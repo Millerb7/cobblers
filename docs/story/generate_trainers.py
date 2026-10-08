@@ -21,6 +21,17 @@ RULES_PATH = ROOT / "docs" / "story" / "TRAINER_RULES.json"
 ROUTES_PATH = ROOT / "data" / "routes.json"
 OUTPUT_PATH = ROOT / "data" / "trainers.json"
 AI_KEYS = {"moveBias", "switchBias", "statusMoveBias", "itemBias", "maxSelectMargin"}
+# A Challenge team is installed under its own rctmod id, <id>_challenge (tools/challenge_mode.py,
+# docs/mechanics/OAK_AND_CHALLENGE.md), and rctmod refuses to spawn a second trainer of the same IDENTITY within
+# uniqueTrainerRadius of the first (TrainerSpawner.isUnique, docs/research/RCT_PER_PLAYER_MODE.md section 2). Both
+# leaders stand in one gym, so the Challenge payload carries an identity of its own.
+CHALLENGE_SUFFIX = "_challenge"
+RUNTIME_MODE_SELECTION = (
+    "per player: Oak records the choice once (quest.main_worldshift_reveal.trainer_mode) and puts a Challenge "
+    "player in rctmod series cobblers_challenge; each record's modes.challenge.rct is installed as "
+    "<rctmod id>_challenge by tools/challenge_mode.py (docs/mechanics/OAK_AND_CHALLENGE.md); top-level team and "
+    "rct mirror normal"
+)
 
 
 def load_json(path: Path):
@@ -65,7 +76,7 @@ def validate_pokemon(pokemon, context):
 
 def make_rct(trainer, rules):
     payload = {
-        "identity": trainer["id"],
+        "identity": trainer.get("identity", trainer["id"]),
         "name": {"literal": trainer["name"]},
         "battleFormat": trainer.get("battle_format", "GEN_9_SINGLES"),
         "battleRules": {
@@ -112,6 +123,7 @@ def build_boss_mode(slot, mode_name, rules):
     ai_profile = mode.get("ai_profile", slot["ai_profile"])
     source = {
         "id": slot["id"],
+        "identity": slot["id"] + (CHALLENGE_SUFFIX if mode_name == "challenge" else ""),
         "name": slot["name"],
         "ai_profile": ai_profile,
         "battle_format": mode.get("battle_format", slot.get("battle_format", "GEN_9_SINGLES")),
@@ -158,7 +170,9 @@ def build_bosses(rules):
         normal = build_boss_mode(slot, "normal", rules)
         challenge = build_boss_mode(slot, "challenge", rules)
         if challenge is None:
+            # an Elite Four or Champion slot with no Challenge members: the same team, under its own identity
             challenge = deepcopy(normal)
+            challenge["rct"]["identity"] = slot["id"] + CHALLENGE_SUFFIX
         entry.update(
             {
                 "ace_level": slot["ace_level"],
@@ -307,6 +321,7 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
             }
             challenge_source = {
                 "id": trainer_id,
+                "identity": trainer_id + CHALLENGE_SUFFIX,
                 "name": placement["name"],
                 "ai_profile": challenge_ai,
                 "team": challenge_team,
@@ -374,9 +389,72 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
     return generated
 
 
+def build_gym_trainers(rules):
+    """The gym juniors (TRAINER_RULES gym_trainers): explicit Normal and Challenge teams, both below the leader's ace.
+
+    Fails rather than adjusts: a member at or over its gym's ace, a Challenge top level that differs from Normal's
+    (the caps do not move between modes), or a gym whose juniors' top levels fall in the order they are listed --
+    which is the order a player reaches them (data/gym_junior_trainers.json, proved by tools/gym_trainers.py)."""
+    section = rules.get("gym_trainers")
+    if not section:
+        return []
+    aces = rules["difficulty"]["gym_ace_levels"]
+    profiles = section["ai_profiles"]
+    out, last_top = [], {}
+    by_gym = {}
+    for slot in section["trainers"]:
+        by_gym[slot["gym"]] = by_gym.get(slot["gym"], 0) + 1
+        ace = aces[slot["gym"] - 1]
+        tops = {}
+        for mode_name in ("normal", "challenge"):
+            team = slot["teams"][mode_name]
+            if not team:
+                raise ValueError(f"{slot['id']} {mode_name}: empty team")
+            over = [m["species"] for m in team if m["level"] >= ace]
+            if over:
+                raise ValueError(f"{slot['id']} {mode_name}: {over} at or over gym {slot['gym']}'s ace {ace}")
+            tops[mode_name] = max(m["level"] for m in team)
+        if tops["normal"] != tops["challenge"]:
+            raise ValueError(f"{slot['id']}: Challenge tops out at {tops['challenge']}, Normal at {tops['normal']}")
+        if len(slot["teams"]["challenge"]) != len(slot["teams"]["normal"]) + 1:
+            raise ValueError(f"{slot['id']}: Challenge adds exactly one member to Normal")
+        if tops["normal"] < last_top.get(slot["gym"], 0):
+            raise ValueError(f"{slot['id']}: tops out below the junior a player passes before it")
+        last_top[slot["gym"]] = tops["normal"]
+        modes = {}
+        for mode_name in ("normal", "challenge"):
+            # a Challenge copy stands beside the Normal one in the gym, so it carries an identity of its own
+            source = {"id": slot["id"], "name": slot["name"], "ai_profile": profiles[mode_name],
+                      "team": slot["teams"][mode_name],
+                      "identity": slot["id"] + (CHALLENGE_SUFFIX if mode_name == "challenge" else "")}
+            modes[mode_name] = {"team": deepcopy(slot["teams"][mode_name]), "ai_profile": profiles[mode_name],
+                                "rct": make_rct(source, rules)}
+        out.append({
+            "id": slot["id"],
+            "display_name": slot["name"],
+            "class": "gym_trainer",
+            "format": "GEN_9_SINGLES",
+            "team": deepcopy(modes["normal"]["team"]),
+            "gym_order": slot["gym"],
+            # the stretch of the game it belongs to, for tools/challenge_guide.py (1-8: the gym's own split)
+            "split": slot["gym"],
+            "leader_ace_level": ace,
+            "type_theme": slot["type"],
+            "trainer_order": by_gym[slot["gym"]],
+            "lesson": slot["lesson"],
+            "dialogue": {"pre": f"dlg_{slot['id']}_pre", "win": f"dlg_{slot['id']}_win",
+                         "loss": f"dlg_{slot['id']}_loss"},
+            "dialogue_text": deepcopy(slot["dialogue_text"]),
+            "rct": deepcopy(modes["normal"]["rct"]),
+            "modes": modes,
+        })
+    return out
+
+
 def build_document(rules, routes):
     bosses = build_bosses(rules)
     route_trainers = build_route_trainers(rules, routes)
+    gym_trainers = build_gym_trainers(rules)
     return {
         "schema": "cobblers.trainers/1",
         "schema_version": 1,
@@ -395,12 +473,13 @@ def build_document(rules, routes):
             "authored_boss_rosters": sum(boss["status"] != "held" for boss in bosses),
             "held_boss_slots": sum(boss["status"] == "held" for boss in bosses),
             "route_trainers": len(route_trainers),
+            "gym_trainers": len(gym_trainers),
             "placement_status": "proposal_only",
             "dialogue_ids": "campaign metadata; RCT sidecars require a future compiler",
             "difficulty_modes": ["normal", "challenge"],
-            "runtime_mode_selection": "not implemented; top-level team and rct mirror normal",
+            "runtime_mode_selection": RUNTIME_MODE_SELECTION,
         },
-        "trainers": bosses + route_trainers,
+        "trainers": bosses + route_trainers + gym_trainers,
     }
 
 
@@ -437,7 +516,7 @@ def main():
         current_document = load_json(OUTPUT_PATH)
         active = build_bosses(rules) + build_route_trainers(
             rules, routes, route_orders=set(range(1, 10))
-        )
+        ) + build_gym_trainers(rules)
         rebuilt = active
         expected = deepcopy(current_document)
         expected["trainers"] = rebuilt
@@ -445,7 +524,7 @@ def main():
         expected["generation_contract"].update(
             {
                 "difficulty_modes": ["normal", "challenge"],
-                "runtime_mode_selection": "not implemented; top-level team and rct mirror normal",
+                "runtime_mode_selection": RUNTIME_MODE_SELECTION,
                 "authored_boss_rosters": sum(
                     trainer.get("class") in {"gym_leader", "elite_four", "champion"}
                     and trainer.get("status") != "held"
@@ -461,6 +540,7 @@ def main():
                     for trainer in rebuilt
                 ),
                 "preserved_blocked_route_orders": [],
+                "gym_trainers": sum(trainer.get("class") == "gym_trainer" for trainer in rebuilt),
             }
         )
         rendered = json.dumps(expected, indent=2, ensure_ascii=False) + "\n"

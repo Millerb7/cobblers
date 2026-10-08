@@ -19,6 +19,8 @@ mutant fails the audit with the named problem:
   exam_level    each exam member one level over the authored team: the exam classes' teams differ from the data
   relative      spawnnpcat at relative coordinates: refused by the static check and by the model
   named_holder  a player's name as a score holder: refused by the no-identity check
+  cap_ignored   (sweep U54, 2026-10-07) the challenge's over-cap guard reads a tag nobody sets: "cap: a party at 31 ..."
+and LC_MUTANTS edit tools/levelcap_pack.py the same way: at_or_over, no_clear_first, fail_closed (each named below).
 A mutation test that only edited data would move the expectation and the output together and prove nothing.
 
 NOT COVERED (validity is not runtime behaviour; see the audit's own docstring): Cobblemon accepting each properties
@@ -97,9 +99,32 @@ MUTANTS = {
                 "rank 1 leg 0: paid [2350]"),
     "intermission": ('% (n, e["heal_before_leg"]))', '% (n, e["heal_before_leg"] + 1))',
                      "rank 8 leg 3: 0 heals"),
-    "exh_bonus": ('"execute if score @s ar.cur matches %d if score @s ar.exh matches 0 run function %s {amount:%d}"',
-                  '"execute if score @s ar.cur matches %d run function %s {amount:%d}"',
-                  "exhibition rank 3"),
+    # unit ARENACAP (purse_policy): a gauntlet's clear bonus paid on a repeat clear too (was exh_bonus, retired)
+    "clear_bonus_on_repeat": ('"execute if score @s ar.cur matches %d if score @s ar.first matches 1 run function %s '
+                              '{amount:%d}"',
+                              '"execute if score @s ar.cur matches %d run function %s {amount:%d}"',
+                              "playing down rank"),
+    # CobbleDollars' own payout no longer taken back
+    "no_clawback": ('"$cobbledollars remove @s $(amount)",', '"# $cobbledollars remove @s $(amount)",', "clawback"),
+    # taken back without its bound: other money in the window goes with it
+    "claw_uncapped": ('"scoreboard players operation #now ar.t < @s ar.cmax",', '"# uncapped",',
+                      "more than CobbleDollars could pay"),
+    # the second look gone: a payout landing after the callback is kept. Re-aimed 2026-10-08 (N143, the builder,
+    # on this file's own "re-aim it"): the look moved from the clear-up to the first line of the next tick
+    "no_second_look": ('        "execute as @a[scores={ar.claw=1}] run function %s" % F_("cd/last"),\n', '',
+                       "clawback"),
+    # the full purse paid twice on a first
+    "purse_twice": ('"execute if score @s ar.first matches 1 run return run function %s" % F_("purse_full"),',
+                    '"execute if score @s ar.first matches 1 run function %s" % F_("purse_full"), '
+                    '"execute if score @s ar.first matches 1 run return run function %s" % F_("purse_full"),',
+                    "rank 1 leg 0: paid"),
+    # a first that never gets spent: every own-rank win pays in full, for ever
+    "first_forever": ('"$execute if entity @s[tag=$(t)_w$(w)] run scoreboard players set @s ar.first 0",',
+                      '"# never spent",', "first purse once"),
+    # the daily cap on the DAY clock, which `time set` moves and which never leaves period 0
+    "daytime_clock": ('time query gametime",', 'time query daytime",', "daily cap"),
+    # one repeat over the cap
+    "cap_plus_one": ("ar.rday >= #rcap", "ar.rday > #rcap", "daily cap"),
     "owner": ('"scoreboard players operation @s ar.id = #me ar.id"]', '"scoreboard players set @s ar.id 1"]',
               "two players"),
     "legs": ('"@s ar.next 1" % (n, e["legs"] - 1))', '"@s ar.next 1" % (n, e["legs"] - 2))',
@@ -122,7 +147,48 @@ MUTANTS = {
     "named_holder": ('"scoreboard players operation @s ar.id = #next ar.id"]',
                      '"scoreboard players operation Steve ar.id = #next ar.id"]',
                      "a named score holder 'Steve'"),
+    # sweep U54: the challenge's guard reads a tag battle_check never sets -- an over-cap party is matched
+    "cap_ignored": ('"execute if entity @s[tag=%s] run return run tellraw',
+                    '"execute if entity @s[tag=%s_x] run return run tellraw',
+                    "cap: a party at 31 over a cap of 30"),
 }
+
+
+LC_SRC = (ROOT / "tools" / "levelcap_pack.py").read_text(encoding="utf-8")
+# sweep U54: tools/levelcap_pack.py's source mutated (data/level_cap.json untouched); each must fail the audit's cap flow
+LC_MUTANTS = {
+    # at-or-over: a party AT the cap is refused -- every flow (run at 50/50) loses its bouts
+    "at_or_over": ("highest_level > $(cap)", "highest_level >= $(cap)", "0 spawns"),
+    # no clear-first: an old refusal survives a cap that does not read
+    "no_clear_first": ('"tag @s remove %s" % PARTY_OVER,\n            "scoreboard players set @s %s 0" % CAP,',
+                       '"scoreboard players set @s %s 0" % CAP,', "a stale refusal tag"),
+    # fail closed: a cap that does not read refuses
+    "fail_closed": ('"$execute store result score @s %s run rctmod player get level_cap @s$(x)" % CAP,\n'
+                    '            "execute unless score @s %s matches 1.. run return 0" % CAP,',
+                    '"$execute store result score @s %s run rctmod player get level_cap @s$(x)" % CAP,\n'
+                    '            "execute unless score @s %s matches 1.. run tag @s add %s" % (CAP, PARTY_OVER),\n'
+                    '            "execute unless score @s %s matches 1.. run return 0" % CAP,',
+                    "a cap that does not read refuses"),
+}
+
+
+# Protects: the audit's cap flow reads the EMITTED level-cap pack, not the builder's rule. Each mutant edits
+# tools/levelcap_pack.py's source in memory (data untouched), the pack it emits is written to tmp and the audit runs on
+# the real arena pack with it. If removed, the cap flow could pass a strictness, trap or fail-closed regression.
+@pytest.mark.parametrize("name", sorted(LC_MUTANTS))
+def test_a_mutated_levelcap_generator_fails_the_audit(name, pack, tmp_path):
+    old, new, expect = LC_MUTANTS[name]
+    assert LC_SRC.count(old) == 1, "mutant %s no longer matches tools/levelcap_pack.py: re-aim it" % name
+    mod = types.ModuleType("levelcap_pack_under_test")
+    mod.__file__ = str(ROOT / "tools" / "levelcap_pack.py")
+    exec(compile(LC_SRC.replace(old, new), "levelcap_pack_under_test", "exec"), mod.__dict__)
+    out = tmp_path / "cobblers_levelcap"
+    for rel, text in mod.files(json.loads((ROOT / "data" / "level_cap.json").read_text(encoding="utf-8"))).items():
+        (out / rel).parent.mkdir(parents=True, exist_ok=True)
+        (out / rel).write_text(text, encoding="utf-8")
+    bad = unknown(A.audit(pack, route=False, levelcap_pack_dir=out))
+    assert bad, "the audit passed a level-cap generator mutated by %s" % name
+    assert any(expect in p for p in bad), bad[:5]
 
 
 # Protects: the audit's independence from the builder. Each mutant changes the GENERATOR with data/ untouched; an
@@ -176,6 +242,39 @@ def test_the_command_model_runs_a_hand_computed_pack(tmp_path):
     W.command("execute as @a[scores={v=5},distance=..1] run scoreboard players add #hit v 1", None, (0.5, 0, 0))
     W.command("execute as @a[scores={v=5},distance=..1] run scoreboard players add #hit v 1", None, (3, 0, 0))
     assert W.score("#hit", "v") == 1                        # in range once, out of range once
+
+
+# Protects: the model's CobbleDollars and clock commands, hand-computed (CobbleDollarsCommand javap: query returns
+# intValue, remove takes min(amount, balance); vanilla TimeCommand: `time set` moves day time only; scores are Java
+# ints). A model that let remove go negative, or `time set` move game time, would pass a leaky clawback or cap.
+def test_the_money_and_clock_commands_follow_the_jar_and_vanilla():
+    P = types.SimpleNamespace(functions={}, load_tag=[], tick_tag=[])
+    W = A.World.__new__(A.World)                            # no pack: the commands alone
+    W.P, W.functions, W.ents, W.scores, W.objectives, W.storage = P, {}, [], {}, {"v"}, {}
+    W.spawns, W.stubbed, W.refuse, W.depth, W.gametime, W.daytime, W.failed_gets = [], [], False, 0, 0, 0, []
+    p = W.player((0, 0, 0))
+    p.bal = 700
+    W.command("execute store result score #q v run cobbledollars query @s", p, p.pos)
+    assert W.score("#q", "v") == 700
+    W.command("cobbledollars remove @s 1000", p, p.pos)
+    assert p.bal == 0 and p.removed == [700]                # min(1000, 700): never below zero
+    W.command("cobbledollars give @s 250", p, p.pos)
+    assert p.bal == 250 and p.money == [250]
+    p.bal = 2 ** 31 + 5                                     # BigInteger.intValue wraps
+    assert W.command("cobbledollars query @s", p, p.pos)[1] == -2 ** 31 + 5
+    with pytest.raises(A.AuditError):
+        W.command("cobbledollars remove @s 0", p, p.pos)    # bigInt(1)
+    W.tick(30)
+    W.command("time set 0", None, None)
+    W.command("time add 24000", None, None)
+    assert W.command("time query gametime", None, None)[1] == 30
+    assert W.command("time query daytime", None, None)[1] == 0      # 24000 % 24000
+    W.set_score("#m", "v", 2 ** 30)
+    W.set_score("#k", "v", 4)
+    W.command("scoreboard players operation #m v *= #k v", None, None)
+    assert W.score("#m", "v") == 0                          # 2^32 wraps to 0 in a Java int
+    W.command("execute store result score #u v run scoreboard players get #nobody v", None, None)
+    assert W.score("#u", "v") == 0 and W.failed_gets == [("#nobody", "v")]   # a failed get stores 0
 
 
 # Protects: the purse's half-rounding is read from the data (rank 8: 13 x 225 = 2925 typed 2900), not assumed.

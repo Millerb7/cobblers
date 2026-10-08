@@ -186,6 +186,8 @@ SCHEMAS = {
                 "admin", "grunt", "route",
                 # an optional trainer off the critical path (the Lake Viltri north-bank angler, PR #48)
                 "optional_route",
+                # a junior inside a gym, passed before its leader (data/gym_junior_trainers.json, 2026-10-06)
+                "gym_trainer",
             },
             "format": {"GEN_9_SINGLES", "GEN_9_DOUBLES"},
         },
@@ -765,7 +767,7 @@ SCENE_ID = re.compile(r"[a-z0-9_]+")
 # effect kinds only a dialogue may run (tools/scenes_pack.py zone())
 SCENE_ITEM_CONDITIONS = {"held_item", "inventory_contains"}
 SCENE_ITEM_EFFECTS = {"consume_held_item", "give_item", "grant_reward_once"}
-SCENE_EFFECT_KINDS = {"particles", "sequence", "push"}
+SCENE_EFFECT_KINDS = {"particles", "sequence", "push", "actionbar"}   # actionbar: Oak's lab, 2026-10-06
 
 
 def _box(b):
@@ -3143,6 +3145,88 @@ def check_spawn_pack(ctx: Context):
         rep.info(C, "%d spawn details across %d files, every id its own" % (total, len(files)))
 
 
+def _species_key(name):
+    """A species name as Cobblemon ids it: lower case, no namespace, no space, hyphen or underscore ("Flutter Mane",
+    "flutter_mane" and "cobblemon:fluttermane" are all "fluttermane")."""
+    return "".join(str(name or "").split()).lower().rsplit(":", 1)[-1].replace("-", "").replace("_", "")
+
+
+def _named_species(node, out, path=""):
+    """Every (path, species) a wild-spawn document names under a "species" or "pokemon" key, at any depth."""
+    if isinstance(node, dict):
+        for k, v in node.items():
+            here = "%s.%s" % (path, k) if path else k
+            if k in ("species", "pokemon"):
+                for s in (v if isinstance(v, list) else [v]):
+                    if isinstance(s, str):
+                        out.append((here, _species_key(s)))
+            _named_species(v, out, here)
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            _named_species(v, out, "%s[%d]" % (path, i))
+    return out
+
+
+def check_wild_paradox(ctx: Context):
+    """No wild spawn we author names a species data/spawn_suppression.json removed_species lists: the 22 paradoxes
+    (the owner, 2026-10-08: "Paradoxes are dungeon content"). The inherited side is fail-closed in
+    tools/suppress_inherited_spawns.py (verify_removed_species); this is ours.
+
+    Read: every species/pokemon value at any depth of data/spawns.json (route, sub-region, habitat and Habitat Block,
+    marine, waterway, Nether and placement-site entries, the habitats' rosters, the Nether tables' species lists), and
+    data/gulch_mine.json mega_field.families (the Mega dens' lines, compiled into the sub-region files). With --pack,
+    every "pokemon" value in the compiled pack's spawn_pool_world and habitat_pools files too. Not read: a starter grant
+    (data/mythical_starters.json gives Flutter Mane to a player, not to a pool), trainer teams, water mounts."""
+    C = "wild-paradox"
+    rep = ctx.report
+    sup_path = ctx.data_dir / "spawn_suppression.json"
+    try:
+        sup = json.loads(sup_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        rep.error(C, "cannot read removed_species: %s" % exc, file="data/spawn_suppression.json")
+        return
+    removed = {_species_key(s) for s in (sup.get("removed_species") or {}).get("species") or []}
+    if not removed:
+        rep.error(C, "removed_species lists no species: nothing would be checked", file="data/spawn_suppression.json")
+        return
+    found, read = [], 0
+    spawns = ctx.doc("spawns.json")
+    if spawns is None:
+        rep.error(C, "data/spawns.json did not load: our wild spawns cannot be checked")
+        return
+    for where, sp in _named_species(spawns, []):
+        read += 1
+        if sp in removed:
+            found.append(("data/spawns.json", where, sp))
+    gulch = ctx.data_dir / "gulch_mine.json"
+    if gulch.is_file():
+        fam = (json.loads(gulch.read_text(encoding="utf-8")).get("mega_field") or {}).get("families") or {}
+        for line, members in (fam.get("lines") or {}).items():
+            for sp in [line] + list(members):
+                read += 1
+                if _species_key(sp) in removed:
+                    found.append(("data/gulch_mine.json", "mega_field.families.lines." + line, _species_key(sp)))
+    pack = getattr(ctx, "spawn_pack", None)
+    if pack and Path(pack).is_dir():
+        for f in sorted(Path(pack).glob("data/**/*.json")):
+            if not {"spawn_pool_world", "habitat_pools"} & set(f.relative_to(pack).parts):
+                continue
+            for m in re.finditer(r'"pokemon"\s*:\s*"([^"]*)"', f.read_text(encoding="utf-8")):
+                read += 1
+                # a compiled detail's pokemon is a property string: the species is its first word
+                sp = _species_key((m.group(1).split() or [""])[0])
+                if sp in removed:
+                    found.append((f.name, "pokemon", sp))
+    for rel, where, sp in found:
+        rep.error(C, "%s spawns wild at %s; it is in removed_species (the owner, 2026-10-08)" % (sp, where), file=rel)
+    if not found:
+        if not read:
+            rep.error(C, "no species read from data/spawns.json: the check saw nothing")
+            return
+        rep.info(C, "%d species values read, none of the %d removed species%s" % (
+            read, len(removed), "" if pack else " (compiled pack not read; pass --pack)"))
+
+
 CHECKS = [
     ("schema", check_schema),
     ("world", check_world_config),
@@ -3163,6 +3247,7 @@ CHECKS = [
     ("habitat-blocks", check_habitat_blocks),
     ("traders", check_traders),
     ("spawn-pack", check_spawn_pack),
+    ("wild-paradox", check_wild_paradox),
 ]
 
 

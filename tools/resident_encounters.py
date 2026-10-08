@@ -370,8 +370,8 @@ def resident_files(doc, e, a, sets, clears, box):
         % (dtag, sx, bb["leash"] + k["settle_margin"], P)]
     fn["%s/wake" % i] = [
         "# as the resident: its trigger (rules.aggression: a bounded local trigger; Fight or Flight is never changed)",
-        "tag @s remove %s" % dtag,
-        "data merge entity @s %s" % _nbt(awake_nbt(e)),
+        "tag @s remove %s" % dtag] + ([] if bb.get("stays_still") else [
+        "data merge entity @s %s" % _nbt(awake_nbt(e))]) + [
         "tellraw @a[%s,distance=..48] %s" % (sx, msg),
         "playsound %s hostile @a[%s,distance=..48] %s 2 0.8" % (bb["sound"], sx, at)]
     fn["%s/settle" % i] = [

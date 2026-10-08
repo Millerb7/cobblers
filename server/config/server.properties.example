@@ -76,10 +76,34 @@ entity-broadcast-range-percentage=100
 sync-chunk-writes=true
 
 # --- pack / resources ----------------------------------------------------
-# Resource packs are shipped in the modpack, not pushed by the server.
-require-resource-pack=false
+# The server delivers one client pack (ADR-006, Proposed):
+# build/client/cobblers-client-AllTheMons-subset.zip, built by
+#   python tools/client_model_fix.py build --server-pack --instance <client instance>
+# It gives the 43 doll species their AllTheMons models (Flutter Mane, Iron
+# Valiant, Vullaby, Greavard...) and restores Cobblemon 1.8's own files for the
+# mis-assembled and crash forms. The pack is never committed.
+#
+# LICENCE GATE: the AllTheMons files in it are under ALLTHEMONS LICENSE v3.2,
+# whose section 1.3 allows uploading copies "only with explicit written
+# permission". Do not host the zip or fill resource-pack until Lvnatic's written
+# permission is on record (docs/decisions/ADR-006-server-delivered-client-pack.md).
+#
+# resource-pack: the HTTPS direct-download URL of the hosted zip, reachable
+# without login. Empty means the server delivers no pack; it stays empty here
+# because the URL is the owner's hosting choice (server/README.md, "Client pack").
+# resource-pack-sha1: printed by the build and written to the zip's .sha1 file.
+# A rebuild that changes the pack changes this; tests/test_server_client_pack.py
+# fails if it differs from a built pack's .sha1.
+# resource-pack-id: fixed, so clients treat a rebuilt pack as the same pack
+# (uuid5 of URL namespace, "cobblers:client-pack/cobblers-client-AllTheMons-subset").
+# resource-pack-prompt: a JSON text component (the server logs "Failed to parse
+# resource pack prompt" otherwise); it carries the AllTheMons credit.
+# require-resource-pack=true: a player who declines the pack is disconnected.
+require-resource-pack=true
 resource-pack=
-resource-pack-sha1=
+resource-pack-sha1=dfdd4f8118a66ff854d23a1e5c2f7651ff042e97
+resource-pack-id=43566b60-4e01-549a-95d3-2592c69f3454
+resource-pack-prompt={"text":"Cobblers model pack: AllTheMons models (Lvnatic and contributors) and Cobblemon 1.8 fixes. Without it, some Pokemon render as dolls."}
 # Datapacks are force-loaded by the Global Packs mod (config/global_packs.toml);
 # initial-enabled-packs only matters for vanilla-registered packs.
 initial-enabled-packs=vanilla

@@ -2,6 +2,7 @@
 name: trainer-balance-designer
 description: Designs the fights and the economy of answers — per-area encounter availability, level caps per chapter, gym/boss/gauntlet/villain teams with movesets, items and abilities, and reward placement — in data/. Use for balance and encounter design. Not for implementing the generator a mod reads (datapack-content-dev) or for world layout.
 tools: Read, Write, Edit, Glob, Grep
+model: opus
 ---
 
 Makes the campaign hard and fair: every wall has a solution a player can

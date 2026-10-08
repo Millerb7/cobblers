@@ -32,7 +32,7 @@ import mcfunction_sim as M  # noqa: E402
 PACK = ROOT / "build" / "datapacks" / "cobblers_ambient"
 DATA = json.loads((ROOT / "data" / "ambient.json").read_text(encoding="utf-8"))
 RULES = DATA["rules"]
-WORKERS = {w["id"]: w for w in DATA["workers"]}
+WORKERS = {w["id"]: w for w in DATA["workers"] + (DATA.get("superseded_workers") or {}).get("workers", [])}  # superseded records are the format samples since the town files (2026-10-05)
 WORLD = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))
 SPAWN = (float(WORLD["export"]["spawn"][0]), 64.0, float(WORLD["export"]["spawn"][1]))   # the server's own position
 TAG = "cobblers.amb"

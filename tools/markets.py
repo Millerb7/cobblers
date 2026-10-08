@@ -1,44 +1,42 @@
 #!/usr/bin/env python
-"""Town markets: a keeper beside each Mart whose shelf is gated per player by badge, paid in CobbleDollars.
+"""Town markets: a CobbleDollars merchant at every counter and every stall, paid through the merchant's own screen.
 Generated from data/markets.json into the world-local datapack build/datapacks/cobblers_markets.
 
-The design is docs/mechanics/MARKET_GATING.md section 4 (the mechanism), docs/mechanics/PROGRESSION_LADDER.md
-revision 2 (the curve) and docs/mechanics/TIERED_GOODS.md (the ids, read from the server's jars). Nothing new in the
-game: it is the ferry (tools/ferries.py) with the teleport replaced by a give.
+The design is docs/mechanics/PROGRESSION_LADDER.md revision 2 (the curve) and docs/mechanics/TIERED_GOODS.md (the
+ids, read from the server's jars). Since 2026-10-06 (the owner, after playing: "need the steve traders gone. the
+button list for purchases is bad, should be the villagers with ui only"; data/markets.json `decisions`
+counters_are_merchants) every seller is a CobbleDollars merchant, `cobbledollars:cobble_merchant`
+(docs/research/notes/cobbleverse-merchants.md), summoned by stalls/merchants/<town>_place with a CobbleMerchantShop
+built from its lines (data/markets.json `stall_merchant`): one category, one offer per line at the line's unit price,
+Item count 1. The merchant's own screen takes the money, so no seller has a dialogue, NPC class or purchase function.
 
-  the keeper     a Cobblemon NPC whose class opens a dialogue (tools/compile_dialogue.py, EXP-022), placed over RCON by
-                 spawnnpcat after a restart (tools/reapply.py R17M, the "npc" action), facing its plaza
-  the menu       one page, one option per shelf item; an option gated on a badge is visible only to a player holding
-                 it (compile_dialogue "flag" -> isVisible, probed per player). No cursor, no field: stateless, so two
-                 players at one keeper cannot disturb each other's menu (MARKET_GATING.md "Principle 12")
-  the purchase   a function run as the player by the option: refuse a second submit inside the cooldown, re-check the
-                 gate, read the balance (`cobbledollars query`, EXP-040), refuse if short with nothing taken, charge by
-                 the blackout's proven macro (`$cobbledollars remove @s $(amount)`, EXP-042 run 1), re-read and refuse
-                 unless the balance fell by exactly the price, then give AS the player (EXP-022 bug 1) and, if the give
-                 reports failure, add the price back (`$cobbledollars add @s $(amount)`: the command is VERIFIED from
-                 the jar, EXP-040; the refund branch is NOT run in game)
+  the keeper     a merchant at its seat (the squares' contract keeper_at, else the record's at/yaw), named, NoAI,
+                 turned to the seat's yaw. Its town's place step looks at each seat every 20 ticks and staffs it
+                 (seat/<id>) only once the seat's chunk shows its saved entities are in (N155: the merchant or the old
+                 keeper seen on it), or blind after 300 ticks: seat/<id> kills every cobblemon:npc within
+                 remove_radius of the seat (the dialogue keepers R17M placed with spawnnpcat until 2026-10-04 at the
+                 stalls and 2026-10-06 at the counters: they carry no tag, so they are known by their seat) and every
+                 copy of the merchant, then summons one; 100 ticks after the last seat <town>_done kills older copies
+                 of each merchant, where the new one stands. R17M reads every merchant back from the world (verify)
+  the gates      none. The screen shows one list to every player (MARKET_GATING.md section 1), so a line cannot wait
+                 for a badge: every counter line that was gated keeps its old gate in `gate_dropped` {gate, decision,
+                 why}, and a line still carrying a gate is refused. A counter's badge still places it on the curve
+                 and the backpack ladder
   the recipes    every Sophisticated Backpacks item a built counter sells has its recipe switched off in
                  modpack/config/sophisticatedcore-common.toml (`enabledItems`, "<id>|false"), the mod's own documented
                  key, written by `overlay` from the base file so the overlay differs from Cobbleverse's in nothing else
 
-Only counters whose status is "sited" are emitted; the rest of the region's shelves live in the data, each with why.
+Only counters and stalls whose status is "sited" are emitted; the rest live in the data, each with why.
 
 The stalls (2026-10-03, the owner: "more traders, and new ones ... per town, reading as the place"): data/markets.json
-`stalls`, the town squares' stalls. Since 2026-10-04 (the owner: "the steve villagers aren't it, it should be the
-cobbleverse ones that have nice ui") each stall's keeper is a CobbleDollars merchant, `cobbledollars:cobble_merchant`
-(docs/research/notes/cobbleverse-merchants.md), summoned by stalls/merchants/<town> with a CobbleMerchantShop built
-from the stall's lines (data/markets.json `stall_merchant`): one category, one offer per line at the line's unit
-price, Item count 1. The merchant's own screen takes the money, so a stall has no dialogue, NPC class or purchase
-function; the summon step removes the Cobblemon dialogue keeper it replaces once the merchant stands, and R17M reads
-every merchant back from the world (verify). A merchant shows one list to every player, so a stall line may not be
-gated: the badge-gated shelves stay the counters' dialogue menus (`decisions_pending`). A stall is not a counter: the
-one-counter-per-town rule, the backpack ladder and the clerk rule stay the counters'. Its own rules:
+`stalls`, the town squares' stalls, merchants since 2026-10-04 (the owner: "the steve villagers aren't it, it should
+be the cobbleverse ones that have nice ui"). A stall is not a counter: the one-counter-per-town rule, the backpack
+ladder and the clerk rule stay the counters'. Its own rules:
   stock      what the place makes: every line names the jar it was verified in (`verified`); an id not verified is
              listed under `unverified` and never emitted; no Sophisticated Backpacks item (the ladder is the
              counters'); no item that is, or places, a block a spawn condition names (data/spawn_blocks.json: a
              player who buys it could decide encounters); a `provision` line is ungated, vanilla, and none of the
-             vanilla items that win fights or print money (NOT_PROVISION); any gated line gates on its town's own
-             badge on the critical path and is counted on the curve like a counter's
+             vanilla items that win fights or print money (NOT_PROVISION); no line is gated (the merchant)
   site       each keeper stands at its stall: the squares' contract, data/plaza_centres.json ("stalls": [{"id":
              "<town>_stall_<n>", "at", "facing", "keeper_at": [x, y, z, yaw], "sells"}]), wins when it names the
              record's `stall`; otherwise the record's own `at`/`yaw`, measured on the plaza from the data (the
@@ -53,13 +51,19 @@ one-counter-per-town rule, the backpack ladder and the clerk rule stay the count
 
 The audit is offline and fails closed (the implementer's audit; its tests belong to the test author):
 
-  data       every town in data/towns.json has a counter or a no_counter reason; every gate is a badge flag that
-             data/progression.json declares and tools/progression_pack.py plans; a critical-path counter gates on its
-             own badge; prices are positive whole dollars and every unit price is ABOVE data's bank sell-back for the
-             same item (a shop at or under it is a money printer, PROGRESSION_LADDER 6.4)
-  curve      on the critical path, every badge's cumulative ask (one of each option, a pick-one group at its dearest,
-             stretch items aside) is at most income_basis.target_ratio of the cumulative income; with the stretch
-             items it never exceeds the income; backpack tiers unlock in tier order and cost more as they rise
+  data       every town in data/towns.json has a counter or a no_counter reason; every badge flag is planned by
+             tools/progression_pack.py; no counter line is gated, and a line whose gate was dropped records it
+             (gate_dropped: a declared badge, the decision in `decisions`, why; on a critical-path counter its own
+             badge -- until 2026-10-06 the rule was "a critical-path counter gates on its own badge"); prices are
+             positive whole dollars that divide by their count, and every unit price is ABOVE data's bank sell-back
+             for the same item (a shop at or under it is a money printer, PROGRESSION_LADDER 6.4)
+  curve      ECONOMY_OVERHAUL.md section 7 R2 (2026-10-10): on the critical path, every badge's cumulative ask (the
+             convenience lines, a pick-one group at its dearest, stretch items aside, plus curve_rule's fight
+             allowance) over what the road earns (trainer income + produce allowance + one gathering hour a leg at
+             data/bank.json effort_model's tier) is inside price_policies.curve_scale.band; with the stretch items it
+             stays below what the road earns; fights never exceed trainer income. Every curve line is priced by the
+             curve rule (curve_prices: one scale a leg on its list_price, to the band's midpoint), never by hand;
+             backpack tiers unlock in tier order and cost more as they rise
   recipes    the committed overlay is exactly what `overlay` writes; every Sophisticated Backpacks item a built
              counter sells is off, unless left_craftable says why; nothing sold only by an unbuilt counter is off
   sites      every built keeper stands one above its plan ground (the plaza's graded paving inside the plaza, else
@@ -68,10 +72,11 @@ The audit is offline and fails closed (the implementer's audit; its tests belong
              other placed NPC and every trader clerk, 3+ from every walked route line, above the sea; on its Mart's
              DOOR side (the Mart anchor's `facing`), inside its town's footprint, off every street's paved width, and
              facing its plaza's centre (R17M: "beside its town's Mart and turned to face its plaza")
-  the output every purchase function checks the cooldown first, the gate before the balance, reads before it charges,
-             refuses below exactly the price, charges once by the macro, verifies, and gives only after the verify;
-             every function passes tools/function_limits.py; every dialogue offers exactly its counter's stock with a
-             gated option hidden behind isVisible
+  the output one merchant summon per sited counter and stall, holding exactly its lines (merchant_problems); no
+             dialogue, NPC class, purchase function or charge macro emitted for any seller; each summon sits in its
+             seat function after the kills of the old dialogue keeper (by seat) and the merchant's older copies, and
+             the town's place step runs it only once the seat is shown (N155); every function passes
+             tools/function_limits.py
 
   python tools/markets.py build    [--out DIR]                     write the pack (no heightmap needed)
   python tools/markets.py audit    [--source-root R] [--skip-dressing]   exit 1 on any problem
@@ -96,14 +101,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
-import compile_dialogue as CD  # noqa: E402
 import function_limits  # noqa: E402
 
 DATA = ROOT / "data" / "markets.json"
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_markets"
 NS = "cobblers"
 SCORE, COOLDOWN, GAVE = "cobblers_market", "cobblers_market_cd", "cobblers_market_gave"
-STORAGE = "%s:markets" % NS
 ID = re.compile(r"[a-z0-9_]+")
 ITEM = re.compile(r"[a-z0-9_.\-]+:[a-z0-9_/.\-]+")
 SB = "sophisticatedbackpacks:"
@@ -147,8 +150,10 @@ def emitted_stalls(doc):
     return [s for s in doc.get("stalls") or [] if s.get("status") == "sited"]
 
 
-def buy_fn(counter, item):
-    return "%s:markets/%s/%s" % (NS, counter["id"], item["id"])
+def merchant_records(doc):
+    """[(record, kind)] of every sited seller, each a CobbleDollars merchant since 2026-10-06: the counters ('counter'),
+    then the stalls ('stall')."""
+    return [(c, "counter") for c in emitted(doc)] + [(s, "stall") for s in emitted_stalls(doc)]
 
 
 def load_plazas(path=None):
@@ -199,149 +204,38 @@ def position(rec, plazas):
     return rec.get("at"), rec.get("yaw"), "record"
 
 
-def text(s, color="gray"):
-    return json.dumps({"text": s, "color": color}, ensure_ascii=False)
-
-
-def fill(template, **kw):
-    for k, v in kw.items():
-        template = template.replace("{%s}" % k, str(v))
-    if re.search(r"\{[a-z_]+\}", template):
-        raise MarketError("message %r names a placeholder this tool does not fill" % template)
-    return template
-
-
 def money(n):
     return "{:,}".format(int(n))
 
 
-def option_text(doc, item):
-    m = doc["messages"]
-    if int(item["count"]) > 1:
-        return fill(m["option_count"], item=item["name"], count=item["count"], price=money(item["price"]))
-    return fill(m["option"], item=item["name"], price=money(item["price"]))
-
-
-# ---------------------------------------------------------------------------------------------------- the dialogue
-def conversation(doc, counter):
-    """(conversation, quest) for one keeper, in data/dialogue.json's and data/quests.json's shape, compiled by
-    tools/compile_dialogue.py as it compiles every other conversation. A menu: no cursor, no field."""
-    return menu(doc, counter, "market", buy_fn)
-
-
-def menu(doc, counter, kind, fn_of):
-    qid = "%s_%s" % (kind, counter["id"])
-    responses, transitions = [], []
-    for it in counter["stock"]:
-        tid = "buy_%s" % it["id"]
-        conds = [{"kind": "flag", "flag": it["gate"]}] if it.get("gate") else []
-        transitions.append({"id": tid, "conditions": conds,
-                            "effects": [{"kind": "function", "function": fn_of(counter, it)}]})
-        r = {"id": "r_%s" % it["id"], "text": option_text(doc, it),
-             "actions": [{"kind": "quest_transition", "transition": tid}, {"kind": "close_dialogue"}]}
-        if conds:
-            r["visible_when"] = conds[0]
-        responses.append(r)
-    responses.append({"id": "r_leave", "text": doc["messages"]["leave"], "actions": [{"kind": "close_dialogue"}]})
-    keeper = counter["keeper"]
-    conv = {"id": "dlg_%s_%s" % (kind, counter["id"]), "quest_id": qid, "npc_id": "npc_%s_%s" % (kind, counter["id"]),
-            "npc_name": keeper["name"], "scope": "player", "speakers": {"keeper": keeper["name"]},
-            "cursor": {"progression_field": None, "initial_node": "menu"},
-            "entry_rules": [{"priority": 10, "when": {"kind": "always"}, "node": "menu"}],
-            "nodes": [{"id": "menu", "kind": "choice", "speaker": "keeper", "text": keeper["greeting"],
-                       "responses": responses}]}
-    quest = {"id": qid, "progression_field_refs": [], "transitions": transitions, "rewards": []}
-    return conv, quest
-
-
-# ---------------------------------------------------------------------------------------------------- the purchase
-def buy_lines(doc, counter, it):
-    m = doc["messages"]
-    price, count = int(it["price"]), int(it["count"])
-    kw = dict(item=it["name"], price=money(price), count=count)
-    out = ["# Generated by tools/markets.py from data/markets.json: %s, %s x%d for $%d (as and at the player, from the "
-           "keeper's dialogue)" % (counter["id"], it["item"], count, price),
-           "# a second submit of the same click, or a purchase straight after one, does nothing",
-           "execute store result score #now %s run time query gametime" % SCORE,
-           "execute if score @s %s > #now %s run return 0" % (COOLDOWN, SCORE)]
-    if it.get("gate"):
-        msg = fill(m["gated"], requirement=doc["badges"][it["gate"]], **kw)
-        out.append("execute unless entity @s[advancements={%s:flag/%s=true}] run return run tellraw @s %s"
-                   % (NS, it["gate"], text(msg, "gold")))
-    before, _, after = m["short"].partition("{balance}")
-    refuse = json.dumps([{"text": "", "color": "gold"}, {"text": fill(before, **kw)},
-                         {"score": {"name": "@s", "objective": SCORE}}, {"text": fill(after, **kw)}], ensure_ascii=False)
-    out += ["# the price, $%d: read the balance first (EXP-040), refuse if it is short, nothing taken" % price,
-            "execute store result score @s %s run cobbledollars query @s" % SCORE,
-            "execute unless score @s %s matches %d.. run return run tellraw @s %s" % (SCORE, price, refuse),
-            "# from here the click is spent: a second one inside the cooldown is refused above",
-            "scoreboard players operation @s %s = #now %s" % (COOLDOWN, SCORE),
-            "scoreboard players add @s %s %d" % (COOLDOWN, int(doc["purchase"]["cooldown_ticks"])),
-            "data modify storage %s charge.amount set value %d" % (STORAGE, price),
-            "function %s:markets/charge with storage %s charge" % (NS, STORAGE),
-            "# the charge must have taken exactly the price, or nothing is given",
-            "execute store result score #after %s run cobbledollars query @s" % SCORE,
-            "scoreboard players operation #want %s = @s %s" % (SCORE, SCORE),
-            "scoreboard players remove #want %s %d" % (SCORE, price),
-            "execute unless score #after %s = #want %s run return run tellraw @s %s"
-            % (SCORE, SCORE, text(fill(m["charge_failed"], **kw), "red")),
-            "# the give, as the player (EXP-022 bug 1); its success into an objective that exists (EXP-022 bug 2)",
-            "scoreboard objectives add %s dummy" % GAVE,
-            "scoreboard players set @s %s 0" % GAVE,
-            "execute store success score @s %s run give @s %s %d" % (GAVE, it["item"], count),
-            "execute unless score @s %s matches 1 run function %s:markets/refund with storage %s charge" % (GAVE, NS, STORAGE),
-            "execute unless score @s %s matches 1 run return run tellraw @s %s" % (GAVE, text(fill(m["give_failed"], **kw), "red")),
-            "tellraw @s %s" % text(fill(m["paid"], **kw))]
-    return out
-
-
+# ---------------------------------------------------------------------------------------------------- the pack
 def build(doc, plazas=None):
-    """{relative path in the pack: content (list of lines, or a JSON object)} and the NPCs to place."""
+    """{relative path in the pack: content (list of lines, or a JSON object)} and the dialogue NPCs to place (none since
+    2026-10-06: every seller is a merchant, summoned by MERCHANTS_FN)."""
     plazas = load_plazas() if plazas is None else plazas
     files = {"pack.mcmeta": {"pack": {"pack_format": 48, "description": "Cobblers town markets (generated by tools/markets.py)"}},
              "data/minecraft/tags/function/load.json": {"values": ["%s:markets/load" % NS]}}
-    fn = lambda rel: "data/%s/function/markets/%s.mcfunction" % (NS, rel)
-    files[fn("load")] = ["# the markets' scores: the balance read, each player's cooldown after a click, and the give's success",
-                         "scoreboard objectives add %s dummy" % SCORE, "scoreboard objectives add %s dummy" % COOLDOWN,
-                         "scoreboard objectives add %s dummy" % GAVE]
-    # the blackout charge's macro, proven in game (EXP-042 run 1: $725 to $652), and its inverse for a failed give
-    files[fn("charge")] = ["$cobbledollars remove @s $(amount)"]
-    files[fn("refund")] = ["$cobbledollars add @s $(amount)"]
-    fields = {f["id"]: f for f in json.loads(
-        (ROOT / "data" / "progression.json").read_text(encoding="utf-8")).get("quest_fields") or []}
-    npcs = []
-    for c in emitted(doc):
-        for it in c["stock"]:
-            files[fn("%s/%s" % (c["id"], it["id"]))] = buy_lines(doc, c, it)
-        conv, quest = conversation(doc, c)
-        got = CD.compile_conversation(conv, {quest["id"]: quest}, fields)
-        clash = [k for k in got if k in files]
-        if clash:
-            raise MarketError("%s writes %s twice" % (c["id"], clash))
-        files.update(got)
-        at, yaw, _src = position(c, plazas)
-        npcs.append((conv["id"], tuple(at), "%s:%s" % (NS, conv["npc_id"]), yaw))
-    # the stalls (since 2026-10-04): CobbleDollars merchants, no dialogue, no NPC class and no purchase function; the
-    # merchant's own screen takes the money (data/markets.json stall_merchant)
-    if emitted_stalls(doc):
+    # R17M runs cobblers:markets/load by name (tools/reapply.py, not this tool's to edit), so it stays: the scores the
+    # dialogue purchases used, harmless now that nothing charges here
+    files["data/%s/function/markets/load.mcfunction" % NS] = [
+        "# the markets' scores (kept: tools/reapply.py R17M runs this function by name; no seller charges here since "
+        "2026-10-06)",
+        "scoreboard objectives add %s dummy" % SCORE, "scoreboard objectives add %s dummy" % COOLDOWN,
+        "scoreboard objectives add %s dummy" % GAVE]
+    if merchant_records(doc):
         got = merchant_functions(doc, plazas)
         clash = [k for k in got if k in files]
         if clash:
-            raise MarketError("the stall merchants write %s twice" % clash)
+            raise MarketError("the merchants write %s twice" % clash)
         files.update(got)
-    return files, npcs
+    return files, []
 
 
 def npc_placements(doc=None, plazas=None):
-    """[(conversation id, (x, y, z), npc class, yaw)] for tools/reapply.py's "npc" action, from the committed data:
-    the counters' keepers, each at its stall when the squares' contract seats it, else at its record's site."""
-    doc = doc or load()
-    plazas = load_plazas() if plazas is None else plazas
-    out = []
-    for c in emitted(doc):
-        at, yaw, _src = position(c, plazas)
-        out.append(("dlg_market_%s" % c["id"], tuple(at), "%s:npc_market_%s" % (NS, c["id"]), yaw))
-    return out
+    """The counters' Cobblemon dialogue keepers for tools/reapply.py's "npc" action: since 2026-10-06 none (every
+    counter keeper is a CobbleDollars merchant, stall_merchants below, placed by R17M through MERCHANTS_FN; decision
+    counters_are_merchants). Kept, and kept empty, so R17M's composition still reads."""
+    return []
 
 
 def stall_placements(doc=None, plazas=None):
@@ -354,9 +248,14 @@ def stall_placements(doc=None, plazas=None):
 # ---------------------------------------------------------------------------------------------------- the merchants
 MERCHANTS_DIR = "stalls/merchants"
 MERCHANTS_FN = "%s:%s/all" % (NS, MERCHANTS_DIR)
-MERCHANT_LOAD_WAIT = 40     # ticks from forceload to summon (tools/traders.py LOAD_WAIT, measured 2026-09-21)
-MERCHANT_DEDUPE_WAIT = 100  # ticks from summon to the removals (tools/traders.py DEDUPE_WAIT)
+MERCHANT_LOAD_WAIT = 40     # ticks from forceload to the first look at the seats (tools/traders.py LOAD_WAIT)
+MERCHANT_POLL_EVERY = 20    # ticks between looks while a seat shows nothing
+MERCHANT_POLLS = 14         # looks before a seat that still shows nothing is staffed blind: 40 + 13 x 20 = 300 ticks
+MERCHANT_DEDUPE_WAIT = 100  # ticks from the last seat staffed to the de-duplication and release (traders.py DEDUPE_WAIT)
+MERCHANT_STEP_TICKS = MERCHANT_LOAD_WAIT + (MERCHANT_POLLS - 1) * MERCHANT_POLL_EVERY + MERCHANT_DEDUPE_WAIT
+MERCHANT_STEP_SECONDS = -(-MERCHANT_STEP_TICKS // 20) + 1   # tools/reapply.py R17M waits this long before verify
 MERCHANT_MARGIN = 8         # force-loaded round a town's stalls: every old keeper stood within remove_radius of a seat
+MERCHANT_WAIT_OBJ = "cobblers_stall_wait"   # #town_<town>: looks left; #seat_<id>: 0 waiting, 1 shown, 2 staffed
 
 
 def merchant_cfg(doc):
@@ -371,20 +270,21 @@ def merchant_tag(doc, stall):
 
 
 def merchant_shop(stall):
-    """The stall's CobbleMerchantShop: one category, one offer per stock line at the line's unit price (count 1, the
-    only Item.count verified in a merchant offer; data/markets.json stall_merchant.offers)."""
+    """The seller's CobbleMerchantShop: one category, one offer per stock line at the line's unit price (count 1, the
+    only Item.count verified in a merchant offer; data/markets.json stall_merchant.offers). A stall's or a counter's."""
     return [{"Category": stall["category"],
              "Offers": [{"Item": {"count": 1, "id": it["item"]}, "Price": str(int(it["price"]) // int(it["count"]))}
                         for it in stall["stock"]]}]
 
 
 def stall_merchants(doc=None, plazas=None):
-    """[{stall, town, at (x, y, z), yaw, tag, name, data}] for every sited stall: the merchant R17M summons."""
+    """[{stall, kind, town, at (x, y, z), yaw, tag, name, data}] for every sited counter and stall: the merchant R17M
+    summons. `stall` is the record's id (a counter's too: the ids never repeat across the two lists, collision_problems)."""
     doc = doc or load()
     plazas = load_plazas() if plazas is None else plazas
     cfg = merchant_cfg(doc)
     out = []
-    for s in emitted_stalls(doc):
+    for s, kind in merchant_records(doc):
         at, yaw, _src = position(s, plazas)
         tag = merchant_tag(doc, s)
         data = {"CustomName": json.dumps({"text": s["keeper"]["name"]}, ensure_ascii=False),
@@ -395,8 +295,8 @@ def stall_merchants(doc=None, plazas=None):
                 "NoAI": True, "PersistenceRequired": True, "Invulnerable": True, "Silent": True,
                 "Rotation": [float(yaw), 0.0],
                 "Tags": [cfg["tag"], tag, cfg["tag"] + "_new"]}
-        out.append({"stall": s["id"], "town": s["town"], "at": tuple(int(v) for v in at), "yaw": yaw, "tag": tag,
-                    "name": s["keeper"]["name"], "data": data})
+        out.append({"stall": s["id"], "kind": kind, "town": s["town"], "at": tuple(int(v) for v in at), "yaw": yaw,
+                    "tag": tag, "name": s["keeper"]["name"], "data": data})
     return out
 
 
@@ -405,13 +305,37 @@ def merchant_box(ms):
     return min(xs) - MERCHANT_MARGIN, min(zs) - MERCHANT_MARGIN, max(xs) + MERCHANT_MARGIN, max(zs) + MERCHANT_MARGIN
 
 
+def seat_shown(cfg, m):
+    """The selectors that prove a seat's chunk has its saved entities in: the merchant on its seat, or a Cobblemon NPC
+    within remove_radius of it (the dialogue keeper it replaces). A chunk's saved entities arrive together, so either
+    one seen means every other copy saved in that chunk is in too."""
+    x, y, z = m["at"]
+    return ["@e[type=%s,tag=%s,x=%d.5,y=%d,z=%d.5,distance=..0.6]" % (cfg["kind"], m["tag"], x, y, z),
+            "@e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, float(cfg["remove_radius"]))]
+
+
 def merchant_functions(doc, plazas):
-    """{pack path: lines}: per town, tools/traders.py's three steps (force-load and wait; summon with a "new" tag; 100
-    ticks later, where the new merchant stands, kill the older copies of it and the dialogue keeper it replaces, drop
-    the tag, release), and `all`, which starts every town's at once."""
+    """{pack path: lines}: per town, force-load and look; staff each seat once its chunk's saved entities are seen to be
+    in; 100 ticks after the last, where each new merchant stands, kill older copies of it, drop the tag, release; and
+    `all`, which starts every town's at once.
+
+    Why it looks before it acts (N155, staging 2026-10-08): a force-loaded chunk accepts a summon at once but its saved
+    entities arrive later, and after a fixed 40 ticks some still had not, so the kill missed the old merchant, the new
+    one was summoned beside it, and the stall was doubled. Nothing a function can test says "this chunk's entities are
+    in", but an entity seen in it does, so <town>_place (every 20 ticks, from 40) marks a seat shown when its merchant
+    or the dialogue keeper it replaces is seen on it (seat_shown), and only a shown seat is staffed: seat/<id> kills
+    every Cobblemon NPC within remove_radius of the seat and every copy of the merchant, then summons one. A seat with
+    nothing on it (its first run, or a merchant lost) is staffed blind after MERCHANT_POLLS looks, 300 ticks, where
+    only a chunk slower than that could still hide a copy; the _done de-duplication stays behind it for that case.
+
+    The NPC kill is unguarded by type tag (2026-10-06: "need the steve traders gone"): the dialogue keepers R17M placed
+    with spawnnpcat carry no tag and their classes are no longer shipped, so a seat is the only handle on them. Every
+    other placed NPC stands NPC_CLEAR+ from a seat (the site rules), so the radius reaches no one else. A cobble_merchant
+    is not a cobblemon:npc, so no merchant is hit by it."""
     import traders as TR
     cfg = merchant_cfg(doc)
     new, radius = cfg["tag"] + "_new", float(cfg["remove_radius"])
+    obj = MERCHANT_WAIT_OBJ
     rel = lambda name: "data/%s/function/%s/%s.mcfunction" % (NS, MERCHANTS_DIR, name)
     ref = lambda name: "%s:%s/%s" % (NS, MERCHANTS_DIR, name)
     by_town = {}
@@ -420,24 +344,53 @@ def merchant_functions(doc, plazas):
     files = {rel("all"): ["# Generated by tools/markets.py from data/markets.json: every town's stall merchants (R17M)"]
              + ["function %s" % ref(t) for t in sorted(by_town)]}
     for town, ms in sorted(by_town.items()):
+        ms = sorted(ms, key=lambda q: q["stall"])
         box = "%d %d %d %d" % merchant_box(ms)
-        files[rel(town)] = ["# Generated by tools/markets.py: the stall merchants of %s" % town,
-                            "# force-load the stalls and give their saved entities time to load before anything is summoned",
-                            "forceload add %s" % box,
-                            "schedule function %s %dt replace" % (ref(town + "_place"), MERCHANT_LOAD_WAIT)]
-        place = ["# Generated by tools/markets.py; called by %s" % ref(town), "# chunks-loaded-by: %s" % ref(town)]
-        done = ["# Generated by tools/markets.py; %d ticks after the summons: one merchant per stall and no dialogue "
-                "keeper beside it, then release" % MERCHANT_DEDUPE_WAIT]
-        for m in sorted(ms, key=lambda q: q["stall"]):
+        clock, still = "#town_%s" % town, "#open_%s" % town
+        files[rel(town)] = (["# Generated by tools/markets.py: the stall merchants of %s" % town,
+                             "# force-load the stalls; nothing is killed or summoned until a seat shows its chunk's "
+                             "saved entities are in (%s_place)" % town,
+                             "forceload add %s" % box,
+                             "scoreboard objectives add %s dummy" % obj,
+                             "scoreboard players set %s %s %d" % (clock, obj, MERCHANT_POLLS)]
+                            + ["scoreboard players set #seat_%s %s 0" % (m["stall"], obj) for m in ms]
+                            + ["schedule function %s %dt replace" % (ref(town + "_place"), MERCHANT_LOAD_WAIT)])
+        place = ["# Generated by tools/markets.py; scheduled by %s, then by itself every %d ticks until every seat is "
+                 "staffed: a seat is staffed once its chunk's entities are seen, or blind after %d looks"
+                 % (ref(town), MERCHANT_POLL_EVERY, MERCHANT_POLLS), "# chunks-loaded-by: %s" % ref(town),
+                 "scoreboard players remove %s %s 1" % (clock, obj)]
+        done = ["# Generated by tools/markets.py; %d ticks after the last seat is staffed: one merchant per seat, then "
+                "release" % MERCHANT_DEDUPE_WAIT]
+        for m in ms:
             x, y, z = m["at"]
-            place += ["# %s: %s, yaw %s" % (m["stall"], m["name"], m["yaw"]), TR.summon_line(cfg["kind"], x, y, z, m["data"])]
+            seat = "#seat_%s" % m["stall"]
+            waiting = "execute if score %s %s matches 0 " % (seat, obj)
+            place += ["# %s %s" % (m["kind"], m["stall"])]
+            place += [waiting + "if entity %s run scoreboard players set %s %s 1" % (sel, seat, obj)
+                      for sel in seat_shown(cfg, m)]
+            place += [waiting + "if score %s %s matches ..0 run scoreboard players set %s %s 1" % (clock, obj, seat, obj),
+                      "execute if score %s %s matches 1 run function %s" % (seat, obj, ref("seat/" + m["stall"]))]
+            files[rel("seat/" + m["stall"])] = [
+                "# Generated by tools/markets.py; run by %s once this seat's chunk shows its entities are in: the "
+                "dialogue keeper and every copy of the merchant, then one merchant" % ref(town + "_place"),
+                "# chunks-loaded-by: %s" % ref(town),
+                "# %s %s: %s, yaw %s" % (m["kind"], m["stall"], m["name"], m["yaw"]),
+                "kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, radius),
+                "kill @e[type=%s,tag=%s]" % (cfg["kind"], m["tag"]),
+                TR.summon_line(cfg["kind"], x, y, z, m["data"]),
+                "scoreboard players set %s %s 2" % (seat, obj)]
             here = "execute if entity @e[tag=%s,tag=%s] run " % (m["tag"], new)
             done += ["# %s" % m["stall"],
                      here + "kill @e[tag=%s,tag=!%s]" % (m["tag"], new),
-                     # the Cobblemon dialogue keeper this merchant replaces (R17M's spawnnpcat until 2026-10-04)
-                     here + "kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, radius),
                      "tag @e[tag=%s,tag=%s] remove %s" % (m["tag"], new, new)]
-        place.append("schedule function %s %dt replace" % (ref(town + "_done"), MERCHANT_DEDUPE_WAIT))
+        place += ["# look again while any seat waits; when none does, de-duplicate and release",
+                  "scoreboard players set %s %s 0" % (still, obj)]
+        place += ["execute if score #seat_%s %s matches 0 run scoreboard players add %s %s 1"
+                  % (m["stall"], obj, still, obj) for m in ms]
+        place += ["execute if score %s %s matches 1.. run schedule function %s %dt replace"
+                  % (still, obj, ref(town + "_place"), MERCHANT_POLL_EVERY),
+                  "execute if score %s %s matches 0 run schedule function %s %dt replace"
+                  % (still, obj, ref(town + "_done"), MERCHANT_DEDUPE_WAIT)]
         done.append("forceload remove %s" % box)
         files[rel(town + "_place")] = place
         files[rel(town + "_done")] = done
@@ -457,13 +410,14 @@ def shop_offers(snbt):
 
 def verify(rc, doc=None, plazas=None):
     """Problems, read from a running server over RCON (tools/reapply.py R17M's check, after MERCHANTS_FN and its wait):
-    each stall has exactly one merchant with its tag, standing on its seat, holding exactly its stall's offers, and no
-    Cobblemon NPC within remove_radius. Force-loads each town's stalls while it reads."""
+    each sited counter and stall has exactly one merchant with its tag, standing on its seat, holding exactly its
+    lines' offers, and no Cobblemon NPC within remove_radius (the dialogue keeper it replaced). Force-loads each town's
+    seats while it reads."""
     import time
     doc = doc or load()
     cfg = merchant_cfg(doc)
     radius = float(cfg["remove_radius"])
-    stalls = {s["id"]: s for s in emitted_stalls(doc)}
+    stalls = {s["id"]: s for s, _kind in merchant_records(doc)}
     by_town = {}
     for m in stall_merchants(doc, plazas):
         by_town.setdefault(m["town"], []).append(m)
@@ -546,6 +500,158 @@ def bank_prices():
     return out
 
 
+# ---------------------------------------------------------------------------------------------------- price policies
+# data/markets.json price_policies.income_gate (the owner, 2026-10-09: "TMs AT COUNTERS: price them above the income
+# gate"). A stock line carrying price_rule "income_gate" and a declared gate_badge B is priced by THIS rule, never by
+# hand: per unit, the smallest multiple of round_to strictly above income_basis.cumulative_by_badge[B] (the most a
+# player with B-1 badges can hold, data/traders.json stock_policy.mart.early_reach_pricing's INCOME GATE); an exchange
+# line keeps its material and takes the smallest whole count of it whose bank value clears the same bar, priced at
+# exactly count x the bank's price (data/bank.json exchanges.shape). `prices --write` writes the result into the data;
+# the audit refuses a line whose price is not the rule's. A counter's held_stock carries lines the rule prices but
+# nothing sells, each with its reason.
+POLICY = "income_gate"
+GATE_BADGES = range(1, 9)
+
+
+def income_gate_policy(doc):
+    return ((doc.get("price_policies") or {}).get(POLICY)) or {}
+
+
+def policy_lines(doc):
+    """[(counter, line, held)] for every counter line (stock or held_stock) under the income-gate rule."""
+    return [(c, it, held) for c in doc.get("counters") or [] for held, key in ((False, "stock"), (True, "held_stock"))
+            for it in c.get(key) or [] if it.get("price_rule") == POLICY]
+
+
+def leader_badges(progression=None):
+    """{item: the lowest gym N whose leader's first win offers it} from data/progression.json
+    upstream_neutralised.first_win_rewards (flag gymN_cleared, items and one_of)."""
+    prog = progression or json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
+    out = {}
+    fwr = ((prog.get("upstream_neutralised") or {}).get("first_win_rewards") or {}).get("trainers") or {}
+    for t in fwr.values():
+        m = re.fullmatch(r"gym(\d+)_cleared", str(t.get("flag")))
+        if m:
+            for i in list(t.get("items") or []) + list(t.get("one_of") or []):
+                out[i] = min(out.get(i, 99), int(m.group(1)))
+    return out
+
+
+def policy_price(doc, it, bank=None):
+    """(price, exchange count or None) that the income-gate rule gives line `it`."""
+    gb = it.get("gate_badge")
+    if isinstance(gb, bool) or gb not in GATE_BADGES:
+        raise MarketError("line %s: gate_badge %r is not a whole badge 1-8" % (it.get("id"), gb))
+    cum = ((doc.get("income_basis") or {}).get("cumulative_by_badge") or {}).get(str(gb))
+    if not isinstance(cum, int):
+        raise MarketError("line %s: income_basis.cumulative_by_badge has no badge %d" % (it.get("id"), gb))
+    cnt = it.get("count") or 1
+    ex = it.get("exchange_for")
+    if ex:
+        bank = bank_prices() if bank is None else bank
+        if ex.get("item") not in bank:
+            raise MarketError("line %s: the bank does not buy its exchange material %r" % (it.get("id"), ex.get("item")))
+        n = cum // bank[ex["item"]] + 1
+        return n * bank[ex["item"]] * cnt, n
+    step = int(income_gate_policy(doc).get("round_to") or 0)
+    if step <= 0:
+        raise MarketError("price_policies.income_gate.round_to must be a positive whole number")
+    return (cum // step + 1) * step * cnt, None
+
+
+def ball_ceiling(doc):
+    """(unit price, line id) of the cheapest `ball` exchange line on a counter: tools/bank.py's exchange floor needs
+    every ball exchange to cost MORE than the dearest non-exchange line on any shelf, so a stocked income-gate line
+    must stay under this."""
+    got = [(it["price"] / (it.get("count") or 1), it["id"]) for c in doc.get("counters") or []
+           for it in c.get("stock") or [] if it.get("exchange_for") and it.get("kind") == "ball"]
+    return min(got) if got else (None, None)
+
+
+def price_policy_problems(doc, progression=None, bank=None):
+    out = []
+    pol = income_gate_policy(doc)
+    lines = policy_lines(doc)
+    if lines and not pol:
+        return ["%d line(s) name price_rule income_gate but data/markets.json has no price_policies.income_gate"
+                % len(lines)]
+    leaders = leader_badges(progression)
+    ceiling, ceiling_id = ball_ceiling(doc)
+    for c, it in [(c, it) for c in doc.get("counters") or [] for it in c.get("stock") or []
+                  if "gate_badge" in it and it.get("price_rule") != POLICY]:
+        out.append("counter %s item %s: gate_badge without price_rule income_gate (its price would be hand-typed)"
+                   % (c["id"], it.get("id")))
+    seen = {}
+    for c, it, held in lines:
+        where = "counter %s %s %s" % (c["id"], "held line" if held else "item", it.get("id"))
+        seen.setdefault(it.get("item"), []).append(where)
+        try:
+            price, n = policy_price(doc, it, bank)
+        except MarketError as e:
+            out.append("%s: %s" % (where, e))
+            continue
+        if not it.get("gate_why"):
+            out.append("%s: no gate_why (why badge %s is this item's gate)" % (where, it.get("gate_badge")))
+        if it.get("price") != price:
+            out.append("%s: price %r is not the income-gate rule's $%d (run tools/markets.py prices --write)"
+                       % (where, it.get("price"), price))
+        if n is not None and (it.get("exchange_for") or {}).get("count") != n:
+            out.append("%s: exchange_for count %r is not the rule's %d" % (where, it["exchange_for"].get("count"), n))
+        lb = leaders.get(it.get("item"))
+        if it.get("item", "").startswith("tmcraft:") and lb != it.get("gate_badge"):
+            out.append("%s: a leader's TM gates on the badge its leader gives (gym %s in data/progression.json "
+                       "first_win_rewards), not %r" % (where, lb, it.get("gate_badge")))
+        unit = price / (it.get("count") or 1)
+        if held:
+            h = it.get("held") or {}
+            if not h.get("reason") or not h.get("why"):
+                out.append("%s: held with no held.reason and held.why" % where)
+            elif h["reason"] == "ball_floor" and ceiling is not None and unit < ceiling:
+                out.append("%s: held for the ball floor, but its $%s is now under %s's $%s: release it to stock"
+                           % (where, money(unit), ceiling_id, money(ceiling)))
+        elif not it.get("exchange_for") and ceiling is not None and unit >= ceiling:
+            out.append("%s: $%s is not under %s's $%s, so the Master Ball exchange would fall under tools/bank.py's "
+                       "ball floor: hold it (held_stock, reason ball_floor)" % (where, money(unit), ceiling_id,
+                                                                                 money(ceiling)))
+    for item, ws in seen.items():
+        if len(ws) > 1:
+            out.append("%s is under the income-gate rule twice: %s" % (item, "; ".join(ws)))
+    return out
+
+
+def price_table(doc, bank=None):
+    """[(counter, line, held, price, exchange count)] for every income-gate line."""
+    return [(c, it, held) + policy_price(doc, it, bank) for c, it, held in policy_lines(doc)]
+
+
+def write_prices(path, doc, bank=None):
+    """Rewrite each income-gate line's price (and exchange count) in the data file's own text, one line per stock
+    entry, so nothing else in the file moves. Returns the number of lines changed."""
+    text = Path(path).read_text(encoding="utf-8")
+    rows = text.split("\n")
+    changed = 0
+    table = price_table(doc, bank)
+    if curve_policy(doc):
+        _scales, cp = curve_prices(doc)
+        table += [(c, it, False, cp[(c["id"], it["id"])], None) for c, it in curve_lines(doc)
+                  if it.get("price_rule") == CURVE_POLICY]
+    for c, it, held, price, n in table:
+        key = '{"id": "%s", "item": "%s"' % (it["id"], it["item"])
+        hits = [i for i, r in enumerate(rows) if key in r]
+        if len(hits) != 1:
+            raise MarketError("prices --write: %d lines of %s carry %s; expected one" % (len(hits), path, key))
+        i = hits[0]
+        new = re.sub(r'"price": -?\d+', '"price": %d' % price, rows[i], count=1)
+        if n is not None:
+            new = re.sub(r'("exchange_for": \{"item": "[^"]+", "count": )\d+', r"\g<1>%d" % n, new, count=1)
+        if new != rows[i]:
+            rows[i] = new
+            changed += 1
+    if changed:
+        Path(path).write_text("\n".join(rows), encoding="utf-8", newline="\n")
+    return changed
+
+
 def static_problems(doc, planned_flags, towns, traders):
     out = []
     town_ids = [t["id"] for t in towns]
@@ -571,6 +677,7 @@ def static_problems(doc, planned_flags, towns, traders):
         if not n.get("why"):
             out.append("no_counter %s: no why" % n.get("town"))
     badges = doc.get("badges") or {}
+    decided = {d.get("id") for d in doc.get("decisions") or []}
     for f in badges:
         if f not in planned_flags:
             out.append("badge flag %s is not planned by tools/progression_pack.py (no advancement)" % f)
@@ -600,6 +707,13 @@ def static_problems(doc, planned_flags, towns, traders):
         k = c.get("keeper") or {}
         if not k.get("name") or not k.get("greeting"):
             out.append("counter %s: keeper without name or greeting" % cid)
+        if '"' in (k.get("name") or "") or "\\" in (k.get("name") or ""):
+            out.append("counter %s: keeper name %r carries a quote or backslash (it is the merchant's CustomName)"
+                       % (cid, k.get("name")))
+        cat = c.get("category")
+        if not isinstance(cat, str) or not cat.strip() or len(cat) > 32 or '"' in cat or "\\" in cat:
+            out.append("counter %s: category %r is not 1-32 characters without quotes (the merchant screen's category)"
+                       % (cid, cat))
         if not c.get("stock"):
             out.append("counter %s: no stock" % cid)
         own = "gym%d_cleared" % c["badge"] if c.get("path") == "critical" and c.get("badge") else None
@@ -624,13 +738,29 @@ def static_problems(doc, planned_flags, towns, traders):
             if sell is not None and price / cnt <= sell:
                 out.append("%s: $%s each is not above the bank's sell-back of $%d: buy and sell is free money"
                            % (where, money(price / cnt), sell))
-            g = it.get("gate")
-            if g is not None and g not in badges:
-                out.append("%s: gate %r is not a declared badge" % (where, g))
-            if own and g != own:
-                out.append("%s: a critical-path counter at badge %d gates on %r, not its own %s" % (where, c["badge"], g, own))
-            if c.get("path") == "critical" and c.get("badge") == 0 and g is not None:
-                out.append("%s: Pallet's shelf is gated" % where)
+            if price % cnt:
+                out.append("%s: $%d for %d does not divide: the merchant sells singly, at the line's unit price "
+                           "(stall_merchant.offers)" % (where, price, cnt))
+            # the gates (changed 2026-10-06, decision counters_are_merchants: "should be the villagers with ui only").
+            # Until then: every line of a critical-path counter gated on its own badge, Pallet's on none. A merchant
+            # shows one list to every player, so no line may carry a gate; the old rule now holds the RECORD of the
+            # dropped gate instead: on a critical-path counter every line names its own badge in gate_dropped
+            g, gd = it.get("gate"), it.get("gate_dropped")
+            if g is not None:
+                out.append("%s: gated on %r, but its merchant shows every line to every player (decision "
+                           "counters_are_merchants): record the old gate in gate_dropped" % (where, g))
+            if gd is not None:
+                if not (isinstance(gd, dict) and gd.get("gate") in badges and gd.get("decision") in decided
+                        and gd.get("why")):
+                    out.append("%s: gate_dropped %r needs a declared badge `gate`, a `decision` in data/markets.json "
+                               "decisions and a `why`" % (where, gd))
+                    continue
+            dropped = gd.get("gate") if isinstance(gd, dict) else None
+            if own and dropped != own:
+                out.append("%s: a critical-path counter at badge %d records a dropped gate %r, not its own %s"
+                           % (where, c["badge"], dropped, own))
+            if c.get("path") == "critical" and c.get("badge") == 0 and dropped is not None:
+                out.append("%s: Pallet's shelf was never gated" % where)
             if it.get("strand") not in ("convenience", "power"):
                 out.append("%s: strand %r" % (where, it.get("strand")))
     # backpack tiers: in tier order along the critical path, and dearer as they rise
@@ -838,43 +968,215 @@ def priced(doc):
     return recs
 
 
-def curve(doc):
-    """[(badge, cumulative ask without stretch, with every stretch item due by then, cumulative income, ratio)] on
-    the critical path. A stretch item counts from its affordable_by badge: before that it is meant to be out of reach
-    (decision B7, 'price as the gate')."""
-    basis = doc["income_basis"]
-    rows, cum, cum_s = [], 0, 0
-    recs = priced(doc)
-    stretch = [it for c in recs for it in c["stock"] if it.get("stretch")]
-    for b in range(0, 9):
-        cum_s += sum(it["price"] for it in stretch if it.get("affordable_by") == b)
-        for c in recs:
-            if c.get("badge") != b:
-                continue
-            groups = {}
-            for it in c["stock"]:
-                if it.get("stretch"):
-                    continue
-                key = it.get("group") or it["id"]
-                groups[key] = max(groups.get(key, 0), it["price"])
-            cum += sum(groups.values())
-        if b == 0:
+def r2_earned(doc, effort=None):
+    """{badge 1-8: (cumulative fight allowance, cumulative trainer income, cumulative earned)} under ECONOMY_OVERHAUL.md
+    section 7 R2, this tool's own reading (nothing imported from an audit): earned = trainer income
+    (income_basis.cumulative_by_badge) + curve_rule.produce_allowance (leg N is played holding N-1 badges) +
+    curve_rule.gathering_hours_per_leg hours a leg at the rate of the data/bank.json effort_model tier opened last by
+    that leg, a tier's hour being the sum of rate_per_hour x price over the buys of its from_tiers. MarketError when a
+    term is missing."""
+    try:
+        effort = effort if effort is not None else json.loads(BANK_DATA.read_text(encoding="utf-8"))
+        cr = doc["curve_rule"]
+        per = int(cr["fight_allowance"]["per_leg"])
+        produce = cr["produce_allowance"]["by_badges_held"]
+        hours = float(cr["gathering_hours_per_leg"])
+        tiers = effort["effort_model"]["tiers"]
+        hour = {n: sum(int(b["rate_per_hour"]) * int(b["price"]) for b in effort["buys"]
+                       if b.get("tier") in set(t["from_tiers"])) for n, t in tiers.items()}
+        trainer = doc["income_basis"]["cumulative_by_badge"]
+        out, extra = {}, 0.0
+        for leg in GATE_BADGES:
+            opened = sorted((t["opens_leg"], n) for n, t in tiers.items() if t["opens_leg"] <= leg)
+            latest = [n for o, n in opened if o == opened[-1][0]]
+            if len(latest) != 1:
+                raise MarketError("curve: leg %d opens %s together in data/bank.json effort_model; R2 counts one "
+                                  "tier's hour" % (leg, latest))
+            extra += int(produce[str(leg - 1)]) + hours * hour[latest[0]]
+            out[leg] = (per * leg, int(trainer[str(leg)]), int(trainer[str(leg)]) + extra)
+        return out
+    except (KeyError, TypeError, ValueError, IndexError) as e:
+        raise MarketError("curve: R2's terms cannot be read (data/markets.json curve_rule / income_basis, data/bank.json "
+                          "effort_model): %r" % (e,))
+
+
+def curve_lines(doc):
+    """[(record, line)] the R2 numerator counts: the convenience lines of the critical path's priced records (every
+    counter, a stall's gated lines; priced()). Power lines leave the curve (R2); a provision is never a rung."""
+    return [(c, it) for c in priced(doc) for it in c["stock"] if it.get("strand") == "convenience"]
+
+
+def line_leg(rec, it):
+    """The leg a curve line is bought in: its record's badge (the hometown's 0 is spent in leg 1), or, for a stretch
+    line, its affordable_by badge (decision B7, 'price as the gate')."""
+    b = it["affordable_by"] if it.get("stretch") else rec.get("badge")
+    return max(1, int(b))
+
+
+def leg_shelf(lines, price_of):
+    """{leg: what the curve counts of that leg's non-stretch lines, a pick-one group at its dearest}."""
+    out, groups = {}, {}
+    for rec, it in lines:
+        if it.get("stretch"):
             continue
-        inc = int(basis["cumulative_by_badge"][str(b)])
-        rows.append((b, cum, cum + cum_s, inc, cum / inc))
+        leg = line_leg(rec, it)
+        if it.get("group"):
+            k = (leg, rec["id"], it["group"])
+            groups[k] = max(groups.get(k, 0), price_of(rec, it))
+        else:
+            out[leg] = out.get(leg, 0) + price_of(rec, it)
+    for (leg, _r, _g), p in groups.items():
+        out[leg] = out.get(leg, 0) + p
+    return out
+
+
+def curve(doc, effort=None):
+    """[(badge, cumulative ask, the ask with every stretch item due by then, cumulative earned, ratio)] on the
+    critical path under ECONOMY_OVERHAUL.md section 7 R2: ask = the convenience lines (curve_lines, stretch aside, a
+    group at its dearest) + the fight allowance; earned = r2_earned. A stretch item counts from its affordable_by
+    badge: before that it is meant to be out of reach."""
+    lines = curve_lines(doc)
+    shelf = leg_shelf(lines, lambda _r, it: int(it["price"]))
+    stretch = {}
+    for rec, it in lines:
+        if it.get("stretch"):
+            stretch[line_leg(rec, it)] = stretch.get(line_leg(rec, it), 0) + int(it["price"])
+    rows, cum, cum_s = [], 0, 0
+    for b, (fights, _trainer, earned) in sorted(r2_earned(doc, effort).items()):
+        cum += shelf.get(b, 0)
+        cum_s += stretch.get(b, 0)
+        rows.append((b, cum + fights, cum + cum_s + fights, earned, (cum + fights) / earned))
     return rows
 
 
-def curve_problems(doc):
+# ---------------------------------------------------------------------------------------------------- the curve rule
+# data/markets.json price_policies.curve_scale (unit CURVEPRICE, 2026-10-10): ECONOMY_OVERHAUL.md section 7 R2 holds
+# every badge's (convenience + fights) / earned in the 0.65-0.70 band. The convenience lines keep their relative worth
+# as `list_price` (the price each carried before R2) and the rule sets `price`: leg by leg, one scale on that leg's
+# lines, the one that brings the cumulative ask to the band's midpoint of what the road has earned by that badge,
+# given what the earlier legs actually cost after rounding. A stretch line takes the scale of its affordable_by leg.
+CURVE_POLICY = "curve_scale"
+BANK_DATA = ROOT / "data" / "bank.json"
+
+
+def curve_policy(doc):
+    return ((doc.get("price_policies") or {}).get(CURVE_POLICY)) or {}
+
+
+def curve_band(doc):
+    band = curve_policy(doc).get("band")
+    if not (isinstance(band, list) and len(band) == 2 and all(isinstance(x, (int, float)) for x in band)
+            and 0 < band[0] < band[1] < 1):
+        raise MarketError("price_policies.curve_scale.band must be [low, high], 0 < low < high < 1 (R2's 0.65-0.70)")
+    return float(band[0]), float(band[1])
+
+
+def curve_prices(doc, effort=None):
+    """({leg: scale}, {(record id, line id): price}) the curve rule gives every curve line carrying price_rule
+    curve_scale. Each price is list_price x its leg's scale, rounded to the nearest multiple of round_to x count (at
+    least one such multiple); the leg's scale is (midpoint x earned[leg] - fights[leg] - what legs before it cost at
+    their rounded prices) / the leg's list shelf. MarketError if a leg's scale is not positive (the band is then
+    unreachable at that badge from this shelf)."""
+    lo, hi = curve_band(doc)
+    mid = (lo + hi) / 2
+    step = int(curve_policy(doc).get("round_to") or 0)
+    if step <= 0:
+        raise MarketError("price_policies.curve_scale.round_to must be a positive whole number")
+    lines = [(r, it) for r, it in curve_lines(doc) if it.get("price_rule") == CURVE_POLICY]
+    for r, it in lines:
+        lp = it.get("list_price")
+        if isinstance(lp, bool) or not isinstance(lp, int) or lp <= 0:
+            raise MarketError("counter %s item %s: price_rule curve_scale needs a positive whole list_price"
+                              % (r["id"], it["id"]))
+    fixed = [(r, it) for r, it in curve_lines(doc) if it.get("price_rule") != CURVE_POLICY]
+    list_shelf = leg_shelf(lines, lambda _r, it: it["list_price"])
+    fixed_shelf = leg_shelf(fixed, lambda _r, it: int(it["price"]))
+    earned = r2_earned(doc, effort)
+
+    def rounded(it, s):
+        unit = step * int(it.get("count") or 1)
+        return max(unit, int(math.floor(it["list_price"] * s / unit + 0.5)) * unit)
+
+    scales, prices, spent = {}, {}, 0
+    for leg in GATE_BADGES:
+        fights, _t, got = earned[leg]
+        want = mid * got - fights - spent - fixed_shelf.get(leg, 0)
+        base = list_shelf.get(leg, 0)
+        if base:
+            if want <= 0:
+                raise MarketError("curve: leg %d: the legs before it and its fixed lines already ask %.0f of the "
+                                  "midpoint's %.0f, so no positive scale reaches the band"
+                                  % (leg, spent + fixed_shelf.get(leg, 0) + fights, mid * got))
+            scales[leg] = want / base
+            for r, it in lines:
+                if line_leg(r, it) == leg and not it.get("stretch"):
+                    prices[(r["id"], it["id"])] = rounded(it, scales[leg])
+        leg_lines = [(r, it) for r, it in lines if line_leg(r, it) == leg and not it.get("stretch")]
+        spent += leg_shelf(leg_lines, lambda r, it: prices[(r["id"], it["id"])]).get(leg, 0) + fixed_shelf.get(leg, 0)
+    for r, it in lines:
+        if it.get("stretch"):
+            leg = line_leg(r, it)
+            if leg not in scales:
+                raise MarketError("counter %s item %s: a stretch line's affordable_by leg %d has no other curve line "
+                                  "to take its scale from" % (r["id"], it["id"], leg))
+            prices[(r["id"], it["id"])] = rounded(it, scales[leg])
+    return scales, prices
+
+
+def curve_policy_problems(doc, effort=None):
     out = []
-    target = float(doc["income_basis"]["target_ratio"])
-    for b, ask, ask_s, inc, ratio in curve(doc):
-        if ratio > target:
-            out.append("badge %d: the critical path asks $%s of $%s earned, %.2f of income, over the declared %.2f"
-                       % (b, money(ask), money(inc), ratio, target))
-        if ask_s > inc:
-            out.append("badge %d: with the stretch items due by then the critical path asks $%s, more than the $%s "
-                       "earned" % (b, money(ask_s), money(inc)))
+    pol = curve_policy(doc)
+    lines = curve_lines(doc)
+    ruled = [(r, it) for r, it in lines if it.get("price_rule") == CURVE_POLICY]
+    if not pol:
+        return ["%d curve line(s) name price_rule curve_scale but data/markets.json has no price_policies.curve_scale"
+                % len(ruled)] if ruled else []
+    on_curve = {(r["id"], it["id"]) for r, it in lines}
+    for c in doc["counters"] + list(doc.get("stalls") or []):
+        for it in c.get("stock") or []:
+            if it.get("price_rule") == CURVE_POLICY and (c["id"], it["id"]) not in on_curve:
+                out.append("%s item %s: price_rule curve_scale off the curve (an off-path record, a provision or a "
+                           "power line): the rule prices only the R2 numerator's lines" % (c["id"], it["id"]))
+    for r, it in lines:
+        if it.get("price_rule") != CURVE_POLICY:
+            out.append("%s item %s: a critical-path convenience line without price_rule curve_scale (its price would "
+                       "be hand-typed onto the curve)" % (r["id"], it["id"]))
+    try:
+        _scales, prices = curve_prices(doc, effort)
+    except MarketError as e:
+        return out + [str(e)]
+    ceiling, ceiling_id = ball_ceiling(doc)
+    for r, it in ruled:
+        want = prices[(r["id"], it["id"])]
+        if it.get("price") != want:
+            out.append("%s item %s: price %r is not the curve rule's $%d (list $%d; run tools/markets.py prices "
+                       "--write)" % (r["id"], it["id"], it.get("price"), want, it["list_price"]))
+        if ceiling is not None and want / (it.get("count") or 1) >= ceiling:
+            out.append("%s item %s: the curve rule's $%d is not under %s's $%s, the ball floor (R4, the owner's): the "
+                       "band is unreachable at badge %d without it" % (r["id"], it["id"], want, ceiling_id,
+                                                                      money(ceiling), line_leg(r, it)))
+    return out
+
+
+def curve_problems(doc, effort=None):
+    out = []
+    try:
+        lo, hi = curve_band(doc)
+        rows = curve(doc, effort)
+        earned = r2_earned(doc, effort)
+    except MarketError as e:
+        return [str(e)]
+    for b, ask, ask_s, got, ratio in rows:
+        if not lo <= round(ratio, 2) <= hi:
+            out.append("badge %d: the critical path asks $%s (convenience + fights) of $%s earned, %.3f, outside "
+                       "%.2f-%.2f (ECONOMY_OVERHAUL R2)" % (b, money(ask), money(got), ratio, lo, hi))
+        if ask_s >= got:
+            out.append("badge %d: with the stretch items due by then the critical path asks $%s, not below the $%s "
+                       "earned" % (b, money(ask_s), money(got)))
+        fights, trainer, _g = earned[b]
+        if fights > trainer:
+            out.append("badge %d: the fight allowance $%s is more than trainer income $%s (R2's hard check)"
+                       % (b, money(fights), money(trainer)))
     for c in doc["counters"] + list(doc.get("stalls") or []):
         for it in c["stock"]:
             if it.get("stretch") and not (isinstance(it.get("affordable_by"), int) and
@@ -1077,7 +1379,7 @@ def site_problems(doc, traders, source_root=None, skip_dressing=False, plazas=No
         else:
             if s not in sites:
                 try:
-                    sites[s] = A.Site(s, base, placements, dressing, None, rules)
+                    sites[s] = A.Site(s, base, placements, dressing, None, dict(rules, avoid_plaza_pieces=False))  # a stall stands on its piece
                 except SystemExit as e:  # town_dressing.town_plan exits when derived/towns/<s>_plan.json is missing
                     sites[s] = e
             site = sites[s]
@@ -1110,7 +1412,10 @@ def site_problems(doc, traders, source_root=None, skip_dressing=False, plazas=No
                 why = site.blocked(x + dx, z + dz)
                 if why:
                     out.append("%s: the cell (%d, %d) is taken by %s" % (where, x + dx, z + dz, why))
-        if y - 1 < sea:
+        # below the sea level on the surface is under water; a settlement on a cavern's floor (the Displaced City,
+        # tools/ground.py GROUND_KINDS) is below it by design and dry, its air the cavern plan's, so the rule is the
+        # surface's only (2026-10-05: the summit square is at y46 against the sea's y62)
+        if y - 1 < sea and (placements["settlements"].get(s) or {}).get("ground") != "cavern_floor":
             out.append("%s: its ground y%d is under the sea level y%d" % (where, y - 1, sea))
         for what, q in others + [(o[0], tuple(o[2])) for o in built if o[1] is not c]:
             if math.dist((x, y, z), q) < NPC_CLEAR:
@@ -1182,96 +1487,39 @@ def frontage_problems(where, c, plan, town, site):
 
 
 def output_problems(doc, files, plazas=None):
+    """The pack as emitted: since 2026-10-06 no counter has a purchase function or a charge macro (markets/ holds only
+    load), and merchant_problems holds every seller to its merchant (no dialogue or NPC class anywhere in the pack);
+    every function passes tools/function_limits.py."""
     out = []
-    fn = lambda rel: "data/%s/function/markets/%s.mcfunction" % (NS, rel)
-    if files.get(fn("charge")) != ["$cobbledollars remove @s $(amount)"]:
-        out.append("the charge macro is not the blackout's proven form")
-    if files.get(fn("refund")) != ["$cobbledollars add @s $(amount)"]:
-        out.append("the refund macro is not the documented add")
-    # the counters' purchases; a stall has none since 2026-10-04 (its merchant's own screen charges: merchant_problems)
-    shelves = [(c, "markets") for c in emitted(doc)]
-    for c, kind in shelves:
-        for it in c["stock"]:
-            path = "data/%s/function/%s/%s/%s.mcfunction" % (NS, kind, c["id"], it["id"])
-            body = files.get(path)
-            if body is None:
-                out.append("%s: no purchase function" % path)
-                continue
-            cmds = [x for x in body if x and not x.startswith("#")]
-            where = lambda pred: [i for i, x in enumerate(cmds) if pred(x)]
-            cd_check = where(lambda x: x.startswith("execute if score @s %s > #now" % COOLDOWN))
-            gates = where(lambda x: "advancements={" in x)
-            query = where(lambda x: "cobbledollars query" in x)
-            refuse = where(lambda x: x.startswith("execute unless score @s %s matches" % SCORE))
-            cd_set = where(lambda x: x.startswith("scoreboard players operation @s %s" % COOLDOWN))
-            charge = where(lambda x: x.startswith("function %s:markets/charge" % NS))
-            verify = where(lambda x: x.startswith("execute unless score #after %s = #want" % SCORE))
-            give = where(lambda x: " run give @s " in x)
-            refund = where(lambda x: "markets/refund" in x)
-            if not cd_check or cd_check[0] != min(cd_check + gates + query + charge + give):
-                out.append("%s: the cooldown is not checked before everything else" % path)
-            if bool(gates) != bool(it.get("gate")) or len(gates) > 1:
-                out.append("%s: %d gate checks for gate %r" % (path, len(gates), it.get("gate")))
-            if gates and "flag/%s=true" % it["gate"] not in cmds[gates[0]]:
-                out.append("%s: checks the wrong flag: %s" % (path, cmds[gates[0]]))
-            if len(charge) != 1 or len(give) != 1:
-                out.append("%s: %d charges and %d gives, not 1 and 1" % (path, len(charge), len(give)))
-                continue
-            if gates and query and gates[0] > query[0]:
-                out.append("%s: the gate is checked after the balance is read" % path)
-            if not (len(query) == 2 and refuse and verify and query[0] < refuse[0] < charge[0] < query[1] < verify[0] < give[0]):
-                out.append("%s: not read, refuse-if-short, charge, re-read, verify, then give" % path)
-            if refuse and cmds[refuse[0]].split()[6] != "%d.." % it["price"]:
-                out.append("%s: refuses below %s, not the price %d" % (path, cmds[refuse[0]].split()[6], it["price"]))
-            amount = [x for x in cmds if x.startswith("data modify storage %s charge.amount set value" % STORAGE)]
-            if amount != ["data modify storage %s charge.amount set value %d" % (STORAGE, it["price"])]:
-                out.append("%s: charges %s, not the price %d" % (path, amount, it["price"]))
-            if not (cd_set and cd_set[0] < charge[0]):
-                out.append("%s: the cooldown is not set before the charge" % path)
-            if cmds[give[0]] != "execute store success score @s %s run give @s %s %d" % (GAVE, it["item"], it["count"]):
-                out.append("%s: gives %r, not %s x%d" % (path, cmds[give[0]], it["item"], it["count"]))
-            if not (refund and refund[0] > give[0]):
-                out.append("%s: no refund after a failed give" % path)
+    for k in files:
+        if k.startswith("data/%s/function/markets/" % NS) and k != "data/%s/function/markets/load.mcfunction" % NS:
+            out.append("%s: a counter's purchase function or charge macro is emitted (every counter is a merchant "
+                       "since 2026-10-06)" % k)
     for rel, body in files.items():
         if rel.endswith(".mcfunction"):
             refused = function_limits.check_lines(body, rel)
             if refused:
                 out.append("%s: %d command(s) the server would refuse" % (rel, len(refused)))
-    for c, kind in shelves:
-        pre = "market" if kind == "markets" else "stall"
-        label = "counter" if kind == "markets" else "stall"
-        dlg = files.get("data/%s/dialogues/dlg_%s_%s.json" % (NS, pre, c["id"]))
-        npc = files.get("data/%s/npcs/npc_%s_%s.json" % (NS, pre, c["id"]))
-        if dlg is None or npc is None:
-            out.append("%s %s: no compiled dialogue or NPC class" % (label, c["id"]))
-            continue
-        got = set()
-        for o in dlg["pages"][0]["input"]["options"]:
-            m = re.search(r"function %s:%s/([a-z0-9_]+)/([a-z0-9_]+)'" % (NS, kind), o["action"])
-            if m:
-                got.add((m.group(1), m.group(2), "isVisible" in o))
-        want = {(c["id"], it["id"], bool(it.get("gate"))) for it in c["stock"]}
-        if got != want:
-            out.append("%s %s: its dialogue offers %s, the data %s" % (label, c["id"], sorted(got), sorted(want)))
     return out + merchant_problems(doc, files, plazas)
 
 
 def merchant_problems(doc, files, plazas=None):
-    """The stall merchants as emitted, read back from the generated text and held to the data: one summon per stall,
-    of the merchant entity, with its keeper's name, the four flags and the profession; a single category named by the
-    stall's `category`; exactly its stock lines in order, each Item count 1 at a price that times the line's count is
-    the line's price; replaced keepers removed only where the new merchant stands; no dialogue, NPC class or purchase
-    function left for a stall (nothing charges twice). With `plazas`, also each summon's block and rotation against
-    the seat, and no counter keeper within the removal radius of a merchant."""
+    """The merchants as emitted (every sited counter's and stall's), read back from the generated text and held to the
+    data: one summon per seller, of the merchant entity, with its keeper's name, the four flags and the profession; a
+    single category named by its `category`; exactly its stock lines in order, each Item count 1 at a price that
+    times the line's count is the line's price; its summon in seat/<id> after the kills of the dialogue keeper (by
+    seat) and of the merchant's older copies, run by _place only once the seat is shown (N155); no dialogue, NPC class
+    or purchase function left for a seller (nothing charges twice). With `plazas`, also each summon's block and
+    rotation against the seat."""
     out = []
     cfg = merchant_cfg(doc)
-    kind, new, radius = cfg["kind"], cfg["tag"] + "_new", float(cfg["remove_radius"])
+    kind, radius = cfg["kind"], float(cfg["remove_radius"])
     mdir = "data/%s/function/%s/" % (NS, MERCHANTS_DIR)
     mfiles = {k: v for k, v in files.items() if k.startswith(mdir)}
     for k in files:
         if (k.startswith("data/%s/function/stalls/" % NS) and not k.startswith(mdir)) or \
-                re.match(r"data/%s/(dialogues/dlg|npcs/npc)_stall_" % NS, k):
-            out.append("%s: a stall dialogue, NPC class or purchase function is emitted beside its merchant" % k)
+                re.match(r"data/%s/(dialogues|npcs)/" % NS, k):
+            out.append("%s: a seller's dialogue, NPC class or purchase function is emitted beside its merchant" % k)
     for k, body in mfiles.items():
         if any(re.search(r"(?:^|\brun )(?:cobbledollars|give|function \S+markets/(?:charge|refund)) ", x)
                for x in body if not x.startswith("#")):
@@ -1279,12 +1527,12 @@ def merchant_problems(doc, files, plazas=None):
     summons = [x for body in mfiles.values() for x in body if x.startswith("summon ")]
     seats = {}
     if plazas is not None:
-        for s in emitted_stalls(doc):
+        for s, _kind in merchant_records(doc):
             at, yaw, _src = position(s, plazas)
             seats[s["id"]] = (tuple(int(v) for v in at), yaw)
     all_fn = mfiles.get(mdir + "all.mcfunction") or []
-    for s in emitted_stalls(doc):
-        w = "stall %s merchant" % s["id"]
+    for s, skind in merchant_records(doc):
+        w = "%s %s merchant" % (skind, s["id"])
         tag = '"%s_%s"' % (cfg["tag"], s["id"])
         mine = [x for x in summons if tag in x]
         if len(mine) != 1:
@@ -1307,7 +1555,7 @@ def merchant_problems(doc, files, plazas=None):
         got = shop_offers(line)
         want = [(it["item"], it["price"], it["count"]) for it in s["stock"]]
         if [g[0] for g in got] != [x[0] for x in want]:
-            out.append("%s: offers %s, the stall's lines %s" % (w, [g[0] for g in got], [x[0] for x in want]))
+            out.append("%s: offers %s, the %s's lines %s" % (w, [g[0] for g in got], skind, [x[0] for x in want]))
         else:
             for (iid, p), (_i, price, cnt) in zip(got, want):
                 if not p.isdigit() or int(p) * cnt != price:
@@ -1319,15 +1567,51 @@ def merchant_problems(doc, files, plazas=None):
         if town_fn not in all_fn:
             out.append("%s: %s/all does not start %s" % (w, MERCHANTS_DIR, s["town"]))
         x, y, z = (int(float(v)) for v in parts[2:5])
+        # N155 (2026-10-08): the summon lives in seat/<id>, which kills the dialogue keeper by its seat (2026-10-06)
+        # and every copy of the merchant BEFORE it summons, and which <town>_place runs only for a seat marked shown:
+        # its merchant or its dialogue keeper seen on the seat (the chunk's saved entities are in), or the looks spent
+        seat_fn = mdir + "seat/%s.mcfunction" % s["id"]
+        seat = mfiles.get(seat_fn) or []
+        place = mfiles.get(mdir + "%s_place.mcfunction" % s["town"]) or []
         done = mfiles.get(mdir + "%s_done.mcfunction" % s["town"]) or []
-        guard = "execute if entity @e[tag=%s_%s,tag=%s] run " % (cfg["tag"], s["id"], new)
-        npc_kill = guard + "kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, radius)
-        if npc_kill not in done:
-            out.append("%s: its _done step does not remove the dialogue keeper at its spot, guarded on the new merchant"
-                       % w)
-        if any("kill @e[type=cobblemon:npc" in d and not re.match(r"execute if entity @e\[tag=[a-z0-9_]+,tag=%s\] run kill "
-                                                                 % new, d) for d in done):
-            out.append("%s: its town's _done step kills a Cobblemon NPC without a new merchant standing" % w)
+        if line not in seat:
+            out.append("%s: its summon is not in seat/%s (the seat's look-then-staff function)" % (w, s["id"]))
+        else:
+            at = seat.index(line)
+            npc_kill = "kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, radius)
+            copies = "kill @e[type=%s,tag=%s_%s]" % (kind, cfg["tag"], s["id"])
+            if npc_kill not in seat[:at]:
+                out.append("%s: its seat function does not remove the dialogue keeper at its seat before the summon" % w)
+            if copies not in seat[:at]:
+                out.append("%s: its seat function does not kill the merchant's older copies before the summon" % w)
+        flag, obj = "#seat_%s" % s["id"], MERCHANT_WAIT_OBJ
+        call = "execute if score %s %s matches 1 run function %s:%s/seat/%s" % (flag, obj, NS, MERCHANTS_DIR, s["id"])
+        if call not in place:
+            out.append("%s: its town's _place does not run seat/%s only once the seat is shown" % (w, s["id"]))
+        else:
+            ci = place.index(call)
+            shown = ["execute if score %s %s matches 0 if entity %s run scoreboard players set %s %s 1"
+                     % (flag, obj, sel, flag, obj) for sel in seat_shown(cfg, {"at": (x, y, z), "tag": "%s_%s" % (
+                         cfg["tag"], s["id"])})]
+            if not all(q in place[:ci] for q in shown):
+                out.append("%s: its town's _place does not look for the merchant or the dialogue keeper on its seat "
+                           "before staffing it (N155)" % w)
+            blind = "execute if score %s %s matches 0 if score #town_%s %s matches ..0 run scoreboard players set %s %s 1" % (
+                flag, obj, s["town"], obj, flag, obj)
+            if blind not in place[:ci]:
+                out.append("%s: its town's _place never staffs the seat blind when the looks run out (an empty seat "
+                           "would wait, and the look reschedule itself, for ever)" % w)
+            if any(q.endswith("run scoreboard players set %s %s 1" % (flag, obj)) and q not in shown and q != blind
+                   for q in place):
+                out.append("%s: its town's _place marks the seat shown on something other than its entities" % w)
+        if any(q.startswith(("kill ", "summon ")) for q in place) or any(
+                re.search(r"\brun (kill|summon) ", q) for q in place):
+            out.append("%s: its town's _place kills or summons itself (only a shown seat's function may)" % w)
+        if any("cobblemon:npc" in d for d in done if not d.startswith("#")):
+            out.append("%s: its town's _done kills a Cobblemon NPC (the removal is the seat's, before the summon)" % w)
+        if any(q.startswith("kill ") and not q.startswith(("kill @e[type=cobblemon:npc,", "kill @e[type=%s," % kind))
+               for q in seat):
+            out.append("%s: its seat function kills something other than a Cobblemon NPC or its merchant" % w)
         if s["id"] in seats:
             (sx, sy, sz), yaw = seats[s["id"]]
             if (x, y, z) != (sx, sy, sz) or parts[2:5] != ["%d.5" % sx, str(sy), "%d.5" % sz]:
@@ -1335,23 +1619,19 @@ def merchant_problems(doc, files, plazas=None):
             rot = re.search(r"Rotation:\[(-?[0-9.]+)f,", line)
             if not rot or abs(float(rot.group(1)) - float(yaw)) > 1e-6:
                 out.append("%s: rotation %s, the seat's yaw %s" % (w, rot and rot.group(1), yaw))
-            for c in npc_placements(doc, plazas):
-                if math.dist(c[1], (sx, sy, sz)) <= radius + 0.5:
-                    out.append("%s: counter keeper %s stands within its removal radius" % (w, c[0]))
     return out
 
 
 def collision_problems(doc):
-    """No conversation, quest or NPC id this tool emits may be authored elsewhere: compile_dialogue --all writes the
-    same namespace, and a clash would silently replace one keeper or resident with the other."""
+    """No counter and stall share an id: each names its merchant's tag (<stall_merchant.tag>_<id>), and two records with
+    one tag would be summoned, de-duplicated and verified as one."""
     out = []
-    dlg = json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-8"))
-    taken = {c["id"] for c in dlg.get("conversations") or []} | {c.get("npc_id") for c in dlg.get("conversations") or []}
-    for pre, recs in (("market", doc["counters"]), ("stall", doc.get("stalls") or [])):
+    seen = {}
+    for kind, recs in (("counter", doc["counters"]), ("stall", doc.get("stalls") or [])):
         for c in recs:
-            for k in ("dlg_%s_%s" % (pre, c["id"]), "npc_%s_%s" % (pre, c["id"])):
-                if k in taken:
-                    out.append("%s is also authored in data/dialogue.json" % k)
+            if c.get("id") in seen:
+                out.append("%s %s shares its id (its merchant's tag) with %s %s" % (kind, c["id"], seen[c["id"]], c["id"]))
+            seen[c.get("id")] = kind
     return out
 
 
@@ -1363,7 +1643,8 @@ def audit(doc, source_root=None, skip_dressing=False, plazas=None):
     towns = json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]
     traders = {t["id"]: t for t in json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))["traders"]}
     plazas = load_plazas() if plazas is None else plazas
-    problems = static_problems(doc, planned, towns, traders) + stall_problems(doc, towns, plazas) + collision_problems(doc)
+    problems = static_problems(doc, planned, towns, traders) + stall_problems(doc, towns, plazas) + \
+        collision_problems(doc) + price_policy_problems(doc, prog) + curve_policy_problems(doc)
     if problems:
         return problems, contract_report(doc, plazas)
     problems += curve_problems(doc) + overlay_problems(doc)
@@ -1375,7 +1656,9 @@ def audit(doc, source_root=None, skip_dressing=False, plazas=None):
 
 # ---------------------------------------------------------------------------------------------------- the jars
 def jar_items(jar_dir):
-    """{item id} from every jar's lang files: item.<ns>.<path> and block.<ns>.<path> keys. Read only."""
+    """{item id} from every jar's lang files (item.<ns>.<path> and block.<ns>.<path> keys) and item models
+    (assets/<ns>/models/item/<path>.json). Read only. The models count since 2026-10-08: TMCraft's per-move TMs
+    (tmcraft:tm_<move>) have an item model and no lang key, the shape tools/economy_audit.py already accepts."""
     return jar_items_of(sorted(Path(jar_dir).glob("*.jar")))
 
 
@@ -1384,6 +1667,10 @@ def jar_items_of(jars):
     for jp in jars:
         with zipfile.ZipFile(jp) as z:
             for n in z.namelist():
+                m = re.fullmatch(r"assets/([a-z0-9_.\-]+)/models/item/([a-z0-9_/.\-]+)\.json", n)
+                if m:
+                    ids.add("%s:%s" % m.groups())
+                    continue
                 if re.fullmatch(r"assets/[^/]+/lang/en_us\.json", n):
                     try:
                         lang = json.loads(z.read(n).decode("utf-8", "replace"))
@@ -1415,15 +1702,39 @@ def main(argv=None):
                    help="a further jar to read (repeatable): the Minecraft 1.21.1 jar for the stalls' minecraft: ids; "
                         "without one, every minecraft: id is reported NOT CHECKED")
     sub.add_parser("report")
+    pr = sub.add_parser("prices", help="the price rules' price per line (price_policies.income_gate and curve_scale)")
+    pr.add_argument("--write", action="store_true", help="write the rule's prices into the data file")
     args = p.parse_args(argv)
     doc = load(args.data)
+    if args.cmd == "prices":
+        inc = doc["income_basis"]["cumulative_by_badge"]
+        ceiling, ceiling_id = ball_ceiling(doc)
+        for c, it, held, price, n in price_table(doc):
+            print("%-18s %-22s gate badge %d (income $%s)  $%s%s  %s" % (
+                c["id"], it["id"], it["gate_badge"], money(inc[str(it["gate_badge"])]), money(price),
+                " = %d x %s" % (n, it["exchange_for"]["item"]) if n is not None else "",
+                "HELD (%s)" % (it.get("held") or {}).get("reason") if held else "stock"))
+        print("ball ceiling: %s at $%s" % (ceiling_id, money(ceiling) if ceiling is not None else "?"))
+        if curve_policy(doc):
+            scales, cp = curve_prices(doc)
+            print("curve rule (price_policies.curve_scale), scale by leg: %s"
+                  % " ".join("%d:%.3f" % kv for kv in sorted(scales.items())))
+            for c, it in curve_lines(doc):
+                if it.get("price_rule") == CURVE_POLICY:
+                    print("%-18s %-28s leg %d  list $%s -> $%s%s" % (
+                        c["id"], it["id"], line_leg(c, it), money(it["list_price"]), money(cp[(c["id"], it["id"])]),
+                        "  (stretch)" if it.get("stretch") else ""))
+        if args.write:
+            print("wrote %d line(s) in %s" % (write_prices(args.data, doc), args.data))
+        return 0
     if args.cmd == "build":
         files, npcs = build(doc)
         write(files, args.out)
-        print("wrote %d files to %s: %d counters built of %d (%d dialogue keepers), %d stalls built of %d (%d merchants)"
-              % (len(files), args.out, len(emitted(doc)), len(doc["counters"]), len(npcs), len(emitted_stalls(doc)),
-                 len(doc.get("stalls") or []),
-                 sum(1 for body in files.values() if isinstance(body, list) for x in body if x.startswith("summon "))))
+        print("wrote %d files to %s: %d counters built of %d, %d stalls built of %d, %d merchant summons, %d dialogue "
+              "keepers" % (len(files), args.out, len(emitted(doc)), len(doc["counters"]), len(emitted_stalls(doc)),
+                           len(doc.get("stalls") or []),
+                           sum(1 for body in files.values() if isinstance(body, list) for x in body if x.startswith("summon ")),
+                           len(npcs)))
         return 0
     if args.cmd == "overlay":
         path = ROOT / doc["recipe_overlay"]["file"]

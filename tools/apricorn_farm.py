@@ -778,8 +778,16 @@ def check(doc, p):
             bx0, bz0, bx1, bz1 = k["box"]
             if bx0 <= cx <= bx1 and bz0 <= cz <= bz1:
                 mine.append((fname, k["box"]))
+    # a resident another file seats ON this farm (its site's anchor is "apricorn_farm") is part of the farm, not a
+    # place near it: exactly its expected_at column (2026-10-08: the Produce Buyer at Hollin's stall, 1 block from it)
+    anchored = set()
+    for fname in ("produce_buyer.json",):
+        for s in json.loads((ROOT / "data" / fname).read_text(encoding="utf-8")).get("sites") or []:
+            if s.get("anchor") == "apricorn_farm" and s.get("expected_at"):
+                anchored.add((fname, s["expected_at"][0], s["expected_at"][2]))
     pts = [(a, b, f) for a, b, f in SR.authored_points({"residents": []}, own_file=DATA)
            if f != "regions.json" and math.hypot(a - cx, b - cz) > 1
+           and (f, a, b) not in anchored
            and not any(f == fn and bx[0] <= a <= bx[2] and bx[1] <= b <= bx[3] for fn, bx in mine)]
     near = [(a, b, f) for a, b, f in pts if x0 - 400 <= a <= x1 + 400 and z0 - 400 <= b <= z1 + 400]
     best = (1e9, None)

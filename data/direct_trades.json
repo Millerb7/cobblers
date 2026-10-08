@@ -1,0 +1,211 @@
+{
+  "schema": "cobblers.direct_trades/1",
+  "generated_by": "hand",
+  "status": "authored 2026-10-07 (wave A, unit A4); re-priced, approved and moved to Northlight 2026-10-08 (overnight unit EXCH) on the owner's answers to the Wave A morning report. NOT run in game: experiment EXP-055 (experiments/EXP-055-direct-trade-villager/README.md) still holds its own villager under Holdfast; the Northlight barterer carries the eight approved lines. tools/economy_audit.py (an independent auditor) checks their edges, this unit does not",
+  "owner_brief": "the owner, 2026-10-07 (docs/STATE.md 'What is decided', the owner's answers item 5): late-game items by direct trade, no money where possible -- '4 netherite ingots for a master ball or something difficult, money systems will be abused somehow'. The owner, 2026-10-08 (docs/STATE.md, the answers to the Wave A morning report): 'Trade lines: re-price them. 5.8x cheaper than the counter makes the counter pointless -- the exchange should be an alternative path, not a bypass' and 'Players trade at Northlight's counter. One place, so the economy has a centre'",
+  "mechanism": {
+    "summary": "a vanilla villager (minecraft:villager) summoned with its Offers written in the summon command: item for item, no CobbleDollars. CobbleDollars cannot barter: an Offer holds item, price and stock only (docs/OVERNIGHT_REVIEW_2026-10-06.md N63)",
+    "rung": "Cobblemon native has no barter NPC; CobbleDollars (a Cobbleverse dependency) prices in money only (N63); so the cheapest rung that trades item for item is vanilla data in a summon command (functions/commands), with no addon, script or mod",
+    "pack": "cobblers_direct_trades, world-local, run by tools/reapply.py step R18DT: the experiment booth first, then the Northlight barterer"
+  },
+  "namespace": "cobblers",
+  "folder": "direct_trades",
+  "pack": "cobblers_direct_trades",
+  "site": {
+    "role": "experiment: EXP-055's villager, carrying the experiment offers only. The approved lines stand at counter_site",
+    "near_counter": "holdfast",
+    "x": 3634,
+    "z": 6462,
+    "depth_below_ground": 9,
+    "booth": {"shell": "minecraft:stone_bricks", "light": "minecraft:glowstone", "interior": [3, 3, 3]},
+    "why": "Holdfast is the gym 8 town (data/markets.json counter 'holdfast', badge 8, at (3634, 113, 6462)): the last stores before Victory Road, so late-game by place as well as by input. The booth is a 3x3x3 room 9 blocks under the counter's heightmap ground, not on the street: a villager struck by lightning is discarded even though MobsBeGone refuses the witch it would become (EXP-055 'Lightning'), and lightning cannot reach a villager that cannot see the sky and is more than 3 blocks under any strike point. Underground also keeps the booth off every street, lot and NPC the town plan seats, which this worktree cannot read (derived/towns is absent). The place function refuses to carve if any shell cell is air, water or lava (a cave, a cellar, an aquifer) and says so in a score",
+    "access": "experiment only: the owner reaches it with /tp"
+  },
+  "barterer": {
+    "name": "Garrison Barterer",
+    "tag": "cob_dt_barterer",
+    "type": "minecraft:plains",
+    "profession": "minecraft:armorer",
+    "level": 5,
+    "yaw": 0,
+    "why": "level 5 (master) is the last level, so no trade can level it up and add vanilla trades; a profession other than none or nitwit, because those two have no trades table (EXP-055 'Profession')"
+  },
+  "counter_site": {
+    "role": "production: the barterer players trade with, carrying every approved line",
+    "near_counter": "northlight_station",
+    "building": "northlight_pokemart",
+    "clerk": "northlight_mart",
+    "x": 7277,
+    "z": 1525,
+    "lightning_reach": 4,
+    "lightning_clearance": 4,
+    "why": "the owner, 2026-10-08: 'Players trade at Northlight's counter. One place.' Northlight's counter (data/markets.json northlight_station, Station Supply and Exchange, at (7277, 117, 1540)) stands in the open on the plaza, where a villager would be discarded by the first bolt that lands within reach (EXP-055 'Lightning'). So the barterer stands inside the counter's own Mart (the counter's near_trader, data/traders.json northlight_mart; the building data/placements.json northlight_pokemart, template kits/structures/campaign/f4/services/towns/northlight_mart.nbt), 15 blocks north of the counter keeper, on the shop floor in front of the Mart counter and 3 west of the aisle from the door (x7280) to the clerk. Read from the plan, never a world: the template's blocks turned by the placement, its floor from the clerk record (y116 = floor + 1, as tools/sea_town.py clerk_record seats it; the heightmap reads y115 at the door too). The generator refuses the spot unless every column within lightning_reach of it holds a template block lightning_clearance or more above the villager's feet (the booth's rule, applied to a roof), the feet and head cells are air and the floor is solid; the place function refuses in the world unless every one of those roof blocks, the floor and the air are there, and says so in a score",
+    "access": "walk in through the Mart's door off Northlight's plaza"
+  },
+  "counter_barterer": {
+    "name": "Station Exchange",
+    "tag": "cob_dt_exchange",
+    "type": "minecraft:snow",
+    "profession": "minecraft:cartographer",
+    "level": 5,
+    "yaw": 0,
+    "why": "the counter's barter half: the counter keeper is 'Station Supply and Exchange' (data/markets.json). Snow type for the aurora town; cartographer for a research station's surveyor (any profession but none or nitwit has a trades table, EXP-055 'Profession'); level 5 as the experiment's; yaw 0 faces south, down the shop floor to the door"
+  },
+  "fixed_trade": {
+    "uses": 0,
+    "maxUses": 9999,
+    "rewardExp": false,
+    "xp": 0,
+    "priceMultiplier": 0.0,
+    "specialPrice": 0,
+    "demand": 0,
+    "why": {
+      "priceMultiplier": "0 zeroes both the demand surcharge and the reputation (gossip) discount, which are each multiplied by it (EXP-055 'Price'); it does NOT touch Hero of the Village",
+      "maxUses": "high enough that the shared stock never runs out between restocks (stock is per villager, so a small stock would let one player empty it for everyone); any restock only resets uses",
+      "xp": "0 so trading never raises the villager's experience",
+      "rewardExp": "false: no experience orbs for the player",
+      "uses_specialPrice_demand": "written as 0 so no default is relied on"
+    }
+  },
+  "rules": {
+    "buy_count_one": "every barter line's `buy` (cost A) has count 1 and its bulk cost goes in `buyB`. Hero of the Village takes max(1, floor((0.3 + 0.0625 * amplifier) * count)) off cost A whatever priceMultiplier is, but cost A is clamped to at least 1 and cost B is never discounted (EXP-055 'Price'), so a count-1 cost A cannot move",
+    "distinct_inputs": "`buy` and `buyB` are different items: the trade screen's auto-fill moves every matching stack into the first slot up to a full stack, so a line paying the same item in both slots leaves the second slot empty for a player holding fewer than a stack plus the second cost",
+    "experiment_offers_never_gain": "every experiment offer's output is one of its own inputs, at a count no larger than the worst-case (fully discounted) count paid of it, so it can stand in any world, the live one included",
+    "max_lines": 8
+  },
+  "pricing": {
+    "rule": "a line's inputs, valued at what the player gives up for them, lie between band[0] and band[1] times the output's reference price: never cheaper than the counter, so the barter is an alternative path and not a bypass (the owner, 2026-10-08), and at most a tenth dearer. The barter's advantage is that it never touches money, not that it is cheaper",
+    "band": [1.0, 1.1],
+    "input_value": "the Bank's buy-back price (modpack/config/cobbledollars/bank.json, tools/bank.py's output) for an item the Bank buys; 9 times its ingredient's for a storage block, which uncrafts to 9; the counter price (data/markets.json) for an item only a counter sells, which is what replacing it costs. The generator checks every value below against those files and refuses a stale one",
+    "values": {
+      "minecraft:netherite_ingot": {"value": 900, "from": "bank", "item": "minecraft:netherite_ingot"},
+      "minecraft:netherite_block": {"value": 8100, "from": "bank_block", "item": "minecraft:netherite_ingot"},
+      "minecraft:diamond_block": {"value": 1080, "from": "bank_block", "item": "minecraft:diamond"},
+      "cobblemon:ability_capsule": {"value": 10000, "from": "counter", "counter": "northlight_station", "line": "ability_capsule"}
+    },
+    "reference": "per line: `reference.lines`, line ids on `reference.counter`'s stock, summed. The output's own counter line where the counter sells it (the Master Ball); where it does not, the counter's line of the same kind and weight, named per line with why. The six held items keep NO money line (the owner's 2026-10-07 'no money where possible'); whether the counter should also sell them for money is decisions_pending held_items_money_line"
+  },
+  "experiment_offers": [
+    {
+      "id": "exp_two_inputs",
+      "buy": {"id": "cobblemon:poke_ball", "count": 4},
+      "buyB": {"id": "cobblemon:great_ball", "count": 1},
+      "sell": {"id": "cobblemon:great_ball", "count": 1},
+      "purpose": "the fixed line under test: a modded item on both sides, two inputs, the fixed-trade fields. Cost A is 4 so drift either way is visible; the player always loses 4 Poke Balls (or 1 if fully discounted), never gains"
+    },
+    {
+      "id": "exp_control_multiplier",
+      "buy": {"id": "cobblemon:poke_ball", "count": 4},
+      "sell": {"id": "cobblemon:poke_ball", "count": 1},
+      "overrides": {"priceMultiplier": 0.2},
+      "purpose": "the control: the same villager, priceMultiplier 0.2 instead of 0. If its cost falls below 4 after trades while exp_two_inputs stays at 4, multiplier 0 is what holds the fixed line; if neither moves, a NoAI villager collects no trade gossip either. Worst case 1 Poke Ball for 1: never a gain"
+    }
+  ],
+  "lines": [
+    {
+      "id": "master_ball",
+      "status": "approved",
+      "approved": true,
+      "buy": {"id": "minecraft:netherite_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 21},
+      "sell": {"id": "cobblemon:master_ball", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["master_ball"], "why": "the counter sells the Master Ball itself for $27,000, priced as 30 netherite ingots at the bank's $900 (its exchange_for)"},
+      "late_game_why": "the owner's own example; a Master Ball removes the catch check. Other routes (N104, the A4 audit): the counter's $27,000 line beside this one, and Cobblemon's own recipe (data/cobblemon/recipe/master_ball.json in Cobblemon-fabric-1.8.0: 2 netherite ingots, a nether star, 2 shulker shells), which needs a Wither and the End",
+      "inputs_why": "a block of netherite (9 ingots, $8,100) and 21 ingots ($18,900): $27,000, exactly the counter's 30 ingots, so the barter is the counter's price paid in metal rather than money (1.00 of the reference). Cost A is the block so the whole cost stays netherite while cost A keeps count 1"
+    },
+    {
+      "id": "choice_specs",
+      "status": "approved",
+      "approved": true,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
+      "sell": {"id": "cobblemon:choice_specs", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["assault_vest"], "why": "no counter sells it; the Assault Vest ($4,500, 5 ingots) is the counter's top held-item rung, and a Choice item is a held item of that weight (the reference the superseded life_orb and choice_band lines shared)"},
+      "late_game_why": "a competitive held item, and not an arena prize (data/arena_fights.json prizes.items, read 2026-10-09), so it stays. Other route (N104): Cobblemon's recipe (data/cobblemon/recipe/choice_specs.json: Wise Glasses, blaze rods, gold, redstone)",
+      "inputs_why": "a diamond block ($1,080, 9 diamonds at the bank's $120) and 4 netherite ingots ($3,600): $4,680, 1.04 of the reference"
+    },
+    {
+      "id": "destiny_knot",
+      "status": "approved",
+      "approved": true,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 3},
+      "sell": {"id": "cobblemon:destiny_knot", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["focus_sash"], "why": "no counter sells it; the Focus Sash ($3,600, 4 ingots) is the counter's standard held-item rung, and the Destiny Knot is a breeding held item of that weight"},
+      "late_game_why": "the breeding item that passes down IVs, and not an arena prize (data/arena_fights.json prizes.items, read 2026-10-09), so it stays. Other route (N104): Cobblemon's recipe (data/cobblemon/recipe/destiny_knot.json: wool, string, a ghast tear)",
+      "inputs_why": "a diamond block ($1,080) and 3 netherite ingots ($2,700): $3,780, 1.05 of the reference"
+    }
+  ],
+  "superseded_lines_why": "the owner, 2026-10-09 (decision arena_trophies_not_sold): 'keep them once-per-player prizes. Do not also sell them at a counter. A prize you can buy is not a prize.' Each record below is the line as it stood (approved 2026-10-08), kept so its pricing and reasoning are not lost; nothing reads this list, so none is placed. Its sell item is one of data/arena_fights.json prizes.items (read 2026-10-09: Choice Band rank 1, Leftovers rank 2, Choice Scarf rank 4, Life Orb rank 6, Ability Patch rank 7, each 'once per player'). Restoring one is the owner's decision, not a merge's",
+  "superseded_lines": [
+    {
+      "id": "ability_patch",
+      "status": "superseded",
+      "approved": false,
+      "superseded": {"decision": "arena_trophies_not_sold", "was": "approved 2026-10-08", "prize": "arena_prize_rank_7 (and the 50-streak prize)"},
+      "buy": {"id": "cobblemon:ability_capsule", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
+      "sell": {"id": "cobblemon:ability_patch", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["ability_capsule", "focus_sash"], "why": "no counter sells the Patch. It is the Capsule's upgrade (a hidden ability instead of the other regular one), so its reference is the Capsule ($10,000) plus the counter's 4-ingot held-item rung ($3,600): $13,600, PROPOSED"},
+      "late_game_why": "a hidden ability. Other routes (N104 corrected the earlier 'only the arena gives one'): Heaven's Arena's rank 7 and 50-streak prizes (data/arena_fights.json), and Mega Showdown's recipe (data/mega_showdown/recipe/ability_patch.json in mega_showdown-fabric-1.0.2: 7 diamonds, 2 iron ingots and a nether star), which needs a Wither",
+      "inputs_why": "an Ability Capsule (the counter's $10,000 line, which the Bank never buys back) upgraded with 4 netherite ingots ($3,600): $13,600, 1.00 of the reference"
+    },
+    {
+      "id": "life_orb",
+      "status": "superseded",
+      "approved": false,
+      "superseded": {"decision": "arena_trophies_not_sold", "was": "approved 2026-10-08", "prize": "arena_prize_rank_6"},
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
+      "sell": {"id": "cobblemon:life_orb", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["assault_vest"], "why": "no counter sells it; the Assault Vest ($4,500, 5 ingots) is the counter's top held-item rung, and a Life Orb is a held item of that weight"},
+      "late_game_why": "a competitive held item. Other routes (N104): Cobblemon's recipe (data/cobblemon/recipe/life_orb.json: ghast tears, tinted glass, golden apples, an ender pearl) and Heaven's Arena's rank 6 prize (data/arena_fights.json)",
+      "inputs_why": "a diamond block ($1,080, 9 diamonds at the bank's $120) and 4 netherite ingots ($3,600): $4,680, 1.04 of the reference"
+    },
+    {
+      "id": "choice_band",
+      "status": "superseded",
+      "approved": false,
+      "superseded": {"decision": "arena_trophies_not_sold", "was": "approved 2026-10-08", "prize": "arena_prize_rank_1"},
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
+      "sell": {"id": "cobblemon:choice_band", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["assault_vest"], "why": "as life_orb: a Choice item is a held item of the Assault Vest's weight"},
+      "late_game_why": "a competitive held item. Other routes (N104): Cobblemon's recipe (data/cobblemon/recipe/choice_band.json: a Muscle Band, quartz, lapis, redstone), Heaven's Arena's rank 1 prize and a cache (data/rewards.json)",
+      "inputs_why": "as life_orb: $4,680, 1.04 of the reference"
+    },
+    {
+      "id": "choice_scarf",
+      "status": "superseded",
+      "approved": false,
+      "superseded": {"decision": "arena_trophies_not_sold", "was": "approved 2026-10-08", "prize": "arena_prize_rank_4"},
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
+      "sell": {"id": "cobblemon:choice_scarf", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["assault_vest"], "why": "as choice_band"},
+      "late_game_why": "a competitive held item. Other routes (N104): Cobblemon's recipe (data/cobblemon/recipe/choice_scarf.json: a Silk Scarf, diamonds, wool) and Heaven's Arena's prizes (data/arena_fights.json)",
+      "inputs_why": "as life_orb: $4,680, 1.04 of the reference"
+    },
+    {
+      "id": "leftovers",
+      "status": "superseded",
+      "approved": false,
+      "superseded": {"decision": "arena_trophies_not_sold", "was": "approved 2026-10-08", "prize": "arena_prize_rank_2"},
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 3},
+      "sell": {"id": "cobblemon:leftovers", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["focus_sash"], "why": "no counter sells it; the Focus Sash ($3,600, 4 ingots) is the counter's standard held-item rung, and Leftovers is a held item of that weight"},
+      "late_game_why": "a competitive held item. No recipe in Cobblemon 1.8.0 or Mega Showdown 1.0.2 (read 2026-10-08); other routes are one-off finds and prizes: Heaven's Arena's rank 2 prize, the old orchard's cask and the gate watcher's thanks (data/arena_fights.json, data/rewards.json)",
+      "inputs_why": "a diamond block ($1,080) and 3 netherite ingots ($2,700): $3,780, 1.05 of the reference"
+    }
+  ],
+  "decisions": [
+    {"id": "arena_trophies_not_sold", "decided": "the owner, 2026-10-09 (docs/STATE.md 'The owner's decisions of 2026-10-09' (3)): 'ARENA TROPHIES: keep them once-per-player prizes. Do not also sell them at a counter. A prize you can buy is not a prize.' Applied: the five barter lines whose output is an arena prize (data/arena_fights.json prizes.items) moved to superseded_lines. No counter (data/markets.json counters and stalls) or Mart (data/traders.json) sold any of the five (grep, 2026-10-09). The Master Ball, Choice Specs and Destiny Knot are not prizes and stay. The arena's sixth prize item, obc:bottle_cap_gold, was then still sold on Giovanni's counter (data/markets.json counter holdfast, line bottle_cap_gold) and left for the owner; the owner's decision names every prize, so design unit U5 (2026-10-09) moved that line to the counter's superseded_stock (data/markets.json decisions arena_trophies_not_sold)"},
+    {"id": "approve_lines", "decided": "the owner, 2026-10-08: re-price the lines so the exchange is an alternative path, not a bypass; re-priced lines go at the counter. Applied by pricing.rule: every line approved at 1.00-1.05 of its reference"},
+    {"id": "barterer_site", "decided": "the owner, 2026-10-08: 'Players trade at Northlight's counter. One place.' The barterer stands at counter_site, inside the Northlight Mart beside the counter; the Holdfast booth stays as EXP-055's"},
+    {"id": "master_ball_counter", "decided": "kept: the owner's 2026-10-08 answer makes the barter an alternative to the counter's $27,000 Master Ball, not its replacement; both price 30 netherite ingots"}
+  ],
+  "decisions_pending": [
+    {"id": "held_items_money_line", "question": "Choice Specs and the Destiny Knot are barter-only at the counter (no money where possible, 2026-10-07): keep them so, or also list them on Station Supply for money at the reference price. (Narrowed 2026-10-09: the Life Orb, Choice Band, Choice Scarf, Leftovers and Ability Patch are arena prizes and are sold nowhere, decision arena_trophies_not_sold)"}
+  ]
+}

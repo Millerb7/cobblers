@@ -1,0 +1,93 @@
+{
+ "settlement": "bravo",
+ "size": "outpost",
+ "character": "bravo's own roster",
+ "workers": [
+  {
+   "id": "bravo_work_00",
+   "settlement": "bravo",
+   "species": "mudbray",
+   "level": 15,
+   "job": "carry",
+   "interact": "The mudbray hauls a load across the yard."
+  },
+  {
+   "id": "bravo_work_01",
+   "settlement": "bravo",
+   "species": "skwovet",
+   "level": 15,
+   "job": "carry",
+   "interact": "The skwovet hauls a load across the yard."
+  }
+ ],
+ "pets": [
+  {
+   "id": "bravo_pet_00",
+   "species": "eevee",
+   "owner": "bravo_resident_0",
+   "mode": "follow",
+   "why": "keeps its owner company"
+  }
+ ],
+ "placed": [
+  {
+   "id": "bravo_placed_00",
+   "species": "hoothoot",
+   "spot": "roof",
+   "building": "bravo_house_00",
+   "why": "lives there"
+  }
+ ],
+ "situations": [
+  {
+   "id": "bravo_queue",
+   "title": "A Psyduck Takeover in the Back Garden!",
+   "story": "A queue at the baker's door.",
+   "unique": true,
+   "at": [
+    0,
+    64,
+    0
+   ],
+   "facing": "north",
+   "members": [
+    {
+     "species": "spearow",
+     "count": 2,
+     "pose": "still",
+     "offsets": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ]
+     ]
+    }
+   ],
+   "props": [
+    {
+     "block": "minecraft:oak_door",
+     "at": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "why": "the town's own"
+  }
+ ],
+ "counts": {
+  "working": 2,
+  "pets": 1,
+  "placed": 1,
+  "situations": 2,
+  "total": 6
+ },
+ "target": 6
+}

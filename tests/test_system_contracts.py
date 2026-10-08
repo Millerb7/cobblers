@@ -466,8 +466,12 @@ def _base(block):
 
 
 def _command_blocks(cmds):
+    """Every block a fill or setblock places, bare or under `execute ... run` (a guarded write still places it: the
+    caves' ore variants and the lake life's plants are all `execute if block ... run setblock|fill`)."""
     out = set()
     for c in cmds:
+        if c.startswith("execute ") and " run " in c:
+            c = c.rsplit(" run ", 1)[1]
         t = c.split()
         if t and t[0] == "setblock" and len(t) > 4:
             out.add(_base(t[4]))
@@ -516,8 +520,15 @@ def _source_blocks():
     }
     # the three wayside places of 2026-10-03: each generator refuses any block outside its record's blocks.ids, so the
     # list is the place's whole palette; a policy entry must name the place itself to cover one of them
-    for place in ("challengers_cairn", "dry_cistern", "survey_benchmark"):
+    # the Scorchbone Dig (tools/fossil_dig.py, 2026-10-05) loads its record the same way (wayside_kit.load_record)
+    for place in ("challengers_cairn", "dry_cistern", "survey_benchmark", "fossil_dig"):
         out[place] = (set(_load("%s.json" % place)["blocks"]["ids"]), [place])
+    # the refillable mining caves (tools/mining_caves.py, 2026-10-10): every block the record names that a cave
+    # places (its yields' ores and hosts, each cave's wall, shell, floor, stair and timber); `restore` is the refill's
+    # filter (what `fill ... replace #tag` may overwrite), never a block placed. A policy entry must name mining_caves
+    mc = _load("mining_caves.json")
+    out["mining_caves"] = (_named_ids([mc["yields"], [{k: c[k] for k in ("wall", "shell", "floor", "stair", "timber")}
+                                                      for c in mc["caves"]]], ("minecraft",)), ["mining_caves"])
     for p in PLACEMENTS["placements"]:
         if p.get("kind") == "earthwork" and p.get("commands"):
             key = "earthworks:%s" % p["settlement"]
@@ -572,20 +583,35 @@ def test_contract_c4_every_tool_that_reads_the_spawn_conditions_is_accounted_for
             assert any(s == sid or s.startswith(sid + ":") for s in SOURCES), (tool, what)
 
 
-# Without it a built pack (whatever tool wrote it) places a spawn condition no policy entry names at all. Runs on the
-# packs present under build/datapacks; a fresh checkout has none, and the test says so.
-def test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows():
-    packs = ROOT / "build" / "datapacks"
-    fns = sorted(packs.glob("*/data/*/function/**/*.mcfunction")) if packs.is_dir() else []
+# the built packs judged: build/datapacks, or COBBLERS_BUILT_DATAPACKS (another checkout's build/datapacks, read only)
+BUILT_PACKS = Path(os.environ.get("COBBLERS_BUILT_DATAPACKS") or ROOT / "build" / "datapacks")
+
+
+def _built_pack_cases():
+    """One case per pack under BUILT_PACKS that ships functions (a pack with none places nothing this way), plus every
+    pack C4's fails_today names (so its strict mark exists in a checkout that has not built it; that case skips)."""
+    present = {p.name for p in BUILT_PACKS.iterdir()
+               if p.is_dir() and next(p.glob("data/*/function/**/*.mcfunction"), None)} if BUILT_PACKS.is_dir() else set()
+    recorded = {pat.split(":", 1)[1] for pat in (C4.get("fails_today") or {}).get("cases", {}) if pat.startswith("built:")}
+    return [("built:%s" % p, (p,)) for p in sorted(present | recorded)] or [("built:none", (None,))]
+
+
+# Without it a built pack (whatever tool wrote it) places a spawn condition no policy entry names at all. One case per
+# pack present under build/datapacks; a fresh checkout has none, and the test says so. A pack recorded in C4's
+# fails_today is strict xfail: the day its block gets a policy entry or leaves the pack, the case passes and fails.
+@pytest.mark.parametrize("pack", _params("C4", _built_pack_cases()))
+def test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows(pack):
+    fns = sorted((BUILT_PACKS / pack).glob("data/*/function/**/*.mcfunction")) if pack else []
     if not fns:
-        pytest.skip("NOT_EXECUTED: no built packs under build/datapacks (run the generators or reapply.py prepare)")
+        pytest.skip("NOT_EXECUTED: %s has no built functions under %s (run the generators or reapply.py prepare)"
+                    % (pack or "no pack", BUILT_PACKS))
     allowed = {b for w in POLICY["whitelist"] for b in w["blocks"]}
     bad = {}
     for f in fns:
         placed = _command_blocks(f.read_text(encoding="utf-8", errors="replace").splitlines())
         for b in sorted((placed & SPAWN_BLOCKS) - allowed):
-            bad.setdefault(f.relative_to(packs).parts[0], set()).add(b)
-    assert not bad, {k: sorted(v) for k, v in bad.items()}
+            bad.setdefault(b, []).append(f.relative_to(BUILT_PACKS / pack).as_posix())
+    assert not bad, {b: (len(v), v[0]) for b, v in bad.items()}
 
 
 # =================================================================================================================
@@ -982,6 +1008,32 @@ def test_contract_c12_a_gulch_mega_makes_no_claim_on_the_player_it_blacks_out():
         assert items[0]["nbt"]["Owner"] != onlooker["nbt"]["UUID"] and items[0]["pos"] == victor["pos"], site
 
 
+def entei_c12(files):
+    """C12 for the Entei boss (a consumer since 2026-10-08): every Entei its generated keeper binds carries tags the
+    generated blackout treats as exempt -- no item claim, no guardian (a guardian in a pocket slot freed the moment its
+    victim leaves would hold their items where nobody can return), and the loss still costs money. The tags are read
+    from the boss pack's GENERATED bind functions; the verdict is the generated blackout's, run on its simulator."""
+    import test_blackout_recovery_pid as RP
+    binds = {p: t for p, t in files.items() if re.search(r"/function/entei_boss/slot/s\d+/bind\.mcfunction$", p)}
+    assert binds, "no bind function generated: nothing to check"
+    for path, text in sorted(binds.items()):
+        tags = tuple(m.group(1) for m in re.finditer(r"^tag @s add (\S+)$", text, re.M))
+        s = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=tags)
+        assert not RP.fn_calls(s, "recovery/make") and not (RP.ledger(s).get("claims") or []), \
+            ("a loss to the Entei makes a claim", path, tags)
+        assert s.get("@s", "bo.lost") > 0, "the loss must still cost money"
+
+
+# Without it the Entei boss's loss path breaks silently: a player beaten in their pocket slot would leave a claim and a
+# guardian in a room that is freed (and its Entei killed) the moment they are sent out, so their items would be lost.
+def test_contract_c12_the_entei_boss_makes_no_claim_on_the_player_it_blacks_out():
+    import entei_boss as EB
+    import test_blackout_recovery_pid as RP
+    entei_c12(EB.build(EB.load()))
+    control = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=("cobblers.eb",))
+    assert RP.fn_calls(control, "recovery/make"), "an Entei without the exempt tag must claim, or this proves nothing"
+
+
 # =================================================================================================================
 # C13. The gulch's zone and build stay off Victory Road
 # =================================================================================================================
@@ -1223,6 +1275,208 @@ def test_harness_the_c15_charge_check_bites_when_the_generator_is_mutated():
 
 
 # =================================================================================================================
+# C19: the suppression strips every inherited Nether spawn and leaves our compiled pools alone
+# (written by the builder of the Nether tables on the brief's instruction, 2026-10-08, not by test-author)
+# ==========================================================================================================
+
+
+def _c19_holds(c, dim, x, z):
+    """A spawn condition or anticondition holds at (dim, x, z): absent bounds restrict nothing, a non-empty
+    dimensions list must contain dim (Cobblemon 1.8.0, docs/research/notes/spawn-dimension-condition-1.8.0.md)."""
+    for lo, hi, v in (("minX", "maxX", x), ("minZ", "maxZ", z)):
+        if (lo in c and v < c[lo]) or (hi in c and v > c[hi]):
+            return False
+    return not c.get("dimensions") or dim in c["dimensions"]
+
+
+def test_contract_c19_the_nether_holds_only_our_compiled_tables(tmp_path):
+    import zipfile
+    import compile_spawns as CS
+    import suppress_inherited_spawns as SIS
+    spawns = json.loads((ROOT / "data" / "spawns.json").read_text(encoding="utf-8"))
+    ours, _ = CS.build_nether(spawns)
+    assert ours, "no compiled Nether tables"
+    server, world, out = tmp_path / "server", tmp_path / "world", tmp_path / "out"
+    (server / "mods").mkdir(parents=True)
+    inherited = "data/cobblemon/spawn_pool_world/fake_nether_heatmor.json"
+    with zipfile.ZipFile(server / "mods" / "fake.jar", "w") as z:
+        z.writestr(inherited, json.dumps({"enabled": True, "spawns": [
+            {"id": "h", "pokemon": "heatmor", "type": "pokemon", "spawnablePositionType": "grounded", "bucket": "common",
+             "level": "30-40", "weight": 5.0, "condition": {"biomes": ["#minecraft:is_nether"]}}]}))
+    for rel, text in ours.items():
+        f = world / "datapacks" / "cobblers_spawns" / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(text, encoding="utf-8")
+    assert SIS.main(["--server", str(server), "--world", str(world), "--out", str(out), "--subregions"]) == 0
+    # (1) our pools are never re-emitted, so nothing the suppression writes can shadow or strip them
+    assert not [p for p in out.rglob("*.json") if "/cobblers/" in p.as_posix()]
+    (detail,) = json.loads((out / inherited).read_text(encoding="utf-8"))["spawns"]
+    anti = detail["anticonditions"]
+    # (2) the inherited detail is gone at every point of every Nether table's boxes, and kept on the overworld far from
+    # every box
+    for rec in spawns["nether_tables"]:
+        for b in rec["boxes"]:
+            for x, z in ((b[0], b[2]), (b[1], b[3]), ((b[0] + b[1]) // 2, (b[2] + b[3]) // 2)):
+                assert any(_c19_holds(c, "minecraft:the_nether", x, z) for c in anti), (rec["id"], x, z)
+    assert not any(_c19_holds(c, "minecraft:overworld", -10 ** 6, -10 ** 6) for c in anti)
+    # (3) every compiled Nether detail can only ever hold in the Nether
+    for rel, text in ours.items():
+        for s in json.loads(text)["spawns"]:
+            c = s["condition"]
+            x, z = (c["minX"] + c["maxX"]) // 2, (c["minZ"] + c["maxZ"]) // 2
+            assert _c19_holds(c, "minecraft:the_nether", x, z), s["id"]
+            assert not _c19_holds(c, "minecraft:overworld", x, z), s["id"]
+# C21. The Nether admits exactly the holders of the eighth badge's flag
+# C20. A player the Nether gate turns back lands where a blackout would put them
+# =================================================================================================================
+
+def _gate_files():
+    import nether_gate as NG
+    return {rel: text for rel, text in NG.build(NG.load()).items() if rel.endswith(".mcfunction")}
+
+
+# Without it the Nether gate tests an advancement nothing grants (a renamed flag: every player bounced for ever, the
+# Nether shut), or the wrong badge, or it searches a dimension other than the Nether (the Entei's pocket rooms gated,
+# its champions bounced out of their own fight); or a champion the Entei sends back into the Nether is not, by the
+# campaign's own chapter order, a holder of the eighth badge.
+def test_contract_c21_the_nether_gate_admits_only_the_flag_the_progression_pack_grants_for_badge_8():
+    import progression_pack as PP
+    prog_doc = _load("progression.json")
+    prog = PP.files(PP.plan(PP.load(ROOT / "data" / "progression.json"), None, PLACEMENTS))
+    gate = _gate_files()
+    named = set()
+    for text in gate.values():
+        named |= set(re.findall(r"advancements=\{([a-z0-9_]+:[a-z0-9_/]+)=", text))
+    assert named == {"cobblers:flag/gym8_cleared"}, named
+    key = "data/cobblers/advancement/flag/gym8_cleared.json"
+    assert key in prog, "cobblers:flag/gym8_cleared is not an advancement tools/progression_pack.py writes"
+    crit = json.loads(prog[key])["criteria"]
+    assert crit and all(c["trigger"] != "minecraft:impossible" for c in crit.values()), crit
+    flag = next(f for f in prog_doc["flags"] if f["id"] == "gym8_cleared")
+    assert flag["set_by"]["kind"] == "trainer_defeat", flag["set_by"]
+    # every player selector the gate runs is in the Nether, and positional (so it searches that dimension only)
+    pocket = {_load("portals.json")["pocket"]["dimension"], _load("entei_boss.json")["pocket"]["dimension"]}
+    for rel, text in gate.items():
+        for line in text.splitlines():
+            if "@a[" in line and not line.startswith("#"):
+                m = re.match(r"execute in (\S+) .*@a\[([^\]]*)\]", line)
+                assert m and m.group(1) == "minecraft:the_nether", (rel, line)
+                assert re.search(r"\b(x|dx|distance)=", m.group(2)), ("a selector without a position", rel, line)
+            assert line.startswith("#") or not any(d in line for d in pocket), ("the gate acts in the pocket", rel, line)
+    # the Entei returns its champions into the Nether: champion_cleared must follow gym8_cleared in the chapters
+    assert _load("entei_boss.json")["gate_flag"] == "cobblers:flag/champion_cleared"
+    unlocking = {u: c for c in prog_doc["chapters"] for u in c["unlocks"]}
+    seen, todo = set(), ["champion_cleared"]
+    while todo:
+        f = todo.pop()
+        for g in unlocking.get(f, {}).get("unlocked_by", []):
+            if g not in seen:
+                seen.add(g)
+                todo.append(g)
+    assert "gym8_cleared" in seen, seen
+
+
+# Without it the TM gate tests an advancement nothing grants (a renamed flag: every crafted TM locked for ever), a flag
+# granted by nothing real, or a badge number the shelf does not mean (markets' gate_badge B priced on another leader).
+def test_contract_c23_the_tm_gate_unlocks_on_the_flags_the_progression_pack_grants(tmp_path):
+    import progression_pack as PP
+    import tm_gate as TG
+    import tm_gate_fixture as TF
+    prog_doc = _load("progression.json")
+    markets = _load("markets.json")
+    prog = PP.files(PP.plan(PP.load(ROOT / "data" / "progression.json"), None, PLACEMENTS))
+    server, vanilla, _ = TF.build_server(tmp_path)
+    plan = TG.plan(TG.load(), TG.resolve(TG.read_server(server, vanilla)), copy.deepcopy(markets),
+                   copy.deepcopy(prog_doc), scores=TF.score_table())
+    files = TG.build(TG.load(), plan)
+    named = set()
+    for rel, text in files.items():
+        named |= set(re.findall(r"advancements=\{([a-z0-9_]+:[a-z0-9_/]+)=", text))
+        if rel.startswith("data/cobblers/advancement/tm_gate/earn/"):
+            for cond in json.loads(text)["criteria"]["held"]["conditions"]["player"]:
+                named |= set(cond["predicate"]["type_specific"]["advancements"])
+    badges = sorted({g["badge"] for g in plan["gated"].values()})
+    assert named == {"cobblers:flag/gym%d_cleared" % b for b in badges}, named
+    for b in badges:
+        fid = "gym%d_cleared" % b
+        key = "data/cobblers/advancement/flag/%s.json" % fid
+        assert key in prog, "cobblers:flag/%s is not an advancement tools/progression_pack.py writes" % fid
+        crit = json.loads(prog[key])["criteria"]
+        assert crit and all(c["trigger"] != "minecraft:impossible" for c in crit.values()), crit
+        flag = next(f for f in prog_doc["flags"] if f["id"] == fid)
+        assert flag["set_by"]["kind"] == "trainer_defeat", flag["set_by"]
+        assert fid in markets["badges"], fid
+    # the shelf's B is the B-th leader's: a shelf TM in a leader's first-win pool carries that leader's flag number
+    pools = {}
+    fwr = next(v for v in _walk_values(prog_doc, "first_win_rewards"))
+    for tr in fwr["trainers"].values():
+        m = re.fullmatch(r"gym([1-8])_cleared", tr.get("flag", ""))
+        for item in tr.get("one_of", []):
+            if m:
+                pools.setdefault(item, int(m.group(1)))
+    shelf = {}
+    for counter in markets["counters"]:
+        for k in ("stock", "held_stock"):
+            for line in counter.get(k) or []:
+                if str(line.get("item", "")).startswith("tmcraft:tm_") and isinstance(line.get("gate_badge"), int):
+                    shelf[line["item"]] = line["gate_badge"]
+    assert shelf and all(item in pools and pools[item] == b for item, b in shelf.items()), \
+        {i: (b, pools.get(i)) for i, b in shelf.items() if pools.get(i) != b}
+
+
+def _walk_values(obj, key):
+    if isinstance(obj, dict):
+        if key in obj:
+            yield obj[key]
+        for v in obj.values():
+            yield from _walk_values(v, key)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from _walk_values(v, key)
+
+
+# Without it the gate calls a blackout function that was renamed (the checkpoint path fails and everyone lands at the
+# pallet: safe, but not where the design sends them), reads a score the blackout no longer keeps, writes into the
+# blackout's own state, or falls back to a pallet that is not standing on the ground.
+def test_contract_c20_the_nether_gate_returns_through_the_blackouts_own_checkpoint():
+    import blackout_pack as BP
+    bo = BP.build(_load("blackout.json"), _load("water_mounts.json"), PLACEMENTS, _load("progression.json"))
+    bo_fns = {re.sub(r"^data/cobblers/function/(.+)\.mcfunction$", r"cobblers:\1", rel): text.splitlines()
+              for rel, text in bo.items() if rel.startswith("data/cobblers/function/")}
+    gate = _gate_files()
+    body = [l for text in gate.values() for l in text.splitlines() if l.strip() and not l.startswith("#")]
+    called = {r for l in body for r in re.findall(r"\bfunction (cobblers:blackout/\S+)", l)}
+    assert called == {"cobblers:blackout/checkpoint/validate", "cobblers:blackout/checkpoint/tp",
+                      "cobblers:blackout/checkpoint/name"}, called
+    assert all(c in bo_fns for c in called), called - set(bo_fns)
+    tp = [l for l in bo_fns["cobblers:blackout/checkpoint/tp"] if l.strip() and not l.startswith("#")]
+    assert len(tp) == 1 and tp[0].startswith("$execute in minecraft:overworld run tp @s "), tp
+    assert set(re.findall(r"\$\((\w+)\)", tp[0])) == {"x", "y", "z"}, tp
+    stored = {m for l in body for m in re.findall(r"store result storage cobblers:nether_gate go\.(\w+) ", l)}
+    assert stored == {"x", "y", "z"}, stored
+    validate = [l for l in bo_fns["cobblers:blackout/checkpoint/validate"] if l.strip() and not l.startswith("#")]
+    assert validate[0] == "scoreboard players set @s bo.ok 0" and all(
+        l.endswith("run scoreboard players set @s bo.ok 1") for l in validate[1:]), validate[:3]
+    assert any("data modify storage cobblers:blackout place set value" in l
+               for l in bo_fns["cobblers:blackout/checkpoint/name"])
+    made = set(re.findall(r"^scoreboard objectives add (\S+)", "\n".join(bo_fns["cobblers:blackout/load"]), re.M))
+    read = {o for l in body for o in re.findall(r"\b(bo\.\w+)\b", l)}
+    assert read and read <= made, read - made
+    for l in body:
+        assert not re.search(r"scoreboard players (set|add|remove|reset|operation) @s bo\.", l), l
+        assert not re.search(r"store result score @s bo\.", l), l
+        assert "data modify storage cobblers:blackout" not in l, l
+    try:
+        import ground as G
+        g = G.load()
+    except Exception as e:  # noqa: BLE001
+        pytest.skip("the canonical heightmap is not available: %s" % e)
+    x, y, z = _load("blackout.json")["pallet"]["position"]
+    assert y == g(x, z) + 1, (x, y, z, g(x, z))
+    assert "execute in minecraft:overworld run tp @s %d.5 %d %d.5" % (x, y, z) in body
+
+
+# =================================================================================================================
 # The registry itself
 # =================================================================================================================
 
@@ -1232,6 +1486,36 @@ def _defs(path):
 
 
 # Without it a contract points at a test that was renamed or deleted, and the registry claims a guarantee nothing checks.
+# Without it maxDynamaxLevel could be lowered (Pokemon.setDmaxLevel clamps the Sketch count to it, so the count stops
+# short of the cap and Sketch never fails), or the cap could be raised past Showdown's 0..10 clamp, or the generated
+# override and callbacks could drift from the record's cap. The 10 is Showdown's own clamp (sim/pokemon.js:118, read
+# from the 1.8.0 jar: clampIntRange(set.dynamaxLevel, 0, 10)), not the record's number.
+def test_contract_c22_the_sketch_cap_fits_under_the_dynamax_level_the_config_allows():
+    import battle_sim
+    import mythical_starters as MS
+    showdown_clamp = 10
+    config = json.loads((ROOT / "modpack" / "config" / "cobblemon" / "main.json").read_text(encoding="utf-8"))
+    assert config["maxDynamaxLevel"] == showdown_clamp, config["maxDynamaxLevel"]
+    doc = json.loads(MS.DATA.read_text(encoding="utf-8"))
+    capped = [ln for ln in doc["lines"] if "sketch_cap" in ln]
+    if not capped:
+        pytest.skip("the Sketch cap is off for now (the owner, 2026-10-08): C22 applies again when a line carries sketch_cap")
+    assert len(capped) == 1, [ln["id"] for ln in capped]
+    cap = capped[0]["sketch_cap"]["uses"]
+    assert 1 <= cap <= min(showdown_clamp, config["maxDynamaxLevel"]), cap
+    try:
+        out = MS.files(doc)
+    except battle_sim.SimError as exc:
+        pytest.skip("no Cobblemon 1.8.0 jar: %s" % exc)
+    js = out["data/cobblers/moves/sketch.js"]
+    guards = re.findall(r"if \(source\.dynamaxLevel >= (\d+)\) return false;", js)
+    assert guards == [str(cap)], guards
+    for event in ("battle_started_post", "battle_victory", "battle_fled"):
+        text = out["data/cobblemon/callbacks/%s/cobblers_sketch_cap.molang" % event]
+        written = [int(n) for n in re.findall(r"apply\('dmax_level=(\d+)'\)", text)]
+        assert max(written) == cap and min(written) == 1, (event, written)
+
+
 def test_every_contract_names_existing_tests():
     for c in REGISTRY["contracts"]:
         assert c["tests"], c["id"]

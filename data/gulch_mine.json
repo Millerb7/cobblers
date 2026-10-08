@@ -2802,7 +2802,8 @@
           "mega_showdown:galladite",
           "mega_showdown:froslassite",
           "mega_showdown:abomasite",
-          "mega_showdown:staraptite"
+          "mega_showdown:staraptite",
+          "zamega:darkranite"
         ]
       },
       {
@@ -2870,7 +2871,6 @@
       "mega_showdown:tyranitarite",
       "mega_showdown:victreebelite",
       "zamega:baxcalibrite",
-      "zamega:darkranite",
       "zamega:heatranite",
       "zamega:lucarionitez",
       "zamega:magearnite",
@@ -2878,7 +2878,10 @@
       "zamega:zeraorite",
       "zamega:zygardite"
     ],
-    "left_out_why": "the 32 of 7.3 for Pokemon nobody can catch here; the Cutters offer none of them (their recipes stay, raised)"
+    "left_out_why": "the 32 of 7.3 for Pokemon nobody can catch here, less Darkranite (31); the Cutters offer none of them (their recipes stay, raised)",
+    "offered_since": [
+      {"stone": "zamega:darkranite", "bench": "bench_2", "when": "2026-10-09 (design unit U5, docs/mechanics/DESIGN_QUESTIONS_2026-10-09.md U5; ITEM_ROUTES.md section 8 question 4: 'Darkranite should leave that list either way: Darkrai is adopted')", "why": "SOUTHERN_RIFT_MEGA.md 7.3 left it out because nobody could catch Darkrai; Darkrai is now adopted (data/adopted_legendary_sites.json, the Darkrai shrine, gate champion_cleared), so its stone is offered with the third and fourth generations (Darkrai is fourth). Id read 2026-10-09 in zamega-fabric-1.7.7+1.8.jar: data/zamega/mega_showdown/mega/darkranite.json (pokemons ['Darkrai']) and data/zamega/recipe/darkranite.json. The Cutters now offer 61 and leave out 31; SOUTHERN_RIFT_MEGA.md 7.3 still says 60 and 32"}
+    ]
   },
   "mine": {
     "why": "SOUTHERN_RIFT_MEGA.md section 5's first two halls at real cavern scale, the slice of section 10: the Tally Hall (the company's works, lit, no Megas) and the Cutting Floor (dark, two faces, two Megas), reached by the Cutters' adit from the yard",

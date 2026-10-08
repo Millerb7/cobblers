@@ -9,6 +9,7 @@
     "Gym waystone positions are the block tools/place_town.py sets (the lower half): x and z from the town plan in data/placements.json, y the plan's surface + 1 as its placement report records. tests check they agree."
   ],
   "namespace": "cobblers",
+  "waystone_gate": {"enforced": false, "why": "the owner, play test 2026-10-05 (review 89): \"turn that off or make it later waystones are blocked\". Off: a gym badge still activates its town's waystone, but no waystone is forgotten for want of a badge and a right-click activates one as the Waystones mod does. true restores the badge gate (activate with the flag, forget without it, re-synced after every use)"},
   "active_series": "kanto",
   "series": [
     {
@@ -57,7 +58,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_brock"
+            "kanto_brock",
+            "kanto_brock_challenge"
           ],
           "johto": [
             "johto_valerio"
@@ -93,7 +95,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_misty"
+            "kanto_misty",
+            "kanto_misty_challenge"
           ],
           "johto": [
             "johto_raffaello"
@@ -129,7 +132,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_ltsurge"
+            "kanto_ltsurge",
+            "kanto_ltsurge_challenge"
           ],
           "johto": [
             "johto_chiara"
@@ -165,7 +169,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_erika"
+            "kanto_erika",
+            "kanto_erika_challenge"
           ],
           "johto": [
             "johto_angelo"
@@ -201,7 +206,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_koga"
+            "kanto_koga",
+            "kanto_koga_challenge"
           ],
           "johto": [
             "johto_furio"
@@ -237,7 +243,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_sabrina"
+            "kanto_sabrina",
+            "kanto_sabrina_challenge"
           ],
           "johto": [
             "johto_jasmine"
@@ -273,7 +280,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_blaine"
+            "kanto_blaine",
+            "kanto_blaine_challenge"
           ],
           "johto": [
             "johto_alfredo"
@@ -304,12 +312,25 @@
       }
     },
     {
+      "id": "crater_operation_stopped",
+      "set_by": {
+        "kind": "quest_transition",
+        "quest": "main_worldshift_reveal",
+        "transition": "record_crater_operation_stopped",
+        "invoked_by": "dlg_main_blaine_crater_analyst",
+        "invoked_at": "line blaine_008 (acknowledged, before complete_blaine_reveal), and the blaine_repeat entry rule (priority 7) for a player who heard the account before the setter existed; NPC npc_main_blaine_crater_analyst in gym7_town (Cinderlee). A stand-in: the design's beat is the Craters climax ('The player stops the activation; crater_operation_stopped records it', docs/story/FACTION.md:211; ARC.md:48), which is not written (docs/story/CAMPAIGN_OUTLINE.md section 4 C1, Codex). When it lands, move invoked_by and both invocations to it."
+      },
+      "why": "Approved in docs/story/ARC.md:27 and :48 ('Sets crater_operation_stopped, then gym7_cleared') and docs/story/FACTION.md:237 ('Stopping it sets crater_operation_stopped; defeating Blaine separately sets gym7_cleared'). Had no setter until 2026-10-09 (review N9, sweep U58). Read by nothing in data yet; the Kyogre 'two sleepers' beat is designed to (docs/world-building/KYOGRE_CAVE.md:88). Per player, like every flag here: an advancement granted by cobblers:flag/crater_operation_stopped/grant, which the transition runs as and at the listening player.",
+      "multiplayer": "per player. ARC.md speaks of the operation's defeat as one world event; a world-scoped flag is state the dialogue compiler refuses, and an owner call (as for rift_crisis_resolved)."
+    },
+    {
       "id": "gym8_cleared",
       "set_by": {
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_giovanni"
+            "kanto_giovanni",
+            "kanto_giovanni_challenge"
           ],
           "johto": [
             "johto_sandra"
@@ -330,7 +351,8 @@
           6444
         ]
       },
-      "offers_marker": "league",
+      "offers_marker": "rift_surveyor",
+      "offers_marker_why": "the owner, 2026-10-06: 'A player who beats gym 8 needs to know where to go.' Until tonight this offered the League, which turns the player back at G5 on the Deep's north rim until rift_crisis_resolved, so the one direction the game gave after the Earth Badge was a gate that would not open. The badge carries the stage to giovanni_reveal_complete, so the surveyor's account opens on the first click (dlg_main_rift_surveyor rule 5). The League's marker moved to rift_crisis_resolved. docs/world-building/POST_GYM8_DIRECTION.md",
       "carries_stage": {
         "field": "quest.main_worldshift_reveal.stage",
         "to": "giovanni_reveal_complete",
@@ -345,7 +367,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_champion_blue"
+            "kanto_champion_blue",
+            "kanto_champion_blue_challenge"
           ],
           "johto": [
             "johto_champion_lance"
@@ -369,8 +392,24 @@
         "invoked_at": "line release_001 ('The restraint opens.'), reached by the choice 'Release Hoopa.', shown only at stage cradle_open to a player who has beaten both Captain Brann Saye and Director Elara Venn in the HQ tower (quest.main_worldshift_reveal.brann_defeated and elara_defeated, data/finale_trainers.json, 2026-10-04; the transition requires the same three); NPC npc_main_relic_hall_binder at (3363, 13, 3312) in Hoopa's carved cradle (the hall's relic ring at (3390, 8, 3268) until 2026-10-03), seated by tools/reapply.py step R18RU (data/relic_underground.json geometry.release). The owner, 2026-10-03: 'set it ourselves at the quest stage that ends the Rift crisis'",
         "superseded_invoked_by_owed": "Kept as the plan the binder replaced (Scene 5 at the cradle still waits on the cradle and a verified Hoopa model). Hoopa's release at the cradle: docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213 on the local branch codex/trainer-modes, NOT merged), actor_finale_hoopa at the cradle centre (3357, 12, 3306), player choice 'Release Hoopa.'. It needs the cradle chamber carved (data/deep_city.json reserves its box, nothing carves it) and a data/scenes.json scene whose Hoopa actor opens that conversation. Until then nothing invokes the transition and nobody holds this flag. Set invoked_by to the conversation id when it lands; tests/test_rift_crisis_resolved.py holds the two in step."
       },
+      "offers_marker": "league",
+      "offers_marker_why": "the League opens on this flag (z5), so this is where its waypoint belongs: offered to the releasing player at the cradle, with the hint naming both ways up (the precinct gate on the north rim and Victory Road's caves from the Deep's floor). Moved here from gym8_cleared 2026-10-06 (docs/world-building/POST_GYM8_DIRECTION.md).",
       "why": "Approved in docs/story/ARC.md ('The final story confrontation ends the forced activation and releases Hoopa from the steering mechanism. It sets rift_crisis_resolved', and the League row 'Requires rift_crisis_resolved'). Per player, like every flag here: an advancement, granted by cobblers:flag/rift_crisis_resolved/grant, which the transition's first effect runs as and at the releasing player. It is the gate data/rift_zones.json z5 names.",
       "multiplayer": "per player. Each player releases Hoopa for themselves; a late joiner, a player who died or disconnected keeps or lacks it on their own record. Codex's 'one world transition that advances every eligible player' (Scene 5) is NOT built: it is world-scoped state the dialogue compiler refuses, and an owner call."
+    },
+    {
+      "id": "oak_sendoff",
+      "set_by": {
+        "kind": "quest_transition",
+        "quest": "main_worldshift_reveal",
+        "transition": "record_oak_sendoff",
+        "invoked_by": "dlg_main_pallet_oak",
+        "invoked_at": "line oak_003 ('Come back if the field guide raises questions.'), acknowledged; reached only by a player Cobblemon says has chosen a starter (data/dialogue.json dlg_main_pallet_oak starter_gate). NPC npc_main_pallet_oak at (1493, 118, 5317) in his lab (data/npc_seats.json). The transition's condition (stage not_started) makes it run once per player"
+      },
+      "offers_marker": "gym1_town",
+      "offers_marker_why": "NAVIGATION.md section 6, one gym ahead, starting at the start: every gymN_cleared offers gym N+1's waypoint, and gym 1's is Oak's to offer as he sends the player off (docs/world-building/WALK_P2.md section 2, review N120). Brock's gym is 1,672 blocks north of Oak's seat; until this, Oak's own lines and the Route 1 signs were the only way a player found it.",
+      "why": "A flag only so that its granted reward offers the gym 1 waypoint to the player Oak sends off: an advancement, granted by cobblers:flag/oak_sendoff/grant, which record_oak_sendoff's first effect runs as and at that player. No chapter, zone or gate reads it. Named for the stage value the same transition sets (quest.main_worldshift_reveal.stage oak_sendoff).",
+      "multiplayer": "per player, like every flag here: each player is sent off and offered the waypoint for themselves. A player sent off before this shipped already holds stage oak_sendoff or later, so the transition never runs for them again and they are not offered it; the Route 1 signs still lead them."
     }
   ],
   "chapters": [
@@ -710,6 +749,38 @@
       "scope": "player",
       "initial": "oak_offer_001",
       "allowed_values": "node ids from dlg_main_pallet_oak"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.trainer_mode",
+      "quest_id": "main_worldshift_reveal",
+      "field": "trainer_mode",
+      "type": "enum",
+      "scope": "player",
+      "initial": "unset",
+      "allowed_values": [
+        "unset",
+        "normal",
+        "challenge"
+      ],
+      "why": "Oak's League rules choice (docs/mechanics/OAK_AND_CHALLENGE.md), written once: both transitions that write it (data/quests.json record_trainer_mode_*) require it unset, because rctmod's `player set series` clears a player's rctmod progress on every call (docs/research/RCT_PER_PLAYER_MODE.md section 1). challenge also put the player in rctmod series cobblers_challenge and tagged them cobblers_mode_challenge in the same action; normal changed nothing in rctmod. A player who never chose plays the Normal teams (rctmod's initial series, kanto)."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.oak_greeted",
+      "quest_id": "main_worldshift_reveal",
+      "field": "oak_greeted",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Oak's lab scene (data/scenes.json oak_lab): set when Oak's conversation opened by itself as this player walked into the lab, so it opens once and every later talk is a click on Oak (data/quests.json greet_in_lab)."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.lab_starter_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "lab_starter_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "lab_starter_001",
+      "allowed_values": "node ids from dlg_main_pallet_lab_starter"
     },
     {
       "id": "quest.main_worldshift_reveal.pallet_mina_cursor",
@@ -1866,6 +1937,240 @@
       "why": "the Compact HQ tower's fight 7 of 7 (data/hq_trainers.json, 2026-10-04), set by its rctmod defeat_count advancement (tools/route_trainers.py)"
     },
     {
+      "id": "quest.gym1_junior_01.defeated",
+      "quest_id": "gym1_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 1's junior 1 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym1_junior_02.defeated",
+      "quest_id": "gym1_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 1's junior 2 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym1_junior_03.defeated",
+      "quest_id": "gym1_junior_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 1's junior 3 of 3 (data/gym_junior_trainers.json, added 2026-10-07), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym2_junior_01.defeated",
+      "quest_id": "gym2_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 2's junior 1 of 2 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym2_junior_02.defeated",
+      "quest_id": "gym2_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 2's junior 2 of 2 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym3_junior_01.defeated",
+      "quest_id": "gym3_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 3's junior 1 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym3_junior_02.defeated",
+      "quest_id": "gym3_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 3's junior 2 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym3_junior_03.defeated",
+      "quest_id": "gym3_junior_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 3's junior 3 of 3 (data/gym_junior_trainers.json, added 2026-10-07), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym4_junior_01.defeated",
+      "quest_id": "gym4_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 4's junior 1 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym4_junior_02.defeated",
+      "quest_id": "gym4_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 4's junior 2 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym4_junior_03.defeated",
+      "quest_id": "gym4_junior_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 4's junior 3 of 3 (data/gym_junior_trainers.json, added 2026-10-07), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym5_junior_01.defeated",
+      "quest_id": "gym5_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 5's junior 1 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym5_junior_02.defeated",
+      "quest_id": "gym5_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 5's junior 2 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym5_junior_03.defeated",
+      "quest_id": "gym5_junior_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 5's junior 3 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym6_junior_01.defeated",
+      "quest_id": "gym6_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 6's junior 1 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym6_junior_02.defeated",
+      "quest_id": "gym6_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 6's junior 2 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym6_junior_03.defeated",
+      "quest_id": "gym6_junior_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 6's junior 3 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym6_junior_04.defeated",
+      "quest_id": "gym6_junior_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 6's junior 4 of 4 (data/gym_junior_trainers.json, added 2026-10-07), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym7_junior_01.defeated",
+      "quest_id": "gym7_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 7's junior 1 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym7_junior_02.defeated",
+      "quest_id": "gym7_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 7's junior 2 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym7_junior_03.defeated",
+      "quest_id": "gym7_junior_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 7's junior 3 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym7_junior_04.defeated",
+      "quest_id": "gym7_junior_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 7's junior 4 of 4 (data/gym_junior_trainers.json, added 2026-10-07), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym8_junior_01.defeated",
+      "quest_id": "gym8_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 8's junior 1 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym8_junior_02.defeated",
+      "quest_id": "gym8_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 8's junior 2 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym8_junior_03.defeated",
+      "quest_id": "gym8_junior_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 8's junior 3 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym8_junior_04.defeated",
+      "quest_id": "gym8_junior_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 8's junior 4 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
       "id": "quest.route_04_trainer_01.defeated",
       "quest_id": "route_04_trainer_01",
       "field": "defeated",
@@ -2319,6 +2624,16 @@
       "why": "the dialogue cursor of Bram Ostrow at the Frostpeak research camp (data/frostpeak_camp.json, tools/frostpeak_camp.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
     },
     {
+      "id": "quest.training_services.menu_cursor",
+      "quest_id": "training_services",
+      "field": "menu_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_training_keeper_gym1..gym8 (one shared menu)",
+      "why": "the dialogue cursor of the eight training-ground keepers (data/training_services.json, tools/training_services.py). A menu only: every conversation opens at its hub, the field gates nothing, and the purchases are functions, not quest state."
+    },
+    {
       "id": "quest.coldwater_station.calder_cursor",
       "quest_id": "coldwater_station",
       "field": "calder_cursor",
@@ -2478,6 +2793,24 @@
       ]
     },
     {
+      "id": "quest.ambient_fossil_dig.foreman_cursor",
+      "quest_id": "ambient_fossil_dig",
+      "field": "foreman_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "bed",
+        "seams",
+        "brush",
+        "silt",
+        "machine",
+        "parts",
+        "repeat"
+      ]
+    },
+    {
       "id": "quest.ambient_drovers_hollow.drover_cursor",
       "quest_id": "ambient_drovers_hollow",
       "field": "drover_cursor",
@@ -2531,6 +2864,15 @@
       "why": "grant_reward_once's ONE claim for Kubfu's scroll, shared by grant_scroll_darkness and grant_scroll_waters, so either closes both (data/research_station.json economy.items kubfu_scroll)."
     },
     {
+      "id": "quest.evt_station_director.memories_claimed",
+      "quest_id": "evt_station_director",
+      "field": "memories_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's ONE claim for Silvally's 17 memories, given together by grant_memories, once (data/research_station.json economy.items silvally_memories)."
+    },
+    {
       "id": "quest.evt_station_director.dialogue_cursor",
       "quest_id": "evt_station_director",
       "field": "dialogue_cursor",
@@ -2559,7 +2901,11 @@
         "k010",
         "k011",
         "k020",
-        "k021"
+        "k021",
+        "n001",
+        "n002",
+        "n010",
+        "n011"
       ],
       "why": "the dialogue cursor of Dr. Imogen Vale (dlg_station_director)."
     },
@@ -3203,10 +3549,15 @@
     }
   ],
   "gym_markers": {
-    "why": "NAVIGATION.md section 6, one gym ahead: when gymN_cleared is granted the player is offered a Xaero's waypoint to the next gym, by a chat share they accept with a click. Gym 1's is Oak's to offer at the start (not built). The waypoint points at the middle of the gym building's placed footprint (tools/place_donor.py box). Replaces Cobbleverse's gym maps, which point at naturally generated gyms this world does not have.",
+    "why": "NAVIGATION.md section 6, one gym ahead: when gymN_cleared is granted the player is offered a Xaero's waypoint to the next gym, by a chat share they accept with a click. Gym 1's is Oak's to offer at the start: flag oak_sendoff, granted by his send-off (data/quests.json record_oak_sendoff), offers gym1_town. The waypoint points at the middle of the gym building's placed footprint (tools/place_donor.py box). Replaces Cobbleverse's gym maps, which point at naturally generated gyms this world does not have.",
     "share_format": "xaero-waypoint:<name>:<initials>:<x>:<y or ~>:<z>:<color>:<rotation>:<yaw>:Internal-overworld-waypoints, read from xaerominimap-fabric-1.21.1-26.4.2 WaypointSharingHandler (name 1-32 characters, initials 1-3, no '-', '_' or ':')",
     "color": 14,
     "markers": {
+      "gym1_town": {
+        "placement": "gym1_brock_gym",
+        "name": "Gym 1 Brock",
+        "initials": "G1"
+      },
       "gym2_town": {
         "placement": "gym2_misty_gym",
         "name": "Gym 2 Misty",
@@ -3242,10 +3593,18 @@
         "name": "Gym 8 Giovanni",
         "initials": "G8"
       },
+      "rift_surveyor": {
+        "npc_seat": "npc_main_rift_surveyor",
+        "name": "Rift Surveyor",
+        "initials": "RS",
+        "hint": "Victory Road starts at the Rift trailhead, about a thousand blocks north of Holdfast up the Victory Road signs. The Rift surveyor at its gate knows what the Compact is doing in the Rift.",
+        "why": "the Earth Badge's marker (flags gym8_cleared offers_marker_why): the next story actor, at his seat in data/npc_seats.json. Measured 2026-10-06: the seat (3552, 112, 5334) is 1,082 blocks north of Giovanni's spawner (3565, 120, 6416); the Victory Road signposts from Holdfast's exit (3597, 112, 6420) run past him (victory_road_transition_4 at (3561, 113, 5308)). The hint is a system line, not a character's: Codex owns the surveyor's words"
+      },
       "league": {
         "placement": "league_building",
         "name": "Pokemon League",
-        "initials": "PL"
+        "initials": "PL",
+        "hint": "Hoopa is free, and the League's precinct gate on the Deep's north rim will let you through. Victory Road's caves also climb to the League from the Deep's floor, under its north face."
       }
     }
   },

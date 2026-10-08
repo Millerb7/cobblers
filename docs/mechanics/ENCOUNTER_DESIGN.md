@@ -67,7 +67,7 @@ evolutions forward from that species and gives each stage a level range and a sh
   (tier 7 for a trade)**, in the upper half of the band. This is the mainline shape -- a late cave holds Crobat and
   Golem -- and here it has a second reason: the world has almost no evolution stones (`docs/STATE.md`), so a late
   wild Vileplume or Ludicolo is the only way some players will ever have one.
-- **Naming an evolved species starts the family there**: Victory Road lists `crobat`, not `zubat`; a zone prize
+- **Naming an evolved species starts the family there**: Victory Road lists `noivern`, not `noibat`; a zone prize
   lists `milotic`, not `feebas`.
 
 ## 4. Roles, buckets and how much a table holds
@@ -122,7 +122,7 @@ Togepi, Toedscool, Aerodactyl, Tauros, Miltank, Cyclizar...). A find is never th
 family: the prizes and the cave belong to Victory Road. Finds sit in the rare bucket and the top half of
 the band. **A route corridor never carries a find**, even where it crosses the find's sub-region: the reward belongs
 to the player who leaves the path. The corridor otherwise takes a sub-region's anchor, common and uncommon families
-(at most 20 species per route, `route_species_selection`), and keeps the water families where the route crosses water.
+(20 species per route filled by score, `route_species_selection`), and keeps the water families where the route crosses water. **Every crossed table keeps its three likeliest land families** (`rules.corridor_table_min`, play test 2026-10-05, review 85: a corridor box compiles only its own table's listed species, and Pallet's meadows had lost every slot but Caterpie to the route-wide ranking); the kept species may pass 20, up to `rules.corridor_species_ceiling` 40.
 
 **A route has a rare and an ultra-rare table (the owner, 2026-10-05: "every area should have a rare, ultra rare, and
 boss table"; ruled the same day that a corridor is an area for the rare and ultra-rare tables but carries no heart --
@@ -161,10 +161,27 @@ is Croconaw, Palpitoad, Toxicroak and Stunfisk, where a tier 1 marsh would be Wo
 
 Its eleven pools are rebuilt on the same rules at tier 9: only final or single-stage families, a theme per zone (the
 Drowned Gallery water, the Slagworks fire, the Bloom spores, the Raw Tear psychic and dragon, the Abandoned Cut
-steel), and a small cave staple shared by the themed zones (Crobat, Steelix, Golem) that is never more than a third
+steel), and a small cave staple shared by the themed zones (Noivern, Archaludon, Glimmora) that is never more than a third
 of one. A zone has no anchor: three or four strong families at even weight, so no one species dominates. The owner's named misfits leave it: **Excadrill, Quagsire, Whiscash, Boldore and Graveler** belong to tiers 3-5
-and now live there. The five prizes (Milotic, Garchomp, Tangrowth, Dragapult, Metagross) stay where the owner flew
-them, the only rare-bucket species in their core tiles, at the top of the band like a find (57-60). Levels are 54-60, all under the Victory Road cap of 60: the
+and now live there. The prizes are the only rare-bucket species in their core tiles, at the top of the band like a
+find (57-60): Milotic, Garchomp, Dragapult and Metagross where the owner flew them, and Goodra in the Bloom's core,
+where Tangrowth was (Tangrowth stays in the Bloom as its uncommon).
+
+**Hit after hit (the owner, 2026-10-06, after walking it): "some of the mons in victory road feel underwhelming, it
+should be hit after hit. why is vileplume there? why is breloom? crobat? i think its final starter evos and pseudo
+legendaries or bangers".** Measured from the Cobblemon 1.8.0 jar, the 27 mainline starters' final stages total
+525-535 and the pseudo-legendaries 600, so one rule admits all three kinds: **every Victory Road species is a final
+stage with a base-stat total of 500 or more**, not legendary, mythical, an ultra beast or paradox, never a client doll,
+and never Crobat, Vileplume or Breloom, which the owner named (`rules.victory_road_roster`; Crobat's 535 passes the
+number, so it is out by name). A find's family stays out as section 6 says: Dragonite, Tyranitar, Salamence,
+Hydreigon, Kommo-o and the seven starter lines that are finds remain the off-path tables' rewards, so the fourteen
+starters here are drawn from the twenty lines that are not finds, and the pseudo-legendaries are the four that are not
+(Garchomp, Metagross, Dragapult, Goodra). `tools/build_encounters.py`
+fails closed on a pool row that breaks any of it. The zones now: the plain cave Rhyperior, Swampert, Torterra,
+Infernape, Krookodile, Gallade (rare); the Drowned Gallery Blastoise, Feraligatr, Samurott on land and Starmie,
+Kingdra, Gyarados, Walrein, Dhelmise in the water; the Slagworks Charizard, Typhlosion, Cinderace, Arcanine,
+Volcarona; the Bloom Venusaur, Meganium, Sceptile, Tangrowth; the Raw Tear Delphox, Chandelure, Gardevoir, Alakazam,
+Dusknoir; the Abandoned Cut Aggron, Empoleon, Klinklang, Kingambit. Levels are 54-60, all under the Victory Road cap of 60: the
 old 58-64 made a third of the cave's spawns uncatchable.
 
 ## 8. Targets a test checks (written before the build)

@@ -269,8 +269,13 @@ def test_the_stage_the_release_needs_is_set_in_play_and_admits_the_player_to_the
                      if any(e.get("kind") == "set_progression" and e.get("field") == STAGE and e.get("value") == PENDING
                             for e in t.get("effects") or []))
     assert setters == sorted(["record_rift_crisis_pending", carry])
+    # the story setter reads PENDING's predecessor AND, since 2026-10-07, the same badge the carry and the League beat
+    # name (the owner: "no player reaches the finale without a badge", review N8): without the badge a player who
+    # walked every teller in turn reached the finale with a starter alone
     story = next(t for _q, t in _transitions() if t["id"] == "record_rift_crisis_pending")
-    assert story["conditions"] == [{"kind": "progression_equals", "field": STAGE, "value": before[-1]}]
+    assert sorted(story["conditions"], key=lambda c: c["kind"]) == [
+        {"kind": "flag", "flag": badge},
+        {"kind": "progression_equals", "field": STAGE, "value": before[-1]}]
     assert _calls("record_rift_crisis_pending") == [("dialogue.json", "dlg_main_rift_surveyor", "line rift_007")]
     lift = next(t for _q, t in _transitions() if t["id"] == carry)
     kinds = {c["kind"]: c for c in lift["conditions"]}
@@ -289,6 +294,13 @@ def test_the_stage_the_release_needs_is_set_in_play_and_admits_the_player_to_the
     assert PENDING in relic["geometry"]["hq"]["guard"]["stages"]
     admit = next(t for _q, t in _transitions() if t["id"] == "relic_hq_admit")
     assert any(c.get("kind") == "progression_in" and PENDING in c.get("values", []) for c in admit["conditions"])
+    # ... and the function that admits refuses, before it moves anyone, a player without that badge's advancement
+    # (a player who reached PENDING before the setters were gated is still held to it)
+    import relic_underground as R
+    lines = R.guard_functions(relic)["hq_admit"]
+    lock = "execute unless entity @s[advancements={cobblers:flag/%s=true}] run return fail" % badge
+    tp = next(i for i, l in enumerate(lines) if l.startswith("tp @s "))
+    assert lock in lines and lines.index(lock) < tp, lines
 
 
 def _seat_problems(seat, spec):

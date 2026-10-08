@@ -15,7 +15,11 @@ helpers: every expectation is derived from the data the design owns --
 -- and every behaviour is checked by EXECUTING the emitted .mcfunction files in this file's own small command model
 (World below): scoreboards, tags, storage, macros, execute chains, selectors with distance/scores/advancements, the
 emitted battle_victory callback's own run_command lines, and the two runmolang shapes the pack uses. A command the
-model does not know is a failure, not a skip.
+model does not know is a failure, not a skip. The challenge calls the level-cap pack's battle_check (sweep U54), so the
+flows run that pack too (emitted by tools/levelcap_pack.py for data/level_cap.json, or --levelcap-pack): `execute
+store result score`, `rctmod player get level_cap` (each model player has a cap, or none: the command fails and 0 is
+stored) and party_compare's runmolang on the party's highest level. Its expectation is rctmod's own rule (strictly
+over the cap refuses), not anything the generator computes.
 
 The purse rounding is taken from the data, not from the builder: prizes.purse_formula says "nearest 50 of 13 x
 (level sum)", and rank 8's typical_per_leg (13 x (74+75+76) = 2925, typed as 2900) fixes an exact half as rounding
@@ -28,8 +32,13 @@ NOT COVERED (validity is not runtime behaviour):
     probe proved a win and a loss reach a callback; the exact collections are read from the emitted text, not proven);
   - levelVariation's semantics: taken as VERIFIED "NPC level + 0..levelVariation" from
     docs/research/notes/arena-per-player-opponents.md section 2 (PoolPartyProvider.formulateParty @1.8.0);
-  - the draw constraints a pool cannot express (decisions_pending "draw"), battle rules (`maxItemUses` not applied,
-    decisions_pending "battle_rules"), and whether CobbleDollars also pays an NPC win by itself (Q7);
+  - the draw constraints a pool cannot express (decisions_pending "draw") and battle rules (`maxItemUses` not applied,
+    decisions_pending "battle_rules");
+  - CobbleDollars' own NPC-win payout (unit ARENACAP, flows 10-11) is MODELLED from the jar's bytecode, not seen: which
+    of its handler and Cobblemon's callback runs first (both orders are walked), whether `/cobbledollars pay` can be
+    typed with the battle screen open, and that `execute store result ... run cobbledollars query` stores the balance
+    are experiments/EXP-060-arena-payout. Money moved by ANOTHER source inside a clawback window is measured and
+    printed as EDGE lines, not failed: the balance-delta mechanism cannot tell it from the payout (owner decision);
   - two players, a forfeit, a flee and canChallenge against a click have never been run in a game.
 """
 import argparse
@@ -37,6 +46,7 @@ import itertools
 import json
 import re
 import sys
+import types
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -69,11 +79,21 @@ NOT_MEGA = {"eviolite"}
 # the builder). They still FAIL the audit -- a post that cannot be summoned is an arena nobody can enter -- and are
 # labelled so the reader knows they are reported. tests/test_arena_runtime_audit.py fails when one stops reproducing,
 # so this list is pruned when the builder is fixed.
-KNOWN = {}   # post_coords: fixed in tools/arena_runtime.py posts/place (2026-10-03, the integrating session)
+KNOWN = {    # post_coords: fixed in tools/arena_runtime.py posts/place (2026-10-03, the integrating session)
+    # claw_margin: fixed by e839de0 (CLAW_MARGIN 0); pruned 2026-10-08 (review N143 audit), when the stale entry was
+    # failing tests/test_arena_runtime_audit.py at 3d7237b as well as at 3aaa71e. What is left of it -- cd_bound's
+    # S*S//10 is $4 over the jar's top credit for the rank 3 pool, where the double sum rounds below S*S/10 -- is a
+    # strict xfail in tests/test_arena_clawback_timing.py (this audit's rank 1 check cannot see it: 171 is tight)
+}
 
 
 class AuditError(Exception):
     pass
+
+
+def i32(v):
+    """A Java int: what a scoreboard score and BigInteger.intValue() hold (two's complement, 32 bits)."""
+    return (v + 2 ** 31) % 2 ** 32 - 2 ** 31
 
 
 def doc(p):
@@ -119,6 +139,18 @@ class Expect:
             raise AuditError("data/league_trainers.json names %d 'Lance beaten' advancements: %s" % (len(lance), lance))
         self.flag["rct_defeated:kanto_league_lance"] = lance[0]
         self.prizes = {p["id"]: p for p in f["prizes"]["items"]}
+        # prizes.purse_policy (docs/mechanics/ECONOMY_OVERHAUL.md section 6): a flat repeat purse, at most
+        # daily_cap_wins paid repeats per player per day_ticks of GAME time; CobbleDollars' own payout keeps nothing
+        pol = f["prizes"].get("purse_policy")
+        if not isinstance(pol, dict):
+            raise AuditError("data/arena_fights.json prizes.purse_policy is missing: no repeat purse can be expected")
+        knobs = [pol.get(k) for k in ("repeat_purse", "daily_cap_wins", "day_ticks")]
+        if not all(isinstance(x, int) and not isinstance(x, bool) and x >= 0 for x in knobs) or not knobs[2]:
+            raise AuditError("prizes.purse_policy knobs are not integers >= 0 (day_ticks >= 1): %r" % knobs)
+        self.rep, self.rep_cap, self.day = knobs
+        self.kept_cap = (pol.get("cobbledollars_auto_payout") or {}).get("kept_cap")
+        cd = doc(ROOT / "modpack" / "config" / "cobbledollars" / "common.json")
+        self.cd_mult, self.cd_npc = cd["cobbleDollarsIncomeMultiplier"], cd["earnCobbleDollarsFromNPC"]
 
     # -- per rank
     def band(self, n):
@@ -473,8 +505,9 @@ def check_route_trainers(E, problems):
     # hq_trainers: the Compact HQ tower's seven (2026-10-04), the sixth seat file route_trainers reads. Brann and Elara
     # (data/finale_trainers.json) are NOT seats since the integration of 2026-10-04: they fight as Cobblemon NPCs in
     # the tower (tools/compile_dialogue.py, tools/hq_tower.py), so that file is not read here
+    # and the gym juniors (data/gym_junior_trainers.json, 2026-10-06), seated by the same tool
     for f in ("route_trainers", "late_route_trainers", "mansion_guardians", "vr_trainers", "arena_trainers",
-              "hq_trainers"):
+              "hq_trainers", "gym_junior_trainers"):
         expected += sum(1 for e in doc(DATA / ("%s.json" % f))["trainers"] if "seat" in e and e.get("seated") is not False)
     if len(seats) != expected:
         problems.append("route_trainers: %d seats placed, the seat files carry %d" % (len(seats), expected))
@@ -499,6 +532,26 @@ def blackout_files(pack_dir=None):
     import blackout_pack as B
     return B.build(B.load("blackout.json"), B.load("water_mounts.json"), B.load("placements.json"),
                    B.load("progression.json"), None)
+
+
+def levelcap_pack(pack_dir=None, files=None):
+    """The level-cap pack as its generator emits it for data/level_cap.json (in memory unless a built pack or a files
+    dict is given): its functions ({"ns:path": [lines]}) and its load tag. The arena's challenge calls its battle_check
+    (sweep U54, review N57), so the flows run it; nothing here is an expectation."""
+    if files is None and pack_dir:
+        root = Path(pack_dir)
+        files = {p.relative_to(root).as_posix(): p.read_text(encoding="utf-8") for p in root.rglob("*") if p.is_file()}
+    if files is None:
+        sys.path.insert(0, str(ROOT / "tools"))
+        import levelcap_pack as LC
+        files = LC.files(doc(DATA / "level_cap.json"))
+    fns = {}
+    for rel, t in files.items():
+        m = re.fullmatch(r"data/([a-z0-9_]+)/function/(.+)\.mcfunction", rel)
+        if m:
+            fns["%s:%s" % m.groups()] = t.splitlines()
+    load = json.loads(files.get("data/minecraft/tags/function/load.json", '{"values":[]}'))["values"]
+    return types.SimpleNamespace(functions=fns, load_tag=load)
 
 
 def check_blackout(E, bfiles, problems):
@@ -535,7 +588,14 @@ class Ent:
         self.advs = set(kw.pop("advs", ()))
         self.cls = kw.pop("cls", None)
         self.level = kw.pop("level", None)
+        # a player's RCT level cap (None: `rctmod player get level_cap` fails) and the party's highest level; the
+        # default sits AT the cap, so every flow also walks the strictly-over boundary (sweep U54)
+        self.cap = kw.pop("cap", 50)
+        self.party = kw.pop("party", 50)
         self.money, self.items, self.heals, self.said = [], [], 0, []
+        # bal: the CobbleDollars balance `cobbledollars query` answers; money (above) lists only the arena's own
+        # `cobbledollars give` amounts; removed every amount `cobbledollars remove` actually took
+        self.bal, self.removed = 0, []
         self.__dict__.update(kw)
 
 
@@ -589,10 +649,12 @@ class Return(Exception):
 class World:
     """Just enough of a server to run the emitted functions: players, NPCs, scores, tags, storage, a battle each."""
 
-    def __init__(self, pack, extra_functions=None, refuse=False):
+    def __init__(self, pack, extra_functions=None, refuse=False, levelcap=None):
         self.P = pack
         self.functions = dict(pack.functions)
         self.functions.update(extra_functions or {})
+        # the level-cap pack (levelcap_pack()): the challenge calls its battle_check (sweep U54); its load tag runs too
+        self.functions.update(levelcap.functions if levelcap else {})
         self.ents = []
         self.scores = {}
         self.objectives = set()
@@ -600,14 +662,16 @@ class World:
         self.spawns = []            # (owner uuid, class, level, pos)
         self.stubbed = []           # calls into functions outside the arena that the model does not run
         self.refuse = refuse
+        self.gametime = self.daytime = 0       # the world's clocks: one tick each per tick()
+        self.failed_gets = []                  # `scoreboard players get` of an unset score (a failed command)
         self.callback = self._parse_callback()
         self.depth = 0
-        for f in pack.load_tag:
+        for f in pack.load_tag + (levelcap.load_tag if levelcap else []):
             self.run_function(f, None, None)
 
     # -------- entities
-    def player(self, pos, advs=()):
-        e = Ent("minecraft:player", pos, advs=advs)
+    def player(self, pos, advs=(), cap=50, party=50):
+        e = Ent("minecraft:player", pos, advs=advs, cap=cap, party=party)
         self.ents.append(e)
         return e
 
@@ -759,11 +823,37 @@ class World:
                 e.items.append((t[2], int(t[3])))
             return (False, 1)
         if h == "cobbledollars":
-            if t[1] != "give":
-                raise AuditError("cobbledollars %s" % t[1])
+            # CobbleDollars-fabric-2.0.0+Beta-5.1+1.21.1 CobbleDollarsCommand (javap 2026-10-10): `query <player>`
+            # returns getCobbleDollars(player).intValue(); `give` adds; `remove` subtracts coerceAtMost(amount,
+            # balance) and so never goes below 0; give/remove take BigIntegerArgumentType.bigInt(1)
+            if t[1] == "query" and len(t) == 3:
+                (e,) = self.select(t[2], ent, pos)
+                return (False, i32(e.bal))
+            if t[1] not in ("give", "remove") or len(t) != 4:
+                raise AuditError("cobbledollars %s" % " ".join(t[1:]))
+            n = int(t[3])
+            if n < 1:
+                raise AuditError("cobbledollars %s %d: the jar refuses an amount under 1" % (t[1], n))
             for e in self.select(t[2], ent, pos):
-                e.money.append(int(t[3]))
+                if t[1] == "give":
+                    e.money.append(n)
+                    e.bal += n
+                else:
+                    take = min(n, e.bal)
+                    e.bal -= take
+                    e.removed.append(take)
             return (False, 1)
+        if h == "time":
+            # vanilla 1.21.1 TimeCommand: `query gametime` answers getGameTime() % Integer.MAX_VALUE, `query daytime`
+            # getDayTime() % 24000; `set` / `add` change only the day time (ServerLevel.setDayTime), never game time
+            if t[1] == "query" and t[2] == "gametime":
+                return (False, self.gametime % 2147483647)
+            if t[1] == "query" and t[2] == "daytime":
+                return (False, self.daytime % 24000)
+            if t[1] in ("set", "add"):
+                self.daytime = int(t[2]) if t[1] == "set" else self.daytime + int(t[2])
+                return (False, 1)
+            raise AuditError("time %s" % " ".join(t[1:]))
         if h == "data":
             return self.data(t, ent, pos)
         if h == "spawnnpcat":
@@ -790,6 +880,13 @@ class World:
             return self.molang(line, ent, pos)
         if h == "advancement":
             return (False, 1)
+        if h == "rctmod":
+            # rctmod's `player get level_cap <player>`: its result is the cap; a cap that does not read is a failed
+            # command, and a failed command stores 0 through `execute store result` (vanilla 1.20.3+)
+            if t[1:4] != ["player", "get", "level_cap"] or len(t) != 5:
+                raise AuditError("rctmod command the model does not know: %s" % line)
+            (e,) = self.select(t[4], ent, pos)
+            return (False, 0 if e.cap is None else int(e.cap))
         raise AuditError("a command the model does not know: %s" % line)
 
     def scoreboard(self, t, ent, pos):
@@ -815,7 +912,11 @@ class World:
             (hd,) = self.holders(t[3], ent, pos)
             v = self.score(hd, obj)
             if v is None:
-                raise AuditError("scoreboard get of an unset score %s %s" % (t[3], obj))
+                # vanilla: "Can't get value of <obj> for <holder>; none is set" -- the command FAILS, and since
+                # 1.20.3 a failed command stores 0 through `execute store result` (the rule the rctmod read above
+                # also follows). first_t keys a player's first win at a rank this way (ar.wins not yet set -> w0)
+                self.failed_gets.append((t[3], obj))
+                return (False, 0)
             return (False, v)
         if op == "operation":
             o, src, sobj = t[5], t[6], t[7]
@@ -841,7 +942,7 @@ class World:
                         a = max(a, b)
                     else:
                         raise AuditError("operation %s" % o)
-                    self.set_score(hd, obj, a)
+                    self.set_score(hd, obj, i32(a))       # a score is a Java int: + - * wrap at 32 bits
             return (False, 1)
         raise AuditError("scoreboard players %s" % op)
 
@@ -885,8 +986,12 @@ class World:
                 res = (False, 0)
                 for e, p in ctxs:
                     r = self.command(cmd, e, p)
-                    if store:
-                        self.storage_set(store[0], store[1], r[1])
+                    if store and store[0] == "storage":
+                        self.storage_set(store[1], store[2], r[1])
+                    elif store:
+                        self._obj(store[2])
+                        for hd in self.holders(store[1], e, p):
+                            self.set_score(hd, store[2], r[1])
                     if r[0]:
                         return r
                     res = r
@@ -939,15 +1044,22 @@ class World:
                     raise AuditError("execute %s %s" % (w, k))
                 ctxs = [(e, p) for e, p in ctxs if test(e, p) == (w == "if")]
             elif w == "store":
+                if toks[i + 1:i + 3] == ["result", "score"]:
+                    store = ("score", toks[i + 3], toks[i + 4])
+                    i += 5
+                    continue
                 if toks[i + 1:i + 3] != ["result", "storage"] or toks[i + 5:i + 7] != ["int", "1"]:
                     raise AuditError("execute store %s" % toks[i:i + 7])
-                store = (toks[i + 3], toks[i + 4])
+                store = ("storage", toks[i + 3], toks[i + 4])
                 i += 7
             else:
                 raise AuditError("execute subcommand the model does not know: %s" % w)
         return (False, len(ctxs))
 
     def molang(self, line, ent, pos):
+        one = re.fullmatch(r'runmolang "([^"]*)" (\S+)', line)
+        if one:
+            return self.party_molang(one.group(1), one.group(2), ent, pos)
         m = re.fullmatch(r'runmolang "([^"]*)" (\S+) (\S+)', line)
         if not m:
             raise AuditError("runmolang the model does not read: %s" % line)
@@ -967,6 +1079,20 @@ class World:
                         self.command(tpl.group(1) + p.uuid + tpl.group(2), None, None)
                 else:
                     raise AuditError("molang the model does not read: %s" % code)
+        return (False, 1)
+
+    def party_molang(self, code, ps, ent, pos):
+        """The one single-target shape the level-cap pack uses (party_compare): `(q.player.party.highest_level <op> N)
+        ? { q.run_command(...); } : { q.run_command(...); };` -- a number compare on the party's highest level, then
+        one branch's commands, each a string concatenation with q.player.uuid, run as the server."""
+        m = re.fullmatch(r"\(q\.player\.party\.highest_level (>=|>|<=|<|==) (-?\d+)\) \? \{ (.*) \} : \{ (.*) \};", code)
+        if not m:
+            raise AuditError("molang the model does not read: %s" % code)
+        op, n = m.group(1), int(m.group(2))
+        for p in self.select(ps, ent, pos):
+            hit = {">": p.party > n, ">=": p.party >= n, "<": p.party < n, "<=": p.party <= n, "==": p.party == n}[op]
+            for expr in re.findall(r"q\.run_command\((.*?)\);", m.group(3) if hit else m.group(4)):
+                self.command(self._eval(expr, {"q.player.uuid": p.uuid}), None, None)
         return (False, 1)
 
     # -------- the callback, read from the emitted .molang
@@ -995,9 +1121,14 @@ class World:
                 raise AuditError("callback expression the model does not read: %s" % part)
         return s
 
-    def result(self, player, won, blackout=None):
-        """The battle ends: Cobblemon's battle_victory event, as the emitted callback reads it."""
+    def result(self, player, won, blackout=None, auto=0, order="before"):
+        """The battle ends: Cobblemon's battle_victory event, as the emitted callback reads it. `auto` is
+        CobbleDollars' own credit to the winner (CobbleDollarsEventsKt.battleVictory, subscribed to the same
+        BATTLE_VICTORY at the same Priority.NORMAL as Cobblemon's CallbackHandler, so which runs first is the mods'
+        init order, not fixed by either jar): `order` "before" credits it ahead of the callback, "after" behind it."""
         n = player.foe
+        if won and auto and order == "before":
+            player.bal += auto
         player.in_battle = n.in_battle = False
         STATS["wins" if won else "losses"] += 1
         lists = {"scriptable_losers": [n] if won else [], "player_winners": [player] if won else [],
@@ -1012,6 +1143,8 @@ class World:
                         self.command(self._eval(c, env), None, None)
         if blackout and not won:
             self.run_blackout(player, blackout)
+        if won and auto and order == "after":
+            player.bal += auto
 
     def run_blackout(self, player, fname):
         try:
@@ -1021,6 +1154,8 @@ class World:
 
     def tick(self, n=1):
         for _ in range(n):
+            self.gametime += 1
+            self.daytime += 1
             for f in self.P.tick_tag:
                 self.run_function(f, None, None)
 
@@ -1055,21 +1190,26 @@ def settle(W, player):
     return until(W, lambda: player.in_battle or (W.score(player, "ar.live") or 0) == 0)
 
 
-def fresh(E, P, rank, advs, wins=0, venue=None, bfn=None, refuse=False):
-    W = World(P, extra_functions=bfn, refuse=refuse)
+def fresh(E, P, rank, advs, wins=0, venue=None, bfn=None, refuse=False, levelcap=None, cap=50, party=50):
+    W = World(P, extra_functions=bfn, refuse=refuse, levelcap=levelcap)
     v = E.venues[venue]
-    p = W.player(v["post"][:3], advs)
+    p = W.player(v["post"][:3], advs, cap=cap, party=party)
     if rank is not None:
         W.set_score(p, "ar.rank", rank)
         W.set_score(p, "ar.wins", wins)
     return W, p
 
 
-def check_flows(E, P, bfiles, problems):
+def check_flows(E, P, bfiles, problems, lc=None):
     gym8, champ, lance = (E.flag["gym8_cleared"], E.flag["champion_cleared"],
                           E.flag["rct_defeated:kanto_league_lance"])
     bfn_name = "cobblers:blackout/battle_loss_npc"
     bfn = {bfn_name: bfiles["data/cobblers/function/blackout/battle_loss_npc.mcfunction"].splitlines()}
+    lc = lc if lc is not None else levelcap_pack()
+    module_fresh = fresh
+
+    def fresh_(*a, **kw):                   # every flow's world carries the level-cap pack
+        return module_fresh(*a, levelcap=lc, **kw)
 
     def fail(msg):
         problems.append("flow: " + msg)
@@ -1100,7 +1240,7 @@ def check_flows(E, P, bfiles, problems):
         for rank in sorted(E.ranks):
             for k in range(8):
                 advs = {a for i, a in enumerate((gym8, lance, champ)) if k >> i & 1}
-                W, p = fresh(E, P, rank, advs, venue=venue)
+                W, p = fresh_(E, P, rank, advs, venue=venue)
                 b = len(W.spawns)
                 click(W, p, venue)
                 want = E.offered(venue, rank, advs)
@@ -1131,7 +1271,7 @@ def check_flows(E, P, bfiles, problems):
         venue = venue_of(n)
         # the least a player at this rank holds, and never champion_cleared below rank 5 (it waives the pool)
         advs = {gym8} | ({lance} if n == 4 else set()) | ({champ} if n >= 5 else set())
-        W, p = fresh(E, P, n, advs, venue=venue)
+        W, p = fresh_(E, P, n, advs, venue=venue)
         r = E.ranks[n]
         legs = E.legs(n)
         for run in range(E.need(n)):
@@ -1206,7 +1346,7 @@ def check_flows(E, P, bfiles, problems):
     else:
         n = gl[0]
         venue = venue_of(n)
-        W, p = fresh(E, P, n, full, venue=venue, bfn=bfn)
+        W, p = fresh_(E, P, n, full, venue=venue, bfn=bfn)
         click(W, p, venue)
         until(W, lambda: p.in_battle, 100)
         W.result(p, True, blackout=bfn_name)
@@ -1237,7 +1377,7 @@ def check_flows(E, P, bfiles, problems):
     if va == vb:
         fail("two players: ranks 1 and 5 share venue %s, no second venue to test with" % va)
         return
-    W = World(P)
+    W = World(P, levelcap=lc)
     a = W.player(E.venues[va]["post"][:3], {gym8})
     b = W.player(E.venues[vb]["post"][:3], full)
     W.set_score(b, "ar.rank", 5)
@@ -1274,10 +1414,12 @@ def check_flows(E, P, bfiles, problems):
     # 6. the streak: levels, size, purse, bonus, milestones once, heals, and a loss resets it
     sn, s, _e, _mm = E.streak()
     venue = venue_of(sn)
-    W, p = fresh(E, P, sn, full, venue=venue)
+    W, p = fresh_(E, P, sn, full, venue=venue)
     ms = {x["streak"]: x["prize"] for x in E.ranks[sn].get("milestones", [])}
     every5 = E.ranks[sn]["purse"]["every_5th_win_bonus"]
     top_ms = max(ms) if ms else 10
+    ledger = Repeats(E)
+    best_paid = 0                       # the longest streak whose wins were paid in full (purse_policy: streak)
     for run_len in (top_ms + 1, min(ms) + 1 if ms else 2):
         b, heals0 = len(W.spawns), p.heals
         click(W, p, venue)
@@ -1299,7 +1441,11 @@ def check_flows(E, P, bfiles, problems):
                 break
             money, items, heals = len(p.money), len(p.items), p.heals
             W.result(p, True)
-            want = [E.streak_purse(w)] + ([every5] if (w + 1) % 5 == 0 else [])
+            if w + 1 > best_paid:
+                want = [E.streak_purse(w)] + ([every5] if (w + 1) % 5 == 0 else [])
+                best_paid = w + 1
+            else:                       # a win short of the best paid streak: a repeat, never a bonus
+                want = ledger.pay(W, p)
             if p.money[money:] != want:
                 fail("streak win %d: paid %s, expected %s" % (w + 1, p.money[money:], want))
             pid = ms.get(w + 1)
@@ -1317,43 +1463,301 @@ def check_flows(E, P, bfiles, problems):
             fail("streak lost: streak %s best %s rank %s" % (W.score(p, "ar.streak"), W.score(p, "ar.best"),
                                                               W.score(p, "ar.rank")))
 
-    # 7. playing down: an exhibition pays a quarter purse (the purse's own 50 grain) and no clear bonus
+    # 7. playing down: a bout below the player's own rank pays the flat repeat purse under the daily cap, never a
+    # bonus, and counts nothing (purse_policy; the quarter-purse exhibition was retired, ECONOMY_OVERHAUL section 6)
+    down = []
     for n in sorted(E.ranks):
         if E.is_streak(n):
             continue
         venue = venue_of(n)
         rank = max(r for r in E.ranks if E.offered(venue, r, full) == n)
-        if rank - n < 2:
+        if rank - n < 1:
             continue
-        W, p = fresh(E, P, rank, full, venue=venue)
+        down.append((n, venue, rank))
+        W, p = fresh_(E, P, rank, full, venue=venue)
+        ledger = Repeats(E)
         click(W, p, venue)
         for leg in range(E.legs(n)):
             until(W, lambda: p.in_battle, 100)
             money = len(p.money)
             W.result(p, True)
-            paid = p.money[money:]
-            if len(paid) != 1 or abs(paid[0] * 4 - E.pool_leg_purse(n)) > 2 * E.step:
-                fail("exhibition rank %d (player %d) leg %d: paid %s, a quarter of %d is %s"
-                     % (n, rank, leg, paid, E.pool_leg_purse(n), E.pool_leg_purse(n) / 4))
+            paid, want = p.money[money:], ledger.pay(W, p)
+            if paid != want:
+                fail("playing down rank %d (player %d) leg %d: paid %s, the repeat rule pays %s"
+                     % (n, rank, leg, paid, want))
             settle(W, p)
         if W.score(p, "ar.wins") != 0:
-            fail("exhibition rank %d counted toward rank %d's wins" % (n, rank))
+            fail("playing down rank %d counted toward rank %d's wins" % (n, rank))
+    if not down:
+        fail("playing down: no venue offers a rank below one a player can hold, so the repeat rule never ran")
 
     # 8. a refused start: the run ends, no opponent, no tag
-    W, p = fresh(E, P, 1, {gym8}, venue=venue_of(1), refuse=True)
+    W, p = fresh_(E, P, 1, {gym8}, venue=venue_of(1), refuse=True)
     click(W, p, venue_of(1))
     until(W, lambda: (W.score(p, "ar.live") or 0) == 0 and not W.npcs(), 100)
     if W.npcs() or E.bout_tag in p.tags or W.score(p, "ar.live"):
         fail("a refused start left opponent %d, tag %s, live %s" % (len(W.npcs()), E.bout_tag in p.tags,
                                                                    W.score(p, "ar.live")))
 
+    # 9. the level cap (sweep U54, review N57). An arena opponent is a cobblemon:npc, outside rctmod's own over-cap
+    # refusal, so the challenge must apply rctmod's rule itself: a party whose highest level is STRICTLY over the
+    # player's RCT cap is refused (canBattleAgainst's test; data/level_cap.json's "decision" for a catch), at the cap
+    # is matched (every flow above runs at 50/50), and before anything spawns or heals. A refused player whose party
+    # is back under is matched on the next click (no trap); a stale refusal tag refuses nobody; a cap that does not
+    # read lets the challenge through (the direction a catch takes: failing closed would shut every venue).
+    def cap_click(venue, rank, cap, party, tags=(), W=None, p=None):
+        if W is None:
+            W, p = fresh_(E, P, rank, full, venue=venue, cap=cap, party=party)
+        p.tags |= set(tags)
+        b, heals = len(W.spawns), p.heals
+        click(W, p, venue)
+        started = until(W, lambda: p.in_battle, 100)
+        return W, p, bool(spawned(W, b)) and started, p.heals - heals
+
+    for venue in E.venues:
+        rank = min((r for r in E.ranks if E.offered(venue, r, full) is not None), default=None)
+        if rank is None:
+            continue
+        W, p, ok, heals = cap_click(venue, rank, 30, 31)
+        if ok or W.npcs() or heals or W.score(p, "ar.live"):
+            fail("cap: a party at 31 over a cap of 30 at %s: matched %s, %d opponent(s), %d heal(s), live %s"
+                 % (venue, ok, len(W.npcs()), heals, W.score(p, "ar.live")))
+        shown = [W.score(p, o) for s in p.said for o in re.findall(r'"objective":"([^"]+)"', s)]
+        if 30 not in shown:
+            fail("cap: the refusal at %s does not show the player's cap of 30 (scores shown %s)" % (venue, shown))
+        refusal_tags = set(p.tags)
+        p.party = 30
+        W, p, ok, _h = cap_click(venue, rank, None, None, W=W, p=p)
+        if not ok:
+            fail("cap: a refused player back at the cap (30/30) is still refused at %s: a trap" % venue)
+        for cap in (30, None):
+            W, p, ok, _h = cap_click(venue, rank, cap, 20, tags=refusal_tags)
+            if not ok:
+                fail("cap: a stale refusal tag %s refuses an under-cap party at %s (cap %s)"
+                     % (sorted(refusal_tags), venue, cap))
+        W, p, ok, _h = cap_click(venue, rank, None, 100)
+        if not ok:
+            fail("cap: a cap that does not read refuses the challenge at %s (it must fail open, as a catch does)"
+                 % venue)
+
+    check_clawback(E, P, fresh_, fail, down, venue_of, full, problems)
+    check_daily_cap(E, P, fresh_, fail, down, full)
+
+
+# ---- money: the repeat ledger, CobbleDollars' own payout, the daily clock
+
+EDGES = []      # measured, reported, NOT failed: behaviour the design accepts as a known edge or the owner must decide
+
+
+class Repeats:
+    """The repeat rule as the DATA states it (prizes.purse_policy.repeat_rule): a flat repeat_purse, at most
+    daily_cap_wins paid per player per period, the period being game time // day_ticks. Kept here per player, from
+    the model world's clock at the moment of the win -- never from the pack's scores."""
+
+    def __init__(self, E):
+        self.E, self.seen = E, {}
+
+    def pay(self, W, p):
+        per = W.gametime // self.E.day
+        was, n = self.seen.get(p.id, (per, 0))
+        n = n if was == per else 0
+        if not self.E.rep or n >= self.E.rep_cap:
+            self.seen[p.id] = (per, n)
+            return []
+        self.seen[p.id] = (per, n + 1)
+        return [self.E.rep]
+
+
+def cd_credit(E, P, npc, extreme):
+    """CobbleDollars' own credit for beating `npc` (CobbleDollarsEventsKt.battleVictory, bytecode 370-567):
+    B = max(1, int(5 * S * sum(L / 50.0))) over the loser's battle team, amount = B + nextIntBetweenInclusive(B / 2,
+    B * 2), credit = BigDecimal(String.valueOf(amount * multiplier)).toBigInteger(). `extreme` "max" is the largest
+    the class can make it (every member at level + levelVariation, the top random draw), "min" the smallest (every
+    member at the spawn level, the bottom draw). From the CLASS FILE and the jar's formula, not the generator."""
+    party = P.classes[npc.cls]["party"]
+    if party["type"] == "pool":
+        var = party["pool"][0].get("levelVariation", 0)
+        lv = [npc.level + (var if extreme == "max" else 0)] * int(party["maxPokemon"])
+    else:
+        lv = [int(re.search(r"level=(\d+)", m).group(1)) for m in party["pokemon"]]
+    b = max(1, int(5 * sum(lv) * sum(x / 50.0 for x in lv)))
+    amount = b + (b * 2 if extreme == "max" else b // 2)
+    from decimal import Decimal
+    return int(Decimal(repr(amount * float(E.cd_mult))))
+
+
+def least_advs(E, n):
+    """The least a player at rank n holds, never champion_cleared below rank 5 (it waives the pool): flow 2's rule."""
+    return ({E.flag["gym8_cleared"]} | ({E.flag["rct_defeated:kanto_league_lance"]} if n == 4 else set())
+            | ({E.flag["champion_cleared"]} if n >= 5 else set()))
+
+
+def check_clawback(E, P, fresh_, fail, down, venue_of, full, problems):
+    """10. CobbleDollars pays every NPC win by itself; on an arena win the pack takes that back (kept_cap 0), whichever
+    handler runs first, and pays only its own purse: the balance moves by exactly what the arena gave. Walked for a
+    first win (rank 1), a gauntlet's chained legs, and a repeat (playing down), at both extremes of the credit."""
+    if not E.cd_npc:
+        return
+    if E.kept_cap != 0:
+        fail("clawback: purse_policy.cobbledollars_auto_payout.kept_cap is %r, the design's is 0" % E.kept_cap)
+    gaunt = min((n for n in E.ranks if not E.is_streak(n) and E.legs(n) > 1), default=None)
+    cases = [("first win, rank 1", 1, venue_of(1), 1, least_advs(E, 1))]
+    if gaunt is not None:
+        cases.append(("gauntlet rank %d" % gaunt, gaunt, venue_of(gaunt), gaunt, least_advs(E, gaunt)))
+    if down:
+        n, venue, rank = down[0]
+        cases.append(("repeat, rank %d played at rank %d" % (n, rank), n, venue, rank, full))
+    for what, n, venue, rank, advs in cases:
+        for order in ("before", "after"):
+            for extreme in ("max", "min"):
+                W, p = fresh_(E, P, rank, advs, venue=venue)
+                p.bal = 50000
+                click(W, p, venue)
+                for leg in range(E.legs(n)):
+                    if not until(W, lambda: p.in_battle, 100):
+                        fail("clawback %s leg %d: the bout never started" % (what, leg))
+                        break
+                    credit = cd_credit(E, P, p.foe, extreme)
+                    bal, money, removed = p.bal, len(p.money), len(p.removed)
+                    W.result(p, True, auto=credit, order=order)
+                    settle(W, p)
+                    gave, took = sum(p.money[money:]), sum(p.removed[removed:])
+                    if p.bal - bal != gave or took != credit:
+                        fail("clawback %s leg %d (CobbleDollars %s the callback, credit %d at its %s): balance moved "
+                             "%+d, the arena gave %d; took back %d of CobbleDollars' %d"
+                             % (what, leg, order, credit, extreme, p.bal - bal, gave, took, credit))
+                if W.score(p, "ar.live"):
+                    W.result(p, False)
+                    settle(W, p)
+    # never more than CobbleDollars could have paid: a large transfer from another source lands in the same window,
+    # and what is taken may not exceed the jar's own maximum for that opponent (purse_policy's mechanism: "never more
+    # than the most CobbleDollars could credit"). The maximum is cd_credit's, from the class and the jar, exact
+    for order in ("before", "after"):
+        W, p = fresh_(E, P, 1, least_advs(E, 1), venue=venue_of(1))
+        p.bal = 50000
+        click(W, p, venue_of(1))
+        until(W, lambda: p.in_battle, 100)
+        top = cd_credit(E, P, p.foe, "max")
+        p.bal += 100000
+        W.result(p, True, auto=top, order=order)
+        settle(W, p)
+        if sum(p.removed) > top:
+            over = sum(p.removed) - top
+            msg = ("clawback (CobbleDollars %s the callback): took %d, more than CobbleDollars could pay for that "
+                   "opponent (%d, the jar's maximum)" % (order, sum(p.removed), top))
+            if "claw_margin" in KNOWN and over <= 3:
+                problems.append("KNOWN claw_margin: " + msg)
+            else:
+                fail(msg)
+
+    # the first purse once: a gauntlet at the player's own rank lost after leg 1, then run again -- leg 1 is now a
+    # repeat (the flat purse), leg 2 still a first (its full purse)
+    if gaunt is not None:
+        W, p = fresh_(E, P, gaunt, least_advs(E, gaunt), venue=venue_of(gaunt))
+        ledger = Repeats(E)
+        click(W, p, venue_of(gaunt))
+        until(W, lambda: p.in_battle, 100)
+        m0 = len(p.money)
+        W.result(p, True)
+        settle(W, p)
+        W.result(p, False)
+        settle(W, p)
+        first = p.money[m0:]
+        click(W, p, venue_of(gaunt))
+        paid = []
+        for leg in range(2):
+            until(W, lambda: p.in_battle, 100)
+            m = len(p.money)
+            W.result(p, True)
+            paid.append(p.money[m:])
+            settle(W, p)
+        last = E.legs(gaunt) == 2 and E.clear_bonus(gaunt)          # leg 2 ends the run: the first clear's bonus
+        want = [ledger.pay(W, p), [E.pool_leg_purse(gaunt)] + ([E.clear_bonus(gaunt)] if last else [])]
+        if first != [E.pool_leg_purse(gaunt)] or paid != want:
+            fail("first purse once: rank %d leg 1 paid %s, then on a second run legs 1-2 paid %s; the policy %s then %s"
+                 % (gaunt, first, paid, [E.pool_leg_purse(gaunt)], want))
+
+    # a loss: CobbleDollars pays a loser nothing and the arena takes nothing
+    W, p = fresh_(E, P, 1, least_advs(E, 1), venue=venue_of(1))
+    p.bal = 50000
+    click(W, p, venue_of(1))
+    until(W, lambda: p.in_battle, 100)
+    W.result(p, False)
+    settle(W, p)
+    if p.bal != 50000 or p.removed:
+        fail("clawback: a LOSS moved the balance to %d (took %s)" % (p.bal, p.removed))
+
+    # the edges: money from or to ANOTHER source while a clawback window is open. Measured and reported, not failed
+    # (prizes.purse_policy.cobbledollars_auto_payout.known_edges names the first two; the owner decides)
+    def walk(order, mid=0, post=0):
+        W, p = fresh_(E, P, 1, least_advs(E, 1), venue=venue_of(1))
+        p.bal = 50000
+        click(W, p, venue_of(1))
+        until(W, lambda: p.in_battle, 100)
+        credit = cd_credit(E, P, p.foe, "min")
+        p.bal += mid                    # a teammate's `cobbledollars pay` (+) or the player's own pay out (-)
+        bal0, money = p.bal - mid, len(p.money)
+        W.result(p, True, auto=credit, order=order)
+        p.bal += post                   # the same inside the 2 s after the win, before the clear-up's second look
+        settle(W, p)
+        return p.bal - bal0 - sum(p.money[money:]) - mid - post, credit
+    for order in ("before", "after"):
+        kept, credit = walk(order, mid=1000)
+        if kept < 0:
+            EDGES.append("clawback (CobbleDollars %s the callback): a 1000 transfer TO the player during the battle "
+                         "loses %d of the player's own money" % (order, -kept))
+        kept, credit = walk(order, post=1000)
+        if kept < 0:
+            EDGES.append("clawback (CobbleDollars %s the callback): a 1000 transfer TO the player in the 2 s after the "
+                         "win loses %d of the player's own money" % (order, -kept))
+        for when in ("mid", "post"):
+            kept, credit = walk(order, **{when: -credit})
+            if kept > 0:
+                EDGES.append("clawback (CobbleDollars %s the callback): the player paying %d away %s keeps %d of "
+                             "CobbleDollars' %d credit (a partner can pay it back; repeat wins are not capped by this)"
+                             % (order, credit, "during the battle" if when == "mid" else "in the 2 s after the win",
+                                kept, credit))
+
+
+def check_daily_cap(E, P, fresh_, fail, down, full):
+    """11. The repeat cap's clock is GAME time (`time query gametime`, which only ticking advances): daily_cap_wins
+    paid repeats a period, none after; `time set` / `time add` (day time only) never reset it; the next period does."""
+    if not down or not E.rep or not E.rep_cap:
+        return
+    n, venue, rank = min(down, key=lambda d: E.legs(d[0]))
+    W, p = fresh_(E, P, rank, full, venue=venue)
+
+    def win():
+        click(W, p, venue)
+        until(W, lambda: p.in_battle, 100)
+        money = len(p.money)
+        W.result(p, True)
+        settle(W, p)
+        if W.score(p, "ar.live"):           # a gauntlet leg: end the run so the next click starts a new one
+            W.result(p, False)
+            settle(W, p)
+        return sum(p.money[money:])
+    W.gametime = E.day * 7 + 1              # inside one period, far from its end
+    paid = [win() for _ in range(E.rep_cap + 1)]
+    if paid != [E.rep] * E.rep_cap + [0]:
+        fail("daily cap: %d repeats in one period paid %s, the policy %s" % (len(paid), paid,
+                                                                          [E.rep] * E.rep_cap + [0]))
+    W.command("time set 0", None, None)
+    W.command("time add 24000", None, None)
+    if win() != 0:
+        fail("daily cap: `time set` / `time add` reset the repeat cap (it must follow game time)")
+    W.gametime = E.day * 8 + 1
+    if win() != E.rep:
+        fail("daily cap: the next period (game time %d) pays no repeat" % W.gametime)
+
 
 # ===================================================================================================== the report
 
-def audit(pack_dir=PACK, dome_path=DOME, blackout_pack_dir=None, route=True):
+def audit(pack_dir=PACK, dome_path=DOME, blackout_pack_dir=None, route=True, levelcap_pack_dir=None):
     problems = []
     for k in STATS:
         STATS[k] = 0
+    del EDGES[:]
     E = Expect(dome_path)
     check_data(E, problems)
     P = Pack(pack_dir)
@@ -1364,7 +1768,7 @@ def audit(pack_dir=PACK, dome_path=DOME, blackout_pack_dir=None, route=True):
     if route:
         check_route_trainers(E, problems)
     try:
-        check_flows(E, P, bfiles, problems)
+        check_flows(E, P, bfiles, problems, levelcap_pack(levelcap_pack_dir))
     except AuditError as e:
         problems.append("model: %s" % e)
     return problems
@@ -1375,14 +1779,17 @@ def main(argv=None):
     ap.add_argument("--pack", default=str(PACK))
     ap.add_argument("--dome", default=str(DOME))
     ap.add_argument("--blackout-pack", default=None, help="a built cobblers_blackout (default: emitted in memory)")
+    ap.add_argument("--levelcap-pack", default=None, help="a built cobblers_levelcap (default: emitted in memory)")
     a = ap.parse_args(argv)
     try:
-        problems = audit(Path(a.pack), Path(a.dome), a.blackout_pack)
+        problems = audit(Path(a.pack), Path(a.dome), a.blackout_pack, levelcap_pack_dir=a.levelcap_pack)
     except AuditError as e:
         print("arena_runtime_audit: FAIL -- %s" % e)
         return 1
     for pr in problems:
         print("  PROBLEM %s" % pr)
+    for ed in EDGES:
+        print("  EDGE %s" % ed)
     print("  ran: %(clicks)d post clicks, %(wins)d won and %(losses)d lost battles in the command model" % STATS)
     known = sum(1 for pr in problems if pr.startswith("KNOWN"))
     if problems:
@@ -1390,7 +1797,7 @@ def main(argv=None):
               % (len(problems), known, "; ".join(sorted(KNOWN))))
         return 1
     print("arena_runtime_audit: ok -- classes, venues, posts, ladder, purses, prizes, gauntlets, streak, two players, "
-          "blackout exemption and the retired champions, all against the data")
+          "blackout exemption, the level-cap refusal and the retired champions, all against the data")
     return 0
 
 

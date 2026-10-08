@@ -6,7 +6,8 @@
   "consumed_by": "tools/mythical_starters.py (check, build -> build/datapacks/cobblers_mythical_starters, measure); modpack/config/cobblemon/starters.json must offer exactly config_entries() of this record",
   "aspects": {
     "stage_1": "cobblers_starter_1",
-    "stage_2": "cobblers_starter_2"
+    "stage_2": "cobblers_starter_2",
+    "stage_3": "cobblers_starter_3"
   },
   "levels": {
     "start": 5,
@@ -18,12 +19,48 @@
     "status": "BUILT 2026-10-03, not observed in game: data/research_station.json economy.items kubfu_scroll. The Director (dlg_station_director r_scroll, k001-k021) gives ONE scroll of the player's choice, once (one claim, quest.evt_station_director.scroll_claimed), behind gym5_cleared, the one switch economy.issuing, and the tag cobblers_station_kubfu that the station pack's party callback keeps on a player whose party holds this line's Kubfu in either starter form (economy.kubfu_check). The fields below from here to what_it_needs are the record as it stood before the build, kept: the gate was PROPOSED there and is DECIDED in kubfu_scroll.gate_why (cap 45 arrives with the fifth badge, docs/mechanics/PROGRESSION_LADDER.md 4.1); why_both is superseded, one scroll of the player's choice being the choice itself (the orchestrator's brief, 2026-10-03, on the owner's 7.5); the owner's question 'every player or only a Kubfu player' was answered by that brief: only a Kubfu player.",
     "built_as": "data/research_station.json economy.items kubfu_scroll and economy.kubfu_check; data/quests.json evt_station_director grant_scroll_darkness and grant_scroll_waters; data/dialogue.json dlg_station_director; data/rewards.json station_director; tools/research_station.py kubfu_callback_text",
     "decision": "The owner, 2026-10-02 (docs/mechanics/NATIVE_STARTERS_COST.md section 7.5): Shrew Station hands out Kubfu's scrolls; the point is 45, when Kubfu's final evolution opens.",
-    "items": ["cobblemon:scroll_of_darkness", "cobblemon:scroll_of_waters"],
+    "items": [
+      "cobblemon:scroll_of_darkness",
+      "cobblemon:scroll_of_waters"
+    ],
     "why_both": "The scroll IS the Single Strike / Rapid Strike choice: the stage-2 form's two item_interact evolutions (this file, starter_kubfu) each take one scroll at level 45, so a player needs both in hand to have a choice.",
     "where_it_would_go": "data/research_station.json economy.items, one record in the shape of the feather and dew records there (id, item, route, levels), given by the Director's dialogue through tools/research_station.py, behind that file's one switch economy.issuing (false today, held for the owner and the test author).",
     "proposed_gate": "cobblers:flag/gym5_cleared (data/progression.json gym5_cleared): the cap reaches 45 only on the leg to gym 6, so a scroll given earlier does nothing for a starter Kubfu, and holding it back keeps it out of reach of a wild Kubfu, whose native scroll evolution has no level requirement. PROPOSED, not decided.",
-    "what_it_needs": ["the items record and its route text in data/research_station.json", "a Director dialogue option and a grant function emitted by tools/research_station.py, once per player", "tools/research_station_audit.py and tests/test_research_station.py updated by their owners (the test pins every item as held today)", "the owner's word on the gate and on whether every player or only a Kubfu player is given them"],
+    "what_it_needs": [
+      "the items record and its route text in data/research_station.json",
+      "a Director dialogue option and a grant function emitted by tools/research_station.py, once per player",
+      "tools/research_station_audit.py and tests/test_research_station.py updated by their owners (the test pins every item as held today)",
+      "the owner's word on the gate and on whether every player or only a Kubfu player is given them"
+    ],
     "already_true": "data/blackout.json excludes both scrolls from its consumables (docs/research/NATIVE_STARTERS_1_8_0.md section 3c)."
+  },
+  "typenull_memories": {
+    "line": "starter_typenull",
+    "status": "BUILT 2026-10-08, not observed in game: data/research_station.json economy.items silvally_memories. The Director (dlg_station_director r_memory, n001-n011; r_memory_locked, n100) gives ALL 17 memories together, once (one claim, quest.evt_station_director.memories_claimed), behind gym5_cleared, the one switch economy.issuing, and the tag cobblers_station_silvally that the station pack's second party callback keeps on a player whose party holds this line's Type: Null in either starter form, or a Silvally in any form (economy.silvally_check).",
+    "built_as": "data/research_station.json economy.items silvally_memories, economy.tags.silvally_partner and economy.silvally_check; data/quests.json evt_station_director grant_memories and reward_station_silvally_memories; data/progression.json quest.evt_station_director.memories_claimed; data/dialogue.json dlg_station_director r_memory, r_memory_locked, n001-n011, n100; data/rewards.json station_director; tools/research_station.py silvally_callback_text",
+    "decision": "The owner, 2026-10-08: 'Silvally should get memories from the same lady as Urshifu's scrolls'; asked how many: all 17 memories, at badge 5, once.",
+    "items": [
+      "mega_showdown:bug_memory",
+      "mega_showdown:dark_memory",
+      "mega_showdown:dragon_memory",
+      "mega_showdown:electric_memory",
+      "mega_showdown:fairy_memory",
+      "mega_showdown:fighting_memory",
+      "mega_showdown:fire_memory",
+      "mega_showdown:flying_memory",
+      "mega_showdown:ghost_memory",
+      "mega_showdown:grass_memory",
+      "mega_showdown:ground_memory",
+      "mega_showdown:ice_memory",
+      "mega_showdown:poison_memory",
+      "mega_showdown:psychic_memory",
+      "mega_showdown:rock_memory",
+      "mega_showdown:steel_memory",
+      "mega_showdown:water_memory"
+    ],
+    "items_verified": "17 assets/mega_showdown/models/item/<type>_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar, read 2026-10-08 from the server snapshot of 2026-10-05; the Cobblemon 1.8.0 jar ships no memory item, only Silvally's 17 type forms (aspects <type>-memory) and the rks_memory feature",
+    "why_all": "Swapping memories is Silvally's identity: its type follows the memory it holds, so one memory would fix it to one type.",
+    "still_held": "data/markets.json keeps all 17 lines held (no counter sells them); their why names the Director as the source."
   },
   "starter_category": {
     "name": "cobblers_mythical",
@@ -88,6 +125,7 @@
   "lines": [
     {
       "id": "starter_cosmog",
+      "tagline": "The late bloomer: a drifting wisp for most of the road, then a sun or a moon at the end of it.",
       "potent_at": {
         "gyms": [
           6,
@@ -209,6 +247,7 @@
     },
     {
       "id": "starter_kubfu",
+      "tagline": "Fast out of the gate, then two scrolls and one choice: which kind of fighter it becomes.",
       "potent_at": {
         "gyms": [
           1,
@@ -323,6 +362,7 @@
     },
     {
       "id": "starter_typenull",
+      "tagline": "The closer: plain and patient through the middle of the journey, then any type it remembers, its memories earned in the story.",
       "potent_at": {
         "gyms": [
           8
@@ -421,6 +461,7 @@
     },
     {
       "id": "starter_poipole",
+      "tagline": "A small poison with a sharp midgame, grown into a dragon that gets stronger with every knockout.",
       "potent_at": {
         "gyms": [
           4
@@ -529,6 +570,7 @@
     },
     {
       "id": "starter_meltan",
+      "tagline": "A nut of living steel that shrugs off poison and grows into a heavy-fisted giant.",
       "potent_at": {
         "gyms": [
           5
@@ -609,6 +651,381 @@
               "id": "cobblers_starter_meltan_melmetal",
               "variant": "level_up",
               "result": "melmetal unaspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 45
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "starter_larvesta",
+      "tagline": "A fragile ember, four times weak to Rock, that repays the wait as a sun moth with Quiver Dance.",
+      "potent_at": {
+        "gyms": [
+          3,
+          4,
+          6
+        ],
+        "peak_gym": 4,
+        "why": "The moth. Bug/Fire is 4x weak to Rock, so it loses Brock outright (the owner accepts it: a Larvesta player catches something for gym 1). From 30 the grown form's Signal Beam (28) and Flamethrower (33) carry Surge and Erika; Volcarona at 45 takes Sabrina with Bug Buzz, and Quiver Dance arrives on that step (the jar's own evolution move) and in the pool at 45. Blaine is its wall. The moves lean special for Volcarona (135 SpA), though the two earlier forms keep Larvesta's physical shape, so Flame Wheel, Bug Bite and Leech Life stay."
+      },
+      "final": [
+        "volcarona"
+      ],
+      "learnset_from": [
+        "larvesta",
+        "volcarona"
+      ],
+      "moves": [
+        "1:ember",
+        "1:stringshot",
+        "6:flamecharge",
+        "12:strugglebug",
+        "18:flamewheel",
+        "24:bugbite",
+        "28:signalbeam",
+        "33:flamethrower",
+        "36:leechlife",
+        "40:gigadrain",
+        "42:bugbuzz",
+        "45:quiverdance"
+      ],
+      "stages": [
+        {
+          "stage": 1,
+          "species": "larvesta",
+          "form": "Starter",
+          "aspect": "cobblers_starter_1",
+          "shape_from": "larvesta",
+          "bst": 330,
+          "baseStats": {
+            "hp": 51,
+            "attack": 78,
+            "defence": 50,
+            "special_attack": 46,
+            "special_defence": 50,
+            "speed": 55
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_larvesta_stage2",
+              "variant": "level_up",
+              "result": "larvesta unaspect=cobblers_starter_1 aspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 30
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "species": "larvesta",
+          "form": "Starter-Grown",
+          "aspect": "cobblers_starter_2",
+          "shape_from": "larvesta",
+          "bst": 430,
+          "baseStats": {
+            "hp": 66,
+            "attack": 101,
+            "defence": 66,
+            "special_attack": 60,
+            "special_defence": 66,
+            "speed": 71
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_larvesta_volcarona",
+              "variant": "level_up",
+              "result": "volcarona unaspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [
+                "quiverdance"
+              ],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 45
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "starter_smeargle",
+      "tagline": "An adaptive and despicable choice of your own fate.",
+      "potent_at": {
+        "gyms": [
+          3,
+          4,
+          7
+        ],
+        "peak_gym": 3,
+        "why": "The painter, played as a fast pivot (the owner, 2026-10-08; docs/research/notes/smeargle-pivot.md): it attacks first for a Protean type, U-turns out, and comes back as something else. Its movepool is what it Sketches. Stages 1 and 2 keep the old 74/79/60/79/60/98 shape at 330 and 430 and only the final takes the pivot spread 92/68/78/68/78/92 at 476 (the owner, 2026-10-08: \"old-shape-early\"). So built it measured 20/35 against the gym leaders (field 15-20; `python tools/mythical_starters.py measure`, 2026-10-08), the top of the field with Cosmog and Misdreavus, Sketching only the moves of earlier gym leaders' teams, with Gen 9 Protean modelled as one type per duel: 9 at gyms 1-5 and 11 at gyms 6-8. With all three stages in the pivot spread it measured 21/35. The sim models no U-turn switch (battle_sim leaves selfSwitch moves out), so the pivot itself is not in the number. Erika (4/4) and Blaine (4/5) are its best gyms, Surge its weakest (1/4: Magneton only); Giovanni falls to Surf, Moonblast and Thunderbolt (5/6). EXP-065 plays the pivot against Sabrina, Lorelei and Agatha."
+      },
+      "final": [],
+      "learnset_from": [
+        "smeargle"
+      ],
+      "moves": [
+        "1:sketch",
+        "1:furyswipes",
+        "10:falseswipe",
+        "20:seismictoss",
+        "27:meanlook",
+        "33:flamethrower",
+        "40:sleeptalk",
+        "tm:uturn"
+      ],
+      "tm_additions": [
+        {
+          "move": "uturn",
+          "decision": "The owner, 2026-10-08: Smeargle is a fast pivot (docs/research/notes/smeargle-pivot.md); add U-turn to its TM list so the native TM Machine can teach it from a bug gem without Sketch.",
+          "mechanism": "Read in the Cobblemon 1.8.0 jar: a `tm:` learnset entry goes into Learnset.tmMoves (the static `tm` interpreter); FormData.getMoves returns the form's own learnset when it sets `moves`; TechnicalMachineItem refuses with tms.cannot_learn unless pokemon.getForm().getMoves().tmLearnableMoves() contains the move, and TechnicalMachine.filterTms filters the machine by the same list. The disc is data/cobblemon/tms/uturn.json (7 bug gems and a Shed Shell, cobblemon:unlockable). Not run in game: EXP-065."
+        }
+      ],
+      "moves_why": "Smeargle's 1.8.0 learnset is Sketch at 1 and nine tutor, legacy and special entries (falseswipe, flamethrower, captivate, sleeptalk, furyswipes, meanlook, odorsleuth, seismictoss, spore), read from the jar's generation2/smeargle.json. Seven are spread across the levels: Fury Swipes at 1 so the level-5 starter can attack, False Swipe at 10 for catching, Seismic Toss at 20 (damage equal to its level, whatever its Attack), Mean Look at 27, Flamethrower at 33 (its one strong special move, 79 SpA at 45) and Sleep Talk at 40. Left out on purpose: Spore (the owner, 2026-10-08: Spore and Shell Smash arrive only through Sketch), Captivate and Odor Sleuth (no use here). One TM entry, `tm:uturn` (tm_additions: the owner, 2026-10-08, the fast pivot), so the native TM Machine teaches U-turn without Sketch. Everything else is Sketch's: the movepool is what the player shows it.",
+      "superseded_sketch_cap_why": "OFF for now (the owner, 2026-10-08: \"remove the cap for smeargle's sketch for now\"). Sketch is unlimited again; the design is kept below so it can be switched back on by renaming the key to sketch_cap (docs/research/notes/sketch-cap-1.8.0.md).",
+      "superseded_sketch_cap": {
+        "uses": 10,
+        "count_on": "dmax_level",
+        "armed_aspect": "cobblers_sketch_armed",
+        "messages": {
+          "counted": "Your Smeargle copied a move with Sketch ({used} of {cap}).",
+          "spent": "Your Smeargle has used Sketch {cap} times. From now on, Sketch will fail."
+        },
+        "decision": "The owner, 2026-10-08: Sketch kept in every form and capped at 10 uses per Pokemon ('if it is cheap, do it at 10'); docs/research/notes/sketch-cap-1.8.0.md designs it. The count rides on the Pokemon's saved dmax_level, so it goes with the Pokemon through the PC, a trade and a restart; a datapack override of Showdown's Sketch fails once it is 10; three battle callbacks count. It applies to every Pokemon that uses Sketch, wild-caught Smeargle included.",
+        "does_not_cover": [
+          "a battle that ends with no callback (/stopbattle, a crash) after which the player re-slots Sketch before the next battle: that one Sketch goes uncounted (sketch-cap-1.8.0.md section 3; in the player's favour)",
+          "Mega Showdown's Dynamax Candy raises dmax_level too, so it spends a Smeargle's Sketches",
+          "an NPC trainer's Smeargle starts at 0 every battle and is never counted",
+          "the cap and the counting have not run in game: EXP-065"
+        ]
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "species": "smeargle",
+          "form": "Starter",
+          "aspect": "cobblers_starter_1",
+          "shape": {
+            "hp": 74,
+            "attack": 79,
+            "defence": 60,
+            "special_attack": 79,
+            "special_defence": 60,
+            "speed": 98
+          },
+          "shape_why": "The owner, 2026-10-08: \"take old-shape-early Smeargle at 476\": stages 1 and 2 keep the earlier 74/79/60/79/60/98 spread; only the final (45) takes the pivot spread.",
+          "bst": 330,
+          "baseStats": {
+            "hp": 54,
+            "attack": 58,
+            "defence": 44,
+            "special_attack": 58,
+            "special_defence": 44,
+            "speed": 72
+          },
+          "abilities": [
+            "protean",
+            "h:protean"
+          ],
+          "evolutions": [
+            {
+              "id": "cobblers_starter_smeargle_stage2",
+              "variant": "level_up",
+              "result": "smeargle unaspect=cobblers_starter_1 aspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 30
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "species": "smeargle",
+          "form": "Starter-Grown",
+          "aspect": "cobblers_starter_2",
+          "shape": {
+            "hp": 74,
+            "attack": 79,
+            "defence": 60,
+            "special_attack": 79,
+            "special_defence": 60,
+            "speed": 98
+          },
+          "shape_why": "The owner, 2026-10-08: \"take old-shape-early Smeargle at 476\": stage 2 keeps the earlier 74/79/60/79/60/98 spread, as stage 1 does.",
+          "bst": 430,
+          "baseStats": {
+            "hp": 71,
+            "attack": 76,
+            "defence": 57,
+            "special_attack": 75,
+            "special_defence": 57,
+            "speed": 94
+          },
+          "abilities": [
+            "protean",
+            "h:protean"
+          ],
+          "evolutions": [
+            {
+              "id": "cobblers_starter_smeargle_stage3",
+              "variant": "level_up",
+              "result": "smeargle unaspect=cobblers_starter_2 aspect=cobblers_starter_3",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 45
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "species": "smeargle",
+          "form": "Starter-Final",
+          "aspect": "cobblers_starter_3",
+          "shape": {
+            "hp": 92,
+            "attack": 68,
+            "defence": 78,
+            "special_attack": 68,
+            "special_defence": 78,
+            "speed": 92
+          },
+          "bst": 476,
+          "baseStats": {
+            "hp": 92,
+            "attack": 68,
+            "defence": 78,
+            "special_attack": 68,
+            "special_defence": 78,
+            "speed": 92
+          },
+          "abilities": [
+            "protean",
+            "h:protean"
+          ],
+          "evolutions": []
+        }
+      ]
+    },
+    {
+      "id": "starter_misdreavus",
+      "tagline": "A little ghost that teases its way down the road, until the thing it was haunting steps out of the past: a paradox at full strength from the day it arrives.",
+      "potent_at": {
+        "gyms": [
+          2,
+          5,
+          7
+        ],
+        "peak_gym": 7,
+        "why": "The ghost. Measured 20/35 against the gym leaders (field 15-20; `python tools/mythical_starters.py measure`, 2026-10-08), the top of the field with Cosmog. Confusion and Disarming Voice scrape one win off Brock; Hex and Psybeam take Misty's Horsea and Lombre; Mismagius at 30 carries Koga with Dazzling Gleam and Psybeam (3/5); Flutter Mane at 45 (135 SpA and Speed) takes Sabrina with Shadow Ball and Blaine with Psybeam and Dazzling Gleam (4/5 each). Surge and Erika are its weak gyms. Moonblast and Power Gem were tried in the pool and left out: with them it measured 21/35, above the field. Protosynthesis is not modelled (battle_sim has no such ability), and Flutter Mane learns Sunny Day at 1, which switches it on."
+      },
+      "final": [
+        "fluttermane"
+      ],
+      "final_why": "The owner, 2026-10-08: Misdreavus -> Mismagius -> Flutter Mane, the starter line only. Flutter Mane is not Mismagius's evolution in the jar (Mismagius has `evolutions: []`; Flutter Mane has none and no `preEvolution`), so the 45 step is a CROSS-SPECIES evolution into an unrelated species: an evolution's result is a free PokemonProperties string (jar Evolution.evolutionMethod clones, then getResult().apply(pokemon); Pokemon.setSpecies writes only the species field, then updateAspects, updateForm, checkGender, updateHP and attemptAbilityUpdate). Flutter Mane is `implemented` by COBBLEVERSE-DP-v31 data/cobblemon/species_additions/fluttermane.json, not by the bare jar. Wild Misdreavus and Mismagius carry no starter aspect, so they keep their own (Dusk Stone) evolution and never reach Flutter Mane; and the starter's Misdreavus form never takes a Dusk Stone, because a form's evolutions are its own set or empty, never the species' (jar FormData.getEvolutions: `_evolutions ?: LinkedHashSet()`); paradoxes stay dungeon content everywhere else (docs/STATE.md). Until the AllTheMons models ship (ADR-006) Flutter Mane renders as the placeholder doll.",
+      "models_pending": {
+        "species": [
+          "fluttermane"
+        ],
+        "why": "The owner, 2026-10-08, chose to ship the AllTheMons models for Flutter Mane; that delivery waits on the licence (docs/decisions/ADR-006-server-delivered-client-pack.md, 'Prepared and verified'). Until it ships, Flutter Mane renders as the placeholder doll in game. tools/player_guide_starters.py says so in the starter page's 'What this page leaves out'; remove a species from this list when its model reaches players."
+      },
+      "learnset_from": [
+        "misdreavus",
+        "mismagius",
+        "fluttermane"
+      ],
+      "moves": [
+        "1:astonish",
+        "1:confusion",
+        "10:disarmingvoice",
+        "14:confuseray",
+        "21:hex",
+        "25:psybeam",
+        "27:willowisp",
+        "29:drainingkiss",
+        "32:mysticalfire",
+        "36:dazzlinggleam",
+        "41:shadowball",
+        "43:calmmind"
+      ],
+      "moves_why": "A Ghost/Fairy special set, every move in the 1.8.0 learnset of Misdreavus, Mismagius or Flutter Mane (the jar's generation2/misdreavus.json, generation4/mismagius.json, generation9/fluttermane.json). Astonish and Confusion at 1 (Misdreavus's own) so the level-5 starter can attack; Disarming Voice (Flutter Mane TM) at 10 for Fairy before the final; Confuse Ray at 14; Hex at 21 and Will-O-Wisp at 27 pair (Hex doubles on a burned target), both after Brock's cap of 20; Psybeam at 25; Draining Kiss (Misdreavus TM) at 29; Mystical Fire (Mismagius's level-1 move) at 32, just after the step to Mismagius; Dazzling Gleam at 36 (Flutter Mane's own level 35); Shadow Ball at 41, after Koga's cap of 40; Calm Mind at 43. Left out on purpose: Moonblast (Flutter Mane's level 84) and Power Gem (measured 21/35 with both, above the field), Memento and Perish Song. After 45 Flutter Mane's own learnset takes over: Mystical Fire 49, Power Gem 56, Psyshock 63, Moonblast 84.",
+      "stages": [
+        {
+          "stage": 1,
+          "species": "misdreavus",
+          "form": "Starter",
+          "aspect": "cobblers_starter_1",
+          "shape_from": "misdreavus",
+          "bst": 330,
+          "baseStats": {
+            "hp": 46,
+            "attack": 46,
+            "defence": 46,
+            "special_attack": 64,
+            "special_defence": 64,
+            "speed": 64
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_misdreavus_stage2",
+              "variant": "level_up",
+              "result": "mismagius unaspect=cobblers_starter_1 aspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 30
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "species": "mismagius",
+          "form": "Starter",
+          "aspect": "cobblers_starter_2",
+          "shape_from": "mismagius",
+          "bst": 430,
+          "baseStats": {
+            "hp": 52,
+            "attack": 52,
+            "defence": 52,
+            "special_attack": 92,
+            "special_defence": 91,
+            "speed": 91
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_misdreavus_fluttermane",
+              "variant": "level_up",
+              "result": "fluttermane unaspect=cobblers_starter_2",
               "consumeHeldItem": false,
               "learnableMoves": [],
               "requirements": [

@@ -1,12 +1,18 @@
 # ADR-006: One client resource pack, delivered by the server
 
-- **Status:** Proposed. The owner asked for it on 2026-09-26: "one pack, one delivery, and write the ADR". The
-  hosting choice is still open (below).
+- **Status:** Proposed. The owner asked for it on 2026-09-26: "one pack, one delivery, and write the ADR". On
+  2026-10-08 the owner gave the go-ahead to ship the AllTheMons models ("Starter line, ship ATM models"), so Flutter
+  Mane and the other dolls render. Accepting this ADR, the hosting choice (below) and the licence permission
+  (below) are still the owner's; everything up to hosting is prepared ("Prepared and verified, 2026-10-08").
 - **Date:** 2026-09-26
 - **Evidence:**
   - `docs/research/COBBLEVERSE_COMPATIBILITY.md`, "Client model audit, 2026-09-26";
   - `docs/research/notes/install-sweep-2026-09-26.md`;
   - `base-pack/cobbleverse/licenses/AllTheMons x Mega Showdown - License.txt`.
+
+## Delivery decided (the owner, 2026-10-08)
+
+"The players will get it, this pack won't go public." The pack is handed to our players directly, not hosted at a public URL, so the `server.properties` resource-pack delivery below is not used: each player copies the built `cobblers-client-AllTheMons-subset.zip` into their instance's `resourcepacks/`, and our overlay (`modpack/config/resourcepackoverrides.json`) enables it above COBBLEVERSE RP. The status stays Proposed until it is seen working in game (Flutter Mane, Iron Valiant and the 11 dolls rendering).
 
 ## Context
 
@@ -44,7 +50,8 @@ delivery question.
   §1.3 says: "Only with explicit written permission can the User ... upload copies of the Software", modified or
   unmodified. Hosting the subset at a URL is an upload. **The AllTheMons files (265 derived, 263 shipped) cannot be
   server-delivered without written permission from the author (Lvnatic).** The zip is built locally only
-  (`build/client/cobblers-client-AllTheMons-subset.zip`, sha1 `dfdd4f81…`, deterministic).
+  (`build/client/cobblers-client-AllTheMons-subset.zip`, sha1 `dfdd4f8118a66ff854d23a1e5c2f7651ff042e97`,
+  deterministic).
   - **Option 1:** ask Lvnatic in writing, for a private, non-monetized server with credit. The pack is already built
     for that, with "AllTheMons" in its name and `CREDITS.md` and `LICENSE-AllTheMons.md` inside.
   - **Option 2:** redistribute nothing from AllTheMons. Every player already has `ATMxMSD RP.zip` from Cobbleverse,
@@ -56,6 +63,60 @@ delivery question.
     Cobblemon's *assets* are covered by it is NOT VERIFIED.
 - **Checked like everything else.** `tools/install_check.py` will verify that `server.properties`' sha1 matches the
   built pack, so a stale or missing pack fails the same way an uninstalled datapack does.
+
+## Prepared and verified, 2026-10-08
+
+After the owner's go-ahead. Nothing was hosted, uploaded or applied to a server.
+
+- **The pack, rebuilt:** `python tools/client_model_fix.py build --server-pack --instance
+  "C:/Users/wnd/AppData/Roaming/ModrinthApp/profiles/Fabric 1.21.10"` (the client instance the tool documents, read
+  only; the build writes nothing there). 1,468,971 bytes, sha1 `dfdd4f8118a66ff854d23a1e5c2f7651ff042e97`: byte for
+  byte the 2026-09-26 build. 303 entries: 36 Cobblemon files, 263 ATMxMSD files for 43 species, plus `pack.mcmeta`,
+  `CREDITS.md`, `LICENSE-AllTheMons.md` and `cobblers-client-pack.json`. The derived path list matched the committed
+  `modpack/manifest/client-pack-atm-subset.json`; the donor `ATMxMSD RP.zip` there has the recorded sha256
+  `6d48b792…`, identical to the copy in `C:/Users/wnd/Documents/github/cobblers/COBBLEVERSE/resourcepacks/`.
+- **Flutter Mane and Iron Valiant are in it, complete:** for each, the resolver (`0_<name>_base.json`), model
+  (`<name>.geo.json`), poser, animation file and three textures (base, shiny, emissive; Flutter Mane's emissive file
+  is spelled `fluttermane_emmisive.png`, as its resolver names it). Every model, poser and texture their resolvers
+  name is in the pack.
+- **The 11 dolls in our tables are in it:** Vullaby, Mandibuzz, Oranguru, Passimian, Gulpin, Swalot, Charjabug,
+  Grubbin, Vikavolt, Greavard, Bombirdier, each with resolver, model, poser and textures (5 to 8 files). Six of them
+  ship no animation file of their own: their posers' animation groups resolve elsewhere in the stack, which the build
+  checks and fails on otherwise.
+- **The species side is ready on the server.** In `Cobblemon-fabric-1.8.0+1.21.1.jar` (server snapshot 2026-10-05),
+  `species/generation9/fluttermane.json` and `ironvaliant.json` carry no `implemented` key. `COBBLEVERSE-DP-v31.zip`
+  `data/cobblemon/species_additions/fluttermane.json` and `ironvaliant.json` set `implemented: true`, and the DP
+  ships `spawn_pool_world/0987_fluttermane.json` and `1006_ironvaliant.json`. The DP is force-loaded from
+  `datapacks/` by Global Packs (relayed: `base-pack/cobbleverse/config/global_packs.toml`, not re-read). So their species and spawn data are live today, and they render as dolls only for want of a
+  model. Not seen in game.
+- **The licence verdict is unchanged: hosting needs Lvnatic's written permission.** The licence that ships in the
+  donor (and is copied into our pack) is v3.2, which by its §4 covers releases after 2026-03-30. §1.3: "Only with explicit written
+  permission can the User ... upload copies of the Software. This includes ... redistributing modified or unmodified
+  copies of the Software publicly". A URL every client can fetch without login is public distribution by its own
+  definition ("hosting, uploading, publishing, or otherwise providing access through websites, file-sharing services
+  ... public repositories"). §1.1 (non-commercial use) is satisfied: no store, no donations. Credit is already in
+  the pack (`pack.mcmeta` `credits`, `CREDITS.md`, `LICENSE-AllTheMons.md`, "AllTheMons" in the file name) and in
+  the prompt. §1.3's second paragraph (permission from third-party asset creators) concerns *altered* artistic
+  assets; ours are copied unaltered. The v3.1 in `base-pack/cobbleverse/licenses/` would allow redistribution with
+  "AllTheMons" in the title, but it does not govern this release. Not legal advice. **So the owner's hosting choice
+  is between: (a) ask Lvnatic in writing, then host as below; or (b) the v4.0 Modrinth reference (above), which
+  uploads nothing.**
+- **The server side, written, not applied:** `server/config/server.properties.example` carries
+  `require-resource-pack=true`, `resource-pack=` (empty: the URL placeholder), `resource-pack-sha1=dfdd4f81…`, the
+  fixed `resource-pack-id=43566b60-4e01-549a-95d3-2592c69f3454` (uuid5, URL namespace,
+  `cobblers:client-pack/cobblers-client-AllTheMons-subset`) and a `resource-pack-prompt` JSON text component with the
+  AllTheMons credit. All five keys are in the Minecraft 1.21.1 jar's dedicated-server properties class (`apo.class`),
+  along with "Failed to parse resource pack prompt '{}'", which is why the prompt is JSON. The owner's steps are in
+  `server/README.md`, "Client pack". `tests/test_server_client_pack.py` checks the example against this ADR,
+  `CLIENT_MODEL_FIXES.md` and any built pack's `.sha1`.
+- **The client overlay does not change.** `modpack/config/resourcepackoverrides.json` keeps `ATMxMSD RP.zip` out of
+  `default_packs` (it has only a `pack_overrides` title). A server pack sits above the client's packs, but it does not
+  remove what a lower pack contributes: an enabled 3.6.1 would still load its Mega Mewtwo resolver, which names
+  models Mega Showdown 1.0.2 does not have, and that broke the first 1.8 reload. The subset ships no Mega Mewtwo
+  resolver, so leaving the full pack disabled is what keeps the fix.
+- **Not verified:** that the client downloads and applies the pack, that a Flutter Mane renders and animates, and
+  that `require-resource-pack=true` with an empty URL sends nothing (the vanilla behaviour, not read in bytecode).
+  `install_check.py` does not yet compare the live `resource-pack-sha1` with the example.
 
 ## Distribution by a Modrinth pack (researched 2026-09-26)
 

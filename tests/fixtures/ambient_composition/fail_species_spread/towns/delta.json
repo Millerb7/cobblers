@@ -1,0 +1,369 @@
+{
+ "settlement": "delta",
+ "size": "town",
+ "character": "delta's own roster",
+ "workers": [
+  {
+   "id": "delta_work_00",
+   "settlement": "delta",
+   "species": "geodude",
+   "level": 15,
+   "job": "carry",
+   "interact": "The geodude hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_01",
+   "settlement": "delta",
+   "species": "onix",
+   "level": 15,
+   "job": "carry",
+   "interact": "The onix hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_02",
+   "settlement": "delta",
+   "species": "drilbur",
+   "level": 15,
+   "job": "carry",
+   "interact": "The drilbur hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_03",
+   "settlement": "delta",
+   "species": "rhyhorn",
+   "level": 15,
+   "job": "carry",
+   "interact": "The rhyhorn hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_04",
+   "settlement": "delta",
+   "species": "nosepass",
+   "level": 15,
+   "job": "carry",
+   "interact": "The nosepass hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_05",
+   "settlement": "delta",
+   "species": "geodude",
+   "level": 15,
+   "job": "carry",
+   "interact": "The geodude hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_06",
+   "settlement": "delta",
+   "species": "onix",
+   "level": 15,
+   "job": "carry",
+   "interact": "The onix hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_07",
+   "settlement": "delta",
+   "species": "drilbur",
+   "level": 15,
+   "job": "carry",
+   "interact": "The drilbur hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_08",
+   "settlement": "delta",
+   "species": "rhyhorn",
+   "level": 15,
+   "job": "carry",
+   "interact": "The rhyhorn hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_09",
+   "settlement": "delta",
+   "species": "nosepass",
+   "level": 15,
+   "job": "carry",
+   "interact": "The nosepass hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_10",
+   "settlement": "delta",
+   "species": "geodude",
+   "level": 15,
+   "job": "carry",
+   "interact": "The geodude hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_11",
+   "settlement": "delta",
+   "species": "onix",
+   "level": 15,
+   "job": "carry",
+   "interact": "The onix hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_12",
+   "settlement": "delta",
+   "species": "drilbur",
+   "level": 15,
+   "job": "carry",
+   "interact": "The drilbur hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_13",
+   "settlement": "delta",
+   "species": "rhyhorn",
+   "level": 15,
+   "job": "carry",
+   "interact": "The rhyhorn hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_14",
+   "settlement": "delta",
+   "species": "nosepass",
+   "level": 15,
+   "job": "carry",
+   "interact": "The nosepass hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_15",
+   "settlement": "delta",
+   "species": "geodude",
+   "level": 15,
+   "job": "carry",
+   "interact": "The geodude hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_16",
+   "settlement": "delta",
+   "species": "onix",
+   "level": 15,
+   "job": "carry",
+   "interact": "The onix hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_17",
+   "settlement": "delta",
+   "species": "drilbur",
+   "level": 15,
+   "job": "carry",
+   "interact": "The drilbur hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_18",
+   "settlement": "delta",
+   "species": "rhyhorn",
+   "level": 15,
+   "job": "carry",
+   "interact": "The rhyhorn hauls a load across the yard."
+  },
+  {
+   "id": "delta_work_19",
+   "settlement": "delta",
+   "species": "nosepass",
+   "level": 15,
+   "job": "carry",
+   "interact": "The nosepass hauls a load across the yard."
+  }
+ ],
+ "pets": [
+  {
+   "id": "delta_pet_00",
+   "species": "eevee",
+   "owner": "delta_resident_0",
+   "mode": "follow",
+   "why": "keeps its owner company"
+  },
+  {
+   "id": "delta_pet_01",
+   "species": "larvitar",
+   "owner": "delta_resident_1",
+   "mode": "follow",
+   "why": "keeps its owner company"
+  },
+  {
+   "id": "delta_pet_02",
+   "species": "cubone",
+   "owner": "delta_resident_2",
+   "mode": "follow",
+   "why": "keeps its owner company"
+  }
+ ],
+ "placed": [
+  {
+   "id": "delta_placed_00",
+   "species": "sableye",
+   "spot": "roof",
+   "building": "delta_house_00",
+   "why": "lives there"
+  },
+  {
+   "id": "delta_placed_01",
+   "species": "bronzor",
+   "spot": "roof",
+   "building": "delta_house_01",
+   "why": "lives there"
+  },
+  {
+   "id": "delta_placed_02",
+   "species": "noibat",
+   "spot": "roof",
+   "building": "delta_house_02",
+   "why": "lives there"
+  },
+  {
+   "id": "delta_placed_03",
+   "species": "woobat",
+   "spot": "roof",
+   "building": "delta_house_03",
+   "why": "lives there"
+  },
+  {
+   "id": "delta_placed_04",
+   "species": "smeargle",
+   "spot": "roof",
+   "building": "delta_house_04",
+   "why": "lives there"
+  }
+ ],
+ "situations": [
+  {
+   "id": "delta_pileup",
+   "title": "The mine-cart pile-up",
+   "story": "The mine-cart pile-up.",
+   "unique": true,
+   "at": [
+    0,
+    64,
+    0
+   ],
+   "facing": "north",
+   "members": [
+    {
+     "species": "trapinch",
+     "count": 6,
+     "pose": "still",
+     "offsets": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      [
+       2,
+       0,
+       0
+      ],
+      [
+       3,
+       0,
+       0
+      ],
+      [
+       4,
+       0,
+       0
+      ],
+      [
+       5,
+       0,
+       0
+      ]
+     ]
+    }
+   ],
+   "props": [
+    {
+     "block": "minecraft:rail",
+     "at": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "block": "minecraft:chest",
+     "at": [
+      0,
+      0,
+      1
+     ]
+    }
+   ],
+   "why": "the town's own"
+  },
+  {
+   "id": "delta_lanterns",
+   "title": "Joltik round the lanterns",
+   "story": "Joltik round the lanterns.",
+   "unique": false,
+   "at": [
+    0,
+    64,
+    0
+   ],
+   "facing": "north",
+   "members": [
+    {
+     "species": "joltik",
+     "count": 6,
+     "pose": "still",
+     "offsets": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      [
+       2,
+       0,
+       0
+      ],
+      [
+       3,
+       0,
+       0
+      ],
+      [
+       4,
+       0,
+       0
+      ],
+      [
+       5,
+       0,
+       0
+      ]
+     ]
+    }
+   ],
+   "props": [
+    {
+     "block": "minecraft:lantern",
+     "at": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "why": "the town's own"
+  }
+ ],
+ "counts": {
+  "working": 20,
+  "pets": 3,
+  "placed": 5,
+  "situations": 12,
+  "total": 40
+ },
+ "target": 40
+}

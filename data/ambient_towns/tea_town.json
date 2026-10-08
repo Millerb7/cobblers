@@ -1,0 +1,259 @@
+{
+  "settlement": "tea_town",
+  "size": "town",
+  "target": 47,
+  "character": "Steepside lives on its tea terraces: its Pokemon are Grass and Bug types that pick, water, dry, sew and sweeten, a tea-ghost or two in the cups, and garden life that has moved into the town as if it were one more terrace (a hive with a queen, tumbleweeds against a fence, a row of Exeggcute on a wall). Leaf, flower and orchard species only.",
+  "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/tea_town_plan.json, tea_town_placement.json, derived/plaza_centres/tea_town.json and tools/ground.py (rounded) through tools/ambient.py's Site; y in a situation is the standing y (ground + 1). No worker stands on the square",
+  "workers": [
+    {
+      "id": "tea_oddish_picker",
+      "settlement": "tea_town",
+      "species": "oddish",
+      "level": 22,
+      "job": "work",
+      "at": [2660, 3520],
+      "face": [2665, 3520],
+      "every": 45,
+      "effect": {"particle": "minecraft:composter", "count": 10, "spread": 0.3, "dy": 0.8, "sound": "minecraft:block.azalea_leaves.break", "pitch": 1.3},
+      "interact": "The Oddish is picking the top leaves off the terrace edge and dropping them in a basket bigger than it is."
+    },
+    {
+      "id": "tea_honey_combee",
+      "settlement": "tea_town",
+      "species": "combee",
+      "level": 21,
+      "job": "carry",
+      "route": [[2658, 3545], [2648, 3564]],
+      "carry": "minecraft:honeycomb",
+      "carry_height": 1.2,
+      "pickup": {"sound": "minecraft:block.beehive.work"},
+      "drop": {"sound": "minecraft:block.beehive.drip", "block": "minecraft:honey_block", "count": 6},
+      "interact": "The Combee carries honeycomb from the terrace hives to the tea house kitchen. Two of its three faces watch where it is going."
+    },
+    {
+      "id": "tea_edge_steenee",
+      "settlement": "tea_town",
+      "species": "steenee",
+      "level": 24,
+      "job": "work",
+      "at": [2660, 3550],
+      "face": [2665, 3550],
+      "every": 38,
+      "effect": {"block": "minecraft:azalea_leaves", "count": 10, "sound": "minecraft:block.azalea_leaves.break", "pitch": 1.2},
+      "interact": "The Steenee picks along the terrace edge, kicking each full basket back to the path without looking."
+    },
+    {
+      "id": "tea_seedlings_bellsprout",
+      "settlement": "tea_town",
+      "species": "bellsprout",
+      "level": 21,
+      "job": "work",
+      "at": [2640, 3510],
+      "face": [2640, 3507],
+      "every": 32,
+      "effect": {"block": "minecraft:moss_block", "count": 8, "sound": "minecraft:entity.generic.splash", "pitch": 1.6},
+      "interact": "The Bellsprout waters the new tea seedlings one mouthful at a time, bending all the way down to each."
+    },
+    {
+      "id": "tea_pour_polteageist",
+      "settlement": "tea_town",
+      "species": "polteageist",
+      "level": 28,
+      "job": "work",
+      "at": [2648, 3598],
+      "face": [2648, 3594],
+      "every": 40,
+      "effect": {"block": "minecraft:brown_terracotta", "count": 6, "sound": "minecraft:block.brewing_stand.brew", "pitch": 1.2},
+      "interact": "The tea house's Polteageist pours for the garden tables out of itself. The tea is excellent. Nobody asks."
+    },
+    {
+      "id": "tea_aprons_sewaddle",
+      "settlement": "tea_town",
+      "species": "sewaddle",
+      "level": 20,
+      "job": "work",
+      "at": [2580, 3540],
+      "face": [2583, 3540],
+      "every": 30,
+      "effect": {"block": "minecraft:oak_leaves", "count": 8, "sound": "minecraft:block.grass.hit", "pitch": 1.4},
+      "interact": "The Sewaddle is sewing the pickers' leaf aprons behind the house, chewing each leaf soft before it stitches it."
+    },
+    {
+      "id": "tea_baskets_leavanny",
+      "settlement": "tea_town",
+      "species": "leavanny",
+      "level": 27,
+      "job": "carry",
+      "route": [[2620, 3500], [2621, 3530]],
+      "carry": "minecraft:azalea_leaves",
+      "carry_height": 1.4,
+      "pickup": {"sound": "minecraft:block.azalea_leaves.hit"},
+      "drop": {"sound": "minecraft:block.azalea_leaves.place", "block": "minecraft:azalea_leaves", "count": 8},
+      "interact": "The Leavanny carries the morning's leaf down to the drying racks, wrapped in a leaf of its own so none of it bruises."
+    },
+    {
+      "id": "tea_compost_shroomish",
+      "settlement": "tea_town",
+      "species": "shroomish",
+      "level": 22,
+      "job": "work",
+      "at": [2585, 3552],
+      "face": [2585, 3549],
+      "every": 36,
+      "effect": {"block": "minecraft:mycelium", "count": 10, "sound": "minecraft:block.composter.fill", "pitch": 0.9},
+      "interact": "The Shroomish tends the compost heap, which is where it would choose to be anyway."
+    },
+    {
+      "id": "tea_racks_sunflora",
+      "settlement": "tea_town",
+      "species": "sunflora",
+      "level": 25,
+      "job": "work",
+      "at": [2635, 3555],
+      "face": [2635, 3552],
+      "every": 60,
+      "effect": {"block": "minecraft:hay_block", "count": 8, "sound": "minecraft:block.grass.place", "pitch": 1.1},
+      "interact": "The Sunflora turns the drying trays to follow the sun, turning itself with them."
+    },
+    {
+      "id": "tea_candied_bounsweet",
+      "settlement": "tea_town",
+      "species": "bounsweet",
+      "level": 20,
+      "job": "work",
+      "at": [2618, 3620],
+      "face": [2615, 3620],
+      "every": 30,
+      "effect": {"block": "minecraft:honey_block", "count": 6, "sound": "minecraft:block.honey_block.place", "pitch": 1.3},
+      "interact": "The Bounsweet sits on the sweet-maker's back step sweetening a tray of candied fruit just by sitting near it."
+    },
+    {
+      "id": "tea_petals_cherrim",
+      "settlement": "tea_town",
+      "species": "cherrim",
+      "level": 23,
+      "job": "work",
+      "at": [2598, 3664],
+      "face": [2600, 3664],
+      "every": 42,
+      "effect": {"block": "minecraft:pink_petals", "count": 10, "sound": "minecraft:block.pink_petals.place", "pitch": 1.2},
+      "interact": "The Cherrim sweeps the fallen petals off the terrace road, opening up in the sun between strokes."
+    }
+  ],
+  "pets": [
+    {"id": "tea_picker_budew", "species": "budew", "owner": "npc_stone_tip_tea_town_picker", "mode": "wait", "why": "the picker's Budew sits by her basket, the only bud on the terraces she will not pick"},
+    {"id": "tea_picker_skiploom", "species": "skiploom", "owner": "npc_stone_tip_tea_town_picker", "mode": "follow", "why": "and a Skiploom that drifts after her on a breeze"},
+    {"id": "tea_counter_cottonee", "species": "cottonee", "owner": "steepside", "mode": "wait", "why": "the counter keeper's Cottonee sits on the counter and is used to dust it"},
+    {"id": "tea_front_petilil", "species": "petilil", "owner": "steepside_tea_front", "mode": "wait", "why": "the tea seller's Petilil waits beside the tins; its leaves are said to be good for a cold"},
+    {"id": "tea_front_chikorita", "species": "chikorita", "owner": "steepside_tea_front", "mode": "follow", "why": "and a Chikorita that follows him, sniffing the samples"}
+  ],
+  "placed": [
+    {"id": "tea_roof_volbeat", "species": "volbeat", "spot": "roof", "building": "tea_house_13", "why": "a Volbeat on a ridge of the lower lane, waiting for dusk to signal across the terraces (2026-10-06)"},
+    {"id": "tea_window_illumise", "species": "illumise", "spot": "window", "building": "tea_house_10", "why": "an Illumise in a window two houses away from the Volbeat, which is the point of it (2026-10-06)"},
+    {"id": "tea_roof_hoppip", "species": "hoppip", "spot": "roof", "building": "tea_house_02", "why": "a Hoppip on the ridge, holding on against the wind"},
+    {"id": "tea_gutter_sunkern", "species": "sunkern", "spot": "gutter", "building": "tea_house_05", "why": "a Sunkern in the gutter, as if it had seeded there"},
+    {"id": "tea_window_gossifleur", "species": "gossifleur", "spot": "window", "building": "tea_house_04", "why": "a Gossifleur in the window box, mistaken for the flowers in it"},
+    {"id": "tea_step_seedot", "species": "seedot", "spot": "step", "building": "tea_house_03", "why": "a Seedot on the step, which the household swept off twice before it complained"},
+    {"id": "tea_step_nuzleaf", "species": "nuzleaf", "spot": "step", "building": "tea_house_08", "why": "a Nuzleaf on the step whistling on its leaf"},
+    {"id": "tea_step_spinda", "species": "spinda", "spot": "step", "building": "tea_house_11", "why": "a Spinda on the step, swaying, which is as still as a Spinda gets"},
+    {"id": "tea_walltop_fomantis", "species": "fomantis", "spot": "wall_top", "building": "tea_house_04", "why": "a Fomantis on the wall top with its leaves to the sun"},
+    {"id": "tea_window_comfey", "species": "comfey", "spot": "window", "building": "tea_house_06", "why": "a Comfey in the window, hanging its flower garland on the latch"},
+    {"id": "tea_roof_cutiefly", "species": "cutiefly", "spot": "roof", "building": "tea_house_13", "why": "a Cutiefly on the ridge, reading the gardens' auras"}
+  ],
+  "situations": [
+    {
+      "id": "tea_sinistea_cups",
+      "title": "Tea for eight",
+      "story": "Eight teacups sit in a row on the tea house's back step. Six of them are Sinistea, and the owner has stopped trying to tell which before she pours.",
+      "unique": true,
+      "at": [2661, 112, 3580],
+      "facing": "west",
+      "members": [
+        {"species": "sinistea", "count": 6, "pose": "still", "offsets": [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 4], [0, 0, 5], [0, 0, 6]]}
+      ],
+      "props": [{"block": "minecraft:flower_pot", "at": [0, 0, 3]}, {"block": "minecraft:flower_pot", "at": [0, 0, 7]}],
+      "why": "behind the tea house (east of its anchor, short of the terraces); the two flower pots are the two real cups"
+    },
+    {
+      "id": "tea_vespiquen_court",
+      "title": "The queen holds court",
+      "story": "A Vespiquen has taken the garden behind the drying racks for her own and two Combee wait on her, while the household eats its lunch indoors.",
+      "unique": true,
+      "at": [2640, 114, 3530],
+      "facing": "south",
+      "members": [
+        {"species": "vespiquen", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
+        {"species": "combee", "count": 2, "pose": "still", "offsets": [[2, 0, 1], [-2, 0, 1]]}
+      ],
+      "props": [{"block": "minecraft:bee_nest", "at": [0, 0, -2]}],
+      "why": "the open garden east of the terrace road houses, between the seedling bed and the racks"
+    },
+    {
+      "id": "tea_bramblin_fence",
+      "title": "Blown in",
+      "story": "Three Bramblin rolled down from the upper terraces in the night and fetched up against a garden fence, where they are waiting for a wind going the other way.",
+      "unique": false,
+      "at": [2630, 114, 3544],
+      "facing": "east",
+      "members": [
+        {"species": "bramblin", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [0, 0, 1], [0, 0, 2]]}
+      ],
+      "props": [{"block": "minecraft:oak_fence", "at": [1, 0, 0]}, {"block": "minecraft:oak_fence", "at": [1, 0, 1]}, {"block": "minecraft:oak_fence", "at": [1, 0, 2]}],
+      "why": "open garden ground east of the terrace road, below the terraces"
+    },
+    {
+      "id": "tea_exeggcute_count",
+      "title": "There were five yesterday",
+      "story": "A row of Exeggcute basks along the lake lane by the last house. The picker who passes them every morning swears the number changes.",
+      "unique": true,
+      "at": [2637, 114, 3712],
+      "facing": "south",
+      "members": [
+        {"species": "exeggcute", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [3, 0, 0], [6, 0, 0]]}
+      ],
+      "props": [],
+      "why": "beside the lake lane, west of tea_house_01"
+    },
+    {
+      "id": "tea_poltchageist_chimney",
+      "title": "The smokehouse's second brew",
+      "story": "The smokehouse chimney has started smelling of green tea. A Poltchageist has moved into the chimney pot and steeps itself in the smoke, and the butcher's hams have never tasted better.",
+      "unique": false,
+      "at": [2609, 121, 3518],
+      "facing": "west",
+      "members": [
+        {"species": "poltchageist", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "on the cobblestone-wall chimney pot of tea_house_04 (butcher_shop_1), the column's top block at y120 read from the template as placed, so the feet are y121; something in a chimney, and a tea ghost in the tea town"
+    },
+    {
+      "id": "tea_slowpoke_leaf_bins",
+      "title": "Asleep in the leaf bins",
+      "story": "The pickers tip the morning's leaves into the bins behind the end house. A Slowpoke climbed in on Tuesday and has slept in the leaves ever since; the pickers say it improves the flavour.",
+      "unique": false,
+      "at": [2617, 115, 3612],
+      "facing": "west",
+      "members": [
+        {"species": "slowpoke", "count": 1, "pose": "sleep", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [{"block": "minecraft:composter[level=7]", "at": [0, 0, -2]}, {"block": "minecraft:composter[level=7]", "at": [0, 0, 2]}, {"block": "minecraft:hay_block", "at": [2, 0, 0]}],
+      "why": "the open ground east of tea_house_09 (small_house_2, back wall x2612), feet y115 from the plan; Slowpoke is one of rules.sleeps_by_day's day sleepers, so it may be posed asleep"
+    },
+    {
+      "id": "tea_cherubi_ripening",
+      "title": "Ripe by Sunday",
+      "story": "Three Cherubi have sat in the herb patch behind the corner house for so long that the gardener has started waiting for them to ripen. She says Sunday.",
+      "unique": true,
+      "at": [2581, 116, 3533],
+      "facing": "east",
+      "members": [
+        {"species": "cherubi", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [-1, 0, -2], [0, 0, 3]]}
+      ],
+      "props": [{"block": "minecraft:composter", "at": [-1, 0, 1]}, {"block": "minecraft:melon", "at": [1, 0, -2]}],
+      "why": "the back (west) of tea_house_07 (medium_house_2, which faces east and keeps its own little wheat plot), feet y116 from the plan"
+    }
+  ],
+  "counts": {"working": 11, "pets": 5, "placed": 11, "situations": 20, "total": 47},
+  "notes": "Supersedes idle.towns.tea_town (Slowpoke, Snorlax and Purrloin gone). tea_oddish_picker is kept with its id and record. Eleven workers (two carriers) is over data/ambient.json rules.per_town."
+}

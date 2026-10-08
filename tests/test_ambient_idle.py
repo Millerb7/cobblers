@@ -126,7 +126,13 @@ def plan():
     if not AI.PLAN.is_file() or not idx.is_file():
         pytest.skip("NOT_EXECUTED: the idle pack is not built (python tools/ambient_idle.py build)")
     pl = json.loads(AI.PLAN.read_text(encoding="utf-8"))
+    # a composed town (data/ambient_towns, data/ambient.json composition) follows the composition's rules, not these:
+    # its checks are tests/test_ambient_composed.py's and the composition audit's, so it is left out of this plan
+    composed = set(pl.get("composed") or {})
+    pl["towns"] = {k: v for k, v in pl["towns"].items() if k not in composed}
     for town, spec in IDLE["towns"].items():
+        if town in composed:
+            continue
         want = sorted(s for k in pl["kinds_on"] for s in spec.get(k) or [])
         got = sorted(i["species"] for i in pl["towns"].get(town, []))
         if want != got:
@@ -144,6 +150,8 @@ def test_each_town_holds_what_its_data_says_by_kind_and_stays_under_the_cap():
     for w in WORKERS:
         nw[w["settlement"]] = nw.get(w["settlement"], 0) + 1
     for town, spec in IDLE["towns"].items():
+        if town not in pl["towns"]:
+            continue                                  # a composed town (plan() leaves them out)
         idlers = pl["towns"][town]
         for k in pl["kinds_on"]:
             assert sorted(i["species"] for i in idlers if i["kind"] == k) == sorted(spec.get(k) or []), (town, k)
@@ -314,10 +322,15 @@ def test_the_claims_set_each_kinds_flags():
 
 
 def test_reapply_settles_every_town_and_checks_the_idlers():
-    pl = plan()
+    plan()
+    pl = AI.plan_doc()                                # every town, the composed ones too
     steps = AI.placement_steps()
     keeps = [v for k, v in steps if k == "fn"]
-    assert keeps == ["%s/t/%s/keep" % (F, s) for s in sorted(pl["towns"]) if pl["towns"][s] for _ in (0, 1)]
+    want = []
+    for s in sorted(pl["towns"]):
+        if pl["towns"][s]:
+            want += (["%s/t/%s/props" % (F, s)] if (pl.get("props") or {}).get(s) else []) + ["%s/t/%s/keep" % (F, s)] * 2
+    assert keeps == want
     for k, v in steps:
         if k == "cmd" and v.startswith("forceload add"):
             x0, z0, x1, z1 = (int(t) for t in v.split()[2:])

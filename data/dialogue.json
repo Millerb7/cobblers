@@ -1564,7 +1564,43 @@
         "cursor_is": "next_unread_node"
       },
       "starter_gate": "The owner's priority zero (2026-10-05): Oak gives the starter. modpack/config/cobblemon/starters.json sets allowStarterOnJoin false, so a new player joins starter-locked (Cobblemon 1.8.0 PlayerDataJsonBackend: starterLocked = !allowStarterOnJoin) and the native screen refuses them until Oak's oak_offer_choose runs `openstarterscreen` for them (tools/compile_dialogue.py open_starter_screen). That command unlocks, opens the config's five-way screen, and returns 0 without opening for a player who has already chosen; chooseStarter refuses a second pick (docs/research/notes/starter-selection.md section 5). oak_001 onward, and so record_oak_sendoff, is reached only by a player Cobblemon says has chosen: the starter_chosen entry rule, or the open action's own 0 result.",
+      "mode_choice": "The owner, 2026-10-06: 'Oak offering the mode choice -- the difference explained without the words easy and hard. Codex wrote his dialogue. Build it.' Codex's lines are docs/story/CHALLENGE_GYM_DESIGN.md 'Oak's world-wide choice', written for ONE choice for the whole world; the choice is built PER PLAYER (docs/research/RCT_PER_PLAYER_MODE.md: rctmod's series is per player), so the three lines that said 'this campaign', 'this world' and 'everyone uses it' say 'your journey' and 'yours alone' here, and nothing else is changed. Standard = Normal, Full-Team = Challenge (docs/mechanics/OAK_AND_CHALLENGE.md). The choice sits between the starter and the send-off, and is written once (data/quests.json record_trainer_mode_*). Full-Team is not offered to a player who already holds the Boulder Badge: the series command would wipe their rctmod progress.",
       "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "progression_equals",
+                  "field": "quest.main_worldshift_reveal.trainer_mode",
+                  "value": "unset"
+                }
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+                "values": [
+                  "oak_offer_001",
+                  "oak_offer_002",
+                  "oak_mode_001",
+                  "oak_mode_002",
+                  "oak_mode_003",
+                  "oak_mode_004",
+                  "oak_mode_005",
+                  "oak_mode_confirm_standard",
+                  "oak_mode_confirm_full"
+                ]
+              }
+            ]
+          },
+          "node": "oak_001"
+        },
         {
           "priority": 5,
           "when": {
@@ -1583,7 +1619,7 @@
               }
             ]
           },
-          "node": "oak_001"
+          "node": "oak_mode_001"
         },
         {
           "priority": 10,
@@ -1605,7 +1641,7 @@
           "id": "oak_offer_002",
           "kind": "choice",
           "speaker": "professor_oak",
-          "text": "Five are waiting in the lab. Choose one, and look after it. You only get the one.",
+          "text": "Eight are waiting in the lab. Choose one, and look after it. You only get the one.",
           "responses": [
             {
               "id": "oak_offer_choose",
@@ -1615,7 +1651,7 @@
                   "kind": "open_starter_screen"
                 }
               ],
-              "next": "oak_001"
+              "next": "oak_mode_001"
             },
             {
               "id": "oak_offer_wait",
@@ -1627,6 +1663,150 @@
               ]
             }
           ]
+        },
+        {
+          "id": "oak_mode_001",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Before I send you out, we need to record the League rules your journey will follow.",
+          "next": "oak_mode_002"
+        },
+        {
+          "id": "oak_mode_002",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Under Standard rules, Gym Leaders use focused teams. Their plans are clear, and their held items support the lesson without filling every slot.",
+          "next": "oak_mode_003"
+        },
+        {
+          "id": "oak_mode_003",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Under Full-Team rules, every Gym Leader brings six. Their combinations are tighter, their held items matter, and a prepared answer may need help from the rest of your party.",
+          "next": "oak_mode_004"
+        },
+        {
+          "id": "oak_mode_004",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "The level limits are identical. This changes what each battle asks of you, not how far you may train.",
+          "next": "oak_mode_005"
+        },
+        {
+          "id": "oak_mode_005",
+          "kind": "choice",
+          "speaker": "professor_oak",
+          "text": "This record is yours alone. Once I enter it, it cannot be changed. Which rules should I enter?",
+          "responses": [
+            {
+              "id": "oak_mode_pick_standard",
+              "text": "Use Standard rules.",
+              "next": "oak_mode_confirm_standard"
+            },
+            {
+              "id": "oak_mode_pick_full",
+              "text": "Use Full-Team rules.",
+              "visible_when": {
+                "kind": "not",
+                "condition": {
+                  "kind": "flag",
+                  "flag": "gym1_cleared"
+                }
+              },
+              "next": "oak_mode_confirm_full"
+            },
+            {
+              "id": "oak_mode_think",
+              "text": "Let me think.",
+              "actions": [
+                {
+                  "kind": "set_cursor",
+                  "node": "oak_mode_001"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "oak_mode_confirm_standard",
+          "kind": "choice",
+          "speaker": "professor_oak",
+          "text": "Record Standard rules for your journey? This cannot be changed later.",
+          "responses": [
+            {
+              "id": "oak_mode_record_standard",
+              "text": "Record them.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "record_trainer_mode_normal"
+                }
+              ],
+              "next": "oak_mode_recorded_normal"
+            },
+            {
+              "id": "oak_mode_back_standard",
+              "text": "Let me think.",
+              "actions": [
+                {
+                  "kind": "set_cursor",
+                  "node": "oak_mode_001"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "oak_mode_confirm_full",
+          "kind": "choice",
+          "speaker": "professor_oak",
+          "text": "Record Full-Team rules for your journey? This cannot be changed later.",
+          "responses": [
+            {
+              "id": "oak_mode_record_full",
+              "text": "Record them.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "record_trainer_mode_challenge"
+                }
+              ],
+              "next": "oak_mode_recorded_challenge"
+            },
+            {
+              "id": "oak_mode_back_full",
+              "text": "Let me think.",
+              "actions": [
+                {
+                  "kind": "set_cursor",
+                  "node": "oak_mode_001"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "oak_mode_recorded_normal",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Your League rules are recorded: Standard rules.",
+          "next": "oak_001"
+        },
+        {
+          "id": "oak_mode_recorded_challenge",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Your League rules are recorded: Full-Team rules.",
+          "next": "oak_001"
         },
         {
           "id": "oak_001",
@@ -1653,6 +1833,14 @@
               "transition": "record_oak_sendoff"
             }
           ],
+          "next": "oak_birds"
+        },
+        {
+          "id": "oak_birds",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "One more page for the field guide: birds nest in the great trees. Stand under a big crown and look up. Some kinds nest nowhere else.",
+          "placeholder": "Claude, 2026-10-08 (unit WAY, the owner: 'the sapling hint ... An NPC mentioning birds nesting is enough'): a functional hint for Codex to replace. Measured from data/habitat_blocks.json and data/spawns.json: 6 species spawn only from the tree nests (the elder_* and sapling_* blocks' pools), Bombirdier (elder_marshy_marsh_2), Ledyba and Ledian (elder_foothill_woods_4), Vullaby (elder_wedge_south_1, sapling_desert_long_isle_north), Mandibuzz (elder_wedge_south_1) and Rowlet (elder_south_pine_isle_3); Hoothoot and Starly also nest in trees but spawn in the open too (surface.route1_maze_forest, surface.river_of_shrews_vale). Said once, after the send-off, so every player who leaves Pallet hears it",
           "next": "oak_repeat_before_mismatch"
         },
         {
@@ -1702,6 +1890,42 @@
           "speaker": "professor_oak",
           "text": "Trust the ground before the map. Bring back an account from someone who was outside Pallet.",
           "next": "oak_repeat_after_mismatch"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_pallet_lab_starter",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": null,
+      "source": "docs/mechanics/OAK_AND_CHALLENGE.md (the owner, 2026-10-06: Oak offers the starters in the lab as a scene)",
+      "scope": "player",
+      "opened_by": "the eight starter actors of data/scenes.json oak_lab, standing in the lab for a player who has not chosen; the choice itself is Cobblemon's chooser, opened by Oak",
+      "speakers": {
+        "narration": null
+      },
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.lab_starter_cursor",
+        "initial_node": "lab_starter_001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "lab_starter_001",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "One of the eight Professor Oak keeps in the lab. Talk to him to choose your partner.",
+          "next": "lab_starter_001"
         }
       ]
     },
@@ -2674,7 +2898,15 @@
           "kind": "line",
           "speaker": "marsh tracker",
           "text": "The anchors drift farther each time, and the living thing behind them is called Hoopa.",
-          "next": "koga_repeat"
+          "next": "koga_mega"
+        },
+        {
+          "id": "koga_mega",
+          "kind": "line",
+          "speaker": "marsh tracker",
+          "text": "Megas fight over the south end of the Rift, behind the Victory Road gate, and that gate wants eight badges. Before then, with Sabrina's badge, the Cutters' Gulch lookout on the Rift's east rim, about 2,300 blocks south of here, lets you down to the mine where their stones are cut.",
+          "placeholder": "Claude, 2026-10-08 (unit WAY, U47 'direct the player to the Mega field after Koga'): way-finding for Codex to replace. Measured from data: all 61 Mega dens (data/gulch_mine.json farms, field_*) have their anchor inside data/rift_zones.json z2's boxes, and z2 admits 8 badges (its guard G2 stands at the Victory Road trailhead (3548, 5322)); none is in the gulch zone. The gulch road starts on the plateau at (4392, 126, 4706) and passes the lookout's grille at (4362, 116, 4706) (gulch_mine.json gate.road, gate.grille), 2,274 blocks from Fenhide's centre (4646, 2446), bearing south; the gulch admits cobblers:flag/gym6_cleared (gulch_mine.json flag). So the line promises the field at eight badges and the gulch at Sabrina's. CRITICAL_PATH_WALK_2 item 14's 'open at 6 badges' does not reproduce from the zone boxes. The new end node: koga_repeat (Codex's text unchanged) now leads here, so a player who has finished the account hears it on the next talk",
+          "next": "koga_mega"
         }
       ]
     },
@@ -2913,6 +3145,22 @@
           "why": "holding gym6_cleared with an earlier stage: carry_by_gym6_cleared_to_sabrina_reveal_complete lifts the stage to sabrina_reveal_complete, then the account opens"
         },
         {
+          "priority": 7,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.blaine_cursor",
+            "value": "blaine_repeat"
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "record_crater_operation_stopped"
+            }
+          ],
+          "node": "blaine_repeat",
+          "why": "Claude, 2026-10-09 (unit WB1, U58): a player who heard the whole account before blaine_008 recorded the stop never hears blaine_008 again, so the repeat records it. Granting a held advancement is a no-op and does not re-run its reward, so a repeated click changes nothing."
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2981,9 +3229,14 @@
           "id": "blaine_008",
           "kind": "line",
           "speaker": "crater analyst",
-          "text": "Blaine's challenge remains separate. The badge opens the southern road; shutting down the operation needs its own authoritative record.",
+          "text": "The activation is stopped, and this record says you were here when it stopped. Blaine's challenge remains separate: his badge opens the southern road.",
+          "placeholder": "Claude, 2026-10-09 (unit WB1, U58 / review N9): a functional line for Codex to replace, with the Craters climax it stands in for (docs/story/CAMPAIGN_OUTLINE.md section 4, C1). Codex's line said 'shutting down the operation needs its own authoritative record', a design note spoken in game. The design names the setter's beat ('The player stops the activation; crater_operation_stopped records it', docs/story/FACTION.md:211) but no scene exists, so the analyst's account, which already reports the stop (blaine_006-007), is the record: acknowledging this line runs record_crater_operation_stopped (data/quests.json) before complete_blaine_reveal. Codex's line: 'Blaine's challenge remains separate. The badge opens the southern road; shutting down the operation needs its own authoritative record.' Reversible: drop the first action and restore the text.",
           "next": "blaine_repeat",
           "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "record_crater_operation_stopped"
+            },
             {
               "kind": "quest_transition",
               "transition": "complete_blaine_reveal"
@@ -3072,6 +3325,25 @@
           "why": "holding gym7_cleared with an earlier stage: carry_by_gym7_cleared_to_blaine_reveal_complete lifts the stage to blaine_reveal_complete, then the account opens"
         },
         {
+          "priority": 7,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.giovanni_cursor",
+                "value": "giovanni_repeat"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym8_cleared"
+              }
+            ]
+          },
+          "node": "giovanni_way",
+          "why": "the owner, 2026-10-06: 'A player who beats gym 8 needs to know where to go.' An Earth Badge holder who has heard the account gets the way to the Rift surveyor instead of the bare repeat; giovanni_way's next is the repeat, so nothing is lost (docs/world-building/POST_GYM8_DIRECTION.md)"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -3134,13 +3406,21 @@
           "kind": "line",
           "speaker": "southern watch officer",
           "text": "After the badge, follow the Rift's south-west arm to its fork, then the trunk toward the head. The final operation lies above the containment cradle.",
-          "next": "giovanni_repeat",
+          "next": "giovanni_way",
           "actions_after_acknowledge": [
             {
               "kind": "quest_transition",
               "transition": "complete_giovanni_reveal"
             }
           ]
+        },
+        {
+          "id": "giovanni_way",
+          "kind": "line",
+          "speaker": "southern watch officer",
+          "text": "With the Earth Badge, take the Victory Road signs north out of Holdfast. The Rift surveyor at the trailhead gate, about a thousand blocks on, has the rest of the route.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder, docs/world-building/POST_GYM8_DIRECTION.md): way-finding line for Codex to replace. giovanni_007 names the Rift's arms but not the person who opens the Rift road; this names him and where he stands. Measured: the surveyor's seat (3552, 112, 5334) is 1,082 blocks north of Giovanni's spawner (3565, 120, 6416), and the Victory Road posts from Holdfast's exit run past him",
+          "next": "giovanni_repeat"
         },
         {
           "id": "giovanni_repeat",
@@ -3188,11 +3468,15 @@
                   "rift_released",
                   "league_recognized"
                 ]
+              },
+              {
+                "kind": "flag",
+                "flag": "gym8_cleared"
               }
             ]
           },
           "node": "rift_001",
-          "why": "at giovanni_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads giovanni_reveal_complete only, so a stage already past it does not move."
+          "why": "at giovanni_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads giovanni_reveal_complete only, so a stage already past it does not move. Needs gym8_cleared since 2026-10-07 (the owner: 'no player reaches the finale without a badge', review N8): the watch officer's account alone no longer opens it, and rift_007's record_rift_crisis_pending needs the badge too"
         },
         {
           "priority": 6,
@@ -3223,6 +3507,58 @@
           "why": "holding gym8_cleared with an earlier stage: carry_by_gym8_cleared_to_giovanni_reveal_complete lifts the stage to giovanni_reveal_complete, then the account opens"
         },
         {
+          "priority": 7,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.rift_cursor",
+                "value": "rift_repeat"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open"
+                ]
+              }
+            ]
+          },
+          "node": "rift_way_2",
+          "why": "the owner, 2026-10-06: a player who comes back to the surveyor mid-crisis hears where the HQ and the cradle are and what Victory Road is (rift_way_2, rift_way_3, then the repeat), not only the repeat (docs/world-building/POST_GYM8_DIRECTION.md)"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.rift_cursor",
+                "values": [
+                  "rift_repeat",
+                  "rift_after"
+                ]
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "rift_after",
+          "why": "after the release the repeat ('release Hoopa before approaching the League') is stale: say the League is open and where Victory Road climbs to it"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -3235,7 +3571,8 @@
           "id": "rift_locked",
           "kind": "line",
           "speaker": "Rift surveyor",
-          "text": "Victory Road stays sealed to anyone Giovanni has not passed. Bring the Earth Badge from his gym on South Strand, or the southern watch officer's report.",
+          "text": "Victory Road stays sealed to anyone Giovanni has not passed. Bring the Earth Badge from his gym on South Strand.",
+          "placeholder": "Claude, 2026-10-07 (the finale badge gate, review N8): Codex's line ended 'or the southern watch officer's report', which was the leak: the report alone no longer opens the account (entry rule 5 and record_rift_crisis_pending need gym8_cleared). Cut to the badge; for Codex to reword",
           "next": "rift_locked"
         },
         {
@@ -3285,13 +3622,45 @@
           "kind": "line",
           "speaker": "Rift surveyor",
           "text": "The world will not reset when this ends. Pallet, the missing settlement, and every stranded refugee will still be here.",
-          "next": "rift_repeat",
+          "next": "rift_way_1",
           "actions_after_acknowledge": [
             {
               "kind": "quest_transition",
               "transition": "record_rift_crisis_pending"
             }
           ]
+        },
+        {
+          "id": "rift_way_1",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "The road is the Rift floor: down the south-west arm to the fork, then up the trunk to the Deep, the great sink at its head. The Sink Gate stair on its south-east lip takes you down to the city's top ring.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder, docs/world-building/POST_GYM8_DIRECTION.md): way-finding, for Codex to replace. rift_002 names the arms; nothing named the Deep or the way down into it. Measured: the Victory Road line (data/routes.json) runs the south-west arm, the fork, the trunk, and reaches the Sink Gate's exit (3695, 3394) at 25 blocks; the gate is a stair from the lip (y82) to ring 0 (y66), bearing 146 (data/deep_city.json sink_gate, derived/deep_city/plan.json)",
+          "next": "rift_way_2"
+        },
+        {
+          "id": "rift_way_2",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "The Compact's headquarters is the black tower on the top ring's west side. The guard at its iron door answers to my word. Hoopa's containment cradle lies beneath it.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder): CRITICAL_PATH_WALK_2 item 6, 'nothing points to the HQ'. Measured: the HQ door (3443, 67, 3282) and its guard (3444, 67, 3283) are on ring 0 (tread y66), west of the pit's centre; the cradle (3357, 12, 3306) is under the HQ (data/relic_underground.json). Nia's line nia_007 uses the same words for the tower, so the two agree",
+          "next": "rift_way_3"
+        },
+        {
+          "id": "rift_way_3",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "Victory Road's caves climb north from the Deep's floor to the League. The League's gate will not open for you until Hoopa is free.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder): what Victory Road is and in what order. Measured: the caves' mouth is at (3560, 1, 3064) under the Deep's north face and their exit ravine opens onto the League's apron at (3656, 89, 2486) (data/vr_caves.json); z5 admits only rift_crisis_resolved (data/rift_zones.json). Whether the surface walk to G5 should also be a way is the owner's open question (CRITICAL_PATH_WALK_2 item 3); this line names neither as the only one",
+          "next": "rift_repeat"
+        },
+        {
+          "id": "rift_after",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "Hoopa is free, and the League will open for you. Victory Road's caves climb to it from the Deep's floor, under the north face.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder): after the release the surveyor's repeat still said 'release Hoopa before approaching the League'; this is what an Earth Badge holder who comes back to him hears instead",
+          "next": "rift_after"
         },
         {
           "id": "rift_repeat",
@@ -6216,7 +6585,15 @@
           "kind": "line",
           "speaker": "owner",
           "text": "Lunch, undisturbed. A small miracle.",
-          "next": "o_done"
+          "next": "o_birds"
+        },
+        {
+          "id": "o_birds",
+          "kind": "line",
+          "speaker": "owner",
+          "text": "The birds are better neighbours. They nest up in the great tree north of here. Some you only ever see round a tree like that.",
+          "placeholder": "Claude, 2026-10-08 (unit WAY, the sapling hint): a functional line for Codex to replace. Measured: the picnic (data/scenes.json route1_rattata_picnic, area x1434-1460 z4812-4840) is about 209 blocks south-south-east of the Route 1 world-tree sapling (data/habitat_blocks.json route1_sapling_low/crown at (1380, 4628)), whose crown pool holds Pidgey; the six tree-only species are on other elders (see dlg_main_pallet_oak oak_birds). Follows o_done (entry rule priority 10 opens a finished picnic at o_done), so a player who has finished the picnic hears it on every talk",
+          "next": "o_birds"
         }
       ],
       "speakers": {
@@ -9716,14 +10093,22 @@
           "kind": "line",
           "speaker": "picker",
           "text": "Use an iron pick. Dig down to the band and stop; the ore ends there. Give it ten quiet minutes and the rock mends, but any chest you leave stays put.",
-          "next": "repeat"
+          "next": "birds"
+        },
+        {
+          "id": "birds",
+          "kind": "line",
+          "speaker": "picker",
+          "text": "Those giant old trees on the plateau are not empty, you know. Taillow nest all up the one west of the rows, and Spearow in the one off to the north-west. Walk in under the branches and they come down to look at you.",
+          "next": "repeat",
+          "why": "play test 2026-10-05: the world-tree nests (activated Habitat Blocks, data/habitat_blocks.json) needed a hint. elder_viltri_plateau_2 (Taillow, Swellow) stands 298 blocks west of this seat and elder_viltri_plateau_3 (Spearow, Fearow) 592 blocks north-west, measured from data/habitat_blocks.json positions. It alternates with repeat so a player whose cursor already sits on repeat still hears it"
         },
         {
           "id": "repeat",
           "kind": "line",
           "speaker": "picker",
           "text": "Upper rows, old stone in the meadow: Leaf in the green face, Shiny in the bright one.",
-          "next": "repeat"
+          "next": "birds"
         }
       ]
     },
@@ -9875,14 +10260,22 @@
           "kind": "line",
           "speaker": "field_hand",
           "text": "Use an iron pick. Dig down to the band and stop; the ore ends there. Leave it ten minutes and the rock mends, but any chest you leave stays put.",
-          "next": "repeat"
+          "next": "birds"
+        },
+        {
+          "id": "birds",
+          "kind": "line",
+          "speaker": "field_hand",
+          "text": "And the giant pines out past the fields have birds nesting in them. Hoothoot in the one to the south, Starly in the one to the north-west, little Rowlet in the north-east one. Stand in under the branches and they show themselves.",
+          "next": "repeat",
+          "why": "play test 2026-10-05: the world-tree nests (activated Habitat Blocks, data/habitat_blocks.json) needed a hint, Hoothoot and Starly named. From this seat, measured from data/habitat_blocks.json positions: elder_south_pine_isle_1 (Hoothoot, Noctowl) 424 blocks south, elder_south_pine_isle_2 (Starly, Staravia) 599 blocks north-west, elder_south_pine_isle_3 (Rowlet line) 391 blocks north-east. It alternates with repeat so a player whose cursor already sits on repeat still hears it"
         },
         {
           "id": "repeat",
           "kind": "line",
           "speaker": "field_hand",
           "text": "Weather mast, square-side cut. Dark band at the foot; stop when you reach it.",
-          "next": "repeat"
+          "next": "birds"
         }
       ]
     },
@@ -10479,6 +10872,90 @@
       }
     },
     {
+      "id": "dlg_fossil_dig_foreman",
+      "quest_id": "ambient_fossil_dig",
+      "npc_id": "npc_fossil_dig_foreman",
+      "source": "data/fossil_dig.json; docs: the owner's request of 2026-10-06 (data/fossil_dig.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_fossil_dig.foreman_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "Mind where you put your boots. Everything down there is a great deal older than you are.",
+          "next": "bed"
+        },
+        {
+          "id": "bed",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "It's a bone bed. One dry season killed a whole herd on this mesa, and the clay kept them. We've cut it down a step at a time.",
+          "next": "seams"
+        },
+        {
+          "id": "seams",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "See the grey seams at the foot of the trench walls? That's where the fossils sit. Put a pick in one and you'll break it and get nothing.",
+          "next": "brush"
+        },
+        {
+          "id": "brush",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "Use a brush. Hold it on the seam and work it slow. If you haven't got one, make one from a feather, a copper ingot and a stick, or buy one at Cinderlee.",
+          "next": "silt"
+        },
+        {
+          "id": "silt",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "The wind silts a brushed seam back up in about a day. Come back and there'll be new grey in the walls. I've stopped asking how.",
+          "next": "machine"
+        },
+        {
+          "id": "machine",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "A fossil's only a stone until you wake it. For that you want the restoring machine: a Fossil Analyzer, a Restoration Tank and a Monitor, built together.",
+          "next": "parts"
+        },
+        {
+          "id": "parts",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "The Analyzer wants amethyst. Sableye and Glimmet shed it when you beat them. The Tank wants a Revive, and you'll be handed a few of those on the road.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "Brush slow. Bring me anything with teeth and I'll try not to look jealous.",
+          "next": "repeat"
+        }
+      ],
+      "speakers": {
+        "quarne": "Hollis Quarne"
+      }
+    },
+    {
       "id": "dlg_drovers_hollow_drover",
       "quest_id": "ambient_drovers_hollow",
       "npc_id": "npc_drovers_hollow_drover",
@@ -10870,7 +11347,8 @@
               "actions": [
                 {
                   "kind": "npc_battle",
-                  "format": "singles"
+                  "format": "singles",
+                  "over_cap_node": "brann_over_cap"
                 }
               ]
             },
@@ -10884,6 +11362,14 @@
               ]
             }
           ]
+        },
+        {
+          "id": "brann_over_cap",
+          "kind": "line",
+          "speaker": "brann",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and I will fight you.",
+          "placeholder": "Claude, 2026-10-09 (unit WB1, U54 / review N57): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is strictly over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py battle_action). Brann and Elara are Cobblemon NPCs, so rctmod's own over-cap refusal never reached them (the owner, in game 2026-10-06: 'a level-100 Pokemon was not refused a fight').",
+          "next": "brann_choice"
         },
         {
           "id": "brann_005",
@@ -11396,7 +11882,8 @@
               "actions": [
                 {
                   "kind": "npc_battle",
-                  "format": "singles"
+                  "format": "singles",
+                  "over_cap_node": "elara_over_cap"
                 }
               ]
             },
@@ -11410,6 +11897,14 @@
               ]
             }
           ]
+        },
+        {
+          "id": "elara_over_cap",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "Not with that team. One of yours is past what your badges let you command. Put it in the PC and come back.",
+          "placeholder": "Claude, 2026-10-09 (unit WB1, U54 / review N57): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is strictly over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py battle_action). Brann and Elara are Cobblemon NPCs, so rctmod's own over-cap refusal never reached them (the owner, in game 2026-10-06: 'a level-100 Pokemon was not refused a fight').",
+          "next": "elara_choice"
         },
         {
           "id": "elara_005",
@@ -11548,6 +12043,15 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "rift_crisis_pending"
+          },
+          "node": "admit_pending"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "progression_in",
@@ -11584,8 +12088,16 @@
           "id": "turned_away_2",
           "kind": "line",
           "speaker": "guard",
-          "text": "When the operation needs you, they'll tell me. The Rift surveyor at the Victory Road trailhead signs the orders, or Nia Calder at the clinic. Move along.",
+          "text": "When the operation needs you, they'll tell me. The Rift surveyor at the Victory Road trailhead signs the orders, or Nia Calder at the clinic two rings down. Move along.",
           "next": "turned_away_2"
+        },
+        {
+          "id": "admit_pending",
+          "kind": "line",
+          "speaker": "guard",
+          "text": "The surveyor's word opens this door, not the Director's tower. She stands in its doorway herself and answers to one thing: Nia Calder's packet. The clinic is two rings down, south-east of here.",
+          "placeholder": "Claude, 2026-10-05 (the finale builder): the Rift finale's way-finding line, for Codex to replace. A player at rift_crisis_pending is admitted here and then turned back by Elara (door_001/door_002), and until this line nothing at the HQ named Nia, whose handoff (record_deep_handoff_received) is the next stage",
+          "next": "admit"
         },
         {
           "id": "admit",
@@ -11758,7 +12270,8 @@
               "league_recognized"
             ]
           },
-          "node": "released_repeat"
+          "node": "release_way",
+          "why": "2026-10-06 (docs/world-building/POST_GYM8_DIRECTION.md): was released_repeat; a player who talks to the binder again after the release hears where to go (release_way), then the repeat"
         },
         {
           "priority": 30,
@@ -11794,7 +12307,8 @@
           "id": "confront_003",
           "kind": "line",
           "speaker": "binder",
-          "text": "Captain Saye holds the tower's briefing hall. The Director keeps the shaft interlock in her office, under anchor control.",
+          "text": "Captain Saye holds the tower's briefing hall. The Director holds the tower's door herself, up at the top of the stair, and only Nia Calder's packet gets you past her.",
+          "placeholder": "Claude, 2026-10-05 (the finale builder), for Codex to replace: was 'The Director keeps the shaft interlock in her office, under anchor control.', true until Elara moved to the HQ tower's door the same day (data/hq_tower.json door_keeper), which sent a player to an empty office",
           "next": "confront_004"
         },
         {
@@ -11892,6 +12406,14 @@
           "kind": "line",
           "speaker": "hoopa",
           "text": "Hoopa!",
+          "next": "release_way"
+        },
+        {
+          "id": "release_way",
+          "kind": "line",
+          "speaker": "binder",
+          "text": "It is done. Go back up the stair to the top ring. Victory Road's caves climb north from the Deep's floor to the League, and the League's gate will open for you now.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder, docs/world-building/POST_GYM8_DIRECTION.md), for Codex to replace: after the release nothing said where the game goes next. Measured: the caves' mouth is at (3560, 1, 3064) under the Deep's north face (data/vr_caves.json mouth), and z5 admits a rift_crisis_resolved holder on entry (tools/rift_zones.py qualify on entry). The flag's own reward also offers the League's waypoint (data/progression.json rift_crisis_resolved offers_marker)",
           "next": "released_repeat"
         },
         {
@@ -11932,7 +12454,8 @@
             "field": "quest.evt_station_director.started",
             "value": true
           },
-          "node": "$cursor"
+          "node": "hub",
+          "why": "play test 2026-10-05 (review 88): resuming at the cursor dropped a returning player mid-chain; every grant is a response action, so the hub loses nothing a skipped line carried"
         },
         {
           "priority": 20,
@@ -12094,6 +12617,93 @@
               "next": "k001"
             },
             {
+              "id": "r_scroll_locked",
+              "text": "My Kubfu is growing. Do you know of the scrolls?",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "flag",
+                      "flag": "gym5_cleared"
+                    }
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_kubfu"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.scroll_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "next": "k100"
+            },
+            {
+              "id": "r_memory",
+              "text": "I raised a Type: Null. Do you know of the memories?",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym5_cleared"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_silvally"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.memories_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "next": "n001"
+            },
+            {
+              "id": "r_memory_locked",
+              "text": "I'm raising a Type: Null. Do you know of the memories?",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "flag",
+                      "flag": "gym5_cleared"
+                    }
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_silvally"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.memories_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "next": "n100"
+            },
+            {
               "id": "r_bye",
               "text": "Goodbye.",
               "actions": [
@@ -12224,6 +12834,87 @@
           "kind": "line",
           "speaker": "vale",
           "text": "Write and tell me what it becomes. The station has only ever read about it.",
+          "next": "hub"
+        },
+        {
+          "id": "k100",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "We keep two, and one of them is yours when your Kubfu is ready for it. Come back with the Soul Badge: a Kubfu that has not seen that much will not read either.",
+          "next": "hub"
+        },
+        {
+          "id": "n001",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Know of them? We keep all seventeen. Type: Null was built to carry one, and the mask holds it back. Once it grows into Silvally, the disc it holds decides its type.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "kind": "choice",
+          "speaker": "vale",
+          "text": "The station gives the whole set, once, to whoever raised it. One disc would fix it to one type, and changing is the point. Will you take them?",
+          "responses": [
+            {
+              "id": "r_memories_take",
+              "text": "I'll take them.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym5_cleared"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_silvally"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.memories_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "grant_memories"
+                }
+              ],
+              "next": "n010"
+            },
+            {
+              "id": "r_memories_later",
+              "text": "Not yet.",
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "n010",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Here: seventeen memories, from our store. Give your Silvally one to hold, and change it whenever the fight calls for another. Type: Null becomes Silvally at level 45.",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Write and tell me which one it settles on. The station has only ever read about them.",
+          "next": "hub"
+        },
+        {
+          "id": "n100",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "We keep a set for it, and it is yours when your Type: Null is ready for it. Come back with the Soul Badge: before then a memory would only sit in your bag.",
           "next": "hub"
         },
         {
@@ -14830,7 +15521,7 @@
       "id": "dlg_apricorn_farmer",
       "quest_id": "ambient_apricorn_farm",
       "npc_id": "npc_apricorn_farmer",
-      "source": "data/apricorn_farm.json npc; every fact she states is read from the Cobblemon 1.8.0 jar (data/apricorn_farm.json apricorn_facts)",
+      "source": "data/apricorn_farm.json npc; every fact she states is read from the Cobblemon 1.8.0 jar (data/apricorn_farm.json apricorn_facts). The `berries` and `berries_end` lines are the Custap hint (the owner, 2026-10-08: \"a discovery with a hint. Do not sell a tree.\"): berries mutate when two kinds are planted together and a mutation's berry mutates again (data/cobblemon/berries/*.json `mutations`, read in the jar 2026-10-08: Pecha x Persim, Mago x Nanab, Magost x Tanga, Watmel x Chilan, four steps to Custap), and a Custap bait makes what it draws drop twice (spawn_bait_effects/berries/custap_berry.json, drops_reroll 1.0; docs/research/DROPS_AUDIT.md sections 2.3 and 6). It names no berry, by design; the chain stays out of every player guide. That the mutated fruit hangs on one of the two trees is Cobblemon's mechanic as described, not observed in game",
       "scope": "player",
       "cursor": {
         "progression_field": "quest.ambient_apricorn_farm.farmer_cursor",
@@ -14910,6 +15601,20 @@
           "kind": "line",
           "speaker": "tamsin",
           "text": "The stall on the avenue sells the wood. The fruit's free: there's more on those trees than I'll ever get to.",
+          "next": "berries"
+        },
+        {
+          "id": "berries",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Apricorns keep to themselves. Berries don't: plant two kinds side by side and now and then one bears a fruit that's neither. Plant that, and it does it again.",
+          "next": "berries_end"
+        },
+        {
+          "id": "berries_end",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Mother followed that four summers for the one at the end. Whatever she baited with it, she said, left twice as much behind.",
           "next": "repeat"
         },
         {

@@ -83,7 +83,7 @@
       "cobblemon:ancient_ivory_ball", "cobblemon:ancient_jet_ball", "cobblemon:ancient_leaden_ball",
       "cobblemon:ancient_poke_ball", "cobblemon:ancient_roseate_ball", "cobblemon:ancient_slate_ball",
       "cobblemon:ancient_ultra_ball", "cobblemon:ancient_verdant_ball", "cobblemon:ancient_wing_ball",
-      "cobblemon:azure_ball", "cobblemon:beast_ball", "cobblemon:citrine_ball", "cobblemon:dive_ball",
+      "cobblemon:azure_ball", "cobblemon:citrine_ball", "cobblemon:dive_ball",
       "cobblemon:dream_ball", "cobblemon:dusk_ball", "cobblemon:fast_ball", "cobblemon:friend_ball",
       "cobblemon:great_ball", "cobblemon:heal_ball", "cobblemon:heavy_ball", "cobblemon:level_ball",
       "cobblemon:love_ball", "cobblemon:lure_ball", "cobblemon:luxury_ball", "cobblemon:moon_ball",
@@ -92,7 +92,7 @@
       "cobblemon:slate_ball", "cobblemon:sport_ball", "cobblemon:timer_ball", "cobblemon:ultra_ball",
       "cobblemon:verdant_ball"
     ],
-    "balls_basis": "#cobblemon:poke_balls in the Cobblemon 1.8.0 jar, resolved, without the Master Ball, the Ancient Origin Ball, the Cherish Ball and the Park Ball (unique or story balls, spec: never lost)",
+    "balls_basis": "#cobblemon:poke_balls in the Cobblemon 1.8.0 jar, resolved, without the Master Ball, the Ancient Origin Ball, the Cherish Ball and the Park Ball (unique or story balls, spec: never lost) and the Beast Ball (the key to dungeon bosses at $5,000 a ball, data/key_ball.json: never lost, as the Master Ball; the owner, 2026-10-08)",
     "medicine": [
       "cobblemon:antidote", "cobblemon:awakening", "cobblemon:burn_heal", "cobblemon:elixir", "cobblemon:ether",
       "cobblemon:fine_remedy", "cobblemon:full_heal", "cobblemon:full_restore", "cobblemon:heal_powder",

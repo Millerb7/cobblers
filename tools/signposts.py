@@ -130,8 +130,9 @@ def posts(ground, wet, seats=None):
     off = cfg.get("offset_blocks", 4)
     out = []
 
-    def seat(pid, pts, i, front, back, why):
-        """A post beside point i of a dense polyline, facing travellers moving towards increasing i."""
+    def seat(pid, pts, i, front, back, why, keep_off_posts=False):
+        """A post beside point i of a dense polyline, facing travellers moving towards increasing i. A notice
+        (keep_off_posts) also keeps NOTICE_GAP columns from every post already set, so it never stands on one."""
         for k in list(range(i, min(len(pts) - 1, i + 30))) + list(range(i - 1, max(0, i - 30), -1)):
             a, b = pts[max(0, k - 2)], pts[min(len(pts) - 1, k + 2)]
             dx, dz = b[0] - a[0], b[1] - a[1]
@@ -141,6 +142,8 @@ def posts(ground, wet, seats=None):
             if wet[z - ground.oz, x - ground.ox]:
                 continue
             if seat_clash(x, ground(x, z) + 1, z, seats):
+                continue
+            if keep_off_posts and any(abs(p["x"] - x) <= NOTICE_GAP and abs(p["z"] - z) <= NOTICE_GAP for p in out):
                 continue
             out.append({"id": pid, "x": x, "y": ground(x, z) + 1, "z": z, "rotation": rotation(-dx, -dz),
                         "front": lines(*front), "back": lines(*back), "why": why})
@@ -200,7 +203,46 @@ def posts(ground, wet, seats=None):
         k = min(range(len(pts)), key=lambda q: (pts[q][0] - jn["at"][0]) ** 2 + (pts[q][1] - jn["at"][1]) ** 2)
         seat("junction_%s" % jn["to"], pts, k, (names.get(jn["to"], jn["to"]), "this way"),
              (names.get(jn["to"], jn["to"]), "this way"), "the path to %s leaves %s" % (names.get(jn["to"], jn["to"]), label.get(r["id"], r["id"])))
+    # notices: a sign that explains rather than names (data/signposts.json notices; the owner, 2026-10-06, "Victory
+    # Road and the Rift finale are explained in the world"). A route notice is a post like any other, seated beside
+    # its route nearest `at`; a wall notice hangs at a measured position on a face its record names.
+    for nt in cfg.get("notices") or []:
+        front, back = notice_lines(nt, "front"), notice_lines(nt, "back")
+        if nt.get("wall"):
+            w = nt["wall"]
+            (x, y, z), facing = w["at"], w["facing"]
+            out.append({"id": "notice_%s" % nt["id"], "x": int(x), "y": int(y), "z": int(z), "wall": facing,
+                        "front": front, "back": ["", "", "", ""], "why": nt["why"]})
+            continue
+        r = routes[nt["route"]]
+        pts = dense([(p["x"], p["z"]) for p in r["corridor"]["polyline"]])
+        k = min(range(len(pts)), key=lambda q: (pts[q][0] - nt["at"][0]) ** 2 + (pts[q][1] - nt["at"][1]) ** 2)
+        seat("notice_%s" % nt["id"], pts, k, tuple(front), tuple(back), nt["why"], keep_off_posts=True)
+        if out and out[-1]["id"] == "notice_%s" % nt["id"]:
+            out[-1]["front"], out[-1]["back"] = front, back     # as authored: lines() would drop a blank line
     return out
+
+
+NOTICE_GAP = 3               # columns a notice keeps from any post already set
+WALL_FACINGS = {"north", "south", "east", "west"}
+
+
+def notice_lines(nt, side):
+    """A notice's four lines for one face, exactly as authored: 1-4 lines of at most 15 characters (a sign's width),
+    padded to four. A notice is refused rather than re-wrapped: its words were chosen to fit."""
+    ls = nt.get(side) or ([] if side == "back" else None)
+    if ls is None or not isinstance(ls, list) or len(ls) > 4 or (side == "front" and not any(ls)):
+        raise SystemExit("notice %r: %s must be 1-4 lines" % (nt.get("id"), side))
+    for t in ls:
+        if not isinstance(t, str) or len(t) > 15:
+            raise SystemExit("notice %r: line %r is longer than a sign's 15 characters" % (nt.get("id"), t))
+    if nt.get("wall"):
+        w = nt["wall"]
+        if side == "back" and any(ls):
+            raise SystemExit("notice %r: a wall sign has no back" % nt.get("id"))
+        if w.get("facing") not in WALL_FACINGS or not (isinstance(w.get("at"), list) and len(w["at"]) == 3):
+            raise SystemExit("notice %r: wall needs at [x, y, z] and facing north/south/east/west" % nt.get("id"))
+    return (list(ls) + [""] * 4)[:4]
 
 
 SUBNAMES = {}
@@ -225,6 +267,9 @@ def _subnames():
 
 def sign_nbt(p, wood):
     q = lambda ls: ",".join("'%s'" % json.dumps(t).replace("'", "\\'") for t in ls)
+    if p.get("wall"):
+        return ("minecraft:%s_wall_sign[facing=%s]{front_text:{messages:[%s]},back_text:{messages:[%s]}}"
+                % (wood, p["wall"], q(p["front"]), q(p["back"])))
     return ("minecraft:%s_sign[rotation=%d]{front_text:{messages:[%s]},back_text:{messages:[%s]}}"
             % (wood, p["rotation"], q(p["front"]), q(p["back"])))
 
@@ -262,6 +307,7 @@ def expected_post_ids():
                  if entry.get("from") in route_ids and settlement not in cfg.get("no_sign", {})]
     junctions += cfg.get("junctions") or []
     ids += ["junction_%s" % junction["to"] for junction in junctions]
+    ids += ["notice_%s" % nt["id"] for nt in cfg.get("notices") or []]
     return set(ids)
 
 
@@ -293,6 +339,10 @@ def function(a):
     wood = load("signposts.json").get("sign_wood", "spruce")
     cmds = ["# route signposts (tools/signposts.py): %d posts" % len(ps)]
     for p in ps:
+        if p.get("wall"):
+            # a wall notice hangs in the one air block in front of its face: nothing cleared, no fence
+            cmds += ["setblock %d %d %d %s" % (p["x"], p["y"], p["z"], sign_nbt(p, wood))]
+            continue
         cmds += ["fill %d %d %d %d %d %d minecraft:air" % (p["x"], p["y"], p["z"], p["x"], p["y"] + 2, p["z"]),
                  "setblock %d %d %d minecraft:%s_fence" % (p["x"], p["y"], p["z"], wood),
                  "setblock %d %d %d %s" % (p["x"], p["y"] + 1, p["z"], sign_nbt(p, wood))]
@@ -334,12 +384,15 @@ def verify(a):
             for be in ch.get("block_entities") or []:
                 bes[(be.get("x"), be.get("y"), be.get("z"))] = be
         for p in ps:
-            fence = w.block(p["x"], p["y"], p["z"])
-            sign = w.block(p["x"], p["y"] + 1, p["z"])
-            be = bes.get((p["x"], p["y"] + 1, p["z"]))
+            wall = bool(p.get("wall"))
+            sy = p["y"] if wall else p["y"] + 1
+            fence = "minecraft:%s_fence" % wood if wall else w.block(p["x"], p["y"], p["z"])
+            sign = w.block(p["x"], sy, p["z"])
+            be = bes.get((p["x"], sy, p["z"]))
             text = lambda side: [json.loads(m) if m.startswith(("\"", "{")) else m for m in ((be or {}).get(side) or {}).get("messages") or []]
             flat = lambda ms: [m if isinstance(m, str) else m.get("text", "") for m in ms]
-            if fence != "minecraft:%s_fence" % wood or sign != "minecraft:%s_sign" % wood:
+            kind = "minecraft:%s_wall_sign" % wood if wall else "minecraft:%s_sign" % wood
+            if fence != "minecraft:%s_fence" % wood or sign != kind:
                 bad.append("%s: %s on %s at %s" % (p["id"], sign, fence, (p["x"], p["y"], p["z"])))
             elif flat(text("front_text")) != p["front"] or flat(text("back_text")) != p["back"]:
                 bad.append("%s: says %s / %s" % (p["id"], flat(text("front_text")), flat(text("back_text"))))

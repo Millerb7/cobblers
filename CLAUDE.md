@@ -201,6 +201,20 @@ and running Minecraft instead. Agents do not spawn their own agent teams.
 Read-only agents (`repo-scout`, `qa-reviewer`, `build-doctor`) do not need a
 worktree; worktrees exist to keep concurrent writers apart.
 
+**Models (the owner, 2026-10-07).** Each agent's model is pinned in its frontmatter: builders, `test-author`,
+researchers and reviewers on `sonnet`; `content-architect` and `trainer-balance-designer` on `opus`; `repo-scout` on
+`haiku`. Before 2026-10-07 none was pinned, so every agent inherited the main session's Opus. Never use Opus 5.
+**Escalate a `sonnet` unit to `opus`** (the Agent call's `model` override, with the reason in the brief) when:
+
+1. it is the independent audit of something that can trap a player or damage the world: softlocks, must-pass
+   geometry, world writes and the apply path, the economy's arbitrage;
+2. it carries a cross-system contract or an integration judgement no runnable check decides;
+3. a `sonnet` run of the same unit missed a defect found downstream, accepted a false premise, or failed its own
+   tests twice: re-run it on `opus`, and record the miss in the review list;
+4. it is design or balance with no runnable check to catch a weak answer.
+
+Never escalate for a long or tedious unit; length is a cost question, not a quality one.
+
 **A guard that names its own remedy is not a refusal (the owner, 2026-10-01).** The
 worktree complexity guard refuses a compound command -- a heredoc, a `for` loop, a
 path it cannot verify stays inside the worktree -- and its own text says *"Split it
@@ -624,6 +638,9 @@ So, before a figure goes into a brief, a commit, a document or a decision:
   had written itself an hour earlier; being its author is not evidence.
 - **When a decision is built on a relayed number, say so in the decision.** The owner chose A1 on a
   premise that turned out to be this session's error, and said afterwards it was not theirs to be held to.
+- **A number in a BRIEF that nobody can source is checked before it is used, not after** (the owner, 2026-10-09,
+  after three briefs in a row rested on figures nobody could trace: "237 ambient", "13 species", "the four P2s"):
+  measure it or trace it first; if it cannot be traced, build on the measurement and say so.
 - **And an instruction built on a bad number should be questioned, not executed.** The agent told to
   "delete the 38" deleted 10, kept 28, and explained. That is the behaviour, not an exception to it.
 

@@ -511,7 +511,7 @@ def resident_record(r):
     return {"id": pk["id"], "name": pk["name"], "species": pk["species"], "level": pk["level"],
             "build": {"yaw": pk["yaw"], "trigger": pk["trigger"], "leash": pk["leash"],
                       "appears_after": pk.get("appears_after"), "message": pk["message"], "sound": pk["sound"],
-                      "dormant_extra": pk.get("dormant_extra")}}
+                      "dormant_extra": pk.get("dormant_extra"), "stays_still": bool(pk.get("stays_still"))}}
 
 
 def anchor(s, r):

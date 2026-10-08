@@ -44,6 +44,22 @@
     "End",
     "postgame unless later progression policy changes it"
   ],
+  "removed_species": {
+    "policy": "never wild, anywhere: every inherited spawn detail naming one of these species is removed from the inherited pools in every dimension, inside and outside every box; retain_defaults does not keep them",
+    "why": "the owner, 2026-10-08: 'WILD FLUTTER MANE: switch the inherited paradox spawns off. Paradoxes are dungeon content, and a wild one in spooky biomes at night undoes both that and the starter being special. Check every other paradox while you are there.' Flutter Mane is the final of the eighth starter line (data/mythical_starters.json starter_misdreavus). Dungeon paradoxes come from dungeon data, not from wild pools",
+    "species": [
+      "greattusk", "screamtail", "brutebonnet", "fluttermane", "slitherwing", "sandyshocks", "roaringmoon",
+      "walkingwake", "gougingfire", "ragingbolt",
+      "irontreads", "ironbundle", "ironhands", "ironjugulis", "ironmoth", "ironthorns", "ironvaliant",
+      "ironleaves", "ironboulder", "ironcrown",
+      "koraidon", "miraidon"
+    ],
+    "species_source": "the 20 species the Cobblemon 1.8.0 jar labels 'paradox' (data/cobblemon/species/generation9/), plus Koraidon and Miraidon (labelled legendary, restricted, not paradox); tools/suppress_inherited_spawns.py fails closed if the jar it reads labels a paradox this list lacks",
+    "native_expression": "tools/suppress_inherited_spawns.py drops every detail whose pokemon (or herd member) is listed from the file it re-emits; a file left with no detail is re-emitted as the inherited file with \"enabled\": false (EXP-012 V4 and V5: disabling a jar file and a COBBLEVERSE-DP file by path, proven 2026-09-17). Generated at install with the rest of the pack, so it reaches whatever upstream spawn files the server actually loads",
+    "inherited_sources_2026-10-08": "COBBLEVERSE-DP-v31.zip data/cobblemon/spawn_pool_world/<dex>_<species>.json, one file each for all 22 and the only wild source; measured over the snapshot cobblers-local/server-snapshot-2026-10-05 (every mod jar, nested pack and datapack, structure .nbt decompressed): no Cobblemon-jar, mod, LegendaryMonuments, habitat_pools or extra/ region-pack spawn names one. Not spawns: the DP's cobblemonraiddens raid bosses (Raid Dens is not installed), RCT trainer teams (kanto_league_agatha's Flutter Mane; three Team Galactic grunts), the Paldea dex, LumyMon's snack blacklist",
+    "fail_closed": "tools/suppress_inherited_spawns.py verify_removed_species: after writing, every inherited resource path the server loads is re-read from its effective source and the pack's output, and the run fails if any still-enabled file names a listed species (tests/test_suppress_removed_species.py)",
+    "not_covered": "a Pokemon a trainer, a scripted event, a starter grant or a player puts in the world; our own compiled pools are checked separately (tools/validate_data.py check wild-paradox)"
+  },
   "spawn_free_zones": [
     {
       "id": "league_precinct",

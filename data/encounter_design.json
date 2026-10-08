@@ -42,7 +42,11 @@
     "corridor_roles": ["anchor", "common", "uncommon"],
     "corridor_rare_min": {"rare": 2, "ultra": 1},
     "corridor_rare_min_why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"; the ruling the same day: a route corridor gets a rare and an ultra-rare table, reserved from the crossed on-path tables' rare- and ultra-role families (never an off-path find), but no heart (section 10: the path stays catchable)",
+    "corridor_table_min": 3,
+    "corridor_table_min_why": "play test 2026-10-05 (review 85): a corridor box compiles only the route's listed species of its own table, and Pallet's meadows lost every slot but Caterpie to the route-wide ranking, so Route 1's first 180 blocks spawned Caterpie alone (113 route boxes held one or two species). Each crossed table keeps its three likeliest land species of the corridor roles before the rest is filled by score (measured over the 9 routes' boxes: one species at half or more of a box's weight in 163 boxes, from 330; none under three species; Pallet's stretch 12% Caterpie)",
     "corridor_species_limit": 20,
+    "corridor_species_ceiling": 40,
+    "corridor_species_ceiling_why": "corridor_species_limit stops the fill by score; the species a route must keep (every crossed table's water species, the reserved rares, corridor_table_min per crossed table) may pass it, up to this ceiling, where the design fails closed",
     "themes": {
       "meadow": ["normal", "grass", "bug", "fairy", "flying", "electric", "fire", "ground", "poison", "dark", "psychic"],
       "forest": ["bug", "grass", "normal", "flying", "poison", "dark", "ghost", "fairy", "steel", "ice", "fire", "electric", "fighting", "dragon"],
@@ -57,11 +61,59 @@
       "volcanic": ["fire", "rock", "ground", "bug", "dragon", "ghost", "poison", "steel"],
       "jungle": ["grass", "bug", "normal", "flying", "fighting", "poison", "dark", "water", "dragon"],
       "cave": ["rock", "ground", "steel", "poison", "dark", "ghost", "fighting", "dragon", "flying", "psychic", "fire", "fairy"]
+    },
+    "victory_road_roster": {
+      "quote": "some of the mons in victory road feel underwhelming, it should be hit after hit. why is vileplume there? why is breloom? crobat? i think its final starter evos and pseudo legendaries or bangers",
+      "by": "the owner, 2026-10-06, after walking Victory Road",
+      "pools": "every habitats pool whose id starts vrc_, and the _staple they carry",
+      "final_only": true,
+      "bst_min": 500,
+      "excluded_labels": ["legendary", "mythical", "ultra_beast", "paradox", "restricted"],
+      "starter_finals_max_per_zone": 1, "starter_families": ["azurill", "bagon", "budew", "bulbasaur", "charmander", "chespin", "chikorita", "chimchar", "cyndaquil", "eevee", "fennekin", "froakie", "fuecoco", "grookey", "litten", "mudkip", "oshawott", "pichu", "piplup", "popplio", "quaxly", "rowlet", "scorbunny", "snivy", "sobble", "sprigatito", "squirtle", "tepig", "torchic", "totodile", "treecko", "turtwig"], "starter_families_source": "base-pack/cobbleverse/config/cobblemon/starters.json (the mainline starters; modpack/config/cobblemon/starters.json now lists the mythical ones), each walked to its family root in the Cobblemon 1.8.0 jar", "starter_finals_why": "the owner, 2026-10-06: \"thats to agressive on starters, technically most of those should be available in world somehow, we need variety\": at most one starter final stage per Victory Road zone (the starter families also spawn wild elsewhere, ENCOUNTER_DESIGN.md section 11); the rest of each zone is non-starter bangers, none repeated across zones", "owner_named_out": ["vileplume", "breloom", "crobat", "excadrill", "quagsire", "whiscash", "boldore", "graveler"],
+      "why": "Measured from the Cobblemon 1.8.0 jar's species files (baseStats summed): the 27 mainline starters' final stages total 525-535, the pseudo-legendaries 600 (Baxcalibur is a client doll and stays out), so one predicate -- a final stage (no evolution in the jar) with a base-stat total of 500 or more, not legendary, mythical, an ultra beast or paradox -- admits all three of the owner's kinds: 186 species pass it once the client dolls are taken out, before the finds are. Crobat totals 535 and passes the number; the owner named it underwhelming, so it is out by name (owner_named_out), as are Vileplume (490) and Breloom (460), which the number already rejects. A find's family stays out (section 6: a find is never the base of a Victory Road family): Dragonite, Tyranitar, Salamence, Hydreigon and Kommo-o and the seven starter lines that are finds are an off-path table's reward and are not repeated here. tools/build_encounters.py fails closed on any vrc_ row that breaks this."
+    },
+    "held_items": {
+      "why": "the owner, play test 2026-10-05: \"wild held items, rare enough to be a find rather than a farm\". A wild spawn of a listed species sometimes holds an item that fits it (a Leftovers Snorlax, a Lucky Egg Chansey); the chance is the main series' own 5% for a type booster or a stone, and 2% for an item a player would otherwise buy or earn (Leftovers, Lucky Egg, Light Ball, King's Rock, Quick Claw, Focus Band, Black Sludge, Ditto's powders), so a catch that comes with one is a find and catching a box of them to strip the items is not a plan",
+      "field": "heldItems",
+      "field_source": "Cobblemon-fabric-1.8.0+1.21.1.jar: PokemonSpawnDetail has the field heldItems (List<PossibleHeldItem>); PossibleHeldItemAdapter reads an object {\"item\": <item id, or #tag>, \"percentage\": <number>}. PokemonSpawnDetail.createSpawnAction (javap -c, read 2026-10-05) takes the chance of no item as 1 - sum(percentage / 100), and when that roll does not come up picks one listed item weighted by its percentage, so a percentage is a chance out of 100 per spawn. None of the jar's own 1,544 spawn_pool_world files uses the field: VERIFIED from bytecode, NOT seen in game",
+      "where": "every spawn_pool_world entry tools/build_encounters.py writes or copies through (sub-region rosters and their hearts, route corridors, the waterway, the marine bands) whose species is listed, stamped as held_items and written by tools/compile_spawns.py as heldItems. NOT habitat-block pools (a Habitat Block's pool spawn is a different format; no heldItems field was verified for it) and NOT the Mega field dens (tools/compile_spawns.py mega_den_spawns, from data/gulch_mine.json, not from data/spawns.json)",
+      "percent": {"booster": 5, "prize": 2},
+      "percent_why": "the main series' wild held-item rates (50% common, 5% rare, 1% very rare; from memory, not a cited source) as the scale. Nothing here is common: 5% for a type booster, a stone or a bone; 2% for an item with a strong battle effect, between rare and very rare because a Cobblemon player meets far more wild spawns than a main-series one; at most max_total_percent per species, so 19 of 20 spawns of any species hold nothing",
+      "max_total_percent": 5,
+      "items": [
+        {"species": ["snorlax"], "item": "cobblemon:leftovers", "class": "prize"},
+        {"species": ["chansey", "blissey"], "item": "cobblemon:lucky_egg", "class": "prize"},
+        {"species": ["pikachu"], "item": "cobblemon:light_ball", "class": "prize"},
+        {"species": ["ditto"], "item": "cobblemon:quick_powder", "class": "prize"},
+        {"species": ["ditto"], "item": "cobblemon:metal_powder", "class": "prize"},
+        {"species": ["sneasel"], "item": "cobblemon:quick_claw", "class": "prize", "why": "Meowth, the owner's example, spawns nowhere in our pools; Sneasel is the main series' other Quick Claw holder"},
+        {"species": ["slowpoke", "poliwag", "poliwhirl"], "item": "cobblemon:kings_rock", "class": "prize"},
+        {"species": ["machop", "machoke"], "item": "cobblemon:focus_band", "class": "prize"},
+        {"species": ["grimer", "muk", "trubbish", "garbodor", "croagunk", "toxicroak"], "item": "cobblemon:black_sludge", "class": "prize"},
+        {"species": ["cubone", "marowak"], "item": "minecraft:bone", "class": "booster", "why": "a bone held by Cubone or Marowak is its Thick Club (CobblemonHeldItemManager remaps Items.BONE to thickclub, docs/research/ITEMS_ABILITY_EV_HELD_MEGA.md section 3)"},
+        {"species": ["geodude", "graveler"], "item": "cobblemon:everstone", "class": "booster"},
+        {"species": ["onix", "roggenrola", "boldore", "aron", "lairon"], "item": "cobblemon:hard_stone", "class": "booster"},
+        {"species": ["magneton"], "item": "cobblemon:magnet", "class": "booster"},
+        {"species": ["bronzor", "bronzong"], "item": "cobblemon:metal_coat", "class": "booster"},
+        {"species": ["gastly", "haunter"], "item": "cobblemon:spell_tag", "class": "booster"},
+        {"species": ["abra"], "item": "cobblemon:twisted_spoon", "class": "booster"},
+        {"species": ["spearow", "fearow"], "item": "cobblemon:sharp_beak", "class": "booster"},
+        {"species": ["butterfree"], "item": "cobblemon:silver_powder", "class": "booster"},
+        {"species": ["tentacool", "tentacruel"], "item": "cobblemon:poison_barb", "class": "booster"},
+        {"species": ["vulpix", "growlithe"], "item": "cobblemon:charcoal_stick", "class": "booster"},
+        {"species": ["swinub", "piloswine", "snover", "abomasnow"], "item": "cobblemon:never_melt_ice", "class": "booster"},
+        {"species": ["oddish", "gloom"], "item": "cobblemon:absorb_bulb", "class": "booster"},
+        {"species": ["murkrow"], "item": "cobblemon:black_glasses", "class": "booster"},
+        {"species": ["dratini", "dragonair"], "item": "cobblemon:dragon_fang", "class": "booster"},
+        {"species": ["drilbur"], "item": "cobblemon:soft_sand", "class": "booster"},
+        {"species": ["volbeat", "illumise"], "item": "cobblemon:bright_powder", "class": "booster"}
+      ]
     }
   },
   "tables": {
     "pallet_meadows": {"tier": 1, "levels": [4, 8], "themes": ["meadow"], "placement": "path",
-      "land": [["pidgey", "anchor"], ["wooloo", "common"], ["mareep", "common"], ["rattata", "common"], ["sentret", "common"], ["caterpie", "common"], ["lechonk", "uncommon"], ["bulbasaur", "uncommon"], ["fletchling", "uncommon"], ["hoppip", "uncommon"], ["tandemaus", "uncommon"], ["fidough", "uncommon"], ["abra", "rare"], ["ralts", "rare"], ["ditto", "ultra"]],
+      "families_why": "hoppip common, not uncommon (play test 2026-10-05: a pre-Brock pool needs a Grass or Water answer at a weight that matters). Measured on the compiled pools: Pallet's own land spawns were 3.1% Grass or Water (Bulbasaur and Hoppip at uncommon) and Route 1's Pallet stretch 0%; Hoppip has Absorb from level 1 and Bullet Seed at 13 (jar learnset), and a common Hoppip makes the corridor's per-table floor (rules.corridor_table_min), so the first stretch of Route 1 carries it too",
+      "land": [["pidgey", "anchor"], ["wooloo", "common"], ["mareep", "common"], ["rattata", "common"], ["sentret", "common"], ["caterpie", "common"], ["hoppip", "common"], ["lechonk", "uncommon"], ["bulbasaur", "uncommon"], ["fletchling", "uncommon"], ["tandemaus", "uncommon"], ["fidough", "uncommon"], ["abra", "rare"], ["ralts", "rare"], ["ditto", "ultra"]],
       "heart": {"kind": "focus", "at": {"x": 1904, "z": 5328, "why": "the meadows' deepest interior beyond the path band: the cell farthest (204 blocks) from the edge of the cells over 128 blocks from every route box, measured on the compiled cells (2026-10-05)"}, "radius": 128,
         "why": "the middle of Pallet's meadows, away from Route 1: grown birds and sheep a new player sees before they can hold one (the owner, 2026-10-05: a boss table in every area)",
         "land": [["metapod", "common"], ["pidgeotto", "presence"], ["flaaffy", "presence"], ["dubwool", "presence"], ["fidough", "uncommon", 3]]}},
@@ -76,7 +128,8 @@
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (2192, 3344); radius 176 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 177 blocks from a corridor box",
         "land": [["kricketune", "common"], ["eldegoss", "presence"], ["diggersby", "presence"], ["pikachu", "uncommon", 3]]}},
     "river_of_shrews_vale": {"tier": 1, "levels": [8, 13], "themes": ["meadow"], "placement": "path", "water_body": "river_of_shrews",
-      "land": [["deerling", "anchor"], ["shinx", "common"], ["bidoof", "common"], ["zigzagoon", "common"], ["starly", "uncommon"], ["kricketot", "uncommon"], ["plusle", "uncommon"], ["minun", "uncommon"], ["snubbull", "rare"], ["pichu", "ultra"]],
+      "families_why": "seedot common (play test 2026-10-05: a pre-Brock pool needs a Grass or Water answer at a weight that matters). Measured on the compiled pools: the vale's land spawns were 34.4% Grass by type but 2.3% with a Grass or Water move by Brock's cap of 20, because Deerling learns none by then (jar learnset: Tackle, Double Kick, Leech Seed); Seedot has Absorb. The vale is the longest land stretch before Brock, and a land family reaches every player who walks it, where a water one needs the river",
+      "land": [["deerling", "anchor"], ["shinx", "common"], ["bidoof", "common"], ["zigzagoon", "common"], ["seedot", "common"], ["starly", "uncommon"], ["kricketot", "uncommon"], ["plusle", "uncommon"], ["minun", "uncommon"], ["snubbull", "rare"], ["pichu", "ultra"]],
       "water": [["goldeen", "anchor"], ["marill", "common"], ["surskit", "uncommon"], ["dewpider", "uncommon"], ["slowpoke", "uncommon"], ["buizel", "rare"], ["wimpod", "rare"]],
       "heart": {"kind": "focus", "at": {"x": 2160, "z": 4304, "why": "the vale's deepest interior beyond the path band: the cell farthest (320 blocks) from the edge of the cells over 128 blocks from every route box, measured on the compiled cells (2026-10-05)"}, "radius": 160,
         "why": "the upper river, away from Route 1",
@@ -425,31 +478,144 @@
     "rift_south_east_arm": {"tier": 9, "themes": ["cave"], "placement": "off", "tier_why": "209 blocks off Route 8 into the Rift",
       "land": [["baltoy", "anchor"], ["golett", "common"], ["gligar", "common"], ["sneasel", "common"], ["murkrow", "common"], ["misdreavus", "common"], ["machop", "common"], ["klefki", "uncommon"], ["duskull", "uncommon"], ["mawile", "uncommon"], ["pawniard", "uncommon"], ["croagunk", "uncommon"], ["druddigon", "find"], ["bagon", "find"], ["goomy", "ultra"]],
       "habitat_fixes": {
-        "archaludon": "replaces Flygon as a heart presence (2026-10-04, the owner's wrong-country sweep; tools/spawn_habitat_audit.py KNOWN): Flygon's line is native in the Cobblemon 1.8.0 jar only to is_desert, two steps from the Rift's cool windswept_gravelly_hills paint, and no condition puts a desert in the Rift. Archaludon is native on the surface (and below sky light 8) to is_mountain, whose is_hills holds windswept_gravelly_hills itself -- the Rift's own paint. A single-stage Dragon presence at the same slot beside Salamence and Haxorus; its Steel replaces Flygon's Ground, which the arm keeps in Gligar, Gliscor, Golett, Golurk, Baltoy and Claydol. Duraludon, its base, is Victory Road's raw-tear uncommon; Archaludon is wild nowhere else"},
+        "archaludon": "replaces Flygon as a heart presence (2026-10-04, the owner's wrong-country sweep; tools/spawn_habitat_audit.py KNOWN): Flygon's line is native in the Cobblemon 1.8.0 jar only to is_desert, two steps from the Rift's cool windswept_gravelly_hills paint, and no condition puts a desert in the Rift. Archaludon is native on the surface (and below sky light 8) to is_mountain, whose is_hills holds windswept_gravelly_hills itself -- the Rift's own paint. A single-stage Dragon presence at the same slot beside Salamence and Haxorus; its Steel replaces Flygon's Ground, which the arm keeps in Gligar, Gliscor, Golett, Golurk, Baltoy and Claydol. Duraludon, its base, was Victory Road's raw-tear uncommon until 2026-10-06, when Archaludon itself joined Victory Road's cave staple (rules.victory_road_roster: final stages only)"},
       "heart": {"kind": "focus", "at": {"x": 4400, "z": 4944, "why": "the arm's deepest floor: the cell farthest (204 blocks) from its edge and the path band"}, "radius": 128,
         "why": "the south-east arm's far end",
         "land": [["salamence", "presence"], ["archaludon", "presence"], ["haxorus", "presence"]]}}
   },
   "habitats": {
-    "_note": "Victory Road's tiles (tools/vr_caves.py), tier 9, levels 54-60, no anchors: a zone is several strong families at even weight. A themed zone (staple: true) also carries the cave staple at the weights given; a core pool is its zone plus the prize the owner flew (2026-09-23), the only rare-bucket family in it.",
-    "_staple": [["crobat", "common", 8], ["steelix", "uncommon", 4], ["golem", "uncommon", 4]],
+    "_note": "Victory Road's tiles (tools/vr_caves.py), tier 9, levels 54-60, no anchors: a zone is several strong families at even weight. A themed zone (staple: true) also carries the cave staple at the weights given; a core pool is its zone plus the prize the owner flew (2026-09-23), the only rare-bucket family in it. Every species is a final stage of 500 or more (rules.victory_road_roster, the owner 2026-10-06: final starter evolutions, pseudo-legendaries, bangers).",
+    "_staple_why": "the cave staple a themed zone carries, rebuilt 2026-10-06 (rules.victory_road_roster): Noivern (535, Flying/Dragon) is the cave's flyer in Crobat's place, Archaludon (600, Steel/Dragon) and Glimmora (525, Rock/Poison) the cave's stone. Each carries a type in every themed zone's theme (Dragon or Poison is in water, volcanic, mushroom and cave), where Steelix and Golem carried none in the water and mushroom zones. Weights unchanged (8, 4, 4).",
+    "_staple": [["noivern", "common", 8], ["archaludon", "uncommon", 4], ["glimmora", "uncommon", 4]],
     "vrc_cave": {"tier": 9, "levels": [54, 60], "themes": ["cave"],
-      "land": [["crobat", "common"], ["steelix", "common"], ["golem", "common"], ["ferrothorn", "common"], ["aggron", "uncommon"], ["gallade", "rare"]]},
+      "land": [["rhyperior", "common"], ["gliscor", "common"], ["mamoswine", "common"], ["swampert", "common"], ["krookodile", "uncommon"], ["gallade", "rare"]]},
     "vrc_drowned": {"tier": 9, "levels": [54, 60], "themes": ["water"], "staple": true,
-      "land": [["golisopod", "common"], ["barbaracle", "common"], ["crawdaunt", "common"]],
-      "water": [["lanturn", "common"], ["kingdra", "common"], ["gyarados", "common"], ["toxapex", "common"], ["dhelmise", "uncommon"]]},
+      "land": [["feraligatr", "common"], ["golisopod", "common"], ["seismitoad", "common"]],
+      "water": [["starmie", "common"], ["kingdra", "common"], ["gyarados", "common"], ["walrein", "common"], ["dhelmise", "uncommon"]]},
     "vrc_drowned_core": {"tier": 9, "levels": [54, 60], "themes": ["water"], "staple": true, "core_of": "vrc_drowned", "prize": "milotic"},
     "vrc_slagworks": {"tier": 9, "levels": [54, 60], "themes": ["volcanic"], "staple": true,
-      "land": [["magmortar", "common"], ["arcanine", "common"], ["coalossal", "common"], ["centiskorch", "uncommon"], ["salazzle", "uncommon"]]},
+      "land": [["charizard", "common"], ["magmortar", "common"], ["centiskorch", "common"], ["arcanine", "uncommon"], ["volcarona", "uncommon"]]},
     "vrc_slagworks_core": {"tier": 9, "levels": [54, 60], "themes": ["volcanic"], "staple": true, "core_of": "vrc_slagworks", "prize": "garchomp"},
     "vrc_bloom": {"tier": 9, "levels": [54, 60], "themes": ["mushroom"], "staple": true,
-      "land": [["breloom", "common"], ["amoonguss", "common"], ["vileplume", "common"], ["shiinotic", "uncommon"]]},
-    "vrc_bloom_core": {"tier": 9, "levels": [54, 60], "themes": ["mushroom"], "staple": true, "core_of": "vrc_bloom", "prize": "tangrowth"},
+      "land": [["venusaur", "common"], ["tsareena", "common"], ["hydrapple", "common"], ["tangrowth", "uncommon"]]},
+    "vrc_bloom_core": {"tier": 9, "levels": [54, 60], "themes": ["mushroom"], "staple": true, "core_of": "vrc_bloom", "prize": "goodra",
+      "prize_why": "re-picked 2026-10-06 (rules.victory_road_roster): Goodra (600) is the one pseudo-legendary outside the finds and the other four prizes, and Dragon is a mushroom-theme type; Tangrowth (535), the prize the owner flew on 2026-09-23, stays in the zone as its uncommon"},
     "vrc_raw_tear": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true,
-      "land": [["noivern", "common"], ["claydol", "common"], ["bronzong", "common"], ["duraludon", "uncommon"], ["reuniclus", "uncommon"]]},
+      "land": [["chandelure", "common"], ["gardevoir", "common"], ["gengar", "common"], ["alakazam", "uncommon"], ["dusknoir", "uncommon"]]},
     "vrc_raw_tear_core": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true, "core_of": "vrc_raw_tear", "prize": "dragapult"},
     "vrc_abandoned_cut": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true,
-      "land": [["aggron", "common"], ["probopass", "common"], ["klinklang", "common"], ["copperajah", "uncommon"]]},
+      "land": [["aggron", "common"], ["magnezone", "common"], ["klinklang", "common"], ["kingambit", "uncommon"]]},
     "vrc_abandoned_cut_core": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true, "core_of": "vrc_abandoned_cut", "prize": "metagross"}
+  },
+  "nether": {
+    "status": "authored 2026-10-08 from docs/mechanics/NETHER_ENCOUNTERS.md sections 2, 2.6 and 3.3, the owner having approved its recommendations Q1-Q5 and Q7. tools/build_encounters.py expands it into data/spawns.json entries with mechanism nether_ring_boxes, and tools/compile_spawns.py writes them to spawn_pool_world/nether/. Not seen in game: Nether spawning under our compiler (N1), neededNearbyBlocks (N2), the structures condition (N4) and the inherited-pool replacement (N3) are all unproven.",
+    "dimension": "minecraft:the_nether",
+    "tiers": {
+      "10": {"cap": 60, "band": [54, 60], "maturity": 0.9, "next_cap": 62, "why": "the near ring, entered at badge 8 (the gate, Q1): cap 60 after Giovanni and through the Elite Four, whose levels are [57, 60] (data/league_trainers.json elite_01..04); the next cap is Lance's 62, the Champion's ace (champion_blue [58, 62]); docs/mechanics/LEAGUE_LEVEL_CAP.md section 2. The band sits level with Victory Road's top (tier 9, 52-60), two levels above its floor (NETHER_ENCOUNTERS.md section 1)"},
+      "11": {"cap": 100, "band": [65, 75], "maturity": 1.0, "next_cap": 85, "why": "the deep ring, postgame (Q2): no cap once the Champion is beaten (LEAGUE_LEVEL_CAP.md section 2); the band and the presences' 85 are the design's (NETHER_ENCOUNTERS.md section 1, 'Two rings, two bands')"}
+    },
+    "rings": {
+      "near": {"tier": 10, "boxes": [[-128, 1151, -128, 1151]], "why": "the overworld border -1024..9215 (data/world.json export.border) divided by the Nether's coordinate scale 8: the Nether x/z a portal from inside the overworld border reaches. The design's -128..1152 (relayed from docs/world-building/DIMENSIONS_AND_BORDERS.md:102-103) is this square, read inclusive"},
+      "deep": {"tier": 11, "boxes": [[-4608, -129, -4608, 9215], [1152, 9215, -4608, 9215], [-128, 1151, -4608, -129], [-128, 1151, 1152, 9215]], "why": "everything else, as four strips around the near ring. Their outer edge is the union of both readings of the Nether border on record (data/dimension_overrides.json count_windows: -1024..9215 unscaled, -4608..5631 centre/8, INFERRED), so whichever is true the deep ring reaches it"}
+    },
+    "fire_rule": {
+      "biomes": ["minecraft:nether_wastes", "minecraft:crimson_forest"],
+      "why": "NETHER_ENCOUNTERS.md section 2: no species with Fire as either type in any table except the nether wastes and the crimson forest; the types are read from the Cobblemon jar. A structure table (fortress, bastion, shrine ring) has no biome, so it holds no Fire unless it carries a written fire_exception"
+    },
+    "excluded_species": {
+      "tyranitar": "1.8 model mis-assembled (docs/research/COBBLEVERSE_COMPATIBILITY.md:136-148)",
+      "cofagrigus": "1.8 model mis-assembled (as tyranitar)",
+      "turtonator": "1.8 model mis-assembled (as tyranitar)",
+      "talonflame": "1.8 model mis-assembled (as tyranitar)",
+      "capsakid": "UNCONFIRMED in the design (NETHER_ENCOUNTERS.md Q9). Implemented in the 1.8.0 jar (read 2026-10-08); Q9 was not among the approved recommendations, so it stays out until the owner adds it",
+      "scovillain": "as capsakid",
+      "stonjourner": "as capsakid (Q9, for the basalt deltas)"
+    },
+    "tables": {
+      "nether_wastes": {
+        "key": {"biomes": ["minecraft:nether_wastes"]},
+        "themes": ["the furnace floor"],
+        "why": "the Nether as the overworld imagines it: open heat, lava shores, quartz and slag (NETHER_ENCOUNTERS.md 2.1)",
+        "land": [["magby", "anchor"], ["numel", "anchor"], ["slugma", "common"], ["sizzlipede", "common"], ["rolycoly", "common"], ["nacli", "common"],
+                 ["torkoal", "uncommon"], ["heatmor", "uncommon"], ["salandit", "uncommon"], ["charcadet", "rare"]],
+        "heart": {"kind": "nearby", "blocks": ["minecraft:lava"], "maxY": 40, "why": "the lava shore: grounded beside lava, below y40, where the wastes' lava sea sits (ASSUMED until a pregen)",
+                  "land": [["camerupt", "common"], ["coalossal", "common"], ["magmortar", "presence"], ["centiskorch", "presence"]]}
+      },
+      "crimson_forest": {
+        "key": {"biomes": ["minecraft:crimson_forest"]},
+        "themes": ["the hunting wood"],
+        "why": "a hot red forest where things hunt, and the prey that hides under the weeping vines (NETHER_ENCOUNTERS.md 2.2)",
+        "land": [["houndour", "anchor"], ["litleo", "common"], ["spinarak", "common"], ["paras", "common"], ["mankey", "uncommon"], ["larvesta", "rare"]],
+        "heart": {"kind": "nearby", "blocks": ["minecraft:weeping_vines", "minecraft:weeping_vines_plant"], "why": "the hanging canopy: beside weeping vines (the tip block and the vine body)",
+                  "land": [["houndoom", "common"], ["ariados", "common"], ["volcarona", "presence"], ["pyroar", "presence"]]}
+      },
+      "warped_forest": {
+        "key": {"biomes": ["minecraft:warped_forest"]},
+        "themes": ["the alien wood"],
+        "why": "the one place in the Nether that is not hot and not dead: wrong-coloured, lit by fungus, full of things that did not evolve on this world (NETHER_ENCOUNTERS.md 2.3). No Fire",
+        "land": [["elgyem", "anchor"], ["morelull", "anchor"], ["toedscool", "common"], ["foongus", "common"], ["inkay", "common"],
+                 ["hatenna", "uncommon"], ["solosis", "uncommon"], ["blipbug", "uncommon"], ["beldum", "rare"], ["minior", "rare"]],
+        "heart": {"kind": "nearby", "blocks": ["minecraft:shroomlight"], "why": "under the lamps: beside the shroomlights of the huge fungi",
+                  "land": [["beheeyem", "common"], ["shiinotic", "common"], ["metagross", "presence"], ["malamar", "presence"]]}
+      },
+      "soul_sand_valley": {
+        "key": {"biomes": ["minecraft:soul_sand_valley"]},
+        "themes": ["the boneyard"],
+        "why": "where the Nether keeps its dead: blue soul fire that gives no warmth, fossil ribs, the sand made of souls (NETHER_ENCOUNTERS.md 2.4). No Fire: Litwick and Chandelure are left out on purpose",
+        "land": [["gastly", "anchor"], ["sandygast", "anchor"], ["duskull", "common"], ["shuppet", "common"], ["cubone", "common"],
+                 ["drifloon", "uncommon"], ["spiritomb", "rare"], ["dreepy", "rare"]],
+        "heart": {"kind": "nearby", "blocks": ["minecraft:bone_block"], "why": "the fossil ribs: beside the bone blocks the valley's fossils are made of (ASSUMED until a pregen)",
+                  "land": [["gengar", "common"], ["palossand", "common"], ["dusknoir", "presence"], ["dragapult", "presence"]]}
+      },
+      "basalt_deltas": {
+        "key": {"biomes": ["minecraft:basalt_deltas"]},
+        "themes": ["rock and ash"],
+        "why": "grey columns, black stone and falling ash: things that are stone, eat stone or breathe the ash (NETHER_ENCOUNTERS.md 2.5). No Fire",
+        "land": [["roggenrola", "anchor"], ["rhyhorn", "anchor"], ["onix", "common"], ["gligar", "common"], ["klawf", "common"],
+                 ["koffing", "uncommon"], ["glimmet", "uncommon"], ["carbink", "rare"]],
+        "stop_evolving": {"onix": "the design spawns Onix as Onix, the basalt serpent (NETHER_ENCOUNTERS.md 2.5); its trade evolution, Steelix, is not in the table"},
+        "heart": {"kind": "nearby", "blocks": ["minecraft:magma_block"], "why": "the vents: beside the deltas' magma blocks",
+                  "land": [["rhyperior", "common"], ["gigalith", "common"], ["gliscor", "presence"], ["glimmora", "presence"]]}
+      },
+      "fortress_garrison": {
+        "key": {"structures": ["minecraft:fortress"]},
+        "themes": ["the garrison"],
+        "why": "inside a Nether fortress, over whatever biome it stands in: the soldiers who held the halls, steel and ghost, no Fire though the halls are full of blazes (NETHER_ENCOUNTERS.md 2.6). The roles are this builder's, the design names none: all three common",
+        "land": [["honedge", "common"], ["pawniard", "common"], ["golett", "common"]],
+        "stop_evolving": {"bisharp": "the design spawns Pawniard as Bisharp (NETHER_ENCOUNTERS.md 2.6); Kingambit's evolution is not in the table"}
+      },
+      "bastion_hoard": {
+        "key": {"structures": ["minecraft:bastion_remnant"]},
+        "themes": ["the hoard"],
+        "why": "inside a bastion remnant: the piglins' gold and everything that wants it (NETHER_ENCOUNTERS.md 2.6). The roles are this builder's, the design names none",
+        "land": [["meowth", "common"], ["murkrow", "common"], ["sableye", "uncommon"], ["gimmighoul", "rare"]],
+        "stop_evolving": {"gimmighoul": "the design: Gimmighoul's coin evolution (Gholdengo) is outside this design (NETHER_ENCOUNTERS.md 2.6)"}
+      },
+      "ruinous_grasswither": {
+        "key": {"structures": ["legendarymonuments:grasswither_shrine"]},
+        "themes": ["the broken seal", "blight"],
+        "why": "Wo-Chien's ring: Foongus and Paras as blight (NETHER_ENCOUNTERS.md 3.3). The shrine generates in the warped forest (data/structures.json biomes). Roles this builder's: both common",
+        "land": [["foongus", "common"], ["paras", "common"]]
+      },
+      "ruinous_groundblight": {
+        "key": {"structures": ["legendarymonuments:groundblight_shrine"]},
+        "themes": ["the broken seal", "cracked earth"],
+        "why": "Ting-Lu's ring: Cubone and Rhyhorn as cracked earth (NETHER_ENCOUNTERS.md 3.3). The shrine generates in the soul sand valley (data/structures.json biomes)",
+        "land": [["cubone", "common"], ["rhyhorn", "common"]]
+      },
+      "ruinous_icerend": {
+        "key": {"structures": ["legendarymonuments:icerend_shrine"]},
+        "themes": ["the broken seal", "the one cold thing"],
+        "why": "Chien-Pao's ring: the one cold thing in the Nether. The design leaves the ice family to choose and names Sneasel as an E1 candidate (NETHER_ENCOUNTERS.md 3.3); Sneasel is the builder's pick, for the owner to confirm. The shrine generates in the basalt deltas (data/structures.json biomes)",
+        "land": [["sneasel", "common"]]
+      },
+      "ruinous_firescourge": {
+        "key": {"structures": ["legendarymonuments:firescourge_shrine"]},
+        "themes": ["the broken seal", "the fire let loose"],
+        "why": "Chi-Yu's ring: Houndour as the fire it lets loose (NETHER_ENCOUNTERS.md 3.3)",
+        "fire_exception": "the owner, 2026-10-08, approving NETHER_ENCOUNTERS.md Q7: the Ruinous rings may put a calamity's types into whatever biome its shrine landed in, Fire included for Firescourge, as the one written exception to the fire rule. data/structures.json records the shrine's biome as minecraft:nether_wastes, where Fire is allowed anyway; the exception covers a shrine that lands elsewhere",
+        "land": [["houndour", "common"]]
+      }
+    }
   }
 }

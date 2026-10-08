@@ -375,6 +375,7 @@
     "mirror": "none",
     "anchor_mode": "corner",
     "y_mode": "absolute",
+    "remove_items": [{"template_pos": [10, 1, 10], "path": "storageWrapper.contents.inventory.Items", "id": "lumymon:glacier_feather", "why": "play test 2026-10-05 (owner note 14): the template's base Sophisticated Storage barrel holds the summoning feather, and a friend caught Moltres for free; the feathers' one source is Shrew Station (docs/STATE.md legendary decisions). Read 2026-10-06 from the server's COBBLEVERSE-DP template. The summit barrel's loot (gems and gear) is kept"}],
     "command": "/place template cobbleverse:legendary/articuno 672 310 369 none none",
     "top_y": 383,
     "ceiling_margin": 192
@@ -527,7 +528,7 @@
    "gate": "OUR Champion flag, cobblers:flag/champion_cleared, written into the template's own summit chain after the paste (data/placements.json set_commands, emitted by tools/place_donor.py as `data merge block`). Every link runs only with a Champion within 12 blocks; anyone else is told so and the chain SURVIVES, so the server's one spawn cannot be burned early. The lift stays open: the tower can be climbed before it can be woken. NOT VERIFIED IN GAME.",
    "does_not_travel_here": [
     "`/locate` and any finder: none exists for these towers anyway",
-    "ONE SPAWN ENTRY: data/structures.json records spawn_entries 1, cobblemon:0803_poipole spawning via the tower. Pasted, no Poipole spawns there. A Habitat Block would restore it if the owner wants it (not authored here)."
+    "ONE SPAWN ENTRY: data/structures.json records spawn_entries 1, cobblemon:0803_poipole spawning via the tower. A paste does not carry it; since 2026-10-08 our own compiled spawn does: data/spawns.json placement_sites dawn_tower, Poipole 38-43, rare, over the footprint plus 16 blocks, sky-open ground only (docs/mechanics/NETHER_ENCOUNTERS.md section 4)."
    ],
    "what_a_player_gets": "after the Champion: a 90-block climb by levitation to a summit where Necrozma (Dawn Wings) appears at level 80 with IVs of 30 and four set moves, catchable at the post-Blue cap of 100. ONE per tower for the WHOLE server: the chain fills itself in once it fires. Before the Champion: the tower, the climb and the view.",
    "one_per_server": "DECIDED, the owner, 2026-10-02: kept as Cobbleverse designed it. Whoever gets there first gets it."
@@ -593,7 +594,7 @@
    "gate": "OUR Champion flag, cobblers:flag/champion_cleared, written into the template's own summit chain after the paste (data/placements.json set_commands, emitted by tools/place_donor.py as `data merge block`). Every link runs only with a Champion within 12 blocks; anyone else is told so and the chain SURVIVES, so the server's one spawn cannot be burned early. The lift stays open: the tower can be climbed before it can be woken. NOT VERIFIED IN GAME.",
    "does_not_travel_here": [
     "`/locate` and any finder: none exists for these towers anyway",
-    "ONE SPAWN ENTRY: data/structures.json records spawn_entries 1, cobblemon:0803_poipole spawning via the tower. Pasted, no Poipole spawns there. A Habitat Block would restore it if the owner wants it (not authored here)."
+    "ONE SPAWN ENTRY: data/structures.json records spawn_entries 1, cobblemon:0803_poipole spawning via the tower. A paste does not carry it; since 2026-10-08 our own compiled spawn does: data/spawns.json placement_sites dusk_tower, Poipole 33-38, rare, over the footprint plus 16 blocks, sky-open ground only (docs/mechanics/NETHER_ENCOUNTERS.md section 4)."
    ],
    "what_a_player_gets": "after the Champion: a 90-block climb by levitation to a summit where Necrozma (Dusk Mane) appears at level 80 with IVs of 30 and four set moves, catchable at the post-Blue cap of 100. ONE per tower for the WHOLE server: the chain fills itself in once it fires. Before the Champion: the tower, the climb and the view.",
    "one_per_server": "DECIDED, the owner, 2026-10-02: kept as Cobbleverse designed it. Whoever gets there first gets it."
@@ -896,5 +897,132 @@
   "the_three_feathers": "worth building toward: Moltres in the Craters with Blaine, Articuno on Frostpeak, Zapdos on the western cliffs, with the feathers handed out by the Frostpeak research camp (data/frostpeak_camp.json item_economy). The feathers are handed out THROUGH DIALOGUE, as a reward for work the researchers ask for - not a shop: 'earning one should mean helping them study.' Gate gym8_cleared, DECIDED. The Moltres site is measured: adopted_moltres_tower.",
   "the_three_feathers_source": "DECIDED LATER THE SAME DAY, the owner, 2026-10-02, verbatim: \"the feathers handed out through the research station's dialogue, gated on gym8_cleared\". One source: Shrew Station (data/research_station.json economy.the_one_source_2026_10_02), its errands keeping 'earning one should mean helping them study'. The camp named in the_three_feathers above is now a pointer (data/frostpeak_camp.json item_economy); its part is Dr. Halvard's deck in the glacier errand.",
   "eternatus": "STAYS OUT until a Galar Particle supply is authored."
+ },
+ "sweep_2026_10_06": {
+  "brief": "the owner, 2026-10-06: 'Go through the whole Cobbleverse catalogue and place what is left, in obscured spots -- behind waterfalls, at the back of caves, down dive portals, on islands with no reason to visit, in Rift dead ends. Use /place template, not /clone. Each one: what gates it, what a player gets, and how anyone would find it. Re-open the ones left where they generate. If any has a better home in our world than a Nether tower nobody visits, move it.'",
+  "premise_check": "The 2026-10-03 pass (docs/world-building/HIDDEN_LEGENDARIES.md) already went through the loaded catalogue and found it used up but for three templates the loaded jars ship outside data/structures.json (Newmoon Island, the Temple of Sinnoh, the Giratina piece), each blocked by an activation item with no source and by a record shape that only knew surface seats. This sweep unblocks two of them: it authors each item's ONE source (a Champion-gated data/rewards.json cache at the altar, tools/rewards_pack.py requires_flags) and adds the two seat kinds below. Everything else in the catalogue is accounted for in catalogue_2026_10_06 with its reason.",
+  "why_not_in_sites": "tests/test_adopted_legendary_sites.py holds every `sites` record to a SURFACE seat (the bottom layer the cheapest y in the measured range, every column dry) and to a template data/structures.json registers. Neither template here is that shape: the Giratina piece is a buried slab, Newmoon Island floats, and neither is a registered structure. A different seat needs a different record (HIDDEN_LEGENDARIES.md owner call 5), so they live in `sweep_sites`, held by tools/legendary_sweep.py check and tests/test_legendary_sweep.py. tools/adopted_sites.py sites() returns both lists, so every consumer that keeps clear of adopted sites (sea life, the hidden-site spread, the research station) sees these two as well.",
+  "the_obscured_homes_the_owner_named": {
+    "behind_waterfalls_back_of_caves_down_dive_portals": "no catalogue template fits: a dive portal's room is 7 to 13 blocks wide in cobblers:pocket, a heightmap cannot describe an overhang or a cave's back, and every remaining template is 42 or more across. Measured 2026-10-03 (HIDDEN_LEGENDARIES.md owner call 5) and unchanged.",
+    "rift_dead_ends": "NONE AVAILABLE, measured 2026-10-06 over the_rift's polygon (data/regions.json) for the Giratina piece's 42x38: 82 footprints with ground spread <= 16 clear the keep-outs, the portals and the 800-block spread (Registeel, Mesprit, Regirock and Hoopa's cradle are its neighbours), and NOT ONE is 156 or more from a route path (the residents' 128 plus half the footprint). The Rift is crossed by Victory Road, the zones and the Deep's approaches. The Giratina piece went to the nearest thing the map has to a tear in the ground: the Glacial Tear's lower trough.",
+    "islands_with_no_reason_to_visit": "Newmoon Island, over the Fungal Isle's empty west end (no route point within 1,200 blocks)."
+  },
+  "what_never_travels": "as for every adopted site (what_never_travels above): no structure start, so no LumyMon radar, /locate or structure spawn finds either paste. Neither template carries a spawn preset (Newmoon Island and the Giratina piece are not registered structures at all)."
+ },
+ "sweep_sites": [
+  {
+   "id": "sweep_giratina_shrine",
+   "template": "legendarymonuments:giratina_island/main/222",
+   "legendary": "Giratina",
+   "status": "SCHEDULED 2026-10-06 as data/placements.json legendary_giratina_shrine. HIDDEN. Measured off tools/ground.py, rounded; nothing placed, booted or clicked.",
+   "hidden": true,
+   "scheduled_as": "legendary_giratina_shrine",
+   "source_archive": "LegendaryMonuments-Cobbleverse.jar",
+   "size": [42, 43, 38],
+   "size_source": "the template NBT, read 2026-10-06 from C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods/LegendaryMonuments-Cobbleverse.jar with zipfile and tools/nbt.py; nothing copied. data/structures.json registers the STRUCTURE legendarymonuments:giratina_island (a depth-7 jigsaw that generates only in the Distortion World); this is its centre piece's template, placed raw.",
+   "template_read_2026_10_06": {
+    "layers": "layers 0-11 a full 42x38 slab of distortion cobblestone and deepslate (1,596 blocks a layer); layer 12 the island's floor cover and the altar; layers 14-34 a black stained-glass dome with distortion logs, leaves and crystals inside; layer 42 five jigsaws only. 43,337 air.",
+    "summon": "lumymon:giratina_altar at template [23, 12, 20], world (4397, 78, 2882); lumymon:summon_anchor at [23, 15, 20], world (4397, 81, 2882).",
+    "jigsaws": "six: [23, 0, 20] final state distortion_deepslate; [0, 42, 20], [23, 42, 0], [23, 42, 20], [23, 42, 37], [41, 42, 20] final state air. data/placements.json jigsaws final_state sets them after the paste.",
+    "containers": "none. No block entity in the template holds an item, so nothing in the paste hands out the Red Chain."
+   },
+   "seat": {"kind": "sunk", "ground_layer": 11, "why": "layer 11, the slab's top, stands at the footprint's cheapest seat y77, so the slab is buried in the trough floor and only the floor cover, the altar and the dome stand above ground. Seated on the ground instead, the slab would be a 12-high block of distortion stone with the dome on top."},
+   "site": {"region": "glacial_tear", "subregion": "lower_trough", "cell": "C5", "why": "the trough's least-seen footprint: of every 42x38 in x4200..4500, z2700..3000 that clears every rule below, the one seen from no route vertex (bare terrain) at the least cut and fill. The Tear is a frozen rift in the land; the Rift itself has no qualifying pocket (sweep_2026_10_06.the_obscured_homes_the_owner_named.rift_dead_ends)."},
+   "placement_lives_in": "the position, rotation and mirror live ONLY in data/placements.json legendary_giratina_shrine: corner (4374, 2862), y66, top occupied layer y108 (467 under the runtime ceiling y575), rotation none, mirror none.",
+   "ground": {"min": 72, "max": 80, "median": 77.0, "columns": 1596, "measured_by": "tools/legendary_sweep.py measure over x4374..4415, z2862..2899"},
+   "displaces": {"cut_blocks": 639, "cut_columns": 635, "fill_blocks": 86, "fill_columns": 64, "terrain": "with the slab's top at y77, 635 columns lose a block or two of trough floor and 64 show the slab's edge above the ground by a block or two. The template's air above the slab clears whatever stood in the box up to y108: trough floor only, no authored record within 115."},
+   "rules_measured": {"nearest_authored": 115, "nearest_authored_src": "data/landmarks.json", "route_path_edge": 458, "habitat_margin": 312, "portal_edge": 918, "spread_nearest": 912, "spread_nearest_id": "adopted_crown_cemetery", "route_sightings": 0, "route_points_within_1200": 3772, "wet_columns": 0},
+   "carries_into_the_world": {"blocks": ["lumymon:giratina_altar", "lumymon:summon_anchor", "15,349 legendarymonuments:distortion_cobblestone and the island's other distortion blocks", "4,954 black and 50 red stained glass", "10 minecraft:light"], "entities": "none"},
+   "extra_caches": [{"source": "giratina_griseous", "items": ["mega_showdown:griseous_core", "mega_showdown:griseous_orb"], "flags": ["champion_cleared"]}],
+   "gate": {"flags": ["champion_cleared"], "why": "Giratina rolls 85, 90 or 99 (GiratinaAltar's spawn strings, some holding mega_showdown:griseous_core), so it can be held only under the Champion's cap of 100 (docs/mechanics/LEAGUE_LEVEL_CAP.md). The place is open to anyone; the CHAIN is the gate: data/rewards.json sweep_red_chain is earned only by a player holding cobblers:flag/champion_cleared, so nobody below the cap can summon and waste it."},
+   "activation_item": {"item": "lumymon:red_chain", "source": "sweep_red_chain", "one_source": "measured 2026-10-06 across every jar and datapack in the server snapshot: lumymon:red_chain is produced by a recipe in the DISABLED Sinnoh pack and dropped by rctmod's team_galactic_cyrus, whom the campaign never seats. Nothing loaded hands it out, and the template holds no container. The cache is its one source."},
+   "what_a_player_gets": "Giratina, at 85-99 (the shiny branch at 90 with a Griseous Core), once per player: one Red Chain each, from the cache at the altar. Whether the altar CONSUMES the chain is not known (LumyMon closed source; EXP-048 left it open): if it does not, the chain is a key and Giratina a farm, and the site needs a twin of cobblers_spectrier_cap (open below). Nothing else: the template has no loot.",
+   "how_it_is_found": {
+    "by_eye": "measured: the dome is seen from the anchor of landmark major_river ('the Glacial Tear to the east coast', 450 blocks off), so a player following that river up into the Tear sees black glass in the trough; it is NOT seen from the Glacial Tear's own anchor (241 off, behind the trough's shoulder) or from any route vertex within 1,200 (route_sightings 0).",
+    "rumour_proposed": "the Compact binder, once the ring is open (data/dialogue.json dlg_main_relic_hall_release, its released_repeat node, to a Champion): 'When the ring went dark something else answered. North-east, where the ice tore. Not Hoopa's kind of door.' NOT AUTHORED: tools/finale_audit.py models that conversation and tests/test_finale_confrontation.py walks its reachability; the line is for Codex or the finale's owner to place.",
+    "after_finding": "the Red Chain's message names the altar; the anchor above it is where Giratina appears (LumyMon's summon_anchor tooltip, 'Pokemon from Altars appear here')."
+   },
+   "does_not_travel_here": ["the Distortion World, the other jigsaw pieces and the island's underside: a raw paste gives the one piece", "/locate and any radar: no structure start"],
+   "open": ["whether giratina_altar consumes the Red Chain (a farm otherwise: a Giratina cap like cobblers_spectrier_cap)", "whether the altar answers in a pasted piece at all (EXP-048 proved one LumyMon altar, the Calyrex statue, not this one)", "data/spawn_suppression.json declares no spawn-free zone here; nothing is dormant in the site"]
+  },
+  {
+   "id": "sweep_newmoon_island",
+   "template": "lumymon:newmoon_island",
+   "legendary": "Darkrai",
+   "status": "SCHEDULED 2026-10-06 as data/placements.json legendary_newmoon_island. HIDDEN. Measured off tools/ground.py, rounded; nothing placed, booted or clicked.",
+   "hidden": true,
+   "scheduled_as": "legendary_newmoon_island",
+   "source_archive": "LumyMon-0.6.6.jar",
+   "size": [101, 58, 100],
+   "size_source": "the template NBT, read 2026-10-06 from the server snapshot's LumyMon-0.6.6.jar with zipfile and tools/nbt.py; nothing copied. Not a registered structure: LumyMon places it in its own Nightmare dimension.",
+   "template_read_2026_10_06": {
+    "layers": "an obsidian and sculk island body in layers 0-19 (7,296 solid in layer 0 of 10,100, so its bottom is 28% air), a dark oak and spruce settlement on it, a shrine room on top. 430,356 air.",
+    "summon": "lumymon:darkrai_shrine at template [49, 46, 33], world (73, 187, 5615); lumymon:summon_anchor at [59, 37, 24], world (83, 178, 5606).",
+    "containers": "barrels, cabinets and chests on loot tables cobbleverse:structures/newmoon_island and newmoon_island_nightmare (COBBLEVERSE-Loot-DP-v11: tumblestones, dark gems, Dusk Balls, dark Tera Shards, Darkinium Z, sherds, nightmare_string) and literal items: a pink gilded chest (6 psychic Tera Shards, 2 Moon Balls, a lunar_wing, glowstone), an oak barrel (5 Dusk Balls, TM Night Slash), bookshelves of enchanted books, bones and wither roses. NONE holds lumymon:nightmare_weaver; nothing to remove.",
+    "entities": "5 armor stands and 4 paintings; place template places them."
+   },
+   "seat": {"kind": "floating", "gap": 24, "why": "the template is a floating island: seated on the Fungal Isle its 28%-air bottom digs holes, seated on the sea it opens dry pits under the waterline. Hung with its bottom layer 24 over the highest ground in the footprint (y117), its air writes over nothing, the isle's tallest trees included."},
+   "site": {"region": "fungal_isle", "subregion": "fungal_north", "cell": "F1", "why": "the 2026-10-03 pass's proposed home (HIDDEN_LEGENDARIES.md owner call 3): the Fungal Isle's west end, 699 off the mainland, with nothing authored on it but spawns and a region outline. Zapdos's tower stands on the same isle's east coast, 823 from this centre, over the 800 spread."},
+   "placement_lives_in": "the position, rotation and mirror live ONLY in data/placements.json legendary_newmoon_island: corner (24, 5582), y141, top occupied layer y198 (377 under the runtime ceiling y575), rotation none, mirror none.",
+   "ground": {"min": 79, "max": 117, "median": 99.0, "columns": 10100, "measured_by": "tools/legendary_sweep.py measure over x24..124, z5582..5681"},
+   "rules_measured": {"nearest_authored": 97, "nearest_authored_src": "data/regions.json", "route_path_edge": 1369, "habitat_margin": 1533, "portal_edge": 2855, "spread_nearest": 823, "spread_nearest_id": "adopted_zapdos_tower", "route_sightings": 0, "route_points_within_1200": 0},
+   "carries_into_the_world": {"blocks": ["lumymon:darkrai_shrine", "lumymon:summon_anchor", "95,045 obsidian and 28,298 sculk", "the settlement's dark oak, spruce and deepslate"], "entities": "5 armor stands, 4 paintings"},
+   "gate": {"flags": ["champion_cleared"], "why": "Darkrai rolls 70-85 (99 shiny) (DarkraiShrine's spawn strings), above every cap but the Champion's 100. The island needs a flying ride to reach; the WEAVER is the gate: data/rewards.json sweep_nightmare_weaver is earned only by a player holding cobblers:flag/champion_cleared."},
+   "activation_item": {"item": "lumymon:nightmare_weaver", "source": "sweep_nightmare_weaver", "one_source": "measured 2026-10-06 across every jar and datapack in the server snapshot: lumymon:nightmare_weaver is produced only by a recipe in the DISABLED Sinnoh pack (its ingredient nightmare_string does drop from the island's nightmare loot table, but the recipe is not loaded). The island's containers hold none. The cache is its one source."},
+   "what_a_player_gets": "Darkrai, at 70-85, once per player: one Nightmare Weaver each, from the cache at the shrine (same consumption question as the Red Chain). And the island's loot, open to anyone who can fly up: Dusk and Moon Balls, dark and psychic Tera Shards, Darkinium Z, TM Night Slash, enchanted books, tumblestones.",
+   "how_it_is_found": {
+    "by_eye": "measured: the island (its middle at y170) is in plain line of sight from the top of Zapdos's tower (y132) on the same isle's east coast, 823 blocks off (centre to centre). A player who climbs to Zapdos sees a black island hanging in the western sky. No route vertex is within 1,200 blocks, so nobody sees it by accident.",
+    "rumour_proposed": "Shrew Station's archivist, to a Champion (data/research_station.json npc archivist): 'Sailors west of the Fungal Isle swear there's an island up in the air out there. Black, and quiet. Dreams go bad near it.' NOT AUTHORED: the station's conversations are another session's (the 2026-10-03 precedent for the Crown Spire's rumour).",
+    "after_finding": "the shrine room is the island's top storey; the weaver's message is given there."
+   },
+   "does_not_travel_here": ["LumyMon's Nightmare dimension and its NightmareState: the island is placed in the overworld, raw", "/locate and any radar: no structure start"],
+   "open": ["whether darkrai_shrine consumes the weaver", "whether the shrine answers in the overworld at all: it was built for LumyMon's Nightmare dimension (the class strings name no dimension check, but NightmareState exists)", "reaching it needs flight: nothing in this repository gates or grants a flying ride"]
+  }
+ ],
+ "catalogue_2026_10_06": {
+  "what": "every legendary or mythical structure template in the server snapshot (C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/), found by reading every .nbt under data/*/structure in the loaded datapacks, the three disabled region packs (datapacks/extra) and the mod jars, and keeping each whose palette carries an altar, shrine, statue, pedestal, cocoon or summon block or whose command blocks spawn a Pokemon. Gym, league and ruin templates with only statue_ancient decoration are left out. Read 2026-10-06 with zipfile and tools/nbt.py; nothing copied.",
+  "loaded_means": "the template is in a pack or jar the server loads, so /place template can reach it today. The Hoenn, Johto and Sinnoh packs are in datapacks/extra and are NOT loaded (our world has had them off since its first export): placing their templates would mean enabling a pack, an owner's dependency decision (CLAUDE.md principles 9-10).",
+  "templates": [
+   {"template": "cobbleverse:mythical/mew", "legendary": "Mew", "loaded": true, "status": "adopted", "where": "adopted_mew_temple"},
+   {"template": "cobbleverse:crown_cemetery", "legendary": "Spectrier, Calyrex", "loaded": true, "status": "adopted", "where": "adopted_crown_cemetery"},
+   {"template": "cobbleverse:crown_spire", "legendary": "Glastrier", "loaded": true, "status": "adopted", "where": "adopted_crown_spire (hidden)"},
+   {"template": "cobbleverse:legendary/zapdos", "legendary": "Zapdos", "loaded": true, "status": "adopted", "where": "adopted_zapdos_tower"},
+   {"template": "cobbleverse:legendary/articuno", "legendary": "Articuno", "loaded": true, "status": "adopted", "where": "adopted_articuno_shrine"},
+   {"template": "cobbleverse:legendary/moltres", "legendary": "Moltres", "loaded": true, "status": "adopted", "where": "adopted_moltres_tower (moved from the Nether 2026-10-02)"},
+   {"template": "cobbleverse:dawn_tower", "legendary": "Necrozma (Dawn Wings)", "loaded": true, "status": "adopted", "where": "adopted_dawn_tower (moved from the End)"},
+   {"template": "cobbleverse:dusk_tower", "legendary": "Necrozma (Dusk Mane)", "loaded": true, "status": "adopted", "where": "adopted_dusk_tower (moved from the End)"},
+   {"template": "legendarymonuments:giratina_island/main/222", "legendary": "Giratina", "loaded": true, "status": "placed_by_sweep", "where": "sweep_giratina_shrine"},
+   {"template": "lumymon:newmoon_island", "legendary": "Darkrai", "loaded": true, "status": "placed_by_sweep", "where": "sweep_newmoon_island"},
+   {"template": "legendarymonuments:lake_guardians/lake_acuity/3x3", "legendary": "Uxie", "loaded": true, "status": "ours_authored", "where": "data/legendaries.json uxie (lake grotto); refused as a paste: two authors for one legendary"},
+   {"template": "legendarymonuments:lake_guardians/lake_valor/3x3", "legendary": "Azelf", "loaded": true, "status": "ours_authored", "where": "data/legendaries.json azelf"},
+   {"template": "legendarymonuments:lake_guardians/lake_verity/3x3", "legendary": "Mesprit", "loaded": true, "status": "ours_authored", "where": "data/legendaries.json mesprit"},
+   {"template": "legendarymonuments:firescourge_shrine", "legendary": "Chi-Yu", "loaded": true, "status": "stays_where_it_generates", "where": "the Nether, re-opened 2026-10-06: its stakes are a Nether worldgen feature (StakePlacement, every #minecraft:is_nether biome), so an overworld paste has no stakes near it and the Nether copy still generates. The Nether is reachable (a vanilla portal), so it is not a tower nobody visits: it is where the stakes are"},
+   {"template": "legendarymonuments:grasswither_shrine", "legendary": "Wo-Chien", "loaded": true, "status": "stays_where_it_generates", "where": "the Nether (as Chi-Yu)"},
+   {"template": "legendarymonuments:groundblight_shrine", "legendary": "Ting-Lu", "loaded": true, "status": "stays_where_it_generates", "where": "the Nether (as Chi-Yu)"},
+   {"template": "legendarymonuments:icerend_shrine", "legendary": "Chien-Pao", "loaded": true, "status": "stays_where_it_generates", "where": "the Nether (as Chi-Yu)"},
+   {"template": "legendarymonuments:eternatus_cocoon", "legendary": "Eternatus", "loaded": true, "status": "out_by_owner", "where": "owner_decisions_2026_10_02.eternatus: out until a Galar Particle supply is authored (500 wanted, 45 in the template, the ore never generates in our export)"},
+   {"template": "legendarymonuments:stark_mountain", "legendary": "Heatran", "loaded": true, "status": "unplaced", "where": "an owner's call, not placed: a 120x90x137 volcano is a landmark by construction, not an obscured spot; it seats two Sinnoh RCT trainers (sinnoh_buck, team_galactic_charon) a paste would have to empty; and its item chain is magmatic_cluster (a recipe only in the disabled Sinnoh pack) forged into a magma_stone in the template's own lumymon:stark_forge. Placeable: emptying the two spawners (remove_blocks rctmod:trainer_spawner) and a Champion-gated magmatic_cluster cache, as for the two sites above"},
+   {"template": "lumymon:temple_of_sinnoh", "legendary": "Arceus (and Origin Dialga/Palkia statues)", "loaded": true, "status": "unplaced", "where": "not placed: its 18 lumymon:arceus_pedestal want one Mega Showdown plate each, and no loaded recipe or loot table makes any of the 18 plates (searched 2026-10-06); the pedestal also has a 'locked' message (INFERRED from class strings, not read: a state the jar keeps in ArceusGlobalState, plausibly opened by the Azure Flute, whose recipe is in the disabled Sinnoh pack). Eighteen item sources is an economy, not a placement. It also seats two Hisuian RCT trainers"},
+   {"template": "legendarymonuments:turnback_cave", "legendary": "Giratina (the route to it)", "loaded": true, "status": "refused", "where": "refused group (above): a depth-7 jigsaw; a raw paste gives one start piece"},
+   {"template": "legendarymonuments:distortion_portal", "legendary": "(a portal to the Distortion World)", "loaded": true, "status": "refused", "where": "refused group (above): adopting it means adopting a dimension"},
+   {"template": "cobbleverse:legendary/groudon", "legendary": "Groudon", "loaded": false, "status": "ours_authored", "where": "Hoenn pack; data/legendaries.json groudon"},
+   {"template": "cobbleverse:legendary/kyogre", "legendary": "Kyogre", "loaded": false, "status": "planned", "where": "Hoenn pack; docs/world-building/KYOGRE_CAVE.md (the weather trio is planned there: not built here)"},
+   {"template": "cobbleverse:legendary/regice", "legendary": "Regice", "loaded": false, "status": "ours_authored", "where": "Hoenn pack; data/legendaries.json regice"},
+   {"template": "cobbleverse:legendary/regirock", "legendary": "Regirock", "loaded": false, "status": "ours_authored", "where": "Hoenn pack; data/legendaries.json regirock"},
+   {"template": "cobbleverse:legendary/registeel", "legendary": "Registeel", "loaded": false, "status": "ours_authored", "where": "Hoenn pack; data/legendaries.json registeel"},
+   {"template": "cobbleverse:sky_pillar", "legendary": "Rayquaza", "loaded": false, "status": "planned", "where": "Hoenn pack; the weather trio, KYOGRE_CAVE.md: not built here"},
+   {"template": "cobbleverse:secret_garden", "legendary": "Latias, Latios", "loaded": false, "status": "ours_authored", "where": "Hoenn pack; Shrew Station's own Eon shrine sets the two LumyMon altars (data/research_station.json), dews held behind eon_issuing"},
+   {"template": "cobbleverse:mythical/deoxys", "legendary": "Deoxys", "loaded": false, "status": "not_loaded", "where": "Hoenn pack (55x56x55; meteorite_crystal, no loaded source)"},
+   {"template": "cobbleverse:mythical/jirachi", "legendary": "Jirachi", "loaded": false, "status": "not_loaded", "where": "Hoenn pack (35x67x36; melodic_tape_vol_1, no loaded source)"},
+   {"template": "cobbleverse:bell_tower", "legendary": "Ho-Oh", "loaded": false, "status": "not_loaded", "where": "Johto pack (23x93x23; rainbow_wing, dropped by rctmod's old_sage)"},
+   {"template": "cobbleverse:whirl_island", "legendary": "Lugia", "loaded": false, "status": "ours_authored", "where": "Johto pack; data/legendaries.json lugia (blocked: no seabed)"},
+   {"template": "cobbleverse:celebi_shrine", "legendary": "Celebi", "loaded": false, "status": "ours_authored", "where": "Johto pack; data/legendaries.json celebi_wake and data/sapling_celebi.json"},
+   {"template": "cobbleverse:snowpoint_temple", "legendary": "Regigigas", "loaded": false, "status": "ours_authored", "where": "Sinnoh pack; data/legendaries.json regigigas"},
+   {"template": "cobbleverse:spear_pillar", "legendary": "Dialga, Palkia", "loaded": false, "status": "not_loaded", "where": "Sinnoh pack (35x22x86; space_time_altar wants a flute and an orb or the Red Chain)"},
+   {"template": "cobbleverse:split_decision_temple", "legendary": "Regidrago, Regieleki", "loaded": false, "status": "not_loaded", "where": "Sinnoh pack (48x20x35; draco and spark relics drop from LumyMon ores, which our export never generates)"},
+   {"template": "cobbleverse:flower_paradise", "legendary": "Shaymin", "loaded": false, "status": "not_loaded", "where": "Sinnoh pack (47x16x44; prof_oak_letter, a Sinnoh recipe)"},
+   {"template": "cobbleverse:fullmoon_island", "legendary": "Cresselia", "loaded": false, "status": "not_loaded", "where": "Sinnoh pack (97x57x97; dream_catcher, a Sinnoh recipe)"}
+  ],
+  "not_a_template": "cobbleverse:spawn_rayquaza is a function (a shiny level-100 Rayquaza at 0,70,0 in the End), not a structure; the End has no door in our world. Hoopa is ours (data/hoopa_cradle.json, the cradle), Kubfu the starter build's."
  }
 }

@@ -47,7 +47,8 @@
     "file/E19 Cobblemon Minimap Icons.zip",
     "file/COBBLEVERSE Soundtrack.zip",
     "file/COBBLEVERSE RCTmod RP.zip",
-    "file/COBBLEVERSE RP.zip"
+    "file/COBBLEVERSE RP.zip",
+    "file/cobblers-client-AllTheMons-subset.zip"
   ],
   "pack_overrides": {
     "file/COBBLEVERSE RP.zip": {

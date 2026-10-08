@@ -16,7 +16,8 @@ A scene belongs to one quest and holds, inside an area:
              its owner leaves the area and comes back where their state says.
   zones      boxes that run quest transitions for a player standing in them (the transition's own conditions decide).
   effects    things one player sees or feels: particles sent only to them (`force <player>`), a push back out of a box,
-             a sequence of lights, a sound. Each runs while its condition holds for that player.
+             a sequence of lights, a sound, a line over their hotbar (actionbar). Each runs while its condition holds
+             for that player.
   functions  named command lists a dialogue can run as the player (effect scene_function in data/quests.json).
   no_build   boxes (a building's interior) where a survival player is put in adventure mode, and back on leaving.
   npcs       Cobblemon NPCs (people) that open a conversation; shared and static. NPC classes load only at server
@@ -372,6 +373,13 @@ class Scene:
             cmds.append("execute if entity @s[%s] run tellraw @s {\"text\":%s,\"color\":\"gray\",\"italic\":true}"
                         % (sel(e), json.dumps(e.get("message", ""))))
             cmds.append("execute if entity @s[%s] run tp @s %s %s %s %s 0" % (sel(e), num(dest[0] + 0.5), num(dest[1]), num(dest[2] + 0.5), num(yaw)))
+        elif kind == "actionbar":
+            # a line over this player's hotbar for as long as the condition holds (Oak's lab, 2026-10-06: where a
+            # new player without a starter goes). Refreshed every cycle, so it stays up while it is true
+            text = e.get("text")
+            if not isinstance(text, str) or not text or len(text) > 80:
+                raise SceneError("scene %s: actionbar %s needs a text of 1-80 characters" % (self.id, eid))
+            cmds.append("title @s actionbar %s" % json.dumps({"text": text, "color": e.get("color", "gold")}))
         else:
             raise SceneError("scene %s: effect kind %s" % (self.id, kind))
         out["fx/%s" % eid] = cmds

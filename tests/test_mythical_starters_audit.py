@@ -1,4 +1,5 @@
-"""tools/mythical_starters_audit.py: the five mythical starters checked against the DECISION and the 1.8.0 jar.
+"""tools/mythical_starters_audit.py: the seven starters (five mythical, Larvesta and Smeargle since 2026-10-08) checked
+against the DECISION and the 1.8.0 jar.
 
 Written by a test author, not by the session that built the starters. Every mutation below changes the GENERATOR's
 code (tools/mythical_starters.py `addition` or `files`, monkeypatched) and leaves data/mythical_starters.json alone
@@ -23,6 +24,13 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
+
+
+def _skip_while_sketch_uncapped():
+    # the owner, 2026-10-08: "remove the cap for smeargle's sketch for now"; these exercise the cap and run again
+    # once a line carries sketch_cap
+    if not any("sketch_cap" in ln for ln in json.loads((ROOT / "data" / "mythical_starters.json").read_text(encoding="utf-8"))["lines"]):
+        pytest.skip("the Sketch cap is off for now (the owner, 2026-10-08)")
 sys.path.insert(0, str(ROOT / "tools"))
 
 import mythical_starters as MS  # noqa: E402  the generator under mutation
@@ -152,7 +160,7 @@ def test_a_forced_evolution_is_a_fault(jar, monkeypatch, tmp_path):
 def test_a_form_on_a_native_final_is_a_fault(jar, monkeypatch, tmp_path):
     extra = {"data/cobblers/species_additions/x_silvally.json":
              {"target": "cobblemon:silvally", "forms": [{"name": "Starter", "aspects": [A2]}]}}
-    assert_named(faults(jar, build(monkeypatch, tmp_path, extra=extra)), "adds to silvally", "carries 11 forms")
+    assert_named(faults(jar, build(monkeypatch, tmp_path, extra=extra)), "adds to silvally", "carries 18 forms")
 
 
 # Without it a species-level change would reach every wild, raid and trainer copy of the species.
@@ -267,7 +275,8 @@ def _screen(tmp_path, pokemon):
     return p
 
 
-FIVE = ["%s level=5 aspect=%s" % (s, A1) for s in ("cosmog", "kubfu", "typenull", "poipole", "meltan")]
+FIVE = ["%s level=5 aspect=%s" % (s, A1) for s in ("cosmog", "kubfu", "typenull", "poipole", "meltan", "larvesta",
+                                                    "smeargle", "misdreavus")]
 
 
 # Without it the screen could offer a wrong level, no aspect (the wild-shaped Pokemon), a sixth or a missing line.
@@ -275,7 +284,7 @@ FIVE = ["%s level=5 aspect=%s" % (s, A1) for s in ("cosmog", "kubfu", "typenull"
     ([e.replace("level=5", "level=6") if e.startswith("kubfu") else e for e in FIVE], "the decision is level=5"),
     ([e.split(" aspect=")[0] if e.startswith("poipole") else e for e in FIVE], "the decision is level=5 aspect="),
     (FIVE + ["charmander level=5 aspect=%s" % A1], "offers ['charmander'"),
-    (FIVE[:-1], "the decision is exactly the five"),
+    (FIVE[:-1], "the decision is exactly the 8 stage-1 lines"),
     (["Type: Null level=5 aspect=%s" % A1 if e.startswith("typenull") else e for e in FIVE], "is not a species id"),
 ])
 def test_the_starter_screen_offers_exactly_the_five(jar, monkeypatch, tmp_path, pokemon, needle):
@@ -293,6 +302,59 @@ def test_a_traditional_starter_with_no_wild_family_is_a_fault(jar, monkeypatch, 
     spawns = tmp_path / "spawns.json"
     spawns.write_text(json.dumps(doc), encoding="utf-8")
     assert_named(faults(jar, build(monkeypatch, tmp_path), spawns=spawns), "charmander: no member of its family")
+
+
+# ------------------------------------------------------------------------- Larvesta, the sixth (2026-10-08)
+# Larvesta is the one line that is also an ordinary wild species, with a native level-59 step to Volcarona. These
+# pin that the starter forms are reached by aspect alone and that the line's own jar facts are kept.
+
+# Without it the grown form could keep the jar's 59 (the starter arriving at gym 6 un-evolved) and pass.
+def test_larvesta_reaching_volcarona_at_the_jars_59_is_a_fault(jar, monkeypatch, tmp_path):
+    def m(sp, a):
+        if sp == "larvesta":
+            stage(a, A2)[0]["evolutions"][0]["requirements"] = [{"variant": "level", "minLevel": 59}]
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "larvesta stage 2 -> volcarona", "[59]")
+
+
+# Without it the 45 step could lose Quiver Dance, the move the jar teaches on Larvesta's evolution.
+def test_larvesta_losing_quiver_dance_on_its_evolution_is_a_fault(jar, monkeypatch, tmp_path):
+    def m(sp, a):
+        if sp == "larvesta":
+            stage(a, A2)[0]["evolutions"][0]["learnableMoves"] = []
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "drops the native evolution move(s) ['quiverdance']")
+
+
+# Without it the weak form could jump straight to Volcarona at 30, skipping the grown form and the 45 point.
+def test_larvesta_skipping_its_grown_form_is_a_fault(jar, monkeypatch, tmp_path):
+    def m(sp, a):
+        if sp == "larvesta":
+            stage(a, A1)[0]["evolutions"][0]["result"] = "volcarona unaspect=%s" % A1
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "stage 2 of the larvesta line is larvesta")
+
+
+# Without it the line could take Volcarona's shape (135 SpA) at 330 and pass; the record says Larvesta's own.
+# Hand check: the jar's Larvesta is 55/85/55/50/55/60 = 360, so at 330 Attack's share is 85*330/360 = 77.92 and
+# Volcarona's shape (85/60/65/135/105/100 = 550) gives Attack 60*330/550 = 36, more than 1 off.
+def test_larvesta_in_volcaronas_shape_is_a_fault(jar, monkeypatch, tmp_path):
+    def m(sp, a):
+        if sp == "larvesta":
+            stage(a, A1)[0]["baseStats"] = {"hp": 51, "attack": 36, "defence": 39, "special_attack": 81,
+                                            "special_defence": 63, "speed": 60}
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "larvesta stage 1: attack 36 is not larvesta's share")
+
+
+# Without it a wild Larvesta row could carry the starter aspect and put the 330 form in the grass; a plain wild row
+# (data/spawns.json has three weighted ones) must still pass.
+def test_a_wild_row_carrying_a_starter_form_is_a_fault(jar, monkeypatch, tmp_path):
+    doc = json.loads(AU.SPAWNS.read_text(encoding="utf-8"))
+    larv = [r for r in doc["entries"] if r["species"].split()[0] == "larvesta" and (r.get("weight") or 0) > 0]
+    assert larv, "the fixture no longer has a wild Larvesta"
+    pack = build(monkeypatch, tmp_path)
+    assert faults(jar, pack) == []
+    larv[0]["species"] = "larvesta aspect=%s" % A1
+    spawns = tmp_path / "spawns.json"
+    spawns.write_text(json.dumps(doc), encoding="utf-8")
+    assert_named(faults(jar, pack, spawns=spawns), "carries a starter form ['aspect=%s']" % A1)
 
 
 # Without it the record's list of the 27 (which other tests now read) could drift from the trios upstream offered.
@@ -317,6 +379,317 @@ def test_an_unissued_scroll_is_reported_open_until_the_station_issues_it(jar, mo
     alt = tmp_path / "station.json"
     alt.write_text(json.dumps(station), encoding="utf-8")
     assert AU.audit(pack=pack, jar=jar, station=alt)[1] == []
+
+
+# ------------------------------------------------------------------------- Smeargle, the seventh (2026-10-08)
+# Smeargle has no evolution, so its 45 step is a third form of its own; every form has Protean and keeps Sketch, and
+# the pack carries the Sketch cap. Each case mutates the GENERATOR (addition, sketch_override or sketch_files); the
+# expectation is the audit's FORM_FINALS / SKETCH_CAP, the owner's numbers.
+
+def _smeargle_forms(fn):
+    def m(sp, a):
+        if sp == "smeargle":
+            for f in a["forms"]:
+                fn(f)
+    return m
+
+
+def _drop_third(sp, a):
+    if sp == "smeargle":
+        a["forms"][1]["evolutions"] = []
+
+
+def _spore(f):
+    f["moves"] = f["moves"] + ["1:spore"]
+
+
+@pytest.mark.parametrize("mutate, needle", [
+    # Without it a form could fall back to Smeargle's own Own Tempo / Technician / Moody and pass
+    (_smeargle_forms(lambda f: f.pop("abilities")), "smeargle stage 1: abilities None; the decision is protean"),
+    # ...or carry Protean only as its hidden ability, which a starter never rolls
+    (_smeargle_forms(lambda f: f.update(abilities=["owntempo", "h:protean"])), "smeargle stage 2: abilities"),
+    # Without it the 45 step could be lost and Smeargle stop at 430 for the rest of the game
+    (_drop_third, "smeargle stage 2: 0 evolutions; the decision is one step, into the third form"),
+    # Without it Spore could be a level-up move, which the decision keeps for Sketch alone
+    (_smeargle_forms(_spore), "the decision is that they arrive only through Sketch"),
+    # Without it a form could lose Sketch from its learnset
+    (_smeargle_forms(lambda f: f.update(moves=[e for e in f["moves"] if e != "1:sketch"])), "sketch is not learnt at 1"),
+])
+def test_a_smeargle_form_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path, mutate, needle):
+    assert_named(faults(jar, build(monkeypatch, tmp_path, mutate)), needle)
+
+
+# Without it the override could refuse at a count the decision did not set (or never), or a callback could be dropped
+# and the count never rise, and the audit would still pass.
+@pytest.mark.parametrize("part, needle", [
+    ("guard", "does not carry 'if (source.dynamaxLevel >= 10) return false;'"),
+    ("callback", "battle_fled/cobblers_sketch_cap.molang is missing"),
+    ("comment", "a // or unbalanced comment"),
+])
+def test_the_sketch_cap_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path, part, needle):
+    _skip_while_sketch_uncapped()
+    if part in ("guard", "comment"):
+        original = MS.sketch_override
+
+        def override(cap, z):
+            text = original(cap, z)
+            if part == "guard":
+                return text.replace(">= %d)" % cap, ">= %d)" % (cap + 1))
+            return text.replace("const move = target.lastMove;", "const move = target.lastMove; // copied")
+        monkeypatch.setattr(MS, "sketch_override", override)
+    else:
+        original_cb = MS.sketch_files
+        monkeypatch.setattr(MS, "sketch_files", lambda line: {k: v for k, v in original_cb(line).items()
+                                                              if "battle_fled" not in k})
+    assert_named(faults(jar, build(monkeypatch, tmp_path)), needle)
+
+
+# ------------------------------------------------------------------------- independent review, 2026-10-08
+# Written by the reviewer of 4012bdb (Misdreavus) and d9c422d (Smeargle), not by either builder: neither unit
+# mutation-tested its own new checks (the per-stage shape, the cross-species step, Smeargle's third form and the Sketch
+# cap's files). Every case below mutates the GENERATOR's output (`addition`, `files`, `sketch_files`) and leaves the
+# record alone; every expected number is hand-computed from the jar's base stats or the owner's spread, not read from
+# the generator. Not covered (runtime, EXP-068 / EXP-065): the step into Flutter Mane happening in game, the aspect
+# being removed there, and the Sketch cap counting.
+
+def _on(species, aspect, fn):
+    """Apply fn to our form of `species` that carries exactly [aspect]."""
+    def m(sp, a):
+        if sp == species:
+            for f in stage(a, aspect):
+                fn(f)
+    return m
+
+
+def _stats(hp, atk, de, spa, spd, spe):
+    return {"hp": hp, "attack": atk, "defence": de, "special_attack": spa, "special_defence": spd, "speed": spe}
+
+
+def _result(text):
+    def fn(f):
+        f["evolutions"][0]["result"] = text
+    return fn
+
+
+A3 = "cobblers_starter_3"
+
+
+@pytest.mark.parametrize("mutate, needle", [
+    # Without it stage 1 could be scaled into Mismagius's shape (the older one-species pattern: 330 x 60/495 = 40,
+    # 105/495 = 70) instead of its own, Misdreavus's 60/60/60/85/85/85: hp share 60 x 330 / 435 = 45.52
+    (_on("misdreavus", A1, lambda f: f.update(baseStats=_stats(40, 40, 40, 70, 70, 70))),
+     "misdreavus stage 1: hp 40 is not misdreavus's share 45.52 of 330"),
+    # Without it stage 2 could stay in Misdreavus's shape (430 x 60/435 = 59.3); Mismagius's share is 60 x 430/495
+    (_on("mismagius", A2, lambda f: f.update(baseStats=_stats(59, 59, 59, 84, 84, 85))),
+     "misdreavus stage 2: hp 59 is not mismagius's share 52.12 of 430"),
+])
+def test_a_misdreavus_stage_in_the_wrong_species_shape_is_a_fault(jar, monkeypatch, tmp_path, mutate, needle):
+    assert_named(faults(jar, build(monkeypatch, tmp_path, mutate)), needle)
+
+
+@pytest.mark.parametrize("mutate, needle", [
+    # Without it the 45 step could point at another species (here another paradox) with the aspect handling kept
+    (_on("mismagius", A2, _result("screamtail unaspect=%s" % A2)),
+     "misdreavus: stage 2 reaches ['screamtail']; the jar's native finals are ['fluttermane']"),
+    # ...or back into Mismagius, so the line never leaves stage 2's species
+    (_on("mismagius", A2, _result("mismagius unaspect=%s" % A2)),
+     "misdreavus: stage 2 reaches ['mismagius']"),
+    # Without it Flutter Mane could keep cobblers_starter_2: a final carrying our aspect (finals stay native)
+    (_on("mismagius", A2, _result("fluttermane")), "the final keeps our aspect ['cobblers_starter_2']"),
+    # Without it the starter Misdreavus could also take a Dusk Stone before 30 (the jar's own Misdreavus step)
+    (_on("misdreavus", A1, lambda f: f["evolutions"].append(
+        {"id": "x", "variant": "item_interact", "result": "mismagius unaspect=%s aspect=%s" % (A1, A2),
+         "requiredContext": "cobblemon:dusk_stone", "requirements": []})),
+     "variant 'item_interact'; the decision advances this step by level_up"),
+])
+def test_the_cross_species_step_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path, mutate, needle):
+    assert_named(faults(jar, build(monkeypatch, tmp_path, mutate)), needle)
+
+
+# Without it our pack could add forms to Flutter Mane itself, so the final would not be the jar's own species.
+def test_a_form_on_the_cross_species_final_is_a_fault(jar, monkeypatch, tmp_path):
+    extra = {"data/cobblers/species_additions/x_fluttermane.json":
+             {"target": "cobblemon:fluttermane", "forms": [{"name": "Starter", "aspects": [A2]}]}}
+    assert_named(faults(jar, build(monkeypatch, tmp_path, extra=extra)), "adds to fluttermane")
+
+
+# Without it the premise could quietly change under a new jar: a Mismagius that evolves natively (so the tagged step
+# displaces something) or a Flutter Mane that joins a line. These mutate the JAR's view, because the premise is the
+# jar's; the generator and record are untouched.
+@pytest.mark.parametrize("sp, change, needle", [
+    ("mismagius", {"evolutions": [{"variant": "level_up", "result": "fluttermane"}]},
+     "the jar now gives mismagius a native evolution"),
+    ("fluttermane", {"preEvolution": "mismagius"}, "the jar now relates fluttermane to a line"),
+])
+def test_the_cross_species_premise_is_checked_against_the_jar(jar, monkeypatch, tmp_path, sp, change, needle):
+    pack = build(monkeypatch, tmp_path)
+    original = AU.load_jar
+
+    def changed(j):
+        species, moves = original(j)
+        species = dict(species)
+        species[sp] = dict(species[sp], **change)
+        return species, moves
+    monkeypatch.setattr(AU, "load_jar", changed)
+    assert_named(faults(jar, pack), needle)
+
+
+@pytest.mark.parametrize("mutate, needle", [
+    # Without it the third form could leave the owner's pivot 92/68/78/68/78/92 (2026-10-08; attack and speed
+    # swapped: share 68.00 of 476)
+    (_on("smeargle", A3, lambda f: f.update(baseStats=_stats(92, 92, 78, 68, 78, 68))),
+     "smeargle stage 3: attack 92 is not the decided spread's share 68.00 of 476"),
+    # Without it stage 1 could be scaled into the jar's Smeargle (55/20/35/20/45/75) instead: hp 74 x 330/450
+    (_on("smeargle", A1, lambda f: f.update(baseStats=_stats(73, 26, 46, 26, 60, 99))),
+     "smeargle stage 1: hp 73 is not the decided spread's share 54.27 of 330"),
+    # Without it stages 1 and 2 could stay in the pivot spread (the build before "old-shape-early", 2026-10-08):
+    # attack 79 x 330/450 = 57.93 and 79 x 430/450 = 75.49
+    (_on("smeargle", A1, lambda f: f.update(baseStats=_stats(64, 47, 54, 47, 54, 64))),
+     "smeargle stage 1: attack 47 is not the decided spread's share 57.93 of 330"),
+    (_on("smeargle", A2, lambda f: f.update(baseStats=_stats(83, 61, 71, 61, 71, 83))),
+     "smeargle stage 2: attack 61 is not the decided spread's share 75.49 of 430"),
+    # Without it the third form alone could lose Protean (the earlier case strips every form at once)
+    (_on("smeargle", A3, lambda f: f.pop("abilities")), "smeargle stage 3: abilities None"),
+    # Without it the third form could evolve on, and the line would not stay at 450
+    (_on("smeargle", A3, lambda f: f.update(evolutions=[{"variant": "level_up", "result": "smeargle"}])),
+     "the third form is where the line stays"),
+    # Without it the 45 step could leave Smeargle for another species
+    (_on("smeargle", A2, _result("exploud unaspect=%s aspect=%s" % (A2, A3))), "the third form is smeargle's own"),
+    # Without it the 45 step could drop cobblers_starter_2 without adding _3, landing on plain Smeargle
+    (_on("smeargle", A2, _result("smeargle unaspect=%s" % A2)), "the third form needs exactly cobblers_starter_3"),
+])
+def test_smeargles_third_form_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path, mutate, needle):
+    assert_named(faults(jar, build(monkeypatch, tmp_path, mutate)), needle)
+
+
+# Without it, since d9c422d taught the generator to emit a stage's `abilities`, any other line's form could carry an
+# ability pool (Protean on Cosmog) and pass: the audit only looked at abilities on Smeargle.
+def test_an_ability_pool_on_a_line_the_decision_gives_none_is_a_fault(jar, monkeypatch, tmp_path):
+    m = _on("cosmog", A1, lambda f: f.update(abilities=["protean", "h:protean"]))
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "cosmog stage 1: abilities ['protean', 'h:protean']")
+
+
+@pytest.mark.parametrize("event", ["battle_started_post", "battle_victory", "battle_fled"])
+# Without it any one of the three callbacks could be dropped (the earlier case drops only battle_fled)
+def test_each_sketch_callback_is_required(jar, monkeypatch, tmp_path, event):
+    _skip_while_sketch_uncapped()
+    original = MS.sketch_files
+    monkeypatch.setattr(MS, "sketch_files", lambda line: {k: v for k, v in original(line).items() if event not in k})
+    assert_named(faults(jar, build(monkeypatch, tmp_path)), "%s/cobblers_sketch_cap.molang is missing" % event)
+
+
+# Without it the callbacks could count to a number other than the decided 10 while the override still refused at 10.
+def test_sketch_callbacks_that_stop_short_of_ten_are_a_fault(jar, monkeypatch, tmp_path):
+    _skip_while_sketch_uncapped()
+    original = MS.sketch_files
+
+    def nine(line):
+        line = copy.deepcopy(line)
+        line["sketch_cap"]["uses"] = 9
+        return original(line)
+    monkeypatch.setattr(MS, "sketch_files", nine)
+    assert_named(faults(jar, build(monkeypatch, tmp_path)),
+                 "battle_victory/cobblers_sketch_cap.molang never raises the count to 10")
+
+
+# Without it the move override itself could be missing and Sketch would be uncapped.
+def test_a_missing_sketch_override_is_a_fault(jar, monkeypatch, tmp_path):
+    _skip_while_sketch_uncapped()
+    original = MS.files
+    monkeypatch.setattr(MS, "files", lambda doc, jar=None: {k: v for k, v in original(doc, jar).items()
+                                                             if not k.endswith("moves/sketch.js")})
+    assert_named(faults(jar, build(monkeypatch, tmp_path)), "data/cobblers/moves/sketch.js is missing")
+
+
+# ------------------------------------------------------------------------- the pivot (the owner, 2026-10-08)
+# Smeargle as a fast pivot (docs/research/notes/smeargle-pivot.md): the final form 476 at 92/68/78/68/78/92, and
+# `tm:uturn` on every form so the native TM Machine teaches U-turn. "Old-shape-early" (the owner, 2026-10-08): stages
+# 1 and 2 at 330 and 430 in the earlier 74/79/60/79/60/98 (= 450). The numbers are hand-computed, not read from the
+# generator: at 330, 74/79/60/98 x 330/450 = 54.27/57.93/44.00/71.87 floor to 54/57/44/57/44/71 = 327, and the three
+# largest remainders (.93 attack, .93 special attack, .87 speed) take the last three; at 430, 70.71/75.49/57.33/93.64
+# floor to 70/75/57/75/57/93 = 427, and hp (.71), speed (.64) and attack (.49, before special attack in stat order)
+# take the three.
+
+PIVOT = {A1: _stats(54, 58, 44, 58, 44, 72), A2: _stats(71, 76, 57, 75, 57, 94), A3: _stats(92, 68, 78, 68, 78, 92)}
+SMEARGLE_ADDITION = "data/cobblers/species_additions/mythical_starter_smeargle.json"
+
+
+def _built_smeargle(monkeypatch, tmp_path):
+    pack = build(monkeypatch, tmp_path)
+    return json.loads((pack / SMEARGLE_ADDITION).read_text(encoding="utf-8"))
+
+
+# Without it the pack could ship any spread the audit's share test tolerates (within 1 of each share) and still pass.
+def test_smeargle_is_the_476_pivot_spread(monkeypatch, tmp_path):
+    add = _built_smeargle(monkeypatch, tmp_path)
+    assert sum(PIVOT[A3].values()) == 476
+    for aspect, want in PIVOT.items():
+        (form,) = stage(add, aspect)
+        assert form["baseStats"] == want, (aspect, form["baseStats"])
+
+
+# Without it the U-turn entry could reach one form and not the others.
+def test_every_smeargle_form_carries_tm_uturn(monkeypatch, tmp_path):
+    add = _built_smeargle(monkeypatch, tmp_path)
+    assert len(add["forms"]) == 3
+    assert all("tm:uturn" in f["moves"] for f in add["forms"]), [f["moves"] for f in add["forms"]]
+
+
+# Without it the final could go back to the earlier 450 and the audit still pass.
+def test_smeargles_final_at_the_old_450_is_a_fault(jar, monkeypatch, tmp_path):
+    m = _on("smeargle", A3, lambda f: f.update(baseStats=_stats(74, 79, 60, 79, 60, 98)))
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "smeargle stage 3: BST 450, the decision is 476")
+
+
+# Without it a form could lose the U-turn entry and the TM Machine refuse it (tms.cannot_learn).
+@pytest.mark.parametrize("aspect, n", [(A1, 1), (A2, 2), (A3, 3)])
+def test_a_smeargle_form_without_tm_uturn_is_a_fault(jar, monkeypatch, tmp_path, aspect, n):
+    m = _on("smeargle", aspect, lambda f: f.update(moves=[e for e in f["moves"] if e != "tm:uturn"]))
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "smeargle stage %d: no tm:uturn" % n)
+
+
+# Without it the generator could add any TM to a starter form and the audit pass: only the record's tm_additions (and
+# a line's own native tm: entries) are allowed. Each case mutates the GENERATOR's output.
+@pytest.mark.parametrize("species, aspect, entry, needle", [
+    ("smeargle", A2, "tm:earthquake", "smeargle stage 2: 'tm:earthquake' is not a tm: entry"),
+    # the allow-list is per line: Smeargle's U-turn does not license it on Cosmog
+    ("cosmog", A1, "tm:uturn", "cosmog stage 1: 'tm:uturn' is not a tm: entry"),
+])
+def test_an_unrecorded_tm_entry_is_a_fault(jar, monkeypatch, tmp_path, species, aspect, entry, needle):
+    m = _on(species, aspect, lambda f: f.update(moves=f["moves"] + [entry]))
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), needle)
+
+
+# Without it the audit could accept tm:uturn from anywhere: the allow-list is the RECORD's, so a copy of the record
+# without it (or with no decision on the entry) makes the built entry a fault. The pack is the real build.
+@pytest.mark.parametrize("change", [
+    lambda sm: sm.pop("tm_additions"),
+    lambda sm: sm["tm_additions"][0].update(decision=" "),
+])
+def test_the_tm_allow_list_is_read_from_the_record(jar, monkeypatch, tmp_path, change):
+    pack = build(monkeypatch, tmp_path)
+    rec = json.loads(MS.DATA.read_text(encoding="utf-8"))
+    change(next(ln for ln in rec["lines"] if ln["id"] == "starter_smeargle"))
+    alt = tmp_path / "record.json"
+    alt.write_text(json.dumps(rec), encoding="utf-8")
+    assert_named(AU.audit(pack=pack, jar=jar, record=alt)[0], "smeargle stage 3: 'tm:uturn' is not a tm: entry")
+
+
+# The generator's own check refuses the same things before it writes (an in-memory copy of the record; the file is
+# untouched).
+@pytest.mark.parametrize("change, needle", [
+    (lambda sm: sm["moves"].append("tm:earthquake"), "starter_smeargle: `tm:earthquake` is not a tm: entry"),
+    (lambda sm: sm.pop("tm_additions"), "starter_smeargle: `tm:uturn` is not a tm: entry"),
+    (lambda sm: sm["tm_additions"][0].update(decision=""), "no `decision`"),
+    (lambda sm: sm["moves"].remove("tm:uturn"), "the addition reaches no form"),
+    (lambda sm: sm["tm_additions"][0].update(move="sketch") or sm["moves"].append("tm:sketch"),
+     "the jar has no data/cobblemon/tms/sketch.json"),
+])
+def test_the_generators_check_refuses_an_unrecorded_tm_entry(jar, change, needle):
+    doc = json.loads(MS.DATA.read_text(encoding="utf-8"))
+    assert MS.check(copy.deepcopy(doc), jar) == []
+    change(next(ln for ln in doc["lines"] if ln["id"] == "starter_smeargle"))
+    assert_named(MS.check(doc, jar), needle)
 
 
 # Without it the audit could start reusing the builder's own derivation and agree with it about anything.

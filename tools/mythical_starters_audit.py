@@ -1,9 +1,17 @@
 #!/usr/bin/env python
-"""Independent audit of the five mythical starters ("a-lite" at 30 and 45) as the server would load them.
+"""Independent audit of the eight starters (five mythical, Larvesta, Smeargle and Misdreavus), "a-lite" at 30 and 45, as
+the server loads them. Smeargle (2026-10-08) has no evolution, so its 45 step is a third form of its own (FORM_FINALS), and its
+pack also carries the Sketch cap's move override and callbacks (only their presence and the cap's number are checked
+here; the cap's runtime is EXP-065). Misdreavus (2026-10-08) steps at 45 from a tagged Mismagius into Flutter Mane, a
+species the jar does not relate to it (CROSS_SPECIES_FINALS; the step's runtime is EXP-068).
 
 Written by a test author, not by the session that built them. It never imports tools/mythical_starters.py and never
 takes an expectation from data/mythical_starters.json's stage specs: the record's levels, aspects, shapes, BSTs and
-evolutions are exactly what is under audit, so none of them is read.
+evolutions are exactly what is under audit, so none of them is read. Two allow-lists ARE read from it, each the owner's
+recorded exception rather than a spec: a line's `authored_moves`, and its `tm_additions` (a non-native `tm:` entry
+passes only when the record names its move with a `decision`; Smeargle's `tm:uturn`, the owner 2026-10-08). Smeargle's
+per-stage spreads (the old shape at stages 1-2, the pivot at 3) and the U-turn entry on every Smeargle form are pinned
+here as constants (FORM_FINALS), not read.
 
 WHERE THE EXPECTATIONS COME FROM
   the decision   docs/mechanics/NATIVE_STARTERS_COST.md sections 6a and 7 (the owner, 2026-10-02): Cosmog, Kubfu,
@@ -61,6 +69,34 @@ WORLD_READS = set()
 START, STAGE_2, FINAL = 5, 30, 45            # 6a table: "level 5", "level 30", "level 45"; 7.1 "30/45, decided"
 BST = {1: 330, 2: 430}                       # 3, the a-lite row at 30/45 "330 / 430 / native"; 6a table (Meltan)
 ASPECT = {1: "cobblers_starter_1", 2: "cobblers_starter_2"}   # 6a table: the aspect each stage carries
+# The seventh, Smeargle (the owner, 2026-10-08; docs/STATE.md "Smeargle, the seventh starter"): no evolution exists,
+# so its line is three forms of the one species, the third at 45 "about 450 at 74/79/60/79/60/98"; stages 1 and 2
+# keep 330 and 430 in that same spread; Protean in every form; Sketch kept in every form and capped at 10 uses per
+# Pokemon; Spore and Shell Smash arrive only through Sketch.
+# The pivot decision (the owner, 2026-10-08; docs/research/notes/smeargle-pivot.md section 7): Smeargle is a fast
+# pivot, its final form "476: 92/68/78/68/78/92", stages 1 and 2 still 330 and 430 in that spread; and "add U-turn to
+# Smeargle's TM list", so every form carries `tm:uturn` for the native TM Machine.
+# Then "take old-shape-early Smeargle at 476" (the owner, 2026-10-08): stages 1 and 2 go back to the earlier
+# 74/79/60/79/60/98 spread at 330 and 430; only the final keeps the pivot 92/68/78/68/78/92 at 476. The shape is
+# therefore per stage (`shapes`, stage -> spread), pinned here, never read from the record.
+BST[3] = 476
+ASPECT[3] = "cobblers_starter_3"
+_SMEARGLE_OLD = {"hp": 74, "attack": 79, "defence": 60, "special_attack": 79, "special_defence": 60, "speed": 98}
+_SMEARGLE_PIVOT = {"hp": 92, "attack": 68, "defence": 78, "special_attack": 68, "special_defence": 78, "speed": 92}
+FORM_FINALS = {
+    "smeargle": {
+        "shapes": {1: _SMEARGLE_OLD, 2: _SMEARGLE_OLD, 3: _SMEARGLE_PIVOT},
+        "ability": "protean",
+        "keeps": "sketch",
+        "never_level_up": {"spore", "shellsmash"},
+        "tm": {"uturn"},
+    },
+}
+SKETCH_CAP = 10                              # "capped at 10 uses per Pokemon"
+SKETCH_GUARD = "if (source.dynamaxLevel >= %d) return false;" % SKETCH_CAP
+SKETCH_FILES = ["data/cobblers/moves/sketch.js"] + [
+    "data/cobblemon/callbacks/%s/cobblers_sketch_cap.molang" % e
+    for e in ("battle_started_post", "battle_victory", "battle_fled")]
 # stage-1 species -> (stage-2 species, the species whose stat shape both stages are scaled into)
 # 1.1: only Cosmog evolves twice, so the other four need a SAME-species stage 2. 3: "shape ... is each stage's own,
 # except the Cosmog line, which uses Solgaleo's shape". 6a: Meltan "330 BST in Melmetal's shape".
@@ -70,9 +106,25 @@ LINES = {
     "typenull": ("typenull", "typenull"),
     "poipole": ("poipole", "poipole"),
     "meltan": ("meltan", "melmetal"),
+    # the sixth (the owner, 2026-10-08; docs/research/notes/larvesta-starter-1.8.0.md version A): stage 2 is a 430
+    # form in Larvesta's own shape, never plain Larvesta (native Larvesta evolves at 59)
+    "larvesta": ("larvesta", "larvesta"),
+    # the seventh: its shape is the owner's literal spread (FORM_FINALS), not a jar species'
+    "smeargle": ("smeargle", None),
+    # the eighth (the owner, 2026-10-08): "the starter's own tagged Misdreavus at 5 (330), a tagged Mismagius at 30
+    # (430)", each stage in ITS OWN species' shape (STAGE_SHAPES), then Flutter Mane at 45 (CROSS_SPECIES_FINALS)
+    "misdreavus": ("mismagius", None),
 }
+# A line whose two stages are scaled into different species' shapes: stage -> the species whose shape it takes.
+STAGE_SHAPES = {"misdreavus": {1: "misdreavus", 2: "mismagius"}}
 # 1.2 and 6a: the jar has no Meltan evolution; the decision names Melmetal as its final.
 DECLARED_FINALS = {"meltan": {"melmetal"}}
+# The eighth's 45 step goes to a species the jar does NOT relate to the line (the owner, 2026-10-08: "Flutter Mane at
+# 45"; docs/research/notes/paradox-pokemon-1.8.0.md section 2). The premise, checked against the jar: the stage-2
+# species is a native FINAL (no evolution of its own, so nothing native is displaced), and the declared final has no
+# pre-evolution and no evolution (it joins no line of its own).
+CROSS_SPECIES_FINALS = {"misdreavus": {"fluttermane"}}
+DECLARED_FINALS.update(CROSS_SPECIES_FINALS)
 # 4: a-lite "keeps two native choices, Cosmoem's Solgaleo/Lunala and Kubfu's scrolls"; 2: Kubfu stays item_interact
 # on the scrolls with a level added. 6a: "Every other line reaches its final form on level alone at 45" (no anvil, no
 # friendship, no has_move).
@@ -233,7 +285,15 @@ def check_requirements(where, ev, line, final_step, native):
     return p
 
 
-def check_form(where, form, stage, line, species, moves, adds_species, authored):
+def native_tm(species, ids):
+    """The moves the jar's own species list as `tm:` learnset entries."""
+    return {e.split(":", 1)[1] for i in ids for e in species.get(i, {}).get("moves") or [] if str(e).startswith("tm:")}
+
+
+def check_form(where, form, stage, line, species, moves, adds_species, authored, tm_ok=frozenset()):
+    """`tm_ok`: the moves data/mythical_starters.json records in the line's `tm_additions` with a decision (the owner's
+    allow-list, read from the record and never from the generator). A form's `tm:` entry passes when it is a native
+    tm: entry of the line or recorded there; any other is a fault."""
     p = []
     if form.get("aspects") != [ASPECT[stage]]:
         p.append("%s: aspects %s, the decision selects stage %d by exactly [%s]"
@@ -244,7 +304,13 @@ def check_form(where, form, stage, line, species, moves, adds_species, authored)
     if any(ASPECT[stage] in (f.get("aspects") or []) for f in native.get("forms") or []):
         p.append("%s: aspect %s is a native form's" % (where, ASPECT[stage]))
     bs = form.get("baseStats") or {}
-    shape = species[LINES[line][1]]["baseStats"]
+    if line in FORM_FINALS:
+        shape, shape_name = FORM_FINALS[line]["shapes"][stage], "the decided spread"
+    elif line in STAGE_SHAPES:
+        shape_name = STAGE_SHAPES[line][stage]
+        shape = species[shape_name]["baseStats"]
+    else:
+        shape, shape_name = species[LINES[line][1]]["baseStats"], LINES[line][1]
     if sorted(bs) != sorted(shape):
         p.append("%s: baseStats keys %s" % (where, sorted(bs)))
     else:
@@ -256,10 +322,44 @@ def check_form(where, form, stage, line, species, moves, adds_species, authored)
         for k, v in sorted(bs.items()):
             share = shape[k] * BST[stage] / stotal
             if abs(v - share) >= 1:
-                p.append("%s: %s %d is not %s's share %.2f of %d" % (where, k, v, LINES[line][1], share, BST[stage]))
+                p.append("%s: %s %d is not %s's share %.2f of %d" % (where, k, v, shape_name, share, BST[stage]))
+    if line in FORM_FINALS:
+        ff = FORM_FINALS[line]
+        pool = form.get("abilities")
+        if not pool or any(str(a).split(":")[-1] != ff["ability"] for a in pool) or \
+                all(str(a).startswith("h:") for a in pool):
+            p.append("%s: abilities %s; the decision is %s in every form (and not only as a hidden ability)"
+                     % (where, pool, ff["ability"]))
+        lv = {str(e).split(":", 1)[1]: str(e).split(":", 1)[0] for e in form.get("moves") or [] if ":" in str(e)}
+        if lv.get(ff["keeps"]) != "1":
+            p.append("%s: %s is not learnt at 1; the decision keeps it in every form" % (where, ff["keeps"]))
+        early = sorted(ff["never_level_up"] & set(lv))
+        if early:
+            p.append("%s: %s in the level-up moves; the decision is that they arrive only through Sketch"
+                     % (where, early))
+        tms = {k for k, v in lv.items() if v == "tm"}
+        missing = sorted(ff.get("tm", set()) - tms)
+        if missing:
+            p.append("%s: no %s; the decision teaches them by the native TM Machine in every form"
+                     % (where, ", ".join("tm:%s" % m for m in missing)))
+    elif "abilities" in form:
+        # Since d9c422d the generator emits a stage's `abilities`; the decision sets a pool for Smeargle alone
+        # (docs/STATE.md "Smeargle, the seventh starter"), so on any other line a form keeps its species' pool.
+        p.append("%s: abilities %s; the decision sets a form's ability pool only for %s, every other line keeps "
+                 "its species' own" % (where, form.get("abilities"), sorted(FORM_FINALS)))
     members = {line, LINES[line][0]} | set(native_final_species(species, line))
     legal = learnset(species, members)
+    tm_native = native_tm(species, members)
     for e in form.get("moves") or []:
+        t = re.match(r"^tm:([a-z0-9]+)$", str(e))
+        if t:
+            mid = t.group(1)
+            if mid not in moves:
+                p.append("%s: %r is not a move in the jar" % (where, mid))
+            elif mid not in tm_native and mid not in tm_ok:
+                p.append("%s: %r is not a tm: entry of %s in 1.8.0 and is not recorded in the line's tm_additions"
+                         % (where, e, ", ".join(sorted(members))))
+            continue
         m = re.match(r"^(\d+):([a-z0-9]+)$", str(e))
         if not m:
             p.append("%s: move entry %r is not level:move" % (where, e))
@@ -285,11 +385,27 @@ def native_final_species(species, line):
     return sorted({k.split()[0] for k in native_finals(species, line)})
 
 
-def check_line(line, adds, species, moves, authored):
+def check_line(line, adds, species, moves, authored, tm_ok=frozenset()):
     """Walk the line as Cobblemon would, from the screen's stage-1 Pokemon to the native final."""
     p = []
     stage2 = LINES[line][0]
-    if line in DECLARED_FINALS:
+    if line in FORM_FINALS:
+        if evolutions_of(species[line]):
+            p.append("%s: the jar now has a native evolution; the decision's premise (no evolution) has changed" % line)
+        natives = {}
+    elif line in CROSS_SPECIES_FINALS:
+        if evolutions_of(species.get(stage2, {})):
+            p.append("%s: the jar now gives %s a native evolution; the cross-species final's premise has changed"
+                     % (line, stage2))
+        for f in sorted(CROSS_SPECIES_FINALS[line]):
+            fs = species.get(f)
+            if fs is None:
+                p.append("%s: the declared final %s is not a species in the jar" % (line, f))
+            elif evolutions_of(fs) or fs.get("preEvolution"):
+                p.append("%s: the jar now relates %s to a line (evolutions or preEvolution); the premise has changed"
+                         % (line, f))
+        natives = {f: None for f in sorted(CROSS_SPECIES_FINALS[line])}
+    elif line in DECLARED_FINALS:
         if evolutions_of(species[line]):
             p.append("%s: the jar now has a native evolution; the decision's premise (1.2) has changed" % line)
         natives = {f: None for f in sorted(DECLARED_FINALS[line])}
@@ -303,7 +419,7 @@ def check_line(line, adds, species, moves, authored):
         return p + ["%s: %d of our forms match the starter (%s, aspect %s); want exactly 1"
                     % (line, len(f1s), line, ASPECT[1])]
     f1 = f1s[0]
-    p += check_form("%s stage 1" % line, f1, 1, line, species, moves, line, authored)
+    p += check_form("%s stage 1" % line, f1, 1, line, species, moves, line, authored, tm_ok)
     if not f1.get("evolutions"):
         p.append("%s stage 1: no evolution" % line)
     f2 = None
@@ -326,7 +442,9 @@ def check_line(line, adds, species, moves, authored):
         f2 = f2s[0]
     if f2 is None:
         return p + ["%s: the chain never reaches a stage-2 form" % line]
-    p += check_form("%s stage 2" % line, f2, 2, line, species, moves, stage2, authored)
+    p += check_form("%s stage 2" % line, f2, 2, line, species, moves, stage2, authored, tm_ok)
+    if line in FORM_FINALS:
+        return p + check_third_form(line, f2, adds, species, moves, authored, tm_ok)
     reached = {}
     for ev in f2.get("evolutions") or []:
         res = native_result(ev.get("result"))
@@ -356,6 +474,59 @@ def check_line(line, adds, species, moves, authored):
     return p
 
 
+def check_third_form(line, f2, adds, species, moves, authored, tm_ok=frozenset()):
+    """A line with no native final: stage 2 steps at 45 into a third form of the same species, which stays."""
+    p = []
+    evos = f2.get("evolutions") or []
+    if len(evos) != 1:
+        return ["%s stage 2: %d evolutions; the decision is one step, into the third form" % (line, len(evos))]
+    ev = evos[0]
+    where = "%s stage 2 -> %s" % (line, ev.get("result"))
+    p += check_requirements(where, ev, line, True, None)
+    sp, props = parse_props(ev.get("result"))
+    aspects = ({ASPECT[2]} - {props.get("unaspect")}) | ({props["aspect"]} if props.get("aspect") else set())
+    if sp != line:
+        return p + ["%s: the third form is %s's own; the result is %s" % (where, line, sp)]
+    if aspects & OURS != {ASPECT[3]}:
+        return p + ["%s: the evolved Pokemon carries %s, the third form needs exactly %s"
+                    % (where, sorted(aspects & OURS), ASPECT[3])]
+    f3s = matching_forms(adds, line, aspects)
+    if len(f3s) != 1:
+        return p + ["%s: %d of our forms match (%s, %s); want exactly 1" % (where, len(f3s), line, sorted(aspects))]
+    f3 = f3s[0]
+    p += check_form("%s stage 3" % line, f3, 3, line, species, moves, line, authored, tm_ok)
+    if f3.get("evolutions"):
+        p.append("%s stage 3: evolutions %s; the third form is where the line stays" % (line, f3.get("evolutions")))
+    return p
+
+
+def check_sketch_cap(pack):
+    """The Sketch cap's four files are in the pack and the move override refuses at the decided count, while a line
+    carries `sketch_cap`; while none does (the owner, 2026-10-08: "remove the cap for smeargle's sketch for now"),
+    none of the four may be in the pack, so Sketch is the stock, unlimited move."""
+    p = []
+    doc = json.loads((ROOT / "data" / "mythical_starters.json").read_text(encoding="utf-8"))
+    if not any("sketch_cap" in ln for ln in doc["lines"]):
+        return ["%s is in the pack, but no line carries sketch_cap: Sketch is meant to be unlimited" % rel
+                for rel in SKETCH_FILES if (Path(pack) / rel).is_file()]
+    for rel in SKETCH_FILES:
+        f = Path(pack) / rel
+        if not f.is_file():
+            p.append("%s is missing: the Sketch cap (decided at %d) is not in the pack" % (rel, SKETCH_CAP))
+            continue
+        text = f.read_text(encoding="utf-8")
+        if rel.endswith(".js"):
+            if SKETCH_GUARD not in text:
+                p.append("%s does not carry %r" % (rel, SKETCH_GUARD))
+            # Cobblemon strips every newline before Showdown reads the file (GraalShowdownService.sendRegistryData)
+            flat = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+            if "//" in flat or "/*" in flat or "*/" in flat:
+                p.append("%s: a // or unbalanced comment survives into the one-line text Showdown evaluates" % rel)
+        elif "dmax_level=%d" % SKETCH_CAP not in text:
+            p.append("%s never raises the count to %d" % (rel, SKETCH_CAP))
+    return p
+
+
 # ------------------------------------------------------------------------------------------------ the rest
 
 def check_screen(starters_path, species):
@@ -372,8 +543,8 @@ def check_screen(starters_path, species):
             p.append("starter screen %r: properties %s, the decision is level=%d aspect=%s"
                      % (e, props, START, ASPECT[1]))
     if sorted(seen) != sorted(LINES):
-        p.append("the starter screen offers %s; the decision is exactly the five stage-1 lines %s"
-                 % (sorted(seen), sorted(LINES)))
+        p.append("the starter screen offers %s; the decision is exactly the %d stage-1 lines %s"
+                 % (sorted(seen), len(LINES), sorted(LINES)))
     return p
 
 
@@ -395,6 +566,16 @@ def check_wild(spawns_path, record_path, upstream_path, species):
                  "extra %s" % (len(listed), sorted(set(traditional) - set(listed)), sorted(set(listed) - set(traditional))))
     rows = json.loads(Path(spawns_path).read_text(encoding="utf-8"))["entries"]
     wild = {parse_props(r["species"])[0] for r in rows if (r.get("weight") or 0) > 0}
+    # 6a: the forms are the screen's alone. Larvesta (2026-10-08) is both a starter line and a wild species, so a
+    # wild row is fine and a wild row carrying a starter aspect (or form=<its name>) puts a starter in the grass
+    # (the compiled pools are swept by tools/oak_starter_audit.py P2; this is the authored source)
+    for r in rows:
+        words = str(r.get("species") or "").lower().split()
+        hit = [w for w in words[1:] if w.split("=")[-1] in OURS
+               or re.fullmatch(r"form=starter(?:[-_]?(?:grown|final))?", w)]
+        if hit:
+            p.append("data/spawns.json %s: %r carries a starter form %s; the forms are the starter screen's alone (6a)"
+                     % (r.get("id"), r.get("species"), hit))
     for s in traditional:
         if not descendants(species, s) & wild:
             p.append("%s: no member of its family has a weighted record in data/spawns.json; a starter left the "
@@ -424,21 +605,26 @@ def audit(pack=PACK, starters=STARTERS, spawns=SPAWNS, record=RECORD, upstream=U
     species, moves = load_jar(jar or find_jar())
     adds, faults = read_pack(Path(pack))
     rec = json.loads(Path(record).read_text(encoding="utf-8"))
-    authored = {}
+    authored, tm_added = {}, {}
     for line in rec.get("lines") or []:
         st = (line.get("stages") or [{}])[0].get("species")
         authored[_id(st)] = set(line.get("authored_moves") or [])
+        # the owner's allow-list of non-native `tm:` entries: only a recorded move with its decision counts
+        tm_added[_id(st)] = {str(a.get("move")) for a in line.get("tm_additions") or []
+                             if isinstance(a, dict) and a.get("move") and str(a.get("decision") or "").strip()}
     if adds:
         allowed = set(LINES) | {v[0] for v in LINES.values()}
         for sp in sorted(set(adds) - allowed):
-            faults.append("our pack adds to %s, which is not a stage-1 or stage-2 species of the five lines "
+            faults.append("our pack adds to %s, which is not a stage-1 or stage-2 species of the starter lines "
                           "(finals and everything else stay native: decision 4)" % sp)
         nforms = sum(len(d.get("forms") or []) for d in adds.values())
-        if nforms != 2 * len(LINES):
-            faults.append("our pack carries %d forms; the decision is %d (two stages x five lines, 4)"
-                          % (nforms, 2 * len(LINES)))
+        want = 2 * len(LINES) + len(FORM_FINALS)
+        if nforms != want:
+            faults.append("our pack carries %d forms; the decision is %d (two stages x %d lines, 4, and a third form "
+                          "for each of %s)" % (nforms, want, len(LINES), sorted(FORM_FINALS)))
         for line in LINES:
-            faults += check_line(line, adds, species, moves, authored.get(line, set()))
+            faults += check_line(line, adds, species, moves, authored.get(line, set()), tm_added.get(line, set()))
+        faults += check_sketch_cap(pack)
     faults += check_screen(starters, species)
     faults += check_wild(spawns, record, upstream, species)
     return faults, open_items(adds, station)
@@ -459,8 +645,15 @@ def main(argv=None):
     if faults:
         print("mythical_starters_audit: %d fault(s)" % len(faults))
         return 1
-    print("mythical_starters_audit: ok: five lines walk 5 -> %d -> %d through two forms to their native finals; "
-          "the screen offers the five; the 27 stay wild (%d open)" % (STAGE_2, FINAL, len(opens)))
+    doc = json.loads((ROOT / "data" / "mythical_starters.json").read_text(encoding="utf-8"))
+    sketch = ("Sketch capped at %d" % SKETCH_CAP if any("sketch_cap" in ln for ln in doc["lines"])
+              else "Sketch unlimited, the cap off for now")
+    print("mythical_starters_audit: ok: %d lines walk 5 -> %d -> %d through two forms to their native finals (%s "
+          "to a third form of its own, %s; %s across species to %s); the screen offers them; "
+          "the 27 stay wild (%d open)"
+          % (len(LINES), STAGE_2, FINAL, ", ".join(sorted(FORM_FINALS)), sketch,
+             ", ".join(sorted(CROSS_SPECIES_FINALS)),
+             ", ".join(sorted(f for v in CROSS_SPECIES_FINALS.values() for f in v)), len(opens)))
     return 0
 
 

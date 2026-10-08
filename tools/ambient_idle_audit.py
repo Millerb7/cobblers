@@ -110,7 +110,19 @@ CLEAR_LIGHT = ("glass", "pane", "fence", "lantern", "chain", "leaves", "slab", "
 # the builder; each is a defect in tools/ambient_idle.py's siting or data/ambient.json's species, for its owner).
 # 2026-10-04: all 42 first-run entries (25 road, 3 spot, 1 npc, 6 follower, 7 sleeper) were fixed in the generator
 # and data/ambient.json and removed here; the list is empty until a new defect is recorded rather than fixed.
-KNOWN: dict = {}
+KNOWN: dict = {
+    ('body', 'gym5_town_fenhide_barrel_cards_2'): "2026-10-06 overnight (docs/OVERNIGHT_REVIEW_2026-10-06.md N48): a composed situation's large body clips the barrel prop its own story stages (the card table, the stuck wagon); a second reader to judge whether to move it",
+    ('body', 'gym5_town_fenhide_barrel_cards_3'): "2026-10-06 overnight (docs/OVERNIGHT_REVIEW_2026-10-06.md N48): a composed situation's large body clips the barrel prop its own story stages (the card table, the stuck wagon); a second reader to judge whether to move it",
+    ('body', 'gym5_town_fenhide_barrel_cards_4'): "2026-10-06 overnight (docs/OVERNIGHT_REVIEW_2026-10-06.md N48): a composed situation's large body clips the barrel prop its own story stages (the card table, the stuck wagon); a second reader to judge whether to move it",
+    ('body', 'gym8_town_holdfast_stuck_wagon_1'): "2026-10-06 overnight (docs/OVERNIGHT_REVIEW_2026-10-06.md N48): a composed situation's large body clips the barrel prop its own story stages (the card table, the stuck wagon); a second reader to judge whether to move it",
+    ('body', 'gym8_town_holdfast_stuck_wagon_2'): "2026-10-06 overnight (docs/OVERNIGHT_REVIEW_2026-10-06.md N48): a composed situation's large body clips the barrel prop its own story stages (the card table, the stuck wagon); a second reader to judge whether to move it",
+    ('road', 'gym5_town_fenhide_moths_at_the_lamp_1'): "2026-10-06 overnight (N48): 'moths at the lamp' hover at a street lamp; AI-on followers, not standing on the road",
+    ('road', 'gym5_town_fenhide_moths_at_the_lamp_2'): "2026-10-06 overnight (N48): 'moths at the lamp' hover at a street lamp; AI-on followers, not standing on the road",
+    ('road', 'gym5_town_fenhide_moths_at_the_lamp_3'): "2026-10-06 overnight (N48): 'moths at the lamp' hover at a street lamp; AI-on followers, not standing on the road",
+    ('cap', 'gym1_town'): "2026-10-06/07 overnight (N89): the hand-written situations took Stoneford to 51 against 48; the owner picks which three go",
+    ('body', 'gorge_hamlet_bridgekeep_palossand_door_1'): "2026-10-06/07 overnight (N89): a sandcastle Pokemon's hitbox 0.15 into the sand block its own story stages it against",
+    ('footprint', 'tea_town_tea_poltchageist_chimney_1'): "2026-10-06/07 overnight (N89): staged inside its chimney pot (no open sky), so the roof exemption does not reach it; for the owner",
+}
 
 
 class AuditError(SystemExit):
@@ -265,9 +277,36 @@ def clusters(points, link=LINK):
     return sorted(g.values(), key=lambda c: (-len(c), c[0][2]))
 
 
+def composed_roles():
+    """{idler id: (role, situation id or None, allow)} for the composed towns, read from data/ambient_towns/*.json (the
+    owner's composition, 2026-10-05): the generator names a record `<settlement>_<id>` and a situation's members
+    `<settlement>_<situation>_<n>`. Read from the town files, not the generator, so the exemptions below rest on data."""
+    out = {}
+    for f in sorted((ROOT / "data" / "ambient_towns").glob("*.json")):
+        d = json.loads(f.read_text(encoding="utf-8"))
+        s = d.get("settlement", f.stem)
+        # the generator keeps an id that already starts with its settlement (northlight_gutter_snom), else prefixes it
+        name = lambda i: i if i.startswith(s + "_") else "%s_%s" % (s, i)  # noqa: E731
+        for r in d.get("placed") or []:
+            out[name(r["id"])] = ("placed", None, tuple(r.get("allow") or ()))
+        for r in d.get("pets") or []:
+            out[name(r["id"])] = ("pet", None, tuple(r.get("allow") or ()))
+        for sit in d.get("situations") or []:
+            n = sum(int(m.get("count") or len(m.get("offsets") or [])) for m in sit.get("members") or [])
+            for k in range(1, n + 2):
+                out["%s_%d" % (name(sit["id"]), k)] = ("situation", sit["id"], tuple(sit.get("allow") or ()))
+    return out
+
+
+ROLES = composed_roles()
+
+
 def check_groups(points_by_town):
+    """A situation's members are one group by the owner's design ("no group of the same species sitting together unless
+    it IS the situation"): they are left out of the clustering; everyone else is held to GROUP_MAX."""
     P = []
     for town, pts in sorted(points_by_town.items()):
+        pts = [p for p in pts if (ROLES.get(p[2]) or ("",))[0] != "situation"]
         for c in clusters(pts):
             if len(c) > GROUP_MAX:
                 P.append(("groups", "%s:%s" % (town, c[0][2]), "%s: %d Pokemon within %.0f blocks of each other (%s), "
@@ -276,8 +315,13 @@ def check_groups(points_by_town):
 
 
 def check_cap(counts):
-    return [("cap", t, "%s: %d Pokemon inside the town's footprint (%s), over the cap of %d" % (t, n, why, CAP))
-            for t, (n, why) in sorted(counts.items()) if n > CAP]
+    """CAP for the old idle towns; a composed town is held to data/ambient.json composition.ceiling.per_town, the
+    frame-rate test's measured ceiling (50 spread held 100-130 FPS; 48 leaves a margin)."""
+    comp = json.loads((ROOT / "data" / "ambient.json").read_text(encoding="utf-8")).get("composition") or {}
+    composed = {f.stem for f in (ROOT / "data" / "ambient_towns").glob("*.json")}
+    cap = lambda t: comp["ceiling"]["per_town"] if t in composed else CAP  # noqa: E731
+    return [("cap", t, "%s: %d Pokemon inside the town's footprint (%s), over the cap of %d" % (t, n, why, cap(t)))
+            for t, (n, why) in sorted(counts.items()) if n > cap(t)]
 
 
 def check_wake(k, idlers):
@@ -417,6 +461,8 @@ def check_followers(idlers, npcs, at=None):
     P = []
     for i in idlers.values():
         if i["kind"] != "follower" or i["town"] == "lopunny_house":   # the yard's Buneary wanders by design
+            continue
+        if (ROLES.get(i["id"]) or ("",))[0] == "situation":   # a situation's follow pose: its members follow each other
             continue
         x, y, z = i["at"]
         if i["home"] is None or math.dist(i["home"], (x, y, z)) > 0.01:
@@ -594,7 +640,11 @@ def town_extents():
     Mart and gym; the rim stop's footprint lies 150 blocks from its buildings), and a Pokemon by a building that
     sticks out is still in the town."""
     out = {}
+    retired = {s for s, v in json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+               .get("settlements", {}).items() if isinstance(v, dict) and v.get("retired")}
     for t, r in town_footprints().items():
+        if t in retired:              # the jungle ruins (decision B15): its old box now holds Pacifidlog, which counts
+            continue
         xs, zs = [r[0], r[2]], [r[1], r[3]]
         pp = ROOT / "derived" / "towns" / ("%s_plan.json" % t)
         plan = json.loads(pp.read_text(encoding="utf-8")) if pp.is_file() else {}
@@ -752,11 +802,18 @@ def check_spots(idlers, m, SW, rest, town_data, beyond=None):
             P.append(("spot", i["id"], "%s at %s: y ends .5 but the block under it is %s, not a seat"
                       % (i["id"], i["at"], seat_state)))
         cls, detail = SW.classify(m, bx, fy, bz)
+        sky = cls == "outside"            # as replayed: floor under, two cells of room, open sky (before any exemption)
         if seat and cls == "pedestal":
             cls = "outside"               # a bench seat stands one above the paving round it: that is a bench
         if cls == "indoors" and i["kind"] == "still" and any(inside(bb, bx, bz) and housed(src, bx, bz)
                                                               for bb, src in beyond.values()):
             cls = "outside"               # a still animal in the byre its place's record puts it in (housed())
+        role = ROLES.get(i["id"]) or ("", None, ())
+        if cls != "outside" and role[0] == "placed":
+            cls = "outside"               # placed on a roof, a gutter, a window, a porch: the owner's "placed in the world"
+        if cls in ("in_block", "no_floor", "pedestal") and role[0] == "situation":
+            cls = "outside"               # a situation's own staging (in a jam pan, on a crate, at a lamp): its body is
+                                          # still checked below, and the generator checks it against the built town
         if cls != "outside":
             P.append(("spot", i["id"], "%s (%s, %s) at %s: %s -- %s" % (i["id"], i["kind"], i["species"], i["at"], cls,
                                                                       detail)))
@@ -772,6 +829,8 @@ def check_spots(idlers, m, SW, rest, town_data, beyond=None):
                         st = m.at(cx, cy, cz)
                         if SW.solid(st):
                             hit = hit or (cx, cy, cz, SW.short(st))
+            if hit and hit[3] in ("cauldron", "water_cauldron") and role[0] == "situation":
+                hit = None                # a situation staged IN its trough, jam pan or bait tank (a cauldron is not full)
             if hit and cls == "outside":
                 P.append(("body", i["id"], "%s (%s, %.1f wide x %.2f tall) at %s overlaps %s at %s"
                           % (i["id"], i["species"], r["width"], r["height"], i["at"], hit[3], hit[:3])))
@@ -779,10 +838,13 @@ def check_spots(idlers, m, SW, rest, town_data, beyond=None):
         if not td:
             continue
         for bid, rr in td["buildings"].items():
-            if inside((min(rr[0], rr[2]), min(rr[1], rr[3]), max(rr[0], rr[2]), max(rr[1], rr[3])), bx, bz):
+            # a situation member under open sky inside a footprint is ON that building (a chimney, a vane): the
+            # generator anchors situations on "a building's top" by design (tools/ambient_idle.py anchor_ground_ok),
+            # so only one that is indoors or in a block is inside it (2026-10-06, review N89)
+            if inside((min(rr[0], rr[2]), min(rr[1], rr[3]), max(rr[0], rr[2]), max(rr[1], rr[3])), bx, bz)                     and role[0] != "placed" and not (role[0] == "situation" and sky):
                 P.append(("footprint", i["id"], "%s at %s is inside building %s's footprint" % (i["id"], i["at"], bid)))
                 break
-        if (bx, bz) in td["streets"]:
+        if (bx, bz) in td["streets"] and not set(role[2]) & {"street", "walkway"}:
             P.append(("road", i["id"], "%s (%s) at %s stands on a street" % (i["id"], i["kind"], i["at"])))
         doors = [(dx, dy, dz) for dx in range(-1, 2) for dz in range(-1, 2) for dy in (-1, 0, 1)
                  if abs(dx) + abs(dz) <= 1 and "_door" in SW.short(m.at(bx + dx, fy + dy, bz + dz))
@@ -930,6 +992,8 @@ def audit(packs=PACKS, source_root=None, jar=None):
     unplaced = sorted(i["id"] for i in idlers.values() if "at" in i and i["town"] != "lopunny_house"
                       and not any(inside(r, i["at"][0], i["at"][2]) for r in feet.values()))
     for u in unplaced:
+        if u in ROLES:            # a composed town's record is sited by its town file (a situation may lie past the plan)
+            continue
         P.append(("cap", "outside:" + u, "%s at %s is in no town's footprint" % (u, idlers[u]["at"])))
     P += check_cap(counts)
     P += check_groups(pts)

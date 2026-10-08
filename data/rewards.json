@@ -12,7 +12,8 @@
     "quest": "npc_grant: the quest in data/quests.json whose grant_reward_once gives the contents",
     "contents": "[{item, count, components?, verification}]: every item id proved by the jar path that defines it",
     "message": "what the player is told, as one line of chat to that player only",
-    "built_by": "the tool and reapply step that put the container back after an export"
+    "built_by": "the tool and reapply step that put the container back after an export",
+    "requires_flags": "cache only, optional (2026-10-06): progression flag ids from data/progression.json; the find is earned only by a player holding every one (cobblers:flag/<id> in the same location predicate). Standing in the box without them earns nothing, and the player may come back"
   },
   "rewards": [
     {
@@ -125,10 +126,15 @@
           "item": "mega_showdown:dragonium_z",
           "count": 1,
           "verification": "assets/mega_showdown/models/item/dragonium_z.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:z_ring",
+          "count": 1,
+          "verification": "assets/mega_showdown/models/item/z_ring.json and data/mega_showdown/recipe/z_ring.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar (the server snapshot's jar, 2026-10-05)"
         }
       ],
-      "message": "Grown into the seam, as if the crystal made it: a Dragonium Z.",
-      "why": "The proposal asked for a species-exclusive Z-crystal or a Mega Stone. The room's anchor is Dragapult, which has neither, so it is the Dragon crystal: the Rift's own Dragons, and useless to anyone who did not build for it. Garchompite and Metagrossite exist in the jar and are left for the owner to place elsewhere.",
+      "message": "Grown into the seam, as if the crystal made it: a Dragonium Z, and a ring of the same stone to wear it on.",
+      "why": "The proposal asked for a species-exclusive Z-crystal or a Mega Stone. The room's anchor is Dragapult, which has neither, so it is the Dragon crystal: the Rift's own Dragons, and useless to anyone who did not build for it. Garchompite and Metagrossite exist in the jar and are left for the owner to place elsewhere. The Z-Ring was added 2026-10-05 (docs/research/OBTAINABILITY_SWEEP_2026-10-05.md): a Z-crystal does nothing without one, the server runs zMoves true (config/mega_showdown/config.json), and the ring's only recipe needs mega_showdown:sparkling_stone_light, which nothing in this world yields (one rare suspicious-sand roll per dig-site template at most), so before this the cache handed every player a crystal no one could use. If the owner cuts Z-Moves (zMoves false), both items go and the room takes a Mega Stone instead.",
       "built_by": "tools/vr_caves.py (the container, reapply step R9C); positions written by `vr_caves.py records --write`"
     },
     {
@@ -1478,10 +1484,27 @@
           "count": 1,
           "one_of": "cobblemon:scroll_of_darkness (one claim, quest.evt_station_director.scroll_claimed)",
           "verification": "assets/cobblemon/models/item/scroll_of_waters.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
-        }
+        },
+        {"item": "mega_showdown:bug_memory", "count": 1, "all_of": "Silvally's 17 memories, given together (one claim, quest.evt_station_director.memories_claimed)", "verification": "assets/mega_showdown/models/item/bug_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:dark_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/dark_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:dragon_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/dragon_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:electric_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/electric_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:fairy_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/fairy_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:fighting_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/fighting_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:fire_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/fire_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:flying_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/flying_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:ghost_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/ghost_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:grass_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/grass_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:ground_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/ground_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:ice_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/ice_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:poison_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/poison_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:psychic_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/psychic_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:rock_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/rock_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:steel_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/steel_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+        {"item": "mega_showdown:water_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/water_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"}
       ],
       "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
-      "why": "The thunder feather (a storm watched from the Zapdos tower's top, after eight badges) and the ember feather (the Craters' Moltres tower surveyed, after eight badges: the owner, 2026-10-02, 'Moltres yes', re-homed to the Craters the same day; data/research_station.json economy.ember_survey). The station is the one source of the three feathers (the owner, 2026-10-02; economy.the_one_source_2026_10_02). And ONE of Kubfu's two scrolls, the player's choice, once, to a player with their starter Kubfu in the party after five badges (the owner, 2026-10-02, docs/mechanics/NATIVE_STARTERS_COST.md 7.5; data/research_station.json economy.items kubfu_scroll).",
+      "why": "The thunder feather (a storm watched from the Zapdos tower's top, after eight badges) and the ember feather (the Craters' Moltres tower surveyed, after eight badges: the owner, 2026-10-02, 'Moltres yes', re-homed to the Craters the same day; data/research_station.json economy.ember_survey). The station is the one source of the three feathers (the owner, 2026-10-02; economy.the_one_source_2026_10_02). And ONE of Kubfu's two scrolls, the player's choice, once, to a player with their starter Kubfu in the party after five badges (the owner, 2026-10-02, docs/mechanics/NATIVE_STARTERS_COST.md 7.5; data/research_station.json economy.items kubfu_scroll). And all 17 of Silvally's memories, together, once, to a player with their starter Type: Null or a Silvally in the party after five badges (the owner, 2026-10-08: 'Silvally should get memories from the same lady as Urshifu's scrolls ... all 17, at badge 5, once'; data/research_station.json economy.items silvally_memories).",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
     },
     {
@@ -1828,6 +1851,204 @@
       "built_by": "tools/jungle_temples.py (the barrel, in cobblers_jungle_temples' vine_pyramid build, step R9JT)",
       "trigger": {"min": [7712, 155, 6824], "max": [7713, 156, 6826]},
       "container": {"block": "minecraft:barrel", "at": [7712, 154, 6825]}
+    },
+    {
+      "id": "desert_wreck_sea_chest",
+      "kind": "cache",
+      "place": "the Brass Petrel on the southern desert beach: the master's sea chest in the stern cabin",
+      "contents": [
+        {
+          "item": "cobblemon:shell_bell",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/shell_bell.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:spell_tag",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/spell_tag.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:dive_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/dive_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the master's sea chest: the ship's Shell Bell, a Spell Tag and three Dive Balls.",
+      "why": "ADR-002's cache (data/rewards.json, tools/rewards_pack.py): standing beside the master's sea chest (a barrel, scenery) in the stern cabin grants it once per player. Tier 7-8 south coast: a Shell Bell (the ship's bell, a held item that heals by damage dealt), a Spell Tag (the ghosts of the strand; boosts Ghost moves) and Dive Balls, the sea's situational ball. Item ids verified in the Cobblemon 1.8.0 jar (assets/cobblemon/models/item/<id>.json) 2026-10-05.",
+      "built_by": "tools/desert_wreck.py (the barrel, in cobblers_desert_wreck's build, reapply step R9DW)",
+      "trigger": {
+        "min": [
+          6490,
+          71,
+          6788
+        ],
+        "max": [
+          6492,
+          72,
+          6790
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          6491,
+          71,
+          6789
+        ]
+      }
+    },
+    {
+      "id": "sweep_red_chain",
+      "kind": "cache",
+      "place": "the Distortion shrine in the Glacial Tear's lower trough (data/adopted_legendary_sites.json sweep_giratina_shrine): at the foot of Giratina's altar, under the black glass dome",
+      "requires_flags": [
+        "champion_cleared"
+      ],
+      "contents": [
+        {
+          "item": "lumymon:red_chain",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/red_chain.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "message": "Coiled at the foot of the altar, cold and heavier than it looks: a Red Chain.",
+      "why": "the ONE source of lumymon:red_chain in our world, the item lumymon:giratina_altar consumes or wants (GiratinaAltar's RED_CHAIN, LumyMon-0.6.6 class strings). Measured 2026-10-06 against the server snapshot: the only other producers are a recipe in the DISABLED Sinnoh pack and rctmod's team_galactic_cyrus loot, a trainer our campaign never seats. Giratina rolls 85-99 (the altar's own strings), so only the Champion's cap (100) can hold it: requires_flags champion_cleared, once per player.",
+      "built_by": "the pasted template itself (data/placements.json legendary_giratina_shrine, tools/place_donor.py, reapply step R9): the container is lumymon:giratina_altar at template [23, 12, 20]",
+      "trigger": {
+        "min": [
+          4393,
+          78,
+          2878
+        ],
+        "max": [
+          4401,
+          80,
+          2886
+        ]
+      },
+      "container": {
+        "block": "lumymon:giratina_altar",
+        "at": [
+          4397,
+          78,
+          2882
+        ]
+      }
+    },
+    {"id": "giratina_griseous", "kind": "cache", "place": "the Distortion shrine in the Glacial Tear's lower trough (data/adopted_legendary_sites.json sweep_giratina_shrine): at the foot of Giratina's altar, under the black glass dome", "requires_flags": ["champion_cleared"], "contents": [{"item": "mega_showdown:griseous_core", "count": 1, "verification": "verified in the jar by the REWARD unit 2026-10-08 (docs/mechanics/ITEM_ROUTES.md Cache routes)"}, {"item": "mega_showdown:griseous_orb", "count": 1, "verification": "verified in the jar by the REWARD unit 2026-10-08; its only other route is recipe/griseous_orb.json from ghost and dragon gems nothing in our world drops"}], "message": "Behind the chain, two cold relics of the Distortion World: a Griseous Core and a Griseous Orb.", "why": "docs/mechanics/ITEM_ROUTES.md 2.3 and review N118: Giratina is adopted, so its form items need a source; gated like the chain on champion_cleared. Declared as an extra cache on sweep_giratina_shrine (tools/legendary_sweep.py extra_caches, commit 4197551).", "built_by": "the pasted template itself (data/placements.json legendary_giratina_shrine, tools/place_donor.py, reapply step R9): the container is lumymon:giratina_altar at template [23, 12, 20]", "trigger": {"min": [4393, 78, 2878], "max": [4401, 80, 2886]}, "container": {"block": "lumymon:giratina_altar", "at": [4397, 78, 2882]}},
+    {
+      "id": "sweep_nightmare_weaver",
+      "kind": "cache",
+      "place": "Newmoon Island, hanging over the Fungal Isle's west end (data/adopted_legendary_sites.json sweep_newmoon_island): at Darkrai's shrine, in the island's top room",
+      "requires_flags": [
+        "champion_cleared"
+      ],
+      "contents": [
+        {
+          "item": "lumymon:nightmare_weaver",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/nightmare_weaver.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "message": "Snagged on the shrine, a knot of black thread that will not quite hold still: a Nightmare Weaver.",
+      "why": "the ONE source of lumymon:nightmare_weaver in our world, the item lumymon:darkrai_shrine wants (DarkraiShrine's NIGHTMARE_WEAVER, LumyMon-0.6.6 class strings). Measured 2026-10-06 against the server snapshot: the only other producer is a recipe in the DISABLED Sinnoh pack; the island's own loot tables (COBBLEVERSE-Loot-DP newmoon_island and newmoon_island_nightmare) and its literal container items hold none. Darkrai rolls 70-85 (99 shiny), so only the Champion's cap holds it: requires_flags champion_cleared, once per player.",
+      "built_by": "the pasted template itself (data/placements.json legendary_newmoon_island, tools/place_donor.py, reapply step R9): the container is lumymon:darkrai_shrine at template [49, 46, 33]",
+      "trigger": {
+        "min": [
+          69,
+          186,
+          5611
+        ],
+        "max": [
+          77,
+          189,
+          5619
+        ]
+      },
+      "container": {
+        "block": "lumymon:darkrai_shrine",
+        "at": [
+          73,
+          187,
+          5615
+        ]
+      }
+    },
+    {
+      "id": "groudon_red_orb",
+      "kind": "cache",
+      "place": "Groudon's sealed chamber deep under the Craters (data/legendaries.json groudon): set into the smooth basalt pedestal Groudon sleeps on, at the chamber's south end",
+      "requires_flags": [
+        "champion_cleared"
+      ],
+      "contents": [
+        {
+          "item": "mega_showdown:red_orb",
+          "count": 1,
+          "verification": "assets/mega_showdown/models/item/red_orb.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        }
+      ],
+      "message": "In a seam of the pedestal, hot to the touch and glowing from inside: a Red Orb.",
+      "why": "2026-10-08 (overnight, unit REWARD): docs/mechanics/ITEM_ROUTES.md section 2.3's Red Orb route. The Red Orb is Primal Groudon's item (Mega Showdown 1.0.2 ships data/mega_showdown/mega_showdown/effect/red_orb.json; that holding it triggers the Primal form is ASSUMED, ITEM_ROUTES.md section 6). Gated on champion_cleared rather than the chamber's own gym8_cleared, the design's recommendation and its open question Q5: Primal Groudon before the League would be the answer to it, not an answer. A player who opens the chamber at eight badges earns nothing here and may come back as Champion. Jar path read in the offline server snapshot C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods.",
+      "built_by": "tools/legendaries.py (the pedestal is the carve's own setblock, reapply step R14L); coordinates from legendaries.geometry() on the canonical heightmap (pedestal (6672, 68, 5542), chamber x6662-6682 y69-79 z5524-5544), held to it by tools/legendaries.py cache_problems",
+      "trigger": {
+        "min": [
+          6668,
+          68,
+          5538
+        ],
+        "max": [
+          6676,
+          71,
+          5544
+        ]
+      },
+      "container": {
+        "block": "minecraft:smooth_basalt",
+        "at": [
+          6672,
+          68,
+          5542
+        ]
+      }
+    },
+    {
+      "id": "hoopa_prison_bottle",
+      "kind": "cache",
+      "place": "Hoopa's cradle under the relic area (data/relic_underground.json geometry.cradle): at the restraint's centre, on the Rift's seep block in the middle of the dais",
+      "requires_flags": [
+        "rift_crisis_resolved"
+      ],
+      "contents": [
+        {
+          "item": "mega_showdown:prison_bottle",
+          "count": 1,
+          "verification": "assets/mega_showdown/models/item/prison_bottle.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        }
+      ],
+      "message": "Where the restraint held it, an empty bottle, still humming: the Prison Bottle.",
+      "why": "2026-10-08 (overnight, unit REWARD): docs/mechanics/ITEM_ROUTES.md section 2.3's Prison Bottle route, a requires_flags cache inside the cradle on Hoopa's own gate, rift_crisis_resolved (data/hoopa_cradle.json gate_flag), which the release grants the releasing player first (data/quests.json unlock_league_after_rift_resolution). The Unbound form changes Hoopa only; that the bottle triggers it under Mega Showdown 1.0.2 is ASSUMED (data/mega_showdown/mega_showdown/effect/prison_bottle.json exists in the jar; the trigger was not read). Jar path read in the offline server snapshot C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods.",
+      "built_by": "tools/relic_underground.py (the dais centre, composition.cradle.dais.centre = palette rift_seep, laid at floor_y under the spot; reapply step R9RU); coordinates from data/hoopa_cradle.json spot (3357, 13, 3306) and data/relic_underground.json geometry.cradle, held to them by tools/hoopa_cradle.py cache_problems",
+      "trigger": {
+        "min": [
+          3355,
+          12,
+          3304
+        ],
+        "max": [
+          3359,
+          15,
+          3308
+        ]
+      },
+      "container": {
+        "block": "minecraft:crying_obsidian",
+        "at": [
+          3357,
+          12,
+          3306
+        ]
+      }
     }
   ]
 }

@@ -496,6 +496,10 @@ def load_pack(pack, sub_ids):
     out = []
     for f in sorted(base.rglob("*.json")):
         kind = f.parent.name
+        if kind == "nether":
+            # NOT covered: the Nether's tables (docs/mechanics/NETHER_ENCOUNTERS.md) have no sub-region, climate or
+            # ground for this audit's places; their biome identity and fire rule are tests/test_nether_encounters.py's
+            continue
         for s in json.loads(f.read_text(encoding="utf-8"))["spawns"]:
             if kind == "routes":
                 place = next((x for x in sub_ids if "_%s_" % x in s["id"]), None)

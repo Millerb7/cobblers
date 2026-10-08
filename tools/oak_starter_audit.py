@@ -30,11 +30,14 @@ WHAT IS CHECKED
   P2  exactly one `openstarterscreen` in all compiled dialogue and every file of every pack under build/datapacks, and
       it is in Oak's dialogue (the one an NPC class named Oak opens); no file gives or spawns one of the five species
       (a give/spawn/summon/loot verb with the species on the same line or in the same Molang string; a give/spawn
-      whose species is a macro is flagged when its pack names a starter species anywhere).
+      whose species is a macro is flagged when its pack names a starter species anywhere); and no file gives, spawns,
+      pokeedits or pools ANY species in a starter form (aspect cobblers_starter_1/_2 or form=Starter[-Grown]), which
+      is how a Larvesta leak is told from the wild Larvesta that spawn by design. Uncatchable displays are exempt.
   P3  "Not yet" (the offer's other options) closes with the offer still standing: the next talk shows the offer again;
       a player carrying the tag, at any cursor value, never sees the offer or the page that leads to it.
-  P4  modpack/config/cobblemon/starters.json: allowStarterOnJoin TRUE (the owner, 2026-10-05: "native chooser ... keep
-      the menu on first join"; Oak's offer stays as a second door), exactly the five aspect=cobblers_starter_1
+  P4  modpack/config/cobblemon/starters.json: allowStarterOnJoin FALSE (the owner, 2026-10-06: "Oak offering the
+      starters in the lab as a scene rather than a menu on join"; it was true from 2026-10-05), exactly the STARTERS
+      set (eight since 2026-10-08) with aspect=cobblers_starter_1
       entries; no pack under build/datapacks (nor modpack/) ships data/<ns>/starters/.
   P5  REPORTED, not failed: quests, flags and rewards the data makes available before Oak that assume a party (a
       battle, an encounter, a party check); FAILED: an RCT initial level cap below the starters' level.
@@ -66,13 +69,36 @@ PACKS = ROOT / "build" / "datapacks"
 CONFIG = ROOT / "modpack" / "config" / "cobblemon" / "starters.json"
 RCT = ROOT / "modpack" / "config" / "rctmod-server.toml"
 
-STARTERS = {"cosmog", "kubfu", "typenull", "poipole", "meltan"}       # the brief / NATIVE_STARTERS_COST.md 6a
+STARTERS = {"cosmog", "kubfu", "typenull", "poipole", "meltan",       # the brief / NATIVE_STARTERS_COST.md 6a
+            "larvesta",                                               # the sixth, the owner 2026-10-08
+            "smeargle",                                               # the seventh, the owner 2026-10-08
+            "misdreavus"}                                             # the eighth, the owner 2026-10-08
 STARTER_ASPECT = "cobblers_starter_1"
+# Smeargle, like Larvesta, is wild (data/spawns.json) and an ambient display (gym1_town, rift_dig_camp), so it is not
+# in the species sweep either; its third form adds cobblers_starter_3 and the name "Starter-Final" to FORM_RE.
+# Misdreavus and Mismagius (the eighth) are wild too, so the form sweep, not the species sweep, catches their leak; its
+# forms are named "Starter" on both species, already in FORM_RE.
+# P2's species sweep names the five mythicals only. Larvesta is wild by design (data/spawns.json, levels 38-60) and
+# an ambient display in two towns (data/ambient_towns/gorge_hamlet.json, gym7_town.json, spawned through a macro), so
+# naming the species would fault those as starter gives. A Larvesta leak is the starter FORM, so the second sweep
+# (FORM_RE, starter_form_given / starter_form_macro) keys on what selects the form -- the aspect, or form= with the
+# form's name (data/mythical_starters.json stages[].form "Starter" / "Starter-Grown") -- whatever the species: a wild
+# Larvesta carries neither and passes, a give, spawn, spawn-pool row or pokeedit carrying either fails.
 SPECIES_RE = re.compile(r"(?<![a-z0-9_])(?:cobblemon:)?(cosmog|kubfu|type_?null|poipole|meltan)(?![a-z0-9_])", re.I)
+FORM_RE = re.compile(r"(?<![a-z0-9_])(?:cobblers_starter_[123]|form=starter(?:[-_]?(?:grown|final))?)(?![a-z0-9_-])",
+                     re.I)
+# a command that creates a Pokemon or rewrites a party one (PokemonEditCommand in the 1.8.0 jar registers pokeedit,
+# pokeeditother, pokemonedit, pokemoneditother: `pokeedit <slot> aspect=cobblers_starter_1` turns a caught wild
+# Larvesta into the starter form). Plain `give` (items) is not one.
+FORM_VERB_RE = re.compile(r"(?<![a-z0-9_])(give_?pokemon\w*|pokegive\w*|spawn_?pokemon\w*|pokespawn\w*"
+                          r"|poke(?:mon)?_?edit\w*|summon|loot)(?![a-z0-9_])", re.I)
+# a spawn pool's row (spawn_pool_world: "pokemon"; habitat_pools: "species" plus "modifiers"), read as JSON
+POOL_DIRS = ("/spawn_pool_world/", "/habitat_pools/")
 GIVE_RE = re.compile(r"(?<![a-z0-9_])(give_?pokemon\w*|pokegive\w*|spawn_?pokemon\w*|pokespawn\w*|summon|give|loot)"
                      r"(?![a-z0-9_])", re.I)
 POKEGIVE_RE = re.compile(r"(?<![a-z0-9_])(give_?pokemon\w*|pokegive\w*|spawn_?pokemon\w*|pokespawn\w*)(?![a-z0-9_])",
                          re.I)
+UNCATCHABLE_RE = re.compile(r"(?<![a-z0-9_])uncatchable(?![a-z0-9_])", re.I)
 SCREEN = "openstarterscreen"
 DIALOGUE_PACK = "cobblers_dialogue"           # compile_dialogue.py's default pack under build/datapacks
 NPC_NAME = re.compile(r"\boak\b", re.I)
@@ -428,8 +454,32 @@ class Model:
             if r is not None and obj in w["objectives"]:
                 w["scores"][obj] = r
             return r
+        # a progression flag probe (compile_dialogue's `flag` condition; first in Oak's dialogue 2026-10-06, the League
+        # rules choice). The explored players hold no flag, so it never passes (integrator edit to the model only)
+        m = re.fullmatch(r"if entity @s\[advancements=\{cobblers:flag/[a-z0-9_]+=true\}\] (.*)", rest)
+        if m:
+            return None
+        # compile_dialogue's `function` effect runs as AND at the player; the position changes nothing modelled here
+        m = re.fullmatch(r"at @s (.*)", rest)
+        if m:
+            return self._sub(w, m.group(1))
         self.unknown.append("execute as @s " + rest)
         return None
+
+    # A progression flag's grant (test author, 2026-10-08, for the held Pallet -> gym 1 waypoint in
+    # docs/world-building/WALK_P2.md section 2). tools/progression_pack.py writes flag/<id>/grant (`advancement grant
+    # @s only cobblers:flag/<id>`) only for a flag data/progression.json declares with set_by.kind quest_transition;
+    # an advancement moves neither the starter state nor the main stage, so a grant of such a flag is a success that
+    # touches nothing this audit checks. Any other flag has no grant function, and stays an unmodelled command.
+    flag_registry = None
+
+    def _grantable(self, fid):
+        if Model.flag_registry is None:
+            prog = json.loads((Path(__file__).resolve().parent.parent / "data" / "progression.json")
+                              .read_text(encoding="utf-8"))
+            Model.flag_registry = {f["id"]: f for f in prog.get("flags") or []}
+        f = Model.flag_registry.get(fid)
+        return f is not None and (f.get("set_by") or {}).get("kind") == "quest_transition"
 
     def _leaf(self, w, cmd):
         m = re.fullmatch(r"scoreboard players set @s (\S+) (-?\d+)", cmd)
@@ -441,6 +491,15 @@ class Model:
         m = re.fullmatch(r"tag @s (add|remove) (\S+)", cmd)
         if m:
             (w["tags"].add if m.group(1) == "add" else w["tags"].discard)(m.group(2))
+            return 1
+        # Oak's League rules choice (2026-10-06, integrator edit to the model only): rctmod's series command and the
+        # mode tag move neither the starter state nor the main stage, so they are modelled as successes that touch
+        # nothing this audit checks. Their own guarantees are docs/mechanics/OAK_AND_CHALLENGE.md's audit list
+        m = re.fullmatch(r"rctmod player set series ([a-z0-9_]+) @s", cmd)
+        if m:
+            return 1
+        m = re.fullmatch(r"function cobblers:flag/([a-z0-9_]+)/grant", cmd)
+        if m and self._grantable(m.group(1)):
             return 1
         if re.fullmatch(r"%s @s" % SCREEN, cmd):
             # RELAYED semantics (see OPEN): a player who has chosen gets nothing and 0; anyone else is unlocked and 1
@@ -598,7 +657,8 @@ class Audit:
 
     def sweep(self):
         roots = [r for r, _ in self.roots()]
-        seen, screens, gives, macro_sites, starter_named = set(), [], [], [], {}
+        seen, screens, gives, macro_sites, starter_named, displays = set(), [], [], [], {}, []
+        form_gives, form_macro_sites, form_named = [], [], {}
         for r, ex in self.roots():
             for f, text in text_files(r, ex):
                 key = str(Path(f).resolve()) if "!/" not in str(f) else str(f)
@@ -608,6 +668,14 @@ class Audit:
                 n = text.count(SCREEN)
                 if n:
                     screens.append((f, n))
+                if FORM_RE.search(text):
+                    form_named[self.pack_of(f, r)] = f
+                    form_gives += self.form_leaks(f, text, displays)
+                if "$(" in text:
+                    for unit in re.split(r"[\n;]", text):
+                        if (FORM_VERB_RE.search(unit) and "$(" in unit and not FORM_RE.search(unit)
+                                and not self.is_display(unit)):
+                            form_macro_sites.append((f, r, unit.strip()[:160]))
                 low = text.lower()
                 has_species = SPECIES_RE.search(low) is not None
                 if has_species:
@@ -618,7 +686,16 @@ class Audit:
                     if POKEGIVE_RE.search(unit) and "$(" in unit and not SPECIES_RE.search(unit):
                         macro_sites.append((f, r, unit.strip()[:160]))
                     if SPECIES_RE.search(unit) and GIVE_RE.search(unit):
+                        # a display: only spawn verbs, and the Cobblemon `uncatchable` flag on the same line (VERIFIED
+                        # in game, EXP-023; docs/research/notes/wild-mega-pokemon.md) -- Oak's lab actors, 2026-10-06
+                        verbs = {m.group(1).lower() for m in GIVE_RE.finditer(unit)}
+                        if all(v.startswith(("spawn", "pokespawn")) for v in verbs) and UNCATCHABLE_RE.search(unit):
+                            displays.append(f)
+                            continue
                         gives.append((f, unit.strip()[:160]))
+        if displays:
+            self.notes.append("P2 %d uncatchable display spawn(s) of a starter species, not counted as gives (%d file(s))"
+                      % (len(displays), len(set(map(str, displays)))))
         for f, unit in gives:
             self.fail("P2", "starter_given:%s" % Path(str(f)).name, "%s gives or spawns a starter species: %s" % (f, unit))
         for f, r, unit in macro_sites:
@@ -627,9 +704,57 @@ class Audit:
                 self.fail("P2", "starter_macro:%s" % Path(str(f)).name,
                           "%s gives/spawns a macro species and its pack names a starter species (%s): %s"
                           % (f, starter_named[pk], unit))
-        self.notes.append("P2 swept %d files under %s; %d macro give/spawn sites"
-                          % (len(seen), " + ".join(str(r) for r in roots), len(macro_sites)))
+        for f, unit in form_gives:
+            self.fail("P2", "starter_form_given:%s" % Path(str(f)).name,
+                      "%s gives, spawns or edits in a starter FORM (aspect or form= outside the starter screen): %s"
+                      % (f, unit))
+        for f, r, unit in form_macro_sites:
+            pk = self.pack_of(f, r)
+            if pk in form_named:
+                self.fail("P2", "starter_form_macro:%s" % Path(str(f)).name,
+                          "%s gives/spawns/edits a macro Pokemon and its pack names a starter form (%s): %s"
+                          % (f, form_named[pk], unit))
+        self.notes.append("P2 swept %d files under %s; %d macro give/spawn sites; %d pack(s) naming a starter form"
+                          % (len(seen), " + ".join(str(r) for r in roots), len(macro_sites), len(form_named)))
         return screens
+
+    @staticmethod
+    def is_display(unit):
+        """Only spawn verbs, and Cobblemon's `uncatchable` on the same unit (EXP-023): a Pokemon nobody can own."""
+        verbs = {m.group(1).lower() for m in FORM_VERB_RE.finditer(unit)} | \
+                {m.group(1).lower() for m in GIVE_RE.finditer(unit)}
+        return all(v.startswith(("spawn", "pokespawn")) for v in verbs) and UNCATCHABLE_RE.search(unit) is not None
+
+    def form_leaks(self, f, text, displays):
+        """[(file, unit)] where a starter form reaches a Pokemon someone can own: a give/spawn/edit command, or a
+        spawn-pool row, carrying the form's aspect or form=<its name>. The species does not matter (a wild Larvesta
+        names the species and no form; that is the line drawn here). Evolution results in species_additions name the
+        aspect with no verb and no pool key, so the screen's own chain passes."""
+        out = []
+        path = "/" + Path(str(f).replace("!/", "/")).as_posix()
+        rows = None
+        if path.endswith(".json") and any(d in path for d in POOL_DIRS):
+            try:
+                rows = json.loads(text).get("spawns") or []
+            except (ValueError, AttributeError):
+                rows = None
+        if rows is not None:
+            for row in rows:
+                s = " ".join(str(row.get(k) or "") for k in ("pokemon", "species", "modifiers")) \
+                    if isinstance(row, dict) else str(row)
+                if FORM_RE.search(s) and not UNCATCHABLE_RE.search(s):
+                    out.append((f, s.strip()[:160]))
+        for unit in re.split(r"[\n;]", text):
+            if not FORM_RE.search(unit):
+                continue
+            if FORM_VERB_RE.search(unit):
+                if self.is_display(unit):
+                    displays.append(f)
+                    continue
+                out.append((f, unit.strip()[:160]))
+            elif rows is None and re.search(r'"(?:pokemon|modifiers)"\s*:', unit) and not UNCATCHABLE_RE.search(unit):
+                out.append((f, unit.strip()[:160]))
+        return out
 
     def pack_of(self, f, root):
         rel = Path(str(f).split("!/")[0]).resolve().relative_to(Path(root).resolve()).parts
@@ -638,9 +763,11 @@ class Audit:
     # ------------------------------------------------------------------ P4
     def check_config(self):
         cfg = read_json(self.config)
-        if cfg.get("allowStarterOnJoin") is not True:
-            self.fail("P4", "allow_on_join", "%s allowStarterOnJoin is %r, not true: a new player gets no chooser on join"
-                      % (self.config, cfg.get("allowStarterOnJoin")))
+        # the owner, 2026-10-06: "Oak offering the starters in the lab as a scene rather than a menu on join" -- the
+        # rule is back to a93f059's: locked on join, Oak's offer is the one door (integrator edit, the owner's call)
+        if cfg.get("allowStarterOnJoin") is not False:
+            self.fail("P4", "allow_on_join", "%s allowStarterOnJoin is %r, not false: the chooser opens on join instead "
+                      "of in Oak's lab" % (self.config, cfg.get("allowStarterOnJoin")))
         entries = [p for c in cfg.get("starters") or [] for p in c.get("pokemon") or []]
         species, bad = set(), []
         for e in entries:
@@ -649,8 +776,8 @@ class Audit:
             species.add(sp)
             if "aspect=%s" % STARTER_ASPECT not in toks:
                 bad.append(e)
-        if len(entries) != 5 or species != STARTERS or bad:
-            self.fail("P4", "five_entries", "%s offers %d entries %r (want exactly the five with aspect=%s; without "
+        if len(entries) != len(STARTERS) or species != STARTERS or bad:
+            self.fail("P4", "five_entries", "%s offers %d entries %r (want exactly the eight with aspect=%s; without "
                       "it: %r)" % (self.config, len(entries), sorted(species), STARTER_ASPECT, bad))
         level = None
         for e in entries:

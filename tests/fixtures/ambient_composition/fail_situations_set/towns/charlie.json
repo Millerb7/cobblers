@@ -1,0 +1,162 @@
+{
+ "settlement": "charlie",
+ "size": "hamlet",
+ "character": "charlie's own roster",
+ "workers": [
+  {
+   "id": "charlie_work_00",
+   "settlement": "charlie",
+   "species": "wooper",
+   "level": 15,
+   "job": "carry",
+   "interact": "The wooper hauls a load across the yard."
+  },
+  {
+   "id": "charlie_work_01",
+   "settlement": "charlie",
+   "species": "sandshrew",
+   "level": 15,
+   "job": "carry",
+   "interact": "The sandshrew hauls a load across the yard."
+  },
+  {
+   "id": "charlie_work_02",
+   "settlement": "charlie",
+   "species": "diglett",
+   "level": 15,
+   "job": "carry",
+   "interact": "The diglett hauls a load across the yard."
+  }
+ ],
+ "pets": [
+  {
+   "id": "charlie_pet_00",
+   "species": "vulpix",
+   "owner": "charlie_resident_0",
+   "mode": "follow",
+   "why": "keeps its owner company"
+  },
+  {
+   "id": "charlie_pet_01",
+   "species": "poochyena",
+   "owner": "charlie_resident_1",
+   "mode": "follow",
+   "why": "keeps its owner company"
+  }
+ ],
+ "placed": [
+  {
+   "id": "charlie_placed_00",
+   "species": "zubat",
+   "spot": "roof",
+   "building": "charlie_house_00",
+   "why": "lives there"
+  },
+  {
+   "id": "charlie_placed_01",
+   "species": "natu",
+   "spot": "roof",
+   "building": "charlie_house_01",
+   "why": "lives there"
+  }
+ ],
+ "situations": [
+  {
+   "id": "charlie_chimney",
+   "title": "Something in the chimney",
+   "story": "Something in the chimney.",
+   "unique": true,
+   "at": [
+    0,
+    64,
+    0
+   ],
+   "facing": "north",
+   "members": [
+    {
+     "species": "slugma",
+     "count": 1,
+     "pose": "sleep",
+     "offsets": [
+      [
+       0,
+       0,
+       0
+      ]
+     ]
+    }
+   ],
+   "props": [
+    {
+     "block": "minecraft:campfire",
+     "at": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "why": "the town's own"
+  },
+  {
+   "id": "charlie_laundry",
+   "title": "Psyduck in the rose beds",
+   "story": "Psyduck in the rose beds.",
+   "unique": false,
+   "at": [
+    0,
+    64,
+    0
+   ],
+   "facing": "north",
+   "members": [
+    {
+     "species": "psyduck",
+     "count": 4,
+     "pose": "still",
+     "offsets": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      [
+       2,
+       0,
+       0
+      ],
+      [
+       3,
+       0,
+       0
+      ]
+     ]
+    }
+   ],
+   "props": [
+    {
+     "block": "rose_bush[half=lower]",
+     "at": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "why": "the town's own"
+  }
+ ],
+ "counts": {
+  "working": 3,
+  "pets": 2,
+  "placed": 2,
+  "situations": 5,
+  "total": 12
+ },
+ "target": 12
+}

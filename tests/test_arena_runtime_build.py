@@ -6,19 +6,24 @@ the designer's typical purses in data/arena_fights.json, set_pool.counts, the ra
 authored teams. The venues are tests/fixtures/arena_dome.json: data/arena_dome.json is authored in parallel.
 
 The walk-through tests run the generated functions in a small interpreter of exactly the command subset the pack
-uses (scoreboard, execute, tag, function and macros, storage, spawnnpcat, kill, tp, runmolang as a hook). It models
+uses (scoreboard, execute incl. store result score|storage, tag, function and macros, storage, spawnnpcat, kill, tp,
+runmolang as a hook, and the level-cap pack's `rctmod player get level_cap` and party compare, sweep U54). It models
 one Minecraft rule set closely enough to follow scores and entities; it does NOT model Cobblemon: a battle is the
 test calling the generated callback's commands, and start_battle's refusal is a switch.
 
 Not covered, and it needs a running server: that spawnnpcat works from inside a macro function; that a cobblemon:npc
 spawned by it is selectable in the same tick; that q.npc.in_battle / q.player.in_battle answer as named; that
 `healpokemon @s`, `cobbledollars give` and the interaction-click advancement behave in game; two real accounts.
+The model's `cobbledollars query|give|remove` follow CobbleDollars-fabric-2.0.0+Beta-5.1's CobbleDollarsCommand
+(javap), `time query gametime` and `time set|add` vanilla 1.21.1's TimeCommand, and scores wrap as Java ints; that the
+query really stores the balance through `execute store result` in game is experiments/EXP-060-arena-payout.
 """
 import json
 import math
 import os
 import re
 import sys
+import types
 import zipfile
 from pathlib import Path
 
@@ -28,8 +33,12 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
 import arena_runtime as AR  # noqa: E402
+import levelcap_pack as LC  # noqa: E402  (only to EMIT the level-cap pack the challenge calls; never an expectation)
 
 FIXTURE = ROOT / "tests" / "fixtures" / "arena_dome.json"
+LEVEL_CAP = json.loads((ROOT / "data" / "level_cap.json").read_text(encoding="utf-8"))
+LC_SRC = (ROOT / "tools" / "levelcap_pack.py").read_text(encoding="utf-8")
+AR_SRC = (ROOT / "tools" / "arena_runtime.py").read_text(encoding="utf-8")
 FIGHTS = json.loads((ROOT / "data" / "arena_fights.json").read_text(encoding="utf-8"))
 TRAINERS = {t["id"]: t for t in json.loads((ROOT / "data" / "arena_trainers.json").read_text(encoding="utf-8"))["trainers"]}
 DOME = json.loads(FIXTURE.read_text(encoding="utf-8"))
@@ -185,17 +194,24 @@ def _amounts(lines, pat):
 
 
 def test_the_purses_are_the_designers_typical_figures(pack):
-    pu = pack[FN % "purse"]
+    # Breaks if a first-clear purse drifts from data/arena_fights.json's typical figures, or the retired quarter-purse
+    # exhibition (docs/mechanics/ECONOMY_OVERHAUL.md section 6, "Exhibition ... retired") comes back.
+    pu = pack[FN % "purse_full"]
     for n, r in RANKS.items():
         if r["format"] == "streak":
             continue
-        (full,) = _amounts(pu, r"kind matches 1 if score @s ar.cur matches %d if score @s ar.exh matches 0 " % n)
+        (full,) = _amounts(pu, r"kind matches 1 if score @s ar.cur matches %d run " % n)
         assert full == r["purse"].get("typical", r["purse"].get("typical_per_leg")), (n, full)
-        (exh,) = _amounts(pu, r"kind matches 1 if score @s ar.cur matches %d if score @s ar.exh matches 1 " % n)
-        assert exh % 50 == 0 and abs(exh - full / 4) <= 25, (n, exh)
     for e in FIGHTS["rank_up_fights"]:
         got = _amounts(pu, r"kind matches 2 if score @s ar.cur matches %d " % e["rank"])
         assert sum(got) == e["purse_typical"], (e["rank"], got)
+    pays = {int(a) for f, lines in pack.items() if f.startswith("data/cobblers/function/arena/")
+            for l in lines for a in re.findall(r"\{amount:(\d+)\}", l)}
+    rep = FIGHTS["prizes"]["purse_policy"]["repeat_purse"]
+    quarters = {r["purse"].get("typical", r["purse"].get("typical_per_leg")) // 4 for r in RANKS.values()
+                if r["format"] != "streak"} - {rep}
+    assert not any(abs(p - q) <= 25 for p in pays for q in quarters), "a quarter purse is paid somewhere"
+    assert "exh matches" not in " ".join(pack[FN % "purse"] + pu)
 
 
 # ------------------------------------------------------------------ the blackout exemption
@@ -241,6 +257,11 @@ def test_the_retired_spire_champions_are_removed_where_they_stood(pack):
 
 # ================================================================== the interpreter
 
+def _i32(v):
+    """A Java int: what a scoreboard score and BigInteger.intValue() hold (two's complement, 32 bits)."""
+    return (v + 2 ** 31) % 2 ** 32 - 2 ** 31
+
+
 class Ent:
     n = 0
 
@@ -252,19 +273,34 @@ class Ent:
 
 
 class Sim:
-    def __init__(self, pack):
+    """The level-cap pack (tools/levelcap_pack.py, emitted for data/level_cap.json, or `levelcap` when given) is loaded
+    beside the arena's, because every challenge calls its battle_check (sweep U54). Each player has an RCT cap
+    (`rctmod player get level_cap` answers it; None: the command fails, as when RCT is still loading, and a failed
+    command stores 0 through `execute store result`) and a party whose highest level `q.player.party.highest_level`
+    answers. The default player sits AT the cap (50/50), so every older flow also walks the strictly-over boundary."""
+
+    def __init__(self, pack, levelcap=None):
         self.fns = {k[len("data/cobblers/function/"):-len(".mcfunction")]: v for k, v in pack.items()
                     if k.startswith("data/cobblers/function/")}
+        for k, v in (LC.files(LEVEL_CAP) if levelcap is None else levelcap).items():
+            if k.startswith("data/cobblers/function/"):
+                assert k[len("data/cobblers/function/"):-len(".mcfunction")] not in self.fns, k
+                self.fns[k[len("data/cobblers/function/"):-len(".mcfunction")]] = (
+                    v.splitlines() if isinstance(v, str) else v)
         self.callback = pack["data/cobblemon/callbacks/battle_victory/cobblers_arena.molang"]
         self.scores, self.storage, self.ents = {}, {}, []
         self.money, self.heals, self.gives, self.started, self.said = {}, {}, {}, [], []
         self.refuse = False
         self.in_battle = set()
+        # self.money is the player's CobbleDollars BALANCE (what `cobbledollars query` answers); self.removed every
+        # amount `cobbledollars remove` actually took. self.gametime is the world's game time, one per tick
+        # (vanilla ServerLevel.tickTime; `time set` / `time add` move only the DAY time, never this)
+        self.removed, self.gametime, self.daytime = [], 0, 0
         self.call("arena/load", None)
 
     # -- entities
-    def player(self, pos=(3580, 20, 3200), adv=()):
-        p = Ent("player", pos)
+    def player(self, pos=(3580, 20, 3200), adv=(), cap=50, top=50):
+        p = Ent("player", pos, cap=cap, top=top)
         p.adv |= set(adv)
         self.ents.append(p)
         return p
@@ -400,13 +436,51 @@ class Sim:
                 i += n
                 continue
             if w == "store":
-                # execute store result storage S path int 1 run scoreboard players get H O
-                st, path = t[i + 3], t[i + 4]
-                j = t.index("run")
-                h, o = t[j + 4], t[j + 5]
-                self.dset(st, path, self.get(self.holder(h, ctx), o))
+                # execute store result storage S path int 1 | store result score H O, then `run <a query>`; a query
+                # that fails stores 0 (vanilla 1.20.3+: the failure callback stores 0 through `store result`)
+                j = t.index("run", i)
+                v = self.query(" ".join(t[j + 1:]), ctx)
+                if t[i + 1:i + 3] == ["result", "storage"]:
+                    self.dset(t[i + 3], t[i + 4], v)
+                elif t[i + 1:i + 3] == ["result", "score"]:
+                    self.scores[(self.holder(t[i + 3], ctx), t[i + 4])] = v
+                else:
+                    raise AssertionError("execute %s" % " ".join(t))
                 return None
             raise AssertionError("execute %s" % " ".join(t))
+
+    def query(self, cmd, ctx):
+        """What a command returns as its result (for `execute store result`); 0 when it fails."""
+        t = cmd.split(" ")
+        if t[:3] == ["scoreboard", "players", "get"]:
+            v = self.get(self.holder(t[3], ctx), t[4])
+            return 0 if v is None else v
+        if t[:4] == ["rctmod", "player", "get", "level_cap"] and len(t) == 5:
+            (e,) = self.select(t[4], ctx)
+            return 0 if getattr(e, "cap", None) is None else e.cap
+        if t[:2] == ["cobbledollars", "query"] and len(t) == 3:
+            # CobbleDollars-fabric-2.0.0+Beta-5.1 CobbleDollarsCommand.query (javap): returns
+            # getCobbleDollars(player).intValue() -- the balance, wrapped to 32 bits like any BigInteger.intValue
+            (e,) = self.select(t[2], ctx)
+            return _i32(self.money.get(e.uuid, 0))
+        if t == ["time", "query", "gametime"]:
+            # vanilla TimeCommand.queryTime(getGameTime() % Integer.MAX_VALUE)
+            return self.gametime % 2147483647
+        if t == ["time", "query", "daytime"]:
+            return self.daytime % 24000
+        raise AssertionError("unmodelled query: %s" % cmd)
+
+    def party_molang(self, mol, s):
+        """`runmolang "<mol>" @s` where mol compares q.player.party.highest_level with a rendered number and runs one
+        branch's q.run_command lines as the server (MoLang's ternary, a number compare, string concatenation)."""
+        m = re.fullmatch(r"\(q\.player\.party\.highest_level (>=|>|<=|<|==) (-?\d+)\) \? \{ (.*) \} : \{ (.*) \};", mol)
+        assert m, "unmodelled molang: %s" % mol
+        op, n = m.group(1), int(m.group(2))
+        yes = {">": s.top > n, ">=": s.top >= n, "<": s.top < n, "<=": s.top <= n, "==": s.top == n}[op]
+        for expr in re.findall(r"q\.run_command\((.*?)\);", m.group(3) if yes else m.group(4)):
+            cmd = "".join(json.loads('"%s"' % p[1:-1]) if p.startswith("'") else {"q.player.uuid": s.uuid}[p]
+                          for p in [x.strip() for x in re.split(r"\s\+\s", expr)])
+            self.run(cmd, {"s": None, "pos": [0, 0, 0]})
 
     def dget(self, st, path):
         d = self.storage.get(st, {})
@@ -450,14 +524,17 @@ class Sim:
             elif t[2] == "operation":
                 a, ao, op, b, bo = self.holder(t[3], ctx), t[4], t[5], self.holder(t[6], ctx), t[7]
                 x, y = self.get(a, ao) or 0, self.get(b, bo) or 0
-                self.scores[(a, ao)] = {"=": y, "+=": x + y, "-=": x - y, "*=": x * y, "/=": x // y if y else x,
-                                        "%=": x % y if y else x, "<": min(x, y), ">": max(x, y)}[op]
+                # a score is a Java int: + - * wrap at 32 bits (vanilla ScoreboardCommand operations); /= is floorDiv
+                self.scores[(a, ao)] = _i32({"=": y, "+=": x + y, "-=": x - y, "*=": x * y,
+                                             "/=": x // y if y else x, "%=": x % y if y else x,
+                                             "<": min(x, y), ">": max(x, y)}[op])
             return
         if c == "function":
             name = t[1].split(":", 1)[1]
             if len(t) > 2 and t[2] == "with":
                 assert t[3] == "storage", line
-                return self.call(name, s, self.dget(t[4], t[5]))
+                # no path: the whole compound (FunctionCommand)
+                return self.call(name, s, self.dget(t[4], t[5]) if len(t) > 5 else dict(self.storage.get(t[4], {})))
             if len(t) > 2:
                 return self.call(name, s, self.snbt(" ".join(t[2:])))
             return self.call(name, s)
@@ -482,7 +559,22 @@ class Sim:
             self.heals[s.uuid] = self.heals.get(s.uuid, 0) + 1
             return
         if c == "cobbledollars":
-            self.money[s.uuid] = self.money.get(s.uuid, 0) + int(t[3])
+            # CobbleDollarsCommand (javap): give adds; remove subtracts coerceAtMost(amount, balance), so it never
+            # goes below 0; both take a bigInt(1) amount. Only `@s` targets occur in the pack
+            assert len(t) == 4 and t[1] in ("give", "remove"), "unmodelled: %s" % line
+            n = int(t[3])
+            assert n >= 1, "BigIntegerArgumentType.bigInt(1) refuses %s" % line
+            (e,) = self.select(t[2], ctx)
+            bal = self.money.get(e.uuid, 0)
+            take = n if t[1] == "give" else -min(n, bal)
+            self.money[e.uuid] = bal + take
+            if t[1] == "remove":
+                self.removed.append(-take)
+            return
+        if c == "time":
+            # vanilla 1.21.1 TimeCommand: set/add change ONLY the day time (ServerLevel.setDayTime)
+            assert t[1] in ("set", "add"), "unmodelled: %s" % line
+            self.daytime = int(t[2]) if t[1] == "set" else self.daytime + int(t[2])
             return
         if c == "give":
             self.gives.setdefault(s.uuid, []).append((t[2], int(t[3])))
@@ -494,6 +586,9 @@ class Sim:
                 self.dset(t[3], t[4], self.snbt(" ".join(t[7:])))
             return
         if c == "runmolang":
+            m = re.fullmatch(r'runmolang "(.*)" @s', line)
+            if m and "q.player.party." in m.group(1):
+                return self.party_molang(m.group(1), s)
             (npc,) = self.select(t[-1], ctx)
             mol = line[len("runmolang "):].rsplit(" ", 2)[0]
             if "start_battle" in mol:
@@ -522,6 +617,8 @@ class Sim:
     # -- the game around the pack
     def tick(self, n=1):
         for _ in range(n):
+            self.gametime += 1
+            self.daytime += 1
             self.call("arena/tick", None)
 
     def result(self, player, won):
@@ -645,7 +742,9 @@ def test_the_relay_exam_is_odell_then_nessa_with_no_heal_between(pack):
     assert sim.heals[p.uuid] == 1 and sim.sc(p, "ar.rank") == 4
 
 
-def test_playing_down_two_ranks_is_an_exhibition_and_counts_nothing(pack):
+def test_playing_down_pays_the_flat_repeat_and_counts_nothing(pack):
+    # Breaks if a bout below the player's rank pays anything but prizes.purse_policy.repeat_purse (the exhibition's
+    # quarter purse was retired, ECONOMY_OVERHAUL section 6) or counts toward the rank.
     sim = Sim(pack)
     p = sim.player(adv=[GYM8, LANCE, CHAMP])
     sim.scores[(p.uuid, "ar.rank")] = 7
@@ -656,7 +755,7 @@ def test_playing_down_two_ranks_is_an_exhibition_and_counts_nothing(pack):
     sim.click(p, "floor_ring")                # 1-3: rank 3, four below
     assert sim.sc(p, "ar.exh") == 1
     _bout(sim, p)
-    assert sim.money[p.uuid] == pytest.approx(RANKS[3]["purse"]["typical_per_leg"] / 4, abs=25)
+    assert sim.money[p.uuid] == FIGHTS["prizes"]["purse_policy"]["repeat_purse"]
     assert sim.sc(p, "ar.wins") in (None, 0) and sim.sc(p, "ar.rank") == 7
 
 
@@ -812,3 +911,179 @@ def test_a_streak_pays_its_bonus_and_milestone_and_a_loss_resets_it(pack):
     assert ("obc:bottle_cap_gold", 1) in sim.gives[p.uuid]
     _bout(sim, p, False)
     assert sim.sc(p, "ar.streak") == 0 and sim.sc(p, "ar.best") == 10 and not sim.mine(p)
+
+
+# ================================================================== the level cap (sweep U54, review N57)
+#
+# An arena opponent is a cobblemon:npc, which rctmod's own over-cap refusal (TrainerMob.canBattleAgainst) never
+# reaches, so the challenge runs the level-cap pack's battle_check first. The rule is rctmod's own: a party whose
+# HIGHEST level is strictly over the player's RCT cap is refused, at the cap is matched. Written by the test author
+# (not the builder of 85be563); the cap and the party are set by the test, the pack's text is executed. The mutants
+# change a GENERATOR's source (tools/levelcap_pack.py or tools/arena_runtime.py) with data/ untouched.
+#
+# Not covered (needs a server): that `rctmod player get level_cap @s` returns the cap as its result; that
+# q.player.party.highest_level answers inside runmolang; that a tag set by a nested q.run_command is visible to the
+# next line of the same function.
+
+def _module(src, name, file):
+    mod = types.ModuleType(name)
+    mod.__file__ = str(file)
+    exec(compile(src, name, "exec"), mod.__dict__)
+    return mod
+
+
+def _mutant(src, old, new, name, file):
+    assert src.count(old) == 1, "mutant no longer matches %s: re-aim it (%r)" % (file.name, old[:70])
+    return _module(src.replace(old, new), name, file)
+
+
+def lc_mutant(old, new):
+    """The level-cap pack's files as a mutated tools/levelcap_pack.py emits them for data/level_cap.json."""
+    return _mutant(LC_SRC, old, new, "levelcap_pack_mutant", ROOT / "tools" / "levelcap_pack.py").files(LEVEL_CAP)
+
+
+def ar_mutant(old, new):
+    """The arena pack as a mutated tools/arena_runtime.py emits it for the fixture dome."""
+    return _mutant(AR_SRC, old, new, "arena_runtime_mutant", ROOT / "tools" / "arena_runtime.py").files(FIXTURE)
+
+
+def challenge(pack, levelcap=None, cap=50, top=50, tags=()):
+    """One rank-1 player clicks the floor ring; returns (sim, player, matched) -- matched: an opponent of theirs
+    stands and, after the start delay, their battle started."""
+    sim = Sim(pack, levelcap)
+    p = sim.player(adv=[GYM8], cap=cap, top=top)
+    p.tags |= set(tags)
+    sim.click(p, "floor_ring")
+    spawned = bool(sim.mine(p))
+    sim.tick(AR.GO_TICKS)
+    return sim, p, spawned and any(u == p.uuid for u, _c, _l in sim.started)
+
+
+def told_cap(sim, p):
+    """The tellraw lines to p that show a score: (objective, the score the message would display)."""
+    out = []
+    for who, line in sim.said:
+        if who == p.uuid:
+            for obj in re.findall(r'"objective":"([^"]+)"', line):
+                out.append((obj, sim.get(p.uuid, obj)))
+    return out
+
+
+# Protects: an over-cap party is refused BEFORE anything is spawned, healed or started, and is told its cap (the
+# message's score is the player's RCT cap, 30 here). If removed, a level-100 Pokemon fights a rank-1 opponent again
+# (the owner, in game, 2026-10-06) and nothing in the suite says so.
+def test_an_over_cap_party_is_refused_before_anything_spawns_and_is_told_its_cap(pack):
+    sim, p, matched = challenge(pack, cap=30, top=31)
+    assert not matched and not sim.npcs() and not sim.started
+    assert sim.heals.get(p.uuid, 0) == 0 and sim.sc(p, "ar.live") in (None, 0) and "cobblers.arena_bout" not in p.tags
+    assert any(v == 30 for _o, v in told_cap(sim, p)), told_cap(sim, p)
+
+
+# Protects: the boundary is rctmod's -- strictly over is refused, AT the cap (and under it) is matched. If removed, an
+# off-by-one would refuse every player who has levelled exactly to the cap, which is most of them before each gym.
+@pytest.mark.parametrize("top", [29, 30])
+def test_a_party_at_or_under_the_cap_is_matched(pack, top):
+    _sim, _p, matched = challenge(pack, cap=30, top=top)
+    assert matched
+
+
+# Protects: NO TRAP. A refused player who puts the over-cap Pokemon away is matched on the very next click. If
+# removed, a check that latched its refusal (a tag it never re-evaluates) could lock a player out of the arena.
+def test_a_refused_player_is_matched_once_the_party_is_back_under_the_cap(pack):
+    sim = Sim(pack)
+    p = sim.player(adv=[GYM8], cap=30, top=45)
+    sim.click(p, "floor_ring")
+    assert not sim.mine(p)
+    p.top = 30
+    sim.click(p, "floor_ring")
+    sim.tick(AR.GO_TICKS)
+    assert sim.mine(p) and [u for u, _c, _l in sim.started] == [p.uuid]
+
+
+def _refusal_tags(pack):
+    sim, p, _m = challenge(pack, cap=30, top=31)
+    tags = set(p.tags)
+    assert tags, "the refusal left no tag: the stale-tag test below has nothing to exercise"
+    return tags
+
+
+# Protects: NO TRAP from a stale answer. Whatever tag a refusal leaves on a player (read from the run above, not from
+# the builder's constant) never refuses that player later when the party is under the cap -- whether the cap reads or
+# not. If removed, a tag left by an old refusal (or by the over-cap notice, which shares it) could refuse a player
+# whose party is fine, and nothing would clear it.
+@pytest.mark.parametrize("cap", [30, None])
+def test_a_stale_refusal_tag_never_refuses_an_under_cap_player(pack, cap):
+    _sim, p, matched = challenge(pack, cap=cap, top=20, tags=_refusal_tags(pack))
+    assert matched, (cap, p.tags)
+
+
+# Protects: the chosen direction when the cap cannot be read (rctmod still loading, the command failing): the
+# challenge goes ahead, as a catch does. A check that failed CLOSED would refuse every player at every venue -- and
+# the HQ's Brann and Elara, who gate the finale -- for as long as the read fails. If removed, a change to fail-closed
+# (a trap for everyone) would pass unseen.
+def test_a_cap_that_cannot_be_read_lets_the_challenge_through(pack):
+    _sim, _p, matched = challenge(pack, cap=None, top=100)
+    assert matched
+
+
+# Protects: nothing changes for an under-cap player: matched, healed once, started, no message about the cap and no
+# tag but the bout's own. If removed, the check could start talking to (or tagging) every challenger.
+def test_an_under_cap_challenge_is_unchanged_by_the_check(pack):
+    sim, p, matched = challenge(pack, cap=60, top=40)
+    assert matched and sim.heals[p.uuid] == 1 and p.tags == {"cobblers.arena_bout"}
+    assert not any("level cap" in line for who, line in sim.said if who == p.uuid)
+
+
+# FINDING (test-author, U54): only the CHALLENGE is checked. A gauntlet's later legs (and every streak bout after the
+# first) start from arena/after -> bout/start with no battle_check, so a party that goes over the cap between legs
+# (experience from the leg just won, if the cap does not stop it; or a party swap within the venue range) fights on.
+# Strict xfail: when the builder re-checks each leg, this XPASSes and fails -- then drop the marker.
+@pytest.mark.xfail(strict=True, reason="U54 finding: a gauntlet's later legs are not re-checked against the cap")
+def test_an_over_cap_party_is_refused_at_every_gauntlet_leg(pack):
+    sim = Sim(pack)
+    p = sim.player(adv=[GYM8], cap=30, top=30)
+    sim.scores[(p.uuid, "ar.rank")] = 3
+    sim.click(p, "floor_ring")
+    assert RANKS[3]["legs"] > 1 and sim.mine(p)
+    sim.tick(AR.GO_TICKS)
+    sim.result(p, True)
+    p.top = 31                                  # over the cap before the next leg
+    sim.tick(AR.END_TICKS + AR.GO_TICKS)
+    assert not sim.mine(p) and len(sim.started) == 1
+
+
+# ---- mutants: the GENERATOR changes, data/ does not, and a property above must fail
+
+# Protects: INDEPENDENCE of the boundary test. tools/levelcap_pack.py comparing `>=` (at-or-over) must refuse a party
+# AT the cap; if this passes, the boundary test is not reading the emitted comparison.
+def test_mutation_at_or_over_refuses_a_party_at_the_cap(pack):
+    lc = lc_mutant("highest_level > $(cap)", "highest_level >= $(cap)")
+    assert challenge(pack, cap=30, top=30)[2] and not challenge(pack, lc, cap=30, top=30)[2]
+
+
+# Protects: INDEPENDENCE of the no-trap test. battle_check without its clear-first line keeps an old refusal when the
+# cap does not read: the stale-tag property must fail under it.
+def test_mutation_no_clear_first_traps_a_stale_tag(pack):
+    tags = _refusal_tags(pack)
+    lc = lc_mutant('"tag @s remove %s" % PARTY_OVER,\n            "scoreboard players set @s %s 0" % CAP,',
+                   '"scoreboard players set @s %s 0" % CAP,')
+    assert challenge(pack, cap=None, top=20, tags=tags)[2]
+    assert not challenge(pack, lc, cap=None, top=20, tags=tags)[2]
+
+
+# Protects: INDEPENDENCE of the fail-open test. battle_check tagging the player when the cap does not read (fail
+# closed) must refuse the unreadable-cap challenge.
+def test_mutation_fail_closed_refuses_when_the_cap_cannot_be_read(pack):
+    old = ('"$execute store result score @s %s run rctmod player get level_cap @s$(x)" % CAP,\n'
+           '            "execute unless score @s %s matches 1.. run return 0" % CAP,')
+    new = ('"$execute store result score @s %s run rctmod player get level_cap @s$(x)" % CAP,\n'
+           '            "execute unless score @s %s matches 1.. run tag @s add %s" % (CAP, PARTY_OVER),\n'
+           '            "execute unless score @s %s matches 1.. run return 0" % CAP,')
+    assert not challenge(pack, lc_mutant(old, new), cap=None, top=20)[2]
+
+
+# Protects: INDEPENDENCE of the refusal test. tools/arena_runtime.py reading a tag the check never sets must let the
+# over-cap party through, so the refusal test is reading the arena's own guard line.
+def test_mutation_arena_ignores_the_check(pack):
+    mut = ar_mutant('"execute if entity @s[tag=%s] run return run tellraw', '"execute if entity @s[tag=%s_x] run return run tellraw')
+    assert not challenge(pack, cap=30, top=31)[2] and challenge(mut, cap=30, top=31)[2]

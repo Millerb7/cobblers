@@ -1,0 +1,266 @@
+{
+  "schema": "cobblers.training_services/1",
+  "generated_by": "hand; each keeper's `at` and `yaw` written by `python tools/training_services.py seat --write` from data/training_grounds.json and tools/ground.py (the canonical heightmap, rounded), never from a world",
+  "status": "built 2026-10-10 (overnight unit SERVICES); NOT run in game. experiments/EXP-062-training-services S1-S5 must pass before the keepers are placed in a world a player uses",
+  "design": "docs/mechanics/ECONOMY_OVERHAUL.md section 5 and BUILD LIST U7; the owner 2026-10-09/10: optional paid services, a flat ~$500 raises ONE Pokemon straight to the player's current level cap, EV and IV training sold the same way",
+  "commands": {
+    "edit": "pokemoneditother <player> <slot 1-6> <properties>: op 2; level=N, <stat>_ev=N (0..252), <stat>_iv=N (0..31); stats hp, attack, defence, special_attack, special_defence, speed (RELAYED from docs/research/notes/paid-services-and-npc-payouts.md A1, read from Cobblemon 1.8.0's PokemonEditCommand and PokemonProperties bytecode)",
+    "test": "testpartyslot <player> <slot 1-6> <properties>: op 2, returns 1 on a match and 0 otherwise; level=N matches by equality only (RELAYED, same note A1, TestPartySlotCommand)",
+    "cap": "$execute store result score @s <obj> run rctmod player get level_cap @s$(x): a macro line, because a plain mod-command line can be inert until a /reload (EXP-046; tools/levelcap_pack.py party_check and battle_check)",
+    "balance": "cobbledollars query @s into a score (EXP-040), as tools/ferries.py trip_lines reads it",
+    "charge": "$cobbledollars remove @s $(amount): proven in game by the blackout charge (EXP-042 run 1), the ferry's macro",
+    "refund": "$cobbledollars give @s $(amount): VERIFIED from the jar (EXP-040), the form tools/arena_runtime.py pay and tools/blackout_pack.py recovery/pay_money emit"
+  },
+  "level_cap_rule": "`level=` calls Pokemon.setLevel, which fires no experience event, so rctmod's cap (an EXPERIENCE_GAINED_EVENT_PRE handler) never sees it and a set CAN overshoot the cap (note A2). The raise therefore writes exactly the cap it has just read into a score, and nothing else: no level is ever authored in this file",
+  "max_level": 100,
+  "max_level_why": "modpack/config/cobblemon/main.json maxPokemonLevel 100: the highest level a slot can hold, so the generated slot read tests levels 1..100",
+  "cooldown_ticks": 20,
+  "cooldown_why": "a second submit of the same click (the dialogue can deliver one) must not buy twice: the ferry's per-player cooldown score, set only once the charge is about to be taken",
+  "price_rule": {
+    "decision": "the owner, after the 2026-10-10 overnight (docs/STATE.md 'Owner decisions after the 2026-10-10 overnight' (4)): price the services and the craftables against each other, one way. Taken: CRAFTING (and training by battle) IS THE ROUTE; a service is the convenience that costs more than the play it saves. Reasoning and the numbers: docs/mechanics/SERVICES_AND_CRAFTING.md",
+    "rule": "a named service's price is the smallest multiple of round_to STRICTLY above hours_saved x the fight hour of anchor_badge's leg. The fight hour is data/markets.json income_basis.leg_by_badge[anchor_badge] / data/bank.json effort_model.max_leg_hours: the same exchange rate between an hour of play and money that R5 (effort_model.rules parity) already prices gathering against. tools/training_services.py audit refuses any other price, so a re-measured income re-prices the service",
+    "anchor_badge": 8,
+    "anchor_why": "a flat price must hold where money is most plentiful: leg 8 has the largest fight hour of the eight badge legs (68,505 / 4 = $17,126, measured by tools/income_model.py), above Victory Road's ($12,335). Every earlier leg then finds the service dearer still, in hours of fighting, which pushes crafting hardest where crafting is cheapest. The League (5 battles, $175,051) is not a leg of play hours and is not used",
+    "round_to": 100,
+    "round_to_why": "data/markets.json price_policies.income_gate round_to: the same 'smallest multiple strictly above' shape",
+    "applies_to": {
+      "ev": {"field": "price", "hours_saved": 1, "why": "ASSUMED, never timed (EXP timing replaces it): one Pokemon's two-stat spread by battle at a training ground is about 64 wild fights with a power item held (252 / 8 = 32 a stat, EV_IV_TRAINING.md 4.2), and by brewing it is 52 vitamins = 18 brewing-stand batches of three (one leek, one vivichoke, one EV berry a batch. The three steps medicinal_brew, pp_up and the vitamin are cobblemon:brewing_stand recipes read from Cobblemon-fabric-1.8.0+1.21.1.jar; that one ingredient serves three bottles is vanilla brewing-stand behaviour, ASSUMED to hold for Cobblemon's recipe type)"},
+      "iv": {"field": "price_per_stat", "hours_saved": 1, "why": "ASSUMED: one stat's cap is a silver Bottle Cap plus eight mint leaves of that stat's colour (obc:bottle_cap_<stat>, read from Only Bottle Caps-1.5.0-fabric.jar). The silver cap is 3% of vanilla fishing treasure and 5% of Poke Rod treasure (obc-common.toml, measured); at vanilla's treasure share and cast time (ASSUMED) that is about 0.7 h with Luck of the Sea III and Lure III, about 3.5 h with a plain rod. One hour is the lower, enchanted figure"}
+    },
+    "not_applied": {
+      "raise": "the raise competes with the training grounds (free, Audino at cap-3 to cap-1), not with a craftable: Exp. Candies are cut by design (docs/mechanics/ITEM_ROUTES.md section 3 row 5) and no other item sets a level. Its $500 is the owner's figure; whether it holds late is owner question 7 (ECONOMY_OVERHAUL.md section 10), not this decision"
+    }
+  },
+  "services": {
+    "raise": {
+      "price": 500,
+      "price_why": "the owner's figure (2026-10-09), ECONOMY_OVERHAUL.md section 5 table",
+      "gate": null,
+      "gate_why": "from the first cap (20) onward, the design's `From` column",
+      "max_cap": 62,
+      "max_cap_why": "ECONOMY_OVERHAUL.md section 5: a flat raise after the Champion (cap 100) would skip the arena's whole climb, so the flat service stops at cap 62. The recommended $200 a level above 62 is owner question 7 and NOT built: a player whose cap reads 63 or more is refused with nothing charged",
+      "refuses": [
+        "the cap did not read (0): nothing is charged",
+        "the cap is above max_cap: nothing is charged",
+        "the slot is empty (no level 1..max_level matches): nothing is charged",
+        "the slot holds a Pokemon above the cap: nothing is charged",
+        "the slot is already at the cap: nothing is charged",
+        "the balance is short: nothing is charged",
+        "the charge did not take exactly the price: the service does nothing",
+        "the slot does not read back at the cap after the edit: the price is given back"
+      ]
+    },
+    "ev": {
+      "price": 17200,
+      "price_why": "price_rule (docs/mechanics/SERVICES_AND_CRAFTING.md): one hour of training saved, at the leg-8 fight hour. Was $2,000 (ECONOMY_OVERHAUL.md section 5), which cost less than the bought inputs of either crafted route and 7 minutes of leg-8 fighting",
+      "gate": "gym2_cleared",
+      "gate_why": "badge 2, the power items' Mart tier (the design's `From` column)",
+      "zero_first": true,
+      "zero_why": "EVs.canSet refuses a set that would pass 510 (note A1), and a set names only the stats it lists, so all six are zeroed in one command and the spread is set in a second; every spread below totals 508",
+      "spreads": [
+        {
+          "id": "physical_sweeper",
+          "name": "Fast attacker",
+          "evs": {
+            "attack": 252,
+            "speed": 252,
+            "hp": 4
+          }
+        },
+        {
+          "id": "special_sweeper",
+          "name": "Fast special attacker",
+          "evs": {
+            "special_attack": 252,
+            "speed": 252,
+            "hp": 4
+          }
+        },
+        {
+          "id": "bulky_physical",
+          "name": "Bulky attacker",
+          "evs": {
+            "hp": 252,
+            "attack": 252,
+            "speed": 4
+          }
+        },
+        {
+          "id": "bulky_special",
+          "name": "Bulky special attacker",
+          "evs": {
+            "hp": 252,
+            "special_attack": 252,
+            "speed": 4
+          }
+        },
+        {
+          "id": "physical_wall",
+          "name": "Physical wall",
+          "evs": {
+            "hp": 252,
+            "defence": 252,
+            "special_defence": 4
+          }
+        },
+        {
+          "id": "special_wall",
+          "name": "Special wall",
+          "evs": {
+            "hp": 252,
+            "special_defence": 252,
+            "defence": 4
+          }
+        }
+      ],
+      "spreads_why": "the design's `two stats to 252 and HP to 4`; where HP is one of the two, the 4 goes to the stat the spread most needs next",
+      "refuses": [
+        "the player has not cleared gym 2: nothing is charged",
+        "the slot is empty (no level 1..max_level matches): nothing is charged",
+        "the balance is short: nothing is charged",
+        "the charge did not take exactly the price: the service does nothing"
+      ],
+      "not_verified_after": "the spread is not read back: whether testpartyslot matches <stat>_ev properties was not read from bytecode (note A1 covers level= and species= only), and a read-back that never matches would refund every purchase. EXP-062 S4 reads the EVs in the summary screen"
+    },
+    "iv": {
+      "price_per_stat": 17200,
+      "price_why": "price_rule (docs/mechanics/SERVICES_AND_CRAFTING.md): one hour saved per stat (fishing a silver Bottle Cap and gathering the eight mint leaves that make it a stat cap), at the leg-8 fight hour; all six $103,200. Was $1,000 a stat (ECONOMY_OVERHAUL.md section 5)",
+      "value": 31,
+      "gate": "gym8_cleared",
+      "gate_why": "badge 8, the retired gold cap's gate (the design's `From` column)",
+      "all_six": true,
+      "refuses": [
+        "the player has not cleared gym 8: nothing is charged",
+        "the slot is empty: nothing is charged",
+        "the balance is short: nothing is charged",
+        "the charge did not take exactly the price: the service does nothing"
+      ],
+      "repeat_rule": "bought again at full price, even on a stat already at 31: the dialogue says so (ECONOMY_OVERHAUL.md section 5 `Limits`)",
+      "not_verified_after": "as the EV service: not read back (testpartyslot's IV matching is unread)"
+    }
+  },
+  "party_over_cap": "NOT a refusal here, a deliberate departure from the design table's last clause: a raise writes exactly the cap, so it cannot put a party over it, and a party already over is told by tools/levelcap_pack.py's own notice. Checking it would make this pack call cobblers:levelcap/battle_check, and a `function` line naming a function another pack may not ship fails this pack's function at load",
+  "slot_choice": "one dialogue page per service shows six options, Slot 1 to Slot 6; each runs its own small function (cobblers:training_services/<service>/.../slot<N>) that writes the slot into storage and calls the service's macro function with it. Cobblemon's dialogue `function` effect takes a bare function id (tools/compile_dialogue.py function_id), so the slot travels in the function's name, not in an argument. MoLang never chooses the slot",
+  "seat": {
+    "offset": [
+      2,
+      2
+    ],
+    "why": "two blocks east of the ground's sign (data/training_grounds.json sign.offset [0, 2]) so the keeper stands beside the sign that names the ground, off the Habitat Block's own column, on the heightmap's ground plus one, turned to face the town"
+  },
+  "keepers": [
+    {
+      "ground": "training_ground_gym1",
+      "name": "Coach Wendell",
+      "at": [
+        1835,
+        140,
+        3620
+      ],
+      "yaw": 85
+    },
+    {
+      "ground": "training_ground_gym2",
+      "name": "Coach Marisol",
+      "at": [
+        1545,
+        107,
+        2761
+      ],
+      "yaw": 304
+    },
+    {
+      "ground": "training_ground_gym3",
+      "name": "Coach Ansel",
+      "at": [
+        1588,
+        140,
+        1438
+      ],
+      "yaw": 254
+    },
+    {
+      "ground": "training_ground_gym4",
+      "name": "Coach Fern",
+      "at": [
+        4393,
+        111,
+        1507
+      ],
+      "yaw": 60
+    },
+    {
+      "ground": "training_ground_gym5",
+      "name": "Coach Bartram",
+      "at": [
+        4646,
+        119,
+        2518
+      ],
+      "yaw": 180
+    },
+    {
+      "ground": "training_ground_gym6",
+      "name": "Coach Ilse",
+      "at": [
+        6172,
+        98,
+        3270
+      ],
+      "yaw": 349
+    },
+    {
+      "ground": "training_ground_gym7",
+      "name": "Coach Torvald",
+      "at": [
+        6110,
+        106,
+        4887
+      ],
+      "yaw": 18
+    },
+    {
+      "ground": "training_ground_gym8",
+      "name": "Coach Rhea",
+      "at": [
+        3571,
+        114,
+        6521
+      ],
+      "yaw": 252
+    }
+  ],
+  "messages": {
+    "greeting": "Want a shortcut? I can train one of your Pokemon to your level cap for ${raise_price}. After your second badge I teach effort training, and after your eighth I can perfect a stat.",
+    "raise_option": "Train a Pokemon to my cap (${raise_price})",
+    "ev_option": "Effort training (${ev_price} a Pokemon)",
+    "iv_option": "Perfect a stat (${iv_price} a stat)",
+    "leave": "Not today.",
+    "back": "Back.",
+    "raise_page": "Which one? I train it straight to your cap. Moves it would learn on the way are worth checking afterwards.",
+    "ev_page": "Pick a training plan. I clear what it had first, then train the plan in.",
+    "ev_slot_page": "{spread}: which Pokemon?",
+    "iv_page": "Which stat? A stat already perfect costs the same: I do not check.",
+    "iv_slot_page": "{stat}: which Pokemon?",
+    "iv_all": "All six (${iv_all_price})",
+    "slot": "Slot {slot}",
+    "cap_unread": "I can't read your level cap right now. Nothing was charged; try again in a moment.",
+    "cap_closed": "Your cap is past what I train to. Nothing was charged.",
+    "slot_above_cap": "That one is already above your cap. Nothing was charged.",
+    "slot_at_cap": "That one is already at your cap. Nothing was charged.",
+    "slot_empty": "There's no Pokemon in that slot. Nothing was charged.",
+    "gated": "Come back when you have {requirement}. Nothing was charged.",
+    "short": "That's ${price}, and you have ${balance}. Nothing was charged.",
+    "charge_failed": "The payment didn't go through, so I've done nothing.",
+    "raised": "Done: trained to level {cap}. ${price} paid.",
+    "refunded": "It didn't take. Your ${price} is back.",
+    "ev_done": "Done: {spread} trained in. ${price} paid.",
+    "iv_done": "Done: {stat} perfected. ${price} paid."
+  },
+  "not_covered": [
+    "the slot's moves and evolutions after a level set: setLevel fires no level-up event (note A2), so whether moves are learned or an evolution is offered is EXP-062 S2; the raise page warns the player",
+    "the slot's level is read by testing level=1..max_level one at a time (testpartyslot has no range syntax, note A1): up to 200 commands a purchase, well inside maxCommandChainLength",
+    "the postgame per-level price (owner question 7): not built",
+    "the keepers are placed by tools/reapply.py R17TS over RCON from this file; a world that has not run that step has no keepers"
+  ]
+}

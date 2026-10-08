@@ -158,6 +158,139 @@ def mart_items(policy):
     return set(((policy or {}).get("mart") or {}).get("items") or [])
 
 
+def mart_tier_items(policy, tier=0):
+    """The Mart's tier lines a clerk at `tier` adds to the basics: every stock_policy.mart.tiers entry whose badges
+    are <= tier (the owner's play-test note 9, 2026-10-05: scale the Mart with the gyms)."""
+    out = set()
+    for t in ((policy or {}).get("mart") or {}).get("tiers") or []:
+        if isinstance(t, dict) and isinstance(t.get("badges"), int) and t["badges"] <= int(tier or 0):
+            out.update(t.get("items") or [])
+    return out
+
+
+def mart_tiers(doc, towns_doc):
+    """{trader id: tier} for every Mart clerk, by stock_policy.mart.tier_rule: the badges a critical-path player
+    holds arriving at its town (critical towns: max(0, order - 1)); an off-path clerk takes the tier of the critical
+    town whose centre is nearest the clerk's own position (straight line). A record's own mart_tier overrides, and must say why. The merchant
+    screen cannot gate per player (data/markets.json decision counters_are_merchants), so the tier is the town's."""
+    towns = {t.get("id"): t for t in (towns_doc or {}).get("towns") or [] if isinstance(t, dict)}
+    crit = {}
+    for tid, t in towns.items():
+        if t.get("critical_path") and isinstance(t.get("order"), int):
+            crit[tid] = max(0, t["order"] - 1)
+    out = {}
+    for r in (doc or {}).get("traders") or []:
+        if not isinstance(r, dict) or r.get("stock") != "mart":
+            continue
+        if isinstance(r.get("mart_tier"), int) and not isinstance(r.get("mart_tier"), bool):
+            out[r["id"]] = r["mart_tier"]
+            continue
+        sid = r.get("settlement")
+        if sid in crit:
+            out[r["id"]] = crit[sid]
+            continue
+        # where the clerk itself stands, not the town's recorded centre: data/towns.json still puts Pacifidlog at its
+        # pre-move site (7210, 6960), 2 km from the deck the clerk stands on (REVIEW 58)
+        here = r.get("position") if isinstance(r.get("position"), dict) else (towns.get(sid) or {}).get("centre")
+        if not here or not crit:
+            out[r["id"]] = 0                              # unknown position: the basics only, never more
+            continue
+        near = min(crit, key=lambda c: ((towns[c]["centre"]["x"] - here["x"]) ** 2
+                                        + (towns[c]["centre"]["z"] - here["z"]) ** 2, c))
+        out[r["id"]] = crit[near]
+    return out
+
+
+def load_towns():
+    return json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))
+
+
+def load_cumulative_income():
+    """{badges: cumulative income} from data/markets.json income_basis.cumulative_by_badge (RELAYED model B): the
+    money a player has earned by the time they hold that many badges, before any spending."""
+    doc = json.loads((ROOT / "data" / "markets.json").read_text(encoding="utf-8"))
+    cum = ((doc.get("income_basis") or {}).get("cumulative_by_badge")) or {}
+    return {int(k): int(v) for k, v in cum.items()}
+
+
+def early_reach_policy(policy):
+    return (((policy or {}).get("mart") or {}).get("early_reach_pricing")) or {}
+
+
+def _tier_item_ids(t):
+    """The item ids of one tier entry: a Mart tier lists ids, a training tier lists {item, price} offers."""
+    return [i["item"] if isinstance(i, dict) else i for i in t.get("items") or []]
+
+
+def priced_tiers(policy):
+    """Every tier entry the early-reach rule prices: stock_policy.mart.tiers, then mart.training.tiers."""
+    mart = (policy or {}).get("mart") or {}
+    return list(mart.get("tiers") or []) + list((mart.get("training") or {}).get("tiers") or [])
+
+
+def early_reach_prices(policy, rid, income=None):
+    """{item id: (band, value)} for the tier lines a Mart clerk listed in stock_policy.mart.early_reach_pricing sells
+    above the badges R its town is reachable with. By the distance d = T - R of a line of tier T:
+      1 <= d <= convenience_within  ("markup", factor): the normal price times convenience_markup (the owner,
+                                    2026-10-08: a low tier is a convenience, not a gate);
+      d > convenience_within        ("floor", price): more than cumulative_by_badge[T], the most a player with T-1
+                                    badges has earned (they earn leg T while holding T-1), rounded UP to round_to (the
+                                    owner, 2026-10-07: late stock out of reach early).
+    apply_price() turns a band into a price and never goes below the normal one. A clerk not listed, and lines with
+    T <= R: absent (the normal price)."""
+    erp = early_reach_policy(policy)
+    rec = (erp.get("traders") or {}).get(rid)
+    if not rec:
+        return {}
+    reach = rec["reachable_from_badges"]
+    step = int(erp.get("round_to") or 1)
+    within = int(erp.get("convenience_within") or 0)
+    markup = erp.get("convenience_markup") or 1
+    income = load_cumulative_income() if income is None else income
+    out = {}
+    for t in priced_tiers(policy):
+        tier = t["badges"]
+        if tier <= reach:
+            continue
+        if tier - reach <= within:
+            band = ("markup", markup)
+        else:
+            if tier not in income:
+                raise SystemExit("early_reach_pricing: %s sells a tier-%d line, but data/markets.json income_basis "
+                                 "has no cumulative_by_badge[%d]" % (rid, tier, tier))
+            band = ("floor", (income[tier] // step + 1) * step)      # strictly above the income, on the step
+        for iid in _tier_item_ids(t):
+            out[iid] = band
+    return out
+
+
+def apply_price(normal, band, step=1):
+    """The price of a line with normal price `normal` under an early-reach band (early_reach_prices), never lower
+    than normal: a floor raises it to the floor; a markup multiplies it, rounded UP to step."""
+    if band is None:
+        return normal
+    kind, value = band
+    if kind == "floor":
+        return max(normal, int(value))
+    if kind == "markup":
+        raw = normal * value
+        return max(normal, int(-(-raw // step) * step))
+    raise ValueError("unknown early-reach band %r" % (kind,))
+
+
+def _price_offer(off, band, step=1):
+    """The offer with its Price set by the early-reach band, in the template's own value shape."""
+    orig, off = off, _v(off)
+    raw = off.get("Price")
+    was = int(str(_v(raw)))
+    price = apply_price(was, band, step)
+    if price == was:
+        return orig
+    new = dict(off)
+    new["Price"] = (raw[0], str(price)) if isinstance(raw, tuple) else str(price)
+    return new
+
+
 def stone_items(policy):
     return list(((policy or {}).get("stones") or {}).get("items") or [])
 
@@ -173,10 +306,34 @@ def card_shop(policy):
              "Offers": [{"Item": {"count": 1, "id": c["item"]}, "Price": str(int(c["price"]))}]}]
 
 
-def mart_shop_items(policy, rid=None):
-    """Every item id a Mart clerk's shop should offer: the basic items, plus the trainer card at the one clerk
-    the policy names. Used by the shop filter and by the in-game verify, so the two cannot disagree."""
-    items = set(mart_items(policy))
+def training_policy(policy):
+    return (((policy or {}).get("mart") or {}).get("training")) or {}
+
+
+def training_offers(policy, tier=0):
+    """[(item id, authored price)] of every stock_policy.mart.training line with badges <= tier, in table order
+    (docs/mechanics/EV_IV_TRAINING.md option B: the Training shelf rides on the Mart tier rule)."""
+    out = []
+    for t in training_policy(policy).get("tiers") or []:
+        if isinstance(t, dict) and isinstance(t.get("badges"), int) and t["badges"] <= int(tier or 0):
+            out += [(i["item"], int(i["price"])) for i in t.get("items") or []]
+    return out
+
+
+def training_shop(policy, tier=0, bands=None, step=1):
+    """The Training category for a Mart clerk at `tier`, or [] when it carries no line. Authored, in the offer shape
+    card_shop emits; an early-reach clerk's bands (early_reach_prices) price each line from its authored price."""
+    bands = bands or {}
+    offers = [{"Item": {"count": 1, "id": iid}, "Price": str(apply_price(price, bands.get(iid), step))}
+              for iid, price in training_offers(policy, tier)]
+    return [{"Category": training_policy(policy)["category"], "Offers": offers}] if offers else []
+
+
+def mart_shop_items(policy, rid=None, tier=0):
+    """Every item id a Mart clerk's shop should offer: the basic items and its tier's lines (mart_tier_items), its
+    tier's training lines (training_offers), plus the trainer card at the one clerk the policy names. Used by the shop
+    filter and by the in-game verify, so the two cannot disagree."""
+    items = set(mart_items(policy)) | mart_tier_items(policy, tier) | {i for i, _ in training_offers(policy, tier)}
     if rid is not None and card_policy(policy) and rid == card_policy(policy).get("trader"):
         items.add(card_policy(policy)["item"])
     return items
@@ -189,15 +346,16 @@ def stone_shop(policy):
              "Offers": [{"Item": {"count": 1, "id": iid}, "Price": str(int(st["price"]))} for iid in st["items"]]}]
 
 
-def apply_stock_policy(data, policy, stock=None, rid=None):
+def apply_stock_policy(data, policy, stock=None, rid=None, tier=0):
     """(data with the shop filtered, kept item ids, withheld item ids).
 
     The shopkeeper templates sell whatever BCA stocked: ultra balls, max revives, X items next to the fish and
     bread. Until the badge-gated stock is designed, a trader sells only what the policy in data/traders.json
     leaves: whole categories and single items are withheld, and a category left empty is dropped. A Mart clerk
     (stock "mart") is the other way round: it sells only the policy's basic Mart items, whatever else the
-    template carries -- plus, at the single clerk stock_policy.trainer_card names, one authored offer for
-    rctmod:trainer_card, which no shopkeeper template carries and which nothing else in the region sells."""
+    template carries, widened by its `tier` (mart_tier_items: the template's own offers for the lines up to that
+    many badges, at the template's prices) -- plus, at the single clerk stock_policy.trainer_card names, one authored
+    offer for rctmod:trainer_card, which no shopkeeper template carries and which nothing else in the region sells."""
     shop = data.get("CobbleMerchantShop")
     if stock == "stones":
         # the Exchange: the template's whole shop is replaced by the authored one (nothing of it is kept)
@@ -212,7 +370,10 @@ def apply_stock_policy(data, policy, stock=None, rid=None):
     cats_out, kept, held = [], [], []
     no_cat = set(policy.get("withhold_categories") or [])
     no_item = set(policy.get("withhold_items") or [])
-    only = mart_items(policy) if stock == "mart" else None
+    only = (mart_items(policy) | mart_tier_items(policy, tier)) if stock == "mart" else None
+    # the early-reach price gate (stock_policy.mart.early_reach_pricing, 2026-10-07): only a listed Mart clerk
+    floors = early_reach_prices(policy, rid) if stock == "mart" and rid is not None else {}
+    step = int(early_reach_policy(policy).get("round_to") or 1)
     for cat in _v(shop):
         cat = _v(cat)
         name = _v(cat.get("Category"))
@@ -223,11 +384,19 @@ def apply_stock_policy(data, policy, stock=None, rid=None):
                 held.append(iid)
             else:
                 kept.append(iid)
-                offers.append(off)
+                offers.append(_price_offer(off, floors[iid], step) if iid in floors else off)
         if offers:
             c = dict(cat)
             c["Offers"] = offers
             cats_out.append(c)
+    if stock == "mart" and training_policy(policy):
+        # the Training shelf (stock_policy.mart.training, EV_IV_TRAINING.md option B): authored like the card, appended
+        # after the filter, released by the same tier. No template carries these lines.
+        train = training_shop(policy, tier, floors, step)
+        cats_out = cats_out + train
+        ids = {o["Item"]["id"] for c in train for o in c["Offers"]}
+        kept = kept + [o["Item"]["id"] for c in train for o in c["Offers"]]
+        held = [i for i in held if i not in ids]
     if stock == "mart" and card_policy(policy) and rid is not None and rid == card_policy(policy).get("trader"):
         # rctmod:trainer_card is in no shopkeeper template and in no shop of ours: without the card
         # `spawningRequiresTrainerCard = true` (modpack/config/rctmod-server.toml:87) means no RCT trainer ever
@@ -271,9 +440,11 @@ def plaza_box(recs):
     return min(xs) - PLAZA_MARGIN, min(zs) - PLAZA_MARGIN, max(xs) + PLAZA_MARGIN, max(zs) + PLAZA_MARGIN
 
 
-def town_functions(town, recs, entity, policy=None):
+def town_functions(town, recs, entity, policy=None, tiers=None):
     """{function name: lines} for one settlement. entity(template id) -> (kind, nbt dict). A trader the stock
-    policy leaves with nothing to sell is withdrawn: no summon, and any copy already standing is removed."""
+    policy leaves with nothing to sell is withdrawn: no summon, and any copy already standing is removed. `tiers`
+    is mart_tiers()'s {id: tier}; a Mart clerk missing from it sells the basics only."""
+    tiers = tiers or {}
     box = "%d %d %d %d" % plaza_box(recs)
     loader = ["# Generated by tools/traders.py from data/traders.json: the traders of %s" % town,
               "# force-load the plaza and give its saved traders time to load before anything is summoned",
@@ -286,7 +457,7 @@ def town_functions(town, recs, entity, policy=None):
     for rec in sorted(recs, key=lambda q: q["id"]):
         kind, data = entity(rec["template"])
         template_name = display_name(data)
-        data, kept, _held = apply_stock_policy(dict(data), policy, rec.get("stock"), rec["id"])
+        data, kept, _held = apply_stock_policy(dict(data), policy, rec.get("stock"), rec["id"], tiers.get(rec["id"], 0))
         x, y, z = (rec["position"][k] for k in "xyz")
         tag = tag_of(rec["id"])
         if kept == [] or rec.get("stock") == "withdrawn":
@@ -363,6 +534,14 @@ def static_problems(doc, placements_doc=None, plans_dir=None):
             out.append((rid, "facing must be one of %s" % ", ".join(YAW)))
         if r.get("stock") == "mart" and not mart_items(doc.get("stock_policy")):
             out.append((rid, "a Mart clerk, but stock_policy.mart lists no items"))
+        if "mart_tier" in r:
+            mt = r.get("mart_tier")
+            if r.get("stock") != "mart":
+                out.append((rid, "mart_tier on a trader whose stock is %r, not \"mart\"" % r.get("stock")))
+            if not (isinstance(mt, int) and not isinstance(mt, bool) and 0 <= mt <= 8):
+                out.append((rid, "mart_tier must be a whole number of badges, 0-8"))
+            if not r.get("mart_tier_why"):
+                out.append((rid, "mart_tier overrides the town-position rule, so it needs mart_tier_why"))
         if r.get("stock") == "stones":
             st = (doc.get("stock_policy") or {}).get("stones") or {}
             items = st.get("items") or []
@@ -419,10 +598,81 @@ def static_problems(doc, placements_doc=None, plans_dir=None):
                               "buys the card back, and a licence with a sell price is sold twice"))
         if len([r for r in recs if isinstance(r, dict) and r.get("id") == who]) > 1:
             out.append((who, "two traders carry the id the trainer card is attached to"))
+    erp = early_reach_policy(doc.get("stock_policy"))
+    if erp:
+        by_id = {r.get("id"): r for r in recs if isinstance(r, dict)}
+        rt = erp.get("round_to")
+        if not (isinstance(rt, int) and not isinstance(rt, bool) and rt > 0):
+            out.append((None, "stock_policy.mart.early_reach_pricing.round_to must be a positive integer"))
+        cw, cm = erp.get("convenience_within", 0), erp.get("convenience_markup", 1)
+        if not (isinstance(cw, int) and not isinstance(cw, bool) and 0 <= cw <= 8):
+            out.append((None, "stock_policy.mart.early_reach_pricing.convenience_within must be a whole number of "
+                              "badges, 0-8"))
+        if not (isinstance(cm, (int, float)) and not isinstance(cm, bool) and cm >= 1):
+            out.append((None, "stock_policy.mart.early_reach_pricing.convenience_markup must be a number >= 1: a "
+                              "convenience is never cheaper than the normal price"))
+        for k in ("convenience_within", "convenience_markup"):
+            if k in erp and not erp.get(k + "_why"):
+                out.append((None, "stock_policy.mart.early_reach_pricing.%s needs a %s_why" % (k, k)))
+        if erp.get("income_source") != "data/markets.json income_basis.cumulative_by_badge":
+            out.append((None, "stock_policy.mart.early_reach_pricing.income_source must name the income it is "
+                              "computed from: data/markets.json income_basis.cumulative_by_badge"))
+        for who, e in sorted((erp.get("traders") or {}).items()):
+            rb = (e or {}).get("reachable_from_badges")
+            if who in by_id and by_id[who].get("stock") != "mart":
+                out.append((who, "early_reach_pricing names it, but its stock is %r, not \"mart\"" % by_id[who].get("stock")))
+            if not (isinstance(rb, int) and not isinstance(rb, bool) and 0 <= rb <= 8):
+                out.append((who, "early_reach_pricing.reachable_from_badges must be a whole number of badges, 0-8"))
+            if not (e or {}).get("why"):
+                out.append((who, "early_reach_pricing needs a why: the badges a town is reachable with is a finding"))
+    tiers = ((doc.get("stock_policy") or {}).get("mart") or {}).get("tiers")
+    if tiers is not None:
+        seen_items = set(mart_items(doc.get("stock_policy")))
+        if not isinstance(tiers, list):
+            out.append((None, "stock_policy.mart.tiers must be a list"))
+            tiers = []
+        for t in tiers:
+            b = t.get("badges") if isinstance(t, dict) else None
+            if not (isinstance(b, int) and not isinstance(b, bool) and 1 <= b <= 8):
+                out.append((None, "stock_policy.mart.tiers: badges must be 1-8 (tier 0 is mart.items), got %r" % (b,)))
+            for iid in (t.get("items") if isinstance(t, dict) else None) or []:
+                if not (isinstance(iid, str) and ":" in iid):
+                    out.append((None, "stock_policy.mart.tiers: %r is not a namespaced item id" % (iid,)))
+                elif iid in seen_items:
+                    out.append((None, "stock_policy.mart.tiers: %s is listed twice (or is already a basic item)" % iid))
+                seen_items.add(iid)
+    train = training_policy(doc.get("stock_policy"))
+    if train:
+        # the Training shelf: authored offers, so every field the offer is built from must be there and sane, and no
+        # line may also be a Mart line (one item, two prices on one screen)
+        seen = set(mart_items(doc.get("stock_policy"))) | mart_tier_items(doc.get("stock_policy"), 8)
+        if not (isinstance(train.get("category"), str) and train["category"]):
+            out.append((None, "stock_policy.mart.training needs a category"))
+        if train.get("buys") is not False:
+            out.append((None, "stock_policy.mart.training must say buys: false (no bank buys a training line back)"))
+        if not isinstance(train.get("tiers"), list) or not train["tiers"]:
+            out.append((None, "stock_policy.mart.training.tiers must be a non-empty list"))
+        for t in train.get("tiers") if isinstance(train.get("tiers"), list) else []:
+            b = t.get("badges") if isinstance(t, dict) else None
+            if not (isinstance(b, int) and not isinstance(b, bool) and 1 <= b <= 8):
+                out.append((None, "stock_policy.mart.training.tiers: badges must be 1-8, got %r" % (b,)))
+            if isinstance(t, dict) and not t.get("why"):
+                out.append((None, "stock_policy.mart.training.tiers: the tier-%r line needs a why" % (b,)))
+            for o in (t.get("items") if isinstance(t, dict) else None) or []:
+                iid = o.get("item") if isinstance(o, dict) else None
+                pr = o.get("price") if isinstance(o, dict) else None
+                if not (isinstance(iid, str) and ":" in iid):
+                    out.append((None, "stock_policy.mart.training: %r is not a namespaced item id" % (iid,)))
+                    continue
+                if not (isinstance(pr, int) and not isinstance(pr, bool) and pr > 0):
+                    out.append((None, "stock_policy.mart.training: %s needs a positive whole price" % iid))
+                if iid in seen:
+                    out.append((None, "stock_policy.mart.training: %s is listed twice (or is already a Mart line)" % iid))
+                seen.add(iid)
     return out
 
 
-def rcon_counts(server_dir, recs, settle=(4, 30), policy=None, leaks=None):
+def rcon_counts(server_dir, recs, settle=(4, 30), policy=None, leaks=None, tiers=None):
     """{id: (tagged count anywhere loaded, tagged count on its spot, untagged copies on its spot)} from a running
     server. Force-loads each plaza and polls until two samples agree: entities appear some ticks after their chunk.
     With a policy and a leaks dict, also reads each standing trader's shop and records withheld items it still sells."""
@@ -469,7 +719,8 @@ def rcon_counts(server_dir, recs, settle=(4, 30), policy=None, leaks=None):
                     cats = set(re.findall(r'Category: "([^"]+)"', shop))
                     if r.get("stock") in ("mart", "stones"):
                         # a Mart sells the basic items and nothing else, and all of them; the Exchange the stones
-                        want = mart_shop_items(policy, r["id"]) if r.get("stock") == "mart" else set(stone_items(policy))
+                        want = mart_shop_items(policy, r["id"], (tiers or {}).get(r["id"], 0)) \
+                            if r.get("stock") == "mart" else set(stone_items(policy))
                         bad = sorted(ids - want) + sorted("missing " + i for i in want - ids)
                     else:
                         bad = sorted(ids & held) + sorted("category " + c for c in cats & set(policy.get("withhold_categories") or []))
@@ -549,6 +800,7 @@ def main(argv=None):
     g.add_argument("--world")
     g.add_argument("--rcon", metavar="SERVER_DIR")
     v.add_argument("--settlement", action="append", help="only these towns (default: every trader in the manifest)")
+    sub.add_parser("tiers", help="each Mart clerk's tier and what it sells (no server needed)")
     a = p.parse_args(argv)
     doc = json.loads(Path(a.manifest).read_text(encoding="utf-8"))
     placements = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
@@ -558,6 +810,30 @@ def main(argv=None):
             print("ERROR %s: %s" % (rid, m))
         return 1
     recs = doc["traders"]
+    tiers = mart_tiers(doc, load_towns())
+    if a.cmd == "tiers":
+        policy = doc.get("stock_policy")
+        for r in sorted((r for r in recs if r.get("stock") == "mart"), key=lambda q: (tiers[q["id"]], q["id"])):
+            add = sorted(mart_tier_items(policy, tiers[r["id"]]))
+            print("%-18s %-12s tier %d%s  +%d: %s" % (r["id"], r["settlement"], tiers[r["id"]],
+                                                     " (override)" if "mart_tier" in r else "", len(add),
+                                                     ", ".join(i.split(":")[1] for i in add) or "-"))
+            floors = early_reach_prices(policy, r["id"])
+            train = training_shop(policy, tiers[r["id"]], floors, int(early_reach_policy(policy).get("round_to") or 1))
+            if train:
+                offs = train[0]["Offers"]
+                print("%-18s   training +%d: %s" % ("", len(offs), ", ".join(
+                    "%s %s" % (o["Item"]["id"].split(":")[1], o["Price"]) for o in offs)))
+            add = add + [o["Item"]["id"] for c in train for o in c["Offers"]]
+            if floors:
+                held = {i: b for i, b in floors.items() if i in add}
+                show = lambda b: ("x%s" % b[1]) if b[0] == "markup" else str(b[1])
+                for kind, label in (("markup", "convenience (normal price x markup)"), ("floor", "income gate")):
+                    part = sorted(((i, b) for i, b in held.items() if b[0] == kind), key=lambda kv: (kv[1][1], kv[0]))
+                    print("%-18s   early-reach %s, reachable at %d badges: %s"
+                          % ("", label, early_reach_policy(policy)["traders"][r["id"]]["reachable_from_badges"],
+                             ", ".join("%s %s" % (i.split(":")[1], show(b)) for i, b in part) or "-"))
+        return 0
     if a.cmd == "function":
         if not a.server_dir:
             raise SystemExit("no server directory: pass --server-dir, or set COBBLERS_SERVER_ROOT")
@@ -571,9 +847,11 @@ def main(argv=None):
             encoding="utf-8", newline="\n")
         policy = doc.get("stock_policy")
         for r in recs:
-            _, kept, held = apply_stock_policy(dict(entity(r["template"])[1]), policy, r.get("stock"), r["id"])
+            _, kept, held = apply_stock_policy(dict(entity(r["template"])[1]), policy, r.get("stock"), r["id"],
+                                               tiers.get(r["id"], 0))
             if r.get("stock") == "mart":
-                missing = mart_items(policy) - set(kept or [])
+                # a tier line the template does not stock would be silently missing from the shelf: refuse
+                missing = (mart_items(policy) | mart_tier_items(policy, tiers.get(r["id"], 0))) - set(kept or [])
                 if missing:
                     raise SystemExit("%s: a Mart clerk read from %s, which does not sell %s"
                                      % (r["id"], r["template"], ", ".join(sorted(missing))))
@@ -588,7 +866,7 @@ def main(argv=None):
         for r in recs:
             by_town.setdefault(r["settlement"], []).append(r)
         for town, trs in sorted(by_town.items()):
-            for name, lines in town_functions(town, trs, entity, policy).items():
+            for name, lines in town_functions(town, trs, entity, policy, tiers).items():
                 refused = function_limits.check_lines(lines, name)
                 if refused:
                     raise SystemExit("%s: %d command(s) the server would refuse" % (name, len(refused)))
@@ -598,7 +876,8 @@ def main(argv=None):
     if a.settlement:
         recs = [r for r in recs if r["settlement"] in a.settlement]
     leaks = {}
-    counts = world_counts(a.world, recs) if a.world else rcon_counts(a.rcon, recs, policy=doc.get("stock_policy"), leaks=leaks)
+    counts = world_counts(a.world, recs) if a.world else rcon_counts(a.rcon, recs, policy=doc.get("stock_policy"), leaks=leaks,
+                                                                     tiers=tiers)
     problems = problems_from_counts(counts, {r["id"] for r in recs if r.get("stock") == "withdrawn"})
     problems += [(rid, "still sells withheld stock: %s" % ", ".join(v)) for rid, v in sorted(leaks.items())]
     for rid, (total, on_spot, strays) in sorted(counts.items()):

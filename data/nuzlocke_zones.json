@@ -1,0 +1,1833 @@
+{
+ "schema": "cobblers.nuzlocke_zones/1",
+ "generated_by": "tools/nuzlocke_zones.py from data/regions.json, encounter_design.json, spawns.json, routes.json, route_paths.json, waterways.json, vr_caves.json, habitat_blocks.json and the canonical heightmap. Do not edit by hand: change the inputs and regenerate.",
+ "rule": "One catch zone per distinct encounter table a player can meet; the first encounter in a zone is the player's catch there, whether it comes from the zone's table or a site inside it (an elder tree, a sapling, a heart). A route leg is not a zone: it crosses several. docs/mechanics/NUZLOCKE_ZONES.md.",
+ "titles": "Every zone is titled on entry by cobblers_titles (tools/location_titles.py): land, sea, waterway and cave zones by their own name over their subtitle; a site zone by its settlement's title.",
+ "counts": {
+  "cave": 6,
+  "land": 61,
+  "sea": 3,
+  "site": 1,
+  "waterway": 1,
+  "total": 72,
+  "not_zones": 28
+ },
+ "derivation": {
+  "tables_are_subregions": "data/encounter_design.json has 63 tables and data/regions.json 63 sub-regions, the same ids",
+  "corridors_carry_crossed_tables": [
+   {
+    "route": "route_01_pallet_to_brock",
+    "tables_crossed": 4,
+    "corridor_species": 20,
+    "species_from_no_crossed_table": []
+   },
+   {
+    "route": "route_02_brock_to_misty",
+    "tables_crossed": 2,
+    "corridor_species": 20,
+    "species_from_no_crossed_table": []
+   },
+   {
+    "route": "route_03_misty_to_surge",
+    "tables_crossed": 5,
+    "corridor_species": 28,
+    "species_from_no_crossed_table": []
+   },
+   {
+    "route": "route_04_surge_to_erika",
+    "tables_crossed": 7,
+    "corridor_species": 35,
+    "species_from_no_crossed_table": []
+   },
+   {
+    "route": "route_05_erika_to_koga",
+    "tables_crossed": 3,
+    "corridor_species": 20,
+    "species_from_no_crossed_table": []
+   },
+   {
+    "route": "route_06_koga_to_sabrina",
+    "tables_crossed": 3,
+    "corridor_species": 23,
+    "species_from_no_crossed_table": []
+   },
+   {
+    "route": "route_07_sabrina_to_blaine",
+    "tables_crossed": 4,
+    "corridor_species": 24,
+    "species_from_no_crossed_table": []
+   },
+   {
+    "route": "route_08_blaine_to_giovanni",
+    "tables_crossed": 5,
+    "corridor_species": 28,
+    "species_from_no_crossed_table": []
+   },
+   {
+    "route": "victory_road",
+    "tables_crossed": 6,
+    "corridor_species": 28,
+    "species_from_no_crossed_table": []
+   }
+  ],
+  "sea_level": 62
+ },
+ "legs": [
+  {
+   "route": "route_01_pallet_to_brock",
+   "name": "Route 1 — Pallet to Brock",
+   "zones": [
+    {
+     "zone": "pallet_meadows",
+     "at_distance_blocks": 0.0,
+     "new": true
+    },
+    {
+     "zone": "route1_maze_forest",
+     "at_distance_blocks": 243.9,
+     "new": true
+    },
+    {
+     "zone": "river_of_shrews_vale",
+     "at_distance_blocks": 1235.9,
+     "new": true
+    },
+    {
+     "zone": "viltri_plateau",
+     "at_distance_blocks": 1461.4,
+     "new": true
+    }
+   ],
+   "new_zones": 4
+  },
+  {
+   "route": "route_02_brock_to_misty",
+   "name": "Route 2 — Brock to Misty",
+   "zones": [
+    {
+     "zone": "viltri_plateau",
+     "at_distance_blocks": 0.0,
+     "new": false
+    },
+    {
+     "zone": "lake_viltri_hollow",
+     "at_distance_blocks": 500.1,
+     "new": true
+    }
+   ],
+   "new_zones": 1
+  },
+  {
+   "route": "route_03_misty_to_surge",
+   "name": "Route 3 — Misty to Surge",
+   "zones": [
+    {
+     "zone": "lake_viltri_hollow",
+     "at_distance_blocks": 0.0,
+     "new": false
+    },
+    {
+     "zone": "foothill_woods",
+     "at_distance_blocks": 366.5,
+     "new": true
+    },
+    {
+     "zone": "mt_clay",
+     "at_distance_blocks": 1654.0,
+     "new": true
+    },
+    {
+     "zone": "mt_vessu",
+     "at_distance_blocks": 1775.8,
+     "new": true
+    },
+    {
+     "zone": "the_tri_peaks",
+     "at_distance_blocks": 1785.7,
+     "new": true
+    }
+   ],
+   "new_zones": 4
+  },
+  {
+   "route": "route_04_surge_to_erika",
+   "name": "Route 4 — Surge to Erika",
+   "zones": [
+    {
+     "zone": "the_tri_peaks",
+     "at_distance_blocks": 0.0,
+     "new": false
+    },
+    {
+     "zone": "mt_vessu",
+     "at_distance_blocks": 328.1,
+     "new": false
+    },
+    {
+     "zone": "mt_clay",
+     "at_distance_blocks": 437.8,
+     "new": false
+    },
+    {
+     "zone": "merian_cirque",
+     "at_distance_blocks": 1048.6,
+     "new": true
+    },
+    {
+     "zone": "the_crags",
+     "at_distance_blocks": 1845.0,
+     "new": true
+    },
+    {
+     "zone": "upper_trough",
+     "at_distance_blocks": 2114.3,
+     "new": true
+    },
+    {
+     "zone": "peak_pond_hollow",
+     "at_distance_blocks": 2891.9,
+     "new": true
+    }
+   ],
+   "new_zones": 4
+  },
+  {
+   "route": "route_05_erika_to_koga",
+   "name": "Route 5 — Erika to Koga",
+   "zones": [
+    {
+     "zone": "peak_pond_hollow",
+     "at_distance_blocks": 0.0,
+     "new": false
+    },
+    {
+     "zone": "north_east_downs",
+     "at_distance_blocks": 867.4,
+     "new": true
+    },
+    {
+     "zone": "glacier_foot_fields",
+     "at_distance_blocks": 993.9,
+     "new": true
+    }
+   ],
+   "new_zones": 2
+  },
+  {
+   "route": "route_06_koga_to_sabrina",
+   "name": "Route 6 — Koga to Sabrina",
+   "zones": [
+    {
+     "zone": "glacier_foot_fields",
+     "at_distance_blocks": 0.0,
+     "new": false
+    },
+    {
+     "zone": "marsh_creek",
+     "at_distance_blocks": 992.5,
+     "new": true
+    },
+    {
+     "zone": "tilpey_north_shore",
+     "at_distance_blocks": 1142.2,
+     "new": true
+    }
+   ],
+   "new_zones": 2
+  },
+  {
+   "route": "route_07_sabrina_to_blaine",
+   "name": "Route 7 — Sabrina to Blaine",
+   "zones": [
+    {
+     "zone": "tilpey_north_shore",
+     "at_distance_blocks": 0.0,
+     "new": false
+    },
+    {
+     "zone": "tilpey_east_shore",
+     "at_distance_blocks": 237.4,
+     "new": true
+    },
+    {
+     "zone": "tilpey_south_shore",
+     "at_distance_blocks": 1707.8,
+     "new": true
+    },
+    {
+     "zone": "crater_rim_north_west",
+     "at_distance_blocks": 1861.8,
+     "new": true
+    }
+   ],
+   "new_zones": 3
+  },
+  {
+   "route": "route_08_blaine_to_giovanni",
+   "name": "Route 8 — Blaine to Giovanni",
+   "zones": [
+    {
+     "zone": "crater_rim_north_west",
+     "at_distance_blocks": 0.0,
+     "new": false
+    },
+    {
+     "zone": "tilpey_south_shore",
+     "at_distance_blocks": 523.8,
+     "new": false
+    },
+    {
+     "zone": "plateau_west",
+     "at_distance_blocks": 1057.9,
+     "new": true
+    },
+    {
+     "zone": "rift_foot",
+     "at_distance_blocks": 2247.7,
+     "new": true
+    },
+    {
+     "zone": "south_strand",
+     "at_distance_blocks": 2714.6,
+     "new": true
+    }
+   ],
+   "new_zones": 3
+  },
+  {
+   "route": "victory_road",
+   "name": "Victory Road — Giovanni to the League",
+   "zones": [
+    {
+     "zone": "south_strand",
+     "at_distance_blocks": 0.0,
+     "new": false
+    },
+    {
+     "zone": "rift_foot",
+     "at_distance_blocks": 399.7,
+     "new": false
+    },
+    {
+     "zone": "rift_south_west_arm",
+     "at_distance_blocks": 1193.7,
+     "new": true
+    },
+    {
+     "zone": "rift_south_east_arm",
+     "at_distance_blocks": 2061.7,
+     "new": true
+    },
+    {
+     "zone": "rift_trunk",
+     "at_distance_blocks": 3074.6,
+     "new": true
+    },
+    {
+     "zone": "rift_west_spur",
+     "at_distance_blocks": 3810.8,
+     "new": true
+    }
+   ],
+   "new_zones": 4
+  }
+ ],
+ "zones": [
+  {
+   "zone": "northgate_west",
+   "kind": "land",
+   "name": "Northgate West",
+   "subtitle": "Northgate Isle",
+   "region": "northgate_isle",
+   "table": "data/encounter_design.json tables.northgate_west",
+   "tier": 6,
+   "levels": null,
+   "species": 16,
+   "geometry": "data/regions.json subregions.northgate_west polygons, 32-block raster",
+   "land_share": 0.995,
+   "legs": [],
+   "sites": [
+    "elder_northgate_west_1",
+    "elder_northgate_west_2"
+   ]
+  },
+  {
+   "zone": "northgate_east",
+   "kind": "land",
+   "name": "Northgate East",
+   "subtitle": "Northgate Isle",
+   "region": "northgate_isle",
+   "table": "data/encounter_design.json tables.northgate_east",
+   "tier": 6,
+   "levels": null,
+   "species": 16,
+   "geometry": "data/regions.json subregions.northgate_east polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "elder_northgate_east_1",
+    "elder_northgate_east_2"
+   ]
+  },
+  {
+   "zone": "north_pine_isle",
+   "kind": "land",
+   "name": "North Pine Isle",
+   "subtitle": "The Pine Isles",
+   "region": "pine_isles",
+   "table": "data/encounter_design.json tables.north_pine_isle",
+   "tier": 6,
+   "levels": null,
+   "species": 16,
+   "geometry": "data/regions.json subregions.north_pine_isle polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "elder_north_pine_isle_1",
+    "elder_north_pine_isle_2"
+   ]
+  },
+  {
+   "zone": "south_pine_isle",
+   "kind": "land",
+   "name": "South Pine Isle",
+   "subtitle": "The Pine Isles",
+   "region": "pine_isles",
+   "table": "data/encounter_design.json tables.south_pine_isle",
+   "tier": 6,
+   "levels": null,
+   "species": 19,
+   "geometry": "data/regions.json subregions.south_pine_isle polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "elder_south_pine_isle_1",
+    "elder_south_pine_isle_2",
+    "elder_south_pine_isle_3"
+   ]
+  },
+  {
+   "zone": "fungal_north",
+   "kind": "land",
+   "name": "Fungal North",
+   "subtitle": "Fungal Isle",
+   "region": "fungal_isle",
+   "table": "data/encounter_design.json tables.fungal_north",
+   "tier": 3,
+   "levels": null,
+   "species": 20,
+   "geometry": "data/regions.json subregions.fungal_north polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "fungal_south",
+   "kind": "land",
+   "name": "Fungal South",
+   "subtitle": "Fungal Isle",
+   "region": "fungal_isle",
+   "table": "data/encounter_design.json tables.fungal_south",
+   "tier": 3,
+   "levels": null,
+   "species": 18,
+   "geometry": "data/regions.json subregions.fungal_south polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "sunset_west",
+   "kind": "land",
+   "name": "Sunset West",
+   "subtitle": "Sunset Isle",
+   "region": "sunset_isle",
+   "table": "data/encounter_design.json tables.sunset_west",
+   "tier": 5,
+   "levels": null,
+   "species": 20,
+   "geometry": "data/regions.json subregions.sunset_west polygons, 32-block raster",
+   "land_share": 0.999,
+   "legs": [],
+   "sites": [
+    "sapling_palm_sunset_west"
+   ]
+  },
+  {
+   "zone": "sunset_east",
+   "kind": "land",
+   "name": "Sunset East",
+   "subtitle": "Sunset Isle",
+   "region": "sunset_isle",
+   "table": "data/encounter_design.json tables.sunset_east",
+   "tier": 8,
+   "levels": null,
+   "species": 21,
+   "geometry": "data/regions.json subregions.sunset_east polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "sapling_palm_sunset_east"
+   ]
+  },
+  {
+   "zone": "long_isle_north",
+   "kind": "land",
+   "name": "Long Isle North",
+   "subtitle": "The Long Isle",
+   "region": "long_isle",
+   "table": "data/encounter_design.json tables.long_isle_north",
+   "tier": 7,
+   "levels": null,
+   "species": 19,
+   "geometry": "data/regions.json subregions.long_isle_north polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "elder_long_isle_north_1",
+    "elder_long_isle_north_2",
+    "sapling_desert_long_isle_north"
+   ]
+  },
+  {
+   "zone": "long_isle_middle",
+   "kind": "land",
+   "name": "Long Isle Middle",
+   "subtitle": "The Long Isle",
+   "region": "long_isle",
+   "table": "data/encounter_design.json tables.long_isle_middle",
+   "tier": 7,
+   "levels": null,
+   "species": 19,
+   "geometry": "data/regions.json subregions.long_isle_middle polygons, 32-block raster",
+   "land_share": 0.997,
+   "legs": [],
+   "sites": [
+    "elder_long_isle_middle_1"
+   ]
+  },
+  {
+   "zone": "long_isle_south",
+   "kind": "land",
+   "name": "Long Isle South",
+   "subtitle": "The Long Isle",
+   "region": "long_isle",
+   "table": "data/encounter_design.json tables.long_isle_south",
+   "tier": 8,
+   "levels": null,
+   "species": 19,
+   "geometry": "data/regions.json subregions.long_isle_south polygons, 32-block raster",
+   "land_share": 0.997,
+   "legs": [],
+   "sites": [
+    "elder_jungle_east_1",
+    "elder_jungle_east_2",
+    "elder_jungle_west_1",
+    "elder_jungle_west_2",
+    "elder_long_isle_middle_2",
+    "elder_long_isle_south_1",
+    "elder_long_isle_south_2",
+    "elder_long_isle_south_3"
+   ]
+  },
+  {
+   "zone": "merian_cirque",
+   "kind": "land",
+   "name": "Merian Cirque",
+   "subtitle": "The Glacial Tear",
+   "region": "glacial_tear",
+   "table": "data/encounter_design.json tables.merian_cirque",
+   "tier": 4,
+   "levels": [
+    25,
+    31
+   ],
+   "species": 11,
+   "geometry": "data/regions.json subregions.merian_cirque polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_04_surge_to_erika"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "the_crags",
+   "kind": "land",
+   "name": "The Crags",
+   "subtitle": "The Glacial Tear",
+   "region": "glacial_tear",
+   "table": "data/encounter_design.json tables.the_crags",
+   "tier": 4,
+   "levels": [
+    25,
+    32
+   ],
+   "species": 14,
+   "geometry": "data/regions.json subregions.the_crags polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_04_surge_to_erika"
+   ],
+   "sites": [
+    "sapling_crag_the_crags"
+   ]
+  },
+  {
+   "zone": "upper_trough",
+   "kind": "land",
+   "name": "Upper Trough",
+   "subtitle": "The Glacial Tear",
+   "region": "glacial_tear",
+   "table": "data/encounter_design.json tables.upper_trough",
+   "tier": 4,
+   "levels": [
+    26,
+    33
+   ],
+   "species": 12,
+   "geometry": "data/regions.json subregions.upper_trough polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_04_surge_to_erika"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "lower_trough",
+   "kind": "land",
+   "name": "Lower Trough",
+   "subtitle": "The Glacial Tear",
+   "region": "glacial_tear",
+   "table": "data/encounter_design.json tables.lower_trough",
+   "tier": 5,
+   "levels": null,
+   "species": 13,
+   "geometry": "data/regions.json subregions.lower_trough polygons, 32-block raster",
+   "land_share": 0.987,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "the_tri_peaks",
+   "kind": "land",
+   "name": "The Tri Peaks",
+   "subtitle": "The Tri Peaks",
+   "region": "tri_peaks",
+   "table": "data/encounter_design.json tables.the_tri_peaks",
+   "tier": 3,
+   "levels": [
+    20,
+    28
+   ],
+   "species": 10,
+   "geometry": "data/regions.json subregions.the_tri_peaks polygons, 32-block raster",
+   "land_share": 0.995,
+   "legs": [
+    "route_03_misty_to_surge",
+    "route_04_surge_to_erika"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "mt_vessu",
+   "kind": "land",
+   "name": "Mt Vessu",
+   "subtitle": "The Tri Peaks",
+   "region": "tri_peaks",
+   "table": "data/encounter_design.json tables.mt_vessu",
+   "tier": 3,
+   "levels": [
+    22,
+    28
+   ],
+   "species": 10,
+   "geometry": "data/regions.json subregions.mt_vessu polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_03_misty_to_surge",
+    "route_04_surge_to_erika"
+   ],
+   "sites": [
+    "sapling_crag_mt_vessu"
+   ]
+  },
+  {
+   "zone": "mt_clay",
+   "kind": "land",
+   "name": "Mt Clay",
+   "subtitle": "The Tri Peaks",
+   "region": "tri_peaks",
+   "table": "data/encounter_design.json tables.mt_clay",
+   "tier": 3,
+   "levels": [
+    20,
+    26
+   ],
+   "species": 16,
+   "geometry": "data/regions.json subregions.mt_clay polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_03_misty_to_surge",
+    "route_04_surge_to_erika"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "rift_trunk",
+   "kind": "land",
+   "name": "Rift Trunk",
+   "subtitle": "The Rift",
+   "region": "the_rift",
+   "table": "data/encounter_design.json tables.rift_trunk",
+   "tier": 9,
+   "levels": null,
+   "species": 11,
+   "geometry": "data/regions.json subregions.rift_trunk polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "victory_road"
+   ],
+   "sites": [
+    "sapling_storm_rift_trunk"
+   ]
+  },
+  {
+   "zone": "rift_west_spur",
+   "kind": "land",
+   "name": "Rift West Spur",
+   "subtitle": "The Rift",
+   "region": "the_rift",
+   "table": "data/encounter_design.json tables.rift_west_spur",
+   "tier": 9,
+   "levels": null,
+   "species": 14,
+   "geometry": "data/regions.json subregions.rift_west_spur polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "victory_road"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "rift_south_west_arm",
+   "kind": "land",
+   "name": "Rift South-West Arm",
+   "subtitle": "The Rift",
+   "region": "the_rift",
+   "table": "data/encounter_design.json tables.rift_south_west_arm",
+   "tier": 9,
+   "levels": null,
+   "species": 19,
+   "geometry": "data/regions.json subregions.rift_south_west_arm polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "victory_road"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "rift_south_east_arm",
+   "kind": "land",
+   "name": "Rift South-East Arm",
+   "subtitle": "The Rift",
+   "region": "the_rift",
+   "table": "data/encounter_design.json tables.rift_south_east_arm",
+   "tier": 9,
+   "levels": null,
+   "species": 24,
+   "geometry": "data/regions.json subregions.rift_south_east_arm polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "victory_road"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "crater_rim_north_west",
+   "kind": "land",
+   "name": "North-West Rim",
+   "subtitle": "The Craters",
+   "region": "the_craters",
+   "table": "data/encounter_design.json tables.crater_rim_north_west",
+   "tier": 7,
+   "levels": null,
+   "species": 19,
+   "geometry": "data/regions.json subregions.crater_rim_north_west polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_07_sabrina_to_blaine",
+    "route_08_blaine_to_giovanni"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "great_crater",
+   "kind": "land",
+   "name": "Great Crater",
+   "subtitle": "The Craters",
+   "region": "the_craters",
+   "table": "data/encounter_design.json tables.great_crater",
+   "tier": 8,
+   "levels": null,
+   "species": 18,
+   "geometry": "data/regions.json subregions.great_crater polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "sapling_scorched_great_crater"
+   ]
+  },
+  {
+   "zone": "east_cones",
+   "kind": "land",
+   "name": "East Cones",
+   "subtitle": "The Craters",
+   "region": "the_craters",
+   "table": "data/encounter_design.json tables.east_cones",
+   "tier": 7,
+   "levels": null,
+   "species": 18,
+   "geometry": "data/regions.json subregions.east_cones polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "plateau_west",
+   "kind": "land",
+   "name": "Plateau West",
+   "subtitle": "The Scorched Plateau",
+   "region": "scorched_plateau",
+   "table": "data/encounter_design.json tables.plateau_west",
+   "tier": 8,
+   "levels": null,
+   "species": 19,
+   "geometry": "data/regions.json subregions.plateau_west polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_08_blaine_to_giovanni"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "plateau_south",
+   "kind": "land",
+   "name": "Plateau South",
+   "subtitle": "The Scorched Plateau",
+   "region": "scorched_plateau",
+   "table": "data/encounter_design.json tables.plateau_south",
+   "tier": 8,
+   "levels": null,
+   "species": 20,
+   "geometry": "data/regions.json subregions.plateau_south polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "plateau_east",
+   "kind": "land",
+   "name": "Plateau East",
+   "subtitle": "The Scorched Plateau",
+   "region": "scorched_plateau",
+   "table": "data/encounter_design.json tables.plateau_east",
+   "tier": 8,
+   "levels": null,
+   "species": 16,
+   "geometry": "data/regions.json subregions.plateau_east polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "frostpeak",
+   "kind": "land",
+   "name": "Frostpeak",
+   "subtitle": "Frostpeak Point",
+   "region": "frostpeak_point",
+   "table": "data/encounter_design.json tables.frostpeak",
+   "tier": 5,
+   "levels": null,
+   "species": 10,
+   "geometry": "data/regions.json subregions.frostpeak polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "sapling_frost_frostpeak"
+   ]
+  },
+  {
+   "zone": "frostpeak_strand",
+   "kind": "land",
+   "name": "Frostpeak Strand",
+   "subtitle": "Frostpeak Point",
+   "region": "frostpeak_point",
+   "table": "data/encounter_design.json tables.frostpeak_strand",
+   "tier": 5,
+   "levels": null,
+   "species": 14,
+   "geometry": "data/regions.json subregions.frostpeak_strand polygons, 32-block raster",
+   "land_share": 0.992,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "tilpey_north_shore",
+   "kind": "land",
+   "name": "Tilpey North Shore",
+   "subtitle": "Tilpey Lakeland",
+   "region": "tilpey_lakeland",
+   "table": "data/encounter_design.json tables.tilpey_north_shore",
+   "tier": 6,
+   "levels": null,
+   "species": 20,
+   "geometry": "data/regions.json subregions.tilpey_north_shore polygons, 32-block raster",
+   "land_share": 0.978,
+   "legs": [
+    "route_06_koga_to_sabrina",
+    "route_07_sabrina_to_blaine"
+   ],
+   "sites": [
+    "elder_tilpey_north_shore_1",
+    "elder_tilpey_north_shore_2"
+   ]
+  },
+  {
+   "zone": "tilpey_waters",
+   "kind": "land",
+   "name": "Tilpey Waters",
+   "subtitle": "Tilpey Lakeland",
+   "region": "tilpey_lakeland",
+   "table": "data/encounter_design.json tables.tilpey_waters",
+   "tier": 7,
+   "levels": null,
+   "species": 12,
+   "geometry": "data/regions.json subregions.tilpey_waters polygons, 32-block raster",
+   "land_share": 0.26,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "tilpey_south_shore",
+   "kind": "land",
+   "name": "Tilpey South Shore",
+   "subtitle": "Tilpey Lakeland",
+   "region": "tilpey_lakeland",
+   "table": "data/encounter_design.json tables.tilpey_south_shore",
+   "tier": 7,
+   "levels": null,
+   "species": 24,
+   "geometry": "data/regions.json subregions.tilpey_south_shore polygons, 32-block raster",
+   "land_share": 0.947,
+   "legs": [
+    "route_07_sabrina_to_blaine",
+    "route_08_blaine_to_giovanni"
+   ],
+   "sites": [
+    "sapling_lakeshore_tilpey_south_shore"
+   ]
+  },
+  {
+   "zone": "tilpey_west_meadows",
+   "kind": "land",
+   "name": "Tilpey West Meadows",
+   "subtitle": "Tilpey Lakeland",
+   "region": "tilpey_lakeland",
+   "table": "data/encounter_design.json tables.tilpey_west_meadows",
+   "tier": 6,
+   "levels": null,
+   "species": 18,
+   "geometry": "data/regions.json subregions.tilpey_west_meadows polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "tilpey_east_shore",
+   "kind": "land",
+   "name": "Tilpey East Shore",
+   "subtitle": "Tilpey Lakeland",
+   "region": "tilpey_lakeland",
+   "table": "data/encounter_design.json tables.tilpey_east_shore",
+   "tier": 6,
+   "levels": null,
+   "species": 17,
+   "geometry": "data/regions.json subregions.tilpey_east_shore polygons, 32-block raster",
+   "land_share": 0.907,
+   "legs": [
+    "route_07_sabrina_to_blaine"
+   ],
+   "sites": [
+    "elder_tilpey_east_shore_1",
+    "elder_tilpey_east_shore_2"
+   ]
+  },
+  {
+   "zone": "wedge_north",
+   "kind": "land",
+   "name": "Wedge North",
+   "subtitle": "The Wedge",
+   "region": "the_wedge",
+   "table": "data/encounter_design.json tables.wedge_north",
+   "tier": 6,
+   "levels": null,
+   "species": 15,
+   "geometry": "data/regions.json subregions.wedge_north polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "elder_wedge_north_1",
+    "elder_wedge_north_2"
+   ]
+  },
+  {
+   "zone": "wedge_south",
+   "kind": "land",
+   "name": "Wedge South",
+   "subtitle": "The Wedge",
+   "region": "the_wedge",
+   "table": "data/encounter_design.json tables.wedge_south",
+   "tier": 8,
+   "levels": null,
+   "species": 14,
+   "geometry": "data/regions.json subregions.wedge_south polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "elder_wedge_south_1",
+    "elder_wedge_south_2"
+   ]
+  },
+  {
+   "zone": "peak_pond_hollow",
+   "kind": "land",
+   "name": "Peak Pond Hollow",
+   "subtitle": "The Northern Downs",
+   "region": "northern_downs",
+   "table": "data/encounter_design.json tables.peak_pond_hollow",
+   "tier": 4,
+   "levels": [
+    26,
+    33
+   ],
+   "species": 17,
+   "geometry": "data/regions.json subregions.peak_pond_hollow polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_04_surge_to_erika",
+    "route_05_erika_to_koga"
+   ],
+   "sites": [
+    "elder_peak_pond_hollow_1",
+    "elder_peak_pond_hollow_2",
+    "elder_peak_pond_hollow_3"
+   ]
+  },
+  {
+   "zone": "north_shore_downs",
+   "kind": "land",
+   "name": "North Shore Downs",
+   "subtitle": "The Northern Downs",
+   "region": "northern_downs",
+   "table": "data/encounter_design.json tables.north_shore_downs",
+   "tier": 4,
+   "levels": null,
+   "species": 12,
+   "geometry": "data/regions.json subregions.north_shore_downs polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "north_east_downs",
+   "kind": "land",
+   "name": "North-East Downs",
+   "subtitle": "The Northern Downs",
+   "region": "northern_downs",
+   "table": "data/encounter_design.json tables.north_east_downs",
+   "tier": 4,
+   "levels": [
+    27,
+    33
+   ],
+   "species": 14,
+   "geometry": "data/regions.json subregions.north_east_downs polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_05_erika_to_koga"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "marshy_marsh",
+   "kind": "land",
+   "name": "Marshy Marsh",
+   "subtitle": "The Marsh Country",
+   "region": "marsh_country",
+   "table": "data/encounter_design.json tables.marshy_marsh",
+   "tier": 5,
+   "levels": null,
+   "species": 19,
+   "geometry": "data/regions.json subregions.marshy_marsh polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "elder_marshy_marsh_1",
+    "elder_marshy_marsh_2",
+    "elder_marshy_marsh_3"
+   ]
+  },
+  {
+   "zone": "marsh_creek",
+   "kind": "land",
+   "name": "Marsh Creek",
+   "subtitle": "The Marsh Country",
+   "region": "marsh_country",
+   "table": "data/encounter_design.json tables.marsh_creek",
+   "tier": 6,
+   "levels": null,
+   "species": 23,
+   "geometry": "data/regions.json subregions.marsh_creek polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_06_koga_to_sabrina"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "eastern_moor",
+   "kind": "land",
+   "name": "Eastern Moor",
+   "subtitle": "The Marsh Country",
+   "region": "marsh_country",
+   "table": "data/encounter_design.json tables.eastern_moor",
+   "tier": 7,
+   "levels": null,
+   "species": 20,
+   "geometry": "data/regions.json subregions.eastern_moor polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "glacier_foot_fields",
+   "kind": "land",
+   "name": "Glacier Foot Fields",
+   "subtitle": "The Marsh Country",
+   "region": "marsh_country",
+   "table": "data/encounter_design.json tables.glacier_foot_fields",
+   "tier": 5,
+   "levels": [
+    30,
+    38
+   ],
+   "species": 16,
+   "geometry": "data/regions.json subregions.glacier_foot_fields polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_05_erika_to_koga",
+    "route_06_koga_to_sabrina"
+   ],
+   "sites": [
+    "sapling_frost_glacier_foot_fields"
+   ]
+  },
+  {
+   "zone": "lake_viltri_hollow",
+   "kind": "land",
+   "name": "Lake Viltri Hollow",
+   "subtitle": "Viltri Woods",
+   "region": "viltri_woods",
+   "table": "data/encounter_design.json tables.lake_viltri_hollow",
+   "tier": 2,
+   "levels": [
+    13,
+    19
+   ],
+   "species": 18,
+   "geometry": "data/regions.json subregions.lake_viltri_hollow polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_02_brock_to_misty",
+    "route_03_misty_to_surge"
+   ],
+   "sites": [
+    "elder_lake_viltri_hollow_1",
+    "elder_lake_viltri_hollow_2"
+   ]
+  },
+  {
+   "zone": "viltris_path_valley",
+   "kind": "land",
+   "name": "Viltri's Path Valley",
+   "subtitle": "Viltri Woods",
+   "region": "viltri_woods",
+   "table": "data/encounter_design.json tables.viltris_path_valley",
+   "tier": 2,
+   "levels": null,
+   "species": 16,
+   "geometry": "data/regions.json subregions.viltris_path_valley polygons, 32-block raster",
+   "land_share": 0.999,
+   "legs": [],
+   "sites": [
+    "elder_viltris_path_valley_1",
+    "elder_viltris_path_valley_2"
+   ]
+  },
+  {
+   "zone": "foothill_woods",
+   "kind": "land",
+   "name": "Foothill Woods",
+   "subtitle": "Viltri Woods",
+   "region": "viltri_woods",
+   "table": "data/encounter_design.json tables.foothill_woods",
+   "tier": 3,
+   "levels": [
+    19,
+    26
+   ],
+   "species": 18,
+   "geometry": "data/regions.json subregions.foothill_woods polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_03_misty_to_surge"
+   ],
+   "sites": [
+    "elder_foothill_grove_1",
+    "elder_foothill_grove_2",
+    "elder_foothill_grove_3",
+    "elder_foothill_grove_4",
+    "elder_foothill_woods_1",
+    "elder_foothill_woods_2",
+    "elder_foothill_woods_3",
+    "elder_foothill_woods_4"
+   ]
+  },
+  {
+   "zone": "north_west_coast",
+   "kind": "land",
+   "name": "North-West Coast",
+   "subtitle": "Viltri Woods",
+   "region": "viltri_woods",
+   "table": "data/encounter_design.json tables.north_west_coast",
+   "tier": 3,
+   "levels": null,
+   "species": 13,
+   "geometry": "data/regions.json subregions.north_west_coast polygons, 32-block raster",
+   "land_share": 0.999,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "viltri_plateau",
+   "kind": "land",
+   "name": "Viltri Plateau",
+   "subtitle": "Viltri Woods",
+   "region": "viltri_woods",
+   "table": "data/encounter_design.json tables.viltri_plateau",
+   "tier": 1,
+   "levels": [
+    9,
+    14
+   ],
+   "species": 12,
+   "geometry": "data/regions.json subregions.viltri_plateau polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_01_pallet_to_brock",
+    "route_02_brock_to_misty"
+   ],
+   "sites": [
+    "elder_viltri_plateau_1",
+    "elder_viltri_plateau_2",
+    "elder_viltri_plateau_3"
+   ]
+  },
+  {
+   "zone": "shrew_lake_shores",
+   "kind": "land",
+   "name": "Shrew Lake Shores",
+   "subtitle": "The Shrew Lakes",
+   "region": "shrew_lakes",
+   "table": "data/encounter_design.json tables.shrew_lake_shores",
+   "tier": 2,
+   "levels": null,
+   "species": 17,
+   "geometry": "data/regions.json subregions.shrew_lake_shores polygons, 32-block raster",
+   "land_share": 0.981,
+   "legs": [],
+   "sites": [
+    "elder_shrew_lake_shores_1",
+    "elder_shrew_lake_shores_2",
+    "elder_shrew_lake_shores_3"
+   ]
+  },
+  {
+   "zone": "arrow_lake_shores",
+   "kind": "land",
+   "name": "Arrow Lake Shores",
+   "subtitle": "The Shrew Lakes",
+   "region": "shrew_lakes",
+   "table": "data/encounter_design.json tables.arrow_lake_shores",
+   "tier": 3,
+   "levels": null,
+   "species": 23,
+   "geometry": "data/regions.json subregions.arrow_lake_shores polygons, 32-block raster",
+   "land_share": 0.976,
+   "legs": [],
+   "sites": [
+    "sapling_lakeshore_arrow_lake_shores"
+   ]
+  },
+  {
+   "zone": "river_of_shrews_vale",
+   "kind": "land",
+   "name": "River of Shrews Vale",
+   "subtitle": "The Shrew Lakes",
+   "region": "shrew_lakes",
+   "table": "data/encounter_design.json tables.river_of_shrews_vale",
+   "tier": 1,
+   "levels": [
+    8,
+    13
+   ],
+   "species": 18,
+   "geometry": "data/regions.json subregions.river_of_shrews_vale polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_01_pallet_to_brock"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "pallet_meadows",
+   "kind": "land",
+   "name": "Pallet Meadows",
+   "subtitle": "Pallet Fields",
+   "region": "pallet_fields",
+   "table": "data/encounter_design.json tables.pallet_meadows",
+   "tier": 1,
+   "levels": [
+    4,
+    8
+   ],
+   "species": 15,
+   "geometry": "data/regions.json subregions.pallet_meadows polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_01_pallet_to_brock"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "west_shore",
+   "kind": "land",
+   "name": "West Shore",
+   "subtitle": "Pallet Fields",
+   "region": "pallet_fields",
+   "table": "data/encounter_design.json tables.west_shore",
+   "tier": 1,
+   "levels": [
+    6,
+    12
+   ],
+   "species": 16,
+   "geometry": "data/regions.json subregions.west_shore polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "south_west_fields",
+   "kind": "land",
+   "name": "South-West Fields",
+   "subtitle": "Pallet Fields",
+   "region": "pallet_fields",
+   "table": "data/encounter_design.json tables.south_west_fields",
+   "tier": 1,
+   "levels": [
+    6,
+    14
+   ],
+   "species": 13,
+   "geometry": "data/regions.json subregions.south_west_fields polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "arrow_creeks",
+   "kind": "land",
+   "name": "Arrow Creeks",
+   "subtitle": "The Southern Coast",
+   "region": "southern_coast",
+   "table": "data/encounter_design.json tables.arrow_creeks",
+   "tier": 8,
+   "levels": null,
+   "species": 20,
+   "geometry": "data/regions.json subregions.arrow_creeks polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": []
+  },
+  {
+   "zone": "south_strand",
+   "kind": "land",
+   "name": "South Strand",
+   "subtitle": "The Southern Coast",
+   "region": "southern_coast",
+   "table": "data/encounter_design.json tables.south_strand",
+   "tier": 8,
+   "levels": null,
+   "species": 20,
+   "geometry": "data/regions.json subregions.south_strand polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_08_blaine_to_giovanni",
+    "victory_road"
+   ],
+   "sites": []
+  },
+  {
+   "zone": "rift_foot",
+   "kind": "land",
+   "name": "Rift Foot",
+   "subtitle": "The Southern Coast",
+   "region": "southern_coast",
+   "table": "data/encounter_design.json tables.rift_foot",
+   "tier": 8,
+   "levels": null,
+   "species": 18,
+   "geometry": "data/regions.json subregions.rift_foot polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_08_blaine_to_giovanni",
+    "victory_road"
+   ],
+   "sites": [
+    "sapling_storm_rift_foot"
+   ]
+  },
+  {
+   "zone": "east_coast_dunes",
+   "kind": "land",
+   "name": "East Coast Dunes",
+   "subtitle": "The Eastern Dunes",
+   "region": "eastern_dunes",
+   "table": "data/encounter_design.json tables.east_coast_dunes",
+   "tier": 7,
+   "levels": null,
+   "species": 23,
+   "geometry": "data/regions.json subregions.east_coast_dunes polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "sapling_palm_east_coast_dunes"
+   ]
+  },
+  {
+   "zone": "south_east_dunes",
+   "kind": "land",
+   "name": "South-East Dunes",
+   "subtitle": "The Eastern Dunes",
+   "region": "eastern_dunes",
+   "table": "data/encounter_design.json tables.south_east_dunes",
+   "tier": 8,
+   "levels": null,
+   "species": 17,
+   "geometry": "data/regions.json subregions.south_east_dunes polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [],
+   "sites": [
+    "sapling_desert_south_east_dunes"
+   ]
+  },
+  {
+   "zone": "route1_maze_forest",
+   "kind": "land",
+   "name": "Maze Forest",
+   "subtitle": "Pallet Fields",
+   "region": "pallet_fields",
+   "table": "data/encounter_design.json tables.route1_maze_forest",
+   "tier": 1,
+   "levels": [
+    6,
+    11
+   ],
+   "species": 16,
+   "geometry": "data/regions.json subregions.route1_maze_forest polygons, 32-block raster",
+   "land_share": 1.0,
+   "legs": [
+    "route_01_pallet_to_brock"
+   ],
+   "sites": [
+    "route_1_sapling_crown"
+   ]
+  },
+  {
+   "zone": "windward_shallows",
+   "kind": "sea",
+   "name": "Windward Sea: the shallows",
+   "subtitle": "The Windward Sea",
+   "region": "windward_deep",
+   "table": "data/spawns.json marine_zones.windward_sea bands.windward_shallows",
+   "tier": null,
+   "levels": [
+    16,
+    20
+   ],
+   "species": 10,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 0-96 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "windward_open",
+   "kind": "sea",
+   "name": "Windward Sea: open water",
+   "subtitle": "The Windward Sea",
+   "region": "windward_deep",
+   "table": "data/spawns.json marine_zones.windward_sea bands.windward_open",
+   "tier": null,
+   "levels": [
+    20,
+    25
+   ],
+   "species": 10,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 96-256 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "windward_depths",
+   "kind": "sea",
+   "name": "Windward Sea: the deep",
+   "subtitle": "The Windward Sea",
+   "region": "windward_deep",
+   "table": "data/spawns.json marine_zones.windward_sea bands.windward_depths",
+   "tier": null,
+   "levels": [
+    25,
+    30
+   ],
+   "species": 9,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 256-the border blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "mt_clay_outflow",
+   "kind": "waterway",
+   "name": "The Wooper creek",
+   "subtitle": "Waterway",
+   "region": null,
+   "table": "data/spawns.json entries scope mt_clay_outflow (waterway_coordinate_boxes)",
+   "tier": null,
+   "levels": [
+    24,
+    35
+   ],
+   "species": 11,
+   "geometry": "data/waterways.json mt_clay_outflow polyline, half_width 8 (tools/waterways.py boxes_by_segment)",
+   "legs": []
+  },
+  {
+   "zone": "vr_the_dark",
+   "kind": "cave",
+   "name": "The Dark",
+   "subtitle": "Victory Road",
+   "region": "the_rift",
+   "table": "data/encounter_design.json habitats.vrc_cave",
+   "pools": [
+    "vrc_cave"
+   ],
+   "tier": 9,
+   "levels": [
+    54,
+    60
+   ],
+   "species": 6,
+   "geometry": "data/habitat_blocks.json positions of vrc_cave, each +-range_of_influence",
+   "legs": [
+    "victory_road"
+   ],
+   "blocks": 31
+  },
+  {
+   "zone": "vr_drowned",
+   "kind": "cave",
+   "name": "The Drowned Gallery",
+   "subtitle": "Victory Road",
+   "region": "the_rift",
+   "table": "data/encounter_design.json habitats.vrc_drowned",
+   "pools": [
+    "vrc_drowned",
+    "vrc_drowned_core"
+   ],
+   "tier": 9,
+   "levels": [
+    54,
+    60
+   ],
+   "species": 12,
+   "geometry": "data/habitat_blocks.json positions of vrc_drowned and vrc_drowned_core, each +-range_of_influence",
+   "legs": [
+    "victory_road"
+   ],
+   "blocks": 7
+  },
+  {
+   "zone": "vr_slagworks",
+   "kind": "cave",
+   "name": "The Slagworks",
+   "subtitle": "Victory Road",
+   "region": "the_rift",
+   "table": "data/encounter_design.json habitats.vrc_slagworks",
+   "pools": [
+    "vrc_slagworks",
+    "vrc_slagworks_core"
+   ],
+   "tier": 9,
+   "levels": [
+    54,
+    60
+   ],
+   "species": 9,
+   "geometry": "data/habitat_blocks.json positions of vrc_slagworks and vrc_slagworks_core, each +-range_of_influence",
+   "legs": [
+    "victory_road"
+   ],
+   "blocks": 14
+  },
+  {
+   "zone": "vr_bloom",
+   "kind": "cave",
+   "name": "The Bloom",
+   "subtitle": "Victory Road",
+   "region": "the_rift",
+   "table": "data/encounter_design.json habitats.vrc_bloom",
+   "pools": [
+    "vrc_bloom",
+    "vrc_bloom_core"
+   ],
+   "tier": 9,
+   "levels": [
+    54,
+    60
+   ],
+   "species": 8,
+   "geometry": "data/habitat_blocks.json positions of vrc_bloom and vrc_bloom_core, each +-range_of_influence",
+   "legs": [
+    "victory_road"
+   ],
+   "blocks": 12
+  },
+  {
+   "zone": "vr_raw_tear",
+   "kind": "cave",
+   "name": "The Raw Tear",
+   "subtitle": "Victory Road",
+   "region": "the_rift",
+   "table": "data/encounter_design.json habitats.vrc_raw_tear",
+   "pools": [
+    "vrc_raw_tear",
+    "vrc_raw_tear_core"
+   ],
+   "tier": 9,
+   "levels": [
+    54,
+    60
+   ],
+   "species": 9,
+   "geometry": "data/habitat_blocks.json positions of vrc_raw_tear and vrc_raw_tear_core, each +-range_of_influence",
+   "legs": [
+    "victory_road"
+   ],
+   "blocks": 10
+  },
+  {
+   "zone": "vr_abandoned_cut",
+   "kind": "cave",
+   "name": "The Abandoned Cut",
+   "subtitle": "Victory Road",
+   "region": "the_rift",
+   "table": "data/encounter_design.json habitats.vrc_abandoned_cut",
+   "pools": [
+    "vrc_abandoned_cut",
+    "vrc_abandoned_cut_core"
+   ],
+   "tier": 9,
+   "levels": [
+    54,
+    60
+   ],
+   "species": 8,
+   "geometry": "data/habitat_blocks.json positions of vrc_abandoned_cut and vrc_abandoned_cut_core, each +-range_of_influence",
+   "legs": [
+    "victory_road"
+   ],
+   "blocks": 6
+  },
+  {
+   "zone": "route_1_ghost_mansion",
+   "kind": "site",
+   "name": "the old manor",
+   "subtitle": "Pallet Fields",
+   "region": null,
+   "settlement": "route1_mansion",
+   "table": "data/spawns.json entries scope route_1_ghost_mansion (habitat_block)",
+   "tier": null,
+   "levels": [
+    6,
+    15
+   ],
+   "species": 11,
+   "geometry": "data/habitat_blocks.json positions of route_1_ghost_mansion, each +-range_of_influence",
+   "legs": [],
+   "blocks": 1,
+   "titled_by": "settlement"
+  }
+ ],
+ "not_zones": [
+  {
+   "zone": "jungle_west",
+   "what": "sub-region table",
+   "why": "no raster cell of Jungle West has ground at or above sea level (y62) on the canonical heightmap: it is under the sea, a land table has nowhere to spawn and a title would show over open water"
+  },
+  {
+   "zone": "jungle_east",
+   "what": "sub-region table",
+   "why": "no raster cell of Jungle East has ground at or above sea level (y62) on the canonical heightmap: it is under the sea, a land table has nowhere to spawn and a title would show over open water"
+  },
+  {
+   "zone": "desert_wreck_strand",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "displaced_city_cavern",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "driftmouth_isle_waters",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "drovers_hollow_fold",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "dune_ruin_undercroft",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "glacial_tear_deep_valley",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "great_crater_bowls",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "lopunny_superfan_cellar",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "marshy_marsh_basin",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "mining_town_fossil_levels",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "northgate_old_growth_grove",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "old_orchard_rows",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "rift_depths",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "station_study_pool",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym1",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym2",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym3",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym4",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym5",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym6",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym7",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym8",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "tree_town_canopy",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "ursaluna_den_outskirts",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "elder_* / sapling_*",
+   "what": "67 placed elder-tree and sapling Habitat Block pools",
+   "why": "a few blocks inside the sub-region each is named for: an encounter there is that sub-region's, listed under its zone's \"sites\""
+  },
+  {
+   "zone": "hearts",
+   "what": "every <area>_h<n> heart entry",
+   "why": "docs/mechanics/ENCOUNTER_DESIGN.md section 10: a rarer spot inside an area, never a first-encounter area"
+  }
+ ]
+}

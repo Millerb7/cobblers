@@ -10,6 +10,11 @@ It owns three parts of data/spawns.json and nothing else:
   Victory Road pools   for every vrc_* pool in the design's habitats: its habitats[] record's entries and level_band,
                        and its habitat_block entries
   route selection      route_species_selection, per route, from the sub-regions its corridor crosses
+  held items           the held_items field of every spawn_pool_world entry (sub-region, marine, waterway), generated
+                       or copied through, from rules.held_items (the owner, 2026-10-05: wild held items, a find and not
+                       a farm); tools/compile_spawns.py writes it as the Cobblemon 1.8.0 spawn detail's heldItems.
+                       Fails closed on an item the jar does not name, a listed species that spawns in no such entry,
+                       a species past max_total_percent, and held_items on a habitat-block entry
 
 Every other entry and habitat (the elder and sapling bird nests, the Route 1 mansion, the unplaced pools, the Windward
 Sea's marine bands, the Mt Clay outflow waterway) is copied through untouched, in its place.
@@ -54,8 +59,9 @@ route_species_selection: per route, the sub-regions data/routes.json's geography
 table only families in rules.corridor_roles (never a find), plus rules.corridor_rare_min of the crossed on-path
 tables' rare- and ultra-role species, reserved first (the owner, 2026-10-05: every area has a rare and an ultra-rare). Each species is scored by its chance in the
 table (the audit's rule: bucket share renormalised over the buckets its context holds, times weight over the bucket's
-weight) times the corridor length in that table; every crossed table's water species are kept, then the rest by
-score until corridor_species_limit. tools/compile_spawns.py then compiles a corridor species only if it is listed.
+weight) times the corridor length in that table; every crossed table's water species and its corridor_table_min
+likeliest land species are kept (past corridor_species_limit if need be, up to corridor_species_ceiling), then the
+rest by score until corridor_species_limit. tools/compile_spawns.py then compiles a corridor species only if it is listed.
 
 Fails closed (exit 1, a message per problem): a species not in the jar; a species the client draws as the substitute
 doll (modpack/manifest/client-pack-atm-subset.json species); a spawn above its tier's cap or outside its band; a table
@@ -116,6 +122,93 @@ def dumps(doc):
 
 # ------------------------------------------------------------------ the jar
 
+# The vanilla items CobblemonHeldItemManager remaps to a Showdown item (docs/research/ITEMS_ABILITY_EV_HELD_MEGA.md
+# section 3: Items.BONE -> thickclub, Items.SNOWBALL -> snowball, Items.GOLD_BLOCK -> bignugget). A minecraft: item
+# outside these has no battle effect, so rules.held_items may not name one.
+VANILLA_HELD = {"minecraft:bone", "minecraft:snowball", "minecraft:gold_block"}
+# the Nether's tables (data/encounter_design.json "nether"): one per (table, ring), keyed on the dimension, a biome or a
+# structure, and the ring's boxes; compiled to spawn_pool_world/nether/ by tools/compile_spawns.py build_nether
+NETHER = "nether_ring_boxes"
+# the spawn mechanisms tools/compile_spawns.py writes as spawn_pool_world details, which carry heldItems
+POOL_WORLD = (SURFACE, "marine_coordinate_boxes", "waterway_coordinate_boxes", NETHER)
+# The blocks a Nether heart may need nearby (Cobblemon 1.8.0 AreaTypeSpawningCondition.neededNearbyBlocks: the position
+# fails unless one listed block is among its nearby blocks, within maxNearbyBlocksHorizontalRange 4 and
+# maxNearbyBlocksVerticalRange 2 in our config/cobblemon/main.json; docs/research/notes/spawn-dimension-condition-1.8.0.md).
+# Outside the overworld vocabulary of contract C4 on purpose: every condition naming one also names
+# "dimensions": ["minecraft:the_nether"], so a shroomlight or bone block placed in the overworld or the pocket decides
+# no encounter there. tests/test_nether_encounters.py holds that pairing.
+NETHER_NEARBY = {"minecraft:lava", "minecraft:weeping_vines", "minecraft:weeping_vines_plant", "minecraft:shroomlight",
+                 "minecraft:bone_block", "minecraft:magma_block"}
+NETHER_KEYS = ("biomes", "structures")
+
+
+def jar_items(jar):
+    """{"cobblemon:<path>"} for every item the jar names in its English lang file (item.cobblemon.<path>)."""
+    import zipfile
+    with zipfile.ZipFile(jar) as z:
+        lang = json.loads(z.read("assets/cobblemon/lang/en_us.json"))
+    return {"cobblemon:" + k[len("item.cobblemon."):] for k in lang
+            if k.startswith("item.cobblemon.") and "." not in k[len("item.cobblemon."):]}
+
+
+def held_items_by_species(rules, dex):
+    """({species: [{"item", "percentage"}]}, problems) from rules.held_items (the owner, 2026-10-05: wild held items,
+    "rare enough to be a find rather than a farm"). Fails closed on an item the jar does not name (or a vanilla item
+    Cobblemon does not remap), a class with no percent, and a species whose items sum past max_total_percent."""
+    hr = rules.get("held_items")
+    if not hr:
+        return {}, []
+    problems, out = [], {}
+    if hr.get("field") != "heldItems":
+        problems.append("rules.held_items.field is heldItems (the Cobblemon 1.8.0 PokemonSpawnDetail field), not %r"
+                        % hr.get("field"))
+    pct = hr.get("percent") or {}
+    cap = hr.get("max_total_percent")
+    for i, rec in enumerate(hr.get("items") or []):
+        item, cls = rec.get("item"), rec.get("class")
+        where = "rules.held_items.items[%d] (%s)" % (i, item)
+        if cls not in pct or not isinstance(pct[cls], (int, float)) or not 0 < pct[cls] <= 100:
+            problems.append("%s: class %r has no percent in (0, 100] in rules.held_items.percent" % (where, cls))
+            continue
+        ok = item in VANILLA_HELD if str(item).startswith("minecraft:") else item in dex.items
+        if not ok:
+            problems.append("%s: not an item the Cobblemon jar names%s" % (
+                where, " nor a vanilla item it remaps to a held item" if str(item).startswith("minecraft:") else ""))
+            continue
+        for sp in rec.get("species") or []:
+            if not dex.has(sp):
+                problems.append("%s: %s is not a species in the Cobblemon jar" % (where, sp))
+                continue
+            if any(h["item"] == item for h in out.get(sp, [])):
+                problems.append("%s: %s holds %s twice" % (where, sp, item))
+                continue
+            out.setdefault(sp, []).append({"item": item, "percentage": pct[cls]})
+    for sp, hs in sorted(out.items()):
+        total = sum(h["percentage"] for h in hs)
+        if not isinstance(cap, (int, float)) or total > cap:
+            problems.append("rules.held_items: %s's items sum to %s%%, past max_total_percent %r" % (sp, total, cap))
+    return out, problems
+
+
+def stamp_held_items(entries, held):
+    """Set (or clear) held_items on every entry from the rule: the rule owns the field. Returns (problems, stamped
+    species). A habitat-block entry never carries one (its pool spawn is another format)."""
+    problems, used = [], set()
+    for e in entries:
+        if e.get("mechanism") not in POOL_WORLD:
+            if "held_items" in e:
+                problems.append("%s: held_items on a %s entry; rules.held_items reaches spawn_pool_world entries only"
+                                % (e["id"], e.get("mechanism")))
+            continue
+        hs = held.get(e["species"])
+        if hs and e.get("ambient") and e.get("weight", 0) > 0:
+            e["held_items"] = [dict(h) for h in hs]
+            used.add(e["species"])
+        else:
+            e.pop("held_items", None)
+    return problems, used
+
+
 class Dex:
     """Species, forms, evolutions and roots from the Cobblemon jar."""
 
@@ -128,6 +221,7 @@ class Dex:
                 if r in self.species and r != k:
                     self.pre.setdefault(r, k)
         self.positions = position_types.upstream_positions(jar)
+        self.items = jar_items(jar)
 
     def split(self, name):
         parts = name.split()
@@ -494,16 +588,18 @@ def presence_levels(dex, rules, tier, band, species, where):
     return lo, hi, how
 
 
-def build_heart(dex, rules, tid, t, band, mtier):
+def build_heart(dex, rules, tid, t, band, mtier, top=9):
     """[(row dict)] for one table's heart: its families on the upper half of the table's band, matured a step
-    further than the table, and its presences from the band's top to the next leg's cap."""
+    further than the table (never past tier `top`: 9 on the overworld, the Nether's top tier there), and its presences
+    from the band's top to the next leg's cap. A Nether heart (kind "nearby") puts its blocks, and its maxY if it has
+    one, into every heart row's conditions."""
     hrules = rules["hearts"]
     tier = t["tier"]
     cap, _ = tier_rules(rules, tier)
     heart = t["heart"]
     half = (band[0] + band[1] + 1) // 2
     hband = (half, band[1])
-    hmtier = min(9, mtier + hrules["maturity_step"])
+    hmtier = min(top, mtier + hrules["maturity_step"])
     rows = []
     for item, side in [(f, "land") for f in heart.get("land") or []] + [(f, "water") for f in heart.get("water") or []]:
         species, role, weight, cond = parse_family(item, rules, tid + " heart")
@@ -512,6 +608,8 @@ def build_heart(dex, rules, tid, t, band, mtier):
         nearby_water = "minecraft:water" in (cond.get("neededNearbyBlocks") or [])
         if heart.get("kind") == "summit":
             cond = dict(cond, minY=heart["minY"])
+        elif heart.get("kind") == "nearby":
+            cond = dict(cond, neededNearbyBlocks=list(heart["blocks"]), **({"maxY": heart["maxY"]} if "maxY" in heart else {}))
         if role == "presence":
             if not dex.has(species):
                 raise DesignError("%s heart: %s is not a species in the Cobblemon jar" % (tid, species))
@@ -621,6 +719,7 @@ def route_selection(routes, generated, rules, placement=None):
     find (section 6), and a find belongs to whoever leaves the path."""
     allowed_roles = set(rules["corridor_roles"])
     rare_min = dict(rules.get("corridor_rare_min") or {})
+    table_min = int(rules.get("corridor_table_min") or 0)
     placement = placement or {}
     limit = rules["corridor_species_limit"]
     out = {}
@@ -632,10 +731,16 @@ def route_selection(routes, generated, rules, placement=None):
             end = tr[i + 1]["at_distance_blocks"] if i + 1 < len(tr) else total
             for s in t["subregions"]:
                 length[s] = length.get(s, 0.0) + max(0.0, end - t["at_distance_blocks"])
-        score, keep, rscore = {}, set(), {k: {} for k in rare_min}
+        score, keep, rscore, floor = {}, set(), {k: {} for k in rare_min}, {}
         for sub in sorted(length):
             rows = generated[sub]
             chance = table_chances(rows)
+            # rules.corridor_table_min: a box compiles only the listed species of ITS table, so a table whose
+            # species all lose the route-wide ranking left boxes of one species (Pallet's stretch of Route 1 was
+            # Caterpie alone, play test 2026-10-05, review 85)
+            own = sorted({r["name"] for r in rows if r["role"] in allowed_roles and r["half"] != "water"},
+                         key=lambda s: (-chance[s], s))
+            floor[sub] = own
             for r in rows:
                 if r["role"] in rare_min:
                     if placement.get(sub) == "path":
@@ -650,9 +755,14 @@ def route_selection(routes, generated, rules, placement=None):
         for role, n in sorted(rare_min.items()):
             cands = sorted((s for s in rscore[role] if s not in keep), key=lambda s: (-rscore[role][s], s))
             keep.update(cands[:n])
-        if len(keep) > limit:
-            raise DesignError("%s: %d water and reserved rare species to keep, over the corridor limit %d: %s"
-                              % (rt["id"], len(keep), limit, sorted(keep)))
+        for sub in sorted(floor):
+            keep.update(floor[sub][:table_min])
+        # the kept species may pass corridor_species_limit (which then only stops the fill by score): a route that
+        # crosses many tables keeps each one's minimum rather than shrinking it to one species a stretch
+        ceiling = rules.get("corridor_species_ceiling", limit)
+        if len(keep) > ceiling:
+            raise DesignError("%s: %d water, reserved rare and per-table species to keep, over the corridor ceiling %d: %s"
+                              % (rt["id"], len(keep), ceiling, sorted(keep)))
         rest = sorted((s for s in score if s not in keep), key=lambda s: (-score[s], s))
         chosen = set(keep) | set(rest[:max(0, limit - len(keep))])
         spaced = sorted(s for s in chosen if " " in s)
@@ -685,6 +795,209 @@ ROUTE_NOTE = ("Generated by tools/build_encounters.py from data/encounter_design
               "crossed on-path tables' rare- and ultra-role species reserved (the owner, 2026-10-05), and the rest by "
               "chance times corridor length. tools/compile_spawns.py reads this list and does not choose. Do not edit "
               "by hand.")
+
+
+def victory_road_roster_problems(dex, rules, tables, pid, rows):
+    """rules.victory_road_roster (the owner, 2026-10-06: "final starter evos and pseudo legendaries or bangers"):
+    every row of a vrc_ pool is a final stage in the jar, totals at least bst_min, carries none of excluded_labels,
+    is not one the owner named out, and is not of a family some sub-region table holds as a find (section 6: "a
+    find is never the base of a Victory Road family"). Fails closed: no rule recorded is a problem, not a pass."""
+    vr = rules.get("victory_road_roster")
+    if not isinstance(vr, dict) or not isinstance(vr.get("bst_min"), int):
+        return ["%s: rules.victory_road_roster with an integer bst_min is missing; Victory Road cannot be checked" % pid]
+    finds = {dex.family(parse_family(f, rules, tid)[0]) for tid, t in tables.items()
+             for f in (t.get("land") or []) + (t.get("water") or []) if f[1] == "find"}
+    out = []
+    for r in rows:
+        name = r["name"]
+        sp, _ = dex.record(name)
+        bst = sum((sp.get("baseStats") or {}).values())
+        labels = set(sp.get("labels") or []) & set(vr.get("excluded_labels") or [])
+        if vr.get("final_only") and dex.evolutions(name):
+            out.append("%s: %s evolves further; Victory Road holds final stages only" % (pid, name))
+        if bst < vr["bst_min"]:
+            out.append("%s: %s totals %d, under rules.victory_road_roster bst_min %d" % (pid, name, bst, vr["bst_min"]))
+        if labels:
+            out.append("%s: %s is %s" % (pid, name, ", ".join(sorted(labels))))
+        if dex.split(name)[0] in set(vr.get("owner_named_out") or []):
+            out.append("%s: %s is one the owner named out of Victory Road" % (pid, name))
+        if r["family"] in finds:
+            out.append("%s: %s is of the %s family, a find off the path (section 6)" % (pid, name, r["family"]))
+    # the owner, 2026-10-06: "thats to agressive on starters ... we need variety": at most starter_finals_max_per_zone
+    # starter families in one pool
+    starters = sorted({r["family"] for r in rows if r["family"] in set(vr.get("starter_families") or [])})
+    cap = vr.get("starter_finals_max_per_zone")
+    if isinstance(cap, int) and len(starters) > cap:
+        out.append("%s: %d starter families %s, over rules.victory_road_roster starter_finals_max_per_zone %d"
+                   % (pid, len(starters), starters, cap))
+    return out
+
+
+# ------------------------------------------------------------------ the Nether (docs/mechanics/NETHER_ENCOUNTERS.md)
+
+def nether_rules(rules, nether):
+    """A copy of the overworld rules with the Nether's tiers added (cap, band, maturity, next cap). The overworld's
+    rules object is never changed, so no overworld table can read a Nether tier."""
+    r = json.loads(json.dumps(rules))
+    for k, t in (nether.get("tiers") or {}).items():
+        if k in r["tiers"]:
+            raise DesignError("nether.tiers %s is already an overworld tier" % k)
+        r["tiers"][k] = {"cap": t["cap"], "band": list(t["band"])}
+        r["maturity"][k] = t["maturity"]
+        r["hearts"]["next_cap"][k] = t["next_cap"]
+    return r
+
+
+class _StopDex:
+    """The Dex with the evolutions of a table's stop_evolving species hidden: the design spawns them as themselves.
+
+    drop_stages cannot say this in the deep ring: at maturity 1.0 an unevolved stage's weight rounds to nothing, so
+    dropping Onix's Steelix there would drop the whole family. A stopped species is the family's last stage, and the
+    walk gives it the family's weight."""
+
+    def __init__(self, dex, stop):
+        self._dex, self._stop = dex, set(stop)
+
+    def __getattr__(self, name):
+        return getattr(self._dex, name)
+
+    def evolutions(self, name):
+        return [] if self._dex.split(name)[0] in self._stop else self._dex.evolutions(name)
+
+
+def _box_overlap(a, b):
+    return a[0] <= b[1] and b[0] <= a[1] and a[2] <= b[3] and b[2] <= a[3]
+
+
+def nether_heart_geometry(tid, heart):
+    """The record a Nether heart's entries carry: kind nearby, its blocks, its maxY. No position: the Nether has no
+    heightmap, and positions are never read from a world (CLAUDE.md, "Ground comes from the heightmap")."""
+    if heart.get("kind") != "nearby":
+        raise DesignError("%s: a Nether heart is kind nearby (a block it stands beside), not %r" % (tid, heart.get("kind")))
+    blocks = heart.get("blocks")
+    if not isinstance(blocks, list) or not blocks:
+        raise DesignError("%s: a nearby heart names its blocks" % tid)
+    bad = sorted(set(blocks) - NETHER_NEARBY)
+    if bad:
+        raise DesignError("%s: heart blocks %s are outside the Nether vocabulary %s" % (tid, bad, sorted(NETHER_NEARBY)))
+    geo = {"kind": "nearby", "blocks": list(blocks)}
+    if "maxY" in heart:
+        if not isinstance(heart["maxY"], int) or isinstance(heart["maxY"], bool):
+            raise DesignError("%s: a heart's maxY is a whole number" % tid)
+        geo["maxY"] = heart["maxY"]
+    return geo
+
+
+def nether_entry(r, scope, key, base_cond, heart=None, alpha=False):
+    sid = r["name"].replace(" ", "_")
+    cond = dict(base_cond)
+    cond.update(r["conditions"])
+    e = {"id": "nether.%s.%s" % (scope, ("heart." + sid) if heart else sid), "species": r["name"], "bucket": r["bucket"],
+         "level": r["level"], "weight": r["weight"], "ambient": True, "scope": scope, "mechanism": NETHER,
+         "conditions": cond, "eligibility_reason": r["reason"]}
+    if heart:
+        e["heart"] = heart
+        e["alpha"] = alpha
+    e["biomes"] = list(key.get("biomes") or [])
+    e["spawnable_position"] = r["position"]
+    return e
+
+
+def generate_nether(design, dex, dolls):
+    """({(NETHER, scope): [entries]}, [table records], [problems]) for data/encounter_design.json "nether".
+
+    Every table is expanded once per ring, as a table of the ring's tier (build_table and build_heart, the overworld's
+    arithmetic, over the Nether's tiers). Each entry's conditions carry "dimensions": [the Nether] and the table's
+    structures; its biomes are the table's. Fails closed on: a key that is neither biomes nor structures; a doll or an
+    excluded species; a Fire type outside the fire rule's biomes without a written fire_exception (types from the jar);
+    a heart presence above the cap in the common bucket, or a heart over rules.hearts.above_cap_max_share; ring boxes
+    that overlap."""
+    nether = design.get("nether")
+    if not nether:
+        return {}, [], []
+    rules = nether_rules(design["rules"], nether)
+    top = max(int(k) for k in nether["tiers"])
+    dim = nether["dimension"]
+    fire_biomes = set(nether["fire_rule"]["biomes"])
+    excluded = nether.get("excluded_species") or {}
+    alpha = rules["hearts"]["alpha"]
+    problems, gen, records = [], {}, []
+    rings = nether["rings"]
+    allboxes = [(rid, tuple(b)) for rid, ring in rings.items() for b in ring["boxes"]]
+    for i, (ra, a) in enumerate(allboxes):
+        for rb, b in allboxes[i + 1:]:
+            if _box_overlap(a, b):
+                problems.append("nether rings: box %s (%s) overlaps box %s (%s)" % (list(a), ra, list(b), rb))
+    for tid, t in nether["tables"].items():
+        key = t.get("key") or {}
+        if not key or set(key) - set(NETHER_KEYS) or not all(isinstance(v, list) and v for v in key.values()):
+            problems.append("nether %s: key is biomes and/or structures, each a non-empty list, not %r" % (tid, key))
+            continue
+        in_fire_biome = bool(key.get("biomes")) and set(key["biomes"]) <= fire_biomes
+        stop = t.get("stop_evolving") or {}
+        unknown = sorted(s for s in stop if not dex.has(s))
+        if unknown:
+            problems.append("nether %s: stop_evolving names %s, not species in the jar" % (tid, unknown))
+            continue
+        tdex = _StopDex(dex, stop) if stop else dex
+        named = set()
+        for rid, ring in rings.items():
+            scope = "%s_%s" % (tid, rid)
+            tt = {k: v for k, v in t.items() if k != "placement"}
+            tt["tier"] = ring["tier"]
+            try:
+                rows, band = build_table(tdex, rules, scope, tt, NETHER)
+                hrows, geo = [], None
+                if t.get("heart"):
+                    geo = nether_heart_geometry(scope, t["heart"])
+                    hrows = build_heart(tdex, rules, scope, tt, band, ring["tier"], top)
+            except DesignError as ex:
+                problems.append(str(ex))
+                continue
+            cap, _ = tier_rules(rules, ring["tier"])
+            named.update(dex.split(r["name"])[0] for r in rows)
+            for where, rs in (("", rows), (" heart", hrows)):
+                for r in rs:
+                    base = dex.split(r["name"])[0]
+                    if base in dolls:
+                        problems.append("nether %s%s: %s is drawn by the client as the substitute doll" % (scope, where, r["name"]))
+                    if base in excluded:
+                        problems.append("nether %s%s: %s is excluded: %s" % (scope, where, r["name"], excluded[base]))
+                    if "fire" in dex.types(r["name"]) and not in_fire_biome and not t.get("fire_exception"):
+                        problems.append("nether %s%s: %s is Fire (%s) outside %s, with no fire_exception (the fire rule)"
+                                        % (scope, where, r["name"], "/".join(dex.types(r["name"])), sorted(fire_biomes)))
+            share = {}
+            if hrows:
+                for r in hrows:
+                    if above_cap_fraction(r["level"], cap) > 0 and r["bucket"] == "common":
+                        problems.append("nether %s heart: %s is above the cap in the common bucket" % (scope, r["name"]))
+                share = heart_above_cap(rows, hrows, cap)
+                for ctx, s in share.items():
+                    if s > rules["hearts"]["above_cap_max_share"]:
+                        problems.append("nether %s heart: %.1f%% of its %s spawns are above the cap, over the %.1f%% allowed"
+                                        % (scope, 100 * s, ctx, 100 * rules["hearts"]["above_cap_max_share"]))
+            base_cond = {"dimensions": [dim]}
+            if key.get("structures"):
+                base_cond["structures"] = list(key["structures"])
+            gen[(NETHER, scope)] = ([nether_entry(r, scope, key, base_cond) for r in rows]
+                                    + [nether_entry(r, scope, key, base_cond, geo, alpha) for r in hrows])
+            rec = {"id": scope, "table": tid, "ring": rid, "tier": ring["tier"],
+                   "level_band": {"minimum": band[0], "maximum": band[1], "cap": cap,
+                                  "next_cap": rules["hearts"]["next_cap"][str(ring["tier"])]},
+                   "dimension": dim, "key": key, "boxes": [list(b) for b in ring["boxes"]],
+                   "species": [r["name"] for r in rows]}
+            if t.get("fire_exception"):
+                rec["fire_exception"] = t["fire_exception"]
+            if geo:
+                rec["heart"] = dict(geo, why=t["heart"].get("why", ""), alpha=alpha, above_cap_share=share,
+                                    species=[r["name"] for r in hrows])
+            rec["roster_basis"] = ("Generated by tools/build_encounters.py from data/encounter_design.json nether.tables.%s, "
+                                   "ring %s (tier %d). Do not edit by hand." % (tid, rid, ring["tier"]))
+            records.append(rec)
+        stale = sorted({battle_sim.key(s) for s in stop} - named)
+        if stale:
+            problems.append("nether %s: stop_evolving names %s, which no ring of the table spawns" % (tid, stale))
+    return gen, records, problems
 
 
 def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
@@ -737,6 +1050,9 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
             gen_rows[pid], bands[pid] = build_table(dex, rules, pid, t, HABITAT, extra)
         except DesignError as ex:
             problems.append(str(ex))
+            continue
+        if pid.startswith("vrc_"):
+            problems += victory_road_roster_problems(dex, rules, tables, pid, gen_rows[pid])
     if problems:
         raise DesignError("\n".join(problems))
     heart_rows, heart_geo = {}, {}
@@ -780,15 +1096,24 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
                                         for r in heart_rows.get(tid, [])]
     for pid in pools:
         gen_entries[(HABITAT, pid)] = [entry_of(dex, r, pid, HABITAT, authored) for r in gen_rows[pid]]
+    nether_gen, nether_records, nether_problems = generate_nether(design, dex, dolls)
+    if nether_problems:
+        raise DesignError("\n".join(nether_problems))
+    gen_entries.update(nether_gen)
+    # a Nether entry in the file that the design no longer produces is dropped, not copied through
+    stale_nether = {(e["mechanism"], e["scope"]) for e in spawns["entries"] if e["mechanism"] == NETHER} - set(nether_gen)
     entries, done = [], set()
     for e in spawns["entries"]:
         k = (e["mechanism"], e["scope"])
+        if k in stale_nether:
+            continue
         if k in gen_entries:
             if k not in done:
                 entries += gen_entries[k]
                 done.add(k)
             continue
-        entries.append(e)
+        # a copy: stamp_held_items below sets fields on it, and the caller's spawns must stay what was read
+        entries.append(json.loads(json.dumps(e)))
     for k in sorted(gen_entries):
         if k not in done:
             entries += gen_entries[k]
@@ -800,6 +1125,15 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
             problems.append("%s: a heart entry has alpha %r; rules.hearts.alpha is %r" % (e["id"], e.get("alpha"), alpha))
         elif not e.get("heart") and "alpha" in e:
             problems.append("%s: alpha belongs to a heart entry only (section 10)" % e["id"])
+    # rules.held_items (the owner, 2026-10-05: wild held items, a find and not a farm): stamped on every
+    # spawn_pool_world entry of a listed species, generated or copied through; a listed species that spawns in no
+    # such entry is a stale rule
+    held, hp = held_items_by_species(rules, dex)
+    problems += hp
+    sp_problems, used = stamp_held_items(entries, held)
+    problems += sp_problems
+    for sp in sorted(set(held) - used):
+        problems.append("rules.held_items: %s spawns in no spawn_pool_world entry; remove it from the rule" % sp)
     if problems:
         raise DesignError("\n".join(problems))
     route_ids ={int(r["id"][6:8]): r["id"] for r in routes["routes"] if r["id"].startswith("route_")}
@@ -827,6 +1161,10 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
             lo, hi = bands[rec["id"]]
             rec["level_band"] = {"minimum": lo, "maximum": hi}
             rec["entries"] = [mirror_of(dex, r) for r in gen_rows[rec["id"]]]
+    if nether_records:
+        out["nether_tables"] = nether_records
+    else:
+        out.pop("nether_tables", None)
     out["evolution_policy"] = EVOLUTION_POLICY
     out["route_species_selection_note"] = ROUTE_NOTE
     out["route_species_selection"] = route_selection(routes, gen_rows, rules,
@@ -864,6 +1202,8 @@ def main(argv=None):
     summary = "%d sub-region tables, %d entries; %d Victory Road pools, %d entries; %d routes, %s species" % (
         sum(1 for k in rows if not k.startswith("vrc_")), n_sub, sum(1 for k in rows if k.startswith("vrc_")), n_hab,
         len(sel), "/".join(str(len(v["species"])) for v in sel.values()))
+    summary += "; %d Nether tables, %d entries" % (len(out.get("nether_tables") or []),
+                                                  sum(1 for e in out["entries"] if e["mechanism"] == NETHER))
     if a.check:
         same = spawns_path.read_text(encoding="utf-8") == text
         print("%s: %s" % ("identical" if same else "DIFFERS from the design", summary))

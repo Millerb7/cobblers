@@ -1,0 +1,604 @@
+{
+  "settlement": "gym4_town",
+  "size": "town",
+  "target": 48,
+  "character": "Greenhollow is a gardeners' town round a moss green: its Pokemon water, weed, trim, pollinate and haul silt and hay, and the ones that are not working have planted themselves in it. Grass and bug Pokemon of the downs and the pond, and none of the cats, sleepers and crows every other town had.",
+  "workers": [
+    {
+      "id": "erika_bulbasaur_waterer",
+      "settlement": "gym4_town",
+      "species": "bulbasaur",
+      "level": 34,
+      "job": "work",
+      "at": [4300, 1540],
+      "face": [4302, 1540],
+      "every": 50,
+      "effect": {
+        "particle": "minecraft:splash",
+        "count": 24,
+        "spread": 0.35,
+        "dy": 0.3,
+        "sound": "minecraft:item.bucket.empty",
+        "pitch": 1.4
+      },
+      "interact": "The Bulbasaur is watering the green one vine-load at a time. It waits for the water to soak in before the next."
+    },
+    {
+      "id": "erika_bellossom_gardener",
+      "settlement": "gym4_town",
+      "species": "bellossom",
+      "level": 36,
+      "job": "work",
+      "at": [4318, 1570],
+      "face": [4320, 1571],
+      "every": 70,
+      "look_around": [4310, 1556],
+      "effect": {
+        "particle": "minecraft:happy_villager",
+        "count": 8,
+        "spread": 0.4,
+        "dy": 0.4,
+        "sound": "minecraft:block.azalea_leaves.place",
+        "pitch": 1.2
+      },
+      "interact": "The Bellossom is coaxing a bed of flowers open, one bloom at a time. The gardeners leave this bed to it."
+    },
+    {
+      "id": "greenhollow_gogoat_hay",
+      "settlement": "gym4_town",
+      "species": "gogoat",
+      "level": 34,
+      "job": "carry",
+      "route": [[4282, 1520], [4336, 1520]],
+      "carry": "minecraft:hay_block",
+      "carry_height": 1.7,
+      "box": [1.0, 1.7],
+      "pickup": {
+        "sound": "minecraft:block.grass.break"
+      },
+      "drop": {
+        "sound": "minecraft:block.grass.place",
+        "block": "minecraft:hay_block",
+        "count": 10
+      },
+      "interact": "The Gogoat brings the green's mowings round to the gym's side, a bale at a time, and eats a mouthful off every one."
+    },
+    {
+      "id": "greenhollow_tropius_orchard",
+      "settlement": "gym4_town",
+      "species": "tropius",
+      "level": 34,
+      "job": "carry",
+      "route": [[4388, 1556], [4350, 1556]],
+      "carry": "minecraft:barrel",
+      "carry_height": 2.2,
+      "box": [1.2, 2.0],
+      "pickup": {
+        "sound": "minecraft:block.barrel.open"
+      },
+      "drop": {
+        "sound": "minecraft:block.barrel.close",
+        "block": "minecraft:oak_leaves",
+        "count": 8
+      },
+      "interact": "The Tropius brings the orchard's crates in along the east lane. The fruit under its chin is not for sale, and the orchard keeper has stopped asking."
+    },
+    {
+      "id": "greenhollow_combee_pollinator",
+      "settlement": "gym4_town",
+      "species": "combee",
+      "level": 33,
+      "job": "work",
+      "at": [4311, 1531],
+      "face": [4311, 1535],
+      "every": 36,
+      "box": [0.8, 0.8],
+      "effect": {
+        "particle": "minecraft:falling_nectar",
+        "count": 8,
+        "spread": 0.4,
+        "dy": 0.5,
+        "sound": "minecraft:block.beehive.work",
+        "pitch": 1.2
+      },
+      "interact": "The Combee goes over the parterre flower by flower. All three faces disagree about which one is next."
+    },
+    {
+      "id": "greenhollow_leavanny_wrapper",
+      "settlement": "gym4_town",
+      "species": "leavanny",
+      "level": 34,
+      "job": "work",
+      "at": [4307, 1531],
+      "face": [4304, 1528],
+      "every": 60,
+      "effect": {
+        "block": "minecraft:oak_leaves",
+        "count": 6,
+        "sound": "minecraft:block.azalea_leaves.break",
+        "pitch": 1.3
+      },
+      "interact": "The Leavanny is sewing leaves into wrappers for the herbalist's bundles. It finishes one, looks at you, and starts another."
+    },
+    {
+      "id": "greenhollow_lurantis_trimmer",
+      "settlement": "gym4_town",
+      "species": "lurantis",
+      "level": 34,
+      "job": "work",
+      "at": [4286, 1570],
+      "face": [4284, 1570],
+      "every": 40,
+      "effect": {
+        "block": "minecraft:oak_leaves",
+        "count": 12,
+        "sound": "minecraft:entity.sheep.shear",
+        "pitch": 1.1
+      },
+      "interact": "The Lurantis trims the green's west edge dead straight. It steps back after every cut to check."
+    },
+    {
+      "id": "greenhollow_sewaddle_tidier",
+      "settlement": "gym4_town",
+      "species": "sewaddle",
+      "level": 32,
+      "job": "work",
+      "at": [4288, 1566],
+      "face": [4286, 1569],
+      "every": 55,
+      "box": [0.7, 0.7],
+      "effect": {
+        "block": "minecraft:oak_leaves",
+        "count": 5,
+        "sound": "minecraft:entity.generic.eat",
+        "pitch": 1.5
+      },
+      "interact": "The Sewaddle follows the Lurantis down the edge, eating the trimmings. Nothing is wasted in Greenhollow."
+    },
+    {
+      "id": "greenhollow_tangela_weeder",
+      "settlement": "gym4_town",
+      "species": "tangela",
+      "level": 34,
+      "job": "work",
+      "at": [4333, 1538],
+      "face": [4330, 1538],
+      "every": 45,
+      "effect": {
+        "block": "minecraft:short_grass",
+        "count": 10,
+        "sound": "minecraft:block.grass.break",
+        "pitch": 0.9
+      },
+      "interact": "The Tangela is weeding the parterre with a dozen vines at once. Some of what it pulls up was meant to be there."
+    },
+    {
+      "id": "greenhollow_shroomish_compost",
+      "settlement": "gym4_town",
+      "species": "shroomish",
+      "level": 33,
+      "job": "work",
+      "at": [4289, 1549],
+      "face": [4286, 1546],
+      "every": 50,
+      "box": [0.8, 0.8],
+      "effect": {
+        "particle": "minecraft:composter",
+        "count": 10,
+        "spread": 0.3,
+        "dy": 0.4,
+        "sound": "minecraft:block.composter.fill",
+        "pitch": 0.9
+      },
+      "interact": "The Shroomish turns the compost by jumping on it. The compost keeper says it is the only one who does it properly."
+    },
+    {
+      "id": "greenhollow_ledyba_aphids",
+      "settlement": "gym4_town",
+      "species": "ledyba",
+      "level": 32,
+      "job": "work",
+      "at": [4316, 1549],
+      "face": [4320, 1546],
+      "every": 34,
+      "box": [0.8, 0.9],
+      "effect": {
+        "particle": "minecraft:happy_villager",
+        "count": 4,
+        "spread": 0.3,
+        "dy": 0.5,
+        "sound": "minecraft:block.flowering_azalea.hit",
+        "pitch": 1.5
+      },
+      "interact": "The Ledyba is picking aphids off the roses, one leaf at a time. It is clearly winning."
+    },
+    {
+      "id": "greenhollow_seedot_sorter",
+      "settlement": "gym4_town",
+      "species": "seedot",
+      "level": 32,
+      "job": "work",
+      "at": [4330, 1580],
+      "face": [4334, 1577],
+      "every": 42,
+      "box": [0.7, 0.7],
+      "effect": {
+        "block": "minecraft:wheat",
+        "count": 8,
+        "sound": "minecraft:item.crop.plant",
+        "pitch": 1.3
+      },
+      "interact": "The Seedot sorts the seed cart's seeds by size. It keeps holding the biggest up against itself."
+    },
+    {
+      "id": "greenhollow_turtwig_silt",
+      "settlement": "gym4_town",
+      "species": "turtwig",
+      "level": 33,
+      "job": "carry",
+      "route": [[4240, 1556], [4271, 1556]],
+      "carry": "minecraft:mud",
+      "carry_height": 1.1,
+      "box": [0.8, 0.9],
+      "pickup": {
+        "sound": "minecraft:block.mud.break"
+      },
+      "drop": {
+        "sound": "minecraft:block.mud.place",
+        "block": "minecraft:mud",
+        "count": 8
+      },
+      "interact": "The Turtwig brings pond silt up the road for the beds. The little tree on its back is greener than anything in them."
+    }
+  ],
+  "pets": [
+    {
+      "id": "greenhollow_archivist_chikorita",
+      "species": "chikorita",
+      "owner": "greenhollow_herbalist",
+      "mode": "follow",
+      "why": "the herbalist's Chikorita, its leaf over her notes whenever she stops to write. Re-homed 2026-10-06 from npc_main_erika_survey_archivist (it was the survey archivist's): she stands on the green, which the world cuts below the heightmap and the build's replay does not, so the build finds no open cell round her; give it back to the archivist when the replay models the square"
+    },
+    {
+      "id": "greenhollow_market_skiddo",
+      "species": "skiddo",
+      "owner": "greenhollow",
+      "mode": "wait",
+      "why": "the market counter's Skiddo, waiting for the end of the day and the leftover greens"
+    },
+    {
+      "id": "greenhollow_seedcart_pikipek",
+      "species": "pikipek",
+      "owner": "greenhollow_compost_keeper",
+      "mode": "wait",
+      "why": "by the compost heap, cracking the seconds the seed seller cannot sell and sends to the compost. Re-homed 2026-10-06 from greenhollow_seed_cart (it perched on the cart's handle): the cart stands on the green, which the world cuts below the heightmap and the build's replay does not, so the build finds no open cell beside it; give it back to the seed cart when the replay models the square"
+    },
+    {
+      "id": "greenhollow_herbalist_petilil",
+      "species": "petilil",
+      "owner": "greenhollow_herbalist",
+      "mode": "follow",
+      "why": "the herbalist's Petilil: the leaves on its head are where the bitter tea comes from"
+    },
+    {
+      "id": "greenhollow_sweets_swirlix",
+      "species": "swirlix",
+      "owner": "greenhollow_sweet_stall",
+      "mode": "follow",
+      "why": "the sweet stall's Swirlix, which smells exactly like the stall and is not for sale"
+    },
+    {
+      "id": "greenhollow_orchard_applin",
+      "species": "applin",
+      "owner": "greenhollow_orchard",
+      "mode": "follow",
+      "why": "the orchard keeper's Applin, sitting among the apples on the stall; customers keep picking it up"
+    },
+    {
+      "id": "greenhollow_compost_deerling",
+      "species": "deerling",
+      "owner": "greenhollow_compost_keeper",
+      "mode": "follow",
+      "why": "the compost keeper's Deerling, never more than a step behind her"
+    }
+  ],
+  "placed": [
+    {
+      "id": "greenhollow_snivy_window",
+      "species": "snivy",
+      "spot": "window",
+      "building": "gym4_house_05",
+      "why": "on the sill in the sun facing the green, looking down its nose at the gardeners"
+    },
+    {
+      "id": "greenhollow_rowlet_roof",
+      "species": "rowlet",
+      "spot": "roof",
+      "building": "gym4_house_07",
+      "why": "on the north house's roof ridge, eyes half shut by day, missing nothing on the green"
+    },
+    {
+      "id": "greenhollow_tarountula_gutter",
+      "species": "tarountula",
+      "spot": "gutter",
+      "building": "gym4_house_03",
+      "why": "in the gutter, rolling a ball of thread along it; the downpipe is half full of thread"
+    },
+    {
+      "id": "greenhollow_sprigatito_window",
+      "species": "sprigatito",
+      "spot": "window",
+      "building": "gym4_house_09",
+      "why": "in the window box, rolling in the herbs until the whole house smells of them"
+    },
+    {
+      "id": "greenhollow_scatterbug_porch",
+      "species": "scatterbug",
+      "spot": "step",
+      "building": "gym4_house_10",
+      "why": "on the porch rail, eating the porch's climbing bean a leaf a day"
+    },
+    {
+      "id": "greenhollow_flabebe_centre",
+      "species": "flabebe",
+      "spot": "window",
+      "building": "gym4_pokecenter",
+      "why": "in the Centre's window with its flower, the nurse's favourite"
+    },
+    {
+      "id": "greenhollow_pansage_step",
+      "species": "pansage",
+      "spot": "step",
+      "building": "gym4_house_06",
+      "why": "on the step with a sprig on its head; the cook next door borrows the sprig for soup"
+    },
+    {
+      "id": "greenhollow_sudowoodo_step",
+      "species": "sudowoodo",
+      "spot": "step",
+      "building": "gym4_house_02",
+      "why": "beside the door, under the deepest part of the eaves, where no rain reaches; it has not been out in the wet since the first storm of spring (rewritten 2026-10-08, unit AMB: a Sudowoodo posing as a potted tree is Stoneford's situation)"
+    }
+  ],
+  "situations": [
+    {
+      "id": "greenhollow_marrow_show",
+      "title": "The marrow show",
+      "unique": true,
+      "story": "Five entries in a row on the green for the end-of-season marrow show. Four of them are Pumpkaboo. Nobody has told the judges which one is the pumpkin.",
+      "at": [4286, 111, 1563],
+      "facing": "north",
+      "members": [
+        {
+          "species": "pumpkaboo",
+          "count": 4,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [2, 0, 0], [4, 0, 0], [8, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:carved_pumpkin",
+          "at": [6, 0, 0]
+        },
+        {
+          "block": "minecraft:hay_block",
+          "at": [-2, 0, 0]
+        },
+        {
+          "block": "minecraft:hay_block",
+          "at": [10, 0, 0]
+        }
+      ],
+      "why": "Greenhollow's own: a garden town's show, and the only town where a Pokemon is entered as produce. Pumpkaboo come in sizes, so the row reads as a judged line. Re-sited 2026-10-06 to the west of the green (x 4284-4296, z 1563), where the green's paving and the heightmap agree: further east the square is cut below the heightmap in the world but not in the build's replay."
+    },
+    {
+      "id": "greenhollow_lotad_crossing",
+      "allow": ["street"],
+      "title": "The Lotad crossing",
+      "unique": false,
+      "story": "Every evening a line of Lotad crosses the pond road from the ditch to the pond, single file, and the carts wait for them.",
+      "at": [4237, 110, 1554],
+      "facing": "south",
+      "members": [
+        {
+          "species": "lotad",
+          "count": 4,
+          "pose": "still",
+          "offsets": [[0, 0, -3], [0, 0, -1], [0, 0, 1], [0, 0, 3]]
+        }
+      ],
+      "props": [],
+      "why": "the one place a group of one species is right: it IS the line. The pond road is the town's way to its pond."
+    },
+    {
+      "id": "greenhollow_gloom_bench",
+      "title": "The bench nobody sits next to",
+      "unique": true,
+      "story": "A Gloom has the bench outside the Centre. A Sentret and a Wurmple share the far end of it, as far from the smell as the bench allows.",
+      "at": [4256, 110, 1548],
+      "facing": "south",
+      "members": [
+        {
+          "species": "gloom",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "sentret",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[3, 0, 0]]
+        },
+        {
+          "species": "wurmple",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[4, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:spruce_stairs",
+          "at": [0, 0, -1]
+        },
+        {
+          "block": "minecraft:spruce_stairs",
+          "at": [1, 0, -1]
+        },
+        {
+          "block": "minecraft:spruce_stairs",
+          "at": [2, 0, -1]
+        },
+        {
+          "block": "minecraft:spruce_stairs",
+          "at": [3, 0, -1]
+        }
+      ],
+      "why": "a joke a player sees from the Centre's door: the gap on the bench is the story"
+    },
+    {
+      "id": "greenhollow_jam_pans",
+      "title": "Bounsweet in the jam pans",
+      "unique": false,
+      "story": "The sweet stall sets its jam pans out to cool, and every afternoon there are Bounsweet sitting in them. A Cutiefly has decided this is the best place in town.",
+      "at": [4339, 112, 1546],
+      "facing": "west",
+      "members": [
+        {
+          "species": "bounsweet",
+          "count": 3,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [0, 0, 2], [0, 0, 4]]
+        },
+        {
+          "species": "cutiefly",
+          "count": 1,
+          "pose": "wander_leashed",
+          "offsets": [[0, 1, 2]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:cauldron",
+          "at": [0, 0, 0]
+        },
+        {
+          "block": "minecraft:cauldron",
+          "at": [0, 0, 2]
+        },
+        {
+          "block": "minecraft:cauldron",
+          "at": [0, 0, 4]
+        }
+      ],
+      "why": "the sweet stall is two blocks west; the pans are where its smell goes"
+    },
+    {
+      "id": "greenhollow_pergola_nest",
+      "title": "The nest on the pergola",
+      "unique": false,
+      "story": "Two Swablu have built a nest of cotton on top of the pergola. The gardeners have stopped trying to clear it and started growing roses up to it.",
+      "at": [4320, 111, 1538],
+      "facing": "south",
+      "on_dressing_ok": true,
+      "members": [
+        {
+          "species": "swablu",
+          "count": 2,
+          "pose": "still",
+          "offsets": [[-1, 4, 0], [1, 4, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:white_wool",
+          "at": [0, 4, 0]
+        }
+      ],
+      "why": "on the green's centrepiece, seen from the whole square; the two are on the roof, not on the ground"
+    },
+    {
+      "id": "greenhollow_psyduck_water_butt",
+      "title": "The third row of beans",
+      "unique": true,
+      "story": "The house on the pond road planted two rows of beans this spring and has three. The third is a pair of Smoliv that sat down at the end of the bean fence one wet morning and put down roots. The owner waters all three rows now, and the Smoliv are coming on better than the beans.",
+      "at": [4230, 110, 1574],
+      "facing": "north",
+      "members": [
+        {
+          "species": "smoliv",
+          "count": 2,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [3, 0, 1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:water_cauldron[level=3]",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:oak_fence",
+          "at": [-2, 0, 2]
+        },
+        {
+          "block": "minecraft:oak_fence",
+          "at": [-1, 0, 2]
+        },
+        {
+          "block": "minecraft:oak_fence",
+          "at": [0, 0, 2]
+        },
+        {
+          "block": "minecraft:composter",
+          "at": [5, 0, 0]
+        }
+      ],
+      "why": "a gardeners' town's garden that has gained a row: the back of gym4_house_02 (its door faces north onto the pond road, so its garden is the open ground south of it, x 4228-4235, z 1572-1576, all at the plan's y 110). Two of one species because the pair IS the story. Rewritten 2026-10-08 (unit AMB): Psyduck that have taken over a back garden is Viltri Quay's (the owner's own example) and a tenant in a water butt is its Barboach; two Smoliv (0.27 x 0.50 blocks, the jar's hitbox x baseScale) stand on the Psyduck's spots (0.64 x 0.80), so nothing they occupy is new"
+    },
+    {
+      "id": "greenhollow_appletun_crate",
+      "title": "Asleep in the top crate",
+      "unique": true,
+      "story": "The orchard's crates are stacked by the lane to go out at dawn. The best apple in the top one is an Appletun, and the orchard keeper is not going to be the one who wakes it.",
+      "at": [4339, 112, 1563],
+      "facing": "west",
+      "members": [
+        {
+          "species": "appletun",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 1, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 0, 0]
+        },
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 0, 1]
+        },
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 0, -1]
+        },
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 1, 1]
+        }
+      ],
+      "why": "on the verge between the green's east edge and the east lane (x 4337-4341 at the plan's y 112), four blocks south of the orchard keeper's stall at (4335, 1559): her crates, her Applin's grown-up cousin. It stands on the middle crate, so it reads as in it"
+    }
+  ],
+  "counts": {
+    "working": 13,
+    "pets": 7,
+    "placed": 8,
+    "situations": 20,
+    "total": 48
+  }
+}

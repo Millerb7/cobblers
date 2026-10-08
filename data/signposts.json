@@ -58,5 +58,46 @@
   ],
   "no_sign": {
     "displaced_city": "hidden on purpose: the waystone inside is the reward for finding it once"
-  }
+  },
+  "notices_why": "Signs that explain rather than name (the owner, 2026-10-06: 'Victory Road and the Rift finale are explained in the world'; docs/world-building/POST_GYM8_DIRECTION.md). A route notice is seated like a junction post, beside its route nearest `at`, keeping clear of every other post; a wall notice hangs at a measured position on the face its record names. Lines are authored to fit (at most 15 characters, at most 4) and are never re-wrapped.",
+  "notices": [
+    {
+      "id": "deep_lip",
+      "route": "victory_road",
+      "at": [
+        3745,
+        3426
+      ],
+      "front": [
+        "THE DEEP",
+        "Compact HQ:",
+        "Sink Gate, then",
+        "top ring, west"
+      ],
+      "back": [
+        "Victory Road",
+        "Rift Trunk",
+        "to Holdfast"
+      ],
+      "why": "CRITICAL_PATH_WALK_2 item 6, 'nothing points to the HQ': the Victory Road line comes up the trunk to the Sink Gate's exit (3695, 3394) on the Deep's south-east lip (derived/deep_city/plan.json sink_gate, from ring 0 at y66 to the lip at y82); the HQ door (3443, 67, 3282) is on ring 0, west. Seated on the Rift floor OUTSIDE the pit (rift_deep.model ring -1, checked by tests/test_signposts_notices.py), about 70 blocks before the gate; the route's own transition_10 post is inside the pit (a defect recorded in POST_GYM8_DIRECTION.md)."
+    },
+    {
+      "id": "vr_mouth",
+      "wall": {
+        "at": [
+          3566,
+          2,
+          3064
+        ],
+        "facing": "south"
+      },
+      "front": [
+        "VICTORY ROAD",
+        "north, through",
+        "the caves, to",
+        "the League"
+      ],
+      "why": "Victory Road explained where it starts: the caves' mouth is (3560, 1, 3064) under the Deep's north face (data/vr_caves.json mouth, toward north; tunnel x3557-3563). This sign hangs on the face east of the tunnel, at head height for a player standing on the Deep's floor (paving at y0). Measured from the built packs 2026-10-06: the face block behind it, (3566, 2, 3063), is filled solid by cobblers_deep (distortion deepslate over the void, y-4 to 65); the sign's own block is cleared to air by cobblers_deep (y1-85) and paved under by cobblers_deep_city at y0; no pack writes it. The vr_caves shell stops at x3565."
+    }
+  ]
 }

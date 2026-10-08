@@ -1,0 +1,81 @@
+{
+  "schema": "cobblers.reveal_evidence.v1",
+  "generated_by": "hand, from data/quests.json main_worldshift_reveal physical_evidence and docs/story/ARC.md",
+  "about": "The physical evidence each mainline reveal beat shows beside the NPC who tells it: one prop (one or two blocks) and one standing sign, built by tools/reveal_evidence.py into pack cobblers_reveal_evidence. data/quests.json says what each object must show and that it is corroboration only: no proven coordinate, proximity or object-inspection predicate exists, so nothing reads it and the conversation carries the beat. The display stands two blocks to one side of its teller (side), the prop on the teller's own line and the sign one block in front of it, facing the way the teller faces, so a player who walks up to the NPC reads both. Every block is placed only into a replaceable block over a solid one; a build never overwrites what is there.",
+  "not_covered": "Pallet's exchange boundary (pallet_exchange_boundary) and the Rift's damage (rift_victory_road_damage) are terrain that already exists; Pallet's damaged homes (pallet_edge_damage_cluster) are evt_pallet_crushed_house's; the containment cradle (rift_containment_cradle) is the finale's (Hoopa's relic hall, tools/relic_underground.py).",
+  "sign_wood": "spruce",
+  "displays": [
+    {
+      "beat": "brock",
+      "evidence": "brock_boundary_sample",
+      "teller": "npc_main_brock_witness",
+      "side": "left",
+      "prop": ["minecraft:tuff", "minecraft:coarse_dirt"],
+      "prop_why": "a core: plateau shale (tuff) below, Pallet's soil (coarse dirt) directly on it, no layer between",
+      "sign": ["BOUNDARY CORE", "Pallet soil on", "plateau shale,", "nothing between"]
+    },
+    {
+      "beat": "misty",
+      "evidence": "misty_refugee_ledger",
+      "teller": "npc_main_misty_relief_clerk",
+      "side": "left",
+      "prop": ["minecraft:barrel[facing=up,open=false]"],
+      "prop_why": "the arrivals' belongings, crated by the relief office",
+      "sign": ["RELIEF LEDGER", "Families saved", "from collapsing", "worlds"]
+    },
+    {
+      "beat": "surge",
+      "evidence": "surge_signal_record",
+      "teller": "npc_main_surge_signal_clerk",
+      "side": "left",
+      "prop": ["minecraft:copper_block", "minecraft:lightning_rod[facing=up,powered=false,waterlogged=false]"],
+      "prop_why": "a pickup mast, the array's comparison point",
+      "sign": ["SIGNAL RECORD", "Each pulse is", "corrected:", "it was steered"]
+    },
+    {
+      "beat": "erika",
+      "evidence": "erika_exchange_survey_ledger",
+      "teller": "npc_main_erika_survey_archivist",
+      "side": "left",
+      "prop": ["minecraft:lectern[facing=$facing,has_book=false,powered=false]"],
+      "prop_why": "the survey ledger on a lectern, as data/quests.json describes it",
+      "sign": ["SURVEY LEDGER", "Before: a river", "and a settled", "summit. Gone."]
+    },
+    {
+      "beat": "koga",
+      "evidence": "koga_recovered_anchor",
+      "teller": "npc_main_koga_marsh_tracker",
+      "side": "left",
+      "prop": ["minecraft:lodestone"],
+      "prop_why": "the recovered exchange anchor",
+      "sign": ["RECOVERED ANCHOR", "Marks drift.", "Plate: a ring,", "named HOOPA"]
+    },
+    {
+      "beat": "sabrina",
+      "evidence": "sabrina_convergence_table",
+      "teller": "npc_main_sabrina_pattern",
+      "side": "left",
+      "prop": ["minecraft:cartography_table"],
+      "prop_why": "the table the observation records are laid out on",
+      "sign": ["CONVERGENCE", "Water, ice,", "memory, signal:", "one peak"]
+    },
+    {
+      "beat": "blaine",
+      "evidence": "blaine_occupied_destination_model",
+      "teller": "npc_main_blaine_crater_analyst",
+      "side": "left",
+      "prop": ["minecraft:lectern[facing=$facing,has_book=false,powered=false]"],
+      "prop_why": "the destination model's sheet and the acknowledged warning",
+      "sign": ["DESTINATION", "Roads, homes,", "life: OCCUPIED", "Warning signed"]
+    },
+    {
+      "beat": "giovanni",
+      "evidence": "giovanni_dissenter_route_packet",
+      "teller": "npc_main_giovanni_watch",
+      "side": "left",
+      "prop": ["minecraft:barrel[facing=up,open=false]"],
+      "prop_why": "the courier crate the intercepted packet came in",
+      "sign": ["ROUTE PACKET", "Loyalists move", "to the Rift.", "Help offered."]
+    }
+  ]
+}

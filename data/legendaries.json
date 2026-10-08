@@ -520,6 +520,11 @@
         "alcove": 0
       },
       "plug_depth": 8,
+      "cache": {
+        "reward": "groudon_red_orb",
+        "container": "pedestal",
+        "why": "2026-10-08 (overnight, unit REWARD): docs/mechanics/ITEM_ROUTES.md section 2.3's Red Orb route, a requires_flags cache in this chamber. The item is given by data/rewards.json groudon_red_orb (ADR-002, tools/rewards_pack.py), gated on champion_cleared, not on this chamber's own gym8_cleared (the design's answer check: Primal Groudon before the League would be the one answer). The container is the pedestal this tool already writes under Groudon, so no block is added to the carve; tools/legendaries.py cache_problems holds the reward's coordinates to this record's geometry."
+      },
       "spawn_free_zone": [
         6656,
         5496,

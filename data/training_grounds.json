@@ -1,0 +1,269 @@
+{
+  "schema": "cobblers.training-grounds/1",
+  "generated_by": "hand (the design: rules, rosters, levels, block settings and the sign); each ground's `site` is written by tools/training_grounds.py site --write from the canonical heightmap and the data it sweeps, and the shared records (data/habitat_blocks.json, data/spawns.json) by tools/training_grounds.py records --write",
+  "status": "authored 2026-10-06; planned (not placed, not run in game)",
+  "owner_brief": "the owner, 2026-10-06: 'A player should not have to grind levels. Build a per-gym catch-up: rare candies, an EXP source, a training area -- whatever fits. It should make reaching the cap for the next gym straightforward without letting anyone exceed it. The cap already holds the ceiling; this is about the floor.'",
+  "design": "docs/mechanics/LEVEL_CATCHUP.md",
+  "mechanism": "one activated Habitat Block per gym town, 60-150 blocks out, off the route paths, keeping a handful of high-EXP-yield wild Pokemon alive round it at levels just under the cap the player holds on arriving at that town. Battle EXP from them is clamped at the cap by rctmod (allowOverLeveling = false), so the ground fills a team up to the cap and no further.",
+  "cap_source": "the cap a player holds before gym N is computed the way rctmod does it, by tools/legendaries_audit.py rct_caps() (data/trainers.json + the rctmod config): never stored here",
+  "rules": {
+    "ring_blocks": [
+      60,
+      150
+    ],
+    "ring_why": "the brief: within about 150 blocks of the town; 60 keeps it out of the streets, lots and squares the town plan builds round its centre",
+    "grid_blocks": 4,
+    "path_clear_blocks": 40,
+    "path_clear_why": "off the critical path: the block's own spawn_range (16) and a 24-block margin, so its Pokemon are not met on the walked line (data/route_paths.json, every route)",
+    "feature_clear_blocks": 40,
+    "feature_clear_why": "40 blocks from every coordinate any data/*.json file carries (placements, towns, landmarks, trainers, traders, residents, nests, caches...), except the host town's own centre, which the ring already keeps 60 away: a sweep, not a list, so a feature another system placed is not missed (CLAUDE.md 'Our list is not the world')",
+    "building_clear_blocks": 32,
+    "building_clear_why": "a placement's position is a corner or a pivot, not the building: every building in data/placements.json is measured as the footprint its placer seats (tools/place_donor.py footprint, sizes read from the templates), and the block stays its spawn_range (16) plus 16 clear of every one, so no Audino spawns in a garden or a gym",
+    "nest_margin_blocks": 16,
+    "nest_margin_why": "from every other activated Habitat Block: its spawn_range + this block's spawn_range + 16, so two nests' Pokemon never mix; from a natural block, its range_of_influence + this block's spawn_range",
+    "resident_leash_blocks": 28,
+    "resident_leash_why": "tests/test_resident_siting.py's largest leash: a named resident's fight must not overlap a nest",
+    "flat_radius_blocks": 12,
+    "max_relief_blocks": 6,
+    "flat_why": "a clearing to fight in: the ground within 12 blocks of the block varies by at most 6",
+    "water_margin_blocks": 4,
+    "water_why": "dry land: no column within spawn_range + 4 of the block is at or under the sea level or inside a painted lake or river mask (build/paint/manifest.json water, the masks tools/themed_saplings.py reads)",
+    "terrain": "GRASS",
+    "terrain_why": "the block mimics minecraft:grass_block, so it must sit in WorldPainter GRASS terrain (build/paint/terrain.png code 1), where the ground block is grass",
+    "score": "distance from the town centre + 8 x relief + 40 x canopy cover: near, flat and open wins"
+  },
+  "block": {
+    "mimic": "minecraft:grass_block",
+    "activated": {
+      "spawn_range": 16,
+      "chance": 1.0,
+      "trigger": "TICK",
+      "cancel_range": -1,
+      "max_spawns_per_activation": 2,
+      "max_spawns": 6
+    },
+    "why": "an activated block (data/habitat_blocks.json, tools/habitat_blocks.py; the settings 246 of the manifest's activated blocks use, with max_spawns 6): it keeps up to six of its pool alive within 16 blocks and refills as they are beaten, so a player never waits for the next fight. cancel_range -1: the ordinary spawns round it carry on"
+  },
+  "levels": {
+    "below_cap": [
+      3,
+      1
+    ],
+    "why": "cap - 3 to cap - 1: just under the cap the player holds on reaching the town, so every one is catchable (rctmod refuses only strictly above the cap, and so does the catch block, data/level_cap.json) and none out-levels the team the ground is filling. Within every host sub-region's ceiling (data/encounter_design.json rules.hearts.next_cap of its tier, which is the next cap up)."
+  },
+  "rosters": {
+    "tiers_1_to_5": [
+      {
+        "species": "audino",
+        "role": "anchor",
+        "weight": 24.0,
+        "why": "base experience yield 390 (Cobblemon 1.8.0 species data), the highest of any species with no evolution; fast experience group. No evolution, so legal at every tier (data/spawns.json evolution_policy)"
+      }
+    ],
+    "tiers_6_to_8": [
+      {
+        "species": "audino",
+        "role": "anchor",
+        "weight": 24.0,
+        "why": "as above"
+      },
+      {
+        "species": "chansey",
+        "role": "common",
+        "weight": 12.0,
+        "why": "base experience yield 395; it comes from Happiny by a held-item evolution, which data/spawns.json evolution_policy allows only from tier 6 ('Evolutions not by level appear only from tier 6')"
+      },
+      {
+        "species": "blissey",
+        "role": "common",
+        "weight": 12.0,
+        "why": "base experience yield 635, the highest of any non-legendary; a friendship evolution, so tier 6 and up only, as Chansey. Already wild at tier 7 (tilpey_west_meadows, 43-50)"
+      }
+    ],
+    "why": "the jar's highest base-experience species that the encounter rules allow at each band: Blissey 635, Chansey 395, Audino 390, then 300 for the pseudo-legendary finals, which the maturity rules keep out of every band below the Elite Four. The yield is what the Pokemon is for here"
+  },
+  "sign": {
+    "block": "minecraft:oak_sign",
+    "offset": [
+      0,
+      2
+    ],
+    "lines": [
+      "Training Ground",
+      "Wild Pokemon gather",
+      "here. Battle them",
+      "up to your cap."
+    ],
+    "why": "a player who does not know the ground is there cannot use it: one standing sign two blocks south of the block, on the heightmap's ground, facing the town"
+  },
+  "grounds": [
+    {
+      "id": "training_ground_gym1",
+      "gym": 1,
+      "town": "gym1_town",
+      "name": "Stoneford Training Ground",
+      "site": {
+        "x": 1833,
+        "z": 3618,
+        "town_distance": 90.6,
+        "path_clearance": 81.0,
+        "feature_clearance": 40.6,
+        "nearest_feature": "traders.json:position",
+        "building_clearance": 33.1,
+        "nearest_building": "gym1_town lamp",
+        "relief": 2,
+        "wet_columns": 0,
+        "terrain": 1,
+        "canopy": 0.0,
+        "y": 139
+      }
+    },
+    {
+      "id": "training_ground_gym2",
+      "gym": 2,
+      "town": "gym2_town",
+      "name": "Viltri Quay Training Ground",
+      "site": {
+        "x": 1543,
+        "z": 2759,
+        "town_distance": 74.9,
+        "path_clearance": 74.9,
+        "feature_clearance": 40.3,
+        "nearest_feature": "placements.json:position",
+        "building_clearance": 39.9,
+        "nearest_building": "gym2_town lot west_street_lot_06",
+        "relief": 1,
+        "wet_columns": 0,
+        "terrain": 1,
+        "canopy": 0.0,
+        "y": 106
+      }
+    },
+    {
+      "id": "training_ground_gym3",
+      "gym": 3,
+      "town": "gym3_town",
+      "name": "Highwire Training Ground",
+      "site": {
+        "x": 1586,
+        "z": 1436,
+        "town_distance": 105.3,
+        "path_clearance": 103.0,
+        "feature_clearance": 58.1,
+        "nearest_feature": "towns.json:centre",
+        "building_clearance": 75.3,
+        "nearest_building": "gym3_town lot lip_walk_lot_01",
+        "relief": 1,
+        "wet_columns": 0,
+        "terrain": 1,
+        "canopy": 0.0,
+        "y": 140
+      }
+    },
+    {
+      "id": "training_ground_gym4",
+      "gym": 4,
+      "town": "gym4_town",
+      "name": "Greenhollow Training Ground",
+      "site": {
+        "x": 4391,
+        "z": 1505,
+        "town_distance": 96.0,
+        "path_clearance": 93.3,
+        "feature_clearance": 43.1,
+        "nearest_feature": "placements.json:position",
+        "building_clearance": 33.5,
+        "nearest_building": "gym4_town lot ring_east_lot_07",
+        "relief": 0,
+        "wet_columns": 0,
+        "terrain": 1,
+        "canopy": 0.0,
+        "y": 110
+      }
+    },
+    {
+      "id": "training_ground_gym5",
+      "gym": 5,
+      "town": "gym5_town",
+      "name": "Fenhide Training Ground",
+      "site": {
+        "x": 4644,
+        "z": 2516,
+        "town_distance": 70.0,
+        "path_clearance": 50.9,
+        "feature_clearance": 43.0,
+        "nearest_feature": "placements.json:position",
+        "building_clearance": 34.5,
+        "nearest_building": "gym5_town lot post_road_lot_08",
+        "relief": 0,
+        "wet_columns": 0,
+        "terrain": 1,
+        "canopy": 0.0,
+        "y": 118
+      }
+    },
+    {
+      "id": "training_ground_gym6",
+      "gym": 6,
+      "town": "gym6_town",
+      "name": "Tilpey Cross Training Ground",
+      "site": {
+        "x": 6170,
+        "z": 3268,
+        "town_distance": 132.6,
+        "path_clearance": 112.4,
+        "feature_clearance": 40.2,
+        "nearest_feature": "placements.json:position",
+        "building_clearance": 40.2,
+        "nearest_building": "gym6_gym_building",
+        "relief": 0,
+        "wet_columns": 0,
+        "terrain": 1,
+        "canopy": 0.0,
+        "y": 97
+      }
+    },
+    {
+      "id": "training_ground_gym7",
+      "gym": 7,
+      "town": "gym7_town",
+      "name": "Cinderlee Training Ground",
+      "site": {
+        "x": 6108,
+        "z": 4885,
+        "town_distance": 115.1,
+        "path_clearance": 53.7,
+        "feature_clearance": 40.7,
+        "nearest_feature": "placements.json:position",
+        "building_clearance": 37.0,
+        "nearest_building": "gym7_pokecenter",
+        "relief": 0,
+        "wet_columns": 0,
+        "terrain": 1,
+        "canopy": 0.0,
+        "y": 105
+      }
+    },
+    {
+      "id": "training_ground_gym8",
+      "gym": 8,
+      "town": "gym8_town",
+      "name": "Holdfast Training Ground",
+      "site": {
+        "x": 3569,
+        "z": 6519,
+        "town_distance": 81.0,
+        "path_clearance": 81.0,
+        "feature_clearance": 40.8,
+        "nearest_feature": "placements.json:position",
+        "building_clearance": 32.2,
+        "nearest_building": "gym8_town lamp",
+        "relief": 1,
+        "wet_columns": 0,
+        "terrain": 1,
+        "canopy": 0.0,
+        "y": 113
+      }
+    }
+  ]
+}

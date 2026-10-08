@@ -1,0 +1,68 @@
+{
+  "settlement": "viltri_light",
+  "size": "outpost",
+  "target": 6,
+  "character": "Viltri Light is a lighthouse keeping a light over an estuary no river uses any more: its few Pokemon keep the lamps and the lantern oil, keep the keeper company at night, and two of them wait in the dry estuary for the river to come back.",
+  "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/viltri_light_plan.json and tools/ground.py (rounded) through tools/ambient.py's Site; the lighthouse is an earthwork, not a placement building, so the one placed Pokemon has a measured `at`; y is the standing y",
+  "workers": [
+    {
+      "id": "viltri_light_lamps_lanturn",
+      "settlement": "viltri_light",
+      "species": "lanturn",
+      "level": 20,
+      "job": "work",
+      "at": [561, 4524],
+      "face": [558, 4522],
+      "every": 60,
+      "effect": {"block": "minecraft:sea_lantern", "count": 8, "sound": "minecraft:block.amethyst_block.chime", "pitch": 1.0},
+      "interact": "The Lanturn lights the apron at dusk from its own lure, so the keeper can see the step. The lighthouse handles the sea."
+    },
+    {
+      "id": "viltri_light_oil_drifloon",
+      "settlement": "viltri_light",
+      "species": "drifloon",
+      "level": 20,
+      "job": "carry",
+      "route": [[578, 4519], [566, 4518]],
+      "carry": "minecraft:lantern",
+      "carry_height": 1.4,
+      "pickup": {"sound": "minecraft:block.lantern.hit"},
+      "drop": {"sound": "minecraft:block.lantern.place", "block": "minecraft:lantern", "count": 4},
+      "interact": "The Drifloon floats the lantern oil down the keeper's track from the cart road, holding the lamp by a string. It has never dropped one."
+    }
+  ],
+  "pets": [],
+  "placed": [
+    {"id": "viltri_light_step_clobbopus", "species": "clobbopus", "spot": "step", "at": [553, 70, 4523], "why": "a Clobbopus on the lighthouse's foundation step, punching the barnacles off it"}
+  ],
+  "situations": [
+    {
+      "id": "viltri_light_goomy_wait",
+      "title": "Waiting for the river",
+      "story": "Two Goomy sit in the dry estuary bed below the lighthouse, damp and patient. The keeper says they are waiting for the river to come back, and he does not tell them it will not.",
+      "unique": true,
+      "at": [543, 66, 4527],
+      "facing": "west",
+      "members": [
+        {"species": "goomy", "count": 2, "pose": "still", "offsets": [[0, 0, 0], [3, 1, 2]]}
+      ],
+      "props": [],
+      "why": "the low ground west of the lighthouse platform, where the estuary used to run"
+    },
+    {
+      "id": "viltri_light_noctowl_post",
+      "title": "The keeper's post",
+      "story": "The keeper has no road and no boat, so her letters go by Pidove. It waits on the old mooring post at the foot of the lighthouse steps every morning and carries them up the dry estuary to Viltri Quay. It has never lost one, and it is always back before the lamp is lit.",
+      "unique": true,
+      "at": [550, 68, 4531],
+      "facing": "west",
+      "members": [
+        {"species": "pidove", "count": 1, "pose": "still", "offsets": [[0, 1, 0]]}
+      ],
+      "props": [{"block": "minecraft:oak_fence", "at": [0, 0, 0]}, {"block": "minecraft:chain", "at": [1, 0, 0]}],
+      "why": "converted 2026-10-06 from the keeper's pet (the outpost's band holds three situation Pokemon only if a pet or a placed one gives its place): the low ground south of the lighthouse platform, feet y68 from the plan, the bird on its post prop. Rewritten 2026-10-08 (unit AMB): an owl keeping the night watch is Rimwatch's working Noctowl; a Pidove (0.28 x 0.44 blocks, the jar's hitbox x baseScale) on the Noctowl's post (0.72 x 1.71)"
+    }
+  ],
+  "counts": {"working": 2, "pets": 0, "placed": 1, "situations": 3, "total": 6},
+  "notes": "New: data/ambient.json listed Viltri Light under idle.not_populated ('a lighthouse with no town plan worth a group'); it now has a plan (derived/towns/viltri_light_plan.json) and a seated keeper (data/npc_seats.json), which is what an outpost of six needs."
+}

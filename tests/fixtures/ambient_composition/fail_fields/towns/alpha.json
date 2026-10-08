@@ -1,0 +1,150 @@
+{
+ "settlement": "alpha",
+ "size": "hamlet",
+ "character": "alpha's own roster",
+ "workers": [
+  {
+   "id": "alpha_work_00",
+   "settlement": "alpha",
+   "species": "machop",
+   "level": 15,
+   "job": "carry",
+   "interact": "The machop hauls a load across the yard."
+  },
+  {
+   "id": "alpha_work_01",
+   "settlement": "alpha",
+   "species": "timburr",
+   "level": 15,
+   "job": "carry",
+   "interact": "The timburr hauls a load across the yard."
+  },
+  {
+   "id": "alpha_work_02",
+   "settlement": "alpha",
+   "species": "bidoof",
+   "level": 15,
+   "job": "carry",
+   "interact": "The bidoof hauls a load across the yard."
+  }
+ ],
+ "pets": [
+  {
+   "id": "alpha_pet_00",
+   "species": "growlithe",
+   "owner": "alpha_resident_0",
+   "mode": "sit",
+   "why": "keeps its owner company"
+  }
+ ],
+ "placed": [
+  {
+   "id": "alpha_placed_00",
+   "species": "meowth",
+   "spot": "roof",
+   "building": "alpha_house_00",
+   "why": "lives there"
+  },
+  {
+   "id": "alpha_placed_01",
+   "species": "pidgey",
+   "spot": "roof",
+   "building": "alpha_house_01",
+   "why": "lives there"
+  }
+ ],
+ "situations": [
+  {
+   "id": "alpha_garden",
+   "title": "A Psyduck takeover in the back garden",
+   "story": "A Psyduck takeover in the back garden.",
+   "unique": true,
+   "at": [
+    0,
+    64,
+    0
+   ],
+   "facing": "north",
+   "members": [
+    {
+     "species": "psyduck",
+     "count": 3,
+     "pose": "wander_leashed",
+     "offsets": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      [
+       2,
+       0,
+       0
+      ]
+     ]
+    }
+   ],
+   "props": [
+    {
+     "block": "minecraft:rose_bush",
+     "at": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "why": "the town's own"
+  },
+  {
+   "id": "alpha_apples",
+   "title": "Asleep in the apple crate",
+   "story": "Asleep in the apple crate.",
+   "unique": false,
+   "at": [
+    0,
+    64,
+    0
+   ],
+   "facing": "north",
+   "members": [
+    {
+     "species": "munchlax",
+     "count": 1,
+     "pose": "sleep",
+     "offsets": [
+      [
+       0,
+       0,
+       0
+      ]
+     ]
+    }
+   ],
+   "props": [
+    {
+     "block": "minecraft:barrel",
+     "at": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "why": "the town's own"
+  }
+ ],
+ "counts": {
+  "working": 3,
+  "pets": 1,
+  "placed": 2,
+  "situations": 4,
+  "total": 10
+ },
+ "target": 10
+}

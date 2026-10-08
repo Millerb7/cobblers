@@ -1407,7 +1407,8 @@ def test_the_mines_pack_is_world_local_and_prepare_builds_it_then_audits_it():
 # ================================================================================ 6. heightmap and local-only inputs
 
 def _ground():
-    if not os.environ.get("COBBLERS_SOURCE_ROOT"):
+    import terrain
+    if not terrain.env_source_root():
         pytest.skip("NOT_EXECUTED: COBBLERS_SOURCE_ROOT is not set: the canonical heightmap is outside the repo")
     import ground as GR
     try:
@@ -1551,9 +1552,16 @@ def test_every_surface_face_stands_inside_the_towns_it_belongs_to(surface_writes
         centre = TOWNS[s["settlement"]]["centre"]
         far = max(math.hypot(x - centre["x"], z - centre["z"]) for x, z in cols)
         assert far <= s["ring"][1] + 24, (f["id"], round(far, 1), s["ring"])
+        # The town's footprint is data/towns.json's, which the builder never reads for siting (tools/mines.py uses
+        # the ring box round the centre), so this is the independent half. The 48 is the original author's and is
+        # not derived from any field; it is kept as written, never widened to pass (2026-10-08, review N162).
         fp = TOWNS[s["settlement"]]["footprint"]
-        assert all(fp["min_x"] - 48 <= x <= fp["max_x"] + 48 and fp["min_z"] - 48 <= z <= fp["max_z"] + 48
-                   for x, z in cols), f["id"]
+        out_ = sorted((x, z) for x, z in cols
+                      if not (fp["min_x"] - 48 <= x <= fp["max_x"] + 48 and fp["min_z"] - 48 <= z <= fp["max_z"] + 48))
+        beyond = max((max(fp["min_x"] - x, x - fp["max_x"], fp["min_z"] - z, z - fp["max_z"]) for x, z in out_),
+                     default=0)
+        assert not out_, (f["id"], "%d of %d written columns beyond the footprint + 48, the farthest %d past it"
+                          % (len(out_), len(cols), beyond), out_[:3])
 
 
 def test_no_written_column_is_within_8_of_a_column_the_water_export_changes(surface_writes):
@@ -1598,7 +1606,8 @@ def test_the_full_audit_is_clean_on_the_real_inputs():
     need = [ROOT / "build" / "datapacks" / "cobblers_mines", ROOT / "derived" / "water_shape" / "changed.npy",
             ROOT / "derived" / "cavern" / "plan.json", ROOT / "derived" / "ambient" / "plan.json"]
     missing = [str(p.relative_to(ROOT)) for p in need if not p.exists()]
-    if missing or not os.environ.get("COBBLERS_SOURCE_ROOT"):
+    import terrain
+    if missing or not terrain.env_source_root():
         pytest.skip("NOT_EXECUTED: local-only inputs missing: %s" % (missing or "COBBLERS_SOURCE_ROOT"))
     probs, notes = MA.audit(None)
     assert probs == [] and notes["faces"] == 22

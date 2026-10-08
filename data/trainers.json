@@ -31,8 +31,9 @@
       "normal",
       "challenge"
     ],
-    "runtime_mode_selection": "not implemented; top-level team and rct mirror normal",
-    "preserved_blocked_route_orders": []
+    "runtime_mode_selection": "per player: Oak records the choice once (quest.main_worldshift_reveal.trainer_mode) and puts a Challenge player in rctmod series cobblers_challenge; each record's modes.challenge.rct is installed as <rctmod id>_challenge by tools/challenge_mode.py (docs/mechanics/OAK_AND_CHALLENGE.md); top-level team and rct mirror normal",
+    "preserved_blocked_route_orders": [],
+    "gym_trainers": 26
   },
   "trainers": [
     {
@@ -374,7 +375,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_01_brock",
+            "identity": "gym_01_brock_challenge",
             "name": {
               "literal": "Brock"
             },
@@ -826,7 +827,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_02_misty",
+            "identity": "gym_02_misty_challenge",
             "name": {
               "literal": "Misty"
             },
@@ -1332,7 +1333,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_03_surge",
+            "identity": "gym_03_surge_challenge",
             "name": {
               "literal": "Lt. Surge"
             },
@@ -1837,7 +1838,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_04_erika",
+            "identity": "gym_04_erika_challenge",
             "name": {
               "literal": "Erika"
             },
@@ -2394,7 +2395,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_05_koga",
+            "identity": "gym_05_koga_challenge",
             "name": {
               "literal": "Koga"
             },
@@ -2951,7 +2952,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_06_sabrina",
+            "identity": "gym_06_sabrina_challenge",
             "name": {
               "literal": "Sabrina"
             },
@@ -3507,7 +3508,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_07_blaine",
+            "identity": "gym_07_blaine_challenge",
             "name": {
               "literal": "Blaine"
             },
@@ -4121,7 +4122,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_08_giovanni",
+            "identity": "gym_08_giovanni_challenge",
             "name": {
               "literal": "Giovanni"
             },
@@ -4729,7 +4730,7 @@
             }
           ],
           "rct": {
-            "identity": "elite_01_lorelei",
+            "identity": "elite_01_lorelei_challenge",
             "name": {
               "literal": "Lorelei"
             },
@@ -5330,7 +5331,7 @@
             }
           ],
           "rct": {
-            "identity": "elite_02_bruno",
+            "identity": "elite_02_bruno_challenge",
             "name": {
               "literal": "Bruno"
             },
@@ -5931,7 +5932,7 @@
             }
           ],
           "rct": {
-            "identity": "elite_03_agatha",
+            "identity": "elite_03_agatha_challenge",
             "name": {
               "literal": "Agatha"
             },
@@ -6532,7 +6533,7 @@
             }
           ],
           "rct": {
-            "identity": "elite_04_lance",
+            "identity": "elite_04_lance_challenge",
             "name": {
               "literal": "Lance"
             },
@@ -7133,7 +7134,7 @@
             }
           ],
           "rct": {
-            "identity": "champion_blue",
+            "identity": "champion_blue_challenge",
             "name": {
               "literal": "Blue"
             },
@@ -7387,7 +7388,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_01_trainer_01",
+            "identity": "route_01_trainer_01_challenge",
             "name": {
               "literal": "Trail Novice"
             },
@@ -7611,7 +7612,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_01_trainer_02",
+            "identity": "route_01_trainer_02_challenge",
             "name": {
               "literal": "Meadow Apiarist"
             },
@@ -7848,7 +7849,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_01_trainer_03",
+            "identity": "route_01_trainer_03_challenge",
             "name": {
               "literal": "Vale Naturalist"
             },
@@ -8145,7 +8146,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_01_trainer_04",
+            "identity": "route_01_trainer_04_challenge",
             "name": {
               "literal": "Plateau Guide"
             },
@@ -8362,7 +8363,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_02_trainer_01",
+            "identity": "route_02_trainer_01_challenge",
             "name": {
               "literal": "Ravine Scrapper"
             },
@@ -8597,7 +8598,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_02_trainer_02",
+            "identity": "route_02_trainer_02_challenge",
             "name": {
               "literal": "Glowbug Keeper"
             },
@@ -8856,7 +8857,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_02_shore_trainer_01",
+            "identity": "route_02_shore_trainer_01_challenge",
             "name": {
               "literal": "North Bank Angler"
             },
@@ -9155,7 +9156,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_02_trainer_03",
+            "identity": "route_02_trainer_03_challenge",
             "name": {
               "literal": "Lake Surveyor"
             },
@@ -9367,7 +9368,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_03_trainer_01",
+            "identity": "route_03_trainer_01_challenge",
             "name": {
               "literal": "Climbing Novice"
             },
@@ -9596,7 +9597,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_03_trainer_02",
+            "identity": "route_03_trainer_02_challenge",
             "name": {
               "literal": "Grove Ranger"
             },
@@ -9834,7 +9835,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_03_trainer_03",
+            "identity": "route_03_trainer_03_challenge",
             "name": {
               "literal": "Groundkeeper"
             },
@@ -10091,7 +10092,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_03_trainer_04",
+            "identity": "route_03_trainer_04_challenge",
             "name": {
               "literal": "Signal Watcher"
             },
@@ -10399,7 +10400,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_03_trainer_05",
+            "identity": "route_03_trainer_05_challenge",
             "name": {
               "literal": "Vessu Ranger"
             },
@@ -10607,7 +10608,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_01",
+            "identity": "route_04_trainer_01_challenge",
             "name": {
               "literal": "Snowfield Novice"
             },
@@ -10832,7 +10833,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_02",
+            "identity": "route_04_trainer_02_challenge",
             "name": {
               "literal": "Alpine Ranger"
             },
@@ -11071,7 +11072,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_03",
+            "identity": "route_04_trainer_03_challenge",
             "name": {
               "literal": "Campfire Keeper"
             },
@@ -11370,7 +11371,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_04",
+            "identity": "route_04_trainer_04_challenge",
             "name": {
               "literal": "Ridge Scout"
             },
@@ -11629,7 +11630,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_05",
+            "identity": "route_04_trainer_05_challenge",
             "name": {
               "literal": "Bird Watcher"
             },
@@ -11928,7 +11929,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_06",
+            "identity": "route_04_trainer_06_challenge",
             "name": {
               "literal": "Naturalist"
             },
@@ -12137,7 +12138,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_05_trainer_01",
+            "identity": "route_05_trainer_01_challenge",
             "name": {
               "literal": "Field Hand"
             },
@@ -12362,7 +12363,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_05_trainer_02",
+            "identity": "route_05_trainer_02_challenge",
             "name": {
               "literal": "Field Medic"
             },
@@ -12596,7 +12597,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_05_trainer_03",
+            "identity": "route_05_trainer_03_challenge",
             "name": {
               "literal": "Mind Reader"
             },
@@ -12889,7 +12890,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_05_trainer_04",
+            "identity": "route_05_trainer_04_challenge",
             "name": {
               "literal": "Trail Warden"
             },
@@ -13097,7 +13098,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_06_trainer_01",
+            "identity": "route_06_trainer_01_challenge",
             "name": {
               "literal": "Marsh Novice"
             },
@@ -13327,7 +13328,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_06_trainer_02",
+            "identity": "route_06_trainer_02_challenge",
             "name": {
               "literal": "Marsh Ranger"
             },
@@ -13562,7 +13563,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_06_trainer_03",
+            "identity": "route_06_trainer_03_challenge",
             "name": {
               "literal": "Night Courier"
             },
@@ -13850,7 +13851,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_06_trainer_04",
+            "identity": "route_06_trainer_04_challenge",
             "name": {
               "literal": "Lake Pathfinder"
             },
@@ -14156,7 +14157,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_06_trainer_05",
+            "identity": "route_06_trainer_05_challenge",
             "name": {
               "literal": "Displaced Archivist"
             },
@@ -14363,7 +14364,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_01",
+            "identity": "route_07_trainer_01_challenge",
             "name": {
               "literal": "Expedition Novice"
             },
@@ -14593,7 +14594,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_02",
+            "identity": "route_07_trainer_02_challenge",
             "name": {
               "literal": "Bridge Hand"
             },
@@ -14828,7 +14829,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_03",
+            "identity": "route_07_trainer_03_challenge",
             "name": {
               "literal": "Shore Battler"
             },
@@ -15126,7 +15127,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_04",
+            "identity": "route_07_trainer_04_challenge",
             "name": {
               "literal": "Crater Geologist"
             },
@@ -15390,7 +15391,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_05",
+            "identity": "route_07_trainer_05_challenge",
             "name": {
               "literal": "Ash-Path Ranger"
             },
@@ -15690,7 +15691,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_06",
+            "identity": "route_07_trainer_06_challenge",
             "name": {
               "literal": "Prospector"
             },
@@ -15904,7 +15905,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_01",
+            "identity": "route_08_trainer_01_challenge",
             "name": {
               "literal": "Crater Novice"
             },
@@ -16135,7 +16136,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_02",
+            "identity": "route_08_trainer_02_challenge",
             "name": {
               "literal": "Crater Scout"
             },
@@ -16375,7 +16376,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_03",
+            "identity": "route_08_trainer_03_challenge",
             "name": {
               "literal": "Grassland Keeper"
             },
@@ -16669,7 +16670,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_04",
+            "identity": "route_08_trainer_04_challenge",
             "name": {
               "literal": "Sand Runner"
             },
@@ -16927,7 +16928,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_05",
+            "identity": "route_08_trainer_05_challenge",
             "name": {
               "literal": "Plateau Ranger"
             },
@@ -17221,7 +17222,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_06",
+            "identity": "route_08_trainer_06_challenge",
             "name": {
               "literal": "Rift Surveyor"
             },
@@ -17533,7 +17534,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_07",
+            "identity": "route_08_trainer_07_challenge",
             "name": {
               "literal": "Final Warden"
             },
@@ -17801,7 +17802,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_01",
+            "identity": "route_09_trainer_01_challenge",
             "name": {
               "literal": "League Applicant"
             },
@@ -18052,7 +18053,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_02",
+            "identity": "route_09_trainer_02_challenge",
             "name": {
               "literal": "Rift Hiker"
             },
@@ -18308,7 +18309,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_03",
+            "identity": "route_09_trainer_03_challenge",
             "name": {
               "literal": "Slagworks Keeper"
             },
@@ -18560,7 +18561,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_04",
+            "identity": "route_09_trainer_04_challenge",
             "name": {
               "literal": "Rift Cartographer"
             },
@@ -18816,7 +18817,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_05",
+            "identity": "route_09_trainer_05_challenge",
             "name": {
               "literal": "Trench Climber"
             },
@@ -19068,7 +19069,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_06",
+            "identity": "route_09_trainer_06_challenge",
             "name": {
               "literal": "Field Medic"
             },
@@ -19324,7 +19325,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_07",
+            "identity": "route_09_trainer_07_challenge",
             "name": {
               "literal": "Veteran Tactician"
             },
@@ -19576,7 +19577,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_08",
+            "identity": "route_09_trainer_08_challenge",
             "name": {
               "literal": "Cut Foreman"
             },
@@ -19827,7 +19828,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_09",
+            "identity": "route_09_trainer_09_challenge",
             "name": {
               "literal": "League Veteran"
             },
@@ -20188,7 +20189,7 @@
           ],
           "ai_profile": "league_aggressive",
           "rct": {
-            "identity": "route_09_trainer_10",
+            "identity": "route_09_trainer_10_challenge",
             "name": {
               "literal": "League Examiner"
             },
@@ -20261,6 +20262,6662 @@
                   "stoneedge",
                   "earthquake"
                 ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym1_junior_01",
+      "display_name": "Hall Mason",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "roggenrola",
+          "moveset": [
+            "smackdown",
+            "sandattack",
+            "harden",
+            "tackle"
+          ],
+          "level": 16
+        },
+        {
+          "species": "nacli",
+          "moveset": [
+            "rockthrow",
+            "mudshot",
+            "headbutt",
+            "harden"
+          ],
+          "level": 17
+        }
+      ],
+      "gym_order": 1,
+      "split": 1,
+      "leader_ace_level": 20,
+      "type_theme": "Rock",
+      "trainer_order": 1,
+      "lesson": "Sturdy holds one more turn: a single strong hit is not a plan.",
+      "dialogue": {
+        "pre": "dlg_gym1_junior_01_pre",
+        "win": "dlg_gym1_junior_01_win",
+        "loss": "dlg_gym1_junior_01_loss"
+      },
+      "dialogue_text": {
+        "pre": "Every stone in this hall was squared by hand. Let's see how square you are.",
+        "player_win": "Cut clean. The foreman will want to see that.",
+        "player_loss": "Rough edges. Go back down and dress them."
+      },
+      "rct": {
+        "identity": "gym1_junior_01",
+        "name": {
+          "literal": "Hall Mason"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "roggenrola",
+            "moveset": [
+              "smackdown",
+              "sandattack",
+              "harden",
+              "tackle"
+            ],
+            "level": 16
+          },
+          {
+            "species": "nacli",
+            "moveset": [
+              "rockthrow",
+              "mudshot",
+              "headbutt",
+              "harden"
+            ],
+            "level": 17
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "roggenrola",
+              "moveset": [
+                "smackdown",
+                "sandattack",
+                "harden",
+                "tackle"
+              ],
+              "level": 16
+            },
+            {
+              "species": "nacli",
+              "moveset": [
+                "rockthrow",
+                "mudshot",
+                "headbutt",
+                "harden"
+              ],
+              "level": 17
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym1_junior_01",
+            "name": {
+              "literal": "Hall Mason"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "roggenrola",
+                "moveset": [
+                  "smackdown",
+                  "sandattack",
+                  "harden",
+                  "tackle"
+                ],
+                "level": 16
+              },
+              {
+                "species": "nacli",
+                "moveset": [
+                  "rockthrow",
+                  "mudshot",
+                  "headbutt",
+                  "harden"
+                ],
+                "level": 17
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "roggenrola",
+              "moveset": [
+                "smackdown",
+                "sandattack",
+                "harden",
+                "tackle"
+              ],
+              "level": 16
+            },
+            {
+              "species": "rockruff",
+              "moveset": [
+                "rocktomb",
+                "bite",
+                "howl",
+                "sandattack"
+              ],
+              "level": 16
+            },
+            {
+              "species": "nacli",
+              "moveset": [
+                "rockthrow",
+                "mudshot",
+                "headbutt",
+                "harden"
+              ],
+              "level": 17,
+              "heldItem": "sitrus_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym1_junior_01_challenge",
+            "name": {
+              "literal": "Hall Mason"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "roggenrola",
+                "moveset": [
+                  "smackdown",
+                  "sandattack",
+                  "harden",
+                  "tackle"
+                ],
+                "level": 16
+              },
+              {
+                "species": "rockruff",
+                "moveset": [
+                  "rocktomb",
+                  "bite",
+                  "howl",
+                  "sandattack"
+                ],
+                "level": 16
+              },
+              {
+                "species": "nacli",
+                "moveset": [
+                  "rockthrow",
+                  "mudshot",
+                  "headbutt",
+                  "harden"
+                ],
+                "level": 17,
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym1_junior_02",
+      "display_name": "Loft Foreman",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "rockruff",
+          "moveset": [
+            "rocktomb",
+            "bite",
+            "howl",
+            "sandattack"
+          ],
+          "level": 17
+        },
+        {
+          "species": "larvitar",
+          "moveset": [
+            "rockslide",
+            "bite",
+            "scaryface",
+            "mudslap"
+          ],
+          "level": 18
+        }
+      ],
+      "gym_order": 1,
+      "split": 1,
+      "leader_ace_level": 20,
+      "type_theme": "Rock",
+      "trainer_order": 2,
+      "lesson": "Rock Tomb slows the answer you were counting on.",
+      "dialogue": {
+        "pre": "dlg_gym1_junior_02_pre",
+        "win": "dlg_gym1_junior_02_win",
+        "loss": "dlg_gym1_junior_02_loss"
+      },
+      "dialogue_text": {
+        "pre": "You came over the wall. Most people take the stack that goes nowhere.",
+        "player_win": "Good climbing, better battling. Brock is through the lit slot.",
+        "player_loss": "The wall's still there. Climb it again when you're ready."
+      },
+      "rct": {
+        "identity": "gym1_junior_02",
+        "name": {
+          "literal": "Loft Foreman"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "rockruff",
+            "moveset": [
+              "rocktomb",
+              "bite",
+              "howl",
+              "sandattack"
+            ],
+            "level": 17
+          },
+          {
+            "species": "larvitar",
+            "moveset": [
+              "rockslide",
+              "bite",
+              "scaryface",
+              "mudslap"
+            ],
+            "level": 18
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "rockruff",
+              "moveset": [
+                "rocktomb",
+                "bite",
+                "howl",
+                "sandattack"
+              ],
+              "level": 17
+            },
+            {
+              "species": "larvitar",
+              "moveset": [
+                "rockslide",
+                "bite",
+                "scaryface",
+                "mudslap"
+              ],
+              "level": 18
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym1_junior_02",
+            "name": {
+              "literal": "Loft Foreman"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "rockruff",
+                "moveset": [
+                  "rocktomb",
+                  "bite",
+                  "howl",
+                  "sandattack"
+                ],
+                "level": 17
+              },
+              {
+                "species": "larvitar",
+                "moveset": [
+                  "rockslide",
+                  "bite",
+                  "scaryface",
+                  "mudslap"
+                ],
+                "level": 18
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "binacle",
+              "moveset": [
+                "rocktomb",
+                "furyswipes",
+                "mudslap",
+                "withdraw"
+              ],
+              "level": 17
+            },
+            {
+              "species": "rockruff",
+              "moveset": [
+                "rocktomb",
+                "bite",
+                "howl",
+                "sandattack"
+              ],
+              "level": 17
+            },
+            {
+              "species": "larvitar",
+              "moveset": [
+                "rockslide",
+                "bite",
+                "scaryface",
+                "mudslap"
+              ],
+              "level": 18,
+              "heldItem": "sitrus_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym1_junior_02_challenge",
+            "name": {
+              "literal": "Loft Foreman"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "binacle",
+                "moveset": [
+                  "rocktomb",
+                  "furyswipes",
+                  "mudslap",
+                  "withdraw"
+                ],
+                "level": 17
+              },
+              {
+                "species": "rockruff",
+                "moveset": [
+                  "rocktomb",
+                  "bite",
+                  "howl",
+                  "sandattack"
+                ],
+                "level": 17
+              },
+              {
+                "species": "larvitar",
+                "moveset": [
+                  "rockslide",
+                  "bite",
+                  "scaryface",
+                  "mudslap"
+                ],
+                "level": 18,
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym1_junior_03",
+      "display_name": "Coal Hauler",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "rolycoly",
+          "moveset": [
+            "smackdown",
+            "rapidspin",
+            "rockpolish",
+            "smokescreen"
+          ],
+          "level": 18
+        },
+        {
+          "species": "carkol",
+          "moveset": [
+            "flamecharge",
+            "smackdown",
+            "rapidspin",
+            "smokescreen"
+          ],
+          "level": 19
+        }
+      ],
+      "gym_order": 1,
+      "split": 1,
+      "leader_ace_level": 20,
+      "type_theme": "Rock",
+      "trainer_order": 3,
+      "lesson": "Rapid Spin and Rock Polish buy speed: hit before the stone gets going.",
+      "dialogue": {
+        "pre": "dlg_gym1_junior_03_pre",
+        "win": "dlg_gym1_junior_03_win",
+        "loss": "dlg_gym1_junior_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "Last cart before the boss. Everything you brought up here, I haul back down.",
+        "player_win": "Fair load. Brock's just up the ladder. Mind the soot.",
+        "player_loss": "Too heavy for you yet. Back down the beams with you."
+      },
+      "rct": {
+        "identity": "gym1_junior_03",
+        "name": {
+          "literal": "Coal Hauler"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "rolycoly",
+            "moveset": [
+              "smackdown",
+              "rapidspin",
+              "rockpolish",
+              "smokescreen"
+            ],
+            "level": 18
+          },
+          {
+            "species": "carkol",
+            "moveset": [
+              "flamecharge",
+              "smackdown",
+              "rapidspin",
+              "smokescreen"
+            ],
+            "level": 19
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "rolycoly",
+              "moveset": [
+                "smackdown",
+                "rapidspin",
+                "rockpolish",
+                "smokescreen"
+              ],
+              "level": 18
+            },
+            {
+              "species": "carkol",
+              "moveset": [
+                "flamecharge",
+                "smackdown",
+                "rapidspin",
+                "smokescreen"
+              ],
+              "level": 19
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym1_junior_03",
+            "name": {
+              "literal": "Coal Hauler"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "rolycoly",
+                "moveset": [
+                  "smackdown",
+                  "rapidspin",
+                  "rockpolish",
+                  "smokescreen"
+                ],
+                "level": 18
+              },
+              {
+                "species": "carkol",
+                "moveset": [
+                  "flamecharge",
+                  "smackdown",
+                  "rapidspin",
+                  "smokescreen"
+                ],
+                "level": 19
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "rolycoly",
+              "moveset": [
+                "smackdown",
+                "rapidspin",
+                "rockpolish",
+                "smokescreen"
+              ],
+              "level": 18
+            },
+            {
+              "species": "nosepass",
+              "moveset": [
+                "rockthrow",
+                "block",
+                "thunderwave",
+                "harden"
+              ],
+              "level": 18
+            },
+            {
+              "species": "carkol",
+              "moveset": [
+                "flamecharge",
+                "smackdown",
+                "rapidspin",
+                "smokescreen"
+              ],
+              "level": 19,
+              "heldItem": "sitrus_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym1_junior_03_challenge",
+            "name": {
+              "literal": "Coal Hauler"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "rolycoly",
+                "moveset": [
+                  "smackdown",
+                  "rapidspin",
+                  "rockpolish",
+                  "smokescreen"
+                ],
+                "level": 18
+              },
+              {
+                "species": "nosepass",
+                "moveset": [
+                  "rockthrow",
+                  "block",
+                  "thunderwave",
+                  "harden"
+                ],
+                "level": 18
+              },
+              {
+                "species": "carkol",
+                "moveset": [
+                  "flamecharge",
+                  "smackdown",
+                  "rapidspin",
+                  "smokescreen"
+                ],
+                "level": 19,
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym2_junior_01",
+      "display_name": "Quay Swimmer",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "buizel",
+          "moveset": [
+            "watergun",
+            "quickattack",
+            "swift",
+            "soak"
+          ],
+          "level": 21
+        },
+        {
+          "species": "shellder",
+          "moveset": [
+            "watergun",
+            "iciclespear",
+            "withdraw",
+            "supersonic"
+          ],
+          "level": 22
+        }
+      ],
+      "gym_order": 2,
+      "split": 2,
+      "leader_ace_level": 25,
+      "type_theme": "Water",
+      "trainer_order": 1,
+      "lesson": "Swift Swim and priority: the water moves first unless you make it wait.",
+      "dialogue": {
+        "pre": "dlg_gym2_junior_01_pre",
+        "win": "dlg_gym2_junior_01_win",
+        "loss": "dlg_gym2_junior_01_loss"
+      },
+      "dialogue_text": {
+        "pre": "Nobody walks up to Misty's door. Whatever brought you, the water decides the rest.",
+        "player_win": "You keep your head above it. Go on in.",
+        "player_loss": "Swim back to the shallows and catch your breath."
+      },
+      "rct": {
+        "identity": "gym2_junior_01",
+        "name": {
+          "literal": "Quay Swimmer"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "buizel",
+            "moveset": [
+              "watergun",
+              "quickattack",
+              "swift",
+              "soak"
+            ],
+            "level": 21
+          },
+          {
+            "species": "shellder",
+            "moveset": [
+              "watergun",
+              "iciclespear",
+              "withdraw",
+              "supersonic"
+            ],
+            "level": 22
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "buizel",
+              "moveset": [
+                "watergun",
+                "quickattack",
+                "swift",
+                "soak"
+              ],
+              "level": 21
+            },
+            {
+              "species": "shellder",
+              "moveset": [
+                "watergun",
+                "iciclespear",
+                "withdraw",
+                "supersonic"
+              ],
+              "level": 22
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym2_junior_01",
+            "name": {
+              "literal": "Quay Swimmer"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "buizel",
+                "moveset": [
+                  "watergun",
+                  "quickattack",
+                  "swift",
+                  "soak"
+                ],
+                "level": 21
+              },
+              {
+                "species": "shellder",
+                "moveset": [
+                  "watergun",
+                  "iciclespear",
+                  "withdraw",
+                  "supersonic"
+                ],
+                "level": 22
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "buizel",
+              "moveset": [
+                "watergun",
+                "quickattack",
+                "swift",
+                "soak"
+              ],
+              "level": 21
+            },
+            {
+              "species": "wingull",
+              "moveset": [
+                "watergun",
+                "wingattack",
+                "supersonic",
+                "quickattack"
+              ],
+              "level": 21
+            },
+            {
+              "species": "shellder",
+              "moveset": [
+                "watergun",
+                "iciclespear",
+                "withdraw",
+                "supersonic"
+              ],
+              "level": 22,
+              "heldItem": "sitrus_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym2_junior_01_challenge",
+            "name": {
+              "literal": "Quay Swimmer"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "buizel",
+                "moveset": [
+                  "watergun",
+                  "quickattack",
+                  "swift",
+                  "soak"
+                ],
+                "level": 21
+              },
+              {
+                "species": "wingull",
+                "moveset": [
+                  "watergun",
+                  "wingattack",
+                  "supersonic",
+                  "quickattack"
+                ],
+                "level": 21
+              },
+              {
+                "species": "shellder",
+                "moveset": [
+                  "watergun",
+                  "iciclespear",
+                  "withdraw",
+                  "supersonic"
+                ],
+                "level": 22,
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym2_junior_02",
+      "display_name": "Lifeguard",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "staryu",
+          "moveset": [
+            "watergun",
+            "rapidspin",
+            "recover",
+            "swift"
+          ],
+          "level": 22
+        },
+        {
+          "species": "corphish",
+          "moveset": [
+            "bubblebeam",
+            "knockoff",
+            "harden",
+            "protect"
+          ],
+          "level": 23
+        }
+      ],
+      "gym_order": 2,
+      "split": 2,
+      "leader_ace_level": 25,
+      "type_theme": "Water",
+      "trainer_order": 2,
+      "lesson": "Recover undoes chip damage: hit hard or not at all.",
+      "dialogue": {
+        "pre": "dlg_gym2_junior_02_pre",
+        "win": "dlg_gym2_junior_02_win",
+        "loss": "dlg_gym2_junior_02_loss"
+      },
+      "dialogue_text": {
+        "pre": "Last check before the pool. Misty doesn't wait for anyone who can't keep up.",
+        "player_win": "Strong strokes. She's at the far rim.",
+        "player_loss": "Out of the water. Rest, then try again."
+      },
+      "rct": {
+        "identity": "gym2_junior_02",
+        "name": {
+          "literal": "Lifeguard"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "staryu",
+            "moveset": [
+              "watergun",
+              "rapidspin",
+              "recover",
+              "swift"
+            ],
+            "level": 22
+          },
+          {
+            "species": "corphish",
+            "moveset": [
+              "bubblebeam",
+              "knockoff",
+              "harden",
+              "protect"
+            ],
+            "level": 23
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "staryu",
+              "moveset": [
+                "watergun",
+                "rapidspin",
+                "recover",
+                "swift"
+              ],
+              "level": 22
+            },
+            {
+              "species": "corphish",
+              "moveset": [
+                "bubblebeam",
+                "knockoff",
+                "harden",
+                "protect"
+              ],
+              "level": 23
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym2_junior_02",
+            "name": {
+              "literal": "Lifeguard"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "staryu",
+                "moveset": [
+                  "watergun",
+                  "rapidspin",
+                  "recover",
+                  "swift"
+                ],
+                "level": 22
+              },
+              {
+                "species": "corphish",
+                "moveset": [
+                  "bubblebeam",
+                  "knockoff",
+                  "harden",
+                  "protect"
+                ],
+                "level": 23
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "krabby",
+              "moveset": [
+                "bubblebeam",
+                "metalclaw",
+                "harden",
+                "mudshot"
+              ],
+              "level": 22
+            },
+            {
+              "species": "staryu",
+              "moveset": [
+                "watergun",
+                "rapidspin",
+                "recover",
+                "swift"
+              ],
+              "level": 22
+            },
+            {
+              "species": "corphish",
+              "moveset": [
+                "bubblebeam",
+                "knockoff",
+                "harden",
+                "protect"
+              ],
+              "level": 23,
+              "heldItem": "sitrus_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym2_junior_02_challenge",
+            "name": {
+              "literal": "Lifeguard"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "krabby",
+                "moveset": [
+                  "bubblebeam",
+                  "metalclaw",
+                  "harden",
+                  "mudshot"
+                ],
+                "level": 22
+              },
+              {
+                "species": "staryu",
+                "moveset": [
+                  "watergun",
+                  "rapidspin",
+                  "recover",
+                  "swift"
+                ],
+                "level": 22
+              },
+              {
+                "species": "corphish",
+                "moveset": [
+                  "bubblebeam",
+                  "knockoff",
+                  "harden",
+                  "protect"
+                ],
+                "level": 23,
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym3_junior_01",
+      "display_name": "Line Engineer",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "magnemite",
+          "moveset": [
+            "spark",
+            "thunderwave",
+            "supersonic",
+            "gyroball"
+          ],
+          "level": 26
+        },
+        {
+          "species": "pachirisu",
+          "moveset": [
+            "nuzzle",
+            "spark",
+            "quickattack",
+            "charm"
+          ],
+          "level": 27
+        }
+      ],
+      "gym_order": 3,
+      "split": 3,
+      "leader_ace_level": 30,
+      "type_theme": "Electric",
+      "trainer_order": 1,
+      "lesson": "Thunder Wave first, damage second: paralysis is the real attack.",
+      "dialogue": {
+        "pre": "dlg_gym3_junior_01_pre",
+        "win": "dlg_gym3_junior_01_win",
+        "loss": "dlg_gym3_junior_01_loss"
+      },
+      "dialogue_text": {
+        "pre": "Mind the tower, it's live. So am I.",
+        "player_win": "Clean break in the circuit. Up you go.",
+        "player_loss": "Tripped the breaker. Reset and come back."
+      },
+      "rct": {
+        "identity": "gym3_junior_01",
+        "name": {
+          "literal": "Line Engineer"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "magnemite",
+            "moveset": [
+              "spark",
+              "thunderwave",
+              "supersonic",
+              "gyroball"
+            ],
+            "level": 26
+          },
+          {
+            "species": "pachirisu",
+            "moveset": [
+              "nuzzle",
+              "spark",
+              "quickattack",
+              "charm"
+            ],
+            "level": 27
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "magnemite",
+              "moveset": [
+                "spark",
+                "thunderwave",
+                "supersonic",
+                "gyroball"
+              ],
+              "level": 26
+            },
+            {
+              "species": "pachirisu",
+              "moveset": [
+                "nuzzle",
+                "spark",
+                "quickattack",
+                "charm"
+              ],
+              "level": 27
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym3_junior_01",
+            "name": {
+              "literal": "Line Engineer"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "magnemite",
+                "moveset": [
+                  "spark",
+                  "thunderwave",
+                  "supersonic",
+                  "gyroball"
+                ],
+                "level": 26
+              },
+              {
+                "species": "pachirisu",
+                "moveset": [
+                  "nuzzle",
+                  "spark",
+                  "quickattack",
+                  "charm"
+                ],
+                "level": 27
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "magnemite",
+              "moveset": [
+                "spark",
+                "thunderwave",
+                "supersonic",
+                "gyroball"
+              ],
+              "level": 26
+            },
+            {
+              "species": "flaaffy",
+              "moveset": [
+                "thundershock",
+                "cottonspore",
+                "thunderwave",
+                "takedown"
+              ],
+              "level": 26
+            },
+            {
+              "species": "pachirisu",
+              "moveset": [
+                "nuzzle",
+                "spark",
+                "quickattack",
+                "charm"
+              ],
+              "level": 27,
+              "heldItem": "cheri_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym3_junior_01_challenge",
+            "name": {
+              "literal": "Line Engineer"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "magnemite",
+                "moveset": [
+                  "spark",
+                  "thunderwave",
+                  "supersonic",
+                  "gyroball"
+                ],
+                "level": 26
+              },
+              {
+                "species": "flaaffy",
+                "moveset": [
+                  "thundershock",
+                  "cottonspore",
+                  "thunderwave",
+                  "takedown"
+                ],
+                "level": 26
+              },
+              {
+                "species": "pachirisu",
+                "moveset": [
+                  "nuzzle",
+                  "spark",
+                  "quickattack",
+                  "charm"
+                ],
+                "level": 27,
+                "heldItem": "cheri_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym3_junior_02",
+      "display_name": "Relay Technician",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "voltorb",
+          "moveset": [
+            "chargebeam",
+            "spark",
+            "rollout",
+            "screech"
+          ],
+          "level": 27
+        },
+        {
+          "species": "flaaffy",
+          "moveset": [
+            "thundershock",
+            "cottonspore",
+            "thunderwave",
+            "takedown"
+          ],
+          "level": 28
+        }
+      ],
+      "gym_order": 3,
+      "split": 3,
+      "leader_ace_level": 30,
+      "type_theme": "Electric",
+      "trainer_order": 2,
+      "lesson": "Charge Beam builds: end it before the third turn.",
+      "dialogue": {
+        "pre": "dlg_gym3_junior_02_pre",
+        "win": "dlg_gym3_junior_02_win",
+        "loss": "dlg_gym3_junior_02_loss"
+      },
+      "dialogue_text": {
+        "pre": "Three runs and only one of them is carrying. Did you read which?",
+        "player_win": "You can read a board. The Lieutenant's past the duct.",
+        "player_loss": "Grounded. Walk the catwalk again and think."
+      },
+      "rct": {
+        "identity": "gym3_junior_02",
+        "name": {
+          "literal": "Relay Technician"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "voltorb",
+            "moveset": [
+              "chargebeam",
+              "spark",
+              "rollout",
+              "screech"
+            ],
+            "level": 27
+          },
+          {
+            "species": "flaaffy",
+            "moveset": [
+              "thundershock",
+              "cottonspore",
+              "thunderwave",
+              "takedown"
+            ],
+            "level": 28
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "voltorb",
+              "moveset": [
+                "chargebeam",
+                "spark",
+                "rollout",
+                "screech"
+              ],
+              "level": 27
+            },
+            {
+              "species": "flaaffy",
+              "moveset": [
+                "thundershock",
+                "cottonspore",
+                "thunderwave",
+                "takedown"
+              ],
+              "level": 28
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym3_junior_02",
+            "name": {
+              "literal": "Relay Technician"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "voltorb",
+                "moveset": [
+                  "chargebeam",
+                  "spark",
+                  "rollout",
+                  "screech"
+                ],
+                "level": 27
+              },
+              {
+                "species": "flaaffy",
+                "moveset": [
+                  "thundershock",
+                  "cottonspore",
+                  "thunderwave",
+                  "takedown"
+                ],
+                "level": 28
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "emolga",
+              "moveset": [
+                "spark",
+                "aerialace",
+                "encore",
+                "quickattack"
+              ],
+              "level": 27
+            },
+            {
+              "species": "voltorb",
+              "moveset": [
+                "chargebeam",
+                "spark",
+                "rollout",
+                "screech"
+              ],
+              "level": 27
+            },
+            {
+              "species": "flaaffy",
+              "moveset": [
+                "thundershock",
+                "cottonspore",
+                "thunderwave",
+                "takedown"
+              ],
+              "level": 28,
+              "heldItem": "cheri_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym3_junior_02_challenge",
+            "name": {
+              "literal": "Relay Technician"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "emolga",
+                "moveset": [
+                  "spark",
+                  "aerialace",
+                  "encore",
+                  "quickattack"
+                ],
+                "level": 27
+              },
+              {
+                "species": "voltorb",
+                "moveset": [
+                  "chargebeam",
+                  "spark",
+                  "rollout",
+                  "screech"
+                ],
+                "level": 27
+              },
+              {
+                "species": "flaaffy",
+                "moveset": [
+                  "thundershock",
+                  "cottonspore",
+                  "thunderwave",
+                  "takedown"
+                ],
+                "level": 28,
+                "heldItem": "cheri_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym3_junior_03",
+      "display_name": "Cable Rigger",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "plusle",
+          "moveset": [
+            "electroball",
+            "spark",
+            "encore",
+            "quickattack"
+          ],
+          "level": 28
+        },
+        {
+          "species": "luxio",
+          "moveset": [
+            "spark",
+            "bite",
+            "charge",
+            "leer"
+          ],
+          "level": 29
+        }
+      ],
+      "gym_order": 3,
+      "split": 3,
+      "leader_ace_level": 30,
+      "type_theme": "Electric",
+      "trainer_order": 3,
+      "lesson": "Electro Ball hits harder the faster it is: slow it down or outpace it.",
+      "dialogue": {
+        "pre": "dlg_gym3_junior_03_pre",
+        "win": "dlg_gym3_junior_03_win",
+        "loss": "dlg_gym3_junior_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "You walked the whole catwalk to get here. The cable run is mine.",
+        "player_win": "Line's yours. Keep your hands off the rails on the way over.",
+        "player_loss": "Tripped the breaker. Reset and come back along the catwalk."
+      },
+      "rct": {
+        "identity": "gym3_junior_03",
+        "name": {
+          "literal": "Cable Rigger"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "plusle",
+            "moveset": [
+              "electroball",
+              "spark",
+              "encore",
+              "quickattack"
+            ],
+            "level": 28
+          },
+          {
+            "species": "luxio",
+            "moveset": [
+              "spark",
+              "bite",
+              "charge",
+              "leer"
+            ],
+            "level": 29
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "plusle",
+              "moveset": [
+                "electroball",
+                "spark",
+                "encore",
+                "quickattack"
+              ],
+              "level": 28
+            },
+            {
+              "species": "luxio",
+              "moveset": [
+                "spark",
+                "bite",
+                "charge",
+                "leer"
+              ],
+              "level": 29
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym3_junior_03",
+            "name": {
+              "literal": "Cable Rigger"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "plusle",
+                "moveset": [
+                  "electroball",
+                  "spark",
+                  "encore",
+                  "quickattack"
+                ],
+                "level": 28
+              },
+              {
+                "species": "luxio",
+                "moveset": [
+                  "spark",
+                  "bite",
+                  "charge",
+                  "leer"
+                ],
+                "level": 29
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "plusle",
+              "moveset": [
+                "electroball",
+                "spark",
+                "encore",
+                "quickattack"
+              ],
+              "level": 28
+            },
+            {
+              "species": "minun",
+              "moveset": [
+                "electroball",
+                "spark",
+                "encore",
+                "thunderwave"
+              ],
+              "level": 28
+            },
+            {
+              "species": "luxio",
+              "moveset": [
+                "spark",
+                "bite",
+                "charge",
+                "leer"
+              ],
+              "level": 29,
+              "heldItem": "cheri_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym3_junior_03_challenge",
+            "name": {
+              "literal": "Cable Rigger"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "plusle",
+                "moveset": [
+                  "electroball",
+                  "spark",
+                  "encore",
+                  "quickattack"
+                ],
+                "level": 28
+              },
+              {
+                "species": "minun",
+                "moveset": [
+                  "electroball",
+                  "spark",
+                  "encore",
+                  "thunderwave"
+                ],
+                "level": 28
+              },
+              {
+                "species": "luxio",
+                "moveset": [
+                  "spark",
+                  "bite",
+                  "charge",
+                  "leer"
+                ],
+                "level": 29,
+                "heldItem": "cheri_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym4_junior_01",
+      "display_name": "Glasshouse Gardener",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "skiploom",
+          "moveset": [
+            "megadrain",
+            "acrobatics",
+            "stunspore",
+            "synthesis"
+          ],
+          "level": 31
+        },
+        {
+          "species": "gloom",
+          "moveset": [
+            "megadrain",
+            "acid",
+            "sleeppowder",
+            "moonblast"
+          ],
+          "level": 32
+        }
+      ],
+      "gym_order": 4,
+      "split": 4,
+      "leader_ace_level": 35,
+      "type_theme": "Grass",
+      "trainer_order": 1,
+      "lesson": "Powders are the threat; the damage is just weather.",
+      "dialogue": {
+        "pre": "dlg_gym4_junior_01_pre",
+        "win": "dlg_gym4_junior_01_win",
+        "loss": "dlg_gym4_junior_01_loss"
+      },
+      "dialogue_text": {
+        "pre": "Mind the beds. Mind me, too.",
+        "player_win": "You walk the canopy like you planted it.",
+        "player_loss": "Wilted. Take some sun and come back up."
+      },
+      "rct": {
+        "identity": "gym4_junior_01",
+        "name": {
+          "literal": "Glasshouse Gardener"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "skiploom",
+            "moveset": [
+              "megadrain",
+              "acrobatics",
+              "stunspore",
+              "synthesis"
+            ],
+            "level": 31
+          },
+          {
+            "species": "gloom",
+            "moveset": [
+              "megadrain",
+              "acid",
+              "sleeppowder",
+              "moonblast"
+            ],
+            "level": 32
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "skiploom",
+              "moveset": [
+                "megadrain",
+                "acrobatics",
+                "stunspore",
+                "synthesis"
+              ],
+              "level": 31
+            },
+            {
+              "species": "gloom",
+              "moveset": [
+                "megadrain",
+                "acid",
+                "sleeppowder",
+                "moonblast"
+              ],
+              "level": 32
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym4_junior_01",
+            "name": {
+              "literal": "Glasshouse Gardener"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "skiploom",
+                "moveset": [
+                  "megadrain",
+                  "acrobatics",
+                  "stunspore",
+                  "synthesis"
+                ],
+                "level": 31
+              },
+              {
+                "species": "gloom",
+                "moveset": [
+                  "megadrain",
+                  "acid",
+                  "sleeppowder",
+                  "moonblast"
+                ],
+                "level": 32
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "nuzleaf",
+              "moveset": [
+                "razorleaf",
+                "fakeout",
+                "torment",
+                "payback"
+              ],
+              "level": 31
+            },
+            {
+              "species": "skiploom",
+              "moveset": [
+                "megadrain",
+                "acrobatics",
+                "stunspore",
+                "synthesis"
+              ],
+              "level": 31
+            },
+            {
+              "species": "gloom",
+              "moveset": [
+                "gigadrain",
+                "acid",
+                "sleeppowder",
+                "moonblast"
+              ],
+              "level": 32,
+              "heldItem": "lum_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym4_junior_01_challenge",
+            "name": {
+              "literal": "Glasshouse Gardener"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "nuzleaf",
+                "moveset": [
+                  "razorleaf",
+                  "fakeout",
+                  "torment",
+                  "payback"
+                ],
+                "level": 31
+              },
+              {
+                "species": "skiploom",
+                "moveset": [
+                  "megadrain",
+                  "acrobatics",
+                  "stunspore",
+                  "synthesis"
+                ],
+                "level": 31
+              },
+              {
+                "species": "gloom",
+                "moveset": [
+                  "gigadrain",
+                  "acid",
+                  "sleeppowder",
+                  "moonblast"
+                ],
+                "level": 32,
+                "heldItem": "lum_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym4_junior_02",
+      "display_name": "Canopy Botanist",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "weepinbell",
+          "moveset": [
+            "razorleaf",
+            "poisonpowder",
+            "knockoff",
+            "wrap"
+          ],
+          "level": 32
+        },
+        {
+          "species": "tangela",
+          "moveset": [
+            "megadrain",
+            "ancientpower",
+            "stunspore",
+            "knockoff"
+          ],
+          "level": 33
+        }
+      ],
+      "gym_order": 4,
+      "split": 4,
+      "leader_ace_level": 35,
+      "type_theme": "Grass",
+      "trainer_order": 2,
+      "lesson": "Regenerator and Leech Seed: a slow fight favours the garden.",
+      "dialogue": {
+        "pre": "dlg_gym4_junior_02_pre",
+        "win": "dlg_gym4_junior_02_win",
+        "loss": "dlg_gym4_junior_02_loss"
+      },
+      "dialogue_text": {
+        "pre": "One line of piers still has its second stone. You saw which?",
+        "player_win": "Erika is in the court below. Drop carefully.",
+        "player_loss": "Down in the mulch again. The ladder is by the wall."
+      },
+      "rct": {
+        "identity": "gym4_junior_02",
+        "name": {
+          "literal": "Canopy Botanist"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "weepinbell",
+            "moveset": [
+              "razorleaf",
+              "poisonpowder",
+              "knockoff",
+              "wrap"
+            ],
+            "level": 32
+          },
+          {
+            "species": "tangela",
+            "moveset": [
+              "megadrain",
+              "ancientpower",
+              "stunspore",
+              "knockoff"
+            ],
+            "level": 33
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "weepinbell",
+              "moveset": [
+                "razorleaf",
+                "poisonpowder",
+                "knockoff",
+                "wrap"
+              ],
+              "level": 32
+            },
+            {
+              "species": "tangela",
+              "moveset": [
+                "megadrain",
+                "ancientpower",
+                "stunspore",
+                "knockoff"
+              ],
+              "level": 33
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym4_junior_02",
+            "name": {
+              "literal": "Canopy Botanist"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "weepinbell",
+                "moveset": [
+                  "razorleaf",
+                  "poisonpowder",
+                  "knockoff",
+                  "wrap"
+                ],
+                "level": 32
+              },
+              {
+                "species": "tangela",
+                "moveset": [
+                  "megadrain",
+                  "ancientpower",
+                  "stunspore",
+                  "knockoff"
+                ],
+                "level": 33
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "cacturne",
+              "moveset": [
+                "needlearm",
+                "suckerpunch",
+                "leechseed",
+                "spikes"
+              ],
+              "level": 32
+            },
+            {
+              "species": "weepinbell",
+              "moveset": [
+                "razorleaf",
+                "poisonpowder",
+                "knockoff",
+                "wrap"
+              ],
+              "level": 32
+            },
+            {
+              "species": "tangela",
+              "moveset": [
+                "gigadrain",
+                "ancientpower",
+                "stunspore",
+                "knockoff"
+              ],
+              "level": 33,
+              "heldItem": "lum_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym4_junior_02_challenge",
+            "name": {
+              "literal": "Canopy Botanist"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "cacturne",
+                "moveset": [
+                  "needlearm",
+                  "suckerpunch",
+                  "leechseed",
+                  "spikes"
+                ],
+                "level": 32
+              },
+              {
+                "species": "weepinbell",
+                "moveset": [
+                  "razorleaf",
+                  "poisonpowder",
+                  "knockoff",
+                  "wrap"
+                ],
+                "level": 32
+              },
+              {
+                "species": "tangela",
+                "moveset": [
+                  "gigadrain",
+                  "ancientpower",
+                  "stunspore",
+                  "knockoff"
+                ],
+                "level": 33,
+                "heldItem": "lum_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym4_junior_03",
+      "display_name": "Bough Climber",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "sunflora",
+          "moveset": [
+            "gigadrain",
+            "razorleaf",
+            "leechseed",
+            "bulletseed"
+          ],
+          "level": 32
+        },
+        {
+          "species": "breloom",
+          "moveset": [
+            "forcepalm",
+            "megadrain",
+            "stunspore",
+            "headbutt"
+          ],
+          "level": 33
+        }
+      ],
+      "gym_order": 4,
+      "split": 4,
+      "leader_ace_level": 35,
+      "type_theme": "Grass",
+      "trainer_order": 3,
+      "lesson": "Stun Spore is the plan, not the damage: keep a cure or a switch ready.",
+      "dialogue": {
+        "pre": "dlg_gym4_junior_03_pre",
+        "win": "dlg_gym4_junior_03_win",
+        "loss": "dlg_gym4_junior_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "Nobody gets up the living bough without a scratch. Let's give you one.",
+        "player_win": "Steady footing. The high canopy is all yours.",
+        "player_loss": "The bough threw you. Breathe, and climb it again."
+      },
+      "rct": {
+        "identity": "gym4_junior_03",
+        "name": {
+          "literal": "Bough Climber"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "sunflora",
+            "moveset": [
+              "gigadrain",
+              "razorleaf",
+              "leechseed",
+              "bulletseed"
+            ],
+            "level": 32
+          },
+          {
+            "species": "breloom",
+            "moveset": [
+              "forcepalm",
+              "megadrain",
+              "stunspore",
+              "headbutt"
+            ],
+            "level": 33
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "sunflora",
+              "moveset": [
+                "gigadrain",
+                "razorleaf",
+                "leechseed",
+                "bulletseed"
+              ],
+              "level": 32
+            },
+            {
+              "species": "breloom",
+              "moveset": [
+                "forcepalm",
+                "megadrain",
+                "stunspore",
+                "headbutt"
+              ],
+              "level": 33
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym4_junior_03",
+            "name": {
+              "literal": "Bough Climber"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "sunflora",
+                "moveset": [
+                  "gigadrain",
+                  "razorleaf",
+                  "leechseed",
+                  "bulletseed"
+                ],
+                "level": 32
+              },
+              {
+                "species": "breloom",
+                "moveset": [
+                  "forcepalm",
+                  "megadrain",
+                  "stunspore",
+                  "headbutt"
+                ],
+                "level": 33
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "sunflora",
+              "moveset": [
+                "gigadrain",
+                "razorleaf",
+                "leechseed",
+                "bulletseed"
+              ],
+              "level": 32
+            },
+            {
+              "species": "lombre",
+              "moveset": [
+                "bubblebeam",
+                "megadrain",
+                "furyswipes",
+                "leechseed"
+              ],
+              "level": 32
+            },
+            {
+              "species": "breloom",
+              "moveset": [
+                "forcepalm",
+                "megadrain",
+                "stunspore",
+                "headbutt"
+              ],
+              "level": 33,
+              "heldItem": "lum_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym4_junior_03_challenge",
+            "name": {
+              "literal": "Bough Climber"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "sunflora",
+                "moveset": [
+                  "gigadrain",
+                  "razorleaf",
+                  "leechseed",
+                  "bulletseed"
+                ],
+                "level": 32
+              },
+              {
+                "species": "lombre",
+                "moveset": [
+                  "bubblebeam",
+                  "megadrain",
+                  "furyswipes",
+                  "leechseed"
+                ],
+                "level": 32
+              },
+              {
+                "species": "breloom",
+                "moveset": [
+                  "forcepalm",
+                  "megadrain",
+                  "stunspore",
+                  "headbutt"
+                ],
+                "level": 33,
+                "heldItem": "lum_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym5_junior_01",
+      "display_name": "Fen Tracker",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "croagunk",
+          "moveset": [
+            "poisonjab",
+            "suckerpunch",
+            "revenge",
+            "taunt"
+          ],
+          "level": 36
+        },
+        {
+          "species": "skorupi",
+          "moveset": [
+            "poisonfang",
+            "bite",
+            "toxicspikes",
+            "pinmissile"
+          ],
+          "level": 37
+        }
+      ],
+      "gym_order": 5,
+      "split": 5,
+      "leader_ace_level": 40,
+      "type_theme": "Poison",
+      "trainer_order": 1,
+      "lesson": "Sucker Punch punishes the slow, careful setup.",
+      "dialogue": {
+        "pre": "dlg_gym5_junior_01_pre",
+        "win": "dlg_gym5_junior_01_win",
+        "loss": "dlg_gym5_junior_01_loss"
+      },
+      "dialogue_text": {
+        "pre": "You came in loud. Koga will have heard you already.",
+        "player_win": "Quieter than you look. Take the reed stair.",
+        "player_loss": "The fen keeps what it catches. Dry off and try again."
+      },
+      "rct": {
+        "identity": "gym5_junior_01",
+        "name": {
+          "literal": "Fen Tracker"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "croagunk",
+            "moveset": [
+              "poisonjab",
+              "suckerpunch",
+              "revenge",
+              "taunt"
+            ],
+            "level": 36
+          },
+          {
+            "species": "skorupi",
+            "moveset": [
+              "poisonfang",
+              "bite",
+              "toxicspikes",
+              "pinmissile"
+            ],
+            "level": 37
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "croagunk",
+              "moveset": [
+                "poisonjab",
+                "suckerpunch",
+                "revenge",
+                "taunt"
+              ],
+              "level": 36
+            },
+            {
+              "species": "skorupi",
+              "moveset": [
+                "poisonfang",
+                "bite",
+                "toxicspikes",
+                "pinmissile"
+              ],
+              "level": 37
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym5_junior_01",
+            "name": {
+              "literal": "Fen Tracker"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "croagunk",
+                "moveset": [
+                  "poisonjab",
+                  "suckerpunch",
+                  "revenge",
+                  "taunt"
+                ],
+                "level": 36
+              },
+              {
+                "species": "skorupi",
+                "moveset": [
+                  "poisonfang",
+                  "bite",
+                  "toxicspikes",
+                  "pinmissile"
+                ],
+                "level": 37
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "grimer",
+              "moveset": [
+                "sludge",
+                "minimize",
+                "mudbomb",
+                "disable"
+              ],
+              "level": 36
+            },
+            {
+              "species": "croagunk",
+              "moveset": [
+                "poisonjab",
+                "suckerpunch",
+                "revenge",
+                "taunt"
+              ],
+              "level": 36
+            },
+            {
+              "species": "skorupi",
+              "moveset": [
+                "poisonfang",
+                "bite",
+                "toxicspikes",
+                "pinmissile"
+              ],
+              "level": 37,
+              "heldItem": "black_sludge"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym5_junior_01_challenge",
+            "name": {
+              "literal": "Fen Tracker"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "grimer",
+                "moveset": [
+                  "sludge",
+                  "minimize",
+                  "mudbomb",
+                  "disable"
+                ],
+                "level": 36
+              },
+              {
+                "species": "croagunk",
+                "moveset": [
+                  "poisonjab",
+                  "suckerpunch",
+                  "revenge",
+                  "taunt"
+                ],
+                "level": 36
+              },
+              {
+                "species": "skorupi",
+                "moveset": [
+                  "poisonfang",
+                  "bite",
+                  "toxicspikes",
+                  "pinmissile"
+                ],
+                "level": 37,
+                "heldItem": "black_sludge"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym5_junior_02",
+      "display_name": "Reed Watcher",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "golbat",
+          "moveset": [
+            "poisonfang",
+            "wingattack",
+            "confuseray",
+            "bite"
+          ],
+          "level": 37
+        },
+        {
+          "species": "arbok",
+          "moveset": [
+            "poisonfang",
+            "glare",
+            "crunch",
+            "acidspray"
+          ],
+          "level": 38
+        }
+      ],
+      "gym_order": 5,
+      "split": 5,
+      "leader_ace_level": 40,
+      "type_theme": "Poison",
+      "trainer_order": 2,
+      "lesson": "Toxic is a clock: every switch spends your time.",
+      "dialogue": {
+        "pre": "dlg_gym5_junior_02_pre",
+        "win": "dlg_gym5_junior_02_win",
+        "loss": "dlg_gym5_junior_02_loss"
+      },
+      "dialogue_text": {
+        "pre": "The tank is breathing. Do you know where it comes up?",
+        "player_win": "You read the water. The flue's below.",
+        "player_loss": "Too long under. Breathe, then come back."
+      },
+      "rct": {
+        "identity": "gym5_junior_02",
+        "name": {
+          "literal": "Reed Watcher"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "golbat",
+            "moveset": [
+              "poisonfang",
+              "wingattack",
+              "confuseray",
+              "bite"
+            ],
+            "level": 37
+          },
+          {
+            "species": "arbok",
+            "moveset": [
+              "poisonfang",
+              "glare",
+              "crunch",
+              "acidspray"
+            ],
+            "level": 38
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "golbat",
+              "moveset": [
+                "poisonfang",
+                "wingattack",
+                "confuseray",
+                "bite"
+              ],
+              "level": 37
+            },
+            {
+              "species": "arbok",
+              "moveset": [
+                "poisonfang",
+                "glare",
+                "crunch",
+                "acidspray"
+              ],
+              "level": 38
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym5_junior_02",
+            "name": {
+              "literal": "Reed Watcher"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "golbat",
+                "moveset": [
+                  "poisonfang",
+                  "wingattack",
+                  "confuseray",
+                  "bite"
+                ],
+                "level": 37
+              },
+              {
+                "species": "arbok",
+                "moveset": [
+                  "poisonfang",
+                  "glare",
+                  "crunch",
+                  "acidspray"
+                ],
+                "level": 38
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "qwilfish",
+              "moveset": [
+                "poisonjab",
+                "aquatail",
+                "spikes",
+                "toxicspikes"
+              ],
+              "level": 37
+            },
+            {
+              "species": "golbat",
+              "moveset": [
+                "poisonfang",
+                "wingattack",
+                "confuseray",
+                "bite"
+              ],
+              "level": 37
+            },
+            {
+              "species": "arbok",
+              "moveset": [
+                "poisonfang",
+                "glare",
+                "crunch",
+                "acidspray"
+              ],
+              "level": 38,
+              "heldItem": "black_sludge"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym5_junior_02_challenge",
+            "name": {
+              "literal": "Reed Watcher"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "qwilfish",
+                "moveset": [
+                  "poisonjab",
+                  "aquatail",
+                  "spikes",
+                  "toxicspikes"
+                ],
+                "level": 37
+              },
+              {
+                "species": "golbat",
+                "moveset": [
+                  "poisonfang",
+                  "wingattack",
+                  "confuseray",
+                  "bite"
+                ],
+                "level": 37
+              },
+              {
+                "species": "arbok",
+                "moveset": [
+                  "poisonfang",
+                  "glare",
+                  "crunch",
+                  "acidspray"
+                ],
+                "level": 38,
+                "heldItem": "black_sludge"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym5_junior_03",
+      "display_name": "Watch Floor Sentry",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "nidorina",
+          "moveset": [
+            "poisonfang",
+            "doublekick",
+            "bite",
+            "toxicspikes"
+          ],
+          "level": 38
+        },
+        {
+          "species": "skuntank",
+          "moveset": [
+            "nightslash",
+            "toxic",
+            "suckerpunch",
+            "flamethrower"
+          ],
+          "level": 39
+        }
+      ],
+      "gym_order": 5,
+      "split": 5,
+      "leader_ace_level": 40,
+      "type_theme": "Poison",
+      "trainer_order": 3,
+      "lesson": "Toxic Spikes and a pivot: the damage comes on entry.",
+      "dialogue": {
+        "pre": "dlg_gym5_junior_03_pre",
+        "win": "dlg_gym5_junior_03_win",
+        "loss": "dlg_gym5_junior_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "Up the flue and still standing. Koga will be pleased, if you get past me.",
+        "player_win": "Go on. He has been watching you since the door.",
+        "player_loss": "Back down the chute. The fen is patient."
+      },
+      "rct": {
+        "identity": "gym5_junior_03",
+        "name": {
+          "literal": "Watch Floor Sentry"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "nidorina",
+            "moveset": [
+              "poisonfang",
+              "doublekick",
+              "bite",
+              "toxicspikes"
+            ],
+            "level": 38
+          },
+          {
+            "species": "skuntank",
+            "moveset": [
+              "nightslash",
+              "toxic",
+              "suckerpunch",
+              "flamethrower"
+            ],
+            "level": 39
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "nidorina",
+              "moveset": [
+                "poisonfang",
+                "doublekick",
+                "bite",
+                "toxicspikes"
+              ],
+              "level": 38
+            },
+            {
+              "species": "skuntank",
+              "moveset": [
+                "nightslash",
+                "toxic",
+                "suckerpunch",
+                "flamethrower"
+              ],
+              "level": 39
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym5_junior_03",
+            "name": {
+              "literal": "Watch Floor Sentry"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "nidorina",
+                "moveset": [
+                  "poisonfang",
+                  "doublekick",
+                  "bite",
+                  "toxicspikes"
+                ],
+                "level": 38
+              },
+              {
+                "species": "skuntank",
+                "moveset": [
+                  "nightslash",
+                  "toxic",
+                  "suckerpunch",
+                  "flamethrower"
+                ],
+                "level": 39
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "toxapex",
+              "moveset": [
+                "venoshock",
+                "recover",
+                "toxicspikes",
+                "banefulbunker"
+              ],
+              "level": 38
+            },
+            {
+              "species": "nidorina",
+              "moveset": [
+                "poisonfang",
+                "doublekick",
+                "bite",
+                "toxicspikes"
+              ],
+              "level": 38
+            },
+            {
+              "species": "skuntank",
+              "moveset": [
+                "nightslash",
+                "toxic",
+                "suckerpunch",
+                "flamethrower"
+              ],
+              "level": 39,
+              "heldItem": "black_sludge"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym5_junior_03_challenge",
+            "name": {
+              "literal": "Watch Floor Sentry"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "toxapex",
+                "moveset": [
+                  "venoshock",
+                  "recover",
+                  "toxicspikes",
+                  "banefulbunker"
+                ],
+                "level": 38
+              },
+              {
+                "species": "nidorina",
+                "moveset": [
+                  "poisonfang",
+                  "doublekick",
+                  "bite",
+                  "toxicspikes"
+                ],
+                "level": 38
+              },
+              {
+                "species": "skuntank",
+                "moveset": [
+                  "nightslash",
+                  "toxic",
+                  "suckerpunch",
+                  "flamethrower"
+                ],
+                "level": 39,
+                "heldItem": "black_sludge"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym6_junior_01",
+      "display_name": "Archive Reader",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "kadabra",
+          "moveset": [
+            "psybeam",
+            "recover",
+            "reflect",
+            "calmmind"
+          ],
+          "level": 41
+        },
+        {
+          "species": "hattrem",
+          "moveset": [
+            "psychic",
+            "lifedew",
+            "disarmingvoice",
+            "calmmind"
+          ],
+          "level": 42
+        }
+      ],
+      "gym_order": 6,
+      "split": 6,
+      "leader_ace_level": 45,
+      "type_theme": "Psychic",
+      "trainer_order": 1,
+      "lesson": "Calm Mind turns a slow special attacker into a wall: break it early.",
+      "dialogue": {
+        "pre": "dlg_gym6_junior_01_pre",
+        "win": "dlg_gym6_junior_01_win",
+        "loss": "dlg_gym6_junior_01_loss"
+      },
+      "dialogue_text": {
+        "pre": "Three of the stacks stop short. One doesn't. You knew that before you came in.",
+        "player_win": "You read well. The gallery is above.",
+        "player_loss": "You trusted the wrong stack. Read again."
+      },
+      "rct": {
+        "identity": "gym6_junior_01",
+        "name": {
+          "literal": "Archive Reader"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "kadabra",
+            "moveset": [
+              "psybeam",
+              "recover",
+              "reflect",
+              "calmmind"
+            ],
+            "level": 41
+          },
+          {
+            "species": "hattrem",
+            "moveset": [
+              "psychic",
+              "lifedew",
+              "disarmingvoice",
+              "calmmind"
+            ],
+            "level": 42
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "kadabra",
+              "moveset": [
+                "psybeam",
+                "recover",
+                "reflect",
+                "calmmind"
+              ],
+              "level": 41
+            },
+            {
+              "species": "hattrem",
+              "moveset": [
+                "psychic",
+                "lifedew",
+                "disarmingvoice",
+                "calmmind"
+              ],
+              "level": 42
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym6_junior_01",
+            "name": {
+              "literal": "Archive Reader"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "kadabra",
+                "moveset": [
+                  "psybeam",
+                  "recover",
+                  "reflect",
+                  "calmmind"
+                ],
+                "level": 41
+              },
+              {
+                "species": "hattrem",
+                "moveset": [
+                  "psychic",
+                  "lifedew",
+                  "disarmingvoice",
+                  "calmmind"
+                ],
+                "level": 42
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "kirlia",
+              "moveset": [
+                "psychic",
+                "calmmind",
+                "magicalleaf",
+                "drainingkiss"
+              ],
+              "level": 41
+            },
+            {
+              "species": "kadabra",
+              "moveset": [
+                "psybeam",
+                "recover",
+                "reflect",
+                "calmmind"
+              ],
+              "level": 41
+            },
+            {
+              "species": "hattrem",
+              "moveset": [
+                "psychic",
+                "lifedew",
+                "disarmingvoice",
+                "calmmind"
+              ],
+              "level": 42,
+              "heldItem": "lum_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym6_junior_01_challenge",
+            "name": {
+              "literal": "Archive Reader"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "kirlia",
+                "moveset": [
+                  "psychic",
+                  "calmmind",
+                  "magicalleaf",
+                  "drainingkiss"
+                ],
+                "level": 41
+              },
+              {
+                "species": "kadabra",
+                "moveset": [
+                  "psybeam",
+                  "recover",
+                  "reflect",
+                  "calmmind"
+                ],
+                "level": 41
+              },
+              {
+                "species": "hattrem",
+                "moveset": [
+                  "psychic",
+                  "lifedew",
+                  "disarmingvoice",
+                  "calmmind"
+                ],
+                "level": 42,
+                "heldItem": "lum_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym6_junior_02",
+      "display_name": "Gallery Medium",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "xatu",
+          "moveset": [
+            "psychic",
+            "nightshade",
+            "confuseray",
+            "airslash"
+          ],
+          "level": 42
+        },
+        {
+          "species": "bronzong",
+          "moveset": [
+            "extrasensory",
+            "payback",
+            "hypnosis",
+            "gyroball"
+          ],
+          "level": 43
+        }
+      ],
+      "gym_order": 6,
+      "split": 6,
+      "leader_ace_level": 45,
+      "type_theme": "Psychic",
+      "trainer_order": 2,
+      "lesson": "Hypnosis misses often; a team that plans for sleep never needs luck.",
+      "dialogue": {
+        "pre": "dlg_gym6_junior_02_pre",
+        "win": "dlg_gym6_junior_02_win",
+        "loss": "dlg_gym6_junior_02_loss"
+      },
+      "dialogue_text": {
+        "pre": "The eye in the arch is looking at you, not me.",
+        "player_win": "You see clearly. The turret ladder is north.",
+        "player_loss": "Your eyes lied to you. Rest them."
+      },
+      "rct": {
+        "identity": "gym6_junior_02",
+        "name": {
+          "literal": "Gallery Medium"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "xatu",
+            "moveset": [
+              "psychic",
+              "nightshade",
+              "confuseray",
+              "airslash"
+            ],
+            "level": 42
+          },
+          {
+            "species": "bronzong",
+            "moveset": [
+              "extrasensory",
+              "payback",
+              "hypnosis",
+              "gyroball"
+            ],
+            "level": 43
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "xatu",
+              "moveset": [
+                "psychic",
+                "nightshade",
+                "confuseray",
+                "airslash"
+              ],
+              "level": 42
+            },
+            {
+              "species": "bronzong",
+              "moveset": [
+                "extrasensory",
+                "payback",
+                "hypnosis",
+                "gyroball"
+              ],
+              "level": 43
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym6_junior_02",
+            "name": {
+              "literal": "Gallery Medium"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "xatu",
+                "moveset": [
+                  "psychic",
+                  "nightshade",
+                  "confuseray",
+                  "airslash"
+                ],
+                "level": 42
+              },
+              {
+                "species": "bronzong",
+                "moveset": [
+                  "extrasensory",
+                  "payback",
+                  "hypnosis",
+                  "gyroball"
+                ],
+                "level": 43
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "girafarig",
+              "moveset": [
+                "psychic",
+                "crunch",
+                "agility",
+                "doublehit"
+              ],
+              "level": 42
+            },
+            {
+              "species": "xatu",
+              "moveset": [
+                "psychic",
+                "nightshade",
+                "confuseray",
+                "airslash"
+              ],
+              "level": 42
+            },
+            {
+              "species": "bronzong",
+              "moveset": [
+                "extrasensory",
+                "payback",
+                "hypnosis",
+                "gyroball"
+              ],
+              "level": 43,
+              "heldItem": "lum_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym6_junior_02_challenge",
+            "name": {
+              "literal": "Gallery Medium"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "girafarig",
+                "moveset": [
+                  "psychic",
+                  "crunch",
+                  "agility",
+                  "doublehit"
+                ],
+                "level": 42
+              },
+              {
+                "species": "xatu",
+                "moveset": [
+                  "psychic",
+                  "nightshade",
+                  "confuseray",
+                  "airslash"
+                ],
+                "level": 42
+              },
+              {
+                "species": "bronzong",
+                "moveset": [
+                  "extrasensory",
+                  "payback",
+                  "hypnosis",
+                  "gyroball"
+                ],
+                "level": 43,
+                "heldItem": "lum_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym6_junior_03",
+      "display_name": "Lens Keeper",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "hypno",
+          "moveset": [
+            "psychic",
+            "hypnosis",
+            "headbutt",
+            "nastyplot"
+          ],
+          "level": 43
+        },
+        {
+          "species": "grumpig",
+          "moveset": [
+            "psybeam",
+            "powergem",
+            "zenheadbutt",
+            "bounce"
+          ],
+          "level": 44
+        }
+      ],
+      "gym_order": 6,
+      "split": 6,
+      "leader_ace_level": 45,
+      "type_theme": "Psychic",
+      "trainer_order": 3,
+      "lesson": "Trick Room-style speed control: the slow side moves first here.",
+      "dialogue": {
+        "pre": "dlg_gym6_junior_03_pre",
+        "win": "dlg_gym6_junior_03_win",
+        "loss": "dlg_gym6_junior_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "One more lens before hers. Look through me first.",
+        "player_win": "Sabrina is waiting at the top. She knew you would come.",
+        "player_loss": "Fogged. Come back when you can see."
+      },
+      "rct": {
+        "identity": "gym6_junior_03",
+        "name": {
+          "literal": "Lens Keeper"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "hypno",
+            "moveset": [
+              "psychic",
+              "hypnosis",
+              "headbutt",
+              "nastyplot"
+            ],
+            "level": 43
+          },
+          {
+            "species": "grumpig",
+            "moveset": [
+              "psybeam",
+              "powergem",
+              "zenheadbutt",
+              "bounce"
+            ],
+            "level": 44
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "hypno",
+              "moveset": [
+                "psychic",
+                "hypnosis",
+                "headbutt",
+                "nastyplot"
+              ],
+              "level": 43
+            },
+            {
+              "species": "grumpig",
+              "moveset": [
+                "psybeam",
+                "powergem",
+                "zenheadbutt",
+                "bounce"
+              ],
+              "level": 44
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym6_junior_03",
+            "name": {
+              "literal": "Lens Keeper"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "hypno",
+                "moveset": [
+                  "psychic",
+                  "hypnosis",
+                  "headbutt",
+                  "nastyplot"
+                ],
+                "level": 43
+              },
+              {
+                "species": "grumpig",
+                "moveset": [
+                  "psybeam",
+                  "powergem",
+                  "zenheadbutt",
+                  "bounce"
+                ],
+                "level": 44
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "slowpoke",
+              "moveset": [
+                "psychic",
+                "yawn",
+                "waterpulse",
+                "slackoff"
+              ],
+              "level": 43
+            },
+            {
+              "species": "hypno",
+              "moveset": [
+                "psychic",
+                "hypnosis",
+                "headbutt",
+                "nastyplot"
+              ],
+              "level": 43
+            },
+            {
+              "species": "grumpig",
+              "moveset": [
+                "psybeam",
+                "powergem",
+                "zenheadbutt",
+                "bounce"
+              ],
+              "level": 44,
+              "heldItem": "lum_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym6_junior_03_challenge",
+            "name": {
+              "literal": "Lens Keeper"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "slowpoke",
+                "moveset": [
+                  "psychic",
+                  "yawn",
+                  "waterpulse",
+                  "slackoff"
+                ],
+                "level": 43
+              },
+              {
+                "species": "hypno",
+                "moveset": [
+                  "psychic",
+                  "hypnosis",
+                  "headbutt",
+                  "nastyplot"
+                ],
+                "level": 43
+              },
+              {
+                "species": "grumpig",
+                "moveset": [
+                  "psybeam",
+                  "powergem",
+                  "zenheadbutt",
+                  "bounce"
+                ],
+                "level": 44,
+                "heldItem": "lum_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym6_junior_04",
+      "display_name": "Stack Warden",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "chimecho",
+          "moveset": [
+            "extrasensory",
+            "takedown",
+            "yawn",
+            "healbell"
+          ],
+          "level": 43
+        },
+        {
+          "species": "medicham",
+          "moveset": [
+            "zenheadbutt",
+            "highjumpkick",
+            "calmmind",
+            "forcepalm"
+          ],
+          "level": 44
+        }
+      ],
+      "gym_order": 6,
+      "split": 6,
+      "leader_ace_level": 45,
+      "type_theme": "Psychic",
+      "trainer_order": 4,
+      "lesson": "Calm Mind stacks every turn it is left alone: pressure it early.",
+      "dialogue": {
+        "pre": "dlg_gym6_junior_04_pre",
+        "win": "dlg_gym6_junior_04_win",
+        "loss": "dlg_gym6_junior_04_loss"
+      },
+      "dialogue_text": {
+        "pre": "The gallery's west walk is shelved by thought. You'll need yours.",
+        "player_win": "Your mind held. The north arm is ahead.",
+        "player_loss": "You lost the thread. Go back to the stacks and find it."
+      },
+      "rct": {
+        "identity": "gym6_junior_04",
+        "name": {
+          "literal": "Stack Warden"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "chimecho",
+            "moveset": [
+              "extrasensory",
+              "takedown",
+              "yawn",
+              "healbell"
+            ],
+            "level": 43
+          },
+          {
+            "species": "medicham",
+            "moveset": [
+              "zenheadbutt",
+              "highjumpkick",
+              "calmmind",
+              "forcepalm"
+            ],
+            "level": 44
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "chimecho",
+              "moveset": [
+                "extrasensory",
+                "takedown",
+                "yawn",
+                "healbell"
+              ],
+              "level": 43
+            },
+            {
+              "species": "medicham",
+              "moveset": [
+                "zenheadbutt",
+                "highjumpkick",
+                "calmmind",
+                "forcepalm"
+              ],
+              "level": 44
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym6_junior_04",
+            "name": {
+              "literal": "Stack Warden"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "chimecho",
+                "moveset": [
+                  "extrasensory",
+                  "takedown",
+                  "yawn",
+                  "healbell"
+                ],
+                "level": 43
+              },
+              {
+                "species": "medicham",
+                "moveset": [
+                  "zenheadbutt",
+                  "highjumpkick",
+                  "calmmind",
+                  "forcepalm"
+                ],
+                "level": 44
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "chimecho",
+              "moveset": [
+                "extrasensory",
+                "takedown",
+                "yawn",
+                "healbell"
+              ],
+              "level": 43
+            },
+            {
+              "species": "beheeyem",
+              "moveset": [
+                "zenheadbutt",
+                "psybeam",
+                "headbutt",
+                "guardsplit"
+              ],
+              "level": 43
+            },
+            {
+              "species": "medicham",
+              "moveset": [
+                "zenheadbutt",
+                "highjumpkick",
+                "calmmind",
+                "forcepalm"
+              ],
+              "level": 44,
+              "heldItem": "lum_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym6_junior_04_challenge",
+            "name": {
+              "literal": "Stack Warden"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "chimecho",
+                "moveset": [
+                  "extrasensory",
+                  "takedown",
+                  "yawn",
+                  "healbell"
+                ],
+                "level": 43
+              },
+              {
+                "species": "beheeyem",
+                "moveset": [
+                  "zenheadbutt",
+                  "psybeam",
+                  "headbutt",
+                  "guardsplit"
+                ],
+                "level": 43
+              },
+              {
+                "species": "medicham",
+                "moveset": [
+                  "zenheadbutt",
+                  "highjumpkick",
+                  "calmmind",
+                  "forcepalm"
+                ],
+                "level": 44,
+                "heldItem": "lum_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym7_junior_01",
+      "display_name": "Assay Hand",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "rapidash",
+          "moveset": [
+            "flamecharge",
+            "stomp",
+            "flareblitz",
+            "agility"
+          ],
+          "level": 46
+        },
+        {
+          "species": "camerupt",
+          "moveset": [
+            "lavaplume",
+            "earthpower",
+            "yawn",
+            "flamethrower"
+          ],
+          "level": 47
+        }
+      ],
+      "gym_order": 7,
+      "split": 7,
+      "leader_ace_level": 50,
+      "type_theme": "Fire",
+      "trainer_order": 1,
+      "lesson": "Flame Charge snowballs: stop the first speed boost.",
+      "dialogue": {
+        "pre": "dlg_gym7_junior_01_pre",
+        "win": "dlg_gym7_junior_01_win",
+        "loss": "dlg_gym7_junior_01_loss"
+      },
+      "dialogue_text": {
+        "pre": "The spoil steps are hot. So's my team.",
+        "player_win": "You'll do. Mind the broken flight, it goes nowhere.",
+        "player_loss": "Cool off by the furnace and try again."
+      },
+      "rct": {
+        "identity": "gym7_junior_01",
+        "name": {
+          "literal": "Assay Hand"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "rapidash",
+            "moveset": [
+              "flamecharge",
+              "stomp",
+              "flareblitz",
+              "agility"
+            ],
+            "level": 46
+          },
+          {
+            "species": "camerupt",
+            "moveset": [
+              "lavaplume",
+              "earthpower",
+              "yawn",
+              "flamethrower"
+            ],
+            "level": 47
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "rapidash",
+              "moveset": [
+                "flamecharge",
+                "stomp",
+                "flareblitz",
+                "agility"
+              ],
+              "level": 46
+            },
+            {
+              "species": "camerupt",
+              "moveset": [
+                "lavaplume",
+                "earthpower",
+                "yawn",
+                "flamethrower"
+              ],
+              "level": 47
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym7_junior_01",
+            "name": {
+              "literal": "Assay Hand"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "rapidash",
+                "moveset": [
+                  "flamecharge",
+                  "stomp",
+                  "flareblitz",
+                  "agility"
+                ],
+                "level": 46
+              },
+              {
+                "species": "camerupt",
+                "moveset": [
+                  "lavaplume",
+                  "earthpower",
+                  "yawn",
+                  "flamethrower"
+                ],
+                "level": 47
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "magmar",
+              "moveset": [
+                "flamethrower",
+                "firepunch",
+                "smokescreen",
+                "confuseray"
+              ],
+              "level": 46
+            },
+            {
+              "species": "rapidash",
+              "moveset": [
+                "flamecharge",
+                "stomp",
+                "flareblitz",
+                "agility"
+              ],
+              "level": 46
+            },
+            {
+              "species": "camerupt",
+              "moveset": [
+                "lavaplume",
+                "earthpower",
+                "yawn",
+                "flamethrower"
+              ],
+              "level": 47,
+              "heldItem": "sitrus_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym7_junior_01_challenge",
+            "name": {
+              "literal": "Assay Hand"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "magmar",
+                "moveset": [
+                  "flamethrower",
+                  "firepunch",
+                  "smokescreen",
+                  "confuseray"
+                ],
+                "level": 46
+              },
+              {
+                "species": "rapidash",
+                "moveset": [
+                  "flamecharge",
+                  "stomp",
+                  "flareblitz",
+                  "agility"
+                ],
+                "level": 46
+              },
+              {
+                "species": "camerupt",
+                "moveset": [
+                  "lavaplume",
+                  "earthpower",
+                  "yawn",
+                  "flamethrower"
+                ],
+                "level": 47,
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym7_junior_02",
+      "display_name": "Rim Researcher",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "houndoom",
+          "moveset": [
+            "flamethrower",
+            "crunch",
+            "nastyplot",
+            "foulplay"
+          ],
+          "level": 47
+        },
+        {
+          "species": "pyroar",
+          "moveset": [
+            "flamethrower",
+            "hypervoice",
+            "nobleroar",
+            "workup"
+          ],
+          "level": 48
+        }
+      ],
+      "gym_order": 7,
+      "split": 7,
+      "leader_ace_level": 50,
+      "type_theme": "Fire",
+      "trainer_order": 2,
+      "lesson": "Nasty Plot plus a fast Fire type: pressure it before it sets up.",
+      "dialogue": {
+        "pre": "dlg_gym7_junior_02_pre",
+        "win": "dlg_gym7_junior_02_win",
+        "loss": "dlg_gym7_junior_02_loss"
+      },
+      "dialogue_text": {
+        "pre": "The gantry is the only way up. I'm the only way past it.",
+        "player_win": "Readings are good. Up to the gallery.",
+        "player_loss": "The vent was hotter than you. Down you go."
+      },
+      "rct": {
+        "identity": "gym7_junior_02",
+        "name": {
+          "literal": "Rim Researcher"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "houndoom",
+            "moveset": [
+              "flamethrower",
+              "crunch",
+              "nastyplot",
+              "foulplay"
+            ],
+            "level": 47
+          },
+          {
+            "species": "pyroar",
+            "moveset": [
+              "flamethrower",
+              "hypervoice",
+              "nobleroar",
+              "workup"
+            ],
+            "level": 48
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "houndoom",
+              "moveset": [
+                "flamethrower",
+                "crunch",
+                "nastyplot",
+                "foulplay"
+              ],
+              "level": 47
+            },
+            {
+              "species": "pyroar",
+              "moveset": [
+                "flamethrower",
+                "hypervoice",
+                "nobleroar",
+                "workup"
+              ],
+              "level": 48
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym7_junior_02",
+            "name": {
+              "literal": "Rim Researcher"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "houndoom",
+                "moveset": [
+                  "flamethrower",
+                  "crunch",
+                  "nastyplot",
+                  "foulplay"
+                ],
+                "level": 47
+              },
+              {
+                "species": "pyroar",
+                "moveset": [
+                  "flamethrower",
+                  "hypervoice",
+                  "nobleroar",
+                  "workup"
+                ],
+                "level": 48
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "salazzle",
+              "moveset": [
+                "flamethrower",
+                "venoshock",
+                "nastyplot",
+                "toxic"
+              ],
+              "level": 47
+            },
+            {
+              "species": "houndoom",
+              "moveset": [
+                "flamethrower",
+                "crunch",
+                "nastyplot",
+                "foulplay"
+              ],
+              "level": 47
+            },
+            {
+              "species": "pyroar",
+              "moveset": [
+                "flamethrower",
+                "hypervoice",
+                "nobleroar",
+                "workup"
+              ],
+              "level": 48,
+              "heldItem": "sitrus_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym7_junior_02_challenge",
+            "name": {
+              "literal": "Rim Researcher"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "salazzle",
+                "moveset": [
+                  "flamethrower",
+                  "venoshock",
+                  "nastyplot",
+                  "toxic"
+                ],
+                "level": 47
+              },
+              {
+                "species": "houndoom",
+                "moveset": [
+                  "flamethrower",
+                  "crunch",
+                  "nastyplot",
+                  "foulplay"
+                ],
+                "level": 47
+              },
+              {
+                "species": "pyroar",
+                "moveset": [
+                  "flamethrower",
+                  "hypervoice",
+                  "nobleroar",
+                  "workup"
+                ],
+                "level": 48,
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym7_junior_03",
+      "display_name": "Flue Keeper",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "ninetales",
+          "moveset": [
+            "flamethrower",
+            "extrasensory",
+            "willowisp",
+            "sunnyday"
+          ],
+          "level": 48
+        },
+        {
+          "species": "centiskorch",
+          "moveset": [
+            "firelash",
+            "bugbite",
+            "coil",
+            "crunch"
+          ],
+          "level": 49
+        }
+      ],
+      "gym_order": 7,
+      "split": 7,
+      "leader_ace_level": 50,
+      "type_theme": "Fire",
+      "trainer_order": 3,
+      "lesson": "Sun boosts every Fire move: change the weather or lose the race.",
+      "dialogue": {
+        "pre": "dlg_gym7_junior_03_pre",
+        "win": "dlg_gym7_junior_03_win",
+        "loss": "dlg_gym7_junior_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "Four hoods, one breathing. You have to get past me to pick.",
+        "player_win": "The leap is yours. Blaine is below the flue.",
+        "player_loss": "Wrong hood. The geyser will bring you back up."
+      },
+      "rct": {
+        "identity": "gym7_junior_03",
+        "name": {
+          "literal": "Flue Keeper"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "ninetales",
+            "moveset": [
+              "flamethrower",
+              "extrasensory",
+              "willowisp",
+              "sunnyday"
+            ],
+            "level": 48
+          },
+          {
+            "species": "centiskorch",
+            "moveset": [
+              "firelash",
+              "bugbite",
+              "coil",
+              "crunch"
+            ],
+            "level": 49
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "ninetales",
+              "moveset": [
+                "flamethrower",
+                "extrasensory",
+                "willowisp",
+                "sunnyday"
+              ],
+              "level": 48
+            },
+            {
+              "species": "centiskorch",
+              "moveset": [
+                "firelash",
+                "bugbite",
+                "coil",
+                "crunch"
+              ],
+              "level": 49
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym7_junior_03",
+            "name": {
+              "literal": "Flue Keeper"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "ninetales",
+                "moveset": [
+                  "flamethrower",
+                  "extrasensory",
+                  "willowisp",
+                  "sunnyday"
+                ],
+                "level": 48
+              },
+              {
+                "species": "centiskorch",
+                "moveset": [
+                  "firelash",
+                  "bugbite",
+                  "coil",
+                  "crunch"
+                ],
+                "level": 49
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "torkoal",
+              "moveset": [
+                "sunnyday",
+                "lavaplume",
+                "bodypress",
+                "yawn"
+              ],
+              "level": 48
+            },
+            {
+              "species": "ninetales",
+              "moveset": [
+                "flamethrower",
+                "extrasensory",
+                "willowisp",
+                "sunnyday"
+              ],
+              "level": 48
+            },
+            {
+              "species": "centiskorch",
+              "moveset": [
+                "firelash",
+                "bugbite",
+                "coil",
+                "crunch"
+              ],
+              "level": 49,
+              "heldItem": "sitrus_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym7_junior_03_challenge",
+            "name": {
+              "literal": "Flue Keeper"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "torkoal",
+                "moveset": [
+                  "sunnyday",
+                  "lavaplume",
+                  "bodypress",
+                  "yawn"
+                ],
+                "level": 48
+              },
+              {
+                "species": "ninetales",
+                "moveset": [
+                  "flamethrower",
+                  "extrasensory",
+                  "willowisp",
+                  "sunnyday"
+                ],
+                "level": 48
+              },
+              {
+                "species": "centiskorch",
+                "moveset": [
+                  "firelash",
+                  "bugbite",
+                  "coil",
+                  "crunch"
+                ],
+                "level": 49,
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym7_junior_04",
+      "display_name": "Stair Stoker",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "heatmor",
+          "moveset": [
+            "firelash",
+            "slash",
+            "bugbite",
+            "honeclaws"
+          ],
+          "level": 48
+        },
+        {
+          "species": "talonflame",
+          "moveset": [
+            "flamecharge",
+            "acrobatics",
+            "aerialace",
+            "agility"
+          ],
+          "level": 49
+        }
+      ],
+      "gym_order": 7,
+      "split": 7,
+      "leader_ace_level": 50,
+      "type_theme": "Fire",
+      "trainer_order": 4,
+      "lesson": "Flame Charge speeds it up with every hit: answer the first one.",
+      "dialogue": {
+        "pre": "dlg_gym7_junior_04_pre",
+        "win": "dlg_gym7_junior_04_win",
+        "loss": "dlg_gym7_junior_04_loss"
+      },
+      "dialogue_text": {
+        "pre": "Halfway up the gantry is where the heat starts. Keep climbing if you can.",
+        "player_win": "You took the heat. The gallery's at the top.",
+        "player_loss": "Burned out on the stair. Cool off and come back up."
+      },
+      "rct": {
+        "identity": "gym7_junior_04",
+        "name": {
+          "literal": "Stair Stoker"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "heatmor",
+            "moveset": [
+              "firelash",
+              "slash",
+              "bugbite",
+              "honeclaws"
+            ],
+            "level": 48
+          },
+          {
+            "species": "talonflame",
+            "moveset": [
+              "flamecharge",
+              "acrobatics",
+              "aerialace",
+              "agility"
+            ],
+            "level": 49
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "heatmor",
+              "moveset": [
+                "firelash",
+                "slash",
+                "bugbite",
+                "honeclaws"
+              ],
+              "level": 48
+            },
+            {
+              "species": "talonflame",
+              "moveset": [
+                "flamecharge",
+                "acrobatics",
+                "aerialace",
+                "agility"
+              ],
+              "level": 49
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym7_junior_04",
+            "name": {
+              "literal": "Stair Stoker"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "heatmor",
+                "moveset": [
+                  "firelash",
+                  "slash",
+                  "bugbite",
+                  "honeclaws"
+                ],
+                "level": 48
+              },
+              {
+                "species": "talonflame",
+                "moveset": [
+                  "flamecharge",
+                  "acrobatics",
+                  "aerialace",
+                  "agility"
+                ],
+                "level": 49
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "heatmor",
+              "moveset": [
+                "firelash",
+                "slash",
+                "bugbite",
+                "honeclaws"
+              ],
+              "level": 48
+            },
+            {
+              "species": "darmanitan",
+              "moveset": [
+                "firepunch",
+                "firefang",
+                "headbutt",
+                "workup"
+              ],
+              "level": 48
+            },
+            {
+              "species": "talonflame",
+              "moveset": [
+                "flamecharge",
+                "acrobatics",
+                "aerialace",
+                "agility"
+              ],
+              "level": 49,
+              "heldItem": "sitrus_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym7_junior_04_challenge",
+            "name": {
+              "literal": "Stair Stoker"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "heatmor",
+                "moveset": [
+                  "firelash",
+                  "slash",
+                  "bugbite",
+                  "honeclaws"
+                ],
+                "level": 48
+              },
+              {
+                "species": "darmanitan",
+                "moveset": [
+                  "firepunch",
+                  "firefang",
+                  "headbutt",
+                  "workup"
+                ],
+                "level": 48
+              },
+              {
+                "species": "talonflame",
+                "moveset": [
+                  "flamecharge",
+                  "acrobatics",
+                  "aerialace",
+                  "agility"
+                ],
+                "level": 49,
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym8_junior_01",
+      "display_name": "Sapper",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "sandslash",
+          "moveset": [
+            "earthquake",
+            "slash",
+            "rapidspin",
+            "sandstorm"
+          ],
+          "level": 51
+        },
+        {
+          "species": "donphan",
+          "moveset": [
+            "earthquake",
+            "rockslide",
+            "knockoff",
+            "iceshard"
+          ],
+          "level": 52
+        }
+      ],
+      "gym_order": 8,
+      "split": 8,
+      "leader_ace_level": 55,
+      "type_theme": "Ground",
+      "trainer_order": 1,
+      "lesson": "Sand Stream chip and Sand Rush: the field fights for them.",
+      "dialogue": {
+        "pre": "dlg_gym8_junior_01_pre",
+        "win": "dlg_gym8_junior_01_win",
+        "loss": "dlg_gym8_junior_01_loss"
+      },
+      "dialogue_text": {
+        "pre": "You found the sap. Most stand in the yard waiting for a door.",
+        "player_win": "Down the heading, then. Mind the shoring.",
+        "player_loss": "Cave-in. Climb out and come back down."
+      },
+      "rct": {
+        "identity": "gym8_junior_01",
+        "name": {
+          "literal": "Sapper"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "sandslash",
+            "moveset": [
+              "earthquake",
+              "slash",
+              "rapidspin",
+              "sandstorm"
+            ],
+            "level": 51
+          },
+          {
+            "species": "donphan",
+            "moveset": [
+              "earthquake",
+              "rockslide",
+              "knockoff",
+              "iceshard"
+            ],
+            "level": 52
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "sandslash",
+              "moveset": [
+                "earthquake",
+                "slash",
+                "rapidspin",
+                "sandstorm"
+              ],
+              "level": 51
+            },
+            {
+              "species": "donphan",
+              "moveset": [
+                "earthquake",
+                "rockslide",
+                "knockoff",
+                "iceshard"
+              ],
+              "level": 52
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym8_junior_01",
+            "name": {
+              "literal": "Sapper"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "sandslash",
+                "moveset": [
+                  "earthquake",
+                  "slash",
+                  "rapidspin",
+                  "sandstorm"
+                ],
+                "level": 51
+              },
+              {
+                "species": "donphan",
+                "moveset": [
+                  "earthquake",
+                  "rockslide",
+                  "knockoff",
+                  "iceshard"
+                ],
+                "level": 52
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "marowak",
+              "moveset": [
+                "bonemerang",
+                "firepunch",
+                "knockoff",
+                "stompingtantrum"
+              ],
+              "level": 51
+            },
+            {
+              "species": "sandslash",
+              "moveset": [
+                "earthquake",
+                "slash",
+                "rapidspin",
+                "sandstorm"
+              ],
+              "level": 51
+            },
+            {
+              "species": "donphan",
+              "moveset": [
+                "earthquake",
+                "rockslide",
+                "knockoff",
+                "iceshard"
+              ],
+              "level": 52,
+              "heldItem": "leftovers"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym8_junior_01_challenge",
+            "name": {
+              "literal": "Sapper"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "marowak",
+                "moveset": [
+                  "bonemerang",
+                  "firepunch",
+                  "knockoff",
+                  "stompingtantrum"
+                ],
+                "level": 51
+              },
+              {
+                "species": "sandslash",
+                "moveset": [
+                  "earthquake",
+                  "slash",
+                  "rapidspin",
+                  "sandstorm"
+                ],
+                "level": 51
+              },
+              {
+                "species": "donphan",
+                "moveset": [
+                  "earthquake",
+                  "rockslide",
+                  "knockoff",
+                  "iceshard"
+                ],
+                "level": 52,
+                "heldItem": "leftovers"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym8_junior_02",
+      "display_name": "Heading Guard",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "dugtrio",
+          "moveset": [
+            "dig",
+            "suckerpunch",
+            "slash",
+            "sandtomb"
+          ],
+          "level": 52
+        },
+        {
+          "species": "gliscor",
+          "moveset": [
+            "earthquake",
+            "acrobatics",
+            "knockoff",
+            "swordsdance"
+          ],
+          "level": 53
+        }
+      ],
+      "gym_order": 8,
+      "split": 8,
+      "leader_ace_level": 55,
+      "type_theme": "Ground",
+      "trainer_order": 2,
+      "lesson": "Dig dodges a turn: use it to switch, not to wait.",
+      "dialogue": {
+        "pre": "dlg_gym8_junior_02_pre",
+        "win": "dlg_gym8_junior_02_win",
+        "loss": "dlg_gym8_junior_02_loss"
+      },
+      "dialogue_text": {
+        "pre": "The heading's shored for one. You'll fight me in it.",
+        "player_win": "Through, then. The tower stair is round the corner.",
+        "player_loss": "Back to the sap. The drill starts over."
+      },
+      "rct": {
+        "identity": "gym8_junior_02",
+        "name": {
+          "literal": "Heading Guard"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "dugtrio",
+            "moveset": [
+              "dig",
+              "suckerpunch",
+              "slash",
+              "sandtomb"
+            ],
+            "level": 52
+          },
+          {
+            "species": "gliscor",
+            "moveset": [
+              "earthquake",
+              "acrobatics",
+              "knockoff",
+              "swordsdance"
+            ],
+            "level": 53
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "dugtrio",
+              "moveset": [
+                "dig",
+                "suckerpunch",
+                "slash",
+                "sandtomb"
+              ],
+              "level": 52
+            },
+            {
+              "species": "gliscor",
+              "moveset": [
+                "earthquake",
+                "acrobatics",
+                "knockoff",
+                "swordsdance"
+              ],
+              "level": 53
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym8_junior_02",
+            "name": {
+              "literal": "Heading Guard"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "dugtrio",
+                "moveset": [
+                  "dig",
+                  "suckerpunch",
+                  "slash",
+                  "sandtomb"
+                ],
+                "level": 52
+              },
+              {
+                "species": "gliscor",
+                "moveset": [
+                  "earthquake",
+                  "acrobatics",
+                  "knockoff",
+                  "swordsdance"
+                ],
+                "level": 53
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "claydol",
+              "moveset": [
+                "earthpower",
+                "psybeam",
+                "rocktomb",
+                "cosmicpower"
+              ],
+              "level": 52
+            },
+            {
+              "species": "dugtrio",
+              "moveset": [
+                "dig",
+                "suckerpunch",
+                "slash",
+                "sandtomb"
+              ],
+              "level": 52
+            },
+            {
+              "species": "gliscor",
+              "moveset": [
+                "earthquake",
+                "acrobatics",
+                "knockoff",
+                "swordsdance"
+              ],
+              "level": 53,
+              "heldItem": "leftovers"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym8_junior_02_challenge",
+            "name": {
+              "literal": "Heading Guard"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "claydol",
+                "moveset": [
+                  "earthpower",
+                  "psybeam",
+                  "rocktomb",
+                  "cosmicpower"
+                ],
+                "level": 52
+              },
+              {
+                "species": "dugtrio",
+                "moveset": [
+                  "dig",
+                  "suckerpunch",
+                  "slash",
+                  "sandtomb"
+                ],
+                "level": 52
+              },
+              {
+                "species": "gliscor",
+                "moveset": [
+                  "earthquake",
+                  "acrobatics",
+                  "knockoff",
+                  "swordsdance"
+                ],
+                "level": 53,
+                "heldItem": "leftovers"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym8_junior_03",
+      "display_name": "Undercroft Sentry",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "rhydon",
+          "moveset": [
+            "rockslide",
+            "earthquake",
+            "hammerarm",
+            "scaryface"
+          ],
+          "level": 52
+        },
+        {
+          "species": "whiscash",
+          "moveset": [
+            "earthquake",
+            "waterpulse",
+            "amnesia",
+            "zenheadbutt"
+          ],
+          "level": 53
+        }
+      ],
+      "gym_order": 8,
+      "split": 8,
+      "leader_ace_level": 55,
+      "type_theme": "Ground",
+      "trainer_order": 3,
+      "lesson": "Rock Slide flinches and Lightning Rod: plan around both.",
+      "dialogue": {
+        "pre": "dlg_gym8_junior_03_pre",
+        "win": "dlg_gym8_junior_03_win",
+        "loss": "dlg_gym8_junior_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "Nobody comes up the stair without coming past me.",
+        "player_win": "Up the stair. The walk is open.",
+        "player_loss": "Back to the drift. Try the stair again when you can."
+      },
+      "rct": {
+        "identity": "gym8_junior_03",
+        "name": {
+          "literal": "Undercroft Sentry"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "rhydon",
+            "moveset": [
+              "rockslide",
+              "earthquake",
+              "hammerarm",
+              "scaryface"
+            ],
+            "level": 52
+          },
+          {
+            "species": "whiscash",
+            "moveset": [
+              "earthquake",
+              "waterpulse",
+              "amnesia",
+              "zenheadbutt"
+            ],
+            "level": 53
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "rhydon",
+              "moveset": [
+                "rockslide",
+                "earthquake",
+                "hammerarm",
+                "scaryface"
+              ],
+              "level": 52
+            },
+            {
+              "species": "whiscash",
+              "moveset": [
+                "earthquake",
+                "waterpulse",
+                "amnesia",
+                "zenheadbutt"
+              ],
+              "level": 53
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym8_junior_03",
+            "name": {
+              "literal": "Undercroft Sentry"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "rhydon",
+                "moveset": [
+                  "rockslide",
+                  "earthquake",
+                  "hammerarm",
+                  "scaryface"
+                ],
+                "level": 52
+              },
+              {
+                "species": "whiscash",
+                "moveset": [
+                  "earthquake",
+                  "waterpulse",
+                  "amnesia",
+                  "zenheadbutt"
+                ],
+                "level": 53
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "golem",
+              "moveset": [
+                "rockslide",
+                "earthquake",
+                "explosion",
+                "defensecurl"
+              ],
+              "level": 52
+            },
+            {
+              "species": "rhydon",
+              "moveset": [
+                "rockslide",
+                "earthquake",
+                "hammerarm",
+                "scaryface"
+              ],
+              "level": 52
+            },
+            {
+              "species": "whiscash",
+              "moveset": [
+                "earthquake",
+                "waterpulse",
+                "amnesia",
+                "zenheadbutt"
+              ],
+              "level": 53,
+              "heldItem": "leftovers"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym8_junior_03_challenge",
+            "name": {
+              "literal": "Undercroft Sentry"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "golem",
+                "moveset": [
+                  "rockslide",
+                  "earthquake",
+                  "explosion",
+                  "defensecurl"
+                ],
+                "level": 52
+              },
+              {
+                "species": "rhydon",
+                "moveset": [
+                  "rockslide",
+                  "earthquake",
+                  "hammerarm",
+                  "scaryface"
+                ],
+                "level": 52
+              },
+              {
+                "species": "whiscash",
+                "moveset": [
+                  "earthquake",
+                  "waterpulse",
+                  "amnesia",
+                  "zenheadbutt"
+                ],
+                "level": 53,
+                "heldItem": "leftovers"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym8_junior_04",
+      "display_name": "Wall Captain",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "seismitoad",
+          "moveset": [
+            "earthpower",
+            "muddywater",
+            "drainpunch",
+            "stealthrock"
+          ],
+          "level": 53
+        },
+        {
+          "species": "nidoking",
+          "moveset": [
+            "earthpower",
+            "poisonjab",
+            "megahorn",
+            "thunderbolt"
+          ],
+          "level": 54
+        }
+      ],
+      "gym_order": 8,
+      "split": 8,
+      "leader_ace_level": 55,
+      "type_theme": "Ground",
+      "trainer_order": 4,
+      "lesson": "Sheer Force and Earth Power: the last guard hits like the boss.",
+      "dialogue": {
+        "pre": "dlg_gym8_junior_04_pre",
+        "win": "dlg_gym8_junior_04_win",
+        "loss": "dlg_gym8_junior_04_loss"
+      },
+      "dialogue_text": {
+        "pre": "The gate walk is mine. The Boss sees everything from here.",
+        "player_win": "You held the line. He's at the end of the walk.",
+        "player_loss": "Back to the yard. The drill starts over."
+      },
+      "rct": {
+        "identity": "gym8_junior_04",
+        "name": {
+          "literal": "Wall Captain"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "seismitoad",
+            "moveset": [
+              "earthpower",
+              "muddywater",
+              "drainpunch",
+              "stealthrock"
+            ],
+            "level": 53
+          },
+          {
+            "species": "nidoking",
+            "moveset": [
+              "earthpower",
+              "poisonjab",
+              "megahorn",
+              "thunderbolt"
+            ],
+            "level": 54
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "seismitoad",
+              "moveset": [
+                "earthpower",
+                "muddywater",
+                "drainpunch",
+                "stealthrock"
+              ],
+              "level": 53
+            },
+            {
+              "species": "nidoking",
+              "moveset": [
+                "earthpower",
+                "poisonjab",
+                "megahorn",
+                "thunderbolt"
+              ],
+              "level": 54
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym8_junior_04",
+            "name": {
+              "literal": "Wall Captain"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "seismitoad",
+                "moveset": [
+                  "earthpower",
+                  "muddywater",
+                  "drainpunch",
+                  "stealthrock"
+                ],
+                "level": 53
+              },
+              {
+                "species": "nidoking",
+                "moveset": [
+                  "earthpower",
+                  "poisonjab",
+                  "megahorn",
+                  "thunderbolt"
+                ],
+                "level": 54
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "gastrodon",
+              "moveset": [
+                "earthpower",
+                "muddywater",
+                "recover",
+                "toxic"
+              ],
+              "level": 53
+            },
+            {
+              "species": "seismitoad",
+              "moveset": [
+                "earthpower",
+                "muddywater",
+                "drainpunch",
+                "stealthrock"
+              ],
+              "level": 53
+            },
+            {
+              "species": "nidoking",
+              "moveset": [
+                "earthpower",
+                "poisonjab",
+                "megahorn",
+                "thunderbolt"
+              ],
+              "level": 54,
+              "heldItem": "leftovers"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym8_junior_04_challenge",
+            "name": {
+              "literal": "Wall Captain"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "gastrodon",
+                "moveset": [
+                  "earthpower",
+                  "muddywater",
+                  "recover",
+                  "toxic"
+                ],
+                "level": 53
+              },
+              {
+                "species": "seismitoad",
+                "moveset": [
+                  "earthpower",
+                  "muddywater",
+                  "drainpunch",
+                  "stealthrock"
+                ],
+                "level": 53
+              },
+              {
+                "species": "nidoking",
+                "moveset": [
+                  "earthpower",
+                  "poisonjab",
+                  "megahorn",
+                  "thunderbolt"
+                ],
+                "level": 54,
+                "heldItem": "leftovers"
               }
             ]
           }

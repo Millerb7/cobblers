@@ -62,6 +62,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -1199,7 +1200,20 @@ def guard_functions(spec):
             "# the HQ guard's %s (data/dialogue.json %s): %s. Run as and at the player who chose it, never" % (
                 act, gd["conversation"], what),
             "# @a: the door stays shut and nobody else moves. Nothing for a player not at the guard.",
-            "execute unless entity @s[x=%d,y=%d,z=%d,distance=..%d] run return fail" % (ax, ay, az, mv["reach"]),
+            "execute unless entity @s[x=%d,y=%d,z=%d,distance=..%d] run return fail" % (ax, ay, az, mv["reach"])]
+        if mv.get("requires_flag"):
+            # the badge lock (geometry.hq.guard.admit.requires_flag, 2026-10-07, review N8): the dialogue gates on the
+            # stage; this refuses, in the function itself, a player without the flag's advancement
+            flag = mv["requires_flag"]
+            if not re.fullmatch(r"[a-z0-9_]+", flag):
+                raise SystemExit("relic_underground: %s.requires_flag %r is not a flag id" % (side, flag))
+            sel = "@s[advancements={cobblers:flag/%s=true}]" % flag
+            fn[act] += ["# the badge lock: nobody moves below without %s (requires_flag)" % flag]
+            if mv.get("refused_text"):
+                fn[act].append("execute unless entity %s run tellraw @s %s"
+                               % (sel, json.dumps({"text": mv["refused_text"], "color": "gray"})))
+            fn[act].append("execute unless entity %s run return fail" % sel)
+        fn[act] += [
             "ride @s dismount",
             "tp @s %s %d %s %s %s" % (x, y, z, mv["yaw"], mv["pitch"])]
         if act == "hq_admit" and spec["zone"]["pass"].get("admit"):

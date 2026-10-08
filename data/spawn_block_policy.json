@@ -1,6 +1,7 @@
 {
   "schema": "cobblers.spawn-block-policy/1",
   "status": "draft",
+  "owner_decision_2026_10_05": "Spawn-condition blocks: ALLOW (the owner after the play test: \"give me all the spawns, id like to just place most things down to help with spawns\"). The owner places them by hand from docs/world-building/SPAWN_BLOCKS_LIST.md (tools/spawn_blocks_list.py). NOT YET ENFORCED in the tools: about 60 generators and audits still refuse a spawn-condition block in our own builds and 29 tests check it; each reads data/spawn_blocks.json itself, with no shared switch. Flipping them is a builder task (Wave 2), and the substitutions already applied to templates stay until it lands.",
   "note": "What a placed template may contain of the blocks in data/spawn_blocks.json. Everything else fails validation: a donor's roof must not decide a town's encounters. Substitutions are applied to the template itself by tools/spawn_blocks.py substitute, so the fix travels with the asset and is not rediscovered per placement.",
   "substitutions": [
     {
@@ -166,7 +167,7 @@
       "scope": "Hollin's Apricorn Farm (apricorn_farm: tools/apricorn_farm.py, data/apricorn_farm.json) at (2068, 5570): its seven groves, the drying sheds' bunches and the stall's display branch",
       "why": "the farm is made of apricorn trees: the fruit is the point of it, and it must be real fruit for a player to pick. The entry above already allows apricorns in gardens and orchards; this one names the place, as the scope rule asks (tests/test_system_contracts.py C4)",
       "consequence": "read from the Cobblemon 1.8.0 jar: 0100_voltorb.json (voltorb hisuian, levels 8-33, uncommon), 0101_electrode.json (electrode hisuian, levels 30-49, uncommon) and their herds (0101_electrode_alpha a boss bucket) need #cobblemon:apricorns nearby, sky light 8-15, any overworld biome. The farm stands in tier-1 sub-regions (south_west_fields, pallet's outskirts, arrow_creeks: level cap 25), so an Electrode above the cap can appear here unless the install's inherited-spawn suppression covers these sub-regions",
-      "decided": "OWNER TO CONFIRM: added 2026-10-05 by the farm's builder under the owner's request for the farm ('groves of all seven colours'); on the review list"
+      "decided": "OWNER TO CONFIRM: added 2026-10-05 by the farm's builder under the owner's request for the farm ('groves of all seven colours'); on the review list -- CONFIRMED by the owner's general ruling of 2026-10-05 ('Spawn-condition blocks: allow them', docs/PLAYTEST_2026-10-05.md), recorded by the 2026-10-06 unfinished-items sweep"
     },
     {
       "tags": [
@@ -475,7 +476,7 @@
       "scope": "cobblers_sea_floor (the open sea's shelf: tools/sea_floor.py, data/sea_floor.json) only",
       "why": "kelp_plant and seagrass are spawn conditions (data/spawn_blocks.json, neededNearbyBlocks) for dragalge, skrelp and pincurchin and their herd; cobblers_sea_floor lays kelp forests and seagrass meadows on the marine regions' shelf, which is these species' native habitat, so their spawning there is the floor doing its job. The level-cap refusal still stops a catch above a player's cap. kelp (the head) and tall_seagrass are not spawn conditions and need no entry",
       "consequence": "dragalge, skrelp and pincurchin can spawn over the dressed shelf wherever their other spawn conditions hold; before this pack the bare sand of the open sea held none of them",
-      "decided": "the integrating session's default 2026-10-04 while the owner was out (ALLOW: the sea floor is these species' native habitat); the owner to confirm"
+      "decided": "the integrating session's default 2026-10-04 while the owner was out (ALLOW: the sea floor is these species' native habitat); the owner to confirm -- CONFIRMED by the owner's general ruling of 2026-10-05 ('Spawn-condition blocks: allow them', docs/PLAYTEST_2026-10-05.md), recorded by the 2026-10-06 unfinished-items sweep"
     },
     {
       "blocks": [
@@ -494,8 +495,26 @@
       "scope": "Arrow Creeks Farm (pokemon_farm: tools/pokemon_farm.py, data/pokemon_farm.json, pack cobblers_pokemon_farm) at (3149, 5714): the apiary's bee flowers only (rows at z5756-5757, x3172-3188)",
       "why": "the farm's Combee refill the hives with Cobblemon's native cobblemon:pokemon_bee behaviour, which only gathers nectar from a flower: FlowerSensor (1.8.0 jar) takes the nearest not-waterlogged block of a vanilla flowers block tag within 5 blocks of the Pokemon. Every flower is a spawn condition (#cobblemon:flowers and the colour tags), so the forage cannot be spawn-neutral. Two small flowers, one yellow and one blue, are the fewest that still read as a flower bed",
       "consequence": "read from the 1.8.0 jar 2026-10-05, spawns needing #cobblemon:flowers nearby in any overworld biome by day: combee (1-24), cutiefly (5-30), ribombee (25-46), comfey (24-49, rare, any time); vivillon savanna wings (12-41, #cobblemon:is_savanna); and through #cobblemon:yellow_flowers / #cobblemon:blue_flowers flabebe (5-30), floette (19-37) and florges (32-55) of those two colours (floette eternal also lists cornflower). Fitting for an apiary; the level-cap refusal still stops a catch above a player's cap",
-      "decided": "OWNER TO CONFIRM: added 2026-10-05 by the farm's systems agent as the means of the owner's \"yeah combee refills\" (the owner approved the refill, not these flowers by name); on the review list (data/pokemon_farm.json owner_questions)"
-    }
+      "decided": "OWNER TO CONFIRM: added 2026-10-05 by the farm's systems agent as the means of the owner's \"yeah combee refills\" (the owner approved the refill, not these flowers by name); on the review list (data/pokemon_farm.json owner_questions) -- CONFIRMED by the owner's general ruling of 2026-10-05 ('Spawn-condition blocks: allow them', docs/PLAYTEST_2026-10-05.md), recorded by the 2026-10-06 unfinished-items sweep"
+    },
+    {
+      "blocks": [
+        "minecraft:sand",
+        "minecraft:dead_brain_coral_block",
+        "minecraft:dead_tube_coral_block",
+        "minecraft:dead_horn_coral_block",
+        "minecraft:dead_fire_coral_block",
+        "minecraft:dead_bubble_coral_block",
+        "minecraft:dead_horn_coral",
+        "minecraft:dead_bubble_coral"
+      ],
+      "scope": "the Brass Petrel (desert_wreck: tools/desert_wreck.py, data/desert_wreck.json, pack cobblers_desert_wreck) on the southern desert beach at (6488, 6772): the dead reef on the flats in front of the stern (x6466-6510, z6794-6838) and the sand spilled into the hold and the stern breach",
+      "why": "the brief of 2026-10-05: 'a bleached dead reef across the flats in front, Galarian Corsola/Cursola and Sandygast there'. Dead coral is the spawn condition of exactly those two (data/spawn_blocks.json: #cobblemon:dead_coral, neededNearbyBlocks), so the reef cannot be spawn-neutral and is not meant to be; sand is Sandygast's and Palossand's base block. The reef also lies inside the strand's natural Habitat Blocks (data/habitat_blocks.json desert_wreck_strand_ward, desert_wreck_hold_ward), which replace the ambient spawns there with the strand's own pool, so the pack's dead-coral spawns are not what a player meets inside their range",
+      "consequence": "read from data/spawn_blocks.json 2026-10-05: corsola galarian and cursola (#cobblemon:dead_coral nearby; the Cobblemon 1.8.0 jar and COBBLEVERSE-DP-v31), herds of them; on sand, sandygast and palossand (#minecraft:sand / #c:sand base). The level-cap refusal still stops a catch above a player's cap",
+      "decided": "the owner, 2026-10-05: spawn-condition blocks ALLOWED (this file's owner_decision_2026_10_05); this entry names where, as the contract C4 requires"
+    },
+    {"blocks": ["minecraft:carved_pumpkin"], "scope": "Greenhollow's marrow show (data/ambient_towns/gym4_town.json situation greenhollow_marrow_show, pack cobblers_ambient_idle): one carved pumpkin among four Pumpkaboo", "why": "the owner's composition brief (2026-10-05): the unique situations are the point, and this one is four Pumpkaboo and one real pumpkin", "consequence": "a carved pumpkin is a spawn condition (data/spawn_blocks.json); one block on Greenhollow's green, inside a town", "decided": "the owner, 2026-10-05 (data/spawn_block_policy.json owner_decision_2026_10_05: spawn-condition blocks allowed)"},
+    {"blocks": ["minecraft:coal_ore", "minecraft:iron_ore", "minecraft:deepslate_coal_ore", "minecraft:deepslate_iron_ore", "minecraft:deepslate_redstone_ore", "minecraft:deepslate_diamond_ore"], "scope": "the refillable mining caves (mining_caves: tools/mining_caves.py, data/mining_caves.json, pack cobblers_mining_caves): the galleries of cave_old_mine by the Route 1 old mine (route1_old_mine) and of cave_fossick at Fossick (mining_town), and only the ore the restore sets in their bodies", "why": "ECONOMY_OVERHAUL.md section 3 (the owner, 2026-10-10: a refillable mining cave on the stone-face reset): the ore is the point of a gallery, and vanilla ore is what it pays in; 3.1 names this entry as the C4 whitelist the cave needs", "consequence": "data/spawn_blocks.json (docs/world-building/SPAWN_BLOCKS_LIST.md): coal ore draws Rolycoly, Carkol, Coalossal and Torkoal; iron ore Aron, Lairon, Aggron, the Alolan Geodude line and Orthworm; deepslate redstone ore Klink, Klang and Klinklang; deepslate diamond ore Carbink, Sableye, Glimmet and Glimmora; each as a nearby-block condition, in the galleries' halls under the level-cap refusal. Copper, lapis and gold ore are not spawn conditions", "decided": "the owner, 2026-10-05: spawn-condition blocks ALLOWED (this file's owner_decision_2026_10_05); this entry names where, as the contract C4 requires (builder flip, unit CAVES 2026-10-10)"}
   ],
   "checked_paving": {
     "gym1_town": [

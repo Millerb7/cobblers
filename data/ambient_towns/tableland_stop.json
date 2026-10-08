@@ -1,0 +1,105 @@
+{
+  "settlement": "tableland_stop",
+  "size": "outpost",
+  "target": 6,
+  "character": "Redbrow is a Centre, a prospector and a lookout on the scorched plateau: six Pokemon of the red rock and the sun, two of them working for the prospector, and two Spinda that came for the view.",
+  "workers": [
+    {
+      "id": "tableland_sandshrew_sifter",
+      "settlement": "tableland_stop",
+      "species": "sandshrew",
+      "level": 48,
+      "job": "work",
+      "at": [4797, 5672],
+      "face": [4800, 5672],
+      "every": 40,
+      "effect": {
+        "block": "minecraft:red_sand",
+        "count": 14,
+        "sound": "minecraft:block.sand.break",
+        "pitch": 1.0
+      },
+      "interact": "The prospector's Sandshrew is digging samples out below the lookout and sorting them by colour."
+    },
+    {
+      "id": "redbrow_helioptile_lamp",
+      "settlement": "tableland_stop",
+      "species": "helioptile",
+      "level": 47,
+      "job": "work",
+      "at": [4857, 5690],
+      "face": [4862, 5690],
+      "every": 90,
+      "box": [0.8, 0.8],
+      "effect": {
+        "particle": "minecraft:electric_spark",
+        "count": 8,
+        "spread": 0.3,
+        "dy": 0.6,
+        "sound": "minecraft:block.beacon.power_select",
+        "pitch": 1.6
+      },
+      "interact": "The Helioptile spreads its frills in the sun all day and charges the prospector's lamp with it at dusk."
+    }
+  ],
+  "pets": [],
+  "placed": [
+    {
+      "id": "redbrow_rufflet_roof",
+      "species": "rufflet",
+      "spot": "roof",
+      "building": "tableland_prospector",
+      "why": "on the prospector's roof, the highest point it can reach without the lookout, watching the plateau"
+    }
+  ],
+  "situations": [
+    {
+      "id": "redbrow_spinda_brow",
+      "title": "The Spinda on the brow",
+      "unique": true,
+      "story": "Two Spinda wobble at the plateau's brow as if the wind were stronger than it is. The prospector says no two Spinda have the same spots, and these two have spent all summer checking.",
+      "at": [4822, 162, 5682],
+      "facing": "west",
+      "members": [
+        {
+          "species": "spinda",
+          "count": 2,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [2, 0, 1]]
+        }
+      ],
+      "props": [],
+      "why": "Redbrow's own, between the square and the lookout, facing the drop; a pair is the joke"
+    },
+    {
+      "id": "redbrow_two_cactuses",
+      "title": "The counter's sundial",
+      "unique": true,
+      "story": "On the plateau the only shade for a hundred blocks is the counter keeper's potted cactus, and a Nymble lives in it. It moves round the pot with the sun, and the keeper has stopped winding her clock: she tells the time by which side of the cactus the Nymble is on.",
+      "at": [4830, 162, 5689],
+      "facing": "east",
+      "members": [
+        {
+          "species": "nymble",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:potted_cactus",
+          "at": [-1, 0, 0]
+        }
+      ],
+      "why": "the counter keeper's Nymble, written where her Cacnea pet stood (the composition's conversion of a pet into a situation, which an outpost of six has no other room for): two west and two south of the counter NPC at (4832, 5687), on the plan's y 162, with the real potted cactus beside it. Rewritten 2026-10-08 (unit AMB): a Cacnea posing as a cactus is Bridgekeep's joke (its roof Cacnea and its Cacturne); a Nymble (0.25 x 0.25 blocks, the jar's hitbox x baseScale) on the Cacnea's spot (0.45 x 0.52)"
+    }
+  ],
+  "counts": {
+    "working": 2,
+    "pets": 0,
+    "placed": 1,
+    "situations": 3,
+    "total": 6
+  }
+}

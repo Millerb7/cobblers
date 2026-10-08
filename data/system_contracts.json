@@ -102,6 +102,22 @@
         "docs/world-building/SOUTHERN_RIFT_MEGA.md"
       ]
     },
+    "mining_caves": {
+      "what": "the refillable mining caves (cave_old_mine, cave_fossick): galleries of vanilla ore restored on approach by the gallery clock mcv.last",
+      "paths": [
+        "data/mining_caves.json",
+        "tools/mining_caves.py",
+        "docs/mechanics/ECONOMY_OVERHAUL.md"
+      ]
+    },
+    "entei_boss": {
+      "what": "the repeatable Entei: one sealed slot per player in cobblers:pocket, entered by eating a crafted sigil in the Nether; catchable until the first catch, then an item roll",
+      "paths": [
+        "data/entei_boss.json",
+        "tools/entei_boss.py",
+        "experiments/EXP-059-entei-boss/README.md"
+      ]
+    },
     "victory_road": {
       "what": "Victory Road's corridor and its cave network",
       "paths": [
@@ -204,10 +220,47 @@
       ]
     },
     "mythical_starters": {
-      "what": "the five starter forms and the starter list the config offers (cobblers_mythical_starters)",
+      "what": "the seven starters' forms, the starter list the config offers, and the Sketch cap's move override and callbacks (cobblers_mythical_starters)",
       "paths": [
         "data/mythical_starters.json",
         "tools/mythical_starters.py"
+      ]
+    },
+    "inherited_spawn_suppression": {
+      "what": "the cobblers_suppress pack: every inherited spawn file re-emitted with the route and sub-region boxes as anticonditions, plus one Nether anticondition per detail",
+      "paths": [
+        "tools/suppress_inherited_spawns.py"
+      ]
+    },
+    "nether_encounters": {
+      "what": "the Nether's own wild tables: five biomes, the fortress and bastion rosters, the Ruinous rings, two rings of levels, hearts by a nearby block",
+      "paths": [
+        "docs/mechanics/NETHER_ENCOUNTERS.md",
+        "data/encounter_design.json",
+        "tools/build_encounters.py",
+        "tools/compile_spawns.py"
+      ]
+    },
+    "nether_gate": {
+      "what": "the Nether's badge-8 gate: a player in minecraft:the_nether without gym8_cleared is sent back to their blackout checkpoint (cobblers_nether_gate)",
+      "paths": [
+        "data/nether_gate.json",
+        "tools/nether_gate.py",
+        "experiments/EXP-063-nether-gate/README.md"
+      ]
+    },
+    "cobblemon_config": {
+      "what": "Cobblemon's own server config as we ship it (modpack/config/cobblemon/main.json)",
+      "paths": [
+        "modpack/config/cobblemon/main.json"
+      ]
+    },
+    "tm_gate": {
+      "what": "crafted TMCraft TMs unlock per player at their shelf badge: doLimitedCrafting, a recipe-book sync and one earn advancement per badge (cobblers_tm_gate)",
+      "paths": [
+        "data/tm_gate.json",
+        "tools/tm_gate.py",
+        "experiments/EXP-067-tm-recipe-gate/README.md"
       ]
     }
   },
@@ -422,8 +475,18 @@
         "tests/test_system_contracts.py::test_contract_c4_every_tool_that_reads_the_spawn_conditions_is_accounted_for",
         "tests/test_system_contracts.py::test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows"
       ],
+      "fails_today": {
+        "recorded": "2026-10-08",
+        "commit": "eef6004",
+        "measured": "the built-pack check run against the integration checkout's build/datapacks (12,691 functions): exactly these two packs place a spawn condition no data/spawn_block_policy.json entry names",
+        "cases": {
+          "built:cobblers_lake_life": "tools/lake_life.py:924 sets minecraft:sugar_cane (the lake banks' reeds), a spawn condition (data/spawn_blocks.json), and no policy entry names it. The owner ALLOWED spawn-condition blocks (2026-10-05: docs/STATE.md 'Spawn-condition blocks: ALLOW', data/spawn_block_policy.json owner_decision_2026_10_05), so the fix is a policy entry scoped to lake_life naming where and what it draws, like the mining_caves entry; it is not added here because data/spawn_block_policy.json belongs to datapack-content-dev (docs/STATE.md file-ownership table)",
+          "built:cobblers_ambient_idle": "data/ambient_towns/gym2_town.json:245 props a minecraft:pumpkin (built into ambient_idle/t/gym2_town/props.mcfunction), a spawn condition; the policy whitelists only minecraft:carved_pumpkin, for gym4_town's marrow show. Same owner decision, same owner of the fix: a policy entry scoped to gym2_town, or a prop that is not a spawn condition"
+        }
+      },
       "tools": {
         "arena_dome_audit.py": "checker: the built cobblers_arena_dome functions (Heaven's Arena's dome), forbidden blocks against data/spawn_blocks.json",
+        "bank.py": "checker: refuses a bank buy line for an item whose block a spawn condition names (data/spawn_blocks.json), unless the line is in_place: the bank would pay players to strip spawn blocks out of the world. It places nothing (review N1, accounted 2026-10-06)",
         "markets.py": "checker: refuses a counter or stall line whose item places a block a spawn condition names (data/spawn_blocks.json)",
         "plaza_centre.py": "checker: refuses spawn-condition blocks in the town squares it builds (R13); its built pack is checked by town_squares_audit.py",
         "town_squares_audit.py": "checker: the built plaza_centres functions and the stalls' goods, against data/spawn_blocks.json",
@@ -436,19 +499,27 @@
         "rift_mines_audit.py": "checker: the built rift_mines pack (source rift_mines)",
         "gulch_mine_audit.py": "checker: the built gulch_mine pack (source gulch_mine)",
         "mines_audit.py": "checker: the built mines pack (the evolution-stone faces; data/mines.json names no spawn condition)",
+        "mining_caves.py": "source: mining_caves (data/mining_caves.json, pack cobblers_mining_caves: every block the record names that a cave places, its yields' ores and hosts and each cave's wall, shell, floor, stair and timber, read by _source_blocks in tests/test_system_contracts.py since the caves audit of 2026-10-10; `restore` is the refill's filter, not a block placed). Six of its ores are spawn conditions, covered by the data/spawn_block_policy.json entry scoped to mining_caves. The builder also refuses, at build, any spawn condition no such entry allows, and the built-pack check covers its output",
         "sea_drift_audit.py": "checker: the built sea_drift pack (the Seaward Drift, its strips, Driftmouth Isle and its lighthouse), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to sea_drift whitelists it (none since 2026-10-02: the line is straight and writes no minecraft:rail, and the audit fails any rail that turns). tools/sea_drift.py does not read the file and is not yet one of this contract's sources (the test author's to add)",
         "portals_audit.py": "checker: the built portals pack, against data/portals.json blocks and the spawn conditions. It checks the WORLD side only: the pocket dimension's rooms carry a chest, which is a spawn condition (Gimmighoul), and the dimension's biome is minecraft:the_void, whose mob spawn list is empty. Whether a Cobblemon pool can match that biome is UNTESTED (EXP-047 left spawning in the pocket unrun)",
         "vr_caves.py": "source: vr_caves",
+        "fossil_dig.py": "source: fossil_dig (the Scorchbone Dig, 2026-10-05: tools/wayside_kit.py load_record reads the conditions when data/fossil_dig.json loads and refuses a blocks.ids holding one no policy entry scoped to fossil_dig allows; the plan refuses any block outside blocks.ids)",
         "route1_old_mine.py": "source: earthworks (its record is the route1_old_mine earthwork in data/placements.json)",
         "town_audit.py": "checker: the built towns, templates and earthworks, against the policy",
         "validate_data.py": "checker: placed structure templates, against the policy",
         "town_templates.py": "checker: spawn blocks in template candidates (through tools/spawn_blocks.py)",
         "spawn_blocks.py": "not covered: it writes data/spawn_blocks.json (the scan of loaded spawn conditions)",
+        "spawn_blocks_list.py": "not covered: it renders data/spawn_blocks.json as the owner's placing list (docs/world-building/SPAWN_BLOCKS_LIST.md); it places nothing",
+        "reveal_evidence_audit.py": "checker: reports a spawn-condition block in the beats' evidence displays (reports, does not fail, under the owner's allow decision)",
+        "desert_wreck_audit.py": "checker: the Brass Petrel's built blocks against data/spawn_blocks.json and the policy",
+        "fossil_dig_audit.py": "checker: the fossil dig's built blocks against data/spawn_blocks.json and the policy",
+        "bank.py": "checker: the CobbleDollars bank's buy list (data/bank.json) against data/spawn_blocks.json: a bought item that is a spawn-condition block is refused unless `in_place` (harvested where it stands). It places no block. Unlisted from its first commit on 2026-10-05 until the material exchange (2026-10-06) found this contract failing on it",
         "paint_maps.py": "not covered: WorldPainter plant sets, painted at export, not a datapack",
         "gym_interiors_independent.py": "checker: the independent audit of the gym interiors (written 2026-09-29 by an agent that built none of them, CLAUDE.md principle 16). It reads data/spawn_blocks.json to check that no block a gym interior places is a spawn condition. Recorded here on 2026-09-30: the audit agent could not edit this registry and said so in docs/world-building/GYM_BUILDINGS_REVIEW.md, so its reader went unlisted and this contract failed for a day. It is a checker, not a source - it reads the conditions to test against them and writes no blocks.",
         "rift_zones.py": "checker: the Rift's zone system (tools/rift_zones.py, written 2026-09-30). It reads data/spawn_blocks.json so its `report` can refuse a wall built from a block that is a spawn condition - an obsidian wall that draws wild Pokemon to it would be a gate with a crowd at it. A checker and a block source at once: it names the wall blocks itself, and it checks them against this contract rather than assuming them, which is why it is listed and not marked \"not covered\".",
         "ferry_docks.py": "checker: the ferry docks (tools/ferry_docks.py, 2026-09-30) read data/spawn_blocks.json and its own `report` refuses a dock built from a block that is a spawn condition - a jetty that draws wild Pokemon onto itself is a crowd on the quay. Recorded after the F7 agent found it omitted; that agent could not edit this registry. NOT YET A `source`, and that is a named gap rather than a classification: it IS a block source (it names the dock palette), but this contract's `source` slot means a block list cross-checked against the spawn-policy scopes, and the list lives in tests/test_system_contracts.py _source_blocks() - a test author's file, needing the palette enumerated. Until that is done its palette is checked by itself and not by this contract, which is weaker than town_dressing and should not be mistaken for it.",
         "poi_heatmap.py": "not covered: reads data/spawn_blocks.json only for the coordinates of its records, to plot them on derived/maps/poi_heatmap.png; it places no block, emits no function and checks no spawn condition",
+        "desert_wreck.py": "checker: the Brass Petrel's builder (tools/desert_wreck.py, 2026-10-05: a wreck in the dune wall, a dead reef, a resident's flag on the southern desert beach) reads data/spawn_blocks.json for its own guard: it refuses a written spawn condition that data/desert_wreck.json blocks.spawn_conditions does not declare, and refuses any block outside blocks.ids. The ones it declares (sand, dead coral) are whitelisted in data/spawn_block_policy.json by an entry whose scope names desert_wreck. NOT YET one of this contract's sources - adding 'desert_wreck' to the place tuple in _source_blocks() in tests/test_system_contracts.py is the test author's.",
         "frostpeak_camp_audit.py": "checker: the built Frostpeak research camp (tools/frostpeak_camp.py, 2026-10-02), against data/frostpeak_camp.json blocks.ids and the spawn conditions. tools/frostpeak_camp.py is a block source that does not read the conditions file itself (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
         "frostpeak_summit_audit.py": "checker: the built Frostpeak summit pack (tools/frostpeak_summit.py, 2026-10-02: tors, rime, the lee's plants, the pilgrims' way and its cairns round Articuno's tower), replayed: no written block is a spawn condition and every written block is in data/frostpeak_summit.json blocks.ids (S4). tools/frostpeak_summit.py does not read the conditions file and does not refuse a block itself, so the audit is the only gate; NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
         "lopunny_house_audit.py": "checker: the built Lopunny superfan's house (tools/lopunny_house.py, 2026-10-02: a cottage, its Buneary cellar and a Lopunny statue on the South Pine Isle), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to lopunny_house allows it (none does), every written block is in data/lopunny_house.json blocks.ids, and no chest or bed. tools/lopunny_house.py does not read the conditions file (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
@@ -689,16 +760,21 @@
     },
     {
       "id": "C12",
-      "title": "A gulch Mega that blacks a player out makes no claim",
+      "title": "A gulch Mega or the Entei boss that blacks a player out makes no claim",
       "owner": "recovery_claims",
       "consumers": [
-        "gulch_mine"
+        "gulch_mine",
+        "entei_boss"
       ],
       "constrained_by": [
         "gulch_mine"
       ],
-      "statement": "Every Mega the gulch's generated keeper spawns carries the tag data/blackout.json claims.exempt_tag names, and the generated blackout, with that Mega as the wild victor, makes no item claim and no guardian, and still charges the money; an untagged wild victor still claims.",
+      "statement": "Every Mega the gulch's generated keeper spawns, and every Entei the Entei boss's generated keeper binds in a pocket slot, carries the tag data/blackout.json claims.exempt_tag names, and the generated blackout, with that Pokemon as the wild victor, makes no item claim and no guardian, and still charges the money; an untagged wild victor still claims. The Entei relies on it because its slot is freed and its Entei killed the moment the beaten player is sent out, so a guardian there would hold the player's items where nobody can return. The tag is the gulch's own (cobblers.gm): a gulch sweep that ever keys on the bare tag would reach the Entei too.",
       "stated_in": [
+        {
+          "at": "data/entei_boss.json:131",
+          "quote": "The Entei carries the blackout's claims.exempt_tag"
+        },
         {
           "at": "data/blackout.json:59",
           "quote": "\"exempt_tag\": \"cobblers.gm\""
@@ -714,6 +790,7 @@
       ],
       "tests": [
         "tests/test_system_contracts.py::test_contract_c12_a_gulch_mega_makes_no_claim_on_the_player_it_blacks_out",
+        "tests/test_system_contracts.py::test_contract_c12_the_entei_boss_makes_no_claim_on_the_player_it_blacks_out",
         "tests/test_blackout_recovery_pid.py::test_a_tagged_gulch_mega_makes_no_claim_but_the_loss_still_costs_money"
       ]
     },
@@ -747,10 +824,11 @@
       "consumers": [
         "ferry",
         "gulch_mine",
+        "mining_caves",
         "rift_mine_gate",
         "water_sites"
       ],
-      "statement": "No action a player can repeat at will (relog, a server restart, placing and boarding a boat, a touch of land, bobbing to the surface, leaving and re-entering an approach box, drinking milk) resets, refreshes early or skips a clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the ladder's drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the Ursaluna den's return clock, the ferry's cooldown, the wards' Mining Fatigue. Each case is a scenario in tests/test_gate_clocks.py run with the generated packs. Excepted by design: riding a water Pokemon (it ends fatigue, WATER_BUILD_PLAN 11.2), a blackout (it costs money and a checkpoint return), operator-only gamemode changes.",
+      "statement": "No action a player can repeat at will (relog, a server restart, placing and boarding a boat, a touch of land, bobbing to the surface, leaving and re-entering an approach box, drinking milk) resets, refreshes early or skips a clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the ladder's drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the Ursaluna den's return clock, the mining caves' gallery restore clock (mcv.last: a restart or leaving and re-entering a cave's approach box never restores a gallery twice inside its period), the ferry's cooldown, the wards' Mining Fatigue. Each case is a scenario in tests/test_gate_clocks.py run with the generated packs. Excepted by design: riding a water Pokemon (it ends fatigue, WATER_BUILD_PLAN 11.2), a blackout (it costs money and a checkpoint return), operator-only gamemode changes.",
       "stated_in": [
         {
           "at": "data/blackout.json:124",
@@ -767,6 +845,10 @@
         {
           "at": "data/rift_mines.json:983",
           "quote": "per player: an effect, not a block"
+        },
+        {
+          "at": "docs/mechanics/ECONOMY_OVERHAUL.md:299",
+          "quote": "clock must join contract C14's sweep."
         }
       ],
       "tests": [
@@ -885,11 +967,11 @@
       "constrained_by": [
         "mythical_starters"
       ],
-      "statement": "A new player gets Cobblemon's native starter chooser on first join (allowStarterOnJoin true; the owner, 2026-10-05: \"Change of call: native chooser\"). The only Pokemon grant on the opening is that screen, opened on join or again by Oak's offer through openstarterscreen for the talking player; Cobblemon refuses that screen and a second pick to a player who has chosen. Oak's send-off (record_oak_sendoff, which unlocks Mina and the rest of main_worldshift_reveal) is reachable only through a starter-gated edge: the starter_chosen tag, or openstarterscreen's own 0 result read from a score preset to -1. The screen offers exactly the five forms data/mythical_starters.json records.",
+      "statement": "A new player joins starter-locked and gets Cobblemon's native starter chooser from Oak, in his lab (allowStarterOnJoin false; the owner, 2026-10-06: \"Oak offering the starters in the lab as a scene rather than a menu on join\"; true from 2026-10-05 to 2026-10-06). The only Pokemon grant on the opening is that screen, opened by Oak's offer through openstarterscreen for the talking player (the lab scene, data/scenes.json oak_lab, opens his conversation as the player walks in); Cobblemon refuses that screen and a second pick to a player who has chosen. Oak's send-off (record_oak_sendoff, which unlocks Mina and the rest of main_worldshift_reveal) is reachable only through a starter-gated edge: the starter_chosen tag, or openstarterscreen's own 0 result read from a score preset to -1. The screen offers exactly the five forms data/mythical_starters.json records.",
       "stated_in": [
         {
           "at": "modpack/config/cobblemon/starters.json:2",
-          "quote": "\"allowStarterOnJoin\": true,"
+          "quote": "\"allowStarterOnJoin\": false,"
         },
         {
           "at": "docs/research/notes/starter-selection.md:246",
@@ -901,10 +983,140 @@
         }
       ],
       "tests": [
-        "tests/test_oak_starter.py::test_the_config_opens_the_chooser_on_join_and_offers_exactly_the_five",
+        "tests/test_oak_starter.py::test_the_config_locks_the_chooser_on_join_and_offers_exactly_the_five",
         "tests/test_oak_starter.py::test_the_offer_runs_openstarterscreen_for_the_talking_player_with_a_preset_score",
         "tests/test_oak_starter.py::test_no_compiled_conversation_gives_a_pokemon",
         "tests/test_oak_starter.py::test_no_path_reaches_the_send_off_without_a_starter"
+      ]
+    },
+    {
+      "id": "C19",
+      "title": "The suppression strips every inherited Nether spawn and leaves our compiled pools alone",
+      "owner": "inherited_spawn_suppression",
+      "consumers": [
+        "nether_encounters"
+      ],
+      "constrained_by": [
+        "wild_spawns"
+      ],
+      "statement": "tools/suppress_inherited_spawns.py re-emits only inherited spawn_pool_world files (it never reads a cobblers_* pack), and gives every detail it emits one anticondition {\"dimensions\": [\"minecraft:the_nether\"]}, so no inherited spawn survives in the Nether while the overworld keeps exactly the suppression it had. The Nether's wild spawns are therefore exactly our compiled pools under data/cobblers/spawn_pool_world/nether/, which the suppression cannot reach: they are in cobblers_spawns, at a namespace no inherited file uses, and each is bound to the Nether by its own dimensions condition. The owner approved 'replace, not layer' (NETHER_ENCOUNTERS.md Q3, 2026-10-08). Not run in game (experiment N3).",
+      "stated_in": [
+        {
+          "at": "docs/mechanics/NETHER_ENCOUNTERS.md:128",
+          "quote": "**Recommendation: suppress every inherited spawn in `minecraft:the_nether`"
+        },
+        {
+          "at": "tools/suppress_inherited_spawns.py:61",
+          "quote": "NETHER_ANTICONDITION = {\"dimensions\": [NETHER]}"
+        },
+        {
+          "at": "tools/suppress_inherited_spawns.py:148",
+          "quote": "if p.name.startswith(\"cobblers_\"):"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c19_the_nether_holds_only_our_compiled_tables",
+        "tests/test_suppress_inherited_spawns.py::test_our_compiled_pools_are_never_re_emitted",
+        "tests/test_suppress_inherited_spawns.py::test_the_overworld_is_unchanged_by_the_nether_rule",
+        "tests/test_nether_encounters.py::test_every_entry_is_bound_to_the_nether_and_carries_its_tables_biome_or_structure"
+      ]
+    },
+    {
+      "id": "C21",
+      "title": "The Nether admits exactly the holders of the eighth badge's flag",
+      "owner": "progression",
+      "consumers": [
+        "nether_gate"
+      ],
+      "constrained_by": [
+        "entei_boss"
+      ],
+      "statement": "The only advancement the generated Nether gate tests is cobblers:flag/gym8_cleared, an advancement tools/progression_pack.py writes for the progression flag gym8_cleared, granted by a real trigger (not minecraft:impossible); the flag is a trainer_defeat of the eighth leader. The gate searches only minecraft:the_nether, so the Entei's cobblers:pocket rooms are never gated, and a champion the Entei returns to the Nether stays there because champion_cleared follows gym8_cleared. A renamed flag, a flag the progression pack stops writing, or a gate that tests another dimension breaks it without touching data/nether_gate.json.",
+      "stated_in": [
+        {
+          "at": "data/nether_gate.json:7",
+          "quote": "\"gate_flag\": \"cobblers:flag/gym8_cleared\","
+        },
+        {
+          "at": "docs/mechanics/NETHER_ENCOUNTERS.md:65",
+          "quote": "**G1. Entry needs `cobblers:flag/gym8_cleared`.**"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c21_the_nether_gate_admits_only_the_flag_the_progression_pack_grants_for_badge_8",
+        "tests/test_nether_gate.py::test_the_gate_flag_is_progressions_eighth_badge_not_a_new_one",
+        "tests/test_nether_gate.py::test_scenario"
+      ]
+    },
+    {
+      "id": "C20",
+      "title": "A player the Nether gate turns back lands where a blackout would put them",
+      "owner": "blackout_checkpoints",
+      "consumers": [
+        "nether_gate"
+      ],
+      "statement": "The blackout pack generates cobblers:blackout/checkpoint/validate (bo.ok 1 only for a checkpoint still in the data), cobblers:blackout/checkpoint/tp (a macro of x, y and z that teleports in minecraft:overworld) and cobblers:blackout/checkpoint/name (the place's name into storage cobblers:blackout place), and creates bo.ok, bo.cpx, bo.cpy and bo.cpz at load. The gate calls exactly these and writes none of the blackout's state. data/blackout.json pallet.position, the gate's fallback by literal coordinates, stands one block above the rounded canonical heightmap.",
+      "stated_in": [
+        {
+          "at": "tools/blackout_pack.py:358",
+          "quote": "fn(\"blackout/checkpoint/tp\", [\"$execute in minecraft:overworld run tp @s $(x).5 $(y) $(z).5\"])"
+        },
+        {
+          "at": "data/blackout.json:31",
+          "quote": "\"position\": [1461, 118, 5306],"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c20_the_nether_gate_returns_through_the_blackouts_own_checkpoint",
+        "tests/test_nether_gate.py::test_the_data_passes_and_the_pallet_stands_on_the_canonical_ground"
+      ]
+    },
+    {
+      "id": "C22",
+      "title": "The Sketch cap fits under the Dynamax Level the config allows",
+      "owner": "cobblemon_config",
+      "consumers": [
+        "mythical_starters"
+      ],
+      "statement": "The Sketch cap counts on a Pokemon's dmax_level, which Pokemon.setDmaxLevel clamps to modpack/config/cobblemon/main.json maxDynamaxLevel and Showdown clamps to 0..10 (sim/pokemon.js:118). So maxDynamaxLevel stays 10, the cap (data/mythical_starters.json sketch_cap.uses) is at most 10 and at most maxDynamaxLevel, the generated data/cobblers/moves/sketch.js refuses at exactly that count, and the callbacks raise the count to exactly it. A lower maxDynamaxLevel would stop the count short of the cap and Sketch would never fail.",
+      "stated_in": [
+        {
+          "at": "modpack/config/cobblemon/main.json:81",
+          "quote": "\"maxDynamaxLevel\": 10,"
+        },
+        {
+          "at": "docs/research/notes/sketch-cap-1.8.0.md:159",
+          "quote": "if `maxDynamaxLevel` is ever lowered below 10, `setDmaxLevel` clamps the count and the cap is"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c22_the_sketch_cap_fits_under_the_dynamax_level_the_config_allows"
+      ]
+    },
+    {
+      "id": "C23",
+      "title": "A crafted TM unlocks on exactly the flag the progression pack grants for its shelf badge",
+      "owner": "progression",
+      "consumers": [
+        "tm_gate"
+      ],
+      "constrained_by": [
+        "markets"
+      ],
+      "statement": "Every advancement the generated TM gate tests is cobblers:flag/gymB_cleared for a badge B some gated recipe needs, an advancement tools/progression_pack.py writes with a real trigger (not minecraft:impossible) for a trainer_defeat flag that data/markets.json `badges` names; and a shelf line's gate_badge B is the badge of the leader whose first-win pool holds that TM, so the gate's B is the shelf's B. A renamed flag (every crafted TM locked for ever), a flag the progression pack stops writing, or a shelf line priced on another leader's badge breaks it without touching data/tm_gate.json.",
+      "stated_in": [
+        {
+          "at": "data/tm_gate.json:12",
+          "quote": "minecraft:tick with the player holding cobblers:flag/<flag> (tools/progression_pack.py)"
+        },
+        {
+          "at": "data/markets.json:77",
+          "quote": "gates on the badge its leader gives"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c23_the_tm_gate_unlocks_on_the_flags_the_progression_pack_grants",
+        "tests/test_tm_gate.py::test_each_shelf_tm_unlocks_at_its_shelf_lines_badge"
       ]
     }
   ]

@@ -769,7 +769,8 @@
           "requires_stage": "sabrina_reveal_complete",
           "requires_existing_flag": "gym6_cleared",
           "world_change_flag": "gym7_cleared",
-          "missing_story_flag": "crater_operation_stopped",
+          "story_flag": "crater_operation_stopped",
+          "story_flag_setter": "record_crater_operation_stopped, at the crater analyst's blaine_008 (a stand-in for the Craters climax, unit WB1 2026-10-09)",
           "required_fact": "Compact leadership knowingly selects an occupied destination and proceeds anyway.",
           "completion_stage": "blaine_reveal_complete"
         },
@@ -1452,6 +1453,94 @@
       ],
       "transitions": [
         {
+          "id": "greet_in_lab",
+          "why": "Oak's lab scene (data/scenes.json oak_lab zone lab_floor, docs/mechanics/OAK_AND_CHALLENGE.md): the first time a player who has not been sent off walks into the lab, Oak's conversation opens by itself; once, then he is clicked like anyone else",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.oak_greeted",
+              "value": false
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "not_started"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.oak_greeted",
+              "value": true
+            },
+            {
+              "kind": "open_dialogue",
+              "conversation": "dlg_main_pallet_oak"
+            }
+          ]
+        },
+        {
+          "id": "record_trainer_mode_normal",
+          "why": "Oak's League rules, Standard (docs/mechanics/OAK_AND_CHALLENGE.md): written once; the player stays in rctmod's initial series, kanto, so no command runs",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.trainer_mode",
+              "value": "unset"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.trainer_mode",
+              "value": "normal"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+              "value": "oak_mode_recorded_normal"
+            }
+          ]
+        },
+        {
+          "id": "record_trainer_mode_challenge",
+          "why": "Oak's League rules, Full-Team (docs/mechanics/OAK_AND_CHALLENGE.md): written once, because rctmod's `player set series` clears the player's rctmod progress on every call; refused to a player who already holds the Boulder Badge, whose progress it would wipe. The tag lets the route trainers' swap find a Challenge player by selector",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.trainer_mode",
+              "value": "unset"
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "flag",
+                "flag": "gym1_cleared"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.trainer_mode",
+              "value": "challenge"
+            },
+            {
+              "kind": "rctmod_series",
+              "series": "cobblers_challenge"
+            },
+            {
+              "kind": "tag_player",
+              "tag": "cobblers_mode_challenge"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+              "value": "oak_mode_recorded_challenge"
+            }
+          ]
+        },
+        {
           "id": "record_oak_sendoff",
           "conditions": [
             {
@@ -1461,6 +1550,10 @@
             }
           ],
           "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:flag/oak_sendoff/grant"
+            },
             {
               "kind": "set_progression",
               "field": "quest.main_worldshift_reveal.stage",
@@ -1694,6 +1787,34 @@
           ]
         },
         {
+          "id": "record_crater_operation_stopped",
+          "external_trigger_contract": "THIS transition is crater_operation_stopped's setter (data/progression.json flags, set_by quest_transition; unit WB1 2026-10-09, U58 / review N9). Its one effect grants the flag's advancement to the player who heard the crater analyst's account. Invoked by dlg_main_blaine_crater_analyst at line blaine_008 (before complete_blaine_reveal) and by its blaine_repeat entry rule (a player who heard the account before this shipped). It stands in for the Craters climax that does not exist (docs/story/CAMPAIGN_OUTLINE.md C1, for Codex): when that scene lands, move both invocations to it. Its condition is the account's own opening gate (entry rule 5's stage list), so the flag is never granted to a player the analyst would refuse; it does not read gym7_cleared, because 'defeating Blaine separately sets gym7_cleared' (docs/story/FACTION.md:237). No stage moves.",
+          "conditions": [
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "sabrina_reveal_complete",
+                "blaine_reveal_complete",
+                "giovanni_reveal_complete",
+                "rift_crisis_pending",
+                "deep_handoff_received",
+                "hq_crossed",
+                "anchor_shutdown",
+                "cradle_open",
+                "rift_released",
+                "league_recognized"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:flag/crater_operation_stopped/grant"
+            }
+          ]
+        },
+        {
           "id": "complete_giovanni_reveal",
           "conditions": [
             {
@@ -1707,21 +1828,22 @@
               "kind": "set_progression",
               "field": "quest.main_worldshift_reveal.stage",
               "value": "giovanni_reveal_complete"
-            },
-            {
-              "kind": "set_progression",
-              "field": "quest.main_worldshift_reveal.rift_cursor",
-              "value": "rift_001"
             }
-          ]
+          ],
+          "rift_cursor_why": "removed 2026-10-07 (review N8, the finale badge gate): this transition also set the Rift surveyor's cursor to rift_001, which opened his account to a player with NO badges (the watch officer's account alone). The surveyor now opens rift_001 from his own entry rule, which needs giovanni_reveal_complete AND gym8_cleared (data/dialogue.json dlg_main_rift_surveyor priority 5), so a badgeless player who heard the watch hears rift_locked instead of an account whose last line (rift_007, record_rift_crisis_pending) would refuse them. The removed effect was set_progression quest.main_worldshift_reveal.rift_cursor = rift_001"
         },
         {
           "id": "record_rift_crisis_pending",
+          "gate": "the owner, 2026-10-07: 'no player reaches the finale without a badge' (review N8). The badge is gym8_cleared, the Earth Badge: the surveyor's own locked line, Victory Road's sealing and the other setter of this stage (carry_by_gym8_cleared_to_rift_crisis_pending) all name it. Without it a player with a starter and no badges walked the ten tellers in turn and reached this stage, and the relic HQ guard admitted them. The tellers' beats stay ungated (the badge OR the previous teller's account); only the finale's first stage needs the badge",
           "conditions": [
             {
               "kind": "progression_equals",
               "field": "quest.main_worldshift_reveal.stage",
               "value": "giovanni_reveal_complete"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym8_cleared"
             }
           ],
           "effects": [
@@ -2360,10 +2482,11 @@
         },
         {
           "beat": "blaine",
-          "kind": "missing_progression_flag",
+          "kind": "existing_progression_flag",
           "flag": "crater_operation_stopped",
-          "result": "Should record defeat of the Craters activation separately from Blaine's badge.",
-          "runtime_status": "approved in ARC.md but absent from data/progression.json; no setter is invented here"
+          "fires": "when record_crater_operation_stopped runs (its one effect, cobblers:flag/crater_operation_stopped/grant), invoked by dlg_main_blaine_crater_analyst line blaine_008 and its blaine_repeat entry rule",
+          "result": "Records defeat of the Craters activation separately from Blaine's badge.",
+          "runtime_status": "declared in data/progression.json 2026-10-09 (unit WB1, U58) with the analyst's account as a stand-in setter: the Craters climax scene does not exist (docs/story/CAMPAIGN_OUTLINE.md C1, Codex). Compiled and unit-tested only; not run in game"
         },
         {
           "beat": "league",
@@ -2396,7 +2519,7 @@
         "Misty needs a relief ledger and belongings display; Surge needs the planned signal array and a comparison record.",
         "Erika needs a tangible survey ledger; do not claim the current dry tarn contains water.",
         "Koga needs an abandoned anchor/control-plate display; Sabrina needs a convergence-record table.",
-        "Blaine needs an occupied-destination model and acknowledged warning; crater_operation_stopped is approved in ARC.md but absent from the progression ledger.",
+        "Blaine needs an occupied-destination model and acknowledged warning; crater_operation_stopped is declared (2026-10-09) with the analyst's account as its stand-in setter; the Craters climax scene it stands in for is not written (Codex, CAMPAIGN_OUTLINE C1).",
         "Giovanni needs an approved dissenter evidence carrier; the route packet is a content requirement, not a placed object.",
         "The containment cradle beneath the League plateau has no Y, entrance, footprint, structure ID, or build.",
         "rift_crisis_resolved is granted by unlock_league_after_rift_resolution, which the Compact binder's release (dlg_main_relic_hall_release, in the carved relic hall) invokes. Codex's Scenes 1-4 and a visible Hoopa actor are not built; the in-game League gate (RCT's chain after gym8) is unchanged.",
@@ -2406,6 +2529,9 @@
       "progression_field_refs": [
         "quest.main_worldshift_reveal.stage",
         "quest.main_worldshift_reveal.pallet_oak_cursor",
+        "quest.main_worldshift_reveal.trainer_mode",
+        "quest.main_worldshift_reveal.oak_greeted",
+        "quest.main_worldshift_reveal.lab_starter_cursor",
         "quest.main_worldshift_reveal.pallet_mina_cursor",
         "quest.main_worldshift_reveal.pallet_maren_cursor",
         "quest.main_worldshift_reveal.brock_cursor",
@@ -5779,6 +5905,32 @@
       ]
     },
     {
+      "id": "ambient_fossil_dig",
+      "source": "data/fossil_dig.json; docs: the owner's request of 2026-10-06 (data/fossil_dig.json request)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_fossil_dig_foreman"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversation sets no story, reward, or completion state",
+      "readers": "the foreman's conversation only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_fossil_dig.foreman_cursor"
+      ]
+    },
+    {
       "id": "ambient_drovers_hollow",
       "source": "data/drovers_hollow.json; the owner's request of 2026-10-02 for places in the south (data/drovers_hollow.json request)",
       "scope": "player",
@@ -5859,6 +6011,18 @@
             "equals": true
           },
           "text": "With five badges and your starter Kubfu in the party, ask the Director for one scroll: Darkness or Waters."
+        },
+        {
+          "id": "silvally_memories",
+          "active_when": {
+            "field": "quest.evt_station_director.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_station_director.memories_claimed",
+            "equals": true
+          },
+          "text": "With five badges and your starter Type: Null or Silvally in the party, ask the Director for the memories."
         }
       ],
       "transitions": [
@@ -6031,9 +6195,70 @@
               "value": "k020"
             }
           ]
+        },
+        {
+          "id": "grant_memories",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym5_cleared"
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_silvally"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_director.memories_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_station_silvally_memories",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_station_director.memories_claimed",
+              "idempotency_key": "evt_station_director:reward_station_silvally_memories:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_director.dialogue_cursor",
+              "value": "n010"
+            }
+          ]
         }
       ],
       "rewards": [
+        {
+          "id": "reward_station_silvally_memories",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json station_director",
+          "contents": [
+            {"item": "mega_showdown:bug_memory", "count": 1, "verification": "assets/mega_showdown/models/item/bug_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:dark_memory", "count": 1, "verification": "assets/mega_showdown/models/item/dark_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:dragon_memory", "count": 1, "verification": "assets/mega_showdown/models/item/dragon_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:electric_memory", "count": 1, "verification": "assets/mega_showdown/models/item/electric_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:fairy_memory", "count": 1, "verification": "assets/mega_showdown/models/item/fairy_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:fighting_memory", "count": 1, "verification": "assets/mega_showdown/models/item/fighting_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:fire_memory", "count": 1, "verification": "assets/mega_showdown/models/item/fire_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:flying_memory", "count": 1, "verification": "assets/mega_showdown/models/item/flying_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:ghost_memory", "count": 1, "verification": "assets/mega_showdown/models/item/ghost_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:grass_memory", "count": 1, "verification": "assets/mega_showdown/models/item/grass_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:ground_memory", "count": 1, "verification": "assets/mega_showdown/models/item/ground_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:ice_memory", "count": 1, "verification": "assets/mega_showdown/models/item/ice_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:poison_memory", "count": 1, "verification": "assets/mega_showdown/models/item/poison_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:psychic_memory", "count": 1, "verification": "assets/mega_showdown/models/item/psychic_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:rock_memory", "count": 1, "verification": "assets/mega_showdown/models/item/rock_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:steel_memory", "count": 1, "verification": "assets/mega_showdown/models/item/steel_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:water_memory", "count": 1, "verification": "assets/mega_showdown/models/item/water_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"}
+          ]
+        },
         {
           "id": "reward_station_scroll_of_darkness",
           "status": "item_ids_verified",
@@ -6101,6 +6326,7 @@
         "quest.evt_station_director.thunder_claimed",
         "quest.evt_station_director.ember_claimed",
         "quest.evt_station_director.scroll_claimed",
+        "quest.evt_station_director.memories_claimed",
         "quest.evt_station_director.dialogue_cursor"
       ]
     },

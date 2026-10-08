@@ -1,0 +1,288 @@
+{
+  "settlement": "northlight",
+  "size": "town",
+  "target": 47,
+  "character": "Northlight is the snowy research village on the pine isle: Ice Pokemon keep its fire, its cold store, its sleds and the field station's instruments, an observatory crowd gathers at night, and the rest are winter life (a sledging hill, a huddle out of the wind, a tongue stuck to a lamp post). Ice and night-sky species only.",
+  "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/northlight_plan.json, northlight_placement.json, data/town_dressing.json's northlight pieces and tools/ground.py (rounded) through tools/ambient.py's Site; y in a situation is the standing y (ground or paved street + 1). No worker stands on the square: it is graded up to a block from the heightmap",
+  "workers": [
+    {
+      "id": "northlight_log_carrier",
+      "settlement": "northlight",
+      "species": "beartic",
+      "level": 30,
+      "job": "carry",
+      "route": [[7272, 1602], [7277, 1577]],
+      "carry": "minecraft:spruce_log",
+      "carry_height": 1.6,
+      "pickup": {"sound": "minecraft:block.wood.hit"},
+      "drop": {"sound": "minecraft:block.wood.place", "block": "minecraft:spruce_log", "count": 10},
+      "interact": "The Beartic carries a log from the woodpile to the bonfire under one arm, as if it weighed nothing, and breathes frost on the fire out of habit."
+    },
+    {
+      "id": "northlight_ice_bergmite",
+      "settlement": "northlight",
+      "species": "bergmite",
+      "level": 26,
+      "job": "carry",
+      "route": [[7270, 1586], [7250, 1597]],
+      "carry": "minecraft:packed_ice",
+      "carry_height": 0.9,
+      "pickup": {"sound": "minecraft:block.glass.hit"},
+      "drop": {"sound": "minecraft:block.glass.place", "block": "minecraft:packed_ice", "count": 8},
+      "interact": "The Bergmite carries lake ice from the pile to the field station's cold store, and keeps it colder on the way."
+    },
+    {
+      "id": "northlight_plough_piloswine",
+      "settlement": "northlight",
+      "species": "piloswine",
+      "level": 30,
+      "job": "carry",
+      "route": [[7266, 1505], [7266, 1486]],
+      "carry": "minecraft:snow_block",
+      "carry_height": 1.1,
+      "pickup": {"sound": "minecraft:block.snow.hit"},
+      "drop": {"sound": "minecraft:block.snow.place", "block": "minecraft:snow_block", "count": 12},
+      "interact": "The Piloswine ploughs the night's snow off the harbour road with its tusks, a heap at a time, into the verge."
+    },
+    {
+      "id": "northlight_fire_darumaka",
+      "settlement": "northlight",
+      "species": "darumaka",
+      "level": 27,
+      "job": "work",
+      "at": [7283, 1580],
+      "face": [7281, 1578],
+      "every": 30,
+      "effect": {"block": "minecraft:campfire", "count": 8, "sound": "minecraft:block.fire.ambient", "pitch": 1.0},
+      "interact": "The Darumaka keeps the bonfire going, hopping in close to warm it whenever it burns low. Its own fire is the hotter of the two."
+    },
+    {
+      "id": "northlight_weather_castform",
+      "settlement": "northlight",
+      "species": "castform",
+      "level": 28,
+      "job": "work",
+      "at": [7289, 1574],
+      "face": [7286, 1573],
+      "every": 60,
+      "effect": {"block": "minecraft:powder_snow", "count": 8, "sound": "minecraft:block.amethyst_block.chime", "pitch": 1.6},
+      "interact": "The field station's Castform reads the weather instruments, and turns into the forecast. Today it is a snow cloud."
+    },
+    {
+      "id": "northlight_aurora_cryogonal",
+      "settlement": "northlight",
+      "species": "cryogonal",
+      "level": 30,
+      "job": "work",
+      "at": [7259, 1574],
+      "face": [7262, 1572],
+      "every": 70,
+      "effect": {"block": "minecraft:blue_ice", "count": 6, "sound": "minecraft:block.amethyst_block.resonate", "pitch": 1.4},
+      "interact": "The Cryogonal hangs by the aurora instrument and its chains of ice catch the light the instrument is aimed at."
+    },
+    {
+      "id": "northlight_stores_delibird",
+      "settlement": "northlight",
+      "species": "delibird",
+      "level": 26,
+      "job": "work",
+      "at": [7287, 1585],
+      "face": [7285, 1584],
+      "every": 34,
+      "effect": {"block": "minecraft:barrel", "count": 8, "sound": "minecraft:block.barrel.close", "pitch": 1.1},
+      "interact": "The Delibird packs the field station's stores into crates out of its tail sack. It packs one thing for itself for every three it packs for them."
+    },
+    {
+      "id": "northlight_sled_stantler",
+      "settlement": "northlight",
+      "species": "stantler",
+      "level": 28,
+      "job": "work",
+      "at": [7257, 1585],
+      "face": [7260, 1583],
+      "every": 50,
+      "effect": {"block": "minecraft:snow_block", "count": 8, "sound": "minecraft:block.snow.step", "pitch": 0.9},
+      "interact": "The Stantler stands in harness by the sled rack, pawing at the snow, waiting for the next run out to the ice."
+    },
+    {
+      "id": "northlight_scope_elgyem",
+      "settlement": "northlight",
+      "species": "elgyem",
+      "level": 27,
+      "job": "work",
+      "at": [7176, 1626],
+      "face": [7176, 1629],
+      "every": 55,
+      "effect": {"block": "minecraft:amethyst_block", "count": 6, "sound": "minecraft:block.amethyst_block.chime", "pitch": 0.8},
+      "interact": "The observatory's Elgyem calibrates the telescope by staring at the sky until its fingers blink. The astronomer writes down whatever it blinks."
+    },
+    {
+      "id": "northlight_hole_eiscue",
+      "settlement": "northlight",
+      "species": "eiscue",
+      "level": 27,
+      "job": "work",
+      "at": [7258, 1440],
+      "face": [7258, 1436],
+      "every": 45,
+      "effect": {"block": "minecraft:ice", "count": 8, "sound": "minecraft:block.glass.break", "pitch": 1.3},
+      "interact": "The Eiscue at the harbour's end keeps the fishing hole open by knocking the new ice off it with its head, which is also ice."
+    },
+    {
+      "id": "northlight_store_vanillite",
+      "settlement": "northlight",
+      "species": "vanillite",
+      "level": 25,
+      "job": "work",
+      "at": [7248, 1612],
+      "face": [7246, 1612],
+      "every": 40,
+      "effect": {"block": "minecraft:powder_snow", "count": 10, "sound": "minecraft:block.powder_snow.place", "pitch": 1.4},
+      "interact": "The Vanillite keeps the field station's cold store cold by breathing on its wall. The station's cook says it is also the ice cream."
+    }
+  ],
+  "pets": [
+    {"id": "northlight_hand_swinub", "species": "swinub", "owner": "npc_stone_tip_northlight_field_hand", "mode": "follow", "why": "the field hand's Swinub, which has its nose in the snow by her feet whenever she stops"},
+    {"id": "northlight_hand_eevee", "species": "eevee", "owner": "npc_stone_tip_northlight_field_hand", "mode": "follow", "why": "and an Eevee that follows her; the field station keeps asking whether it will be a Glaceon"},
+    {"id": "northlight_station_snorunt", "species": "snorunt", "owner": "northlight_station", "mode": "wait", "why": "the station counter's Snorunt waits by the counter in a little drift of its own making"},
+    {"id": "northlight_kit_vulpix", "species": "vulpix", "owner": "northlight_field_kit", "mode": "follow", "why": "the field-kit seller's Vulpix (the snow kind) follows her round the stall"},
+    {"id": "northlight_kit_sneasel", "species": "sneasel", "owner": "northlight_field_kit", "mode": "wait", "why": "and a Sneasel that waits by the kit, which explains why the kit is counted twice a day"}
+  ],
+  "placed": [
+    {"id": "northlight_roof_murkrow", "species": "murkrow", "spot": "roof", "building": "northlight_house_11", "why": "a Murkrow on the ridge of a house on the lower lane, the one bird that stays up for the observatory's night shift and sleeps through the day (2026-10-06)"},
+    {"id": "northlight_step_nickit", "species": "nickit", "spot": "step", "building": "northlight_house_12", "why": "a Nickit on the step of the east house, whose owner leaves the boots out to dry and finds them in the snow (2026-10-06)"},
+    {"id": "northlight_gutter_snom", "species": "snom", "spot": "gutter", "building": "northlight_house_04", "why": "a Snom asleep along the gutter, frosted into it"},
+    {"id": "northlight_step_munna", "species": "munna", "spot": "step", "building": "northlight_house_05", "why": "a Munna drifting at the butcher's step in the long northern night, eating the household's dreams"},
+    {"id": "northlight_window_smoochum", "species": "smoochum", "spot": "window", "building": "northlight_house_04", "why": "a Smoochum in the window, kissing the frost off the glass"},
+    {"id": "northlight_roof_hoothoot", "species": "hoothoot", "spot": "roof", "building": "northlight_house_03", "why": "a Hoothoot on the ridge, the observatory's unofficial night watch"},
+    {"id": "northlight_porch_piplup", "species": "piplup", "spot": "porch", "building": "northlight_house_01", "why": "a Piplup on the library porch, out of the wind, looking offended by the snow"},
+    {"id": "northlight_porch_chimecho", "species": "chimecho", "spot": "porch", "building": "northlight_house_10", "why": "a Chimecho hanging in the harbour house's porch, the town's wind chime"},
+    {"id": "northlight_step_snover", "species": "snover", "spot": "step", "building": "northlight_house_06", "why": "a Snover on the step, which the household thought was a small tree in a pot until it walked in"},
+    {"id": "northlight_roof_frosmoth", "species": "frosmoth", "spot": "roof", "building": "northlight_house_07", "why": "a Frosmoth on the ridge, wings open, catching snowflakes"},
+    {"id": "northlight_step_deerling", "species": "deerling", "spot": "step", "building": "northlight_house_12", "why": "a Deerling in its winter coat at the harbour house's step"}
+  ],
+  "situations": [
+    {
+      "id": "northlight_cubchoo_sledging",
+      "allow": ["street"],
+      "title": "The sledging hill",
+      "story": "Four Cubchoo slide down the station lane on their bellies, climb back up, and slide again, all day. Runny noses, no sleds.",
+      "unique": true,
+      "at": [7216, 120, 1594],
+      "facing": "north",
+      "members": [
+        {"species": "cubchoo", "count": 4, "pose": "wander_leashed", "offsets": [[0, 0, 0], [3, 0, -3], [-3, 0, 3], [5, -1, -6]]}
+      ],
+      "props": [],
+      "why": "the station lane's slope down from the field station, y 120 to 119; the lane is a street, so allowed"
+    },
+    {
+      "id": "northlight_spheal_huddle",
+      "title": "Out of the wind",
+      "story": "Three Spheal have rolled themselves into one ball in the lee of the field station and are taking turns on the outside.",
+      "unique": false,
+      "at": [7230, 119, 1626],
+      "facing": "east",
+      "members": [
+        {"species": "spheal", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [1, 0, 0], [0, 0, 1]]}
+      ],
+      "props": [],
+      "why": "south of the field station's anchor, the lee side"
+    },
+    {
+      "id": "northlight_lamp_teddiursa",
+      "allow": ["street"],
+      "title": "Stuck to the lamp post",
+      "story": "A Teddiursa licked the lamp post on the station lane and is stuck to it. Two others are trying to help by pulling.",
+      "unique": false,
+      "at": [7229, 119, 1583],
+      "facing": "west",
+      "members": [
+        {"species": "teddiursa", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [1, 0, 1], [0, 0, -2]]}
+      ],
+      "props": [],
+      "why": "beside the station lane's lamp at about (7227, 1583); street cells, so allowed"
+    },
+    {
+      "id": "northlight_clefairy_dance",
+      "title": "The observatory's night shift",
+      "story": "Three Clefairy dance in a ring in front of the observatory round a Lunatone that hovers in the middle, facing the sky. The astronomer says they come for the same reason she does.",
+      "unique": false,
+      "at": [7176, 122, 1622],
+      "facing": "south",
+      "members": [
+        {"species": "clefairy", "count": 3, "pose": "still", "offsets": [[-3, 0, -2], [3, 0, -2], [0, 0, -4]]},
+        {"species": "lunatone", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "the open ground north of the northlight_observatory anchor"
+    },
+    {
+      "id": "northlight_sled_glaceon",
+      "title": "Under the sled rack",
+      "story": "A Glaceon lies beside the sled rack every afternoon, exactly where the runners drip. Nobody knows whose it is.",
+      "unique": false,
+      "at": [7263, 118, 1585],
+      "facing": "west",
+      "members": [
+        {"species": "glaceon", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "beside northlight_sled_rack (7260, 1583)"
+    },
+    {
+      "id": "northlight_froslass_chimney",
+      "title": "The fire that will not catch",
+      "story": "The house by the sledging hill has not got its fire going all week. A Froslass is sitting in the chimney pot, and every time the smoke comes up she breathes on it.",
+      "unique": true,
+      "at": [7213, 127, 1583],
+      "facing": "south",
+      "members": [
+        {"species": "froslass", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "on the cobblestone-wall chimney pot of northlight_house_14 (snowy_small_house_6), the column's top block at y126 read from the template as placed, so the feet are y127; something in a chimney, and the cold one (a Frigibax first, 2026-10-06: it is in the ATM client-model subset)"
+    },
+    {
+      "id": "northlight_cetoddle_ice_queue",
+      "title": "First in line for the ice",
+      "story": "Every morning two Cetoddle queue at the Mart door before it opens. The Mart sells ice for the cool boxes; they buy nothing, they wait for the clerk to drop a block, and they eat it on the step.",
+      "unique": false,
+      "at": [7280, 116, 1538],
+      "facing": "north",
+      "members": [
+        {"species": "cetoddle", "count": 2, "pose": "still", "offsets": [[0, 0, 0], [0, 1, 3]]}
+      ],
+      "props": [{"block": "minecraft:packed_ice", "at": [2, 0, 0]}],
+      "why": "south of northlight_pokemart's door (7280, 1535), on the plan's open ground (feet y116, then y117 a step down the slope), not a street; a queue at a door, one species because the queue is the situation"
+    },
+    {
+      "id": "northlight_amaura_aurora",
+      "title": "Waiting for the lights",
+      "story": "An Amaura stands on the observatory hill every night facing north. On the nights the aurora comes its sail lights up the same colours, and the astronomers have started logging the Amaura instead of the sky.",
+      "unique": true,
+      "at": [7180, 122, 1610],
+      "facing": "north",
+      "members": [
+        {"species": "amaura", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "the north edge of the open ground by the northlight_observatory anchor, feet y122 from the plan, eight blocks clear of the Clefairy"
+    },
+    {
+      "id": "northlight_vanillish_snowmen",
+      "title": "Third snowman from the left",
+      "story": "The children built two snowmen on the observatory hill. There are three now. The middle one is a Vanillish, and it has started wearing the hat.",
+      "unique": true,
+      "at": [7187, 121, 1613],
+      "facing": "west",
+      "members": [
+        {"species": "vanillish", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [{"block": "minecraft:snow_block", "at": [0, 0, -2]}, {"block": "minecraft:carved_pumpkin[facing=west]", "at": [0, 1, -2]}, {"block": "minecraft:snow_block", "at": [0, 0, 2]}, {"block": "minecraft:carved_pumpkin[facing=west]", "at": [0, 1, 2]}],
+      "why": "the hill's lower shelf east of the observatory ground, feet y121 from the plan; the snowmen are props either side of it"
+    }
+  ],
+  "counts": {"working": 11, "pets": 5, "placed": 11, "situations": 20, "total": 47},
+  "notes": "Supersedes idle.towns.northlight (Snorlax and Murkrow gone). northlight_log_carrier keeps its id and route; its species is now Beartic (the Timburr went to Viltri Quay's boatwright). The field station (the_lanturn_lodge) and the observatory are plan anchors, not placement buildings, so nothing is placed on them. Eleven workers (three carriers) is over data/ambient.json rules.per_town."
+}

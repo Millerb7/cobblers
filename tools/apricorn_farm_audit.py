@@ -1047,6 +1047,12 @@ def check_siting(R, D, rep, data_dir=DATA):
                 best = (d, (px, pz, f))
         return best
     pts = authored_points(data_dir, {"apricorn_farm.json", "regions.json", "routes.json", "route_paths.json", "towns.json"})
+    # a site another file anchors ON this farm ("anchor": "apricorn_farm") is a resident of the farm, exempt at exactly
+    # its expected_at column and nowhere else (2026-10-08: the Produce Buyer at Hollin's stall)
+    pb = Path(data_dir) / "produce_buyer.json"
+    own = {(s["expected_at"][0], s["expected_at"][2]) for s in (jload(pb).get("sites") or [] if pb.is_file() else [])
+           if s.get("anchor") == "apricorn_farm" and s.get("expected_at")}
+    pts = [p for p in pts if not (p[2] == "produce_buyer.json" and (p[0], p[1]) in own)]
     d, w = nearest(pts, rules["authored_clearance"])
     near["authored"] = (round(d), w)
     if d < rules["authored_clearance"]:

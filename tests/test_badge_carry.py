@@ -236,9 +236,18 @@ def _badge_gated():
     """[(conversation id, badge flag)] for every reveal conversation with an entry rule on a badge."""
     out = []
     for cid in QUEST["dialogue_ids"]:
+        cur = CONVS[cid].get("cursor") or {}
         for r in CONVS[cid]["entry_rules"]:
             w = r["when"]
-            for c in (w.get("conditions") or [w]):
+            conds = w.get("conditions") or [w]
+            # a rule that reads the conversation's own cursor at a node PAST its locked one only ever fires for a
+            # player who has already heard the account (dlg_main_giovanni_watch's giovanni_way pointer at
+            # giovanni_repeat, dc2ccf8): it points onward and gates nothing, so its locked line need not name it
+            past = [c for c in conds if c.get("kind") == "progression_equals"
+                    and c.get("field") == cur.get("progression_field") and c.get("value") != cur.get("initial_node")]
+            if past:
+                continue
+            for c in conds:
                 if c.get("kind") == "flag" and c["flag"] in BADGES and (cid, c["flag"]) not in out:
                     out.append((cid, c["flag"]))
     return out

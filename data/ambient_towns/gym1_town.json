@@ -1,0 +1,309 @@
+{
+  "settlement": "gym1_town",
+  "size": "town",
+  "target": 48,
+  "character": "Stoneford is a masons' town that also runs the plateau's rescues: its Pokemon cut, haul, dig and burn lime for the wall going up south of the square, and the rest are stone that moved in, Rock types pretending to be something else (a tree, a pile, a roadblock). No water, no fish, no ghosts: nothing here is shared with the lake or the coast.",
+  "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/gym1_town_plan.json, gym1_town_placement.json, derived/plaza_centres/gym1_town.json and tools/ground.py (rounded) through tools/ambient.py's Site; y in a situation is the standing y (ground or paved street + 1)",
+  "workers": [
+    {
+      "id": "brock_stone_carrier",
+      "settlement": "gym1_town",
+      "species": "graveler",
+      "level": 18,
+      "job": "carry",
+      "route": [[1781, 3669], [1752, 3689]],
+      "carry": "minecraft:stone_bricks",
+      "carry_height": 1.0,
+      "pickup": {"sound": "minecraft:block.stone.hit"},
+      "drop": {"sound": "minecraft:block.stone.place", "block": "minecraft:stone_bricks", "count": 12},
+      "interact": "The masons' Graveler sets its block against the new wall with two of its hands and brushes off the dust with the other two. A mason calls it back to the pile."
+    },
+    {
+      "id": "stoneford_bench_sawk",
+      "settlement": "gym1_town",
+      "species": "sawk",
+      "level": 18,
+      "job": "work",
+      "at": [1786, 3689],
+      "face": [1786, 3690],
+      "every": 24,
+      "look_around": [1768, 3672],
+      "effect": {"block": "minecraft:stone", "count": 14, "sound": "minecraft:block.stone.hit", "pitch": 0.8},
+      "interact": "The Sawk squares the block on the bench with one chop, turns it a quarter and chops again. Its belt is grey with dust."
+    },
+    {
+      "id": "stoneford_kiln_carkol",
+      "settlement": "gym1_town",
+      "species": "carkol",
+      "level": 19,
+      "job": "work",
+      "at": [1789, 3676],
+      "face": [1791, 3676],
+      "every": 36,
+      "look_around": [1792, 3681],
+      "effect": {"block": "minecraft:coal_block", "count": 10, "sound": "minecraft:block.fire.ambient", "pitch": 0.9},
+      "interact": "The Carkol leans into the lime kiln's mouth and the fire inside brightens. It looks round at the Rolycoly waiting their turn."
+    },
+    {
+      "id": "stoneford_derrick_gurdurr",
+      "settlement": "gym1_town",
+      "species": "gurdurr",
+      "level": 20,
+      "job": "work",
+      "at": [1771, 3670],
+      "face": [1768, 3670],
+      "every": 30,
+      "look_around": [1752, 3689],
+      "effect": {"block": "minecraft:spruce_planks", "count": 10, "sound": "minecraft:block.wood.hit", "pitch": 0.7},
+      "interact": "The Gurdurr hauls on the derrick's rope with its steel beam hooked through the loop. Something heavy rises an inch."
+    },
+    {
+      "id": "stoneford_footing_drilbur",
+      "settlement": "gym1_town",
+      "species": "drilbur",
+      "level": 17,
+      "job": "work",
+      "at": [1753, 3694],
+      "face": [1753, 3692],
+      "every": 26,
+      "effect": {"block": "minecraft:gravel", "count": 12, "sound": "minecraft:block.gravel.break", "pitch": 1.1},
+      "interact": "The Drilbur is cutting the footing trench for the next length of wall, spinning down, backing out, spinning down."
+    },
+    {
+      "id": "stoneford_rescue_mudbray",
+      "settlement": "gym1_town",
+      "species": "mudbray",
+      "level": 18,
+      "job": "carry",
+      "route": [[1779, 3556], [1790, 3570], [1803, 3582]],
+      "carry": "minecraft:hay_block",
+      "carry_height": 1.1,
+      "pickup": {"sound": "minecraft:block.grass.hit"},
+      "drop": {"sound": "minecraft:block.grass.place", "block": "minecraft:hay_block", "count": 8},
+      "interact": "The rescue depot's Mudbray brings another bale of supplies to the coordinator's post. It stamps once, as if counting."
+    },
+    {
+      "id": "stoneford_rope_herdier",
+      "settlement": "gym1_town",
+      "species": "herdier",
+      "level": 19,
+      "job": "work",
+      "at": [1786, 3540],
+      "face": [1784, 3539],
+      "every": 40,
+      "look_around": [1770, 3543],
+      "effect": {"block": "minecraft:white_wool", "count": 8, "sound": "minecraft:block.wool.hit", "pitch": 1.0},
+      "interact": "The depot's Herdier noses along the rope coils, knot by knot. It has found a frayed one before and expects to again."
+    },
+    {
+      "id": "stoneford_map_smeargle",
+      "settlement": "gym1_town",
+      "species": "smeargle",
+      "level": 17,
+      "job": "work",
+      "at": [1775, 3555],
+      "face": [1772, 3553],
+      "every": 34,
+      "effect": {"block": "minecraft:light_blue_wool", "count": 8, "sound": "minecraft:block.wool.place", "pitch": 1.2},
+      "interact": "The cartographer's Smeargle is painting the plateau on the back wall of the map house, north at the top, Pallet in the corner."
+    },
+    {
+      "id": "stoneford_westlane_diggersby",
+      "settlement": "gym1_town",
+      "species": "diggersby",
+      "level": 18,
+      "job": "work",
+      "at": [1684, 3623],
+      "face": [1681, 3625],
+      "every": 28,
+      "effect": {"block": "minecraft:coarse_dirt", "count": 12, "sound": "minecraft:block.gravel.hit", "pitch": 0.9},
+      "interact": "The Diggersby is levelling ground for the stone at the west lane's end, scooping with its ears and patting it flat."
+    },
+    {
+      "id": "stoneford_paving_boldore",
+      "settlement": "gym1_town",
+      "species": "boldore",
+      "level": 19,
+      "job": "carry",
+      "route": [[1752, 3594], [1752, 3546]],
+      "carry": "minecraft:polished_andesite",
+      "carry_height": 1.0,
+      "pickup": {"sound": "minecraft:block.stone.hit"},
+      "drop": {"sound": "minecraft:block.stone.place", "block": "minecraft:polished_andesite", "count": 10},
+      "interact": "The Boldore carries paving slabs up the north avenue to where the road crew left off. Its crystals ring faintly when it sets one down."
+    },
+    {
+      "id": "stoneford_approach_golett",
+      "settlement": "gym1_town",
+      "species": "golett",
+      "level": 18,
+      "job": "carry",
+      "route": [[1723, 3703], [1724, 3713]],
+      "carry": "minecraft:andesite",
+      "carry_height": 1.2,
+      "pickup": {"sound": "minecraft:block.stone.hit"},
+      "drop": {"sound": "minecraft:block.stone.place", "block": "minecraft:andesite", "count": 10},
+      "interact": "The Golett walks one block of andesite from the roadside pile to the bench, sets it down, and walks back for the next. It has never been told to stop."
+    },
+    {
+      "id": "stoneford_compass_nosepass",
+      "settlement": "gym1_town",
+      "species": "nosepass",
+      "level": 18,
+      "job": "work",
+      "at": [1804, 3588],
+      "face": [1806, 3585],
+      "every": 60,
+      "effect": {"block": "minecraft:lodestone", "count": 6, "sound": "minecraft:block.lodestone.place", "pitch": 1.0},
+      "interact": "The coordinator's Nosepass faces north, as it always does. The rescue teams set their maps by it before they go out."
+    }
+  ],
+  "pets": [
+    {"id": "stoneford_witness_larvitar", "species": "larvitar", "owner": "stoneford_herbalist", "mode": "follow", "why": "the witness at the gym's forecourt keeps a Larvitar that chews the forecourt's gravel while it waits (re-homed 2026-10-06 to the herbalist's stall: the witness's ring is taken by the Boulder Badge evidence display, tools/reveal_evidence.py; give it back to npc_main_brock_witness when there is room)"},
+    {"id": "stoneford_workstations_tinkatink", "species": "tinkatink", "owner": "stoneford", "mode": "follow", "why": "the workstations seller's Tinkatink follows her round the stall with its hammer, tapping every anvil she sells"},
+    {"id": "stoneford_tools_rockruff", "species": "rockruff", "owner": "stoneford_masons_yard", "mode": "wait", "why": "the masons' yard tool seller's Rockruff sits by the stall and guards the chisels"},
+    {"id": "stoneford_bakehouse_fidough", "species": "fidough", "owner": "stoneford_bakehouse", "mode": "follow", "why": "the bakehouse stall's Fidough lies by the bread, proving"},
+    {"id": "stoneford_seeds_skwovet", "species": "skwovet", "owner": "stoneford_terrace_seedsman", "mode": "wait", "why": "the seedsman's Skwovet sits on the seed sacks with its cheeks full; the seedsman says it is stock-taking"},
+    {"id": "stoneford_witness_smoliv", "species": "smoliv", "owner": "stoneford_mulch_carter", "mode": "follow", "why": "the witness's other Pokemon, a Smoliv from the herbalist's stall that she bought by mistake and kept (re-homed 2026-10-06 to the mulch carter: the witness's ring is taken by the Boulder Badge evidence display, tools/reveal_evidence.py; give it back to npc_main_brock_witness when there is room)"},
+    {"id": "stoneford_mulch_lechonk", "species": "lechonk", "owner": "stoneford_mulch_carter", "mode": "follow", "why": "the mulch carter's Lechonk follows him everywhere and smells of what he sells"}
+  ],
+  "placed": [
+    {"id": "stoneford_roof_rookidee", "species": "rookidee", "spot": "roof", "building": "gym1_house_05", "why": "a Rookidee on the big house's ridge, watching the avenue"},
+    {"id": "stoneford_window_carbink", "species": "carbink", "spot": "window", "building": "gym1_house_12", "why": "a Carbink in the library window, taken for an ornament by everyone who walks past"},
+    {"id": "stoneford_porch_nacli", "species": "nacli", "spot": "step", "at": [1749, 139, 3549], "why": "a Nacli on the butcher's doorstep: he salts the meat with what it sheds (the template has no free porch, so measured beside the door)"},
+    {"id": "stoneford_step_shuckle", "species": "shuckle", "spot": "step", "building": "gym1_house_15", "why": "a Shuckle on the temple step, fermenting a berry in its shell"},
+    {"id": "stoneford_walltop_bronzor", "species": "bronzor", "spot": "wall_top", "building": "gym1_house_14", "why": "a Bronzor on the garden wall of the tall house, catching the light"},
+    {"id": "stoneford_walltop_klawf", "species": "klawf", "spot": "wall_top", "building": "gym1_house_07", "why": "a Klawf on the masons' house wall, upside down, the way it hangs off cliffs"},
+    {"id": "stoneford_gutter_minior", "species": "minior", "spot": "gutter", "building": "gym1_house_11", "why": "a Minior in the armourer's gutter; it fell there and nobody has worked out how to get it down"},
+    {"id": "stoneford_step_pawniard", "species": "pawniard", "spot": "step", "building": "gym1_house_08", "why": "a Pawniard on the toolsmith's step, running its own blades along the whetstone every time the door opens (2026-10-06)"},
+    {"id": "stoneford_porch_dwebble", "species": "dwebble", "spot": "porch", "building": "gym1_house_17", "why": "a Dwebble on the tannery porch wearing one of the yard's offcuts as its shell"}
+  ],
+  "situations": [
+    {
+      "id": "stoneford_potted_sudowoodo",
+      "allow": ["walkway"],
+      "title": "The herbalist's new tree",
+      "story": "A Sudowoodo has stood beside the herbalist's stall for three days pretending to be a potted tree. Two Bonsly have started standing in the row with it, and the herbalist has started watering all three.",
+      "unique": true,
+      "at": [1749, 139, 3629],
+      "facing": "south",
+      "members": [
+        {"species": "sudowoodo", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
+        {"species": "bonsly", "count": 2, "pose": "still", "offsets": [[-2, 0, 0], [2, 0, 0]]}
+      ],
+      "props": [{"block": "minecraft:potted_oak_sapling", "at": [4, 0, 0]}],
+      "why": "the only town where a Rock type poses as a plant; the real potted sapling at the end of the row is the joke"
+    },
+    {
+      "id": "stoneford_rhyhorn_roadblock",
+      "allow": ["street"],
+      "title": "The Rhyhorn across the west lane",
+      "story": "A Rhyhorn has lain down across the west lane and will not move. Two Lillipup bark at it from a safe distance while a cart of crates waits behind it.",
+      "unique": false,
+      "at": [1700, 139, 3596],
+      "facing": "east",
+      "members": [
+        {"species": "rhyhorn", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
+        {"species": "lillipup", "count": 2, "pose": "still", "offsets": [[4, 1, -3], [-3, 0, 3]]}
+      ],
+      "props": [{"block": "minecraft:barrel", "at": [-4, 0, 0]}, {"block": "minecraft:barrel", "at": [-4, 0, 1]}],
+      "why": "a street that is blocked, with the town's dogs as the audience"
+    },
+    {
+      "id": "stoneford_rolycoly_queue",
+      "title": "Waiting their turn at the kiln",
+      "story": "Four Rolycoly wait in a line at the lime kiln's mouth. Each rolls forward one place whenever the Carkol feeding the fire looks round.",
+      "unique": false,
+      "at": [1792, 142, 3679],
+      "facing": "north",
+      "members": [
+        {"species": "rolycoly", "count": 4, "pose": "still", "offsets": [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3]]}
+      ],
+      "props": [],
+      "why": "a queue is the situation, so one species in a line is right here"
+    },
+    {
+      "id": "stoneford_phanpy_bath",
+      "title": "Bath day at the animal pen",
+      "story": "Three Phanpy have found the pen's water trough behind the farmhouse and are taking turns spraying each other with it.",
+      "unique": false,
+      "at": [1677, 138, 3677],
+      "facing": "east",
+      "members": [
+        {"species": "phanpy", "count": 3, "pose": "wander_leashed", "offsets": [[0, 0, 0], [0, 0, 2], [-1, 0, -2]]}
+      ],
+      "props": [{"block": "minecraft:water_cauldron", "at": [1, 0, 1]}],
+      "why": "the pen's back yard (approach_sw_lot_03) behind gym1_house_03"
+    },
+    {
+      "id": "stoneford_pile_geodude",
+      "title": "Three stones too many",
+      "story": "The roadside stone pile has three more stones than anyone cut. They are Geodude, curled up among the blocks, and the Golett keeps trying to carry one.",
+      "unique": false,
+      "at": [1718, 138, 3700],
+      "facing": "east",
+      "members": [
+        {"species": "geodude", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [1, 0, 3], [-1, 0, 2]]}
+      ],
+      "props": [],
+      "why": "beside brock_approach_yard_stone (1720, 3702), the first thing a player walking in from Pallet passes"
+    },
+    {
+      "id": "stoneford_klefki_chimney",
+      "title": "The sweep nobody pays",
+      "story": "The armorer has never once paid a sweep, and his chimney draws cleaner than any on the wall. A Nickit sleeps in the pot by day and goes down the flue at night for whatever has rolled behind the grate; its brush of a tail does the sweeping on the way.",
+      "unique": false,
+      "at": [
+        1743,
+        146,
+        3533
+      ],
+      "facing": "east",
+      "members": [
+        {
+          "species": "nickit",
+          "count": 1,
+          "pose": "still",
+          "offsets": [
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      ],
+      "props": [],
+      "why": "on the cobblestone-wall chimney pot of gym1_house_11 (armorer_house_1), the column's top block at y145 read from the template as placed, so the feet are y146; something in a chimney; a Nickit, not Fossick's Klefki (orchestrator 2026-10-06: the two authors both wrote a lone key-Klefki). Rewritten 2026-10-08 (unit AMB): the lost keys were Fossick's Klefki's joke and the badly drawing forge Sunset West's; not credited unique, since five towns have something on a chimney and Northlight's is the one credited"
+    },
+    {
+      "id": "stoneford_sculptors_models",
+      "title": "Sitting for the sculptor",
+      "story": "Behind the masons' house a Tyrunt and an Archen have held the same pose for an hour beside a block with half a head carved into it. The mason went for lunch and nobody has told them.",
+      "unique": true,
+      "at": [1737, 139, 3566],
+      "facing": "east",
+      "members": [
+        {"species": "tyrunt", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
+        {"species": "archen", "count": 1, "pose": "still", "offsets": [[0, 0, -3]]}
+      ],
+      "props": [{"block": "minecraft:chiseled_stone_bricks", "at": [-1, 0, -2]}, {"block": "minecraft:stone_bricks", "at": [-1, 1, -2]}],
+      "why": "the open ground west of gym1_house_07 (masons_house_1, footprint x1740-1747), feet y139 from the plan; two fossil revivals from the rescue side of town modelling for the stone side of it"
+    },
+    {
+      "id": "stoneford_temple_claydol",
+      "title": "The temple's new statue",
+      "story": "A Claydol has stood on a plinth by the temple door since the spring fair. The priest has started leaving offerings at its feet, and it has started accepting them.",
+      "unique": true,
+      "at": [1694, 139, 3600],
+      "facing": "north",
+      "members": [
+        {"species": "claydol", "count": 1, "pose": "still", "offsets": [[0, 1, 0]]}
+      ],
+      "props": [{"block": "minecraft:chiseled_stone_bricks", "at": [0, 0, 0]}, {"block": "minecraft:flower_pot", "at": [-1, 0, -1]}],
+      "why": "the temple's (gym1_house_15) north-east corner by its door, off the street at z3597; feet y139 from the plan, the Claydol standing on its plinth prop; a Rock type pretending to be a statue, the town's habit"
+    }
+  ],
+  "counts": {"working": 12, "pets": 7, "placed": 9, "situations": 20, "total": 48},
+  "notes": "Supersedes idle.towns.gym1_town (the dozing Snorlax, Purrloin and Murkrow are gone) and the brock_* workers: the Graveler's route is kept; the bench's Machop is now a Sawk at the same station. Twelve workers (four carriers) is over data/ambient.json rules.per_town (2 carriers, 4 stationary): the composition's 30% working asks for more, and which rule wins is the generator's and the owner's call."
+}

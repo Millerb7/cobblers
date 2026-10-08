@@ -15,16 +15,27 @@ Route files (spawn_pool_world/routes/<route>.json), per spawns.json compilation.
 Sub-region files (spawn_pool_world/subregions/<sub>.json): every ambient entry scoped to the sub-region over its
 polygon, corridor excluded; an entry carrying a "heart" (docs/mechanics/ENCOUNTER_DESIGN.md section 10) only over the
 heart's cells (heart_boxes), and never in a route file. A heart entry with "alpha" true compiles as a native alpha
-(heart_pokemon: "<species> alpha=true"), in sub-region, waterway and marine files alike.
+(heart_pokemon: "<species> alpha=true"), in sub-region, waterway and marine files alike. An entry carrying
+"held_items" compiles them as the spawn detail's heldItems (held_items()) in route, sub-region, waterway and marine
+files alike, never in a habitat pool.
 
 Habitat files (habitat_pools/<habitat>.json): every ambient entry scoped to the habitat.
 
 The Mega field's dens (data/gulch_mine.json mega_field.families, 2026-10-05): each den's evolution line, plain and
 catchable, over a box round its anchor, appended to the file of the sub-region holding the anchor (mega_den_spawns).
 
+Placed structures' grounds (data/spawns.json placement_sites, entries with mechanism placement_coordinate_boxes): a
+site's roster over its placement's footprint (data/placements.json) widened by its margin, appended to the file of the
+sub-region holding the footprint, as the dens are (placement_site_spawns). The first: Poipole at the two pasted
+Necrozma towers (docs/mechanics/NETHER_ENCOUNTERS.md section 4).
+
 Marine files (spawn_pool_world/marine/<band>.json), from spawns.json marine_zones: open sea no sub-region, route or
 waterway covers, split into bands by distance from land (marine_bands below); every ambient entry scoped to a band
 (mechanism marine_coordinate_boxes). The first is the Windward Sea off Route 1 (2026-09-26).
+
+Nether files (spawn_pool_world/nether/<table>_<ring>.json), from spawns.json nether_tables and the entries with mechanism
+nether_ring_boxes (tools/build_encounters.py, from data/encounter_design.json "nether"): each table's roster over its
+ring's boxes, bound to minecraft:the_nether by the entries' own conditions, never with a forced canSeeSky (build_nether).
 
   python tools/compile_spawns.py                          # write build/datapacks/cobblers_spawns
   python tools/compile_spawns.py --out <dir>              # write elsewhere
@@ -62,6 +73,7 @@ SAMPLE_STEP = 4.0
 SUBREGION_GRID = 32
 WATERWAY_GRID = 16
 MARINE_GRID = 32
+OVERWORLD = "minecraft:overworld"
 
 
 def dumps(doc):
@@ -78,14 +90,36 @@ def box_condition(min_x, max_x, min_z, max_z, entry):
     column's sky flag once, at the top of the spawning zone around the player (see marine_condition), so under a
     deep lake it is false and a forced canSeeSky empties every submerged and seafloor entry: on staging
     2026-09-26 /checkspawn on the floor of Lake Viltri and Shrew Lake found nothing at all.
+
+    Nor is it forced on an entry bound off the overworld (open_sky_forced): under the Nether's roof no column sees the
+    sky, so a forced canSeeSky empties every grounded Nether entry (review N154).
     """
     cond = {"minX": min_x, "maxX": max_x, "minZ": min_z, "maxZ": max_z}
-    if position_type(entry) not in ("submerged", "seafloor"):
+    if open_sky_forced(entry):
         cond["canSeeSky"] = True
     if entry.get("biomes"):
         cond["biomes"] = list(entry["biomes"])
     cond.update(entry.get("conditions") or {})
     return cond
+
+
+def open_sky_forced(entry):
+    """Whether box_condition adds canSeeSky true: a land or surface entry on the overworld only.
+
+    The dimension is read from the entry's own conditions.dimensions, the Cobblemon 1.8.0 SpawningCondition field
+    (a list of dimension ids; an empty or absent list restricts nothing; docs/research/notes/
+    spawn-dimension-condition-1.8.0.md). An entry with no dimensions is an overworld entry, as every one compiled
+    before 2026-10-08 was, and keeps the sky. An entry whose dimensions name anything but minecraft:overworld (the
+    Nether, the End, or an empty list, which Cobblemon reads as every dimension) gets no forced sky; it may still
+    author canSeeSky in its conditions."""
+    if position_type(entry) in ("submerged", "seafloor"):
+        return False
+    dims = (entry.get("conditions") or {}).get("dimensions")
+    if dims is None:
+        return True
+    if not isinstance(dims, list) or not all(isinstance(d, str) and ":" in d for d in dims):
+        raise SystemExit("%s: conditions.dimensions must be a list of dimension ids, not %r" % (entry.get("species"), dims))
+    return bool(dims) and set(dims) == {OVERWORLD}
 
 
 def heart_pokemon(entry):
@@ -97,6 +131,20 @@ def heart_pokemon(entry):
     data/cobblemon/spawn_pool_world/herds/0023_fearow_alpha.json "fearow held_item=cobblemon:flying_gem alpha=true"
     (Cobblemon-fabric-1.8.0+1.21.1.jar). tools/build_encounters.py fails closed on a heart entry without the flag."""
     return entry["species"] + (" alpha=true" if entry.get("alpha") is True else "")
+
+
+def held_items(entry):
+    """{"heldItems": [...]} for an entry carrying held_items (tools/build_encounters.py stamps them from
+    data/encounter_design.json rules.held_items; the owner, 2026-10-05: wild held items, a find and not a farm), else {}.
+
+    heldItems is the Cobblemon 1.8.0 PokemonSpawnDetail field (List<PossibleHeldItem>, each {"item", "percentage"},
+    read through PossibleHeldItemAdapter); createSpawnAction gives no item with chance 1 - sum(percentage) / 100.
+    Verified from the jar's bytecode, not in game. Written on spawn_pool_world details only: a habitat pool spawn and a
+    Mega field den row (mega_den_spawns, from data/gulch_mine.json) never carry one."""
+    hs = entry.get("held_items")
+    if not hs:
+        return {}
+    return {"heldItems": [{"item": h["item"], "percentage": h["percentage"]} for h in hs]}
 
 
 def position_type(entry):
@@ -243,7 +291,7 @@ def compile_route(route, entries_by_scope, allowed=None, zones=()):
                         else "%s_p%d_%s_%s" % (b["id"], k, s, e["species"])
                     spawns.append({"id": sid, "pokemon": e["species"], "type": "pokemon",
                                    "spawnablePositionType": position_type(e), "bucket": e["bucket"], "level": e["level"],
-                                   "weight": e["weight"], "condition": cond})
+                                   "weight": e["weight"], "condition": cond, **held_items(e)})
                     species.add(e["species"])
     doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns}
     summary = {"route_id": route["id"], "source_box_count": len(boxes), "compiled_entry_count": len(spawns),
@@ -361,7 +409,8 @@ def compile_subregion(sub, entries, exclude, grid, waterways=()):
             cond = box_condition(b[0], b[1], b[2], b[3], e)
             spawns.append({"id": "%s_b%04d_%s" % (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": e["species"],
                            "type": "pokemon", "spawnablePositionType": position_type(e),
-                           "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond})
+                           "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond,
+                           **held_items(e)})
     hboxes = []
     if hearts:
         geoms = {json.dumps(e["heart"], sort_keys=True) for e in hearts}
@@ -373,7 +422,8 @@ def compile_subregion(sub, entries, exclude, grid, waterways=()):
                 cond = box_condition(b[0], b[1], b[2], b[3], e)
                 spawns.append({"id": "%s_h%04d_%s" % (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": heart_pokemon(e),
                                "type": "pokemon", "spawnablePositionType": position_type(e),
-                               "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond})
+                               "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond,
+                               **held_items(e)})
     doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns}
     summary = {"subregion_id": sub["id"], "box_count": len(boxes), "compiled_entry_count": len(spawns),
                "species": sorted({e["species"] for e in base}),
@@ -393,11 +443,16 @@ def compile_habitat(h, entries):
     # cobblemon:farfetch'd, an invalid location, and the whole data load stopped on staging, 2026-09-26)
     # a habitat pool spawn takes a timeRange of its own (Cobblemon 1.8.0 HabitatSpawn, and the jar's own
     # habitat_pools/abandoned_village_house.json): an entry's conditions.timeRange carries through, so a night bird
-    # is a night bird in a tree too
+    # is a night bird in a tree too.
+    # A regional form ("corsola galarian") is the species plus `modifiers`: HabitatSpawn.species is a Species, not a
+    # properties string, so "corsola galarian" there would be an invalid species and fail the data load; the form goes
+    # in `modifiers` (a PokemonProperties), as the jar's own habitat pools write it ("modifiers": "galarian";
+    # docs/research/notes/habitat-blocks-underground.md, HabitatSpawn.kt). 2026-10-05, tools/desert_wreck.py's pool.
     doc = {"name": "cobblers.habitat.%s.name" % h["id"], "type": "cobblemon:natural",
-           "spawns": [dict({"species": e["species"], "bucket": e["bucket"],
+           "spawns": [dict({"species": e["species"].split()[0], "bucket": e["bucket"],
                             "spawnablePositionType": position_type(e),
                             "weight": e["weight"], "levelRange": e["level"], "phases": "1-25"},
+                           **({"modifiers": " ".join(e["species"].split()[1:])} if len(e["species"].split()) > 1 else {}),
                            **({"timeRange": e["conditions"]["timeRange"]}
                               if (e.get("conditions") or {}).get("timeRange") else {})) for e in compiled]}
     compiled_names = {display.get(e["species"], e["species"]) for e in compiled}
@@ -438,7 +493,7 @@ def build_waterways(spawns, waterways, grid=WATERWAY_GRID, routes=None):
                                        "spawnablePositionType": position_type(e),
                                        "bucket": e["bucket"], "level": e["level"],
                                        "weight": round(e["weight"] * mult, 3),
-                                       "condition": box_condition(b[0], b[1], b[2], b[3], e)})
+                                       "condition": box_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
         hboxes = []
         if hearts:
             hboxes = focus_heart_boxes(all_boxes, one_heart(w["id"], hearts), grid, corridor, whole_boxes=True)
@@ -450,7 +505,7 @@ def build_waterways(spawns, waterways, grid=WATERWAY_GRID, routes=None):
                                        "pokemon": heart_pokemon(e), "type": "pokemon",
                                        "spawnablePositionType": position_type(e),
                                        "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
-                                       "condition": box_condition(b[0], b[1], b[2], b[3], e)})
+                                       "condition": box_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
         doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns_out}
         files["data/cobblers/spawn_pool_world/waterways/%s.json" % w["id"]] = dumps(doc)
         summaries.append({"waterway_id": w["id"], "box_count": boxes, "compiled_entry_count": len(spawns_out),
@@ -491,7 +546,7 @@ def build(spawns, routes):
     return files, route_summaries, habitat_summaries
 
 
-def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=()):
+def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=(), placements=None):
     """The sub-region half of the pack: every authored roster over its own polygon.
 
     Kept separate from build() so the route compilation keeps its shape; a sub-region file and a
@@ -511,9 +566,11 @@ def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=())
     subs = {s["id"]: s for s in regions["subregions"]}
     dens, den_summ = mega_den_spawns(regions, corridor, spawns,
                                      base_boxes=lambda sid: subregion_boxes.boxes_for(subs[sid]["polygons"], grid, corridor, waterways))
+    sites, site_summ = placement_site_spawns(regions, corridor, spawns, placements,
+                                             base_boxes=lambda sid: subregion_boxes.boxes_for(subs[sid]["polygons"], grid, corridor, waterways))
     for sub in regions["subregions"]:
         ents = by_scope.get(sub["id"], [])
-        extra = dens.get(sub["id"], [])
+        extra = dens.get(sub["id"], []) + sites.get(sub["id"], [])
         if not ents and not extra:
             continue
         if ents:
@@ -524,10 +581,14 @@ def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=())
                     "covered_blocks": 0, "corridor_blocks_excluded": 0,
                     "output": "spawn_pool_world/subregions/%s.json" % sub["id"]}
         if extra:
-            # the Mega field's dens' lines (mega_den_spawns), over each den's own box, on top of the roster there
+            # the Mega field's dens' lines (mega_den_spawns), over each den's own box, on top of the roster there,
+            # and a placed structure's grounds (placement_site_spawns), likewise over its own box
             doc["spawns"] += extra
             summ["compiled_entry_count"] += len(extra)
-            summ["mega_dens"] = den_summ[sub["id"]]
+            if sub["id"] in den_summ:
+                summ["mega_dens"] = den_summ[sub["id"]]
+            if sub["id"] in site_summ:
+                summ["placement_sites"] = site_summ[sub["id"]]
         if not doc["spawns"]:
             continue
         files["data/cobblers/spawn_pool_world/subregions/%s.json" % sub["id"]] = dumps(doc)
@@ -604,6 +665,95 @@ def mega_den_spawns(regions, corridor, spawns, gulch=None, base_boxes=None):
             s["species"] |= set(line)
     for s in summ.values():
         s["species"] = sorted(s["species"])
+    return out, summ
+
+
+PLACEMENTS = ROOT / "data" / "placements.json"
+SITE = "placement_coordinate_boxes"
+
+
+def placement_site_spawns(regions, corridor, spawns, placements=None, base_boxes=None):
+    """({sub-region id: [spawn details]}, {sub-region id: [summary]}): the roster of a placed structure's grounds
+    (data/spawns.json placement_sites; entries with mechanism placement_coordinate_boxes scoped to a site id). The first
+    is Poipole at the two pasted Necrozma towers (docs/mechanics/NETHER_ENCOUNTERS.md section 4, the owner approved
+    2026-10-08), whose only upstream spawn rode the End's copies the dimension override switches off.
+
+    The box is the placement's footprint (data/placements.json position and size; corner anchor, rotation none only)
+    widened by the site's margin, less the route corridor boxes and the spawn-free zones, and only where the base
+    roster of the sub-region holding the footprint's centre already spawns (as mega_den_spawns lays a den). The details
+    go into that sub-region's file, after its own roster, with ids <sub>_<site>_b<n>_<species>. box_condition applies:
+    a grounded entry is forced canSeeSky, so a site entry spawns on the open grounds and any sky-open surface of the
+    structure, never under its roof and never in a cave below it.
+
+    Fails closed: an entry naming no site, a site naming no placement, a placement that is not corner-anchored and
+    unrotated, a footprint centre in no sub-region, a site whose box leaves nothing, and an entry whose level is outside
+    the sub-region's level_band (a find, its eligibility_reason starting "find", also outside the band's top half,
+    ENCOUNTER_DESIGN.md section 6). Translation only: every number is the data's."""
+    sites = {s["id"]: s for s in spawns.get("placement_sites") or []}
+    ents = [e for e in spawns["entries"] if e["mechanism"] == SITE and e["ambient"] and e["weight"] > 0]
+    if not sites and not ents:
+        return {}, {}
+    unknown = sorted({e["scope"] for e in ents} - set(sites))
+    if unknown:
+        raise SystemExit("placement-site entries name sites data/spawns.json placement_sites does not define: %s" % unknown)
+    if placements is None:
+        placements = json.loads(PLACEMENTS.read_text(encoding="utf-8"))
+    by_id = {p["id"]: p for p in placements.get("placements") or [] if isinstance(p, dict) and "id" in p}
+    bands = {s["id"]: s.get("level_band") for s in spawns.get("subregions") or []}
+    cut = list(spawn_free_zones()) + [tuple(b[:4]) for b in corridor]
+    out, summ, base_cache = {}, {}, {}
+    for sid, site in sorted(sites.items()):
+        rows_in = [e for e in ents if e["scope"] == sid]
+        if not rows_in:
+            continue
+        p = by_id.get(site["placement"])
+        if p is None:
+            raise SystemExit("placement site %s: data/placements.json has no placement %r" % (sid, site["placement"]))
+        if p.get("anchor_mode") != "corner" or p.get("rotation") != "none":
+            raise SystemExit("placement site %s: %s is %s-anchored, rotation %s; only corner and none are translated"
+                             % (sid, p["id"], p.get("anchor_mode"), p.get("rotation")))
+        x0, z0 = p["position"]["x"], p["position"]["z"]
+        sx, sz = p["size"][0], p["size"][2]
+        m = site["margin"]
+        cx, cz = x0 + sx / 2.0, z0 + sz / 2.0
+        home = [s for s in regions["subregions"]
+                if any(subregion_boxes.point_in_polygon(cx, cz, poly) for poly in s["polygons"])]
+        if not home:
+            raise SystemExit("placement site %s: the footprint centre (%.1f, %.1f) is in no data/regions.json sub-region"
+                             % (sid, cx, cz))
+        sub = sorted(home, key=lambda s: s["id"])[0]["id"]
+        box = (x0 - m, x0 + sx - 1 + m, z0 - m, z0 + sz - 1 + m)
+        boxes = subtract(box, cut)
+        if base_boxes is not None:
+            if sub not in base_cache:
+                base_cache[sub] = base_boxes(sub)
+            boxes = [(max(b[0], c[0]), min(b[1], c[1]), max(b[2], c[2]), min(b[3], c[3]))
+                     for b in boxes for c in base_cache[sub]
+                     if max(b[0], c[0]) <= min(b[1], c[1]) and max(b[2], c[2]) <= min(b[3], c[3])]
+        if not boxes:
+            raise SystemExit("placement site %s: its box %s leaves nothing once the path, spawn-free zones and the "
+                             "sub-region's own cells are applied" % (sid, box))
+        band = bands.get(sub)
+        if not band:
+            raise SystemExit("placement site %s: sub-region %s has no level_band in data/spawns.json" % (sid, sub))
+        lo_b, hi_b = band["minimum"], band["maximum"]
+        rows = []
+        for e in rows_in:
+            lo, hi = (int(v) for v in e["level"].split("-"))
+            if lo < lo_b or hi > hi_b:
+                raise SystemExit("%s: level %s is outside %s's band %d-%d" % (e["id"], e["level"], sub, lo_b, hi_b))
+            if str(e.get("eligibility_reason", "")).startswith("find") and lo < lo_b + (hi_b - lo_b) // 2:
+                raise SystemExit("%s: a find spawns in the top half of the band (from %d), not from %d"
+                                 % (e["id"], lo_b + (hi_b - lo_b) // 2, lo))
+            for bi, b in enumerate(boxes):
+                rows.append({"id": "%s_%s_b%d_%s" % (sub, sid, bi, e["species"].replace(" ", "_")),
+                             "pokemon": e["species"], "type": "pokemon", "spawnablePositionType": position_type(e),
+                             "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
+                             "condition": box_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
+        out.setdefault(sub, []).extend(rows)
+        summ.setdefault(sub, []).append({"site": sid, "placement": p["id"], "box": list(box), "box_count": len(boxes),
+                                         "covered_blocks": subregion_boxes.area(boxes), "entries": len(rows),
+                                         "species": sorted({e["species"] for e in rows_in})})
     return out, summ
 
 
@@ -715,7 +865,7 @@ def build_marine(spawns, regions, routes, waterways=()):
                 spawns_out.append({"id": "%s_b%04d_%s" % (bid, n, e["species"].replace(" ", "_")), "pokemon": e["species"],
                                    "type": "pokemon", "spawnablePositionType": position_type(e),
                                    "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
-                                   "condition": marine_condition(b[0], b[1], b[2], b[3], e)})
+                                   "condition": marine_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
         hboxes = []
         if hearts:
             hboxes = focus_heart_boxes(boxes, one_heart(bid, hearts), MARINE_GRID, corridor)
@@ -726,7 +876,7 @@ def build_marine(spawns, regions, routes, waterways=()):
                     spawns_out.append({"id": "%s_h%04d_%s" % (bid, n, e["species"].replace(" ", "_")), "pokemon": heart_pokemon(e),
                                        "type": "pokemon", "spawnablePositionType": position_type(e),
                                        "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
-                                       "condition": marine_condition(b[0], b[1], b[2], b[3], e)})
+                                       "condition": marine_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
         doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns_out}
         files["data/cobblers/spawn_pool_world/marine/%s.json" % bid] = dumps(doc)
         summaries.append({"band_id": bid, "box_count": len(boxes), "compiled_entry_count": len(spawns_out),
@@ -735,6 +885,55 @@ def build_marine(spawns, regions, routes, waterways=()):
         if hearts:
             summaries[-1]["heart"] = dict(hearts[0]["heart"], box_count=len(hboxes), covered_blocks=subregion_boxes.area(hboxes),
                                           species=sorted({e["species"] for e in hearts}))
+    return files, summaries
+
+
+NETHER = "nether_ring_boxes"
+NETHER_DIMENSION = "minecraft:the_nether"
+
+
+def build_nether(spawns):
+    """The Nether half of the pack (docs/mechanics/NETHER_ENCOUNTERS.md): one file per data/spawns.json nether_tables
+    record, spawn_pool_world/nether/<table>_<ring>.json, every entry of that scope over each of the ring's boxes.
+
+    box_condition writes the box, the entry's biomes and its conditions, which carry "dimensions":
+    ["minecraft:the_nether"] (and a structure table's "structures"): so open_sky_forced adds no canSeeSky, which no
+    column under the Nether's roof could meet (review N154). A heart entry is laid over the same boxes as the base
+    rows (it has no position: its neededNearbyBlocks, and maxY, are its geometry), with ids <scope>_h<n>_<species>.
+
+    These are our compiled pools in cobblers_spawns. tools/suppress_inherited_spawns.py re-emits only inherited files
+    and never reads a cobblers_* pack (its collect()), so the one Nether anticondition it adds to every inherited
+    detail does not reach them (contract C19). Fails closed on an entry whose scope has no record, an entry not bound
+    to the Nether, and a record with no entries."""
+    by_scope = {}
+    for e in spawns["entries"]:
+        if e["mechanism"] == NETHER and e["ambient"] and e["weight"] > 0:
+            if (e.get("conditions") or {}).get("dimensions") != [NETHER_DIMENSION]:
+                raise SystemExit("%s: a Nether entry must carry conditions.dimensions [%s]" % (e["id"], NETHER_DIMENSION))
+            by_scope.setdefault(e["scope"], []).append(e)
+    records = {r["id"]: r for r in spawns.get("nether_tables") or []}
+    unknown = sorted(set(by_scope) - set(records))
+    if unknown:
+        raise SystemExit("Nether entries name tables no nether_tables record defines: %s" % unknown)
+    files, summaries = {}, []
+    for sid, rec in sorted(records.items()):
+        ents = by_scope.get(sid, [])
+        if not ents:
+            raise SystemExit("nether table %s has no entries" % sid)
+        out = []
+        for n, b in enumerate(rec["boxes"]):
+            for e in ents:
+                out.append({"id": "%s_%s%04d_%s" % (sid, "h" if e.get("heart") else "b", n, e["species"].replace(" ", "_")),
+                            "pokemon": heart_pokemon(e) if e.get("heart") else e["species"], "type": "pokemon",
+                            "spawnablePositionType": position_type(e), "bucket": e["bucket"], "level": e["level"],
+                            "weight": e["weight"], "condition": box_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
+        doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": out}
+        files["data/cobblers/spawn_pool_world/nether/%s.json" % sid] = dumps(doc)
+        summaries.append({"table_id": sid, "ring": rec["ring"], "tier": rec["tier"], "box_count": len(rec["boxes"]),
+                          "compiled_entry_count": len(out), "key": rec["key"],
+                          "species": sorted({e["species"] for e in ents if not e.get("heart")}),
+                          "heart_species": sorted({e["species"] for e in ents if e.get("heart")}),
+                          "output": "spawn_pool_world/nether/%s.json" % sid})
     return files, summaries
 
 
@@ -776,6 +975,8 @@ def main(argv=None):
         files.update(subfiles)
         marinefiles, ms = build_marine(spawns, regions, routes, water_boxes)
         files.update(marinefiles)
+    netherfiles, ns = build_nether(spawns)
+    files.update(netherfiles)
     if a.check:
         base = Path(a.check)
         same = diff = missing = 0
@@ -809,10 +1010,12 @@ def main(argv=None):
         f.write_text(text, encoding="utf-8", newline="\n")
     manifest = {"generator": "tools/compile_spawns.py",
                 "inputs": {k: hashlib.sha256(Path(v).read_bytes()).hexdigest() for k, v in (("data/spawns.json", a.spawns), ("data/routes.json", a.routes))
-                           + ((("data/gulch_mine.json", GULCH),) if GULCH.is_file() and not a.no_subregions else ())},
+                           + ((("data/gulch_mine.json", GULCH),) if GULCH.is_file() and not a.no_subregions else ())
+                           + ((("data/placements.json", PLACEMENTS),) if spawns.get("placement_sites") and not a.no_subregions else ())},
                 "files": {rel: hashlib.sha256(text.encode("utf-8")).hexdigest() for rel, text in sorted(files.items())},
                 "route_files": rs, "habitat_files": hs, "subregion_files": ss, "waterway_files": ws,
                 "marine_files": ms,
+                "nether_files": ns,
                 "subregion_grid": a.grid,
                 "subregion_box_count": sum(q["box_count"] for q in ss),
                 "subregion_spawn_entry_count": sum(q["compiled_entry_count"] for q in ss),
@@ -827,6 +1030,8 @@ def main(argv=None):
     for q in ms:
         print("  marine %s: %d boxes, %d entries, %s blocks" % (q["band_id"], q["box_count"], q["compiled_entry_count"],
                                                             format(q["covered_blocks"], ",")))
+    if ns:
+        print("  nether: %d tables, %d entries" % (len(ns), sum(q["compiled_entry_count"] for q in ns)))
     return 0
 
 

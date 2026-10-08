@@ -633,9 +633,11 @@ def _real_pack():
 def test_each_gym_flag_offers_the_next_gym_to_the_player_who_earned_it():
     # One gym ahead (NAVIGATION.md section 6). Without this a cleared gym leaves the player with Cobbleverse's map to
     # a gym this world does not have, or with nothing.
+    # Gym 8's is the Rift surveyor, not the League (2026-10-06, docs/world-building/POST_GYM8_DIRECTION.md): the
+    # League turns an Earth Badge holder back at G5 until rift_crisis_resolved, which now offers the League instead.
     out = _real_pack()
     order = ["Gym 2 Misty", "Gym 3 Lt Surge", "Gym 4 Erika", "Gym 5 Koga", "Gym 6 Sabrina", "Gym 7 Blaine",
-             "Gym 8 Giovanni", "Pokemon League"]
+             "Gym 8 Giovanni", "Rift Surveyor"]
     for i, name in enumerate(order, 1):
         text = out["data/cobblers/function/flag/gym%d_cleared/granted.mcfunction" % i]
         tell = [l for l in text.splitlines() if l.startswith("tellraw")]
@@ -646,6 +648,57 @@ def test_each_gym_flag_offers_the_next_gym_to_the_player_who_earned_it():
         assert len(fields) == 10 and fields[1] == name and fields[-1] == "Internal-overworld-waypoints", share
         assert all(re.fullmatch(r"-?\d+", f) for f in fields[3:7]) and fields[7] == "false"
     assert "tellraw" not in out["data/cobblers/function/flag/champion_cleared/granted.mcfunction"]
+
+
+def _offer(out, flag):
+    text = out["data/cobblers/function/flag/%s/granted.mcfunction" % flag]
+    tell = [l for l in text.splitlines() if l.startswith("tellraw @s ")]
+    assert len(tell) == 1, text
+    parts = json.loads(tell[0][len("tellraw @s "):])
+    share = re.search(r"xaero-waypoint:[^\"]+", tell[0]).group(0).split(":")
+    return parts, share
+
+
+def test_the_earth_badge_points_at_the_rift_surveyor_and_says_why():
+    """After gym 8 the player is told where to go (the owner, 2026-10-06): the waypoint stands on the surveyor's seat
+    (read here from data/npc_seats.json, not from the pack), and the offer carries a sentence naming Victory Road's
+    trailhead. Without it the only direction after the Earth Badge was the League, which turns the player back."""
+    out = _real_pack()
+    parts, share = _offer(out, "gym8_cleared")
+    seats = json.loads((ROOT / "data" / "npc_seats.json").read_text(encoding="utf-8"))["seats"]
+    sx, sy, sz = next(s["at"] for s in seats if s["id"] == "npc_main_rift_surveyor")
+    assert share[1] == "Rift Surveyor" and (int(share[3]), int(share[4]), int(share[5])) == (sx, sy, sz), share
+    said = " ".join(p.get("text", "") for p in parts if isinstance(p, dict))
+    assert "Victory Road" in said and "trailhead" in said and "surveyor" in said, said
+    assert "Pokemon League" not in said
+
+
+def test_the_league_waypoint_comes_with_the_release_not_the_earth_badge():
+    out = _real_pack()
+    parts, share = _offer(out, "rift_crisis_resolved")
+    assert share[1] == "Pokemon League", share
+    said = " ".join(p.get("text", "") for p in parts if isinstance(p, dict))
+    assert "Victory Road" in said and "north rim" in said, said
+    for flag in ["gym%d_cleared" % n for n in range(1, 9)]:
+        assert "Pokemon League" not in out["data/cobblers/function/flag/%s/granted.mcfunction" % flag], flag
+
+
+def test_a_marker_naming_both_or_neither_of_placement_and_npc_seat_fails():
+    doc = PP.load(REAL_DATA)
+    doc["gym_markers"]["markers"]["rift_surveyor"]["placement"] = "league_building"
+    with pytest.raises(PP.ProgressionError, match="exactly one"):
+        PP.plan(doc, placements=REAL_PLACEMENTS)
+    doc = PP.load(REAL_DATA)
+    del doc["gym_markers"]["markers"]["rift_surveyor"]["npc_seat"]
+    with pytest.raises(PP.ProgressionError, match="exactly one"):
+        PP.plan(doc, placements=REAL_PLACEMENTS)
+
+
+def test_a_marker_on_an_unseated_npc_fails():
+    doc = PP.load(REAL_DATA)
+    doc["gym_markers"]["markers"]["rift_surveyor"]["npc_seat"] = "npc_nobody"
+    with pytest.raises(PP.ProgressionError, match="no seat"):
+        PP.plan(doc, placements=REAL_PLACEMENTS)
 
 
 def test_the_league_marker_stands_on_the_league():
@@ -744,7 +797,11 @@ def test_real_no_emptied_leader_table_lacks_a_first_win_record_and_each_gives_a_
     assert emptied, "no rctmod table is emptied: the rule was never exercised"
     assert sorted(set(emptied) - set(trainers)) == []
     series = doc["upstream_neutralised"]["first_win_rewards"]["series"]
-    leaders = [t for f in doc["flags"] if f["set_by"]["kind"] == "trainer_defeat"
+    # Challenge mode (data/challenge_mode.json, 2026-10-06): a flag also lists <leader>_challenge, whose win grants
+    # the same flag and so the same one-time reward (progression_pack keys the reward on the flag, not the id). It
+    # is covered by its Normal leader's record; a second record would pay the reward twice
+    sfx = json.loads((REAL_DATA.parent / "challenge_mode.json").read_text(encoding="utf-8"))["id_suffix"]
+    leaders = [t[:-len(sfx)] if t.endswith(sfx) else t for f in doc["flags"] if f["set_by"]["kind"] == "trainer_defeat"
                for t in f["set_by"]["trainer_ids"][series]]
     assert sorted(set(leaders) - set(trainers)) == [], "a %s leader has no first-win reward" % series
     for tid, r in trainers.items():

@@ -30,6 +30,10 @@ From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and four 
                                 used to author beside the seat (kept there, decided against, emitted nowhere)
   data/hq_trainers.json         the Compact HQ tower's seven (2026-10-04), record and seat together like the
                                 mansion guardians, on the floors tools/hq_tower.py builds inside the tower's shell
+  data/gym_junior_trainers.json the gym juniors (2026-10-06): 21 trainers inside the eight halls, two to four a gym,
+                                stand only (records in data/trainers.json, generated from TRAINER_RULES gym_trainers).
+                                Every seat is proved unavoidable against its own hall's geometry by
+                                tools/gym_trainers.py check; seated, cycled and summoned like every other seat here
   data/gym_trainers.json        the eight gym leaders. No seat either: our own gym build sets
                                 rctmod:trainer_spawner{TrainerIds:["kanto_brock"]} and the badge is awarded
                                 for beating that id, so the id cannot be re-pointed and our roster reaches a
@@ -106,9 +110,13 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import challenge_mode as CM  # noqa: E402
+
 OUT = ROOT / "build" / "datapacks" / "cobblers_trainers"
 NS = "cobblers"
 PERIOD = 10
@@ -261,6 +269,9 @@ def load():
     arena = doc("arena_trainers.json")["trainers"]
     # the Compact HQ tower's seven (2026-10-04, data/hq_trainers.json): record and seat together, like the guardians
     hq = doc("hq_trainers.json")["trainers"]
+    # the gym juniors (2026-10-06, data/gym_junior_trainers.json): the stand only, like Victory Road's ten; the roster
+    # is generated into data/trainers.json, and each seat is proved unavoidable by tools/gym_trainers.py check
+    gym = doc("gym_junior_trainers.json")["trainers"]
     prog = doc("progression.json")
     fields = {f["id"] for f in prog["quest_fields"]}
     recs = {r["id"]: r for r in t["trainers"]}
@@ -270,7 +281,8 @@ def load():
                           ("data/mansion_guardians.json", guards),
                           ("data/vr_trainers.json", vr),
                           ("data/arena_trainers.json", arena),
-                          ("data/hq_trainers.json", hq)):
+                          ("data/hq_trainers.json", hq),
+                          ("data/gym_junior_trainers.json", gym)):
         SUPERSEDED.extend(ownership(recs, entries, name))
     # a seat file whose trainer has no generated record carries the record itself: the five mansion
     # guardians, the arena's seven, and before #96 Victory Road's tenth. ownership() has already proved it
@@ -287,7 +299,7 @@ def load():
     if both:
         raise SystemExit("data/arena_trainers.json: %s say seated false and still carry a seat" % both)
     arena_seated = [e for e in arena if "seat" in e and e.get("seated", True)]
-    return recs, seats + guards + vr + arena_seated + hq, fields
+    return recs, seats + guards + vr + arena_seated + hq + gym, fields
 
 
 def overrides():
@@ -333,6 +345,23 @@ def overrides():
     return out, held
 
 
+def league_lines(upstream):
+    """The authored battle lines of the override at `upstream`, as an rctmod dialog dict without the refusals, or
+    None for an override that carries none (the eight leaders, whose lines are upstream's). Challenge mode's copy of
+    the same person speaks the same lines (tools/challenge_mode.py)."""
+    recs, _seats, _f = load()
+    for name in ("league_trainers.json", "gym_trainers.json"):
+        for e in doc(name)["trainers"]:
+            if e.get("upstream_trainer_id") != upstream or not e.get("dialogue_text"):
+                continue
+            d = lines_of(recs[e["id"]], e)
+            ln = lambda text: [{"text": text}]
+            return {"on_battle_start": ln(d["pre"]), "on_battle_lost": ln(d["player_win"]),
+                    "trainer_lost": ln(d["player_win"]), "on_battle_won": ln(d["player_loss"]),
+                    "trainer_won": ln(d["player_loss"]), "on_cooldown": ln(COOLDOWN_LINE[e.get("cooldown", "league")])}
+    return None
+
+
 def lines_of(rec, seat):
     """The three dialogue lines: the record's own text, or the seat file's when the record has only ids.
 
@@ -354,6 +383,7 @@ def files():
                                                    "(tools/route_trainers.py)"}}}
     cycle = ["scoreboard players set #clock cobblers_trainers 0",
              "# each placed trainer: home, its players' beaten tags (from their own fields), and no rematch for them"]
+    challenge = []   # Challenge mode's lines (cobblers:trainers/challenge/cycle), kept out of the Normal cycle
     # every undeclared field, not just the first: one run should name the whole list to add to data/progression.json
     undeclared = []
     for s in seats:
@@ -386,6 +416,11 @@ def files():
             # what it says while on cooldown: after a battle either way, and to a player who has beaten it (cycle)
             "on_cooldown": line(COOLDOWN_LINE[s.get("cooldown") or ("guardian" if "sets" in r else "route")])})
         out["data/rctmod/loot_table/trainers/single/%s.json" % tid] = {"pools": []}
+        # Challenge mode (tools/challenge_mode.py): the same seat's Challenge copy, swapped in by the cycle below
+        cid = None
+        if CM.has_challenge(r):
+            cid, more = CM.route_files(tid, r, mob, out["data/rctmod/dialogs/trainers/single/%s.json" % tid])
+            out.update(more)
         setf = r["sets"] if "sets" in r else ["quest.%s.defeated" % tid] + EXTRA_FIELDS.get(tid, [])
         undeclared += [(tid, f) for f in setf if f not in fields]
         mol = "t.d = q.player.data(); %s q.player.save_data();" % " ".join("t.d.%s = 1;" % key(f) for f in setf)
@@ -396,10 +431,20 @@ def files():
             fn.append('tellraw @s {"text":%s,"color":"gray","italic":true}' % json.dumps(after))
         out["data/%s/function/trainers/won/%s.mcfunction" % (NS, tid)] = fn
         out["data/%s/advancement/trainer/%s.json" % (NS, tid)] = {
-            "criteria": {"won": {"trigger": "rctmod:defeat_count", "conditions": {"trainer_ids": [tid], "count": 1}}},
+            "criteria": {"won": {"trigger": "rctmod:defeat_count",
+                                 "conditions": {"trainer_ids": [tid] + ([cid] if cid else []), "count": 1}}},
             "rewards": {"function": "%s:trainers/won/%s" % (NS, tid)}}
-        cycle += cycle_lines(tid, s, setf[0])
+        lines = cycle_lines(tid, s, setf[0])
+        cycle += lines
+        if cid:
+            # Challenge mode's own cycle (cobblers:trainers/challenge/cycle): the same home and hold-off lines for the
+            # entity while it carries the Challenge id (the beaten tag is the record's, from its own defeat field, so
+            # the per-player tag line is not repeated), then the swap
+            challenge += [ln_.replace('TrainerId:"%s"' % tid, 'TrainerId:"%s"' % cid) for ln_ in lines
+                          if 'TrainerId:"%s"' % tid in ln_]
+            challenge += CM.swap_lines(tid, s["seat"], max(float(s.get("sight_distance", 8.0)), 6.0) + 1)
     cycle += leader_cycle_lines()
+    challenge += leader_cycle_lines(challenge=True)
     if undeclared:
         raise SystemExit("data/progression.json quest_fields does not declare %d field(s):\n%s"
                          % (len(undeclared), "\n".join("  %s sets %s" % (t, f) for t, f in undeclared)))
@@ -428,6 +473,14 @@ def files():
             "on_battle_start": ln(d["pre"]), "on_battle_lost": ln(d["player_win"]), "trainer_lost": ln(d["player_win"]),
             "on_battle_won": ln(d["player_loss"]), "trainer_won": ln(d["player_loss"]),
             "on_cooldown": ln(COOLDOWN_LINE[entry.get("cooldown", "league")])})
+    # Challenge mode's thirteen boss ids, the series, and the second spawners (tools/challenge_mode.py). Everything
+    # Challenge adds to the clock -- the spawners, the swap, the Challenge copies' home and hold-off lines -- runs as
+    # cobblers:trainers/challenge/cycle, so the cycle stays exactly the Normal per-trainer lines it has always been
+    boss = CM.boss_files(over, with_refusals, league_lines)
+    out["data/%s/function/trainers/challenge/cycle.mcfunction" % NS] = (
+        ["# Challenge mode (tools/challenge_mode.py, docs/mechanics/OAK_AND_CHALLENGE.md), every %d ticks before the "
+         "cycle resets the clock" % PERIOD] + boss.pop("cycle") + challenge)
+    out.update(boss)
     # the hold-off NOTICE lines were generated beside each hold-off; they run as their own function, on the same
     # clock just before the cycle, so the cycle keeps exactly its home / tag / cooldown lines per trainer
     notice = holdoff_rearm() + [ln_ for ln_ in cycle if HOLDOFF_TOLD in ln_]
@@ -437,6 +490,7 @@ def files():
     out["data/%s/function/trainers/tick.mcfunction" % NS] = [
         "scoreboard players add #clock cobblers_trainers 1",
         "execute if score #clock cobblers_trainers matches %d.. run function %s:trainers/holdoff_notice" % (PERIOD, NS),
+        "execute if score #clock cobblers_trainers matches %d.. run function %s:trainers/challenge/cycle" % (PERIOD, NS),
         "execute if score #clock cobblers_trainers matches %d.. run function %s:trainers/cycle" % (PERIOD, NS)]
     out["data/%s/function/trainers/load.mcfunction" % NS] = ["scoreboard objectives add cobblers_trainers dummy"]
     out["data/minecraft/tags/function/tick.json"] = {"values": ["%s:trainers/tick" % NS]}
@@ -444,7 +498,7 @@ def files():
     return out
 
 
-def leader_cycle_lines():
+def leader_cycle_lines(challenge=False):
     """The eight gym leaders' hold-off, keyed on their badge flag instead of a quest field.
 
     WHY THEY WERE MISSING. The cycle is built from placements(), and a gym leader is not placed by us:
@@ -500,6 +554,27 @@ def leader_cycle_lines():
         out += holdoff_notice(me, "9.0", "advancements={%s:flag/%s=true}" % (NS, flag),
                               "advancements={%s:flag/%s=false}" % (NS, flag))
 
+    # Challenge mode's second leaders (tools/challenge_mode.py): the same hold-off at their own spawner, on the same
+    # badge flag, which a Challenge win also sets (data/progression.json lists both ids). Kept apart (`ch`), so the
+    # cycle stays exactly the Normal lines and Challenge's run as cobblers:trainers/challenge/cycle
+    ch = []
+    flag_of = {g["upstream_trainer_id"]: g.get("flag") for g in json.loads(
+        (ROOT / "data" / "gym_trainers.json").read_text(encoding="utf-8"))["trainers"]}
+    over, _held = overrides()
+    for _rec, up, cid, ent in CM.boss_ids(over):
+        flag = flag_of.get(up)
+        if not flag:
+            continue
+        # where the Challenge leader stands: its second spawner, or for a one-leader gym (data/challenge_mode.json
+        # single_leader.rollout) the one spawner the swap drives
+        x, y, z = CM.challenge_seat(up, ent)
+        me = '@e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..24,nbt={TrainerId:"%s"}]' % (x, y, z, cid)
+        ch += ["# %s, Challenge mode's leader: no rematch once the badge is held" % cid,
+               "execute as %s at @s if entity @a[distance=..9.0,advancements={%s:flag/%s=true}] "
+               "run data merge entity @s {Cooldown:40}" % (me, NS, flag)]
+        ch += holdoff_notice(me, "9.0", "advancements={%s:flag/%s=true}" % (NS, flag),
+                             "advancements={%s:flag/%s=false}" % (NS, flag))
+
     # THE SAME GAP, FIVE MORE TRAINERS. Found by the 2026-09-30 sweep the owner asked for, straight after
     # the leaders: the Elite Four and the Champion are overrides at the `kanto_league` template's OWN
     # spawners, so like the leaders they are not in placements() and had no hold-off either. The Champion
@@ -534,7 +609,15 @@ def leader_cycle_lines():
                     "execute as %s at @s if entity @a[distance=..9.0,advancements={%s=true}] "
                     "run data merge entity @s {Cooldown:40}" % (me, adv)]
             out += holdoff_notice(me, "9.0", "advancements={%s=true}" % adv, "advancements={%s=false}" % adv)
-    return out
+            # and Challenge mode's copy on the same floor: a Challenge win grants the same upstream advancement
+            # (tools/challenge_mode.py), so the same test holds it off
+            cid = CM.challenge_id(tid)
+            cme = me.replace('TrainerId:"%s"' % tid, 'TrainerId:"%s"' % cid)
+            ch += ["# %s, Challenge mode's League: no rematch once upstream's defeat advancement is held" % cid,
+                   "execute as %s at @s if entity @a[distance=..9.0,advancements={%s=true}] "
+                   "run data merge entity @s {Cooldown:40}" % (cme, adv)]
+            ch += holdoff_notice(cme, "9.0", "advancements={%s=true}" % adv, "advancements={%s=false}" % adv)
+    return ch if challenge else out
 
 
 def cycle_lines(tid, seat, field):

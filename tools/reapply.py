@@ -134,6 +134,17 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_old_orchard",
                 # 2026-10-02: the Copperway Khan in the south-east dunes and its milestones (tools/dune_ruin.py), run by R9DU
                 "cobblers_dune_ruin",
+                # 2026-10-05: the mainline beats' evidence displays beside eight tellers (tools/reveal_evidence.py), run
+                # by R17NE after R17N
+                "cobblers_reveal_evidence",
+                # 2026-10-05: the Brass Petrel, the wreck half-buried in the south-east dunes' beach (tools/desert_wreck.py),
+                # run by R9DW before R9E
+                "cobblers_desert_wreck",
+                # 2026-10-06: the fossil dig on the scorched plateau's west mesa (tools/fossil_dig.py), run by R9FD; its
+                # load and tick tags restore the brushed seams
+                "cobblers_fossil_dig",
+                # 2026-10-06: the training grounds' signs (tools/training_grounds.py; the grounds' Habitat Blocks are R9E's), run by R9TG
+                "cobblers_training_grounds",
                 # 2026-10-02: Codex's ten named residents (tools/resident_encounters.py, data/resident_encounters.json):
                 # a keeper loop and respawn clock hold them, so world-local; dressed and the ungated ones summoned by R18R
                 "cobblers_residents",
@@ -155,6 +166,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # seven terraced groves, the yard and lanes, built by R9AF; block functions and the stall merchant's
                 # summon, nothing that runs on its own; the farmer and the merchant stood by R18AF
                 "cobblers_apricorn_farm",
+                # 2026-10-10: the Produce Buyer at Hollin's farm (tools/produce_buyer.py, data/produce_buyer.json):
+                # its NPC class and dialogue and the sales its options run; placed over RCON by R18PB. It pays
+                # CobbleDollars and takes items, so world-local below like the ferry
+                "cobblers_produce_buyer",
                 # 2026-10-05: Arrow Creeks Farm (tools/pokemon_farm.py, data/pokemon_farm.json): pure block functions
                 # run by R9PF; no tick or load, so not world-local. Its animals are cobblers_ambient_idle's (R16C)
                 "cobblers_pokemon_farm",
@@ -212,10 +227,32 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # so the live world's species never change; NOTE the starter config that offers these forms is
                 # server-wide (modpack/config/cobblemon/starters.json) and is only coherent where this pack is loaded
                 "cobblers_mythical_starters",
+                # 2026-10-08: species drop tables fixed from our side (tools/drop_fixes.py, data/drop_fixes.json):
+                # species_additions `drops` only, no functions and no step. Twelve of them overlay COBBLEVERSE files at
+                # the same path, so the pack must load ABOVE the global COBBLEVERSE pack: world-local below
+                "cobblers_drop_fixes",
+                # 2026-10-08: alphas pay type gems by level and no candies (tools/alpha_spoils.py,
+                # data/alpha_spoils.json, DROPS_PROGRESSION_SPLIT.md option C): the jar's four alpha tier loot tables
+                # emptied at their own paths and a Cobblemon battle_fainted callback beside the jar's. No functions and
+                # no step; a callback acts on its own, so world-local below
+                "cobblers_alpha_spoils",
                 # 2026-10-02: one Spectrier per player at the Crown Cemetery (tools/spectrier_cap.py,
                 # data/spectrier_cap.json): its own tick tag judges each new wild Spectrier, so world-local below,
                 # the cobblers_sizes shape (self-driving, no blocks, no step)
                 "cobblers_spectrier_cap",
+                # 2026-10-06: the catchable Hoopa at the cradle (tools/hoopa_cradle.py): a self-driving keeper, world-local
+                "cobblers_hoopa_cradle",
+                # 2026-10-08: the repeatable Entei (tools/entei_boss.py, data/entei_boss.json): a sigil advancement, a
+                # self-driving keeper that spawns per player in cobblers:pocket, two callbacks; world-local below.
+                # Its rooms are blocks in the pocket dimension, built by R16Q after the portals' R16P
+                "cobblers_entei_boss",
+                # 2026-10-08: the Beast Ball is the key to dungeon bosses (tools/key_ball.py, data/key_ball.json): two
+                # Cobblemon callbacks and the jar's beast_ball recipe closed; no blocks, no step; world-local below
+                "cobblers_key_ball",
+                # 2026-10-08: crafted TMs unlock per player at their badge (tools/tm_gate.py, data/tm_gate.json): the
+                # gamerule doLimitedCrafting, a tick sync of the recipe book and closed unlock advancements, generated
+                # from the server's own jars; no blocks, no step; world-local below
+                "cobblers_tm_gate",
                 # 2026-10-03: Heaven's Arena's per-player opponents (tools/arena_runtime.py, data/arena_fights.json,
                 # data/arena_dome.json venues): NPC classes, a battle_victory callback and a tick driver that spawns
                 # and clears opponents on its own, so world-local below; R17A places the venues' posts
@@ -253,15 +290,38 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # dialogues and the purchases their options run; the keepers are placed over RCON by R17M. It charges
                 # CobbleDollars and gives items, so world-local below
                 "cobblers_markets",
+                # 2026-10-10: paid training services (tools/training_services.py, data/training_services.json,
+                # EXP-062): the training-ground keepers' NPC classes and dialogues and the purchases their options run;
+                # the keepers are placed over RCON by R17TS. It charges CobbleDollars and edits party Pokemon, so
+                # world-local below
+                "cobblers_training_services",
+                # 2026-10-07: direct trades (tools/direct_trades.py, data/direct_trades.json, EXP-055): a buried booth
+                # under the Holdfast counter and a vanilla villager with fixed item-for-item offers, placed by R18DT.
+                # It gives items for items, so world-local below like the markets
+                "cobblers_direct_trades",
                 # 2026-09-28: the evolution-stone faces (tools/mines.py, data/mines.json, STONE_ECONOMY.md): blocks run by
                 # R9O; the faces' restore on approach acts on its own (a tick driver), so world-local below
                 "cobblers_mines",
+                # 2026-10-10: the refillable mining caves (tools/mining_caves.py, data/mining_caves.json,
+                # ECONOMY_OVERHAUL.md section 3): blocks run by R9OC; the galleries' restore on approach acts on its own
+                # (a tick driver, tools/mines.py's), so world-local below
+                "cobblers_mining_caves",
                 # 2026-09-29: the dive and sky portals and the pocket dimension (tools/portals.py, data/portals.json,
                 # ADR-004, EXP-047). It ships a `dimension` and a `dimension_type`, which register only at a server
                 # BOOT, not at a /reload: installing this pack needs a restart before R16P will run. The arches are
                 # blocks in the overworld (R16P); the rooms live inside the world folder, which a re-export replaces,
                 # so R16P rebuilds them every time. The gate sweep and the rescue act on their own (tick drivers)
-                "cobblers_portals")
+                "cobblers_portals",
+                # 2026-10-10: no Blaine, League, Moltres or Necrozma copies in the Nether or the End
+                # (tools/dimension_overrides.py, data/dimension_overrides.json, EXP-058). Worldgen data only: no
+                # functions, no step. World-local so it wins over the global COBBLEVERSE datapack (as the spawn packs
+                # do); worldgen registries load at a boot, so it acts from the next start
+                "cobblers_dimension_overrides",
+                # 2026-10-08: the Nether's badge-8 gate (tools/nether_gate.py, data/nether_gate.json, EXP-063): an
+                # advancement on arrival and a sweep that send a player without gym8_cleared back to their blackout
+                # checkpoint. It teleports players on its own, so world-local below; it must be installed with or
+                # before cobblers_dimension_overrides, before anyone enters the Nether (NETHER_ENCOUNTERS.md section 7)
+                "cobblers_nether_gate")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -297,11 +357,18 @@ EXCLUDED = {
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
     "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores; its tick tag runs the over-cap party notice near trainers",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
+    "cobblers_key_ball": "self-driving: two Cobblemon callbacks (pokemon_catch_rate_calculated, poke_ball_capture_calculated) run it and call key_ball/refused; its recipe overrides act at load; it writes no blocks (tools/key_ball.py)",
+    "cobblers_tm_gate": "self-driving: its load tag sets doLimitedCrafting, its tick tag syncs each player's recipe book "
+                        "once a plan, and an advancement per badge gives that badge's TMs; it writes no blocks "
+                        "(tools/tm_gate.py)",
+    "cobblers_hoopa_cradle": "self-driving: its keeper gives each player holding rift_crisis_resolved who stands in the cradle their own level-60 Hoopa (data/hoopa_cradle.json)",
     "cobblers_spectrier_cap": "self-driving: its own minecraft tick tag judges each new wild Spectrier at the Crown "
                               "Cemetery (tools/spectrier_cap.py); it writes no blocks",
     "cobblers_blackout": "self-driving: its own load and tick tags, an advancement and three Cobblemon callbacks run it; "
                          "it writes no blocks",
-    "cobblers_titles": "event functions (enter_place_*), fired on entering a place, not applied to the world",
+    "cobblers_nether_gate": "self-driving: its load tag starts the sweep's schedule and a changed_dimension advancement "
+                            "runs it on arrival; it writes no blocks (tools/nether_gate.py)",
+    "cobblers_titles": "event functions (enter_place_*, enter_zone_*) fired on entering a place or a Nuzlocke zone, and its own load and tick functions: self-driving, not applied to the world",
     "cobblers_trainers": "self-driving: each trainer's won function is an advancement reward rctmod fires for the winner, "
                          "and its tick cycle keeps each trainer home and refuses a rematch; the trainers themselves are "
                          "placed by R17 over RCON (summon_persistent), not by a function",
@@ -322,9 +389,24 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine",
                "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_ambient_idle", "cobblers_levelcap", "cobblers_mines",
-               "cobblers_legendaries", "cobblers_spectrier_cap",
+               # 2026-10-10: the mining caves' restore drives itself on its own tick, like the stone faces'
+               "cobblers_mining_caves",
+               "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
+               # 2026-10-08: the Entei keeper SPAWNS a legendary per player on its own and gives items: never global
+               "cobblers_entei_boss",
+               # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
+               "cobblers_key_ball",
+               # 2026-10-08: sets a gamerule and rewrites every player's recipe book: never global, or the live world
+               # would run it too
+               "cobblers_tm_gate",
                # 2026-10-03: charges CobbleDollars and gives items, like the ferry
                "cobblers_markets",
+               # 2026-10-10: charges CobbleDollars and sets party levels, EVs and IVs, like the markets
+               "cobblers_training_services",
+               # 2026-10-07: the barterer trades items for items, so it never loads in the global folder either
+               "cobblers_direct_trades",
+               # 2026-10-10: the Produce Buyer pays CobbleDollars for items, like the ferry charges them
+               "cobblers_produce_buyer",
                # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
                "cobblers_ursaluna_cave",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
@@ -334,6 +416,10 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_hq_tower",
                # 2026-10-03: species forms for the starters; global would change the live world's species too
                "cobblers_mythical_starters",
+               # 2026-10-08: drop tables overlaying COBBLEVERSE's files at the same path; they win only above the global pack
+               "cobblers_drop_fixes",
+               # 2026-10-08: a battle_fainted callback that pays alpha gems; global would change the live world's alphas
+               "cobblers_alpha_spoils",
                # 2026-10-03: the southern residents' keeper spawns its two Pokemon the same way
                "cobblers_southern_residents",
                # 2026-10-03: the northern residents' keeper spawns its three Pokemon the same way
@@ -342,7 +428,11 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_far_south",
                # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
                # global folder would run it in the live world too
-               "cobblers_arena")
+               "cobblers_arena",
+               # 2026-10-10: its structure_set overrides must sit above the global COBBLEVERSE datapack
+               "cobblers_dimension_overrides",
+               # 2026-10-08: the Nether gate teleports players on its own; global would gate the live world too
+               "cobblers_nether_gate")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -545,8 +635,16 @@ def prepare_jobs(a):
     # problem. The boxes and wall lines are committed data; `trace` is not run here, because it needs the
     # owner's annotated source map, which prepare does not have
     add("rift_zones:build", "rift_zones.py", "build", *src)
+    # Victory Road's closure (z5.pass.admit_within, knock_needs_score, also_boxes; 2026-10-08), on the two packs just
+    # built and the heightmap: no flag holder reaches the League but up through the caves, and the caves walk to it.
+    # Fail-closed; it reads the emitted packs, never either builder's model
+    add("vr_closure_audit", "vr_closure_audit.py", *src)
     # the Mega Showdown stone recipes raised to 4 raw stones, from the server's own jar (never committed)
     add("mega_recipes", "mega_recipes.py", "--server-dir", a.server_dir)
+    # crafted TMs gated per player at their badge (data/tm_gate.json), from the server's own jars (never committed).
+    # Fails closed on a TM it cannot place, an unlock advancement that does more than unlock gated recipes, or a
+    # function elsewhere that runs `recipe give *` and is not declared with its re-sync trigger
+    add("tm_gate", "tm_gate.py", "--server-dir", a.server_dir)
     # the Deep's city and the relic area's surface, stood on the pit's ring model; the audit checks what it wrote
     # against the ring model, Victory Road's mouth and the sealed volumes, and refuses to go on if anything is wrong
     add("deep_city:build", "deep_city.py", "build", *src)
@@ -597,6 +695,15 @@ def prepare_jobs(a):
     # against the base and the jars' recipe conditions, tiers and the curve against PROGRESSION_LADDER, and every
     # keeper R17M places off streets, buildings, walked lines and other NPCs, and in front of its Mart
     add("markets:audit_independent", "markets_audit.py", "--server-dir", a.server_dir, *src)
+    # paid training services (2026-10-10, data/training_services.json, EXP-062): the training-ground keepers' classes
+    # and dialogues and the purchases, then the builder's offline audit: no level written but the cap just read, the
+    # balance read before the one charge and the charge before the one edit, every gate a planned badge flag, every
+    # keeper on the heightmap seat and apart from every other placed NPC
+    add("training_services:build", "training_services.py", "build")
+    add("training_services:audit", "training_services.py", "audit", *src)
+    # direct trades (2026-10-07, data/direct_trades.json, EXP-055): the barterer's booth from the heightmap and its
+    # fixed offers; refuses data whose fixed-trade fields would let a price move, and places no held line
+    add("direct_trades:build", "direct_trades.py", "build")
     # the CobbleDollars Bank's buy list (2026-10-05, data/bank.json): no pack -- a config overlay that `install` copies
     # (modpack/config/cobbledollars/bank.json). Refuses an overlay the data does not write, a bought item any authored
     # shop sells at or below the bank's price (the shopkeeper templates read from <server>/mods and datapacks only),
@@ -615,6 +722,7 @@ def prepare_jobs(a):
     # route_events does, so a seat cannot quietly move when the ground under it changes.
     add("late_route_trainers", "late_route_trainers.py", *src)
     add("route_trainers", "route_trainers.py")
+    add("challenge_mode_audit", "challenge_mode_audit.py")
     # Heaven's Arena's per-player opponents (2026-10-03): the ladder, the champions' exam teams and the dome's venues.
     # It FAILS while data/arena_dome.json has no venues: an arena with nowhere to fight is not a pack to install
     add("arena_runtime", "arena_runtime.py")
@@ -635,6 +743,9 @@ def prepare_jobs(a):
     add("rift_mines_audit", "rift_mines_audit.py", *src)
     add("place_donor:function", "place_donor.py", "function", "--server-dir", a.server_dir)
     add("traders:function", "traders.py", "function", "--server-dir", a.server_dir)
+    # the economy's independent audit (2026-10-06, tools/economy_audit.py, not the builders'): no arbitrage, no Mart
+    # tier leak, every item real; reports the exchange ratios and the AFK-farmable bank prices
+    add("economy_audit", "economy_audit.py")
     add("sapling_celebi", "sapling_celebi.py")
     # the authored legendary chambers, then their offline audit: a chamber whose roof would break a lake bed,
     # whose shell is not sealed, whose gate line lacks its badge flag or whose mouth falls outside the water
@@ -693,6 +804,13 @@ def prepare_jobs(a):
     add("old_orchard_audit", "old_orchard_audit.py", *src)
     add("dune_ruin:build", "dune_ruin.py", "build", *src)
     add("dune_ruin_audit", "dune_ruin_audit.py", *src)
+    add("reveal_evidence:build", "reveal_evidence.py", "build")
+    add("reveal_evidence_audit", "reveal_evidence_audit.py", *src)
+    add("desert_wreck:build", "desert_wreck.py", "build", *src)
+    add("desert_wreck_audit", "desert_wreck_audit.py", *src)
+    add("fossil_dig:build", "fossil_dig.py", "build", *src)
+    add("fossil_dig_audit", "fossil_dig_audit.py", *src)
+    add("training_grounds:build", "training_grounds.py", "build")
     # the ten named residents (2026-10-02), then their independent audit, which re-derives every site and write from
     # the data and the heightmap and fails the prepare on a broken pack
     add("resident_encounters", "resident_encounters.py", *src)
@@ -727,6 +845,12 @@ def prepare_jobs(a):
     # dialogue (compiled by compile_dialogue above) and this wiring; KNOWN defects print and do not fail it
     add("apricorn_farm:build", "apricorn_farm.py", "build", *src)
     add("apricorn_farm_audit", "apricorn_farm_audit.py", *src)
+    # the Produce Buyer (2026-10-10, docs/mechanics/ECONOMY_OVERHAUL.md U2): farm goods by the crate under a per-player
+    # allowance per leg; its seat is a cell of the farm's plan, so after the farm. The check fails closed on the
+    # schedule, the bank still buying a crate item, a cheaper seller, the sale's order (count, take, pay, verify) and
+    # the seat
+    add("produce_buyer:build", "produce_buyer.py", "build")
+    add("produce_buyer:check", "produce_buyer.py", "check", *src)
     # Arrow Creeks Farm (2026-10-05): the generator fails closed on its siting rules, on a seat (the farmer's in
     # data/npc_seats.json, the stand's in data/markets.json) the plan does not leave open and on a spawn-condition
     # block. Before ambient_idle:build, whose plan takes the farm's animals from it (tools/pokemon_farm.py idlers).
@@ -791,6 +915,9 @@ def prepare_jobs(a):
     # world; both take their ground from tools/ground.py and the town plan's levelled lot
     add("gym_demolish:build", "gym_demolish.py", "build", *src)
     add("gym_buildings:build", "gym_buildings.py", "build", *src)
+    # the gym juniors (2026-10-06, tools/gym_trainers.py): every seat proved must-pass against the gym's own geometry
+    add("gym_trainers:check", "gym_trainers.py", "check")
+    add("gym_trainers_audit", "gym_trainers_audit.py")  # independent: real hall geometry, must-pass and softlock
     # (no audit job for the gym buildings yet: the audit and the tests are another agent's, CLAUDE.md principle 16.
     # Add it here, after gym_buildings:build, so a broken hall stops the prepare before anything is installed.)
     # the dive and sky portals and the pocket dimension they lead into (data/portals.json, EXP-047, ADR-004);
@@ -816,6 +943,16 @@ def prepare_jobs(a):
     # each line walks 5 -> 30 -> 45 through two forms to its native final, the screen offers exactly the five, the
     # 27 stay wild. Fail-closed; an unissued scroll is printed OPEN and does not stop prepare
     add("mythical_starters_audit", "mythical_starters_audit.py")
+    # species drop tables that named no item or could never roll their later entries (data/drop_fixes.json); `build`
+    # runs its own check first (each fix's recorded upstream still matches, every item exists, every entry reaches its
+    # intent) and writes nothing on a problem; then the sweep over every installed jar and datapack with ours on top
+    add("drop_fixes:build", "drop_fixes.py", "build")
+    add("drop_fixes:sweep", "drop_fixes.py", "sweep")
+    # what an alpha pays (data/alpha_spoils.json): `build` checks the jar's alpha callback and loot tables first (the
+    # tier tables it empties still carry the recorded candies, each band's gems a KO recomputed from the jar's type
+    # tables) and writes nothing on a problem
+    add("alpha_spoils:build", "alpha_spoils.py", "build")
+    add("nuzlocke_zones", "nuzlocke_zones.py", "--check")
     add("location_titles", "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     add("progression_pack", "progression_pack.py")
@@ -834,6 +971,8 @@ def prepare_jobs(a):
     # our wild spawns: the route and sub-region rosters from data/spawns.json (the suppression that makes them the
     # only thing spawning there is generated at install, against the server and world it will run on)
     add("compile_spawns", "compile_spawns.py")
+    # the training grounds' independent audit (2026-10-06), on the pools compile_spawns just wrote
+    add("training_grounds_audit", "training_grounds_audit.py", "--pools", "build/datapacks/cobblers_spawns/data/cobblers/habitat_pools")
     # ... then its independent habitat audit (the owner, 2026-10-04: "wrong-country spawns"): every compiled entry
     # judged against the species' own natural spawn data in the Cobblemon jar and the place's paint, never against
     # data/encounter_design.json. Fails closed on an unjudged misfit or a stale ruling
@@ -849,12 +988,30 @@ def prepare_jobs(a):
     add("size_outliers", "size_outliers.py")
     # one Spectrier per player at the Crown Cemetery (data/spectrier_cap.json; fails closed if the placement moved)
     add("spectrier_cap", "spectrier_cap.py")
+    add("hoopa_cradle", "hoopa_cradle.py")
+    # no gym, League or legendary copies in the Nether or the End (data/dimension_overrides.json); its independent
+    # audit scans the server's own mods and datapacks, so it runs by hand against them, not here
+    add("dimension_overrides", "dimension_overrides.py", "build")
+    # the repeatable Entei in cobblers:pocket (data/entei_boss.json; fails closed on a bankable drop, a room in the
+    # portals' rescue box or outside the border, or an alpha / mis-levelled boss)
+    add("entei_boss", "entei_boss.py")
+    # the Beast Ball key (data/key_ball.json): fails closed if any boss tool's bind does not add the shared tag, if the
+    # refusal message hints at the key, or if data/blackout.json can take a Beast Ball
+    add("key_ball", "key_ball.py")
+    # the Nether's badge-8 gate (data/nether_gate.json; fails closed if the flag is not the eighth badge's, the pallet
+    # is off the canonical ground, or the gated dimension is the pocket's)
+    add("nether_gate", "nether_gate.py")
+    add("legendary_sweep_audit", "legendary_sweep_audit.py", *src)
     # blackout, recovery claims and the water ladder (data/blackout.json, data/water_mounts.json)
     add("blackout_pack", "blackout_pack.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
 
     # the stone faces' audit LAST: it checks R9O through steps(), which indexes every pack built above, so on a fresh
     # build/ it failed closed on whichever pack came after it in this list (found 2026-10-02 on a new worktree)
+    # the refillable mining caves (data/mining_caves.json): late, because its siting guard keeps clear of every
+    # other built pack's writes and reads them from build/datapacks; it fails closed on a write where a cave may not
+    # stand. Before mines_audit, which lists reapply's steps (R9OC's build functions come from the data)
+    add("mining_caves:build", "mining_caves.py", "build", *src)
     add("mines_audit", "mines_audit.py", *src)
     # the idle Pokemon (tools/ambient_idle.py): LAST of the builds, because it seats them on the BUILT town -- it
     # replays every pack's block writes through steps() (tools/npc_spot_sweep.py) and refuses a spot a signpost, a
@@ -870,6 +1027,8 @@ def prepare_jobs(a):
     # the wake at 16, no brain-remaking merge, the workers' flags, the snow house's Buneary. Fail-closed; KNOWN
     # defects are listed in the tool and a fixed one fails until it is removed there
     add("ambient_idle_audit", "ambient_idle_audit.py", *src)
+    # the owner's composition (2026-10-05): the town files and the idle plan, re-derived (tools/ambient_composition_audit.py)
+    add("ambient_composition_audit", "ambient_composition_audit.py", "--plan", "derived/ambient/idle_plan.json", "--plan", "derived/ambient/plan.json")
     # Oak gives the starter: its independent audit (tools/oak_starter_audit.py, written by an agent that did not build
     # it). LAST, so it runs after compile_dialogue and after every other pack is built: it reads the compiled dialogue,
     # explores Oak's offer from a fresh player, and sweeps every pack under build/datapacks for a second
@@ -1208,6 +1367,9 @@ def install(a):
     if (dp / "cobblers_restore").exists():
         shutil.rmtree(dp / "cobblers_restore")
         print("removed", dp / "cobblers_restore", "(disposable worlds only)")
+    # the Nether/End overrides against what THIS server loads (2026-10-10): a mod or datapack that adds a gym, League
+    # or legendary structure to the Nether or the End, or changes a set we override, stops the install before any copy
+    py(TOOLS / "dimension_overrides.py", "audit", "--roots", Path(a.server_dir) / "mods", dp)
     wdp = Path(a.world_dir) / "datapacks"
     wdp.mkdir(exist_ok=True)
     retired = Path(a.server_dir).resolve().parent / "cobblers-server-retired"
@@ -1514,6 +1676,11 @@ def held_functions():
                   % (zid, ", ".join("%s %s blocks in" % (n, d) for n, d in sorted(gates.items()))))
         for fn in RZ.zone_functions(zid, z[zid]):
             out["cobblers:rift_zones/%s" % fn] = reason
+    # 2026-10-06: a composed town's undo (tools/ambient_idle.py t/<s>/cleanup: its props and its Pokemon out), one per
+    # town file in data/ambient_towns/; deliberately run by no step, as the Shrew Station and Seaward Drift cleanups
+    # are run by hand. Derived from the town files, so a town that leaves composition stops being held here
+    for f in sorted((ROOT / "data" / "ambient_towns").glob("*.json")):
+        out["cobblers:ambient_idle/t/%s/cleanup" % f.stem] = ("the undo of composed town %s (data/ambient_towns/%s): run by hand to take its props and Pokemon out" % (f.stem, f.name))
     return out
 
 
@@ -1661,6 +1828,14 @@ def steps(with_spawns=False):
     import mines
     out.append(("R9O", "the evolution-stone faces at their seven places (data/mines.json)",
                 [("fn", f) for f in mines.build_functions()]))
+    # the refillable mining caves (tools/mining_caves.py, data/mining_caves.json; ECONOMY_OVERHAUL.md section 3): after
+    # R9O and, like it, after the towns (R8) and the donors (R9) whose writes they keep clear of; before the Habitat
+    # Blocks (R9E) and the lights (R16). One build function a cave, named from the committed data. The galleries'
+    # restore on approach drives itself (cobblers:mining_caves/tick) and needs no step
+    import mining_caves
+    out.append(("R9OC", "the refillable mining caves: %s (data/mining_caves.json)" % ", ".join(
+                    "%s with %d galleries" % (c["id"], len(c["galleries"])) for c in mining_caves.load()["caves"]),
+                [("fn", f) for f in mining_caves.build_functions()]))
     # the city stands on the pit R9B sinks, after R9C (the caves write round the mouth the city keeps clear) and before
     # R9E (Habitat Blocks sit on finished floors) and the lights (R16). Structure, then the Centre and Mart by
     # /place template, then what hangs on the structure (ladders, hatches, panes, doors, signs, lamps). R9DC, not R9D:
@@ -1718,6 +1893,14 @@ def steps(with_spawns=False):
                 old_orchard.placement_steps()))
     # the Copperway Khan (2026-10-02, tools/dune_ruin.py): BEFORE R9E, because its build writes the vault floor - after
     # R9E it would lay smooth sandstone over the Cofagrigus Habitat Block set in that floor
+    # the Brass Petrel (2026-10-05, tools/desert_wreck.py): BEFORE R9E, whose Habitat Blocks include the beach's two
+    # the fossil dig (2026-10-06, tools/fossil_dig.py): its pit, seams and camp; the foreman is an npc_seats record (R17N)
+    import fossil_dig
+    out.append(("R9FD", "the fossil dig on the scorched plateau's west mesa: pit, seams, camp (data/fossil_dig.json)",
+                fossil_dig.placement_steps()))
+    import desert_wreck
+    out.append(("R9DW", "the Brass Petrel: the wreck in the south-east dunes' beach, its dead reef and anchor (data/desert_wreck.json)",
+                desert_wreck.placement_steps()))
     import dune_ruin
     out.append(("R9DU", "the Copperway Khan, its sealed store and the Copperway's milestones (data/dune_ruin.json)",
                 dune_ruin.placement_steps()))
@@ -1792,6 +1975,8 @@ def steps(with_spawns=False):
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
+    # the training grounds (2026-10-06, tools/training_grounds.py): a sign at each, after R9E placed their Habitat Blocks
+    out.append(("R9TG", "the training grounds' signs (data/training_grounds.json)", [("fn", "cobblers:training_grounds/build")]))
     out.append(("R9F", "NPCs a reward is given through (data/rewards.json npc_grant)",
                 [("npc", n) for n in npcs()]))
     # the bridges, after the towns and donors (neither may stand on one, and a donor placed whole would erase what it
@@ -1869,6 +2054,12 @@ def steps(with_spawns=False):
     out.append(("R16P", "the dive and sky portals (%d) and their rooms in cobblers:pocket" % len(portal_ids),
                 [("fn", "cobblers:portals/world/%s" % p) for p in portal_ids]
                 + [("fn", "cobblers:portals/place")]))
+    # the Entei boss's rooms (tools/entei_boss.py, data/entei_boss.json): four sealed slots in cobblers:pocket, after
+    # R16P because the dimension is the portals pack's (it registers only at a boot: a first install restarts before
+    # this runs). Flat and deterministic like the portal rooms, so a re-export's loss is rebuilt exactly. Each room
+    # function holds its own chunks (function_limits.ensure_loaded). The keeper, the sigil and the callbacks need no step
+    out.append(("R16Q", "the Entei boss's four rooms in cobblers:pocket (data/entei_boss.json)",
+                [("fn", "cobblers:entei_boss/place")]))
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
@@ -1894,6 +2085,21 @@ def steps(with_spawns=False):
                 + [("fn", "cobblers:arena/load"), ("fn", "cobblers:arena/retire_spire"),
                    ("fn", "cobblers:arena/posts/place")]
                 + [("cmd", "forceload remove " + h) for h in hold]))
+    # one leader per gym (the owner, 2026-10-07; docs/mechanics/ONE_LEADER_SWAP.md): for every boss in
+    # data/challenge_mode.json single_leader.rollout, the second spawner a world already holds is removed once, at its
+    # recorded data position, with any Challenge-id trainer by it, then read back from the world. Each line tests the
+    # block first, so on a fresh export (no second spawner) it changes nothing. A boss whose one spawner moves
+    # (single_leader.move, Lance) has its move function listed after its retire by retire_functions(), and moves
+    # once: it tests the old cell first. cobblers_trainers is EXCLUDED as
+    # self-driving; this step is the one thing in it run over RCON. Held in a forceload, like R17A
+    import challenge_mode
+    single_hold = ["%d %d %d %d" % b for b in challenge_mode.retire_hold()]
+    if single_hold:
+        out.append(("R17L", "one leader per gym: the retired second spawners removed (data/challenge_mode.json single_leader)",
+                    [("cmd", "forceload add " + h) for h in single_hold] + [("wait", 3)]
+                    + [("fn", f) for f in challenge_mode.retire_functions()]
+                    + [("check", "single_leader")]
+                    + [("cmd", "forceload remove " + h) for h in single_hold]))
     # the ferrymen (data/ferries.json): NPCs, so an export erases them, and their classes load at boot from
     # cobblers_ferries, so they are placed over RCON after the restart, as R9F and R17 place theirs; the load function
     # first (the pack's scores, also created by its load tag). Listed from the committed data, not the build
@@ -1907,20 +2113,34 @@ def steps(with_spawns=False):
     # squares' contract (data/plaza_centres.json) seats stands at that stall instead
     # 2026-10-04 (the owner: "the steve villagers aren't it, it should be the cobbleverse ones that have nice ui"): every
     # stall keeper is a CobbleDollars merchant (cobbledollars:cobble_merchant with its stall's CobbleMerchantShop),
-    # summoned by the pack's function like R14's traders, which also removes the dialogue keeper it replaces; 8 s for
-    # the function's 40 + 100 ticks, then the merchants are read back from the world. The counters stay dialogue clerks
+    # summoned by the pack's function like R14's traders, which also removes the dialogue keeper it replaces; then
+    # the merchants are read back from the world. The wait is the function's longest run, MERCHANT_STEP_SECONDS (since
+    # N155, 2026-10-08: a seat is staffed only once its chunk's entities are seen, or blind after 300 ticks, then 100
+    # more to de-duplicate), so the read never starts before the last seat is staffed
     import markets
     out.append(("R17M", "the market keepers and the stall merchants (data/markets.json)",
                 [("fn", "cobblers:markets/load")] + [("npc", n) for n in markets.npc_placements(markets.load())]
                 + [("npc", n) for n in markets.stall_placements(markets.load())]
-                + ([("fn", markets.MERCHANTS_FN), ("wait", 8), ("check", "stall_merchants")]
+                + ([("fn", markets.MERCHANTS_FN), ("wait", markets.MERCHANT_STEP_SECONDS), ("check", "stall_merchants")]
                    if markets.emitted_stalls(markets.load()) else [])))
+    # the training-ground keepers (data/training_services.json, 2026-10-10): NPCs whose classes load at boot from
+    # cobblers_training_services, placed over RCON after the restart like the ferrymen, each beside its ground's sign
+    # and turned to face its town; the load function first (the pack's scores). Listed from the committed data
+    import training_services
+    out.append(("R17TS", "the training-ground keepers' paid services (data/training_services.json)",
+                [("fn", "cobblers:training_services/load")]
+                + [("npc", n) for n in training_services.npc_placements(training_services.load())]))
     # the settlement NPCs (data/npc_seats.json): the main reveal's residents and the stone-tip speakers. NPCs like the
     # ferrymen, so placed over RCON after the restart that loaded cobblers_dialogue's classes, and after every town and
     # gym pass so the plaza, lot and lab floor they stand on exist. Each is turned to its authored yaw
     import npc_seats
     out.append(("R17N", "the settlement NPCs (data/npc_seats.json)",
                 [("npc", n) for n in npc_seats.placements()]))
+    # the mainline beats' evidence (2026-10-05, tools/reveal_evidence.py): a prop and a sign beside each gym town's
+    # teller, after R17N seats them, into replaceable blocks only
+    import reveal_evidence
+    out.append(("R17NE", "the mainline beats' evidence displays beside the tellers (data/reveal_evidence.json)",
+                reveal_evidence.placement_steps()))
     # the Old Orchard's keeper (2026-10-02, tools/old_orchard.py): an NPC like the settlement ones, placed over RCON
     # after the restart that loaded cobblers_dialogue's classes, on the ground R9SO's orchard stands on
     out.append(("R18SO", "the Old Orchard's keeper, Wenna Marlow (data/old_orchard.json npc)",
@@ -1930,6 +2150,18 @@ def steps(with_spawns=False):
     # forceload of its chunk and de-duplicated by tag 100 ticks later (tools/markets.py's shape)
     out.append(("R18AF", "Hollin's Apricorn Farm: the farmer and the stall merchant (data/apricorn_farm.json npc, merchant)",
                 apricorn_farm.entity_steps()))
+    # the Produce Buyer (2026-10-10, tools/produce_buyer.py): its load function (the sale's scores), then the buyer, an
+    # NPC whose class loads at boot from cobblers_produce_buyer, placed over RCON like the ferrymen, on the cell of the
+    # farm's plan beside Hollin's stall, after R18AF so the stall keeper it stands apart from is already there
+    import produce_buyer
+    out.append(("R18PB", "the Produce Buyer at Hollin's farm (data/produce_buyer.json)",
+                [("fn", "cobblers:produce_buyer/load")] + [("npc", n) for n in produce_buyer.npc_placements()]))
+    # direct trades (2026-10-07, EXP-055): the barterer, a vanilla villager whose fixed item-for-item offers are written
+    # into its summon, in a booth carved 9 under the Holdfast counter (no sky, so no lightning, which would discard it).
+    # Held in a forceload of its chunk; the place function refuses to carve if the shell meets air or water (score
+    # #breach cob_dt) and de-duplicates by tag 100 ticks on. Only approved barter lines are in it
+    import direct_trades
+    out.append(("R18DT", "the barterer under the Holdfast counter (data/direct_trades.json)", direct_trades.steps()))
     # the Copperway Khan's salvager (2026-10-02): an NPC on the dug-out hall's floor R9DU wrote, her class loaded at boot
     # from cobblers_dialogue, so placed over RCON after the restart like R17N's
     out.append(("R18DU", "the Copperway Khan's salvager (data/dune_ruin.json npc)",
@@ -2236,6 +2468,13 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 bad += ["stall merchants: %s" % m for m in problems]
                 print("   stall merchants: %d stalls, %d problems" % (len(markets.emitted_stalls(markets.load())),
                                                                      len(problems)), flush=True)
+            elif kind == "check" and v == "single_leader":
+                # one leader per gym: the second spawner gone, the one spawner Normal with nobody near (R17L)
+                import challenge_mode
+                problems = challenge_mode.single_leader_verify(rc)
+                bad += ["single leader: %s" % m for m in problems]
+                print("   single leader: %d bosses, %d problems" % (len(challenge_mode.rollout()), len(problems)),
+                      flush=True)
             elif kind == "check" and v == "ambient_idle":
                 import ambient_idle
                 problems = ambient_idle.verify(rc)

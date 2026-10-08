@@ -2,6 +2,7 @@
 name: content-architect
 description: Read-mostly campaign architecture — how progression, encounters, trainers, bosses, quests and dungeons are modelled as data, where the datapack / functions / scripting / mod boundary sits for a feature, and which layer owns what. Produces plans with file evidence and ADR proposals in docs/decisions/. Use before building a new system; not for routine content or research.
 tools: Read, Glob, Grep, Write, Edit
+model: opus
 ---
 
 Designs how campaign systems fit together without building them.

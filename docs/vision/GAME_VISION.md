@@ -135,7 +135,10 @@ Final Chamber: opens only when every required dungeon flag is set
 Reward: special encounter
 ```
 
-Progress persists. Multiplayer state is explicit: some rewards are per player, some
+Progress persists: what a player has earned (catches, items, flags, first clears,
+badges, money) survives any dungeon reset. A puzzle dungeon also keeps its own state
+between visits; a timed run resets its rooms on every entry and keeps only what the
+player earned. Multiplayer state is explicit: some rewards are per player, some
 are shared, and each dungeon says which.
 
 ### 6. Villain gauntlets

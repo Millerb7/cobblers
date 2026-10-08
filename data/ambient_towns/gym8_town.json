@@ -1,0 +1,603 @@
+{
+  "settlement": "gym8_town",
+  "size": "town",
+  "target": 48,
+  "character": "Holdfast is a garrison on the south strand: its Pokemon drill, drive stakes, dig the ditch, shoe the stores and stand sentry, and the off-duty ones are a garrison's, recruits on parade, dogs in a heap, a wagon nobody moves. Ground and fighting Pokemon; no fire, no psychic and no marsh.",
+  "workers": [
+    {
+      "id": "giovanni_target_machop",
+      "settlement": "gym8_town",
+      "species": "machop",
+      "level": 40,
+      "job": "work",
+      "at": [3611, 6539],
+      "face": [3610, 6540],
+      "every": 20,
+      "effect": {
+        "particle": "minecraft:crit",
+        "count": 12,
+        "sound": "minecraft:block.wood.hit",
+        "pitch": 0.8
+      },
+      "interact": "The Machop drills without a break. Someone has scratched a tally of its sessions on the post."
+    },
+    {
+      "id": "giovanni_supply_carrier",
+      "settlement": "gym8_town",
+      "species": "gurdurr",
+      "level": 40,
+      "job": "carry",
+      "route": [[3598, 6475], [3581, 6474]],
+      "carry": "minecraft:barrel",
+      "carry_height": 1.6,
+      "box": [1.0, 1.6],
+      "pickup": {
+        "sound": "minecraft:block.barrel.open"
+      },
+      "drop": {
+        "sound": "minecraft:block.barrel.close",
+        "block": "minecraft:spruce_planks",
+        "count": 8
+      },
+      "interact": "The Gurdurr brings another barrel to the quartermaster on its girder. The quartermaster ticks it off without looking up."
+    },
+    {
+      "id": "holdfast_hitmonlee_post",
+      "settlement": "gym8_town",
+      "species": "hitmonlee",
+      "level": 40,
+      "job": "work",
+      "at": [3621, 6543],
+      "face": [3618, 6540],
+      "every": 26,
+      "effect": {
+        "particle": "minecraft:crit",
+        "count": 10,
+        "sound": "minecraft:block.wood.hit",
+        "pitch": 1.0
+      },
+      "interact": "The Hitmonlee kicks the post from further away than its legs should reach. The post leans a little more."
+    },
+    {
+      "id": "holdfast_hitmonchan_post",
+      "settlement": "gym8_town",
+      "species": "hitmonchan",
+      "level": 40,
+      "job": "work",
+      "at": [3603, 6549],
+      "face": [3606, 6546],
+      "every": 18,
+      "effect": {
+        "particle": "minecraft:crit",
+        "count": 8,
+        "sound": "minecraft:block.wool.hit",
+        "pitch": 0.9
+      },
+      "interact": "The Hitmonchan works the padded post in short combinations. It nods at the Hitmonlee between rounds; the Hitmonlee does not nod back."
+    },
+    {
+      "id": "holdfast_cubone_smithy",
+      "settlement": "gym8_town",
+      "species": "cubone",
+      "level": 39,
+      "job": "work",
+      "at": [3596, 6455],
+      "face": [3593, 6453],
+      "every": 22,
+      "box": [0.8, 0.9],
+      "effect": {
+        "particle": "minecraft:crit",
+        "count": 6,
+        "dy": 0.6,
+        "sound": "minecraft:block.anvil.use",
+        "pitch": 1.4
+      },
+      "interact": "The Cubone hammers out horseshoe nails for the smith with its bone club. The smith uses a hammer. The Cubone is faster."
+    },
+    {
+      "id": "holdfast_rhydon_stakes",
+      "settlement": "gym8_town",
+      "species": "rhydon",
+      "level": 40,
+      "job": "work",
+      "at": [3622, 6425],
+      "face": [3624, 6420],
+      "every": 64,
+      "effect": {
+        "block": "minecraft:spruce_log",
+        "count": 14,
+        "sound": "minecraft:block.wood.hit",
+        "pitch": 0.6
+      },
+      "interact": "The Rhydon drives the palisade's stakes in with its horn, one a minute, all exactly as deep as the last."
+    },
+    {
+      "id": "holdfast_dugtrio_ditch",
+      "settlement": "gym8_town",
+      "species": "dugtrio",
+      "level": 40,
+      "job": "work",
+      "at": [3650, 6418],
+      "face": [3650, 6416],
+      "every": 34,
+      "effect": {
+        "block": "minecraft:coarse_dirt",
+        "count": 14,
+        "sound": "minecraft:block.gravel.break",
+        "pitch": 0.9
+      },
+      "interact": "The Dugtrio is digging the ditch outside the palisade. The three of it disagree about the line, and the ditch wanders."
+    },
+    {
+      "id": "holdfast_hippowdon_sweeper",
+      "settlement": "gym8_town",
+      "species": "hippowdon",
+      "level": 40,
+      "job": "work",
+      "at": [3625, 6537],
+      "face": [3615, 6544],
+      "every": 90,
+      "effect": {
+        "block": "minecraft:sand",
+        "count": 18,
+        "spread": 0.6,
+        "sound": "minecraft:block.sand.break",
+        "pitch": 0.7
+      },
+      "interact": "The Hippowdon blows the drill ground clear of the night's sand. It blows most of it onto the targets."
+    },
+    {
+      "id": "holdfast_stoutland_sentry",
+      "settlement": "gym8_town",
+      "species": "stoutland",
+      "level": 40,
+      "job": "work",
+      "at": [3702, 6440],
+      "face": [3712, 6430],
+      "every": 140,
+      "look_around": [3690, 6450],
+      "effect": {
+        "particle": "minecraft:poof",
+        "count": 4,
+        "spread": 0.2,
+        "dy": 0.2,
+        "sound": "minecraft:entity.wolf.ambient",
+        "pitch": 0.8
+      },
+      "interact": "The Stoutland has the east gate. It looks at you, at your Pokemon, and at the road behind you, in that order."
+    },
+    {
+      "id": "holdfast_mudbray_crates",
+      "settlement": "gym8_town",
+      "species": "mudbray",
+      "level": 39,
+      "job": "work",
+      "at": [3636, 6428],
+      "face": [3638, 6424],
+      "every": 40,
+      "effect": {
+        "block": "minecraft:spruce_planks",
+        "count": 10,
+        "sound": "minecraft:block.wood.place",
+        "pitch": 0.8
+      },
+      "interact": "The Mudbray stamps the depot's crates shut with one hoof. The lids stay shut."
+    },
+    {
+      "id": "holdfast_gligar_colours",
+      "settlement": "gym8_town",
+      "species": "gligar",
+      "level": 39,
+      "job": "work",
+      "at": [3634, 6544],
+      "face": [3632, 6547],
+      "every": 80,
+      "box": [0.9, 0.9],
+      "effect": {
+        "particle": "minecraft:poof",
+        "count": 5,
+        "spread": 0.3,
+        "dy": 2.2,
+        "sound": "minecraft:block.wool.place",
+        "pitch": 1.2
+      },
+      "interact": "The Gligar keeps the colours on the pole untangled. When the wind turns them it climbs up and turns them back."
+    },
+    {
+      "id": "holdfast_makuhita_armoury",
+      "settlement": "gym8_town",
+      "species": "makuhita",
+      "level": 39,
+      "job": "work",
+      "at": [3643, 6547],
+      "face": [3640, 6550],
+      "every": 52,
+      "effect": {
+        "block": "minecraft:iron_block",
+        "count": 6,
+        "sound": "minecraft:block.anvil.land",
+        "pitch": 1.6
+      },
+      "interact": "The Makuhita stacks the armoury's shields, then slaps each one to hear if it is sound."
+    },
+    {
+      "id": "holdfast_phanpy_barrels",
+      "settlement": "gym8_town",
+      "species": "phanpy",
+      "level": 38,
+      "job": "work",
+      "at": [3603, 6470],
+      "face": [3600, 6473],
+      "every": 46,
+      "box": [0.8, 0.8],
+      "effect": {
+        "particle": "minecraft:splash",
+        "count": 18,
+        "spread": 0.3,
+        "dy": 0.4,
+        "sound": "minecraft:item.bucket.empty",
+        "pitch": 1.3
+      },
+      "interact": "The Phanpy washes out the depot's empty barrels with its trunk. Some of the water reaches the barrels."
+    }
+  ],
+  "pets": [
+    {
+      "id": "holdfast_watch_sandile",
+      "species": "sandile",
+      "owner": "npc_main_giovanni_watch",
+      "mode": "follow",
+      "why": "the watch officer's Sandile, its dark eyes on whatever she is looking at"
+    },
+    {
+      "id": "holdfast_watch_lillipup",
+      "species": "lillipup",
+      "owner": "npc_main_giovanni_watch",
+      "mode": "follow",
+      "why": "the watch's newest dog, following the officer and learning from the Sandile"
+    },
+    {
+      "id": "holdfast_counter_zigzagoon",
+      "species": "zigzagoon",
+      "owner": "holdfast",
+      "mode": "wait",
+      "why": "the market counter's Zigzagoon, which brings the clerk whatever it found on the strand"
+    },
+    {
+      "id": "holdfast_provisions_doduo",
+      "species": "doduo",
+      "owner": "holdfast_garrison_provisions",
+      "mode": "wait",
+      "why": "the provisioner's Doduo, which runs the orders to the far posts; both heads wait for the next one"
+    },
+    {
+      "id": "holdfast_provisions_tyrogue",
+      "species": "tyrogue",
+      "owner": "holdfast_garrison_provisions",
+      "mode": "follow",
+      "why": "the provisioner's Tyrogue, which wants to be on the drill ground and is not allowed yet"
+    },
+    {
+      "id": "holdfast_packstore_skwovet",
+      "species": "skwovet",
+      "owner": "holdfast_pack_store",
+      "mode": "follow",
+      "why": "the pack store's Skwovet, which has hidden part of the stock in its cheeks"
+    },
+    {
+      "id": "holdfast_smithy_riolu",
+      "species": "riolu",
+      "owner": "holdfast_garrison_smithy",
+      "mode": "follow",
+      "why": "the smith's apprentice Riolu, which can feel when the iron is ready"
+    }
+  ],
+  "placed": [
+    {
+      "id": "holdfast_diglett_step",
+      "species": "diglett",
+      "spot": "step",
+      "building": "gym8_house_07",
+      "why": "up through the paving beside the step; there is a new hole every morning"
+    },
+    {
+      "id": "holdfast_sandygast_step",
+      "species": "sandygast",
+      "spot": "step",
+      "building": "gym8_house_13",
+      "why": "a little sand castle by the door with a spade in it; do not take the spade"
+    },
+    {
+      "id": "holdfast_wingull_roof",
+      "species": "wingull",
+      "spot": "roof",
+      "building": "gym8_house_14",
+      "why": "on the roof ridge facing the sea wind, the strand's gull"
+    },
+    {
+      "id": "holdfast_clauncher_step",
+      "species": "clauncher",
+      "spot": "step",
+      "building": "gym8_house_10",
+      "why": "in the bucket by the step, brought up from the strand by somebody's child"
+    },
+    {
+      "id": "holdfast_nincada_step",
+      "species": "nincada",
+      "spot": "step",
+      "building": "gym8_house_12",
+      "why": "beside the step, only its eyes showing above the dirt"
+    },
+    {
+      "id": "holdfast_larvitar_roof",
+      "species": "larvitar",
+      "spot": "roof",
+      "building": "gym8_house_04",
+      "why": "on the roof, eating a clay tile"
+    },
+    {
+      "id": "holdfast_silicobra_gutter",
+      "species": "silicobra",
+      "spot": "gutter",
+      "building": "gym8_house_02",
+      "why": "curled in the gutter full of blown sand, which it has kept"
+    },
+    {
+      "id": "holdfast_trapinch_step",
+      "species": "trapinch",
+      "spot": "step",
+      "building": "gym8_house_09",
+      "why": "at the bottom of a sand pit in the animal pen's gateway; the goats go round"
+    }
+  ],
+  "situations": [
+    {
+      "id": "holdfast_recruit_parade",
+      "title": "The recruits on parade",
+      "unique": true,
+      "story": "A Primeape drill sergeant faces its recruits on the parade ground: a Falinks, which is a whole squad on its own, a Pancham, a Mienfoo and a Crabrawler that is facing the wrong way.",
+      "at": [3622, 116, 6550],
+      "facing": "north",
+      "members": [
+        {
+          "species": "primeape",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -3]]
+        },
+        {
+          "species": "falinks",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[-2, 0, 0]]
+        },
+        {
+          "species": "pancham",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "crabrawler",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[2, 0, 0]]
+        },
+        {
+          "species": "mienfoo",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[4, 0, 0]]
+        }
+      ],
+      "props": [],
+      "why": "Holdfast's own: a garrison's parade, on the drill ground by the colours; the one facing away is the joke"
+    },
+    {
+      "id": "holdfast_hippo_trough",
+      "title": "The trough the horses cannot use",
+      "unique": false,
+      "story": "The trough by the pack store has three Hippopotas in it. The horses drink at the well now.",
+      "at": [3624, 113, 6464],
+      "facing": "west",
+      "members": [
+        {
+          "species": "hippopotas",
+          "count": 3,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [1, 0, 0], [2, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:water_cauldron",
+          "at": [0, 0, 0]
+        },
+        {
+          "block": "minecraft:water_cauldron",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:water_cauldron",
+          "at": [2, 0, 0]
+        }
+      ],
+      "why": "a trough taken over; the three ARE the situation"
+    },
+    {
+      "id": "holdfast_dog_heap",
+      "title": "The dogs off watch",
+      "unique": false,
+      "story": "Every dog off watch sleeps in one heap by the depot fire: a Herdier, a Yamper and a Furfrou that was somebody's pet before it joined up.",
+      "at": [3652, 111, 6434],
+      "facing": "south",
+      "members": [
+        {
+          "species": "herdier",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "yamper",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[-1, 0, 1]]
+        },
+        {
+          "species": "furfrou",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[1, 0, -1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:campfire",
+          "at": [-3, 0, 0]
+        }
+      ],
+      "why": "behind the palisade, by the depot; a garrison's dogs"
+    },
+    {
+      "id": "holdfast_stuck_wagon",
+      "title": "The wagon that has not moved since Tuesday",
+      "unique": false,
+      "story": "On Tuesday the quartermaster put a Rhyhorn and a Tauros in the supply wagon's harness together, and each is certain it is the one in charge. Each pulls its own way, the wagon stays exactly where it is, and the garrison has started drilling round it. A Rattata lives under it now.",
+      "at": [3618, 114, 6494],
+      "facing": "east",
+      "members": [
+        {
+          "species": "rhyhorn",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "tauros",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[3, 0, 0]]
+        },
+        {
+          "species": "rattata",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[1, 0, 1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 0, -1]
+        },
+        {
+          "block": "minecraft:barrel",
+          "at": [1, 0, -1]
+        },
+        {
+          "block": "minecraft:barrel",
+          "at": [2, 0, -1]
+        }
+      ],
+      "why": "west of the Mart; the load stands where the wagon stopped. Rewritten 2026-10-08 (unit AMB): a Rhyhorn lying down in a cart's way is Stoneford's roadblock; Holdfast's is a tug of war. Same members, same spots"
+    },
+    {
+      "id": "holdfast_marowak_cairn",
+      "title": "The Marowak at the cairn",
+      "unique": true,
+      "story": "Every evening a Marowak stands at the little cairn by the drill ground, with a Duskull at its shoulder. The garrison salutes it as they pass.",
+      "at": [3594, 115, 6534],
+      "facing": "south",
+      "members": [
+        {
+          "species": "marowak",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "duskull",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[1, 1, 1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:cobblestone_wall",
+          "at": [0, 0, -1]
+        },
+        {
+          "block": "minecraft:candle",
+          "at": [0, 1, -1]
+        }
+      ],
+      "why": "west of the drill ground, quiet; the garrison's memory"
+    },
+    {
+      "id": "holdfast_butcher_queue",
+      "title": "The queue at the butcher's door",
+      "unique": false,
+      "story": "At six every evening the butcher throws out the trimmings, and by five there is a queue at his door: a Mightyena, a Zangoose and a Persian, who would fight anywhere else and here wait their turn. The garrison calls it the best-drilled unit in Holdfast.",
+      "at": [3603, 114, 6498],
+      "facing": "south",
+      "members": [
+        {
+          "species": "mightyena",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "zangoose",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -2]]
+        },
+        {
+          "species": "persian",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -4]]
+        }
+      ],
+      "props": [],
+      "why": "gym8_house_04 is the butcher's shop, its door on the west wall at z 6500; the queue stands on the strip between the street (x 3597-3601) and the shop (x 3603, z 6494-6498, the plan's y 114), north of the door so the way in stays open. The doorstep's placed Pupitar is taken out for it (the conversion from placed the composition asks for)"
+    },
+    {
+      "id": "holdfast_sirfetchd_sentry",
+      "title": "The sentry nobody posted",
+      "unique": true,
+      "story": "A Sirfetch'd stands at the end of the gate palisade with its leek on its shoulder, facing the road out. Nobody posted it. The watch changes round it four times a day, and it has never once been relieved.",
+      "at": [3627, 111, 6415],
+      "facing": "north",
+      "members": [
+        {
+          "species": "sirfetchd",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:spruce_fence",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:lantern",
+          "at": [1, 1, 0]
+        }
+      ],
+      "why": "a garrison town's own soldier: by giovanni_palisade at (3624, 6420), on the plan's y 111 and clear of the Rhydon's stake line; the fence post and lantern are its sentry post"
+    }
+  ],
+  "counts": {
+    "working": 13,
+    "pets": 7,
+    "placed": 8,
+    "situations": 20,
+    "total": 48
+  }
+}

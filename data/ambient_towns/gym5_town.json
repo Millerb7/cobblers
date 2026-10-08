@@ -1,0 +1,587 @@
+{
+  "settlement": "gym5_town",
+  "size": "town",
+  "target": 48,
+  "character": "Fenhide is a trappers' and poisoners' town in the reeds: its Pokemon cut reeds, smoke eels, spin snares, paint balls and dig ditches, and the ones off work are the marsh's families, frogs, mushrooms and things you should not step on. Poison and mud only; nothing here would live in a garden.",
+  "workers": [
+    {
+      "id": "koga_reed_carrier",
+      "settlement": "gym5_town",
+      "species": "croagunk",
+      "level": 24,
+      "job": "carry",
+      "route": [[4578, 2396], [4587, 2399]],
+      "carry": "minecraft:sugar_cane",
+      "carry_height": 1.1,
+      "pickup": {
+        "sound": "minecraft:block.grass.break"
+      },
+      "drop": {
+        "sound": "minecraft:block.grass.place",
+        "block": "minecraft:sugar_cane",
+        "count": 8
+      },
+      "interact": "The Croagunk hangs another bundle of reeds to dry and croaks at you, not unfriendly."
+    },
+    {
+      "id": "koga_target_venonat",
+      "settlement": "gym5_town",
+      "species": "venonat",
+      "level": 24,
+      "job": "work",
+      "at": [4704, 2401],
+      "face": [4705, 2400],
+      "every": 30,
+      "effect": {
+        "particle": "minecraft:crit",
+        "count": 10,
+        "sound": "minecraft:block.wood.hit",
+        "pitch": 1.2
+      },
+      "interact": "The Venonat keeps its eyes on the target, then on you, then on the target. It does not miss."
+    },
+    {
+      "id": "fenhide_quagsire_ditch",
+      "settlement": "gym5_town",
+      "species": "quagsire",
+      "level": 24,
+      "job": "work",
+      "at": [4598, 2452],
+      "face": [4596, 2454],
+      "every": 44,
+      "effect": {
+        "block": "minecraft:mud",
+        "count": 14,
+        "sound": "minecraft:block.mud.break",
+        "pitch": 0.8
+      },
+      "interact": "The Quagsire is digging out the drainage ditch with its hands. It has been at it all morning and has not stopped smiling."
+    },
+    {
+      "id": "fenhide_corphish_traps",
+      "settlement": "gym5_town",
+      "species": "corphish",
+      "level": 23,
+      "job": "work",
+      "at": [4573, 2457],
+      "face": [4576, 2453],
+      "every": 52,
+      "box": [0.8, 0.9],
+      "effect": {
+        "particle": "minecraft:splash",
+        "count": 16,
+        "spread": 0.3,
+        "dy": 0.3,
+        "sound": "minecraft:entity.fishing_bobber.splash",
+        "pitch": 1.1
+      },
+      "interact": "The Corphish checks the eel traps one by one. Any eel it finds, it holds up to the trapper before it lets go."
+    },
+    {
+      "id": "fenhide_ariados_snares",
+      "settlement": "gym5_town",
+      "species": "ariados",
+      "level": 24,
+      "job": "work",
+      "at": [4657, 2425],
+      "face": [4654, 2423],
+      "every": 60,
+      "effect": {
+        "block": "minecraft:cobweb",
+        "count": 6,
+        "sound": "minecraft:entity.spider.ambient",
+        "pitch": 1.2
+      },
+      "interact": "The Ariados spins snare line for the trapper's stall. The trapper tests every length against her teeth."
+    },
+    {
+      "id": "fenhide_koffing_smoker",
+      "settlement": "gym5_town",
+      "species": "koffing",
+      "level": 24,
+      "job": "work",
+      "at": [4698, 2434],
+      "face": [4695, 2432],
+      "every": 40,
+      "box": [0.9, 0.9],
+      "effect": {
+        "particle": "minecraft:campfire_cosy_smoke",
+        "count": 3,
+        "spread": 0.2,
+        "speed": 0.01,
+        "dy": 0.8,
+        "sound": "minecraft:block.fire.ambient",
+        "pitch": 0.8
+      },
+      "interact": "The Koffing hangs under the smoke rack, puffing. Fenhide's smoked eels taste of nothing anyone else can make."
+    },
+    {
+      "id": "fenhide_marshtomp_casts",
+      "settlement": "gym5_town",
+      "species": "marshtomp",
+      "level": 24,
+      "job": "work",
+      "at": [4703, 2389],
+      "face": [4700, 2386],
+      "every": 48,
+      "effect": {
+        "block": "minecraft:mud",
+        "count": 12,
+        "sound": "minecraft:block.mud.place",
+        "pitch": 1.0
+      },
+      "interact": "The Marshtomp tamps fresh mud into a cast of a track the trackers brought in. It is very careful with the claw marks."
+    },
+    {
+      "id": "fenhide_weepinbell_still",
+      "settlement": "gym5_town",
+      "species": "weepinbell",
+      "level": 24,
+      "job": "work",
+      "at": [4679, 2424],
+      "face": [4682, 2422],
+      "every": 66,
+      "effect": {
+        "particle": "minecraft:witch",
+        "count": 6,
+        "spread": 0.2,
+        "dy": 0.9,
+        "sound": "minecraft:block.brewing_stand.brew",
+        "pitch": 1.2
+      },
+      "interact": "The Weepinbell lets one drop at a time into the apothecary's flask. The apothecary counts them out loud."
+    },
+    {
+      "id": "fenhide_shroodle_balls",
+      "settlement": "gym5_town",
+      "species": "shroodle",
+      "level": 23,
+      "job": "work",
+      "at": [4675, 2440],
+      "face": [4672, 2443],
+      "every": 38,
+      "box": [0.7, 0.7],
+      "effect": {
+        "particle": "minecraft:squid_ink",
+        "count": 5,
+        "spread": 0.15,
+        "dy": 0.5,
+        "sound": "minecraft:item.ink_sac.use",
+        "pitch": 1.4
+      },
+      "interact": "The Shroodle paints a band round every ball the ball maker finishes. It signs some of them."
+    },
+    {
+      "id": "fenhide_yanma_reeds",
+      "settlement": "gym5_town",
+      "species": "yanma",
+      "level": 24,
+      "job": "work",
+      "at": [4563, 2403],
+      "face": [4560, 2400],
+      "every": 30,
+      "box": [0.9, 0.9],
+      "effect": {
+        "particle": "minecraft:poof",
+        "count": 6,
+        "spread": 0.3,
+        "dy": 0.8,
+        "sound": "minecraft:block.grass.hit",
+        "pitch": 1.4
+      },
+      "interact": "The Yanma hovers in front of the reed rack, drying the bundles with its wings. Every so often it stops to look round at nothing."
+    },
+    {
+      "id": "fenhide_nidoking_eels",
+      "settlement": "gym5_town",
+      "species": "nidoking",
+      "level": 25,
+      "job": "carry",
+      "route": [[4588, 2453], [4596, 2441]],
+      "carry": "minecraft:barrel",
+      "carry_height": 1.9,
+      "box": [1.0, 1.7],
+      "pickup": {
+        "sound": "minecraft:block.barrel.open"
+      },
+      "drop": {
+        "sound": "minecraft:block.barrel.close",
+        "block": "minecraft:spruce_planks",
+        "count": 8
+      },
+      "interact": "The Nidoking brings the morning's eels up from the traps a barrel at a time. Something in the barrel is still arguing."
+    },
+    {
+      "id": "fenhide_grafaiai_marks",
+      "settlement": "gym5_town",
+      "species": "grafaiai",
+      "level": 24,
+      "job": "work",
+      "at": [4637, 2431],
+      "face": [4635, 2431],
+      "every": 72,
+      "effect": {
+        "particle": "minecraft:squid_ink",
+        "count": 8,
+        "spread": 0.25,
+        "dy": 1.1,
+        "sound": "minecraft:block.wool.place",
+        "pitch": 1.3
+      },
+      "interact": "The Grafaiai is painting the season's tally on the cartographer's door. The door is mostly tally now."
+    },
+    {
+      "id": "fenhide_toxtricity_fire",
+      "settlement": "gym5_town",
+      "species": "toxtricity",
+      "level": 25,
+      "job": "work",
+      "at": [4613, 2385],
+      "face": [4613, 2380],
+      "every": 58,
+      "effect": {
+        "particle": "minecraft:electric_spark",
+        "count": 10,
+        "spread": 0.3,
+        "dy": 0.6,
+        "sound": "minecraft:block.fire.ambient",
+        "pitch": 1.0
+      },
+      "interact": "The Toxtricity keeps the north smoke rack's fire going with a strum of sparks. It plays the same three notes every time."
+    }
+  ],
+  "pets": [
+    {
+      "id": "fenhide_tracker_seviper",
+      "species": "seviper",
+      "owner": "npc_main_koga_marsh_tracker",
+      "mode": "follow",
+      "why": "the marsh tracker's Seviper: it reads a trail with its tongue faster than she reads it with her eyes"
+    },
+    {
+      "id": "fenhide_tracker_nidoranf",
+      "species": "nidoranf",
+      "owner": "npc_main_koga_marsh_tracker",
+      "mode": "follow",
+      "why": "the tracker's other one, still learning, always a step behind the Seviper"
+    },
+    {
+      "id": "fenhide_counter_wooper",
+      "species": "wooper",
+      "owner": "fenhide",
+      "mode": "wait",
+      "why": "the market counter's Wooper, sitting in the wash bucket by the scales"
+    },
+    {
+      "id": "fenhide_balls_foongus",
+      "species": "foongus",
+      "owner": "fenhide_ball_bench",
+      "mode": "wait",
+      "why": "the ball maker keeps one Foongus on the bench among the finished balls, to see who is paying attention"
+    },
+    {
+      "id": "fenhide_apothecary_salandit",
+      "species": "salandit",
+      "owner": "fenhide_apothecary",
+      "mode": "follow",
+      "why": "the apothecary's Salandit; half her remedies start with something it breathes on"
+    },
+    {
+      "id": "fenhide_apothecary_roselia",
+      "species": "roselia",
+      "owner": "fenhide_apothecary",
+      "mode": "wait",
+      "why": "on the apothecary's counter, the only thing on it you are allowed to smell"
+    },
+    {
+      "id": "fenhide_trapper_ekans",
+      "species": "ekans",
+      "owner": "fenhide_trapper",
+      "mode": "follow",
+      "why": "the trapper's Ekans, coiled loose round her ankle when she stands still"
+    }
+  ],
+  "placed": [
+    {
+      "id": "fenhide_surskit_gutter",
+      "species": "surskit",
+      "spot": "gutter",
+      "building": "gym5_house_04",
+      "why": "skating up and down the fisher cottage's full gutter"
+    },
+    {
+      "id": "fenhide_spinarak_window",
+      "species": "spinarak",
+      "spot": "window",
+      "building": "gym5_house_09",
+      "why": "in the corner of the window behind its own web; nobody in this house dusts"
+    },
+    {
+      "id": "fenhide_grimer_gutter",
+      "species": "grimer",
+      "spot": "gutter",
+      "building": "gym5_house_10",
+      "why": "living in the drain at the foot of the downpipe, which it keeps clear in its own way"
+    },
+    {
+      "id": "fenhide_stunky_porch",
+      "species": "stunky",
+      "spot": "porch",
+      "building": "gym5_house_03",
+      "why": "under the cartographer's porch bench; the bench is free for anyone who wants it"
+    },
+    {
+      "id": "fenhide_tympole_step",
+      "species": "tympole",
+      "spot": "step",
+      "building": "gym5_house_08",
+      "why": "on the step's edge in the puddle the step has never drained, only its eyes over the water (rewritten 2026-10-08, unit AMB: a tenant in the rain butt is Viltri Quay's Barboach)"
+    },
+    {
+      "id": "fenhide_skorupi_porch",
+      "species": "skorupi",
+      "spot": "porch",
+      "building": "gym5_house_05",
+      "why": "on the mason's porch rail, tail up, looking at the street"
+    },
+    {
+      "id": "fenhide_masquerain_window",
+      "species": "masquerain",
+      "spot": "window",
+      "building": "gym5_house_05",
+      "why": "resting on the mason's window ledge, its eye-spots staring out"
+    },
+    {
+      "id": "fenhide_carnivine_porch",
+      "species": "carnivine",
+      "spot": "porch",
+      "building": "gym5_house_10",
+      "why": "hanging from the porch beam like a basket, which is how it catches the moths"
+    }
+  ],
+  "situations": [
+    {
+      "id": "fenhide_stunfisk_doormat",
+      "title": "The Stunfisk on the square's step",
+      "unique": true,
+      "story": "Every stranger who comes into Fenhide steps on the Stunfisk once. The locals step round it. A Toxicroak leans on the wall nearby, waiting for you.",
+      "at": [4650, 118, 2433],
+      "facing": "west",
+      "members": [
+        {
+          "species": "stunfisk",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "toxicroak",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[-2, 0, -3]]
+        }
+      ],
+      "props": [],
+      "why": "Fenhide's own: a trap town's welcome, on the way from the post road onto the square, where every newcomer walks"
+    },
+    {
+      "id": "fenhide_frog_chorus",
+      "title": "The frog chorus on the fen walk",
+      "unique": true,
+      "story": "At dusk the frogs line up on the fen walk's edge in order of size and sing, smallest first. The Seismitoad comes in last and loudest.",
+      "at": [4599, 116, 2430],
+      "facing": "east",
+      "members": [
+        {
+          "species": "tympole",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -2]]
+        },
+        {
+          "species": "palpitoad",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "seismitoad",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 2]]
+        }
+      ],
+      "props": [],
+      "why": "a family in size order is the joke; the fen walk is the marsh side of town"
+    },
+    {
+      "id": "fenhide_moths_at_the_lamp",
+      "title": "The moths at the junction lamp",
+      "unique": false,
+      "story": "Three Venomoth live round the lamp where the fen walk meets the post road. The lamplighter has given up shooing them and now just says good evening.",
+      "at": [4618, 118, 2403],
+      "facing": "south",
+      "on_dressing_ok": true,
+      "members": [
+        {
+          "species": "venomoth",
+          "count": 3,
+          "pose": "wander_leashed",
+          "offsets": [[-1, 3, 0], [1, 3, 1], [0, 4, -1]]
+        }
+      ],
+      "props": [],
+      "why": "the group IS the situation; they hang in the air round the lamp's head, off the ground"
+    },
+    {
+      "id": "fenhide_mushroom_patch",
+      "title": "More Pokemon than mushrooms",
+      "unique": false,
+      "story": "The mushroom patch behind the apothecary has more Pokemon in it than mushrooms. She picks round the Amoonguss and lets the Paras keep whatever they find.",
+      "at": [4688, 119, 2410],
+      "facing": "south",
+      "members": [
+        {
+          "species": "amoonguss",
+          "count": 2,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [3, 0, 2]]
+        },
+        {
+          "species": "paras",
+          "count": 2,
+          "pose": "wander_leashed",
+          "offsets": [[1, 0, 2], [2, 0, -1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:red_mushroom",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:red_mushroom",
+          "at": [-1, 0, 1]
+        },
+        {
+          "block": "minecraft:brown_mushroom",
+          "at": [0, 0, 2]
+        },
+        {
+          "block": "minecraft:brown_mushroom",
+          "at": [3, 0, 0]
+        }
+      ],
+      "why": "the apothecary's garden, north-east of the square, out of the market's way"
+    },
+    {
+      "id": "fenhide_barrel_cards",
+      "title": "The game on the eel barrel",
+      "unique": true,
+      "story": "Four of Fenhide's hardest sit round an upturned eel barrel playing a game with pebbles. Nobody will tell you the rules. The Croagunk is winning.",
+      "at": [4700, 119, 2452],
+      "facing": "north",
+      "members": [
+        {
+          "species": "croagunk",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[-1, 0, 0]]
+        },
+        {
+          "species": "skuntank",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[1, 0, 0]]
+        },
+        {
+          "species": "muk",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -1]]
+        },
+        {
+          "species": "arbok",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 0, 0]
+        },
+        {
+          "block": "minecraft:lantern",
+          "at": [0, 1, 0]
+        }
+      ],
+      "why": "four different species round one barrel by the market stall; the town's nightlife"
+    },
+    {
+      "id": "fenhide_antidote_queue",
+      "title": "The queue for the antidote",
+      "unique": false,
+      "story": "Three wild Pokemon off the downs have learned that the Centre opens at seven and the nurse cures poison for nothing. They queue along the wall in the order they arrived, and the Linoone has been first every day this week.",
+      "at": [4617, 118, 2371],
+      "facing": "south",
+      "members": [
+        {
+          "species": "linoone",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "furret",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -2]]
+        },
+        {
+          "species": "pidgeotto",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -4]]
+        }
+      ],
+      "props": [],
+      "why": "a poisoners' town has a Centre that treats poison more than anything else, and the downs' wild Pokemon have worked that out. The line stands two west of the Centre's footprint, out from under its eaves (x 4617, z 2367-2371, the plan's y 118; at x 4620 the idle audit found it indoors under the roof at y 122), north of its doorway at (4621, 2373) and not in front of it, so the way in stays open"
+    },
+    {
+      "id": "fenhide_kecleon_target",
+      "title": "The fifth target",
+      "unique": true,
+      "story": "The trackers' yard has four target posts and a fifth that has never once been hit. The fifth is a Kecleon. It has stood at the butt since spring and the trackers have started taking bets on it.",
+      "at": [4716, 120, 2401],
+      "facing": "west",
+      "members": [
+        {
+          "species": "kecleon",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:hay_block",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:hay_block",
+          "at": [1, 1, 0]
+        }
+      ],
+      "why": "in line with the yard's target posts (koga_target_3 at (4714, 2398), koga_target_4 at (4718, 2405)), on the plan's y 120, with a hay butt behind it the way an archery butt stands: a trackers' town's practice yard is where a camouflaged Pokemon would hide in plain sight"
+    }
+  ],
+  "counts": {
+    "working": 13,
+    "pets": 7,
+    "placed": 8,
+    "situations": 20,
+    "total": 48
+  }
+}

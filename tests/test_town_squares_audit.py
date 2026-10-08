@@ -171,27 +171,69 @@ def test_door_starts_are_the_middle_half_outside_the_facing_edge():
 
 
 # ------------------------------------------------------------------------------------------- markets, by hand
-def _market(stock_counter, stock_stall, badge=1):
+def _market(stock_counter, stock_stall, badge=1, fights=0, produce=0, hours=0):
+    """Income 1000 x badge. R2's other terms default to 0, so a ratio is the convenience ask over income."""
     return {"income_basis": {"cumulative_by_badge": {str(b): 1000 * b for b in range(1, 9)}, "target_ratio": 0.7},
+            "curve_rule": {"fight_allowance": {"per_leg": fights},
+                           "produce_allowance": {"by_badges_held": {str(b): produce for b in range(8)}},
+                           "gathering_hours_per_leg": hours},
             "counters": [{"id": "c", "town": "gym1_town", "badge": badge, "status": "sited", "stock": stock_counter}],
             "stalls": [{"id": "s", "town": "gym1_town", "badge": badge, "status": "sited", "sells": "fish",
                         "stock": stock_stall}]}
 
 
 TOWNS = {"towns": [{"id": "gym1_town", "critical_path": True}, {"id": "sea_town", "critical_path": False}]}
+# a gathering tier worth 2/h x $10 = $20 an hour from leg 1, and a second worth that + 1/h x $30 = $50 from leg 3
+EFFORT = {"effort_model": {"tiers": {"early": {"from_tiers": ["early"], "opens_leg": 1},
+                                     "deep": {"from_tiers": ["early", "deep"], "opens_leg": 3}}},
+          "buys": [{"item": "x:ore", "tier": "early", "rate_per_hour": 2, "price": 10},
+                   {"item": "x:gem", "tier": "deep", "rate_per_hour": 1, "price": 30}]}
 
 
-def test_curve_counts_counters_and_only_a_stalls_gated_lines():
-    # Without it a stall line could move the money curve unseen, or a pick-one group be counted in full.
-    counter = [{"id": "a", "item": "x:a", "price": 300, "gate": "gym1_cleared"},
-               {"id": "b", "item": "x:b", "price": 200, "group": "g", "gate": "gym1_cleared"},
-               {"id": "c", "item": "x:c", "price": 500, "group": "g", "gate": "gym1_cleared"},
-               {"id": "d", "item": "x:d", "price": 9000, "stretch": True}]
-    stall = [{"id": "e", "item": "minecraft:cod", "price": 100, "gate": None},
-             {"id": "f", "item": "minecraft:salmon", "price": 40, "gate": "gym1_cleared"}]
-    rows = A.curve(_market(counter, stall), TOWNS)
-    assert rows[0] == (1, 300 + 500 + 40, 1000, 0.84)          # a, g at its dearest, f; not d, not e
+def _l(i, price, strand="convenience", **kw):
+    return dict({"id": i, "item": "x:" + i, "price": price, "gate": None, "strand": strand}, **kw)
+
+
+def test_curve_counts_only_convenience_lines_of_counters_and_stalls():
+    # ECONOMY_OVERHAUL R2: "power lines leave it". Without it a power line would weigh on the money curve again, a
+    # stall's convenience line could move it unseen, or a pick-one group be counted in full.
+    counter = [_l("a", 300), _l("b", 200, group="g"), _l("c", 500, group="g"),
+               _l("d", 9000, stretch=True), _l("tm", 7000, "power")]
+    stall = [dict(_l("e", 100, "provision"), item="minecraft:cod"), dict(_l("f", 40), item="minecraft:salmon")]
+    rows = A.curve(_market(counter, stall), TOWNS, EFFORT)
+    assert rows[0] == (1, 300 + 500 + 40, 1000, 0.84)          # a, g at its dearest, f; not d, tm or e
     assert rows[7][1] == 840                                   # nothing after badge 1
+
+
+def test_earned_by_badge_adds_produce_and_one_gathering_hour_a_leg_by_hand():
+    # R2's denominator. By hand with fights 100, produce 50 a leg, 1 hour a leg: leg 1-2 at the early tier's $20,
+    # legs 3-8 at the deep tier's $50. Badge 3: income 3000 + produce 150 + gathering 20 + 20 + 50 = 3240, fights 300.
+    # Without it the produce allowance or the gathering hour could silently drop out of the curve.
+    e = A.earned_by_badge(_market([], [], fights=100, produce=50, hours=1), EFFORT)
+    assert e[1] == (100, 1000 + 50 + 20) and e[2] == (200, 2000 + 100 + 40) and e[3] == (300, 3240)
+    assert e[8] == (800, 8000 + 400 + 40 + 6 * 50)
+    rows = A.curve(_market([_l("a", 1000)], [], fights=100, produce=50, hours=1), TOWNS, EFFORT)
+    assert rows[0] == (1, 1100, 1070, round(1100 / 1070, 4))
+
+
+def test_mutation_the_gathering_rate_input_moves_the_curve():
+    # Mutates the INPUT (data/bank.json's effort rates), never the record under test: the early hour doubles to $40
+    # and badge 1's earned rises by 20. Without it the gathering term could be a constant.
+    rich = json.loads(json.dumps(EFFORT))
+    rich["buys"][0]["rate_per_hour"] = 4
+    mk = _market([_l("a", 1000)], [], hours=1)
+    assert A.curve(mk, TOWNS, rich)[0][2] - A.curve(mk, TOWNS, EFFORT)[0][2] == 20
+
+
+def test_curve_check_names_an_unknown_strand_and_a_missing_basis():
+    # Fail closed: a critical-path line of no strand cannot be placed on either side of R2's split, and a curve whose
+    # curve_rule is gone cannot be computed. Without it both would pass as an empty ask.
+    P, _r = A.curve_checks(_market([{"id": "a", "item": "x:a", "price": 100, "gate": None}], []), TOWNS, EFFORT)
+    assert [k for _c, k, _m in P] == ["strand:c:a"]
+    mk = _market([_l("a", 100)], [])
+    del mk["curve_rule"]
+    P, rows = A.curve_checks(mk, TOWNS, EFFORT)
+    assert [k for _c, k, _m in P] == ["basis"] and rows == []
 
 
 def test_power_rule_flags_an_ungated_ball_and_passes_a_badge_gated_one():
@@ -202,6 +244,133 @@ def test_power_rule_flags_an_ungated_ball_and_passes_a_badge_gated_one():
                    {"id": "p", "item": "minecraft:splash_potion", "price": 1, "gate": None}])
     P, _u = A.item_checks(doc, set(), {})
     assert sorted(p[1] for p in P if p[0] == "power") == ["s:cobblemon:great_ball", "s:minecraft:splash_potion"]
+
+
+def test_power_rule_accepts_a_gate_dropped_by_a_recorded_decision_only():
+    # 2026-10-06 (the owner: "should be the villagers with ui only"): a counter is a merchant and cannot gate, so a
+    # ball whose badge gate was dropped BY A DECISION data/markets.json records passes; the same record citing a
+    # decision nobody took, or naming no badge, still fails. Without it the rule would either fail every counter or
+    # wave through any ungated ball.
+    drop = lambda **kw: dict({"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "probe"}, **kw)
+    doc = _market([{"id": "u", "item": "cobblemon:ultra_ball", "price": 1, "gate": None, "gate_dropped": drop()},
+                   {"id": "v", "item": "cobblemon:great_ball", "price": 1, "gate": None,
+                    "gate_dropped": drop(decision="nobody_decided")},
+                   {"id": "w", "item": "cobblemon:net_ball", "price": 1, "gate": None, "gate_dropped": drop(gate=None)}],
+                  [])
+    doc["decisions"] = [{"id": "counters_are_merchants"}]
+    P, _u = A.item_checks(doc, set(), {})
+    assert sorted(p[1] for p in P if p[0] == "power") == ["c:cobblemon:great_ball", "c:cobblemon:net_ball"]
+
+
+def _price_gated(price, badge, count=1, **kw):
+    return dict({"id": "t%d_%d" % (price, badge), "item": "tmcraft:tm_probe_%d_%d" % (price, badge), "count": count,
+                 "price": price, "gate": None, "gate_badge": badge}, **kw)
+
+
+def test_power_rule_counter_price_above_its_income_gate_passes_and_below_or_undeclared_fails():
+    # 2026-10-09 (the owner: "price them above the income gate. A TM costing less than a player earns before badge 1
+    # is free"): on a counter the price is the gate. Income here is 1000 x badge, so by hand: badge 2's gate is 2000.
+    # Without it a TM priced under what the road pays would pass as gated, or every counter TM would fail forever.
+    doc = _market([_price_gated(2001, 2),                       # one dollar above: passes
+                   _price_gated(2000, 2),                       # equal is not above: fails
+                   _price_gated(1999, 2),                       # below: fails
+                   _price_gated(4002, 2, count=2),              # 2001 a unit: passes
+                   _price_gated(4000, 2, count=2),              # 2000 a unit, the line's 4000 is no excuse: fails
+                   _price_gated(9001, 9),                       # no badge 9 in the income basis: fails
+                   dict(_price_gated(5000, 1), gate_badge=True),  # a bool is not a badge: fails
+                   {"id": "nd", "item": "tmcraft:tm_nodecl", "price": 9000, "gate": None}],  # declares nothing
+                  [dict(_price_gated(2001, 2), item="cobblemon:ultra_ball")])   # a stall: price gates nothing
+    P, _u = A.item_checks(doc, set(), {})
+    power = {p[1]: p[2] for p in P if p[0] == "power"}
+    assert sorted(power) == sorted(["c:tmcraft:tm_probe_2000_2", "c:tmcraft:tm_probe_1999_2",
+                                    "c:tmcraft:tm_probe_4000_2", "c:tmcraft:tm_probe_9001_9",
+                                    "c:tmcraft:tm_probe_5000_1", "c:tmcraft:tm_nodecl",
+                                    "s:cobblemon:ultra_ball"])
+    assert "not above the 2000 earned by badge 2" in power["c:tmcraft:tm_probe_2000_2"]
+    assert "declares no gate_badge" in power["c:tmcraft:tm_nodecl"]
+    assert "no figure for" in power["c:tmcraft:tm_probe_9001_9"]
+
+
+FIXTURE_2833317 = ROOT / "tests" / "fixtures" / "counter_lines_2833317.json"
+
+
+def _with_2833317(price_of=None, badge_of=None):
+    """The committed data/markets.json, in memory, with the 41 counter lines 2833317 added (held out by e41b72e)
+    put back on their counters. price_of/badge_of(counter, line) -> the line's price / declared gate_badge (None:
+    declare none). The file on disk is not touched."""
+    import copy
+    mk = copy.deepcopy(A.load(ROOT / "data" / "markets.json"))
+    fx = A.load(FIXTURE_2833317)["counters"]
+    by = {c["id"]: c for c in mk["counters"]}
+    for cid, lines in fx.items():
+        for l in copy.deepcopy(lines):
+            if badge_of is not None and badge_of(by[cid], l) is not None:
+                l["gate_badge"] = badge_of(by[cid], l)
+            if price_of is not None:
+                l["price"] = price_of(by[cid], l)
+            by[cid]["stock"].append(l)
+    return mk, {(cid, l["item"]) for cid, ls in fx.items() for l in ls}
+
+
+def _tm_badge(counter, line):
+    """The badge each 2833317 line was priced at, from its own words ('5% of income at badge N'); else the
+    counter's badge (the memories and the Sachet)."""
+    import re
+    m = re.search(r"at badge (\d)", line.get("why") or "")
+    return int(m.group(1)) if m else counter["badge"]
+
+
+def _power_keys(mk):
+    P, _u = A.item_checks(mk, set(), {})
+    return {p[1]: p[2] for p in P if p[0] == "power"}
+
+
+def test_the_2833317_counter_lines_fail_at_their_old_prices_with_or_without_a_declared_gate():
+    # The 41 lines 2833317 put on Fossick and Northlight (23 TMs at 5% of income, 17 memories, the Sachet). Without
+    # it they could go back on sale at $500-$7,300 against what the road pays by their badge (income_basis), which the
+    # owner calls free.
+    inc = A.load(ROOT / "data" / "markets.json")["income_basis"]["cumulative_by_badge"]
+    base = set(_power_keys(A.load(ROOT / "data" / "markets.json")))
+    mk, added = _with_2833317()
+    assert len(added) == 41 and sum(1 for _c, i in added if i.startswith("tmcraft:tm_")) == 23
+    want = {"%s:%s" % k for k in added}
+    got = _power_keys(mk)
+    assert set(got) - base == want                                      # every one, nothing else
+    assert all("declares no gate_badge" in got[k] for k in want)
+    mk, _a = _with_2833317(badge_of=_tm_badge)                          # declared, still at the old prices
+    got = _power_keys(mk)
+    assert set(got) - base == want
+    assert all("not above the" in got[k] for k in want)
+    assert "one costs 500, not above the %d earned by badge 1" % inc["1"] in got["fossick:tmcraft:tm_bide"]
+
+
+def test_the_2833317_counter_lines_pass_one_dollar_above_their_declared_income_gate():
+    # The same 41 lines re-priced by hand to the income basis + $1 a unit, each declaring its badge: none fails, and
+    # the audit's power findings are back to the committed data's (the KNOWN set is not disturbed). Without it the
+    # rule could fail a correctly re-priced line and the builder would have no price that passes.
+    inc = A.load(ROOT / "data" / "markets.json")["income_basis"]["cumulative_by_badge"]
+    base = _power_keys(A.load(ROOT / "data" / "markets.json"))
+    mk, _a = _with_2833317(badge_of=_tm_badge,
+                           price_of=lambda c, l: (inc[str(_tm_badge(c, l))] + 1) * (l.get("count") or 1))
+    assert _power_keys(mk) == base
+
+
+def test_mutation_the_income_basis_raised_one_dollar_fails_every_line_priced_one_above_it():
+    # Mutates the INPUT the threshold comes from (income_basis.cumulative_by_badge), with every line record left as
+    # the previous test priced it: all 41 must flip to failing. Without it the gate could be a constant, or read from
+    # the line itself (a record-side check moves with the record and proves nothing).
+    import copy
+    inc = A.load(ROOT / "data" / "markets.json")["income_basis"]["cumulative_by_badge"]
+    base = set(_power_keys(A.load(ROOT / "data" / "markets.json")))
+    mk, added = _with_2833317(badge_of=_tm_badge,
+                              price_of=lambda c, l: (inc[str(_tm_badge(c, l))] + 1) * (l.get("count") or 1))
+    assert set(_power_keys(mk)) == base
+    raised = copy.deepcopy(mk)
+    raised["income_basis"]["cumulative_by_badge"] = {k: v + 1 for k, v in inc.items()}
+    assert set(_power_keys(raised)) - base == {"%s:%s" % k for k in added}
+    gone = copy.deepcopy(mk)
+    del gone["income_basis"]["cumulative_by_badge"]                     # the basis missing: nothing can pass by price
+    assert set(_power_keys(gone)) - base == {"%s:%s" % k for k in added}
 
 
 def test_item_rule_reads_the_block_an_item_puts_down_and_what_it_grows():
@@ -224,7 +393,10 @@ def _kill(x, y, z, r=2.5):
     return "execute if entity @e[tag=a] run kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, r)
 
 
-MK = {"counters": [{"id": "a", "town": "t"}, {"id": "b", "town": "t"}],
+# counter a is sited, a merchant since 2026-10-06 (data/markets.json decisions counters_are_merchants); b is not
+MK = {"counters": [{"id": "a", "town": "t", "status": "sited", "category": "Fish", "keeper": {"name": "Fisher"},
+                    "stock": [{"item": "minecraft:cod", "count": 4, "price": 80, "gate": None}]},
+                   {"id": "b", "town": "t"}],
       "stall_merchant": {"tag": "cobblers_stall"},
       "stalls": [{"id": "c", "town": "t", "sells": "fish", "status": "sited", "category": "Fish",
                   "keeper": {"name": "Fisher"},
@@ -245,26 +417,34 @@ def _staff(npcs, lines, plazas=None):
     return sorted(p[1] for p in A.staff_checks(plazas, MK, npcs, summons, kills)), summons
 
 
-def test_staffing_counts_clerks_and_merchants_and_names_each_fault():
+def test_staffing_counts_merchants_and_names_each_fault():
     # Without it a stall could stand empty, two keepers share one spot, a keeper stand off every stall, a dialogue
-    # stall keeper survive the merchants, or a merchant's removal of the old keeper miss it or take a counter clerk.
-    good = [_summon("c", 9, 1, 9), _kill(9, 1, 9), _summon("d", 2, 2, 2), _kill(2, 2, 2)]
-    clerk = [("cobblers:npc_market_a", (5, 1, 6), 0)]
-    assert _staff(clerk, good)[0] == []
-    # two clerks on one seat, the second merchant nowhere
-    keys, _s = _staff(clerk + [("cobblers:npc_market_b", (5, 1, 6), 0)], good[2:])
-    assert keys == ["c:merchants", "t_stall_1", "t_stall_2"]
-    # a Cobblemon dialogue stall keeper still placed by R17M, beside the merchant on its seat
-    keys, _s = _staff(clerk + [("cobblers:npc_stall_c", (9, 1, 9), 0)], good)
+    # keeper (a stall's, or since 2026-10-06 a counter's) survive the merchants, or a merchant's removal of the old
+    # keeper miss it or take another NPC R17M places. Counter a's keeper is a merchant on t_stall_1's seat.
+    a = [_summon("a", 5, 1, 6), _kill(5, 1, 6)]
+    good = a + [_summon("c", 9, 1, 9), _kill(9, 1, 9), _summon("d", 2, 2, 2), _kill(2, 2, 2)]
+    assert _staff([], good)[0] == []
+    # the counter's merchant missing, and the first stall's: both seats empty
+    keys, _s = _staff([], good[4:])
+    assert keys == ["a:merchants", "c:merchants", "t_stall_1", "t_stall_2"]
+    # a Cobblemon dialogue keeper still placed by R17M beside the merchant on its seat: the counter's, then a stall's
+    keys, _s = _staff([("cobblers:npc_market_a", (5, 1, 6), 0)], good)
+    assert keys == ["cobblers:npc_market_a:dialogue", "t_stall_1"]
+    keys, _s = _staff([("cobblers:npc_stall_c", (9, 1, 9), 0)], good)
     assert keys == ["cobblers:npc_stall_c:dialogue", "t_stall_2"]
     # a merchant off every seat in a town that is not a declared fallback; and one with no removal of the old keeper
-    keys, _s = _staff(clerk, [_summon("c", 1, 1, 1), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
+    keys, _s = _staff([], a + [_summon("c", 1, 1, 1), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
     assert keys == ["c:replaces", "merchant c:seat", "t_stall_2"]
-    # a removal wide enough to reach the clerk at (5, 1, 6) from (9, 1, 9): 5.0 blocks centre to centre
-    keys, _s = _staff(clerk, [_summon("c", 9, 1, 9), _kill(9, 1, 9, 5), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
-    assert keys == ["c:kills:cobblers:npc_market_a"]
+    # the counter's merchant with no removal: its Steve stays (the owner, 2026-10-06: "need the steve traders gone")
+    keys, _s = _staff([], [_summon("a", 5, 1, 6)] + good[2:])
+    assert keys == ["a:replaces"]
+    # a removal wide enough to reach another NPC R17M places, at (12, 1, 9) from (9, 1, 9): 3.0 blocks centre to
+    # centre (a dialogue keeper is the removal's target, never its victim, so the victim here is another class)
+    keys, _s = _staff([("cobblers:npc_other", (12, 1, 9), 0)],
+                      a + [_summon("c", 9, 1, 9), _kill(9, 1, 9, 5), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
+    assert keys == ["c:kills:cobblers:npc_other", "cobblers:npc_other"]
     # turned the wrong way on its seat
-    keys, _s = _staff(clerk, [_summon("c", 9, 1, 9, yaw=90.0), _kill(9, 1, 9), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
+    keys, _s = _staff([], a + [_summon("c", 9, 1, 9, yaw=90.0), _kill(9, 1, 9), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
     assert keys == ["t_stall_2:yaw"]
 
 
@@ -301,6 +481,13 @@ def test_merchant_shop_must_equal_its_stalls_lines():
     assert run(_summon("c", 9, 1, 9), gated) == ["c:minecraft:cod:gated"]
     gated["stalls"][0]["category"] = ""
     assert "c:category" in run(_summon("c", 9, 1, 9), gated)
+    # a counter's merchant is held to its own lines the same way (2026-10-06), and may not be gated either
+    assert run(_summon("a", 5, 1, 6)) == []
+    assert run(_summon("a", 5, 1, 6, shop='[{Category:"Fish",Offers:[{Item:{count:1,id:"minecraft:cod"},Price:"40"}]}]')) \
+        == ["a:minecraft:cod:price"]
+    gated = json.loads(json.dumps(MK))
+    gated["counters"][0]["stock"][0]["gate"] = "badge_1"
+    assert run(_summon("a", 5, 1, 6), gated) == ["a:minecraft:cod:gated"]
 
 
 def test_r17m_merchants_follows_calls_and_names_a_missing_function():
@@ -330,15 +517,142 @@ def test_the_survey_still_names_the_towns_with_nowhere_to_spend():
         assert label in sec, label
 
 
-def test_curve_is_unchanged_by_the_stalls_and_inside_the_target():
-    # Without it a gated stall line could take the critical path over 0.70 of income, or quietly move the ladder.
+def test_curve_is_unchanged_by_the_stalls():
+    # Without it a stall's convenience line could quietly move the critical path's ask.
     mk = A.load(ROOT / "data" / "markets.json")
     towns = A.load(ROOT / "data" / "towns.json")
     rows = A.curve(mk, towns)
-    assert [(b, a, i) for b, a, i, _r in rows] == A.BASELINE_CURVE
-    assert all(0.65 <= r <= 0.70 for _b, _a, _i, r in rows), rows
-    no_stalls = dict(mk, stalls=[])
-    assert A.curve(no_stalls, towns) == rows
+    assert A.curve(dict(mk, stalls=[]), towns) == rows
+    P, _rows = A.curve_checks(mk, towns)
+    assert [k for _c, k, _m in P if not k.startswith("badge")] == [], P
+
+
+# Was a strict xfail while the convenience strand read 1.37 at badge 1 down to 0.38 at badge 8 under R2; the strand
+# was re-priced (unit CURVEPRICE, data/markets.json price_policies.curve_scale) and the builder removed only the marker.
+def test_the_committed_curve_is_inside_the_target():
+    mk = A.load(ROOT / "data" / "markets.json")
+    P, _rows = A.curve_checks(mk, A.load(ROOT / "data" / "towns.json"))
+    assert P == [], P
+
+
+def test_curve_check_names_a_stall_convenience_line_and_lets_a_counter_reprice_through():
+    # The check pins "the stalls moved no money", derived from the data, not a constant curve. By hand: a counter at
+    # badge 1 asking 600 against 1000 earned (0.60). A 40 convenience line on a stall at badge 1 moves badges 1-8 by
+    # 40 and is named; re-pricing the counter 600 -> 650 (a deliberate counter change, markets_audit's to judge) is
+    # not; a re-price to 750 (0.75) still fails the 0.70 target. Without it either a stall could move the ladder
+    # unseen, or every deliberate counter re-price would fail this audit forever (the 2026-10-09 Holdfast prices did).
+    counter = [_l("a", 600)]
+    stall = [dict(_l("f", 40), item="minecraft:salmon"),
+             dict(_l("e", 100, "provision"), item="minecraft:cod")]                  # provision: never counted
+    P, _r = A.curve_checks(_market(counter, stall), TOWNS, EFFORT)
+    assert [k for _c, k, _m in P] == ["stalls"]
+    assert "[(1, 40), (2, 40), (3, 40), (4, 40), (5, 40), (6, 40), (7, 40), (8, 40)]" in P[0][2]
+    P, _r = A.curve_checks(_market([dict(counter[0], price=650)], stall[1:]), TOWNS, EFFORT)
+    assert P == []
+    P, _r = A.curve_checks(_market([dict(counter[0], price=750)], stall[1:]), TOWNS, EFFORT)
+    assert [k for _c, k, _m in P] == ["badge1"]
+
+
+def test_curve_check_follows_the_real_counters_when_a_counter_line_is_repriced():
+    # Mutates the committed data in memory (the file is untouched). Holdfast's Inception Upgrade (convenience) down
+    # 500 moves badge 8's ask by -500 and nothing before it; Holdfast's Full Restore (power) moved by 500 moves
+    # nothing at all (R2: power lines leave the curve). The check stays silent on the stalls either way. Without it
+    # the audit could regain a hard-coded curve, or start counting power lines again.
+    import copy
+    mk = copy.deepcopy(A.load(ROOT / "data" / "markets.json"))
+    towns = A.load(ROOT / "data" / "towns.json")
+    before = A.curve(mk, towns)
+    hold = next(c for c in mk["counters"] if c["id"] == "holdfast")
+    power = next(l for l in hold["stock"] if l["item"] == "cobblemon:full_restore")
+    assert power["strand"] == "power"
+    power["price"] -= 500
+    assert A.curve(mk, towns) == before
+    conv = next(l for l in hold["stock"] if l["item"] == "sophisticatedbackpacks:inception_upgrade")
+    assert conv["strand"] == "convenience"
+    conv["price"] -= 500
+    after = A.curve(mk, towns)
+    assert [a for _b, a, _i, _r in before][:7] == [a for _b, a, _i, _r in after][:7]
+    assert before[7][1] - after[7][1] == 500
+    P, _r = A.curve_checks(mk, towns)
+    assert [k for _c, k, _m in P if k == "stalls"] == []
+
+
+def test_a_trade_evolution_item_is_power_like_a_stone_and_passes_only_with_a_recorded_gate_drop():
+    # A Link Cable evolves a Kadabra, a Machoke, a Haunter or a Graveler: a power step like an evolution stone (the
+    # stones are power here, KNOWN at Steepside). On a counter it passes the way its siblings on the same counters
+    # (the Metal Coat, the Dubious Disc) pass: a gate_dropped record citing a decision data/markets.json holds. Without
+    # it a new evolution item could go on sale from the first visit with nothing recording why.
+    drop = {"gate": "gym3_cleared", "decision": "counters_are_merchants", "why": "probe"}
+    doc = _market([{"id": "lc", "item": "cobblemon:link_cable", "price": 2160, "gate": None},
+                   {"id": "mc", "item": "cobblemon:metal_coat", "price": 2160, "gate": None, "gate_dropped": drop}], [])
+    doc["decisions"] = [{"id": "counters_are_merchants"}]
+    P, _u = A.item_checks(doc, set(), {})
+    assert [p[1] for p in P if p[0] == "power"] == ["c:cobblemon:link_cable"]
+
+
+def _jar(path, files):
+    import zipfile
+    with zipfile.ZipFile(path, "w") as z:
+        for name, body in files.items():
+            z.writestr(name, body if isinstance(body, (str, bytes)) else json.dumps(body))
+
+
+def test_an_item_exists_by_its_lang_key_or_by_model_and_tag_together_never_by_one_alone(tmp_path):
+    # TMCraft's per-move TMs have an item model and an item-tag entry and no lang key. By hand, one synthetic jar:
+    #   tm_both   model + tag              -> exists
+    #   tm_model  model only               -> fails (a model can exist for an unregistered id)
+    #   tm_tag    tag only                 -> fails (a tag is data any pack can write)
+    #   tm_opt    model + {"required": false} tag entry -> fails (an optional entry is no evidence)
+    #   tm_ref    model + "#tmcraft:tm_ref" (a tag reference, not an item) -> fails
+    #   named     lang key only            -> exists (the old rule, unchanged)
+    # and the same in a jar nested under META-INF/jars/. Without it the 7 TMCraft TMs on the counters fail as
+    # missing, or a model file alone would let a typo'd id through.
+    model = {"parent": "item/generated"}
+    _jar(tmp_path / "inner.jar", {"assets/nest/models/item/deep.json": model,
+                                  "data/nest/tags/item/all.json": {"values": ["nest:deep"]}})
+    (tmp_path / "mods").mkdir()
+    _jar(tmp_path / "mods" / "tm.jar", {
+        "assets/tmcraft/lang/en_us.json": {"item.tmcraft.named": "Named", "itemGroup.tmcraft": "x"},
+        "assets/minecraft/lang/en_us.json": {"item.minecraft.stick": "Renamed Stick"},   # a mod's override
+        "assets/tmcraft/models/item/tm_both.json": model,
+        "assets/tmcraft/models/item/tm_model.json": model,
+        "assets/tmcraft/models/item/tm_opt.json": model,
+        "assets/tmcraft/models/item/tm_ref.json": model,
+        "data/tmcraft/tags/item/tm_moves.json": {"values": ["tmcraft:tm_both", "tmcraft:tm_tag", "#tmcraft:tm_ref",
+                                                            {"id": "tmcraft:tm_opt", "required": False}]},
+        "META-INF/jars/inner.jar": (tmp_path / "inner.jar").read_bytes(),
+    })
+    ids, notes = A.jar_index(None, tmp_path / "mods")
+    assert ids["tmcraft"] == {"named", "tm_both"}
+    assert ids["nest"] == {"deep"}
+    assert any("2 id(s) with no lang key accepted" in n for n in notes), notes
+    # no vanilla jar: a mod's one-key minecraft lang override is not the vanilla list, so minecraft: is unchecked
+    # (named as such), never failed against that fragment
+    assert "minecraft" not in ids
+    _P, unchecked = A.item_checks(_market([{"id": "w", "item": "minecraft:wheat", "price": 1, "gate": None}], []),
+                                  set(), ids)
+    assert unchecked == {"minecraft"} and _P == []
+    stock = [{"id": p, "item": "tmcraft:%s" % p, "price": 1, "gate": None}
+             for p in ("tm_both", "tm_model", "tm_tag", "tm_opt", "tm_ref", "named")]
+    P, _u = A.item_checks(_market(stock, []), set(), ids)
+    assert sorted(p[1] for p in P if p[0] == "items") == ["c:tmcraft:tm_model:exists", "c:tmcraft:tm_opt:exists",
+                                                          "c:tmcraft:tm_ref:exists", "c:tmcraft:tm_tag:exists"]
+
+
+SNAPSHOT_MODS = Path("C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods")
+
+
+@pytest.mark.skipif(not SNAPSHOT_MODS.is_dir(), reason="needs the 2026-10-05 offline server snapshot's mods/ at %s"
+                    % SNAPSHOT_MODS)
+def test_every_counter_and_stall_item_is_in_the_snapshot_jars():
+    # The committed stock against the real jars (the offline snapshot, never the live server): no item is missing,
+    # and an id TMCraft does not ship still is. Without it a TM with no lang key would fail as missing, and an id
+    # nobody registers could be sold as a blank slot. Minecraft ids are judged only when the vanilla jar is present.
+    ids, _n = A.jar_index(A.DEFAULT_VANILLA if A.DEFAULT_VANILLA.is_file() else None, SNAPSHOT_MODS)
+    mk = A.load(ROOT / "data" / "markets.json")
+    P, _u = A.item_checks(mk, set(), ids)
+    assert [m for c, _k, m in P if c == "items"] == []
+    assert "tm_bide" in ids["tmcraft"] and "tm_not_a_move" not in ids["tmcraft"]
 
 
 def test_wired_into_prepare_after_the_squares_and_the_markets():
@@ -386,8 +700,11 @@ def test_known_defects_are_exactly_the_recorded_ones(real):
 @need_build
 def test_every_town_reaches_its_square_from_both_doors(real):
     # Without it a town whose Centre opens onto a cliff would be counted as having a middle.
+    # 2026-10-05: a hamlet with no Mart, or a place with neither, is exempt ONLY for the door its KNOWN reach entry
+    # names (recorded by the squares' builder); a town missing a door with no KNOWN entry still fails here
     for t, r in real["towns"].items():
-        assert set(r["reach"]) == {"pokecenter", "pokemart"}, t
+        missing = {k.split(":", 1)[1] for c, k in A.KNOWN if c == "reach" and k.startswith(t + ":")}
+        assert set(r["reach"]) == {"pokecenter", "pokemart"} - missing, t
         assert r["stalls"] >= 1 and r["blocks"] > 0, t
 
 
@@ -436,7 +753,7 @@ def test_mutation_a_stall_built_without_its_counter_is_caught(tmp_path, monkeypa
     res = A.audit(None, None, None, npcs=_npcs(), r17m_fns=_r17m_fns(), markets_files=_markets_files())
     caught = {k for c, k, _m in res["problems"] if c == "stall" and k.endswith(":counter")}
     n = sum(len(t["stalls"]) for t in A.load(ROOT / "data" / "plaza_centres.json")["towns"].values())
-    assert len(caught) == n == 43
+    assert len(caught) == n == 49     # 43 until 2026-10-05; the six new squares added 8, the Displaced City's 2 held (data/held/)
 
 
 @need_build
@@ -491,7 +808,7 @@ def test_mutation_merchant_seated_at_the_table_facing_it_is_caught(monkeypatch):
     assert markets.merchant_problems(doc, files, markets.load_plazas()) == []      # the builder's check passes it
     P = _staffing(files)
     unstaffed = {k for _c, k, _m in P if k.count("_stall_") == 1 and ":" not in k}
-    assert len(unstaffed) == 43
+    assert len(unstaffed) == 49     # 43 until 2026-10-05; the six new squares added 8, the Displaced City's 2 held (data/held/)
 
 
 def test_mutation_merchant_price_doubled_is_caught(monkeypatch):
@@ -509,7 +826,8 @@ def test_mutation_merchant_price_doubled_is_caught(monkeypatch):
     monkeypatch.setattr(markets, "merchant_shop", doubled)
     P = _staffing(_markets_files())
     mk = A.load(ROOT / "data" / "markets.json")
-    lines = sum(len(s["stock"]) for s in mk["stalls"] if s.get("status") == "sited")
+    # every sited stall's line, and since 2026-10-06 every sited counter's (the counters are merchants)
+    lines = sum(len(s["stock"]) for s in mk["stalls"] + mk["counters"] if s.get("status") == "sited")
     assert {k for c, k, _m in P} == {k for c, k, _m in P if c == "shop" and k.endswith(":price")}
     assert len(P) == lines > 0
 
@@ -530,4 +848,4 @@ def test_mutation_tent_built_without_clearing_its_footprint_is_caught(tmp_path, 
     res = A.audit(None, None, None, npcs=_npcs(), r17m_fns=_r17m_fns(), markets_files=_markets_files())
     caught = {k.rsplit(":", 1)[0] for c, k, _m in res["problems"] if c == "stall" and k.endswith(":air0")}
     n = sum(len(t["stalls"]) for t in A.load(ROOT / "data" / "plaza_centres.json")["towns"].values())
-    assert len(caught) == n == 43
+    assert len(caught) == n == 49     # 43 until 2026-10-05; the six new squares added 8, the Displaced City's 2 held (data/held/)

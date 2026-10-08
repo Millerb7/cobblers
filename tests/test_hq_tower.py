@@ -108,7 +108,8 @@ def test_the_relic_door_guard_still_admits_from_rift_crisis_pending_on():
     t = _transitions()["relic_hq_admit"]
     assert t["conditions"][0]["values"] == want
     g = next(c for c in doc("dialogue.json")["conversations"] if c["id"] == "dlg_main_relic_hq_guard")
-    assert g["entry_rules"][0]["when"]["values"] == want
+    admit = next(r for r in g["entry_rules"] if r["node"] == "admit")   # by node: a pointer line may sit before it
+    assert admit["when"]["values"] == want
     opt = next(r for n in g["nodes"] for r in n.get("responses") or [] if r["id"] == "r_go")
     assert opt["visible_when"]["values"] == want
 
