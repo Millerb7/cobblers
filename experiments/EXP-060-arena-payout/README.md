@@ -11,11 +11,23 @@ CobbleDollars also pays every NPC-battle win by itself (`CobbleDollarsEventsKt.b
 `docs/research/notes/paid-services-and-npc-payouts.md` B2). The pack now takes that automatic credit back:
 
 1. `bout/begin` stores the balance (`cobbledollars query @s`, its command result) in `ar.bal` just before
-   `start_battle`.
-2. `won` removes the gain since then (`cobbledollars remove`), bounded by the most CobbleDollars could pay for that
-   opponent (`ar.cmax`), pays the arena's purse under `prizes.purse_policy`, and stores the balance again.
-3. The clear-up 40 ticks later (`after`), or `rejoined`, removes any further gain once more. This covers the case
-   where CobbleDollars' handler runs after our callback, because the jar does not fix the order.
+   `start_battle`, and the tick function stores it again at the start of every tick until the result (revised
+   2026-10-08, review N143).
+2. `won` (`cd/first`) reads the gain over that baseline. If it is at least `ar.cmin`, the least CobbleDollars can
+   credit for that opponent, CobbleDollars has already paid: the gain, at most `ar.cmax`, is removed
+   (`cobbledollars remove`) and `#cd_first ar.t` counts it. If it is smaller, CobbleDollars has not paid yet, and
+   `ar.claw` is set to 1. Then the arena's purse is paid under `prizes.purse_policy`.
+3. When the payout was not there yet, the first line of the NEXT tick (`cd/last`), or `rejoined`, removes the gain
+   since the callback. `#cd_last ar.t` counts these. Once one of them has seen a full payout, `#cb_first ar.t` is 1
+   for the rest of the boot, and from then on such a look takes at least `ar.cmin`.
+
+Why this timing (javap of `Cobblemon-fabric-1.8.0+1.21.1.jar`, 2026-10-08): the victory fires inside
+`PokemonBattle.tick`, which runs from Fabric's END_SERVER_TICK. Both handlers subscribe at the default priority, so
+they run back to back. A datapack tick function runs at the START of a tick. The assumption this experiment tests:
+player commands and packets are handled BETWEEN ticks, never inside one. If it holds, then:
+
+- with CobbleDollars first, nothing a player does can fall inside the measured window;
+- with our callback first, one inter-tick phase falls inside it (the residual, see `known_edges`).
 
 The purse rule (`data/arena_fights.json` `prizes.purse_policy`, numbers from `docs/mechanics/ECONOMY_OVERHAUL.md`
 section 6):
@@ -52,8 +64,11 @@ Read the balance with `/cobbledollars query <p>` at every point marked **B**.
 
 1. **B0.** Click the floor ring post and win the rank 1 bout. Watch chat during the win.
    - Record every `+N CobbleDollars` line (green, ours) and every `(-N: CobbleDollars' own payout ...)` line (gray).
-   - Record which of the two chat lines comes first. A gray line inside the win tells us CobbleDollars paid before
-     our callback; a gray line about 2 s later tells us it paid after.
+   - Record which of the two chat lines comes first. A gray line BEFORE the green one means CobbleDollars paid
+     before our callback. A gray line AFTER it, one tick later, means CobbleDollars paid after.
+   - Record `scoreboard players get #cd_first ar.t`, `#cd_last ar.t` and `#cb_first ar.t`. **This is the
+     handler order on this server.** It decides which residual in `known_edges` applies. Repeat it after a restart:
+     the order is mod init order.
    - Record any CobbleDollars message of its own.
 2. **B1**, about 3 s after the win. Expect **B1 - B0 = 2200** (rank 1's purse). Record `scoreboard players get <p>
    ar.bal` and `ar.cmax`.
@@ -66,6 +81,11 @@ Read the balance with `/cobbledollars query <p>` at every point marked **B**.
 6. **Control.** Lose one bout. Expect no gray line and no change to the balance.
 7. **Control, outside the arena.** Beat any rctmod route trainer. Expect CobbleDollars' normal payout to arrive and
    stay, because the arena pack touches no other battle.
+8. **The windows (needs a second player, Q).** During a rank 1 battle, Q runs `/cobbledollars pay <p> 1000` a few
+   seconds before the win. Then P runs `/cobbledollars pay <Q> 1000` during another battle. Expect each win to leave
+   B moved by exactly the purse plus or minus 1000: the per-tick baseline has absorbed the transfer. Then, if the
+   order is callback-first, Q sends repeated pays across a win (a macro, if one is available). Record how much was
+   taken. It must stay within `[ar.cmin, ar.cmax]`.
 
 ## Success criteria
 
@@ -73,6 +93,7 @@ Read the balance with `/cobbledollars query <p>` at every point marked **B**.
   the cap is reached. CobbleDollars' random credit is fully removed.
 - The route trainer still pays.
 - `ar.bal` is reset and `ar.claw` is 0 after each clear-up.
+- Step 8: a transfer made before the win's tick is never taken, and what is taken stays within its bounds.
 
 ## Failure readings
 
@@ -86,6 +107,7 @@ Read the balance with `/cobbledollars query <p>` at every point marked **B**.
 ## Not covered
 
 - Two players at once.
-- A disconnect inside the 2 s after a win. Offline, `test_leaving_right_after_a_win_still_takes_a_late_payout_back`
+- A disconnect in the tick after a win. Offline, `test_leaving_right_after_a_win_still_takes_a_late_payout_back`
   covers it.
-- A server crash in that window. The second look is then dropped, and this is accepted in `known_edges`.
+- A server crash in that tick. The second look is then dropped, and this is accepted in `known_edges`.
+- The cost of one `cobbledollars query` per player in battle per tick. Watch `/tick query` during step 8.

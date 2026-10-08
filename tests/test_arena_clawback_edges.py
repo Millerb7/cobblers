@@ -100,9 +100,17 @@ def test_an_arena_win_keeps_none_of_cobbledollars_payout(pack, order, auto):
 # bound, so a teammate's `cobbledollars pay` (permission level NONE) landing during the battle or in the two seconds
 # after the win is removed with the payout. data/arena_fights.json purse_policy.cobbledollars_auto_payout.known_edges
 # names the first half; the owner has not accepted it.
-@pytest.mark.xfail(strict=True, reason="defect: a transfer to the player inside the clawback window is clawed back")
-@pytest.mark.parametrize("order", ORDERS)
-@pytest.mark.parametrize("when", ["mid", "post"])
+# 2026-10-08 (N143, the builder; marks only, the assertion untouched): the xfail is lifted for the two cases the
+# per-tick baseline and the next-tick second look close -- the callback first with money arriving before it, and
+# CobbleDollars first with money arriving after it. It stays on the two that read the window the code still measures.
+_OPEN = pytest.mark.xfail(strict=True, reason="defect: a transfer to the player inside the clawback window is clawed back")
+
+
+@pytest.mark.parametrize("order,when", [
+    pytest.param("before", "mid", marks=_OPEN, id="mid-before"),
+    pytest.param("after", "mid", id="mid-after"),
+    pytest.param("before", "post", id="post-before"),
+    pytest.param("after", "post", marks=_OPEN, id="post-after")])
 def test_a_transfer_to_the_player_inside_the_window_is_never_clawed_back(pack, order, when):
     kept, _sim = first_win(pack, order, **{when: 1000})
     assert kept == 0, "the player lost %d of their own money" % -kept
