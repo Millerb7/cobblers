@@ -96,18 +96,47 @@ BY_HAND = {
 # docs/mechanics/TM_POWER_GATE.md 3: TMs by badge, the rule alone and with the shelf
 PROPOSAL_POWER_RULE = {1: 163, 2: 122, 3: 110, 4: 104, 5: 107, 6: 99, 7: 66, 8: 31}
 PROPOSAL_WITH_SHELF = {1: 166, 2: 122, 3: 107, 4: 103, 5: 109, 6: 96, 7: 66, 8: 33}
-APPLIED = {1: 165, 2: 120, 3: 99, 4: 85, 5: 123, 6: 99, 7: 77, 8: 34}  # group 18: Spore 8 -> 5
-# the owner, 2026-10-08: "A craft that unlocks before its input is a dead recipe". The chain TMs of the 2026-10-05
-# snapshot that opened before their input (read from tmcraft-1.4.19's recipes, listed here by hand):
+# the owner, 2026-10-08: "A craft that unlocks before its input is a dead recipe". The chain TMs of the
+# 2026-10-05 snapshot that opened before their input (the chain recipes are COBBLEVERSE-DP-v31.zip's added recipes;
+# TMCraft 1.4.19's own jar has no crafting recipe for these; listed here by hand):
 # chain TM -> (its input TM, the badge before the raise, the input's badge)
 CHAIN_RAISES = {T + "boneclub": (T + "bonemerang", 3, 6), T + "nobleroar": (T + "roar", 1, 2),
                 T + "triplekick": (T + "doublekick", 2, 3)}
 # the fourth chain, which no longer needs a raise: Stun Spore (band 5) from Spore, placed at 5 by group 18
 SPORE_CHAIN = (T + "stunspore", T + "spore", 5)
-# the snapshot's plan: APPLIED with the three raises (1: -1 Noble Roar; 2: +1 Noble Roar -1 Triple Kick; 3: -1 Bone
-# Club +1 Triple Kick; 6: +1 Bone Club). Before group 18 it was {..., 5: 121, ..., 8: 36}: Spore and Stun Spore at 8
-SNAPSHOT_APPLIED = {1: 164, 2: 120, 3: 99, 4: 85, 5: 123, 6: 100, 7: 77, 8: 34}
 TM_ID = re.compile(r'"(tmcraft:tm_[a-z0-9_]+)"')
+
+
+def applied_by_hand():
+    """TMs by badge after the outliers: the proposal's with-shelf distribution moved by OUTLIERS, one TM at a time.
+    (Replaces a literal APPLIED table that restated the generator's own count, review 2026-10-08.)"""
+    want = collections.Counter(PROPOSAL_WITH_SHELF)
+    for items in OUTLIERS.values():
+        for _, (before, after) in items.items():
+            want[before] -= 1
+            want[after] += 1
+    return want
+
+
+def snapshot_by_hand():
+    """applied_by_hand moved by CHAIN_RAISES, each chain TM from its own badge to its input's."""
+    want = applied_by_hand()
+    for _, before, after in CHAIN_RAISES.values():
+        want[before] -= 1
+        want[after] += 1
+    return dict(want)
+
+
+def band_by_hand(score):
+    """docs/mechanics/TM_POWER_GATE.md 3, typed here and not read from data/tm_gate.json or tm_gate.band: badge 1
+    below 35; tops 54/64/74/84/94/104 inclusive; 8 above; the score rounded to 0.1 first."""
+    s = round(score, 1)
+    if s < 35:
+        return 1
+    for b, top in ((2, 54), (3, 64), (4, 74), (5, 84), (6, 94), (7, 104)):
+        if s <= top:
+            return b
+    return 8
 
 
 def chain_inputs(resolved):
@@ -380,19 +409,35 @@ def test_a_tm_with_no_shelf_line_and_no_outlier_is_at_its_power_band():
 
 
 def test_the_distribution_is_the_proposals_moved_only_by_the_outliers():
+    # Without it the table could be rescored away from the distribution the owner approved (TM_POWER_GATE.md 3), or a
+    # TM moved by something other than the shelf and the outlier table, with every per-TM check still green.
     tms, _ = _place(G)
     power = collections.Counter(t["power_badge"] for t in tms.values())
     assert dict(power) == PROPOSAL_POWER_RULE
-    want = collections.Counter(PROPOSAL_WITH_SHELF)
-    for items in OUTLIERS.values():
-        for item, (before, after) in items.items():
-            want[before] -= 1
-            want[after] += 1
     got = collections.Counter(t["badge"] for t in tms.values())
-    assert dict(got) == dict(want)
-    assert dict(got) == APPLIED  # the delta, stated: {1: -1, 2: -2, 3: -8, 4: -18, 5: +14, 6: +3, 7: +11, 8: +1}
-    assert {b: APPLIED[b] - PROPOSAL_WITH_SHELF[b] for b in APPLIED} == \
-        {1: -1, 2: -2, 3: -8, 4: -18, 5: 14, 6: 3, 7: 11, 8: 1}
+    assert dict(got) == dict(applied_by_hand())
+
+
+# Without it a TM could be placed by anything but the documented order (shelf, then its outlier group, then its
+# score's band) and only the counts above would notice, and only if two errors did not cancel. The band is typed here,
+# not tm_gate.band, so a fault shared by the generator's band() and the table's power_badge column is caught.
+def test_every_scored_tm_is_placed_by_shelf_then_outlier_then_band_worked_here():
+    tms, problems = _place(G)
+    assert problems == []
+    table = F.score_table()["tms"]
+    shelf = F.shelf_from_markets()
+    hand = {i: after for items in OUTLIERS.values() for i, (_, after) in items.items()}
+    wrong = {}
+    for item, row in sorted(table.items()):
+        b = band_by_hand(row["score"])
+        want = (b, b, shelf.get(item, hand.get(item, b)))
+        got = (row["power_badge"], tms[item]["power_badge"], tms[item]["badge"])
+        if got != want:
+            wrong[item] = (got, want)
+    assert wrong == {}
+    # and each outlier's 'rule badge' in the proposal is its score's band (OUTLIERS' first column, checked, not trusted)
+    assert {i: before for items in OUTLIERS.values() for i, (before, _) in items.items()} == \
+        {i: band_by_hand(table[i]["score"]) for items in OUTLIERS.values() for i in items}
 
 
 def test_an_outlier_placed_on_a_shelf_tm_is_refused():
@@ -532,7 +577,7 @@ def test_the_snapshot_places_every_tm_by_the_power_rule_and_matches_the_shelf():
     tm_gated = {rid for rid, g in plan["gated"].items() if not g.get("device")}
     assert made == tm_gated
     assert len(plan["tms"]) == 802
-    assert plan["distribution"] == SNAPSHOT_APPLIED  # APPLIED, moved only by the three chain raises
+    assert plan["distribution"] == snapshot_by_hand()  # the outliers' distribution, moved only by the chain raises
     assert outlier_failures(plan["tms"]) == []
     assert plan["tms"]["tmcraft:tm_shadowball"]["badge"] == 5  # 81.6: no longer waiting for badge 8 by type
 
@@ -696,3 +741,115 @@ def test_mutant_that_drops_group_18_and_the_chain_raise_leaves_a_dead_recipe_the
     fails = chain_failures(plan, chain_inputs(resolved))
     assert any(": %s 5 < %s 8" % (chain_tm, inp) in f for f in fails), fails
     assert any(chain_tm in p and "a dead recipe" in p for p in plan["problems"]), plan["problems"]
+# ---------------------------------------------------------------- review 2026-10-08: chains the snapshot does not have
+# A chain recipe is written into the fixture's datapack at the TMCraft recipe's own path (a datapack loads after the
+# mods, so it wins). Expectations from the fixture's hand badges (tm_gate_fixture.UNLISTED: icebeam 6, tackle 2, howl
+# 2, the shelf's bide 1), never from the plan.
+
+def _chain_recipe(result, *inputs):
+    return json.dumps({"type": "minecraft:crafting_shapeless", "ingredients": [{"item": i} for i in inputs],
+                       "result": {"id": result, "count": 1}})
+
+
+CASCADE = {"data/tmcraft/recipe/tm_tackle.json": _chain_recipe(T + "tackle", T + "icebeam", "cobblemon:normal_gem")}
+CASCADE_RAISES = [{"item": T + "tackle", "input": T + "icebeam", "from": 2, "to": 6},
+                  {"item": T + "howl", "input": T + "tackle", "from": 2, "to": 6}]
+
+
+def _cascade_plan(mod, tmp):
+    doc = mod.load()
+    doc["badge_rule"]["chain"]["raises"] += copy.deepcopy(CASCADE_RAISES)
+    plan, _, files = _make(mod, tmp, doc=doc, extra_functions=CASCADE)
+    server, vanilla, _ = F.build_server(Path(tmp) / "again", extra_functions=CASCADE)
+    return plan, files, chain_inputs(mod.resolve(mod.read_server(server, vanilla)))
+
+
+# Without it a raise that makes another chain dead (tackle raised to its input icebeam leaves howl, crafted from
+# tackle, below it) would be fixed one link deep only. The snapshot has no such cascade, so nothing else tests it.
+def test_a_raise_cascades_down_a_chain(tmp_path):
+    plan, files, chains = _cascade_plan(G, tmp_path)
+    assert plan["problems"] == [] and files, plan["problems"]
+    assert (plan["tms"][T + "tackle"]["badge"], plan["tms"][T + "howl"]["badge"]) == (6, 6)
+    assert plan["tms"][T + "icebeam"]["badge"] == 6  # the input is never lowered
+    assert chain_failures(plan, chains) == []
+
+
+# Without it the cascade test could be passing on a raise that only ever looks one link deep.
+def test_mutant_raising_in_a_single_pass_leaves_the_cascade_dead(tmp_path):
+    m = _mutant(("                badge[item] = need\n                changed = True\n",
+                 "                badge[item] = need\n"))
+    plan, files, chains = _cascade_plan(m, tmp_path)
+    assert files is None
+    assert chain_failures(plan, chains) == ["tmcraft:tm_howl: %showl 2 < %stackle 6" % (T, T)], \
+        chain_failures(plan, chains)
+
+
+SHELF_CHAIN = {"data/tmcraft/recipe/tm_bide.json": _chain_recipe(T + "bide", T + "icebeam", "cobblemon:normal_gem")}
+
+
+# Without it the chain raise could move a shelf TM off its shelf badge (the owner: the shelf wins), quietly. The rule
+# is that a shelf TM crafted from a later TM keeps its shelf badge and the plan fails, naming it, for the owner.
+def test_a_shelf_tm_crafted_from_a_later_tm_keeps_its_shelf_badge_and_fails_closed(tmp_path):
+    plan, _, files = _make(G, tmp_path, extra_functions=SHELF_CHAIN)
+    assert shelf_failures(plan) == []
+    assert files is None
+    assert any(p.startswith("tmcraft:tm_bide makes %sbide at badge 1 from %sicebeam" % (T, T)) and "a shelf TM" in p
+               for p in plan["problems"]), plan["problems"]
+
+
+# Without it the shelf test above could be passing with a raise that ignores the shelf.
+def test_mutant_raising_a_shelf_tm_is_caught(tmp_path):
+    m = _mutant(('if tms[item]["rule"] == "shelf" or not inputs[item]:', "if not inputs[item]:"))
+    plan, _, _ = _make(m, tmp_path, extra_functions=SHELF_CHAIN)
+    assert shelf_failures(plan) == ["%sbide: shelf 1, gate 6" % T], shelf_failures(plan)
+
+
+def jar_chains(snapshot):
+    """{(chain TM, recipe id): {input TMs}} read straight from the snapshot's mod jars (nested too) and global datapack
+    zips with zipfile alone, not through tools/tm_gate.py's reader. Every file counts, overridden or not: a recipe the
+    reader resolves away would show up here as an extra chain, never a missing one."""
+    import io
+    import zipfile
+    out = {}
+
+    def scan(zf):
+        for n in zf.namelist():
+            if n.startswith("META-INF/jars/") and n.endswith(".jar"):
+                scan(zipfile.ZipFile(io.BytesIO(zf.read(n))))
+                continue
+            m = re.match(r"^(?:resourcepacks/[^/]+/)?data/([^/]+)/recipe/(.+)\.json$", n)
+            if not m:
+                continue
+            try:
+                r = json.loads(zf.read(n).decode("utf-8-sig"), strict=False)
+            except ValueError:
+                continue
+            res = r.get("result") if isinstance(r, dict) else None
+            res = (res.get("id") or res.get("item")) if isinstance(res, dict) else res
+            if not (isinstance(res, str) and res.startswith(T)) or r.get("type") not in (
+                    "minecraft:crafting_shaped", "minecraft:crafting_shapeless"):
+                continue
+            ins = set(TM_ID.findall(json.dumps([r.get("ingredients"), r.get("key")]))) - {res}
+            if ins:
+                out[(res, "%s:%s" % m.groups())] = ins
+
+    for jar in sorted((snapshot / "mods").glob("*.jar")):
+        scan(zipfile.ZipFile(jar))
+    for z in sorted((snapshot / "datapacks").glob("*.zip")):
+        scan(zipfile.ZipFile(z))
+    return out
+
+
+# Without it a chain recipe the generator's own reader never saw (a nested jar, a datapack it skipped) would escape
+# both the raise and the dead-recipe check, and test_every_chain_tm_opens_no_earlier_than_its_input, which reads the
+# chains through that same reader, would agree with it.
+@pytest.mark.skipif(not (SNAPSHOT / "mods").is_dir(), reason="no server snapshot at %s" % SNAPSHOT)
+def test_every_chain_in_the_snapshots_own_zips_opens_no_earlier_than_its_input():
+    plan, _ = _snapshot_plan()
+    chains = jar_chains(SNAPSHOT)
+    assert len(chains) >= 19  # read 2026-10-08: 19 chain recipes, all in COBBLEVERSE-DP-v31.zip
+    tms = plan["tms"]
+    assert {i for ins in chains.values() for i in ins} <= set(tms)  # every input is a TM this server crafts
+    dead = sorted("%s: %s %d < %s %d" % (rid, item, tms[item]["badge"], i, tms[i]["badge"])
+                  for (item, rid), ins in chains.items() for i in ins if tms[i]["badge"] > tms[item]["badge"])
+    assert dead == []
