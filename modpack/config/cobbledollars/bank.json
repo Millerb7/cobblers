@@ -13,18 +13,6 @@
       "price": 25000
     },
     {
-      "item": "cobblemon:relic_coin",
-      "price": 50
-    },
-    {
-      "item": "cobblemon:relic_coin_pouch",
-      "price": 475
-    },
-    {
-      "item": "cobblemon:relic_coin_sack",
-      "price": 4500
-    },
-    {
       "item": "cobblemon:potion",
       "price": 50
     },
@@ -117,64 +105,12 @@
       "price": 30000
     },
     {
-      "item": "minecraft:apple",
-      "price": 5
-    },
-    {
-      "item": "minecraft:mushroom_stew",
-      "price": 25
-    },
-    {
-      "item": "minecraft:bread",
-      "price": 5
-    },
-    {
       "item": "minecraft:porkchop",
       "price": 10
     },
     {
       "item": "minecraft:cooked_porkchop",
       "price": 20
-    },
-    {
-      "item": "minecraft:cod",
-      "price": 10
-    },
-    {
-      "item": "minecraft:salmon",
-      "price": 10
-    },
-    {
-      "item": "minecraft:tropical_fish",
-      "price": 10
-    },
-    {
-      "item": "minecraft:pufferfish",
-      "price": 20
-    },
-    {
-      "item": "minecraft:cooked_cod",
-      "price": 20
-    },
-    {
-      "item": "minecraft:cooked_salmon",
-      "price": 20
-    },
-    {
-      "item": "minecraft:cake",
-      "price": 40
-    },
-    {
-      "item": "minecraft:cookie",
-      "price": 5
-    },
-    {
-      "item": "minecraft:melon_slice",
-      "price": 5
-    },
-    {
-      "item": "minecraft:dried_kelp",
-      "price": 10
     },
     {
       "item": "minecraft:beef",
@@ -190,26 +126,6 @@
     },
     {
       "item": "minecraft:cooked_chicken",
-      "price": 20
-    },
-    {
-      "item": "minecraft:carrot",
-      "price": 5
-    },
-    {
-      "item": "minecraft:potato",
-      "price": 5
-    },
-    {
-      "item": "minecraft:baked_potato",
-      "price": 10
-    },
-    {
-      "item": "minecraft:golden_carrot",
-      "price": 20
-    },
-    {
-      "item": "minecraft:pumpkin_pie",
       "price": 20
     },
     {
@@ -235,22 +151,6 @@
     {
       "item": "minecraft:chorus_fruit",
       "price": 5
-    },
-    {
-      "item": "minecraft:beetroot",
-      "price": 5
-    },
-    {
-      "item": "minecraft:beetroot_soup",
-      "price": 20
-    },
-    {
-      "item": "minecraft:sweet_berries",
-      "price": 5
-    },
-    {
-      "item": "minecraft:glow_berries",
-      "price": 20
     },
     {
       "item": "cobblemon:poke_cake",
@@ -361,114 +261,6 @@
       "price": 120
     },
     {
-      "item": "minecraft:amethyst_shard",
-      "price": 5
-    },
-    {
-      "item": "cobblemon:red_apricorn",
-      "price": 1
-    },
-    {
-      "item": "cobblemon:blue_apricorn",
-      "price": 1
-    },
-    {
-      "item": "cobblemon:yellow_apricorn",
-      "price": 1
-    },
-    {
-      "item": "cobblemon:green_apricorn",
-      "price": 1
-    },
-    {
-      "item": "cobblemon:pink_apricorn",
-      "price": 1
-    },
-    {
-      "item": "cobblemon:white_apricorn",
-      "price": 1
-    },
-    {
-      "item": "cobblemon:black_apricorn",
-      "price": 1
-    },
-    {
-      "item": "cobblemon:oran_berry",
-      "price": 2
-    },
-    {
-      "item": "cobblemon:pecha_berry",
-      "price": 2
-    },
-    {
-      "item": "cobblemon:cheri_berry",
-      "price": 2
-    },
-    {
-      "item": "cobblemon:chesto_berry",
-      "price": 2
-    },
-    {
-      "item": "cobblemon:rawst_berry",
-      "price": 2
-    },
-    {
-      "item": "cobblemon:aspear_berry",
-      "price": 2
-    },
-    {
-      "item": "cobblemon:persim_berry",
-      "price": 2
-    },
-    {
-      "item": "cobblemon:leppa_berry",
-      "price": 3
-    },
-    {
-      "item": "cobblemon:sitrus_berry",
-      "price": 5
-    },
-    {
-      "item": "cobblemon:lum_berry",
-      "price": 8
-    },
-    {
-      "item": "minecraft:string",
-      "price": 1
-    },
-    {
-      "item": "minecraft:bone",
-      "price": 1
-    },
-    {
-      "item": "minecraft:feather",
-      "price": 1
-    },
-    {
-      "item": "minecraft:spider_eye",
-      "price": 1
-    },
-    {
-      "item": "minecraft:rabbit_hide",
-      "price": 1
-    },
-    {
-      "item": "minecraft:gunpowder",
-      "price": 3
-    },
-    {
-      "item": "minecraft:slime_ball",
-      "price": 3
-    },
-    {
-      "item": "minecraft:leather",
-      "price": 5
-    },
-    {
-      "item": "minecraft:ender_pearl",
-      "price": 15
-    },
-    {
       "item": "minecraft:ancient_debris",
       "price": 200
     },
@@ -483,10 +275,6 @@
     {
       "item": "minecraft:quartz",
       "price": 2
-    },
-    {
-      "item": "minecraft:nether_wart",
-      "price": 1
     }
   ]
 }
