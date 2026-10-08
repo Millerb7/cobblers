@@ -64,7 +64,8 @@ OUTLIERS = {
          T + "weatherball": (2, 4)},
     15: {T + "sludgebomb": (7, 6), T + "ironhead": (6, 5)},
     16: {T + "return": (7, 7), T + "frustration": (7, 7)},  # measured 2026-10-08: full power is cheap, so 102's band
-    17: {T + "glare": (7, 6)},
+    # the owner, 2026-10-08: "Glare moves to badge 5. A sure paralysis after a sure sleep inverts the rule."
+    17: {T + "glare": (7, 5)},
     # the owner, 2026-10-08: "lower Spore rather than leaving Stun Spore at 8": Stun Spore's own band (75 -> 5)
     18: {T + "spore": (8, 5)},
 }
@@ -694,9 +695,10 @@ def test_spore_is_placed_at_stun_spores_own_band_by_its_own_group():
     assert inp not in groups[1]["place"] and inp not in groups[17].get("not_placed", {})
     assert groups[18]["place"] == {inp: badge}
     assert {"decision", "badge", "why_its_own_group", "what_it_costs"} <= set(groups[18]["placed_2026_10_08"])
-    # the other sleep moves the group's cost names: Spore now opens with the 75% sleeps and before Glare
+    # the other sleep moves the group's cost names: Spore opens with the 75% sleeps, and with Glare since the owner
+    # moved Glare to 5 (2026-10-08): the sure sleep no longer opens before the sure paralysis
     assert {tms[T + m]["badge"] for m in ("sleeppowder", "lovelykiss")} == {badge}
-    assert tms[T + "glare"]["badge"] == badge + 1
+    assert tms[T + "glare"]["badge"] == badge
 
 
 @pytest.mark.skipif(not (SNAPSHOT / "mods").is_dir(), reason="no server snapshot at %s" % SNAPSHOT)

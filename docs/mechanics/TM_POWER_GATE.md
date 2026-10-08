@@ -225,7 +225,7 @@ A pure number misjudges these. Each has a suggested hand placement; all are appl
 | 14 | Conditional doublers: Hex, Venoshock (65 -> 4), Facade (70 -> 4), Acrobatics (55 -> 3), Weather Ball (50 -> 2) | Left at stated power on purpose (2.1). Each doubles in a condition a player can set up: 130, 130, 140, 110, 100 | Hex, Venoshock, Facade, Acrobatics 5; Weather Ball 4 |
 | 15 | Band edges: Sludge Bomb (94.5 -> 7) vs Psychic (90.8 -> 6); Poison Jab (84.5 -> 6, shelf 5), Iron Head (84.5 -> 6) vs X-Scissor (80 -> 5) | A 30% side effect pushes a 90 or an 80 over the four-point allowance. Any edge cuts somewhere | Sludge Bomb 6; Iron Head 5 (Poison Jab keeps its shelf 5) |
 | 16 | Return, Frustration | 100 -> 7 | Nominal 100 assumes full (or zero) friendship. Measured 2026-10-08 (section 9.1): full power is a purchase at badge 4 for Return and the starting point for Frustration | ~~6, or measure first~~ 7 (measured) |
-| 17 | Signature and one-species TMs: V-create, Double Iron Bash, Multi-Attack, Revival Blessing, Spore, Glare (100 -> 7) ... | The score ignores who can learn it. A badge-8 Sunsteel Strike matters to one species. Harmless in either direction; Glare beating Thunder Wave is correct | leave; if Thunder Wave moves to 5, Glare to 6 (Spore: moved by 18) |
+| 17 | Signature and one-species TMs: V-create, Double Iron Bash, Multi-Attack, Revival Blessing, Spore, Glare (100 -> 7) ... | The score ignores who can learn it. A badge-8 Sunsteel Strike matters to one species. Harmless in either direction; Glare beating Thunder Wave is correct | leave; ~~if Thunder Wave moves to 5, Glare to 6~~ Glare 5 (the owner, 2026-10-08: a sure paralysis must not open after Spore's sure sleep) (Spore: moved by 18) |
 | 18 | Spore (110 -> 8) | Nothing in its own score. Spore is also an **input**: TMCraft's Stun Spore recipe takes the Spore TM, so the chain rule (9.2) held Stun Spore (75 -> 5) at 8 with it. The owner, 2026-10-08: "lower Spore rather than leaving Stun Spore at 8" | 5 (Stun Spore's own band) |
 
 What the rule cannot see at all, and does not try to: **learnsets** (outlier 17), **the disc grade** (crafting cost,
@@ -298,8 +298,8 @@ The strongest TM at each badge as applied, by score (a placed outlier keeps its 
 | 2 | Scald 89 (shelf) | Leech Seed 54 |
 | 3 | Thunderbolt 93 (shelf) | Synthesis, Morning Sun 61.8 |
 | 4 | Giga Drain 90 (shelf); by the rule, Spark 74 | Soft-Boiled, Slack Off 71.2 |
-| 5 | U-turn, Volt Switch 90 (outlier 5) | Spore 110 (outlier 18); Thunder Wave 90 (outlier 1) |
-| 6 | Sludge Bomb 94.5 (outlier 15); Body Slam, Dire Claw 94 | Glare 100 (outlier 17) |
+| 5 | U-turn, Volt Switch 90 (outlier 5) | Spore 110 (outlier 18); Glare 100 (outlier 17); Thunder Wave 90 (outlier 1) |
+| 6 | Sludge Bomb 94.5 (outlier 15); Body Slam, Dire Claw 94 | |
 | 7 | Searing Shot, Oblivion Wing 104; Return, Frustration 100 (102 at full or zero friendship, outlier 16) | Shift Gear 95 (outlier 7) |
 | 8 | Boomburst 140 | Shell Smash 125 |
 
@@ -354,9 +354,9 @@ a move the score misjudges, while Spore's score (a 100% sleep, 110) is right, an
 the recipe that takes it. Sleep is not paralysis either: a sleeping target does not act for its sleep turns, while a
 paralysed one acts three times in four, and the score table already values them apart (110 against 100, 2.2). So if
 sleep "belonged" anywhere by its own merit it would be with the other sleep moves by score, Sleep Powder and Lovely
-Kiss (75% sleep, 82.5, band 5), which is where Spore now opens. **What it costs:** a guaranteed sleep (Spore, 5) now
-opens a badge before a guaranteed paralysis (Glare, 6, group 17), the inverse of their scores. That is the owner's
-trade, recorded in group 18's `what_it_costs`; moving Glare to 5 would close it and is the owner's call.
+Kiss (75% sleep, 82.5, band 5), which is where Spore now opens. **What it cost:** a guaranteed sleep (Spore, 5) opened
+a badge before a guaranteed paralysis (Glare, then 6, group 17), the inverse of their scores. The owner closed it on
+2026-10-08 by moving Glare to 5 (group 17's `placed_2026_10_08`): the two now open together.
 
 The rule holds for every TM: the plan fails when a raise is not listed, when a listed raise no longer matches, and
 when any recipe still opens before its input.
