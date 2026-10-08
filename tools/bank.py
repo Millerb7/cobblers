@@ -212,7 +212,11 @@ def problems(doc, server_dir=None):
         if raw in bank and ingot in bank and not bank[raw] <= bank[ingot] <= bank[raw] + SMELT_MAX:
             out.append("%s pays $%d against %s's $%d: a smelted item pays raw to raw + %d"
                        % (ingot, bank[ingot], raw, bank[raw], SMELT_MAX))
-        if (raw in bank) != (ingot in bank):
+        # an ingot may leave alone when afk_rule names it and buys_removed records it (gold: nuggets from a ranch);
+        # the raw ore then still sells, so a miner is never stranded
+        afk_gone = ingot not in bank and ingot in afk_items(doc) and ingot in {
+            r.get("item") for r in ((doc.get("buys_removed") or {}).get("entries") or [])}
+        if (raw in bank) != (ingot in bank) and not (raw in bank and afk_gone):
             out.append("%s and %s: one is bought and not the other" % (raw, ingot))
     out += craft_problems(doc, bank)
     out += removal_problems(doc, base, seen)
@@ -254,17 +258,40 @@ def problems(doc, server_dir=None):
 def craft_problems(doc, bank):
     """data/bank.json crafts: a crafted item pays its inputs' bank total to total + CRAFT_MAX(total)."""
     out = []
+    val = dict(bank)
+    val.update(removed_input_values(doc, out))
     for item, inputs in sorted(((doc.get("crafts") or {}).get("recipes") or {}).items()):
-        missing = sorted(i for i in inputs if i not in bank)
+        missing = sorted(i for i in inputs if i not in val)
         if item not in bank or missing:
             out.append("crafts %s: the item%s not bought (%s)" % (
                 item, "" if item in bank else " and/or its inputs", ", ".join(missing) or item))
             continue
-        total = sum(bank[i] * int(n) for i, n in inputs.items())
+        total = sum(val[i] * int(n) for i, n in inputs.items())
         if not total <= bank[item] <= total + CRAFT_MAX(total):
             out.append("crafts %s pays $%d against its inputs' $%d at the bank: a crafted item pays its inputs to "
                        "inputs + %d" % (item, bank[item], total, CRAFT_MAX(total)))
     return out
+
+
+def removed_input_values(doc, out):
+    """{item: price} for crafts.removed_inputs: a recipe input the bank stopped buying keeps its buys_removed price as
+    its value, so removing a farmable input does not reprice its products. Each must be a buys_removed entry with a
+    price and named by afk_rule; anything else is a problem appended to `out`."""
+    ri = (doc.get("crafts") or {}).get("removed_inputs") or {}
+    gone = {r.get("item"): r for r in ((doc.get("buys_removed") or {}).get("entries") or [])}
+    afk = afk_items(doc)
+    if ri.get("items") and not ri.get("why"):
+        out.append("crafts.removed_inputs: no why")
+    vals = {}
+    for iid in ri.get("items") or []:
+        r = gone.get(iid)
+        if not r or not (isinstance(r.get("price"), int) and r["price"] > 0):
+            out.append("crafts.removed_inputs %s: not a buys_removed entry with a price" % iid)
+        elif iid not in afk:
+            out.append("crafts.removed_inputs %s: in no afk_rule list, so nothing says why it left" % iid)
+        else:
+            vals[iid] = r["price"]
+    return vals
 
 
 def removal_problems(doc, base, bought):

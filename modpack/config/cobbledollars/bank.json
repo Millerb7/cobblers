@@ -5,84 +5,8 @@
       "price": 400
     },
     {
-      "item": "minecraft:emerald_block",
-      "price": 3750
-    },
-    {
       "item": "minecraft:elytra",
       "price": 25000
-    },
-    {
-      "item": "cobblemon:potion",
-      "price": 50
-    },
-    {
-      "item": "cobblemon:super_potion",
-      "price": 175
-    },
-    {
-      "item": "cobblemon:hyper_potion",
-      "price": 375
-    },
-    {
-      "item": "cobblemon:max_potion",
-      "price": 625
-    },
-    {
-      "item": "cobblemon:full_restore",
-      "price": 750
-    },
-    {
-      "item": "cobblemon:ether",
-      "price": 300
-    },
-    {
-      "item": "cobblemon:max_ether",
-      "price": 500
-    },
-    {
-      "item": "cobblemon:elixir",
-      "price": 750
-    },
-    {
-      "item": "cobblemon:max_elixir",
-      "price": 1125
-    },
-    {
-      "item": "cobblemon:revive",
-      "price": 500
-    },
-    {
-      "item": "cobblemon:max_revive",
-      "price": 1000
-    },
-    {
-      "item": "cobblemon:hp_up",
-      "price": 2500
-    },
-    {
-      "item": "cobblemon:protein",
-      "price": 2500
-    },
-    {
-      "item": "cobblemon:iron",
-      "price": 2500
-    },
-    {
-      "item": "cobblemon:calcium",
-      "price": 2500
-    },
-    {
-      "item": "cobblemon:zinc",
-      "price": 2500
-    },
-    {
-      "item": "cobblemon:carbos",
-      "price": 2500
-    },
-    {
-      "item": "cobblemon:pp_up",
-      "price": 2500
     },
     {
       "item": "cobblemon:pp_max",
@@ -157,16 +81,8 @@
       "price": 120
     },
     {
-      "item": "cobblemon:old_gateau",
-      "price": 40
-    },
-    {
       "item": "cobblemon:smoked_tail_curry",
       "price": 70
-    },
-    {
-      "item": "cobblemon:candied_apple",
-      "price": 33
     },
     {
       "item": "cobblemon:rage_candy_bar",
@@ -177,19 +93,7 @@
       "price": 30
     },
     {
-      "item": "cobblemon:candied_berry",
-      "price": 30
-    },
-    {
-      "item": "cobblemon:jubilife_muffin",
-      "price": 40
-    },
-    {
       "item": "cobblemon:casteliacone",
-      "price": 30
-    },
-    {
-      "item": "cobblemon:ponigiri",
       "price": 30
     },
     {
@@ -197,20 +101,8 @@
       "price": 75
     },
     {
-      "item": "cobblemon:lava_cookie",
-      "price": 10
-    },
-    {
       "item": "cobblemon:big_malasada",
       "price": 35
-    },
-    {
-      "item": "cobblemon:pewter_crunchies",
-      "price": 40
-    },
-    {
-      "item": "cobblemon:potato_mochi",
-      "price": 25
     },
     {
       "item": "cobblemon:open_faced_sandwich",
@@ -247,10 +139,6 @@
     {
       "item": "minecraft:raw_gold",
       "price": 20
-    },
-    {
-      "item": "minecraft:gold_ingot",
-      "price": 22
     },
     {
       "item": "minecraft:redstone",
