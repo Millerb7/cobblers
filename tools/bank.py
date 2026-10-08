@@ -6,7 +6,14 @@ selling minerals in brocks town". CobbleDollars already has the mechanism: shift
 cobbledollars:cobble_merchant (or the Bank button on its shop screen) opens a Bank that buys items at the prices in
 ONE server-wide file, config/cobbledollars/bank.json (read in the jar: data/bank.json `mechanism.verified`). The base
 pack's list buys emeralds, medicine, vitamins, feathers of the birds and food, and no ore, no apricorn, no berry but
-two. This tool writes our overlay of that file from data/bank.json: the base list unchanged, then our `buys`.
+two. This tool writes our overlay of that file from data/bank.json: the base list less `base_removed`, then our `buys`.
+
+The AFK rule (the owner, 2026-10-10: "AFK-farmable food must not pay for everything -- cap it or exclude it";
+docs/mechanics/ECONOMY_OVERHAUL.md 2.2): `check` fails when the output buys an item data/bank.json afk_rule names
+(farm, ranch, crafts, or a `buys` entry in afk_rule.groups) unless afk_rule.exceptions declares it. Every removed entry
+is kept with its reason (base_removed, buys_removed). With --server-dir the ranch list is re-measured from the species
+drop tables in the snapshot's jars and datapacks less Pasture Loot's blacklist. Farm goods sell to the Produce Buyer
+instead (tools/produce_buyer.py), under a per-player allowance the bank cannot express.
 
   write    python tools/bank.py write                     modpack/config/cobbledollars/bank.json from the data
   check    python tools/bank.py check [--server-dir S]    the data's rules and the committed file; exit 1 on a problem
@@ -79,9 +86,16 @@ def base_entries(doc):
     return json.loads((ROOT / doc["base"]).read_text(encoding="utf-8"))["bank"]
 
 
+def base_removed(doc):
+    """{item: record} of the base entries data/bank.json base_removed takes out (the owner, 2026-10-10)."""
+    return {r.get("item"): r for r in ((doc.get("base_removed") or {}).get("entries") or [])}
+
+
 def entries(doc):
-    """The file CobbleDollars reads: the base's entries in order, then ours."""
-    return list(base_entries(doc)) + [{"item": b["item"], "price": b["price"]} for b in doc["buys"]]
+    """The file CobbleDollars reads: the base's entries in order less base_removed, then ours."""
+    gone = base_removed(doc)
+    return [e for e in base_entries(doc) if e["item"] not in gone] + \
+        [{"item": b["item"], "price": b["price"]} for b in doc["buys"]]
 
 
 def text(doc):
@@ -201,6 +215,10 @@ def problems(doc, server_dir=None):
         if (raw in bank) != (ingot in bank):
             out.append("%s and %s: one is bought and not the other" % (raw, ingot))
     out += craft_problems(doc, bank)
+    out += removal_problems(doc, base, seen)
+    out += afk_problems(doc, bank)
+    if server_dir is not None:
+        out += ranch_problems(doc, bank, ranch_drops(server_dir))
     unreachable = {u.get("item"): u.get("why") for u in doc.get("unreachable") or []}
     for u in doc.get("unreachable") or []:
         if not ITEM.fullmatch(u.get("item") or "") or not u.get("why"):
@@ -209,6 +227,9 @@ def problems(doc, server_dir=None):
         out.append("buys %s: listed unreachable (%s); a price on what no player can get is a promise the world breaks"
                    % (iid, unreachable[iid]))
     pts, skipped = sell_points(server_dir)
+    if server_dir is None:
+        skipped.append("afk_rule.ranch re-measured from the species drop tables (no --server-dir): the declared list "
+                       "is trusted as written")
     for where, iid, unit in pts:
         if iid in bank and unit <= bank[iid]:
             out.append("%s sells %s at $%s each, at or below the bank's $%d: buy and sell is free money"
@@ -244,6 +265,128 @@ def craft_problems(doc, bank):
             out.append("crafts %s pays $%d against its inputs' $%d at the bank: a crafted item pays its inputs to "
                        "inputs + %d" % (item, bank[item], total, CRAFT_MAX(total)))
     return out
+
+
+def removal_problems(doc, base, bought):
+    """base_removed and buys_removed: every removal recorded with its reason, never silently; nothing removed and
+    re-added; the decision named."""
+    out = []
+    br = doc.get("base_removed") or {}
+    if br.get("entries") and not br.get("decision"):
+        out.append("base_removed: entries with no decision (a base price changes only by a separate, named decision)")
+    base_price = {e["item"]: int(e["price"]) for e in base_entries(doc)}
+    for iid, r in sorted(base_removed(doc).items(), key=lambda kv: str(kv[0])):
+        w = "base_removed %s" % iid
+        if iid not in base:
+            out.append("%s: the base does not buy it, so the removal is stale" % w)
+        elif r.get("price") != base_price[iid]:
+            out.append("%s: records $%r, the base pays $%d: the record is stale" % (w, r.get("price"), base_price[iid]))
+        for k in ("afk", "why"):
+            if not r.get(k):
+                out.append("%s: no %s" % (w, k))
+    if len(base_removed(doc)) != len((br.get("entries") or [])):
+        out.append("base_removed: an item is listed twice")
+    for r in ((doc.get("buys_removed") or {}).get("entries") or []):
+        w = "buys_removed %s" % r.get("item")
+        if not r.get("left_bank") or not r.get("decision"):
+            out.append("%s: no left_bank reason or no decision: a removal is recorded, never silent" % w)
+        if r.get("item") in bought:
+            out.append("%s: removed and still in buys" % w)
+    return out
+
+
+def afk_items(doc):
+    """{item: which afk_rule lists name it} over farm, ranch and crafts."""
+    rule = doc.get("afk_rule") or {}
+    out = {}
+    for k in ("farm", "ranch", "crafts"):
+        for iid in (rule.get(k) or {}).get("items") or []:
+            out.setdefault(iid, []).append(k)
+    return out
+
+
+def afk_problems(doc, bank):
+    """data/bank.json afk_rule (the owner, 2026-10-10): the output buys nothing an unattended farm makes unless an
+    exception names it. Fails closed: no afk_rule at all is a problem."""
+    rule = doc.get("afk_rule")
+    if not rule:
+        return ["no afk_rule: the bank's exclusion of what an unattended farm makes is not declared"]
+    out = []
+    items = afk_items(doc)
+    for k in ("farm", "ranch", "crafts"):
+        if not (rule.get(k) or {}).get("items") or not (rule.get(k) or {}).get("why"):
+            out.append("afk_rule.%s: no items or no why" % k)
+    exc = {}
+    for e in rule.get("exceptions") or []:
+        iid = e.get("item")
+        if not e.get("why") or not e.get("decision"):
+            out.append("afk_rule.exceptions %s: needs a why and a decision" % iid)
+        if iid in exc:
+            out.append("afk_rule.exceptions %s: listed twice" % iid)
+        exc[iid] = e
+        if iid not in items:
+            out.append("afk_rule.exceptions %s: in no afk_rule list, so the exception is stale" % iid)
+        if iid not in bank:
+            out.append("afk_rule.exceptions %s: not bought, so the exception is stale" % iid)
+    for iid in sorted(set(items) & set(bank)):
+        if iid not in exc:
+            out.append("%s is bought at $%d, but afk_rule.%s says an unattended farm makes it: remove it "
+                       "(base_removed or buys_removed) or declare an exception" % (iid, bank[iid], "/".join(items[iid])))
+    groups = set(rule.get("groups") or [])
+    for b in doc.get("buys") or []:
+        if b.get("group") in groups and b["item"] not in exc:
+            out.append("buys %s: group %s is excluded by afk_rule.groups (%s)"
+                       % (b["item"], b["group"], rule.get("groups_why") or "no why"))
+    return out
+
+
+SPECIES_JSON = re.compile(r"data/[^/]+/(species|species_additions)/.+\.json$")
+PASTURE_LOOT = ROOT / "base-pack" / "cobbleverse" / "config" / "PastureLoot.json"
+
+
+def ranch_drops(server_dir):
+    """{item: [species file stems]} of every species drop entry in <server>/mods/*.jar and <server>/datapacks/*.zip
+    that Pasture Loot's item_blacklist does not name (the server's config/PastureLoot.json if present, else the base
+    pack's). Reads archives only; never a world."""
+    import zipfile
+    sd = Path(server_dir)
+    cfg = sd / "config" / "PastureLoot.json"
+    black = set(json.loads((cfg if cfg.is_file() else PASTURE_LOOT).read_text(encoding="utf-8"))["item_blacklist"])
+    drops = {}
+
+    def walk(o, stem):
+        if isinstance(o, dict):
+            d = o.get("drops")
+            if isinstance(d, dict):
+                for e in d.get("entries") or []:
+                    if isinstance(e, dict) and e.get("item") and e["item"] not in black:
+                        drops.setdefault(e["item"], []).append(stem)
+            for v in o.values():
+                walk(v, stem)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v, stem)
+
+    for arc in sorted(list((sd / "mods").glob("*.jar")) + list((sd / "datapacks").glob("*.zip"))):
+        try:
+            z = zipfile.ZipFile(arc)
+        except (zipfile.BadZipFile, OSError):
+            continue
+        for n in z.namelist():
+            if SPECIES_JSON.match(n):
+                try:
+                    walk(json.loads(z.read(n).decode("utf-8", "replace")), Path(n).stem)
+                except ValueError:
+                    continue
+    return drops
+
+
+def ranch_problems(doc, bank, drops):
+    """A bought item some species drops (and Pasture Loot does not blacklist) that afk_rule.ranch does not name."""
+    declared = set(((doc.get("afk_rule") or {}).get("ranch") or {}).get("items") or [])
+    return ["%s is bought at $%d and a pastured Pokemon drops it (%s), but afk_rule.ranch does not name it: the "
+            "ranch list is stale" % (i, bank[i], ", ".join(sorted(set(drops[i]))[:4]))
+            for i in sorted(set(bank) & set(drops) - declared)]
 
 
 def tier_hours(doc):
@@ -392,7 +535,12 @@ def report(doc):
         if u["item"] in base:
             lines.append("DORMANT base price: %s at $%d, which no player can get (%s)"
                          % (u["item"], bank[u["item"]], u["why"][:80]))
-    lines.append("%d entries: %d base + %d ours" % (len(entries(doc)), len(base_entries(doc)), len(doc["buys"])))
+    exc = [e["item"] for e in (doc.get("afk_rule") or {}).get("exceptions") or []]
+    if exc:
+        lines.append("AFK EXCEPTIONS still bought (afk_rule.exceptions): %s" % ", ".join(i.split(":", 1)[1] for i in exc))
+    lines.append("%d entries: %d base (%d removed by base_removed) + %d ours (%d in buys_removed)" % (
+        len(entries(doc)), len(base_entries(doc)) - len(base_removed(doc)), len(base_removed(doc)), len(doc["buys"]),
+        len((doc.get("buys_removed") or {}).get("entries") or [])))
     return lines
 
 
