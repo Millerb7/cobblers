@@ -300,7 +300,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # (tools/dimension_overrides.py, data/dimension_overrides.json, EXP-058). Worldgen data only: no
                 # functions, no step. World-local so it wins over the global COBBLEVERSE datapack (as the spawn packs
                 # do); worldgen registries load at a boot, so it acts from the next start
-                "cobblers_dimension_overrides")
+                "cobblers_dimension_overrides",
+                # 2026-10-08: the Nether's badge-8 gate (tools/nether_gate.py, data/nether_gate.json, EXP-063): an
+                # advancement on arrival and a sweep that send a player without gym8_cleared back to their blackout
+                # checkpoint. It teleports players on its own, so world-local below; it must be installed with or
+                # before cobblers_dimension_overrides, before anyone enters the Nether (NETHER_ENCOUNTERS.md section 7)
+                "cobblers_nether_gate")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -341,6 +346,8 @@ EXCLUDED = {
                               "Cemetery (tools/spectrier_cap.py); it writes no blocks",
     "cobblers_blackout": "self-driving: its own load and tick tags, an advancement and three Cobblemon callbacks run it; "
                          "it writes no blocks",
+    "cobblers_nether_gate": "self-driving: its load tag starts the sweep's schedule and a changed_dimension advancement "
+                            "runs it on arrival; it writes no blocks (tools/nether_gate.py)",
     "cobblers_titles": "event functions (enter_place_*, enter_zone_*) fired on entering a place or a Nuzlocke zone, and its own load and tick functions: self-driving, not applied to the world",
     "cobblers_trainers": "self-driving: each trainer's won function is an advancement reward rctmod fires for the winner, "
                          "and its tick cycle keeps each trainer home and refuses a rematch; the trainers themselves are "
@@ -394,7 +401,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                # global folder would run it in the live world too
                "cobblers_arena",
                # 2026-10-10: its structure_set overrides must sit above the global COBBLEVERSE datapack
-               "cobblers_dimension_overrides")
+               "cobblers_dimension_overrides",
+               # 2026-10-08: the Nether gate teleports players on its own; global would gate the live world too
+               "cobblers_nether_gate")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -940,6 +949,9 @@ def prepare_jobs(a):
     # the repeatable Entei in cobblers:pocket (data/entei_boss.json; fails closed on a bankable drop, a room in the
     # portals' rescue box or outside the border, or an alpha / mis-levelled boss)
     add("entei_boss", "entei_boss.py")
+    # the Nether's badge-8 gate (data/nether_gate.json; fails closed if the flag is not the eighth badge's, the pallet
+    # is off the canonical ground, or the gated dimension is the pocket's)
+    add("nether_gate", "nether_gate.py")
     add("legendary_sweep_audit", "legendary_sweep_audit.py", *src)
     # blackout, recovery claims and the water ladder (data/blackout.json, data/water_mounts.json)
     add("blackout_pack", "blackout_pack.py")

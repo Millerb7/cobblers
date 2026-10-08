@@ -1275,6 +1275,98 @@ def test_harness_the_c15_charge_check_bites_when_the_generator_is_mutated():
 
 
 # =================================================================================================================
+# C19. The Nether admits exactly the holders of the eighth badge's flag
+# C20. A player the Nether gate turns back lands where a blackout would put them
+# =================================================================================================================
+
+def _gate_files():
+    import nether_gate as NG
+    return {rel: text for rel, text in NG.build(NG.load()).items() if rel.endswith(".mcfunction")}
+
+
+# Without it the Nether gate tests an advancement nothing grants (a renamed flag: every player bounced for ever, the
+# Nether shut), or the wrong badge, or it searches a dimension other than the Nether (the Entei's pocket rooms gated,
+# its champions bounced out of their own fight); or a champion the Entei sends back into the Nether is not, by the
+# campaign's own chapter order, a holder of the eighth badge.
+def test_contract_c19_the_nether_gate_admits_only_the_flag_the_progression_pack_grants_for_badge_8():
+    import progression_pack as PP
+    prog_doc = _load("progression.json")
+    prog = PP.files(PP.plan(PP.load(ROOT / "data" / "progression.json"), None, PLACEMENTS))
+    gate = _gate_files()
+    named = set()
+    for text in gate.values():
+        named |= set(re.findall(r"advancements=\{([a-z0-9_]+:[a-z0-9_/]+)=", text))
+    assert named == {"cobblers:flag/gym8_cleared"}, named
+    key = "data/cobblers/advancement/flag/gym8_cleared.json"
+    assert key in prog, "cobblers:flag/gym8_cleared is not an advancement tools/progression_pack.py writes"
+    crit = json.loads(prog[key])["criteria"]
+    assert crit and all(c["trigger"] != "minecraft:impossible" for c in crit.values()), crit
+    flag = next(f for f in prog_doc["flags"] if f["id"] == "gym8_cleared")
+    assert flag["set_by"]["kind"] == "trainer_defeat", flag["set_by"]
+    # every player selector the gate runs is in the Nether, and positional (so it searches that dimension only)
+    pocket = {_load("portals.json")["pocket"]["dimension"], _load("entei_boss.json")["pocket"]["dimension"]}
+    for rel, text in gate.items():
+        for line in text.splitlines():
+            if "@a[" in line and not line.startswith("#"):
+                m = re.match(r"execute in (\S+) .*@a\[([^\]]*)\]", line)
+                assert m and m.group(1) == "minecraft:the_nether", (rel, line)
+                assert re.search(r"\b(x|dx|distance)=", m.group(2)), ("a selector without a position", rel, line)
+            assert line.startswith("#") or not any(d in line for d in pocket), ("the gate acts in the pocket", rel, line)
+    # the Entei returns its champions into the Nether: champion_cleared must follow gym8_cleared in the chapters
+    assert _load("entei_boss.json")["gate_flag"] == "cobblers:flag/champion_cleared"
+    unlocking = {u: c for c in prog_doc["chapters"] for u in c["unlocks"]}
+    seen, todo = set(), ["champion_cleared"]
+    while todo:
+        f = todo.pop()
+        for g in unlocking.get(f, {}).get("unlocked_by", []):
+            if g not in seen:
+                seen.add(g)
+                todo.append(g)
+    assert "gym8_cleared" in seen, seen
+
+
+# Without it the gate calls a blackout function that was renamed (the checkpoint path fails and everyone lands at the
+# pallet: safe, but not where the design sends them), reads a score the blackout no longer keeps, writes into the
+# blackout's own state, or falls back to a pallet that is not standing on the ground.
+def test_contract_c20_the_nether_gate_returns_through_the_blackouts_own_checkpoint():
+    import blackout_pack as BP
+    bo = BP.build(_load("blackout.json"), _load("water_mounts.json"), PLACEMENTS, _load("progression.json"))
+    bo_fns = {re.sub(r"^data/cobblers/function/(.+)\.mcfunction$", r"cobblers:\1", rel): text.splitlines()
+              for rel, text in bo.items() if rel.startswith("data/cobblers/function/")}
+    gate = _gate_files()
+    body = [l for text in gate.values() for l in text.splitlines() if l.strip() and not l.startswith("#")]
+    called = {r for l in body for r in re.findall(r"\bfunction (cobblers:blackout/\S+)", l)}
+    assert called == {"cobblers:blackout/checkpoint/validate", "cobblers:blackout/checkpoint/tp",
+                      "cobblers:blackout/checkpoint/name"}, called
+    assert all(c in bo_fns for c in called), called - set(bo_fns)
+    tp = [l for l in bo_fns["cobblers:blackout/checkpoint/tp"] if l.strip() and not l.startswith("#")]
+    assert len(tp) == 1 and tp[0].startswith("$execute in minecraft:overworld run tp @s "), tp
+    assert set(re.findall(r"\$\((\w+)\)", tp[0])) == {"x", "y", "z"}, tp
+    stored = {m for l in body for m in re.findall(r"store result storage cobblers:nether_gate go\.(\w+) ", l)}
+    assert stored == {"x", "y", "z"}, stored
+    validate = [l for l in bo_fns["cobblers:blackout/checkpoint/validate"] if l.strip() and not l.startswith("#")]
+    assert validate[0] == "scoreboard players set @s bo.ok 0" and all(
+        l.endswith("run scoreboard players set @s bo.ok 1") for l in validate[1:]), validate[:3]
+    assert any("data modify storage cobblers:blackout place set value" in l
+               for l in bo_fns["cobblers:blackout/checkpoint/name"])
+    made = set(re.findall(r"^scoreboard objectives add (\S+)", "\n".join(bo_fns["cobblers:blackout/load"]), re.M))
+    read = {o for l in body for o in re.findall(r"\b(bo\.\w+)\b", l)}
+    assert read and read <= made, read - made
+    for l in body:
+        assert not re.search(r"scoreboard players (set|add|remove|reset|operation) @s bo\.", l), l
+        assert not re.search(r"store result score @s bo\.", l), l
+        assert "data modify storage cobblers:blackout" not in l, l
+    try:
+        import ground as G
+        g = G.load()
+    except Exception as e:  # noqa: BLE001
+        pytest.skip("the canonical heightmap is not available: %s" % e)
+    x, y, z = _load("blackout.json")["pallet"]["position"]
+    assert y == g(x, z) + 1, (x, y, z, g(x, z))
+    assert "execute in minecraft:overworld run tp @s %d.5 %d %d.5" % (x, y, z) in body
+
+
+# =================================================================================================================
 # The registry itself
 # =================================================================================================================
 
