@@ -185,7 +185,20 @@ newly installed: the dimension registers only at boot. Then run step R16Q.
 
 ## Results
 
-None. NOT_EXECUTED.
+### RCON steps 1-6 (2026-10-08, main session, staging-2026-10-01, prepare 381c568b, after `run --only R9O,R9Z,R16Q,R14,R17M,R17TS,R17`)
+
+Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, Mega Showdown 1.0.2, the server's full mod set.
+
+| Step | Result |
+|---|---|
+| 1 | the boot log names no error for `entei_boss` or any of today's packs |
+| 2 | `recipe give @a cobblers:entei_boss/ember_sigil` with nobody online: "No player was found", as expected |
+| 3 | slot 1: bedrock at y94, the sunk bell at (-768, 95, -764), the ash ring, the cracked-stone-brick floor, the stripped dark oak west wall and air above the spot: all **Test passed**. No item entity at the bell, so the bell survives the rebuild's order. The old nether-brick palette is gone (probe at (-759, 100, -767): Test failed, expected) |
+| 4 | the arch's interaction box exists, **count 2, not 1**: a duplicate, most likely the forceload-then-act race R17M shows (review N155), from R16Q re-running over an earlier build; harmless to a click, recorded |
+| 5 | `#s1 eb.own` = 0; `function cobblers:entei_boss/keeper` runs without error |
+| 6 | `spawn_at` under `execute in cobblers:pocket` lands in the pocket: `Pokemon.Species` cobblemon:entei, `Pokemon.Level` 100 (the ASSUMED part holds). The farm props verbatim: MoveSet sacredfire, extremespeed, **stoneedge**, crunch (so `moves=` accepts the TM move), ability innerfocus, held cobblemon:life_orb. Both killed afterwards |
+
+Steps 7-17 need the owner in game with `champion_cleared`; 18-19 wait for a second account.
 
 ## Limitations
 
