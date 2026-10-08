@@ -460,8 +460,14 @@ def check_third_form(line, f2, adds, species, moves, authored):
 
 
 def check_sketch_cap(pack):
-    """The Sketch cap's four files are in the pack and the move override refuses at the decided count."""
+    """The Sketch cap's four files are in the pack and the move override refuses at the decided count, while a line
+    carries `sketch_cap`; while none does (the owner, 2026-10-08: "remove the cap for smeargle's sketch for now"),
+    none of the four may be in the pack, so Sketch is the stock, unlimited move."""
     p = []
+    doc = json.loads((ROOT / "data" / "mythical_starters.json").read_text(encoding="utf-8"))
+    if not any("sketch_cap" in ln for ln in doc["lines"]):
+        return ["%s is in the pack, but no line carries sketch_cap: Sketch is meant to be unlimited" % rel
+                for rel in SKETCH_FILES if (Path(pack) / rel).is_file()]
     for rel in SKETCH_FILES:
         f = Path(pack) / rel
         if not f.is_file():
@@ -595,10 +601,13 @@ def main(argv=None):
     if faults:
         print("mythical_starters_audit: %d fault(s)" % len(faults))
         return 1
+    doc = json.loads((ROOT / "data" / "mythical_starters.json").read_text(encoding="utf-8"))
+    sketch = ("Sketch capped at %d" % SKETCH_CAP if any("sketch_cap" in ln for ln in doc["lines"])
+              else "Sketch unlimited, the cap off for now")
     print("mythical_starters_audit: ok: %d lines walk 5 -> %d -> %d through two forms to their native finals (%s "
-          "to a third form of its own, Sketch capped at %d; %s across species to %s); the screen offers them; "
+          "to a third form of its own, %s; %s across species to %s); the screen offers them; "
           "the 27 stay wild (%d open)"
-          % (len(LINES), STAGE_2, FINAL, ", ".join(sorted(FORM_FINALS)), SKETCH_CAP,
+          % (len(LINES), STAGE_2, FINAL, ", ".join(sorted(FORM_FINALS)), sketch,
              ", ".join(sorted(CROSS_SPECIES_FINALS)),
              ", ".join(sorted(f for v in CROSS_SPECIES_FINALS.values() for f in v)), len(opens)))
     return 0

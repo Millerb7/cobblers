@@ -790,7 +790,8 @@
         "40:sleeptalk"
       ],
       "moves_why": "Smeargle's 1.8.0 learnset is Sketch at 1 and nine tutor, legacy and special entries (falseswipe, flamethrower, captivate, sleeptalk, furyswipes, meanlook, odorsleuth, seismictoss, spore), read from the jar's generation2/smeargle.json. Seven are spread across the levels: Fury Swipes at 1 so the level-5 starter can attack, False Swipe at 10 for catching, Seismic Toss at 20 (damage equal to its level, whatever its Attack), Mean Look at 27, Flamethrower at 33 (its one strong special move, 79 SpA at 45) and Sleep Talk at 40. Left out on purpose: Spore (the owner, 2026-10-08: Spore and Shell Smash arrive only through Sketch), Captivate and Odor Sleuth (no use here). Everything else is Sketch's: the movepool is what the player shows it.",
-      "sketch_cap": {
+      "superseded_sketch_cap_why": "OFF for now (the owner, 2026-10-08: \"remove the cap for smeargle's sketch for now\"). Sketch is unlimited again; the design is kept below so it can be switched back on by renaming the key to sketch_cap (docs/research/notes/sketch-cap-1.8.0.md).",
+      "superseded_sketch_cap": {
         "uses": 10,
         "count_on": "dmax_level",
         "armed_aspect": "cobblers_sketch_armed",

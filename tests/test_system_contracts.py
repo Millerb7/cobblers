@@ -1498,6 +1498,8 @@ def test_contract_c22_the_sketch_cap_fits_under_the_dynamax_level_the_config_all
     assert config["maxDynamaxLevel"] == showdown_clamp, config["maxDynamaxLevel"]
     doc = json.loads(MS.DATA.read_text(encoding="utf-8"))
     capped = [ln for ln in doc["lines"] if "sketch_cap" in ln]
+    if not capped:
+        pytest.skip("the Sketch cap is off for now (the owner, 2026-10-08): C22 applies again when a line carries sketch_cap")
     assert len(capped) == 1, [ln["id"] for ln in capped]
     cap = capped[0]["sketch_cap"]["uses"]
     assert 1 <= cap <= min(showdown_clamp, config["maxDynamaxLevel"]), cap

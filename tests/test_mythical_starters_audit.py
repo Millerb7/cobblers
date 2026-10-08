@@ -420,6 +420,8 @@ def test_a_smeargle_form_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path,
     ("comment", "a // or unbalanced comment"),
 ])
 def test_the_sketch_cap_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path, part, needle):
+    if not any("sketch_cap" in ln for ln in json.loads((ROOT / "data" / "mythical_starters.json").read_text(encoding="utf-8"))["lines"]):
+        pytest.skip("the Sketch cap is off for now (the owner, 2026-10-08); these run again when a line carries sketch_cap")
     if part in ("guard", "comment"):
         original = MS.sketch_override
 
