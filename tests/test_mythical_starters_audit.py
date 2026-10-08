@@ -535,12 +535,13 @@ def test_the_cross_species_premise_is_checked_against_the_jar(jar, monkeypatch, 
 
 
 @pytest.mark.parametrize("mutate, needle", [
-    # Without it the third form could leave the owner's 74/79/60/79/60/98 (attack and speed swapped: share 79.00)
-    (_on("smeargle", A3, lambda f: f.update(baseStats=_stats(74, 98, 60, 79, 60, 79))),
-     "smeargle stage 3: attack 98 is not the decided spread's share 79.00 of 450"),
-    # Without it stage 1 could be scaled into the jar's Smeargle (55/20/35/20/45/75) instead: hp 74 x 330/450
+    # Without it the third form could leave the owner's pivot 92/68/78/68/78/92 (2026-10-08; attack and speed
+    # swapped: share 68.00 of 476)
+    (_on("smeargle", A3, lambda f: f.update(baseStats=_stats(92, 92, 78, 68, 78, 68))),
+     "smeargle stage 3: attack 92 is not the decided spread's share 68.00 of 476"),
+    # Without it stage 1 could be scaled into the jar's Smeargle (55/20/35/20/45/75) instead: hp 92 x 330/476
     (_on("smeargle", A1, lambda f: f.update(baseStats=_stats(73, 26, 46, 26, 60, 99))),
-     "smeargle stage 1: hp 73 is not the decided spread's share 54.27 of 330"),
+     "smeargle stage 1: hp 73 is not the decided spread's share 63.78 of 330"),
     # Without it the third form alone could lose Protean (the earlier case strips every form at once)
     (_on("smeargle", A3, lambda f: f.pop("abilities")), "smeargle stage 3: abilities None"),
     # Without it the third form could evolve on, and the line would not stay at 450
@@ -592,6 +593,95 @@ def test_a_missing_sketch_override_is_a_fault(jar, monkeypatch, tmp_path):
     monkeypatch.setattr(MS, "files", lambda doc, jar=None: {k: v for k, v in original(doc, jar).items()
                                                              if not k.endswith("moves/sketch.js")})
     assert_named(faults(jar, build(monkeypatch, tmp_path)), "data/cobblers/moves/sketch.js is missing")
+
+
+# ------------------------------------------------------------------------- the pivot (the owner, 2026-10-08)
+# Smeargle as a fast pivot (docs/research/notes/smeargle-pivot.md): the final form 476 at 92/68/78/68/78/92, stages 1
+# and 2 at 330 and 430 in that spread, and `tm:uturn` on every form so the native TM Machine teaches U-turn. The
+# numbers are hand-computed, not read from the generator: 92 x 330/476 = 63.78, 68 x 330/476 = 47.14, 78 x 330/476 =
+# 54.08 floor to 63/47/54/47/54/63 = 328, and the two largest remainders (.78, hp then speed) take the last two; at
+# 430: 83.11/61.43/70.46 floor to 428, and defence and special defence (.46) take the two.
+
+PIVOT = {A1: _stats(64, 47, 54, 47, 54, 64), A2: _stats(83, 61, 71, 61, 71, 83), A3: _stats(92, 68, 78, 68, 78, 92)}
+SMEARGLE_ADDITION = "data/cobblers/species_additions/mythical_starter_smeargle.json"
+
+
+def _built_smeargle(monkeypatch, tmp_path):
+    pack = build(monkeypatch, tmp_path)
+    return json.loads((pack / SMEARGLE_ADDITION).read_text(encoding="utf-8"))
+
+
+# Without it the pack could ship any spread the audit's share test tolerates (within 1 of each share) and still pass.
+def test_smeargle_is_the_476_pivot_spread(monkeypatch, tmp_path):
+    add = _built_smeargle(monkeypatch, tmp_path)
+    assert sum(PIVOT[A3].values()) == 476
+    for aspect, want in PIVOT.items():
+        (form,) = stage(add, aspect)
+        assert form["baseStats"] == want, (aspect, form["baseStats"])
+
+
+# Without it the U-turn entry could reach one form and not the others.
+def test_every_smeargle_form_carries_tm_uturn(monkeypatch, tmp_path):
+    add = _built_smeargle(monkeypatch, tmp_path)
+    assert len(add["forms"]) == 3
+    assert all("tm:uturn" in f["moves"] for f in add["forms"]), [f["moves"] for f in add["forms"]]
+
+
+# Without it the final could go back to the earlier 450 and the audit still pass.
+def test_smeargles_final_at_the_old_450_is_a_fault(jar, monkeypatch, tmp_path):
+    m = _on("smeargle", A3, lambda f: f.update(baseStats=_stats(74, 79, 60, 79, 60, 98)))
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "smeargle stage 3: BST 450, the decision is 476")
+
+
+# Without it a form could lose the U-turn entry and the TM Machine refuse it (tms.cannot_learn).
+@pytest.mark.parametrize("aspect, n", [(A1, 1), (A2, 2), (A3, 3)])
+def test_a_smeargle_form_without_tm_uturn_is_a_fault(jar, monkeypatch, tmp_path, aspect, n):
+    m = _on("smeargle", aspect, lambda f: f.update(moves=[e for e in f["moves"] if e != "tm:uturn"]))
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "smeargle stage %d: no tm:uturn" % n)
+
+
+# Without it the generator could add any TM to a starter form and the audit pass: only the record's tm_additions (and
+# a line's own native tm: entries) are allowed. Each case mutates the GENERATOR's output.
+@pytest.mark.parametrize("species, aspect, entry, needle", [
+    ("smeargle", A2, "tm:earthquake", "smeargle stage 2: 'tm:earthquake' is not a tm: entry"),
+    # the allow-list is per line: Smeargle's U-turn does not license it on Cosmog
+    ("cosmog", A1, "tm:uturn", "cosmog stage 1: 'tm:uturn' is not a tm: entry"),
+])
+def test_an_unrecorded_tm_entry_is_a_fault(jar, monkeypatch, tmp_path, species, aspect, entry, needle):
+    m = _on(species, aspect, lambda f: f.update(moves=f["moves"] + [entry]))
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), needle)
+
+
+# Without it the audit could accept tm:uturn from anywhere: the allow-list is the RECORD's, so a copy of the record
+# without it (or with no decision on the entry) makes the built entry a fault. The pack is the real build.
+@pytest.mark.parametrize("change", [
+    lambda sm: sm.pop("tm_additions"),
+    lambda sm: sm["tm_additions"][0].update(decision=" "),
+])
+def test_the_tm_allow_list_is_read_from_the_record(jar, monkeypatch, tmp_path, change):
+    pack = build(monkeypatch, tmp_path)
+    rec = json.loads(MS.DATA.read_text(encoding="utf-8"))
+    change(next(ln for ln in rec["lines"] if ln["id"] == "starter_smeargle"))
+    alt = tmp_path / "record.json"
+    alt.write_text(json.dumps(rec), encoding="utf-8")
+    assert_named(AU.audit(pack=pack, jar=jar, record=alt)[0], "smeargle stage 3: 'tm:uturn' is not a tm: entry")
+
+
+# The generator's own check refuses the same things before it writes (an in-memory copy of the record; the file is
+# untouched).
+@pytest.mark.parametrize("change, needle", [
+    (lambda sm: sm["moves"].append("tm:earthquake"), "starter_smeargle: `tm:earthquake` is not a tm: entry"),
+    (lambda sm: sm.pop("tm_additions"), "starter_smeargle: `tm:uturn` is not a tm: entry"),
+    (lambda sm: sm["tm_additions"][0].update(decision=""), "no `decision`"),
+    (lambda sm: sm["moves"].remove("tm:uturn"), "the addition reaches no form"),
+    (lambda sm: sm["tm_additions"][0].update(move="sketch") or sm["moves"].append("tm:sketch"),
+     "the jar has no data/cobblemon/tms/sketch.json"),
+])
+def test_the_generators_check_refuses_an_unrecorded_tm_entry(jar, change, needle):
+    doc = json.loads(MS.DATA.read_text(encoding="utf-8"))
+    assert MS.check(copy.deepcopy(doc), jar) == []
+    change(next(ln for ln in doc["lines"] if ln["id"] == "starter_smeargle"))
+    assert_named(MS.check(doc, jar), needle)
 
 
 # Without it the audit could start reusing the builder's own derivation and agree with it about anything.

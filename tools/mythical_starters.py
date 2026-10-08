@@ -37,7 +37,10 @@ THE SEVENTH, SMEARGLE (the owner, 2026-10-08; docs/research/notes/smeargle-prote
 has no evolution, so its line is THREE forms of the one species (aspects cobblers_starter_1/2/3) and BOTH its steps,
 30 and 45, are same-species form changes; a three-form line has no native final (`final` is empty) and its stage 3
 has no evolution. Every Smeargle form carries its own `abilities` (Protean; the jar's raichu.json form "Alola" is the
-format), and a form may give its spread as a literal `shape` instead of a jar species' `shape_from`.
+format), and a form may give its spread as a literal `shape` instead of a jar species' `shape_from`. Since the owner's
+pivot decision (2026-10-08; docs/research/notes/smeargle-pivot.md) the final form is 92/68/78/68/78/92 = 476, and its
+move list carries `tm:uturn`, recorded in the line's `tm_additions`: a form's `tm:` entry is what the native TM disc and
+TM Machine read (check_tm_entries), and no other non-native `tm:` entry passes the check.
   the Sketch cap      data/mythical_starters.json `sketch_cap` (docs/research/notes/sketch-cap-1.8.0.md), emitted
                       into this same pack:
     data/cobblers/moves/sketch.js   Showdown's own Sketch, read from the jar's data/cobblemon/showdown.zip
@@ -135,6 +138,60 @@ def learnset_union(allsp, names):
 # ------------------------------------------------------------------------------------------------ the check
 
 LEVEL_MOVE = re.compile(r"^(\d+):([a-z0-9]+)$")
+TM_MOVE = re.compile(r"^tm:([a-z0-9]+)$")
+
+
+def tm_union(allsp, names):
+    """The moves the line's own 1.8.0 species list as `tm:` entries."""
+    out = set()
+    for n in names:
+        for e in allsp[B.key(n)].get("moves") or []:
+            if e.startswith("tm:"):
+                out.add(e.split(":", 1)[1])
+    return out
+
+
+def check_tm_entries(line, native_tm, showdown, z):
+    """A form's `tm:` entries (the moves the native TM disc and TM Machine accept: in the 1.8.0 jar the `tm` learnset
+    interpreter fills Learnset.tmMoves, TechnicalMachineItem refuses unless the FORM's tmLearnableMoves() has the move,
+    and TechnicalMachine.filterTms filters the machine the same way). One is legal when it is in the line's own 1.8.0
+    learnset, or when the line records it in `tm_additions` with the owner's decision; any other is a fault. A recorded
+    addition must also be in the move list (or it records nothing), be a Showdown move, and have a native disc,
+    data/cobblemon/tms/<move>.json, without which the entry teaches nothing."""
+    p = []
+    lid = line["id"]
+    entries = [TM_MOVE.match(e).group(1) for e in line["moves"] if TM_MOVE.match(e)]
+    recorded = {}
+    for a in line.get("tm_additions") or []:
+        mid = a.get("move") if isinstance(a, dict) else None
+        if not mid or not re.match(r"^[a-z0-9]+$", str(mid)):
+            p.append("%s tm_additions: entry %r has no move id" % (lid, a))
+            continue
+        if mid in recorded:
+            p.append("%s tm_additions: %r is recorded twice" % (lid, mid))
+        recorded[mid] = a
+        if not str(a.get("decision") or "").strip():
+            p.append("%s tm_additions %r: no `decision`; a TM addition is the owner's call and records why" % (lid, mid))
+        if mid in native_tm:
+            p.append("%s tm_additions %r: already a native tm: entry of %s; nothing to add"
+                     % (lid, mid, ", ".join(line["learnset_from"])))
+        if mid not in entries:
+            p.append("%s tm_additions %r: no `tm:%s` in the line's moves, so the addition reaches no form"
+                     % (lid, mid, mid))
+        if mid not in showdown:
+            p.append("%s tm_additions %r: not a move in the jar's Showdown data" % (lid, mid))
+        if "data/cobblemon/tms/%s.json" % mid not in z.namelist():
+            p.append("%s tm_additions %r: the jar has no data/cobblemon/tms/%s.json, so no disc teaches it"
+                     % (lid, mid, mid))
+    seen = set()
+    for mid in entries:
+        if mid in seen:
+            p.append("%s: `tm:%s` is listed twice" % (lid, mid))
+        seen.add(mid)
+        if mid not in native_tm and mid not in recorded:
+            p.append("%s: `tm:%s` is not a tm: entry of %s in 1.8.0 and not recorded in the line's tm_additions"
+                     % (lid, mid, ", ".join(line["learnset_from"])))
+    return p
 
 
 def check(doc, jar=None):
@@ -162,9 +219,13 @@ def check(doc, jar=None):
         if any(B.key(n) not in allsp for n in members):
             continue
         legal = learnset_union(allsp, members)
+        native_tm = tm_union(allsp, members)
+        p.extend(check_tm_entries(line, native_tm, showdown, z))
         # the movepool: level:move, rising, every move in Showdown's data AND in the line's own 1.8.0 learnset
         last = 0
         for e in line["moves"]:
+            if TM_MOVE.match(e):
+                continue                      # checked above, against the jar and the line's tm_additions
             m = LEVEL_MOVE.match(e)
             if not m:
                 p.append("%s: move entry %r is not level:move" % (lid, e))
@@ -678,7 +739,8 @@ def measure(doc, ivs=15):
             k = "cobblers%sfinal%s" % (B.key(lid), B.key(f))
             nat = allsp[B.key(f.split()[0])]
             native = [e for e in nat.get("moves") or [] if e.split(":", 1)[1] not in SELF_KO]
-            sp = dict(nat, moves=native + [e for e in line["moves"] if int(e.split(":")[0]) <= lf], evolutions=[])
+            sp = dict(nat, moves=native + [e for e in line["moves"]
+                                           if LEVEL_MOVE.match(e) and int(e.split(":")[0]) <= lf], evolutions=[])
             species[k] = sp
             finals.append((f, k))
         res = {}
@@ -689,7 +751,9 @@ def measure(doc, ivs=15):
             foes = B.build_leader(t, species, moves, chart, ivs, False)
             options = ([("stage 1", syn[1])] if cap < l2 else [("stage 2", syn[2])] if cap < lf
                        else [("stage 3", syn[3])] if 3 in syn else [(f, k) for f, k in finals])
-            if "sketch_cap" in line:
+            # keyed on the line KEEPING Sketch, not on sketch_cap: the cap only limits how many copies, and with it off
+            # (the owner, 2026-10-08) keying on it measured Smeargle with no Sketch at all (9/35)
+            if "1:sketch" in line["moves"]:
                 # Sketch is the movepool: the moves of every EARLIER gym leader's team, learnt "at 1" so
                 # choose_moveset can pick them (a lower bound: wild Pokemon and route trainers are left out, and
                 # battle_sim models no Protean, so the Smeargle here is Normal throughout)

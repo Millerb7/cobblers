@@ -7,7 +7,10 @@ species the jar does not relate to it (CROSS_SPECIES_FINALS; the step's runtime 
 
 Written by a test author, not by the session that built them. It never imports tools/mythical_starters.py and never
 takes an expectation from data/mythical_starters.json's stage specs: the record's levels, aspects, shapes, BSTs and
-evolutions are exactly what is under audit, so none of them is read.
+evolutions are exactly what is under audit, so none of them is read. Two allow-lists ARE read from it, each the owner's
+recorded exception rather than a spec: a line's `authored_moves`, and its `tm_additions` (a non-native `tm:` entry
+passes only when the record names its move with a `decision`; Smeargle's `tm:uturn`, the owner 2026-10-08). The pivot
+spread and the U-turn entry on every Smeargle form are pinned here as constants (FORM_FINALS), not read.
 
 WHERE THE EXPECTATIONS COME FROM
   the decision   docs/mechanics/NATIVE_STARTERS_COST.md sections 6a and 7 (the owner, 2026-10-02): Cosmog, Kubfu,
@@ -69,14 +72,18 @@ ASPECT = {1: "cobblers_starter_1", 2: "cobblers_starter_2"}   # 6a table: the as
 # so its line is three forms of the one species, the third at 45 "about 450 at 74/79/60/79/60/98"; stages 1 and 2
 # keep 330 and 430 in that same spread; Protean in every form; Sketch kept in every form and capped at 10 uses per
 # Pokemon; Spore and Shell Smash arrive only through Sketch.
-BST[3] = 450
+# The pivot decision (the owner, 2026-10-08; docs/research/notes/smeargle-pivot.md section 7): Smeargle is a fast
+# pivot, its final form "476: 92/68/78/68/78/92", stages 1 and 2 still 330 and 430 in that spread; and "add U-turn to
+# Smeargle's TM list", so every form carries `tm:uturn` for the native TM Machine.
+BST[3] = 476
 ASPECT[3] = "cobblers_starter_3"
 FORM_FINALS = {
     "smeargle": {
-        "shape": {"hp": 74, "attack": 79, "defence": 60, "special_attack": 79, "special_defence": 60, "speed": 98},
+        "shape": {"hp": 92, "attack": 68, "defence": 78, "special_attack": 68, "special_defence": 78, "speed": 92},
         "ability": "protean",
         "keeps": "sketch",
         "never_level_up": {"spore", "shellsmash"},
+        "tm": {"uturn"},
     },
 }
 SKETCH_CAP = 10                              # "capped at 10 uses per Pokemon"
@@ -272,7 +279,15 @@ def check_requirements(where, ev, line, final_step, native):
     return p
 
 
-def check_form(where, form, stage, line, species, moves, adds_species, authored):
+def native_tm(species, ids):
+    """The moves the jar's own species list as `tm:` learnset entries."""
+    return {e.split(":", 1)[1] for i in ids for e in species.get(i, {}).get("moves") or [] if str(e).startswith("tm:")}
+
+
+def check_form(where, form, stage, line, species, moves, adds_species, authored, tm_ok=frozenset()):
+    """`tm_ok`: the moves data/mythical_starters.json records in the line's `tm_additions` with a decision (the owner's
+    allow-list, read from the record and never from the generator). A form's `tm:` entry passes when it is a native
+    tm: entry of the line or recorded there; any other is a fault."""
     p = []
     if form.get("aspects") != [ASPECT[stage]]:
         p.append("%s: aspects %s, the decision selects stage %d by exactly [%s]"
@@ -316,6 +331,11 @@ def check_form(where, form, stage, line, species, moves, adds_species, authored)
         if early:
             p.append("%s: %s in the level-up moves; the decision is that they arrive only through Sketch"
                      % (where, early))
+        tms = {k for k, v in lv.items() if v == "tm"}
+        missing = sorted(ff.get("tm", set()) - tms)
+        if missing:
+            p.append("%s: no %s; the decision teaches them by the native TM Machine in every form"
+                     % (where, ", ".join("tm:%s" % m for m in missing)))
     elif "abilities" in form:
         # Since d9c422d the generator emits a stage's `abilities`; the decision sets a pool for Smeargle alone
         # (docs/STATE.md "Smeargle, the seventh starter"), so on any other line a form keeps its species' pool.
@@ -323,7 +343,17 @@ def check_form(where, form, stage, line, species, moves, adds_species, authored)
                  "its species' own" % (where, form.get("abilities"), sorted(FORM_FINALS)))
     members = {line, LINES[line][0]} | set(native_final_species(species, line))
     legal = learnset(species, members)
+    tm_native = native_tm(species, members)
     for e in form.get("moves") or []:
+        t = re.match(r"^tm:([a-z0-9]+)$", str(e))
+        if t:
+            mid = t.group(1)
+            if mid not in moves:
+                p.append("%s: %r is not a move in the jar" % (where, mid))
+            elif mid not in tm_native and mid not in tm_ok:
+                p.append("%s: %r is not a tm: entry of %s in 1.8.0 and is not recorded in the line's tm_additions"
+                         % (where, e, ", ".join(sorted(members))))
+            continue
         m = re.match(r"^(\d+):([a-z0-9]+)$", str(e))
         if not m:
             p.append("%s: move entry %r is not level:move" % (where, e))
@@ -349,7 +379,7 @@ def native_final_species(species, line):
     return sorted({k.split()[0] for k in native_finals(species, line)})
 
 
-def check_line(line, adds, species, moves, authored):
+def check_line(line, adds, species, moves, authored, tm_ok=frozenset()):
     """Walk the line as Cobblemon would, from the screen's stage-1 Pokemon to the native final."""
     p = []
     stage2 = LINES[line][0]
@@ -383,7 +413,7 @@ def check_line(line, adds, species, moves, authored):
         return p + ["%s: %d of our forms match the starter (%s, aspect %s); want exactly 1"
                     % (line, len(f1s), line, ASPECT[1])]
     f1 = f1s[0]
-    p += check_form("%s stage 1" % line, f1, 1, line, species, moves, line, authored)
+    p += check_form("%s stage 1" % line, f1, 1, line, species, moves, line, authored, tm_ok)
     if not f1.get("evolutions"):
         p.append("%s stage 1: no evolution" % line)
     f2 = None
@@ -406,9 +436,9 @@ def check_line(line, adds, species, moves, authored):
         f2 = f2s[0]
     if f2 is None:
         return p + ["%s: the chain never reaches a stage-2 form" % line]
-    p += check_form("%s stage 2" % line, f2, 2, line, species, moves, stage2, authored)
+    p += check_form("%s stage 2" % line, f2, 2, line, species, moves, stage2, authored, tm_ok)
     if line in FORM_FINALS:
-        return p + check_third_form(line, f2, adds, species, moves, authored)
+        return p + check_third_form(line, f2, adds, species, moves, authored, tm_ok)
     reached = {}
     for ev in f2.get("evolutions") or []:
         res = native_result(ev.get("result"))
@@ -438,7 +468,7 @@ def check_line(line, adds, species, moves, authored):
     return p
 
 
-def check_third_form(line, f2, adds, species, moves, authored):
+def check_third_form(line, f2, adds, species, moves, authored, tm_ok=frozenset()):
     """A line with no native final: stage 2 steps at 45 into a third form of the same species, which stays."""
     p = []
     evos = f2.get("evolutions") or []
@@ -458,7 +488,7 @@ def check_third_form(line, f2, adds, species, moves, authored):
     if len(f3s) != 1:
         return p + ["%s: %d of our forms match (%s, %s); want exactly 1" % (where, len(f3s), line, sorted(aspects))]
     f3 = f3s[0]
-    p += check_form("%s stage 3" % line, f3, 3, line, species, moves, line, authored)
+    p += check_form("%s stage 3" % line, f3, 3, line, species, moves, line, authored, tm_ok)
     if f3.get("evolutions"):
         p.append("%s stage 3: evolutions %s; the third form is where the line stays" % (line, f3.get("evolutions")))
     return p
@@ -569,10 +599,13 @@ def audit(pack=PACK, starters=STARTERS, spawns=SPAWNS, record=RECORD, upstream=U
     species, moves = load_jar(jar or find_jar())
     adds, faults = read_pack(Path(pack))
     rec = json.loads(Path(record).read_text(encoding="utf-8"))
-    authored = {}
+    authored, tm_added = {}, {}
     for line in rec.get("lines") or []:
         st = (line.get("stages") or [{}])[0].get("species")
         authored[_id(st)] = set(line.get("authored_moves") or [])
+        # the owner's allow-list of non-native `tm:` entries: only a recorded move with its decision counts
+        tm_added[_id(st)] = {str(a.get("move")) for a in line.get("tm_additions") or []
+                             if isinstance(a, dict) and a.get("move") and str(a.get("decision") or "").strip()}
     if adds:
         allowed = set(LINES) | {v[0] for v in LINES.values()}
         for sp in sorted(set(adds) - allowed):
@@ -584,7 +617,7 @@ def audit(pack=PACK, starters=STARTERS, spawns=SPAWNS, record=RECORD, upstream=U
             faults.append("our pack carries %d forms; the decision is %d (two stages x %d lines, 4, and a third form "
                           "for each of %s)" % (nforms, want, len(LINES), sorted(FORM_FINALS)))
         for line in LINES:
-            faults += check_line(line, adds, species, moves, authored.get(line, set()))
+            faults += check_line(line, adds, species, moves, authored.get(line, set()), tm_added.get(line, set()))
         faults += check_sketch_cap(pack)
     faults += check_screen(starters, species)
     faults += check_wild(spawns, record, upstream, species)
