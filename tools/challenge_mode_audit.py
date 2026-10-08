@@ -25,7 +25,7 @@ derive it from:
 
 Checks (FAIL fails the run; REPORT is a finding that needs an owner or another tool, not this audit):
 
-  C   config      allowStarterOnJoin false; the chooser's five species are the five standing in the lab
+  C   config      allowStarterOnJoin false; the chooser's eight species are the eight standing in the lab
   S   starter     world spawn inside the hint area; Oak's seat standable and reachable on foot from outside the lab
                   template (wooden doors pass, iron doors do not); the greet zone covers Oak's seat and opens his
                   conversation only for stage not_started, once; nothing teleports a player out of the spawn-to-Oak
@@ -90,6 +90,8 @@ import sys
 import zipfile
 from collections import Counter
 from pathlib import Path
+
+STARTER_COUNT = 8   # the owner, 2026-10-08: eight starters, and the set is closed
 
 ROOT = Path(__file__).resolve().parent.parent
 TOOLS = ROOT / "tools"
@@ -842,8 +844,10 @@ class Audit:
             self.fail("C:allow_on_join", "starters.json allowStarterOnJoin is %r, not false"
                       % cfg.get("allowStarterOnJoin"))
         species = [p.split()[0] for c in cfg.get("starters") or [] for p in c.get("pokemon") or []]
-        if len(species) != 5 or len(set(species)) != 5:
-            self.fail("C:five", "the chooser offers %d entries (%s), not five distinct" % (len(species), species))
+        # the owner, 2026-10-08: "Eight, and STOP THERE. The set is full and more dilutes the choice."
+        if len(species) != STARTER_COUNT or len(set(species)) != STARTER_COUNT:
+            self.fail("C:eight", "the chooser offers %d entries (%s), not %d distinct"
+                      % (len(species), species, STARTER_COUNT))
         scene = next((s for s in self.doc("scenes.json")["scenes"] if s["id"] == "oak_lab"), None)
         if scene is None:
             self.fail("C:lab_scene", "data/scenes.json has no oak_lab scene")
