@@ -45,6 +45,8 @@ differs from the data or if any authored shop sells a bought item at or below th
 server-wide file (read in the jar: `data/bank.json` `mechanism.verified`); `cobbledollars reload` re-reads it without
 a restart. That a sale pays in game is not run (`data/bank.json` `experiment`).
 
+`lenientdeath.json5` is Cobbleverse's file with one id added to the items kept on death: `cobblemon:beast_ball`, next to the Master Ball (the owner, 2026-10-08: the Beast Ball is the only ball that catches a dungeon boss and is exempt from blackout loss like the Master Ball; the Beast Ball key's audit, ef62faf, found Lenient Death kept the Master Ball on death and not the Beast Ball).
+
 `PastureLoot.json` is Cobbleverse's file with eight ids appended to `item_blacklist`: coal, raw copper, raw iron, iron
 ingot, iron nugget, redstone, diamond and emerald (the owner, after the 2026-10-10 overnight: `ranch_ore` is excluded,
 `data/bank.json` `decisions_pending` ranch_ore). The bank buys those ores at flat prices for miners, and a pastured
