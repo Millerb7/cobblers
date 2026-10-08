@@ -1,6 +1,6 @@
 # EXP-058: Do the structure_set overrides stop gym, League and legendary copies generating in the Nether and the End?
 
-**Status: NOT_EXECUTED.** Written 2026-10-10 by the builder of `tools/dimension_overrides.py`. Run and graded by
+**Status: PASSED (run 2026-10-08 by the main session, not the builder; not yet graded by a reviewer).** Written 2026-10-10 by the builder of `tools/dimension_overrides.py`. Run and graded by
 someone else (CLAUDE.md principle 16).
 
 Number: EXP-057 was the next free number in this checkout; the brief named EXP-058, which keeps clear of a
@@ -115,6 +115,41 @@ datapack list enabled
 - **Loads, but a structure is still found:** record which; the set may be duplicated at another path (re-run the
   audit) or overridden by a later pack.
 
-## Results
+## Results (2026-10-08, main session)
 
-Not run.
+Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, the server's full mod set and global datapacks
+(COBBLEVERSE-DP-v31, -RCT-DP-v20, -Loot-DP-v11, No Hunger, No Ender Dragon), `cobblers-server` booted at 16G with
+`--universe C:/Users/wnd/Documents/cobblers-staging`. Worlds `exp058_control` and `exp058_control2`, seed
+-7807808745076202749, both disposable. Raw replies: the session scratchpad `exp058_*.txt`; audits `derived/exp058/`.
+
+**The design above was not enough, and was changed while running.** `locate` in run B returned run A's positions
+unchanged, because run A's own `locate` had already created those chunks at STRUCTURE_STARTS: the starts were saved
+before the pack existed, and the pack cannot remove them. Forceloading the same positions in run B (step 4) would
+likewise read run A's saved starts. So the proof used FRESH positions: a second control world on the same seed
+(`exp058_control2`, no pack) located each structure from (6000, 64, 6000), and the same four chunks were then
+forceloaded in both worlds. (Candidate positions were also reproduced independently from the seed with vanilla's
+random_spread formula: Blaine chunk (-38, 57), Moltres (43, 10), League (-96, 50), all three matching run A.)
+
+| Check | Without the pack | With the pack |
+|---|---|---|
+| boot | Done | Done; `Found new data pack file/cobblers_dimension_overrides, loading it automatically`; no error names the pack or a structure_set (the raid-den loot errors are the mod's own, in both runs) |
+| pack order (`datapack list enabled`, 113 packs) | - | `file/cobblers_dimension_overrides (world)` at 112, after `COBBLEVERSE-DP-v31.zip (Global)` at 54: highest priority |
+| locate from (6000, 6000): blaine | 555 blocks | 8,339 (only run A's saved start) |
+| moltres | 1,173 | 7,894 (only run A's saved start) |
+| kanto_league (End) | 2,720 | 9,155 (only run A's saved start) |
+| firescourge_shrine (kept) | 781 | 781 |
+| region files, Nether (6112, 6544) | 1 start `cobbleverse:blaine` | 0 starts |
+| Nether (4944, 5488) | 1 start `cobbleverse:legendary/moltres` | 0 starts |
+| End (5936, 8720) | 1 start `cobbleverse:kanto_league` | 0 starts |
+| Nether (5552, 5360) | firescourge_shrine, ruins_nether, outpost_nether_brick | the same three |
+| stark_mountain | not found (run A) | not found |
+
+Each audited box: 64 chunks saved, 25 full.
+
+**Verdict: the override works on 1.21.1 with this pack set. It stops Blaine, Moltres and League starts in fresh
+chunks and leaves the kept shrines and other mods' Nether structures alone.** Dawn tower, dusk tower and Eternatus
+were checked with run B's `locate` only, not region files (same mechanism, same pack file).
+
+**Finding for the live world:** a `locate` (or any structure check that reaches STRUCTURE_STARTS) in the Nether or
+the End **before** the pack is installed saves a start that the pack cannot remove. Install the pack before anyone
+enters either dimension or runs `locate` there.
