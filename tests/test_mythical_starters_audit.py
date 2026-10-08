@@ -438,6 +438,153 @@ def test_the_sketch_cap_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path, 
     assert_named(faults(jar, build(monkeypatch, tmp_path)), needle)
 
 
+# ------------------------------------------------------------------------- independent review, 2026-10-08
+# Written by the reviewer of 4012bdb (Misdreavus) and d9c422d (Smeargle), not by either builder: neither unit
+# mutation-tested its own new checks (the per-stage shape, the cross-species step, Smeargle's third form and the Sketch
+# cap's files). Every case below mutates the GENERATOR's output (`addition`, `files`, `sketch_files`) and leaves the
+# record alone; every expected number is hand-computed from the jar's base stats or the owner's spread, not read from
+# the generator. Not covered (runtime, EXP-068 / EXP-065): the step into Flutter Mane happening in game, the aspect
+# being removed there, and the Sketch cap counting.
+
+def _on(species, aspect, fn):
+    """Apply fn to our form of `species` that carries exactly [aspect]."""
+    def m(sp, a):
+        if sp == species:
+            for f in stage(a, aspect):
+                fn(f)
+    return m
+
+
+def _stats(hp, atk, de, spa, spd, spe):
+    return {"hp": hp, "attack": atk, "defence": de, "special_attack": spa, "special_defence": spd, "speed": spe}
+
+
+def _result(text):
+    def fn(f):
+        f["evolutions"][0]["result"] = text
+    return fn
+
+
+A3 = "cobblers_starter_3"
+
+
+@pytest.mark.parametrize("mutate, needle", [
+    # Without it stage 1 could be scaled into Mismagius's shape (the older one-species pattern: 330 x 60/495 = 40,
+    # 105/495 = 70) instead of its own, Misdreavus's 60/60/60/85/85/85: hp share 60 x 330 / 435 = 45.52
+    (_on("misdreavus", A1, lambda f: f.update(baseStats=_stats(40, 40, 40, 70, 70, 70))),
+     "misdreavus stage 1: hp 40 is not misdreavus's share 45.52 of 330"),
+    # Without it stage 2 could stay in Misdreavus's shape (430 x 60/435 = 59.3); Mismagius's share is 60 x 430/495
+    (_on("mismagius", A2, lambda f: f.update(baseStats=_stats(59, 59, 59, 84, 84, 85))),
+     "misdreavus stage 2: hp 59 is not mismagius's share 52.12 of 430"),
+])
+def test_a_misdreavus_stage_in_the_wrong_species_shape_is_a_fault(jar, monkeypatch, tmp_path, mutate, needle):
+    assert_named(faults(jar, build(monkeypatch, tmp_path, mutate)), needle)
+
+
+@pytest.mark.parametrize("mutate, needle", [
+    # Without it the 45 step could point at another species (here another paradox) with the aspect handling kept
+    (_on("mismagius", A2, _result("screamtail unaspect=%s" % A2)),
+     "misdreavus: stage 2 reaches ['screamtail']; the jar's native finals are ['fluttermane']"),
+    # ...or back into Mismagius, so the line never leaves stage 2's species
+    (_on("mismagius", A2, _result("mismagius unaspect=%s" % A2)),
+     "misdreavus: stage 2 reaches ['mismagius']"),
+    # Without it Flutter Mane could keep cobblers_starter_2: a final carrying our aspect (finals stay native)
+    (_on("mismagius", A2, _result("fluttermane")), "the final keeps our aspect ['cobblers_starter_2']"),
+    # Without it the starter Misdreavus could also take a Dusk Stone before 30 (the jar's own Misdreavus step)
+    (_on("misdreavus", A1, lambda f: f["evolutions"].append(
+        {"id": "x", "variant": "item_interact", "result": "mismagius unaspect=%s aspect=%s" % (A1, A2),
+         "requiredContext": "cobblemon:dusk_stone", "requirements": []})),
+     "variant 'item_interact'; the decision advances this step by level_up"),
+])
+def test_the_cross_species_step_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path, mutate, needle):
+    assert_named(faults(jar, build(monkeypatch, tmp_path, mutate)), needle)
+
+
+# Without it our pack could add forms to Flutter Mane itself, so the final would not be the jar's own species.
+def test_a_form_on_the_cross_species_final_is_a_fault(jar, monkeypatch, tmp_path):
+    extra = {"data/cobblers/species_additions/x_fluttermane.json":
+             {"target": "cobblemon:fluttermane", "forms": [{"name": "Starter", "aspects": [A2]}]}}
+    assert_named(faults(jar, build(monkeypatch, tmp_path, extra=extra)), "adds to fluttermane")
+
+
+# Without it the premise could quietly change under a new jar: a Mismagius that evolves natively (so the tagged step
+# displaces something) or a Flutter Mane that joins a line. These mutate the JAR's view, because the premise is the
+# jar's; the generator and record are untouched.
+@pytest.mark.parametrize("sp, change, needle", [
+    ("mismagius", {"evolutions": [{"variant": "level_up", "result": "fluttermane"}]},
+     "the jar now gives mismagius a native evolution"),
+    ("fluttermane", {"preEvolution": "mismagius"}, "the jar now relates fluttermane to a line"),
+])
+def test_the_cross_species_premise_is_checked_against_the_jar(jar, monkeypatch, tmp_path, sp, change, needle):
+    pack = build(monkeypatch, tmp_path)
+    original = AU.load_jar
+
+    def changed(j):
+        species, moves = original(j)
+        species = dict(species)
+        species[sp] = dict(species[sp], **change)
+        return species, moves
+    monkeypatch.setattr(AU, "load_jar", changed)
+    assert_named(faults(jar, pack), needle)
+
+
+@pytest.mark.parametrize("mutate, needle", [
+    # Without it the third form could leave the owner's 74/79/60/79/60/98 (attack and speed swapped: share 79.00)
+    (_on("smeargle", A3, lambda f: f.update(baseStats=_stats(74, 98, 60, 79, 60, 79))),
+     "smeargle stage 3: attack 98 is not the decided spread's share 79.00 of 450"),
+    # Without it stage 1 could be scaled into the jar's Smeargle (55/20/35/20/45/75) instead: hp 74 x 330/450
+    (_on("smeargle", A1, lambda f: f.update(baseStats=_stats(73, 26, 46, 26, 60, 99))),
+     "smeargle stage 1: hp 73 is not the decided spread's share 54.27 of 330"),
+    # Without it the third form alone could lose Protean (the earlier case strips every form at once)
+    (_on("smeargle", A3, lambda f: f.pop("abilities")), "smeargle stage 3: abilities None"),
+    # Without it the third form could evolve on, and the line would not stay at 450
+    (_on("smeargle", A3, lambda f: f.update(evolutions=[{"variant": "level_up", "result": "smeargle"}])),
+     "the third form is where the line stays"),
+    # Without it the 45 step could leave Smeargle for another species
+    (_on("smeargle", A2, _result("exploud unaspect=%s aspect=%s" % (A2, A3))), "the third form is smeargle's own"),
+    # Without it the 45 step could drop cobblers_starter_2 without adding _3, landing on plain Smeargle
+    (_on("smeargle", A2, _result("smeargle unaspect=%s" % A2)), "the third form needs exactly cobblers_starter_3"),
+])
+def test_smeargles_third_form_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path, mutate, needle):
+    assert_named(faults(jar, build(monkeypatch, tmp_path, mutate)), needle)
+
+
+# Without it, since d9c422d taught the generator to emit a stage's `abilities`, any other line's form could carry an
+# ability pool (Protean on Cosmog) and pass: the audit only looked at abilities on Smeargle.
+def test_an_ability_pool_on_a_line_the_decision_gives_none_is_a_fault(jar, monkeypatch, tmp_path):
+    m = _on("cosmog", A1, lambda f: f.update(abilities=["protean", "h:protean"]))
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "cosmog stage 1: abilities ['protean', 'h:protean']")
+
+
+@pytest.mark.parametrize("event", ["battle_started_post", "battle_victory", "battle_fled"])
+# Without it any one of the three callbacks could be dropped (the earlier case drops only battle_fled)
+def test_each_sketch_callback_is_required(jar, monkeypatch, tmp_path, event):
+    original = MS.sketch_files
+    monkeypatch.setattr(MS, "sketch_files", lambda line: {k: v for k, v in original(line).items() if event not in k})
+    assert_named(faults(jar, build(monkeypatch, tmp_path)), "%s/cobblers_sketch_cap.molang is missing" % event)
+
+
+# Without it the callbacks could count to a number other than the decided 10 while the override still refused at 10.
+def test_sketch_callbacks_that_stop_short_of_ten_are_a_fault(jar, monkeypatch, tmp_path):
+    original = MS.sketch_files
+
+    def nine(line):
+        line = copy.deepcopy(line)
+        line["sketch_cap"]["uses"] = 9
+        return original(line)
+    monkeypatch.setattr(MS, "sketch_files", nine)
+    assert_named(faults(jar, build(monkeypatch, tmp_path)),
+                 "battle_victory/cobblers_sketch_cap.molang never raises the count to 10")
+
+
+# Without it the move override itself could be missing and Sketch would be uncapped.
+def test_a_missing_sketch_override_is_a_fault(jar, monkeypatch, tmp_path):
+    original = MS.files
+    monkeypatch.setattr(MS, "files", lambda doc, jar=None: {k: v for k, v in original(doc, jar).items()
+                                                             if not k.endswith("moves/sketch.js")})
+    assert_named(faults(jar, build(monkeypatch, tmp_path)), "data/cobblers/moves/sketch.js is missing")
+
+
 # Without it the audit could start reusing the builder's own derivation and agree with it about anything.
 def test_the_audit_does_not_import_the_builder():
     src = (ROOT / "tools" / "mythical_starters_audit.py").read_text(encoding="utf-8")
