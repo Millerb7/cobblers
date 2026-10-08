@@ -65,6 +65,8 @@ OUTLIERS = {
     15: {T + "sludgebomb": (7, 6), T + "ironhead": (6, 5)},
     16: {T + "return": (7, 7), T + "frustration": (7, 7)},  # measured 2026-10-08: full power is cheap, so 102's band
     17: {T + "glare": (7, 6)},
+    # the owner, 2026-10-08: "lower Spore rather than leaving Stun Spore at 8": Stun Spore's own band (75 -> 5)
+    18: {T + "spore": (8, 5)},
 }
 # the shelf lines the groups also name, which the shelf already places at the group's badge (groups 7, 8, 12, 15)
 SHELF_AGREES = {T + "calmmind": 6, T + "earthquake": 8, T + "fissure": 8, T + "poisonjab": 5}
@@ -94,15 +96,17 @@ BY_HAND = {
 # docs/mechanics/TM_POWER_GATE.md 3: TMs by badge, the rule alone and with the shelf
 PROPOSAL_POWER_RULE = {1: 163, 2: 122, 3: 110, 4: 104, 5: 107, 6: 99, 7: 66, 8: 31}
 PROPOSAL_WITH_SHELF = {1: 166, 2: 122, 3: 107, 4: 103, 5: 109, 6: 96, 7: 66, 8: 33}
-APPLIED = {1: 165, 2: 120, 3: 99, 4: 85, 5: 122, 6: 99, 7: 77, 8: 35}
-# the owner, 2026-10-08: "A craft that unlocks before its input is a dead recipe". The four chain TMs of the
-# 2026-10-05 snapshot that opened before their input (read from tmcraft-1.4.19's recipes, listed here by hand):
+APPLIED = {1: 165, 2: 120, 3: 99, 4: 85, 5: 123, 6: 99, 7: 77, 8: 34}  # group 18: Spore 8 -> 5
+# the owner, 2026-10-08: "A craft that unlocks before its input is a dead recipe". The chain TMs of the 2026-10-05
+# snapshot that opened before their input (read from tmcraft-1.4.19's recipes, listed here by hand):
 # chain TM -> (its input TM, the badge before the raise, the input's badge)
 CHAIN_RAISES = {T + "boneclub": (T + "bonemerang", 3, 6), T + "nobleroar": (T + "roar", 1, 2),
-                T + "stunspore": (T + "spore", 5, 8), T + "triplekick": (T + "doublekick", 2, 3)}
-# the snapshot's plan: APPLIED with the four raises (1: -1 Noble Roar; 2: +1 Noble Roar -1 Triple Kick; 3: -1 Bone
-# Club +1 Triple Kick; 5: -1 Stun Spore; 6: +1 Bone Club; 8: +1 Stun Spore)
-SNAPSHOT_APPLIED = {1: 164, 2: 120, 3: 99, 4: 85, 5: 121, 6: 100, 7: 77, 8: 36}
+                T + "triplekick": (T + "doublekick", 2, 3)}
+# the fourth chain, which no longer needs a raise: Stun Spore (band 5) from Spore, placed at 5 by group 18
+SPORE_CHAIN = (T + "stunspore", T + "spore", 5)
+# the snapshot's plan: APPLIED with the three raises (1: -1 Noble Roar; 2: +1 Noble Roar -1 Triple Kick; 3: -1 Bone
+# Club +1 Triple Kick; 6: +1 Bone Club). Before group 18 it was {..., 5: 121, ..., 8: 36}: Spore and Stun Spore at 8
+SNAPSHOT_APPLIED = {1: 164, 2: 120, 3: 99, 4: 85, 5: 123, 6: 100, 7: 77, 8: 34}
 TM_ID = re.compile(r'"(tmcraft:tm_[a-z0-9_]+)"')
 
 
@@ -386,9 +390,9 @@ def test_the_distribution_is_the_proposals_moved_only_by_the_outliers():
             want[after] += 1
     got = collections.Counter(t["badge"] for t in tms.values())
     assert dict(got) == dict(want)
-    assert dict(got) == APPLIED  # the delta, stated: {1: -1, 2: -2, 3: -8, 4: -18, 5: +13, 6: +3, 7: +11, 8: +2}
+    assert dict(got) == APPLIED  # the delta, stated: {1: -1, 2: -2, 3: -8, 4: -18, 5: +14, 6: +3, 7: +11, 8: +1}
     assert {b: APPLIED[b] - PROPOSAL_WITH_SHELF[b] for b in APPLIED} == \
-        {1: -1, 2: -2, 3: -8, 4: -18, 5: 13, 6: 3, 7: 11, 8: 2}
+        {1: -1, 2: -2, 3: -8, 4: -18, 5: 14, 6: 3, 7: 11, 8: 1}
 
 
 def test_an_outlier_placed_on_a_shelf_tm_is_refused():
@@ -528,7 +532,7 @@ def test_the_snapshot_places_every_tm_by_the_power_rule_and_matches_the_shelf():
     tm_gated = {rid for rid, g in plan["gated"].items() if not g.get("device")}
     assert made == tm_gated
     assert len(plan["tms"]) == 802
-    assert plan["distribution"] == SNAPSHOT_APPLIED  # APPLIED, moved only by the four chain raises
+    assert plan["distribution"] == SNAPSHOT_APPLIED  # APPLIED, moved only by the three chain raises
     assert outlier_failures(plan["tms"]) == []
     assert plan["tms"]["tmcraft:tm_shadowball"]["badge"] == 5  # 81.6: no longer waiting for badge 8 by type
 
@@ -628,3 +632,67 @@ def test_mutant_that_drops_the_hyper_beam_class_placements_is_caught():
     fails = outlier_failures(tms)
     assert {f.split(" ")[2].rstrip(":") for f in fails} == set(OUTLIERS[9]), fails
     assert all(f.startswith("group 9 ") for f in fails)
+
+
+# ---------------------------------------------------------------- the owner, 2026-10-08: Spore lowered for Stun Spore
+
+def test_spore_is_placed_at_stun_spores_own_band_by_its_own_group():
+    tms, problems = _place(G)
+    assert problems == []
+    chain_tm, inp, badge = SPORE_CHAIN
+    # Stun Spore's own band, worked by hand: 75% x paralysis 100 = 75, inside badge 5 (64.1-84)
+    assert (tms[chain_tm]["score"], tms[chain_tm]["power_badge"]) == (75.0, badge)
+    assert (tms[inp]["score"], tms[inp]["power_badge"], tms[inp]["badge"]) == (110.0, 8, badge)
+    assert tms[inp]["rule"].startswith("outlier 18 ("), tms[inp]["rule"]
+    groups = {g["group"]: g for g in G.load()["badge_rule"]["power"]["outliers"]}
+    # its own named, reasoned group: not Thunder Wave's (1), and group 17 no longer says it is left at its band
+    assert inp not in groups[1]["place"] and inp not in groups[17].get("not_placed", {})
+    assert groups[18]["place"] == {inp: badge}
+    assert {"decision", "badge", "why_its_own_group", "what_it_costs"} <= set(groups[18]["placed_2026_10_08"])
+    # the other sleep moves the group's cost names: Spore now opens with the 75% sleeps and before Glare
+    assert {tms[T + m]["badge"] for m in ("sleeppowder", "lovelykiss")} == {badge}
+    assert tms[T + "glare"]["badge"] == badge + 1
+
+
+@pytest.mark.skipif(not (SNAPSHOT / "mods").is_dir(), reason="no server snapshot at %s" % SNAPSHOT)
+def test_stun_spore_opens_with_spore_and_the_chain_raises_nothing_for_it():
+    plan, resolved = _snapshot_plan()
+    assert plan["problems"] == [], plan["problems"][:5]
+    chain_tm, inp, badge = SPORE_CHAIN
+    chains = chain_inputs(resolved)
+    # the recipe still takes the Spore TM (read here from the recipe JSON, not through traits())
+    assert any(item == chain_tm and inp in ins for (_, item), ins in chains.items())
+    assert plan["tms"][chain_tm]["badge"] == plan["tms"][inp]["badge"] == badge
+    assert chain_tm not in {r["item"] for r in plan["chain_raises"]}
+    assert "chain:" not in plan["tms"][chain_tm]["rule"]
+    assert chain_failures(plan, chains) == []  # and the chain rule holds for every chain TM
+    declared = G.load()["badge_rule"]["chain"]
+    assert chain_tm not in {d["item"] for d in declared["raises"]}
+    assert [d["item"] for d in declared["superseded_raises"]] == [chain_tm]
+
+
+@pytest.mark.skipif(not (SNAPSHOT / "mods").is_dir(), reason="no server snapshot at %s" % SNAPSHOT)
+def test_mutant_that_drops_group_18_is_caught_by_the_chain_rule_and_the_outlier_check():
+    m = _mutant(('for g in rule["outliers"]:', 'for g in [g for g in rule["outliers"] if g["group"] != 18]:'))
+    plan, resolved = _snapshot_plan(m)
+    chain_tm, inp, badge = SPORE_CHAIN
+    assert plan["tms"][inp]["badge"] == 8
+    # the chain rule still holds (Stun Spore is raised with it), but the raise is not declared, so the plan fails
+    assert plan["tms"][chain_tm]["badge"] == 8
+    assert chain_failures(plan, chain_inputs(resolved)) == []
+    assert "%s is raised 5 -> 8 to its input %s, and badge_rule.chain.raises does not list it" % (chain_tm, inp) \
+        in plan["problems"], plan["problems"]
+    assert outlier_failures(plan["tms"]) == ["group 18 %s: rule 8 -> placed 8, the proposal says 8 -> 5" % inp]
+
+
+@pytest.mark.skipif(not (SNAPSHOT / "mods").is_dir(), reason="no server snapshot at %s" % SNAPSHOT)
+def test_mutant_that_drops_group_18_and_the_chain_raise_leaves_a_dead_recipe_the_check_names():
+    # without group 18 AND without the raise, Stun Spore opens at 5 from a badge-8 Spore: the dead-recipe check and the
+    # independent chain check both name it
+    m = _mutant(('for g in rule["outliers"]:', 'for g in [g for g in rule["outliers"] if g["group"] != 18]:'),
+                ("            if need > badge[item]:\n", "            if False:\n"))
+    plan, resolved = _snapshot_plan(m)
+    chain_tm, inp, badge = SPORE_CHAIN
+    fails = chain_failures(plan, chain_inputs(resolved))
+    assert any(": %s 5 < %s 8" % (chain_tm, inp) in f for f in fails), fails
+    assert any(chain_tm in p and "a dead recipe" in p for p in plan["problems"]), plan["problems"]

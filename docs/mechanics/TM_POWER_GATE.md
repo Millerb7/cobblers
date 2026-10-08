@@ -225,7 +225,8 @@ A pure number misjudges these. Each has a suggested hand placement; all are appl
 | 14 | Conditional doublers: Hex, Venoshock (65 -> 4), Facade (70 -> 4), Acrobatics (55 -> 3), Weather Ball (50 -> 2) | Left at stated power on purpose (2.1). Each doubles in a condition a player can set up: 130, 130, 140, 110, 100 | Hex, Venoshock, Facade, Acrobatics 5; Weather Ball 4 |
 | 15 | Band edges: Sludge Bomb (94.5 -> 7) vs Psychic (90.8 -> 6); Poison Jab (84.5 -> 6, shelf 5), Iron Head (84.5 -> 6) vs X-Scissor (80 -> 5) | A 30% side effect pushes a 90 or an 80 over the four-point allowance. Any edge cuts somewhere | Sludge Bomb 6; Iron Head 5 (Poison Jab keeps its shelf 5) |
 | 16 | Return, Frustration | 100 -> 7 | Nominal 100 assumes full (or zero) friendship. Measured 2026-10-08 (section 9.1): full power is a purchase at badge 4 for Return and the starting point for Frustration | ~~6, or measure first~~ 7 (measured) |
-| 17 | Signature and one-species TMs: V-create, Double Iron Bash, Multi-Attack, Revival Blessing, Spore, Glare (100 -> 7) ... | The score ignores who can learn it. A badge-8 Sunsteel Strike matters to one species. Harmless in either direction; Glare beating Thunder Wave is correct | leave; if Thunder Wave moves to 5, Glare to 6 |
+| 17 | Signature and one-species TMs: V-create, Double Iron Bash, Multi-Attack, Revival Blessing, Spore, Glare (100 -> 7) ... | The score ignores who can learn it. A badge-8 Sunsteel Strike matters to one species. Harmless in either direction; Glare beating Thunder Wave is correct | leave; if Thunder Wave moves to 5, Glare to 6 (Spore: moved by 18) |
+| 18 | Spore (110 -> 8) | Nothing in its own score. Spore is also an **input**: TMCraft's Stun Spore recipe takes the Spore TM, so the chain rule (9.2) held Stun Spore (75 -> 5) at 8 with it. The owner, 2026-10-08: "lower Spore rather than leaving Stun Spore at 8" | 5 (Stun Spore's own band) |
 
 What the rule cannot see at all, and does not try to: **learnsets** (outlier 17), **the disc grade** (crafting cost,
 below), **combos** (Rain Dance + Thunder, Sunny Day + Solar Beam, Toxic + Hex), and **the level caps**: a score is
@@ -269,9 +270,9 @@ Never point either at `C:/Users/wnd/Documents/github/cobblers-server/`, the runn
 
 ## 9. What the gate places (the snapshot of 2026-10-05, measured 2026-10-08)
 
-802 TMs: 23 by the shelf, 50 by an outlier group (7 of them hold a TM at its own band: Flip Turn, Shift Gear, Shell
-Smash, Seismic Toss, Night Shade, Return, Frustration), 729 by their band; then 4 chain TMs raised to their input's
-badge (9.2).
+802 TMs: 23 by the shelf, 51 by an outlier group (7 of them hold a TM at its own band: Flip Turn, Shift Gear, Shell
+Smash, Seismic Toss, Night Shade, Return, Frustration), 728 by their band; then 3 chain TMs raised to their input's
+badge (9.2). Measured: `python tools/tm_gate.py --server-dir <snapshot>`, 2026-10-08.
 
 | Badge | With the shelf (section 3) | Shelf and outliers | And the chain raises (the plan) | Delta |
 |---:|---:|---:|---:|---:|
@@ -279,14 +280,15 @@ badge (9.2).
 | 2 | 122 | 120 | 120 | -2 |
 | 3 | 107 | 99 | 99 | -8 |
 | 4 | 103 | 85 | 85 | -18 |
-| 5 | 109 | 122 | 121 | +12 |
+| 5 | 109 | 123 | 123 | +14 |
 | 6 | 96 | 99 | 100 | +4 |
 | 7 | 66 | 77 | 77 | +11 |
-| 8 | 33 | 35 | 36 | +3 |
+| 8 | 33 | 34 | 34 | +1 |
 
-The owner's calls of 2026-10-08 moved seven TMs and raised four: Inferno 3 -> 5 and Zap Cannon 4 -> 5 (group 3);
+The owner's calls of 2026-10-08 moved eight TMs and raised three: Inferno 3 -> 5 and Zap Cannon 4 -> 5 (group 3);
 Meteor Assault 4 -> 7, Prismatic Laser 5 -> 7, Roar of Time 4 -> 7 (group 9); Return and Frustration 6 -> 7 (group
-16, measured in 9.1); the chain raises of 9.2.
+16, measured in 9.1); Spore 8 -> 5 (group 18, 9.2); the chain raises of 9.2. Spore's move changed the plan's
+distribution by two TMs: 5 from 121 to 123 and 8 from 36 to 34 (Spore and Stun Spore, both now at 5).
 
 The strongest TM at each badge as applied, by score (a placed outlier keeps its score, so Hyper Beam at 7 reads 64.1):
 
@@ -296,7 +298,7 @@ The strongest TM at each badge as applied, by score (a placed outlier keeps its 
 | 2 | Scald 89 (shelf) | Leech Seed 54 |
 | 3 | Thunderbolt 93 (shelf) | Synthesis, Morning Sun 61.8 |
 | 4 | Giga Drain 90 (shelf); by the rule, Spark 74 | Soft-Boiled, Slack Off 71.2 |
-| 5 | U-turn, Volt Switch 90 (outlier 5) | Thunder Wave 90 (outlier 1) |
+| 5 | U-turn, Volt Switch 90 (outlier 5) | Spore 110 (outlier 18); Thunder Wave 90 (outlier 1) |
 | 6 | Sludge Bomb 94.5 (outlier 15); Body Slam, Dire Claw 94 | Glare 100 (outlier 17) |
 | 7 | Searing Shot, Oblivion Wing 104; Return, Frustration 100 (102 at full or zero friendship, outlier 16) | Shift Gear 95 (outlier 7) |
 | 8 | Boomburst 140 | Shell Smash 125 |
@@ -309,8 +311,10 @@ zipfile, 2026-10-08; nothing run in game). The full record, with the class each 
 
 - **Power**: Return = floor(friendship x 10 / 25), Frustration the same of (255 - friendship): 102 at 255 or 0.
   Cobblemon packs the friendship into the Showdown team. `maxPokemonFriendship` is 255; no rate multiplier exists.
-- **Start**: the species' base friendship: 837 species at 50, 79 at 0. Four of our eight starters start at 0
-  (Cosmog, Type: Null, Poipole, Meltan). The Friend Ball sets 150; the Luxury Ball's boost does nothing in 1.8.0.
+- **Start**: a wild Pokemon from a natural spawn takes its species' base friendship: 837 species at 50, 79 at 0.
+  ~~Four of our eight starters start at 0 (Cosmog, Type: Null, Poipole, Meltan).~~ **Corrected 2026-10-08 (section
+  10.1): a starter does not take its own species' base**; it takes a random species'. The Friend Ball sets 150; the
+  Luxury Ball's boost does nothing in 1.8.0.
 - **Level-up**: +3 below 100, +2 below 200, **+0 from 200**. Levels alone stop at about 200: Return 80.
 - **Walking**: +1 every 120 seconds to a party Pokemon sent out or shouldered, **only below 160** (30 an hour).
 - **Battles**: nothing. An X item used in battle gives +1.
@@ -322,21 +326,112 @@ Return for a base-50 starter levelled to each badge's cap (badges 1-7: caps 25-5
 54, 58, 62, 66; holding a Soothe Bell: 52, 58, 64, 70, 76, 80, 80. **But 102 is a purchase**: walk the Pokemon to
 160 (3.7 hours out, 1.8 with the bell), then 8 malasadas (6 with the bell) from greenhollow's badge-4 counter (900
 each) or steepside's (700). Frustration is cheaper still: a base-0 Pokemon has it at 102 when taught, and a
-base-0 starter at cap 25 still has 78. Full power is reachable three badges before badge 7, so the proposal's
+base-0 Pokemon caught at level 5 and levelled to cap 25 still has 78. Full power is reachable three badges before badge 7, so the proposal's
 nominal 100 stands, and 102 sits in the badge-7 band (94.1-104): **both at 7**, their own band.
 
 ### 9.2 Chain TMs (the owner, 2026-10-08: "A craft that unlocks before its input is a dead recipe")
 
-Four TMCraft recipes take another TM, and opened before it. Each chain TM is raised to its input's badge; no input
-moves (`data/tm_gate.json` `badge_rule.chain.raises`):
+Four TMCraft recipes take another TM, and opened before it. Three chain TMs are raised to their input's badge; the
+chain rule moves no input (`data/tm_gate.json` `badge_rule.chain.raises`):
 
 | Chain TM | Input TM | Badge before | Raised to |
 |---|---|---:|---:|
 | Bone Club (56.5) | Bonemerang (90) | 3 | 6 |
 | Noble Roar (30) | Roar (45) | 1 | 2 |
-| Stun Spore (75) | Spore (110, left at its band by group 17) | 5 | 8 |
+| ~~Stun Spore (75)~~ | ~~Spore (110)~~ | ~~5~~ | ~~8~~: no raise; Spore placed at 5 by group 18 |
 | Triple Kick (46.8) | Double Kick (60) | 2 | 3 |
 
-Stun Spore at 8 is the costliest: a badge-5 status move waits three badges for its input. The other fix, lowering
-Spore, is the owner's to make, not the chain rule's. The rule holds for every TM: the plan fails when a raise is not
-listed, when a listed raise no longer matches, and when any recipe still opens before its input.
+**Stun Spore and Spore (the owner, 2026-10-08: "lower Spore rather than leaving Stun Spore at 8").** Stun Spore at 8
+was the costliest raise, a badge-5 status move waiting three badges for its input. Spore is now placed by hand at **5**,
+Stun Spore's own band, by its own outlier group 18; the chain rule then finds Stun Spore (5) no earlier than Spore
+(5) and raises nothing. The chain rule was not bent: the input moved by a named placement, and the rule still checks
+it. The overruled raise is kept as `badge_rule.chain.superseded_raises`.
+
+*Is Spore in Thunder Wave's group?* No, and that is deliberate. (The brief called Thunder Wave's group "group 3";
+in the data it is **group 1**, Thunder Wave alone at 5. Group 3 is Nuzzle, Inferno and Zap Cannon: damaging moves
+with a guaranteed status, also at 5.) Spore shares their **badge** but none of their **reasons**: groups 1 and 3 move
+a move the score misjudges, while Spore's score (a 100% sleep, 110) is right, and Spore moves for a reason outside it,
+the recipe that takes it. Sleep is not paralysis either: a sleeping target does not act for its sleep turns, while a
+paralysed one acts three times in four, and the score table already values them apart (110 against 100, 2.2). So if
+sleep "belonged" anywhere by its own merit it would be with the other sleep moves by score, Sleep Powder and Lovely
+Kiss (75% sleep, 82.5, band 5), which is where Spore now opens. **What it costs:** a guaranteed sleep (Spore, 5) now
+opens a badge before a guaranteed paralysis (Glare, 6, group 17), the inverse of their scores. That is the owner's
+trade, recorded in group 18's `what_it_costs`; moving Glare to 5 would close it and is the owner's call.
+
+The rule holds for every TM: the plan fails when a raise is not listed, when a listed raise no longer matches, and
+when any recipe still opens before its input.
+
+## 10. Frustration: higher, off the shelf, or 7? (analysis for the owner, 2026-10-08; NOT applied)
+
+The owner, 2026-10-08: *"FRUSTRATION: full power from the start for 79 species including four of our starters is a
+real problem. A max-power move at badge 7 that is already max for a quarter of the dex is not gated at all. Say
+whether Frustration should go higher, or come off the shelf entirely."* Frustration stays at 7 (group 16) until the
+owner decides. Everything below is read from the 2026-10-05 snapshot's jars (`Cobblemon-fabric-1.8.0+1.21.1.jar`,
+`tmcraft-1.4.19+1.8.0.jar`, Mega Showdown and `COBBLEVERSE-DP-v31.zip`) with zipfile and javap; **nothing was run in
+game.**
+
+### 10.1 What was measured
+
+**Three of the premise's figures do not hold.** They came from group 16's record (9.1), which this section corrects.
+
+| The premise | Measured |
+|---|---|
+| "79 species start at 0" | **True for a natural wild spawn**: 79 of 1,025 species have base friendship 0 after every species file and species_addition in the snapshot is merged, and `PokemonSpawnAction.createEntity` sets a spawned Pokemon's friendship to its form's base. A trade resets to the base too (`TradeManager.performTrade`). |
+| "a quarter of the dex" | **7.7%** (79 / 1,025). And only **40** of the 79 can learn Frustration at all, nearly all legendaries, Ultra Beasts and mythicals. The one ordinary catchable species among them is **Buneary** (`data/encounter_design.json` `arrow_lake_shores`, tier 3, and `south_pine_isle`; the Lopunny cellar's habitat block). |
+| "four of our starters" start at 0 | **Not by the bytecode.** A starter is built by `PokemonProperties.create` (`CobblemonStarterHandler.chooseStarter`). `new Pokemon()` sets friendship to the base of `PokemonSpecies.random()`, a random implemented species; `apply()` then sets the real species and `initialize()` runs, and **neither writes friendship** (the only writes in `Pokemon` are the constructor, `setFriendship`, increment/decrement, `restoreFriendship` and `copyFrom`). So a starter starts at a random species' base: 50 with chance 837/1,025 (82%), 0 with chance 79/1,025 (7.7%), whatever its own species. And of the four base-0 starters, **Cosmog and Meltan cannot learn Frustration at all**; Type: Null and Poipole can (legacy learnset), as can Silvally, Naganadel, Solgaleo and Lunala. |
+
+**Who the crafted TM can teach.** `tmcraft:tm_frustration` is a `TMMoveTeachingItem`, which teaches a Pokemon that
+learns the move by level-up or by TM (`isLearnedByLevelUp`, `isLearnedByTM`). **No species lists `tm:frustration`**
+in the loaded data; by level-up only Buneary and Lopunny (`1:frustration`), who have it without the TM. Everyone else
+learns it as `legacy:frustration` (789 species in the Cobblemon jar), and TMCraft reaches them through the furnace:
+`tmcraft:legacy_frustration_from_smelting_tm_frustration` (`minecraft:smelting`, so outside doLimitedCrafting) turns the
+crafted TM into `tmcraft:legacy_frustration`, a `LegacyMoveTeachingItem`. A second recipe,
+`to_cobblemon_tm_frustration`, turns it into Cobblemon's own TM item. Both need the crafted TM first, so **the badge
+gates all three routes**. Cobblemon's TM Machine does not print Frustration (no `data/cobblemon/tms/frustration.json`).
+
+**Where full power comes from.** Not from the starting value, for anyone but a wild base-0 catch. Friendship rises +3
+per level below 100 and +2 below 200, and +1 every two minutes while sent out, below 160 (9.1); a base-50 Pokemon caught
+at level 5 and levelled to cap 55 is at about 167 (Return 66, Frustration 35). Going down: **bitter remedies**,
+`data/cobblemon/mechanics/remedies.json` `friendshipDrop`: Remedy 5, Fine and Superb Remedy 5, Energy Root 10, Revival
+Herb 15, Heal Powder 5, on any Pokemon not at full HP (`RemedyItem.canUseOnPokemon` reads `isFullHealth`). From 167
+that is 17 Energy Roots. **The Frustration recipe itself takes an Energy Root** (`tmcraft:recipe/tm_frustration`: a
+gold blank disc, a normal gem, an energy root), so whoever can craft the TM has the means to zero a Pokemon. Under
+the level caps a capped Pokemon gains no levels, so once at 0 it stays near 0 while kept in its ball. No counter sells
+remedies (`data/markets.json`); where Energy Roots and Big Roots grow in our world is **not measured**.
+
+**Shelf or craft.** **Frustration has no shelf line**: `data/markets.json` names neither `tm_frustration` nor
+`tm_return`. "Off the shelf" can therefore only mean the crafting route.
+
+### 10.2 The three options
+
+| | Keep at 7 (today) | Badge 8 | Off the craftable set |
+|---|---|---|---|
+| What it means | the power rule's band for 102 (94.1-104), with Return | placed by hand one badge late (data only: group 16 `place`) | the gate never gives `tmcraft:tm_frustration`; with it go the furnace's legacy item and the Cobblemon-TM conversion. **No mechanism exists today**: tools/tm_gate.py has badges 1-8 and no "never"; it needs a new withheld list in the generator (or a datapack override of the recipe at its own path that the gate's plan must also know about), plus tests |
+| Full power when it opens | yes, for anyone with Energy Roots or a wild base-0 catch | the same, a badge later | n/a |
+| Return | same badge, same 102, reached by walking plus 6-8 malasadas from badge 4 (9.1) | Return 7 and Frustration 8: two halves of one move at different badges, though both are at full power before either opens | Return stays, so the pair is broken: the friendship-0 half is removed and the friendship-255 half kept |
+| What it does not touch | Buneary and Lopunny's level-1 Frustration (no TM involved), loot, trades | the same | the same; and TMCraft's Move Tutor Table and tutor/egg items, which this gate never read (`does_not_cover`) |
+| Cost | none | one data line, a test | generator change, new tests, an ADR-sized exception to "every TM unlocks at a badge" |
+
+### 10.3 Recommendation: keep Frustration at 7
+
+1. **The badge gates when a move arrives, not how strong it is.** The owner's "already max, so not gated" holds for a
+   move whose power grows with badges; a 102-power move that opens at the badge where the 100-power moves open
+   (Searing Shot and Oblivion Wing 104, Hyper Beam class 150 by group 9) is gated exactly like them. Badge 6 holds the
+   90s and badge 8 Boomburst's 140: neither is where a 102 belongs.
+2. **At badge 7 Frustration and Return are the same move.** Both reach 102 before 7: Return by a purchase from badge 4,
+   Frustration by Energy Roots the recipe already makes the player gather. Moving one alone puts a difference between
+   them that does not exist when they open. If the owner wants both later, raise **both** to 8 together; that is a
+   decision about Normal-type 102s, not about Frustration.
+3. **Removing it is new machinery for a problem the badge already solves**, and it removes the furnace route for 789
+   species while leaving Return. Principle 6: a datapack value (the badge) suffices; a never-unlock list is not needed.
+4. **The early full-power Frustration the owner is worried about is not the TM's.** The one real case is **Buneary**:
+   wild, base 0, Frustration at level 1, no TM, in a tier-3 zone. A wild Buneary is caught at friendship 0, so
+   Frustration 102 for the first gyms, falling 1.2 power per level gained (+3 friendship a level). No TM badge
+   reaches it. If that is a problem, it is an encounter-table question (`data/encounter_design.json`, Buneary is an
+   anchor of `south_pine_isle` and common in `arrow_lake_shores`), for `trainer-balance-designer`.
+
+### 10.4 What to verify in game (not done)
+
+- A picked Cosmog's friendship: 50 most of the time, as the bytecode says, or 0 (EXP to be numbered).
+- A wild Buneary's friendship (0) and whether a caught Buneary can select its level-1 Frustration from the summary.
+- That smelting a crafted `tm_frustration` gives `legacy_frustration`, and that it teaches, say, Poipole.
