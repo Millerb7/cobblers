@@ -34,8 +34,13 @@ document, a data file another system owns, or the server's jars, and the generat
                income, income_basis re-summed from its own level sums at 0.28125 S^2 + curve_rule's produce allowance
                + one gathering hour a leg at data/bank.json effort_model's tier rate); power lines leave it. R2's hard
                check: fights <= trainer income at every badge. 0.3's "a ladder that is exactly affordable is
-               unaffordable": with the stretch items the ask stays below what the road earns
-    floors     PROGRESSION_LADDER.md 6.4: a shop's unit price above bank.json's sell price for the same item
+               unaffordable": with the stretch items the ask stays below what the road earns. A critical stall's
+               gated convenience lines count as a counter's would; its provisions never do
+    curve rule data/markets.json price_policies.curve_scale's own criterion, re-derived (curve_price_faults): every
+               critical-path convenience line carries the rule, and its price is list_price x its leg's scale,
+               rounded; the band must be 0.3's. The ladder's numbers are relative worth, so a ruled line is held to
+               the ladder by its list_price (what it carried before R2), every other line by its price
+    floors    PROGRESSION_LADDER.md 6.4: a shop's unit price above bank.json's sell price for the same item
     keepers    the town's plan in data/placements.json (streets with their widths, anchor lots), every placed
                building's footprint (its template's size turned by its rotation), data/route_paths.json's walked
                lines (tools/npc_seats.py MIN_ROUTE, the repo's rule for an immovable NPC beside a walked line), and
@@ -959,15 +964,153 @@ def other_npcs(exclude_prefix="dlg_market_"):
 
 
 # ------------------------------------------------------------------------------------------------ the curve (R2)
+def curve_records(doc, crit):
+    """The records whose lines R2's numerator reads: every counter in a critical-path town (`crit`, town_badges), and,
+    of a stall in one, only its GATED lines (data/markets.json price_policies.curve_scale criterion: 'every critical
+    counter's, a critical stall's gated ones'; an ungated stall line is a provision, never a rung). A stall copy keeps
+    its id and town."""
+    out = [c for c in doc["counters"] if c["town"] in crit]
+    for s in doc.get("stalls") or []:
+        gated = [it for it in s.get("stock") or [] if it.get("gate")]
+        if s.get("town") in crit and gated:
+            out.append(dict(s, stock=gated))
+    return out
+
+
+def curve_price_faults(doc, crit, income, effort, blackout):
+    """FAULT lines for data/markets.json price_policies.curve_scale, re-derived from the policy's own words and this
+    audit's R2 terms (curve_terms, trainer_income), nothing from tools/markets.py:
+
+      a critical-path convenience line carries price_rule curve_scale and a positive whole list_price; no line off
+      that set carries the rule. Leg by leg (a town's badge, the hometown's 0 spent in leg 1), one scale:
+        (band midpoint x earned by that badge - fights by then - what the earlier legs cost at the rule's own rounded
+         prices, worked out here - this leg's unruled curve lines) / this leg's list shelf   (a group at its dearest)
+      and each price is list_price x scale rounded to the nearest multiple of round_to x count (half up), never below
+      one such multiple. A stretch line takes the scale of its STRETCH_FROM leg (the ladder's own), and must say so in
+      affordable_by.
+
+    The band must be 0.3's CURVE_BAND: the policy cannot move the band the design holds. `income` None (already a
+    fault) checks only the records. What this does NOT check: that the rule's prices are any good as prices (that is
+    curve_faults' band, and the ladder's list_price comparison)."""
+    F = []
+    pol = (doc.get("price_policies") or {}).get("curve_scale")
+    ruled_anywhere = [(c["id"], it["id"]) for c in doc["counters"] + list(doc.get("stalls") or [])
+                      for it in c.get("stock") or [] if it.get("price_rule") == "curve_scale"]
+    if not pol:
+        if ruled_anywhere:
+            F.append("curve rule: %d line(s) carry price_rule curve_scale but data/markets.json has no "
+                     "price_policies.curve_scale" % len(ruled_anywhere))
+        return F
+    band = pol.get("band")
+    if not (isinstance(band, list) and len(band) == 2 and tuple(band) == CURVE_BAND):
+        F.append("curve rule: price_policies.curve_scale.band %r is not PROGRESSION_LADDER 0.3's %s" % (band, list(CURVE_BAND)))
+        return F
+    step = pol.get("round_to")
+    if isinstance(step, bool) or not isinstance(step, int) or step <= 0:
+        F.append("curve rule: price_policies.curve_scale.round_to %r is not a positive whole number" % (step,))
+        return F
+    mid = (band[0] + band[1]) / 2
+    on_curve = []                                        # (record, line, leg)
+    for c in curve_records(doc, crit):
+        for it in c["stock"]:
+            if it.get("strand") != "convenience":
+                continue
+            if it.get("stretch"):
+                if it["item"] not in STRETCH_FROM:
+                    continue                             # curve_faults names it
+                if it.get("affordable_by") != STRETCH_FROM[it["item"]]:
+                    F.append("curve rule: %s/%s is a stretch line affordable_by %r; the ladder makes it affordable "
+                             "at badge %d" % (c["id"], it["id"], it.get("affordable_by"), STRETCH_FROM[it["item"]]))
+                leg = STRETCH_FROM[it["item"]]
+            else:
+                leg = crit[c["town"]]
+            on_curve.append((c, it, max(1, leg)))
+    keys = {(c["id"], it["id"]) for c, it, _l in on_curve}
+    for k in ruled_anywhere:
+        if k not in keys:
+            F.append("curve rule: %s/%s carries price_rule curve_scale but is not a critical-path convenience line "
+                     "(the rule prices only R2's numerator)" % k)
+    ok = []
+    for c, it, leg in on_curve:
+        if it.get("price_rule") != "curve_scale":
+            F.append("curve rule: %s/%s is a critical-path convenience line without price_rule curve_scale "
+                     "(its price would be hand-typed onto the curve)" % (c["id"], it["id"]))
+            continue
+        lp = it.get("list_price")
+        if isinstance(lp, bool) or not isinstance(lp, int) or lp <= 0:
+            F.append("curve rule: %s/%s carries price_rule curve_scale with list_price %r, not a positive whole "
+                     "number" % (c["id"], it["id"], lp))
+            continue
+        ok.append((c, it, leg))
+    if income is None:
+        return F
+    fights, produce, gather, _tp = curve_terms(doc, effort, blackout)      # curve_faults reports _tp
+
+    def shelf(rows, value):
+        """{leg: sum of value(record, line)} over non-stretch rows, a (record, group) at its dearest."""
+        out, groups = {}, {}
+        for c, it, leg in rows:
+            if it.get("stretch"):
+                continue
+            if it.get("group"):
+                k = (leg, c["id"], it["group"])
+                groups[k] = max(groups.get(k, 0), value(c, it))
+            else:
+                out[leg] = out.get(leg, 0) + value(c, it)
+        for (leg, _c, _g), v in groups.items():
+            out[leg] = out.get(leg, 0) + v
+        return out
+
+    def rule(it, s):
+        unit = step * int(it.get("count") or 1)
+        return max(unit, int(math.floor(it["list_price"] * s / unit + 0.5)) * unit)
+
+    # the earlier legs are counted at the RULE's prices (worked out here leg by leg), never at the prices written in
+    # the file: an expectation read from the artifact under check is not an expectation, and one mispriced line
+    # then faults alone instead of moving every later leg's figure with it. Unruled lines (already faults) count
+    # at their written price: there is nothing else to count them at
+    ruled_ids = {(c["id"], it["id"]) for c, it, _l in ok}
+    lists = shelf(ok, lambda _c, it: it["list_price"])
+    unruled = shelf([r for r in on_curve if (r[0]["id"], r[1]["id"]) not in ruled_ids],
+                    lambda _c, it: int(it["price"]))
+    scale, expect, before = {}, {}, 0
+    for leg in range(1, 9):
+        earned = income[leg] + produce[leg] + gather[leg]
+        want = mid * earned - fights[leg] - before - unruled.get(leg, 0)
+        here = [r for r in ok if r[2] == leg and not r[1].get("stretch")]
+        if lists.get(leg):
+            if want <= 0:
+                F.append("curve rule: leg %d: fights %d, the earlier legs' %d and this leg's unruled %d already ask "
+                         "more than the band's midpoint of %g earned; no positive scale exists"
+                         % (leg, fights[leg], before, unruled.get(leg, 0), mid * earned))
+            else:
+                scale[leg] = want / lists[leg]
+                for c, it, _l in here:
+                    expect[(c["id"], it["id"])] = rule(it, scale[leg])
+        before += unruled.get(leg, 0) + shelf([r for r in here if (r[0]["id"], r[1]["id"]) in expect],
+                                              lambda c, it: expect[(c["id"], it["id"])]).get(leg, 0)
+    for c, it, leg in ok:
+        if leg not in scale:
+            if lists.get(leg) is None:
+                F.append("curve rule: %s/%s is a stretch line whose leg %d has no other ruled line to take its scale "
+                         "from" % (c["id"], it["id"], leg))
+            continue
+        unit = step * int(it.get("count") or 1)
+        want = rule(it, scale[leg])
+        if int(it["price"]) != want:
+            F.append("curve rule: %s/%s costs $%d; price_policies.curve_scale gives list $%d x leg %d's scale %.4f "
+                     "= $%d (rounded to $%d)" % (c["id"], it["id"], int(it["price"]), it["list_price"], leg,
+                                                 scale[leg], want, unit))
+    return F
+
+
 def curve_faults(doc, crit, income, effort, blackout):
     """(faults, notes) of ECONOMY_OVERHAUL.md section 7 R2 over data/markets.json `doc`. `crit` is {critical-path
     town: its badge} (town_badges), `income` {badge: cumulative trainer income} or None (already a fault), `effort`
     data/bank.json and `blackout` data/blackout.json (curve_terms)."""
     F, N = [], []
     shelf = {}
-    for c in doc["counters"]:
-        if c["town"] not in crit:
-            continue
+    for c in curve_records(doc, crit):
         groups, s = {}, 0
         for it in c["stock"]:
             if it.get("strand") not in CURVE_STRANDS:
@@ -1011,7 +1154,7 @@ def curve_faults(doc, crit, income, effort, blackout):
     # "a ladder that is exactly affordable is unaffordable", in R2's terms: the ask with its stretch items stays
     # below what the road earns
     stretch = {}
-    for c in doc["counters"]:
+    for c in curve_records(doc, crit):
         for it in c["stock"]:
             if it.get("stretch"):
                 if it["item"] not in STRETCH_FROM:
@@ -1232,6 +1375,8 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income=N
     cf, cn = curve_faults(doc, crit, income, effort, blackout)
     F += cf
     N += cn
+    # data/markets.json price_policies.curve_scale: a convenience line's price is the rule's, not a hand figure
+    F += curve_price_faults(doc, crit, income, effort, blackout)
     whole = {}
     for c in doc["counters"]:
         groups = {}
@@ -1254,10 +1399,16 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income=N
         N.append("one of every option on every shelf, stretch and off-path included: %d against badge 8's trainer "
                  "income %d (%.2f)" % (tot, income[8], tot / income[8]))
 
-    town_of = {}
+    # The ladder's numbers are relative worth, set before R2. A line priced by price_policies.curve_scale keeps that
+    # worth as list_price and its price is the rule's scale of it (curve_price_faults), so the ladder is held against
+    # list_price there; every other line, and the discount rule below (what a player pays), against price
+    town_of, paid_of = {}, {}
     for c in doc["counters"]:
         for it in c["stock"]:
-            town_of.setdefault(it["item"], []).append((c["town"], int(it["price"]) / int(it["count"]), c["id"]))
+            ruled = it.get("price_rule") == "curve_scale" and isinstance(it.get("list_price"), int)
+            worth = it["list_price"] if ruled else int(it["price"])
+            town_of.setdefault(it["item"], []).append((c["town"], worth / int(it["count"]), c["id"], ruled))
+            paid_of.setdefault(it["item"], []).append((c["town"], int(it["price"]) / int(it["count"]), c["id"]))
     for lid, (ltown, lprice) in LADDER.items():
         item = RENAMED.get(lid, lid)
         sold = [s for s in town_of.get(item, []) if s[0] not in DISCOUNT_UNDER]
@@ -1268,20 +1419,22 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income=N
             continue
         if lid in DECLARED_DROPPED:
             F.append("ladder: %s is declared dropped (TIERED_GOODS 3) but is sold" % lid)
-        for town, unit, cid in sold:
+        for town, unit, cid, ruled in sold:
             wt = DECLARED_MOVED.get(item, ltown)
             if town != wt:
                 W.append("ladder: %s is sold at %s (%s); the ladder sells it at %s and no move is declared"
                          % (item, cid, town, wt))
             if unit != lprice:
-                W.append("ladder: %s at %s costs $%g each; the ladder prices it at $%d and TIERED_GOODS 3 does not "
-                         "declare the change" % (item, cid, unit, lprice))
+                W.append("ladder: %s at %s %s $%g each; the ladder prices it at $%d and TIERED_GOODS 3 does not "
+                         "declare the change" % (item, cid, "lists (list_price, curve_scale) at" if ruled else "costs",
+                                                 unit, lprice))
     for item, (town, price) in DECLARED_ADDED.items():
-        for t, unit, cid in town_of.get(item, []):
+        for t, unit, cid, ruled in town_of.get(item, []):
             if t != town or unit != price:
-                W.append("ladder: %s at %s for $%g; TIERED_GOODS 3 declares it at %s for $%d" % (item, cid, unit, town, price))
+                W.append("ladder: %s at %s for $%g%s; TIERED_GOODS 3 declares it at %s for $%d"
+                         % (item, cid, unit, " (list_price, curve_scale)" if ruled else "", town, price))
     for cheap, dear in DISCOUNT_UNDER.items():
-        for item, rows in town_of.items():
+        for item, rows in paid_of.items():
             a = [u for t, u, _ in rows if t == cheap]
             b = [u for t, u, _ in rows if t == dear]
             if a and b and not max(a) < min(b):

@@ -160,16 +160,88 @@ def test_every_town_with_a_square_or_a_clerk_now_has_a_keeper_or_says_why():
     assert len([s for s in M.emitted_stalls(doc) if s["town"] == "tea_town"]) >= 1
 
 
+def _r2_independent(doc, stalls=True):
+    """{badge: (ask, earned)} of ECONOMY_OVERHAUL.md section 7 R2, derived here and not with tools/markets.py:
+    ask = the critical-path towns' convenience lines (a town's badge from data/progression.json + data/towns.json, the
+    hometown's 0 spent in leg 1; stretch aside; a pick-one group at its dearest), of a critical stall only its GATED
+    lines, cumulative, + curve_rule's fight allowance; earned = income_basis re-summed from its level sums
+    (MA.trainer_income) + the produce allowance + one gathering hour a leg (MA.curve_terms: the audit's own reader).
+    `stalls=False` reads the counters alone."""
+    tb = MA.town_badges(json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8")),
+                        json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8")))
+    crit = {t: n for t, (n, _f) in tb.items()}
+    recs = [c for c in doc["counters"] if c["town"] in crit]
+    if stalls:
+        recs += [dict(s, stock=[it for it in s["stock"] if it.get("gate")]) for s in doc.get("stalls") or []
+                 if s.get("town") in crit]
+    shelf = {}
+    for c in recs:
+        groups, leg = {}, max(1, crit[c["town"]])
+        for it in c["stock"]:
+            if it.get("strand") != "convenience" or it.get("stretch"):
+                continue
+            if it.get("group"):
+                groups[it["group"]] = max(groups.get(it["group"], 0), int(it["price"]))
+            else:
+                shelf[leg] = shelf.get(leg, 0) + int(it["price"])
+        shelf[leg] = shelf.get(leg, 0) + sum(groups.values())
+    income = MA.trainer_income(doc)
+    fights, produce, gather, problems = MA.curve_terms(doc, MA.read_json(MA.DATA_BANK), MA.read_json(MA.BLACKOUT))
+    assert problems == []
+    out, cum = {}, 0
+    for b in range(1, 9):
+        cum += shelf.get(b, 0)
+        out[b] = (cum + fights[b], income[b] + produce[b] + gather[b])
+    return out
+
+
+def _r2_disagreements(doc):
+    """Badges where tools/markets.py's curve() and the independent R2 reading differ in ask or in earned."""
+    got = {b: (ask, earned) for b, ask, _s, earned, _r in M.curve(doc)}
+    want = _r2_independent(doc)
+    return [b for b in range(1, 9) if got.get(b, (None, 0))[0] != want[b][0] or abs(got[b][1] - want[b][1]) > 1e-6]
+
+
+# protects the curve's reach into the stalls (R2): the builder's curve is the R2 reading (convenience lines + fights
+# over trainer income + produce + gathering) of the COUNTERS alone -- the stalls' ungated provisions add nothing, even
+# repriced by $10,000 each -- while a gated convenience line on a critical stall counts from its leg on (+777 at every
+# badge from 1). Removing it lets food on a stall price the road, or a gated stall line escape the band.
 def test_the_curve_is_unchanged_by_provisions_and_counts_a_gated_stall_line():
     doc = _doc()
+    assert _r2_disagreements(doc) == []
     before = {b: ask for b, ask, _s, _i, _r in M.curve(doc)}
-    want = {1: 6550, 2: 11450, 3: 20000, 4: 29800, 5: 41300, 6: 54800, 7: 71000, 8: 99500}
-    assert before == want      # the survey's figures (TOWN_SQUARES_SURVEY 5): the stalls added nothing to the curve
+    assert before == {b: a for b, (a, _e) in _r2_independent(doc, stalls=False).items()}      # stalls add nothing
+    provisions = [it for s in doc["stalls"] for it in s["stock"] if it.get("strand") == "provision"]
+    assert provisions
+    for it in provisions:
+        it["price"] += 10000
+    assert {b: ask for b, ask, _s, _i, _r in M.curve(doc)} == before
     _stall(doc, "stoneford_masons_yard")["stock"].append(
         {"id": "x", "item": "minecraft:anvil", "name": "Anvil", "count": 1, "price": 777, "gate": "gym1_cleared",
          "strand": "convenience", "why": "probe", "verified": "probe"})
     after = {b: ask for b, ask, _s, _i, _r in M.curve(doc)}
     assert all(after[b] == before[b] + 777 for b in range(1, 9))
+    assert _r2_disagreements(doc) == []
+
+
+# protects the comparison above from agreeing with anything: the builder's curve mutated (data untouched) -- counting
+# provisions and power lines, or reading a bank.json whose gathering rates are doubled -- disagrees with the
+# independent R2 reading. Removing it would let the first test pass against a curve that has drifted from R2.
+@pytest.mark.parametrize("mutation", ["every_strand", "doubled_bank"])
+def test_a_mutated_builder_curve_disagrees_with_the_independent_r2(mutation, monkeypatch, tmp_path):
+    if mutation == "every_strand":
+        def every(doc):
+            recs = [c for c in doc["counters"] if c.get("path") == "critical"]
+            recs += [s for s in doc.get("stalls") or [] if s.get("path") == "critical"]
+            return [(c, it) for c in recs for it in c["stock"] if not it.get("stretch")]
+        monkeypatch.setattr(M, "curve_lines", every)
+    else:
+        bank = json.loads(M.BANK_DATA.read_text(encoding="utf-8"))
+        for b in bank["buys"]:
+            b["rate_per_hour"] *= 2
+        (tmp_path / "bank.json").write_text(json.dumps(bank), encoding="utf-8")
+        monkeypatch.setattr(M, "BANK_DATA", tmp_path / "bank.json")
+    assert _r2_disagreements(_doc()) == list(range(1, 9))
 
 
 def test_places_beyond_towns_are_held_to_coverage():
