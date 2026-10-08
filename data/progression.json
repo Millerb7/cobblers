@@ -2624,6 +2624,16 @@
       "why": "the dialogue cursor of Bram Ostrow at the Frostpeak research camp (data/frostpeak_camp.json, tools/frostpeak_camp.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
     },
     {
+      "id": "quest.training_services.menu_cursor",
+      "quest_id": "training_services",
+      "field": "menu_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_training_keeper_gym1..gym8 (one shared menu)",
+      "why": "the dialogue cursor of the eight training-ground keepers (data/training_services.json, tools/training_services.py). A menu only: every conversation opens at its hub, the field gates nothing, and the purchases are functions, not quest state."
+    },
+    {
       "id": "quest.coldwater_station.calder_cursor",
       "quest_id": "coldwater_station",
       "field": "calder_cursor",
