@@ -270,6 +270,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # dialogues and the purchases their options run; the keepers are placed over RCON by R17M. It charges
                 # CobbleDollars and gives items, so world-local below
                 "cobblers_markets",
+                # 2026-10-10: paid training services (tools/training_services.py, data/training_services.json,
+                # EXP-062): the training-ground keepers' NPC classes and dialogues and the purchases their options run;
+                # the keepers are placed over RCON by R17TS. It charges CobbleDollars and edits party Pokemon, so
+                # world-local below
+                "cobblers_training_services",
                 # 2026-10-07: direct trades (tools/direct_trades.py, data/direct_trades.json, EXP-055): a buried booth
                 # under the Holdfast counter and a vanilla villager with fixed item-for-item offers, placed by R18DT.
                 # It gives items for items, so world-local below like the markets
@@ -354,6 +359,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_entei_boss",
                # 2026-10-03: charges CobbleDollars and gives items, like the ferry
                "cobblers_markets",
+               # 2026-10-10: charges CobbleDollars and sets party levels, EVs and IVs, like the markets
+               "cobblers_training_services",
                # 2026-10-07: the barterer trades items for items, so it never loads in the global folder either
                "cobblers_direct_trades",
                # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
@@ -630,6 +637,12 @@ def prepare_jobs(a):
     # against the base and the jars' recipe conditions, tiers and the curve against PROGRESSION_LADDER, and every
     # keeper R17M places off streets, buildings, walked lines and other NPCs, and in front of its Mart
     add("markets:audit_independent", "markets_audit.py", "--server-dir", a.server_dir, *src)
+    # paid training services (2026-10-10, data/training_services.json, EXP-062): the training-ground keepers' classes
+    # and dialogues and the purchases, then the builder's offline audit: no level written but the cap just read, the
+    # balance read before the one charge and the charge before the one edit, every gate a planned badge flag, every
+    # keeper on the heightmap seat and apart from every other placed NPC
+    add("training_services:build", "training_services.py", "build")
+    add("training_services:audit", "training_services.py", "audit", *src)
     # direct trades (2026-10-07, data/direct_trades.json, EXP-055): the barterer's booth from the heightmap and its
     # fixed offers; refuses data whose fixed-trade fields would let a price move, and places no held line
     add("direct_trades:build", "direct_trades.py", "build")
@@ -2017,6 +2030,13 @@ def steps(with_spawns=False):
                 + [("npc", n) for n in markets.stall_placements(markets.load())]
                 + ([("fn", markets.MERCHANTS_FN), ("wait", 8), ("check", "stall_merchants")]
                    if markets.emitted_stalls(markets.load()) else [])))
+    # the training-ground keepers (data/training_services.json, 2026-10-10): NPCs whose classes load at boot from
+    # cobblers_training_services, placed over RCON after the restart like the ferrymen, each beside its ground's sign
+    # and turned to face its town; the load function first (the pack's scores). Listed from the committed data
+    import training_services
+    out.append(("R17TS", "the training-ground keepers' paid services (data/training_services.json)",
+                [("fn", "cobblers:training_services/load")]
+                + [("npc", n) for n in training_services.npc_placements(training_services.load())]))
     # the settlement NPCs (data/npc_seats.json): the main reveal's residents and the stone-tip speakers. NPCs like the
     # ferrymen, so placed over RCON after the restart that loaded cobblers_dialogue's classes, and after every town and
     # gym pass so the plaza, lot and lab floor they stand on exist. Each is turned to its authored yaw
