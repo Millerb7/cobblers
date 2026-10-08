@@ -254,6 +254,14 @@
       "paths": [
         "modpack/config/cobblemon/main.json"
       ]
+    },
+    "tm_gate": {
+      "what": "crafted TMCraft TMs unlock per player at their shelf badge: doLimitedCrafting, a recipe-book sync and one earn advancement per badge (cobblers_tm_gate)",
+      "paths": [
+        "data/tm_gate.json",
+        "tools/tm_gate.py",
+        "experiments/EXP-067-tm-recipe-gate/README.md"
+      ]
     }
   },
   "contracts": [
@@ -1083,6 +1091,32 @@
       ],
       "tests": [
         "tests/test_system_contracts.py::test_contract_c22_the_sketch_cap_fits_under_the_dynamax_level_the_config_allows"
+      ]
+    },
+    {
+      "id": "C23",
+      "title": "A crafted TM unlocks on exactly the flag the progression pack grants for its shelf badge",
+      "owner": "progression",
+      "consumers": [
+        "tm_gate"
+      ],
+      "constrained_by": [
+        "markets"
+      ],
+      "statement": "Every advancement the generated TM gate tests is cobblers:flag/gymB_cleared for a badge B some gated recipe needs, an advancement tools/progression_pack.py writes with a real trigger (not minecraft:impossible) for a trainer_defeat flag that data/markets.json `badges` names; and a shelf line's gate_badge B is the badge of the leader whose first-win pool holds that TM, so the gate's B is the shelf's B. A renamed flag (every crafted TM locked for ever), a flag the progression pack stops writing, or a shelf line priced on another leader's badge breaks it without touching data/tm_gate.json.",
+      "stated_in": [
+        {
+          "at": "data/tm_gate.json:12",
+          "quote": "minecraft:tick with the player holding cobblers:flag/<flag> (tools/progression_pack.py)"
+        },
+        {
+          "at": "data/markets.json:77",
+          "quote": "gates on the badge its leader gives"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c23_the_tm_gate_unlocks_on_the_flags_the_progression_pack_grants",
+        "tests/test_tm_gate.py::test_each_shelf_tm_unlocks_at_its_shelf_lines_badge"
       ]
     }
   ]
