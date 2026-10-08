@@ -362,7 +362,7 @@ MUTATIONS = [
     ("the net is gone", '"execute in %s positioned as @s as @a[tag=%s,distance=..1] run function %s" % (dim, tag, _fn("to_pallet")),',
      "", scenario_without_the_blackout_pack_the_net_still_sends_them_home),
     ("no dismount", '"ride @s dismount",', "", scenario_a_rider_is_dismounted_and_sent_home_without_the_mount),
-    ("the sweep searches every dimension", "% (dim, _box(doc[\"sweep\"][\"box\"]), who, _fn(\"bounce\"))",
+    ("the sweep searches every dimension", "% (dim, _box(sweep_box(doc)), who, _fn(\"bounce\"))",
      "% (dim, \"tag=!x\", who, _fn(\"bounce\"))", scenario_operators_and_other_dimensions_are_untouched),
     ("the trigger does not revoke itself", '"advancement revoke @s only %s" % adv,', "",
      scenario_portal_without_badge_goes_to_checkpoint),
@@ -407,7 +407,7 @@ def test_the_data_passes_and_the_pallet_stands_on_the_canonical_ground():
 @pytest.mark.parametrize("edit,needle", [
     (lambda d, b: d.__setitem__("gate_flag", "cobblers:flag/gym7_cleared"), "eighth badge"),
     (lambda d, b: d.__setitem__("dimension", POCKET), "dimension must be"),
-    (lambda d, b: d["sweep"].__setitem__("box", [-1024, 0, -1024, 10240, 256, 10240]), "sweep.box"),
+    (lambda d, b: d["sweep"].__setitem__("box", {"corner": [-1024, 0, -1024], "size": [10240, 256, 10240]}), "sweep.box"),
     (lambda d, b: d["sweep"].__setitem__("period_ticks", 1200), "period_ticks"),
     (lambda d, b: d.__setitem__("exempt_gamemodes", ["creative", "adventure"]), "exempt_gamemodes"),
     (lambda d, b: d["trigger"]["criterion"]["conditions"].__setitem__("from", OVER), "trigger.criterion"),

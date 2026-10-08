@@ -114,7 +114,7 @@ def problems(doc, progression=None, blackout=None, portals=None, entei=None, wor
     p = int(doc["sweep"]["period_ticks"])
     if not 1 <= p <= 200:
         bad.append("sweep.period_ticks %d outside 1..200 (the backstop must run at least every ten seconds)" % p)
-    x, y, z, dx, dy, dz = doc["sweep"]["box"]
+    x, y, z, dx, dy, dz = sweep_box(doc)
     if not (x <= -XZ_LIMIT and x + dx >= XZ_LIMIT and z <= -XZ_LIMIT and z + dz >= XZ_LIMIT):
         bad.append("sweep.box x/z must cover -%d..%d, every column of any dimension" % (XZ_LIMIT, XZ_LIMIT))
     if not (y <= -Y_LIMIT and y + dy >= Y_LIMIT):
@@ -150,6 +150,12 @@ def _fn(name):
     return "%s:nether_gate/%s" % (NS, name)
 
 
+def sweep_box(doc):
+    """The sweep's selector volume as x, y, z, dx, dy, dz, from data/nether_gate.json sweep.box {corner, size}."""
+    b = doc["sweep"]["box"]
+    return list(b["corner"]) + list(b["size"])
+
+
 def _box(box):
     return "x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d" % tuple(box)
 
@@ -178,7 +184,7 @@ def functions(doc, blackout=None):
         "# every player in %s, wherever they stand: the box is larger than any dimension, and only makes the" % dim,
         "# selector positional, so vanilla searches this dimension alone (EXP-047 result 4). cobblers:pocket is",
         "# never searched. A holder of %s, or a creative or spectator player, is never selected." % flag,
-        "execute in %s as @a[%s,%s] run function %s" % (dim, _box(doc["sweep"]["box"]), who, _fn("bounce"))]
+        "execute in %s as @a[%s,%s] run function %s" % (dim, _box(sweep_box(doc)), who, _fn("bounce"))]
     out["arrived"] = [
         head,
         "# the reward of %s (changed_dimension to %s), as the arriving player. Revoked so it fires" % (adv, dim),
