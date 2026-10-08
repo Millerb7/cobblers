@@ -278,7 +278,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # BOOT, not at a /reload: installing this pack needs a restart before R16P will run. The arches are
                 # blocks in the overworld (R16P); the rooms live inside the world folder, which a re-export replaces,
                 # so R16P rebuilds them every time. The gate sweep and the rescue act on their own (tick drivers)
-                "cobblers_portals")
+                "cobblers_portals",
+                # 2026-10-10: no Blaine, League, Moltres or Necrozma copies in the Nether or the End
+                # (tools/dimension_overrides.py, data/dimension_overrides.json, EXP-058). Worldgen data only: no
+                # functions, no step. World-local so it wins over the global COBBLEVERSE datapack (as the spawn packs
+                # do); worldgen registries load at a boot, so it acts from the next start
+                "cobblers_dimension_overrides")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -362,7 +367,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_far_south",
                # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
                # global folder would run it in the live world too
-               "cobblers_arena")
+               "cobblers_arena",
+               # 2026-10-10: its structure_set overrides must sit above the global COBBLEVERSE datapack
+               "cobblers_dimension_overrides")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -890,6 +897,9 @@ def prepare_jobs(a):
     # one Spectrier per player at the Crown Cemetery (data/spectrier_cap.json; fails closed if the placement moved)
     add("spectrier_cap", "spectrier_cap.py")
     add("hoopa_cradle", "hoopa_cradle.py")
+    # no gym, League or legendary copies in the Nether or the End (data/dimension_overrides.json); its independent
+    # audit scans the server's own mods and datapacks, so it runs by hand against them, not here
+    add("dimension_overrides", "dimension_overrides.py", "build")
     add("legendary_sweep_audit", "legendary_sweep_audit.py", *src)
     # blackout, recovery claims and the water ladder (data/blackout.json, data/water_mounts.json)
     add("blackout_pack", "blackout_pack.py")
@@ -1252,6 +1262,9 @@ def install(a):
     if (dp / "cobblers_restore").exists():
         shutil.rmtree(dp / "cobblers_restore")
         print("removed", dp / "cobblers_restore", "(disposable worlds only)")
+    # the Nether/End overrides against what THIS server loads (2026-10-10): a mod or datapack that adds a gym, League
+    # or legendary structure to the Nether or the End, or changes a set we override, stops the install before any copy
+    py(TOOLS / "dimension_overrides.py", "audit", "--roots", Path(a.server_dir) / "mods", dp)
     wdp = Path(a.world_dir) / "datapacks"
     wdp.mkdir(exist_ok=True)
     retired = Path(a.server_dir).resolve().parent / "cobblers-server-retired"
