@@ -68,6 +68,11 @@ def _measured_as(mod, monkeypatch, jar):
         ln.pop("sketch_cap", None)
     monkeypatch.setattr(mod, "wins_duel", lambda *a, **k: False)
     monkeypatch.setattr(MS.B, "find_jar", lambda: jar)
+    # these tests measure the Sketch MODELLING, so the move-source check (tools/sim_move_sources.py, which refuses to
+    # measure a pool missing a source) is bypassed here; test_mutant_keying_sketch_on_the_cap_is_caught asserts the
+    # check itself refuses the mutant
+    import sim_move_sources
+    monkeypatch.setattr(sim_move_sources, "check_plan", lambda *a, **k: [])
     res = mod.measure(doc)
     return {lid: {g: r["as"] for g, r in gyms.items()} for lid, gyms in res.items()}
 
@@ -88,6 +93,13 @@ def test_mutant_keying_sketch_on_the_cap_is_caught(jar, monkeypatch):
     m = _mutant(('            if "1:sketch" in line["moves"]:', '            if "sketch_cap" in line:'))
     got = _measured_as(m, monkeypatch, jar)
     assert not any(a.endswith("+sketch") for a in got["starter_smeargle"].values()), got
+    # and with the move-source check in force, the mutant does not get to print a number at all
+    monkeypatch.undo()
+    monkeypatch.setattr(m, "wins_duel", lambda *a, **k: False)
+    monkeypatch.setattr(MS.B, "find_jar", lambda: jar)
+    doc = json.loads(MS.DATA.read_text(encoding="utf-8"))
+    with pytest.raises(SystemExit, match="smeargle"):
+        m.measure(doc)
 
 
 def _class(zf, name):
