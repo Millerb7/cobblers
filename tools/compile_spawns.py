@@ -28,6 +28,10 @@ Marine files (spawn_pool_world/marine/<band>.json), from spawns.json marine_zone
 waterway covers, split into bands by distance from land (marine_bands below); every ambient entry scoped to a band
 (mechanism marine_coordinate_boxes). The first is the Windward Sea off Route 1 (2026-09-26).
 
+Nether files (spawn_pool_world/nether/<table>_<ring>.json), from spawns.json nether_tables and the entries with mechanism
+nether_ring_boxes (tools/build_encounters.py, from data/encounter_design.json "nether"): each table's roster over its
+ring's boxes, bound to minecraft:the_nether by the entries' own conditions, never with a forced canSeeSky (build_nether).
+
   python tools/compile_spawns.py                          # write build/datapacks/cobblers_spawns
   python tools/compile_spawns.py --out <dir>              # write elsewhere
   python tools/compile_spawns.py --routes <routes.json> --check <dir>   # compare with an existing compilation
@@ -784,6 +788,55 @@ def build_marine(spawns, regions, routes, waterways=()):
     return files, summaries
 
 
+NETHER = "nether_ring_boxes"
+NETHER_DIMENSION = "minecraft:the_nether"
+
+
+def build_nether(spawns):
+    """The Nether half of the pack (docs/mechanics/NETHER_ENCOUNTERS.md): one file per data/spawns.json nether_tables
+    record, spawn_pool_world/nether/<table>_<ring>.json, every entry of that scope over each of the ring's boxes.
+
+    box_condition writes the box, the entry's biomes and its conditions, which carry "dimensions":
+    ["minecraft:the_nether"] (and a structure table's "structures"): so open_sky_forced adds no canSeeSky, which no
+    column under the Nether's roof could meet (review N154). A heart entry is laid over the same boxes as the base
+    rows (it has no position: its neededNearbyBlocks, and maxY, are its geometry), with ids <scope>_h<n>_<species>.
+
+    These are our compiled pools in cobblers_spawns. tools/suppress_inherited_spawns.py re-emits only inherited files
+    and never reads a cobblers_* pack (its collect()), so the one Nether anticondition it adds to every inherited
+    detail does not reach them (contract C19). Fails closed on an entry whose scope has no record, an entry not bound
+    to the Nether, and a record with no entries."""
+    by_scope = {}
+    for e in spawns["entries"]:
+        if e["mechanism"] == NETHER and e["ambient"] and e["weight"] > 0:
+            if (e.get("conditions") or {}).get("dimensions") != [NETHER_DIMENSION]:
+                raise SystemExit("%s: a Nether entry must carry conditions.dimensions [%s]" % (e["id"], NETHER_DIMENSION))
+            by_scope.setdefault(e["scope"], []).append(e)
+    records = {r["id"]: r for r in spawns.get("nether_tables") or []}
+    unknown = sorted(set(by_scope) - set(records))
+    if unknown:
+        raise SystemExit("Nether entries name tables no nether_tables record defines: %s" % unknown)
+    files, summaries = {}, []
+    for sid, rec in sorted(records.items()):
+        ents = by_scope.get(sid, [])
+        if not ents:
+            raise SystemExit("nether table %s has no entries" % sid)
+        out = []
+        for n, b in enumerate(rec["boxes"]):
+            for e in ents:
+                out.append({"id": "%s_%s%04d_%s" % (sid, "h" if e.get("heart") else "b", n, e["species"].replace(" ", "_")),
+                            "pokemon": heart_pokemon(e) if e.get("heart") else e["species"], "type": "pokemon",
+                            "spawnablePositionType": position_type(e), "bucket": e["bucket"], "level": e["level"],
+                            "weight": e["weight"], "condition": box_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
+        doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": out}
+        files["data/cobblers/spawn_pool_world/nether/%s.json" % sid] = dumps(doc)
+        summaries.append({"table_id": sid, "ring": rec["ring"], "tier": rec["tier"], "box_count": len(rec["boxes"]),
+                          "compiled_entry_count": len(out), "key": rec["key"],
+                          "species": sorted({e["species"] for e in ents if not e.get("heart")}),
+                          "heart_species": sorted({e["species"] for e in ents if e.get("heart")}),
+                          "output": "spawn_pool_world/nether/%s.json" % sid})
+    return files, summaries
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--spawns", default=str(ROOT / "data" / "spawns.json"))
@@ -822,6 +875,8 @@ def main(argv=None):
         files.update(subfiles)
         marinefiles, ms = build_marine(spawns, regions, routes, water_boxes)
         files.update(marinefiles)
+    netherfiles, ns = build_nether(spawns)
+    files.update(netherfiles)
     if a.check:
         base = Path(a.check)
         same = diff = missing = 0
@@ -859,6 +914,7 @@ def main(argv=None):
                 "files": {rel: hashlib.sha256(text.encode("utf-8")).hexdigest() for rel, text in sorted(files.items())},
                 "route_files": rs, "habitat_files": hs, "subregion_files": ss, "waterway_files": ws,
                 "marine_files": ms,
+                "nether_files": ns,
                 "subregion_grid": a.grid,
                 "subregion_box_count": sum(q["box_count"] for q in ss),
                 "subregion_spawn_entry_count": sum(q["compiled_entry_count"] for q in ss),
@@ -873,6 +929,8 @@ def main(argv=None):
     for q in ms:
         print("  marine %s: %d boxes, %d entries, %s blocks" % (q["band_id"], q["box_count"], q["compiled_entry_count"],
                                                             format(q["covered_blocks"], ",")))
+    if ns:
+        print("  nether: %d tables, %d entries" % (len(ns), sum(q["compiled_entry_count"] for q in ns)))
     return 0
 
 

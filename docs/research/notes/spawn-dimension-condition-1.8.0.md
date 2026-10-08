@@ -28,8 +28,14 @@ for strings and JSON, `javap -c -p -cp <jar>` for bytecode). Nothing was run in 
 
 ## Applied
 
-- `tools/suppress_inherited_spawns.py` `box_anticondition`: every suppression box carries
-  `"dimensions": ["minecraft:overworld"]` (N153).
+- `tools/suppress_inherited_spawns.py`: first, every suppression box carried `"dimensions": ["minecraft:overworld"]`
+  (N153). **Reverted 2026-10-08**: the pack grew from 240.8 MB to 418.8 MB (that unit's measurement). Instead every
+  inherited detail gets ONE anticondition `{"dimensions": ["minecraft:the_nether"]}` (`NETHER_ANTICONDITION`),
+  which removes it everywhere in the Nether and nowhere else, as the owner's "replace" for the Nether asked
+  (`docs/mechanics/NETHER_ENCOUNTERS.md` Q3). Measured on the 2026-10-05 offline snapshot's mods and global datapacks
+  with an empty scratch world, `--subregions --boxes merged --grid 16`: 1,729 files, 5,195 details, **240,777,251
+  bytes without the Nether rule and 240,985,051 with it** (+207,800). With the Nether anticondition removed from every
+  detail the two packs are identical, file for file.
 - `tools/compile_spawns.py` `open_sky_forced`: `canSeeSky: true` is forced only on a land or surface entry whose
   `conditions.dimensions` is absent or exactly `["minecraft:overworld"]` (N154).
 
@@ -38,5 +44,19 @@ for strings and JSON, `javap -c -p -cp <jar>` for bytecode). Nothing was run in 
 - That the bound anticonditions load and an inherited Nether spawn appears at an overworld box's x/z
   (`docs/mechanics/NETHER_ENCOUNTERS.md` experiment N3), or that a grounded Nether entry without `canSeeSky` spawns
   (experiment N1).
-- The server's heap and load time with the larger suppression pack (see the measurement in the commit that applied
-  this: 240.8 MB to 418.8 MB against the 2026-10-05 offline snapshot's mods and global datapacks).
+- That the Nether anticondition loads and `/checkspawn` in the Nether lists none of the inherited species (N3).
+
+## Also read 2026-10-08, for the Nether tables (same jar, sha256 a6228f32...dc9ec31)
+
+- **`neededNearbyBlocks`** is a field of `AreaTypeSpawningCondition` (the superclass of the grounded condition):
+  `List<RegistryLikeCondition<Block>>`. `fits`, offsets 74-261: when the list is non-empty, the position fails unless
+  **at least one** listed block (id or tag) matches one of `AreaSpawnablePosition.getNearbyBlockHolders()`. Those come
+  from `AreaSpawnablePositionCalculator.getNearbyBlocks`, whose defaults read
+  `CobblemonConfig.getMaxNearbyBlocksHorizontalRange()` and `getMaxNearbyBlocksVerticalRange()`; our
+  `modpack/config/cobblemon/main.json` and the snapshot's `config/cobblemon/main.json` set them to **4 and 2**. The
+  exact box shape the calculator draws with them is not read. The jar's own pools use it on 448 details
+  (`minecraft:water` 87, `#minecraft:iron_ores` 18, `minecraft:lily_pad` 17, ...).
+- **`structures`** is `List<Either<ResourceLocation, TagKey<Structure>>>` on `SpawningCondition`, checked through the
+  position's structure cache. The jar's own pools use it on 852 details, e.g. `["minecraft:monument"]`,
+  `["minecraft:swamp_hut"]`, `["#minecraft:village"]`. `minecraft:fortress` and `minecraft:bastion_remnant` are the
+  vanilla structure ids recorded from `server-1.21.1.jar` in `data/structures.json`.

@@ -506,5 +506,116 @@
     "vrc_abandoned_cut": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true,
       "land": [["aggron", "common"], ["magnezone", "common"], ["klinklang", "common"], ["kingambit", "uncommon"]]},
     "vrc_abandoned_cut_core": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true, "core_of": "vrc_abandoned_cut", "prize": "metagross"}
+  },
+  "nether": {
+    "status": "authored 2026-10-08 from docs/mechanics/NETHER_ENCOUNTERS.md sections 2, 2.6 and 3.3, the owner having approved its recommendations Q1-Q5 and Q7. tools/build_encounters.py expands it into data/spawns.json entries with mechanism nether_ring_boxes, and tools/compile_spawns.py writes them to spawn_pool_world/nether/. Not seen in game: Nether spawning under our compiler (N1), neededNearbyBlocks (N2), the structures condition (N4) and the inherited-pool replacement (N3) are all unproven.",
+    "dimension": "minecraft:the_nether",
+    "tiers": {
+      "10": {"cap": 60, "band": [54, 60], "maturity": 0.9, "next_cap": 62, "why": "the near ring, entered at badge 8 (the gate, Q1): cap 60 after Giovanni and through the Elite Four, whose levels are [57, 60] (data/league_trainers.json elite_01..04); the next cap is Lance's 62, the Champion's ace (champion_blue [58, 62]); docs/mechanics/LEAGUE_LEVEL_CAP.md section 2. The band sits level with Victory Road's top (tier 9, 52-60), two levels above its floor (NETHER_ENCOUNTERS.md section 1)"},
+      "11": {"cap": 100, "band": [65, 75], "maturity": 1.0, "next_cap": 85, "why": "the deep ring, postgame (Q2): no cap once the Champion is beaten (LEAGUE_LEVEL_CAP.md section 2); the band and the presences' 85 are the design's (NETHER_ENCOUNTERS.md section 1, 'Two rings, two bands')"}
+    },
+    "rings": {
+      "near": {"tier": 10, "boxes": [[-128, 1151, -128, 1151]], "why": "the overworld border -1024..9215 (data/world.json export.border) divided by the Nether's coordinate scale 8: the Nether x/z a portal from inside the overworld border reaches. The design's -128..1152 (relayed from docs/world-building/DIMENSIONS_AND_BORDERS.md:102-103) is this square, read inclusive"},
+      "deep": {"tier": 11, "boxes": [[-4608, -129, -4608, 9215], [1152, 9215, -4608, 9215], [-128, 1151, -4608, -129], [-128, 1151, 1152, 9215]], "why": "everything else, as four strips around the near ring. Their outer edge is the union of both readings of the Nether border on record (data/dimension_overrides.json count_windows: -1024..9215 unscaled, -4608..5631 centre/8, INFERRED), so whichever is true the deep ring reaches it"}
+    },
+    "fire_rule": {
+      "biomes": ["minecraft:nether_wastes", "minecraft:crimson_forest"],
+      "why": "NETHER_ENCOUNTERS.md section 2: no species with Fire as either type in any table except the nether wastes and the crimson forest; the types are read from the Cobblemon jar. A structure table (fortress, bastion, shrine ring) has no biome, so it holds no Fire unless it carries a written fire_exception"
+    },
+    "excluded_species": {
+      "tyranitar": "1.8 model mis-assembled (docs/research/COBBLEVERSE_COMPATIBILITY.md:136-148)",
+      "cofagrigus": "1.8 model mis-assembled (as tyranitar)",
+      "turtonator": "1.8 model mis-assembled (as tyranitar)",
+      "talonflame": "1.8 model mis-assembled (as tyranitar)",
+      "capsakid": "UNCONFIRMED in the design (NETHER_ENCOUNTERS.md Q9). Implemented in the 1.8.0 jar (read 2026-10-08); Q9 was not among the approved recommendations, so it stays out until the owner adds it",
+      "scovillain": "as capsakid",
+      "stonjourner": "as capsakid (Q9, for the basalt deltas)"
+    },
+    "tables": {
+      "nether_wastes": {
+        "key": {"biomes": ["minecraft:nether_wastes"]},
+        "themes": ["the furnace floor"],
+        "why": "the Nether as the overworld imagines it: open heat, lava shores, quartz and slag (NETHER_ENCOUNTERS.md 2.1)",
+        "land": [["magby", "anchor"], ["numel", "anchor"], ["slugma", "common"], ["sizzlipede", "common"], ["rolycoly", "common"], ["nacli", "common"],
+                 ["torkoal", "uncommon"], ["heatmor", "uncommon"], ["salandit", "uncommon"], ["charcadet", "rare"]],
+        "heart": {"kind": "nearby", "blocks": ["minecraft:lava"], "maxY": 40, "why": "the lava shore: grounded beside lava, below y40, where the wastes' lava sea sits (ASSUMED until a pregen)",
+                  "land": [["camerupt", "common"], ["coalossal", "common"], ["magmortar", "presence"], ["centiskorch", "presence"]]}
+      },
+      "crimson_forest": {
+        "key": {"biomes": ["minecraft:crimson_forest"]},
+        "themes": ["the hunting wood"],
+        "why": "a hot red forest where things hunt, and the prey that hides under the weeping vines (NETHER_ENCOUNTERS.md 2.2)",
+        "land": [["houndour", "anchor"], ["litleo", "common"], ["spinarak", "common"], ["paras", "common"], ["mankey", "uncommon"], ["larvesta", "rare"]],
+        "heart": {"kind": "nearby", "blocks": ["minecraft:weeping_vines", "minecraft:weeping_vines_plant"], "why": "the hanging canopy: beside weeping vines (the tip block and the vine body)",
+                  "land": [["houndoom", "common"], ["ariados", "common"], ["volcarona", "presence"], ["pyroar", "presence"]]}
+      },
+      "warped_forest": {
+        "key": {"biomes": ["minecraft:warped_forest"]},
+        "themes": ["the alien wood"],
+        "why": "the one place in the Nether that is not hot and not dead: wrong-coloured, lit by fungus, full of things that did not evolve on this world (NETHER_ENCOUNTERS.md 2.3). No Fire",
+        "land": [["elgyem", "anchor"], ["morelull", "anchor"], ["toedscool", "common"], ["foongus", "common"], ["inkay", "common"],
+                 ["hatenna", "uncommon"], ["solosis", "uncommon"], ["blipbug", "uncommon"], ["beldum", "rare"], ["minior", "rare"]],
+        "heart": {"kind": "nearby", "blocks": ["minecraft:shroomlight"], "why": "under the lamps: beside the shroomlights of the huge fungi",
+                  "land": [["beheeyem", "common"], ["shiinotic", "common"], ["metagross", "presence"], ["malamar", "presence"]]}
+      },
+      "soul_sand_valley": {
+        "key": {"biomes": ["minecraft:soul_sand_valley"]},
+        "themes": ["the boneyard"],
+        "why": "where the Nether keeps its dead: blue soul fire that gives no warmth, fossil ribs, the sand made of souls (NETHER_ENCOUNTERS.md 2.4). No Fire: Litwick and Chandelure are left out on purpose",
+        "land": [["gastly", "anchor"], ["sandygast", "anchor"], ["duskull", "common"], ["shuppet", "common"], ["cubone", "common"],
+                 ["drifloon", "uncommon"], ["spiritomb", "rare"], ["dreepy", "rare"]],
+        "heart": {"kind": "nearby", "blocks": ["minecraft:bone_block"], "why": "the fossil ribs: beside the bone blocks the valley's fossils are made of (ASSUMED until a pregen)",
+                  "land": [["gengar", "common"], ["palossand", "common"], ["dusknoir", "presence"], ["dragapult", "presence"]]}
+      },
+      "basalt_deltas": {
+        "key": {"biomes": ["minecraft:basalt_deltas"]},
+        "themes": ["rock and ash"],
+        "why": "grey columns, black stone and falling ash: things that are stone, eat stone or breathe the ash (NETHER_ENCOUNTERS.md 2.5). No Fire",
+        "land": [["roggenrola", "anchor"], ["rhyhorn", "anchor"], ["onix", "common"], ["gligar", "common"], ["klawf", "common"],
+                 ["koffing", "uncommon"], ["glimmet", "uncommon"], ["carbink", "rare"]],
+        "stop_evolving": {"onix": "the design spawns Onix as Onix, the basalt serpent (NETHER_ENCOUNTERS.md 2.5); its trade evolution, Steelix, is not in the table"},
+        "heart": {"kind": "nearby", "blocks": ["minecraft:magma_block"], "why": "the vents: beside the deltas' magma blocks",
+                  "land": [["rhyperior", "common"], ["gigalith", "common"], ["gliscor", "presence"], ["glimmora", "presence"]]}
+      },
+      "fortress_garrison": {
+        "key": {"structures": ["minecraft:fortress"]},
+        "themes": ["the garrison"],
+        "why": "inside a Nether fortress, over whatever biome it stands in: the soldiers who held the halls, steel and ghost, no Fire though the halls are full of blazes (NETHER_ENCOUNTERS.md 2.6). The roles are this builder's, the design names none: all three common",
+        "land": [["honedge", "common"], ["pawniard", "common"], ["golett", "common"]],
+        "stop_evolving": {"bisharp": "the design spawns Pawniard as Bisharp (NETHER_ENCOUNTERS.md 2.6); Kingambit's evolution is not in the table"}
+      },
+      "bastion_hoard": {
+        "key": {"structures": ["minecraft:bastion_remnant"]},
+        "themes": ["the hoard"],
+        "why": "inside a bastion remnant: the piglins' gold and everything that wants it (NETHER_ENCOUNTERS.md 2.6). The roles are this builder's, the design names none",
+        "land": [["meowth", "common"], ["murkrow", "common"], ["sableye", "uncommon"], ["gimmighoul", "rare"]],
+        "stop_evolving": {"gimmighoul": "the design: Gimmighoul's coin evolution (Gholdengo) is outside this design (NETHER_ENCOUNTERS.md 2.6)"}
+      },
+      "ruinous_grasswither": {
+        "key": {"structures": ["legendarymonuments:grasswither_shrine"]},
+        "themes": ["the broken seal", "blight"],
+        "why": "Wo-Chien's ring: Foongus and Paras as blight (NETHER_ENCOUNTERS.md 3.3). The shrine generates in the warped forest (data/structures.json biomes). Roles this builder's: both common",
+        "land": [["foongus", "common"], ["paras", "common"]]
+      },
+      "ruinous_groundblight": {
+        "key": {"structures": ["legendarymonuments:groundblight_shrine"]},
+        "themes": ["the broken seal", "cracked earth"],
+        "why": "Ting-Lu's ring: Cubone and Rhyhorn as cracked earth (NETHER_ENCOUNTERS.md 3.3). The shrine generates in the soul sand valley (data/structures.json biomes)",
+        "land": [["cubone", "common"], ["rhyhorn", "common"]]
+      },
+      "ruinous_icerend": {
+        "key": {"structures": ["legendarymonuments:icerend_shrine"]},
+        "themes": ["the broken seal", "the one cold thing"],
+        "why": "Chien-Pao's ring: the one cold thing in the Nether. The design leaves the ice family to choose and names Sneasel as an E1 candidate (NETHER_ENCOUNTERS.md 3.3); Sneasel is the builder's pick, for the owner to confirm. The shrine generates in the basalt deltas (data/structures.json biomes)",
+        "land": [["sneasel", "common"]]
+      },
+      "ruinous_firescourge": {
+        "key": {"structures": ["legendarymonuments:firescourge_shrine"]},
+        "themes": ["the broken seal", "the fire let loose"],
+        "why": "Chi-Yu's ring: Houndour as the fire it lets loose (NETHER_ENCOUNTERS.md 3.3)",
+        "fire_exception": "the owner, 2026-10-08, approving NETHER_ENCOUNTERS.md Q7: the Ruinous rings may put a calamity's types into whatever biome its shrine landed in, Fire included for Firescourge, as the one written exception to the fire rule. data/structures.json records the shrine's biome as minecraft:nether_wastes, where Fire is allowed anyway; the exception covers a shrine that lands elsewhere",
+        "land": [["houndour", "common"]]
+      }
+    }
   }
 }

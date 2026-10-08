@@ -145,7 +145,12 @@ def test_no_compiled_submerged_or_seafloor_entry_requires_the_sky(compiled):
 # Without it a land or surface entry compiles without its sky test (and spawns in caves), or a marine surface entry
 # loses the canSeeSky its data authors (marine_condition forces nothing, so the data must carry it).
 def test_every_compiled_land_and_surface_entry_requires_the_sky(compiled):
-    open_ = list(_spawns(compiled, IN_THE_OPEN))
+    # overworld entries only: an entry bound off the overworld must NOT carry it (the N154 test above); the Nether's
+    # compiled tables (spawn_pool_world/nether/, 2026-10-08) are all such entries. Narrowed by the Nether tables'
+    # builder, not by test-author: tests/test_nether_encounters.py holds the Nether side.
+    open_ = [(rel, s) for rel, s in _spawns(compiled, IN_THE_OPEN)
+             if s["condition"].get("dimensions") in (None, ["minecraft:overworld"])]
+    assert not [rel for rel, _ in open_ if rel.startswith("nether/")], "a Nether pool lost its dimension binding"
     assert len(open_) >= 1000, len(open_)
     assert any(rel.startswith("marine/") for rel, _ in open_), "no marine surface entry: the check lost its marine teeth"
     bad = [(rel, s["id"]) for rel, s in open_ if s["condition"].get("canSeeSky") is not True]

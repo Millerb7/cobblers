@@ -1275,6 +1275,59 @@ def test_harness_the_c15_charge_check_bites_when_the_generator_is_mutated():
 
 
 # =================================================================================================================
+# C19: the suppression strips every inherited Nether spawn and leaves our compiled pools alone
+# (written by the builder of the Nether tables on the brief's instruction, 2026-10-08, not by test-author)
+# =================================================================================================================
+
+def _c19_holds(c, dim, x, z):
+    """A spawn condition or anticondition holds at (dim, x, z): absent bounds restrict nothing, a non-empty
+    dimensions list must contain dim (Cobblemon 1.8.0, docs/research/notes/spawn-dimension-condition-1.8.0.md)."""
+    for lo, hi, v in (("minX", "maxX", x), ("minZ", "maxZ", z)):
+        if (lo in c and v < c[lo]) or (hi in c and v > c[hi]):
+            return False
+    return not c.get("dimensions") or dim in c["dimensions"]
+
+
+def test_contract_c19_the_nether_holds_only_our_compiled_tables(tmp_path):
+    import zipfile
+    import compile_spawns as CS
+    import suppress_inherited_spawns as SIS
+    spawns = json.loads((ROOT / "data" / "spawns.json").read_text(encoding="utf-8"))
+    ours, _ = CS.build_nether(spawns)
+    assert ours, "no compiled Nether tables"
+    server, world, out = tmp_path / "server", tmp_path / "world", tmp_path / "out"
+    (server / "mods").mkdir(parents=True)
+    inherited = "data/cobblemon/spawn_pool_world/fake_nether_heatmor.json"
+    with zipfile.ZipFile(server / "mods" / "fake.jar", "w") as z:
+        z.writestr(inherited, json.dumps({"enabled": True, "spawns": [
+            {"id": "h", "pokemon": "heatmor", "type": "pokemon", "spawnablePositionType": "grounded", "bucket": "common",
+             "level": "30-40", "weight": 5.0, "condition": {"biomes": ["#minecraft:is_nether"]}}]}))
+    for rel, text in ours.items():
+        f = world / "datapacks" / "cobblers_spawns" / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(text, encoding="utf-8")
+    assert SIS.main(["--server", str(server), "--world", str(world), "--out", str(out), "--subregions"]) == 0
+    # (1) our pools are never re-emitted, so nothing the suppression writes can shadow or strip them
+    assert not [p for p in out.rglob("*.json") if "/cobblers/" in p.as_posix()]
+    (detail,) = json.loads((out / inherited).read_text(encoding="utf-8"))["spawns"]
+    anti = detail["anticonditions"]
+    # (2) the inherited detail is gone at every point of every Nether table's boxes, and kept on the overworld far from
+    # every box
+    for rec in spawns["nether_tables"]:
+        for b in rec["boxes"]:
+            for x, z in ((b[0], b[2]), (b[1], b[3]), ((b[0] + b[1]) // 2, (b[2] + b[3]) // 2)):
+                assert any(_c19_holds(c, "minecraft:the_nether", x, z) for c in anti), (rec["id"], x, z)
+    assert not any(_c19_holds(c, "minecraft:overworld", -10 ** 6, -10 ** 6) for c in anti)
+    # (3) every compiled Nether detail can only ever hold in the Nether
+    for rel, text in ours.items():
+        for s in json.loads(text)["spawns"]:
+            c = s["condition"]
+            x, z = (c["minX"] + c["maxX"]) // 2, (c["minZ"] + c["maxZ"]) // 2
+            assert _c19_holds(c, "minecraft:the_nether", x, z), s["id"]
+            assert not _c19_holds(c, "minecraft:overworld", x, z), s["id"]
+
+
+# =================================================================================================================
 # The registry itself
 # =================================================================================================================
 
