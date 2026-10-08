@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "generated_by": "hand, from a scan of the server snapshot's mods and datapacks (C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/{mods,datapacks}) on 2026-10-10; re-checked by `python tools/dimension_overrides.py audit`",
+  "status": "BUILT, NOT PROVEN: the override form is unproven until experiments/EXP-058-dimension-overrides passes on a throwaway generated world. Never install beside the live world before it has.",
+  "why": "The live world has never generated a Nether or End chunk (docs/world-building/DIMENSIONS_AND_BORDERS.md section 3). The first player through a portal makes the Nether generate, and with it Blaine-gym copies (each with a kanto_blaine rctmod:trainer_spawner) and Moltres altars, which answer once Shrew Station hands out the feathers at gym8_cleared. The owner, 2026-10-10: nobody should be able to reach a second Blaine or an unearned Moltres. The same holds for the End's League copies (Elite Four and Champion spawners) and the Necrozma towers, whose summit command chains in a generated copy fire for anyone.",
+  "mechanism": {
+    "form": "Override each upstream minecraft:random_spread structure_set at its own namespace path, keeping its structures and placement and adding \"frequency\": 0.0.",
+    "why_this_form": "A structure_set decides only where WORLDGEN places a structure. Our own copies are pasted with `place template <id>` (tools/place_donor.py:309, tools/place_town.py:380; no tool in tools/ runs `place structure`), which reads the template, not the structure or its set, so the overworld copies we place are untouched. The structure definitions themselves are left alone (copying them would put no-redistribution upstream JSON in our pack).",
+    "frequency_field": "`frequency` is a field of the structure placement, used by packs this server already loads: mega_showdown:archaeological_site 0.45 (mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar data/mega_showdown/worldgen/structure_set/archaeological_site.json), repurposed_structures:mineshafts_nether 0.00275 (repurposed_structures-7.5.21+1.21.1-fabric.jar). 0.0 is the low end of its range; that the 1.21.1 codec accepts 0.0 and that it then places nothing is what EXP-058 proves.",
+    "fallback_if_rejected": "If the boot rejects frequency 0.0, override the structure's biomes with an empty biome tag instead. Precedent: Terralith ships an empty tag terralith:has_structure/none ({\"replace\": false, \"values\": []}, extra/Terralith-DP.zip data/terralith/tags/worldgen/biome/has_structure/none.json) used by terralith:underground/witch_hut. That form copies the structure JSON, so it is the second choice.",
+    "applies_in_every_dimension": "A structure_set is not per dimension: frequency 0.0 stops it everywhere. Nothing is lost in the overworld, which a WorldPainter export writes in full so worldgen places no structure there (docs/world-building/DIMENSIONS_AND_BORDERS.md section 4)."
+  },
+  "install": {
+    "pack": "cobblers_dimension_overrides",
+    "folder": "world-local (tools/reapply.py WORLD_LOCAL)",
+    "why": "Its files must win over COBBLEVERSE-DP-v31.zip, which sits in the server's global datapacks/ folder (Global Packs, config/global_packs.toml). A world pack first seen is enabled above every other pack; the spawn suppression relies on exactly that (tools/reapply.py install, EXP-012). The order of two packs inside the global folder is not documented, so the global folder is the unproven choice. The live world gets it through `reapply.py install` with its own world folder, like cobblers_spawns. Worldgen registries load only at a server boot: a /reload does not apply it.",
+    "when": "before anyone enters the Nether or the End. Chunks generated before it is installed keep whatever they placed."
+  },
+  "suppress": [
+    {
+      "structure_set": "cobbleverse:blaine",
+      "structures": [{"structure": "cobbleverse:blaine", "weight": 10}],
+      "placement": {"type": "minecraft:random_spread", "spacing": 25, "separation": 10, "salt": 7137},
+      "dimension": "the_nether",
+      "biomes": ["minecraft:crimson_forest"],
+      "source": "COBBLEVERSE-DP-v31.zip data/cobbleverse/worldgen/structure_set/blaine.json; structure data/cobbleverse/worldgen/structure/blaine.json",
+      "carries": "rctmod:trainer_spawner in data/cobbleverse/structure/blaine.nbt (the kanto_blaine leader)",
+      "why": "a second Blaine: badge 7 beaten in any Nether copy skips the Craters gym (placements.json gym7_gym_building)"
+    },
+    {
+      "structure_set": "cobbleverse:legendary/moltres",
+      "structures": [{"structure": "cobbleverse:legendary/moltres", "weight": 1}],
+      "placement": {"type": "minecraft:random_spread", "spacing": 151, "separation": 99, "salt": 14631},
+      "dimension": "the_nether",
+      "biomes": ["minecraft:nether_wastes"],
+      "source": "COBBLEVERSE-DP-v31.zip data/cobbleverse/worldgen/structure_set/legendary/moltres.json; structure data/cobbleverse/worldgen/structure/legendary/moltres.json",
+      "carries": "the Moltres altar (data/adopted_legendary_sites.json catalogue_2026_10_06: adopted in the Craters)",
+      "why": "an unearned Moltres: each Nether copy is a live altar once a player holds the feather"
+    },
+    {
+      "structure_set": "cobbleverse:kanto_league",
+      "structures": [{"structure": "cobbleverse:kanto_league", "weight": 1}],
+      "placement": {"type": "random_spread", "spacing": 120, "separation": 50, "salt": 9045},
+      "dimension": "the_end",
+      "biomes": ["minecraft:end_highlands"],
+      "source": "COBBLEVERSE-DP-v31.zip data/cobbleverse/worldgen/structure_set/kanto_league.json; structure data/cobbleverse/worldgen/structure/kanto_league.json",
+      "carries": "rctmod:trainer_spawner in data/cobbleverse/structure/kanto_league.nbt (Elite Four and Champion)",
+      "why": "a second League: our League is pasted in the overworld (placements.json league_building)"
+    },
+    {
+      "structure_set": "cobbleverse:dawn_tower",
+      "structures": [{"structure": "cobbleverse:dawn_tower", "weight": 1}],
+      "placement": {"type": "random_spread", "spacing": 200, "separation": 125, "salt": 769831},
+      "dimension": "the_end",
+      "biomes": ["minecraft:end_highlands"],
+      "source": "COBBLEVERSE-DP-v31.zip data/cobbleverse/worldgen/structure_set/dawn_tower.json; structure data/cobbleverse/worldgen/structure/dawn_tower.json",
+      "carries": "command_block chain in data/cobbleverse/structure/dawn_tower.nbt that spawns Necrozma (data/adopted_legendary_sites.json adopted_dawn_tower)",
+      "why": "an unearned Necrozma: only our pasted tower's chain is rewritten to need champion_cleared (tools/place_donor.py set_commands)"
+    },
+    {
+      "structure_set": "cobbleverse:dusk_tower",
+      "structures": [{"structure": "cobbleverse:dusk_tower", "weight": 1}],
+      "placement": {"type": "random_spread", "spacing": 200, "separation": 125, "salt": 884817},
+      "dimension": "the_end",
+      "biomes": ["minecraft:end_highlands"],
+      "source": "COBBLEVERSE-DP-v31.zip data/cobbleverse/worldgen/structure_set/dusk_tower.json; structure data/cobbleverse/worldgen/structure/dusk_tower.json",
+      "carries": "command_block chain in data/cobbleverse/structure/dusk_tower.nbt that spawns Necrozma (data/adopted_legendary_sites.json adopted_dusk_tower)",
+      "why": "as the Dawn tower"
+    },
+    {
+      "structure_set": "legendarymonuments:eternatus_cocoon",
+      "structures": [{"structure": "legendarymonuments:eternatus_cocoon", "weight": 1}],
+      "placement": {"type": "minecraft:random_spread", "salt": 15915, "spread_type": "triangular", "spacing": 280, "separation": 210},
+      "dimension": "the_end",
+      "biomes": ["minecraft:end_highlands", "minecraft:end_midlands"],
+      "source": "LegendaryMonuments-Cobbleverse.jar data/legendarymonuments/worldgen/structure_set/eternatus_cocoon.json; structure data/legendarymonuments/worldgen/structure/eternatus_cocoon.json",
+      "carries": "the Eternatus summon (catalogue_2026_10_06: out_by_owner)",
+      "why": "the owner, 2026-10-02: Eternatus stays out until a Galar Particle supply is authored"
+    },
+    {
+      "structure_set": "legendarymonuments:stark_mountain",
+      "structures": [{"structure": "legendarymonuments:stark_mountain", "weight": 1}],
+      "placement": {"type": "minecraft:random_spread", "salt": 672598, "spread_type": "triangular", "spacing": 205, "separation": 155},
+      "dimension": "the_nether",
+      "biomes": ["#cobbleverse:has_structure/stark_mountain"],
+      "source": "LegendaryMonuments-Cobbleverse.jar data/legendarymonuments/worldgen/structure_set/stark_mountain.json; structure data/legendarymonuments/worldgen/structure/stark_mountain.json; its biome tag (nether_wastes) ships only in extra/COBBLEVERSE-Sinnoh-DP.zip data/cobbleverse/tags/worldgen/biome/has_structure/stark_mountain.json",
+      "carries": "rctmod:trainer_spawner in data/legendarymonuments/structure/stark_mountain.nbt (sinnoh_buck, team_galactic_charon) and the Heatran summon (catalogue_2026_10_06: unplaced, an owner's call)",
+      "why": "inert today, since its biome tag is in the disabled Sinnoh extra; suppressed anyway because it carries trainer spawners the campaign refused (adopted_legendary_sites.json refused) and goes live the day that extra is enabled. Its structure ships in the jar, so the override never names a missing structure. The owner may move it to kept"
+    }
+  ],
+  "kept": [
+    {
+      "structure_set": "legendarymonuments:shrines",
+      "structures": ["legendarymonuments:firescourge_shrine", "legendarymonuments:grasswither_shrine", "legendarymonuments:icerend_shrine", "legendarymonuments:groundblight_shrine"],
+      "placement": {"type": "minecraft:random_spread", "salt": 79583, "spread_type": "triangular", "spacing": 80, "separation": 40},
+      "dimension": "the_nether",
+      "source": "LegendaryMonuments-Cobbleverse.jar data/legendarymonuments/worldgen/structure_set/shrines.json",
+      "why": "the Ruinous four stay Nether-generated by decision: their stakes are a Nether worldgen feature (data/adopted_legendary_sites.json catalogue_2026_10_06 status stays_where_it_generates; docs/STATE.md 'Seven legendary sites'; docs/mechanics/NETHER_DUNGEON_SCOPE.md: leave untouched). No rctmod spawner or command block in their templates (scan)."
+    }
+  ],
+  "not_covered": [
+    {
+      "structure_set": "cobbleverse:sandra",
+      "structures": ["cobbleverse:sandra"],
+      "dimension": "the_nether",
+      "source": "extra/COBBLEVERSE-Johto-DP.zip data/cobbleverse/worldgen/structure_set/sandra.json (soul_sand_valley; rctmod:trainer_spawner in its template)",
+      "why": "in an OPTIONAL Global Packs folder (datapacks/extra/, config/global_packs.toml) that this world has never enabled. Overriding it would name a structure that does not exist while the extra is off, and an unbound structure reference fails the world's registry load. If the extra is ever enabled, add it here first"
+    },
+    {
+      "structure_set": "cobbleverse:johto_league",
+      "structures": ["cobbleverse:johto_league"],
+      "dimension": "the_end",
+      "source": "extra/COBBLEVERSE-Johto-DP.zip data/cobbleverse/worldgen/structure_set/johto_league.json (end_highlands; rctmod:trainer_spawner in its template)",
+      "why": "as cobbleverse:sandra"
+    },
+    {
+      "structure_set": "cobbleverse:mythical/deoxys",
+      "structures": ["cobbleverse:mythical/deoxys"],
+      "dimension": "the_end",
+      "source": "extra/COBBLEVERSE-Hoenn-DP.zip data/cobbleverse/worldgen/structure_set/mythical/deoxys.json (small_end_islands)",
+      "why": "as cobbleverse:sandra"
+    }
+  ],
+  "optional_packs": ["COBBLEVERSE-Hoenn-DP.zip", "COBBLEVERSE-Johto-DP.zip", "COBBLEVERSE-Sinnoh-DP.zip", "Terralith-DP.zip"],
+  "count_windows": {
+    "border": "data/world.json export.border: size 10240, centre 4096, blocks -1024..9215",
+    "the_nether_unscaled": {"min": -1024, "max": 9215, "why": "the reading on record (DIMENSIONS_AND_BORDERS.md section 1): one border shared by every dimension in 1.21.1"},
+    "the_nether_centre_over_8": {"min": -4608, "max": 5631, "why": "INFERRED, not read from the jar: vanilla divides the border's centre by the dimension's coordinate_scale (8) and keeps its size. Same area, shifted; the doc lists the centre as not verified"},
+    "the_end": {"min": -1024, "max": 9215, "exclude_radius": 1024, "why": "coordinate_scale 1; end_highlands and end_midlands lie only on the outer islands, about 1024 blocks and more from (0, 0)"}
+  }
+}
