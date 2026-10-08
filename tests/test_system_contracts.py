@@ -583,20 +583,35 @@ def test_contract_c4_every_tool_that_reads_the_spawn_conditions_is_accounted_for
             assert any(s == sid or s.startswith(sid + ":") for s in SOURCES), (tool, what)
 
 
-# Without it a built pack (whatever tool wrote it) places a spawn condition no policy entry names at all. Runs on the
-# packs present under build/datapacks; a fresh checkout has none, and the test says so.
-def test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows():
-    packs = ROOT / "build" / "datapacks"
-    fns = sorted(packs.glob("*/data/*/function/**/*.mcfunction")) if packs.is_dir() else []
+# the built packs judged: build/datapacks, or COBBLERS_BUILT_DATAPACKS (another checkout's build/datapacks, read only)
+BUILT_PACKS = Path(os.environ.get("COBBLERS_BUILT_DATAPACKS") or ROOT / "build" / "datapacks")
+
+
+def _built_pack_cases():
+    """One case per pack under BUILT_PACKS that ships functions (a pack with none places nothing this way), plus every
+    pack C4's fails_today names (so its strict mark exists in a checkout that has not built it; that case skips)."""
+    present = {p.name for p in BUILT_PACKS.iterdir()
+               if p.is_dir() and next(p.glob("data/*/function/**/*.mcfunction"), None)} if BUILT_PACKS.is_dir() else set()
+    recorded = {pat.split(":", 1)[1] for pat in (C4.get("fails_today") or {}).get("cases", {}) if pat.startswith("built:")}
+    return [("built:%s" % p, (p,)) for p in sorted(present | recorded)] or [("built:none", (None,))]
+
+
+# Without it a built pack (whatever tool wrote it) places a spawn condition no policy entry names at all. One case per
+# pack present under build/datapacks; a fresh checkout has none, and the test says so. A pack recorded in C4's
+# fails_today is strict xfail: the day its block gets a policy entry or leaves the pack, the case passes and fails.
+@pytest.mark.parametrize("pack", _params("C4", _built_pack_cases()))
+def test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows(pack):
+    fns = sorted((BUILT_PACKS / pack).glob("data/*/function/**/*.mcfunction")) if pack else []
     if not fns:
-        pytest.skip("NOT_EXECUTED: no built packs under build/datapacks (run the generators or reapply.py prepare)")
+        pytest.skip("NOT_EXECUTED: %s has no built functions under %s (run the generators or reapply.py prepare)"
+                    % (pack or "no pack", BUILT_PACKS))
     allowed = {b for w in POLICY["whitelist"] for b in w["blocks"]}
     bad = {}
     for f in fns:
         placed = _command_blocks(f.read_text(encoding="utf-8", errors="replace").splitlines())
         for b in sorted((placed & SPAWN_BLOCKS) - allowed):
-            bad.setdefault(f.relative_to(packs).parts[0], set()).add(b)
-    assert not bad, {k: sorted(v) for k, v in bad.items()}
+            bad.setdefault(b, []).append(f.relative_to(BUILT_PACKS / pack).as_posix())
+    assert not bad, {b: (len(v), v[0]) for b, v in bad.items()}
 
 
 # =================================================================================================================
