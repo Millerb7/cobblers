@@ -13,7 +13,7 @@ when the dialogue closes, that a locked player's own key is refused, and what op
 (the audit's model takes the builder's reading of OpenStarterScreenCommand.kt @1.8.0 and prints it as OPEN).
 """
 import json
-import shutil
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -40,10 +40,15 @@ def compile_with(tmp, mutate=None):
         assert src.count(old) == 1, "mutation anchor not unique or gone: %r" % old
         src = src.replace(old, new)
     (tools / "compile_dialogue.py").write_text(src, encoding="utf-8")
-    shutil.copy(ROOT / "tools" / "arena_runtime.py", tools / "arena_runtime.py")
+    # The compiler's own imports come from the real tools/ on PYTHONPATH, behind the copy's directory (the script's
+    # directory is sys.path[0], so the mutant shadows the real compiler and nothing else). Until 2026-10-08 this
+    # fixture copied the imports by hand (arena_runtime.py only); 85be563 added `import levelcap_pack` to the
+    # compiler and every test here failed with ModuleNotFoundError instead of auditing anything.
+    env = dict(os.environ)
+    env["PYTHONPATH"] = os.pathsep.join([str(ROOT / "tools")] + ([env["PYTHONPATH"]] if env.get("PYTHONPATH") else []))
     out = tmp / "cobblers_dialogue"
     r = subprocess.run([sys.executable, str(tools / "compile_dialogue.py"), "--all", "--data", str(DATA),
-                        "--out", str(out)], capture_output=True, text=True, timeout=200)
+                        "--out", str(out)], capture_output=True, text=True, timeout=200, env=env)
     assert r.returncode == 0, r.stderr[-800:]
     return out
 
@@ -207,6 +212,122 @@ def test_a_pack_function_giving_a_starter_species_is_caught(tmp_path):
     (fn / "gift.mcfunction").write_text("givepokemon @s kubfu level=5\n", encoding="utf-8")
     a = audit(dlg, tmp_path, packs=packs)
     assert "P2:starter_given" in checks(a), a.problems
+
+
+# --------------------------------------------------------------------------------------------- P2: the starter FORM
+# Larvesta, the sixth starter (2026-10-08), is also a wild species, so the species sweep cannot name it. The leak is
+# the starter form reaching a Pokemon a player can own; these fix the line between that and a wild Larvesta.
+def _pack_fn(tmp_path, text, name="gift.mcfunction"):
+    packs = tmp_path / "packs"
+    fn = packs / "cobblers_x" / "data" / "cobblers" / "function"
+    fn.mkdir(parents=True, exist_ok=True)
+    (fn / name).write_text(text, encoding="utf-8")
+    return packs
+
+
+@pytest.mark.parametrize("text,leak", [
+    ("givepokemon @s larvesta level=5\n", False),                                   # a wild-shaped gift: allowed
+    ("pokespawn larvesta level=40\n", False),                                       # a wild spawn: allowed
+    ("givepokemon @s larvesta level=5 aspect=cobblers_starter_1\n", True),
+    ("pokegive @s larvesta cobblers_starter_2\n", True),                            # a bare aspect token
+    ("pokespawn larvesta form=Starter-Grown\n", True),                              # the form by name
+    ("pokeedit @s 1 aspect=cobblers_starter_1\n", True),                            # a caught wild one rewritten
+    ("spawnpokemonat 1 2 3 larvesta aspect=cobblers_starter_1 uncatchable no_ai\n", False),   # a display
+    ("give @s minecraft:paper[custom_name='\"cobblers_starter_1\"']\n", False),     # an item give, not a Pokemon
+])
+def test_a_starter_form_given_outside_the_screen_is_told_from_a_wild_larvesta(tmp_path, text, leak):
+    # Without it a function handing out the 330-BST starter Larvesta (or pokeediting a wild one into it) passes P2,
+    # because the species sweep leaves Larvesta out; or, over-wide, every wild Larvesta gift and display fails it.
+    a = audit(oak_pack(tmp_path / "dlg"), tmp_path, packs=_pack_fn(tmp_path, text))
+    assert ("P2:starter_form_given" in checks(a)) == leak, a.problems
+    assert "P2:starter_given" not in checks(a), a.problems       # Larvesta is not a species-keyed starter
+
+
+def test_a_spawn_pool_row_in_a_starter_form_is_caught_and_a_wild_row_is_not(tmp_path):
+    # Without it a spawn pool (minified, one line) could put the starter form in the wild with no verb anywhere.
+    packs = tmp_path / "packs"
+    d = packs / "cobblers_y" / "data" / "cobblers" / "spawn_pool_world"
+    d.mkdir(parents=True)
+    rows = [{"id": "a", "pokemon": "larvesta", "type": "pokemon"},
+            {"id": "b", "pokemon": "larvesta aspect=cobblers_starter_1", "type": "pokemon"}]
+    (d / "x.json").write_text(json.dumps({"spawns": rows}), encoding="utf-8")
+    a = audit(oak_pack(tmp_path / "dlg"), tmp_path, packs=packs)
+    got = [p for p in a.problems if p[1].startswith("starter_form_given")]
+    assert len(got) == 1 and "cobblers_starter_1" in got[0][2], a.problems
+
+
+def test_a_macro_give_in_a_pack_naming_a_starter_form_is_caught(tmp_path):
+    # Without it the form could arrive through a macro argument (the species and props written in storage elsewhere
+    # in the pack), which no line-level match sees.
+    packs = _pack_fn(tmp_path, "$givepokemon @s $(props)\n")
+    _pack_fn(tmp_path, "data modify storage cobblers:x p set value {props:\"larvesta aspect=cobblers_starter_1\"}\n",
+             name="set.mcfunction")
+    a = audit(oak_pack(tmp_path / "dlg"), tmp_path, packs=packs)
+    assert "P2:starter_form_macro" in checks(a), a.problems
+
+
+def _mutant(path, old, new):
+    """The module at `path` with one source change, loaded under its own name (never touching the real one)."""
+    import types
+    src = path.read_text(encoding="utf-8")
+    assert src.count(old) == 1, "mutation anchor not unique or gone: %r" % old
+    mod = types.ModuleType("mutant_" + path.stem)
+    mod.__file__ = str(path)
+    sys.modules[mod.__name__] = mod
+    try:
+        exec(compile(src.replace(old, new), str(path), "exec"), mod.__dict__)
+    finally:
+        sys.modules.pop(mod.__name__, None)
+    return mod
+
+
+SPAWN_ANCHOR = 'heart_pokemon(e) if e.get("heart") else e["species"]'
+
+
+@pytest.mark.parametrize("mutate", [False, True])
+def test_the_spawn_generator_emitting_the_starter_aspect_on_larvesta_is_caught(tmp_path, mutate):
+    # Independence by MUTATING THE GENERATOR (tools/compile_spawns.py build_nether, over the real, untouched
+    # data/spawns.json, whose Nether ring carries a wild Larvesta row): the real output passes, and the copy that
+    # writes aspect=cobblers_starter_1 on Larvesta fails. Without it the form check could pass anything, or fault the
+    # wild Larvesta it must leave alone.
+    new = (SPAWN_ANCHOR.replace('e["species"]', '(e["species"] + (" aspect=cobblers_starter_1" '
+                                'if e["species"] == "larvesta" else ""))') if mutate else SPAWN_ANCHOR)
+    cs = _mutant(ROOT / "tools" / "compile_spawns.py", SPAWN_ANCHOR, new)
+    files, _ = cs.build_nether(json.loads((DATA / "spawns.json").read_text(encoding="utf-8")))
+    assert any('"pokemon": "larvesta' in t for t in files.values()), "the fixture no longer exercises a wild Larvesta"
+    packs = tmp_path / "packs"
+    for rel, text in files.items():
+        p = packs / "cobblers_spawns" / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding="utf-8")
+    a = audit(oak_pack(tmp_path / "dlg"), tmp_path, packs=packs)
+    assert ("P2:starter_form_given" in checks(a)) == mutate, a.problems
+    assert not [p for p in a.problems if p[0] == "P2" and not p[1].startswith("starter_form_given")], a.problems
+
+
+SCENE_ANCHOR = 'props = "level=%d uncatchable no_ai" % int(a["level"])'
+
+
+@pytest.mark.parametrize("props,leak", [
+    (None, False),                                                      # today's generator
+    ("level=%d aspect=cobblers_starter_1 uncatchable no_ai", False),   # the form, still a display nobody can own
+    ("level=%d aspect=cobblers_starter_1 no_ai", True),                # the form, catchable
+])
+def test_the_lab_scene_generator_spawning_a_catchable_starter_larvesta_is_caught(tmp_path, props, leak):
+    # Independence by MUTATING THE GENERATOR (tools/scenes_pack.py, the lab's six standing starters, data untouched):
+    # a Larvesta actor spawned in the starter form and catchable is a free second starter; one still uncatchable is
+    # not. Without it the display exemption could swallow a catchable copy, or the form check fault every display.
+    new = SCENE_ANCHOR if props is None else (
+        'props = ("%s" if a["species"] == "larvesta" else "level=%%d uncatchable no_ai") %% int(a["level"])' % props)
+    sp = _mutant(ROOT / "tools" / "scenes_pack.py", SCENE_ANCHOR, new)
+    files, _ = sp.build(DATA)
+    larv = [c for c in files.values() if isinstance(c, list) and any("spawnpokemonat" in l and " larvesta " in l for l in c)]
+    assert larv, "the fixture no longer spawns the lab's Larvesta"
+    packs = tmp_path / "packs"
+    sp.write(files, packs / "cobblers_scenes")
+    a = audit(oak_pack(tmp_path / "dlg"), tmp_path, packs=packs)
+    assert ("P2:starter_form_given" in checks(a)) == leak, a.problems
+    assert "P2:starter_given" not in checks(a), a.problems
 
 
 def test_a_pack_shipping_a_starters_folder_is_caught(tmp_path):

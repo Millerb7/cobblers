@@ -30,12 +30,14 @@ WHAT IS CHECKED
   P2  exactly one `openstarterscreen` in all compiled dialogue and every file of every pack under build/datapacks, and
       it is in Oak's dialogue (the one an NPC class named Oak opens); no file gives or spawns one of the five species
       (a give/spawn/summon/loot verb with the species on the same line or in the same Molang string; a give/spawn
-      whose species is a macro is flagged when its pack names a starter species anywhere).
+      whose species is a macro is flagged when its pack names a starter species anywhere); and no file gives, spawns,
+      pokeedits or pools ANY species in a starter form (aspect cobblers_starter_1/_2 or form=Starter[-Grown]), which
+      is how a Larvesta leak is told from the wild Larvesta that spawn by design. Uncatchable displays are exempt.
   P3  "Not yet" (the offer's other options) closes with the offer still standing: the next talk shows the offer again;
       a player carrying the tag, at any cursor value, never sees the offer or the page that leads to it.
   P4  modpack/config/cobblemon/starters.json: allowStarterOnJoin FALSE (the owner, 2026-10-06: "Oak offering the
-      starters in the lab as a scene rather than a menu on join"; it was true from 2026-10-05), exactly the five
-      aspect=cobblers_starter_1
+      starters in the lab as a scene rather than a menu on join"; it was true from 2026-10-05), exactly the STARTERS
+      set (six since 2026-10-08) with aspect=cobblers_starter_1
       entries; no pack under build/datapacks (nor modpack/) ships data/<ns>/starters/.
   P5  REPORTED, not failed: quests, flags and rewards the data makes available before Oak that assume a party (a
       battle, an encounter, a party check); FAILED: an RCT initial level cap below the starters' level.
@@ -70,11 +72,21 @@ RCT = ROOT / "modpack" / "config" / "rctmod-server.toml"
 STARTERS = {"cosmog", "kubfu", "typenull", "poipole", "meltan",       # the brief / NATIVE_STARTERS_COST.md 6a
             "larvesta"}                                               # the sixth, the owner 2026-10-08
 STARTER_ASPECT = "cobblers_starter_1"
-# P2's give/spawn sweep names the five mythicals only. Larvesta is wild by design (data/spawns.json, levels 38-53) and
+# P2's species sweep names the five mythicals only. Larvesta is wild by design (data/spawns.json, levels 38-60) and
 # an ambient display in two towns (data/ambient_towns/gorge_hamlet.json, gym7_town.json, spawned through a macro), so
-# naming the species would fault those as starter gives. NOT covered: a give of Larvesta WITH aspect=cobblers_starter_1
-# (the real leak) -- left for the test author to add, keyed on the aspect rather than the species.
+# naming the species would fault those as starter gives. A Larvesta leak is the starter FORM, so the second sweep
+# (FORM_RE, starter_form_given / starter_form_macro) keys on what selects the form -- the aspect, or form= with the
+# form's name (data/mythical_starters.json stages[].form "Starter" / "Starter-Grown") -- whatever the species: a wild
+# Larvesta carries neither and passes, a give, spawn, spawn-pool row or pokeedit carrying either fails.
 SPECIES_RE = re.compile(r"(?<![a-z0-9_])(?:cobblemon:)?(cosmog|kubfu|type_?null|poipole|meltan)(?![a-z0-9_])", re.I)
+FORM_RE = re.compile(r"(?<![a-z0-9_])(?:cobblers_starter_[12]|form=starter(?:[-_]?grown)?)(?![a-z0-9_-])", re.I)
+# a command that creates a Pokemon or rewrites a party one (PokemonEditCommand in the 1.8.0 jar registers pokeedit,
+# pokeeditother, pokemonedit, pokemoneditother: `pokeedit <slot> aspect=cobblers_starter_1` turns a caught wild
+# Larvesta into the starter form). Plain `give` (items) is not one.
+FORM_VERB_RE = re.compile(r"(?<![a-z0-9_])(give_?pokemon\w*|pokegive\w*|spawn_?pokemon\w*|pokespawn\w*"
+                          r"|poke(?:mon)?_?edit\w*|summon|loot)(?![a-z0-9_])", re.I)
+# a spawn pool's row (spawn_pool_world: "pokemon"; habitat_pools: "species" plus "modifiers"), read as JSON
+POOL_DIRS = ("/spawn_pool_world/", "/habitat_pools/")
 GIVE_RE = re.compile(r"(?<![a-z0-9_])(give_?pokemon\w*|pokegive\w*|spawn_?pokemon\w*|pokespawn\w*|summon|give|loot)"
                      r"(?![a-z0-9_])", re.I)
 POKEGIVE_RE = re.compile(r"(?<![a-z0-9_])(give_?pokemon\w*|pokegive\w*|spawn_?pokemon\w*|pokespawn\w*)(?![a-z0-9_])",
@@ -639,6 +651,7 @@ class Audit:
     def sweep(self):
         roots = [r for r, _ in self.roots()]
         seen, screens, gives, macro_sites, starter_named, displays = set(), [], [], [], {}, []
+        form_gives, form_macro_sites, form_named = [], [], {}
         for r, ex in self.roots():
             for f, text in text_files(r, ex):
                 key = str(Path(f).resolve()) if "!/" not in str(f) else str(f)
@@ -648,6 +661,14 @@ class Audit:
                 n = text.count(SCREEN)
                 if n:
                     screens.append((f, n))
+                if FORM_RE.search(text):
+                    form_named[self.pack_of(f, r)] = f
+                    form_gives += self.form_leaks(f, text, displays)
+                if "$(" in text:
+                    for unit in re.split(r"[\n;]", text):
+                        if (FORM_VERB_RE.search(unit) and "$(" in unit and not FORM_RE.search(unit)
+                                and not self.is_display(unit)):
+                            form_macro_sites.append((f, r, unit.strip()[:160]))
                 low = text.lower()
                 has_species = SPECIES_RE.search(low) is not None
                 if has_species:
@@ -676,9 +697,57 @@ class Audit:
                 self.fail("P2", "starter_macro:%s" % Path(str(f)).name,
                           "%s gives/spawns a macro species and its pack names a starter species (%s): %s"
                           % (f, starter_named[pk], unit))
-        self.notes.append("P2 swept %d files under %s; %d macro give/spawn sites"
-                          % (len(seen), " + ".join(str(r) for r in roots), len(macro_sites)))
+        for f, unit in form_gives:
+            self.fail("P2", "starter_form_given:%s" % Path(str(f)).name,
+                      "%s gives, spawns or edits in a starter FORM (aspect or form= outside the starter screen): %s"
+                      % (f, unit))
+        for f, r, unit in form_macro_sites:
+            pk = self.pack_of(f, r)
+            if pk in form_named:
+                self.fail("P2", "starter_form_macro:%s" % Path(str(f)).name,
+                          "%s gives/spawns/edits a macro Pokemon and its pack names a starter form (%s): %s"
+                          % (f, form_named[pk], unit))
+        self.notes.append("P2 swept %d files under %s; %d macro give/spawn sites; %d pack(s) naming a starter form"
+                          % (len(seen), " + ".join(str(r) for r in roots), len(macro_sites), len(form_named)))
         return screens
+
+    @staticmethod
+    def is_display(unit):
+        """Only spawn verbs, and Cobblemon's `uncatchable` on the same unit (EXP-023): a Pokemon nobody can own."""
+        verbs = {m.group(1).lower() for m in FORM_VERB_RE.finditer(unit)} | \
+                {m.group(1).lower() for m in GIVE_RE.finditer(unit)}
+        return all(v.startswith(("spawn", "pokespawn")) for v in verbs) and UNCATCHABLE_RE.search(unit) is not None
+
+    def form_leaks(self, f, text, displays):
+        """[(file, unit)] where a starter form reaches a Pokemon someone can own: a give/spawn/edit command, or a
+        spawn-pool row, carrying the form's aspect or form=<its name>. The species does not matter (a wild Larvesta
+        names the species and no form; that is the line drawn here). Evolution results in species_additions name the
+        aspect with no verb and no pool key, so the screen's own chain passes."""
+        out = []
+        path = "/" + Path(str(f).replace("!/", "/")).as_posix()
+        rows = None
+        if path.endswith(".json") and any(d in path for d in POOL_DIRS):
+            try:
+                rows = json.loads(text).get("spawns") or []
+            except (ValueError, AttributeError):
+                rows = None
+        if rows is not None:
+            for row in rows:
+                s = " ".join(str(row.get(k) or "") for k in ("pokemon", "species", "modifiers")) \
+                    if isinstance(row, dict) else str(row)
+                if FORM_RE.search(s) and not UNCATCHABLE_RE.search(s):
+                    out.append((f, s.strip()[:160]))
+        for unit in re.split(r"[\n;]", text):
+            if not FORM_RE.search(unit):
+                continue
+            if FORM_VERB_RE.search(unit):
+                if self.is_display(unit):
+                    displays.append(f)
+                    continue
+                out.append((f, unit.strip()[:160]))
+            elif rows is None and re.search(r'"(?:pokemon|modifiers)"\s*:', unit) and not UNCATCHABLE_RE.search(unit):
+                out.append((f, unit.strip()[:160]))
+        return out
 
     def pack_of(self, f, root):
         rel = Path(str(f).split("!/")[0]).resolve().relative_to(Path(root).resolve()).parts
