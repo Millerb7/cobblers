@@ -14,7 +14,7 @@
       "file": "starters.html",
       "title": "Starters",
       "label": "Starters",
-      "description": "The five starters on the starter screen: their stats at each tier, how each line evolves, and how to get the items two of them need.",
+      "description": "The six starters on the starter screen: their stats at each tier, how each line evolves, and how to get the items two of them need.",
       "generator": "tools/player_guide_starters.py",
       "order": 10
     },
@@ -33,6 +33,14 @@
       "description": "How money works, and every item you can buy, barter for, sell or craft: where, from whom and for how much.",
       "generator": "tools/player_guide_items.py",
       "order": 30
+    },
+    {
+      "file": "drops.html",
+      "title": "What wild Pokemon drop",
+      "label": "Drops",
+      "description": "For every Pokemon you can meet in the wild, what it drops when you defeat it and how often; and for every dropped item, which Pokemon to look for.",
+      "generator": "tools/player_guide_drops.py",
+      "order": 35
     }
   ]
 }
