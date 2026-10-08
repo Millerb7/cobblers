@@ -239,10 +239,15 @@ def summarise(by_box, bucket_weights):
 # ------------------------------------------------------------------ the picture
 
 
+def downsample(heights):
+    """The heightmap averaged over DOWNSAMPLE x DOWNSAMPLE blocks: what land_share() reads."""
+    n = heights.shape[0] // DOWNSAMPLE
+    return heights[:n * DOWNSAMPLE, :n * DOWNSAMPLE].reshape(n, DOWNSAMPLE, n, DOWNSAMPLE).mean(axis=(1, 3))
+
+
 def relief(heights, sea):
     """A shaded-relief RGB image of the heightmap, 1 pixel per DOWNSAMPLE blocks, and the downsampled heights."""
-    n = heights.shape[0] // DOWNSAMPLE
-    h = heights[:n * DOWNSAMPLE, :n * DOWNSAMPLE].reshape(n, DOWNSAMPLE, n, DOWNSAMPLE).mean(axis=(1, 3))
+    h = downsample(heights)
     gz, gx = np.gradient(h.astype(np.float64) * 1.6 / DOWNSAMPLE)
     az, alt = math.radians(315.0), math.radians(40.0)
     slope = np.arctan(np.hypot(gx, gz))
@@ -564,6 +569,21 @@ if(hm&&hm[1]==='area'&&byId[decodeURIComponent(hm[2])])selectArea(decodeURICompo
 else if(hm&&hm[1]==='pokemon')selectSpecies(decodeURIComponent(hm[2]));else home();
 })();
 """
+
+
+def wild_species(pack_pools=None):
+    """{species string: display name} of every Pokemon this page lists: the same model build_page() draws (the
+    compiled pools, less hearts, Mega den rows, habitat pools and land pools with no dry ground), without the picture.
+    The species string is the compiled entry's `pokemon` ("rattata alolan"). tools/player_guide_drops.py lists drops
+    for exactly these, so the two pages cannot disagree about which Pokemon a player meets in the wild."""
+    heights, world = terrain.load()
+    sea = int(terrain.sea_level(world))
+    small = downsample(heights)
+    del heights
+    cfg = load_json(SPAWNER_CONFIG)
+    bucket_weights = {b: float(cfg["worldBuckets"][b]) for b in BUCKETS}
+    model = build_model(pack_pools if pack_pools is not None else compile_pack(), small, sea, bucket_weights)
+    return {r["sp"]: r["name"] for a in model["areas"] for r in a["rows"]}
 
 
 def build_page(pack_pools, source_note):

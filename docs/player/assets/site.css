@@ -3,7 +3,7 @@
    through tools/player_site.py) emit classes and never their own <style>, so the guides cannot drift into three
    looks. Sections: tokens and themes; base; the shared header, spoiler note and footer; the section filter and
    search box; the index; the battle guide (body.page-battles); the region map (body.page-map); the starters
-   (body.page-starters); items and money (body.page-items). */
+   (body.page-starters); items and money (body.page-items); drops (body.page-drops). */
 
 /* ---------------------------------------------------------------- tokens and themes */
 /* light: lavender (the owner, 2026-10-08) */
@@ -214,4 +214,20 @@ section.doc li{margin:.15rem 0}
 .page-items .id{color:var(--muted);font-size:.78rem;display:block}
 @media (max-width:560px){.page-items main{padding:8px 10px 20px}.page-items table{font-size:.8rem}
 .page-items .id{display:none}}
+/* drops.html (tools/player_guide_drops.py) */
+.page-drops main{max-width:1080px;margin:0 auto;padding:12px 16px 20px}
+.page-drops h1{font-size:1.7rem;margin:14px 0 4px}
+.page-drops h2{font-size:1.35rem;margin:30px 0 6px;padding-bottom:4px;border-bottom:2px solid var(--accent)}
+.page-drops table{border-collapse:collapse;width:100%;font-size:.88rem;margin:6px 0}
+.page-drops th,.page-drops td{text-align:left;padding:.3rem .45rem;border-bottom:1px solid var(--rule);vertical-align:top}
+.page-drops th{font-weight:600;color:var(--muted);font-size:.78rem}
+.page-drops td ul{margin:0;padding-left:1.1rem}
+.page-drops td li{margin:0 0 2px}
+.page-drops td p{margin:0}
+.page-drops .id{color:var(--muted);font-size:.78rem;display:block}
+.page-drops .pct{color:var(--muted);font-size:.78rem;font-variant-numeric:tabular-nums}
+.page-drops .where{font-size:.8rem;margin-left:6px}
+.page-drops .also{font-size:.8rem;margin:2px 0 0}
+@media (max-width:560px){.page-drops main{padding:8px 10px 20px}.page-drops table{font-size:.8rem}
+.page-drops .id,.page-drops .pct{display:none}}
 @media print{.site-header{position:static}.seg,#theme,.filter,.search{display:none}}
