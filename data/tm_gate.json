@@ -1,7 +1,7 @@
 {
   "schema": "cobblers.tm_gate/1",
   "generated_by": "hand",
-  "status": "built 2026-10-08 (tools/tm_gate.py, pack cobblers_tm_gate, world-local); the badge rule switched to the power rule 2026-10-08; the owner's four calls of 2026-10-08 applied (groups 3, 9, 16 and badge_rule.chain); NOT run in game: experiments/EXP-067-tm-recipe-gate",
+  "status": "built 2026-10-08 (tools/tm_gate.py, pack cobblers_tm_gate, world-local); the badge rule switched to the power rule 2026-10-08; the owner's four calls of 2026-10-08 applied (groups 3, 9, 16 and badge_rule.chain), and Spore lowered to 5 for Stun Spore (group 18); NOT run in game: experiments/EXP-067-tm-recipe-gate",
   "decision": "the owner, 2026-10-08: 'Gate the recipes by badge.' Each crafted TM unlocks at the same badge as its shelf line: crafting stays the cheap route, but no earlier than the shelf (docs/research/DROP_RATE_CONSUMERS.md 3.3: with alpha gems 16 of the 23 income-gated shelf TMs were craftable before their shelf price was affordable). Every other TM unlocks by what its move does: the power rule, badge_rule.decision",
   "mechanism": {
     "rung": "configuration + datapack + functions (CLAUDE.md principle 6): the vanilla gamerule doLimitedCrafting, the vanilla recipe book, recipe advancements and /recipe. No mod, no scripting layer",
@@ -31,7 +31,7 @@
         "rounding": "the score is rounded to 0.1 first, as the table prints it; a top is inclusive",
         "why": "the proposal's bands (docs/mechanics/TM_POWER_GATE.md 3), not retuned: badge 1 below 35; then each badge is one step of ten base power plus up to four points of side effects (badge 3 holds the 60-power moves, 5 the 80s, 6 the 90s, 7 the 100s); badge 8 above 104. The tops sit four above the round numbers because base powers cluster on them: with tops exactly on 80 and 90, Crunch and Shadow Ball (81.6) came out a badge after Dragon Claw (80), and Thunderbolt (93) a badge after Surf (90)"
       },
-      "outliers_are": "the 17 groups of docs/mechanics/TM_POWER_GATE.md 6, each applied as its 'Suggested' column says. `place` is a hand badge for a TM with no shelf line (a placement equal to the band holds it there, and says so); `shelf_agrees` names a shelf TM the group also speaks of, whose shelf line already is the group's badge (tools/tm_gate.py fails if the shelf moves away from it); `not_placed` names a TM the group's text mentions but its suggestion does not place, with why. A placement on a shelf TM is refused: the shelf wins",
+      "outliers_are": "the 17 groups of docs/mechanics/TM_POWER_GATE.md 6, each applied as its 'Suggested' column says, and group 18 (Spore, the owner, 2026-10-08). `place` is a hand badge for a TM with no shelf line (a placement equal to the band holds it there, and says so); `shelf_agrees` names a shelf TM the group also speaks of, whose shelf line already is the group's badge (tools/tm_gate.py fails if the shelf moves away from it); `not_placed` names a TM the group's text mentions but its suggestion does not place, with why. A placement on a shelf TM is refused: the shelf wins",
       "outliers": [
         {"group": 1, "name": "Thunder Wave", "misjudges": "valued as a Surf (90), which is the anchor working as asked; but a mid-game status move should not wait for the badge that also brings Thunderbolt. Toxic's shelf line is 5",
          "place": {"tmcraft:tm_thunderwave": 5}},
@@ -85,6 +85,7 @@
                       "power": "Mega Showdown moves.js: Return = floor(happiness x 10 / 25) || 1, Frustration = floor((255 - happiness) x 10 / 25) || 1, so 102 at 255 (Return) or 0 (Frustration). Cobblemon packs the Pokemon's friendship into the Showdown team (BattleRegistry calls Pokemon.getFriendship while packing)",
                       "max": "config/cobblemon/main.json maxPokemonFriendship 255 (modpack and snapshot); Cobblemon has no friendship-rate multiplier in its config",
                       "start": "a new Pokemon takes its form's baseFriendship (Pokemon init, FormData.getBaseFriendship); the species data: 837 at 50, 79 at 0, 73 at 35, 15 at 100, 11 at 140, 5 at 90, 3 at 20, 2 at 70. A starter is no different: our eight (modpack/config/cobblemon/starters.json, level 5) start at Cosmog 0, Type: Null 0, Poipole 0, Meltan 0, Misdreavus 35, Kubfu 50, Smeargle 50, Larvesta 50. The Friend Ball sets 150 on capture (PokeBalls: CaptureEffects.friendshipSetter(150)); the Luxury Ball's FriendshipEarningBoostEffect.apply does nothing in 1.8.0",
+                      "start_corrected_2026_10_08": "'A starter is no different' is contradicted by the bytecode (read 2026-10-08, javap; not run in game): only a NATURAL spawn sets its form's base (PokemonSpawnAction.createEntity calls setFriendship(form.getBaseFriendship())), and a trade resets to it (TradeManager.performTrade). A starter is built by PokemonProperties.create (CobblemonStarterHandler.chooseStarter): new Pokemon() takes the base of PokemonSpecies.random()'s standard form (a random implemented species), then apply() sets the species and initialize() runs, and neither touches friendship (Pokemon has no other friendship write). So our base-0 starters (Cosmog, Type: Null, Poipole, Meltan) start at a random species' base, 50 four times in five, 0 one time in thirteen. Of the four, only Type: Null and Poipole can learn Frustration at all (legacy learnset). docs/mechanics/TM_POWER_GATE.md 10",
                       "level_up": "Pokemon.addExperienceWithPlayer, per level gained: +3 at friendship 0-99, +2 at 100-199, +0 at 200 and above (FriendshipMutationCalculator SWORD_AND_SHIELD_LEVEL_UP). Levels alone stop at 200-202: Return 80",
                       "walking": "PlayerPartyStore.onSecondPassed: every 120 seconds, +1 to each party Pokemon that is sent out or on a shoulder, while its friendship is below 160 (30 an hour; 50 -> 160 in 220 minutes)",
                       "battle": "no battle win or battle turn raises friendship: no battle class calls incrementFriendship. An X item used in battle gives +1 (XStatItem, DireHitItem, GuardSpecItem)",
@@ -94,8 +95,14 @@
         {"group": 17, "name": "signature and one-species TMs", "misjudges": "the score ignores who can learn it; a badge-8 Sunsteel Strike matters to one species. Harmless in either direction, so they are left at their bands; but Glare (100, badge 7) must not stay after Thunder Wave, which group 1 moves to 5",
          "place": {"tmcraft:tm_glare": 6},
          "not_placed": {"tmcraft:tm_vcreate": "left at its band, as proposed", "tmcraft:tm_doubleironbash": "left at its band, as proposed",
-                        "tmcraft:tm_multiattack": "left at its band, as proposed", "tmcraft:tm_revivalblessing": "left at its band, as proposed",
-                        "tmcraft:tm_spore": "left at its band, as proposed"}}
+                        "tmcraft:tm_multiattack": "left at its band, as proposed", "tmcraft:tm_revivalblessing": "left at its band, as proposed"},
+         "superseded_not_placed": {"tmcraft:tm_spore": {"was": "left at its band (8), as proposed", "replaced_by": "group 18 (the owner, 2026-10-08), which places Spore at 5 so Stun Spore, crafted from it, opens at its own band", "kept_because": "the proposal's reasoning for leaving Spore alone (one-species signature move, harmless either way) was wrong for Spore once the chain rule made it Stun Spore's input"}}},
+        {"group": 18, "name": "Spore, lowered for Stun Spore", "misjudges": "nothing in Spore's own score: a 100% sleep is valued 110 (band 8), and Spore is the best status move a TM teaches. The rule cannot see that Spore is also an INPUT: TMCraft's tm_stunspore recipe takes tm_spore, so the chain rule (badge_rule.chain) raised Stun Spore, a 75% paralysis at band 5, to badge 8 with it. The owner chose to lower the input rather than leave the paralysis move at 8",
+         "place": {"tmcraft:tm_spore": 5},
+         "placed_2026_10_08": {"decision": "the owner, 2026-10-08: 'STUN SPORE: lower Spore rather than leaving Stun Spore at 8. A paralysis move at badge 8 is too late; it is a mid-game tool. Spore is strong, but Stun Spore pulling it down is the right trade. Say what badge that puts Spore at, and whether it lands in the outlier group Thunder Wave sits in.'",
+                               "badge": "5: Stun Spore's own band (score 75), so the two open together and Stun Spore needs no chain raise. Not by breaking the chain rule: the input is placed by hand here, and the chain rule then finds nothing to raise",
+                               "why_its_own_group": "not group 1 (Thunder Wave). Group 1 says a status move valued at its own band should not wait for the badge that also brings Thunderbolt; group 3 says a guaranteed status on a damaging move is undervalued. Spore is neither: the rule values it right, and it moves for a reason outside its score, the recipe that takes it. Sleep is not paralysis either: a sleeping target does not act at all for its sleep turns, where a paralysed one still acts three times in four (Showdown's 25% full paralysis), and the score table already values them apart: sleep 110, paralysis 100 (docs/mechanics/TM_POWER_GATE.md 2.2). Filing Spore with Thunder Wave would record a reason that is not the one the owner gave",
+                               "what_it_costs": "Spore (100% sleep) now opens at 5 with Sleep Powder and Lovely Kiss (75% sleep, band 5) and a badge before Glare (100% paralysis, group 17's 6): a guaranteed sleep before a guaranteed paralysis, which inverts the scores. Left as is; the owner's trade, said so here"}}
       ]
     },
     "shelf_disagreements": {
@@ -128,16 +135,19 @@
     "chain": {
       "decision": "the owner, 2026-10-08: 'The four chain TMs opening before their source: fix it. A craft that unlocks before its input is a dead recipe.' Enforced for every TM: badge(chain TM) >= badge(its input TM)",
       "rule": "after the shelf, the outlier groups and the bands, tools/tm_gate.py chain_order raises every TM whose crafting recipe takes another TM (tm_howl is tm_leer + a gem + a glove) to that input's badge, to a fixpoint. Only the chain TM moves, and only up: the input is never lowered. A shelf TM is never raised (the shelf wins): one crafted from a later TM fails the plan, for the owner to move a shelf line. Every raise is listed here, exactly, or the plan fails; then every recipe is checked again, and one that opens before its input fails the plan",
-      "raises_are": "item, the input TM that sets its badge, from (the badge the shelf, an outlier group or the band gave it) and to (the input's badge). Measured on the 2026-10-05 snapshot: four chains, one input each, no cascade",
+      "raises_are": "item, the input TM that sets its badge, from (the badge the shelf, an outlier group or the band gave it) and to (the input's badge). Measured on the 2026-10-05 snapshot: three chains raised, one input each, no cascade; a fourth (Stun Spore from Spore) needs no raise since outlier group 18 placed Spore at Stun Spore's own badge",
       "raises": [
         {"item": "tmcraft:tm_boneclub", "input": "tmcraft:tm_bonemerang", "from": 3, "to": 6,
          "why": "Bone Club (56.5, band 3) is crafted from Bonemerang (90, band 6): it waits for Bonemerang's badge. Three badges late for a 65-power move, the cost of a recipe that needs a badge-6 TM in hand"},
         {"item": "tmcraft:tm_nobleroar", "input": "tmcraft:tm_roar", "from": 1, "to": 2,
          "why": "Noble Roar (30, band 1) is crafted from Roar (45, band 2)"},
-        {"item": "tmcraft:tm_stunspore", "input": "tmcraft:tm_spore", "from": 5, "to": 8,
-         "why": "Stun Spore (75, band 5) is crafted from Spore (110, band 8, left at its band by outlier group 17): it waits for badge 8. The largest move, three badges; lowering Spore is the other fix and is not this rule's to make"},
         {"item": "tmcraft:tm_triplekick", "input": "tmcraft:tm_doublekick", "from": 2, "to": 3,
          "why": "Triple Kick (46.8, band 2) is crafted from Double Kick (60, band 3)"}
+      ],
+      "superseded_raises": [
+        {"item": "tmcraft:tm_stunspore", "input": "tmcraft:tm_spore", "from": 5, "to": 8,
+         "why": "Stun Spore (75, band 5) is crafted from Spore (110, band 8, left at its band by outlier group 17): it waits for badge 8. The largest move, three badges; lowering Spore is the other fix and is not this rule's to make",
+         "superseded_by": "outlier group 18 (the owner, 2026-10-08: 'lower Spore rather than leaving Stun Spore at 8'): Spore at 5, so Stun Spore opens at its own band 5 and the chain rule raises nothing. Not read by tools/tm_gate.py; kept as the raise the owner overruled"}
       ],
       "superseded": "until 2026-10-08 a chain TM was placed by its own score and the plan only noted, 'by design', that these four opened before their input, on the reasoning that the input could come from the shelf, loot or a trade first. The owner rejected it: a recipe that opens before its input is dead for anyone who has not found the input elsewhere"
     },
