@@ -12,10 +12,15 @@ before it starts. The review list is `docs/OVERNIGHT_REVIEW_2026-10-06.md` (N95-
   `git fetch --prune; git rev-parse origin/build/2026-10-06-next`.
 - Next: ONE draft PR for it against main (memory: one big PR per batch) after #119 merges, or stacked on #119.
 
-## 2. Where it stopped (2026-10-09, day)
-- Today's build is applied and read back: `docs/REPORT_2026-10-09.md`. Staging stopped with RCON `stop`, saved, lock
-  released, `max-tick-time` 60000. Snapshot before today: `cobblers-staging/snapshot-2026-10-09-before-day`.
-- This worktree has a full `derived/` and a complete `build/` (prepare at the head before the docs commits).
+## 2. Where it stopped (overnight 2026-10-10)
+- Everything in `docs/MORNING_REPORT_2026-10-11.md` is merged and audited on this branch; NOTHING is installed: a
+  server held port 25565 all night (no lock), so by the safety rule no server work ran. The lock is not held by us.
+- Next, when the port is free (process/port check first, then the lock): EXP-058's throwaway proof (one fresh world,
+  booted without then with the pack: `experiments/EXP-058-dimension-overrides/README.md`), then one full prepare
+  (`--server-dir` + lock env; expect the markets payment faults to clear), snapshot staging, install, boot 16G with
+  `max-tick-time` -1, `run --only R9OC,R14,R16Q,R17M,R17TS,R18DT,R18PB --no-reload` (plus the arena restart), restart,
+  read back. The bank/Produce Buyer wait on EXP-061's `clear 0` check before install.
+- This worktree has a full `derived/` and `build/` (build/ is stale against tonight's data until prepare).
 
 ## 3. Next: the overnight brief of 2026-10-10 (the owner, verbatim decisions; run in session bacb34ed because no tool here can start a fresh session)
 1. **Nether override, FIRST (live defect):** stop Blaine-gym copies and Moltres altars generating in the Nether (and the
