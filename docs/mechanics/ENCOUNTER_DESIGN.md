@@ -124,6 +124,13 @@ the band. **A route corridor never carries a find**, even where it crosses the f
 to the player who leaves the path. The corridor otherwise takes a sub-region's anchor, common and uncommon families
 (at most 20 species per route, `route_species_selection`), and keeps the water families where the route crosses water.
 
+**A route has a rare and an ultra-rare table (the owner, 2026-10-05: "every area should have a rare, ultra rare, and
+boss table"; ruled the same day that a corridor is an area for the rare and ultra-rare tables but carries no heart --
+section 10, the path stays catchable).** Before the corridor is filled by score, `rules.corridor_rare_min` (2 rare, 1
+ultra-rare) of the best-scoring rare- and ultra-role families of the crossed **on-path** tables are reserved. An
+off-path table's rare families never reach a corridor: they may be its find. The `ultra` role (ultra-rare bucket,
+weight 1, the upper half of the band like a find) is the place's rarest family; every table carries one.
+
 A detour should also be *stronger*, not only rarer: at the same tier, the off-path tables' mean base-stat total is at
 least the on-path tables'. So an off-path table is **matured one tier further** than its tier (`off_path_maturity_step`):
 its families show the evolved share of the next leg, inside its own catchable band.
@@ -285,6 +292,78 @@ and **Viltri's Path valley** (each already holds two finds); the **foothill wood
 **Arrow creeks** (left without a heart in this pass, a candidate for the next: its Dondozo find already sits in the
 deep pools); and the **Jungle Isle** (under the sea, decision B15).
 Untouched as section 9 says: the bird nests, the mansion, the marine bands, the waterway, Victory Road's pools.
+
+**Every area has a heart (the owner, 2026-10-05: "every area should have a rare, ultra rare, and boss table"; boss =
+a heart, approved).** The "No heart" list above is superseded for map rows A-D: Viltri's plateau, Viltri's Path valley,
+the foothill woods, the north-east and north-shore downs, the upper trough, the glacier-foot fields, the Frostpeak
+strand, the north-west coast, Marsh creek, the eastern moor, the Tilpey north, east and west shores and Northgate east
+now carry a focus heart at their deepest interior cell beyond 128 blocks of every corridor (each heart's `why` gives
+its point, radius and nearest gap; 129 to 1,113 blocks). The 128-block and 1/9 rules stand for every one of them. The
+Windward shallows and deep and the Mt Clay outflow carry a focus heart too (`tools/compile_spawns.py`
+`focus_heart_boxes`). The count and list above, and `tests/test_encounter_hearts.py`, still name the 28; updating them
+is a test author's change.
+
+### The bosses are alphas, and every boss table holds a local (the owner, 2026-10-05)
+
+**"For the pokemon species overhaul running, the boss pokemon are alphas, so it should sometimes be the pokemon in
+the area as well right?"** Built 2026-10-05: valid data and a measured compiled pack only, not seen in game.
+
+- **Every heart entry is a native alpha** (`rules.hearts.alpha`). The compiled spawn's `pokemon` string is
+  `"<species> alpha=true"`. That is a PokemonProperties key in Cobblemon 1.8.0 (`PokemonProperties$Companion` registers
+  `alpha` and `is_alpha`). It is also the form every one of the jar's own 1,082 alpha spawns uses: each is a herd
+  leader in bucket `boss`, e.g. `spawn_pool_world/herds/0023_fearow_alpha.json`,
+  `"fearow held_item=cobblemon:flying_gem alpha=true"`. `tools/build_encounters.py` stamps the flag on generated heart
+  entries and fails closed on a copied-through one (marine band, waterway) that lacks it, and on a flag outside a
+  heart. The other rules of this section are unchanged: focal site, 1/9 of the area, 128 blocks from a corridor,
+  above-cap share and the level band, at spawn.
+- **What the jar makes an alpha do** (read from Cobblemon-fabric-1.8.0+1.21.1.jar, not observed):
+  - `behaviours/pokemon/auto/pokemon_non_party.json` makes a wild alpha retaliate.
+  - It gains the `cobblemon:alpha_level_matching` sensor.
+  - On faint, `callbacks/battle_fainted/pokemon_alpha_drops.molang` drops `loot_table/alpha/alpha_rewards_tier1-4`
+    by level (31, 51 and 66 are the steps), plus type rewards.
+  - Its size scales with its hitbox (`Pokemon.getAlphaScaleMultiplier`), and it carries the alpha mark.
+  - A battle against it adds the Showdown rule "Wild Alpha" (`BattleBuilder`).
+  - Catches count towards `cobblemon:catch_alpha_pokemon`.
+- **The authored level is not the level fought.** `AlphaLevelMatchingSensor$Companion.getTargetLevel` works as
+  follows. While a player is within 32 blocks and the alpha is not battling, it re-levels to that player's highest
+  party level plus a step:
+  - +4 below 21;
+  - +8 for 21-30;
+  - +12 for 31-45;
+  - +16 for 46-65;
+  - +20 above that.
+
+  The result is held to at most 100 and at least the level its species evolves at. So in game every boss stands
+  above the party, which overrides this section's band, its "under the cap" families and its next-cap ceiling for
+  presences. Two ways forward, and the choice is **the owner's**:
+  - keep the jar's behaviour, which suits a hard boss;
+  - overlay `pokemon_non_party.json` at the same path without the sensor, which keeps the band but replaces a whole
+    upstream behaviour file.
+
+  **Decided (the owner, 2026-10-05): "keep the alpha scaling".** The jar's behaviour stays; nothing is overlaid. A boss
+  is always fought above the party. The record is `rules.hearts.alpha_level_matching`.
+- **Every heart holds one of its own place's Pokemon** (`rules.hearts.local_alpha`). Before this, 57 of 67 hearts named
+  a species from their own compiled base table: 138 of 238 heart species, 58%. By family (a heart naming the evolved
+  stage of a local), all 67 did: 202 of 238, 85%. The ten with no exact local each gain the place's strongest local
+  stage, chosen as follows:
+  - the highest base-stat total among its common and uncommon base species;
+  - mainline starters excluded (section 11);
+  - ties go to the higher weight, then the name;
+  - role uncommon, at the presences' weight 3.
+
+  The ten are:
+  - Pallet's meadows: Fidough;
+  - the Route 1 forest: Oddish;
+  - Viltri's plateau: Pikachu;
+  - the River of Shrews: Minun;
+  - the west shore: Staryu (water);
+  - the south-west fields: Growlithe;
+  - the Windward depths, open sea and shallows: Alomomola, Qwilfish and Staryu;
+  - the Mt Clay outflow: Basculin.
+
+  The marine and waterway levels are the upper half of their base band. After the change all 67 hearts hold an exact
+  local: 148 of 248 heart species, 60%. The non-local signature bosses stay as authored (Frostpeak's Avalugg and
+  Mamoswine, Arrow creeks' Braviary and the rest).
 
 ### What the tests make of it
 

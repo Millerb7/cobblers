@@ -41,6 +41,10 @@ EMITTED callback run for that NPC at its placed spot). Every stage write, defeat
 and visible "Release Hoopa." is recorded with the state it happened in. Then the joint story walk: from a player at
 rift_crisis_pending, all five conversations in any order until nothing new is reached.
 
+THE DOOR KEEPER (re-pointed 2026-10-05 by a second test-author for c2ef17c, "Elara at the HQ door"): her compiled
+conversation run by a player standing in front of her, every action directly from every stage, and the emitted gate
+cycle run on the players her moves leave; the door stages come from data/hq_tower.json's door GATE. check_door_keeper.
+
 WHAT IT DOES NOT COVER. Nothing here ran in Minecraft: that a choice opens the battle, that `t.l.uuid` and
 `t.w.player.uuid` are what Cobblemon 1.8 exposes to a battle_victory callback, that the class's party fights at its
 levels, that a loss runs the blackout pack's NPC-loss path (only the sweep says it writes no defeat field), that the
@@ -564,6 +568,11 @@ class World:
                 except ValueError:
                     pass
             return None
+        if head == "ride" and len(w) == 3 and w[2] == "dismount":
+            for t in self.targets(w[1], p, at):
+                t.vehicle = None
+                self._log("ride", cmd, t)
+            return None
         if head in ("fill", "setblock", "summon", "clone", "kill", "data", "item", "give", "clear", "loot"):
             self._log("world_change", cmd, p)
             return None
@@ -976,17 +985,21 @@ class Conversation:
     ("field", pre, key, new) for a defeat field a conversation writes itself, ("battle", pre), ("offer", data) when
     CHOICE is visible."""
 
-    def __init__(self, dlg, functions, npc=None, win=None):
+    def __init__(self, dlg, functions, npc=None, win=None, pos=None):
         self.dlg, self.functions, self.npc, self.win = dlg, functions, npc, win
+        self.pos = pos                      # where the talking player stands; None: the old default, far from all
         self.pages = {p["id"]: p for p in dlg["pages"]}
         self.memo = {}
 
     def run(self, src, data, adv):
-        w, p = World(self.functions), Player()
+        w, p = World(self.functions), (Player(pos=self.pos) if self.pos is not None else Player())
         p.data, p.adv = dict(data), set(adv)
+        pos0 = p.pos
         m = Molang(w, p, npc=self.npc)
         m.run(src)
         ev = [("grant", d) for kind, detail, d, _a in w.log if kind == "function" and detail == FLAG_GRANT_FN]
+        if self.pos is not None and p.pos != pos0:
+            ev.append(("moved", dict(data), p.pos))        # only when a position was given: the door keeper's admit
         if p.data.get(key(STAGE)) != data.get(key(STAGE)):
             ev.append(("stage", dict(data), p.data.get(key(STAGE))))
         for f in (BRANN_FIELD, ELARA_FIELD):
@@ -1435,6 +1448,163 @@ def check_gates(functions, data=DATA):
     return dedupe(bad)[:30], notes
 
 
+# ------------------------------------------------------------------ the door keeper (2026-10-05)
+
+def facing(yaw):
+    """Minecraft's yaw as a unit step on the grid: 0 faces +z (south), 90 faces -x (west), -90 +x, 180 -z."""
+    r = math.radians(yaw)
+    return (int(round(-math.sin(r))), int(round(math.cos(r))))
+
+
+def placed_yaws():
+    """{npc id: yaw} from the same list R18HQ spawns from (tools/hq_tower.py npc_placements())."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import hq_tower
+    return {cls.split(":", 1)[1]: yaw for _conv, _at, cls, yaw in hq_tower.npc_placements()}
+
+
+def check_door_keeper(packs, functions, data=DATA, spots=None, yaws=None):
+    """Elara keeps the tower door (the owner, 2026-10-05). Expectations from data/hq_tower.json's GATES (the door
+    gate's from_stage over the stage enum, which must equal the brief's DOOR_OPEN) and the tower's interior, and from
+    where R18HQ places her and which way she faces -- never from the door_keeper block or its function:
+      admit   every action of her compiled conversation, run DIRECTLY from every stage by a player standing in the
+              cell in front of her (as a restored cursor would), moves that player into the tower only at a door
+              stage; and the walk from each door stage, her battle forked both ways, reaches a move inside (the
+              stages whose move is made only after a later stage is written are named in the note)
+      landing a player at a door stage where the admit put them is not moved by the emitted cycle (twice); a player
+              before the door stage there is set outside the tower (the gate behind her still bites)
+      the hole a survival player of any stage in the cell behind her is moved by the cycle onto the line in front of
+              her (outside the tower, within her admit's reach of her again), and a second cycle moves nobody
+      inside  a player at a door stage on the threshold cell just inside the hole is not moved: the exit cannot
+              strand (eject) a player who is legitimately inside.
+    Not covered: whether her body blocks the doorway in game, and whether Cobblemon opens her dialogue at that range."""
+    bad, notes = [], []
+    h = jload(Path(data) / "hq_tower.json")
+    vals = stage_values(data)
+    door_from = h["gates"]["door"]["from_stage"]
+    doors = set(vals[vals.index(door_from):]) if door_from in vals else set()
+    if doors != DOOR_OPEN:
+        bad.append("the door gate opens at %s on (data/hq_tower.json gates.door), the chain's door is %s"
+                   % (door_from, sorted(DOOR_OPEN)))
+    ix0, iz0, ix1, iz1 = h["tower"]["interior"]
+    bx0, bz0, bx1, bz1 = h["tower"]["box"]
+
+    def inside(pos):
+        return ix0 <= math.floor(pos[0]) <= ix1 and iz0 <= math.floor(pos[2]) <= iz1
+
+    def in_tower(pos):        # the box, its walls and the section wall's door cut (x1 + 1), as check_gates
+        return bx0 <= math.floor(pos[0]) <= bx1 + 1 and bz0 <= math.floor(pos[2]) <= bz1
+
+    spots = spots if spots is not None else placed_spots()
+    yaws = yaws if yaws is not None else placed_yaws()
+    elara = FIGHTS["elara"]
+    spot = spots.get(elara["npc"])
+    if spot is None or elara["npc"] not in yaws:
+        return ["the door keeper %s is not placed by R18HQ" % elara["npc"]], notes
+    fx, fz = facing(yaws[elara["npc"]])
+    sx, sy, sz = math.floor(spot[0]), int(spot[1]), math.floor(spot[2])
+    front = (sx + fx + 0.5, float(sy), sz + fz + 0.5)
+    hole = (sx - fx + 0.5, float(sy), sz - fz + 0.5)
+    threshold = (sx - 2 * fx + 0.5, float(sy), sz - 2 * fz + 0.5)
+    if in_tower(front) or not in_tower(hole) or not inside(threshold):
+        bad.append("Elara at %s facing %s: in front %s is %s the tower, behind her %s is %s it, two behind %s is %s "
+                   "the interior -- she does not stand in the doorway facing out"
+                   % ((sx, sy, sz), (fx, fz), front, "in" if in_tower(front) else "outside", hole,
+                      "in" if in_tower(hole) else "outside", threshold, "in" if inside(threshold) else "outside"))
+    dlg = dialogue_of(packs, elara["conv"])
+    if dlg is None:
+        return bad + ["the compiled %s is not in %s/cobblers_dialogue" % (elara["conv"], packs)], notes
+    npc = Entity(npc_uuid(elara["npc"]), spot)
+    cv = Conversation(dlg, functions, npc, None, pos=front)
+    acts = []
+    for pg in dlg["pages"]:
+        inp = pg.get("input")
+        acts += [inp] if isinstance(inp, str) else [o["action"] for o in (inp or {}).get("options", [])]
+    admitted, landings, n = set(), {}, 0
+    try:
+        for stage in [None] + vals:
+            for e in (None, 0, 1):
+                d = {key(STAGE): stage} if stage is not None else {}
+                if e is not None:
+                    d[key(ELARA_FIELD)] = e
+                for act in acts:
+                    n += 1
+                    for ev in cv.run(act, d, set())[0]:
+                        if ev[0] == "moved" and inside(ev[2]):
+                            admitted.add(stage)
+                            landings.setdefault(stage, ev[2])
+    except (Unmodelled, MolangError) as e:
+        return bad + ["%s does not run in the model for a player at her door: %s" % (elara["conv"], e)], notes
+    for st in sorted(map(str, admitted - doors)):
+        bad.append("Elara lets a player at stage %s into the tower (the door gate opens at %s)" % (st, door_from))
+    # the walk forks her battle both ways (the EMITTED callback for the win): at anchor_shutdown she lets a player in
+    # only after the fight, so "reaches a move inside" is judged over the walk, whatever stage the move is made at
+    win = win_for(packs, functions, elara["npc"], spot) if callback_src(packs) else None
+    walk_cv = Conversation(dlg, functions, npc, win, pos=front)
+    later = []
+    for st in sorted(doors):
+        try:
+            _seen, evs = walk_cv.reach(sig({key(STAGE): st}, set()))
+        except (Unmodelled, MolangError) as e:
+            bad.append("%s from %s does not run in the model: %s" % (elara["conv"], st, e))
+            continue
+        moved = [ev for ev in evs if ev[0] == "moved" and inside(ev[2])]
+        if not moved:
+            bad.append("a player at stage %s talking to Elara at her door is never let in" % st)
+            continue
+        landings.setdefault(st, moved[0][2])
+        if not any(ev[1].get(key(STAGE)) == st for ev in moved):
+            later.append(st)
+    # the emitted cycle against players where her moves put them
+    cyc = "cobblers:hq_tower/cycle"
+    if cyc not in functions:
+        return dedupe(bad) + ["no emitted %s" % cyc], notes
+    players, want, k = [], {}, 0
+
+    def player(stage, pos, how):
+        nonlocal k
+        k += 1
+        p = Player(uuid="00000000-0000-0000-0000-%012d" % (900000 + k), pos=pos)
+        if stage is not None:
+            p.data[key(STAGE)] = stage
+        players.append(p)
+        want[p.uuid] = (how, stage, pos)
+
+    landing = next(iter(landings.values()), None)
+    for stage in [None] + vals:
+        if landing is not None:
+            player(stage, landing, "stays" if stage in doors else "outside")
+        player(stage, hole, "in_front")
+        if stage in doors:
+            player(stage, threshold, "stays")
+    w = World(functions, players)
+    try:
+        w.function(cyc, None)
+        after1 = {p.uuid: p.pos for p in players}
+        w.function(cyc, None)
+    except (Unmodelled, MolangError) as e:
+        return dedupe(bad) + ["the gate cycle does not run in the model: %s" % e], notes
+    for p in players:
+        how, stage, pos0 = want[p.uuid]
+        a = after1[p.uuid]
+        if how == "stays" and a != pos0:
+            bad.append("a player at stage %s legitimately inside at %s is moved to %s" % (stage, pos0, a))
+        if how == "outside" and in_tower(a):
+            bad.append("a player at stage %s where Elara's admit lands (%s) is left inside at %s" % (stage, pos0, a))
+        if how == "in_front":
+            ax, az = math.floor(a[0]) - sx, math.floor(a[2]) - sz
+            on_line = (ax * fz - az * fx) == 0 and (ax * fx + az * fz) >= 1 and int(round(a[1])) == sy
+            if not on_line or in_tower(a) or math.dist(a, spot) > 6:
+                bad.append("a player at stage %s behind Elara at %s is moved to %s, not in front of her outside the "
+                           "tower" % (stage, pos0, a))
+        if p.pos != a:
+            bad.append("the cycle's second run moves a player at stage %s from %s to %s" % (stage, a, p.pos))
+    notes.append("door keeper: Elara at %s facing %s; %d direct actions run from her door; admitted at %s; let in "
+                 "only after a later stage from %s; %d players cycled (admit landing, the hole, the threshold)"
+                 % ((sx, sy, sz), (fx, fz), n, [s for s in vals if s in admitted], sorted(later), len(players)))
+    return dedupe(bad)[:30], notes
+
+
 # ------------------------------------------------------------------ the sweep
 
 CALLS_GRANT = re.compile(re.escape(FLAG_GRANT_FN) + r"(?![a-z0-9_/])")
@@ -1798,6 +1968,9 @@ def audit(packs=PACKS, jar=None, data=DATA, skip_jar=False, spots=None):
     b, n = check_gates(functions, data)
     problems += b
     results["gates"] = n
+    b, n = check_door_keeper(packs, functions, data, spots)
+    problems += b
+    results["door_keeper"] = n
     b, seen = check_sweep(packs)
     problems += b
     results["sweep"] = seen
@@ -1819,7 +1992,7 @@ def main(argv=None):
     if a.json:
         Path(a.json).write_text(json.dumps({"problems": problems, "results": results}, indent=1, default=list),
                                 encoding="utf-8")
-    for k in ("parties", "conversation", "story", "gates", "cradle"):
+    for k in ("parties", "conversation", "story", "gates", "door_keeper", "cradle"):
         for line in results.get(k) or []:
             print("  " + line)
     print("  jar: %s" % results.get("jar"))

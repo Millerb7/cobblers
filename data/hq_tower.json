@@ -29,7 +29,7 @@
     {"id": "hq_s6", "floor": 103, "room": "the relay hall: four relay pylons and the resonator column, double height with hq_s7", "stair": "W", "codex_room": null},
     {"id": "hq_s7", "floor": 109, "room": "the relay hall's catwalk", "stair": "S", "void": true, "codex_room": null},
     {"id": "hq_s8", "floor": 115, "room": "the barracks: lockers and bunks", "stair": "W", "codex_room": null},
-    {"id": "hq_s9", "floor": 121, "room": "the director's office: Director Elara Venn's desk and shelves; the shaft interlock is hers", "stair": "N", "codex_room": "hq_director_office"},
+    {"id": "hq_s9", "floor": 121, "room": "the director's office: Director Elara Venn's desk and shelves, empty -- since 2026-10-05 she keeps the tower's door herself (door_keeper)", "stair": "N", "codex_room": "hq_director_office"},
     {"id": "hq_s10", "floor": 127, "room": "anchor control, the control room at the top: desks on three walls, the four relay lamps and the core lamp, Tomas's trace on a lectern, Oren Pell at the board", "stair": null, "codex_room": "hq_anchor_control"}
   ],
   "stairs_why": "one flight a storey along the inside of a wall, turning clockwise so each flight's head is a step or two from the next one's foot; polished deepslate stairs, the city's own stair material (tools/deep_city.py towers), with the floor above opened over the top three steps and railed on its inner side. The two catwalk storeys (hq_s3, hq_s7) keep a two-wide ring of their floor and open its middle 5 by 5, so the foundry and the relay hall each read as one tall hall.",
@@ -42,14 +42,15 @@
   },
   "gates": {
     "field": "quest.main_worldshift_reveal.stage",
-    "mechanism": "one tick function, every 10 ticks (the shape of tools/route_trainers.py's cycle): each player near the tower is tagged from their own stage by runmolang (q.player.data(), the store tools/compile_dialogue.py's conversations write), then a player inside a gated box without the tag is set back where the gate stands, with one actionbar line. Per player: one player's stage moves nobody else. No block is ever opened or shut, so a player inside walks out through the open doorway whenever they like; creative and spectator pass.",
+    "mechanism": "one tick function, every 10 ticks (the shape of tools/route_trainers.py's cycle): each player near the tower is tagged from their own stage by runmolang (q.player.data(), the store tools/compile_dialogue.py's conversations write), then a player inside a gated box without the tag is set back where the gate stands, with one actionbar line. Per player: one player's stage moves nobody else. No block is ever opened or shut; since 2026-10-05 Director Elara Venn stands in the doorway (door_keeper), so the way in is her conversation and the way out is the doorway's inner cell, which the same cycle turns into a step out past her; creative and spectator pass. The door gate below stays as the backstop behind her.",
     "tag_box": [3418, 60, 3293, 3452, 140, 3323],
     "door": {
       "from_stage": "deep_handoff_received",
       "tag": "cobblers_hq_door",
       "box": [3428, 67, 3303, 3439, 133, 3313],
-      "set_back": [3441.5, 67, 3306.5, 180],
-      "say": "The tower door is barred to you. Nia Calder holds the packet that opens it: the clinic on the second ring.",
+      "set_back": [3441.5, 67, 3306.5, 90],
+      "say": "Director Elara Venn, in the doorway: \"This door is not on your route.\"",
+      "set_back_why": "facing west (yaw 90), at Director Elara Venn standing in the doorway two blocks away (door_keeper): a player turned back is turned back BY her, and faces her. Until 2026-10-05 it faced north (yaw 180) at an empty doorway",
       "why": "Codex's Scene 1: 'Hear her before you enter Compact headquarters.' Nia Calder writes deep_handoff_received (dlg_main_finale_nia line nia_006), so the door is the player's from that stage on. The box is the tower, walls and doorway included, from y67 (a player on the relic site's stair under the tower is below it) to the roof's top; the set-back is the corridor cell outside the doorway, on the Deep's ring-0 tread (the city writes nothing at x3441 z3306 y66-70)."
     },
     "climb": {
@@ -61,10 +62,21 @@
       "why": "Codex's Scene 2: Brann stands the hall guard down when the player refuses to leave (record_hq_crossed). The hall is storey hq_s1; every storey above it is in the box, from the foundry's floor (y79) to the roof, so the briefing stair's top steps already set an unqualified player back onto the hall's floor at (1, 1)."
     }
   },
+  "door_keeper": {
+    "npc": "npc_finale_elara_venn",
+    "stand": [3439, 67, 3306],
+    "admit": {"transition": "elara_door_admit", "function": "cobblers:hq_tower/door_admit", "to": [3436.5, 67, 3306.5], "yaw": 90, "pitch": 0, "reach": 6},
+    "hole": [3438, 67, 3306],
+    "out": {"to": [3441.5, 67, 3306.5], "yaw": 90, "say": "Director Elara Venn turns aside to let you out."},
+    "decision": "the owner, 2026-10-05: 'BLOCKING NPC: Elara at the HQ door. The confrontation is what the arc builds to and a locked door with nobody behind it is the lesser version.'",
+    "design": "ONE Elara, who never moves: she stands in the doorway's outer cell (the section wall's, x3439), facing east down the corridor, for every player at every stage. What changes is per player and lives in her conversation (dlg_main_finale_elara, scope player): at rift_crisis_pending she turns the player away; at deep_handoff_received (Nia's packet) the first confrontation, words only, and she lets the player up, telling them to come back down to her; at anchor_shutdown the decisive confrontation and the ONE Elara battle, here at the door, whose win writes cradle_open; after it she lets the player in and out. The way in is her conversation: the choice 'Let me through.' runs quest transition elara_door_admit (the door gate's own stages, deep_handoff_received or later), whose function effect moves THAT player to `admit.to` inside, as data/relic_underground.json geometry.hq.guard's hq_admit does at the ring-0 iron door. The way out: any survival or adventure player whose hitbox enters the tower wall's doorway cell `hole` (x3438, behind her) is moved to `out.to` in the corridor, facing her (the gate cycle). Nobody walks round her: she fills the one-wide doorway and the hole behind her sends everyone back out, so the only way in is to talk to her",
+    "why_the_fight_is_here": "the arc's own lines put the reckoning AFTER the anchors and nowhere in particular: Nia 'Get the anchors down safely. Then Elara has no operation left to defend', Brann 'Then face Elara with the machine silent', Oren 'Elara has the shaft interlock', and Elara's own 'You shut the anchors down ... There is no operation left to finish'. Codex's Scene 4 gives her two stands, 'hq_director_office, then the secure-shaft head'; the tower door opens FROM the secure-shaft head (door.opens_from, data/deep_city.json hq_secure_shaft_head), so the door is Codex's second stand. One entity cannot be in the office for one player and at the door for another (the stage is per player), so she keeps the door for the whole arc: the summit is Oren's machine, the door is Elara's, and the player meets her there twice before the battle -- turned away, then let up -- and comes back down to fight her. There is no second Elara and no second Elara battle",
+    "limits": "per player, honestly: (1) her body is one body: while one player battles or talks to her, whether a second player can open her dialogue or battle at the same moment is Cobblemon's and NOT tested; (2) a Cobblemon NPC is a soft blocker, not a solid box (docs/research/CAUGHT_COUNT_AND_NPC_GUARDS.md Q2: whether a player can squeeze past an immovable NPC in a one-wide doorway is unknown), so she is not the lock: a player who squeezes past her lands in `hole` and is sent back out, and the door gate (gates.door) still sets back anyone without the door tag anywhere in the tower; (3) a player with the door tag who reaches the inside some other way (an ender pearl over her shoulder) is inside, which their stage already allows; (4) the battle is fought in the three-wide corridor, not a hall: where Cobblemon sends the Pokemon out there is not seen in game"
+  },
   "npcs": [
     {"id": "npc_finale_nia_calder", "conversation": "dlg_main_finale_nia", "at": [3536, 33, 3344], "yaw": 180, "where": "outside her clinic on ring 2 (data/deep_city.json rooms nia_clinic, the lot tools/deep_city.py picks at bearing 205; its door (3535, 33, 3345) faces north)", "at_why": "one block east of the doorstep (3535, 33, 3344), so the doorway stays clear: on the ring-2 sidewalk the city writes (polished tuff at y32) with nothing it writes at y33-34, facing north over the street. Codex's stand is the clinic's interior, 'final XYZ blocked on interior furnishing'; the interior is still an empty shell, so she waits at its door until it is furnished"},
     {"id": "npc_finale_brann_saye", "conversation": "dlg_main_finale_brann", "storey": "hq_s1", "at": [3431, 74, 3305], "yaw": 90, "at_why": "local (2, 1): beside the hall's landing (0, 1) and the briefing stair's foot (0, 0), facing west to meet a player coming up; off the walk"},
-    {"id": "npc_finale_elara_venn", "conversation": "dlg_main_finale_elara", "storey": "hq_s9", "at": [3433, 122, 3309], "yaw": 180, "at_why": "local (4, 5), behind her desk (3..5, 4), facing north across it to the office's landing (0, 2)"},
+    {"id": "npc_finale_elara_venn", "conversation": "dlg_main_finale_elara", "door": true, "at": [3439, 67, 3306], "yaw": -90, "at_why": "IN the doorway (door_keeper.stand): the section wall's doorway cell, carved by this pack, on the Deep's ring-0 tread y66 (R9B; the city writes nothing at x3439 z3306 y66), facing east (Minecraft yaw -90 faces +x) down the corridor x3440-3442 a player comes along", "superseded_at": {"storey": "hq_s9", "at": [3433, 122, 3309], "yaw": 180, "was": "local (4, 5) behind her desk in the director's office, facing north to the office's landing; replaced 2026-10-05 by the owner's 'Elara at the HQ door' (door_keeper). Kept as the record of the first stand"}},
     {"id": "npc_finale_oren_pell", "conversation": "dlg_main_finale_oren", "storey": "hq_s10", "at": [3433, 128, 3307], "yaw": 180, "at_why": "local (4, 3), in the middle of the control room between its desks, facing north to the stair's head (6, 0)"}
   ],
   "fights": [
@@ -76,7 +88,7 @@
     {"scene": 1, "who": "npc_finale_nia_calder", "reads": "rift_crisis_pending", "writes": "deep_handoff_received", "fight": null, "transition": "record_deep_handoff_received", "opens": "the tower door (gates.door)"},
     {"scene": 2, "who": "npc_finale_brann_saye", "reads": "deep_handoff_received", "fight": "finale_brann_saye", "then": "brann_defeated", "writes": "hq_crossed", "transition": "record_hq_crossed", "opens": "the climb above the briefing hall (gates.climb)"},
     {"scene": 3, "who": "npc_finale_oren_pell", "reads": "hq_crossed", "writes": "anchor_shutdown", "fight": null, "transition": "record_anchor_shutdown", "opens": "Elara's conversation"},
-    {"scene": 4, "who": "npc_finale_elara_venn", "reads": "anchor_shutdown", "fight": "finale_elara_venn", "then": "elara_defeated", "writes": "cradle_open", "transition": "record_cradle_open", "opens": "the release"},
+    {"scene": 4, "who": "npc_finale_elara_venn", "at": "the tower door (door_keeper), where the player met her twice on the way up", "reads": "anchor_shutdown", "fight": "finale_elara_venn", "then": "elara_defeated", "writes": "cradle_open", "transition": "record_cradle_open", "opens": "the release"},
     {"scene": 5, "who": "npc_main_relic_hall_binder", "reads": "cradle_open AND brann_defeated AND elara_defeated", "writes": "rift_released (and rift_crisis_resolved, granted to the releasing player)", "fight": null, "transition": "unlock_league_after_rift_resolution", "opens": "the League (rift_crisis_resolved)"}
   ],
   "finale_order_why": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scenes 1-5, each scene's 'Reads' and 'Writes' as the doc gives them, with the owner's two fights (2026-10-04: 'the confrontation with Elara and Brann') placed inside Scenes 2 and 4: each fight happens at the scene's 'Reads' stage and its win is a condition of the scene's 'Writes'. Per player throughout: the stage and both defeat fields are the player's own Cobblemon data.",
@@ -90,6 +102,7 @@
   "needs": [
     "in game: the door gate and the climb gate against two players at different stages; Nia, Brann, Oren and Elara each moving the stage once; the seven fights",
     "in game: Brann's and Elara's fights (fights): that the choice opens the battle from the dialogue (Cobblemon's own example does it; not run here), that the class's simple party fights at its authored levels, that a win runs won_brann / won_elara for the winner only and a loss runs nothing here, and that the binder then offers 'Release Hoopa.' at cradle_open",
-    "the obtainability sweep's contents for hq_caches"
+    "the obtainability sweep's contents for hq_caches",
+    "in game: Elara at the door (door_keeper): that a player cannot get past her body in the doorway (and that the hole sends one who does back out), that 'Let me through.' moves only the talking player and only from deep_handoff_received, that her battle starts and ends cleanly in the corridor, and two players at different stages talking to her in turn"
   ]
 }

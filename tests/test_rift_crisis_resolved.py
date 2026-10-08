@@ -252,11 +252,32 @@ def test_exactly_one_beat_grants_the_flag_and_only_behind_release_hoopa_at_the_c
 
 def test_the_stage_the_release_needs_is_set_in_play_and_admits_the_player_to_the_hall():
     # rift_crisis_pending is written by a transition a placed conversation invokes (the Rift surveyor's rift_007) ...
-    setters = [t["id"] for _q, t in _transitions()
-               if any(e.get("kind") == "set_progression" and e.get("field") == STAGE and e.get("value") == PENDING
-                      for e in t.get("effects") or [])]
-    assert setters == ["record_rift_crisis_pending"]
+    # The setters are DERIVED from the design, not listed (data/quests.json main_worldshift_reveal):
+    #   the story setter  the one strict transition from the stage before PENDING in the enum, PENDING's predecessor
+    #                     (a player who heard every actor), invoked by the Rift surveyor's rift_007;
+    #   the badge carry   carry_forward mechanism (2): one carry_by_<badge>_to_<PENDING> for the badge the League beat
+    #                     requires (beats[league].requires_existing_flag), run from Nia's entry rule, for a player
+    #                     the Earth Badge carried past the surveyor. It needs the starter tag and that badge, and it
+    #                     reads only stages strictly before PENDING, so it never lowers a stage.
+    # A third setter, or either of these losing a gate, fails here.
+    quest = next(q for q in _json("quests.json")["quests"] if q["id"] == "main_worldshift_reveal")
+    stages = next(f for f in _json("progression.json")["quest_fields"] if f["id"] == STAGE)["allowed_values"]
+    before = stages[:stages.index(PENDING)]
+    badge = next(b for b in quest["beats"] if b["id"] == "league")["requires_existing_flag"]
+    carry = "carry_by_%s_to_%s" % (badge, PENDING)
+    setters = sorted(t["id"] for _q, t in _transitions()
+                     if any(e.get("kind") == "set_progression" and e.get("field") == STAGE and e.get("value") == PENDING
+                            for e in t.get("effects") or []))
+    assert setters == sorted(["record_rift_crisis_pending", carry])
+    story = next(t for _q, t in _transitions() if t["id"] == "record_rift_crisis_pending")
+    assert story["conditions"] == [{"kind": "progression_equals", "field": STAGE, "value": before[-1]}]
     assert _calls("record_rift_crisis_pending") == [("dialogue.json", "dlg_main_rift_surveyor", "line rift_007")]
+    lift = next(t for _q, t in _transitions() if t["id"] == carry)
+    kinds = {c["kind"]: c for c in lift["conditions"]}
+    assert set(kinds) == {"starter_chosen", "flag", "progression_in"}
+    assert kinds["flag"]["flag"] == badge
+    assert kinds["progression_in"]["field"] == STAGE and set(kinds["progression_in"]["values"]) <= set(before)
+    assert _calls(carry) == [("dialogue.json", "dlg_main_finale_nia", "entry rule nia_001")]
     # ... the release's own stage, cradle_open, has one setter and Director Elara Venn's conversation invokes it ...
     opens = [t["id"] for _q, t in _transitions()
              if any(e.get("kind") == "set_progression" and e.get("field") == STAGE and e.get("value") == RELEASE_STAGE

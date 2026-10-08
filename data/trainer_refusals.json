@@ -1,0 +1,22 @@
+{
+  "schema": "cobblers.trainer_refusals/1",
+  "generated_by": "hand",
+  "why": "rctmod does not merge a trainer's dialog with its default. DataPackManager.loadResource(trainerId, \"dialogs\") loads ONE file (trainers/single/<id>.json, else the longest matching group, else the default) and ChatUtils.reply looks a context up in that file only; a missing context logs 'Invalid dialog contexts' and sends the player nothing (rctmod v0.19.0-beta, common/src/main/java/com/gitlab/srcmc/rctmod/api/data/pack/DataPackManager.java:259-285, api/utils/ChatUtils.java:56-80). tools/route_trainers.py wrote six contexts per file, so every trainer it writes a dialog for -- the seated trainers and the Elite Four and Champion overrides -- refused in silence: over the level cap, a required trainer not yet beaten (the League chain), a fainted party. These are the refusal contexts TrainerMob.replyTo (world/entities/TrainerMob.java:239-273) can ask for, written into every dialog file we emit. A file's own authored line for a context wins over these.",
+  "source": "https://gitlab.com/srcmc/rct/mod/-/archive/v0.19.0-beta/mod-v0.19.0-beta.zip (read 2026-10-04)",
+  "lines": {
+    "over_level_cap": "Not with that team. One of your Pokemon is above your level cap (your Trainer Card shows it). Put it in the PC and I will battle you.",
+    "missing_required_trainer": "Not yet. There is a trainer you have to beat before me; your Trainer Card shows the way.",
+    "missing_required_series": "Not yet. You have a trainer series to finish before I will battle you.",
+    "wrong_series": "We are not on the same road. Your Trainer Card shows the series you are on.",
+    "missing_pokemon": "Your Pokemon cannot battle. Heal them first.",
+    "player_busy": "Finish the battle you are in first.",
+    "trainer_busy": "I am in the middle of a battle. Wait your turn.",
+    "unknown_reason": "Not now."
+  },
+  "hold_off_notice": {
+    "why": "The rematch hold-off (tools/route_trainers.py cycle_lines and leader_cycle_lines) sets the trainer's Cooldown while a player who has beaten it stands near. Cooldown is entity NBT on a shared trainer, and rctmod refuses EVERY player through it, interaction included: mobInteract -> startBattleWith -> canBattleAgainst requires getCooldown() == 0 (TrainerMob.java:159-176, 190-201, 594-607). The 2026-09-29 note that an unbeaten partner 'may have to start the fight by interacting' does not hold: they are refused with the on_cooldown line for as long as the beaten player stays in range. This notice tells them why, once per approach.",
+    "text": "This trainer will not battle you while someone who has already beaten them is standing this close. Ask them to step back.",
+    "color": "yellow",
+    "clear_radius": 24
+  }
+}

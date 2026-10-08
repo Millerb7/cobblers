@@ -72,6 +72,12 @@ refused as a sleeper.
 Followers stand only beside a placed NPC (rules.prefer.follower is ["npc"]): within follower_home_radius + 1 of it
 (the disc it potters in touches the NPC) and at least 2 cells from it.
 
+Two groups are not towns and are placed by their own place's plan, not the town model: the snow house's Buneary
+(place_buneary) and, since 2026-10-05, Arrow Creeks Farm's livestock (tools/pokemon_farm.py idlers, group
+"pokemon_farm"): stalled animals are loafers, grazing ones followers homed inside a fenced pen rather than beside an
+NPC, and the wool flock's follower list adds cobblemon:pokemon_eats_grass (an idler's own `behaviours`, which the
+claim writes in place of rules.behaviours.follower).
+
 Not covered: a tree or a bush in a yard (the export's foliage: the replay has no trees), blocks a function writes by
 relative coordinates (the replay skips them), NPCs spawned at runtime or by relative coordinates, anything a player
 built. Roofs: NO roof sleepers -- a ridge of stairs is not a place to sleep.
@@ -711,6 +717,14 @@ def plan(source_root=None, packs=None):
                         "group_gap):\n  " + "\n  ".join(shortfalls))
     towns[BUNEARY_TOWN] = place_buneary(idle["buneary"], g, rules, kinds_on)
     everyone += towns[BUNEARY_TOWN]
+    # Arrow Creeks Farm's livestock (2026-10-05, data/pokemon_farm.json animals): one more group like the Buneary,
+    # each spot checked by tools/pokemon_farm.py against the farm's own block plan (bodies clear, followers inside
+    # their pens), never against a town plan, which the farm has none of
+    import pokemon_farm as PF
+    towns[PF.TOWN] = PF.idlers(g, rules, kinds_on)
+    if len(towns[PF.TOWN]) > rules["cap_per_town"]:
+        raise IdleError("ambient_idle/%s: %d animals, over the cap of %d" % (PF.TOWN, len(towns[PF.TOWN]), rules["cap_per_town"]))
+    everyone += towns[PF.TOWN]
     seen = set()
     for i in everyone:
         if i["id"] in seen:
@@ -807,9 +821,11 @@ def functions(pl):
                           % (flags, snbt_list(beh["sleeper"])),
                           "tag @s add %s" % DOZER]
             else:
+                # a follower's list is the rules' own, unless its group names a longer one (the farm's wool flock adds
+                # cobblemon:pokemon_eats_grass, tools/pokemon_farm.py idlers)
                 claim += ["data merge entity @s {NoAI:0b,%s,BehavioursAreCustom:1b,Behaviours:%s,"
                           "ScriptingConfig:{home_x:%sd,home_y:%sd,home_z:%sd,home_radius:%sd}}"
-                          % (flags, snbt_list(beh["follower"]), num(x), num(y), num(z),
+                          % (flags, snbt_list(i.get("behaviours") or beh["follower"]), num(x), num(y), num(z),
                              num(float(rules["follower_home_radius"])))]
             fn["i/%s/claim" % iid] = claim
         fn["t/%s/keep" % s] = keep

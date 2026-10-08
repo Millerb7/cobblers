@@ -160,6 +160,49 @@ def test_a_follower_needs_an_npc_within_its_home_radius_plus_one():
     assert "not its spot" in A.check_followers({"f": moved}, [("kid", 1.5, 65.0, 0.5)])[0][2]
 
 
+class Pen:
+    """Flat stone to y64; a ring of `block` round x/z -6..6 at y65 (and y66 for a two-high wall)."""
+
+    def __init__(self, block="minecraft:spruce_fence", high=1, gap=None):
+        self.cells = {(x, 65 + k, z): block for x in range(-6, 7) for z in range(-6, 7) for k in range(high)
+                      if (abs(x) == 6 or abs(z) == 6) and (x, z) != gap}
+
+    def at(self, x, y, z):
+        return self.cells.get((x, y, z)) or ("minecraft:stone" if y <= 64 else "minecraft:air")
+
+
+# The farm's grazing livestock (2026-10-05): without this a fenced-in follower with no NPC beside it is refused, and
+# without the fence half of it a follower walled in by a house, or loose on open ground, would be let through.
+def test_a_follower_with_no_npc_passes_only_when_fenced_in():
+    f = {"id": "f", "kind": "follower", "town": "pokemon_farm", "at": (0.5, 65.0, 0.5), "home": (0.5, 65.0, 0.5),
+         "home_radius": 3.0}
+    assert A.check_followers({"f": f}, [], Pen().at) == []
+    assert "it can walk out" in A.check_followers({"f": f}, [], Pen(gap=(6, 0)).at)[0][2]
+    walled = A.check_followers({"f": f}, [], Pen("minecraft:spruce_planks", high=2).at)
+    assert "not fence, gate or wall" in walled[0][2]
+    assert len(A.check_followers({"f": f}, [])) == 1            # no world given: the NPC rule alone, as before
+
+
+# A still Pokemon under a roof is a town's misplacement and a byre's purpose: without this the farm's stalled Miltank
+# are refused, and with a looser rule any town idler indoors would pass.
+def test_indoors_is_allowed_only_in_a_building_the_places_own_record_houses_it_in():
+    src = {"site": {"centre": [100, 200]},
+           "pieces": [{"kind": "building", "name": "the barn", "footprint": [0, 0, 4, 4]},
+                      {"kind": "silo", "name": "the silo", "centre": [10, 10], "r": 1}],
+           "animals": [{"at": [2, 2, "the barn"]}, {"at": [3, 3, "ground"]}, {"at": [10, 10, "the silo"]}]}
+    assert A.housed(src, 102, 202) == "the barn"
+    assert A.housed(src, 103, 203) is None          # in the barn's footprint, but its record says it stands on ground
+    assert A.housed(src, 101, 201) is None          # in the barn, but no animal of the record stands there
+    assert A.housed(src, 110, 210) == "the silo"
+
+
+# Without it the farm's animals would be "in no place": the places beyond the towns come from data/markets.json.
+def test_places_beyond_towns_take_their_box_from_their_source_record():
+    farm = json.loads((ROOT / "data" / "pokemon_farm.json").read_text(encoding="utf-8"))
+    got = A.places_beyond_towns()
+    assert got["pokemon_farm"][0] == tuple(farm["bbox"])
+
+
 class FakeModel:
     def __init__(self, cells):
         self.cells = {k: (v, "test") for k, v in cells.items()}

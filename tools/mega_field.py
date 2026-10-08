@@ -424,9 +424,12 @@ def floor(spec, source_root=None):
         return [p for p in pts if x0 - reach <= p[0] <= x1 + reach and z0 - reach <= p[1] <= z1 + reach]
     vr = near(paths[lay["road"]])
     crit = near([p for pts in paths.values() for p in pts])
+    # every critical path but the field's own road: the 128 rule's reach (the road keeps its own rule, road_clear)
+    crit_o = near([p for k, pts in paths.items() if k != lay["road"] for p in pts])
     zp = spec["zone"]["polygon"]
     road = _coarse(x0, z0, x1, z1, lambda a, b: point_dist(a, b, vr))
     critd = _coarse(x0, z0, x1, z1, lambda a, b: point_dist(a, b, crit))
+    crito = _coarse(x0, z0, x1, z1, lambda a, b: point_dist(a, b, crit_o))
     gul = _coarse(x0, z0, x1, z1, lambda a, b: edge_dist(zp, a, b) * np.where(point_in(zp, a, b), -1, 1))
     oth = np.full(field.shape, np.inf)
     for _w, ox, oz, r in others(spec):
@@ -434,7 +437,7 @@ def floor(spec, source_root=None):
             oth = np.minimum(oth, np.hypot(gx - ox, gz - oz) - r)
     bx, bz = spec["grid"]["x"], spec["grid"]["z"]
     in_grid = (gx >= bx[0]) & (gx <= bx[1] + 1) & (gz >= bz[0]) & (gz <= bz[1] + 1)
-    return (x0, z0, x1, z1), {"field": field, "dry": ~wet, "walk": ~steep, "road": road, "crit": critd, "gulch": gul,
+    return (x0, z0, x1, z1), {"field": field, "dry": ~wet, "walk": ~steep, "road": road, "crit": critd, "crit_other": crito, "gulch": gul,
                               "other": oth, "in_grid": in_grid}, H
 
 
@@ -758,6 +761,11 @@ def sites(spec, source_root=None):
     `farms` holds, ready to paste."""
     mf = spec["mega_field"]
     lay = mf["layout"]
+    # road_clear is derived, not tuned (layout.why.road_clear, 2026-10-05): a range's edge plus a Mega's notice plus
+    # half the road, so the walked line runs between territories
+    if "aggro_reach" in lay and lay["road_clear"] != lay["leash"] + lay["aggro_reach"] + lay["road_margin"]:
+        raise FieldError("layout.road_clear %d is not leash + aggro_reach + road_margin = %d" % (
+            lay["road_clear"], lay["leash"] + lay["aggro_reach"] + lay["road_margin"]))
     poly = mf["polygon"]
     g = G.Ground(source_root)
     vr = json.loads((ROOT / "data" / "route_paths.json").read_text(encoding="utf-8"))["paths"][lay["road"]]

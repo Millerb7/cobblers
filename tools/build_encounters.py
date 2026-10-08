@@ -46,9 +46,13 @@ from the level they evolve at, matured rules.hearts.maturity_step tiers further;
 the band's top, or the level they evolve at, to rules.hearts.next_cap. Fails closed on a presence in a base table, a
 presence in the common bucket, a presence past the next cap, a find in a heart, and a heart whose share of spawn
 chance above the cap (base and heart rows together, the audit's chance rule) exceeds rules.hearts.above_cap_max_share.
+Every heart entry carries "alpha": rules.hearts.alpha (the owner, 2026-10-05: the bosses are alphas), which
+tools/compile_spawns.py writes as alpha=true; fails closed on a copied-through heart entry whose flag differs, and on
+an alpha flag outside a heart. A native alpha re-levels to a nearby player's party (rules.hearts.alpha_level_matching).
 
 route_species_selection: per route, the sub-regions data/routes.json's geography transitions cross; from each such
-table only families in rules.corridor_roles (never rare, never a find). Each species is scored by its chance in the
+table only families in rules.corridor_roles (never a find), plus rules.corridor_rare_min of the crossed on-path
+tables' rare- and ultra-role species, reserved first (the owner, 2026-10-05: every area has a rare and an ultra-rare). Each species is scored by its chance in the
 table (the audit's rule: bucket share renormalised over the buckets its context holds, times weight over the bucket's
 weight) times the corridor length in that table; every crossed table's water species are kept, then the rest by
 score until corridor_species_limit. tools/compile_spawns.py then compiles a corridor species only if it is listed.
@@ -280,7 +284,8 @@ def expand_family(dex, rules, tier, band, species, role, weight, where, mtier=No
     half = (lo_b + hi_b + 1) // 2
     overlap = rules["stage_overlap_levels"]
     min_tier = rules["non_level_evolution_min_tier"]
-    find = role == "find"
+    # a find and an ultra-rare family both spawn on the upper half of the band: the reward for looking (section 4)
+    find = role in ("find", "ultra")
     w = weight if weight is not None else float(rules["roles"][role]["weight"])
     # walk forward: node = (name, depth, floor, lo, parent, reason)
     nodes, frontier = [], [(species, 0, half if find else lo_b, half if find else lo_b, None, None)]
@@ -328,7 +333,9 @@ def expand_family(dex, rules, tier, band, species, role, weight, where, mtier=No
             continue
         if n["parent"] is None:
             reason = ("find: the reason to leave the path, rare bucket, top half of the band (%d-%d)" % (n["lo"], n["hi"])
-                      if find else "named %s family, tier %d: the family starts here" % (role, tier))
+                      if role == "find" else
+                      "ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (%d-%d)" % (n["lo"], n["hi"])
+                      if role == "ultra" else "named %s family, tier %d: the family starts here" % (role, tier))
         else:
             meth, lv, how = n["how"]
             parent = dex.display(n["parent"])
@@ -562,13 +569,16 @@ def heart_above_cap(base_rows, heart_rows, cap):
     return out
 
 
-def entry_of(dex, r, scope, kind, authored, heart=None):
+def entry_of(dex, r, scope, kind, authored, heart=None, alpha=False):
     sid = r["name"].replace(" ", "_")
     e = {"id": ("surface.%s.%s" if kind == SURFACE else "habitat.%s.%s") % (scope, ("heart." + sid) if heart else sid),
          "species": r["name"], "bucket": r["bucket"], "level": r["level"], "weight": r["weight"], "ambient": True,
          "scope": scope, "mechanism": kind, "conditions": r["conditions"], "eligibility_reason": r["reason"]}
     if heart:
         e["heart"] = heart
+        # rules.hearts.alpha (the owner, 2026-10-05: "the boss pokemon are alphas"); tools/compile_spawns.py writes
+        # it into the spawn's PokemonProperties string as alpha=true
+        e["alpha"] = alpha
     if kind == SURFACE:
         e["biomes"] = []
     e["spawnable_position"] = r["position"]
@@ -602,9 +612,16 @@ def table_chances(rows):
     return out
 
 
-def route_selection(routes, generated, rules):
-    """{route id: {"species": [...]}} from the crossed tables' corridor-role families."""
+def route_selection(routes, generated, rules, placement=None):
+    """{route id: {"species": [...]}} from the crossed tables' corridor-role families.
+
+    rules.corridor_rare_min (the owner, 2026-10-05: "every area should have a rare, ultra rare") reserves, per role,
+    that many of the best-scoring rare-role and ultra-role species of the crossed ON-PATH tables (placement "path")
+    before the rest is filled by score. An off-path table's rare families never reach a corridor: they may be its
+    find (section 6), and a find belongs to whoever leaves the path."""
     allowed_roles = set(rules["corridor_roles"])
+    rare_min = dict(rules.get("corridor_rare_min") or {})
+    placement = placement or {}
     limit = rules["corridor_species_limit"]
     out = {}
     for rt in routes["routes"]:
@@ -615,18 +632,26 @@ def route_selection(routes, generated, rules):
             end = tr[i + 1]["at_distance_blocks"] if i + 1 < len(tr) else total
             for s in t["subregions"]:
                 length[s] = length.get(s, 0.0) + max(0.0, end - t["at_distance_blocks"])
-        score, keep = {}, set()
+        score, keep, rscore = {}, set(), {k: {} for k in rare_min}
         for sub in sorted(length):
             rows = generated[sub]
             chance = table_chances(rows)
             for r in rows:
+                if r["role"] in rare_min:
+                    if placement.get(sub) == "path":
+                        rs = rscore[r["role"]]
+                        rs[r["name"]] = rs.get(r["name"], 0.0) + chance[r["name"]] * max(length[sub], 1.0)
+                    continue
                 if r["role"] not in allowed_roles:
                     continue
                 score[r["name"]] = score.get(r["name"], 0.0) + chance[r["name"]] * max(length[sub], 1.0)
                 if r["half"] == "water":
                     keep.add(r["name"])
+        for role, n in sorted(rare_min.items()):
+            cands = sorted((s for s in rscore[role] if s not in keep), key=lambda s: (-rscore[role][s], s))
+            keep.update(cands[:n])
         if len(keep) > limit:
-            raise DesignError("%s: %d water species to keep, over the corridor limit %d: %s"
+            raise DesignError("%s: %d water and reserved rare species to keep, over the corridor limit %d: %s"
                               % (rt["id"], len(keep), limit, sorted(keep)))
         rest = sorted((s for s in score if s not in keep), key=lambda s: (-score[s], s))
         chosen = set(keep) | set(rest[:max(0, limit - len(keep))])
@@ -654,10 +679,12 @@ EVOLUTION_POLICY = {
 }
 
 ROUTE_NOTE = ("Generated by tools/build_encounters.py from data/encounter_design.json (docs/mechanics/"
-              "ENCOUNTER_DESIGN.md section 6): per route, the families in rules.corridor_roles (never rare, never a "
-              "find) of every sub-region its corridor crosses (data/routes.json geography transitions), at most "
-              "corridor_species_limit, every crossed table's water species kept and the rest by chance times corridor "
-              "length. tools/compile_spawns.py reads this list and does not choose. Do not edit by hand.")
+              "ENCOUNTER_DESIGN.md section 6): per route, the families in rules.corridor_roles (never a find) of every "
+              "sub-region its corridor crosses (data/routes.json geography transitions), at most "
+              "corridor_species_limit: every crossed table's water species kept, rules.corridor_rare_min of the "
+              "crossed on-path tables' rare- and ultra-role species reserved (the owner, 2026-10-05), and the rest by "
+              "chance times corridor length. tools/compile_spawns.py reads this list and does not choose. Do not edit "
+              "by hand.")
 
 
 def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
@@ -742,11 +769,14 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
     if problems:
         raise DesignError("\n".join(problems))
 
+    alpha = rules["hearts"].get("alpha")
+    if not isinstance(alpha, bool):
+        raise DesignError("rules.hearts.alpha is true or false (ENCOUNTER_DESIGN.md section 10), not %r" % (alpha,))
     out = json.loads(json.dumps(spawns))
     gen_entries = {}
     for tid in sub_ids:
         gen_entries[(SURFACE, tid)] = [entry_of(dex, r, tid, SURFACE, authored) for r in gen_rows[tid]]
-        gen_entries[(SURFACE, tid)] += [entry_of(dex, r, tid, SURFACE, authored, heart_geo[tid])
+        gen_entries[(SURFACE, tid)] += [entry_of(dex, r, tid, SURFACE, authored, heart_geo[tid], alpha)
                                         for r in heart_rows.get(tid, [])]
     for pid in pools:
         gen_entries[(HABITAT, pid)] = [entry_of(dex, r, pid, HABITAT, authored) for r in gen_rows[pid]]
@@ -763,7 +793,16 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
         if k not in done:
             entries += gen_entries[k]
     out["entries"] = entries
-    route_ids = {int(r["id"][6:8]): r["id"] for r in routes["routes"] if r["id"].startswith("route_")}
+    # a heart entry copied through untouched (a marine band's, a waterway's) is authored in data/spawns.json; it must
+    # carry the same alpha flag as the generated ones, and no entry outside a heart may carry one
+    for e in entries:
+        if e.get("heart") and e.get("alpha") is not alpha:
+            problems.append("%s: a heart entry has alpha %r; rules.hearts.alpha is %r" % (e["id"], e.get("alpha"), alpha))
+        elif not e.get("heart") and "alpha" in e:
+            problems.append("%s: alpha belongs to a heart entry only (section 10)" % e["id"])
+    if problems:
+        raise DesignError("\n".join(problems))
+    route_ids ={int(r["id"][6:8]): r["id"] for r in routes["routes"] if r["id"].startswith("route_")}
     for rec in out["subregions"]:
         t = tables[rec["id"]]
         lo, hi = bands[rec["id"]]
@@ -775,7 +814,7 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
         rec.pop("heart", None)
         if rec["id"] in heart_rows:
             cap, _ = tier_rules(rules, t["tier"])
-            rec["heart"] = dict(heart_geo[rec["id"]], why=t["heart"].get("why", ""),
+            rec["heart"] = dict(heart_geo[rec["id"]], why=t["heart"].get("why", ""), alpha=alpha,
                                 above_cap_share=heart_above_cap(gen_rows[rec["id"]], heart_rows[rec["id"]], cap),
                                 entries=[mirror_of(dex, r) for r in heart_rows[rec["id"]]])
         rec["roster_basis"] = ("Generated by tools/build_encounters.py from data/encounter_design.json tables.%s: tier %d, "
@@ -790,7 +829,8 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
             rec["entries"] = [mirror_of(dex, r) for r in gen_rows[rec["id"]]]
     out["evolution_policy"] = EVOLUTION_POLICY
     out["route_species_selection_note"] = ROUTE_NOTE
-    out["route_species_selection"] = route_selection(routes, gen_rows, rules)
+    out["route_species_selection"] = route_selection(routes, gen_rows, rules,
+                                                     {k: v.get("placement") for k, v in tables.items()})
     return out, gen_rows
 
 

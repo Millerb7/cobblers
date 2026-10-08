@@ -132,7 +132,12 @@ def test_the_committed_markets_and_stalls_pass_every_offline_rule():
     assert M.output_problems(doc, files, {}) == []          # with the seats: every summon on its seat, turned to its yaw
     assert len(npcs) == len(M.emitted(doc))
     summons = [x for body in files.values() if isinstance(body, list) for x in body if x.startswith("summon ")]
-    assert len(summons) == len(M.emitted_stalls(doc)) == 33
+    # one summon per stall record that names where its keeper stands -- counted from data/markets.json itself, not
+    # pasted (it was a literal 33 until Arrow Creeks Farm's stand made 34 on 2026-10-05); an unsited stall has no `at`
+    raw = json.loads((ROOT / "data" / "markets.json").read_text(encoding="utf-8"))["stalls"]
+    standing = [s["id"] for s in raw if isinstance(s.get("at"), list) and len(s["at"]) == 3]
+    assert not [s["id"] for s in raw if s.get("status") == "unsited" and s.get("at")]
+    assert len(summons) == len(M.emitted_stalls(doc)) == len(standing) > 0
 
 
 def test_every_town_with_a_square_or_a_clerk_now_has_a_keeper_or_says_why():

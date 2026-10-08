@@ -15,7 +15,14 @@ takes no geometry from tools/gulch_mine.py or tools/mega_dens.py. Every expectat
   the level cap        rctmod's rule as docs/mechanics/LEAGUE_LEVEL_CAP.md section 1 records it, computed here from
                        modpack/config/rctmod-server.toml and the gym and League teams in data/trainers.json; the gate
                        of the zone each den stands in from data/rift_zones.json
-  the critical path    data/route_paths.json, every point of every path (mega_dens_audit.py's 128 footprint rule)
+  the critical path    data/route_paths.json, every point of every path (mega_dens_audit.py's 128 footprint rule),
+                       except the field's own road (layout.road, Victory Road): the owner, 2026-10-05 (review 64, the
+                       128 rule left the south-west lobe empty): "make sure to use the left side of the southern tip as
+                       well, not just secluded in those pockets". Its clearance is derived here from its declared parts:
+                       each den's leash + layout.aggro_reach + the road's half-width, data/rift_sculpt.json entrances
+                       <road>_descent.width / 2 (not layout.road_margin, which is checked against it). aggro_reach is
+                       ASSUMED (vanilla FOLLOW_RANGE 16; no Fight or Flight source in the checkout, EXP-054 not run):
+                       reported as a problem until EXP-054 records a result
   spawn conditions     data/spawn_blocks.json and data/spawn_block_policy.json
   broken Mega models   docs/research/CLIENT_MODEL_FIXES.md ("7 megas")
   the borders          data/mega_borders.json's declared rules (blocks, palettes, kill threshold, keep, cap), each den's
@@ -35,7 +42,9 @@ R9MD run (taken from the generators as output, as mega_dens_audit.py does).
             within the pad); standable (its 3x3 within 1 block); its leash reaches neither the gulch zone nor
             any Rift zone's post or guard line; its whole range (leash disc) inside the polygon (layout.why.edge_clear:
             "a Mega's whole range is the field's floor");
-            at least 128 from every critical-path point; its id names no other den (a den is keyed by its id, never its
+            at least 128 from every critical-path point but its road's; at least leash + aggro_reach + half-width
+            from its road's walked line (every point of data/route_paths.json paths[layout.road]), and its range at
+            least the half-width from it; its id names no other den (a den is keyed by its id, never its
             species: since 2026-10-04 a species may hold several dens, and every lair, border, keeper function and
             retirement below is keyed by the den's id); a species whose stone (the aspect's, X or Y included) the Cutters sell; none on the broken-model list
   crowding  THE OWNER, 2026-10-04: "Megas clashing over territory ... pressing against each other for space ...
@@ -56,6 +65,16 @@ R9MD run (taken from the generators as output, as mega_dens_audit.py does).
   level     the den's zone gate (data/rift_zones.json boxes) gives the badges; the rctmod cap for those badges plus
             the owner's offset (13.1's level less the owner's cap of 50) is the level in the BUILT spawn function;
             spawn_at spawns uncatchable
+  pack      THE OWNER, 2026-10-05: "make more than one mega per zone, like a few of each mon, and make sure they are
+            uncatchable". Per field den exactly pack_size (the den's, else layout.pack_size) members, ids
+            <den>_m1..<den>_m<n> and no other, each spawned by its own megas/spawn_<member> through spawn_at (the
+            only spawn line it holds, so the macro's `uncatchable` is on every member), at a home on the den's pad
+            (data/mega_dens.json anchor_pad: within clear_radius of the anchor, y from the anchor's to the top of its
+            head_room, and above round(ground) + 1 there), no two in one column, each aspect one layout.pack_aspects
+            allows for the species (every one of them present when the pack is big enough) and sold by the Cutters;
+            each member with its own keeper, respawn clock (#<member> gm.resp, gm.gone), bind (its own, its den's and
+            the pack tag) and leash line; megas/pack_<den> counts the den's tag and kills past pack_size
+            (`matches <n + 1>..`), and the site's drive runs every member's keeper and the pack guard
   borders   the BUILT cobblers_mega_borders functions (tools/mega_borders.py, data/mega_borders.json): exactly one border
             per pair of overlapping ranges measured above and none for any other pair, named <den id>__<den id> (never
             by species); a border that writes nothing is right only when its lens has no free dressing column by this
@@ -69,21 +88,23 @@ R9MD run (taken from the generators as output, as mega_dens_audit.py does).
             boulder blocks and rubble.loose_blocks; a carcass (one skeleton skull) on every border whose ranges overlap
             by kill.min_overlap or more and on no other; no column written by two borders, within keep.anchor_clear of
             any anchor or keep.lair_clear of any column a BUILT lair writes; no column outside the polygon, in the
-            gulch's zone or block box, under painted water, within 128 of the critical path, within 32 of a Rift zone
+            gulch's zone or block box, under painted water, within 128 of the critical path (but the road: within its
+            half-width of the road's walked line), within 32 of a Rift zone
             wall, post or guard point or a placement, or in a town's footprint; the written columns at most
             coverage_cap of the usable floor inside any range (the floor above); R9MB holds each border's columns,
             runs it once, and releases every hold
-  drops     per field den, the built load sets gm.pct and gm.resp to 13.1's numbers for its tier (outer 15% 10 min,
+  drops     per pack member, the built load sets gm.pct and gm.resp to 13.1's numbers for its tier (outer 15% 10 min,
             deeper 30% 15 min; within section 13's 25-35%); bind_ hit_ roll_ slain_ hitter_ exist; the battle_fainted
             callback calls drops/fainted, which rolls every field den; give drops the raw stone section 13 names,
             owner-only; every Cutters trade buys that stone at section 13's price
-  keeper    the leash returns each Mega to its own anchor at its den's leash; the farm's approach box holds the whole
+  keeper    the leash, measured from the den's anchor at its leash, returns each member to its own home; the farm's approach box holds the whole
             leash disc and its ground, so a player fighting the Mega keeps its keeper running
   retire    megas/retire kills exactly the per-den tag of every superseded den (the tag scheme read off a live den's
             bind) and clears its drop storage; no other function names a retired den; R9SX holds anchor +- leash of
             every retired den (each hold under 256 chunks), runs megas/retire after a wait, and releases every hold
   lairs     one lair per field den, mega_dens/<den id>, and none for a retired one; no lair writes a spawn condition no mega_dens policy
-            whitelists; every lair write is inside the field polygon and 128 or more from every critical-path point;
+            whitelists; every lair write is inside the field polygon, inside its own den's range (the road rule
+            above keeps every range off the road) and 128 or more from every critical-path point but the road's;
             no two lairs write one column (their dens now stand as close as the lairs allow); R9MD runs exactly the
             field dens' lairs
   order     reapply.steps: R9S < R9SX < R9MD < R9MB < R9E; prepare: mega_field:check < gulch_mine:build,
@@ -308,6 +329,102 @@ def field_dens(spec):
     return [(fa, d) for fa in spec["farms"] if fa["id"].startswith("field_") for d in fa["dens"]]
 
 
+def pack_size(spec, d):
+    """The owner's "a few of each mon" (2026-10-05) as the data declares it: the den's own pack_size, else
+    layout.pack_size. A den with neither is a pack of one: the audit then still demands the member naming."""
+    return int(d.get("pack_size", (spec["mega_field"]["layout"]).get("pack_size", 1)))
+
+
+def pack_ids(spec, d):
+    """The member ids a den's pack must have, from the data's naming rule (layout.why.pack: <den>_m<k>)."""
+    return ["%s_m%d" % (d["id"], k) for k in range(1, pack_size(spec, d) + 1)]
+
+
+SPAWN_CALL = re.compile(r"spawn_at \{x:(-?\d+),y:(-?\d+),z:(-?\d+),species:\"([a-z_]+)\",aspect:\"([^\"]+)\","
+                        r"level:(\d+)\}")
+
+
+def member_spawn(fns, mid):
+    """(x, y, z, species, aspect, level) of the one spawn_at call in megas/spawn_<member>, or None."""
+    calls = [SPAWN_CALL.search(l) for l in read_fn(fns, "megas/spawn_%s" % mid)]
+    calls = [m for m in calls if m]
+    if len(calls) != 1:
+        return None
+    x, y, z, sp, asp, lv = calls[0].groups()
+    return int(x), int(y), int(z), sp, asp, int(lv)
+
+
+def road_rule(spec, data=DATA):
+    """The field's road and its clearance parts, all from data: the road id (layout.road), its walked line
+    (data/route_paths.json paths[road]), every OTHER critical-path point, the road's half-width (data/rift_sculpt.json
+    entrances <road>_descent.width / 2, never layout.road_margin) and layout.aggro_reach (ASSUMED, see main's KNOWN)."""
+    lay = spec["mega_field"]["layout"]
+    road = lay.get("road")
+    paths = load_json(Path(data) / "route_paths.json")["paths"]
+    ent = [e for e in load_json(Path(data) / "rift_sculpt.json").get("entrances") or []
+           if e.get("id") == "%s_descent" % road and isinstance(e.get("width"), (int, float))]
+    return {"road": road, "line": [tuple(p) for p in paths.get(road) or []],
+            "others": [tuple(p) for k, pts in paths.items() if k != road for p in pts],
+            "half": ent[0]["width"] / 2.0 if len(ent) == 1 else None, "aggro": lay.get("aggro_reach")}
+
+
+# KNOWN findings of the road rule (2026-10-05), each with a strict xfail in tests/test_mega_field_audit.py:
+#   1. aggro_reach is ASSUMED: vanilla FOLLOW_RANGE 16, no Fight or Flight source in the checkout, EXP-054 not run.
+#   2. four dens stand 53.74 from Victory Road's walked line against road_clear 54: tools/mega_field.py floor() measures
+#      `road` on a 2-block coarse grid (_coarse: "right to within step / sqrt 2 blocks") and then applies road_clear with no allowance for that error, so a site up to 1.41 under the
+#      clearance passes. Measured here column to column (anchor to every walked-line point).
+#   3. (FIXED 2026-10-05 by the integrator: tools/mega_borders.py dresses from every critical path but the field's own
+#      road at 128, and from the road off its half-width + 2; all 85 borders write. The KNOWN entry is retired.)
+#   4. borders gm_mf_4076_5086__gm_mf_4118_5028 and gm_mf_3852_4700__gm_mf_3838_4770 (the second exposed once its
+#      border began writing, same cause): no scar column on the first den's side is from its own scrape palette
+#      (the 2026-10-05 re-dress of data/mega_dens.json; a generator-side redraw did not change it, so not the draw).
+KNOWN_ROAD = (re.compile(r"^road: aggro_reach \S+ is ASSUMED"),
+              re.compile(r"^den: gm_mf_(3704_5196|3748_5152|3996_4810|4072_4734): anchor 53\.74 from victory_road's "
+                         r"walked line: under leash 36 \+ aggro_reach 16 \+ half-width 2 = 54$"),
+              re.compile(r"^borders: (gm_mf_4076_5086__gm_mf_4118_5028: no scar column on gm_mf_4076_5086|"
+                         r"gm_mf_3852_4700__gm_mf_3838_4770: no scar column on gm_mf_3852_4700)'s side is "
+                         r"from its own scrape palette$"))
+
+
+def exp054_result(docs_root=ROOT / "experiments"):
+    """EXP-054's Results section's first line (the experiment that would measure how far a field Mega notices a
+    player), or None when there is no such experiment."""
+    for p in sorted(Path(docs_root).glob("EXP-054-*/README.md")):
+        m = re.search(r"^## Results\s*\n+(.+)$", p.read_text(encoding="utf-8"), re.M)
+        return m.group(1).strip() if m else ""
+    return None
+
+
+def check_road(spec, R, data=DATA, exp_root=ROOT / "experiments"):
+    """The road's clearance from its declared parts (the owner, 2026-10-05: Megas along Victory Road, the road running
+    between their ranges): layout.road_clear must be layout.leash + aggro_reach + the road's half-width; the road's
+    half-width must be what layout.road_margin says; aggro_reach unmeasured is a problem of its own."""
+    lay = spec["mega_field"]["layout"]
+    rr = road_rule(spec, data)
+    if not rr["line"]:
+        R.err("road", "layout.road %r has no walked line in data/route_paths.json" % rr["road"])
+    if rr["half"] is None:
+        R.err("road", "no data/rift_sculpt.json entrance %s_descent with a width: the road's half-width is not "
+                      "declared anywhere this audit reads" % rr["road"])
+        return rr
+    if not isinstance(rr["aggro"], (int, float)):
+        R.err("road", "layout.aggro_reach is not declared: the road's clearance has no notice term")
+        return rr
+    if lay.get("road_margin") != rr["half"]:
+        R.err("road", "layout.road_margin %s is not the road's half-width %g (data/rift_sculpt.json %s_descent.width)"
+              % (lay.get("road_margin"), rr["half"], rr["road"]))
+    want = lay["leash"] + rr["aggro"] + rr["half"]
+    if lay.get("road_clear") != want:
+        R.err("road", "layout.road_clear %s is not leash %d + aggro_reach %s + half-width %g = %g"
+              % (lay.get("road_clear"), lay["leash"], rr["aggro"], rr["half"], want))
+    res = exp054_result(exp_root)
+    if res is None or re.match(r"not run", res, re.I):
+        R.err("road", "aggro_reach %s is ASSUMED (vanilla 1.21.1 FOLLOW_RANGE 16), not measured: no Fight or Flight "
+                      "jar or source in the checkout and experiments/EXP-054 Results is %r"
+              % (rr["aggro"], res))
+    return rr
+
+
 def check_area(spec, basin, D, R):
     mf = spec["mega_field"]
     poly = mf["polygon"]
@@ -404,7 +521,8 @@ def zone_of(rz, x, z):
 def check_dens(spec, g, basin, D, R, sold, data=DATA):
     poly = spec["mega_field"]["polygon"]
     zone = spec["zone"]["polygon"]
-    route = [tuple(p) for pts in load_json(Path(data) / "route_paths.json")["paths"].values() for p in pts]
+    rr = road_rule(spec, data)
+    road_d = []
     import water_mask
     bodies, sea = water_mask.bodies(), water_mask.sea_level()
     # where a zone's guard stands or its line crosses: a field Mega's leash never reaches one (data/rift_zones.json)
@@ -447,9 +565,20 @@ def check_dens(spec, g, basin, D, R, sold, data=DATA):
         for what, (px, pz) in posts:
             if math.hypot(px - ax, pz - az) <= d["leash"]:
                 R.err("den", "%s: its leash (%d) reaches the Rift zones' %s at (%d, %d)" % (did, d["leash"], what, px, pz))
-        dr = near_points([(ax, az)], route)
-        if dr < 128:
-            R.err("den", "%s: anchor %.0f from the critical path (data/route_paths.json): under 128" % (did, dr))
+        if rr["others"]:
+            dr = near_points([(ax, az)], rr["others"])
+            if dr < 128:
+                R.err("den", "%s: anchor %.0f from the critical path (data/route_paths.json): under 128" % (did, dr))
+        if rr["line"] and rr["half"] is not None and isinstance(rr["aggro"], (int, float)):
+            dv = near_points([(ax, az)], rr["line"])
+            road_d.append(dv)
+            want = d["leash"] + rr["aggro"] + rr["half"]
+            if dv - d["leash"] < rr["half"]:
+                R.err("den", "%s: its range (leash %d) comes %.2f from %s's walked line: inside the road's half-width "
+                             "%g" % (did, d["leash"], dv - d["leash"], rr["road"], rr["half"]))
+            if dv < want:
+                R.err("den", "%s: anchor %.2f from %s's walked line: under leash %d + aggro_reach %s + half-width %g = %g"
+                      % (did, dv, rr["road"], d["leash"], rr["aggro"], rr["half"], want))
         # a den is its id, not its species (2026-10-04: a species may hold several dens); its tag, scores, keeper
         # functions, lair and borders are all named by the id, so two dens with one id would be one Mega to the keeper
         if did in seen:
@@ -458,15 +587,21 @@ def check_dens(spec, g, basin, D, R, sold, data=DATA):
         seen[did] = (ax, az)
         if sp in D["broken"]:
             R.err("den", "%s: %s is on CLIENT_MODEL_FIXES.md's broken Mega models" % (did, sp))
-        asp = d["aspect"]
-        m = re.fullmatch(r"mega_evolution=mega(?:_([xy]))?", asp)
-        if not m:
-            R.err("den", "%s: aspect %r is not a Mega aspect" % (did, asp))
-        else:
-            want = [s for s in sold if s.startswith(sp[:5]) and (s.endswith("_" + m.group(1)) if m.group(1)
-                                                                   else not re.search(r"_[xy]$", s))]
-            if not want:
-                R.err("den", "%s: no %s stone for %s on any Cutters bench: not a Mega the pack has" % (did, asp, sp))
+        # the den's aspect and every aspect its pack may mix (layout.pack_aspects): each a Mega the Cutters sell
+        for asp in [d["aspect"]] + [a for a in (spec["mega_field"]["layout"].get("pack_aspects") or {}).get(sp) or []
+                                    if a != d["aspect"]]:
+            m = re.fullmatch(r"mega_evolution=mega(?:_([xy]))?", asp)
+            if not m:
+                R.err("den", "%s: aspect %r is not a Mega aspect" % (did, asp))
+            else:
+                want = [s for s in sold if s.startswith(sp[:5]) and (s.endswith("_" + m.group(1)) if m.group(1)
+                                                                       else not re.search(r"_[xy]$", s))]
+                if not want:
+                    R.err("den", "%s: no %s stone for %s on any Cutters bench: not a Mega the pack has" % (did, asp, sp))
+    if road_d:
+        R.note("road: %d dens; nearest anchor %.2f from %s's walked line, so the nearest range edge %.2f from it "
+               "(half-width %g)" % (len(road_d), min(road_d), rr["road"], min(road_d) - spec["mega_field"]["layout"]["leash"],
+                                    rr["half"]))
 
 
 # ---------------------------------------------------------------------------------------------- crowding and floor
@@ -586,7 +721,49 @@ def check_floor(spec, g, R):
            "of them (%.1f%%); the usable column farthest from every range is %.0f past the nearest, at (%d, %d); "
            "dens %d, roster %d" % (n, len(field_dens(spec)), int(cov.sum()), 100.0 * cov.sum() / n, far[i, j],
                                    j + x0, i + z0, len(field_dens(spec)), len(spec["mega_field"]["layout"]["roster"])))
+    check_west_floor(spec, floor, cov, (x0, z0), R)
     return (x0, z0), floor, cov
+
+
+def check_west_floor(spec, floor, cov, origin, R, data=DATA):
+    """THE OWNER, 2026-10-05: "use the left side of the southern tip as well, not just secluded in those pockets" (review
+    64: the 128-block rule from Victory Road's walk left the north stem and the south-west lobe no den). The floor that
+    rule emptied is the usable floor within 128 + layout.lair_radius (the old road_clear) of the road's walked line,
+    measured here column to column; it must now hold dens. Reported: that band's coverage and each farm's (its approach
+    box's usable columns inside any range). No fraction is demanded: the owner gave none."""
+    x0, z0 = origin
+    lay = spec["mega_field"]["layout"]
+    rr = road_rule(spec, data)
+    old = 128 + lay.get("lair_radius", 0)
+    if not rr["line"]:
+        return
+    zz, xx = np.nonzero(floor)
+    cx, cz = (xx + x0).astype(float), (zz + z0).astype(float)
+    pts = np.asarray([p for p in rr["line"] if cx.min() - old <= p[0] <= cx.max() + old
+                      and cz.min() - old <= p[1] <= cz.max() + old], dtype=float).reshape(-1, 2)
+    dist = np.full(len(cx), np.inf)
+    for i in range(0, len(cx), 2048):
+        if len(pts):
+            d = np.hypot(cx[i:i + 2048, None] - pts[None, :, 0], cz[i:i + 2048, None] - pts[None, :, 1])
+            dist[i:i + 2048] = d.min(axis=1)
+    band = dist < old
+    inside = [d for _fa, d in field_dens(spec) if near_points([(d["anchor"][0], d["anchor"][2])], rr["line"]) < old]
+    nb, cb = int(band.sum()), int((cov[zz, xx] & band).sum())
+    R.note("west floor: %d usable columns within %d (128 + lair_radius, the clearance the owner relaxed on 2026-10-05) "
+           "of %s's walked line; %d den(s) stand there, their ranges and the rest cover %d of them (%.1f%%)"
+           % (nb, old, rr["road"], len(inside), cb, 100.0 * cb / nb if nb else 0.0))
+    if nb and not inside:
+        R.err("floor", "no den stands within %d of %s's walked line: the floor the owner asked to use (2026-10-05) "
+                       "holds none" % (old, rr["road"]))
+    for fa in spec["farms"]:
+        if not fa["id"].startswith("field_"):
+            continue
+        ap = fa["approach"]
+        sel = (cx >= ap[0]) & (cx <= ap[3]) & (cz >= ap[2]) & (cz <= ap[5])
+        n = int(sel.sum())
+        c = int((cov[zz, xx] & sel).sum())
+        R.note("farm %s: %d den(s), %d usable columns in its approach box, %d in a range (%.1f%%), %d within %d of %s"
+               % (fa["id"], len(fa["dens"]), n, c, 100.0 * c / n if n else 0.0, int((sel & band).sum()), old, rr["road"]))
 
 
 def check_tiers(spec, fns, R):
@@ -600,11 +777,11 @@ def check_tiers(spec, fns, R):
             R.err("tiers", "%s is %.0f from the Cutters' square: %s by deeper_from_town %d, but it is %s"
                   % (d["id"], far, want, lay["deeper_from_town"], d["tier"]))
         lvl = spec["farm_tiers"].get(d["tier"], {}).get("level")
-        m = re.search(r"spawn_at \{[^}]*species:\"%s\"[^}]*level:(\d+)\}" % re.escape(d["species"]),
-                      "\n".join(read_fn(fns, "megas/spawn_%s" % d["id"])))
-        if lvl is None or not m or int(m.group(1)) != lvl:
-            R.err("tiers", "%s: built level %s, farm_tiers.%s.level declares %s"
-                  % (d["id"], m and m.group(1), d["tier"], lvl))
+        for mid in pack_ids(spec, d):
+            ms = member_spawn(fns, mid)
+            if lvl is None or not ms or ms[3] != d["species"] or ms[5] != lvl:
+                R.err("tiers", "%s: built level %s, farm_tiers.%s.level declares %s"
+                      % (mid, ms and ms[5], d["tier"], lvl))
     # the roster dealt by distance, nearest first (ties: the roster order is the generator's own, so equal distances
     # are not judged)
     order = [sp for sp, _a in lay["roster"]]
@@ -625,6 +802,7 @@ def read_fn(fns, name):
 
 def check_keeper(spec, fns, callback, g, D, caps, R, data=DATA):
     rz = load_json(Path(data) / "rift_zones.json")
+    pad = load_json(Path(data) / "mega_dens.json")["anchor_pad"]
     for fa, d in field_dens(spec):
         did = d["id"]
         ax, ay, az = d["anchor"]
@@ -643,46 +821,102 @@ def check_keeper(spec, fns, callback, g, D, caps, R, data=DATA):
             continue
         cap = caps[min(max(badges), max(caps))]
         want = cap + T["offset"]
-        body = "\n".join(read_fn(fns, "megas/spawn_%s" % did))
-        m = re.search(r"spawn_at \{x:(-?\d+),y:(-?\d+),z:(-?\d+),species:\"([a-z_]+)\",aspect:\"([^\"]+)\",level:(\d+)\}", body)
-        if not m:
-            R.err("level", "%s: no megas/spawn_%s calling spawn_at in the built pack" % (did, did))
-            continue
-        x, y, z, sp, asp, lv = m.groups()
-        if (int(x), int(y), int(z)) != (ax, ay, az) or sp != d["species"] or asp != d["aspect"]:
-            R.err("level", "%s: spawns %s %s at (%s, %s, %s), not its %s %s at %s"
-                  % (did, sp, asp, x, y, z, d["species"], d["aspect"], d["anchor"]))
-        if int(lv) != want:
-            R.err("level", "%s: built level %s, but its zone %s gates %d badges, cap %d, and the owner's %s offset is "
-                           "+%d: want %d" % (did, lv, zs[0][0], max(badges), cap, tier, T["offset"], want))
-        R.note("%s: zone %s, %d badges, cap %d, %s, level %s" % (did, zs[0][0], max(badges), cap, tier, lv))
-        # drops and respawn, as load sets them
         load = "\n".join(read_fn(fns, "load"))
-        pct = re.search(r"scoreboard players set #%s gm\.pct (\d+)" % re.escape(did), load)
-        resp = re.search(r"scoreboard players set #%s gm\.resp (\d+)" % re.escape(did), load)
-        if not pct or int(pct.group(1)) != T["pct"]:
-            R.err("drops", "%s: drop chance %s, section 13.1's %s is %d%%" % (did, pct and pct.group(1), tier, T["pct"]))
-        if not resp or int(resp.group(1)) != T["ticks"]:
-            R.err("drops", "%s: respawn %s ticks, section 13.1's %s is %d" % (did, resp and resp.group(1), tier, T["ticks"]))
-        for part in ("megas/bind_", "megas/hit_", "drops/roll_", "drops/slain_", "drops/hitter_"):
-            if not read_fn(fns, part + did):
-                R.err("drops", "%s: no %s%s in the built pack" % (did, part, did))
-        for part in ("drops/roll_", "drops/slain_"):
-            b = "\n".join(read_fn(fns, part + did))
-            if b and not (re.search(r"random value 1\.\.100", b) and "#%s gm.pct" % did in b):
-                R.err("drops", "%s: %s%s does not roll 1..100 against its gm.pct" % (did, part, did))
-        if not re.search(r"\bdrops/roll_%s\b" % re.escape(did), "\n".join(read_fn(fns, "drops/fainted"))):
-            R.err("drops", "%s: drops/fainted never rolls it" % did)
-        # the leash
         lb = "\n".join(l for k, v in fns.items() if k.startswith("leash") for l in v)
-        lm = re.search(r"tag=[\w.]*\.%s\] positioned (-?\d+) (-?\d+) (-?\d+) unless entity @s\[distance=\.\.(\d+)\] "
-                       r"run tp @s (-?\d+) (-?\d+) (-?\d+)" % re.escape(did), lb)
-        if not lm:
-            R.err("keeper", "%s: no leash line returns its Mega" % did)
-        else:
-            v = [int(t) for t in lm.groups()]
-            if v[:3] != [ax, ay, az] or v[4:] != [ax, ay, az] or v[3] != d["leash"]:
-                R.err("keeper", "%s: the leash holds %s within %d, not its anchor within %d" % (did, v[:3], v[3], d["leash"]))
+        fainted = "\n".join(read_fn(fns, "drops/fainted"))
+        ids = pack_ids(spec, d)
+        lay = spec["mega_field"]["layout"]
+        allowed = (lay.get("pack_aspects") or {}).get(d["species"]) or [d["aspect"]]
+        # a pack is exactly its members: no single Mega under the den's own id, none past pack_size
+        for extra in [did, "%s_m%d" % (did, len(ids) + 1)]:
+            if read_fn(fns, "megas/spawn_%s" % extra) or read_fn(fns, "megas/keep_%s" % extra):
+                R.err("pack", "%s: the built pack spawns or keeps %s, outside its pack of %d (%s..%s)"
+                      % (did, extra, len(ids), ids[0], ids[-1]))
+        homes, aspects = [], []
+        for mid in ids:
+            body = read_fn(fns, "megas/spawn_%s" % mid)
+            if not body:
+                R.err("pack", "%s: no megas/spawn_%s in the built pack (pack_size %d)" % (did, mid, len(ids)))
+                continue
+            # every spawning line of the member's spawn is the spawn_at macro call: the macro is what says uncatchable
+            other = [l for l in body if not l.startswith("#") and "spawnpokemon" in l]
+            if other:
+                R.err("pack", "%s: megas/spawn_%s spawns outside spawn_at (so not by its uncatchable macro): %s"
+                      % (did, mid, other[0]))
+            ms = member_spawn(fns, mid)
+            if not ms:
+                R.err("level", "%s: megas/spawn_%s does not call spawn_at exactly once" % (did, mid))
+                continue
+            x, y, z, sp, asp, lv = ms
+            homes.append((x, y, z))
+            aspects.append(asp)
+            if sp != d["species"] or asp not in allowed:
+                R.err("level", "%s: spawns %s %s, not its den's %s in %s" % (mid, sp, asp, d["species"], allowed))
+            if lv != want:
+                R.err("level", "%s: built level %s, but its zone %s gates %d badges, cap %d, and the owner's %s offset "
+                               "is +%d: want %d" % (mid, lv, zs[0][0], max(badges), cap, tier, T["offset"], want))
+            # its home: on the den's pad (data/mega_dens.json anchor_pad), in the pad's air, above the natural ground
+            off = math.hypot(x - ax, z - az)
+            top = ay + pad["head_room"] - 1
+            if off > pad["clear_radius"] or not (ay <= y <= top) or y < int(round(g(x, z))) + 1:
+                R.err("pack", "%s: home (%d, %d, %d) is off its den's pad: %.2f from the anchor (pad clear_radius %d), "
+                              "y%d against the pad's air y%d..%d and ground y%d"
+                      % (mid, x, y, z, off, pad["clear_radius"], y, ay, top, int(round(g(x, z)))))
+            # its own keeper: respawn clock, drops, bind, roll and the leash line
+            keep = "\n".join(read_fn(fns, "megas/keep_%s" % mid))
+            if "#%s gm.resp" % mid not in keep or "#%s gm.gone" % mid not in keep:
+                R.err("keeper", "%s: megas/keep_%s does not keep its own respawn clock (#%s gm.resp, gm.gone)"
+                      % (mid, mid, mid))
+            pct = re.search(r"scoreboard players set #%s gm\.pct (\d+)" % re.escape(mid), load)
+            resp = re.search(r"scoreboard players set #%s gm\.resp (\d+)" % re.escape(mid), load)
+            if not pct or int(pct.group(1)) != T["pct"]:
+                R.err("drops", "%s: drop chance %s, section 13.1's %s is %d%%" % (mid, pct and pct.group(1), tier, T["pct"]))
+            if not resp or int(resp.group(1)) != T["ticks"]:
+                R.err("drops", "%s: respawn %s ticks, section 13.1's %s is %d" % (mid, resp and resp.group(1), tier, T["ticks"]))
+            for part in ("megas/bind_", "megas/hit_", "drops/roll_", "drops/slain_", "drops/hitter_"):
+                if not read_fn(fns, part + mid):
+                    R.err("drops", "%s: no %s%s in the built pack" % (mid, part, mid))
+            for part in ("drops/roll_", "drops/slain_"):
+                b = "\n".join(read_fn(fns, part + mid))
+                if b and not (re.search(r"random value 1\.\.100", b) and "#%s gm.pct" % mid in b):
+                    R.err("drops", "%s: %s%s does not roll 1..100 against its gm.pct" % (mid, part, mid))
+            if not re.search(r"\bdrops/roll_%s\b" % re.escape(mid), fainted):
+                R.err("drops", "%s: drops/fainted never rolls it" % mid)
+            bind = [l.strip() for l in read_fn(fns, "megas/bind_%s" % mid)]
+            tags = [l[len("tag @s add "):] for l in bind if l.startswith("tag @s add ")]
+            if not any(t.endswith("." + mid) for t in tags) or not any(t.endswith("." + did) for t in tags):
+                R.err("keeper", "%s: its bind tags it %s, not by its own id and its den's" % (mid, tags))
+            lm = re.search(r"tag=[\w.]*\.%s\] positioned (-?\d+) (-?\d+) (-?\d+) unless entity @s\[distance=\.\.(\d+)\] "
+                           r"run tp @s (-?\d+) (-?\d+) (-?\d+)" % re.escape(mid), lb)
+            if not lm:
+                R.err("keeper", "%s: no leash line returns it" % mid)
+            else:
+                v = [int(t) for t in lm.groups()]
+                if v[:3] != [ax, ay, az] or v[3] != d["leash"] or v[4:] != [x, y, z]:
+                    R.err("keeper", "%s: the leash holds %s within %d and returns it to %s, not its den's anchor %s "
+                                    "within %d and its home %s" % (mid, v[:3], v[3], v[4:], d["anchor"], d["leash"],
+                                                                  [x, y, z]))
+        if len({(h[0], h[2]) for h in homes}) != len(homes):
+            R.err("pack", "%s: two members' homes share a column: %s" % (did, homes))
+        if len(ids) >= len(allowed) and set(aspects) != set(allowed) and len(aspects) == len(ids):
+            R.err("pack", "%s: its pack of %d mixes %s, not every aspect layout.pack_aspects allows (%s)"
+                  % (did, len(ids), sorted(set(aspects)), allowed))
+        # the den-wide guard: never more than the pack in the den, the pre-pack single Mega removed
+        guard = read_fn(fns, "megas/pack_%s" % did)
+        g_txt = "\n".join(guard)
+        if not re.search(r"matches %d\.\. positioned %d %d %d run kill @e\[type=cobblemon:pokemon,tag=[\w.]*\.%s,limit=1"
+                         % (len(ids) + 1, ax, ay, az, re.escape(did)), g_txt) or \
+                not re.search(r"store result score #n gm\.t if entity @e\[type=cobblemon:pokemon,tag=[\w.]*\.%s\]"
+                              % re.escape(did), g_txt):
+            R.err("pack", "%s: megas/pack_%s does not count the den's tag and kill past its pack of %d (`matches %d..`)"
+                  % (did, did, len(ids), len(ids) + 1))
+        drive = "\n".join(l for k, v in fns.items() if k.startswith("drive_") for l in v)
+        missing = [n for n in ["megas/keep_%s" % i for i in ids] + ["megas/pack_%s" % did]
+                   if not re.search(r"function [\w:/]*%s$" % re.escape(n), drive, re.M)]
+        if missing:
+            R.err("pack", "%s: no site's drive runs %s" % (did, missing))
+        R.note("%s: zone %s, %d badges, cap %d, %s, level %s, pack %d %s" % (did, zs[0][0], max(badges), cap, tier, want,
+                                                                         len(homes), sorted(set(aspects))))
         # the approach box the keeper drives on holds the leash disc and its ground
         ap = fa["approach"]
         L = d["leash"]
@@ -728,7 +962,8 @@ def check_retire(spec, fns, r9sx, R):
         R.err("retire", "data/gulch_mine.json superseded_farms names no retired den")
         return
     fd = field_dens(spec)
-    prefix = tag_scheme(fns, fd[0][1]["id"]) if fd else None
+    # the tag scheme off a live MEMBER's bind (a den's Megas are its pack members since 2026-10-05)
+    prefix = tag_scheme(fns, pack_ids(spec, fd[0][1])[0]) if fd else None
     if prefix is None:
         R.err("retire", "cannot read the per-den tag off a live den's bind")
         return
@@ -805,7 +1040,7 @@ def check_lairs(spec, rec, lairs, r9md, R, data=DATA):
     spawn = set(load_json(Path(data) / "spawn_blocks.json")["blocks"])
     policy = load_json(Path(data) / "spawn_block_policy.json")
     white = {b for w in policy.get("whitelist") or [] if "mega_dens" in (w.get("scope") or "") for b in w["blocks"]}
-    route = [tuple(p) for pts in load_json(Path(data) / "route_paths.json")["paths"].values() for p in pts]
+    rr = road_rule(spec, data)
     owner = {}
     # a lair is keyed by its DEN's id (mega_dens/<den id>), never its species: a species may hold several dens
     for i, d in sorted(fd.items()):
@@ -833,11 +1068,23 @@ def check_lairs(spec, rec, lairs, r9md, R, data=DATA):
         out = [c for c in sorted(cols) if not _in_poly_pt(poly, c[0] + 0.5, c[1] + 0.5)]
         if out:
             R.err("lairs", "%s's lair writes %d column(s) outside the field, e.g. %s" % (i, len(out), out[0]))
-        dmin = near_points(cols, route)
+        dmin = near_points(cols, rr["others"]) if rr["others"] else math.inf
         if dmin < 128:
             R.err("lairs", "%s's lair writes %.1f from the critical path (data/route_paths.json): under 128 "
                            "(tools/mega_dens_audit.py footprint rule)" % (i, dmin))
-        R.note("lair %s (%s): %d cells, %d columns, nearest critical path %.1f" % (i, sp, len(st), len(cols), dmin))
+        # its own road (the owner, 2026-10-05): the lair is its den's dressing, so it lies inside its den's range, which
+        # check_dens keeps off the road; and never on the road's own width
+        ax, _ay, az = d["anchor"]
+        outr = [c for c in sorted(cols) if math.hypot(c[0] - ax, c[1] - az) > d["leash"]]
+        if outr:
+            R.err("lairs", "%s's lair writes %d column(s) outside its den's range (leash %d), e.g. %s"
+                  % (i, len(outr), d["leash"], outr[0]))
+        dv = near_points(cols, rr["line"]) if rr["line"] else math.inf
+        if rr["half"] is not None and dv <= rr["half"]:
+            R.err("lairs", "%s's lair writes %.1f from %s's walked line: on the road (half-width %g)"
+                  % (i, dv, rr["road"], rr["half"]))
+        R.note("lair %s (%s): %d cells, %d columns, nearest critical path %.1f, nearest %s %.1f"
+               % (i, sp, len(st), len(cols), dmin, rr["road"], dv))
     extra = sorted(set(lairs) - set(fd))
     if extra:
         R.err("lairs", "built lairs for no field den: %s%s"
@@ -876,7 +1123,10 @@ def world_marks(spec, g, data=DATA):
 
     def gr(x, z):
         return int(round(g(x, z)))
-    return {"route": [tuple(p) for pts in load_json(Path(data) / "route_paths.json")["paths"].values() for p in pts],
+    rr = road_rule(spec, data)
+    # the critical path but the field's own road, which keeps its own rule (road_rule; a border lies inside both its
+    # dens' ranges, so the dens' road rule keeps it off the road too)
+    return {"route": rr["others"], "road": rr["line"], "road_half": rr["half"],
             "built": built, "towns": towns,
             "wet": lambda x, z: water_mask.level_at(x, z, gr, bodies, sea)[0] is not None,
             "spawn": set(load_json(Path(data) / "spawn_blocks.json")["blocks"]),
@@ -1042,6 +1292,11 @@ def footprint(name, cols, poly, zone, grid, marks, R):
         dr = near_points(cols, marks["route"])
         if dr < 128:
             R.err("borders", "%s writes %.1f from the critical path (data/route_paths.json): under 128" % (name, dr))
+    if marks.get("road") and marks.get("road_half") is not None:
+        dv = near_points(cols, marks["road"])
+        if dv <= marks["road_half"]:
+            R.err("borders", "%s writes %.1f from the field's road's walked line: on the road (half-width %g)"
+                  % (name, dv, marks["road_half"]))
     xs, zs = [c[0] for c in cols], [c[1] for c in cols]
     for px, pz, what in marks["built"]:
         if min(xs) - 32 <= px <= max(xs) + 32 and min(zs) - 32 <= pz <= max(zs) + 32 and \
@@ -1166,6 +1421,7 @@ def audit(spec, g, basin, fns, callback, rec, lairs, r9sx, r9md, reapply_src=Non
     caps = caps or cap_table()
     sold = re.findall(r'sell:\{id:"mega_showdown:([a-z_]+)"', "\n".join(read_fn(fns, "cutters_place")))
     check_area(spec, basin, D, R)
+    check_road(spec, R)
     check_dens(spec, g, basin, D, R, sold)
     check_crowding(spec, R)
     floor = check_floor(spec, g, R)
@@ -1234,8 +1490,9 @@ def main(argv=None):
         print("note: %s" % n)
     # KNOWN findings, reported and owned by the builder (tests/test_mega_field_audit.py KNOWN, strict xfail there): printed
     # as KNOWN and not failed here, so prepare runs while the fix is owed; a NEW problem still fails it. EMPTY since
-    # 2026-10-04: the per-den field closed both findings of the species-keyed one; add a pattern only with its xfail
-    known = []
+    # 2026-10-04: the per-den field closed both findings of the species-keyed one; add a pattern only with its xfail.
+    # 2026-10-05 (independent audit of the packs and the west floor): KNOWN_ROAD below
+    known = list(KNOWN_ROAD)
     unk = [e for e in R.errors if not any(k.search(e) for k in known)]
     for e in R.errors:
         print("%s %s" % ("PROBLEM" if e in unk else "KNOWN", e))

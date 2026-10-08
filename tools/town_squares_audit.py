@@ -139,6 +139,9 @@ DEFAULT_VANILLA = Path(os.environ.get("APPDATA", "")) / "ModrinthApp" / "meta" /
 
 STEP = {"north": (0, -1), "south": (0, 1), "west": (-1, 0), "east": (1, 0)}
 FALLBACK_TOWNS = {"mining_town", "northlight", "tableland_stop", "deep_city"}
+# a stand outside any town (2026-10-05): its keeper stands where its own place's record says, never anywhere else --
+# {markets `town` value: (data file, key of the stand record whose `feet` is the keeper's cell)}
+PLACE_STANDS = {"pokemon_farm": ("pokemon_farm.json", "stand_keeper")}
 # TOWN_SQUARES_SURVEY.md section 0, "Places where a player can spend nothing beyond the Mart clerk's three items"
 SURVEY_NO_SPEND = {"Sunset West": "sunset_west", "Pacifidlog": "sea_town", "Pallet": "hometown",
                    "Redbrow": "tableland_stop", "The Deep's city": "deep_city"}
@@ -173,6 +176,9 @@ POWER_VANILLA = re.compile(r"minecraft:(?:potion|splash_potion|lingering_potion|
 COOKED = {"bread", "baked_potato", "cooked_beef", "cooked_chicken", "cooked_mutton", "cooked_porkchop", "cooked_rabbit",
           "cooked_cod", "cooked_salmon", "rabbit_stew", "mushroom_stew", "beetroot_soup", "pumpkin_pie"}
 THEME_WORDS = {
+    # 2026-10-05, Arrow Creeks Farm's stand: what the owner's farm makes ("milk, leather, yadda yadda") and its fields
+    "farm goods": {"milk_bucket", "white_wool", "leather", "honey_bottle", "honeycomb", "egg", "feather", "carrot",
+                   "potato", "beetroot", "wheat", "hay_block"},
     "workstations": {"stonecutter", "smithing_table", "grindstone", "anvil", "crafting_table", "loom", "fletching_table",
                      "cartography_table", "barrel", "composter", "blast_furnace", "smoker"},
     "tools": {"iron_pickaxe", "iron_shovel", "iron_axe", "iron_hoe", "stone_pickaxe", "stone_shovel", "stone_axe",
@@ -885,6 +891,13 @@ def staff_checks(plazas, markets_doc, npcs, summons=(), kills=()):
         if rec is None:
             if kind == "npc":
                 P.append(("staff", label, "R17M places %s, which no markets record describes" % label))
+            continue
+        if rec["town"] in PLACE_STANDS:
+            fname, key = PLACE_STANDS[rec["town"]]
+            feet = json.loads((ROOT / "data" / fname).read_text(encoding="utf-8"))[key]["feet"]
+            if [int(v) for v in pos[:3]] != [int(v) for v in feet[:3]]:
+                P.append(("staff", label + ":place", "%s (%s) stands at %s, not at %s's declared stand %s"
+                          % (rec["id"], label, list(pos), fname, feet)))
             continue
         if pos not in seats and rec["town"] not in FALLBACK_TOWNS:
             P.append(("staff", label + ":seat", "%s (%s) stands at %s, no contract keeper_at, in %s, not a declared "

@@ -14,9 +14,13 @@ Route files (spawn_pool_world/routes/<route>.json), per spawns.json compilation.
 
 Sub-region files (spawn_pool_world/subregions/<sub>.json): every ambient entry scoped to the sub-region over its
 polygon, corridor excluded; an entry carrying a "heart" (docs/mechanics/ENCOUNTER_DESIGN.md section 10) only over the
-heart's cells (heart_boxes), and never in a route file.
+heart's cells (heart_boxes), and never in a route file. A heart entry with "alpha" true compiles as a native alpha
+(heart_pokemon: "<species> alpha=true"), in sub-region, waterway and marine files alike.
 
 Habitat files (habitat_pools/<habitat>.json): every ambient entry scoped to the habitat.
+
+The Mega field's dens (data/gulch_mine.json mega_field.families, 2026-10-05): each den's evolution line, plain and
+catchable, over a box round its anchor, appended to the file of the sub-region holding the anchor (mega_den_spawns).
 
 Marine files (spawn_pool_world/marine/<band>.json), from spawns.json marine_zones: open sea no sub-region, route or
 waterway covers, split into bands by distance from land (marine_bands below); every ambient entry scoped to a band
@@ -82,6 +86,17 @@ def box_condition(min_x, max_x, min_z, max_z, entry):
         cond["biomes"] = list(entry["biomes"])
     cond.update(entry.get("conditions") or {})
     return cond
+
+
+def heart_pokemon(entry):
+    """The PokemonProperties string of a heart entry: the species, plus alpha=true when the entry carries "alpha"
+    (data/encounter_design.json rules.hearts.alpha; the owner, 2026-10-05: "the boss pokemon are alphas").
+
+    alpha is a PokemonProperties key in Cobblemon 1.8.0 (PokemonProperties$Companion registers "alpha" and
+    "is_alpha"), and the jar's own alpha spawns write it this way in the pokemon string, e.g.
+    data/cobblemon/spawn_pool_world/herds/0023_fearow_alpha.json "fearow held_item=cobblemon:flying_gem alpha=true"
+    (Cobblemon-fabric-1.8.0+1.21.1.jar). tools/build_encounters.py fails closed on a heart entry without the flag."""
+    return entry["species"] + (" alpha=true" if entry.get("alpha") is True else "")
 
 
 def position_type(entry):
@@ -283,6 +298,49 @@ def heart_boxes(sub, heart, grid, exclude, waterways=()):
                   for ix0, ix1, iz0, iz1 in subregion_boxes.merge_rectangles(keep))
 
 
+def focus_heart_boxes(boxes, heart, grid, corridor, whole_boxes=False):
+    """The heart of a marine band or a waterway (the owner, 2026-10-05: "every area should have a rare, ultra rare,
+    and boss table"; docs/mechanics/ENCOUNTER_DESIGN.md section 10): a subset of the area's own base boxes, so a
+    heart's entries ADD to the base roster there. A focus heart keeps the grid cells (whole_boxes: the boxes) whose
+    centre lies within heart["radius"] of (heart["x"], heart["z"]) and whose Chebyshev gap to every route corridor box
+    exceeds heart["clear_of_path_blocks"] -- section 10's 128 blocks, so the band beside the path stays the base
+    table. Only a focus heart is defined here; a summit line has no meaning at sea or along a creek."""
+    import numpy as np
+    if heart.get("kind") != "focus":
+        raise SystemExit("a marine or waterway heart is kind focus, not %r" % heart.get("kind"))
+    clear = heart.get("clear_of_path_blocks") or 0
+    b = np.array([c[:4] for c in corridor], dtype=np.int64) if corridor else np.zeros((0, 4), dtype=np.int64)
+
+    def clear_of_path(x0, x1, z0, z1):
+        if not len(b):
+            return True
+        dx = np.maximum(0, np.maximum(x0 - b[:, 1], b[:, 0] - x1))
+        dz = np.maximum(0, np.maximum(z0 - b[:, 3], b[:, 2] - z1))
+        return bool((np.maximum(dx, dz) > clear).all())
+
+    def near_focus(x0, x1, z0, z1):
+        return math.hypot((x0 + x1 + 1) / 2.0 - heart["x"], (z0 + z1 + 1) / 2.0 - heart["z"]) <= heart["radius"]
+
+    if whole_boxes:
+        return [bx for bx in boxes if near_focus(*bx[:4]) and clear_of_path(*bx[:4])]
+    cells = set()
+    for x0, x1, z0, z1 in boxes:
+        for cx in range(x0, x1 + 1, grid):
+            for cz in range(z0, z1 + 1, grid):
+                cell = (cx, min(cx + grid - 1, x1), cz, min(cz + grid - 1, z1))
+                if near_focus(*cell) and clear_of_path(*cell):
+                    cells.add((cx // grid, cz // grid))
+    return sorted((int(ix0 * grid), int((ix1 + 1) * grid - 1), int(iz0 * grid), int((iz1 + 1) * grid - 1))
+                  for ix0, ix1, iz0, iz1 in subregion_boxes.merge_rectangles(cells))
+
+
+def one_heart(area, hearts):
+    geoms = {json.dumps(e["heart"], sort_keys=True) for e in hearts}
+    if len(geoms) != 1:
+        raise SystemExit("%s: heart entries disagree on the heart's geometry: %s" % (area, sorted(geoms)))
+    return hearts[0]["heart"]
+
+
 def compile_subregion(sub, entries, exclude, grid, waterways=()):
     """A sub-region's roster over its own polygon, minus the route corridor boxes.
 
@@ -313,7 +371,7 @@ def compile_subregion(sub, entries, exclude, grid, waterways=()):
         for n, b in enumerate(hboxes):
             for e in hearts:
                 cond = box_condition(b[0], b[1], b[2], b[3], e)
-                spawns.append({"id": "%s_h%04d_%s" % (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": e["species"],
+                spawns.append({"id": "%s_h%04d_%s" % (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": heart_pokemon(e),
                                "type": "pokemon", "spawnablePositionType": position_type(e),
                                "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond})
     doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns}
@@ -349,32 +407,49 @@ def compile_habitat(h, entries):
     return doc, summary
 
 
-def build_waterways(spawns, waterways, grid=WATERWAY_GRID):
+def build_waterways(spawns, waterways, grid=WATERWAY_GRID, routes=None):
     """A named river's roster along its centreline, thinning by the authored weight ramp.
 
     Boxes come from tools/waterways.py, which gives each segment its own disjoint rectangles, so a
-    block is never covered twice and a weight is never doubled.
+    block is never covered twice and a weight is never doubled. An entry carrying a "heart" (focus_heart_boxes) is laid
+    only over the boxes of the heart, at its authored weight (no ramp), with ids <waterway>_h<n>_<species>.
     """
     by_scope = {}
     for e in spawns["entries"]:
         if e["mechanism"] == "waterway_coordinate_boxes" and e["ambient"] and e["weight"] > 0:
             by_scope.setdefault(e["scope"], []).append(e)
+    corridor = subregion_boxes.route_boxes(routes) if routes else []
     files, summaries = {}, []
     for w in waterways["waterways"]:
-        ents = by_scope.get(w["id"], [])
+        allents = by_scope.get(w["id"], [])
+        ents = [e for e in allents if not e.get("heart")]
+        hearts = [e for e in allents if e.get("heart")]
         if not ents:
             continue
-        spawns_out, boxes = [], 0
+        spawns_out, boxes, all_boxes = [], 0, []
         for i, frac, bs in waterways_mod.boxes_by_segment(w["polyline"], w["half_width"], grid):
             mult = waterways_mod.ramp(w["weight_ramp"], frac)
             for n, b in enumerate(bs):
                 boxes += 1
+                all_boxes.append(tuple(b[:4]))
                 for e in ents:
                     spawns_out.append({"id": "%s_s%03d_b%02d_%s" % (w["id"], i, n, e["species"].replace(" ", "_")),
                                        "pokemon": e["species"], "type": "pokemon",
                                        "spawnablePositionType": position_type(e),
                                        "bucket": e["bucket"], "level": e["level"],
                                        "weight": round(e["weight"] * mult, 3),
+                                       "condition": box_condition(b[0], b[1], b[2], b[3], e)})
+        hboxes = []
+        if hearts:
+            hboxes = focus_heart_boxes(all_boxes, one_heart(w["id"], hearts), grid, corridor, whole_boxes=True)
+            if not hboxes:
+                raise SystemExit("%s: its heart covers no box clear of the path" % w["id"])
+            for n, b in enumerate(hboxes):
+                for e in hearts:
+                    spawns_out.append({"id": "%s_h%04d_%s" % (w["id"], n, e["species"].replace(" ", "_")),
+                                       "pokemon": heart_pokemon(e), "type": "pokemon",
+                                       "spawnablePositionType": position_type(e),
+                                       "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
                                        "condition": box_condition(b[0], b[1], b[2], b[3], e)})
         doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns_out}
         files["data/cobblers/spawn_pool_world/waterways/%s.json" % w["id"]] = dumps(doc)
@@ -383,6 +458,9 @@ def build_waterways(spawns, waterways, grid=WATERWAY_GRID):
                           "weight_multiplier": [round(waterways_mod.ramp(w["weight_ramp"], 0.0), 3),
                                                 round(waterways_mod.ramp(w["weight_ramp"], 1.0), 3)],
                           "output": "spawn_pool_world/waterways/%s.json" % w["id"]})
+        if hearts:
+            summaries[-1]["heart"] = dict(hearts[0]["heart"], box_count=len(hboxes), covered_blocks=subregion_boxes.area(hboxes),
+                                          species=sorted({e["species"] for e in hearts}))
     return files, summaries
 
 
@@ -430,16 +508,103 @@ def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=())
     # overlapping the League zone's edge by 8 blocks kept its roster (80 details on the first compile)
     waterways = list(waterways) + spawn_free_zones()
     files, summaries = {}, []
+    subs = {s["id"]: s for s in regions["subregions"]}
+    dens, den_summ = mega_den_spawns(regions, corridor, spawns,
+                                     base_boxes=lambda sid: subregion_boxes.boxes_for(subs[sid]["polygons"], grid, corridor, waterways))
     for sub in regions["subregions"]:
         ents = by_scope.get(sub["id"], [])
-        if not ents:
+        extra = dens.get(sub["id"], [])
+        if not ents and not extra:
             continue
-        doc, summ = compile_subregion(sub, ents, corridor, grid, waterways)
+        if ents:
+            doc, summ = compile_subregion(sub, ents, corridor, grid, waterways)
+        else:
+            doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": []}
+            summ = {"subregion_id": sub["id"], "box_count": 0, "compiled_entry_count": 0, "species": [],
+                    "covered_blocks": 0, "corridor_blocks_excluded": 0,
+                    "output": "spawn_pool_world/subregions/%s.json" % sub["id"]}
+        if extra:
+            # the Mega field's dens' lines (mega_den_spawns), over each den's own box, on top of the roster there
+            doc["spawns"] += extra
+            summ["compiled_entry_count"] += len(extra)
+            summ["mega_dens"] = den_summ[sub["id"]]
         if not doc["spawns"]:
             continue
         files["data/cobblers/spawn_pool_world/subregions/%s.json" % sub["id"]] = dumps(doc)
         summaries.append(summ)
     return files, summaries
+
+
+GULCH = ROOT / "data" / "gulch_mine.json"
+
+
+def mega_den_spawns(regions, corridor, spawns, gulch=None, base_boxes=None):
+    """({sub-region id: [spawn details]}, {sub-region id: summary}): each Mega field den's evolution line, in plain
+    form and catchable, over a box round the den's anchor (data/gulch_mine.json mega_field.families, its why: the
+    owner, 2026-10-05). The box is the anchor +- families.box_half, less the route corridor boxes and the spawn-free
+    zones (as every sub-region roster is); the details go into the file of the sub-region whose polygon holds the
+    anchor, after its own roster. A species in families.held is not compiled. Levels: inside that sub-region's
+    level_band (data/spawns.json; the line is catchable, so never past the cap), the final stage its top
+    families.band, each stage below (maximum - minimum - band) // (n - 1) lower; weights:
+    families.family_weight split from the bottom stage up (stage k of n weighs n - k shares). Translation only: every
+    number is the data's."""
+    if gulch is None:
+        if not GULCH.is_file():
+            return {}, {}
+        gulch = json.loads(GULCH.read_text(encoding="utf-8"))
+    fam = (gulch.get("mega_field") or {}).get("families")
+    if not fam:
+        return {}, {}
+    held = fam.get("held") or {}
+    bands = {s["id"]: s.get("level_band") for s in spawns.get("subregions") or []}
+    zones = spawn_free_zones()
+    cut = list(zones) + [tuple(b[:4]) for b in corridor]
+    out, summ, base_cache = {}, {}, {}
+    for fa in gulch.get("farms", []):
+        for d in fa["dens"]:
+            ax, _ay, az = d["anchor"]
+            home = [s for s in regions["subregions"]
+                    if any(subregion_boxes.point_in_polygon(ax + 0.5, az + 0.5, poly) for poly in s["polygons"])]
+            if not home:
+                raise SystemExit("mega den %s: its anchor (%d, %d) is in no data/regions.json sub-region" % (d["id"], ax, az))
+            sub = sorted(home, key=lambda s: s["id"])[0]["id"]
+            h = fam["box_half"]
+            boxes = subtract((ax - h, ax + h, az - h, az + h), cut)
+            if base_boxes is not None:
+                # only on top of the sub-region's own roster boxes (its corridor and water cells excluded whole, as
+                # compile_subregion lays them): a den line never spawns where the base roster does not
+                if sub not in base_cache:
+                    base_cache[sub] = base_boxes(sub)
+                boxes = [(max(b[0], c[0]), min(b[1], c[1]), max(b[2], c[2]), min(b[3], c[3]))
+                         for b in boxes for c in base_cache[sub]
+                         if max(b[0], c[0]) <= min(b[1], c[1]) and max(b[2], c[2]) <= min(b[3], c[3])]
+            line = [sp for sp in fam["lines"][d["species"]] if sp not in held]
+            n = len(fam["lines"][d["species"]])
+            band = bands.get(sub)
+            if not band:
+                raise SystemExit("mega den %s: sub-region %s has no level_band in data/spawns.json" % (d["id"], sub))
+            lo, hi = band["minimum"], band["maximum"]
+            step = (hi - lo - fam["band"]) // (n - 1) if n > 1 else 0
+            shares = n * (n + 1) / 2.0
+            rows = []
+            for k, sp in enumerate(fam["lines"][d["species"]]):
+                if sp in held:
+                    continue
+                top = hi - (n - 1 - k) * step
+                lv = "%d-%d" % (top - fam["band"], top)
+                w = round(fam["family_weight"] * (n - k) / shares, 3)
+                for bi, b in enumerate(boxes):
+                    rows.append({"id": "%s_%s_b%d_%s" % (sub, d["id"], bi, sp), "pokemon": sp, "type": "pokemon",
+                                 "spawnablePositionType": "grounded", "bucket": fam["bucket"], "level": lv, "weight": w,
+                                 "condition": box_condition(b[0], b[1], b[2], b[3], {})})
+            out.setdefault(sub, []).extend(rows)
+            s = summ.setdefault(sub, {"dens": 0, "entries": 0, "species": set()})
+            s["dens"] += 1
+            s["entries"] += len(rows)
+            s["species"] |= set(line)
+    for s in summ.values():
+        s["species"] = sorted(s["species"])
+    return out, summ
 
 
 def _grid_cells_of(sub, grid):
@@ -526,8 +691,10 @@ def marine_condition(min_x, max_x, min_z, max_z, entry):
 
 
 def build_marine(spawns, regions, routes, waterways=()):
-    """The marine half of the pack: each marine band's roster over its own boxes."""
+    """The marine half of the pack: each marine band's roster over its own boxes; an entry carrying a "heart"
+    (focus_heart_boxes) only over the heart's cells of the band, with ids <band>_h<n>_<species>."""
     bands = marine_bands(spawns, regions, routes, waterways)
+    corridor = subregion_boxes.route_boxes(routes)
     by_scope = {}
     for e in spawns["entries"]:
         if e["mechanism"] == "marine_coordinate_boxes" and e["ambient"] and e["weight"] > 0:
@@ -537,7 +704,9 @@ def build_marine(spawns, regions, routes, waterways=()):
         raise SystemExit("marine entries name bands no marine zone defines: %s" % unknown)
     files, summaries = {}, []
     for bid, boxes in sorted(bands.items()):
-        ents = by_scope.get(bid, [])
+        allents = by_scope.get(bid, [])
+        ents = [e for e in allents if not e.get("heart")]
+        hearts = [e for e in allents if e.get("heart")]
         if not ents or not boxes:
             continue
         spawns_out = []
@@ -547,11 +716,25 @@ def build_marine(spawns, regions, routes, waterways=()):
                                    "type": "pokemon", "spawnablePositionType": position_type(e),
                                    "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
                                    "condition": marine_condition(b[0], b[1], b[2], b[3], e)})
+        hboxes = []
+        if hearts:
+            hboxes = focus_heart_boxes(boxes, one_heart(bid, hearts), MARINE_GRID, corridor)
+            if not hboxes:
+                raise SystemExit("%s: its heart covers no cell of the band clear of the path" % bid)
+            for n, b in enumerate(hboxes):
+                for e in hearts:
+                    spawns_out.append({"id": "%s_h%04d_%s" % (bid, n, e["species"].replace(" ", "_")), "pokemon": heart_pokemon(e),
+                                       "type": "pokemon", "spawnablePositionType": position_type(e),
+                                       "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
+                                       "condition": marine_condition(b[0], b[1], b[2], b[3], e)})
         doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns_out}
         files["data/cobblers/spawn_pool_world/marine/%s.json" % bid] = dumps(doc)
         summaries.append({"band_id": bid, "box_count": len(boxes), "compiled_entry_count": len(spawns_out),
                           "species": sorted({e["species"] for e in ents}), "covered_blocks": subregion_boxes.area(boxes),
                           "output": "spawn_pool_world/marine/%s.json" % bid})
+        if hearts:
+            summaries[-1]["heart"] = dict(hearts[0]["heart"], box_count=len(hboxes), covered_blocks=subregion_boxes.area(hboxes),
+                                          species=sorted({e["species"] for e in hearts}))
     return files, summaries
 
 
@@ -574,7 +757,7 @@ def main(argv=None):
     ws, water_boxes = [], []
     if Path(a.waterways).is_file():
         waterdoc = json.loads(Path(a.waterways).read_text(encoding="utf-8"))
-        waterfiles, ws = build_waterways(spawns, waterdoc)
+        waterfiles, ws = build_waterways(spawns, waterdoc, routes=routes)
         files.update(waterfiles)
         for wdef in waterdoc["waterways"]:
             for _, _, bs in waterways_mod.boxes_by_segment(wdef["polyline"], wdef["half_width"], WATERWAY_GRID):
@@ -625,7 +808,8 @@ def main(argv=None):
         f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text(text, encoding="utf-8", newline="\n")
     manifest = {"generator": "tools/compile_spawns.py",
-                "inputs": {k: hashlib.sha256(Path(v).read_bytes()).hexdigest() for k, v in (("data/spawns.json", a.spawns), ("data/routes.json", a.routes))},
+                "inputs": {k: hashlib.sha256(Path(v).read_bytes()).hexdigest() for k, v in (("data/spawns.json", a.spawns), ("data/routes.json", a.routes))
+                           + ((("data/gulch_mine.json", GULCH),) if GULCH.is_file() and not a.no_subregions else ())},
                 "files": {rel: hashlib.sha256(text.encode("utf-8")).hexdigest() for rel, text in sorted(files.items())},
                 "route_files": rs, "habitat_files": hs, "subregion_files": ss, "waterway_files": ws,
                 "marine_files": ms,

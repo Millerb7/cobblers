@@ -385,15 +385,19 @@ def test_the_compiled_pack_has_no_unjudged_misfit_and_no_stale_ruling(real_rows)
 
 def test_the_builders_five_fixes_hold_in_the_compiled_pack(real_rows):
     # the 2026-10-04 fixes (commit be0bc12): without it a regenerated table could bring the seven species back
+    # Keyed on the FIRST TOKEN of the compiled pokemon string: since 2026-10-05 a heart entry is "<species> alpha=true"
+    # (ENCOUNTER_DESIGN.md section 10), and keyed on the whole string a removed species brought back as a heart alpha
+    # ("crabominable alpha=true") would not equal "crabominable" and would pass unseen.
     rows, _ = real_rows
-    present = {(r["place_id"], r["species"]) for r in rows}
+    first = lambda s: str(s).split()[0]  # noqa: E731
+    present = {(r["place_id"], first(r["species"])) for r in rows}
     for gone in [("south_strand", "crabominable"), ("mt_clay", "sandshrew"), ("mt_clay", "sandslash"),
                  ("the_crags", "crustle"), ("tilpey_waters", "wailord"), ("tilpey_south_shore", "shellos"),
                  ("tilpey_south_shore", "gastrodon")]:
         assert gone not in present, gone
     for kept in [("south_strand", "crabrawler"), ("mt_clay", "rhyhorn"), ("the_crags", "druddigon"),
                  ("tilpey_waters", "basculegion"), ("tilpey_south_shore", "crawdaunt")]:   # tier 7 shows Crawdaunt
-        got = {r["class"] for r in rows if (r["place_id"], r["species"]) == kept}
+        got = {r["class"] for r in rows if (r["place_id"], first(r["species"])) == kept}
         assert got == {"FIT"}, (kept, got)
 
 
@@ -419,7 +423,7 @@ def test_mutating_the_generator_brings_crabominable_back_and_the_audit_catches_i
     pack = _compile(scratch, tmp_path / "cobblers_spawns")
     regions, waterways, spawns, doc = _real_inputs()
     rows, _ = A.audit(pack, real_jar, regions, waterways, spawns, doc)
-    hit = [r for r in rows if r["species"] == "crabominable" and r["place_id"] == "south_strand"]
+    hit = [r for r in rows if str(r["species"]).split()[0] == "crabominable" and r["place_id"] == "south_strand"]
     assert hit and all(r["class"] == "MISFIT" for r in hit), hit
 
 

@@ -45,8 +45,11 @@ Not checked here: the farm dens' drop roll
   faces       scenery (SOUTHERN_RIFT_MEGA.md 13): each face box written whole with exactly its crystals; no function
               outside the build's passes writes into a face box (the restore is retired, and its block tag gone); the
               tick wards each face every tick with the data's margin
-  megas       one macro line spawns every Mega (EXP-046: no plain spawnpokemonat line anywhere); each den's spawn calls
-              it with the species, the Mega aspect and the level at its anchor and claims the Mega in the same
+  megas       one macro line spawns every Mega (EXP-046: no plain spawnpokemonat line anywhere), uncatchable; a farm den
+              is a pack (2026-10-05): exactly pack_size members <den>_m<k>, none under the den's own id or past the
+              pack, each home on the den's pad (data/mega_dens.json anchor_pad), leashed from the den's anchor back to
+              its home, megas/pack_<den> killing past pack_size; each Mega's spawn calls
+              it with the species, the Mega aspect and the level at its home and claims the Mega in the same
               function (tags, PersistenceRequired); a mine anchor is a walkable floor cell of its hall; the leash walks
               it back to the same anchor at the data's radius; the keeper waits gm.resp from the respawn clock, with
               nobody within spawn_clear, and every line in the pack that writes a clock is one the design allows (load
@@ -791,14 +794,49 @@ def audit(source_root=None):
              if any(ln.startswith("spawnpokemonat ") or " run spawnpokemonat " in ln for ln in p_.read_text(encoding="utf-8").splitlines())]
     if plain:
         probs.append("megas: a plain spawnpokemonat line (parsed at start, it spawns nothing until /reload): %s" % plain[:3])
+    # A farm den is a PACK since 2026-10-05 (the owner: "make more than one mega per zone, like a few of each mon, and make
+    # sure they are uncatchable"): pack_size members (the den's, else mega_field.layout.pack_size), ids <den>_m<k>, each
+    # spawned through the uncatchable macro above at a home on the den's pad (data/mega_dens.json anchor_pad: within
+    # clear_radius of the anchor, y in the pad's head_room of air), leashed from the den's anchor back to that home, with
+    # its own keeper and clock; megas/pack_<den> kills past pack_size. A mine slot is its own single Mega.
+    pad = json.loads((Path(__file__).resolve().parent.parent / "data" / "mega_dens.json").read_text(
+        encoding="utf-8"))["anchor_pad"]
+    lay = (spec.get("mega_field") or {}).get("layout") or {}
+    units = []
     for site, s in all_dens:
+        if site == "mine":
+            units.append((site, s, s["id"]))
+            continue
+        n = int(s.get("pack_size", lay.get("pack_size", 1)))
+        ax, ay, az = s["anchor"]
+        for extra in (s["id"], "%s_m%d" % (s["id"], n + 1)):
+            if fn_text("megas/spawn_%s" % extra):
+                probs.append("megas: %s spawns %s, outside its pack of %d" % (s["id"], extra, n))
+        if "execute if score #n gm.t matches %d.. positioned %d %d %d run kill @e[type=cobblemon:pokemon,tag=%s.%s,limit=1," \
+           "sort=furthest]" % (n + 1, ax, ay, az, mg["tag"], s["id"]) not in fn_text("megas/pack_%s" % s["id"]).splitlines():
+            probs.append("megas: %s's megas/pack_%s does not kill past its pack of %d" % (s["id"], s["id"], n))
+        units += [(site, s, "%s_m%d" % (s["id"], k)) for k in range(1, n + 1)]
+    spawn_call = re.compile(r"^function cobblers:gulch_mine/megas/spawn_at \{x:(-?\d+),y:(-?\d+),z:(-?\d+),"
+                            r"species:\"([a-z_]+)\",aspect:\"([^\"]+)\",level:(\d+)\}$")
+    for site, s, i in units:
+        asp = s["aspect"]
         if site == "mine":
             if s["id"] not in anchors:
                 continue
             x, y, z = anchors[s["id"]]
+            ax, ay, az = x, y, z
         else:
-            x, y, z = s["anchor"]
-        i = s["id"]
+            ax, ay, az = s["anchor"]
+            calls = [m_ for m_ in (spawn_call.match(ln) for ln in fn_text("megas/spawn_%s" % i).splitlines()) if m_]
+            if len(calls) != 1:
+                probs.append("megas: %s (pack member of %s) has no one spawn_at call" % (i, s["id"]))
+                continue
+            x, y, z = (int(v) for v in calls[0].groups()[:3])
+            allowed = (lay.get("pack_aspects") or {}).get(s["species"]) or [s["aspect"]]
+            asp = calls[0].group(5) if calls[0].group(5) in allowed else s["aspect"]
+            if math.hypot(x - ax, z - az) > pad["clear_radius"] or not (ay <= y <= ay + pad["head_room"] - 1):
+                probs.append("megas: %s's home %s is off its den's pad (within %d of %s, y%d..%d)"
+                             % (i, (x, y, z), pad["clear_radius"], s["anchor"], ay, ay + pad["head_room"] - 1))
         # A den's level is its own when it states one, else its farm's tier's (data farm_tiers[].level).
         # The rule is written out here rather than imported from tools/gulch_mine.py: the audit must say
         # for itself what the DATA means, or it is only checking the generator against the generator
@@ -816,7 +854,7 @@ def audit(source_root=None):
             level = tier["level"]
         sp = fn_text("megas/spawn_%s" % i)
         call = "function cobblers:gulch_mine/megas/spawn_at {x:%d,y:%d,z:%d,species:\"%s\",aspect:\"%s\",level:%d}" % (
-            x, y, z, s["species"], s["aspect"], level)
+            x, y, z, s["species"], asp, level)
         if call not in sp.splitlines():
             probs.append("megas: %s's spawn is not `%s`" % (i, call))
         if "execute positioned %d %d %d as @e[type=cobblemon:pokemon,tag=!%s,distance=..2,limit=1,sort=nearest] run function " \
@@ -826,7 +864,8 @@ def audit(source_root=None):
         if "PersistenceRequired:1b" not in bind or ("tag @s add %s.%s" % (mg["tag"], i)) not in bind \
                 or ("tag @s add %s" % mg["tag"]) not in bind.splitlines():
             probs.append("megas: %s is not tagged and kept from the despawner" % i)
-        want = "positioned %d %d %d unless entity @s[distance=..%d] run tp @s %d %d %d" % (x, y, z, s["leash"], x, y, z)
+        # measured from the den's anchor (a mine slot's is its home), returned to the Mega's own home
+        want = "positioned %d %d %d unless entity @s[distance=..%d] run tp @s %d %d %d" % (ax, ay, az, s["leash"], x, y, z)
         if want not in fn_text("leash_%s" % site):
             probs.append("megas: %s's leash is not `%s`" % (i, want))
         if site == "mine":

@@ -10,6 +10,7 @@ fills land on the ground the heightmap predicts, that the keeper's Mega spawns o
 the air (docs/world-building/MEGA_DENS.md "World probes").
 """
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -155,6 +156,29 @@ def test_a_write_outside_the_box_is_caught(ground, tmp_path, monkeypatch):
     _after(monkeypatch, "build", lambda d: d.w.__setitem__((d.ax + 30, d.G0, d.az), "minecraft:coarse_dirt"))
     rep = run(ground, tmp_path)
     assert "box" in checks(rep)
+
+
+# Added 2026-10-05 (the owner: "use the left side of the southern tip as well"; dens now stand by Victory Road, so its
+# lairs are judged by their den's range and the road's width, not the old 128). Without it a lair could dress Victory
+# Road itself: the generator writing one block on the walked line point nearest the den nearest the road is named for
+# that den, as on the road and outside its range, and for no other.
+def test_a_lair_writing_on_victory_road_is_caught(ground, tmp_path, monkeypatch):
+    road = [tuple(p) for p in json.loads((ROOT / "data" / "route_paths.json").read_text(encoding="utf-8"))["paths"][
+        GULCH["mega_field"]["layout"]["road"]]]
+    dens = {d["id"]: d for fa in GULCH["farms"] for d in fa["dens"] if fa["id"].startswith("field_")}
+    near = min(dens, key=lambda i: min(math.hypot(dens[i]["anchor"][0] - p[0], dens[i]["anchor"][2] - p[1]) for p in road))
+    ax, az = dens[near]["anchor"][0], dens[near]["anchor"][2]
+    px, pz = min(road, key=lambda p: math.hypot(ax - p[0], az - p[1]))
+
+    def on_road(d):
+        if d.rec["den"] == near:
+            d.w[(px, int(round(ground(px, pz))) + 1, pz)] = "minecraft:cobblestone"
+    _after(monkeypatch, "build", on_road)
+    rep = run(ground, tmp_path)
+    fp = [e for e in rep.errors if e.startswith("footprint: ")]
+    assert any(e.startswith("footprint: %s writes" % near) and "on the road" in e for e in fp), fp
+    assert any(e.startswith("footprint: %s writes" % near) and "outside its den's range" in e for e in fp), fp
+    assert all(e.startswith("footprint: %s " % near) for e in fp), fp
 
 
 def test_a_sign_left_unbuilt_is_caught(ground, tmp_path, monkeypatch):

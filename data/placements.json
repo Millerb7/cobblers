@@ -11106,330 +11106,6 @@
       ]
     },
     {
-      "id": "ruin_great_hall",
-      "settlement": "jungle_ruins",
-      "pack_template": "minecraft:underwater_ruin/big_mossy_2",
-      "template": "minecraft:underwater_ruin/big_mossy_2",
-      "cell": "H6",
-      "kind": "donor",
-      "position": {
-        "x": 5152,
-        "y": 62,
-        "z": 7503
-      },
-      "size": [
-        16,
-        16,
-        16
-      ],
-      "rotation": "none",
-      "mirror": "none",
-      "anchor_mode": "corner",
-      "y_mode": "absolute",
-      "status": "planned",
-      "facing": "north",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y126 with the seabed under it at y60..61 - 64 blocks of open air, a stone ruin hanging over the water. Now y62, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits at the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
-      "source": {
-        "licence": "placed by resource id from the installed pack or the server jar; never copied"
-      },
-      "substitutions": [
-        {
-          "from": "minecraft:magma_block",
-          "to": "minecraft:mossy_cobblestone",
-          "why": "magma draws fire types; the ruin's floor is old stone"
-        },
-        {
-          "from": "minecraft:sand",
-          "to": "minecraft:coarse_dirt",
-          "why": "sand is a spawn condition; jungle floor instead of seabed"
-        },
-        {
-          "from": "minecraft:prismarine",
-          "to": "minecraft:cracked_stone_bricks",
-          "why": "prismarine reads as the sea; cracked stone as ruin"
-        },
-        {
-          "from": "minecraft:sea_lantern",
-          "to": "minecraft:chiseled_stone_bricks",
-          "why": "a ruin lit by nothing"
-        }
-      ],
-      "remove_blocks": [
-        "minecraft:structure_block"
-      ],
-      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
-    },
-    {
-      "id": "ruin_west_wall",
-      "settlement": "jungle_ruins",
-      "pack_template": "minecraft:underwater_ruin/big_mossy_1",
-      "template": "minecraft:underwater_ruin/big_mossy_1",
-      "cell": "H6",
-      "kind": "donor",
-      "position": {
-        "x": 5145,
-        "y": 62,
-        "z": 7412
-      },
-      "size": [
-        16,
-        16,
-        16
-      ],
-      "rotation": "clockwise_90",
-      "mirror": "none",
-      "anchor_mode": "corner",
-      "y_mode": "absolute",
-      "status": "planned",
-      "facing": "east",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y123 with the seabed under it at y58..61 - 61 blocks of open air, a stone ruin hanging over the water. Now y62, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits at the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
-      "source": {
-        "licence": "placed by resource id from the installed pack or the server jar; never copied"
-      },
-      "substitutions": [
-        {
-          "from": "minecraft:magma_block",
-          "to": "minecraft:mossy_cobblestone",
-          "why": "magma draws fire types; the ruin's floor is old stone"
-        },
-        {
-          "from": "minecraft:sand",
-          "to": "minecraft:coarse_dirt",
-          "why": "sand is a spawn condition; jungle floor instead of seabed"
-        },
-        {
-          "from": "minecraft:prismarine",
-          "to": "minecraft:cracked_stone_bricks",
-          "why": "prismarine reads as the sea; cracked stone as ruin"
-        },
-        {
-          "from": "minecraft:sea_lantern",
-          "to": "minecraft:chiseled_stone_bricks",
-          "why": "a ruin lit by nothing"
-        }
-      ],
-      "remove_blocks": [
-        "minecraft:structure_block"
-      ],
-      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
-    },
-    {
-      "id": "ruin_east_court",
-      "settlement": "jungle_ruins",
-      "pack_template": "minecraft:underwater_ruin/big_mossy_3",
-      "template": "minecraft:underwater_ruin/big_mossy_3",
-      "cell": "H6",
-      "kind": "donor",
-      "position": {
-        "x": 5170,
-        "y": 59,
-        "z": 7387
-      },
-      "size": [
-        16,
-        16,
-        16
-      ],
-      "rotation": "counterclockwise_90",
-      "mirror": "none",
-      "anchor_mode": "corner",
-      "y_mode": "absolute",
-      "status": "planned",
-      "facing": "west",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y123 with the seabed under it at y57..58 - 64 blocks of open air, a stone ruin hanging over the water. Now y59, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 3 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
-      "source": {
-        "licence": "placed by resource id from the installed pack or the server jar; never copied"
-      },
-      "substitutions": [
-        {
-          "from": "minecraft:magma_block",
-          "to": "minecraft:mossy_cobblestone",
-          "why": "magma draws fire types; the ruin's floor is old stone"
-        },
-        {
-          "from": "minecraft:sand",
-          "to": "minecraft:coarse_dirt",
-          "why": "sand is a spawn condition; jungle floor instead of seabed"
-        },
-        {
-          "from": "minecraft:prismarine",
-          "to": "minecraft:cracked_stone_bricks",
-          "why": "prismarine reads as the sea; cracked stone as ruin"
-        },
-        {
-          "from": "minecraft:sea_lantern",
-          "to": "minecraft:chiseled_stone_bricks",
-          "why": "a ruin lit by nothing"
-        }
-      ],
-      "remove_blocks": [
-        "minecraft:structure_block"
-      ],
-      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
-    },
-    {
-      "id": "ruin_north_gate",
-      "settlement": "jungle_ruins",
-      "pack_template": "minecraft:underwater_ruin/big_mossy_8",
-      "template": "minecraft:underwater_ruin/big_mossy_8",
-      "cell": "H6",
-      "kind": "donor",
-      "position": {
-        "x": 5147,
-        "y": 60,
-        "z": 7351
-      },
-      "size": [
-        16,
-        16,
-        16
-      ],
-      "rotation": "180",
-      "mirror": "none",
-      "anchor_mode": "corner",
-      "y_mode": "absolute",
-      "status": "planned",
-      "facing": "south",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y120 with the seabed under it at y58..59 - 60 blocks of open air, a stone ruin hanging over the water. Now y60, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 2 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
-      "source": {
-        "licence": "placed by resource id from the installed pack or the server jar; never copied"
-      },
-      "substitutions": [
-        {
-          "from": "minecraft:magma_block",
-          "to": "minecraft:mossy_cobblestone",
-          "why": "magma draws fire types; the ruin's floor is old stone"
-        },
-        {
-          "from": "minecraft:sand",
-          "to": "minecraft:coarse_dirt",
-          "why": "sand is a spawn condition; jungle floor instead of seabed"
-        },
-        {
-          "from": "minecraft:prismarine",
-          "to": "minecraft:cracked_stone_bricks",
-          "why": "prismarine reads as the sea; cracked stone as ruin"
-        },
-        {
-          "from": "minecraft:sea_lantern",
-          "to": "minecraft:chiseled_stone_bricks",
-          "why": "a ruin lit by nothing"
-        }
-      ],
-      "remove_blocks": [
-        "minecraft:structure_block"
-      ],
-      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
-    },
-    {
-      "id": "ruin_court_east",
-      "settlement": "jungle_ruins",
-      "pack_template": "minecraft:underwater_ruin/mossy_3",
-      "template": "minecraft:underwater_ruin/mossy_3",
-      "cell": "H6",
-      "kind": "donor",
-      "position": {
-        "x": 5186,
-        "y": 60,
-        "z": 7482
-      },
-      "size": [
-        6,
-        7,
-        7
-      ],
-      "rotation": "counterclockwise_90",
-      "mirror": "none",
-      "anchor_mode": "corner",
-      "y_mode": "absolute",
-      "status": "planned",
-      "facing": "west",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y127 with the seabed under it at y58..59 - 67 blocks of open air, a stone ruin hanging over the water. Now y60, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 2 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
-      "source": {
-        "licence": "placed by resource id from the installed pack or the server jar; never copied"
-      },
-      "substitutions": [
-        {
-          "from": "minecraft:magma_block",
-          "to": "minecraft:mossy_cobblestone",
-          "why": "magma draws fire types; the ruin's floor is old stone"
-        },
-        {
-          "from": "minecraft:sand",
-          "to": "minecraft:coarse_dirt",
-          "why": "sand is a spawn condition; jungle floor instead of seabed"
-        },
-        {
-          "from": "minecraft:prismarine",
-          "to": "minecraft:cracked_stone_bricks",
-          "why": "prismarine reads as the sea; cracked stone as ruin"
-        },
-        {
-          "from": "minecraft:sea_lantern",
-          "to": "minecraft:chiseled_stone_bricks",
-          "why": "a ruin lit by nothing"
-        }
-      ],
-      "remove_blocks": [
-        "minecraft:structure_block"
-      ],
-      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
-    },
-    {
-      "id": "ruin_court_west",
-      "settlement": "jungle_ruins",
-      "pack_template": "minecraft:underwater_ruin/mossy_6",
-      "template": "minecraft:underwater_ruin/mossy_6",
-      "cell": "H6",
-      "kind": "donor",
-      "position": {
-        "x": 5133,
-        "y": 60,
-        "z": 7487
-      },
-      "size": [
-        6,
-        7,
-        7
-      ],
-      "rotation": "clockwise_90",
-      "mirror": "none",
-      "anchor_mode": "corner",
-      "y_mode": "absolute",
-      "status": "planned",
-      "facing": "east",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y125 with the seabed under it at y58..59 - 65 blocks of open air, a stone ruin hanging over the water. Now y60, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 2 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
-      "source": {
-        "licence": "placed by resource id from the installed pack or the server jar; never copied"
-      },
-      "substitutions": [
-        {
-          "from": "minecraft:magma_block",
-          "to": "minecraft:mossy_cobblestone",
-          "why": "magma draws fire types; the ruin's floor is old stone"
-        },
-        {
-          "from": "minecraft:sand",
-          "to": "minecraft:coarse_dirt",
-          "why": "sand is a spawn condition; jungle floor instead of seabed"
-        },
-        {
-          "from": "minecraft:prismarine",
-          "to": "minecraft:cracked_stone_bricks",
-          "why": "prismarine reads as the sea; cracked stone as ruin"
-        },
-        {
-          "from": "minecraft:sea_lantern",
-          "to": "minecraft:chiseled_stone_bricks",
-          "why": "a ruin lit by nothing"
-        }
-      ],
-      "remove_blocks": [
-        "minecraft:structure_block"
-      ],
-      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
-    },
-    {
       "id": "displaced_house_01",
       "settlement": "displaced_city",
       "template": "repurposed_structures:villages/giant_taiga/houses/temple_1",
@@ -28322,5 +27998,335 @@
       ],
       "chosen_because": "measured and argued in data/adopted_legendary_sites.json adopted_crown_spire, the first HIDDEN site (tools/hidden_sites.py check): a bench on Northgate Isle's eastern highland, an island no route, ferry or town reaches, 99 blocks from its elder spruce; 1,957 of the footprint's 2,009 columns already stand at y130, so the paste moves 52 blocks. Scheduled 2026-10-03, off tools/ground.py, rounded."
     }
-  ]
+  ],
+  "superseded_placements": {
+    "note": "2026-10-04: the six ruined pieces of the retired jungle_ruins settlement (settlements.jungle_ruins.retired, decision B15), taken out of `placements` so no tool that reads that list can build them. Their seats (x5133-5186 z7351-7503) are on the drowned Jungle Isle's bank, inside Pacifidlog's raft town (data/sea_town.json, square (5160, 7380)); each record was still `planned`. Kept here as they were, never deleted: hand-authored seats and chosen_because notes. Superseded by the Long Isle south's three lost temples (data/jungle_temples.json, tools/jungle_temples.py, step R9JT), which carry the jungle ruins' story (SQ-SUNSET-02, SQ-JUNGLE-01, SQ-JUNGLE-02) on dry ground, as docs/world-building/LONG_ISLE.md section 11.4 recommends. tools/clear_jungle_residue.py reads the settlement's retired flag, not these records.",
+    "superseded_by": "data/jungle_temples.json",
+    "records": [
+      {
+        "id": "ruin_great_hall",
+        "settlement": "jungle_ruins",
+        "pack_template": "minecraft:underwater_ruin/big_mossy_2",
+        "template": "minecraft:underwater_ruin/big_mossy_2",
+        "cell": "H6",
+        "kind": "donor",
+        "position": {
+          "x": 5152,
+          "y": 62,
+          "z": 7503
+        },
+        "size": [
+          16,
+          16,
+          16
+        ],
+        "rotation": "none",
+        "mirror": "none",
+        "anchor_mode": "corner",
+        "y_mode": "absolute",
+        "status": "planned",
+        "facing": "north",
+        "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y126 with the seabed under it at y60..61 - 64 blocks of open air, a stone ruin hanging over the water. Now y62, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits at the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
+        "source": {
+          "licence": "placed by resource id from the installed pack or the server jar; never copied"
+        },
+        "substitutions": [
+          {
+            "from": "minecraft:magma_block",
+            "to": "minecraft:mossy_cobblestone",
+            "why": "magma draws fire types; the ruin's floor is old stone"
+          },
+          {
+            "from": "minecraft:sand",
+            "to": "minecraft:coarse_dirt",
+            "why": "sand is a spawn condition; jungle floor instead of seabed"
+          },
+          {
+            "from": "minecraft:prismarine",
+            "to": "minecraft:cracked_stone_bricks",
+            "why": "prismarine reads as the sea; cracked stone as ruin"
+          },
+          {
+            "from": "minecraft:sea_lantern",
+            "to": "minecraft:chiseled_stone_bricks",
+            "why": "a ruin lit by nothing"
+          }
+        ],
+        "remove_blocks": [
+          "minecraft:structure_block"
+        ],
+        "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+      },
+      {
+        "id": "ruin_west_wall",
+        "settlement": "jungle_ruins",
+        "pack_template": "minecraft:underwater_ruin/big_mossy_1",
+        "template": "minecraft:underwater_ruin/big_mossy_1",
+        "cell": "H6",
+        "kind": "donor",
+        "position": {
+          "x": 5145,
+          "y": 62,
+          "z": 7412
+        },
+        "size": [
+          16,
+          16,
+          16
+        ],
+        "rotation": "clockwise_90",
+        "mirror": "none",
+        "anchor_mode": "corner",
+        "y_mode": "absolute",
+        "status": "planned",
+        "facing": "east",
+        "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y123 with the seabed under it at y58..61 - 61 blocks of open air, a stone ruin hanging over the water. Now y62, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits at the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
+        "source": {
+          "licence": "placed by resource id from the installed pack or the server jar; never copied"
+        },
+        "substitutions": [
+          {
+            "from": "minecraft:magma_block",
+            "to": "minecraft:mossy_cobblestone",
+            "why": "magma draws fire types; the ruin's floor is old stone"
+          },
+          {
+            "from": "minecraft:sand",
+            "to": "minecraft:coarse_dirt",
+            "why": "sand is a spawn condition; jungle floor instead of seabed"
+          },
+          {
+            "from": "minecraft:prismarine",
+            "to": "minecraft:cracked_stone_bricks",
+            "why": "prismarine reads as the sea; cracked stone as ruin"
+          },
+          {
+            "from": "minecraft:sea_lantern",
+            "to": "minecraft:chiseled_stone_bricks",
+            "why": "a ruin lit by nothing"
+          }
+        ],
+        "remove_blocks": [
+          "minecraft:structure_block"
+        ],
+        "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+      },
+      {
+        "id": "ruin_east_court",
+        "settlement": "jungle_ruins",
+        "pack_template": "minecraft:underwater_ruin/big_mossy_3",
+        "template": "minecraft:underwater_ruin/big_mossy_3",
+        "cell": "H6",
+        "kind": "donor",
+        "position": {
+          "x": 5170,
+          "y": 59,
+          "z": 7387
+        },
+        "size": [
+          16,
+          16,
+          16
+        ],
+        "rotation": "counterclockwise_90",
+        "mirror": "none",
+        "anchor_mode": "corner",
+        "y_mode": "absolute",
+        "status": "planned",
+        "facing": "west",
+        "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y123 with the seabed under it at y57..58 - 64 blocks of open air, a stone ruin hanging over the water. Now y59, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 3 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
+        "source": {
+          "licence": "placed by resource id from the installed pack or the server jar; never copied"
+        },
+        "substitutions": [
+          {
+            "from": "minecraft:magma_block",
+            "to": "minecraft:mossy_cobblestone",
+            "why": "magma draws fire types; the ruin's floor is old stone"
+          },
+          {
+            "from": "minecraft:sand",
+            "to": "minecraft:coarse_dirt",
+            "why": "sand is a spawn condition; jungle floor instead of seabed"
+          },
+          {
+            "from": "minecraft:prismarine",
+            "to": "minecraft:cracked_stone_bricks",
+            "why": "prismarine reads as the sea; cracked stone as ruin"
+          },
+          {
+            "from": "minecraft:sea_lantern",
+            "to": "minecraft:chiseled_stone_bricks",
+            "why": "a ruin lit by nothing"
+          }
+        ],
+        "remove_blocks": [
+          "minecraft:structure_block"
+        ],
+        "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+      },
+      {
+        "id": "ruin_north_gate",
+        "settlement": "jungle_ruins",
+        "pack_template": "minecraft:underwater_ruin/big_mossy_8",
+        "template": "minecraft:underwater_ruin/big_mossy_8",
+        "cell": "H6",
+        "kind": "donor",
+        "position": {
+          "x": 5147,
+          "y": 60,
+          "z": 7351
+        },
+        "size": [
+          16,
+          16,
+          16
+        ],
+        "rotation": "180",
+        "mirror": "none",
+        "anchor_mode": "corner",
+        "y_mode": "absolute",
+        "status": "planned",
+        "facing": "south",
+        "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y120 with the seabed under it at y58..59 - 60 blocks of open air, a stone ruin hanging over the water. Now y60, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 2 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
+        "source": {
+          "licence": "placed by resource id from the installed pack or the server jar; never copied"
+        },
+        "substitutions": [
+          {
+            "from": "minecraft:magma_block",
+            "to": "minecraft:mossy_cobblestone",
+            "why": "magma draws fire types; the ruin's floor is old stone"
+          },
+          {
+            "from": "minecraft:sand",
+            "to": "minecraft:coarse_dirt",
+            "why": "sand is a spawn condition; jungle floor instead of seabed"
+          },
+          {
+            "from": "minecraft:prismarine",
+            "to": "minecraft:cracked_stone_bricks",
+            "why": "prismarine reads as the sea; cracked stone as ruin"
+          },
+          {
+            "from": "minecraft:sea_lantern",
+            "to": "minecraft:chiseled_stone_bricks",
+            "why": "a ruin lit by nothing"
+          }
+        ],
+        "remove_blocks": [
+          "minecraft:structure_block"
+        ],
+        "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+      },
+      {
+        "id": "ruin_court_east",
+        "settlement": "jungle_ruins",
+        "pack_template": "minecraft:underwater_ruin/mossy_3",
+        "template": "minecraft:underwater_ruin/mossy_3",
+        "cell": "H6",
+        "kind": "donor",
+        "position": {
+          "x": 5186,
+          "y": 60,
+          "z": 7482
+        },
+        "size": [
+          6,
+          7,
+          7
+        ],
+        "rotation": "counterclockwise_90",
+        "mirror": "none",
+        "anchor_mode": "corner",
+        "y_mode": "absolute",
+        "status": "planned",
+        "facing": "west",
+        "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y127 with the seabed under it at y58..59 - 67 blocks of open air, a stone ruin hanging over the water. Now y60, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 2 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
+        "source": {
+          "licence": "placed by resource id from the installed pack or the server jar; never copied"
+        },
+        "substitutions": [
+          {
+            "from": "minecraft:magma_block",
+            "to": "minecraft:mossy_cobblestone",
+            "why": "magma draws fire types; the ruin's floor is old stone"
+          },
+          {
+            "from": "minecraft:sand",
+            "to": "minecraft:coarse_dirt",
+            "why": "sand is a spawn condition; jungle floor instead of seabed"
+          },
+          {
+            "from": "minecraft:prismarine",
+            "to": "minecraft:cracked_stone_bricks",
+            "why": "prismarine reads as the sea; cracked stone as ruin"
+          },
+          {
+            "from": "minecraft:sea_lantern",
+            "to": "minecraft:chiseled_stone_bricks",
+            "why": "a ruin lit by nothing"
+          }
+        ],
+        "remove_blocks": [
+          "minecraft:structure_block"
+        ],
+        "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+      },
+      {
+        "id": "ruin_court_west",
+        "settlement": "jungle_ruins",
+        "pack_template": "minecraft:underwater_ruin/mossy_6",
+        "template": "minecraft:underwater_ruin/mossy_6",
+        "cell": "H6",
+        "kind": "donor",
+        "position": {
+          "x": 5133,
+          "y": 60,
+          "z": 7487
+        },
+        "size": [
+          6,
+          7,
+          7
+        ],
+        "rotation": "clockwise_90",
+        "mirror": "none",
+        "anchor_mode": "corner",
+        "y_mode": "absolute",
+        "status": "planned",
+        "facing": "east",
+        "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y125 with the seabed under it at y58..59 - 65 blocks of open air, a stone ruin hanging over the water. Now y60, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 2 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
+        "source": {
+          "licence": "placed by resource id from the installed pack or the server jar; never copied"
+        },
+        "substitutions": [
+          {
+            "from": "minecraft:magma_block",
+            "to": "minecraft:mossy_cobblestone",
+            "why": "magma draws fire types; the ruin's floor is old stone"
+          },
+          {
+            "from": "minecraft:sand",
+            "to": "minecraft:coarse_dirt",
+            "why": "sand is a spawn condition; jungle floor instead of seabed"
+          },
+          {
+            "from": "minecraft:prismarine",
+            "to": "minecraft:cracked_stone_bricks",
+            "why": "prismarine reads as the sea; cracked stone as ruin"
+          },
+          {
+            "from": "minecraft:sea_lantern",
+            "to": "minecraft:chiseled_stone_bricks",
+            "why": "a ruin lit by nothing"
+          }
+        ],
+        "remove_blocks": [
+          "minecraft:structure_block"
+        ],
+        "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+      }
+    ]
+  }
 }

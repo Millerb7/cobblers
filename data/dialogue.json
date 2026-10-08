@@ -1558,12 +1558,33 @@
       "scope": "player",
       "cursor": {
         "progression_field": "quest.main_worldshift_reveal.pallet_oak_cursor",
-        "initial_node": "oak_001",
+        "initial_node": "oak_offer_001",
         "persist": "after_each_node",
         "restore": "on_every_interaction",
         "cursor_is": "next_unread_node"
       },
+      "starter_gate": "The owner's priority zero (2026-10-05): Oak gives the starter. modpack/config/cobblemon/starters.json sets allowStarterOnJoin false, so a new player joins starter-locked (Cobblemon 1.8.0 PlayerDataJsonBackend: starterLocked = !allowStarterOnJoin) and the native screen refuses them until Oak's oak_offer_choose runs `openstarterscreen` for them (tools/compile_dialogue.py open_starter_screen). That command unlocks, opens the config's five-way screen, and returns 0 without opening for a player who has already chosen; chooseStarter refuses a second pick (docs/research/notes/starter-selection.md section 5). oak_001 onward, and so record_oak_sendoff, is reached only by a player Cobblemon says has chosen: the starter_chosen entry rule, or the open action's own 0 result.",
       "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+                "values": [
+                  "oak_offer_001",
+                  "oak_offer_002"
+                ]
+              }
+            ]
+          },
+          "node": "oak_001"
+        },
         {
           "priority": 10,
           "when": {
@@ -1573,6 +1594,40 @@
         }
       ],
       "nodes": [
+        {
+          "id": "oak_offer_001",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "There you are. Nobody walks out of Pallet without a partner, and you will not be the first.",
+          "next": "oak_offer_002"
+        },
+        {
+          "id": "oak_offer_002",
+          "kind": "choice",
+          "speaker": "professor_oak",
+          "text": "Five are waiting in the lab. Choose one, and look after it. You only get the one.",
+          "responses": [
+            {
+              "id": "oak_offer_choose",
+              "text": "Let me see them.",
+              "actions": [
+                {
+                  "kind": "open_starter_screen"
+                }
+              ],
+              "next": "oak_001"
+            },
+            {
+              "id": "oak_offer_wait",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
         {
           "id": "oak_001",
           "kind": "line",
@@ -1818,6 +1873,71 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.brock_cursor",
+                "value": "brock_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "pallet_complete",
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "brock_001",
+          "why": "at pallet_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads pallet_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.brock_cursor",
+                "value": "brock_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym1_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym1_cleared_to_pallet_complete"
+            }
+          ],
+          "node": "brock_001",
+          "why": "holding gym1_cleared with an earlier stage: carry_by_gym1_cleared_to_pallet_complete lifts the stage to pallet_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -1830,7 +1950,7 @@
           "id": "brock_locked",
           "kind": "line",
           "speaker": "brock",
-          "text": "Compare Pallet's maps with the ground before we speak. You need the first half of this account.",
+          "text": "Compare Pallet's maps with the ground before we speak. Professor Oak and Maren in Pallet hold the first half of this account. Or earn the Boulder Badge from me, and I will tell you anyway.",
           "next": "brock_locked"
         },
         {
@@ -1933,6 +2053,70 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.misty_cursor",
+                "value": "misty_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "misty_001",
+          "why": "at brock_account_heard or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads brock_account_heard only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.misty_cursor",
+                "value": "misty_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym1_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym1_cleared_to_brock_account_heard"
+            }
+          ],
+          "node": "misty_001",
+          "why": "holding gym1_cleared with an earlier stage: carry_by_gym1_cleared_to_brock_account_heard lifts the stage to brock_account_heard, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -1945,7 +2129,7 @@
           "id": "misty_locked",
           "kind": "line",
           "speaker": "relief clerk",
-          "text": "The lake office is still sorting arrivals. Brock's account comes first.",
+          "text": "The lake office is still sorting arrivals. Bring the Boulder Badge from Brock, or his account of Pallet's arrival from Viltri Plateau, and I will open the ledger.",
           "next": "misty_locked"
         },
         {
@@ -2027,6 +2211,69 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.surge_cursor",
+                "value": "surge_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "surge_001",
+          "why": "at misty_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads misty_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.surge_cursor",
+                "value": "surge_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym2_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym2_cleared_to_misty_reveal_complete"
+            }
+          ],
+          "node": "surge_001",
+          "why": "holding gym2_cleared with an earlier stage: carry_by_gym2_cleared_to_misty_reveal_complete lifts the stage to misty_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2039,7 +2286,7 @@
           "id": "surge_locked",
           "kind": "line",
           "speaker": "signal technician",
-          "text": "I cannot compare an unlogged sample. The Viltri office has the file we need.",
+          "text": "I cannot compare an unlogged sample. Bring the Cascade Badge from Misty, or the relief clerk's file from the Lake Viltri office.",
           "next": "surge_locked"
         },
         {
@@ -2121,6 +2368,68 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.erika_cursor",
+                "value": "erika_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "erika_001",
+          "why": "at surge_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads surge_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.erika_cursor",
+                "value": "erika_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym3_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym3_cleared_to_surge_reveal_complete"
+            }
+          ],
+          "node": "erika_001",
+          "why": "holding gym3_cleared with an earlier stage: carry_by_gym3_cleared_to_surge_reveal_complete lifts the stage to surge_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2133,7 +2442,7 @@
           "id": "erika_locked",
           "kind": "line",
           "speaker": "survey archivist",
-          "text": "The survey ledger is sealed until the signal comparison from Mt Vessu arrives.",
+          "text": "The survey ledger is sealed until the signal comparison from Mt Vessu arrives. Bring the Thunder Badge from Surge, or his signal technician's comparison.",
           "next": "erika_locked"
         },
         {
@@ -2229,6 +2538,67 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.koga_cursor",
+                "value": "koga_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "koga_001",
+          "why": "at erika_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads erika_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.koga_cursor",
+                "value": "koga_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym4_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym4_cleared_to_erika_reveal_complete"
+            }
+          ],
+          "node": "koga_001",
+          "why": "holding gym4_cleared with an earlier stage: carry_by_gym4_cleared_to_erika_reveal_complete lifts the stage to erika_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2241,7 +2611,7 @@
           "id": "koga_locked",
           "kind": "line",
           "speaker": "marsh tracker",
-          "text": "The marsh marks mean little without the Peak Pond survey. Bring the exchange record south.",
+          "text": "The marsh marks mean little without the Peak Pond survey. Bring the Rainbow Badge from Erika, or her survey archivist's record, south.",
           "next": "koga_locked"
         },
         {
@@ -2323,6 +2693,66 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.sabrina_cursor",
+                "value": "sabrina_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "sabrina_001",
+          "why": "at koga_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads koga_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.sabrina_cursor",
+                "value": "sabrina_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym5_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym5_cleared_to_koga_reveal_complete"
+            }
+          ],
+          "node": "sabrina_001",
+          "why": "holding gym5_cleared with an earlier stage: carry_by_gym5_cleared_to_koga_reveal_complete lifts the stage to koga_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2335,7 +2765,7 @@
           "id": "sabrina_locked",
           "kind": "line",
           "speaker": "Sabrina",
-          "text": "The reports do not form a pattern until Koga's anchor record joins them.",
+          "text": "The reports do not form a pattern until Koga's anchor record joins them. Bring the Soul Badge from Koga, or his marsh tracker's record.",
           "next": "sabrina_locked"
         },
         {
@@ -2424,6 +2854,65 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.blaine_cursor",
+                "value": "blaine_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "blaine_001",
+          "why": "at sabrina_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads sabrina_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.blaine_cursor",
+                "value": "blaine_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym6_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym6_cleared_to_sabrina_reveal_complete"
+            }
+          ],
+          "node": "blaine_001",
+          "why": "holding gym6_cleared with an earlier stage: carry_by_gym6_cleared_to_sabrina_reveal_complete lifts the stage to sabrina_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2436,7 +2925,7 @@
           "id": "blaine_locked",
           "kind": "line",
           "speaker": "crater analyst",
-          "text": "The destination model means nothing without Sabrina's convergence record.",
+          "text": "The destination model means nothing without Sabrina's convergence record. Bring the Marsh Badge from Sabrina, or her record from the Tilpey north shore.",
           "next": "blaine_locked"
         },
         {
@@ -2525,6 +3014,64 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.giovanni_cursor",
+                "value": "giovanni_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "giovanni_001",
+          "why": "at blaine_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads blaine_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.giovanni_cursor",
+                "value": "giovanni_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym7_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym7_cleared_to_blaine_reveal_complete"
+            }
+          ],
+          "node": "giovanni_001",
+          "why": "holding gym7_cleared with an earlier stage: carry_by_gym7_cleared_to_blaine_reveal_complete lifts the stage to blaine_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2537,7 +3084,7 @@
           "id": "giovanni_locked",
           "kind": "line",
           "speaker": "southern watch officer",
-          "text": "The southern watch has no reason to open its Rift file before the crater evidence arrives.",
+          "text": "The southern watch has no reason to open its Rift file before the crater evidence arrives. Bring the Volcano Badge from Blaine, or his crater analyst's findings.",
           "next": "giovanni_locked"
         },
         {
@@ -2619,6 +3166,63 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.rift_cursor",
+                "value": "rift_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "rift_001",
+          "why": "at giovanni_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads giovanni_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.rift_cursor",
+                "value": "rift_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym8_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym8_cleared_to_giovanni_reveal_complete"
+            }
+          ],
+          "node": "rift_001",
+          "why": "holding gym8_cleared with an earlier stage: carry_by_gym8_cleared_to_giovanni_reveal_complete lifts the stage to giovanni_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2631,7 +3235,7 @@
           "id": "rift_locked",
           "kind": "line",
           "speaker": "Rift surveyor",
-          "text": "Victory Road remains sealed until Giovanni clears the regional approach.",
+          "text": "Victory Road stays sealed to anyone Giovanni has not passed. Bring the Earth Badge from his gym on South Strand, or the southern watch officer's report.",
           "next": "rift_locked"
         },
         {
@@ -2725,7 +3329,7 @@
           "id": "league_locked",
           "kind": "line",
           "speaker": "League steward",
-          "text": "The League remains closed while the forced activation is unresolved.",
+          "text": "The League remains closed while the forced activation is unresolved. Hoopa is still bound in the cradle beneath the Compact's headquarters in the Deep.",
           "next": "league_locked"
         },
         {
@@ -9967,6 +10571,48 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym8_cleared"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "not_started",
+                  "oak_sendoff",
+                  "mismatch_seen",
+                  "oak_admitted",
+                  "pallet_complete",
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete"
+                ]
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym8_cleared_to_rift_crisis_pending"
+            }
+          ],
+          "node": "nia_001",
+          "why": "the Earth Badge, and the Rift surveyor never met: carried to rift_crisis_pending, then her account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "progression_equals",
@@ -10014,7 +10660,7 @@
           "id": "nia_before",
           "kind": "line",
           "speaker": "nia",
-          "text": "The clinic is for people the Rift has already hurt. If the Compact sent you, you are early.",
+          "text": "The clinic is for people the Rift has already hurt. If the Compact sent you, you are early. Nobody comes down here without Giovanni's Earth Badge.",
           "next": "nia_before"
         },
         {
@@ -10069,7 +10715,7 @@
           "id": "nia_007",
           "kind": "line",
           "speaker": "nia",
-          "text": "Headquarters is the black tower on the top ring, west side. The tower door inside will open for my packet. Climb.",
+          "text": "Headquarters is the black tower on the top ring, west side. Elara keeps its door herself. My packet gets you past her; it will not get you her blessing. Climb.",
           "next": "nia_repeat"
         },
         {
@@ -10263,7 +10909,7 @@
           "id": "brann_repeat",
           "kind": "line",
           "speaker": "brann",
-          "text": "The stair is open. Anchor control is at the top of the tower; Elara's office is the floor below it.",
+          "text": "The stair is open. Anchor control is at the top of the tower. Elara is holding the door you came in by.",
           "next": "brann_repeat"
         }
       ],
@@ -10412,7 +11058,7 @@
           "id": "oren_repeat",
           "kind": "line",
           "speaker": "oren",
-          "text": "Anchors are down. The secure shaft is still locked from Elara's office.",
+          "text": "Anchors are down. The secure shaft is still locked, and Elara holds the door above it.",
           "next": "oren_repeat"
         },
         {
@@ -10432,7 +11078,7 @@
       "quest_id": "main_worldshift_reveal",
       "npc_id": "npc_finale_elara_venn",
       "npc_name": "Director Elara Venn",
-      "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 4, Elara's decision, in the HQ tower's director's office (data/hq_tower.json storey hq_s9), the floor below anchor control. The integration of 2026-10-04 makes her the ONE Elara, who talks and fights here: Codex's lines 1-4 open, the choice starts her battle (npc_battle; team data/finale_trainers.json finale_elara_venn), the win sets elara_defeated (the cobblers_hq_tower battle_victory callback), and lines 5-7 after the win write cradle_open, the stage the doc opens the secure shaft at and the release reads. The choice's line is new (Codex's Elara does not fight)",
+      "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 4, Elara's decision. Since the owner's 2026-10-05 'BLOCKING NPC: Elara at the HQ door' she is the ONE Elara and stands in the HQ tower's doorway for the whole finale (data/hq_tower.json door_keeper): Codex gives her two stands, 'hq_director_office, then the secure-shaft head', and the tower door opens from the secure-shaft head. The player meets her there three times: turned away at rift_crisis_pending (door_001-002, new); let up at deep_handoff_received after a confrontation in words (meet_001-003 and meet_choice, new), told to come back down to her; and at anchor_shutdown Codex's lines 1-4, the choice that starts the ONE Elara battle (npc_battle; team data/finale_trainers.json finale_elara_venn; the win sets elara_defeated by the cobblers_hq_tower battle_victory callback), and lines 5-7 after the win, which write cradle_open. 'Let me through.' (elara_door_admit) is how every player gets in. The choice's line is new (Codex's Elara does not fight). In the director's office 2026-10-04 to 2026-10-05",
       "scope": "player",
       "cursor": {
         "progression_field": "quest.main_worldshift_reveal.finale_elara_cursor",
@@ -10490,7 +11136,44 @@
           "node": "elara_001"
         },
         {
+          "priority": 14,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "deep_handoff_received"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.finale_elara_cursor",
+                "value": "meet_choice"
+              }
+            ]
+          },
+          "node": "meet_choice"
+        },
+        {
+          "priority": 16,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "deep_handoff_received"
+          },
+          "node": "meet_001"
+        },
+        {
           "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "hq_crossed"
+          },
+          "node": "elara_waiting"
+        },
+        {
+          "priority": 22,
           "when": {
             "kind": "progression_equals",
             "field": "quest.main_worldshift_reveal.stage",
@@ -10511,16 +11194,32 @@
           "node": "elara_after"
         },
         {
-          "priority": 40,
+          "priority": 36,
           "when": {
-            "kind": "progression_in",
-            "field": "quest.main_worldshift_reveal.stage",
-            "values": [
-              "deep_handoff_received",
-              "hq_crossed"
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "rift_crisis_pending"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.finale_elara_cursor",
+                "value": "door_002"
+              }
             ]
           },
-          "node": "elara_waiting"
+          "node": "door_002"
+        },
+        {
+          "priority": 38,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "rift_crisis_pending"
+          },
+          "node": "door_001"
         },
         {
           "priority": 50,
@@ -10535,15 +11234,127 @@
           "id": "elara_before",
           "kind": "line",
           "speaker": "elara",
-          "text": "Whoever you are, this office is not on your route.",
+          "text": "Whoever you are, this door is not on your route.",
           "next": "elara_before"
         },
         {
-          "id": "elara_waiting",
+          "id": "door_001",
           "kind": "line",
           "speaker": "elara",
+          "text": "Jun let you into the Deep. That was his to give. This door is mine.",
+          "next": "door_002"
+        },
+        {
+          "id": "door_002",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "Behind me is the operation that keeps every light down here burning. It has no use for a trainer without orders. Step back.",
+          "next": "door_002"
+        },
+        {
+          "id": "meet_001",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "Nia's packet. She thinks an evacuation order makes you staff.",
+          "next": "meet_002"
+        },
+        {
+          "id": "meet_002",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "I have read Tomas's trace more times than she has. I know what is on the other side of the cycle.",
+          "next": "meet_003"
+        },
+        {
+          "id": "meet_003",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "Go up, then. Captain Saye holds the briefing hall, and Oren will show you why the machine is still running.",
+          "next": "meet_choice"
+        },
+        {
+          "id": "meet_choice",
+          "kind": "choice",
+          "speaker": "elara",
+          "text": "When you have run out of arguments, come back down. I will be here. The shaft under this floor answers to me.",
+          "responses": [
+            {
+              "id": "r_through",
+              "text": "Let me through.",
+              "visible_when": {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "elara_door_admit"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "elara_waiting",
+          "kind": "choice",
+          "speaker": "elara",
           "text": "The anchors are still live. Nothing you say to me changes while the machine is running.",
-          "next": "elara_waiting"
+          "responses": [
+            {
+              "id": "r_through",
+              "text": "Let me through.",
+              "visible_when": {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "elara_door_admit"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "elara_001",
@@ -10629,17 +11440,87 @@
         },
         {
           "id": "elara_repeat",
-          "kind": "line",
+          "kind": "choice",
           "speaker": "elara",
           "text": "The shaft is open. Follow the passage beneath the relic site.",
-          "next": "elara_repeat"
+          "responses": [
+            {
+              "id": "r_through",
+              "text": "Let me through.",
+              "visible_when": {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "elara_door_admit"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "elara_after",
-          "kind": "line",
+          "kind": "choice",
           "speaker": "elara",
           "text": "The cradle is empty. Now the work starts that nobody can exchange their way out of.",
-          "next": "elara_after"
+          "responses": [
+            {
+              "id": "r_through",
+              "text": "Let me through.",
+              "visible_when": {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "elara_door_admit"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
         }
       ],
       "speakers": {
@@ -10703,7 +11584,7 @@
           "id": "turned_away_2",
           "kind": "line",
           "speaker": "guard",
-          "text": "When the operation needs you, they'll tell me. Move along.",
+          "text": "When the operation needs you, they'll tell me. The Rift surveyor at the Victory Road trailhead signs the orders, or Nia Calder at the clinic. Move along.",
           "next": "turned_away_2"
         },
         {
@@ -13943,6 +14824,174 @@
       ],
       "speakers": {
         "cassius": "Cassius Rook"
+      }
+    },
+    {
+      "id": "dlg_apricorn_farmer",
+      "quest_id": "ambient_apricorn_farm",
+      "npc_id": "npc_apricorn_farmer",
+      "source": "data/apricorn_farm.json npc; every fact she states is read from the Cobblemon 1.8.0 jar (data/apricorn_farm.json apricorn_facts)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_apricorn_farm.farmer_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Mind the fences, they're new. Well, newer than the trees.",
+          "next": "who"
+        },
+        {
+          "id": "who",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Tamsin Hollin. My mother put in the first row, red, because red is what a Poke Ball wants. Then somebody asked for blue, and somebody else for black, and now there are seven.",
+          "next": "ripe"
+        },
+        {
+          "id": "ripe",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Pick them once they've coloured all the way through. A green one gives you nothing for the trouble.",
+          "next": "regrow"
+        },
+        {
+          "id": "regrow",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "And don't pull the branch about. Take the fruit and it grows back where it hung, a quarter of an hour or so, as long as somebody's about to keep it company. Trees don't grow when nobody's looking. Mother swore to that.",
+          "next": "leaves"
+        },
+        {
+          "id": "leaves",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Leave the leaves, too. Every apricorn hangs off one leaf, and if the leaf goes, the fruit goes with it.",
+          "next": "sprout"
+        },
+        {
+          "id": "sprout",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "One pick in ten or so you'll find a sprout in with the fruit. Plant it where you like. Not in my rows.",
+          "next": "balls"
+        },
+        {
+          "id": "balls",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Four reds round a bit of copper makes four Poke Balls. Blue and red round iron for Great Balls, black and yellow round gold for Ultras. It's on the wall inside if you forget.",
+          "next": "round_ones"
+        },
+        {
+          "id": "round_ones",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "If an apricorn looks back at you, it isn't one. The round ones come for the trees. They mostly just sit there. Mostly.",
+          "next": "stall"
+        },
+        {
+          "id": "stall",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "The stall on the avenue sells the wood. The fruit's free: there's more on those trees than I'll ever get to.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Pick what's ripe and shut the gates behind you.",
+          "next": "repeat"
+        }
+      ],
+      "speakers": {
+        "tamsin": "Tamsin Hollin"
+      }
+    },
+    {
+      "id": "dlg_pokemon_farm_farmer",
+      "quest_id": "ambient_pokemon_farm",
+      "npc_id": "npc_pokemon_farm_farmer",
+      "source": "data/pokemon_farm.json (the owner, 2026-10-05: a Pokemon farm at 3149 5714); every mechanic the farmer names is read from the Cobblemon 1.8.0 jar there (native_mechanics), NOT seen in game",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_pokemon_farm.farmer_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "Arrow Creeks Farm. Shut the gates behind you; the Wooloo think every open one was opened for them.",
+          "next": "dairy"
+        },
+        {
+          "id": "dairy",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "The Miltank give the milk, but a Miltank only lets the trainer it belongs to milk it. Bring your own and a bucket. These ones give to the farm and nobody else.",
+          "next": "wool"
+        },
+        {
+          "id": "wool",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "Shears work on the flock, if they'll stand for you. Leave them on the grass afterwards and the fleece comes back.",
+          "next": "bees"
+        },
+        {
+          "id": "bees",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "The hives were full when I looked this morning. A glass bottle and a steady hand. The Vespiquen keeps count, so take one from each and no more.",
+          "next": "stand"
+        },
+        {
+          "id": "stand",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "Milk, wool, leather, honey, eggs: the stand by the south gate sells what we don't use. The Bouffalant pulls the plough and the Ponyta pulls the cart. Neither will pull for you.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "Shears for the flock, a bottle for the hives, coin at the stand. And the gates.",
+          "next": "repeat"
+        }
+      ],
+      "speakers": {
+        "farmer": "Farmer Wren"
       }
     }
   ]

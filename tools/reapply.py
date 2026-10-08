@@ -118,6 +118,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Frostpeak research camp (tools/frostpeak_camp.py, data/frostpeak_camp.json): block
                 # functions and the instruments' display entities, run by R18F
                 "cobblers_frostpeak_camp",
+                # 2026-10-05: Coldwater Station, the Kyogre research station on marsh country's east coast
+                # (tools/coldwater_station.py, data/coldwater_station.json): block functions, two instrument displays
+                # and three researchers, run by R18CW. Its jetty and boatman are the ferry's (R16H, R17F)
+                "cobblers_coldwater_station",
                 # 2026-10-02: the Seaward Drift, its strip mine and Driftmouth Isle (tools/sea_drift.py,
                 # data/sea_drift.json): 90 block functions run by R9SD, before the Habitat Blocks that sit in its rock
                 "cobblers_sea_drift",
@@ -144,6 +148,16 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-04: the far south's five places (tools/far_south.py, data/far_south.json) in rows F-H, built
                 # by R9FS; three named Pokemon on the residents' keeper, so world-local below; R18FS after R18NR
                 "cobblers_far_south",
+                # 2026-10-04: the jungle's three lost temples on the Long Isle's south (tools/jungle_temples.py,
+                # data/jungle_temples.json), built by R9JT; no load or tick and no Pokemon, so not world-local
+                "cobblers_jungle_temples",
+                # 2026-10-05: Hollin's Apricorn Farm at (2068, 5570) (tools/apricorn_farm.py, data/apricorn_farm.json):
+                # seven terraced groves, the yard and lanes, built by R9AF; block functions and the stall merchant's
+                # summon, nothing that runs on its own; the farmer and the merchant stood by R18AF
+                "cobblers_apricorn_farm",
+                # 2026-10-05: Arrow Creeks Farm (tools/pokemon_farm.py, data/pokemon_farm.json): pure block functions
+                # run by R9PF; no tick or load, so not world-local. Its animals are cobblers_ambient_idle's (R16C)
+                "cobblers_pokemon_farm",
                 # 2026-10-02: the relic site underground (tools/relic_underground.py, data/relic_underground.json): the
                 # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
                 # its own (an advancement), so world-local below
@@ -281,7 +295,7 @@ EXCLUDED = {
     # these three drive themselves and write no blocks: found by the check below the moment it was added
     "cobblers_progression": "self-driving: its own minecraft load and tick tags run it",
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
-    "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores",
+    "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores; its tick tag runs the over-cap party notice near trainers",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
     "cobblers_spectrier_cap": "self-driving: its own minecraft tick tag judges each new wild Spectrier at the Crown "
                               "Cemetery (tools/spectrier_cap.py); it writes no blocks",
@@ -583,6 +597,11 @@ def prepare_jobs(a):
     # against the base and the jars' recipe conditions, tiers and the curve against PROGRESSION_LADDER, and every
     # keeper R17M places off streets, buildings, walked lines and other NPCs, and in front of its Mart
     add("markets:audit_independent", "markets_audit.py", "--server-dir", a.server_dir, *src)
+    # the CobbleDollars Bank's buy list (2026-10-05, data/bank.json): no pack -- a config overlay that `install` copies
+    # (modpack/config/cobbledollars/bank.json). Refuses an overlay the data does not write, a bought item any authored
+    # shop sells at or below the bank's price (the shopkeeper templates read from <server>/mods and datapacks only),
+    # a never_buy item, a spawn-condition block not harvested in place, and a buyer town with no merchant
+    add("bank:check", "bank.py", "check", "--server-dir", a.server_dir)
     # the ferry docks' pack (a SERVER_PACKS member): until 2026-10-02 no job built it, and a build/ left over from an
     # earlier hand run hid that; function_limits failed on a fresh checkout without it
     add("ferry_docks:build", "ferry_docks.py", "build", *src)
@@ -662,6 +681,9 @@ def prepare_jobs(a):
     add("ursaluna_cave_audit", "ursaluna_cave_audit.py", *src)
     add("frostpeak_camp:build", "frostpeak_camp.py", "build", *src)
     add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
+    # Coldwater Station (2026-10-05): its builder's siting guards fail the job; its independent audit
+    # (tools/coldwater_station_audit.py) runs after sea_floor:build below, so it replays the sea packs it must keep clear
+    add("coldwater_station:build", "coldwater_station.py", "build", *src)
     add("sea_drift:build", "sea_drift.py", "build", *src)
     add("frostpeak_summit:build", "frostpeak_summit.py", "build", *src)
     add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
@@ -691,6 +713,28 @@ def prepare_jobs(a):
     # rule, the species' climate, the caches' rewards pack, the gym 7 gate, the steps and this wiring
     add("far_south", "far_south.py", *src)
     add("far_south_audit", "far_south_audit.py", *src)
+    # the jungle's lost temples (2026-10-04): the generator fails closed on its own siting rules (long_isle_south, the
+    # keep-clear list, the authored clearance, spawn blocks) and on a record the heightmap disagrees with; then its
+    # independent audit (tools/jungle_temples_audit.py, another agent's), after the pack it reads: the pack replayed
+    # against the heightmap and water, a walker to each cache, the siting and a keep-clear list of its own, the
+    # Harbour Mark's bearing, the caches against the economy curve, the steps and this wiring
+    add("jungle_temples", "jungle_temples.py", *src)
+    add("jungle_temples_audit", "jungle_temples_audit.py", *src)
+    # Hollin's Apricorn Farm (2026-10-05): the generator fails closed on its own guards (allow-list, spawn blocks, wet
+    # columns, overlaps, fruit attachment, gates, spots, siting). Then its independent audit (tools/apricorn_farm_audit.py,
+    # another agent's, never imports the generator to derive): the built pack replayed over the heightmap, fruit
+    # attachment in the final world, terraces and floors re-derived, walking, light, siting, the merchant, the farmer's
+    # dialogue (compiled by compile_dialogue above) and this wiring; KNOWN defects print and do not fail it
+    add("apricorn_farm:build", "apricorn_farm.py", "build", *src)
+    add("apricorn_farm_audit", "apricorn_farm_audit.py", *src)
+    # Arrow Creeks Farm (2026-10-05): the generator fails closed on its siting rules, on a seat (the farmer's in
+    # data/npc_seats.json, the stand's in data/markets.json) the plan does not leave open and on a spawn-condition
+    # block. Before ambient_idle:build, whose plan takes the farm's animals from it (tools/pokemon_farm.py idlers).
+    # Its independent audit (tools/pokemon_farm_audit.py, written by an agent that built none of it) replays the pack
+    # over the heightmap: writes, floors, fence links, closed pens, doors, roofs, the record's animals against the jar,
+    # seats, siting from the other data files, the stand, this wiring. Its claims half runs after ambient_idle:build
+    add("pokemon_farm", "pokemon_farm.py", *src)
+    add("pokemon_farm_audit", "pokemon_farm_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
@@ -733,6 +777,9 @@ def prepare_jobs(a):
     # exclusions and the EMITTED sea_life pack; after both packs are built
     add("sea_floor:build", "sea_floor.py", "build", *src)
     add("sea_floor_audit", "sea_floor_audit.py", *src)
+    # Coldwater Station's independent audit (never imports its builder, tools/portals.py or tools/frostpeak_camp.py):
+    # the built functions replayed over the heightmap, and the freshly built sea packs held off its sealed arch
+    add("coldwater_station_audit", "coldwater_station_audit.py", "--require-sea", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -791,6 +838,10 @@ def prepare_jobs(a):
     # judged against the species' own natural spawn data in the Cobblemon jar and the place's paint, never against
     # data/encounter_design.json. Fails closed on an unjudged misfit or a stale ruling
     add("spawn_habitat_audit", "spawn_habitat_audit.py")
+    # ... and its independent tiers audit (the owner, 2026-10-05: "every area should have a rare, ultra rare, and boss
+    # table"): rare >= 2 and ultra-rare >= 1 species, a heart inside its area and clear of the path, a species floor,
+    # rarity that means something -- read from the compiled pack only. Fails closed; table in derived/spawn_tiers/
+    add("spawn_tiers_audit", "spawn_tiers_audit.py")
     # the structure templates the placement steps use, the spawn biome tags, and the size outliers: all three were
     # on the server only by hand, or not at all, until 2026-09-26 (install sweep)
     add("kit:pack", "kit.py", "pack")
@@ -809,12 +860,26 @@ def prepare_jobs(a):
     # replays every pack's block writes through steps() (tools/npc_spot_sweep.py) and refuses a spot a signpost, a
     # waystone, a porch or a roof holds -- and steps() indexes every pack built above
     add("ambient_idle:build", "ambient_idle.py", "build", *src)
+    # Arrow Creeks Farm's animals as the idle pack claims them (tools/pokemon_farm_audit.py --animals): each record
+    # animal spawned once at its spot, NoAI as its kind, the AI ones penned with the home walk, eats-grass only where
+    # the species' own jar ai lists it, the workers' flags, the cap. After the idle pack it reads
+    add("pokemon_farm_audit:animals", "pokemon_farm_audit.py", "--animals", *src)
     # the idle Pokemon's independent audit (tools/ambient_idle_audit.py, written by an agent that did not build them):
     # after ambient:build, and LAST for the same reason as mines_audit -- it replays the town from steps(), which
     # indexes every pack built above. The cap, groups of 1-3, every spot on the built town's floor, the jar's sleepers,
     # the wake at 16, no brain-remaking merge, the workers' flags, the snow house's Buneary. Fail-closed; KNOWN
     # defects are listed in the tool and a fixed one fails until it is removed there
     add("ambient_idle_audit", "ambient_idle_audit.py", *src)
+    # Oak gives the starter: its independent audit (tools/oak_starter_audit.py, written by an agent that did not build
+    # it). LAST, so it runs after compile_dialogue and after every other pack is built: it reads the compiled dialogue,
+    # explores Oak's offer from a fresh player, and sweeps every pack under build/datapacks for a second
+    # openstarterscreen, a starter species given, or a data/*/starters/ folder. Fail-closed; KNOWN listed in the tool
+    add("oak_starter_audit", "oak_starter_audit.py")
+    # a fresh player's walk (tools/new_player_walk.py, the owner 2026-10-05: "Can a new player get a starter, reach
+    # gym 1, and beat it" known continuously): spawn -> Oak -> starter -> each route and gym -> the League, read from
+    # the packs built above (towns, dialogue, forms, trainers, spawns, gym buildings, progression). LAST, after
+    # oak_starter_audit, which it runs as one stage. Fail-closed on a FAIL; NOT_MODELLED and KNOWN do not stop it
+    add("new_player_walk", "new_player_walk.py", *src)
     return J
 
 
@@ -1481,7 +1546,8 @@ def rift_zone_steps(index, spec):
 def steps(with_spawns=False):
     """[(step id, title, [(kind, value)])]; kind is fn (a function), wait (seconds), check (a callable name)."""
     doc = placements()
-    # the Rift's entities (the trailhead guards' placeholders and the portal sheets) after its blocks: fx force-loads
+    # the Rift's entities (the trailhead guards' placeholders; the portal sheets are R1S's since 2026-10-05, and
+    # fx_go still kills any old sheet, which carries rift_fx_all) after its blocks: fx force-loads
     # their chunks and schedules fx_go 60 ticks on, which summons them and counts them. No step ran it until the
     # 2026-09-24 rehearsal found 0 of 14 on a fresh export: they had been placed by hand on staging
     out = [("R1", "the Rift skin: the block pass over the sculpted shape, then its entities",
@@ -1496,7 +1562,13 @@ def steps(with_spawns=False):
             [("fn", "cobblers:lakebed_repair/%s" % f) for f in indexed("cobblers_lakebed_repair", "lakebed_repair")]),
            ("R1B", "the Rift biome, painted over the skin",
             [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift_biome", "rift")]),
-           ("R2", "Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
+           # the portal sheets (tools/rift_skin.py, 2026-10-05): their own step, so re-siting them never needs R1
+           # again. After R1, whose fx_go kills the old sheets by rift_fx_all and whose seal must not refill the new
+           # tears. sheets force-loads and schedules sheets_go 60 ticks on, which kills every sheet, puts back the
+           # old slots, seals and carves, summons and counts
+           ("R1S", "the Rift's portal sheets: glimpses through a tear in a sheer face",
+            [("fn", "cobblers:rift/sheets"), ("wait", 8), ("check", "rift_sheets")]),
+           ("R2","Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
            ("R3", "world tree", [("fn", "cobblers:worldtree/%02d_tree" % k) for k in range(4)]
             + [("fn", "cobblers:worldtree/90_foundation"), ("check", "crown")]),
            ("R4", "Foothill grove", [("fn", "cobblers:reapply/grove"), ("fn", "cobblers:reapply/grove_augment")]),
@@ -1701,6 +1773,22 @@ def steps(with_spawns=False):
     import far_south
     out.append(("R9FS", "the far south's places: kraal, chimneys, glass garden, glyph ring, folly (data/far_south.json)",
                 far_south.placement_steps()))
+    # the jungle's lost temples (2026-10-04, tools/jungle_temples.py): the same pure block pass per temple, held in a
+    # forceload of its box, before R9E (none sits on a Habitat Block); the caches' barrels are written here
+    import jungle_temples
+    out.append(("R9JT", "the jungle's lost temples: the Ring Court, the Harbour Mark, the Green Stair (data/jungle_temples.json)",
+                jungle_temples.placement_steps()))
+    # Hollin's Apricorn Farm (2026-10-05, tools/apricorn_farm.py): one block pass held in a forceload of the farm's box
+    # (90 chunks), before R9E with the other block passes; the farmer and the stall keeper stand on it (R18AF)
+    import apricorn_farm
+    out.append(("R9AF", "Hollin's Apricorn Farm: seven terraced groves, the farmyard and lanes (data/apricorn_farm.json)",
+                apricorn_farm.placement_steps()))
+    # Arrow Creeks Farm (2026-10-05, tools/pokemon_farm.py): one pure block pass in a forceload of its box, before
+    # R9E (no Habitat Block near it); its animals stand on these floors and in these pens (R16C), its farmer (R17N)
+    # and its stand's merchant (R17M) on the ground it leaves open
+    import pokemon_farm
+    out.append(("R9PF", "Arrow Creeks Farm: farmhouse, barns, silo, pens, fields, apiary, stand (data/pokemon_farm.json)",
+                pokemon_farm.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1837,6 +1925,11 @@ def steps(with_spawns=False):
     # after the restart that loaded cobblers_dialogue's classes, on the ground R9SO's orchard stands on
     out.append(("R18SO", "the Old Orchard's keeper, Wenna Marlow (data/old_orchard.json npc)",
                 [("npc", n) for n in old_orchard.npc_placements()]))
+    # Hollin's Apricorn Farm (2026-10-05): the farmer, Tamsin Hollin, an NPC like the Old Orchard's keeper (her class
+    # loaded at boot from cobblers_dialogue), turned to her yaw; then the stall's CobbleDollars merchant, summoned in a
+    # forceload of its chunk and de-duplicated by tag 100 ticks later (tools/markets.py's shape)
+    out.append(("R18AF", "Hollin's Apricorn Farm: the farmer and the stall merchant (data/apricorn_farm.json npc, merchant)",
+                apricorn_farm.entity_steps()))
     # the Copperway Khan's salvager (2026-10-02): an NPC on the dug-out hall's floor R9DU wrote, her class loaded at boot
     # from cobblers_dialogue, so placed over RCON after the restart like R17N's
     out.append(("R18DU", "the Copperway Khan's salvager (data/dune_ruin.json npc)",
@@ -1908,6 +2001,12 @@ def steps(with_spawns=False):
     import frostpeak_summit
     out.append(("R18S", "Frostpeak's summit: tors, rime, lee plants and the pilgrims' way (data/frostpeak_summit.json)",
                 frostpeak_summit.placement_steps()))
+    # Coldwater Station (2026-10-05, tools/coldwater_station.py): its blocks and instruments held in a forceload, then
+    # its three researchers, whose classes load at boot from cobblers_coldwater_station. After R16H and R17F, whose
+    # jetty and boatman below it the station keeps clear of
+    import coldwater_station
+    out.append(("R18CW", "Coldwater Station, the Kyogre research station (data/coldwater_station.json)",
+                coldwater_station.placement_steps()))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
@@ -2270,6 +2369,22 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 print("   the Rift's entities: %s of %d" % (got, want), flush=True)
                 if got != want:
                     bad.append("the Rift's entities: %s of %d summoned (cobblers:rift/fx)" % (got, want))
+            elif kind == "check" and v == "rift_sheets":
+                # sheets_go counts the sheets standing after it ran; the plan says how many it sited
+                pl = json.loads((ROOT / "derived" / "rift_skin" / "plan.json").read_text(encoding="utf-8"))
+                want = pl["sheets_expected"]
+                got = None
+                for _ in range(10):
+                    r = rc("scoreboard players get #%s cobblers.rift_fx" % pl["sheet_tag"])
+                    m = re.search(r"has (\d+) ", r)
+                    if m:
+                        got = int(m.group(1))
+                        if got == want:
+                            break
+                    time.sleep(2)
+                print("   the Rift's portal sheets: %s of %d" % (got, want), flush=True)
+                if got != want:
+                    bad.append("the Rift's portal sheets: %s of %d summoned (cobblers:rift/sheets)" % (got, want))
             elif kind == "check" and v == "verify":
                 time.sleep(5)
                 print(rc("save-all flush", timeout=600))

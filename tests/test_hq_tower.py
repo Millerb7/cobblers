@@ -133,15 +133,31 @@ def test_each_gate_tags_exactly_the_stages_from_its_own_on(gate, first):
 
 
 def test_the_gates_move_only_unqualified_survival_players_inside_their_boxes():
-    lines = H.gate_lines(H.load())
+    # re-pointed 2026-10-05 by test-author (c2ef17c added a third tp line, the step out past Elara): was "exactly two
+    # tp lines, each with a tag filter". Now: one tagged line per gate, over that gate's own box; any line without a
+    # tag (the door keeper's step out) selects one cell of the doorway and no cell of the interior, so it moves
+    # nobody already inside; every line passes creative and spectator.
+    spec = H.load()
+    lines = H.gate_lines(spec)
     tps = [l for l in lines if l.startswith("tp ")]
-    assert len(tps) == 2
+    gates = {n: g for n, g in spec["gates"].items() if isinstance(g, dict) and "box" in g}
+    door = {tuple(c) for c in spec["door"]["cells"]}
+    ix0, iz0, ix1, iz1 = spec["tower"]["interior"]
+    tagged = {}
     for l in tps:
         sel = l.split()[1]
-        assert "tag=!cobblers_hq_" in sel and "gamemode=!creative" in sel and "gamemode=!spectator" in sel
-        assert sel.startswith("@a[x=")
+        assert "gamemode=!creative" in sel and "gamemode=!spectator" in sel and sel.startswith("@a[x="), l
+        kv = dict(a.split("=", 1) for a in sel[3:-1].split(",") if not a.startswith(("tag=", "gamemode=")))
+        x, y, z = int(kv["x"]), int(kv["y"]), int(kv["z"])
+        box = [x, y, z, x + int(kv["dx"]), y + int(kv["dy"]), z + int(kv["dz"])]
+        tags = [a[5:] for a in sel[3:-1].split(",") if a.startswith("tag=!")]
+        if tags:
+            tagged.setdefault(tags[0], []).append(box)
+        else:
+            assert box[:3] == box[3:] and tuple(box[:3]) in door, l
+            assert not (ix0 <= x <= ix1 and iz0 <= z <= iz1), l
+    assert tagged == {g["tag"]: [g["box"]] for g in gates.values()}, tagged
     # the tags are refreshed over a box that holds both gated boxes
-    spec = H.load()
     tb = spec["gates"]["tag_box"]
     for g in ("door", "climb"):
         b = spec["gates"][g]["box"]

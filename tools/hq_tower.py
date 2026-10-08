@@ -12,7 +12,13 @@ obtainability sweep fills).
 The gates are a tick function, not blocks (data/hq_tower.json gates): every 10 ticks each player near the tower is
 tagged from their own quest.main_worldshift_reveal.stage, then a player inside the tower without the door tag
 (deep_handoff_received or later) is set back outside the doorway, and a player above the briefing hall without the
-climb tag (hq_crossed or later) is set back onto the hall's floor. Nothing is ever shut, so anyone inside walks out.
+climb tag (hq_crossed or later) is set back onto the hall's floor. Nothing is ever shut.
+
+The door keeper (data/hq_tower.json door_keeper, the owner, 2026-10-05: 'Elara at the HQ door'): Director Elara Venn
+stands IN the doorway for every player and never moves. The way in is her conversation, whose 'Let me through.' runs
+door_admit as THAT player (a teleport inside, the relic HQ guard's hq_admit shape); the way out is the doorway's inner
+cell, which the gate cycle turns into a step out past her. check_door_keeper() holds her stand, the two moves and her
+admit transition against the door gate's own stages.
 
 Every position comes from tools/deep_city.py's build run in memory (its plan's hq.tower box and top), never a world:
 the build fails closed when the city's tower is not data/hq_tower.json's, when a write leaves the tower's interior or
@@ -405,7 +411,7 @@ def check_outside_seats(spec, cells):
     the seat is required."""
     probs = []
     for n in spec["npcs"]:
-        if n.get("storey"):
+        if n.get("storey") or n.get("door"):
             continue
         x, y, z = n["at"]
         if cells.get((x, y - 1, z), AIR) == AIR:
@@ -414,6 +420,85 @@ def check_outside_seats(spec, cells):
             if cells.get((x, y + dy, z), AIR) != AIR:
                 probs.append("%s at %s: the city writes %s in its stand" % (n["id"], n["at"], cells[(x, y + dy, z)]))
     return probs
+
+
+def _cell(p):
+    return (int(p[0] // 1), int(p[1]), int(p[2] // 1))
+
+
+def check_door_keeper(spec, W, cells, reach):
+    """Elara in the doorway (data/hq_tower.json door_keeper). [] when clean. Her stand is a doorway cell a body fits in
+    (floor under it, the cell and the one above clear), the hole behind her is the other doorway cell, admit lands
+    inside the tower on a cell the walk reaches and outside the hole, out lands on a reached cell outside the hole and
+    outside the door gate's box (or the eject would hand the player to the set-back, or to itself), and her admit is a
+    quest transition of her own conversation whose only stage condition is the door gate's stages and whose function
+    is this pack's door_admit -- so she never lets in a player the gate would set back, nor keeps out one it admits."""
+    dk = spec.get("door_keeper")
+    if not dk:
+        return ["no door_keeper: the owner's 'Elara at the HQ door' (2026-10-05) is not built"]
+    probs = []
+    door = {tuple(c) for c in spec["door"]["cells"]}
+    npc = next((n for n in spec["npcs"] if n["id"] == dk["npc"]), None)
+    stand, hole = tuple(dk["stand"]), tuple(dk["hole"])
+    if npc is None:
+        return ["door_keeper: no NPC %s in npcs" % dk["npc"]]
+    if tuple(npc["at"]) != stand or not npc.get("door") or npc.get("storey"):
+        probs.append("door_keeper: %s stands at %s (storey %s), not in the doorway at %s"
+                     % (npc["id"], npc["at"], npc.get("storey"), stand))
+    if stand not in door or hole not in door or stand == hole or (stand[0], stand[2]) == (hole[0], hole[2]):
+        probs.append("door_keeper: the stand %s and the hole %s are not two columns of the doorway" % (stand, hole))
+    at = model(spec, W, cells)
+    x, y, z = stand
+    if not (passable(at(stand)) and passable(at((x, y + 1, z))) and not passable(at((x, y - 1, z)))):
+        probs.append("door_keeper: her stand %s is not a floor with two clear above" % (stand,))
+    t = spec["tower"]
+    ix0, iz0, ix1, iz1 = t["interior"]
+    box = spec["gates"]["door"]["box"]
+    a = _cell(dk["admit"]["to"])
+    if not (ix0 <= a[0] <= ix1 and iz0 <= a[2] <= iz1) or a not in reach or a == hole:
+        probs.append("door_keeper: admit lands at %s, not a cell inside the tower the walk reaches" % (a,))
+    o = _cell(dk["out"]["to"])
+    if o not in reach or o in door or _in(o, box):
+        probs.append("door_keeper: out lands at %s, not a reached cell outside the doorway and the door gate's box" % (o,))
+    if dk["admit"]["function"] != "%s:%s/door_admit" % (NS, FOLDER):
+        probs.append("door_keeper: admit runs %s, this pack emits %s:%s/door_admit" % (dk["admit"]["function"], NS, FOLDER))
+    qd = json.loads((ROOT / "data" / "quests.json").read_text(encoding="utf-8"))
+    tr = {t_["id"]: t_ for q in qd["quests"] for t_ in q.get("transitions") or []}
+    adm = tr.get(dk["admit"]["transition"])
+    want = stages_from(spec["gates"]["door"]["from_stage"])
+    if adm is None:
+        probs.append("door_keeper: no quest transition %s" % dk["admit"]["transition"])
+    else:
+        conds = [c for c in adm["conditions"] if c.get("field") == STAGE_FIELD]
+        if len(adm["conditions"]) != 1 or len(conds) != 1 or conds[0].get("kind") != "progression_in" \
+                or list(conds[0].get("values") or []) != want:
+            probs.append("door_keeper: %s's conditions are %s, not the door gate's stages %s"
+                         % (adm["id"], adm["conditions"], want))
+        if [e for e in adm["effects"]] != [{"kind": "function", "function": dk["admit"]["function"]}]:
+            probs.append("door_keeper: %s's effects are %s, not the one admit function" % (adm["id"], adm["effects"]))
+    dl = json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-8"))
+    conv = next((c for c in dl["conversations"] if c["id"] == npc["conversation"]), {})
+    used = [a for n in conv.get("nodes") or [] if n["kind"] == "choice" for r in n["responses"]
+            for a in r.get("actions") or [] if a.get("transition") == dk["admit"]["transition"]]
+    if not used:
+        probs.append("door_keeper: %s never offers %s: nobody could get in" % (npc["conversation"], dk["admit"]["transition"]))
+    return probs
+
+
+def door_keeper_files(spec):
+    """{function name: lines}: door_admit, run as and at the player who chose 'Let me through.' (the compiled dialogue's
+    `function` effect), the shape of tools/relic_underground.py's hq_admit."""
+    dk = spec["door_keeper"]
+    x, y, z = dk["stand"]
+    ad = dk["admit"]
+    tx, ty, tz = ad["to"]
+    return {"door_admit": [
+        "# Generated by tools/hq_tower.py: Director Elara Venn lets THIS player through the tower door (data/hq_tower.json",
+        "# door_keeper). Run as and at the player who chose it, never @a; the stage test is the dialogue's transition",
+        "# (%s). Nothing for a player not at her." % ad["transition"],
+        "execute unless entity @s[x=%d.5,y=%d,z=%d.5,distance=..%d] run return fail" % (x, y, z, ad["reach"]),
+        "ride @s dismount",
+        "tp @s %s %s %s %s %s" % (tx, ty, tz, ad["yaw"], ad["pitch"])]}
 
 
 def check_caches(spec):
@@ -472,6 +557,15 @@ def gate_lines(spec):
         lines += ["# the %s gate: %s or later" % (name, gg["from_stage"]),
                   "title %s actionbar %s" % (who, json.dumps({"text": gg["say"], "color": "gold"})),
                   "tp %s %s %s %s %s 0" % (who, x, y, z, yaw)]
+    dk = spec.get("door_keeper")
+    if dk:
+        hx, hy, hz = dk["hole"]
+        who = "@a[%s,gamemode=!creative,gamemode=!spectator]" % _box((hx, hy, hz, hx, hy, hz))
+        x, y, z = dk["out"]["to"]
+        lines += ["# the way out past Director Elara Venn (door_keeper): whoever steps into the doorway's inner cell, behind",
+                  "# her, is moved out to the corridor facing her. Every player alike: the way IN is her conversation",
+                  "title %s actionbar %s" % (who, json.dumps({"text": dk["out"]["say"], "color": "gold"})),
+                  "tp %s %s %s %s %s 0" % (who, x, y, z, dk["out"]["yaw"])]
     return lines
 
 
@@ -585,6 +679,7 @@ def build(source_root):
     probs += check_writes(spec, W, cells, plan, dc_spec)
     walk_probs, reach = check_walk(spec, W, cells)
     probs += walk_probs + check_caches(spec) + check_outside_seats(spec, cells) + check_fights(spec)
+    probs += check_door_keeper(spec, W, cells, reach)
     return spec, W, probs, reach
 
 
@@ -613,6 +708,8 @@ def emit(spec, W):
             order.append(name)
     (fn / "index.txt").write_text("\n".join(order) + "\n", encoding="utf-8")
     (fn / "cycle.mcfunction").write_text("\n".join(gate_lines(spec)) + "\n", encoding="utf-8")
+    for name, lines in door_keeper_files(spec).items():
+        (fn / (name + ".mcfunction")).write_text("\n".join(lines) + "\n", encoding="utf-8")
     (fn / "tick.mcfunction").write_text("\n".join([
         "scoreboard players add #clock cobblers_hq_tower 1",
         "execute if score #clock cobblers_hq_tower matches %d.. run function %s:%s/cycle" % (PERIOD, NS, FOLDER)]) + "\n",

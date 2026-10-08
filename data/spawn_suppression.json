@@ -235,6 +235,18 @@
       "why": "2026-10-03, carried from the owner's 2026-10-02 decision for the hall ('nothing spawns there. It is the end of the story, not a cave'): Hoopa's cradle, carved (data/relic_underground.json geometry.cradle, zone box 4 [3338, 3287, 3376, 3325]), snapped out to the 8-block grid. All y, so the capped relic area's surface over it is spawn-free too, as over the hall.",
       "mechanism": "as the League precinct's",
       "not_covered": "Pokemon a player sends out, and anything a scripted event puts there (a Hoopa actor at the cradle is the scene runtime's)"
+    },
+    {
+      "id": "heavens_arena",
+      "box": [
+        3552,
+        3128,
+        3623,
+        3207
+      ],
+      "why": "the owner, 2026-10-05: \"disable spawns inside heavens arena\". The dome (data/arena_dome.json site: centre (3586, 3164) r34, so x3552-3620, z3130-3198) and its entrance tower (tower.box to z3203), snapped out to the 8-block grid the route boxes share. Clear of the mouth plaza keep-clear (z3064-3124).",
+      "mechanism": "tools/compile_spawns.py cuts it out of every route, sub-region and waterway pool, and tools/suppress_inherited_spawns.py adds it to the inherited pools' anticondition boxes, so neither the campaign's rosters nor Cobblemon's and Cobbleverse's defaults spawn inside it",
+      "not_covered": "Pokemon a player sends out, the arena's own NPC opponents (tools/arena_runtime.py), and anything a trainer spawner or scripted event puts there"
     }
   ]
 }

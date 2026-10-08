@@ -154,6 +154,21 @@
       "scope": "gardens and orchards"
     },
     {
+      "blocks": [
+        "cobblemon:red_apricorn",
+        "cobblemon:blue_apricorn",
+        "cobblemon:yellow_apricorn",
+        "cobblemon:green_apricorn",
+        "cobblemon:pink_apricorn",
+        "cobblemon:white_apricorn",
+        "cobblemon:black_apricorn"
+      ],
+      "scope": "Hollin's Apricorn Farm (apricorn_farm: tools/apricorn_farm.py, data/apricorn_farm.json) at (2068, 5570): its seven groves, the drying sheds' bunches and the stall's display branch",
+      "why": "the farm is made of apricorn trees: the fruit is the point of it, and it must be real fruit for a player to pick. The entry above already allows apricorns in gardens and orchards; this one names the place, as the scope rule asks (tests/test_system_contracts.py C4)",
+      "consequence": "read from the Cobblemon 1.8.0 jar: 0100_voltorb.json (voltorb hisuian, levels 8-33, uncommon), 0101_electrode.json (electrode hisuian, levels 30-49, uncommon) and their herds (0101_electrode_alpha a boss bucket) need #cobblemon:apricorns nearby, sky light 8-15, any overworld biome. The farm stands in tier-1 sub-regions (south_west_fields, pallet's outskirts, arrow_creeks: level cap 25), so an Electrode above the cap can appear here unless the install's inherited-spawn suppression covers these sub-regions",
+      "decided": "OWNER TO CONFIRM: added 2026-10-05 by the farm's builder under the owner's request for the farm ('groves of all seven colours'); on the review list"
+    },
+    {
       "tags": [
         "leaves",
         "flowers",
@@ -461,6 +476,25 @@
       "why": "kelp_plant and seagrass are spawn conditions (data/spawn_blocks.json, neededNearbyBlocks) for dragalge, skrelp and pincurchin and their herd; cobblers_sea_floor lays kelp forests and seagrass meadows on the marine regions' shelf, which is these species' native habitat, so their spawning there is the floor doing its job. The level-cap refusal still stops a catch above a player's cap. kelp (the head) and tall_seagrass are not spawn conditions and need no entry",
       "consequence": "dragalge, skrelp and pincurchin can spawn over the dressed shelf wherever their other spawn conditions hold; before this pack the bare sand of the open sea held none of them",
       "decided": "the integrating session's default 2026-10-04 while the owner was out (ALLOW: the sea floor is these species' native habitat); the owner to confirm"
+    },
+    {
+      "blocks": [
+        "minecraft:wheat"
+      ],
+      "scope": "Arrow Creeks Farm (pokemon_farm: tools/pokemon_farm.py, data/pokemon_farm.json, pack cobblers_pokemon_farm) at (3149, 5714): its wheat field only (11 x 13 at x3110-3120 z5697-5709)",
+      "why": "the owner asked for it: a farm with a wheat field. The older entry above allows wheat to 'farm and animal-pen lots' but names no place; this one names the place, as the scope rule asks (tests/test_system_contracts.py C4)",
+      "consequence": "data/spawn_blocks.json names minecraft:wheat for three spawn entries, all Cobblemon-fabric-1.8.0+1.21.1.jar (read 2026-10-05): spawn_pool_world/0605_elgyem.json (elgyem, common, levels 9-34, weight 72), 0606_beheeyem.json (beheeyem, common, levels 42-49, weight 8), herds/0605_elgyem_herd.json (common, weight 20) and herds/0606_beheeyem_alpha.json (boss bucket, weight 100); each needs wheat nearby, timeRange night, sky light 8-15, any overworld biome. So Elgyem (and rarely a Beheeyem, above any early cap) can appear round the field at night, unless the install's inherited-spawn suppression covers arrow_creeks; the level-cap refusal still stops a catch above a player's cap",
+      "decided": "the owner, 2026-10-05: \"make wheat field\" (answering the farm builder's question that a wheat field needs this entry)"
+    },
+    {
+      "blocks": [
+        "minecraft:dandelion",
+        "minecraft:cornflower"
+      ],
+      "scope": "Arrow Creeks Farm (pokemon_farm: tools/pokemon_farm.py, data/pokemon_farm.json, pack cobblers_pokemon_farm) at (3149, 5714): the apiary's bee flowers only (rows at z5756-5757, x3172-3188)",
+      "why": "the farm's Combee refill the hives with Cobblemon's native cobblemon:pokemon_bee behaviour, which only gathers nectar from a flower: FlowerSensor (1.8.0 jar) takes the nearest not-waterlogged block of a vanilla flowers block tag within 5 blocks of the Pokemon. Every flower is a spawn condition (#cobblemon:flowers and the colour tags), so the forage cannot be spawn-neutral. Two small flowers, one yellow and one blue, are the fewest that still read as a flower bed",
+      "consequence": "read from the 1.8.0 jar 2026-10-05, spawns needing #cobblemon:flowers nearby in any overworld biome by day: combee (1-24), cutiefly (5-30), ribombee (25-46), comfey (24-49, rare, any time); vivillon savanna wings (12-41, #cobblemon:is_savanna); and through #cobblemon:yellow_flowers / #cobblemon:blue_flowers flabebe (5-30), floette (19-37) and florges (32-55) of those two colours (floette eternal also lists cornflower). Fitting for an apiary; the level-cap refusal still stops a catch above a player's cap",
+      "decided": "OWNER TO CONFIRM: added 2026-10-05 by the farm's systems agent as the means of the owner's \"yeah combee refills\" (the owner approved the refill, not these flowers by name); on the review list (data/pokemon_farm.json owner_questions)"
     }
   ],
   "checked_paving": {

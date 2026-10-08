@@ -294,6 +294,171 @@ def lake_surface(shape, X0, Z0, H):
     return wet
 
 
+# ---------------------------------------------------------------- the portal sheets: glimpses through a tear
+#
+# The owner (2026-09-22): "glimpses only: sheets set deep inside a narrow tear in a solid face, the rock hiding every
+# edge. Never standing in the open, never in a fissure." The first placement (to 2026-10-05) did not do that: it put
+# nine sheets at evenly spaced ring stations whatever the face was there, carved one column of air two blocks behind
+# the ring line with no opening to the air, and hung a 5 x 5 panel there with a yaw that mirrored the face normal and
+# a translation that was not rotated with it. On every diagonal face the panel stood edge-on and stuck out of the rock
+# into the open, which is what the owner saw at (4166.5, 118, 5121.5): "floating, reading as a random portal".
+#
+# Now: a site is a ring station on a SHEER stretch where the face is one cliff step; the sheet faces the basin along
+# the nearest axis (so its 5 x 5 rectangle is exactly 25 cells of one block layer, nothing rotated), it stands some
+# blocks behind the face, and a tear one block wide and three tall runs from the face to it. In the Rift's own surface
+# model (a cell is rock iff y <= H, the sculpted heightmap; never a world) every cell of the rectangle and a margin
+# round it is rock but the tear, and so are the tear's walls. A station that fails is refused and the next is tried.
+#
+# The model's limit, stated: below the skin's band (face_depth) the rock is whatever the export made, so the step
+# also fills any void in each enclosure box with the seal rock before it carves the tear. Later re-apply steps that
+# dig (the Deep, Victory Road, the mines, the zones' walls) are NOT checked here: that is the world probe's job.
+
+SHEET_W = 5         # the panel: 5 wide, 5 tall, one block layer (scale 5 x 5 x 1 of the nether_portal model)
+SHEET_H = 5
+
+
+def sheet_facing(nx, nz):
+    """The nearest axis to the inward (toward the basin) normal, as (fx, fz), and the panel's block axis."""
+    if abs(nx) >= abs(nz):
+        return (1 if nx > 0 else -1, 0), "z"      # facing along x: the panel lies in the z-y plane (axis=z)
+    return (0, 1 if nz > 0 else -1), "x"          # facing along z: the panel lies in the x-y plane (axis=x)
+
+
+def old_sheet_slots(ring, nrm, H, X0, Z0, shape, count):
+    """The cells the first placement carved to air, by its own logic: count stations evenly round the ring, one
+    column two blocks outside the ring line, from 2 to 7 above the ring station's ground. Kept so the sheets step can
+    put back the rock it took, on a world R1 already ran on."""
+    out = []
+    step = max(1, len(ring) // (count + 1))
+    for i in range(count):
+        k = (i + 1) * step
+        rx, rz = ring[k]
+        nx, nz = nrm[k]
+        ix, iz = rx - X0, rz - Z0
+        if not (0 <= ix < shape[1] and 0 <= iz < shape[0]):
+            continue
+        y = int(H[iz, ix])
+        sx, sz = int(round(rx - nx * 2)), int(round(rz - nz * 2))
+        out.append((sx, sz, [y + dy for dy in range(2, 8)]))
+    return out
+
+
+def site_sheet(k, ring, nrm, H, basin, wet, X0, Z0, shape, ps):
+    """(site, None) for a sheet at ring station k, or (None, why it is refused). Model only: rock iff y <= H."""
+    tr = ps["tear"]
+    mg = ps["margin"]
+    rx, rz = ring[k]
+    (fx, fz), axis = sheet_facing(*nrm[k])
+    tx, tz = -fz, fx
+
+    def h(x, z):
+        ix, iz = x - X0, z - Z0
+        if not (0 <= ix < shape[1] and 0 <= iz < shape[0]):
+            return None
+        return int(H[iz, ix])
+
+    # the face: walking outward from inside the basin, the first column whose ground stands a sheet's height and
+    # its margins above the column in front of it. A sheer stretch is one cliff step, so this is one column.
+    face = None
+    for d in range(tr["search"], -tr["search"] - 1, -1):
+        a, b = h(rx + fx * d, rz + fz * d), h(rx + fx * (d + 1), rz + fz * (d + 1))
+        if a is None or b is None:
+            continue
+        if a - b >= SHEET_H + 1 + mg:
+            face = d
+            break
+    if face is None:
+        return None, "no single cliff step tall enough"
+    front = (rx + fx * (face + 1), rz + fz * (face + 1))
+    ys = h(*front) + 1                                  # the panel's bottom row is the eye-level course over the floor
+    # the viewer stands in front: basin floor, dry, not raised over the tear's mouth
+    for j in range(1, tr["approach"] + 1):
+        x, z = rx + fx * (face + j), rz + fz * (face + j)
+        hj = h(x, z)
+        if hj is None or not basin[z - Z0, x - X0] or wet[z - Z0, x - X0] or hj > ys:
+            return None, "no dry floor in front of the face"
+    lo, hi = ys + tr["y"][0], ys + tr["y"][1]           # the tear's courses, inside the panel's five
+
+    def layer(m):                                       # the centre of the m-th block layer behind the face
+        return rx + fx * (face - m), rz + fz * (face - m)
+
+    def rock_to(x, z, y):
+        g = h(x, z)
+        return g is not None and y <= g
+
+    for ks in range(tr["depth"][0], tr["depth"][1] + 1):
+        w = tr["width"]
+        tear = {(layer(m)[0] + tx * u, y, layer(m)[1] + tz * u)
+                for m in range(ks + 1) for u in range(w) for y in range(lo, hi + 1)}
+        ok = True
+        # the tear's walls, roof and sill, all the way from the face to the sheet
+        for m in range(ks + 1):
+            cx, cz = layer(m)
+            for u in range(-1, w + 1):
+                for y in range(lo - 1, hi + 2):
+                    if not rock_to(cx + tx * u, cz + tz * u, y):
+                        ok = False
+        # the sheet's layer, the one in front and the one behind: the rectangle and its margin, all rock
+        half = SHEET_W // 2 + mg
+        for m in (ks - 1, ks, ks + 1):
+            cx, cz = layer(m)
+            for u in range(-half, half + 1):
+                for y in range(ys - mg, ys + SHEET_H + mg):
+                    if not rock_to(cx + tx * u, cz + tz * u, y):
+                        ok = False
+        if ok:
+            sx, sz = layer(ks)
+            return {"station": k, "x": sx, "y": ys, "z": sz, "axis": axis, "facing": [fx, fz],
+                    "face": list(layer(0)), "depth": ks, "section": w * (hi - lo + 1),
+                    "tear": sorted(tear),
+                    "view": [front[0] + fx * (tr["approach"] - 1), ys, front[1] + fz * (tr["approach"] - 1)]}, None
+    return None, "the rock round the sheet is not solid at any depth up to %d" % tr["depth"][1]
+
+
+def sheet_panel(site):
+    """The cells the summoned panel passes through, from the summon's own geometry: the entity at the centre cell's
+    bottom, translated half a block back on its thin axis and 2.5 along its wide one, scaled 5 x 5 x 1."""
+    x, y, z = site["x"], site["y"], site["z"]
+    half = SHEET_W // 2
+    if site["axis"] == "x":
+        return [(x + u, y + dy, z) for u in range(-half, half + 1) for dy in range(SHEET_H)]
+    return [(x, y + dy, z + u) for u in range(-half, half + 1) for dy in range(SHEET_H)]
+
+
+def sheet_enclosure_faults(site, H, X0, Z0, shape):
+    """The build's guard. Every cell within one block of the panel (its whole box, grown by one in all three axes)
+    must be rock after the step, in the model, except the tear's own cells; the tear must reach the panel and open to
+    the air at its mouth; and no more than the tear's cross-section of the panel may show. Reads the summon's
+    geometry (sheet_panel) and the carved cells, not the search that chose them."""
+    def air_after(x, y, z):
+        if (x, y, z) in tear:
+            return True
+        ix, iz = x - X0, z - Z0
+        if not (0 <= ix < shape[1] and 0 <= iz < shape[0]):
+            return True
+        return y > int(H[iz, ix])
+
+    tear = {tuple(c) for c in site["tear"]}
+    panel = sheet_panel(site)
+    xs, ys_, zs = zip(*panel)
+    faults = []
+    for x in range(min(xs) - 1, max(xs) + 2):
+        for y in range(min(ys_) - 1, max(ys_) + 2):
+            for z in range(min(zs) - 1, max(zs) + 2):
+                if air_after(x, y, z) and (x, y, z) not in tear:
+                    faults.append("open cell %s beside the panel" % ((x, y, z),))
+    shown = [c for c in panel if c in tear]
+    if not shown:
+        faults.append("the tear never reaches the panel: nothing shows")
+    if len(shown) > site["section"]:
+        faults.append("%d of the panel's %d cells show, more than a tear's cross-section" % (len(shown), len(panel)))
+    fx, fz = site["facing"]
+    mouth = [c for c in tear if (c[0] + fx, c[1], c[2] + fz) not in tear]
+    if not mouth or not all(air_after(c[0] + fx, c[1], c[2] + fz) for c in mouth):
+        faults.append("the tear does not open to the air at the face")
+    return faults
+
+
 def build(source_root, server_dir=None):
     import ground as G
     import terrain as T
@@ -650,35 +815,88 @@ def build(source_root, server_dir=None):
     plan.count("railing pier blocks", npier)
     plan.count("railing lanterns", nlamp)
 
-    # ---- the portal sheets: glimpses set deep in a tear in a solid face
+    # ---- the portal sheets: glimpses set deep in a tear in a solid face. Their OWN step (R1S, cobblers:rift/sheets),
+    # so they can be re-sited without the whole R1 pass: nothing of them is in plan.lines or plan.entities.
     ps = spec["portal_sheets"]
-    sheer = [i for i, (a, b, k) in enumerate(sc["segments"]) if k == "sheer"]
+    seal_rock = pick(spec["water"]["seal"]["block"], spec["water"]["seal"]["fallback"], have)
+    sheer = [k for a_, b_, kind in sc["segments"] if kind == "sheer" for k in range(int(math.ceil(a_)), int(b_))
+             if k < len(ring)]
+    near_entrance = set()
+    for e in ent:
+        reach = e.get("gap", 30) + ps["entrance_clearance"]
+        near_entrance.update((e["ring"] + j) % len(ring) for j in range(-reach, reach + 1))
+    refused = {}
     sites = []
-    step = max(1, len(ring) // (ps["count"] + 1))
-    for i in range(ps["count"]):
-        k = (i + 1) * step
-        rx, rz = ring[k]
-        nx, nz = nrm[k]
-        ix, iz = rx - X0, rz - Z0
-        if not (0 <= ix < shape[1] and 0 <= iz < shape[0]):
-            continue
-        y = int(H[iz, ix])
-        # a narrow slot into the face, and the sheet two blocks deeper than its mouth
-        sx, sz = int(round(rx - nx * 2)), int(round(rz - nz * 2))
-        for dy in range(2, 8):
-            plan.lines.append("fill %d %d %d %d %d %d minecraft:air" % (sx, y + dy, sz, sx, y + dy, sz))
-        yaw = math.degrees(math.atan2(-nx, nz))
-        plan.entities.append(
-            'summon minecraft:block_display %.1f %.1f %.1f {block_state:{Name:"%s"},'
+    bins = ps["count"]
+    for b_ in range(bins):
+        part = sheer[b_ * len(sheer) // bins:(b_ + 1) * len(sheer) // bins]
+        mid = len(part) // 2
+        order_ = [part[mid + (d + 1) // 2 * (1 if d % 2 else -1)] for d in range(len(part))
+                  if 0 <= mid + (d + 1) // 2 * (1 if d % 2 else -1) < len(part)]
+        got = None
+        for k in order_:
+            if k in near_entrance:
+                refused["beside an entrance"] = refused.get("beside an entrance", 0) + 1
+                continue
+            site, why = site_sheet(k, ring, nrm, H, basin, wet, X0, Z0, shape, ps)
+            if site is None:
+                refused[why] = refused.get(why, 0) + 1
+                continue
+            got = site
+            break
+        if got is not None:
+            sites.append(got)
+    for why, n in sorted(refused.items()):
+        plan.count("portal sheet stations refused: %s" % why, n)
+    if len(sites) < ps["count"]:
+        print("  portal sheets: only %d of %d stretches have a face that encloses a sheet" % (len(sites), ps["count"]))
+    # the guard: a sheet whose rectangle is not enclosed fails the build, whatever chose it
+    for st_ in sites:
+        faults = sheet_enclosure_faults(st_, H, X0, Z0, shape)
+        if faults:
+            raise SkinError("portal sheet at %s is not enclosed: %s" % ((st_["x"], st_["y"], st_["z"]), faults[:4]))
+    old = old_sheet_slots(ring, nrm, H, X0, Z0, shape, ps["count"])
+    sl = []          # the step's block lines, in order: put back the old slots, seal the enclosures, carve the tears
+    for x, z, cells in old:
+        g = int(H[z - Z0, x - X0])
+        for y in cells:
+            if y > g:
+                continue                      # the model has air there: the old carve took nothing
+            b = rock[min(len(rock) - 1, int(unit(x, y // band, z, 11) * len(rock)))]
+            sl.append("fill %d %d %d %d %d %d %s replace minecraft:air" % (x, y, z, x, y, z, b))
+            plan.count("portal sheets: old slot cells put back")
+    for st_ in sites:
+        panel = sheet_panel(st_)
+        xs, ys_, zs = zip(*panel)
+        fx, fz = st_["facing"]
+        # any cave the export left in the rock the model says encloses the sheet becomes rock: the panel's box grown
+        # by one (the guard's box), and the tear's walls from the face in. Only cells the search proved are rock in
+        # the model, so the fill can never build into the open.
+        sl.append("fill %d %d %d %d %d %d %s replace #cobblers:rift_void" % (
+            min(xs) - 1, min(ys_) - 1, min(zs) - 1, max(xs) + 1, max(ys_) + 1, max(zs) + 1, seal_rock))
+        tx_, ty_, tz_ = zip(*st_["tear"])
+        sl.append("fill %d %d %d %d %d %d %s replace #cobblers:rift_void" % (
+            min(tx_) - abs(fz), min(ty_) - 1, min(tz_) - abs(fx), max(tx_) + abs(fz), max(ty_) + 1, max(tz_) + abs(fx),
+            seal_rock))
+        for x, y, z in st_["tear"]:
+            sl.append("setblock %d %d %d minecraft:air" % (x, y, z))
+        plan.count("portal sheet tear cells", len(st_["tear"]))
+    se = []
+    for st_ in sites:
+        if st_["axis"] == "x":
+            scale, trans = "5f,5f,1f", "-2.5f,0f,-0.5f"
+        else:
+            scale, trans = "1f,5f,5f", "-0.5f,0f,-2.5f"
+        se.append(
+            'summon minecraft:block_display %.1f %d %.1f {block_state:{Name:"%s",Properties:{axis:"%s"}},'
             'brightness:{sky:15,block:15},view_range:%.1ff,width:6f,height:6f,'
-            'transformation:{left_rotation:[0f,%.4ff,0f,%.4ff],right_rotation:[0f,0f,0f,1f],'
-            'translation:[-2.5f,0f,0f],scale:[5f,5f,1f]},Tags:["%s","%s"]}'
-            % (sx + 0.5, y + 2.0, sz + 0.5, ps["block"], ps["view_range"],
-               math.sin(math.radians(yaw) / 2), math.cos(math.radians(yaw) / 2),
-               ps["tag"], "rift_fx_all"))
-        sites.append([sx, y + 3, sz])
+            'transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],'
+            'translation:[%s],scale:[%s]},Tags:["%s","%s"]}'
+            % (st_["x"] + 0.5, st_["y"], st_["z"] + 0.5, ps["block"], st_["axis"], ps["view_range"],
+               trans, scale, ps["tag"], ps["sheet_tag"]))
+    plan.sheet_lines, plan.sheet_entities, plan.sheet_sites, plan.old_slots = sl, se, sites, old
     plan.count("portal sheets", len(sites))
-    plan.views["a glimpse"] = sites[0] if sites else [0, 0, 0]
+    plan.views["a glimpse"] = sites[0]["view"] if sites else [0, 0, 0]
 
     # ---- the seal: any void the export left right behind a new face becomes rock
     seal = spec["water"]["seal"]
@@ -849,6 +1067,30 @@ def write(plan):
         go.append("forceload remove %d %d %d %d" % (bx - 16, bz - 16, bx + 31, bz + 31))
     (fn / "fx_go.mcfunction").write_text("\n".join(go) + "\n", encoding="utf-8")
 
+    # the portal sheets, their own step (R1S): force-load every chunk they or the old slots touch, wait for the
+    # entities to load, then kill every sheet (the old ones carry rift_fx and rift_fx_all, the new rift_fx and
+    # rift_sheet; only block_displays, so the trailhead stands that also carry rift_fx stay), put back the old slots,
+    # seal and carve, summon, count. The new sheets do NOT carry rift_fx_all, so re-running R1's fx_go leaves them.
+    ps = spec["portal_sheets"]
+    pts = [(x, z) for x, z, _ in plan.old_slots] + [(c[0], c[2]) for s_ in plan.sheet_sites for c in s_["tear"]] \
+        + [(c[0], c[2]) for s_ in plan.sheet_sites for c in sheet_panel(s_)]
+    sboxes = sorted({(x >> 4 << 4, z >> 4 << 4) for x, z in pts})
+    hold = ["forceload add %d %d %d %d" % (bx - 16, bz - 16, bx + 31, bz + 31) for bx, bz in sboxes]
+    probs = FL.check_lines(hold + plan.sheet_lines, "sheets_go")
+    if probs:
+        raise SkinError("the sheets step would be refused: %s" % probs[:3])
+    (fn / "sheets.mcfunction").write_text("\n".join(
+        ["# Generated by tools/rift_skin.py: the Rift's portal sheets (re-apply step R1S)"] + hold
+        + ["schedule function cobblers:rift/sheets_go 60t replace"]) + "\n", encoding="utf-8")
+    sg = ["# Generated by tools/rift_skin.py",
+          "# chunks-loaded-by: cobblers:rift/sheets (its forceload of every sheet box, checked above with these lines)",
+          "scoreboard objectives add cobblers.rift_fx dummy",
+          "kill @e[type=minecraft:block_display,tag=%s]" % ps["tag"]] + plan.sheet_lines + plan.sheet_entities + [
+        "execute store result score #%s cobblers.rift_fx if entity @e[type=minecraft:block_display,tag=%s]"
+        % (ps["sheet_tag"], ps["tag"])]
+    sg += ["forceload remove %d %d %d %d" % (bx - 16, bz - 16, bx + 31, bz + 31) for bx, bz in sboxes]
+    (fn / "sheets_go.mcfunction").write_text("\n".join(sg) + "\n", encoding="utf-8")
+
     (fn / "index.txt").write_text("\n".join(order) + "\n", encoding="utf-8")
     (bfn / "index.txt").write_text("\n".join(border) + "\n", encoding="utf-8")
     PLAN.parent.mkdir(parents=True, exist_ok=True)
@@ -856,6 +1098,11 @@ def write(plan):
         "checks": [[x, y, z, a, w] for x, y, z, a, w in plan.checks],
         "entities_expected": len(plan.entities),
         "entity_area_tag": tag,
+        "sheets_expected": len(plan.sheet_entities),
+        "sheet_tag": spec["portal_sheets"]["sheet_tag"],
+        "sheets": [{k: s_[k] for k in ("station", "x", "y", "z", "axis", "facing", "face", "depth", "tear", "view")}
+                   for s_ in plan.sheet_sites],
+        "old_sheet_slots": [[x, z, cells] for x, z, cells in plan.old_slots],
         "commands": len(plan.lines),
         "biome_cells": len(plan.biome_cells),
         "counts": plan.counts,
@@ -865,7 +1112,7 @@ def write(plan):
 
 
 def entity_count(world, tag):
-    """Entities of any type carrying the tag (the sheets and the trailhead guards), from the entity region files."""
+    """Entities of any type carrying the tag (rift_fx_all: the trailhead guards; rift_sheet: the sheets), from the entity region files."""
     import nbt
     n = 0
     for p in sorted((Path(world) / "entities").glob("r.*.*.mca")):
@@ -1008,7 +1255,10 @@ def verify(world):
         print("%-24s %7d of %7d as planned%s" % (k, good, good + wrong, ("   e.g. %s" % bad[k][:2]) if wrong else ""))
     n = entity_count(world, p["entity_area_tag"])
     print("%-24s %7d, expected %d" % ("entities", n, p["entities_expected"]))
-    total = sum(b for _, b in by.values()) + (0 if n == p["entities_expected"] else 1)
+    ns_ = entity_count(world, p.get("sheet_tag", "rift_sheet"))
+    print("%-24s %7d, expected %d" % ("portal sheets", ns_, p.get("sheets_expected", 0)))
+    total = sum(b for _, b in by.values()) + (0 if n == p["entities_expected"] else 1) \
+        + (0 if ns_ == p.get("sheets_expected", 0) else 1)
     print("rift skin: %s" % ("clean" if total == 0 else "%d MISMATCHES" % total))
     return 0 if total == 0 else 1
 
