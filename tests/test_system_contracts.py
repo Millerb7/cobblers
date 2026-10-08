@@ -1427,6 +1427,34 @@ def _defs(path):
 
 
 # Without it a contract points at a test that was renamed or deleted, and the registry claims a guarantee nothing checks.
+# Without it maxDynamaxLevel could be lowered (Pokemon.setDmaxLevel clamps the Sketch count to it, so the count stops
+# short of the cap and Sketch never fails), or the cap could be raised past Showdown's 0..10 clamp, or the generated
+# override and callbacks could drift from the record's cap. The 10 is Showdown's own clamp (sim/pokemon.js:118, read
+# from the 1.8.0 jar: clampIntRange(set.dynamaxLevel, 0, 10)), not the record's number.
+def test_contract_c22_the_sketch_cap_fits_under_the_dynamax_level_the_config_allows():
+    import battle_sim
+    import mythical_starters as MS
+    showdown_clamp = 10
+    config = json.loads((ROOT / "modpack" / "config" / "cobblemon" / "main.json").read_text(encoding="utf-8"))
+    assert config["maxDynamaxLevel"] == showdown_clamp, config["maxDynamaxLevel"]
+    doc = json.loads(MS.DATA.read_text(encoding="utf-8"))
+    capped = [ln for ln in doc["lines"] if "sketch_cap" in ln]
+    assert len(capped) == 1, [ln["id"] for ln in capped]
+    cap = capped[0]["sketch_cap"]["uses"]
+    assert 1 <= cap <= min(showdown_clamp, config["maxDynamaxLevel"]), cap
+    try:
+        out = MS.files(doc)
+    except battle_sim.SimError as exc:
+        pytest.skip("no Cobblemon 1.8.0 jar: %s" % exc)
+    js = out["data/cobblers/moves/sketch.js"]
+    guards = re.findall(r"if \(source\.dynamaxLevel >= (\d+)\) return false;", js)
+    assert guards == [str(cap)], guards
+    for event in ("battle_started_post", "battle_victory", "battle_fled"):
+        text = out["data/cobblemon/callbacks/%s/cobblers_sketch_cap.molang" % event]
+        written = [int(n) for n in re.findall(r"apply\('dmax_level=(\d+)'\)", text)]
+        assert max(written) == cap and min(written) == 1, (event, written)
+
+
 def test_every_contract_names_existing_tests():
     for c in REGISTRY["contracts"]:
         assert c["tests"], c["id"]

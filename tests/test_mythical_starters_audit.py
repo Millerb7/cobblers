@@ -1,5 +1,5 @@
-"""tools/mythical_starters_audit.py: the six starters (five mythical, and Larvesta since 2026-10-08) checked against
-the DECISION and the 1.8.0 jar.
+"""tools/mythical_starters_audit.py: the seven starters (five mythical, Larvesta and Smeargle since 2026-10-08) checked
+against the DECISION and the 1.8.0 jar.
 
 Written by a test author, not by the session that built the starters. Every mutation below changes the GENERATOR's
 code (tools/mythical_starters.py `addition` or `files`, monkeypatched) and leaves data/mythical_starters.json alone
@@ -153,7 +153,7 @@ def test_a_forced_evolution_is_a_fault(jar, monkeypatch, tmp_path):
 def test_a_form_on_a_native_final_is_a_fault(jar, monkeypatch, tmp_path):
     extra = {"data/cobblers/species_additions/x_silvally.json":
              {"target": "cobblemon:silvally", "forms": [{"name": "Starter", "aspects": [A2]}]}}
-    assert_named(faults(jar, build(monkeypatch, tmp_path, extra=extra)), "adds to silvally", "carries 13 forms")
+    assert_named(faults(jar, build(monkeypatch, tmp_path, extra=extra)), "adds to silvally", "carries 16 forms")
 
 
 # Without it a species-level change would reach every wild, raid and trainer copy of the species.
@@ -268,7 +268,8 @@ def _screen(tmp_path, pokemon):
     return p
 
 
-FIVE = ["%s level=5 aspect=%s" % (s, A1) for s in ("cosmog", "kubfu", "typenull", "poipole", "meltan", "larvesta")]
+FIVE = ["%s level=5 aspect=%s" % (s, A1) for s in ("cosmog", "kubfu", "typenull", "poipole", "meltan", "larvesta",
+                                                    "smeargle")]
 
 
 # Without it the screen could offer a wrong level, no aspect (the wild-shaped Pokemon), a sixth or a missing line.
@@ -276,7 +277,7 @@ FIVE = ["%s level=5 aspect=%s" % (s, A1) for s in ("cosmog", "kubfu", "typenull"
     ([e.replace("level=5", "level=6") if e.startswith("kubfu") else e for e in FIVE], "the decision is level=5"),
     ([e.split(" aspect=")[0] if e.startswith("poipole") else e for e in FIVE], "the decision is level=5 aspect="),
     (FIVE + ["charmander level=5 aspect=%s" % A1], "offers ['charmander'"),
-    (FIVE[:-1], "the decision is exactly the 6 stage-1 lines"),
+    (FIVE[:-1], "the decision is exactly the 7 stage-1 lines"),
     (["Type: Null level=5 aspect=%s" % A1 if e.startswith("typenull") else e for e in FIVE], "is not a species id"),
 ])
 def test_the_starter_screen_offers_exactly_the_five(jar, monkeypatch, tmp_path, pokemon, needle):
@@ -371,6 +372,68 @@ def test_an_unissued_scroll_is_reported_open_until_the_station_issues_it(jar, mo
     alt = tmp_path / "station.json"
     alt.write_text(json.dumps(station), encoding="utf-8")
     assert AU.audit(pack=pack, jar=jar, station=alt)[1] == []
+
+
+# ------------------------------------------------------------------------- Smeargle, the seventh (2026-10-08)
+# Smeargle has no evolution, so its 45 step is a third form of its own; every form has Protean and keeps Sketch, and
+# the pack carries the Sketch cap. Each case mutates the GENERATOR (addition, sketch_override or sketch_files); the
+# expectation is the audit's FORM_FINALS / SKETCH_CAP, the owner's numbers.
+
+def _smeargle_forms(fn):
+    def m(sp, a):
+        if sp == "smeargle":
+            for f in a["forms"]:
+                fn(f)
+    return m
+
+
+def _drop_third(sp, a):
+    if sp == "smeargle":
+        a["forms"][1]["evolutions"] = []
+
+
+def _spore(f):
+    f["moves"] = f["moves"] + ["1:spore"]
+
+
+@pytest.mark.parametrize("mutate, needle", [
+    # Without it a form could fall back to Smeargle's own Own Tempo / Technician / Moody and pass
+    (_smeargle_forms(lambda f: f.pop("abilities")), "smeargle stage 1: abilities None; the decision is protean"),
+    # ...or carry Protean only as its hidden ability, which a starter never rolls
+    (_smeargle_forms(lambda f: f.update(abilities=["owntempo", "h:protean"])), "smeargle stage 2: abilities"),
+    # Without it the 45 step could be lost and Smeargle stop at 430 for the rest of the game
+    (_drop_third, "smeargle stage 2: 0 evolutions; the decision is one step, into the third form"),
+    # Without it Spore could be a level-up move, which the decision keeps for Sketch alone
+    (_smeargle_forms(_spore), "the decision is that they arrive only through Sketch"),
+    # Without it a form could lose Sketch from its learnset
+    (_smeargle_forms(lambda f: f.update(moves=[e for e in f["moves"] if e != "1:sketch"])), "sketch is not learnt at 1"),
+])
+def test_a_smeargle_form_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path, mutate, needle):
+    assert_named(faults(jar, build(monkeypatch, tmp_path, mutate)), needle)
+
+
+# Without it the override could refuse at a count the decision did not set (or never), or a callback could be dropped
+# and the count never rise, and the audit would still pass.
+@pytest.mark.parametrize("part, needle", [
+    ("guard", "does not carry 'if (source.dynamaxLevel >= 10) return false;'"),
+    ("callback", "battle_fled/cobblers_sketch_cap.molang is missing"),
+    ("comment", "a // or unbalanced comment"),
+])
+def test_the_sketch_cap_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path, part, needle):
+    if part in ("guard", "comment"):
+        original = MS.sketch_override
+
+        def override(cap, z):
+            text = original(cap, z)
+            if part == "guard":
+                return text.replace(">= %d)" % cap, ">= %d)" % (cap + 1))
+            return text.replace("const move = target.lastMove;", "const move = target.lastMove; // copied")
+        monkeypatch.setattr(MS, "sketch_override", override)
+    else:
+        original_cb = MS.sketch_files
+        monkeypatch.setattr(MS, "sketch_files", lambda line: {k: v for k, v in original_cb(line).items()
+                                                              if "battle_fled" not in k})
+    assert_named(faults(jar, build(monkeypatch, tmp_path)), needle)
 
 
 # Without it the audit could start reusing the builder's own derivation and agree with it about anything.

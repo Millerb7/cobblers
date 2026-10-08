@@ -237,7 +237,8 @@ def our_packs(doc=None, with_fixes=True):
     import mythical_starters as MS
     packs = {"cobblers_mythical_starters": {r: json.loads(t) for r, t in
                                             MS.files(json.loads(MS.DATA.read_text(encoding="utf-8"))).items()
-                                            if r.startswith("data/")}}
+                                            # the pack also carries the Sketch cap's .js and .molang (not JSON)
+                                            if r.startswith("data/") and r.endswith(".json")}}
     if with_fixes:
         doc = doc if doc is not None else load()
         packs[PACK] = {r: json.loads(t) for r, t in files(doc, upstream_files(doc)).items() if r.startswith("data/")}

@@ -119,8 +119,9 @@ ALLOW: dict[str, str] = {
     # the starters (the owner, 2026-10-08: "add a starter page"): every player picks one of these five on the starter
     # screen (modpack/config/cobblemon/starters.json) and raises it through its own line, so the species names are
     # public. data/mythical_starters.json stays a secret file: its research station, Director and dialogue stay out
-    # Larvesta, the sixth (the owner, 2026-10-08), is also wild (data/spawns.json), so the region map names it too
-    **{n: _STARTER for n in ("cosmog", "cosmoem", "kubfu", "poipole", "meltan", "larvesta")},
+    # Larvesta, the sixth (the owner, 2026-10-08), is also wild (data/spawns.json), so the region map names it too;
+    # Smeargle, the seventh (the owner, 2026-10-08), likewise
+    **{n: _STARTER for n in ("cosmog", "cosmoem", "kubfu", "poipole", "meltan", "larvesta", "smeargle")},
 }
 # Single ordinary English words that a secret file uses as an NPC's label (data/dialogue.json npc_name "Courier",
 # "Guide") and that the pages use in their ordinary sense ("this guide", the route trainer "Night Courier"). Matching
