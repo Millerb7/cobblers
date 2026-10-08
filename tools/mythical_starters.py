@@ -707,29 +707,46 @@ def sketch_pool(trainer, text):
                 out.add(mid)
     return out
 
-def measure(doc, ivs=15):
-    """Wins of each leader Pokemon, 1v1 from full health, at each gym's cap, with the stage a player has there.
+# Move sources `measure` deliberately does not model, each with the reason. tools/sim_move_sources.py derives every
+# measured form's move sources from the jar and data/mythical_starters.json and fails on any source the measure's
+# pool gives none of, unless its kind is listed here; it also fails on an entry here that exempts nothing or that the
+# pool now models. An explicit list, so a source left out is a decision someone wrote down, not a silent skip
+# (the owner, 2026-10-08, after 9/35: Smeargle measured with no Sketch).
+MEASURE_UNMODELLED = {
+    "native:tm": "a native final's own TM list. battle_sim measures every species on level-up moves only (its gym "
+                 "assessment too), so the eight native finals stay like-for-like with each other; when a player "
+                 "holds which disc is not measured (`cobblemon:unlockable`).",
+    "native:tutor": "a native final's tutor list: as native:tm, and no tutor's availability is measured.",
+    "native:egg": "a native final's egg moves: the starter is received, not hatched; an egg move reaches a Pokemon "
+                  "only through breeding, which this measure does not model.",
+    "native:legacy": "a native final's legacy moves: not obtainable through level-up, and how a player would get "
+                     "them is not measured.",
+}
 
-    The stage at a cap: below stage_2 the stage-1 form, from stage_2 the stage-2 form, from final the native final
-    (each choice the line offers is measured; the best is reported). The final carries the native learnset PLUS the
-    authored pool, because every move a Pokemon has learnt stays benched and can be slotted back
-    (src pokemon/Pokemon.kt allAccessibleMoves, relayed from NATIVE_STARTERS_1_8_0.md section 3d). IVs 15, no
-    items, damaging level-up moves only: battle_sim's own Mon, choose_moveset and duel. A lower bound on spread.
-    """
-    jar = B.find_jar()
+
+def measure_plan(doc, jar=None):
+    """What `measure` fights with, without fighting: the species table with the starter forms written into it, the
+    leaders, and per line per gym the cap and the options [(label, species key, form)], form ("stage", n) or
+    ("final", name). tools/sim_move_sources.py reads this as the system under test."""
+    jar = jar or B.find_jar()
     species, moves, chart = B.load_pack(jar)
     allsp = jar_species(jar)
     leaders, _contract = B.gym_leaders()
     _init, rel = B.level_caps(B.RCT_CONFIG)
     l2, lf = doc["levels"]["stage_2"], doc["levels"]["final"]
-    out = {}
     pool_text = zipfile.ZipFile(jar).read(B.SHOWDOWN + "moves.js").decode("utf8", "replace")
+    plan = {}
     for line in doc["lines"]:
         lid = line["id"]
+        # a form's `tm:` entries (the native TM disc and TM Machine teach them; tm_additions are among them), learnt
+        # "at 1" so choose_moveset can pick them: an upper bound on when the disc is in hand (its unlock is not
+        # measured); with Smeargle's tm:uturn the 2026-10-08 total is 21/35 either way
+        tms = ["1:%s" % TM_MOVE.match(e).group(1) for e in line["moves"] if TM_MOVE.match(e)]
         syn = {}
         for s in line["stages"]:
             k = "cobblers%s%d" % (B.key(lid), s["stage"])
-            sp = dict(allsp[B.key(s["species"])], baseStats=s["baseStats"], moves=list(line["moves"]), evolutions=[])
+            sp = dict(allsp[B.key(s["species"])], baseStats=s["baseStats"], moves=list(line["moves"]) + tms,
+                      evolutions=[])
             if "abilities" in s:
                 sp["abilities"] = list(s["abilities"])
             species[k] = sp
@@ -740,7 +757,8 @@ def measure(doc, ivs=15):
             nat = allsp[B.key(f.split()[0])]
             native = [e for e in nat.get("moves") or [] if e.split(":", 1)[1] not in SELF_KO]
             sp = dict(nat, moves=native + [e for e in line["moves"]
-                                           if LEVEL_MOVE.match(e) and int(e.split(":")[0]) <= lf], evolutions=[])
+                                           if LEVEL_MOVE.match(e) and int(e.split(":")[0]) <= lf] + tms,
+                      evolutions=[])
             species[k] = sp
             finals.append((f, k))
         res = {}
@@ -748,21 +766,57 @@ def measure(doc, ivs=15):
         for g in sorted(leaders):
             t = leaders[g]
             cap = max(m["level"] for m in t["team"]) + rel
-            foes = B.build_leader(t, species, moves, chart, ivs, False)
-            options = ([("stage 1", syn[1])] if cap < l2 else [("stage 2", syn[2])] if cap < lf
-                       else [("stage 3", syn[3])] if 3 in syn else [(f, k) for f, k in finals])
-            # keyed on the line KEEPING Sketch, not on sketch_cap: the cap only limits how many copies, and with it off
-            # (the owner, 2026-10-08) keying on it measured Smeargle with no Sketch at all (9/35)
+            options = ([("stage 1", syn[1], ("stage", 1))] if cap < l2
+                       else [("stage 2", syn[2], ("stage", 2))] if cap < lf
+                       else [("stage 3", syn[3], ("stage", 3))] if 3 in syn
+                       else [(f, k, ("final", f)) for f, k in finals])
+            # keyed on the line KEEPING Sketch, not on sketch_cap: the cap only limits how many copies. From the cap's
+            # removal (e25882e, the owner 2026-10-08) until b1280c0, keying on sketch_cap measured Smeargle with no
+            # Sketch at all, and its 9/35 was reported as a measurement (docs/OVERNIGHT_REVIEW_2026-10-06.md N165)
             if "1:sketch" in line["moves"]:
                 # Sketch is the movepool: the moves of every EARLIER gym leader's team, learnt "at 1" so
                 # choose_moveset can pick them (a lower bound: wild Pokemon and route trainers are left out, and
                 # battle_sim models no Protean, so the Smeargle here is Normal throughout)
-                label, k = options[0]
+                label, k, form = options[0]
                 k2 = "%sg%d" % (k, g)
                 species[k2] = dict(species[k], moves=list(species[k]["moves"])
                                    + ["1:%s" % m for m in sorted(sketched) if m in moves])
-                options = [(label + " +sketch", k2)]
+                options = [(label + " +sketch", k2, form)]
                 sketched |= sketch_pool(t, pool_text)
+            res[g] = {"cap": cap, "options": options}
+        plan[lid] = res
+    return {"species": species, "moves": moves, "chart": chart, "leaders": leaders, "plan": plan, "jar": jar}
+
+
+def measure(doc, ivs=15):
+    """Wins of each leader Pokemon, 1v1 from full health, at each gym's cap, with the stage a player has there.
+
+    The stage at a cap: below stage_2 the stage-1 form, from stage_2 the stage-2 form, from final the native final
+    (each choice the line offers is measured; the best is reported). The final carries the native learnset PLUS the
+    authored pool, because every move a Pokemon has learnt stays benched and can be slotted back
+    (src pokemon/Pokemon.kt allAccessibleMoves, relayed from NATIVE_STARTERS_1_8_0.md section 3d). IVs 15, no
+    items, damaging level-up moves (and the forms' `tm:` entries and Sketch) only: battle_sim's own Mon,
+    choose_moveset and duel. A lower bound on spread.
+
+    Refuses to fight when tools/sim_move_sources.py finds a move source the pool cannot see and MEASURE_UNMODELLED
+    does not exempt: a number measured on a pool missing a source is a broken tool's number, not a measurement.
+    """
+    import sim_move_sources as S  # here, not at the top: it imports this module
+    mp = measure_plan(doc)
+    gaps = S.check_plan(doc, mp)
+    if gaps:
+        raise SystemExit("measure refused: the simulator cannot see a move source\n  "
+                         + "\n  ".join(gaps))
+    species, moves, chart, leaders = mp["species"], mp["moves"], mp["chart"], mp["leaders"]
+    out = {}
+    for line in doc["lines"]:
+        lid = line["id"]
+        res = {}
+        for g in sorted(leaders):
+            t = leaders[g]
+            cap = mp["plan"][lid][g]["cap"]
+            options = [(label, k) for label, k, _form in mp["plan"][lid][g]["options"]]
+            foes = B.build_leader(t, species, moves, chart, ivs, False)
             best = None
             for label, k in options:
                 me = B.Mon(species, k, cap, moves, chart, ivs=ivs)
