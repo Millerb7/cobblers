@@ -17,15 +17,24 @@ before it starts. The review list is `docs/OVERNIGHT_REVIEW_2026-10-06.md` (N95-
   released, `max-tick-time` 60000. Snapshot before today: `cobblers-staging/snapshot-2026-10-09-before-day`.
 - This worktree has a full `derived/` and a complete `build/` (prepare at the head before the docs commits).
 
-## 3. Next
-1. **Owner: Brock in game** -> then fix `P1:move_orphan` (N130) and decide Agatha/Bruno and Bruno/Lorelei (N131)
-   before the League rolls out; the other 7 gyms' templates need nothing more than Misty's/the League's measured data.
-2. **Owner decisions** listed in the report (N128 the Master Ball floor, N138 Link Cable/Upgrade, N132 z4, N129 prices,
-   the 12 design choices, U7).
-3. **Land the coast fringe (N139)**: store its cells in a form no siting scanner reads as a point, then re-audit.
-4. The level-cap check's gauntlet gap (N133); U6 mint-seed barter (research done: `docs/research/notes/mint-seeds.md`).
-5. The guides: regenerate with `python tools/player_guide_battles.py` and `python tools/player_guide_map.py`
-   after data changes; tests for both are a test-author's job (none yet).
+## 3. Next: the overnight brief of 2026-10-10 (the owner, verbatim decisions; run in session bacb34ed because no tool here can start a fresh session)
+1. **Nether override, FIRST (live defect):** stop Blaine-gym copies and Moltres altars generating in the Nether (and the
+   End copies, STATE "Generated gym copies"); re-measure the copy count; prove on a throwaway world; nobody may reach a
+   second Blaine or an unearned Moltres.
+2. **Entei boss (option B, `docs/mechanics/NETHER_DUNGEON_SCOPE.md`):** each player fights their own copy; losing blacks
+   you out; entry costs MATERIALS (Challenge players pay the same); first clear catchable, later clears give items; no
+   Arceus plates; Mewtwo stays on the fossil route; Entei first, Heatran after. Experiments first; check every species
+   against the 1.8.0 jar; the two-player case waits for a second account (never faked).
+3. **Arena payout hole:** settle whether CobbleDollars pays on the arena's NPC wins; if it pays, cap it.
+4. **Economy overhaul:** design then build: trainer income covers the fights; TMs, Mega stones, held items and training
+   from materials; farm products pay early on a declining price, AFK food capped or excluded; a REFILLABLE MINING CAVE
+   (stone-face reset mechanism: where, shared or per-player, yield, netherite too?); the Challenge voucher's real number
+   from the ladder; the paid services ($500 to raise one Pokemon to the cap; EV/IV the same) after researching the
+   level-setting command.
+5. **Queue:** the eight units the brief lists LANDED on 2026-10-09 (`docs/REPORT_2026-10-09.md`); left: the P1s
+   (Victory Road skippable on the surface and z4 over the League are owner decisions, N132; the Champion's floor trigger is
+   in-game only) and the four blocked trainer seats (explain them).
+Blocked on the owner: Brock (holds the 12), Lootr's two-player cases, the in-game checks.
 
 ## 4. Do not rediscover
 - `reapply.py prepare` needs `--server-dir` and the lock env (`COBBLERS_SERVER_LOCK`, `COBBLERS_LOCK_OWNER` equal to
