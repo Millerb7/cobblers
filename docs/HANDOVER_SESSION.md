@@ -82,3 +82,25 @@ once reported: further work goes on a new branch. Re-read its head before quotin
   loads at the next boot. Boot it when the owner asks, at 12G, in the terminal panel. Then, over RCON or in game,
   `tag <player> add cobblers.dg_playtest` and `scoreboard players set <player> dg.ptband 1` give a level-100 team the
   band-1 run, with the band-1 sigil (`miner_pottery_sherd` with `cobblers_dg_sigil:1b`).
+
+## 8. The next job: the gyms rebuilt as one walk-through building (the owner, 2026-10-09, after playing them)
+In substance: **"the fight areas are way better but getting to them sucks."** A gym should be **a single building the
+player walks through to the boss**, with a mini puzzle on the way and engaged fights (the juniors). Not "climb up and
+around, then go down five flights of stairs to a room I can't leave". **The arena rooms' vibes were good: expand from
+them, and fold the old building's puzzle into the one building.**
+- **A defect from play: "a room I can't leave from".** The independent audit (`tools/gym_arenas_audit.py`) found every
+  arena walkable down AND back up, so play and the walk model disagree. Find out which gym and why (a stair a client
+  cannot climb, a door that does not open from inside, the descent not readable as a way out) before the rebuild
+  repeats it.
+- **What carries over:** each arena's room, its leader seat and Battle Positions (`data/gym_arenas/`), the size rules
+  and the measured team sizes (`docs/world-building/GYM_ARENAS.md`), the moved spawners and the Challenge cells
+  (`data/challenge_mode.json`), the juniors (`data/gym_junior_trainers.json`) and each building's puzzle beats
+  (`data/gym_buildings/<gym>.json` `route`, `rooms`; Misty's in `data/gym_interiors.json`).
+- **What changes:** the building is the approach. Entrance, then puzzle rooms with juniors, then the arena as the last
+  room, on one level or a gentle grade. No long descent. The exit is the way you came, or a door past the leader. Fixed
+  lots still bind (STATE "Gyms"); Misty's is the one donor template. The rest are ours, so the building above ground
+  may itself be rebuilt.
+- **Cost (an estimate, not a measurement):** one design pass over all eight, keeping each leader's civic role
+  (`content-architect`, about 2M); the shared tool's change from carve-below to walk-through (one builder, about 4M,
+  the arena pilot's shape); eight per-gym builders (about 2.6M each, about 21M); an independent audit including
+  "can a client leave every room" (about 3M). About 30M. Say so to the owner and get approval before spawning.
