@@ -256,8 +256,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
                 "cobblers_gym_interiors",
                 # 2026-09-29: the five rejected sets of gym works filled in and their COBBLEVERSE shells taken down
-                # (tools/gym_demolish.py, data/gym_interiors.json `superseded_by`). Gyms 1, 3, 4, 5 and 7 only:
-                # Misty's (gym 2) is kept exactly as built. Block functions run by R16F, after R16E
+                # (tools/gym_demolish.py, data/gym_interiors.json `superseded_by`). Gyms 1, 3, 4, 5 and 7, and
+                # since 2026-10-09 Misty's (gym 2: works and plinth; her walk-through hall clears the template).
+                # Block functions run by R16F, after R16E
                 "cobblers_gym_demolish",
                 # 2026-09-29: the authored gym buildings (tools/gym_buildings.py, data/gym_buildings/*.json): one
                 # hall per gym with its puzzle inside it, on the lot the shell stood on. Block functions run by
@@ -1834,7 +1835,8 @@ def gym_step_functions():
     """{step id: [function id, in run order]} for the steps that write the gym lots, from the committed data alone
     (no built pack needed), so tools/gym_arenas_audit.py can replay every order an apply allows.
 
-    R16E  tools/gym_interiors.py: each carved interior (Misty's dig); its healer sweep writes no gym block
+    R16E  tools/gym_interiors.py: each carved interior still built (none since 2026-10-09); its healer sweep writes
+          no gym block
     R16F  tools/gym_demolish.py: the old works refilled and the donor shells taken down, every superseded gym
     R16G  tools/gym_buildings.py: every building not superseded by a walk-through hall; THEN every gym arena or hall
           function (a hall's takedown first); THEN every seat move
@@ -2224,9 +2226,10 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:gym_interiors/healers")]
                 + [("fn", "cobblers:gym_interiors/%s" % g) for g in gym_built]))
     # the demolition (tools/gym_demolish.py): the five rejected sets of works filled back in and their COBBLEVERSE
-    # shells taken down, at every gym data/gym_interiors.json marks `superseded_by`. Gym 2 is never in this list -
-    # Misty's is kept exactly as built (the owner, 2026-09-29). After R16E, whose healer sweep still runs over all
-    # eight shells, and before the buildings that stand where the shells were
+    # shells taken down, at every gym data/gym_interiors.json marks `superseded_by`. Gym 2 joined on 2026-10-09 (the
+    # owner had Misty's template taken down): its works and quay plinth here, the template by its walk-through hall
+    # (data/gym_arenas/gym2.json). After R16E, whose healer sweep still runs over all eight shells, and before the
+    # buildings that stand where the shells were
     gym_gone = [g["id"] for g in gym_doc.get("gyms") or [] if g.get("superseded_by")]
     out.append(("R16F", "the rejected gym works filled in and %d donor shell(s) taken down" % len(gym_gone),
                 [("fn", "cobblers:gym_demolish/%s" % g) for g in gym_gone]))

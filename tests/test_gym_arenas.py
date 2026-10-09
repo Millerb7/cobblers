@@ -250,11 +250,15 @@ def test_no_leader_can_be_scaled_by_the_baby_ramp():
 
 
 # ------------------------------------------------------------------------------------------------- the survey
-def test_the_survey_covers_eight_gyms_and_finds_mistys_standing_well():
+def test_the_survey_covers_eight_gyms_and_finds_mistys_well_filled():
+    # 2026-10-09: Misty's works (the well, cistern, race and ledger gallery) are filled in with her template taken down
+    # (data/gym_interiors.json gym2 superseded_by data/gym_arenas/gym2.json); the survey still finds the dig in the
+    # data, and must say it is filled, never that it stands
     s = GA.load(ROOT / "data" / "gym_arenas" / "survey.json")
     assert s["cover"] == GA.COVER
     assert [g["gym"] for g in s["gyms"]] == ["gym%d" % i for i in range(1, 9)]
     g2 = s["gyms"][1]
-    assert any(c["path"].endswith(".dig") and c["state"] == "carved and standing" for c in g2["carved_in_data"])
+    digs = [c for c in g2["carved_in_data"] if c["path"].endswith(".dig")]
+    assert digs and all(c["state"].startswith("filled back in by R16F") for c in digs), digs
     for g in s["gyms"]:
         assert g["envelopes"]["lot"]["shell_top_max"] <= g["lot_level"] - 1 - GA.COVER if g["lot_level"] else True

@@ -64,7 +64,10 @@ def _without_single_leader(d, ups):
     return d
 
 
-TEMPLATE_BOSSES = ("kanto_misty", "kanto_league_lorelei", "kanto_league_bruno", "kanto_league_agatha",
+# Misty left this list on 2026-10-09: her template came down for the walk-through hall data/gym_arenas/gym2.json, so
+# her seat and her Challenge cell's floor come from the hall's own model (normal_seat, restore_blocks), not from
+# template measurements. The League's five still stand in their template.
+TEMPLATE_BOSSES = ("kanto_league_lorelei", "kanto_league_bruno", "kanto_league_agatha",
                    "kanto_league_lance", "kanto_champion_blue")
 
 
@@ -215,11 +218,14 @@ def test_the_retire_function_follows_the_recorded_position_not_a_constant(monkey
 
 
 # Without it the retire could put a guessed block back into a template floor. Held on an in-memory copy without
-# Misty's single_leader (the file has it since M1, bfa6971), so the refusal itself stays tested.
+# the boss's single_leader (the file has the measurements since M1, bfa6971), so the refusal itself stays tested.
+# Misty was the case until 2026-10-09; her template is gone (her Challenge cell is in her walk-through hall, whose
+# own model gives the floor), so Lorelei, in the League's template, carries the refusal now.
 def test_a_template_boss_in_the_rollout_needs_its_restore_blocks(monkeypatch):
-    d = _without_single_leader(_with(monkeypatch, ["kanto_misty"]), ["kanto_misty"])
+    up = "kanto_league_lorelei"
+    d = _without_single_leader(_with(monkeypatch, [up]), [up])
     with pytest.raises(SystemExit) as e:
-        CM.retire_lines("kanto_misty", "kanto_misty" + SFX, d["bosses"]["kanto_misty"])
+        CM.retire_lines(up, up + SFX, d["bosses"][up])
     assert "single_leader.restore" in str(e.value)
 
 

@@ -263,8 +263,13 @@ def audit(pack, source_root=None):
     index = [l.strip() for l in index_file.read_text(encoding="utf-8").splitlines() if l.strip()]
     built = [g for g in doc["gyms"] if g.get("built")]
     want = ["healers"] + [g["id"] for g in built]
-    if not built:
-        problems.append("data/gym_interiors.json marks no gym built: there is no interior to check (fail closed)")
+    # no carved interior is left since 2026-10-09 (gym 2, the last, superseded by its walk-through hall): the pack is
+    # the healer sweep alone, which is allowed only when EVERY record says what replaced it. A record that is neither
+    # built nor superseded_by anything is a gym this audit would silently stop checking (fail closed)
+    loose = [g["id"] for g in doc["gyms"] if not g.get("built") and not g.get("superseded_by")]
+    if loose:
+        problems.append("data/gym_interiors.json: %s neither built nor superseded_by anything: no interior to check "
+                        "(fail closed)" % loose)
     if index != want:
         problems.append("the pack index is %s but data/gym_interiors.json asks for %s" % (index, want))
 

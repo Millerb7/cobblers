@@ -83,7 +83,7 @@ be measured by their authors with `check`; only gym 1 is built.
 | Gym | Lot (x, z), level, facing | Carved arena today: floor, below the lot | Largest Pokemon (clear radius) | Juniors |
 |---|---|---|---|---|
 | 1 Brock | 1806..1845 x 3656..3703 (40 x 48), y141, north | y122, 19 below | Onix 10.56 | 3 |
-| 2 Misty | 1592..1631 x 2858..2891 (40 x 34), template, north | y92, under the template | Pelipper 1.85 | 2 |
+| 2 Misty | 1592..1631 x 2858..2891 (40 x 34), no level (y104..108, the bank), north | y92, under the template (both taken down 2026-10-09) | Pelipper 1.85 | 2 |
 | 3 Surge | 1722..1752 x 1388..1432 (31 x 45), y174, west | y158, 16 below | Raichu 2.93 | 3 |
 | 4 Erika | 4288..4332 x 1470..1512 (45 x 43), y110, south | y94, 16 below | Victreebel 5.28 | 3 |
 | 5 Koga | 4574..4606 x 2463..2495 (33 x 33), y116, north | y100, 16 below | Drapion 3.13 | 3 |
@@ -110,15 +110,20 @@ cleared and overwritten) and the undercroft with its newel stair (stone, y120..1
 (approach 30.1, dais 3, 219 battle-start cells, all find the markers; light min 1); audit clean (street to stand and
 back, every order, takedown 0 cells left); juniors proved (3 of 3).
 
-### Gym 2, Misty: the Lifeboat House (the template stays)
+### Gym 2, Misty: the Lifeboat House (BUILT as a hall 2026-10-09, data/gym_arenas/gym2.json)
 
-Misty's hall is the one COBBLEVERSE template and is kept exactly as built (the owner, 2026-09-29); her climb is the
-well, which the owner endorsed ("on misty, thats the way to go up"). Her route already ends where the walk-through
-wants it: the ledger gallery's south door opens on a six-tread slipway (a gentle grade) into the boat house. **What
-changes:** nothing above the cistern; a **way out past Misty** -- the launch channel is the natural one, through an
-iron door with its button inside onto the quay -- is to be MEASURED first (where the channel meets the lake, and
-whether its mouth is above water; nothing here has measured it). Until then, back the way you came, up the well's
-scaffolding. No takedown. Juniors unchanged (2).
+The template no longer stays. The owner, 2026-10-09: "Misty needs to have the template building removed, make it
+match the rest of the world." The COBBLEVERSE template, its quay plinth, the works under it and the boat house carved
+under the lot come down (the hall's own clear over the template's whole box; tools/gym_demolish.py for the works, the
+plinth's foot and the never-built shore stair; the takedown for the old boat house), and the rescue station stands on
+the lot in mud brick, prismarine, dark oak and spruce. In at the north door from the promenade (y108); **the arrivals
+hall**; **the one step down** (the Quay Swimmer at its head) to **the race**, a still canal wall to wall, waded and
+swum; **three mouths** alike under the far bank, two blind five deep, the west one lit; **the ledger gallery** (the
+Lifeguard) and **the slipway** into **the Lifeboat House**, kept as the owner liked it, Misty on the lookout deck
+(seat (1627, 108, 2883), floor y105). Total grade: down three courses, all stair half-steps but the race's shelves. Out
+over the gangway and through the iron door past Misty onto the shore (z2892, ground y104, dry), or back the way you
+came. Numbers: builder check clean (approach 32.4, dais 3, 78 battle-start cells, light min 4); audit clean; juniors
+proved (2 of 2; a third chokepoint, the slipway, waits on a roster). Detail: `docs/world-building/gym_arenas/gym2.md`.
 
 ### Gym 3, Surge: the Relay Works and the Grounding Hall
 

@@ -37,8 +37,10 @@ arena can press). Its seat function sets the spawner where it is missing; nothin
 volumes only these functions may write (tools/gym_demolish.py honours it).
 
 A WAY OUT TO THE SURFACE (`exit_passages`, 2026-10-09). The owner does not want a gym you go far down in and must climb
-back out of. Misty's gym is the one donor template, so its walk in is the template's (a well, the race, the ledger
-gallery) and its hall is deep: the way out is a passage from the hall to the shore. An `exit_passages[]` entry is
+back out of. Misty's gym was the one donor template, its walk in the template's (a well, the race, the ledger gallery)
+and its hall deep, so its way out was a passage from the hall to the shore; since 2026-10-09 the template is gone and
+gym 2 is a walk-through hall too (no passage: its replaced arena's never-built one is set back to the ground by
+tools/gym_demolish.py from replaces.arena.exit_passages). An `exit_passages[]` entry is
 its own declared box (writes, bounds and zone), where, and only where, the arena may meet the open air: no cover rule
 (its top is the surface), and an open cell may touch unwritten NATURAL AIR (never unwritten rock, never water). It
 carries a one-way door: an iron door in the hall's wall opened by a stone button on the hall side only, so the passage
@@ -278,6 +280,18 @@ def interior_doc(gym):
     for g in load(ROOT / "data" / "gym_interiors.json")["gyms"]:
         if g["id"] == gym:
             return g
+    return None
+
+
+def donor_superseded_by(doc):
+    """The data/gym_interiors.json record of a COBBLEVERSE donor gym this hall replaces outright (its `superseded_by`
+    names this hall's file, and no data/gym_buildings record stands between them), or None. Gym 2 since 2026-10-09:
+    the template comes down (tools/gym_demolish.py below the hall, the hall's own first parts within it)."""
+    if not is_hall(doc) or building_doc(doc["gym"]):
+        return None
+    i = interior_doc(doc["gym"])
+    if i and str(i.get("superseded_by") or "").startswith("data/gym_arenas/%s.json" % doc["gym"]):
+        return i
     return None
 
 
@@ -1102,6 +1116,18 @@ def hall_checks(doc, a, lot, lot_level, reach_cells):
         if missing:
             bad.append("%d cell(s) of the old building's bounds %s are never written by the hall, first %s: its "
                        "takedown must leave nothing of the old one" % (len(missing), list(ob), list(missing[0])))
+    # a donor template superseded by this hall (gym 2): the same rule over the template's own box, so nothing of the
+    # COBBLEVERSE building the donor step (R9) stamps survives the hall; below the hall tools/gym_demolish.py restores
+    # the ground (its plinth, the works), never inside these bounds
+    t = donor_superseded_by(doc)
+    if t:
+        tb = norm(t["shell"]["expect_box"])
+        missing = [(x, y, z) for x in range(tb[0], tb[3] + 1) for y in range(tb[1], tb[4] + 1)
+                   for z in range(tb[2], tb[5] + 1) if (x, y, z) not in a.cells or (x, y, z) in a.down]
+        if missing:
+            bad.append("%d cell(s) of the donor template's box %s (data/gym_interiors.json %s shell.expect_box) are "
+                       "never written by the hall, first %s: the template must come down whole"
+                       % (len(missing), list(tb), t["id"], list(missing[0])))
     if "arena" not in (doc.get("replaces") or {}):
         bad.append("replaces.arena: the arena record this hall replaces (its bounds, through_building and seat, as "
                    "built), so the takedown is measured; null only if none was ever built")
@@ -1214,6 +1240,12 @@ def replaced_seats(doc):
     b = building_doc(doc["gym"])
     if b and (b.get("leader") or {}).get("spawner"):
         out.append(tuple(b["leader"]["spawner"]))
+    # a donor template superseded by this hall (gym 2, 2026-10-09: data/gym_interiors.json gym2 superseded_by this
+    # file): its own spawner, where the template stamps it. Named as a cell, not as the template's box, which covers
+    # the whole lot to y146 and so holds this hall's own dais
+    t = donor_superseded_by(doc)
+    if t and (t.get("leader") or {}).get("expect_spawner_at"):
+        out.append(tuple(t["leader"]["expect_spawner_at"]))
     boss = load(ROOT / "data" / "challenge_mode.json")["bosses"].get(doc["leader"]["id"]) or {}
     sp = boss.get("spawner") or {}
     # the cell the Challenge spawner held BEFORE the hall: superseded_at, recorded when a hall moved it. The live `at`
@@ -1394,6 +1426,11 @@ def old_leader_kills(doc):
         sx, sy, sz = doc["leader"]["seat"]
         bx = norm(doc["bounds"])
         boxes = box_minus(bx, (sx - 2, sy - 1, sz - 2, sx + 2, sy + 4, sz + 2)) + [b for b, _w in takedown_boxes(doc)]
+        t = donor_superseded_by(doc)
+        if t and not all(inside(c, bx) for c in (tuple(t["shell"]["expect_box"][:3]),
+                                                   tuple(t["shell"]["expect_box"][3:]))):
+            raise ArenaError("%s: the donor template %s it replaces is not inside the hall's bounds %s: its leader "
+                             "could stand outside every sweep box" % (doc["id"], t["shell"]["expect_box"], list(bx)))
         kills = []
         for (x0, y0, z0, x1, y1, z1) in boxes:
             vol = "x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d" % (x0, y0, z0, x1 - x0, y1 - y0, z1 - z0)
@@ -1656,7 +1693,9 @@ def survey(G=None, margin=32):
                                                                                               is not None) else None}
         out.append({
             "gym": gid, "leader": lead_id, "building": "data/gym_buildings/%s.json" % gid if b else
-            "the COBBLEVERSE template cobbleverse:misty with a carved interior (data/gym_interiors.json gym2)",
+            ("the COBBLEVERSE template %s, taken down for %s" % (g["donor"], g["superseded_by"].split(" (")[0])
+             if g.get("superseded_by") else
+             "the COBBLEVERSE template %s with a carved interior (data/gym_interiors.json %s)" % (g["donor"], gid)),
             "route_end_seat": list(route_end) if route_end else None, "seat_now": list(seat["seat"]) if seat else None,
             "lot": list(lot), "lot_level": lot_level, "building_bounds": list(bbounds) if bbounds else None,
             "building_lowest_write": bmin, "spawn_free_zone": zone["box"] if zone else None,

@@ -212,22 +212,27 @@ def test_gym3_full_check_is_clean(g3):
     assert tops == sorted(tops), list(zip(order, tops))
 
 
-def test_gym2_the_proof_needs_defect_d1_closed_and_says_so():
-    if not T.donor_zip():
-        pytest.skip("gym 2 needs COBBLEVERSE-DP-v31.zip (set COBBLERS_DONOR_ZIP)")
+def test_gym2_the_hall_proof_assumes_no_defect_and_knows_its_one_way_in():
+    # 2026-10-09: Misty's template (and with it defect D1, the well's scaffolding open under its floating island) is
+    # taken down for the walk-through Lifeboat House (data/gym_arenas/gym2.json). What this test held for the template
+    # it holds for the hall: the proof passes for a rider who can land anywhere open to the sky, it passes WITHOUT any
+    # cell assumed closed (a defect may not be proved away silently), and the model knows the gym's one way in.
     G = _heightmap_or_skip()
     seats = [s for s in SEATS["trainers"] if s["gym"] == "gym2"]
     problems, row = T.check_gym("gym2", seats, ROSTER, G)
     assert problems == []
     assert row["arrival"] == "sky"
-    assert row["assumed_closed"] and all(c["open_as_built"] for c in row["assumed_closed"])
-    # while D1 is open a walker climbs the well into the hall past both juniors: the report must say so
-    assert all(j["cut_holds_with_defects_open"] is False for j in row["juniors"])
-    # as built, on foot, the only way to Misty is the well: nothing reaches her once its breakout is blocked
+    assert row["assumed_closed"] == [], "gym 2 assumes cells closed again: a defect is being proved away"
+    # as built, on foot, the only way to Misty is the one step down in the cistern wall (x1626..1627, z2865): a
+    # walker (MODEST: short jumps only) reaches nothing of her once the step, the hall floor at its head and the quay
+    # at its foot are blocked (x1624..1629, z2864..2866; the head and foot too, because even a MODEST jump carries
+    # a player from the hall floor over the one-course step onto the quay)
     h0 = T.hall("gym2", G)
-    walk = T.Graph(h0, True, "walk")
-    shaft = frozenset(walk.index[(1620, y, 2867)] for y in range(100, 133) if (1620, y, 2867) in walk.index)
-    assert walk.reaches_leader() and not walk.reaches_leader(shaft)
+    walk = T.Graph(h0, False, "walk")
+    step = frozenset(walk.index[(x, y, z)] for x in range(1624, 1630) for z in (2864, 2865, 2866)
+                     for y in range(107, 112) if (x, y, z) in walk.index)
+    assert step, "the step down is no position in the model: the hall moved, and this test must follow it"
+    assert walk.reaches_leader() and not walk.reaches_leader(step)
 
 
 # ------------------------------------------------------------------------------------------------ the rosters

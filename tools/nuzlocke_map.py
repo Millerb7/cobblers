@@ -11,7 +11,8 @@ Every fact on the page is read, never invented:
   towns           data/towns.json, at data/plaza_centres.json's square centre where a town has one (towns.json's
                   Pacifidlog centre is stale, REVIEW 58; its plaza square is the real site)
   gyms            data/gym_buildings/gym<N>.json leader.spawner; gym 2 (Misty, no building record) is
-                  data/placements.json gym2_misty_gym + data/gym_interiors.json measured.misty_relative.trainer_spawner
+                  its walk-through hall's leader.seat (data/gym_arenas/gym2.json, tools/gym_arenas.py leader_seats) since
+                  2026-10-09; before, data/placements.json gym2_misty_gym + gym_interiors.json misty_relative.trainer_spawner
   the League      data/towns.json "league" (the centre of data/placements.json league_building's footprint)
   main path       data/route_paths.json, in data/routes.json order
   level caps      rctmod's rule (docs/mechanics/LEAGUE_LEVEL_CAP.md section 1): max(initialLevelCap, next required
@@ -268,6 +269,11 @@ def gyms():
         sp = moved[d["leader"]["id"]]["seat"] if d["leader"]["id"] in moved else d["leader"]["spawner"]
         out[n] = {"n": n, "leader": d["leader"].get("name") or leaders[n]["display_name"], "x": sp[0], "z": sp[2],
                   "town": d.get("settlement")}
+    if 2 not in out and "kanto_misty" in moved:
+        # Misty's walk-through hall (data/gym_arenas/gym2.json, 2026-10-09: her template taken down)
+        sp = moved["kanto_misty"]["seat"]
+        p = next(p for p in load_json("data/placements.json")["placements"] if p["id"] == "gym2_misty_gym")
+        out[2] = {"n": 2, "leader": leaders[2]["display_name"], "x": sp[0], "z": sp[2], "town": p.get("settlement")}
     if 2 not in out:
         p = next(p for p in load_json("data/placements.json")["placements"] if p["id"] == "gym2_misty_gym")
         if p.get("rotation", "none") != "none" or p.get("mirror", "none") != "none":

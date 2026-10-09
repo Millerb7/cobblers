@@ -14,7 +14,7 @@ Run `python tools/gym_arenas.py check --gym gymN` until it prints no `PROBLEM`. 
 
 | Field | Meaning |
 |---|---|
-| `schema`, `id`, `gym` | `"gym_arena/1"`, the file stem, the gym id (`gym1`; the building is `data/gym_buildings/<gym>.json`, or Misty's template for `gym2`) |
+| `schema`, `id`, `gym` | `"gym_arena/1"`, the file stem, the gym id (`gym1`; the building is `data/gym_buildings/<gym>.json`; gym2 had Misty's template until 2026-10-09) |
 | `status`, `name`, `reading` | what is proven, the arena's name, and why it reads as this leader's and no other's |
 | `leader.id`, `leader.seat` | the upstream trainer id (`kanto_brock`) and THE seat: the spawner, flush in the dais top. **This is the one source of the leader's seat** once the file exists (`gym_arenas.leader_seats()`); the building's `leader.spawner` becomes where the move starts |
 | `spawn_free_zone` | the id in `data/spawn_suppression.json` `spawn_free_zones`; the arena's x/z must lie inside it (extend it on the 8-block grid if not) |
@@ -111,8 +111,11 @@ inside an arena's bounds and through boxes, nor inside the box a building clears
 # `exit_passages[]`: a way out to the surface (both schemas, 2026-10-09)
 
 The owner does not want a gym you go far down in and must climb back out of. A hall that stands on its lot leaves by
-its own door; a gym that is DEEP (Misty's: the one donor template, a 38-block well down, the race, the ledger gallery,
-then our boat house) needs a passage up. An `exit_passages[]` entry is the smallest thing that lets a record say it:
+its own door; a gym that is DEEP (Misty's was, until 2026-10-09: the donor template, a 38-block well down, the race,
+the ledger gallery, then our boat house) needs a passage up. No record carries one today: Misty's template came down
+for a walk-through hall, and a hall's `replaces.arena.exit_passages` keeps the one it replaced, which
+tools/gym_demolish.py sets back to the ground (rock under it, air or the mapped water over it). An `exit_passages[]`
+entry is the smallest thing that lets a record say it:
 
 | Field | Meaning |
 |---|---|
@@ -130,4 +133,4 @@ reads only `box` and derives the rest from the replayed blocks (its docstring, "
 Authoring: lay the passage with the existing ops. A stair that RISES to the south is a `straight_stair` written from its
 top, `dir: north` (the op steps down in `dir`), the side walls and roof a `repeat` stepped the same way, a landing flush
 with the bank, and light from sea lanterns in the walls: never a lantern hung in the headroom, which stops an upright
-player on a flight (the gym 7 finding). Gym 2's `shore_stair` is the worked example.
+player on a flight (the gym 7 finding). Gym 2's `shore_stair` was the worked example (commit ca4c84b, never built).

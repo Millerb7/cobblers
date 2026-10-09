@@ -1,13 +1,20 @@
 #!/usr/bin/env python
-"""Fill in the five sets of underground gym works and take down the five donor shells over them.
+"""Fill in the underground gym works and take down the donor shells over them.
 
 The owner rejected the pattern on sight (docs/world-building/GYM_BUILDINGS_BRIEF.md): "a scaffold to a cave feels
 dumb every time, i get it on misty, thats the way to go up, but id rather have a large gym building with a puzzle
 inside than whatever that was". So at gyms 1, 3, 4, 5 and 7 the carve goes back to rock and the COBBLEVERSE shell
 comes down, and an authored hall (tools/gym_buildings.py) is built on the lot instead.
 
-GYM 2 IS NEVER TOUCHED. Misty's hall stands on the template's own rock plinth and going down her well is the
-building; the owner said so explicitly. This tool refuses to act on gym2 even if a record asks it to.
+GYM 2 TOO, since 2026-10-09. Misty's was kept (the owner, 2026-09-29) until the owner reversed it: "Misty needs to
+have the template building removed, make it match the rest of the world." Its record names the walk-through hall
+that replaces it (data/gym_arenas/gym2.json), whose bounds take in the whole template; so here, below and beside that
+hall, the works (the well, cistern, race and ledger gallery) go back to rock, the template's quay plinth (data/
+placements.json gym2_misty_gym `plinth`, derived from the record like the shell) comes out, and the old boat house's
+never-built shore stair box (the hall's replaces.arena.exit_passages) is set back to the ground. Misty's lot is on
+the lake shore, so every box here is restored to the WATER where tools/bridges.py water() says there is water: rock to
+the ground, the lake (or river, or sea) from there to its level, air above it. At Misty's lot the mask puts no water
+in any of those boxes (the lake's edge is z2896 at its nearest), which this tool reports rather than assumes.
 
   python tools/gym_demolish.py report [--source-root <root>]
   python tools/gym_demolish.py build  [--out build/datapacks/cobblers_gym_demolish] [--source-root <root>]
@@ -54,7 +61,7 @@ INTERIORS = ROOT / "data" / "gym_interiors.json"
 PLACEMENTS = ROOT / "data" / "placements.json"
 ROCK = "minecraft:stone"
 AIR = "minecraft:air"
-KEEP = "gym2"
+WATER = "minecraft:water"
 
 # The ground rule (tools/ground_rule.py): nothing here reads a world at all.
 WORLD_READS = set()
@@ -65,15 +72,15 @@ def load(path):
 
 
 def superseded():
-    """The gym records this tool acts on: every one that names the building that replaces it. Never gym 2."""
+    """The gym records this tool acts on: every one that names the building that replaces it."""
     doc = load(INTERIORS)
     out = []
     for g in doc.get("gyms") or []:
         if not g.get("superseded_by"):
             continue
-        if g["id"] == KEEP:
-            raise SystemExit("data/gym_interiors.json marks %s superseded. Misty's gym is kept exactly as built "
-                             "and this tool will not touch it (the owner, 2026-09-29)." % KEEP)
+        if g.get("built"):
+            raise SystemExit("%s: data/gym_interiors.json marks it both `built` and `superseded_by`: R16E would carve "
+                             "the works this step fills in, every apply" % g["id"])
         if not (g.get("shell") or {}).get("expect_box"):
             raise SystemExit("%s: a superseded gym needs `shell.expect_box`" % g["id"])
         # `dig` is the carved works under the gym, filled back to rock. Gyms 6 and 8 never had any: they
@@ -139,9 +146,28 @@ def rects(x0, z0, x1, z1, gy):
     return out
 
 
-def box_commands(box, gy, why, reserved=()):
-    """Rock back under the ground, air over it, for every column of the box -- except inside `reserved`, the
-    volumes only a gym's own arena or hall function may write (tools/gym_arenas.py reserved_boxes).
+def water_fn(G, boxes):
+    """((x, z) -> the water level y where tools/bridges.py water() marks the column wet, else None; wet column count)
+    over the window holding `boxes`. The same committed water the export paints (lakes' basins at their level, cut
+    river courses, the sea), from the heightmap, never from a world."""
+    import bridges
+    x0, z0 = min(b[0] for b in boxes), min(b[2] for b in boxes)
+    x1, z1 = max(b[3] for b in boxes), max(b[5] for b in boxes)
+    level, wet, _definite = bridges.water(G.heights, G.world, (x0, z0, x1, z1))
+
+    def f(x, z):
+        if x0 <= x <= x1 and z0 <= z <= z1 and wet[z - z0, x - x0]:
+            return int(level[z - z0, x - x0])
+        return None
+
+    cols = {(x, z) for b in boxes for x in range(b[0], b[3] + 1) for z in range(b[2], b[5] + 1)}
+    return f, sum(1 for c in cols if f(*c) is not None)
+
+
+def box_commands(box, gy, why, reserved=(), wl=None):
+    """Rock back under the ground, the water from there to its level where `wl` (water_fn) says the column is wet,
+    air over that, for every column of the box -- except inside `reserved`, the volumes only a gym's own arena or
+    hall function may write (tools/gym_arenas.py reserved_boxes). Returns (lines, rock, air, water) cell counts.
 
     THE DEFECT THIS EXCLUSION CLOSES (2026-10-09, "a room I can't leave from"): this step runs every apply, BEFORE
     the arenas (R16GA). The works it refills (gyms 1, 3, 4, 5, 7) and the shells it clears overlap the arenas
@@ -153,7 +179,7 @@ def box_commands(box, gy, why, reserved=()):
     x0, x1 = min(x0, x1), max(x0, x1)
     y0, y1 = min(y0, y1), max(y0, y1)
     z0, z1 = min(z0, z1), max(z0, z1)
-    out, rock, air = ["# %s" % why], 0, 0
+    out, rock, air, water = ["# %s" % why], 0, 0, 0
 
     def emit(b, state):
         n = 0
@@ -165,15 +191,33 @@ def box_commands(box, gy, why, reserved=()):
             n += (q[3] - q[0] + 1) * (q[4] - q[1] + 1) * (q[5] - q[2] + 1)
         return n
 
-    for a, b, c, d, g in rects(x0, z0, x1, z1, gy):
+    def key(x, z):
+        return (gy(x, z), wl(x, z) if wl else None)
+
+    for a, b, c, d, (g, lv) in rects(x0, z0, x1, z1, key):
+        if lv is not None and lv <= g:
+            # wet but not definite (tools/bridges.py: the paint's water, h < level, over a ground that rounds to the
+            # level or above, so h >= level - 0.5): the export may or may not stand water on it. Under the level the
+            # ground is certain and goes back to rock; the level's own course is not written -- the world keeps
+            # whether it is water or bank -- and only the air over it is restored
+            if y0 <= lv - 1:
+                rock += emit((a, y0, c, b, min(lv - 1, y1), d), ROCK)
+            if lv < y1:
+                air += emit((a, max(y0, lv + 1), c, b, y1, d), AIR)
+            continue
         if y0 <= g:
             rock += emit((a, y0, c, b, min(g, y1), d), ROCK)
-        if g < y1:
-            air += emit((a, max(y0, g + 1), c, b, y1, d), AIR)
+        top = g
+        if lv is not None and lv > g:
+            if max(y0, g + 1) <= min(lv, y1):
+                water += emit((a, max(y0, g + 1), c, b, min(lv, y1), d), WATER)
+            top = lv
+        if top < y1:
+            air += emit((a, max(y0, top + 1), c, b, y1, d), AIR)
     if reserved:
         out.insert(1, "# never inside the gym's arena or hall (tools/gym_arenas.py reserved_boxes): %s"
                    % [list(r) for r in reserved])
-    return out, rock, air
+    return out, rock, air, water
 
 
 def gym_commands(gym, placements, G):
@@ -199,19 +243,48 @@ def gym_commands(gym, placements, G):
     bdoc = {d["id"]: d for _p, d in GB.records()}.get(gym["id"])
     if bdoc and not bdoc.get("superseded_by") and GB.clear_box(bdoc):
         reserved.append(tuple(GB.clear_box(bdoc)))
+    # what else of the donor this step restores, each derived from a record, never authored as a box here: the
+    # template's quay plinth (data/placements.json `plinth`: tools/place_donor.py fills air and water with it from
+    # `from_y` to the course under the template, over the template's footprint), and, where a walk-through hall
+    # replaced an arena that declared a way out to the surface, that passage's box (replaces.arena.exit_passages)
+    extra = []
+    plinth = rec.get("plinth")
+    if plinth:
+        extra.append(([sx0, int(plinth.get("from_y", sy0 - 9)), sz0, sx1, sy0 - 1, sz1],
+                      "the template's quay plinth (%s from y%s, data/placements.json %s plinth), back to the ground"
+                      % (plinth.get("material"), plinth.get("from_y"), gym["donor"])))
+    hall = gym_arenas.record_of(gym["id"])
+    if gym_arenas.is_hall(hall):
+        for p_ in ((hall.get("replaces") or {}).get("arena") or {}).get("exit_passages") or []:
+            extra.append((list(gym_arenas.norm(p_["box"])), "the replaced arena's way out %s "
+                          "(data/gym_arenas/%s.json replaces.arena.exit_passages), back to the ground"
+                          % (p_.get("id"), gym["id"])))
+    boxes = ([gym["dig"]] if gym.get("dig") else []) + [shell] + [b_ for b_, _w in extra]
+    wl, wet_n = water_fn(G, [gym_arenas.norm(b_) for b_ in boxes])
+    if wet_n:
+        lines.append("# water: tools/bridges.py water() marks %d column(s) of these boxes wet; they are set back to "
+                     "their water level" % wet_n)
+    else:
+        lines.append("# water: tools/bridges.py water() marks no column of these boxes wet, so no water is written")
     if gym.get("dig"):
-        a, r1, v1 = box_commands(gym["dig"], gy, "the works, back to rock", reserved)
+        a, r1, v1, w1 = box_commands(gym["dig"], gy, "the works, back to rock", reserved, wl)
     else:
         # `works_existed: false`, checked in superseded(): nothing was ever cut under this gym, so the
         # demolition is the shell alone and the works pass writes no command rather than a vacuous one.
-        a, r1, v1 = [], 0, 0
+        a, r1, v1, w1 = [], 0, 0, 0
         lines.append("# no works under this gym: it was a donor shell on an uncut lot, so only the shell comes down")
-    b, r2, v2 = box_commands(shell, gy, "the donor shell, and the ground it stood on", reserved)
+    b, r2, v2, w2 = box_commands(shell, gy, "the donor shell, and the ground it stood on", reserved, wl)
     lines += a + b
+    r3 = v3 = w3 = 0
+    for box, why in extra:
+        c, r_, v_, w_ = box_commands(box, gy, why, reserved, wl)
+        lines += c
+        r3, v3, w3 = r3 + r_, v3 + v_, w3 + w_
     return lines, {"id": gym["id"], "donor": gym["donor"], "settlement": rec["settlement"],
                    "dig": gym.get("dig"), "shell_box": shell, "lot": lot[0] if lot else None,
-                   "lot_level": lot[1] if lot else None,
-                   "rock_cells": r1 + r2, "air_cells": v1 + v2,
+                   "lot_level": lot[1] if lot else None, "also": [b_ for b_, _w in extra],
+                   "rock_cells": r1 + r2 + r3, "air_cells": v1 + v2 + v3, "water_cells": w1 + w2 + w3,
+                   "wet_columns": wet_n,
                    "commands": len([l for l in lines if not l.startswith("#")])}
 
 
@@ -255,13 +328,14 @@ def main(argv=None):
         if a.cmd == "build":
             write_function(gym["id"], lines)
             done.append(gym["id"])
-        print("%s: %d commands, %d cells back to rock, %d to air (shell %s, dig %s)"
-              % (row["id"], row["commands"], row["rock_cells"], row["air_cells"], row["shell_box"], row["dig"]))
+        print("%s: %d commands, %d cells back to rock, %d to air, %d to water over %d wet column(s) (shell %s, "
+              "dig %s, also %s)" % (row["id"], row["commands"], row["rock_cells"], row["air_cells"],
+                                    row["water_cells"], row["wet_columns"], row["shell_box"], row["dig"], row["also"]))
     if a.cmd == "build":
         (FUNCS / "index.txt").write_text("\n".join(done) + "\n", encoding="utf-8")
     REPORT.mkdir(parents=True, exist_ok=True)
-    (REPORT / "demolish.json").write_text(json.dumps({"note": "gym 2 is never here: Misty's gym is kept exactly "
-                                                     "as built.", "gyms": rows}, indent=1) + "\n",
+    (REPORT / "demolish.json").write_text(json.dumps({"note": "every gym data/gym_interiors.json marks superseded_by; "
+                                                     "gym 2 since 2026-10-09.", "gyms": rows}, indent=1) + "\n",
                                           encoding="utf-8")
     if a.cmd == "build":
         print("wrote", PACK)

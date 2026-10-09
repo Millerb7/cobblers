@@ -53,9 +53,14 @@ def measured(gym):
 
 # ------------------------------------------------------------------------------- the authored record itself
 def test_the_six_built_gyms_are_the_ones_this_unit_claims():
-    assert BUILT_IDS == ["gym2"], "gyms 1, 3, 4, 5 and 7 were retired 2026-09-29 for the authored buildings"
-    assert "gym6" not in BUILT_IDS, "Sabrina's gym waits on EXP-034 and is out of scope"
-    assert "gym8" not in BUILT_IDS
+    # gyms 1, 3, 4, 5 and 7 were retired 2026-09-29 for the authored buildings; gym 2, the last carved interior, on
+    # 2026-10-09 for its walk-through hall (data/gym_arenas/gym2.json: the owner, "Misty needs to have the template
+    # building removed"). None is built now, and each says what replaced it, or the demolition would skip it.
+    assert BUILT_IDS == [], "a carved interior is built again: %s" % BUILT_IDS
+    assert all(g.get("superseded_by") for g in DOC["gyms"]), \
+        [g["id"] for g in DOC["gyms"] if not g.get("superseded_by")]
+    misty = [g for g in DOC["gyms"] if g["id"] == "gym2"][0]
+    assert misty["superseded_by"].startswith("data/gym_arenas/gym2.json")
 
 
 def test_every_built_gym_has_a_builder_and_every_extra_builder_is_a_superseded_gym():

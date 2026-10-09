@@ -3,21 +3,9 @@
   "generated_by": "hand, from the seats python tools/gym_trainers.py propose proves for each hall; every seat is re-proved by python tools/gym_trainers.py check",
   "note": "The STAND of each gym junior: where it stands and how it behaves standing there. The roster (who it is, its Normal and Challenge teams, its lines) is data/trainers.json, generated from docs/story/TRAINER_RULES.json gym_trainers. tools/route_trainers.py reads both halves like any seat file (eye contact, the rematch hold-off, the per-player defeat field) and tools/reapply.py R17 summons each one. Counts followed docs/mechanics/GYM_INTERIORS.md section 4 (2, 2, 2, 2, 3, 3, 3, 4) until the owner asked on 2026-10-07 for at least three a gym, some more: now 3, 2, 3, 3, 3, 4, 4, 4. Gym 2 stays at two because its only must-pass ground is the porch, door and vestibule (a rider sets down anywhere open to the sky) and no three proven seats there are apart (docs/world-building/GYM_TRAINERS.md). What every seat proves, and what it does not, is docs/world-building/GYM_TRAINERS.md.",
   "gyms": {
-    "gym2": {"below_minimum": {"juniors": 2, "why": "Only the porch, door and vestibule are must-pass (a rider sets down anywhere open to the sky); with line of sight there are 39 must-pass seats and no non-overlapping triple, and no third seat fits beside the two existing ones. A third needs a second chokepoint inside the hall (e.g. a one-wide walk into the pool). Owner decision pending: change the hall, or accept two (the owner asked for at least 3 per gym, 2026-10-07).", "evidence": "tools/gym_trainers_audit.py independent search, A2 audit commit 87fd852 (2026-10-07); the builder's own search agreed (commit 8abaf9c)"}, 
+    "gym2": {"below_minimum": {"juniors": 2, "why": "Two rosters exist (data/trainers.json gym2_junior_01 and gym2_junior_02). The walk-through Lifeboat House (data/gym_arenas/gym2.json, 2026-10-09) has a third chokepoint, the slipway (x1594..1596, z2877..2878) between the ledger gallery and the boat house, more than 16 from Misty; a third seat there waits on a roster (docs/story/TRAINER_RULES.json gym_trainers, trainer-balance-designer). The old template hall's limit (only its porch, door and vestibule were must-pass) is gone with the template.", "evidence": "data/gym_arenas/gym2.json rooms and route; python tools/gym_trainers.py check --gym gym2 proves the two seats"},
       "arrival": "sky",
-      "arrival_why": "Misty's hall stands on the donor template's own island, which floats: its edges hold solid only from about y118 to y128 and the island's path ends at its south lip at y128, twenty blocks over the lot's ground at y104-108 (COBBLEVERSE-DP-v31 misty.nbt, read by tools/gym_trainers.py). A walker on the ground cannot reach the door at all, so a player arrives by air, and the proof lets a player set down anywhere open to the sky.",
-      "assume_closed": [
-        {
-          "defect": "D1",
-          "why": "the gym 2 well (data/gym_interiors.json gym2 rooms.shaft, scaffolding x1620 z2867 y92-133) passes through open air under the island between y108 and y114, where the island's underside is above the ground, so its scaffolding stands exposed to the lot and a walker climbs it straight into Misty's hall through the healer's cell. These are the open cells beside the column at those heights. The proof runs with them closed and the report says what each cut is worth while they are open.",
-          "cells": [[1621, 108, 2867], [1619, 108, 2867], [1620, 108, 2868], [1620, 108, 2866],
-                    [1621, 109, 2867], [1619, 109, 2867], [1620, 109, 2868], [1620, 109, 2866],
-                    [1621, 110, 2867], [1619, 110, 2867], [1620, 110, 2868], [1620, 110, 2866],
-                    [1621, 111, 2867], [1619, 111, 2867], [1620, 111, 2868], [1620, 111, 2866],
-                    [1621, 112, 2867], [1620, 112, 2866], [1621, 113, 2867], [1620, 113, 2866],
-                    [1621, 114, 2867]]
-        }
-      ]
+      "arrival_why": "a rider on a flying mount (Cobblemon 1.8 riding) can set down anywhere open to the sky. Misty's hall is now one roofed building on its lot (data/gym_arenas/gym2.json), so that is the street round the lot, the forecourt and the roof; the roof has no way in, so the proof holds for a rider as for a walker. The 2026-10-07 defect D1 (the well's scaffolding open under the template's island) is gone: the works are filled in (tools/gym_demolish.py) and the template taken down."
     }
   },
   "trainers": [
@@ -31,12 +19,12 @@
      "skin": "rctmod:textures/trainers/single/worker_conrad_0586.png", "eye_contact": true, "sight_distance": 3.0,
      "room": "cross_passage", "why": "re-seated 2026-10-09: in the cross passage before the setting-out floor's door (x1830..1832, z3698), the last thing between the yard and Brock; 30 from Brock, so no fight with him starts from here"},
 
-    {"id": "gym2_junior_01", "name": "Quay Swimmer", "gym": "gym2", "seat": [1611, 131, 2884], "yaw": 90,
+    {"id": "gym2_junior_01", "name": "Quay Swimmer", "gym": "gym2", "seat": [1625, 109, 2864], "yaw": 90,
      "skin": "rctmod:textures/trainers/single/swimmer_aubree_0375.png", "eye_contact": true, "sight_distance": 4.0,
-     "room": "porch_path", "why": "on the island's path below the porch steps: the one-wide door at (1612, 133, 2881) is the hall's only way in once the well is sleeved (D1), and every way up the steps to it is in her sight"},
-    {"id": "gym2_junior_02", "name": "Lifeguard", "gym": "gym2", "seat": [1612, 133, 2878], "yaw": 0,
+     "room": "the_step_down", "why": "re-seated 2026-10-09 in the walk-through Lifeboat House (data/gym_arenas/gym2.json): in the arrivals hall at the head of the one step down to the race (x1626..1627, z2865), beside it, facing back down the hall toward the door; nobody reaches the race without stepping down past her"},
+    {"id": "gym2_junior_02", "name": "Lifeguard", "gym": "gym2", "seat": [1600, 108, 2875], "yaw": -90,
      "skin": "rctmod:textures/trainers/single/swimmer_adrian_035e.png", "eye_contact": true, "sight_distance": 3.0,
-     "room": "vestibule", "why": "just inside the door, on the vestibule floor between the door and the pool: whoever comes through the door is in his sight before the hall opens out"},
+     "room": "ledger_gallery", "why": "re-seated 2026-10-09: in the middle of the ledger gallery (three wide, z2874..2876), between the true mouth (x1606) and the slipway (x1594..1596), facing the mouth; whoever chose right walks past him to the boat house"},
 
     {"id": "gym3_junior_01", "name": "Line Engineer", "gym": "gym3", "seat": [1730, 175, 1394], "yaw": 135,
      "skin": "rctmod:textures/trainers/single/engineer_baily_00dc.png", "eye_contact": true, "sight_distance": 3.0,

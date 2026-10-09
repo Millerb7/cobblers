@@ -64,10 +64,14 @@ KNOWN_DEFECTS = {
 
 
 def test_the_suite_audits_every_interior_that_is_still_built():
-    # breaks if: an interior comes back (or the last one goes) and the parametrised tests silently stop covering it
-    built = {g["id"] for g in json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))["gyms"]
-             if g.get("built")}
-    assert {"gym%d" % n for n in GYMS} == built and built, built
+    # breaks if: an interior comes back (or the last one goes) and the parametrised tests silently stop covering it.
+    # The last one went on 2026-10-09 (gym 2, for its walk-through hall data/gym_arenas/gym2.json): an empty suite is
+    # allowed only when every record says what superseded it, so the emptiness is a decision and not a lost flag
+    gyms = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))["gyms"]
+    built = {g["id"] for g in gyms if g.get("built")}
+    assert {"gym%d" % n for n in GYMS} == built, built
+    if not built:
+        assert all(g.get("superseded_by") for g in gyms), [g["id"] for g in gyms if not g.get("superseded_by")]
 
 
 # ---------------------------------------------------------------------------------------------------- the fixtures

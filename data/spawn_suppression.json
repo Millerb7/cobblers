@@ -100,7 +100,7 @@
         1631,
         2911
       ],
-      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Misty's gym (gym2_misty_gym, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share. Extended 2026-10-09 from z2895 to z2911 (still 8-grid: 2912 is a multiple of 8) to hold the way out past Misty, the stair-house of data/gym_arenas/gym2.json exit_passages (x1594..1596, z2896..2907): the strip x1592..1631 z2896..2911 is the lake's north shore, so no wild Pokemon spawns there either.",
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Misty's gym (gym2_misty_gym, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share. Extended 2026-10-09 from z2895 to z2911 (still 8-grid: 2912 is a multiple of 8) to hold the way out past Misty, the stair-house of data/gym_arenas/gym2.json exit_passages (x1594..1596, z2896..2907): the strip x1592..1631 z2896..2911 is the lake's north shore, so no wild Pokemon spawns there either. Kept at z2911 when the template came down for the walk-through hall (2026-10-09): the stair was dropped, but the hall's door past Misty opens onto this shore at (1622, 2892).",
       "mechanism": "as the League precinct's",
       "not_covered": "Pokemon a player sends out, and the gym's own trainers"
     },

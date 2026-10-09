@@ -545,6 +545,13 @@ def leader_cycle_lines(challenge=False):
     sys.path.insert(0, str(ROOT / "tools"))
     import gym_arenas
     moved = gym_arenas.leader_seats()
+    # and a leader whose gym has neither: Misty since 2026-10-09, her template and works superseded straight by a
+    # walk-through hall (data/gym_interiors.json gym2 superseded_by data/gym_arenas/gym2.json), so no building record
+    # and no built interior names her and the two loops above miss her. The arena records are where she stands
+    have = {tid for _g, tid, _s, _f in seats}
+    for tid, s in sorted(moved.items()):
+        if tid not in have and s["source"].startswith("data/gym_arenas/"):
+            seats.append((s["gym"], tid, list(s["seat"]), None))
     seats = [(gid, tid, list(moved[tid]["seat"]) if tid in moved else seat, flag) for gid, tid, seat, flag in seats]
     out = []
     for gid, tid, seat, flag in sorted(seats):
