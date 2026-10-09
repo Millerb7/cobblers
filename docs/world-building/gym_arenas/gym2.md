@@ -109,3 +109,35 @@ gallery, sill, cistern, well back up). Her spawner stands in the hall only becau
   climbs back into it should be told where she went (a sign, a line of dialogue) is a design question, not made here.
 - Arena order in R16GA after R16E (the dig): the dig is applied first, so the door is cut after it; a re-run of R16E
   alone does not touch the arena (the dig writes no cell the arena wrote).
+
+## The way out past Misty, measured (2026-10-09, the walk-through unit)
+
+The walk-through design (`docs/world-building/GYM_WALKTHROUGH.md`, gym 2) kept the template and the slipway and asked for
+the launch channel as a door past Misty "to be MEASURED first (where the channel meets the lake, and whether its
+mouth is above water)". Measured from the heightmap (`tools/ground.py`) and the lake's own water model
+(`tools/bridges.py water()`, the one the audit uses), nothing from a world:
+
+- The channel is x1594..1629, z2891..2893, water y91..92 (surface about y92.9), inside a shell whose south face is z2895.
+- Lake Viltri's surface is y103 (`data/landmarks.json` lake_viltri `water_body.level_y`). Its first wet column is z2896
+  at x1629..1631, z2897 at x1624, z2899 at x1618, z2901 at x1612, z2902 at x1606, z2904 at x1600 and z2907 at x1594.
+  No column of the hall's footprint (x1592..1631, z2881..2895) is wet.
+- The channel's water is therefore **10 to 11 blocks below the lake's**. The bed does not come down to y93 until z2916
+  (x1629), z2919 (x1618), z2921 (x1612), z2923 (x1606), z2926 (x1600) and z2929 (x1594): 22 to 35 blocks south of the
+  shell. A channel that met the lake would have to be a sealed, flooded tunnel that long, ending under about ten
+  blocks of water, or an opening below the lake's surface, which floods the hall.
+
+**Verdict: the launch channel is not a way out.** The premise (a mouth above water) is false. What is left, and what
+was not built:
+
+1. **Back the way you came** (the baseline, walked by the audit from the slipway's landing: down True, up True, no
+   jump True): door, slipway, boat house; and beyond the landing the template's own route, the sill four down and the
+   well's scaffolding thirty-eight up (`data/gym_interiors.json` gym2 `route`), not modelled by the arena tool.
+2. **A walked shore stair** is the honest candidate and is not buildable under `gym_arena/1`: from a gangway across the
+   channel (three planks at y92) and a door in the south wall, a stair rising south about eleven courses (quay y92,
+   ground y103..105 at the south wall) to the shore at roughly z2905 (x1594) or z2897 (x1629), where the lake meets
+   the lot. It cannot be said in this schema: (a) the shell rule refuses any open arena cell beside unwritten ground,
+   which a shore opening is; (b) the cover rule wants natural blocks over every written column, and the top of such a
+   stair is at the surface; (c) bounds must lie inside the `gym_misty` spawn-free box (z to 2895), which a stair to
+   the shore leaves; (d) `gym_hall/1` needs a superseded building and a lot level, and the template has neither. A
+   door that opens only from inside would also be needed, so that it is never a way in past the race and the
+   lifeguard. That is a tool change, not a data change, and it is the owner's call whether Misty gets it.
