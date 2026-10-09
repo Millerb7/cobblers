@@ -19,14 +19,15 @@ VERIFIED there, the inclusive uniform draw ASSUMED there): over the losing team,
     B = max(1, int(5*S*sum(L_i/50)))  (= S*S//10),  amount = B + uniform_int(B//2, 2B),  credit = floor(amount * 1.25).
 Each battle is DRAWN. This tool never uses the expectation to price a battle.
 
-THE TWO DEFECTS, as they stand today (the scenario names):
-  as_built   boss stages pay the NPC payout (no clawback: dungeons.json engine.clawback.status) and the TM gate's
+THE SCENARIOS (defect1 and defect2 are the two faults taken apart: the clawback failing, and the recipe window):
+  as_built   the clawback is BUILT (tools/dungeon_fights.py, 2026-10-09; dungeons.json engine.clawback.status: written,
+             not yet run in game): a boss stage pays $0 net. The TM gate's
              `recipe give @s *` opens every sigil recipe for up to recipe_sync_period_ticks (200)
   design     the contract: a dungeon win pays $0 net (the clawback works) and the window does not exist
-  defect1    design + the boss payout only
+  defect1    design + the boss payout only: the clawback failing (its timing assumption, EXP-060, is not proven in game)
   defect2    design + the recipe window only
-  stands_unclawed   COUNTERFACTUAL, not a defect today: as_built plus the three stands paying the same payout. The
-             stands are not built (dungeons.json status); this is what building them before the clawback would do.
+  stands_unclawed   COUNTERFACTUAL: no clawback at all (boss stages pay) plus the three stands paying the same payout.
+             The stands are not seated yet (dungeons.json status); this is what the dungeon would do if the clawback failed.
 
 WHAT IS ASSUMED (not measured anywhere; each is a named parameter, swept in the report where it matters):
   - hours: a leg's fights take effort_model.max_leg_hours (4, ASSUMED there); Victory Road 4 h, the League 2 h, the HQ tower 2 h
@@ -84,7 +85,7 @@ ORE_DROPS = {"coal_ore": ("minecraft:coal", 1, 1), "iron_ore": ("minecraft:raw_i
              "diamond_ore": ("minecraft:diamond", 1, 1)}
 # DUNGEONS.md 9.2: area gems per stand by band (items; counted, never priced)
 GEMS_PER_STAND = {1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 3}
-# Stand members by band (DUNGEONS.md 5.3), used only by the stands_unclawed counterfactual
+# Stand members by band (DUNGEONS.md 5.3; data/dungeons.json engine.stands.members_by_band), used only by the stands_unclawed counterfactual
 STAND_MEMBERS = {1: 2, 2: 3, 3: 3, 4: 4, 5: 5, 6: 6}
 # docs/mechanics/PROGRESSION_LADDER.md 4.1 (RELAYED): the cap is the next required leader's ace: 20/25/.../55 holding
 # 0..7 badges; 60 holding 8 (62 after Victory Road); 100 once the Champion has fallen
@@ -94,7 +95,7 @@ CHAMPION_CAP = 100
 SEAM_TAKE_CANDIDATES = (4, 9, 14, 19, 24)       # the top of each ladder tier: 4 is the free tier (x1)
 
 SCENARIOS = {
-    "as_built": dict(pay_boss=True, window=True, stands=False),
+    "as_built": dict(pay_boss=False, window=True, stands=False),    # the clawback exists (engine.clawback)
     "design": dict(pay_boss=False, window=False, stands=False),
     "defect1": dict(pay_boss=True, window=False, stands=False),
     "defect2": dict(pay_boss=False, window=True, stands=False),
@@ -237,10 +238,8 @@ class World:
         offs = bo["stage_level_offsets"]
         teams = []
         for k, off in enumerate(offs, 1):
-            team = [base + off]
-            if k == len(offs) and band >= bo["escort_from_band"]:
-                team.append(base + bo["escort_level_offset"])
-            teams.append(team)
+            crew = bo["teams"][str(band)][k - 1]
+            teams.append([base + off + (0 if i == len(crew) - 1 else bo["member_level_offset"]) for i in range(len(crew))])
         return teams
 
     def stand_team(self, band):

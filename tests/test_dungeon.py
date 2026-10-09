@@ -457,7 +457,9 @@ def test_timeout_kills_once_out_of_battle_and_the_death_ends_the_run_with_a_tail
     assert w.get(p.name, "dg.st") == 4 and not p.dead, "sudden death holds while in battle"
     w.set(p.name, "dg.claw", 1)
     w.in_battle.discard(p.name)
-    w.passes(2)
+    # dg.claw is 1 only between a win's callback and the start of the next tick (claw/tick resolves it, unit DG-CLAW),
+    # so the wait is asked of the kill's own function directly: ticking would let the clawback finish first
+    w.call("cobblers:dungeons/m/timeout", PS.Ctx(p, p.dim, p.pos))
     assert not p.dead, "the clawback runs to completion before the kill (E1 rule 6)"
     w.set(p.name, "dg.claw", 0)
     w.passes(1)

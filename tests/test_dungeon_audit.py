@@ -504,7 +504,9 @@ def test_at_zero_in_battle_the_kill_waits_for_the_battle_and_the_clawback():
     assert not p.dead and score(w, p, "dg.clock") == 0 and score(w, p, "dg.st") == 4
     w.battle.discard(p.name)
     w.set(p.name, "dg.claw", 1)
-    w.tick(PASS * 3)
+    # dg.claw is 1 only between a win's callback and the start of the next tick (claw/tick resolves it, unit DG-CLAW),
+    # so the wait is asked of the kill's own function directly: ticking would let the clawback finish first
+    w.call("cobblers:dungeons/m/timeout", PS_ctx(p))
     assert not p.dead
     w.set(p.name, "dg.claw", 0)
     w.tick(PASS)
@@ -685,11 +687,9 @@ def test_a_player_whose_slot_was_freed_never_resumes_a_run_in_it():
 
 
 # Without it the design's "dungeon wins pay $0 net" (DUNGEONS.md 11.4 new contracts) is silently untrue: a won boss
-# stage is an NPC win, and CobbleDollars credits it (earnCobbleDollarsFromNPC true). Nothing in the pack measures a
-# clawback: dg.claw is never set to 1. Size today: tools/dungeon_audit.py --payout (band 1 $202-$405 a run, band 6
-# $11,062-$22,125), once an hour per player and dungeon.
-@pytest.mark.xfail(strict=True, reason="DEFECT (known, step 6): a won boss stage keeps CobbleDollars' NPC payout; "
-                                       "no function starts the dg.claw clawback")
-def test_a_won_boss_stage_pays_nothing_net():
+# stage is an NPC win, and CobbleDollars credits it (earnCobbleDollarsFromNPC true). This was a strict xfail until unit
+# DG-CLAW built the clawback (tools/dungeon_fights.py; tests/test_dungeon_fights.py is its real test). Size without it:
+# tools/dungeon_audit.py --payout.
+def test_a_won_boss_stage_pays_nothing_net():      # the defect closed by unit DG-CLAW (tools/dungeon_fights.py)
     assert DA.boss_payouts(DG) is None or any(
         re.search(r"scoreboard players set @s dg\.claw [1-9]", l) for ls in FNS.values() for l in DA.body(ls))

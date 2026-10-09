@@ -111,7 +111,23 @@
     },
     "clawback": {
       "objective": "dg.claw",
-      "status": "the extension point only (the stands and their clawback are step 6): sudden death's kill waits while dg.claw is 1 or more, so the clawback a stand or boss win starts runs to completion before the kill (E1 rule 6). Nothing sets it tonight, so a boss stage's NPC payout is NOT clawed back by this build (does_not_cover)"
+      "status": "BUILT 2026-10-09 (tools/dungeon_fights.py, unit DG-CLAW), NOT RUN IN GAME: every dungeon NPC battle (the boss's stages now, the stands through claw/begin and claw/bounds/<class>) takes CobbleDollars' own NPC-win payout back, by the arena's design (tools/arena_runtime.py cd/*; EXP-060, NOT_EXECUTED, is the arena's proof of the same timing assumption). claw/begin reads the balance before start_battle, a tick function re-reads it every tick until the result, the victory callback runs claw/settle, which takes the gain (at most dg.cmax, the most CobbleDollars can credit for that class) now or, if CobbleDollars' handler has not run yet, at the start of the next tick (dg.claw 1 while pending; sudden death's kill waits, E1 rule 6). The dungeon pays no purse of its own, so the whole payout goes back: $0 net",
+      "assumptions": "the handler order and the inter-tick timing (EXP-060 for the arena); the exact level sum of an NPC's party (simple party, explicit level=); CobbleDollars crediting a win won inside cobblers:pocket like any other",
+      "does_not_cover": "a player offline in the tick after the win keeps dg.claw 1 until they return (the tick function then takes it); a battle with no result (flee, forfeit) pays nothing and so takes nothing"
+    },
+    "stands": {
+      "status": "the generator of the trainer classes and the stand battle's start, built by tools/dungeon_fights.py for wave 2 (the rooms); no room carries a stand yet",
+      "members_by_band": {"1": 2, "2": 3, "3": 3, "4": 4, "5": 5, "6": 6},
+      "level_rule": "DUNGEONS.md 5.3: members 2/3/3/4/5/6 by band, levels from the band's lower cap less low_offset to the lower cap less high_offset, the last (the ace) at the high end; band 6 spans band6_levels. Never above the band's lower cap",
+      "low_offset": 2,
+      "high_offset": 1,
+      "band6_levels": [95, 99],
+      "skill": 3,
+      "go_ticks": 10,
+      "go_ticks_why": "the battle starts go_ticks after the macro spawn: Heaven's Arena's GO_TICKS (tools/arena_runtime.py), proven in game 2026-10-03 for its macro-free spawn; L1/C1 only needed a tick",
+      "retry_ticks": 20,
+      "retries": 6,
+      "pools": {}
     },
     "adventure": {
       "tag": "dg.adv",
@@ -222,15 +238,22 @@
       },
       "boss": {
         "placeholder": true,
-        "placeholder_why": "the stages' species, moves and items are trainer-balance-designer's (DUNGEONS.md 3.2, 5.3); this placeholder has one ace per stage at the design's levels and no authored moves, so the chain can run",
+        "placeholder_why": "the stages' species, moves and items are trainer-balance-designer's (DUNGEONS.md 3.2, 5.3); these crews are the main session's placeholder (the owner, 2026-10-09 playtest: 'he would need more mons, no reason he just has one'), no authored moves or items yet",
         "name": "The Night Foreman",
         "stage_level_offsets": [-2, -1, 0],
         "level_basis": "band_min_cap",
         "level_basis_why": "a class is per band (3.2: 3 stages x 6 bands); its levels are the band's LOWER cap less the offset, so no stage is ever above the cap of any player in that band (the arena rule, never above the band's cap)",
-        "aces": {"1": "electabuzz", "2": "electabuzz", "3": "electivire", "4": "electivire", "5": "electivire", "6": "electivire"},
-        "escort": "magnezone",
-        "escort_from_band": 4,
-        "escort_level_offset": -1,
+        "teams": {
+          "1": [["geodude", "magnemite", "electabuzz"], ["voltorb", "roggenrola", "onix", "electabuzz"], ["drilbur", "geodude", "magnemite", "onix", "electabuzz"]],
+          "2": [["graveler", "magneton", "electabuzz"], ["electrode", "boldore", "onix", "electabuzz"], ["boldore", "graveler", "magneton", "electrode", "onix", "electabuzz"]],
+          "3": [["graveler", "magneton", "boldore", "electivire"], ["excadrill", "electrode", "steelix", "electivire"], ["excadrill", "graveler", "boldore", "magneton", "steelix", "electivire"]],
+          "4": [["golem", "magnezone", "gigalith", "electivire"], ["excadrill", "steelix", "electrode", "probopass", "electivire"], ["golem", "gigalith", "excadrill", "steelix", "magnezone", "electivire"]],
+          "5": [["golem", "magnezone", "gigalith", "excadrill", "electivire"], ["rhyperior", "steelix", "probopass", "electrode", "electivire"], ["golem", "gigalith", "excadrill", "rhyperior", "magnezone", "electivire"]],
+          "6": [["golem", "magnezone", "gigalith", "excadrill", "steelix", "electivire"], ["rhyperior", "probopass", "electrode", "excadrill", "magnezone", "electivire"], ["golem", "gigalith", "rhyperior", "steelix", "magnezone", "electivire"]]
+        },
+        "teams_why": "per band, one crew per stage, the ACE LAST (it is sent out last): Electabuzz to band 2, Electivire from band 3. The crew is the mine's: rock, ground and steel with electric. Sizes grow by stage and band (3/4/5 at band 1 to 6/6/6 at band 6), above the stands' 2/3/3/4/5/6 (5.3) because he is the boss. The party carries over between stages with no heal (3.2), so band 1 is 12 Pokemon in a row: the owner's playtest decides whether that is too many",
+        "member_level_offset": -1,
+        "member_level_offset_why": "the crew stand one level under the stage's level; the ace is at the stage's level, so nothing is above the band's lower cap",
         "gap_ticks": 60,
         "skill": 3,
         "gated_on": "C1 (owner half, EXP-078): the macro spawn after a plain restart PASSED; a victory's follow-up starting the next fight, three times in a row, is unproven",
@@ -261,7 +284,7 @@
         "Pokemon a player sends out OUTSIDE a no-deploy box: the sweep runs only in those boxes (3.4), and nothing else in a slot removes a send-out",
         "items dropped in a slot: nothing collects them; a reset does not clear them",
         "an NPC or Pokemon that is not ours standing in a slot: the keeper binds any untagged cobblemon:npc in a slot's box as ours (the exempt tag), but a wild Pokemon there is untouched; the pocket's void biome spawns nothing (data/portals.json generator.biome_why, NOT VERIFIED for Cobblemon)",
-        "a boss stage's NPC payout: the clawback is step 6, so a won stage pays CobbleDollars' NPC payout today (contract 'dungeon wins pay $0 net' is not met by this build)",
+        "a boss stage's NPC payout is clawed back (engine.clawback, built 2026-10-09) but the clawback is unproven in game: until EXP-060's timing assumption holds, the contract 'dungeon wins pay $0 net' is written, not observed",
         "the stands, the seam, the parkour's catch bands, the lake and the den (step 6); the seam's call into the greed ladder is cobblers:dungeons/greed/take",
         "a shell from an earlier, longer spine (engine.slots.clear_strip)",
         "a player in co-op: members_max is 1, and the second account (XD8) is needed for its proofs",

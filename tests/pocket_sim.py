@@ -246,6 +246,11 @@ class World:
         self.block_writes = []
         self.calls, self.spawned, self.log = [], [], []
         self.rolls = []             # loot rolls: each an index into the pool's entries; empty -> the first
+        self.money = {}             # CobbleDollars balances by score holder (`cobbledollars query|give|remove`)
+        self.tick_fns = []          # the pack's tick-tagged functions, run first in every tick
+        tick_tag = self.pack / "data" / "minecraft" / "tags" / "function" / "tick.json"
+        if tick_tag.is_file():
+            self.tick_fns = json.loads(tick_tag.read_text(encoding="utf-8"))["values"]
 
     # ---- the world --------------------------------------------------------------------------------------------
     def player(self, name, dim, pos, advancements=()):
@@ -279,6 +284,8 @@ class World:
     def tick(self, n=1):
         for _ in range(n):
             self.gametime += 1
+            for f in self.tick_fns:
+                self.call(f, self.server_ctx())
             for f, due in sorted(self.scheduled.items()):
                 if due <= self.gametime:
                     del self.scheduled[f]
@@ -570,6 +577,21 @@ class World:
             self.ents.append(e)
             self.spawned.append(e)
             return 1
+        if h == "cobbledollars":
+            # CobbleDollarsCommand: query <target> returns the balance; give|remove <targets> <amount>, amount >= 1,
+            # remove takes min(amount, balance)
+            assert len(t) in (3, 4) and t[1] in ("query", "give", "remove"), "unmodelled: %s" % " ".join(t)
+            es = self.select(t[2], ctx)
+            if len(es) != 1 and t[1] == "query":
+                raise Failed("cobbledollars query needs one player")
+            if t[1] == "query":
+                return self.money.get(es[0].holder, 0)
+            n = int(t[3])
+            assert n >= 1, "the jar refuses an amount under 1: %s" % " ".join(t)
+            for e in es:
+                bal = self.money.get(e.holder, 0)
+                self.money[e.holder] = bal + n if t[1] == "give" else bal - min(n, bal)
+            return len(es)
         raise Unsupported("command %r" % " ".join(t))
 
     def function_cmd(self, t, ctx):
@@ -599,6 +621,11 @@ class World:
             for hd in self.holders(t[3], ctx):
                 cur = self.get(hd, t[4]) or 0
                 self.set(hd, t[4], n if op == "set" else cur + n if op == "add" else cur - n)
+            return 1
+        if op == "reset":
+            for hd in self.holders(t[3], ctx):
+                for obj in ([t[4]] if len(t) > 4 else [o for (h2, o) in list(self.scores) if h2 == hd]):
+                    self.scores.pop((hd, obj), None)
             return 1
         if op == "get":
             (hd,) = self.holders(t[3], ctx)

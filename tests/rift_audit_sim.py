@@ -71,6 +71,10 @@ class RiftWorld(PS.World):
         self.death_objs, self.deaths, self.delivered, self.started = set(), [], [], []
         self.battle, self.caps, self.npcs, self.titles = set(), {}, [], []
         self.hooks = {}
+        self.money = {}
+        self.tick_fns = []
+        if "data/minecraft/tags/function/tick.json" in files:
+            self.tick_fns = json.loads(files["data/minecraft/tags/function/tick.json"])["values"]
 
     def boot(self):
         self.scheduled = {}
@@ -221,6 +225,8 @@ class RiftWorld(PS.World):
                         if st[0] == "score":
                             for hd in self.holders(st[1], c):
                                 self.set(hd, st[2], r if ok else 0)
+                        elif st[0] == "storage":
+                            self.store(st, c, r if ok else 0)
                     total += r
                 return total
             if w == "as":
@@ -287,6 +293,9 @@ class RiftWorld(PS.World):
                 elif t[i + 2] == "bossbar":
                     stores.append(("bossbar",))
                     i += 5
+                elif t[i + 2] == "storage":
+                    stores.append(("storage", t[i + 3], t[i + 4], t[i + 5], float(t[i + 6])))
+                    i += 7
                 else:
                     raise PS.Unsupported("execute store result %s" % t[i + 2])
             else:
