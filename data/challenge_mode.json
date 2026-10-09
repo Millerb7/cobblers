@@ -56,7 +56,7 @@
       "advancement": "cobbleverse:trainer/kanto/defeat_erika",
       "upstream_mob": {"type": "kanto", "signatureItem": "lumymon:nature_fan", "maxTrainerWins": -1, "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0, "biomeTagBlacklist": ["is_void", "is_underground", "is_nether", "is_end"], "biomeTagWhitelist": ["cobbleverse:flower_forest"]},
       "upstream_required": ["kanto_ltsurge"],
-      "spawner": {"at": [4306, 110, 1480], "measured_by": "gym_buildings", "why": "two west of Erika's spawner (4308, 110, 1480), moss over stone; the chest is east at x4312"}
+      "spawner": {"at": [4309, 98, 1514], "measured_by": "gym_buildings", "why": "two west of Erika's spawner (4308, 110, 1480), moss over stone; the chest is east at x4312"}
     },
     "kanto_koga": {
       "lang": "koga",
