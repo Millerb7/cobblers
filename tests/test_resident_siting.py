@@ -47,12 +47,12 @@ def _southern(name="southern_residents.json"):
 
 
 RES = load("resident_encounters.json")["encounters"] + _southern() + _southern("northern_residents.json") \
-    + _southern("far_south.json")
+    + _southern("far_south.json") + _southern("rookery.json")
 DESIGN = load("encounter_design.json")
 HEARTS = DESIGN["rules"]["hearts"]
 IDS = [e["id"] for e in RES]
 SOUTH_IDS = {e["id"] for e in _southern()} | {e["id"] for e in _southern("northern_residents.json")} \
-    | {e["id"] for e in _southern("far_south.json")}
+    | {e["id"] for e in _southern("far_south.json")} | {e["id"] for e in _southern("rookery.json")}
 FAR_SOUTH = {"greymane", "fifth_chimney", "old_watcher"}
 
 

@@ -31669,6 +31669,92 @@
       },
       "eligibility_reason": "Swablu: the cloud bird, evolving at 35, so it spawns 28-38 with its evolution Altaria only at 35+",
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.gull_rock_colony.pelipper",
+      "species": "pelipper",
+      "bucket": "common",
+      "level": "36-44",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "gull_rock_colony",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "final stage: Wingull evolves at 25, under the band's floor 36",
+      "spawnable_position": "surface",
+      "spawnable_position_authored": {
+        "position": "surface",
+        "why": "tools/position_types.py would derive grounded (6 of 10 upstream entries are on dry land); a surface position is the Wingull family's own other half (4 of 10), and it is the one that puts the colony on the water between the rocks, where a player wading sees it"
+      }
+    },
+    {
+      "id": "habitat.gull_rock_colony.swanna",
+      "species": "swanna",
+      "bucket": "common",
+      "level": "36-44",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "gull_rock_colony",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "final stage: Ducklett evolves at 35, under the band's floor 36",
+      "spawnable_position": "surface",
+      "spawnable_position_authored": {
+        "position": "surface",
+        "why": "the same: surface is 2 of its 4 upstream entries, and a Swanna is a bird on the water"
+      }
+    },
+    {
+      "id": "habitat.gull_rock_colony.altaria",
+      "species": "altaria",
+      "bucket": "uncommon",
+      "level": "36-44",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "gull_rock_colony",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "final stage: Swablu evolves at 35, under the band's floor 36",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.gull_rock_colony.kilowattrel",
+      "species": "kilowattrel",
+      "bucket": "uncommon",
+      "level": "36-44",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "gull_rock_colony",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "final stage: Wattrel evolves at 25, under the band's floor 36",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.gull_rock_colony.delibird",
+      "species": "delibird",
+      "bucket": "rare",
+      "level": "36-44",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "gull_rock_colony",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage with no level evolution inside the band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.gull_rock_colony.mantyke",
+      "species": "mantyke",
+      "bucket": "rare",
+      "level": "36-44",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "gull_rock_colony",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage with no level evolution inside the band",
+      "spawnable_position": "submerged"
     }
   ],
   "placement_sites_note": "A placed structure's grounds with a roster of its own (mechanism placement_coordinate_boxes, an entry's scope a site id). tools/compile_spawns.py lays a site's entries over its placement's footprint (data/placements.json position and size) widened by margin, less the path and the spawn-free zones, inside the sub-region holding it, and appends them to that sub-region's file on top of its roster. Grounded entries are forced canSeeSky like every land entry, so a site spawns on the open grounds round the structure and its sky-open surfaces (a tower's summit), never inside under a roof. Hand-authored; tools/build_encounters.py copies it through.",
@@ -62769,6 +62855,93 @@
         }
       ],
       "placement_status": "authored: data/habitat_blocks.json sunset_watch_mast_ward, status planned"
+    },
+    {
+      "id": "gull_rock_colony",
+      "display_name": "Gull Rock's colony",
+      "intended_location": "the sea round Gull Rock (6940, 2650): six activated Habitat Blocks in its tidal rocks, 34 blocks from the stack (data/habitat_blocks.json rookery_skerry_*), each keeping up to 3 alive within 16",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 36,
+        "maximum": 44
+      },
+      "why": "data/rookery.json colony: 36-44: the top is under the cap at five badges (45), so every bird is catchable by the player the sweep calls band 5 and by every later one; the floor 36 is one above the evolution level of the lowest-stage birds here (Wingull and Wattrel evolve at 25; Ducklett and Swablu at 35, all Cobblemon 1.8.0 species data), which is why the roster is evolved stages and Mantyke, never a base Wingull at level 40. The eastern moor's tier-7 band is 38-48 and its cap 50 (data/encounter_design.json): the colony sits under it by design, the nest is a band-5 place that asks for more only of the Gullmother what a cold strait's gulls and divers would be, and her kin: Pelipper is the colony (a Wingull colony at this level is Pelipper); Swanna the white water-bird; Altaria the cloud dragon of the Dragonite's own Dragon/Flying kin; Kilowattrel the storm bird (the Dragonite's lore is storms: the jar's dex text, 'leads lost and foundering ships in a storm to the safety of land'); Delibird the cold-water gift bird; Mantyke the ray that skims the wave tops (a find: nothing else on this coast has it). Wingull, Dratini, Skarmory and Lapras are NOT in it: Dratini already stands in two water tables, Driftmouth's and Shrew Lake's (the rule: at most two); Lapras is Frostpeak Strand's find; Skarmory belongs to the crater plateau (data/encounter_design.json)",
+      "placement_status": "pending_or_authored_world_asset",
+      "entries": [
+        {
+          "species": "Pelipper",
+          "pokemon": "pelipper",
+          "family": "wingull",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "final stage: Wingull evolves at 25, under the band's floor 36",
+          "level": "36-44",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swanna",
+          "pokemon": "swanna",
+          "family": "ducklett",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "final stage: Ducklett evolves at 35, under the band's floor 36",
+          "level": "36-44",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Altaria",
+          "pokemon": "altaria",
+          "family": "swablu",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "final stage: Swablu evolves at 35, under the band's floor 36",
+          "level": "36-44",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Kilowattrel",
+          "pokemon": "kilowattrel",
+          "family": "wattrel",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "final stage: Wattrel evolves at 25, under the band's floor 36",
+          "level": "36-44",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Delibird",
+          "pokemon": "delibird",
+          "family": "delibird",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "base stage with no level evolution inside the band",
+          "level": "36-44",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        },
+        {
+          "species": "Mantyke",
+          "pokemon": "mantyke",
+          "family": "mantyke",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "base stage with no level evolution inside the band",
+          "level": "36-44",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        }
+      ]
     }
   ],
   "route_species_selection_note": "Generated by tools/build_encounters.py from data/encounter_design.json (docs/mechanics/ENCOUNTER_DESIGN.md section 6): per route, the families in rules.corridor_roles (never a find) of every sub-region its corridor crosses (data/routes.json geography transitions), at most corridor_species_limit: every crossed table's water species kept, rules.corridor_rare_min of the crossed on-path tables' rare- and ultra-role species reserved (the owner, 2026-10-05), and the rest by chance times corridor length. tools/compile_spawns.py reads this list and does not choose. Do not edit by hand.",

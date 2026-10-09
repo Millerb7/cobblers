@@ -7860,6 +7860,144 @@
       "status": "planned",
       "why": "written by tools/sunset_watch.py records --write from the plan (data/sunset_watch.json day). A second activated block in the mast's second log, so the Watch is not dead until dusk. Its own block and pool because an activated block counts what it has alive against its cap: day birds sharing the dusk block would sit on the cap and shut the dusk pool out. Day birds only (timeRange day, ticks 23460-12541, the jar's 'day'). ACTIVATED, the orchard's and the den's pattern; cancel_range -1 leaves natural spawning alone. The position is the lamp mast's second log as the generator seats it (the terrace's paved Y 137 from the heightmap), in a block that pack writes, so the pack must run BEFORE R9E (R9SW) or it writes the block back over this one.",
       "mimic_why": "the block the pack writes at that cell (minecraft:spruce_log), so the Habitat Block is one more of them."
+    },
+    {
+      "id": "rookery_skerry_0",
+      "place": "Gull Rock, tidal rock 0 of 6 (bearing 30 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6957,
+        "y": 64,
+        "z": 2621
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
+    },
+    {
+      "id": "rookery_skerry_1",
+      "place": "Gull Rock, tidal rock 1 of 6 (bearing 90 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6974,
+        "y": 64,
+        "z": 2650
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
+    },
+    {
+      "id": "rookery_skerry_2",
+      "place": "Gull Rock, tidal rock 2 of 6 (bearing 150 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6957,
+        "y": 64,
+        "z": 2679
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
+    },
+    {
+      "id": "rookery_skerry_3",
+      "place": "Gull Rock, tidal rock 3 of 6 (bearing 210 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6923,
+        "y": 64,
+        "z": 2679
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
+    },
+    {
+      "id": "rookery_skerry_4",
+      "place": "Gull Rock, tidal rock 4 of 6 (bearing 270 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6906,
+        "y": 64,
+        "z": 2650
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
+    },
+    {
+      "id": "rookery_skerry_5",
+      "place": "Gull Rock, tidal rock 5 of 6 (bearing 330 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6923,
+        "y": 64,
+        "z": 2621
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
     }
   ]
 }
