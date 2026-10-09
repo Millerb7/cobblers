@@ -1206,7 +1206,25 @@ class Walker:
         else:
             st.add("leader_spawner", FAIL, "no rctmod:trainer_spawner for %s in any built function" % tid)
         # the hall
-        if gid in self.records and "cobblers_gym_buildings" in self.inp.unbuilt:
+        hall_rec = self.inp.root / "data" / "gym_arenas" / ("%s.json" % gid)
+        is_hall = hall_rec.is_file() and json.loads(hall_rec.read_text(encoding="utf-8")).get("schema") == "gym_hall/1"
+        if is_hall:
+            # a walk-through hall (2026-10-09): its old building is superseded and emits nothing; the walk street ->
+            # challenger's stand -> street is the independent arena audit's (tools/gym_arenas_audit.py), run as a CLI
+            import subprocess, tempfile
+            with tempfile.TemporaryDirectory() as td:
+                out = Path(td) / "a.json"
+                r = subprocess.run([sys.executable, str(self.inp.root / "tools" / "gym_arenas_audit.py"), "--gym", gid,
+                                    "--json", str(out)], capture_output=True, text=True, cwd=str(self.inp.root))
+                rep = json.loads(out.read_text(encoding="utf-8")) if out.is_file() else {}
+            g = rep.get(gid) or {}
+            probs = list(g.get("problems") or [])
+            ok = r.returncode == 0 and not probs and g.get("reach_down") and g.get("reach_up")
+            st.add("hall_walk", PASS if ok else FAIL,
+                   {"summary": "the hall is walked street -> challenger's stand -> street (tools/gym_arenas_audit.py)"
+                    if ok else "arena audit: %s" % ((probs or [r.stderr.strip()[-200:]])[0]), "blocking": probs},
+                   not_covered="the audit's movement model of vanilla, not a walk in game")
+        elif gid in self.records and "cobblers_gym_buildings" in self.inp.unbuilt:
             st.add("hall_walk", NM, "cobblers_gym_buildings is not built in this mode: %s"
                    % self.inp.unbuilt["cobblers_gym_buildings"])
         elif gid in self.records:
