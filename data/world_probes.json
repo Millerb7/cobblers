@@ -3993,6 +3993,238 @@
         ],
         "expect": false
       }
+    ],
+    "route4_events": [
+      {
+        "what": "headwall_camp: the lean-to's barrel",
+        "block": [
+          2497,
+          163,
+          1282,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "headwall_camp: the camp fire",
+        "block": [
+          2504,
+          163,
+          1278,
+          "minecraft:campfire"
+        ],
+        "expect": true
+      },
+      {
+        "what": "headwall_camp: the hitching post",
+        "block": [
+          2506,
+          163,
+          1284,
+          "minecraft:spruce_fence"
+        ],
+        "expect": true
+      },
+      {
+        "what": "headwall_camp: the boulder",
+        "block": [
+          2525,
+          161,
+          1274,
+          "minecraft:andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "headwall_camp: the lead prop (an interaction box)",
+        "hold": [
+          2506,
+          163,
+          1284
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_headwall_camp_lead]",
+        "count": 1
+      },
+      {
+        "what": "headwall_camp: the scar prop (an interaction box)",
+        "hold": [
+          2525,
+          162,
+          1274
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_headwall_camp_scar]",
+        "count": 1
+      },
+      {
+        "what": "steam_hollow: the pool's water",
+        "block": [
+          3111,
+          106,
+          1500,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "steam_hollow: the pool's moss",
+        "block": [
+          3115,
+          107,
+          1500,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "steam_hollow: the tracks prop (an interaction box)",
+        "hold": [
+          3118,
+          107,
+          1499
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_steam_hollow_tracks]",
+        "count": 1
+      },
+      {
+        "what": "steam_hollow: the pool prop (an interaction box)",
+        "hold": [
+          3114,
+          107,
+          1500
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_steam_hollow_pool]",
+        "count": 1
+      },
+      {
+        "what": "steam_hollow: the petal prop (an interaction box)",
+        "hold": [
+          3107,
+          107,
+          1498
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_steam_hollow_petal]",
+        "count": 1
+      },
+      {
+        "what": "strayed_load: the strayed barrel",
+        "block": [
+          3262,
+          116,
+          1450,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "strayed_load: the red pennant",
+        "block": [
+          3259,
+          124,
+          1447,
+          "minecraft:red_banner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 5",
+        "block": [
+          3247,
+          105,
+          1618,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 4",
+        "block": [
+          3199,
+          105,
+          1619,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 3",
+        "block": [
+          3145,
+          106,
+          1622,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 2",
+        "block": [
+          3104,
+          112,
+          1654,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 1",
+        "block": [
+          3072,
+          116,
+          1697,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 0",
+        "block": [
+          3029,
+          120,
+          1720,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: the stone_0 prop (an interaction box)",
+        "hold": [
+          3029,
+          120,
+          1720
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_summit_road_stone_0]",
+        "count": 1
+      },
+      {
+        "what": "thaw_gate: the moss belt",
+        "block": [
+          3034,
+          119,
+          1707,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "thaw_gate: the gate's lantern post",
+        "block": [
+          3027,
+          123,
+          1709,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "thaw_gate: the drift prop (an interaction box)",
+        "hold": [
+          3037,
+          120,
+          1708
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_thaw_gate_drift]",
+        "count": 1
+      }
     ]
   }
 }

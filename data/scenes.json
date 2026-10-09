@@ -2310,6 +2310,609 @@
           "yaw": 0
         }
       ]
+    },
+    {
+      "id": "route4_headwall_camp",
+      "quest_id": "evt_route4_thaw_road",
+      "source": "data/route4_events.json",
+      "built_by": "tools/route4_events.py headwall_camp",
+      "area": {
+        "from": [
+          2470,
+          148,
+          1262
+        ],
+        "to": [
+          2540,
+          179,
+          1302
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "scar",
+          "conversation": "dlg_route4_scar",
+          "at": [
+            2525.5,
+            162.0,
+            1274.5
+          ],
+          "size": [
+            2.0,
+            1.4
+          ],
+          "on": [
+            2525,
+            162,
+            1274
+          ]
+        },
+        {
+          "id": "lead",
+          "conversation": "dlg_route4_lead",
+          "at": [
+            2506.5,
+            163.0,
+            1284.5
+          ],
+          "size": [
+            1.0,
+            1.6
+          ],
+          "on": [
+            2506,
+            163,
+            1284
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_route4_headwall_camp",
+          "at": [
+            2503,
+            163,
+            1275
+          ],
+          "yaw": 180
+        }
+      ]
+    },
+    {
+      "id": "route4_steam_hollow",
+      "quest_id": "evt_route4_thaw_road",
+      "source": "data/route4_events.json",
+      "built_by": "tools/route4_events.py steam_hollow",
+      "area": {
+        "from": [
+          3088,
+          100,
+          1478
+        ],
+        "to": [
+          3132,
+          123,
+          1522
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "tracks",
+          "conversation": "dlg_route4_hollow_tracks",
+          "at": [
+            3118.5,
+            108.0,
+            1499.5
+          ],
+          "size": [
+            1.4,
+            0.8
+          ],
+          "on": [
+            3118,
+            107,
+            1499
+          ]
+        },
+        {
+          "id": "pool",
+          "conversation": "dlg_route4_hollow_pool",
+          "at": [
+            3114.5,
+            108.0,
+            1500.5
+          ],
+          "size": [
+            1.6,
+            1.0
+          ],
+          "on": [
+            3114,
+            107,
+            1500
+          ]
+        },
+        {
+          "id": "petal",
+          "conversation": "dlg_route4_hollow_petal",
+          "at": [
+            3107.5,
+            108.0,
+            1498.5
+          ],
+          "size": [
+            0.9,
+            0.7
+          ],
+          "on": [
+            3107,
+            107,
+            1498
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [],
+      "effects": [
+        {
+          "id": "steam",
+          "kind": "particles",
+          "particles": [
+            {
+              "particle": "minecraft:cloud",
+              "at": [
+                3110.5,
+                108.0,
+                1500.5
+              ],
+              "delta": [
+                0.5,
+                1.2,
+                0.5
+              ],
+              "count": 3
+            }
+          ]
+        },
+        {
+          "id": "steam_b",
+          "kind": "particles",
+          "particles": [
+            {
+              "particle": "minecraft:white_smoke",
+              "at": [
+                3109.0,
+                108.0,
+                1501.5
+              ],
+              "delta": [
+                0.6,
+                0.8,
+                0.6
+              ],
+              "count": 2
+            }
+          ]
+        }
+      ],
+      "npcs": []
+    },
+    {
+      "id": "route4_summit_road",
+      "quest_id": "evt_route4_thaw_road",
+      "source": "data/route4_events.json",
+      "built_by": "tools/route4_events.py summit_road",
+      "area": {
+        "from": [
+          3018,
+          92,
+          1607
+        ],
+        "to": [
+          3266,
+          135,
+          1732
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "stone_0",
+          "conversation": "dlg_route4_stone_zero",
+          "at": [
+            3029.5,
+            120.0,
+            1720.5
+          ],
+          "size": [
+            0.9,
+            3.2
+          ],
+          "on": [
+            3029,
+            120,
+            1720
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [
+        {
+          "id": "z5",
+          "from": [
+            3243,
+            101,
+            1618
+          ],
+          "to": [
+            3251,
+            112,
+            1626
+          ],
+          "transitions": [
+            "pass_5"
+          ]
+        },
+        {
+          "id": "z4",
+          "from": [
+            3195,
+            101,
+            1618
+          ],
+          "to": [
+            3203,
+            112,
+            1626
+          ],
+          "transitions": [
+            "pass_4"
+          ]
+        },
+        {
+          "id": "z3",
+          "from": [
+            3143,
+            102,
+            1621
+          ],
+          "to": [
+            3151,
+            113,
+            1629
+          ],
+          "transitions": [
+            "pass_3"
+          ]
+        },
+        {
+          "id": "z2",
+          "from": [
+            3102,
+            108,
+            1652
+          ],
+          "to": [
+            3110,
+            119,
+            1660
+          ],
+          "transitions": [
+            "pass_2"
+          ]
+        },
+        {
+          "id": "z1",
+          "from": [
+            3065,
+            112,
+            1689
+          ],
+          "to": [
+            3073,
+            123,
+            1697
+          ],
+          "transitions": [
+            "pass_1"
+          ]
+        },
+        {
+          "id": "z0",
+          "from": [
+            3029,
+            116,
+            1716
+          ],
+          "to": [
+            3037,
+            127,
+            1724
+          ],
+          "transitions": [
+            "pass_0"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "id": "hud5",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s5"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "Old Summit Road: five stones to the top.",
+          "color": "gold"
+        },
+        {
+          "id": "hud4",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s4"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "Four stones. The wind has turned warm.",
+          "color": "gold"
+        },
+        {
+          "id": "hud3",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s3"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "Three stones. There is no climb.",
+          "color": "gold"
+        },
+        {
+          "id": "hud2",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s2"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "Two stones. Something smells of blossom.",
+          "color": "gold"
+        },
+        {
+          "id": "hud1",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s1"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "One stone.",
+          "color": "gold"
+        },
+        {
+          "id": "hud0",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s0"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "Summit. There is no mountain here. Read the stone.",
+          "color": "gold"
+        }
+      ],
+      "npcs": []
+    },
+    {
+      "id": "route4_thaw_gate",
+      "quest_id": "evt_route4_thaw_road",
+      "source": "data/route4_events.json",
+      "built_by": "tools/route4_events.py thaw_gate",
+      "area": {
+        "from": [
+          3007,
+          110,
+          1694
+        ],
+        "to": [
+          3059,
+          136,
+          1740
+        ]
+      },
+      "markers": {
+        "biscuit_drift": {
+          "at": [
+            3039,
+            120,
+            1706
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "biscuit_gate": {
+          "at": [
+            3038,
+            119,
+            1718
+          ],
+          "yaw": 0,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      },
+      "props": [
+        {
+          "id": "drift",
+          "conversation": "dlg_route4_drift",
+          "at": [
+            3037.5,
+            120.0,
+            1708.5
+          ],
+          "size": [
+            1.2,
+            1.2
+          ],
+          "on": [
+            3037,
+            120,
+            1708
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "biscuit",
+          "species": "gogoat",
+          "level": 34,
+          "name": "Biscuit",
+          "conversation": "dlg_route4_biscuit",
+          "not_yours": "That Gogoat is sulking at somebody else.",
+          "place": [
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.gate_done",
+                "value": true
+              },
+              "marker": "biscuit_gate"
+            },
+            {
+              "marker": "biscuit_drift"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [
+        {
+          "id": "petals",
+          "kind": "particles",
+          "particles": [
+            {
+              "particle": "minecraft:cherry_leaves",
+              "at": [
+                3035.5,
+                120.5,
+                1704.5
+              ],
+              "delta": [
+                4.0,
+                1.5,
+                3.0
+              ],
+              "count": 7
+            }
+          ]
+        },
+        {
+          "id": "petals_b",
+          "kind": "particles",
+          "particles": [
+            {
+              "particle": "minecraft:cherry_leaves",
+              "at": [
+                3033.5,
+                120.5,
+                1707.5
+              ],
+              "delta": [
+                3.0,
+                1.0,
+                3.0
+              ],
+              "count": 4
+            }
+          ]
+        }
+      ],
+      "npcs": [
+        {
+          "conversation": "dlg_route4_thaw_gate",
+          "at": [
+            3033,
+            120,
+            1709
+          ],
+          "yaw": 0
+        }
+      ]
     }
   ]
 }

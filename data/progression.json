@@ -1680,6 +1680,162 @@
       "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
     },
     {
+      "id": "quest.evt_route4_thaw_road.camp_started",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "camp_started",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.clue_scar",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "clue_scar",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.clue_lead",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "clue_lead",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.camp_answered",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "camp_answered",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.camp_reward_claimed",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "camp_reward_claimed",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.camp_done",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "camp_done",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.seen_tracks",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "seen_tracks",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.seen_pool",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "seen_pool",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.hollow_done",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "hollow_done",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.passed_5",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "passed_5",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.passed_0",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "passed_0",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.last_stone",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "last_stone",
+      "scope": "player",
+      "type": "enum",
+      "initial": "none",
+      "allowed_values": "none|s5|s4|s3|s2|s1|s0"
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.road_done",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "road_done",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.gate_reward_claimed",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "gate_reward_claimed",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.gate_done",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "gate_done",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.invited",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "invited",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.hallam_cursor",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "hallam_cursor",
+      "scope": "player",
+      "type": "enum",
+      "initial": "m1",
+      "allowed_values": "node ids from dlg_route4_headwall_camp"
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.oriel_cursor",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "oriel_cursor",
+      "scope": "player",
+      "type": "enum",
+      "initial": "g1",
+      "allowed_values": "node ids from dlg_route4_thaw_gate"
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.prop_cursor",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "prop_cursor",
+      "scope": "player",
+      "type": "enum",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
       "id": "quest.route_01_trainer_01.defeated",
       "quest_id": "route_01_trainer_01",
       "field": "defeated",

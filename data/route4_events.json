@@ -1,0 +1,325 @@
+{
+  "schema": "cobblers.route4-events/1",
+  "generated_by": "hand",
+  "route": "route_04_surge_to_erika",
+  "status": "authored 2026-10-09; tools/route4_events.py builds the sites and writes the scene, quest, dialogue, progression and reward records below into their shared files; NOT run in a world",
+  "note": "Route 4's middle (walked 1085-2263 of 3,453 blocks, cells B3-B4, band 3, cap 35): four events and one find, west to east, because the leg had six trainers and nothing else. One quest, evt_route4_thaw_road, carries the whole chain (a quest may read only its own fields: tools/validate_data.py quest-dialogue), so the finale can greet a player by what they did at the earlier sites. The story: a packer's lead mule bolts at a rockfall on the cirque headwall (1), leaves tracks at a steaming hollow on the trough floor (2) and a dragged crate under the east wall (the find), and walks the old summit road, a line of numbered stones that count down to a summit that is not there (3), to the Displaced City's gate, where warm air and cherry petals come out of the hill into the snow (4). Every event stands alone and pays alone; the finale reads the others' flags only to change who greets the player, so no order is forced and no player is locked out of anything by the order they walk.",
+  "design_rules": [
+    "no new money: every reward is an item, none of them in the Bank's buy list (data/bank.json buys), so the income model (data/markets.json income_basis) is untouched; cash 0 per hour",
+    "no progression item: the only held item is Never-Melt Ice, which the wild pools already carry (data/spawns.json); no Exp. Candy, IV candy, Rare Candy, Lucky Egg, stone or TM",
+    "one claim per player per reward (grant_reward_once with a claim field; the find is an advancement)",
+    "each event is complete without the others; the finale's four opening lines differ by who has done what and its reward does not"
+  ],
+  "sites": {
+    "headwall_camp": {"x": 2500, "z": 1278, "why": "the shelf above the headwall's first drop: ground y162 within 2 over a 19 x 19 box, 18 blocks south of the walked line at walked 1089"},
+    "steam_hollow": {"x": 3110, "z": 1500, "why": "the trough floor: ground y107 within 2 over a 21 x 21 box, 39 blocks from the walked line at walked 1903, 130 from the nearest trainer"},
+    "strayed_load": {"x": 3262, "z": 1450, "why": "the east wall's foot: ground y115, 104 blocks from the walked line"},
+    "summit_road": {"from_walked": 2100, "to": [3033, 1722], "why": "the trail leaves the walked line at its walked-2100 cell and ends 2 blocks south of the Displaced City's gate (data/placements.json displaced_gate, x3029-3037 z1713-1715)"},
+    "thaw_gate": {"gate": [3033, 1714], "mouth": [3035, 1700], "why": "the gate earthwork and the tunnel mouth (tools/cavern_plan.py: x = the town footprint's max_x 3035, z = its middle 1710.5 - 10)"}
+  },
+  "quest": {
+    "id": "evt_route4_thaw_road",
+    "lore_rule": "Hallam's accident is a work accident on a freight route, not the Worldshift or the Haven Compact; the stones and the gate are the Displaced City's own (data/placements.json displaced_city plan: 'the old road climbs the ridge to the top of the mountain'; data/towns.json displaced_city entrance 'a meltwater cave mouth on the trough flank'); the warm-air hook is docs/story/SIDEQUESTS.md SQ-G5-02",
+    "fields": {
+      "camp_started": "bool", "clue_scar": "bool", "clue_lead": "bool", "camp_answered": "bool", "camp_reward_claimed": "bool", "camp_done": "bool",
+      "seen_tracks": "bool", "seen_pool": "bool", "hollow_done": "bool",
+      "passed_5": "bool", "passed_0": "bool", "last_stone": ["enum", "none"], "road_done": "bool",
+      "gate_reward_claimed": "bool", "gate_done": "bool", "invited": "bool",
+      "hallam_cursor": ["enum", "m1"], "oriel_cursor": ["enum", "g1"], "prop_cursor": ["enum", "idle"]
+    },
+    "objectives": [
+      {"id": "camp", "active": "!camp_done", "complete": "camp_done", "text": "Hallam's string bolted at the headwall: read the lip and the post, and tell her which way her mule went."},
+      {"id": "hollow", "active": "!hollow_done", "complete": "hollow_done", "text": "Read the prints, the pool and the petal on the trough floor, then follow the prints east."},
+      {"id": "road", "active": "!road_done", "complete": "road_done", "text": "Walk the old summit road down its numbered stones and read the last one."},
+      {"id": "gate", "active": "!gate_done", "complete": "gate_done", "text": "Find the grey mule at the thaw gate, and the keeper."}
+    ],
+    "transitions": [
+      {"id": "camp_start", "when": ["!camp_started"], "do": ["set:camp_started=true", "set:hallam_cursor=m_hunt"]},
+      {"id": "clue_scar", "when": ["camp_started"], "do": ["set:clue_scar=true"]},
+      {"id": "clue_lead", "when": ["camp_started"], "do": ["set:clue_lead=true"]},
+      {"id": "camp_answer", "when": ["clue_scar", "clue_lead", "!camp_answered"], "do": ["set:camp_answered=true", "set:hallam_cursor=m_back1"]},
+      {"id": "camp_grant", "when": ["camp_answered", "!camp_reward_claimed"], "do": ["grant:reward_packer", "set:hallam_cursor=m_back3"]},
+      {"id": "camp_complete", "when": ["camp_reward_claimed"], "do": ["set:camp_done=true", "set:hallam_cursor=m_done"]},
+      {"id": "see_tracks", "when": [], "do": ["set:seen_tracks=true"]},
+      {"id": "see_pool", "when": [], "do": ["set:seen_pool=true"]},
+      {"id": "follow", "when": ["seen_tracks", "seen_pool", "!hollow_done"], "do": ["set:hollow_done=true", "set:prop_cursor=petal_done"]},
+      {"id": "pass_5", "when": ["last_stone!=s5"], "do": ["set:passed_5=true", "set:last_stone=s5"]},
+      {"id": "pass_4", "when": ["last_stone!=s4"], "do": ["set:last_stone=s4"]},
+      {"id": "pass_3", "when": ["last_stone!=s3"], "do": ["set:last_stone=s3"]},
+      {"id": "pass_2", "when": ["last_stone!=s2"], "do": ["set:last_stone=s2"]},
+      {"id": "pass_1", "when": ["last_stone!=s1"], "do": ["set:last_stone=s1"]},
+      {"id": "pass_0", "when": ["last_stone!=s0"], "do": ["set:passed_0=true", "set:last_stone=s0"]},
+      {"id": "finish_road", "when": ["passed_5", "passed_0", "!road_done"], "do": ["set:road_done=true"]},
+      {"id": "gate_grant", "when": ["!gate_reward_claimed"], "do": ["grant:reward_gate", "set:oriel_cursor=g_pay3"]},
+      {"id": "gate_complete", "when": ["gate_reward_claimed"], "do": ["set:gate_done=true", "set:invited=true", "set:oriel_cursor=g_done", "sync_scene:route4_thaw_gate"]}
+    ],
+    "rewards": {
+      "reward_packer": {"claim": "camp_reward_claimed", "event": "headwall_camp", "contents": [["cobblemon:oran_berry", 4]], "why": "a packer's thanks: four Oran Berries, growable by anyone; the reward ladder on this leg starts small"},
+      "reward_gate": {"claim": "gate_reward_claimed", "event": "thaw_gate", "contents": [["cobblemon:never_melt_ice", 1], ["minecraft:cherry_sapling", 1], ["cobblemon:sitrus_berry", 3]], "why": "the payoff: a held item for the cold, a cutting from the grove under the hill (plantable anywhere a sapling grows) and three Sitrus Berries; no cash, nothing the Bank buys, nothing that advances a gate"}
+    }
+  },
+  "events": {
+    "headwall_camp": {
+      "title": "Headwall camp: the string that bolted",
+      "scene": "route4_headwall_camp",
+      "site": "headwall_camp",
+      "conversations": [
+        {
+          "id": "dlg_route4_headwall_camp", "npc": {"id": "npc_route4_packer", "name": "Hallam"}, "cursor": "hallam_cursor", "initial": "m1",
+          "speakers": {"hallam": "Hallam", "narration": null},
+          "rules": [
+            {"p": 10, "when": ["camp_done"], "node": "m_done"},
+            {"p": 20, "when": ["camp_answered", "hallam_cursor in m_back1,m_back2,m_back3"], "node": "$cursor"},
+            {"p": 25, "when": ["camp_answered"], "node": "m_back1"},
+            {"p": 26, "when": ["clue_scar", "clue_lead"], "node": "m_ask"},
+            {"p": 30, "when": ["camp_started"], "node": "m_hunt"},
+            {"p": 40, "when": [], "node": "m1"}
+          ],
+          "nodes": [
+            {"id": "m1", "speaker": "hallam", "text": "Don't come down the headwall at a run. The whole face let go in the night.", "next": "m2"},
+            {"id": "m2", "speaker": "hallam", "text": "It took my string with it, near enough. Biscuit, my lead mule, snapped his rope and went. A Gogoat, grey, bad manners.", "next": "m3"},
+            {"id": "m3", "speaker": "narration", "text": "Fresh stone across the lip. Hoofprints on the bare shelf, going the wrong way for a mule that wanted to stay.", "next": "m_hunt", "after": ["T:camp_start"]},
+            {"id": "m_hunt", "speaker": "hallam", "text": "Look at the lip and the post. Then tell me which way he went. I can't leave the loads.", "next": "m_hunt"},
+            {"id": "m_ask", "kind": "choice", "speaker": "hallam", "text": "Well? You've seen the lip and the post. Which way did he go?", "responses": [
+              {"id": "r_east", "text": "East, down off the shelf. He pulled free and ran with the slide.", "do": ["T:camp_answer"], "next": "m_back1"},
+              {"id": "r_back", "text": "Back the way you came, up the mountain.", "next": "m_wrong_back"},
+              {"id": "r_over", "text": "Over the edge.", "next": "m_wrong_over"}
+            ]},
+            {"id": "m_wrong_back", "speaker": "hallam", "text": "Up? Into the rock that's still coming down? He's stubborn, not stupid. Look at the lead again.", "next": "m_ask"},
+            {"id": "m_wrong_over", "speaker": "hallam", "text": "Don't say that where I can hear it. The prints go along the shelf, not off it. Look again.", "next": "m_ask"},
+            {"id": "m_back1", "speaker": "hallam", "text": "East. Of course, east. The ground goes warm that way, and he can smell it.", "next": "m_back2"},
+            {"id": "m_back2", "speaker": "hallam", "text": "There is one place on this trough where the snow won't lie: an old stone gate on the south-west flank, and a wind out of the hill like a bakery's. If he's anywhere, he's there. Take these for the looking.", "next": "m_back3", "after": ["T:camp_grant"]},
+            {"id": "m_back3", "speaker": "hallam", "text": "And if you find him, he bites. Don't take it personally.", "next": "m_done", "after": ["T:camp_complete"]},
+            {"id": "m_done", "speaker": "hallam", "text": "Still here with the loads. Still not taking it personally.", "next": "m_done"}
+          ]
+        },
+        {
+          "id": "dlg_route4_scar", "npc": null, "cursor": "prop_cursor", "initial": "scar_idle",
+          "speakers": {"narration": null},
+          "rules": [
+            {"p": 10, "when": ["camp_started"], "node": "scar_clue", "do": ["T:clue_scar"]},
+            {"p": 20, "when": [], "node": "scar_idle"}
+          ],
+          "nodes": [
+            {"id": "scar_clue", "speaker": "narration", "text": "Scree across the lip, still bright where it split. It fell east, with the slope, and the shelf above it is bare to the rock. Whatever stood here was carried that way.", "next": "scar_clue"},
+            {"id": "scar_idle", "speaker": "narration", "text": "Loose stone, newly fallen.", "next": "scar_idle"}
+          ]
+        },
+        {
+          "id": "dlg_route4_lead", "npc": null, "cursor": "prop_cursor", "initial": "lead_idle",
+          "speakers": {"narration": null},
+          "rules": [
+            {"p": 10, "when": ["camp_started"], "node": "lead_clue", "do": ["T:clue_lead"]},
+            {"p": 20, "when": [], "node": "lead_idle"}
+          ],
+          "nodes": [
+            {"id": "lead_clue", "speaker": "narration", "text": "A hitching post with a stub of rope on it. The rope isn't chewed: it parted under strain, and the strands all point east, the way something heavy pulled.", "next": "lead_clue"},
+            {"id": "lead_idle", "speaker": "narration", "text": "A hitching post.", "next": "lead_idle"}
+          ]
+        }
+      ],
+      "scene_def": {
+        "props": [
+          {"id": "scar", "conversation": "dlg_route4_scar"},
+          {"id": "lead", "conversation": "dlg_route4_lead"}
+        ],
+        "effects": [],
+        "actors": [],
+        "zones": []
+      }
+    },
+
+    "steam_hollow": {
+      "title": "Steam hollow: where the snow won't lie",
+      "scene": "route4_steam_hollow",
+      "site": "steam_hollow",
+      "conversations": [
+        {
+          "id": "dlg_route4_hollow_tracks", "npc": null, "cursor": "prop_cursor", "initial": "tracks_idle",
+          "speakers": {"narration": null},
+          "rules": [
+            {"p": 10, "when": [], "node": "tracks_read", "do": ["T:see_tracks"]}
+          ],
+          "nodes": [
+            {"id": "tracks_read", "speaker": "narration", "text": "Cloven prints, wide-set, driven deep: a heavy animal moving fast, then slowing. They come in from the road and stop at the ring of bare moss. Others go out again, east, toward the wall.", "next": "tracks_read"},
+            {"id": "tracks_idle", "speaker": "narration", "text": "Hoofprints.", "next": "tracks_idle"}
+          ]
+        },
+        {
+          "id": "dlg_route4_hollow_pool", "npc": null, "cursor": "prop_cursor", "initial": "pool_idle",
+          "speakers": {"narration": null},
+          "rules": [
+            {"p": 10, "when": [], "node": "pool_read", "do": ["T:see_pool"]}
+          ],
+          "nodes": [
+            {"id": "pool_read", "speaker": "narration", "text": "Open water in the middle of a frozen floor, and warm: the steam comes up in a column and the moss round it is green. Snow lands on the ring and goes. Nothing feeds it from above.", "next": "pool_read"},
+            {"id": "pool_idle", "speaker": "narration", "text": "A pool.", "next": "pool_idle"}
+          ]
+        },
+        {
+          "id": "dlg_route4_hollow_petal", "npc": null, "cursor": "prop_cursor", "initial": "petal_idle",
+          "speakers": {"narration": null},
+          "rules": [
+            {"p": 10, "when": ["hollow_done"], "node": "petal_done"},
+            {"p": 20, "when": ["seen_tracks", "seen_pool"], "node": "petal_offer"},
+            {"p": 30, "when": [], "node": "petal_early"}
+          ],
+          "nodes": [
+            {"id": "petal_offer", "kind": "choice", "speaker": "narration", "text": "A pink petal, whole, on the moss. The nearest cherry tree you know of is a very long way from here, and it is winter. A red pennant stands up against the east wall, a long walk off.", "responses": [
+              {"id": "petal_follow", "text": "Follow the prints east.", "do": ["T:follow"], "next": "petal_done"},
+              {"id": "petal_leave", "text": "Leave it.", "do": ["close"]}
+            ]},
+            {"id": "petal_done", "speaker": "narration", "text": "The prints run east across the road to a red pennant at the foot of the wall. The petal is pink and soft and very out of place.", "next": "petal_done"},
+            {"id": "petal_early", "speaker": "narration", "text": "A pink petal on green moss, in the snow. Look around the hollow first.", "next": "petal_early"},
+            {"id": "petal_idle", "speaker": "narration", "text": "A petal.", "next": "petal_idle"}
+          ]
+        }
+      ],
+      "scene_def": {
+        "props": [
+          {"id": "tracks", "conversation": "dlg_route4_hollow_tracks"},
+          {"id": "pool", "conversation": "dlg_route4_hollow_pool"},
+          {"id": "petal", "conversation": "dlg_route4_hollow_petal"}
+        ],
+        "effects": [
+          {"id": "steam", "kind": "particles", "particle": "minecraft:cloud", "at_point": "steam_a", "delta": [0.5, 1.2, 0.5], "count": 3},
+          {"id": "steam_b", "kind": "particles", "particle": "minecraft:white_smoke", "at_point": "steam_b", "delta": [0.6, 0.8, 0.6], "count": 2}
+        ],
+        "actors": [],
+        "zones": []
+      }
+    },
+
+    "summit_road": {
+      "title": "The old summit road: five stones to a summit that is not there",
+      "scene": "route4_summit_road",
+      "site": "summit_road",
+      "conversations": [
+        {
+          "id": "dlg_route4_stone_zero", "npc": null, "cursor": "prop_cursor", "initial": "zero_early",
+          "speakers": {"narration": null},
+          "rules": [
+            {"p": 10, "when": ["road_done"], "node": "zero_done"},
+            {"p": 20, "when": ["passed_5", "passed_0"], "node": "zero_read", "do": ["T:finish_road"]},
+            {"p": 30, "when": [], "node": "zero_early"}
+          ],
+          "nodes": [
+            {"id": "zero_read", "speaker": "narration", "text": "A 0, and SUMMIT. Under it, cut smaller and later, by a different hand: THE SUMMIT IS BELOW. ASK AT THE GATE.", "next": "zero_read"},
+            {"id": "zero_done", "speaker": "narration", "text": "SUMMIT, 0. THE SUMMIT IS BELOW. ASK AT THE GATE.", "next": "zero_done"},
+            {"id": "zero_early", "speaker": "narration", "text": "A stone with a 0 on it. You did not climb for it, and it is not a summit. Walk the road from the first stone.", "next": "zero_early"}
+          ]
+        }
+      ],
+      "scene_def": {
+        "props": [
+          {"id": "stone_0", "conversation": "dlg_route4_stone_zero"}
+        ],
+        "zones": [
+          {"id": "z5", "stone": 5, "transitions": ["pass_5"]},
+          {"id": "z4", "stone": 4, "transitions": ["pass_4"]},
+          {"id": "z3", "stone": 3, "transitions": ["pass_3"]},
+          {"id": "z2", "stone": 2, "transitions": ["pass_2"]},
+          {"id": "z1", "stone": 1, "transitions": ["pass_1"]},
+          {"id": "z0", "stone": 0, "transitions": ["pass_0"]}
+        ],
+        "effects": [
+          {"id": "hud5", "kind": "actionbar", "when": ["last_stone=s5", "!road_done"], "text": "Old Summit Road: five stones to the top.", "color": "gold"},
+          {"id": "hud4", "kind": "actionbar", "when": ["last_stone=s4", "!road_done"], "text": "Four stones. The wind has turned warm.", "color": "gold"},
+          {"id": "hud3", "kind": "actionbar", "when": ["last_stone=s3", "!road_done"], "text": "Three stones. There is no climb.", "color": "gold"},
+          {"id": "hud2", "kind": "actionbar", "when": ["last_stone=s2", "!road_done"], "text": "Two stones. Something smells of blossom.", "color": "gold"},
+          {"id": "hud1", "kind": "actionbar", "when": ["last_stone=s1", "!road_done"], "text": "One stone.", "color": "gold"},
+          {"id": "hud0", "kind": "actionbar", "when": ["last_stone=s0", "!road_done"], "text": "Summit. There is no mountain here. Read the stone.", "color": "gold"}
+        ],
+        "actors": []
+      }
+    },
+
+    "thaw_gate": {
+      "title": "The thaw gate: the summit is below",
+      "scene": "route4_thaw_gate",
+      "site": "thaw_gate",
+      "conversations": [
+        {
+          "id": "dlg_route4_thaw_gate", "npc": {"id": "npc_route4_gatekeeper", "name": "Oriel"}, "cursor": "oriel_cursor", "initial": "g1",
+          "speakers": {"oriel": "Oriel", "narration": null},
+          "rules": [
+            {"p": 10, "when": ["gate_done"], "node": "g_done"},
+            {"p": 20, "when": ["oriel_cursor in g_pay1,g_pay2,g_pay3"], "node": "$cursor"},
+            {"p": 30, "when": ["camp_done", "road_done"], "node": "g1_both"},
+            {"p": 31, "when": ["camp_done"], "node": "g1_hallam"},
+            {"p": 32, "when": ["road_done"], "node": "g1_road"},
+            {"p": 40, "when": [], "node": "g1"}
+          ],
+          "nodes": [
+            {"id": "g1_both", "speaker": "oriel", "text": "You read the stones and you have Hallam's look about you. Both of you walk in like it's your gate. Good. Slowly, though: look at the snow.", "next": "g_view"},
+            {"id": "g1_hallam", "speaker": "oriel", "text": "Hallam sends someone every time. Slowly, now: look at the snow, not at me.", "next": "g_view"},
+            {"id": "g1_road", "speaker": "oriel", "text": "You came by the road, and you read the last stone. Slowly, now: look at the snow, not at me.", "next": "g_view"},
+            {"id": "g1", "speaker": "oriel", "text": "Mind the ground. Slowly, now: look at the snow, not at me.", "next": "g_view"},
+            {"id": "g_view", "speaker": "narration", "text": "Warm wind is coming out of the hill. It carries cherry petals, pink on white, a long way from any tree, and where they land the snow has gone to moss. Somewhere in the drift a grey animal is pretending to be a rock.", "next": "g_ask"},
+            {"id": "g_ask", "kind": "choice", "speaker": "oriel", "text": "Well. What brings you to the top of nothing?", "responses": [
+              {"id": "ask_stones", "text": "The stones on the road. They counted down.", "next": "g_stones"},
+              {"id": "ask_wind", "text": "Where does the warm wind come from?", "next": "g_wind"},
+              {"id": "ask_mule", "text": "A grey Gogoat. He bites, I'm told.", "next": "g_pay1"}
+            ]},
+            {"id": "g_stones", "speaker": "oriel", "text": "They are right. They were laid when this was a summit town, and they count what a road to a summit counts. The mountain isn't here now; the count didn't change. Ask me something else.", "next": "g_ask"},
+            {"id": "g_wind", "speaker": "oriel", "text": "Up the way behind me, from the city. We call it spring and don't say how long it has been spring. Ask me something else.", "next": "g_ask"},
+            {"id": "g_pay1", "speaker": "oriel", "text": "Biscuit. Yes. He came up the road two nights ago, ate a lantern wick, and has been sulking in the petals since. Hallam can have him back, or he can stay, whichever he allows.", "next": "g_pay2"},
+            {"id": "g_pay2", "speaker": "oriel", "text": "Take these. A cutting from the grove down there, which will grow wherever you plant it and which the grove will not miss; something for the cold; and berries, because the Gogoat will want them off you.", "next": "g_pay3", "after": ["T:gate_grant"]},
+            {"id": "g_pay3", "speaker": "oriel", "text": "The way down behind me is lit all the way. There's a waystone at the bottom of it, and it'll know you for next time. We have no Centre. We have a kettle.", "next": "g_done", "after": ["T:gate_complete"]},
+            {"id": "g_done", "speaker": "oriel", "text": "The way down is lit. Mind the petals; they're slippery.", "next": "g_done"}
+          ]
+        },
+        {
+          "id": "dlg_route4_biscuit", "npc": null, "cursor": "prop_cursor", "initial": "b_idle",
+          "speakers": {"narration": null},
+          "rules": [
+            {"p": 10, "when": ["gate_done"], "node": "b_done"},
+            {"p": 20, "when": [], "node": "b_idle"}
+          ],
+          "nodes": [
+            {"id": "b_idle", "speaker": "narration", "text": "Biscuit looks at you. Then at your pockets. Then at the lantern wick he is chewing, with total contempt.", "next": "b_idle"},
+            {"id": "b_done", "speaker": "narration", "text": "Biscuit has decided you are his. He will not be told otherwise, and he is standing on your foot.", "next": "b_done"}
+          ]
+        },
+        {
+          "id": "dlg_route4_drift", "npc": null, "cursor": "prop_cursor", "initial": "drift_read",
+          "speakers": {"narration": null},
+          "rules": [
+            {"p": 10, "when": [], "node": "drift_read"}
+          ],
+          "nodes": [
+            {"id": "drift_read", "speaker": "narration", "text": "Cherry petals, drifted against the stones. They are soft and wet and warm, a day's walk from the nearest cherry tree you know of.", "next": "drift_read"}
+          ]
+        }
+      ],
+      "scene_def": {
+        "props": [
+          {"id": "drift", "conversation": "dlg_route4_drift"}
+        ],
+        "effects": [
+          {"id": "petals", "kind": "particles", "particle": "minecraft:cherry_leaves", "at_point": "petals_a", "delta": [4.0, 1.5, 3.0], "count": 7},
+          {"id": "petals_b", "kind": "particles", "particle": "minecraft:cherry_leaves", "at_point": "petals_b", "delta": [3.0, 1.0, 3.0], "count": 4}
+        ],
+        "actors": [
+          {
+            "id": "biscuit", "species": "gogoat", "level": 34, "name": "Biscuit", "conversation": "dlg_route4_biscuit",
+            "not_yours": "That Gogoat is sulking at somebody else.",
+            "place": [
+              {"when": ["gate_done"], "marker": "biscuit_gate"},
+              {"marker": "biscuit_drift"}
+            ]
+          }
+        ],
+        "zones": []
+      }
+    }
+  },
+  "find": {
+    "id": "r4_strayed_load",
+    "event": "strayed_load",
+    "place": "the east wall's foot, 104 blocks off Route 4, under a red pennant",
+    "contents": [["cobblemon:sitrus_berry", 2], ["cobblemon:pecha_berry", 2]],
+    "message": "Dragged here and abandoned, one strap still tied: a packer's spare stores. Two Sitrus Berries and two Pecha Berries, dry under the oilcloth.",
+    "why": "the second step of the chain's reward ladder (berries 4, then 4 here, then the gate's three, a held item and a sapling); the tracks from the hollow lead here and a red pennant shows it from the road"
+  }
+}

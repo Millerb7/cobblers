@@ -9999,6 +9999,907 @@
       }
     },
     {
+      "id": "dlg_route4_headwall_camp",
+      "quest_id": "evt_route4_thaw_road",
+      "npc_id": "npc_route4_packer",
+      "source": "data/route4_events.json",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route4_thaw_road.hallam_cursor",
+        "initial_node": "m1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route4_thaw_road.camp_done",
+            "value": true
+          },
+          "node": "m_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.camp_answered",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route4_thaw_road.hallam_cursor",
+                "values": [
+                  "m_back1",
+                  "m_back2",
+                  "m_back3"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route4_thaw_road.camp_answered",
+            "value": true
+          },
+          "node": "m_back1"
+        },
+        {
+          "priority": 26,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.clue_scar",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.clue_lead",
+                "value": true
+              }
+            ]
+          },
+          "node": "m_ask"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route4_thaw_road.camp_started",
+            "value": true
+          },
+          "node": "m_hunt"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "m1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "m1",
+          "kind": "line",
+          "speaker": "hallam",
+          "text": "Don't come down the headwall at a run. The whole face let go in the night.",
+          "next": "m2"
+        },
+        {
+          "id": "m2",
+          "kind": "line",
+          "speaker": "hallam",
+          "text": "It took my string with it, near enough. Biscuit, my lead mule, snapped his rope and went. A Gogoat, grey, bad manners.",
+          "next": "m3"
+        },
+        {
+          "id": "m3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Fresh stone across the lip. Hoofprints on the bare shelf, going the wrong way for a mule that wanted to stay.",
+          "next": "m_hunt",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "camp_start"
+            }
+          ]
+        },
+        {
+          "id": "m_hunt",
+          "kind": "line",
+          "speaker": "hallam",
+          "text": "Look at the lip and the post. Then tell me which way he went. I can't leave the loads.",
+          "next": "m_hunt"
+        },
+        {
+          "id": "m_ask",
+          "kind": "choice",
+          "speaker": "hallam",
+          "text": "Well? You've seen the lip and the post. Which way did he go?",
+          "responses": [
+            {
+              "id": "r_east",
+              "text": "East, down off the shelf. He pulled free and ran with the slide.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "camp_answer"
+                }
+              ],
+              "next": "m_back1"
+            },
+            {
+              "id": "r_back",
+              "text": "Back the way you came, up the mountain.",
+              "next": "m_wrong_back"
+            },
+            {
+              "id": "r_over",
+              "text": "Over the edge.",
+              "next": "m_wrong_over"
+            }
+          ]
+        },
+        {
+          "id": "m_wrong_back",
+          "kind": "line",
+          "speaker": "hallam",
+          "text": "Up? Into the rock that's still coming down? He's stubborn, not stupid. Look at the lead again.",
+          "next": "m_ask"
+        },
+        {
+          "id": "m_wrong_over",
+          "kind": "line",
+          "speaker": "hallam",
+          "text": "Don't say that where I can hear it. The prints go along the shelf, not off it. Look again.",
+          "next": "m_ask"
+        },
+        {
+          "id": "m_back1",
+          "kind": "line",
+          "speaker": "hallam",
+          "text": "East. Of course, east. The ground goes warm that way, and he can smell it.",
+          "next": "m_back2"
+        },
+        {
+          "id": "m_back2",
+          "kind": "line",
+          "speaker": "hallam",
+          "text": "There is one place on this trough where the snow won't lie: an old stone gate on the south-west flank, and a wind out of the hill like a bakery's. If he's anywhere, he's there. Take these for the looking.",
+          "next": "m_back3",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "camp_grant"
+            }
+          ]
+        },
+        {
+          "id": "m_back3",
+          "kind": "line",
+          "speaker": "hallam",
+          "text": "And if you find him, he bites. Don't take it personally.",
+          "next": "m_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "camp_complete"
+            }
+          ]
+        },
+        {
+          "id": "m_done",
+          "kind": "line",
+          "speaker": "hallam",
+          "text": "Still here with the loads. Still not taking it personally.",
+          "next": "m_done"
+        }
+      ],
+      "speakers": {
+        "hallam": "Hallam",
+        "narration": null
+      },
+      "npc_name": "Hallam"
+    },
+    {
+      "id": "dlg_route4_scar",
+      "quest_id": "evt_route4_thaw_road",
+      "npc_id": null,
+      "source": "data/route4_events.json",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route4_thaw_road.prop_cursor",
+        "initial_node": "scar_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route4_thaw_road.camp_started",
+            "value": true
+          },
+          "node": "scar_clue",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "clue_scar"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "scar_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "scar_clue",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Scree across the lip, still bright where it split. It fell east, with the slope, and the shelf above it is bare to the rock. Whatever stood here was carried that way.",
+          "next": "scar_clue"
+        },
+        {
+          "id": "scar_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Loose stone, newly fallen.",
+          "next": "scar_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route4_lead",
+      "quest_id": "evt_route4_thaw_road",
+      "npc_id": null,
+      "source": "data/route4_events.json",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route4_thaw_road.prop_cursor",
+        "initial_node": "lead_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route4_thaw_road.camp_started",
+            "value": true
+          },
+          "node": "lead_clue",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "clue_lead"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "lead_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "lead_clue",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A hitching post with a stub of rope on it. The rope isn't chewed: it parted under strain, and the strands all point east, the way something heavy pulled.",
+          "next": "lead_clue"
+        },
+        {
+          "id": "lead_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A hitching post.",
+          "next": "lead_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route4_hollow_tracks",
+      "quest_id": "evt_route4_thaw_road",
+      "npc_id": null,
+      "source": "data/route4_events.json",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route4_thaw_road.prop_cursor",
+        "initial_node": "tracks_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "tracks_read",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "see_tracks"
+            }
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "tracks_read",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Cloven prints, wide-set, driven deep: a heavy animal moving fast, then slowing. They come in from the road and stop at the ring of bare moss. Others go out again, east, toward the wall.",
+          "next": "tracks_read"
+        },
+        {
+          "id": "tracks_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Hoofprints.",
+          "next": "tracks_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route4_hollow_pool",
+      "quest_id": "evt_route4_thaw_road",
+      "npc_id": null,
+      "source": "data/route4_events.json",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route4_thaw_road.prop_cursor",
+        "initial_node": "pool_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "pool_read",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "see_pool"
+            }
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "pool_read",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Open water in the middle of a frozen floor, and warm: the steam comes up in a column and the moss round it is green. Snow lands on the ring and goes. Nothing feeds it from above.",
+          "next": "pool_read"
+        },
+        {
+          "id": "pool_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A pool.",
+          "next": "pool_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route4_hollow_petal",
+      "quest_id": "evt_route4_thaw_road",
+      "npc_id": null,
+      "source": "data/route4_events.json",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route4_thaw_road.prop_cursor",
+        "initial_node": "petal_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route4_thaw_road.hollow_done",
+            "value": true
+          },
+          "node": "petal_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.seen_tracks",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.seen_pool",
+                "value": true
+              }
+            ]
+          },
+          "node": "petal_offer"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "petal_early"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "petal_offer",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "A pink petal, whole, on the moss. The nearest cherry tree you know of is a very long way from here, and it is winter. A red pennant stands up against the east wall, a long walk off.",
+          "responses": [
+            {
+              "id": "petal_follow",
+              "text": "Follow the prints east.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "follow"
+                }
+              ],
+              "next": "petal_done"
+            },
+            {
+              "id": "petal_leave",
+              "text": "Leave it.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "petal_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The prints run east across the road to a red pennant at the foot of the wall. The petal is pink and soft and very out of place.",
+          "next": "petal_done"
+        },
+        {
+          "id": "petal_early",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A pink petal on green moss, in the snow. Look around the hollow first.",
+          "next": "petal_early"
+        },
+        {
+          "id": "petal_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A petal.",
+          "next": "petal_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route4_stone_zero",
+      "quest_id": "evt_route4_thaw_road",
+      "npc_id": null,
+      "source": "data/route4_events.json",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route4_thaw_road.prop_cursor",
+        "initial_node": "zero_early",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route4_thaw_road.road_done",
+            "value": true
+          },
+          "node": "zero_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.passed_5",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.passed_0",
+                "value": true
+              }
+            ]
+          },
+          "node": "zero_read",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "finish_road"
+            }
+          ]
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "zero_early"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "zero_read",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A 0, and SUMMIT. Under it, cut smaller and later, by a different hand: THE SUMMIT IS BELOW. ASK AT THE GATE.",
+          "next": "zero_read"
+        },
+        {
+          "id": "zero_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "SUMMIT, 0. THE SUMMIT IS BELOW. ASK AT THE GATE.",
+          "next": "zero_done"
+        },
+        {
+          "id": "zero_early",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A stone with a 0 on it. You did not climb for it, and it is not a summit. Walk the road from the first stone.",
+          "next": "zero_early"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route4_thaw_gate",
+      "quest_id": "evt_route4_thaw_road",
+      "npc_id": "npc_route4_gatekeeper",
+      "source": "data/route4_events.json",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route4_thaw_road.oriel_cursor",
+        "initial_node": "g1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route4_thaw_road.gate_done",
+            "value": true
+          },
+          "node": "g_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.evt_route4_thaw_road.oriel_cursor",
+            "values": [
+              "g_pay1",
+              "g_pay2",
+              "g_pay3"
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.camp_done",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": true
+              }
+            ]
+          },
+          "node": "g1_both"
+        },
+        {
+          "priority": 31,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route4_thaw_road.camp_done",
+            "value": true
+          },
+          "node": "g1_hallam"
+        },
+        {
+          "priority": 32,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route4_thaw_road.road_done",
+            "value": true
+          },
+          "node": "g1_road"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "g1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "g1_both",
+          "kind": "line",
+          "speaker": "oriel",
+          "text": "You read the stones and you have Hallam's look about you. Both of you walk in like it's your gate. Good. Slowly, though: look at the snow.",
+          "next": "g_view"
+        },
+        {
+          "id": "g1_hallam",
+          "kind": "line",
+          "speaker": "oriel",
+          "text": "Hallam sends someone every time. Slowly, now: look at the snow, not at me.",
+          "next": "g_view"
+        },
+        {
+          "id": "g1_road",
+          "kind": "line",
+          "speaker": "oriel",
+          "text": "You came by the road, and you read the last stone. Slowly, now: look at the snow, not at me.",
+          "next": "g_view"
+        },
+        {
+          "id": "g1",
+          "kind": "line",
+          "speaker": "oriel",
+          "text": "Mind the ground. Slowly, now: look at the snow, not at me.",
+          "next": "g_view"
+        },
+        {
+          "id": "g_view",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Warm wind is coming out of the hill. It carries cherry petals, pink on white, a long way from any tree, and where they land the snow has gone to moss. Somewhere in the drift a grey animal is pretending to be a rock.",
+          "next": "g_ask"
+        },
+        {
+          "id": "g_ask",
+          "kind": "choice",
+          "speaker": "oriel",
+          "text": "Well. What brings you to the top of nothing?",
+          "responses": [
+            {
+              "id": "ask_stones",
+              "text": "The stones on the road. They counted down.",
+              "next": "g_stones"
+            },
+            {
+              "id": "ask_wind",
+              "text": "Where does the warm wind come from?",
+              "next": "g_wind"
+            },
+            {
+              "id": "ask_mule",
+              "text": "A grey Gogoat. He bites, I'm told.",
+              "next": "g_pay1"
+            }
+          ]
+        },
+        {
+          "id": "g_stones",
+          "kind": "line",
+          "speaker": "oriel",
+          "text": "They are right. They were laid when this was a summit town, and they count what a road to a summit counts. The mountain isn't here now; the count didn't change. Ask me something else.",
+          "next": "g_ask"
+        },
+        {
+          "id": "g_wind",
+          "kind": "line",
+          "speaker": "oriel",
+          "text": "Up the way behind me, from the city. We call it spring and don't say how long it has been spring. Ask me something else.",
+          "next": "g_ask"
+        },
+        {
+          "id": "g_pay1",
+          "kind": "line",
+          "speaker": "oriel",
+          "text": "Biscuit. Yes. He came up the road two nights ago, ate a lantern wick, and has been sulking in the petals since. Hallam can have him back, or he can stay, whichever he allows.",
+          "next": "g_pay2"
+        },
+        {
+          "id": "g_pay2",
+          "kind": "line",
+          "speaker": "oriel",
+          "text": "Take these. A cutting from the grove down there, which will grow wherever you plant it and which the grove will not miss; something for the cold; and berries, because the Gogoat will want them off you.",
+          "next": "g_pay3",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "gate_grant"
+            }
+          ]
+        },
+        {
+          "id": "g_pay3",
+          "kind": "line",
+          "speaker": "oriel",
+          "text": "The way down behind me is lit all the way. There's a waystone at the bottom of it, and it'll know you for next time. We have no Centre. We have a kettle.",
+          "next": "g_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "gate_complete"
+            }
+          ]
+        },
+        {
+          "id": "g_done",
+          "kind": "line",
+          "speaker": "oriel",
+          "text": "The way down is lit. Mind the petals; they're slippery.",
+          "next": "g_done"
+        }
+      ],
+      "speakers": {
+        "oriel": "Oriel",
+        "narration": null
+      },
+      "npc_name": "Oriel"
+    },
+    {
+      "id": "dlg_route4_biscuit",
+      "quest_id": "evt_route4_thaw_road",
+      "npc_id": null,
+      "source": "data/route4_events.json",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route4_thaw_road.prop_cursor",
+        "initial_node": "b_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route4_thaw_road.gate_done",
+            "value": true
+          },
+          "node": "b_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "b_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "b_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Biscuit looks at you. Then at your pockets. Then at the lantern wick he is chewing, with total contempt.",
+          "next": "b_idle"
+        },
+        {
+          "id": "b_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Biscuit has decided you are his. He will not be told otherwise, and he is standing on your foot.",
+          "next": "b_done"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route4_drift",
+      "quest_id": "evt_route4_thaw_road",
+      "npc_id": null,
+      "source": "data/route4_events.json",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route4_thaw_road.prop_cursor",
+        "initial_node": "drift_read",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "drift_read"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "drift_read",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Cherry petals, drifted against the stones. They are soft and wet and warm, a day's walk from the nearest cherry tree you know of.",
+          "next": "drift_read"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
       "id": "dlg_stone_tip_viltri_light",
       "quest_id": "ambient_stone_tips",
       "npc_id": "npc_stone_tip_viltri_light_keeper",
