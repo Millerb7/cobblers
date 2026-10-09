@@ -135,6 +135,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_lopunny_house",
                 # 2026-10-02: the Old Orchard on Sunset Isle round the Orchard Sleeper (tools/old_orchard.py), run by R9SO
                 "cobblers_old_orchard",
+                # 2026-10-09: the Sundown Watch on Sunset Isle's western shoulder (tools/sunset_watch.py): terrace, dial, Sun Gate,
+                # lamp house, mast and the isle landing's waymark, run by R9SW before the Habitat Blocks in its plinth and mast
+                "cobblers_sunset_watch",
                 # 2026-10-02: the Copperway Khan in the south-east dunes and its milestones (tools/dune_ruin.py), run by R9DU
                 "cobblers_dune_ruin",
                 # 2026-10-05: the mainline beats' evidence displays beside eight tellers (tools/reveal_evidence.py), run
@@ -838,6 +841,8 @@ def prepare_jobs(a):
     add("lopunny_house_audit", "lopunny_house_audit.py", *src)
     add("old_orchard:build", "old_orchard.py", "build", *src)
     add("old_orchard_audit", "old_orchard_audit.py", *src)
+    add("sunset_watch:build", "sunset_watch.py", "build", *src)
+    add("sunset_watch_audit", "sunset_watch_audit.py", *src)
     add("dune_ruin:build", "dune_ruin.py", "build", *src)
     add("dune_ruin_audit", "dune_ruin_audit.py", *src)
     add("reveal_evidence:build", "reveal_evidence.py", "build")
@@ -1946,6 +1951,12 @@ def steps(with_spawns=False):
     import old_orchard
     out.append(("R9SO", "the Old Orchard on Sunset Isle: rows, press-house and cellar, garden (data/old_orchard.json)",
                 old_orchard.placement_steps()))
+    # the Sundown Watch on Sunset Isle (2026-10-09, tools/sunset_watch.py): BEFORE R9E, because its build writes the dial's
+    # plinth and the mast's second log that the two activated Habitat Blocks sit in - after R9E it would write the
+    # blocks back over them
+    import sunset_watch
+    out.append(("R9SW", "the Sundown Watch on Sunset Isle: terrace, dial, Sun Gate, lamp house, mast (data/sunset_watch.json)",
+                sunset_watch.placement_steps()))
     # the Copperway Khan (2026-10-02, tools/dune_ruin.py): BEFORE R9E, because its build writes the vault floor - after
     # R9E it would lay smooth sandstone over the Cofagrigus Habitat Block set in that floor
     # the Brass Petrel (2026-10-05, tools/desert_wreck.py): BEFORE R9E, whose Habitat Blocks include the beach's two
@@ -2235,6 +2246,9 @@ def steps(with_spawns=False):
     # after the restart that loaded cobblers_dialogue's classes, on the ground R9SO's orchard stands on
     out.append(("R18SO", "the Old Orchard's keeper, Wenna Marlow (data/old_orchard.json npc)",
                 [("npc", n) for n in old_orchard.npc_placements()]))
+    # the Sundown Watch's keeper (2026-10-09, tools/sunset_watch.py): as the Old Orchard's, on the terrace R9SW paves
+    out.append(("R18SW", "the Sundown Watch's keeper, Isaura Dray (data/sunset_watch.json npc)",
+                [("npc", n) for n in sunset_watch.npc_placements()]))
     # Hollin's Apricorn Farm (2026-10-05): the farmer, Tamsin Hollin, an NPC like the Old Orchard's keeper (her class
     # loaded at boot from cobblers_dialogue), turned to her yaw; then the stall's CobbleDollars merchant, summoned in a
     # forceload of its chunk and de-duplicated by tag 100 ticks later (tools/markets.py's shape)

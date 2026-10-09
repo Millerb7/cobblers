@@ -947,7 +947,8 @@ def other_npcs(exclude_prefix="dlg_market_"):
         if "x" in p:
             out.append(("trader %s" % t["id"], (p["x"], p["y"], p["z"])))
     srcs = [("ferries", lambda m: m.npc_placements(m.load())), ("npc_seats", lambda m: m.placements()),
-            ("old_orchard", lambda m: m.npc_placements()), ("dune_ruin", lambda m: m.npc_placements()),
+            ("old_orchard", lambda m: m.npc_placements()), ("sunset_watch", lambda m: m.npc_placements()),
+            ("dune_ruin", lambda m: m.npc_placements()),
             ("ursaluna_cave", lambda m: m.npc_placements()), ("relic_underground", lambda m: m.npc_placements()),
             ("drovers_hollow", lambda m: m.npc_placements())]
     for mod, call in srcs:

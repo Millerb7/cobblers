@@ -2049,6 +2049,46 @@
           3306
         ]
       }
+    },
+    {
+      "id": "sunset_watch_lamp_store",
+      "kind": "cache",
+      "place": "the Sundown Watch on Sunset Isle (data/sunset_watch.json): the guild's store barrel in the lamp house's north-east corner",
+      "contents": [
+        {
+          "item": "cobblemon:dusk_ball",
+          "count": 8,
+          "verification": "assets/cobblemon/models/item/dusk_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:spell_tag",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/spell_tag.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the guild's store barrel, under a tarred sheet: eight Dusk Balls and a Spell Tag, the lamp-keepers' kit for what comes at sundown.",
+      "why": "a cache (data/rewards.json, ADR-002): reaching the hut's north-east corner grants it once per player; the barrel is scenery. Eight Dusk Balls are the right tool for the thing the place is for (a Dusk Ball catches best at night and in the dark; the dusk window is the edge of it) and a Spell Tag is the Dreepy line's own type boost. No evolution stone: stones are allocated (docs/mechanics/EVOLUTION_STONES.md) and this is not a stone's place. Ungated, as every cache is. Both items verified in the 1.8.0 jar (assets/cobblemon/models/item).",
+      "built_by": "tools/sunset_watch.py (the barrel, in cobblers_sunset_watch's build, reapply step R9SW)",
+      "trigger": {
+        "min": [
+          1074,
+          138,
+          7473
+        ],
+        "max": [
+          1075,
+          139,
+          7474
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          1075,
+          138,
+          7473
+        ]
+      }
     }
   ]
 }
