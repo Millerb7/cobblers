@@ -1215,7 +1215,14 @@ def replaced_seats(doc):
     if b and (b.get("leader") or {}).get("spawner"):
         out.append(tuple(b["leader"]["spawner"]))
     boss = load(ROOT / "data" / "challenge_mode.json")["bosses"].get(doc["leader"]["id"]) or {}
-    at = (boss.get("spawner") or {}).get("at")
+    sp = boss.get("spawner") or {}
+    # the cell the Challenge spawner held BEFORE the hall: superseded_at, recorded when a hall moved it. The live `at`
+    # is the hall's own new cell and is never a replaced seat (2026-10-09: reading `at` called every non-rollout hall's
+    # new cell a hall spawner still standing); `at` is read only for a record no hall has moved yet
+    at = sp.get("superseded_at") or (None if sp.get("superseded_at") is None and "superseded_at" in sp else sp.get("at"))
+    if sp.get("superseded_at"):
+        out.append(tuple(sp["superseded_at"]))
+        at = None
     if at:
         olds = ([norm(b["bounds"])] if b else []) + [box for box, _w in takedown_boxes(doc)]
         if any(inside(tuple(at), o) for o in olds):

@@ -2674,9 +2674,9 @@
       {
         "what": "no spawner at the old seat",
         "block": [
-          1829,
-          144,
-          3667,
+          1830,
+          155,
+          3696,
           "rctmod:trainer_spawner"
         ],
         "expect": false
@@ -3656,6 +3656,16 @@
           "rctmod:trainer_spawner"
         ],
         "expect": false
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          4309,
+          98,
+          1514,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
       }
     ],
     "gym5_arena": [
@@ -3902,9 +3912,9 @@
       {
         "what": "no spawner at the old seat",
         "block": [
-          4579,
-          119,
-          2467,
+          4584,
+          103,
+          2461,
           "rctmod:trainer_spawner"
         ],
         "expect": false
@@ -4147,6 +4157,16 @@
           6196,
           111,
           3312,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          6181,
+          70,
+          3318,
           "rctmod:trainer_spawner"
         ],
         "expect": false

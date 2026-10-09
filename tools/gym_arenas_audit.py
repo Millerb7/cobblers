@@ -537,8 +537,11 @@ def site(gym, building_pack=None, interior_pack=None):
         _bounds, _t, d = declared(gym)
         rep_ = (d.get("replaces") or {}).get("arena") or {}
         replaced = [tuple(b["leader"]["spawner"])] + ([tuple(rep_["seat"])] if rep_.get("seat") else [])
-        cs = challenge_spawner(b["leader"]["id"])
-        if cs and inside(cs, norm(b["bounds"])):
+        # the Challenge spawner's OLD cell (superseded_at, recorded when a hall moved it); the live cell is the hall's
+        # own and never a replaced seat (2026-10-09, the gym 5 author's finding)
+        old_cs = ((load(ROOT / "data" / "challenge_mode.json")["bosses"].get(b["leader"]["id"]) or {}).get("spawner") or {}).get("superseded_at")
+        cs = tuple(old_cs) if old_cs else challenge_spawner(b["leader"]["id"])
+        if cs and (old_cs or inside(cs, norm(b["bounds"]))):
             replaced.append(cs)
         return {"leader": b["leader"]["id"], "host": "hall", "host_fn": None, "lots": lots,
                 "host_box": (x0 - 1, int(lv), z0 - 1, x1 + 1, norm(b["bounds"])[4] + 2, z1 + 1),
