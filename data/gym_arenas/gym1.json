@@ -44,7 +44,7 @@
     "hanging": "minecraft:lantern[hanging=true]",
     "chain": "minecraft:chain[axis=y]"
   },
-  "blocks": [
+  "blocks": ["minecraft:shroomlight", 
     "minecraft:air", "minecraft:stone_bricks", "minecraft:polished_andesite", "minecraft:chiseled_stone_bricks",
     "minecraft:cobblestone", "minecraft:tuff", "minecraft:calcite", "minecraft:stripped_spruce_log",
     "minecraft:cobblestone_wall", "minecraft:stone_brick_stairs", "minecraft:lantern", "minecraft:chain"
@@ -121,6 +121,7 @@
      "why": "the descent: a newel stair in the gallery's west end, four turns round a polished post, down to the floor. The gallery floor opens only where the first treads need headroom (four cells), so nobody steps off the gallery into a deep drop; the deepest step-off is three"},
     {"op": "scatter", "positions": [[1812, 126, 3696], [1813, 131, 3697], [1812, 136, 3697], [1813, 141, 3696], [1812, 146, 3696], [1813, 151, 3697]], "block": "$lantern",
      "why": "lanterns set into the newel post every five courses, lighting the stair from its middle"},
+    {"op": "scatter", "positions": [[1810, 150, 3695], [1814, 148, 3694]], "block": "minecraft:shroomlight", "why": "a light set flush into the stair's wall beside each of its two upper landings: the newel lanterns at y146 and y151 are boxed in by the treads on every side and lit nothing, so the landings at (1811, 150, 3695) and (1814, 148, 3695) stood at block light 0 (the independent audit, 2026-10-09)"},
     {"op": "carve", "box": [1815, 123, 3696, 1815, 125, 3697], "why": "the turret's door onto the floor, two wide and three high"},
     {"op": "fill", "box": [1815, 126, 3695, 1815, 126, 3698], "block": "$dressed", "why": "its lintel"}
   ],

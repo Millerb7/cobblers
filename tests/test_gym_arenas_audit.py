@@ -282,14 +282,16 @@ def gyms_except(marks):
     return [pytest.param(g, marks=marks[g]) if g in marks else g for g in A.GYMS]
 
 
-ADIT = pytest.mark.xfail(strict=True, reason=(
+# was the gym7 adit finding (fixed 2026-10-09); kept as the record of what was found
+ADIT_FIXED = (
     "FINDING gym7: lanterns hung in the adit's third headroom course, (6179,104,5006), (6179,100,5010), "
     "(6175,95,5012), (6171,91,5012), stop an upright player on the flight (head 1.8 over a tread's low half meets the "
     "lantern 1/16 lower); only crouching passes, both ways (build/.../gym7.mcfunction 'lanterns hung from the adit's "
-    "roof')"))
+    "roof')")
 
 
-@pytest.mark.parametrize("gym", gyms_except({"gym7": ADIT}))
+# FIXED 2026-10-09 by the main session (gym7 adit lanterns moved into the walls): its strict xfail turned red, as written, and was removed
+@pytest.mark.parametrize("gym", A.GYMS)
 def test_reach_down_to_the_challenger_and_back_up(real, gym):
     # Removing this lets an arena be built that a player cannot reach on foot, or cannot leave: a softlock.
     f = real[gym]
@@ -319,8 +321,8 @@ def test_gym2_ledger_gallery_reaches_the_slipway_through_its_door_and_only_throu
     assert stand not in walled.reach(start) and start not in walled.reach(stand)
 
 
-@pytest.mark.parametrize("gym", gyms_except({"gym7": pytest.mark.xfail(strict=True, reason=(
-    "gym7: the walk does not reach the arena (the adit lanterns), so the no-jump climb cannot be shown"))}))
+# FIXED 2026-10-09 by the main session (gym7 adit lanterns moved into the walls): its strict xfail turned red, as written, and was removed
+@pytest.mark.parametrize("gym", A.GYMS)
 def test_the_arena_descent_is_climbed_without_a_jump(real, gym):
     # Removing this lets a stair the generator promises to be walkable both ways need a jump (the 'tread_dropped'
     # mutation), which is invisible to a walk that may jump.
@@ -337,10 +339,8 @@ def test_clearance_round_both_pokemon_blocks_at_the_measured_size(real, gym):
     assert f["trainer_pokemon_clear_slack"] is None or f["trainer_pokemon_clear_slack"] >= 0
 
 
-@pytest.mark.parametrize("gym", gyms_except({"gym7": pytest.mark.xfail(strict=True, reason=(
-    "FINDING gym7: the adit's top six treads (6179, 103..105, 5002..5007), under the Assay House floor, have "
-    "unwritten rock on both sides (x6178, x6180): 28 open-cell/rock pairs; the builder's shell check exempts the "
-    "whole building box"))}))
+# FIXED 2026-10-09 by the main session (gym7 adit walls and ceiling written): its strict xfail turned red, as written, and was removed
+@pytest.mark.parametrize("gym", A.GYMS)
 def test_shell_bounds_and_seat_move(real, gym):
     # Removing this lets a cave open into an arena, a write land outside its declared boxes, or the seat move leave
     # the leader in the hall (all three are the same replay).
@@ -363,10 +363,8 @@ def test_no_water_or_lava_gets_in_and_no_hazard_on_the_walk(real, gym):
     assert not kinds(f, "WATER", "LAVA", "HAZARD"), kinds(f, "WATER", "LAVA", "HAZARD")
 
 
-@pytest.mark.parametrize("gym", gyms_except({"gym1": pytest.mark.xfail(strict=True, reason=(
-    "FINDING gym1: the newel stair's landings (1811,150,3695) and (1814,148,3695) are at block light 0 on a full "
-    "block; the lanterns 'set into the newel post' at (1812,146,3696) and (1813,151,3697) have an opaque block on all "
-    "six sides and light nothing; the builder's light check covers only bounds, not the through_building box"))}))
+# FIXED 2026-10-09 by the main session (gym1 landings lit from the stair wall): its strict xfail turned red, as written, and was removed
+@pytest.mark.parametrize("gym", A.GYMS)
 def test_no_walkable_arena_cell_at_block_light_zero(real, gym):
     # Removing this lets a monster spawn inside an arena or on its descent.
     f = real[gym]

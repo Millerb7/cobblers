@@ -131,7 +131,8 @@
   "minecraft:barrel",
   "minecraft:brewing_stand",
   "minecraft:cauldron",
-  "minecraft:blast_furnace"
+  "minecraft:blast_furnace",
+  "minecraft:shroomlight"
  ],
  "parts": [
   {
@@ -1444,28 +1445,68 @@
    "why": "its floor, level with the hall's (y84)"
   },
   {
+   "op": "fill",
+   "box": [
+    6178,
+    103,
+    5002,
+    6178,
+    105,
+    5007
+   ],
+   "block": "$shell",
+   "why": "the adit's first leg where it leaves the vault: its west wall at y103..105, rock the build never wrote (the independent audit, finding 2: a natural cave could open here)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6180,
+    103,
+    5002,
+    6180,
+    105,
+    5007
+   ],
+   "block": "$shell",
+   "why": "the same, the east wall"
+  },
+  {
    "op": "scatter",
    "positions": [
     [
      6179,
      104,
-     5006
+     5007
     ],
     [
      6179,
-     100,
-     5010
+     105,
+     5006
+    ]
+   ],
+   "block": "$shell",
+   "why": "the adit's ceiling over its top treads where it meets the vault's south footing: two rock cells the build never wrote (the independent audit's shell finding)"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6178,
+     106,
+     5007
     ],
     [
-     6175,
-     95,
-     5012
-    ],
-    [
-     6171,
-     91,
-     5012
-    ],
+     6180,
+     106,
+     5007
+    ]
+   ],
+   "block": "minecraft:shroomlight",
+   "why": "the two pockets beside the adit's top at y106..107 that the new wall tops left dark: a light block in their floor (the independent audit's light finding)"
+  },
+  {
+   "op": "scatter",
+   "positions": [
     [
      6166,
      88,
@@ -1473,7 +1514,34 @@
     ]
    ],
    "block": "$hanging",
-   "why": "lanterns hung from the adit's roof, one every four steps, so no step is dark"
+   "why": "lanterns hung from the adit's roof, one every four steps, so no step is dark (four of the five moved into the walls 2026-10-09: hung in the third course of headroom over a tread they stopped a standing player; the independent audit's finding 1)"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6180,
+     103,
+     5006
+    ],
+    [
+     6180,
+     99,
+     5010
+    ],
+    [
+     6175,
+     94,
+     5013
+    ],
+    [
+     6171,
+     90,
+     5013
+    ]
+   ],
+   "block": "minecraft:shroomlight",
+   "why": "the adit's lights set flush into its walls at head height, where the hung lanterns were (none in the headroom)"
   },
   {
    "op": "scatter",
