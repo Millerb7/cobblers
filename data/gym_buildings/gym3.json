@@ -2,6 +2,7 @@
   "schema": "gym_building/1",
   "id": "gym3",
   "status": "authored 2026-09-29; file-valid only. Nothing here has been seen in a running game.",
+  "superseded_by": "data/gym_arenas/gym3.json (schema gym_hall/1, the walk-through Relay Works and Grounding Hall, 2026-10-09). This record is kept as the record of what stood: tools/gym_buildings.py no longer emits its function and R16G no longer runs it; the hall's own first part clears every cell of these bounds, and its read-back probes the old gallery's air. Its model is still read (tools/challenge_mode.py restore_blocks; tools/gym_arenas.py's takedown coverage check).",
   "settlement": "gym3_town",
   "supersedes_donor": "gym3_gym_building",
   "supersedes_why": "the COBBLEVERSE donor shell (data/gym_interiors.json gym3.shell.expect_box 1726,173,1397..1748,189,1423, one oval room) is taken down by tools/gym_demolish.py, which also fills the works it cut under it (gym3.dig 1732,150,1400..1750,172,1427). This building is raised on the same lot. docs/world-building/GYM_BUILDINGS_BRIEF.md: the owner rejected a shaft into a cave under the shell and asked for a large building with the puzzle inside it.",

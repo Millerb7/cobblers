@@ -1,86 +1,68 @@
-# Gym 3: Lt. Surge, The Grounding Hall
+# Gym 3: Lt. Surge, the Relay Works and the Grounding Hall
 
-Record: `data/gym_arenas/gym3.json` (schema `gym_arena/1`, tool `tools/gym_arenas.py`). Offline checks only: nothing
-here has been built in a world or seen in a running game. Numbers below are the tool's own output
-(`python tools/gym_arenas.py check --gym gym3`) or measured from the model it builds; the survey figures are from
-`data/gym_arenas/survey.json`.
+Record: `data/gym_arenas/gym3.json` (schema `gym_hall/1`, tool `tools/gym_arenas.py`; design in
+`docs/world-building/GYM_WALKTHROUGH.md`). One building on the lot (1722..1752 x 1388..1432, level y174, facing
+west), walked through to the leader. Offline checks only: nothing here has been built in a world or seen in a running
+game. The carved arena it replaced (schema `gym_arena/1`, a newel stair down from a gallery in the rock) is kept in
+the record's `replaces.arena` and in git (`dfcd2fb`); its look is kept and expanded.
 
 ## The reading
 
-Surge's town keeps the power, the relays and the storm gear running (`TOWN_CHARACTER.md` gym3_town: deepslate and
-tuff, weathered and waxed copper). The Relay Works above is the substation where the feeder from his array lands.
-Under it is where the line is earthed: a deep switch hall. Transformer banks stand along both walls, each bank one
-stage further up copper's oxidation ladder (oxidised, weathered, exposed, bright), with lightning rods on every
-bank; three bus runs hang from the ceiling on chains, two weathered and one bright, as the building above carries
-them; and down the floor runs one course of waxed copper, oxidised at the door and bright at the dais, with a pair
-of ochre froglights set in the floor every third course. That is the signal line the player walks: the current
-rising as it comes in. At the far end Surge stands in a control cab four courses up, between two generator
-housings, in front of a board of redstone lamps whose lit columns rise to a peak over his head.
+Surge's town keeps the power, the relays and the storm gear running (`TOWN_CHARACTER.md` gym3_town: deepslate and tuff,
+weathered and waxed copper). The building is the substation where the feeder from his array lands, and the hall at
+its end is where the line is earthed. Machinery on both walls, a line in the floor, a board behind him; every copper
+block waxed, so the gradient stays where it is put.
 
-It is not Brock's hall: no colonnade, no nave, no stage wall to wall. Machinery on both walls, a line in the floor,
-a board behind the leader. Every copper block is waxed, so the gradient stays where it is put (unwaxed copper
-oxidises over time).
+## The walk (85 moves from the lane to the challenger's stand; stand height up 4 then down 7)
 
-## The walk in
+1. **The lane door** (west wall x1723, z1391..1393) and **the bay**: cable drums and spools; the Line Engineer
+   stands at the foot of the tower, clear ground in front of it.
+2. **The tower** (z1396..1403, two courses, across the whole 10-wide strip x1724..1733): sheer, climbed only by its
+   two half steps at the east end (x1732..1733) onto the **catwalk** (grate deck, stand y177).
+3. **The leads**: three two-wide bus bars (x1725..1726, x1728..1729, x1731..1732) run south over a pit of packing
+   straw at y178. Only the west bar has its lead (two stair steps, z1404..1405); the other two begin two courses over
+   the deck with no step, and are weathered and oxidised, dark. The live bar is bright waxed copper with lanterns
+   over it. The Relay Technician stands on the deck in front of the whole lead. The puzzle is reading which lead is
+   whole; the other two cannot be stepped onto. A player who drops into the straw (four down, hay) climbs out by the
+   stair at the pit's east edge (x1733).
+4. **The isolator**: the live bar steps down onto a tuff insulator two long (z1410..1411) and up again, the open
+   switch, all half steps; the bar goes through the isolator wall (z1415..1416) by the **duct** and down **four half
+   steps** onto the ground.
+5. **The junction** (z1423..1428): the Cable Rigger, then the cross passage east through the divider (x1734,
+   z1426..1428) onto **the earthing gallery** (y174, z1425..1428, 15 wide).
+6. **The Grounding Hall**: one broad stair of three half steps, 15 wide, down to the floor (y171, three under the
+   works' floor). The hall is 15 wide (x1735..1749) by 35 long (the cab z1390..1394, the floor z1395..1421, the stair
+   z1422..1424); the signal line is
+   oxidised at the stair and bright at the cab; four banks each side, brightest at the cab; three bus runs on chains
+   at y179; the cab four courses up at the north end with the lamp board in the wall behind it. 29 from the stair's
+   foot to Surge, so the fight cannot start until the player stands on the floor.
 
-1. The puzzle route ends in the cable-head gallery (4 wide, 13 long, cut in the rock), at (1747, 191, 1414), one over
-   Surge's old spawner. At the gallery's north end the floor opens on the head of a stair: the feeder's own, wound
-   round a weathered-copper conduit (ring x1746..1749, z1404..1407). The gallery's chest (1747, 191, 1406), barrels
-   and lanterns are not touched; the conduit stands under the chest.
-2. The stair winds down four turns, 49 treads, 32 levels, from the gallery floor (y190) to the hall floor (y158),
-   lit by lanterns set into the conduit. The deepest step off the gallery into the opening is three (no damage).
-3. A landing at (1748, 158, 1407), then the cable door: one wide, three high, two long, through the hall's north wall.
-   Its jambs and lintel on the hall side are oxidised copper.
-4. The hall: 19 wide, 28 long, 11 of air over the floor. The signal line starts at the player's feet, dull green,
-   and runs 23 blocks to the cab's face at z1433, brightening as it goes. The banks stand either side; the
-   ceiling busses run overhead. Nothing blocks the line: the bays are flush against the walls.
-5. Surge stands on the cab, four courses over the floor, in front of the lamp board. 25.3 from the door: farther than
-   rctmod's forceBattleMaxDistance + 1 (17), so the player is in the hall before he can call the fight. The
-   housings close the cab on both sides, so there is no aisle beside it and no way up.
+**Out**: an iron door in the divider at (1734, 175, 1392), opened by a stone button at (1735, 176, 1393) on the hall
+side, reached by a three-step stair west of the cab (x1735..1736) up to a platform: it lets out into the bay, 11 blocks
+from the lane door, 40 moves from the challenger's stand. Or back the way you came (70 moves, nothing one-way, no fall
+over three). The pilaster at x1737 stands between the platform and the cab, so the cab cannot be climbed from it.
 
 ## Where they stand
 
 | | |
 |---|---|
-| Surge's seat | (1748, 162, 1435), the spawner flush in the cab top, redstone block at y161; trainer stand block (1748, 161, 1434) |
-| His Pokemon | (1748, 157, 1427): 5.5 from the cab's face (cell edge z1433.0 against z1427.5) and 6.5 from the nearest bank |
-| The challenger's Pokemon | (1748, 157, 1420), 7.0 behind his; challenger stands (1748, 157, 1417) |
-| Challenge spawner | (1746, 162, 1435), two west of the seat, moved there from the gallery (1747, 190, 1412) |
+| Surge's seat | (1742, 175, 1392), the spawner flush in the cab top, redstone block at y174; trainer stand block (1742, 174, 1393) |
+| Challenge spawner | (1742, 175, 1390), two north of the seat on the same line (the one row of the cab outside the old Relay Works' bounds, z1391..1430, so `replaced_seats` does not claim it) |
+| His Pokemon | (1742, 170, 1400): 5.5 from the cab's face (cell edge z1395.0 against z1400.5), 4.5+ from the nearest bank |
+| The challenger's Pokemon | (1742, 170, 1407), 7.0 behind his; challenger stands (1742, 170, 1410) |
+| Juniors | Line Engineer (1730, 175, 1394); Relay Technician (1726, 177, 1403); Cable Rigger (1730, 175, 1425) |
 
-## Dimensions
+## What it takes down
 
-| | |
-|---|---|
-| Shell | x1737..1759, y156..171, z1408..1439 (23 x 16 x 32), two courses all round; the stair's ring and walls add x1745..1750, z1403..1408 |
-| Floor | y158 (stand at y159), interior x1739..1757 (19) by z1410..1437 (28), air y159..169 (11) |
-| Cab | x1743..1753, z1433..1437, top y162 (4 over the floor), face at z1433 |
-| Housings | x1739..1742 and x1754..1757, z1430..1437, top y166 |
-| Banks | x1739..1741 and x1755..1757, four bays each at z1411, 1416, 1421, 1426 (4 long), seams between |
-| Approach | 23 blocks from the door (z1410) to the cab's face (z1433); 25.3 from the entry cell to Surge |
-| Written | 15,948 cell writes (8,824 solid, the rest air) in 309 commands in `cobblers:gym_arenas/gym3`, before the move |
-| Cover | slack 0: the top course y171 under natural top y173 (the lot's pad at 174 less one) |
+The old Grounding Hall (x1737..1759, y156..171, z1403..1439: filled with stone by `gym3_takedown`, measured from
+`replaces.arena`), the part of its newel stair under the pad, and above the pad every cell of the Relay Works' bounds
+(x1725..1750, y174..206, z1391..1430), cleared by the hall's own first part. `data/gym_buildings/gym3.json` is
+`superseded_by` the hall (R16G no longer builds it).
 
-## What I measured
+## Not verified
 
-- Surge's measured team (the survey): clear radius 2.93 (Raichu's model sweep), clear height 1.96 (Electabuzz).
-  Against it, measured on the model: the nearest solid to his Pokemon's block in y159..161 is 5.5 away (spare 2.57),
-  to the challenger's 6.5 (spare 3.57); the ceiling is 11 over the floor against the 3 the rule asks (clear height
-  rounded up, plus the send-out's one); the clear floor across is 13 (x1742..1754) against 2 x 2.93 = 5.9.
-- The check: no PROBLEM. 116 cells a battle can start from, all four Battle Positions blocks found from all 116;
-  block light min 6, median 12, 6 cells under 8; dais 4; Pokemon 7.0 apart (widest hitbox 1.5).
-- The shell top is the survey's maximum for this lot (171); the floor is 8 under the survey's maximum (166), the
-  descent is 32 levels where the survey's was 24, because a taller hall was worth a longer stair.
-- Zone: `gym_surge` (1720..1759 x 1384..1439) already holds the arena (x1737..1759, z1403..1439); no change.
-
-## Notes and what is not verified
-
-- The old Challenge spawner at (1747, 190, 1412) is taken out by `gym3_seat` under its guard; the data value
-  `bosses.kanto_ltsurge.spawner.at` is the one edit to `data/challenge_mode.json`. Its `why` there still describes the old
-  position and was left alone on purpose.
-- Redstone lamps are lit only where a redstone block touches them (behind the board, in the shell). A lit lamp with
-  no power would switch itself off. Lightning rods are underground and below the surface height, so they cannot be struck.
-- Not verified: anything in a running game. That the lamps stay lit after a chunk reload; that Battle Positions sends
-  Surge's Pokemon to its block here; that a battle on sight starts at 16 from a leader four courses up; the bind-pose
-  model sweep as the real clearance; that no vanilla update turns a lit lamp off; that the block ids with a state
-  (`ochre_froglight[axis=y]`, `lightning_rod[facing=up]`, `redstone_lamp[lit=...]`) are accepted by the server as
-  written (they are vanilla 1.21.1 ids).
+Everything in a running game: stair shapes as placed, that the lit lamps stay lit across a chunk reload, that Battle
+Positions sends Surge's Pokemon to its block here, that a battle on sight starts at 16 from a leader four courses up,
+that the hall's lightning rods are inert (they stand under the roof; the roof carries copper finials, not rods), the
+bind-pose model sweep as the real clearance. The walk is a model's walk: a real player's jumps over the one-wide
+gaps between the bars are not modelled.
