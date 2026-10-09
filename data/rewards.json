@@ -403,6 +403,96 @@
       }
     },
     {
+      "id": "r4_packer",
+      "kind": "npc_grant",
+      "place": "Headwall camp: the string that bolted",
+      "npc_at": [
+        2503,
+        163,
+        1275
+      ],
+      "quest": "evt_route4_thaw_road",
+      "contents": [
+        {
+          "item": "cobblemon:oran_berry",
+          "count": 4,
+          "verification": "assets/cobblemon/models/item/oran_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "a packer's thanks: four Oran Berries, growable by anyone; the reward ladder on this leg starts small",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R17); its position written by `route4_events.py --write`"
+    },
+    {
+      "id": "r4_gate",
+      "kind": "npc_grant",
+      "place": "The thaw gate: the summit is below",
+      "npc_at": [
+        3033,
+        120,
+        1709
+      ],
+      "quest": "evt_route4_thaw_road",
+      "contents": [
+        {
+          "item": "cobblemon:never_melt_ice",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/never_melt_ice.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "minecraft:cherry_sapling",
+          "count": 1,
+          "verification": "vanilla item"
+        },
+        {
+          "item": "cobblemon:sitrus_berry",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/sitrus_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "the payoff: a held item for the cold, a cutting from the grove under the hill (plantable anywhere a sapling grows) and three Sitrus Berries; no cash, nothing the Bank buys, nothing that advances a gate",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R17); its position written by `route4_events.py --write`"
+    },
+    {
+      "id": "r4_strayed_load",
+      "kind": "cache",
+      "place": "the east wall's foot, 104 blocks off Route 4, under a red pennant",
+      "contents": [
+        {
+          "item": "cobblemon:sitrus_berry",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/sitrus_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:pecha_berry",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/pecha_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "Dragged here and abandoned, one strap still tied: a packer's spare stores. Two Sitrus Berries and two Pecha Berries, dry under the oilcloth.",
+      "why": "the second step of the chain's reward ladder (berries 4, then 4 here, then the gate's three, a held item and a sapling); the tracks from the hollow lead here and a red pennant shows it from the road",
+      "built_by": "tools/route4_events.py strayed_load (the container, reapply step R12R4); positions written by `route4_events.py --write`",
+      "trigger": {
+        "min": [
+          3260,
+          115,
+          1448
+        ],
+        "max": [
+          3264,
+          118,
+          1452
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          3262,
+          116,
+          1450
+        ]
+      }
+    },
+    {
       "id": "r1_old_mine",
       "kind": "cache",
       "place": "the old mine west of Route 1: the far west end of the cave under the hill, past the pool",

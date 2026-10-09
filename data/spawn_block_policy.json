@@ -560,6 +560,17 @@
       "why": "the brief of 2026-10-09 ('Mushroom Island: foliage and life. It is empty.'): data/encounter_design.json fungal_south names a water_body 'fungal_pools' that no landmark or water mask defines (the island is entirely dry) and carries a water table (Tadbulb anchor, Dewpider, Araquanid) with nowhere to spawn; the hollow's pool is that body, and fungal_glowcap_hollow's Tadbulb spawns submerged in it",
       "consequence": "data/spawn_blocks.json: water is a nearby-block condition of 45 spawn entries (Poliwag, Psyduck, Froakie, Wooper, Squirtle, Quagsire, the Quaxly line and others, in COBBLEVERSE-DP-v31.zip and the Cobblemon 1.8.0 jar); each also carries its own biome or other conditions, so the risk is a species with a water-nearby condition and no biome limit appearing at one hollow. Not verified in game; water is already whitelisted for the sea town and Victory Road's caves",
       "decided": "the owner, 2026-10-05 (data/spawn_block_policy.json owner_decision_2026_10_05: spawn-condition blocks allowed); the pool itself: this unit, to be confirmed by the owner when the hollow is seen"
+    },
+    {
+      "blocks": [
+        "minecraft:pink_petals",
+        "minecraft:cherry_leaves",
+        "minecraft:water"
+      ],
+      "scope": "Route 4's steam hollow and the thaw gate (route4_events: tools/route4_events.py, data/route4_events.json, pack cobblers_route4_events): the hollow's pool of seven cells and its petals at (3110, 1500), and the petals and drifted cherry leaves between the Displaced City's tunnel mouth and gate at (3033, 1700..1714)",
+      "why": "the two places are about warm air and blossom coming out of a frozen hillside; a petal on moss and a leaf in a drift are the picture, and the pool is the steam",
+      "consequence": "read from data/spawn_blocks.json 2026-10-09: petals and cherry leaves are neededNearbyBlocks of combee, cutiefly, comfey and ribombee (#cobblemon:flowers); water of freshwater species. Which of them spawn is decided by the pools in data/spawns.json (the hollow is inside Route 4's corridor, the gate 235 blocks outside it), not by these blocks",
+      "decided": "this file's owner_decision_2026_10_05 allows spawn-condition blocks; this entry names where, as contract C4 requires. Chosen by the builder of the gap fill, 2026-10-09, for the owner's review"
     }
   ],
   "checked_paving": {

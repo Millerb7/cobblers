@@ -500,6 +500,7 @@
         "town_dressing.py": "source: town_dressing",
         "town_dressing_audit.py": "checker: the built town_dressing functions",
         "shrines.py": "not covered: a block source (data/shrines.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by shrines_audit.py and by the built-packs test here",
+        "route4_events.py": "checker: refuses any spawn-condition block it writes that its SPAWN_OK does not declare (pink_petals, cherry_leaves and water, at the hollow and the gate, each with a data/spawn_block_policy.json entry scoped to route4_events); its built functions are checked by the built-packs test here and by tests/test_route4_events.py",
         "shrines_audit.py": "checker: the built shrines functions, against data/shrines.json blocks and the spawn conditions",
         "gym_interiors.py": "not covered: a block source (data/gym_interiors.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by gym_interiors_audit.py",
         "gym_interiors_audit.py": "checker: the built gym_interiors functions, against data/gym_interiors.json blocks and the spawn conditions",

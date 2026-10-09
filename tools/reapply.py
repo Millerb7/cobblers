@@ -78,6 +78,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # Routes 1-3 and the mansion (2026-09-24): the event sites, the scene runtime (props, per-player actors,
                 # zones, effects) and the route trainers
                 "cobblers_route_events", "cobblers_scenes", "cobblers_trainers",
+                # 2026-10-09: Route 4's middle (tools/route4_events.py, data/route4_events.json): four event sites and a
+                # find, block functions run by R12R4. Its scenes, quest and conversations ride in the packs above
+                "cobblers_route4_events",
                 # the sleeping Celebi in the Route 1 sapling and its keeper (2026-09-25)
                 "cobblers_celebi",
                 # the authored legendary encounters and their chambers (2026-09-29, tools/legendaries.py):
@@ -778,6 +781,9 @@ def prepare_jobs(a):
     # Routes 1-3: the event sites (it fails when data/scenes.json or data/route_trainers.json disagree with the
     # build, or anything stands on the walked line), then the scene runtime and the trainers
     add("route_events", "route_events.py", *src)
+    # Route 4's middle (2026-10-09): the same, for its own region; fails when the records in data/ disagree with the design or
+    # anything stands on the walked line, within 3.5 of the tunnel mouth or on a spawn-condition block it does not declare
+    add("route4_events", "route4_events.py", *src)
     add("scenes_pack", "scenes_pack.py")
     # routes 4-8's 28 trainers (tools/late_route_trainers.py, data/late_route_trainers.json, 2026-09-30): the
     # biggest unplaced content in the project until now. BEFORE route_trainers, which reads its seat file as a
@@ -2242,6 +2248,10 @@ def steps(with_spawns=False):
     # theirs and before R17 places the props, NPCs and actors that stand in them
     out.append(("R12R5", "Route 5 event sites (tools/route5_events.py)",
                 [("fn", "cobblers:route5_events/%s" % f) for f in indexed("cobblers_route5_events", "route5_events")]))
+    # Route 4's middle (tools/route4_events.py): the camp, the hollow, the strayed load, the old summit road and the thaw gate,
+    # after the same signposts and the towns. Its props and NPCs are scenes in data/scenes.json, so R17 below places them
+    out.append(("R12R4", "Route 4's middle event sites (tools/route4_events.py)",
+                [("fn", "cobblers:route4_events/%s" % f) for f in indexed("cobblers_route4_events", "route4_events")]))
     # what stands in the sites and the mansion: the scenes' props (interaction boxes, once each), their NPCs, and
     # the route trainers; entities, so an export erases them like blocks, and NPC classes and trainer data load at
     # boot, so these run over RCON after the restart that followed install

@@ -5315,6 +5315,554 @@
       "bench": "the sheltered bench farther up has no healing, PC, waystone or progression function"
     },
     {
+      "id": "evt_route4_thaw_road",
+      "source": "data/route4_events.json",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_route4_headwall_camp",
+        "dlg_route4_scar",
+        "dlg_route4_lead",
+        "dlg_route4_hollow_tracks",
+        "dlg_route4_hollow_pool",
+        "dlg_route4_hollow_petal",
+        "dlg_route4_stone_zero",
+        "dlg_route4_thaw_gate",
+        "dlg_route4_biscuit",
+        "dlg_route4_drift"
+      ],
+      "objectives": [
+        {
+          "id": "camp",
+          "active_when": {
+            "field": "quest.evt_route4_thaw_road.camp_done",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_route4_thaw_road.camp_done",
+            "equals": true
+          },
+          "text": "Hallam's string bolted at the headwall: read the lip and the post, and tell her which way her mule went."
+        },
+        {
+          "id": "hollow",
+          "active_when": {
+            "field": "quest.evt_route4_thaw_road.hollow_done",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_route4_thaw_road.hollow_done",
+            "equals": true
+          },
+          "text": "Read the prints, the pool and the petal on the trough floor, then follow the prints east."
+        },
+        {
+          "id": "road",
+          "active_when": {
+            "field": "quest.evt_route4_thaw_road.road_done",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_route4_thaw_road.road_done",
+            "equals": true
+          },
+          "text": "Walk the old summit road down its numbered stones and read the last one."
+        },
+        {
+          "id": "gate",
+          "active_when": {
+            "field": "quest.evt_route4_thaw_road.gate_done",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_route4_thaw_road.gate_done",
+            "equals": true
+          },
+          "text": "Find the grey mule at the thaw gate, and the keeper."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "camp_start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.camp_started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.camp_started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.hallam_cursor",
+              "value": "m_hunt"
+            }
+          ]
+        },
+        {
+          "id": "clue_scar",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.camp_started",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.clue_scar",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "clue_lead",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.camp_started",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.clue_lead",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "camp_answer",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.clue_scar",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.clue_lead",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.camp_answered",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.camp_answered",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.hallam_cursor",
+              "value": "m_back1"
+            }
+          ]
+        },
+        {
+          "id": "camp_grant",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.camp_answered",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.camp_reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_packer",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route4_thaw_road.camp_reward_claimed",
+              "idempotency_key": "evt_route4_thaw_road:reward_packer:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.hallam_cursor",
+              "value": "m_back3"
+            }
+          ]
+        },
+        {
+          "id": "camp_complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.camp_reward_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.camp_done",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.hallam_cursor",
+              "value": "m_done"
+            }
+          ]
+        },
+        {
+          "id": "see_tracks",
+          "conditions": [],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.seen_tracks",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "see_pool",
+          "conditions": [],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.seen_pool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "follow",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.seen_tracks",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.seen_pool",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.hollow_done",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.hollow_done",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.prop_cursor",
+              "value": "petal_done"
+            }
+          ]
+        },
+        {
+          "id": "pass_5",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s5"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.passed_5",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.last_stone",
+              "value": "s5"
+            }
+          ]
+        },
+        {
+          "id": "pass_4",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s4"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.last_stone",
+              "value": "s4"
+            }
+          ]
+        },
+        {
+          "id": "pass_3",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s3"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.last_stone",
+              "value": "s3"
+            }
+          ]
+        },
+        {
+          "id": "pass_2",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s2"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.last_stone",
+              "value": "s2"
+            }
+          ]
+        },
+        {
+          "id": "pass_1",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s1"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.last_stone",
+              "value": "s1"
+            }
+          ]
+        },
+        {
+          "id": "pass_0",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s0"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.passed_0",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.last_stone",
+              "value": "s0"
+            }
+          ]
+        },
+        {
+          "id": "finish_road",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.passed_5",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.passed_0",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.road_done",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.road_done",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "gate_grant",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.gate_reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_gate",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route4_thaw_road.gate_reward_claimed",
+              "idempotency_key": "evt_route4_thaw_road:reward_gate:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.oriel_cursor",
+              "value": "g_pay3"
+            }
+          ]
+        },
+        {
+          "id": "gate_complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route4_thaw_road.gate_reward_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.gate_done",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.invited",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route4_thaw_road.oriel_cursor",
+              "value": "g_done"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route4_thaw_gate"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_packer",
+          "status": "item_ids_verified; quantities provisional",
+          "contents": [
+            {
+              "item": "cobblemon:oran_berry",
+              "count": 4,
+              "verification": "assets/cobblemon/models/item/oran_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "a packer's thanks: four Oran Berries, growable by anyone; the reward ladder on this leg starts small"
+        },
+        {
+          "id": "reward_gate",
+          "status": "item_ids_verified; quantities provisional",
+          "contents": [
+            {
+              "item": "cobblemon:never_melt_ice",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/never_melt_ice.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            },
+            {
+              "item": "minecraft:cherry_sapling",
+              "count": 1,
+              "verification": "vanilla item"
+            },
+            {
+              "item": "cobblemon:sitrus_berry",
+              "count": 3,
+              "verification": "assets/cobblemon/models/item/sitrus_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "the payoff: a held item for the cold, a cutting from the grove under the hill (plantable anywhere a sapling grows) and three Sitrus Berries; no cash, nothing the Bank buys, nothing that advances a gate"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "shared props open each clicker's own conversation",
+        "actors": "posed Pokemon are per-player actors (data/scenes.json), never capture rewards",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "progression_field_refs": [
+        "quest.evt_route4_thaw_road.camp_started",
+        "quest.evt_route4_thaw_road.clue_scar",
+        "quest.evt_route4_thaw_road.clue_lead",
+        "quest.evt_route4_thaw_road.camp_answered",
+        "quest.evt_route4_thaw_road.camp_reward_claimed",
+        "quest.evt_route4_thaw_road.camp_done",
+        "quest.evt_route4_thaw_road.seen_tracks",
+        "quest.evt_route4_thaw_road.seen_pool",
+        "quest.evt_route4_thaw_road.hollow_done",
+        "quest.evt_route4_thaw_road.passed_5",
+        "quest.evt_route4_thaw_road.passed_0",
+        "quest.evt_route4_thaw_road.last_stone",
+        "quest.evt_route4_thaw_road.road_done",
+        "quest.evt_route4_thaw_road.gate_reward_claimed",
+        "quest.evt_route4_thaw_road.gate_done",
+        "quest.evt_route4_thaw_road.invited",
+        "quest.evt_route4_thaw_road.hallam_cursor",
+        "quest.evt_route4_thaw_road.oriel_cursor",
+        "quest.evt_route4_thaw_road.prop_cursor"
+      ],
+      "scene": "data/scenes.json route4_headwall_camp, route4_steam_hollow, route4_summit_road, route4_thaw_gate",
+      "lore_rule": "Hallam's accident is a work accident on a freight route, not the Worldshift or the Haven Compact; the stones and the gate are the Displaced City's own (data/placements.json displaced_city plan: 'the old road climbs the ridge to the top of the mountain'; data/towns.json displaced_city entrance 'a meltwater cave mouth on the trough flank'); the warm-air hook is docs/story/SIDEQUESTS.md SQ-G5-02"
+    },
+    {
       "id": "route_01_trainer_01",
       "kind": "trainer_record",
       "source": "data/trainers.json route_01_trainer_01 (docs/story/TRAINER_RULES.json)",
