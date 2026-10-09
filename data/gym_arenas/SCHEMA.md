@@ -107,3 +107,27 @@ missing once the hall stands: no move), `<gym>_old_leader` (both ids killed anyw
 seat, and in the old arena). R16G runs takedown, hall and seat after the other buildings; R16GA runs them with the
 sweep and the read-back. `tools/gym_demolish.py` (R16F) never writes inside a hall's bounds or its takedown, nor
 inside an arena's bounds and through boxes, nor inside the box a building clears (`gym_buildings.clear_box`).
+
+# `exit_passages[]`: a way out to the surface (both schemas, 2026-10-09)
+
+The owner does not want a gym you go far down in and must climb back out of. A hall that stands on its lot leaves by
+its own door; a gym that is DEEP (Misty's: the one donor template, a 38-block well down, the race, the ledger gallery,
+then our boat house) needs a passage up. An `exit_passages[]` entry is the smallest thing that lets a record say it:
+
+| Field | Meaning |
+|---|---|
+| `id`, `why` | a name, and the measurement it rests on (where the ground is, where the water is) |
+| `box` | the passage's own declared box. Writes are allowed in `bounds`, a `through_building` box, or here; every x/z must lie inside the `spawn_free_zone` (extend it on the 8-block grid). Inside it, and only inside it: the COVER rule does not apply (its top is the surface) and an open cell may touch unwritten NATURAL AIR (the mouth). It may never touch unwritten rock (the shell rule) or water, so its walls and roof are written |
+| `door`, `button` | the iron door's LOWER cell and the stone button, both inside `bounds` (the hall's wall) and outside `box`. Both door halves must be `iron_door[open=false]`; the button is `stone_button[face=wall]` on the hall side, powering the wall block it is set on, which touches a door half. An iron door opens on a signal only, so nothing outside opens it: the passage is a way out and never a way in |
+| `surface` | a standing cell on the world's own ground beside the passage (air, over an unwritten block), outside `bounds` and `box`: where the walk out must arrive |
+
+`check` adds: the door and button as above; from the challenger's stand, no fall over 3, the door opened by a button
+the walk reaches by hand, the walk reaches `surface`; with the door shut it does not (and the shore, walked from
+`surface`, reaches neither the hall side nor the button within reach of 4.5). `reserved_boxes()` and `hold_boxes()` include
+the box, so the demolition leaves it alone and the read-back forceloads it. The audit (`tools/gym_arenas_audit.py`)
+reads only `box` and derives the rest from the replayed blocks (its docstring, "AN EXIT TO THE SURFACE").
+
+Authoring: lay the passage with the existing ops. A stair that RISES to the south is a `straight_stair` written from its
+top, `dir: north` (the op steps down in `dir`), the side walls and roof a `repeat` stepped the same way, a landing flush
+with the bank, and light from sea lanterns in the walls: never a lantern hung in the headroom, which stops an upright
+player on a flight (the gym 7 finding). Gym 2's `shore_stair` is the worked example.

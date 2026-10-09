@@ -1163,7 +1163,7 @@
           1592,
           2856,
           1631,
-          2895
+          2911
         ],
         "why": "contract G1, and unchanged: the dig's footprint x1598-1626, z2861-2881 is wholly inside the standing box, so nothing had to be widened."
       },

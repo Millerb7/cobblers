@@ -2,7 +2,7 @@
   "schema": "gym_arena/1",
   "id": "gym2",
   "gym": "gym2",
-  "status": "authored 2026-10-08; offline checks only (tools/gym_arenas.py check). Nothing here has been built in a world or seen in a running game. The one junction the check cannot see across is the open door in the ledger gallery's south wall (see entry.why).",
+  "status": "authored 2026-10-08; offline checks only (tools/gym_arenas.py check). Nothing here has been built in a world or seen in a running game. The way out (exit_passages: a gangway, a one-way iron door and an 11-tread stair to the lake shore) was added 2026-10-09 and is checked offline only. The one junction the check cannot see across is the open door in the ledger gallery's south wall (see entry.why).",
   "name": "The Lifeboat House",
   "reading": "Misty's town keeps the lake's rescue service (docs/world-building/TOWN_CHARACTER.md gym2_town: rescue boats, a record of every arrival; prismarine and mud brick, dark oak, spruce). The cistern the town draws from and the ledger gallery above the race are already carved under the template hall (data/gym_interiors.json gym2). Beyond the ledger gallery, past the lifeguard, is where the service keeps its boat: a long timber-framed boat house in mud brick with a prismarine quay, a launch channel along its whole south side with the boat still lying in it, buoys on the water and a lifeline strung on posts along the quay edge, a lifebuoy painted on the end wall. A player comes through a door the lifeguard guards, down a slipway stair, into the hall's west end and walks its whole length toward the lookout deck at the east end: a raised timber deck on a dark prismarine plinth, three courses above the quay, where the watch is kept and Misty stands.",
   "leader": {
@@ -13,7 +13,10 @@
   "spawn_free_zone": "gym_misty",
   "floor_y": 92,
   "bounds": [1592, 88, 2877, 1631, 102, 2895],
-  "bounds_why": "the hall shell x1592..1631 (interior 1594..1629, 36 long) by z2881..2895 (interior 2883..2893, 11 wide) by y88..101 (floor top y92, air y93..99, beams at y99, vault y100..101), joined on its north side by the slipway block x1597..1607 z2877..2881 y91..102. Every column lies inside the gym_misty spawn-free box [1592, 2856, 1631, 2895], so no zone change. Nothing is written in the template's own bounds [1594, 107, 2859, 1629, 146, 2890] (this arena's top is y102, the template's lowest course y107), and no write lands on a cell the dig wrote (measured by replaying tools/gym_interiors.py gym2_commands: 0 of 11,105). The dig's carved cells end at z2876; the slipway block's north face (z2877) stands directly against the ledger gallery's south wall, the one cell of rock the dig left there, and the nearest open arena cell is two cells from the nearest open dig cell.",
+  "bounds_why": "the hall shell x1592..1631 (interior 1594..1629, 36 long) by z2881..2895 (interior 2883..2893, 11 wide) by y88..101 (floor top y92, air y93..99, beams at y99, vault y100..101), joined on its north side by the slipway block x1597..1607 z2877..2881 y91..102. Every column lies inside the gym_misty spawn-free box [1592, 2856, 1631, 2895], so no zone change. Nothing is written in the template's own bounds [1594, 107, 2859, 1629, 146, 2890] (this arena's top is y102, the template's lowest course y107), and no write lands on a cell the dig wrote (measured by replaying tools/gym_interiors.py gym2_commands: 0 of 11,105). THE EXIT PASSAGE (exit_passages shore_stair, x1594..1596 z2896..2907 y92..108) lies outside `bounds`, in its own declared box; the gym_misty spawn-free box was extended on the 8-block grid from z2895 to z2911 to hold it (data/spawn_suppression.json, 2026-10-09). The dig's carved cells end at z2876; the slipway block's north face (z2877) stands directly against the ledger gallery's south wall, the one cell of rock the dig left there, and the nearest open arena cell is two cells from the nearest open dig cell.",
+  "exit_passages": [
+    {"id": "shore_stair", "box": [1594, 92, 2896, 1596, 108, 2907], "door": [1595, 93, 2894], "button": [1596, 94, 2893], "surface": [1593, 104, 2907], "why": "The way out past Misty (docs/world-building/gym_arenas/gym2.md 'The way out past Misty, measured'): the launch channel is not a mouth (the lake stands at y103, ten above the channel), so the hall is left by a gangway across the channel, a one-way iron door in the south wall and a stair of eleven courses to the lake shore at z2907. The box is the stair-house and its mouth: x1594..1596 (walls and stair), z2896..2907, y92 (under the first tread) to 108. It is the one place this arena meets the open air, and the one not under cover; the door, the vestibule (z2895) and the button stay in the hall's own bounds. `surface` is the standing cell on the bank beside the landing that the walk must reach."}
+  ],
   "through_building": [],
   "through_building_why": "none: the descent is the existing well, cistern, race and ledger gallery (data/gym_interiors.json gym2); the arena starts at the gallery's south wall and writes nothing in the template building.",
   "entry": {
@@ -58,9 +61,12 @@
     "white": "minecraft:white_terracotta",
     "locker": "minecraft:barrel[facing=up]",
     "door_lower": "minecraft:dark_oak_door[facing=south,half=lower,hinge=left,open=true]",
-    "door_upper": "minecraft:dark_oak_door[facing=south,half=upper,hinge=left,open=true]"
+    "door_upper": "minecraft:dark_oak_door[facing=south,half=upper,hinge=left,open=true]",
+    "iron_door_lower": "minecraft:iron_door[facing=north,half=lower,hinge=left,open=false,powered=false]",
+    "iron_door_upper": "minecraft:iron_door[facing=north,half=upper,hinge=left,open=false,powered=false]",
+    "button": "minecraft:stone_button[face=wall,facing=north,powered=false]"
   },
-  "blocks": ["minecraft:air", "minecraft:mud_bricks", "minecraft:prismarine_bricks", "minecraft:dark_prismarine", "minecraft:spruce_planks", "minecraft:stripped_dark_oak_log", "minecraft:dark_oak_planks", "minecraft:dark_oak_log", "minecraft:dark_oak_fence", "minecraft:water", "minecraft:prismarine_brick_stairs", "minecraft:sea_lantern", "minecraft:lantern", "minecraft:chain", "minecraft:red_terracotta", "minecraft:white_terracotta", "minecraft:barrel", "minecraft:dark_oak_door"],
+  "blocks": ["minecraft:air", "minecraft:mud_bricks", "minecraft:prismarine_bricks", "minecraft:dark_prismarine", "minecraft:spruce_planks", "minecraft:stripped_dark_oak_log", "minecraft:dark_oak_planks", "minecraft:dark_oak_log", "minecraft:dark_oak_fence", "minecraft:water", "minecraft:prismarine_brick_stairs", "minecraft:sea_lantern", "minecraft:lantern", "minecraft:chain", "minecraft:red_terracotta", "minecraft:white_terracotta", "minecraft:barrel", "minecraft:dark_oak_door", "minecraft:iron_door", "minecraft:stone_button"],
   "blocks_why": "the town's own palette (TOWN_CHARACTER.md gym2_town: prismarine, mud brick, dark oak, spruce) and the interior's own (data/gym_interiors.json gym2 blocks: sea lantern, dark prismarine, barrels, lanterns, chain), plus red and white concrete for the buoys and the lifebuoy. Water is a spawn-condition block, so it is kept inside the gym_misty box, which takes every column out of every compiled spawn file; there is no grass, leaves, sand or carpet.",
   "parts": [
     {"op": "shell", "box": [1592, 88, 2881, 1631, 101, 2895], "thickness": 2, "block": "$shell", "why": "the boat house: two courses of mud brick on all six faces, built and never the rock; the inside carved (x1594..1629, y90..99, z2883..2893)"},
@@ -124,7 +130,19 @@
     {"op": "setblock", "pos": [1606, 99, 2877], "block": "$door_lower", "why": "THE DOOR: the boat house's door in the ledger gallery's south wall, dark oak, standing open. It is the only block in the arena that is neither the arena's own wall nor open air"},
     {"op": "setblock", "pos": [1606, 100, 2877], "block": "$door_upper"},
     {"op": "setblock", "pos": [1606, 101, 2879], "block": "$hanging", "why": "a lantern over the top landing"},
-    {"op": "scatter", "positions": [[1603, 99, 2879], [1601, 97, 2879], [1599, 95, 2879]], "block": "$hanging", "why": "three more hung from the roof over the slipway at the top of each headroom (x1603: tread y96, x1601: y94) and over its foot"}
+    {"op": "scatter", "positions": [[1603, 99, 2879], [1601, 97, 2879], [1599, 95, 2879]], "block": "$hanging", "why": "three more hung from the roof over the slipway at the top of each headroom (x1603: tread y96, x1601: y94) and over its foot"},
+    {"op": "fill", "box": [1595, 92, 2891, 1595, 92, 2893], "block": "$deck", "why": "THE WAY OUT, 1 of 5, the gangway: three planks of spruce across the launch channel at x1595, in the water's own course (y92), from the quay's edge (z2890) to the hall's south wall. The water under it stays; the planks are a full block, so the channel is still enclosed"},
+    {"op": "fill", "box": [1594, 93, 2891, 1594, 93, 2893], "block": "$fence", "why": "the gangway's two rails in dark oak fence, the lifeline's post at x1596, z2890 continuing them"},
+    {"op": "fill", "box": [1596, 93, 2891, 1596, 93, 2893], "block": "$fence"},
+    {"op": "setblock", "pos": [1595, 93, 2894], "block": "$iron_door_lower", "why": "THE DOOR PAST MISTY, 2 of 5: an iron door in the south wall's inner course at x1595, facing into the hall. Vanilla: an iron door opens only on a redstone signal, so it opens from nothing outside the wall. It is a way out and never a way in past the race and the lifeguard"},
+    {"op": "setblock", "pos": [1595, 94, 2894], "block": "$iron_door_upper"},
+    {"op": "setblock", "pos": [1596, 94, 2893], "block": "$button", "why": "its button, on the hall side of the wall, one east of the door: it powers the wall block it is set on, (1596, 94, 2894), which touches the door's upper half. Over the gangway rail, in a player's reach from the gangway and from the quay's edge; a wall two cells thick and a shut door stand between it and the passage"},
+    {"op": "carve", "box": [1595, 93, 2895, 1595, 95, 2895], "why": "THE PASSAGE, 3 of 5, the vestibule through the wall's outer course, three high, on the quay's level (the wall's base course y92, top y93)"},
+    {"op": "setblock", "pos": [1596, 94, 2895], "block": "$sealight", "why": "a sea lantern in the vestibule's east wall: the passage is lit from its walls, never from a lantern hung in headroom, which stops an upright player on a flight of stairs (the gym 7 finding)"},
+    {"op": "repeat", "step": [0, -1, -1], "count": 11, "why": "the stair-house's two side walls and its roof, one set for each of the eleven treads: from the tread at z2906 (y103) down to the one at z2896 (y93), each wall from one under its tread to the roof, which is four over it. Solid mud brick all round, so the stair is walled on every side whatever the hill does, and meets the open air only at its south mouth", "parts": [{"op": "fill", "box": [1594, 102, 2906, 1594, 107, 2906], "block": "$shell"}, {"op": "fill", "box": [1596, 102, 2906, 1596, 107, 2906], "block": "$shell"}, {"op": "setblock", "pos": [1595, 107, 2906], "block": "$shell"}]},
+    {"op": "scatter", "positions": [[1594, 104, 2905], [1594, 101, 2902], [1594, 98, 2899]], "block": "$sealight", "why": "three more sea lanterns in the west wall, two courses over the treads at z2905, z2902 and z2899 (the wall cell is solid, so no headroom is taken)"},
+    {"op": "straight_stair", "from": [1595, 103, 2906], "dir": "north", "steps": 11, "width": 1, "tread": "$tread", "under": "$shell", "headroom": 3, "why": "THE SHORE STAIR, 4 of 5: eleven treads rising south from the vestibule (y93 at z2896) to the shore (y103 at z2906), one course a block, one wide, three of headroom; walked both ways without a jump. Written from its top so the existing straight_stair (which descends) does it: down in `north` is up to the south"},
+    {"op": "fill", "box": [1594, 103, 2907, 1596, 103, 2907], "block": "$floor", "why": "THE SHORE, 5 of 5, the landing: three blocks of prismarine at the lake's edge, flush with the bank (ground y103, top y104 at x1593..1596, z2907; tools/ground.py rounded), so the last tread's top (y104) steps level onto it and the landing level onto the bank. The lake's first water is z2908 at x1595 (bridges.water, y103): the landing is a full block between"}
   ],
   "probes": [
     {"what": "the quay under the leader's Pokemon", "at": [1620, 92, 2887], "block": "minecraft:prismarine_bricks"},
@@ -135,6 +153,13 @@
     {"what": "the door in the ledger gallery's south wall", "at": [1606, 99, 2877], "block": "minecraft:dark_oak_door"},
     {"what": "the slipway's top landing is air over its floor", "at": [1606, 99, 2879], "block": "minecraft:air"},
     {"what": "the lifebuoy on the end wall", "at": [1630, 100, 2887], "block": "minecraft:red_terracotta"},
-    {"what": "the shell's south-west bottom corner", "at": [1592, 88, 2895], "block": "minecraft:mud_bricks"}
+    {"what": "the shell's south-west bottom corner", "at": [1592, 88, 2895], "block": "minecraft:mud_bricks"},
+    {"what": "the gangway over the launch channel", "at": [1595, 92, 2892], "block": "minecraft:spruce_planks"},
+    {"what": "the iron door past Misty, in the south wall", "at": [1595, 93, 2894], "block": "minecraft:iron_door"},
+    {"what": "the door's button, on the hall side", "at": [1596, 94, 2893], "block": "minecraft:stone_button"},
+    {"what": "the vestibule is air", "at": [1595, 94, 2895], "block": "minecraft:air"},
+    {"what": "the shore stair's top tread", "at": [1595, 103, 2906], "block": "minecraft:prismarine_brick_stairs"},
+    {"what": "the shore stair's landing", "at": [1595, 103, 2907], "block": "minecraft:prismarine_bricks"},
+    {"what": "air over the landing, the stair-house mouth", "at": [1595, 105, 2907], "block": "minecraft:air"}
   ]
 }
