@@ -382,8 +382,14 @@ def test_macro_lines(files):
 
 def test_staging_only_never_installed():
     """The pack must not enter the players' pack or the re-apply's install lists."""
-    reapply = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
-    assert "cobblers_dg_probes" not in reapply and "dungeon_probes" not in reapply
+    # reapply.py may name it in ONE place: EXCLUDED, the whole-build gate's record of why no step runs it (2026-10-09:
+    # the prepare refuses a built pack that no step runs and EXCLUDED does not explain). Never an install list or a step
+    import reapply as R
+    assert "cobblers_dg_probes" in R.EXCLUDED
+    assert "cobblers_dg_probes" not in R.SERVER_PACKS
+    assert not any("cobblers_dg_probes" in repr(s) for s in R.steps())
+    text = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
+    assert text.count("cobblers_dg_probes") == 1 and "dungeon_probes" not in text.replace("tools/dungeon_probes.py", "")
     for p in (ROOT / "modpack").rglob("*"):
         if p.is_file() and p.suffix in (".json", ".toml", ".txt", ".md", ".json5", ".yaml", ".yml"):
             assert "cobblers_dg_probes" not in p.read_text(encoding="utf-8", errors="ignore"), p

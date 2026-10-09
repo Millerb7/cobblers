@@ -182,7 +182,7 @@
         "outside_why": "where a player leaving the run stands: on the trail in the notch, facing east down the carts' way out (yaw -90). On the notch floor (y129 coarse dirt, tools/route1_old_mine.py), so clear and walkable",
         "click": [1352, 130, 4118],
         "click_why": "the interaction's centre column, in the notch just south of the opening (z 4118), 3 wide and 3 high, so it is clicked from the trail",
-        "palette": {"frame": "minecraft:crying_obsidian", "lintel": "minecraft:polished_blackstone_bricks", "opening": "minecraft:black_concrete"},
+        "palette": {"frame": "minecraft:crying_obsidian", "lintel": "minecraft:polished_blackstone_bricks", "opening": "minecraft:black_terracotta"},
         "palette_why": "placeholder: never a nether_portal or end_portal block (7.1, they teleport on their own). world-content-dev chooses the real palette against docs/world-building/BUILD_PALETTE.md",
         "plume": false,
         "plume_gated_on": "V1 (EXP-080): whether the particles are seen from the approach path; the owner looks"
@@ -190,7 +190,7 @@
       "spine": {
         "placeholder": true,
         "placeholder_why": "the real spine is step 4 (world-content-dev): 1,000-2,000 blocks of drifts, three stands, the seam, the gantry and lake, the parkour and the boss (DUNGEONS.md 1, 11.1). This one is the least that runs the engine end to end: the entry room with the board and the back rip, a drift, a no-deploy gate box with its cracked lamps (so the recall sweep has a box), the boss arena with its exit gate, and the exit room with the far rip",
-        "palette": {"wall": "minecraft:polished_blackstone_bricks", "floor": "minecraft:deepslate_tiles", "light": "minecraft:shroomlight", "rip_frame": "minecraft:crying_obsidian", "rip_opening": "minecraft:black_concrete", "lamp": "minecraft:redstone_lamp", "gate": "minecraft:iron_bars"},
+        "palette": {"wall": "minecraft:polished_blackstone_bricks", "floor": "minecraft:deepslate_tiles", "light": "minecraft:shroomlight", "rip_frame": "minecraft:crying_obsidian", "rip_opening": "minecraft:black_terracotta", "lamp": "minecraft:redstone_lamp", "gate": "minecraft:iron_bars"},
         "light_every": 6,
         "segments": [
           {"kind": "entry_room", "length": 16, "width": 11, "height": 6, "why": "arrival 3 in from the back rip; the board on the north wall; the threshold is its east doorway"},

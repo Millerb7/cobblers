@@ -54,13 +54,13 @@
     "lantern": "minecraft:lantern",
     "hanging": "minecraft:lantern[hanging=true]",
     "chain": "minecraft:chain[axis=y]",
-    "red": "minecraft:red_concrete",
-    "white": "minecraft:white_concrete",
+    "red": "minecraft:red_terracotta",
+    "white": "minecraft:white_terracotta",
     "locker": "minecraft:barrel[facing=up]",
     "door_lower": "minecraft:dark_oak_door[facing=south,half=lower,hinge=left,open=true]",
     "door_upper": "minecraft:dark_oak_door[facing=south,half=upper,hinge=left,open=true]"
   },
-  "blocks": ["minecraft:air", "minecraft:mud_bricks", "minecraft:prismarine_bricks", "minecraft:dark_prismarine", "minecraft:spruce_planks", "minecraft:stripped_dark_oak_log", "minecraft:dark_oak_planks", "minecraft:dark_oak_log", "minecraft:dark_oak_fence", "minecraft:water", "minecraft:prismarine_brick_stairs", "minecraft:sea_lantern", "minecraft:lantern", "minecraft:chain", "minecraft:red_concrete", "minecraft:white_concrete", "minecraft:barrel", "minecraft:dark_oak_door"],
+  "blocks": ["minecraft:air", "minecraft:mud_bricks", "minecraft:prismarine_bricks", "minecraft:dark_prismarine", "minecraft:spruce_planks", "minecraft:stripped_dark_oak_log", "minecraft:dark_oak_planks", "minecraft:dark_oak_log", "minecraft:dark_oak_fence", "minecraft:water", "minecraft:prismarine_brick_stairs", "minecraft:sea_lantern", "minecraft:lantern", "minecraft:chain", "minecraft:red_terracotta", "minecraft:white_terracotta", "minecraft:barrel", "minecraft:dark_oak_door"],
   "blocks_why": "the town's own palette (TOWN_CHARACTER.md gym2_town: prismarine, mud brick, dark oak, spruce) and the interior's own (data/gym_interiors.json gym2 blocks: sea lantern, dark prismarine, barrels, lanterns, chain), plus red and white concrete for the buoys and the lifebuoy. Water is a spawn-condition block, so it is kept inside the gym_misty box, which takes every column out of every compiled spawn file; there is no grass, leaves, sand or carpet.",
   "parts": [
     {"op": "shell", "box": [1592, 88, 2881, 1631, 101, 2895], "thickness": 2, "block": "$shell", "why": "the boat house: two courses of mud brick on all six faces, built and never the rock; the inside carved (x1594..1629, y90..99, z2883..2893)"},
@@ -134,7 +134,7 @@
     {"what": "a roof beam", "at": [1614, 99, 2887], "block": "minecraft:dark_oak_log"},
     {"what": "the door in the ledger gallery's south wall", "at": [1606, 99, 2877], "block": "minecraft:dark_oak_door"},
     {"what": "the slipway's top landing is air over its floor", "at": [1606, 99, 2879], "block": "minecraft:air"},
-    {"what": "the lifebuoy on the end wall", "at": [1630, 100, 2887], "block": "minecraft:red_concrete"},
+    {"what": "the lifebuoy on the end wall", "at": [1630, 100, 2887], "block": "minecraft:red_terracotta"},
     {"what": "the shell's south-west bottom corner", "at": [1592, 88, 2895], "block": "minecraft:mud_bricks"}
   ]
 }

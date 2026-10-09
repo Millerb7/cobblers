@@ -1109,10 +1109,10 @@ def v1(doc, spec):
         fill(rx - 3, oy, oz - 4, rx - 3, oy, oz + 4, "minecraft:glass"),
         # the frame (obsidian; the Rift palette is world-content-dev's) and its dark, non-teleporting opening
         fill(rx, oy, oz - 2, rx, oy + 6, oz + 2, "minecraft:obsidian"),
-        fill(rx, oy + 1, oz - 1, rx, oy + 5, oz + 1, "minecraft:black_concrete")]
+        fill(rx, oy + 1, oz - 1, rx, oy + 5, oz + 1, "minecraft:black_terracotta")]
     colours = ["lime", "yellow", "red", "purple"]
     for i, d in enumerate(spec["marks"]):
-        build.append(fill(rx + d, oy - 1, oz - 3, rx + d, oy - 1, oz + 3, "minecraft:%s_concrete" % colours[i % 4]))
+        build.append(fill(rx + d, oy - 1, oz - 3, rx + d, oy - 1, oz + 3, "minecraft:%s_terracotta" % colours[i % 4]))
     P.build = build
     P.boxes = [(rx - 3, oy - 1, oz - 4, far, oy + 6, oz + 4)]
     P.arrive = (rx + spec["marks"][0] + 0.5, oy, oz + 0.5, 90)
