@@ -16,9 +16,9 @@
  "entry": {"street": [1813, 141, 3655], "floor": [1831, 142, 3697], "why": "street is the lane north of the lot, in front of the door (ground y140 at x1813, tools/ground.py rounded: the lane climbs from the plaza north-west of the knoll). entry.floor is the setting-out floor's first cell inside its door: 30.1 from Brock, farther than rctmod's forceBattleMaxDistance + 1 = 17, so the player stands on the floor before he can call the fight."},
  "exit": {"door": [1843, 142, 3675], "button": [1842, 143, 3674], "why": "the door past the leader: an iron door in the east wall just south of the stage, opened by the stone button on the wall inside it; out onto the lot's east side and round to the forecourt. Nothing outside opens it, so it cannot be used to reach Brock past the yard and its juniors. Or back the way you came: every step of the yard is walked both ways."},
  "rooms": [
-  {"id": "forecourt", "kind": "entrance", "box": [1806, 141, 3656, 1845, 145, 3663], "why": "the polished apron in front of the door, where the witness Brock stands"},
-  {"id": "cutting_floor", "kind": "entrance", "box": [1809, 141, 3665, 1818, 156, 3670], "why": "inside the door: the stonecutters, and the wall ahead across the strip"},
-  {"id": "the_wall", "kind": "puzzle", "box": [1809, 141, 3671, 1818, 156, 3674], "why": "the wall being raised: three courses, sheer but for its stepped east end. The Hall Mason stands at the foot of the steps"},
+  {"id": "sof_forecourt", "kind": "entrance", "box": [1806, 141, 3656, 1845, 145, 3663], "why": "the polished apron in front of the door, where the witness Brock stands"},
+  {"id": "sof_cutting_floor", "kind": "entrance", "box": [1809, 141, 3665, 1818, 156, 3670], "why": "inside the door: the stonecutters, and the wall ahead across the strip"},
+  {"id": "sof_the_wall", "kind": "puzzle", "box": [1809, 141, 3671, 1818, 156, 3674], "why": "the wall being raised: three courses, sheer but for its stepped east end. The Hall Mason stands at the foot of the steps"},
   {"id": "the_void", "kind": "puzzle", "box": [1809, 141, 3675, 1818, 156, 3680], "why": "six blocks of straw-floored void crossed by three beams; a stair climbs back out of the straw"},
   {"id": "the_slots", "kind": "puzzle", "box": [1809, 141, 3681, 1818, 156, 3682], "why": "the cross wall: three slots at the beams' ends, two blind, the middle one through, lit from behind"},
   {"id": "the_landing", "kind": "junior", "box": [1809, 141, 3683, 1818, 156, 3687], "why": "the landing behind the true slot, walled by parapets, and its stair down. The Loft Foreman stands on it"},
@@ -27,14 +27,14 @@
   {"id": "setting_out_floor", "kind": "arena", "box": [1820, 141, 3665, 1842, 156, 3697], "why": "the arena: 23 by 33, the stage across its north end, Brock on it"}
  ],
  "route": [
-  {"step": 1, "id": "the_door", "from": [1813, 142, 3662], "to": [1813, 142, 3666], "how": "walk"},
+  {"step": 1, "id": "sof_the_door", "from": [1813, 142, 3662], "to": [1813, 142, 3666], "how": "walk"},
   {"step": 2, "id": "the_stepped_end", "from": [1817, 142, 3670], "to": [1817, 145, 3674], "how": "walk", "why": "three half-steps up the wall's east end"},
   {"step": 3, "id": "the_beam", "from": [1813, 145, 3674], "to": [1813, 145, 3680], "how": "beam", "why": "the middle beam; the outer two end at blind slots"},
-  {"step": 4, "id": "the_lit_slot", "from": [1813, 145, 3681], "to": [1813, 145, 3683], "how": "walk"},
+  {"step": 4, "id": "sof_the_lit_slot", "from": [1813, 145, 3681], "to": [1813, 145, 3683], "how": "walk"},
   {"step": 5, "id": "the_landing_stair", "from": [1813, 145, 3684], "to": [1813, 142, 3688], "how": "walk"},
   {"step": 6, "id": "the_cross_passage", "from": [1813, 142, 3699], "to": [1831, 142, 3699], "how": "walk"},
-  {"step": 7, "id": "brock", "from": [1831, 142, 3697], "to": [1831, 142, 3689], "how": "walk", "why": "up the setting-out line to the challenger's stand"},
-  {"step": 8, "id": "the_way_out", "from": [1842, 142, 3675], "to": [1844, 142, 3663], "how": "walk", "why": "press the button, out of the iron door past the leader, north along the lot's east side to the forecourt"}
+  {"step": 7, "id": "sof_brock", "from": [1831, 142, 3697], "to": [1831, 142, 3689], "how": "walk", "why": "up the setting-out line to the challenger's stand"},
+  {"step": 8, "id": "sof_the_way_out", "from": [1842, 142, 3675], "to": [1844, 142, 3663], "how": "walk", "why": "press the button, out of the iron door past the leader, north along the lot's east side to the forecourt"}
  ],
  "battle": {"trainer_pokemon": [1831, 140, 3681], "player_pokemon": [1831, 140, 3686], "trainer_stand": [1831, 143, 3668], "player_stand": [1831, 140, 3689], "why": "as the undercroft set them, moved with the floor: Brock's Pokemon 14 in front of his seat and 11.5 from the stage face (clear radius 10.5, Onix), the challenger's 5 behind it, the challenger 3 behind their own. One under the floor's top course, so spawnHeightOffset 2.0 stands each on the floor."},
  "palette": {"shell": "minecraft:stone_bricks", "floor": "minecraft:polished_andesite", "dressed": "minecraft:chiseled_stone_bricks", "rough": "minecraft:cobblestone", "course": "minecraft:tuff", "line": "minecraft:calcite", "column": "minecraft:polished_andesite", "timber": "minecraft:stripped_spruce_log", "beam": "minecraft:stripped_spruce_log[axis=x]", "beam_z": "minecraft:stripped_spruce_log[axis=z]", "roof": "minecraft:spruce_planks", "post": "minecraft:cobblestone_wall", "tread": "minecraft:stone_brick_stairs", "lantern": "minecraft:lantern", "hanging": "minecraft:lantern[hanging=true]", "chain": "minecraft:chain[axis=y]", "glow": "minecraft:shroomlight", "straw": "minecraft:hay_block", "cutter": "minecraft:stonecutter", "barrel": "minecraft:barrel[facing=up]"},
