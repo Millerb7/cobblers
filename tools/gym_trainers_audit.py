@@ -499,7 +499,14 @@ class Hall:
 
 
 def gym_record(gym):
-    return load(ROOT / "data" / "gym_buildings" / ("%s.json" % gym))
+    """The gym's old record: our building's, or for gym 2 (a donor template, 2026-10-09 replaced by a hall) its
+    data/gym_interiors.json record, which carries the same `settlement` and `superseded_by`."""
+    b = ROOT / "data" / "gym_buildings" / ("%s.json" % gym)
+    if b.is_file():
+        return load(b)
+    i = load(ROOT / "data" / "gym_interiors.json")
+    recs = i.get("gyms") if isinstance(i.get("gyms"), list) else []
+    return next((r for r in recs if r.get("id") == gym), None) or i.get(gym) or {}
 
 
 def force_battle_distance():
@@ -519,9 +526,8 @@ def arena_record(gym):
 def is_walkthrough(gym):
     """True when the gym is one walk-through hall (2026-10-09): its building record carries `superseded_by` and
     data/gym_arenas/<gym>.json is a gym_hall/1 record. The building's function is then not emitted at all."""
-    b = ROOT / "data" / "gym_buildings" / ("%s.json" % gym)
     a = arena_record(gym)
-    return b.is_file() and bool(load(b).get("superseded_by")) and bool(a) and a.get("schema") == "gym_hall/1"
+    return bool(gym_record(gym).get("superseded_by")) and bool(a) and a.get("schema") == "gym_hall/1"
 
 
 SEAT_SET = re.compile(r"\brun setblock (-?\d+) (-?\d+) (-?\d+) (\S+)")
@@ -535,16 +541,21 @@ def walkthrough_hall(gym, G, build=None):
     one of its lines is an `execute ... run fill`, which this replay skips) and does not change a walk."""
     rec, arena = gym_record(gym), arena_record(gym)
     plan = load(ROOT / "data" / "placements.json")["settlements"][rec["settlement"]]["plan"]
-    anchor = [a for a in plan.get("anchors") or [] if a.get("role") == "gym"][0]
-    lot, level = tuple(anchor["rect"]), int(anchor["level"])
+    # the gym's lot anchor: role "gym", or gym 2's "waterfront_gym", a lot with no level (the template stood on its own
+    # rock): its ground is then the heightmap's, column by column
+    anchor = [a for a in plan.get("anchors") or [] if a.get("role") in ("gym", "waterfront_gym")][0]
+    lot = tuple(anchor["rect"])
+    level = int(anchor["level"]) if anchor.get("level") is not None else None
     ring = {}
     for x in range(lot[0] - RING, lot[2] + RING + 1):
         for z in range(lot[1] - RING, lot[3] + RING + 1):
-            if not (lot[0] <= x <= lot[2] and lot[1] <= z <= lot[3]):
+            if level is None or not (lot[0] <= x <= lot[2] and lot[1] <= z <= lot[3]):
                 ring[(x, z)] = G(x, z)
+    if level is None:
+        level = min(ring.values())
 
     def base(x, y, z):
-        if lot[0] <= x <= lot[2] and lot[1] <= z <= lot[3]:
+        if lot[0] <= x <= lot[2] and lot[1] <= z <= lot[3] and (x, z) not in ring:
             return "minecraft:stone" if y <= level else "minecraft:air"
         return "minecraft:stone" if y <= ring.get((x, z), level) else "minecraft:air"
 
@@ -656,7 +667,9 @@ def misty_hall(G, build=None):
 
 
 def hall(gym, G, build=None):
-    return misty_hall(G, build) if gym == "gym2" else building_hall(gym, G, build)
+    if gym == "gym2" and not is_walkthrough(gym):
+        return misty_hall(G, build)
+    return building_hall(gym, G, build)
 
 
 # ------------------------------------------------------------------------------------------------ movement
