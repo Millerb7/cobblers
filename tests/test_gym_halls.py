@@ -213,15 +213,54 @@ def old_boxes(gym):
         out.append(("the old arena", A.norm(arena["bounds"])))
     for t in arena.get("through_building") or []:
         out.append(("the old descent", A.norm(t["box"])))
-    b = json.loads((ROOT / "data" / "gym_buildings" / ("%s.json" % gym)).read_text(encoding="utf-8"))
-    out.append(("the old building", A.norm(b["bounds"])))
+    out += old_structure(gym)
+    return out
+
+
+def interior_of(gym):
+    d = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
+    return next((g for g in d["gyms"] if g["id"] == gym), None)
+
+
+def is_donor_hall(gym):
+    """True when this hall replaced a COBBLEVERSE template outright (gym 2): no data/gym_buildings record, and
+    data/gym_interiors.json says the template's interior is superseded by this hall's file."""
+    i = interior_of(gym)
+    return (not (ROOT / "data" / "gym_buildings" / ("%s.json" % gym)).is_file()
+            and str((i or {}).get("superseded_by") or "").startswith("data/gym_arenas/%s.json" % gym))
+
+
+def old_structure(gym):
+    """[(what, box)] of the old building, from DECLARED data and never from the generator. A hall that replaced our own
+    building: that building's `bounds` (data/gym_buildings/<gym>.json). A hall that replaced a donor template: the
+    template's box (data/placements.json position and size of the interior's `donor`, which must equal the interior's
+    shell.expect_box), its quay plinth (placements `plinth`: the lot's columns from plinth.from_y up to the template's
+    first course) and the works dug under it (data/gym_interiors.json `dig`)."""
+    bp = ROOT / "data" / "gym_buildings" / ("%s.json" % gym)
+    if bp.is_file():
+        return [("the old building", A.norm(json.loads(bp.read_text(encoding="utf-8"))["bounds"]))]
+    assert is_donor_hall(gym), "%s has neither a building record nor a donor template it replaced" % gym
+    i = interior_of(gym)
+    pl = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["placements"]
+    pl = next(p for p in pl if p["id"] == i["donor"])
+    pos, size = pl["position"], pl["size"]
+    tpl = (pos["x"], pos["y"], pos["z"], pos["x"] + size[0] - 1, pos["y"] + size[1] - 1, pos["z"] + size[2] - 1)
+    assert tpl == tuple(i["shell"]["expect_box"]), "the placement and the interior disagree about the template's box"
+    out = [("the old building", tpl)]
+    if pl.get("plinth"):
+        out.append(("the old plinth", (tpl[0], pl["plinth"]["from_y"], tpl[2], tpl[3], tpl[1] - 1, tpl[5])))
+    out.append(("the old works", A.norm(i["dig"])))
     return out
 
 
 def unwritten(gym, pack, ctx, demolish):
-    """{what: (count, first cell)} of the old cells no function of the HALL (its takedown, the hall, its seat) writes."""
+    """{what: (count, first cell)} of the old cells no function of the HALL (its takedown, the hall, its seat) writes.
+    A hall that replaced a donor template shares the takedown with R16F (tools/gym_demolish.py, layer "demolish"),
+    which fills the plinth and the works the hall does not reach; for any other hall R16F is not part of the hall."""
     world, *_ = H.assembled(gym, pack, ctx, demolish)
     mine = ("takedown", "arena", "seat", "cycle")   # "cycle": the Challenge spawner set into a cell the hall wrote
+    if is_donor_hall(gym):
+        mine += ("demolish",)
     out = {}
     for what, b in old_boxes(gym):
         miss = [(x, y, z) for x in range(b[0], b[3] + 1) for y in range(b[1], b[4] + 1) for z in range(b[2], b[5] + 1)
@@ -275,6 +314,62 @@ def test_a_generator_that_takes_down_less_than_it_replaces_is_caught(ctx, packs,
     assert what in got, got
 
 
+DONOR_HALLS = [g for g in HALLS if is_donor_hall(g)]
+
+
+def r16f_without(word):
+    """R16F (tools/gym_demolish.py) writes no command for the box whose reason names `word` (the plinth, the works)."""
+    def mutate(mp):
+        import gym_demolish as GD
+        orig = GD.box_commands
+
+        def skip(box, gy, why, *a, **k):
+            if word in why:
+                return [], 0, 0, 0
+            return orig(box, gy, why, *a, **k)
+        mp.setattr(GD, "box_commands", skip)
+    return mutate
+
+
+def test_a_donor_template_hall_exists_so_the_template_takedown_tests_below_are_not_vacuous():
+    # breaks if: no hall replaces a donor template any more and the three tests below parametrize over nothing
+    assert DONOR_HALLS, "no hall replaced a donor template (data/gym_interiors.json superseded_by a gym_arenas file)"
+
+
+@pytest.mark.parametrize("gym", DONOR_HALLS)
+@pytest.mark.parametrize("which,what", [("plinth", "the old plinth"), ("the works", "the old works")])
+def test_an_r16f_that_leaves_the_templates_plinth_or_the_works_standing_is_caught(ctx, packs, gym, which, what):
+    # breaks if: the template hall's takedown is judged without R16F's share (the plinth and the dig are outside the
+    # hall's bounds), or judged so loosely that R16F dropping one of them passes: shaft and cistern under a new floor
+    arenas, _real, out = packs
+    demolish = H.build_demolish(out / ("mut_r16f_%s_%s" % (which.replace(" ", "_"), gym)), mutate=r16f_without(which))
+    got = unwritten(gym, arenas, ctx, demolish)
+    assert what in got, got
+
+
+def no_carve(mp):
+    """The generator drops the hall's `carve` part, whichever it is: the one that clears the lot above the pad."""
+    orig = GA.run_parts
+
+    def run(a, parts, where="parts"):
+        if where == "parts":
+            i = next((k for k, q in enumerate(parts) if q.get("op") == "carve"), None)
+            if i is not None:
+                parts = parts[:i] + parts[i + 1:]
+        return orig(a, parts, where)
+    mp.setattr(GA, "run_parts", run)
+
+
+@pytest.mark.parametrize("gym", DONOR_HALLS)
+def test_a_hall_that_does_not_clear_the_template_it_stands_in_is_caught(ctx, packs, gym):
+    # breaks if: the template's own box (placements position and size) is not judged: the hall's carve of the lot,
+    # dropped, leaves the donor's masonry standing in the hall (R16F skips the hall's bounds, so nothing else clears it)
+    _arenas, demolish, out = packs
+    pack = H.build_pack(out / ("mut_tpl_" + gym), gyms=[gym], mutate=no_carve, G=ctx.G)
+    got = unwritten(gym, pack, ctx, demolish)
+    assert "the old building" in got, got
+
+
 # =========== 4. every step alone (R16F, R16G, R16GA) on a finished world leaves every arena cell intact
 def superseded_interiors():
     d = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
@@ -308,30 +403,64 @@ def takedown_last(real):
     return steps
 
 
-def order_matters(gym, packs):
-    """True when the hall's takedown fills a cell the hall itself writes (so running the takedown AFTER the hall can
-    undo some of it); read from the emitted functions, takedown boxes from the record's replaces."""
+def order_matters(gym, packs, ctx):
+    """True when running the hall's takedown AFTER the hall would change a cell: the hall writes a cell inside a takedown
+    box and that cell does not end as the takedown's own fill block (read from the emitted takedown function). A hall
+    whose only overlap with its takedown is a rock bed of the same block (gym 2: the lot filled to rock y101..104 over
+    the old arena's top courses, which the takedown fills with the same stone) is order-insensitive by construction."""
     funcs = Path(packs[0]) / "data" / "cobblers" / "function" / "gym_arenas"
     boxes = [A.norm(b) for b, _w in GA.takedown_boxes(H.record(gym))]
-    return any(H.inside(c, b) for c in A.function_writes(funcs / ("%s.mcfunction" % gym)) for b in boxes)
+    fills = {ln.split()[-1] for ln in (funcs / ("%s_takedown.mcfunction" % gym)).read_text(encoding="utf-8").splitlines()
+             if " run fill " in ln}
+    assert len(fills) == 1, (gym, fills)
+    rock = fills.pop()
+    world, *_ = H.assembled(gym, packs[0], ctx, packs[1])
+    return any(A.name_of(world.get(*c)) != rock for c in A.function_writes(funcs / ("%s.mcfunction" % gym))
+               if any(H.inside(c, b) for b in boxes))
 
 
-def test_the_step_order_matters_for_at_least_one_hall_so_the_order_mutation_below_can_bite(packs):
-    # breaks if: every hall's takedown becomes disjoint from the hall's own cells and the order test below skips for all
-    assert any(order_matters(g, packs) for g in HALLS), "no hall's takedown overlaps what the hall writes"
+def test_the_step_order_matters_for_at_least_one_hall_so_the_order_mutation_below_can_bite(ctx, packs):
+    # breaks if: every hall's takedown becomes disjoint from the hall's own cells (or only overlaps its rock bed) and
+    # the order test below skips for all
+    assert any(order_matters(g, packs, ctx) for g in HALLS), "no hall's takedown overlaps what the hall writes"
 
 
 @pytest.mark.parametrize("gym", HALLS)
 def test_a_takedown_that_runs_after_its_hall_is_caught(ctx, packs, facts, gym):
     # breaks if: the step order is not replayed, so a takedown that fills the finished hall with rock passes. Run on the
-    # halls whose takedown fills cells the hall writes (order_matters): for the others the order is harmless by
-    # construction, and a mutation there could not bite (they skip, naming why)
+    # halls whose takedown would change a cell the hall wrote (order_matters): for the others the order is harmless by
+    # construction, and a mutation there could not bite (they skip, naming why; the test after this one proves the
+    # replay agrees that they are harmless)
     import reapply
-    if not order_matters(gym, packs):
-        pytest.skip("%s's takedown fills no cell its hall writes: the order cannot matter" % gym)
+    if not order_matters(gym, packs, ctx):
+        pytest.skip("%s's takedown changes no cell its hall writes: the order cannot matter" % gym)
     assert not facts[gym].get("problems"), facts[gym].get("problems")
     f, _ = mutant(ctx, packs, gym, lambda mp: None, "order", steps=takedown_last(reapply.gym_step_functions))
-    assert f.get("problems"), "a takedown that runs after the finished hall changed nothing the audit sees"
+    if f.get("problems"):
+        return
+    # the audit is silent: that is only right when the wrong order changes nothing but cells wholly under the natural
+    # ground (gym 2: its mud-brick foundation courses y101..102 inside the old arena's box, ground y103..108 there),
+    # which no body can stand in or see. Judged from the two replays and the heightmap's own ground, never the audit.
+    arenas, demolish, _ = packs
+    right, *_ = H.assembled(gym, arenas, ctx, demolish)
+    wrong, *_ = H.assembled(gym, arenas, ctx, demolish, steps=takedown_last(reapply.gym_step_functions))
+    changed = [c for c in set(right.cells) | set(wrong.cells) if right.get(*c) != wrong.get(*c)]
+    assert changed, "the takedown after the hall changed nothing in the replay and the audit is silent: not a mutation"
+    exposed = [c for c in changed if c[1] > ctx.G(c[0], c[2])]
+    assert exposed == [], "a takedown after the hall changes %d cell(s) above the ground and the audit says nothing: %s" % (
+        len(exposed), exposed[:3])
+
+
+@pytest.mark.parametrize("gym", HALLS)
+def test_a_hall_judged_order_insensitive_really_is_so_in_the_replay(ctx, packs, facts, gym):
+    # breaks if: order_matters() calls a hall order-insensitive (so the test above skips it) while a takedown run after
+    # the hall does change something the audit sees: the skip would hide a real ordering defect. Runs on exactly the
+    # halls the test above skips
+    import reapply
+    if order_matters(gym, packs, ctx):
+        pytest.skip("%s's order matters: the test above mutates it" % gym)
+    f, _ = mutant(ctx, packs, gym, lambda mp: None, "order_ins", steps=takedown_last(reapply.gym_step_functions))
+    assert not f.get("problems"), f.get("problems")
 
 
 @pytest.mark.parametrize("gym", [g for g in H.two(HALLS)])
@@ -431,11 +560,23 @@ def test_a_challenge_cell_beside_the_seat_and_the_replaced_cell_checks_agree_onl
     for gym in HALLS:
         rec = H.record(gym)
         sp = cm["bosses"][rec["leader"]["id"]]["spawner"]
+        live = tuple(sp["at"])
+        if is_donor_hall(gym):
+            # a hall that replaced a donor TEMPLATE: the template's box covers the whole lot to y146, so it holds the
+            # hall's own live cell and is deliberately NOT a replaced volume (replaced seats are named one by one):
+            # the live cell is not a replaced seat, the old arena's cell (superseded_at) and the template's own
+            # spawner (gym_interiors leader.expect_spawner_at, stamped by R9 every apply) are
+            tpl = dict(old_structure(gym))["the old building"]
+            assert H.inside(live, tpl), "%s: the live cell is no longer inside the template's box" % gym
+            assert live not in GA.replaced_seats(rec), gym
+            assert tuple(sp["superseded_at"]) in GA.replaced_seats(rec), gym
+            assert tuple(interior_of(gym)["leader"]["expect_spawner_at"]) in GA.replaced_seats(rec), gym
+            checked += 1
+            continue
         olds = [A.norm(json.loads((ROOT / "data" / "gym_buildings" / ("%s.json" % gym)).read_text(encoding="utf-8"))["bounds"])]
-        if not any(H.inside(tuple(sp["at"]), b) for b in olds) or not sp.get("superseded_at"):
+        if not any(H.inside(live, b) for b in olds) or not sp.get("superseded_at"):
             continue
         checked += 1
-        live = tuple(sp["at"])
         assert live not in GA.replaced_seats(rec), gym                      # as recorded: the live cell is not a replaced seat
         assert tuple(sp["superseded_at"]) in GA.replaced_seats(rec), gym     # the old one is
         stripped = json.loads(json.dumps(cm))
@@ -445,6 +586,29 @@ def test_a_challenge_cell_beside_the_seat_and_the_replaced_cell_checks_agree_onl
             mp.setattr(GA, "load", lambda p: stripped if Path(p).name == "challenge_mode.json" else real_load(p))
             assert live in GA.replaced_seats(rec), "%s: without superseded_at the live cell is not read as old" % gym
     assert checked, "no hall has a live Challenge cell inside its old building: the case this guards is gone"
+
+
+@pytest.mark.parametrize("gym", DONOR_HALLS)
+def test_a_generator_that_reads_the_donor_templates_box_as_a_replaced_volume_calls_the_live_cell_a_replaced_seat(gym):
+    # breaks if: the template-hall branch above never bites: tools/gym_arenas.py replaced_seats() taking the template's
+    # box (which holds the hall's own Challenge cell) as a replaced volume is the gym 7 contradiction again, and the
+    # live-cell assertion above must see it. Mutates the GENERATOR (takedown_boxes), the data untouched.
+    rec = H.record(gym)
+    live = tuple(json.loads((ROOT / "data" / "challenge_mode.json").read_text(encoding="utf-8"))["bosses"][
+        rec["leader"]["id"]]["spawner"]["at"])
+    assert live not in GA.replaced_seats(rec)
+    cm = json.loads((ROOT / "data" / "challenge_mode.json").read_text(encoding="utf-8"))
+    stripped = json.loads(json.dumps(cm))
+    stripped["bosses"][rec["leader"]["id"]]["spawner"].pop("superseded_at")
+    real_load = GA.load
+    tpl = dict(old_structure(gym))["the old building"]
+    orig = GA.takedown_boxes
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(GA, "load", lambda p: stripped if Path(p).name == "challenge_mode.json" else real_load(p))
+        # as the data stands, the template is no replaced volume, so the live cell is safe even without superseded_at
+        assert live not in GA.replaced_seats(rec)
+        mp.setattr(GA, "takedown_boxes", lambda doc: list(orig(doc)) + [(tpl, "mutant: the template box")])
+        assert live in GA.replaced_seats(rec), "the template box as a replaced volume did not catch the live cell"
 
 
 # ============================ 6. juniors stand on the walk and are fought before the arena

@@ -345,19 +345,51 @@ def test_every_building_is_an_interior_that_was_superseded(records):
     # stale (Giovanni's was a donor shell, not Misty's carved interior). gym_interiors.json records both
     # decisions. The data was changed to match a decision, never to turn this check green.
     doc = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
+    # `records` are the historic ones (all of data/gym_buildings, see historic_records). A donor gym superseded
+    # straight by a walk-through hall, with no building between (gym 2, 2026-10-09: the owner had the template taken
+    # down), never had a building record, so it is the one superseded interior that is not among them.
+    bad = building_ledger(doc, set(records))
+    assert not bad, bad
+
+
+def building_ledger(doc, building_ids):
+    """What is wrong with the ledger of interiors against the set of building records `building_ids`: the property of
+    the test above, as a function so a mutation can feed it a broken ledger. A building record exists for exactly the
+    superseded interiors that a BUILDING replaced; a donor template that a walk-through hall replaced outright (its
+    `superseded_by` names data/gym_arenas/, gym 2 since 2026-10-09) never had one; nothing is `built`."""
     superseded = {g["id"] for g in doc["gyms"] if g.get("superseded_by")}
-    # and a building itself superseded by a walk-through hall (data/gym_buildings/<gym>.json superseded_by, 2026-10-09:
-    # gym 1) is no longer built, so it is not among the records this audit reads
-    halls = {p.stem for p in (ROOT / "data" / "gym_buildings").glob("gym*.json")
-             if json.loads(p.read_text(encoding="utf-8")).get("superseded_by")}
-    # and a donor gym superseded straight by a walk-through hall, with no building between (gym 2, 2026-10-09: the
-    # owner had the template taken down), was never a building this audit reads
-    halls |= {g["id"] for g in doc["gyms"] if str(g.get("superseded_by") or "").startswith("data/gym_arenas/")}
-    assert set(records) == superseded - halls, (sorted(records), sorted(superseded - halls))
-    assert [g["id"] for g in doc["gyms"] if g.get("built")] == []
-    # `records` here are the historic ones (all of data/gym_buildings, see historic_records), so the set is whole again
-    assert set(records) == superseded, (sorted(records), sorted(superseded))
-    assert [g["id"] for g in doc["gyms"] if g.get("built")] == ["gym2"]
+    donor_halls = {g["id"] for g in doc["gyms"] if str(g.get("superseded_by") or "").startswith("data/gym_arenas/")}
+    bad = []
+    if set(building_ids) != superseded - donor_halls:
+        bad.append("building records %s are not the superseded interiors %s less the donor-template halls %s"
+                   % (sorted(building_ids), sorted(superseded), sorted(donor_halls)))
+    if donor_halls & set(building_ids):
+        bad.append("a donor-template hall also has a building record: %s" % sorted(donor_halls & set(building_ids)))
+    for g in doc["gyms"]:
+        if g.get("built"):
+            bad.append("%s is still marked built: its works would be carved under the hall" % g["id"])
+    for gid in sorted(donor_halls):
+        hall = ROOT / "data" / "gym_arenas" / ("%s.json" % gid)
+        if not hall.is_file() or json.loads(hall.read_text(encoding="utf-8")).get("schema") != "gym_hall/1":
+            bad.append("%s names a walk-through hall that is not a gym_hall/1 record" % gid)
+    return bad
+
+
+def test_the_ledger_check_fails_on_a_misty_built_again_a_building_for_the_donor_or_an_unsuperseded_building():
+    # breaks if: the ledger test above stops biting, so Misty's carved works could be rebuilt under her hall (built), a
+    # building record could be written for the donor template (a second author of her gym), or a building could stand
+    # for a gym whose interior is not superseded, and the suite stayed green. Mutates the DATA in memory only (the test
+    # above proves the real ledger is clean).
+    doc = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
+    real = set(historic_records())
+    assert not building_ledger(doc, real)
+    rebuilt = json.loads(json.dumps(doc))
+    next(g for g in rebuilt["gyms"] if g["id"] == "gym2")["built"] = True
+    assert any("gym2 is still marked built" in b for b in building_ledger(rebuilt, real))
+    assert any("gym2" in b for b in building_ledger(doc, real | {"gym2"}))
+    unsuperseded = json.loads(json.dumps(doc))
+    del next(g for g in unsuperseded["gyms"] if g["id"] == "gym3")["superseded_by"]
+    assert building_ledger(unsuperseded, real)
 
 
 def test_a_building_that_is_no_longer_built_has_the_walk_through_hall_that_replaced_it():
