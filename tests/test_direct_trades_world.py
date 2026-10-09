@@ -38,10 +38,14 @@ def _ground():
 
 
 @pytest.fixture(scope="module")
-def place():
+def place(tmp_path_factory):
+    """Every command of the place chain (N155: tools/chunk_look.py's look-then-act chain, entry first), followed from
+    the entry R18DT calls by tools/chunk_look_audit.py, which reads the written pack and never the generator."""
+    import chunk_look_audit as CA
     out, _res = D.files(D.load(), _ground())
-    return [ln for ln in out["data/cobblers/function/direct_trades/place.mcfunction"].splitlines()
-            if ln.strip() and not ln.startswith("#")]
+    pack = tmp_path_factory.mktemp("direct_trades")
+    D.write(out, pack)
+    return CA.chain_lines(pack, "cobblers:direct_trades/place")
 
 
 def _fill(place):
@@ -89,7 +93,10 @@ def _forceload_chunks(cmds, verb):
 # the setblock and the summon after it still run -- a villager summoned into uncarved rock. The booth's box comes from
 # the emitted fill; the chunks are floor(coordinate / 16).
 def test_the_forceload_holds_every_chunk_the_booth_touches(place):
-    cmds = [v for kind, v in D.steps() if kind == "cmd"]
+    # Since N155 the place chain holds its own box for its whole life and the step holds nothing: a step-level
+    # release would drop a chunk under a chain still looking (a forceload is per chunk, not counted)
+    assert not [v for kind, v in D.steps() if kind == "cmd"], "R18DT runs a command of its own"
+    cmds = [c for c in place if c.startswith("forceload ")]
     need = {(x // 16, z // 16) for x, _y, z in _written(place)}
     held = _forceload_chunks(cmds, "add")
     assert need <= held, "R18DT holds chunks %s; the booth touches %s (unheld: %s)" % (

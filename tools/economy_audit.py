@@ -2059,9 +2059,45 @@ def touched_chunks(text):
     return out
 
 
+_CALL = re.compile(r"(?:^|\brun\s+)function\s+(\S+)\s*$")
+
+
+def _chain_texts(fn_text, entry):
+    """{function: text} reached from entry by `function` and `schedule function` lines, entry included."""
+    out, todo = {}, [entry]
+    while todo:
+        name = todo.pop()
+        if name in out:
+            continue
+        text = fn_text(name)
+        if text is None:
+            continue
+        out[name] = text
+        for line in text.splitlines():
+            line = line.strip()
+            if line.startswith("#"):
+                continue
+            todo += [m.group(1) for m in (_CALL.search(line), _SCHEDULE.search(line)) if m]
+    return out
+
+
+def _forceload_boxes(text, verb):
+    """[(cx0, cz0, cx1, cz1)] chunk boxes of a function's own `forceload <verb>` lines."""
+    out = []
+    for line in text.splitlines():
+        m = _FORCELOAD.match(line.strip())
+        if m and m.group(1) == verb:
+            x0, z0 = int(m.group(2)), int(m.group(3))
+            x1, z1 = (int(m.group(4)), int(m.group(5))) if m.group(4) else (x0, z0)
+            out.append((min(x0, x1) >> 4, min(z0, z1) >> 4, max(x0, x1) >> 4, max(z0, z1) >> 4))
+    return out
+
+
 def forceload_checks(files, steps, step_id="R18DT"):
     """Failures: a step runs a function that touches a chunk no forceload holds at that moment, or removes the hold
-    before a function the run scheduled has had its ticks. Read from the emitted functions and the step list (the
+    before a function the run scheduled has had its ticks. A function's chunks are those of every function its run
+    reaches (calls and schedules, followed), and a forceload the chain adds itself holds them as a step's would.
+    Read from the emitted functions and the step list (the
     reapply step's actions), never from the data's coordinates: what is checked is what the server would run."""
     fails = []
     held = []                                            # [(cx0, cz0, cx1, cz1)]
@@ -2097,10 +2133,16 @@ def forceload_checks(files, steps, step_id="R18DT"):
             if text is None:
                 fails.append("FORCELOAD %s runs %s, which the pack does not emit" % (step_id, v))
                 continue
-            for ch, (x, z) in sorted(touched_chunks(text).items()):
-                if not covered(ch):
-                    fails.append("FORCELOAD %s runs %s, which touches chunk %s at (%d, %d): no forceload holds it"
-                                 % (step_id, v, ch, x, z))
+            # the whole chain the function starts (N155: tools/chunk_look.py's look-then-act chains do their block work
+            # in a function a look calls, ticks later), and the boxes the chain force-loads itself, which hold its
+            # chunks for its life (tools/chunk_look_audit.py proves a chain releases them only at its end)
+            chain = _chain_texts(fn_text, v)
+            own = [b for t in chain.values() for b in _forceload_boxes(t, "add")]
+            for fname, ftext in sorted(chain.items()):
+                for ch, (x, z) in sorted(touched_chunks(ftext).items()):
+                    if not covered(ch) and not any(a <= ch[0] <= c and b <= ch[1] <= d for a, b, c, d in own):
+                        fails.append("FORCELOAD %s runs %s, which touches chunk %s at (%d, %d): no forceload holds it%s"
+                                     % (step_id, v, ch, x, z, "" if fname == v else " (in %s)" % fname))
             for m in _SCHEDULE.finditer(text):
                 sub = fn_text(m.group(1)) or ""
                 chunks = set(touched_chunks(sub)) | set(touched_chunks(text))

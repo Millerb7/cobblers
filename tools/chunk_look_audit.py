@@ -1,5 +1,6 @@
 """Read a generated look-then-act function chain from its text and say what is wrong with it, for the audits of the
-sites that re-summon display entities (tools/frostpeak_camp_audit.py, tools/coldwater_station_audit.py).
+sites that re-summon display entities (tools/frostpeak_camp_audit.py, tools/coldwater_station_audit.py) and of the
+town traders and the barterers (tests/test_traders_chunk_look.py, tests/test_direct_trades.py).
 
 Independent of the generator: it never imports tools/chunk_look.py and follows the chain by the `function` and
 `schedule function` lines it finds, from the entry function a reapply step calls. What it proves, each from the
@@ -9,7 +10,8 @@ arrive later, so a kill in the same tick as the forceload misses them and the su
   hold      the entry force-loads; every summon and every kill/look selector centre lies in its chunks; the chunks are
             released only in a function that schedules and calls nothing more (the chain's end), and all of them are
   gate      the function that summons is never the entry nor called from it; it is called only behind a score flag that
-            is set only by a look that saw an entity with the site's tag, or by a look counter run out; the counter
+            is set only by a look that saw an entity with the site's tag (or, in a look needing several at once, saw
+            every one, each with the site's tag), or by a look counter run out; the counter
             and flag are reset in the entry; the blind case comes no sooner than BLIND_MIN ticks after the forceload
   order     the summoning function kills the site's tagged displays before its first summon
   once      every summon carries the site's tag and its `<tag>_new` tag; the end kills, where a new one stands, every
@@ -144,9 +146,10 @@ def problems(pack, entry, tag, label=None):
                    if re.search(r"scoreboard players set %s %s 1$" % (re.escape(flag), re.escape(obj)), c)]
         counter = None
         for ref, c in setters:
-            seen = re.match(r"execute (?:if score \S+ \S+ matches 0 )?if entity @e\[([^\]]*)\] run ", c)
+            # one look line may need several entities at once (`if entity A if entity B ... run`): each must be the site's
+            seen = re.match(r"execute (?:if score \S+ \S+ matches 0 )?((?:if entity @e\[[^\]]*\] )+)run ", c)
             blind = re.match(r"execute (?:if score \S+ \S+ matches 0 )?if score (\S+) %s matches \.\.0 run " % re.escape(obj), c)
-            if seen and tag in _tags(seen.group(1)):
+            if seen and all(tag in _tags(b) for b in re.findall(r"if entity @e\[([^\]]*)\]", seen.group(1))):
                 continue
             if blind:
                 counter = blind.group(1)

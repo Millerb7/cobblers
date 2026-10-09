@@ -7,25 +7,30 @@ so a trader summoned in game is gone after the next export. The manifest is the 
 stands exactly once. Nothing is summoned by hand.
 
   function   python tools/traders.py function [--server-dir <server>] [--out build/datapacks/cobblers_vendors]
-             then: /reload and /function cobblers:towns/vendors_<settlement>, and wait 8 seconds for it to finish
+             then: /reload and /function cobblers:towns/vendors_<settlement>, and wait 21 seconds for it to finish
+             (tools/reapply.py R14: steps(), every town at once, then #vendors_<town> cobblers_chunk_look read back)
   verify     python tools/traders.py verify --rcon <server dir>     a running server, under the coordination lock
              python tools/traders.py verify --world <stopped world>  an offline snapshot or disposable copy
 
 Each trader is summoned from the entity in its shopkeeper template: the trade list, name and look come from the
-installed pack, and only the fields the engine owns are dropped. The function runs in three ticks' worth of steps,
-each spaced by what was measured on the disposable world on 2026-09-21:
+installed pack, and only the fields the engine owns are dropped. The function is tools/chunk_look.py's look-then-act
+chain (N155, R17M's shape):
 
-  vendors_<town>        force-load the plaza, then wait 40 ticks.
-  vendors_<town>_place  summon every trader with a "new" tag.
-  vendors_<town>_done   100 ticks later: where a new trader stands, kill every older one with its tag and any
-                        untagged copy of it on its spot, drop the "new" tag, release the plaza.
+  vendors_<town>        force-load the plaza; look from 40 ticks.
+  vendors_<town>_look   every 20 ticks: once EVERY standing trader's saved copy is seen, or blind after 300 ticks, act.
+  vendors_<town>_act    per trader: kill its older tagged copies, summon it with a "new" tag, then kill untagged copies
+                        of it round the plaza where the new one stands; kill the withdrawn ones.
+  vendors_<town>_done   100 ticks later: where a new trader stands, kill every older one with its tag, drop the "new"
+                        tag, count the plaza's traders into #vendors_<town> cobblers_chunk_look, release the plaza.
 
-Why the waits, measured with an old trader saved in an unloaded chunk and a new one summoned N ticks after
+Why it looks, measured with an old trader saved in an unloaded chunk and a new one summoned N ticks after
 `forceload add`: at 1 and 2 ticks the chunk accepts a summon but its saved entities are not loaded yet, so a kill by
 tag finds nothing and the old trader survives beside the new (old 1, new 1); at 20 and 100 ticks the kill finds it
-(old 0, new 1). The first version killed at 2 ticks, and every run stacked another trader on each spot. Deduplicating
-100 ticks after the summon, and only where the new one exists, makes a re-run converge on one trader per spot even if
-loading is slower, and leaves the old trader standing if a summon ever fails.
+(old 0, new 1). The first version killed at 2 ticks, and every run stacked another trader on each spot; the second
+summoned at a fixed 40 and de-duplicated at 140, and on staging 2026-10-08 the stall merchants' identical fixed wait
+missed entities slower than that and doubled them (N155). Looking for every trader first means the kill and the
+de-duplication come after the plaza's entities are in; only a chunk slower than the 300-tick blind limit plus the
+100-tick de-duplication can still hide a copy, and `verify` names it.
 
 Counting has the same trap: an entity in a chunk that is not force-loaded or near a player is invisible to @e even
 while its chunk is still unloading, so a count taken after the plaza is released reads 0 with every trader in place.
@@ -49,6 +54,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
+import chunk_look as CL  # noqa: E402
 import function_limits  # noqa: E402
 import nbt  # noqa: E402
 
@@ -58,8 +64,8 @@ STATUSES = ("planned", "placed", "verified")
 PLACED = ("placed", "verified")
 TAG_ALL = "cobblers_vendor"
 TAG_NEW = "cobblers_vendor_new"
-LOAD_WAIT = 40      # ticks from forceload to summon: saved entities load within 20 (measured), doubled
-DEDUPE_WAIT = 100   # ticks from summon to the de-duplication and release
+# the chain's waits are tools/chunk_look.py's (R17M's): first look 40 ticks after the forceload, blind at 300, dedupe 100
+COUNT_Y0, COUNT_DY = -64, 640   # the count's box spans the whole build height (cobblers_height: up to y575)
 SPOT_RADIUS = 3     # a trader wanders a little; further than this from its spot is not standing there
 PLAZA_MARGIN = 48    # force-loaded round the plaza, so strays that walked off are found too
 STOCKS = ("regional", "withdrawn", "mart", "stones")
@@ -445,15 +451,8 @@ def town_functions(town, recs, entity, policy=None, tiers=None):
     policy leaves with nothing to sell is withdrawn: no summon, and any copy already standing is removed. `tiers`
     is mart_tiers()'s {id: tier}; a Mart clerk missing from it sells the basics only."""
     tiers = tiers or {}
-    box = "%d %d %d %d" % plaza_box(recs)
-    loader = ["# Generated by tools/traders.py from data/traders.json: the traders of %s" % town,
-              "# force-load the plaza and give its saved traders time to load before anything is summoned",
-              "forceload add %s" % box,
-              "schedule function cobblers:towns/vendors_%s_place %dt replace" % (town, LOAD_WAIT)]
-    place = ["# Generated by tools/traders.py; called by cobblers:towns/vendors_%s" % town,
-             # the loader force-loads the plaza and the _done step releases it, after the summons are saved
-             "# chunks-loaded-by: cobblers:towns/vendors_%s" % town]
-    done = ["# Generated by tools/traders.py; %d ticks after the summons: one trader per spot, then release" % DEDUPE_WAIT]
+    box = plaza_box(recs)
+    act, kept_tags, gone_tags = [], [], []
     for rec in sorted(recs, key=lambda q: q["id"]):
         kind, data = entity(rec["template"])
         template_name = display_name(data)
@@ -462,9 +461,11 @@ def town_functions(town, recs, entity, policy=None, tiers=None):
         tag = tag_of(rec["id"])
         if kept == [] or rec.get("stock") == "withdrawn":
             name = display_name(data)
-            done += ["# %s: withdrawn, nothing left to sell under the stock policy" % rec["id"],
-                     "kill @e[tag=%s]" % tag, "kill @e[%s]" % stray_selector(kind, name, x, y, z)]
+            gone_tags.append(tag)
+            act += ["# %s: withdrawn, nothing left to sell under the stock policy" % rec["id"],
+                    "kill @e[tag=%s]" % tag, "kill @e[%s]" % stray_selector(kind, name, x, y, z)]
             continue
+        kept_tags.append(tag)
         data["Tags"] = [TAG_ALL, tag, TAG_NEW]
         data["PersistenceRequired"] = True
         # The template's merchant keeps its AI and walks: copies summoned with it were found 2 to 40 blocks off
@@ -479,25 +480,58 @@ def town_functions(town, recs, entity, policy=None, tiers=None):
             # NoAI never turns its head: a clerk summoned without a rotation stares at the wall behind the counter
             data["Rotation"] = [YAW[rec["facing"]], 0.0]
         name = display_name(data)
+        act += ["# %s: %s" % (rec["id"], rec["template"]),
+                # a jigsaw left by the earlier attempt that placed traders as structures
+                "execute if block %d %d %d minecraft:jigsaw run setblock %d %d %d minecraft:air" % (x, y, z, x, y, z),
+                "execute if block %d %d %d minecraft:jigsaw run setblock %d %d %d minecraft:air" % (x, y + 1, z, x, y + 1, z),
+                # its older copies, now that the plaza shows its saved traders are in (R17M's order, N155)
+                "kill @e[tag=%s,tag=%s]" % (TAG_ALL, tag)]
         if name != template_name:
             # a copy under the template's own name, left by structure placement or an earlier run, is still a copy
-            done.append("kill @e[%s]" % stray_selector(kind, template_name, x, y, z))
-        place += ["# %s: %s" % (rec["id"], rec["template"]),
-                  # a jigsaw left by the earlier attempt that placed traders as structures
-                  "execute if block %d %d %d minecraft:jigsaw run setblock %d %d %d minecraft:air" % (x, y, z, x, y, z),
-                  "execute if block %d %d %d minecraft:jigsaw run setblock %d %d %d minecraft:air" % (x, y + 1, z, x, y + 1, z),
-                  summon_line(kind, x, y, z, data)]
-        done += ["# %s" % rec["id"],
-                 "execute if entity @e[tag=%s,tag=%s] run kill @e[tag=%s,tag=!%s]" % (tag, TAG_NEW, tag, TAG_NEW),
-                 # untagged copies of this trader, left by structure placement or by hand: same type and name,
-                 # anywhere round the plaza, since the earlier copies could walk
-                 "execute if entity @e[tag=%s,tag=%s] run kill @e[%s]" % (tag, TAG_NEW, stray_selector(kind, name, x, y, z)),
-                 # this trader's own "new" tag only: stripping it from every entity let the first town's pass
-                 # clear the second town's before that town de-duplicated, and the second town kept stacking
-                 "tag @e[tag=%s,tag=%s] remove %s" % (tag, TAG_NEW, TAG_NEW)]
-    place.append("schedule function cobblers:towns/vendors_%s_done %dt replace" % (town, DEDUPE_WAIT))
-    done += ["forceload remove %s" % box]
-    return {"vendors_%s" % town: loader, "vendors_%s_place" % town: place, "vendors_%s_done" % town: done}
+            act.append("kill @e[%s]" % stray_selector(kind, template_name, x, y, z))
+        act += [summon_line(kind, x, y, z, data),
+                # untagged copies of this trader, left by structure placement or by hand: same type and name,
+                # anywhere round the plaza, since the earlier copies could walk; only once the new one stands
+                "execute if entity @e[tag=%s,tag=%s] run kill @e[%s]" % (tag, TAG_NEW, stray_selector(kind, name, x, y, z))]
+    # The chain (tools/chunk_look.py, N155): the plaza is force-loaded and nothing is killed or summoned until EVERY
+    # standing trader's saved copy is seen (a plaza spans chunks, and one chunk's entities prove nothing about
+    # another's: R17M looks per seat for that reason), or blind after 300 ticks (a first run, a trader added or lost).
+    # A town whose traders are all withdrawn looks for the withdrawn ones instead. 100 ticks after the act, the
+    # helper's _done kills, per trader, every copy without the new tag where a new one stands and drops that
+    # trader's own new tag only (stripping it from every entity let the first town's pass clear the second town's
+    # before that town de-duplicated), counts the plaza's traders into #vendors_<town> and releases the plaza.
+    look = kept_tags or gone_tags
+    x0, z0, x1, z1 = box
+    count = "tag=%s,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d" % (TAG_ALL, x0, COUNT_Y0, z0, x1 - x0, COUNT_DY, z1 - z0)
+    fns = CL.chain("cobblers:towns/vendors_%s" % town, box,
+                   ["@e[tag=%s,tag=%s]" % (TAG_ALL, t) for t in look], act,
+                   ["tag=%s" % t for t in look], TAG_NEW, count, holder_of(town),
+                   note="tools/traders.py from data/traders.json, the traders of %s" % town, need_all=True)
+    return {ref.split("/", 1)[1]: lines for ref, lines in fns.items()}
+
+
+def holder_of(town):
+    """The score holder (#vendors_<town>, objective chunk_look.OBJ) the town's chain counts its traders into."""
+    return "vendors_%s" % town
+
+
+def town_want(recs):
+    """The traders a town's chain must leave standing: every record not withdrawn. tools/traders.py `function` refuses
+    a record whose `stock` disagrees with what the stock policy leaves it, so the data's word is the function's."""
+    return sum(1 for r in recs if r.get("stock") != "withdrawn")
+
+
+def steps(doc=None):
+    """tools/reapply.py R14's actions: every town's chain started at once (each holds and releases only its own plaza,
+    and no two plazas share a chunk: tests/test_traders_chunk_look.py), one wait for the longest, then each count."""
+    doc = doc or json.loads(MANIFEST.read_text(encoding="utf-8"))
+    by_town = {}
+    for r in doc.get("traders") or []:
+        if r.get("settlement"):
+            by_town.setdefault(r["settlement"], []).append(r)
+    per = [CL.steps("cobblers:towns/vendors_%s" % t, holder_of(t), town_want(rs), "%s's traders" % t)
+           for t, rs in sorted(by_town.items())]
+    return [s[0] for s in per] + ([per[0][1]] if per else []) + [s[2] for s in per]
 
 
 def static_problems(doc, placements_doc=None, plans_dir=None):

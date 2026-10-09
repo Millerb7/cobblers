@@ -21,7 +21,7 @@ that check. The chain holds its own forceload for its whole life; a step that al
 release its own BEFORE calling the entry (a forceload is per chunk, not counted: a later remove would release the
 chunk under the chain).
 
-Interface: chain(base, box, shown, act, scopes, new_tag, count, holder) -> {"ns:path": [lines]}; files(chain) ->
+Interface: chain(base, box, shown, act, scopes, new_tag, count, holder[, need_all]) -> {"ns:path": [lines]}; files(chain) ->
 {pack path: lines}; steps(base, holder, want, label) -> reapply actions.
 """
 from __future__ import annotations
@@ -40,11 +40,14 @@ OBJ = "cobblers_chunk_look"                  # #<holder>: the count (-1 until do
 _REF = re.compile(r"^[a-z0-9_.-]+:[a-z0-9_./-]+$")
 
 
-def chain(base, box, shown, act, scopes, new_tag, count, holder, note=""):
+def chain(base, box, shown, act, scopes, new_tag, count, holder, note="", need_all=False):
     """{function id: lines} for the look-then-act chain at `base` ('ns:path').
 
     box      (x0, z0, x1, z1) block coordinates force-loaded for the chain's whole life
-    shown    selectors; any one finding an entity proves the box's saved entities are in
+    shown    selectors; any one finding an entity proves the box's saved entities are in. With need_all, every one
+             must find one in the same look (one `execute ... if entity A if entity B ... run` line): for a box whose
+             things stand in several chunks, where one chunk's entities prove nothing about another's (R17M's per-seat
+             look, tools/markets.py; the town traders, tools/traders.py)
     act      lines run once, after a look or blind: kill the old entities, summon new ones tagged `new_tag`
     scopes   selector argument bodies (no brackets), one per thing de-duplicated after the act
     count    the selector argument body counted into #<holder> OBJ after the de-duplication
@@ -70,8 +73,10 @@ def chain(base, box, shown, act, scopes, new_tag, count, holder, note=""):
     out[look] = ([gen, by, "# one look every %d ticks; act when an entity is seen, or blind after %d looks (%d ticks)"
                   % (POLL_EVERY, POLLS, BLIND_TICKS),
                   "scoreboard players remove %s %s 1" % (looks, OBJ)]
-                 + ["execute if score %s %s matches 0 if entity %s run scoreboard players set %s %s 1"
-                    % (seen, OBJ, sel, seen, OBJ) for sel in shown]
+                 + (["execute if score %s %s matches 0 %s run scoreboard players set %s %s 1"
+                     % (seen, OBJ, " ".join("if entity %s" % sel for sel in shown), seen, OBJ)] if need_all else
+                    ["execute if score %s %s matches 0 if entity %s run scoreboard players set %s %s 1"
+                     % (seen, OBJ, sel, seen, OBJ) for sel in shown])
                  + ["execute if score %s %s matches 0 if score %s %s matches ..0 run scoreboard players set %s %s 1"
                     % (seen, OBJ, looks, OBJ, seen, OBJ),
                     "execute if score %s %s matches 1 run function %s" % (seen, OBJ, act_fn),
@@ -82,9 +87,9 @@ def chain(base, box, shown, act, scopes, new_tag, count, holder, note=""):
                    + ["scoreboard players set %s %s 2" % (seen, OBJ),
                       "schedule function %s %dt replace" % (done, DEDUPE_WAIT)])
     d = [gen, by, "# %d ticks after the act: one of each, the count, then release" % DEDUPE_WAIT]
-    for s in scopes:
-        d += ["execute if entity @e[%s,tag=%s] run kill @e[%s,tag=!%s]" % (s, new_tag, s, new_tag),
-              "tag @e[%s,tag=%s] remove %s" % (s, new_tag, new_tag)]
+    # every scope's de-duplication before any scope's untag (one scope: the same two lines as ever)
+    d += ["execute if entity @e[%s,tag=%s] run kill @e[%s,tag=!%s]" % (s, new_tag, s, new_tag) for s in scopes]
+    d += ["tag @e[%s,tag=%s] remove %s" % (s, new_tag, new_tag) for s in scopes]
     d += ["execute store result score #%s %s if entity @e[%s]" % (holder, OBJ, count),
           "forceload remove %s" % fl]
     out[done] = d
