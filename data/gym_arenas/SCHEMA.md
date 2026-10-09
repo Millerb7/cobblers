@@ -61,3 +61,49 @@ there.
 | `cobblers:gym_arenas/verify` | by hand in game | one red line per probe that fails |
 
 R16GA ends with the `gym_arenas` check (`gym_arenas.verify`), which reads every probe back over RCON.
+
+# Schema `gym_hall/1`: the gym as one walk-through building (2026-10-09)
+
+The owner, after playing the arenas: "a single building that a player walks through to the boss, a mini puzzle in
+between with engaged fights", not a climb up and around and a long descent to a room you cannot leave. A
+`gym_hall/1` record is the WHOLE gym, standing on its lot: entrance, the old building's puzzle condensed, the juniors
+at its chokepoints, and the arena as the last room. Same file (`data/gym_arenas/<gym>.json`), same tool
+(`tools/gym_arenas.py check|build|probes`), same ops, same seat contract, same Battle Positions and clear-disc rules.
+The design for all eight is `docs/world-building/GYM_WALKTHROUGH.md`; gym 1 is the worked example.
+
+Converting a gym: (1) keep the carved arena's record as built under `replaces.arena` (bounds, through_building,
+seat, floor_y, battle): it is what the takedown fills, measured, never guessed; (2) add `superseded_by:
+"data/gym_arenas/<gym>.json ..."` to `data/gym_buildings/<gym>.json` (R16G then stops building it; the record stays);
+(3) re-seat the gym's juniors in `data/gym_junior_trainers.json` until `python tools/gym_trainers.py check --gym
+<gym>` proves them; (4) if the leader is outside `single_leader.rollout`, keep `data/challenge_mode.json
+bosses.<id>.spawner.at` beside the new seat on the dais (the old cell under `superseded_at`); (5) `python
+tools/gym_arenas.py probes --write`.
+
+## Fields that differ from `gym_arena/1`
+
+| Field | Meaning |
+|---|---|
+| `schema` | `"gym_hall/1"` |
+| `bounds` | the gym lot in x and z (data/placements.json, checked), from the lowest write (the Battle Positions blocks at `floor_y - 1`) to over the roof. Must contain the superseded building's bounds: every cell of them is written by the hall (`check` names any that is not). Start `parts` with a `carve` of the lot above the pad |
+| `footprint` | `[x0, z0, x1, z1]` of the building's walls: `tools/gym_trainers.py` holds every junior's sight inside it |
+| `replaces` | `{arena: {...the carved record as built...} or null, building: "data/gym_buildings/<gym>.json", why}`. The takedown (`<gym>_takedown`) fills `replaces.arena.bounds` and each `through_building` box below the lot level with stone, each fill skipped while a player is inside its box |
+| `entry.street` | a cell just off the lot where a player arrives (replaces `route_end`); `entry.floor` is the arena's first floor cell, farther than forceBattleMaxDistance + 1 from the leader |
+| `exit` | `{door, button, why}` for a door past the leader, or `{why}` alone for "back the way you came". A door past the leader must never be a way in: an `iron_door` (both halves) and a `stone_button[face=wall,...]` INSIDE the arena room. `check` refuses a button anyone outside the arena room can press (reach 4.5, in sight) and a door that no button reached from the stand opens |
+| `rooms[]` | `{id, kind, box, why}` in walking order, kinds `entrance`, `puzzle`, `junior`, `passage`, `arena`, `exit`; the LAST is the arena and holds the seat |
+| `route[]` | `{step, id, from, to, how, why}`, the walk as data/gym_buildings records it (documentation: the checks walk the model) |
+| `through_building`, `challenge_spawner` | not used: no building under it, and the takedown removes every old seat |
+
+## What `check` adds for a hall
+
+Lot bounds; the old building fully overwritten; `replaces.arena` present; no spawner left at a replaced seat (the
+old arena's seat, the building's spawner, a Challenge cell inside either); the way out, from the challenger's stand
+to a cell off the lot on foot, no fall over 3, a door only where a reached button opens it; the rooms. Cover is not
+checked (a hall stands on its lot); the shell rule holds only under the pad.
+
+## What it emits for a hall
+
+`<gym>_takedown` (rock into the old arena), `<gym>` (the hall), `<gym>_seat` (the spawner and its redstone, set where
+missing once the hall stands: no move), `<gym>_old_leader` (both ids killed anywhere on the lot except round the new
+seat, and in the old arena). R16G runs takedown, hall and seat after the other buildings; R16GA runs them with the
+sweep and the read-back. `tools/gym_demolish.py` (R16F) never writes inside a hall's bounds or its takedown, nor
+inside an arena's bounds and through boxes, nor inside the box a building clears (`gym_buildings.clear_box`).

@@ -26,11 +26,18 @@ def G():
     return ground.load()
 
 
+V1_GYM1 = ROOT / "tests" / "fixtures" / "gym_arena_v1_gym1.json"
+
+
 @pytest.fixture(scope="module")
 def built(G):
     out = {}
     for _p, doc in GA.records():
         out[doc["id"]] = (doc,) + GA.build(doc, G)
+    # gym 1 became a walk-through hall on 2026-10-09 (schema gym_hall/1). The carved arena it replaced is kept here as
+    # it was built, so the mutations below still exercise the carve-below path the other gyms use until they move
+    doc = json.loads(V1_GYM1.read_text(encoding="utf-8"))
+    out["gym1_v1"] = (doc,) + GA.build(doc, G)
     return out
 
 
@@ -75,19 +82,19 @@ def _mutated(doc, f):
 
 
 def test_a_pokemon_block_moved_toward_the_stage_is_refused(built, G):
-    doc = built["gym1"][0]
+    doc = built["gym1_v1"][0]
     d = _mutated(doc, lambda d: d["battle"].__setitem__("trainer_pokemon", [1826, 121, 3670]))
     assert any("clear radius" in p for p in problems_of(d, G))
 
 
 def test_the_challengers_block_beyond_the_search_is_refused(built, G):
-    doc = built["gym1"][0]
+    doc = built["gym1_v1"][0]
     d = _mutated(doc, lambda d: d["battle"].__setitem__("player_pokemon", [1826, 121, 3690]))
     assert any("player_pokemon is out of Battle Positions' search" in p for p in problems_of(d, G))
 
 
 def test_a_missing_shell_face_is_a_leak(built, G):
-    doc = built["gym1"][0]
+    doc = built["gym1_v1"][0]
 
     def cut(d):
         d["parts"][0] = {"op": "carve", "box": [1810, 122, 3660, 1842, 136, 3703]}
@@ -95,7 +102,7 @@ def test_a_missing_shell_face_is_a_leak(built, G):
 
 
 def test_a_climbable_or_low_dais_is_refused(built, G):
-    doc = built["gym1"][0]
+    doc = built["gym1_v1"][0]
     d = _mutated(doc, lambda d: d.__setitem__("floor_y", 124))
     assert any("the dais is 1 over the floor" in p for p in problems_of(d, G))
 
@@ -103,12 +110,12 @@ def test_a_climbable_or_low_dais_is_refused(built, G):
 def test_cover_is_the_generator_not_the_record(built, G, monkeypatch):
     # a generator mutation: the same record against a stricter COVER must fail, so the slack is real, not tuned
     monkeypatch.setattr(GA, "COVER", GA.COVER + 1)
-    assert any("natural blocks over the arena" in p for p in problems_of(built["gym1"][0], G))
+    assert any("natural blocks over the arena" in p for p in problems_of(built["gym1_v1"][0], G))
 
 
 def test_a_stair_with_no_headroom_cuts_the_descent(built, G, monkeypatch):
     # a generator mutation: headroom 1 leaves no room to walk the stair, and the floor is cut off
-    doc = built["gym1"][0]
+    doc = built["gym1_v1"][0]
     real = GA.newel_stair
 
     def low(a, part):
@@ -134,7 +141,7 @@ def test_the_build_function_never_writes_the_seat(built):
 
 
 def test_the_move_restores_the_old_cell_only_once_the_new_spawner_stands():
-    doc = GA.records("gym1")[0][1]
+    doc = json.loads(V1_GYM1.read_text(encoding="utf-8"))
     lines = [l for l in GA.seat_lines(doc, GA.reach()) if not l.startswith("#")]
     old = "if block 1832 155 3696 rctmod:trainer_spawner"
     restore = [l for l in lines if l.endswith("minecraft:polished_andesite") or l.endswith("minecraft:stone_bricks")]
@@ -170,7 +177,7 @@ def test_a_leader_outside_the_rollout_needs_its_challenge_spawner_moved(built, G
     cm["single_leader"]["rollout"] = []
     real = GA.load
     monkeypatch.setattr(GA, "load", lambda p: cm if str(p).endswith("challenge_mode.json") else real(p))
-    assert any("Challenge spawner" in p for p in problems_of(built["gym1"][0], G))
+    assert any("Challenge spawner" in p for p in problems_of(built["gym1_v1"][0], G))
 
 
 # ------------------------------------------------------------------------------------------------- the pack

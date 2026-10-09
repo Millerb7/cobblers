@@ -1244,9 +1244,16 @@ def load_texts(funcs_dir, ids):
 
 
 def load_records(root=ROOT):
+    """Every building that is BUILT: a record carrying `superseded_by` (2026-10-09: the gym is now one walk-through
+    hall, data/gym_arenas/<gym>.json schema gym_hall/1) is kept as the record of what stood, is not emitted by
+    tools/gym_buildings.py and is not run by any step, so there is no function of it to audit. The hall that
+    replaced it is audited by tools/gym_arenas_audit.py."""
     out = {}
     for p in sorted((root / "data" / "gym_buildings").glob("*.json")):
-        out[p.stem] = json.loads(p.read_text(encoding="utf-8"))
+        d = json.loads(p.read_text(encoding="utf-8"))
+        if d.get("superseded_by"):
+            continue
+        out[p.stem] = d
     return out
 
 

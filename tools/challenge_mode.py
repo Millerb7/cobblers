@@ -346,6 +346,19 @@ def restore_blocks(up, entry):
     floor. A gym_buildings gym: its own voxel model (tools/gym_buildings.py), so nothing is copied by hand. Otherwise
     (templates) the entry's single_leader.restore, or a failure naming it."""
     x, y, z = entry["spawner"]["at"]
+    # a cell inside a walk-through hall (data/gym_arenas schema gym_hall/1, 2026-10-09): the hall's own model
+    # (tools/gym_arenas.py build, the cells its functions write); its building is superseded and stands nowhere.
+    # The seven carve-below arenas keep the building model below until restore_blocks is fixed for them (STATE: the
+    # one-leader swap past Brock; tests/test_one_leader_* hold that as a strict xfail)
+    sys.path.insert(0, str(ROOT / "tools"))
+    import gym_arenas as GA
+    for _p, rec in GA.records():
+        if rec["leader"]["id"] != up or not GA.is_hall(rec):
+            continue
+        boxes = [GA.norm(rec["bounds"])] + [GA.norm(t["box"]) for t in rec.get("through_building") or []]
+        if any(GA.inside((x, y, z), b) for b in boxes):
+            hm, _ops, _problems, _facts = GA.build(rec)
+            return hm.at(x, y, z), hm.at(x, y - 1, z)
     if entry["spawner"].get("measured_by") == "gym_buildings":
         gb = _gym_leader_records().get(up)
         if not gb:

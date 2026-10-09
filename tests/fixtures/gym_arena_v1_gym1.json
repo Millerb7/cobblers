@@ -1,0 +1,136 @@
+{
+  "schema": "gym_arena/1",
+  "id": "gym1",
+  "gym": "gym1",
+  "status": "authored 2026-10-08; offline checks only (tools/gym_arenas.py check). Nothing here has been built in a world or seen in a running game.",
+  "name": "The Setting-Out Floor",
+  "reading": "Brock's town is the plateau's builders (docs/world-building/TOWN_CHARACTER.md gym1_town: masons who build in the plateau's stone; stone, polished andesite, cobblestone, tuff, calcite, spruce). The Stoneworks Hall above is their works, with an unfinished wall in it. Under it is the floor masons draw their work on full size before a stone is cut: a long vaulted undercroft of finished ashlar, rough cobble at the foot of the walls and dressed stone above, two rows of polished columns carrying ribs, and the setting-out lines scribed in calcite down the floor. A player comes down the newel stair - the masons' own stair, wound round a single post - into the far corner and walks the length of the floor toward the finished work: a stage of dressed stone across the whole north end, a trilithon behind it, and Brock standing in front of it, three courses above the floor.",
+  "leader": {
+    "id": "kanto_brock",
+    "seat": [1826, 125, 3662],
+    "seat_why": "on the axis of the hall (x1826, the building's own centre line, 1810..1842), in the dais top at y125 (floor y122 + 3), two in front of the trilithon. THE ONE SOURCE of Brock's seat once this record exists (tools/gym_arenas.py leader_seats): data/gym_buildings/gym1.json leader.spawner (1832, 155, 3696) is where the building puts the spawner the arena step then moves."
+  },
+  "spawn_free_zone": "gym_brock",
+  "floor_y": 122,
+  "bounds": [1808, 120, 3658, 1844, 138, 3705],
+  "bounds_why": "the shell, two thick all round: x1808..1844 (interior 1810..1842, the building's own width), z3658..3705 (interior 3660..3703, 44 long), y120..138 (floor finish y122, air 123..136, vault 137..138). The top course y138 leaves y139 and y140 natural under the pad (lot level 141): COVER = 2.",
+  "through_building": [
+    {"box": [1810, 139, 3694, 1815, 158, 3699], "why": "the newel stair from the gallery's west end (x1811..1814, z3695..3698, all stone bricks under the gallery floor in the building's own model y142..154) down through the pad and the two natural courses into the arena. Its walls are built only below the building (to y140); inside it the building's masonry is the wall."}
+  ],
+  "entry": {
+    "route_end": [1832, 156, 3696],
+    "floor": [1816, 123, 3696],
+    "why": "route_end is where Brock stands today: one over his spawner (1832, 155, 3696) in the gallery, the end of data/gym_buildings/gym1.json step 7 ('brock'). The gallery runs west to the stair head at x1814; the stair winds down four turns and a step (33 levels, its first tread level with the gallery floor) and lets the player out of the turret's east door onto the floor at (1816, 123, 3696), 35.6 from Brock: farther than rctmod's forceBattleMaxDistance + 1, so the player stands in the hall before he can call the fight."
+  },
+  "battle": {
+    "trainer_pokemon": [1826, 121, 3676],
+    "player_pokemon": [1826, 121, 3681],
+    "trainer_stand": [1826, 124, 3663],
+    "player_stand": [1826, 121, 3684],
+    "why": "Cobblemon Battle Positions (a Cobbleverse dependency, already installed): its search finds these from the challenger's feet and sends both Pokemon to them (PositionBlockFinder; the set is valid when both Pokemon blocks are found). The Pokemon blocks sit one under the floor's top course, so spawnHeightOffset 2.0 stands each Pokemon ON the floor; the trainer stand is under the dais top one in front of the seat, so Brock steps to the dais edge. Brock's Pokemon is 11.5 from the dais face (clear radius 10.56, Onix's model sweep); the two Pokemon are 5 apart (Onix's hitbox is 2 wide), the farthest the challenger's can be and still be found from the foot of the dais (16 across); the challenger stands 3 behind their own, as the donor gyms set it."
+  },
+  "palette": {
+    "shell": "minecraft:stone_bricks",
+    "floor": "minecraft:polished_andesite",
+    "dressed": "minecraft:chiseled_stone_bricks",
+    "rough": "minecraft:cobblestone",
+    "course": "minecraft:tuff",
+    "line": "minecraft:calcite",
+    "column": "minecraft:polished_andesite",
+    "timber": "minecraft:stripped_spruce_log",
+    "post": "minecraft:cobblestone_wall",
+    "tread": "minecraft:stone_brick_stairs",
+    "lantern": "minecraft:lantern",
+    "hanging": "minecraft:lantern[hanging=true]",
+    "chain": "minecraft:chain[axis=y]"
+  },
+  "blocks": ["minecraft:shroomlight", 
+    "minecraft:air", "minecraft:stone_bricks", "minecraft:polished_andesite", "minecraft:chiseled_stone_bricks",
+    "minecraft:cobblestone", "minecraft:tuff", "minecraft:calcite", "minecraft:stripped_spruce_log",
+    "minecraft:cobblestone_wall", "minecraft:stone_brick_stairs", "minecraft:lantern", "minecraft:chain"
+  ],
+  "blocks_why": "the town's own palette (TOWN_CHARACTER.md gym1_town) and nothing that is a spawn condition: no grass, leaves, water, sand or carpet.",
+  "parts": [
+    {"op": "shell", "box": [1808, 120, 3658, 1844, 138, 3705], "thickness": 2, "block": "$shell",
+     "why": "the shell: two courses of stone bricks on all six faces, built, never the rock (an old cave or the refilled works under the lot could otherwise open into it); the inside carved"},
+    {"op": "fill", "box": [1810, 122, 3660, 1842, 122, 3703], "block": "$floor", "why": "the floor: polished andesite, the floor masons draw on"},
+    {"op": "fill", "box": [1809, 123, 3660, 1809, 124, 3703], "block": "$rough", "why": "rough cobble at the foot of every wall, dressed stone above it: the hall shows the work from rough to finished"},
+    {"op": "fill", "box": [1843, 123, 3660, 1843, 124, 3703], "block": "$rough"},
+    {"op": "fill", "box": [1810, 123, 3704, 1842, 124, 3704], "block": "$rough"},
+    {"op": "fill", "box": [1809, 128, 3660, 1809, 128, 3703], "block": "$course", "why": "a tuff string course round the hall at y128"},
+    {"op": "fill", "box": [1843, 128, 3660, 1843, 128, 3703], "block": "$course"},
+    {"op": "fill", "box": [1810, 128, 3704, 1842, 128, 3704], "block": "$course"},
+    {"op": "fill", "box": [1810, 128, 3659, 1842, 128, 3659], "block": "$course"},
+    {"op": "fill", "box": [1810, 123, 3660, 1842, 124, 3664], "block": "$shell", "why": "the stage: the whole north end, x1810..1842 and z3660..3664, three courses high. Wall to wall, so no aisle runs up beside it: every cell a battle can start from is in front of it"},
+    {"op": "fill", "box": [1810, 125, 3660, 1842, 125, 3663], "block": "$floor", "why": "its top, polished andesite (the seat at (1826, 125, 3662) is never written here: the seat function owns it)"},
+    {"op": "fill", "box": [1810, 123, 3664, 1842, 125, 3664], "block": "$dressed", "why": "its face: a course of chiseled stone, the mason's finished edge"},
+    {"op": "fill", "box": [1822, 126, 3660, 1823, 131, 3661], "block": "$column", "why": "the trilithon behind Brock: two dressed uprights and a lintel, the masons' proof piece"},
+    {"op": "fill", "box": [1829, 126, 3660, 1830, 131, 3661], "block": "$column"},
+    {"op": "fill", "box": [1821, 132, 3660, 1831, 133, 3661], "block": "$dressed"},
+    {"op": "fill", "box": [1812, 126, 3660, 1814, 127, 3662], "block": "$floor", "why": "dressed blocks stacked on the stage either side, as the yard stacks them above"},
+    {"op": "fill", "box": [1812, 128, 3660, 1813, 128, 3661], "block": "$shell"},
+    {"op": "fill", "box": [1838, 126, 3660, 1840, 127, 3662], "block": "$floor"},
+    {"op": "fill", "box": [1839, 128, 3660, 1840, 128, 3661], "block": "$shell"},
+    {"op": "scatter", "positions": [[1814, 128, 3662], [1838, 128, 3662]], "block": "$lantern", "why": "a lantern on each stack"},
+    {"op": "fill", "box": [1816, 126, 3660, 1816, 131, 3660], "block": "$timber", "why": "spruce sheer-legs at the stage's back corners, the derrick of the yard above"},
+    {"op": "fill", "box": [1836, 126, 3660, 1836, 131, 3660], "block": "$timber"},
+    {"op": "repeat", "step": [0, 0, 6], "count": 4, "why": "the west colonnade: four 2x2 columns, base, shaft and capital, every six blocks from z3668 (the stair turret takes the fifth bay)",
+     "parts": [
+       {"op": "fill", "box": [1812, 123, 3668, 1813, 123, 3669], "block": "$dressed"},
+       {"op": "fill", "box": [1812, 124, 3668, 1813, 134, 3669], "block": "$column"},
+       {"op": "fill", "box": [1812, 135, 3668, 1813, 136, 3669], "block": "$dressed"}
+     ]},
+    {"op": "repeat", "step": [0, 0, 6], "count": 6, "why": "the east colonnade: six columns from z3668",
+     "parts": [
+       {"op": "fill", "box": [1839, 123, 3668, 1840, 123, 3669], "block": "$dressed"},
+       {"op": "fill", "box": [1839, 124, 3668, 1840, 134, 3669], "block": "$column"},
+       {"op": "fill", "box": [1839, 135, 3668, 1840, 136, 3669], "block": "$dressed"}
+     ]},
+    {"op": "repeat", "step": [0, 0, 6], "count": 6, "why": "a rib across the vault over every pair of columns, with haunches down to the side walls",
+     "parts": [
+       {"op": "fill", "box": [1810, 136, 3668, 1842, 136, 3669], "block": "$shell"},
+       {"op": "fill", "box": [1810, 135, 3668, 1811, 135, 3669], "block": "$shell"},
+       {"op": "fill", "box": [1841, 135, 3668, 1842, 135, 3669], "block": "$shell"}
+     ]},
+    {"op": "repeat", "step": [0, 0, 6], "count": 6, "why": "two lanterns hung from every rib on chains, over the floor's two working lines",
+     "parts": [
+       {"op": "fill", "box": [1820, 129, 3668, 1820, 135, 3668], "block": "$chain"},
+       {"op": "setblock", "pos": [1820, 128, 3668], "block": "$hanging"},
+       {"op": "fill", "box": [1832, 129, 3668, 1832, 135, 3668], "block": "$chain"},
+       {"op": "setblock", "pos": [1832, 128, 3668], "block": "$hanging"},
+       {"op": "fill", "box": [1826, 129, 3669, 1826, 135, 3669], "block": "$chain"},
+       {"op": "setblock", "pos": [1826, 128, 3669], "block": "$hanging"}
+     ]},
+    {"op": "repeat", "step": [0, 0, 6], "count": 6, "why": "lantern posts down the side aisles, between the columns",
+     "parts": [
+       {"op": "setblock", "pos": [1842, 123, 3671], "block": "$post"},
+       {"op": "setblock", "pos": [1842, 124, 3671], "block": "$lantern"}
+     ]},
+    {"op": "repeat", "step": [0, 0, 6], "count": 4,
+     "parts": [
+       {"op": "setblock", "pos": [1810, 123, 3671], "block": "$post"},
+       {"op": "setblock", "pos": [1810, 124, 3671], "block": "$lantern"}
+     ]},
+    {"op": "scatter", "positions": [[1820, 123, 3703], [1832, 123, 3703]], "block": "$post", "why": "two posts at the south wall, where the player comes in"},
+    {"op": "scatter", "positions": [[1820, 124, 3703], [1832, 124, 3703]], "block": "$lantern"},
+    {"op": "fill", "box": [1826, 122, 3666, 1826, 122, 3703], "block": "$line", "why": "the setting-out lines in calcite: the axis down the floor, and a cross line at each Pokemon's mark"},
+    {"op": "fill", "box": [1816, 122, 3676, 1836, 122, 3676], "block": "$line"},
+    {"op": "fill", "box": [1816, 122, 3681, 1836, 122, 3681], "block": "$line"},
+    {"op": "newel_stair", "ring": [1811, 3695, 1814, 3698], "top_y": 155, "bottom_y": 122, "start": [1814, 3696], "turn": "cw",
+     "tread": "$tread", "landing": "$shell", "newel": "$column", "under": "$shell", "wall": "$shell", "wall_to_y": 140, "headroom": 3,
+     "why": "the descent: a newel stair in the gallery's west end, four turns round a polished post, down to the floor. The gallery floor opens only where the first treads need headroom (four cells), so nobody steps off the gallery into a deep drop; the deepest step-off is three"},
+    {"op": "scatter", "positions": [[1812, 126, 3696], [1813, 131, 3697], [1812, 136, 3697], [1813, 141, 3696], [1812, 146, 3696], [1813, 151, 3697]], "block": "$lantern",
+     "why": "lanterns set into the newel post every five courses, lighting the stair from its middle"},
+    {"op": "scatter", "positions": [[1810, 150, 3695], [1814, 148, 3694]], "block": "minecraft:shroomlight", "why": "a light set flush into the stair's wall beside each of its two upper landings: the newel lanterns at y146 and y151 are boxed in by the treads on every side and lit nothing, so the landings at (1811, 150, 3695) and (1814, 148, 3695) stood at block light 0 (the independent audit, 2026-10-09)"},
+    {"op": "carve", "box": [1815, 123, 3696, 1815, 125, 3697], "why": "the turret's door onto the floor, two wide and three high"},
+    {"op": "fill", "box": [1815, 126, 3695, 1815, 126, 3698], "block": "$dressed", "why": "its lintel"}
+  ],
+  "probes": [
+    {"what": "the floor's axis line", "at": [1826, 122, 3690], "block": "minecraft:calcite"},
+    {"what": "air in the nave", "at": [1826, 130, 3690], "block": "minecraft:air"},
+    {"what": "the trilithon's lintel", "at": [1826, 133, 3660], "block": "minecraft:chiseled_stone_bricks"},
+    {"what": "the turret door", "at": [1815, 124, 3696], "block": "minecraft:air"},
+    {"what": "the shell's south-west corner", "at": [1808, 120, 3705], "block": "minecraft:stone_bricks"},
+    {"what": "the shell's north-east top corner", "at": [1844, 138, 3658], "block": "minecraft:stone_bricks"}
+  ]
+}

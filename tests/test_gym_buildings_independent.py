@@ -291,7 +291,11 @@ def test_every_building_is_an_interior_that_was_superseded(records):
     # decisions. The data was changed to match a decision, never to turn this check green.
     doc = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
     superseded = {g["id"] for g in doc["gyms"] if g.get("superseded_by")}
-    assert set(records) == superseded, (sorted(records), sorted(superseded))
+    # and a building itself superseded by a walk-through hall (data/gym_buildings/<gym>.json superseded_by, 2026-10-09:
+    # gym 1) is no longer built, so it is not among the records this audit reads
+    halls = {p.stem for p in (ROOT / "data" / "gym_buildings").glob("gym*.json")
+             if json.loads(p.read_text(encoding="utf-8")).get("superseded_by")}
+    assert set(records) == superseded - halls, (sorted(records), sorted(superseded - halls))
     assert [g["id"] for g in doc["gyms"] if g.get("built")] == ["gym2"]
 
 
@@ -432,8 +436,8 @@ def test_two_buildings_writing_the_same_cells_is_caught(emitted, records, placem
     # breaks if: cross-building collisions are not compared at cell level
     texts, _ = emitted
     t = dict(texts)
-    t["gym3"] = texts["gym1"]
-    rep, _s, _w, _e = A.run(t, records, placements, ground, only={"gym1", "gym3"})
+    t["gym3"] = texts["gym4"]   # gym 1's building is superseded by its hall (2026-10-09): any two built ones do
+    rep, _s, _w, _e = A.run(t, records, placements, ground, only={"gym4", "gym3"})
     assert "gym_cells" in rep.codes() or "lot" in rep.codes("gym3")
 
 
@@ -443,20 +447,20 @@ def test_a_building_written_into_mistys_dig_is_caught(emitted, records, placemen
     misty = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))["gyms"]
     dig = [g for g in misty if g["id"] == "gym2"][0]["dig"]
     t = dict(texts)
-    t["gym1"] = appended(texts["gym1"], "fill %d %d %d %d %d %d minecraft:stone"
+    t["gym3"] = appended(texts["gym3"], "fill %d %d %d %d %d %d minecraft:stone"
                          % (dig[0], dig[1], dig[2], dig[0] + 1, dig[1] + 1, dig[2] + 1))
-    rep, _s, _w, _e = A.run(t, records, placements, ground, only={"gym1"})
-    assert "misty" in rep.codes("gym1"), sorted(rep.codes("gym1"))
+    rep, _s, _w, _e = A.run(t, records, placements, ground, only={"gym3"})
+    assert "misty" in rep.codes("gym3"), sorted(rep.codes("gym3"))
 
 
 def test_a_data_file_naming_a_buildings_columns_is_caught(baseline):
     # breaks if: the scan of the other data files matches nothing, so a scene or portal inside a gym is invisible
-    world = baseline[2]["gym1"]
+    world = baseline[2]["gym3"]
     box = world.extent
-    boxes = {"gym1": box}
+    boxes = {"gym3": box}
     mid = {"x": (box[0] + box[3]) // 2, "y": (box[1] + box[4]) // 2, "z": (box[2] + box[5]) // 2}
     hit = A.scan_claims({"scenes": [dict(id="s", at=mid)]}, boxes)
-    assert hit and hit[0][0] == "gym1"
+    assert hit and hit[0][0] == "gym3"
     assert not A.scan_claims({"scenes": [{"at": dict(mid, y=400)}]}, boxes), "a point far above is not a claim"
     assert not A.scan_claims({"a": [0, 0, 9000, 9000]}, boxes), "a map-sized region is not a claim on one gym"
 

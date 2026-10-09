@@ -2484,9 +2484,9 @@
       {
         "what": "the leader's spawner in the dais",
         "block": [
-          1826,
-          125,
-          3662,
+          1831,
+          144,
+          3667,
           "rctmod:trainer_spawner"
         ],
         "expect": true
@@ -2494,9 +2494,9 @@
       {
         "what": "its redstone",
         "block": [
-          1826,
-          124,
-          3662,
+          1831,
+          143,
+          3667,
           "minecraft:redstone_block"
         ],
         "expect": true
@@ -2504,9 +2504,9 @@
       {
         "what": "air over the seat",
         "block": [
-          1826,
-          126,
-          3662,
+          1831,
+          145,
+          3667,
           "minecraft:air"
         ],
         "expect": true
@@ -2514,9 +2514,9 @@
       {
         "what": "battle.trainer_pokemon",
         "block": [
-          1826,
-          121,
-          3676,
+          1831,
+          140,
+          3681,
           "cobblemonbattlepositions:trainer_pokemon_position"
         ],
         "expect": true
@@ -2524,9 +2524,9 @@
       {
         "what": "battle.player_pokemon",
         "block": [
-          1826,
-          121,
-          3681,
+          1831,
+          140,
+          3686,
           "cobblemonbattlepositions:player_pokemon_position"
         ],
         "expect": true
@@ -2534,9 +2534,9 @@
       {
         "what": "battle.trainer_stand",
         "block": [
-          1826,
-          124,
-          3663,
+          1831,
+          143,
+          3668,
           "cobblemonbattlepositions:trainer_stand_position"
         ],
         "expect": true
@@ -2544,9 +2544,9 @@
       {
         "what": "battle.player_stand",
         "block": [
-          1826,
-          121,
-          3684,
+          1831,
+          140,
+          3689,
           "cobblemonbattlepositions:player_stand_position"
         ],
         "expect": true
@@ -2554,18 +2554,18 @@
       {
         "what": "the floor's axis line",
         "block": [
-          1826,
-          122,
+          1831,
+          141,
           3690,
           "minecraft:calcite"
         ],
         "expect": true
       },
       {
-        "what": "air in the nave",
+        "what": "air over the floor",
         "block": [
-          1826,
-          130,
+          1831,
+          150,
           3690,
           "minecraft:air"
         ],
@@ -2574,42 +2574,92 @@
       {
         "what": "the trilithon's lintel",
         "block": [
-          1826,
-          133,
-          3660,
+          1831,
+          152,
+          3665,
           "minecraft:chiseled_stone_bricks"
         ],
         "expect": true
       },
       {
-        "what": "the turret door",
+        "what": "the north door",
         "block": [
-          1815,
-          124,
+          1813,
+          143,
+          3664,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the door past the leader",
+        "block": [
+          1843,
+          142,
+          3675,
+          "minecraft:iron_door"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its button, inside",
+        "block": [
+          1842,
+          143,
+          3674,
+          "minecraft:stone_button"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the true slot",
+        "block": [
+          1813,
+          145,
+          3682,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old arena's nave, taken down",
+        "block": [
+          1826,
+          130,
+          3690,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old descent under the pad, taken down",
+        "block": [
+          1812,
+          140,
+          3696,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old gallery's air, cleared",
+        "block": [
+          1826,
+          156,
           3696,
           "minecraft:air"
         ],
         "expect": true
       },
       {
-        "what": "the shell's south-west corner",
+        "what": "no spawner at the old seat",
         "block": [
-          1808,
-          120,
-          3705,
-          "minecraft:stone_bricks"
+          1826,
+          125,
+          3662,
+          "rctmod:trainer_spawner"
         ],
-        "expect": true
-      },
-      {
-        "what": "the shell's north-east top corner",
-        "block": [
-          1844,
-          138,
-          3658,
-          "minecraft:stone_bricks"
-        ],
-        "expect": true
+        "expect": false
       },
       {
         "what": "no spawner at the old seat",
@@ -2617,6 +2667,16 @@
           1832,
           155,
           3696,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          1829,
+          144,
+          3667,
           "rctmod:trainer_spawner"
         ],
         "expect": false

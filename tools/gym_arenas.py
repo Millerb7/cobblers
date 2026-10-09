@@ -26,6 +26,16 @@ floor, any leader standing in the building removed. R16G also runs each seat mov
 so `--only R16G` never leaves a leader two spawners; the move waits until its arena stands. A building spawner is
 therefore only ever the arena's starting point.
 
+A WALK-THROUGH HALL (schema gym_hall/1, 2026-10-09; docs/world-building/GYM_WALKTHROUGH.md). The owner, after
+playing the arenas: one building walked through to the boss, not a climb up and around and a long descent to a room
+he could not leave. A gym_hall/1 record is the whole gym on its lot -- entrance, the old building's puzzle
+condensed, the juniors, the arena as the last room -- built by the same ops and held to the same arena rules, plus
+hall_checks(): the lot, the superseded building wholly overwritten, the old arena filled (takedown_boxes, measured
+from `replaces.arena`, its own function <gym>_takedown), no spawner left at a replaced seat, and the way out walked
+from the challenger's stand to the street (a door past the leader only an iron door whose button nobody outside the
+arena can press). Its seat function sets the spawner where it is missing; nothing moves. reserved_boxes() names the
+volumes only these functions may write (tools/gym_demolish.py honours it).
+
 WHAT THIS TOOL REFUSES TO WRITE, each derived in docs/world-building/GYM_ARENAS.md "Design rules":
   bounds        every write inside the record's bounds or a declared through_building box; the arena's x/z inside
                 its spawn-free zone (data/spawn_suppression.json), which is snapped to the 8-block grid
@@ -62,6 +72,9 @@ PACK = ROOT / "build" / "datapacks" / "cobblers_gym_arenas"
 NS = "cobblers"
 FOLDER = "gym_arenas"
 SCHEMA = "gym_arena/1"
+HALL = "gym_hall/1"      # a whole walk-through gym: entrance, puzzle, juniors, the arena as the last room
+SCHEMAS = (SCHEMA, HALL)
+ROCK = "minecraft:stone"
 SPAWNER = "rctmod:trainer_spawner"
 REDSTONE = "minecraft:redstone_block"
 HEALER = "cobblemon:healing_machine"
@@ -110,8 +123,8 @@ def records(only=None):
     out = []
     for p in sorted(DATA.glob("gym*.json")):
         doc = load(p)
-        if doc.get("schema") != SCHEMA:
-            raise ArenaError("%s: schema is %r, expected %r" % (p.name, doc.get("schema"), SCHEMA))
+        if doc.get("schema") not in SCHEMAS:
+            raise ArenaError("%s: schema is %r, expected one of %s" % (p.name, doc.get("schema"), SCHEMAS))
         if doc["id"] != p.stem:
             raise ArenaError("%s: record id %r does not match its file name" % (p.name, doc["id"]))
         if only and doc["id"] != only:
@@ -119,6 +132,77 @@ def records(only=None):
         out.append((p, doc))
     if only and not out:
         raise ArenaError("no data/gym_arenas/%s.json" % only)
+    return out
+
+
+def is_hall(doc):
+    """A walk-through gym (schema gym_hall/1): the whole building is this record, standing on the lot, the arena its
+    last room; the old building (data/gym_buildings/<gym>.json, now `superseded_by` this file) and the old arena
+    (`replaces`) are taken down by its own takedown function."""
+    return (doc or {}).get("schema") == HALL
+
+
+def record_of(gym):
+    p = DATA / ("%s.json" % gym)
+    return load(p) if p.exists() else None
+
+
+def box_minus(box, cut):
+    """The box without the box `cut`, as up to six boxes (all inclusive [x0, y0, z0, x1, y1, z1])."""
+    x0, y0, z0, x1, y1, z1 = norm(box)
+    c0, c1, c2, c3, c4, c5 = norm(cut)
+    if c0 > x1 or c3 < x0 or c1 > y1 or c4 < y0 or c2 > z1 or c5 < z0:
+        return [(x0, y0, z0, x1, y1, z1)]
+    out = []
+    if y0 < c1:
+        out.append((x0, y0, z0, x1, c1 - 1, z1))
+    if c4 < y1:
+        out.append((x0, c4 + 1, z0, x1, y1, z1))
+    ya, yb = max(y0, c1), min(y1, c4)
+    if x0 < c0:
+        out.append((x0, ya, z0, c0 - 1, yb, z1))
+    if c3 < x1:
+        out.append((c3 + 1, ya, z0, x1, yb, z1))
+    xa, xb = max(x0, c0), min(x1, c3)
+    if z0 < c2:
+        out.append((xa, ya, z0, xb, yb, c2 - 1))
+    if c5 < z1:
+        out.append((xa, ya, c5 + 1, xb, yb, z1))
+    return out
+
+
+def takedown_boxes(doc):
+    """[(box, why)] a hall's takedown fills with rock, MEASURED from what it replaces, never authored as boxes:
+    `replaces.arena` is the carved arena's own record as it was built (its `bounds`, and each `through_building` box
+    below the lot level; above the lot the hall's own clear takes the old building's masonry down). Nothing for an
+    arena record."""
+    if not is_hall(doc):
+        return []
+    r = (doc.get("replaces") or {}).get("arena")
+    if not r:
+        return []
+    _rect, level = lot_of(doc)
+    out = [(tuple(norm(r["bounds"])), "the old arena carved under the lot (replaces.arena.bounds), back to rock")]
+    for tb in r.get("through_building") or []:
+        b = norm(tb["box"])
+        if level is not None and b[1] <= int(level) - 1:
+            out.append(((b[0], b[1], b[2], b[3], min(b[4], int(level) - 1), b[5]),
+                        "the old descent under the pad (replaces.arena.through_building), back to rock"))
+    return out
+
+
+def reserved_boxes(gym):
+    """The volumes only this gym's own arena or hall functions may write (tools/gym_demolish.py honours them): an
+    arena's bounds and through_building boxes; a hall's bounds and its takedown boxes. [] when the gym has no
+    record. JSON only."""
+    d = record_of(gym)
+    if not d:
+        return []
+    out = [tuple(norm(d["bounds"]))]
+    if is_hall(d):
+        out += [b for b, _w in takedown_boxes(d)]
+    else:
+        out += [tuple(norm(tb["box"])) for tb in d.get("through_building") or []]
     return out
 
 
@@ -278,6 +362,19 @@ class Arena:
         # function sets them, once, and the move is the only thing that ever does)
         sx, sy, sz = doc["leader"]["seat"]
         self.protect = {(sx, sy, sz), (sx, sy - 1, sz)}
+        self.down = set()   # cells a hall's takedown function sets back to rock (written before the hall)
+
+    def take_down(self, box):
+        """The takedown's rock into the model, before any part: no command here (the takedown is its own function,
+        takedown_lines), and nothing over the seat."""
+        x0, y0, z0, x1, y1, z1 = norm(box)
+        for x in range(x0, x1 + 1):
+            for y in range(y0, y1 + 1):
+                for z in range(z0, z1 + 1):
+                    if (x, y, z) in self.protect:
+                        raise ArenaError("%s: the takedown box %s holds the new seat" % (self.doc["id"], list(box)))
+                    self.cells[(x, y, z)] = ROCK
+                    self.down.add((x, y, z))
 
     # ---- states
     def state(self, s):
@@ -573,10 +670,21 @@ def build(doc, G=None):
     """(Arena, problems, facts) for one record."""
     import ground as ground_mod
     G = G or ground_mod.load()
-    at_b, bbounds, bmin, bdoc = building_model(doc["gym"])
-    a = Arena(doc, G, at_b, bbounds)
-    a.comment("%s: %s (data/gym_arenas/%s.json, tools/gym_arenas.py). After R16G: the building stands first."
-              % (doc["id"], doc.get("name", ""), doc["id"]))
+    if is_hall(doc):
+        # the whole gym: no building under it (the old one is superseded and taken down), ground = the lot's pad
+        at_b = bbounds = bmin = bdoc = None
+        lot, lvl = lot_of(doc)
+        a = Arena(doc, lambda x, z: natural_top(x, z, G, lot, lvl, None, None))
+        a.allowed.add(ROCK)
+        for box, _why in takedown_boxes(doc):
+            a.take_down(box)
+        a.comment("%s: %s (data/gym_arenas/%s.json, tools/gym_arenas.py): the whole gym, entrance to arena. After "
+                  "its takedown (%s_takedown)." % (doc["id"], doc.get("name", ""), doc["id"], doc["id"]))
+    else:
+        at_b, bbounds, bmin, bdoc = building_model(doc["gym"])
+        a = Arena(doc, G, at_b, bbounds)
+        a.comment("%s: %s (data/gym_arenas/%s.json, tools/gym_arenas.py). After R16G: the building stands first."
+                  % (doc["id"], doc.get("name", ""), doc["id"]))
     run_parts(a, doc["parts"])
     place_markers(a, doc)
     build_ops = list(a.ops)
@@ -608,8 +716,11 @@ def check(doc, a, G, bdoc, bbounds, bmin):
     for (x, z) in ((zx0, zz0), (zx1 + 1, zz1 + 1)):
         if x % 8 or z % 8:
             bad.append("spawn-free zone %s is not on the 8-block grid the suppression is written on" % list(zone))
+    hall = is_hall(doc)
     stray, in_bld, uncovered = [], [], []
     for c in a.cells:
+        if c in a.down:
+            continue
         in_t = any(inside(c, t) for t in through)
         if not inside(c, bounds) and not in_t:
             stray.append(c)
@@ -623,7 +734,8 @@ def check(doc, a, G, bdoc, bbounds, bmin):
 
     # cover: the highest arena write per column, against the natural top
     tops = {}
-    for (x, y, z) in a.cells:
+    for (x, y, z) in ([] if hall else a.cells):
+        # a hall stands on the lot: nothing of it is under ground but what its shell rule below holds
         if any(inside((x, y, z), t) for t in through):
             continue
         tops[(x, z)] = max(tops.get((x, z), -999), y)
@@ -664,6 +776,8 @@ def check(doc, a, G, bdoc, bbounds, bmin):
             n = (x + d[0], y + d[1], z + d[2])
             if n in a.cells:
                 continue
+            if hall and (lot_level is None or n[1] >= int(lot_level)):
+                continue   # a hall's open cells may meet the town's air; only under the pad is rock a cave
             if bbounds and inside(n, bbounds):
                 continue
             leak.append((c, n))
@@ -737,12 +851,15 @@ def check(doc, a, G, bdoc, bbounds, bmin):
 
     # who can stand where: a walk from the building's route end
     stand = (sx, sy + 1, sz)
-    reach_cells = walk(a, tuple(doc["entry"]["route_end"]), bounds, bbounds)
+    start_key = "street" if hall else "route_end"
+    reach_cells = walk(a, tuple(doc["entry"][start_key]), bounds, bbounds)
     facts["walkable_cells"] = len(reach_cells)
     ef = tuple(doc["entry"]["floor"])
     if ef not in reach_cells:
-        bad.append("entry.floor %s cannot be reached on foot from entry.route_end %s"
-                   % (list(ef), doc["entry"]["route_end"]))
+        bad.append("entry.floor %s cannot be reached on foot from entry.%s %s"
+                   % (list(ef), start_key, doc["entry"][start_key]))
+    if hall:
+        bad += hall_checks(doc, a, lot, lot_level, reach_cells)
     if stand in reach_cells:
         bad.append("a player can walk onto the leader's own stand %s: the dais must not be climbable" % list(stand))
     d_entry = dist3(ef, stand)
@@ -821,7 +938,7 @@ def dist3(a, b):
     return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2)
 
 
-def walk(a, start, bounds, bbounds):
+def walk(a, start, bounds, bbounds, max_fall=None, opened=()):
     """Every feet cell a player reaches from `start`: walk, step or jump up one, fall any distance. Generous on
     purpose (it answers 'can a player get here', where more is the safe side). Inside the arena's bounds and the
     building's, one cell round each."""
@@ -832,9 +949,14 @@ def walk(a, start, bounds, bbounds):
     def ok(c):
         return all(lo[i] <= c[i] <= hi[i] for i in range(3))
 
+    opened = set(opened)
+
+    def op(c):
+        return c in opened or is_open(a.at(*c))
+
     def body(c):
         x, y, z = c
-        return is_open(a.at(x, y, z)) and is_open(a.at(x, y + 1, z))
+        return op((x, y, z)) and op((x, y + 1, z))
 
     def floor(c):
         x, y, z = c
@@ -842,8 +964,11 @@ def walk(a, start, bounds, bbounds):
 
     def settle(c):
         x, y, z = c
+        y0 = y
         while y > lo[1] and body((x, y, z)) and not floor((x, y, z)):
             y -= 1
+        if max_fall is not None and y0 - y > max_fall:
+            return None
         return (x, y, z) if body((x, y, z)) and floor((x, y, z)) else None
 
     s = settle(start)
@@ -866,6 +991,169 @@ def walk(a, start, bounds, bbounds):
                         q.append(t)
                     break
     return seen
+
+
+ROOM_KINDS = ("entrance", "puzzle", "junior", "passage", "arena", "exit")
+
+
+def hall_checks(doc, a, lot, lot_level, reach_cells):
+    """What a walk-through hall must carry beyond an arena's rules (docs/world-building/GYM_WALKTHROUGH.md)."""
+    bad = []
+    bx = norm(doc["bounds"])
+    x0, z0, x1, z1 = lot
+    if not (x0 <= bx[0] and bx[3] <= x1 and z0 <= bx[2] and bx[5] <= z1):
+        bad.append("bounds %s leave the gym lot %s (data/placements.json): a hall stands on its own lot"
+                   % (list(bx), lot))
+    street = tuple(doc["entry"]["street"])
+    if x0 <= street[0] <= x1 and z0 <= street[2] <= z1:
+        bad.append("entry.street %s is on the lot: it is the street cell a player arrives from" % list(street))
+    # the old building: superseded by this file, and every cell of it written by the hall (nothing of it survives)
+    b = building_doc(doc["gym"])
+    if b:
+        want = "data/gym_arenas/%s.json" % doc["gym"]
+        if not str(b.get("superseded_by") or "").startswith(want):
+            bad.append("data/gym_buildings/%s.json must carry superseded_by %r, or R16G builds the old hall over this "
+                       "one" % (doc["gym"], want))
+        ob = norm(b["bounds"])
+        missing = [(x, y, z) for x in range(ob[0], ob[3] + 1) for y in range(ob[1], ob[4] + 1)
+                   for z in range(ob[2], ob[5] + 1) if (x, y, z) not in a.cells or (x, y, z) in a.down]
+        if missing:
+            bad.append("%d cell(s) of the old building's bounds %s are never written by the hall, first %s: its "
+                       "takedown must leave nothing of the old one" % (len(missing), list(ob), list(missing[0])))
+    if "arena" not in (doc.get("replaces") or {}):
+        bad.append("replaces.arena: the arena record this hall replaces (its bounds, through_building and seat, as "
+                   "built), so the takedown is measured; null only if none was ever built")
+    for s in replaced_seats(doc):
+        if s in a.cells and block_name(a.cells[s]) == SPAWNER:
+            bad.append("a replaced seat %s still holds a spawner in the model" % list(s))
+    # the way out: from the challenger's stand to a cell off the lot, on foot, no fall over 3 (damage starts past 3),
+    # through a door only once a button the walk has reached opens it (button_doors)
+    ps = doc["battle"]["player_stand"]
+    back = walk(a, (ps[0], ps[1] + 2, ps[2]), bx, None, max_fall=3)
+    opened = set()
+    for btn, doors in button_doors(a).items():
+        if any(by_hand(a, c, btn) for c in back):
+            opened |= doors
+    if opened:
+        back = walk(a, (ps[0], ps[1] + 2, ps[2]), bx, None, max_fall=3, opened=opened)
+    ex = doc.get("exit") or {}
+    if ex.get("door") and tuple(ex["door"]) not in opened:
+        bad.append("exit.door %s is not opened by a button the challenger can reach from the stand" % ex["door"])
+    # and nothing that opens a door is in arm's reach of anyone not yet in the arena: a door past the leader is a way
+    # out, never a way in past the puzzle and its juniors
+    arena_box = [norm(r["box"]) for r in doc.get("rooms") or [] if r.get("kind") == "arena"]
+    for btn in button_doors(a):
+        near = [c for c in reach_cells if not any(inside(c, b) for b in arena_box) and by_hand(a, c, btn)]
+        if near:
+            bad.append("the button %s that opens a door is in reach from %s, outside the arena: the door would let a "
+                       "player in past the juniors" % (list(btn), list(near[0])))
+    off = [c for c in back if not (x0 <= c[0] <= x1 and z0 <= c[2] <= z1)]
+    if not off:
+        bad.append("EXIT: from the challenger's stand no cell off the lot is reached on foot without a fall over 3: the "
+                   "way out must be walked (back the way you came, or a door past the leader)")
+    # the rooms, in walking order, the arena last
+    rooms = doc.get("rooms") or []
+    if not rooms or rooms[-1].get("kind") != "arena":
+        bad.append("rooms: list them in walking order, the arena (kind 'arena') last")
+    for r in rooms:
+        if r.get("kind") not in ROOM_KINDS:
+            bad.append("room %s: kind %r is not one of %s" % (r.get("id"), r.get("kind"), ROOM_KINDS))
+    arena = [r for r in rooms if r.get("kind") == "arena"]
+    if arena and not inside(tuple(doc["leader"]["seat"]), norm(arena[-1]["box"])):
+        bad.append("the leader's seat is not in the arena room's box %s" % arena[-1]["box"])
+    return bad
+
+
+HAND = 4.5   # a survival player's block reach
+
+
+def by_hand(a, c, btn, step=0.2):
+    """A player standing in feet cell c can press the button at btn: its centre within HAND of the eye, and the line
+    to it through open cells only (a button behind a wall is not pressed through it)."""
+    p0 = (c[0] + 0.5, c[1] + 1.62, c[2] + 0.5)
+    p1 = (btn[0] + 0.5, btn[1] + 0.5, btn[2] + 0.5)
+    d = dist3(p0, p1)
+    if d > HAND:
+        return False
+    n = max(1, int(d / step))
+    for i in range(1, n):
+        f = i / float(n)
+        q = (int(math.floor(p0[0] + (p1[0] - p0[0]) * f)), int(math.floor(p0[1] + (p1[1] - p0[1]) * f)),
+             int(math.floor(p0[2] + (p1[2] - p0[2]) * f)))
+        if q != tuple(btn) and not is_open(a.at(*q)):
+            return False
+    return True
+
+
+BUTTON_ATTACH = {"north": (0, 0, 1), "south": (0, 0, -1), "east": (-1, 0, 0), "west": (1, 0, 0)}
+
+
+def button_doors(a):
+    """{button cell: {door cells it opens}}: a button powers the block it is set on and its own neighbours; a door
+    half beside either opens (both halves). Vanilla redstone, read from the block states the hall writes."""
+    out = {}
+    doors = {c for c, s in a.cells.items() if block_name(s).endswith("_door")}
+    for c, s in a.cells.items():
+        if not block_name(s).endswith("_button"):
+            continue
+        face = re.search(r"face=(\w+)", s)
+        facing = re.search(r"facing=(\w+)", s)
+        face = face.group(1) if face else "wall"
+        if face == "floor":
+            att = (c[0], c[1] - 1, c[2])
+        elif face == "ceiling":
+            att = (c[0], c[1] + 1, c[2])
+        else:
+            d = BUTTON_ATTACH[facing.group(1) if facing else "north"]
+            att = (c[0] + d[0], c[1] + d[1], c[2] + d[2])
+        near = set()
+        for src in (c, att):
+            for d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)):
+                n = (src[0] + d[0], src[1] + d[1], src[2] + d[2])
+                if n in doors:
+                    near.add(n)
+        both = set()
+        for n in near:
+            both |= {n, (n[0], n[1] + 1, n[2]) if "half=lower" in a.cells[n] else (n[0], n[1] - 1, n[2])}
+        if both:
+            out[c] = both
+    return out
+
+
+def replaced_seats(doc):
+    """Every cell that held this leader's spawner before the hall: the old arena's seat (replaces.arena.seat), the
+    superseded building's leader.spawner, and a Challenge spawner data/challenge_mode.json recorded in either."""
+    if not is_hall(doc):
+        return []
+    out = []
+    r = (doc.get("replaces") or {}).get("arena") or {}
+    if r.get("seat"):
+        out.append(tuple(r["seat"]))
+    b = building_doc(doc["gym"])
+    if b and (b.get("leader") or {}).get("spawner"):
+        out.append(tuple(b["leader"]["spawner"]))
+    boss = load(ROOT / "data" / "challenge_mode.json")["bosses"].get(doc["leader"]["id"]) or {}
+    at = (boss.get("spawner") or {}).get("at")
+    if at:
+        olds = ([norm(b["bounds"])] if b else []) + [box for box, _w in takedown_boxes(doc)]
+        if any(inside(tuple(at), o) for o in olds):
+            out.append(tuple(at))
+    return [s for i, s in enumerate(out) if s not in out[:i] and s != tuple(doc["leader"]["seat"])]
+
+
+def takedown_lines(doc):
+    """The hall's takedown function: every takedown box back to rock, before the hall is built. Never with a player
+    inside a box (the fill waits for the next apply, and the read-back's probes name it)."""
+    import function_limits
+    lines = ["# %s: what this hall replaces, taken down before it is built (data/gym_arenas/%s.json replaces, measured "
+             "by tools/gym_arenas.py takedown_boxes). Above the lot the hall's own first part clears the old building"
+             % (doc["id"], doc["id"])]
+    for box, why in takedown_boxes(doc):
+        lines.append("# %s: %s" % (why, list(box)))
+        for (x0, y0, z0, x1, y1, z1) in function_limits._fill_boxes(*box):
+            lines.append("execute unless entity @a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d] run fill %d %d %d %d %d %d %s"
+                         % (x0, y0, z0, x1 - x0, y1 - y0, z1 - z0, x0, y0, z0, x1, y1, z1, ROCK))
+    return lines
 
 
 def light_map(a, bounds):
@@ -928,12 +1216,30 @@ def challenge_id(up):
     return up + cm.get("id_suffix", "_challenge")
 
 
+def hall_seat_lines(doc):
+    """A hall's seat: no move (its takedown removed every older seat, replaced_seats), so the one spawner is set where
+    it is missing, once the hall stands (its trainer Pokemon block)."""
+    lead = doc["leader"]
+    nx, ny, nz = lead["seat"]
+    tx, ty, tz = doc["battle"]["trainer_pokemon"]
+    ok = "if block %d %d %d %s" % (tx, ty, tz, MARKERS["trainer_pokemon"])
+    return ["# %s: %s's one spawner, in the arena's dais (data/gym_arenas/%s.json leader.seat). A walk-through hall "
+            "moves nothing: its takedown removed the older seats %s" % (doc["id"], lead["id"], doc["id"],
+                                                                         [list(s) for s in replaced_seats(doc)]),
+            "execute %s unless block %d %d %d %s run setblock %d %d %d %s" % (ok, nx, ny - 1, nz, REDSTONE, nx, ny - 1,
+                                                                             nz, REDSTONE),
+            'execute %s unless block %d %d %d %s run setblock %d %d %d %s{TrainerIds:["%s"]}'
+            % (ok, nx, ny, nz, SPAWNER, nx, ny, nz, SPAWNER, lead["id"])]
+
+
 def seat_lines(doc, reach):
     """The move, once per apply, after the build: the new spawner set in the dais, the old cell back to its floor.
     Every line first tests that the OLD cell still holds a spawner, so a re-run changes nothing; the old cell is
     restored only once the new spawner stands, so the leader is never left with none. Never with a player within
     reach of either cell (no battle can start with the old leader or the new one). This is
     tools/challenge_mode.py move_lines' shape, for a gym's own seat."""
+    if is_hall(doc):
+        return hall_seat_lines(doc)
     lead = doc["leader"]
     old = old_seat(doc)
     ox, oy, oz = old
@@ -976,7 +1282,10 @@ def seat_lines(doc, reach):
 
 
 def old_seat(doc):
-    """Where the leader's spawner stands before the move: the building's leader.spawner, or Misty's template one."""
+    """Where the leader's spawner stands before the move: the building's leader.spawner, or Misty's template one.
+    None for a hall, which moves nothing (replaced_seats)."""
+    if is_hall(doc):
+        return None
     b = building_doc(doc["gym"])
     if b:
         return tuple(b["leader"]["spawner"])
@@ -990,6 +1299,19 @@ def old_leader_kills(doc):
     """Selector bodies for the leader standing anywhere in the building (both ids, never in a battle): the arena's
     seat is outside the building's bounds, so the new leader is never in them."""
     up = doc["leader"]["id"]
+    if is_hall(doc):
+        # everywhere the old leader could stand -- the lot's air (an old gallery's leader falls when the hall clears
+        # it) and the old arena -- except round the new seat, where the hall's own leader stands
+        sx, sy, sz = doc["leader"]["seat"]
+        bx = norm(doc["bounds"])
+        boxes = box_minus(bx, (sx - 2, sy - 1, sz - 2, sx + 2, sy + 4, sz + 2)) + [b for b, _w in takedown_boxes(doc)]
+        kills = []
+        for (x0, y0, z0, x1, y1, z1) in boxes:
+            vol = "x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d" % (x0, y0, z0, x1 - x0, y1 - y0, z1 - z0)
+            kills += [('type=rctmod:trainer,%s,nbt={TrainerId:"%s",InBattle:0b}' % (vol, i))
+                      for i in (up, challenge_id(up))]
+        return kills, (min(b[0] for b in boxes), min(b[2] for b in boxes), max(b[3] for b in boxes),
+                       max(b[5] for b in boxes))
     b = building_doc(doc["gym"])
     if b:
         x0, y0, z0, x1, y1, z1 = norm(b["bounds"])
@@ -1004,13 +1326,17 @@ def verify_probes(doc):
     """[(what, x, y, z, block or None for 'not a spawner')]: what the world must hold after R16GA."""
     lead, b = doc["leader"], doc["battle"]
     sx, sy, sz = lead["seat"]
-    ox, oy, oz = old_seat(doc)
+    ox, oy, oz = old_seat(doc) or (None, None, None)
     out = [("the leader's spawner in the dais", sx, sy, sz, SPAWNER),
            ("its redstone", sx, sy - 1, sz, REDSTONE),
            ("air over the seat", sx, sy + 1, sz, "minecraft:air")]
     for k, block in MARKERS.items():
         out.append(("battle.%s" % k, b[k][0], b[k][1], b[k][2], block))
-    out.append(("no spawner left at the old seat", ox, oy, oz, None))
+    if ox is None:
+        for (rx, ry, rz) in replaced_seats(doc):
+            out.append(("no spawner at a replaced seat", rx, ry, rz, None))
+    else:
+        out.append(("no spawner left at the old seat", ox, oy, oz, None))
     for p in doc.get("probes") or []:
         out.append((p["what"], p["at"][0], p["at"][1], p["at"][2], p["block"]))
     return out
@@ -1051,6 +1377,8 @@ def build_pack(out, recs, G):
         if problems:
             raise ArenaError("%s:\n  %s" % (doc["id"], "\n  ".join(problems)))
         write_fn(funcs, doc["id"], build_ops)
+        if is_hall(doc):
+            write_fn(funcs, doc["id"] + "_takedown", takedown_lines(doc))
         write_fn(funcs, doc["id"] + "_seat", seat_lines(doc, reach()))
         kills, box = old_leader_kills(doc)
         sw = chunk_look.sweep("%s:%s/%s_old_leader" % (NS, FOLDER, doc["id"]), box, kills,
@@ -1079,6 +1407,8 @@ def steps():
     out = []
     for _p, doc in records():
         base = "%s:%s/%s_old_leader" % (NS, FOLDER, doc["id"])
+        if is_hall(doc):
+            out.append(("fn", "%s:%s/%s_takedown" % (NS, FOLDER, doc["id"])))
         out += [("fn", "%s:%s/%s" % (NS, FOLDER, doc["id"])), ("fn", "%s:%s/%s_seat" % (NS, FOLDER, doc["id"])),
                 ("fn", base), ("wait", chunk_look.STEP_SECONDS)]
     if out:
@@ -1092,8 +1422,14 @@ def hold_boxes():
     out = []
     for _p, doc in records():
         b = norm(doc["bounds"])
-        ox, _oy, oz = old_seat(doc)
-        out.append((min(b[0], ox), min(b[2], oz), max(b[3], ox), max(b[5], oz)))
+        pts = [(b[0], b[2]), (b[3], b[5])]
+        if old_seat(doc):
+            pts.append((old_seat(doc)[0], old_seat(doc)[2]))
+        for (s, _w) in takedown_boxes(doc):
+            pts += [(s[0], s[2]), (s[3], s[5])]
+        for s in replaced_seats(doc):
+            pts.append((s[0], s[2]))
+        out.append((min(q[0] for q in pts), min(q[1] for q in pts), max(q[0] for q in pts), max(q[1] for q in pts)))
     return out
 
 
@@ -1276,8 +1612,9 @@ def presence_probes():
             if block is None:
                 continue
             rows.append({"what": what, "block": [x, y, z, block], "expect": True})
-        ox, oy, oz = old_seat(doc)
-        rows.append({"what": "no spawner at the old seat", "block": [ox, oy, oz, SPAWNER], "expect": False})
+        olds = [old_seat(doc)] if old_seat(doc) else replaced_seats(doc)
+        for (ox, oy, oz) in olds:
+            rows.append({"what": "no spawner at the old seat", "block": [ox, oy, oz, SPAWNER], "expect": False})
         out["%s_arena" % doc["id"]] = rows
     return out
 

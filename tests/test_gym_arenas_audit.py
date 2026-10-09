@@ -328,7 +328,8 @@ def test_the_arena_descent_is_climbed_without_a_jump(real, gym):
     # mutation), which is invisible to a walk that may jump.
     f = real[gym]
     assert not kinds(f, "STAIR"), kinds(f, "STAIR")
-    assert f.get("host_floor_without_jump", 0) > 0
+    # a walk-through hall (2026-10-09) has no descent and no host floor: its walk is street to stand and back (EXIT)
+    assert f.get("host") == "hall" or f.get("host_floor_without_jump", 0) > 0
 
 
 @pytest.mark.parametrize("gym", A.GYMS)
@@ -353,7 +354,8 @@ def test_cover_over_the_arena(real, gym):
     # Removing this lets an arena's top stand at or above the ground in the worst case of the heightmap's rounding.
     f = real[gym]
     assert not kinds(f, "COVER"), kinds(f, "COVER")
-    assert f["cover_min"] >= 1
+    # a walk-through hall stands on its lot: nothing of it is under cover (the shell rule holds under the pad)
+    assert f.get("host") == "hall" or f["cover_min"] >= 1
 
 
 @pytest.mark.parametrize("gym", A.GYMS)

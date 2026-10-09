@@ -61,6 +61,22 @@ THE CHECKS, each derived:
   light      block light from every written source, through every cell that is not an opaque full cube; no
              walkable cell inside the arena at block light 0 (vanilla monsters spawn only there since 1.18).
 
+EVERY ORDER THE APPLY ALLOWS (2026-10-09, "a room I can't leave from"). The functions are replayed in the apply's own
+order, read from tools/reapply.py gym_step_functions() (what runs when, never geometry): R16E (Misty's dig), R16F
+(the demolition), R16G
+(the buildings, then the arenas, then the seats), R16GA. Then each of those steps is run AGAIN alone on the finished
+world, as `--only <step>` does, and the walk is repeated: a step that seals the arena when R16GA does not follow it
+is a fault (`ORDER`). Before this the audit replayed one order (building, arena, seat), the one a full apply makes,
+and so passed arenas that R16G alone (its building refills the descent) or R16F alone (its refill of the old works
+fills the arena) sealed with a player inside.
+
+A WALK-THROUGH HALL (schema gym_hall/1; its building record carries `superseded_by`). There is no host: the walk
+starts in the street, every column of the ring just outside the lot (data/placements.json), and must reach the
+challenger's stand and come back out to the street (`EXIT`), upright, without a fall over 3, from the stand. The
+takedown is proved from two declared fields: every cell of the superseded building's bounds is written, and every
+cell of `replaces.arena`'s boxes outside the hall's bounds is left a full block (`TAKEDOWN`). The shell rule holds
+under the lot's level; above it a hall meets the town's air and ground, which is the street, not a cave.
+
 WHAT IT DOES NOT COVER: Battle Positions' search box and rctmod's sight line (the builder's check owns those); the
 seat's spawner contract; runtime behavior of anything (that is an experiment in a running server).
 """
@@ -84,6 +100,7 @@ PACKS = ROOT / "build" / "datapacks"
 ARENA_PACK = PACKS / "cobblers_gym_arenas"
 BUILDING_PACK = PACKS / "cobblers_gym_buildings"
 INTERIOR_PACK = PACKS / "cobblers_gym_interiors"
+DEMOLISH_PACK = PACKS / "cobblers_gym_demolish"
 SNAPSHOT = Path(os.environ.get("COBBLERS_SERVER_SNAPSHOT",
                                "C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05"))
 GYMS = ["gym%d" % i for i in range(1, 9)]
@@ -168,6 +185,8 @@ def shape(state):
     a wall), the facing of a bottom stair (its high half), or None for no collision."""
     n, _p = parse_state(state)
     short = n.split(":", 1)[1]
+    if short == "iron_door" and prop(state, "open", "false") != "true":
+        return (0.0, 1.0, None)   # opened only by a signal: closed to a walk unless a reached button opens it
     if n in NOCOLL or short.endswith(NOCOLL_SUFFIX):
         return None
     if n == NAT or n == PAD:
@@ -496,6 +515,26 @@ def site(gym, building_pack=None, interior_pack=None):
     route ends, the lot."""
     bp = ROOT / "data" / "gym_buildings" / ("%s.json" % gym)
     placements = load(ROOT / "data" / "placements.json")["settlements"]
+    if bp.exists() and load(bp).get("superseded_by"):
+        # a walk-through hall: the building record is the record of what stood (its bounds, its leader and spawner)
+        b = load(bp)
+        lots = [(a["rect"][0], a["rect"][1], a["rect"][2], a["rect"][3], a.get("level"))
+                for a in placements[b["settlement"]]["plan"].get("anchors") or [] if a.get("role") == "gym"]
+        x0, z0, x1, z1, lv = lots[0]
+        _bounds, _t, d = declared(gym)
+        rep_ = (d.get("replaces") or {}).get("arena") or {}
+        replaced = [tuple(b["leader"]["spawner"])] + ([tuple(rep_["seat"])] if rep_.get("seat") else [])
+        cs = challenge_spawner(b["leader"]["id"])
+        if cs and inside(cs, norm(b["bounds"])):
+            replaced.append(cs)
+        return {"leader": b["leader"]["id"], "host": "hall", "host_fn": None, "lots": lots,
+                "host_box": (x0 - 1, int(lv), z0 - 1, x1 + 1, norm(b["bounds"])[4] + 2, z1 + 1),
+                "lot": (x0, z0, x1, z1, int(lv)), "route_end": None, "route_start": None,
+                "hall_spawner": tuple(b["leader"]["spawner"]), "replaced_seats": replaced,
+                "old_building": norm(b["bounds"]),
+                "replaced_arena": [norm(rep_["bounds"])] + [norm(tb["box"]) for tb in rep_.get("through_building") or []]
+                if rep_.get("bounds") else [],
+                "host_allows_natural_air": True}
     if bp.exists():
         b = load(bp)
         spawner = tuple(b["leader"]["spawner"])
@@ -517,6 +556,36 @@ def site(gym, building_pack=None, interior_pack=None):
             "template_box": norm(i["shell"]["expect_box"]),
             "route_end": tuple(gallery[0]), "route_start": None, "hall_spawner": tuple(i["leader"]["expect_spawner_at"]),
             "lots": lots, "host_allows_natural_air": False}
+
+
+def gym_steps(gym):
+    """{step: [function id]} of this gym's own block functions, in the order the apply runs them: tools/reapply.py
+    gym_step_functions(), read for what runs when and never for geometry."""
+    import reapply
+    allf = reapply.gym_step_functions()
+    mine = {gym, gym + "_takedown", gym + "_seat"}
+    return {k: [f for f in v if f.rsplit("/", 1)[1] in mine] for k, v in allf.items()}
+
+
+def fn_path(fid, packs):
+    ns, path = fid.split(":", 1)
+    folder, name = path.split("/", 1)
+    return Path(packs[folder]) / "data" / ns / "function" / folder / ("%s.mcfunction" % name)
+
+
+def fn_layer(fid):
+    name = fid.rsplit("/", 1)[1]
+    if ":gym_interiors/" in fid:
+        return "dig"
+    if ":gym_demolish/" in fid:
+        return "demolish"
+    if ":gym_buildings/" in fid:
+        return "building"
+    if name.endswith("_takedown"):
+        return "takedown"
+    if name.endswith("_seat"):
+        return "seat"
+    return "arena"
 
 
 def declared(gym):
@@ -948,6 +1017,17 @@ class Walker:
                 out.append(((nx, nz, h2), "jump" if jumped else ("fall" if fall > EPS else "walk")))
         return out
 
+    def reach_many(self, starts):
+        """Every node reached from any of `starts` (the street ring round a hall's lot)."""
+        seen, q = set(starts), deque(starts)
+        while q:
+            n = q.popleft()
+            for m, _how in self.moves(n):
+                if m not in seen and self.inbox(*m):
+                    seen.add(m)
+                    q.append(m)
+        return seen
+
     def reach(self, start, stop=None):
         seen, q = {start}, deque([start])
         while q:
@@ -959,6 +1039,34 @@ class Walker:
                     seen.add(m)
                     q.append(m)
         return seen
+
+
+def button_opened(world, nodes):
+    """Door cells opened by a button within arm's reach (2 blocks across, 2 up or down) of a reached node."""
+    attach = {"north": (0, 0, 1), "south": (0, 0, -1), "east": (-1, 0, 0), "west": (1, 0, 0)}
+    doors = {c for c, s in world.cells.items() if name_of(s).endswith("_door")}
+    out = set()
+    for c, s in world.cells.items():
+        if not name_of(s).endswith("_button"):
+            continue
+        if not any(abs(n[0] - c[0]) + abs(n[1] - c[2]) <= 2 and abs(n[2] - c[1]) <= 2 for n in nodes):
+            continue
+        face = prop(s, "face", "wall")
+        if face == "floor":
+            att = (c[0], c[1] - 1, c[2])
+        elif face == "ceiling":
+            att = (c[0], c[1] + 1, c[2])
+        else:
+            d = attach[prop(s, "facing", "north")]
+            att = (c[0] + d[0], c[1] + d[1], c[2] + d[2])
+        for src in (c, att):
+            for d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)):
+                n = (src[0] + d[0], src[1] + d[1], src[2] + d[2])
+                if n in doors:
+                    other = (n[0], n[1] + 1, n[2]) if prop(world.cells[n], "half", "lower") == "lower" else \
+                        (n[0], n[1] - 1, n[2])
+                    out |= {n, other}
+    return out
 
 
 def blocked_at(upright, crouch, start):
@@ -1073,20 +1181,34 @@ def assemble(gym, pack=ARENA_PACK, G=None, water_fn=None, hosts=(None, None)):
         water_fn = water_levels(G, bounds, s["host_box"])
     world = World(Nature(G, s["lots"], water_fn))
     funcs = Path(pack) / "data" / "cobblers" / "function" / "gym_arenas"
+    packs = {"gym_arenas": Path(pack), "gym_buildings": Path(hosts[0] or BUILDING_PACK),
+             "gym_interiors": Path(hosts[1] or INTERIOR_PACK), "gym_demolish": DEMOLISH_PACK}
     if s["host"] == "dig":
         # the donor template is not in the repository; the one cell of it the seat move reads is its spawner, which
         # data/gym_interiors.json records as measured (expect_spawner_at), standing on a redstone block
         hx, hy, hz = s["hall_spawner"]
         world.set((hx, hy - 1, hz), "minecraft:redstone_block", "template")
         world.set((hx, hy, hz), 'rctmod:trainer_spawner{TrainerIds:["%s"]}' % s["leader"], "template")
-    logs = {"host": apply_file(world, s["host_fn"], s["host"])}
-    host_cells = set(world.cells)
-    logs["arena"] = apply_file(world, funcs / ("%s.mcfunction" % gym), "arena")
+    logs = {}
+    host_cells = set()
+    steps = gym_steps(gym)
+    for step in ("R16E", "R16F", "R16G", "R16GA"):
+        for f in steps.get(step) or []:
+            path = fn_path(f, packs)
+            if not path.exists():
+                raise SystemExit("%s: %s is not built (%s): run its generator first" % (gym, f, path))
+            layer = fn_layer(f)
+            logs["%s %s" % (step, f)] = apply_file(world, path, layer)
+            if layer in ("building", "dig"):
+                host_cells = set(c for c, l in world.layer.items() if l == layer)
     arena_writes = function_writes(funcs / ("%s.mcfunction" % gym))
-    logs["seat"] = apply_file(world, funcs / ("%s_seat.mcfunction" % gym), "seat")
     cs = challenge_spawner(s["leader"])
+    roll = (load(ROOT / "data" / "challenge_mode.json").get("single_leader") or {}).get("rollout") or []
+    if roll == "all" or s["leader"] in roll:
+        cs = None   # a one-leader boss: the cycle sets no second spawner (its place line is not emitted)
     if cs and inside(cs, bounds):
         world.set(cs, 'rctmod:trainer_spawner{TrainerIds:["%s_challenge"]}' % s["leader"], "cycle")
+    world.steps, world.packs = steps, packs
     return world, s, bounds, through, arena_writes, host_cells, logs
 
 
@@ -1121,7 +1243,7 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
     import ground as ground_mod
     G = G or ground_mod.load()
     world, s, bounds, through, arena_writes, host_cells, logs = assemble(gym, pack, G, hosts=hosts)
-    problems, facts = [], {"gym": gym, "leader": s["leader"], "logs": logs}
+    problems, facts = [], {"gym": gym, "leader": s["leader"], "logs": logs, "host": s["host"]}
     region = [bounds, s["host_box"]] + through
     box = (min(b[0] for b in region) - 2, min(b[1] for b in region) - 3, min(b[2] for b in region) - 2,
            max(b[3] for b in region) + 2, max(b[4] for b in region) + 3, max(b[5] for b in region) + 2)
@@ -1136,9 +1258,10 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
              and s["leader"] in st and "_challenge" not in st and inside(c, bounds)]
     if len(seats) != 1:
         problems.append("leader spawner in the arena: %d (exactly one after the seat move)" % len(seats))
-    old = s["hall_spawner"]
-    if name_of(world.get(*old)) == "rctmod:trainer_spawner":
-        problems.append("the hall spawner %s is still standing after the seat move" % (list(old),))
+    hall = s["host"] == "hall"
+    for old in (s.get("replaced_seats") or [s["hall_spawner"]]):
+        if name_of(world.get(*old)) == "rctmod:trainer_spawner":
+            problems.append("the hall spawner %s is still standing after the seat move" % (list(old),))
     if problems:
         facts["problems"] = problems
         return facts
@@ -1171,6 +1294,8 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
             n = (x + d[0], y + d[1], z + d[2])
             if world.written(n):
                 continue
+            if hall and n[1] >= s["lot"][4]:
+                continue   # a hall's open cells meet the town above the lot's level: the street, not a cave
             nat = world.nature(*n)
             if nat in (NAT, PAD):
                 leaks.append((c, n))
@@ -1187,9 +1312,9 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
         problems.append("SHELL: %d open arena cell(s) beside the world's own %s outside the host, first %s beside %s"
                         % (len(sky), sky[0][2], list(sky[0][0]), list(sky[0][1])))
 
-    # ---- cover
+    # ---- cover (an arena under a lot; a hall stands on it)
     tops = {}
-    for c in arena_writes:
+    for c in ([] if hall else arena_writes):
         if any(inside(c, t) for t in through):
             continue
         tops[(c[0], c[2])] = max(tops.get((c[0], c[2]), -999), c[1])
@@ -1220,23 +1345,78 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
     # ---- reach, both ways
     start = None
     w_strict = Walker(world, box)
-    rx, ry, rz = s["route_end"]
-    start = w_strict.settle(rx, ry, rz)
     stand = (PS[0], PS[2], PS[1] + off)
-    facts["route_end"] = list(s["route_end"])
     facts["challenger_stand"] = [PS[0], PS[1] + off, PS[2]]
-    if start is None:
+    ring = []
+    if hall:
+        lx0, lz0, lx1, lz1, _lv = s["lot"]
+        ring = [(x, lz0 - 1) for x in range(lx0 - 1, lx1 + 2)] + [(x, lz1 + 1) for x in range(lx0 - 1, lx1 + 2)] + \
+            [(lx0 - 1, z) for z in range(lz0, lz1 + 1)] + [(lx1 + 1, z) for z in range(lz0, lz1 + 1)]
+
+    def street(n):
+        return not (lx0 <= n[0] <= lx1 and lz0 <= n[1] <= lz1)
+
+    def both_ways(wd):
+        """(stand reached from the way in, the way in reached from the stand) in world wd, walking upright with no
+        fall over 3: from the route's end (an arena), or from and back to the street (a hall)."""
+        W = Walker(wd, box)
+        if hall:
+            sts = [n for n in (W.settle(x, wd.nature.natural_top(x, z)[0] + 1, z) for x, z in ring) if n]
+            d = W.reach_many(sts)
+            u = W.reach(stand) if W.valid(*stand) else set()
+            return stand in d, any(street(n) for n in u), d, u
+        st = W.settle(*s["route_end"])
+        if st is None:
+            return False, False, set(), set()
+        d = W.reach(st)
+        u = W.reach(stand) if W.valid(*stand) else set()
+        return stand in d, st in u, d, u
+
+    if hall:
+        facts["street_ring"] = len(ring)
+        if not w_strict.valid(*stand):
+            problems.append("REACH: the challenger's stand %s is not a cell a player can stand in"
+                            % facts["challenger_stand"])
+        facts["reach_down"], facts["reach_up"], down, up = both_ways(world)
+        if not facts["reach_up"]:
+            # an iron door opens to a button: one the walk from the stand reaches (in arm's reach of a node) opens the
+            # door beside the block it is set on, or beside itself (vanilla redstone); walk again with it open
+            Wb = Walker(world, box)
+            opened = button_opened(world, up)
+            if opened:
+                for c in opened:
+                    Wb._sh[c] = (None, False, False, False)
+                u2 = Wb.reach(stand)
+                facts["reach_up"] = any(street(n) for n in u2)
+                facts["exit_doors_opened"] = sorted(list(c) for c in opened)
+                up = u2
+        if not facts["reach_down"]:
+            problems.append("REACH: the challenger's stand %s is not reached from the street round the lot, walking "
+                            "upright without fall damage" % facts["challenger_stand"])
+        if not facts["reach_up"]:
+            problems.append("EXIT: from the challenger's stand %s no street cell round the lot is reached walking "
+                            "upright without a fall over 3: the way out must be walked" % facts["challenger_stand"])
+        facts["exit_cells_on_street"] = len([n for n in up if street(n)])
+    else:
+        rx, ry, rz = s["route_end"]
+        start = w_strict.settle(rx, ry, rz)
+        facts["route_end"] = list(s["route_end"])
+    if hall:
+        pass   # its walk is above; the route's end belongs to a building
+    elif start is None:
         problems.append("REACH: the route's end %s is not a cell a player can stand in" % (list(s["route_end"]),))
         down = set()
     else:
         down = w_strict.reach(start)
-    if not w_strict.valid(*stand):
-        problems.append("REACH: the challenger's stand %s is not a cell a player can stand in" % facts["challenger_stand"])
-    facts["reach_down"] = stand in down
-    up = w_strict.reach(stand) if w_strict.valid(*stand) else set()
-    facts["reach_up"] = start in up if start else False
+    if not hall:
+        if not w_strict.valid(*stand):
+            problems.append("REACH: the challenger's stand %s is not a cell a player can stand in"
+                            % facts["challenger_stand"])
+        facts["reach_down"] = stand in down
+        up = w_strict.reach(stand) if w_strict.valid(*stand) else set()
+        facts["reach_up"] = start in up if start else False
     crouch = Walker(world, box, body=1.5)
-    if not facts["reach_down"]:
+    if not facts["reach_down"] and not hall:
         w_dmg = Walker(world, box, fall=1e9)
         facts["reach_down_with_damage"] = start is not None and stand in w_dmg.reach(start)
         facts["reach_down_crouching"] = start is not None and stand in crouch.reach(start)
@@ -1244,7 +1424,7 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
                         "without fall damage (with damage: %s; crouching: %s)%s"
                         % (facts["challenger_stand"], list(s["route_end"]), facts["reach_down_with_damage"],
                            facts["reach_down_crouching"], blocked_at(w_strict, crouch, start)))
-    if not facts["reach_up"]:
+    if not facts["reach_up"] and not hall:
         facts["reach_up_crouching"] = start is not None and start in crouch.reach(stand)
         problems.append("REACH: from the challenger's stand %s a player walking upright cannot get back to the "
                         "route's end %s (crouching: %s)" % (facts["challenger_stand"], list(s["route_end"]),
@@ -1268,6 +1448,54 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
             problems.append("STAIR: going up, no way off the arena's own descent onto the host's floor without a "
                             "jump; %d jump(s) at the edge, first %s" % (
                                 len(jumps), ["%s -> %s" % (list(a), list(b)) for a, b in jumps[:2]]))
+    # ---- every order the apply allows: each gym step run again alone on the finished world (`--only <step>`)
+    facts["order"] = {}
+    for step in ("R16E", "R16F", "R16G", "R16GA"):
+        fns = (world.steps.get(step) or [])
+        if not fns:
+            continue
+        w2 = World(world.nature)
+        w2.cells, w2.layer = dict(world.cells), dict(world.layer)
+        for f in fns:
+            apply_file(w2, fn_path(f, world.packs), "again")
+        dn, upk, _d, _u = both_ways(w2)
+        # the Challenge spawner the trainers cycle sets in a dais is the cycle's, not the arena's: an arena run takes it
+        # out and the cycle's place line puts it back when a player comes near (by design since 2026-10-09)
+        changed = sorted(c for c in arena_writes if world.layer.get(c) != "cycle" and w2.get(*c) != world.get(*c))
+        facts["order"][step] = {"functions": len(fns), "reach_down": dn, "reach_up": upk,
+                                "arena_cells_changed": len(changed)}
+        if changed:
+            problems.append("ORDER: `--only %s` changes %d of the arena's own cells, first %s (%s -> %s): only the "
+                            "arena's function may write them" % (step, len(changed), list(changed[0]),
+                                                                world.get(*changed[0]), w2.get(*changed[0])))
+        if not (dn and upk):
+            problems.append("ORDER: after `--only %s` (its %d function(s) run again on a finished world, no R16GA "
+                            "after them) the challenger's stand is %s: %s" % (
+                                step, len(fns), "not reached" if not dn else "reached but cannot be left",
+                                ", ".join(fns)))
+
+    # ---- a hall's takedown: nothing of what it replaces survives
+    if hall:
+        ob = s["old_building"]
+        miss = [(x, y, z) for x in range(ob[0], ob[3] + 1) for y in range(ob[1], ob[4] + 1)
+                for z in range(ob[2], ob[5] + 1) if not world.written((x, y, z))]
+        open_old = []
+        for b in s["replaced_arena"]:
+            for x in range(b[0], b[3] + 1):
+                for y in range(b[1], b[4] + 1):
+                    for z in range(b[2], b[5] + 1):
+                        if inside((x, y, z), bounds):
+                            continue
+                        if shape(world.get(x, y, z)) != (0.0, 1.0, None):
+                            open_old.append((x, y, z))
+        facts["takedown"] = {"old_building_unwritten": len(miss), "old_arena_left_open": len(open_old)}
+        if miss:
+            problems.append("TAKEDOWN: %d cell(s) of the superseded building's bounds %s are never written, first %s"
+                            % (len(miss), list(ob), list(miss[0])))
+        if open_old:
+            problems.append("TAKEDOWN: %d cell(s) of the replaced arena (replaces.arena) left open under the lot, "
+                            "first %s" % (len(open_old), list(open_old[0])))
+
     leader_stand = (seat[0], seat[2], seat[1] + 1.0)
     facts["leader_stand_reachable"] = leader_stand in down
     if leader_stand in down:
