@@ -63,7 +63,7 @@
       "advancement": "cobbleverse:trainer/kanto/defeat_koga",
       "upstream_mob": {"type": "kanto", "signatureItem": "lumymon:ninja_poison", "maxTrainerWins": -1, "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0, "biomeTagBlacklist": ["is_void", "is_end", "is_underground", "is_nether"], "biomeTagWhitelist": ["cobbleverse:swamp"]},
       "upstream_required": ["kanto_erika"],
-      "spawner": {"at": [4592, 131, 2487], "measured_by": "gym_buildings", "why": "two west of Koga's spawner (4594, 131, 2487) on the watch floor, mangrove planks; the floor is a deck, so the redstone block hangs in the air under it (no support needed); the chest is east at x4598"}
+      "spawner": {"at": [4584, 103, 2461], "measured_by": "gym_buildings", "why": "two west of Koga's spawner (4594, 131, 2487) on the watch floor, mangrove planks; the floor is a deck, so the redstone block hangs in the air under it (no support needed); the chest is east at x4598"}
     },
     "kanto_sabrina": {
       "lang": "sabrina",
