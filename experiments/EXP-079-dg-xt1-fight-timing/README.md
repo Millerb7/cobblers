@@ -1,6 +1,6 @@
 # EXP-079: XT1, how long is an NPC fight at 2, 4 and 6 opposing members, caps 20, 45 and 100, and a 3-stage chain?
 
-**Status: RCON PART PASSED; the timings need the owner (2026-10-08).** Probe XT1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PART PASSED; owner part OPEN (every timing) (2026-10-08).** Probe XT1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
