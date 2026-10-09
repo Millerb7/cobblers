@@ -1,0 +1,310 @@
+{
+  "schema": "cobblers.drowned-quarry/1",
+  "status": "built 2026-10-09 by tools/drowned_quarry.py and audited offline by tools/drowned_quarry_audit.py; NOT applied to any world and NOT seen in game. Everything that needs a running server is listed in docs/world-building/DROWNED_QUARRY.md 'Not verified'.",
+  "request": "the owner, 2026-10-09, verbatim: \"a large lake monster in Lake Tilpey, with an underwater cave a player with Dive can reach.\"",
+  "namespace": "cobblers",
+  "folder": "drowned_quarry",
+  "pack": "cobblers_drowned_quarry",
+  "water_body": "lake_tilpey",
+  "water_body_why": "data/landmarks.json lake_tilpey: water.level_y 77 and its basin_polygons are what tools/paint_maps.py paints, read through tools/water_mask.py (never the landmark's extent, which disagrees with the paint by 219,737 columns). The record repeats no water number: the surface is whatever that landmark says.",
+  "place": {
+    "name": "the Drowned Quarry",
+    "name_why": "the lake's own history, as the owner asked for it: Lake Tilpey is the glacier's meltwater basin and its east shore is a stone wall (heightmap: ground y58 to y75 over 12 blocks at x6386-6398, z4104-4112). The fiction is a quarry that cut into that wall before the water came up: a paved haul road across the bed, a timbered haulage adit through the rock, a pillar-and-room hall where the stone was won, a crane with its last block still on the chain, and a sump pit at the far end where the water now pools deepest. The water took the quarry and the lake's oldest Gyarados took the sump. This is the Ursaluna den's idea (a creature, a place that suits it) in the opposite medium: that den is a dry bear's cave in a hill, this is a flooded working in a wall.",
+    "cell": "E7",
+    "cell_note": "a planning label only (CLAUDE.md), read from data/cells.json: E7 is x 6144-7167, z 4096-5119, and every block this build writes (x6330-6550, z4098-4160) is inside it; the lake itself is mostly D6 and D7 to the north"
+  },
+  "geometry": {
+    "margin": 4,
+    "margin_why": "the legendary chambers' shell_margin (data/legendaries.json defaults, WATER_BUILD_PLAN 4.5 audit 1): at least 4 blocks of rock round every void past the portal, guaranteed by construction because the shell is filled solid before the void is cut and flooded.",
+    "keep_natural_top": 2,
+    "keep_natural_top_why": "the shell never writes the top two blocks of any column (the bed's skin under water, the hill's grass above it), so no surface is raised or re-skinned: the Ursaluna den's rule.",
+    "floor_y": 52,
+    "floor_y_why": "tools/ground.py reads y51-y53 along the road's first 30 blocks (x6340-6372, z4108), so a floor block at y52 is the bed or one above it. It is the lake's own foot, 25 blocks below the top water block y77 (water_body level_y), and the road keeps this one level to the sump so nothing is climbed.",
+    "road": {
+      "points": [
+        [
+          6340,
+          4108
+        ],
+        [
+          6430,
+          4108
+        ],
+        [
+          6430,
+          4132
+        ],
+        [
+          6488,
+          4132
+        ]
+      ],
+      "half_width": 3,
+      "height": 6,
+      "portal_x": 6392,
+      "why": "an axis-aligned polyline with square corners, a cut working's plan and not a wandering natural tunnel: 90 blocks east across the open bed and into the wall, 24 south, 58 east into the hall. 7 wide and 6 high at every point (floor_y+1 to floor_y+6): wide enough to swim two abreast, low enough to read as hand-cut. portal_x is the first column along the first run whose roof is rock (ground at least margin+1 over the roof across the whole width, tools/drowned_quarry.py --report); west of it the road is the open cutting, a trench the wall deepens round until it closes.",
+      "open_cut_until_x": 6392
+    },
+    "hall": {
+      "x": [
+        6488,
+        6540
+      ],
+      "z": [
+        4114,
+        4150
+      ],
+      "height": 16,
+      "pillars": {
+        "xs": [
+          6500,
+          6512
+        ],
+        "zs": [
+          4122,
+          4142
+        ],
+        "half": 1
+      },
+      "why": "a pillar-and-room hall 53 long, 37 wide and 16 high (y53-y68), the shape a quarry is left in: two rows of 3 by 3 stone pillars (4 of them) left standing to hold the roof, a nave 12 wide down its middle. It is sized from the model, not guessed: the Gyarados' model is 4.1 by 11.0 by 3.2 blocks as built (cube bounds, tools/drowned_quarry.py 'model'), 8.3 by 22.0 by 6.4 at scale 2, so the hall's 16 over the floor and the sump's 6 below it make the 22 the serpent needs, and the nave is wider than the 8.3 it needs. The pit is at the east end, past the pillars. Under 25 or more blocks of hill (audit: cover)."
+    },
+    "pit": {
+      "centre": [
+        6528,
+        4132
+      ],
+      "radius": 8,
+      "depth": 6,
+      "floor_block": "minecraft:gravel",
+      "why": "the sump: a round pit 17 across sunk 6 below the floor (y47-y52 void, gravel floor at y46) where the working's water gathered and where the Gyarados lies. Round, because everything else here is square and a lair should read as the one place that was not cut."
+    },
+    "blocks": {
+      "shell": "minecraft:stone",
+      "floor": "minecraft:stone_bricks",
+      "floor_wear": [
+        "minecraft:mossy_stone_bricks",
+        "minecraft:cracked_stone_bricks"
+      ],
+      "floor_wear_share": [
+        0.15,
+        0.05
+      ],
+      "pillar": "minecraft:stone_bricks",
+      "timber": "minecraft:spruce_log",
+      "post": [
+        "minecraft:stone_bricks",
+        "minecraft:stone_brick_wall[waterlogged=true]",
+        "minecraft:stone_brick_wall[waterlogged=true]",
+        "minecraft:lantern[hanging=false,waterlogged=true]"
+      ],
+      "light_hung": "minecraft:lantern[hanging=true,waterlogged=true]",
+      "bones": "minecraft:bone_block[axis=y]",
+      "chain": "minecraft:chain[axis=y,waterlogged=true]"
+    },
+    "blocks_why": "vanilla only. None of these is a spawn-conditioning block in data/spawn_blocks.json (the audit checks every block this pack writes against it: rail, sand, seagrass, coral, iron_block, cobweb and amethyst are in it, and none is used), so the place adds no pack spawns. Lanterns, never light blocks (STATE 'Places are lit as towns'); every non-full block is written waterlogged.",
+    "frames": {
+      "every": 8,
+      "from_portal": 4,
+      "stop_before_corner": 4,
+      "why": "a timber set (two spruce posts and a cap beam) every 8 blocks along each straight run of the adit from 4 inside the portal, skipping the 4 blocks either side of a corner, with a lantern hung under the beam: the lighting and the 'someone worked here' read in one object."
+    },
+    "road_posts": {
+      "every": 12,
+      "from_x": 6344,
+      "until_x": 6380,
+      "offset": 4,
+      "why": "the lure: a lantern on a stone-brick post each side of the open road, 4 off its centre, every 12 blocks from x6344 to x6380. Under 25 blocks of lake the first of them is the thing a diver sees from the shelf: the nearest column where the lake is only a block deep is 61 blocks from the first post (measured on the heightmap, ground y76 and painted): a line of lights going into the dark."
+    },
+    "hall_lanterns": {
+      "xs": [
+        6494,
+        6506,
+        6518,
+        6532
+      ],
+      "zs": [
+        4118,
+        4132,
+        4146
+      ],
+      "why": "hung from the roof (y68) on a 12 by 14 grid: twelve over the hall, none over a pillar (the generator drops any that would be)."
+    },
+    "dressing": {
+      "crane": {
+        "mast": [
+          6492,
+          4120
+        ],
+        "mast_height": 10,
+        "boom_len": 5,
+        "chain_drop": 5,
+        "block": "minecraft:stone_bricks",
+        "why": "the quarry's crane: a spruce mast against the hall's west end, a boom over the floor and a chain with the last cut block still hanging from it, the one that was never set down."
+      },
+      "stacks": [
+        [
+          6496,
+          4146
+        ],
+        [
+          6537,
+          4118
+        ],
+        [
+          6537,
+          4147
+        ]
+      ],
+      "stacks_why": "three 2 by 2 by 2 stacks of cut stone_bricks left against the walls, never hauled out.",
+      "bones": [
+        [
+          -6,
+          2,
+          1
+        ],
+        [
+          -5,
+          -4,
+          2
+        ],
+        [
+          3,
+          6,
+          1
+        ],
+        [
+          5,
+          -5,
+          1
+        ],
+        [
+          -2,
+          -7,
+          2
+        ],
+        [
+          6,
+          1,
+          1
+        ]
+      ],
+      "bones_why": "bone blocks on the sump's floor ([dx, dz, height] from the pit's centre): what the lake's biggest Gyarados has eaten. The one hint of the creature's habits.",
+      "wreck": [
+        [
+          6516,
+          53,
+          4128,
+          "minecraft:spruce_planks"
+        ],
+        [
+          6517,
+          53,
+          4128,
+          "minecraft:stripped_spruce_log[axis=x]"
+        ],
+        [
+          6518,
+          53,
+          4129,
+          "minecraft:spruce_planks"
+        ],
+        [
+          6515,
+          53,
+          4136,
+          "minecraft:stripped_spruce_log[axis=z]"
+        ],
+        [
+          6516,
+          54,
+          4128,
+          "minecraft:spruce_slab[type=bottom,waterlogged=true]"
+        ]
+      ],
+      "wreck_why": "a skiff's ribs and planks on the floor in front of the sump: the lake's skiffs (data/lake_life.json) have a reason to be missing."
+    }
+  },
+  "monster": {
+    "species": "gyarados",
+    "species_why": "weighed against Milotic, Lapras, Wailord, Dracovish, Basculegion, Kingdra and Barraskewda (docs/world-building/DROWNED_QUARRY.md section 2). Gyarados: the lake monster every player already knows (the Lake of Rage's), serpentine so a serpent's hall suits it, and a species the lake already spawns (the sub-region tilpey_waters lists it, data/spawns.json), so the boss is the old one and the ordinary ones are its young, not a stranger. The Cobblemon 1.8.0 jar has its model and a poser with an underwater SLEEP pose (water-sleep, battle-water-sleep) and its hitbox is 2.0 by 3.3 (data/cobblemon/species/generation1/gyarados.json). It is NOT in data/water_mounts.json's Dive list (it is a Surf species), so the lair does not hand a Dive mount to the player who beats it.",
+    "level": 60,
+    "level_why": "the cap at the gate. data/legendaries.json level_caps.upper_bound_by_badges: 6 badges 50, 7 badges 55, 8 badges 60, and data/level_cap.json blocks every ball for a Pokemon strictly over the thrower's cap. So 60 is caught by a thrower with eight badges and by nobody with seven: the gate is the level cap alone, no hook of this pack's. It is 10 over a six-badge thrower's cap (the badge Dive is taught after, DEATH_AND_WIPE.md line 318) and 12 over the top of the lake's own band (tilpey_waters 38-48, tier 7).",
+    "catch_gate": "gym8_cleared",
+    "catch_gate_why": "stated, not enforced by this pack: eight badges is the first state in which the thrower's cap (upper bound 60) is not below the level. The same unproven chain as every legendary at its gate (STATE 'The level-cap trap'): no throw has been seen. Wild Pokemon above the cap are welcome where they make a place, in balance (STATE, the owner 2026-10-02): this is the place's one focal point, and nothing else of the lake changes.",
+    "scale_modifier": 2.0,
+    "scale_why": "'large' is the scale_modifier property (the Ursaluna's, data/ursaluna_cave.json ursaluna.scale_why: PokemonProperties parses scale_modifier=, read from the 1.8.0 jar). NEEDS AN IN-GAME CHECK that the summoned one is twice normal size.",
+    "spot": [
+      6528.5,
+      47,
+      4132.5
+    ],
+    "spot_why": "the sump's centre, one above its floor (y46): inside the round pit, 40 blocks past the hall's west face and 16 past its last pillar.",
+    "yaw": 90.0,
+    "yaw_why": "Minecraft yaw 90 faces -x: toward the hall and the door, so a diver coming in sees its head first.",
+    "spawn_properties": [
+      "no_ai"
+    ],
+    "tag": "cobblers.dq",
+    "dormant_tag": "cobblers.dq_dormant",
+    "guardian_tag": "cobblers.guardian",
+    "dormant_nbt": {
+      "Unbattleable": "1b",
+      "NoAI": "1b",
+      "NoGravity": "1b",
+      "PoseType": "\"SLEEP\"",
+      "RecalculatePose": "0b",
+      "HideLabel": "1b",
+      "PersistenceRequired": "1b",
+      "Invulnerable": "1b",
+      "Silent": "1b"
+    },
+    "awake_nbt": {
+      "Unbattleable": "0b",
+      "RecalculatePose": "1b",
+      "HideLabel": "0b",
+      "Silent": "0b"
+    },
+    "nbt_why": "the sleeping Celebi's and the Ursaluna's dormant flags (data/ursaluna_cave.json ursaluna.nbt, each proved to hold across a restart for the Celebi, EXP-023) and their wake merge: Unbattleable 0b and RecalculatePose 1b, never a guessed PoseType (only \"SLEEP\" is proven). NoAI and NoGravity STAY on awake: the serpent holds its sump and the fight comes to it. UNPROVEN, and the first question of the experiment: that Unbattleable 0b on a live entity lets a battle start, and that a NoAI Pokemon can be battled under water.",
+    "trigger_radius": 24,
+    "trigger_why": "measured from the spot. The hall's west face is 40 blocks from it, so the road, the portal and the hall's door never wake it; it wakes once a player is past the second pillar row (x6512, 16 away) and the sump is in front of them. Nothing outside the cave is within 24 of it (audit: wake).",
+    "keeper": {
+      "period_ticks": 40,
+      "spawn_radius": 96,
+      "spawn_clear": 48,
+      "settle_radius": 64,
+      "cooldown_ticks": 72000,
+      "absent_passes": 2,
+      "guardian_search_radius": 48,
+      "home_tolerance": 1.0
+    },
+    "keeper_why": "guardian_search_radius 48 is the blackout guardian leash (data/blackout.json claims.guardian_leash 24, to the claim site) plus the trigger radius 24: a guardian REBUILT by the blackout does not carry our tag and is found by tag, species and this distance. The Ursaluna den's boss rules (the owner, 2026-10-02: 'Den boss: returns after it is beaten, no badge to wake it, catchable only late. A boss that stays dead is an event; one that returns is a place.') on the residents' cleaner state machine (tools/resident_encounters.py: a dormant TAG instead of a score, the blackout guardian left alone). cooldown_ticks 72000 is one hour of game time, the den's. It returns only with nobody within spawn_clear (48) and a player within spawn_radius (96), absent on two loaded passes first (entities load a moment after their chunk), and an awake one nobody is within settle_radius (64) of lies down again on its spot. A beaten, a caught and a killed Pokemon are all one thing here: absent. The den's battle_fainted and pokemon_captured callbacks only start the clock 80 ticks sooner; this pack has none.",
+    "message": "The water in the hall goes still. Something at the sump uncoils and turns its head.",
+    "sound": "minecraft:entity.guardian.ambient_land",
+    "blackout": "a wild victor to the blackout system (data/blackout.json claims): it makes the item claim and becomes that claim's guardian (tag cobblers.guardian); from then on this pack never touches it (no hold, wake, settle, tp, merge or kill) and still counts it as present, as tools/resident_encounters.py does. It is NOT exempt like the gulch Megas (cobblers.gm)."
+  },
+  "gate": {
+    "dive_tag": "cobblers.dive",
+    "dive_flag": "gym6_cleared",
+    "dive_flag_source": "docs/mechanics/DEATH_AND_WIPE.md line 318: 'after gym6_cleared, Sabrina directs the player to a glacial survey [diver]'; tools/blackout_pack.py water/grant_dive adds the tag. The NPC that grants it was not read for this unit.",
+    "numbers": {
+      "swim_blocks_per_s": 5.0,
+      "swim_source": "docs/mechanics/WATER_MAP.md 'Measured (EXP-042 session 3)': a sprint-swim is 5 blocks per second, down 5.0 and up 4.9",
+      "dive_blocks_per_s": 10.0,
+      "dive_source": "docs/STATE.md death-and-water line (EXP-042): 'Dive adds a swim boost, about 10 blocks per second'",
+      "no_mount_air_s": 15,
+      "no_mount_source": "docs/mechanics/WATER_MAP.md rung table: 'vanilla 15 s, then one hit to half health and a lethal second hit a second later'; surface fatigue (data/blackout.json surface) knocks out at 18 s in deep water",
+      "surf_air_s": 60,
+      "surf_source": "data/blackout.json water.surf_bonus_ticks 900 (45 s) plus the vanilla 15 s, about 61 s (WATER_MAP.md rung table)",
+      "dive_air": "held flat: 'Dive (a Wailmer) held air flat for over two minutes' (STATE, EXP-042)"
+    },
+    "why": "Tilpey is 25 deep at this foot, so depth alone cannot gate it: a swimmer with no training can touch the floor and come back (WATER_MAP.md line 32: 'Tilpey (25)... a no-mount player can touch the floor and come back. They cannot search it'). The gate is therefore the length of the flooded way. The audit measures it through the replayed water (26-neighbour Dijkstra, from the lake's top water voxel over any painted column of the corridor, because a swimmer breathes at the surface wherever it is): the portal is 24 blocks from the nearest surface (a no-mount swimmer can touch it and return in 9.6 s), the hall's door 137 and the Gyarados 180. At the measured 5 blocks per second a no-mount swimmer is out of air 12 s before the hall's door; a Surf swimmer (60 s) can reach the door and return with 5 s to spare, but reaches the Gyarados with 24 s of air and needs 36 s to leave, so it cannot fight; only Dive's flat air (18 s each way at 10 blocks per second) lets a player spend a battle there. The numbers are re-measured by tools/drowned_quarry_audit.py on every run and the audit fails if a no-mount swimmer can reach the door or a Surf swimmer can go to the Gyarados and back."
+  },
+  "probes": {
+    "why": "data/world_probes.json 'drowned_quarry', written by `python tools/drowned_quarry.py probes --write`: a block in each part of the build and the Gyarados itself (the presence audit holds the chunk and counts the tagged entity)."
+  },
+  "step": {
+    "id": "R18DQ",
+    "after": "R9LL",
+    "after_why": "R9LL is the lake skin: it plants and lays the bed's top blocks, and the open cutting rewrites those columns. This step comes after every lake pack so nothing re-skins the cut."
+  }
+}
