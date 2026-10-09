@@ -12,7 +12,7 @@
    116,
    6404
   ],
-  "seat_why": "on the muster hall's axis (x3565, the middle of x3558..3572) in the dais top at y116 (floor y112 + 4), two in from the dais face and one from the back wall's course. THE ONE SOURCE of Giovanni's seat (tools/gym_arenas.py leader_seats)."
+  "seat_why": "on the muster hall's axis (x3565, the middle of x3558..3572) in the dais top at y116 (floor y112 + 4), two in from the dais face and two from its back row. THE ONE SOURCE of Giovanni's seat (tools/gym_arenas.py leader_seats)."
  },
  "spawn_free_zone": "gym_giovanni",
  "floor_y": 112,
@@ -114,7 +114,7 @@
    113,
    6424
   ],
-  "why": "street is the cell just off the lot at the yard's gate (ground y110 at x3589, z6404, tools/ground.py rounded: two under the pad, one sill stair up in the gate). entry.floor is the muster hall's first cell inside the blast door: 21 from Giovanni, farther than rctmod's forceBattleMaxDistance + 1 = 17, so the player stands on the floor before he can call the fight."
+  "why": "street is the cell just off the lot at the yard's gate (ground y110 at x3589, z6404, tools/ground.py rounded: two under the pad, one sill block and one stair up in the gate). entry.floor is the muster hall's first cell inside the blast door: 21.6 (3D) from Giovanni, farther than rctmod's forceBattleMaxDistance + 1 = 17, so the player stands on the floor before he can call the fight."
  },
  "exit": {
   "door": [
@@ -331,7 +331,7 @@
    111,
    6422
   ],
-  "why": "Cobblemon Battle Positions: the Pokemon blocks sit one under the floor's top course (spawnHeightOffset 2.0 stands each Pokemon ON the floor), the trainer stand under the dais top one in front of the seat. Rhyperior's model sweeps 3.45 (clear height 3.78); Giovanni's Pokemon stands 8 in front of the dais face, the two Pokemon 5 apart (Hippowdon's hitbox is 2.2 wide), the challenger's Pokemon 16 from the dais face, and the challenger stands 3 behind it."
+  "why": "Cobblemon Battle Positions: the Pokemon blocks sit one under the floor's top course (spawnHeightOffset 2.0 stands each Pokemon ON the floor), the trainer stand under the dais top one in front of the seat. Rhyperior's model sweeps 3.45 (clear height 3.78); Giovanni's Pokemon stands 8 in front of the dais face, the two Pokemon 5 apart (Hippowdon's hitbox is 2.2 wide), the challenger's Pokemon 13 from the dais face, and the challenger stands 3 behind it."
  },
  "palette": {
   "floor": "minecraft:deepslate_tiles",

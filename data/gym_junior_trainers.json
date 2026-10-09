@@ -105,6 +105,6 @@
      "room": "the_heading", "why": "re-seated 2026-10-09: in the middle of the shored east heading, three wide, facing back up it toward the drift: every walk to the stairs and the sally goes by him"},
     {"id": "gym8_junior_04", "name": "Wall Captain", "gym": "gym8", "seat": [3585, 113, 6424], "yaw": 180,
      "skin": "rctmod:textures/trainers/single/ace_trainer_garrett_034c.png", "eye_contact": true, "sight_distance": 3.0,
-     "room": "the_sally", "why": "re-seated 2026-10-09: in the sally's first bay, where the heading's stairs bring the walk up out of the works, facing the stairs; the last guard, 20 from Giovanni and a wall and a bulkhead away, so no fight with him starts from here"}
+     "room": "the_sally", "why": "re-seated 2026-10-09: in the sally's first bay, where the heading's stairs bring the walk up out of the works, facing the stairs; the last guard, 28 from Giovanni (measured) and a wall and a bulkhead away, so no fight with him starts from here"}
   ]
 }
