@@ -159,6 +159,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-04: the far south's five places (tools/far_south.py, data/far_south.json) in rows F-H, built
                 # by R9FS; three named Pokemon on the residents' keeper, so world-local below; R18FS after R18NR
                 "cobblers_far_south",
+                # 2026-10-09: Hummock Mere, the swamp monster's drowned grove on the Marshy Marsh's east shore
+                # (tools/hummock_mere.py, data/hummock_mere.json), built by R9HM; one named Pokemon on the residents'
+                # keeper, so world-local below; summoned by R18HM after R18FS
+                "cobblers_hummock_mere",
                 # 2026-10-04: the jungle's three lost temples on the Long Isle's south (tools/jungle_temples.py,
                 # data/jungle_temples.json), built by R9JT; no load or tick and no Pokemon, so not world-local
                 "cobblers_jungle_temples",
@@ -438,6 +442,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_northern_residents",
                # 2026-10-04: the far south's keeper spawns its three Pokemon the same way
                "cobblers_far_south",
+               # 2026-10-09: Hummock Mere's keeper spawns its one Pokemon the same way
+               "cobblers_hummock_mere",
                # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
                # global folder would run it in the live world too
                "cobblers_arena",
@@ -847,6 +853,10 @@ def prepare_jobs(a):
     # rule, the species' climate, the caches' rewards pack, the gym 7 gate, the steps and this wiring
     add("far_south", "far_south.py", *src)
     add("far_south_audit", "far_south_audit.py", *src)
+    # Hummock Mere (2026-10-09): the generator fails closed on its siting rules and a record the heightmap disagrees
+    # with; then its independent audit (tools/hummock_mere_audit.py), which replays the pack it reads
+    add("hummock_mere", "hummock_mere.py", *src)
+    add("hummock_mere_audit", "hummock_mere_audit.py", *src)
     # the jungle's lost temples (2026-10-04): the generator fails closed on its own siting rules (long_isle_south, the
     # keep-clear list, the authored clearance, spawn blocks) and on a record the heightmap disagrees with; then its
     # independent audit (tools/jungle_temples_audit.py, another agent's), after the pack it reads: the pack replayed
@@ -1983,6 +1993,11 @@ def steps(with_spawns=False):
     import far_south
     out.append(("R9FS", "the far south's places: kraal, chimneys, glass garden, glyph ring, folly (data/far_south.json)",
                 far_south.placement_steps()))
+    # Hummock Mere (2026-10-09, tools/hummock_mere.py): the drowned grove and the roadside warning, each held in a
+    # forceload of its box, before R9E (none sits on a Habitat Block); its resident stands on the island (R18HM)
+    import hummock_mere
+    out.append(("R9HM", "Hummock Mere: the drowned grove, the island and the Route 6 warning (data/hummock_mere.json)",
+                hummock_mere.placement_steps()))
     # the jungle's lost temples (2026-10-04, tools/jungle_temples.py): the same pure block pass per temple, held in a
     # forceload of its box, before R9E (none sits on a Habitat Block); the caches' barrels are written here
     import jungle_temples
@@ -2263,6 +2278,11 @@ def steps(with_spawns=False):
     import far_south
     out.append(("R18FS", "the far south's residents: the ungated Pokemon (data/far_south.json)",
                 far_south.entity_steps()))
+    # Hummock Mere (2026-10-09): its one Pokemon is UNGATED, so unlike the far south's this step summons it (guarded on
+    # tag AND species) and binds it, inside a forceload of the grove's box. After R18FS
+    import hummock_mere
+    out.append(("R18HM", "Hummock Mere's resident, the Hummock (data/hummock_mere.json)",
+                hummock_mere.entity_steps()))
     # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",

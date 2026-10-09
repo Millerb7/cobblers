@@ -1,0 +1,198 @@
+{
+  "schema": "cobblers.hummock-mere/1",
+  "status": "built 2026-10-09 by tools/hummock_mere.py into build/datapacks/cobblers_hummock_mere (re-application steps R9HM, before R9E; R18HM, after R18FS); NOT applied to any world and nothing here has been seen in game. The resident, its size, its wake and its catch refusal are the proven residents' keeper and the level-cap refusal; the one unproven thing is how the creature LOOKS at scale_modifier 2.2 on a mud mound.",
+  "request": "the owner, 2026-10-09: \"a large swamp monster in a den\", on the model of the Ursaluna den: a creature, a place that suits it, strong enough that meeting it early is a mistake. The model is the Ursaluna den's MECHANISM (a named resident, a level well over the place's cap, a catch gate, the size property), not its form: this is not a strong thing in a cave.",
+  "generated_by": "hand (the design), tools/hummock_mere.py (the build, every Y from tools/ground.py); the independent audit is tools/hummock_mere_audit.py",
+  "measured_by": "2026-10-09 from tools/ground.py and tools/water_mask.py (via resident_encounters.Wet): the site is a flooded flat on the Marshy Marsh's east shore. The lake level is y100 over the whole flat; the bed is y99 (water 1 deep) across the shallows and falls to y96-98 in a pool 25 blocks west of the centre; the spit east of x5268 is dry at exactly y100. Every number in this file that is not a design choice is re-derived by the generator or the audit on every run and the generator refuses a record that disagrees.",
+  "creature_choice": {
+    "species": "cobblemon:clodsire",
+    "why": "Poison/Ground, the Paldean Wooper's last form: 130 HP, 100 Sp.Def and Toxic Spikes make a long fight, not a fast one, and it is the biggest mud-bound body in the species list that the campaign has not used. data/spawns.json names it nowhere, so this resident is the only Clodsire a player can meet, and catching it is the only way to own one. Swampert is already the Marshy Marsh heart's 'presence' roll (data/encounter_design.json) and Toxicroak its common one, so neither could be a named find; Goodra and Dhelmise are spawned elsewhere. In Cobblemon 1.8.0: species data/cobblemon/species/generation9/clodsire.json, model assets/cobblemon/bedrock/pokemon/models/0980_clodsire/clodsire.geo.json (read from the jar: cubes span 1.88 x 1.75 x 2.88 blocks, species baseScale 1.15, hitbox 1.4 x 1.0), swims and breathes underwater.",
+    "assumed": "that the rendered model scales with baseScale x scale_modifier as the hitbox does (the Ursaluna den's own assumption, data/ursaluna_cave.json model.assumed). At 2.2 it is about 4.7 x 4.4 x 7.3 blocks by that arithmetic. Whether it looks right on its mound is the owner's eye."
+  },
+  "rules": {
+    "authored_clearance": 96,
+    "authored_clearance_why": "tools/northern_residents.py's rule: every written column, clear, anchor and sign at least 96 blocks from every x/z authored in any other data/*.json (a point scan like theirs, see authored_points) and from every route corridor box in data/routes.json (a FILLED rectangle each). The one exception is the Marshy Marsh's own outline: landmarks.json's record `marshy_marsh` carries the lake's rim as polygon vertices, and a nest ON the lake's shore is by definition near them. skip_records names it and nothing else.",
+    "skip_records": ["marshy_marsh"],
+    "town_clearance": 200,
+    "town_clearance_why": "the owner, 2026-10-09: at least 200 blocks from any town. Measured against every towns.json footprint box, not its centre",
+    "path_clearance": 128,
+    "path_clearance_why": "data/encounter_design.json rules.hearts.clear_of_path_blocks, tests/test_resident_siting.py's rule for a named resident; the owner's 'off the critical path'. Applied to the site centre, the anchor and every written column of the nest itself (the roadside sign is the one placement that is on a route by design)",
+    "level_over_cap_min": 10,
+    "level_over_cap_why": "the owner: 'well above the local cap'. The place's tier cap (data/encounter_design.json rules.tiers[tier].cap) is what a player arrives holding; the nest's level is at least this many levels over it. Over the place's CEILING (rules.hearts.next_cap) on purpose, like Split-Bark (tests/test_resident_siting.py CEILING_PENDING); this file declares it as a decision instead of an xfail, and the audit holds the numbers",
+    "headroom_blocks": 6,
+    "headroom_why": "air over the creature's standing spot, anchor feet to feet+5. The model is 1.75 x baseScale 1.15 x scale_modifier 2.2 = 4.4 blocks tall (assumed, creature_choice.assumed), rounded up with a block to spare. The grove's lowest leaf must clear it over the whole mound",
+    "flood_rule": "no clear in this pack starts at or under the lake level: #minecraft:replaceable holds water, so a clear over a wet column below the surface would drain the lake (tools/northern_residents.py piece_clearing). Every clear box starts at lake level + 1, and the audit re-reads every fill",
+    "spawn_rule": "no block of data/spawn_blocks.json is written, so no spawn table changes: no water, lily pad, sugar cane, seagrass, mangrove propagule or oak leaves. Water in the mere is the lake's own. Roots are waterlogged where they stand under the surface (the block id is mangrove_roots, not water)"
+  },
+  "build": {
+    "namespace": "cobblers",
+    "folder": "hummock_mere",
+    "pack": "cobblers_hummock_mere",
+    "steps": {"blocks": "R9HM", "entities": "R18HM"},
+    "tag": "cobblers.res",
+    "dormant_tag": "cobblers.res_dormant",
+    "guardian_tag": "cobblers.guardian",
+    "objective": "cobblers.hmere",
+    "respawn_ticks": 36000,
+    "keeper": {
+      "period_ticks": 40,
+      "spawn_radius": 96,
+      "spawn_clear": 48,
+      "settle_margin": 16,
+      "home_tolerance": 1.0,
+      "guardian_search_margin": 8
+    },
+    "keeper_why": "the northern and far-south residents' numbers and tools/resident_encounters.py resident_files() itself, called not copied: the same keep/hold/wake/settle/spawn/bind functions, the same 30-minute respawn clock, the same blackout decision (a resident that wins becomes the claim's guardian and is never touched again). The Ursaluna den's boss wake (EXP-053) is NOT used: that wake clears Unbattleable on a live entity and is unproven. This wake only clears NoAI, which the gulch Megas and Codex's residents already run."
+  },
+  "blocks": {
+    "rule": "vanilla 1.21.1 only, none a spawn condition in data/spawn_blocks.json (the generator refuses one), no concrete (contract C4), no water or lava, no chests, no beds",
+    "ids": [
+      "minecraft:air",
+      "minecraft:mud",
+      "minecraft:moss_block",
+      "minecraft:mangrove_roots",
+      "minecraft:mangrove_log",
+      "minecraft:mangrove_leaves",
+      "minecraft:vine",
+      "minecraft:verdant_froglight",
+      "minecraft:mangrove_sign",
+      "minecraft:mangrove_planks",
+      "minecraft:mangrove_slab",
+      "minecraft:mangrove_stairs",
+      "minecraft:stripped_mangrove_log",
+      "minecraft:bone_block"
+    ]
+  },
+  "residents": [
+    {
+      "id": "hummock_mere",
+      "name": "Hummock Mere",
+      "kind": "a drowned grove: a ring of mangroves standing in the lake's shallows round a mud island, the island a sleeping beast",
+      "cell": "B6",
+      "subregion": "marshy_marsh",
+      "situation": "On the Marshy Marsh's east shore the lake spreads over a flat a block deep and more than a hundred wide. Thirteen blocks from its middle eight mangroves stand in a ring, leaning in, their crowns meeting over a round mud island that the flat has no reason to have. The island is the Hummock, a Clodsire the size of a cart, asleep with its back out of the water. A green glow hangs under the crowns. A furrow of dark mud runs from the dry spit to its foot where something heavy was dragged in, and a punt rots on the spit with one sign beside it: the last person to pole out here.",
+      "site": {
+        "centre": [5240, 1924],
+        "water_level": 100,
+        "why": "(5240, 1924) is the middle of the flooded flat's east edge: measured, the lake's level is y100 and the bed y99 (1 deep) across the flat, the bed falls to y96-98 in the pool 25 blocks west, and the dry spit begins at x5268 (y100 exactly). A flat that is the lake's own water, not a basin the build digs, is why the build places no water. the nearest route path is 766 away and the nearest town footprint 617 (tools/hummock_mere_audit.py, over every written column): the generator and the audit hold both."
+      },
+      "pieces": [
+        {
+          "kind": "bed_strip",
+          "name": "the furrow",
+          "segments": [[[34, 0], [6, 0]]],
+          "half_width": 1,
+          "palette": [["minecraft:mud", 1]],
+          "why": "the bed (or the spit's grass) replaced with mud along the line something heavy was dragged from the spit to the island: three wide, the ground's own top block, so no height changes. It is the way in: the shallows along it are 1 deep, wading not swimming (the audit re-reads the depths)."
+        },
+        {
+          "kind": "mound",
+          "name": "the hummock",
+          "at": [0, 0],
+          "radius": 5.5,
+          "profile": [[2.5, 2], [4.5, 1], [5.5, 0]],
+          "palette": [["minecraft:mud", 5], ["minecraft:moss_block", 2]],
+          "why": "the creature's island: mud from the bed up to lake level + 2 on the crest (d <= 2.5), + 1 on the shoulder (d <= 4.5) and flush with the surface at the rim (d <= 5.5). Crest 11 across, big enough that a 7-block body lies on it with a metre to spare. Its top block is mud with moss patches, so the island reads as a bank the lake left, not a build."
+        },
+        {
+          "kind": "mangrove",
+          "name": "the drowned grove",
+          "trees": [
+            {"bearing": 20, "r": 13},
+            {"bearing": 58, "r": 15},
+            {"bearing": 122, "r": 15},
+            {"bearing": 160, "r": 13},
+            {"bearing": 200, "r": 13},
+            {"bearing": 240, "r": 13},
+            {"bearing": 280, "r": 13},
+            {"bearing": 320, "r": 13}
+          ],
+          "height": 9,
+          "lean": 0.3,
+          "arms": 5,
+          "arm_len": 4,
+          "crown": {"r": 3.6, "ry": 2.4, "in": 3, "up": 2},
+          "light": "minecraft:verdant_froglight",
+          "why": "eight mangroves on a ring of radius 13 (two flank trees at 15, the gap between them facing east is the way in, 15 blocks wide at its narrowest). Each is a trunk of mangrove log from the bed to lake level + 9, leaning 0.3 of a block inward per block up (about 2 blocks at the crown), standing on five prop roots that arc out and down to the bed (waterlogged below the surface, so no water block is written), with a leaf crown 7 across (persistent, so it never decays) whose lowest centre block is a verdant froglight: eight green lights under the canopy. Vines hang on the trunks' inward faces. The crowns close over the island with a hole in the middle; the lowest leaf is above the creature's headroom (rules.headroom_blocks)."
+        },
+        {
+          "kind": "ground_blocks",
+          "name": "the punt",
+          "at": [30, 6],
+          "blocks": [
+            [0, 0, 0, "minecraft:mangrove_planks"],
+            [1, 0, 0, "minecraft:mangrove_planks"],
+            [2, 0, 0, "minecraft:mangrove_planks"],
+            [3, 0, 0, "minecraft:mangrove_planks"],
+            [0, 1, 0, "minecraft:mangrove_stairs[facing=east,half=bottom]"],
+            [4, 0, 0, "minecraft:mangrove_slab[type=bottom]"],
+            [0, 0, 1, "minecraft:mangrove_planks"],
+            [1, 0, 1, "minecraft:mangrove_slab[type=bottom]"],
+            [3, 0, 1, "minecraft:mangrove_planks"],
+            [1, 1, -1, "minecraft:stripped_mangrove_log[axis=x]"],
+            [2, 1, -1, "minecraft:stripped_mangrove_log[axis=x]"],
+            [-2, 0, 0, "minecraft:bone_block[axis=x]"],
+            [-3, 0, 1, "minecraft:bone_block[axis=z]"]
+          ],
+          "why": "a flat-bottomed punt half sunk in the spit's mud, bow up, with a pole (the stripped log) across it and two bone blocks where the last person's trail ends; all on dry spit columns (the generator refuses a wet one), each block on its own column's ground."
+        },
+        {
+          "kind": "signs",
+          "name": "the warning",
+          "signs": [
+            {"at": [34, 0], "wood": "mangrove", "rotation": 12, "lines": ["THE HUMMOCK", "Do not wade", "past this post.", "Turn back."]}
+          ],
+          "why": "one standing sign on the spit at the furrow's dry end, text facing east (rotation 12) at whoever comes across the spit. Lines at most 15 characters, four lines."
+        }
+      ],
+      "pokemon": {
+        "id": "the_hummock",
+        "name": "The Hummock",
+        "species": "cobblemon:clodsire",
+        "level": 52,
+        "scale_modifier": 2.2,
+        "at": [0, 0],
+        "anchor": [5240, 103, 1924],
+        "yaw": 90.0,
+        "trigger": 14,
+        "leash": 24,
+        "appears_after": null,
+        "gate": "gym7_cleared",
+        "intended_stage": "post_gym_7",
+        "catch_rule": "catchable_after_gate",
+        "message": "The mud island lifts. The Hummock turns its head, and the green light slides over its back.",
+        "sound": "minecraft:entity.frog.ambient",
+        "level_why": "the place is Marshy Marsh, tier 5 (data/encounter_design.json tables.marshy_marsh): cap 40, band 28-38, ceiling 45. A player reaches it holding 4 badges (RCT cap 40) or Koga's fifth (45). L52 is 12 over the cap a player arrives with: the whole point, meeting it early is a mistake. Its catch gate is the level-cap refusal (a catch above the thrower's cap is refused, data/level_cap.json): the cap is the gym ace levels [20, 25, 30, 35, 40, 45, 50, 55] (data/trainers.json generation_contract), so after gym 6 a player holds 50 and still cannot catch a 52, and after gym 7 holds 55 and can. The audit recomputes that from trainers.json.",
+        "trigger_why": "14: a wading player is in the grove's ring (radius 13) before it wakes, with the crowns overhead and the furrow under their feet; closer than the spit's sign, further than the island's rim. The leash of 24 keeps it in its own ring when awake: it can slip into the pool to the west (it swims) but not out of the grove",
+        "presence": "ungated: it is always there. A player who comes across the flat meets a L52 at cap 40. The warning sign is the only courtesy.",
+        "reward": "capture itself; no item (Codex's rule: no_loot_drops)",
+        "size_note": "scale_modifier is the Pokemon property the Ursaluna den already spawns with (tools/ursaluna_cave.py spawn_at); read from the 1.8.0 jar: PokemonProperties and its Companion carry the string scale_modifier. tools/size_outliers.py rolls any wild Pokemon without its marker once; a roll can overwrite this ScaleModifier (a 1-in-N chance the same for every named resident), which would shrink or grow it: not guarded here."
+      },
+      "records": {},
+      "bbox": [5220, 1904, 5275, 1944]
+    }
+  ],
+  "waysign": {
+    "id": "hummock_waysign",
+    "route": "route_06_koga_to_sabrina",
+    "after_town": "gym5_town",
+    "beyond_blocks": 80,
+    "side": "left",
+    "offset": 4,
+    "wood": "mangrove",
+    "lines": ["WARNING", "Something huge", "sleeps in the", "east mere."],
+    "why": "the rumour (the owner: 'a sightline or rumour that makes a player want to go'). The nest is 766 blocks from the nearest route path and nothing on a route sees it, so the lure is a sign on Route 6, 80 blocks outside Fenhide's footprint, on the traveller's LEFT (tools/signposts.py seats its posts on the right, 4 out), 4 blocks from the path, text facing the traveller leaving the town. It names no coordinates and no way: a warning is a dare. NOT audited against tools/signposts.py's own post positions (its plan needs build/paint, which a worktree has not): the left side and 80 blocks past the footprint are the clearance.",
+    "bbox": [4844, 2611, 4846, 2613]
+  },
+  "audit_checklist": [
+    "the block palette: every id in the pack is in blocks.ids; none is in data/spawn_blocks.json (water, lava, lily pad, sugar cane, seagrass, propagule, oak leaves); none is concrete; no water or lava is written",
+    "the flood rule: no fill ... air replace starts at or under the lake level (rules.flood_rule), on any column",
+    "the mound: for every column inside the radius the solid runs from the bed + 1 to the crest or shoulder or rim height the profile gives, recomputed from tools/ground.py and the profile, not from the pack",
+    "the creature's spot: feet one above the crest, six air blocks over it (rules.headroom_blocks), a 5 x 5 footprint of solid under it, no leaf lower than the headroom over the mound",
+    "the grove: each trunk is unbroken from the bed + 1 to lake level + 9; a froglight under every crown; the way in (bearing 58 to 122) has no trunk, leaf or root",
+    "the way in: the furrow is contiguous from the spit to the island's rim and the water along it is at most 1 deep at every column (tools/ground.py against the lake level), so the approach is wading",
+    "the resident: species, level 52, scale_modifier in the spawn, the guard on tag AND species, trigger < leash, level over the tier cap by at least 10, the catch gate = the first gym whose cap holds the level, its leash clear of every activated Habitat Block, 128+ from every route path, 200+ from every town footprint",
+    "the waysign: on the route's left, 4 blocks out, 80 blocks past the town's footprint, on a dry column, text at most 15 characters by 4 lines",
+    "the steps: R9HM holds the nest's box and runs the build; R18HM summons the resident under the summon guard; the pack is registered once in reapply.py and the probes name only blocks the pack writes"
+  ]
+}
