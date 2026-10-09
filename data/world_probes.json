@@ -3470,9 +3470,9 @@
       {
         "what": "the leader's spawner in the dais",
         "block": [
-          4311,
-          98,
-          1514,
+          4310,
+          112,
+          1474,
           "rctmod:trainer_spawner"
         ],
         "expect": true
@@ -3480,9 +3480,9 @@
       {
         "what": "its redstone",
         "block": [
-          4311,
-          97,
-          1514,
+          4310,
+          111,
+          1474,
           "minecraft:redstone_block"
         ],
         "expect": true
@@ -3490,9 +3490,9 @@
       {
         "what": "air over the seat",
         "block": [
-          4311,
-          99,
-          1514,
+          4310,
+          113,
+          1474,
           "minecraft:air"
         ],
         "expect": true
@@ -3500,9 +3500,9 @@
       {
         "what": "battle.trainer_pokemon",
         "block": [
-          4311,
-          93,
-          1505,
+          4310,
+          107,
+          1484,
           "cobblemonbattlepositions:trainer_pokemon_position"
         ],
         "expect": true
@@ -3510,9 +3510,9 @@
       {
         "what": "battle.player_pokemon",
         "block": [
-          4311,
-          93,
-          1500,
+          4310,
+          107,
+          1489,
           "cobblemonbattlepositions:player_pokemon_position"
         ],
         "expect": true
@@ -3520,9 +3520,9 @@
       {
         "what": "battle.trainer_stand",
         "block": [
-          4311,
-          97,
-          1513,
+          4310,
+          111,
+          1475,
           "cobblemonbattlepositions:trainer_stand_position"
         ],
         "expect": true
@@ -3530,29 +3530,29 @@
       {
         "what": "battle.player_stand",
         "block": [
-          4311,
-          93,
-          1497,
+          4310,
+          107,
+          1492,
           "cobblemonbattlepositions:player_stand_position"
         ],
         "expect": true
       },
       {
-        "what": "the floor's centre round of moss",
+        "what": "the court floor's central round of moss",
         "block": [
-          4311,
-          94,
-          1504,
+          4310,
+          108,
+          1487,
           "minecraft:moss_block"
         ],
         "expect": true
       },
       {
-        "what": "air in the ring",
+        "what": "air in the court over the floor",
         "block": [
-          4311,
-          100,
-          1502,
+          4310,
+          114,
+          1490,
           "minecraft:air"
         ],
         "expect": true
@@ -3560,42 +3560,92 @@
       {
         "what": "the bench's front rail",
         "block": [
-          4311,
-          98,
-          1512,
+          4310,
+          112,
+          1477,
           "minecraft:stripped_cherry_log"
         ],
         "expect": true
       },
       {
-        "what": "the stair's door",
+        "what": "the court's arch, open",
         "block": [
-          4311,
-          96,
-          1484,
+          4310,
+          115,
+          1501,
           "minecraft:air"
         ],
         "expect": true
       },
       {
-        "what": "the shell's south-east bottom corner",
+        "what": "the south door",
         "block": [
-          4332,
-          92,
-          1519,
-          "minecraft:packed_mud"
+          4310,
+          112,
+          1512,
+          "minecraft:air"
         ],
         "expect": true
       },
       {
-        "what": "the shell's north-west top corner",
+        "what": "the garden gate's iron door",
         "block": [
-          4290,
-          106,
-          1477,
-          "minecraft:packed_mud"
+          4332,
+          111,
+          1485,
+          "minecraft:iron_door"
         ],
         "expect": true
+      },
+      {
+        "what": "its button, inside",
+        "block": [
+          4331,
+          112,
+          1486,
+          "minecraft:stone_button"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the great cherry's trunk",
+        "block": [
+          4310,
+          118,
+          1505,
+          "minecraft:stripped_cherry_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old carved court, taken down",
+        "block": [
+          4310,
+          98,
+          1500,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old glasshouse's air above, cleared",
+        "block": [
+          4310,
+          130,
+          1490,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          4311,
+          98,
+          1514,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
       },
       {
         "what": "no spawner at the old seat",
