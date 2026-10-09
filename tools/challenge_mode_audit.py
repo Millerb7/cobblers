@@ -299,6 +299,11 @@ class Replay:
     def __init__(self, lines, level):
         self.level = level
         self.cells = {}
+        self.apply(lines)
+
+    def apply(self, lines):
+        """Run emitted fill/setblock text, in order, over what is already here (a later function over an earlier
+        one: the arena over the building, the seat move over both)."""
         for raw in lines:
             line = raw.strip()
             m = FILL.match(line)
@@ -341,6 +346,8 @@ class TemplateWorld:
     def __init__(self, size, cells, origin, rotation, level=None):
         self.cells = {rotate(c, origin, rotation): s for c, s in cells.items()}
         self.level = level
+
+    apply = Replay.apply   # the same emitted text, run over the placed template (Misty's arena and seat move)
 
     def at(self, c):
         st = self.cells.get(tuple(c))
@@ -762,22 +769,47 @@ class Artifacts:
         return files
 
     @functools.cached_property
+    def arenas(self):
+        """{leader id: [command lines]} the gym arenas' GENERATED functions as R16GA runs them, in order: the arena's
+        build function, then its seat move read as the world it leaves with nobody near (each `execute ... run`
+        line's command). Read back from the files tools/gym_arenas.py build_pack writes into a scratch pack, never
+        from the tool's own helpers (seat_lines, the Arena model), so the audit replays text, not the generator's
+        view of it. A leader with no arena record has no entry."""
+        import shutil
+        import tempfile
+        GA = self.mod("gym_arenas")
+        ground = self.mod("ground")
+        recs = GA.records()
+        out = {}
+        tmp = Path(tempfile.mkdtemp(prefix="gym_arenas_audit_"))
+        try:
+            GA.build_pack(tmp / "pack", recs, ground.load())
+            funcs = tmp / "pack" / "data" / "cobblers" / "function" / "gym_arenas"
+            for _p, a in recs:
+                lines = []
+                for name in (a["id"], a["id"] + "_seat"):
+                    for raw in (funcs / ("%s.mcfunction" % name)).read_text(encoding="utf-8").splitlines():
+                        if not raw.strip() or raw.startswith("#") or raw.startswith("forceload"):
+                            continue
+                        lines.append(raw[raw.rfind(" run ") + 5:] if raw.startswith("execute ") else raw)
+                out[a["leader"]["id"]] = lines
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+        return out
+
+    @functools.cached_property
     def gyms(self):
         """{gym id: (leader id, [command lines], pad level)} from tools/gym_buildings.py's emitted text, then, for a
-        gym with an arena, tools/gym_arenas.py's emitted seat move (R16GA runs it straight after the building, in the
-        same step), read as the world it leaves with nobody near: each `execute ... run` line's command. So the
-        Normal spawner this audit finds is where the apply leaves it, in the arena, and the hall's cell is floor."""
+        gym with an arena, the arena's generated build and seat move (`arenas`; R16GA runs them straight after the
+        building). So the Normal spawner this audit finds is where the apply leaves it, in the arena, and the hall's
+        cell is floor. Misty's template has no building record: check_spawners lays her arena over her placed
+        template the same way."""
         GB = self.mod("gym_buildings")
-        GA = self.mod("gym_arenas")
-        moves = {}
-        for _p, a in GA.records():
-            moves[a["gym"]] = [l[l.rfind(" run ") + 5:] if l.startswith("execute ") else l
-                               for l in GA.seat_lines(a, GA.reach()) if not l.startswith("#")]
         out = {}
         for _p, doc in GB.records():
             e, _rect, _lvl = GB.build_one(doc)
-            out[doc["id"]] = ((doc.get("leader") or {}).get("id"), list(e.ops) + moves.get(doc["id"], []),
-                              doc["settlement"])
+            lead = (doc.get("leader") or {}).get("id")
+            out[doc["id"]] = (lead, list(e.ops) + self.arenas.get(lead, []), doc["settlement"])
         return out
 
     @functools.cached_property
@@ -1374,6 +1406,7 @@ class Audit:
                     normal.setdefault(i, []).append(c)
                     worlds[c] = w
         places = {p["id"]: p for p in self.doc("placements.json")["placements"]}
+        as_placed = {}
         for pid, tname in (("gym2_misty_gym", "misty"), ("league_building", "kanto_league")):
             p = places[pid]
             pos = p["position"]
@@ -1387,6 +1420,12 @@ class Audit:
                 if a.get("id") == p.get("lot", pid) or (p.get("kind") == "gym" and a.get("role") == "gym"):
                     level = a.get("level")
             w = TemplateWorld(size, cells, (pos["x"], pos["y"], pos["z"]), p.get("rotation", "none"), level)
+            if tname == "misty":
+                # the transform check below reads the template as placed; the world then gets R16GA's arena and move
+                for c0, ids0 in w.spawners():
+                    for i0 in ids0:
+                        as_placed.setdefault(i0, []).append(c0)
+                w.apply(self.art.arenas.get("kanto_misty", []))
             # what the donor placement then fills over the template (tools/place_donor.py `commands`: the policy's
             # substitutions, then the record's own, then remove_blocks to air), read here from the data itself, so the
             # retire's restore is judged against the block the world held when the second spawner replaced it
@@ -1404,9 +1443,9 @@ class Audit:
         for g in self.doc("gym_interiors.json")["gyms"]:
             lead = g.get("leader") or {}
             if lead.get("id") == "kanto_misty" and lead.get("expect_spawner_at"):
-                if normal.get("kanto_misty") != [tuple(lead["expect_spawner_at"])]:
+                if as_placed.get("kanto_misty") != [tuple(lead["expect_spawner_at"])]:
                     self.fail("P:transform", "the misty template puts kanto_misty at %s; gym_interiors measured %s"
-                              % (normal.get("kanto_misty"), lead["expect_spawner_at"]))
+                              % (as_placed.get("kanto_misty"), lead["expect_spawner_at"]))
         challenge = {}
         for k, v in T.items():
             if not k.endswith(".mcfunction"):

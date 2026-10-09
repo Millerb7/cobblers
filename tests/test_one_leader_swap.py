@@ -38,10 +38,12 @@ def _with(monkeypatch, rollout):
 
 
 def _brock_seat():
-    # the one source of a leader's seat (tools/gym_arenas.py leader_seats): Brock's arena once it exists
-    # (data/gym_arenas/gym1.json, moved by R16GA), the building's leader.spawner before that
-    import gym_arenas
-    return tuple(gym_arenas.leader_seats()["kanto_brock"]["seat"])
+    # Brock's authored seat, read from the arena record itself (data/gym_arenas/gym1.json leader.seat, moved by R16GA),
+    # NOT through tools/gym_arenas.py leader_seats(): the generator under test reads its seat through that function, so
+    # a test that did too would agree with a generator that read the wrong file
+    g = json.loads((ROOT / "data" / "gym_arenas" / "gym1.json").read_text(encoding="utf-8"))
+    assert g["leader"]["id"] == "kanto_brock"
+    return tuple(g["leader"]["seat"])
 
 
 # ------------------------------------------------------------------------------------------------ the switch

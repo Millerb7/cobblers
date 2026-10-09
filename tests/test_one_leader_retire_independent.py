@@ -181,6 +181,28 @@ def stand(cell):
     return (cell[0] + 0.5, cell[1] + 1.0, cell[2] + 0.5)
 
 
+def _arena_seats():
+    """{leader id: seat} read straight from data/gym_arenas/gym*.json leader.seat (the authored arena records), not
+    from tools/gym_arenas.py: an input the generator under test does not compute."""
+    out = {}
+    for p in sorted((ROOT / "data" / "gym_arenas").glob("gym*.json")):
+        a = json.loads(p.read_text(encoding="utf-8"))
+        out[a["leader"]["id"]] = tuple(a["leader"]["seat"])
+    return out
+
+
+# Without it the swap could keep driving the hall's spawner while the arena holds the leader (or the reverse): for
+# every gym with an arena record, the one spawner the cycle drives is the arena's authored seat. The seat comes from the
+# arena file, the anchor from the cycle's own text.
+def test_the_swap_of_a_gym_with_an_arena_drives_the_arenas_seat(built_all):
+    files, _d = built_all
+    cycle = lines(files[CYCLE])
+    seats = _arena_seats()
+    assert len(seats) == 8, sorted(seats)
+    for up, seat in seats.items():
+        assert swap_anchor(cycle, up + SFX)[0] == seat, up
+
+
 def lag_world(up, e, cycle, second_spawner):
     """The leader still on the Challenge id with nobody near: a Challenge player left the swap's reach (or a battle
     ended) less than one cycle (10 ticks) ago, so the nobody-near line has not yet run."""
@@ -222,12 +244,23 @@ def test_a_rerun_in_the_lag_window_kills_nobody_only_because_of_the_block_test(b
     # Gated, nobody dies. Ungated, every leader the kill can reach dies: all but a boss whose one spawner moved out of
     # the kill's radius (Lance, data/challenge_mode.json single_leader.move, 30.6 from his retired cell: 2026-10-09).
     # Every boss that did not move must be among them, so the mutation still bites wherever `has` is the only guard.
-    # A gym leader whose spawner moved into its arena (tools/gym_arenas.py, data/gym_arenas: Brock, 45.5 from his
-    # retired cell, 2026-10-08) has moved out of the radius the same way.
-    import gym_arenas
-    arena = {up for up, s in gym_arenas.leader_seats().items() if s["source"].startswith("data/gym_arenas/")}
+    # A gym leader whose spawner moved into its arena (data/gym_arenas/<gym>.json leader.seat, read here from the
+    # file, not from tools/gym_arenas.py) is excused ONLY if the arena seat is out of the kill's radius from the
+    # retired cell, measured: Brock, 45.5 from his, is; the other seven keep their Challenge cell beside the new
+    # seat (2-3 blocks), so they stay in the radius and must be reachable like any unmoved boss. Excusing all eight
+    # arena leaders (cd7c55a) would have let the mutation stop biting on seven of them unseen.
+    out_of_radius = set()
+    for up, seat in _arena_seats().items():
+        kill_r = {float(m.group(1)) for m in (re.search(r"run kill @e\[type=rctmod:trainer,distance=\.\.(\d+),nbt=\{TrainerId:\"%s\""
+                                                         % re.escape(up + SFX), l)
+                                               for l in mod.retire_lines(up, up + SFX, d["bosses"][up])) if m}
+        assert len(kill_r) == 1, (up, kill_r)
+        c = d["bosses"][up]["spawner"]["at"]
+        if dist((c[0] + 0.5, c[1], c[2] + 0.5), stand(seat)) > kill_r.pop():   # the kill's anchor, as `reachable` has it
+            out_of_radius.add(up)
+    assert out_of_radius == {"kanto_brock"}, out_of_radius
     unmoved = {up for up, e in d["bosses"].items() if not (e.get("single_leader") or {}).get("move")
-               and up not in arena}
+               and up not in out_of_radius}
     assert unmoved <= set(reachable)
     assert (killed == []) if gated else (killed == sorted(reachable)), (killed, reachable)
 
@@ -299,21 +332,50 @@ def test_the_one_leader_seats_inside_each_others_reach_are_the_known_ones(built_
     assert pairs == KNOWN_SHARED_REACH
 
 
-# Without it the thirteen could be rolled out with P1 (the 3-D command model in tools/challenge_mode_audit.py) never
-# having run over the template bosses: this runs it with rollout "all" in memory and wants no problem. It needs the
-# snapshot's DP-v31 zip for the templates and skips without it.
-def test_the_challenge_audit_passes_p1_for_all_thirteen_in_memory(monkeypatch):
+@pytest.fixture(scope="module")
+def all_thirteen_problems():
+    """The audit's problems (checks P and R) with every boss in the rollout, on an in-memory copy of the data and the
+    generators as they are. Skips without the snapshot's DP-v31 zip, which the templates need."""
     try:
         up = A.Upstream()
     except FileNotFoundError as e:
         pytest.skip("the local server snapshot is not here: %s" % e)
     d = _all()
-    monkeypatch.setattr(CM, "doc", lambda: d)
-    orig = A.Audit.doc
-    monkeypatch.setattr(A.Audit, "doc", lambda self, name: copy.deepcopy(d) if name == "challenge_mode.json"
-                        else orig(self, name))
-    a = A.Audit(A.Artifacts(), up).run("PR")
-    assert [p for p in a.problems if p[0].startswith(("P1", "R:summon", "P:count"))] == []
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(CM, "doc", lambda: d)
+        orig = A.Audit.doc
+        mp.setattr(A.Audit, "doc", lambda self, name: copy.deepcopy(d) if name == "challenge_mode.json"
+                   else orig(self, name))
+        return A.Audit(A.Artifacts(), up).run("PR").problems
+
+
+# Without it the thirteen could be rolled out with P1 (the 3-D command model in tools/challenge_mode_audit.py) never
+# having run over the template bosses: this runs it with rollout "all" in memory and wants no problem. It needs the
+# snapshot's DP-v31 zip for the templates and skips without it. KNOWN FAILING (2026-10-08): Lance's P1:move_orphan,
+# which predates the gym arenas and is the owner's open item. The one other thing it would show, the retire of the
+# seven arena gyms restoring the hall's blocks in the arena, is pinned by its own strict xfail below and is the only
+# thing filtered here, so each defect has exactly one test and a fix to either flips exactly one.
+def test_the_challenge_audit_passes_p1_for_all_thirteen_in_memory(all_thirteen_problems):
+    arena = {up + SFX for up in _arena_seats() if up != "kanto_brock"}
+    pinned = lambda p: p[0] in ("P1:restore", "P1:retire") and p[1].split()[0] in arena
+    assert [p for p in all_thirteen_problems if p[0].startswith(("P1", "R:summon", "P:count")) and not pinned(p)] == []
+
+
+# Without it the seven gyms whose Challenge spawner moved into an arena could be rolled out to one leader with a retire
+# that, finding a second spawner in the arena, writes the HALL's floor (the building model's, or Misty's template's)
+# into the arena's floor cell: the audit judges the retire against the world the apply leaves, arena included.
+# KNOWN DEFECT, left failing on purpose (strict): tools/challenge_mode.py restore_blocks reads the building model (gym
+# buildings) or single_leader.restore (templates) at bosses.<id>.spawner.at, and that cell is now in the arena, where
+# the building model holds stone and the template block is not the arena's floor. docs/world-building/GYM_ARENAS.md
+# calls restore_blocks "unchanged, on purpose"; true while only Brock is in the rollout (his retired cell is still in
+# the hall), false the day another arena gym joins it. The fix is the generator's (restore from the arena's floor);
+# not made here. Flips to a pass, and fails the run, when it is made.
+@pytest.mark.xfail(strict=True, reason="restore_blocks restores the hall's blocks at a Challenge cell that is now in the "
+                   "arena (tools/challenge_mode.py:344): 7 gyms would get stone or the hall's floor in the arena")
+def test_a_rollout_gyms_retire_restores_its_arena_floor_not_the_halls(all_thirteen_problems):
+    arena = {up + SFX for up in _arena_seats() if up != "kanto_brock"}
+    bad = [p for p in all_thirteen_problems if p[0] in ("P1:restore", "P1:retire") and p[1].split()[0] in arena]
+    assert bad == []
 
 
 def _exec_into(monkeypatch, name, edits=(), d=None):
@@ -333,8 +395,12 @@ def _exec_into(monkeypatch, name, edits=(), d=None):
 
 # Without it the template restore (the audit's donor-substitution replay, 2026-10-08) could agree with anything:
 # the generator's template branch putting floor and under back the wrong way round must fail P1:restore for the
-# template bosses, with data/challenge_mode.json untouched.
-def test_the_template_restore_check_fails_a_generator_that_swaps_floor_and_under(monkeypatch):
+# template bosses, with data/challenge_mode.json untouched. Judged as what the mutation ADDS to the unmutated run,
+# because Misty's retired cell is now in her arena (data/gym_arenas/gym2.json), where the unmutated generator already
+# fails P1:restore (the defect pinned above): her failure cannot show the mutation bites. The League's five stand in
+# their template, so for them the mutation is the only difference.
+def test_the_template_restore_check_fails_a_generator_that_swaps_floor_and_under(monkeypatch, all_thirteen_problems):
+    base = {m.split()[0] for c, m in all_thirteen_problems if c == "P1:restore"}
     try:
         up = A.Upstream()
     except FileNotFoundError as e:
@@ -347,8 +413,10 @@ def test_the_template_restore_check_fails_a_generator_that_swaps_floor_and_under
                         else orig(self, name))
     a = A.Audit(A.Artifacts(), up).run("P")
     hit = {m.split()[0] for c, m in a.problems if c == "P1:restore"}
-    assert hit == {u + SFX for u in ("kanto_misty", "kanto_league_lorelei", "kanto_league_bruno",
-                                     "kanto_league_agatha", "kanto_league_lance", "kanto_champion_blue")}, hit
+    league = {u + SFX for u in ("kanto_league_lorelei", "kanto_league_bruno", "kanto_league_agatha",
+                                "kanto_league_lance", "kanto_champion_blue")}
+    assert hit - base == league, (hit, base)
+    assert "kanto_misty" + SFX in base, "Misty's retire is judged against her arena now; see the strict xfail above"
 
 
 # ------------------------------------------------------------------------------------------------ the League floors

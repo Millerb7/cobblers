@@ -162,9 +162,13 @@ def test_the_challenge_cycle_runs_on_the_trainers_clock_before_the_cycle_resets_
     assert not any("_challenge" in l for l in _fn(files, "trainers/cycle")), "Challenge lines leaked into the cycle"
 
 
-# The spawner cell, checked against the gym building's own model with the shared floor rule (tools/npc_spot_sweep.py
-# spawner_problem): set into the floor, flush on four sides, room for the leader over it. Gym 2 and the League are
-# templates nothing in the repository models; their cells were measured from the template and are NOT re-checked.
+# The spawner cell, checked against the model of the world the apply leaves it in with the shared floor rule
+# (tools/npc_spot_sweep.py spawner_problem): set into the floor, flush on four sides, room for the leader over it.
+# Two places hold it. In the gym BUILDING (the hall, tools/gym_buildings.py's own model) for Brock, whose retired second
+# spawner still stands there until R17L; in the gym's ARENA where data/gym_arenas has one and data/challenge_mode.json
+# moved the cell into it (2026-10-08, seven leaders), checked against the arena's GENERATED functions replayed
+# (tools/challenge_mode_audit.py Replay over Artifacts.arenas), never against the arena tool's own model. The League
+# is a template nothing in the repository models; its cells were measured from the template and are NOT re-checked.
 def _gym_models():
     import gym_buildings as GB
     out = {}
@@ -174,7 +178,46 @@ def _gym_models():
     return out
 
 
-@pytest.mark.parametrize("up", [u for u in UPSTREAM if DATA["bosses"][u]["spawner"]["measured_by"] == "gym_buildings"])
+def _arena_docs():
+    """{leader id: arena record}, read straight from data/gym_arenas/gym*.json."""
+    out = {}
+    for p in sorted((ROOT / "data" / "gym_arenas").glob("gym*.json")):
+        a = json.loads(p.read_text(encoding="utf-8"))
+        out[a["leader"]["id"]] = a
+    return out
+
+
+def _in_box(q, box):
+    x0, y0, z0, x1, y1, z1 = box
+    lo, hi = (min(x0, x1), min(y0, y1), min(z0, z1)), (max(x0, x1), max(y0, y1), max(z0, z1))
+    return all(lo[i] <= q[i] <= hi[i] for i in range(3))
+
+
+def _building_bounds():
+    out = {}
+    for p in sorted((ROOT / "data" / "gym_buildings").glob("gym*.json")):
+        g = json.loads(p.read_text(encoding="utf-8"))
+        out[g["leader"]["id"]] = g["bounds"]
+    return out
+
+
+ARENAS = _arena_docs()
+IN_HALL = [u for u, b in _building_bounds().items()
+           if u in DATA["bosses"] and _in_box(DATA["bosses"][u]["spawner"]["at"], b)]
+IN_ARENA = [u for u, a in ARENAS.items() if u in DATA["bosses"] and _in_box(DATA["bosses"][u]["spawner"]["at"], a["bounds"])]
+
+
+# Without it a gym leader's Challenge cell could be moved to somewhere neither the hall's model nor the arena's replay
+# checks (a coordinate typo, or an arena authored without its cell), and the self-placing line would set a spawner
+# into rock or open air with every other test green.
+def test_every_gym_leaders_challenge_cell_is_checked_in_the_hall_or_in_the_arena():
+    gym_leaders = set(_building_bounds()) | set(ARENAS)
+    assert len(gym_leaders) == 8, sorted(gym_leaders)
+    assert set(IN_HALL) | set(IN_ARENA) == gym_leaders, sorted(gym_leaders - set(IN_HALL) - set(IN_ARENA))
+    assert not set(IN_HALL) & set(IN_ARENA)
+
+
+@pytest.mark.parametrize("up", IN_HALL)
 def test_a_gym_buildings_challenge_spawner_is_set_into_its_floor(up):
     import gym_buildings as GB
     import npc_spot_sweep as SW
@@ -190,6 +233,35 @@ def test_a_gym_buildings_challenge_spawner_is_set_into_its_floor(up):
     assert why is None, why
     lx, ly, lz = d["leader"]["spawner"]
     assert 2 <= abs(q[0] - lx) + abs(q[2] - lz) <= 5 and q[1] == ly
+
+
+@pytest.fixture(scope="module")
+def arena_text():
+    """{leader id: the arena's build and seat-move command lines}, read back from the files tools/gym_arenas.py
+    build_pack writes (the audit's reader), not from the tool's model."""
+    import challenge_mode_audit as A
+    return A.Artifacts().arenas
+
+
+@pytest.mark.parametrize("up", IN_ARENA)
+def test_an_arenas_challenge_spawner_is_set_into_the_arenas_floor(arena_text, up):
+    import challenge_mode_audit as A
+    import npc_spot_sweep as SW
+    arena = ARENAS[up]
+    q = tuple(DATA["bosses"][up]["spawner"]["at"])
+    seat = tuple(arena["leader"]["seat"])
+    assert q != seat
+    assert q != tuple((arena.get("challenge_spawner") or {}).get("old_at") or ()), "the cell was not moved off the hall's"
+    # everything the arena does not write is rock: a cell must be WRITTEN by the arena to count as its floor
+    w = A.Replay(arena_text[up], 10 ** 6)
+    assert q in w.cells, "the arena writes nothing at %s: the spawner would be set into unwritten rock" % (q,)
+    assert A.solid_floor(w.at(q)) and A.bname(w.at(q)) != "rctmod:trainer_spawner", "not a floor: %s" % w.at(q)
+    extra = {q: "rctmod:trainer_spawner", (q[0], q[1] - 1, q[2]): "minecraft:redstone_block"}
+    why = SW.spawner_problem(lambda a, b, c: extra.get((a, b, c), w.at((a, b, c))), q)
+    assert why is None, why
+    # the Challenge spawner stands beside the dais seat on the same floor, as it stood beside the hall seat
+    assert q[1] == seat[1] and 2 <= abs(q[0] - seat[0]) + abs(q[2] - seat[2]) <= 5, (q, seat)
+    assert up in [i for _c, ids in w.spawners() for i in ids], "the replay holds no Normal spawner for %s" % up
 
 
 # ------------------------------------------------------------------------------------------------ routes
