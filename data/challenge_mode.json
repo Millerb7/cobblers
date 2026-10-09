@@ -49,7 +49,7 @@
       "advancement": "cobbleverse:trainer/kanto/defeat_ltsurge",
       "upstream_mob": {"type": "kanto", "signatureItem": "lumymon:lieutenant_medal", "maxTrainerWins": -1, "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0, "biomeTagBlacklist": ["is_void", "is_underground", "is_nether", "is_end"], "biomeTagWhitelist": ["cobbleverse:savanna_plateau"]},
       "upstream_required": ["kanto_misty"],
-      "spawner": {"at": [1747, 190, 1412], "measured_by": "gym_buildings", "why": "two north of Surge's spawner (1747, 190, 1414), polished deepslate over tuff, open on four sides"}
+      "spawner": {"at": [1746, 162, 1435],"measured_by": "gym_buildings", "why": "two north of Surge's spawner (1747, 190, 1414), polished deepslate over tuff, open on four sides"}
     },
     "kanto_erika": {
       "lang": "erika",
