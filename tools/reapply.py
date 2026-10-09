@@ -301,6 +301,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-08: the Beast Ball is the key to dungeon bosses (tools/key_ball.py, data/key_ball.json): two
                 # Cobblemon callbacks and the jar's beast_ball recipe closed; no blocks, no step; world-local below
                 "cobblers_key_ball",
+                # 2026-10-09: every Waystones recipe (placeable waystones, sharestones, portstones, the warp plate and the
+                # warp items) closed, so Oak's gift is a player's only waystone (tools/player_waystone.py,
+                # data/player_waystone.json): recipe and advancement overrides only; no function, no step; world-local below
+                "cobblers_player_waystone",
                 # 2026-10-08: crafted TMs unlock per player at their badge (tools/tm_gate.py, data/tm_gate.json): the
                 # gamerule doLimitedCrafting, a tick sync of the recipe book and closed unlock advancements, generated
                 # from the server's own jars; no blocks, no step; world-local below
@@ -325,6 +329,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-30: the nine built ferry docks (tools/ferry_docks.py, data/ferry_docks.json).
                 # Blocks in the overworld, so WORLD_LOCAL like the other block packs
                 "cobblers_ferry_docks",
+                # 2026-10-09: the hub waystones (tools/hub_waystones.py, data/hub_waystones.json): one waystone each at
+                # Shrew Station, Coldwater Station and the north-east landing, set by R18W after those places' own
+                # builds. Block functions run by a step; nothing runs on its own, so not world-local
+                "cobblers_hub_waystones",
                 # 2026-09-30: the lake beds tools/rift_skin.py painted over before it was fixed the same day
                 # (F5). A REPAIR for worlds exported before the fix: the skin no longer writes those cells, so
                 # nothing puts back the gravel and clay tools/paint_maps.py paints, and re-running R1 leaves
@@ -411,6 +419,9 @@ EXCLUDED = {
     "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores; its tick tag runs the over-cap party notice near trainers",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
     "cobblers_key_ball": "self-driving: two Cobblemon callbacks (pokemon_catch_rate_calculated, poke_ball_capture_calculated) run it and call key_ball/refused; its recipe overrides act at load; it writes no blocks (tools/key_ball.py)",
+    "cobblers_player_waystone": "load-time only: 54 Waystones recipes and their 54 unlock advancements written back closed "
+                                "(fabric:load_conditions that never pass); it ships no function and runs nothing "
+                                "(tools/player_waystone.py)",
     "cobblers_tm_gate": "self-driving: its load tag sets doLimitedCrafting, its tick tag syncs each player's recipe book "
                         "once a plan, and an advancement per badge gives that badge's TMs; it writes no blocks "
                         "(tools/tm_gate.py)",
@@ -452,6 +463,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_dungeons",
                # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
                "cobblers_key_ball",
+               # 2026-10-09: closes the Waystones recipes; global would close them in the live world too
+               "cobblers_player_waystone",
                # 2026-10-08: sets a gamerule and rewrites every player's recipe book: never global, or the live world
                # would run it too
                "cobblers_tm_gate",
@@ -1018,6 +1031,9 @@ def prepare_jobs(a):
     # Coldwater Station's independent audit (never imports its builder, tools/portals.py or tools/frostpeak_camp.py):
     # the built functions replayed over the heightmap, and the freshly built sea packs held off its sealed arch
     add("coldwater_station_audit", "coldwater_station_audit.py", "--require-sea", *src)
+    # the hub waystones (2026-10-09, data/hub_waystones.json): fails closed on a stone off dry level ground or inside a
+    # column the research station's, Coldwater Station's or the dock's own plan writes
+    add("hub_waystones:build", "hub_waystones.py", "build", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -1118,6 +1134,9 @@ def prepare_jobs(a):
     # the Beast Ball key (data/key_ball.json): fails closed if any boss tool's bind does not add the shared tag, if the
     # refusal message hints at the key, or if data/blackout.json can take a Beast Ball
     add("key_ball", "key_ball.py")
+    # no craftable waystone or warp item (data/player_waystone.json): fails closed if the closed list is not the Waystones
+    # jar's own, if the gift's recipe is left open, or if the quest, reward and Oak's dialogue do not agree
+    add("player_waystone", "player_waystone.py", "build", "--require-jar")
     # the Nether's badge-8 gate (data/nether_gate.json; fails closed if the flag is not the eighth badge's, the pallet
     # is off the canonical ground, or the gated dimension is the pocket's)
     add("nether_gate", "nether_gate.py")
@@ -2510,6 +2529,12 @@ def steps(with_spawns=False):
     import ice_lodge
     out.append(("R18IL", "the Merian Ice Lodge: frozen tarn, shelters, lodge and the holekeeper (data/ice_lodge.json)",
                 ice_lodge.placement_steps()))
+    # the hub waystones (2026-10-09, tools/hub_waystones.py): AFTER Shrew Station (R9RS), the ferry docks (R16H) and
+    # Coldwater Station (R18CW), whose builds clear and pave the ground a stone stands on; each holds its own chunks.
+    # The sweep in each function removes an older waystone first, so a re-run never stacks one
+    import hub_waystones
+    out.append(("R18W", "the hub waystones: Shrew Station, Coldwater Station, the north-east landing (data/hub_waystones.json)",
+                hub_waystones.placement_steps()))
     # the town traders: each town's look-then-act chain (tools/chunk_look.py, N155) started at once, waited for whole,
     # and each town's count read back; no step-level forceload, each chain holds and releases its own plaza
     import traders

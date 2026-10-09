@@ -777,6 +777,15 @@
       "why": "Oak's lab scene (data/scenes.json oak_lab): set when Oak's conversation opened by itself as this player walked into the lab, so it opens once and every later talk is a click on Oak (data/quests.json greet_in_lab)."
     },
     {
+      "id": "quest.main_worldshift_reveal.waystone_claimed",
+      "quest_id": "main_worldshift_reveal",
+      "field": "waystone_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Oak's gift of one waystone (data/player_waystone.json, data/rewards.json oak_waystone): the claim of grant_reward_once in data/quests.json grant_oak_waystone, written only when the item was given. Permanent and per player: a player who loses the item has no second grant, by the owner's 'one per player' (2026-10-09)."
+    },
+    {
       "id": "quest.main_worldshift_reveal.lab_starter_cursor",
       "quest_id": "main_worldshift_reveal",
       "field": "lab_starter_cursor",

@@ -187,6 +187,16 @@
         "why": "the dock's own `near` is the shore column the rule finds: marsh country's shore cell nearest the Pine Isles (contract C3 northlight_packet) is already dry with open water straight north"
       },
       "landward": "marsh country's shore at y62-64, rising south onto the marsh; the Northlight packet's mainland end has no road of its own yet",
+      "waystone": {
+        "at": [
+          6605,
+          2311
+        ],
+        "facing": "north",
+        "unlock": "discovery: the first visit activates it (the Waystones mod's own behaviour); no flag",
+        "placed_by": "tools/hub_waystones.py (re-apply step R18W), after this dock's own build (R16H)",
+        "why": "the owner, 2026-10-09: waystones at the main ferry ports. This is the only open mainland port to Northlight (the packet, $400 each way; Coldwater Station's launch is the badge-gated second), a crossing with no other way: a visitor who has reached it once can come back by waystone, and the walk to it stays the cost of the first visit. On the jetty's axis (x6605) four blocks inland of the boarded forecourt (x6603-6607, z2304-2307), on dry ground at y63, facing north back down the jetty so the packet master and the boats are in front of it"
+      },
       "why": "the Northlight packet's mainland end (WATER_PROPOSAL section 6 dock 14). 388 blocks of water separate the Pine Isles from any mainland, so the packet is the only way across"
     },
     {
