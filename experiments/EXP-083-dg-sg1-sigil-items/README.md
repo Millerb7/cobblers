@@ -101,3 +101,11 @@ from its keeper's first pass that finds a player, not from an advancement.
 
 ## Follow-up
 V16 (the validator) for the six sherd ids and the bank's reach.
+
+### Added 2026-10-08 (main session, RCON, same server): the predicate's TYPE matters
+
+The crafted Soot Sigil stores `cobblers_dg_sigil: 1b` (a byte, from the recipe's result); the hand-stocked chest's
+holds `1` (an int). On the crafted one in the output chest (4382, 96, -637):
+`...[minecraft:custom_data~{cobblers_dg_sigil:1}]` **Test failed**; `...[minecraft:custom_data~{cobblers_dg_sigil:1b}]`
+**Test passed, count: 1**. Partial NBT matching compares tag types, so step 5's PASS above held only for the int stock.
+**Every predicate against a crafted sigil must use the byte form** (the engine, `tools/dungeon.py`, does).

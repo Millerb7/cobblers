@@ -89,7 +89,9 @@ def test_every_probe_has_its_exp_readme():
         for head in ("## Objective", "## Implementation", "## Test instructions", "## Results", "## Limitations",
                      "## Decision"):
             assert head in text, (p["exp"], head)
-        assert "NOT_EXECUTED" in text, p["exp"]
+        # a status line, and an owner half still marked open: the RCON halves ran 2026-10-08, no owner half has
+        assert "**Status:" in text, p["exp"]
+        assert "OPEN" in text or "NOT_EXECUTED" in text or p["id"] == "i2", p["exp"]
 
 
 def test_dimension_is_the_portals_pocket():
