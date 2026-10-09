@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
 np = pytest.importorskip("numpy")
+import chunk_look as CL  # noqa: E402
 import direct_trades as D  # noqa: E402
 
 # every placed recipe ends with exactly this, in the codec's order; the control overrides priceMultiplier only
@@ -45,8 +46,10 @@ def doc():
 
 
 def _place(doc, g=None, fn="place"):
+    """The whole look-then-act chain at <fn> (entry, look, act, done: tools/chunk_look.py), in that order."""
     out, _res = D.files(doc, g or FlatGround())
-    return out["data/cobblers/function/direct_trades/%s.mcfunction" % fn]
+    return "".join(out["data/cobblers/function/direct_trades/%s%s.mcfunction" % (fn, part)]
+                   for part in ("", "_look", "_act", "_done"))
 
 
 def _counter(doc):
@@ -266,12 +269,27 @@ def test_the_booth_guards_every_shell_cell_before_carving(doc):
     assert lines[carve] == "fill 3632 90 6460 3636 94 6464 minecraft:stone_bricks hollow"
 
 
-def test_the_step_holds_the_chunk_and_runs_place(doc):
-    assert D.steps(doc) == [("cmd", "forceload add 3632 6460 3636 6464"), ("wait", 3), ("fn", "cobblers:direct_trades/place"),
-                            ("wait", 7), ("cmd", "forceload remove 3632 6460 3636 6464"),
-                            ("cmd", "forceload add 7273 1521 7281 1529"), ("wait", 3),
-                            ("fn", "cobblers:direct_trades/counter"), ("wait", 7),
-                            ("cmd", "forceload remove 7273 1521 7281 1529")]
+def test_the_step_runs_both_chains_waits_them_whole_and_reads_both_counts(doc):
+    # N155: no step-level forceload (its release would drop a chunk under a chain still looking); each chain holds its
+    # own box (below), and the step waits out the longest chain before reading each barterer's count
+    assert D.steps(doc) == [("fn", "cobblers:direct_trades/place"), ("fn", "cobblers:direct_trades/counter"),
+                            ("wait", 21),
+                            ("check", ("chunk_look", "direct_trades_place", 1, "the Holdfast booth's barterer")),
+                            ("check", ("chunk_look", "direct_trades_counter", 1, "the Northlight barterer"))]
+    assert 21 * 20 >= CL.STEP_TICKS
+
+
+def test_each_chain_holds_the_box_its_act_reads(doc):
+    # the booth's whole 5x5 footprint (z6464 is the next chunk: A4 audit, 2026-10-07) and the roof within reach
+    out, _ = D.files(doc, FlatGround())
+    fl = lambda fn: [ln for ln in out["data/cobblers/function/direct_trades/%s.mcfunction" % fn].splitlines()
+                     if ln.startswith("forceload ")]
+    assert fl("place") == ["forceload add 3632 6460 3636 6464"]
+    assert fl("place_done") == ["forceload remove 3632 6460 3636 6464"]
+    assert fl("counter") == ["forceload add 7273 1521 7281 1529"]
+    assert fl("counter_done") == ["forceload remove 7273 1521 7281 1529"]
+    chunks = lambda x0, z0, x1, z1: {(cx, cz) for cx in range(x0 // 16, x1 // 16 + 1) for cz in range(z0 // 16, z1 // 16 + 1)}
+    assert not chunks(3632, 6460, 3636, 6464) & chunks(7273, 1521, 7281, 1529), "the two chains run at once"
 
 
 # ------------------------------------------------------------------ the Northlight spot (from the Mart's template)

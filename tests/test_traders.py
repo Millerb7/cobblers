@@ -42,16 +42,17 @@ def ticks(line):
 
 
 def test_saved_traders_have_time_to_load_before_the_kill():
-    # at 2 ticks the kill missed the saved trader; at 20 it found it
+    # at 2 ticks the kill missed the saved trader; at 20 it found it. Since N155 the act also waits for a look
+    # (tests/test_traders_chunk_look.py)
     f = functions()
     loader = f["vendors_t1"]
     assert loader[2].startswith("forceload add ")
     assert ticks(loader[-1]) >= 20
-    assert ticks(f["vendors_t1_place"][-1]) >= 20
+    assert ticks(f["vendors_t1_act"][-1]) >= 20
 
 
 def test_summons_carry_the_new_tag_and_stand_still():
-    for line in functions()["vendors_t1_place"]:
+    for line in functions()["vendors_t1_act"]:
         if line.startswith("summon "):
             assert "NoAI:1b" in line and "PersistenceRequired:1b" in line
             assert '"%s"' % TR.TAG_NEW in line and '"%s"' % TR.TAG_ALL in line
@@ -72,7 +73,9 @@ def test_one_towns_pass_leaves_other_towns_new_tags_alone():
 
 
 def test_strays_are_matched_by_type_and_name_never_everything():
-    for line in functions()["vendors_t1_done"]:
+    strays = [l for l in functions()["vendors_t1_act"] if "kill @e[type=" in l]
+    assert strays
+    for line in strays:
         if "kill @e[type=" in line:
             sel = line.split("kill @e[")[1]
             assert "type=%s" % KIND in sel and 'name="' in sel and "tag=!%s" % TR.TAG_ALL in sel
@@ -80,7 +83,7 @@ def test_strays_are_matched_by_type_and_name_never_everything():
 
 def test_the_plaza_is_released_last_and_nothing_is_released_early():
     f = functions()
-    assert not any(l.startswith("forceload remove") for l in f["vendors_t1_place"])
+    assert not any(l.startswith("forceload remove") for l in f["vendors_t1_act"] + f["vendors_t1_look"])
     assert f["vendors_t1_done"][-1].startswith("forceload remove ")
 
 
@@ -133,8 +136,8 @@ def test_a_trader_without_a_shop_is_not_mistaken_for_an_empty_one():
 def test_a_trader_with_nothing_left_is_removed_not_summoned():
     fake = lambda t: (KIND, shop(("Boosts", ["cobblemon:x_attack"])))
     f = TR.town_functions("t1", [rec(1)], fake, POLICY)
-    assert not any(l.startswith("summon") for l in f["vendors_t1_place"])
-    assert "kill @e[tag=cobblers_vendor_t1_vendor_01]" in f["vendors_t1_done"]
+    assert not any(l.startswith("summon") for l in f["vendors_t1_act"])
+    assert "kill @e[tag=cobblers_vendor_t1_vendor_01]" in f["vendors_t1_act"]
 
 
 def test_counting_a_withdrawn_trader_expects_none():

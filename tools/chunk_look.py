@@ -51,7 +51,10 @@ def chain(base, box, shown, act, scopes, new_tag, count, holder, note="", all_sh
     """{function id: lines} for the look-then-act chain at `base` ('ns:path').
 
     box      (x0, z0, x1, z1) block coordinates force-loaded for the chain's whole life, or a list of such boxes
-    shown    selectors; any one finding an entity proves the box's saved entities are in (all_shown: every one must)
+    shown    selectors; any one finding an entity proves the box's saved entities are in. With all_shown, every one
+             must find one in the same look: for things standing in several chunks, where one chunk's entities prove
+             nothing about another's (the Rift's sites; R17M's per-seat look, tools/markets.py; the town traders,
+             tools/traders.py, whose plaza spans up to four chunks)
     act      lines run once, after a look or blind: kill the old entities, summon new ones tagged `new_tag`
     scopes   selector argument bodies (no brackets), one per thing de-duplicated after the act
     count    the selector argument body counted into #<holder> OBJ after the de-duplication

@@ -2163,8 +2163,9 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:produce_buyer/load")] + [("npc", n) for n in produce_buyer.npc_placements()]))
     # direct trades (2026-10-07, EXP-055): the barterer, a vanilla villager whose fixed item-for-item offers are written
     # into its summon, in a booth carved 9 under the Holdfast counter (no sky, so no lightning, which would discard it).
-    # Held in a forceload of its chunk; the place function refuses to carve if the shell meets air or water (score
-    # #breach cob_dt) and de-duplicates by tag 100 ticks on. Only approved barter lines are in it
+    # Each barterer is a look-then-act chain (tools/chunk_look.py, N155) holding its own forceload, waited for whole and
+    # its count read back; the place function refuses to carve if the shell meets air or water (score #breach cob_dt).
+    # Only approved barter lines are in it
     import direct_trades
     out.append(("R18DT", "the barterer under the Holdfast counter (data/direct_trades.json)", direct_trades.steps()))
     # the Copperway Khan's salvager (2026-10-02): an NPC on the dug-out hall's floor R9DU wrote, her class loaded at boot
@@ -2247,9 +2248,10 @@ def steps(with_spawns=False):
     import coldwater_station
     out.append(("R18CW", "Coldwater Station, the Kyogre research station (data/coldwater_station.json)",
                 coldwater_station.placement_steps()))
-    trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
-    towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
-    out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
+    # the town traders: each town's look-then-act chain (tools/chunk_look.py, N155) started at once, waited for whole,
+    # and each town's count read back; no step-level forceload, each chain holds and releases its own plaza
+    import traders
+    out.append(("R14", "town traders", traders.steps()))
     # the sleeping Celebi: an entity, so the export erased it; summoned over RCON because Cobblemon's spawn command
     # does nothing from a function (tools/sapling_celebi.py), then walled and dressed by its pack
     import sapling_celebi

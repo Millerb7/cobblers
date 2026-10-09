@@ -215,11 +215,11 @@ def test_a_mart_clerk_is_named_for_the_shop_and_turned_to_its_facing(facing):
     shop["CustomName"] = json.dumps({"text": "General Shopkeeper"})
     f = TR.town_functions(rec["settlement"], [rec], lambda _t: ("cobbledollars:cobble_merchant", copy.deepcopy(shop)),
                           POLICY)
-    line = _summon(f["vendors_%s_place" % rec["settlement"]])
+    line = _summon(f["vendors_%s_act" % rec["settlement"]])
     assert "Rotation:[%sf,0.0f]" % VANILLA_YAW[facing] in line, line
     assert TR.to_snbt(json.dumps({"text": "Poké Mart"}, ensure_ascii=False)) in line
-    # a copy under the template's name, left by structure placement, is still removed
-    assert any('name="General Shopkeeper"' in l for l in f["vendors_%s_done" % rec["settlement"]])
+    # a copy under the template's name, left by structure placement, is still removed (by the chain's act, N155)
+    assert any('name="General Shopkeeper"' in l for l in f["vendors_%s_act" % rec["settlement"]])
 
 
 def _server(tmp_path, items):
@@ -253,7 +253,7 @@ def test_the_function_mode_writes_a_mart_whose_template_sells_all_three(tmp_path
     server, manifest, rec = _server(tmp_path, sorted(MART_ITEMS) + ["cobblemon:full_heal"])
     assert TR.main(["--manifest", str(manifest), "function", "--server-dir", str(server),
                     "--out", str(tmp_path / "out")]) == 0
-    fn = tmp_path / "out" / "data" / "cobblers" / "function" / "towns" / ("vendors_%s_place.mcfunction" % rec["settlement"])
+    fn = tmp_path / "out" / "data" / "cobblers" / "function" / "towns" / ("vendors_%s_act.mcfunction" % rec["settlement"])
     line = _summon(fn.read_text(encoding="utf-8").splitlines())
     assert all(i in line for i in MART_ITEMS) and "cobblemon:full_heal" not in line
 
