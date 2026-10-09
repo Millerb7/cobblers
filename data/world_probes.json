@@ -5031,6 +5031,78 @@
           7487
         ]
       }
+    ],
+    "frostpeak_keep": [
+      {
+        "what": "the spire's finial ice, the highest block",
+        "block": [
+          1548,
+          198,
+          640,
+          "minecraft:packed_ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a snow-block cone roof",
+        "block": [
+          1548,
+          195,
+          640,
+          "minecraft:snow_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "blue-ice roof trim",
+        "block": [
+          1520,
+          154,
+          612,
+          "minecraft:blue_ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the spire's ladder",
+        "block": [
+          1548,
+          173,
+          643,
+          "minecraft:ladder[facing=north]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the portcullis or the arcade's bars",
+        "block": [
+          1543,
+          175,
+          638,
+          "minecraft:iron_bars"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a stair of the gate ramp or the keep",
+        "block": [
+          1546,
+          99,
+          584,
+          "minecraft:stone_brick_stairs[facing=north,half=bottom,shape=straight]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a sign of the Wardens' log",
+        "block": [
+          1544,
+          141,
+          634,
+          "minecraft:spruce_wall_sign[facing=south,waterlogged=false]"
+        ],
+        "expect": true
+      }
     ]
   }
 }
