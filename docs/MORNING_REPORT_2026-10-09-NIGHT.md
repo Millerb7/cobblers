@@ -179,6 +179,5 @@ before step 6. The TM gate's `recipe give *` costs ~$0.
 
 ## 6. Cost (`python tools/session_cost.py`, weighted)
 
-This session ~14M by the time of writing (context 599k: over the hand-over line); agents **99.3M** with two still
-running, against the estimates given before spawning of about 100M in all (39M for the engine and arenas, 37M and
+This session **18.9M** at the end (context 687k: over the hand-over line); agents **107.0M**, against the estimates given before spawning of about 100M in all (39M for the engine and arenas, 37M and
 24M for the world brief's two waves). The arena pilot ran at 10.4M against 5M; the seven arena authors 7.1M against 18M. Per agent against its estimate: section 6 of `docs/HANDOVER_SESSION.md`.

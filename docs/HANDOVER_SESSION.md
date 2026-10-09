@@ -53,7 +53,12 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
 - `derived/` for a new worktree: robocopy from `session-handover-decisions-de63f6` (done here).
 
 ## 5. Cost
-`python tools/session_cost.py` at the handover: this session ~14M weighted (context ~600k: over the line, start fresh);
-agents 99.3M+ against about 100M estimated in all. Over estimate: the arena pilot (10.4M vs 5M), Fungal Isle (6.6 vs
-4), the C7 rookery (5.3 vs 4), Route 5 (5.2 vs 4), Route 4 (7.2 vs 4), C3 (6.2+ vs 4). Under: the seven arena
-authors (7.1M vs 18M), E1 (0.9 vs 2.6), the challenge tests (1.1 vs 2.6).
+`python tools/session_cost.py` at the handover: this session **18.9M** weighted over 412 turns (context 687k: far over
+the line; a cold session must start fresh); agents **107.0M** against about 100M estimated before spawning. Over
+estimate: the arena pilot (10.4M vs 5M), Fungal Isle (6.6 vs 4), the C7 rookery (5.3 vs 4), Route 5 (5.2 vs 4),
+Route 4 (7.2 vs 4), the Long Count (6.2+ vs 4). Under: the seven arena authors (7.1M vs 18M), E1 (0.9 vs 2.6), the
+challenge tests (1.1 vs 2.6).
+
+## 6. The PR
+[#132](https://github.com/Millerb7/cobblers/pull/132), draft, `claude/night-shift-engine-gym-9b76f2` -> main, FROZEN
+once reported: further work goes on a new branch. Re-read its head before quoting (`gh pr view 132 --json headRefOid`).
