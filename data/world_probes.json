@@ -2510,7 +2510,7 @@
           0,
           97,
           1056,
-          "minecraft:black_concrete"
+          "minecraft:black_terracotta"
         ],
         "expect": true
       },
@@ -2532,7 +2532,7 @@
           123,
           97,
           1056,
-          "minecraft:black_concrete"
+          "minecraft:black_terracotta"
         ],
         "expect": true
       },
@@ -2587,7 +2587,7 @@
           0,
           97,
           1184,
-          "minecraft:black_concrete"
+          "minecraft:black_terracotta"
         ],
         "expect": true
       },
@@ -2609,7 +2609,7 @@
           123,
           97,
           1184,
-          "minecraft:black_concrete"
+          "minecraft:black_terracotta"
         ],
         "expect": true
       },
@@ -2664,7 +2664,7 @@
           0,
           97,
           1312,
-          "minecraft:black_concrete"
+          "minecraft:black_terracotta"
         ],
         "expect": true
       },
@@ -2686,7 +2686,7 @@
           123,
           97,
           1312,
-          "minecraft:black_concrete"
+          "minecraft:black_terracotta"
         ],
         "expect": true
       },
@@ -2741,7 +2741,7 @@
           0,
           97,
           1440,
-          "minecraft:black_concrete"
+          "minecraft:black_terracotta"
         ],
         "expect": true
       },
@@ -2763,7 +2763,7 @@
           123,
           97,
           1440,
-          "minecraft:black_concrete"
+          "minecraft:black_terracotta"
         ],
         "expect": true
       },
@@ -2805,7 +2805,7 @@
           1352,
           131,
           4117,
-          "minecraft:black_concrete"
+          "minecraft:black_terracotta"
         ],
         "expect": true
       },

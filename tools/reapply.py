@@ -219,6 +219,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # hall per gym with its puzzle inside it, on the lot the shell stood on. Block functions run by
                 # R16G, after the demolition (R16F) that clears the lot for them
                 "cobblers_gym_buildings",
+                # 2026-10-09: the gym arenas carved below the buildings (tools/gym_arenas.py). It was in WORLD_LOCAL
+                # only, so install never installed it and install_check called the install current; the first apply
+                # had it copied by hand. Block functions run by R16GA, after R16G
+                "cobblers_gym_arenas",
                 # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
                 # callback acts on its own, so world-local below
                 "cobblers_levelcap",

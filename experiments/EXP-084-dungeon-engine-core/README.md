@@ -1,6 +1,6 @@
 # EXP-084: the dungeon engine core runs the Night Shift's placeholder spine end to end
 
-**Status: NOT_EXECUTED.** Written 2026-10-08 with the build (`tools/dungeon.py`, `data/dungeons.json`, pack
+**Status: RCON PART PASSED 2026-10-09 (16 of 16 readable steps; owner part OPEN).** Written 2026-10-08 with the build (`tools/dungeon.py`, `data/dungeons.json`, pack
 `cobblers_dungeons`). Nothing below has run on a server. The builder does not grade it.
 
 ## Objective
@@ -74,7 +74,41 @@ Before: `scoreboard players reset <you> dg.lk_ns` between runs that need no lock
 
 ## Results
 
-NOT_EXECUTED.
+### RCON, no player (2026-10-09 02:13-02:25, main session)
+
+staging-2026-10-01 (restored from `snapshot-2026-10-09-before-arenas` after the OOM below), prepare 203/203 at
+0b3a8b2, installed, then `reapply.py run --only R16GA,R16DG,R16DR --no-reload` after a boot with the tick watchdog off
+(0 problems, PARTIAL by design: 3 of 98 steps). Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1,
+rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set, Java 21, -Xmx16G. No player
+online. The run built the shells and the rip; steps 3, 5 and 6's PLACEMENT were therefore the apply's, and their
+READINGS below are from the world.
+
+| Step | Reading |
+|---|---|
+| 1 | boot log: no `Failed to load` naming `cobblers:dungeons/` or `dg_ns_boss` (the only failure is the probe pack's known `cobblers_dg_probes:c1/spawn_plain`) |
+| 2 | `#up dg.up` 6560, then 6760 ten seconds later: **+200, the keeper runs** |
+| 3 | the placement ran inside R16DG (22 s for the step, its waits included); the single-call stall was not timed separately |
+| 4 | slots 1 and 4: deepslate floor, air over it, the entry wall, the iron bars, the far wall: **10 of 10 pass**. The wall block is `minecraft:black_terracotta` (2026-10-09: concrete is a spawn-condition block contract C4 refuses; the README's `black_concrete` in this step and in 6 reads terracotta now) |
+| 5 | `#dg_shells cobblers_chunk_look` = **12** |
+| 6 | `#dg_rips` = **1**; the rip at (1350, 130, 4117) crying obsidian, (1352, 131, 4117) black terracotta, (1352, 130, 4118) air: **3 of 3** |
+| 7 | `presence_audit --only extra`: every `dungeon_night_shift` probe present, after the nine probe lines that still named `black_concrete` were corrected to terracotta (the world was read as terracotta in steps 4 and 6). Whole extra set: **386 of 393**, the 7 absent the known stale ones (Copperway Khan x2, Orchard Sleeper x2, two residents' air, the relic platform's gravel) |
+| 8 | greed `test_set` n = 0, 4, 5, 9, 10, 15, 20, 25 -> `dg.rate` **4, 4, 5, 5, 6, 8, 12, 12: PASS**. (A first batch read nothing: the marker was summoned in the same RCON burst as `forceload add 0 0` and did not exist yet, the N155 shape; re-run once it stood) |
+| 9 | the charge at rate 5 from 10000: **9900: PASS** |
+| 10 | the absence gap: `#gap` 200, clock 9000 = 10000 - 5 x 200: **PASS** |
+| 11 | digits at rate 4, clock 139200: 29 0 0 / 29 0 0; at rate 12: 29 0 0 / 9 4 0: **PASS** |
+| 12 | `npc_at` macro, class `cobblers:dg_ns_boss_b1_s1`, level 18: **"The Night Foreman"** stands with Tags `dg.npc`, `cobblers.gm`, `dg.s4`: **PASS** (C1's macro spawn, and the bind backstop a pass later) |
+| 13 | `#s4 dg.run` changed: the NPC tagged `dg.s4` gone 3 s later: **PASS** |
+| 14 | the recall sweep on a WILD Magikarp, with controls: inside the no-deploy box it read present at once (`count: 1`) and **gone 3 s later**; a second one outside the box (30.5, 96, 1440.5) still stood 3 s later: **PASS** (P1's proven half; an OWNED Pokemon is the owner's) |
+| 15 | the deadline: `#s4 dg.own` 99, then **0** six seconds later with no member present: **PASS** |
+| 16 | cleanup done; the stray Magikarp killed; slot 4's fake ownership reset to 0 |
+
+**The OOM (before these readings, recorded because it cost a restore).** At 02:00 the main session ran
+`datapack enable "file/cobblers_gym_arenas"` over RCON on a pack it had copied into the world after the boot had
+discovered packs. An enable is a full data reload; at -Xmx16G it ran out of heap (Distant Horizons threads first) and the
+server was killed. The world was set aside as `cobblers-staging/staging-2026-10-01.oom-2026-10-09`,
+`snapshot-2026-10-09-before-arenas` restored, the install re-run (clean) and the arena pack copied BEFORE the next boot.
+Review N111's "a 12G server cannot /reload this build" holds at 16G too: never enable a pack by command on staging.
+
 
 ## Limitations
 
