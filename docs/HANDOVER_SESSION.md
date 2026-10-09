@@ -6,9 +6,7 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
 ## 1. The branches
 - **#129** (the 10-06..10-08 batch, Glare included) and **#128** (the starter page) are MERGED; both heads verified on
   main (`git merge-base --is-ancestor`).
-- **[#130](https://github.com/Millerb7/cobblers/pull/130)** `build/2026-10-08-chunk-race` -> main, draft, FROZEN once
-  reported: the N155 fix, the review, the Cutters fix, the sigil calls, this STATE and handover. Re-read its head before
-  quoting (`git fetch --prune; gh pr view 130 --json headRefOid`). Built in a scratchpad worktree (`.../scratchpad/integ`);
+- **#130** (`build/2026-10-08-chunk-race`) is MERGED (97bd8bc on main): the N155 fix, the review, the Cutters fix, the sigil calls, this STATE and handover. Built in a scratchpad worktree (`.../scratchpad/integ`);
   the session worktree `session-handover-decisions-de63f6` holds `derived/` and the `build/` of this install.
 - Delete when convenient: `worktree-agent-a51bcd8...`, `-a3523e3...`, `-aa6cbb0...`, `-a5ab351...`, `-a4e0aba...` (all
   merged into the chunk-race branch).
@@ -24,10 +22,43 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
   twice to prove a re-run reads its count and does not double: R18F, R18CW, R9Z, R9M, R1, R1S, R9S, R18AF, R14, R18DT.
 
 ## 3. Waiting on the owner
-- EXP-059 steps 7-17 on staging (grant `cobblers:flag/champion_cleared` first); now on the new build.
+- EXP-059 steps 7-17 on staging (grant `cobblers:flag/champion_cleared` first); now on the new build. The owner's
+  staging character was RESET 2026-10-08 at their request (18 per-player files moved to
+  `cobblers-staging/player-reset-2026-10-08`, scores reset; trainers' per-player defeat counts, Lootr and the blackout
+  ledger are world-wide and were left). Move the files back, server stopped, to restore it.
 - Sigils: Q20 (Night Shift's free first run) and Q23 (ungated recipes) were NOT accepted as recommended: what instead?
 - The ten stale steps above: apply or not.
 - Carried: EXP-061/062/064-068 in game; Brock; Lootr's two-player cases; the live Nether override; the 19 dungeon OPENs.
+
+## 3a. Queued job: the gym overhaul, DESIGN ONLY (the owner, 2026-10-08)
+
+**Order:** after the playtest and the dungeon adjustments. A fresh session. **Build nothing until the owner has read
+the designs.** The owner's brief, in substance:
+
+- **Problem:** leaders fight in cramped rooms. It should read as a stage or a throne: a long approach, the leader
+  raised at the far end, the arena floor between. Mechanically too: Cobblemon battles happen in the world, both teams
+  are sent out into that room, and a cramped attic means large Pokemon clipping into walls in the fight that matters most.
+- **Constraints:** the gyms sit on fixed town lots, so a grand hall may not fit. The precedent is "dress the shell and
+  carve below": the building may be the entrance, with the arena opening beneath it (bigger inside than outside). The
+  buildings are Cobbleverse templates and cannot be redistributed modified, so **the arena is our own authored space**.
+  **The leader's spawner moves with the leader:** say how that interacts with the one-leader swap the other 12 bosses
+  are waiting on. The juniors and the puzzle route still lead to it.
+- **For each of the eight:** an arena that reads as that leader's and like no other: Brock the plateau builder, Misty
+  lake rescue, Surge power and signals, Erika the mediator, Koga covert tracking, Sabrina the Rift researcher, Blaine
+  crater geology, Giovanni civil defence. **Measured** to hold the largest Pokemon on that leader's team, with room to
+  spare: hitboxes from the species data in the 1.8.0 jar, times the scale; teams from `data/trainers.json`, every tier
+  including Challenge. The approach: what a player sees walking in. Where the leader stands and where the player stands.
+- **Deliverable:** the eight designs with sizes and costs, reported before any build.
+
+**Inputs to read first, not rediscover:** the gym lots and shells (`data/placements.json`, the gym templates, the
+existing carve-below work); the one-leader swap (STATE: `single_leader_verify`, R17L, the 12 waiting bosses); the
+rematch guard keyed on the gyms' own `rctmod:trainer_spawner` (CLAUDE.md "Our list is not the world"); ground from
+`tools/ground.py`, never a world.
+
+**Expected cost (an estimate, not a measurement):** one survey of lots, spawners and the swap (~1M); the hitbox
+measurement over the eight teams (~0.6M); two shell-equipped design agents of four gyms each (~3-4M each, they must
+measure); an independent check of the sizes (~1M). About 9-10M plus the main session. Say this to the owner and wait
+for approval before spawning.
 
 ## 4. Do not rediscover
 - A new worktree has no `derived/` or `build/`: prepare needs `derived/` (the Rift sculpt cannot be rebuilt). This
