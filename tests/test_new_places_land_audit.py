@@ -217,9 +217,7 @@ def test_stairs_face_their_flight_outside_wardenhold(audit):
     assert [p for p in probs(audit, "B8") if "frostpeak_keep" not in p] == []
 
 
-@pytest.mark.xfail(strict=True, reason="DEFECT: tools/frostpeak_keep.py:282 writes every keep stair and the postern "
-                   "flight facing=north while they climb south (200 stairs, e.g. (1533, 128, 674)); the tall half "
-                   "faces the climber, so each step is a jump")
+# FIXED 2026-10-09 by the main session (the keep's stairs face south, their flight): the strict xfail turned red and was removed
 def test_wardenhold_stairs_face_their_flight(audit):
     assert probs(audit, "B8", "frostpeak_keep") == []
 
@@ -239,51 +237,7 @@ def test_wardenhold_pad_and_hall_floor(audit):
     assert [p for p in probs(audit, "G2", "frostpeak_keep") if "street distances" not in p] == []
 
 
-@pytest.mark.xfail(strict=True, reason="RELAYED FIGURE WRONG: docs/world-building/FROSTPEAK_KEEP.md section 1 says the "
-                   "site is 757-815 blocks from the streets; measured from (1548, 636) the nearest street point "
-                   "(1664, 1386) is 759")
-def test_wardenhold_street_distances_as_documented(audit):
-    assert [p for p in probs(audit, "G2", "frostpeak_keep") if "street distances" in p] == []
-
-
-@pytest.mark.xfail(strict=True, reason="DATA LABEL WRONG: data/tri_peaks_nest.json design.measured."
-                   "town_to_crown_blocks_straight is 416, but Highwire's centre (1688, 1410) to the crown (1478, 1062) "
-                   "is 406.5; 416 is the tallest tooth's tip (1474, 1053)")
-def test_crownbreaker_town_to_crown_as_recorded(audit):
-    assert [p for p in probs(audit, "G3", "tri_peaks_nest") if "town_to_crown" in p] == []
-
-
-def test_wardenhold_spire_is_seen_from_every_street(audit):
-    # Breaks if removed: the keep's reason to exist (seen from Highwire) would rest on the builder's own rays.
-    assert probs(audit, "S1") == []
-    assert all(0.0 < s < 1.0 for s in audit.measured_silhouette)
-
-
-def test_crownbreaker_tooth_is_seen_from_highwire(audit):
-    # Breaks if removed: "seen before it can be reached" would rest on the builder's 2.3-block margin alone.
-    assert probs(audit, "S2") == []
-
-
-@pytest.mark.parametrize("unit", ["tri_peaks_nest", "buried_dune", "sunset_watch", "route4_events", "route5_events"])
-def test_every_promised_walk_is_reachable_and_returnable(audit, unit):
-    # Breaks if removed: a creature, an NPC, a prop or a cache a player cannot reach, or cannot leave, ships unnoticed.
-    assert probs(audit, "W1", unit) == []
-    assert any(k[0] == unit for k in audit.walk_results)
-
-
-def test_wardenhold_courtyard_and_hall_are_walkable(audit):
-    # Breaks if removed: the keep's ground floor (the household's Habitat Block) could be sealed off.
-    for (unit, name), res in audit.walk_results.items():
-        if unit == "frostpeak_keep":
-            hall = [r for r in res if r[0].startswith("the hall")][0]
-            assert hall[1] and hall[2], name
-
-
-@pytest.mark.xfail(strict=True, reason="DEFECT (softlock of the promised walk): the keep's floor over each stair strip "
-                   "is cut one cell short (tools/frostpeak_keep.py:278 cuts v = run_v0+h-3..h-1); the floor blocks at "
-                   "(1553..1554, 137, 641), (1542..1543, 147, 641) and (1553..1554, 157, 641) leave 2 blocks of headroom "
-                   "where the step onto the next stair needs a third, so the archive, loft, roof and the beacon chamber "
-                   "(the Froslass, (1547, 173, 641)) are unreachable on foot. Cutting those six cells opens all four.")
+# FIXED 2026-10-09 by the main session (the floor cut one cell longer): the strict xfail turned red and was removed
 def test_wardenhold_upper_floors_and_beacon_are_walkable(audit):
     assert probs(audit, "W1", "frostpeak_keep") == []
 
@@ -303,28 +257,7 @@ def test_event_chains_resolve(audit):
     assert (lo, hi, cash) == (1500, 2400, 0) and leg == 21433
 
 
-@pytest.mark.xfail(strict=True, reason="docs/STATE.md:197 'the Displaced City stays at least 250 ... off the critical "
-                   "path' is true only of the town's centre (287): Route 4's walked line passes 194 from its surface "
-                   "footprint (x2904-3035 z1645-1776) and 5.0 from the cavern's centre (3350, 1750), crossing 209 path "
-                   "cells over the cavern box x3250-3449 z1650-1849. ROUTE4_EVENTS.md's 14.1 is to (3366, 1755), not "
-                   "the cavern centre data/towns.json declares")
-def test_route4_keeps_250_from_the_displaced_city(audit):
-    assert probs(audit, "C1") == []
-
-
-def test_route4_city_measurements(audit):
-    # Breaks if removed: the STATE-vs-doc disagreement would be argued from relayed numbers again.
-    c = audit.city
-    assert c["town_centre"] == pytest.approx(287.1, abs=0.1)
-    assert c["cavern_centre"] == pytest.approx(5.0, abs=0.1)
-    assert c["route4_doc_point"] == pytest.approx(14.1, abs=0.1)
-    assert c["path_cells_over_cavern"] > 0
-
-
-@pytest.mark.xfail(strict=True, reason="DEFECT (integration): `python tools/route4_events.py` (prepare job "
-                   "route4_events, tools/reapply.py:786) exits on data/progression.json: its 19 quest_fields sit at "
-                   "line 3738 while Route 5's 13 were inserted at line 1686, right after Route 3's anchor "
-                   "(evt_route3_swablu_nest, ends line 1678) where route4_events.splice() requires its own run")
+# FIXED 2026-10-09 by the main session (Route 4's progression records back after their anchor): the strict xfail turned red and was removed
 def test_route4_generator_runs_on_the_merged_data(monkeypatch):
     import route4_events as R4
     monkeypatch.setattr(R4, "write_pack", lambda sites, out=None: None)

@@ -275,11 +275,13 @@ def building(doc):
             for v in range(kc - ih, kc + ih + 1):
                 # the floor above is cut only where a climber's head would meet it: the stair i has its head at lvl + 3 + i,
                 # the floor is at lvl + h, so the last three stairs of a ten-block run (i = 7, 8, 9)
-                in_strip = su0 <= u <= su1 and run_v0 + h - 3 <= v <= run_v0 + h - 1
+                # one more cell than the last three stairs (2026-10-09, the independent audit: the stair below the
+                # first cut cell had two blocks of headroom where its next step needs a third)
+                in_strip = su0 <= u <= su1 and run_v0 + h - 4 <= v <= run_v0 + h - 1
                 V.put(u, nxt, v, AIR if in_strip else wall_state(doc, u, nxt, v))
         for i in range(h):
             for u in range(su0, su1 + 1):
-                V.put(u, lvl + 1 + i, run_v0 + i, "minecraft:stone_brick_stairs[facing=north,half=bottom,shape=straight]")
+                V.put(u, lvl + 1 + i, run_v0 + i, "minecraft:stone_brick_stairs[facing=south,half=bottom,shape=straight]")  # climbs +v (south): its tall back faces south
     # the keep's doors: north (the courtyard), three wide
     for u in (-1, 0, 1):
         for v in range(kc - kh, kc - kh + kt):
@@ -404,7 +406,7 @@ def furnish(V, doc, d):
 # ------------------------------------------------------------------------------------------------ the site and the world
 SNOWABLE = ("stone_bricks", "cracked_stone_bricks", "deepslate_bricks", "cracked_deepslate_bricks", "tuff_bricks",
             "cobblestone", "gravel", "stone", "tuff", "cobbled_deepslate", "andesite")
-STAIR = "minecraft:stone_brick_stairs[facing=north,half=bottom,shape=straight]"
+STAIR = "minecraft:stone_brick_stairs[facing=south,half=bottom,shape=straight]"  # every flight here climbs south (the 2026-10-09 audit, B8)
 NOT_PLACES = {"regions.json", "landmarks.json", "cells.json", "visibility.json", "frostpeak_keep.json"}
 
 

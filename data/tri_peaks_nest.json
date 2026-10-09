@@ -34,7 +34,7 @@
       "by": "2026-10-09, tools/ground.py rounded heightmap, throwaway scripts; tests/test_tri_peaks_nest.py recomputes each with its own code",
       "crown_ground_y": 253,
       "tallest_tooth_tip": [1474, 263, 1053],
-      "town_to_crown_blocks_straight": 416,
+      "town_to_crown_blocks_straight": 406.5,
       "town_margin_to_tallest_tip_blocks": 2.3,
       "route_3_final_sight_from": [1721, 1524],
       "route_3_final_sight_distance": 532,

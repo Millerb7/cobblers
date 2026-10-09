@@ -5231,7 +5231,7 @@
           1546,
           99,
           584,
-          "minecraft:stone_brick_stairs[facing=north,half=bottom,shape=straight]"
+          "minecraft:stone_brick_stairs[facing=south,half=bottom,shape=straight]"
         ],
         "expect": true
       },

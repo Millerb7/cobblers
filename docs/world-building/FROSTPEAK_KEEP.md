@@ -22,7 +22,7 @@ roof surface y190; a viewing height, not a walkway).
 
 **Distant Horizons.** `modpack/config/DistantHorizons.toml` line 774, `lodChunkRenderDistanceRadius = 256` = 4,096 blocks
 (DH's own comment calls it "a best effort number"; `docs/world-building/SIGHTLINES.md` quotes the same). The chosen site is
-757-815 blocks from the streets, so the distance is not the limit. **What an 11-block-wide spire looks like as an LOD at 800 blocks
+759-815 blocks from the streets, so the distance is not the limit. **What an 11-block-wide spire looks like as an LOD at 800 blocks
 is NOT measured.**
 
 **The terrain does block it.** From the belvedere to the Strand, the limiting column is the ridge at (1606, 925), ground top
@@ -66,7 +66,7 @@ snow cone, the finial), the four keep turrets' cones and the corner towers' cone
 hidden by 12-20 blocks. The audit (`K7`) holds that: the finial from all ten street points and two of three roofline points,
 the arcade from at least nine of ten, and at least 30 blocks of the spire's axis from the belvedere. **Reciprocal (`K8`):**
 from the beacon arcade the belvedere and at least eight street points see back, so a player standing in the chamber sees
-Highwire's shelf, 757 blocks south by east (bearing 170 degrees).
+Highwire's shelf, 759 blocks south by east (bearing 170 degrees).
 
 **Reachable on foot.** A 1-block-step walk (water excluded) from the array path's lip to the postern lane's far end exists:
 weighted cost 819 for 749 straight-line blocks. The audit's own player model (`K9`) walks from the north approach and the
