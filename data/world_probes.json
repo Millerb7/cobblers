@@ -2839,6 +2839,1160 @@
           4118
         ]
       }
+    ],
+    "gym2_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          1627,
+          95,
+          2887,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          1627,
+          94,
+          2887,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          1627,
+          96,
+          2887,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          1620,
+          91,
+          2887,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          1612,
+          91,
+          2887,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          1626,
+          94,
+          2887,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          1609,
+          91,
+          2887,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the quay under the leader's Pokemon",
+        "block": [
+          1620,
+          92,
+          2887,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the quay in the middle of the hall",
+        "block": [
+          1616,
+          95,
+          2887,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "water in the launch channel",
+        "block": [
+          1614,
+          92,
+          2892,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lookout deck's front edge",
+        "block": [
+          1624,
+          95,
+          2887,
+          "minecraft:stripped_dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a roof beam",
+        "block": [
+          1614,
+          99,
+          2887,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the door in the ledger gallery's south wall",
+        "block": [
+          1606,
+          99,
+          2877,
+          "minecraft:dark_oak_door"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the slipway's top landing is air over its floor",
+        "block": [
+          1606,
+          99,
+          2879,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lifebuoy on the end wall",
+        "block": [
+          1630,
+          100,
+          2887,
+          "minecraft:red_concrete"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-west bottom corner",
+        "block": [
+          1592,
+          88,
+          2895,
+          "minecraft:mud_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          1605,
+          132,
+          2874,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym3_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          1748,
+          162,
+          1435,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          1748,
+          161,
+          1435,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          1748,
+          163,
+          1435,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          1748,
+          157,
+          1427,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          1748,
+          157,
+          1420,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          1748,
+          161,
+          1434,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          1748,
+          157,
+          1417,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the signal line at the door (oxidised)",
+        "block": [
+          1748,
+          158,
+          1412,
+          "minecraft:waxed_oxidized_cut_copper"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the signal line by the dais (bright)",
+        "block": [
+          1748,
+          158,
+          1430,
+          "minecraft:waxed_cut_copper"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air in the hall",
+        "block": [
+          1748,
+          164,
+          1420,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the cable door",
+        "block": [
+          1748,
+          159,
+          1409,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a lit lamp on the board",
+        "block": [
+          1748,
+          165,
+          1437,
+          "minecraft:redstone_lamp"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-west corner",
+        "block": [
+          1737,
+          156,
+          1439,
+          "minecraft:deepslate_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-east top corner",
+        "block": [
+          1759,
+          171,
+          1408,
+          "minecraft:deepslate_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          1747,
+          190,
+          1414,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym4_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          4311,
+          98,
+          1514,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          4311,
+          97,
+          1514,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          4311,
+          99,
+          1514,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          4311,
+          93,
+          1505,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          4311,
+          93,
+          1500,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          4311,
+          97,
+          1513,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          4311,
+          93,
+          1497,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the floor's centre round of moss",
+        "block": [
+          4311,
+          94,
+          1504,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air in the ring",
+        "block": [
+          4311,
+          100,
+          1502,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the bench's front rail",
+        "block": [
+          4311,
+          98,
+          1512,
+          "minecraft:stripped_cherry_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the stair's door",
+        "block": [
+          4311,
+          96,
+          1484,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-east bottom corner",
+        "block": [
+          4332,
+          92,
+          1519,
+          "minecraft:packed_mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-west top corner",
+        "block": [
+          4290,
+          106,
+          1477,
+          "minecraft:packed_mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          4308,
+          110,
+          1480,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym5_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          4586,
+          103,
+          2461,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          4586,
+          102,
+          2461,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          4586,
+          104,
+          2461,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          4586,
+          99,
+          2468,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          4586,
+          99,
+          2473,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          4586,
+          102,
+          2462,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          4586,
+          99,
+          2476,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the floor in lane 1",
+        "block": [
+          4590,
+          100,
+          2490,
+          "minecraft:mud_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a print set in the floor of lane 1",
+        "block": [
+          4594,
+          100,
+          2489,
+          "minecraft:muddy_mangrove_roots"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air on the range",
+        "block": [
+          4586,
+          103,
+          2470,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "screen 2's lattice",
+        "block": [
+          4585,
+          104,
+          2480,
+          "minecraft:bamboo_mosaic"
+        ],
+        "expect": true
+      },
+      {
+        "what": "screen 3's lattice",
+        "block": [
+          4597,
+          104,
+          2476,
+          "minecraft:bamboo_mosaic"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the blind's roof",
+        "block": [
+          4586,
+          106,
+          2460,
+          "minecraft:mangrove_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tower door",
+        "block": [
+          4598,
+          101,
+          2488,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-west corner",
+        "block": [
+          4568,
+          98,
+          2494,
+          "minecraft:mud_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-east top corner",
+        "block": [
+          4605,
+          109,
+          2456,
+          "minecraft:mud_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          4594,
+          131,
+          2487,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym6_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          6181,
+          70,
+          3320,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          6181,
+          69,
+          3320,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          6181,
+          71,
+          3320,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          6190,
+          65,
+          3320,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          6194,
+          65,
+          3320,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          6182,
+          69,
+          3320,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          6197,
+          65,
+          3320,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the floor's focal froglight",
+        "block": [
+          6192,
+          66,
+          3320,
+          "minecraft:pearlescent_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air in the room",
+        "block": [
+          6192,
+          72,
+          3320,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lens's centre course",
+        "block": [
+          6192,
+          78,
+          3320,
+          "minecraft:tinted_glass"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the eye's pupil",
+        "block": [
+          6178,
+          78,
+          3320,
+          "minecraft:pearlescent_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the dais lip",
+        "block": [
+          6184,
+          70,
+          3320,
+          "minecraft:amethyst_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the terrace",
+        "block": [
+          6205,
+          80,
+          3308,
+          "minecraft:polished_diorite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tube's door onto the terrace",
+        "block": [
+          6201,
+          82,
+          3312,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-west bottom corner",
+        "block": [
+          6176,
+          64,
+          3335,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-east top corner",
+        "block": [
+          6215,
+          89,
+          3304,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          6196,
+          111,
+          3312,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym7_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          6166,
+          87,
+          4981,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          6166,
+          86,
+          4981,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          6166,
+          88,
+          4981,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          6166,
+          83,
+          4990,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          6166,
+          83,
+          4996,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          6166,
+          86,
+          4982,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          6166,
+          83,
+          4999,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the floor's axis line",
+        "block": [
+          6166,
+          84,
+          5003,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air in the gallery",
+        "block": [
+          6166,
+          92,
+          4995,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the bore-hole's lava, sealed",
+        "block": [
+          6166,
+          93,
+          4977,
+          "minecraft:lava"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the bore-hole's glass",
+        "block": [
+          6166,
+          93,
+          4979,
+          "minecraft:glass"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the magma sill under it",
+        "block": [
+          6166,
+          88,
+          4979,
+          "minecraft:magma_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the south door",
+        "block": [
+          6166,
+          86,
+          5010,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the adit's corner landing",
+        "block": [
+          6179,
+          95,
+          5012,
+          "minecraft:polished_blackstone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-west bottom corner",
+        "block": [
+          6154,
+          81,
+          4977,
+          "minecraft:blackstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-east top corner",
+        "block": [
+          6178,
+          100,
+          5011,
+          "minecraft:blackstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          6178,
+          106,
+          5001,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym8_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          3556,
+          94,
+          6419,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          3556,
+          93,
+          6419,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          3556,
+          95,
+          6419,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          3568,
+          89,
+          6419,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          3573,
+          89,
+          6419,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          3557,
+          93,
+          6419,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          3576,
+          89,
+          6419,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the hall's axis line",
+        "block": [
+          3580,
+          90,
+          6419,
+          "minecraft:polished_granite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air in the hall",
+        "block": [
+          3575,
+          94,
+          6419,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a bulkhead's jamb",
+        "block": [
+          3572,
+          92,
+          6403,
+          "minecraft:chiseled_deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the sally's centre line",
+        "block": [
+          3575,
+          90,
+          6405,
+          "minecraft:polished_granite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the dais top",
+        "block": [
+          3557,
+          94,
+          6419,
+          "minecraft:polished_granite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the proscenium's head-tree",
+        "block": [
+          3562,
+          97,
+          6419,
+          "minecraft:stripped_spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the apse's raw back wall",
+        "block": [
+          3554,
+          92,
+          6419,
+          "minecraft:granite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-west bottom corner",
+        "block": [
+          3552,
+          88,
+          6431,
+          "minecraft:deepslate_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-east top corner",
+        "block": [
+          3591,
+          101,
+          6400,
+          "minecraft:deepslate_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          3565,
+          120,
+          6416,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
     ]
   }
 }
