@@ -262,12 +262,18 @@ def test_a_spawn_condition_block_is_caught(ground, tmp_path, monkeypatch):
                 V.b[key] = "minecraft:white_concrete"
         return r
     monkeypatch.setattr(K, "pyramid", bad)
+    with pytest.raises(SystemExit):                       # the generator's own guard refuses it ...
+        built(ground, tmp_path)
+    monkeypatch.setattr(K, "GUARD_BLOCKS", False)         # ... and with the guard off the audit still does
     built(ground, tmp_path)
     assert "K4" in failing(A.audit(tmp_path, ground))
 
 
 def test_a_lantern_is_caught(ground, tmp_path, monkeypatch):
     mutate_building(monkeypatch, lambda V: V.put(0, 2, 0, "minecraft:lantern"))
+    with pytest.raises(SystemExit):
+        built(ground, tmp_path)
+    monkeypatch.setattr(K, "GUARD_BLOCKS", False)
     built(ground, tmp_path)
     assert "K4" in failing(A.audit(tmp_path, ground))
 

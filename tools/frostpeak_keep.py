@@ -62,6 +62,7 @@ WORLD_READS: set = set()
 # a test mutates these to prove the audit bites (CLAUDE.md: mutate the GENERATOR, never the record)
 SPIRE_LIFT = 0          # added to the spire's chamber roof height
 CLEAR_TOP_CUT = 0       # taken off the cleared volume's height
+GUARD_BLOCKS = True     # the generator's own palette guard; a test turns it off to let the AUDIT meet a bad block
 
 
 class KeepError(SystemExit):
@@ -553,6 +554,13 @@ def plan(doc, g):
         snow[(x, y + 1, z)] = "minecraft:snow[layers=%d]" % n
     for p, s in snow.items():
         F.setdefault(p, s)
+    # ---- the palette guard: nothing outside the record's blocks.ids, nothing the spawn system keys on
+    if GUARD_BLOCKS:
+        names = {st.split("[")[0].split("{")[0] for st in list(F.values()) + list(S.values())}
+        spawn = set(json.loads((ROOT / "data" / "spawn_blocks.json").read_text(encoding="utf-8"))["blocks"])
+        outside, bad = sorted(names - set(doc["blocks"]["ids"])), sorted(names & spawn)
+        if outside or bad:
+            raise KeepError("Wardenhold writes blocks outside data/frostpeak_keep.json blocks.ids %s or spawn-condition blocks %s" % (outside, bad))
     # ---- the cleared volume: the rectangle from the courtyard floor up, so no krummholz stands in the keep
     clear = (x0, pad + 1, z0, x1, pad + top_ry + 2 - CLEAR_TOP_CUT, z1)
     info = {"pad": pad, "top_ry": top_ry, "plinth_blocks": plinth, "clear": clear, "notes": notes, "lane_cells": len(lane_cells),
