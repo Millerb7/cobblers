@@ -178,7 +178,7 @@ passage two wide along the east wall, north through the dividing wall onto the g
 15): the strata in the walls and in six glass core tubes, four ember bays of magma behind glass in the north wall, ribs
 with hung lanterns above y111, and at the west end the stage (top y106, three over the floor) with the bore-hole behind
 it: a seven-by-seven window of lava one deep, sealed in the wall behind glass, a magma sill under it, copper pylons
-either side. Blaine's seat (6159, 106, 4989); his Challenge cell (6159, 106, 4982) at the stage's north end. Out by the
+either side. Blaine's seat (6159, 106, 4987); his Challenge cell (6159, 106, 4982) at the stage's north end. Out by the
 iron door in the east wall at the stair's head (button inside), or back the way you came. Total grade: up three, down
 three (the hoods), down three (the broad stair), all half steps. Takes down the Assay House (the lot cleared from y106,
 the footing y103..105 rewritten) and the carved gallery (bounds as built, clipped to y102; see the record's

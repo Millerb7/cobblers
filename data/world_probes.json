@@ -3888,7 +3888,7 @@
         "block": [
           6159,
           106,
-          4989,
+          4987,
           "rctmod:trainer_spawner"
         ],
         "expect": true
@@ -3898,7 +3898,7 @@
         "block": [
           6159,
           105,
-          4989,
+          4987,
           "minecraft:redstone_block"
         ],
         "expect": true
@@ -3908,7 +3908,7 @@
         "block": [
           6159,
           107,
-          4989,
+          4987,
           "minecraft:air"
         ],
         "expect": true
@@ -3938,7 +3938,7 @@
         "block": [
           6160,
           105,
-          4989,
+          4987,
           "cobblemonbattlepositions:trainer_stand_position"
         ],
         "expect": true
@@ -4076,9 +4076,9 @@
       {
         "what": "no spawner at the old seat",
         "block": [
-          6166,
-          87,
-          4981,
+          6159,
+          106,
+          4989,
           "rctmod:trainer_spawner"
         ],
         "expect": false
