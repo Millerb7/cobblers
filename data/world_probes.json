@@ -2980,6 +2980,36 @@
           130,
           4118
         ]
+      },
+      {
+        "what": "... its oval: one item_display of the carrier item, in front of the opening (after R16DR's entity chain; a client with tools/rip_pack.py's pack sees it animated, one without sees a big amethyst shard)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_ns,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          1352,
+          130,
+          4118
+        ]
+      },
+      {
+        "what": "... and it is the right item and model value (the display carries minecraft:amethyst_shard with custom_model_data 4180)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_ns,tag=dg.rip_oval,nbt={item:{id:\"minecraft:amethyst_shard\",components:{\"minecraft:custom_model_data\":4180}}}]",
+        "count": 1,
+        "hold": [
+          1352,
+          130,
+          4118
+        ]
+      },
+      {
+        "what": "... the oval's top cell (y133, in front of the lintel) is open air, so nothing hides it",
+        "block": [
+          1352,
+          133,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
       }
     ],
     "gym2_arena": [
