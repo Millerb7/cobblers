@@ -1,0 +1,140 @@
+{
+  "schema": "gym_arena/1",
+  "id": "gym2",
+  "gym": "gym2",
+  "status": "authored 2026-10-08; offline checks only (tools/gym_arenas.py check). Nothing here has been built in a world or seen in a running game. The one junction the check cannot see across is the open door in the ledger gallery's south wall (see entry.why).",
+  "name": "The Lifeboat House",
+  "reading": "Misty's town keeps the lake's rescue service (docs/world-building/TOWN_CHARACTER.md gym2_town: rescue boats, a record of every arrival; prismarine and mud brick, dark oak, spruce). The cistern the town draws from and the ledger gallery above the race are already carved under the template hall (data/gym_interiors.json gym2). Beyond the ledger gallery, past the lifeguard, is where the service keeps its boat: a long timber-framed boat house in mud brick with a prismarine quay, a launch channel along its whole south side with the boat still lying in it, buoys on the water and a lifeline strung on posts along the quay edge, a lifebuoy painted on the end wall. A player comes through a door the lifeguard guards, down a slipway stair, into the hall's west end and walks its whole length toward the lookout deck at the east end: a raised timber deck on a dark prismarine plinth, three courses above the quay, where the watch is kept and Misty stands.",
+  "leader": {
+    "id": "kanto_misty",
+    "seat": [1627, 95, 2887],
+    "seat_why": "on the lookout deck's top (y95 = floor y92 + 3), on the hall's axis z2887, three in from the deck's front trim (x1624) and three from the end wall. THE ONE SOURCE of Misty's seat once this record exists (tools/gym_arenas.py leader_seats): data/gym_interiors.json gym2 leader.expect_spawner_at (1605, 132, 2874) is where the template puts it and where the move starts."
+  },
+  "spawn_free_zone": "gym_misty",
+  "floor_y": 92,
+  "bounds": [1592, 88, 2877, 1631, 102, 2895],
+  "bounds_why": "the hall shell x1592..1631 (interior 1594..1629, 36 long) by z2881..2895 (interior 2883..2893, 11 wide) by y88..101 (floor top y92, air y93..99, beams at y99, vault y100..101), joined on its north side by the slipway block x1597..1607 z2877..2881 y91..102. Every column lies inside the gym_misty spawn-free box [1592, 2856, 1631, 2895], so no zone change. Nothing is written in the template's own bounds [1594, 107, 2859, 1629, 146, 2890] (this arena's top is y102, the template's lowest course y107), and no write lands on a cell the dig wrote (measured by replaying tools/gym_interiors.py gym2_commands: 0 of 11,105). The dig's carved cells end at z2876; the slipway block's north face (z2877) stands directly against the ledger gallery's south wall, the one cell of rock the dig left there, and the nearest open arena cell is two cells from the nearest open dig cell.",
+  "through_building": [],
+  "through_building_why": "none: the descent is the existing well, cistern, race and ledger gallery (data/gym_interiors.json gym2); the arena starts at the gallery's south wall and writes nothing in the template building.",
+  "entry": {
+    "route_end": [1606, 99, 2878],
+    "floor": [1598, 93, 2883],
+    "why": "THE JUNCTION. Misty's route is the well, not the hall: hall, 38 down the scaffolding to the cistern, the one-way fall into the race, the three mouths, the true one up into the ledger gallery where the lifeguard stands, the sill down to the cistern, the well back up (data/gym_interiors.json gym2 route). The template spawner, one over which the walk would start, is (1605, 133, 2874) in the hall. The arena hangs off that route at its LAST gated room: a door in the ledger gallery's south wall at (1606, 99..100, 2877), east of the lifeguard (1604, 99, 2874) and of the true mouth (1602..1603), so the mouth's exit puts a player beside the lifeguard and the door lies beyond him. The descent from the hall is therefore the well that already exists (gallery floor y98 to hall floor y133 = 35 courses), not a stair this arena builds; the arena's own descent is the 6-tread slipway. route_end is the first cell INSIDE the arena, the slipway's top landing, because tools/gym_arenas.py has no model of the template or the dig: it sees the door as a solid block (in the world it is `open=true`, a leaf swung back to the jamb, passable to a player), and its walk has to start this side of it. Mutation: the same record with the door cells as air fails the shell rule ('2 open cells touch unwritten ground, first [1606, 99, 2877] beside [1606, 99, 2876]', the gallery's own air), so the door is what closes the arena to the check and opens it to the world. What the check therefore does NOT prove: that a player in the gallery reaches this landing. entry.floor is where the slipway lets the player out of the hall's north-west arch: 29.4 from the lookout stand, farther than rctmod's forceBattleMaxDistance + 1 = 17."
+  },
+  "battle": {
+    "trainer_pokemon": [1620, 91, 2887],
+    "player_pokemon": [1612, 91, 2887],
+    "trainer_stand": [1626, 94, 2887],
+    "player_stand": [1609, 91, 2887],
+    "why": "Cobblemon Battle Positions (docs/world-building/GYM_ARENAS.md): both Pokemon blocks one under the floor's top course (y91 under y92), so spawnHeightOffset 2.0 stands each Pokemon on the quay. Misty's team is small: the largest clear radius over all her members is 1.85 (pelipper, model sweep) and the tallest clear height 1.53 (floatzel). Her block (centre x1620.5) is 3.5 from the deck's front trim (x1624) and her disc reaches x1622.35, so it is empty by 1.65; the challenger's (centre x1612.5) is 8 from hers (hitbox 0.96 wide) and 11.5 from the deck face, inside the 16 Battle Positions searches from every cell a battle can start from (the check: 73 of 73). The axis z2887 is one north of the hall's centre line (z2888): the disc reaches z2889.35, the quay-edge rail row begins at z2890, the lockers' row (z2883) ends at z2884, so nothing stands within the disc. The challenger's stand is 3 behind their Pokemon, as the donor gyms set it."
+  },
+  "challenge_spawner": {
+    "old_at": [1605, 132, 2873],
+    "old_restore": {"floor": "minecraft:smooth_quartz_stairs[facing=south,half=bottom,shape=inner_right,waterlogged=true]", "under": "minecraft:smooth_stone"},
+    "why": "the Challenge spawner the trainers cycle sets in the template hall (data/challenge_mode.json bosses.kanto_misty.spawner.at, measured there by unit M1) goes back to the rim stair and smooth stone it replaced; the cycle's new cell is two south of the seat on the same deck, (1627, 95, 2885), with the two cells over it left air."
+  },
+  "old_seat_restore": {
+    "floor": "minecraft:smooth_quartz_stairs[facing=west,half=bottom,shape=straight,waterlogged=true]",
+    "under": "minecraft:smooth_stone",
+    "why": "the template's pool rim at x1605 is a column of smooth quartz stairs facing west over smooth stone (read from the template as placed: cells (1605, 132, 2871..2877) and (1605, 131, ...)); the spawner replaced one of them at z2874 and a straight west stair puts the rim back. data/challenge_mode.json single_leader.restore carries the inner_right stair of the cell north of it, which is the right floor for the Challenge cell and not for this one."
+  },
+  "palette": {
+    "shell": "minecraft:mud_bricks",
+    "floor": "minecraft:prismarine_bricks",
+    "edge": "minecraft:dark_prismarine",
+    "deck": "minecraft:spruce_planks",
+    "trim": "minecraft:stripped_dark_oak_log",
+    "timber": "minecraft:dark_oak_planks",
+    "post": "minecraft:dark_oak_log",
+    "beam": "minecraft:dark_oak_log[axis=z]",
+    "fence": "minecraft:dark_oak_fence",
+    "water": "minecraft:water",
+    "tread": "minecraft:prismarine_brick_stairs",
+    "sealight": "minecraft:sea_lantern",
+    "lantern": "minecraft:lantern",
+    "hanging": "minecraft:lantern[hanging=true]",
+    "chain": "minecraft:chain[axis=y]",
+    "red": "minecraft:red_concrete",
+    "white": "minecraft:white_concrete",
+    "locker": "minecraft:barrel[facing=up]",
+    "door_lower": "minecraft:dark_oak_door[facing=south,half=lower,hinge=left,open=true]",
+    "door_upper": "minecraft:dark_oak_door[facing=south,half=upper,hinge=left,open=true]"
+  },
+  "blocks": ["minecraft:air", "minecraft:mud_bricks", "minecraft:prismarine_bricks", "minecraft:dark_prismarine", "minecraft:spruce_planks", "minecraft:stripped_dark_oak_log", "minecraft:dark_oak_planks", "minecraft:dark_oak_log", "minecraft:dark_oak_fence", "minecraft:water", "minecraft:prismarine_brick_stairs", "minecraft:sea_lantern", "minecraft:lantern", "minecraft:chain", "minecraft:red_concrete", "minecraft:white_concrete", "minecraft:barrel", "minecraft:dark_oak_door"],
+  "blocks_why": "the town's own palette (TOWN_CHARACTER.md gym2_town: prismarine, mud brick, dark oak, spruce) and the interior's own (data/gym_interiors.json gym2 blocks: sea lantern, dark prismarine, barrels, lanterns, chain), plus red and white concrete for the buoys and the lifebuoy. Water is a spawn-condition block, so it is kept inside the gym_misty box, which takes every column out of every compiled spawn file; there is no grass, leaves, sand or carpet.",
+  "parts": [
+    {"op": "shell", "box": [1592, 88, 2881, 1631, 101, 2895], "thickness": 2, "block": "$shell", "why": "the boat house: two courses of mud brick on all six faces, built and never the rock; the inside carved (x1594..1629, y90..99, z2883..2893)"},
+    {"op": "fill", "box": [1594, 90, 2883, 1629, 91, 2893], "block": "$shell", "why": "the floor's base, two courses"},
+    {"op": "fill", "box": [1594, 92, 2883, 1629, 92, 2893], "block": "$floor", "why": "the quay: prismarine brick, wet-looking, y92 is the floor's top course"},
+    {"op": "fill", "box": [1594, 91, 2891, 1629, 92, 2893], "block": "$water", "why": "the launch channel along the whole south side: three wide, two deep, its surface flush with the quay (y92) as a slipway's is, over a bed at y90. Enclosed on every side by written blocks, so the water does not run"},
+    {"op": "fill", "box": [1594, 92, 2890, 1623, 92, 2890], "block": "$edge", "why": "the quay's edge in dark prismarine, west end to the lookout's plinth"},
+    {"op": "scatter", "positions": [[1597, 90, 2892], [1602, 90, 2892], [1607, 90, 2892], [1612, 90, 2892], [1617, 90, 2892], [1622, 90, 2892], [1627, 90, 2892]], "block": "$sealight", "why": "sea lanterns set in the channel's bed: the channel is lit from under the water, as the race and the mouths of the cistern are"},
+    {"op": "fill", "box": [1597, 92, 2891, 1606, 92, 2893], "block": "$timber", "why": "the rescue boat lying in the channel: a deck of dark oak at the waterline"},
+    {"op": "fill", "box": [1597, 93, 2891, 1606, 93, 2891], "block": "$timber", "why": "its gunwales"},
+    {"op": "fill", "box": [1597, 93, 2893, 1606, 93, 2893], "block": "$timber"},
+    {"op": "fill", "box": [1597, 93, 2892, 1597, 93, 2892], "block": "$timber", "why": "the stern board"},
+    {"op": "setblock", "pos": [1607, 92, 2892], "block": "$timber", "why": "the bow, a block narrower than the hull"},
+    {"op": "setblock", "pos": [1607, 93, 2892], "block": "$timber"},
+    {"op": "fill", "box": [1602, 93, 2892, 1602, 96, 2892], "block": "$fence", "why": "the mast, with the boat's lantern at its head"},
+    {"op": "setblock", "pos": [1602, 97, 2892], "block": "$lantern"},
+    {"op": "repeat", "step": [5, 0, 0], "count": 3, "why": "three buoys on the water east of the boat, x1612, 1617 and 1622: a red course, a white course and a lantern", "parts": [
+      {"op": "setblock", "pos": [1612, 92, 2892], "block": "$red"},
+      {"op": "setblock", "pos": [1612, 93, 2892], "block": "$white"},
+      {"op": "setblock", "pos": [1612, 94, 2892], "block": "$lantern"}
+      ]},
+    {"op": "repeat", "step": [5, 0, 0], "count": 6, "why": "the lifeline: a post on the quay's edge every five from x1596 to x1621, two courses of dark oak fence and a lantern, and a chain strung between each pair at y94", "parts": [
+      {"op": "fill", "box": [1596, 93, 2890, 1596, 94, 2890], "block": "$fence"},
+      {"op": "setblock", "pos": [1596, 95, 2890], "block": "$lantern"}
+      ]},
+    {"op": "repeat", "step": [5, 0, 0], "count": 5, "parts": [
+      {"op": "fill", "box": [1597, 94, 2890, 1600, 94, 2890], "block": "minecraft:chain[axis=x]"}
+      ]},
+    {"op": "repeat", "step": [6, 0, 0], "count": 5, "why": "the timber frame: every six from x1602 a dark oak beam across the roof (y99), a post up each long wall to meet it, and two lanterns hung on chains from it over the quay's two sides", "parts": [
+      {"op": "fill", "box": [1602, 99, 2883, 1602, 99, 2893], "block": "$beam"},
+      {"op": "fill", "box": [1602, 93, 2882, 1602, 99, 2882], "block": "$post"},
+      {"op": "fill", "box": [1602, 93, 2894, 1602, 99, 2894], "block": "$post"},
+      {"op": "fill", "box": [1602, 98, 2885, 1602, 98, 2885], "block": "$chain"},
+      {"op": "setblock", "pos": [1602, 97, 2885], "block": "$hanging"},
+      {"op": "fill", "box": [1602, 98, 2889, 1602, 98, 2889], "block": "$chain"},
+      {"op": "setblock", "pos": [1602, 97, 2889], "block": "$hanging"}
+      ]},
+    {"op": "scatter", "positions": [[1604, 93, 2883], [1605, 93, 2883], [1611, 93, 2883], [1612, 93, 2883], [1617, 93, 2883], [1618, 93, 2883]], "block": "$locker", "why": "the station's lockers along the north wall: life jackets, lines, flares. All at z2883, three clear of the 1.85 disc round the Pokemon blocks"},
+    {"op": "fill", "box": [1624, 93, 2883, 1629, 94, 2890], "block": "$edge", "why": "the lookout's plinth: dark prismarine, two courses, the full width north of the channel; the channel runs on along its south face"},
+    {"op": "fill", "box": [1624, 95, 2883, 1629, 95, 2890], "block": "$deck", "why": "the lookout deck: spruce planking, y95, three courses over the quay (the seat at (1627, 95, 2887) is never written here: the seat function owns it)"},
+    {"op": "fill", "box": [1624, 95, 2883, 1624, 95, 2890], "block": "$trim", "why": "the deck's front edge in stripped dark oak"},
+    {"op": "fill", "box": [1625, 96, 2883, 1629, 96, 2883], "block": "$fence", "why": "the lookout's rail along its north and south edges; the front, toward the hall, is left open"},
+    {"op": "fill", "box": [1625, 96, 2890, 1629, 96, 2890], "block": "$fence"},
+    {"op": "fill", "box": [1629, 96, 2884, 1629, 97, 2884], "block": "$fence", "why": "two lamp posts against the end wall, at the deck's two corners, clear of the lifebuoy"},
+    {"op": "fill", "box": [1629, 96, 2890, 1629, 97, 2890], "block": "$fence"},
+    {"op": "scatter", "positions": [[1629, 98, 2884], [1629, 98, 2890]], "block": "$lantern"},
+    {"op": "setblock", "pos": [1627, 99, 2887], "block": "$sealight", "why": "the watch lamp over the seat, set in the roof"},
+    {"op": "fill", "box": [1630, 100, 2886, 1630, 100, 2888], "block": "$red", "why": "a lifebuoy painted on the end wall behind the seat, five by five, in the wall's own plane x1630: red top and bottom arcs, white sides, mud brick in the middle"},
+    {"op": "fill", "box": [1630, 96, 2886, 1630, 96, 2888], "block": "$red"},
+    {"op": "fill", "box": [1630, 97, 2885, 1630, 99, 2885], "block": "$white"},
+    {"op": "fill", "box": [1630, 97, 2889, 1630, 99, 2889], "block": "$white"},
+    {"op": "fill", "box": [1597, 91, 2877, 1607, 102, 2881], "block": "$shell", "why": "THE SLIPWAY BLOCK: solid mud brick over the ground south of the ledger gallery, x1597..1607 by z2877..2881, y91..102, the hall's north wall at its south edge. Everything below is cut out of it, so the stair is walled on every side, roofed, and meets the gallery's south wall (z2877) in one door"},
+    {"op": "carve", "box": [1606, 99, 2878, 1606, 101, 2880], "why": "the top landing (a full block at y98, three wide), with its headroom"},
+    {"op": "straight_stair", "from": [1605, 98, 2880], "dir": "west", "steps": 6, "width": 3, "tread": "$tread", "under": "$shell", "headroom": 3, "why": "the slipway: a stair three wide running west, six treads from y98 (flush with the landing) down to y93, one over the quay; walked both ways"},
+    {"op": "carve", "box": [1598, 93, 2878, 1599, 95, 2880], "why": "the foot of the slipway, two long, on the quay's level"},
+    {"op": "fill", "box": [1598, 92, 2878, 1599, 92, 2882], "block": "$floor", "why": "the foot's floor, in the quay's prismarine, running through the hall's north wall"},
+    {"op": "carve", "box": [1598, 93, 2881, 1599, 95, 2882], "why": "the arch through the hall's north wall, two wide and three high, into the hall's north-west corner"},
+    {"op": "fill", "box": [1597, 93, 2881, 1597, 95, 2882], "block": "$post", "why": "the arch's jambs and lintel in dark oak"},
+    {"op": "fill", "box": [1600, 93, 2881, 1600, 95, 2882], "block": "$post"},
+    {"op": "fill", "box": [1597, 96, 2881, 1600, 96, 2882], "block": "$beam"},
+    {"op": "setblock", "pos": [1606, 99, 2877], "block": "$door_lower", "why": "THE DOOR: the boat house's door in the ledger gallery's south wall, dark oak, standing open. It is the only block in the arena that is neither the arena's own wall nor open air"},
+    {"op": "setblock", "pos": [1606, 100, 2877], "block": "$door_upper"},
+    {"op": "setblock", "pos": [1606, 101, 2879], "block": "$hanging", "why": "a lantern over the top landing"},
+    {"op": "scatter", "positions": [[1603, 99, 2879], [1601, 97, 2879], [1599, 95, 2879]], "block": "$hanging", "why": "three more hung from the roof over the slipway at the top of each headroom (x1603: tread y96, x1601: y94) and over its foot"}
+  ],
+  "probes": [
+    {"what": "the quay under the leader's Pokemon", "at": [1620, 92, 2887], "block": "minecraft:prismarine_bricks"},
+    {"what": "air over the quay in the middle of the hall", "at": [1616, 95, 2887], "block": "minecraft:air"},
+    {"what": "water in the launch channel", "at": [1614, 92, 2892], "block": "minecraft:water"},
+    {"what": "the lookout deck's front edge", "at": [1624, 95, 2887], "block": "minecraft:stripped_dark_oak_log"},
+    {"what": "a roof beam", "at": [1614, 99, 2887], "block": "minecraft:dark_oak_log"},
+    {"what": "the door in the ledger gallery's south wall", "at": [1606, 99, 2877], "block": "minecraft:dark_oak_door"},
+    {"what": "the slipway's top landing is air over its floor", "at": [1606, 99, 2879], "block": "minecraft:air"},
+    {"what": "the lifebuoy on the end wall", "at": [1630, 100, 2887], "block": "minecraft:red_concrete"},
+    {"what": "the shell's south-west bottom corner", "at": [1592, 88, 2895], "block": "minecraft:mud_bricks"}
+  ]
+}
