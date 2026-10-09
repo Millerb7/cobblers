@@ -194,6 +194,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # stack and six tidal rocks in the sea built by R9RK, before R9E (the colony's Habitat Blocks sit in the
                 # rock); the Gullmother, a Dragonite, is on the residents' keeper, so world-local below; R18RK after R18FS
                 "cobblers_rookery",
+                # 2026-10-09: the Long Count in C3 (tools/long_count.py, data/long_count.json): Perrin Hale's camp, the
+                # lantern pole and the Grotle's lane of trees, built by R9LC; one named Pokemon on the residents'
+                # keeper, so world-local below; summoned by R18LC after R18FS; Perrin is R9F's (an npc_grant)
+                "cobblers_long_count",
                 # 2026-10-04: the jungle's three lost temples on the Long Isle's south (tools/jungle_temples.py,
                 # data/jungle_temples.json), built by R9JT; no load or tick and no Pokemon, so not world-local
                 "cobblers_jungle_temples",
@@ -488,6 +492,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_buried_dune",
                # 2026-10-09: the rookery's keeper spawns its one Pokemon the same way
                "cobblers_rookery",
+               # 2026-10-09: the Long Count's keeper spawns its Grotle the same way
+               "cobblers_long_count",
                # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
                # global folder would run it in the live world too
                "cobblers_arena",
@@ -931,6 +937,10 @@ def prepare_jobs(a):
     # rule, no spawn-condition or gravity block) and on a record the heightmap disagrees with. Its independent audit is
     # owed (data/rookery.json audit_checklist) and is wired here when it exists
     add("rookery", "rookery.py", *src)
+    # the Long Count in C3 (2026-10-09): the generator fails closed on its own siting rules (cell C3, the authored
+    # clearance, the path rule, the line pointing at the world tree, spawn blocks) and on a record the heightmap
+    # disagrees with. Its independent audit is owed (data/long_count.json audit_checklist), so no audit job yet
+    add("long_count", "long_count.py", *src)
     # the jungle's lost temples (2026-10-04): the generator fails closed on its own siting rules (long_isle_south, the
     # keep-clear list, the authored clearance, spawn blocks) and on a record the heightmap disagrees with; then its
     # independent audit (tools/jungle_temples_audit.py, another agent's), after the pack it reads: the pack replayed
@@ -2104,6 +2114,11 @@ def steps(with_spawns=False):
     import rookery
     out.append(("R9RK", "Gull Rock: the stack and its six tidal rocks off the north-east coast (data/rookery.json)",
                 rookery.placement_steps()))
+    # the Long Count (2026-10-09, tools/long_count.py): the same pure block pass, held in a forceload of its box, before
+    # R9E (it sits on no Habitat Block); Perrin stands on its floor (R9F, from the npc_grant long_count_thanks)
+    import long_count
+    out.append(("R9LC", "the Long Count in C3: the camp, the lantern pole, the Grotle's lane of trees (data/long_count.json)",
+                long_count.placement_steps()))
     # the jungle's lost temples (2026-10-04, tools/jungle_temples.py): the same pure block pass per temple, held in a
     # forceload of its box, before R9E (none sits on a Habitat Block); the caches' barrels are written here
     import jungle_temples
@@ -2421,6 +2436,11 @@ def steps(with_spawns=False):
     # Ungated: she is there from the first day and asleep; her catch gate is the level cap, not an appearance gate
     out.append(("R18RK", "Gull Rock's Gullmother: the ungated Pokemon (data/rookery.json)",
                 rookery.entity_steps()))
+    # the Long Count (2026-10-09): its Grotle has no presence gate (the level cap is the gate at gym 2), so it is
+    # summoned (guarded on tag AND species) and bound inside a forceload of the site's box. After R18FS
+    import long_count
+    out.append(("R18LC", "the Long Count's Grotle, Old Pace: summoned and bound (data/long_count.json)",
+                long_count.entity_steps()))
     # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",

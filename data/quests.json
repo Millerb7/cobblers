@@ -9266,6 +9266,127 @@
       ]
     },
     {
+      "id": "evt_long_count",
+      "source": "data/long_count.json long_count; the owner's world sweep of 2026-10-09 (docs/world-building/WORLD_SWEEP_2026-10-09.md gap 4)",
+      "reward_record": "data/rewards.json long_count_thanks",
+      "place": "data/long_count.json long_count: Perrin Hale's camp on Foothill Woods' north-east side, (2136, 2160)",
+      "dialogue_id": "dlg_long_count",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        2140,
+        124,
+        2159
+      ],
+      "objectives": [
+        {
+          "id": "show_berry",
+          "active_when": {
+            "field": "quest.evt_long_count.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_long_count.reward_claimed",
+            "equals": true
+          },
+          "text": "Perrin Hale has not been under the world tree's roots in nine years and wants to know whether they still bear. Show her a Sitrus Berry off them."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_long_count.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_long_count.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_long_count.dialogue_cursor",
+              "value": "c001"
+            }
+          ]
+        },
+        {
+          "id": "show_berry",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_long_count.reward_claimed",
+              "value": false
+            },
+            {
+              "kind": "held_item",
+              "item_predicate": "cobblemon:sitrus_berry"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_long_count_thanks",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_long_count.reward_claimed",
+              "idempotency_key": "evt_long_count:reward_long_count_thanks:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_long_count.dialogue_cursor",
+              "value": "b001"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_long_count_thanks",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json long_count_thanks (kind npc_grant); contents and verification string copied from it",
+          "contents": [
+            {
+              "item": "cobblemon:growth_mulch",
+              "count": 2,
+              "verification": "assets/cobblemon/models/item/growth_mulch.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "story_beat": "A small errand with a human answer: the world tree is the horizon of Perrin's count, and she wants to know it still bears. The berry is only SHOWN (held_item is a condition, nothing is consumed: compile_dialogue's consume_held_item empties a whole stack). The Grotle (data/long_count.json pokemon) and the tin at the far end of her lane (data/rewards.json long_count_first_oak) need no conversation: she only tells the player they are there.",
+      "held_check": "r_berry and the show_berry transition read the main hand with the held_item probe (compile_dialogue: execute ... if items entity @s weapon.mainhand cobblemon:sitrus_berry), the thirsty stranger's proven shape. NOT verified in game.",
+      "repeat_dialogue": {
+        "after_claim": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_long_count at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R9F, from data/rewards.json long_count_thanks), on the ground R9LC's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_long_count.started",
+        "quest.evt_long_count.reward_claimed",
+        "quest.evt_long_count.dialogue_cursor"
+      ]
+    },
+    {
       "id": "ambient_apricorn_farm",
       "source": "data/apricorn_farm.json; the owner's request of 2026-10-05 (data/apricorn_farm.json request)",
       "scope": "player",

@@ -1615,23 +1615,108 @@
           "one_of": "cobblemon:scroll_of_darkness (one claim, quest.evt_station_director.scroll_claimed)",
           "verification": "assets/cobblemon/models/item/scroll_of_waters.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
         },
-        {"item": "mega_showdown:bug_memory", "count": 1, "all_of": "Silvally's 17 memories, given together (one claim, quest.evt_station_director.memories_claimed)", "verification": "assets/mega_showdown/models/item/bug_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:dark_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/dark_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:dragon_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/dragon_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:electric_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/electric_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:fairy_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/fairy_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:fighting_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/fighting_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:fire_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/fire_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:flying_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/flying_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:ghost_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/ghost_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:grass_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/grass_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:ground_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/ground_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:ice_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/ice_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:poison_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/poison_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:psychic_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/psychic_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:rock_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/rock_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:steel_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/steel_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
-        {"item": "mega_showdown:water_memory", "count": 1, "all_of": "Silvally's 17 memories", "verification": "assets/mega_showdown/models/item/water_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"}
+        {
+          "item": "mega_showdown:bug_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories, given together (one claim, quest.evt_station_director.memories_claimed)",
+          "verification": "assets/mega_showdown/models/item/bug_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:dark_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/dark_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:dragon_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/dragon_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:electric_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/electric_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:fairy_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/fairy_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:fighting_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/fighting_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:fire_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/fire_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:flying_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/flying_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:ghost_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/ghost_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:grass_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/grass_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:ground_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/ground_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:ice_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/ice_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:poison_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/poison_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:psychic_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/psychic_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:rock_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/rock_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:steel_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/steel_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:water_memory",
+          "count": 1,
+          "all_of": "Silvally's 17 memories",
+          "verification": "assets/mega_showdown/models/item/water_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        }
       ],
       "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
       "why": "The thunder feather (a storm watched from the Zapdos tower's top, after eight badges) and the ember feather (the Craters' Moltres tower surveyed, after eight badges: the owner, 2026-10-02, 'Moltres yes', re-homed to the Craters the same day; data/research_station.json economy.ember_survey). The station is the one source of the three feathers (the owner, 2026-10-02; economy.the_one_source_2026_10_02). And ONE of Kubfu's two scrolls, the player's choice, once, to a player with their starter Kubfu in the party after five badges (the owner, 2026-10-02, docs/mechanics/NATIVE_STARTERS_COST.md 7.5; data/research_station.json economy.items kubfu_scroll). And all 17 of Silvally's memories, together, once, to a player with their starter Type: Null or a Silvally in the party after five badges (the owner, 2026-10-08: 'Silvally should get memories from the same lady as Urshifu's scrolls ... all 17, at badge 5, once'; data/research_station.json economy.items silvally_memories).",
@@ -1869,8 +1954,26 @@
       "message": "In the fossil-hunter's tin at the foot of the tallest chimney: a Smooth Rock, polished by the wash, and two Dusk Balls.",
       "why": "data/far_south.json four_chimneys: a hunter's leftovers in rock country. A Smooth Rock (held: a sandstorm lasts longer) is a natural source of a held item otherwise bought or crafted (docs/STATE.md: every Cobblemon item obtainable without crafting); two Dusk Balls for the plateau's night hunting. Tier 8, optional; the critical path needs none of it. items_hook: data/far_south.json four_chimneys caches[0].",
       "built_by": "tools/far_south.py (the barrel, in cobblers_far_south's four_chimneys build, step R9FS)",
-      "trigger": {"min": [5177, 159, 5957], "max": [5178, 160, 5959]},
-      "container": {"block": "minecraft:barrel", "at": [5177, 158, 5958]}
+      "trigger": {
+        "min": [
+          5177,
+          159,
+          5957
+        ],
+        "max": [
+          5178,
+          160,
+          5959
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          5177,
+          158,
+          5958
+        ]
+      }
     },
     {
       "id": "far_south_glass_cutters_box",
@@ -1891,8 +1994,26 @@
       "message": "In the glass-cutter's box: a Thunder Stone that still crackles, found at the foot of the great spire, and a twist of Soft Sand.",
       "why": "data/far_south.json glass_garden: what lightning leaves in sand. Thunder is the stone in most demand (docs/mechanics/STONE_ECONOMY.md: 6 families) and this is one more, late and optional; Soft Sand is the dunes' held item, a natural source of something otherwise bought or crafted. items_hook: data/far_south.json glass_garden caches[0].",
       "built_by": "tools/far_south.py (the barrel, in cobblers_far_south's glass_garden build, step R9FS)",
-      "trigger": {"min": [5987, 125, 6532], "max": [5988, 126, 6534]},
-      "container": {"block": "minecraft:barrel", "at": [5988, 124, 6533]}
+      "trigger": {
+        "min": [
+          5987,
+          125,
+          6532
+        ],
+        "max": [
+          5988,
+          126,
+          6534
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          5988,
+          124,
+          6533
+        ]
+      }
     },
     {
       "id": "far_south_folly_cellar",
@@ -1913,8 +2034,26 @@
       "message": "Under the loose stone of the folly's floor: a Leaf Stone and a Miracle Seed, put by for a garden.",
       "why": "data/far_south.json garden_folly: a gardener's keepsakes. A Leaf Stone (Grass evolutions) and a Miracle Seed (held: Grass moves), the second a natural source of a held item otherwise bought or crafted. On Sunset Isle, optional. items_hook: data/far_south.json garden_folly caches[0].",
       "built_by": "tools/far_south.py (the barrel, in cobblers_far_south's garden_folly build, step R9FS)",
-      "trigger": {"min": [2902, 95, 7629], "max": [2903, 96, 7631]},
-      "container": {"block": "minecraft:barrel", "at": [2902, 94, 7630]}
+      "trigger": {
+        "min": [
+          2902,
+          95,
+          7629
+        ],
+        "max": [
+          2903,
+          96,
+          7631
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          2902,
+          94,
+          7630
+        ]
+      }
     },
     {
       "id": "jungle_temple_ring_court_undercroft",
@@ -1935,8 +2074,26 @@
       "message": "In the room under the eye: a Sun Stone, and three Ancient Great Balls older than any Mart's.",
       "why": "data/jungle_temples.json ring_court: SQ-JUNGLE-01's one hidden cache, the find behind the temple's puzzle. Tier 8 (data/encounter_design.json long_isle_south), band 44-50 PROVISIONAL (LONG_ISLE.md D5): a Sun Stone (no stone ore generates in this world, docs/research/notes/reward-item-inventory.md section 2: Gloom, Petilil, Cottonee and Helioptile in the rosters wait on it) and three great-tier balls. Ancient Great Ball's catch behaviour in Cobblemon 1.8.0 is not measured here; the item exists in the jar. items_hook: data/jungle_temples.json ring_court caches[0].",
       "built_by": "tools/jungle_temples.py (the barrel, in cobblers_jungle_temples' ring_court build, step R9JT)",
-      "trigger": {"min": [7202, 127, 7525], "max": [7203, 128, 7527]},
-      "container": {"block": "minecraft:barrel", "at": [7202, 126, 7526]}
+      "trigger": {
+        "min": [
+          7202,
+          127,
+          7525
+        ],
+        "max": [
+          7203,
+          128,
+          7527
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          7202,
+          126,
+          7526
+        ]
+      }
     },
     {
       "id": "jungle_temple_harbour_mark_offering",
@@ -1957,8 +2114,26 @@
       "message": "In the offering stone under the mark: a King's Rock, and two Revives left for the crossing.",
       "why": "data/jungle_temples.json harbour_mark: what sailors left for the sea. Tier 8, band 44-50 PROVISIONAL: a King's Rock (held: flinch; Poliwhirl's and Slowpoke's evolution item) and two Revives, the challengers' cairn's measure of a consumable find. items_hook: data/jungle_temples.json harbour_mark caches[0].",
       "built_by": "tools/jungle_temples.py (the barrel, in cobblers_jungle_temples' harbour_mark build, step R9JT)",
-      "trigger": {"min": [7564, 149, 7327], "max": [7565, 150, 7329]},
-      "container": {"block": "minecraft:barrel", "at": [7564, 148, 7328]}
+      "trigger": {
+        "min": [
+          7564,
+          149,
+          7327
+        ],
+        "max": [
+          7565,
+          150,
+          7329
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          7564,
+          148,
+          7328
+        ]
+      }
     },
     {
       "id": "jungle_temple_vine_pyramid_altar",
@@ -1979,8 +2154,26 @@
       "message": "Before the altar, under the stone: a Big Root, and three Ancient Feather Balls for the ones who fly.",
       "why": "data/jungle_temples.json vine_pyramid: the summit's offering. Tier 8, band 44-50 PROVISIONAL: a Big Root (held: draining moves heal more; the jungle's Grass types) and three Ancient Feather Balls for the island's birds (Chatot, Squawkabilly). Ancient Feather Ball's catch behaviour in Cobblemon 1.8.0 is not measured here; the item exists in the jar. items_hook: data/jungle_temples.json vine_pyramid caches[0].",
       "built_by": "tools/jungle_temples.py (the barrel, in cobblers_jungle_temples' vine_pyramid build, step R9JT)",
-      "trigger": {"min": [7712, 155, 6824], "max": [7713, 156, 6826]},
-      "container": {"block": "minecraft:barrel", "at": [7712, 154, 6825]}
+      "trigger": {
+        "min": [
+          7712,
+          155,
+          6824
+        ],
+        "max": [
+          7713,
+          156,
+          6826
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          7712,
+          154,
+          6825
+        ]
+      }
     },
     {
       "id": "desert_wreck_sea_chest",
@@ -2065,7 +2258,49 @@
         ]
       }
     },
-    {"id": "giratina_griseous", "kind": "cache", "place": "the Distortion shrine in the Glacial Tear's lower trough (data/adopted_legendary_sites.json sweep_giratina_shrine): at the foot of Giratina's altar, under the black glass dome", "requires_flags": ["champion_cleared"], "contents": [{"item": "mega_showdown:griseous_core", "count": 1, "verification": "verified in the jar by the REWARD unit 2026-10-08 (docs/mechanics/ITEM_ROUTES.md Cache routes)"}, {"item": "mega_showdown:griseous_orb", "count": 1, "verification": "verified in the jar by the REWARD unit 2026-10-08; its only other route is recipe/griseous_orb.json from ghost and dragon gems nothing in our world drops"}], "message": "Behind the chain, two cold relics of the Distortion World: a Griseous Core and a Griseous Orb.", "why": "docs/mechanics/ITEM_ROUTES.md 2.3 and review N118: Giratina is adopted, so its form items need a source; gated like the chain on champion_cleared. Declared as an extra cache on sweep_giratina_shrine (tools/legendary_sweep.py extra_caches, commit 4197551).", "built_by": "the pasted template itself (data/placements.json legendary_giratina_shrine, tools/place_donor.py, reapply step R9): the container is lumymon:giratina_altar at template [23, 12, 20]", "trigger": {"min": [4393, 78, 2878], "max": [4401, 80, 2886]}, "container": {"block": "lumymon:giratina_altar", "at": [4397, 78, 2882]}},
+    {
+      "id": "giratina_griseous",
+      "kind": "cache",
+      "place": "the Distortion shrine in the Glacial Tear's lower trough (data/adopted_legendary_sites.json sweep_giratina_shrine): at the foot of Giratina's altar, under the black glass dome",
+      "requires_flags": [
+        "champion_cleared"
+      ],
+      "contents": [
+        {
+          "item": "mega_showdown:griseous_core",
+          "count": 1,
+          "verification": "verified in the jar by the REWARD unit 2026-10-08 (docs/mechanics/ITEM_ROUTES.md Cache routes)"
+        },
+        {
+          "item": "mega_showdown:griseous_orb",
+          "count": 1,
+          "verification": "verified in the jar by the REWARD unit 2026-10-08; its only other route is recipe/griseous_orb.json from ghost and dragon gems nothing in our world drops"
+        }
+      ],
+      "message": "Behind the chain, two cold relics of the Distortion World: a Griseous Core and a Griseous Orb.",
+      "why": "docs/mechanics/ITEM_ROUTES.md 2.3 and review N118: Giratina is adopted, so its form items need a source; gated like the chain on champion_cleared. Declared as an extra cache on sweep_giratina_shrine (tools/legendary_sweep.py extra_caches, commit 4197551).",
+      "built_by": "the pasted template itself (data/placements.json legendary_giratina_shrine, tools/place_donor.py, reapply step R9): the container is lumymon:giratina_altar at template [23, 12, 20]",
+      "trigger": {
+        "min": [
+          4393,
+          78,
+          2878
+        ],
+        "max": [
+          4401,
+          80,
+          2886
+        ]
+      },
+      "container": {
+        "block": "lumymon:giratina_altar",
+        "at": [
+          4397,
+          78,
+          2882
+        ]
+      }
+    },
     {
       "id": "sweep_nightmare_weaver",
       "kind": "cache",
@@ -2217,6 +2452,66 @@
           1075,
           138,
           7473
+        ]
+      }
+    },
+    {
+      "id": "long_count_thanks",
+      "kind": "npc_grant",
+      "place": "Perrin Hale's camp on Foothill Woods' north-east side (data/long_count.json long_count), at the fire",
+      "npc_at": [
+        2140,
+        124,
+        2159
+      ],
+      "quest": "evt_long_count",
+      "contents": [
+        {
+          "item": "cobblemon:growth_mulch",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/growth_mulch.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-09 in the offline server snapshot C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods)"
+        }
+      ],
+      "why": "Perrin's thanks for a Sitrus Berry from the world tree's roots (the cache r3_world_tree_roots gives two), shown to her and not taken: she dries what the Grotle leaves on its lane and gives two Growth Mulch for the berry trees. One per player, by grant_reward_once. A modest reward for a modest errand at tier 3 (Foothill Woods, band 2): mulch is the berry gardener's, not a curve-breaker. Nothing is consumed from the player (compile_dialogue's consume_held_item empties a whole stack, data/quests.json evt_route1_thirsty_stranger note), so the condition is only that the berry is held.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/long_count.py seats Perrin Hale on, and it refuses to build when they differ"
+    },
+    {
+      "id": "long_count_first_oak",
+      "kind": "cache",
+      "place": "the Long Count's first tree (data/long_count.json long_count), 108 paces down the Grotle's lane from where it rests now (the YEAR 0 stake is at 104): a tin set into the ground under the YEAR 0 stake",
+      "contents": [
+        {
+          "item": "cobblemon:miracle_seed",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/miracle_seed.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-09 in the offline server snapshot C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods)"
+        },
+        {
+          "item": "cobblemon:oran_berry",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/oran_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-09 in the offline server snapshot C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods)"
+        }
+      ],
+      "message": "In the tin under the first stake: a Miracle Seed, and two Oran Berries kept in it a long time and none the worse.",
+      "why": "data/long_count.json long_count: what a woman who plants a tree a year buries at the first. A Miracle Seed (held: Grass moves) is a natural source of a held item otherwise bought or crafted, the right gift for a Grotle; two Oran Berries for the walk back. Tier 3, optional, off the road by 204 blocks; the critical path needs none of it. items_hook: data/long_count.json long_count caches[0].",
+      "built_by": "tools/long_count.py (the barrel, in cobblers_long_count's long_count build, step R9LC)",
+      "trigger": {
+        "min": [
+          2222,
+          130,
+          2072
+        ],
+        "max": [
+          2224,
+          131,
+          2074
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          2223,
+          129,
+          2073
         ]
       }
     }

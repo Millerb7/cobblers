@@ -6285,6 +6285,208 @@
         "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_thaw_gate_drift]",
         "count": 1
       }
+    ],
+    "long_count": [
+      {
+        "what": "pole: the foot of the trunk",
+        "block": [
+          2128,
+          123,
+          2168,
+          "minecraft:stripped_spruce_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "pole: the trunk under the platform",
+        "block": [
+          2128,
+          152,
+          2168,
+          "minecraft:stripped_spruce_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "pole: the lantern at the top",
+        "block": [
+          2128,
+          164,
+          2168,
+          "minecraft:lantern[hanging=false]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "pole: the ladder's foot",
+        "block": [
+          2127,
+          123,
+          2168,
+          "minecraft:ladder[facing=west]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "pole: the platform",
+        "block": [
+          2126,
+          157,
+          2169,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the camp fire, lit on its hay",
+        "block": [
+          2140,
+          124,
+          2156,
+          "minecraft:campfire[lit=true,signal_fire=true]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-13 tree's trunk",
+        "block": [
+          2144,
+          124,
+          2146,
+          "minecraft:oak_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-13 tree's crown",
+        "block": [
+          2144,
+          125,
+          2146,
+          "minecraft:azalea_leaves"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-13 stake",
+        "block": [
+          2150,
+          124,
+          2152,
+          "minecraft:oak_fence"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-7 tree's trunk",
+        "block": [
+          2180,
+          127,
+          2114,
+          "minecraft:oak_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-7 tree's crown",
+        "block": [
+          2180,
+          131,
+          2114,
+          "minecraft:azalea_leaves"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-7 stake",
+        "block": [
+          2182,
+          127,
+          2116,
+          "minecraft:oak_fence"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-0 tree's trunk",
+        "block": [
+          2219,
+          130,
+          2074,
+          "minecraft:oak_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-0 tree's crown",
+        "block": [
+          2219,
+          138,
+          2074,
+          "minecraft:azalea_leaves"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-0 stake",
+        "block": [
+          2222,
+          130,
+          2077,
+          "minecraft:oak_fence"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tin's barrel at the first tree",
+        "block": [
+          2223,
+          129,
+          2073,
+          "minecraft:barrel[facing=up]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lane is clear, between stakes 10 and 9",
+        "block": [
+          2167,
+          127,
+          2129,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lane is clear, between stakes 5 and 4",
+        "block": [
+          2195,
+          129,
+          2101,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lane is clear, between stakes 1 and 0",
+        "block": [
+          2218,
+          131,
+          2078,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Grotle, once the summon has run",
+        "hold": [
+          2147,
+          124,
+          2149
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.res.old_pace,distance=..24]",
+        "count": 1
+      }
     ]
   }
 }

@@ -17496,6 +17496,250 @@
       }
     },
     {
+      "id": "dlg_long_count",
+      "quest_id": "evt_long_count",
+      "npc_id": "npc_long_count",
+      "source": "data/long_count.json long_count; the owner's world sweep of 2026-10-09 (docs/world-building/WORLD_SWEEP_2026-10-09.md gap 4). The one fact she states about Pokemon (g003) is Cobblemon 1.8.0's, read in data/cobblemon/species/generation4/grotle.json on 2026-10-09: a level-32 Grotle becomes Torterra, and holding a sapling it takes that tree's variant. Her numbers (thirteen years, eight paces, a hundred and seventy paces, twenty-two years, forty-odd blocks of pole) are the layout's, computed by tools/long_count.py facts() and held by tests/test_long_count.py. The Sitrus Berry is the one cache r3_world_tree_roots gives (data/rewards.json); the berry is shown and never taken",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_long_count.dialogue_cursor",
+        "initial_node": "c001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_long_count.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_long_count.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "c001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "c001",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "Mind the line. Not the road, the line: east of you, the little trees. People cut across and I lose a year under a boot.",
+          "next": "c002"
+        },
+        {
+          "id": "c002",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "Perrin Hale. I count. Don't smile; somebody has to, and everyone who would rather do something else is busy.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "perrin",
+          "text": "Ask, then. I'm not going anywhere, and neither is she, not quickly.",
+          "responses": [
+            {
+              "id": "r_count",
+              "text": "What are you counting?",
+              "next": "k001"
+            },
+            {
+              "id": "r_grotle",
+              "text": "Is that a Grotle?",
+              "next": "g001"
+            },
+            {
+              "id": "r_tree",
+              "text": "Why do the trees point at the world tree?",
+              "next": "t001"
+            },
+            {
+              "id": "r_pole",
+              "text": "What is the pole for?",
+              "next": "p001"
+            },
+            {
+              "id": "r_far",
+              "text": "What is at the far end of the lane?",
+              "next": "f001"
+            },
+            {
+              "id": "r_where",
+              "text": "Where would I find a Sitrus Berry off the roots?",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_long_count.reward_claimed",
+                "value": false
+              },
+              "next": "w001"
+            },
+            {
+              "id": "r_berry",
+              "text": "Show her the Sitrus Berry.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_long_count.reward_claimed",
+                    "value": false
+                  },
+                  {
+                    "kind": "held_item",
+                    "hand": "main",
+                    "item": "cobblemon:sitrus_berry",
+                    "item_predicate": "cobblemon:sitrus_berry"
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "show_berry"
+                }
+              ],
+              "next": "b001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "k001",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "Years. Thirteen of them, and the paces she's made in each. Eight, near enough. Every spring she gets up, walks eight paces and sits down again, and every spring there's a seedling where she sat.",
+          "next": "k002"
+        },
+        {
+          "id": "k002",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "The stakes are mine; they say the year and what I made of it. The trees are hers. I only keep the lane open, so the little ones get some light.",
+          "next": "hub"
+        },
+        {
+          "id": "g001",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "She's a Grotle. She was a Grotle when I first saw her and she'll be a Grotle when I'm gone, if I'm any judge. Thirty-two makes a Torterra, and she's nowhere near caring.",
+          "next": "g002"
+        },
+        {
+          "id": "g002",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "Gentle, mind. But she's old and she's big, and she'll get up if you walk on her moss. Don't make her do it twice.",
+          "next": "g003"
+        },
+        {
+          "id": "g003",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "The old women say whatever sapling a Grotle holds when she grows up is the tree she wears. Oak, birch, spruce. I've never seen it. I'd like to, and I know I won't.",
+          "next": "hub"
+        },
+        {
+          "id": "t001",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "Because that's where she's going. She set out the spring after the big wind, and I ran a line from her first hollow to the trunk, and she has not drifted off it in thirteen years.",
+          "next": "t002"
+        },
+        {
+          "id": "t002",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "A hundred and seventy paces still to go, near enough. Twenty-two years, at her rate. I'll be ninety-odd. So I write the years on posts, and when I can't, somebody will find the posts.",
+          "next": "t003"
+        },
+        {
+          "id": "t003",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "I haven't been under the tree's roots in nine years. The knee. I used to take a Sitrus Berry off them every autumn, just to know it was still bearing. If you've been under there and you've one on you, show me. I'd like to see one more.",
+          "next": "hub"
+        },
+        {
+          "id": "p001",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "The pole? It's so the tree can see her coming. ...Don't look at me like that. I know what a tree can see. But I light the lantern every dusk, and if she lifts her head from the long walk, there it is: a light, ahead of her, where she's headed.",
+          "next": "p002"
+        },
+        {
+          "id": "p002",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "Climb it if you like. The platform's sound and I oiled the ladder. You'll see the whole lane from up there, and the tree at the end of it. I went up every morning till the knee.",
+          "next": "hub"
+        },
+        {
+          "id": "f001",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "The first stake. Year nought. There's an oak there, the oldest, and a tin I buried under it the spring she set out. I've not dug it up. You may, if you've the legs for a hundred paces. Take what you like; I've no use for what's in it.",
+          "next": "hub"
+        },
+        {
+          "id": "w001",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "At the tree's west foot, where the road goes under the crown. Between the great roots, half grown into them. Go and look; they're not shy about it.",
+          "next": "hub"
+        },
+        {
+          "id": "b001",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "Sitrus. Off the roots? ...Hold it up. There. Still firm, still that smell.",
+          "next": "b002"
+        },
+        {
+          "id": "b002",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "Then it's bearing. Nine years I've wondered. That's... thank you. That's a good thing to know on a long walk.",
+          "next": "b003"
+        },
+        {
+          "id": "b003",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "Here. What she leaves on the lane, dried and sifted: mulch. Put it under a berry tree and the tree will thank you for it. I've more than I can use.",
+          "next": "hub"
+        }
+      ],
+      "speakers": {
+        "perrin": "Perrin Hale"
+      }
+    },
+    {
       "id": "dlg_apricorn_farmer",
       "quest_id": "ambient_apricorn_farm",
       "npc_id": "npc_apricorn_farmer",
