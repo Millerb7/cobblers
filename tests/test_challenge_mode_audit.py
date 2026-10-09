@@ -350,9 +350,27 @@ def test_the_unmutated_retire_kill_is_excused(baseline):
     assert "R:summon" not in {c for c, _ in baseline}
 
 
+def _a_rollout_leader_stands_in_the_kill_radius():
+    import math
+    import challenge_mode as CM
+    d = CM.doc()
+    for u in CM.rollout():
+        e = d["bosses"][u]
+        if math.dist(CM.normal_seat(u, e), e["spawner"]["at"]) <= CM.SEAT_BOX:
+            return True
+    return False
+
+
 @pytest.mark.parametrize("name", sorted(MUTATIONS))
 def test_a_mutated_generator_fails_the_audit(name, up, monkeypatch, baseline):
     module, edits, only, code = MUTATIONS[name]
+    if name == "retire_keeps_nobody" and not _a_rollout_leader_stands_in_the_kill_radius():
+        # Brock's spawner moved into his gym arena (tools/gym_arenas.py, 2026-10-08), 45.5 from his retired second
+        # spawner, out of the Normal-id kill's SEAT_BOX: with no rollout boss whose one leader stands inside it, a
+        # kill that keeps nobody kills no leader, so this mutation has nothing to bite on. Read from the data, not
+        # assumed: the day a rollout boss stands within the radius (the rollout grows to Misty, whose seat did not
+        # move), this branch is not taken and the mutation must bite again
+        pytest.xfail("no rollout boss's one leader stands within the retire kill's radius (Brock moved to his arena)")
     fresh(monkeypatch, module, edits)
     # the importers pick the mutated module up from sys.modules
     if module == "challenge_mode":

@@ -539,6 +539,13 @@ def leader_cycle_lines(challenge=False):
         lead = g.get("leader") or {}
         if lead.get("id") and lead.get("expect_spawner_at"):
             seats.append((g["id"], lead["id"], lead["expect_spawner_at"], lead.get("flag")))
+    # A gym whose arena is built (data/gym_arenas, tools/gym_arenas.py) has its leader there, not in the hall: the
+    # arena's leader.seat is the one source of a leader's seat once it exists (gym_arenas.leader_seats), and the
+    # hold-off has to stand where the leader stands
+    sys.path.insert(0, str(ROOT / "tools"))
+    import gym_arenas
+    moved = gym_arenas.leader_seats()
+    seats = [(gid, tid, list(moved[tid]["seat"]) if tid in moved else seat, flag) for gid, tid, seat, flag in seats]
     out = []
     for gid, tid, seat, flag in sorted(seats):
         if not tid or not seat:

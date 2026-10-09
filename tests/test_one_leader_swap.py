@@ -38,9 +38,10 @@ def _with(monkeypatch, rollout):
 
 
 def _brock_seat():
-    g = json.loads((ROOT / "data" / "gym_buildings" / "gym1.json").read_text(encoding="utf-8"))
-    assert g["leader"]["id"] == "kanto_brock"
-    return tuple(g["leader"]["spawner"])
+    # the one source of a leader's seat (tools/gym_arenas.py leader_seats): Brock's arena once it exists
+    # (data/gym_arenas/gym1.json, moved by R16GA), the building's leader.spawner before that
+    import gym_arenas
+    return tuple(gym_arenas.leader_seats()["kanto_brock"]["seat"])
 
 
 # ------------------------------------------------------------------------------------------------ the switch
@@ -91,7 +92,7 @@ def test_brock_gets_no_second_spawner(files):
 
 def test_brocks_swap_drives_his_one_spawner_and_his_trainer(files):
     x, y, z = _brock_seat()
-    assert (x, y, z) == (1832, 155, 3696)
+    assert (x, y, z) == (1826, 125, 3662)   # the dais of Brock's arena (data/gym_arenas/gym1.json)
     up, cid = "kanto_brock", "kanto_brock" + SFX
     lines = [l for l in files[FN % "cycle"] if "data merge" in l and ("{TrainerIds:[" in l or "TrainerId:\"kanto_brock" in l)
              and "positioned %d.5 %d %d.5" % (x, y, z) in l]

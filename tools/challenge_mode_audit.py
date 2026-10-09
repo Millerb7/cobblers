@@ -763,12 +763,21 @@ class Artifacts:
 
     @functools.cached_property
     def gyms(self):
-        """{gym id: (leader id, [command lines], pad level)} from tools/gym_buildings.py's emitted text."""
+        """{gym id: (leader id, [command lines], pad level)} from tools/gym_buildings.py's emitted text, then, for a
+        gym with an arena, tools/gym_arenas.py's emitted seat move (R16GA runs it straight after the building, in the
+        same step), read as the world it leaves with nobody near: each `execute ... run` line's command. So the
+        Normal spawner this audit finds is where the apply leaves it, in the arena, and the hall's cell is floor."""
         GB = self.mod("gym_buildings")
+        GA = self.mod("gym_arenas")
+        moves = {}
+        for _p, a in GA.records():
+            moves[a["gym"]] = [l[l.rfind(" run ") + 5:] if l.startswith("execute ") else l
+                               for l in GA.seat_lines(a, GA.reach()) if not l.startswith("#")]
         out = {}
         for _p, doc in GB.records():
             e, _rect, _lvl = GB.build_one(doc)
-            out[doc["id"]] = ((doc.get("leader") or {}).get("id"), list(e.ops), doc["settlement"])
+            out[doc["id"]] = ((doc.get("leader") or {}).get("id"), list(e.ops) + moves.get(doc["id"], []),
+                              doc["settlement"])
         return out
 
     @functools.cached_property

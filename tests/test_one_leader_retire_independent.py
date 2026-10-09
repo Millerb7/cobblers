@@ -222,7 +222,12 @@ def test_a_rerun_in_the_lag_window_kills_nobody_only_because_of_the_block_test(b
     # Gated, nobody dies. Ungated, every leader the kill can reach dies: all but a boss whose one spawner moved out of
     # the kill's radius (Lance, data/challenge_mode.json single_leader.move, 30.6 from his retired cell: 2026-10-09).
     # Every boss that did not move must be among them, so the mutation still bites wherever `has` is the only guard.
-    unmoved = {up for up, e in d["bosses"].items() if not (e.get("single_leader") or {}).get("move")}
+    # A gym leader whose spawner moved into its arena (tools/gym_arenas.py, data/gym_arenas: Brock, 45.5 from his
+    # retired cell, 2026-10-08) has moved out of the radius the same way.
+    import gym_arenas
+    arena = {up for up, s in gym_arenas.leader_seats().items() if s["source"].startswith("data/gym_arenas/")}
+    unmoved = {up for up, e in d["bosses"].items() if not (e.get("single_leader") or {}).get("move")
+               and up not in arena}
     assert unmoved <= set(reachable)
     assert (killed == []) if gated else (killed == sorted(reachable)), (killed, reachable)
 
