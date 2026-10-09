@@ -4,16 +4,12 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
 `docs/OVERNIGHT_REVIEW_2026-10-06.md` (N155 is the chunk race).
 
 ## 1. The branches
-- **[#129](https://github.com/Millerb7/cobblers/pull/129)** `build/2026-10-06-next` -> main, draft, **FROZEN** at
-  `24ac441d3884d0b282401b0a01967104b22ab163` (the whole 10-06..10-08 batch, Glare included, main merged in).
-  `gh pr merge 129 --match-head-commit 24ac441d3884d0b282401b0a01967104b22ab163`
-- **[#128](https://github.com/Millerb7/cobblers/pull/128)** site: the starter page (Smeargle 476, Sketch uncapped), head
-  `c5ff1f2bbfb3fa4c4d0d6202dae66a90e50123d5`. Same page as #129's, so either order merges clean.
-- **`build/2026-10-08-chunk-race`**, stacked on #129: the N155 fix, the review, the Cutters fix, the sigil calls, this
-  STATE and handover. Its PR is against `build/2026-10-06-next`; re-read the head before quoting
-  (`git fetch --prune; gh pr view <N> --json headRefOid`). Built in a scratchpad worktree
-  (`.../scratchpad/integ`); the session worktree `session-handover-decisions-de63f6` holds `derived/` and the
-  `build/` of this install.
+- **#129** (the 10-06..10-08 batch, Glare included) and **#128** (the starter page) are MERGED; both heads verified on
+  main (`git merge-base --is-ancestor`).
+- **[#130](https://github.com/Millerb7/cobblers/pull/130)** `build/2026-10-08-chunk-race` -> main, draft, FROZEN once
+  reported: the N155 fix, the review, the Cutters fix, the sigil calls, this STATE and handover. Re-read its head before
+  quoting (`git fetch --prune; gh pr view 130 --json headRefOid`). Built in a scratchpad worktree (`.../scratchpad/integ`);
+  the session worktree `session-handover-decisions-de63f6` holds `derived/` and the `build/` of this install.
 - Delete when convenient: `worktree-agent-a51bcd8...`, `-a3523e3...`, `-aa6cbb0...`, `-a5ab351...`, `-a4e0aba...` (all
   merged into the chunk-race branch).
 
