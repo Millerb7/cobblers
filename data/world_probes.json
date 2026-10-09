@@ -3993,6 +3993,108 @@
         ],
         "expect": false
       }
+    ],
+    "hummock_mere": [
+      {
+        "what": "the island's crest (mud or moss)",
+        "block": [
+          5240,
+          102,
+          1924,
+          "minecraft:mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the island under the crest",
+        "block": [
+          5240,
+          101,
+          1924,
+          "minecraft:mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the creature's spot (feet + 4)",
+        "block": [
+          5240,
+          107,
+          1924,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "grove tree 0: trunk",
+        "block": [
+          5244,
+          105,
+          1913,
+          "minecraft:mangrove_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "grove tree 0: the froglight under its crown",
+        "block": [
+          5242,
+          109,
+          1917,
+          "minecraft:verdant_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "grove tree 3: trunk",
+        "block": [
+          5244,
+          106,
+          1935,
+          "minecraft:mangrove_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "grove tree 3: the froglight under its crown",
+        "block": [
+          5242,
+          109,
+          1931,
+          "minecraft:verdant_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the sign at the furrow's dry end",
+        "block": [
+          5274,
+          101,
+          1924,
+          "minecraft:mangrove_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the roadside warning on Route 6",
+        "block": [
+          4845,
+          133,
+          2612,
+          "minecraft:mangrove_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Hummock (after R18HM)",
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.res.the_hummock,x=5240,y=103,z=1924,distance=..30]",
+        "count": 1,
+        "hold": [
+          5240,
+          103,
+          1924
+        ]
+      }
     ]
   }
 }
