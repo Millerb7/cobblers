@@ -5103,6 +5103,298 @@
         ],
         "expect": true
       }
+    ],
+    "ice_lodge": [
+      {
+        "what": "the Lead: open water under open air (the only place the open-water check can hold)",
+        "block": [
+          2755,
+          106,
+          1082,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Lead: air at the surface",
+        "block": [
+          2755,
+          107,
+          1082,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Lead: air over it too",
+        "block": [
+          2755,
+          108,
+          1082,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a fishing hole: air in the ice",
+        "block": [
+          2767,
+          107,
+          1071,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a fishing hole: water under it",
+        "block": [
+          2767,
+          106,
+          1071,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its stool beside it",
+        "block": [
+          2768,
+          108,
+          1071,
+          "minecraft:spruce_slab[type=bottom]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "clear ice on the tarn",
+        "block": [
+          2738,
+          107,
+          1084,
+          "minecraft:ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "clear ice on the tarn",
+        "block": [
+          2767,
+          107,
+          1098,
+          "minecraft:ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "clear ice on the tarn",
+        "block": [
+          2797,
+          107,
+          1092,
+          "minecraft:ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tarn's deepest column: water at the bed",
+        "block": [
+          2762,
+          102,
+          1084,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "... gravel under it",
+        "block": [
+          2762,
+          101,
+          1084,
+          "minecraft:gravel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_1: the hole in its floor",
+        "block": [
+          2772,
+          107,
+          1075,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_1: water under the hole",
+        "block": [
+          2772,
+          106,
+          1075,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_1: its packed-ice floor",
+        "block": [
+          2773,
+          107,
+          1076,
+          "minecraft:packed_ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_2: the hole in its floor",
+        "block": [
+          2756,
+          107,
+          1093,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_2: water under the hole",
+        "block": [
+          2756,
+          106,
+          1093,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_2: its packed-ice floor",
+        "block": [
+          2757,
+          107,
+          1094,
+          "minecraft:packed_ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_3: the hole in its floor",
+        "block": [
+          2786,
+          107,
+          1090,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_3: water under the hole",
+        "block": [
+          2786,
+          106,
+          1090,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_3: its packed-ice floor",
+        "block": [
+          2787,
+          107,
+          1091,
+          "minecraft:packed_ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lodge door (lower half)",
+        "block": [
+          2764,
+          108,
+          1059,
+          "minecraft:spruce_door[half=lower]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lodge door (lower half)",
+        "block": [
+          2765,
+          108,
+          1059,
+          "minecraft:spruce_door[half=lower]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the hearth's campfire",
+        "block": [
+          2769,
+          108,
+          1055,
+          "minecraft:campfire"
+        ],
+        "expect": true
+      },
+      {
+        "what": "bunk_1: the bed's head",
+        "block": [
+          2757,
+          108,
+          1052,
+          "minecraft:red_bed[part=head]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "bunk_kept: the bed's head",
+        "block": [
+          2761,
+          108,
+          1052,
+          "minecraft:blue_bed[part=head]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a lodge lantern",
+        "block": [
+          2760,
+          109,
+          1058,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the boardwalk spine",
+        "block": [
+          2764,
+          107,
+          1078,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a drying rack's beam",
+        "block": [
+          2782,
+          111,
+          1052,
+          "minecraft:stripped_spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "Ketil Aune, the holekeeper, after R18IL",
+        "entity": "@e[type=cobblemon:npc,x=2767,y=108,z=1056,distance=..2]",
+        "count": 1,
+        "hold": [
+          2767,
+          108,
+          1056
+        ]
+      }
     ]
   }
 }

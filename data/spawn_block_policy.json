@@ -120,6 +120,13 @@
   "whitelist": [
     {
       "blocks": [
+        "minecraft:water"
+      ],
+      "why": "The Merian Ice Lodge's tarn (tools/ice_lodge.py, data/ice_lodge.json): about 1,400 columns of still water two to five deep under a sheet of ice in the Merian cirque, 25 to 60 blocks from the Merian hut's apron. The water is the place (the owner, 2026-10-09: an ice fishing lodge). minecraft:water is named by 84 spawn entries (data/spawn_blocks.json), among them Golduck, Poliwag, Politoed and Bidoof: whether the cirque's cold biome admits any of them, and whether they spawn under ice, is not known (docs/world-building/ICE_LODGE.md section 6; the probe is the EXP in that note).",
+      "scope": "the Merian Ice Lodge tarn only (ice_lodge, tools/ice_lodge.py)"
+    },
+    {
+      "blocks": [
         "minecraft:quartz_block"
       ],
       "why": "the only spawns conditioned on it (carbink, corsola galarian, cursola, duraludon, archaludon and their herds) require #cobblemon:nether/is_quartz biomes. In an overworld town it has no effect.",

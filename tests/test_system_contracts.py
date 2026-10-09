@@ -521,7 +521,7 @@ def _source_blocks():
     # the three wayside places of 2026-10-03: each generator refuses any block outside its record's blocks.ids, so the
     # list is the place's whole palette; a policy entry must name the place itself to cover one of them
     # the Scorchbone Dig (tools/fossil_dig.py, 2026-10-05) loads its record the same way (wayside_kit.load_record)
-    for place in ("challengers_cairn", "dry_cistern", "survey_benchmark", "fossil_dig"):
+    for place in ("challengers_cairn", "dry_cistern", "survey_benchmark", "fossil_dig", "ice_lodge"):
         out[place] = (set(_load("%s.json" % place)["blocks"]["ids"]), [place])
     # the refillable mining caves (tools/mining_caves.py, 2026-10-10): every block the record names that a cave
     # places (its yields' ores and hosts, each cave's wall, shell, floor, stair and timber); `restore` is the refill's

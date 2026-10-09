@@ -125,6 +125,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # (tools/coldwater_station.py, data/coldwater_station.json): block functions, two instrument displays
                 # and three researchers, run by R18CW. Its jetty and boatman are the ferry's (R16H, R17F)
                 "cobblers_coldwater_station",
+                # 2026-10-09: the Merian Ice Lodge (tools/ice_lodge.py, data/ice_lodge.json): the Merian cirque's frozen tarn,
+                # its shelters, lodge, racks and gear, and the holekeeper's class and dialogue; one block function and one
+                # NPC, run by R18IL
+                "cobblers_ice_lodge",
                 # 2026-10-02: the Seaward Drift, its strip mine and Driftmouth Isle (tools/sea_drift.py,
                 # data/sea_drift.json): 90 block functions run by R9SD, before the Habitat Blocks that sit in its rock
                 "cobblers_sea_drift",
@@ -856,6 +860,11 @@ def prepare_jobs(a):
     add("desert_wreck_audit", "desert_wreck_audit.py", *src)
     add("fossil_dig:build", "fossil_dig.py", "build", *src)
     add("fossil_dig_audit", "fossil_dig_audit.py", *src)
+    # the Merian Ice Lodge (2026-10-09): its builder's siting guards fail the job (flat floor, keep-clear boxes, spawn
+    # conditions, the melting rule), then its independent audit, which replays the written function and re-derives the
+    # tarn, the holes, the lights and the walk from the record alone
+    add("ice_lodge:build", "ice_lodge.py", "build", *src)
+    add("ice_lodge_audit", "ice_lodge_audit.py", *src)
     add("training_grounds:build", "training_grounds.py", "build")
     # the ten named residents (2026-10-02), then their independent audit, which re-derives every site and write from
     # the data and the heightmap and fails the prepare on a broken pack
@@ -2369,6 +2378,11 @@ def steps(with_spawns=False):
     import coldwater_station
     out.append(("R18CW", "Coldwater Station, the Kyogre research station (data/coldwater_station.json)",
                 coldwater_station.placement_steps()))
+    # the Merian Ice Lodge (2026-10-09, tools/ice_lodge.py): the tarn, shelters, lodge, racks and gear held in a forceload,
+    # then the holekeeper (her class loads at boot from cobblers_ice_lodge). On the cirque floor south of the hut's yard
+    import ice_lodge
+    out.append(("R18IL", "the Merian Ice Lodge: frozen tarn, shelters, lodge and the holekeeper (data/ice_lodge.json)",
+                ice_lodge.placement_steps()))
     # the town traders: each town's look-then-act chain (tools/chunk_look.py, N155) started at once, waited for whole,
     # and each town's count read back; no step-level forceload, each chain holds and releases its own plaza
     import traders
