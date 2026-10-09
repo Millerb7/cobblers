@@ -70,7 +70,7 @@
       "advancement": "cobbleverse:trainer/kanto/defeat_sabrina",
       "upstream_mob": {"type": "kanto", "signatureItem": "lumymon:hypnotic_whip", "maxTrainerWins": -1, "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0, "biomeTagBlacklist": ["is_void", "is_nether", "is_underground", "is_end"], "biomeTagWhitelist": ["cobbleverse:dark_forest"]},
       "upstream_required": ["kanto_koga"],
-      "spawner": {"at": [6194, 111, 3312], "measured_by": "gym_buildings", "why": "two west of Sabrina's spawner (6196, 111, 3312) in the lens chamber, smooth quartz over air (as hers is); the chest is east at x6200"}
+      "spawner": {"at": [6181, 70, 3318], "measured_by": "gym_buildings", "why": "two west of Sabrina's spawner (6196, 111, 3312) in the lens chamber, smooth quartz over air (as hers is); the chest is east at x6200"}
     },
     "kanto_blaine": {
       "lang": "blaine",
