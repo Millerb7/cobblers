@@ -47,7 +47,7 @@ OBJ = "cobblers_chunk_look"                  # #<holder>: the count (-1 until do
 _REF = re.compile(r"^[a-z0-9_.-]+:[a-z0-9_./-]+$")
 
 
-def chain(base, box, shown, act, scopes, new_tag, count, holder, note="", all_shown=False):
+def chain(base, box, shown, act, scopes, new_tag, count, holder, note="", all_shown=False, dim=None):
     """{function id: lines} for the look-then-act chain at `base` ('ns:path').
 
     box      (x0, z0, x1, z1) block coordinates force-loaded for the chain's whole life, or a list of such boxes
@@ -58,7 +58,12 @@ def chain(base, box, shown, act, scopes, new_tag, count, holder, note="", all_sh
     act      lines run once, after a look or blind: kill the old entities, summon new ones tagged `new_tag`
     scopes   selector argument bodies (no brackets), one per thing de-duplicated after the act
     count    the selector argument body counted into #<holder> OBJ after the de-duplication
-    holder   a score holder name without '#'"""
+    holder   a score holder name without '#'
+    dim      None (the default, every chain before 2026-10-08): the box is in the overworld, where a scheduled function
+             runs. A dimension id (the dungeon shells in cobblers:pocket, tools/dungeon.py): every forceload, look,
+             de-duplication and count is run `in` it, because the chain's later links are SCHEDULED and a scheduled
+             function runs in the overworld whatever dimension the entry was called in. The caller's act lines carry
+             their own `execute in`. With dim None the output is unchanged, line for line."""
     if not _REF.match(base):
         raise ValueError("chain base %r is not a namespaced function id" % base)
     if not shown or not act or not scopes:
@@ -67,6 +72,9 @@ def chain(base, box, shown, act, scopes, new_tag, count, holder, note="", all_sh
     if not boxes or any(len(b) != 4 for b in boxes):
         raise ValueError("chain %s: a box is (x0, z0, x1, z1): %r" % (base, box))
     fls = ["%d %d %d %d" % b for b in boxes]
+    # with a dimension, every line that searches or force-loads runs in it (see dim above); without, unchanged
+    inrun = "execute in %s run " % dim if dim else ""
+    inx = "in %s " % dim if dim else ""
     look, act_fn, done = base + "_look", base + "_act", base + "_done"
     looks, seen = "#%s_looks" % holder, "#%s_seen" % holder
     by = "# chunks-loaded-by: %s" % base
@@ -74,7 +82,7 @@ def chain(base, box, shown, act, scopes, new_tag, count, holder, note="", all_sh
     out = {}
     out[base] = [gen.replace("; part of", "; the start of"),
                  "# force-load; nothing is killed or summoned until the box shows its saved entities are in (%s)" % look,
-                 ] + ["forceload add %s" % fl for fl in fls] + [
+                 ] + ["%sforceload add %s" % (inrun, fl) for fl in fls] + [
                  "scoreboard objectives add %s dummy" % OBJ,
                  "scoreboard players set #%s %s -1" % (holder, OBJ),
                  "scoreboard players set %s %s %d" % (looks, OBJ, POLLS),
@@ -83,10 +91,10 @@ def chain(base, box, shown, act, scopes, new_tag, count, holder, note="", all_sh
     out[look] = ([gen, by, "# one look every %d ticks; act when an entity is seen, or blind after %d looks (%d ticks)"
                   % (POLL_EVERY, POLLS, BLIND_TICKS),
                   "scoreboard players remove %s %s 1" % (looks, OBJ)]
-                 + (["execute if score %s %s matches 0 %s run scoreboard players set %s %s 1"
-                     % (seen, OBJ, " ".join("if entity %s" % sel for sel in shown), seen, OBJ)] if all_shown else
-                    ["execute if score %s %s matches 0 if entity %s run scoreboard players set %s %s 1"
-                     % (seen, OBJ, sel, seen, OBJ) for sel in shown])
+                 + (["execute if score %s %s matches 0 %s%s run scoreboard players set %s %s 1"
+                     % (seen, OBJ, inx, " ".join("if entity %s" % sel for sel in shown), seen, OBJ)] if all_shown else
+                    ["execute if score %s %s matches 0 %sif entity %s run scoreboard players set %s %s 1"
+                     % (seen, OBJ, inx, sel, seen, OBJ) for sel in shown])
                  + ["execute if score %s %s matches 0 if score %s %s matches ..0 run scoreboard players set %s %s 1"
                     % (seen, OBJ, looks, OBJ, seen, OBJ),
                     "execute if score %s %s matches 1 run function %s" % (seen, OBJ, act_fn),
@@ -99,10 +107,10 @@ def chain(base, box, shown, act, scopes, new_tag, count, holder, note="", all_sh
     d = [gen, by, "# %d ticks after the act: one of each, the count, then release" % DEDUPE_WAIT]
     # every de-duplication before any untag: with several scopes, an untag in one must not hide a new copy from a
     # later scope's test where two overlap (one scope: the same two lines as ever)
-    d += ["execute if entity @e[%s,tag=%s] run kill @e[%s,tag=!%s]" % (s, new_tag, s, new_tag) for s in scopes]
-    d += ["tag @e[%s,tag=%s] remove %s" % (s, new_tag, new_tag) for s in scopes]
-    d += ["execute store result score #%s %s if entity @e[%s]" % (holder, OBJ, count)]
-    d += ["forceload remove %s" % fl for fl in fls]
+    d += ["execute %sif entity @e[%s,tag=%s] run kill @e[%s,tag=!%s]" % (inx, s, new_tag, s, new_tag) for s in scopes]
+    d += ["%stag @e[%s,tag=%s] remove %s" % (inrun, s, new_tag, new_tag) for s in scopes]
+    d += ["execute %sstore result score #%s %s if entity @e[%s]" % (inx, holder, OBJ, count)]
+    d += ["%sforceload remove %s" % (inrun, fl) for fl in fls]
     out[done] = d
     return out
 

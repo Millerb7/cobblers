@@ -246,6 +246,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # self-driving keeper that spawns per player in cobblers:pocket, two callbacks; world-local below.
                 # Its rooms are blocks in the pocket dimension, built by R16Q after the portals' R16P
                 "cobblers_entei_boss",
+                # 2026-10-08: the dungeon engine core (tools/dungeon.py, data/dungeons.json): timed rift runs in
+                # cobblers:pocket, a self-driving keeper, a battle_victory callback and NPC classes; world-local below.
+                # Its slot shells are built by R16DG and its overworld rips by R16DR, after R16Q
+                "cobblers_dungeons",
                 # 2026-10-08: the Beast Ball is the key to dungeon bosses (tools/key_ball.py, data/key_ball.json): two
                 # Cobblemon callbacks and the jar's beast_ball recipe closed; no blocks, no step; world-local below
                 "cobblers_key_ball",
@@ -394,6 +398,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
                # 2026-10-08: the Entei keeper SPAWNS a legendary per player on its own and gives items: never global
                "cobblers_entei_boss",
+               # 2026-10-08: the dungeon keeper KILLS players on a timer, spawns NPCs, takes and gives items and sets game
+               # modes on its own: never global
+               "cobblers_dungeons",
                # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
                "cobblers_key_ball",
                # 2026-10-08: sets a gamerule and rewrites every player's recipe book: never global, or the live world
@@ -1002,6 +1009,9 @@ def prepare_jobs(a):
     # the repeatable Entei in cobblers:pocket (data/entei_boss.json; fails closed on a bankable drop, a room in the
     # portals' rescue box or outside the border, or an alpha / mis-levelled boss)
     add("entei_boss", "entei_boss.py")
+    # the dungeon engine (data/dungeons.json; fails closed on a slot meeting the rescue box, Entei's band, the probes'
+    # row or a waystone's arrival, a lockout under the longest clock, or a run tag missing from data/blackout.json)
+    add("dungeons", "dungeon.py")
     # the Beast Ball key (data/key_ball.json): fails closed if any boss tool's bind does not add the shared tag, if the
     # refusal message hints at the key, or if data/blackout.json can take a Beast Ball
     add("key_ball", "key_ball.py")
@@ -2089,6 +2099,13 @@ def steps(with_spawns=False):
     # function holds its own chunks (function_limits.ensure_loaded). The keeper, the sigil and the callbacks need no step
     out.append(("R16Q", "the Entei boss's four rooms in cobblers:pocket (data/entei_boss.json)",
                 [("fn", "cobblers:entei_boss/place")]))
+    # the dungeon engine's slot shells (R16DG) and its overworld rips (R16DR), tools/dungeon.py: after R16P for the
+    # pocket dimension, as R16Q, and after the places, so the Night Shift's placeholder rip is set into the old mine's
+    # notch after tools/route1_old_mine.py cut it. Each block function holds its own chunks (ensure_loaded); the
+    # entities (the slots' rips and boards, the overworld rips' interactions) follow through tools/chunk_look.py, so
+    # nothing is killed or summoned before a chunk's saved entities are in, and the step reads their count back
+    import dungeon as DG
+    out.extend(DG.reapply_steps())
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
