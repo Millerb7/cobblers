@@ -1,5 +1,11 @@
 # The legendaries sweep: the rest of the catalogue, and a catchable Hoopa
 
+> **2026-10-09: the Giratina piece is RETIRED.** The owner, on staging at the shrine: "giratina being plopped right
+> here sucks, move it to the castle in the north" and "get rid of his sphere though, he just lives in the castle."
+> Giratina now lives in Wardenhold's yard (`docs/world-building/FROSTPEAK_KEEP.md` section 7); the shrine's records are in
+> `superseded_placements`, `superseded_sweep_sites` and `superseded_rewards` (kept, not built), and step R18FK takes the
+> pasted template down. What follows about the Giratina piece is history; the sweep's tests keep it as a fixture.
+
 The owner, 2026-10-06: *"Go through the whole Cobbleverse catalogue and place what is left, in obscured spots --
 behind waterfalls, at the back of caves, down dive portals, on islands with no reason to visit, in Rift dead ends.
 Use /place template, not /clone. Each one: what gates it, what a player gets, and how anyone would find it. Re-open

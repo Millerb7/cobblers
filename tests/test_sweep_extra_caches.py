@@ -44,9 +44,17 @@ SNAP = A.SNAPSHOT
 HAVE_SNAPSHOT = (SNAP / "mods").is_dir() and any((SNAP / "mods").glob("LumyMon-*.jar"))
 needs_snapshot = pytest.mark.skipif(not HAVE_SNAPSHOT, reason="NOT RUN: no offline server snapshot at %s" % SNAP)
 
-DOC = json.loads((ROOT / "data" / "adopted_legendary_sites.json").read_text(encoding="utf-8"))
-PLACEMENTS = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["placements"]
-REWARDS = json.loads((ROOT / "data" / "rewards.json").read_text(encoding="utf-8"))
+_DOC = json.loads((ROOT / "data" / "adopted_legendary_sites.json").read_text(encoding="utf-8"))
+_PLACEMENTS = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+_REWARDS = json.loads((ROOT / "data" / "rewards.json").read_text(encoding="utf-8"))
+# 2026-10-09 the owner retired Giratina's piece (Giratina lives in Wardenhold: data/frostpeak_keep_quest.json) and with it
+# the Red Chain and Griseous caches; their records are kept under superseded_*. The extra-caches mechanism has no live
+# user now, so every case here runs on that retired state put back IN MEMORY (the FIXTURE below): the data as it stood
+# before the retirement. Nothing is written to disk; the live data is checked in tests/test_legendary_sweep*.py.
+DOC = dict(_DOC, sweep_sites=_DOC["sweep_sites"] + _DOC["superseded_sweep_sites"]["records"])
+PLACEMENTS = _PLACEMENTS["placements"] + [r for r in _PLACEMENTS["superseded_placements"]["records"]
+                                          if r.get("id") == "legendary_giratina_shrine"]
+REWARDS = dict(_REWARDS, rewards=_REWARDS["rewards"] + _REWARDS["superseded_rewards"]["records"])
 GIRATINA = "sweep_giratina_shrine"
 NEWMOON = "sweep_newmoon_island"
 PASTE = "legendary_giratina_shrine"
@@ -235,13 +243,18 @@ def test_the_committed_griseous_cache_passes_the_builders_check(ground):
 def patched_j(monkeypatch, rdoc=None, adopted=None):
     """A._j as it would read data/ holding the scratch documents (the authored-point walker reads through it too)."""
     real = A._j
+    # the retired state is the fixture (see DOC above): unnamed documents default to it, never to the live files
+    rdoc = REWARDS if rdoc is None else rdoc
+    adopted = DOC if adopted is None else adopted
 
     def j(path):
         p = Path(path)
-        if rdoc is not None and p.name == "rewards.json" and p.parent == A.DATA:
+        if p.name == "rewards.json" and p.parent == A.DATA:
             return copy.deepcopy(rdoc)
-        if adopted is not None and p.name == "adopted_legendary_sites.json" and p.parent == A.DATA:
+        if p.name == "adopted_legendary_sites.json" and p.parent == A.DATA:
             return copy.deepcopy(adopted)
+        if p.name == "placements.json" and p.parent == A.DATA:
+            return dict(copy.deepcopy(_PLACEMENTS), placements=copy.deepcopy(PLACEMENTS))
         return real(path)
     monkeypatch.setattr(A, "_j", j)
 
@@ -331,9 +344,11 @@ def test_the_audit_still_fails_a_second_item_in_the_activation_cache(declared, m
 
 @needs_snapshot
 @pytest.mark.slow
-def test_the_audit_passes_the_committed_griseous_cache(packs, ground):
-    # Without it the committed Core and Orb could fail the independent audit (jars, flags, extent, contents) while the
-    # scratch scenarios pass. Nothing is patched: the audit reads data/ as committed.
+def test_the_audit_passes_the_committed_griseous_cache(packs, ground, monkeypatch):
+    # Without it the Core and Orb record as it was committed could fail the independent audit (jars, flags, extent,
+    # contents) while the scratch scenarios pass. Since 2026-10-09 that record is retired (data/rewards.json
+    # superseded_rewards): the audit reads the retired state, unaltered, as the fixture.
+    patched_j(monkeypatch)
     R = A.Report()
     sites = A.paste_audit(R, packs, ground, sightlines=False)
     A.cache_audit(R, sites)

@@ -18004,6 +18004,366 @@
       "speakers": {
         "farmer": "Farmer Wren"
       }
+    },
+    {
+      "id": "dlg_wardenhold_maren",
+      "quest_id": "evt_wardenhold_giratina",
+      "npc_id": "npc_wardenhold_maren",
+      "source": "data/frostpeak_keep_quest.json; the owner, 2026-10-09 (data/frostpeak_keep_quest.json owner_requests)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_wardenhold_giratina.dialogue_cursor",
+        "initial_node": "m001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_wardenhold_giratina.reward_claimed",
+            "value": true
+          },
+          "node": "done01"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_wardenhold_giratina.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_wardenhold_giratina.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "m001"
+        }
+      ],
+      "speakers": {
+        "maren": "Maren Holt"
+      },
+      "nodes": [
+        {
+          "id": "m001",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "Pull the hide across behind you. The cold follows anyone in.",
+          "next": "m002"
+        },
+        {
+          "id": "m002",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "I'm Maren. My mother kept the keep on the Strand, and hers before her. Wardenhold. You'll have seen the spire.",
+          "next": "m003"
+        },
+        {
+          "id": "m003",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "We were forty-one. We kept the yard, the stores, the old log. Nobody lit the beacon. Nobody had to.",
+          "next": "m004"
+        },
+        {
+          "id": "m004",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "Last winter something came down off the ice and lay down in our yard. Huge. Shadow for legs, gold across its back.",
+          "next": "m005"
+        },
+        {
+          "id": "m005",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "The cold came off it like smoke. The north-east tower split in a night. Then the roof went, and a turret.",
+          "next": "m006"
+        },
+        {
+          "id": "m006",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "We dug in here, across the col, where we can still see the spire. Thirty-eight of us made it.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "maren",
+          "text": "It's still there. Asleep, mostly. We want our home back.",
+          "responses": [
+            {
+              "id": "r_what",
+              "text": "What is it?",
+              "next": "w001"
+            },
+            {
+              "id": "r_how",
+              "text": "Where do I find it?",
+              "next": "h001"
+            },
+            {
+              "id": "r_done",
+              "text": "I beat it.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers.fk_giratina_beaten"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_wardenhold_giratina.reported",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "report"
+                }
+              ],
+              "next": "f001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "w001",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "Old Sef calls it Giratina, out of his grandmother's stories. The one that lives on the wrong side of things. I don't care what it's called.",
+          "next": "w002"
+        },
+        {
+          "id": "w002",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "It's strong. Sef says don't go near it with a team that hasn't beaten most of the leaders, and Sef is usually right.",
+          "next": "hub"
+        },
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "Through the gate and keep to the middle of the yard. It lies in the east half, on the ice, by the tower that fell.",
+          "next": "h002"
+        },
+        {
+          "id": "h002",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "Walk up to it and it wakes. Beat it, then come back and tell me.",
+          "next": "hub"
+        },
+        {
+          "id": "f001",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "You beat it? ...It'll be back. Things like that come back. But now it knows we have friends.",
+          "next": "f002"
+        },
+        {
+          "id": "f002",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "These were lying in the yard where it sleeps. Sef says they belong to it. A core and an orb. Better in your pack than ours.",
+          "next": "f003",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_reward"
+            }
+          ]
+        },
+        {
+          "id": "f003",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "If it comes back and you've the strength, take it with you. Then it's yours to worry about.",
+          "next": "done01"
+        },
+        {
+          "id": "done01",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "We'll go home in the spring. Watch the spire for a fire.",
+          "next": "done01"
+        }
+      ]
+    },
+    {
+      "id": "dlg_wardenhold_sef",
+      "quest_id": "evt_wardenhold_giratina",
+      "npc_id": "npc_wardenhold_sef",
+      "source": "data/frostpeak_keep_quest.json; the owner, 2026-10-09 (data/frostpeak_keep_quest.json owner_requests)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_wardenhold_giratina.sef_cursor",
+        "initial_node": "s001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "player_tag",
+            "tag": "cobblers.fk_giratina_beaten"
+          },
+          "node": "a001"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "speakers": {
+        "sef": "Old Sef"
+      },
+      "nodes": [
+        {
+          "id": "s001",
+          "kind": "line",
+          "speaker": "sef",
+          "text": "Sit. The fire's the only honest thing down here.",
+          "next": "s002"
+        },
+        {
+          "id": "s002",
+          "kind": "line",
+          "speaker": "sef",
+          "text": "The Wardens' log says the shelf used to answer the fire. Nobody answers now.",
+          "next": "s003"
+        },
+        {
+          "id": "s003",
+          "kind": "line",
+          "speaker": "sef",
+          "text": "That thing in the yard, my grandmother had a name for it. Giratina. Banished, she said, to the back of the world. Seems it got out.",
+          "next": "s004"
+        },
+        {
+          "id": "s004",
+          "kind": "line",
+          "speaker": "sef",
+          "text": "It doesn't eat. It doesn't hunt. It just lies there, and the world goes thin round it.",
+          "next": "s005"
+        },
+        {
+          "id": "s005",
+          "kind": "line",
+          "speaker": "sef",
+          "text": "Mind the hearth.",
+          "next": "s005"
+        },
+        {
+          "id": "a001",
+          "kind": "line",
+          "speaker": "sef",
+          "text": "You fought it? Then you've seen the dark under it. Sit closer to the fire.",
+          "next": "a001"
+        }
+      ]
+    },
+    {
+      "id": "dlg_wardenhold_pell",
+      "quest_id": "evt_wardenhold_giratina",
+      "npc_id": "npc_wardenhold_pell",
+      "source": "data/frostpeak_keep_quest.json; the owner, 2026-10-09 (data/frostpeak_keep_quest.json owner_requests)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_wardenhold_giratina.pell_cursor",
+        "initial_node": "p001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "player_tag",
+            "tag": "cobblers.fk_giratina_beaten"
+          },
+          "node": "a001"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "speakers": {
+        "pell": "Pell"
+      },
+      "nodes": [
+        {
+          "id": "p001",
+          "kind": "line",
+          "speaker": "pell",
+          "text": "I keep the count. Forty-one went out the gate. Thirty-eight came here. It's on the wall.",
+          "next": "p002"
+        },
+        {
+          "id": "p002",
+          "kind": "line",
+          "speaker": "pell",
+          "text": "We dug all of this with the keep's own picks. Twelve nights for the hall alone.",
+          "next": "p003"
+        },
+        {
+          "id": "p003",
+          "kind": "line",
+          "speaker": "pell",
+          "text": "The stores are south. Don't bother with the barrels, they're mostly empty.",
+          "next": "p004"
+        },
+        {
+          "id": "p004",
+          "kind": "line",
+          "speaker": "pell",
+          "text": "Still no fire on the spire.",
+          "next": "p004"
+        },
+        {
+          "id": "a001",
+          "kind": "line",
+          "speaker": "pell",
+          "text": "You went in the yard and came back out? Can I tell the others? I'm telling the others.",
+          "next": "a001"
+        }
+      ]
     }
   ]
 }

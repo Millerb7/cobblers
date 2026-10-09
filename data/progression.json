@@ -3945,6 +3945,109 @@
         "stand",
         "repeat"
       ]
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.started",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Maren Holt in the burrow (dlg_wardenhold_maren start)."
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.reported",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "reported",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player told Maren they beat Giratina (the report transition, which reads the player tag cobblers.fk_giratina_beaten)."
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.reward_claimed",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the claim field of grant_reward_once reward_wardenhold_giratina."
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.dialogue_cursor",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "m001",
+      "allowed_values": [
+        "m001",
+        "m002",
+        "m003",
+        "m004",
+        "m005",
+        "m006",
+        "hub",
+        "w001",
+        "w002",
+        "h001",
+        "h002",
+        "f001",
+        "f002",
+        "f003",
+        "done01"
+      ]
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.sef_cursor",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "sef_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "s001",
+      "allowed_values": [
+        "s001",
+        "s002",
+        "s003",
+        "s004",
+        "s005",
+        "a001"
+      ]
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.pell_cursor",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "pell_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "p001",
+      "allowed_values": [
+        "p001",
+        "p002",
+        "p003",
+        "p004",
+        "a001"
+      ]
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.giratina_beaten",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "giratina_beaten",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:frostpeak_keep_quest/giratina_defeated in cobblers_frostpeak_keep_quest (tools/frostpeak_keep_quest.py), mirrored as the player tag cobblers.fk_giratina_beaten which the dialogue reads; NOT Cobblemon player data: a battle callback cannot write q.player.data()",
+      "why": "data/frostpeak_keep_quest.json: this player was in a battle in which Wardenhold's Giratina fainted."
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.giratina_caught",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "giratina_caught",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:frostpeak_keep_quest/giratina_caught in cobblers_frostpeak_keep_quest, read by its catch gate (giratina/catch_check)",
+      "why": "data/frostpeak_keep_quest.json giratina.catch: once per player."
     }
   ],
   "gym_markers": {

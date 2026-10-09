@@ -156,6 +156,46 @@ def pasted(packs, ground):
     return R, sites
 
 
+def retired_j():
+    """A._j reading data/ with the RETIRED Giratina piece put back in memory: its sweep site, its placement and its two
+    caches, from their superseded_* records (the owner retired them 2026-10-09; Giratina lives in Wardenhold). It was
+    the one sunk, jigsaw-carrying, dome-sealed site, so the checks for those cases keep it as their FIXTURE. Nothing is
+    written to disk."""
+    import copy
+    real = A._j
+
+    def j(path):
+        p = Path(path)
+        d = real(path)
+        if p.parent != A.DATA:
+            return d
+        d = copy.deepcopy(d)
+        if p.name == "adopted_legendary_sites.json":
+            d["sweep_sites"] = d["sweep_sites"] + d["superseded_sweep_sites"]["records"]
+        elif p.name == "placements.json":
+            d["placements"] = d["placements"] + [r for r in d["superseded_placements"]["records"]
+                                                 if r.get("id") == "legendary_giratina_shrine"]
+        elif p.name == "rewards.json":
+            d["rewards"] = d["rewards"] + d["superseded_rewards"]["records"]
+        return d
+    return j
+
+
+@pytest.fixture(scope="module")
+def pasted_retired(packs, ground):
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(A, "_j", retired_j())
+        R = A.Report()
+        sites = A.paste_audit(R, packs, ground, sightlines=False)
+    return R, sites
+
+
+def test_the_giratina_piece_is_retired_from_every_list_the_audit_reads():
+    # Without it the retired piece could come back into the paste list by a stale record (the owner, 2026-10-09)
+    assert "legendary_giratina_shrine" not in {q["id"] for q in A.placements()}
+    assert "legendary_giratina_shrine" not in {q["id"] for q in A.sweep_placements()}
+
+
 @needs_snapshot
 @pytest.mark.slow
 def test_the_whole_audit_passes_on_the_repository_as_it_stands(ground):
@@ -168,10 +208,10 @@ def test_the_whole_audit_passes_on_the_repository_as_it_stands(ground):
 
 @needs_snapshot
 @pytest.mark.slow
-def test_each_paste_reads_its_item_from_the_altars_own_class(pasted):
+def test_each_paste_reads_its_item_from_the_altars_own_class(pasted_retired):
     # Without it the audit would be checking the item the record names, which is the builder's claim: the class says
-    # which item the summon block wants, and what it hands back.
-    R, sites = pasted
+    # which item the summon block wants, and what it hands back. (Giratina's altar: the retired piece, as fixture.)
+    R, sites = pasted_retired
     assert {s: v["item"] for s, v in sites.items()} == {"legendary_giratina_shrine": "lumymon:red_chain",
                                                         "legendary_newmoon_island": "lumymon:nightmare_weaver"}
     assert R.facts["legendary_giratina_shrine.reward_item"] == ["lumymon:broken_red_chain"]
@@ -179,12 +219,13 @@ def test_each_paste_reads_its_item_from_the_altars_own_class(pasted):
 
 @needs_snapshot
 @pytest.mark.slow
-def test_the_sunk_seat_is_the_heightmaps_cheapest(pasted):
+def test_the_sunk_seat_is_the_heightmaps_cheapest(pasted_retired):
     # Without it the slab could be seated a block high or low and stand proud of the trough, or bury the altar.
-    R, _ = pasted
+    # The one sunk site was the retired Giratina piece: the rule is held on it as a fixture.
+    R, _ = pasted_retired
     seat = R.facts["legendary_giratina_shrine.seat"]
     assert seat["slab_top_y"] == seat["cheapest_seat"] == 77
-    assert not problems(R)
+    assert not [p for p in problems(R) if "seat" in p]
 
 
 @needs_snapshot
@@ -207,10 +248,12 @@ def test_newmoon_island_floats_over_dry_land_with_nothing_of_ours_under_it(paste
     # the shrine's corner put 40 east of route_06_koga_to_sabrina's vertex (4718, 2518)
     ("legendary_giratina_shrine", {"x": 4758, "z": 2500}, "a route path"),
 ])
-def test_a_moved_paste_is_caught(packs, ground, record, changes, want):
+def test_a_moved_paste_is_caught(packs, ground, record, changes, want, monkeypatch):
     # Without it the measurements could agree with the record by sharing it: the expectation is the heightmap and
-    # the authored world around the site, which a moved copy of the placement cannot move.
-    pl = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["placements"]
+    # the authored world around the site, which a moved copy of the placement cannot move. (Giratina's rows: the
+    # retired piece, as fixture.)
+    monkeypatch.setattr(A, "_j", retired_j())
+    pl = A.placements()
     q = next(p for p in pl if p["id"] == record)
     q["position"].update(changes)
     R = A.Report()
@@ -253,8 +296,10 @@ def test_a_template_container_holding_the_activation_item_is_caught(packs, groun
     ('final = (b.get("nbt") or {}).get("final_state") or "minecraft:air"', 'final = "minecraft:air"',
      "is not set to its own final state"),
 ])
-def test_a_mutated_paste_generator_is_caught(packs, ground, old, new, want):
+def test_a_mutated_paste_generator_is_caught(packs, ground, old, new, want, monkeypatch):
     # Without it tools/place_donor.py could paste somewhere other than the measured seat, or leave jigsaws standing.
+    # (The jigsaw case needs the retired Giratina piece, the one template carrying jigsaws: as fixture.)
+    monkeypatch.setattr(A, "_j", retired_j())
     R = A.Report()
     A.paste_audit(R, packs, ground, donor=mutated("place_donor", old, new), sightlines=False)
     assert any(want in p for p in problems(R)), problems(R)
@@ -262,11 +307,17 @@ def test_a_mutated_paste_generator_is_caught(packs, ground, old, new, want):
 
 @needs_snapshot
 @pytest.mark.slow
-def test_the_caches_as_generated_give_one_item_to_a_champion_once(pasted):
+def test_the_caches_as_generated_give_one_item_to_a_champion_once(pasted, pasted_retired, monkeypatch):
     # Without it the audit's cache reading could fail the real pack, and the mutations below would prove nothing.
     R0, sites = pasted
     R = A.Report()
     A.cache_audit(R, sites)
+    assert problems(R) == []
+    assert R.known.keys() == set()
+    # and on the retired Giratina piece (fixture), whose sealed dome was the one KNOWN finding
+    monkeypatch.setattr(A, "_j", retired_j())
+    R = A.Report()
+    A.cache_audit(R, pasted_retired[1])
     assert problems(R) == []
     assert R.known.keys() == {"giratina_dome_sealed"}
 
@@ -293,10 +344,10 @@ def test_a_mutated_rewards_generator_is_caught(pasted, old, new, want):
 
 @needs_snapshot
 @pytest.mark.slow
-def test_no_loaded_pack_hands_out_either_activation_item(packs, pasted):
+def test_no_loaded_pack_hands_out_either_activation_item(packs, pasted_retired):
     # Without it a recipe, a loot table or a trainer drop in a loaded pack would be a second source, and the
-    # Champion gate on the cache would gate nothing.
-    _, sites = pasted
+    # Champion gate on the cache would gate nothing. (Both items: the Red Chain's site is the retired fixture.)
+    _, sites = pasted_retired
     R = A.Report()
     A.source_audit(R, packs, sites)
     assert problems(R) == []

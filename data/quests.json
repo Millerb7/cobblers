@@ -9481,6 +9481,177 @@
       "progression_field_refs": [
         "quest.ambient_pokemon_farm.farmer_cursor"
       ]
+    },
+    {
+      "id": "evt_wardenhold_giratina",
+      "source": "data/frostpeak_keep_quest.json; the owner, 2026-10-09 (data/frostpeak_keep_quest.json owner_requests)",
+      "place": "data/frostpeak_keep_quest.json burrow: the Wardenhold folk's burrow in Mt Vessu's west face, (1829-1864, 721-751); Giratina in Wardenhold's yard (data/frostpeak_keep.json ruin.nest)",
+      "reward_record": "data/rewards.json wardenhold_giratina",
+      "dialogue_ids": [
+        "dlg_wardenhold_maren",
+        "dlg_wardenhold_sef",
+        "dlg_wardenhold_pell"
+      ],
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        1851,
+        198,
+        732
+      ],
+      "objectives": [
+        {
+          "id": "beat_giratina",
+          "active_when": {
+            "field": "quest.evt_wardenhold_giratina.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_wardenhold_giratina.reported",
+            "equals": true
+          },
+          "text": "Maren Holt's people fled Wardenhold when Giratina lay down in its yard. Beat it in battle, then tell Maren."
+        },
+        {
+          "id": "hear_maren_out",
+          "active_when": {
+            "field": "quest.evt_wardenhold_giratina.reported",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_wardenhold_giratina.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Maren out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_wardenhold_giratina.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_wardenhold_giratina.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_wardenhold_giratina.dialogue_cursor",
+              "value": "m001"
+            }
+          ]
+        },
+        {
+          "id": "report",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers.fk_giratina_beaten"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_wardenhold_giratina.reported",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_wardenhold_giratina.reported",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_wardenhold_giratina.dialogue_cursor",
+              "value": "f001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_wardenhold_giratina.reported",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_wardenhold_giratina.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_wardenhold_giratina",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_wardenhold_giratina.reward_claimed",
+              "idempotency_key": "evt_wardenhold_giratina:reward_wardenhold_giratina:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_wardenhold_giratina.dialogue_cursor",
+              "value": "f003"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_wardenhold_giratina",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json wardenhold_giratina (kind npc_grant); contents and verification strings copied from it",
+          "contents": [
+            {
+              "item": "mega_showdown:griseous_core",
+              "count": 1,
+              "verification": "assets/mega_showdown/models/item/griseous_core.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+            },
+            {
+              "item": "mega_showdown:griseous_orb",
+              "count": 1,
+              "verification": "assets/mega_showdown/models/item/griseous_orb.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+            }
+          ]
+        }
+      ],
+      "story_beat": "The defeat is seen by Cobblemon's battle_fainted callback (cobblers_frostpeak_keep_quest), as every player in the battle, at Wardenhold: each gets the advancement cobblers:frostpeak_keep_quest/giratina_defeated and the player tag cobblers.fk_giratina_beaten, which Maren's 'I beat it.' and the report transition read (compile_dialogue's player_tag, the hide-and-seek quest's way). The keeper re-tags a player holding the advancement, so the tag cannot be lost for good. Giratina returns an hour of server time later, so every player of a group can do the quest.",
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; every player in the battle that beat Giratina is credited, nobody else; Giratina is shared and returns after cooldown_ticks"
+      },
+      "generation_blockers": [
+        "Place the three residents with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R18FK, tools/frostpeak_keep_quest.py npc_placements).",
+        "NOT RUN in game: that battle_fainted reaches every player of a multi-player wild battle, and that the tag survives death and logout (the keeper re-tags from the advancement either way)."
+      ],
+      "progression_field_refs": [
+        "quest.evt_wardenhold_giratina.started",
+        "quest.evt_wardenhold_giratina.reported",
+        "quest.evt_wardenhold_giratina.reward_claimed",
+        "quest.evt_wardenhold_giratina.dialogue_cursor",
+        "quest.evt_wardenhold_giratina.sef_cursor",
+        "quest.evt_wardenhold_giratina.pell_cursor",
+        "quest.evt_wardenhold_giratina.giratina_beaten",
+        "quest.evt_wardenhold_giratina.giratina_caught"
+      ]
     }
   ]
 }

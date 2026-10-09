@@ -5858,9 +5858,9 @@
       {
         "what": "blue-ice roof trim",
         "block": [
-          1520,
+          1512,
           154,
-          612,
+          604,
           "minecraft:blue_ice"
         ],
         "expect": true
@@ -5888,9 +5888,9 @@
       {
         "what": "a stair of the gate ramp or the keep",
         "block": [
-          1546,
-          99,
-          584,
+          1548,
+          93,
+          570,
           "minecraft:stone_brick_stairs[facing=south,half=bottom,shape=straight]"
         ],
         "expect": true
@@ -7208,6 +7208,108 @@
           "waystones:waystone[half=upper,facing=north]"
         ],
         "expect": true
+      }
+    ],
+    "frostpeak_keep_quest": [
+      {
+        "what": "the burrow's hearth (a lit campfire)",
+        "block": [
+          1849,
+          198,
+          736,
+          "minecraft:campfire[lit=true,facing=north,signal_fire=false,waterlogged=false]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a pillar of the hall",
+        "block": [
+          1846,
+          199,
+          733,
+          "minecraft:spruce_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tunnel's first timber beam (the portal in the face)",
+        "block": [
+          1832,
+          201,
+          736,
+          "minecraft:spruce_log[axis=z]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the hall's floor (packed mud)",
+        "block": [
+          1851,
+          197,
+          738,
+          "minecraft:packed_mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the stores' barrels",
+        "block": [
+          1844,
+          198,
+          751,
+          "minecraft:barrel[facing=up,open=false]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a hung lantern in the hall",
+        "block": [
+          1846,
+          202,
+          735,
+          "minecraft:lantern[hanging=true,waterlogged=false]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a sign of the burrow",
+        "block": [
+          1833,
+          199,
+          735,
+          "minecraft:spruce_wall_sign[facing=south,waterlogged=false]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old Distortion shrine's altar cell, now air (the shrine is taken down)",
+        "block": [
+          4397,
+          78,
+          2882,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old shrine's ground at its middle, rock again at the heightmap's height",
+        "block": [
+          4394,
+          77,
+          2880,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "Giratina in Wardenhold's yard (one tagged cobblers.fk_giratina; absent while its return clock runs)",
+        "hold": [
+          1565,
+          128,
+          621
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.fk_giratina]",
+        "count": 1
       }
     ]
   }

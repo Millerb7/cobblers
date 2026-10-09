@@ -140,6 +140,10 @@ Champion, not at Giovanni.**
 
 ### 2.3 Legendary and form items: memories, Red Orb, Prison Bottle, Griseous Core (row 9)
 
+> **2026-10-09:** the Griseous Core and Orb's cache at Giratina's altar is retired with the altar (the owner moved Giratina
+> to Wardenhold). Their one source is now the burrow quest's reward, `data/rewards.json wardenhold_giratina` (npc_grant,
+> once, to a player who has beaten Giratina; `data/frostpeak_keep_quest.json`).
+
 | Item | Unlocks | Route | Gate | Build |
 |---|---|---|---|---|
 | **17 Silvally memories** | Silvally's types. Type: Null is a mythical starter; it becomes Silvally at **L45** and learns Multi-Attack then (`data/mythical_starters.json:404-414`, *measured*); its peak is gym 8 (`:327-331`) | **Recommended:** 17 cheap lines on Northlight's Station Supply (a research station studying an artificial Pokemon; the town is at the gym-6 rung, `markets.json:285`, *measured*). **Alternative, per player:** the gym-type memory in each Kanto leader's first win (8 of 17) plus the rest at the Champion | town position (Northlight). Memories are inert before L45, so earlier costs nothing | new lines in `markets.json`; the bank must not buy them back (economy audit) |

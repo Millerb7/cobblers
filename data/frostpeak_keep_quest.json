@@ -1,0 +1,479 @@
+{
+  "schema": "cobblers.frostpeak_keep_quest/1",
+  "status": "authored 2026-10-09; built by tools/frostpeak_keep_quest.py, audited by tools/frostpeak_keep_quest_audit.py; NOT applied to any world, NOT seen in game",
+  "generated_by": "hand",
+  "built_by": "tools/frostpeak_keep_quest.py build -> build/datapacks/cobblers_frostpeak_keep_quest (world-local: a keeper loop), re-apply step R18FK",
+  "owner_requests": [
+    "the owner, 2026-10-09, about Wardenhold: \"Have it inhabited by a big legendary we haven't used yet.\"",
+    "\"Have the people of the castle burrowing in the mountainside at 1825 736.\"",
+    "\"Have the legendary be lvl 50-60 and be a quest to kill it.\"",
+    "the same day, on staging at Giratina's Distortion shrine (4374, 66, 2862): \"giratina being plopped right here sucks, move it to the castle in the north.\"",
+    "and: \"get rid of his sphere though, he just lives in the castle.\""
+  ],
+  "namespace": "cobblers",
+  "folder": "frostpeak_keep_quest",
+  "giratina": {
+    "species": "giratina",
+    "species_why": "the owner's choice (2026-10-09), replacing the unused-legendary pick. Big: Mega Showdown 1.0.2 implements it (data/cobblemon/species_additions/giratina.json, implemented true, hitbox 4.5 x 6.5, baseScale 1.1) and ships its model, poser, texture and resolver for both formes (assets/cobblemon/bedrock/pokemon/{models,posers,resolvers}/0487_giratina, textures/pokemon/0487_giratina), read 2026-10-09 from mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar in the server snapshot; Cobblemon 1.8.0's own giratina.json has no implemented flag. So every player draws it from a jar the server already requires. NOT seen in game here.",
+    "level": 55,
+    "level_why": "the owner asked for 50-60. 55 is data/trainers.json generation_contract gym_ace_levels[7] (Giovanni), the upper bound of the RCT cap after seven badges (data/legendaries.json level_caps.upper_bound_by_badges '7': 55; the cap is the MINIMUM over the next required set, so it is at most 55 and lower while a weaker required trainer is undefeated). data/level_cap.json breaks every ball at a Pokemon strictly over the thrower's cap, a Master Ball included: Giratina is catchable only by a player whose cap has reached 55 (seven badges and the route trainers before Giovanni beaten), or after gym 8 (cap 60). The fight itself is not capped (a wild battle: rctmod's party check applies to trainers only). The Strand round it is the 28-38 band (tier 5), so meeting it on a first visit is the mistake the owner's nest rule wants.",
+    "scale_modifier": 1.0,
+    "scale_why": "its natural size: about 5 x 7.2 blocks at baseScale 1.1, the biggest thing in the keep. The Ursaluna's and the Gyarados's scale_modifier 2.0 doubled ordinary animals; Giratina needs nothing.",
+    "spawn_properties": [
+      "no_ai"
+    ],
+    "tag": "cobblers.fk_giratina",
+    "dormant_tag": "cobblers.fk_giratina_dormant",
+    "guardian_tag": "cobblers.guardian",
+    "yaw": 135.0,
+    "yaw_why": "facing north-west, toward the gate (Minecraft yaw 0 faces +z, 90 faces -x, 180 faces -z, so 135 faces (-x, -z)): a player coming through the gate meets its face.",
+    "dormant_nbt": {
+      "Unbattleable": "1b",
+      "NoAI": "1b",
+      "NoGravity": "1b",
+      "PoseType": "\"SLEEP\"",
+      "RecalculatePose": "0b",
+      "HideLabel": "1b",
+      "PersistenceRequired": "1b",
+      "Invulnerable": "1b",
+      "Silent": "1b"
+    },
+    "awake_nbt": {
+      "Unbattleable": "0b",
+      "RecalculatePose": "1b",
+      "HideLabel": "0b",
+      "Silent": "0b"
+    },
+    "nbt_why": "copied from data/drowned_quarry.json monster (dormant_nbt, awake_nbt): the sleeping Celebi's flags (EXP-023) and the residents' wake (tools/resident_encounters.py). Whether Giratina's poser has a sleep pose is NOT checked; NoAI and Unbattleable hold it either way.",
+    "trigger_radius": 14,
+    "trigger_why": "the lair is 17.0 blocks from the gate-to-keep-door line at its nearest, 19.2 from the keep door and 19.7 from the inside of the gate (data/frostpeak_keep.json ruin.nest.why; tools/frostpeak_keep_audit.py K12 measures it on the written blocks), so a player crossing the yard to the keep does not wake it; one who walks toward it does.",
+    "keeper": {
+      "period_ticks": 40,
+      "spawn_radius": 96,
+      "spawn_clear": 48,
+      "settle_radius": 64,
+      "cooldown_ticks": 72000,
+      "absent_passes": 2,
+      "guardian_search_radius": 48,
+      "home_tolerance": 1.0
+    },
+    "keeper_why": "data/drowned_quarry.json monster.keeper, number for number: the residents' state machine (a dormant tag, a wake inside trigger_radius, settling back asleep when nobody is within settle_radius, a return clock started the first loaded pass it is seen gone, a return never within spawn_clear of a player). The return is the den boss rule (the owner, 2026-10-02: \"A boss that stays dead is an event; one that returns is a place.\"): one hour of server time after it is beaten, caught or killed.",
+    "message": "The frost in the yard cracks. Something vast lifts its head from the ice, and the shadows under the walls lean toward it.",
+    "sound": "minecraft:entity.warden.emerge",
+    "sound_why": "a vanilla 1.21.1 sound event id: the string entity.warden.emerge is in the client jar's sound-event class (1.21.1-0.19.5.jar, read 2026-10-09).",
+    "fight_radius": 64,
+    "fight_radius_why": "a defeat or catch counts for a player within 64 blocks of the lair when it is reported (the Entei boss's pattern: species, then where the player stands, data/entei_boss.json); no other wild Giratina exists in our world (its only placed home was retired, data/adopted_legendary_sites.json superseded_sweep_sites).",
+    "catch": {
+      "decision": "PROPOSED for the owner to confirm: defeat it first, then catch it, once per player. A thrower who has not yet beaten it in battle, or who has already caught one, sees the ball break free (the poke_ball_capture_calculated callback sets the shakes to 0, the Ursaluna den's per-thrower gate, tools/ursaluna_cave.py). Ordinary balls: it is an overworld legendary, not a dungeon boss (STATE 'Beast Ball is the dungeon-boss key': only dungeon bosses refuse every ball but the Beast Ball), so data/key_ball.json does not tag it. The level cap (data/level_cap.json) still applies: 55 needs a cap of 55.",
+      "why": "the owner asked for a quest to KILL it, and overworld legendaries stay catchable. Defeat-first keeps the quest the point; once per player keeps a returning boss from being a Giratina farm (the open question the retired shrine left: data/adopted_legendary_sites.json superseded_sweep_sites, 'a farm otherwise'), as Spectrier is capped once per player (STATE, owner decision 2026-10-02).",
+      "not_beaten_message": "The ball slides off. It does not know you yet: beat it first.",
+      "caught_message": "The ball slides off. You already carry one of these.",
+      "asleep_message": "The ball bounces off the ice. It stirs."
+    },
+    "returns": "yes: after keeper.cooldown_ticks of server time, asleep on its spot, for the next player (every player of a group can do the quest; each is credited only for a battle they were in)."
+  },
+  "quest": {
+    "id": "evt_wardenhold_giratina",
+    "defeated_advancement": "cobblers:frostpeak_keep_quest/giratina_defeated",
+    "caught_advancement": "cobblers:frostpeak_keep_quest/giratina_caught",
+    "beaten_tag": "cobblers.fk_giratina_beaten",
+    "free_tag": "cobblers.fk_giratina_free",
+    "carrier_why": "a defeat is seen by Cobblemon's battle_fainted callback, as each player of the battle (the gulch's and the Entei boss's c.players loop), and recorded as the advancement (durable, per player) and the player tag the dialogue reads (compile_dialogue's player_tag condition, the hide-and-seek quest's way). The keeper loop re-tags any player holding the advancement and not the tag, so the tag cannot be lost for good.",
+    "reward": "wardenhold_giratina"
+  },
+  "burrow": {
+    "measured": "tools/ground.py, rounded, 2026-10-09: (1825, 736) is ground y196 on a slope that rises about one block a block eastward (y185 at x1814 to y197 at x1828) to the foot of Mt Vessu's west face, a cliff standing from y199-208 at x1829-1831 to y246-251 at x1832, 42 blocks high at z736 (region mt_vessu; Mt Vessu's summit is data/sculpt.json (1860, 770)). Every carved block east of the face (x over 1832) has 51 or more blocks of the heightmap's ground over it (tools/frostpeak_keep_quest_audit.py Q2 reports the least); the mouth's cutting through the talus (x1829-1831) is open or under a 2-4 block crust.",
+    "floor_y": 197,
+    "floor_why": "the slope's ground at the mouth (x1828, z735-737) is y196-198, so a floor block at y197 (feet y198) meets it level; the burrow is one floor.",
+    "rooms": [
+      {
+        "id": "mouth",
+        "box": [
+          1829,
+          735,
+          1841,
+          737
+        ],
+        "height": 3,
+        "floor": "minecraft:coarse_dirt",
+        "why": "the cutting through the talus at x1829-1831 and the tunnel into the face, 3 wide and 3 high"
+      },
+      {
+        "id": "hall",
+        "box": [
+          1842,
+          729,
+          1856,
+          743
+        ],
+        "height": 5,
+        "floor": "minecraft:packed_mud",
+        "why": "the common room: the hearth, the benches, the table"
+      },
+      {
+        "id": "sleeping",
+        "box": [
+          1844,
+          721,
+          1854,
+          727
+        ],
+        "height": 4,
+        "floor": "minecraft:packed_mud",
+        "why": "north of the hall: bedding of hay under hides along the wall"
+      },
+      {
+        "id": "sleeping_door",
+        "box": [
+          1848,
+          728,
+          1850,
+          728
+        ],
+        "height": 3,
+        "floor": "minecraft:packed_mud"
+      },
+      {
+        "id": "stores",
+        "box": [
+          1844,
+          745,
+          1854,
+          751
+        ],
+        "height": 4,
+        "floor": "minecraft:packed_mud",
+        "why": "south of the hall: what they carried out of the keep"
+      },
+      {
+        "id": "stores_door",
+        "box": [
+          1848,
+          744,
+          1850,
+          744
+        ],
+        "height": 3,
+        "floor": "minecraft:packed_mud"
+      },
+      {
+        "id": "watch",
+        "box": [
+          1858,
+          733,
+          1864,
+          739
+        ],
+        "height": 4,
+        "floor": "minecraft:packed_mud",
+        "why": "east of the hall: the keep's log carried down, and the count of who came through"
+      },
+      {
+        "id": "watch_door",
+        "box": [
+          1857,
+          735,
+          1857,
+          737
+        ],
+        "height": 3,
+        "floor": "minecraft:packed_mud"
+      }
+    ],
+    "shell": {
+      "block": [
+        [
+          "minecraft:stone",
+          0.6
+        ],
+        [
+          "minecraft:tuff",
+          0.2
+        ],
+        [
+          "minecraft:andesite",
+          0.2
+        ]
+      ],
+      "margin": 2,
+      "why": "the legendary chambers' order (tools/legendaries.py, tools/ursaluna_cave.py): a rock shell written solid first, margin blocks round every carved block and never above the heightmap's own ground (the face's surface is never raised), then the rooms cut out of it, so whatever the world held there (a worldgen cave) the rooms are closed."
+    },
+    "timber": {
+      "xs": [
+        1832,
+        1836,
+        1840
+      ],
+      "post": "minecraft:spruce_log[axis=y]",
+      "beam": "minecraft:spruce_log[axis=z]",
+      "why": "timber sets across the tunnel: posts in the side walls (z734, z738) and a beam in the roof (y201), the first one the portal in the face"
+    },
+    "pillars": [
+      [
+        1846,
+        733
+      ],
+      [
+        1852,
+        733
+      ],
+      [
+        1846,
+        739
+      ],
+      [
+        1852,
+        739
+      ]
+    ],
+    "hearth": [
+      1849,
+      736
+    ],
+    "lanterns": {
+      "hanging": [
+        [
+          1834,
+          735
+        ],
+        [
+          1838,
+          737
+        ],
+        [
+          1846,
+          735
+        ],
+        [
+          1852,
+          737
+        ],
+        [
+          1849,
+          731
+        ],
+        [
+          1849,
+          741
+        ],
+        [
+          1849,
+          724
+        ],
+        [
+          1849,
+          748
+        ],
+        [
+          1861,
+          736
+        ]
+      ],
+      "floor": [
+        [
+          1843,
+          730
+        ],
+        [
+          1855,
+          730
+        ],
+        [
+          1843,
+          742
+        ],
+        [
+          1855,
+          742
+        ],
+        [
+          1845,
+          722
+        ],
+        [
+          1853,
+          726
+        ],
+        [
+          1845,
+          750
+        ],
+        [
+          1853,
+          746
+        ],
+        [
+          1859,
+          734
+        ],
+        [
+          1863,
+          738
+        ]
+      ],
+      "posts": [
+        [
+          1827,
+          734
+        ],
+        [
+          1827,
+          738
+        ]
+      ],
+      "why": "places are lit as towns (STATE: lanterns on posts and floors, never light blocks): two lantern posts at the mouth, hung lanterns under the timber and the ceilings, floor lanterns in the corners. tools/frostpeak_keep_quest_audit.py propagates the block light itself and holds every standable cell of the burrow at light 1 or more (no monster spawns in 1.21.1 at block light over 0)."
+    },
+    "signs": {
+      "mouth": {
+        "at": [
+          1833,
+          199,
+          735
+        ],
+        "facing": "south",
+        "lines": [
+          "WARDENHOLD",
+          "folk. Knock,",
+          "then come in."
+        ],
+        "why": "inside the portal, on the tunnel's north wall (a wall sign facing south hangs on the block north of it), read as a visitor walks in"
+      },
+      "watch": [
+        {
+          "at": [
+            1864,
+            199,
+            734
+          ],
+          "facing": "west",
+          "lines": [
+            "WE CAME DOWN",
+            "the night the",
+            "tower fell."
+          ]
+        },
+        {
+          "at": [
+            1864,
+            199,
+            736
+          ],
+          "facing": "west",
+          "lines": [
+            "Forty-one went",
+            "out the gate.",
+            "Thirty-eight",
+            "came here."
+          ]
+        },
+        {
+          "at": [
+            1864,
+            199,
+            738
+          ],
+          "facing": "west",
+          "lines": [
+            "Do not light",
+            "the beacon.",
+            "It watches",
+            "the spire."
+          ]
+        }
+      ],
+      "stores": {
+        "at": [
+          1849,
+          199,
+          751
+        ],
+        "facing": "north",
+        "lines": [
+          "STORES",
+          "Meal: 4 sacks",
+          "Kelp: 2 bales",
+          "Count twice."
+        ]
+      }
+    },
+    "spawn_free_zone": {
+      "id": "wardenhold_burrow",
+      "box": [
+        1824,
+        720,
+        1871,
+        759
+      ],
+      "why": "the owner, 2026-10-09: the burrow is \"clear of spawns\". The burrow's x/z (mouth x1827 to the watch room x1865, z721-751) snapped out to the 8-block grid the route boxes share (data/spawn_suppression.json league_precinct's rule). The boxes are x/z only, so the face over it is spawn-free too."
+    }
+  },
+  "residents": [
+    {
+      "id": "maren",
+      "conversation": "dlg_wardenhold_maren",
+      "at_xz": [
+        1851,
+        732
+      ],
+      "yaw": 90.0,
+      "why": "the quest giver: at the east end of the hall table (which runs x1848-1850 at z731), facing west toward the tunnel a visitor comes in by (yaw 90 faces -x)"
+    },
+    {
+      "id": "sef",
+      "conversation": "dlg_wardenhold_sef",
+      "at_xz": [
+        1847,
+        738
+      ],
+      "yaw": -135.0,
+      "why": "by the hearth (1849, 736), on its south-west side, facing it (yaw -135 faces (+x, -z))"
+    },
+    {
+      "id": "pell",
+      "conversation": "dlg_wardenhold_pell",
+      "at_xz": [
+        1861,
+        738
+      ],
+      "yaw": 90.0,
+      "why": "in the watch room, facing the hall (yaw 90 faces -x)"
+    }
+  ],
+  "residents_why": "settlement NPCs on the pattern the den watcher and the Drovers' Hollow's drover use (tools/ursaluna_cave.py npc_placements, tools/drovers_hollow.py): one conversation each in data/dialogue.json, compiled into cobblers_dialogue (tools/compile_dialogue.py), placed after the restart that loads their classes by the re-application's npc action (R18FK). Feet one above the burrow's floor.",
+  "shrine_takedown": {
+    "placement": "legendary_giratina_shrine",
+    "placement_lives_in": "data/placements.json superseded_placements.records (retired 2026-10-09)",
+    "surface": "minecraft:stone",
+    "surface_why": "the heightmap carries height only; the lower trough's painted cover is not in any data file, so the restored columns are rock to the ground's own height (round(h)) and the top block is stone, as tools/gym_demolish.py restores a lot. NOT matched to the trough's cover; a look in game may want a cover pass.",
+    "why": "the owner, 2026-10-09: the Distortion shrine comes down entirely (\"get rid of his sphere\"). Its box is the retired placement's own (tools/place_donor.py box(): x4374-4415, y66-108, z2862-2899): everything in it goes to air, then each column is rock up to the heightmap's ground, rounded (the slab's 12 sunk layers included), then water from the ground to the water mask's level where tools/water_mask.py says water stands (the record measured 0 wet columns; the tool reports, not assumes). Ground from tools/ground.py, never from the world (the world holds the template).",
+    "not_covered": "entities: the template places none, but a Giratina the altar may have summoned on staging is not removed (no verified selector tells a wild one from a player's own sent-out Giratina); look at the site after R18FK."
+  },
+  "blocks": {
+    "ids": [
+      "minecraft:air",
+      "minecraft:andesite",
+      "minecraft:barrel",
+      "minecraft:brown_carpet",
+      "minecraft:campfire",
+      "minecraft:coarse_dirt",
+      "minecraft:composter",
+      "minecraft:crafting_table",
+      "minecraft:dried_kelp_block",
+      "minecraft:hay_block",
+      "minecraft:lantern",
+      "minecraft:lectern",
+      "minecraft:packed_mud",
+      "minecraft:spruce_fence",
+      "minecraft:spruce_log",
+      "minecraft:spruce_planks",
+      "minecraft:spruce_pressure_plate",
+      "minecraft:spruce_slab",
+      "minecraft:spruce_stairs",
+      "minecraft:spruce_wall_sign",
+      "minecraft:stone",
+      "minecraft:tuff",
+      "minecraft:water"
+    ],
+    "rule": "vanilla 1.21.1; nothing in data/spawn_blocks.json except minecraft:water, which only the shrine takedown may write (where the water mask says water stands; the record measured none there). No wool, no bed, no concrete."
+  }
+}

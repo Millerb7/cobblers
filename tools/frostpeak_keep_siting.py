@@ -60,7 +60,7 @@ class Siting:
 
     def rect(self, cx, cz):
         d = self.doc["dims"]
-        return cx - d["base_hu"], cz - d["base_hv"], cx + d["base_hu"], cz + d["base_hv"]
+        return cx - d["base_hu"], cz - K.north(d, "base_hv"), cx + d["base_hu"], cz + d["base_hv"]
 
     def rect_in_polygon(self, cx, cz):
         x0, z0, x1, z1 = self.rect(cx, cz)
@@ -122,7 +122,8 @@ class Siting:
         feat = {"spire top (ry %d)" % self.notes["spire_top_ry"]: (0, kc, pad + self.notes["spire_top_ry"]),
                 "beacon chamber floor (ry %d)" % d["spire_floor"]: (0, kc, pad + d["spire_floor"] + 1),
                 "keep roof (ry %d)" % d["keep_roof"]: (0, kc, pad + d["keep_roof"]),
-                "keep turret tip (ry %d)" % self.notes["turret_tip_ry"]: (d["keep_half"] - d["turret_half"], kc + d["keep_half"] - d["turret_half"], pad + self.notes["turret_tip_ry"]),
+                # the south-WEST turret: the south-east one fell in the ruin (data/frostpeak_keep.json ruin.turrets)
+                "keep turret tip (ry %d)" % self.notes["turret_tip_ry"]: (-(d["keep_half"] - d["turret_half"]), kc + d["keep_half"] - d["turret_half"], pad + self.notes["turret_tip_ry"]),
                 "corner tower cone tip (ry %d)" % self.notes["corner_tip_ry"]: (d["wall_hu"] - 1, d["wall_hv"] - 1, pad + self.notes["corner_tip_ry"]),
                 "south wall top (ry 13)": (0, d["wall_hv"], pad + 13)}
         out = {}

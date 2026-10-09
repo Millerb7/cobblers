@@ -911,41 +911,6 @@
  },
  "sweep_sites": [
   {
-   "id": "sweep_giratina_shrine",
-   "template": "legendarymonuments:giratina_island/main/222",
-   "legendary": "Giratina",
-   "status": "SCHEDULED 2026-10-06 as data/placements.json legendary_giratina_shrine. HIDDEN. Measured off tools/ground.py, rounded; nothing placed, booted or clicked.",
-   "hidden": true,
-   "scheduled_as": "legendary_giratina_shrine",
-   "source_archive": "LegendaryMonuments-Cobbleverse.jar",
-   "size": [42, 43, 38],
-   "size_source": "the template NBT, read 2026-10-06 from C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods/LegendaryMonuments-Cobbleverse.jar with zipfile and tools/nbt.py; nothing copied. data/structures.json registers the STRUCTURE legendarymonuments:giratina_island (a depth-7 jigsaw that generates only in the Distortion World); this is its centre piece's template, placed raw.",
-   "template_read_2026_10_06": {
-    "layers": "layers 0-11 a full 42x38 slab of distortion cobblestone and deepslate (1,596 blocks a layer); layer 12 the island's floor cover and the altar; layers 14-34 a black stained-glass dome with distortion logs, leaves and crystals inside; layer 42 five jigsaws only. 43,337 air.",
-    "summon": "lumymon:giratina_altar at template [23, 12, 20], world (4397, 78, 2882); lumymon:summon_anchor at [23, 15, 20], world (4397, 81, 2882).",
-    "jigsaws": "six: [23, 0, 20] final state distortion_deepslate; [0, 42, 20], [23, 42, 0], [23, 42, 20], [23, 42, 37], [41, 42, 20] final state air. data/placements.json jigsaws final_state sets them after the paste.",
-    "containers": "none. No block entity in the template holds an item, so nothing in the paste hands out the Red Chain."
-   },
-   "seat": {"kind": "sunk", "ground_layer": 11, "why": "layer 11, the slab's top, stands at the footprint's cheapest seat y77, so the slab is buried in the trough floor and only the floor cover, the altar and the dome stand above ground. Seated on the ground instead, the slab would be a 12-high block of distortion stone with the dome on top."},
-   "site": {"region": "glacial_tear", "subregion": "lower_trough", "cell": "C5", "why": "the trough's least-seen footprint: of every 42x38 in x4200..4500, z2700..3000 that clears every rule below, the one seen from no route vertex (bare terrain) at the least cut and fill. The Tear is a frozen rift in the land; the Rift itself has no qualifying pocket (sweep_2026_10_06.the_obscured_homes_the_owner_named.rift_dead_ends)."},
-   "placement_lives_in": "the position, rotation and mirror live ONLY in data/placements.json legendary_giratina_shrine: corner (4374, 2862), y66, top occupied layer y108 (467 under the runtime ceiling y575), rotation none, mirror none.",
-   "ground": {"min": 72, "max": 80, "median": 77.0, "columns": 1596, "measured_by": "tools/legendary_sweep.py measure over x4374..4415, z2862..2899"},
-   "displaces": {"cut_blocks": 639, "cut_columns": 635, "fill_blocks": 86, "fill_columns": 64, "terrain": "with the slab's top at y77, 635 columns lose a block or two of trough floor and 64 show the slab's edge above the ground by a block or two. The template's air above the slab clears whatever stood in the box up to y108: trough floor only, no authored record within 115."},
-   "rules_measured": {"nearest_authored": 115, "nearest_authored_src": "data/landmarks.json", "route_path_edge": 458, "habitat_margin": 312, "portal_edge": 918, "spread_nearest": 912, "spread_nearest_id": "adopted_crown_cemetery", "route_sightings": 0, "route_points_within_1200": 3772, "wet_columns": 0},
-   "carries_into_the_world": {"blocks": ["lumymon:giratina_altar", "lumymon:summon_anchor", "15,349 legendarymonuments:distortion_cobblestone and the island's other distortion blocks", "4,954 black and 50 red stained glass", "10 minecraft:light"], "entities": "none"},
-   "extra_caches": [{"source": "giratina_griseous", "items": ["mega_showdown:griseous_core", "mega_showdown:griseous_orb"], "flags": ["champion_cleared"]}],
-   "gate": {"flags": ["champion_cleared"], "why": "Giratina rolls 85, 90 or 99 (GiratinaAltar's spawn strings, some holding mega_showdown:griseous_core), so it can be held only under the Champion's cap of 100 (docs/mechanics/LEAGUE_LEVEL_CAP.md). The place is open to anyone; the CHAIN is the gate: data/rewards.json sweep_red_chain is earned only by a player holding cobblers:flag/champion_cleared, so nobody below the cap can summon and waste it."},
-   "activation_item": {"item": "lumymon:red_chain", "source": "sweep_red_chain", "one_source": "measured 2026-10-06 across every jar and datapack in the server snapshot: lumymon:red_chain is produced by a recipe in the DISABLED Sinnoh pack and dropped by rctmod's team_galactic_cyrus, whom the campaign never seats. Nothing loaded hands it out, and the template holds no container. The cache is its one source."},
-   "what_a_player_gets": "Giratina, at 85-99 (the shiny branch at 90 with a Griseous Core), once per player: one Red Chain each, from the cache at the altar. Whether the altar CONSUMES the chain is not known (LumyMon closed source; EXP-048 left it open): if it does not, the chain is a key and Giratina a farm, and the site needs a twin of cobblers_spectrier_cap (open below). Nothing else: the template has no loot.",
-   "how_it_is_found": {
-    "by_eye": "measured: the dome is seen from the anchor of landmark major_river ('the Glacial Tear to the east coast', 450 blocks off), so a player following that river up into the Tear sees black glass in the trough; it is NOT seen from the Glacial Tear's own anchor (241 off, behind the trough's shoulder) or from any route vertex within 1,200 (route_sightings 0).",
-    "rumour_proposed": "the Compact binder, once the ring is open (data/dialogue.json dlg_main_relic_hall_release, its released_repeat node, to a Champion): 'When the ring went dark something else answered. North-east, where the ice tore. Not Hoopa's kind of door.' NOT AUTHORED: tools/finale_audit.py models that conversation and tests/test_finale_confrontation.py walks its reachability; the line is for Codex or the finale's owner to place.",
-    "after_finding": "the Red Chain's message names the altar; the anchor above it is where Giratina appears (LumyMon's summon_anchor tooltip, 'Pokemon from Altars appear here')."
-   },
-   "does_not_travel_here": ["the Distortion World, the other jigsaw pieces and the island's underside: a raw paste gives the one piece", "/locate and any radar: no structure start"],
-   "open": ["whether giratina_altar consumes the Red Chain (a farm otherwise: a Giratina cap like cobblers_spectrier_cap)", "whether the altar answers in a pasted piece at all (EXP-048 proved one LumyMon altar, the Calyrex statue, not this one)", "data/spawn_suppression.json declares no spawn-free zone here; nothing is dormant in the site"]
-  },
-  {
    "id": "sweep_newmoon_island",
    "template": "lumymon:newmoon_island",
    "legendary": "Darkrai",
@@ -991,7 +956,7 @@
    {"template": "cobbleverse:legendary/moltres", "legendary": "Moltres", "loaded": true, "status": "adopted", "where": "adopted_moltres_tower (moved from the Nether 2026-10-02)"},
    {"template": "cobbleverse:dawn_tower", "legendary": "Necrozma (Dawn Wings)", "loaded": true, "status": "adopted", "where": "adopted_dawn_tower (moved from the End)"},
    {"template": "cobbleverse:dusk_tower", "legendary": "Necrozma (Dusk Mane)", "loaded": true, "status": "adopted", "where": "adopted_dusk_tower (moved from the End)"},
-   {"template": "legendarymonuments:giratina_island/main/222", "legendary": "Giratina", "loaded": true, "status": "placed_by_sweep", "where": "sweep_giratina_shrine"},
+   {"template": "legendarymonuments:giratina_island/main/222", "legendary": "Giratina", "loaded": true, "status": "retired", "where": "superseded_sweep_sites (the owner, 2026-10-09: Giratina lives in Wardenhold, data/frostpeak_keep_quest.json)"},
    {"template": "lumymon:newmoon_island", "legendary": "Darkrai", "loaded": true, "status": "placed_by_sweep", "where": "sweep_newmoon_island"},
    {"template": "legendarymonuments:lake_guardians/lake_acuity/3x3", "legendary": "Uxie", "loaded": true, "status": "ours_authored", "where": "data/legendaries.json uxie (lake grotto); refused as a paste: two authors for one legendary"},
    {"template": "legendarymonuments:lake_guardians/lake_valor/3x3", "legendary": "Azelf", "loaded": true, "status": "ours_authored", "where": "data/legendaries.json azelf"},
@@ -1024,5 +989,118 @@
    {"template": "cobbleverse:fullmoon_island", "legendary": "Cresselia", "loaded": false, "status": "not_loaded", "where": "Sinnoh pack (97x57x97; dream_catcher, a Sinnoh recipe)"}
   ],
   "not_a_template": "cobbleverse:spawn_rayquaza is a function (a shiny level-100 Rayquaza at 0,70,0 in the End), not a structure; the End has no door in our world. Hoopa is ours (data/hoopa_cradle.json, the cradle), Kubfu the starter build's."
+ },
+ "superseded_sweep_sites": {
+  "note": "sweep sites the owner retired after they were placed; kept as they were. No tool builds, checks or keeps clear of them (tools/adopted_sites.py sites() reads sweep_sites only).",
+  "records": [
+   {
+    "id": "sweep_giratina_shrine",
+    "template": "legendarymonuments:giratina_island/main/222",
+    "legendary": "Giratina",
+    "status": "RETIRED 2026-10-09. SCHEDULED 2026-10-06 as data/placements.json legendary_giratina_shrine. HIDDEN. Measured off tools/ground.py, rounded; nothing placed, booted or clicked.",
+    "hidden": true,
+    "scheduled_as": "legendary_giratina_shrine",
+    "source_archive": "LegendaryMonuments-Cobbleverse.jar",
+    "size": [
+     42,
+     43,
+     38
+    ],
+    "size_source": "the template NBT, read 2026-10-06 from C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods/LegendaryMonuments-Cobbleverse.jar with zipfile and tools/nbt.py; nothing copied. data/structures.json registers the STRUCTURE legendarymonuments:giratina_island (a depth-7 jigsaw that generates only in the Distortion World); this is its centre piece's template, placed raw.",
+    "template_read_2026_10_06": {
+     "layers": "layers 0-11 a full 42x38 slab of distortion cobblestone and deepslate (1,596 blocks a layer); layer 12 the island's floor cover and the altar; layers 14-34 a black stained-glass dome with distortion logs, leaves and crystals inside; layer 42 five jigsaws only. 43,337 air.",
+     "summon": "lumymon:giratina_altar at template [23, 12, 20], world (4397, 78, 2882); lumymon:summon_anchor at [23, 15, 20], world (4397, 81, 2882).",
+     "jigsaws": "six: [23, 0, 20] final state distortion_deepslate; [0, 42, 20], [23, 42, 0], [23, 42, 20], [23, 42, 37], [41, 42, 20] final state air. data/placements.json jigsaws final_state sets them after the paste.",
+     "containers": "none. No block entity in the template holds an item, so nothing in the paste hands out the Red Chain."
+    },
+    "seat": {
+     "kind": "sunk",
+     "ground_layer": 11,
+     "why": "layer 11, the slab's top, stands at the footprint's cheapest seat y77, so the slab is buried in the trough floor and only the floor cover, the altar and the dome stand above ground. Seated on the ground instead, the slab would be a 12-high block of distortion stone with the dome on top."
+    },
+    "site": {
+     "region": "glacial_tear",
+     "subregion": "lower_trough",
+     "cell": "C5",
+     "why": "the trough's least-seen footprint: of every 42x38 in x4200..4500, z2700..3000 that clears every rule below, the one seen from no route vertex (bare terrain) at the least cut and fill. The Tear is a frozen rift in the land; the Rift itself has no qualifying pocket (sweep_2026_10_06.the_obscured_homes_the_owner_named.rift_dead_ends)."
+    },
+    "placement_lives_in": "the position, rotation and mirror live ONLY in data/placements.json legendary_giratina_shrine: corner (4374, 2862), y66, top occupied layer y108 (467 under the runtime ceiling y575), rotation none, mirror none.",
+    "ground": {
+     "min": 72,
+     "max": 80,
+     "median": 77.0,
+     "columns": 1596,
+     "measured_by": "tools/legendary_sweep.py measure over x4374..4415, z2862..2899"
+    },
+    "displaces": {
+     "cut_blocks": 639,
+     "cut_columns": 635,
+     "fill_blocks": 86,
+     "fill_columns": 64,
+     "terrain": "with the slab's top at y77, 635 columns lose a block or two of trough floor and 64 show the slab's edge above the ground by a block or two. The template's air above the slab clears whatever stood in the box up to y108: trough floor only, no authored record within 115."
+    },
+    "rules_measured": {
+     "nearest_authored": 115,
+     "nearest_authored_src": "data/landmarks.json",
+     "route_path_edge": 458,
+     "habitat_margin": 312,
+     "portal_edge": 918,
+     "spread_nearest": 912,
+     "spread_nearest_id": "adopted_crown_cemetery",
+     "route_sightings": 0,
+     "route_points_within_1200": 3772,
+     "wet_columns": 0
+    },
+    "carries_into_the_world": {
+     "blocks": [
+      "lumymon:giratina_altar",
+      "lumymon:summon_anchor",
+      "15,349 legendarymonuments:distortion_cobblestone and the island's other distortion blocks",
+      "4,954 black and 50 red stained glass",
+      "10 minecraft:light"
+     ],
+     "entities": "none"
+    },
+    "extra_caches": [
+     {
+      "source": "giratina_griseous",
+      "items": [
+       "mega_showdown:griseous_core",
+       "mega_showdown:griseous_orb"
+      ],
+      "flags": [
+       "champion_cleared"
+      ]
+     }
+    ],
+    "gate": {
+     "flags": [
+      "champion_cleared"
+     ],
+     "why": "Giratina rolls 85, 90 or 99 (GiratinaAltar's spawn strings, some holding mega_showdown:griseous_core), so it can be held only under the Champion's cap of 100 (docs/mechanics/LEAGUE_LEVEL_CAP.md). The place is open to anyone; the CHAIN is the gate: data/rewards.json sweep_red_chain is earned only by a player holding cobblers:flag/champion_cleared, so nobody below the cap can summon and waste it."
+    },
+    "activation_item": {
+     "item": "lumymon:red_chain",
+     "source": "sweep_red_chain",
+     "one_source": "measured 2026-10-06 across every jar and datapack in the server snapshot: lumymon:red_chain is produced by a recipe in the DISABLED Sinnoh pack and dropped by rctmod's team_galactic_cyrus, whom the campaign never seats. Nothing loaded hands it out, and the template holds no container. The cache is its one source."
+    },
+    "what_a_player_gets": "Giratina, at 85-99 (the shiny branch at 90 with a Griseous Core), once per player: one Red Chain each, from the cache at the altar. Whether the altar CONSUMES the chain is not known (LumyMon closed source; EXP-048 left it open): if it does not, the chain is a key and Giratina a farm, and the site needs a twin of cobblers_spectrier_cap (open below). Nothing else: the template has no loot.",
+    "how_it_is_found": {
+     "by_eye": "measured: the dome is seen from the anchor of landmark major_river ('the Glacial Tear to the east coast', 450 blocks off), so a player following that river up into the Tear sees black glass in the trough; it is NOT seen from the Glacial Tear's own anchor (241 off, behind the trough's shoulder) or from any route vertex within 1,200 (route_sightings 0).",
+     "rumour_proposed": "the Compact binder, once the ring is open (data/dialogue.json dlg_main_relic_hall_release, its released_repeat node, to a Champion): 'When the ring went dark something else answered. North-east, where the ice tore. Not Hoopa's kind of door.' NOT AUTHORED: tools/finale_audit.py models that conversation and tests/test_finale_confrontation.py walks its reachability; the line is for Codex or the finale's owner to place.",
+     "after_finding": "the Red Chain's message names the altar; the anchor above it is where Giratina appears (LumyMon's summon_anchor tooltip, 'Pokemon from Altars appear here')."
+    },
+    "does_not_travel_here": [
+     "the Distortion World, the other jigsaw pieces and the island's underside: a raw paste gives the one piece",
+     "/locate and any radar: no structure start"
+    ],
+    "open": [
+     "whether giratina_altar consumes the Red Chain (a farm otherwise: a Giratina cap like cobblers_spectrier_cap)",
+     "whether the altar answers in a pasted piece at all (EXP-048 proved one LumyMon altar, the Calyrex statue, not this one)",
+     "data/spawn_suppression.json declares no spawn-free zone here; nothing is dormant in the site"
+    ],
+    "retired": "RETIRED 2026-10-09 by the owner, on staging, looking at the shrine at (4374, 66, 2862): \"giratina being plopped right here sucks, move it to the castle in the north\", and then \"get rid of his sphere though, he just lives in the castle.\" Giratina now lives in Wardenhold, the ruined keep on Frostpeak Strand (data/frostpeak_keep_quest.json giratina, tools/frostpeak_keep_quest.py, step R18FK), with the burrow people's quest to defeat it. Nothing of this set piece is carried over (no sphere, no dome, no altar, no Red Chain). The template already pasted on staging is taken down by cobblers:frostpeak_keep_quest/shrine_takedown (R18FK), back to the heightmap's ground (tools/ground.py, rounded) and the water mask's water. Kept here as it was, never deleted: hand-measured seat and chosen_because notes."
+   }
+  ]
  }
 }

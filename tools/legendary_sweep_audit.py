@@ -103,7 +103,10 @@ MAP = 8192
 
 # KNOWN findings: reported every run, never failed; one that stops reproducing fails until removed here
 KNOWN = {
-    "giratina_dome_sealed": "sweep_red_chain's trigger box is reachable only by breaking the template's glass dome",
+    # "giratina_dome_sealed" (sweep_red_chain's trigger box reachable only by breaking the glass dome) was removed
+    # 2026-10-09 with the site: the owner retired the Giratina piece (data/adopted_legendary_sites.json
+    # superseded_sweep_sites). The component checks still name the key when they are run over that retired record as a
+    # test fixture (tests/test_sweep_extra_caches.py).
 }
 
 # a block a player walks through (or opens): exact paths, then suffixes. Never a substring test: "air" is in "stairs"
@@ -489,7 +492,10 @@ def paste_audit(R, packs, g, pl=None, donor=None, sightlines=True):
     if donor is None:
         import place_donor as donor
     sites = sweep_placements(pl)
-    R.check("pastes", len(sites) == 2, "data/placements.json has %d sweep_site records, the sweep named 2" % len(sites))
+    # the sweep named 2; the owner retired the Giratina piece on 2026-10-09 (superseded_sweep_sites), so the live
+    # count is the sweep_sites the record still holds
+    named = len(_j(DATA / "adopted_legendary_sites.json").get("sweep_sites") or [])
+    R.check("pastes", len(sites) == named, "data/placements.json has %d sweep_site records, the sweep names %d" % (len(sites), named))
     out = {}
     for q in sites:
         sid = q["id"]

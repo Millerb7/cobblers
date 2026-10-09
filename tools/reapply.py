@@ -153,6 +153,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-09: Wardenhold, the snow-covered keep on Frostpeak Strand's southern lip (tools/frostpeak_keep.py),
                 # run by R9FK before R9E
                 "cobblers_frostpeak_keep",
+                # 2026-10-09: Wardenhold's people and its Giratina (tools/frostpeak_keep_quest.py): the burrow in Mt
+                # Vessu's face, the old Distortion shrine's takedown, Giratina's keeper and the quest's callbacks; a
+                # keeper loop, so world-local below; built, summoned and its residents placed by R18FK
+                "cobblers_frostpeak_keep_quest",
                 # 2026-10-05: the mainline beats' evidence displays beside eight tellers (tools/reveal_evidence.py), run
                 # by R17NE after R17N
                 "cobblers_reveal_evidence",
@@ -481,6 +485,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_ursaluna_cave",
                # 2026-10-09: the Drowned Quarry's keeper holds its Gyarados on its own tick, like the den's
                "cobblers_drowned_quarry",
+               # 2026-10-09: Wardenhold's Giratina keeper, the same loop, and its catch gate
+               "cobblers_frostpeak_keep_quest",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
                # load in the global folder, where the live world would run it too
                "cobblers_residents", "cobblers_relic_underground",
@@ -904,6 +910,10 @@ def prepare_jobs(a):
     add("dune_ruin_audit", "dune_ruin_audit.py", *src)
     add("frostpeak_keep:build", "frostpeak_keep.py", "build", *src)
     add("frostpeak_keep_audit", "frostpeak_keep_audit.py", *src)
+    # Wardenhold's people and its Giratina (2026-10-09), then their independent audit (the burrow walked and lit, the
+    # lair recomputed from the keep's record, the callbacks, the old shrine's takedown replayed over its own box)
+    add("frostpeak_keep_quest:build", "frostpeak_keep_quest.py", "build", *src)
+    add("frostpeak_keep_quest_audit", "frostpeak_keep_quest_audit.py", *src)
     add("reveal_evidence:build", "reveal_evidence.py", "build")
     add("reveal_evidence_audit", "reveal_evidence_audit.py", *src)
     add("desert_wreck:build", "desert_wreck.py", "build", *src)
@@ -2438,6 +2448,13 @@ def steps(with_spawns=False):
     import drowned_quarry
     out.append(("R18DQ", "the Drowned Quarry under Lake Tilpey's east wall and its Gyarados (data/drowned_quarry.json)",
                 drowned_quarry.placement_steps()))
+    # Wardenhold's people and its Giratina (2026-10-09): the retired Distortion shrine taken down to the heightmap's
+    # ground, the burrow dug into Mt Vessu's face, Giratina summoned into the ruined keep's yard through
+    # tools/chunk_look.py's chain (after R9FK, whose build writes the lair's ice), then the three residents, whose
+    # classes load at boot from cobblers_dialogue
+    import frostpeak_keep_quest
+    out.append(("R18FK", "Wardenhold's burrow, its Giratina and the old shrine's takedown (data/frostpeak_keep_quest.json)",
+                frostpeak_keep_quest.placement_steps()))
     # the Compact guards at the HQ's ring-0 door (2026-10-02, data/relic_underground.json geometry.hq.guard): the door
     # stays shut and the guard's dialogue moves a player at rift_crisis_pending or later inside; the inside guard lets
     # anyone out. NPCs, so after the restart that loaded cobblers_dialogue's classes, like R17N's, each turned to its yaw

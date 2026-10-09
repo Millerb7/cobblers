@@ -39,6 +39,17 @@ SWEEP = {s["id"]: s for s in DOC["sweep_sites"]}
 IDS = sorted(SWEEP)
 CATALOGUE = DOC["catalogue_2026_10_06"]["templates"]
 
+# The Giratina piece was the one SUNK site and the Red Chain its cache; the owner retired both on 2026-10-09 (Giratina
+# lives in Wardenhold now: data/frostpeak_keep_quest.json). The records are kept under superseded_* and serve here as
+# the in-memory FIXTURE for the sunk-seat rule and the champion-flag cache rule, which no live site exercises any more.
+# Nothing below puts them back into a file.
+RETIRED_SITE = next(s for s in DOC["superseded_sweep_sites"]["records"] if s["id"] == "sweep_giratina_shrine")
+RETIRED_PLACEMENT = next(p for p in json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+                         ["superseded_placements"]["records"] if p["id"] == "legendary_giratina_shrine")
+RETIRED_CHAIN = next(r for r in REWARDS["superseded_rewards"]["records"] if r["id"] == "sweep_red_chain")
+FIXTURE_DOC = dict(DOC, sweep_sites=DOC["sweep_sites"] + [RETIRED_SITE])
+FIXTURE_PLACEMENTS = PLACEMENTS + [RETIRED_PLACEMENT]
+
 # read from the template NBT, 2026-10-06 (the server snapshot's jars), NOT from the record
 ALTAR_IN_TEMPLATE = {"sweep_giratina_shrine": ("lumymon:giratina_altar", (23, 12, 20)),
                      "sweep_newmoon_island": ("lumymon:darkrai_shrine", (49, 46, 33))}
@@ -71,9 +82,14 @@ def cheapest_seat(heights):
     return best[0]
 
 
-def test_two_sweep_sites_of_the_two_kinds():
-    assert IDS == ["sweep_giratina_shrine", "sweep_newmoon_island"]
-    assert {s["seat"]["kind"] for s in SWEEP.values()} == {"sunk", "floating"}
+def test_one_live_sweep_site_and_the_giratina_piece_retired_out_of_every_list_a_tool_builds():
+    # 2026-10-09 the owner retired the Giratina piece; no placer may paste it again
+    assert IDS == ["sweep_newmoon_island"]
+    assert {s["seat"]["kind"] for s in FIXTURE_DOC["sweep_sites"]} == {"sunk", "floating"}
+    assert "legendary_giratina_shrine" not in {p.get("id") for p in PLACEMENTS}
+    assert "sweep_red_chain" not in {r["id"] for r in REWARDS["rewards"]}
+    assert "giratina_griseous" not in {r["id"] for r in REWARDS["rewards"]}
+    assert RETIRED_SITE.get("retired") and RETIRED_PLACEMENT.get("status") == "retired"
 
 
 # ------------------------------------------------------------------------------------------------- the seat
@@ -100,11 +116,14 @@ def test_the_sweep_check_is_clean(sid, ground):
 
 
 def test_a_sunk_site_reseated_by_one_block_is_caught(ground):
-    q = copy.deepcopy(PLACEMENTS)
+    # (the fixture's own check is not clean any more: its retired caches, kept in data/rewards.json superseded_rewards,
+    # are authored points at its edge; only the seat rule is under test here)
+    assert not any("cheapest seat" in b for b in S.check(ground, FIXTURE_DOC, FIXTURE_PLACEMENTS)["sweep_giratina_shrine"])
+    q = copy.deepcopy(FIXTURE_PLACEMENTS)
     for r in q:
         if r["id"] == "legendary_giratina_shrine":
             r["position"]["y"] += 1
-    bad = S.check(ground, DOC, q)["sweep_giratina_shrine"]
+    bad = S.check(ground, FIXTURE_DOC, q)["sweep_giratina_shrine"]
     assert any("cheapest seat" in b for b in bad), bad
 
 
@@ -119,11 +138,11 @@ def test_a_floating_site_lowered_into_its_trees_is_caught(ground):
 
 def test_a_site_moved_onto_a_route_is_caught(ground):
     # Viridian-side Route 1 country: the move must trip the route rule (and others), never pass
-    q = copy.deepcopy(PLACEMENTS)
+    q = copy.deepcopy(FIXTURE_PLACEMENTS)
     for r in q:
         if r["id"] == "legendary_giratina_shrine":
             r["position"]["x"], r["position"]["z"] = 1466 - 21, 5036 - 19
-    bad = S.check(ground, DOC, q)["sweep_giratina_shrine"]
+    bad = S.check(ground, FIXTURE_DOC, q)["sweep_giratina_shrine"]
     assert any("route path" in b for b in bad), bad
 
 
@@ -165,7 +184,7 @@ def test_nothing_else_in_data_names_the_item(sid):
 
 def test_the_cache_advancement_holds_the_flag_in_its_one_condition():
     for rid in ("sweep_red_chain", "sweep_nightmare_weaver"):
-        r = next(x for x in REWARDS["rewards"] if x["id"] == rid)
+        r = RETIRED_CHAIN if rid == "sweep_red_chain" else next(x for x in REWARDS["rewards"] if x["id"] == rid)
         (crit,) = R.advancement(r)["criteria"].values()
         (cond,) = crit["conditions"]["player"]
         assert cond["predicate"]["type_specific"] == {"type": "minecraft:player",
@@ -182,7 +201,8 @@ def test_a_cache_without_requires_flags_has_no_player_predicate():
 @pytest.mark.parametrize("bad,why", [(["not_a_flag"], "does not declare"), ([], "non-empty"), ("champion_cleared", "non-empty"),
                                      (["Champion"], "non-empty")])
 def test_requires_flags_is_refused_unless_declared_flags(bad, why):
-    r = copy.deepcopy(next(x for x in REWARDS["rewards"] if x["id"] == "sweep_red_chain"))
+    r = copy.deepcopy(RETIRED_CHAIN)
+    assert not R.problems({"rewards": [r]})             # the fixture is a valid cache before the bad flag
     r["requires_flags"] = bad
     assert any(why in p for p in R.problems({"rewards": [r]}))
 
