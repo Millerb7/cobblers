@@ -6,7 +6,7 @@ packs use:
   execute   as / at / positioned / on target / if|unless score (matches and comparisons) / entity / loaded / data
             entity, store result|success score|storage, run; a trailing condition is the command's result (the entity
             count for `if entity`), as vanilla does
-  scoreboard objectives add, players set|add|remove|get|operation (= only)
+  scoreboard objectives add, players set|add|remove|get|operation (= and +=)
   tag, data merge entity, data modify storage ... set value, data remove entity, data get entity (scale 1)
   effect give, summon (interaction, item_display), tp (absolute, ~ and yaw/pitch), kill, item replace entity ...
   contents with, playsound, particle, tellraw, fill (recorded), forceload add|remove, return
@@ -401,6 +401,12 @@ class World:
                 pool = [e for e in pool if _nbt_match(want, e.nbt)]
             elif k in ("x", "y", "z"):
                 pass
+            elif k in ("dx", "dy", "dz"):
+                # vanilla's volume is the box from the origin to origin + d, grown by one block, met by the entity's
+                # hitbox; this simplification takes the entity's position in [origin, origin + d + 1)
+                i, d = "xyz".index(k[1]), float(v)
+                lo, hi = min(origin[i], origin[i] + d), max(origin[i], origin[i] + d) + 1
+                pool = [e for e in pool if lo <= e.pos[i] < hi]
             else:
                 raise Unsupported("selector argument %s" % k)
         if sort == "nearest":
@@ -534,9 +540,11 @@ class World:
             return self.scores[(holders[0], obj)]
         if op == "operation":
             a, ao, o, b, bo = t[2:7]
-            if o != "=":
+            if o not in ("=", "+="):
                 raise Unsupported("operation %s" % o)
             v = self.get_score(b, bo, ctx)
+            if o == "+=":
+                v += self.get_score(a, ao, ctx)
             self.set_score(a, ao, v, ctx)
             return v
         raise Unsupported("scoreboard players %s" % op)

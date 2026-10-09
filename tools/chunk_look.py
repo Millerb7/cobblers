@@ -22,7 +22,8 @@ release its own BEFORE calling the entry (a forceload is per chunk, not counted:
 chunk under the chain).
 
 Interface: chain(base, box, shown, act, scopes, new_tag, count, holder) -> {"ns:path": [lines]}; files(chain) ->
-{pack path: lines}; steps(base, holder, want, label) -> reapply actions.
+{pack path: lines}; steps(base, holder, want, label) -> reapply actions. sweep(base, box, kills, holder) is the
+kill-only form for cleanups that summon nothing (the kill repeats over the same window; see its docstring).
 """
 from __future__ import annotations
 
@@ -89,6 +90,52 @@ def chain(base, box, shown, act, scopes, new_tag, count, holder, note=""):
     d += ["execute store result score #%s %s if entity @e[%s]" % (holder, OBJ, count),
           "forceload remove %s" % fl]
     out[done] = d
+    return out
+
+
+def sweep(base, box, kills, holder, note=""):
+    """{function id: lines} for a KILL-ONLY cleanup at `base` ('ns:path'): the staging cleanups that remove old entities
+    and summon nothing. chain() does not fit them: there is nothing to summon or de-duplicate, and a look that waits for
+    one entity proves nothing about the others when the box spans chunks. A kill is idempotent, so the sweep repeats it:
+
+      <base>       forceload add <box>; #<holder> OBJ -1; schedule <base>_look in LOAD_WAIT ticks
+      <base>_look  run every kill, adding what each removed to #<holder>_gone; again in POLL_EVERY ticks for POLLS looks
+                   (the last at BLIND_TICKS, the chain's blind limit), then <base>_done
+      <base>_done  #<holder> OBJ = what went in all; forceload remove <box>
+
+    An entity whose chunk's entities arrive within BLIND_TICKS of the forceload is killed; a slower one is not (the
+    chain's limit too). box: (x0, z0, x1, z1), or a list of them for kills scattered over distant chunks. kills:
+    selector argument bodies (no brackets)."""
+    if not _REF.match(base):
+        raise ValueError("sweep base %r is not a namespaced function id" % base)
+    if not kills:
+        raise ValueError("sweep %s: nothing to kill" % base)
+    boxes = list(box) if box and isinstance(box[0], (list, tuple)) else [box]
+    fls = ["%d %d %d %d" % tuple(b) for b in boxes]
+    look, done = base + "_look", base + "_done"
+    looks, gone, n = "#%s_looks" % holder, "#%s_gone" % holder, "#%s_n" % holder
+    by = "# chunks-loaded-by: %s" % base
+    gen = "# Generated%s; part of %s's kill sweep (tools/chunk_look.py sweep)" % (note and " by " + note, base)
+    out = {}
+    out[base] = [gen.replace("; part of", "; the start of"),
+                 "# force-load; the kills repeat every %d ticks from tick %d to %d, as the box's saved entities arrive"
+                 % (POLL_EVERY, LOAD_WAIT, BLIND_TICKS)]
+    out[base] += ["forceload add %s" % fl for fl in fls]
+    out[base] += ["scoreboard objectives add %s dummy" % OBJ,
+                 "scoreboard players set #%s %s -1" % (holder, OBJ),
+                 "scoreboard players set %s %s %d" % (looks, OBJ, POLLS),
+                 "scoreboard players set %s %s 0" % (gone, OBJ),
+                 "schedule function %s %dt replace" % (look, LOAD_WAIT)]
+    lk = [gen, by, "scoreboard players remove %s %s 1" % (looks, OBJ)]
+    for k in kills:
+        lk += ["execute store result score %s %s run kill @e[%s]" % (n, OBJ, k),
+               "scoreboard players operation %s %s += %s %s" % (gone, OBJ, n, OBJ)]
+    lk += ["execute if score %s %s matches 1.. run schedule function %s %dt replace" % (looks, OBJ, look, POLL_EVERY),
+           "execute if score %s %s matches ..0 run function %s" % (looks, OBJ, done)]
+    out[look] = lk
+    out[done] = [gen, by, "# after the last look: what went, then release",
+                 "scoreboard players operation #%s %s = %s %s" % (holder, OBJ, gone, OBJ)]
+    out[done] += ["forceload remove %s" % fl for fl in fls]
     return out
 
 

@@ -132,7 +132,9 @@ def test_the_cleanup_puts_every_shoulder_column_back_to_heightmap_ground(ground)
 def test_the_cleanup_is_a_function_the_server_will_run(ground):
     lines = AT.cleanup_commands(ground)
     assert function_limits.check_lines(lines, "articuno_cleanup/shoulder") == []
-    assert lines[3].startswith("forceload add ") and lines[-1].startswith("forceload remove ")
+    # the box is held here and released by the entity sweep this function ends by starting (N155)
+    assert lines[3].startswith("forceload add ") and lines[-1] == "function %s" % AT.ENTITIES_FN
+    assert not any(l.startswith("forceload remove ") or l.startswith("kill ") for l in lines)
 
 
 @pytest.mark.slow
