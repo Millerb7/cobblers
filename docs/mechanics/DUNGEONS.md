@@ -3,7 +3,10 @@
 **Status: DESIGN AND COSTING ONLY (content-architect, 2026-10-08).** Nothing here is built, placed, generated or run.
 The owner's answers of 2026-10-08 to section 15 are applied (0.1), and the dungeon death rule is added (2.5).
 The owner's sigil direction (D21) is designed in 7.4, and the run tag's requirements (D22) are written into the
-engine (11.3), both the same day.
+engine (11.3), both the same day. **2026-10-09:** the owner's catches-on-the-clock rule (catches count on the greed
+ladder and are lost on a failed run, fail-safe; the dungeon legendary anchored) is designed in
+`docs/mechanics/DUNGEON_CATCHES.md`, which changes 2.5's "kept", escrow and chat line 4 and 2.6's "kept", each marked
+in place.
 This rewrite answers the owner's timed-dungeon brief of 2026-10-08 (relayed close to verbatim by the brief): "an
 instanced run with a TIMER. Finish it or get out before the clock runs down. If you are still inside when it does, you
 die. They are visible rips in the world, torn from the Rift." The architectural choice is
@@ -221,8 +224,11 @@ Entei's room reached the same conclusion for one boss (`data/entei_boss.json:132
    sigil (or uses the Night Shift's one free entry, if unspent) and waits out the hour, which runs from the threshold
    (D17).
 
-**What is kept:** every item in the inventory, including the seam ores and den drops already picked up, and any
-Pokemon caught in the run. The rift pick is taken back, because it was never the player's.
+**What is kept:** every item in the inventory, including the seam ores and den drops already picked up. The rift pick
+is taken back, because it was never the player's. **Changed 2026-10-09 (the owner: "Fail to extract and you lose
+them"):** a Pokemon caught past the threshold is a *held* catch, forfeited by a death in the run and removed only if
+every guard passes; the dungeon's legendary is anchored and kept. See `docs/mechanics/DUNGEON_CATCHES.md` sections 3,
+7 and 9. *Was (2026-10-08): "...already picked up, and any Pokemon caught in the run."*
 
 **It covers every way to die there:** the timer, a boss stage, a stand trainer, a den Pokemon, the lake legendary, a
 fall, lava, drowning in the sump, and anything else. The blackout's other steps are unchanged: the player is sent to
@@ -264,8 +270,12 @@ their overworld checkpoint and healed (`DEATH_AND_WIPE.md:61-80`).
   (11.3) closes it by reading the player's run tag, not the killer.
 
 **Escrow, the stake.** Every reward the run pays is held **in escrow**, except the real items the player picks up (seam
-ores, den drops) and a caught Pokemon. The escrow is scores on the player, paid by `loot give` only at a clean exit
-(9.1). Any death clears it. A logout does not, unless the clock runs out while the player is away (2.6). Rule 5 is
+ores, den drops). The escrow is scores on the player, paid by `loot give` only at a clean exit
+(9.1). **Changed 2026-10-09:** a caught Pokemon is now part of the stake too, but it cannot be escrowed (it is in the
+party before any callback sees it), so it is held by a **mark and a ledger with the default inverted**: escrow is lost
+unless paid, a held catch is kept unless a named failure forfeits it and every guard passes
+(`docs/mechanics/DUNGEON_CATCHES.md` F1-F2, section 7). *Was (2026-10-08): "...(seam ores, den drops) and a caught
+Pokemon."* Any death clears it. A logout does not, unless the clock runs out while the player is away (2.6). Rule 5 is
 untouched, because escrowed loot was never an item the player held (DM 1.3 C).
 
 **What the player is told** (draft lines for `trainer-balance-designer` to tone; `messages.death` in 11.2). The
@@ -280,7 +290,10 @@ a claim line. Then, on arrival:
   1. "Your items are all still yours. Nothing in a rift keeps them."
   2. "The {money} is gone for good. No one in the rift is holding it." (only if money was taken)
   3. "Lost with the run: {held_summary}." or "The run had earned nothing yet."
-  4. "Kept: everything you mined and picked up{, and {caught}}."
+  4. "Kept: everything you mined and picked up." then, if the run held catches, "The rift is taking back {n}
+     catches." and the reaper's per-catch lines (**changed 2026-10-09**, `docs/mechanics/DUNGEON_CATCHES.md` section 8;
+     the built text, `data/dungeons.json:102`, already has no catch clause). *Was (2026-10-08): "Kept: everything you
+     mined and picked up{, and {caught}}."*
   5. "{dungeon} opens to you again in about {minutes} minutes, for another {sigil}." The band's sigil name (7.4), or
      "for a {sigil}" if the run was the free first entry.
 
@@ -332,7 +345,10 @@ keeper pass. It fires when their own clock is at or below 0 after the gap, or wh
   The first chat line is preceded by "The rift closed {minutes} minutes ago while you were away."
 - **What they lost:** the blackout's money and the run's held rewards. The sigil was already spent at the threshold;
   the retry costs another and waits out the lockout (2.5, 7.4).
-- **What they kept:** every item, including what they mined and picked up, and any catch.
+- **What they kept:** every item, including what they mined and picked up. **Changed 2026-10-09:** the run's held
+  catches are forfeit (cause 4) and reaped on the first pass back, after the respawn, outside the pocket, behind every
+  guard; until they return, the catches stay with them (`docs/mechanics/DUNGEON_CATCHES.md` 7.2). *Was (2026-10-08):
+  "...and any catch."*
 - **Why the kill, and not a quiet teleport out:** if logging out avoided the $600, quitting would be the way to dodge
   a timeout. A crash is unlucky, but its cost is the same as dying, no more.
 
@@ -483,6 +499,9 @@ alpha, carry the claims exempt tag (2.5), and are spawned by macro on entering t
 `data/entei_boss.json:19`). Their drops are the **species' own tables**: real items, so death keeps them. The den costs clock, about 4 wild fights (*planning*: 1.5
 minutes each, 6 in all), and it is the second-largest spend of slack after the lake. The two approved dens and their
 expected yields *stand* (old 2.3, *relayed* from `docs/mechanics/DROPS_PROGRESSION_SPLIT.md` section 5).
+**Not a nest (2026-10-09):** the den stays `uncatchable`. A catchable **nest** is a separate optional leg, spawned at or
+under the band's lower cap so the level cap never refuses its balls, whose catches are held by the run
+(`docs/mechanics/DUNGEON_CATCHES.md` section 11).
 
 ### 3.7 The legendary lake (optional; band 6 catches it, every band sees it)
 
