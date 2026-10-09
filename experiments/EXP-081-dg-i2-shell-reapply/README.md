@@ -1,6 +1,6 @@
 # EXP-081: I2, the time and block count of one slot's shell re-apply
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe I2 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: PASSED (entirely RCON) (2026-10-08).** Probe I2 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only. Entirely over RCON.
 
 ## Objective
@@ -46,7 +46,24 @@ Time each call from send to reply (the function runs inside the command, so the 
 No owner step.
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | `i2/shell` fresh (chunks generated on this call): returned **456264**, **2.64 s** |
+| 2 | again (chunks from disk): returned 0, **0.98 s** |
+| 3 | `i2/dirty`: returned 730112, **0.89 s** |
+| 4 | `i2/shell` over the dressed interior: returned 730112, **1.75 s** |
+| 5 | cleanup returned 1, **1.74 s** |
+| 6 | `forceload query` in the pocket: no chunk in x 1024..3071, z -960..-897 (chunk z -60..-57) held; the 72 listed are the other probes' rows (chunk z -41, -40) |
+
+`tick query` before and after: P50 4.7 ms, P99 22.7 ms both times, so the cost is one long tick per call and no lasting
+load. Each figure is wall time for one RCON call that runs the whole function in one tick: **a slot shell re-apply of
+about 0.46-0.73M blocks stalls the server 1-2.6 s**. Fine in a re-apply step; never at run entry (the design rebuilds
+nothing on entry, DUNGEONS.md 11.3).
 
 ## Limitations
 - The real shell's dressing (walls, stands, lake, parkour, displays) is not built; the dirty pass is a stand-in for

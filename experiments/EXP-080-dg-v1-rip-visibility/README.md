@@ -1,6 +1,6 @@
 # EXP-080: V1, is a rip seen from 32, 64 and 128 blocks; `force` mode; a plume?
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe V1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PART PASSED; owner part OPEN (2026-10-08).** Probe V1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -51,7 +51,18 @@ red).
 | 7 | | `function cobblers_dg_probes:v1/off`, `execute as <owner> run function cobblers_dg_probes:v1/leave`, `function cobblers_dg_probes:v1/cleanup` | |
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | `v1/dress` returned 6: all six displays parsed |
+| 2 | `particle ...` with no player: "The particle was not visible for anybody": the reading works |
+
+The builder's finding stands unrun: the design emits rip particles only while a player is within 48 blocks, which
+cannot make a rip visible from 64 or 128. The owner's look decides.
 
 ## Limitations
 One client's settings decide the client half; a player with particles on "minimal" sees fewer. The pocket is lit at

@@ -545,11 +545,11 @@ def b2(doc, spec):
     husk = ('{Tags:["dp%s.e","dp%s.%s"],PersistenceRequired:1b,NoAI:1b,Silent:1b,'
             'HandItems:[{},{id:"minecraft:totem_of_undying",count:1}],HandDropChances:[0.0f,0.0f]}')
     P.fns["mobs"] = [
-        HEAD, "# Over RCON: two husks holding a totem in the off hand, NoAI so they stand still (a husk does not burn)",
+        HEAD, "# Over RCON: two villagers holding a totem in the off hand, NoAI so they stand still (MobsBeGone removes every other vanilla mob, husks included)",
         require_ready(pid),
         "execute in %s run kill @e[tag=dp%s.e,%s]" % (dim, pid, sel(box)),
-        "execute in %s run summon minecraft:husk %.1f %d %.1f %s" % (dim, ox + 3.5, oy, oz + 3.5, husk % (pid, pid, "kill")),
-        "execute in %s run summon minecraft:husk %.1f %d %.1f %s" % (dim, ox - 2.5, oy, oz + 3.5, husk % (pid, pid, "dmg")),
+        "execute in %s run summon minecraft:villager %.1f %d %.1f %s" % (dim, ox + 3.5, oy, oz + 3.5, husk % (pid, pid, "kill")),
+        "execute in %s run summon minecraft:villager %.1f %d %.1f %s" % (dim, ox - 2.5, oy, oz + 3.5, husk % (pid, pid, "dmg")),
         "execute in %s store result score #n %s if entity @e[tag=dp%s.e,%s]" % (dim, R, pid, sel(box)),
         "return run scoreboard players get #n %s" % R]
     P.fns["kit"] = [HEAD, "# as the owner: one totem; they move it to the off hand themselves (nothing is overwritten)",
@@ -737,12 +737,12 @@ def f1(doc, spec):
     P.consts = {"#arm": 0, "#ticks": 0}
     husk = '{Tags:["dp%s.e","dp%s.%s"],PersistenceRequired:1b,Silent:1b}'
     P.fns["mobs"] = [
-        HEAD, "# Over RCON, no player: a husk drops in each tube (a PROXY: a player's fall is client-reported)",
+        HEAD, "# Over RCON, no player: a villager drops in each tube (a PROXY: a player's fall is client-reported; MobsBeGone removes husks)",
         require_ready(pid),
         "execute in %s run kill @e[tag=dp%s.e,%s]" % (dim, pid, sel(union(boxes)))] + [
         "scoreboard players set %s %s 0" % (h, R) for h in
         ("#caught_b", "#caught_c", "#fd_b", "#fd_c", "#fd_b_after", "#fd_c_after")] + [
-        "execute in %s run summon minecraft:husk %.1f %d %.1f %s" % (dim, x + 0.5, top, oz + 0.5, husk % (pid, pid, k))
+        "execute in %s run summon minecraft:villager %.1f %d %.1f %s" % (dim, x + 0.5, top, oz + 0.5, husk % (pid, pid, k))
         for k, x in mobs.items()] + [
         "scoreboard players set #arm %s 1" % ST, "scoreboard players set #ticks %s 0" % ST,
         "schedule function %s 1t replace" % F(pid, "tick"), "return 1"]

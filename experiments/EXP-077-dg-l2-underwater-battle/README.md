@@ -1,6 +1,6 @@
 # EXP-077: L2, does a wild battle start and finish underwater, with and without Dive?
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe L2 of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PART PASSED; owner part OPEN (2026-10-08).** Probe L2 of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -52,7 +52,17 @@ If he is not Dive-qualified, case 3 is skipped and recorded as not run: without 
 second (`pulse_ticks` 20, half maximum health).
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | `wild_shallow` and `wild_deep` returned 1 each: both spawned under water |
+| 2 | after 60 s both present: not despawned: **PASS** |
+
+The underwater battle with Dive is the owner's half.
 
 ## Limitations
 Case 3 needs the owner's Dive state; a real legendary at level 100 (the 3.7 encounter) is not spawned. A wild loss

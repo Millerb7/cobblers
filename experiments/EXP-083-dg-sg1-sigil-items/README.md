@@ -1,6 +1,6 @@
 # EXP-083: SG1, sigils: the clear takes one and nothing else; the recipe's result keeps its components; `recipe give` under `doLimitedCrafting`
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe SG1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PART PASSED; owner part OPEN (2026-10-08).** Probe SG1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -44,7 +44,7 @@ and the redstone spot behind it (4380, 96, -637).
 | 1 | `gamerule doLimitedCrafting` | `... is currently set to: true` | false: the F7 half of this probe tests nothing; record it |
 | 2 | grep the boot log for `cobblers_dg_probes:sg1/` and for recipe or advancement errors naming `cobblers_dg_probes` | none | the named file's syntax is wrong (record the line) |
 | 3 | `function cobblers_dg_probes:sg1/setup`; wait 15 s; `function cobblers_dg_probes:sg1/stock` | `returned 1` | |
-| 4 | `clear NoSuchPlayerDgProbe minecraft:miner_pottery_sherd[minecraft:custom_data~{cobblers_dg_sigil:1}] 1` | `No player was found` (the predicate parsed) | a syntax error pointing into the brackets |
+| 4 | `clear NoDgProbe minecraft:miner_pottery_sherd[minecraft:custom_data~{cobblers_dg_sigil:1}] 1` | `No player was found` (the predicate parsed) | a syntax error pointing into the brackets |
 | 5 | `execute in cobblers:pocket if items block 4387 96 -637 container.* minecraft:miner_pottery_sherd[minecraft:custom_data~{cobblers_dg_sigil:1}]` | `Test passed, count: 1` | count 2 or 3: the predicate also matches the plain sherd or the band-2 tag |
 | 6 | `function cobblers_dg_probes:sg1/count` | `returned 1` | |
 | 7 | `function cobblers_dg_probes:sg1/craft`; 2 s later `execute in cobblers:pocket run data get block 4382 96 -637 Items` | one `minecraft:miner_pottery_sherd` with `components` holding `"minecraft:custom_data":{cobblers_dg_sigil:1}`, `item_name` "Soot Sigil", two `lore` lines and `rarity` `"rare"` | empty: `execute in cobblers:pocket run data get block 4381 96 -637 Items` shows the inputs still there (no recipe matched, or the crafter did not fire); an item entity on the floor instead means it dropped rather than filled the chest (record it); a sherd without components fails the criterion |
@@ -61,7 +61,23 @@ and the redstone spot behind it (4380, 96, -637).
 | 7 | | `recipe take <owner> cobblers_dg_probes:sg1_band1`, `recipe take <owner> cobblers_dg_probes:sg1_band2`, `advancement revoke <owner> only cobblers_dg_probes:sg1/sync`, `advancement revoke <owner> only cobblers_dg_probes:sg1/opt`, `execute as <owner> run function cobblers_dg_probes:sg1/leave`, `function cobblers_dg_probes:sg1/cleanup` | |
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | `doLimitedCrafting` true |
+| 2 | no load error for `cobblers_dg_probes:sg1/` or for any recipe or advancement of the pack in the boot log |
+| 3 | `sg1/stock` returned 1 |
+| 4 | **as written the step cannot pass**: `NoSuchPlayerDgProbe` is 19 characters, so it fails "Invalid name or UUID" (a name over 16). With `NoDgProbe`: **"No player was found": the predicate parsed: PASS**; a control with the brace missing fails "Expected '}'" |
+| 5 | `execute if items block ... container.* ...[minecraft:custom_data~{cobblers_dg_sigil:1}]`: `count: 1` (not the plain sherd, not band 2): **PASS** |
+| 6 | `sg1/count` returned 1 |
+| 7 | **a Crafter crafted the Soot Sigil with no player**: one `minecraft:miner_pottery_sherd` with `custom_data {cobblers_dg_sigil: 1b}`, `item_name` "Soot Sigil", two `lore` lines and `rarity` "rare"; the input chest emptied: **PASS** |
+
+The `recipe give` / `doLimitedCrafting` half (F7) needs the owner. The builder notes the TM gate's sync runs
+`recipe give @s *` for new or re-keyed players, which unlocks the sigil recipes too.
 
 ## Limitations
 - While installed the recipes exist for every player on staging; `doLimitedCrafting` keeps them locked except for whoever

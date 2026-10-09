@@ -1,6 +1,6 @@
 # EXP-069: P1, does `q.pokemon.discard` recall an own sent-out Pokemon with its HP kept?
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe P1 of `docs/mechanics/DUNGEONS.md` section 14, in the staging-only
+**Status: RCON PART PASSED; owner part OPEN (2026-10-08).** Probe P1 of `docs/mechanics/DUNGEONS.md` section 14, in the staging-only
 pack `cobblers_dg_probes` (`tools/dungeon_probes.py`, `data/dungeon_probes.json`). Never the live world.
 
 ## Objective
@@ -79,7 +79,24 @@ Before: the owner's first party slot holds a Pokemon able to battle. The session
 | 12 | | `function cobblers_dg_probes:p1/disarm`, `execute as <owner> run function cobblers_dg_probes:p1/leave`, `function cobblers_dg_probes:p1/cleanup` | owner home; `returned 1` |
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | setup returned 1 |
+| 2 | `#ready` 1 |
+| 3 | `p1/wild` returned 1; the Pokemon read present (`Test passed, count: 1`) before each discard |
+| 4 | three-argument `runmolang "q.pokemon.discard;" @e[..] @e[..]`: `MoLang output: 1`, then the box test **Test failed (gone): PASS** |
+| 5 | `execute as @e[..] run runmolang "q.entity.discard;"`: `MoLang output: 1`, gone: **PASS** |
+| 6 | keeper form: gone within 2 s, `#seen` 1: **PASS** |
+| 7 | disarm returned 1 |
+
+On a WILD Pokemon every form removes it, including the three-argument form the builder feared would not bind `q.pokemon`
+(it binds when the target is not a player). Whether discarding an OWNED sent-out Pokemon recalls it with its HP is the
+owner's half and is not shown.
 
 ## Limitations
 - One player. The keeper's four-argument form takes the NEAREST player within 64 as `q.player`; in co-op that may be

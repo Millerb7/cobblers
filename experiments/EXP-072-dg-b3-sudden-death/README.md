@@ -1,6 +1,6 @@
 # EXP-072: B3, sudden death: the clock holds at 0 mid-battle and the kill lands when `in_battle` reads 0
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe B3 of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PROXY PASSED; owner part OPEN (2026-10-08).** Probe B3 of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -51,7 +51,17 @@ FAIL: he dies while the battle screen is open (killed mid-battle), or never dies
 `#left` counts; that run proves nothing about the kill.
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | setup and proxy returned 1 |
+| 2 | after 20 s: `#clk` 0, `#zero_at` 8032603 (a gametime), `#killed` 0, `#absent` 89: the clock stops at 0 and no kill is made while the target is absent: **PASS** |
+
+The kill when `in_battle` reads 0 after a battle needs the owner.
 
 ## Limitations
 - `runmolang`'s nested command is queued, not immediate (EXP-022), so the kill lands on the queue's next run, not in

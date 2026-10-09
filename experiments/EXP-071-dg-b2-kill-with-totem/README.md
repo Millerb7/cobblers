@@ -1,6 +1,6 @@
 # EXP-071: B2, does `kill @s` go through a totem, and does the blackout fire once?
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe B2 of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PROXY PASSED (with villagers); owner part OPEN (2026-10-08).** Probe B2 of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -45,7 +45,20 @@ x 1536..1791; pen at (1568, 96, -640), box `x=1561,y=95,z=-647,dx=14,dy=3,dz=14`
 The kill costs the owner the blackout's money on staging (`data/blackout.json` `money`).
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 (as built) | **FAILED, not on the mechanism:** `b2/mobs` returned 0. The server's MobsBeGone 0.0.7 (`config/mobsbegone-blacklist.json`) deletes every summoned vanilla mob except villagers and wandering traders, in every dimension (a summoned pig was gone at the next command, overworld and pocket alike). The generator now summons villagers. Re-run after a plain restart: |
+| 1 | `b2/mobs` returned 2 |
+| 2-3 | `kill` on the villager holding a totem: `Killed Villager`, then absent: **the totem does NOT stop `kill`: PASS** |
+| 4-5 | 1000 `outside_border` damage on the other: alive, off hand `{}` (the totem was used) |
+
+So the timer's `kill @s` goes through a totem, and `damage ... outside_border` would NOT (a totem stops it): keep `kill`.
+A villager is a proxy; that the blackout fires ONCE for a player is the owner's half.
 
 ## Limitations
 The kill-credit window (a wild hit within 100 ticks makes `kill` a wild kill) is DX1's and E1's, not B2's.

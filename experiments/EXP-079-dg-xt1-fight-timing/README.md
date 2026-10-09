@@ -1,6 +1,6 @@
 # EXP-079: XT1, how long is an NPC fight at 2, 4 and 6 opposing members, caps 20, 45 and 100, and a 3-stage chain?
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe XT1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PART PASSED; the timings need the owner (2026-10-08).** Probe XT1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -57,7 +57,17 @@ A fight that will not start (`fight/<id>` returns 0) means a previous one is sti
 start was refused.
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | no `Failed to load` and no NPC class error naming `xt1_` in the boot log |
+| 2 | `#ready` 1 |
+
+No fight timed: XT1 is the owner's. Until it runs, every clock value is tunable data, not a decided number.
 
 ## Limitations
 One owner, one party per cap, one run each: a sample of one per cell. A fight's length depends heavily on the party and

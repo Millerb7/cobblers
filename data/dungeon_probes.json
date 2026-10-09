@@ -32,7 +32,7 @@
     {"id": "r2", "exp": "EXP-074", "slug": "dg-r2-can-break-pick", "title": "Does minecraft:can_break on a pick in adventure mode break the seam ores and nothing else?", "settles": "3.3",
      "seam": ["minecraft:coal_ore", "minecraft:iron_ore"], "control": ["minecraft:stone", "minecraft:glass", "minecraft:dirt"]},
     {"id": "f1", "exp": "EXP-075", "slug": "dg-f1-teleport-mid-fall", "title": "Does a teleport mid-fall keep the fall distance, with and without resistance 5?", "settles": "3.5",
-     "drop": 13, "proxy_mob": "minecraft:husk"},
+     "drop": 13, "proxy_mob": "minecraft:villager"},
     {"id": "l1", "exp": "EXP-076", "slug": "dg-l1-lake-obvious", "title": "Are a glowing sleeper, lanterns, a bubble column and a beacon readable from a gantry 40 above the bed?", "settles": "3.7, obvious",
      "depth": 40, "sleeper": "lapras level=50 uncatchable"},
     {"id": "l2", "exp": "EXP-077", "slug": "dg-l2-underwater-battle", "title": "Does a wild battle start and finish underwater, with and without Dive?", "settles": "3.7 (fallback: dry chamber)",

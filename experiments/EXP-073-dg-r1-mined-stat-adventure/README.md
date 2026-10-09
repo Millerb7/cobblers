@@ -1,6 +1,6 @@
 # EXP-073: R1, does `minecraft.mined` count in adventure mode with the rift pick under `can_break`?
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe R1 of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PART PASSED; owner part OPEN (2026-10-08).** Probe R1 of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -48,7 +48,18 @@ FAIL: step 3 below step 2's counts. Then co-op credit cannot use the stat; DUNGE
 solo, nearest member in co-op) is all there is.
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | `#ready` 1 |
+| 2 | `dpr1.coal`, `dpr1.iron`, `dpr1.stone` all exist (`scoreboard players get #x dpr1.coal`: "none is set", against "Unknown scoreboard objective" for a missing one): the `minecraft.mined:` criteria parse: **PASS** |
+| 3 | `r1/read` returned 0 (nothing mined) |
+
+Whether the stat counts in adventure mode is the owner's half.
 
 ## Limitations
 One player; the stat is per player by construction, but a co-op split is XD8's. Silk touch and a wrong tool are not

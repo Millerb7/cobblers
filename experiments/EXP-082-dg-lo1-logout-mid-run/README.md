@@ -1,6 +1,6 @@
 # EXP-082: LO1, logging out mid-run: the absence charge, the slot deadline, the dead-run check, a server stop
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe LO1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PART PASSED; owner part OPEN (2026-10-08).** Probe LO1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -78,7 +78,16 @@ Everything else needs a player who logs out; RCON reads each value by name while
 | 17 | | `execute as <owner> run function cobblers_dg_probes:lo1/leave`, `function cobblers_dg_probes:lo1/cleanup` | |
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | `#ready` 1 |
+
+Everything else needs the owner to log out.
 
 ## Limitations
 One member, one slot; the co-op deadline (the latest of several members) is XD8's. The engine's eject and escrow are

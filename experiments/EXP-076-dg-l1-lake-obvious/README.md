@@ -1,6 +1,6 @@
 # EXP-076: L1, are a glowing sleeper, lanterns, a bubble column and a beacon readable from a gantry 40 above the bed?
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe L1 of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PART: 3 PASS, 1 FAIL (the glow); owner part OPEN (2026-10-08).** Probe L1 of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -47,7 +47,23 @@ z -643..-637, bed blocks at y 95, water y 96..135 (40 deep), stone-brick walls, 
 Do NOT jump into the shaft: without a Dive partner the water ladder's deep rule applies at 5 down.
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | `l1/sleeper` returned 1 |
+| 2 | a bubble column at (2846, 120, -638), mid-shaft: **PASS** (it forms from a setblock under standing water) |
+| 3 | the beacon block entity reads `Levels: 1`: the pyramid counts: **PASS** |
+| 4 | the Lapras's `PoseType` "SLEEP": **PASS**; `active_effects` EMPTY: **the glow did NOT apply: FAIL as built** |
+| 5 | `steam_on` returned 1 |
+
+The glow: `effect give @s minecraft:glowing infinite 0 true` in the same function as the macro spawn missed the new
+Pokemon. Given afterwards over RCON (`effect give @e[tag=dpl1.sl,limit=1] ...`) it applied and held (`duration: -1`
+three seconds later). **Engine rule: apply effects to a macro-spawned Pokemon a tick after the spawn**, not in the same
+function. Whether all four read as obvious from the gantry is the owner's half.
 
 ## Limitations
 Visual and one client's settings (render distance, particles, shaders). The membrane and the real species are not

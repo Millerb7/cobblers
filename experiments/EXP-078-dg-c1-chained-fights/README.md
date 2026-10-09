@@ -1,6 +1,6 @@
 # EXP-078: C1, the first chained fight: a macro `spawnnpcat` after a plain restart, and three follow-ups in a row
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe C1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: PART ONE PASSED (spawn after a plain restart, by macro); the chain OPEN (2026-10-08).** Probe C1 (new) of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -61,7 +61,22 @@ If a follow-up does not start: `#refused` 1 means `start_battle` returned 0 (the
 Pokemon able); `#won` below the stage reached means the callback did not tag the win.
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | boot log: **`Failed to load function cobblers_dg_probes:c1/spawn_plain`: "You need to include a valid NPC identifier. at position 83: ...obes:c1_s1<--[HERE]"**. A plain function naming a datapack NPC class fails to PARSE at load (the classes are not registered when functions parse). `c1/npc_at` and `c1/spawn_macro` loaded |
+| 2 | `#ready` 1 |
+| 3 | `c1/spawn_macro` returned 1 after a plain restart: **PASS** |
+| 4 | the spawned NPC (`Rift Warden 1`) reads `NPCClass` "cobblers_dg_probes:c1_s1": **PASS** |
+| 5 | `Unknown function cobblers_dg_probes:c1/spawn_plain` (consistent with step 1) |
+| 6 | clear_tests returned 1 |
+
+**Engine rule: every `spawnnpcat` naming one of our classes goes on a macro line.** The victory-hook chain (three fights,
+60 ticks apart) needs the owner.
 
 ## Limitations
 One player; two players chaining at once is XD8's. A forfeit or flee between stages sends no result (DM 1.4): the

@@ -1,6 +1,6 @@
 # EXP-075: F1, does a teleport mid-fall keep the fall distance, with and without `resistance 5`?
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe F1 of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PROXY READ (with villagers); owner part OPEN (2026-10-08).** Probe F1 of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -51,7 +51,21 @@ Vanilla `tp`, `effect`, `FallDistance` and `Health` NBT.
 | 7 | | `execute as <owner> run function cobblers_dg_probes:f1/leave`, `function cobblers_dg_probes:f1/cleanup` | |
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 (as built) | **FAILED, not on the mechanism:** MobsBeGone deletes summoned husks (see EXP-071). Re-run with villagers: |
+| 2 | `#caught_b` 1, `#caught_c` 1: both catches fired |
+| 3 | A (control, 13-block fall to stone): Health 10.0: the fall hurts |
+| 4 | B (teleported mid-fall, no resistance): **Health 10.0, `#fd_b` 1200 (12 blocks): the fall distance is CARRIED through the teleport and paid on landing** |
+| 5 | C (teleported with resistance 5): Health 20.0: **resistance 5 covers the landing: PASS** |
+
+For a mob a teleport does NOT reset fall distance, so a catch band must give resistance 5 (or reset the fall) before the
+teleport. A player's fall is client-reported: the owner's half decides whether the same holds for a player.
 
 ## Limitations
 - The mob half is a proxy. A player's fall distance is accumulated from the client's movement packets and its landing

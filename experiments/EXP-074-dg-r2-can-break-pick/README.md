@@ -1,6 +1,6 @@
 # EXP-074: R2, does `minecraft:can_break` on a pick in adventure mode break the seam ores and nothing else?
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe R2 of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PART PASSED; owner part OPEN (2026-10-08).** Probe R2 of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes`, staging only.
 
 ## Objective
@@ -47,7 +47,21 @@ blocks gone and leaves per-kind counts in `#gone_<id> dpr2.r`.
 | 7 | | `execute as <owner> run function cobblers_dg_probes:r2/leave`, `function cobblers_dg_probes:r2/cleanup` | home |
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1 | setup returned 1 |
+| 2 | `can_break={predicates:[{blocks:[coal_ore, iron_ore]}]}` with `unbreakable` and `custom_data`: `Replaced a slot`: **PASS** |
+| 3 | the short form `can_break={blocks:[...]}` ALSO parses, and is stored normalised as `{predicates:[{blocks:[...]}]}` |
+| 4 | the chest holds slot 0 with all three components and both ore ids: **PASS** |
+| 5 | no `Failed to load function cobblers_dg_probes:r2/pick` in the boot log: **PASS** |
+| 6 | `r2/read` returned 0 |
+
+Breaking only the seam ores in adventure mode is the owner's half.
 
 ## Limitations
 The behaviour half needs the owner; the RCON half proves the parse and the stored component only. Breaking speed with

@@ -1,6 +1,6 @@
 # EXP-070: B1, a per-member bossbar re-named every second from scores, a relog, and a clear
 
-**Status: designed 2026-10-08, NOT_EXECUTED.** Probe B1 of `docs/mechanics/DUNGEONS.md` section 14, pack
+**Status: RCON PART PASSED; owner part OPEN (2026-10-08).** Probe B1 of `docs/mechanics/DUNGEONS.md` section 14, pack
 `cobblers_dg_probes` (`tools/dungeon_probes.py`, `data/dungeon_probes.json`), staging only.
 
 ## Objective
@@ -54,7 +54,20 @@ Step 3's clock note: this probe's keeper charges only a present member, as DUNGE
 LO1's.
 
 ## Results
-NOT_EXECUTED.
+
+### RCON, no player (2026-10-08, main session)
+
+Run 2026-10-08 22:46-22:58 by the main session over RCON, staging-2026-10-01 (staging only), pack `cobblers_dg_probes` from `tools/dungeon_probes.py` (installed by hand, plain restart, no /reload), no player online. Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, rctmod 0.19.0-beta / rctapi 0.16.1-beta, Mega Showdown 1.0.2, the server's full mod set (MobsBeGone 0.0.7 among it), Java 21, -Xmx16G.
+
+| Step | Reading |
+|---|---|
+| 1-2 | setup and proxy returned 1 |
+| 3 | `bossbar list`: `[Rift 0:56 · x1.25 · ~0:45 left · taken 6]`: the scores resolved against the marker as `@s`: **PASS** |
+| 4 | value 4500, then 4300 two seconds later (two passes x 100): **PASS** |
+| 5 | the marker's `dpb1.clk` 4300 = the bar's value: **PASS** |
+| 6 | `has no players currently online` |
+
+Per-player visibility, logout/login and the clear need the owner.
 
 ## Limitations
 - One bar, one member. Per-member bars for several members, and other packs' actionbar use, are not tested.
