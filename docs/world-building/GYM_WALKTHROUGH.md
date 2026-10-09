@@ -157,13 +157,33 @@ tinted lens hung over the floor (the clear height must take Hatterene, 6.13 in t
 Exeggutor 3.53: whichever is larger rules), Sabrina on the dais. Out past her, or back. Takes down the Hall of
 Lenses and the well at y66 -- the deepest descent of the eight, 31 below the lot.
 
-### Gym 7, Blaine: the Assay House and the Core Gallery
+### Gym 7, Blaine: the Assay House and the Core Gallery (BUILT, data/gym_arenas/gym7.json)
 
 Lot 33 by 31, facing west. In over **the spoil steps**; **the broken flight** (one gap over a bale floor, a stair
 back); **the gantry stair** and **the gauge gallery**; **the four hoods**, one true; then **the Core Gallery** as the
 last room, sunk three under the house floor by a broad stair ("into the core"), the banded strata in the walls and
 the lava behind glass kept, Blaine on the dais. Charizard (4.09). No one-way geyser on the way out: an iron door past
 Blaine, or back. Takes down the Assay House and the gallery at y84 (the adit's lanterns and walls go with it).
+
+**As built (2026-10-09, offline only).** One gabled house on the whole lot, x6155..6186 by z4980..5010, house floor y106,
+the Core Gallery north of the house and three under it. In at the west door (z5002..5004) from the causeway's end
+(apron x6154 with lamp posts). **The drill floor**, then **the spoil steps**: three tuff-brick treads up to the deck's
+level (y109) through the only opening in the wall at x6164. **The deck** (x6165..6168), then **the broken flight**: a
+three-wide acacia catwalk (z5002..5004) over straw, the planking either side gone; a step off it is a drop of three onto
+straw and a four-wide stair back up to the deck. **The second deck** (x6175..6177), then **the four hoods** in a wall
+five thick (x6178..6182): each a stair of three treads down to the flue floor (y106); three end at a wall on straw, the
+third (z5004..5005, hooded in chiselled blackstone with a lantern either side) goes on into **the flue's foot**, a
+passage two wide along the east wall, north through the dividing wall onto the gallery's upper floor (y106), and down
+**the broad stair** (fifteen wide, three treads) into **the Core Gallery** (x6157..6184 by z4982..4996, floor y103, 28 by
+15): the strata in the walls and in six glass core tubes, four ember bays of magma behind glass in the north wall, ribs
+with hung lanterns above y111, and at the west end the stage (top y106, three over the floor) with the bore-hole behind
+it: a seven-by-seven window of lava one deep, sealed in the wall behind glass, a magma sill under it, copper pylons
+either side. Blaine's seat (6159, 106, 4989); his Challenge cell (6159, 106, 4982) at the stage's north end. Out by the
+iron door in the east wall at the stair's head (button inside), or back the way you came. Total grade: up three, down
+three (the hoods), down three (the broad stair), all half steps. Takes down the Assay House (the lot cleared from y106,
+the footing y103..105 rewritten) and the carved gallery (bounds as built, clipped to y102; see the record's
+`replaces.arena.clipped_why`). Juniors: Assay Hand on the deck behind the wall's opening, Rim Researcher at the
+catwalk's end, Flue Keeper and Stair Stoker in the flue's foot passage.
 
 ### Gym 8, Giovanni: the Gate and the Muster Hall
 

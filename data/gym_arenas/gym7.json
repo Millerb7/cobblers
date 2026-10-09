@@ -1,92 +1,380 @@
 {
- "schema": "gym_arena/1",
+ "schema": "gym_hall/1",
  "id": "gym7",
  "gym": "gym7",
- "status": "authored 2026-10-08; offline checks only (tools/gym_arenas.py check). Nothing here has been built in a world or seen in a running game.",
- "name": "The Core Gallery",
- "reading": "Blaine's town studies the crater's energy (docs/world-building/TOWN_CHARACTER.md gym7_town: core-sample racks, a field laboratory, survey tables, a fumarole vent; blackstone, basalt, tuff, copper). The Assay House above is where the town reads the vent; under it is where the town keeps what it has drilled out of it. A player leaves the assay vault by an adit cut down through the crater's rock - eleven steps south, a landing, eleven west, a flat foot - and comes into a long gallery whose walls are a drilled section of the cone in bands (deepslate, blackstone, a thin calcite ash bed, basalt flows, tuff, a second ash bed, a basalt cap), with the same bands standing in glass core tubes down both sides and the town's magma held behind glass in the walls. At the far end the assayer's stage is raised across the whole hall, and behind Blaine is the bore-hole itself: a seven-by-seven window of lava sealed in the rock behind glass, a sill of magma blocks under it, copper pylons either side.",
+ "status": "authored 2026-10-09 as a walk-through hall (docs/world-building/GYM_WALKTHROUGH.md); offline checks only (tools/gym_arenas.py check, tools/gym_arenas_audit.py, tools/gym_trainers.py check). Nothing of it has been built in a world or seen in a running game.",
+ "name": "The Assay House and the Core Gallery",
+ "reading": "Blaine's town studies the crater's energy (docs/world-building/TOWN_CHARACTER.md gym7_town: core-sample racks, a field laboratory, survey tables, a fumarole vent; blackstone, basalt, tuff, copper). One house on the rim at the causeway's end, walked through: in at the west door onto the drill floor, up the spoil steps over the wall, along the deck and across the broken flight, down one of four copper-hooded stairs (three stop on straw; the lit one goes on) to the flue's foot, then north onto the Core Gallery's upper floor and down its broad stair into the core -- the drilled section of the cone in bands (deepslate, blackstone, a thin calcite ash bed, basalt flows, tuff, a second ash bed, a basalt cap) in the walls and in glass core tubes, magma held behind glass in the north wall, and at the far end the assayer's stage with the bore-hole behind it: a seven-by-seven window of lava sealed in the wall behind glass, a sill of magma under it, copper pylons either side. Blaine stands on the stage, three over the floor. Out by the iron door at the stair's head, or back the way you came.",
  "leader": {
   "id": "kanto_blaine",
   "seat": [
-   6166,
-   87,
-   4981
+   6159,
+   106,
+   4989
   ],
-  "seat_why": "on the hall's axis (x6166, centre of x6156..6176), in the stage's centre top at y87 (floor y84 + 3), two in front of the bore-hole's glass (z4979). THE ONE SOURCE of Blaine's seat once this record exists (tools/gym_arenas.py leader_seats): data/gym_buildings/gym7.json leader.spawner (6178, 106, 5001) is where the building puts the spawner the arena step then moves."
- },
- "spawn_free_zone": "gym_blaine",
- "floor_y": 84,
- "bounds": [
-  6154,
-  81,
-  4976,
-  6181,
-  103,
-  5014
- ],
- "bounds_why": "the hall's shell x6154..6178, y81..100, z4977..5011, plus the bore-hole's back wall at z4976 (the zone's northern edge, data/spawn_suppression.json gym_blaine [6152, 4976, 6191, 5015]: no zone change), and the adit: x6179..6180 up to z5013, the foot's wall to z5014, y up to 103 where it leaves the building's footprint (natural top 105 on the lot, COVER 2). Inside the zone on every side.",
- "through_building": [
-  {
-   "box": [
-    6178,
-    101,
-    5001,
-    6180,
-    109,
-    5007
-   ],
-   "why": "the adit's first leg, where it leaves the assay vault: the vault's floor is cut for the first four steps (x6179, z5001..5004, y106) and its head room opens y107..109 over them; below, the stair is cut under the vault's south wall footing. Inside the building's bounds (x6156..6182, z4983..5007, y103 and up); the vault's walls above y106 and the geyser's casing (z4996..4998) are never touched."
-  }
- ],
- "entry": {
-  "route_end": [
-   6178,
-   107,
-   5001
-  ],
-  "floor": [
-   6166,
-   85,
-   5009
-  ],
-  "why": "route_end is where Blaine stands today: one over the building's spawner (6178, 106, 5001) in the assay vault, the 'to' of data/gym_buildings/gym7.json route step 8 ('blaine'). The first tread of the adit is the cell beside it, east (6179, 106, 5001), level with the vault's floor. The adit runs 11 south, a landing, 11 west and a flat foot, and lets the player out of the hall's south door onto the hall floor at (6166, 85, 5009), 28.2 from Blaine: farther than rctmod's forceBattleMaxDistance + 1, so the player stands in the hall, with the whole gallery in view, before he can call the fight."
- },
- "battle": {
-  "trainer_pokemon": [
-   6166,
-   83,
-   4990
-  ],
-  "player_pokemon": [
-   6166,
-   83,
-   4996
-  ],
-  "trainer_stand": [
-   6166,
-   86,
-   4982
-  ],
-  "player_stand": [
-   6166,
-   83,
-   4999
-  ],
-  "why": "Cobblemon Battle Positions (docs/world-building/GYM_ARENAS.md): both Pokemon blocks sit one under the floor's top course (y83 under y84), so spawnHeightOffset 2.0 stands each Pokemon on the floor; the trainer stand is under the stage top one in front of the seat, so Blaine steps to the stage edge. Blaine's Pokemon block is 5.5 from the stage face (z4985.0 to the block's centre 4990.5) against Charizard's sweep of 4.09; the two Pokemon are 6 apart (Magmortar's hitbox is 1.53 wide), the challenger's 11 from the foot of the stage, well inside Battle Positions' 16; the challenger stands 3 behind their own, as the donor gyms set it."
+  "seat_why": "on the gallery's axis (z4989, the middle of z4982..4996) in the stage top at y106 (floor y103 + 3, the house's own level), two in front of the bore-hole's glass. THE ONE SOURCE of Blaine's seat (tools/gym_arenas.py leader_seats)."
  },
  "challenge_spawner": {
   "old_at": [
-   6178,
-   106,
-   5004
+   6169,
+   87,
+   4981
   ],
   "old_restore": {
    "floor": "minecraft:smooth_basalt",
    "under": "minecraft:stone"
+  },
+  "why": "tools/gym_arenas.py check still asks a leader outside single_leader.rollout for challenge_spawner.old_at (SCHEMA says a hall does not use it): the 2026-10-08 arena's Challenge cell, inside the takedown. A hall's seat function ignores it; bosses.kanto_blaine.spawner.at is now (6159, 106, 4982) on the new stage."
+ },
+ "spawn_free_zone": "gym_blaine",
+ "floor_y": 103,
+ "bounds": [
+  6154,
+  102,
+  4980,
+  6186,
+  127,
+  5010
+ ],
+ "bounds_why": "the gym lot exactly in x and z (data/placements.json gym7_town gym7_gym rect 6154..6186 x 4980..5010, level 106), y102 (the Battle Positions blocks under the gallery's floor course) to y127 (over the ridge at y125 and over the old Assay House's own top at y126, so the clear takes the old house down). Inside data/spawn_suppression.json gym_blaine [6152, 4976, 6191, 5015] on every side.",
+ "footprint": [
+  6155,
+  4980,
+  6186,
+  5010
+ ],
+ "through_building": [],
+ "replaces": {
+  "arena": {
+   "name": "The Core Gallery",
+   "bounds": [
+    6154,
+    81,
+    4976,
+    6181,
+    102,
+    5014
+   ],
+   "through_building": [
+    {
+     "box": [
+      6178,
+      101,
+      5001,
+      6180,
+      102,
+      5007
+     ],
+     "why": "the adit's first leg, where it leaves the assay vault: the vault's floor is cut for the first four steps (x6179, z5001..5004, y106) and its head room opens y107..109 over them; below, the stair is cut under the vault's south wall footing. Inside the building's bounds (x6156..6182, z4983..5007, y103 and up); the vault's walls above y106 and the geyser's casing (z4996..4998) are never touched."
+    }
+   ],
+   "floor_y": 84,
+   "battle": {
+    "trainer_pokemon": [
+     6166,
+     83,
+     4990
+    ],
+    "player_pokemon": [
+     6166,
+     83,
+     4996
+    ],
+    "trainer_stand": [
+     6166,
+     86,
+     4982
+    ],
+    "player_stand": [
+     6166,
+     83,
+     4999
+    ],
+    "why": "Cobblemon Battle Positions (docs/world-building/GYM_ARENAS.md): both Pokemon blocks sit one under the floor's top course (y83 under y84), so spawnHeightOffset 2.0 stands each Pokemon on the floor; the trainer stand is under the stage top one in front of the seat, so Blaine steps to the stage edge. Blaine's Pokemon block is 5.5 from the stage face (z4985.0 to the block's centre 4990.5) against Charizard's sweep of 4.09; the two Pokemon are 6 apart (Magmortar's hitbox is 1.53 wide), the challenger's 11 from the foot of the stage, well inside Battle Positions' 16; the challenger stands 3 behind their own, as the donor gyms set it."
+   },
+   "seat": [
+    6166,
+    87,
+    4981
+   ],
+   "clipped_why": "as built, bounds [6154, 81, 4976, 6181, 103, 5014] and the adit box [6178, 101, 5001, 6180, 109, 5007]; both are clipped here to y102 because the old building's own footing course y103 (data/gym_buildings/gym7.json bounds start at y103) overlaps the arena's top row, and tools/gym_arenas.py hall_checks counts a cell the takedown set to rock as 'never written by the hall' even though the hall rewrites it. The hall's footing fill rewrites every y103..105 cell of the lot itself; the only y103 cells outside the lot are the adit's blackstone walls at z5011..5013, buried under three courses of natural stone."
+  },
+  "building": "data/gym_buildings/gym7.json",
+  "why": "what stood before this hall and is taken down by it, measured from the records that built it, never guessed. The arena is data/gym_arenas/gym7.json as it was built and applied to staging on 2026-10-09 (schema gym_arena/1, git history: the Core Gallery carved at y81..103 under the lot, its adit leaving the vault); the building is data/gym_buildings/gym7.json, kept, now superseded_by this file. Below the lot the takedown function (gym7_takedown) fills the arena's bounds and the adit's part under the pad with stone; above it this hall's first part clears the lot."
+ },
+ "entry": {
+  "street": [
+   6152,
+   107,
+   4995
+  ],
+  "floor": [
+   6178,
+   104,
+   4989
+  ],
+  "why": "street is the causeway's last cell (data/placements.json streets causeway, [6088,4995] to [6152,4995], ground y106 by tools/ground.py, rounded: feet y107). entry.floor is the Core Gallery's first floor cell at the foot of the broad stair: 19.2 from Blaine's stand, farther than rctmod's forceBattleMaxDistance + 1 = 17, so the player stands in the gallery before he can call the fight."
+ },
+ "exit": {
+  "door": [
+   6185,
+   107,
+   4989
+  ],
+  "button": [
+   6184,
+   108,
+   4988
+  ],
+  "why": "an iron door in the east wall at the broad stair's head, opened by the stone button on the wall inside it; out onto the lot's east side and round to the causeway. Nothing outside opens it, so it cannot be used to reach Blaine past the house and its juniors. Or back the way you came: every step of the house is walked both ways, and no drop on it is over three."
+ },
+ "rooms": [
+  {
+   "id": "assay_apron",
+   "kind": "entrance",
+   "box": [
+    6154,
+    106,
+    4980,
+    6154,
+    110,
+    5010
+   ],
+   "why": "the apron where the causeway ends, lamp posts, and the house's west door"
+  },
+  {
+   "id": "assay_yard",
+   "kind": "entrance",
+   "box": [
+    6155,
+    106,
+    4998,
+    6163,
+    113,
+    5008
+   ],
+   "why": "inside the door: the drill floor, the spoil heaped, the wall ahead and its steps"
+  },
+  {
+   "id": "spoil_deck",
+   "kind": "puzzle",
+   "box": [
+    6164,
+    106,
+    4998,
+    6168,
+    114,
+    5008
+   ],
+   "why": "over the wall by the spoil steps onto the deck, three above the floor"
+  },
+  {
+   "id": "assay_catwalk",
+   "kind": "junior",
+   "box": [
+    6169,
+    106,
+    4998,
+    6177,
+    114,
+    5008
+   ],
+   "why": "the catwalk over the straw and the second deck it ends on, where the Rim Researcher stands"
+  },
+  {
+   "id": "assay_hoods",
+   "kind": "puzzle",
+   "box": [
+    6178,
+    106,
+    4998,
+    6182,
+    114,
+    5008
+   ],
+   "why": "four copper-hooded stairs; three end on straw, one goes on"
+  },
+  {
+   "id": "assay_flue_foot",
+   "kind": "junior",
+   "box": [
+    6183,
+    106,
+    4997,
+    6184,
+    114,
+    5008
+   ],
+   "why": "the passage along the east wall, the Flue Keeper in it, and the opening north through the dividing wall"
+  },
+  {
+   "id": "core_gallery",
+   "kind": "arena",
+   "box": [
+    6157,
+    103,
+    4982,
+    6184,
+    117,
+    4996
+   ],
+   "why": "the arena: 28 by 15, the stage across its west end, Blaine on it; the upper floor and its broad stair at the east end"
   }
+ ],
+ "route": [
+  {
+   "step": 1,
+   "id": "assay_door",
+   "from": [
+    6153,
+    107,
+    5003
+   ],
+   "to": [
+    6157,
+    107,
+    5003
+   ],
+   "how": "walk"
+  },
+  {
+   "step": 2,
+   "id": "assay_spoil_steps",
+   "from": [
+    6160,
+    107,
+    5003
+   ],
+   "to": [
+    6165,
+    110,
+    5003
+   ],
+   "how": "walk",
+   "why": "three half-steps up to the deck's level through the wall's opening"
+  },
+  {
+   "step": 3,
+   "id": "assay_catwalk",
+   "from": [
+    6168,
+    110,
+    5003
+   ],
+   "to": [
+    6175,
+    110,
+    5003
+   ],
+   "how": "walk",
+   "why": "along the catwalk; a step off it is a three-block drop onto straw and a stair back up to the deck"
+  },
+  {
+   "step": 4,
+   "id": "assay_hoods",
+   "from": [
+    6177,
+    110,
+    5004
+   ],
+   "to": [
+    6183,
+    107,
+    5004
+   ],
+   "how": "walk",
+   "why": "the third hood, the lit one: down three half-steps to the flue floor and on"
+  },
+  {
+   "step": 5,
+   "id": "assay_flue_foot",
+   "from": [
+    6183,
+    107,
+    5004
+   ],
+   "to": [
+    6183,
+    107,
+    4996
+   ],
+   "how": "walk",
+   "why": "north along the passage and through the dividing wall"
+  },
+  {
+   "step": 6,
+   "id": "assay_into_the_core",
+   "from": [
+    6182,
+    107,
+    4989
+   ],
+   "to": [
+    6178,
+    104,
+    4989
+   ],
+   "how": "walk",
+   "why": "down the broad stair, three half-steps"
+  },
+  {
+   "step": 7,
+   "id": "assay_stand",
+   "from": [
+    6178,
+    104,
+    4989
+   ],
+   "to": [
+    6176,
+    104,
+    4989
+   ],
+   "how": "walk",
+   "why": "to the challenger's stand"
+  },
+  {
+   "step": 8,
+   "id": "assay_way_out",
+   "from": [
+    6184,
+    107,
+    4988
+   ],
+   "to": [
+    6187,
+    107,
+    4989
+   ],
+   "how": "walk",
+   "why": "press the button, out of the iron door at the stair's head, round the lot's east side to the causeway"
+  }
+ ],
+ "battle": {
+  "trainer_pokemon": [
+   6167,
+   102,
+   4989
+  ],
+  "player_pokemon": [
+   6173,
+   102,
+   4989
+  ],
+  "trainer_stand": [
+   6160,
+   105,
+   4989
+  ],
+  "player_stand": [
+   6176,
+   102,
+   4989
+  ],
+  "why": "Cobblemon Battle Positions (docs/world-building/GYM_ARENAS.md): both Pokemon blocks one under the floor's top course (y102 under y103), so spawnHeightOffset 2.0 stands each Pokemon on the floor; the trainer stand is under the stage top one in front of the seat, so Blaine steps to the stage edge. Blaine's Pokemon block is 5.5 from the stage face (x6162.0 to the block's centre 6167.5) against Charizard's sweep of 4.09; the two Pokemon are 6 apart (Magmortar's hitbox is 1.53 wide); the challenger stands 3 behind their own."
  },
  "palette": {
-  "shell": "minecraft:blackstone",
+  "shell": "minecraft:polished_blackstone",
   "floor": "minecraft:smooth_basalt",
   "brick": "minecraft:polished_blackstone_bricks",
   "face": "minecraft:chiseled_polished_blackstone",
@@ -105,15 +393,23 @@
   "chain": "minecraft:chain[axis=y]",
   "tread": "minecraft:polished_blackstone_brick_stairs",
   "landing": "minecraft:polished_blackstone_bricks",
-  "lectern": "minecraft:lectern[facing=south]",
+  "spoiltread": "minecraft:tuff_brick_stairs",
+  "spoil": "minecraft:tuff_bricks",
+  "roof": "minecraft:acacia_planks",
+  "edge": "minecraft:stripped_acacia_log",
+  "plank": "minecraft:acacia_planks",
+  "straw": "minecraft:hay_block",
+  "glow": "minecraft:shroomlight",
+  "post": "minecraft:tuff_wall",
+  "lectern": "minecraft:lectern[facing=east]",
   "barrel": "minecraft:barrel[facing=up]",
   "brewing": "minecraft:brewing_stand",
   "cauldron": "minecraft:cauldron",
-  "furnace": "minecraft:blast_furnace[facing=south]"
+  "furnace": "minecraft:blast_furnace[facing=east]"
  },
  "blocks": [
   "minecraft:air",
-  "minecraft:blackstone",
+  "minecraft:polished_blackstone",
   "minecraft:smooth_basalt",
   "minecraft:polished_blackstone_bricks",
   "minecraft:chiseled_polished_blackstone",
@@ -127,688 +423,1449 @@
   "minecraft:lantern",
   "minecraft:chain",
   "minecraft:polished_blackstone_brick_stairs",
+  "minecraft:tuff_brick_stairs",
+  "minecraft:acacia_planks",
+  "minecraft:stripped_acacia_log",
+  "minecraft:hay_block",
+  "minecraft:shroomlight",
+  "minecraft:tuff_wall",
   "minecraft:lectern",
   "minecraft:barrel",
   "minecraft:brewing_stand",
   "minecraft:cauldron",
   "minecraft:blast_furnace",
-  "minecraft:shroomlight"
+  "minecraft:iron_door",
+  "minecraft:stone_button"
  ],
+ "blocks_why": "the town's own palette (TOWN_CHARACTER.md gym7_town: blackstone, basalt, tuff, copper, acacia) and nothing that is a spawn condition except the lava and magma behind glass in a spawn-free zone (data/spawn_suppression.json gym_blaine): no grass, leaves, sand or carpet. Hay is straw on a stone floor, inside a roofed house.",
  "parts": [
   {
-   "op": "shell",
+   "op": "carve",
    "box": [
     6154,
-    81,
-    4977,
-    6178,
-    100,
-    5011
+    106,
+    4980,
+    6186,
+    127,
+    5010
    ],
-   "thickness": 2,
-   "block": "$shell",
-   "why": "the hall's shell: two courses of blackstone on all six faces, built, never the rock (the crater's own rock is full of old vents and the works under the lot were refilled); the inside carved. Interior x6156..6176, y85..98, z4979..5009; top course y100 is the highest COVER allows under the building (its lowest course y103, natural top y102)"
+   "why": "THE TAKEDOWN ABOVE THE PAD: the whole lot cleared, y106 up, so nothing of the Assay House (data/gym_buildings/gym7.json: the drill floor, the flue, the deck, the gantry, the gallery, the crown, the vault, the roof to y126) is left. The old works under the pad are taken down by the hall's takedown function (replaces.arena)"
   },
   {
    "op": "fill",
    "box": [
-    6156,
-    83,
-    4979,
-    6176,
-    83,
-    5009
+    6154,
+    103,
+    4980,
+    6186,
+    105,
+    5010
+   ],
+   "block": "$shell",
+   "why": "the footing: three courses of blackstone under the whole lot, y103..105, built and never the rock (the old building's footing y103..105 and the old flue basin are overwritten); the Core Gallery is then cut out of it"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    106,
+    4980,
+    6186,
+    106,
+    5010
+   ],
+   "block": "$shell",
+   "why": "the lot's paving at y106 (the town's level, data/placements.json gym7_town gym7_gym)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    106,
+    4980,
+    6154,
+    106,
+    5010
    ],
    "block": "$floor",
-   "why": "the floor, two courses: y83 under, y84 the top (floor_y). The Battle Positions blocks sit in y83"
+   "why": "the apron along the lot's west edge in the causeway's own smooth basalt, where the causeway ends"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    107,
+    4980,
+    6156,
+    117,
+    5010
+   ],
+   "block": "$shell",
+   "why": "the west wall, two courses (x6155..6156), to the eaves at y117"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    107,
+    4980,
+    6186,
+    117,
+    5010
+   ],
+   "block": "$shell",
+   "why": "the east wall (x6185..6186)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    107,
+    4980,
+    6186,
+    117,
+    4981
+   ],
+   "block": "$shell",
+   "why": "the north wall (z4980..4981)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    107,
+    5009,
+    6186,
+    117,
+    5010
+   ],
+   "block": "$shell",
+   "why": "the south wall (z5009..5010)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    107,
+    4997,
+    6184,
+    123,
+    4997
+   ],
+   "block": "$shell",
+   "why": "the dividing wall (z4997), one course, between the Core Gallery on the north and the house on the south: up to the roof, which is y124 over it"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    114,
+    4980,
+    6186,
+    114,
+    4980
+   ],
+   "block": "$tuff",
+   "why": "the string course outside, in tuff, at the windows' sills of the old house"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    117,
+    4980,
+    6186,
+    117,
+    4980
+   ],
+   "block": "$copper",
+   "why": "and the copper course under the eaves"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    114,
+    5010,
+    6186,
+    114,
+    5010
+   ],
+   "block": "$tuff"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    117,
+    5010,
+    6186,
+    117,
+    5010
+   ],
+   "block": "$copper"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    114,
+    4980,
+    6155,
+    114,
+    5010
+   ],
+   "block": "$tuff"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    117,
+    4980,
+    6155,
+    117,
+    5010
+   ],
+   "block": "$copper"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6186,
+    114,
+    4980,
+    6186,
+    114,
+    5010
+   ],
+   "block": "$tuff"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6186,
+    117,
+    4980,
+    6186,
+    117,
+    5010
+   ],
+   "block": "$copper"
+  },
+  {
+   "op": "comment",
+   "why": "THE STRATA: the walls read as a drilled section of the crater, in bands from the floor up - deepslate, blackstone, a thin calcite ash bed, basalt flows, tuff, a second ash bed, a basalt cap - on the inner course of every wall, the Core Gallery's and the house's, the same order as in every core tube"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    104,
+    4981,
+    6184,
+    105,
+    4981
+   ],
+   "block": "$deepslate"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    106,
+    4981,
+    6184,
+    108,
+    4981
+   ],
+   "block": "$blackstone"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    109,
+    4981,
+    6184,
+    109,
+    4981
+   ],
+   "block": "$calcite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    110,
+    4981,
+    6184,
+    112,
+    4981
+   ],
+   "block": "$basalt"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    113,
+    4981,
+    6184,
+    115,
+    4981
+   ],
+   "block": "$tuff"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    116,
+    4981,
+    6184,
+    116,
+    4981
+   ],
+   "block": "$calcite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    117,
+    4981,
+    6184,
+    117,
+    4981
+   ],
+   "block": "$basalt"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    104,
+    4997,
+    6184,
+    105,
+    4997
+   ],
+   "block": "$deepslate"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    106,
+    4997,
+    6184,
+    108,
+    4997
+   ],
+   "block": "$blackstone"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    109,
+    4997,
+    6184,
+    109,
+    4997
+   ],
+   "block": "$calcite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    110,
+    4997,
+    6184,
+    112,
+    4997
+   ],
+   "block": "$basalt"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    113,
+    4997,
+    6184,
+    115,
+    4997
+   ],
+   "block": "$tuff"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    116,
+    4997,
+    6184,
+    116,
+    4997
+   ],
+   "block": "$calcite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    117,
+    4997,
+    6184,
+    117,
+    4997
+   ],
+   "block": "$basalt"
   },
   {
    "op": "fill",
    "box": [
     6156,
-    84,
-    4979,
-    6176,
-    84,
+    104,
+    4982,
+    6156,
+    105,
+    4996
+   ],
+   "block": "$deepslate"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6156,
+    106,
+    4982,
+    6156,
+    108,
+    4996
+   ],
+   "block": "$blackstone"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6156,
+    109,
+    4982,
+    6156,
+    109,
+    4996
+   ],
+   "block": "$calcite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6156,
+    110,
+    4982,
+    6156,
+    112,
+    4996
+   ],
+   "block": "$basalt"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6156,
+    113,
+    4982,
+    6156,
+    115,
+    4996
+   ],
+   "block": "$tuff"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6156,
+    116,
+    4982,
+    6156,
+    116,
+    4996
+   ],
+   "block": "$calcite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6156,
+    117,
+    4982,
+    6156,
+    117,
+    4996
+   ],
+   "block": "$basalt"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    104,
+    4982,
+    6185,
+    105,
+    4996
+   ],
+   "block": "$deepslate"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    106,
+    4982,
+    6185,
+    108,
+    4996
+   ],
+   "block": "$blackstone"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    109,
+    4982,
+    6185,
+    109,
+    4996
+   ],
+   "block": "$calcite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    110,
+    4982,
+    6185,
+    112,
+    4996
+   ],
+   "block": "$basalt"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    113,
+    4982,
+    6185,
+    115,
+    4996
+   ],
+   "block": "$tuff"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    116,
+    4982,
+    6185,
+    116,
+    4996
+   ],
+   "block": "$calcite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    117,
+    4982,
+    6185,
+    117,
+    4996
+   ],
+   "block": "$basalt"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    107,
+    5009,
+    6184,
+    108,
     5009
    ],
-   "block": "$floor"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    85,
-    4978,
-    6155,
-    86,
-    5010
-   ],
-   "block": "$deepslate",
-   "why": "the walls read as a drilled section of the crater: the inner course of the shell in bands from the floor up - deepslate, blackstone, a thin calcite ash bed, basalt flows, tuff, a second ash bed, a basalt cap. The same order is in every core tube in the hall"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    87,
-    4978,
-    6155,
-    89,
-    5010
-   ],
    "block": "$blackstone"
   },
   {
    "op": "fill",
    "box": [
-    6155,
-    90,
-    4978,
-    6155,
-    90,
-    5010
+    6157,
+    109,
+    5009,
+    6184,
+    109,
+    5009
    ],
    "block": "$calcite"
   },
   {
    "op": "fill",
    "box": [
-    6155,
-    91,
-    4978,
-    6155,
-    93,
-    5010
+    6157,
+    110,
+    5009,
+    6184,
+    112,
+    5009
    ],
    "block": "$basalt"
   },
   {
    "op": "fill",
    "box": [
-    6155,
-    94,
-    4978,
-    6155,
-    96,
-    5010
+    6157,
+    113,
+    5009,
+    6184,
+    115,
+    5009
    ],
    "block": "$tuff"
   },
   {
    "op": "fill",
    "box": [
-    6155,
-    97,
-    4978,
-    6155,
-    97,
-    5010
+    6157,
+    116,
+    5009,
+    6184,
+    116,
+    5009
    ],
    "block": "$calcite"
   },
   {
    "op": "fill",
    "box": [
-    6155,
-    98,
-    4978,
-    6155,
-    98,
-    5010
+    6157,
+    117,
+    5009,
+    6184,
+    117,
+    5009
    ],
    "block": "$basalt"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6177,
-    85,
-    4978,
-    6177,
-    86,
-    5010
-   ],
-   "block": "$deepslate"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6177,
-    87,
-    4978,
-    6177,
-    89,
-    5010
-   ],
-   "block": "$blackstone"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6177,
-    90,
-    4978,
-    6177,
-    90,
-    5010
-   ],
-   "block": "$calcite"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6177,
-    91,
-    4978,
-    6177,
-    93,
-    5010
-   ],
-   "block": "$basalt"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6177,
-    94,
-    4978,
-    6177,
-    96,
-    5010
-   ],
-   "block": "$tuff"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6177,
-    97,
-    4978,
-    6177,
-    97,
-    5010
-   ],
-   "block": "$calcite"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6177,
-    98,
-    4978,
-    6177,
-    98,
-    5010
-   ],
-   "block": "$basalt"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    85,
-    4978,
-    6177,
-    86,
-    4978
-   ],
-   "block": "$deepslate"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    87,
-    4978,
-    6177,
-    89,
-    4978
-   ],
-   "block": "$blackstone"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    90,
-    4978,
-    6177,
-    90,
-    4978
-   ],
-   "block": "$calcite"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    91,
-    4978,
-    6177,
-    93,
-    4978
-   ],
-   "block": "$basalt"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    94,
-    4978,
-    6177,
-    96,
-    4978
-   ],
-   "block": "$tuff"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    97,
-    4978,
-    6177,
-    97,
-    4978
-   ],
-   "block": "$calcite"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    98,
-    4978,
-    6177,
-    98,
-    4978
-   ],
-   "block": "$basalt"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    85,
-    5010,
-    6177,
-    86,
-    5010
-   ],
-   "block": "$deepslate"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    87,
-    5010,
-    6177,
-    89,
-    5010
-   ],
-   "block": "$blackstone"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    90,
-    5010,
-    6177,
-    90,
-    5010
-   ],
-   "block": "$calcite"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    91,
-    5010,
-    6177,
-    93,
-    5010
-   ],
-   "block": "$basalt"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    94,
-    5010,
-    6177,
-    96,
-    5010
-   ],
-   "block": "$tuff"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    97,
-    5010,
-    6177,
-    97,
-    5010
-   ],
-   "block": "$calcite"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    98,
-    5010,
-    6177,
-    98,
-    5010
-   ],
-   "block": "$basalt"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6154,
-    86,
-    4985,
-    6154,
-    88,
-    4987
-   ],
-   "block": "$magma",
-   "why": "eight ember bays in the side walls, between the core tubes: magma blocks in the shell's outer course behind a pane of glass in the inner one. Magma in a wall is not stood on; the fire is held in rock, not in the hall"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    86,
-    4985,
-    6155,
-    88,
-    4987
-   ],
-   "block": "$glass"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6178,
-    86,
-    4985,
-    6178,
-    88,
-    4987
-   ],
-   "block": "$magma"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6177,
-    86,
-    4985,
-    6177,
-    88,
-    4987
-   ],
-   "block": "$glass"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6154,
-    86,
-    4991,
-    6154,
-    88,
-    4993
-   ],
-   "block": "$magma"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    86,
-    4991,
-    6155,
-    88,
-    4993
-   ],
-   "block": "$glass"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6178,
-    86,
-    4991,
-    6178,
-    88,
-    4993
-   ],
-   "block": "$magma"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6177,
-    86,
-    4991,
-    6177,
-    88,
-    4993
-   ],
-   "block": "$glass"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6154,
-    86,
-    4997,
-    6154,
-    88,
-    4999
-   ],
-   "block": "$magma"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    86,
-    4997,
-    6155,
-    88,
-    4999
-   ],
-   "block": "$glass"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6178,
-    86,
-    4997,
-    6178,
-    88,
-    4999
-   ],
-   "block": "$magma"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6177,
-    86,
-    4997,
-    6177,
-    88,
-    4999
-   ],
-   "block": "$glass"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6154,
-    86,
-    5003,
-    6154,
-    88,
-    5005
-   ],
-   "block": "$magma"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6155,
-    86,
-    5003,
-    6155,
-    88,
-    5005
-   ],
-   "block": "$glass"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6178,
-    86,
-    5003,
-    6178,
-    88,
-    5005
-   ],
-   "block": "$magma"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6177,
-    86,
-    5003,
-    6177,
-    88,
-    5005
-   ],
-   "block": "$glass"
   },
   {
    "op": "fill",
    "box": [
     6156,
-    85,
-    4979,
-    6160,
-    86,
-    4984
+    107,
+    4998,
+    6156,
+    108,
+    5008
    ],
-   "block": "$brick",
-   "why": "the assayer's stage across the whole north end, wall to wall so no aisle runs up beside it: the wings are two courses (tops y86), the centre three (top y87). Two is the least a player cannot step or jump onto"
+   "block": "$blackstone"
   },
   {
    "op": "fill",
    "box": [
-    6172,
-    85,
-    4979,
-    6176,
-    86,
-    4984
+    6156,
+    109,
+    4998,
+    6156,
+    109,
+    5008
    ],
-   "block": "$brick"
+   "block": "$calcite"
   },
   {
    "op": "fill",
    "box": [
-    6161,
-    85,
-    4979,
-    6171,
-    87,
-    4984
+    6156,
+    110,
+    4998,
+    6156,
+    112,
+    5008
    ],
-   "block": "$brick",
-   "why": "the centre of the stage, x6161..6171, top y87; the seat (6166, 87, 4981) is never written here: the seat function owns it"
+   "block": "$basalt"
   },
   {
    "op": "fill",
    "box": [
-    6161,
-    87,
-    4979,
-    6171,
-    87,
+    6156,
+    113,
+    4998,
+    6156,
+    115,
+    5008
+   ],
+   "block": "$tuff"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6156,
+    116,
+    4998,
+    6156,
+    116,
+    5008
+   ],
+   "block": "$calcite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6156,
+    117,
+    4998,
+    6156,
+    117,
+    5008
+   ],
+   "block": "$basalt"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    107,
+    4998,
+    6185,
+    108,
+    5008
+   ],
+   "block": "$blackstone"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    109,
+    4998,
+    6185,
+    109,
+    5008
+   ],
+   "block": "$calcite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    110,
+    4998,
+    6185,
+    112,
+    5008
+   ],
+   "block": "$basalt"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    113,
+    4998,
+    6185,
+    115,
+    5008
+   ],
+   "block": "$tuff"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    116,
+    4998,
+    6185,
+    116,
+    5008
+   ],
+   "block": "$calcite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    117,
+    4998,
+    6185,
+    117,
+    5008
+   ],
+   "block": "$basalt"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    118,
+    4980,
+    6186,
+    118,
+    4981
+   ],
+   "block": "$roof",
+   "why": "the roof: acacia planks, a course every two rows from each eave (y118) to the ridge (y125)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    118,
+    5009,
+    6186,
+    118,
+    5010
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    119,
+    4982,
+    6186,
+    119,
     4983
    ],
-   "block": "$floor",
-   "why": "its top, smooth basalt like the floor"
+   "block": "$roof"
   },
   {
    "op": "fill",
    "box": [
-    6156,
-    85,
+    6154,
+    119,
+    5007,
+    6186,
+    119,
+    5008
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    120,
     4984,
-    6176,
-    86,
-    4984
+    6186,
+    120,
+    4985
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    120,
+    5005,
+    6186,
+    120,
+    5006
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    121,
+    4986,
+    6186,
+    121,
+    4987
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    121,
+    5003,
+    6186,
+    121,
+    5004
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    122,
+    4988,
+    6186,
+    122,
+    4989
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    122,
+    5001,
+    6186,
+    122,
+    5002
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    123,
+    4990,
+    6186,
+    123,
+    4991
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    123,
+    4999,
+    6186,
+    123,
+    5000
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    124,
+    4992,
+    6186,
+    124,
+    4993
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    124,
+    4997,
+    6186,
+    124,
+    4998
+   ],
+   "block": "$roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    125,
+    4994,
+    6186,
+    125,
+    4996
+   ],
+   "block": "$roof",
+   "why": "the ridge"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6154,
+    125,
+    4995,
+    6186,
+    125,
+    4995
+   ],
+   "block": "$edge",
+   "why": "its ridge pole, in stripped acacia log"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    4982,
+    6156,
+    118,
+    4983
+   ],
+   "block": "$shell",
+   "why": "the gable ends, stone up under the roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    5007,
+    6156,
+    118,
+    5008
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    4982,
+    6186,
+    118,
+    4983
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    5007,
+    6186,
+    118,
+    5008
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    4984,
+    6156,
+    119,
+    4985
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    5005,
+    6156,
+    119,
+    5006
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    4984,
+    6186,
+    119,
+    4985
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    5005,
+    6186,
+    119,
+    5006
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    4986,
+    6156,
+    120,
+    4987
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    5003,
+    6156,
+    120,
+    5004
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    4986,
+    6186,
+    120,
+    4987
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    5003,
+    6186,
+    120,
+    5004
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    4988,
+    6156,
+    121,
+    4989
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    5001,
+    6156,
+    121,
+    5002
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    4988,
+    6186,
+    121,
+    4989
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    5001,
+    6186,
+    121,
+    5002
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    4990,
+    6156,
+    122,
+    4991
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    4999,
+    6156,
+    122,
+    5000
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    4990,
+    6186,
+    122,
+    4991
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    4999,
+    6186,
+    122,
+    5000
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    4992,
+    6156,
+    123,
+    4993
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    4997,
+    6156,
+    123,
+    4998
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    4992,
+    6186,
+    123,
+    4993
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    4997,
+    6186,
+    123,
+    4998
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    118,
+    4994,
+    6156,
+    124,
+    4996
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    118,
+    4994,
+    6186,
+    124,
+    4996
+   ],
+   "block": "$shell"
+  },
+  {
+   "op": "comment",
+   "why": "THE CORE GALLERY, x6157..6184 by z4982..4996, floor y103: three under the house floor, the last room. The stage across its west end (the bore-hole behind it), the floor between, a broad stair down at its east end"
+  },
+  {
+   "op": "carve",
+   "box": [
+    6162,
+    104,
+    4982,
+    6178,
+    106,
+    4996
+   ],
+   "why": "the gallery's sunk floor space, cut out of the footing: x6162..6178, y104 up"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6162,
+    103,
+    4982,
+    6178,
+    103,
+    4996
+   ],
+   "block": "$floor",
+   "why": "the floor: smooth basalt, one course (y103, floor_y); the Battle Positions blocks sit under it at y102"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6162,
+    103,
+    4989,
+    6178,
+    103,
+    4989
+   ],
+   "block": "$line",
+   "why": "survey lines in calcite on the floor: the axis, and a cross line at each Pokemon's mark"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6167,
+    103,
+    4984,
+    6167,
+    103,
+    4994
+   ],
+   "block": "$line"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6173,
+    103,
+    4984,
+    6173,
+    103,
+    4994
+   ],
+   "block": "$line"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6182,
+    106,
+    4982,
+    6184,
+    106,
+    4996
+   ],
+   "block": "$floor",
+   "why": "the upper floor at the east end, level with the house (y106): where the house's passage comes in and the stair goes down"
+  },
+  {
+   "op": "straight_stair",
+   "from": [
+    6181,
+    106,
+    4996
+   ],
+   "dir": "west",
+   "steps": 3,
+   "tread": "$tread",
+   "under": "$landing",
+   "headroom": 3,
+   "width": 15,
+   "why": "the broad stair 'into the core', fifteen wide, three treads from the upper floor (y106) to the gallery floor (y103): half steps, walked both ways without a jump. Its head is x6181, 22 blocks from Blaine's stand, so it is never a cell a battle starts from"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    106,
+    4982,
+    6160,
+    106,
+    4996
+   ],
+   "block": "$floor",
+   "why": "the assayer's stage across the whole west end, wall to wall so no aisle runs up beside it: three over the gallery floor (top y106, the house's own level), its top smooth basalt like the floor. The seat (6159, 106, 4989) is never written here: the seat function owns it"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6161,
+    104,
+    4982,
+    6161,
+    106,
+    4996
    ],
    "block": "$face",
    "why": "the stage's face, a course of chiselled blackstone"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6161,
-    87,
-    4984,
-    6171,
-    87,
-    4984
-   ],
-   "block": "$face"
   },
   {
    "op": "scatter",
    "positions": [
     [
      6158,
-     87,
-     4981
+     107,
+     4984
     ],
     [
-     6174,
-     87,
-     4981
+     6158,
+     107,
+     4994
     ]
    ],
    "block": "$lectern",
-   "why": "a reading lectern on each wing: the log of the day's cores"
+   "why": "a reading lectern at each end of the stage: the log of the day's cores"
   },
   {
    "op": "scatter",
    "positions": [
     [
      6157,
-     87,
-     4980
+     107,
+     4983
     ],
     [
-     6175,
-     87,
-     4980
+     6157,
+     107,
+     4995
     ]
    ],
    "block": "$barrel",
@@ -818,14 +1875,14 @@
    "op": "scatter",
    "positions": [
     [
-     6159,
-     87,
+     6160,
+     107,
      4983
     ],
     [
-     6173,
-     87,
-     4983
+     6160,
+     107,
+     4995
     ]
    ],
    "block": "$brewing",
@@ -834,8 +1891,8 @@
   {
    "op": "setblock",
    "pos": [
-    6157,
-    87,
+    6158,
+    107,
     4983
    ],
    "block": "$cauldron",
@@ -844,9 +1901,9 @@
   {
    "op": "setblock",
    "pos": [
-    6175,
-    87,
-    4983
+    6158,
+    107,
+    4995
    ],
    "block": "$furnace",
    "why": "the assay furnace"
@@ -854,51 +1911,12 @@
   {
    "op": "fill",
    "box": [
-    6163,
-    90,
-    4976,
-    6169,
-    96,
-    4976
-   ],
-   "block": "$shell",
-   "why": "the back of the bore-hole: z4976, the zone's northern edge, so the lava has a built wall behind it"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6163,
-    90,
-    4977,
-    6169,
-    96,
-    4978
-   ],
-   "block": "$lava",
-   "why": "the bore-hole: seven by seven by two of lava in the north wall behind the stage, sealed - blackstone behind (z4976), below (y89), above (y97) and either side (x6162, x6170), glass in front (z4979). Nothing a Pokemon or a player can touch; it is also out of reach, six blocks from the nearest floor a player can stand on"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6163,
-    90,
-    4979,
-    6169,
-    96,
-    4979
-   ],
-   "block": "$glass",
-   "why": "its glass, from y90, two above the leader's head and out of reach"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6163,
-    88,
-    4979,
-    6169,
-    89,
-    4979
+    6157,
+    107,
+    4986,
+    6157,
+    108,
+    4992
    ],
    "block": "$magma",
    "why": "a sill of magma blocks under the glass, two high so nobody steps onto it from the stage"
@@ -906,12 +1924,38 @@
   {
    "op": "fill",
    "box": [
-    6162,
-    88,
-    4979,
-    6162,
-    97,
-    4979
+    6156,
+    109,
+    4986,
+    6156,
+    115,
+    4992
+   ],
+   "block": "$lava",
+   "why": "the bore-hole: a seven-by-seven window of lava in the west wall behind the stage, one deep, sealed - blackstone behind (x6155), below (y108), above (y116) and either side (z4985, z4993), glass in front (x6157). Nothing a Pokemon or a player can touch"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    109,
+    4986,
+    6157,
+    115,
+    4992
+   ],
+   "block": "$glass",
+   "why": "its glass, from y109, two over the leader's head"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6157,
+    107,
+    4985,
+    6157,
+    116,
+    4985
    ],
    "block": "$copper",
    "why": "cut copper pylons either side of the bore-hole: the town's instruments"
@@ -919,124 +1963,160 @@
   {
    "op": "fill",
    "box": [
-    6170,
-    88,
-    4979,
-    6170,
-    97,
-    4979
+    6157,
+    107,
+    4993,
+    6157,
+    116,
+    4993
    ],
    "block": "$copper"
   },
   {
    "op": "repeat",
    "step": [
+    6,
     0,
-    0,
-    6
+    0
    ],
    "count": 4,
-   "why": "four core tubes down the west wall, every six blocks from z4988: a glass case three by three, twelve high, round a one-block core banded in the same order as the walls, on a copper base and under a blackstone cap with a lantern on it",
+   "why": "four ember bays in the north wall, between the core tubes: magma blocks in the wall's outer course behind a pane of glass in the inner one. Magma in a wall is not stood on; the fire is held in rock, not in the hall",
    "parts": [
     {
      "op": "fill",
      "box": [
-      6156,
-      85,
-      4988,
-      6158,
-      85,
-      4990
+      6161,
+      105,
+      4980,
+      6163,
+      107,
+      4980
+     ],
+     "block": "$magma"
+    },
+    {
+     "op": "fill",
+     "box": [
+      6161,
+      105,
+      4981,
+      6163,
+      107,
+      4981
+     ],
+     "block": "$glass"
+    }
+   ]
+  },
+  {
+   "op": "repeat",
+   "step": [
+    6,
+    0,
+    0
+   ],
+   "count": 3,
+   "why": "three core tubes down the north side, every six blocks from x6164: a glass case three by three, ten high, round a one-block core banded in the same order as the walls, on a copper base and under a blackstone cap with a lantern on it",
+   "parts": [
+    {
+     "op": "fill",
+     "box": [
+      6164,
+      104,
+      4982,
+      6166,
+      104,
+      4984
      ],
      "block": "$copper"
     },
     {
      "op": "fill",
      "box": [
-      6156,
-      86,
-      4988,
-      6158,
-      95,
-      4990
+      6164,
+      105,
+      4982,
+      6166,
+      114,
+      4984
      ],
      "block": "$glass"
     },
     {
      "op": "fill",
      "box": [
-      6157,
-      86,
-      4989,
-      6157,
-      87,
-      4989
+      6165,
+      105,
+      4983,
+      6165,
+      106,
+      4983
      ],
      "block": "$deepslate"
     },
     {
      "op": "fill",
      "box": [
-      6157,
-      88,
-      4989,
-      6157,
-      89,
-      4989
+      6165,
+      107,
+      4983,
+      6165,
+      108,
+      4983
      ],
      "block": "$blackstone"
     },
     {
      "op": "setblock",
      "pos": [
-      6157,
-      90,
-      4989
+      6165,
+      109,
+      4983
      ],
      "block": "$calcite"
     },
     {
      "op": "fill",
      "box": [
-      6157,
-      91,
-      4989,
-      6157,
-      93,
-      4989
+      6165,
+      110,
+      4983,
+      6165,
+      112,
+      4983
      ],
      "block": "$basalt"
     },
     {
      "op": "fill",
      "box": [
-      6157,
-      94,
-      4989,
-      6157,
-      95,
-      4989
+      6165,
+      113,
+      4983,
+      6165,
+      114,
+      4983
      ],
      "block": "$tuff"
     },
     {
      "op": "fill",
      "box": [
-      6156,
-      96,
-      4988,
-      6158,
-      96,
-      4990
+      6164,
+      115,
+      4982,
+      6166,
+      115,
+      4984
      ],
      "block": "$brick"
     },
     {
      "op": "setblock",
      "pos": [
-      6157,
-      97,
-      4989
+      6165,
+      116,
+      4983
      ],
      "block": "$lantern"
     }
@@ -1045,262 +2125,344 @@
   {
    "op": "repeat",
    "step": [
+    6,
     0,
-    0,
-    6
+    0
    ],
-   "count": 4,
-   "why": "four core tubes down the east wall, every six blocks from z4988: a glass case three by three, twelve high, round a one-block core banded in the same order as the walls, on a copper base and under a blackstone cap with a lantern on it",
+   "count": 3,
+   "why": "three core tubes down the south side, every six blocks from x6164: a glass case three by three, ten high, round a one-block core banded in the same order as the walls, on a copper base and under a blackstone cap with a lantern on it",
    "parts": [
     {
      "op": "fill",
      "box": [
-      6174,
-      85,
-      4988,
-      6176,
-      85,
-      4990
+      6164,
+      104,
+      4994,
+      6166,
+      104,
+      4996
      ],
      "block": "$copper"
     },
     {
      "op": "fill",
      "box": [
-      6174,
-      86,
-      4988,
-      6176,
-      95,
-      4990
+      6164,
+      105,
+      4994,
+      6166,
+      114,
+      4996
      ],
      "block": "$glass"
     },
     {
      "op": "fill",
      "box": [
-      6175,
-      86,
-      4989,
-      6175,
-      87,
-      4989
+      6165,
+      105,
+      4995,
+      6165,
+      106,
+      4995
      ],
      "block": "$deepslate"
     },
     {
      "op": "fill",
      "box": [
-      6175,
-      88,
-      4989,
-      6175,
-      89,
-      4989
+      6165,
+      107,
+      4995,
+      6165,
+      108,
+      4995
      ],
      "block": "$blackstone"
     },
     {
      "op": "setblock",
      "pos": [
-      6175,
-      90,
-      4989
+      6165,
+      109,
+      4995
      ],
      "block": "$calcite"
     },
     {
      "op": "fill",
      "box": [
-      6175,
-      91,
-      4989,
-      6175,
-      93,
-      4989
+      6165,
+      110,
+      4995,
+      6165,
+      112,
+      4995
      ],
      "block": "$basalt"
     },
     {
      "op": "fill",
      "box": [
-      6175,
-      94,
-      4989,
-      6175,
-      95,
-      4989
+      6165,
+      113,
+      4995,
+      6165,
+      114,
+      4995
      ],
      "block": "$tuff"
     },
     {
      "op": "fill",
      "box": [
-      6174,
-      96,
-      4988,
-      6176,
-      96,
-      4990
+      6164,
+      115,
+      4994,
+      6166,
+      115,
+      4996
      ],
      "block": "$brick"
     },
     {
      "op": "setblock",
      "pos": [
-      6175,
-      97,
-      4989
+      6165,
+      116,
+      4995
      ],
      "block": "$lantern"
     }
    ]
   },
   {
-   "op": "fill",
-   "box": [
-    6166,
-    84,
-    4985,
-    6166,
-    84,
-    5009
-   ],
-   "block": "$line",
-   "why": "survey lines in calcite on the floor: the axis, and a cross line at each Pokemon's mark"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6161,
-    84,
-    4990,
-    6171,
-    84,
-    4990
-   ],
-   "block": "$line"
-  },
-  {
-   "op": "fill",
-   "box": [
-    6161,
-    84,
-    4996,
-    6171,
-    84,
-    4996
-   ],
-   "block": "$line"
-  },
-  {
    "op": "repeat",
    "step": [
+    6,
     0,
-    0,
-    6
+    0
    ],
-   "count": 5,
-   "why": "a rib across the roof every six blocks from z4982, three lanterns hung from each on chains (all over y89, the top of the clear height)",
+   "count": 4,
+   "why": "a rib across the roof every six blocks from x6163, three lanterns hung from each on chains (all over y108, the top of the clear height)",
    "parts": [
     {
      "op": "fill",
      "box": [
-      6156,
-      98,
+      6163,
+      117,
       4982,
-      6176,
-      98,
-      4982
+      6163,
+      117,
+      4996
      ],
      "block": "$brick"
     },
     {
      "op": "fill",
      "box": [
-      6161,
-      93,
-      4982,
-      6161,
-      97,
-      4982
+      6163,
+      112,
+      4985,
+      6163,
+      116,
+      4985
      ],
      "block": "$chain"
     },
     {
      "op": "setblock",
      "pos": [
-      6161,
-      92,
-      4982
+      6163,
+      111,
+      4985
      ],
      "block": "$hanging"
     },
     {
      "op": "fill",
      "box": [
-      6166,
-      93,
-      4982,
-      6166,
-      97,
-      4982
+      6163,
+      112,
+      4989,
+      6163,
+      116,
+      4989
      ],
      "block": "$chain"
     },
     {
      "op": "setblock",
      "pos": [
-      6166,
-      92,
-      4982
+      6163,
+      111,
+      4989
      ],
      "block": "$hanging"
     },
     {
      "op": "fill",
      "box": [
-      6171,
-      93,
-      4982,
-      6171,
-      97,
-      4982
+      6163,
+      112,
+      4993,
+      6163,
+      116,
+      4993
      ],
      "block": "$chain"
     },
     {
      "op": "setblock",
      "pos": [
-      6171,
-      92,
-      4982
+      6163,
+      111,
+      4993
      ],
      "block": "$hanging"
     }
    ]
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6183,
+     108,
+     4981
+    ],
+    [
+     6178,
+     108,
+     4981
+    ],
+    [
+     6185,
+     109,
+     4985
+    ],
+    [
+     6185,
+     109,
+     4993
+    ],
+    [
+     6156,
+     112,
+     4983
+    ],
+    [
+     6156,
+     112,
+     4995
+    ],
+    [
+     6172,
+     108,
+     4997
+    ],
+    [
+     6180,
+     108,
+     4997
+    ]
+   ],
+   "block": "$glow",
+   "why": "lights set flush into the walls, where a hung lantern would be in the way"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6186,
+    109,
+    4989
+   ],
+   "block": "$glow",
+   "why": "a light flush over the doorway's outer cell, so the way out is lit"
+  },
+  {
+   "op": "comment",
+   "why": "THE WAY OUT: an iron door in the east wall at the stair's head, opened by the stone button on the wall inside it and by nothing outside: out onto the lot's east side and round to the causeway. Nobody outside can press the button, so it is never a way in past the house and its juniors. Or back the way you came"
   },
   {
    "op": "carve",
    "box": [
-    6165,
-    85,
-    5010,
-    6167,
-    88,
-    5011
+    6185,
+    107,
+    4989,
+    6186,
+    108,
+    4989
    ],
-   "why": "the door: three wide, four high, through the south wall (two courses of shell and its inner band)"
+   "why": "the doorway through the east wall, two high"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6185,
+    107,
+    4989
+   ],
+   "block": "minecraft:iron_door[facing=west,half=lower,hinge=left,open=false,powered=false]",
+   "why": "the door"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6185,
+    108,
+    4989
+   ],
+   "block": "minecraft:iron_door[facing=west,half=upper,hinge=left,open=false,powered=false]"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6184,
+    108,
+    4988
+   ],
+   "block": "minecraft:stone_button[face=wall,facing=west,powered=false]",
+   "why": "its button, inside: it powers the wall block it is set on, beside the door's upper half"
   },
   {
    "op": "fill",
    "box": [
-    6164,
-    85,
-    5010,
-    6164,
-    88,
-    5010
+    6185,
+    109,
+    4988,
+    6185,
+    109,
+    4990
+   ],
+   "block": "$face",
+   "why": "the door's lintel, so the way out reads from across the gallery"
+  },
+  {
+   "op": "comment",
+   "why": "THE ASSAY HOUSE, laid flat along the gallery's south side: x6157..6184 by z4998..5008, the puzzle of the old house (the spoil steps, the broken flight, the hoods) condensed to one floor with a deck three above it. In at the west door, east along the strip, the hoods, the flue's foot, and north through the dividing wall onto the gallery's upper floor"
+  },
+  {
+   "op": "carve",
+   "box": [
+    6155,
+    107,
+    5002,
+    6156,
+    110,
+    5004
+   ],
+   "why": "THE DOOR, in the west wall at the strip's end, three wide and four high, from the apron where the causeway ends"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6155,
+    107,
+    5001,
+    6156,
+    110,
+    5001
    ],
    "block": "$copper",
    "why": "its jambs, in cut copper"
@@ -1308,370 +2470,897 @@
   {
    "op": "fill",
    "box": [
-    6168,
-    85,
-    5010,
-    6168,
-    88,
-    5010
+    6155,
+    107,
+    5005,
+    6156,
+    110,
+    5005
    ],
    "block": "$copper"
   },
   {
    "op": "fill",
    "box": [
-    6178,
-    93,
+    6155,
+    111,
     5001,
-    6180,
-    102,
-    5007
+    6156,
+    111,
+    5005
    ],
-   "block": "$shell",
-   "why": "the adit's walls, first stretch: solid from y93 up to y102 on x6178..6180, z5001..5007 under the vault's south end (inside the building's bounds from y103, which the through_building box carries); the stair is then cut out of it"
+   "block": "$face",
+   "why": "its lintel"
   },
   {
    "op": "fill",
    "box": [
-    6179,
-    92,
-    5008,
-    6180,
-    103,
-    5013
+    6157,
+    106,
+    4998,
+    6163,
+    106,
+    5008
    ],
-   "block": "$shell",
-   "why": "its second stretch, outside the building: x6179..6180, z5008..5013, up to y103 (natural top 105 on the lot, COVER 2)"
+   "block": "$floor",
+   "why": "the drill floor, smooth basalt"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6154,
+     107,
+     4984
+    ],
+    [
+     6154,
+     107,
+     4992
+    ],
+    [
+     6154,
+     107,
+     4998
+    ],
+    [
+     6154,
+     107,
+     5008
+    ]
+   ],
+   "block": "$post",
+   "why": "lamp posts along the apron"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6154,
+     108,
+     4984
+    ],
+    [
+     6154,
+     108,
+     4992
+    ],
+    [
+     6154,
+     108,
+     4998
+    ],
+    [
+     6154,
+     108,
+     5008
+    ]
+   ],
+   "block": "$lantern"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6158,
+     107,
+     4998
+    ],
+    [
+     6159,
+     107,
+     4998
+    ],
+    [
+     6162,
+     107,
+     5008
+    ]
+   ],
+   "block": "$barrel",
+   "why": "sample barrels along the walls"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6160,
+    107,
+    5008
+   ],
+   "block": "$furnace",
+   "why": "the assay furnace"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6158,
+     107,
+     5008
+    ],
+    [
+     6161,
+     107,
+     4998
+    ]
+   ],
+   "block": "$brewing",
+   "why": "assay stands"
   },
   {
    "op": "fill",
    "box": [
-    6178,
-    101,
-    5008,
-    6178,
-    103,
-    5011
+    6157,
+    107,
+    5006,
+    6158,
+    107,
+    5008
    ],
-   "block": "$shell",
-   "why": "and x6178 over the hall's shell (which stops at y100) so the stair's head room has a wall"
+   "block": "$spoil",
+   "why": "drilling spoil heaped in the corner, one course"
+  },
+  {
+   "op": "straight_stair",
+   "from": [
+    6163,
+    109,
+    5004
+   ],
+   "dir": "west",
+   "steps": 3,
+   "tread": "$spoiltread",
+   "under": "$spoil",
+   "headroom": 3,
+   "width": 3,
+   "why": "THE SPOIL STEPS: three treads of tuff, up three courses from the drill floor (y106) to the deck's level (y109), against the wall: the only way over the wall at x6164"
   },
   {
    "op": "fill",
    "box": [
     6164,
-    82,
-    5012,
-    6180,
-    100,
-    5014
+    107,
+    4998,
+    6164,
+    118,
+    5008
    ],
    "block": "$shell",
-   "why": "the foot of the adit: the corridor along the hall's south wall, x6164..6180, z5012 (open), 5013 and 5014 its wall, up to y100"
-  },
-  {
-   "op": "straight_stair",
-   "from": [
-    6179,
-    106,
-    5001
-   ],
-   "dir": "south",
-   "steps": 11,
-   "tread": "$tread",
-   "under": "$landing",
-   "headroom": 3,
-   "why": "the adit, first leg: eleven steps south from the vault's floor beside the spawner's cell (6178, 106, 5001), x6179, from y106 to y96 at z5011. Each step is a stair's half-block front or level, so it is walked up as well as down without a jump. Its head room is cut through the vault's floor for the first four cells (z5001..5004) and under the vault's south wall footing after that; the wall (y106 and up) is never cut"
+   "why": "the wall across the strip, x6164, three high below the deck's level and sheer: the steps are the only way up"
   },
   {
    "op": "carve",
    "box": [
-    6179,
-    96,
-    5012,
-    6179,
-    98,
-    5012
+    6164,
+    110,
+    5002,
+    6164,
+    113,
+    5004
    ],
-   "why": "the landing's head room"
+   "why": "its opening, above the deck's level: reached only up the steps"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6164,
+    114,
+    5002,
+    6164,
+    114,
+    5004
+   ],
+   "block": "$face",
+   "why": "and its lintel"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6165,
+    106,
+    4998,
+    6168,
+    108,
+    5008
+   ],
+   "block": "$shell",
+   "why": "THE DECK: a platform three above the drill floor, x6165..6168"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6165,
+    109,
+    4998,
+    6168,
+    109,
+    5008
+   ],
+   "block": "$plank",
+   "why": "planked in acacia"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6169,
+    106,
+    4998,
+    6174,
+    106,
+    5008
+   ],
+   "block": "$straw",
+   "why": "THE BROKEN FLIGHT: the scaffold that carried the cores up has lost its planking but for a catwalk three wide down the middle; the floor either side is packed straw, three down from the deck (a fall onto straw hurts nobody)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6169,
+    107,
+    4998,
+    6171,
+    108,
+    5001
+   ],
+   "block": "$shell",
+   "why": "the wedge under the north pit's stair"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6169,
+    107,
+    5005,
+    6171,
+    108,
+    5008
+   ],
+   "block": "$shell",
+   "why": "and the south pit's"
+  },
+  {
+   "op": "straight_stair",
+   "from": [
+    6169,
+    109,
+    4998
+   ],
+   "dir": "east",
+   "steps": 3,
+   "tread": "$tread",
+   "under": "$shell",
+   "headroom": 3,
+   "width": 4,
+   "why": "a stair out of each pit, back up onto the deck: four wide, three treads, rising west. A fall costs a walk, never a softlock; it leads back to the catwalk's start, not past it"
+  },
+  {
+   "op": "straight_stair",
+   "from": [
+    6169,
+    109,
+    5005
+   ],
+   "dir": "east",
+   "steps": 3,
+   "tread": "$tread",
+   "under": "$shell",
+   "headroom": 3,
+   "width": 4
+  },
+  {
+   "op": "fill",
+   "box": [
+    6169,
+    106,
+    5002,
+    6174,
+    108,
+    5004
+   ],
+   "block": "$shell",
+   "why": "THE CATWALK: the one stretch of the flight still planked, x6169..6174 by z5002..5004, level with the deck"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6169,
+    109,
+    5002,
+    6174,
+    109,
+    5004
+   ],
+   "block": "$plank"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6175,
+    106,
+    4998,
+    6177,
+    108,
+    5008
+   ],
+   "block": "$shell",
+   "why": "THE SECOND DECK, x6175..6177, where the hoods open"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6175,
+    109,
+    4998,
+    6177,
+    109,
+    5008
+   ],
+   "block": "$plank"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6178,
+    107,
+    4998,
+    6182,
+    118,
+    5008
+   ],
+   "block": "$shell",
+   "why": "THE FOUR HOODS: the flue's foot is a wall five thick, x6178..6182, with a copper-hooded stair cut down into it at four places. Three stop on packed straw at a wall; the true one is the third, which goes on into the flue's foot"
+  },
+  {
+   "op": "straight_stair",
+   "from": [
+    6178,
+    109,
+    4998
+   ],
+   "dir": "east",
+   "steps": 3,
+   "tread": "$tread",
+   "under": "$shell",
+   "headroom": 3,
+   "width": 2,
+   "why": "each hood a stair of three treads down from the deck (y109) to the flue floor (y106)"
+  },
+  {
+   "op": "carve",
+   "box": [
+    6181,
+    107,
+    4998,
+    6181,
+    109,
+    4999
+   ]
+  },
+  {
+   "op": "fill",
+   "box": [
+    6181,
+    106,
+    4998,
+    6181,
+    106,
+    4999
+   ],
+   "block": "$straw",
+   "why": "the dead end: packed straw on the flue floor and a wall"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6178,
+    113,
+    4998,
+    6178,
+    113,
+    4999
+   ],
+   "block": "$brick"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6177,
+    113,
+    4998,
+    6177,
+    113,
+    4999
+   ],
+   "block": "$copper",
+   "why": "the copper hood over the mouth"
   },
   {
    "op": "setblock",
    "pos": [
-    6179,
-    95,
-    5012
+    6182,
+    108,
+    4998
    ],
-   "block": "$landing",
-   "why": "the corner, a full block level with the next leg's back"
+   "block": "$glow",
+   "why": "a light flush in the dead end's wall"
   },
   {
    "op": "straight_stair",
    "from": [
     6178,
-    95,
-    5012
+    109,
+    5001
    ],
-   "dir": "west",
-   "steps": 11,
+   "dir": "east",
+   "steps": 3,
    "tread": "$tread",
-   "under": "$landing",
+   "under": "$shell",
    "headroom": 3,
-   "why": "the adit, second leg: eleven steps west along the hall's south wall from the landing (y95) to x6168 (y85)"
+   "width": 2
   },
   {
    "op": "carve",
    "box": [
-    6165,
-    85,
-    5012,
-    6167,
-    88,
-    5012
-   ],
-   "why": "the foot: flat, three wide, in line with the door"
+    6181,
+    107,
+    5001,
+    6181,
+    109,
+    5002
+   ]
   },
   {
    "op": "fill",
    "box": [
-    6165,
-    83,
-    5012,
-    6167,
-    84,
-    5012
+    6181,
+    106,
+    5001,
+    6181,
+    106,
+    5002
+   ],
+   "block": "$straw"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6178,
+    113,
+    5001,
+    6178,
+    113,
+    5002
+   ],
+   "block": "$brick"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6177,
+    113,
+    5001,
+    6177,
+    113,
+    5002
+   ],
+   "block": "$copper"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6182,
+    108,
+    5001
+   ],
+   "block": "$glow"
+  },
+  {
+   "op": "straight_stair",
+   "from": [
+    6178,
+    109,
+    5004
+   ],
+   "dir": "east",
+   "steps": 3,
+   "tread": "$tread",
+   "under": "$shell",
+   "headroom": 3,
+   "width": 2
+  },
+  {
+   "op": "carve",
+   "box": [
+    6181,
+    107,
+    5004,
+    6181,
+    109,
+    5005
+   ]
+  },
+  {
+   "op": "carve",
+   "box": [
+    6182,
+    107,
+    5004,
+    6182,
+    109,
+    5005
+   ],
+   "why": "the true hood goes on: the wall at x6182 is open here and the stair gives onto the flue's foot"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6178,
+    113,
+    5004,
+    6178,
+    113,
+    5005
+   ],
+   "block": "$face",
+   "why": "its hood in chiselled blackstone, with a lantern either side on the deck: the lit way"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6177,
+     110,
+     5003
+    ],
+    [
+     6177,
+     110,
+     5006
+    ]
+   ],
+   "block": "$lantern"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6177,
+    113,
+    5004,
+    6177,
+    113,
+    5005
+   ],
+   "block": "$copper"
+  },
+  {
+   "op": "straight_stair",
+   "from": [
+    6178,
+    109,
+    5007
+   ],
+   "dir": "east",
+   "steps": 3,
+   "tread": "$tread",
+   "under": "$shell",
+   "headroom": 3,
+   "width": 2
+  },
+  {
+   "op": "carve",
+   "box": [
+    6181,
+    107,
+    5007,
+    6181,
+    109,
+    5008
+   ]
+  },
+  {
+   "op": "fill",
+   "box": [
+    6181,
+    106,
+    5007,
+    6181,
+    106,
+    5008
+   ],
+   "block": "$straw"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6178,
+    113,
+    5007,
+    6178,
+    113,
+    5008
+   ],
+   "block": "$brick"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6177,
+    113,
+    5007,
+    6177,
+    113,
+    5008
+   ],
+   "block": "$copper"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6182,
+    108,
+    5007
+   ],
+   "block": "$glow"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6183,
+    106,
+    4998,
+    6184,
+    106,
+    5008
    ],
    "block": "$floor",
-   "why": "its floor, level with the hall's (y84)"
+   "why": "THE FLUE'S FOOT: a passage two wide along the east wall, x6183..6184, the only way on from the hoods"
+  },
+  {
+   "op": "carve",
+   "box": [
+    6183,
+    107,
+    4997,
+    6184,
+    110,
+    4997
+   ],
+   "why": "the opening north through the dividing wall onto the gallery's upper floor, two wide and four high"
   },
   {
    "op": "fill",
    "box": [
-    6178,
-    103,
-    5002,
-    6178,
-    105,
-    5007
+    6183,
+    106,
+    4997,
+    6184,
+    106,
+    4997
    ],
-   "block": "$shell",
-   "why": "the adit's first leg where it leaves the vault: its west wall at y103..105, rock the build never wrote (the independent audit, finding 2: a natural cave could open here)"
+   "block": "$floor"
   },
   {
    "op": "fill",
    "box": [
-    6180,
-    103,
-    5002,
-    6180,
-    105,
-    5007
+    6182,
+    107,
+    4997,
+    6182,
+    110,
+    4997
    ],
-   "block": "$shell",
-   "why": "the same, the east wall"
+   "block": "$copper",
+   "why": "its jamb"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6183,
+    111,
+    4997,
+    6184,
+    111,
+    4997
+   ],
+   "block": "$face",
+   "why": "its lintel"
   },
   {
    "op": "scatter",
    "positions": [
     [
-     6179,
-     104,
-     5007
+     6156,
+     109,
+     5000
     ],
     [
-     6179,
-     105,
-     5006
-    ]
-   ],
-   "block": "$shell",
-   "why": "the adit's ceiling over its top treads where it meets the vault's south footing: two rock cells the build never wrote (the independent audit's shell finding)"
-  },
-  {
-   "op": "scatter",
-   "positions": [
-    [
-     6178,
-     106,
-     5007
-    ],
-    [
-     6180,
-     106,
-     5007
-    ]
-   ],
-   "block": "minecraft:shroomlight",
-   "why": "the two pockets beside the adit's top at y106..107 that the new wall tops left dark: a light block in their floor (the independent audit's light finding)"
-  },
-  {
-   "op": "scatter",
-   "positions": [
-    [
-     6166,
-     88,
-     5012
-    ]
-   ],
-   "block": "$hanging",
-   "why": "lanterns hung from the adit's roof, one every four steps, so no step is dark (four of the five moved into the walls 2026-10-09: hung in the third course of headroom over a tread they stopped a standing player; the independent audit's finding 1)"
-  },
-  {
-   "op": "scatter",
-   "positions": [
-    [
-     6180,
-     103,
+     6156,
+     109,
      5006
     ],
     [
-     6180,
-     99,
-     5010
+     6185,
+     109,
+     5000
     ],
     [
-     6175,
-     94,
-     5013
+     6185,
+     109,
+     5006
+    ],
+    [
+     6159,
+     109,
+     5009
+    ],
+    [
+     6165,
+     109,
+     5009
     ],
     [
      6171,
-     90,
-     5013
+     109,
+     5009
+    ],
+    [
+     6176,
+     109,
+     5009
+    ],
+    [
+     6159,
+     109,
+     4997
+    ],
+    [
+     6165,
+     109,
+     4997
+    ],
+    [
+     6171,
+     109,
+     4997
+    ],
+    [
+     6176,
+     109,
+     4997
     ]
    ],
-   "block": "minecraft:shroomlight",
-   "why": "the adit's lights set flush into its walls at head height, where the hung lanterns were (none in the headroom)"
-  },
-  {
-   "op": "scatter",
-   "positions": [
-    [
-     6156,
-     85,
-     4986
-    ],
-    [
-     6156,
-     85,
-     4992
-    ],
-    [
-     6156,
-     85,
-     4998
-    ],
-    [
-     6156,
-     85,
-     5004
-    ],
-    [
-     6176,
-     85,
-     4986
-    ],
-    [
-     6176,
-     85,
-     4992
-    ],
-    [
-     6176,
-     85,
-     4998
-    ],
-    [
-     6176,
-     85,
-     5004
-    ]
-   ],
-   "block": "$lantern",
-   "why": "floor lanterns at the foot of the core tubes along both side walls: the check found ten standable cells at block light 0 at x6156/x6176 (added by the main session from the builder's handed-back fix)"
+   "block": "$glow",
+   "why": "lights set flush into the house's walls at head height, none hung in the headroom"
   }
  ],
  "probes": [
   {
-   "what": "the floor's axis line",
+   "what": "the gallery floor's axis line",
    "at": [
-    6166,
-    84,
-    5003
+    6170,
+    103,
+    4989
    ],
    "block": "minecraft:calcite"
   },
   {
    "what": "air in the gallery",
    "at": [
-    6166,
-    92,
-    4995
+    6170,
+    112,
+    4989
    ],
    "block": "minecraft:air"
   },
   {
    "what": "the bore-hole's lava, sealed",
    "at": [
-    6166,
-    93,
-    4977
+    6156,
+    112,
+    4989
    ],
    "block": "minecraft:lava"
   },
   {
    "what": "the bore-hole's glass",
    "at": [
-    6166,
-    93,
-    4979
+    6157,
+    112,
+    4989
    ],
    "block": "minecraft:glass"
   },
   {
    "what": "the magma sill under it",
    "at": [
-    6166,
-    88,
-    4979
+    6157,
+    107,
+    4989
    ],
    "block": "minecraft:magma_block"
   },
   {
-   "what": "the south door",
+   "what": "the west door",
    "at": [
-    6166,
-    86,
-    5010
+    6155,
+    108,
+    5003
    ],
    "block": "minecraft:air"
   },
   {
-   "what": "the adit's corner landing",
+   "what": "the door at the stair's head",
    "at": [
-    6179,
-    95,
-    5012
+    6185,
+    107,
+    4989
    ],
-   "block": "minecraft:polished_blackstone_bricks"
+   "block": "minecraft:iron_door"
   },
   {
-   "what": "the shell's north-west bottom corner",
+   "what": "its button, inside",
    "at": [
-    6154,
-    81,
-    4977
+    6184,
+    108,
+    4988
    ],
-   "block": "minecraft:blackstone"
+   "block": "minecraft:stone_button"
   },
   {
-   "what": "the shell's south-east top corner",
+   "what": "the true hood, open to the flue's foot",
    "at": [
-    6178,
-    100,
-    5011
+    6182,
+    108,
+    5004
    ],
-   "block": "minecraft:blackstone"
+   "block": "minecraft:air"
+  },
+  {
+   "what": "a false hood's wall",
+   "at": [
+    6182,
+    108,
+    4999
+   ],
+   "block": "minecraft:polished_blackstone"
+  },
+  {
+   "what": "the old arena's nave, taken down",
+   "at": [
+    6166,
+    90,
+    4989
+   ],
+   "block": "minecraft:stone"
+  },
+  {
+   "what": "the old Assay House's flue, cleared",
+   "at": [
+    6170,
+    118,
+    4995
+   ],
+   "block": "minecraft:air"
   }
  ]
 }
