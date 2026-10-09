@@ -117,7 +117,7 @@
   },
   "rooms": [
     {
-      "id": "the_lane_door",
+      "id": "relay_lane_door",
       "kind": "entrance",
       "box": [
         1722,
@@ -130,7 +130,7 @@
       "why": "the door on the lane and the bay behind it: cable drums and spools, the tower ahead across the whole strip"
     },
     {
-      "id": "the_tower",
+      "id": "relay_tower",
       "kind": "junior",
       "box": [
         1724,
@@ -143,7 +143,7 @@
       "why": "the transformer bank across the strip, climbed only by its stair at the east end; the Line Engineer stands at its foot, then the catwalk on top"
     },
     {
-      "id": "the_leads",
+      "id": "relay_leads",
       "kind": "puzzle",
       "box": [
         1724,
@@ -156,7 +156,7 @@
       "why": "three bus bars over a floor of straw; three leads from the catwalk, one whole (west), the bright live bar with the open isolator in it. The Relay Technician stands on the deck at the whole lead"
     },
     {
-      "id": "the_duct",
+      "id": "relay_duct_room",
       "kind": "puzzle",
       "box": [
         1724,
@@ -169,7 +169,7 @@
       "why": "the isolator wall, the duct through it and its stair down onto the ground"
     },
     {
-      "id": "the_junction",
+      "id": "relay_junction",
       "kind": "junior",
       "box": [
         1724,
@@ -182,7 +182,7 @@
       "why": "the foot of the duct stair and the cross passage east through the divider; the Cable Rigger stands in it"
     },
     {
-      "id": "the_earthing_gallery",
+      "id": "relay_earthing_gallery",
       "kind": "passage",
       "box": [
         1735,
@@ -195,7 +195,7 @@
       "why": "the platform at the works' level across the hall's south end, and its one broad stair down"
     },
     {
-      "id": "the_grounding_hall",
+      "id": "relay_grounding_hall",
       "kind": "arena",
       "box": [
         1735,
@@ -211,7 +211,7 @@
   "route": [
     {
       "step": 1,
-      "id": "the_door",
+      "id": "relay_door",
       "from": [
         1721,
         175,
@@ -226,7 +226,7 @@
     },
     {
       "step": 2,
-      "id": "the_bank_stair",
+      "id": "relay_bank_stair",
       "from": [
         1732,
         175,
@@ -242,7 +242,7 @@
     },
     {
       "step": 3,
-      "id": "the_leads",
+      "id": "relay_leads_choice",
       "from": [
         1727,
         177,
@@ -258,7 +258,7 @@
     },
     {
       "step": 4,
-      "id": "the_live_bar",
+      "id": "relay_live_bar",
       "from": [
         1725,
         179,
@@ -274,7 +274,7 @@
     },
     {
       "step": 5,
-      "id": "the_duct",
+      "id": "relay_duct",
       "from": [
         1725,
         179,
@@ -289,7 +289,7 @@
     },
     {
       "step": 6,
-      "id": "the_duct_stair",
+      "id": "relay_duct_stair",
       "from": [
         1725,
         179,
@@ -305,7 +305,7 @@
     },
     {
       "step": 7,
-      "id": "the_cross_passage",
+      "id": "relay_cross_passage",
       "from": [
         1725,
         175,
@@ -320,7 +320,7 @@
     },
     {
       "step": 8,
-      "id": "the_broad_stair",
+      "id": "relay_broad_stair",
       "from": [
         1742,
         175,
@@ -336,7 +336,7 @@
     },
     {
       "step": 9,
-      "id": "surge",
+      "id": "relay_surge_floor",
       "from": [
         1742,
         172,

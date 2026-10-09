@@ -40,13 +40,13 @@
 
     {"id": "gym3_junior_01", "name": "Line Engineer", "gym": "gym3", "seat": [1730, 175, 1394], "yaw": 135,
      "skin": "rctmod:textures/trainers/single/engineer_baily_00dc.png", "eye_contact": true, "sight_distance": 3.0,
-     "room": "the_tower", "why": "re-seated 2026-10-09 in the walk-through Relay Works (data/gym_arenas/gym3.json): on the bay floor at the foot of the transformer bank across the strip, beside its stair at the east end (x1732..1733), the only climb onto the catwalk; every walk in from the lane door comes into his sight before the stair"},
+     "room": "relay_tower", "why": "re-seated 2026-10-09 in the walk-through Relay Works (data/gym_arenas/gym3.json): on the bay floor at the foot of the transformer bank across the strip, beside its stair at the east end (x1732..1733), the only climb onto the catwalk; every walk in from the lane door comes into his sight before the stair"},
     {"id": "gym3_junior_02", "name": "Relay Technician", "gym": "gym3", "seat": [1726, 177, 1403], "yaw": 225,
      "skin": "rctmod:textures/trainers/single/scientist_beau_0154.png", "eye_contact": true, "sight_distance": 3.0,
-     "room": "the_leads", "why": "re-seated 2026-10-09: on the catwalk deck where the three leads leave it, in front of the whole one (x1725..1726): nobody reaches the live bus without stepping onto its first stair under her eye"},
+     "room": "relay_leads", "why": "re-seated 2026-10-09: on the catwalk deck where the three leads leave it, in front of the whole one (x1725..1726): nobody reaches the live bus without stepping onto its first stair under her eye"},
     {"id": "gym3_junior_03", "name": "Cable Rigger", "gym": "gym3", "seat": [1730, 175, 1425], "yaw": 100,
      "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png", "eye_contact": true, "sight_distance": 3.0,
-     "room": "the_junction", "why": "re-seated 2026-10-09: in the junction at the foot of the duct stair, before the cross passage to the Grounding Hall (x1734, z1426..1428): the last thing between the bus and Surge, 40 from him through walls, so no fight with him starts from here"},
+     "room": "relay_junction", "why": "re-seated 2026-10-09: in the junction at the foot of the duct stair, before the cross passage to the Grounding Hall (x1734, z1426..1428): the last thing between the bus and Surge, 40 from him through walls, so no fight with him starts from here"},
 
     {"id": "gym4_junior_01", "name": "Glasshouse Gardener", "gym": "gym4", "seat": [4314, 116, 1502], "yaw": 90,
      "skin": "rctmod:textures/trainers/single/aroma_lady_rose_0241.png", "eye_contact": true, "sight_distance": 3.0,
