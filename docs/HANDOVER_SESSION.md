@@ -62,3 +62,7 @@ challenge tests (1.1 vs 2.6).
 ## 6. The PR
 [#132](https://github.com/Millerb7/cobblers/pull/132), draft, `claude/night-shift-engine-gym-9b76f2` -> main, FROZEN
 once reported: further work goes on a new branch. Re-read its head before quoting (`gh pr view 132 --json headRefOid`).
+
+## 7. After the handover (the owner, 2026-10-09 morning, playing staging)
+- **The rip's look: the owner chose the Cobblemon Ultra Beasts wormhole** (https://www.curseforge.com/minecraft/mc-mods/cobblemon-ultra-beasts: a pink cloud ring round a blue centre, an oval). NOT installed. Next: read its jar and licence (`dependency-auditor`): can its portal be placed by command without its timer and dimension, and may its texture ship in our client pack? If either is no, draw our own oval in that style as an animated texture on a display entity at the rip.
+- **Playtest switch** (branch `build/2026-10-09-dungeon-playtest`, stacked on #132): a player tagged `cobblers.dg_playtest` skips the rip's over-cap refusal and runs at band `dg.ptband` (1-6). Staging only, set by hand. The owner wanted a level-100 team against band 1. The band otherwise follows the level cap, and a cap of 100 (the Champion flag) means band 6, so the band-1 sigil was refused.
