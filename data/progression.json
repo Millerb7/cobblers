@@ -3532,6 +3532,53 @@
       "why": "the dialogue cursor of Cassius Rook's conversation (dlg_hunters_hide)."
     },
     {
+      "id": "quest.evt_long_count.started",
+      "quest_id": "evt_long_count",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Perrin Hale (data/long_count.json long_count); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_long_count.reward_claimed",
+      "quest_id": "evt_long_count",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has shown Perrin a Sitrus Berry and been given her Growth Mulch (dlg_long_count r_berry, grant_reward_once); the option closes."
+    },
+    {
+      "id": "quest.evt_long_count.dialogue_cursor",
+      "quest_id": "evt_long_count",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "c001",
+      "allowed_values": [
+        "c001",
+        "c002",
+        "hub",
+        "k001",
+        "k002",
+        "g001",
+        "g002",
+        "g003",
+        "t001",
+        "t002",
+        "t003",
+        "p001",
+        "p002",
+        "f001",
+        "w001",
+        "b001",
+        "b002",
+        "b003"
+      ],
+      "why": "the dialogue cursor of Perrin Hale's conversation (dlg_long_count)."
+    },
+    {
       "id": "quest.ambient_pokemon_farm.farmer_cursor",
       "quest_id": "ambient_pokemon_farm",
       "field": "farmer_cursor",

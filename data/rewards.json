@@ -2049,6 +2049,44 @@
           3306
         ]
       }
+    },
+    {
+      "id": "long_count_thanks",
+      "kind": "npc_grant",
+      "place": "Perrin Hale's camp on Foothill Woods' north-east side (data/long_count.json long_count), at the fire",
+      "npc_at": [2140, 124, 2159],
+      "quest": "evt_long_count",
+      "contents": [
+        {
+          "item": "cobblemon:growth_mulch",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/growth_mulch.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-09 in the offline server snapshot C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods)"
+        }
+      ],
+      "why": "Perrin's thanks for a Sitrus Berry from the world tree's roots (the cache r3_world_tree_roots gives two), shown to her and not taken: she dries what the Grotle leaves on its lane and gives two Growth Mulch for the berry trees. One per player, by grant_reward_once. A modest reward for a modest errand at tier 3 (Foothill Woods, band 2): mulch is the berry gardener's, not a curve-breaker. Nothing is consumed from the player (compile_dialogue's consume_held_item empties a whole stack, data/quests.json evt_route1_thirsty_stranger note), so the condition is only that the berry is held.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/long_count.py seats Perrin Hale on, and it refuses to build when they differ"
+    },
+    {
+      "id": "long_count_first_oak",
+      "kind": "cache",
+      "place": "the Long Count's first tree (data/long_count.json long_count), 108 paces down the Grotle's lane from where it rests now (the YEAR 0 stake is at 104): a tin set into the ground under the YEAR 0 stake",
+      "contents": [
+        {
+          "item": "cobblemon:miracle_seed",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/miracle_seed.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-09 in the offline server snapshot C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods)"
+        },
+        {
+          "item": "cobblemon:oran_berry",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/oran_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-09 in the offline server snapshot C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods)"
+        }
+      ],
+      "message": "In the tin under the first stake: a Miracle Seed, and two Oran Berries kept in it a long time and none the worse.",
+      "why": "data/long_count.json long_count: what a woman who plants a tree a year buries at the first. A Miracle Seed (held: Grass moves) is a natural source of a held item otherwise bought or crafted, the right gift for a Grotle; two Oran Berries for the walk back. Tier 3, optional, off the road by 204 blocks; the critical path needs none of it. items_hook: data/long_count.json long_count caches[0].",
+      "built_by": "tools/long_count.py (the barrel, in cobblers_long_count's long_count build, step R9LC)",
+      "trigger": {"min": [2222, 130, 2072], "max": [2224, 131, 2074]},
+      "container": {"block": "minecraft:barrel", "at": [2223, 129, 2073]}
     }
   ]
 }

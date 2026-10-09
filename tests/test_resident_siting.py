@@ -47,12 +47,12 @@ def _southern(name="southern_residents.json"):
 
 
 RES = load("resident_encounters.json")["encounters"] + _southern() + _southern("northern_residents.json") \
-    + _southern("far_south.json")
+    + _southern("far_south.json") + _southern("long_count.json")
 DESIGN = load("encounter_design.json")
 HEARTS = DESIGN["rules"]["hearts"]
 IDS = [e["id"] for e in RES]
 SOUTH_IDS = {e["id"] for e in _southern()} | {e["id"] for e in _southern("northern_residents.json")} \
-    | {e["id"] for e in _southern("far_south.json")}
+    | {e["id"] for e in _southern("far_south.json")} | {e["id"] for e in _southern("long_count.json")}
 FAR_SOUTH = {"greymane", "fifth_chimney", "old_watcher"}
 
 
@@ -60,6 +60,11 @@ FAR_SOUTH = {"greymane", "fifth_chimney", "old_watcher"}
 # silently stop holding those Pokemon.
 def test_the_far_south_residents_are_held_to_the_rules():
     assert FAR_SOUTH <= set(IDS), sorted(FAR_SOUTH - set(IDS))
+
+
+# The same for the Long Count's Grotle (data/long_count.json, 2026-10-09, gym 2).
+def test_the_long_counts_grotle_is_held_to_the_rules():
+    assert "old_pace" in set(IDS), "data/long_count.json's Grotle is not read by this file's three rules"
 
 
 def _sub_of(x, z):
