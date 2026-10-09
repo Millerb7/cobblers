@@ -251,13 +251,20 @@ def packs(tmp_path_factory):
     if not (A.SNAPSHOT / "mods").exists():
         pytest.skip("no server snapshot with the jars at %s" % A.SNAPSHOT)
     out = tmp_path_factory.mktemp("arena_audit")
-    arenas, buildings = out / "arenas", out / "buildings"
+    arenas, buildings, demolish = out / "arenas", out / "buildings", out / "demolish"
     for cmd in ([sys.executable, str(ROOT / "tools" / "gym_arenas.py"), "build", "--out", str(arenas)],
                 [sys.executable, str(ROOT / "tools" / "gym_buildings.py"), "build", "--out", str(buildings)],
+                [sys.executable, str(ROOT / "tools" / "gym_demolish.py"), "build", "--out", str(demolish)],
                 [sys.executable, str(ROOT / "tools" / "gym_interiors.py"), "build"]):
         r = subprocess.run(cmd, capture_output=True, text=True)
         assert r.returncode == 0, "%s failed: %s" % (cmd[1], (r.stderr or r.stdout)[-800:])
-    return G, arenas, buildings
+    # R16F is replayed from the demolition pack: built here too, so the audit never reads a stale or absent
+    # build/datapacks/cobblers_gym_demolish (on a fresh checkout it is absent and every gym's replay fails with
+    # "run its generator first")
+    mp = pytest.MonkeyPatch()
+    mp.setattr(A, "DEMOLISH_PACK", demolish)
+    yield G, arenas, buildings
+    mp.undo()
 
 
 @pytest.fixture(scope="module")

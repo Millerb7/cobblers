@@ -53,10 +53,22 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 import gym_buildings_independent as A  # noqa: E402
 
+def historic_records(root=ROOT):
+    """Every data/gym_buildings/*.json, including a record that carries `superseded_by` (2026-10-09: all seven are
+    superseded by a walk-through hall, data/gym_arenas/<gym>.json schema gym_hall/1; R16G no longer builds them and
+    the audit's default load_records, which reads what is BUILT, returns nothing). The record stays as the record of
+    what stood and tools/gym_buildings.py still models it, so it is the one fixture left that exercises this audit
+    and the building generator on real content: the building is emitted into a scratch pack with `superseded_by`
+    dropped in memory (the data is untouched), exactly as R16G did the day before. What these tests protect is the
+    AUDIT and the GENERATOR; that the hall which replaced a building is sound is tests/test_gym_halls.py and
+    tools/gym_arenas_audit.py, which do not read this file's buildings."""
+    return A.load_records(root, include_superseded=True)
+
+
 # Every record that exists on disk, not a list written down here. A hardcoded five is how gyms 6 and 8 went
 # unaudited for a day: tools/gym_buildings_independent.py has always globbed the folder, so the audit covered
 # them while these tests did not look, and the one test that compares the two is what caught it.
-GYMS = tuple(sorted(A.load_records(ROOT)))
+GYMS = tuple(sorted(historic_records()))
 
 # (gym, code) -> the finding. Each is a defect in the built content, seen by this audit and confirmed by hand
 # against the emitted text; see docs/world-building/GYM_BUILDINGS_REVIEW.md. Delete an entry when the content is
@@ -85,7 +97,7 @@ COORD = re.compile(r"^(fill|setblock) (-?\d+) (-?\d+) (-?\d+)( (-?\d+) (-?\d+) (
 # ---------------------------------------------------------------------------------------------------- the fixtures
 @pytest.fixture(scope="module")
 def records():
-    return A.load_records(ROOT)
+    return historic_records()
 
 
 @pytest.fixture(scope="module")
@@ -118,6 +130,15 @@ def emitted(tmp_path_factory, records):
     mp.setattr(GB, "PACK", base)
     mp.setattr(GB, "FUNCS", funcs)
     mp.setattr(GB, "REPORT", base / "derived")
+    real_load = GB.load
+
+    def load_as_built(path):
+        # the records as R16G built them before the halls: `superseded_by` dropped in memory, the file untouched
+        d = real_load(path)
+        if isinstance(d, dict) and d.get("schema") == GB.SCHEMA:
+            d.pop("superseded_by", None)
+        return d
+    mp.setattr(GB, "load", load_as_built)
     try:
         GB.main(["build"])
     finally:
@@ -180,15 +201,17 @@ def appended(text, *lines):
 
 
 # ----------------------------------------------------------------- the content, one property at a time
-def assert_clean(rep, gid, codes, what):
-    """No problem of these codes for this gym, except the ones KNOWN_DEFECTS records (which xfail; fixed ones fail)."""
-    present = {c for g, c, _ in rep.items if g == gid and c in codes}
+def assert_clean(rep, gid, codes, what, ignore=None):
+    """No problem of these codes for this gym, except the ones KNOWN_DEFECTS records (which xfail; fixed ones fail).
+    `ignore(text)` drops a finding that is named and justified by the caller."""
+    ignore = ignore or (lambda _t: False)
+    present = {c for g, c, t in rep.items if g == gid and c in codes and not ignore(t)}
     known = {c for (g, c) in KNOWN_DEFECTS if g == gid and c in codes}
     stale = known - present
     assert not stale, "%s no longer has %s: delete it from KNOWN_DEFECTS (%s)" % (gid, sorted(stale), what)
     fresh = present - known
     if fresh:
-        detail = [t for g, c, t in rep.items if g == gid and c in fresh]
+        detail = [t for g, c, t in rep.items if g == gid and c in fresh and not ignore(t)]
         pytest.fail("%s %s:\n  %s" % (gid, what, "\n  ".join(d[:400] for d in detail)))
     if present:
         pytest.xfail("; ".join(sorted({KNOWN_DEFECTS[(gid, c)] for c in present})))
@@ -212,10 +235,42 @@ def test_every_building_lies_inside_its_spawn_free_box(baseline, gid):
     assert_clean(baseline[0], gid, {"spawn"}, "spawn suppression")
 
 
+COORD_IN_TEXT = re.compile(r"names \((-?\d+), (-?\d+), (-?\d+)\)")
+
+
+def hall_owned(gid):
+    """A predicate over a finding's text: True for a claim on the building's columns that is THE REPLACING HALL's own
+    data and nothing else. Since 2026-10-09 every building here stands under a walk-through hall on the same lot, so
+    the data that seats things in the hall names the same columns: the gym's own juniors (seats), its leader's Challenge
+    cell (bosses.<leader>.spawner at / superseded_at) and a town NPC standing in the hall's entrance room. Anything
+    else (a scene, a portal, a route, another gym) is still a finding; and that the NPC stands on the hall's floor in
+    open air is tests/test_gym_halls.py's, not this audit's."""
+    hall = json.loads((ROOT / "data" / "gym_arenas" / ("%s.json" % gid)).read_text(encoding="utf-8"))
+    juniors = {tuple(t["seat"]) for t in json.loads((ROOT / "data" / "gym_junior_trainers.json").read_text(
+        encoding="utf-8"))["trainers"] if t["gym"] == gid}
+    entrance = [r["box"] for r in hall.get("rooms") or [] if r.get("kind") == "entrance"]
+
+    def ours(text):
+        m = COORD_IN_TEXT.search(text)
+        if not m:
+            return False
+        c = tuple(int(v) for v in m.groups())
+        if "gym_junior_trainers.json" in text:
+            return c in juniors
+        if "challenge_mode.json/bosses/%s/spawner/" % hall["leader"]["id"] in text:
+            return True
+        if "npc_seats.json" in text:
+            return any(b[0] <= c[0] <= b[3] and b[1] <= c[1] <= b[4] and b[2] <= c[2] <= b[5] for b in entrance)
+        return False
+    return ours
+
+
 @pytest.mark.parametrize("gid", GYMS)
 def test_nothing_else_claims_the_columns_a_building_occupies(baseline, gid):
-    # breaks if: a scene, portal, route or landmark is authored inside a gym building, or two gyms collide
-    assert_clean(baseline[0], gid, {"gym_cells", "misty", "data_claim"}, "overlap")
+    # breaks if: a scene, portal, route or landmark is authored inside a gym building, or two gyms collide. The
+    # replacing hall's own seats are the one named exception (hall_owned): without it this went red on 2026-10-09 for
+    # a true reason that is not a fault, and the fix must not be "stop looking"
+    assert_clean(baseline[0], gid, {"gym_cells", "misty", "data_claim"}, "overlap", ignore=hall_owned(gid))
 
 
 @pytest.mark.parametrize("gid", GYMS)
@@ -300,6 +355,22 @@ def test_every_building_is_an_interior_that_was_superseded(records):
     halls |= {g["id"] for g in doc["gyms"] if str(g.get("superseded_by") or "").startswith("data/gym_arenas/")}
     assert set(records) == superseded - halls, (sorted(records), sorted(superseded - halls))
     assert [g["id"] for g in doc["gyms"] if g.get("built")] == []
+    # `records` here are the historic ones (all of data/gym_buildings, see historic_records), so the set is whole again
+    assert set(records) == superseded, (sorted(records), sorted(superseded))
+    assert [g["id"] for g in doc["gyms"] if g.get("built")] == ["gym2"]
+
+
+def test_a_building_that_is_no_longer_built_has_the_walk_through_hall_that_replaced_it():
+    # breaks if: a building record is marked `superseded_by` (so R16G stops building it and this audit stops reading
+    # it as built) while no gym_hall/1 record stands in its place: the gym would then have no building and no hall.
+    # Read from the folders, never a fixed list, so a gym that gets a hall later is covered.
+    for p in sorted((ROOT / "data" / "gym_buildings").glob("*.json")):
+        b = json.loads(p.read_text(encoding="utf-8"))
+        if not b.get("superseded_by"):
+            continue
+        a = ROOT / "data" / "gym_arenas" / p.name
+        assert a.is_file(), "%s is superseded but %s does not exist" % (p.name, a.relative_to(ROOT))
+        assert json.loads(a.read_text(encoding="utf-8")).get("schema") == "gym_hall/1", p.name
 
 
 def test_exactly_one_spawner_per_building_names_its_own_leader_and_no_healer_is_written(baseline):
@@ -439,7 +510,7 @@ def test_two_buildings_writing_the_same_cells_is_caught(emitted, records, placem
     # breaks if: cross-building collisions are not compared at cell level
     texts, _ = emitted
     t = dict(texts)
-    t["gym3"] = texts["gym4"]   # gym 1's building is superseded by its hall (2026-10-09): any two built ones do
+    t["gym3"] = texts["gym4"]   # any two buildings do (all seven are historic fixtures since 2026-10-09)
     rep, _s, _w, _e = A.run(t, records, placements, ground, only={"gym4", "gym3"})
     assert "gym_cells" in rep.codes() or "lot" in rep.codes("gym3")
 
@@ -649,7 +720,8 @@ def test_the_ground_comes_from_the_town_plan_and_the_heightmap_and_never_from_a_
 def test_the_command_prints_one_verdict_line_and_only_problems(emitted):
     # breaks if: the audit lists what passed, or exits 0 while it has problems
     _, funcs = emitted
-    r = subprocess.run([sys.executable, str(ROOT / "tools" / "gym_buildings_independent.py"), "--functions", str(funcs)],
+    r = subprocess.run([sys.executable, str(ROOT / "tools" / "gym_buildings_independent.py"), "--functions", str(funcs),
+                        "--include-superseded"],
                        capture_output=True, text=True, timeout=600)
     if r.returncode not in (0, 1):
         pytest.skip("the audit could not run here: " + r.stdout[-200:] + r.stderr[-200:])
@@ -662,6 +734,7 @@ def test_the_command_prints_one_verdict_line_and_only_problems(emitted):
 
 def test_the_command_refuses_an_empty_functions_folder(tmp_path):
     # breaks if: a missing build is reported as a clean audit
-    r = subprocess.run([sys.executable, str(ROOT / "tools" / "gym_buildings_independent.py"), "--functions", str(tmp_path)],
+    r = subprocess.run([sys.executable, str(ROOT / "tools" / "gym_buildings_independent.py"), "--functions", str(tmp_path),
+                        "--include-superseded"],
                        capture_output=True, text=True, timeout=300)
     assert r.returncode == 2 and "run python tools/gym_buildings.py build first" in r.stdout
