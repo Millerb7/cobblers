@@ -94,17 +94,17 @@
      "skin": "rctmod:textures/trainers/single/burglar_00d3.png", "eye_contact": true, "sight_distance": 2.5,
      "room": "gantry_stair", "why": "on the gantry stair's east lane, three steps up, turned to face down the west lane a climber takes past him (yaw 180, straight down the stair, left that lane beside him: tools/gym_trainers_audit.py [facing]): the stair (x6179-6180, z4985-4990) is the only climb from the assay deck to the gallery, and its west lane stays open past him; added 2026-10-07 (the owner: at least three a gym, some more), chosen from python tools/gym_trainers.py propose --gym gym7 (first reached at 12 moves, between the Rim Researcher's 10 and the Flue Keeper's 16, so he tops out level with the Flue Keeper)"},
 
-    {"id": "gym8_junior_01", "name": "Sapper", "gym": "gym8", "seat": [3576, 107, 6408], "yaw": 180,
-     "skin": "rctmod:textures/trainers/single/worker_colin_037a.png", "eye_contact": true, "sight_distance": 2.5,
-     "room": "drift", "why": "at the sap's foot where the drift begins (trainers_why: the drift's mouth at the sap's foot)"},
-    {"id": "gym8_junior_02", "name": "Heading Guard", "gym": "gym8", "seat": [3569, 107, 6423], "yaw": 180,
+    {"id": "gym8_junior_01", "name": "Sapper", "gym": "gym8", "seat": [3581, 111, 6409], "yaw": 180,
+     "skin": "rctmod:textures/trainers/single/worker_colin_037a.png", "eye_contact": true, "sight_distance": 3.0,
+     "room": "the_sap", "why": "re-seated 2026-10-09 in the walk-through Gate of the South (data/gym_arenas/gym8.json): at the foot of the sap's two stairs, in the middle of the trench floor under the headframe, facing back up them; every walk into the works comes down the trench in front of him"},
+    {"id": "gym8_junior_02", "name": "Heading Guard", "gym": "gym8", "seat": [3584, 111, 6412], "yaw": 90,
      "skin": "rctmod:textures/trainers/single/hiker_brice_00ba.png", "eye_contact": true, "sight_distance": 2.5,
-     "room": "drift", "why": "at the far end of the shored heading, where it turns west for the undercroft: the heading is one wide and every walk to the tower stair comes along it"},
-    {"id": "gym8_junior_03", "name": "Undercroft Sentry", "gym": "gym8", "seat": [3562, 108, 6421], "yaw": 0,
+     "room": "the_drift", "why": "re-seated 2026-10-09: in the drift where it turns toward the headings, facing west down it; the drift is three wide and his sight takes all of it, and the shored heading to the stairs leaves from his side"},
+    {"id": "gym8_junior_03", "name": "Undercroft Sentry", "gym": "gym8", "seat": [3585, 111, 6416], "yaw": 180,
      "skin": "rctmod:textures/trainers/single/black_belt_aaron_0140.png", "eye_contact": true, "sight_distance": 2.5,
-     "room": "undercroft", "why": "in the undercroft at the foot of the tower stair (trainers_why: the undercroft)"},
-    {"id": "gym8_junior_04", "name": "Wall Captain", "gym": "gym8", "seat": [3562, 121, 6408], "yaw": 0,
-     "skin": "rctmod:textures/trainers/single/ace_trainer_garrett_034c.png", "eye_contact": true, "sight_distance": 2.5,
-     "room": "gate_walk", "why": "on the walk at the stair's head (trainers_why), the last stand before the gate walk to Giovanni"}
+     "room": "the_heading", "why": "re-seated 2026-10-09: in the middle of the shored east heading, three wide, facing back up it toward the drift: every walk to the stairs and the sally goes by him"},
+    {"id": "gym8_junior_04", "name": "Wall Captain", "gym": "gym8", "seat": [3585, 113, 6424], "yaw": 180,
+     "skin": "rctmod:textures/trainers/single/ace_trainer_garrett_034c.png", "eye_contact": true, "sight_distance": 3.0,
+     "room": "the_sally", "why": "re-seated 2026-10-09: in the sally's first bay, where the heading's stairs bring the walk up out of the works, facing the stairs; the last guard, 28 from Giovanni (measured) and a wall and a bulkhead away, so no fight with him starts from here"}
   ]
 }

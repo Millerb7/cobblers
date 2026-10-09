@@ -84,7 +84,7 @@
       "advancement": "cobbleverse:trainer/kanto/defeat_giovanni",
       "upstream_mob": {"type": "kanto", "signatureItem": "lumymon:boss_ring", "maxTrainerWins": -1, "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0, "biomeTagBlacklist": ["is_void", "is_end"], "biomeTagWhitelist": ["minecraft:has_structure/ancient_city"]},
       "upstream_required": ["kanto_blaine"],
-      "spawner": {"at": [3556, 94, 6421], "measured_by": "gym_buildings", "why": "two south of Giovanni's spawner in his arena, the seat (3556, 94, 6419) on the dais (data/gym_arenas/gym8.json, The Sally and the Muster Hall): polished granite over polished deepslate, flush on four sides, air over it. Moved here from the hall cell (3565, 120, 6418), which R16GA puts back to the building's granite over granite (gym8.json challenge_spawner)"}
+      "spawner": {"at": [3565, 116, 6402], "measured_by": "gym_arenas", "why": "two north of Giovanni's seat (3565, 116, 6404), toward the back wall in the command dais of the walk-through Muster Hall (data/gym_arenas/gym8.json, schema gym_hall/1, 2026-10-09): polished granite over polished deepslate, flush on four sides, air over it. Giovanni is outside single_leader.rollout, so the trainers cycle sets the second spawner here", "superseded_at": [3556, 94, 6421], "superseded_why": "the Challenge cell in the carved arena's dais (two south of its seat (3556, 94, 6419)), taken down with the arena by gym8_takedown (stone); the hall's old-leader sweep removes any kanto_giovanni_challenge trainer left on the lot or in the old arena"}
     },
     "kanto_league_lorelei": {
       "advancement": "cobbleverse:trainer/kanto/defeat_elite_lorelei",

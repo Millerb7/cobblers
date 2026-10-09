@@ -1,89 +1,53 @@
-# Gym 8: Giovanni, The Sally and the Muster Hall
+# Gym 8: Giovanni, The Gate of the South and the Muster Hall
 
-`data/gym_arenas/gym8.json`, authored 2026-10-08. Offline checks only (`python tools/gym_arenas.py check --gym gym8`);
-nothing here has been built in a world or seen in a running game.
+`data/gym_arenas/gym8.json`, schema `gym_hall/1`, authored 2026-10-09 as one of the eight walk-through halls
+(`docs/world-building/GYM_WALKTHROUGH.md`). Offline checks only (`python tools/gym_arenas.py check --gym gym8`,
+`tools/gym_arenas_audit.py`, `tools/gym_trainers.py check`); nothing here has been built in a world or seen in a
+running game. It replaces the carved arena of 2026-10-08 (22 courses under the lot, a 61-tread newel stair from the gate
+walk), which is kept in the record under `replaces.arena` and taken down by `gym8_takedown`.
 
 ## The reading
 
-Giovanni's civic role is civil defence. His building is The Gate of the South (`data/gym_buildings/gym8.json`): a
-gatehouse, a gate mass seven wide with the walk on top of it where he stands, a muster yard below. A garrison keeps
-its bunker under its gate, so the arena is that bunker: the command post that holds when the gate does not. Heavy
-and plain, polished deepslate and deepslate brick, with the town's orange (`TOWN_CHARACTER.md` gym8_town: terracotta,
-polished granite, spruce, coarse dirt, mud brick) as the garrison's marks. He is a ground type, so the far end is not
-more masonry: the shell gives out to the earth it was dug into.
+Giovanni's civic role is civil defence: his town is the southern garrison and its gym is the gate. The gate is shut (a
+sheer granite face on the yard, the blind arch of the gate that does not open let into it in terracotta), so the way past
+is the way a garrison takes a shut gate. The hall behind it is the post that holds when the gate does not. A ground type,
+in his own ground: the earth the bunker was dug into shows at the wall foot and in the dais's flanks.
 
-It shares nothing with Brock's hall (a long colonnaded undercroft, a wall-to-wall stage). Here there are no columns;
-the approach is a separate low corridor under bulkheads, the hall is a wide room with ribs on wall piers, and the
-leader stands in a rock-walled dug-out behind a timber doorway.
+## The walk (lot 3556..3588 x 6400..6431, pad y112, facing east)
 
-## The walk in
+Measured in the model: 48 steps from the street cell (3589, 111, 6404) to the challenger's stand (3565, 113, 6422); the
+lowest the walk goes is y111 (down 2 from the yard), the hall is at the pad.
 
-1. **The gate walk (y121).** The player ends the puzzle route on the walk beside Giovanni's old cell (3565, 120, 6416).
-   At the walk's north end (x3564..3566, z6405..6407) the gate mass is opened: a 3 x 3 newel stair in granite, the
-   gate's own stone, round a polished granite post. The first tread is level with the walk; 61 treads, 30 levels, down
-   through the gate mass, the building's rock and the two natural courses, lamps (glowstone) set into the post every
-   six courses.
-2. **The sally (y91).** A door one wide and three high at the foot (3567, 91..93, 6405) opens east into the approach:
-   21 long, 5 wide, 5 high, deepslate tiles with a polished granite centre line, a glowstone flush in the ceiling in
-   every bay. Four bulkheads cross it, every four blocks from x3572: chiselled jambs, a brick lintel, an opening three
-   wide and three high. The nth bulkhead carries n orange rank marks on its west face (1, 2, 3, then 3 and one below).
-3. **The blast door.** At the corridor's east end (x3586..3588) the player turns south through a passage three wide,
-   four high and two thick (z6408..6409): chiselled jambs, a chiselled lintel with two glowstones, an orange sill
-   and an orange course over it.
-4. **The muster hall.** First floor cell (3587, 91, 6410). A hall 31 long (x3559..3589) and 19 wide (z6410..6428), nine
-   high (y91..99), deepslate tiles with a polished granite axis down it from the dais to the door. Three ribs
-   (x3566, 3574, 3582) at y98..99 each on a pair of wall piers, glowstone flush in each rib's underside at three
-   places. On the east half orange 2 x 2 muster squares in ranks, sandbag stacks (mud brick) by the walls. The south
-   wall's foot is bare rock: granite with coarse dirt, tuff and dripstone block, shored by three pit-props and a
-   head-tree. At each Pokemon's mark a 3 x 3 orange square on the floor.
-5. **The dug-out.** At the west end two raw granite wings (x3554..3562, with coarse dirt, tuff, dripstone block in their
-   faces) close the hall in to a mouth nine wide, framed by two stripped spruce posts and a head-tree at y97. Beyond
-   it the apse: rock walls and roof, the command dais (x3555..3558, z6414..6424), and on the back wall a situation
-   map of terracotta contour bands (brown, orange, plain) with three glowstone signal lamps.
+1. **The yard** (x3575..3587, z6401..6409), open to the sky, entered by the gate in the east curtain over a two-step
+   sill (the street's heightmap is y110 along the lot's east edge). Three wells in the paving: two cisterns one course
+   deep with nothing in them, and **the sap**, the only one with a headframe over it and a lamp: the same tell for every
+   player. The shut gate fills the yard's west side; the postern, an iron door, is in a recess beside the blind arch.
+2. **The sap**: three wide, two stairs down to the drift's floor (y110). The Sapper stands on the trench floor.
+3. **The drift and the headings** under the keep: three headings off it, two of them two cells and a face, the east one
+   three wide, shored with a stripped-spruce crown and lit. The Heading Guard stands where the drift turns, the
+   Undercroft Sentry in the shored heading.
+4. **The way up**: two stairs, three wide, to the sally's floor (y112).
+5. **The sally** (x3575..3587, z6422..6426): five wide, five high, under four ranked bulkheads (the nth carries n orange
+   rank marks; the blast door's lintel the fourth). The Wall Captain stands in its first bay.
+6. **The blast door** (x3573..3574, z6423..6425) into **the muster hall** (x3558..3572, z6402..6429, floor y112, 15 by 28,
+   seven high): deepslate tile and polished granite, orange marks where the garrison falls in, ribs on wall piers,
+   pit-props, sandbags, the command dais at the far end (x3560..3570, z6402..6406, top y116) with Giovanni on it
+   (seat (3565, 116, 6404)) under the situation map on the back wall. First floor cell 21.6 from the leader.
 
-## Where they stand
+Out: back the way you came (every stair is walked both ways), or the postern past Giovanni: an iron door in the hall's
+east wall at the dais's flank (3573, 113..114, 6408), opened by the stone button inside it (3572, 114, 6407), out
+through a recess in the gate's face onto the yard and east to the gate. Nothing in the yard can press the button.
 
-| | |
-|---|---|
-| Giovanni | seat (3556, 94, 6419), spawner flush in the dais top (polished granite), redstone at y93; the trainer stand block (3557, 93, 6419), one in front |
-| Challenger | walks the hall; the challenger's Pokemon mark (3573, 89, 6419) stands at (3573, 91, 6419) on the floor, the player stand block (3576, 89, 6419) |
-| Giovanni's Pokemon | mark (3568, 89, 6419) |
+## What it takes down
 
-## Dimensions (measured by the tool and my scripts on 2026-10-08)
-
-| | |
-|---|---|
-| Shell | x3552..3591, y88..101, z6400..6431 (40 x 14 x 32), two courses all round; exactly the spawn-free zone `gym_giovanni` (no change to `spawn_suppression.json`) |
-| Floor | y90 (a player stands at y91); hall air y91..99, vault y100..101; top course y101 with y102..103 natural over it and the building's rock from y104 (cover slack 0) |
-| Dais | 4 high (top y94), face at x3559.0 |
-| Hall | 31 x 19 plus the 9-wide mouth and the apse |
-| Approach | entry.floor (3587, 91, 6410) is 32.5 from the leader's stand; the walk from route end to entry floor is 90 cells (no jump; falls of at most 3), back up 96; the dais foot is 125 cells from the route end |
-| Written | 25,632 cells, 421 commands in `cobblers:gym_arenas/gym8` |
-| Checks | 116 cells a battle can start from, all four Battle Positions blocks found from all 116; block light min 2, median 6 |
-
-## Size against the largest member (Rhyperior: clear radius 3.45, clear height 3.78)
-
-- Radius: the nearest block to Giovanni's Pokemon mark within y91..95 is 7.11 away (the proscenium post), so 3.66 spare;
-  to the challenger's mark 7.52, so 4.07 spare. The mark is 9.5 from the dais face (3.45 needed).
-- Height: air is y91..99, nine courses, over both marks; the tool requires five (`ceil(3.78) + 1`), so four spare.
-  Under a rib (y98..99 filled) it is seven, two spare. Nothing solid stands over either mark.
-- The two marks are 5 apart (the widest hitbox is Hippowdon's 2.2).
-
-## The seat move
-
-Giovanni is not in `single_leader.rollout`, so: `challenge_spawner` is set in the arena (`old_at` (3565, 120, 6418), the
-Challenge spawner the trainers cycle set two south of his old cell, restored to granite over granite, the gate mass's
-own blocks), and `data/challenge_mode.json bosses.kanto_giovanni.spawner.at` moves from (3565, 120, 6418) to
-(3556, 94, 6421), two south of the new seat, flush in the same dais top. Only that value was edited. The `why` and
-`measured_by` text beside it still describe the old position (the brief limited the edit to the one value).
+The old Gate of the South (`data/gym_buildings/gym8.json`, now `superseded_by`): the hall's first parts clear the lot
+above the pad (the donor shell, the gate mass, curtain, walk and stair) and overwrite the building's nine courses under
+it (y104..111) with stone; the old arena (bounds x3552..3591, y88..103) is filled by `gym8_takedown`. The gate walk
+remains as a deck at y121 on the gatehouse, unreachable: the town's face, no longer the way.
 
 ## Not verified
 
-- Nothing is built in a world. The stair's treads, the door cells, the bulkhead openings, the hall's look and the
-  light by eye are model results only.
-- That Battle Positions sends Rhyperior to the mark here; that a battle on sight starts at 16 from a leader four
-  courses up; the bind-pose model sweep as real clearance.
-- The through-building cut (the stair through the gate mass, x3563..3567, z6404..6408, y102..123) was not run
-  against the real building as R16G leaves it in a world; the tool's model of the building was used. It replaces
-  gate-mass granite and rock with granite and polished granite, and carves air over the treads; it touches nothing
-  of the sap, the drift, the undercroft or the gate's inner stair (checked by their boxes in `gym_buildings/gym8.json`).
+Everything in a running game. Ground at the east edge is the heightmap's y110; if the town's prep leaves the street
+higher the sill is a step down, which the gate still walks. The Challenge spawner cell (3565, 116, 6402) is two behind
+the seat on the dais's back row (outside the old building's bounds on purpose: `tools/gym_arenas.py replaced_seats` counts a Challenge cell inside them
+as a replaced seat, and the audit then fails it as a spawner left standing).

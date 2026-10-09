@@ -4348,9 +4348,9 @@
       {
         "what": "the leader's spawner in the dais",
         "block": [
-          3556,
-          94,
-          6419,
+          3565,
+          116,
+          6404,
           "rctmod:trainer_spawner"
         ],
         "expect": true
@@ -4358,9 +4358,9 @@
       {
         "what": "its redstone",
         "block": [
-          3556,
-          93,
-          6419,
+          3565,
+          115,
+          6404,
           "minecraft:redstone_block"
         ],
         "expect": true
@@ -4368,9 +4368,9 @@
       {
         "what": "air over the seat",
         "block": [
-          3556,
-          95,
-          6419,
+          3565,
+          117,
+          6404,
           "minecraft:air"
         ],
         "expect": true
@@ -4378,9 +4378,9 @@
       {
         "what": "battle.trainer_pokemon",
         "block": [
-          3568,
-          89,
-          6419,
+          3565,
+          111,
+          6414,
           "cobblemonbattlepositions:trainer_pokemon_position"
         ],
         "expect": true
@@ -4388,8 +4388,8 @@
       {
         "what": "battle.player_pokemon",
         "block": [
-          3573,
-          89,
+          3565,
+          111,
           6419,
           "cobblemonbattlepositions:player_pokemon_position"
         ],
@@ -4398,9 +4398,9 @@
       {
         "what": "battle.trainer_stand",
         "block": [
-          3557,
-          93,
-          6419,
+          3565,
+          115,
+          6405,
           "cobblemonbattlepositions:trainer_stand_position"
         ],
         "expect": true
@@ -4408,9 +4408,9 @@
       {
         "what": "battle.player_stand",
         "block": [
-          3576,
-          89,
-          6419,
+          3565,
+          111,
+          6422,
           "cobblemonbattlepositions:player_stand_position"
         ],
         "expect": true
@@ -4418,19 +4418,19 @@
       {
         "what": "the hall's axis line",
         "block": [
-          3580,
-          90,
-          6419,
+          3565,
+          112,
+          6410,
           "minecraft:polished_granite"
         ],
         "expect": true
       },
       {
-        "what": "air in the hall",
+        "what": "air over the hall's floor",
         "block": [
-          3575,
-          94,
-          6419,
+          3565,
+          116,
+          6416,
           "minecraft:air"
         ],
         "expect": true
@@ -4438,29 +4438,19 @@
       {
         "what": "a bulkhead's jamb",
         "block": [
-          3572,
-          92,
-          6403,
+          3580,
+          114,
+          6422,
           "minecraft:chiseled_deepslate"
         ],
         "expect": true
       },
       {
-        "what": "the sally's centre line",
+        "what": "the dais top at the Challenge cell, two behind the seat",
         "block": [
-          3575,
-          90,
-          6405,
-          "minecraft:polished_granite"
-        ],
-        "expect": true
-      },
-      {
-        "what": "the dais top",
-        "block": [
-          3557,
-          94,
-          6419,
+          3565,
+          116,
+          6402,
           "minecraft:polished_granite"
         ],
         "expect": true
@@ -4468,42 +4458,122 @@
       {
         "what": "the proscenium's head-tree",
         "block": [
-          3562,
-          97,
-          6419,
+          3565,
+          119,
+          6407,
           "minecraft:stripped_spruce_log"
         ],
         "expect": true
       },
       {
-        "what": "the apse's raw back wall",
+        "what": "the situation map on the back wall",
         "block": [
-          3554,
+          3565,
+          116,
+          6401,
+          "minecraft:packed_mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the postern's iron door",
+        "block": [
+          3573,
+          113,
+          6408,
+          "minecraft:iron_door"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its button, inside",
+        "block": [
+          3572,
+          114,
+          6407,
+          "minecraft:stone_button"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the yard's gate",
+        "block": [
+          3588,
+          114,
+          6404,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the sap's trench stair",
+        "block": [
+          3581,
+          111,
+          6408,
+          "minecraft:granite_stairs"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the headframe's post",
+        "block": [
+          3578,
+          115,
+          6406,
+          "minecraft:stripped_spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shored heading's crown",
+        "block": [
+          3585,
+          114,
+          6416,
+          "minecraft:stripped_spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old arena's floor, taken down",
+        "block": [
+          3575,
+          90,
+          6419,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old descent under the pad, taken down",
+        "block": [
+          3565,
+          100,
+          6406,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old dais, taken down",
+        "block": [
+          3556,
           92,
           6419,
-          "minecraft:granite"
+          "minecraft:stone"
         ],
         "expect": true
       },
       {
-        "what": "the shell's south-west bottom corner",
+        "what": "no spawner at the old seat",
         "block": [
-          3552,
-          88,
-          6431,
-          "minecraft:deepslate_bricks"
+          3556,
+          94,
+          6419,
+          "rctmod:trainer_spawner"
         ],
-        "expect": true
-      },
-      {
-        "what": "the shell's north-east top corner",
-        "block": [
-          3591,
-          101,
-          6400,
-          "minecraft:deepslate_bricks"
-        ],
-        "expect": true
+        "expect": false
       },
       {
         "what": "no spawner at the old seat",
