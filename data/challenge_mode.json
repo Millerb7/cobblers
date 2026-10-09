@@ -34,7 +34,7 @@
       "advancement": "cobbleverse:trainer/kanto/defeat_brock",
       "upstream_mob": {"type": "kanto", "signatureItem": "lumymon:onyx_stone", "maxTrainerWins": -1, "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0, "biomeTagBlacklist": ["is_void", "is_nether", "is_end", "is_spooky"], "biomeTagWhitelist": ["cobbleverse:plains"]},
       "upstream_required": [],
-      "spawner": {"at": [1830, 155, 3696], "measured_by": "gym_buildings", "why": "two west of Brock's spawner (1832, 155, 3696) in the gallery floor, polished andesite over stone bricks; the chest is east at x1836"}
+      "spawner": {"at": [1829, 144, 3667], "measured_by": "gym_arenas", "why": "two west of Brock's seat (1831, 144, 3667) in the stage top of the walk-through Setting-Out Floor (data/gym_arenas/gym1.json, schema gym_hall/1, 2026-10-09): polished andesite over stone bricks, flush on four sides, air over it, clear of the trilithon (x1827..1828 at z3665..3666). Brock is in single_leader.rollout, so no second spawner is ever set here; it is the cell R17L's retire tests (a no-op) and the one a Challenge spawner would take if he left the rollout.", "superseded_at": [1830, 155, 3696], "superseded_why": "the retired second spawner's cell in the Stoneworks Hall's gallery, two west of its spawner (1832, 155, 3696): polished andesite over stone bricks. R17L retired it on staging; the gallery no longer exists, cleared by the hall's own first part (every cell of the old building's bounds), and the hall's old-leader sweep removes any kanto_brock_challenge trainer left on the lot."}
     },
     "kanto_misty": {
       "lang": "misty",

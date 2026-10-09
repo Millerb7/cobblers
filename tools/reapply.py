@@ -1830,6 +1830,38 @@ def rift_zone_steps(index, spec):
     return run, held
 
 
+def gym_step_functions():
+    """{step id: [function id, in run order]} for the steps that write the gym lots, from the committed data alone
+    (no built pack needed), so tools/gym_arenas_audit.py can replay every order an apply allows.
+
+    R16E  tools/gym_interiors.py: each carved interior (Misty's dig); its healer sweep writes no gym block
+    R16F  tools/gym_demolish.py: the old works refilled and the donor shells taken down, every superseded gym
+    R16G  tools/gym_buildings.py: every building not superseded by a walk-through hall; THEN every gym arena or hall
+          function (a hall's takedown first); THEN every seat move
+    R16GA tools/gym_arenas.py: per gym, (takedown,) the arena or hall, its seat (the sweeps and the read-back are
+          R16GA's own actions, not block writes)
+
+    WHY R16G RE-RUNS THE ARENAS (2026-10-09, "a room I can't leave from"): a building's function clears its bounds
+    and rebuilds its masonry every run, and the descent of the arena under it passes through that masonry. Run
+    after R16GA with no R16GA after it -- `--only R16G`, which the seat-move comment above names as a supported run
+    -- it sealed the descent of all seven building-hosted arenas, with anyone below inside (gym_arenas_audit's order
+    replay). Re-carving in the same step is what keeps every step's result walkable on its own. A walk-through hall
+    has no building under it to re-run; its function is its own building."""
+    import gym_arenas
+    import gym_buildings as GB
+    gym_doc = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
+    out = {"R16E": ["cobblers:gym_interiors/%s" % g["id"] for g in gym_doc.get("gyms") or [] if g.get("built")],
+           "R16F": ["cobblers:gym_demolish/%s" % g["id"] for g in gym_doc.get("gyms") or [] if g.get("superseded_by")],
+           "R16G": ["cobblers:gym_buildings/%s" % g for g in sorted(GB.built())], "R16GA": []}
+    arenas = gym_arenas.records()
+    for _p, d in arenas:
+        fns = (["cobblers:gym_arenas/%s_takedown" % d["id"]] if gym_arenas.is_hall(d) else []) +             ["cobblers:gym_arenas/%s" % d["id"]]
+        out["R16G"] += fns
+        out["R16GA"] += fns + ["cobblers:gym_arenas/%s_seat" % d["id"]]
+    out["R16G"] += ["cobblers:gym_arenas/%s_seat" % d["id"] for _p, d in arenas]
+    return out
+
+
 def steps(with_spawns=False):
     """[(step id, title, [(kind, value)])]; kind is fn (a function), wait (seconds), check (a callable name)."""
     doc = placements()
@@ -2201,14 +2233,15 @@ def steps(with_spawns=False):
     # the authored gym buildings (tools/gym_buildings.py): one hall per record in data/gym_buildings/, each with
     # its puzzle inside it and the leader's spawner at the end of it. Listed from the committed data, not the built
     # pack, so the step exists whether or not the pack is built here; the prepare's audit fails on a missing one
-    gym_halls = sorted(p.stem for p in (ROOT / "data" / "gym_buildings").glob("*.json"))
     import gym_arenas
     # each arena's seat move straight after the buildings, in this step: a building puts its spawner back in the
     # hall every run, so R16G run alone (--only R16G) would otherwise leave a second spawner for a leader whose arena
-    # stands. The move tests that its arena is built, so on a world without one it does nothing (R16GA moves it)
-    out.append(("R16G", "the authored gym buildings (%d), and each arena's leader moved back into it" % len(gym_halls),
-                [("fn", "cobblers:gym_buildings/%s" % g) for g in gym_halls]
-                + [("fn", "cobblers:gym_arenas/%s_seat" % d["id"]) for _p, d in gym_arenas.records()]))
+    # stands. The move tests that its arena is built, so on a world without one it does nothing (R16GA moves it).
+    # And each arena re-carved between them (gym_step_functions): see there
+    gsf = gym_step_functions()
+    out.append(("R16G", "the authored gym buildings (%d), each arena re-carved through it and its leader moved "
+                "back into it" % len([f for f in gsf["R16G"] if ":gym_buildings/" in f]),
+                [("fn", f) for f in gsf["R16G"]]))
     # the gym arenas (tools/gym_arenas.py, data/gym_arenas/): carved below each building that has one, AFTER R16G
     # (the descent starts in the building, and the building puts its spawner back every run) and after R16E/R16F
     # (the healer sweep and the refilled works). Per arena: the build, the seat move (the building's spawner into

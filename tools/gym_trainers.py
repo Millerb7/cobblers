@@ -126,7 +126,7 @@ OPEN_NAMES = {
     "pokeblocks:magikarp_fishbowl", "pokeblocks:pokedoll_shellder",
     # Cobblemon Battle Positions markers: flat floor markers
     "cobblemonbattlepositions:player_pokemon_position", "cobblemonbattlepositions:player_stand_position",
-    "cobblemonbattlepositions:trainer_pokemon_position",
+    "cobblemonbattlepositions:trainer_pokemon_position", "cobblemonbattlepositions:trainer_stand_position",
 }
 WATER_NAMES = {"minecraft:water", "minecraft:bubble_column", "minecraft:seagrass", "minecraft:tall_seagrass",
                "minecraft:kelp", "minecraft:kelp_plant", "minecraft:sea_pickle", "minecraft:fire_coral",
@@ -136,7 +136,8 @@ SCAF_NAMES = {"minecraft:scaffolding"}
 SOLID_NAMES = {
     # full or near-full collision: a player stands on it and cannot pass it
     "minecraft:acacia_planks", "minecraft:andesite", "minecraft:azalea_leaves", "minecraft:bamboo_planks",
-    "minecraft:barrel", "minecraft:basalt", "minecraft:birch_planks", "minecraft:blast_furnace",
+    "minecraft:barrel", "minecraft:basalt", "minecraft:birch_planks", "minecraft:blast_furnace", "minecraft:shroomlight",
+    "minecraft:iron_door",  # opened only by a signal; a hall's button is inside it, so from the street it is a wall
     "minecraft:bookshelf", "minecraft:brewing_stand", "minecraft:calcite", "minecraft:cauldron",
     "minecraft:cherry_log", "minecraft:cherry_planks", "minecraft:chest", "minecraft:chiseled_deepslate",
     "minecraft:chiseled_polished_blackstone", "minecraft:chiseled_quartz_block", "minecraft:chiseled_stone_bricks",
@@ -252,9 +253,13 @@ def load(path):
 class Hall:
     """One gym's voxels, its arrival ring, its leader and its footprint."""
 
-    def __init__(self, gym, vox, ring, leader_stand, footprint, lot_rect, leader_id):
+    def __init__(self, gym, vox, ring, leader_stand, footprint, lot_rect, leader_id, leader_reach=None):
         self.gym, self.vox, self.ring = gym, vox, ring
         self.leader_stand, self.footprint, self.lot_rect, self.leader_id = leader_stand, footprint, lot_rect, leader_id
+        # how near (and in sight) a player engages the leader: by interacting (LEADER_REACH) in a hall whose leader
+        # stands on its floor; by rctmod's battle on sight (forceBattleMaxDistance) on an arena's dais, which no player
+        # can step onto
+        self.leader_reach = leader_reach or LEADER_REACH
 
 
 def ring_columns(rect):
@@ -267,10 +272,44 @@ def ring_columns(rect):
     return out
 
 
+def walkthrough_hall(gym, G, rec):
+    """A walk-through gym (data/gym_arenas/<gym>.json schema gym_hall/1, 2026-10-09): tools/gym_arenas.py's own model
+    of the hall it builds (the takedown, the parts, the seat), over the lot's pad at its declared level."""
+    import gym_arenas as GA
+    a, _ops, _problems, _facts = GA.build(rec, G)
+    lot_rect, lot_level = GA.lot_of(rec)
+    lot_level = int(lot_level)
+    x0, z0, x1, z1 = lot_rect
+    ring = ring_columns(lot_rect)
+    ring_ground = {(x, z): max(G(x, z), lot_level) for x, z in ring}
+    b = GA.norm(rec["bounds"])
+    y0 = min(b[1], lot_level) - 3
+    y1 = max([b[4]] + list(ring_ground.values())) + 4
+
+    def at(x, y, z):
+        if x0 <= x <= x1 and z0 <= z <= z1:
+            return a.at(x, y, z)
+        return "minecraft:stone" if y <= ring_ground[(x, z)] else "minecraft:air"
+
+    vox = Voxels((x0 - 1, y0, z0 - 1, x1 + 1, y1, z1 + 1), at)
+    sx, sy, sz = rec["leader"]["seat"]
+    starts = [(x, ring_ground[(x, z)] + 1, z) for x, z in ring]
+    return Hall(gym, vox, starts, (sx, sy + 1, sz), tuple(rec["footprint"]), tuple(lot_rect), rec["leader"]["id"],
+                leader_reach=GA.rct_config()["forceBattleMaxDistance"])
+
+
 def building_hall(gym, G):
-    """Gyms 1 and 3-8: tools/gym_buildings.py's own model of the record it builds."""
+    """Gyms 1 and 3-8: tools/gym_buildings.py's own model of the record it builds -- or, once the building is
+    superseded by a walk-through hall, tools/gym_arenas.py's model of the hall."""
     import gym_buildings as GB
     doc = load(ROOT / "data" / "gym_buildings" / ("%s.json" % gym))
+    if doc.get("superseded_by"):
+        import gym_arenas as GA
+        rec = GA.record_of(gym)
+        if not GA.is_hall(rec):
+            raise SystemExit("%s: data/gym_buildings/%s.json is superseded but data/gym_arenas/%s.json is not a "
+                             "gym_hall/1 record" % (gym, gym, gym))
+        return walkthrough_hall(gym, G, rec)
     e, lot_rect, lot_level = GB.build_one(doc)
     lot_level = int(doc["site"]["lot_level"])
     x0, z0, x1, z1 = lot_rect
@@ -544,7 +583,7 @@ class Graph:
         # a player engages the leader by interacting with him: within reach AND in clear line of sight, so a wall
         # between them is not an engagement (rctmod's sight-forced battle is a separate matter: GYM_TRAINERS.md D2)
         self.goals = {k for k, (x, y, z) in enumerate(self.nodes)
-                      if math.dist((x, y, z), (lx, ly, lz)) <= LEADER_REACH and los(v, (x, y, z), (lx, ly, lz))}
+                      if math.dist((x, y, z), (lx, ly, lz)) <= h.leader_reach and los(v, (x, y, z), (lx, ly, lz))}
         if not self.starts:
             raise SystemExit("%s: no position on the arrival ring" % h.gym)
 

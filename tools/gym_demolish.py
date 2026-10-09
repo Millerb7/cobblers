@@ -139,20 +139,40 @@ def rects(x0, z0, x1, z1, gy):
     return out
 
 
-def box_commands(box, gy, why):
-    """Rock back under the ground, air over it, for every column of the box."""
+def box_commands(box, gy, why, reserved=()):
+    """Rock back under the ground, air over it, for every column of the box -- except inside `reserved`, the
+    volumes only a gym's own arena or hall function may write (tools/gym_arenas.py reserved_boxes).
+
+    THE DEFECT THIS EXCLUSION CLOSES (2026-10-09, "a room I can't leave from"): this step runs every apply, BEFORE
+    the arenas (R16GA). The works it refills (gyms 1, 3, 4, 5, 7) and the shells it clears overlap the arenas
+    carved under the lots since 2026-10-09, so a run of R16F that R16GA did not follow (`--only R16F`, or an apply
+    that stopped between them) filled the arena -- and anyone standing in it -- with stone. The arena's own
+    function writes every cell of its volume (shell, then carve), so leaving it alone here loses nothing."""
+    import gym_arenas
     x0, y0, z0, x1, y1, z1 = box
     x0, x1 = min(x0, x1), max(x0, x1)
     y0, y1 = min(y0, y1), max(y0, y1)
     z0, z1 = min(z0, z1), max(z0, z1)
     out, rock, air = ["# %s" % why], 0, 0
+
+    def emit(b, state):
+        n = 0
+        parts = [b]
+        for r in reserved:
+            parts = [q for p_ in parts for q in gym_arenas.box_minus(p_, r)]
+        for q in parts:
+            out.append("fill %d %d %d %d %d %d %s" % (q[0], q[1], q[2], q[3], q[4], q[5], state))
+            n += (q[3] - q[0] + 1) * (q[4] - q[1] + 1) * (q[5] - q[2] + 1)
+        return n
+
     for a, b, c, d, g in rects(x0, z0, x1, z1, gy):
         if y0 <= g:
-            out.append("fill %d %d %d %d %d %d %s" % (a, y0, c, b, min(g, y1), d, ROCK))
-            rock += (b - a + 1) * (d - c + 1) * (min(g, y1) - y0 + 1)
+            rock += emit((a, y0, c, b, min(g, y1), d), ROCK)
         if g < y1:
-            out.append("fill %d %d %d %d %d %d %s" % (a, max(y0, g + 1), c, b, y1, d, AIR))
-            air += (b - a + 1) * (d - c + 1) * (y1 - max(y0, g + 1) + 1)
+            air += emit((a, max(y0, g + 1), c, b, y1, d), AIR)
+    if reserved:
+        out.insert(1, "# never inside the gym's arena or hall (tools/gym_arenas.py reserved_boxes): %s"
+                   % [list(r) for r in reserved])
     return out, rock, air
 
 
@@ -170,14 +190,23 @@ def gym_commands(gym, placements, G):
              "# %s" % gym["superseded_by"],
              "# ground: %s" % ("the gym lot %s levelled to y%d, the heightmap outside it" % (lot[0], lot[1])
                                if lot else "the heightmap (tools/ground.py, rounded)")]
+    import gym_arenas
+    import gym_buildings as GB
+    # never inside the gym's arena or hall, nor inside the box its building clears and rebuilds every run (R16G):
+    # this step runs before both, so whatever it wrote there was theirs to write again, and run alone (`--only
+    # R16F`) it took the standing building down round anyone inside it (tools/gym_arenas_audit.py ORDER)
+    reserved = list(gym_arenas.reserved_boxes(gym["id"]))
+    bdoc = {d["id"]: d for _p, d in GB.records()}.get(gym["id"])
+    if bdoc and not bdoc.get("superseded_by") and GB.clear_box(bdoc):
+        reserved.append(tuple(GB.clear_box(bdoc)))
     if gym.get("dig"):
-        a, r1, v1 = box_commands(gym["dig"], gy, "the works, back to rock")
+        a, r1, v1 = box_commands(gym["dig"], gy, "the works, back to rock", reserved)
     else:
         # `works_existed: false`, checked in superseded(): nothing was ever cut under this gym, so the
         # demolition is the shell alone and the works pass writes no command rather than a vacuous one.
         a, r1, v1 = [], 0, 0
         lines.append("# no works under this gym: it was a donor shell on an uncut lot, so only the shell comes down")
-    b, r2, v2 = box_commands(shell, gy, "the donor shell, and the ground it stood on")
+    b, r2, v2 = box_commands(shell, gy, "the donor shell, and the ground it stood on", reserved)
     lines += a + b
     return lines, {"id": gym["id"], "donor": gym["donor"], "settlement": rec["settlement"],
                    "dig": gym.get("dig"), "shell_box": shell, "lot": lot[0] if lot else None,

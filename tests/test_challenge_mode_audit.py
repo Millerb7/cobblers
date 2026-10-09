@@ -306,7 +306,7 @@ MUTATIONS = {
         "    floor, under = restore_blocks(up, entry)\n    x += 1\n")], "P", "P1:retire_at"),
     # the restore puts back the air over the floor instead of the floor
     "restore_wrong_floor": ("challenge_mode", [(
-        "return e.at(x, y, z), e.at(x, y - 1, z)", "return e.at(x, y + 1, z), e.at(x, y - 1, z)")], "P", "P1:restore"),
+        "return hm.at(x, y, z), hm.at(x, y - 1, z)", "return hm.at(x, y + 1, z), hm.at(x, y - 1, z)")], "P", "P1:restore"),
     # the battle guard dropped from the swap: the spawner changes under a battle
     "single_swap_blind_to_battle": ("challenge_mode", [(
         '    head = "execute if loaded', '    busy = ""\n    head = "execute if loaded')], "P", "P1:swap"),
