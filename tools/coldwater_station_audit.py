@@ -293,7 +293,10 @@ class Audit:
             fl += forceload_problems(rel, commands(self.fn(rel)))
         # the instruments are a look-then-act chain over several ticks (N155): its forceload is added in its entry and
         # released at its end, so it is read as one chain -- held for its whole life, the act gated on a look
-        fl += chunk_look_audit.problems(self.pack, INSTRUMENTS_FN, STATION_TAG, "instruments")
+        # sites from the DATA (each instrument's `at`): one look must require an entity in every tube's chunk, since
+        # two chunks' saved entities do not arrive together (review of N155, 2026-10-08)
+        fl += chunk_look_audit.problems(self.pack, INSTRUMENTS_FN, STATION_TAG, "instruments",
+                                        sites=[tuple(p["at"][:2]) for p in d["pieces"] if p.get("kind") == "instrument"])
         self.check("forceload", fl)
 
     def block_problems(self, states, allowed, what):

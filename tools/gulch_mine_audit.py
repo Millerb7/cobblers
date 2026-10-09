@@ -910,7 +910,10 @@ def audit(source_root=None):
     # entry to its end, the act gated on a look that saw a Cutter or the blind limit, the old Cutters killed before the
     # summons, each summon tagged new and de-duplicated after (tools/chunk_look_audit.py, never the generator's code)
     sums = [ln for ln in chunk_look_audit.chain_lines(PACK, CUTTERS_FN) if ln.startswith("summon minecraft:villager ")]
-    probs += ["cutters: %s" % p for p in chunk_look_audit.problems(PACK, CUTTERS_FN, cu["tag"], "the Cutters' chain")]
+    # sites from the DATA (each bench's `at`): the benches span two chunks, and one chunk's saved villagers prove
+    # nothing about the other's, so one look must require a Cutter in every bench's chunk (review of N155, 2026-10-08)
+    probs += ["cutters: %s" % p for p in chunk_look_audit.problems(PACK, CUTTERS_FN, cu["tag"], "the Cutters' chain",
+                                                                   sites=[(b["at"][0], b["at"][2]) for b in cu["benches"]])]
     if len(sums) != len(cu["benches"]):
         probs.append("cutters: %d villagers summoned, %d benches" % (len(sums), len(cu["benches"])))
     sold = []

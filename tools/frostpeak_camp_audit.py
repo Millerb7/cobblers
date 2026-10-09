@@ -349,7 +349,10 @@ def audit(pack, inputs_root, source_root):
               "C7 re-run", "the instruments function does not remove its own previous displays")
     # held from the entry to the end, the act gated on a look or the blind limit, old displays killed before the
     # summons, each summon tagged new and de-duplicated after (tools/chunk_look_audit.py)
-    for prob in chunk_look_audit.problems(pack, INSTRUMENTS_FN, TAG, "instruments") or [None]:
+    # sites from the DATA (each instrument's `at`): a look must require an entity in every tube's chunk, since two
+    # chunks' saved entities do not arrive together (review of N155, 2026-10-08)
+    sites = [tuple(p["at"][:2]) for p in inst.values()]
+    for prob in chunk_look_audit.problems(pack, INSTRUMENTS_FN, TAG, "instruments", sites=sites) or [None]:
         rep.check(prob is None, "C7 chain", prob)
     measured = {}
     for tid, tb in tubes.items():
