@@ -141,3 +141,46 @@ The four failures in `tests/test_blackout_recovery_pid.py` (`600 == 200`) predat
 In game: everything. Rule 2's line on a server. The kill credit window (overlap 4). Whether Cobblemon spawns
 anything in the pocket's `the_void`. The tick order between the blackout's login delivery and a dungeon eject. The
 server's own Lenient Death and Fight-or-Flight configs (the live server is not read; the repository's copies are cited).
+
+## E1 as built
+
+The blackout half of E1 (`DUNGEONS.md` 11.3), built 2026-10-08 by `minecraft-systems-dev`. Rung: datapack functions
+(principle 6), the same pack and the same victor-test pattern the gulch and the Entei already rely on; nothing new is
+needed because the whole rule is "read one tag on the player", which a function line does. The engine half (adding the
+tag, counting the tail, calling the two functions) does not exist yet.
+
+**Data.** `data/blackout.json` `dungeon_exempt`: `player_tag` **`cobblers.dg_run`** (the proposed `cobblers.dungeon_run`,
+renamed to the engine's `dg_` prefix), `tail_ticks` **100** (ASSUMED: vanilla's kill-credit window, not read from the
+jar), the two function names, and the engine's obligations as `engine_must` / `engine_must_never`. With no
+`dungeon_exempt` the generator emits the pack as before.
+
+**The pack** (`tools/blackout_pack.py`):
+- `blackout/battle_loss_wild`: `execute if entity @s[tag=cobblers.dg_run] run scoreboard players set #exempt bo.tmp 1`,
+  directly after the victor test (rule 2). M3 and M4 both pass through it, so a battle loss, a kill outside battle and a
+  kill-credited timer, lava or fall death are covered by the same line. No claim keeps `bo.clm` 0, so `hold_money`
+  never runs; the charge and `bo_pending` are untouched.
+- `recovery/make`: `execute if entity @s[tag=cobblers.dg_run] run return 0` as its first line (defence in depth).
+- `recovery/deliver`: the same return as its first command (rule 4). The login delivery (`blackout/login`) and the
+  two `execute as @a at @s run function .../deliver` calls (a guardian beaten, a pid resolved) all go through it, so a
+  claim settled while its owner is in a run stays at `deliver`.
+- `battle_loss_npc` and `battle_loss_other` are unchanged (rule 3).
+- New, for the engine: `recovery/run_tail_end` (removes the tag, then runs `recovery/deliver`) and
+  `recovery/run_tag_stale` (the backstop; runs `run_tail_end`). Only these remove the tag.
+
+**The interface the engine must honour:**
+1. Add `cobblers.dg_run` in `door_click`, in the function that reserves the slot, before the arrival delay; at the same
+   time cancel any tail still counting from an earlier run (else it ends inside the new run and untags the player).
+2. Never `tag ... remove cobblers.dg_run`. The death handling on respawn starts the tail; it never ends it.
+3. After every way out (clean exit, eject, respawn after death, dead-run kill), count at least `tail_ticks` in its own
+   per-player score, then `execute as <player> at @s run function cobblers:recovery/run_tail_end`, in the overworld.
+4. In the overworld backstop sweep, for a tagged player outside `cobblers:pocket` with no live run and no tail left,
+   `execute as <player> at @s run function cobblers:recovery/run_tag_stale`.
+5. Never call either function while the player is in `cobblers:pocket`: both deliver at the player's feet. The pack does
+   not test the dimension itself (neither command simulator models `execute if dimension`); this is the engine's.
+
+**Contract** C24 in `data/system_contracts.json` (owner `recovery_claims`, consumer `dungeons`). Its blackout cases
+pass on the generated pack; its engine cases are `fails_today` (strict xfail) until `tools/dungeon.py` exists.
+
+**Not verified:** nothing has run on a server (DX1). The 100-tick window is ASSUMED. That `execute if entity @s[tag=..]`
+with no `as` reads the player is how every other player test in this pack is written (`battle_loss_npc`'s arena tag),
+not separately proved in game.

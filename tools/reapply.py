@@ -78,6 +78,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # Routes 1-3 and the mansion (2026-09-24): the event sites, the scene runtime (props, per-player actors,
                 # zones, effects) and the route trainers
                 "cobblers_route_events", "cobblers_scenes", "cobblers_trainers",
+                # 2026-10-09: Route 4's middle (tools/route4_events.py, data/route4_events.json): four event sites and a
+                # find, block functions run by R12R4. Its scenes, quest and conversations ride in the packs above
+                "cobblers_route4_events",
                 # the sleeping Celebi in the Route 1 sapling and its keeper (2026-09-25)
                 "cobblers_celebi",
                 # the authored legendary encounters and their chambers (2026-09-29, tools/legendaries.py):
@@ -97,6 +100,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-27: the bridges (tools/bridges.py, data/bridges.json): the Route 7 crossing of Tilpey's
                 # outflow, the one required bridge; block functions run by R9G
                 "cobblers_bridges",
+                # 2026-10-09: Route 5's event sites (tools/route5_events.py): block functions run by R12R5; the scenes,
+                # NPCs and conversations they carry are data/scenes.json's, placed by R17
+                "cobblers_route5_events",
                 # 2026-09-27: each dressed town's landmark and set dressing (tools/town_dressing.py,
                 # data/town_dressing.json), run by R16B after the donors and the lights
                 "cobblers_town_dressing",
@@ -115,6 +121,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Ursaluna's den west of Highwire (tools/ursaluna_cave.py, data/ursaluna_cave.json): a
                 # keeper loop holds the bear in its den, so world-local; carved, summoned and dressed by R18U
                 "cobblers_ursaluna_cave",
+                # 2026-10-09: the Drowned Quarry under Lake Tilpey's east wall (tools/drowned_quarry.py,
+                # data/drowned_quarry.json): a keeper loop holds its Gyarados, so world-local; carved and summoned by R18DQ
+                "cobblers_drowned_quarry",
                 # 2026-10-02: the Frostpeak research camp (tools/frostpeak_camp.py, data/frostpeak_camp.json): block
                 # functions and the instruments' display entities, run by R18F
                 "cobblers_frostpeak_camp",
@@ -122,6 +131,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # (tools/coldwater_station.py, data/coldwater_station.json): block functions, two instrument displays
                 # and three researchers, run by R18CW. Its jetty and boatman are the ferry's (R16H, R17F)
                 "cobblers_coldwater_station",
+                # 2026-10-09: the Merian Ice Lodge (tools/ice_lodge.py, data/ice_lodge.json): the Merian cirque's frozen tarn,
+                # its shelters, lodge, racks and gear, and the holekeeper's class and dialogue; one block function and one
+                # NPC, run by R18IL
+                "cobblers_ice_lodge",
                 # 2026-10-02: the Seaward Drift, its strip mine and Driftmouth Isle (tools/sea_drift.py,
                 # data/sea_drift.json): 90 block functions run by R9SD, before the Habitat Blocks that sit in its rock
                 "cobblers_sea_drift",
@@ -132,8 +145,14 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_lopunny_house",
                 # 2026-10-02: the Old Orchard on Sunset Isle round the Orchard Sleeper (tools/old_orchard.py), run by R9SO
                 "cobblers_old_orchard",
+                # 2026-10-09: the Sundown Watch on Sunset Isle's western shoulder (tools/sunset_watch.py): terrace, dial, Sun Gate,
+                # lamp house, mast and the isle landing's waymark, run by R9SW before the Habitat Blocks in its plinth and mast
+                "cobblers_sunset_watch",
                 # 2026-10-02: the Copperway Khan in the south-east dunes and its milestones (tools/dune_ruin.py), run by R9DU
                 "cobblers_dune_ruin",
+                # 2026-10-09: Wardenhold, the snow-covered keep on Frostpeak Strand's southern lip (tools/frostpeak_keep.py),
+                # run by R9FK before R9E
+                "cobblers_frostpeak_keep",
                 # 2026-10-05: the mainline beats' evidence displays beside eight tellers (tools/reveal_evidence.py), run
                 # by R17NE after R17N
                 "cobblers_reveal_evidence",
@@ -159,9 +178,34 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-04: the far south's five places (tools/far_south.py, data/far_south.json) in rows F-H, built
                 # by R9FS; three named Pokemon on the residents' keeper, so world-local below; R18FS after R18NR
                 "cobblers_far_south",
+                # 2026-10-09: Hummock Mere, the swamp monster's drowned grove on the Marshy Marsh's east shore
+                # (tools/hummock_mere.py, data/hummock_mere.json), built by R9HM; one named Pokemon on the residents'
+                # keeper, so world-local below; summoned by R18HM after R18FS
+                "cobblers_hummock_mere",
+                # 2026-10-09: the Tri Peaks' open-summit nest (tools/tri_peaks_nest.py, data/tri_peaks_nest.json): the
+                # south peak's crown, teeth and scree spur, built by R9TP; one named Pokemon on the residents' keeper,
+                # so world-local below. No entity step: the keeper brings it in
+                "cobblers_tri_peaks_nest",
+                # 2026-10-09: Undertow Basin on the east coast dunes (tools/buried_dune.py, data/buried_dune.json): a
+                # Sandaconda in a bed under the dune on the residents' keeper, so world-local below; built by R9BD,
+                # summoned by R18BD
+                "cobblers_buried_dune",
+                # 2026-10-09: Gull Rock, the rookery off the north-east coast (tools/rookery.py, data/rookery.json): a
+                # stack and six tidal rocks in the sea built by R9RK, before R9E (the colony's Habitat Blocks sit in the
+                # rock); the Gullmother, a Dragonite, is on the residents' keeper, so world-local below; R18RK after R18FS
+                "cobblers_rookery",
+                # 2026-10-09: the Long Count in C3 (tools/long_count.py, data/long_count.json): Perrin Hale's camp, the
+                # lantern pole and the Grotle's lane of trees, built by R9LC; one named Pokemon on the residents'
+                # keeper, so world-local below; summoned by R18LC after R18FS; Perrin is R9F's (an npc_grant)
+                "cobblers_long_count",
                 # 2026-10-04: the jungle's three lost temples on the Long Isle's south (tools/jungle_temples.py,
                 # data/jungle_temples.json), built by R9JT; no load or tick and no Pokemon, so not world-local
                 "cobblers_jungle_temples",
+                # 2026-10-09: the Fungal Isle grown over (tools/fungal_isle.py, data/fungal_isle.json): the Cap Wood, the
+                # Stump Court, the Glowcap Hollow and the island's scatter of caps, stumps and logs, built by R9FI
+                # BEFORE R9E (three activated Habitat Blocks stand in blocks it writes); no load or tick and no Pokemon
+                # of its own (the nests are the Habitat Blocks'), so not world-local
+                "cobblers_fungal_isle",
                 # 2026-10-05: Hollin's Apricorn Farm at (2068, 5570) (tools/apricorn_farm.py, data/apricorn_farm.json):
                 # seven terraced groves, the yard and lanes, built by R9AF; block functions and the stall merchant's
                 # summon, nothing that runs on its own; the farmer and the merchant stood by R18AF
@@ -219,6 +263,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # hall per gym with its puzzle inside it, on the lot the shell stood on. Block functions run by
                 # R16G, after the demolition (R16F) that clears the lot for them
                 "cobblers_gym_buildings",
+                # 2026-10-09: the gym arenas carved below the buildings (tools/gym_arenas.py). It was in WORLD_LOCAL
+                # only, so install never installed it and install_check called the install current; the first apply
+                # had it copied by hand. Block functions run by R16GA, after R16G
+                "cobblers_gym_arenas",
                 # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
                 # callback acts on its own, so world-local below
                 "cobblers_levelcap",
@@ -246,6 +294,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # self-driving keeper that spawns per player in cobblers:pocket, two callbacks; world-local below.
                 # Its rooms are blocks in the pocket dimension, built by R16Q after the portals' R16P
                 "cobblers_entei_boss",
+                # 2026-10-08: the dungeon engine core (tools/dungeon.py, data/dungeons.json): timed rift runs in
+                # cobblers:pocket, a self-driving keeper, a battle_victory callback and NPC classes; world-local below.
+                # Its slot shells are built by R16DG and its overworld rips by R16DR, after R16Q
+                "cobblers_dungeons",
                 # 2026-10-08: the Beast Ball is the key to dungeon bosses (tools/key_ball.py, data/key_ball.json): two
                 # Cobblemon callbacks and the jar's beast_ball recipe closed; no blocks, no step; world-local below
                 "cobblers_key_ball",
@@ -326,6 +378,7 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
 EXCLUDED = {
+    "cobblers_dg_probes": "STAGING ONLY: the Night Shift probe pack (tools/dungeon_probes.py, EXP-069..083), installed by hand into the staging world and run over RCON per each EXP; never in the players' pack or a re-apply step",
     "cobblers_reapply": "the loose-function container; its functions are run by the steps that own them",
     # 2026-09-30: HELD BACK ON PURPOSE, and this is a safety hold, not tidiness. R9Z places obsidian walls
     # across the Rift's throat, the League's gate and behind the League, plus gatehouse barriers. The hold was
@@ -394,6 +447,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
                # 2026-10-08: the Entei keeper SPAWNS a legendary per player on its own and gives items: never global
                "cobblers_entei_boss",
+               # 2026-10-08: the dungeon keeper KILLS players on a timer, spawns NPCs, takes and gives items and sets game
+               # modes on its own: never global
+               "cobblers_dungeons",
                # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
                "cobblers_key_ball",
                # 2026-10-08: sets a gamerule and rewrites every player's recipe book: never global, or the live world
@@ -409,6 +465,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_produce_buyer",
                # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
                "cobblers_ursaluna_cave",
+               # 2026-10-09: the Drowned Quarry's keeper holds its Gyarados on its own tick, like the den's
+               "cobblers_drowned_quarry",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
                # load in the global folder, where the live world would run it too
                "cobblers_residents", "cobblers_relic_underground",
@@ -426,13 +484,27 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_northern_residents",
                # 2026-10-04: the far south's keeper spawns its three Pokemon the same way
                "cobblers_far_south",
+               # 2026-10-09: Hummock Mere's keeper spawns its one Pokemon the same way
+               "cobblers_hummock_mere",
+               # 2026-10-09: the Tri Peaks nest's keeper spawns its Tyranitar the same way
+               "cobblers_tri_peaks_nest",
+               # 2026-10-09: Undertow Basin's keeper spawns and moves its Sandaconda the same way
+               "cobblers_buried_dune",
+               # 2026-10-09: the rookery's keeper spawns its one Pokemon the same way
+               "cobblers_rookery",
+               # 2026-10-09: the Long Count's keeper spawns its Grotle the same way
+               "cobblers_long_count",
                # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
                # global folder would run it in the live world too
                "cobblers_arena",
                # 2026-10-10: its structure_set overrides must sit above the global COBBLEVERSE datapack
                "cobblers_dimension_overrides",
                # 2026-10-08: the Nether gate teleports players on its own; global would gate the live world too
-               "cobblers_nether_gate")
+               "cobblers_nether_gate",
+               # 2026-10-08: the gym arenas carved below the gym buildings (tools/gym_arenas.py, data/gym_arenas/):
+               # block functions run by R16GA, which also MOVES a leader's spawner into its arena and kills the leader
+               # left standing in the building; world-local so nothing in the live world can call it
+               "cobblers_gym_arenas")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -715,6 +787,9 @@ def prepare_jobs(a):
     # Routes 1-3: the event sites (it fails when data/scenes.json or data/route_trainers.json disagree with the
     # build, or anything stands on the walked line), then the scene runtime and the trainers
     add("route_events", "route_events.py", *src)
+    # Route 4's middle (2026-10-09): the same, for its own region; fails when the records in data/ disagree with the design or
+    # anything stands on the walked line, within 3.5 of the tunnel mouth or on a spawn-condition block it does not declare
+    add("route4_events", "route4_events.py", *src)
     add("scenes_pack", "scenes_pack.py")
     # routes 4-8's 28 trainers (tools/late_route_trainers.py, data/late_route_trainers.json, 2026-09-30): the
     # biggest unplaced content in the project until now. BEFORE route_trainers, which reads its seat file as a
@@ -722,6 +797,9 @@ def prepare_jobs(a):
     # route_events does, so a seat cannot quietly move when the ground under it changes.
     add("late_route_trainers", "late_route_trainers.py", *src)
     add("route_trainers", "route_trainers.py")
+    # Route 5's event sites (2026-10-09, tools/route5_events.py): fails on drift between the build and the four scene
+    # records or the cache record in data/, or on anything standing on the walked line
+    add("route5_events", "route5_events.py", *src)
     add("challenge_mode_audit", "challenge_mode_audit.py")
     # Heaven's Arena's per-player opponents (2026-10-03): the ladder, the champions' exam teams and the dome's venues.
     # It FAILS while data/arena_dome.json has no venues: an arena with nowhere to fight is not a pack to install
@@ -790,6 +868,10 @@ def prepare_jobs(a):
     # replays the written functions against its own reading of the plan and fails the prepare on a broken build
     add("ursaluna_cave", "ursaluna_cave.py", *src)
     add("ursaluna_cave_audit", "ursaluna_cave_audit.py", *src)
+    # the Drowned Quarry (2026-10-09), then its independent audit, which replays the written functions into the natural
+    # lake and the rock and fails the prepare on a leak, a thin roof, a reach that gates nothing or a broken keeper
+    add("drowned_quarry", "drowned_quarry.py", *src)
+    add("drowned_quarry_audit", "drowned_quarry_audit.py", *src)
     add("frostpeak_camp:build", "frostpeak_camp.py", "build", *src)
     add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
     # Coldwater Station (2026-10-05): its builder's siting guards fail the job; its independent audit
@@ -802,19 +884,31 @@ def prepare_jobs(a):
     add("lopunny_house_audit", "lopunny_house_audit.py", *src)
     add("old_orchard:build", "old_orchard.py", "build", *src)
     add("old_orchard_audit", "old_orchard_audit.py", *src)
+    add("sunset_watch:build", "sunset_watch.py", "build", *src)
+    add("sunset_watch_audit", "sunset_watch_audit.py", *src)
     add("dune_ruin:build", "dune_ruin.py", "build", *src)
     add("dune_ruin_audit", "dune_ruin_audit.py", *src)
+    add("frostpeak_keep:build", "frostpeak_keep.py", "build", *src)
+    add("frostpeak_keep_audit", "frostpeak_keep_audit.py", *src)
     add("reveal_evidence:build", "reveal_evidence.py", "build")
     add("reveal_evidence_audit", "reveal_evidence_audit.py", *src)
     add("desert_wreck:build", "desert_wreck.py", "build", *src)
     add("desert_wreck_audit", "desert_wreck_audit.py", *src)
     add("fossil_dig:build", "fossil_dig.py", "build", *src)
     add("fossil_dig_audit", "fossil_dig_audit.py", *src)
+    # the Merian Ice Lodge (2026-10-09): its builder's siting guards fail the job (flat floor, keep-clear boxes, spawn
+    # conditions, the melting rule), then its independent audit, which replays the written function and re-derives the
+    # tarn, the holes, the lights and the walk from the record alone
+    add("ice_lodge:build", "ice_lodge.py", "build", *src)
+    add("ice_lodge_audit", "ice_lodge_audit.py", *src)
     add("training_grounds:build", "training_grounds.py", "build")
     # the ten named residents (2026-10-02), then their independent audit, which re-derives every site and write from
     # the data and the heightmap and fails the prepare on a broken pack
     add("resident_encounters", "resident_encounters.py", *src)
     add("resident_encounters_audit", "resident_encounters_audit.py", *src)
+    # the Tri Peaks' open-summit nest (2026-10-09): the generator fails closed on a record the heightmap disagrees
+    # with (anchor, bbox) and on a function the server would refuse. Its independent audit is owed to another agent
+    add("tri_peaks_nest", "tri_peaks_nest.py", *src)
     # the southern residents (2026-10-03): the generator fails closed on its own siting rules and on a record the
     # heightmap disagrees with; then its independent audit (written by an agent that built none of it, never imports
     # the generator to derive): the pack replayed against the data and the heightmap, the siting and resident rules,
@@ -831,6 +925,22 @@ def prepare_jobs(a):
     # rule, the species' climate, the caches' rewards pack, the gym 7 gate, the steps and this wiring
     add("far_south", "far_south.py", *src)
     add("far_south_audit", "far_south_audit.py", *src)
+    # Hummock Mere (2026-10-09): the generator fails closed on its siting rules and a record the heightmap disagrees
+    # with; then its independent audit (tools/hummock_mere_audit.py), which replays the pack it reads
+    add("hummock_mere", "hummock_mere.py", *src)
+    add("hummock_mere_audit", "hummock_mere_audit.py", *src)
+    # Undertow Basin (2026-10-09): the generator fails closed on its own siting rules (authored clearance, route paths,
+    # the sub-region's tier ceiling, a habitat leash, spawn-condition blocks) and on a record the heightmap disagrees with
+    add("buried_dune", "buried_dune.py", *src)
+    # Gull Rock, the rookery off the north-east coast (2026-10-09): the generator fails closed on its own siting rules
+    # (every column wet and in cell C7, the authored and corridor clearances, the path and ferry clearances, the nest
+    # rule, no spawn-condition or gravity block) and on a record the heightmap disagrees with. Its independent audit is
+    # owed (data/rookery.json audit_checklist) and is wired here when it exists
+    add("rookery", "rookery.py", *src)
+    # the Long Count in C3 (2026-10-09): the generator fails closed on its own siting rules (cell C3, the authored
+    # clearance, the path rule, the line pointing at the world tree, spawn blocks) and on a record the heightmap
+    # disagrees with. Its independent audit is owed (data/long_count.json audit_checklist), so no audit job yet
+    add("long_count", "long_count.py", *src)
     # the jungle's lost temples (2026-10-04): the generator fails closed on its own siting rules (long_isle_south, the
     # keep-clear list, the authored clearance, spawn blocks) and on a record the heightmap disagrees with; then its
     # independent audit (tools/jungle_temples_audit.py, another agent's), after the pack it reads: the pack replayed
@@ -838,6 +948,10 @@ def prepare_jobs(a):
     # Harbour Mark's bearing, the caches against the economy curve, the steps and this wiring
     add("jungle_temples", "jungle_temples.py", *src)
     add("jungle_temples_audit", "jungle_temples_audit.py", *src)
+    # the Fungal Isle grown over (2026-10-09, tools/fungal_isle.py): the generator fails closed on its own guards (terrain,
+    # keep-clear regions, the Newmoon ceiling, spawn-condition blocks, small-mushroom support, the pool's containment, the
+    # Habitat Blocks' mimics). No independent audit yet (docs/world-building/FUNGAL_ISLE.md, "What an audit must check")
+    add("fungal_isle:build", "fungal_isle.py", "build", *src)
     # Hollin's Apricorn Farm (2026-10-05): the generator fails closed on its own guards (allow-list, spawn blocks, wet
     # columns, overlaps, fruit attachment, gates, spots, siting). Then its independent audit (tools/apricorn_farm_audit.py,
     # another agent's, never imports the generator to derive): the built pack replayed over the heightmap, fruit
@@ -915,6 +1029,9 @@ def prepare_jobs(a):
     # world; both take their ground from tools/ground.py and the town plan's levelled lot
     add("gym_demolish:build", "gym_demolish.py", "build", *src)
     add("gym_buildings:build", "gym_buildings.py", "build", *src)
+    # the arenas below the gym buildings (2026-10-08): every rule proved against the building's own model and the
+    # heightmap, then the pack; a broken arena stops the prepare here, before anything is installed
+    add("gym_arenas:build", "gym_arenas.py", "build", *src)
     # the gym juniors (2026-10-06, tools/gym_trainers.py): every seat proved must-pass against the gym's own geometry
     add("gym_trainers:check", "gym_trainers.py", "check")
     add("gym_trainers_audit", "gym_trainers_audit.py")  # independent: real hall geometry, must-pass and softlock
@@ -995,6 +1112,9 @@ def prepare_jobs(a):
     # the repeatable Entei in cobblers:pocket (data/entei_boss.json; fails closed on a bankable drop, a room in the
     # portals' rescue box or outside the border, or an alpha / mis-levelled boss)
     add("entei_boss", "entei_boss.py")
+    # the dungeon engine (data/dungeons.json; fails closed on a slot meeting the rescue box, Entei's band, the probes'
+    # row or a waystone's arrival, a lockout under the longest clock, or a run tag missing from data/blackout.json)
+    add("dungeons", "dungeon.py")
     # the Beast Ball key (data/key_ball.json): fails closed if any boss tool's bind does not add the shared tag, if the
     # refusal message hints at the key, or if data/blackout.json can take a Beast Ball
     add("key_ball", "key_ball.py")
@@ -1896,6 +2016,12 @@ def steps(with_spawns=False):
     import old_orchard
     out.append(("R9SO", "the Old Orchard on Sunset Isle: rows, press-house and cellar, garden (data/old_orchard.json)",
                 old_orchard.placement_steps()))
+    # the Sundown Watch on Sunset Isle (2026-10-09, tools/sunset_watch.py): BEFORE R9E, because its build writes the dial's
+    # plinth and the mast's second log that the two activated Habitat Blocks sit in - after R9E it would write the
+    # blocks back over them
+    import sunset_watch
+    out.append(("R9SW", "the Sundown Watch on Sunset Isle: terrace, dial, Sun Gate, lamp house, mast (data/sunset_watch.json)",
+                sunset_watch.placement_steps()))
     # the Copperway Khan (2026-10-02, tools/dune_ruin.py): BEFORE R9E, because its build writes the vault floor - after
     # R9E it would lay smooth sandstone over the Cofagrigus Habitat Block set in that floor
     # the Brass Petrel (2026-10-05, tools/desert_wreck.py): BEFORE R9E, whose Habitat Blocks include the beach's two
@@ -1909,6 +2035,12 @@ def steps(with_spawns=False):
     import dune_ruin
     out.append(("R9DU", "the Copperway Khan, its sealed store and the Copperway's milestones (data/dune_ruin.json)",
                 dune_ruin.placement_steps()))
+    # Wardenhold (2026-10-09, tools/frostpeak_keep.py): BEFORE R9E, because its build writes the two floor cells that carry the
+    # household's and the Froslass's Habitat Blocks (frostpeak_keep_hall_ward, frostpeak_keep_beacon_ward) - after R9E it
+    # would lay stone bricks over them
+    import frostpeak_keep
+    out.append(("R9FK", "Wardenhold, the snow-covered keep on Frostpeak Strand's southern lip (data/frostpeak_keep.json)",
+                frostpeak_keep.placement_steps()))
     # the Drovers' Hollow (2026-10-02, tools/drovers_hollow.py): BEFORE R9E, because its build writes the fold's floor -
     # after R9E it would lay coarse dirt over the herd's Habitat Block set in that floor
     import drovers_hollow
@@ -1961,11 +2093,43 @@ def steps(with_spawns=False):
     import far_south
     out.append(("R9FS", "the far south's places: kraal, chimneys, glass garden, glyph ring, folly (data/far_south.json)",
                 far_south.placement_steps()))
+    # Hummock Mere (2026-10-09, tools/hummock_mere.py): the drowned grove and the roadside warning, each held in a
+    # forceload of its box, before R9E (none sits on a Habitat Block); its resident stands on the island (R18HM)
+    import hummock_mere
+    out.append(("R9HM", "Hummock Mere: the drowned grove, the island and the Route 6 warning (data/hummock_mere.json)",
+                hummock_mere.placement_steps()))
+    # the Tri Peaks' open-summit nest (2026-10-09, tools/tri_peaks_nest.py): the same pure block pass, held in a
+    # forceload of its box (30 chunks), before R9E (no Habitat Block near it). Its Tyranitar is the residents' keeper's:
+    # ungated, brought in the first time a player is within 96 blocks of the crown, so no entity is touched here
+    import tri_peaks_nest
+    out.append(("R9TP", "the Tri Peaks' open-summit nest: the crown, its teeth and the scree spur (data/tri_peaks_nest.json)",
+                tri_peaks_nest.placement_steps()))
+    # Undertow Basin (2026-10-09, tools/buried_dune.py): the bowl, the trails, the bones and the sleeper's bed, one pure
+    # block pass held in a forceload of its box, before R9E (none sits on a Habitat Block); its creature is R18BD
+    import buried_dune
+    out.append(("R9BD", "Undertow Basin on the east coast dunes: bowl, trails, bones, the sleeper's bed (data/buried_dune.json)",
+                buried_dune.placement_steps()))
+    # Gull Rock (2026-10-09, tools/rookery.py): the stack and the six tidal rocks in the sea, held in a forceload of
+    # their box, BEFORE R9E (the colony's six Habitat Blocks are set in this rock); the Gullmother stands on its crown (R18RK)
+    import rookery
+    out.append(("R9RK", "Gull Rock: the stack and its six tidal rocks off the north-east coast (data/rookery.json)",
+                rookery.placement_steps()))
+    # the Long Count (2026-10-09, tools/long_count.py): the same pure block pass, held in a forceload of its box, before
+    # R9E (it sits on no Habitat Block); Perrin stands on its floor (R9F, from the npc_grant long_count_thanks)
+    import long_count
+    out.append(("R9LC", "the Long Count in C3: the camp, the lantern pole, the Grotle's lane of trees (data/long_count.json)",
+                long_count.placement_steps()))
     # the jungle's lost temples (2026-10-04, tools/jungle_temples.py): the same pure block pass per temple, held in a
     # forceload of its box, before R9E (none sits on a Habitat Block); the caches' barrels are written here
     import jungle_temples
     out.append(("R9JT", "the jungle's lost temples: the Ring Court, the Harbour Mark, the Green Stair (data/jungle_temples.json)",
                 jungle_temples.placement_steps()))
+    # the Fungal Isle grown over (2026-10-09, tools/fungal_isle.py): a block pass per glade and per 128-block tile of the
+    # island's scatter, each held in a forceload of its own box, BEFORE R9E: the Cap Wood's beacon stem, the Stump
+    # Court's great stump and the Glowcap Hollow's floor are the blocks the three activated Habitat Blocks mimic
+    import fungal_isle
+    out.append(("R9FI", "the Fungal Isle grown over: Cap Wood, Stump Court, Glowcap Hollow and the island's caps, stumps and logs (data/fungal_isle.json)",
+                fungal_isle.placement_steps()))
     # Hollin's Apricorn Farm (2026-10-05, tools/apricorn_farm.py): one block pass held in a forceload of the farm's box
     # (90 chunks), before R9E with the other block passes; the farmer and the stall keeper stand on it (R18AF)
     import apricorn_farm
@@ -2038,8 +2202,25 @@ def steps(with_spawns=False):
     # its puzzle inside it and the leader's spawner at the end of it. Listed from the committed data, not the built
     # pack, so the step exists whether or not the pack is built here; the prepare's audit fails on a missing one
     gym_halls = sorted(p.stem for p in (ROOT / "data" / "gym_buildings").glob("*.json"))
-    out.append(("R16G", "the authored gym buildings (%d)" % len(gym_halls),
-                [("fn", "cobblers:gym_buildings/%s" % g) for g in gym_halls]))
+    import gym_arenas
+    # each arena's seat move straight after the buildings, in this step: a building puts its spawner back in the
+    # hall every run, so R16G run alone (--only R16G) would otherwise leave a second spawner for a leader whose arena
+    # stands. The move tests that its arena is built, so on a world without one it does nothing (R16GA moves it)
+    out.append(("R16G", "the authored gym buildings (%d), and each arena's leader moved back into it" % len(gym_halls),
+                [("fn", "cobblers:gym_buildings/%s" % g) for g in gym_halls]
+                + [("fn", "cobblers:gym_arenas/%s_seat" % d["id"]) for _p, d in gym_arenas.records()]))
+    # the gym arenas (tools/gym_arenas.py, data/gym_arenas/): carved below each building that has one, AFTER R16G
+    # (the descent starts in the building, and the building puts its spawner back every run) and after R16E/R16F
+    # (the healer sweep and the refilled works). Per arena: the build, the seat move (the building's spawner into
+    # the dais, its cell back to its floor, never with a player within reach of either), the old leader swept out of
+    # the building (tools/chunk_look.py), then the read-back. R16G also runs each seat move (above), so the hall
+    # never keeps a spawner its arena has taken. Listed from the committed data, not the built pack
+    arena_steps = gym_arenas.steps()
+    if arena_steps:
+        arena_hold = ["%d %d %d %d" % b for b in gym_arenas.hold_boxes()]
+        out.append(("R16GA", "the gym arenas (%d) and their leaders moved into them" % len(gym_arenas.records()),
+                    arena_steps[:-2] + [("cmd", "forceload add " + h) for h in arena_hold] + [("wait", 3)]
+                    + arena_steps[-2:] + [("cmd", "forceload remove " + h) for h in arena_hold]))
     # the dive and sky portals (tools/portals.py, data/portals.json): the world-side arches, then `place`, which
     # builds every room inside cobblers:pocket. The rooms live in the world folder and a re-export makes a new one
     # (EXP-047 result 6), so they are rebuilt here every run; they are flat and deterministic, so that is exact.
@@ -2065,12 +2246,27 @@ def steps(with_spawns=False):
     # function holds its own chunks (function_limits.ensure_loaded). The keeper, the sigil and the callbacks need no step
     out.append(("R16Q", "the Entei boss's four rooms in cobblers:pocket (data/entei_boss.json)",
                 [("fn", "cobblers:entei_boss/place")]))
+    # the dungeon engine's slot shells (R16DG) and its overworld rips (R16DR), tools/dungeon.py: after R16P for the
+    # pocket dimension, as R16Q, and after the places, so the Night Shift's placeholder rip is set into the old mine's
+    # notch after tools/route1_old_mine.py cut it. Each block function holds its own chunks (ensure_loaded); the
+    # entities (the slots' rips and boards, the overworld rips' interactions) follow through tools/chunk_look.py, so
+    # nothing is killed or summoned before a chunk's saved entities are in, and the step reads their count back
+    import dungeon as DG
+    out.extend(DG.reapply_steps())
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
     # Routes 1-3's event sites after the signposts and every town, and before the things that stand in them
     out.append(("R12", "Routes 1-3 event sites (tools/route_events.py)",
                 [("fn", "cobblers:route_events/%s" % f) for f in indexed("cobblers_route_events", "route_events")]))
+    # Route 5's event sites (tools/route5_events.py): a pack of their own so Routes 1-3's cannot move, run right after
+    # theirs and before R17 places the props, NPCs and actors that stand in them
+    out.append(("R12R5", "Route 5 event sites (tools/route5_events.py)",
+                [("fn", "cobblers:route5_events/%s" % f) for f in indexed("cobblers_route5_events", "route5_events")]))
+    # Route 4's middle (tools/route4_events.py): the camp, the hollow, the strayed load, the old summit road and the thaw gate,
+    # after the same signposts and the towns. Its props and NPCs are scenes in data/scenes.json, so R17 below places them
+    out.append(("R12R4", "Route 4's middle event sites (tools/route4_events.py)",
+                [("fn", "cobblers:route4_events/%s" % f) for f in indexed("cobblers_route4_events", "route4_events")]))
     # what stands in the sites and the mansion: the scenes' props (interaction boxes, once each), their NPCs, and
     # the route trainers; entities, so an export erases them like blocks, and NPC classes and trainer data load at
     # boot, so these run over RCON after the restart that followed install
@@ -2150,6 +2346,9 @@ def steps(with_spawns=False):
     # after the restart that loaded cobblers_dialogue's classes, on the ground R9SO's orchard stands on
     out.append(("R18SO", "the Old Orchard's keeper, Wenna Marlow (data/old_orchard.json npc)",
                 [("npc", n) for n in old_orchard.npc_placements()]))
+    # the Sundown Watch's keeper (2026-10-09, tools/sunset_watch.py): as the Old Orchard's, on the terrace R9SW paves
+    out.append(("R18SW", "the Sundown Watch's keeper, Isaura Dray (data/sunset_watch.json npc)",
+                [("npc", n) for n in sunset_watch.npc_placements()]))
     # Hollin's Apricorn Farm (2026-10-05): the farmer, Tamsin Hollin, an NPC like the Old Orchard's keeper (her class
     # loaded at boot from cobblers_dialogue), turned to her yaw; then the stall's CobbleDollars merchant, summoned in a
     # forceload of its chunk and de-duplicated by tag 100 ticks later (tools/markets.py's shape)
@@ -2178,6 +2377,12 @@ def steps(with_spawns=False):
     import ursaluna_cave
     out.append(("R18U", "the Ursaluna's den west of Highwire (data/ursaluna_cave.json)",
                 ursaluna_cave.placement_steps() + [("npc", n) for n in ursaluna_cave.npc_placements()]))
+    # the Drowned Quarry (2026-10-09): carve the flooded working under Lake Tilpey's east wall, then summon the sleeping
+    # Gyarados through tools/chunk_look.py's look-then-act chain (a force-loaded chunk accepts a summon at once but its
+    # saved entities arrive later), after every lake pack (R9LL) so nothing re-skins the open cutting
+    import drowned_quarry
+    out.append(("R18DQ", "the Drowned Quarry under Lake Tilpey's east wall and its Gyarados (data/drowned_quarry.json)",
+                drowned_quarry.placement_steps()))
     # the Compact guards at the HQ's ring-0 door (2026-10-02, data/relic_underground.json geometry.hq.guard): the door
     # stays shut and the guard's dialogue moves a player at rift_crisis_pending or later inside; the inside guard lets
     # anyone out. NPCs, so after the restart that loaded cobblers_dialogue's classes, like R17N's, each turned to its yaw
@@ -2217,6 +2422,25 @@ def steps(with_spawns=False):
     import far_south
     out.append(("R18FS", "the far south's residents: the ungated Pokemon (data/far_south.json)",
                 far_south.entity_steps()))
+    # Hummock Mere (2026-10-09): its one Pokemon is UNGATED, so unlike the far south's this step summons it (guarded on
+    # tag AND species) and binds it, inside a forceload of the grove's box. After R18FS
+    import hummock_mere
+    out.append(("R18HM", "Hummock Mere's resident, the Hummock (data/hummock_mere.json)",
+                hummock_mere.entity_steps()))
+    # Undertow Basin (2026-10-09): the Sandaconda held in its bed under the east coast dunes, summoned once and bound
+    # through tools/chunk_look.py's look-then-act chain (which holds and releases its own forceload). After R9BD
+    import buried_dune
+    out.append(("R18BD", "Undertow Basin's sleeper: the Undertow, in its bed under the dune (data/buried_dune.json)",
+                buried_dune.entity_steps()))
+    # Gull Rock's Gullmother (2026-10-09): a Dragonite on the crown, summoned (guarded on tag AND species) and bound.
+    # Ungated: she is there from the first day and asleep; her catch gate is the level cap, not an appearance gate
+    out.append(("R18RK", "Gull Rock's Gullmother: the ungated Pokemon (data/rookery.json)",
+                rookery.entity_steps()))
+    # the Long Count (2026-10-09): its Grotle has no presence gate (the level cap is the gate at gym 2), so it is
+    # summoned (guarded on tag AND species) and bound inside a forceload of the site's box. After R18FS
+    import long_count
+    out.append(("R18LC", "the Long Count's Grotle, Old Pace: summoned and bound (data/long_count.json)",
+                long_count.entity_steps()))
     # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",
@@ -2248,6 +2472,11 @@ def steps(with_spawns=False):
     import coldwater_station
     out.append(("R18CW", "Coldwater Station, the Kyogre research station (data/coldwater_station.json)",
                 coldwater_station.placement_steps()))
+    # the Merian Ice Lodge (2026-10-09, tools/ice_lodge.py): the tarn, shelters, lodge, racks and gear held in a forceload,
+    # then the holekeeper (her class loads at boot from cobblers_ice_lodge). On the cirque floor south of the hut's yard
+    import ice_lodge
+    out.append(("R18IL", "the Merian Ice Lodge: frozen tarn, shelters, lodge and the holekeeper (data/ice_lodge.json)",
+                ice_lodge.placement_steps()))
     # the town traders: each town's look-then-act chain (tools/chunk_look.py, N155) started at once, waited for whole,
     # and each town's count read back; no step-level forceload, each chain holds and releases its own plaza
     import traders
@@ -2478,6 +2707,12 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 bad += ["stall merchants: %s" % m for m in problems]
                 print("   stall merchants: %d stalls, %d problems" % (len(markets.emitted_stalls(markets.load())),
                                                                      len(problems)), flush=True)
+            elif kind == "check" and v == "gym_arenas":
+                # each arena's probes and its leader moved: the spawner in the dais, none in the hall (R16GA)
+                import gym_arenas
+                problems = gym_arenas.verify(rc)
+                bad += ["gym arenas: %s" % m for m in problems]
+                print("   gym arenas: %d arenas, %d problems" % (len(gym_arenas.records()), len(problems)), flush=True)
             elif kind == "check" and v == "single_leader":
                 # one leader per gym: the second spawner gone, the one spawner Normal with nobody near (R17L)
                 import challenge_mode

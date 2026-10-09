@@ -2337,6 +2337,4156 @@
         ],
         "expect": false
       }
+    ],
+    "route5_events": [
+      {
+        "what": "route5_empty_fold: the block under prop empty_hook",
+        "block": [
+          4399,
+          113,
+          1659,
+          "minecraft:tripwire_hook"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_empty_fold: spruce_fence_gate",
+        "block": [
+          4402,
+          112,
+          1661,
+          "minecraft:spruce_fence_gate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_empty_fold: dlg_r5_nan",
+        "entity": "@e[type=cobblemon:npc,x=4399,y=112,z=1664,distance=..2]",
+        "count": 1,
+        "hold": [
+          4399,
+          112,
+          1664
+        ]
+      },
+      {
+        "what": "route5_cairn_bells: the block under prop bell_north",
+        "block": [
+          4433,
+          121,
+          1876,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_cairn_bells: the block under prop bell_south",
+        "block": [
+          4435,
+          122,
+          1889,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_cairn_bells: the block under prop bell_west",
+        "block": [
+          4425,
+          120,
+          1884,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_cairn_bells: barrel",
+        "block": [
+          4430,
+          121,
+          1883,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_lee_hut: the block under prop weather_board",
+        "block": [
+          4396,
+          118,
+          2072,
+          "minecraft:spruce_wall_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_lee_hut: spruce_planks",
+        "block": [
+          4397,
+          116,
+          2071,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_lee_hut: dlg_r5_gorse",
+        "entity": "@e[type=cobblemon:npc,x=4401,y=117,z=2074,distance=..2]",
+        "count": 1,
+        "hold": [
+          4401,
+          117,
+          2074
+        ]
+      },
+      {
+        "what": "route5_winter_fold: the block under prop tally_post",
+        "block": [
+          4574,
+          117,
+          2296,
+          "minecraft:spruce_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_winter_fold: moss_block",
+        "block": [
+          4565,
+          118,
+          2287,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_winter_fold: smooth_stone",
+        "block": [
+          4580,
+          114,
+          2290,
+          "minecraft:smooth_stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_winter_fold: dlg_r5_jory",
+        "entity": "@e[type=cobblemon:npc,x=4571,y=114,z=2295,distance=..2]",
+        "count": 1,
+        "hold": [
+          4571,
+          114,
+          2295
+        ]
+      }
+    ],
+    "gym1_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          1826,
+          125,
+          3662,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          1826,
+          124,
+          3662,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          1826,
+          126,
+          3662,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          1826,
+          121,
+          3676,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          1826,
+          121,
+          3681,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          1826,
+          124,
+          3663,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          1826,
+          121,
+          3684,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the floor's axis line",
+        "block": [
+          1826,
+          122,
+          3690,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air in the nave",
+        "block": [
+          1826,
+          130,
+          3690,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the trilithon's lintel",
+        "block": [
+          1826,
+          133,
+          3660,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the turret door",
+        "block": [
+          1815,
+          124,
+          3696,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-west corner",
+        "block": [
+          1808,
+          120,
+          3705,
+          "minecraft:stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-east top corner",
+        "block": [
+          1844,
+          138,
+          3658,
+          "minecraft:stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          1832,
+          155,
+          3696,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "dungeon_night_shift": [
+      {
+        "what": "slot 1: the entry room's floor under the arrival",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          95,
+          1056,
+          "minecraft:deepslate_tiles"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 1: the arrival's feet are open",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          96,
+          1056,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 1: the back rip's dark opening in the west wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          0,
+          97,
+          1056,
+          "minecraft:black_terracotta"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 1: the exit gate shut (R16DG; a run's last stage opens it, the next door_click shuts it)",
+        "dim": "cobblers:pocket",
+        "block": [
+          111,
+          97,
+          1056,
+          "minecraft:iron_bars"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 1: the far rip's dark opening in the east wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          123,
+          97,
+          1056,
+          "minecraft:black_terracotta"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 1: the board (after R16DG's entity chain)",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:text_display,tag=dg.board,tag=dg.shell.ns1]",
+        "count": 1,
+        "hold": [
+          8,
+          96,
+          1051
+        ]
+      },
+      {
+        "what": "slot 1: the back rip's interaction",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_back,tag=dg.shell.ns1]",
+        "count": 1,
+        "hold": [
+          1,
+          96,
+          1056
+        ]
+      },
+      {
+        "what": "slot 2: the entry room's floor under the arrival",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          95,
+          1184,
+          "minecraft:deepslate_tiles"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 2: the arrival's feet are open",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          96,
+          1184,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 2: the back rip's dark opening in the west wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          0,
+          97,
+          1184,
+          "minecraft:black_terracotta"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 2: the exit gate shut (R16DG; a run's last stage opens it, the next door_click shuts it)",
+        "dim": "cobblers:pocket",
+        "block": [
+          111,
+          97,
+          1184,
+          "minecraft:iron_bars"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 2: the far rip's dark opening in the east wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          123,
+          97,
+          1184,
+          "minecraft:black_terracotta"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 2: the board (after R16DG's entity chain)",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:text_display,tag=dg.board,tag=dg.shell.ns2]",
+        "count": 1,
+        "hold": [
+          8,
+          96,
+          1179
+        ]
+      },
+      {
+        "what": "slot 2: the back rip's interaction",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_back,tag=dg.shell.ns2]",
+        "count": 1,
+        "hold": [
+          1,
+          96,
+          1184
+        ]
+      },
+      {
+        "what": "slot 3: the entry room's floor under the arrival",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          95,
+          1312,
+          "minecraft:deepslate_tiles"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 3: the arrival's feet are open",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          96,
+          1312,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 3: the back rip's dark opening in the west wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          0,
+          97,
+          1312,
+          "minecraft:black_terracotta"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 3: the exit gate shut (R16DG; a run's last stage opens it, the next door_click shuts it)",
+        "dim": "cobblers:pocket",
+        "block": [
+          111,
+          97,
+          1312,
+          "minecraft:iron_bars"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 3: the far rip's dark opening in the east wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          123,
+          97,
+          1312,
+          "minecraft:black_terracotta"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 3: the board (after R16DG's entity chain)",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:text_display,tag=dg.board,tag=dg.shell.ns3]",
+        "count": 1,
+        "hold": [
+          8,
+          96,
+          1307
+        ]
+      },
+      {
+        "what": "slot 3: the back rip's interaction",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_back,tag=dg.shell.ns3]",
+        "count": 1,
+        "hold": [
+          1,
+          96,
+          1312
+        ]
+      },
+      {
+        "what": "slot 4: the entry room's floor under the arrival",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          95,
+          1440,
+          "minecraft:deepslate_tiles"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 4: the arrival's feet are open",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          96,
+          1440,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 4: the back rip's dark opening in the west wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          0,
+          97,
+          1440,
+          "minecraft:black_terracotta"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 4: the exit gate shut (R16DG; a run's last stage opens it, the next door_click shuts it)",
+        "dim": "cobblers:pocket",
+        "block": [
+          111,
+          97,
+          1440,
+          "minecraft:iron_bars"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 4: the far rip's dark opening in the east wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          123,
+          97,
+          1440,
+          "minecraft:black_terracotta"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 4: the board (after R16DG's entity chain)",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:text_display,tag=dg.board,tag=dg.shell.ns4]",
+        "count": 1,
+        "hold": [
+          8,
+          96,
+          1435
+        ]
+      },
+      {
+        "what": "slot 4: the back rip's interaction",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_back,tag=dg.shell.ns4]",
+        "count": 1,
+        "hold": [
+          1,
+          96,
+          1440
+        ]
+      },
+      {
+        "what": "the Night Shift rip (PLACEHOLDER, R16DR): its west post",
+        "block": [
+          1350,
+          130,
+          4117,
+          "minecraft:crying_obsidian"
+        ],
+        "expect": true
+      },
+      {
+        "what": "... its dark opening",
+        "block": [
+          1352,
+          131,
+          4117,
+          "minecraft:black_terracotta"
+        ],
+        "expect": true
+      },
+      {
+        "what": "... its lintel",
+        "block": [
+          1352,
+          133,
+          4117,
+          "minecraft:polished_blackstone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "... the notch in front of it is open (tools/route1_old_mine.py's notch, not ours)",
+        "block": [
+          1352,
+          130,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "... its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_ns]",
+        "count": 1,
+        "hold": [
+          1352,
+          130,
+          4118
+        ]
+      }
+    ],
+    "gym2_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          1627,
+          95,
+          2887,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          1627,
+          94,
+          2887,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          1627,
+          96,
+          2887,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          1620,
+          91,
+          2887,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          1612,
+          91,
+          2887,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          1626,
+          94,
+          2887,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          1609,
+          91,
+          2887,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the quay under the leader's Pokemon",
+        "block": [
+          1620,
+          92,
+          2887,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the quay in the middle of the hall",
+        "block": [
+          1616,
+          95,
+          2887,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "water in the launch channel",
+        "block": [
+          1614,
+          92,
+          2892,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lookout deck's front edge",
+        "block": [
+          1624,
+          95,
+          2887,
+          "minecraft:stripped_dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a roof beam",
+        "block": [
+          1614,
+          99,
+          2887,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the door in the ledger gallery's south wall",
+        "block": [
+          1606,
+          99,
+          2877,
+          "minecraft:dark_oak_door"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the slipway's top landing is air over its floor",
+        "block": [
+          1606,
+          99,
+          2879,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lifebuoy on the end wall",
+        "block": [
+          1630,
+          100,
+          2887,
+          "minecraft:red_terracotta"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-west bottom corner",
+        "block": [
+          1592,
+          88,
+          2895,
+          "minecraft:mud_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          1605,
+          132,
+          2874,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym3_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          1748,
+          162,
+          1435,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          1748,
+          161,
+          1435,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          1748,
+          163,
+          1435,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          1748,
+          157,
+          1427,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          1748,
+          157,
+          1420,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          1748,
+          161,
+          1434,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          1748,
+          157,
+          1417,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the signal line at the door (oxidised)",
+        "block": [
+          1748,
+          158,
+          1412,
+          "minecraft:waxed_oxidized_cut_copper"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the signal line by the dais (bright)",
+        "block": [
+          1748,
+          158,
+          1430,
+          "minecraft:waxed_cut_copper"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air in the hall",
+        "block": [
+          1748,
+          164,
+          1420,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the cable door",
+        "block": [
+          1748,
+          159,
+          1409,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a lit lamp on the board",
+        "block": [
+          1748,
+          165,
+          1437,
+          "minecraft:redstone_lamp"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-west corner",
+        "block": [
+          1737,
+          156,
+          1439,
+          "minecraft:deepslate_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-east top corner",
+        "block": [
+          1759,
+          171,
+          1408,
+          "minecraft:deepslate_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          1747,
+          190,
+          1414,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym4_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          4311,
+          98,
+          1514,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          4311,
+          97,
+          1514,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          4311,
+          99,
+          1514,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          4311,
+          93,
+          1505,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          4311,
+          93,
+          1500,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          4311,
+          97,
+          1513,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          4311,
+          93,
+          1497,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the floor's centre round of moss",
+        "block": [
+          4311,
+          94,
+          1504,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air in the ring",
+        "block": [
+          4311,
+          100,
+          1502,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the bench's front rail",
+        "block": [
+          4311,
+          98,
+          1512,
+          "minecraft:stripped_cherry_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the stair's door",
+        "block": [
+          4311,
+          96,
+          1484,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-east bottom corner",
+        "block": [
+          4332,
+          92,
+          1519,
+          "minecraft:packed_mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-west top corner",
+        "block": [
+          4290,
+          106,
+          1477,
+          "minecraft:packed_mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          4308,
+          110,
+          1480,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym5_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          4586,
+          103,
+          2461,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          4586,
+          102,
+          2461,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          4586,
+          104,
+          2461,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          4586,
+          99,
+          2468,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          4586,
+          99,
+          2473,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          4586,
+          102,
+          2462,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          4586,
+          99,
+          2476,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the floor in lane 1",
+        "block": [
+          4590,
+          100,
+          2490,
+          "minecraft:mud_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a print set in the floor of lane 1",
+        "block": [
+          4594,
+          100,
+          2489,
+          "minecraft:muddy_mangrove_roots"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air on the range",
+        "block": [
+          4586,
+          103,
+          2470,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "screen 2's lattice",
+        "block": [
+          4585,
+          104,
+          2480,
+          "minecraft:bamboo_mosaic"
+        ],
+        "expect": true
+      },
+      {
+        "what": "screen 3's lattice",
+        "block": [
+          4597,
+          104,
+          2476,
+          "minecraft:bamboo_mosaic"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the blind's roof",
+        "block": [
+          4586,
+          106,
+          2460,
+          "minecraft:mangrove_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tower door",
+        "block": [
+          4598,
+          101,
+          2488,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-west corner",
+        "block": [
+          4568,
+          98,
+          2494,
+          "minecraft:mud_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-east top corner",
+        "block": [
+          4605,
+          109,
+          2456,
+          "minecraft:mud_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          4594,
+          131,
+          2487,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym6_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          6181,
+          70,
+          3320,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          6181,
+          69,
+          3320,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          6181,
+          71,
+          3320,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          6190,
+          65,
+          3320,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          6194,
+          65,
+          3320,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          6182,
+          69,
+          3320,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          6197,
+          65,
+          3320,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the floor's focal froglight",
+        "block": [
+          6192,
+          66,
+          3320,
+          "minecraft:pearlescent_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air in the room",
+        "block": [
+          6192,
+          72,
+          3320,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lens's centre course",
+        "block": [
+          6192,
+          78,
+          3320,
+          "minecraft:tinted_glass"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the eye's pupil",
+        "block": [
+          6178,
+          78,
+          3320,
+          "minecraft:pearlescent_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the dais lip",
+        "block": [
+          6184,
+          70,
+          3320,
+          "minecraft:amethyst_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the terrace",
+        "block": [
+          6205,
+          80,
+          3308,
+          "minecraft:polished_diorite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tube's door onto the terrace",
+        "block": [
+          6201,
+          82,
+          3312,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-west bottom corner",
+        "block": [
+          6176,
+          64,
+          3335,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-east top corner",
+        "block": [
+          6215,
+          89,
+          3304,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          6196,
+          111,
+          3312,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym7_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          6166,
+          87,
+          4981,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          6166,
+          86,
+          4981,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          6166,
+          88,
+          4981,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          6166,
+          83,
+          4990,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          6166,
+          83,
+          4996,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          6166,
+          86,
+          4982,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          6166,
+          83,
+          4999,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the floor's axis line",
+        "block": [
+          6166,
+          84,
+          5003,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air in the gallery",
+        "block": [
+          6166,
+          92,
+          4995,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the bore-hole's lava, sealed",
+        "block": [
+          6166,
+          93,
+          4977,
+          "minecraft:lava"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the bore-hole's glass",
+        "block": [
+          6166,
+          93,
+          4979,
+          "minecraft:glass"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the magma sill under it",
+        "block": [
+          6166,
+          88,
+          4979,
+          "minecraft:magma_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the south door",
+        "block": [
+          6166,
+          86,
+          5010,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the adit's corner landing",
+        "block": [
+          6179,
+          95,
+          5012,
+          "minecraft:polished_blackstone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-west bottom corner",
+        "block": [
+          6154,
+          81,
+          4977,
+          "minecraft:blackstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-east top corner",
+        "block": [
+          6178,
+          100,
+          5011,
+          "minecraft:blackstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          6178,
+          106,
+          5001,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "gym8_arena": [
+      {
+        "what": "the leader's spawner in the dais",
+        "block": [
+          3556,
+          94,
+          6419,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its redstone",
+        "block": [
+          3556,
+          93,
+          6419,
+          "minecraft:redstone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the seat",
+        "block": [
+          3556,
+          95,
+          6419,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_pokemon",
+        "block": [
+          3568,
+          89,
+          6419,
+          "cobblemonbattlepositions:trainer_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_pokemon",
+        "block": [
+          3573,
+          89,
+          6419,
+          "cobblemonbattlepositions:player_pokemon_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.trainer_stand",
+        "block": [
+          3557,
+          93,
+          6419,
+          "cobblemonbattlepositions:trainer_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "battle.player_stand",
+        "block": [
+          3576,
+          89,
+          6419,
+          "cobblemonbattlepositions:player_stand_position"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the hall's axis line",
+        "block": [
+          3580,
+          90,
+          6419,
+          "minecraft:polished_granite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air in the hall",
+        "block": [
+          3575,
+          94,
+          6419,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a bulkhead's jamb",
+        "block": [
+          3572,
+          92,
+          6403,
+          "minecraft:chiseled_deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the sally's centre line",
+        "block": [
+          3575,
+          90,
+          6405,
+          "minecraft:polished_granite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the dais top",
+        "block": [
+          3557,
+          94,
+          6419,
+          "minecraft:polished_granite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the proscenium's head-tree",
+        "block": [
+          3562,
+          97,
+          6419,
+          "minecraft:stripped_spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the apse's raw back wall",
+        "block": [
+          3554,
+          92,
+          6419,
+          "minecraft:granite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's south-west bottom corner",
+        "block": [
+          3552,
+          88,
+          6431,
+          "minecraft:deepslate_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell's north-east top corner",
+        "block": [
+          3591,
+          101,
+          6400,
+          "minecraft:deepslate_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          3565,
+          120,
+          6416,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      }
+    ],
+    "hummock_mere": [
+      {
+        "what": "the island's crest (mud or moss)",
+        "block": [
+          5240,
+          102,
+          1924,
+          "minecraft:mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the island under the crest",
+        "block": [
+          5240,
+          101,
+          1924,
+          "minecraft:mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the creature's spot (feet + 4)",
+        "block": [
+          5240,
+          107,
+          1924,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "grove tree 0: trunk",
+        "block": [
+          5244,
+          105,
+          1913,
+          "minecraft:mangrove_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "grove tree 0: the froglight under its crown",
+        "block": [
+          5242,
+          109,
+          1917,
+          "minecraft:verdant_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "grove tree 3: trunk",
+        "block": [
+          5244,
+          106,
+          1935,
+          "minecraft:mangrove_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "grove tree 3: the froglight under its crown",
+        "block": [
+          5242,
+          109,
+          1931,
+          "minecraft:verdant_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the sign at the furrow's dry end",
+        "block": [
+          5274,
+          101,
+          1924,
+          "minecraft:mangrove_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the roadside warning on Route 6",
+        "block": [
+          4845,
+          133,
+          2612,
+          "minecraft:mangrove_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Hummock (after R18HM)",
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.res.the_hummock,x=5240,y=103,z=1924,distance=..30]",
+        "count": 1,
+        "hold": [
+          5240,
+          103,
+          1924
+        ]
+      }
+    ],
+    "drowned_quarry": [
+      {
+        "what": "a pillar of the hall (stone bricks)",
+        "block": [
+          6500,
+          58,
+          4122,
+          "minecraft:stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the roof over the nave (stone, the shell)",
+        "block": [
+          6508,
+          69,
+          4132,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the flooded nave (water, no air)",
+        "block": [
+          6506,
+          60,
+          4132,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the flooded adit (water)",
+        "block": [
+          6406,
+          55,
+          4108,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the open cutting (water)",
+        "block": [
+          6360,
+          55,
+          4108,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the sump's gravel floor",
+        "block": [
+          6528,
+          46,
+          4132,
+          "minecraft:gravel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the sump's water",
+        "block": [
+          6528,
+          50,
+          4132,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the crane's mast (spruce log)",
+        "block": [
+          6492,
+          57,
+          4120,
+          "minecraft:spruce_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a hall lantern, hung and waterlogged",
+        "block": [
+          6494,
+          68,
+          4118,
+          "minecraft:lantern[hanging=true,waterlogged=true]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the first timber set's beam",
+        "block": [
+          6396,
+          58,
+          4108,
+          "minecraft:spruce_log[axis=z]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Gyarados of the sump (one tagged cobblers.dq; absent while its return clock runs)",
+        "hold": [
+          6528,
+          47,
+          4132
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.dq]",
+        "count": 1
+      }
+    ],
+    "fungal_isle": [
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_beacon)",
+        "block": [
+          380,
+          168,
+          5572,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: mushroom_stem (cap_wood_beacon)",
+        "block": [
+          392,
+          139,
+          5572,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_beacon)",
+        "block": [
+          400,
+          173,
+          5567,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_elder_0)",
+        "block": [
+          396,
+          163,
+          5536,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: brown_mushroom_block (cap_wood_elder_1)",
+        "block": [
+          429,
+          161,
+          5563,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_elder_2)",
+        "block": [
+          427,
+          163,
+          5590,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_elder_4)",
+        "block": [
+          363,
+          162,
+          5601,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: mushroom_stem (cap_wood_elder_5)",
+        "block": [
+          357,
+          147,
+          5577,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_elder_6)",
+        "block": [
+          367,
+          159,
+          5554,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_wood_1)",
+        "block": [
+          441,
+          153,
+          5576,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: mushroom_stem (cap_wood_wood_4)",
+        "block": [
+          355,
+          142,
+          5621,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_wood_6)",
+        "block": [
+          440,
+          150,
+          5533,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_wood_8)",
+        "block": [
+          407,
+          152,
+          5521,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_wood_9)",
+        "block": [
+          464,
+          150,
+          5564,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: dark_oak_log (stump_court_great_stump)",
+        "block": [
+          557,
+          146,
+          5710,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: dark_oak_log (stump_court_great_stump)",
+        "block": [
+          562,
+          147,
+          5711,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_0)",
+        "block": [
+          561,
+          160,
+          5681,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_0)",
+        "block": [
+          569,
+          159,
+          5684,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_1)",
+        "block": [
+          583,
+          159,
+          5703,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_1)",
+        "block": [
+          587,
+          158,
+          5697,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_2)",
+        "block": [
+          574,
+          161,
+          5726,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: mushroom_stem (stump_court_audience_2)",
+        "block": [
+          578,
+          155,
+          5734,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_2)",
+        "block": [
+          583,
+          160,
+          5728,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: mushroom_stem (stump_court_audience_3)",
+        "block": [
+          557,
+          155,
+          5741,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_4)",
+        "block": [
+          528,
+          159,
+          5710,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_4)",
+        "block": [
+          536,
+          160,
+          5712,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_5)",
+        "block": [
+          541,
+          159,
+          5691,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_5)",
+        "block": [
+          544,
+          160,
+          5693,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          542,
+          139,
+          5949,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          548,
+          135,
+          5956,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: moss_block (glowcap_hollow_bowl)",
+        "block": [
+          552,
+          133,
+          5955,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          555,
+          139,
+          5935,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: mud (glowcap_hollow_bowl)",
+        "block": [
+          559,
+          129,
+          5952,
+          "minecraft:mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          562,
+          133,
+          5942,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: moss_block (glowcap_hollow_bowl)",
+        "block": [
+          565,
+          139,
+          5967,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: moss_block (glowcap_hollow_bowl)",
+        "block": [
+          569,
+          135,
+          5959,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          573,
+          140,
+          5938,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          579,
+          141,
+          5955,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: red_mushroom_block (glowcap_hollow_rim_1)",
+        "block": [
+          581,
+          156,
+          5942,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: red_mushroom_block (glowcap_hollow_rim_3)",
+        "block": [
+          579,
+          159,
+          5964,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: brown_mushroom_block (glowcap_hollow_rim_4)",
+        "block": [
+          568,
+          154,
+          5980,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: red_mushroom_block (glowcap_hollow_rim_7)",
+        "block": [
+          532,
+          157,
+          5948,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the pool's surface at the middle",
+        "block": [
+          560,
+          133,
+          5952,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no water on the rim path",
+        "block": [
+          574,
+          133,
+          5952,
+          "minecraft:water"
+        ],
+        "expect": false
+      },
+      {
+        "what": "a froglight cap",
+        "block": [
+          562,
+          144,
+          5936,
+          "minecraft:pearlescent_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a froglight cap",
+        "block": [
+          572,
+          142,
+          5943,
+          "minecraft:verdant_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a froglight cap",
+        "block": [
+          575,
+          144,
+          5947,
+          "minecraft:pearlescent_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_000)",
+        "block": [
+          466,
+          124,
+          6054,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_007)",
+        "block": [
+          290,
+          112,
+          5420,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_014)",
+        "block": [
+          663,
+          142,
+          5849,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_021)",
+        "block": [
+          779,
+          124,
+          5752,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_028)",
+        "block": [
+          133,
+          114,
+          5738,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_035)",
+        "block": [
+          237,
+          133,
+          5687,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_042)",
+        "block": [
+          523,
+          148,
+          5885,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_049)",
+        "block": [
+          200,
+          130,
+          5653,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_056)",
+        "block": [
+          791,
+          112,
+          5602,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_063)",
+        "block": [
+          163,
+          124,
+          5672,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_070)",
+        "block": [
+          603,
+          109,
+          6131,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_077)",
+        "block": [
+          668,
+          143,
+          5798,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_084)",
+        "block": [
+          426,
+          111,
+          5371,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_091)",
+        "block": [
+          306,
+          130,
+          5909,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_000)",
+        "block": [
+          219,
+          121,
+          5880,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_013)",
+        "block": [
+          488,
+          143,
+          5971,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_026)",
+        "block": [
+          62,
+          95,
+          5641,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_039)",
+        "block": [
+          639,
+          141,
+          5968,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_052)",
+        "block": [
+          392,
+          138,
+          5740,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_065)",
+        "block": [
+          609,
+          127,
+          5484,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      }
+    ],
+    "sunset_watch": [
+      {
+        "what": "the dial's smooth-stone ring",
+        "block": [
+          1076,
+          137,
+          7492,
+          "minecraft:smooth_stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the dial's plinth (the dusk Habitat Block's mimic)",
+        "block": [
+          1068,
+          138,
+          7492,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Sun Gate's north pillar, foot",
+        "block": [
+          1055,
+          138,
+          7487,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Sun Gate's other pillar, foot",
+        "block": [
+          1055,
+          138,
+          7496,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Sun Gate's lintel",
+        "block": [
+          1055,
+          146,
+          7492,
+          "minecraft:stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a bench (stone-brick stairs)",
+        "block": [
+          1078,
+          138,
+          7484,
+          "minecraft:stone_brick_stairs[facing=east]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp mast's foot",
+        "block": [
+          1082,
+          138,
+          7483,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp mast's crown lantern",
+        "block": [
+          1082,
+          151,
+          7483,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp house's floor",
+        "block": [
+          1073,
+          137,
+          7475,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp house's door (lower)",
+        "block": [
+          1073,
+          138,
+          7478,
+          "minecraft:spruce_door[half=lower]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp house's door (upper)",
+        "block": [
+          1073,
+          139,
+          7478,
+          "minecraft:spruce_door[half=upper]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the find's barrel",
+        "block": [
+          1075,
+          138,
+          7473,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp house's ridge",
+        "block": [
+          1073,
+          146,
+          7475,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the waymark sign at the isle's landing",
+        "block": [
+          2576,
+          65,
+          6916,
+          "minecraft:spruce_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the keeper",
+        "entity": "@e[type=cobblemon:npc,x=1076,y=138,z=7487,distance=..2]",
+        "count": 1,
+        "hold": [
+          1076,
+          138,
+          7487
+        ]
+      }
+    ],
+    "frostpeak_keep": [
+      {
+        "what": "the spire's finial ice, the highest block",
+        "block": [
+          1548,
+          198,
+          640,
+          "minecraft:packed_ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a snow-block cone roof",
+        "block": [
+          1548,
+          195,
+          640,
+          "minecraft:snow_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "blue-ice roof trim",
+        "block": [
+          1520,
+          154,
+          612,
+          "minecraft:blue_ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the spire's ladder",
+        "block": [
+          1548,
+          173,
+          643,
+          "minecraft:ladder[facing=north]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the portcullis or the arcade's bars",
+        "block": [
+          1543,
+          175,
+          638,
+          "minecraft:iron_bars"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a stair of the gate ramp or the keep",
+        "block": [
+          1546,
+          99,
+          584,
+          "minecraft:stone_brick_stairs[facing=south,half=bottom,shape=straight]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a sign of the Wardens' log",
+        "block": [
+          1544,
+          141,
+          634,
+          "minecraft:spruce_wall_sign[facing=south,waterlogged=false]"
+        ],
+        "expect": true
+      }
+    ],
+    "ice_lodge": [
+      {
+        "what": "the Lead: open water under open air (the only place the open-water check can hold)",
+        "block": [
+          2755,
+          106,
+          1082,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Lead: air at the surface",
+        "block": [
+          2755,
+          107,
+          1082,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Lead: air over it too",
+        "block": [
+          2755,
+          108,
+          1082,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a fishing hole: air in the ice",
+        "block": [
+          2767,
+          107,
+          1071,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a fishing hole: water under it",
+        "block": [
+          2767,
+          106,
+          1071,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its stool beside it",
+        "block": [
+          2768,
+          108,
+          1071,
+          "minecraft:spruce_slab[type=bottom]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "clear ice on the tarn",
+        "block": [
+          2738,
+          107,
+          1084,
+          "minecraft:ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "clear ice on the tarn",
+        "block": [
+          2767,
+          107,
+          1098,
+          "minecraft:ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "clear ice on the tarn",
+        "block": [
+          2797,
+          107,
+          1092,
+          "minecraft:ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tarn's deepest column: water at the bed",
+        "block": [
+          2762,
+          102,
+          1084,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "... gravel under it",
+        "block": [
+          2762,
+          101,
+          1084,
+          "minecraft:gravel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_1: the hole in its floor",
+        "block": [
+          2772,
+          107,
+          1075,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_1: water under the hole",
+        "block": [
+          2772,
+          106,
+          1075,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_1: its packed-ice floor",
+        "block": [
+          2773,
+          107,
+          1076,
+          "minecraft:packed_ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_2: the hole in its floor",
+        "block": [
+          2756,
+          107,
+          1093,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_2: water under the hole",
+        "block": [
+          2756,
+          106,
+          1093,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_2: its packed-ice floor",
+        "block": [
+          2757,
+          107,
+          1094,
+          "minecraft:packed_ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_3: the hole in its floor",
+        "block": [
+          2786,
+          107,
+          1090,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_3: water under the hole",
+        "block": [
+          2786,
+          106,
+          1090,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shelter_3: its packed-ice floor",
+        "block": [
+          2787,
+          107,
+          1091,
+          "minecraft:packed_ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lodge door (lower half)",
+        "block": [
+          2764,
+          108,
+          1059,
+          "minecraft:spruce_door[half=lower]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lodge door (lower half)",
+        "block": [
+          2765,
+          108,
+          1059,
+          "minecraft:spruce_door[half=lower]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the hearth's campfire",
+        "block": [
+          2769,
+          108,
+          1055,
+          "minecraft:campfire"
+        ],
+        "expect": true
+      },
+      {
+        "what": "bunk_1: the bed's head",
+        "block": [
+          2757,
+          108,
+          1052,
+          "minecraft:red_bed[part=head]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "bunk_kept: the bed's head",
+        "block": [
+          2761,
+          108,
+          1052,
+          "minecraft:blue_bed[part=head]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a lodge lantern",
+        "block": [
+          2760,
+          109,
+          1058,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the boardwalk spine",
+        "block": [
+          2764,
+          107,
+          1078,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a drying rack's beam",
+        "block": [
+          2782,
+          111,
+          1052,
+          "minecraft:stripped_spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "Ketil Aune, the holekeeper, after R18IL",
+        "entity": "@e[type=cobblemon:npc,x=2767,y=108,z=1056,distance=..2]",
+        "count": 1,
+        "hold": [
+          2767,
+          108,
+          1056
+        ]
+      }
+    ],
+    "tri_peaks_nest": [
+      {
+        "what": "the tooth, east: tip",
+        "block": [
+          1488,
+          260,
+          1059,
+          "minecraft:cobbled_deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, east: air over the tip",
+        "block": [
+          1488,
+          261,
+          1059,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, north-east: tip",
+        "block": [
+          1482,
+          260,
+          1053,
+          "minecraft:basalt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, north-east: air over the tip",
+        "block": [
+          1482,
+          261,
+          1053,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, north-west: tip",
+        "block": [
+          1474,
+          263,
+          1053,
+          "minecraft:cobbled_deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, north-west: air over the tip",
+        "block": [
+          1474,
+          264,
+          1053,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, south-east: tip",
+        "block": [
+          1486,
+          257,
+          1068,
+          "minecraft:basalt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, south-east: air over the tip",
+        "block": [
+          1486,
+          258,
+          1068,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, south-west: tip",
+        "block": [
+          1471,
+          254,
+          1068,
+          "minecraft:tuff"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, south-west: air over the tip",
+        "block": [
+          1471,
+          255,
+          1068,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, west: tip",
+        "block": [
+          1468,
+          259,
+          1059,
+          "minecraft:basalt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, west: air over the tip",
+        "block": [
+          1468,
+          260,
+          1059,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the scoured bench: a surface block",
+        "block": [
+          1476,
+          252,
+          1055,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the scree, belly: a surface block",
+        "block": [
+          1489,
+          218,
+          1115,
+          "minecraft:cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "crownbreaker: air at the feet",
+        "block": [
+          1478,
+          254,
+          1062,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "crownbreaker: air at the head",
+        "block": [
+          1478,
+          257,
+          1062,
+          "minecraft:air"
+        ],
+        "expect": true
+      }
+    ],
+    "buried_dune": [
+      {
+        "what": "the chamber's roof (sandstone) under the basin",
+        "block": [
+          7282,
+          90,
+          5592,
+          "minecraft:sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the chamber's floor shell",
+        "block": [
+          7282,
+          84,
+          5592,
+          "minecraft:sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air where the sleeper lies",
+        "block": [
+          7282,
+          85,
+          5592,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a light block that keeps the bed from spawning mobs",
+        "block": [
+          7277,
+          89,
+          5588,
+          "minecraft:light[level=1]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the basin's floor surface is solid",
+        "block": [
+          7282,
+          94,
+          5592,
+          "!air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the basin's floor",
+        "block": [
+          7282,
+          95,
+          5592,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the slip face's top block is cut away",
+        "block": [
+          7280,
+          100,
+          5598,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the sea trail's groove is cut (ground y96)",
+        "block": [
+          7298,
+          96,
+          5594,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a rib of bone block",
+        "block": [
+          7272,
+          105,
+          5691,
+          "minecraft:bone_block[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "undertow present after R18BD (ungated)",
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.res.undertow,nbt={Pokemon:{Species:\"cobblemon:sandaconda\"}}]",
+        "count": 1,
+        "hold": [
+          7282,
+          85,
+          5592
+        ]
+      }
+    ],
+    "rookery": [
+      {
+        "what": "the crown plate under the Gullmother",
+        "block": [
+          6940,
+          82,
+          2650,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the crown (1)",
+        "block": [
+          6940,
+          83,
+          2650,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the crown (2)",
+        "block": [
+          6940,
+          84,
+          2650,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the crown (3)",
+        "block": [
+          6940,
+          85,
+          2650,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the crown (4)",
+        "block": [
+          6940,
+          86,
+          2650,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the stack's core",
+        "block": [
+          6940,
+          68,
+          2650,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a nest of hay (1)",
+        "block": [
+          6930,
+          69,
+          2651,
+          "minecraft:hay_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a nest of hay (2)",
+        "block": [
+          6931,
+          69,
+          2652,
+          "minecraft:hay_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a nest of hay (3)",
+        "block": [
+          6931,
+          69,
+          2653,
+          "minecraft:hay_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a nest of hay (4)",
+        "block": [
+          6937,
+          83,
+          2648,
+          "minecraft:hay_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "guano on a face",
+        "block": [
+          6937,
+          81,
+          2652,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 0: its top",
+        "block": [
+          6957,
+          65,
+          2621,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 0: its Habitat Block (after R9E)",
+        "block": [
+          6957,
+          64,
+          2621,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 1: its top",
+        "block": [
+          6974,
+          65,
+          2650,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 1: its Habitat Block (after R9E)",
+        "block": [
+          6974,
+          64,
+          2650,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 2: its top",
+        "block": [
+          6957,
+          65,
+          2679,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 2: its Habitat Block (after R9E)",
+        "block": [
+          6957,
+          64,
+          2679,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 3: its top",
+        "block": [
+          6923,
+          65,
+          2679,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 3: its Habitat Block (after R9E)",
+        "block": [
+          6923,
+          64,
+          2679,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 4: its top",
+        "block": [
+          6906,
+          65,
+          2650,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 4: its Habitat Block (after R9E)",
+        "block": [
+          6906,
+          64,
+          2650,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 5: its top",
+        "block": [
+          6923,
+          65,
+          2621,
+          "minecraft:andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 5: its Habitat Block (after R9E)",
+        "block": [
+          6923,
+          64,
+          2621,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "open water between the stack and the nearest rock (the stack did not fill the strait)",
+        "block": [
+          6918,
+          62,
+          2650,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Gullmother present after R18RK (ungated)",
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.res.gullmother,nbt={Pokemon:{Species:\"cobblemon:dragonite\"}}]",
+        "count": 1,
+        "hold": [
+          6940,
+          83,
+          2650
+        ]
+      }
+    ],
+    "route4_events": [
+      {
+        "what": "headwall_camp: the lean-to's barrel",
+        "block": [
+          2497,
+          163,
+          1282,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "headwall_camp: the camp fire",
+        "block": [
+          2504,
+          163,
+          1278,
+          "minecraft:campfire"
+        ],
+        "expect": true
+      },
+      {
+        "what": "headwall_camp: the hitching post",
+        "block": [
+          2506,
+          163,
+          1284,
+          "minecraft:spruce_fence"
+        ],
+        "expect": true
+      },
+      {
+        "what": "headwall_camp: the boulder",
+        "block": [
+          2525,
+          161,
+          1274,
+          "minecraft:andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "headwall_camp: the lead prop (an interaction box)",
+        "hold": [
+          2506,
+          163,
+          1284
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_headwall_camp_lead]",
+        "count": 1
+      },
+      {
+        "what": "headwall_camp: the scar prop (an interaction box)",
+        "hold": [
+          2525,
+          162,
+          1274
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_headwall_camp_scar]",
+        "count": 1
+      },
+      {
+        "what": "steam_hollow: the pool's water",
+        "block": [
+          3111,
+          106,
+          1500,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "steam_hollow: the pool's moss",
+        "block": [
+          3115,
+          107,
+          1500,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "steam_hollow: the tracks prop (an interaction box)",
+        "hold": [
+          3118,
+          107,
+          1499
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_steam_hollow_tracks]",
+        "count": 1
+      },
+      {
+        "what": "steam_hollow: the pool prop (an interaction box)",
+        "hold": [
+          3114,
+          107,
+          1500
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_steam_hollow_pool]",
+        "count": 1
+      },
+      {
+        "what": "steam_hollow: the petal prop (an interaction box)",
+        "hold": [
+          3107,
+          107,
+          1498
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_steam_hollow_petal]",
+        "count": 1
+      },
+      {
+        "what": "strayed_load: the strayed barrel",
+        "block": [
+          3262,
+          116,
+          1450,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "strayed_load: the red pennant",
+        "block": [
+          3259,
+          124,
+          1447,
+          "minecraft:red_banner"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 5",
+        "block": [
+          3247,
+          105,
+          1618,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 4",
+        "block": [
+          3199,
+          105,
+          1619,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 3",
+        "block": [
+          3145,
+          106,
+          1622,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 2",
+        "block": [
+          3104,
+          112,
+          1654,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 1",
+        "block": [
+          3072,
+          116,
+          1697,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: milestone 0",
+        "block": [
+          3029,
+          120,
+          1720,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "summit_road: the stone_0 prop (an interaction box)",
+        "hold": [
+          3029,
+          120,
+          1720
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_summit_road_stone_0]",
+        "count": 1
+      },
+      {
+        "what": "thaw_gate: the moss belt",
+        "block": [
+          3034,
+          119,
+          1707,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "thaw_gate: the gate's lantern post",
+        "block": [
+          3027,
+          123,
+          1709,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "thaw_gate: the drift prop (an interaction box)",
+        "hold": [
+          3037,
+          120,
+          1708
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers_prop_route4_thaw_gate_drift]",
+        "count": 1
+      }
+    ],
+    "long_count": [
+      {
+        "what": "pole: the foot of the trunk",
+        "block": [
+          2128,
+          123,
+          2168,
+          "minecraft:stripped_spruce_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "pole: the trunk under the platform",
+        "block": [
+          2128,
+          152,
+          2168,
+          "minecraft:stripped_spruce_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "pole: the lantern at the top",
+        "block": [
+          2128,
+          164,
+          2168,
+          "minecraft:lantern[hanging=false]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "pole: the ladder's foot",
+        "block": [
+          2127,
+          123,
+          2168,
+          "minecraft:ladder[facing=west]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "pole: the platform",
+        "block": [
+          2126,
+          157,
+          2169,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the camp fire, lit on its hay",
+        "block": [
+          2140,
+          124,
+          2156,
+          "minecraft:campfire[lit=true,signal_fire=true]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-13 tree's trunk",
+        "block": [
+          2144,
+          124,
+          2146,
+          "minecraft:oak_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-13 tree's crown",
+        "block": [
+          2144,
+          125,
+          2146,
+          "minecraft:azalea_leaves"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-13 stake",
+        "block": [
+          2150,
+          124,
+          2152,
+          "minecraft:oak_fence"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-7 tree's trunk",
+        "block": [
+          2180,
+          127,
+          2114,
+          "minecraft:oak_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-7 tree's crown",
+        "block": [
+          2180,
+          131,
+          2114,
+          "minecraft:azalea_leaves"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-7 stake",
+        "block": [
+          2182,
+          127,
+          2116,
+          "minecraft:oak_fence"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-0 tree's trunk",
+        "block": [
+          2219,
+          130,
+          2074,
+          "minecraft:oak_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-0 tree's crown",
+        "block": [
+          2219,
+          138,
+          2074,
+          "minecraft:azalea_leaves"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the year-0 stake",
+        "block": [
+          2222,
+          130,
+          2077,
+          "minecraft:oak_fence"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tin's barrel at the first tree",
+        "block": [
+          2223,
+          129,
+          2073,
+          "minecraft:barrel[facing=up]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lane is clear, between stakes 10 and 9",
+        "block": [
+          2167,
+          127,
+          2129,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lane is clear, between stakes 5 and 4",
+        "block": [
+          2195,
+          129,
+          2101,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lane is clear, between stakes 1 and 0",
+        "block": [
+          2218,
+          131,
+          2078,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Grotle, once the summon has run",
+        "hold": [
+          2147,
+          124,
+          2149
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.res.old_pace,distance=..24]",
+        "count": 1
+      }
     ]
   }
 }

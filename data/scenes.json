@@ -51,6 +51,324 @@
       ]
     },
     {
+      "id": "route5_empty_fold",
+      "quest_id": "evt_route5_bellwether",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "built_by": "tools/route5_events.py",
+      "why": "E1 of Route 5's Bellwether chain, walked ~145: the drystone fold, the open gate, the empty hook, Nan Tarrow at the gap",
+      "area": {
+        "from": [
+          4392,
+          105,
+          1650
+        ],
+        "to": [
+          4420,
+          127,
+          1672
+        ]
+      },
+      "markers": {
+        "ewe_gate": {
+          "at": [
+            4406,
+            113,
+            1662
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0.9,
+              0
+            ],
+            [
+              0,
+              0.9
+            ],
+            [
+              0.9,
+              0.9
+            ]
+          ]
+        }
+      },
+      "props": [
+        {
+          "id": "empty_hook",
+          "conversation": "dlg_r5_hook",
+          "at": [
+            4399.5,
+            113.0,
+            1659.5
+          ],
+          "size": [
+            0.8,
+            1.0
+          ],
+          "on": [
+            4399,
+            113,
+            1659
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "ewe",
+          "species": "mareep",
+          "level": 12,
+          "conversation": "dlg_r5_ewe",
+          "not_yours": "The ewe ignores you.",
+          "place": [
+            {
+              "marker": "ewe_gate"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_r5_nan",
+          "at": [
+            4399,
+            112,
+            1664
+          ],
+          "yaw": 90
+        }
+      ]
+    },
+    {
+      "id": "route5_cairn_bells",
+      "quest_id": "evt_route5_bellwether",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "built_by": "tools/route5_events.py",
+      "why": "E2, walked ~375: three bell cairns on the rise east of the road, one flat note, the strap, and the tin in the lee (data/rewards.json r5_shepherds_tin)",
+      "area": {
+        "from": [
+          4412,
+          111,
+          1866
+        ],
+        "to": [
+          4446,
+          135,
+          1896
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "bell_west",
+          "conversation": "dlg_r5_bell_west",
+          "at": [
+            4425.5,
+            120.0,
+            1884.5
+          ],
+          "size": [
+            0.8,
+            1.7
+          ],
+          "on": [
+            4425,
+            120,
+            1884
+          ]
+        },
+        {
+          "id": "bell_north",
+          "conversation": "dlg_r5_bell_north",
+          "at": [
+            4433.5,
+            121.0,
+            1876.5
+          ],
+          "size": [
+            0.8,
+            1.7
+          ],
+          "on": [
+            4433,
+            121,
+            1876
+          ]
+        },
+        {
+          "id": "bell_south",
+          "conversation": "dlg_r5_bell_south",
+          "at": [
+            4435.5,
+            122.0,
+            1889.5
+          ],
+          "size": [
+            0.8,
+            1.7
+          ],
+          "on": [
+            4435,
+            122,
+            1889
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [],
+      "effects": [],
+      "npcs": []
+    },
+    {
+      "id": "route5_lee_hut",
+      "quest_id": "evt_route5_bellwether",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "built_by": "tools/route5_events.py",
+      "why": "E3, walked ~560: the weather keeper's hut, the board on its wall, the commons box (a free choice of one parcel)",
+      "area": {
+        "from": [
+          4390,
+          108,
+          2064
+        ],
+        "to": [
+          4412,
+          131,
+          2084
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "weather_board",
+          "conversation": "dlg_r5_board",
+          "at": [
+            4396.5,
+            118.0,
+            2072.5
+          ],
+          "size": [
+            0.9,
+            0.9
+          ],
+          "on": [
+            4396,
+            118,
+            2072
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_r5_gorse",
+          "at": [
+            4401,
+            117,
+            2074
+          ],
+          "yaw": 90
+        }
+      ]
+    },
+    {
+      "id": "route5_winter_fold",
+      "quest_id": "evt_route5_bellwether",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "built_by": "tools/route5_events.py",
+      "why": "E4, walked ~900, the payoff: the winter fold in the fields at the glacier's foot, Tolly on his stone, Jory Tarrow at the byre door",
+      "area": {
+        "from": [
+          4554,
+          107,
+          2280
+        ],
+        "to": [
+          4592,
+          128,
+          2302
+        ]
+      },
+      "markers": {
+        "tolly_stone": {
+          "at": [
+            4582,
+            115,
+            2290
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0.9,
+              0
+            ],
+            [
+              -0.9,
+              0
+            ]
+          ]
+        }
+      },
+      "props": [
+        {
+          "id": "tally_post",
+          "conversation": "dlg_r5_tally",
+          "at": [
+            4574.5,
+            117.0,
+            2296.5
+          ],
+          "size": [
+            0.9,
+            1.4
+          ],
+          "on": [
+            4574,
+            117,
+            2296
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "tolly",
+          "species": "flaaffy",
+          "level": 24,
+          "conversation": "dlg_r5_tolly",
+          "not_yours": "The Flaaffy ignores you.",
+          "place": [
+            {
+              "marker": "tolly_stone"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_r5_jory",
+          "at": [
+            4571,
+            114,
+            2295
+          ],
+          "yaw": 0
+        }
+      ]
+    },
+    {
       "id": "route1_gastly_family",
       "quest_id": "evt_route1_gastly_family",
       "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
@@ -2306,6 +2624,609 @@
             2016,
             133,
             1598
+          ],
+          "yaw": 0
+        }
+      ]
+    },
+    {
+      "id": "route4_headwall_camp",
+      "quest_id": "evt_route4_thaw_road",
+      "source": "data/route4_events.json",
+      "built_by": "tools/route4_events.py headwall_camp",
+      "area": {
+        "from": [
+          2470,
+          148,
+          1262
+        ],
+        "to": [
+          2540,
+          179,
+          1302
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "scar",
+          "conversation": "dlg_route4_scar",
+          "at": [
+            2525.5,
+            162.0,
+            1274.5
+          ],
+          "size": [
+            2.0,
+            1.4
+          ],
+          "on": [
+            2525,
+            162,
+            1274
+          ]
+        },
+        {
+          "id": "lead",
+          "conversation": "dlg_route4_lead",
+          "at": [
+            2506.5,
+            163.0,
+            1284.5
+          ],
+          "size": [
+            1.0,
+            1.6
+          ],
+          "on": [
+            2506,
+            163,
+            1284
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_route4_headwall_camp",
+          "at": [
+            2503,
+            163,
+            1275
+          ],
+          "yaw": 180
+        }
+      ]
+    },
+    {
+      "id": "route4_steam_hollow",
+      "quest_id": "evt_route4_thaw_road",
+      "source": "data/route4_events.json",
+      "built_by": "tools/route4_events.py steam_hollow",
+      "area": {
+        "from": [
+          3088,
+          100,
+          1478
+        ],
+        "to": [
+          3132,
+          123,
+          1522
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "tracks",
+          "conversation": "dlg_route4_hollow_tracks",
+          "at": [
+            3118.5,
+            108.0,
+            1499.5
+          ],
+          "size": [
+            1.4,
+            0.8
+          ],
+          "on": [
+            3118,
+            107,
+            1499
+          ]
+        },
+        {
+          "id": "pool",
+          "conversation": "dlg_route4_hollow_pool",
+          "at": [
+            3114.5,
+            108.0,
+            1500.5
+          ],
+          "size": [
+            1.6,
+            1.0
+          ],
+          "on": [
+            3114,
+            107,
+            1500
+          ]
+        },
+        {
+          "id": "petal",
+          "conversation": "dlg_route4_hollow_petal",
+          "at": [
+            3107.5,
+            108.0,
+            1498.5
+          ],
+          "size": [
+            0.9,
+            0.7
+          ],
+          "on": [
+            3107,
+            107,
+            1498
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [],
+      "effects": [
+        {
+          "id": "steam",
+          "kind": "particles",
+          "particles": [
+            {
+              "particle": "minecraft:cloud",
+              "at": [
+                3110.5,
+                108.0,
+                1500.5
+              ],
+              "delta": [
+                0.5,
+                1.2,
+                0.5
+              ],
+              "count": 3
+            }
+          ]
+        },
+        {
+          "id": "steam_b",
+          "kind": "particles",
+          "particles": [
+            {
+              "particle": "minecraft:white_smoke",
+              "at": [
+                3109.0,
+                108.0,
+                1501.5
+              ],
+              "delta": [
+                0.6,
+                0.8,
+                0.6
+              ],
+              "count": 2
+            }
+          ]
+        }
+      ],
+      "npcs": []
+    },
+    {
+      "id": "route4_summit_road",
+      "quest_id": "evt_route4_thaw_road",
+      "source": "data/route4_events.json",
+      "built_by": "tools/route4_events.py summit_road",
+      "area": {
+        "from": [
+          3018,
+          92,
+          1607
+        ],
+        "to": [
+          3266,
+          135,
+          1732
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "stone_0",
+          "conversation": "dlg_route4_stone_zero",
+          "at": [
+            3029.5,
+            120.0,
+            1720.5
+          ],
+          "size": [
+            0.9,
+            3.2
+          ],
+          "on": [
+            3029,
+            120,
+            1720
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [
+        {
+          "id": "z5",
+          "from": [
+            3243,
+            101,
+            1618
+          ],
+          "to": [
+            3251,
+            112,
+            1626
+          ],
+          "transitions": [
+            "pass_5"
+          ]
+        },
+        {
+          "id": "z4",
+          "from": [
+            3195,
+            101,
+            1618
+          ],
+          "to": [
+            3203,
+            112,
+            1626
+          ],
+          "transitions": [
+            "pass_4"
+          ]
+        },
+        {
+          "id": "z3",
+          "from": [
+            3143,
+            102,
+            1621
+          ],
+          "to": [
+            3151,
+            113,
+            1629
+          ],
+          "transitions": [
+            "pass_3"
+          ]
+        },
+        {
+          "id": "z2",
+          "from": [
+            3102,
+            108,
+            1652
+          ],
+          "to": [
+            3110,
+            119,
+            1660
+          ],
+          "transitions": [
+            "pass_2"
+          ]
+        },
+        {
+          "id": "z1",
+          "from": [
+            3065,
+            112,
+            1689
+          ],
+          "to": [
+            3073,
+            123,
+            1697
+          ],
+          "transitions": [
+            "pass_1"
+          ]
+        },
+        {
+          "id": "z0",
+          "from": [
+            3029,
+            116,
+            1716
+          ],
+          "to": [
+            3037,
+            127,
+            1724
+          ],
+          "transitions": [
+            "pass_0"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "id": "hud5",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s5"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "Old Summit Road: five stones to the top.",
+          "color": "gold"
+        },
+        {
+          "id": "hud4",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s4"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "Four stones. The wind has turned warm.",
+          "color": "gold"
+        },
+        {
+          "id": "hud3",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s3"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "Three stones. There is no climb.",
+          "color": "gold"
+        },
+        {
+          "id": "hud2",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s2"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "Two stones. Something smells of blossom.",
+          "color": "gold"
+        },
+        {
+          "id": "hud1",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s1"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "One stone.",
+          "color": "gold"
+        },
+        {
+          "id": "hud0",
+          "kind": "actionbar",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.last_stone",
+                "value": "s0"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.road_done",
+                "value": false
+              }
+            ]
+          },
+          "text": "Summit. There is no mountain here. Read the stone.",
+          "color": "gold"
+        }
+      ],
+      "npcs": []
+    },
+    {
+      "id": "route4_thaw_gate",
+      "quest_id": "evt_route4_thaw_road",
+      "source": "data/route4_events.json",
+      "built_by": "tools/route4_events.py thaw_gate",
+      "area": {
+        "from": [
+          3007,
+          110,
+          1694
+        ],
+        "to": [
+          3059,
+          136,
+          1740
+        ]
+      },
+      "markers": {
+        "biscuit_drift": {
+          "at": [
+            3039,
+            120,
+            1706
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "biscuit_gate": {
+          "at": [
+            3038,
+            119,
+            1718
+          ],
+          "yaw": 0,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      },
+      "props": [
+        {
+          "id": "drift",
+          "conversation": "dlg_route4_drift",
+          "at": [
+            3037.5,
+            120.0,
+            1708.5
+          ],
+          "size": [
+            1.2,
+            1.2
+          ],
+          "on": [
+            3037,
+            120,
+            1708
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "biscuit",
+          "species": "gogoat",
+          "level": 34,
+          "name": "Biscuit",
+          "conversation": "dlg_route4_biscuit",
+          "not_yours": "That Gogoat is sulking at somebody else.",
+          "place": [
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route4_thaw_road.gate_done",
+                "value": true
+              },
+              "marker": "biscuit_gate"
+            },
+            {
+              "marker": "biscuit_drift"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [
+        {
+          "id": "petals",
+          "kind": "particles",
+          "particles": [
+            {
+              "particle": "minecraft:cherry_leaves",
+              "at": [
+                3035.5,
+                120.5,
+                1704.5
+              ],
+              "delta": [
+                4.0,
+                1.5,
+                3.0
+              ],
+              "count": 7
+            }
+          ]
+        },
+        {
+          "id": "petals_b",
+          "kind": "particles",
+          "particles": [
+            {
+              "particle": "minecraft:cherry_leaves",
+              "at": [
+                3033.5,
+                120.5,
+                1707.5
+              ],
+              "delta": [
+                3.0,
+                1.0,
+                3.0
+              ],
+              "count": 4
+            }
+          ]
+        }
+      ],
+      "npcs": [
+        {
+          "conversation": "dlg_route4_thaw_gate",
+          "at": [
+            3033,
+            120,
+            1709
           ],
           "yaw": 0
         }

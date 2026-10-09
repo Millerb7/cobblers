@@ -1,0 +1,160 @@
+{
+  "schema": "cobblers.ice-lodge/1",
+  "status": "authored 2026-10-09; generated into build/datapacks/cobblers_ice_lodge by tools/ice_lodge.py, applied by reapply step R18IL; NOT built into any world, NOT seen in game (experiment in docs/world-building/ICE_LODGE.md)",
+  "request": "the owner, 2026-10-09: 'MERIAN HUT becomes an ICE FISHING LODGE. It sits at the major river's source, and that is what anyone living there would actually be doing. Holes cut in the ice, shelters, gear, someone who knows the water. Connect it to fishing for prizes if that system exists by then.'",
+  "built_by": "tools/ice_lodge.py (blocks, the holekeeper's conversation, presence probes); audited by tools/ice_lodge_audit.py; tests/test_ice_lodge.py",
+  "settlement": "merian_hut",
+  "premise_check": {
+    "measured": "2026-10-09 against data/rivers.json and the canonical heightmap",
+    "river_head": "the major river's cut course (data/rivers.json major_river_trunk) starts at (3132, 1632), ground y106.3, 690 blocks from the hut's Centre (2813, 1020); the Merian landmark (data/landmarks.json merian) says 'no basin holds water inside the outline'. The hut is at the cirque, the glacier's head and the river's drainage, NOT on the trunk's first block. The tarn is therefore authored here, as the cirque's own meltwater, and its keeper says the creek comes up a walk to the south-east (dialogue topic 'source').",
+    "ground": "the cirque floor is y107 (7,241 of 7,656 sampled columns) or y108 (415) over x2700-2930, z1030-1160; every tarn, lodge and rack column is checked to be y107 by the generator"
+  },
+  "site": {
+    "bounds": [2728, 1042, 2806, 1104],
+    "level": 107,
+    "hold": [2724, 1038, 2812, 1108],
+    "keep_clear": [
+      {"id": "cirque_path", "box": [2809, 1040, 2817, 1230], "why": "the gravel path from Route 4 to the yard, 3 wide at x 2812-2814 (data/placements.json merian_hut plan.streets cirque_path), four each side"},
+      {"id": "apron", "box": [2779, 1030, 2847, 1040], "why": "the cobbled apron and the stall, well, lamps and waystone on it (data/plaza_centres.json merian_hut; waystone (2800, 1034) data/placements.json), two clear of its south edge"}
+    ],
+    "authored_clearance": 6,
+    "authored_clearance_why": "no x/z authored by another data file (southern_residents.authored_points) within 6 blocks of any column this pack writes, the Merian landmark's anchor (2754, 1055) aside (it is a label for the cirque, not a thing; the lodge stands 4 blocks from it by choice)"
+  },
+  "blocks": {
+    "ids": [
+      "minecraft:air", "minecraft:water", "minecraft:ice", "minecraft:packed_ice", "minecraft:blue_ice", "minecraft:gravel",
+      "minecraft:snow_block", "minecraft:cobblestone", "minecraft:cobblestone_slab", "minecraft:stone_bricks",
+      "minecraft:spruce_planks", "minecraft:spruce_log", "minecraft:stripped_spruce_log", "minecraft:spruce_slab",
+      "minecraft:spruce_stairs", "minecraft:spruce_fence", "minecraft:spruce_door", "minecraft:spruce_trapdoor",
+      "minecraft:spruce_wall_sign", "minecraft:spruce_sign", "minecraft:spruce_pressure_plate", "minecraft:glass_pane",
+      "minecraft:barrel", "minecraft:composter", "minecraft:loom", "minecraft:fletching_table", "minecraft:smoker",
+      "minecraft:cauldron", "minecraft:lectern", "minecraft:campfire", "minecraft:lantern",
+      "minecraft:chain", "minecraft:hay_block", "minecraft:dried_kelp_block", "minecraft:brown_carpet",
+      "minecraft:red_bed", "minecraft:blue_bed", "minecraft:bookshelf"
+    ],
+    "why": "vanilla 1.21.1 only, no addon block: this is a build for the player's eye, not a spawn condition. data/spawn_blocks.json is read by the generator and every block named here that is a spawn condition must be allowed by a data/spawn_block_policy.json entry scoped to ice_lodge (only minecraft:water is: the tarn is the place)."
+  },
+  "tarn": {
+    "name": "Merian Tarn",
+    "lobes": [
+      {"id": "main", "c": [2762, 1084], "rx": 24, "rz": 15},
+      {"id": "tail", "c": [2784, 1092], "rx": 13, "rz": 9}
+    ],
+    "surface_y": 107,
+    "water_top_y": 106,
+    "depth_by_distance_from_edge": [[1, 2], [3, 3], [5, 4], [99, 5]],
+    "depth_why": "the shelf is 2 deep for the first cell in, 3 to the third, 4 to the fifth, 5 beyond: a tarn is a bowl, and a bowl is what makes the Lead deep enough for the open-water treasure check to pass (vanilla's needs four layers of water or air above water, ASSUMED to be Cobblemon's too: docs/world-building/ICE_LODGE.md section 5)",
+    "bed": "minecraft:gravel",
+    "ice": "minecraft:ice",
+    "frost": {"block": "minecraft:packed_ice", "share": 0.07, "blue": "minecraft:blue_ice", "blue_share": 0.015, "why": "white frost patches and a few blue seams in the clear ice; the ice cells that remain `minecraft:ice` are the ones the light rule protects"},
+    "light_rule": {"melts_above_block_light": 8, "margin": 1, "why": "ice melts to water on a random tick when block light at it exceeds 11 minus the light the ice filters (vanilla IceBlock; ASSUMED from the game's source, not read from the jar, so the build keeps block light at every `minecraft:ice` cell at 7 or less, one under the lowest reading); a light of level L is therefore kept at least L-7 blocks (Manhattan, walls ignored) from every ice cell"}
+  },
+  "lead": {
+    "box": [2751, 1079, 2759, 1085],
+    "fence_ring": true,
+    "gap": [[2760, 1081], [2760, 1082], [2760, 1083]],
+    "stub": [[2761, 1081], [2763, 1083]],
+    "post": [2763, 1081],
+    "sign_at": [2762, 1081],
+    "sign": ["THE LEAD", "open water", "big fish use", "this, not holes"],
+    "why": "9 by 7 of unfrozen water (the tarn drains out under the gravel here and moving water will not freeze), fenced on the ice side with a gap on the boardwalk side. The only water in the tarn where the poke bobber's 'in_open_water' predicate can be true: every hole elsewhere is one block in a sheet of ice. The design hook for prizes (section 5 of the note) is built on that, and is NOT built."
+  },
+  "walks": {
+    "block": "minecraft:spruce_planks",
+    "list": [
+      {"id": "spine", "box": [2764, 1060, 2765, 1096], "why": "the boardwalk from the lodge's door south along the tarn's long axis"},
+      {"id": "spur_shelter_1", "box": [2766, 1075, 2769, 1075], "why": "to shelter 1's west door"},
+      {"id": "spur_shelter_2", "box": [2759, 1093, 2763, 1093], "why": "to shelter 2's east door"},
+      {"id": "spur_shelter_3", "box": [2766, 1090, 2783, 1090], "why": "the long spur east along the tail to shelter 3's west door"},
+      {"id": "porch", "box": [2760, 1060, 2769, 1062], "why": "the lodge's porch deck, wider than the spine"}
+    ]
+  },
+  "shelters": [
+    {"id": "shelter_1", "c": [2772, 1075], "door": "west", "hole": "centre", "seat": "back"},
+    {"id": "shelter_2", "c": [2756, 1093], "door": "east", "hole": "centre", "seat": "back"},
+    {"id": "shelter_3", "c": [2786, 1090], "door": "west", "hole": "centre", "seat": "back"}
+  ],
+  "shelter": {
+    "size": 5,
+    "wall_height": 3,
+    "floor": "minecraft:packed_ice",
+    "frost_radius": 4,
+    "light": "minecraft:lantern",
+    "why": "a hole under a roof out of the wind, with a stool and a barrel: the one picture everyone has of ice fishing. One lantern hangs over the hole, so the hut is lit to level 11 or more at every floor cell and no monster can spawn in it. A level-15 light melts plain ice within 7 blocks (Manhattan), so every ice cell within 4 of a shelter's centre (a diamond that takes in the hut's footprint and two cells beyond each wall) is packed ice instead, which does not melt: from outside it reads as trampled white frost round the hut's door",
+    "floor_why": "packed ice under the footprint and out to frost_radius; plain ice from there out is at least 8 blocks (Manhattan) from the lantern, one more than its melt reach"
+  },
+  "stations": [
+    {"id": "h1", "hole": [2767, 1071], "stool": [2768, 1071], "extra": ["minecraft:cauldron", [2768, 1072]]},
+    {"id": "h2", "hole": [2762, 1073], "stool": [2761, 1073]},
+    {"id": "h3", "hole": [2767, 1079], "stool": [2768, 1079], "extra": ["minecraft:barrel", [2769, 1079]]},
+    {"id": "h4", "hole": [2762, 1088], "stool": [2761, 1088]},
+    {"id": "h5", "hole": [2767, 1085], "stool": [2768, 1085]},
+    {"id": "h6", "hole": [2762, 1096], "stool": [2761, 1096]},
+    {"id": "h7", "hole": [2772, 1089], "stool": [2772, 1088], "extra": ["minecraft:barrel", [2773, 1088]]},
+    {"id": "h8", "hole": [2778, 1091], "stool": [2778, 1092]}
+  ],
+  "lodge": {
+    "id": "merian_ice_lodge",
+    "name": "Merian Ice Lodge",
+    "box": [2756, 1051, 2774, 1059],
+    "ridge_z": 1055,
+    "floor_y": 107,
+    "wall_height": 4,
+    "door": {"cells": [[2764, 1059], [2765, 1059]], "facing": "south"},
+    "windows": [[2759, 1059], [2762, 1059], [2767, 1059], [2770, 1059], [2756, 1055], [2760, 1051], [2770, 1051]],
+    "smoke_hole": [2768, 2770],
+    "hearth": {"campfire": [2769, 1055], "ring": "minecraft:cobblestone_slab"},
+    "bunks": [
+      {"id": "bunk_1", "head": [2757, 1052], "bed": "minecraft:red_bed"},
+      {"id": "bunk_2", "head": [2758, 1052], "bed": "minecraft:red_bed"},
+      {"id": "bunk_3", "head": [2759, 1052], "bed": "minecraft:red_bed"},
+      {"id": "bunk_kept", "head": [2761, 1052], "bed": "minecraft:blue_bed", "why": "made up and slept in by nobody: SQ-MERIAN-02 'A Bed Kept Ready' (docs/story/SIDEQUESTS.md) already says the hut keeps one bunk for a traveller who stopped arriving; the quest is not built, the bunk is its place"}
+    ],
+    "tackle": [
+      {"block": "minecraft:fletching_table", "at": [2763, 1052]},
+      {"block": "minecraft:loom", "at": [2764, 1052]},
+      {"block": "minecraft:composter", "at": [2765, 1052]},
+      {"block": "minecraft:barrel[facing=south]", "at": [2766, 1052]},
+      {"block": "minecraft:barrel[facing=south]", "at": [2767, 1052]},
+      {"block": "minecraft:smoker[facing=south]", "at": [2772, 1052]},
+      {"block": "minecraft:cauldron", "at": [2773, 1052]}
+    ],
+    "lanterns": [[2760, 1058], [2762, 1056], [2771, 1058], [2772, 1054], [2758, 1054]],
+    "board": {"wall_x": 2774, "sign_x": 2773, "y": [109, 110], "z": [1054, 1055, 1056], "lines": [
+      ["CATCH", "BOARD", "", ""],
+      ["this winter", "", "", ""],
+      ["nothing", "chalked yet", "", ""]
+    ]},
+    "sign_over_door": ["MERIAN", "ICE LODGE", "holes cut daily", ""]
+  },
+  "racks": [
+    {"id": "rack_1", "x0": 2779, "z": 1052, "length": 7},
+    {"id": "rack_2", "x0": 2779, "z": 1056, "length": 7},
+    {"id": "rack_3", "x0": 2790, "z": 1054, "length": 7}
+  ],
+  "smoke_pit": {"c": [2788, 1058], "why": "a ring of cobblestone with a campfire for the fish that will not dry in this air, and hay beside it"},
+  "yard": {
+    "frame": {"box": [2744, 1053, 2748, 1057], "why": "next winter's shelter, framed in posts and rails and not yet walled"},
+    "ice_stack": {"c": [2751, 1053], "why": "cut ice, stacked in packed ice (it keeps), with snow blocks over it: the harvest from the Lead's first holes"},
+    "sled": {"c": [2742, 1060], "why": "a sled for the catch: slabs on runners, two barrels strapped on"}
+  },
+  "keeper": {
+    "id": "ice_lodge_keeper",
+    "name": "Ketil Aune",
+    "role": "the holekeeper",
+    "at": [2767, 1056],
+    "yaw": 0,
+    "greeting": "Mind the boards. They are the only part of the tarn that is not trying to put you on your back. Ketil. I keep the holes.",
+    "topics": [
+      {"id": "holes", "ask": "Who cuts the holes?", "says": "I do, every dark morning, with the long auger and a good many opinions. A hand and a thumb of ice will hold you and still let a line through. Thicker and it is a floor. Thinner is a lesson."},
+      {"id": "lead", "ask": "What is the open water by the post?", "says": "The Lead. The tarn drains out under the gravel at that end, and moving water will not freeze. The little ones come to the holes. Anything that wants room goes to the Lead. I have never seen a big one at a small hole, and I have stopped taking it personally."},
+      {"id": "huts", "ask": "Why the huts on the ice?", "says": "Wind. A bare hole is a hobby, a hut is a living. Three of them. Mine is the one with the good stool. Do not sit in mine."},
+      {"id": "source", "ask": "Is this where the river starts?", "says": "In the way that counts. Everything on this floor melts towards that gravel and the gravel hands it to the Tear. It comes up a good walk south and east of here as a creek you could step across, and you would never think it was this much cold. Go and look. Then come back and tell me I am wrong."},
+      {"id": "hole", "ask": "Can I cut my own hole?", "says": "A pick will do it. The ice does not mind, and it skins over by morning. Keep your lantern off it, though. Light eats ice, and I would rather not start again."},
+      {"id": "board", "ask": "What is the board by the door?", "says": "The tally. I chalk the heavy ones. Nothing on it yet this winter. The fish are in a mood."},
+      {"id": "bunk", "ask": "Why is one bunk made up?", "says": "It is kept. Sleep in the other three."},
+      {"id": "warden", "ask": "Who else is up here?", "says": "The Warden has the Centre and the larder, and I have the water. Between us we make one competent person."}
+    ],
+    "leave": "I will mind the boards."
+  }
+}

@@ -120,6 +120,13 @@
   "whitelist": [
     {
       "blocks": [
+        "minecraft:water"
+      ],
+      "why": "The Merian Ice Lodge's tarn (tools/ice_lodge.py, data/ice_lodge.json): about 1,400 columns of still water two to five deep under a sheet of ice in the Merian cirque, 25 to 60 blocks from the Merian hut's apron. The water is the place (the owner, 2026-10-09: an ice fishing lodge). minecraft:water is named by 84 spawn entries (data/spawn_blocks.json), among them Golduck, Poliwag, Politoed and Bidoof: whether the cirque's cold biome admits any of them, and whether they spawn under ice, is not known (docs/world-building/ICE_LODGE.md section 6; the probe is the EXP in that note).",
+      "scope": "the Merian Ice Lodge tarn only (ice_lodge, tools/ice_lodge.py)"
+    },
+    {
+      "blocks": [
         "minecraft:quartz_block"
       ],
       "why": "the only spawns conditioned on it (carbink, corsola galarian, cursola, duraludon, archaludon and their herds) require #cobblemon:nether/is_quartz biomes. In an overworld town it has no effect.",
@@ -513,8 +520,58 @@
       "consequence": "read from data/spawn_blocks.json 2026-10-05: corsola galarian and cursola (#cobblemon:dead_coral nearby; the Cobblemon 1.8.0 jar and COBBLEVERSE-DP-v31), herds of them; on sand, sandygast and palossand (#minecraft:sand / #c:sand base). The level-cap refusal still stops a catch above a player's cap",
       "decided": "the owner, 2026-10-05: spawn-condition blocks ALLOWED (this file's owner_decision_2026_10_05); this entry names where, as the contract C4 requires"
     },
-    {"blocks": ["minecraft:carved_pumpkin"], "scope": "Greenhollow's marrow show (data/ambient_towns/gym4_town.json situation greenhollow_marrow_show, pack cobblers_ambient_idle): one carved pumpkin among four Pumpkaboo", "why": "the owner's composition brief (2026-10-05): the unique situations are the point, and this one is four Pumpkaboo and one real pumpkin", "consequence": "a carved pumpkin is a spawn condition (data/spawn_blocks.json); one block on Greenhollow's green, inside a town", "decided": "the owner, 2026-10-05 (data/spawn_block_policy.json owner_decision_2026_10_05: spawn-condition blocks allowed)"},
-    {"blocks": ["minecraft:coal_ore", "minecraft:iron_ore", "minecraft:deepslate_coal_ore", "minecraft:deepslate_iron_ore", "minecraft:deepslate_redstone_ore", "minecraft:deepslate_diamond_ore"], "scope": "the refillable mining caves (mining_caves: tools/mining_caves.py, data/mining_caves.json, pack cobblers_mining_caves): the galleries of cave_old_mine by the Route 1 old mine (route1_old_mine) and of cave_fossick at Fossick (mining_town), and only the ore the restore sets in their bodies", "why": "ECONOMY_OVERHAUL.md section 3 (the owner, 2026-10-10: a refillable mining cave on the stone-face reset): the ore is the point of a gallery, and vanilla ore is what it pays in; 3.1 names this entry as the C4 whitelist the cave needs", "consequence": "data/spawn_blocks.json (docs/world-building/SPAWN_BLOCKS_LIST.md): coal ore draws Rolycoly, Carkol, Coalossal and Torkoal; iron ore Aron, Lairon, Aggron, the Alolan Geodude line and Orthworm; deepslate redstone ore Klink, Klang and Klinklang; deepslate diamond ore Carbink, Sableye, Glimmet and Glimmora; each as a nearby-block condition, in the galleries' halls under the level-cap refusal. Copper, lapis and gold ore are not spawn conditions", "decided": "the owner, 2026-10-05: spawn-condition blocks ALLOWED (this file's owner_decision_2026_10_05); this entry names where, as the contract C4 requires (builder flip, unit CAVES 2026-10-10)"}
+    {
+      "blocks": [
+        "minecraft:carved_pumpkin"
+      ],
+      "scope": "Greenhollow's marrow show (data/ambient_towns/gym4_town.json situation greenhollow_marrow_show, pack cobblers_ambient_idle): one carved pumpkin among four Pumpkaboo",
+      "why": "the owner's composition brief (2026-10-05): the unique situations are the point, and this one is four Pumpkaboo and one real pumpkin",
+      "consequence": "a carved pumpkin is a spawn condition (data/spawn_blocks.json); one block on Greenhollow's green, inside a town",
+      "decided": "the owner, 2026-10-05 (data/spawn_block_policy.json owner_decision_2026_10_05: spawn-condition blocks allowed)"
+    },
+    {
+      "blocks": [
+        "minecraft:coal_ore",
+        "minecraft:iron_ore",
+        "minecraft:deepslate_coal_ore",
+        "minecraft:deepslate_iron_ore",
+        "minecraft:deepslate_redstone_ore",
+        "minecraft:deepslate_diamond_ore"
+      ],
+      "scope": "the refillable mining caves (mining_caves: tools/mining_caves.py, data/mining_caves.json, pack cobblers_mining_caves): the galleries of cave_old_mine by the Route 1 old mine (route1_old_mine) and of cave_fossick at Fossick (mining_town), and only the ore the restore sets in their bodies",
+      "why": "ECONOMY_OVERHAUL.md section 3 (the owner, 2026-10-10: a refillable mining cave on the stone-face reset): the ore is the point of a gallery, and vanilla ore is what it pays in; 3.1 names this entry as the C4 whitelist the cave needs",
+      "consequence": "data/spawn_blocks.json (docs/world-building/SPAWN_BLOCKS_LIST.md): coal ore draws Rolycoly, Carkol, Coalossal and Torkoal; iron ore Aron, Lairon, Aggron, the Alolan Geodude line and Orthworm; deepslate redstone ore Klink, Klang and Klinklang; deepslate diamond ore Carbink, Sableye, Glimmet and Glimmora; each as a nearby-block condition, in the galleries' halls under the level-cap refusal. Copper, lapis and gold ore are not spawn conditions",
+      "decided": "the owner, 2026-10-05: spawn-condition blocks ALLOWED (this file's owner_decision_2026_10_05); this entry names where, as the contract C4 requires (builder flip, unit CAVES 2026-10-10)"
+    },
+    {
+      "blocks": [
+        "minecraft:water"
+      ],
+      "scope": "the Drowned Quarry (drowned_quarry: tools/drowned_quarry.py, data/drowned_quarry.json, pack cobblers_drowned_quarry): the flooded working under Lake Tilpey's east wall, x6337-6540 z4105-4150, carved rock filled with water and joined to the lake at one open cutting",
+      "why": "the owner, 2026-10-09: 'an underwater cave a player with Dive can reach'. The rooms ARE water; an air pocket would let a Surf swimmer rest in it and break the Dive gate (docs/world-building/DROWNED_QUARRY.md). tools/drowned_quarry_audit.py proves the carved water meets the lake only at the open cutting and touches no air",
+      "consequence": "this entry adds water where the export had rock, unlike the sea town's earthwork: a submerged pocket 25 blocks down at the foot of the lake's east wall, inside the lake's own submerged spawn contexts (data/spawns.json tilpey_waters, 38-48). The boss is a NoAI entity; ordinary lake Pokemon swimming in the hall are the lake's young, not a change to the place's encounter. If a playtest shows the hall filling with ordinary spawns round the boss, the fix is a Habitat Block at the hall (data/habitat_blocks.json), not removing the water",
+      "decided": "the owner, 2026-10-05: spawn-condition blocks ALLOWED (this file's owner_decision_2026_10_05); this entry names where, as the contract C4 requires"
+    },
+    {
+      "blocks": [
+        "minecraft:water"
+      ],
+      "scope": "the Glowcap Hollow on the Fungal Isle (fungal_isle: tools/fungal_isle.py, data/fungal_isle.json, pack cobblers_fungal_isle) at (560, 5952): its pool, 197 columns of water in a bowl cut into the mushroom plateau, surface y133, 4 deep at the middle",
+      "why": "the brief of 2026-10-09 ('Mushroom Island: foliage and life. It is empty.'): data/encounter_design.json fungal_south names a water_body 'fungal_pools' that no landmark or water mask defines (the island is entirely dry) and carries a water table (Tadbulb anchor, Dewpider, Araquanid) with nowhere to spawn; the hollow's pool is that body, and fungal_glowcap_hollow's Tadbulb spawns submerged in it",
+      "consequence": "data/spawn_blocks.json: water is a nearby-block condition of 45 spawn entries (Poliwag, Psyduck, Froakie, Wooper, Squirtle, Quagsire, the Quaxly line and others, in COBBLEVERSE-DP-v31.zip and the Cobblemon 1.8.0 jar); each also carries its own biome or other conditions, so the risk is a species with a water-nearby condition and no biome limit appearing at one hollow. Not verified in game; water is already whitelisted for the sea town and Victory Road's caves",
+      "decided": "the owner, 2026-10-05 (data/spawn_block_policy.json owner_decision_2026_10_05: spawn-condition blocks allowed); the pool itself: this unit, to be confirmed by the owner when the hollow is seen"
+    },
+    {
+      "blocks": [
+        "minecraft:pink_petals",
+        "minecraft:cherry_leaves",
+        "minecraft:water"
+      ],
+      "scope": "Route 4's steam hollow and the thaw gate (route4_events: tools/route4_events.py, data/route4_events.json, pack cobblers_route4_events): the hollow's pool of seven cells and its petals at (3110, 1500), and the petals and drifted cherry leaves between the Displaced City's tunnel mouth and gate at (3033, 1700..1714)",
+      "why": "the two places are about warm air and blossom coming out of a frozen hillside; a petal on moss and a leaf in a drift are the picture, and the pool is the steam",
+      "consequence": "read from data/spawn_blocks.json 2026-10-09: petals and cherry leaves are neededNearbyBlocks of combee, cutiefly, comfey and ribombee (#cobblemon:flowers); water of freshwater species. Which of them spawn is decided by the pools in data/spawns.json (the hollow is inside Route 4's corridor, the gate 235 blocks outside it), not by these blocks",
+      "decided": "this file's owner_decision_2026_10_05 allows spawn-condition blocks; this entry names where, as contract C4 requires. Chosen by the builder of the gap fill, 2026-10-09, for the owner's review"
+    }
   ],
   "checked_paving": {
     "gym1_town": [

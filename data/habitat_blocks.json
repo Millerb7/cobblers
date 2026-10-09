@@ -7131,6 +7131,54 @@
       "mimic_why": "the den's rocky apron: probed in staging 2026-10-02, the 24 columns round this block at y158 are 10 stone, 8 cobblestone and 6 other; a grass_block disguise set the same day read as a lone grass tile there. Stone is also what this block was before (no mimic set, the default; MimicId minecraft:stone read off it that morning)."
     },
     {
+      "id": "frostpeak_keep_hall_ward",
+      "place": "Wardenhold's ground hall on Frostpeak Strand's southern lip (data/frostpeak_keep.json), in the hall's paving",
+      "pool": "cobblers:frostpeak_keep_hall",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1551,
+        "y": 127,
+        "z": 636
+      },
+      "mimic": "minecraft:stone_bricks",
+      "activated": {
+        "spawn_range": 12,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 4
+      },
+      "status": "planned",
+      "why": "The keep's household (the owner, 2026-10-09: a Pokemon that belongs): up to 4 of the Strand's own ice folk (Snorunt, Snom, Sneasel; data/spawns.json frostpeak_keep_hall) alive within 12 blocks of the hall's floor, refilled 2 at a time as they are caught or leave. ACTIVATED after the Ursaluna den's pattern (ursaluna_den_outskirts_ward): a natural ReplaceSpawns block only swaps what natural spawning picks and the keep stands on a hill where little does. cancel_range -1: the Strand's own table continues round it; the household is added, not substituted. Same band as the Strand (28-38), so the hall and the courtyard stay catchable. NOT VERIFIED in game; PLANNED until placed in staging.",
+      "mimic_why": "the hall's paving is stone bricks (data/frostpeak_keep.json palette.paving); tools/frostpeak_keep.py writes this floor cell as stone_bricks and runs BEFORE the Habitat Block step (R9FK, then R9E), so the block lands in a floor that is already there."
+    },
+    {
+      "id": "frostpeak_keep_beacon_ward",
+      "place": "Wardenhold's beacon chamber at the spire's head (data/frostpeak_keep.json), in the chamber floor",
+      "pool": "cobblers:frostpeak_keep_beacon",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1547,
+        "y": 173,
+        "z": 641
+      },
+      "mimic": "minecraft:stone_bricks",
+      "activated": {
+        "spawn_range": 8,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 1
+      },
+      "status": "planned",
+      "why": "The keep's last watch (the owner, 2026-10-09: a Pokemon that belongs, at the area's band): ONE Froslass at 40-44, above the Strand's 28-38 and under tier 5's next cap 45 (data/encounter_design.json rules.hearts.next_cap), alive in the beacon chamber at the head of a 25-block ladder climb (the Wardens' log ends 'Someone stays'). A nest in the Ursaluna den's sense: a creature, a place that suits it, strong enough that meeting it early is a mistake; every other room of the keep and the whole climb stay catchable. max_spawns 1, so it refills only when she is caught or gone. Pokemon cannot climb ladders, so she stays in the chamber. NOT VERIFIED in game (whether a floating ghost spawns on 'grounded' here, and what the alpha-free spawn does to the climb); PLANNED until placed in staging.",
+      "mimic_why": "the chamber floor is the keep's masonry; tools/frostpeak_keep.py writes this floor cell as stone_bricks and runs BEFORE the Habitat Block step (R9FK, then R9E)."
+    },
+    {
       "id": "driftmouth_stack_ne_high",
       "place": "Driftmouth Isle, the NE sea stack: inside its rock, 4 under the sea (the surface and the upper water)",
       "pool": "cobblers:driftmouth_isle_waters",
@@ -7692,6 +7740,264 @@
       },
       "status": "planned",
       "why": "written by tools/training_grounds.py records --write: the levelling catch-up for gym 8 (cap 55, docs/mechanics/LEVEL_CATCHUP.md). In the grass at the heightmap's ground, keeping up to 6 of its pool alive within 16 blocks; battle EXP from them stops at the cap (rctmod)."
+    },
+    {
+      "id": "fungal_cap_wood_ward",
+      "place": "the Fungal Isle's The Cap Wood (data/fungal_isle.json): the Cap Wood's beacon stem: the second block of the 3x3 stem's middle column",
+      "pool": "cobblers:fungal_cap_wood",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 392,
+        "y": 140,
+        "z": 5572
+      },
+      "mimic": "minecraft:mushroom_stem",
+      "activated": {
+        "spawn_range": 20,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "why": "written by tools/fungal_isle.py records --write from the plan (data/fungal_isle.json nests.cap_wood). An activated block keeps up to 5 of the pool alive within 20 blocks of itself and refills as they are caught or despawn; cancel_range -1, so the island's own rosters continue round it. Kept in a block the pack writes (minecraft:mushroom_stem), so the pack runs BEFORE R9E. UNPROVEN in game: that this block keeps its pool visible (EXP-021, the Ursaluna's den and the Old Orchard use the same shape).",
+      "mimic_why": "the block the pack writes at that position: the Cap Wood's beacon stem: the second block of the 3x3 stem's middle column"
+    },
+    {
+      "id": "fungal_stump_court_ward",
+      "place": "the Fungal Isle's The Stump Court (data/fungal_isle.json): the Great Stump: the second log of its middle column",
+      "pool": "cobblers:fungal_stump_court",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 560,
+        "y": 147,
+        "z": 5712
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "why": "written by tools/fungal_isle.py records --write from the plan (data/fungal_isle.json nests.stump_court). An activated block keeps up to 5 of the pool alive within 16 blocks of itself and refills as they are caught or despawn; cancel_range -1, so the island's own rosters continue round it. Kept in a block the pack writes (minecraft:dark_oak_log), so the pack runs BEFORE R9E. UNPROVEN in game: that this block keeps its pool visible (EXP-021, the Ursaluna's den and the Old Orchard use the same shape).",
+      "mimic_why": "the block the pack writes at that position: the Great Stump: the second log of its middle column"
+    },
+    {
+      "id": "fungal_glowcap_hollow_ward",
+      "place": "the Fungal Isle's The Glowcap Hollow (data/fungal_isle.json): the hollow's floor, 9 blocks east of the pool's middle, in the moss",
+      "pool": "cobblers:fungal_glowcap_hollow",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 569,
+        "y": 133,
+        "z": 5952
+      },
+      "mimic": "minecraft:moss_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 4
+      },
+      "status": "planned",
+      "why": "written by tools/fungal_isle.py records --write from the plan (data/fungal_isle.json nests.glowcap_hollow). An activated block keeps up to 4 of the pool alive within 16 blocks of itself and refills as they are caught or despawn; cancel_range -1, so the island's own rosters continue round it. Kept in a block the pack writes (minecraft:moss_block), so the pack runs BEFORE R9E. UNPROVEN in game: that this block keeps its pool visible (EXP-021, the Ursaluna's den and the Old Orchard use the same shape).",
+      "mimic_why": "the block the pack writes at that position: the hollow's floor, 9 blocks east of the pool's middle, in the moss"
+    },
+    {
+      "id": "sunset_watch_dial_ward",
+      "place": "the Sundown Watch on Sunset Isle (data/sunset_watch.json): the dial's centre plinth at (1068, 138, 7492)",
+      "pool": "cobblers:sunset_watch_dusk",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1068,
+        "y": 138,
+        "z": 7492
+      },
+      "mimic": "minecraft:chiseled_stone_bricks",
+      "activated": {
+        "spawn_range": 14,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 4
+      },
+      "status": "planned",
+      "why": "written by tools/sunset_watch.py records --write from the plan (data/sunset_watch.json dusk). An ACTIVATED Habitat Block (the den's and the orchard's pattern) in the dial's centre plinth, disguised as a chiselled brick. Every entry carries timeRange dusk, which tools/compile_spawns.py compile_habitat carries into the pool and Cobblemon 1.8.0's HabitatSpawn reads (docs/research/notes/habitat-blocks-underground.md section 1). Outside the dusk window (ticks 11834-13701 of 24000, about 93 seconds of a 20-minute day, read from TimeRange in the 1.8.0 jar) the pool has nothing to offer and the block spawns nothing. ACTIVATED, the orchard's and the den's pattern; cancel_range -1 leaves natural spawning alone. The position is the dial's centre plinth as the generator seats it (the terrace's paved Y 137 from the heightmap), in a block that pack writes, so the pack must run BEFORE R9E (R9SW) or it writes the block back over this one.",
+      "mimic_why": "the block the pack writes at that cell (minecraft:chiseled_stone_bricks), so the Habitat Block is one more of them."
+    },
+    {
+      "id": "sunset_watch_mast_ward",
+      "place": "the Sundown Watch on Sunset Isle (data/sunset_watch.json): the lamp mast's second log at (1082, 139, 7483)",
+      "pool": "cobblers:sunset_watch_day",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1082,
+        "y": 139,
+        "z": 7483
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 12,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "written by tools/sunset_watch.py records --write from the plan (data/sunset_watch.json day). A second activated block in the mast's second log, so the Watch is not dead until dusk. Its own block and pool because an activated block counts what it has alive against its cap: day birds sharing the dusk block would sit on the cap and shut the dusk pool out. Day birds only (timeRange day, ticks 23460-12541, the jar's 'day'). ACTIVATED, the orchard's and the den's pattern; cancel_range -1 leaves natural spawning alone. The position is the lamp mast's second log as the generator seats it (the terrace's paved Y 137 from the heightmap), in a block that pack writes, so the pack must run BEFORE R9E (R9SW) or it writes the block back over this one.",
+      "mimic_why": "the block the pack writes at that cell (minecraft:spruce_log), so the Habitat Block is one more of them."
+    },
+    {
+      "id": "rookery_skerry_0",
+      "place": "Gull Rock, tidal rock 0 of 6 (bearing 30 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6957,
+        "y": 64,
+        "z": 2621
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
+    },
+    {
+      "id": "rookery_skerry_1",
+      "place": "Gull Rock, tidal rock 1 of 6 (bearing 90 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6974,
+        "y": 64,
+        "z": 2650
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
+    },
+    {
+      "id": "rookery_skerry_2",
+      "place": "Gull Rock, tidal rock 2 of 6 (bearing 150 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6957,
+        "y": 64,
+        "z": 2679
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
+    },
+    {
+      "id": "rookery_skerry_3",
+      "place": "Gull Rock, tidal rock 3 of 6 (bearing 210 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6923,
+        "y": 64,
+        "z": 2679
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
+    },
+    {
+      "id": "rookery_skerry_4",
+      "place": "Gull Rock, tidal rock 4 of 6 (bearing 270 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6906,
+        "y": 64,
+        "z": 2650
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
+    },
+    {
+      "id": "rookery_skerry_5",
+      "place": "Gull Rock, tidal rock 5 of 6 (bearing 330 from the stack, 34 out): in its rock one block under the top",
+      "pool": "cobblers:gull_rock_colony",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6923,
+        "y": 64,
+        "z": 2621
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
     }
   ]
 }

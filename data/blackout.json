@@ -208,5 +208,28 @@
     "surface_tiring": "Your arms are growing heavy. Head for shore.",
     "surface_exhausted": "You are exhausted. Get out of the water, or ride a water Pokemon.",
     "surface_collapse": "The water is pulling you under."
+  },
+  "dungeon_exempt": {
+    "status": "built 2026-10-08 (E1, docs/mechanics/DUNGEONS.md 11.3; docs/research/DUNGEON_DEATH.md 'E1 as built'): the blackout half only. The dungeon engine (tools/dungeon.py) that adds the tag, counts the tail and runs the two functions below does not exist yet. Simulated, not run in game (DX1)",
+    "rule": "a player holding player_tag makes no recovery claim, whatever beat or killed them and however vanilla credits the kill: blackout/battle_loss_wild treats them as exempt beside the victor test, and recovery/make returns at its first line. No claim means bo.clm stays 0, so no money is held (recovery/hold_money needs bo.clm 2). The flat charge, the return to the checkpoint and the heal run unchanged. Not in blackout/battle_loss_npc, which takes no items. And a settled claim is never delivered to a tagged player: recovery/deliver (which the login delivery calls) returns, leaving the claim at state deliver until the tag is removed by one of the two functions below",
+    "player_tag": "cobblers.dg_run",
+    "player_tag_why": "the dungeon engine's ids are prefixed dg_ (DUNGEONS.md V14); proposed as cobblers.dungeon_run in DUNGEON_DEATH.md section 4 rule 1 and renamed to match. The exemption reads the PLAYER, never the killer, which is what covers vanilla's kill credit (a timer kill, a fall or lava within the credit window of a wild hit arrives as a wild kill)",
+    "tail_ticks": 100,
+    "tail_ticks_basis": "ASSUMED, not read from the jar: vanilla's kill credit (LivingEntity.getKillCredit) names the last mob that hurt the player within 100 ticks (DUNGEON_DEATH.md section 2 item 4; claims.slain_rule above rests on the same 100-tick attacker memory). The tag outlives every way out of a run by this many ticks, so a hit taken in the slot cannot credit an overworld death a moment later. Must be at least the credit window; a longer tail is a leniency (an overworld wild Pokemon that kills the player inside it makes no claim), never a loss",
+    "tail_end_function": "cobblers:recovery/run_tail_end",
+    "backstop_function": "cobblers:recovery/run_tag_stale",
+    "engine_must": [
+      "add player_tag to the player in door_click, in the function that reserves the slot, before the 40-tick arrival delay (E1 rule 1)",
+      "when door_click adds the tag, cancel any tail still counting for that player from an earlier run: otherwise that tail ends during the new run and removes the tag inside the slot",
+      "start a tail of at least tail_ticks after every way out: a clean exit, the eject, the respawn after a death, and the dead-run kill on relog. The tail is the engine's own per-player score; the blackout pack never reads it",
+      "when a tail ends, run `execute as <player> at @s run function cobblers:recovery/run_tail_end` with the player in the overworld",
+      "in the overworld backstop sweep, run `execute as <player> at @s run function cobblers:recovery/run_tag_stale` for any player holding player_tag outside cobblers:pocket with no live run and no tail left (including a player who logged out during a tail)",
+      "keep tagging every wild Pokemon and NPC it spawns with claims.exempt_tag (den, boss stages, the lake): the second layer, not the rule"
+    ],
+    "engine_must_never": [
+      "remove player_tag itself (no `tag ... remove cobblers.dg_run` in the dungeon pack): only the two functions above remove it, so the delivery that is owed always runs with the removal",
+      "remove it before the blackout has read it: the run's death handling runs on respawn, after blackout/death, battle_loss_wild and recovery/make, and starts the tail; it never ends it",
+      "run either function while the player is in cobblers:pocket: both deliver settled claims at the player's feet, and both leave the player untagged"
+    ]
   }
 }

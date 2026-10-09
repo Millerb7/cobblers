@@ -48,7 +48,9 @@ sys.path.insert(0, str(ROOT / "tools"))
 OUT = ROOT / "data" / "nuzlocke_zones.json"
 GRID = 32                       # the sub-region raster compile_spawns uses (SUBREGION_GRID)
 VR_SUBTITLE = "Victory Road"
-MICRO_SITE = re.compile(r"^(elder|sapling)_|_sapling_")
+# fungal_*: the Fungal Isle's three nest pools (tools/fungal_isle.py), each a few dozen blocks inside fungal_north or
+# fungal_south and untitled by any settlement, so once placed they would otherwise raise below
+MICRO_SITE = re.compile(r"^(elder|sapling|fungal)_|_sapling_")
 
 
 def load(name):

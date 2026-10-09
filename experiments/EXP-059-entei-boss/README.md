@@ -1,6 +1,6 @@
 # EXP-059: does the repeatable Entei work, one copy per player, in the pocket dimension?
 
-**Status: NOT_EXECUTED.** Designed 2026-10-08 by unit ENTEI with the pack it tests (`tools/entei_boss.py`,
+**Status: PARKED 2026-10-08 (the owner): steps 1-6 PASS over RCON, 7 and 9 seen in game, steps 10-17 OPEN.** No more Entei testing until the owner reopens it. Designed 2026-10-08 by unit ENTEI with the pack it tests (`tools/entei_boss.py`,
 `data/entei_boss.json`, step R16Q). Nothing has been run on a server. The builder wrote this procedure and the
 builder's own tests (`tests/test_entei_boss.py`). **The builder does not grade it.** A different agent or the main
 session reviews the results.
@@ -200,6 +200,37 @@ Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, Mega Showdown 1.
 
 Steps 7-17 need the owner in game with `champion_cleared`; 18-19 wait for a second account.
 
+### The owner in game (2026-10-08, staging-2026-10-01, build 24ac441; relayed by the owner, not seen by a session)
+
+Same versions as above. The owner's staging character had been reset that day (`docs/HANDOVER_SESSION.md` 3).
+
+| Step | Result |
+|---|---|
+| 7 (X3-a) | a Tower Ash was crafted. Tooltip, inventory read, brewing stand and recipe book: not reported |
+| 8 (X3-c, overworld) | not reported |
+| 9 (X3-b, X2-a) | the room was entered from the Nether. Entei appeared. The model rendered (the owner fought it). Aggression outside a battle: not reported |
+| 10 (X2-b) | **NOT run as written.** The owner FAINTED the catchable Entei instead of catching it. Read over RCON afterwards: no `cobblers:entei_boss/caught` advancement, `eb.clears` unset, the Entei gone, `#s1 eb.own` still 1 until the arch was clicked |
+| 10a (ball refusal, unplanned) | a Master Ball and an Origin Ball were thrown; **neither caught it**. Whether each ball was handed back with the refusal message is **unknown** |
+| 11 (X2-d) | the arch freed the slot (`eb.own` went to 0 after it); the Nether return position was not reported |
+| 12-17 | **OPEN** |
+
+The owner's verdict: "it seems to be working". Read against the criteria that is: X3-b and X2-a pass; X2-b is NOT
+shown (no catch was attempted on a catchable Entei with an ordinary ball before it fainted); the refusal of a Master Ball and an Origin Ball is the Beast Ball key working as built: `data/key_ball.json:30` lists `entei_boss` among the keyed bosses (the owner's 2026-10-08 decision, "every dungeon boss refuses every ball but the Beast Ball", supersedes this experiment's "catchable once with an ordinary ball"). So step 10 as written (catch with any ball) is obsolete: the catch is now EXP-064's Beast Ball case. It counts toward EXP-064 as a refusal SEEN (two balls), the hand-back and the message NOT SEEN. Not chased: parked.
+A faint of the catchable Entei set no `eb.clears`: by the design only a faint AFTER the catch counts as a clear
+(step 13), so this is consistent, not a defect, and the owner's next entry will still offer a catchable Entei.
+
+### Recorded defects carried, not fixed (the owner: fix one only if the engine reuses that code)
+
+1. **The doubled arch interaction box** (step 4, count 2): the forceload-then-act race (review N155). The dungeon
+   engine's door and exit use the same `summon interaction` after a forceload, so the engine build takes its exit from
+   `tools/chunk_look.py` (look before acting, de-duplicate) instead of copying R16Q's; Entei's own R16Q is left as is.
+2. **N157 (a): a new owner B catching A's left-standing Entei** gets no flag and then a second Entei of their own
+   (`tools/entei_boss.py:595-628`, strict xfail).
+3. **N157 (b): a flag holder relogging into a slot B now owns** can catch B's Entei.
+
+Both N157 cases need a ball to land within one 20-tick keeper pass. The engine's slot ownership is new code
+(`docs/mechanics/DUNGEONS.md` 11.3) and does not reuse the Entei keeper's ownership sweep.
+
 ## Limitations
 
 - Balance is untested and is the open problem the scope names (section 4): one level-100 legendary against six.
@@ -215,7 +246,10 @@ Steps 7-17 need the owner in game with `champion_cleared`; 18-19 wait for a seco
 
 ## Decision
 
-Pending the run.
+PARKED by the owner 2026-10-08 with the dungeon engine taking priority. What is shown: the pack loads, the room
+builds, the sigil crafts, Nether entry lands in the slot, the Entei spawns at level 100 with its props and renders,
+a faint frees the slot at the arch. Not shown: a catch, the post-catch refusal and drop, the lockout, flee, loss and
+disconnect. Reopen with step 10 (grant `champion_cleared`; reset `eb.last`).
 
 ## Follow-up
 

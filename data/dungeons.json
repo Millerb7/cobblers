@@ -1,0 +1,252 @@
+{
+  "schema": "cobblers.dungeons/2",
+  "generated_by": "hand",
+  "status": "ENGINE CORE built 2026-10-08 (tools/dungeon.py, pack cobblers_dungeons): the timer, the greed ladder's counter, the slots and their shells, the staged boss's chain, the recall sweep, E1's engine half, entry and exit, the sigils and the rip. Generated and unit-tested; NOTHING of it has run on a server (experiments/EXP-084-dungeon-engine-core, NOT_EXECUTED). NOT built (step 6): the stands and their clawback, the seam markers and rate source, the parkour catch bands, the lake and the den. The spine is a PLACEHOLDER (spine.placeholder), so the engine can run end to end before world-content-dev authors the real one (step 4).",
+  "spec": "docs/mechanics/DUNGEONS.md (sections 1, 2, 3.2, 3.4, 5, 6, 7, 11.2-11.4); docs/decisions/ADR-008-dungeon-runs.md (Proposed)",
+  "rung": "datapack plus functions/commands (CLAUDE.md principle 6): vanilla scoreboards, bossbars, interactions, advancements and recipes, and Cobblemon 1.8.0's own commands (spawnnpcat, runmolang) and battle_victory callback. Every lower rung is exhausted by the record DUNGEONS.md 11.1 cites (DM 4.1: no 1.8.0 callback can cancel anything, so no-deploy is a sweep; DM 1.1: no native run timer). Nothing here is a mod, a script layer or a companion.",
+  "tunable": "EVERY clock, delay and threshold below is tunable data, not a decided number: probe XT1 (EXP-079) timed no fight, so the band clocks are DUNGEONS.md 4.2's planning values (relayed), and the delays are the engine's own choices",
+  "engine": {
+    "pack": "cobblers_dungeons",
+    "pack_why": "world-local (tools/reapply.py WORLD_LOCAL): the keeper kills players on a timer, spawns NPCs, takes and gives items and sets game modes on its own; the global datapacks folder is loaded by every world the server runs, the live one included",
+    "pocket": {
+      "dimension": "cobblers:pocket",
+      "floor_y": 96,
+      "border": [-1024, 9215],
+      "border_margin": 32,
+      "read_from": "data/portals.json pocket.dimension and pocket.floor_y, and data/entei_boss.json pocket.border and border_margin: tools/dungeon.py fails closed if any disagrees (as tools/entei_boss.py does). The dimension is cobblers_portals' and registers only at a boot"
+    },
+    "slots": {
+      "per_dungeon": 4,
+      "rows_from_z": 1024,
+      "row_spacing": 128,
+      "strip_length": 2048,
+      "strip_width_max": 64,
+      "origin_x": 0,
+      "why": "DUNGEONS.md section 1: 4 slots per dungeon, one strip each, 2,048 long in x and at most 64 wide in z, 128-block rows from z 1,024. Slot k of dungeon d is row (d-1)*4 + (k-1): its strip is z0 = rows_from_z + row * row_spacing .. z0 + strip_width_max - 1, x origin_x .. origin_x + strip_length - 1, its spine along +x at the strip's centre line z0 + strip_width_max / 2. tools/dungeon.py refuses any overlap with the portals' rescue box (z -512..768 on every x), Entei's band (z around -768) and the probe pack's row (z -704..-577, data/dungeon_probes.json), each recomputed from its own file",
+      "overworld_coincidence": "the rows are inside the overworld map's x/z bounds (data/world.json 0..8191), unlike Entei's (data/entei_boss.json pocket.origin_why). What that risks is the blackout's waystone arrival test, which compares coordinates and not dimensions (data/blackout.json checkpoints.waystone_jump_why): tools/dungeon.py refuses any slot's arrival point within waystone_arrival_radius + 1 of a town waystone in data/progression.json, and the keeper's own box tests are made dimension-safe by the dg.pk tag (a box test on @s is coordinate-only)",
+      "clear_strip": false,
+      "clear_strip_why": "false for the placeholder: the pocket is void, so the shell writes only its own boxes. A shell from an earlier, LONGER spine is not cleared by a later shorter one; set true for the first apply of the real spine (step 4) to air the whole strip first (I2, EXP-081: one 2,048 x 64 strip cleared in one function call stalls the server 2.64 s fresh). A re-apply step only, never at entry",
+      "clear_strip_height": 64
+    },
+    "members_max": 1,
+    "members_why": "solo first (D16). The data and the scores carry a member index (bossbar ..._m1) so co-op is a switch, not a rewrite; the gates, the bar and the slot's freeing are written per member",
+    "keeper": {
+      "period_ticks": 20,
+      "arrive_delay_ticks": 40,
+      "arrive_delay_why": "Entei's (data/entei_boss.json keeper.arrive_delay_ticks), counted by the keeper on the player, so a player who logs out before arriving arrives when they return: at least 40 ticks after door_click, at most 40 + one period",
+      "entry_hold_ticks": 6000,
+      "entry_hold_why": "an engine choice, not in DUNGEONS.md: a member who has paid but not crossed the threshold holds no clock, so 2.6's slot deadline would never come. This many ticks of absence before the threshold frees the slot; on their return the run is void and the sigil returned (the threshold refund, 7.4). Five minutes",
+      "rip_particle_period_ticks": 10,
+      "rip_particle_range": 48,
+      "rip_particle_why": "DUNGEONS.md 7.1: re-emitted every 10 ticks while a player is within 48 blocks, so an unvisited rip costs one distance check. V1 (EXP-080) found these particles cannot be seen from 64-128 blocks; the plume is gated on the owner's look (rips[].plume)",
+      "recipe_sync_period_ticks": 200,
+      "boss_restart_idle_passes": 5,
+      "boss_restart_why": "an engine choice: a forfeit or flee sends no battle result (DM 1.4), which would leave a stage standing with the exit gate shut. After this many passes out of battle with the stage standing and no result, the keeper starts the same stage's battle again"
+    },
+    "clock": {
+      "units_per_tick": 4,
+      "period_ticks": 20,
+      "ladder": [
+        {"taken": 0, "rate": 4, "label": "x1", "colour": "white"},
+        {"taken": 5, "rate": 5, "label": "x1.25", "colour": "yellow"},
+        {"taken": 10, "rate": 6, "label": "x1.5", "colour": "yellow"},
+        {"taken": 15, "rate": 8, "label": "x2", "colour": "red"},
+        {"taken": 20, "rate": 12, "label": "x3", "colour": "red"}
+      ],
+      "ladder_basis": "D13 (the owner, 2026-10-08): x1.25 at 5, x1.5 at 10, x2.0 at 15, x3 at 20, per member, holding for the rest of the run. Quarter-ticks, so x1.25 is an integer rate (DUNGEONS.md 2.1)",
+      "warn_colour": "purple",
+      "fall_penalty_s": 15,
+      "slack_factor": 1.25,
+      "titles_at_s": [300, 60],
+      "countdown_last_s": 10,
+      "why": "DUNGEONS.md 2.1-2.2: dg.clock on the player in quarter-ticks, the keeper subtracting period_ticks x rate each pass; no rate 0 (D1); titles at 5:00 and 1:00 and each of the last 10 seconds"
+    },
+    "return_margin": {
+      "sprint_x10": 56,
+      "warn_extra_s": 60,
+      "parkour_recross_s": 0,
+      "why": "DUNGEONS.md 2.3: back_s = (x - x_back) x 10 / 56 (sprint 5.6 blocks a second, relayed GYM_INTERIORS.md:139), plus the parkour's re-crossing once past it (0: the placeholder spine has no parkour); the warning fires when real seconds left at the current rate fall under back_s + 60"
+    },
+    "lockout_ticks": 72000,
+    "lockout_why": "D17: one hour of UPTIME per dungeon per player, counted from the threshold (2.5). Our own counter (#up dg.up, 20 a keeper pass), never gametime, so a re-export or /time set cannot move it. It must be at least the longest clock (39 minutes = 46,800 ticks)",
+    "uptime": {"objective": "dg.up", "holder": "#up", "step": "period_ticks per keeper pass"},
+    "bands": [
+      {"band": 1, "caps": [20, 25], "clock_s": 1740},
+      {"band": 2, "caps": [30, 35], "clock_s": 1860},
+      {"band": 3, "caps": [40, 45], "clock_s": 1920},
+      {"band": 4, "caps": [50, 55], "clock_s": 2040},
+      {"band": 5, "caps": [60, 62], "clock_s": 2220},
+      {"band": 6, "caps": [100], "clock_s": 2340}
+    ],
+    "bands_why": "DUNGEONS.md 5.3 (caps) and 4.2's planning table (relayed: 29, 31, 32, 34, 37, 39 minutes). A player's band is the first whose highest cap is at or above their RCT level cap at the rip (5.1), frozen for the run. The clocks are for the REAL spine's walk and fights; with the placeholder spine V3 (clock = ceil(required x slack) over the built shell) cannot hold and is not claimed",
+    "death": {
+      "player_tag_from": "data/blackout.json dungeon_exempt.player_tag",
+      "tail_ticks_from": "data/blackout.json dungeon_exempt.tail_ticks",
+      "tail_end_from": "data/blackout.json dungeon_exempt.tail_end_function",
+      "backstop_from": "data/blackout.json dungeon_exempt.backstop_function",
+      "claims_exempt_tag_from": "data/blackout.json claims.exempt_tag",
+      "rule": "E1 (DUNGEONS.md 11.3), the engine half: door_click adds the run tag in the function that reserves the slot, BEFORE the arrival delay, and cancels any tail still counting; the engine never removes the tag; after every way out (a clean exit, the eject, the respawn after a death, the dead-run kill, a run voided before the threshold) it starts a tail of tail_ticks + period_ticks on its own score dg.tail and, when it ends with the player OUTSIDE cobblers:pocket, runs `execute as <p> at @s run function <tail_end>`; its overworld sweep runs <backstop> for a tagged player outside the pocket with no live run and no tail. Neither is ever called in the pocket. Every NPC the engine spawns carries claims.exempt_tag in the function that spawns it, and the keeper re-asserts it on any untagged NPC in a slot a pass later",
+      "tail_why": "tail_ticks + period_ticks: the tail is counted down period_ticks per keeper pass, and a tail started between passes (a click) would otherwise end up to period_ticks - 1 short of tail_ticks",
+      "pre_threshold_death_refund": false,
+      "pre_threshold_death_why": "an engine choice: a death before the threshold (nothing in the entry room can kill, so /kill or a wild hit at the rip's mouth while arriving) does not return the sigil; only a walk out by the back rip does (7.4)",
+      "titles": {
+        "1": {"title": "The rift closed", "subtitle": "You were still inside."},
+        "2": {"title": "Beaten in the rift", "subtitle": "The rift lets you go."},
+        "3": {"title": "The rift threw you out", "subtitle": ""},
+        "4": {"title": "The rift closed without you", "subtitle": ""}
+      },
+      "titles_why": "DUNGEONS.md 2.5, by cause (dg.cause): 1 the timer, 2 a boss stage (or any NPC) beat them, 3 anything else, 4 a run that died while they were away (2.6)",
+      "chat": [
+        "Your items are all still yours. Nothing in a rift keeps them.",
+        "The blackout's money is gone for good. No one in the rift is holding it.",
+        "Kept: everything you mined and picked up."
+      ],
+      "chat_why": "DUNGEONS.md 2.5's lines 1, 2 and 4, as drafted there (trainer-balance-designer to tone). Line 2 is printed without the amount (the blackout's own line names it); line 3 (the escrow) and line 5 (the lockout) are built by the keeper from scores",
+      "away_line": "The rift closed while you were away.",
+      "away_line_why": "2.6's line, without its minutes: the slot's deadline is freed with the slot, so the minutes are not kept"
+    },
+    "escrow": {
+      "objective": "dg.esc",
+      "status": "the extension point only: no reward table is built tonight (section 9 is step 6's). A clean exit runs dungeons/pay, which is empty but for clearing dg.esc; every other way out clears it. dg.bossd is set when the boss's last stage falls, the flag 9.1's boss escrow will key on"
+    },
+    "clawback": {
+      "objective": "dg.claw",
+      "status": "the extension point only (the stands and their clawback are step 6): sudden death's kill waits while dg.claw is 1 or more, so the clawback a stand or boss win starts runs to completion before the kill (E1 rule 6). Nothing sets it tonight, so a boss stage's NPC payout is NOT clawed back by this build (does_not_cover)"
+    },
+    "adventure": {
+      "tag": "dg.adv",
+      "rule": "the arrival sets adventure and the tag; every way out, and the overworld backstop for a tagged player with no live run outside the pocket, sets survival and removes it. Only a player WE put in adventure is ever set to survival (V13)"
+    },
+    "rift_pick": {
+      "item": "minecraft:iron_pickaxe",
+      "custom_data_key": "cobblers_dg_pick",
+      "name": "Rift Pick",
+      "colour": "dark_purple",
+      "can_break": ["minecraft:coal_ore", "minecraft:iron_ore", "minecraft:copper_ore", "minecraft:deepslate_coal_ore", "minecraft:deepslate_iron_ore"],
+      "can_break_basis": "R2 (EXP-074): `minecraft:can_break={predicates:[{blocks:[...]}]}` parses. The seam's per-band ore lists are step 6's; these are the band-1 seam's coal and iron (9.3) so the pick has something to name",
+      "taken_by": "its custom_data (a byte, cobblers_dg_pick:1b), never its item id (DUNGEON_DEATH.md section 4 rule 6)"
+    },
+    "sweep": {
+      "keep_tag": "dg.keep",
+      "rule": "DUNGEONS.md 3.4: every keeper pass, in each no-deploy box of a slot whose run is live, every cobblemon:pokemon without dg.keep is removed by `execute as <it> run runmolang \"q.entity.discard;\"` (P1's form 2, EXP-069 step 5: PASS on a wild Pokemon), every player in the box is dismounted, and ender pearls are killed. Never `kill`",
+      "gated_on": "P1 (owner half): discarding an OWNED sent-out Pokemon, and that it returns to the party with its HP kept (DM 4.2), is unproven",
+      "message": "The rift will not hold them here."
+    },
+    "sigils": {
+      "accept": "own_or_higher",
+      "accept_rule": "one of the entrant's own band if held, else the lowest higher band held; only a lower band's: refused, 'This sigil is too weak for you now.' (7.4)",
+      "refund_before_threshold": true,
+      "custom_data_key": "cobblers_dg_sigil",
+      "custom_data_type": "byte",
+      "custom_data_type_why": "FINDING (2026-10-08): SG1 (EXP-083) step 5 proved `[custom_data~{cobblers_dg_sigil:1}]` against a sherd STOCKED with an int 1, but step 7 read the CRAFTED sigil as `cobblers_dg_sigil: 1b` (a recipe's JSON number becomes the smallest NBT type). An NBT partial match compares tag types (1b is not 1), so the int predicate would very likely never match a crafted sigil. The engine matches, gives and refunds the byte form throughout; the match against a CRAFTED sigil is unproven (EXP-084 step SG)",
+      "ladder": [
+        {"band": 1, "id": "soot", "item": "minecraft:miner_pottery_sherd", "name": "Soot Sigil", "colour": "gray", "caps": "20 and 25", "recipe": [["minecraft:iron_ingot", 3], ["minecraft:coal", 3]], "why": "a stone pickaxe opens the early tier at leg 1; the Old Mine's Lower Galleries next door yield two sigils a reset (7.4)"},
+        {"band": 2, "id": "gilt", "item": "minecraft:prize_pottery_sherd", "name": "Gilt Sigil", "colour": "gold", "caps": "30 and 35", "recipe": [["minecraft:gold_ingot", 1], ["minecraft:iron_ingot", 4], ["minecraft:redstone", 2]], "why": "gold and redstone are the deep tier, an iron pickaxe below y32, opened at leg 3 (7.4)"},
+        {"band": 3, "id": "glint", "item": "minecraft:explorer_pottery_sherd", "name": "Glint Sigil", "colour": "aqua", "caps": "40 and 45", "recipe": [["minecraft:diamond", 1], ["minecraft:gold_ingot", 1], ["minecraft:iron_ingot", 2]], "why": "the first diamond (7.4)"},
+        {"band": 4, "id": "deepstone", "item": "minecraft:danger_pottery_sherd", "name": "Deepstone Sigil", "colour": "dark_aqua", "caps": "50 and 55", "recipe": [["minecraft:diamond", 2], ["minecraft:gold_ingot", 1]], "why": "still overworld materials; the Nether is closed until badge 8 (7.4)"},
+        {"band": 5, "id": "cinder", "item": "minecraft:burn_pottery_sherd", "name": "Cinder Sigil", "colour": "red", "caps": "60 and 62", "recipe": [["minecraft:netherite_ingot", 1]], "why": "the Nether opens with badge 8 (7.4)"},
+        {"band": 6, "id": "rift_black", "item": "minecraft:skull_pottery_sherd", "name": "Rift-Black Sigil", "colour": "dark_purple", "caps": "100", "recipe": [["minecraft:netherite_ingot", 1], ["minecraft:netherite_scrap", 4]], "why": "the Tower Ash's tier, less four gold (7.4)"}
+      ],
+      "ladder_basis": "D21 and Q21/Q22 (decided): DUNGEONS.md 7.4's table, as written there. The sherd ids are ASSUMED to exist in 1.21.1 (7.4); V16's sweep is the independent auditor's",
+      "lore": ["The rift lets you in for this.", "For a trainer at level cap {caps}."],
+      "rarity": "rare",
+      "free_first_entry": {
+        "dungeons": [],
+        "owner_decision": "Q20 OPEN",
+        "staging_value": "STAGING VALUE, NOT A DECISION: no free entry, a sigil always required. The owner did not accept 7.4's recommendation (the Night Shift's first run free, once per player) and owes an alternative. List a dungeon id here to give its first run free; the engine then marks the free entry with the impossible advancement cobblers:dungeons/free/<id> at door_click and needs no sigil for it"
+      },
+      "recipe_gate": {
+        "mode": "band",
+        "modes": {"band": "a player knows the recipes of their own band and lower: every recipe_sync_period_ticks the keeper reads each player's RCT level cap and gives the sigil recipes at or below their band, and takes the rest", "all": "every player knows all six (7.4's recommendation: the rip checks the band, so an early higher sigil only overpays)"},
+        "owner_decision": "Q23 OPEN",
+        "staging_value": "STAGING VALUE, NOT A DECISION: gated by band. The owner did not accept 7.4's recommendation (ungated recipes) and owes an alternative",
+        "tm_gate_interaction": "FINDING: tools/tm_gate.py's sync runs `recipe give @s *` (tools/tm_gate.py:637), which gives every sigil recipe too; in band mode this keeper takes the higher ones back on its next sync, so for at most recipe_sync_period_ticks after a TM re-sync a player can craft a sigil above their band. That only overpays (the rip checks the band)",
+        "gated_on": "SG1 (owner half): `recipe give` under doLimitedCrafting is unproven (F7)"
+      }
+    }
+  },
+  "dungeons": [
+    {
+      "id": "night_shift",
+      "short": "ns",
+      "name": "The Night Shift",
+      "gate_flag": null,
+      "gate_flag_why": "DUNGEONS.md 11.2: gate_flag null; it opens at 0 badges and serves every band (10)",
+      "rip": {
+        "placeholder": true,
+        "placeholder_why": "the owner places the rip 'in the notch before the old mine's adit, x1347 z4120, on the carts' trail' (DUNGEONS.md 896; tools/route1_old_mine.py:49-61 PORTAL_X 1347, Z_AXIS 4120, TRAIL (1357,4120),(1366,4121),(1374,4123)). The rip cell proper is step 4's (world-content-dev, with its data/placements.json record). This working placeholder stands against the notch's NORTH side, east of the portal face, its opening facing south onto the trail, so the 5-wide notch (z 4118..4122) and the adit stay clear",
+        "frame": {"x0": 1350, "x1": 1354, "z": 4117, "y": 130, "height": 4},
+        "frame_why": "posts at x 1350 and 1354, the opening x 1351..1353 at y 130..132, the lintel at y 133, in the plane z 4117 (the hill, one block north of the notch's north edge z 4118)",
+        "ground": {"x": 1348, "z": 4120, "rule": "tools/route1_old_mine.py build: the notch's feet = g(PORTAL_X + 1, Z_AXIS) + 1 with g = tools/ground.py (the canonical heightmap, rounded); its floor is levelled to feet - 1 across the notch", "measured": "round(ground(1348, 4120)) = 129, so the feet are y130 (tools/ground.py, 2026-10-08); ground over x 1341..1353, z 4114..4126 reads 129 throughout"},
+        "outside": [1352.5, 130, 4120.5, -90],
+        "outside_why": "where a player leaving the run stands: on the trail in the notch, facing east down the carts' way out (yaw -90). On the notch floor (y129 coarse dirt, tools/route1_old_mine.py), so clear and walkable",
+        "click": [1352, 130, 4118],
+        "click_why": "the interaction's centre column, in the notch just south of the opening (z 4118), 3 wide and 3 high, so it is clicked from the trail",
+        "palette": {"frame": "minecraft:crying_obsidian", "lintel": "minecraft:polished_blackstone_bricks", "opening": "minecraft:black_terracotta"},
+        "palette_why": "placeholder: never a nether_portal or end_portal block (7.1, they teleport on their own). world-content-dev chooses the real palette against docs/world-building/BUILD_PALETTE.md",
+        "plume": false,
+        "plume_gated_on": "V1 (EXP-080): whether the particles are seen from the approach path; the owner looks"
+      },
+      "spine": {
+        "placeholder": true,
+        "placeholder_why": "the real spine is step 4 (world-content-dev): 1,000-2,000 blocks of drifts, three stands, the seam, the gantry and lake, the parkour and the boss (DUNGEONS.md 1, 11.1). This one is the least that runs the engine end to end: the entry room with the board and the back rip, a drift, a no-deploy gate box with its cracked lamps (so the recall sweep has a box), the boss arena with its exit gate, and the exit room with the far rip",
+        "palette": {"wall": "minecraft:polished_blackstone_bricks", "floor": "minecraft:deepslate_tiles", "light": "minecraft:shroomlight", "rip_frame": "minecraft:crying_obsidian", "rip_opening": "minecraft:black_terracotta", "lamp": "minecraft:redstone_lamp", "gate": "minecraft:iron_bars"},
+        "light_every": 6,
+        "segments": [
+          {"kind": "entry_room", "length": 16, "width": 11, "height": 6, "why": "arrival 3 in from the back rip; the board on the north wall; the threshold is its east doorway"},
+          {"kind": "drift", "length": 48, "width": 5, "height": 5},
+          {"kind": "drift", "length": 16, "width": 5, "height": 5, "no_deploy": true, "why": "a gate box on solid ground, its cracked lamps across the floor at its west edge (3.4)"},
+          {"kind": "boss_arena", "length": 32, "width": 25, "height": 10, "gate_east": true, "why": "the boss's stages stand at two thirds of its length on the centre line; its east doorway is the exit gate"},
+          {"kind": "exit_room", "length": 12, "width": 9, "height": 6, "why": "the far rip on its east wall"}
+        ]
+      },
+      "boss": {
+        "placeholder": true,
+        "placeholder_why": "the stages' species, moves and items are trainer-balance-designer's (DUNGEONS.md 3.2, 5.3); this placeholder has one ace per stage at the design's levels and no authored moves, so the chain can run",
+        "name": "The Night Foreman",
+        "stage_level_offsets": [-2, -1, 0],
+        "level_basis": "band_min_cap",
+        "level_basis_why": "a class is per band (3.2: 3 stages x 6 bands); its levels are the band's LOWER cap less the offset, so no stage is ever above the cap of any player in that band (the arena rule, never above the band's cap)",
+        "aces": {"1": "electabuzz", "2": "electabuzz", "3": "electivire", "4": "electivire", "5": "electivire", "6": "electivire"},
+        "escort": "magnezone",
+        "escort_from_band": 4,
+        "escort_level_offset": -1,
+        "gap_ticks": 60,
+        "skill": 3,
+        "gated_on": "C1 (owner half, EXP-078): the macro spawn after a plain restart PASSED; a victory's follow-up starting the next fight, three times in a row, is unproven",
+        "cue": {"title": "He gets up again.", "done": "The way out is open."}
+      },
+      "messages": {
+        "enter": "The rift takes your {sigil}. Go back before the board and it is returned; past it, it is spent.",
+        "arrive": "Read the board. The clock starts past it.",
+        "start": "The clock is running.",
+        "exit": "You step back out of the rift.",
+        "refund": "The rift gives your sigil back.",
+        "refuse_gate": "The rift will not open for you yet.",
+        "refuse_lockout": "The rift is still closing behind your last run. Try again in about ",
+        "refuse_run": "You are already in a rift.",
+        "refuse_elytra": "The rift will not take wings. Take off the elytra.",
+        "refuse_cap": "The rift cannot read your level cap yet. Try again in a moment.",
+        "refuse_over": "A Pokemon in your party is above your level cap. Put it in the PC and come back.",
+        "refuse_busy": "The rift is full. Wait for someone to come out.",
+        "refuse_sigil": "The rift wants a sigil of your band: ",
+        "refuse_weak": "This sigil is too weak for you now.",
+        "way_back": "The way back is closing.",
+        "away": "The rift did not wait.",
+        "closes": "The rift closes.",
+        "tightens": "The rift tightens. Time runs ",
+        "eject": "The rift puts you out."
+      },
+      "does_not_cover": [
+        "Pokemon a player sends out OUTSIDE a no-deploy box: the sweep runs only in those boxes (3.4), and nothing else in a slot removes a send-out",
+        "items dropped in a slot: nothing collects them; a reset does not clear them",
+        "an NPC or Pokemon that is not ours standing in a slot: the keeper binds any untagged cobblemon:npc in a slot's box as ours (the exempt tag), but a wild Pokemon there is untouched; the pocket's void biome spawns nothing (data/portals.json generator.biome_why, NOT VERIFIED for Cobblemon)",
+        "a boss stage's NPC payout: the clawback is step 6, so a won stage pays CobbleDollars' NPC payout today (contract 'dungeon wins pay $0 net' is not met by this build)",
+        "the stands, the seam, the parkour's catch bands, the lake and the den (step 6); the seam's call into the greed ladder is cobblers:dungeons/greed/take",
+        "a shell from an earlier, longer spine (engine.slots.clear_strip)",
+        "a player in co-op: members_max is 1, and the second account (XD8) is needed for its proofs",
+        "Cobblemon's battle state at a disconnect (LO1, owner half): a battle open at a logout is assumed to end with no result"
+      ]
+    }
+  ]
+}

@@ -72,3 +72,9 @@ refusal line. Everywhere else, balls behave as Cobblemon ships them. **Yes** mea
 
 For each case: what was thrown, in or out of battle, shakes seen, the chat lines, P's ball counts before and after.
 Write results to `experiments/EXP-064-beast-ball-key/results.md`.
+
+### Seen in passing (2026-10-08, the owner on staging-2026-10-01 build 24ac441, during EXP-059 step 9; relayed)
+
+The Entei boss (keyed, `data/key_ball.json:30`) was NOT caught by a thrown Master Ball or a thrown Origin Ball. Whether
+each ball was handed back and the refusal line shown: **not observed**. Nothing else in these cases was run. Status stays
+NOT_EXECUTED for every case; this is a partial observation of the refusal, not a pass.

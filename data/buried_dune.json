@@ -1,0 +1,317 @@
+{
+  "schema": "cobblers.buried-dune/1",
+  "status": "built as data and a generator 2026-10-09 (tools/buried_dune.py, tests/test_buried_dune.py); NOT applied to any world, NOT seen in game. Every part is an existing proven piece: the residents' keeper (tools/resident_encounters.py), the macro spawn (EXP-046), the look-then-act chain (tools/chunk_look.py) and the level-cap catch refusal (data/level_cap.json). What is new is the shape: the creature is held UNDER a dune and rises out of the floor of a basin at the first step into it.",
+  "generated_by": "hand (this file); the pack, its probes and its steps come from tools/buried_dune.py. Nothing in this file is derived from the pack.",
+  "request": "the world sweep of 2026-10-09 (docs/world-building/WORLD_SWEEP_2026-10-09.md section 7, gap 8, 'F8, the east coast dunes, bands 7-8'), narrowed by the night's brief: a creature BURIED in or under the dunes that a player finds by its signs before they find it (trails in the sand, a dune basin, bones, a slip face that moves); it emerges, it is not waiting in a room. Relayed: the sweep's 81% land and 0 sites for F8 (data/cells.json), the sweep's coordinates (by hand, no ground measured). Measured here: everything under `measured`.",
+  "id": "undertow_basin",
+  "name": "Undertow Basin",
+  "cell": "F8",
+  "subregion": "east_coast_dunes",
+  "premises_checked": {
+    "dunes_exist_on_the_heightmap": "NO. Measured with tools/ground.py over the cell's part of the East Coast Dunes (x7170-7392, z5150-6110, an 8-block grid, the 2,618 columns at y70 or more): the largest local concavity (a column below the mean of a 16- and a 28-block ring of 16 points each) is 5.5 blocks, at (7346, 5566), and the terrain is a smooth shoulder falling from y139 at x7160 to the sea at x~7420 (data/spawns.json gives the sub-region's slope p90 as 18.1 degrees: relayed, not re-measured). The 'dunes' are the desert paint, not landforms. Hence the bowl is SCOOPED out of the shoulder and the trails scored into it (surface work), not a basin found there.",
+    "coast": "sea level is 62 (data/world.json). On the canonical (water-shaped) heightmap the ground along z5592 is y99 at x7282, y96 at x7298, y85 at x7330, y75 at x7350, y68 at x7370, y66 at x7390, y64 at x7400, y63 at x7410 and y62 at x7420: the strand begins near x7390 and the sea stands from x7420. The site is 100 blocks from the strand and 35 above it at the sea trail's mouth.",
+    "the_sweeps_neighbours": "measured from the centre (7282, 5592): the Mining Town (6633, 5716) is 661 blocks west, the Watcher's Ring (7056, 6200) 649, sky_assay_tor (7007, 5834) 366, the Copperway Khan (6744, 6224) 830, and the East Coast palm's nest block (7376, 5512) 123. All beyond rules.authored_clearance."
+  },
+  "measured": {
+    "how": "tools/ground.py (the canonical heightmap, rounded), 2026-10-09; every figure re-derived by `python tools/buried_dune.py report` and by tests/test_buried_dune.py from the heightmap, not from this file",
+    "centre_ground": 99,
+    "ramp": "the ground along z5592 climbs west of the centre by about 1 in 4: y96 at x7298, y99 at x7282, y101 at x7274, y104 at x7266, y108 at x7258. East of the centre it is level for 16 blocks (y96-97 to x7306) and then falls to the strand. The bowl is cut where the ramp is steepest, so the west wall is high and the east side is a mouth.",
+    "nearest_route_path_blocks": 1299,
+    "nearest_route_path_note": "the nearest point of data/route_paths.json (17,448 points) to the centre, from the report; rules.path_clearance is 128"
+  },
+  "site": {
+    "centre": [
+      7282,
+      5592
+    ],
+    "why": "the foot of the ramp. The shoulder is a smooth slope with no basin, so the place scoops its own: at the centre the ground is y99, 9 higher by x7258 on the west (the wall the bowl is cut into: the slip face) and 2-3 lower by x7306 on the east, so the bowl is deep and walled on the west and opens to the east, toward the sea trail. It is 100 blocks from the strand and high enough to see the water over the east lip."
+  },
+  "bowl": {
+    "semi_axis_x": 15,
+    "semi_axis_z": 11,
+    "depth": 5,
+    "flat": 0.5,
+    "rise": 12,
+    "profile": "the bowl's floor surface block is y(ground at the centre - depth) over the inner `flat` (0.5) of the ellipse and rises linearly to + rise at the ellipse's edge; wherever that is below a column's own ground the column is cut down to it, nowhere else. Nothing is built up and no sand is written: the dune's own sand is the wall.",
+    "slip_face": {
+      "points": 6,
+      "arc_degrees": [
+        110,
+        250
+      ],
+      "min_cut": 4,
+      "rim_from": 0.55,
+      "why": "on the west (the high side) the cut is 4-7 blocks; six points along that wall's top are where the keeper's loop runs sand down the face while a player is near and the creature sleeps (pokemon.signs)"
+    }
+  },
+  "chamber": {
+    "half_x": 5,
+    "half_z": 4,
+    "height": 5,
+    "cover": 4,
+    "shell": "minecraft:sandstone",
+    "lights": 4,
+    "why": "the sleeper's bed, under the bowl's floor, sealed on all six sides by a sandstone shell one block thick, so what it is cut into is known whatever the paint has under the sand. Interior 11 x 9 x 5: the Sandaconda's model is 56.5 px long, 26.5 wide and 25 high (assets/cobblemon/bedrock/pokemon/models/0844_sandaconda/sandaconda.geo.json, the union of the cubes; Cobblemon 1.8.0 jar), 3.5 x 1.7 x 1.6 blocks at scale 1 (16 px to the block); at scale_modifier 2.0 that is at most 7.1 x 3.3 x 3.1, inside 11 x 9 x 5. `cover` natural blocks stand between the roof and the bowl's floor. Four invisible light-level-1 blocks stop hostile mobs spawning in the dark cavity. A player who digs 10 blocks down from the bowl's floor finds the chamber; nobody has to.",
+    "model_hitbox": "data/cobblemon/species/generation8/sandaconda.json: hitbox 2 x 1.5, baseScale 0.8, from the jar"
+  },
+  "trails": [
+    {
+      "id": "sea",
+      "why": "the long one: out of the strand, up the shoulder, into the bowl by its east mouth. It is how a player coming up from the beach finds the place",
+      "waypoints": [
+        [
+          7384,
+          5640
+        ],
+        [
+          7352,
+          5628
+        ],
+        [
+          7324,
+          5610
+        ],
+        [
+          7298,
+          5594
+        ]
+      ],
+      "amplitude": 3.5,
+      "wavelength": 22,
+      "phase": 0.0
+    },
+    {
+      "id": "crest",
+      "why": "from the high dune on the south-west, down the slope to the rim: it ends at the cut wall, the way the others do not",
+      "waypoints": [
+        [
+          7256,
+          5668
+        ],
+        [
+          7266,
+          5642
+        ],
+        [
+          7274,
+          5620
+        ],
+        [
+          7278,
+          5603
+        ]
+      ],
+      "amplitude": 3.0,
+      "wavelength": 20,
+      "phase": 1.9
+    },
+    {
+      "id": "north",
+      "why": "from the north, across the shelf",
+      "waypoints": [
+        [
+          7270,
+          5520
+        ],
+        [
+          7280,
+          5548
+        ],
+        [
+          7284,
+          5570
+        ],
+        [
+          7283,
+          5584
+        ]
+      ],
+      "amplitude": 3.0,
+      "wavelength": 24,
+      "phase": 3.4
+    },
+    {
+      "id": "outbound",
+      "why": "the one that leaves: south out of the bowl, then nothing, a pit where it went down again. A player who follows the others finds the bowl; one who follows this finds the proof that what made them can come up and go back",
+      "waypoints": [
+        [
+          7290,
+          5603
+        ],
+        [
+          7292,
+          5640
+        ],
+        [
+          7284,
+          5668
+        ],
+        [
+          7277,
+          5690
+        ]
+      ],
+      "amplitude": 3.0,
+      "wavelength": 21,
+      "phase": 0.8,
+      "end_pit": {
+        "radius": 3,
+        "depth": 3
+      }
+    }
+  ],
+  "trail_profile": {
+    "centre_depth": 2,
+    "edge_depth": 1,
+    "half_width": 1.5,
+    "why": "a V: the centre column two blocks lower than its ground, the columns beside it one. Only air is written, from each column's own ground down, so the height of the land changes by one or two blocks along the line and nothing is built"
+  },
+  "bones": [
+    {
+      "kind": "ribs",
+      "name": "the ribs on the east lip",
+      "at": [
+        20,
+        -12
+      ],
+      "axis": "z",
+      "heights": [
+        1,
+        2,
+        3,
+        4,
+        4,
+        3,
+        2,
+        1
+      ],
+      "arcs": 2,
+      "arc_gap": 3,
+      "why": "two arches of bone block, 3 apart, standing out of the slope north of the sea trail: the half-buried cage of something larger than a cow"
+    },
+    {
+      "kind": "ribs",
+      "name": "the old ribs on the south lip",
+      "at": [
+        14,
+        17
+      ],
+      "axis": "x",
+      "heights": [
+        1,
+        2,
+        2,
+        2,
+        1
+      ],
+      "arcs": 1,
+      "arc_gap": 3,
+      "why": "one older arch, small, near where the outbound trail leaves"
+    },
+    {
+      "kind": "spine",
+      "name": "the spine along the north trail",
+      "from": [
+        -12,
+        -30
+      ],
+      "to": [
+        0,
+        -10
+      ],
+      "every": 3,
+      "why": "single vertebrae every third block on the line of the north trail"
+    },
+    {
+      "kind": "skull",
+      "name": "the skull at the pit",
+      "at": [
+        -12,
+        98
+      ],
+      "why": "a heap of bone block at the lip of the outbound trail's pit"
+    }
+  ],
+  "pokemon": {
+    "id": "undertow",
+    "name": "The Undertow",
+    "species": "cobblemon:sandaconda",
+    "level": 55,
+    "scale_modifier": 2.0,
+    "yaw": -90.0,
+    "trigger": 14,
+    "leash": 36,
+    "settle_margin": 16,
+    "gate": "gym7_cleared",
+    "catch_rule": "catchable_after_gate",
+    "message": "The floor of the basin starts to run like water. The Undertow rises out of it.",
+    "sound": "minecraft:entity.warden.emerge",
+    "choice_why": "SANDACONDA, over Krookodile, Flygon, Garchomp, Hippowdon and the Gligar line. What the place needs is a body that leaves a trail: a snake scores a groove two blocks wide on its way across the dune, and no other sand Pokemon in the jar's species list does that. Krookodile (40-48), Flygon (45-48) and Hippowdon (38-48, with a heart presence at 48-55) are all wild in this very sub-region (data/spawns.json east_coast_dunes), so the player already knows them as ordinary and a buried one would be a bigger copy of a common thing; Sandaconda is also in the table at 38-48 but as the small 'common' one, and the Undertow is what they are the young of, which is the reading the trails give. Garchomp is the Mega farm of the gulch (data/gulch_mine.json), a different place's creature. Gligar's line is a glider, a cliff animal, with nothing to bury. Its stats (72/107/125/65/70/71, jar) are a wall that hits hard: not a legendary, and a fight the player can lose without it being unfair.",
+    "level_why": "55. The band of the East Coast Dunes is 38-48 (tier 7, data/spawns.json), the cap with six badges is 50 and with seven it is 55 (tools/legendaries_audit.py rct_caps, computed from data/trainers.json and the RCT config: gym6_cleared 50, gym7_cleared 55, gym8_cleared 60). A player in the band meets a level-55 creature at twice its normal size when their own team is at 45-50: 5-7 over the cap and 7 over the band's top, which is the 'early is a mistake' the brief asked for, and still a fight a prepared group can win. 55 is also the tier's ceiling (data/encounter_design.json rules.hearts.next_cap['7']), the rule every named resident is held to (tests/test_resident_siting.py).",
+    "gate_why": "catchable at gym7_cleared and not before. There is no new mechanism: the level-cap pack (data/level_cap.json) makes every ball break free from a Pokemon over the thrower's RCT cap, a Master Ball included, so the Undertow at 55 holds for a thrower whose cap is 50 and lets go of one whose cap is 55. The gate is not a presence gate: it is there from the first day (the keeper brings it in unprompted) and a player who wakes it at six badges fights it and loses the catch, the brief's 'early is a mistake'. That the level-cap hook works in play is NOT proven (docs/STATE.md 'The level-cap trap': loaded on staging, no throw seen).",
+    "scale_why": "scale_modifier=2.0, the Ursaluna den's property (data/ursaluna_cave.json ursaluna.scale_why: Cobblemon 1.8.0's PokemonProperties parses scale_modifier=, Pokemon.getEffectiveScale returns it for a non-alpha past baby age; NEEDS AN IN-GAME CHECK that the spawned snake is twice normal size).",
+    "trigger_why": "14 blocks, measured in 3D from the chamber's floor (feet y85) to the player's position: a player standing on the bowl's floor (feet y95) wakes it within 9.8 blocks of the centre, which is the flat of the bowl; one on the rim (feet y100+) is 15 or more above and does not. The bowl is where the sleeper rests, so stepping into it is the trigger",
+    "leash_why": "36 blocks from the place it rose (the bowl's floor): the fight stays on the shoulder and does not follow a retreat down to the strand, 100 blocks off. It settles back under the dune when nobody is within 52.",
+    "signs": {
+      "radius": 48,
+      "ring": 24,
+      "why": "while it sleeps and a player is within `radius` of the bowl, the keeper runs sand down the slip face (the wall's six points, at random so the face seems to move) and plays the soft step of sand; within `ring` it adds the slow heartbeat of the warden's, pitched down. Neither sound nor particle is a block, a command-block, an advancement or a flag."
+    },
+    "returns": {
+      "respawn_ticks": 72000,
+      "why": "the Ursaluna den's hour (data/ursaluna_cave.json ursaluna.returns.cooldown_ticks): a place to come back to, not to farm. The residents' clock (tools/resident_encounters.py): the keeper starts it on the first pass that finds the creature gone and brings a new one, asleep, once it has run and nobody is within the spawn-clear range."
+    }
+  },
+  "build": {
+    "namespace": "cobblers",
+    "folder": "buried_dune",
+    "pack": "cobblers_buried_dune",
+    "steps": {
+      "blocks": "R9BD",
+      "entities": "R18BD"
+    },
+    "tag": "cobblers.res",
+    "dormant_tag": "cobblers.res_dormant",
+    "guardian_tag": "cobblers.guardian",
+    "objective": "cobblers.dune",
+    "summon": {
+      "base": "cobblers:buried_dune/summon",
+      "holder": "dune_summon",
+      "new_tag": "cobblers.dune_new"
+    },
+    "keeper": {
+      "period_ticks": 40,
+      "spawn_radius": 96,
+      "spawn_clear": 48,
+      "settle_margin": 16,
+      "home_tolerance": 1.0,
+      "guardian_search_margin": 8
+    },
+    "keeper_why": "the numbers of data/far_south.json build.keeper, the residents' keeper called through tools/resident_encounters.py resident_files() rather than copied, with this pack's own hold, wake and settle (the creature sleeps in a chamber and rises to the bowl, so the leash and the wake are measured from two places)."
+  },
+  "blocks": {
+    "rule": "vanilla 1.21.1 only. None is a spawn-condition block in data/spawn_blocks.json (the generator refuses one): no sand is written at all, since the bowl is cut out of the dune and the trails are cut into it, and the pack's one particle names sand but places nothing. No chests, no beds, no concrete.",
+    "ids": [
+      "minecraft:air",
+      "minecraft:sandstone",
+      "minecraft:bone_block",
+      "minecraft:light"
+    ]
+  },
+  "rules": {
+    "authored_clearance": 96,
+    "authored_clearance_why": "tools/far_south.py rules.authored_clearance (tools/southern_residents.py authored_points(), called with this file as the one skipped): every x/z any other data file authors",
+    "path_clearance": 128,
+    "path_clearance_why": "data/encounter_design.json rules.hearts.clear_of_path_blocks, the rule tests/test_resident_siting.py holds a named resident to",
+    "min_ground": 66,
+    "min_ground_why": "no written column is under y66, four above the sea (62): the strand and its waterline stay out of the pack, and every column is also tested dry against tools/water_mask.py and the rivers",
+    "habitat_rule": "the creature's leash is clear of every activated Habitat Block's spawn_range (tests/test_resident_siting.py): the nearest is the East Coast palm's nest at (7376, 5512)",
+    "ceiling_rule": "level at most the tier's ceiling, data/encounter_design.json rules.hearts.next_cap"
+  },
+  "does_not_cover": [
+    "the dunes' own wild table and heart (data/spawns.json east_coast_dunes): this adds one named creature, no spawn entry, no Habitat Block",
+    "any NPC, rumour or dialogue: a player finds this by walking up the shoulder from the strand or the Mining Town road and reading the ground; a rumour line is a content decision for the owner",
+    "any reward on the creature: no drops (rules.no_loot_drops in data/resident_encounters.json), the catch is the prize",
+    "what the paint has under the sand: the chamber is a sandstone shell, so it does not matter, but the bowl's and trails' exposed floor is whatever the world has at 1-3 blocks under the dune's top, which the heightmap cannot say"
+  ]
+}

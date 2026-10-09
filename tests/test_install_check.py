@@ -302,3 +302,12 @@ def test_the_required_setting_is_clean(inst, body):
 def test_a_missing_server_properties_is_a_problem(inst):
     (inst.server / "server.properties").unlink()
     assert IC.properties(inst.server) and "not found" in IC.properties(inst.server)[0]
+
+
+def test_every_world_local_pack_is_in_an_install_list():
+    # Without it a pack listed only in WORLD_LOCAL is never installed and install_check still calls the install current:
+    # 2026-10-09 cobblers_gym_arenas was in WORLD_LOCAL alone, and its first apply needed the pack copied by hand
+    # (written by the main session that found it, not by a test author)
+    import reapply
+    groups = set(reapply.SERVER_PACKS) | set(getattr(reapply, "SPAWN_PACKS", ()))
+    assert [p for p in reapply.WORLD_LOCAL if p not in groups] == []

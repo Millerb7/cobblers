@@ -114,6 +114,22 @@ shows a different stage** (Goldeen at the River of Shrews, nothing else; Magikar
 Tilpey). Two different bodies of water share at most 35% of their water spawns. The shores of one lake (Tilpey's
 four) may share more, but each still has its own shallows family.
 
+**Lake Tilpey's bank, night and rain (the owner, 2026-10-09: "more spawns, VARIED across species. It is the biggest
+lake and it should feel like it").** Measured on the canonical heightmap: the basin holds 1,116,133 water columns (the
+next lake, Shrew Lake, 176,416), mean depth 17.2, 235,136 columns 1-2 deep and 640,931 over 20 deep. Ten species were
+added in five tables, every one native in the Cobblemon 1.8.0 jar to fresh water, a river or a forest, and none in a
+second water table: the lake's WATER half was already as full as section 5's rules allow (every freshwater family left
+is in two water tables, or would show no new stage in its second), so the additions stand on the bank
+(`neededNearbyBlocks` water, grounded: a land context, outside the two-table rule, the way section 11 seats the water
+starters) or fly over the water. Open water and isles (`tilpey_waters`): Illumise and Volbeat on the surface at night
+(jar: is_freshwater, night), Cramorant on the rocks and Politoed in rain (is_freshwater, raining). North shore:
+Drednaw, Poliwrath in rain, Vivillon. East shore: Bellibolt (is_freshwater). South shore: Floatzel (is_freshwater).
+West meadows: Simipour (is_river, where the creek comes in). The deep has no new species: the water natives of a deep
+freshwater lake in the jar are the ones already seated (Gyarados, Basculegion, Kabutops, Clobbopus) or are in two water
+tables. Considered and left out for a stated reason: Dragonair (the jar has it in oceans and below y32, not on a
+lake), Clamperl and its line (deep ocean), Wooper and its line (swamp), Overqwil (cold ocean), Marill and Vaporeon
+(starter-family species).
+
 ## 6. Off the path: every place has a find
 
 Every off-path table carries at least one **find**: a family that appears in no on-path table at any tier, whose

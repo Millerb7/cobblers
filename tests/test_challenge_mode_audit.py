@@ -12,6 +12,7 @@ Minecraft. The real-build and mutation tests need the local server snapshot's zi
 """
 from __future__ import annotations
 
+import copy
 import sys
 import types
 from pathlib import Path
@@ -350,9 +351,46 @@ def test_the_unmutated_retire_kill_is_excused(baseline):
     assert "R:summon" not in {c for c, _ in baseline}
 
 
+# Brock's one spawner moved into his gym arena (45.5 from his retired second spawner, outside the Normal-id kill's
+# SEAT_BOX of 24), so with the real rollout (Brock alone) a retire that keeps nobody kills no leader and the mutation
+# below has nothing to bite on. The cd7c55a edit turned that test into an xfail, which stops guarding the keep for as
+# long as the rollout stays Brock. Restored instead by judging that mutation on an IN-MEMORY rollout that also holds
+# Bruno, whose one leader stands in the template beside his retired cell (data/challenge_mode.json is untouched), with
+# the baseline taken on the same rollout so only what the mutation adds counts.
+KEEP_ROLLOUT_EXTRA = ("kanto_league_bruno",)
+
+
+def _with_rollout(monkeypatch, extra):
+    import challenge_mode as CM
+    d = copy.deepcopy(CM.doc())
+    d["single_leader"]["rollout"] = list(CM.rollout()) + [u for u in extra if u not in CM.rollout()]
+    orig = A.Audit.doc
+    monkeypatch.setattr(A.Audit, "doc", lambda self, name: copy.deepcopy(d) if name == "challenge_mode.json"
+                        else orig(self, name))
+    return d
+
+
+def _reload_generators(monkeypatch, edits, d=None):
+    fresh(monkeypatch, "challenge_mode", edits)
+    if d is not None:
+        sys.modules["challenge_mode"].doc = lambda: d
+    fresh(monkeypatch, "route_trainers")
+
+
 @pytest.mark.parametrize("name", sorted(MUTATIONS))
 def test_a_mutated_generator_fails_the_audit(name, up, monkeypatch, baseline):
     module, edits, only, code = MUTATIONS[name]
+    if name == "retire_keeps_nobody":
+        d = _with_rollout(monkeypatch, KEEP_ROLLOUT_EXTRA)
+        _reload_generators(monkeypatch, [], d)
+        base = keyed(run(up, only))
+        # the unmutated retire spares Bruno, so what the mutation adds is its doing and the kill reaches a leader
+        assert not [k for k in base if k[1].startswith("kanto_league_bruno")], base
+        _reload_generators(monkeypatch, edits, d)
+        new = keyed(run(up, only)) - base
+        assert (code, "kanto_league_bruno_challenge") in new, "mutation %s: the audit did not fail %s on the leader " \
+            "the kill reaches (new problems: %s)" % (name, code, new)
+        return
     fresh(monkeypatch, module, edits)
     # the importers pick the mutated module up from sys.modules
     if module == "challenge_mode":

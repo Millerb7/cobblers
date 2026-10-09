@@ -9,7 +9,10 @@
     "Gym waystone positions are the block tools/place_town.py sets (the lower half): x and z from the town plan in data/placements.json, y the plan's surface + 1 as its placement report records. tests check they agree."
   ],
   "namespace": "cobblers",
-  "waystone_gate": {"enforced": false, "why": "the owner, play test 2026-10-05 (review 89): \"turn that off or make it later waystones are blocked\". Off: a gym badge still activates its town's waystone, but no waystone is forgotten for want of a badge and a right-click activates one as the Waystones mod does. true restores the badge gate (activate with the flag, forget without it, re-synced after every use)"},
+  "waystone_gate": {
+    "enforced": false,
+    "why": "the owner, play test 2026-10-05 (review 89): \"turn that off or make it later waystones are blocked\". Off: a gym badge still activates its town's waystone, but no waystone is forgotten for want of a badge and a right-click activates one as the Waystones mod does. true restores the badge gate (activate with the flag, forget without it, re-synced after every use)"
+  },
   "active_series": "kanto",
   "series": [
     {
@@ -1680,6 +1683,317 @@
       "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
     },
     {
+      "id": "quest.evt_route4_thaw_road.camp_started",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "camp_started",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.clue_scar",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "clue_scar",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.clue_lead",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "clue_lead",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.camp_answered",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "camp_answered",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.camp_reward_claimed",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "camp_reward_claimed",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.camp_done",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "camp_done",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.seen_tracks",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "seen_tracks",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.seen_pool",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "seen_pool",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.hollow_done",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "hollow_done",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.passed_5",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "passed_5",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.passed_0",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "passed_0",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.last_stone",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "last_stone",
+      "scope": "player",
+      "type": "enum",
+      "initial": "none",
+      "allowed_values": "none|s5|s4|s3|s2|s1|s0"
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.road_done",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "road_done",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.gate_reward_claimed",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "gate_reward_claimed",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.gate_done",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "gate_done",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.invited",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "invited",
+      "scope": "player",
+      "type": "boolean",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.hallam_cursor",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "hallam_cursor",
+      "scope": "player",
+      "type": "enum",
+      "initial": "m1",
+      "allowed_values": "node ids from dlg_route4_headwall_camp"
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.oriel_cursor",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "oriel_cursor",
+      "scope": "player",
+      "type": "enum",
+      "initial": "g1",
+      "allowed_values": "node ids from dlg_route4_thaw_gate"
+    },
+    {
+      "id": "quest.evt_route4_thaw_road.prop_cursor",
+      "quest_id": "evt_route4_thaw_road",
+      "field": "prop_cursor",
+      "scope": "player",
+      "type": "enum",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.met_nan",
+      "quest_id": "evt_route5_bellwether",
+      "field": "met_nan",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has spoken to Nan Tarrow at the empty fold (dlg_r5_nan)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.strap",
+      "quest_id": "evt_route5_bellwether",
+      "field": "strap",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player rang the flat bell on the north cairn and took Tolly's blue strap (dlg_r5_bell_north)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.met_gorse",
+      "quest_id": "evt_route5_bellwether",
+      "field": "met_gorse",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has spoken to Old Gorse in the lee hut (dlg_r5_gorse)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.commons_taken",
+      "quest_id": "evt_route5_bellwether",
+      "field": "commons_taken",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the commons-box parcel Gorse offers has been given to this player (grant_reward_once claim)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.found_tolly",
+      "quest_id": "evt_route5_bellwether",
+      "field": "found_tolly",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has reached Tolly on his stone at the winter fold (dlg_r5_tolly)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.met_jory",
+      "quest_id": "evt_route5_bellwether",
+      "field": "met_jory",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has spoken to Jory Tarrow at the winter fold (dlg_r5_jory)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.reward_claimed",
+      "quest_id": "evt_route5_bellwether",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Jory's reward has been given to this player (grant_reward_once claim)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.completed",
+      "quest_id": "evt_route5_bellwether",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "set after Jory's reward line is acknowledged"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.commons",
+      "quest_id": "evt_route5_bellwether",
+      "field": "commons",
+      "type": "enum",
+      "scope": "player",
+      "initial": "none",
+      "allowed_values": [
+        "none",
+        "salve",
+        "oil"
+      ],
+      "why": "which parcel the player chose from Gorse's commons box; a failed delivery is retried from it"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.nan_cursor",
+      "quest_id": "evt_route5_bellwether",
+      "field": "nan_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "n_01",
+      "allowed_values": [
+        "n_01",
+        "n_02",
+        "n_03",
+        "n_hub",
+        "n_where",
+        "n_bell",
+        "n_help"
+      ]
+    },
+    {
+      "id": "quest.evt_route5_bellwether.gorse_cursor",
+      "quest_id": "evt_route5_bellwether",
+      "field": "gorse_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "g_01",
+      "allowed_values": [
+        "g_01",
+        "g_02",
+        "g_03",
+        "g_hub",
+        "g_tear",
+        "g_tolly",
+        "g_strap",
+        "g_box",
+        "g_pick",
+        "g_salve",
+        "g_oil",
+        "g_after"
+      ]
+    },
+    {
+      "id": "quest.evt_route5_bellwether.jory_cursor",
+      "quest_id": "evt_route5_bellwether",
+      "field": "jory_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "j_01",
+      "allowed_values": [
+        "j_01",
+        "j_02",
+        "j_hub",
+        "j_msg",
+        "j_tolly",
+        "j_fold",
+        "j_full",
+        "j_full2",
+        "j_plain",
+        "j_plain2",
+        "j_after"
+      ]
+    },
+    {
+      "id": "quest.evt_route5_bellwether.prop_cursor",
+      "quest_id": "evt_route5_bellwether",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
       "id": "quest.route_01_trainer_01.defeated",
       "quest_id": "route_01_trainer_01",
       "field": "defeated",
@@ -2664,6 +2978,16 @@
       "why": "the dialogue cursor of Wren Moss at Coldwater Station (data/coldwater_station.json, tools/coldwater_station.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
     },
     {
+      "id": "quest.ice_lodge.keeper_cursor",
+      "quest_id": "ice_lodge",
+      "field": "keeper_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_ice_lodge_keeper",
+      "why": "the dialogue cursor of Ketil Aune, the holekeeper of the Merian Ice Lodge (data/ice_lodge.json, tools/ice_lodge.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing. Per player, so two players at the tarn read their own."
+    },
+    {
       "id": "quest.ambient_ursaluna_den.watcher_cursor",
       "quest_id": "ambient_ursaluna_den",
       "field": "watcher_cursor",
@@ -2694,6 +3018,25 @@
         "warn",
         "applin",
         "cellar",
+        "repeat"
+      ]
+    },
+    {
+      "id": "quest.ambient_sunset_watch.keeper_cursor",
+      "quest_id": "ambient_sunset_watch",
+      "field": "keeper_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "who",
+        "watch",
+        "evenfall",
+        "lights",
+        "hours",
+        "nest",
+        "store",
         "repeat"
       ]
     },
@@ -3530,6 +3873,53 @@
         "done_l"
       ],
       "why": "the dialogue cursor of Cassius Rook's conversation (dlg_hunters_hide)."
+    },
+    {
+      "id": "quest.evt_long_count.started",
+      "quest_id": "evt_long_count",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Perrin Hale (data/long_count.json long_count); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_long_count.reward_claimed",
+      "quest_id": "evt_long_count",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has shown Perrin a Sitrus Berry and been given her Growth Mulch (dlg_long_count r_berry, grant_reward_once); the option closes."
+    },
+    {
+      "id": "quest.evt_long_count.dialogue_cursor",
+      "quest_id": "evt_long_count",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "c001",
+      "allowed_values": [
+        "c001",
+        "c002",
+        "hub",
+        "k001",
+        "k002",
+        "g001",
+        "g002",
+        "g003",
+        "t001",
+        "t002",
+        "t003",
+        "p001",
+        "p002",
+        "f001",
+        "w001",
+        "b001",
+        "b002",
+        "b003"
+      ],
+      "why": "the dialogue cursor of Perrin Hale's conversation (dlg_long_count)."
     },
     {
       "id": "quest.ambient_pokemon_farm.farmer_cursor",

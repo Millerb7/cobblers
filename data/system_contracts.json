@@ -262,6 +262,13 @@
         "tools/tm_gate.py",
         "experiments/EXP-067-tm-recipe-gate/README.md"
       ]
+    },
+    "dungeons": {
+      "what": "the rift dungeons: sealed instanced runs in cobblers:pocket entered through a rip, with a clock, escrowed rewards and the run tag; the engine (tools/dungeon.py) is designed, not built",
+      "paths": [
+        "docs/mechanics/DUNGEONS.md",
+        "docs/research/DUNGEON_DEATH.md"
+      ]
     }
   },
   "contracts": [
@@ -486,13 +493,14 @@
       },
       "tools": {
         "arena_dome_audit.py": "checker: the built cobblers_arena_dome functions (Heaven's Arena's dome), forbidden blocks against data/spawn_blocks.json",
-        "bank.py": "checker: refuses a bank buy line for an item whose block a spawn condition names (data/spawn_blocks.json), unless the line is in_place: the bank would pay players to strip spawn blocks out of the world. It places nothing (review N1, accounted 2026-10-06)",
+        "bank.py": "checker: the CobbleDollars bank's buy list (data/bank.json) against data/spawn_blocks.json: a bought item that is a spawn-condition block is refused unless `in_place` (harvested where it stands). It places no block. Unlisted from its first commit on 2026-10-05 until the material exchange (2026-10-06) found this contract failing on it",
         "markets.py": "checker: refuses a counter or stall line whose item places a block a spawn condition names (data/spawn_blocks.json)",
         "plaza_centre.py": "checker: refuses spawn-condition blocks in the town squares it builds (R13); its built pack is checked by town_squares_audit.py",
         "town_squares_audit.py": "checker: the built plaza_centres functions and the stalls' goods, against data/spawn_blocks.json",
         "town_dressing.py": "source: town_dressing",
         "town_dressing_audit.py": "checker: the built town_dressing functions",
         "shrines.py": "not covered: a block source (data/shrines.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by shrines_audit.py and by the built-packs test here",
+        "route4_events.py": "checker: refuses any spawn-condition block it writes that its SPAWN_OK does not declare (pink_petals, cherry_leaves and water, at the hollow and the gate, each with a data/spawn_block_policy.json entry scoped to route4_events); its built functions are checked by the built-packs test here and by tests/test_route4_events.py",
         "shrines_audit.py": "checker: the built shrines functions, against data/shrines.json blocks and the spawn conditions",
         "gym_interiors.py": "not covered: a block source (data/gym_interiors.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by gym_interiors_audit.py",
         "gym_interiors_audit.py": "checker: the built gym_interiors functions, against data/gym_interiors.json blocks and the spawn conditions",
@@ -513,7 +521,8 @@
         "reveal_evidence_audit.py": "checker: reports a spawn-condition block in the beats' evidence displays (reports, does not fail, under the owner's allow decision)",
         "desert_wreck_audit.py": "checker: the Brass Petrel's built blocks against data/spawn_blocks.json and the policy",
         "fossil_dig_audit.py": "checker: the fossil dig's built blocks against data/spawn_blocks.json and the policy",
-        "bank.py": "checker: the CobbleDollars bank's buy list (data/bank.json) against data/spawn_blocks.json: a bought item that is a spawn-condition block is refused unless `in_place` (harvested where it stands). It places no block. Unlisted from its first commit on 2026-10-05 until the material exchange (2026-10-06) found this contract failing on it",
+        "ice_lodge.py": "source: ice_lodge (the Merian Ice Lodge, 2026-10-09: guards() reads the conditions and refuses any written block that is a spawn condition no data/spawn_block_policy.json entry scoped to ice_lodge allows; only minecraft:water is allowed; Plan.put refuses any block outside blocks.ids)",
+        "ice_lodge_audit.py": "checker: the Merian Ice Lodge's built function, replayed over the heightmap with its own parser, against data/spawn_blocks.json and the policy (names outside blocks.ids and spawn conditions the policy does not allow for ice_lodge are errors)",
         "paint_maps.py": "not covered: WorldPainter plant sets, painted at export, not a datapack",
         "gym_interiors_independent.py": "checker: the independent audit of the gym interiors (written 2026-09-29 by an agent that built none of them, CLAUDE.md principle 16). It reads data/spawn_blocks.json to check that no block a gym interior places is a spawn condition. Recorded here on 2026-09-30: the audit agent could not edit this registry and said so in docs/world-building/GYM_BUILDINGS_REVIEW.md, so its reader went unlisted and this contract failed for a day. It is a checker, not a source - it reads the conditions to test against them and writes no blocks.",
         "rift_zones.py": "checker: the Rift's zone system (tools/rift_zones.py, written 2026-09-30). It reads data/spawn_blocks.json so its `report` can refuse a wall built from a block that is a spawn condition - an obsidian wall that draws wild Pokemon to it would be a gate with a crowd at it. A checker and a block source at once: it names the wall blocks itself, and it checks them against this contract rather than assuming them, which is why it is listed and not marked \"not covered\".",
@@ -522,15 +531,20 @@
         "desert_wreck.py": "checker: the Brass Petrel's builder (tools/desert_wreck.py, 2026-10-05: a wreck in the dune wall, a dead reef, a resident's flag on the southern desert beach) reads data/spawn_blocks.json for its own guard: it refuses a written spawn condition that data/desert_wreck.json blocks.spawn_conditions does not declare, and refuses any block outside blocks.ids. The ones it declares (sand, dead coral) are whitelisted in data/spawn_block_policy.json by an entry whose scope names desert_wreck. NOT YET one of this contract's sources - adding 'desert_wreck' to the place tuple in _source_blocks() in tests/test_system_contracts.py is the test author's.",
         "frostpeak_camp_audit.py": "checker: the built Frostpeak research camp (tools/frostpeak_camp.py, 2026-10-02), against data/frostpeak_camp.json blocks.ids and the spawn conditions. tools/frostpeak_camp.py is a block source that does not read the conditions file itself (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
         "frostpeak_summit_audit.py": "checker: the built Frostpeak summit pack (tools/frostpeak_summit.py, 2026-10-02: tors, rime, the lee's plants, the pilgrims' way and its cairns round Articuno's tower), replayed: no written block is a spawn condition and every written block is in data/frostpeak_summit.json blocks.ids (S4). tools/frostpeak_summit.py does not read the conditions file and does not refuse a block itself, so the audit is the only gate; NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
+        "frostpeak_keep.py": "checker: Wardenhold's builder (tools/frostpeak_keep.py, 2026-10-09: the snow-covered keep on Frostpeak Strand's southern lip) reads data/spawn_blocks.json for its own guard in plan(): it refuses to build with a block outside data/frostpeak_keep.json blocks.ids or a block that is a spawn condition (white concrete, light blue wool, iron blocks, bells and lightning rods are, and none is used). NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() would make the contract test the palette as well; the audit below is the independent check",
+        "frostpeak_keep_audit.py": "checker: the built Wardenhold pack (tools/frostpeak_keep.py), replayed: no written block is a spawn condition (K4), none emits light, none is a chest, bed or bell, and the only block entities are wall signs (the audit does not import the generator; tests/test_frostpeak_keep.py mutates the generator to a white-concrete cone and a lantern with the generator's own guard off)",
         "lopunny_house_audit.py": "checker: the built Lopunny superfan's house (tools/lopunny_house.py, 2026-10-02: a cottage, its Buneary cellar and a Lopunny statue on the South Pine Isle), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to lopunny_house allows it (none does), every written block is in data/lopunny_house.json blocks.ids, and no chest or bed. tools/lopunny_house.py does not read the conditions file (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
         "dune_ruin_audit.py": "checker: the built Copperway Khan (tools/dune_ruin.py, 2026-10-02: a half-buried caravanserai, its sealed store and the Copperway's milestones in the south-east dunes), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to dune_ruin allows it (none does), every written block is in data/dune_ruin.json blocks.ids, and no chest, bed or sand (the Khan's sand is the dune's own, never written). tools/dune_ruin.py does not read the conditions file (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
         "wayside_kit.py": "checker: the palette guard of the three wayside places of 2026-10-03 (tools/challengers_cairn.py, tools/dry_cistern.py, tools/survey_benchmark.py; data/challengers_cairn.json, data/dry_cistern.json, data/survey_benchmark.json). It reads data/spawn_blocks.json and data/spawn_block_policy.json when a record loads and refuses a blocks.ids list holding a spawn condition no policy entry scoped to that place allows, a chest or a bed; each generator then refuses any block outside its record's blocks.ids. A checker of the BUILDER'S OWN lists, so not independent: since 2026-10-03 the three records' blocks.ids are this contract's sources (challengers_cairn, dry_cistern, survey_benchmark in _source_blocks() of tests/test_system_contracts.py, each scoped to its own place id), their built packs are covered by the built-packs test here, and each built pack by its independent audit (challengers_cairn_audit.py, dry_cistern_audit.py, survey_benchmark_audit.py)",
+        "drowned_quarry_audit.py": "checker: the independent audit of the Drowned Quarry (2026-10-09; it imports no geometry from tools/drowned_quarry.py). It reads data/spawn_blocks.json to check every block the REPLAYED carve writes (never a spawn condition other than the water the place is made of, never concrete or a barrier, always vanilla), and the place's water is whitelisted for drowned_quarry in data/spawn_block_policy.json, so the record's palette is this contract's source drowned_quarry in _source_blocks() of tests/test_system_contracts.py",
         "wayside_audit.py": "checker: the audit side shared by the three wayside places of 2026-10-03 (written by an agent that built none of them; it imports no builder and not tools/wayside_kit.py). It reads data/spawn_blocks.json and data/spawn_block_policy.json to check every block a REPLAYED build function writes: no spawn condition unless a policy entry scoped to that place allows it, every block in the record's blocks.ids, no chest or bed",
         "challengers_cairn_audit.py": "checker: the built Challengers' Cairn (tools/challengers_cairn.py), replayed over the heightmap through tools/wayside_audit.py: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to challengers_cairn allows it (none does), every written block in data/challengers_cairn.json blocks.ids, no chest, no bed",
         "dry_cistern_audit.py": "checker: the built Dry Cistern (tools/dry_cistern.py), replayed over the heightmap through tools/wayside_audit.py: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to dry_cistern allows it (none does), every written block in data/dry_cistern.json blocks.ids, no sand, no red sand, no chest, no bed",
         "survey_benchmark_audit.py": "checker: the built Surveyors' Benchmark (tools/survey_benchmark.py), replayed over the heightmap through tools/wayside_audit.py: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to survey_benchmark allows it (none does), every written block in data/survey_benchmark.json blocks.ids, no chest, no bed, no lightning rod",
         "drovers_hollow_audit.py": "checker: the built Drovers' Hollow (tools/drovers_hollow.py, 2026-10-02: a longbarn, its fold and the old working under the bank in the Rift Foot), replayed: no written block is a spawn condition and every written block is in data/drovers_hollow.json blocks.ids",
         "old_orchard_audit.py": "checker: the built Old Orchard (tools/old_orchard.py, 2026-10-02: an abandoned orchard, its press-house and cellar round the Orchard Sleeper on Sunset Isle), replayed: no written block is a spawn condition (data/spawn_blocks.json) unless the record allows it AND data/spawn_block_policy.json lists it for old_orchard. tools/old_orchard.py does not read the conditions file; NOT YET one of this contract's sources - adding its blocks to _source_blocks() in tests/test_system_contracts.py is the test author's. Entry added at integration: the orchard's builder wrote the checker but not this line.",
+        "sunset_watch.py": "checker: the Sundown Watch's builder (data/sunset_watch.json, 2026-10-09): load() reads data/spawn_blocks.json and refuses a blocks.ids list holding a spawn condition the record does not declare (it declares none), and the plan refuses any block outside blocks.ids. A builder's guard, not an audit; the audit is tools/sunset_watch_audit.py",
+        "sunset_watch_audit.py": "checker: the built Sundown Watch (tools/sunset_watch.py, 2026-10-09: a terrace with a dial and a Sun Gate, a lamp house and mast on Sunset Isle's western shoulder, a waymark sign at the isle's landing), replayed: no written block is a spawn condition (data/spawn_blocks.json; the record declares none), no chest, no bed, and every written block is in data/sunset_watch.json blocks.ids",
         "research_station_audit.py": "checker: the built Shrew Station pack (tools/research_station.py, 2026-10-02: re-sited the same day to the west sea coast near (552, 2812): the strand's buildings and paving, the walks and platforms over the sea, the Eon shrine), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to research_station allows it (none does), every written block is in data/research_station.json blocks.ids, and no chest, bed or water. tools/research_station.py does not read the conditions file (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
         "mega_dens_audit.py": "checker: the seven open-air Mega dens dressed (tools/mega_dens.py, 2026-10-02: a scrape, a ring of boulders, bones and each species' sign round the den anchors of data/gulch_mine.json), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to mega_dens allows it (none does; sand, magma, iron block and iron ore are substituted, data/mega_dens.json substitutions), every written block is in data/mega_dens.json blocks.ids, and no chest, bed or light source. tools/mega_dens.py does not read the conditions file (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
         "sea_life_audit.py": "checker: cobblers_sea_life (tools/sea_life.py), replayed over a world from the heightmap; it REPORTS the spawn-condition blocks the pack writes (stats.spawn_condition_blocks) and enforces nothing - the enforcement is test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows (live coral on the Relic reef whitelisted 2026-10-02)",
@@ -547,12 +561,20 @@
         "coldwater_station.py": "checker: Coldwater Station's builder (data/coldwater_station.json, 2026-10-05): plan() reads data/spawn_blocks.json and refuses a blocks.ids list naming a spawn condition, and add() refuses any block outside blocks.ids. A builder's guard, not an audit; the independent audit is owed, data/coldwater_station.json audit_checklist",
         "apricorn_farm_audit.py": "checker: Hollin's Apricorn Farm's independent audit (tools/apricorn_farm_audit.py, 2026-10-05, d886004): replays the built pack; a spawn-condition block passes only where data/spawn_block_policy.json allows it",
         "apricorn_farm.py": "checker: Hollin's Apricorn Farm's builder (data/apricorn_farm.json, 2026-10-05): check() reads data/spawn_blocks.json and refuses to build a farm that writes a spawn-condition block other than the record's spawn_conditions_allowed (the seven apricorn fruits), and each of those only where a data/spawn_block_policy.json entry whose scope names apricorn_farm whitelists it. A builder's guard, not an audit; the independent audit is owed (data/apricorn_farm.json audit_checklist). NOT YET one of this contract's sources: adding its blocks to _source_blocks() in tests/test_system_contracts.py is the test author's",
+        "rookery.py": "checker: Gull Rock's builder (data/rookery.json, 2026-10-09): siting() reads data/spawn_blocks.json and refuses to build a rock that writes a block a spawn condition names, and load() refuses a gravity block. A builder's guard, not an audit; the independent audit is owed, data/rookery.json audit_checklist",
         "far_south.py": "checker: the far south's builder (data/far_south.json, 2026-10-04): check_all() reads data/spawn_blocks.json and refuses to build a site that writes a block a spawn condition names. A builder's guard, not an audit; the independent audit (tools/far_south_audit.py) is owed, data/far_south.json audit_checklist",
+        "hummock_mere.py": "checker: Hummock Mere's builder (data/hummock_mere.json, 2026-10-09): check_all() reads data/spawn_blocks.json and refuses to build a nest that writes a block a spawn condition names,. It places no water, lily pad, sugar cane, seagrass or propagule, so the pack needs no policy entry. A builder's guard, not an audit; the independent audit is tools/hummock_mere_audit.py",
+        "hummock_mere_audit.py": "checker: Hummock Mere's independent audit (tools/hummock_mere_audit.py, 2026-10-09): replays the built pack and fails on any block in data/spawn_blocks.json, any concrete, water or lava, and any clear that starts at or under the lake level",
         "jungle_temples_audit.py": "checker: the jungle temples' independent audit (tools/jungle_temples_audit.py, 2026-10-05): reads data/spawn_blocks.json and data/spawn_block_policy.json; a spawn-condition block passes only where a whitelist scope names jungle",
         "jungle_temples.py": "checker: the jungle's lost temples' builder (data/jungle_temples.json, 2026-10-04): check_all() reads data/spawn_blocks.json and refuses to build a temple that writes a block a spawn condition names (cobweb is the ruin block it would catch), a chest or a bed. A builder's guard, not an audit; the independent audit (tools/jungle_temples_audit.py) is owed, data/jungle_temples.json audit_checklist",
+        "fungal_isle.py": "checker: the Fungal Isle's builder (data/fungal_isle.json, 2026-10-09: giant and small mushrooms, stumps, logs and three glades on the mushroom island): check_plan() reads data/spawn_blocks.json and data/spawn_block_policy.json and refuses to build a write of a spawn-condition block no policy entry scoped to fungal_isle allows (water, the Glowcap Hollow's pool, is the one), and any concrete. A builder's guard, not an audit; the independent audit is owed, data/fungal_isle.json audit_checklist",
         "pokemon_farm_audit.py": "checker: Arrow Creeks Farm's independent audit (tools/pokemon_farm_audit.py, 2026-10-05, da67a62): replays the built pack; a spawn-condition block passes only under a policy entry scoped to the farm",
         "pokemon_farm.py": "checker: Arrow Creeks Farm's builder (data/pokemon_farm.json, 2026-10-05): check_blocks() reads data/spawn_blocks.json and refuses to build a farm that writes a block a spawn condition names unless it is in the record's blocks.spawn_conditions_allowed AND a data/spawn_block_policy.json whitelist entry whose scope names pokemon_farm lists it (since 2026-10-05: wheat for the wheat field, dandelion and cornflower for the Combee's forage; never water). A builder's guard, not an audit; the independent audit is owed, data/pokemon_farm.json audit_checklist",
-        "northern_residents_audit.py": "checker: the built northern residents pack (tools/northern_residents.py), replayed over the heightmap by an agent that built none of it (commit 59147af): no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to northern_residents allows it"
+        "northern_residents_audit.py": "checker: the built northern residents pack (tools/northern_residents.py), replayed over the heightmap by an agent that built none of it (commit 59147af): no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to northern_residents allows it",
+        "buried_dune.py": "checker: Undertow Basin's builder (data/buried_dune.json, 2026-10-09): siting() reads data/spawn_blocks.json and refuses to build a plan that writes a block a spawn condition names. It writes no sand at all (the basin and trails are cut out of the dune; its palette is air, sandstone, bone block and the light block), so no policy entry is needed. A builder's guard, not an audit; tests/test_buried_dune.py re-reads the pack's commands against the conditions without importing the generator",
+        "new_places_water_audit.py": "checker: the 2026-10-09 independent water audit of five new places (reads data/spawn_blocks.json and data/spawn_block_policy.json to refuse a spawn-condition block outside the policy's scoped entries)",
+        "new_places_land_audit.py": "checker: B4 of the 2026-10-09 places (the independent land audit: reads data/spawn_blocks.json to refuse a spawn-condition block the policy does not allow)",
+        "long_count.py": "checker: the Long Count's builder (data/long_count.json, 2026-10-09): check_all() reads data/spawn_blocks.json and refuses to build a site that writes a block a spawn condition names (an oak leaf is one, so the young trees' leaves are azalea leaves). A builder's guard, not an audit; the independent audit (tools/long_count_audit.py) is owed, data/long_count.json audit_checklist"
       }
     },
     {
@@ -943,7 +965,7 @@
       "statement": "A resident's tags are never the blackout's exempt tag, so a resident that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the residents' generated keeper only counts it: no kill, hold, leash, wake, settle or merge selector of the pack reaches an entity tagged cobblers.guardian, and nothing in the pack adds or removes cobblers.guardian or the exempt tag.",
       "stated_in": [
         {
-          "at": "tools/blackout_pack.py:498",
+          "at": "tools/blackout_pack.py:510",
           "quote": "\"tag @s add cobblers.guardian\","
         },
         {
@@ -1117,6 +1139,41 @@
       "tests": [
         "tests/test_system_contracts.py::test_contract_c23_the_tm_gate_unlocks_on_the_flags_the_progression_pack_grants",
         "tests/test_tm_gate.py::test_each_shelf_tm_unlocks_at_its_shelf_lines_badge"
+      ]
+    },
+    {
+      "id": "C24",
+      "title": "A dungeon death is a blackout death with no recovery claim, and no claim is delivered into a slot",
+      "owner": "recovery_claims",
+      "consumers": [
+        "dungeons"
+      ],
+      "constrained_by": [
+        "dungeons"
+      ],
+      "statement": "A player holding data/blackout.json dungeon_exempt.player_tag who is beaten or killed by a wild Pokemon -- in battle, outside one, or by a timer kill, fall or lava that vanilla credits to a wild hit -- makes no item claim, binds no guardian and has no money held: the generated blackout charges the flat money once and queues the return to the checkpoint, keepInventory stays set, and it reads the PLAYER's tag, never the killer's. A claim settled while its owner holds the tag stays at state deliver (recovery/deliver and the login delivery return), and is delivered by dungeon_exempt.tail_end_function or backstop_function, which are the only things that remove the tag. The dungeons rely on it for DUNGEONS.md 2.5 (D20, E1); they keep it true by adding the tag before the arrival delay, never removing it themselves, keeping it for tail_ticks after every way out, and calling those two functions only in the overworld. A dungeon pack that removes the tag itself, or clears it before the blackout has read it, breaks it without touching the blackout.",
+      "stated_in": [
+        {
+          "at": "docs/mechanics/DUNGEONS.md:1102",
+          "quote": "a dungeon death is a blackout death with no recovery claim"
+        },
+        {
+          "at": "data/blackout.json:215",
+          "quote": "\"player_tag\": \"cobblers.dg_run\""
+        },
+        {
+          "at": "tools/blackout_pack.py:236",
+          "quote": "\"execute if entity @s[tag=%s] run scoreboard players set #exempt bo.tmp 1\" % dg_tag"
+        },
+        {
+          "at": "docs/research/DUNGEON_DEATH.md:145",
+          "quote": "## E1 as built"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c24_a_dungeon_death_makes_no_claim_and_nothing_is_delivered_into_a_slot",
+        "tests/test_dungeon_death.py::test_the_generated_pack_takes_no_items_in_a_dungeon",
+        "tests/test_dungeon_death.py::test_the_generated_pack_holds_delivery_for_a_player_inside_a_dungeon"
       ]
     }
   ]

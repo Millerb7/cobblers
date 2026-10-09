@@ -55,17 +55,23 @@ def _passed(reply):
     return "passed" in (reply or "")
 
 
-def _hold(rc, x, y, z, settle=2):
-    rc("forceload add %d %d" % (x, z))
+def _in(dim):
+    """`execute in <dim> ` for a probe outside the overworld (data/world_probes.json `dim`, 2026-10-08: the dungeon
+    shells in cobblers:pocket); '' for the overworld, so every older probe runs the same commands as before."""
+    return "execute in %s " % dim if dim else ""
+
+
+def _hold(rc, x, y, z, settle=2, dim=None):
+    rc("%sforceload add %d %d" % (_in(dim) + "run " if dim else "", x, z))
     for _ in range(30):
-        if _passed(rc("execute if loaded %d %d %d" % (x, y, z))):
+        if _passed(rc("%sif loaded %d %d %d" % (_in(dim) or "execute ", x, y, z))):
             break
         time.sleep(1)
     time.sleep(settle)                     # a chunk's entities load after its blocks
 
 
-def _free(rc, x, z):
-    rc("forceload remove %d %d" % (x, z))
+def _free(rc, x, z, dim=None):
+    rc("%sforceload remove %d %d" % (_in(dim) + "run " if dim else "", x, z))
 
 
 def _count(rc, sel):
@@ -75,11 +81,12 @@ def _count(rc, sel):
     return 0
 
 
-def _block(rc, x, y, z, want):
+def _block(rc, x, y, z, want, dim=None):
     """want: a block id, '!air' (anything but air) or 'air'."""
+    ex = _in(dim) or "execute "
     if want == "!air":
-        return not _passed(rc("execute if block %d %d %d minecraft:air" % (x, y, z)))
-    return _passed(rc("execute if block %d %d %d %s" % (x, y, z, want)))
+        return not _passed(rc("%sif block %d %d %d minecraft:air" % (ex, x, y, z)))
+    return _passed(rc("%sif block %d %d %d %s" % (ex, x, y, z, want)))
 
 
 def _plan():
@@ -265,18 +272,19 @@ def extra(rc):
     out = []
     for place, probes in json.loads(p.read_text(encoding="utf-8"))["places"].items():
         for pr in probes:
+            dim = pr.get("dim")
             if "block" in pr:
                 x, y, z, want = pr["block"]
-                _hold(rc, x, y, z, settle=0)
-                ok = _block(rc, x, y, z, want) == pr.get("expect", True)
+                _hold(rc, x, y, z, settle=0, dim=dim)
+                ok = _block(rc, x, y, z, want, dim) == pr.get("expect", True)
                 out.append((place, pr["what"], (x, y, z), "" if ok else "expected %s%s"
                             % ("" if pr.get("expect", True) else "NOT ", want)))
             else:
                 x, y, z = pr["hold"]
-                _hold(rc, x, y, z)
+                _hold(rc, x, y, z, dim=dim)
                 n = _count(rc, pr["entity"])
                 out.append((place, pr["what"], (x, y, z), "" if n == pr["count"] else "%d, expected %d" % (n, pr["count"])))
-            _free(rc, x, z)
+            _free(rc, x, z, dim)
     return out
 
 

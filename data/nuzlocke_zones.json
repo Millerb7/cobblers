@@ -10,7 +10,7 @@
   "site": 1,
   "waterway": 1,
   "total": 72,
-  "not_zones": 28
+  "not_zones": 30
  },
  "derivation": {
   "tables_are_subregions": "data/encounter_design.json has 63 tables and data/regions.json 63 sub-regions, the same ids",
@@ -1721,6 +1721,16 @@
   },
   {
    "zone": "dune_ruin_undercroft",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "frostpeak_keep_beacon",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "frostpeak_keep_hall",
    "what": "Habitat Block pool",
    "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
   },

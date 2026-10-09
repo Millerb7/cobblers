@@ -1,0 +1,2463 @@
+{
+ "schema": "gym_arena_sizes/1",
+ "generated_by": "tools/pokemon_sizes.py --write (from the jars; do not hand-edit)",
+ "snapshot": "server-snapshot-2026-10-05",
+ "archives": [
+  "Cobblemon-fabric-1.8.0+1.21.1.jar",
+  "zamega-fabric-1.7.7+1.8.jar",
+  "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
+  "COBBLEVERSE-DP-v31.zip"
+ ],
+ "scale_rule": "PokemonEntity.getDimensions (method_18377): hitbox.scale(form.baseScale * Pokemon.getEffectiveScale()).scale(LivingEntity.getScale()); getEffectiveScale is 1.0 at level >= babyPokemonLevelDuration for a non-alpha Pokemon with scaleModifier 1.0",
+ "config": {
+  "babyPokemonLevelDuration": 9,
+  "babyPokemonSizeMultiplier": 0.9,
+  "dynamax": true,
+  "dynamaxAnywhere": false,
+  "dynamaxScaleFactor": 4.0,
+  "powerSpotRange": 32
+ },
+ "leaders": {
+  "gym_01_brock": {
+   "upstream": "kanto_brock",
+   "order": 1,
+   "name": "Brock",
+   "members": [
+    {
+     "species": "bonsly",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation4/bonsly.json",
+       "width": 0.5,
+       "height": 1.7,
+       "baseScale": 0.6,
+       "world_width": 0.3,
+       "world_height": 1.02
+      }
+     ],
+     "design_width": 0.3,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/bonsly.json",
+     "design_height": 1.02,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/bonsly.json",
+     "model": {
+      "id": "cobblemon:bonsly.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0438_bonsly/bonsly.geo.json",
+      "x": 0.49,
+      "y_top": 1.07,
+      "y_bottom": 0.0,
+      "z": 0.37,
+      "reach": 0.27,
+      "x_min_max_z_min_max": [
+       -0.25,
+       0.25,
+       -0.19,
+       0.19
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 0.27,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.07
+    },
+    {
+     "species": "cranidos",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation4/cranidos.json",
+       "width": 0.7,
+       "height": 1.15,
+       "baseScale": 0.5,
+       "world_width": 0.35,
+       "world_height": 0.575
+      }
+     ],
+     "design_width": 0.35,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/cranidos.json",
+     "design_height": 0.575,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/cranidos.json",
+     "model": {
+      "id": "cobblemon:cranidos.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0408_cranidos/cranidos.geo.json",
+      "x": 0.42,
+      "y_top": 0.51,
+      "y_bottom": -0.0,
+      "z": 0.61,
+      "reach": 0.35,
+      "x_min_max_z_min_max": [
+       -0.21,
+       0.21,
+       -0.35,
+       0.26
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 0.35,
+     "clear_radius_from": "model reach",
+     "clear_height": 0.57
+    },
+    {
+     "species": "dwebble",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation5/dwebble.json",
+       "width": 0.9,
+       "height": 0.7,
+       "baseScale": 0.7,
+       "world_width": 0.63,
+       "world_height": 0.49
+      }
+     ],
+     "design_width": 0.63,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation5/dwebble.json",
+     "design_height": 0.49,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation5/dwebble.json",
+     "model": {
+      "id": "cobblemon:dwebble.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0557_dwebble/dwebble.geo.json",
+      "x": 1.39,
+      "y_top": 0.88,
+      "y_bottom": -0.05,
+      "z": 0.71,
+      "reach": 0.71,
+      "x_min_max_z_min_max": [
+       -0.7,
+       0.7,
+       -0.32,
+       0.39
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 0.71,
+     "clear_radius_from": "model reach",
+     "clear_height": 0.88
+    },
+    {
+     "species": "geodude",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/geodude.json",
+       "width": 0.9,
+       "height": 0.5,
+       "baseScale": 1.0,
+       "world_width": 0.9,
+       "world_height": 0.5
+      }
+     ],
+     "design_width": 0.9,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/geodude.json",
+     "design_height": 0.5,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/geodude.json",
+     "model": {
+      "id": "cobblemon:geodude.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0074_geodude/geodude.geo.json",
+      "x": 2.81,
+      "y_top": 0.5,
+      "y_bottom": -0.0,
+      "z": 0.56,
+      "reach": 1.41,
+      "x_min_max_z_min_max": [
+       -1.41,
+       1.41,
+       -0.28,
+       0.28
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.41,
+     "clear_radius_from": "model reach",
+     "clear_height": 0.5
+    },
+    {
+     "species": "lileep",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation3/lileep.json",
+       "width": 0.6,
+       "height": 1.1,
+       "baseScale": 1.0,
+       "world_width": 0.6,
+       "world_height": 1.1
+      }
+     ],
+     "design_width": 0.6,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/lileep.json",
+     "design_height": 1.1,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/lileep.json",
+     "model": {
+      "id": "cobblemon:lileep.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0345_lileep/lileep.geo.json",
+      "x": 0.8,
+      "y_top": 0.88,
+      "y_bottom": 0.0,
+      "z": 0.8,
+      "reach": 0.42,
+      "x_min_max_z_min_max": [
+       -0.4,
+       0.4,
+       -0.38,
+       0.42
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 0.43,
+     "clear_radius_from": "hitbox half-diagonal",
+     "clear_height": 1.1
+    },
+    {
+     "species": "onix",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/onix.json",
+       "width": 2.0,
+       "height": 4.0,
+       "baseScale": 1.0,
+       "world_width": 2.0,
+       "world_height": 4.0
+      }
+     ],
+     "design_width": 2.0,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/onix.json",
+     "design_height": 4.0,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/onix.json",
+     "model": {
+      "id": "cobblemon:onix.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0095_onix/onix.geo.json",
+      "x": 1.63,
+      "y_top": 2.78,
+      "y_bottom": -0.12,
+      "z": 15.38,
+      "reach": 10.56,
+      "x_min_max_z_min_max": [
+       -0.81,
+       0.81,
+       -4.81,
+       10.56
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 10.56,
+     "clear_radius_from": "model reach",
+     "clear_height": 4.0
+    }
+   ],
+   "design": {
+    "clear_radius": 10.56,
+    "clear_radius_species": "onix",
+    "clear_radius_from": "model reach",
+    "clear_height": 4.0,
+    "clear_height_species": "onix"
+   },
+   "largest_by_width": {
+    "species": "onix",
+    "width": 2.0,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/onix.json"
+   },
+   "largest_by_height": {
+    "species": "onix",
+    "height": 4.0,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/onix.json"
+   },
+   "largest_model_horizontal": {
+    "species": "onix",
+    "extent": 15.38,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0095_onix/onix.geo.json"
+   },
+   "largest_model_height": {
+    "species": "onix",
+    "y_top": 2.78,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0095_onix/onix.geo.json"
+   }
+  },
+  "gym_02_misty": {
+   "upstream": "kanto_misty",
+   "order": 2,
+   "name": "Misty",
+   "members": [
+    {
+     "species": "barboach",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation3/barboach.json",
+       "width": 1.0,
+       "height": 0.5,
+       "baseScale": 0.65,
+       "world_width": 0.65,
+       "world_height": 0.325
+      }
+     ],
+     "design_width": 0.65,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/barboach.json",
+     "design_height": 0.325,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/barboach.json",
+     "model": {
+      "id": "cobblemon:barboach.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0339_barboach/barboach.geo.json",
+      "x": 0.25,
+      "y_top": 0.63,
+      "y_bottom": -0.16,
+      "z": 1.42,
+      "reach": 0.79,
+      "x_min_max_z_min_max": [
+       -0.12,
+       0.12,
+       -0.63,
+       0.79
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 0.79,
+     "clear_radius_from": "model reach",
+     "clear_height": 0.63
+    },
+    {
+     "species": "floatzel",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation4/floatzel.json",
+       "width": 0.9,
+       "height": 1.7,
+       "baseScale": 0.9,
+       "world_width": 0.81,
+       "world_height": 1.53
+      }
+     ],
+     "design_width": 0.81,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/floatzel.json",
+     "design_height": 1.53,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/floatzel.json",
+     "model": {
+      "id": "cobblemon:floatzel_male.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0419_floatzel/floatzel_male.geo.json",
+      "x": 1.49,
+      "y_top": 1.52,
+      "y_bottom": -0.0,
+      "z": 1.82,
+      "reach": 1.48,
+      "x_min_max_z_min_max": [
+       -0.75,
+       0.75,
+       -0.38,
+       1.45
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.48,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.53
+    },
+    {
+     "species": "goldeen",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/goldeen.json",
+       "width": 1.0,
+       "height": 0.8,
+       "baseScale": 0.6,
+       "world_width": 0.6,
+       "world_height": 0.48
+      }
+     ],
+     "design_width": 0.6,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/goldeen.json",
+     "design_height": 0.48,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/goldeen.json",
+     "model": {
+      "id": "cobblemon:goldeen_male.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0118_goldeen/goldeen_male.geo.json",
+      "x": 1.16,
+      "y_top": 0.5,
+      "y_bottom": 0.0,
+      "z": 1.3,
+      "reach": 0.89,
+      "x_min_max_z_min_max": [
+       -0.58,
+       0.58,
+       -0.44,
+       0.86
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 0.89,
+     "clear_radius_from": "model reach",
+     "clear_height": 0.5
+    },
+    {
+     "species": "horsea",
+     "tiers": [
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/horsea.json",
+       "width": 0.5,
+       "height": 1.1,
+       "baseScale": 0.55,
+       "world_width": 0.275,
+       "world_height": 0.605
+      }
+     ],
+     "design_width": 0.275,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/horsea.json",
+     "design_height": 0.605,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/horsea.json",
+     "model": {
+      "id": "cobblemon:horsea.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0116_horsea/horsea.geo.json",
+      "x": 0.56,
+      "y_top": 0.76,
+      "y_bottom": -0.21,
+      "z": 0.64,
+      "reach": 0.34,
+      "x_min_max_z_min_max": [
+       -0.28,
+       0.28,
+       -0.29,
+       0.34
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 0.34,
+     "clear_radius_from": "model reach",
+     "clear_height": 0.76
+    },
+    {
+     "species": "lombre",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation3/lombre.json",
+       "width": 0.9,
+       "height": 1.2,
+       "baseScale": 0.75,
+       "world_width": 0.675,
+       "world_height": 0.9
+      }
+     ],
+     "design_width": 0.675,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/lombre.json",
+     "design_height": 0.9,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/lombre.json",
+     "model": {
+      "id": "cobblemon:lombre.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0271_lombre/lombre.geo.json",
+      "x": 1.33,
+      "y_top": 0.94,
+      "y_bottom": 0.0,
+      "z": 0.8,
+      "reach": 0.67,
+      "x_min_max_z_min_max": [
+       -0.67,
+       0.67,
+       -0.42,
+       0.38
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 0.67,
+     "clear_radius_from": "model reach",
+     "clear_height": 0.94
+    },
+    {
+     "species": "pelipper",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation3/pelipper.json",
+       "width": 0.8,
+       "height": 1.2,
+       "baseScale": 1.2,
+       "world_width": 0.96,
+       "world_height": 1.44
+      }
+     ],
+     "design_width": 0.96,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/pelipper.json",
+     "design_height": 1.44,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/pelipper.json",
+     "model": {
+      "id": "cobblemon:pelipper.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0279_pelipper/pelipper.geo.json",
+      "x": 3.6,
+      "y_top": 1.46,
+      "y_bottom": -0.49,
+      "z": 2.34,
+      "reach": 1.85,
+      "x_min_max_z_min_max": [
+       -1.8,
+       1.8,
+       -0.97,
+       1.37
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.85,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.46
+    },
+    {
+     "species": "starmie",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/starmie.json",
+       "width": 0.8,
+       "height": 1.1,
+       "baseScale": 0.8,
+       "world_width": 0.64,
+       "world_height": 0.88
+      }
+     ],
+     "design_width": 0.64,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/starmie.json",
+     "design_height": 0.88,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/starmie.json",
+     "model": {
+      "id": "cobblemon:starmie.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0121_starmie/starmie.geo.json",
+      "x": 1.48,
+      "y_top": 1.38,
+      "y_bottom": -0.06,
+      "z": 0.67,
+      "reach": 0.76,
+      "x_min_max_z_min_max": [
+       -0.74,
+       0.74,
+       -0.42,
+       0.26
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 0.76,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.38
+    }
+   ],
+   "design": {
+    "clear_radius": 1.85,
+    "clear_radius_species": "pelipper",
+    "clear_radius_from": "model reach",
+    "clear_height": 1.53,
+    "clear_height_species": "floatzel"
+   },
+   "largest_by_width": {
+    "species": "pelipper",
+    "width": 0.96,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/pelipper.json"
+   },
+   "largest_by_height": {
+    "species": "floatzel",
+    "height": 1.53,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/floatzel.json"
+   },
+   "largest_model_horizontal": {
+    "species": "pelipper",
+    "extent": 3.6,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0279_pelipper/pelipper.geo.json"
+   },
+   "largest_model_height": {
+    "species": "floatzel",
+    "y_top": 1.52,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0419_floatzel/floatzel_male.geo.json"
+   }
+  },
+  "gym_03_surge": {
+   "upstream": "kanto_ltsurge",
+   "order": 3,
+   "name": "Lt. Surge",
+   "members": [
+    {
+     "species": "boltund",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation8/boltund.json",
+       "width": 0.7,
+       "height": 1.65,
+       "baseScale": 0.7,
+       "world_width": 0.49,
+       "world_height": 1.155
+      }
+     ],
+     "design_width": 0.49,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation8/boltund.json",
+     "design_height": 1.155,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation8/boltund.json",
+     "model": {
+      "id": "cobblemon:boltund.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0836_boltund/boltund.geo.json",
+      "x": 0.39,
+      "y_top": 1.13,
+      "y_bottom": 0.0,
+      "z": 1.63,
+      "reach": 1.09,
+      "x_min_max_z_min_max": [
+       -0.2,
+       0.2,
+       -0.54,
+       1.09
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.09,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.16
+    },
+    {
+     "species": "electabuzz",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/electabuzz.json",
+       "width": 0.7,
+       "height": 1.5,
+       "baseScale": 1.0,
+       "world_width": 0.7,
+       "world_height": 1.5
+      }
+     ],
+     "design_width": 0.7,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/electabuzz.json",
+     "design_height": 1.5,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/electabuzz.json",
+     "model": {
+      "id": "cobblemon:electabuzz.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0125_electabuzz/electabuzz.geo.json",
+      "x": 3.25,
+      "y_top": 1.96,
+      "y_bottom": 0.0,
+      "z": 1.93,
+      "reach": 1.63,
+      "x_min_max_z_min_max": [
+       -1.62,
+       1.62,
+       -0.42,
+       1.51
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.63,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.96
+    },
+    {
+     "species": "magneton",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/magneton.json",
+       "width": 1.1,
+       "height": 1.4,
+       "baseScale": 0.9,
+       "world_width": 0.99,
+       "world_height": 1.26
+      }
+     ],
+     "design_width": 0.99,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/magneton.json",
+     "design_height": 1.26,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/magneton.json",
+     "model": {
+      "id": "cobblemon:magneton.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0082_magneton/magneton.geo.json",
+      "x": 2.36,
+      "y_top": 1.38,
+      "y_bottom": 0.05,
+      "z": 0.6,
+      "reach": 1.18,
+      "x_min_max_z_min_max": [
+       -1.18,
+       1.18,
+       -0.38,
+       0.23
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.18,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.38
+    },
+    {
+     "species": "pawmot",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon jar",
+       "path": "Species.<init> defaults (no hitbox in the species file)",
+       "width": 1.0,
+       "height": 1.0,
+       "baseScale": 1.0,
+       "world_width": 1.0,
+       "world_height": 1.0
+      }
+     ],
+     "design_width": 1.0,
+     "width_from": "Cobblemon jar Species.<init> defaults (no hitbox in the species file)",
+     "design_height": 1.0,
+     "height_from": "Cobblemon jar Species.<init> defaults (no hitbox in the species file)",
+     "clear_radius": 0.71,
+     "clear_radius_from": "hitbox half-diagonal (no model in any server archive: a client resource pack draws it)",
+     "clear_height": 1.0
+    },
+    {
+     "species": "raichu",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/raichu.json",
+       "width": 0.8,
+       "height": 1.5,
+       "baseScale": 0.75,
+       "world_width": 0.6,
+       "world_height": 1.125
+      }
+     ],
+     "design_width": 0.6,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/raichu.json",
+     "design_height": 1.125,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/raichu.json",
+     "model": {
+      "id": "cobblemon:raichu_male.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0026_raichu/raichu_male.geo.json",
+      "x": 1.41,
+      "y_top": 1.12,
+      "y_bottom": -0.0,
+      "z": 3.26,
+      "reach": 2.93,
+      "x_min_max_z_min_max": [
+       -0.7,
+       0.7,
+       -0.33,
+       2.93
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 2.93,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.12
+    },
+    {
+     "species": "vikavolt",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation7/vikavolt.json",
+       "width": 1.0,
+       "height": 1.0,
+       "baseScale": 1.0,
+       "world_width": 1.0,
+       "world_height": 1.0
+      },
+      {
+       "archive": "COBBLEVERSE-DP-v31.zip",
+       "path": "data/cobblemon/species_additions/vikavolt.json",
+       "width": 2.0,
+       "height": 2.5,
+       "baseScale": 0.75,
+       "world_width": 1.5,
+       "world_height": 1.875
+      }
+     ],
+     "design_width": 1.5,
+     "width_from": "COBBLEVERSE-DP-v31.zip data/cobblemon/species_additions/vikavolt.json",
+     "design_height": 1.875,
+     "height_from": "COBBLEVERSE-DP-v31.zip data/cobblemon/species_additions/vikavolt.json",
+     "clear_radius": 1.07,
+     "clear_radius_from": "hitbox half-diagonal (no model in any server archive: a client resource pack draws it)",
+     "clear_height": 1.88
+    }
+   ],
+   "design": {
+    "clear_radius": 2.93,
+    "clear_radius_species": "raichu",
+    "clear_radius_from": "model reach",
+    "clear_height": 1.96,
+    "clear_height_species": "electabuzz"
+   },
+   "largest_by_width": {
+    "species": "vikavolt",
+    "width": 1.5,
+    "from": "COBBLEVERSE-DP-v31.zip data/cobblemon/species_additions/vikavolt.json"
+   },
+   "largest_by_height": {
+    "species": "vikavolt",
+    "height": 1.875,
+    "from": "COBBLEVERSE-DP-v31.zip data/cobblemon/species_additions/vikavolt.json"
+   },
+   "largest_model_horizontal": {
+    "species": "raichu",
+    "extent": 3.26,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0026_raichu/raichu_male.geo.json"
+   },
+   "largest_model_height": {
+    "species": "electabuzz",
+    "y_top": 1.96,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0125_electabuzz/electabuzz.geo.json"
+   }
+  },
+  "gym_04_erika": {
+   "upstream": "kanto_erika",
+   "order": 4,
+   "name": "Erika",
+   "members": [
+    {
+     "species": "bellossom",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation2/bellossom.json",
+       "width": 0.8,
+       "height": 1.0,
+       "baseScale": 0.5,
+       "world_width": 0.4,
+       "world_height": 0.5
+      }
+     ],
+     "design_width": 0.4,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation2/bellossom.json",
+     "design_height": 0.5,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation2/bellossom.json",
+     "model": {
+      "id": "cobblemon:bellossom.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0182_bellossom/bellossom.geo.json",
+      "x": 0.53,
+      "y_top": 0.64,
+      "y_bottom": -0.01,
+      "z": 0.44,
+      "reach": 0.27,
+      "x_min_max_z_min_max": [
+       -0.27,
+       0.27,
+       -0.22,
+       0.22
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 0.29,
+     "clear_radius_from": "hitbox half-diagonal",
+     "clear_height": 0.64
+    },
+    {
+     "species": "cradily",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation3/cradily.json",
+       "width": 0.9,
+       "height": 2.0,
+       "baseScale": 1.0,
+       "world_width": 0.9,
+       "world_height": 2.0
+      }
+     ],
+     "design_width": 0.9,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/cradily.json",
+     "design_height": 2.0,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/cradily.json",
+     "model": {
+      "id": "cobblemon:cradily.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0346_cradily/cradily.geo.json",
+      "x": 2.63,
+      "y_top": 2.49,
+      "y_bottom": -0.0,
+      "z": 2.47,
+      "reach": 1.36,
+      "x_min_max_z_min_max": [
+       -1.31,
+       1.31,
+       -1.34,
+       1.13
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.36,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.49
+    },
+    {
+     "species": "roserade",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation4/roserade.json",
+       "width": 0.7,
+       "height": 1.75,
+       "baseScale": 0.75,
+       "world_width": 0.525,
+       "world_height": 1.312
+      }
+     ],
+     "design_width": 0.525,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/roserade.json",
+     "design_height": 1.312,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/roserade.json",
+     "model": {
+      "id": "cobblemon:roserade_male.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0407_roserade/roserade_male.geo.json",
+      "x": 1.69,
+      "y_top": 1.43,
+      "y_bottom": 0.0,
+      "z": 1.2,
+      "reach": 1.03,
+      "x_min_max_z_min_max": [
+       -0.85,
+       0.85,
+       -0.26,
+       0.94
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.03,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.43
+    },
+    {
+     "species": "tangrowth",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation4/tangrowth.json",
+       "width": 0.9,
+       "height": 1.2,
+       "baseScale": 2.0,
+       "world_width": 1.8,
+       "world_height": 2.4
+      }
+     ],
+     "design_width": 1.8,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/tangrowth.json",
+     "design_height": 2.4,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/tangrowth.json",
+     "model": {
+      "id": "cobblemon:tangrowth.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0465_tangrowth/tangrowth.geo.json",
+      "x": 7.12,
+      "y_top": 2.72,
+      "y_bottom": 0.0,
+      "z": 1.38,
+      "reach": 3.56,
+      "x_min_max_z_min_max": [
+       -3.56,
+       3.56,
+       -0.68,
+       0.68
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 3.56,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.72
+    },
+    {
+     "species": "victreebel",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/victreebel.json",
+       "width": 1.15,
+       "height": 2.0,
+       "baseScale": 0.95,
+       "world_width": 1.092,
+       "world_height": 1.9
+      }
+     ],
+     "design_width": 1.092,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/victreebel.json",
+     "design_height": 1.9,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/victreebel.json",
+     "model": {
+      "id": "cobblemon:victreebel.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0071_victreebel/victreebel.geo.json",
+      "x": 5.22,
+      "y_top": 2.22,
+      "y_bottom": 0.0,
+      "z": 5.92,
+      "reach": 5.28,
+      "x_min_max_z_min_max": [
+       -2.61,
+       2.61,
+       -0.64,
+       5.28
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 5.28,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.22
+    },
+    {
+     "species": "vileplume",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/vileplume.json",
+       "width": 1.2,
+       "height": 1.0,
+       "baseScale": 1.0,
+       "world_width": 1.2,
+       "world_height": 1.0
+      }
+     ],
+     "design_width": 1.2,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/vileplume.json",
+     "design_height": 1.0,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/vileplume.json",
+     "model": {
+      "id": "cobblemon:vileplume.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0045_vileplume/vileplume.geo.json",
+      "x": 1.69,
+      "y_top": 0.97,
+      "y_bottom": -0.0,
+      "z": 1.62,
+      "reach": 1.02,
+      "x_min_max_z_min_max": [
+       -0.84,
+       0.84,
+       -0.84,
+       0.78
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.02,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.0
+    }
+   ],
+   "design": {
+    "clear_radius": 5.28,
+    "clear_radius_species": "victreebel",
+    "clear_radius_from": "model reach",
+    "clear_height": 2.72,
+    "clear_height_species": "tangrowth"
+   },
+   "largest_by_width": {
+    "species": "tangrowth",
+    "width": 1.8,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/tangrowth.json"
+   },
+   "largest_by_height": {
+    "species": "tangrowth",
+    "height": 2.4,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/tangrowth.json"
+   },
+   "largest_model_horizontal": {
+    "species": "tangrowth",
+    "extent": 7.12,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0465_tangrowth/tangrowth.geo.json"
+   },
+   "largest_model_height": {
+    "species": "tangrowth",
+    "y_top": 2.72,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0465_tangrowth/tangrowth.geo.json"
+   }
+  },
+  "gym_05_koga": {
+   "upstream": "kanto_koga",
+   "order": 5,
+   "name": "Koga",
+   "members": [
+    {
+     "species": "crobat",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation2/crobat.json",
+       "width": 1.0,
+       "height": 2.2,
+       "baseScale": 1.0,
+       "world_width": 1.0,
+       "world_height": 2.2
+      }
+     ],
+     "design_width": 1.0,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation2/crobat.json",
+     "design_height": 2.2,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation2/crobat.json",
+     "model": {
+      "id": "cobblemon:crobat.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0169_crobat/crobat.geo.json",
+      "x": 6.12,
+      "y_top": 2.12,
+      "y_bottom": 0.03,
+      "z": 0.8,
+      "reach": 3.06,
+      "x_min_max_z_min_max": [
+       -3.06,
+       3.06,
+       -0.4,
+       0.39
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 3.06,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.2
+    },
+    {
+     "species": "dragalge",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation6/dragalge.json",
+       "width": 1.0,
+       "height": 2.2,
+       "baseScale": 1.0,
+       "world_width": 1.0,
+       "world_height": 2.2
+      }
+     ],
+     "design_width": 1.0,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation6/dragalge.json",
+     "design_height": 2.2,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation6/dragalge.json",
+     "model": {
+      "id": "cobblemon:dragalge.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0691_dragalge/dragalge.geo.json",
+      "x": 4.12,
+      "y_top": 2.37,
+      "y_bottom": -0.52,
+      "z": 2.23,
+      "reach": 2.25,
+      "x_min_max_z_min_max": [
+       -2.06,
+       2.06,
+       -1.32,
+       0.91
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 2.25,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.37
+    },
+    {
+     "species": "drapion",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation4/drapion.json",
+       "width": 2.25,
+       "height": 2.5,
+       "baseScale": 0.9,
+       "world_width": 2.025,
+       "world_height": 2.25
+      }
+     ],
+     "design_width": 2.025,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/drapion.json",
+     "design_height": 2.25,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/drapion.json",
+     "model": {
+      "id": "cobblemon:drapion.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0452_drapion/drapion.geo.json",
+      "x": 4.36,
+      "y_top": 1.18,
+      "y_bottom": 0.16,
+      "z": 4.67,
+      "reach": 3.13,
+      "x_min_max_z_min_max": [
+       -2.18,
+       2.18,
+       -2.36,
+       2.32
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 3.13,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.25
+    },
+    {
+     "species": "toxtricity",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation8/toxtricity.json",
+       "width": 1.15,
+       "height": 2.75,
+       "baseScale": 0.8,
+       "world_width": 0.92,
+       "world_height": 2.2
+      },
+      {
+       "archive": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
+       "path": "data/cobblemon/species/generation8/toxtricity.json",
+       "width": 1.15,
+       "height": 2.75,
+       "baseScale": 0.8,
+       "world_width": 0.92,
+       "world_height": 2.2
+      }
+     ],
+     "design_width": 0.92,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation8/toxtricity.json",
+     "design_height": 2.2,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation8/toxtricity.json",
+     "model": {
+      "id": "cobblemon:toxtricity_amped.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0849_toxtricity/toxtricity_amped.geo.json",
+      "x": 3.15,
+      "y_top": 2.72,
+      "y_bottom": 0.0,
+      "z": 1.38,
+      "reach": 1.58,
+      "x_min_max_z_min_max": [
+       -1.58,
+       1.58,
+       -0.5,
+       0.88
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.58,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.72
+    },
+    {
+     "species": "venomoth",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/venomoth.json",
+       "width": 0.8,
+       "height": 1.55,
+       "baseScale": 0.9,
+       "world_width": 0.72,
+       "world_height": 1.395
+      }
+     ],
+     "design_width": 0.72,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/venomoth.json",
+     "design_height": 1.395,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/venomoth.json",
+     "model": {
+      "id": "cobblemon:venomoth.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0049_venomoth/venomoth.geo.json",
+      "x": 2.63,
+      "y_top": 1.03,
+      "y_bottom": -0.56,
+      "z": 0.95,
+      "reach": 1.33,
+      "x_min_max_z_min_max": [
+       -1.31,
+       1.31,
+       -0.23,
+       0.73
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.33,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.4
+    },
+    {
+     "species": "weezing",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/weezing.json",
+       "width": 1.3,
+       "height": 1.4,
+       "baseScale": 1.2,
+       "world_width": 1.56,
+       "world_height": 1.68
+      }
+     ],
+     "design_width": 1.56,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/weezing.json",
+     "design_height": 1.68,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/weezing.json",
+     "model": {
+      "id": "cobblemon:weezing.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0110_weezing/weezing.geo.json",
+      "x": 2.15,
+      "y_top": 1.56,
+      "y_bottom": -0.01,
+      "z": 1.3,
+      "reach": 1.18,
+      "x_min_max_z_min_max": [
+       -1.01,
+       1.14,
+       -0.56,
+       0.73
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.18,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.68
+    }
+   ],
+   "design": {
+    "clear_radius": 3.13,
+    "clear_radius_species": "drapion",
+    "clear_radius_from": "model reach",
+    "clear_height": 2.72,
+    "clear_height_species": "toxtricity"
+   },
+   "largest_by_width": {
+    "species": "drapion",
+    "width": 2.025,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/drapion.json"
+   },
+   "largest_by_height": {
+    "species": "drapion",
+    "height": 2.25,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/drapion.json"
+   },
+   "largest_model_horizontal": {
+    "species": "crobat",
+    "extent": 6.12,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0169_crobat/crobat.geo.json"
+   },
+   "largest_model_height": {
+    "species": "toxtricity",
+    "y_top": 2.72,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0849_toxtricity/toxtricity_amped.geo.json"
+   }
+  },
+  "gym_06_sabrina": {
+   "upstream": "kanto_sabrina",
+   "order": 6,
+   "name": "Sabrina",
+   "members": [
+    {
+     "species": "alakazam",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/alakazam.json",
+       "width": 1.0,
+       "height": 1.7,
+       "baseScale": 1.0,
+       "world_width": 1.0,
+       "world_height": 1.7
+      }
+     ],
+     "design_width": 1.0,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/alakazam.json",
+     "design_height": 1.7,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/alakazam.json",
+     "model": {
+      "id": "cobblemon:alakazam_male.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0065_alakazam/alakazam_male.geo.json",
+      "x": 2.19,
+      "y_top": 2.6,
+      "y_bottom": 0.03,
+      "z": 0.86,
+      "reach": 1.16,
+      "x_min_max_z_min_max": [
+       -1.1,
+       1.1,
+       -0.61,
+       0.25
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.16,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.6
+    },
+    {
+     "species": "bronzong",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation4/bronzong.json",
+       "width": 1.35,
+       "height": 2.5,
+       "baseScale": 0.65,
+       "world_width": 0.878,
+       "world_height": 1.625
+      }
+     ],
+     "design_width": 0.878,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/bronzong.json",
+     "design_height": 1.625,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/bronzong.json",
+     "model": {
+      "id": "cobblemon:bronzong.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0437_bronzong/bronzong.geo.json",
+      "x": 2.85,
+      "y_top": 1.64,
+      "y_bottom": 0.0,
+      "z": 0.83,
+      "reach": 1.42,
+      "x_min_max_z_min_max": [
+       -1.42,
+       1.42,
+       -0.43,
+       0.4
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.42,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.64
+    },
+    {
+     "species": "exeggutor",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/exeggutor.json",
+       "width": 1.8,
+       "height": 3.0,
+       "baseScale": 0.85,
+       "world_width": 1.53,
+       "world_height": 2.55
+      },
+      {
+       "archive": "COBBLEVERSE-DP-v31.zip",
+       "path": "data/cobblemon/species/generation1/exeggutor.json",
+       "width": 1.8,
+       "height": 3.0,
+       "baseScale": 0.85,
+       "world_width": 1.53,
+       "world_height": 2.55
+      }
+     ],
+     "design_width": 1.53,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/exeggutor.json",
+     "design_height": 2.55,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/exeggutor.json",
+     "model": {
+      "id": "cobblemon:exeggutor.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0103_exeggutor/exeggutor.geo.json",
+      "x": 3.75,
+      "y_top": 3.54,
+      "y_bottom": 0.0,
+      "z": 3.0,
+      "reach": 1.9,
+      "x_min_max_z_min_max": [
+       -1.87,
+       1.87,
+       -1.31,
+       1.69
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.9,
+     "clear_radius_from": "model reach",
+     "clear_height": 3.54
+    },
+    {
+     "species": "hatterene",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation8/hatterene.json",
+       "width": 1.5,
+       "height": 4.0,
+       "baseScale": 0.7,
+       "world_width": 1.05,
+       "world_height": 2.8
+      }
+     ],
+     "design_width": 1.05,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation8/hatterene.json",
+     "design_height": 2.8,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation8/hatterene.json",
+     "model": {
+      "id": "cobblemon:hatterene.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0858_hatterene/hatterene.geo.json",
+      "x": 1.53,
+      "y_top": 6.13,
+      "y_bottom": -0.02,
+      "z": 2.54,
+      "reach": 1.94,
+      "x_min_max_z_min_max": [
+       -0.76,
+       0.76,
+       -0.6,
+       1.93
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.94,
+     "clear_radius_from": "model reach",
+     "clear_height": 6.13
+    },
+    {
+     "species": "reuniclus",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation5/reuniclus.json",
+       "width": 1.2,
+       "height": 1.8,
+       "baseScale": 0.85,
+       "world_width": 1.02,
+       "world_height": 1.53
+      }
+     ],
+     "design_width": 1.02,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation5/reuniclus.json",
+     "design_height": 1.53,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation5/reuniclus.json",
+     "model": {
+      "id": "cobblemon:reuniclus.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0579_reuniclus/reuniclus.geo.json",
+      "x": 3.61,
+      "y_top": 1.73,
+      "y_bottom": 0.05,
+      "z": 1.06,
+      "reach": 1.82,
+      "x_min_max_z_min_max": [
+       -1.8,
+       1.8,
+       -0.53,
+       0.53
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.82,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.73
+    },
+    {
+     "species": "slowbro",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/slowbro.json",
+       "width": 0.8,
+       "height": 1.3,
+       "baseScale": 1.3,
+       "world_width": 1.04,
+       "world_height": 1.69
+      },
+      {
+       "archive": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
+       "path": "data/cobblemon/species/generation1/slowbro.json",
+       "width": 0.8,
+       "height": 1.3,
+       "baseScale": 1.3,
+       "world_width": 1.04,
+       "world_height": 1.69
+      }
+     ],
+     "design_width": 1.04,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/slowbro.json",
+     "design_height": 1.69,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/slowbro.json",
+     "model": {
+      "id": "cobblemon:slowbro.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0080_slowbro/slowbro.geo.json",
+      "x": 2.35,
+      "y_top": 2.26,
+      "y_bottom": -0.6,
+      "z": 2.48,
+      "reach": 2.09,
+      "x_min_max_z_min_max": [
+       -1.18,
+       1.18,
+       -0.39,
+       2.09
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 2.09,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.26
+    }
+   ],
+   "design": {
+    "clear_radius": 2.09,
+    "clear_radius_species": "slowbro",
+    "clear_radius_from": "model reach",
+    "clear_height": 6.13,
+    "clear_height_species": "hatterene"
+   },
+   "largest_by_width": {
+    "species": "exeggutor",
+    "width": 1.53,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/exeggutor.json"
+   },
+   "largest_by_height": {
+    "species": "hatterene",
+    "height": 2.8,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation8/hatterene.json"
+   },
+   "largest_model_horizontal": {
+    "species": "exeggutor",
+    "extent": 3.75,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0103_exeggutor/exeggutor.geo.json"
+   },
+   "largest_model_height": {
+    "species": "hatterene",
+    "y_top": 6.13,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0858_hatterene/hatterene.geo.json"
+   }
+  },
+  "gym_07_blaine": {
+   "upstream": "kanto_blaine",
+   "order": 7,
+   "name": "Blaine",
+   "members": [
+    {
+     "species": "arcanine",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/arcanine.json",
+       "width": 1.2,
+       "height": 1.7,
+       "baseScale": 1.1,
+       "world_width": 1.32,
+       "world_height": 1.87
+      },
+      {
+       "archive": "COBBLEVERSE-DP-v31.zip",
+       "path": "data/cobblemon/species/generation1/arcanine.json",
+       "width": 1.2,
+       "height": 1.7,
+       "baseScale": 1.1,
+       "world_width": 1.32,
+       "world_height": 1.87
+      }
+     ],
+     "design_width": 1.32,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/arcanine.json",
+     "design_height": 1.87,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/arcanine.json",
+     "model": {
+      "id": "cobblemon:arcanine.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0059_arcanine/arcanine.geo.json",
+      "x": 1.57,
+      "y_top": 3.4,
+      "y_bottom": -1.1,
+      "z": 3.4,
+      "reach": 2.21,
+      "x_min_max_z_min_max": [
+       -0.79,
+       0.79,
+       -2.21,
+       1.18
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 2.21,
+     "clear_radius_from": "model reach",
+     "clear_height": 3.4
+    },
+    {
+     "species": "charizard",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/charizard.json",
+       "width": 1.5,
+       "height": 2.65,
+       "baseScale": 1.0,
+       "world_width": 1.5,
+       "world_height": 2.65
+      },
+      {
+       "archive": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
+       "path": "data/cobblemon/species/generation1/charizard.json",
+       "width": 1.5,
+       "height": 2.65,
+       "baseScale": 1.0,
+       "world_width": 1.5,
+       "world_height": 2.65
+      }
+     ],
+     "design_width": 1.5,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/charizard.json",
+     "design_height": 2.65,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/charizard.json",
+     "model": {
+      "id": "cobblemon:charizard.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0006_charizard/charizard.geo.json",
+      "x": 3.4,
+      "y_top": 3.35,
+      "y_bottom": -0.0,
+      "z": 4.81,
+      "reach": 4.09,
+      "x_min_max_z_min_max": [
+       -1.7,
+       1.7,
+       -0.72,
+       4.09
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 4.09,
+     "clear_radius_from": "model reach",
+     "clear_height": 3.35
+    },
+    {
+     "species": "magcargo",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation2/magcargo.json",
+       "width": 1.0,
+       "height": 1.3,
+       "baseScale": 0.9,
+       "world_width": 0.9,
+       "world_height": 1.17
+      }
+     ],
+     "design_width": 0.9,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation2/magcargo.json",
+     "design_height": 1.17,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation2/magcargo.json",
+     "model": {
+      "id": "cobblemon:magcargo.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0219_magcargo/magcargo.geo.json",
+      "x": 1.35,
+      "y_top": 1.7,
+      "y_bottom": 0.0,
+      "z": 1.86,
+      "reach": 1.17,
+      "x_min_max_z_min_max": [
+       -0.68,
+       0.68,
+       -0.91,
+       0.95
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.17,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.7
+    },
+    {
+     "species": "magmortar",
+     "tiers": [
+      "challenge",
+      "challenge.rct"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation4/magmortar.json",
+       "width": 1.3,
+       "height": 2.1,
+       "baseScale": 1.175,
+       "world_width": 1.528,
+       "world_height": 2.468
+      }
+     ],
+     "design_width": 1.528,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/magmortar.json",
+     "design_height": 2.468,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/magmortar.json",
+     "model": {
+      "id": "cobblemon:magmortar.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0467_magmortar/magmortar.geo.json",
+      "x": 5.29,
+      "y_top": 3.67,
+      "y_bottom": 0.0,
+      "z": 3.03,
+      "reach": 2.67,
+      "x_min_max_z_min_max": [
+       -2.64,
+       2.64,
+       -0.86,
+       2.16
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 2.67,
+     "clear_radius_from": "model reach",
+     "clear_height": 3.67
+    },
+    {
+     "species": "torkoal",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation3/torkoal.json",
+       "width": 1.15,
+       "height": 1.05,
+       "baseScale": 0.7,
+       "world_width": 0.805,
+       "world_height": 0.735
+      }
+     ],
+     "design_width": 0.805,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/torkoal.json",
+     "design_height": 0.735,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation3/torkoal.json",
+     "model": {
+      "id": "cobblemon:torkoal.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0324_torkoal/torkoal.geo.json",
+      "x": 0.78,
+      "y_top": 0.72,
+      "y_bottom": -0.29,
+      "z": 1.74,
+      "reach": 1.11,
+      "x_min_max_z_min_max": [
+       -0.39,
+       0.39,
+       -1.11,
+       0.64
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.11,
+     "clear_radius_from": "model reach",
+     "clear_height": 0.73
+    },
+    {
+     "species": "typhlosion",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation2/typhlosion.json",
+       "width": 1.35,
+       "height": 2.65,
+       "baseScale": 0.65,
+       "world_width": 0.878,
+       "world_height": 1.722
+      }
+     ],
+     "design_width": 0.878,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation2/typhlosion.json",
+     "design_height": 1.722,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation2/typhlosion.json",
+     "model": {
+      "id": "cobblemon:typhlosion.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0157_typhlosion/typhlosion.geo.json",
+      "x": 1.7,
+      "y_top": 1.35,
+      "y_bottom": -0.33,
+      "z": 2.77,
+      "reach": 2.14,
+      "x_min_max_z_min_max": [
+       -0.85,
+       0.85,
+       -2.13,
+       0.64
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 2.14,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.72
+    }
+   ],
+   "design": {
+    "clear_radius": 4.09,
+    "clear_radius_species": "charizard",
+    "clear_radius_from": "model reach",
+    "clear_height": 3.67,
+    "clear_height_species": "magmortar"
+   },
+   "largest_by_width": {
+    "species": "magmortar",
+    "width": 1.528,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/magmortar.json"
+   },
+   "largest_by_height": {
+    "species": "charizard",
+    "height": 2.65,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/charizard.json"
+   },
+   "largest_model_horizontal": {
+    "species": "magmortar",
+    "extent": 5.29,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0467_magmortar/magmortar.geo.json"
+   },
+   "largest_model_height": {
+    "species": "magmortar",
+    "y_top": 3.67,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0467_magmortar/magmortar.geo.json"
+   }
+  },
+  "gym_08_giovanni": {
+   "upstream": "kanto_giovanni",
+   "order": 8,
+   "name": "Giovanni",
+   "members": [
+    {
+     "species": "hippowdon",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation4/hippowdon.json",
+       "width": 2.2,
+       "height": 1.9,
+       "baseScale": 1.0,
+       "world_width": 2.2,
+       "world_height": 1.9
+      }
+     ],
+     "design_width": 2.2,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/hippowdon.json",
+     "design_height": 1.9,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/hippowdon.json",
+     "model": {
+      "id": "cobblemon:hippowdon.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0450_hippowdon/hippowdon.geo.json",
+      "x": 4.0,
+      "y_top": 2.22,
+      "y_bottom": -0.0,
+      "z": 4.9,
+      "reach": 2.92,
+      "x_min_max_z_min_max": [
+       -2.0,
+       2.0,
+       -2.78,
+       2.13
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 2.92,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.22
+    },
+    {
+     "species": "krookodile",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation5/krookodile.json",
+       "width": 1.75,
+       "height": 2.5,
+       "baseScale": 1.0,
+       "world_width": 1.75,
+       "world_height": 2.5
+      }
+     ],
+     "design_width": 1.75,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation5/krookodile.json",
+     "design_height": 2.5,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation5/krookodile.json",
+     "model": {
+      "id": "cobblemon:krookodile.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0553_krookodile/krookodile.geo.json",
+      "x": 3.38,
+      "y_top": 2.83,
+      "y_bottom": -0.0,
+      "z": 3.42,
+      "reach": 2.18,
+      "x_min_max_z_min_max": [
+       -1.69,
+       1.69,
+       -1.24,
+       2.17
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 2.18,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.83
+    },
+    {
+     "species": "mudsdale",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation7/mudsdale.json",
+       "width": 1.3,
+       "height": 2.6,
+       "baseScale": 1.0,
+       "world_width": 1.3,
+       "world_height": 2.6
+      }
+     ],
+     "design_width": 1.3,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation7/mudsdale.json",
+     "design_height": 2.6,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation7/mudsdale.json",
+     "model": {
+      "id": "cobblemon:mudsdale.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0750_mudsdale/mudsdale.geo.json",
+      "x": 1.47,
+      "y_top": 3.03,
+      "y_bottom": -0.0,
+      "z": 3.14,
+      "reach": 2.11,
+      "x_min_max_z_min_max": [
+       -0.73,
+       0.73,
+       -1.05,
+       2.09
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 2.11,
+     "clear_radius_from": "model reach",
+     "clear_height": 3.03
+    },
+    {
+     "species": "nidoqueen",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/nidoqueen.json",
+       "width": 1.2,
+       "height": 1.6,
+       "baseScale": 1.2,
+       "world_width": 1.44,
+       "world_height": 1.92
+      }
+     ],
+     "design_width": 1.44,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/nidoqueen.json",
+     "design_height": 1.92,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/nidoqueen.json",
+     "model": {
+      "id": "cobblemon:nidoqueen.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0031_nidoqueen/nidoqueen.geo.json",
+      "x": 3.22,
+      "y_top": 2.56,
+      "y_bottom": -0.04,
+      "z": 2.12,
+      "reach": 1.64,
+      "x_min_max_z_min_max": [
+       -1.61,
+       1.61,
+       -0.8,
+       1.32
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.64,
+     "clear_radius_from": "model reach",
+     "clear_height": 2.56
+    },
+    {
+     "species": "persian",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation1/persian.json",
+       "width": 1.0,
+       "height": 1.2,
+       "baseScale": 0.8,
+       "world_width": 0.8,
+       "world_height": 0.96
+      }
+     ],
+     "design_width": 0.8,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/persian.json",
+     "design_height": 0.96,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation1/persian.json",
+     "model": {
+      "id": "cobblemon:persian.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0053_persian/persian.geo.json",
+      "x": 0.78,
+      "y_top": 1.46,
+      "y_bottom": -0.03,
+      "z": 2.23,
+      "reach": 1.73,
+      "x_min_max_z_min_max": [
+       -0.39,
+       0.39,
+       -0.5,
+       1.73
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 1.73,
+     "clear_radius_from": "model reach",
+     "clear_height": 1.46
+    },
+    {
+     "species": "rhyperior",
+     "tiers": [
+      "challenge",
+      "challenge.rct",
+      "normal",
+      "normal.rct",
+      "rct",
+      "team"
+     ],
+     "candidates": [
+      {
+       "archive": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+       "path": "data/cobblemon/species/generation4/rhyperior.json",
+       "width": 1.8,
+       "height": 2.5,
+       "baseScale": 1.1,
+       "world_width": 1.98,
+       "world_height": 2.75
+      }
+     ],
+     "design_width": 1.98,
+     "width_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/rhyperior.json",
+     "design_height": 2.75,
+     "height_from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/rhyperior.json",
+     "model": {
+      "id": "cobblemon:rhyperior_male.geo",
+      "path": "assets/cobblemon/bedrock/pokemon/models/0464_rhyperior/rhyperior_male.geo.json",
+      "x": 6.88,
+      "y_top": 3.78,
+      "y_bottom": 0.08,
+      "z": 5.35,
+      "reach": 3.45,
+      "x_min_max_z_min_max": [
+       -3.43,
+       3.43,
+       -1.99,
+       3.34
+      ],
+      "note": "bind pose, cubes only, times the largest baseScale; approximate. reach = the farthest any cube corner lies from the entity's origin, horizontally: the radius it sweeps turning on the spot"
+     },
+     "clear_radius": 3.45,
+     "clear_radius_from": "model reach",
+     "clear_height": 3.78
+    }
+   ],
+   "design": {
+    "clear_radius": 3.45,
+    "clear_radius_species": "rhyperior",
+    "clear_radius_from": "model reach",
+    "clear_height": 3.78,
+    "clear_height_species": "rhyperior"
+   },
+   "largest_by_width": {
+    "species": "hippowdon",
+    "width": 2.2,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/hippowdon.json"
+   },
+   "largest_by_height": {
+    "species": "rhyperior",
+    "height": 2.75,
+    "from": "Cobblemon-fabric-1.8.0+1.21.1.jar data/cobblemon/species/generation4/rhyperior.json"
+   },
+   "largest_model_horizontal": {
+    "species": "rhyperior",
+    "extent": 6.88,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0464_rhyperior/rhyperior_male.geo.json"
+   },
+   "largest_model_height": {
+    "species": "rhyperior",
+    "y_top": 3.78,
+    "from": "assets/cobblemon/bedrock/pokemon/models/0464_rhyperior/rhyperior_male.geo.json"
+   }
+  }
+ }
+}
