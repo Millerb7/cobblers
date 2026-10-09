@@ -2,6 +2,7 @@
   "schema": "gym_building/1",
   "id": "gym4",
   "status": "authored 2026-09-29; file-valid only. Nothing here has been seen in a running game.",
+  "superseded_by": "data/gym_arenas/gym4.json (schema gym_hall/1, the walk-through Great Glasshouse and Root Court, 2026-10-09). This record is kept as the record of what stood: tools/gym_buildings.py no longer emits its function and R16G no longer runs it; the hall's own first part clears every cell of these bounds, and its read-back probes the old glasshouse's air. Its model is still read (tools/gym_arenas.py's takedown coverage check).",
   "settlement": "gym4_town",
   "supersedes_donor": "gym4_gym_building",
   "supersedes_why": "the COBBLEVERSE donor shell (27x23, one oval room, no second storey) is taken down by tools/gym_demolish.py and this glasshouse is built on its lot. docs/world-building/GYM_BUILDINGS_BRIEF.md: the owner rejected a shaft into a cave under the shell and asked for a large building with the puzzle inside it.",

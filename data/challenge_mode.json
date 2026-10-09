@@ -56,7 +56,7 @@
       "advancement": "cobbleverse:trainer/kanto/defeat_erika",
       "upstream_mob": {"type": "kanto", "signatureItem": "lumymon:nature_fan", "maxTrainerWins": -1, "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0, "biomeTagBlacklist": ["is_void", "is_underground", "is_nether", "is_end"], "biomeTagWhitelist": ["cobbleverse:flower_forest"]},
       "upstream_required": ["kanto_ltsurge"],
-      "spawner": {"at": [4309, 98, 1514], "measured_by": "gym_buildings", "why": "two west of Erika's spawner in her arena, the seat (4311, 98, 1514) on the dais (data/gym_arenas/gym4.json, The Root Court): cherry planks over mud bricks, flush on four sides, air over it. Moved here from the hall cell (4306, 110, 1480), which R16GA puts back to the building's moss over stone (gym4.json challenge_spawner)"}
+      "spawner": {"at": [4308, 112, 1474], "measured_by": "gym_arenas", "why": "two west of Erika's seat (4310, 112, 1474) in the bench top of the walk-through Great Glasshouse and Root Court (data/gym_arenas/gym4.json, schema gym_hall/1, 2026-10-09): cherry planks over mud bricks, flush on four sides, air over it, clear of the bench's roots (x4307 and x4313 at z1474) and its lanterns (y113 at z1475). Outside the old building's bounds (z1475 is its north edge) on purpose, so it is not read as a replaced seat.", "superseded_at": [4309, 98, 1514], "superseded_why": "the Challenge spawner of the carved Root Court (2026-10-08), two west of that court's seat (4311, 98, 1514): cherry planks over mud bricks. The hall's takedown fills the old court at y92..106 with stone (gym4_takedown), which removes it; R17L retires the Challenge copy only for a rollout boss."}
     },
     "kanto_koga": {
       "lang": "koga",
