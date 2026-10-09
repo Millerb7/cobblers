@@ -1101,18 +1101,42 @@ def cart_files(m):
         if rail is None:
             raise MineError("cart at (%d, %d) stands on no rail" % (x, z))
         carts.append(rail)
+    return cart_functions(carts), carts
+
+
+CARTS_FN = "%s:%s/carts" % (NS, FOLDER)
+CARTS_HOLDER = "rift_mines_carts"       # tools/reapply.py R9M reads the count back from #rift_mines_carts cobblers_chunk_look
+
+
+def cart_functions(carts):
+    """{name under rift_mines/: lines}: the mine carts, entities an export erases, through tools/chunk_look.py's
+    look-then-act chain. Until 2026-10-08 `carts` force-loaded and `carts_go` killed and summoned 60 ticks on: a
+    re-run whose chunks' saved carts came later than that killed nothing and doubled them (N155, measured for R17M's
+    stall merchants on staging that day). The carts lie in several chunks, so the chain holds each cart's chunk and
+    its look requires a cart in EVERY one of them (all_shown), or acts blind after 300 ticks (a fresh export); then
+    it kills the camp's carts, summons each once with cobblers_rift_mines_new, and 100 ticks on kills every cart of the
+    camp without it (the act's own kill scope, for one that came late) and counts them. carts: [(x, y, z)] rail blocks."""
+    import chunk_look as CL
+    new = TAG + "_new"
+    kind = "type=minecraft:minecart,tag=%s" % TAG
     chunks = sorted({(x >> 4, z >> 4) for x, _y, z in carts})
-    add = ["forceload add %d %d" % (cx * 16, cz * 16) for cx, cz in chunks]
-    rem = ["forceload remove %d %d" % (cx * 16, cz * 16) for cx, cz in chunks]
-    head = ["# the mine carts (tools/rift_mines.py): entities, so an export erases them; their chunks are force-loaded",
-            "# here and they are summoned 60 ticks on, when the chunks are ready (the Rift's fx pattern)"] + add + [
-        "schedule function %s:%s/carts_go 60t replace" % (NS, FOLDER)]
-    go = ["# chunks-loaded-by: %s:%s/carts" % (NS, FOLDER),
-          "kill @e[type=minecraft:minecart,tag=%s]" % TAG]
-    for x, y, z in carts:
-        go.append("summon minecraft:minecart %.1f %d %.1f {Tags:[\"%s\"],Invulnerable:1b}" % (x + 0.5, y, z + 0.5, TAG))
-    go += rem
-    return head, go, carts
+    vol = ["%s,x=%d,y=-64,z=%d,dx=15,dy=704,dz=15" % (kind, cx * 16, cz * 16) for cx, cz in chunks]
+    act = ["# %d carts: the camp's carts, then one on each rail" % len(carts), "kill @e[%s]" % kind]
+    act += ["summon minecraft:minecart %.1f %d %.1f {Tags:[\"%s\",\"%s\"],Invulnerable:1b}" % (x + 0.5, y, z + 0.5, TAG, new)
+            for x, y, z in carts]
+    fns = CL.chain(CARTS_FN, [(cx * 16, cz * 16, cx * 16 + 15, cz * 16 + 15) for cx, cz in chunks],
+                   ["@e[%s]" % v for v in vol], act, [kind], new, kind, CARTS_HOLDER, note="tools/rift_mines.py",
+                   all_shown=True)
+    pre = "%s:%s/" % (NS, FOLDER)
+    return {ref[len(pre):]: lines for ref, lines in fns.items()}
+
+
+def cart_steps(spec=None):
+    """tools/reapply.py R9M's cart actions: start the chain, wait for all of it, read the count back (one cart for each
+    data/rift_mines.json town.carts entry). Run after the block functions, which each release their own chunks."""
+    import chunk_look as CL
+    spec = spec or json.loads(SPEC.read_text(encoding="utf-8"))
+    return CL.steps(CARTS_FN, CARTS_HOLDER, len(spec["town"]["carts"]), "the Rift dig camp's mine carts")
 
 
 def write_blocks(out, lns, passes, title, desc):
@@ -1167,9 +1191,12 @@ def write(m, lns):
     bt.mkdir(parents=True)
     t = m.spec["mine"]["tease"]
     (bt / ("%s.json" % t["resettable_tag"])).write_text(json.dumps({"values": t["resettable"]}, indent=2) + "\n", encoding="utf-8")
-    head, go, carts = cart_files(m)
-    (fn / "carts.mcfunction").write_text("\n".join(head) + "\n", encoding="utf-8")
-    (fn / "carts_go.mcfunction").write_text("\n".join(go) + "\n", encoding="utf-8")
+    cfns, carts = cart_files(m)
+    for name, body in cfns.items():
+        bad = FL.check_lines(body, name)
+        if bad:
+            raise MineError("function %s would be refused: %s" % (name, bad[:3]))
+        (fn / (name + ".mcfunction")).write_text("\n".join(body) + "\n", encoding="utf-8")
     return order, carts
 
 

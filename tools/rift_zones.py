@@ -1767,6 +1767,59 @@ def gates_of(zid, z):
     return out
 
 
+GUARD_TAG = "cobblers_rift_guard"
+GUARDS_FN = "%s:%s/guards" % (NS, FOLDER)
+GUARDS_HOLDER = "rift_guards"           # tools/reapply.py R9Z reads the count back from #rift_guards cobblers_chunk_look
+CHUNK_SPAN = "y=-64,dy=704"             # a whole chunk column, to the raised build limit (y575 measured 2026-10-02)
+
+
+def _chunk_volume(x, z):
+    return "x=%d,%s,z=%d,dx=15,dz=15" % (x >> 4 << 4, CHUNK_SPAN, z >> 4 << 4)
+
+
+def guard_functions(guards):
+    """{name under rift_zones/: lines}: the guards' placeholders through tools/chunk_look.py's look-then-act chain.
+
+    guards: [(gate name, guard id, x, y, z, custom name)], one per gate R9Z builds. The guards stand far apart, so
+    the chain holds each guard's chunk (a list of boxes) and its look requires a guard stand in EVERY one of those
+    chunks (all_shown): one chunk's saved stands arriving says nothing about another's. Then, once, it kills the
+    stands on each guard's block and summons each guard with cobblers_rift_guard_new; 100 ticks on it kills, on each
+    block where a new one stands, every other guard stand, and counts the guard stands into #rift_guards. A first run
+    (nothing saved) acts blind after 300 ticks. No guard (every zone held): no function at all."""
+    import chunk_look as CL
+    if not guards:
+        return {}
+    new = GUARD_TAG + "_new"
+    kind = "type=minecraft:armor_stand,tag=%s" % GUARD_TAG
+    block = lambda x, y, z: "%s,x=%d,y=%d,z=%d,dx=0,dy=1,dz=0" % (kind, x, y, z)
+    chunks = sorted({(x >> 4, z >> 4) for _g, _i, x, _y, z, _n in guards})
+    act = ["# %d guard placeholders: the stands on each guard's block, then one of each" % len(guards)]
+    act += ["kill @e[%s]" % block(x, y, z) for _g, _i, x, y, z, _n in guards]
+    act += ["summon minecraft:armor_stand %d %d %d {Invulnerable:1b,NoGravity:1b,CustomNameVisible:1b,"
+            "CustomName:'%s',Tags:[\"%s\",\"%s\",\"%s\"]}" % (x, y, z, name, GUARD_TAG, gname, new)
+            for gname, _i, x, y, z, name in guards]
+    fns = CL.chain(GUARDS_FN, [(cx * 16, cz * 16, cx * 16 + 15, cz * 16 + 15) for cx, cz in chunks],
+                   ["@e[%s,%s]" % (kind, _chunk_volume(cx * 16, cz * 16)) for cx, cz in chunks], act,
+                   [block(x, y, z) for _g, _i, x, y, z, _n in guards], new, kind, GUARDS_HOLDER,
+                   note="tools/rift_zones.py", all_shown=True)
+    pre = "%s:%s/" % (NS, FOLDER)
+    return {ref[len(pre):]: lines for ref, lines in fns.items()}
+
+
+def guard_count(spec):
+    """The placeholders the chain must leave standing: one per gate of every live zone R9Z builds (not held)."""
+    held = held_zones(spec)
+    return sum(len(gates_of(zid, z)) for zid, z in spec["zones"].items()
+               if not str(z.get("status", "")).startswith("SUPERSEDED") and zid not in held)
+
+
+def guard_steps(spec):
+    """tools/reapply.py R9Z's guard actions: start the chain, wait for all of it, read the count back."""
+    import chunk_look as CL
+    n = guard_count(spec)
+    return CL.steps(GUARDS_FN, GUARDS_HOLDER, n, "the Rift's guard placeholders") if n else []
+
+
 def sel_box(b):
     """The selector arguments for a [x0, y0, z0, x1, y1, z1] block box: dx/dy/dz are SPANS, so a one-block
     column is dx=0, and the volume test covers whole blocks x0..x1."""
@@ -2435,32 +2488,14 @@ def cmd_build(a):
             fn[name] = gl
             index.append(name)
 
-    # The guards' placeholders, one per gate of every zone that can grant, in tools/traders.py's pattern
-    # (data/gulch_mine.json's Cutters use it too): force-load each guard's chunk, wait 40 ticks for the entities
-    # already saved there to load, summon a fresh one tagged _new, and 100 ticks on keep it and kill every other
-    # guard placeholder on that block. In the gatehouse function itself a kill could not see them -- entities
-    # load after their chunk, so a kill in the tick of the forceload finds nothing -- and the step is re-run over
-    # a world that has them already (staging, 2026-10-01; the Victory Road descent post's block holds G2's old
-    # stand, from before G2 moved to the trailhead, under another tag). R9Z runs `guards` after the shells.
-    new = "cobblers_rift_guard_new"
-    fn["guards"] = ["# the guards' placeholders (tools/rift_zones.py): force-load, wait for saved entities, summon,"
-                    "# then keep one per guard block"]
-    fn["guards_place"] = ["# chunks-loaded-by: %s/guards" % F]
-    fn["guards_done"] = ["# chunks-loaded-by: %s/guards" % F]
-    for (gname, gid, x, y, z_) in guards:
-        fn["guards"].append("forceload add %d %d %d %d" % (x, z_, x, z_))
-        fn["guards_place"].append(
-            "summon minecraft:armor_stand %d %d %d {Invulnerable:1b,NoGravity:1b,CustomNameVisible:1b,"
-            "CustomName:'%s',Tags:[\"cobblers_rift_guard\",\"%s\",\"%s\"]}"
-            % (x, y, z_, text("%s (placeholder)" % gid), gname, new))
-        fn["guards_done"].append(
-            "execute if entity @e[type=minecraft:armor_stand,tag=%s,x=%d,y=%d,z=%d,dx=0,dy=1,dz=0] run kill "
-            "@e[type=minecraft:armor_stand,tag=cobblers_rift_guard,tag=!%s,x=%d,y=%d,z=%d,dx=0,dy=1,dz=0]"
-            % (new, x, y, z_, new, x, y, z_))
-    fn["guards"].append("schedule function %s/guards_place 40t replace" % F)
-    fn["guards_place"].append("schedule function %s/guards_done 100t replace" % F)
-    fn["guards_done"].append("tag @e[type=minecraft:armor_stand,tag=%s] remove %s" % (new, new))
-    fn["guards_done"] += ["forceload remove %d %d %d %d" % (x, z_, x, z_) for (_n, _g, x, _y, z_) in guards]
+    # The guards' placeholders, one per gate of every zone that can grant: R9Z runs `guards` after the shells. In
+    # the gatehouse function itself a kill could not see them -- entities load after their chunk, so a kill in the
+    # tick of the forceload finds nothing -- and the step is re-run over a world that has them already (staging,
+    # 2026-10-01; the Victory Road descent post's block holds G2's old stand, from before G2 moved to the trailhead,
+    # under another tag). Until 2026-10-08 this waited a fixed 40 ticks (tools/traders.py's pattern), the wait that
+    # let R17M's stall merchants double on staging that day (N155); now tools/chunk_look.py's look-then-act chain.
+    fn.update(guard_functions([(gname, gid, x, y, z_, text("%s (placeholder)" % gid))
+                               for (gname, gid, x, y, z_) in guards]))
 
     out = PACKS / PACK
     # the pack is rebuilt from nothing. This loop used to be a no-op, so a file the data no longer produces --

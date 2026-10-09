@@ -284,8 +284,12 @@ def test_reapply_runs_the_pack_as_r9m_between_the_caves_and_the_habitat_blocks(m
     assert ids.index("R9C") < ids.index("R9M") < ids.index("R9E")
     assert ids.index("R9") < ids.index("R9M") < ids.index("R16")
     acts = next(s for s in reapply.steps() if s[0] == "R9M")[2]
+    # the carts are a look-then-act chain since 2026-10-08 (N155): started, waited for whole, counted back
+    import chunk_look as CL
+    ncarts = len(json.loads((ROOT / "data" / "rift_mines.json").read_text(encoding="utf-8"))["town"]["carts"])
     assert acts == [("fn", "cobblers:rift_mines/%s" % f) for f in listed["cobblers_rift_mines"]] + \
-        [("fn", "cobblers:rift_mines/carts"), ("wait", 5)]
+        [("fn", "cobblers:rift_mines/carts"), ("wait", CL.STEP_SECONDS),
+         ("check", ("chunk_look", "rift_mines_carts", ncarts, "the Rift dig camp's mine carts"))]
 
 
 # Without it the pack's ward and daily face (which act on their own) are installed where every world loads them, or the

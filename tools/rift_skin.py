@@ -974,6 +974,77 @@ def settle_checks(plan):
     return moved
 
 
+FX_TAG = "rift_fx_all"           # R1's trailhead placeholders (and the pre-2026-10-05 sheets, which also carry it)
+FX_FN = "cobblers:rift/fx"
+FX_HOLDER = "rift_fx"            # tools/reapply.py check rift_fx reads #rift_fx cobblers_chunk_look
+SHEETS_FN = "cobblers:rift/sheets"
+SHEETS_HOLDER = "rift_sheets"    # tools/reapply.py check rift_sheets reads #rift_sheets cobblers_chunk_look
+SPAN = "y=-64,dy=704"            # a whole chunk column, to the raised build limit (y575, measured 2026-10-02)
+
+
+def _summon_xz(line):
+    t = line.split()
+    return float(t[2]), float(t[4])
+
+
+def _with_tag(line, tag):
+    """The summon with one more tag at the end of its Tags list (which must end the command)."""
+    if not line.endswith('"]}'):
+        raise SkinError("summon does not end in its Tags list, so it cannot carry %s: %s" % (tag, line[:90]))
+    return line[:-2] + ',"%s"]}' % tag
+
+
+def _chunks(points):
+    return sorted({(math.floor(x) >> 4, math.floor(z) >> 4) for x, z in points})
+
+
+def _rel(fns):
+    return {ref[len("cobblers:rift/"):]: lines for ref, lines in fns.items()}
+
+
+def fx_functions(entities):
+    """{name under rift/: lines}: R1's entities (the trailhead guards' placeholders) through tools/chunk_look.py's
+    look-then-act chain. Until 2026-10-08 `fx` force-loaded and `fx_go` killed by tag, summoned and counted a fixed
+    60 ticks on: where a chunk's saved stands came later the kill missed them and the summon doubled them (N155,
+    measured for R17M's stall merchants on staging that day). The trailheads lie all round the Rift, so the chain holds
+    the same 3x3 chunks round each one as before and its look requires a stand in EVERY trailhead's chunk (all_shown),
+    or acts blind after 300 ticks (a fresh export). It then kills by tag whatever the type, summons each with
+    rift_fx_all_new, and 100 ticks on kills every rift_fx_all entity without it (the act's own scope, for one that came
+    late) and counts them into #rift_fx."""
+    import chunk_look as CL
+    chunks = _chunks(_summon_xz(e) for e in entities)
+    new = FX_TAG + "_new"
+    act = ["# %d trailhead placeholders: every %s entity, then one of each" % (len(entities), FX_TAG),
+           "kill @e[tag=%s]" % FX_TAG] + [_with_tag(e, new) for e in entities]
+    return _rel(CL.chain(FX_FN, [(cx * 16 - 16, cz * 16 - 16, cx * 16 + 31, cz * 16 + 31) for cx, cz in chunks],
+                         ["@e[tag=%s,x=%d,%s,z=%d,dx=15,dz=15]" % (FX_TAG, cx * 16, SPAN, cz * 16) for cx, cz in chunks],
+                         act, ["tag=%s" % FX_TAG], new, "tag=%s" % FX_TAG, FX_HOLDER, note="tools/rift_skin.py",
+                         all_shown=True))
+
+
+def sheet_functions(sheet_lines, sheet_entities, points, ps):
+    """{name under rift/: lines}: R1S, the portal sheets, through tools/chunk_look.py's look-then-act chain (N155; the
+    same fault and fix as fx_functions). The chain holds the 3x3 chunks round every point the step touches (the old
+    slots, the tears, the panels), looks for a sheet in EVERY sheet's chunk (or blind), then kills every sheet (old ones
+    carry rift_fx and rift_fx_all, new ones rift_fx and rift_sheet; only block_displays, so the trailhead stands that
+    also carry rift_fx stay), puts back the old slots, seals and carves (block lines, held by the chain), summons each
+    sheet with rift_fx_new, and 100 ticks on kills every rift_fx block_display without it and counts them into
+    #rift_sheets. The new sheets do NOT carry rift_fx_all, so re-running R1's fx leaves them."""
+    import chunk_look as CL
+    boxes = [(bx * 16 - 16, bz * 16 - 16, bx * 16 + 31, bz * 16 + 31) for bx, bz in _chunks(points)]
+    probs = FL.check_lines(["forceload add %d %d %d %d" % b for b in boxes] + list(sheet_lines), "sheets_act")
+    if probs:
+        raise SkinError("the sheets step would be refused: %s" % probs[:3])
+    kind = "type=minecraft:block_display,tag=%s" % ps["tag"]
+    new = ps["tag"] + "_new"
+    sites = _chunks(_summon_xz(e) for e in sheet_entities)
+    act = (["# %d portal sheets: every sheet, the old slots back, seal and carve, then one of each" % len(sheet_entities),
+            "kill @e[%s]" % kind] + list(sheet_lines) + [_with_tag(e, new) for e in sheet_entities])
+    return _rel(CL.chain(SHEETS_FN, boxes,
+                         ["@e[%s,x=%d,%s,z=%d,dx=15,dz=15]" % (kind, cx * 16, SPAN, cz * 16) for cx, cz in sites],
+                         act, [kind], new, kind, SHEETS_HOLDER, note="tools/rift_skin.py", all_shown=True))
+
+
 def write(plan):
     """Emit the datapacks: the blocks in order, the biome, and the entity lifecycle."""
     import shutil
@@ -1047,49 +1118,18 @@ def write(plan):
             (bfn / (name + ".mcfunction")).write_text("\n".join(lines) + "\n", encoding="utf-8")
             border.append(name)
 
-    # the entities: force-load, wait, kill by tag, summon, count
-    tag = "rift_fx_all"
-    xs = [int(e.split()[2].split(".")[0]) for e in plan.entities]
-    zs = [int(e.split()[4].split(".")[0]) for e in plan.entities]
-    fx = ["# Generated by tools/rift_skin.py: the Rift's entities"]
-    boxes = sorted({(x >> 4 << 4, z >> 4 << 4) for x, z in zip(xs, zs)})
-    for bx, bz in boxes:
-        fx.append("forceload add %d %d %d %d" % (bx - 16, bz - 16, bx + 31, bz + 31))
-    fx.append("schedule function cobblers:rift/fx_go 60t replace")
-    (fn / "fx.mcfunction").write_text("\n".join(fx) + "\n", encoding="utf-8")
-    # kill by tag only, whatever the entity type, so a re-run never stacks a guard on a guard; then count what
-    # is actually there, which is what the audit reads
-    go = ["# Generated by tools/rift_skin.py",
-          "scoreboard objectives add cobblers.rift_fx dummy",
-          "kill @e[tag=%s]" % tag] + plan.entities + [
-        "execute store result score #%s cobblers.rift_fx if entity @e[tag=%s]" % (tag, tag)]
-    for bx, bz in boxes:
-        go.append("forceload remove %d %d %d %d" % (bx - 16, bz - 16, bx + 31, bz + 31))
-    (fn / "fx_go.mcfunction").write_text("\n".join(go) + "\n", encoding="utf-8")
-
-    # the portal sheets, their own step (R1S): force-load every chunk they or the old slots touch, wait for the
-    # entities to load, then kill every sheet (the old ones carry rift_fx and rift_fx_all, the new rift_fx and
-    # rift_sheet; only block_displays, so the trailhead stands that also carry rift_fx stay), put back the old slots,
-    # seal and carve, summon, count. The new sheets do NOT carry rift_fx_all, so re-running R1's fx_go leaves them.
+    # the entities (R1's trailhead placeholders) and the portal sheets (R1S): each a look-then-act chain
+    # (tools/chunk_look.py, N155), written under rift/
     ps = spec["portal_sheets"]
+    tag = FX_TAG
     pts = [(x, z) for x, z, _ in plan.old_slots] + [(c[0], c[2]) for s_ in plan.sheet_sites for c in s_["tear"]] \
         + [(c[0], c[2]) for s_ in plan.sheet_sites for c in sheet_panel(s_)]
-    sboxes = sorted({(x >> 4 << 4, z >> 4 << 4) for x, z in pts})
-    hold = ["forceload add %d %d %d %d" % (bx - 16, bz - 16, bx + 31, bz + 31) for bx, bz in sboxes]
-    probs = FL.check_lines(hold + plan.sheet_lines, "sheets_go")
-    if probs:
-        raise SkinError("the sheets step would be refused: %s" % probs[:3])
-    (fn / "sheets.mcfunction").write_text("\n".join(
-        ["# Generated by tools/rift_skin.py: the Rift's portal sheets (re-apply step R1S)"] + hold
-        + ["schedule function cobblers:rift/sheets_go 60t replace"]) + "\n", encoding="utf-8")
-    sg = ["# Generated by tools/rift_skin.py",
-          "# chunks-loaded-by: cobblers:rift/sheets (its forceload of every sheet box, checked above with these lines)",
-          "scoreboard objectives add cobblers.rift_fx dummy",
-          "kill @e[type=minecraft:block_display,tag=%s]" % ps["tag"]] + plan.sheet_lines + plan.sheet_entities + [
-        "execute store result score #%s cobblers.rift_fx if entity @e[type=minecraft:block_display,tag=%s]"
-        % (ps["sheet_tag"], ps["tag"])]
-    sg += ["forceload remove %d %d %d %d" % (bx - 16, bz - 16, bx + 31, bz + 31) for bx, bz in sboxes]
-    (fn / "sheets_go.mcfunction").write_text("\n".join(sg) + "\n", encoding="utf-8")
+    for name, body in list(fx_functions(plan.entities).items()) + list(
+            sheet_functions(plan.sheet_lines, plan.sheet_entities, pts, ps).items()):
+        probs = FL.check_lines(body, name)
+        if probs:
+            raise SkinError("function rift/%s would be refused: %s" % (name, probs[:3]))
+        (fn / (name + ".mcfunction")).write_text("\n".join(body) + "\n", encoding="utf-8")
 
     (fn / "index.txt").write_text("\n".join(order) + "\n", encoding="utf-8")
     (bfn / "index.txt").write_text("\n".join(border) + "\n", encoding="utf-8")

@@ -11,6 +11,8 @@ arrive later, so a kill in the same tick as the forceload misses them and the su
   gate      the function that summons is never the entry nor called from it; it is called only behind a score flag that
             is set only by a look that saw an entity with the site's tag, or by a look counter run out; the counter
             and flag are reset in the entry; the blind case comes no sooner than BLIND_MIN ticks after the forceload
+  sites     (given sites, for a chain over several far apart: the Rift's) every site's chunk is held and one look
+            requires an entity in each of them, since two chunks' saved entities do not arrive together
   order     the summoning function kills the site's tagged displays before its first summon
   once      every summon carries the site's tag and its `<tag>_new` tag; the end kills, where a new one stands, every
             tagged display without the new tag, drops the new tag, and stores a count of the tagged displays
@@ -73,8 +75,9 @@ def _tags(body):
     return [a[4:] for a in body.split(",") if a.startswith("tag=")]
 
 
-def problems(pack, entry, tag, label=None):
-    """[problem] for the chain at `entry` re-summoning displays tagged `tag`."""
+def problems(pack, entry, tag, label=None, sites=None):
+    """[problem] for the chain at `entry` re-summoning displays tagged `tag`. `sites`: [(x, z)] the caller's own data
+    says the chain serves, when it serves several far apart (sites below)."""
     label = label or entry
     fns, missing = read_chain(pack, entry)
     out = ["%s: %s is called but not in the pack" % (label, m) for m in missing]
@@ -139,14 +142,19 @@ def problems(pack, entry, tag, label=None):
     if not callers:
         out.append("%s: nothing calls %s" % (label, act))
     looks = {ref for ref, _c in callers}
+    looked = []                 # per look line: the chunks its `if entity` selectors look in
     for flag, obj in flags:
         setters = [(ref, c) for ref, cmds in fns.items() for c in cmds
                    if re.search(r"scoreboard players set %s %s 1$" % (re.escape(flag), re.escape(obj)), c)]
         counter = None
         for ref, c in setters:
-            seen = re.match(r"execute (?:if score \S+ \S+ matches 0 )?if entity @e\[([^\]]*)\] run ", c)
+            # one look may require several sites at once (`if entity A if entity B ...`): every one must be the site's
+            seen = re.match(r"execute (?:if score \S+ \S+ matches 0 )?((?:if entity @e\[[^\]]*\] )+)run ", c)
             blind = re.match(r"execute (?:if score \S+ \S+ matches 0 )?if score (\S+) %s matches \.\.0 run " % re.escape(obj), c)
-            if seen and tag in _tags(seen.group(1)):
+            if seen and all(tag in _tags(b) for b in re.findall(r"@e\[([^\]]*)\]", seen.group(1))):
+                looked.append({(int(float(a["x"]) // 1) >> 4, int(float(a["z"]) // 1) >> 4)
+                               for b in re.findall(r"@e\[([^\]]*)\]", seen.group(1)) for a in [_args(b)]
+                               if "x" in a and "z" in a})
                 continue
             if blind:
                 counter = blind.group(1)
@@ -167,6 +175,17 @@ def problems(pack, entry, tag, label=None):
         elif first[0] + (polls[0] - 1) * again[0] < BLIND_MIN:
             out.append("%s: acts blind %d ticks after the forceload, under %d" % (label, first[0] + (polls[0] - 1) * again[0],
                                                                                   BLIND_MIN))
+
+    # sites (a chain serving several sites far apart): each site's chunk is held, and ONE look requires an entity in
+    # every one of them. Two chunks' saved entities do not arrive together, so a look that acts on any one site
+    # kills nothing at a site whose entities are still out and the summon doubles them there
+    if sites:
+        want = {(int(x // 1) >> 4, int(z // 1) >> 4) for x, z in sites}
+        if want - added:
+            out.append("%s: site chunk(s) %s are not force-loaded by the entry" % (label, sorted(want - added)))
+        if not any(want <= c for c in looked):
+            out.append("%s: no one look requires an entity in every site's chunk %s (looks see %s): it acts on one "
+                       "site's entities while another's may still be out" % (label, sorted(want), [sorted(c) for c in looked]))
 
     # order
     first_summon = next(i for i, c in enumerate(fns[act]) if SUMMON.search(c))
