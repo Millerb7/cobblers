@@ -2664,6 +2664,16 @@
       "why": "the dialogue cursor of Wren Moss at Coldwater Station (data/coldwater_station.json, tools/coldwater_station.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
     },
     {
+      "id": "quest.ice_lodge.keeper_cursor",
+      "quest_id": "ice_lodge",
+      "field": "keeper_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_ice_lodge_keeper",
+      "why": "the dialogue cursor of Ketil Aune, the holekeeper of the Merian Ice Lodge (data/ice_lodge.json, tools/ice_lodge.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing. Per player, so two players at the tarn read their own."
+    },
+    {
       "id": "quest.ambient_ursaluna_den.watcher_cursor",
       "quest_id": "ambient_ursaluna_den",
       "field": "watcher_cursor",
