@@ -20,9 +20,11 @@ THE SEAT. A leader's seat is authored in exactly one place: data/gym_arenas/<gym
 exists for that gym; before that, the building's leader.spawner (data/gym_buildings) or Misty's template spawner
 (data/gym_interiors.json expect_spawner_at). leader_seats() below is the one reader every consumer uses
 (tools/challenge_mode.py normal_seat, tools/route_trainers.py leader_cycle_lines, tools/trainer_world_audit.py,
-tools/nuzlocke_map.py). The building keeps placing its spawner in the hall (R16G is unchanged and so are its
-audits); the arena step R16GA then MOVES it: the new spawner in the arena, the old cell back to its floor, any
-leader standing in the building removed. A building spawner is therefore only ever the arena's starting point.
+tools/nuzlocke_map.py). The building keeps placing its spawner in the hall (tools/gym_buildings.py and its
+audits are unchanged); the arena step R16GA then MOVES it: the new spawner in the arena, the old cell back to its
+floor, any leader standing in the building removed. R16G also runs each seat move straight after the buildings,
+so `--only R16G` never leaves a leader two spawners; the move waits until its arena stands. A building spawner is
+therefore only ever the arena's starting point.
 
 WHAT THIS TOOL REFUSES TO WRITE, each derived in docs/world-building/GYM_ARENAS.md "Design rules":
   bounds        every write inside the record's bounds or a declared through_building box; the arena's x/z inside

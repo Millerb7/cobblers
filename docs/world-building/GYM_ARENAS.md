@@ -205,7 +205,11 @@ so on a world without the arena it does nothing.
 (1830, 155, 3696) still works: it is measured from the building's model, which still has the hall spawner; its
 player guard widens to reach + the 45.5 between the old second spawner and the new seat; its keep-the-nearest
 pass now looks round the arena seat. `single_leader_verify` checks the spawner at the arena seat. Order: R16GA
-(after R16G) runs before R17L. **Good: the move is built.**
+(after R16G) runs before R17L. One consequence, and it is the safe side: Brock now stands 45.5 from his retired
+cell, outside the retire's kill radius (24), so no R17L kill can reach the one leader at all; the audit mutation
+that proved the keep (`retire_keeps_nobody`) has no leader to bite on and xfails while no rollout boss stands
+inside that radius (read from the data: it bites again when the rollout grows to a seat that did not move).
+**Good: the move is built.**
 
 **The other seven (not in the rollout).** Each keeps a SECOND, Challenge spawner, set by the trainers cycle at
 `data/challenge_mode.json bosses.<id>.spawner.at` (two from the hall seat) whenever a player is within 48. When
@@ -227,8 +231,10 @@ reaching the arena); `tools/challenge_mode.py restore_blocks` (the second spawne
 INPUT only: `tools/challenge_mode_audit.py` (an independent audit) replays each building's emitted text, and now
 also each arena's emitted seat move after it, read as the world it leaves with nobody near, so its Normal spawner
 is where the apply leaves it; its checks are untouched. `tests/test_one_leader_swap.py` reads Brock's seat
-through `leader_seats()` instead of the building record. Both are another agent's; their owners should re-read
-the change. The badge flags and the rematch guard key on `kanto_brock` wherever he stands, so neither moves.
+through `leader_seats()` instead of the building record; `tests/test_one_leader_retire_independent.py` counts a
+leader moved into an arena as moved, as it already counted Lance's `single_leader.move`;
+`tests/test_challenge_mode_audit.py` xfails `retire_keeps_nobody` as above. All are another agent's; their owners
+should re-read the change. The badge flags and the rematch guard key on `kanto_brock` wherever he stands, so neither moves.
 
 ## Not verified
 
