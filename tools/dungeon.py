@@ -48,6 +48,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import chunk_look  # noqa: E402  (entity work after a forceload: look, then act)
+import dungeon_rooms as DR  # noqa: E402  (a dungeon with `rooms`: the room kit, docs/mechanics/DUNGEON_ROOMS.md)
 import function_limits  # noqa: E402
 import levelcap_pack as LC  # noqa: E402  (the NPC-battle cap check and its tag, as Heaven's Arena uses them)
 import portals  # noqa: E402  (the click advancement, EXP-034)
@@ -218,7 +219,9 @@ def first(segs, kind):
 
 
 def points(doc, slot):
-    """The slot's named points and boxes, all derived from the layout."""
+    """The slot's named points and boxes, all derived from the layout (or, for a dungeon with `rooms`, the room plan)."""
+    if DR.has_rooms(slot["dungeon"]):
+        return DR.points(doc, slot)
     fy = doc["engine"]["pocket"]["floor_y"]
     cz = slot["cz"]
     segs = layout(doc, slot)
@@ -348,6 +351,8 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
                                                                                          w["town"], w["position"]))
         segs = pt["segs"]
         kinds = [g["kind"] for g in segs]
+        if DR.has_rooms(sl["dungeon"]):
+            continue        # a dungeon with rooms: the room kit's own checks run once below (DR.problems)
         for need in ("entry_room", "boss_arena", "exit_room"):
             if kinds.count(need) != 1:
                 bad.append("%s: the spine needs exactly one %s (has %d)" % (label, need, kinds.count(need)))
@@ -358,6 +363,7 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
                 bad.append("%s: segment %d (%s): width odd and >= 3, height >= 3, length >= 4" % (label, g["i"], g["kind"]))
             if g["width"] + 2 > s["strip_width_max"]:
                 bad.append("%s: segment %d is wider than the strip" % (label, g["i"]))
+    bad += DR.problems(doc)
     # the clock
     lad = ladder(doc)
     if [r["taken"] for r in lad] != sorted(r["taken"] for r in lad) or lad[0]["taken"] != 0:
@@ -490,11 +496,15 @@ def recipe_id(x):
     return "%s:dg_sigil_b%d" % (NS, x["band"])
 
 
-def pick_give(doc):
+def pick_give(doc, d=None):
+    """The rift pick. For a dungeon with `rooms` its can_break also names the blocks its resources rooms ask for."""
     p = doc["engine"]["rift_pick"]
+    breaks = list(p["can_break"])
+    if d is not None and DR.has_rooms(d):
+        breaks += [b for b in DR.seam_blocks(d) if b not in breaks]
     return ("%s[minecraft:custom_data={%s:1b},minecraft:item_name=%s,minecraft:can_break={predicates:[{blocks:[%s]}]}]"
             % (p["item"], p["custom_data_key"], snbt_str(text(p["name"], p["colour"])),
-               ",".join('"%s"' % b for b in p["can_break"])))
+               ",".join('"%s"' % b for b in breaks)))
 
 
 def pick_match(doc):
@@ -531,7 +541,10 @@ def boss_classes(doc, d):
 
 
 def shell_lines(doc, slot):
-    """The slot's shell as block commands in the pocket's context (the caller carries `execute in`)."""
+    """The slot's shell as block commands in the pocket's context (the caller carries `execute in`). A dungeon with
+    `rooms` builds its shell room by room (DR.shell_functions): this is then the concatenation, for counts and tests."""
+    if DR.has_rooms(slot["dungeon"]):
+        return [ln for b in DR.slot_build(doc, slot["dungeon"], slot) for ln in DR.shell_lines(b)]
     fy = doc["engine"]["pocket"]["floor_y"]
     pt = points(doc, slot)
     pal = slot["dungeon"]["spine"]["palette"]
@@ -566,6 +579,8 @@ def shell_lines(doc, slot):
 def shell_blocks(doc, slot):
     """Blocks written by the slot's shell function (the sum of every fill's and setblock's volume, after the split)."""
     n = 0
+    if DR.has_rooms(slot["dungeon"]):
+        return DR.total_blocks(doc, slot)
     for line in function_limits.split_fills(shell_lines(doc, slot)):
         m = function_limits.FILL.search(line)
         if m:
@@ -591,13 +606,21 @@ def board_text(doc, d, slot):
         legs.append("%s %d" % (label, int(g["xa"] - bx)))
     lad = " ".join("%d:%s" % (r["taken"], r["label"]) for r in ladder(doc)[1:])
     clocks = " ".join("%d:%d:%02d" % (b["band"], b["clock_s"] // 60, b["clock_s"] % 60) for b in bands(doc))
-    lines = [d["name"].upper() + (" (placeholder spine)" if d["spine"].get("placeholder") else ""),
+    if DR.has_rooms(d):
+        legs = []
+        for g in pt["segs"][1:]:
+            if g["kind"] in ("drift", "stairs"):
+                continue
+            label = "cracked lamps" if g.get("no_deploy") else names.get(g["kind"], g["kind"].replace("_", " "))
+            legs.append("%s %d" % (label, int(g["xa"] - bx)))
+    optional = [k.replace("_", " ") for k in ("resources", "nest", "habitat", "vault") if any(r["kind"] == k for r in d.get("rooms", []))]
+    lines = [d["name"].upper() + (" (placeholder spine)" if d.get("spine", {}).get("placeholder") else ""),
              "Legs (blocks from here): " + ", ".join(legs),
              "Clock by band: " + clocks,
              "Seam blocks taken -> time runs: " + lad,
              "Falls cost %d seconds." % doc["engine"]["clock"]["fall_penalty_s"],
              "No Pokemon past the cracked lamps.",
-             "Optional legs: none in this spine.",
+             ("Optional legs: " + ", ".join(optional) + ".") if optional else "Optional legs: none in this spine.",
              "Dying here takes no items, only your money and what the run has earned.",
              "Leaving the game does not stop the rift.",
              "The rift has taken your sigil. Go back now and it is returned; past this board it is spent."]
@@ -697,6 +720,8 @@ def functions(doc, blackout=None):
     objs = ["scoreboard objectives add %s dummy" % v for kk, v in O.items() if kk != "dc"]
     objs += ["scoreboard objectives add %s deathCount" % O["dc"]]
     objs += ["scoreboard objectives add %s dummy" % lk_obj(d) for d in ds]
+    if any(DR.has_rooms(d) for d in ds):
+        objs += DR.objective_lines()
     out["load"] = [HEAD,
                    "# DUNGEONS.md 11.3. Objectives, constants, every slot free unless already held, and the loops: the keeper",
                    "# re-schedules from here (a /reload or a boot restarts it), as tools/entei_boss.py's does"] + objs + [
@@ -837,6 +862,8 @@ def functions(doc, blackout=None):
         "function %s" % F("m/margin"),
         "function %s" % F("m/digits")]
     clock += ["execute if score @s %s matches %d run function %s" % (O["slot"], s["g"], F("slot/s%d/bar" % s["g"])) for s in sl]
+    clock += ["execute if score @s %s matches %d run function %s" % (O["slot"], s["g"], F("slot/s%d/rooms" % s["g"]))
+              for s in sl if DR.has_rooms(s["dungeon"])]
     clock += ["execute if score @s %s matches %d run function %s" % (O["slot"], s["g"], F("slot/s%d/boss" % s["g"])) for s in sl]
     out["m/clock"] = clock
 
@@ -1242,15 +1269,19 @@ def functions(doc, blackout=None):
             "# the mutables (1, Instancing): the exit gate shut. Never under a player: the slot was free, and the keeper",
             "# puts out anyone who is not its member",
             "execute in %s run function %s" % (dim, F("slot/s%d/reset" % g))]
-        out["slot/s%d/reset" % g] = function_limits.ensure_loaded(
-            ["# slot %d's mutable blocks, in %s (reserve carries the dimension in)" % (g, dim)]
-            + gate_lines(doc, s, d["spine"]["palette"]["gate"]))
+        if DR.has_rooms(d):
+            out["slot/s%d/reset" % g] = ["# slot %d's mutable blocks, room by room, in %s (reserve carries the dimension in)" % (g, dim)] + DR.reset_lines(doc, s)
+            out["slot/s%d/rooms" % g] = DR.rooms_lines(doc, s)
+        else:
+            out["slot/s%d/reset" % g] = function_limits.ensure_loaded(
+                ["# slot %d's mutable blocks, in %s (reserve carries the dimension in)" % (g, dim)]
+                + gate_lines(doc, s, d["spine"]["palette"]["gate"]))
         out["slot/s%d/arrive" % g] = [
             HEAD, "# As slot %d's member, the arrival delay over: into the entry room, adventure, the pick, the board" % g,
             "execute in %s run tp @s %s %d %s %d 0" % (dim, fmt(ax), ay, fmt(az), ayaw),
             "gamemode adventure @s",
             "tag @s add %s" % T["adv"],
-            "give @s %s 1" % pick_give(doc),
+            "give @s %s 1" % pick_give(doc, d),
             "scoreboard players set @s %s 2" % O["st"],
             "scoreboard players operation @s %s = #up %s" % (O["seen"], O["up"]),
             "title @s actionbar %s" % text(d["messages"]["arrive"], "light_purple")]
@@ -1410,8 +1441,9 @@ def functions(doc, blackout=None):
             HEAD, "# chunks-loaded-by: the member standing in the arena beside the gate (this runs as them, in slot %d)" % g,
             "# The last stage fell: the exit gate opens and the boss's escrow flag is set (3.2 step 5)",
             "scoreboard players set %s %s 1" % (S, O["bdone"]),
-            "scoreboard players set @s %s 1" % O["bossd"]] + [
-            "execute in %s run %s" % (dim, l) for l in gate_lines(doc, s, "minecraft:air")] + [
+            "scoreboard players set @s %s 1" % O["bossd"]] + (
+            [DR.arena_clear_line(doc, s)] if DR.has_rooms(d) else
+            ["execute in %s run %s" % (dim, l) for l in gate_lines(doc, s, "minecraft:air")]) + [
             "title @s title %s" % text(d["boss"]["cue"]["done"], "gold")]
 
     for di, d in enumerate(ds, 1):
@@ -1479,9 +1511,18 @@ def functions(doc, blackout=None):
     out["shells/build"] = ["# runs with %s as its execution dimension (place carries it in)" % dim] + [
         "function %s" % F("shells/s%d" % s["g"]) for s in sl]
     for s in sl:
+        if any(DR.has_rooms(x) for x in ds):
+            out["place/s%d" % s["g"]] = ["# one slot's shell, in %s: a re-apply step of its own, so no call holds the tick for long (EXP-081)" % dim,
+                                         "execute in %s run function %s" % (dim, F("shells/s%d" % s["g"]))]
+        if DR.has_rooms(s["dungeon"]):
+            out.update(DR.shell_functions(doc, s))
+            continue
         out["shells/s%d" % s["g"]] = function_limits.ensure_loaded(
             ["# slot %d's shell (%s %d), %d blocks written; place carries the dimension in"
              % (s["g"], s["dungeon"]["id"], s["k"], shell_blocks(doc, s))] + shell_lines(doc, s))
+    for di, d in enumerate(ds, 1):
+        if DR.has_rooms(d):
+            out.update(DR.runtime_functions(doc, d, dsel(di)))
     out["rips/place"] = [HEAD, "# tools/reapply.py step R16DR: every overworld rip's blocks (its entity follows: rips/entities)"] + [
         "execute in minecraft:overworld run function %s" % F("rips/blocks_%s" % d["short"]) for d in ds]
     for d in ds:
@@ -1533,8 +1574,13 @@ def reapply_steps(doc=None):
     """tools/reapply.py's two steps: R16DG the shells and their entities, R16DR the overworld rips."""
     doc = doc if doc is not None else load()
     _c, want_shell, want_rips = chains(doc)
+    if any(DR.has_rooms(d) for d in dungeons(doc)):
+        # full-length shells: one re-apply call per slot, so no single call holds the tick (EXP-081: ~0.5M blocks is 1-2.6 s)
+        place = [("fn", F("place/s%d" % s["g"])) for s in slots(doc)]
+    else:
+        place = [("fn", F("place"))]
     return [("R16DG", "the dungeon slots' shells in cobblers:pocket (data/dungeons.json)",
-             [("fn", F("place"))] + chunk_look.steps(F("shells/entities"), SHELL_HOLDER, want_shell, "dungeon shell entities")),
+             place + chunk_look.steps(F("shells/entities"), SHELL_HOLDER, want_shell, "dungeon shell entities")),
             ("R16DR", "the dungeon rips in the overworld (data/dungeons.json; the Night Shift's is a placeholder)",
              [("fn", F("rips/place"))] + chunk_look.steps(F("rips/entities"), RIP_HOLDER, want_rips, "dungeon rips"))]
 
@@ -1605,6 +1651,11 @@ def write(files, out):
         p.write_text(body, encoding="utf-8", newline="\n")
 
 
+def warnings(doc):
+    """Things that build but are not finished: kinds declared in a dungeon's rooms with no implementation yet."""
+    return DR.warnings(doc)
+
+
 def report(doc):
     lines = []
     for s in slots(doc):
@@ -1623,10 +1674,12 @@ def main(argv=None):
     a = p.parse_args(argv)
     doc = load(a.data)
     if a.report:
-        print("\n".join(report(doc)))
+        print("\n".join(report(doc) + ["WARNING: " + w for w in warnings(doc)]))
         return 0
     files = build(doc)
     write(files, a.out)
+    for w in warnings(doc):
+        print("WARNING: " + w)
     print("cobblers_dungeons: %d files -> %s" % (len(files), a.out))
     return 0
 

@@ -1,0 +1,107 @@
+{
+  "schema": "cobblers.dungeon_themes/1",
+  "generated_by": "hand",
+  "why": "The THEMES of the dungeon room kit (tools/dungeon_rooms.py, tools/dungeon_kinds.py, docs/mechanics/DUNGEON_ROOMS.md): the blocks a dungeon's rooms are drawn in and the dressing rules that make a room look like what it is. A dungeon names one in data/dungeons.json (dungeons[].theme). Vanilla blocks only (the pocket is a void dimension: nothing here is checked against the overworld's spawn blocks).",
+  "rules": [
+    "Every block of the hull (wall, floor, ceiling) is OPAQUE. The pocket has skylight at a fixed noon (data/portals.json pocket.generator), so a leaf or glass hull would let daylight into every room; leaves are interior dressing only.",
+    "No block that falls (sand, gravel, anvil) and no concrete anywhere (contract C4). No hazard (lava, fire, magma, cactus, berry bush, cobweb, campfire, powder snow, pointed dripstone).",
+    "Nothing in the hull or the dressing is on the rift pick's can_break list: the decorative 'ores' of a wall are raw blocks and coal blocks, never ore. The seam's ores sit in a 3-thick slab of unbreakable rock (kind resources), so mining one opens a pocket, never a hole to the void.",
+    "Water exists only one block deep, at floor level, over a bed (a deeper pool would need walls under the floor course and would flow into the void).",
+    "A dress spec with \"lit\": true emits light and is skipped in a dark_room. A spec with \"level\": \"full\" places obstacles (trunks, columns, piles) and only runs in rooms whose kind is dressed 'full', off a trail kept clear for the player."
+  ],
+  "themes": {
+    "mine": {
+      "name": "The old workings",
+      "why": "Timber sets (posts and a beam every eight blocks, a lantern on a chain), cobbled deepslate, rubble, streaks of raw ore in the walls, and a track laid in the floor with polished blocks and sleepers: NOT rail blocks, which are updated by their neighbours and are not floor.",
+      "hull": {"wall": "minecraft:cobbled_deepslate", "floor": "minecraft:stone", "ceiling": "minecraft:cobbled_deepslate", "light": "minecraft:shroomlight", "light_style": "lantern", "light_every": 8, "min_light": 4},
+      "door": {"gate": "minecraft:iron_bars", "frame": "minecraft:oak_log", "lintel": "minecraft:stripped_oak_log"},
+      "rip": {"frame": "minecraft:crying_obsidian", "opening": "minecraft:black_terracotta"},
+      "lamp": "minecraft:redstone_lamp",
+      "messages": {"clear": "A way on opens.", "fall": "The rift sets you back. -{s} s.", "dark": "The lamps are out. Look for a candle."},
+      "trail_wiggle": 0.0,
+      "dress": [
+        {"op": "base_course", "where": "bottom", "block": "minecraft:deepslate_bricks"},
+        {"op": "base_course", "where": "top", "block": "minecraft:polished_deepslate"},
+        {"op": "streak", "count": 6, "len": [3, 7], "blocks": [{"block": "minecraft:raw_iron_block", "w": 3}, {"block": "minecraft:raw_copper_block", "w": 2}, {"block": "minecraft:coal_block", "w": 3}, {"block": "minecraft:raw_gold_block", "w": 1}]},
+        {"op": "floor_patches", "per100": 5, "size": [2, 4], "blocks": [{"block": "minecraft:coarse_dirt", "w": 3}, {"block": "minecraft:cobblestone", "w": 2}, {"block": "minecraft:andesite", "w": 2}]},
+        {"op": "floor_strip", "rail": "minecraft:smooth_basalt", "sleeper": "minecraft:stripped_oak_log", "every": 3, "kinds": ["drift", "stairs"]},
+        {"op": "timber", "every": 8, "post": "minecraft:oak_log", "beam": "minecraft:stripped_oak_log", "lantern": true, "lit": true},
+        {"op": "piles", "density": 0.012, "blocks": [{"block": "minecraft:cobbled_deepslate", "w": 3}, {"block": "minecraft:cobblestone", "w": 2}, {"block": "minecraft:andesite", "w": 1}]}
+      ],
+      "maze": {"wall": [{"block": "minecraft:cobbled_deepslate"}, {"block": "minecraft:cobblestone"}, {"block": "minecraft:andesite"}], "top": null, "post": "minecraft:oak_log", "height": 4},
+      "parkour": {"ledge": "minecraft:stone_bricks", "ledge_top": "minecraft:polished_deepslate", "platform": "minecraft:oak_planks", "pillar": "minecraft:oak_log", "catch_floor": "minecraft:deepslate"},
+      "bridge": {"span": "minecraft:oak_planks", "span_edge": "minecraft:stripped_oak_log", "rail": "minecraft:oak_fence", "post": "minecraft:lantern", "ledge": "minecraft:stone_bricks", "support": "minecraft:cobbled_deepslate"},
+      "seam": {"slab": "minecraft:deepslate", "blocks": [
+        {"min_band": 1, "block": "minecraft:deepslate_coal_ore"}, {"min_band": 1, "block": "minecraft:deepslate_iron_ore"}, {"min_band": 1, "block": "minecraft:deepslate_copper_ore"},
+        {"min_band": 3, "block": "minecraft:deepslate_gold_ore"}, {"min_band": 3, "block": "minecraft:deepslate_redstone_ore"}, {"min_band": 3, "block": "minecraft:deepslate_lapis_ore"},
+        {"min_band": 5, "block": "minecraft:deepslate_diamond_ore"}]},
+      "safe": {"counter": "minecraft:spruce_planks", "counter_top": "minecraft:spruce_slab[type=bottom]", "rug": "minecraft:red_carpet", "bench": "minecraft:oak_stairs", "post": "minecraft:oak_fence", "lantern": "minecraft:lantern"},
+      "dark": {"place_on": ["minecraft:stone", "minecraft:coarse_dirt", "minecraft:cobblestone", "minecraft:andesite", "minecraft:smooth_basalt", "minecraft:polished_deepslate", "minecraft:deepslate_bricks", "minecraft:cobbled_deepslate", "minecraft:stripped_oak_log"]}
+    },
+    "jungle": {
+      "name": "The overgrowth",
+      "why": "DENSE (the owner, 2026-10-09: 'make it feel like a dense jungle'): jungle and mangrove logs floor to ceiling from a seeded scatter off a winding trail, a double layer of leaves as the ceiling with holes and hanging curtains, vines down the trunks and walls, a floor of grass, podzol, moss and mud under ferns and tall grass, shallow streams to wade, froglights for the dappled light. The trail winds, so no sightline runs further than a few blocks.",
+      "hull": {"wall": "minecraft:moss_block", "floor": "minecraft:grass_block", "ceiling": "minecraft:moss_block", "light": "minecraft:verdant_froglight", "light_every": 8, "min_light": 3},
+      "door": {"gate": "minecraft:jungle_fence", "frame": "minecraft:jungle_log", "lintel": "minecraft:jungle_planks"},
+      "rip": {"frame": "minecraft:crying_obsidian", "opening": "minecraft:black_terracotta"},
+      "lamp": "minecraft:redstone_lamp",
+      "messages": {"clear": "The undergrowth parts.", "fall": "The rift sets you back. -{s} s.", "dark": "The canopy has swallowed the light."},
+      "trail_wiggle": 1.0,
+      "dress": [
+        {"op": "floor_patches", "per100": 7, "size": [2, 5], "blocks": [{"block": "minecraft:podzol", "w": 3}, {"block": "minecraft:moss_block", "w": 3}, {"block": "minecraft:mud", "w": 1}, {"block": "minecraft:rooted_dirt", "w": 2}, {"block": "minecraft:coarse_dirt", "w": 1}]},
+        {"op": "stream", "count": 1, "width": [2, 3], "pools": 1, "pool_size": [4, 7], "bed": "minecraft:mud", "plants": [], "not_kinds": ["entry_room", "exit_room", "boss_arena", "safe_room"]},
+        {"op": "trunks", "block": "minecraft:jungle_log", "density": 0.20, "thick_p": 0.3, "vines_p": 0.7, "min_gap": 1, "vine_len": [3, 9], "salt": "a"},
+        {"op": "trunks", "block": "minecraft:mangrove_log", "density": 0.05, "thick_p": 0.15, "vines_p": 0.4, "min_gap": 2, "vine_len": [2, 6], "salt": "b"},
+        {"op": "canopy", "leaf": "minecraft:jungle_leaves[persistent=true]", "layers": 2, "hole_p": 0.12, "light": "minecraft:shroomlight", "light_p": 0.02, "lit": true, "curtain_p": 0.035, "curtain_len": [2, 3]},
+        {"op": "wall_vines", "p": 0.16, "len": [3, 8], "blocks": [{"block": "minecraft:vine"}], "salt": "v"},
+        {"op": "wall_vines", "p": 0.08, "blocks": [{"block": "minecraft:glow_lichen"}], "lit": true, "salt": "l"},
+        {"op": "ground_cover", "plants": [
+          {"block": "minecraft:fern", "p": 0.13, "on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]},
+          {"block": "minecraft:short_grass", "p": 0.15, "on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]},
+          {"p": 0.05, "double": {"lower": "minecraft:tall_grass[half=lower]", "upper": "minecraft:tall_grass[half=upper]"}, "on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]},
+          {"p": 0.06, "double": {"lower": "minecraft:large_fern[half=lower]", "upper": "minecraft:large_fern[half=upper]"}, "on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]},
+          {"block": "minecraft:moss_carpet", "p": 0.07},
+          {"block": "minecraft:big_dripleaf[facing=north]", "p": 0.02, "solid": true, "on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]}]}
+      ],
+      "maze": {"wall": [{"block": "minecraft:jungle_leaves[persistent=true]"}, {"block": "minecraft:mangrove_leaves[persistent=true]"}, {"block": "minecraft:azalea_leaves[persistent=true]"}], "top": "minecraft:flowering_azalea_leaves[persistent=true]", "post": "minecraft:jungle_log", "height": 4},
+      "parkour": {"ledge": "minecraft:grass_block", "ledge_top": "minecraft:podzol", "platform": "minecraft:jungle_wood", "pillar": "minecraft:jungle_log", "catch_floor": "minecraft:moss_block"},
+      "bridge": {"span": "minecraft:bamboo_planks", "span_edge": "minecraft:bamboo_mosaic", "rail": "minecraft:bamboo_fence", "post": "minecraft:lantern", "ledge": "minecraft:grass_block", "support": "minecraft:moss_block"},
+      "seam": {"slab": "minecraft:jungle_wood", "blocks": [
+        {"min_band": 1, "block": "minecraft:stripped_jungle_log"}, {"min_band": 1, "block": "minecraft:melon"}, {"min_band": 1, "block": "minecraft:bamboo_block"},
+        {"min_band": 3, "block": "minecraft:honeycomb_block"}, {"min_band": 3, "block": "minecraft:pumpkin"}]},
+      "safe": {"counter": "minecraft:jungle_planks", "counter_top": "minecraft:jungle_slab[type=bottom]", "rug": "minecraft:green_carpet", "bench": "minecraft:jungle_stairs", "post": "minecraft:jungle_fence", "lantern": "minecraft:lantern"},
+      "dark": {"place_on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]}
+    },
+    "flooded_ruin": {
+      "name": "The drowned halls",
+      "why": "Prismarine and mossy, cracked stone brick; standing water a block deep in channels and pools to wade, kelp, seagrass and sea pickles in it; columns that are broken off or lying on the floor; dim (sparse sea lanterns, the pickles' glow). Collapsed arches in the maze are the maze's cracked, mossy bands.",
+      "hull": {"wall": "minecraft:mossy_stone_bricks", "floor": "minecraft:prismarine_bricks", "ceiling": "minecraft:dark_prismarine", "light": "minecraft:sea_lantern", "light_every": 10, "min_light": 2},
+      "door": {"gate": "minecraft:iron_bars", "frame": "minecraft:chiseled_stone_bricks", "lintel": "minecraft:mossy_stone_bricks"},
+      "rip": {"frame": "minecraft:crying_obsidian", "opening": "minecraft:black_terracotta"},
+      "lamp": "minecraft:redstone_lamp",
+      "messages": {"clear": "A sluice opens.", "fall": "The rift sets you back. -{s} s.", "dark": "The water has put the lamps out."},
+      "trail_wiggle": 0.3,
+      "dress": [
+        {"op": "base_course", "where": "bottom", "block": "minecraft:dark_prismarine"},
+        {"op": "base_course", "where": "top", "block": "minecraft:cracked_stone_bricks"},
+        {"op": "pillars", "every": 6, "block": "minecraft:chiseled_stone_bricks", "broken_p": 0.35},
+        {"op": "floor_patches", "per100": 7, "size": [2, 4], "blocks": [{"block": "minecraft:cracked_stone_bricks", "w": 3}, {"block": "minecraft:mossy_stone_bricks", "w": 3}, {"block": "minecraft:dark_prismarine", "w": 2}]},
+        {"op": "stream", "count": 1, "width": [2, 3], "pools": 2, "pool_size": [4, 8], "bed": "minecraft:dark_prismarine", "not_kinds": ["entry_room", "exit_room", "boss_arena", "safe_room"], "lit": true, "plants": [
+          {"block": "minecraft:kelp[age=25]", "p": 0.12}, {"block": "minecraft:seagrass", "p": 0.2}, {"block": "minecraft:sea_pickle[pickles=4,waterlogged=true]", "p": 0.05}]},
+        {"op": "columns", "block": "minecraft:mossy_stone_bricks", "cap": "minecraft:chiseled_stone_bricks", "density": 0.012, "thick_p": 0.3, "broken_p": 0.55, "fallen_p": 0.6},
+        {"op": "piles", "density": 0.015, "blocks": [{"block": "minecraft:cracked_stone_bricks", "w": 3}, {"block": "minecraft:mossy_cobblestone", "w": 2}, {"block": "minecraft:stone_bricks", "w": 1}]},
+        {"op": "wall_vines", "p": 0.06, "len": [2, 5], "blocks": [{"block": "minecraft:vine"}], "salt": "v"},
+        {"op": "wall_vines", "p": 0.05, "blocks": [{"block": "minecraft:glow_lichen"}], "lit": true, "salt": "l"}
+      ],
+      "maze": {"wall": [{"block": "minecraft:mossy_stone_bricks"}, {"block": "minecraft:cracked_stone_bricks"}, {"block": "minecraft:stone_bricks"}], "top": "minecraft:cracked_stone_bricks", "post": "minecraft:chiseled_stone_bricks", "height": 4},
+      "parkour": {"ledge": "minecraft:prismarine_bricks", "ledge_top": "minecraft:mossy_stone_bricks", "platform": "minecraft:cracked_stone_bricks", "pillar": "minecraft:mossy_stone_bricks", "catch_floor": "minecraft:dark_prismarine"},
+      "bridge": {"span": "minecraft:cracked_stone_bricks", "span_edge": "minecraft:mossy_stone_bricks", "rail": "minecraft:stone_brick_wall", "post": "minecraft:soul_lantern", "ledge": "minecraft:prismarine_bricks", "support": "minecraft:mossy_stone_bricks"},
+      "seam": {"slab": "minecraft:prismarine", "blocks": [
+        {"min_band": 1, "block": "minecraft:coal_ore"}, {"min_band": 1, "block": "minecraft:iron_ore"}, {"min_band": 1, "block": "minecraft:copper_ore"},
+        {"min_band": 3, "block": "minecraft:gold_ore"}, {"min_band": 3, "block": "minecraft:redstone_ore"}, {"min_band": 3, "block": "minecraft:lapis_ore"},
+        {"min_band": 5, "block": "minecraft:diamond_ore"}]},
+      "safe": {"counter": "minecraft:dark_prismarine", "counter_top": "minecraft:prismarine_slab[type=bottom]", "rug": "minecraft:cyan_carpet", "bench": "minecraft:prismarine_brick_stairs", "post": "minecraft:stone_brick_wall", "lantern": "minecraft:sea_lantern"},
+      "dark": {"place_on": ["minecraft:prismarine_bricks", "minecraft:dark_prismarine", "minecraft:mossy_stone_bricks", "minecraft:cracked_stone_bricks", "minecraft:stone_bricks"]}
+    }
+  }
+}
