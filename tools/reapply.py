@@ -180,6 +180,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # south peak's crown, teeth and scree spur, built by R9TP; one named Pokemon on the residents' keeper,
                 # so world-local below. No entity step: the keeper brings it in
                 "cobblers_tri_peaks_nest",
+                # 2026-10-09: Undertow Basin on the east coast dunes (tools/buried_dune.py, data/buried_dune.json): a
+                # Sandaconda in a bed under the dune on the residents' keeper, so world-local below; built by R9BD,
+                # summoned by R18BD
+                "cobblers_buried_dune",
                 # 2026-10-04: the jungle's three lost temples on the Long Isle's south (tools/jungle_temples.py,
                 # data/jungle_temples.json), built by R9JT; no load or tick and no Pokemon, so not world-local
                 "cobblers_jungle_temples",
@@ -470,6 +474,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_hummock_mere",
                # 2026-10-09: the Tri Peaks nest's keeper spawns its Tyranitar the same way
                "cobblers_tri_peaks_nest",
+               # 2026-10-09: Undertow Basin's keeper spawns and moves its Sandaconda the same way
+               "cobblers_buried_dune",
                # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
                # global folder would run it in the live world too
                "cobblers_arena",
@@ -899,6 +905,9 @@ def prepare_jobs(a):
     # with; then its independent audit (tools/hummock_mere_audit.py), which replays the pack it reads
     add("hummock_mere", "hummock_mere.py", *src)
     add("hummock_mere_audit", "hummock_mere_audit.py", *src)
+    # Undertow Basin (2026-10-09): the generator fails closed on its own siting rules (authored clearance, route paths,
+    # the sub-region's tier ceiling, a habitat leash, spawn-condition blocks) and on a record the heightmap disagrees with
+    add("buried_dune", "buried_dune.py", *src)
     # the jungle's lost temples (2026-10-04): the generator fails closed on its own siting rules (long_isle_south, the
     # keep-clear list, the authored clearance, spawn blocks) and on a record the heightmap disagrees with; then its
     # independent audit (tools/jungle_temples_audit.py, another agent's), after the pack it reads: the pack replayed
@@ -2062,6 +2071,11 @@ def steps(with_spawns=False):
     import tri_peaks_nest
     out.append(("R9TP", "the Tri Peaks' open-summit nest: the crown, its teeth and the scree spur (data/tri_peaks_nest.json)",
                 tri_peaks_nest.placement_steps()))
+    # Undertow Basin (2026-10-09, tools/buried_dune.py): the bowl, the trails, the bones and the sleeper's bed, one pure
+    # block pass held in a forceload of its box, before R9E (none sits on a Habitat Block); its creature is R18BD
+    import buried_dune
+    out.append(("R9BD", "Undertow Basin on the east coast dunes: bowl, trails, bones, the sleeper's bed (data/buried_dune.json)",
+                buried_dune.placement_steps()))
     # the jungle's lost temples (2026-10-04, tools/jungle_temples.py): the same pure block pass per temple, held in a
     # forceload of its box, before R9E (none sits on a Habitat Block); the caches' barrels are written here
     import jungle_temples
@@ -2362,6 +2376,11 @@ def steps(with_spawns=False):
     import hummock_mere
     out.append(("R18HM", "Hummock Mere's resident, the Hummock (data/hummock_mere.json)",
                 hummock_mere.entity_steps()))
+    # Undertow Basin (2026-10-09): the Sandaconda held in its bed under the east coast dunes, summoned once and bound
+    # through tools/chunk_look.py's look-then-act chain (which holds and releases its own forceload). After R9BD
+    import buried_dune
+    out.append(("R18BD", "Undertow Basin's sleeper: the Undertow, in its bed under the dune (data/buried_dune.json)",
+                buried_dune.entity_steps()))
     # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",
