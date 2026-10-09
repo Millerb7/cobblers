@@ -10510,6 +10510,57 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.tilpey_north_shore.vivillon",
+      "species": "vivillon",
+      "bucket": "uncommon",
+      "level": "33-43",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tilpey_north_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "named uncommon family, tier 6: the family starts here",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.tilpey_north_shore.drednaw",
+      "species": "drednaw",
+      "bucket": "uncommon",
+      "level": "33-43",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tilpey_north_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "named uncommon family, tier 6: the family starts here",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.tilpey_north_shore.poliwrath",
+      "species": "poliwrath",
+      "bucket": "uncommon",
+      "level": "33-43",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tilpey_north_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ],
+        "isRaining": true
+      },
+      "eligibility_reason": "named uncommon family, tier 6: the family starts here",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "surface.tilpey_north_shore.ducklett",
       "species": "ducklett",
       "bucket": "common",
@@ -10690,6 +10741,43 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.tilpey_waters.cramorant",
+      "species": "cramorant",
+      "bucket": "uncommon",
+      "level": "38-48",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tilpey_waters",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.tilpey_waters.politoed",
+      "species": "politoed",
+      "bucket": "uncommon",
+      "level": "38-48",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tilpey_waters",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ],
+        "isRaining": true
+      },
+      "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "surface.tilpey_waters.gyarados",
       "species": "gyarados",
       "bucket": "common",
@@ -10814,6 +10902,50 @@
       "eligibility_reason": "evolves from Feebas by trade holding prism scale, not by level: in the wild from tier 7, in the upper half of the band (43-48)",
       "biomes": [],
       "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_waters.illumise",
+      "species": "illumise",
+      "bucket": "uncommon",
+      "level": "38-48",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tilpey_waters",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "timeRange": "night"
+      },
+      "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+      "biomes": [],
+      "spawnable_position": "surface",
+      "held_items": [
+        {
+          "item": "cobblemon:bright_powder",
+          "percentage": 5
+        }
+      ]
+    },
+    {
+      "id": "surface.tilpey_waters.volbeat",
+      "species": "volbeat",
+      "bucket": "uncommon",
+      "level": "38-48",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tilpey_waters",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "timeRange": "night"
+      },
+      "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+      "biomes": [],
+      "spawnable_position": "surface",
+      "held_items": [
+        {
+          "item": "cobblemon:bright_powder",
+          "percentage": 5
+        }
+      ]
     },
     {
       "id": "surface.tilpey_waters.heart.gyarados",
@@ -11184,6 +11316,24 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.tilpey_south_shore.floatzel",
+      "species": "floatzel",
+      "bucket": "uncommon",
+      "level": "38-48",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tilpey_south_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "surface.tilpey_south_shore.crawdaunt",
       "species": "crawdaunt",
       "bucket": "common",
@@ -11534,6 +11684,24 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.tilpey_west_meadows.simipour",
+      "species": "simipour",
+      "bucket": "uncommon",
+      "level": "33-43",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tilpey_west_meadows",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "named uncommon family, tier 6: the family starts here",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "surface.tilpey_west_meadows.masquerain",
       "species": "masquerain",
       "bucket": "common",
@@ -11862,6 +12030,24 @@
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
       "eligibility_reason": "ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (38-43)",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.tilpey_east_shore.bellibolt",
+      "species": "bellibolt",
+      "bucket": "uncommon",
+      "level": "33-43",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tilpey_east_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "named uncommon family, tier 6: the family starts here",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -42614,6 +42800,63 @@
           "conditions": {}
         },
         {
+          "species": "Vivillon",
+          "pokemon": "vivillon",
+          "types": [
+            "bug",
+            "flying"
+          ],
+          "family": "scatterbug",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 6: the family starts here",
+          "level": "33-43",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Drednaw",
+          "pokemon": "drednaw",
+          "types": [
+            "water",
+            "rock"
+          ],
+          "family": "chewtle",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 6: the family starts here",
+          "level": "33-43",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "neededNearbyBlocks": [
+              "minecraft:water"
+            ]
+          }
+        },
+        {
+          "species": "Poliwrath",
+          "pokemon": "poliwrath",
+          "types": [
+            "water",
+            "fighting"
+          ],
+          "family": "poliwag",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 6: the family starts here",
+          "level": "33-43",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "neededNearbyBlocks": [
+              "minecraft:water"
+            ],
+            "isRaining": true
+          }
+        },
+        {
           "species": "Ducklett",
           "pokemon": "ducklett",
           "types": [
@@ -42675,7 +42918,7 @@
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (5872, 3600); radius 128 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 129 blocks from a corridor box",
         "alpha": true,
         "above_cap_share": {
-          "land": 0.0089,
+          "land": 0.0048,
           "water": 0.0635
         },
         "entries": [
@@ -42817,6 +43060,46 @@
           }
         },
         {
+          "species": "Cramorant",
+          "pokemon": "cramorant",
+          "types": [
+            "flying",
+            "water"
+          ],
+          "family": "cramorant",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+          "level": "38-48",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "neededNearbyBlocks": [
+              "minecraft:water"
+            ]
+          }
+        },
+        {
+          "species": "Politoed",
+          "pokemon": "politoed",
+          "types": [
+            "water"
+          ],
+          "family": "poliwag",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+          "level": "38-48",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "neededNearbyBlocks": [
+              "minecraft:water"
+            ],
+            "isRaining": true
+          }
+        },
+        {
           "species": "Gyarados",
           "pokemon": "gyarados",
           "types": [
@@ -42954,6 +43237,40 @@
           "bucket": "ultra-rare",
           "weight": 0.6,
           "conditions": {}
+        },
+        {
+          "species": "Illumise",
+          "pokemon": "illumise",
+          "types": [
+            "bug"
+          ],
+          "family": "illumise",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+          "level": "38-48",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "timeRange": "night"
+          }
+        },
+        {
+          "species": "Volbeat",
+          "pokemon": "volbeat",
+          "types": [
+            "bug"
+          ],
+          "family": "volbeat",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+          "level": "38-48",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "timeRange": "night"
+          }
         }
       ],
       "biomes": [
@@ -42970,7 +43287,7 @@
         "alpha": true,
         "above_cap_share": {
           "land": 0.0,
-          "water": 0.0375
+          "water": 0.0208
         },
         "entries": [
           {
@@ -43372,6 +43689,25 @@
           "conditions": {}
         },
         {
+          "species": "Floatzel",
+          "pokemon": "floatzel",
+          "types": [
+            "water"
+          ],
+          "family": "buizel",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+          "level": "38-48",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "neededNearbyBlocks": [
+              "minecraft:water"
+            ]
+          }
+        },
+        {
           "species": "Crawdaunt",
           "pokemon": "crawdaunt",
           "types": [
@@ -43439,7 +43775,7 @@
         "why": "the south shore's old wood, away from Routes 7 and 8 (the lake's own heart is the open water)",
         "alpha": true,
         "above_cap_share": {
-          "land": 0.0144,
+          "land": 0.0125,
           "water": 0.0
         },
         "entries": [
@@ -43739,6 +44075,25 @@
           "conditions": {}
         },
         {
+          "species": "Simipour",
+          "pokemon": "simipour",
+          "types": [
+            "water"
+          ],
+          "family": "panpour",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 6: the family starts here",
+          "level": "33-43",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "neededNearbyBlocks": [
+              "minecraft:water"
+            ]
+          }
+        },
+        {
           "species": "Masquerain",
           "pokemon": "masquerain",
           "types": [
@@ -43800,7 +44155,7 @@
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (5072, 4176); radius 80 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 649 blocks from a corridor box",
         "alpha": true,
         "above_cap_share": {
-          "land": 0.0268,
+          "land": 0.0208,
           "water": 0.0
         },
         "entries": [
@@ -44105,6 +44460,25 @@
           "conditions": {}
         },
         {
+          "species": "Bellibolt",
+          "pokemon": "bellibolt",
+          "types": [
+            "electric"
+          ],
+          "family": "tadbulb",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 6: the family starts here",
+          "level": "33-43",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "neededNearbyBlocks": [
+              "minecraft:water"
+            ]
+          }
+        },
+        {
           "species": "Lombre",
           "pokemon": "lombre",
           "types": [
@@ -44166,7 +44540,7 @@
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (6928, 3824); radius 160 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 145 blocks from a corridor box",
         "alpha": true,
         "above_cap_share": {
-          "land": 0.0156,
+          "land": 0.0125,
           "water": 0.0
         },
         "entries": [
