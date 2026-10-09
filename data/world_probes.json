@@ -3993,6 +3993,108 @@
         ],
         "expect": false
       }
+    ],
+    "buried_dune": [
+      {
+        "what": "the chamber's roof (sandstone) under the basin",
+        "block": [
+          7282,
+          90,
+          5592,
+          "minecraft:sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the chamber's floor shell",
+        "block": [
+          7282,
+          84,
+          5592,
+          "minecraft:sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air where the sleeper lies",
+        "block": [
+          7282,
+          85,
+          5592,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a light block that keeps the bed from spawning mobs",
+        "block": [
+          7277,
+          89,
+          5588,
+          "minecraft:light[level=1]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the basin's floor surface is solid",
+        "block": [
+          7282,
+          94,
+          5592,
+          "!air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the basin's floor",
+        "block": [
+          7282,
+          95,
+          5592,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the slip face's top block is cut away",
+        "block": [
+          7280,
+          100,
+          5598,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the sea trail's groove is cut (ground y96)",
+        "block": [
+          7298,
+          96,
+          5594,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a rib of bone block",
+        "block": [
+          7272,
+          105,
+          5691,
+          "minecraft:bone_block[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "undertow present after R18BD (ungated)",
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.res.undertow,nbt={Pokemon:{Species:\"cobblemon:sandaconda\"}}]",
+        "count": 1,
+        "hold": [
+          7282,
+          85,
+          5592
+        ]
+      }
     ]
   }
 }
