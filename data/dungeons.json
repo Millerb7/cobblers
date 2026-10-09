@@ -163,6 +163,24 @@
         "tm_gate_interaction": "FINDING: tools/tm_gate.py's sync runs `recipe give @s *` (tools/tm_gate.py:637), which gives every sigil recipe too; in band mode this keeper takes the higher ones back on its next sync, so for at most recipe_sync_period_ticks after a TM re-sync a player can craft a sigil above their band. That only overpays (the rip checks the band)",
         "gated_on": "SG1 (owner half): `recipe give` under doLimitedCrafting is unproven (F7)"
       }
+    },
+    "rip_art": {
+      "why": "the owner (2026-10-09): the dungeon rip should look like the Cobblemon Ultra Beasts mod's wormhole: an upright oval, a soft puffy pink cloud ring round a lavender band round a pale blue glowing centre. That mod is not installed and its art was never fetched or copied; tools/rip_art.py draws our own, from the description alone. tools/rip_pack.py packs it as a CLIENT resource pack (never installed on the server); tools/dungeon.py R16DR shows it with an item_display",
+      "item": "minecraft:amethyst_shard",
+      "item_why": "the carrier: a vanilla item whose model our pack overrides ONLY for this custom_model_data (1.21.1 item overrides, assets/minecraft/models/item/<item>.json 'overrides' with a 'custom_model_data' predicate; the component is a plain int in 1.21.1). A player without the pack sees a large flat amethyst shard where the rip stands, which still reads as a rift and is never a white square",
+      "custom_model_data": 4180,
+      "model": "cobblers:item/dungeon_rip",
+      "texture": "cobblers:item/dungeon_rip",
+      "frame": {"width": 96, "height": 128},
+      "frame_why": "3:4, the oval's own proportion, so the 3 x 4 block quad shows it undistorted",
+      "frames": 48,
+      "frametime_ticks": 5,
+      "interpolate": true,
+      "loop_why": "48 frames x 5 ticks = 240 ticks = 12 s a loop: the outer clouds turn once a loop (slow), the core beats twice (every 6 s). Interpolated, so the five ticks between frames blend",
+      "brightness": {"sky": 15, "block": 15},
+      "brightness_why": "a display entity's own `brightness` override (the 1.21.1 display-entity NBT): full light, so the oval glows at night and in a cave mouth instead of taking the light of the block it stands in. A resource pack cannot make an item model emissive; this is the vanilla way",
+      "view_range": 2.0,
+      "tag": "dg.rip_oval"
     }
   },
   "dungeons": [
@@ -184,6 +202,8 @@
         "click_why": "the interaction's centre column, in the notch just south of the opening (z 4118), 3 wide and 3 high, so it is clicked from the trail",
         "palette": {"frame": "minecraft:crying_obsidian", "lintel": "minecraft:polished_blackstone_bricks", "opening": "minecraft:black_terracotta"},
         "palette_why": "placeholder: never a nether_portal or end_portal block (7.1, they teleport on their own). world-content-dev chooses the real palette against docs/world-building/BUILD_PALETTE.md",
+        "oval": {"width": 3.0, "height": 4.0, "in_front": 0.06},
+        "oval_why": "the owner (2026-10-09): the rip is an upright OVAL, 3 wide by 4 tall (engine.rip_art). It stands on the frame's own column (centre x = (x0 + x1) / 2 + 0.5), its foot at the frame's y, and 0.06 of a block SOUTH of the opening's face (frame z + 1), so the black terracotta is its dark backdrop and the click interaction (centre z 4118.5, 3 wide) is unchanged. A display entity has no hitbox: a click goes through it to the interaction",
         "plume": false,
         "plume_gated_on": "V1 (EXP-080): whether the particles are seen from the approach path; the owner looks"
       },

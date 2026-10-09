@@ -24,7 +24,8 @@ THE KEEPER, every period_ticks (one schedule, re-scheduled from load like tools/
   backstops   over the overworld: the run tag's stale sweep (cobblers:recovery/run_tag_stale), survival and the pick
 
 What it emits (namespace cobblers, folder dungeons/), each named where it is built below. The shells and the rip are
-built by tools/reapply.py steps R16DG and R16DR; the keeper, the clicks, the recipes and the callback drive
+built by tools/reapply.py steps R16DG and R16DR (R16DR also stands each rip's animated oval: an item_display of
+engine.rip_art's carrier item, which tools/rip_pack.py's CLIENT resource pack gives its model); the keeper, the clicks, the recipes and the callback drive
 themselves. Every NPC class and the battle_victory callback load only at a boot.
 
   python tools/dungeon.py                 # write build/datapacks/cobblers_dungeons
@@ -428,6 +429,26 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
         for blk in rip["palette"].values():
             if "portal" in blk:
                 bad.append("%s: a portal block in the rip (7.1: they teleport on their own)" % d["id"])
+        ov = rip.get("oval")
+        art = e.get("rip_art")
+        if not ov or not art:
+            bad.append("%s: no rip.oval / engine.rip_art (the rip's animated oval)" % d["id"])
+        else:
+            if not (0 < ov["in_front"] <= 0.5):
+                bad.append("%s: the oval must stand in front of the opening's face (0 < in_front <= 0.5), not in the block" % d["id"])
+            if ov["width"] <= 0 or ov["height"] <= 0:
+                bad.append("%s: the oval has no size" % d["id"])
+            fw, fh = art["frame"]["width"], art["frame"]["height"]
+            if abs(fw * ov["height"] - fh * ov["width"]) > 1e-6:
+                bad.append("%s: the oval is %sx%s but the texture frame is %dx%d (a stretched art)" % (d["id"], ov["width"], ov["height"], fw, fh))
+    art = e.get("rip_art")
+    if art:
+        if not isinstance(art["custom_model_data"], int) or isinstance(art["custom_model_data"], bool):
+            bad.append("rip_art.custom_model_data must be an int (1.21.1's component is a plain int)")
+        if "portal" in art["item"]:
+            bad.append("rip_art.item is a portal item")
+        if not re.match(r"^[a-z0-9_.]+$", art["tag"]):
+            bad.append("rip_art.tag %r" % art["tag"])
     ids = [d["id"] for d in dungeons(doc)]
     shorts = [d["short"] for d in dungeons(doc)]
     if len(set(ids)) != len(ids) or len(set(shorts)) != len(shorts):
@@ -615,6 +636,34 @@ def rip_lines(d):
 
 def rip_tag(d):
     return "%s_%s" % (TAGS["rip"], d["short"])
+
+
+def oval_pos(d):
+    """(x, y, z) of the rip's oval display, its CENTRE: on the frame's column, its foot at the frame's y, in front of
+    the opening's face (data/dungeons.json rip.oval). All three are derived from the frame, never typed twice."""
+    r = d["rip"]
+    f, o = r["frame"], r["oval"]
+    return ((f["x0"] + f["x1"]) / 2.0 + 0.5, f["y"] + o["height"] / 2.0, f["z"] + 1 + o["in_front"])
+
+
+def oval_tag(doc):
+    return doc["engine"]["rip_art"]["tag"]
+
+
+def oval_summon(doc, d):
+    """The R16DR summon of one rip's oval: an item_display of the carrier item (engine.rip_art; tools/rip_pack.py
+    gives that item+custom_model_data its model in the client pack). Fixed in the frame's plane, facing south onto the
+    trail, full-bright. `scale` is the oval's width x height x 1 over the model's one-block quad."""
+    art, o = doc["engine"]["rip_art"], d["rip"]["oval"]
+    x, y, z = oval_pos(d)
+    br = art["brightness"]
+    return ("summon minecraft:item_display %.2f %.2f %.2f {Tags:[\"%s\",\"%s\",\"%s\"],"
+            "item:{id:\"%s\",count:1,components:{\"minecraft:custom_model_data\":%d}},item_display:\"none\","
+            "brightness:{sky:%d,block:%d},view_range:%.1ff,"
+            "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],"
+            "scale:[%.2ff,%.2ff,1f]}}"
+            % (x, y, z, rip_tag(d), oval_tag(doc), TAGS["rip_new"], art["item"], art["custom_model_data"],
+               br["sky"], br["block"], art["view_range"], o["width"], o["height"]))
 
 
 # ------------------------------------------------------------------------------------------------- functions
@@ -1465,9 +1514,14 @@ def chains(doc):
         x, y, z = d["rip"]["click"]
         racts += ["kill @e[type=minecraft:interaction,tag=%s]" % tag,
                   "summon minecraft:interaction %.1f %d %.1f {width:3.0f,height:3.0f,response:1b,Tags:[\"%s\",\"%s\",\"%s\"]}"
-                  % (x + 0.5, y, z + 0.5, TAGS["rip"], tag, TAGS["rip_new"])]
+                  % (x + 0.5, y, z + 0.5, TAGS["rip"], tag, TAGS["rip_new"]),
+                  # the oval (engine.rip_art): killed and summoned with the interaction, in the same chain and de-duplicated
+                  # by its own scope; the chain's count (interactions) and `shown` (an interaction) are unchanged
+                  "kill @e[type=minecraft:item_display,tag=%s,tag=%s]" % (tag, oval_tag(doc)),
+                  oval_summon(doc, d)]
         rshown.append("@e[type=minecraft:interaction,tag=%s]" % tag)
         rscopes.append("type=minecraft:interaction,tag=%s" % tag)
+        rscopes.append("type=minecraft:item_display,tag=%s,tag=%s" % (tag, oval_tag(doc)))
         rboxes.append((x - 4, z - 4, x + 4, z + 4))
     out.update(chunk_look.chain(F("rips/entities"), rboxes, rshown, racts, rscopes, TAGS["rip_new"],
                                 "type=minecraft:interaction,tag=%s" % TAGS["rip"], RIP_HOLDER, note="tools/dungeon.py",
