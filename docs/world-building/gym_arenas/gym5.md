@@ -1,6 +1,15 @@
 # Gym 5: Koga, The Tracking Floor
 
-Record: `data/gym_arenas/gym5.json` (schema `gym_arena/1`, tool `tools/gym_arenas.py`). Authored 2026-10-08. Offline checks
+**Superseded 2026-10-09 by the walk-through hall.** `data/gym_arenas/gym5.json` is now schema `gym_hall/1`, "The Reed
+House": one building on Koga's lot (x4574..4606, z2463..2495, level y116), in at the jetty door, up the reed stair onto
+the drying loft, along one of three plank walks over the flood to three steeping vats, down into the west one (soul
+sand's bubbles, a green glow), out through its mouth under the screen into a settling pool, and in at the door in the
+dividing wall to **this Tracking Floor, kept and turned north-south at the lot's level** (12 wide by 29 long: the blind
+at the north end, two screens in the south). The text below describes last night's carved range, which the hall's
+takedown fills with stone (`replaces.arena` in the record); its look, palette and dressing are what the hall keeps.
+Walk, rooms and numbers: `docs/world-building/GYM_WALKTHROUGH.md` section 3 (gym 5) and the record itself.
+
+Record (as built last night): schema `gym_arena/1`, tool `tools/gym_arenas.py`. Authored 2026-10-08. Offline checks
 only: nothing here has been built in a world or seen in a running game.
 
 ## The reading
