@@ -910,9 +910,13 @@ def old_seat_restore(doc, old):
     out = []
     for dy in (0, -1):
         cand = [at_b(x + dx, y + dy, z + dz) for dx, dz in DIRS.values()]
-        cand = [c for c in cand if not is_open(c) and block_name(c) not in (SPAWNER, REDSTONE)]
+        cand = [c for c in cand if block_name(c) not in (SPAWNER, REDSTONE)]
+        solid = [c for c in cand if not is_open(c)]
+        # a seat in a deck can hang its redstone block in open air (gym 5's watch floor): every neighbour at that
+        # height is open, and the building model's own open cell is what belongs there, never a guessed solid
+        cand = solid or cand
         if not cand:
-            raise ArenaError("%s: nothing solid beside the old seat at y%d to restore it from" % (doc["id"], y + dy))
+            raise ArenaError("%s: nothing beside the old seat at y%d to restore it from" % (doc["id"], y + dy))
         out.append(max(set(cand), key=cand.count))
     if r and (r.get("floor"), r.get("under")) != tuple(out):
         raise ArenaError("%s: old_seat_restore %s disagrees with the building model's %s" % (doc["id"], r, out))
