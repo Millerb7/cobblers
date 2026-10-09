@@ -88,6 +88,13 @@
     "far_dock": "northlight_landing",
     "why": "The 'ferry guy' the owner asked for is the station jetty's ferryman, a stop on a new line of the existing ferry system (data/ferries.json lines coldwater_crossing): the jetty is built by tools/ferry_docks.py at R16H and the ferrymen are placed by tools/ferries.py at R17F, so this pack builds neither. The far end is Northlight's existing landing on South Pine Isle (built 2026-09-30), whose packet master then offers both crossings: a second landing on the same island's coast would be a second jetty and a second ferryman for no new destination. Fare and gate are the Northlight packet's ($400, Koga's badge): a cheaper or ungated boat to the same island would undo the packet's gate."
   },
+  "waystone": {
+    "at": [6052, 1846],
+    "facing": "east",
+    "unlock": "discovery: the first visit activates it (the Waystones mod's own behaviour); no flag",
+    "placed_by": "tools/hub_waystones.py (re-apply step R18W), after this station's own build (R18CW) and its jetty (R16H): one block above the heightmap ground, in the open ground between the lab and the observation deck",
+    "why": "the owner, 2026-10-09: waystones at the research stations. This is the mainland end of the Northlight crossing and the station that studies the sea floor: the open ground between the lab (x6042-6048) and the observation deck (x6056-6060), four blocks from each, on the walk up from the jetty. It faces east, the way the walk from the jetty arrives. Outside every column this station writes (tools/hub_waystones.py checks it against the station's own plan) and written here, in this file, because the station's build refuses any build column within rules.authored_clearance of an x/z another data file authors, and this file is the one it skips"
+  },
   "blocks": {
     "rule": "vanilla 1.21.1 only, none a spawn condition in data/spawn_blocks.json (checked by the tool on every build; light blue wool and lightning rods are, and are not used). No chests (tools/portals_audit.py's Gimmighoul reading) and no beds (the blackout recovery owns respawn points): barrels and carpets, as at the Frostpeak camp.",
     "ids": [

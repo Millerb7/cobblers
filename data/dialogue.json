@@ -1622,6 +1622,54 @@
           "node": "oak_mode_001"
         },
         {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.waystone_claimed",
+                "value": false
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+                "values": [
+                  "oak_repeat_before_mismatch"
+                ]
+              }
+            ]
+          },
+          "node": "oak_waystone_001"
+        },
+        {
+          "priority": 7,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.waystone_claimed",
+                "value": false
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+                "values": [
+                  "oak_repeat_after_mismatch"
+                ]
+              }
+            ]
+          },
+          "node": "oak_waystone_late"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -1841,7 +1889,43 @@
           "speaker": "professor_oak",
           "text": "One more page for the field guide: birds nest in the great trees. Stand under a big crown and look up. Some kinds nest nowhere else.",
           "placeholder": "Claude, 2026-10-08 (unit WAY, the owner: 'the sapling hint ... An NPC mentioning birds nesting is enough'): a functional hint for Codex to replace. Measured from data/habitat_blocks.json and data/spawns.json: 6 species spawn only from the tree nests (the elder_* and sapling_* blocks' pools), Bombirdier (elder_marshy_marsh_2), Ledyba and Ledian (elder_foothill_woods_4), Vullaby (elder_wedge_south_1, sapling_desert_long_isle_north), Mandibuzz (elder_wedge_south_1) and Rowlet (elder_south_pine_isle_3); Hoothoot and Starly also nest in trees but spawn in the open too (surface.route1_maze_forest, surface.river_of_shrews_vale). Said once, after the send-off, so every player who leaves Pallet hears it",
+          "next": "oak_waystone_001"
+        },
+        {
+          "id": "oak_waystone_001",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "One more thing before you go. This is a waystone. Set it down wherever you mean to come back to, and it will know you.",
+          "placeholder": "Claude, 2026-10-09 (the owner: 'a player's own waystone, given by Oak once after the starter'): a functional line for Codex to replace. data/player_waystone.json holds the decision and the reading of what the item does.",
+          "next": "oak_waystone_002"
+        },
+        {
+          "id": "oak_waystone_002",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Break it and it is yours again, so carry it with you when you move on. There is only the one.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_oak_waystone"
+            }
+          ],
+          "placeholder": "Claude, 2026-10-09 (the owner: 'a player's own waystone, given by Oak once after the starter'): a functional line for Codex to replace. data/player_waystone.json holds the decision and the reading of what the item does.",
           "next": "oak_repeat_before_mismatch"
+        },
+        {
+          "id": "oak_waystone_late",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "I nearly forgot. Here is a waystone of your own. Set it down wherever you mean to come back to, and pick it up when you move on. There is only the one.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_oak_waystone"
+            }
+          ],
+          "placeholder": "Claude, 2026-10-09 (the owner: 'a player's own waystone, given by Oak once after the starter'): a functional line for Codex to replace. data/player_waystone.json holds the decision and the reading of what the item does. Said once to a player Oak had already sent off before the gift shipped.",
+          "next": "oak_repeat_after_mismatch"
         },
         {
           "id": "oak_repeat_before_mismatch",

@@ -7107,6 +7107,68 @@
         "entity": "@e[type=cobblemon:pokemon,tag=cobblers.res.old_pace,distance=..24]",
         "count": 1
       }
+    ],
+    "hub_waystones": [
+      {
+        "what": "shrew_station: the hub waystone, lower half",
+        "block": [
+          544,
+          64,
+          2808,
+          "waystones:waystone[half=lower,facing=west]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "shrew_station: the hub waystone, upper half",
+        "block": [
+          544,
+          65,
+          2808,
+          "waystones:waystone[half=upper,facing=west]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "coldwater_station: the hub waystone, lower half",
+        "block": [
+          6052,
+          68,
+          1846,
+          "waystones:waystone[half=lower,facing=east]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "coldwater_station: the hub waystone, upper half",
+        "block": [
+          6052,
+          69,
+          1846,
+          "waystones:waystone[half=upper,facing=east]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "northeast_landing: the hub waystone, lower half",
+        "block": [
+          6605,
+          64,
+          2311,
+          "waystones:waystone[half=lower,facing=north]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "northeast_landing: the hub waystone, upper half",
+        "block": [
+          6605,
+          65,
+          2311,
+          "waystones:waystone[half=upper,facing=north]"
+        ],
+        "expect": true
+      }
     ]
   }
 }

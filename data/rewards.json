@@ -2514,6 +2514,26 @@
           2073
         ]
       }
+    },
+    {
+      "id": "oak_waystone",
+      "kind": "npc_grant",
+      "place": "Oak's lab, Pallet Town: Professor Oak, in his own conversation after the send-off",
+      "npc_at": [
+        1493,
+        118,
+        5317
+      ],
+      "quest": "main_worldshift_reveal",
+      "contents": [
+        {
+          "item": "waystones:waystone",
+          "count": 1,
+          "verification": "assets/waystones/models/item/waystone.json in waystones-fabric-1.21.1-21.1.37.jar"
+        }
+      ],
+      "why": "The owner, 2026-10-09: a player's own waystone, given by Oak once after the starter, so a player can make a house anywhere; one per player, its crafting recipe closed (data/player_waystone.json, tools/player_waystone.py). A given item, because the claim has to be a field Oak's dialogue can read and a lost item must not be regranted. Broken, the waystone drops as itself (the mod's own loot table), so a player who moves keeps it.",
+      "built_by": "no build: Oak is placed by reapply step R17 (data/npc_seats.json npc_main_pallet_oak) and his conversation is compiled by tools/compile_dialogue.py; the recipes are closed by cobblers_player_waystone"
     }
   ]
 }

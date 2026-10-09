@@ -18,7 +18,7 @@
     "why_here": "the owner's coordinate (552, 2812), 2026-10-02. It is dry coast at y64, 30 blocks inland of the waterline, on a straight, gently shelving shore, so the station keeps the lake build's character in the same order: research buildings on dry ground, a jetty over the 1-deep shoal, a boardwalk spine with the instrument huts over 3-4 deep, a pier out across the shelf, the Eon shrine on a platform 15 deep and about 100 blocks off the beach, and the observatory beyond it looking west over the shelf toward the drop. The land buildings stand 16-50 blocks east of the owner's coordinate, on ground y63-68",
     "neighbours": "measured 2026-10-02 by a sweep of every [x, z] and {x, z} pair in data/*.json within x250-850, z2500-3150: the only authored thing is adopted_zapdos_tower (data/adopted_legendary_sites.json), its 31 by 29 footprint x562-592, z2614-2642, so the station's nearest write (z2775) is 133 blocks south of it and its centre about 190; the rest are region and marine-region polygon vertices. No route, river, town, ferry, portal or other structure is in that box. The tower is the thunder feather's altar: the station stands a walk down the coast from the place its storm log is kept. SUPERSEDED 2026-10-03: the owner moved the tower to the Fungal Isle (\"move zapdos tower to mooshroom island i think or its own off in the sea\"); it now stands at corner (881, 67, 5569), 2,777 blocks from (552, 2812), and the box above is empty again. The storm log follows the tower (economy.storm_log reads its position through tools/adopted_sites.py), so the earning is not broken; the station's reason to stand here (to study a tower a walk away) is gone, and whether the station moves too is the owner's call",
     "ferry": "none, as the proposal decided (section 5.4) and the owner's word kept: the station is walkable from its land plaza by design, and nothing on it sits behind water",
-    "waystone": "none: the owner, 2026-10-02 ('no waystone')",
+    "waystone": "SUPERSEDED 2026-10-09 by the owner (see the top-level waystone below): the 2026-10-02 answer was 'no waystone'; on 2026-10-09 the owner asked for waystones at the research stations and the main ferry ports, so travel to them is earned by one visit and fast travel stays limited elsewhere",
     "surveyor": "SQ-DIG-02's lost surveyor stays at the dig camp (the owner, 2026-10-02). Nothing here moves, copies or names him"
   },
   "superseded_site": {
@@ -73,6 +73,13 @@
     "post": "minecraft:stripped_spruce_log",
     "platform": "minecraft:polished_tuff",
     "why": "the proposal's signature paving (section 5.2): polished tuff and tuff bricks on the strand and the platform floors, with waxed oxidized cut copper inlays - a cool grey-green, instrument-coloured, unlike Brock's andesite, Misty's mud brick and prismarine, the sea town's jungle and bamboo and Northlight's terracotta. Decks are spruce planks on stripped spruce posts. None of these is in data/spawn_blocks.json (checked by the audit, C4). The town-ground tag the encounters design names (#cobblers:town_ground/<town>, docs/story/ENCOUNTERS.md) does not exist yet, so no roster is keyed to this paving: that is a second pass."
+  },
+  "waystone": {
+    "at": [544, 2808],
+    "facing": "west",
+    "unlock": "discovery: the first visit activates it (the Waystones mod's own behaviour); no flag",
+    "placed_by": "tools/hub_waystones.py (re-apply step R18W), after this station's own build (R9RS): a hub waystone stands one block above the plaza's paving, on a column the station's plan leaves empty above its floor",
+    "why": "the owner, 2026-10-09: waystones at the main places, 'like ferry ports or research centers'. On the avenue's centre line twenty blocks in from the jetty's foot sign, on ground a block above the waterline strip (y63; the strip at x524-534 is y62, level with the sea), where the walk from the shore reaches the Institute's row; it faces west, back down the avenue to the jetty, so a visitor coming up from the water meets its front. The 3 x 3 round it is paving and nothing else (tools/hub_waystones.py checks it against this station's own plan)"
   },
   "plaza": {
     "rect": [524, 2792, 584, 2830],

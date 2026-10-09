@@ -1567,6 +1567,35 @@
           ]
         },
         {
+          "id": "grant_oak_waystone",
+          "why": "the owner, 2026-10-09: Oak gives each player ONE waystone of their own, once, after the starter, so a player can make a house anywhere (data/player_waystone.json). Run by Oak's oak_waystone_002 (the new player, after the send-off) or oak_waystone_late (a player he sent off before this shipped); guarded by a permanent per-player claim, so a second talk gives nothing. A waystone broken is an item again (the mod's own drop), so a player who moves keeps it",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.waystone_claimed",
+              "value": false
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "not_started"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_oak_waystone",
+              "target": "triggering_player",
+              "claim_field": "quest.main_worldshift_reveal.waystone_claimed",
+              "idempotency_key": "main_worldshift_reveal:oak_waystone:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            }
+          ]
+        },
+        {
           "id": "record_boundary_mismatch",
           "conditions": [
             {
@@ -2526,11 +2555,26 @@
         "Physical evidence is visible corroboration only because no proven coordinate, proximity, block-interaction, or object-inspection predicate exists.",
         "The compiled mechanism remains single-player proven only; two-player independent cursors are not runtime verified."
       ],
+      "rewards": [
+        {
+          "id": "reward_oak_waystone",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json oak_waystone (kind npc_grant); contents and verification string copied from it",
+          "contents": [
+            {
+              "item": "waystones:waystone",
+              "count": 1,
+              "verification": "assets/waystones/models/item/waystone.json in waystones-fabric-1.21.1-21.1.37.jar"
+            }
+          ]
+        }
+      ],
       "progression_field_refs": [
         "quest.main_worldshift_reveal.stage",
         "quest.main_worldshift_reveal.pallet_oak_cursor",
         "quest.main_worldshift_reveal.trainer_mode",
         "quest.main_worldshift_reveal.oak_greeted",
+        "quest.main_worldshift_reveal.waystone_claimed",
         "quest.main_worldshift_reveal.lab_starter_cursor",
         "quest.main_worldshift_reveal.pallet_mina_cursor",
         "quest.main_worldshift_reveal.pallet_maren_cursor",
