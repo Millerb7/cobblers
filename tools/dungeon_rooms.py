@@ -104,10 +104,12 @@ def register_dress(name, fn, level="light"):
 
 
 def flags_of(kind):
+    load_extensions()
     return FLAGS.get(kind) or dict(DEFAULT_FLAGS, dress="full")
 
 
 def known_kind(kind):
+    load_extensions()
     return kind in KINDS or kind in DECLARED_KINDS
 
 
@@ -160,7 +162,15 @@ def has_rooms(d):
     return "rooms" in d
 
 
+_EXTENSIONS_LOADED = []
+
+
 def load_extensions():
+    """Import the kind modules once, on first use: never at import time, because an extension (dungeon_fights)
+    imports tools/dungeon.py, which imports this module, and a load at import time finds dungeon.py half-built."""
+    if _EXTENSIONS_LOADED:
+        return
+    _EXTENSIONS_LOADED.append(True)
     for name in EXTENSION_MODULES:
         try:
             importlib.import_module(name)
@@ -390,6 +400,7 @@ class DressCtx:
 
 
 def _cache_key(doc, d, slot):
+    load_extensions()
     blob = json.dumps([d, slot["x0"], slot["z0"], slot["cz"], doc["engine"]["pocket"]["floor_y"],
                        doc["engine"]["clock"]["fall_penalty_s"], doc["engine"]["clock"]["units_per_tick"],
                        load_themes(), sorted(KINDS), sorted(DRESS)], sort_keys=True)
@@ -592,6 +603,7 @@ def _point_list(v):
 
 
 def build_room(doc, d, slot, room, theme):
+    load_extensions()
     kind = room["kind"]
     fl = flags_of(kind)
     b = Built(room)
@@ -1014,6 +1026,7 @@ EXTRA_CHECKS = []     # wave 2 appends fn(doc, d, slot) -> [problem] for its kin
 
 
 def warnings(doc):
+    load_extensions()
     out = []
     for d in doc["dungeons"]:
         if not has_rooms(d):
@@ -1037,4 +1050,3 @@ def _slots_for(doc):
     return out
 
 
-load_extensions()

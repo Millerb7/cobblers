@@ -475,11 +475,12 @@ def check_c1(dg_files):
     dg = functions(dg_files)
     classes = {"%s:%s" % (m.group(1), m.group(2)) for rel in dg_files
                for m in [re.match(r"data/([^/]+)/npcs/(.+)\.json$", rel)] if m}
+    helpers = spawn_helpers(dg)   # once: computed per line it made the check O(lines^2), 62 s on a 700-block dungeon
     for f, ls in dg.items():
         for l in body(ls):
             if re.search(r"\bspawnnpcat\b", l) and not l.startswith("$"):
                 bad.append("%s: spawnnpcat on a plain line fails to parse at load (EXP-078): %s" % (f, l))
-            for h in spawn_helpers(dg):
+            for h in helpers:
                 if h in calls(l):
                     m = re.search(r'cls:"([^"]+)"', l)
                     if m and m.group(1) not in classes:
