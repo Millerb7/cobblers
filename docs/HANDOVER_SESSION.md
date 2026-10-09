@@ -73,3 +73,12 @@ once reported: further work goes on a new branch. Re-read its head before quotin
   `species/generation2/wooper.json`, form Paldea), written `wooper paldean` as `sandshrew alolan` is. To do: restore
   it on the creek's entries, mark the audit's misfit as the owner's decision (not KNOWN-removed), compile, prepare,
   install. Not done this session.
+- **And Clodsire on Wooper Creek (the owner, 2026-10-09 morning)**, the Paldean line's evolution, as a creek spawn at the
+  creek's level band. Hummock Mere's Clodsire (L52, the named swamp nest, merged and not installed) stays as it is: one
+  is a resident, the other the line's wild adult.
+- **Staging is STOPPED (the owner, 2026-10-09 09:23: "shut down server and prep it for next test ... don't start the
+  server yet").** Stopped cleanly with RCON (`save-all flush`, `stop`), java gone, port free, lock released. Watchdog
+  60000. The world holds tonight's install plus the playtest dungeons pack (`build/2026-10-09-dungeon-playtest`), which
+  loads at the next boot. Boot it when the owner asks, at 12G, in the terminal panel. Then, over RCON or in game,
+  `tag <player> add cobblers.dg_playtest` and `scoreboard players set <player> dg.ptband 1` give a level-100 team the
+  band-1 run, with the band-1 sigil (`miner_pottery_sherd` with `cobblers_dg_sigil:1b`).
