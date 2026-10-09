@@ -536,6 +536,11 @@ def authored(doc, data, record=RECORD):
     own = set()
     for r in doc["residents"]:
         own |= {v for v in (r.get("records") or {}).values() if v}
+    # the residents file's declared exceptions (rules.authored_clearance_exempt ids, ..._files names): data inputs,
+    # each with its reason in the file; never a smaller clearance
+    rules_ = doc.get("rules") or {}
+    own |= set(rules_.get("authored_clearance_exempt") or {})
+    skip_files = set(rules_.get("authored_clearance_exempt_files") or {})
     # an area a cell wide or wider is an index, not a place: data/world.json grid.cell_size, and CLAUDE.md "a cell
     # indexes location only". Every column of the map is inside one
     cell = jload("world.json", data)["grid"]["cell_size"]
@@ -575,7 +580,7 @@ def authored(doc, data, record=RECORD):
                     walk(v, f)
 
     for p in sorted(Path(data).glob("*.json")):
-        if p.name == record:
+        if p.name == record or p.name in skip_files:
             continue
         walk(json.loads(p.read_text(encoding="utf-8")), p.name)
     return pts, rects
