@@ -1474,6 +1474,53 @@
    ],
    "block": "$hanging",
    "why": "lanterns hung from the adit's roof, one every four steps, so no step is dark"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6156,
+     85,
+     4986
+    ],
+    [
+     6156,
+     85,
+     4992
+    ],
+    [
+     6156,
+     85,
+     4998
+    ],
+    [
+     6156,
+     85,
+     5004
+    ],
+    [
+     6176,
+     85,
+     4986
+    ],
+    [
+     6176,
+     85,
+     4992
+    ],
+    [
+     6176,
+     85,
+     4998
+    ],
+    [
+     6176,
+     85,
+     5004
+    ]
+   ],
+   "block": "$lantern",
+   "why": "floor lanterns at the foot of the core tubes along both side walls: the check found ten standable cells at block light 0 at x6156/x6176 (added by the main session from the builder's handed-back fix)"
   }
  ],
  "probes": [
