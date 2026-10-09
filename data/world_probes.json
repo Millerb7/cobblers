@@ -5395,6 +5395,168 @@
           1056
         ]
       }
+    ],
+    "tri_peaks_nest": [
+      {
+        "what": "the tooth, east: tip",
+        "block": [
+          1488,
+          260,
+          1059,
+          "minecraft:cobbled_deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, east: air over the tip",
+        "block": [
+          1488,
+          261,
+          1059,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, north-east: tip",
+        "block": [
+          1482,
+          260,
+          1053,
+          "minecraft:basalt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, north-east: air over the tip",
+        "block": [
+          1482,
+          261,
+          1053,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, north-west: tip",
+        "block": [
+          1474,
+          263,
+          1053,
+          "minecraft:cobbled_deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, north-west: air over the tip",
+        "block": [
+          1474,
+          264,
+          1053,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, south-east: tip",
+        "block": [
+          1486,
+          257,
+          1068,
+          "minecraft:basalt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, south-east: air over the tip",
+        "block": [
+          1486,
+          258,
+          1068,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, south-west: tip",
+        "block": [
+          1471,
+          254,
+          1068,
+          "minecraft:tuff"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, south-west: air over the tip",
+        "block": [
+          1471,
+          255,
+          1068,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, west: tip",
+        "block": [
+          1468,
+          259,
+          1059,
+          "minecraft:basalt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the tooth, west: air over the tip",
+        "block": [
+          1468,
+          260,
+          1059,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the scoured bench: a surface block",
+        "block": [
+          1476,
+          252,
+          1055,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the scree, belly: a surface block",
+        "block": [
+          1489,
+          218,
+          1115,
+          "minecraft:cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "crownbreaker: air at the feet",
+        "block": [
+          1478,
+          254,
+          1062,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "crownbreaker: air at the head",
+        "block": [
+          1478,
+          257,
+          1062,
+          "minecraft:air"
+        ],
+        "expect": true
+      }
     ]
   }
 }

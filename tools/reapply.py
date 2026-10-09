@@ -176,6 +176,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # (tools/hummock_mere.py, data/hummock_mere.json), built by R9HM; one named Pokemon on the residents'
                 # keeper, so world-local below; summoned by R18HM after R18FS
                 "cobblers_hummock_mere",
+                # 2026-10-09: the Tri Peaks' open-summit nest (tools/tri_peaks_nest.py, data/tri_peaks_nest.json): the
+                # south peak's crown, teeth and scree spur, built by R9TP; one named Pokemon on the residents' keeper,
+                # so world-local below. No entity step: the keeper brings it in
+                "cobblers_tri_peaks_nest",
                 # 2026-10-04: the jungle's three lost temples on the Long Isle's south (tools/jungle_temples.py,
                 # data/jungle_temples.json), built by R9JT; no load or tick and no Pokemon, so not world-local
                 "cobblers_jungle_temples",
@@ -464,6 +468,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_far_south",
                # 2026-10-09: Hummock Mere's keeper spawns its one Pokemon the same way
                "cobblers_hummock_mere",
+               # 2026-10-09: the Tri Peaks nest's keeper spawns its Tyranitar the same way
+               "cobblers_tri_peaks_nest",
                # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
                # global folder would run it in the live world too
                "cobblers_arena",
@@ -870,6 +876,9 @@ def prepare_jobs(a):
     # the data and the heightmap and fails the prepare on a broken pack
     add("resident_encounters", "resident_encounters.py", *src)
     add("resident_encounters_audit", "resident_encounters_audit.py", *src)
+    # the Tri Peaks' open-summit nest (2026-10-09): the generator fails closed on a record the heightmap disagrees
+    # with (anchor, bbox) and on a function the server would refuse. Its independent audit is owed to another agent
+    add("tri_peaks_nest", "tri_peaks_nest.py", *src)
     # the southern residents (2026-10-03): the generator fails closed on its own siting rules and on a record the
     # heightmap disagrees with; then its independent audit (written by an agent that built none of it, never imports
     # the generator to derive): the pack replayed against the data and the heightmap, the siting and resident rules,
@@ -2047,6 +2056,12 @@ def steps(with_spawns=False):
     import hummock_mere
     out.append(("R9HM", "Hummock Mere: the drowned grove, the island and the Route 6 warning (data/hummock_mere.json)",
                 hummock_mere.placement_steps()))
+    # the Tri Peaks' open-summit nest (2026-10-09, tools/tri_peaks_nest.py): the same pure block pass, held in a
+    # forceload of its box (30 chunks), before R9E (no Habitat Block near it). Its Tyranitar is the residents' keeper's:
+    # ungated, brought in the first time a player is within 96 blocks of the crown, so no entity is touched here
+    import tri_peaks_nest
+    out.append(("R9TP", "the Tri Peaks' open-summit nest: the crown, its teeth and the scree spur (data/tri_peaks_nest.json)",
+                tri_peaks_nest.placement_steps()))
     # the jungle's lost temples (2026-10-04, tools/jungle_temples.py): the same pure block pass per temple, held in a
     # forceload of its box, before R9E (none sits on a Habitat Block); the caches' barrels are written here
     import jungle_temples
