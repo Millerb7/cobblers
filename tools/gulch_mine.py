@@ -1258,8 +1258,12 @@ def cutter_files(m):
     re-run whose chunks' saved villagers arrived after that (staging 2026-10-08, the stall merchants) doubled every
     bench. The chain looks from tick 40 every 20 until a Cutter is seen (or blind after 300 ticks on a first run),
     then kills the old Cutters near the workshop and summons each once with `<tag>_new`; 100 ticks later it keeps the
-    new one per bench and counts them into #gulch_cutters. The benches span two chunks (x 268 and 269); a look sees
-    either, and the de-duplication 100 ticks after the act catches the other chunk's villager if it was slower."""
+    new one per bench and counts them into #gulch_cutters. The benches span two chunks (x 268 and 269), and one
+    chunk's entities prove nothing about the other's, so the look holds one selector per chunk the benches stand in
+    (that chunk's first bench, on its own seat) and acts only once EVERY chunk shows its Cutter (`all_shown`), or blind.
+    Until 2026-10-08 it looked with one `near` selector: a Cutter seen in chunk 268 let the chain act before 269's
+    villagers were in, and a 269 Cutter slower than the de-duplication survived beside its new copy (the independent
+    review, tests/test_chunk_look_review.py)."""
     c = m.spec["cutters"]
     off = c["offer"]
     tag, new = c["tag"], c["tag"] + "_new"
@@ -1286,8 +1290,17 @@ def cutter_files(m):
                    % (x + 0.5, y, z + 0.5, tag, new, tag, b["id"], b["yaw"], name, c["profession"], c["villager_type"],
                       ",".join(recipes)))
         scopes.append("type=minecraft:villager,tag=%s,tag=%s_%s" % (tag, tag, b["id"]))
-    fns = CL.chain(CUTTERS_FN, box, ["@e[%s]" % near], act, scopes, new, "type=minecraft:villager,tag=%s" % tag,
-                   CUTTERS_HOLDER, note="tools/gulch_mine.py")
+    # one look per chunk the benches stand in: that chunk's first bench, its Cutter on its own seat
+    shown, chunks = [], set()
+    for b in c["benches"]:
+        ch = (b["at"][0] >> 4, b["at"][2] >> 4)
+        if ch not in chunks:
+            chunks.add(ch)
+            x, y, z = b["at"]
+            shown.append("@e[type=minecraft:villager,tag=%s,tag=%s_%s,x=%.1f,y=%d,z=%.1f,distance=..1.5]"
+                         % (tag, tag, b["id"], x + 0.5, y, z + 0.5))
+    fns = CL.chain(CUTTERS_FN, box, shown, act, scopes, new, "type=minecraft:villager,tag=%s" % tag,
+                   CUTTERS_HOLDER, note="tools/gulch_mine.py", all_shown=True)
     pre = "%s:%s/" % (NS, FOLDER)
     return {ref[len(pre):]: lines for ref, lines in fns.items()}
 

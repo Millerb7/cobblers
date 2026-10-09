@@ -89,8 +89,7 @@ def test_the_cutters_benches_span_two_chunks_in_the_data():
     assert len(_bench_chunks()) >= 2, _bench_chunks()
 
 
-@pytest.mark.xfail(strict=True, reason="tools/gulch_mine.py:1289: one `near` look over two chunks (no all_shown), so "
-                                       "a slower chunk's saved Cutter arrives after the de-duplication and doubles")
+# fixed 2026-10-08: the Cutters' chain looks in every bench's chunk (all_shown)
 def test_one_cutter_per_bench_when_one_benchs_chunk_is_slower_than_the_other():
     # Without it a re-run of R9S doubles the Cutter of a bench whose chunk loads 160+ ticks after its neighbour's.
     first = {}
@@ -101,7 +100,7 @@ def test_one_cutter_per_bench_when_one_benchs_chunk_is_slower_than_the_other():
     assert _per_bench(w) == [1] * len(BENCHES)
 
 
-@pytest.mark.xfail(strict=True, reason="tools/gulch_mine.py:1289: no one look requires a Cutter in every bench's chunk")
+# fixed 2026-10-08: one look requires a Cutter in every bench's chunk
 def test_the_cutters_chain_looks_in_every_benchs_chunk(tmp_path):
     # Without it the audit (tools/gulch_mine_audit.py, sites from the data's benches) could pass a single-chunk look.
     sites = [(b["at"][0], b["at"][2]) for b in BENCHES]
