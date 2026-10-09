@@ -7692,6 +7692,78 @@
       },
       "status": "planned",
       "why": "written by tools/training_grounds.py records --write: the levelling catch-up for gym 8 (cap 55, docs/mechanics/LEVEL_CATCHUP.md). In the grass at the heightmap's ground, keeping up to 6 of its pool alive within 16 blocks; battle EXP from them stops at the cap (rctmod)."
+    },
+    {
+      "id": "fungal_cap_wood_ward",
+      "place": "the Fungal Isle's The Cap Wood (data/fungal_isle.json): the Cap Wood's beacon stem: the second block of the 3x3 stem's middle column",
+      "pool": "cobblers:fungal_cap_wood",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 392,
+        "y": 140,
+        "z": 5572
+      },
+      "mimic": "minecraft:mushroom_stem",
+      "activated": {
+        "spawn_range": 20,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "why": "written by tools/fungal_isle.py records --write from the plan (data/fungal_isle.json nests.cap_wood). An activated block keeps up to 5 of the pool alive within 20 blocks of itself and refills as they are caught or despawn; cancel_range -1, so the island's own rosters continue round it. Kept in a block the pack writes (minecraft:mushroom_stem), so the pack runs BEFORE R9E. UNPROVEN in game: that this block keeps its pool visible (EXP-021, the Ursaluna's den and the Old Orchard use the same shape).",
+      "mimic_why": "the block the pack writes at that position: the Cap Wood's beacon stem: the second block of the 3x3 stem's middle column"
+    },
+    {
+      "id": "fungal_stump_court_ward",
+      "place": "the Fungal Isle's The Stump Court (data/fungal_isle.json): the Great Stump: the second log of its middle column",
+      "pool": "cobblers:fungal_stump_court",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 560,
+        "y": 147,
+        "z": 5712
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "why": "written by tools/fungal_isle.py records --write from the plan (data/fungal_isle.json nests.stump_court). An activated block keeps up to 5 of the pool alive within 16 blocks of itself and refills as they are caught or despawn; cancel_range -1, so the island's own rosters continue round it. Kept in a block the pack writes (minecraft:dark_oak_log), so the pack runs BEFORE R9E. UNPROVEN in game: that this block keeps its pool visible (EXP-021, the Ursaluna's den and the Old Orchard use the same shape).",
+      "mimic_why": "the block the pack writes at that position: the Great Stump: the second log of its middle column"
+    },
+    {
+      "id": "fungal_glowcap_hollow_ward",
+      "place": "the Fungal Isle's The Glowcap Hollow (data/fungal_isle.json): the hollow's floor, 9 blocks east of the pool's middle, in the moss",
+      "pool": "cobblers:fungal_glowcap_hollow",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 569,
+        "y": 133,
+        "z": 5952
+      },
+      "mimic": "minecraft:moss_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 4
+      },
+      "status": "planned",
+      "why": "written by tools/fungal_isle.py records --write from the plan (data/fungal_isle.json nests.glowcap_hollow). An activated block keeps up to 4 of the pool alive within 16 blocks of itself and refills as they are caught or despawn; cancel_range -1, so the island's own rosters continue round it. Kept in a block the pack writes (minecraft:moss_block), so the pack runs BEFORE R9E. UNPROVEN in game: that this block keeps its pool visible (EXP-021, the Ursaluna's den and the Old Orchard use the same shape).",
+      "mimic_why": "the block the pack writes at that position: the hollow's floor, 9 blocks east of the pool's middle, in the moss"
     }
   ]
 }

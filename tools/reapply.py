@@ -169,6 +169,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-04: the jungle's three lost temples on the Long Isle's south (tools/jungle_temples.py,
                 # data/jungle_temples.json), built by R9JT; no load or tick and no Pokemon, so not world-local
                 "cobblers_jungle_temples",
+                # 2026-10-09: the Fungal Isle grown over (tools/fungal_isle.py, data/fungal_isle.json): the Cap Wood, the
+                # Stump Court, the Glowcap Hollow and the island's scatter of caps, stumps and logs, built by R9FI
+                # BEFORE R9E (three activated Habitat Blocks stand in blocks it writes); no load or tick and no Pokemon
+                # of its own (the nests are the Habitat Blocks'), so not world-local
+                "cobblers_fungal_isle",
                 # 2026-10-05: Hollin's Apricorn Farm at (2068, 5570) (tools/apricorn_farm.py, data/apricorn_farm.json):
                 # seven terraced groves, the yard and lanes, built by R9AF; block functions and the stall merchant's
                 # summon, nothing that runs on its own; the farmer and the merchant stood by R18AF
@@ -873,6 +878,10 @@ def prepare_jobs(a):
     # Harbour Mark's bearing, the caches against the economy curve, the steps and this wiring
     add("jungle_temples", "jungle_temples.py", *src)
     add("jungle_temples_audit", "jungle_temples_audit.py", *src)
+    # the Fungal Isle grown over (2026-10-09, tools/fungal_isle.py): the generator fails closed on its own guards (terrain,
+    # keep-clear regions, the Newmoon ceiling, spawn-condition blocks, small-mushroom support, the pool's containment, the
+    # Habitat Blocks' mimics). No independent audit yet (docs/world-building/FUNGAL_ISLE.md, "What an audit must check")
+    add("fungal_isle:build", "fungal_isle.py", "build", *src)
     # Hollin's Apricorn Farm (2026-10-05): the generator fails closed on its own guards (allow-list, spawn blocks, wet
     # columns, overlaps, fruit attachment, gates, spots, siting). Then its independent audit (tools/apricorn_farm_audit.py,
     # another agent's, never imports the generator to derive): the built pack replayed over the heightmap, fruit
@@ -2012,6 +2021,12 @@ def steps(with_spawns=False):
     import jungle_temples
     out.append(("R9JT", "the jungle's lost temples: the Ring Court, the Harbour Mark, the Green Stair (data/jungle_temples.json)",
                 jungle_temples.placement_steps()))
+    # the Fungal Isle grown over (2026-10-09, tools/fungal_isle.py): a block pass per glade and per 128-block tile of the
+    # island's scatter, each held in a forceload of its own box, BEFORE R9E: the Cap Wood's beacon stem, the Stump
+    # Court's great stump and the Glowcap Hollow's floor are the blocks the three activated Habitat Blocks mimic
+    import fungal_isle
+    out.append(("R9FI", "the Fungal Isle grown over: Cap Wood, Stump Court, Glowcap Hollow and the island's caps, stumps and logs (data/fungal_isle.json)",
+                fungal_isle.placement_steps()))
     # Hollin's Apricorn Farm (2026-10-05, tools/apricorn_farm.py): one block pass held in a forceload of the farm's box
     # (90 chunks), before R9E with the other block passes; the farmer and the stall keeper stand on it (R18AF)
     import apricorn_farm

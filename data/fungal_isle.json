@@ -1,0 +1,225 @@
+{
+  "schema": "cobblers.fungal-isle/1",
+  "status": "draft, 2026-10-09: generated and checked offline against the canonical heightmap; not applied to any world, not seen in game",
+  "request": "the owner, 2026-10-09: \"MUSHROOM ISLAND: foliage and life. It is empty.\" Mushroom Island is the Fungal Isle (data/regions.json fungal_isle: fungal_north and fungal_south, cell F1, 0.77 km2, painted minecraft:mushroom_fields over MYCELIUM with 4% small red and brown mushrooms and nothing else).",
+  "generated_by": "hand. tools/fungal_isle.py reads this file and the canonical heightmap and writes the pack, the Habitat Block and pool records (records --write) and the presence probes (probes --write). Nothing in it is read from a world.",
+  "built_by": "tools/fungal_isle.py; builder's tests tests/test_fungal_isle.py (not an independent audit). Design note: docs/world-building/FUNGAL_ISLE.md.",
+  "what_it_is_not": [
+    "Not a foliage-model change. data/foliage.json feeds the WorldPainter export (tools/paint_maps.py); the world is already exported and a pre-exported world never regenerates, so a fungal_wood type there would reach only a future re-export, and would move the canopy hash data/visibility.json was measured on. The live world gets blocks only through a re-apply step, so this file owns the island's growth.",
+    "Not Grandmother Cap's ring. The fairy ring at (608, 5888) is data/southern_residents.json fairy_ring (R9SR, R18SR) and stands untouched; this file keeps 30 blocks clear of it and builds three different places.",
+    "Not idle scenery Pokemon. tools/ambient_idle.py is a town model (town plans, derived/ plans, a cap per town); the only wild-site seam is a place module exposing idlers() the way tools/pokemon_farm.py does, which cannot be exercised without derived/ and is left alone. The island's visible life is the three activated Habitat Blocks below plus the existing sub-region rosters (data/spawns.json fungal_north, fungal_south)."
+  ],
+  "ground_rule": "Every Y is round(ground) from tools/ground.py (the canonical heightmap). Nothing here reads a world save. Paint is a fill ... replace minecraft:mycelium over a slab, so it follows the terrain without being told its height and changes no column's height.",
+  "build": {
+    "namespace": "cobblers",
+    "folder": "fungal_isle",
+    "pack": "cobblers_fungal_isle",
+    "step": "R9FI",
+    "tile": 128,
+    "wait_seconds": 3,
+    "note": "A pure block pass: no load or tick function, nothing that runs unless called, so a server pack and not world-local. Run BEFORE R9E: the three Habitat Blocks stand in blocks this pack writes (their mimic is the block written there)."
+  },
+  "island": {
+    "region": "fungal_isle",
+    "sea_level": 62
+  },
+  "rules": {
+    "min_ground": 68,
+    "min_ground_why": "the beach and the strand (data/sculpt.json classes) end well below this; 8 over the sea keeps every written column on grade-and-grass ground and out of the water-shaped coast",
+    "shore_clear": 18,
+    "shore_clear_why": "no written column within 22 blocks (horizontally) of a column at or under y64: a cap is up to 12 blocks across and the sea bar chain (data/water_shape.json fungal_bar_chain) works on the coast",
+    "max_slope_deg": 34,
+    "max_slope_deg_why": "the island's slope p90 is 26.2 degrees (data/regions.json fungal_isle.measured.slope_degrees), all of it at the coast; above this a stem stands on a face",
+    "authored_clearance": 10,
+    "authored_clearance_ignore": {
+      "regions.json": "polygon vertices and cell labels, not things",
+      "spawns.json": "heart foci and spawn boxes, not things",
+      "encounter_design.json": "heart foci, not things",
+      "nuzlocke_zones.json": "zone geometry, not things",
+      "water_shape.json": "coast features at the sea line, outside min_ground",
+      "adopted_legendary_sites.json": "alternatives measured for the Zapdos tower, none built"
+    },
+    "keep_clear": [
+      {"id": "fairy_ring", "kind": "circle", "source": "data/southern_residents.json fairy_ring", "margin": 22,
+       "why": "Grandmother Cap's ring: ten blocks across on a podzol band, signs at 15, her trigger 9 and leash 16 (R9SR, R18SR); the margin grows the signs' circle past her leash"},
+      {"id": "zapdos_tower", "kind": "box", "source": "data/placements.json legendary_zapdos_tower", "margin": 16,
+       "why": "the east-coast storm tower, template cobbleverse:legendary/zapdos, size [31, 66, 29] at its corner"},
+      {"id": "newmoon_island", "kind": "box", "source": "data/placements.json legendary_newmoon_island", "margin": 16, "giants_only": true,
+       "why": "LumyMon's floating Nightmare island hung 24 over the west end's highest ground (placements.json, adopted_legendary_sites.json sweep_newmoon_island); the template writes air through its whole volume from y141. Giant caps stay out of the footprint; nothing written may reach y139 inside it (rules.newmoon_ceiling)"}
+    ],
+    "newmoon_ceiling": 139,
+    "map_margin": 12,
+    "map_margin_why": "the heightmap and the world end at x 0 (data/world.json grid origin); nothing is written within 12 blocks of that edge, where a cap would cross into chunks the export never wrote",
+    "glade_scatter_margin": 10,
+    "glade_scatter_margin_why": "the scatter keeps a glade's own radius plus this clear, so a glade reads as a room in the island's growth and the two never write one block"
+  },
+  "blocks": {
+    "ids": [
+      "minecraft:mushroom_stem", "minecraft:red_mushroom_block", "minecraft:brown_mushroom_block",
+      "minecraft:red_mushroom", "minecraft:brown_mushroom",
+      "minecraft:mycelium", "minecraft:podzol", "minecraft:moss_block", "minecraft:moss_carpet", "minecraft:mud",
+      "minecraft:coarse_dirt", "minecraft:rooted_dirt", "minecraft:dirt",
+      "minecraft:dark_oak_log", "minecraft:stripped_dark_oak_log",
+      "minecraft:shroomlight", "minecraft:pearlescent_froglight", "minecraft:verdant_froglight",
+      "minecraft:water", "minecraft:air"
+    ],
+    "why": "every id a vanilla 1.21.1 block and none a spawn-condition block but water, the Glowcap Hollow's pool, which data/spawn_block_policy.json whitelists for fungal_isle with the risk stated (data/spawn_blocks.json, checked on every build). No concrete (contract C4). The glowing blocks are shroomlight (Cap Wood's beacon) and the two froglights (the Glowcap Hollow); no oak leaves, spore blossom or flowering azalea, which the spawn policy names."
+  },
+  "scatter": {
+    "seed": 20261009,
+    "scale_why": "island-wide growth: the objects every wood is made of, laid by the same density method tools/foliage.py uses (its noise() and Spacing, imported, not copied): clumping noise at 72 blocks, glades at 320, minimum spacing between every pair of stems, bigger classes first",
+    "clump_scale": 72,
+    "glade_scale": 220,
+    "base_density": 0.25,
+    "glade_share": 0.05,
+    "edge_ramp": [22, 90],
+    "edge_ramp_why": "density rises from nothing at shore_clear to full 90 blocks inland, so the coast stays a beach and the middle is a wood",
+    "giants": {"per_ha": 3.4, "spacing": 24, "height": [10, 22], "radius": [4.5, 8.0],
+               "kinds": {"dome": 4, "umbrella": 4, "tiered": 2}, "clear_radius": 10,
+               "why": "the skyline: a red spotted dome, a brown umbrella or a stack of tiers on one stem, 10 to 22 blocks of stem under a cap 9 to 16 across"},
+    "mediums": {"per_ha": 9.0, "spacing": 9, "height": [4, 8], "radius": [2.0, 3.6],
+                "kinds": {"dome": 5, "umbrella": 5}, "clear_radius": 5,
+                "why": "the understory: a person-high cap you walk under"},
+    "stumps": {"per_ha": 2.6, "spacing": 8, "height": [1, 3], "wide_share": 0.3, "clear_radius": 3,
+               "why": "dark oak stumps with shelf fungi (brown and red caps) growing from the sides: what the island's old trees left"},
+    "logs": {"per_ha": 1.6, "spacing": 9, "length": [4, 7], "clear_radius": 4,
+             "why": "fallen dark oak logs with moss on top and a bracket on the side"},
+    "tufts": {"per_ha": 26, "spacing": 4, "count": [3, 6], "radius": 2.2, "clear_radius": 3,
+              "why": "clusters of small red and brown mushrooms on a patch of podzol, the way the plant layer's 4% never grouped them"},
+    "paint": {"giant_podzol": 1, "giant_moss": 3, "medium_podzol": 0,
+              "why": "podzol under a giant's stem to its cap's radius plus 1, moss on the next 2 blocks; the Cap Wood and the hollow carry their own"}
+  },
+  "glades": [
+    {
+      "id": "cap_wood",
+      "name": "The Cap Wood",
+      "kind": "cap_wood",
+      "cell": "F1",
+      "subregion": "fungal_north",
+      "centre": [392, 5572],
+      "radius": 74,
+      "pieces": {
+        "beacon": {"height": 30, "stem": "3x3", "cap_radius": 12, "cap_height": 9, "lamps": 12, "lamp_ring": 7.5},
+        "elders": {"count": 7, "ring": 34, "height": [18, 24], "radius": [7.0, 9.0]},
+        "wood": {"count": 11, "min_spacing": 17, "inner": 46, "outer": 68, "height": [12, 20], "radius": [5.0, 8.0]},
+        "understory": {"count": 10, "ring": [14, 24]},
+        "floor": {"podzol_radius": 30, "moss_noise_share": 0.5}
+      },
+      "memorable": "the tallest thing on the island: one 30-block stem under a 24-block red cap with a ring of shroomlight hung from its underside, in a clearing ringed by seven elder caps, then a wood. Lit at night from below, seen from the whole north plateau.",
+      "why_here": "the north heart's focus is (432, 5488) radius 112 (data/encounter_design.json fungal_north.heart: 'the middle of the mushroom island, where the caps grow tallest'); the clearing is 90 blocks from it on the flattest ground nearest (relief 0.7 over a 49-block box, measured 2026-10-09 on tools/ground.py), where the stem stands level"
+    },
+    {
+      "id": "stump_court",
+      "name": "The Stump Court",
+      "kind": "stump_court",
+      "cell": "F1",
+      "subregion": "fungal_north",
+      "centre": [560, 5712],
+      "radius": 40,
+      "pieces": {
+        "great_stump": {"radius": 3.7, "height": 5, "brackets": 10},
+        "ring": {"count": 14, "radius": 11.5, "height": [1, 3]},
+        "floor": {"radius": 17, "palette": [["minecraft:coarse_dirt", 5], ["minecraft:podzol", 3], ["minecraft:rooted_dirt", 2]], "clear_small": true},
+        "audience": {"count": 6, "ring": 29, "height": [11, 16], "radius": [5.5, 8.0]},
+        "border_tufts": {"count": 9, "ring": 19}
+      },
+      "memorable": "a bare, trodden dojo floor in the middle of the growth: a great cut stump with its rings showing, fourteen smaller stumps round it, every one with shelf fungi, and six brown umbrellas leaning round the edge like an audience.",
+      "why_here": "the central plateau, ground 145 with relief 1.0 over 49 blocks; 176 blocks from Grandmother Cap's ring, 218 from the Cap Wood"
+    },
+    {
+      "id": "glowcap_hollow",
+      "name": "The Glowcap Hollow",
+      "kind": "glowcap_hollow",
+      "cell": "F1",
+      "subregion": "fungal_south",
+      "centre": [560, 5952],
+      "radius": 36,
+      "pieces": {
+        "bowl": {"rim_radius": 20, "depth": 9, "flat_radius": 8},
+        "pool": {"deep_radius": 3, "mid_radius": 6.5, "shallow_radius": 8, "deep": 4, "mid": 2, "shallow": 1},
+        "floor": {"inner": [["minecraft:moss_block", 5], ["minecraft:mud", 3], ["minecraft:mycelium", 2]], "outer": [["minecraft:mycelium", 4], ["minecraft:podzol", 3], ["minecraft:moss_block", 3]], "inner_radius": 12},
+        "lamps": {"big": 10, "buds": 36, "light": ["minecraft:pearlescent_froglight", "minecraft:verdant_froglight"]},
+        "rim": {"count": 9, "ring": 27, "height": [9, 14], "radius": [4.5, 6.5]}
+      },
+      "memorable": "a sunken hollow forty blocks across and nine deep with a pool at the bottom and a cold purple-and-green light coming up out of it: stems topped with froglight caps on the slopes, buds round the water, a rim of ordinary caps hiding it until you stand over it. The island's fungal pools.",
+      "why_here": "data/encounter_design.json fungal_south names a water_body 'fungal_pools' that no landmark or water mask defines (the island is entirely dry: 0 of 12,061 sampled columns wet) and a water table (Tadbulb, Dewpider, Araquanid) with nowhere to spawn; this makes the pool. 48 blocks from the south heart's focus (592, 6000), 80 from Grandmother Cap's ring"
+    }
+  ],
+  "nests": [
+    {
+      "id": "cap_wood",
+      "glade": "cap_wood",
+      "pool": "fungal_cap_wood",
+      "block": "fungal_cap_wood_ward",
+      "display_name": "Cap Wood understory",
+      "place": "the Cap Wood's beacon stem: the second block of the 3x3 stem's middle column",
+      "where": "beacon_stem",
+      "mimic": "minecraft:mushroom_stem",
+      "activated": {"spawn_range": 20, "chance": 1.0, "trigger": "TICK", "cancel_range": -1, "max_spawns_per_activation": 2, "max_spawns": 5},
+      "band": [18, 28],
+      "band_why": "inside fungal_north's band (18-28, tier 3, basis route_03_misty_to_surge; data/spawns.json subregions) so everything here is catchable at the island's cap; no stage younger than its evolution level (Cobblemon 1.8.0 species data: Paras to Parasect 24, Shroomish to Breloom 23, Foongus to Amoonguss 39)",
+      "entries_why": "the wood's own small fungi, kept alive under the caps: the table fungal_north already lists Paras (anchor), Shroomish, Foongus and Parasect; an activated block keeps 5 of them within 20 blocks of the beacon so the clearing is never bare (the owner, 2026-10-02: 'didnt see ... many teddiursa spawns' is the failure a natural spawn has here)",
+      "entries": [
+        {"species": "paras", "role": "anchor", "level": "18-26", "why": "base stage; the wood's anchor family (fungal_north)"},
+        {"species": "parasect", "role": "uncommon", "level": "24-28", "family": "paras", "why": "evolves from Paras at level 24 (Cobblemon 1.8.0 species data)"},
+        {"species": "foongus", "role": "common", "level": "18-28", "why": "base stage; Amoonguss needs 39, above the band, so it is not here (Grandmother Cap is the island's one)"},
+        {"species": "shroomish", "role": "common", "level": "18-22", "why": "base stage, held under its evolution level 23 so no wild Shroomish here is older than its own Breloom"}
+      ]
+    },
+    {
+      "id": "stump_court",
+      "glade": "stump_court",
+      "pool": "fungal_stump_court",
+      "block": "fungal_stump_court_ward",
+      "display_name": "Stump Court sparring ground",
+      "place": "the Great Stump: the second log of its middle column",
+      "where": "great_stump",
+      "mimic": "minecraft:dark_oak_log",
+      "activated": {"spawn_range": 16, "chance": 1.0, "trigger": "TICK", "cancel_range": -1, "max_spawns_per_activation": 2, "max_spawns": 5},
+      "band": [18, 28],
+      "band_why": "fungal_north's band, tier 3; Breloom needs 23 and Shroomish is held under it, Croagunk is a base stage",
+      "entries_why": "fighters on the sparring floor: Shroomish and Breloom (Grass/Fighting, the punching mushrooms, in fungal_north's table and heart) and Croagunk (Poison/Fighting, in fungal_south's table), five alive within 16 of the Great Stump",
+      "entries": [
+        {"species": "shroomish", "role": "anchor", "level": "18-22", "why": "base stage; the court's anchor family"},
+        {"species": "breloom", "role": "uncommon", "level": "24-28", "family": "shroomish", "why": "evolves from Shroomish at level 23 (Cobblemon 1.8.0 species data)"},
+        {"species": "croagunk", "role": "common", "level": "18-26", "why": "base stage; Toxicroak needs 37"}
+      ]
+    },
+    {
+      "id": "glowcap_hollow",
+      "glade": "glowcap_hollow",
+      "pool": "fungal_glowcap_hollow",
+      "block": "fungal_glowcap_hollow_ward",
+      "display_name": "Glowcap Hollow keepers",
+      "place": "the hollow's floor, 9 blocks east of the pool's middle, in the moss",
+      "where": "hollow_floor",
+      "mimic": "minecraft:moss_block",
+      "activated": {"spawn_range": 16, "chance": 1.0, "trigger": "TICK", "cancel_range": -1, "max_spawns_per_activation": 2, "max_spawns": 4},
+      "band": [18, 34],
+      "band_why": "the place's keepers are the one group above the island's catchable band: Toedscruel (31-34, evolves from Toedscool at 30) and night Shiinotic are the creatures of the hollow, under tier 3's cap of 35 (data/encounter_design.json rules.hearts.next_cap) and 3 to 6 above the band's 28 top. Its Morelull, Toedscool and Tadbulb are the island's own catchable species. A Toedscruel is the reason a player turns back at level 25",
+      "entries_why": "bioluminescent fungi round a pool: Morelull and Shiinotic (Grass/Fairy, the glowing caps; Shiinotic only at night, the spore grove), Toedscool and its level-30 Toedscruel (Ground/Grass, the mud-capped one that drifts through the shallows) and Tadbulb, the electric tadpole of the pool itself (fungal_south's water anchor, which had no water to spawn in). Weights follow data/spawns.json rarity",
+      "entries": [
+        {"species": "morelull", "role": "anchor", "level": "18-27", "why": "base stage; Shiinotic needs 24 so it is held to 27"},
+        {"species": "shiinotic", "role": "uncommon", "level": "24-30", "family": "morelull", "conditions": {"timeRange": "night"}, "why": "evolves from Morelull at 24 (Cobblemon 1.8.0 species data); night only: the spore grove after dark. 24-30, so most are catchable and only the top two levels pass the band"},
+        {"species": "toedscool", "role": "common", "level": "20-28", "why": "base stage; Toedscruel needs 30"},
+        {"species": "toedscruel", "role": "rare", "level": "31-34", "family": "toedscool", "conditions": {"timeRange": "night"}, "why": "evolves from Toedscool at level 30 (Cobblemon 1.8.0 species data); the nest's strong creature, night only, above the 28 cap"},
+        {"species": "tadbulb", "role": "common", "level": "18-26", "position": "submerged", "why": "base stage (Bellibolt is by item); spawns in the pool, submerged, as fungal_south's own Tadbulb entry does"}
+      ]
+    }
+  ],
+  "probes": {
+    "key": "fungal_isle",
+    "per_glade": 14,
+    "scatter_giants": 14,
+    "scatter_stumps": 6,
+    "why": "presence probes for tools/presence_audit.py --only extra: stems, caps, logs, the pool's water and the hollow's lights, read from the plan; a block-for-block read of the pack, so they prove the pack ran, not that the island looks right"
+  },
+  "audit_checklist": [
+    "re-derive the island mask from data/regions.json fungal_isle and the heightmap and confirm no written column is outside it, under min_ground, within shore_clear of the coast or steeper than max_slope_deg (scatter only; the glades are placed by hand and checked on the same terms)",
+    "replay the pack's commands over a heightmap-built column array and confirm every stem column stands on or in its own ground and no cap floats (a cap block with no stem or other cap block within 1 below)",
+    "confirm the hollow's water cannot escape: replay the bowl, flood from the pool and confirm the flood stays inside the bowl and never touches a column under y (pool level)",
+    "confirm the three Habitat Block positions are the blocks the pack writes there and their mimics are those blocks, and that each pool's species are legal in the Cobblemon 1.8.0 jar and no stage is under its evolution level",
+    "confirm no block is concrete, none is in data/spawn_blocks.json, and nothing is written inside the keep_clear regions, the giants outside the Newmoon box and everything inside it under y139",
+    "mutate the GENERATOR, not the record: shift sample() by 40 blocks east and expect the keep-clear or shore rule to fail"
+  ]
+}

@@ -4207,6 +4207,678 @@
         "entity": "@e[type=cobblemon:pokemon,tag=cobblers.dq]",
         "count": 1
       }
+    ],
+    "fungal_isle": [
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_beacon)",
+        "block": [
+          380,
+          168,
+          5572,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: mushroom_stem (cap_wood_beacon)",
+        "block": [
+          392,
+          139,
+          5572,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_beacon)",
+        "block": [
+          400,
+          173,
+          5567,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_elder_0)",
+        "block": [
+          396,
+          163,
+          5536,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: brown_mushroom_block (cap_wood_elder_1)",
+        "block": [
+          429,
+          161,
+          5563,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_elder_2)",
+        "block": [
+          427,
+          163,
+          5590,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_elder_4)",
+        "block": [
+          363,
+          162,
+          5601,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: mushroom_stem (cap_wood_elder_5)",
+        "block": [
+          357,
+          147,
+          5577,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_elder_6)",
+        "block": [
+          367,
+          159,
+          5554,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_wood_1)",
+        "block": [
+          441,
+          153,
+          5576,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: mushroom_stem (cap_wood_wood_4)",
+        "block": [
+          355,
+          142,
+          5621,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_wood_6)",
+        "block": [
+          440,
+          150,
+          5533,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_wood_8)",
+        "block": [
+          407,
+          152,
+          5521,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cap_wood: red_mushroom_block (cap_wood_wood_9)",
+        "block": [
+          464,
+          150,
+          5564,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: dark_oak_log (stump_court_great_stump)",
+        "block": [
+          557,
+          146,
+          5710,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: dark_oak_log (stump_court_great_stump)",
+        "block": [
+          562,
+          147,
+          5711,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_0)",
+        "block": [
+          561,
+          160,
+          5681,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_0)",
+        "block": [
+          569,
+          159,
+          5684,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_1)",
+        "block": [
+          583,
+          159,
+          5703,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_1)",
+        "block": [
+          587,
+          158,
+          5697,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_2)",
+        "block": [
+          574,
+          161,
+          5726,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: mushroom_stem (stump_court_audience_2)",
+        "block": [
+          578,
+          155,
+          5734,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_2)",
+        "block": [
+          583,
+          160,
+          5728,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: mushroom_stem (stump_court_audience_3)",
+        "block": [
+          557,
+          155,
+          5741,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_4)",
+        "block": [
+          528,
+          159,
+          5710,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_4)",
+        "block": [
+          536,
+          160,
+          5712,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_5)",
+        "block": [
+          541,
+          159,
+          5691,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "stump_court: brown_mushroom_block (stump_court_audience_5)",
+        "block": [
+          544,
+          160,
+          5693,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          542,
+          139,
+          5949,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          548,
+          135,
+          5956,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: moss_block (glowcap_hollow_bowl)",
+        "block": [
+          552,
+          133,
+          5955,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          555,
+          139,
+          5935,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: mud (glowcap_hollow_bowl)",
+        "block": [
+          559,
+          129,
+          5952,
+          "minecraft:mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          562,
+          133,
+          5942,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: moss_block (glowcap_hollow_bowl)",
+        "block": [
+          565,
+          139,
+          5967,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: moss_block (glowcap_hollow_bowl)",
+        "block": [
+          569,
+          135,
+          5959,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          573,
+          140,
+          5938,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: dirt (glowcap_hollow_bowl)",
+        "block": [
+          579,
+          141,
+          5955,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: red_mushroom_block (glowcap_hollow_rim_1)",
+        "block": [
+          581,
+          156,
+          5942,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: red_mushroom_block (glowcap_hollow_rim_3)",
+        "block": [
+          579,
+          159,
+          5964,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: brown_mushroom_block (glowcap_hollow_rim_4)",
+        "block": [
+          568,
+          154,
+          5980,
+          "minecraft:brown_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "glowcap_hollow: red_mushroom_block (glowcap_hollow_rim_7)",
+        "block": [
+          532,
+          157,
+          5948,
+          "minecraft:red_mushroom_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the pool's surface at the middle",
+        "block": [
+          560,
+          133,
+          5952,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no water on the rim path",
+        "block": [
+          574,
+          133,
+          5952,
+          "minecraft:water"
+        ],
+        "expect": false
+      },
+      {
+        "what": "a froglight cap",
+        "block": [
+          562,
+          144,
+          5936,
+          "minecraft:pearlescent_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a froglight cap",
+        "block": [
+          572,
+          142,
+          5943,
+          "minecraft:verdant_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a froglight cap",
+        "block": [
+          575,
+          144,
+          5947,
+          "minecraft:pearlescent_froglight"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_000)",
+        "block": [
+          466,
+          124,
+          6054,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_007)",
+        "block": [
+          290,
+          112,
+          5420,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_014)",
+        "block": [
+          663,
+          142,
+          5849,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_021)",
+        "block": [
+          779,
+          124,
+          5752,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_028)",
+        "block": [
+          133,
+          114,
+          5738,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_035)",
+        "block": [
+          237,
+          133,
+          5687,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_042)",
+        "block": [
+          523,
+          148,
+          5885,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_049)",
+        "block": [
+          200,
+          130,
+          5653,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_056)",
+        "block": [
+          791,
+          112,
+          5602,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_063)",
+        "block": [
+          163,
+          124,
+          5672,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_070)",
+        "block": [
+          603,
+          109,
+          6131,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_077)",
+        "block": [
+          668,
+          143,
+          5798,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_084)",
+        "block": [
+          426,
+          111,
+          5371,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter giant's stem (giant_091)",
+        "block": [
+          306,
+          130,
+          5909,
+          "minecraft:mushroom_stem"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_000)",
+        "block": [
+          219,
+          121,
+          5880,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_013)",
+        "block": [
+          488,
+          143,
+          5971,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_026)",
+        "block": [
+          62,
+          95,
+          5641,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_039)",
+        "block": [
+          639,
+          141,
+          5968,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_052)",
+        "block": [
+          392,
+          138,
+          5740,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a scatter stump (stump_065)",
+        "block": [
+          609,
+          127,
+          5484,
+          "minecraft:dark_oak_log"
+        ],
+        "expect": true
+      }
     ]
   }
 }
