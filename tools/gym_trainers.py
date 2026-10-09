@@ -118,6 +118,7 @@ PASSABLE = (OPEN, CLIMB, WATER, SCAF)
 # Every block name the eight halls hold, classified. A name not here fails closed: an unknown block could be the
 # one a player walks through, and guessing it solid would invent a wall.
 OPEN_NAMES = {
+    "minecraft:lightning_rod",  # 2026-10-09: a thin rod a player walks past (gym 3)
     "minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:light", "minecraft:short_grass",
     "minecraft:tall_grass", "minecraft:dandelion", "minecraft:poppy", "minecraft:cornflower",
     "minecraft:oxeye_daisy", "minecraft:chain", "minecraft:lantern", "minecraft:soul_lantern", "minecraft:torch",
@@ -134,6 +135,10 @@ WATER_NAMES = {"minecraft:water", "minecraft:bubble_column", "minecraft:seagrass
 CLIMB_NAMES = {"minecraft:ladder", "minecraft:vine"}
 SCAF_NAMES = {"minecraft:scaffolding"}
 SOLID_NAMES = {
+    # 2026-10-09, the walk-through halls (gym 3's copper banks and lamp board): full cubes
+    "minecraft:waxed_cut_copper", "minecraft:waxed_exposed_cut_copper", "minecraft:waxed_oxidized_cut_copper",
+    "minecraft:waxed_exposed_copper_grate", "minecraft:waxed_oxidized_copper_grate",
+    "minecraft:waxed_weathered_copper_grate", "minecraft:ochre_froglight", "minecraft:redstone_lamp",
     # full or near-full collision: a player stands on it and cannot pass it
     "minecraft:acacia_planks", "minecraft:andesite", "minecraft:azalea_leaves", "minecraft:bamboo_planks",
     "minecraft:barrel", "minecraft:basalt", "minecraft:birch_planks", "minecraft:blast_furnace", "minecraft:shroomlight",
