@@ -3612,9 +3612,9 @@
       {
         "what": "the leader's spawner in the dais",
         "block": [
-          4586,
-          103,
-          2461,
+          4581,
+          119,
+          2467,
           "rctmod:trainer_spawner"
         ],
         "expect": true
@@ -3622,9 +3622,9 @@
       {
         "what": "its redstone",
         "block": [
-          4586,
-          102,
-          2461,
+          4581,
+          118,
+          2467,
           "minecraft:redstone_block"
         ],
         "expect": true
@@ -3632,9 +3632,9 @@
       {
         "what": "air over the seat",
         "block": [
-          4586,
-          104,
-          2461,
+          4581,
+          120,
+          2467,
           "minecraft:air"
         ],
         "expect": true
@@ -3642,9 +3642,9 @@
       {
         "what": "battle.trainer_pokemon",
         "block": [
-          4586,
-          99,
-          2468,
+          4581,
+          115,
+          2475,
           "cobblemonbattlepositions:trainer_pokemon_position"
         ],
         "expect": true
@@ -3652,9 +3652,9 @@
       {
         "what": "battle.player_pokemon",
         "block": [
-          4586,
-          99,
-          2473,
+          4581,
+          115,
+          2480,
           "cobblemonbattlepositions:player_pokemon_position"
         ],
         "expect": true
@@ -3662,9 +3662,9 @@
       {
         "what": "battle.trainer_stand",
         "block": [
-          4586,
-          102,
-          2462,
+          4581,
+          118,
+          2468,
           "cobblemonbattlepositions:trainer_stand_position"
         ],
         "expect": true
@@ -3672,29 +3672,19 @@
       {
         "what": "battle.player_stand",
         "block": [
-          4586,
-          99,
-          2476,
+          4581,
+          115,
+          2483,
           "cobblemonbattlepositions:player_stand_position"
         ],
         "expect": true
       },
       {
-        "what": "the floor in lane 1",
+        "what": "a print set in the floor of lane A",
         "block": [
-          4590,
-          100,
-          2490,
-          "minecraft:mud_bricks"
-        ],
-        "expect": true
-      },
-      {
-        "what": "a print set in the floor of lane 1",
-        "block": [
-          4594,
-          100,
-          2489,
+          4586,
+          116,
+          2491,
           "minecraft:muddy_mangrove_roots"
         ],
         "expect": true
@@ -3702,9 +3692,9 @@
       {
         "what": "air on the range",
         "block": [
-          4586,
-          103,
-          2470,
+          4581,
+          120,
+          2478,
           "minecraft:air"
         ],
         "expect": true
@@ -3712,62 +3702,142 @@
       {
         "what": "screen 2's lattice",
         "block": [
-          4585,
-          104,
-          2480,
-          "minecraft:bamboo_mosaic"
-        ],
-        "expect": true
-      },
-      {
-        "what": "screen 3's lattice",
-        "block": [
-          4597,
-          104,
-          2476,
-          "minecraft:bamboo_mosaic"
+          4580,
+          120,
+          2485,
+          "minecraft:bamboo_planks"
         ],
         "expect": true
       },
       {
         "what": "the blind's roof",
         "block": [
-          4586,
-          106,
-          2460,
+          4581,
+          122,
+          2467,
           "minecraft:mangrove_planks"
         ],
         "expect": true
       },
       {
-        "what": "the tower door",
+        "what": "the north door",
         "block": [
-          4598,
-          101,
-          2488,
+          4591,
+          118,
+          2464,
           "minecraft:air"
         ],
         "expect": true
       },
       {
-        "what": "the shell's south-west corner",
+        "what": "the arena door",
         "block": [
-          4568,
-          98,
-          2494,
+          4588,
+          118,
+          2492,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the door past the leader",
+        "block": [
+          4575,
+          117,
+          2472,
+          "minecraft:iron_door"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its button, inside",
+        "block": [
+          4576,
+          118,
+          2471,
+          "minecraft:stone_button"
+        ],
+        "expect": true
+      },
+      {
+        "what": "water in the west vat",
+        "block": [
+          4591,
+          115,
+          2483,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "soul sand in the west vat's floor",
+        "block": [
+          4591,
+          112,
+          2483,
+          "minecraft:soul_sand"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the mouth under the screen",
+        "block": [
+          4591,
+          113,
+          2486,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a decoy vat's solid wall",
+        "block": [
+          4596,
+          114,
+          2485,
           "minecraft:mud_bricks"
         ],
         "expect": true
       },
       {
-        "what": "the shell's north-east top corner",
+        "what": "the old range's floor, taken down",
         "block": [
-          4605,
-          109,
-          2456,
-          "minecraft:mud_bricks"
+          4586,
+          104,
+          2475,
+          "minecraft:stone"
         ],
         "expect": true
+      },
+      {
+        "what": "the old stair tower under the pad, taken down",
+        "block": [
+          4600,
+          108,
+          2489,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old watch floor's air, cleared",
+        "block": [
+          4594,
+          131,
+          2487,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          4586,
+          103,
+          2461,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
       },
       {
         "what": "no spawner at the old seat",
@@ -3775,6 +3845,16 @@
           4594,
           131,
           2487,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          4579,
+          119,
+          2467,
           "rctmod:trainer_spawner"
         ],
         "expect": false
