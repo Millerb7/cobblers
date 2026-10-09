@@ -21,7 +21,9 @@ The checks (one line each in the output):
   station_blocks     every block in blocks.ids; none a spawn condition (data/spawn_blocks.json, policy whitelist noted)
   station_floors     each piece (its written columns, by nearest top-level piece) starts at max(ground)+1; every write
                      under that is foundation, contiguous from ground+1
-  forceload          every written column of every function inside a forceload added in that function, and removed
+  forceload          every written column of build and portal/build inside a forceload added in that function, and
+                     removed; the instruments' look-then-act chain held from its entry to its end, its act gated on a
+                     look or the blind limit, old displays killed first, each summon once (tools/chunk_look_audit.py)
   npcs               one spawnnpcat per researcher, at its column, y = host floor + 1, on a full block of its host,
                      two cells of air above the floor (a carpet allowed at the feet)
   npc_classes        each NPC class names the researcher and a dialogue the pack ships
@@ -69,8 +71,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
+import chunk_look_audit  # noqa: E402  (reads the chain's text; never imports the chain's generator)
+
 PACK = ROOT / "build" / "datapacks" / "cobblers_coldwater_station"
 FN = "data/cobblers/function/coldwater_station"
+INSTRUMENTS_FN = "cobblers:coldwater_station/instruments"     # the entry R18CW calls (steps.txt)
 STATION_TAG = "cobblers_coldwater_station"
 PIVOT_ABOVE_FLOOR = 2.2          # data/coldwater_station.json audit_checklist: "pivot at its deck floor + 2.2"
 SEA_MARGIN = 3                   # audit_checklist: "neither writes a block within 3 of the arch"
@@ -284,8 +289,14 @@ class Audit:
                                                          d["blocks"]["ids"], "station"))
         self.floors_check(sets)
         fl = []
-        for rel in ("build", "instruments", "portal/build"):
+        for rel in ("build", "portal/build"):
             fl += forceload_problems(rel, commands(self.fn(rel)))
+        # the instruments are a look-then-act chain over several ticks (N155): its forceload is added in its entry and
+        # released at its end, so it is read as one chain -- held for its whole life, the act gated on a look
+        # sites from the DATA (each instrument's `at`): one look must require an entity in every tube's chunk, since
+        # two chunks' saved entities do not arrive together (review of N155, 2026-10-08)
+        fl += chunk_look_audit.problems(self.pack, INSTRUMENTS_FN, STATION_TAG, "instruments",
+                                        sites=[tuple(p["at"][:2]) for p in d["pieces"] if p.get("kind") == "instrument"])
         self.check("forceload", fl)
 
     def block_problems(self, states, allowed, what):
@@ -517,11 +528,11 @@ class Audit:
 
     # ---------------------------------------------------------------- instruments
     def instruments(self):
-        cmds = commands(self.fn("instruments"))
+        cmds = chunk_look_audit.chain_lines(self.pack, INSTRUMENTS_FN)
         probs = []
         disp = []
         killed = False
-        for _i, c in cmds:
+        for c in cmds:
             if c.startswith("kill @e[type=minecraft:block_display,tag=%s" % STATION_TAG):
                 killed = True
             if c.startswith("summon minecraft:block_display"):

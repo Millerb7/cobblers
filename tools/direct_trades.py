@@ -3,7 +3,11 @@
 The owner, 2026-10-07: late-game items by direct trade, no money where possible. CobbleDollars cannot barter (an
 Offer holds item, price and stock only: docs/OVERNIGHT_REVIEW_2026-10-06.md N63), so this writes a world-local pack,
 cobblers_direct_trades, with two villagers, each with its Offers written into its summon. Run by tools/reapply.py
-step R18DT, in this order:
+step R18DT, both at once, each as tools/chunk_look.py's look-then-act chain (N155: a force-loaded chunk's saved
+entities arrive after a summon is accepted, so a fixed wait let the de-duplication miss an old villager and the summon
+doubled it): the chain force-loads its box, does its block checks and its kill and summon only once the barterer's
+saved copy is seen there (or blind after 300 ticks), de-duplicates 100 ticks later, counts into
+#direct_trades_<place|counter> cobblers_chunk_look and releases the box:
 
   place     EXP-055's experiment villager: carves a small buried booth under the Holdfast counter and summons the
             experiment offers there (the data's `site` and `barterer`).
@@ -37,6 +41,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TOOLS = ROOT / "tools"
 sys.path.insert(0, str(TOOLS))
+import chunk_look as CL  # noqa: E402
 import function_limits  # noqa: E402
 
 DATA = ROOT / "data" / "direct_trades.json"
@@ -48,7 +53,6 @@ OUT = ROOT / "build" / "datapacks" / "cobblers_direct_trades"
 PACK_FORMAT = 48  # Minecraft 1.21.1
 KIND = "minecraft:villager"
 STEP = "R18DT"
-DEDUPE_WAIT = 100  # ticks between the summon and the de-duplication (tools/apricorn_farm.py's shape)
 OBJECTIVE = "cob_dt"
 BREACH_TAG = "direct_trades_breach"
 # the Offers.Recipes keys of vanilla 1.21.1's MerchantOffer codec, in its own order (EXP-055 'Fields': read from the
@@ -441,62 +445,94 @@ def summon_line(doc, b, who="barterer"):
     return TR.summon_line(KIND, x, y, z, villager_nbt(doc, who=who))
 
 
-def _dedupe(tag):
-    new = tag + "_new"
-    return ["execute if entity @e[type=%s,tag=%s,tag=%s] run kill @e[type=%s,tag=%s,tag=!%s]"
-            % (KIND, tag, new, KIND, tag, new),
-            "tag @e[type=%s,tag=%s,tag=%s] remove %s" % (KIND, tag, new, new)]
+def _scope(tag):
+    return "type=%s,tag=%s" % (KIND, tag)
+
+
+def _chain(doc, name, box, tag, act, note):
+    """{name: lines} for one barterer's look-then-act chain (tools/chunk_look.py, N155) at <ns>:<folder>/<name>: the
+    chain force-loads `box`, acts once the barterer's saved copy is seen there (or blind after 300 ticks: a first run),
+    and 100 ticks after the act kills every copy without the new tag where a new one stands, counts the barterers into
+    #<holder> cobblers_chunk_look (want 1) and releases the box. `act` runs its block checks first: a function's
+    `execute if block` on a chunk not yet loaded reads false, and the act comes only after an entity there was seen, or
+    300 ticks after the forceload. A breach ends the act before the kill (the standing barterer is kept), after
+    scheduling the de-duplication, which then finds no new one, counts what stands and releases the box."""
+    ns, fo = doc["namespace"], doc["folder"]
+    base = "%s:%s/%s" % (ns, fo, name)
+    scope = _scope(tag)
+    fns = CL.chain(base, box, ["@e[%s]" % scope], act, [scope], tag + "_new", scope, holder(name), note=note)
+    return {ref.split("/", 1)[1]: lines for ref, lines in fns.items()}
+
+
+def holder(name):
+    """The score holder a chain counts its barterer into (objective chunk_look.OBJ)."""
+    return "direct_trades_%s" % name
+
+
+def _breach_end(doc, name, score):
+    ns, fo = doc["namespace"], doc["folder"]
+    return ["execute if score %s %s matches 1 run schedule function %s:%s/%s_done %dt replace"
+            % (score, OBJECTIVE, ns, fo, name, CL.DEDUPE_WAIT),
+            "execute if score %s %s matches 1 run return fail" % (score, OBJECTIVE)]
+
+
+def counter_box(doc):
+    """The Northlight chain's force-loaded box: every column the counter function reads (the roof within lightning
+    reach), from the data's x and z only."""
+    s = doc["counter_site"]
+    x, z, r = int(s["x"]), int(s["z"]), int(s["lightning_reach"])
+    return (x - r, z - r, x + r, z + r)
+
+
+def booth_box(b):
+    """The Holdfast chain's force-loaded box: the booth's whole 5x5 shell (at (3634, 6462) its z6464 is the next chunk,
+    where an unloaded shell cell slips the breach check: A4 audit, 2026-10-07)."""
+    (x0, _y0, z0), (x1, _y1, z1) = b["shell"]
+    return (x0, z0, x1, z1)
 
 
 def counter_functions(doc, c):
     """The Northlight barterer: read the Mart back (every roof block within lightning reach, the floor, the air), then
-    summon. Nothing is written but the villager."""
-    ns, fo = doc["namespace"], doc["folder"]
+    summon, inside the look-then-act chain. Nothing is written but the villager."""
     x, y, z = c["villager"]
     fx, fy, fz = c["floor"]
+    tag = doc["counter_barterer"]["tag"]
     br = "scoreboard players set %s %s 1" % (COUNTER_BREACH, OBJECTIVE)
-    fn = ["# Generated by tools/direct_trades.py from data/direct_trades.json counter_site: the Northlight barterer "
-          "in %s, %d approved line(s). Refuses unless the Mart's roof, floor and air are where its template puts them"
-          % (c["building"], len(counter_recipes(doc))),
-          "# chunks-loaded-by: tools/reapply.py %s" % STEP,
-          "scoreboard objectives add %s dummy" % OBJECTIVE,
-          "scoreboard players set %s %s 0" % (COUNTER_BREACH, OBJECTIVE)]
-    fn += ["execute if block %d %d %d #minecraft:air run %s" % (rx, ry, rz, br) for rx, ry, rz in c["roof"]]
-    fn += ["execute if block %d %d %d #minecraft:air run %s" % (fx, fy, fz, br),
-           "execute unless block %d %d %d #minecraft:air run %s" % (x, y, z, br),
-           "execute unless block %d %d %d #minecraft:air run %s" % (x, y + 1, z, br),
-           "execute if score %s %s matches 1 run return fail" % (COUNTER_BREACH, OBJECTIVE),
-           summon_line(doc, c, who="counter_barterer"),
-           "schedule function %s:%s/counter_done %dt replace" % (ns, fo, DEDUPE_WAIT)]
-    done = ["# Generated by tools/direct_trades.py; %d ticks after the summon: one Northlight barterer, the older "
-            "copies killed" % DEDUPE_WAIT] + _dedupe(doc["counter_barterer"]["tag"])
-    return {"counter": fn, "counter_done": done}
+    act = ["# Northlight barterer in %s, %d approved line(s). Refuses unless the Mart's roof, floor and air are where its "
+           "template puts them" % (c["building"], len(counter_recipes(doc))),
+           "scoreboard objectives add %s dummy" % OBJECTIVE,
+           "scoreboard players set %s %s 0" % (COUNTER_BREACH, OBJECTIVE)]
+    act += ["execute if block %d %d %d #minecraft:air run %s" % (rx, ry, rz, br) for rx, ry, rz in c["roof"]]
+    act += ["execute if block %d %d %d #minecraft:air run %s" % (fx, fy, fz, br),
+            "execute unless block %d %d %d #minecraft:air run %s" % (x, y, z, br),
+            "execute unless block %d %d %d #minecraft:air run %s" % (x, y + 1, z, br)]
+    act += _breach_end(doc, "counter", COUNTER_BREACH)
+    act += ["kill @e[%s]" % _scope(tag), summon_line(doc, c, who="counter_barterer")]
+    return _chain(doc, "counter", counter_box(doc), tag, act,
+                  "tools/direct_trades.py from data/direct_trades.json counter_site")
 
 
 def functions(doc, b):
-    ns, fo = doc["namespace"], doc["folder"]
+    ns = doc["namespace"]
     tag = doc["barterer"]["tag"]
     (x0, y0, z0), (x1, y1, z1) = b["shell"]
     lx, ly, lz = b["light"]
-    place = ["# Generated by tools/direct_trades.py from data/direct_trades.json: the experiment booth and EXP-055's "
-             "villager. %d experiment offer(s) here; %d approved line(s) at the Northlight barterer, %d held."
-             % (len(experiment_recipes(doc)), len(counter_recipes(doc)), len(held_lines(doc))),
-             "# chunks-loaded-by: tools/reapply.py %s" % STEP,
-             "scoreboard objectives add %s dummy" % OBJECTIVE,
-             "scoreboard players set #breach %s 0" % OBJECTIVE]
+    act = ["# the experiment booth and EXP-055's villager. %d experiment offer(s) here; %d approved line(s) at the "
+           "Northlight barterer, %d held."
+           % (len(experiment_recipes(doc)), len(counter_recipes(doc)), len(held_lines(doc))),
+           "scoreboard objectives add %s dummy" % OBJECTIVE,
+           "scoreboard players set #breach %s 0" % OBJECTIVE]
     # refuse to carve into a cave, a cellar or water: any shell cell that is air, water or lava stops the function.
     # On a re-run the shell is the booth's own stone, so the check passes and the booth is laid again unchanged
-    place += ["execute if block %d %d %d #%s:%s run scoreboard players set #breach %s 1" % (x, y, z, ns, BREACH_TAG,
-                                                                                            OBJECTIVE)
-              for x, y, z in shell_cells(b)]
-    place += ["execute if score #breach %s matches 1 run return fail" % OBJECTIVE,
-              "fill %d %d %d %d %d %d %s hollow" % (x0, y0, z0, x1, y1, z1, doc["site"]["booth"]["shell"]),
-              "setblock %d %d %d %s" % (lx, ly, lz, doc["site"]["booth"]["light"]),
-              summon_line(doc, b),
-              "schedule function %s:%s/place_done %dt replace" % (ns, fo, DEDUPE_WAIT)]
-    done = ["# Generated by tools/direct_trades.py; %d ticks after the summon: one barterer, the older copies killed"
-            % DEDUPE_WAIT] + _dedupe(tag)
-    return {"place": place, "place_done": done}
+    act += ["execute if block %d %d %d #%s:%s run scoreboard players set #breach %s 1" % (x, y, z, ns, BREACH_TAG,
+                                                                                          OBJECTIVE)
+            for x, y, z in shell_cells(b)]
+    act += _breach_end(doc, "place", "#breach")
+    act += ["fill %d %d %d %d %d %d %s hollow" % (x0, y0, z0, x1, y1, z1, doc["site"]["booth"]["shell"]),
+            "setblock %d %d %d %s" % (lx, ly, lz, doc["site"]["booth"]["light"]),
+            "kill @e[%s]" % _scope(tag),
+            summon_line(doc, b)]
+    return _chain(doc, "place", booth_box(b), tag, act, "tools/direct_trades.py from data/direct_trades.json")
 
 
 def files(doc, g):
@@ -525,23 +561,15 @@ def files(doc, g):
 
 # ------------------------------------------------------------------------------------------------------------ the step
 def steps(doc=None):
-    """R18DT: hold the booth's chunk, run the place function, wait out its de-duplication, release. From the data's
-    x and z only, so the step list needs no heightmap."""
+    """R18DT: both barterers' look-then-act chains (tools/chunk_look.py, N155) started at once, one wait for the whole
+    chain, then each count read back (one barterer each). No step-level forceload: each chain holds and releases its
+    own box (a forceload is per chunk, not counted, so a step's release would drop the chunk under the chain). The two
+    boxes share no chunk (tests/test_direct_trades.py). From the data alone, so the step list needs no heightmap."""
     doc = doc or load()
-    x, z = int(doc["site"]["x"]), int(doc["site"]["z"])
-    # the whole 5x5 footprint (booth()'s shell), not its centre: at (3634, 6462) the box's z6464 is the next chunk,
-    # where an unloaded shell cell slips the breach check (A4 audit, 2026-10-07)
-    box = "%d %d %d %d" % (x - 2, z - 2, x + 2, z + 2)
-    # the Northlight barterer: every column its place function reads (the roof within lightning reach)
-    c = doc["counter_site"]
-    cx, cz, r = int(c["x"]), int(c["z"]), int(c["lightning_reach"])
-    cbox = "%d %d %d %d" % (cx - r, cz - r, cx + r, cz + r)
-    return [("cmd", "forceload add %s" % box), ("wait", 3),
-            ("fn", "%s:%s/place" % (doc["namespace"], doc["folder"])), ("wait", 7),
-            ("cmd", "forceload remove %s" % box),
-            ("cmd", "forceload add %s" % cbox), ("wait", 3),
-            ("fn", "%s:%s/counter" % (doc["namespace"], doc["folder"])), ("wait", 7),
-            ("cmd", "forceload remove %s" % cbox)]
+    ns, fo = doc["namespace"], doc["folder"]
+    per = [CL.steps("%s:%s/%s" % (ns, fo, name), holder(name), 1, label)
+           for name, label in (("place", "the Holdfast booth's barterer"), ("counter", "the Northlight barterer"))]
+    return [s[0] for s in per] + [per[0][1]] + [s[2] for s in per]
 
 
 def rcon_checks(doc=None):

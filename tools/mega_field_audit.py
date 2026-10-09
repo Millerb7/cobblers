@@ -940,7 +940,7 @@ def check_keeper(spec, fns, callback, g, D, caps, R, data=DATA):
               % (item, spec["cutters"]["offer"]["raw"], D["raw"]))
     if "Owner set from entity @s UUID" not in give:
         R.err("drops", "drops/give does not make the dropped stone owner-only")
-    cut = "\n".join(read_fn(fns, "cutters_place"))
+    cut = "\n".join(read_fn(fns, "cutters_act"))
     buys = re.findall(r'buy:\{id:"([^"]+)",count:(\d+)\}', cut)
     if not buys or {(i, int(c)) for i, c in buys} != {(D["raw"], D["price"])}:
         R.err("drops", "the Cutters' trades buy %s, not section 13's %d %s" % (sorted(set(buys)), D["price"], D["raw"]))
@@ -1419,7 +1419,7 @@ def audit(spec, g, basin, fns, callback, rec, lairs, r9sx, r9md, reapply_src=Non
     R = Report()
     D = D or design()
     caps = caps or cap_table()
-    sold = re.findall(r'sell:\{id:"mega_showdown:([a-z_]+)"', "\n".join(read_fn(fns, "cutters_place")))
+    sold = re.findall(r'sell:\{id:"mega_showdown:([a-z_]+)"', "\n".join(read_fn(fns, "cutters_act")))
     check_area(spec, basin, D, R)
     check_road(spec, R)
     check_dens(spec, g, basin, D, R, sold)

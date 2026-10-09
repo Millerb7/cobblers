@@ -767,18 +767,21 @@ def test_a_cleanup_that_drains_the_lake_is_caught(ground, cleaned, monkeypatch):
 def test_the_cleanup_removes_the_four_old_npcs_by_type_in_a_tight_box_at_their_old_seats(cleaned, tmp_path):
     _lines, _counts, seats, _op = cleaned
     assert seats == {k: tuple(v) for k, v in OLD["npc_seats"].items()}
-    hold, go = R.npc_cleanup_lines(seats, "research_station_cleanup")
-    kills = [l for l in go if " kill " in l]
+    fns = R.npc_cleanup_lines(seats, "research_station_cleanup")
+    hold, go, done = fns["npcs"], fns["npcs_look"], fns["npcs_done"]
+    kills = [l for l in go if " kill " in l and not l.startswith("#")]
     assert len(kills) == 4
-    for nid, (x, y, z) in seats.items():
-        k = next(l for l in kills if ".%s " % nid in l)
-        assert "@e[type=cobblemon:npc,x=%d,y=%d,z=%d,dx=2,dy=1,dz=2]" % (x - 1, y, z - 1) in k
-        assert "distance" not in k
-    assert any(l.startswith("schedule function cobblers:research_station_cleanup/npcs_go") for l in hold)
-    assert go[0].startswith("# chunks-loaded-by: cobblers:research_station_cleanup/npcs")
+    for (x, y, z) in seats.values():
+        assert sum("@e[type=cobblemon:npc,x=%d,y=%d,z=%d,dx=2,dy=1,dz=2]" % (x - 1, y, z - 1) in k for k in kills) == 1
+    assert not any("distance" in k for k in kills)
+    # N155: the kills are a sweep (tools/chunk_look.py), never in the tick of the forceload
+    assert not any(" kill " in l or l.startswith("kill ") for l in hold if not l.startswith("#"))
+    assert any(l.startswith("schedule function cobblers:research_station_cleanup/npcs_look") for l in hold)
+    assert go[1].startswith("# chunks-loaded-by: cobblers:research_station_cleanup/npcs")
     for x, _y, z in seats.values():
-        assert "forceload add %d %d" % (x >> 4 << 4, z >> 4 << 4) in hold
-        assert "forceload remove %d %d" % (x >> 4 << 4, z >> 4 << 4) in go
+        c = (x >> 4 << 4, z >> 4 << 4)
+        assert "forceload add %d %d %d %d" % (c + c) in hold
+        assert "forceload remove %d %d %d %d" % (c + c) in done
 
 
 def test_the_cleanup_pack_is_staging_only_and_every_function_would_run(cleaned, tmp_path):
@@ -790,6 +793,74 @@ def test_the_cleanup_pack_is_staging_only_and_every_function_would_run(cleaned, 
     assert order[-1] == "npcs" and len(order) >= 2
     for f in fn.glob("*.mcfunction"):
         assert function_limits.check_lines(f.read_text(encoding="utf-8").splitlines(), f.name) == [], f.name
+    import chunk_look_audit as CA
+    assert CA.sweep_problems(out, "cobblers:research_station_cleanup/npcs") == []
+
+
+# N155 (tools/chunk_look.py sweep): the old NPCs' chunks' saved entities arrive late. On tests/test_markets_merchant_load
+# .py's LateWorld the old shape (one kill 60 ticks after the forceload) left an NPC that arrived later; the sweep kills
+# it up to the 300-tick limit; a generator mutated to kill in the tick it force-loads misses it and the audit names it.
+# The seats are data/research_station.json's own (no lake-build commit needed). Written by the implementer of the fix
+# (minecraft-systems-dev); an independent test-author review is still owed (CLAUDE.md principle 16).
+def _seats():
+    return {k: tuple(v) for k, v in OLD["npc_seats"].items()}
+
+
+def _npc_world(fns, delay):
+    sys.path.insert(0, str(ROOT / "tests"))
+    import mcfunction_sim as S
+    from test_markets_merchant_load import LateWorld
+    w = LateWorld({"cobblers:rsc/%s" % k: v for k, v in fns.items()}, delay)
+    for x, y, z in _seats().values():
+        w.save(S.Entity("cobblemon:npc", (x + 0.5, y, z + 0.5)))
+    return w
+
+
+def _old_npc_cleanup():
+    seats = _seats()
+    chunks = sorted({(x >> 4, z >> 4) for x, _y, z in seats.values()})
+    return {"npcs": ["forceload add %d %d" % (cx * 16, cz * 16) for cx, cz in chunks]
+            + ["schedule function cobblers:rsc/npcs_go 60t replace"],
+            "npcs_go": ["kill @e[type=cobblemon:npc,%s]" % R.npc_box(s) for s in seats.values()]
+            + ["forceload remove %d %d" % (cx * 16, cz * 16) for cx, cz in chunks]}
+
+
+@pytest.mark.parametrize("delay", [61, 200])
+def test_the_old_npc_cleanup_leaves_an_npc_whose_chunk_is_slower_than_its_one_kill(delay):
+    w = _npc_world(_old_npc_cleanup(), delay)
+    w.run("cobblers:rsc/npcs", 400)
+    assert len(w.living("cobblemon:npc")) == 4
+
+
+@pytest.mark.parametrize("delay", [0, 61, 200, 299])
+def test_the_npc_sweep_removes_all_four_however_late_they_arrive_and_counts_them(delay):
+    import chunk_look as CL
+    w = _npc_world(R.npc_cleanup_lines(_seats(), "rsc"), delay)
+    w.run("cobblers:rsc/npcs", CL.STEP_TICKS)
+    assert w.living("cobblemon:npc") == []
+    assert w.scores[("#" + R.NPC_SWEEP_HOLDER, CL.OBJ)] == 4 and not w.forced
+
+
+def test_a_sweep_mutated_to_kill_at_the_forceload_misses_them_and_the_audit_names_it(monkeypatch, tmp_path):
+    import chunk_look as CL
+    import chunk_look_audit as CA
+    orig = CL.sweep
+
+    def at_once(base, box, kills, *a, **k):
+        fns = orig(base, box, kills, *a, **k)
+        fns[base] = fns[base] + ["kill @e[%s]" % kl for kl in kills]
+        fns[base + "_look"] = [l for l in fns[base + "_look"] if " kill " not in l]
+        return fns
+    monkeypatch.setattr(CL, "sweep", at_once)
+    bad = R.npc_cleanup_lines(_seats(), "rsc")
+    w = _npc_world(bad, 61)
+    w.run("cobblers:rsc/npcs", CL.STEP_TICKS)
+    assert len(w.living("cobblemon:npc")) == 4
+    for k, lines in bad.items():
+        p = tmp_path / "data" / "cobblers" / "function" / "rsc" / (k + ".mcfunction")
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    assert any("kills in the tick it force-loads" in p for p in CA.sweep_problems(tmp_path, "cobblers:rsc/npcs"))
 
 
 # ------------------------------------------------------------------------------------------- the jar, when present

@@ -193,7 +193,7 @@ def test_a_zone_no_passless_player_can_reach_ships_no_advancement():
     index = [x for x in (fn / "index.txt").read_text(encoding="utf-8").split() if x]
     run, _held = r9z(index)
     assert {"gatehouse_z1", "wall_throat"} <= set(run), run
-    assert any("\"z1\"" in ln for ln in _lines(fn, "guards_place"))
+    assert any("\"z1\"" in ln for ln in _lines(fn, "guards_act"))
 
 
 # Without this the test above could pass because the column test is wrong, not because the generator holds the
@@ -281,7 +281,14 @@ def _lines(fn, name):
 # one under its old tag. One fresh stand per gate R9Z builds, on the guard's own feet, none for a held gate,
 # none from a gatehouse function (a kill in the tick of the forceload cannot see saved entities), and the
 # clean-up a later tick kills every OTHER guard stand on that block, but only once the fresh one is there.
+# Since 2026-10-08 (N155) the summon waits for a look that sees a guard stand in EVERY guard's chunk, or blind,
+# read by tools/chunk_look_audit.py with the guards' positions taken from the data here.
 def test_one_placeholder_per_built_gate_and_the_old_ones_go():
+    import chunk_look_audit as CA
+    fn, _adv = fast()
+    pack = fn.parents[3]
+    sites = [tuple(g[2]["block"]) for zid, z in live_zones().items() if built(z) for g in RZ.gates_of(zid, z)]
+    assert CA.problems(pack, "cobblers:rift_zones/guards", "cobblers_rift_guard", "R9Z guards", sites=sites) == []
     fn, _adv = fast()
     for p in fn.glob("gatehouse_*.mcfunction"):
         assert "summon" not in p.read_text(encoding="utf-8"), p.stem
@@ -291,7 +298,7 @@ def test_one_placeholder_per_built_gate_and_the_old_ones_go():
             for g in RZ.gates_of(zid, z):
                 want[g[0]] = (g[2]["block"][0], g[2]["ground_y"] + 1, g[2]["block"][1])
     placed = {}
-    for ln in _lines(fn, "guards_place"):
+    for ln in _lines(fn, "guards_act"):
         if ln.startswith("summon minecraft:armor_stand"):
             x, y, z = (int(v) for v in ln.split()[2:5])
             tags = ln.split("Tags:[", 1)[1].split("]", 1)[0].replace('"', "").split(",")
@@ -306,8 +313,9 @@ def test_one_placeholder_per_built_gate_and_the_old_ones_go():
         assert len(hits) == 1, name
         cond, kill = hits[0].split(" run ", 1)
         assert "tag=cobblers_rift_guard_new" in cond and "tag=!cobblers_rift_guard_new" in kill, hits[0]
-    assert any(ln.startswith("schedule function cobblers:rift_zones/guards_place") for ln in _lines(fn, "guards"))
-    assert any(ln.startswith("schedule function cobblers:rift_zones/guards_done") for ln in _lines(fn, "guards_place"))
+    assert any(ln.startswith("schedule function cobblers:rift_zones/guards_look") for ln in _lines(fn, "guards"))
+    assert any(ln.startswith("schedule function cobblers:rift_zones/guards_done") for ln in _lines(fn, "guards_act"))
+    assert RZ.guard_count(SPEC) == len(want)
 
 
 # ------------------------------------------------------------------ the walk, over the heightmap

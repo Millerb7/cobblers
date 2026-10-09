@@ -66,6 +66,10 @@ DOC = DATA / "apricorn_farm.json"
 PACK = ROOT / "build" / "datapacks" / "cobblers_apricorn_farm"
 NS = "cobblers"
 FOLDER = "apricorn_farm"
+MERCHANT_FN = "%s:%s/merchant" % (NS, FOLDER)      # the entry R18AF calls
+CHAIN_TICKS = 300 + 100     # R17M's blind limit (tools/markets.py MERCHANT_POLLS) and its de-duplication wait, in ticks
+
+import chunk_look_audit  # noqa: E402  (reads the merchant's chain from its text; never imports its generator)
 
 SETBLOCK = re.compile(r"^setblock (-?\d+) (-?\d+) (-?\d+) (\S.*)$")
 FILL = re.compile(r"^fill (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (\S+?)"
@@ -1217,7 +1221,8 @@ def summon_merchant(lines):
     return s
 
 
-def check_merchant(R, D, mlines, dlines, jar, entity_steps):
+def check_merchant(R, D, mlines, chain_problems, jar, entity_steps):
+    """mlines: every command of the merchant's chain; chain_problems: tools/chunk_look_audit.problems for it."""
     m = D.doc["merchant"]
     s = summon_merchant(mlines)
     spot = None
@@ -1248,20 +1253,29 @@ def check_merchant(R, D, mlines, dlines, jar, entity_steps):
     tag = m["tag"]
     if "Tags:[\"%s\",\"%s_new\"]" % (tag, tag) not in nbt:
         R.err("merchant", "the keeper is not summoned with tags %s and %s_new" % (tag, tag))
-    if not any(l.startswith("schedule function %s:%s/merchant_done" % (NS, FOLDER)) for l in mlines):
-        R.err("merchant", "the summon does not schedule merchant_done")
-    if not any(("kill @e[tag=%s,tag=!%s_new]" % (tag, tag)) in l for l in dlines):
-        R.err("merchant", "merchant_done does not kill the older copies by tag")
-    if not any(l.startswith("tag @e[tag=%s,tag=%s_new] remove %s_new" % (tag, tag, tag)) for l in dlines):
-        R.err("merchant", "merchant_done does not clear the new tag")
+    # N155: the merchant is a look-then-act chain held in its own forceload from entry to end, summoning only once a
+    # look sees the old keeper (or blind after 300 ticks), killing it first, and keeping one by the new tag after
+    # (tools/chunk_look_audit.py: read from the pack's text, never the generator)
+    for prob in chain_problems or []:
+        R.err("merchant", prob)
     if entity_steps is not None:
         es = [tuple(s) for s in entity_steps]
         fns = [s for s in es if s[0] == "fn"]
-        if fns != [("fn", "%s:%s/merchant" % (NS, FOLDER))]:
+        if fns != [("fn", MERCHANT_FN)]:
             R.err("merchant", "R18AF runs %s, not the merchant function once" % fns)
-        adds = [s[1] for s in es if s[0] == "cmd" and s[1].startswith("forceload add")]
-        if not any(a.split()[2:4] == [str(spot[0]), str(spot[2])] for a in adds):
-            R.err("merchant", "R18AF does not forceload the keeper's column %s" % ((spot[0], spot[2]),))
+        fl = [s[1] for s in es if s[0] == "cmd" and s[1].startswith("forceload")]
+        if fl:
+            # a forceload is per chunk, not counted: a step remove would release the chunk under the chain
+            R.err("merchant", "R18AF force-loads at step level %s; the chain holds the keeper's chunk itself" % fl)
+        if fns:
+            i = es.index(fns[0])
+            nxt = es[i + 1:i + 3]
+            waited = sum(v for k, v in nxt if k == "wait")
+            checks = [v for k, v in nxt if k == "check" and isinstance(v, tuple) and v[0] == "chunk_look"]
+            if waited * 20 < CHAIN_TICKS:
+                R.err("merchant", "R18AF waits %d s after the chain starts; it needs %d ticks to finish" % (waited, CHAIN_TICKS))
+            if not checks or checks[0][2] != 1:
+                R.err("merchant", "R18AF does not read the chain's count back as one keeper: %s" % nxt)
     return spot
 
 
@@ -1402,10 +1416,9 @@ def audit(doc, g, pack, wet=None, jar=None, steps=None, entity_steps=None, reapp
     if siting:
         check_siting(R, D, rep, data_dir)
     reached = check_walk(R, D, W, fruit_count)
-    fdir = pack / "data" / NS / "function" / FOLDER
-    ml = (fdir / "merchant.mcfunction").read_text(encoding="utf-8").splitlines() if (fdir / "merchant.mcfunction").exists() else []
-    dlx = (fdir / "merchant_done.mcfunction").read_text(encoding="utf-8").splitlines() if (fdir / "merchant_done.mcfunction").exists() else []
-    merchant = check_merchant(R, D, ml, dlx, jar, entity_steps)
+    ml = chunk_look_audit.chain_lines(pack, MERCHANT_FN)
+    cp = chunk_look_audit.problems(pack, MERCHANT_FN, D.doc["merchant"]["tag"], "the stall merchant's chain")
+    merchant = check_merchant(R, D, ml, cp, jar, entity_steps)
     farmer = check_dialogue(R, D, entity_steps, data_dir) if dialogue else None
     if farmer is None and entity_steps is None:
         x, z = D.W(*doc["npc"]["at"])

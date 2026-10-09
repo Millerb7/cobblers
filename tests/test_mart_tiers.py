@@ -193,9 +193,9 @@ def test_the_summoned_clerk_carries_its_tier_shelf():
     rec = next(r for r in MARTS if r["id"] == "gym4_mart")
     entity = lambda _t: ("cobbledollars:cobble_merchant", _template_shop())
     f = TR.town_functions(rec["settlement"], [rec], entity, POLICY, TIERS)
-    line = next(l for l in f["vendors_%s_place" % rec["settlement"]] if l.startswith("summon "))
+    line = next(l for l in f["vendors_%s_act" % rec["settlement"]] if l.startswith("summon "))
     assert "cobblemon:great_ball" in line and "cobblemon:super_potion" in line
     assert "cobblemon:ultra_ball" not in line and "cobblemon:full_heal" not in line
     f0 = TR.town_functions(rec["settlement"], [rec], entity, POLICY)          # no tiers: the basics only
-    line0 = next(l for l in f0["vendors_%s_place" % rec["settlement"]] if l.startswith("summon "))
+    line0 = next(l for l in f0["vendors_%s_act" % rec["settlement"]] if l.startswith("summon "))
     assert "cobblemon:great_ball" not in line0 and "cobblemon:poke_ball" in line0

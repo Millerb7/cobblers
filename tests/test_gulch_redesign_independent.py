@@ -1114,7 +1114,7 @@ def test_a_farm_den_without_its_own_level_spawns_at_its_tiers_level():
 def test_a_keyed_stone_costs_two_raw_stones_and_a_diamond_at_the_cutters_and_the_bench():
     import mega_recipes as MR
     assert SPEC["cutters"]["offer"]["raw_count"] == 2 and MR.RAW_COUNT == 2
-    place = GM.cutter_files(model_of(SPEC))["cutters_place"]
+    place = GM.cutter_files(model_of(SPEC))["cutters_act"]
     offers = [o for l in place if l.startswith("summon minecraft:villager")
               for o in re.findall(r"\{buy:\{[^}]*\},buyB:\{[^}]*\},sell:\{[^}]*\}", l)]
     assert len(offers) == 60
@@ -1700,7 +1700,7 @@ def _plant(name, pack, final, tmp):
               "execute as @a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,gamemode=!creative,gamemode=!spectator] run effect give @s "
               "minecraft:mining_fatigue 3 3 true\n" % (x0 - m, y0 - m, z0 - m, x1 - x0 + 2 * m, y1 - y0 + 2 * m, z1 - z0 + 2 * m), "")
     elif name == "the old price":
-        _edit(pack, "function/gulch_mine/cutters_place.mcfunction", 'buy:{id:"mega_showdown:mega_stone",count:2}',
+        _edit(pack, "function/gulch_mine/cutters_act.mcfunction", 'buy:{id:"mega_showdown:mega_stone",count:2}',
               'buy:{id:"mega_showdown:mega_stone",count:4}')
     elif name == "a breach in the wall":
         j, x, z, _nx, _nz = SPEC["gate"]["band"]["points"][-15]

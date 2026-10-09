@@ -1307,16 +1307,18 @@ Dropped from DM's list, with the reason:
 19. **OPEN. A random rip scheduler only after two fixed dungeons are played?** *Recommend yes* (D5). It adds a
     scheduler, an expiry and a candidate validator, about one narrow unit (2.6M) plus an audit. A moving rip takes
     the same sigil (7.3); whether its scarcity should make it free is decided with the scheduler.
-20. **OPEN. The Night Shift's first run free, once per player, as a waiver (no sigil given); no rip free for good?**
-    *Recommend yes* (7.4).
-21. **OPEN. "Entry" in D17 read as the threshold: the sigil is returned and no lockout is stamped for a player who
-    leaves by the back rip without crossing it?** *Recommend yes* (7.4, 2.5).
-22. **OPEN. The ladder of 7.4 as priced: Soot (3 iron, 3 coal), Gilt (1 gold, 4 iron, 2 redstone), Glint (1 diamond,
+20. **OPEN, the recommendation NOT accepted (the owner, 2026-10-08, asked with Q21-Q23 and left unticked; their
+    alternative not yet given). The Night Shift's first run free, once per player, as a waiver (no sigil given); no
+    rip free for good?** *Recommended yes* (7.4). Until the owner says otherwise, build nothing that depends on the
+    waiver.
+21. **DECIDED (the owner, 2026-10-08): yes. "Entry" in D17 read as the threshold: the sigil is returned and no
+    lockout is stamped for a player who leaves by the back rip without crossing it** (7.4, 2.5).
+22. **DECIDED (the owner, 2026-10-08): yes, as priced; retuned when gathering is timed. The ladder of 7.4: Soot (3 iron, 3 coal), Gilt (1 gold, 4 iron, 2 redstone), Glint (1 diamond,
     1 gold, 2 iron), Deepstone (2 diamonds, 1 gold), Cinder (1 netherite ingot), Rift-Black (1 netherite ingot, 4
-    scrap)?** *Recommend yes*, retuned when gathering is timed. A higher band's sigil is accepted for a lower band; a
-    lower one is refused.
-23. **OPEN. Sigil recipes visible from the start, not badge-gated?** *Recommend yes*: the rip checks the band, so the
-    gate would only hide the ladder (7.4).
+    scrap).** A higher band's sigil is accepted for a lower band; a lower one is refused.
+23. **OPEN, the recommendation NOT accepted (the owner, 2026-10-08, as Q20). Sigil recipes visible from the start,
+    not badge-gated?** *Recommended yes*: the rip checks the band, so the gate would only hide the ladder (7.4). The
+    alternative 7.4 names is the TM gate's per-badge recipe-book mechanism (`data/tm_gate.json`); not chosen yet.
 
 **Still open from other documents**, untouched by this design: `DUNGEON_PLACEMENT.md` Q12-Q15 (its Q11 is decided, D8), and its band-4 paradox
 threats; `DROPS_PROGRESSION_SPLIT.md` Q2, Q4 and Q5 (old 8.11-8.14).

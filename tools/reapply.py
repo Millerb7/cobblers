@@ -1713,13 +1713,14 @@ def rift_zone_steps(index, spec):
 def steps(with_spawns=False):
     """[(step id, title, [(kind, value)])]; kind is fn (a function), wait (seconds), check (a callable name)."""
     doc = placements()
+    import chunk_look
     # the Rift's entities (the trailhead guards' placeholders; the portal sheets are R1S's since 2026-10-05, and
-    # fx_go still kills any old sheet, which carries rift_fx_all) after its blocks: fx force-loads
-    # their chunks and schedules fx_go 60 ticks on, which summons them and counts them. No step ran it until the
-    # 2026-09-24 rehearsal found 0 of 14 on a fresh export: they had been placed by hand on staging
+    # fx still kills any old sheet, which carries rift_fx_all) after its blocks, each block function releasing its own
+    # chunks in its own tick: fx is a look-then-act chain (tools/chunk_look.py, N155), waited for whole and counted.
+    # No step ran it until the 2026-09-24 rehearsal found 0 of 14 on a fresh export: they had been placed by hand
     out = [("R1", "the Rift skin: the block pass over the sculpted shape, then its entities",
             [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift", "rift")]
-            + [("fn", "cobblers:rift/fx"), ("wait", 8), ("check", "rift_fx")]),
+            + [("fn", "cobblers:rift/fx"), ("wait", chunk_look.STEP_SECONDS), ("check", "rift_fx")]),
            # the lake-bed repair (tools/lakebed_repair.py): AFTER R1, because R1 is the pass that did the damage
            # in every world exported before 2026-09-30 and would undo this if it ran second. The skin itself no
            # longer writes these cells, so on a world exported after the fix this lays back exactly what is
@@ -1730,11 +1731,12 @@ def steps(with_spawns=False):
            ("R1B", "the Rift biome, painted over the skin",
             [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift_biome", "rift")]),
            # the portal sheets (tools/rift_skin.py, 2026-10-05): their own step, so re-siting them never needs R1
-           # again. After R1, whose fx_go kills the old sheets by rift_fx_all and whose seal must not refill the new
-           # tears. sheets force-loads and schedules sheets_go 60 ticks on, which kills every sheet, puts back the
-           # old slots, seals and carves, summons and counts
+           # again. After R1, whose fx kills the old sheets by rift_fx_all and whose seal must not refill the new
+           # tears. sheets is a look-then-act chain (tools/chunk_look.py, N155): once a sheet shows in every sheet's
+           # chunk, or blind, it kills every sheet, puts back the old slots, seals and carves, summons, then
+           # de-duplicates and counts
            ("R1S", "the Rift's portal sheets: glimpses through a tear in a sheer face",
-            [("fn", "cobblers:rift/sheets"), ("wait", 8), ("check", "rift_sheets")]),
+            [("fn", "cobblers:rift/sheets"), ("wait", chunk_look.STEP_SECONDS), ("check", "rift_sheets")]),
            ("R2","Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
            ("R3", "world tree", [("fn", "cobblers:worldtree/%02d_tree" % k) for k in range(4)]
             + [("fn", "cobblers:worldtree/90_foundation"), ("check", "crown")]),
@@ -1766,20 +1768,23 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:vr_caves/%s" % f) for f in indexed("cobblers_vr_caves", "vr_caves")]))
     # the Rift dig camp as a mining town and the mega stone seam in its spur (tools/rift_mines.py): after the camp's
     # prep (R8) and tents (R9), whose cells it keeps clear, and before its lights (R16). Shell, air, fittings, then the
-    # surface; then the carts, entities summoned 60 ticks after their chunks are force-loaded (the Rift's fx pattern).
-    # The seam crystal's ward and daily face drive themselves (an advancement, the pack's tick) and need no step.
+    # surface (each releasing its own chunks in its own tick); then the carts, a look-then-act chain (tools/chunk_look.py,
+    # N155) waited for and counted. The seam crystal's ward and daily face drive themselves and need no step.
+    import rift_mines
     out.append(("R9M", "the Rift dig camp's mines, quarries and the mega stone seam, then its carts",
                 [("fn", "cobblers:rift_mines/%s" % f) for f in indexed("cobblers_rift_mines", "rift_mines")]
-                + [("fn", "cobblers:rift_mines/carts"), ("wait", 5)]))
+                + rift_mines.cart_steps()))
     # the southern Rift's mega site, prototype slice (tools/gulch_mine.py; SOUTHERN_RIFT_MEGA.md decision 12 names the
     # step): after the Rift skin (R1), whose surface it paves and cuts, and before the Habitat Blocks (R9E) and the
-    # lights (R16). Earthworks, shell, air, fittings, surface, the faces at variant 0; then the Cutters, villagers
-    # summoned 40 ticks after their chunks are force-loaded and de-duplicated 100 ticks later (tools/traders.py's
-    # pattern). The gate, the zone check, the faces' ward and the Megas act on their own and need no step.
+    # lights (R16). Earthworks, shell, air, fittings, surface, the faces at variant 0; then the Cutters through their
+    # look-then-act chain (tools/chunk_look.py, N155: summoned only once a saved Cutter is seen, or blind after 300
+    # ticks), waited for and their count read back. The gate, the zone check, the faces' ward and the Megas act on their
+    # own and need no step.
+    import gulch_mine
     out.append(("R9S", "the southern Rift's mega site: the gulch gate, the Cutters' square, the Tally Hall and the "
                        "Cutting Floor, then the Cutters",
                 [("fn", "cobblers:gulch_mine/%s" % f) for f in indexed("cobblers_gulch_mine", "gulch_mine")]
-                + [("fn", "cobblers:gulch_mine/cutters"), ("wait", 8)]))
+                + gulch_mine.cutter_steps()))
     # 2026-10-03, the Mega field (docs/world-building/MEGA_FIELD.md): the field's dens are ordinary farms of the gulch
     # pack and need no step (the keeper spawns each Mega when a player is in its farm's approach box). This removes the
     # Megas a keeper may have left at the seven retired dens (data/gulch_mine.json superseded_farms), which nothing
@@ -1818,9 +1823,9 @@ def steps(with_spawns=False):
     out.append(("R9Z", "the Rift's zone walls and gatehouse shells for the zones that can be passed (%d of %d; "
                        "held: %s)" % (len(live), len(live) + len(heldb), ", ".join(sorted(shut)) or "none"),
                 [("fn", "cobblers:rift_zones/%s" % f) for f in live]
-                # the guards' placeholders, one per gate it built, after the shells: force-load, 40 ticks for the
-                # stands already saved there, summon, 100 ticks on keep one per block (the Cutters' pattern)
-                + [("fn", "cobblers:rift_zones/guards"), ("wait", 8)]))
+                # the guards' placeholders, one per gate it built, after the shells (each releases its own chunks in
+                # its own tick): a look-then-act chain (tools/chunk_look.py, N155) waited for and counted
+                + RZ.guard_steps(zspec)))
     # the evolution-stone faces (tools/mines.py, data/mines.json; STONE_ECONOMY.md 5.5 names the step): after the towns
     # (R8) and the donors (R9), whose cells they keep clear, and the Displaced City cavern (R2), whose shell two of the
     # sites cut into; before the Habitat Blocks (R9E) and the lights (R16). One build function a site, named from the
@@ -2158,8 +2163,9 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:produce_buyer/load")] + [("npc", n) for n in produce_buyer.npc_placements()]))
     # direct trades (2026-10-07, EXP-055): the barterer, a vanilla villager whose fixed item-for-item offers are written
     # into its summon, in a booth carved 9 under the Holdfast counter (no sky, so no lightning, which would discard it).
-    # Held in a forceload of its chunk; the place function refuses to carve if the shell meets air or water (score
-    # #breach cob_dt) and de-duplicates by tag 100 ticks on. Only approved barter lines are in it
+    # Each barterer is a look-then-act chain (tools/chunk_look.py, N155) holding its own forceload, waited for whole and
+    # its count read back; the place function refuses to carve if the shell meets air or water (score #breach cob_dt).
+    # Only approved barter lines are in it
     import direct_trades
     out.append(("R18DT", "the barterer under the Holdfast counter (data/direct_trades.json)", direct_trades.steps()))
     # the Copperway Khan's salvager (2026-10-02): an NPC on the dug-out hall's floor R9DU wrote, her class loaded at boot
@@ -2215,13 +2221,15 @@ def steps(with_spawns=False):
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",
                 [("npc", n) for n in drovers_hollow.npc_placements()]))
-    # the Frostpeak research camp (2026-10-02): its blocks and instruments, held in a forceload so no fill lands on an
-    # unloaded chunk, then its three researchers
+    # the Frostpeak research camp (2026-10-02): its blocks, held in a forceload so no fill lands on an unloaded chunk and
+    # released BEFORE the instruments' look-then-act chain (tools/chunk_look.py), which holds and releases its own (a
+    # forceload is per chunk, not counted); the chain is waited for and its count read back; then its three researchers
     import frostpeak_camp
     out.append(("R18F", "the Frostpeak research camp (data/frostpeak_camp.json)",
                 [("cmd", "forceload add 680 680 735 735"), ("wait", 3),
-                 ("fn", "cobblers:frostpeak_camp/build"), ("fn", "cobblers:frostpeak_camp/instruments"),
+                 ("fn", "cobblers:frostpeak_camp/build"),
                  ("cmd", "forceload remove 680 680 735 735")]
+                + frostpeak_camp.instrument_steps()
                 + [("npc", n) for n in frostpeak_camp.npc_placements()]))
     # Articuno's tower on Frostpeak's summit (2026-10-02, tools/articuno_tower.py): the first adopted Cobbleverse site
     # any step places. On the summit because the owner chose it once the build limit was measured at y575
@@ -2233,15 +2241,17 @@ def steps(with_spawns=False):
     import frostpeak_summit
     out.append(("R18S", "Frostpeak's summit: tors, rime, lee plants and the pilgrims' way (data/frostpeak_summit.json)",
                 frostpeak_summit.placement_steps()))
-    # Coldwater Station (2026-10-05, tools/coldwater_station.py): its blocks and instruments held in a forceload, then
+    # Coldwater Station (2026-10-05, tools/coldwater_station.py): its blocks held in a forceload, its instruments' own
+    # look-then-act chain after that is released (tools/chunk_look.py, R18F's shape), then
     # its three researchers, whose classes load at boot from cobblers_coldwater_station. After R16H and R17F, whose
     # jetty and boatman below it the station keeps clear of
     import coldwater_station
     out.append(("R18CW", "Coldwater Station, the Kyogre research station (data/coldwater_station.json)",
                 coldwater_station.placement_steps()))
-    trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
-    towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
-    out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
+    # the town traders: each town's look-then-act chain (tools/chunk_look.py, N155) started at once, waited for whole,
+    # and each town's count read back; no step-level forceload, each chain holds and releases its own plaza
+    import traders
+    out.append(("R14", "town traders", traders.steps()))
     # the sleeping Celebi: an entity, so the export erased it; summoned over RCON because Cobblemon's spawn command
     # does nothing from a function (tools/sapling_celebi.py), then walled and dressed by its pack
     import sapling_celebi
@@ -2594,12 +2604,13 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 if "passed" not in r:
                     bad.append("the world tree's crown block at %s is missing: cobblers_height is not in the world folder" % (CROWN,))
             elif kind == "check" and v == "rift_fx":
-                # fx_go counts what it summoned into a score; the plan says how many there must be
+                # fx's look-then-act chain counts what stands after its de-duplication (-1 until it ends,
+                # tools/rift_skin.py fx_functions); the plan says how many there must be
                 want = json.loads((ROOT / "derived" / "rift_skin" / "plan.json").read_text(encoding="utf-8"))["entities_expected"]
                 got = None
                 for _ in range(10):
-                    r = rc("scoreboard players get #rift_fx_all cobblers.rift_fx")
-                    m = re.search(r"has (\d+) ", r)
+                    r = rc("scoreboard players get #rift_fx cobblers_chunk_look")
+                    m = re.search(r"has (-?\d+) ", r)
                     if m:
                         got = int(m.group(1))
                         if got == want:
@@ -2608,14 +2619,31 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 print("   the Rift's entities: %s of %d" % (got, want), flush=True)
                 if got != want:
                     bad.append("the Rift's entities: %s of %d summoned (cobblers:rift/fx)" % (got, want))
+            elif kind == "check" and isinstance(v, tuple) and v[0] == "chunk_look":
+                # a look-then-act chain (tools/chunk_look.py) counts what stands after its de-duplication; -1 until then
+                import chunk_look
+                _k, holder, want, label = v
+                got = None
+                for _ in range(10):
+                    r = rc("scoreboard players get #%s %s" % (holder, chunk_look.OBJ))
+                    m = re.search(r"has (-?\d+) ", r)
+                    if m:
+                        got = int(m.group(1))
+                        if got == want:
+                            break
+                    time.sleep(2)
+                print("   %s: %s of %d" % (label, got, want), flush=True)
+                if got != want:
+                    bad.append("%s: %s of %d standing after the chain (-1: it never finished)" % (label, got, want))
             elif kind == "check" and v == "rift_sheets":
-                # sheets_go counts the sheets standing after it ran; the plan says how many it sited
+                # sheets' look-then-act chain counts the sheets standing after its de-duplication (-1 until it ends,
+                # tools/rift_skin.py sheet_functions); the plan says how many it sited
                 pl = json.loads((ROOT / "derived" / "rift_skin" / "plan.json").read_text(encoding="utf-8"))
                 want = pl["sheets_expected"]
                 got = None
                 for _ in range(10):
-                    r = rc("scoreboard players get #%s cobblers.rift_fx" % pl["sheet_tag"])
-                    m = re.search(r"has (\d+) ", r)
+                    r = rc("scoreboard players get #rift_sheets cobblers_chunk_look")
+                    m = re.search(r"has (-?\d+) ", r)
                     if m:
                         got = int(m.group(1))
                         if got == want:

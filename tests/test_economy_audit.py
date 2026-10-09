@@ -664,12 +664,13 @@ def test_every_approved_barter_line_is_valued_against_the_counter(real):
 
 
 # Without it the Northlight barterer's place function could read its roof in a chunk the step never loads: the real
-# function touches both chunks of the 9x9 lightning box (454, 95) and (455, 95), and the real step holds both.
+# function touches both chunks of the 9x9 lightning box (454, 95) and (455, 95), and the real step holds both. Since
+# N155 the reads are in the chain's act (counter_act) and the hold is the chain's own forceload (counter).
 def test_the_real_barter_step_holds_every_chunk_it_reads():
     import direct_trades as DT
     doc = E.read_json(E.DIRECT_TRADES)
     files, _res = DT.files(doc, E._FlatGround())
-    counter = files["data/%s/function/%s/counter.mcfunction" % (doc["namespace"], doc["folder"])]
+    counter = files["data/%s/function/%s/counter_act.mcfunction" % (doc["namespace"], doc["folder"])]
     assert {(454, 95), (455, 95)} <= set(E.touched_chunks(counter))
     assert E.forceload_checks(files, DT.steps(doc)) == []
 
@@ -741,8 +742,7 @@ def test_a_generator_that_prices_a_barter_at_nine_tenths_is_a_bypass():
 
 # Without it a step holding one chunk of two would pass: the Northlight box shrunk to end at the villager's own x.
 def test_a_generator_whose_forceload_drops_the_second_chunk_fails():
-    d = mutant("direct_trades", 'cbox = "%d %d %d %d" % (cx - r, cz - r, cx + r, cz + r)',
-               'cbox = "%d %d %d %d" % (cx - r, cz - r, cx, cz + r)')
+    d = mutant("direct_trades", "return (x - r, z - r, x + r, z + r)", "return (x - r, z - r, x, z + r)")
     fails, _r, _n = E.audit(None, None, use_jars=False, direct_trades_mod=d)
     assert any(f.startswith("FORCELOAD R18DT runs cobblers:direct_trades/counter, which touches chunk (455, 95)")
                for f in fails), fails[:5]
