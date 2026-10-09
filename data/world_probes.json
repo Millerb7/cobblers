@@ -3993,6 +3993,158 @@
         ],
         "expect": false
       }
+    ],
+    "sunset_watch": [
+      {
+        "what": "the dial's smooth-stone ring",
+        "block": [
+          1076,
+          137,
+          7492,
+          "minecraft:smooth_stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the dial's plinth (the dusk Habitat Block's mimic)",
+        "block": [
+          1068,
+          138,
+          7492,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Sun Gate's north pillar, foot",
+        "block": [
+          1055,
+          138,
+          7487,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Sun Gate's other pillar, foot",
+        "block": [
+          1055,
+          138,
+          7496,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Sun Gate's lintel",
+        "block": [
+          1055,
+          146,
+          7492,
+          "minecraft:stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a bench (stone-brick stairs)",
+        "block": [
+          1078,
+          138,
+          7484,
+          "minecraft:stone_brick_stairs[facing=east]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp mast's foot",
+        "block": [
+          1082,
+          138,
+          7483,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp mast's crown lantern",
+        "block": [
+          1082,
+          151,
+          7483,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp house's floor",
+        "block": [
+          1073,
+          137,
+          7475,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp house's door (lower)",
+        "block": [
+          1073,
+          138,
+          7478,
+          "minecraft:spruce_door[half=lower]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp house's door (upper)",
+        "block": [
+          1073,
+          139,
+          7478,
+          "minecraft:spruce_door[half=upper]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the find's barrel",
+        "block": [
+          1075,
+          138,
+          7473,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the lamp house's ridge",
+        "block": [
+          1073,
+          146,
+          7475,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the waymark sign at the isle's landing",
+        "block": [
+          2576,
+          65,
+          6916,
+          "minecraft:spruce_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the keeper",
+        "entity": "@e[type=cobblemon:npc,x=1076,y=138,z=7487,distance=..2]",
+        "count": 1,
+        "hold": [
+          1076,
+          138,
+          7487
+        ]
+      }
     ]
   }
 }

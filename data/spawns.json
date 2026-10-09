@@ -31196,6 +31196,81 @@
         "minecraft:warped_forest"
       ],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sunset_watch_dusk.dreepy",
+      "species": "dreepy",
+      "bucket": "common",
+      "level": "30-38",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "sunset_watch_dusk",
+      "mechanism": "habitat_block",
+      "conditions": {
+        "timeRange": "dusk"
+      },
+      "eligibility_reason": "Dreepy: Cobblemon 1.8.0's own coastal dusk Pokemon (spawn_pool_world/0885_dreepy.json: ultra-rare, weight x5 at dusk, levels 2-27, #cobblemon:is_coast and is_ocean). Here it is at the band's 30-38 and the pool's anchor, but only in the dusk window",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sunset_watch_dusk.lycanroc_dusk",
+      "species": "lycanroc dusk",
+      "bucket": "uncommon",
+      "level": "30-38",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sunset_watch_dusk",
+      "mechanism": "habitat_block",
+      "conditions": {
+        "timeRange": "dusk"
+      },
+      "eligibility_reason": "Lycanroc in its Dusk form (spawn_pool_world/0745_lycanroc.json 'lycanroc dusk', timeRange dusk): the sunset dog. A final stage from Rockruff at 25, so it spawns over 30-38",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sunset_watch_dusk.drakloak",
+      "species": "drakloak",
+      "bucket": "rare",
+      "level": "45-48",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "sunset_watch_dusk",
+      "mechanism": "habitat_block",
+      "conditions": {
+        "timeRange": "dusk"
+      },
+      "eligibility_reason": "Drakloak, the nest's elder: the middle of the Dreepy line (stock levels 50-55, dusk x5), here 45-48 so that it is the next leg's cap (45) and not the one after. Above the tier-5 cap (40); a party that meets it early is out of its depth. Rare: weight 2 of 32, one spawn in sixteen",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sunset_watch_day.swellow",
+      "species": "swellow",
+      "bucket": "common",
+      "level": "28-38",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "sunset_watch_day",
+      "mechanism": "habitat_block",
+      "conditions": {
+        "timeRange": "day"
+      },
+      "eligibility_reason": "Swellow: the savanna's swallow, final stage of Taillow (22), so the whole band; it roosts on the mast",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sunset_watch_day.swablu",
+      "species": "swablu",
+      "bucket": "uncommon",
+      "level": "28-38",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sunset_watch_day",
+      "mechanism": "habitat_block",
+      "conditions": {
+        "timeRange": "day"
+      },
+      "eligibility_reason": "Swablu: the cloud bird, evolving at 35, so it spawns 28-38 with its evolution Altaria only at 35+",
+      "spawnable_position": "grounded"
     }
   ],
   "placement_sites_note": "A placed structure's grounds with a roster of its own (mechanism placement_coordinate_boxes, an entry's scope a site id). tools/compile_spawns.py lays a site's entries over its placement's footprint (data/placements.json position and size) widened by margin, less the path and the spawn-free zones, inside the sub-region holding it, and appends them to that sub-region's file on top of its roster. Grounded entries are forced canSeeSky like every land entry, so a site spawns on the open grounds round the structure and its sky-open surfaces (a tower's summit), never inside under a roof. Hand-authored; tools/build_encounters.py copies it through.",
@@ -61717,6 +61792,108 @@
         }
       ],
       "placement_status": "authored: data/habitat_blocks.json training_ground_gym8_block, status planned"
+    },
+    {
+      "id": "sunset_watch_dusk",
+      "display_name": "the Sundown Watch, dusk",
+      "intended_location": "the Sundown Watch on Sunset Isle (data/sunset_watch.json): one activated Habitat Block, sunset_watch_dial_ward in data/habitat_blocks.json, in the dial's centre plinth at (1068, 138, 7492), keeping up to 4 alive within 14",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 30,
+        "maximum": 38
+      },
+      "level_band_why": "the band of sunset_west (data/spawns.json subregions: 28-38, tier 5, basis route_05_erika_to_koga, cap 40), the sub-region the Watch stands in (data/regions.json polygons). The one entry above it, Drakloak at 45-48, is the place's nest: the creature the place is for, strong enough that meeting it early is a mistake (5-8 over the cap); rare, so a visit is mostly Dreepy.",
+      "why": "An ACTIVATED Habitat Block (the den's and the orchard's pattern) in the dial's centre plinth, disguised as a chiselled brick. Every entry carries timeRange dusk, which tools/compile_spawns.py compile_habitat carries into the pool and Cobblemon 1.8.0's HabitatSpawn reads (docs/research/notes/habitat-blocks-underground.md section 1). Outside the dusk window (ticks 11834-13701 of 24000, about 93 seconds of a 20-minute day, read from TimeRange in the 1.8.0 jar) the pool has nothing to offer and the block spawns nothing.",
+      "entries": [
+        {
+          "species": "Dreepy",
+          "pokemon": "dreepy",
+          "family": "dreepy",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "Dreepy: Cobblemon 1.8.0's own coastal dusk Pokemon (spawn_pool_world/0885_dreepy.json: ultra-rare, weight x5 at dusk, levels 2-27, #cobblemon:is_coast and is_ocean). Here it is at the band's 30-38 and the pool's anchor, but only in the dusk window",
+          "level": "30-38",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {
+            "timeRange": "dusk"
+          }
+        },
+        {
+          "species": "Dusk Lycanroc",
+          "pokemon": "lycanroc dusk",
+          "family": "rockruff",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "Lycanroc in its Dusk form (spawn_pool_world/0745_lycanroc.json 'lycanroc dusk', timeRange dusk): the sunset dog. A final stage from Rockruff at 25, so it spawns over 30-38",
+          "level": "30-38",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "timeRange": "dusk"
+          }
+        },
+        {
+          "species": "Drakloak",
+          "pokemon": "drakloak",
+          "family": "dreepy",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "Drakloak, the nest's elder: the middle of the Dreepy line (stock levels 50-55, dusk x5), here 45-48 so that it is the next leg's cap (45) and not the one after. Above the tier-5 cap (40); a party that meets it early is out of its depth. Rare: weight 2 of 32, one spawn in sixteen",
+          "level": "45-48",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {
+            "timeRange": "dusk"
+          }
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json sunset_watch_dial_ward, status planned"
+    },
+    {
+      "id": "sunset_watch_day",
+      "display_name": "the Sundown Watch, day",
+      "intended_location": "the Sundown Watch on Sunset Isle (data/sunset_watch.json): one activated Habitat Block, sunset_watch_mast_ward in data/habitat_blocks.json, in the lamp mast's second log at (1082, 139, 7483), keeping up to 3 alive within 12",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 28,
+        "maximum": 38
+      },
+      "level_band_why": "the band of sunset_west (data/spawns.json subregions: 28-38, tier 5, basis route_05_erika_to_koga, cap 40), the sub-region the Watch stands in (data/regions.json polygons).",
+      "why": "A second activated block in the mast's second log, so the Watch is not dead until dusk. Its own block and pool because an activated block counts what it has alive against its cap: day birds sharing the dusk block would sit on the cap and shut the dusk pool out. Day birds only (timeRange day, ticks 23460-12541, the jar's 'day').",
+      "entries": [
+        {
+          "species": "Swellow",
+          "pokemon": "swellow",
+          "family": "taillow",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "Swellow: the savanna's swallow, final stage of Taillow (22), so the whole band; it roosts on the mast",
+          "level": "28-38",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {
+            "timeRange": "day"
+          }
+        },
+        {
+          "species": "Swablu",
+          "pokemon": "swablu",
+          "family": "swablu",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "Swablu: the cloud bird, evolving at 35, so it spawns 28-38 with its evolution Altaria only at 35+",
+          "level": "28-38",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "timeRange": "day"
+          }
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json sunset_watch_mast_ward, status planned"
     }
   ],
   "route_species_selection_note": "Generated by tools/build_encounters.py from data/encounter_design.json (docs/mechanics/ENCOUNTER_DESIGN.md section 6): per route, the families in rules.corridor_roles (never a find) of every sub-region its corridor crosses (data/routes.json geography transitions), at most corridor_species_limit: every crossed table's water species kept, rules.corridor_rare_min of the crossed on-path tables' rare- and ultra-role species reserved (the owner, 2026-10-05), and the rest by chance times corridor length. tools/compile_spawns.py reads this list and does not choose. Do not edit by hand.",

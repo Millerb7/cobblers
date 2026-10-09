@@ -2698,6 +2698,25 @@
       ]
     },
     {
+      "id": "quest.ambient_sunset_watch.keeper_cursor",
+      "quest_id": "ambient_sunset_watch",
+      "field": "keeper_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "who",
+        "watch",
+        "evenfall",
+        "lights",
+        "hours",
+        "nest",
+        "store",
+        "repeat"
+      ]
+    },
+    {
       "id": "quest.ambient_apricorn_farm.farmer_cursor",
       "quest_id": "ambient_apricorn_farm",
       "field": "farmer_cursor",

@@ -5879,6 +5879,32 @@
       ]
     },
     {
+      "id": "ambient_sunset_watch",
+      "source": "data/sunset_watch.json; docs: docs/world-building/SUNSET_WATCH.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_sunset_watch_keeper"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversation sets no story, reward, or completion state (the lamp store is a cache, data/rewards.json sunset_watch_lamp_store, granted on reaching it)",
+      "readers": "the Watch keeper's conversation only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_sunset_watch.keeper_cursor"
+      ]
+    },
+    {
       "id": "ambient_dune_ruin",
       "source": "data/dune_ruin.json; docs: the owner's request of 2026-10-02 (data/dune_ruin.json request)",
       "scope": "player",

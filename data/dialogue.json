@@ -10795,6 +10795,97 @@
       }
     },
     {
+      "id": "dlg_sunset_watch_keeper",
+      "quest_id": "ambient_sunset_watch",
+      "npc_id": "npc_sunset_watch_keeper",
+      "source": "data/sunset_watch.json; docs: docs/world-building/SUNSET_WATCH.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_sunset_watch.keeper_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "isaura",
+          "text": "Sit if you like. Nothing happens for an hour, and then all of it happens at once.",
+          "next": "who"
+        },
+        {
+          "id": "who",
+          "kind": "line",
+          "speaker": "isaura",
+          "text": "Dray. Isaura Dray. The boatbuilders' guild kept this brow for the boats that went out to the Outer Sea, and I kept it for the guild. The guild moved to the mainland. The lamp didn't.",
+          "next": "watch"
+        },
+        {
+          "id": "watch",
+          "kind": "line",
+          "speaker": "isaura",
+          "text": "Every boat had an hour to be home by, and the hour was this: the sun in the gate. Stand at the benches and look west between the pillars. When the sun sits in it, everything that floats should be in sight of the pier. If you were still out, we rang.",
+          "next": "evenfall"
+        },
+        {
+          "id": "evenfall",
+          "kind": "line",
+          "speaker": "isaura",
+          "text": "The Evenfall was the last boat I rang for. Three masts, good oak, a crew of nineteen. She went out on a fair evening and the light went and she didn't come in. I rang till the sky was out.",
+          "next": "lights"
+        },
+        {
+          "id": "lights",
+          "kind": "line",
+          "speaker": "isaura",
+          "text": "The next dusk the Dreepy came up the slope. Pale, small, heads in the air. They drift up to the gate and look out to sea. The old hands say they're what the water gives back. I say they're waiting for the bell, same as I was.",
+          "next": "hours"
+        },
+        {
+          "id": "hours",
+          "kind": "line",
+          "speaker": "isaura",
+          "text": "They come when the light goes and only then. The sky turns the colour of the inside of a shell, and you have about a minute and a half before the dark takes them home. Not before. Not after. Sit on the benches. Don't walk at them.",
+          "next": "nest"
+        },
+        {
+          "id": "nest",
+          "kind": "line",
+          "speaker": "isaura",
+          "text": "Now and then something bigger comes up behind the small ones. Long, quiet, and it has opinions. I wouldn't be here with a party that's only just learned to win.",
+          "next": "store"
+        },
+        {
+          "id": "store",
+          "kind": "line",
+          "speaker": "isaura",
+          "text": "The guild left its lamp store in the hut, north-east corner, under the tarred sheet. Dusk Balls, mostly, and a tag some boatman swore by. Take it. I've no boats to light.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "isaura",
+          "text": "Go on. The evening's lighter than it looks. I'll keep the lamp.",
+          "next": "repeat"
+        }
+      ],
+      "speakers": {
+        "isaura": "Isaura Dray"
+      }
+    },
+    {
       "id": "dlg_dune_ruin_salvager",
       "quest_id": "ambient_dune_ruin",
       "npc_id": "npc_dune_ruin_salvager",

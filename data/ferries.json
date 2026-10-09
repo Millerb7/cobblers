@@ -217,7 +217,7 @@
           6590
         ],
         "name": "Ferryman",
-        "greeting": "The isle's across the strait. Two hundred yards of open water and a current under it - you'll not swim that. A hundred each way.",
+        "greeting": "The isle's across the strait. Two hundred yards of open water and a current under it - you'll not swim that. A hundred each way. Folk who've been say the old Watch on the isle's west brow still lights its lamp at sundown, and that something comes up the slope to see it. West, with the sea on your right.",
         "why": "on the quay head boards at the pier's landward root, west of the pier itself: he stands on heightmap ground at y63, which is what tools/ferries.py audits, and the pier's head is 49 columns out over the flats. First Cast's boatman stands on his beach for the same reason"
       },
       "landing": {
@@ -257,7 +257,7 @@
           6899
         ],
         "name": "Boatman",
-        "greeting": "Back to Sunset West? It's a fair pull across the strait, and the current runs hard in the middle. A hundred, and mind your feet getting in.",
+        "greeting": "Back to Sunset West? It's a fair pull across the strait, and the current runs hard in the middle. A hundred, and mind your feet getting in. If it's the Watch you're after, it's west along the shore, a long way, and up the brow to the lamp. The sign on the beach says the rest. Go at sundown, or you've walked for nothing.",
         "why": "on the forecourt boards five columns landward of the jetty's root, on the isle's own shore at y62: heightmap ground, off the deck, where anyone leaving the isle must pass him"
       },
       "landing": {

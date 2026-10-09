@@ -7692,6 +7692,54 @@
       },
       "status": "planned",
       "why": "written by tools/training_grounds.py records --write: the levelling catch-up for gym 8 (cap 55, docs/mechanics/LEVEL_CATCHUP.md). In the grass at the heightmap's ground, keeping up to 6 of its pool alive within 16 blocks; battle EXP from them stops at the cap (rctmod)."
+    },
+    {
+      "id": "sunset_watch_dial_ward",
+      "place": "the Sundown Watch on Sunset Isle (data/sunset_watch.json): the dial's centre plinth at (1068, 138, 7492)",
+      "pool": "cobblers:sunset_watch_dusk",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1068,
+        "y": 138,
+        "z": 7492
+      },
+      "mimic": "minecraft:chiseled_stone_bricks",
+      "activated": {
+        "spawn_range": 14,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 4
+      },
+      "status": "planned",
+      "why": "written by tools/sunset_watch.py records --write from the plan (data/sunset_watch.json dusk). An ACTIVATED Habitat Block (the den's and the orchard's pattern) in the dial's centre plinth, disguised as a chiselled brick. Every entry carries timeRange dusk, which tools/compile_spawns.py compile_habitat carries into the pool and Cobblemon 1.8.0's HabitatSpawn reads (docs/research/notes/habitat-blocks-underground.md section 1). Outside the dusk window (ticks 11834-13701 of 24000, about 93 seconds of a 20-minute day, read from TimeRange in the 1.8.0 jar) the pool has nothing to offer and the block spawns nothing. ACTIVATED, the orchard's and the den's pattern; cancel_range -1 leaves natural spawning alone. The position is the dial's centre plinth as the generator seats it (the terrace's paved Y 137 from the heightmap), in a block that pack writes, so the pack must run BEFORE R9E (R9SW) or it writes the block back over this one.",
+      "mimic_why": "the block the pack writes at that cell (minecraft:chiseled_stone_bricks), so the Habitat Block is one more of them."
+    },
+    {
+      "id": "sunset_watch_mast_ward",
+      "place": "the Sundown Watch on Sunset Isle (data/sunset_watch.json): the lamp mast's second log at (1082, 139, 7483)",
+      "pool": "cobblers:sunset_watch_day",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1082,
+        "y": 139,
+        "z": 7483
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 12,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "written by tools/sunset_watch.py records --write from the plan (data/sunset_watch.json day). A second activated block in the mast's second log, so the Watch is not dead until dusk. Its own block and pool because an activated block counts what it has alive against its cap: day birds sharing the dusk block would sit on the cap and shut the dusk pool out. Day birds only (timeRange day, ticks 23460-12541, the jar's 'day'). ACTIVATED, the orchard's and the den's pattern; cancel_range -1 leaves natural spawning alone. The position is the lamp mast's second log as the generator seats it (the terrace's paved Y 137 from the heightmap), in a block that pack writes, so the pack must run BEFORE R9E (R9SW) or it writes the block back over this one.",
+      "mimic_why": "the block the pack writes at that cell (minecraft:spruce_log), so the Habitat Block is one more of them."
     }
   ]
 }
