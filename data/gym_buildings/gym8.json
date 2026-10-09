@@ -2,6 +2,7 @@
   "schema": "gym_building/1",
   "id": "gym8",
   "status": "authored 2026-09-30; file-valid only. Nothing here has been seen in a running game.",
+  "superseded_by": "data/gym_arenas/gym8.json (schema gym_hall/1, the walk-through Gate of the South and Muster Hall, 2026-10-09). This record is kept as the record of what stood: tools/gym_buildings.py no longer emits its function and R16G no longer runs it; the hall's own first parts clear every cell of these bounds and overwrite the nine courses under the pad. Its model is still read (tools/challenge_mode.py restore_blocks and tools/gym_arenas.py's takedown coverage check).",
   "settlement": "gym8_town",
   "supersedes_donor": "gym8_gym_building",
   "supersedes_why": "the COBBLEVERSE donor shell (cobbleverse:giovanni, 27x17x24 rotated counterclockwise_90 to 3560,111,6403..3583,127,6429, one oval room, no second storey, its own rctmod:trainer_spawner) stands on this lot and is taken down by this function's own two clearing parts. Gyms 6 and 8 have NO record in data/gym_interiors.json with `superseded_by`, so tools/gym_demolish.py does not act on them and there is no dig under them to fill in - nothing was ever carved here. The clearing fills cover the donor's box on every axis: air y113-128 and stone y104-112, over x3559-3585 z6403-6429.",
