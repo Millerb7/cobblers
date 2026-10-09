@@ -84,7 +84,7 @@
       "advancement": "cobbleverse:trainer/kanto/defeat_giovanni",
       "upstream_mob": {"type": "kanto", "signatureItem": "lumymon:boss_ring", "maxTrainerWins": -1, "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0, "biomeTagBlacklist": ["is_void", "is_end"], "biomeTagWhitelist": ["minecraft:has_structure/ancient_city"]},
       "upstream_required": ["kanto_blaine"],
-      "spawner": {"at": [3565, 120, 6418], "measured_by": "gym_buildings", "why": "two south of Giovanni's spawner (3565, 120, 6416), granite over granite; the chest is north at z6412"}
+      "spawner": {"at": [3556, 94, 6421], "measured_by": "gym_buildings", "why": "two south of Giovanni's spawner (3565, 120, 6416), granite over granite; the chest is north at z6412"}
     },
     "kanto_league_lorelei": {
       "advancement": "cobbleverse:trainer/kanto/defeat_elite_lorelei",
