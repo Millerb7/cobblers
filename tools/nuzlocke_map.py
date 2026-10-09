@@ -258,10 +258,14 @@ def towns():
 def gyms():
     leaders = {t["order"]: t for t in load_json("data/trainers.json")["trainers"] if t.get("class") == "gym_leader"}
     out = {}
+    # a gym's arena, once it has one, is where its leader stands (tools/gym_arenas.py leader_seats)
+    sys.path.insert(0, str(ROOT / "tools"))
+    import gym_arenas
+    moved = gym_arenas.leader_seats()
     for f in sorted((ROOT / "data" / "gym_buildings").glob("gym*.json")):
         n = int(re.sub(r"\D", "", f.stem))
         d = json.loads(f.read_text(encoding="utf-8"))
-        sp = d["leader"]["spawner"]
+        sp = moved[d["leader"]["id"]]["seat"] if d["leader"]["id"] in moved else d["leader"]["spawner"]
         out[n] = {"n": n, "leader": d["leader"].get("name") or leaders[n]["display_name"], "x": sp[0], "z": sp[2],
                   "town": d.get("settlement")}
     if 2 not in out:

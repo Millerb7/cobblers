@@ -432,7 +432,11 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                # 2026-10-10: its structure_set overrides must sit above the global COBBLEVERSE datapack
                "cobblers_dimension_overrides",
                # 2026-10-08: the Nether gate teleports players on its own; global would gate the live world too
-               "cobblers_nether_gate")
+               "cobblers_nether_gate",
+               # 2026-10-08: the gym arenas carved below the gym buildings (tools/gym_arenas.py, data/gym_arenas/):
+               # block functions run by R16GA, which also MOVES a leader's spawner into its arena and kills the leader
+               # left standing in the building; world-local so nothing in the live world can call it
+               "cobblers_gym_arenas")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -915,6 +919,9 @@ def prepare_jobs(a):
     # world; both take their ground from tools/ground.py and the town plan's levelled lot
     add("gym_demolish:build", "gym_demolish.py", "build", *src)
     add("gym_buildings:build", "gym_buildings.py", "build", *src)
+    # the arenas below the gym buildings (2026-10-08): every rule proved against the building's own model and the
+    # heightmap, then the pack; a broken arena stops the prepare here, before anything is installed
+    add("gym_arenas:build", "gym_arenas.py", "build", *src)
     # the gym juniors (2026-10-06, tools/gym_trainers.py): every seat proved must-pass against the gym's own geometry
     add("gym_trainers:check", "gym_trainers.py", "check")
     add("gym_trainers_audit", "gym_trainers_audit.py")  # independent: real hall geometry, must-pass and softlock
@@ -2038,8 +2045,25 @@ def steps(with_spawns=False):
     # its puzzle inside it and the leader's spawner at the end of it. Listed from the committed data, not the built
     # pack, so the step exists whether or not the pack is built here; the prepare's audit fails on a missing one
     gym_halls = sorted(p.stem for p in (ROOT / "data" / "gym_buildings").glob("*.json"))
-    out.append(("R16G", "the authored gym buildings (%d)" % len(gym_halls),
-                [("fn", "cobblers:gym_buildings/%s" % g) for g in gym_halls]))
+    import gym_arenas
+    # each arena's seat move straight after the buildings, in this step: a building puts its spawner back in the
+    # hall every run, so R16G run alone (--only R16G) would otherwise leave a second spawner for a leader whose arena
+    # stands. The move tests that its arena is built, so on a world without one it does nothing (R16GA moves it)
+    out.append(("R16G", "the authored gym buildings (%d), and each arena's leader moved back into it" % len(gym_halls),
+                [("fn", "cobblers:gym_buildings/%s" % g) for g in gym_halls]
+                + [("fn", "cobblers:gym_arenas/%s_seat" % d["id"]) for _p, d in gym_arenas.records()]))
+    # the gym arenas (tools/gym_arenas.py, data/gym_arenas/): carved below each building that has one, AFTER R16G
+    # (the descent starts in the building, and the building puts its spawner back every run) and after R16E/R16F
+    # (the healer sweep and the refilled works). Per arena: the build, the seat move (the building's spawner into
+    # the dais, its cell back to its floor, never with a player within reach of either), the old leader swept out of
+    # the building (tools/chunk_look.py), then the read-back. R16G also runs each seat move (above), so the hall
+    # never keeps a spawner its arena has taken. Listed from the committed data, not the built pack
+    arena_steps = gym_arenas.steps()
+    if arena_steps:
+        arena_hold = ["%d %d %d %d" % b for b in gym_arenas.hold_boxes()]
+        out.append(("R16GA", "the gym arenas (%d) and their leaders moved into them" % len(gym_arenas.records()),
+                    arena_steps[:-1] + [("cmd", "forceload add " + h) for h in arena_hold] + [("wait", 3)]
+                    + arena_steps[-1:] + [("cmd", "forceload remove " + h) for h in arena_hold]))
     # the dive and sky portals (tools/portals.py, data/portals.json): the world-side arches, then `place`, which
     # builds every room inside cobblers:pocket. The rooms live in the world folder and a re-export makes a new one
     # (EXP-047 result 6), so they are rebuilt here every run; they are flat and deterministic, so that is exact.
@@ -2478,6 +2502,12 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 bad += ["stall merchants: %s" % m for m in problems]
                 print("   stall merchants: %d stalls, %d problems" % (len(markets.emitted_stalls(markets.load())),
                                                                      len(problems)), flush=True)
+            elif kind == "check" and v == "gym_arenas":
+                # each arena's probes and its leader moved: the spawner in the dais, none in the hall (R16GA)
+                import gym_arenas
+                problems = gym_arenas.verify(rc)
+                bad += ["gym arenas: %s" % m for m in problems]
+                print("   gym arenas: %d arenas, %d problems" % (len(gym_arenas.records()), len(problems)), flush=True)
             elif kind == "check" and v == "single_leader":
                 # one leader per gym: the second spawner gone, the one spawner Normal with nobody near (R17L)
                 import challenge_mode

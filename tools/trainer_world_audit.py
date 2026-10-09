@@ -102,12 +102,18 @@ def seats(rc):
 
 
 def spawners():
-    """[(gym, leader id, (x, y, z), source)] from the gym building, else the interior record."""
+    """[(gym, leader id, (x, y, z), source)] from the gym's arena once it has one (data/gym_arenas leader.seat:
+    tools/gym_arenas.py R16GA moves the building's spawner there), else the gym building, else the interior record."""
     gi = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
+    sys.path.insert(0, str(ROOT / "tools"))
+    import gym_arenas
+    moved = {s["gym"]: (lid, s) for lid, s in gym_arenas.leader_seats().items() if s["source"].startswith("data/gym_arenas/")}
     built = {}
     for f in sorted((ROOT / "data" / "gym_buildings").glob("*.json")):
         d = json.loads(f.read_text(encoding="utf-8"))
         built[d["id"]] = (d["leader"]["id"], tuple(d["leader"]["spawner"]), "data/gym_buildings/%s" % f.name)
+    for gid, (lid, s) in moved.items():
+        built[gid] = (lid, tuple(s["seat"]), s["source"])
     out = []
     for gid in ["gym%d" % i for i in range(1, 9)]:
         if gid in built:

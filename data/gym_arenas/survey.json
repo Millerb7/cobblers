@@ -1,0 +1,971 @@
+{
+ "schema": "gym_arena_survey/1",
+ "generated_by": "tools/gym_arenas.py survey --write (do not hand-edit)",
+ "cover": 2,
+ "gyms": [
+  {
+   "gym": "gym1",
+   "leader": "kanto_brock",
+   "building": "data/gym_buildings/gym1.json",
+   "route_end_seat": [
+    1832,
+    155,
+    3696
+   ],
+   "seat_now": [
+    1832,
+    155,
+    3696
+   ],
+   "lot": [
+    1806,
+    3656,
+    1845,
+    3703
+   ],
+   "lot_level": 141,
+   "building_bounds": [
+    1809,
+    141,
+    3659,
+    1843,
+    166,
+    3700
+   ],
+   "building_lowest_write": 141,
+   "spawn_free_zone": [
+    1800,
+    3656,
+    1847,
+    3711
+   ],
+   "window": [
+    1774,
+    3624,
+    1877,
+    3735
+   ],
+   "ground": {
+    "min": 138,
+    "max": 142,
+    "median": 141,
+    "lot_min": 140,
+    "lot_max": 142
+   },
+   "water": {
+    "wet_columns": 0,
+    "below_sea_level_columns": 0,
+    "max_level": null
+   },
+   "carved_in_data": [
+    {
+     "file": "data/gym_interiors.json",
+     "path": ".gyms[0].dig",
+     "box": [
+      1812,
+      114,
+      3667,
+      1838,
+      139,
+      3703
+     ],
+     "state": "filled back in by R16F (tools/gym_demolish.py)"
+    }
+   ],
+   "team": {
+    "clear_radius": 10.56,
+    "clear_radius_species": "onix",
+    "clear_radius_from": "model reach",
+    "clear_height": 4.0,
+    "clear_height_species": "onix"
+   },
+   "envelopes": {
+    "lot": {
+     "box_xz": [
+      1806,
+      3656,
+      1845,
+      3703
+     ],
+     "size": [
+      40,
+      48
+     ],
+     "shell_top_max": 138,
+     "floor_y_max_for_team": 131,
+     "descent_from_route_end": 24
+    },
+    "spawn_free_zone": {
+     "box_xz": [
+      1800,
+      3656,
+      1847,
+      3711
+     ],
+     "size": [
+      48,
+      56
+     ],
+     "shell_top_max": 138,
+     "floor_y_max_for_team": 131,
+     "descent_from_route_end": 24
+    },
+    "lot_plus_32": {
+     "box_xz": [
+      1774,
+      3624,
+      1877,
+      3735
+     ],
+     "size": [
+      104,
+      112
+     ],
+     "shell_top_max": 136,
+     "floor_y_max_for_team": 129,
+     "descent_from_route_end": 26
+    }
+   }
+  },
+  {
+   "gym": "gym2",
+   "leader": "kanto_misty",
+   "building": "the COBBLEVERSE template cobbleverse:misty with a carved interior (data/gym_interiors.json gym2)",
+   "route_end_seat": [
+    1605,
+    132,
+    2874
+   ],
+   "seat_now": [
+    1605,
+    132,
+    2874
+   ],
+   "lot": [
+    1592,
+    2858,
+    1631,
+    2891
+   ],
+   "lot_level": null,
+   "building_bounds": [
+    1594,
+    107,
+    2859,
+    1629,
+    146,
+    2890
+   ],
+   "building_lowest_write": 107,
+   "spawn_free_zone": [
+    1592,
+    2856,
+    1631,
+    2895
+   ],
+   "window": [
+    1560,
+    2826,
+    1663,
+    2923
+   ],
+   "ground": {
+    "min": 88,
+    "max": 109,
+    "median": 107,
+    "lot_min": 104,
+    "lot_max": 108
+   },
+   "water": {
+    "wet_columns": 2287,
+    "below_sea_level_columns": 0,
+    "max_level": 103
+   },
+   "carved_in_data": [
+    {
+     "file": "data/gym_interiors.json",
+     "path": ".gyms[1].dig",
+     "box": [
+      1598,
+      84,
+      2861,
+      1626,
+      106,
+      2881
+     ],
+     "state": "carved and standing"
+    }
+   ],
+   "team": {
+    "clear_radius": 1.85,
+    "clear_radius_species": "pelipper",
+    "clear_radius_from": "model reach",
+    "clear_height": 1.53,
+    "clear_height_species": "floatzel"
+   },
+   "envelopes": {
+    "lot": {
+     "box_xz": [
+      1592,
+      2858,
+      1631,
+      2891
+     ],
+     "size": [
+      40,
+      34
+     ],
+     "shell_top_max": 102,
+     "floor_y_max_for_team": 97,
+     "descent_from_route_end": 35
+    },
+    "spawn_free_zone": {
+     "box_xz": [
+      1592,
+      2856,
+      1631,
+      2895
+     ],
+     "size": [
+      40,
+      40
+     ],
+     "shell_top_max": 101,
+     "floor_y_max_for_team": 96,
+     "descent_from_route_end": 36
+    },
+    "lot_plus_32": {
+     "box_xz": [
+      1560,
+      2826,
+      1663,
+      2923
+     ],
+     "size": [
+      104,
+      98
+     ],
+     "shell_top_max": 86,
+     "floor_y_max_for_team": 81,
+     "descent_from_route_end": 51
+    }
+   }
+  },
+  {
+   "gym": "gym3",
+   "leader": "kanto_ltsurge",
+   "building": "data/gym_buildings/gym3.json",
+   "route_end_seat": [
+    1747,
+    190,
+    1414
+   ],
+   "seat_now": [
+    1747,
+    190,
+    1414
+   ],
+   "lot": [
+    1722,
+    1388,
+    1752,
+    1432
+   ],
+   "lot_level": 174,
+   "building_bounds": [
+    1725,
+    174,
+    1391,
+    1750,
+    206,
+    1430
+   ],
+   "building_lowest_write": 174,
+   "spawn_free_zone": [
+    1720,
+    1384,
+    1759,
+    1439
+   ],
+   "window": [
+    1690,
+    1356,
+    1784,
+    1464
+   ],
+   "ground": {
+    "min": 173,
+    "max": 276,
+    "median": 186,
+    "lot_min": 174,
+    "lot_max": 212
+   },
+   "water": {
+    "wet_columns": 0,
+    "below_sea_level_columns": 0,
+    "max_level": null
+   },
+   "carved_in_data": [
+    {
+     "file": "data/gym_interiors.json",
+     "path": ".gyms[2].dig",
+     "box": [
+      1732,
+      150,
+      1400,
+      1750,
+      172,
+      1427
+     ],
+     "state": "filled back in by R16F (tools/gym_demolish.py)"
+    }
+   ],
+   "team": {
+    "clear_radius": 2.93,
+    "clear_radius_species": "raichu",
+    "clear_radius_from": "model reach",
+    "clear_height": 1.96,
+    "clear_height_species": "electabuzz"
+   },
+   "envelopes": {
+    "lot": {
+     "box_xz": [
+      1722,
+      1388,
+      1752,
+      1432
+     ],
+     "size": [
+      31,
+      45
+     ],
+     "shell_top_max": 171,
+     "floor_y_max_for_team": 166,
+     "descent_from_route_end": 24
+    },
+    "spawn_free_zone": {
+     "box_xz": [
+      1720,
+      1384,
+      1759,
+      1439
+     ],
+     "size": [
+      40,
+      56
+     ],
+     "shell_top_max": 171,
+     "floor_y_max_for_team": 166,
+     "descent_from_route_end": 24
+    },
+    "lot_plus_32": {
+     "box_xz": [
+      1690,
+      1356,
+      1784,
+      1464
+     ],
+     "size": [
+      95,
+      109
+     ],
+     "shell_top_max": 171,
+     "floor_y_max_for_team": 166,
+     "descent_from_route_end": 24
+    }
+   }
+  },
+  {
+   "gym": "gym4",
+   "leader": "kanto_erika",
+   "building": "data/gym_buildings/gym4.json",
+   "route_end_seat": [
+    4308,
+    110,
+    1480
+   ],
+   "seat_now": [
+    4308,
+    110,
+    1480
+   ],
+   "lot": [
+    4288,
+    1470,
+    4332,
+    1512
+   ],
+   "lot_level": 110,
+   "building_bounds": [
+    4293,
+    109,
+    1475,
+    4327,
+    134,
+    1511
+   ],
+   "building_lowest_write": 109,
+   "spawn_free_zone": [
+    4288,
+    1472,
+    4335,
+    1519
+   ],
+   "window": [
+    4256,
+    1438,
+    4364,
+    1544
+   ],
+   "ground": {
+    "min": 107,
+    "max": 111,
+    "median": 110,
+    "lot_min": 109,
+    "lot_max": 110
+   },
+   "water": {
+    "wet_columns": 0,
+    "below_sea_level_columns": 0,
+    "max_level": null
+   },
+   "carved_in_data": [
+    {
+     "file": "data/gym_interiors.json",
+     "path": ".gyms[3].dig",
+     "box": [
+      4296,
+      94,
+      1478,
+      4324,
+      106,
+      1506
+     ],
+     "state": "filled back in by R16F (tools/gym_demolish.py)"
+    }
+   ],
+   "team": {
+    "clear_radius": 5.28,
+    "clear_radius_species": "victreebel",
+    "clear_radius_from": "model reach",
+    "clear_height": 2.72,
+    "clear_height_species": "tangrowth"
+   },
+   "envelopes": {
+    "lot": {
+     "box_xz": [
+      4288,
+      1470,
+      4332,
+      1512
+     ],
+     "size": [
+      45,
+      43
+     ],
+     "shell_top_max": 106,
+     "floor_y_max_for_team": 100,
+     "descent_from_route_end": 10
+    },
+    "spawn_free_zone": {
+     "box_xz": [
+      4288,
+      1472,
+      4335,
+      1519
+     ],
+     "size": [
+      48,
+      48
+     ],
+     "shell_top_max": 106,
+     "floor_y_max_for_team": 100,
+     "descent_from_route_end": 10
+    },
+    "lot_plus_32": {
+     "box_xz": [
+      4256,
+      1438,
+      4364,
+      1544
+     ],
+     "size": [
+      109,
+      107
+     ],
+     "shell_top_max": 105,
+     "floor_y_max_for_team": 99,
+     "descent_from_route_end": 11
+    }
+   }
+  },
+  {
+   "gym": "gym5",
+   "leader": "kanto_koga",
+   "building": "data/gym_buildings/gym5.json",
+   "route_end_seat": [
+    4594,
+    131,
+    2487
+   ],
+   "seat_now": [
+    4594,
+    131,
+    2487
+   ],
+   "lot": [
+    4574,
+    2463,
+    4606,
+    2495
+   ],
+   "lot_level": 116,
+   "building_bounds": [
+    4576,
+    112,
+    2465,
+    4604,
+    142,
+    2493
+   ],
+   "building_lowest_write": 112,
+   "spawn_free_zone": [
+    4568,
+    2456,
+    4607,
+    2495
+   ],
+   "window": [
+    4542,
+    2431,
+    4638,
+    2527
+   ],
+   "ground": {
+    "min": 114,
+    "max": 118,
+    "median": 116,
+    "lot_min": 114,
+    "lot_max": 116
+   },
+   "water": {
+    "wet_columns": 0,
+    "below_sea_level_columns": 0,
+    "max_level": null
+   },
+   "carved_in_data": [
+    {
+     "file": "data/gym_interiors.json",
+     "path": ".gyms[4].dig",
+     "box": [
+      4572,
+      94,
+      2466,
+      4605,
+      111,
+      2494
+     ],
+     "state": "filled back in by R16F (tools/gym_demolish.py)"
+    }
+   ],
+   "team": {
+    "clear_radius": 3.13,
+    "clear_radius_species": "drapion",
+    "clear_radius_from": "model reach",
+    "clear_height": 2.72,
+    "clear_height_species": "toxtricity"
+   },
+   "envelopes": {
+    "lot": {
+     "box_xz": [
+      4574,
+      2463,
+      4606,
+      2495
+     ],
+     "size": [
+      33,
+      33
+     ],
+     "shell_top_max": 109,
+     "floor_y_max_for_team": 103,
+     "descent_from_route_end": 28
+    },
+    "spawn_free_zone": {
+     "box_xz": [
+      4568,
+      2456,
+      4607,
+      2495
+     ],
+     "size": [
+      40,
+      40
+     ],
+     "shell_top_max": 109,
+     "floor_y_max_for_team": 103,
+     "descent_from_route_end": 28
+    },
+    "lot_plus_32": {
+     "box_xz": [
+      4542,
+      2431,
+      4638,
+      2527
+     ],
+     "size": [
+      97,
+      97
+     ],
+     "shell_top_max": 109,
+     "floor_y_max_for_team": 103,
+     "descent_from_route_end": 28
+    }
+   }
+  },
+  {
+   "gym": "gym6",
+   "leader": "kanto_sabrina",
+   "building": "data/gym_buildings/gym6.json",
+   "route_end_seat": [
+    6196,
+    111,
+    3312
+   ],
+   "seat_now": [
+    6196,
+    111,
+    3312
+   ],
+   "lot": [
+    6180,
+    3302,
+    6212,
+    3334
+   ],
+   "lot_level": 97,
+   "building_bounds": [
+    6182,
+    92,
+    3306,
+    6210,
+    128,
+    3332
+   ],
+   "building_lowest_write": 92,
+   "spawn_free_zone": [
+    6176,
+    3304,
+    6215,
+    3335
+   ],
+   "window": [
+    6148,
+    3270,
+    6244,
+    3366
+   ],
+   "ground": {
+    "min": 94,
+    "max": 98,
+    "median": 96,
+    "lot_min": 95,
+    "lot_max": 97
+   },
+   "water": {
+    "wet_columns": 0,
+    "below_sea_level_columns": 0,
+    "max_level": null
+   },
+   "carved_in_data": [],
+   "team": {
+    "clear_radius": 2.09,
+    "clear_radius_species": "slowbro",
+    "clear_radius_from": "model reach",
+    "clear_height": 6.13,
+    "clear_height_species": "hatterene"
+   },
+   "envelopes": {
+    "lot": {
+     "box_xz": [
+      6180,
+      3302,
+      6212,
+      3334
+     ],
+     "size": [
+      33,
+      33
+     ],
+     "shell_top_max": 89,
+     "floor_y_max_for_team": 79,
+     "descent_from_route_end": 32
+    },
+    "spawn_free_zone": {
+     "box_xz": [
+      6176,
+      3304,
+      6215,
+      3335
+     ],
+     "size": [
+      40,
+      32
+     ],
+     "shell_top_max": 89,
+     "floor_y_max_for_team": 79,
+     "descent_from_route_end": 32
+    },
+    "lot_plus_32": {
+     "box_xz": [
+      6148,
+      3270,
+      6244,
+      3366
+     ],
+     "size": [
+      97,
+      97
+     ],
+     "shell_top_max": 89,
+     "floor_y_max_for_team": 79,
+     "descent_from_route_end": 32
+    }
+   }
+  },
+  {
+   "gym": "gym7",
+   "leader": "kanto_blaine",
+   "building": "data/gym_buildings/gym7.json",
+   "route_end_seat": [
+    6178,
+    106,
+    5001
+   ],
+   "seat_now": [
+    6178,
+    106,
+    5001
+   ],
+   "lot": [
+    6154,
+    4980,
+    6186,
+    5010
+   ],
+   "lot_level": 106,
+   "building_bounds": [
+    6156,
+    103,
+    4983,
+    6182,
+    126,
+    5007
+   ],
+   "building_lowest_write": 103,
+   "spawn_free_zone": [
+    6152,
+    4976,
+    6191,
+    5015
+   ],
+   "window": [
+    6122,
+    4948,
+    6218,
+    5042
+   ],
+   "ground": {
+    "min": 105,
+    "max": 111,
+    "median": 106,
+    "lot_min": 106,
+    "lot_max": 106
+   },
+   "water": {
+    "wet_columns": 0,
+    "below_sea_level_columns": 0,
+    "max_level": null
+   },
+   "carved_in_data": [
+    {
+     "file": "data/gym_interiors.json",
+     "path": ".gyms[6].dig",
+     "box": [
+      6156,
+      70,
+      4980,
+      6182,
+      102,
+      5012
+     ],
+     "state": "filled back in by R16F (tools/gym_demolish.py)"
+    }
+   ],
+   "team": {
+    "clear_radius": 4.09,
+    "clear_radius_species": "charizard",
+    "clear_radius_from": "model reach",
+    "clear_height": 3.67,
+    "clear_height_species": "magmortar"
+   },
+   "envelopes": {
+    "lot": {
+     "box_xz": [
+      6154,
+      4980,
+      6186,
+      5010
+     ],
+     "size": [
+      33,
+      31
+     ],
+     "shell_top_max": 100,
+     "floor_y_max_for_team": 93,
+     "descent_from_route_end": 13
+    },
+    "spawn_free_zone": {
+     "box_xz": [
+      6152,
+      4976,
+      6191,
+      5015
+     ],
+     "size": [
+      40,
+      40
+     ],
+     "shell_top_max": 100,
+     "floor_y_max_for_team": 93,
+     "descent_from_route_end": 13
+    },
+    "lot_plus_32": {
+     "box_xz": [
+      6122,
+      4948,
+      6218,
+      5042
+     ],
+     "size": [
+      97,
+      95
+     ],
+     "shell_top_max": 100,
+     "floor_y_max_for_team": 93,
+     "descent_from_route_end": 13
+    }
+   }
+  },
+  {
+   "gym": "gym8",
+   "leader": "kanto_giovanni",
+   "building": "data/gym_buildings/gym8.json",
+   "route_end_seat": [
+    3565,
+    120,
+    6416
+   ],
+   "seat_now": [
+    3565,
+    120,
+    6416
+   ],
+   "lot": [
+    3556,
+    6400,
+    3588,
+    6432
+   ],
+   "lot_level": 112,
+   "building_bounds": [
+    3559,
+    104,
+    6403,
+    3585,
+    128,
+    6429
+   ],
+   "building_lowest_write": 104,
+   "spawn_free_zone": [
+    3552,
+    6400,
+    3591,
+    6431
+   ],
+   "window": [
+    3524,
+    6368,
+    3620,
+    6464
+   ],
+   "ground": {
+    "min": 107,
+    "max": 113,
+    "median": 111,
+    "lot_min": 110,
+    "lot_max": 112
+   },
+   "water": {
+    "wet_columns": 0,
+    "below_sea_level_columns": 0,
+    "max_level": null
+   },
+   "carved_in_data": [],
+   "team": {
+    "clear_radius": 3.45,
+    "clear_radius_species": "rhyperior",
+    "clear_radius_from": "model reach",
+    "clear_height": 3.78,
+    "clear_height_species": "rhyperior"
+   },
+   "envelopes": {
+    "lot": {
+     "box_xz": [
+      3556,
+      6400,
+      3588,
+      6432
+     ],
+     "size": [
+      33,
+      33
+     ],
+     "shell_top_max": 101,
+     "floor_y_max_for_team": 94,
+     "descent_from_route_end": 26
+    },
+    "spawn_free_zone": {
+     "box_xz": [
+      3552,
+      6400,
+      3591,
+      6431
+     ],
+     "size": [
+      40,
+      32
+     ],
+     "shell_top_max": 101,
+     "floor_y_max_for_team": 94,
+     "descent_from_route_end": 26
+    },
+    "lot_plus_32": {
+     "box_xz": [
+      3524,
+      6368,
+      3620,
+      6464
+     ],
+     "size": [
+      97,
+      97
+     ],
+     "shell_top_max": 101,
+     "floor_y_max_for_team": 94,
+     "descent_from_route_end": 26
+    }
+   }
+  }
+ ]
+}

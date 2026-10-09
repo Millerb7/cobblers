@@ -255,10 +255,16 @@ def _gym_leader_records():
 
 
 def normal_seat(up, entry):
-    """The Normal leader's one spawner, from the data that builds it: data/gym_buildings leader.spawner, else
-    data/gym_interiors.json expect_spawner_at (Misty's template spawner), else the entry's own
+    """The Normal leader's one spawner, from the data that builds it: a gym arena's leader.seat (data/gym_arenas,
+    tools/gym_arenas.py, whose step R16GA moves the building's spawner there), else data/gym_buildings
+    leader.spawner, else data/gym_interiors.json expect_spawner_at (Misty's template spawner), else the entry's own
     single_leader.normal_at (the League's template spawners, which no other record carries). None of these is read
     from a world. A rollout boss with none fails: its swap would have nothing to drive."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import gym_arenas
+    arena = gym_arenas.leader_seats().get(up)
+    if arena and arena["source"].startswith("data/gym_arenas/"):
+        return tuple(arena["seat"])
     gb = _gym_leader_records().get(up)
     if gb:
         return tuple(gb[1]["spawner"])
