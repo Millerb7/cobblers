@@ -52,8 +52,7 @@ DESIGN = load("encounter_design.json")
 HEARTS = DESIGN["rules"]["hearts"]
 IDS = [e["id"] for e in RES]
 SOUTH_IDS = {e["id"] for e in _southern()} | {e["id"] for e in _southern("northern_residents.json")} \
-    | {e["id"] for e in _southern("far_south.json")} | {e["id"] for e in _southern("rookery.json")}
-    | {e["id"] for e in _southern("far_south.json")} | {e["id"] for e in _southern("long_count.json")}
+    | {e["id"] for e in _southern("far_south.json")} | {e["id"] for e in _southern("rookery.json")}     | {e["id"] for e in _southern("long_count.json")}
 FAR_SOUTH = {"greymane", "fifth_chimney", "old_watcher"}
 
 

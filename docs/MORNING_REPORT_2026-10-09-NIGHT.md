@@ -89,7 +89,7 @@ not decisions.** Not built (step 6): stands and their clawback, the seam, parkou
 
 **Remember: Q20 (the Night Shift's free first run) and Q23 (ungated sigil recipes) still wait on your alternative.**
 
-## 4. The world brief (built and audited by their builders, on branches, NOT merged, NOT installed)
+## 4. The world brief (built by its builders; MERGED into this branch at the end of the night; NOT installed)
 
 | Place | Branch head | Where | What |
 |---|---|---|---|
@@ -105,7 +105,7 @@ not decisions.** Not built (step 6): stands and their clawback, the seam, parkou
 | Gull Rock (C7) | a657 `01f9b13` | (6940, 2650) | an authored sea stack: Dragonite L55 and a bird colony on six tidal rocks |
 | Route 5: The Bellwether | a7b3 `2c90346` | Route 5 | a four-scene shepherd chain, items only (7-11% of leg 5 income) |
 | Route 4: The Thaw Road | aef5 `2a48d77` | Route 4's middle, headwall camp (2500, 1278) to the thaw gate (3033, 1714) | a lost Gogoat followed to the Displaced City's tunnel mouth, $0 cash; **the route passes 14 blocks from the Displaced City's centre, not the 250 STATE says** |
-| C3 place | still running at writing | | |
+| The Long Count (C3, band 2) | a81e `7344e73` | camp (2136, 2160), lane to (2223, 2073) | a Grotle, Old Pace L29, that walks eight paces a year toward the world tree, a tree where it sat each year; Perrin Hale's request; the gym-2 band's first optional place. Its lantern is seen from Route 3 only at the fog edge (the 96-block rule pushed it 163 out). NOT in tonight's independent audits |
 
 Designs written (not built): **dungeons 2 and 3** (`docs/mechanics/DUNGEON_2_STREET.md`, `DUNGEON_3_PATRIARCH.md`);
 **catches on the clock** (`DUNGEON_CATCHES.md`); **the world sweep** (`docs/world-building/WORLD_SWEEP_2026-10-09.md`).
