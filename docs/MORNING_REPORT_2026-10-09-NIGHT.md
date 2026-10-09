@@ -107,6 +107,18 @@ not decisions.** Not built (step 6): stands and their clawback, the seam, parkou
 | Route 4: The Thaw Road | aef5 `2a48d77` | Route 4's middle, headwall camp (2500, 1278) to the thaw gate (3033, 1714) | a lost Gogoat followed to the Displaced City's tunnel mouth, $0 cash; **the route passes 14 blocks from the Displaced City's centre, not the 250 STATE says** |
 | The Long Count (C3, band 2) | a81e `7344e73` | camp (2136, 2160), lane to (2223, 2073) | a Grotle, Old Pace L29, that walks eight paces a year toward the world tree, a tree where it sat each year; Perrin Hale's request; the gym-2 band's first optional place. Its lantern is seen from Route 3 only at the fog edge (the 96-block rule pushed it 163 out). NOT in tonight's independent audits |
 
+**Independent audits (tonight, opus; their own tools and tests):** the water audit (`tools/new_places_water_audit.py`)
+passes the Drowned Quarry, the Glowcap Hollow, the ice lodge and Hummock Mere, 12 of 12 generator mutations caught,
+and found **Gull Rock's Dragonite can never wake**: her wake radius is 12 and the nearest place a player can swim or
+climb to is 17.9 blocks away (the ledges and crown cannot be climbed from the sea): your call, a scramble path or a
+wider wake (strict xfail). The land audit (`tools/new_places_land_audit.py`) found **Wardenhold's upper floors and
+its Froslass unreachable** (a floor cut one cell short, 200 stairs facing backwards): FIXED tonight and proven by its
+xfails turning red; Route 4's records out of order after the merge: FIXED. Still recorded: the ice lodge's Lead is
+still water and will freeze in a cold biome; a Surf player who wakes the Gyarados cannot get back out; the Long Count
+was in neither audit. Distinctness (the land auditor's judgement): the Undertow reads most like "a strong thing in a
+cave"; Crownbreaker echoes Gull Rock (one big creature on a crowned rock in a ring); the Froslass tower echoes the
+Dusk tower.
+
 Designs written (not built): **dungeons 2 and 3** (`docs/mechanics/DUNGEON_2_STREET.md`, `DUNGEON_3_PATRIARCH.md`);
 **catches on the clock** (`DUNGEON_CATCHES.md`); **the world sweep** (`docs/world-building/WORLD_SWEEP_2026-10-09.md`).
 
@@ -157,8 +169,11 @@ before step 6. The TM gate's `recipe give *` costs ~$0.
 9. **Owner choices waiting:** the Tilpey two-table rule; the native Fungal Dwelling; the quests `SQ-MERIAN-01/02` point at
    a keeper with no NPC (Ketil?); Wardenhold's name and story; the fishing-prize system; no rumour points at the
    Undertow.
-10. **Self-graded:** most world-brief builders wrote their own audits (mutation-tested, but not independent); an
-    independent audit of those places is owed before their install.
+10. **Audits and merges:** two independent audits covered eleven of the twelve world-brief units; the Long Count's is
+    owed. My JSON merges reformatted the hand-formatted shared files (`progression`, `rewards`, `spawn_block_policy`,
+    `world_probes`, `system_contracts`, `spawns`, `habitat_blocks`): valid, but large diffs. Route 4 against the
+    Displaced City: the walked line crosses 209 cells over the cavern, 5 blocks from its centre; STATE's "at least
+    250" holds only for the town's centre.
 11. **Pre-existing, not tonight's:** two `test_spawn_habitat_audit`/`tiers` order tests (`7194e31`); the 61-vs-60 Cutter
     stones; four `600 == 200` blackout tests.
 

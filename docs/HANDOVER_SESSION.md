@@ -9,27 +9,24 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
   engine core, the eight gym arenas, the audits and their fixes, the designs, STATE and this handover. Re-read the head
   before quoting it (`git rev-parse HEAD`). **No PR opened yet**: one draft PR for the batch is the next step
   (memory: one big PR per batch).
-- **The world brief, on agent branches, NOT merged** (`worktree-agent-<id>`, each one commit or two on `0b3a8b2`/
+- **The world brief, MERGED into this branch (the merges and fixes are its last commits); the agent branches it came from** (`worktree-agent-<id>`, each one commit or two on `0b3a8b2`/
   `1bcb087`): swamp nest a775e90e671b31012 `3af7466`; Drowned Quarry ac7dfdcff287b1624 `bd39246`; Tilpey spawns
   a033d07c5517417a9 `a9aa8f5`; Fungal Isle ac9d376819faa18f3 `f2f4ea4`; Sundown Watch ab7d2c93d44329266 `49a3580`;
   Wardenhold af825b9f9e7b000df `5a52d69`; ice lodge a54e72cf1167a8edc `7a669dc`; economy sim a8fe0288bd86a9c7f
   `36cb6bd`; Crownbreaker aac996cb89c97f615 `1e99d60`; Undertow a6f9e8dcc018e1c00 `aaa9a82`; Gull Rock
   a6574158502118a45 `01f9b13`; Route 5 a7b3215c5d44b18d7 `2c90346`; Route 4 aef58650877204df6 `2a48d77`; the C3 place
-  a81e02708207b16e7 was still running at the handover (check its branch).
+  a81e02708207b16e7 `7344e73`. Audits: water a11b8677bd0e5af4f `9052c96`, land afb9e845577a94967 `70c6cf5`, both merged.
 
 ## 2. Where it stopped
 - **Staging RUNNING for the owner**, 12G, watchdog 60000, Terminal panel tab "staging server". Lock released.
   Installed from prepare 203/203 at `0b3a8b2`; R16GA, R16DG, R16DR applied (0 problems), restarted, read back (8 of 8
   arena spawners; presence extra 386/393). The world brief is NOT installed.
-- **Next, as commands:** merge the thirteen agent branches above into this branch (expect textual conflicts in
-  `tools/reapply.py`, `data/world_probes.json`, `data/spawns.json`, `data/habitat_blocks.json`,
-  `data/system_contracts.json`, `data/spawn_block_policy.json`, `data/scenes.json`/`quests.json`/`dialogue.json`/
-  `progression.json`/`rewards.json` for the two route chains: resolve JSON by key, keep both sides);
-  `python tools/validate_data.py`; `python tools/id_authorship.py`; then an INDEPENDENT audit of the new places (their
-  builders graded themselves); then prepare, install (hold the bank: copy `config/cobbledollars/bank.json` before,
+- **Next, as commands:** the world brief is merged, validated (0 errors, 0 faults) and audited (except the Long Count);
+  decide Gull Rock's wake with the owner; then prepare, install (hold the bank: copy `config/cobbledollars/bank.json` before,
   restore after), boot with `max-tick-time=-1`, `run --only <the new steps> --no-reload`, restore 60000, restart, read back.
   New steps: R9HM R18HM (swamp), R18DQ (quarry), R9FI (fungal), R9SW R18SW (sunset), R9FK (keep), R18IL (lodge),
-  R9TP (Crownbreaker), R9BD R18BD (Undertow), R9RK R18RK (Gull Rock), R12R5 (Route 5), R12R4 (Route 4), then R17.
+  R9TP (Crownbreaker), R9BD R18BD (Undertow), R9RK R18RK (Gull Rock), R9LC R18LC + R9F (the Long Count), R12R5 (Route 5),
+  R12R4 (Route 4), then R17.
 
 ## 3. Waiting on the owner
 - The probes' owner halves (report section 2) and EXP-084's 15 owner steps; XT1 decides the clocks.
