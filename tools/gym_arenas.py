@@ -1082,7 +1082,8 @@ def steps():
         out += [("fn", "%s:%s/%s" % (NS, FOLDER, doc["id"])), ("fn", "%s:%s/%s_seat" % (NS, FOLDER, doc["id"])),
                 ("fn", base), ("wait", chunk_look.STEP_SECONDS)]
     if out:
-        out.append(("check", "gym_arenas"))
+        # the pack's own in-world verify (tellraw per probe, for whoever watches the console), then the read-back
+        out += [("fn", "%s:%s/verify" % (NS, FOLDER)), ("check", "gym_arenas")]
     return out
 
 

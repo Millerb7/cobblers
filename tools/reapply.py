@@ -330,6 +330,7 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
 EXCLUDED = {
+    "cobblers_dg_probes": "STAGING ONLY: the Night Shift probe pack (tools/dungeon_probes.py, EXP-069..083), installed by hand into the staging world and run over RCON per each EXP; never in the players' pack or a re-apply step",
     "cobblers_reapply": "the loose-function container; its functions are run by the steps that own them",
     # 2026-09-30: HELD BACK ON PURPOSE, and this is a safety hold, not tidiness. R9Z places obsidian walls
     # across the Rift's throat, the League's gate and behind the League, plus gatehouse barriers. The hold was
@@ -2072,8 +2073,8 @@ def steps(with_spawns=False):
     if arena_steps:
         arena_hold = ["%d %d %d %d" % b for b in gym_arenas.hold_boxes()]
         out.append(("R16GA", "the gym arenas (%d) and their leaders moved into them" % len(gym_arenas.records()),
-                    arena_steps[:-1] + [("cmd", "forceload add " + h) for h in arena_hold] + [("wait", 3)]
-                    + arena_steps[-1:] + [("cmd", "forceload remove " + h) for h in arena_hold]))
+                    arena_steps[:-2] + [("cmd", "forceload add " + h) for h in arena_hold] + [("wait", 3)]
+                    + arena_steps[-2:] + [("cmd", "forceload remove " + h) for h in arena_hold]))
     # the dive and sky portals (tools/portals.py, data/portals.json): the world-side arches, then `place`, which
     # builds every room inside cobblers:pocket. The rooms live in the world folder and a re-export makes a new one
     # (EXP-047 result 6), so they are rebuilt here every run; they are flat and deterministic, so that is exact.

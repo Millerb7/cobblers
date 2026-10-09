@@ -1238,6 +1238,9 @@ def functions(doc, blackout=None):
             "# reconnect, DM 1.2), its NPCs killed where loaded (a stale one elsewhere dies when its chunk loads: tend)",
             "scoreboard players set %s %s 0" % (S, O["own"]),
             "scoreboard players set %s %s 0" % (S, O["bdone"]),
+            "# the slot forgets its run id (no run is numbered 0: #runs counts from 1), so a member who was away when it",
+            "# freed matches nothing on return and m/member voids the run (data/dungeons.json absence; the audit's finding)",
+            "scoreboard players set %s %s 0" % (S, O["run"]),
             "bossbar set %s players" % BAR,
             "bossbar remove %s" % BAR,
             "execute in %s run kill @e[type=cobblemon:npc,tag=%s]" % (dim, stag)]

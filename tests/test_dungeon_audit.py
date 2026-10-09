@@ -671,8 +671,7 @@ def test_a_refunded_sigil_is_the_crafted_one_and_opens_the_rip_again():
 # the sigil spent, the lockout stamped, $600 taken). data/dungeons.json keeper.entry_hold_why says "on their
 # return the run is void and the sigil returned"; the engine frees the slot (slot/s<g>/free) without changing the
 # slot's run id, and m/member voids on the run id only.
-@pytest.mark.xfail(strict=True, reason="DEFECT tools/dungeon.py slot/s<g>/free keeps #s<g> dg.run, so m/member does not "
-                                       "void a run whose slot was freed: the player resumes in an unowned slot")
+# FIXED 2026-10-09 by the main session (slot/s<g>/free now sets the slot's dg.run to 0): the strict xfail turned red
 def test_a_player_whose_slot_was_freed_never_resumes_a_run_in_it():
     w = new_world()
     p = player(w)
