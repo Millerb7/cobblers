@@ -218,6 +218,73 @@ def problems(pack, entry, tag, label=None, sites=None):
     return out
 
 
+def sweep_problems(pack, entry, label=None):
+    """[problem] for a KILL-ONLY sweep at `entry` (a staging cleanup that summons nothing). Read from the text like
+    problems(): the entry force-loads and kills nothing (a kill in the tick of the forceload misses saved entities);
+    one function holds every kill, reschedules itself and, when its counter runs out, calls the function that releases;
+    its last run comes no sooner than BLIND_MIN ticks after the forceload; nothing summons; the chunks released are the
+    chunks held, and every positioned kill lies in them."""
+    label = label or entry
+    fns, missing = read_chain(pack, entry)
+    out = ["%s: %s is called but not in the pack" % (label, m) for m in missing]
+    if entry not in fns:
+        return out or ["%s: no entry function" % label]
+    added, removed, releasers = set(), set(), []
+    for ref, cmds in fns.items():
+        for c in cmds:
+            m = FORCELOAD.match(c)
+            if m and m.group(1) == "add":
+                if ref != entry:
+                    out.append("%s: %s force-loads; only the entry may" % (label, ref))
+                added |= _chunks(m)
+            elif m:
+                removed |= _chunks(m)
+                releasers.append(ref)
+            if SUMMON.search(c):
+                out.append("%s: %s summons; a sweep only kills" % (label, ref))
+    if not added:
+        out.append("%s: the entry force-loads nothing" % label)
+    if added != removed:
+        out.append("%s: chunks force-loaded %s are not the ones released %s" % (label, sorted(added), sorted(removed)))
+    for ref in set(releasers):
+        if any(CALL.search(c) or SCHEDULE.search(c) for c in fns[ref]):
+            out.append("%s: %s releases its chunks and still calls on: the sweep is not over" % (label, ref))
+    killers = sorted({ref for ref, cmds in fns.items() if any(re.search(r"\brun kill @e\[|^kill @e\[", c) for c in cmds)})
+    if entry in killers:
+        out.append("%s: the entry kills in the tick it force-loads: the saved entities are not in yet" % label)
+    looks = [ref for ref in killers if ref != entry]
+    if len(looks) != 1:
+        out.append("%s: %d functions kill after the entry (%s); a sweep has one look" % (label, len(looks), looks))
+        return out
+    look = looks[0]
+    for c in fns[look]:
+        for body in SELECTOR.findall(c):
+            a = _args(body)
+            if "x" in a and "z" in a and (int(float(a["x"]) // 1) >> 4, int(float(a["z"]) // 1) >> 4) not in added:
+                out.append("%s: %s kills at (%s, %s), outside every chunk the sweep holds" % (label, look, a["x"], a["z"]))
+    first = [int(m.group(2)) for c in fns[entry] for m in [SCHEDULE.search(c)] if m and m.group(1) == look]
+    again = [(re.match(r"execute if score (\S+) (\S+) matches 1\.\. run ", c), int(m.group(2)))
+             for c in fns[look] for m in [SCHEDULE.search(c)] if m and m.group(1) == look]
+    if len(first) != 1 or len(again) != 1 or not again[0][0]:
+        out.append("%s: cannot read the sweep's window (first look %s, look again %s)" % (label, first, [a for _m, a in again]))
+        return out
+    counter, obj = again[0][0].group(1), again[0][0].group(2)
+    polls = [int(c.split()[-1]) for c in fns[entry] if c.startswith("scoreboard players set %s %s " % (counter, obj))]
+    decs = [c for c in fns[look] if c == "scoreboard players remove %s %s 1" % (counter, obj)]
+    ends = [c for c in fns[look] if re.match(r"execute if score %s %s matches \.\.0 run function (\S+)$"
+                                             % (re.escape(counter), re.escape(obj)), c)]
+    if len(polls) != 1 or len(decs) != 1 or len(ends) != 1:
+        out.append("%s: cannot read the sweep's counter %s (set %s, %d decrements, %d ends)" % (label, counter, polls,
+                                                                                                len(decs), len(ends)))
+        return out
+    if ends[0].split()[-1] not in releasers:
+        out.append("%s: the sweep's last look does not call the function that releases" % label)
+    last = first[0] + (polls[0] - 1) * again[0][1]
+    if last < BLIND_MIN:
+        out.append("%s: the last kill runs %d ticks after the forceload, under %d" % (label, last, BLIND_MIN))
+    return out
+
+
 def chain_lines(pack, entry):
     """Every command of the chain, entry first, for an audit that reads summons from it."""
     fns, _missing = read_chain(pack, entry)
