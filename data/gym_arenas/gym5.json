@@ -1,0 +1,1487 @@
+{
+  "schema": "gym_arena/1",
+  "id": "gym5",
+  "gym": "gym5",
+  "status": "authored 2026-10-08; offline checks only (tools/gym_arenas.py check). Nothing here has been built in a world or seen in a running game.",
+  "name": "The Tracking Floor",
+  "reading": "Koga's town is a fen-edge watch town whose trackers read the marsh for anyone passing unseen (docs/world-building/TOWN_CHARACTER.md gym5_town: mangrove, mud brick, packed mud, bamboo, dark oak; its signature dressing is a board of cast prints). The Reed House above is their watch house. Under it, below the marsh, is the range where the trackers learn to read: a low mud-brick floor in half-light, mangrove roots grown down through the roof, a trail of prints set into the floor, and woven reed screens that hide the far end. A player comes down the trackers' stair, a spiral round a mangrove post, into the south-east corner and walks west the length of a lane behind a screen, turns north, walks back east behind the next, and turns again: only under the third screen's end does the range open and the blind show, a raised hide at the far end with a plank roof and Koga half in shadow in it, three courses above the floor.",
+  "leader": {
+    "id": "kanto_koga",
+    "seat": [
+      4586,
+      103,
+      2461
+    ],
+    "seat_why": "in the deck of the blind (y103, floor y100 + 3), on the range's axis (x4586, the centre of the 34-wide floor), two in from the front of the hide. THE ONE SOURCE of Koga's seat once this record exists (tools/gym_arenas.py leader_seats): data/gym_buildings/gym5.json leader.spawner (4594, 131, 2487) is where the building puts the spawner the arena step then moves."
+  },
+  "spawn_free_zone": "gym_koga",
+  "floor_y": 100,
+  "bounds": [
+    4568,
+    98,
+    2456,
+    4605,
+    109,
+    2494
+  ],
+  "bounds_why": "the shell, two thick all round: x4568..4605 (interior 4570..4603), z2456..2494 (interior 2458..2492), y98..109 (floor y100, air 101..107, roof 108..109). Inside the gym_koga zone [4568, 2456, 4607, 2495] (40 x 40) on every side. The top course y109 leaves y110 and y111 natural under the Reed House's lowest course (the flue's sump, y112): COVER = 2.",
+  "through_building": [
+    {
+      "box": [
+        4598,
+        99,
+        2487,
+        4603,
+        134,
+        2492
+      ],
+      "why": "the stair tower: its walls x4598..4603 and z2487..2492 from y99 up to the watch floor's deck (y131), the ring x4599..4602 x z2488..2491, and the headroom over the first treads up to y134. It stands in the flood hall's south-east corner, which is open air over water (the building's model: air above the one block of water at y116, mud-brick walls on the east and south). The watch floor's deck at y131 is the building's; the arena opens it only over the first treads."
+    }
+  ],
+  "entry": {
+    "route_end": [
+      4594,
+      132,
+      2487
+    ],
+    "floor": [
+      4597,
+      101,
+      2488
+    ],
+    "why": "route_end is one over Koga's spawner (4594, 131, 2487) on the watch floor, where the puzzle route ends (data/gym_buildings/gym5.json step 6 'koga'). The deck runs east to the stair head at (4599, 131, 2490); the stair winds down four turns (31 levels) and lets the player out of the tower's west door onto lane 1 at (4597, 101, 2488), 29 from Koga: farther than rctmod's forceBattleMaxDistance + 1, so the player is on the range before he can call the fight."
+  },
+  "battle": {
+    "trainer_pokemon": [
+      4586,
+      99,
+      2468
+    ],
+    "player_pokemon": [
+      4586,
+      99,
+      2473
+    ],
+    "trainer_stand": [
+      4586,
+      102,
+      2462
+    ],
+    "player_stand": [
+      4586,
+      99,
+      2476
+    ],
+    "why": "Cobblemon Battle Positions (a Cobbleverse dependency, already installed): its search finds these from the challenger's feet and sends both Pokemon to them. The Pokemon blocks sit one under the floor's top course, so spawnHeightOffset 2.0 stands each Pokemon ON the floor; the trainer stand is under the deck one in front of the seat, behind the packed-mud face, so Koga steps to the front of the hide. Koga's Pokemon is 5.5 from the dais face (clear radius 3.13, Drapion's model sweep: 2.4 to spare); the two Pokemon are 5 apart (Drapion's hitbox is 2.02 wide); the challenger stands 3 behind their own."
+  },
+  "palette": {
+    "brick": "minecraft:mud_bricks",
+    "packed": "minecraft:packed_mud",
+    "print": "minecraft:muddy_mangrove_roots",
+    "log": "minecraft:mangrove_log",
+    "logx": "minecraft:mangrove_log[axis=x]",
+    "plank": "minecraft:mangrove_planks",
+    "lattice": "minecraft:bamboo_mosaic",
+    "roots": "minecraft:mangrove_roots",
+    "barrel": "minecraft:barrel",
+    "lantern": "minecraft:lantern",
+    "hanging": "minecraft:lantern[hanging=true]",
+    "soul": "minecraft:soul_lantern[hanging=true]",
+    "chain": "minecraft:chain[axis=y]",
+    "tread": "minecraft:mud_brick_stairs",
+    "newel": "minecraft:stripped_mangrove_log"
+  },
+  "blocks": [
+    "minecraft:air",
+    "minecraft:mud_bricks",
+    "minecraft:packed_mud",
+    "minecraft:muddy_mangrove_roots",
+    "minecraft:mangrove_log",
+    "minecraft:mangrove_planks",
+    "minecraft:bamboo_mosaic",
+    "minecraft:mangrove_roots",
+    "minecraft:barrel",
+    "minecraft:lantern",
+    "minecraft:soul_lantern",
+    "minecraft:chain",
+    "minecraft:mud_brick_stairs",
+    "minecraft:stripped_mangrove_log"
+  ],
+  "blocks_why": "the town's own palette (TOWN_CHARACTER.md gym5_town: mangrove, mud brick, packed mud, bamboo) and nothing that is a spawn condition: no grass, leaves, water, sand or carpet. Bamboo mosaic is a solid cube, so each lattice screen blocks sight in the world as well as in the check.",
+  "challenge_spawner": {
+    "old_at": [
+      4592,
+      131,
+      2487
+    ],
+    "old_restore": {
+      "floor": "minecraft:mangrove_planks",
+      "under": "minecraft:air"
+    }
+  },
+  "parts": [
+    {
+      "op": "shell",
+      "box": [
+        4568,
+        98,
+        2456,
+        4605,
+        109,
+        2494
+      ],
+      "thickness": 2,
+      "block": "$brick",
+      "why": "the shell: two courses of mud brick on all six faces, built and never the rock (the refilled works of the old donor shell, or any cave, could otherwise open into it); the inside carved: x4570..4603, z2458..2492, y100..107 (34 x 35, 8 high)"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4570,
+        100,
+        2458,
+        4603,
+        100,
+        2492
+      ],
+      "block": "$brick",
+      "why": "the tracking floor: mud brick, the floor the trackers read prints on"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4569,
+        101,
+        2458,
+        4569,
+        102,
+        2492
+      ],
+      "block": "$packed",
+      "why": "packed mud wainscot, two courses, set into the shell's inner course on all four walls"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4604,
+        101,
+        2458,
+        4604,
+        102,
+        2492
+      ],
+      "block": "$packed"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4570,
+        101,
+        2457,
+        4603,
+        102,
+        2457
+      ],
+      "block": "$packed"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4570,
+        101,
+        2493,
+        4603,
+        102,
+        2493
+      ],
+      "block": "$packed"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4569,
+        104,
+        2458,
+        4569,
+        104,
+        2492
+      ],
+      "block": "$plank",
+      "why": "a mangrove plank string course at y104 round the walls: the trackers' sight line"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4604,
+        104,
+        2458,
+        4604,
+        104,
+        2492
+      ],
+      "block": "$plank"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4570,
+        104,
+        2457,
+        4603,
+        104,
+        2457
+      ],
+      "block": "$plank"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4570,
+        104,
+        2493,
+        4603,
+        104,
+        2493
+      ],
+      "block": "$plank"
+    },
+    {
+      "op": "repeat",
+      "step": [
+        0,
+        0,
+        6
+      ],
+      "count": 3,
+      "why": "three mangrove posts a side down the range and a rib across the ceiling over each pair, z2465, z2471, z2477",
+      "parts": [
+        {
+          "op": "fill",
+          "box": [
+            4570,
+            101,
+            2465,
+            4570,
+            106,
+            2465
+          ],
+          "block": "$log"
+        },
+        {
+          "op": "fill",
+          "box": [
+            4603,
+            101,
+            2465,
+            4603,
+            106,
+            2465
+          ],
+          "block": "$log"
+        },
+        {
+          "op": "fill",
+          "box": [
+            4570,
+            107,
+            2465,
+            4603,
+            107,
+            2465
+          ],
+          "block": "$logx"
+        }
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        4574,
+        101,
+        2486,
+        4603,
+        102,
+        2486
+      ],
+      "block": "$packed",
+      "why": "screen 1, z2486: mud-brick foot, a woven reed lattice, a plank beam, floor to ceiling. It runs from the east wall to x4574 and leaves the west end (x4570..4573) open: lane 1 turns north there"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4574,
+        103,
+        2486,
+        4603,
+        105,
+        2486
+      ],
+      "block": "$lattice"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4574,
+        106,
+        2486,
+        4603,
+        107,
+        2486
+      ],
+      "block": "$plank"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4574,
+        101,
+        2486,
+        4574,
+        107,
+        2486
+      ],
+      "block": "$log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4570,
+        101,
+        2480,
+        4596,
+        102,
+        2480
+      ],
+      "block": "$packed",
+      "why": "screen 2, z2480: the same, from the west wall to x4596; the gap is at the east end (x4597..4603), so lane 2 turns north there"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4570,
+        103,
+        2480,
+        4596,
+        105,
+        2480
+      ],
+      "block": "$lattice"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4570,
+        106,
+        2480,
+        4596,
+        107,
+        2480
+      ],
+      "block": "$plank"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4596,
+        101,
+        2480,
+        4596,
+        107,
+        2480
+      ],
+      "block": "$log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4591,
+        101,
+        2476,
+        4603,
+        102,
+        2476
+      ],
+      "block": "$packed",
+      "why": "screen 3, z2476, in the range itself: from the east wall to x4591. It hides the dais from the gap; the player walks west under it and sees the hide only at its west end"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4591,
+        103,
+        2476,
+        4603,
+        105,
+        2476
+      ],
+      "block": "$lattice"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4591,
+        106,
+        2476,
+        4603,
+        107,
+        2476
+      ],
+      "block": "$plank"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4591,
+        101,
+        2476,
+        4591,
+        107,
+        2476
+      ],
+      "block": "$log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4570,
+        106,
+        2468,
+        4603,
+        107,
+        2468
+      ],
+      "block": "$lattice",
+      "why": "two hanging reed valances across the range at z2468 and z2474, y106..107 only: layers of screening overhead that leave the head-high floor and both Pokemon's air clear"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4570,
+        106,
+        2474,
+        4603,
+        107,
+        2474
+      ],
+      "block": "$lattice"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4580,
+        101,
+        2458,
+        4592,
+        102,
+        2463
+      ],
+      "block": "$brick",
+      "why": "the blind's base: a raised hide of mud brick, x4580..4592, z2458..2463, deck at y103 (3 over the floor)"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4580,
+        103,
+        2458,
+        4592,
+        103,
+        2463
+      ],
+      "block": "$plank",
+      "why": "its deck, mangrove planks; the seat (4586, 103, 2461) is never written here: the seat function owns it"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4580,
+        101,
+        2463,
+        4592,
+        102,
+        2463
+      ],
+      "block": "$packed",
+      "why": "its face, packed mud, with casts of prints set into it in a checker: the trackers' board"
+    },
+    {
+      "op": "repeat",
+      "step": [
+        2,
+        0,
+        0
+      ],
+      "count": 7,
+      "parts": [
+        {
+          "op": "setblock",
+          "pos": [
+            4580,
+            102,
+            2463
+          ],
+          "block": "$print"
+        },
+        {
+          "op": "setblock",
+          "pos": [
+            4581,
+            101,
+            2463
+          ],
+          "block": "$print"
+        }
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        4581,
+        104,
+        2458,
+        4581,
+        105,
+        2458
+      ],
+      "block": "$log",
+      "why": "the hide on the deck: four posts, a lattice back and sides, a plank roof at y106, and the front open to the range"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4591,
+        104,
+        2458,
+        4591,
+        105,
+        2458
+      ],
+      "block": "$log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4581,
+        104,
+        2463,
+        4581,
+        105,
+        2463
+      ],
+      "block": "$log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4591,
+        104,
+        2463,
+        4591,
+        105,
+        2463
+      ],
+      "block": "$log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4582,
+        104,
+        2458,
+        4590,
+        105,
+        2458
+      ],
+      "block": "$lattice"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4581,
+        104,
+        2459,
+        4581,
+        105,
+        2462
+      ],
+      "block": "$lattice"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4591,
+        104,
+        2459,
+        4591,
+        105,
+        2462
+      ],
+      "block": "$lattice"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4581,
+        106,
+        2458,
+        4591,
+        106,
+        2463
+      ],
+      "block": "$plank",
+      "why": "the roof: it throws the leader's seat into shadow; a cell of air (y107) stays over it"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          4583,
+          105,
+          2460
+        ],
+        [
+          4589,
+          105,
+          2460
+        ]
+      ],
+      "block": "$soul",
+      "why": "two soul lanterns hung under the roof: the only light on Koga, so he stands half in shadow"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4583,
+        104,
+        2459
+      ],
+      "block": "$barrel",
+      "why": "a barrel in the corner of the hide"
+    },
+    {
+      "op": "repeat",
+      "step": [
+        -4,
+        0,
+        0
+      ],
+      "count": 6,
+      "why": "lane 1: a trail of human prints walking west, left and right foot",
+      "parts": [
+        {
+          "op": "setblock",
+          "pos": [
+            4594,
+            100,
+            2489
+          ],
+          "block": "$print"
+        },
+        {
+          "op": "setblock",
+          "pos": [
+            4592,
+            100,
+            2491
+          ],
+          "block": "$print"
+        }
+      ]
+    },
+    {
+      "op": "repeat",
+      "step": [
+        4,
+        0,
+        0
+      ],
+      "count": 7,
+      "why": "lane 2: the same trail coming back east",
+      "parts": [
+        {
+          "op": "setblock",
+          "pos": [
+            4572,
+            100,
+            2482
+          ],
+          "block": "$print"
+        },
+        {
+          "op": "setblock",
+          "pos": [
+            4574,
+            100,
+            2484
+          ],
+          "block": "$print"
+        }
+      ]
+    },
+    {
+      "op": "repeat",
+      "step": [
+        -4,
+        0,
+        0
+      ],
+      "count": 3,
+      "why": "the corridor under screen 3, then the trail turning north to the blind",
+      "parts": [
+        {
+          "op": "setblock",
+          "pos": [
+            4600,
+            100,
+            2478
+          ],
+          "block": "$print"
+        },
+        {
+          "op": "setblock",
+          "pos": [
+            4598,
+            100,
+            2479
+          ],
+          "block": "$print"
+        }
+      ]
+    },
+    {
+      "op": "repeat",
+      "step": [
+        0,
+        0,
+        -4
+      ],
+      "count": 4,
+      "parts": [
+        {
+          "op": "setblock",
+          "pos": [
+            4585,
+            100,
+            2478
+          ],
+          "block": "$print"
+        },
+        {
+          "op": "setblock",
+          "pos": [
+            4588,
+            100,
+            2476
+          ],
+          "block": "$print"
+        }
+      ]
+    },
+    {
+      "op": "repeat",
+      "step": [
+        0,
+        0,
+        -6
+      ],
+      "count": 3,
+      "why": "an animal's claw marks, three toes and a drag, on the west flank of the range",
+      "parts": [
+        {
+          "op": "setblock",
+          "pos": [
+            4574,
+            100,
+            2474
+          ],
+          "block": "$print"
+        },
+        {
+          "op": "setblock",
+          "pos": [
+            4575,
+            100,
+            2473
+          ],
+          "block": "$print"
+        },
+        {
+          "op": "setblock",
+          "pos": [
+            4576,
+            100,
+            2474
+          ],
+          "block": "$print"
+        },
+        {
+          "op": "setblock",
+          "pos": [
+            4575,
+            100,
+            2475
+          ],
+          "block": "$print"
+        }
+      ]
+    },
+    {
+      "op": "scatter",
+      "block": "$roots",
+      "why": "mangrove roots grown down through the roof, in clumps along the walls and over the lanes",
+      "positions": [
+        [
+          4571,
+          107,
+          2460
+        ],
+        [
+          4572,
+          107,
+          2460
+        ],
+        [
+          4571,
+          106,
+          2460
+        ],
+        [
+          4602,
+          107,
+          2461
+        ],
+        [
+          4601,
+          107,
+          2461
+        ],
+        [
+          4602,
+          106,
+          2461
+        ],
+        [
+          4571,
+          107,
+          2479
+        ],
+        [
+          4572,
+          107,
+          2479
+        ],
+        [
+          4571,
+          106,
+          2479
+        ],
+        [
+          4602,
+          107,
+          2470
+        ],
+        [
+          4602,
+          106,
+          2470
+        ],
+        [
+          4575,
+          107,
+          2488
+        ],
+        [
+          4576,
+          107,
+          2488
+        ],
+        [
+          4576,
+          106,
+          2488
+        ],
+        [
+          4590,
+          107,
+          2491
+        ],
+        [
+          4591,
+          107,
+          2491
+        ],
+        [
+          4580,
+          107,
+          2484
+        ],
+        [
+          4581,
+          107,
+          2484
+        ],
+        [
+          4593,
+          107,
+          2482
+        ],
+        [
+          4593,
+          106,
+          2482
+        ],
+        [
+          4572,
+          107,
+          2491
+        ]
+      ]
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4577,
+        107,
+        2489
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4577,
+        106,
+        2489
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4585,
+        107,
+        2489
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4585,
+        106,
+        2489
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4593,
+        107,
+        2489
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4593,
+        106,
+        2489
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4572,
+        107,
+        2491
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4572,
+        106,
+        2491
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4575,
+        107,
+        2483
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4575,
+        106,
+        2483
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4583,
+        107,
+        2483
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4583,
+        106,
+        2483
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4591,
+        107,
+        2483
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4591,
+        106,
+        2483
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4599,
+        107,
+        2483
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4599,
+        106,
+        2483
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4574,
+        107,
+        2461
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4574,
+        106,
+        2461
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4574,
+        107,
+        2470
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4574,
+        106,
+        2470
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4574,
+        107,
+        2478
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4574,
+        106,
+        2478
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4586,
+        107,
+        2470
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4586,
+        106,
+        2470
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4598,
+        107,
+        2461
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4598,
+        106,
+        2461
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4598,
+        107,
+        2470
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4598,
+        106,
+        2470
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4592,
+        107,
+        2478
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4592,
+        106,
+        2478
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4586,
+        107,
+        2478
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4586,
+        106,
+        2478
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4581,
+        107,
+        2466
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4581,
+        106,
+        2466
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4591,
+        107,
+        2466
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4591,
+        106,
+        2466
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4580,
+        107,
+        2472
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4580,
+        106,
+        2472
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4602,
+        107,
+        2475
+      ],
+      "block": "$chain"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4602,
+        106,
+        2475
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "newel_stair",
+      "ring": [
+        4599,
+        2488,
+        4602,
+        2491
+      ],
+      "top_y": 131,
+      "bottom_y": 100,
+      "start": [
+        4599,
+        2490
+      ],
+      "turn": "ccw",
+      "tread": "$tread",
+      "landing": "$brick",
+      "newel": "$newel",
+      "under": "$brick",
+      "wall": "$brick",
+      "wall_to_y": 130,
+      "headroom": 3,
+      "why": "the descent: a newel stair wound round a stripped mangrove post, in a mud-brick tower standing in the flood hall's south-east corner, from the watch floor's deck (y131) down to the tracking floor (y100). The deck opens only over the first treads, so the deepest step-off from the watch floor is three"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4600,
+        102,
+        2489
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4600,
+        108,
+        2490
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4601,
+        113,
+        2489
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4600,
+        118,
+        2489
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4600,
+        123,
+        2490
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4600,
+        128,
+        2489
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "carve",
+      "box": [
+        4598,
+        101,
+        2488,
+        4598,
+        102,
+        2488
+      ],
+      "why": "the tower's door onto lane 1, one wide and two high, off the bottom landing at (4599, 100, 2488)"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4598,
+        103,
+        2487,
+        4598,
+        103,
+        2489
+      ],
+      "block": "$plank",
+      "why": "its lintel"
+    }
+  ],
+  "probes": [
+    {
+      "what": "the floor in lane 1",
+      "at": [
+        4590,
+        100,
+        2490
+      ],
+      "block": "minecraft:mud_bricks"
+    },
+    {
+      "what": "a print set in the floor of lane 1",
+      "at": [
+        4594,
+        100,
+        2489
+      ],
+      "block": "minecraft:muddy_mangrove_roots"
+    },
+    {
+      "what": "air on the range",
+      "at": [
+        4586,
+        103,
+        2470
+      ],
+      "block": "minecraft:air"
+    },
+    {
+      "what": "screen 2's lattice",
+      "at": [
+        4585,
+        104,
+        2480
+      ],
+      "block": "minecraft:bamboo_mosaic"
+    },
+    {
+      "what": "screen 3's lattice",
+      "at": [
+        4597,
+        104,
+        2476
+      ],
+      "block": "minecraft:bamboo_mosaic"
+    },
+    {
+      "what": "the blind's roof",
+      "at": [
+        4586,
+        106,
+        2460
+      ],
+      "block": "minecraft:mangrove_planks"
+    },
+    {
+      "what": "the tower door",
+      "at": [
+        4598,
+        101,
+        2488
+      ],
+      "block": "minecraft:air"
+    },
+    {
+      "what": "the shell's south-west corner",
+      "at": [
+        4568,
+        98,
+        2494
+      ],
+      "block": "minecraft:mud_bricks"
+    },
+    {
+      "what": "the shell's north-east top corner",
+      "at": [
+        4605,
+        109,
+        2456
+      ],
+      "block": "minecraft:mud_bricks"
+    }
+  ]
+}
