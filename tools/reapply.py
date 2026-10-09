@@ -97,6 +97,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-27: the bridges (tools/bridges.py, data/bridges.json): the Route 7 crossing of Tilpey's
                 # outflow, the one required bridge; block functions run by R9G
                 "cobblers_bridges",
+                # 2026-10-09: Route 5's event sites (tools/route5_events.py): block functions run by R12R5; the scenes,
+                # NPCs and conversations they carry are data/scenes.json's, placed by R17
+                "cobblers_route5_events",
                 # 2026-09-27: each dressed town's landmark and set dressing (tools/town_dressing.py,
                 # data/town_dressing.json), run by R16B after the donors and the lights
                 "cobblers_town_dressing",
@@ -782,6 +785,9 @@ def prepare_jobs(a):
     # route_events does, so a seat cannot quietly move when the ground under it changes.
     add("late_route_trainers", "late_route_trainers.py", *src)
     add("route_trainers", "route_trainers.py")
+    # Route 5's event sites (2026-10-09, tools/route5_events.py): fails on drift between the build and the four scene
+    # records or the cache record in data/, or on anything standing on the walked line
+    add("route5_events", "route5_events.py", *src)
     add("challenge_mode_audit", "challenge_mode_audit.py")
     # Heaven's Arena's per-player opponents (2026-10-03): the ladder, the champions' exam teams and the dome's venues.
     # It FAILS while data/arena_dome.json has no venues: an arena with nowhere to fight is not a pack to install
@@ -2232,6 +2238,10 @@ def steps(with_spawns=False):
     # Routes 1-3's event sites after the signposts and every town, and before the things that stand in them
     out.append(("R12", "Routes 1-3 event sites (tools/route_events.py)",
                 [("fn", "cobblers:route_events/%s" % f) for f in indexed("cobblers_route_events", "route_events")]))
+    # Route 5's event sites (tools/route5_events.py): a pack of their own so Routes 1-3's cannot move, run right after
+    # theirs and before R17 places the props, NPCs and actors that stand in them
+    out.append(("R12R5", "Route 5 event sites (tools/route5_events.py)",
+                [("fn", "cobblers:route5_events/%s" % f) for f in indexed("cobblers_route5_events", "route5_events")]))
     # what stands in the sites and the mansion: the scenes' props (interaction boxes, once each), their NPCs, and
     # the route trainers; entities, so an export erases them like blocks, and NPC classes and trainer data load at
     # boot, so these run over RCON after the restart that followed install

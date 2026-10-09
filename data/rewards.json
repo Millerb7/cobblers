@@ -323,6 +323,46 @@
       }
     },
     {
+      "id": "r5_shepherds_tin",
+      "kind": "cache",
+      "place": "Route 5's bell cairns, east of the road at walked ~375: the barrel in the lee between the three cairns",
+      "contents": [
+        {
+          "item": "cobblemon:sitrus_berry",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/sitrus_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:lum_berry",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/lum_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "A shepherds' tin in the lee of the cairns, wedged between two stones: two Sitrus Berries and a Lum Berry.",
+      "why": "the find off the path for Route 5: a reason to leave the road forty paces east to the bell cairns, whether or not the player rings the flat bell (a cache cannot read a quest field)",
+      "built_by": "tools/route5_events.py caches (the container, reapply step R12R5); positions written by `route5_events.py --write-scenes`",
+      "trigger": {
+        "min": [
+          4428,
+          119,
+          1881
+        ],
+        "max": [
+          4432,
+          122,
+          1885
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4430,
+          121,
+          1883
+        ]
+      }
+    },
+    {
       "id": "r3_world_tree_roots",
       "kind": "cache",
       "place": "the world tree's west foot, 95 blocks off Route 3 under its crown",

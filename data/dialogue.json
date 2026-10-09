@@ -14115,6 +14115,992 @@
       }
     },
     {
+      "id": "dlg_r5_nan",
+      "quest_id": "evt_route5_bellwether",
+      "npc_id": "npc_r5_nan",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route5_bellwether.nan_cursor",
+        "initial_node": "n_01",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route5_bellwether.met_nan",
+            "value": true
+          },
+          "node": "n_hub"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "meet_nan"
+            }
+          ],
+          "node": "n_01"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n_01",
+          "kind": "line",
+          "speaker": "nan",
+          "text": "Not through the gate. They're jumpy enough as it is.",
+          "next": "n_02"
+        },
+        {
+          "id": "n_02",
+          "kind": "line",
+          "speaker": "nan",
+          "text": "That's the fold, and that's the flock. Nineteen ewes, and not one of them will cross that gap. They're waiting on the bell.",
+          "next": "n_03"
+        },
+        {
+          "id": "n_03",
+          "kind": "line",
+          "speaker": "nan",
+          "text": "Tolly. My Flaaffy. Bellwether eleven winters, and never once left them. Dawn today I found his strap slipped over the hook. Not torn. Slipped. He took it off himself.",
+          "next": "n_hub"
+        },
+        {
+          "id": "n_hub",
+          "kind": "choice",
+          "speaker": "nan",
+          "text": "Nan looks past you, down the road.",
+          "responses": [
+            {
+              "id": "r_where",
+              "text": "Where would he go?",
+              "next": "n_where"
+            },
+            {
+              "id": "r_bell",
+              "text": "What does he sound like?",
+              "next": "n_bell"
+            },
+            {
+              "id": "r_help",
+              "text": "I'll keep an eye out.",
+              "next": "n_help"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "n_hub"
+            }
+          ]
+        },
+        {
+          "id": "n_where",
+          "kind": "line",
+          "speaker": "nan",
+          "text": "South. They all go south, come back-end: down the old drove road to the winter fold at the foot of the Tear. My brother Jory keeps it. But Tolly never goes straight. He rings the cairns first. Likes to be sure the way is marked.",
+          "next": "n_hub"
+        },
+        {
+          "id": "n_bell",
+          "kind": "line",
+          "speaker": "nan",
+          "text": "His bell cracked at spring shearing. Flat, with a rattle in it, like a pebble in a tin. Every other bell on this down sings. His doesn't. You'd know it in a gale.",
+          "next": "n_hub"
+        },
+        {
+          "id": "n_help",
+          "kind": "line",
+          "speaker": "nan",
+          "text": "Then keep to the road and listen. If you reach the winter fold before I do, tell Jory the ewes are fine and the fool isn't.",
+          "next": "n_help"
+        }
+      ],
+      "speakers": {
+        "nan": "Nan Tarrow"
+      }
+    },
+    {
+      "id": "dlg_r5_hook",
+      "quest_id": "evt_route5_bellwether",
+      "npc_id": null,
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route5_bellwether.prop_cursor",
+        "initial_node": "hk_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route5_bellwether.met_nan",
+            "value": true
+          },
+          "node": "hk_nan"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "hk_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "hk_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A hook on the gate post, worn bright. The loop is empty. The leather isn't cut or chewed: it was slid off over the post.",
+          "next": "hk_idle"
+        },
+        {
+          "id": "hk_nan",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Slid off over the post, exactly as Nan said. Whoever did this knew how a strap works.",
+          "next": "hk_nan"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_r5_ewe",
+      "quest_id": "evt_route5_bellwether",
+      "npc_id": null,
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route5_bellwether.prop_cursor",
+        "initial_node": "ew_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "ew_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "ew_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The ewe stands in the gap with her nose to the south and does not move. When you step closer she plants her feet.",
+          "next": "ew_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_r5_bell_west",
+      "quest_id": "evt_route5_bellwether",
+      "npc_id": null,
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route5_bellwether.prop_cursor",
+        "initial_node": "bw_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "bw_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "bw_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You flick the bell with a finger. A bright, clean note, and it carries over the down. Pretty. Not the one.",
+          "next": "bw_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_r5_bell_south",
+      "quest_id": "evt_route5_bellwether",
+      "npc_id": null,
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route5_bellwether.prop_cursor",
+        "initial_node": "bs_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "bs_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "bs_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A deep, round note, sweet as a well. Somebody's good bell, hung here for luck. Not the one.",
+          "next": "bs_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_r5_bell_north",
+      "quest_id": "evt_route5_bellwether",
+      "npc_id": null,
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route5_bellwether.prop_cursor",
+        "initial_node": "bn_ring",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route5_bellwether.strap",
+            "value": true
+          },
+          "node": "bn_done"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "bn_ring"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "bn_ring",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You flick it. Flat. A dull clack with a rattle under it, a pebble in a tin.",
+          "next": "bn_strap"
+        },
+        {
+          "id": "bn_strap",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Over the arm, looped twice, hangs a braided strap of blue yarn. Not cut. Slipped.",
+          "next": "bn_trail",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "ring_flat"
+            }
+          ]
+        },
+        {
+          "id": "bn_trail",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Below the cairn, in the soft ground: a small cloven print, then another, going away south-east where the old drove wall runs down toward the glacier's foot. You take the strap.",
+          "next": "bn_done"
+        },
+        {
+          "id": "bn_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The cracked bell clacks in its own small way. The strap is already in your pack.",
+          "next": "bn_done"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_r5_board",
+      "quest_id": "evt_route5_bellwether",
+      "npc_id": null,
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route5_bellwether.prop_cursor",
+        "initial_node": "wb_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "wb_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "wb_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "WIND SSW, rising. Pond: skinning. Ewes: gone quiet. Tonight. Chalked fresh, in a hand that has chalked it every autumn evening of its life.",
+          "next": "wb_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_r5_gorse",
+      "quest_id": "evt_route5_bellwether",
+      "npc_id": "npc_r5_gorse",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route5_bellwether.gorse_cursor",
+        "initial_node": "g_01",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 3,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.commons",
+                "value": "salve"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.commons_taken",
+                "value": false
+              }
+            ]
+          },
+          "node": "g_salve"
+        },
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.commons",
+                "value": "oil"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.commons_taken",
+                "value": false
+              }
+            ]
+          },
+          "node": "g_oil"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route5_bellwether.met_gorse",
+            "value": true
+          },
+          "node": "g_hub"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "meet_gorse"
+            }
+          ],
+          "node": "g_01"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "g_01",
+          "kind": "line",
+          "speaker": "gorse",
+          "text": "Shut the door, you're letting the weather in.",
+          "next": "g_02"
+        },
+        {
+          "id": "g_02",
+          "kind": "line",
+          "speaker": "gorse",
+          "text": "Not that I mind. It's all the same weather. Gorse. I've watched the Tear from here since before it had that name.",
+          "next": "g_03"
+        },
+        {
+          "id": "g_03",
+          "kind": "line",
+          "speaker": "gorse",
+          "text": "Every back-end it breathes out. Cold runs off the ice like rain off a roof, down the trough and onto the fields. First a draught at the ankles, then the ponds skin over, then the ewes go quiet. Tonight, I'd say.",
+          "next": "g_hub"
+        },
+        {
+          "id": "g_hub",
+          "kind": "choice",
+          "speaker": "gorse",
+          "text": "Gorse doesn't look up from the board.",
+          "responses": [
+            {
+              "id": "r_tear",
+              "text": "Why is the winter fold where it is?",
+              "next": "g_tear"
+            },
+            {
+              "id": "r_tolly",
+              "text": "Has a Flaaffy gone by?",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.strap",
+                "value": false
+              },
+              "next": "g_tolly"
+            },
+            {
+              "id": "r_strap",
+              "text": "I found his strap at the cairns.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.strap",
+                "value": true
+              },
+              "next": "g_strap"
+            },
+            {
+              "id": "r_box",
+              "text": "May I take from the commons box?",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.commons",
+                "value": "none"
+              },
+              "next": "g_box"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "g_hub"
+            }
+          ]
+        },
+        {
+          "id": "g_tear",
+          "kind": "line",
+          "speaker": "gorse",
+          "text": "Behind the long swell of the field, out of the line of the trough. The cold runs past it, not through it. The ewes know that. Nobody told them.",
+          "next": "g_hub"
+        },
+        {
+          "id": "g_tolly",
+          "kind": "line",
+          "speaker": "gorse",
+          "text": "Dawn, going south, bell clacking like a dropped spoon. Didn't stop for the stew. He'll be at the winter fold by dark if he has any sense. Flaaffy don't, as a rule, but he's an old one.",
+          "next": "g_hub"
+        },
+        {
+          "id": "g_strap",
+          "kind": "line",
+          "speaker": "gorse",
+          "text": "Blue yarn, slid clean. Then he went on ahead on purpose, to be at the fold when the front comes. Typical. Look for the turf roof in the open, south-east, past the shrine niche.",
+          "next": "g_hub"
+        },
+        {
+          "id": "g_box",
+          "kind": "line",
+          "speaker": "gorse",
+          "text": "Walkers' box, under the bench. Take one parcel and leave the rest for the next. That's the rule, and the box is older than the rule.",
+          "next": "g_pick"
+        },
+        {
+          "id": "g_pick",
+          "kind": "choice",
+          "speaker": "gorse",
+          "text": "Which?",
+          "responses": [
+            {
+              "id": "r_salve",
+              "text": "The salve box.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.commons",
+                "value": "none"
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "pick_salve"
+                }
+              ],
+              "next": "g_salve"
+            },
+            {
+              "id": "r_oil",
+              "text": "The oil flasks.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.commons",
+                "value": "none"
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "pick_oil"
+                }
+              ],
+              "next": "g_oil"
+            },
+            {
+              "id": "r_back",
+              "text": "Not just now.",
+              "next": "g_hub"
+            }
+          ]
+        },
+        {
+          "id": "g_salve",
+          "kind": "line",
+          "speaker": "gorse",
+          "text": "A cloth parcel tied with heather. Inside, three tins of resin salve, the kind that takes the sting out of anything.",
+          "next": "g_after",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_salve"
+            }
+          ]
+        },
+        {
+          "id": "g_oil",
+          "kind": "line",
+          "speaker": "gorse",
+          "text": "Two stoppered flasks of lamp oil and a twist of wicks, still warm from the shelf over the hearth.",
+          "next": "g_after",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_oil"
+            }
+          ]
+        },
+        {
+          "id": "g_after",
+          "kind": "line",
+          "speaker": "gorse",
+          "text": "Good. Now go on. The front doesn't wait on a conversation.",
+          "next": "g_after"
+        }
+      ],
+      "speakers": {
+        "gorse": "Old Gorse"
+      }
+    },
+    {
+      "id": "dlg_r5_tally",
+      "quest_id": "evt_route5_bellwether",
+      "npc_id": null,
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route5_bellwether.prop_cursor",
+        "initial_node": "tp_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "tp_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "tp_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A chalk tally on a board: nineteen strokes for the ewes in, and a ring beside them, left open, for the bell that's out.",
+          "next": "tp_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_r5_tolly",
+      "quest_id": "evt_route5_bellwether",
+      "npc_id": null,
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route5_bellwether.prop_cursor",
+        "initial_node": "t_bare",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 3,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route5_bellwether.found_tolly",
+            "value": true
+          },
+          "node": "t_after"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route5_bellwether.strap",
+            "value": true
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "find_tolly"
+            }
+          ],
+          "node": "t_strap"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "find_tolly"
+            }
+          ],
+          "node": "t_bare"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "t_strap",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You hold up the blue strap. Tolly goes very still, then lowers his head and lets you slip it over. A spark jumps from his wool to your wrist. Round his neck, on a bit of cord, the cracked bell gives its flat little rattle.",
+          "next": "t_after"
+        },
+        {
+          "id": "t_bare",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A Flaaffy with no strap and a cracked bell on a bit of cord, standing very straight on a flat stone as though he'd been posted there. He lets you come near. He doesn't let you touch him.",
+          "next": "t_after"
+        },
+        {
+          "id": "t_after",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Tolly keeps his post on the stone. The flock is down in the fold; the nearest ewes keep half an eye on him.",
+          "next": "t_after"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_r5_jory",
+      "quest_id": "evt_route5_bellwether",
+      "npc_id": "npc_r5_jory",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route5_bellwether.jory_cursor",
+        "initial_node": "j_01",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 3,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route5_bellwether.reward_claimed",
+            "value": true
+          },
+          "node": "j_hub"
+        },
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.found_tolly",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.reward_claimed",
+                "value": false
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.strap",
+                "value": true
+              }
+            ]
+          },
+          "node": "j_full"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.found_tolly",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.reward_claimed",
+                "value": false
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.strap",
+                "value": false
+              }
+            ]
+          },
+          "node": "j_plain"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route5_bellwether.met_jory",
+            "value": true
+          },
+          "node": "j_hub"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "meet_jory"
+            }
+          ],
+          "node": "j_01"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "j_01",
+          "kind": "line",
+          "speaker": "jory",
+          "text": "Keep left of the wall. The ground's soft by the stone.",
+          "next": "j_02"
+        },
+        {
+          "id": "j_02",
+          "kind": "line",
+          "speaker": "jory",
+          "text": "Jory Tarrow. Winter fold. If Nan sent you with a message, it's 'hurry up', and I've heard it.",
+          "next": "j_hub"
+        },
+        {
+          "id": "j_hub",
+          "kind": "choice",
+          "speaker": "jory",
+          "text": "Jory wipes his hands on his coat.",
+          "responses": [
+            {
+              "id": "r_msg",
+              "text": "Nan says the ewes are fine and the fool isn't.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.met_nan",
+                "value": true
+              },
+              "next": "j_msg"
+            },
+            {
+              "id": "r_tolly",
+              "text": "Have you seen Tolly?",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route5_bellwether.found_tolly",
+                "value": false
+              },
+              "next": "j_tolly"
+            },
+            {
+              "id": "r_fold",
+              "text": "Why a turf roof?",
+              "next": "j_fold"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "j_hub"
+            }
+          ]
+        },
+        {
+          "id": "j_msg",
+          "kind": "line",
+          "speaker": "jory",
+          "text": "That's the third time she's sent me that. The fool's on his stone by the pen and has been since noon, ringing like a spoon in a pot. Go and tell him he's in trouble.",
+          "next": "j_hub"
+        },
+        {
+          "id": "j_tolly",
+          "kind": "line",
+          "speaker": "jory",
+          "text": "On the flat stone by the pen, where else. Go and look. Then come and tell me you saw him, because Nan won't believe me.",
+          "next": "j_hub"
+        },
+        {
+          "id": "j_fold",
+          "kind": "line",
+          "speaker": "jory",
+          "text": "Turf holds heat and sheds wind, and the roof's the one thing the Tear can't read. Cut the same sods my father did. Same grass, probably.",
+          "next": "j_hub"
+        },
+        {
+          "id": "j_full",
+          "kind": "line",
+          "speaker": "jory",
+          "text": "That's Tolly's strap round his neck. You went by the cairns? Then you did it properly.",
+          "next": "j_full2"
+        },
+        {
+          "id": "j_full2",
+          "kind": "line",
+          "speaker": "jory",
+          "text": "Take this. A lodestone the Tarrows have handed round the bellwethers since before my time: they all end up leaning on it. It'll do more good in your team than in my rafters. And these, for the road.",
+          "next": "j_after",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_full"
+            }
+          ]
+        },
+        {
+          "id": "j_plain",
+          "kind": "line",
+          "speaker": "jory",
+          "text": "You found him. That's more than the dog managed. He won't say where he's been; he never does.",
+          "next": "j_plain2"
+        },
+        {
+          "id": "j_plain2",
+          "kind": "line",
+          "speaker": "jory",
+          "text": "Here, for the road. And if you pass Nan again, tell her I said she was right, and she'll be unbearable all winter.",
+          "next": "j_after",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_plain"
+            }
+          ]
+        },
+        {
+          "id": "j_after",
+          "kind": "line",
+          "speaker": "jory",
+          "text": "Mind the front tonight. Gorse reckons it'll be a cold one, and Gorse is usually right.",
+          "next": "j_after",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "finish"
+            }
+          ]
+        }
+      ],
+      "speakers": {
+        "jory": "Jory Tarrow"
+      }
+    },
+    {
       "id": "dlg_prospector_claim",
       "quest_id": "evt_prospector_claim",
       "npc_id": "npc_prospector_claim",
