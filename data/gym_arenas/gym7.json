@@ -46,44 +46,56 @@
  "through_building": [],
  "replaces": {
   "arena": {
-   "name": "The Assay House and the Core Gallery",
+   "name": "The Core Gallery",
    "bounds": [
     6154,
+    81,
+    4976,
+    6181,
     102,
-    4980,
-    6186,
-    102,
-    5010
+    5014
    ],
-   "through_building": [],
-   "floor_y": 103,
+   "through_building": [
+    {
+     "box": [
+      6178,
+      101,
+      5001,
+      6180,
+      102,
+      5007
+     ],
+     "why": "the adit's first leg, where it leaves the assay vault: the vault's floor is cut for the first four steps (x6179, z5001..5004, y106) and its head room opens y107..109 over them; below, the stair is cut under the vault's south wall footing. Inside the building's bounds (x6156..6182, z4983..5007, y103 and up); the vault's walls above y106 and the geyser's casing (z4996..4998) are never touched."
+    }
+   ],
+   "floor_y": 84,
    "battle": {
     "trainer_pokemon": [
-     6167,
-     102,
-     4989
+     6166,
+     83,
+     4990
     ],
     "player_pokemon": [
-     6173,
-     102,
-     4989
+     6166,
+     83,
+     4996
     ],
     "trainer_stand": [
-     6160,
-     105,
-     4989
+     6166,
+     86,
+     4982
     ],
     "player_stand": [
-     6176,
-     102,
-     4989
+     6166,
+     83,
+     4999
     ],
-    "why": "Cobblemon Battle Positions (docs/world-building/GYM_ARENAS.md): both Pokemon blocks one under the floor's top course (y102 under y103), so spawnHeightOffset 2.0 stands each Pokemon on the floor; the trainer stand is under the stage top one in front of the seat, so Blaine steps to the stage edge. Blaine's Pokemon block is 5.5 from the stage face (x6162.0 to the block's centre 6167.5) against Charizard's sweep of 4.09; the two Pokemon are 6 apart (Magmortar's hitbox is 1.53 wide); the challenger stands 3 behind their own."
+    "why": "Cobblemon Battle Positions (docs/world-building/GYM_ARENAS.md): both Pokemon blocks sit one under the floor's top course (y83 under y84), so spawnHeightOffset 2.0 stands each Pokemon on the floor; the trainer stand is under the stage top one in front of the seat, so Blaine steps to the stage edge. Blaine's Pokemon block is 5.5 from the stage face (z4985.0 to the block's centre 4990.5) against Charizard's sweep of 4.09; the two Pokemon are 6 apart (Magmortar's hitbox is 1.53 wide), the challenger's 11 from the foot of the stage, well inside Battle Positions' 16; the challenger stands 3 behind their own, as the donor gyms set it."
    },
    "seat": [
-    6159,
-    106,
-    4989
+    6166,
+    87,
+    4981
    ],
    "clipped_why": "as built, bounds [6154, 81, 4976, 6181, 103, 5014] and the adit box [6178, 101, 5001, 6180, 109, 5007]; both are clipped here to y102 because the old building's own footing course y103 (data/gym_buildings/gym7.json bounds start at y103) overlaps the arena's top row, and tools/gym_arenas.py hall_checks counts a cell the takedown set to rock as 'never written by the hall' even though the hall rewrites it. The hall's footing fill rewrites every y103..105 cell of the lot itself; the only y103 cells outside the lot are the adit's blackstone walls at z5011..5013, buried under three courses of natural stone."
   },
@@ -101,7 +113,7 @@
    104,
    4989
   ],
-  "why": "street is the causeway's last cell (data/placements.json streets causeway, [6088,4995] to [6152,4995], ground y106 by tools/ground.py, rounded: feet y107). entry.floor is the Core Gallery's first floor cell at the foot of the broad stair: 19.2 from Blaine's stand, farther than rctmod's forceBattleMaxDistance + 1 = 17, so the player stands in the gallery before he can call the fight."
+  "why": "street is the causeway's last cell (data/placements.json streets causeway, [6088,4995] to [6152,4995], ground y106 by tools/ground.py, rounded: feet y107). entry.floor is the Core Gallery's first floor cell at the foot of the broad stair: 19.3 from Blaine's stand, farther than rctmod's forceBattleMaxDistance + 1 = 17, so the player stands in the gallery before he can call the fight."
  },
  "exit": {
   "door": [
@@ -1810,7 +1822,7 @@
     4996
    ],
    "block": "$floor",
-   "why": "the assayer's stage across the whole west end, wall to wall so no aisle runs up beside it: three over the gallery floor (top y106, the house's own level), its top smooth basalt like the floor. The seat (6159, 106, 4989) is never written here: the seat function owns it"
+   "why": "the assayer's stage across the whole west end, wall to wall so no aisle runs up beside it: three over the gallery floor (top y106, the house's own level), its top smooth basalt like the floor. The seat (6159, 106, 4987) is never written here: the seat function owns it"
   },
   {
    "op": "fill",
@@ -2607,6 +2619,19 @@
    ],
    "block": "$spoil",
    "why": "drilling spoil heaped in the corner, one course"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6161,
+    107,
+    5002,
+    6163,
+    108,
+    5004
+   ],
+   "block": "$spoil",
+   "why": "the spoil heaped solid under the steps, so there is no nook beneath them"
   },
   {
    "op": "straight_stair",

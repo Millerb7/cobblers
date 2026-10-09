@@ -4076,9 +4076,9 @@
       {
         "what": "no spawner at the old seat",
         "block": [
-          6159,
-          106,
-          4989,
+          6166,
+          87,
+          4981,
           "rctmod:trainer_spawner"
         ],
         "expect": false
