@@ -1,0 +1,1952 @@
+{
+ "schema": "gym_arena/1",
+ "id": "gym8",
+ "gym": "gym8",
+ "status": "authored 2026-10-08; offline checks only (tools/gym_arenas.py check). Nothing here has been built in a world or seen in a running game.",
+ "name": "The Sally and the Muster Hall",
+ "reading": "Giovanni's town is a garrison and its gym is the gate (data/gym_buildings/gym8.json: a gate mass with the walk on top of it, where he stands). Under the gate is what a garrison keeps beneath its gate: the bunker. A civil defender's command post, heavy and plain: you come down the gate's own newel stair into the sally, a long dark approach under four ranked bulkheads (the nth carries n orange rank marks), through a blast door into the muster hall, where the garrison falls in on orange marks painted on the floor. At the far end the shell gives out to the earth it was dug into: raw granite, coarse dirt and tuff in the walls, timber pit-props, and a doorway framed in spruce into the dug-out where the command dais stands with the situation map behind it. A ground type, in his own ground; and a defender, in the post that holds when the gate does not.",
+ "leader": {
+  "id": "kanto_giovanni",
+  "seat": [
+   3556,
+   94,
+   6419
+  ],
+  "seat_why": "on the hall's axis (z6419, the centre of the hall z6410..6428), in the dais top at y94 (floor y90 + 4), two in from the dais face (x3558), four from the back wall (x3554). THE ONE SOURCE of Giovanni's seat once this record exists; data/gym_buildings/gym8.json leader.spawner (3565, 120, 6416) is where the building puts the spawner the arena step then moves."
+ },
+ "spawn_free_zone": "gym_giovanni",
+ "floor_y": 90,
+ "bounds": [
+  3552,
+  88,
+  6400,
+  3591,
+  103,
+  6431
+ ],
+ "bounds_why": "the shell is the spawn-free zone gym_giovanni exactly (x3552..3591, z6400..6431): two thick all round, interior x3554..3589 z6402..6429. y88..101 is the shell (floor course y90, air y91..99, vault y100..101); y102..103 is the stair's own shaft through the two natural courses under the building's rock (y104).",
+ "through_building": [
+  {
+   "box": [
+    3563,
+    102,
+    6404,
+    3567,
+    123,
+    6408
+   ],
+   "why": "the newel stair from the gate walk's north end (x3564..3566, z6405..6407, granite gate mass y113..120 on stone y104..112) down through the gate mass and the building's own rock into the arena. Its walls are built only to y112; above that the gate mass's granite is the wall. The ring's headroom opens the walk course (y120) over the treads, and carves y121..123 over the first ones."
+  }
+ ],
+ "entry": {
+  "route_end": [
+   3565,
+   121,
+   6416
+  ],
+  "floor": [
+   3587,
+   91,
+   6410
+  ],
+  "why": "route_end is where Giovanni stands today: one over his spawner (3565, 120, 6416) on the gate walk, the end of data/gym_buildings/gym8.json step 4. The walk runs north to the stair head; the player goes down the newel stair at its north end (61 treads, the first level with the walk), out of the door at the foot (3567, 91..93, 6405), east along the sally past four bulkheads (x3572..3585), turns south through the blast door (x3586..3588, z6408..6409) and reaches the hall's first floor cell (3587, 91, 6410), 32 from Giovanni: farther than rctmod's forceBattleMaxDistance + 1."
+ },
+ "battle": {
+  "trainer_pokemon": [
+   3568,
+   89,
+   6419
+  ],
+  "player_pokemon": [
+   3573,
+   89,
+   6419
+  ],
+  "trainer_stand": [
+   3557,
+   93,
+   6419
+  ],
+  "player_stand": [
+   3576,
+   89,
+   6419
+  ],
+  "why": "Cobblemon Battle Positions: the Pokemon blocks sit one under the floor's top course (spawnHeightOffset 2.0 stands each Pokemon ON the floor), the trainer stand under the dais top one in front of the seat. Rhyperior's model sweeps 3.45 (clear height 3.78); Giovanni's Pokemon stands 9.5 from the dais face (x3559.0 to x3568.5), the two Pokemon 5 apart (Hippowdon's hitbox is 2.2 wide), the challenger's Pokemon 14 from the dais foot (within the search's 16), and the challenger stands 3 behind it."
+ },
+ "challenge_spawner": {
+  "old_at": [
+   3565,
+   120,
+   6418
+  ],
+  "old_restore": {
+   "floor": "minecraft:granite",
+   "under": "minecraft:granite"
+  }
+ },
+ "palette": {
+  "shell": "minecraft:deepslate_bricks",
+  "wall": "minecraft:polished_deepslate",
+  "floor": "minecraft:deepslate_tiles",
+  "frame": "minecraft:chiseled_deepslate",
+  "line": "minecraft:polished_granite",
+  "band": "minecraft:orange_terracotta",
+  "map1": "minecraft:brown_terracotta",
+  "map2": "minecraft:terracotta",
+  "rock": "minecraft:granite",
+  "dirt": "minecraft:coarse_dirt",
+  "tuff": "minecraft:tuff",
+  "drip": "minecraft:dripstone_block",
+  "post": "minecraft:stripped_spruce_log[axis=y]",
+  "headtree": "minecraft:stripped_spruce_log[axis=z]",
+  "headtreex": "minecraft:stripped_spruce_log[axis=x]",
+  "sandbag": "minecraft:mud_bricks",
+  "lamp": "minecraft:glowstone",
+  "tread": "minecraft:granite_stairs",
+  "landing": "minecraft:polished_granite",
+  "under": "minecraft:granite"
+ },
+ "blocks": [
+  "minecraft:air",
+  "minecraft:deepslate_bricks",
+  "minecraft:polished_deepslate",
+  "minecraft:deepslate_tiles",
+  "minecraft:chiseled_deepslate",
+  "minecraft:polished_granite",
+  "minecraft:orange_terracotta",
+  "minecraft:brown_terracotta",
+  "minecraft:terracotta",
+  "minecraft:granite",
+  "minecraft:coarse_dirt",
+  "minecraft:tuff",
+  "minecraft:dripstone_block",
+  "minecraft:stripped_spruce_log",
+  "minecraft:mud_bricks",
+  "minecraft:glowstone",
+  "minecraft:granite_stairs"
+ ],
+ "blocks_why": "the town's own palette (TOWN_CHARACTER.md gym8_town: terracotta, polished granite, spruce, coarse dirt, mud brick) and deepslate for the bunker's shell, and nothing that is a spawn condition (each checked against data/spawn_blocks.json): no grass, leaves, water, sand, iron block, lightning rod or redstone lamp.",
+ "parts": [
+  {
+   "op": "shell",
+   "box": [
+    3552,
+    88,
+    6400,
+    3591,
+    101,
+    6431
+   ],
+   "thickness": 2,
+   "block": "$shell",
+   "why": "the shell: two courses of deepslate brick on all six faces, built, never the rock; the zone's whole 40 x 32 (x3552..3591, z6400..6431), interior x3554..3589 z6402..6429, y90..99. Top course y101 leaves y102..103 natural under the building's rock (y104)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3554,
+    90,
+    6402,
+    3589,
+    90,
+    6429
+   ],
+   "block": "$floor",
+   "why": "the floor course: deepslate tiles, the whole interior"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3554,
+    91,
+    6402,
+    3589,
+    99,
+    6409
+   ],
+   "block": "$wall",
+   "why": "the north mass: z6402..6409, solid polished deepslate. The approach corridor and the blast door are cut out of it; the stair's shaft passes through it"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3554,
+    91,
+    6429,
+    3589,
+    99,
+    6429
+   ],
+   "block": "$wall",
+   "why": "the muster hall's south wall, z6429"
+  },
+  {
+   "op": "carve",
+   "box": [
+    3568,
+    91,
+    6403,
+    3588,
+    95,
+    6407
+   ],
+   "why": "the approach: 21 long, 5 wide, 5 high (x3568..3588, z6403..6407), under ranked bulkheads, from the stair's foot east to the blast door"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3568,
+    90,
+    6405,
+    3588,
+    90,
+    6405
+   ],
+   "block": "$line",
+   "why": "a polished granite centre line down the approach"
+  },
+  {
+   "op": "repeat",
+   "step": [
+    4,
+    0,
+    0
+   ],
+   "count": 4,
+   "parts": [
+    {
+     "op": "fill",
+     "box": [
+      3572,
+      91,
+      6403,
+      3573,
+      95,
+      6403
+     ],
+     "block": "$frame"
+    },
+    {
+     "op": "fill",
+     "box": [
+      3572,
+      91,
+      6407,
+      3573,
+      95,
+      6407
+     ],
+     "block": "$frame"
+    },
+    {
+     "op": "fill",
+     "box": [
+      3572,
+      94,
+      6404,
+      3573,
+      95,
+      6406
+     ],
+     "block": "$shell"
+    }
+   ],
+   "why": "four bulkheads, every four blocks from x3572: a heavy frame two thick, chiselled jambs and a brick lintel, an opening three wide and three high (y91..93) between them"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3572,
+     95,
+     6405
+    ]
+   ],
+   "block": "$band",
+   "why": "bulkhead 1 carries 1 orange rank marks on its west face"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3576,
+     95,
+     6404
+    ],
+    [
+     3576,
+     95,
+     6406
+    ]
+   ],
+   "block": "$band",
+   "why": "bulkhead 2 carries 2 orange rank marks on its west face"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3580,
+     95,
+     6404
+    ],
+    [
+     3580,
+     95,
+     6405
+    ],
+    [
+     3580,
+     95,
+     6406
+    ]
+   ],
+   "block": "$band",
+   "why": "bulkhead 3 carries 3 orange rank marks on its west face"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3584,
+     95,
+     6404
+    ],
+    [
+     3584,
+     95,
+     6405
+    ],
+    [
+     3584,
+     95,
+     6406
+    ],
+    [
+     3584,
+     94,
+     6405
+    ]
+   ],
+   "block": "$band",
+   "why": "bulkhead 4 carries 4 orange rank marks on its west face"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3568,
+    96,
+    6403,
+    3588,
+    96,
+    6407
+   ],
+   "block": "$wall",
+   "why": "the approach's ceiling course, polished deepslate"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3570,
+     96,
+     6405
+    ],
+    [
+     3574,
+     96,
+     6405
+    ],
+    [
+     3578,
+     96,
+     6405
+    ],
+    [
+     3582,
+     96,
+     6405
+    ],
+    [
+     3586,
+     96,
+     6405
+    ]
+   ],
+   "block": "$lamp",
+   "why": "a glowstone let flush into the ceiling in every bay"
+  },
+  {
+   "op": "carve",
+   "box": [
+    3586,
+    91,
+    6408,
+    3588,
+    94,
+    6409
+   ],
+   "why": "the blast door's passage: three wide, four high, two thick (x3586..3588, z6408..6409)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3585,
+    91,
+    6408,
+    3585,
+    95,
+    6409
+   ],
+   "block": "$frame",
+   "why": "the door's jambs, chiselled deepslate"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3589,
+    91,
+    6408,
+    3589,
+    95,
+    6409
+   ],
+   "block": "$frame"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3586,
+    95,
+    6408,
+    3588,
+    95,
+    6409
+   ],
+   "block": "$frame",
+   "why": "its lintel"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3586,
+    90,
+    6408,
+    3588,
+    90,
+    6409
+   ],
+   "block": "$band",
+   "why": "the sill: orange terracotta, the garrison's colour, the threshold between the approach and the hall"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3587,
+     95,
+     6408
+    ],
+    [
+     3587,
+     95,
+     6409
+    ]
+   ],
+   "block": "$lamp",
+   "why": "two glowstones in the lintel, over the sill"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3585,
+    96,
+    6408,
+    3589,
+    96,
+    6409
+   ],
+   "block": "$band",
+   "why": "an orange course over the door"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3554,
+    91,
+    6410,
+    3562,
+    99,
+    6413
+   ],
+   "block": "$rock",
+   "why": "the north wing: raw granite, x3554..3562 z6410..6413, the earth the bunker was dug into showing through where the shell meets it"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3554,
+    91,
+    6425,
+    3562,
+    99,
+    6428
+   ],
+   "block": "$rock",
+   "why": "the south wing, the same"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3554,
+    98,
+    6414,
+    3562,
+    99,
+    6424
+   ],
+   "block": "$rock",
+   "why": "the apse's roof, raw rock"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3554,
+    91,
+    6414,
+    3554,
+    97,
+    6424
+   ],
+   "block": "$rock",
+   "why": "the apse's back wall, raw rock to y97"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3555,
+     95,
+     6413
+    ],
+    [
+     3555,
+     96,
+     6413
+    ],
+    [
+     3555,
+     96,
+     6425
+    ],
+    [
+     3555,
+     97,
+     6413
+    ],
+    [
+     3556,
+     96,
+     6413
+    ],
+    [
+     3557,
+     96,
+     6413
+    ],
+    [
+     3558,
+     95,
+     6425
+    ],
+    [
+     3558,
+     96,
+     6413
+    ],
+    [
+     3559,
+     96,
+     6413
+    ],
+    [
+     3560,
+     96,
+     6425
+    ],
+    [
+     3560,
+     97,
+     6425
+    ],
+    [
+     3561,
+     97,
+     6413
+    ],
+    [
+     3562,
+     91,
+     6410
+    ],
+    [
+     3562,
+     91,
+     6425
+    ],
+    [
+     3562,
+     91,
+     6426
+    ],
+    [
+     3562,
+     92,
+     6410
+    ],
+    [
+     3562,
+     93,
+     6427
+    ],
+    [
+     3562,
+     94,
+     6412
+    ],
+    [
+     3562,
+     94,
+     6427
+    ],
+    [
+     3562,
+     95,
+     6425
+    ],
+    [
+     3562,
+     95,
+     6428
+    ],
+    [
+     3562,
+     96,
+     6412
+    ],
+    [
+     3562,
+     96,
+     6427
+    ],
+    [
+     3562,
+     97,
+     6411
+    ],
+    [
+     3562,
+     98,
+     6428
+    ],
+    [
+     3562,
+     99,
+     6428
+    ]
+   ],
+   "block": "$dirt",
+   "why": "coarse dirt in the wings' faces"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3556,
+     95,
+     6425
+    ],
+    [
+     3556,
+     97,
+     6425
+    ],
+    [
+     3557,
+     95,
+     6425
+    ],
+    [
+     3559,
+     96,
+     6425
+    ],
+    [
+     3560,
+     95,
+     6413
+    ],
+    [
+     3560,
+     96,
+     6413
+    ],
+    [
+     3561,
+     95,
+     6413
+    ],
+    [
+     3561,
+     96,
+     6413
+    ],
+    [
+     3562,
+     91,
+     6427
+    ],
+    [
+     3562,
+     92,
+     6412
+    ],
+    [
+     3562,
+     93,
+     6412
+    ],
+    [
+     3562,
+     94,
+     6425
+    ],
+    [
+     3562,
+     96,
+     6413
+    ],
+    [
+     3562,
+     96,
+     6425
+    ],
+    [
+     3562,
+     96,
+     6426
+    ],
+    [
+     3562,
+     97,
+     6425
+    ],
+    [
+     3562,
+     97,
+     6428
+    ],
+    [
+     3562,
+     98,
+     6412
+    ],
+    [
+     3562,
+     98,
+     6427
+    ],
+    [
+     3562,
+     99,
+     6426
+    ]
+   ],
+   "block": "$tuff",
+   "why": "tuff in the wings' faces"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3557,
+     96,
+     6425
+    ],
+    [
+     3558,
+     97,
+     6425
+    ],
+    [
+     3560,
+     97,
+     6413
+    ],
+    [
+     3562,
+     91,
+     6413
+    ],
+    [
+     3562,
+     92,
+     6413
+    ],
+    [
+     3562,
+     92,
+     6426
+    ],
+    [
+     3562,
+     93,
+     6425
+    ],
+    [
+     3562,
+     93,
+     6428
+    ],
+    [
+     3562,
+     95,
+     6412
+    ],
+    [
+     3562,
+     96,
+     6428
+    ],
+    [
+     3562,
+     97,
+     6410
+    ],
+    [
+     3562,
+     99,
+     6413
+    ]
+   ],
+   "block": "$drip",
+   "why": "dripstone block in the wings' faces"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3556,
+     98,
+     6414
+    ],
+    [
+     3556,
+     98,
+     6419
+    ],
+    [
+     3557,
+     98,
+     6418
+    ],
+    [
+     3557,
+     98,
+     6419
+    ],
+    [
+     3558,
+     98,
+     6416
+    ],
+    [
+     3558,
+     98,
+     6420
+    ],
+    [
+     3558,
+     98,
+     6422
+    ],
+    [
+     3559,
+     98,
+     6414
+    ],
+    [
+     3559,
+     98,
+     6417
+    ],
+    [
+     3560,
+     98,
+     6424
+    ],
+    [
+     3561,
+     98,
+     6415
+    ],
+    [
+     3561,
+     98,
+     6417
+    ],
+    [
+     3561,
+     98,
+     6418
+    ],
+    [
+     3561,
+     98,
+     6419
+    ]
+   ],
+   "block": "$dirt",
+   "why": "coarse dirt in the apse roof"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3555,
+     98,
+     6417
+    ],
+    [
+     3556,
+     98,
+     6418
+    ],
+    [
+     3558,
+     98,
+     6415
+    ],
+    [
+     3559,
+     98,
+     6416
+    ],
+    [
+     3559,
+     98,
+     6420
+    ],
+    [
+     3560,
+     98,
+     6415
+    ],
+    [
+     3560,
+     98,
+     6417
+    ],
+    [
+     3560,
+     98,
+     6418
+    ],
+    [
+     3560,
+     98,
+     6423
+    ],
+    [
+     3561,
+     98,
+     6424
+    ]
+   ],
+   "block": "$drip",
+   "why": "dripstone block in the apse roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3562,
+    91,
+    6414,
+    3562,
+    96,
+    6414
+   ],
+   "block": "$post",
+   "why": "the proscenium: a stripped spruce post either side of the apse's mouth"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3562,
+    91,
+    6424,
+    3562,
+    96,
+    6424
+   ],
+   "block": "$post"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3562,
+    97,
+    6414,
+    3562,
+    97,
+    6424
+   ],
+   "block": "$headtree",
+   "why": "and the head-tree across them at y97, as a pit-prop frame shores a drive"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3555,
+    91,
+    6414,
+    3558,
+    93,
+    6424
+   ],
+   "block": "$wall",
+   "why": "the command dais: x3555..3558 z6414..6424, four courses over the floor (top y94). Polished deepslate body"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3555,
+    94,
+    6414,
+    3558,
+    94,
+    6424
+   ],
+   "block": "$line",
+   "why": "its top, polished granite (the seat at (3556, 94, 6419) is never written here: the seat function owns it)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3558,
+    94,
+    6414,
+    3558,
+    94,
+    6424
+   ],
+   "block": "$band",
+   "why": "an orange edge, the garrison's colour, one course along the dais face"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3558,
+    93,
+    6414,
+    3558,
+    93,
+    6424
+   ],
+   "block": "$frame",
+   "why": "the face's chiselled course under it"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3554,
+    91,
+    6414,
+    3554,
+    94,
+    6424
+   ],
+   "block": "$rock",
+   "why": "rock behind the dais"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3554,
+    95,
+    6414,
+    3554,
+    95,
+    6424
+   ],
+   "block": "$map1",
+   "why": "the situation map on the apse's back wall: contour bands, brown, orange and plain terracotta"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3554,
+    96,
+    6414,
+    3554,
+    96,
+    6424
+   ],
+   "block": "$band"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3554,
+    97,
+    6414,
+    3554,
+    97,
+    6424
+   ],
+   "block": "$map2"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3554,
+     96,
+     6417
+    ],
+    [
+     3554,
+     96,
+     6419
+    ],
+    [
+     3554,
+     96,
+     6421
+    ]
+   ],
+   "block": "$lamp",
+   "why": "three signal lamps in the map, the town's beacon"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3558,
+     98,
+     6416
+    ],
+    [
+     3558,
+     98,
+     6422
+    ],
+    [
+     3560,
+     98,
+     6419
+    ]
+   ],
+   "block": "$lamp",
+   "why": "glowstone let flush into the apse roof over the dais and the floor in front of it"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3559,
+    90,
+    6419,
+    3588,
+    90,
+    6419
+   ],
+   "block": "$line",
+   "why": "the hall's axis in polished granite, from the dais to the door"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3567,
+    90,
+    6418,
+    3569,
+    90,
+    6420
+   ],
+   "block": "$band",
+   "why": "a 3 x 3 orange mark on the floor at each Pokemon's block (the leader's at x3568, the challenger's at x3573)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3572,
+    90,
+    6418,
+    3574,
+    90,
+    6420
+   ],
+   "block": "$band"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    3568,
+    90,
+    6419
+   ],
+   "block": "$line"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    3573,
+    90,
+    6419
+   ],
+   "block": "$line"
+  },
+  {
+   "op": "repeat",
+   "step": [
+    3,
+    0,
+    0
+   ],
+   "count": 3,
+   "parts": [
+    {
+     "op": "repeat",
+     "step": [
+      0,
+      0,
+      3
+     ],
+     "count": 2,
+     "parts": [
+      {
+       "op": "fill",
+       "box": [
+        3579,
+        90,
+        6412,
+        3580,
+        90,
+        6413
+       ],
+       "block": "$band"
+      }
+     ]
+    },
+    {
+     "op": "repeat",
+     "step": [
+      0,
+      0,
+      3
+     ],
+     "count": 2,
+     "parts": [
+      {
+       "op": "fill",
+       "box": [
+        3579,
+        90,
+        6424,
+        3580,
+        90,
+        6425
+       ],
+       "block": "$band"
+      }
+     ]
+    }
+   ],
+   "why": "the muster marks: 2 x 2 orange squares in ranks on the east half of the floor, where a garrison falls in (x3579, 3582, 3585; z6412, 6415 and z6424, 6427)"
+  },
+  {
+   "op": "repeat",
+   "step": [
+    8,
+    0,
+    0
+   ],
+   "count": 3,
+   "parts": [
+    {
+     "op": "fill",
+     "box": [
+      3566,
+      98,
+      6410,
+      3567,
+      99,
+      6428
+     ],
+     "block": "$wall"
+    },
+    {
+     "op": "fill",
+     "box": [
+      3566,
+      91,
+      6410,
+      3567,
+      96,
+      6411
+     ],
+     "block": "$wall"
+    },
+    {
+     "op": "fill",
+     "box": [
+      3566,
+      91,
+      6427,
+      3567,
+      96,
+      6428
+     ],
+     "block": "$wall"
+    },
+    {
+     "op": "fill",
+     "box": [
+      3566,
+      97,
+      6410,
+      3567,
+      97,
+      6411
+     ],
+     "block": "$frame"
+    },
+    {
+     "op": "fill",
+     "box": [
+      3566,
+      97,
+      6427,
+      3567,
+      97,
+      6428
+     ],
+     "block": "$frame"
+    },
+    {
+     "op": "setblock",
+     "pos": [
+      3566,
+      98,
+      6413
+     ],
+     "block": "$lamp"
+    },
+    {
+     "op": "setblock",
+     "pos": [
+      3566,
+      98,
+      6419
+     ],
+     "block": "$lamp"
+    },
+    {
+     "op": "setblock",
+     "pos": [
+      3566,
+      98,
+      6425
+     ],
+     "block": "$lamp"
+    }
+   ],
+   "why": "three ribs across the hall at y98..99 (x3566, 3574, 3582), each on a pair of piers against the walls; a glowstone flush in every rib's underside at three places across the hall"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3563,
+    91,
+    6429,
+    3588,
+    93,
+    6429
+   ],
+   "block": "$rock",
+   "why": "the south wall's dado: bare granite at the foot, the polished wall above it"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3563,
+     92,
+     6429
+    ],
+    [
+     3564,
+     91,
+     6429
+    ],
+    [
+     3564,
+     92,
+     6429
+    ],
+    [
+     3565,
+     92,
+     6429
+    ],
+    [
+     3565,
+     93,
+     6429
+    ],
+    [
+     3568,
+     91,
+     6429
+    ],
+    [
+     3568,
+     93,
+     6429
+    ],
+    [
+     3569,
+     92,
+     6429
+    ],
+    [
+     3570,
+     91,
+     6429
+    ],
+    [
+     3570,
+     92,
+     6429
+    ],
+    [
+     3572,
+     93,
+     6429
+    ],
+    [
+     3574,
+     92,
+     6429
+    ],
+    [
+     3574,
+     93,
+     6429
+    ],
+    [
+     3577,
+     91,
+     6429
+    ],
+    [
+     3577,
+     92,
+     6429
+    ],
+    [
+     3583,
+     93,
+     6429
+    ],
+    [
+     3584,
+     91,
+     6429
+    ],
+    [
+     3584,
+     92,
+     6429
+    ],
+    [
+     3585,
+     92,
+     6429
+    ],
+    [
+     3586,
+     92,
+     6429
+    ],
+    [
+     3587,
+     92,
+     6429
+    ],
+    [
+     3588,
+     92,
+     6429
+    ]
+   ],
+   "block": "$dirt",
+   "why": "coarse dirt in the dado"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3566,
+     91,
+     6429
+    ],
+    [
+     3566,
+     92,
+     6429
+    ],
+    [
+     3566,
+     93,
+     6429
+    ],
+    [
+     3568,
+     92,
+     6429
+    ],
+    [
+     3570,
+     93,
+     6429
+    ],
+    [
+     3571,
+     93,
+     6429
+    ],
+    [
+     3573,
+     91,
+     6429
+    ],
+    [
+     3573,
+     92,
+     6429
+    ],
+    [
+     3575,
+     92,
+     6429
+    ],
+    [
+     3576,
+     92,
+     6429
+    ],
+    [
+     3577,
+     93,
+     6429
+    ],
+    [
+     3579,
+     92,
+     6429
+    ],
+    [
+     3581,
+     91,
+     6429
+    ],
+    [
+     3581,
+     93,
+     6429
+    ],
+    [
+     3582,
+     93,
+     6429
+    ],
+    [
+     3583,
+     92,
+     6429
+    ],
+    [
+     3586,
+     91,
+     6429
+    ],
+    [
+     3586,
+     93,
+     6429
+    ]
+   ],
+   "block": "$tuff",
+   "why": "tuff in the dado"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3569,
+     91,
+     6429
+    ],
+    [
+     3569,
+     93,
+     6429
+    ],
+    [
+     3571,
+     91,
+     6429
+    ],
+    [
+     3576,
+     91,
+     6429
+    ],
+    [
+     3576,
+     93,
+     6429
+    ],
+    [
+     3580,
+     91,
+     6429
+    ],
+    [
+     3583,
+     91,
+     6429
+    ],
+    [
+     3584,
+     93,
+     6429
+    ],
+    [
+     3585,
+     93,
+     6429
+    ],
+    [
+     3587,
+     93,
+     6429
+    ]
+   ],
+   "block": "$drip",
+   "why": "dripstone block in the dado"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3563,
+    94,
+    6429,
+    3588,
+    94,
+    6429
+   ],
+   "block": "$headtreex",
+   "why": "a head-tree along the top of the dado"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3570,
+     91,
+     6429
+    ],
+    [
+     3570,
+     92,
+     6429
+    ],
+    [
+     3570,
+     93,
+     6429
+    ],
+    [
+     3578,
+     91,
+     6429
+    ],
+    [
+     3578,
+     92,
+     6429
+    ],
+    [
+     3578,
+     93,
+     6429
+    ],
+    [
+     3586,
+     91,
+     6429
+    ],
+    [
+     3586,
+     92,
+     6429
+    ],
+    [
+     3586,
+     93,
+     6429
+    ]
+   ],
+   "block": "$post",
+   "why": "pit-props, every eight blocks, between the piers"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3577,
+    91,
+    6410,
+    3579,
+    92,
+    6411
+   ],
+   "block": "$sandbag",
+   "why": "sandbag stacks against the walls: mud brick, two high"
+  },
+  {
+   "op": "fill",
+   "box": [
+    3579,
+    91,
+    6427,
+    3581,
+    92,
+    6428
+   ],
+   "block": "$sandbag"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3570,
+     96,
+     6409
+    ],
+    [
+     3578,
+     96,
+     6409
+    ],
+    [
+     3586,
+     96,
+     6409
+    ],
+    [
+     3570,
+     96,
+     6429
+    ],
+    [
+     3578,
+     96,
+     6429
+    ],
+    [
+     3586,
+     96,
+     6429
+    ]
+   ],
+   "block": "$lamp",
+   "why": "glowstone flush in the side walls at y96, between the ribs"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3590,
+     96,
+     6413
+    ],
+    [
+     3590,
+     96,
+     6419
+    ],
+    [
+     3590,
+     96,
+     6425
+    ]
+   ],
+   "block": "$lamp",
+   "why": "glowstone let into the east wall, over the door end of the hall"
+  },
+  {
+   "op": "newel_stair",
+   "ring": [
+    3564,
+    6405,
+    3566,
+    6407
+   ],
+   "top_y": 120,
+   "bottom_y": 90,
+   "start": [
+    3564,
+    6407
+   ],
+   "turn": "cw",
+   "tread": "$tread",
+   "landing": "$landing",
+   "newel": "$landing",
+   "under": "$under",
+   "wall": "$under",
+   "wall_to_y": 112,
+   "headroom": 3,
+   "why": "the descent: a newel stair in the gate walk's north end, a 3 x 3 ring round a polished granite post, from the walk (y120, level with the gate mass's top) down to the approach's floor at y90. Sixty-one treads, the first level with the walk. Built of granite, the gate mass's own stone"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     3565,
+     93,
+     6406
+    ],
+    [
+     3565,
+     99,
+     6406
+    ],
+    [
+     3565,
+     105,
+     6406
+    ],
+    [
+     3565,
+     111,
+     6406
+    ],
+    [
+     3565,
+     117,
+     6406
+    ]
+   ],
+   "block": "$lamp",
+   "why": "glowstones set into the newel post every six courses, lighting the stair from its middle"
+  },
+  {
+   "op": "carve",
+   "box": [
+    3567,
+    91,
+    6405,
+    3567,
+    93,
+    6405
+   ],
+   "why": "the stair foot's door onto the approach, one wide and three high"
+  }
+ ],
+ "probes": [
+  {
+   "what": "the hall's axis line",
+   "at": [
+    3580,
+    90,
+    6419
+   ],
+   "block": "minecraft:polished_granite"
+  },
+  {
+   "what": "air in the hall",
+   "at": [
+    3575,
+    94,
+    6419
+   ],
+   "block": "minecraft:air"
+  },
+  {
+   "what": "a bulkhead's jamb",
+   "at": [
+    3572,
+    92,
+    6403
+   ],
+   "block": "minecraft:chiseled_deepslate"
+  },
+  {
+   "what": "the sally's centre line",
+   "at": [
+    3575,
+    90,
+    6405
+   ],
+   "block": "minecraft:polished_granite"
+  },
+  {
+   "what": "the dais top",
+   "at": [
+    3557,
+    94,
+    6419
+   ],
+   "block": "minecraft:polished_granite"
+  },
+  {
+   "what": "the proscenium's head-tree",
+   "at": [
+    3562,
+    97,
+    6419
+   ],
+   "block": "minecraft:stripped_spruce_log"
+  },
+  {
+   "what": "the apse's raw back wall",
+   "at": [
+    3554,
+    92,
+    6419
+   ],
+   "block": "minecraft:granite"
+  },
+  {
+   "what": "the shell's south-west bottom corner",
+   "at": [
+    3552,
+    88,
+    6431
+   ],
+   "block": "minecraft:deepslate_bricks"
+  },
+  {
+   "what": "the shell's north-east top corner",
+   "at": [
+    3591,
+    101,
+    6400
+   ],
+   "block": "minecraft:deepslate_bricks"
+  }
+ ]
+}
