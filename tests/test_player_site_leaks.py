@@ -66,6 +66,7 @@ SECRET_FILES = (
     ("npc_seats.json", "resident"),
     ("ursaluna_cave.json", "resident"),
     ("lopunny_house.json", "resident"),
+    ("rookery.json", "resident"),
     ("shrines.json", "shrine"),
     ("rewards.json", "cache"),
     ("sea_drift.json", "cache"),

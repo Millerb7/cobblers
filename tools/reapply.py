@@ -159,6 +159,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-04: the far south's five places (tools/far_south.py, data/far_south.json) in rows F-H, built
                 # by R9FS; three named Pokemon on the residents' keeper, so world-local below; R18FS after R18NR
                 "cobblers_far_south",
+                # 2026-10-09: Gull Rock, the rookery off the north-east coast (tools/rookery.py, data/rookery.json): a
+                # stack and six tidal rocks in the sea built by R9RK, before R9E (the colony's Habitat Blocks sit in the
+                # rock); the Gullmother, a Dragonite, is on the residents' keeper, so world-local below; R18RK after R18FS
+                "cobblers_rookery",
                 # 2026-10-04: the jungle's three lost temples on the Long Isle's south (tools/jungle_temples.py,
                 # data/jungle_temples.json), built by R9JT; no load or tick and no Pokemon, so not world-local
                 "cobblers_jungle_temples",
@@ -434,6 +438,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_northern_residents",
                # 2026-10-04: the far south's keeper spawns its three Pokemon the same way
                "cobblers_far_south",
+               # 2026-10-09: the rookery's keeper spawns its one Pokemon the same way
+               "cobblers_rookery",
                # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
                # global folder would run it in the live world too
                "cobblers_arena",
@@ -843,6 +849,11 @@ def prepare_jobs(a):
     # rule, the species' climate, the caches' rewards pack, the gym 7 gate, the steps and this wiring
     add("far_south", "far_south.py", *src)
     add("far_south_audit", "far_south_audit.py", *src)
+    # Gull Rock, the rookery off the north-east coast (2026-10-09): the generator fails closed on its own siting rules
+    # (every column wet and in cell C7, the authored and corridor clearances, the path and ferry clearances, the nest
+    # rule, no spawn-condition or gravity block) and on a record the heightmap disagrees with. Its independent audit is
+    # owed (data/rookery.json audit_checklist) and is wired here when it exists
+    add("rookery", "rookery.py", *src)
     # the jungle's lost temples (2026-10-04): the generator fails closed on its own siting rules (long_isle_south, the
     # keep-clear list, the authored clearance, spawn blocks) and on a record the heightmap disagrees with; then its
     # independent audit (tools/jungle_temples_audit.py, another agent's), after the pack it reads: the pack replayed
@@ -1979,6 +1990,11 @@ def steps(with_spawns=False):
     import far_south
     out.append(("R9FS", "the far south's places: kraal, chimneys, glass garden, glyph ring, folly (data/far_south.json)",
                 far_south.placement_steps()))
+    # Gull Rock (2026-10-09, tools/rookery.py): the stack and the six tidal rocks in the sea, held in a forceload of
+    # their box, BEFORE R9E (the colony's six Habitat Blocks are set in this rock); the Gullmother stands on its crown (R18RK)
+    import rookery
+    out.append(("R9RK", "Gull Rock: the stack and its six tidal rocks off the north-east coast (data/rookery.json)",
+                rookery.placement_steps()))
     # the jungle's lost temples (2026-10-04, tools/jungle_temples.py): the same pure block pass per temple, held in a
     # forceload of its box, before R9E (none sits on a Habitat Block); the caches' barrels are written here
     import jungle_temples
@@ -2259,6 +2275,10 @@ def steps(with_spawns=False):
     import far_south
     out.append(("R18FS", "the far south's residents: the ungated Pokemon (data/far_south.json)",
                 far_south.entity_steps()))
+    # Gull Rock's Gullmother (2026-10-09): a Dragonite on the crown, summoned (guarded on tag AND species) and bound.
+    # Ungated: she is there from the first day and asleep; her catch gate is the level cap, not an appearance gate
+    out.append(("R18RK", "Gull Rock's Gullmother: the ungated Pokemon (data/rookery.json)",
+                rookery.entity_steps()))
     # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",

@@ -3993,6 +3993,258 @@
         ],
         "expect": false
       }
+    ],
+    "rookery": [
+      {
+        "what": "the crown plate under the Gullmother",
+        "block": [
+          6940,
+          82,
+          2650,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the crown (1)",
+        "block": [
+          6940,
+          83,
+          2650,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the crown (2)",
+        "block": [
+          6940,
+          84,
+          2650,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the crown (3)",
+        "block": [
+          6940,
+          85,
+          2650,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the crown (4)",
+        "block": [
+          6940,
+          86,
+          2650,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the stack's core",
+        "block": [
+          6940,
+          68,
+          2650,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a nest of hay (1)",
+        "block": [
+          6930,
+          69,
+          2651,
+          "minecraft:hay_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a nest of hay (2)",
+        "block": [
+          6931,
+          69,
+          2652,
+          "minecraft:hay_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a nest of hay (3)",
+        "block": [
+          6931,
+          69,
+          2653,
+          "minecraft:hay_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a nest of hay (4)",
+        "block": [
+          6937,
+          83,
+          2648,
+          "minecraft:hay_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "guano on a face",
+        "block": [
+          6937,
+          81,
+          2652,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 0: its top",
+        "block": [
+          6957,
+          65,
+          2621,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 0: its Habitat Block (after R9E)",
+        "block": [
+          6957,
+          64,
+          2621,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 1: its top",
+        "block": [
+          6974,
+          65,
+          2650,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 1: its Habitat Block (after R9E)",
+        "block": [
+          6974,
+          64,
+          2650,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 2: its top",
+        "block": [
+          6957,
+          65,
+          2679,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 2: its Habitat Block (after R9E)",
+        "block": [
+          6957,
+          64,
+          2679,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 3: its top",
+        "block": [
+          6923,
+          65,
+          2679,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 3: its Habitat Block (after R9E)",
+        "block": [
+          6923,
+          64,
+          2679,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 4: its top",
+        "block": [
+          6906,
+          65,
+          2650,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 4: its Habitat Block (after R9E)",
+        "block": [
+          6906,
+          64,
+          2650,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 5: its top",
+        "block": [
+          6923,
+          65,
+          2621,
+          "minecraft:andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tidal rock 5: its Habitat Block (after R9E)",
+        "block": [
+          6923,
+          64,
+          2621,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "open water between the stack and the nearest rock (the stack did not fill the strait)",
+        "block": [
+          6918,
+          62,
+          2650,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Gullmother present after R18RK (ungated)",
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.res.gullmother,nbt={Pokemon:{Species:\"cobblemon:dragonite\"}}]",
+        "count": 1,
+        "hold": [
+          6940,
+          83,
+          2650
+        ]
+      }
     ]
   }
 }
