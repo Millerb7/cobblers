@@ -25,7 +25,9 @@ the generator's matrix; sight lines by stepping column boundaries rather than fi
                  between the lowest visible layer and the top, along a line clear of the terrain; the theodolite's
                  tube lies on the summit's bearing at the false crest's elevation; the summit platform is NOT visible
                  from it (so the false-crest line is true); each tube's axis passes through its pivot and clears its
-                 pier, and each tube's block is a declared display block
+                 pier, and each tube's block is a declared display block. The tubes are summoned once each by a
+                 look-then-act chain held in its own forceload from entry to end, acting only after a look sees the
+                 camp's displays or the blind limit, old displays killed first (tools/chunk_look_audit.py, N155)
   C8  numbers    every bearing, range, crown height, climb, distance and count of crown layers showing over the
                  crest that a sign or a page states matches this audit's own computation. The tower's top is
                  derived here as y + the template's height (data/structures.json footprint) - 1, not read from the
@@ -62,11 +64,14 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+import chunk_look_audit  # noqa: E402  (reads the chain's text; never imports the chain's generator)
 import function_limits  # noqa: E402
 import ground as G  # noqa: E402
 
 PACK = ROOT / "build" / "datapacks" / "cobblers_frostpeak_camp"
 FN = "data/cobblers/function/frostpeak_camp"
+INSTRUMENTS_FN = "cobblers:frostpeak_camp/instruments"     # the entry R18F calls (steps.txt)
+TAG = "cobblers_frostpeak_camp"
 WORLD_READS: set = set()
 
 SETBLOCK = re.compile(r"^setblock (-?\d+) (-?\d+) (-?\d+) (\S+?)(\{.*\})?$")
@@ -155,7 +160,9 @@ def audit(pack, inputs_root, source_root):
     doc = load_json(ROOT / "data" / "frostpeak_camp.json")
     g = G.Ground(source_root)
     build_lines = (pack / FN / "build.mcfunction").read_text(encoding="utf-8").splitlines()
-    inst_lines = (pack / FN / "instruments.mcfunction").read_text(encoding="utf-8").splitlines()
+    # the instruments are a look-then-act chain over several ticks (N155): every command of it, entry first
+    inst_fns, _missing = chunk_look_audit.read_chain(pack, INSTRUMENTS_FN)
+    inst_lines = chunk_look_audit.chain_lines(pack, INSTRUMENTS_FN)
 
     blocks, order, cleared = {}, {}, {}
     for n, line in enumerate(build_lines):
@@ -327,15 +334,23 @@ def audit(pack, inputs_root, source_root):
         if not m:
             continue
         blob = m.group(4)
-        tag = re.search(r'Tags:\["[^"]+","([^"]+)"\]', blob).group(1)
+        tags = re.findall(r'"([^"]+)"', re.search(r"Tags:\[([^\]]*)\]", blob).group(1))
+        ids = [t for t in tags if t not in (TAG, TAG + "_new")]
+        tag = ids[0] if len(ids) == 1 else "|".join(tags)
         tubes[tag] = {"pos": tuple(float(v) for v in m.groups()[:3]),
                       "q": parse_nbt_floats(blob, "left_rotation"), "t": parse_nbt_floats(blob, "translation"),
                       "s": parse_nbt_floats(blob, "scale"), "r": parse_nbt_floats(blob, "right_rotation"),
                       "block": re.search(r'Name:"([^"]+)"', blob).group(1)}
     inst = {p["id"]: p for p in doc["pieces"] if p["kind"] == "instrument"}
     rep.check(set(tubes) == set(inst), "C7 tubes", "summoned %s, instruments %s" % (sorted(tubes), sorted(inst)))
+    rep.check(sum(1 for l in inst_lines if SUMMON.match(l)) == len(inst), "C7 once",
+              "%d summons for %d instruments" % (sum(1 for l in inst_lines if SUMMON.match(l)), len(inst)))
     rep.check(any(l.startswith("kill @e[type=minecraft:block_display,tag=") and "distance=.." in l for l in inst_lines),
               "C7 re-run", "the instruments function does not remove its own previous displays")
+    # held from the entry to the end, the act gated on a look or the blind limit, old displays killed before the
+    # summons, each summon tagged new and de-duplicated after (tools/chunk_look_audit.py)
+    for prob in chunk_look_audit.problems(pack, INSTRUMENTS_FN, TAG, "instruments") or [None]:
+        rep.check(prob is None, "C7 chain", prob)
     measured = {}
     for tid, tb in tubes.items():
         q = tb["q"]
@@ -496,7 +511,9 @@ def audit(pack, inputs_root, source_root):
             rep.check(not bool(np.asarray(sub).any()), "C10 water export", "the water export changes a column within %d" % m)
 
     # C11
-    for nm, lines in (("build", build_lines), ("instruments", inst_lines)):
+    inst_files = [(ref.split("/")[-1], chunk_look_audit.pack_path(pack, ref).read_text(encoding="utf-8").splitlines())
+                  for ref in sorted(inst_fns)]
+    for nm, lines in [("build", build_lines)] + inst_files:
         bad = function_limits.check_lines(lines, nm)
         rep.check(not bad, "C11 %s" % nm, "%s" % bad[:2])
     return rep, measured
