@@ -236,7 +236,9 @@ def test_the_nbt_reader_reads_a_hand_built_structure():
 
 
 # ------------------------------------------------------------------------------------------------ the real halls
-MISSING = A.inputs_missing()
+# The halls' pack (cobblers_gym_arenas) is built by the `arena_build` fixture below, from the generator, so a checkout
+# that has not run `prepare` still runs these; only inputs the fixtures cannot make are reported missing.
+MISSING = [m for m in A.inputs_missing() if m != "pack cobblers_gym_arenas"]
 real = pytest.mark.skipif(bool(MISSING), reason="needs %s" % ", ".join(MISSING))
 
 
@@ -247,8 +249,20 @@ def G():
 
 
 @pytest.fixture(scope="module")
-def report(G):
-    return A.audit(G=G)
+def arena_build(tmp_path_factory):
+    """A build directory holding the walk-through halls' functions, made by `python tools/gym_arenas.py build --out`
+    (the audit replays the EMITTED text of the hall and of its seat function, nothing from the generator's model)."""
+    import subprocess
+    out = tmp_path_factory.mktemp("hall_build")
+    r = subprocess.run([sys.executable, str(ROOT / "tools" / "gym_arenas.py"), "build", "--out",
+                        str(out / "datapacks" / "cobblers_gym_arenas")], capture_output=True, text=True)
+    assert r.returncode == 0, (r.stderr or r.stdout)[-600:]
+    return str(out)
+
+
+@pytest.fixture(scope="module")
+def report(G, arena_build):
+    return A.audit(G=G, build=arena_build)
 
 
 def problems_of(rep, who, codes=None):
@@ -257,16 +271,13 @@ def problems_of(rep, who, codes=None):
 
 JUNIORS = sorted(A.load(ROOT / "data" / "gym_junior_trainers.json")["trainers"], key=lambda t: t["id"])
 IDS = [t["id"] for t in JUNIORS]
-# defects this audit found on 2026-10-06, each recorded in the hand-back. Strict by hand (pytest.xfail() is never
-# strict): a known defect that is gone FAILS, naming the entry to remove. gym7_junior_03's softlock was fixed by
-# moving its seat one block north to (6179, 120, 4991), gym3_junior_01's must-pass by moving it one block east to
-# (1732, 175, 1424). Both moves were found by this audit and re-proved by tools/gym_trainers.py check.
-# Found 2026-10-06 (A2 audit): the Archive Reader's cut holds only through a block -- a walk from (6195, 98, 3332)
-# passes within 3.5 of her only where no clear line joins the player's eye to her (closest 2.45 at (6198, 99,
-# 3326)). A warning in the CLI (runtime sight through walls is unverified), recorded here so it cannot widen.
-KNOWN = {
-    ("line_of_sight", "gym6_junior_01"): "the Archive Reader's cut holds only if rctmod's sight passes walls",
-}
+# Defects this audit knows and holds open, each strict by hand (pytest.xfail() is never strict): a known defect that
+# is gone FAILS, naming the entry to remove. EMPTY since 2026-10-09: the seven walk-through halls replaced the
+# buildings the 2026-10-06 entries were found in (gym7_junior_03's softlock, gym3_junior_01's must-pass, the Archive
+# Reader's cut that held only through a block) and the audit finds none of them in the halls. Facing warnings remain
+# (a junior passed only beside or behind it: 11 across the eight gyms on 2026-10-09), which the CLI prints as WARN and
+# `--strict-facing` turns into a failure; the mutation tests below that need a clean facing run ONE gym.
+KNOWN = {}
 
 
 @real
@@ -378,61 +389,163 @@ PLACEMENTS = 'return [(s["id"], tuple(s["seat"]), s["yaw"]) for s in seats]'
 
 
 @real
-def test_moving_a_seat_in_route_trainers_fails_the_walk(G):
-    # Removing this loses the proof that the walk checks the seat R17 summons, not a copy of the builder's answer.
+def test_moving_a_seat_in_route_trainers_fails_the_walk(G, arena_build):
+    # Removing this loses the proof that the walk checks the seat R17 summons, not a copy of the builder's answer. On
+    # the walk-through hall of gym 5 (the Fen Walk range): its last junior summoned three blocks east of its seat no
+    # longer covers the walk, so a walk reaches the leader without coming within its sight.
     rt = mutated(ROOT / "tools" / "route_trainers.py", PLACEMENTS,
                  'return [(s["id"], (s["seat"][0] + (3 if s["id"] == "gym5_junior_03" else 0),) + '
                  'tuple(s["seat"][1:]), s["yaw"]) for s in seats]', "route_trainers_mutant")
-    rep = A.audit(("gym5",), placements=rt.placements(), G=G)
+    clean = A.audit(("gym5",), G=G, build=arena_build)
+    assert problems_of(clean, "gym5_junior_03", {"must_pass"}) == []
+    rep = A.audit(("gym5",), placements=rt.placements(), G=G, build=arena_build)
     assert problems_of(rep, "gym5_junior_03", {"must_pass"}), rep["problems"]
 
 
 @real
-def test_turning_the_juniors_round_in_route_trainers_fails_the_facing(G):
-    # Removing this loses the proof that the facing check reads the yaw R17 summons with.
+def test_turning_the_juniors_round_in_route_trainers_fails_the_facing(G, arena_build):
+    # Removing this loses the proof that the facing check reads the yaw R17 summons with (gym 6's hall is the one
+    # whose juniors are all passed in front on the walk, so its strict-facing run is clean).
     rt = mutated(ROOT / "tools" / "route_trainers.py", PLACEMENTS,
                  'return [(s["id"], tuple(s["seat"]), s["yaw"] + 180) for s in seats]', "route_trainers_mutant")
-    clean = A.audit(("gym6",), G=G, strict_facing=True)
+    clean = A.audit(("gym6",), G=G, strict_facing=True, build=arena_build)
     assert problems_of(clean, "gym6_junior_01", {"facing"}) == []
-    rep = A.audit(("gym6",), placements=rt.placements(), G=G, strict_facing=True)
+    rep = A.audit(("gym6",), placements=rt.placements(), G=G, strict_facing=True, build=arena_build)
     assert problems_of(rep, "gym6_junior_01", {"facing"}), rep["problems"]
 
 
 @real
-def test_two_juniors_moved_side_by_side_across_gym7s_stair_fail_together_and_not_alone(G):
-    # Removing this loses the proof, on a real hall, that the juniors are judged standing at once: the Rim
-    # Researcher moved (in route_trainers' placements, the generator of what R17 summons) beside the Stair Stoker
-    # fills the stair's other lane, and only the all-at-once check sees it.
+def test_swapping_two_juniors_in_route_trainers_puts_the_stronger_first_and_fails_the_order(G, arena_build):
+    # Removing this loses the proof, on a real hall, that the order check reads where R17 summons each junior: gym 5's
+    # first and last juniors exchange seats, so the strongest is met first and the weakest last.
+    import route_trainers
+    base = route_trainers.placements()
+    first = [t for t in base if t[0] == "gym5_junior_01"][0][1]
+    last = [t for t in base if t[0] == "gym5_junior_03"][0][1]
     rt = mutated(ROOT / "tools" / "route_trainers.py", PLACEMENTS,
-                 'return [(s["id"], (6179, 116, 4987) if s["id"] == "gym7_junior_02" else tuple(s["seat"]), s["yaw"]) '
-                 'for s in seats]', "route_trainers_mutant")
-    rep = A.audit(("gym7",), placements=rt.placements(), G=G)
-    assert problems_of(rep, "gym7", {"softlock"}), rep["problems"]
-    assert problems_of(rep, "gym7_junior_02", {"softlock"}) == [] and problems_of(rep, "gym7_junior_04",
-                                                                                  {"softlock"}) == []
+                 'return [(s["id"], tuple(%r if s["id"] == "gym5_junior_03" else %r if s["id"] == "gym5_junior_01" '
+                 'else s["seat"]), s["yaw"]) for s in seats]' % (tuple(first), tuple(last)), "route_trainers_mutant")
+    assert [p for p in A.audit(("gym5",), G=G, build=arena_build)["problems"] if p[0] == "order"] == []
+    rep = A.audit(("gym5",), placements=rt.placements(), G=G, build=arena_build)
+    assert [p for p in rep["problems"] if p[0] == "order"], rep["problems"]
 
 
 @real
-def test_undoing_the_stair_stokers_facing_correction_fails_the_facing(G):
-    # Removing this loses the proof that the new gym 7 seat's yaw (135, corrected from 180) is what keeps the climb
-    # past him in front of him.
-    rt = mutated(ROOT / "tools" / "route_trainers.py", PLACEMENTS,
-                 'return [(s["id"], tuple(s["seat"]), 180 if s["id"] == "gym7_junior_04" else s["yaw"]) '
-                 'for s in seats]', "route_trainers_mutant")
-    clean = A.audit(("gym7",), G=G, strict_facing=True)
-    assert problems_of(clean, "gym7_junior_04", {"facing"}) == []
-    rep = A.audit(("gym7",), placements=rt.placements(), G=G, strict_facing=True)
-    assert problems_of(rep, "gym7_junior_04", {"facing"}), rep["problems"]
+def test_a_junior_r17_never_summons_is_named(G, arena_build):
+    # Removing this loses the proof that a seat in the seat file but missing from what R17 summons is a problem (the
+    # junior would be proved on paper and never stand in the hall).
+    import route_trainers
+    pl = [t for t in route_trainers.placements() if t[0] != "gym7_junior_02"]
+    rep = A.audit(("gym7",), placements=pl, G=G, build=arena_build)
+    assert [p for p in rep["problems"] if p[0] == "seat" and p[1] == "gym7_junior_02"], rep["problems"]
 
 
 @real
-def test_raising_a_team_in_the_trainer_generator_fails_the_roster(G):
+def test_undoing_the_stair_stokers_facing_correction_fails_the_facing(G, arena_build):
+    # Removing this loses the proof that a second hall's yaw is read from R17's summons too. Gym 7's first junior is
+    # passed in front (clean under strict facing); summoned facing the other way it is not.
+    clean = A.audit(("gym7",), G=G, strict_facing=True, build=arena_build)
+    assert problems_of(clean, "gym7_junior_01", {"facing"}) == []
+    rt = mutated(ROOT / "tools" / "route_trainers.py", PLACEMENTS,
+                 'return [(s["id"], tuple(s["seat"]), s["yaw"] + 180 if s["id"] == "gym7_junior_01" else s["yaw"]) '
+                 'for s in seats]', "route_trainers_mutant")
+    rep = A.audit(("gym7",), placements=rt.placements(), G=G, strict_facing=True, build=arena_build)
+    assert problems_of(rep, "gym7_junior_01", {"facing"}), rep["problems"]
+
+
+@real
+def test_raising_a_team_in_the_trainer_generator_fails_the_roster(G, arena_build):
     # Removing this loses the proof that the ace check reads what the generator emits, not what the rules say.
     gen = mutated(ROOT / "docs" / "story" / "generate_trainers.py",
                   'modes[mode_name] = {"team": deepcopy(slot["teams"][mode_name]),',
                   'modes[mode_name] = {"team": [dict(m, level=m["level"] + 6) for m in slot["teams"][mode_name]],',
                   "generate_trainers_mutant")
     roster = gen.build_gym_trainers(gen.load_json(gen.RULES_PATH))
-    rep = A.audit(("gym1",), roster=roster, G=G)
+    rep = A.audit(("gym1",), roster=roster, G=G, build=arena_build)
     over = [p for p in problems_of(rep, "gym1_junior_01", {"roster"}) if "over the leader's ace" in p[2]]
     assert over, rep["problems"]
+
+
+# ------------------------------------------------------------------------------------------- the hall replay itself
+def hall_gyms():
+    return sorted(p.stem for p in (ROOT / "data" / "gym_arenas").glob("gym*.json")
+                  if A.is_walkthrough(p.stem))
+
+
+@real
+def test_every_walk_through_gym_is_replayed_from_its_hall_pack_and_audited(report):
+    # Removing this lets a hall quietly fall back to the superseded building (whose function is no longer emitted) or
+    # to nothing: each gym whose building is superseded must be audited with the hall's leader found in ITS replay.
+    halls = hall_gyms()
+    assert halls, "no gym is a walk-through hall"
+    for gym in halls:
+        r = report["gyms"][gym]
+        assert r["info"]["arrival"] == "ring and forecourt, on foot", gym
+        assert r["info"]["engage"] > 0 and r["info"]["arrivals"] > 0, (gym, r["info"])
+        assert [p for p in r["problems"] if p[0] in ("leader", "blocks")] == [], gym
+
+
+def _hall_pack_with(tmp_path, mutate):
+    """tools/gym_arenas.py's output for every hall with the generator broken by `mutate(mp, GA)` and its own check
+    silenced, as a build directory the audit can read."""
+    import gym_arenas as GA
+    import ground
+    G = ground.load()
+    out = tmp_path / "datapacks" / "cobblers_gym_arenas"
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(GA, "check", lambda *a, **k: ([], {}))
+        mutate(mp, GA)
+        GA.build_pack(out, GA.records(), G)
+    return str(tmp_path)
+
+
+@real
+def test_a_spawner_the_generators_seat_function_sets_off_the_seat_is_named(G, tmp_path):
+    # Removing this loses the proof that the leader is found IN the replayed seat function and compared with the
+    # record, not assumed to stand where the record says: the hall's seat function writes it one block east.
+    def mutate(mp, GA):
+        orig = GA.hall_seat_lines
+        mp.setattr(GA, "hall_seat_lines", lambda doc: orig(dict(doc, leader=dict(
+            doc["leader"], seat=[doc["leader"]["seat"][0] + 1] + list(doc["leader"]["seat"][1:])))))
+    rep = A.audit(("gym3",), G=G, build=_hall_pack_with(tmp_path, mutate))
+    assert [p for p in rep["problems"] if p[0] == "leader" and "spawner built at" in p[2]], rep["problems"]
+
+
+@real
+def test_a_hall_whose_entrance_the_generator_seals_reaches_no_leader(G, tmp_path):
+    # Removing this loses the proof that the arrivals are the street ring and the forecourt, walked into the emitted
+    # hall: a hall with no door has no walk to its leader.
+    def mutate(mp, GA):
+        orig = GA.place_markers
+
+        def sealed(a, doc):
+            orig(a, doc)
+            if doc["id"] != "gym3":
+                return
+            (x0, z0, x1, z1), _lvl = GA.lot_of(doc)
+            sy = doc["entry"]["street"][1]
+            for box in ((x0, sy, z0, x0 + 1, sy + 3, z1), (x1 - 1, sy, z0, x1, sy + 3, z1),
+                        (x0, sy, z0, x1, sy + 3, z0 + 1), (x0, sy, z1 - 1, x1, sy + 3, z1)):
+                a.fill(box, "minecraft:stone")
+        mp.setattr(GA, "place_markers", sealed)
+    rep = A.audit(("gym3",), G=G, build=_hall_pack_with(tmp_path, mutate))
+    assert [p for p in rep["problems"] if p[0] == "leader" and "no arrival reaches" in p[2]], rep["problems"]
+
+
+@real
+def test_a_healing_machine_the_generator_writes_into_a_hall_is_named(G, tmp_path):
+    # Removing this loses the proof that the audit looks for the healer the owner removed from all eight gyms in the
+    # emitted hall itself, not in a record.
+    def mutate(mp, GA):
+        orig = GA.place_markers
+
+        def healer(a, doc):
+            orig(a, doc)
+            if doc["id"] != "gym3":
+                return
+            sx, sy, sz = doc["entry"]["floor"]
+            # not a.set(): the generator refuses a healer, which is the point; write the command the way a broken one would
+            a.ops.append("setblock %d %d %d %s" % (sx, sy + 3, sz, GA.HEALER))
+        mp.setattr(GA, "place_markers", healer)
+    rep = A.audit(("gym3",), G=G, build=_hall_pack_with(tmp_path, mutate))
+    assert [p for p in rep["problems"] if p[0] == "blocks" and "healing machine" in p[2]], rep["problems"]
