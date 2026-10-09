@@ -7113,6 +7113,460 @@
       ]
     },
     {
+      "id": "evt_route5_bellwether",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_r5_nan",
+        "dlg_r5_hook",
+        "dlg_r5_ewe",
+        "dlg_r5_bell_west",
+        "dlg_r5_bell_south",
+        "dlg_r5_bell_north",
+        "dlg_r5_board",
+        "dlg_r5_gorse",
+        "dlg_r5_tally",
+        "dlg_r5_tolly",
+        "dlg_r5_jory"
+      ],
+      "objectives": [
+        {
+          "id": "ring",
+          "active_when": {
+            "field": "quest.evt_route5_bellwether.met_nan",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route5_bellwether.strap",
+            "equals": true
+          },
+          "text": "Ring the bells on the cairns off the road until you hear the flat one."
+        },
+        {
+          "id": "tolly",
+          "active_when": {
+            "field": "quest.evt_route5_bellwether.met_nan",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route5_bellwether.found_tolly",
+            "equals": true
+          },
+          "text": "Find Tolly at the winter fold at the foot of the Tear."
+        },
+        {
+          "id": "jory",
+          "active_when": {
+            "field": "quest.evt_route5_bellwether.found_tolly",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route5_bellwether.reward_claimed",
+            "equals": true
+          },
+          "text": "Tell Jory Tarrow you found him."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "meet_nan",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.met_nan",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.met_nan",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.nan_cursor",
+              "value": "n_01"
+            }
+          ]
+        },
+        {
+          "id": "ring_flat",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.strap",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.strap",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "meet_gorse",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.met_gorse",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.met_gorse",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.gorse_cursor",
+              "value": "g_01"
+            }
+          ]
+        },
+        {
+          "id": "pick_salve",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.commons",
+              "value": "none"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.commons",
+              "value": "salve"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.gorse_cursor",
+              "value": "g_salve"
+            }
+          ]
+        },
+        {
+          "id": "pick_oil",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.commons",
+              "value": "none"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.commons",
+              "value": "oil"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.gorse_cursor",
+              "value": "g_oil"
+            }
+          ]
+        },
+        {
+          "id": "grant_salve",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.commons",
+              "value": "salve"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.commons_taken",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_salve",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route5_bellwether.commons_taken",
+              "idempotency_key": "evt_route5_bellwether:reward_salve:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.gorse_cursor",
+              "value": "g_after"
+            }
+          ]
+        },
+        {
+          "id": "grant_oil",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.commons",
+              "value": "oil"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.commons_taken",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_oil",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route5_bellwether.commons_taken",
+              "idempotency_key": "evt_route5_bellwether:reward_oil:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.gorse_cursor",
+              "value": "g_after"
+            }
+          ]
+        },
+        {
+          "id": "find_tolly",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.found_tolly",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.found_tolly",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "meet_jory",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.met_jory",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.met_jory",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.jory_cursor",
+              "value": "j_01"
+            }
+          ]
+        },
+        {
+          "id": "grant_full",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.found_tolly",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.strap",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_full",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route5_bellwether.reward_claimed",
+              "idempotency_key": "evt_route5_bellwether:reward_full:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.jory_cursor",
+              "value": "j_after"
+            }
+          ]
+        },
+        {
+          "id": "grant_plain",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.found_tolly",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.strap",
+              "value": false
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_plain",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route5_bellwether.reward_claimed",
+              "idempotency_key": "evt_route5_bellwether:reward_plain:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.jory_cursor",
+              "value": "j_after"
+            }
+          ]
+        },
+        {
+          "id": "finish",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.reward_claimed",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route5_bellwether.completed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route5_bellwether.jory_cursor",
+              "value": "j_after"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_salve",
+          "status": "item_ids_verified; quantities provisional",
+          "contents": [
+            {
+              "item": "cobblemon:full_heal",
+              "count": 3,
+              "verification": "assets/cobblemon/models/item/full_heal.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "the commons box, first choice: three cures (a Full Heal is $300 on a shelf)"
+        },
+        {
+          "id": "reward_oil",
+          "status": "item_ids_verified; quantities provisional",
+          "contents": [
+            {
+              "item": "cobblemon:super_potion",
+              "count": 2,
+              "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "the commons box, second choice: two flasks that mend (a Super Potion is $400 on a shelf)"
+        },
+        {
+          "id": "reward_plain",
+          "status": "item_ids_verified; quantities provisional",
+          "contents": [
+            {
+              "item": "cobblemon:great_ball",
+              "count": 2,
+              "verification": "assets/cobblemon/models/item/great_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            },
+            {
+              "item": "cobblemon:sitrus_berry",
+              "count": 2,
+              "verification": "assets/cobblemon/models/item/sitrus_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "Jory's thanks to a player who found Tolly without the strap (a Great Ball is $350 on a shelf)"
+        },
+        {
+          "id": "reward_full",
+          "status": "item_ids_verified; quantities provisional",
+          "contents": [
+            {
+              "item": "cobblemon:great_ball",
+              "count": 2,
+              "verification": "assets/cobblemon/models/item/great_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            },
+            {
+              "item": "cobblemon:sitrus_berry",
+              "count": 2,
+              "verification": "assets/cobblemon/models/item/sitrus_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            },
+            {
+              "item": "cobblemon:magnet",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/magnet.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "the same, plus a Magnet (held: boosts Electric moves; $800 on a counter in data/markets.json) for a player who rang the flat bell and brought the strap"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "shared props open each clicker's own conversation",
+        "actors": "posed Pokemon are per-player actors (data/scenes.json), never capture rewards",
+        "npcs": "three shared static NPCs; the order of events is free and nothing one player does changes another's",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "scene": "data/scenes.json route5_empty_fold, route5_cairn_bells, route5_lee_hut, route5_winter_fold",
+      "progression_field_refs": [
+        "quest.evt_route5_bellwether.met_nan",
+        "quest.evt_route5_bellwether.strap",
+        "quest.evt_route5_bellwether.met_gorse",
+        "quest.evt_route5_bellwether.commons_taken",
+        "quest.evt_route5_bellwether.found_tolly",
+        "quest.evt_route5_bellwether.met_jory",
+        "quest.evt_route5_bellwether.reward_claimed",
+        "quest.evt_route5_bellwether.completed",
+        "quest.evt_route5_bellwether.commons",
+        "quest.evt_route5_bellwether.nan_cursor",
+        "quest.evt_route5_bellwether.gorse_cursor",
+        "quest.evt_route5_bellwether.jory_cursor",
+        "quest.evt_route5_bellwether.prop_cursor"
+      ]
+    },
+    {
       "id": "evt_prospector_claim",
       "source": "data/southern_residents.json prospector_camp; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
       "reward_record": "data/rewards.json prospector_claim (a cache: given by tools/rewards_pack.py's advancement, not by this quest)",

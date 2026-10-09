@@ -1680,6 +1680,161 @@
       "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
     },
     {
+      "id": "quest.evt_route5_bellwether.met_nan",
+      "quest_id": "evt_route5_bellwether",
+      "field": "met_nan",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has spoken to Nan Tarrow at the empty fold (dlg_r5_nan)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.strap",
+      "quest_id": "evt_route5_bellwether",
+      "field": "strap",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player rang the flat bell on the north cairn and took Tolly's blue strap (dlg_r5_bell_north)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.met_gorse",
+      "quest_id": "evt_route5_bellwether",
+      "field": "met_gorse",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has spoken to Old Gorse in the lee hut (dlg_r5_gorse)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.commons_taken",
+      "quest_id": "evt_route5_bellwether",
+      "field": "commons_taken",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the commons-box parcel Gorse offers has been given to this player (grant_reward_once claim)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.found_tolly",
+      "quest_id": "evt_route5_bellwether",
+      "field": "found_tolly",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has reached Tolly on his stone at the winter fold (dlg_r5_tolly)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.met_jory",
+      "quest_id": "evt_route5_bellwether",
+      "field": "met_jory",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has spoken to Jory Tarrow at the winter fold (dlg_r5_jory)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.reward_claimed",
+      "quest_id": "evt_route5_bellwether",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Jory's reward has been given to this player (grant_reward_once claim)"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.completed",
+      "quest_id": "evt_route5_bellwether",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "set after Jory's reward line is acknowledged"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.commons",
+      "quest_id": "evt_route5_bellwether",
+      "field": "commons",
+      "type": "enum",
+      "scope": "player",
+      "initial": "none",
+      "allowed_values": [
+        "none",
+        "salve",
+        "oil"
+      ],
+      "why": "which parcel the player chose from Gorse's commons box; a failed delivery is retried from it"
+    },
+    {
+      "id": "quest.evt_route5_bellwether.nan_cursor",
+      "quest_id": "evt_route5_bellwether",
+      "field": "nan_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "n_01",
+      "allowed_values": [
+        "n_01",
+        "n_02",
+        "n_03",
+        "n_hub",
+        "n_where",
+        "n_bell",
+        "n_help"
+      ]
+    },
+    {
+      "id": "quest.evt_route5_bellwether.gorse_cursor",
+      "quest_id": "evt_route5_bellwether",
+      "field": "gorse_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "g_01",
+      "allowed_values": [
+        "g_01",
+        "g_02",
+        "g_03",
+        "g_hub",
+        "g_tear",
+        "g_tolly",
+        "g_strap",
+        "g_box",
+        "g_pick",
+        "g_salve",
+        "g_oil",
+        "g_after"
+      ]
+    },
+    {
+      "id": "quest.evt_route5_bellwether.jory_cursor",
+      "quest_id": "evt_route5_bellwether",
+      "field": "jory_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "j_01",
+      "allowed_values": [
+        "j_01",
+        "j_02",
+        "j_hub",
+        "j_msg",
+        "j_tolly",
+        "j_fold",
+        "j_full",
+        "j_full2",
+        "j_plain",
+        "j_plain2",
+        "j_after"
+      ]
+    },
+    {
+      "id": "quest.evt_route5_bellwether.prop_cursor",
+      "quest_id": "evt_route5_bellwether",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
       "id": "quest.route_01_trainer_01.defeated",
       "quest_id": "route_01_trainer_01",
       "field": "defeated",

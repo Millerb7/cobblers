@@ -51,6 +51,324 @@
       ]
     },
     {
+      "id": "route5_empty_fold",
+      "quest_id": "evt_route5_bellwether",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "built_by": "tools/route5_events.py",
+      "why": "E1 of Route 5's Bellwether chain, walked ~145: the drystone fold, the open gate, the empty hook, Nan Tarrow at the gap",
+      "area": {
+        "from": [
+          4392,
+          105,
+          1650
+        ],
+        "to": [
+          4420,
+          127,
+          1672
+        ]
+      },
+      "markers": {
+        "ewe_gate": {
+          "at": [
+            4406,
+            113,
+            1662
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0.9,
+              0
+            ],
+            [
+              0,
+              0.9
+            ],
+            [
+              0.9,
+              0.9
+            ]
+          ]
+        }
+      },
+      "props": [
+        {
+          "id": "empty_hook",
+          "conversation": "dlg_r5_hook",
+          "at": [
+            4399.5,
+            113.0,
+            1659.5
+          ],
+          "size": [
+            0.8,
+            1.0
+          ],
+          "on": [
+            4399,
+            113,
+            1659
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "ewe",
+          "species": "mareep",
+          "level": 12,
+          "conversation": "dlg_r5_ewe",
+          "not_yours": "The ewe ignores you.",
+          "place": [
+            {
+              "marker": "ewe_gate"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_r5_nan",
+          "at": [
+            4399,
+            112,
+            1664
+          ],
+          "yaw": 90
+        }
+      ]
+    },
+    {
+      "id": "route5_cairn_bells",
+      "quest_id": "evt_route5_bellwether",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "built_by": "tools/route5_events.py",
+      "why": "E2, walked ~375: three bell cairns on the rise east of the road, one flat note, the strap, and the tin in the lee (data/rewards.json r5_shepherds_tin)",
+      "area": {
+        "from": [
+          4412,
+          111,
+          1866
+        ],
+        "to": [
+          4446,
+          135,
+          1896
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "bell_west",
+          "conversation": "dlg_r5_bell_west",
+          "at": [
+            4425.5,
+            120.0,
+            1884.5
+          ],
+          "size": [
+            0.8,
+            1.7
+          ],
+          "on": [
+            4425,
+            120,
+            1884
+          ]
+        },
+        {
+          "id": "bell_north",
+          "conversation": "dlg_r5_bell_north",
+          "at": [
+            4433.5,
+            121.0,
+            1876.5
+          ],
+          "size": [
+            0.8,
+            1.7
+          ],
+          "on": [
+            4433,
+            121,
+            1876
+          ]
+        },
+        {
+          "id": "bell_south",
+          "conversation": "dlg_r5_bell_south",
+          "at": [
+            4435.5,
+            122.0,
+            1889.5
+          ],
+          "size": [
+            0.8,
+            1.7
+          ],
+          "on": [
+            4435,
+            122,
+            1889
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [],
+      "effects": [],
+      "npcs": []
+    },
+    {
+      "id": "route5_lee_hut",
+      "quest_id": "evt_route5_bellwether",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "built_by": "tools/route5_events.py",
+      "why": "E3, walked ~560: the weather keeper's hut, the board on its wall, the commons box (a free choice of one parcel)",
+      "area": {
+        "from": [
+          4390,
+          108,
+          2064
+        ],
+        "to": [
+          4412,
+          131,
+          2084
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "weather_board",
+          "conversation": "dlg_r5_board",
+          "at": [
+            4396.5,
+            118.0,
+            2072.5
+          ],
+          "size": [
+            0.9,
+            0.9
+          ],
+          "on": [
+            4396,
+            118,
+            2072
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_r5_gorse",
+          "at": [
+            4401,
+            117,
+            2074
+          ],
+          "yaw": 90
+        }
+      ]
+    },
+    {
+      "id": "route5_winter_fold",
+      "quest_id": "evt_route5_bellwether",
+      "source": "docs/world-building/ROUTE5_EVENTS.md",
+      "built_by": "tools/route5_events.py",
+      "why": "E4, walked ~900, the payoff: the winter fold in the fields at the glacier's foot, Tolly on his stone, Jory Tarrow at the byre door",
+      "area": {
+        "from": [
+          4554,
+          107,
+          2280
+        ],
+        "to": [
+          4592,
+          128,
+          2302
+        ]
+      },
+      "markers": {
+        "tolly_stone": {
+          "at": [
+            4582,
+            115,
+            2290
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0.9,
+              0
+            ],
+            [
+              -0.9,
+              0
+            ]
+          ]
+        }
+      },
+      "props": [
+        {
+          "id": "tally_post",
+          "conversation": "dlg_r5_tally",
+          "at": [
+            4574.5,
+            117.0,
+            2296.5
+          ],
+          "size": [
+            0.9,
+            1.4
+          ],
+          "on": [
+            4574,
+            117,
+            2296
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "tolly",
+          "species": "flaaffy",
+          "level": 24,
+          "conversation": "dlg_r5_tolly",
+          "not_yours": "The Flaaffy ignores you.",
+          "place": [
+            {
+              "marker": "tolly_stone"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_r5_jory",
+          "at": [
+            4571,
+            114,
+            2295
+          ],
+          "yaw": 0
+        }
+      ]
+    },
+    {
       "id": "route1_gastly_family",
       "quest_id": "evt_route1_gastly_family",
       "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",

@@ -2338,6 +2338,148 @@
         "expect": false
       }
     ],
+    "route5_events": [
+      {
+        "what": "route5_empty_fold: the block under prop empty_hook",
+        "block": [
+          4399,
+          113,
+          1659,
+          "minecraft:tripwire_hook"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_empty_fold: spruce_fence_gate",
+        "block": [
+          4402,
+          112,
+          1661,
+          "minecraft:spruce_fence_gate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_empty_fold: dlg_r5_nan",
+        "entity": "@e[type=cobblemon:npc,x=4399,y=112,z=1664,distance=..2]",
+        "count": 1,
+        "hold": [
+          4399,
+          112,
+          1664
+        ]
+      },
+      {
+        "what": "route5_cairn_bells: the block under prop bell_north",
+        "block": [
+          4433,
+          121,
+          1876,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_cairn_bells: the block under prop bell_south",
+        "block": [
+          4435,
+          122,
+          1889,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_cairn_bells: the block under prop bell_west",
+        "block": [
+          4425,
+          120,
+          1884,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_cairn_bells: barrel",
+        "block": [
+          4430,
+          121,
+          1883,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_lee_hut: the block under prop weather_board",
+        "block": [
+          4396,
+          118,
+          2072,
+          "minecraft:spruce_wall_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_lee_hut: spruce_planks",
+        "block": [
+          4397,
+          116,
+          2071,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_lee_hut: dlg_r5_gorse",
+        "entity": "@e[type=cobblemon:npc,x=4401,y=117,z=2074,distance=..2]",
+        "count": 1,
+        "hold": [
+          4401,
+          117,
+          2074
+        ]
+      },
+      {
+        "what": "route5_winter_fold: the block under prop tally_post",
+        "block": [
+          4574,
+          117,
+          2296,
+          "minecraft:spruce_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_winter_fold: moss_block",
+        "block": [
+          4565,
+          118,
+          2287,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_winter_fold: smooth_stone",
+        "block": [
+          4580,
+          114,
+          2290,
+          "minecraft:smooth_stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "route5_winter_fold: dlg_r5_jory",
+        "entity": "@e[type=cobblemon:npc,x=4571,y=114,z=2295,distance=..2]",
+        "count": 1,
+        "hold": [
+          4571,
+          114,
+          2295
+        ]
+      }
+    ],
     "gym1_arena": [
       {
         "what": "the leader's spawner in the dais",
