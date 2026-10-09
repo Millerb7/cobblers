@@ -1159,14 +1159,7 @@
         "tests/test_system_contracts.py::test_contract_c24_a_dungeon_death_makes_no_claim_and_nothing_is_delivered_into_a_slot",
         "tests/test_dungeon_death.py::test_the_generated_pack_takes_no_items_in_a_dungeon",
         "tests/test_dungeon_death.py::test_the_generated_pack_holds_delivery_for_a_player_inside_a_dungeon"
-      ],
-      "fails_today": {
-        "recorded": "2026-10-08",
-        "commit": "8b52ae7",
-        "cases": {
-          "engine:*": "the dungeon engine (tools/dungeon.py, DUNGEONS.md 11.3) is not built on this commit: there is no generated dungeon pack to add the tag, keep it, or call recovery/run_tail_end and recovery/run_tag_stale. The test expects tools/dungeon.py to expose build(load()) -> {path: text}, as tools/entei_boss.py does; the engine's builder adapts that one call if its API differs, and removes this entry when the cases pass"
-        }
-      }
+      ]
     }
   ]
 }

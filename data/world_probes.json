@@ -2337,6 +2337,366 @@
         ],
         "expect": false
       }
+    ],
+    "dungeon_night_shift": [
+      {
+        "what": "slot 1: the entry room's floor under the arrival",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          95,
+          1056,
+          "minecraft:deepslate_tiles"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 1: the arrival's feet are open",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          96,
+          1056,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 1: the back rip's dark opening in the west wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          0,
+          97,
+          1056,
+          "minecraft:black_concrete"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 1: the exit gate shut (R16DG; a run's last stage opens it, the next door_click shuts it)",
+        "dim": "cobblers:pocket",
+        "block": [
+          111,
+          97,
+          1056,
+          "minecraft:iron_bars"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 1: the far rip's dark opening in the east wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          123,
+          97,
+          1056,
+          "minecraft:black_concrete"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 1: the board (after R16DG's entity chain)",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:text_display,tag=dg.board,tag=dg.shell.ns1]",
+        "count": 1,
+        "hold": [
+          8,
+          96,
+          1051
+        ]
+      },
+      {
+        "what": "slot 1: the back rip's interaction",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_back,tag=dg.shell.ns1]",
+        "count": 1,
+        "hold": [
+          1,
+          96,
+          1056
+        ]
+      },
+      {
+        "what": "slot 2: the entry room's floor under the arrival",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          95,
+          1184,
+          "minecraft:deepslate_tiles"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 2: the arrival's feet are open",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          96,
+          1184,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 2: the back rip's dark opening in the west wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          0,
+          97,
+          1184,
+          "minecraft:black_concrete"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 2: the exit gate shut (R16DG; a run's last stage opens it, the next door_click shuts it)",
+        "dim": "cobblers:pocket",
+        "block": [
+          111,
+          97,
+          1184,
+          "minecraft:iron_bars"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 2: the far rip's dark opening in the east wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          123,
+          97,
+          1184,
+          "minecraft:black_concrete"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 2: the board (after R16DG's entity chain)",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:text_display,tag=dg.board,tag=dg.shell.ns2]",
+        "count": 1,
+        "hold": [
+          8,
+          96,
+          1179
+        ]
+      },
+      {
+        "what": "slot 2: the back rip's interaction",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_back,tag=dg.shell.ns2]",
+        "count": 1,
+        "hold": [
+          1,
+          96,
+          1184
+        ]
+      },
+      {
+        "what": "slot 3: the entry room's floor under the arrival",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          95,
+          1312,
+          "minecraft:deepslate_tiles"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 3: the arrival's feet are open",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          96,
+          1312,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 3: the back rip's dark opening in the west wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          0,
+          97,
+          1312,
+          "minecraft:black_concrete"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 3: the exit gate shut (R16DG; a run's last stage opens it, the next door_click shuts it)",
+        "dim": "cobblers:pocket",
+        "block": [
+          111,
+          97,
+          1312,
+          "minecraft:iron_bars"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 3: the far rip's dark opening in the east wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          123,
+          97,
+          1312,
+          "minecraft:black_concrete"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 3: the board (after R16DG's entity chain)",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:text_display,tag=dg.board,tag=dg.shell.ns3]",
+        "count": 1,
+        "hold": [
+          8,
+          96,
+          1307
+        ]
+      },
+      {
+        "what": "slot 3: the back rip's interaction",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_back,tag=dg.shell.ns3]",
+        "count": 1,
+        "hold": [
+          1,
+          96,
+          1312
+        ]
+      },
+      {
+        "what": "slot 4: the entry room's floor under the arrival",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          95,
+          1440,
+          "minecraft:deepslate_tiles"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 4: the arrival's feet are open",
+        "dim": "cobblers:pocket",
+        "block": [
+          3,
+          96,
+          1440,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 4: the back rip's dark opening in the west wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          0,
+          97,
+          1440,
+          "minecraft:black_concrete"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 4: the exit gate shut (R16DG; a run's last stage opens it, the next door_click shuts it)",
+        "dim": "cobblers:pocket",
+        "block": [
+          111,
+          97,
+          1440,
+          "minecraft:iron_bars"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 4: the far rip's dark opening in the east wall",
+        "dim": "cobblers:pocket",
+        "block": [
+          123,
+          97,
+          1440,
+          "minecraft:black_concrete"
+        ],
+        "expect": true
+      },
+      {
+        "what": "slot 4: the board (after R16DG's entity chain)",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:text_display,tag=dg.board,tag=dg.shell.ns4]",
+        "count": 1,
+        "hold": [
+          8,
+          96,
+          1435
+        ]
+      },
+      {
+        "what": "slot 4: the back rip's interaction",
+        "dim": "cobblers:pocket",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_back,tag=dg.shell.ns4]",
+        "count": 1,
+        "hold": [
+          1,
+          96,
+          1440
+        ]
+      },
+      {
+        "what": "the Night Shift rip (PLACEHOLDER, R16DR): its west post",
+        "block": [
+          1350,
+          130,
+          4117,
+          "minecraft:crying_obsidian"
+        ],
+        "expect": true
+      },
+      {
+        "what": "... its dark opening",
+        "block": [
+          1352,
+          131,
+          4117,
+          "minecraft:black_concrete"
+        ],
+        "expect": true
+      },
+      {
+        "what": "... its lintel",
+        "block": [
+          1352,
+          133,
+          4117,
+          "minecraft:polished_blackstone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "... the notch in front of it is open (tools/route1_old_mine.py's notch, not ours)",
+        "block": [
+          1352,
+          130,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "... its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_ns]",
+        "count": 1,
+        "hold": [
+          1352,
+          130,
+          4118
+        ]
+      }
     ]
   }
 }
