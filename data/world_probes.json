@@ -3318,9 +3318,9 @@
       {
         "what": "the leader's spawner in the dais",
         "block": [
-          1748,
-          162,
-          1435,
+          1742,
+          175,
+          1392,
           "rctmod:trainer_spawner"
         ],
         "expect": true
@@ -3328,9 +3328,9 @@
       {
         "what": "its redstone",
         "block": [
-          1748,
-          161,
-          1435,
+          1742,
+          174,
+          1392,
           "minecraft:redstone_block"
         ],
         "expect": true
@@ -3338,9 +3338,9 @@
       {
         "what": "air over the seat",
         "block": [
-          1748,
-          163,
-          1435,
+          1742,
+          176,
+          1392,
           "minecraft:air"
         ],
         "expect": true
@@ -3348,9 +3348,9 @@
       {
         "what": "battle.trainer_pokemon",
         "block": [
-          1748,
-          157,
-          1427,
+          1742,
+          170,
+          1400,
           "cobblemonbattlepositions:trainer_pokemon_position"
         ],
         "expect": true
@@ -3358,9 +3358,9 @@
       {
         "what": "battle.player_pokemon",
         "block": [
-          1748,
-          157,
-          1420,
+          1742,
+          170,
+          1407,
           "cobblemonbattlepositions:player_pokemon_position"
         ],
         "expect": true
@@ -3368,9 +3368,9 @@
       {
         "what": "battle.trainer_stand",
         "block": [
-          1748,
-          161,
-          1434,
+          1742,
+          174,
+          1393,
           "cobblemonbattlepositions:trainer_stand_position"
         ],
         "expect": true
@@ -3378,29 +3378,29 @@
       {
         "what": "battle.player_stand",
         "block": [
-          1748,
-          157,
-          1417,
+          1742,
+          170,
+          1410,
           "cobblemonbattlepositions:player_stand_position"
         ],
         "expect": true
       },
       {
-        "what": "the signal line at the door (oxidised)",
+        "what": "the signal line at the stair (oxidised)",
         "block": [
-          1748,
-          158,
-          1412,
+          1742,
+          171,
+          1418,
           "minecraft:waxed_oxidized_cut_copper"
         ],
         "expect": true
       },
       {
-        "what": "the signal line by the dais (bright)",
+        "what": "the signal line by the cab (bright)",
         "block": [
-          1748,
-          158,
-          1430,
+          1742,
+          171,
+          1398,
           "minecraft:waxed_cut_copper"
         ],
         "expect": true
@@ -3408,52 +3408,152 @@
       {
         "what": "air in the hall",
         "block": [
-          1748,
-          164,
-          1420,
+          1742,
+          176,
+          1412,
           "minecraft:air"
         ],
         "expect": true
       },
       {
-        "what": "the cable door",
+        "what": "the lane door",
         "block": [
-          1748,
-          159,
-          1409,
+          1723,
+          176,
+          1392,
           "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the cross passage",
+        "block": [
+          1734,
+          176,
+          1427,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the live bar",
+        "block": [
+          1725,
+          178,
+          1407,
+          "minecraft:waxed_cut_copper"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the dead middle bar's foot (no lead)",
+        "block": [
+          1728,
+          177,
+          1404,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the straw floor",
+        "block": [
+          1730,
+          174,
+          1408,
+          "minecraft:hay_block"
         ],
         "expect": true
       },
       {
         "what": "a lit lamp on the board",
         "block": [
-          1748,
-          165,
-          1437,
+          1742,
+          178,
+          1389,
           "minecraft:redstone_lamp"
         ],
         "expect": true
       },
       {
-        "what": "the shell's south-west corner",
+        "what": "the iron door past the leader",
         "block": [
-          1737,
-          156,
-          1439,
-          "minecraft:deepslate_bricks"
+          1734,
+          175,
+          1392,
+          "minecraft:iron_door"
         ],
         "expect": true
       },
       {
-        "what": "the shell's north-east top corner",
+        "what": "its button, on the hall side",
         "block": [
-          1759,
-          171,
-          1408,
-          "minecraft:deepslate_bricks"
+          1735,
+          176,
+          1393,
+          "minecraft:stone_button"
         ],
         "expect": true
+      },
+      {
+        "what": "the old Grounding Hall's nave, taken down",
+        "block": [
+          1748,
+          164,
+          1420,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old hall's cab, taken down",
+        "block": [
+          1748,
+          160,
+          1435,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old stair's conduit under the pad, taken down",
+        "block": [
+          1747,
+          168,
+          1405,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old gallery's air, cleared",
+        "block": [
+          1747,
+          192,
+          1410,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old rock mass's top bench, cleared",
+        "block": [
+          1750,
+          200,
+          1420,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          1748,
+          162,
+          1435,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
       },
       {
         "what": "no spawner at the old seat",

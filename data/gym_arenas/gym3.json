@@ -1,96 +1,397 @@
 {
-  "schema": "gym_arena/1",
+  "schema": "gym_hall/1",
   "id": "gym3",
   "gym": "gym3",
-  "status": "authored 2026-10-08; offline checks only (tools/gym_arenas.py check). Nothing here has been built in a world or seen in a running game.",
-  "name": "The Grounding Hall",
-  "reading": "Surge's town keeps the power, the relays and the storm gear running (docs/world-building/TOWN_CHARACTER.md gym3_town: deepslate and tuff, weathered and waxed copper). The Relay Works above is the substation where the feeder from his array lands; under it is where the line is earthed: a deep switch hall with the transformer banks along both walls, each bank a stage further up the copper's oxidation ladder, three bus runs hung on chains overhead, lightning rods on every bank, and down the floor a single course of waxed copper that is oxidised at the door and bright by the dais, with a lamp pair set in the floor every third course: the signal line the player walks. The stair is the feeder's own, wound round a copper conduit from the gallery where the cable is terminated. At the far end Surge stands in a control cab four courses up, between two generator housings, in front of a board of redstone lamps whose lit columns rise to a peak over his head. No colonnade, no nave: machinery on both walls, a line in the floor and a board behind him.",
+  "status": "authored 2026-10-09 as a walk-through hall (docs/world-building/GYM_WALKTHROUGH.md); offline checks only (tools/gym_arenas.py check, tools/gym_arenas_audit.py, tools/gym_trainers.py check). Nothing of it has been built in a world or seen in a running game.",
+  "name": "The Relay Works",
+  "reading": "Surge's town keeps the power, the relays and the storm gear running (docs/world-building/TOWN_CHARACTER.md gym3_town: deepslate and tuff, weathered and waxed copper). The substation where the feeder from his array lands, walked through: in at the west door on the lane, past the cable drums, up the transformer bank's stair onto the catwalk, where three leads run out to three bus bars over a floor of packing straw (only the west lead is whole, and the bright copper and the lamps over its bar say so), along the live bar across the open isolator, through the wall by the duct and down; then in at the south end of the Grounding Hall, three courses under the works' floor by one broad stair, where the line is earthed: transformer banks on both walls, each a stage further up the copper's oxidation ladder, three bus runs hung on chains overhead, lightning rods on every bank, and down the floor a single course of waxed copper that is oxidised at the stair and bright at the cab, with a pair of ochre lights set in the floor every third course: the signal line the player walks. Surge stands in a control cab four courses up at the north end, between a generator housing and a pilaster, in front of a board of redstone lamps whose lit columns rise to a peak over his head. No colonnade, no nave: machinery on both walls, a line in the floor and a board behind him. Every copper block is waxed, so the gradient stays where it is put.",
   "leader": {
     "id": "kanto_ltsurge",
     "seat": [
-      1748,
-      162,
-      1435
+      1742,
+      175,
+      1392
     ],
-    "seat_why": "on the hall's axis (x1748, the line of the cable door and the signal line), in the cab's top at y162 (floor y158 + 4), z1435: two courses in from the cab's face at z1433 and two from the back wall's lamp board at z1437. THE ONE SOURCE of Surge's seat once this record exists (tools/gym_arenas.py leader_seats): data/gym_buildings/gym3.json leader.spawner (1747, 190, 1414) is where the building puts the spawner the arena step then moves."
+    "seat_why": "on the hall's axis (x1742, the middle of x1735..1749 and the line of the signal) in the cab's top at y175 (floor y171 + 4), z1392: two courses in from the cab's face (z1394) and three from the board's wall (z1389). THE ONE SOURCE of Surge's seat (tools/gym_arenas.py leader_seats)."
   },
   "spawn_free_zone": "gym_surge",
-  "floor_y": 158,
+  "floor_y": 171,
   "bounds": [
-    1737,
-    156,
-    1403,
-    1759,
-    171,
-    1439
+    1722,
+    170,
+    1388,
+    1752,
+    206,
+    1432
   ],
-  "bounds_why": "x1737..1759 is the whole of gym_surge's width (1720..1759, on the 8-block grid) and z1403..1439 is inside its depth (1384..1439): the shell is two thick all round (interior x1739..1757, 19 wide; z1410..1437, 28 long; y158..169 with the floor course at y158, so 11 of air over the floor), and z1403..1408 is the stair's ring and walls on the hall's north side. The top course y171 leaves y172 and y173 natural under the building's lowest course (y174): COVER = 2.",
-  "through_building": [
-    {
-      "box": [
-        1745,
-        172,
+  "bounds_why": "the gym lot exactly in x and z (data/placements.json gym3_town gym3_gym rect 1722..1752 x 1388..1432, level 174, facing west), y170 (the four Battle Positions blocks under the Grounding Hall's floor course at y171) to y206 (the top of the Relay Works' rock mass, data/gym_buildings/gym3.json bounds, so this hall's first part clears every cell of it). Inside the spawn-free zone gym_surge (1720..1759 x 1384..1439).",
+  "footprint": [
+    1723,
+    1388,
+    1750,
+    1429
+  ],
+  "through_building": [],
+  "replaces": {
+    "why": "what stood before this hall and is taken down by it, measured from the records that built it, never guessed. The arena is data/gym_arenas/gym3.json as it was built and applied to staging on 2026-10-09 (schema gym_arena/1, git history dfcd2fb): its bounds run beyond the lot to x1759 and z1439, and the takedown function (gym3_takedown) fills them, and the part of its newel stair under the pad, with stone. The building is data/gym_buildings/gym3.json, kept, now superseded_by this file; above the pad this hall's first part clears the lot.",
+    "arena": {
+      "name": "The Grounding Hall",
+      "bounds": [
+        1737,
+        156,
         1403,
-        1750,
-        193,
-        1408
+        1759,
+        171,
+        1439
       ],
-      "why": "the stair's ring and walls from the gallery's north end (ring x1746..1749, z1404..1407; walls x1745 and x1750, z1403 and z1408) up to the gallery floor (y190) and its three courses of headroom over the first treads (y191..y193). The building's own gallery floor, walls, chest at (1747, 191, 1406), barrels and lanterns are not written; the walls are built only to y189, so under the gallery floor they close the cable head shaft (z1409..1411, y185..189) off from the stair. y172 and y173 are under the building's lowest course (y174)."
-    }
-  ],
+      "through_building": [
+        {
+          "box": [
+            1745,
+            172,
+            1403,
+            1750,
+            193,
+            1408
+          ],
+          "why": "the stair's ring and walls from the gallery's north end (ring x1746..1749, z1404..1407; walls x1745 and x1750, z1403 and z1408) up to the gallery floor (y190) and its three courses of headroom over the first treads (y191..y193). The building's own gallery floor, walls, chest at (1747, 191, 1406), barrels and lanterns are not written; the walls are built only to y189, so under the gallery floor they close the cable head shaft (z1409..1411, y185..189) off from the stair. y172 and y173 are under the building's lowest course (y174)."
+        }
+      ],
+      "seat": [
+        1748,
+        162,
+        1435
+      ],
+      "floor_y": 158,
+      "battle": {
+        "trainer_pokemon": [
+          1748,
+          157,
+          1427
+        ],
+        "player_pokemon": [
+          1748,
+          157,
+          1420
+        ],
+        "trainer_stand": [
+          1748,
+          161,
+          1434
+        ],
+        "player_stand": [
+          1748,
+          157,
+          1417
+        ],
+        "why": "Cobblemon Battle Positions (see data/gym_arenas/gym1.json battle.why): the Pokemon blocks one under the floor's top course, under the copper line so they are under full blocks. Surge's Pokemon is 5.5 from the cab's face (cell edge z1433.0 against block centre z1427.5; clear radius 2.93, Raichu's model sweep: 2.57 to spare) and 6.5 from the nearest bank (the cell edge x1742 against x1748.5); the challenger's is 7 behind it, which is the larger of the two Pokemon being 1.5 wide at most (Vikavolt) with the whole of Raichu's 2.93 sweep as well; the challenger stands 3 behind their own. The trainer stand is under the cab top one in front of the seat, so Surge steps to the cab's edge."
+      }
+    },
+    "building": "data/gym_buildings/gym3.json"
+  },
   "entry": {
-    "route_end": [
-      1747,
-      191,
-      1414
+    "street": [
+      1721,
+      175,
+      1392
     ],
     "floor": [
-      1748,
-      159,
-      1410
+      1742,
+      172,
+      1421
     ],
-    "why": "route_end is where Surge stands today: one over his spawner (1747, 190, 1414) in the gallery, the end of data/gym_buildings/gym3.json step 7 ('surge'). The gallery runs 13 long and 4 wide; at its north end the floor opens on the stair's head at (1748, 190, 1407), and the stair winds down four turns (49 treads) to a landing at (1748, 158, 1407) and out of the cable door onto the hall floor at (1748, 159, 1410), 25.3 from Surge: farther than rctmod's forceBattleMaxDistance + 1, so the player is in the hall before he can call the fight."
+    "why": "street is the lane cell west of the door (ground y174 at x1721, tools/ground.py rounded: the lane runs flat along the foot of the wall, so the street is level with the works' floor). entry.floor is the Grounding Hall's first floor cell below the broad stair, 29 from Surge: farther than rctmod's forceBattleMaxDistance + 1 = 17, so the player stands on the hall floor before he can call the fight."
   },
+  "exit": {
+    "door": [
+      1734,
+      175,
+      1392
+    ],
+    "button": [
+      1735,
+      176,
+      1393
+    ],
+    "why": "the door past the leader: an iron door in the divider at the cab's west side, onto the bay ten blocks from the street door, opened by the stone button on the hall side of the wall (the stair up to it is beside the cab). Nothing in the bay opens it, so it cannot be used to reach Surge past the tower, the bars and the juniors. Or back the way you came: every step of the walk is a half step or a one-block step, nothing one-way."
+  },
+  "rooms": [
+    {
+      "id": "relay_lane_door",
+      "kind": "entrance",
+      "box": [
+        1722,
+        174,
+        1388,
+        1733,
+        184,
+        1395
+      ],
+      "why": "the door on the lane and the bay behind it: cable drums and spools, the tower ahead across the whole strip"
+    },
+    {
+      "id": "relay_tower",
+      "kind": "junior",
+      "box": [
+        1724,
+        175,
+        1395,
+        1733,
+        184,
+        1403
+      ],
+      "why": "the transformer bank across the strip, climbed only by its stair at the east end; the Line Engineer stands at its foot, then the catwalk on top"
+    },
+    {
+      "id": "relay_leads",
+      "kind": "puzzle",
+      "box": [
+        1724,
+        174,
+        1404,
+        1733,
+        184,
+        1414
+      ],
+      "why": "three bus bars over a floor of straw; three leads from the catwalk, one whole (west), the bright live bar with the open isolator in it. The Relay Technician stands on the deck at the whole lead"
+    },
+    {
+      "id": "relay_duct_room",
+      "kind": "puzzle",
+      "box": [
+        1724,
+        174,
+        1415,
+        1733,
+        184,
+        1422
+      ],
+      "why": "the isolator wall, the duct through it and its stair down onto the ground"
+    },
+    {
+      "id": "relay_junction",
+      "kind": "junior",
+      "box": [
+        1724,
+        174,
+        1423,
+        1734,
+        184,
+        1429
+      ],
+      "why": "the foot of the duct stair and the cross passage east through the divider; the Cable Rigger stands in it"
+    },
+    {
+      "id": "relay_earthing_gallery",
+      "kind": "passage",
+      "box": [
+        1735,
+        174,
+        1425,
+        1749,
+        185,
+        1428
+      ],
+      "why": "the platform at the works' level across the hall's south end, and its one broad stair down"
+    },
+    {
+      "id": "relay_grounding_hall",
+      "kind": "arena",
+      "box": [
+        1735,
+        171,
+        1390,
+        1749,
+        185,
+        1424
+      ],
+      "why": "the arena: 15 wide by 35 long (cab, floor and stair), three under the works' floor, the cab at its north end, Surge on it"
+    }
+  ],
+  "route": [
+    {
+      "step": 1,
+      "id": "relay_door",
+      "from": [
+        1721,
+        175,
+        1392
+      ],
+      "to": [
+        1724,
+        175,
+        1392
+      ],
+      "how": "walk"
+    },
+    {
+      "step": 2,
+      "id": "relay_bank_stair",
+      "from": [
+        1732,
+        175,
+        1395
+      ],
+      "to": [
+        1732,
+        177,
+        1398
+      ],
+      "how": "walk",
+      "why": "two half steps up the transformer bank's east end onto the catwalk"
+    },
+    {
+      "step": 3,
+      "id": "relay_leads_choice",
+      "from": [
+        1727,
+        177,
+        1403
+      ],
+      "to": [
+        1725,
+        179,
+        1406
+      ],
+      "how": "choose",
+      "why": "the whole lead is the west one: two stair steps up. The middle and east bars begin two courses over the deck with no step"
+    },
+    {
+      "step": 4,
+      "id": "relay_live_bar",
+      "from": [
+        1725,
+        179,
+        1406
+      ],
+      "to": [
+        1725,
+        179,
+        1414
+      ],
+      "how": "walk",
+      "why": "the bright bar, down one half step onto the insulator and up one"
+    },
+    {
+      "step": 5,
+      "id": "relay_duct",
+      "from": [
+        1725,
+        179,
+        1415
+      ],
+      "to": [
+        1725,
+        179,
+        1418
+      ],
+      "how": "walk"
+    },
+    {
+      "step": 6,
+      "id": "relay_duct_stair",
+      "from": [
+        1725,
+        179,
+        1419
+      ],
+      "to": [
+        1725,
+        175,
+        1423
+      ],
+      "how": "walk",
+      "why": "four half steps down onto the ground"
+    },
+    {
+      "step": 7,
+      "id": "relay_cross_passage",
+      "from": [
+        1725,
+        175,
+        1424
+      ],
+      "to": [
+        1735,
+        175,
+        1427
+      ],
+      "how": "walk"
+    },
+    {
+      "step": 8,
+      "id": "relay_broad_stair",
+      "from": [
+        1742,
+        175,
+        1425
+      ],
+      "to": [
+        1742,
+        172,
+        1421
+      ],
+      "how": "walk",
+      "why": "three half steps down the fifteen-wide stair into the Grounding Hall"
+    },
+    {
+      "step": 9,
+      "id": "relay_surge_floor",
+      "from": [
+        1742,
+        172,
+        1421
+      ],
+      "to": [
+        1742,
+        172,
+        1410
+      ],
+      "how": "walk"
+    }
+  ],
   "battle": {
     "trainer_pokemon": [
-      1748,
-      157,
-      1427
+      1742,
+      170,
+      1400
     ],
     "player_pokemon": [
-      1748,
-      157,
-      1420
+      1742,
+      170,
+      1407
     ],
     "trainer_stand": [
-      1748,
-      161,
-      1434
+      1742,
+      174,
+      1393
     ],
     "player_stand": [
-      1748,
-      157,
-      1417
+      1742,
+      170,
+      1410
     ],
-    "why": "Cobblemon Battle Positions (see data/gym_arenas/gym1.json battle.why): the Pokemon blocks one under the floor's top course, under the copper line so they are under full blocks. Surge's Pokemon is 5.5 from the cab's face (cell edge z1433.0 against block centre z1427.5; clear radius 2.93, Raichu's model sweep: 2.57 to spare) and 6.5 from the nearest bank (the cell edge x1742 against x1748.5); the challenger's is 7 behind it, which is the larger of the two Pokemon being 1.5 wide at most (Vikavolt) with the whole of Raichu's 2.93 sweep as well; the challenger stands 3 behind their own. The trainer stand is under the cab top one in front of the seat, so Surge steps to the cab's edge."
+    "why": "Cobblemon Battle Positions (see data/gym_arenas/gym1.json battle.why), the old Grounding Hall's offsets from its dais kept: Surge's Pokemon 5.5 from the cab's face (cell edge z1395.0 against block centre z1400.5; clear radius 2.93, Raichu's model sweep), the challenger's 7 behind it, the challenger 3 behind their own; the blocks one under the floor's top course, under the copper line so they are under full blocks. The trainer stand is under the cab top one in front of the seat, so Surge steps to the cab's edge."
   },
   "challenge_spawner": {
     "old_at": [
-      1747,
-      190,
-      1412
+      1746,
+      162,
+      1435
     ],
     "old_restore": {
-      "floor": "minecraft:polished_deepslate",
-      "under": "minecraft:tuff"
+      "floor": "minecraft:waxed_cut_copper",
+      "under": "minecraft:deepslate_tiles"
     },
-    "why": "the Challenge spawner the trainers cycle set two north of the gallery seat (data/challenge_mode.json bosses.kanto_ltsurge.spawner.at, moved in this change to (1746, 162, 1435): two west of the seat, flush in the cab's top, redstone under it in the cab, three open cells over it). old_restore is the building's own model at (1747, 190, 1412) and (1747, 189, 1412), measured."
+    "why": "Surge is outside single_leader.rollout, so the Challenge spawner the trainers cycle set in the carved Grounding Hall's cab at (1746, 162, 1435) (data/challenge_mode.json bosses.kanto_ltsurge.spawner.superseded_at) is the one the check asks this record to name. A walk-through hall moves nothing (hall_seat_lines) and its takedown fills that arena with stone, so the cell is gone; old_restore is the old cab's own floor and the block under it. The live Challenge cell is data/challenge_mode.json bosses.kanto_ltsurge.spawner.at (1742, 175, 1390), two north of the seat on the same line in this hall's cab top."
   },
   "palette": {
     "shell": "minecraft:deepslate_bricks",
     "floor": "minecraft:polished_deepslate",
     "tiles": "minecraft:deepslate_tiles",
     "tuff": "minecraft:tuff_bricks",
+    "rock": "minecraft:tuff",
+    "cap": "minecraft:deepslate_bricks",
     "c0": "minecraft:waxed_oxidized_cut_copper",
     "c1": "minecraft:waxed_weathered_cut_copper",
     "c2": "minecraft:waxed_exposed_cut_copper",
@@ -101,13 +402,15 @@
     "g3": "minecraft:waxed_copper_grate",
     "rod": "minecraft:lightning_rod[facing=up]",
     "tread": "minecraft:deepslate_brick_stairs",
+    "cstair": "minecraft:waxed_cut_copper_stairs",
     "lantern": "minecraft:lantern",
     "hanging": "minecraft:lantern[hanging=true]",
     "chain_y": "minecraft:chain[axis=y]",
     "froglight": "minecraft:ochre_froglight[axis=y]",
     "lamp_on": "minecraft:redstone_lamp[lit=true]",
     "lamp_off": "minecraft:redstone_lamp[lit=false]",
-    "rs": "minecraft:redstone_block"
+    "rs": "minecraft:redstone_block",
+    "straw": "minecraft:hay_block"
   },
   "blocks": [
     "minecraft:air",
@@ -115,6 +418,7 @@
     "minecraft:polished_deepslate",
     "minecraft:deepslate_tiles",
     "minecraft:tuff_bricks",
+    "minecraft:tuff",
     "minecraft:waxed_oxidized_cut_copper",
     "minecraft:waxed_weathered_cut_copper",
     "minecraft:waxed_exposed_cut_copper",
@@ -125,235 +429,3379 @@
     "minecraft:waxed_copper_grate",
     "minecraft:lightning_rod",
     "minecraft:deepslate_brick_stairs",
+    "minecraft:waxed_cut_copper_stairs",
     "minecraft:lantern",
     "minecraft:chain",
     "minecraft:ochre_froglight",
     "minecraft:redstone_lamp",
-    "minecraft:redstone_block"
+    "minecraft:redstone_block",
+    "minecraft:hay_block",
+    "minecraft:iron_door",
+    "minecraft:stone_button"
   ],
-  "blocks_why": "the town's own palette (TOWN_CHARACTER.md gym3_town: deepslate and tuff, weathered and waxed copper) and nothing that is a spawn condition: no grass, leaves, water, sand or carpet. Every copper block is WAXED: an unwaxed one oxidises over time, and the whole point of the gradient is that it stays where it is put. The redstone lamps are lit only with a redstone block touching them (an unpowered lit lamp switches itself off a few ticks after a neighbour changes).",
+  "blocks_why": "the town's own palette (TOWN_CHARACTER.md gym3_town: deepslate and tuff, weathered and waxed copper) and nothing else of the world's: no grass, leaves, water, sand or carpet. Every copper block is WAXED: an unwaxed one oxidises over time, and the whole point of the gradient (and of the clue on the bars) is that it stays where it is put. The lightning rods and redstone lamps are spawn-condition blocks (data/spawn_blocks.json: lightning rod for Electrode, Galvantula, Joltik; redstone lamp for Rotom), kept from the carved Grounding Hall for its look; the whole lot is inside the spawn-free zone gym_surge, so they decide no encounter. The lamps are lit only with a redstone block touching them (an unpowered lit lamp switches itself off a few ticks after a neighbour changes). Hay is straw on a stone floor, inside a roofed hall.",
+  "parts": [
+    {
+      "op": "comment",
+      "why": "THE TAKEDOWN ABOVE THE PAD: the whole lot cleared, y174 up to the top of the Relay Works' rock mass (y206, data/gym_buildings/gym3.json bounds 1725..1750 x 174..206 x 1391..1430, now superseded), so nothing of the old works survives. Below the pad the takedown function (gym3_takedown) fills the old Grounding Hall."
+    },
+    {
+      "op": "carve",
+      "box": [
+        1722,
+        174,
+        1388,
+        1752,
+        206,
+        1432
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1722,
+        174,
+        1388,
+        1752,
+        174,
+        1432
+      ],
+      "block": "$tiles",
+      "why": "the lot's paving at y174, deepslate tile, the town's own: the works' apron on every side"
+    },
+    {
+      "op": "carve",
+      "box": [
+        1735,
+        172,
+        1395,
+        1749,
+        184,
+        1421
+      ],
+      "why": "the Grounding Hall sunk three under the works' floor: its air from y172 to the roof, from the cab's front (z1395) to the foot of the broad stair (z1421). Every wall of it is built below (the shell rule: no open cell touches rock)"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        171,
+        1395,
+        1749,
+        171,
+        1421
+      ],
+      "block": "$floor",
+      "why": "THE GROUNDING HALL: polished deepslate, y171"
+    },
+    {
+      "op": "comment",
+      "why": "THE WORKS, walls first. West wall x1723 (the door on the lane), north wall z1388..1389 (two thick: the board's redstone sits in it), south wall z1429, the divider x1734 between the walk and the hall, the east wall x1750 against the hill. The strip is 10 wide (x1724..1733), the hall 15 (x1735..1749)"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1723,
+        175,
+        1388,
+        1733,
+        184,
+        1389
+      ],
+      "block": "$shell"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        171,
+        1388,
+        1750,
+        185,
+        1389
+      ],
+      "block": "$shell"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1723,
+        175,
+        1388,
+        1723,
+        184,
+        1429
+      ],
+      "block": "$shell"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1723,
+        175,
+        1429,
+        1733,
+        184,
+        1429
+      ],
+      "block": "$shell"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        171,
+        1429,
+        1750,
+        185,
+        1429
+      ],
+      "block": "$shell"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1750,
+        171,
+        1389,
+        1750,
+        185,
+        1429
+      ],
+      "block": "$shell"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        171,
+        1390,
+        1734,
+        185,
+        1428
+      ],
+      "block": "$shell"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1723,
+        182,
+        1388,
+        1723,
+        182,
+        1429
+      ],
+      "block": "$c1",
+      "why": "a weathered copper string course round the strip, which is how the town reads a substation"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1724,
+        182,
+        1388,
+        1733,
+        182,
+        1388
+      ],
+      "block": "$c1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1724,
+        182,
+        1429,
+        1733,
+        182,
+        1429
+      ],
+      "block": "$c1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1750,
+        183,
+        1389,
+        1750,
+        183,
+        1429
+      ],
+      "block": "$c1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        183,
+        1388,
+        1750,
+        183,
+        1388
+      ],
+      "block": "$c1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        183,
+        1429,
+        1750,
+        183,
+        1429
+      ],
+      "block": "$c1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1723,
+        184,
+        1388,
+        1733,
+        184,
+        1429
+      ],
+      "block": "$tiles",
+      "why": "the strip's roof, y184: deepslate tile"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        185,
+        1388,
+        1750,
+        185,
+        1429
+      ],
+      "block": "$tiles",
+      "why": "the hall's roof, y185, one course higher"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1751,
+        174,
+        1388,
+        1751,
+        192,
+        1432
+      ],
+      "block": "$rock",
+      "why": "the rock the works are cut into, east of the hall (the lot's own cut edge against the hillside at x1753): two benches, as the Relay Works had them, stepped up to meet it"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1752,
+        174,
+        1388,
+        1752,
+        200,
+        1432
+      ],
+      "block": "$rock"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1751,
+        192,
+        1388,
+        1751,
+        192,
+        1432
+      ],
+      "block": "$cap"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1752,
+        200,
+        1388,
+        1752,
+        200,
+        1432
+      ],
+      "block": "$cap"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        186,
+        1392,
+        1738,
+        187,
+        1392
+      ],
+      "block": "$c3",
+      "why": "a bright copper finial on the hall's roof, deliberately not a lightning rod: a rod standing outside under the open sky is a lightning target (from memory of vanilla, not checked); the rods inside stand under the roof"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        186,
+        1392,
+        1746,
+        187,
+        1392
+      ],
+      "block": "$c3",
+      "why": "a bright copper finial on the hall's roof, deliberately not a lightning rod: a rod standing outside under the open sky is a lightning target (from memory of vanilla, not checked); the rods inside stand under the roof"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        186,
+        1426,
+        1738,
+        187,
+        1426
+      ],
+      "block": "$c3",
+      "why": "a bright copper finial on the hall's roof, deliberately not a lightning rod: a rod standing outside under the open sky is a lightning target (from memory of vanilla, not checked); the rods inside stand under the roof"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        186,
+        1426,
+        1746,
+        187,
+        1426
+      ],
+      "block": "$c3",
+      "why": "a bright copper finial on the hall's roof, deliberately not a lightning rod: a rod standing outside under the open sky is a lightning target (from memory of vanilla, not checked); the rods inside stand under the roof"
+    },
+    {
+      "op": "carve",
+      "box": [
+        1723,
+        175,
+        1391,
+        1723,
+        178,
+        1393
+      ],
+      "why": "THE DOOR, in the west wall at the north end, three wide and four high: the town is behind you when you go in (the lot anchor's `facing: west`)"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1723,
+        179,
+        1390,
+        1723,
+        179,
+        1394
+      ],
+      "block": "$floor",
+      "why": "its lintel"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1723,
+          181,
+          1392
+        ],
+        [
+          1723,
+          177,
+          1390
+        ],
+        [
+          1723,
+          177,
+          1394
+        ]
+      ],
+      "block": "$froglight",
+      "why": "ochre light set flush over and beside the door, so the way in reads from the lane"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1724,
+        174,
+        1390,
+        1733,
+        174,
+        1428
+      ],
+      "block": "$floor",
+      "why": "the strip's floor: polished deepslate"
+    },
+    {
+      "op": "comment",
+      "why": "THE BAY, z1390..1394 (the cable drums and spools the works keep at the door), kept clear at z1393..1395 so nothing stands within a jump of the tower's face"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1724,
+        175,
+        1390,
+        1725,
+        176,
+        1391
+      ],
+      "block": "$c2",
+      "why": "a cable drum, two by two"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1731,
+        175,
+        1390,
+        1733,
+        176,
+        1391
+      ],
+      "block": "$c2",
+      "why": "and a second, three wide"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1729,
+        175,
+        1390,
+        1729,
+        176,
+        1390
+      ],
+      "block": "$tuff",
+      "why": "a spool crate between them"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1724,
+          177,
+          1390
+        ],
+        [
+          1733,
+          177,
+          1390
+        ],
+        [
+          1729,
+          177,
+          1390
+        ]
+      ],
+      "block": "$lantern",
+      "why": "lanterns on the drums"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1724,
+        175,
+        1392,
+        1724,
+        177,
+        1392
+      ],
+      "block": "$c0",
+      "why": "a relay cabinet against the west wall's back, oxidised, forgotten"
+    },
+    {
+      "op": "comment",
+      "why": "THE TOWER, z1396..1403 across the whole strip, two courses high, sheer but for its stair at the east end (x1732..1733). Its top is the catwalk: a copper grate deck at y176 (stand 177). The Line Engineer stands at the foot."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1724,
+        175,
+        1396,
+        1733,
+        176,
+        1403
+      ],
+      "block": "$c1",
+      "why": "the transformer bank: weathered waxed copper"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1724,
+        176,
+        1398,
+        1733,
+        176,
+        1403
+      ],
+      "block": "$g1",
+      "why": "the catwalk deck, grate"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        175,
+        1396,
+        1726,
+        176,
+        1396
+      ],
+      "block": "$g0",
+      "why": "copper fins on the bank's face"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1728,
+        175,
+        1396,
+        1729,
+        176,
+        1396
+      ],
+      "block": "$g0"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1730,
+        175,
+        1396,
+        1730,
+        176,
+        1396
+      ],
+      "block": "$g0"
+    },
+    {
+      "op": "straight_stair",
+      "from": [
+        1732,
+        176,
+        1397
+      ],
+      "dir": "north",
+      "steps": 2,
+      "tread": "$tread",
+      "under": "$c1",
+      "headroom": 3,
+      "width": 2,
+      "why": "the bank's stair at its east end, two wide: two half steps up from the bay onto the catwalk (walked both ways)"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1724,
+          177,
+          1398
+        ],
+        [
+          1724,
+          177,
+          1403
+        ]
+      ],
+      "block": "$lantern",
+      "why": "lanterns at the deck's west corners (against the wall, off the way)"
+    },
+    {
+      "op": "comment",
+      "why": "THE BUS FLOOR: a pit of packing straw (y174) under three bus bars at y178, z1405..1414, each a two-wide run. Each bar leaves the catwalk by a LEAD: two copper stair steps from the deck. Only the west lead is whole; the middle and east bars rise two courses sheer from the deck (their lower pier is lifted out), so they cannot be climbed, and the bright waxed copper and the lanterns over the west bar say which is live."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1724,
+        174,
+        1404,
+        1733,
+        174,
+        1414
+      ],
+      "block": "$straw",
+      "why": "the bales of packing straw the works keep under the live line; a fall onto them hurts nobody"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        175,
+        1404,
+        1726,
+        176,
+        1404
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        175,
+        1405,
+        1726,
+        177,
+        1405
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "straight_stair",
+      "from": [
+        1725,
+        178,
+        1405
+      ],
+      "dir": "north",
+      "steps": 2,
+      "tread": "$cstair",
+      "under": "$c3",
+      "headroom": 3,
+      "width": 2,
+      "why": "the whole lead: two stair steps from the catwalk deck (stand 177) up onto the live bar (stand 179)"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        178,
+        1406,
+        1726,
+        178,
+        1408
+      ],
+      "block": "$c3",
+      "why": "the live bar, bright waxed copper"
+    },
+    {
+      "op": "straight_stair",
+      "from": [
+        1725,
+        178,
+        1409
+      ],
+      "dir": "south",
+      "steps": 1,
+      "tread": "$cstair",
+      "under": "$c3",
+      "headroom": 3,
+      "width": 2,
+      "why": "the isolator: the bar steps down onto the insulator ..."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        177,
+        1410,
+        1726,
+        177,
+        1411
+      ],
+      "block": "$tuff",
+      "why": "... the open switch's insulator, one course lower, two long ..."
+    },
+    {
+      "op": "straight_stair",
+      "from": [
+        1725,
+        178,
+        1412
+      ],
+      "dir": "north",
+      "steps": 1,
+      "tread": "$cstair",
+      "under": "$c3",
+      "headroom": 3,
+      "width": 2,
+      "why": "... and steps up onto the bar again"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        178,
+        1413,
+        1726,
+        178,
+        1414
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1728,
+        175,
+        1405,
+        1729,
+        178,
+        1405
+      ],
+      "block": "$c1",
+      "why": "the middle bar: its lead is gone (no stair at z1404): two courses sheer from the deck, weathered, dark"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1728,
+        178,
+        1406,
+        1729,
+        178,
+        1414
+      ],
+      "block": "$c1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1731,
+        175,
+        1405,
+        1732,
+        178,
+        1405
+      ],
+      "block": "$c0",
+      "why": "the east bar: the same, oxidised"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1731,
+        178,
+        1406,
+        1732,
+        178,
+        1414
+      ],
+      "block": "$c0"
+    },
+    {
+      "op": "straight_stair",
+      "from": [
+        1733,
+        176,
+        1403
+      ],
+      "dir": "south",
+      "steps": 2,
+      "tread": "$tread",
+      "under": "$c1",
+      "headroom": 3,
+      "why": "a stair back out of the straw onto the catwalk, at the pit's east edge: a fall costs a walk, never a softlock"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        182,
+        1407,
+        1725,
+        183,
+        1407
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1726,
+        182,
+        1407,
+        1726,
+        183,
+        1407
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        182,
+        1413,
+        1725,
+        183,
+        1413
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1726,
+        182,
+        1413,
+        1726,
+        183,
+        1413
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1725,
+          181,
+          1407
+        ],
+        [
+          1726,
+          181,
+          1407
+        ],
+        [
+          1725,
+          181,
+          1413
+        ],
+        [
+          1726,
+          181,
+          1413
+        ]
+      ],
+      "block": "$hanging",
+      "why": "hung lanterns over the live bar, high enough that a head under them clears (181 against a head top of 180.8)"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1728,
+          184,
+          1410
+        ],
+        [
+          1731,
+          184,
+          1410
+        ],
+        [
+          1725,
+          184,
+          1410
+        ]
+      ],
+      "block": "$froglight",
+      "why": "light cut into the roof over the bars"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1723,
+          180,
+          1404
+        ],
+        [
+          1723,
+          180,
+          1410
+        ],
+        [
+          1734,
+          180,
+          1404
+        ],
+        [
+          1734,
+          180,
+          1412
+        ]
+      ],
+      "block": "$froglight",
+      "why": "and flush in the pit's side walls (x1723 and the divider x1734)"
+    },
+    {
+      "op": "comment",
+      "why": "THE ISOLATOR WALL, z1415..1416 across the strip, to the roof: the live bar goes through it by the duct at x1725..1726"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1724,
+        175,
+        1415,
+        1733,
+        183,
+        1416
+      ],
+      "block": "$shell"
+    },
+    {
+      "op": "carve",
+      "box": [
+        1725,
+        179,
+        1415,
+        1726,
+        182,
+        1416
+      ],
+      "why": "the duct mouth, two wide and four high, at the bar's line"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        178,
+        1415,
+        1726,
+        178,
+        1416
+      ],
+      "block": "$c3",
+      "why": "the bar runs on through the wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1724,
+        181,
+        1415,
+        1733,
+        181,
+        1415
+      ],
+      "block": "$tuff",
+      "why": "tuff bands on the wall's face: insulator discs"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1727,
+          180,
+          1415
+        ],
+        [
+          1730,
+          180,
+          1415
+        ],
+        [
+          1733,
+          180,
+          1415
+        ]
+      ],
+      "block": "$froglight"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1724,
+        175,
+        1417,
+        1733,
+        183,
+        1422
+      ],
+      "block": "$c2",
+      "why": "behind the wall the bank: the duct and its stair are cut through it, and the rest is bank"
+    },
+    {
+      "op": "carve",
+      "box": [
+        1725,
+        179,
+        1417,
+        1726,
+        183,
+        1422
+      ],
+      "why": "the duct and the air over its stair"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        178,
+        1417,
+        1726,
+        178,
+        1418
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        175,
+        1417,
+        1726,
+        177,
+        1418
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "straight_stair",
+      "from": [
+        1725,
+        178,
+        1419
+      ],
+      "dir": "south",
+      "steps": 4,
+      "tread": "$tread",
+      "under": "$c2",
+      "headroom": 3,
+      "width": 2,
+      "why": "the duct's stair down onto the ground: four half steps, south (walked both ways)"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1727,
+          180,
+          1418
+        ],
+        [
+          1724,
+          180,
+          1420
+        ],
+        [
+          1727,
+          178,
+          1421
+        ],
+        [
+          1724,
+          178,
+          1418
+        ]
+      ],
+      "block": "$froglight",
+      "why": "light cut into the bank's face over the duct"
+    },
+    {
+      "op": "comment",
+      "why": "THE JUNCTION, z1423..1428: the foot of the duct stair and the way to the hall through the divider"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        175,
+        1428,
+        1729,
+        176,
+        1428
+      ],
+      "block": "$c0",
+      "why": "relay cabinets against the south wall, oxidised"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1731,
+        175,
+        1428,
+        1732,
+        177,
+        1428
+      ],
+      "block": "$tuff"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1727,
+          177,
+          1428
+        ],
+        [
+          1731,
+          178,
+          1428
+        ]
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1723,
+          177,
+          1424
+        ],
+        [
+          1723,
+          177,
+          1427
+        ],
+        [
+          1734,
+          177,
+          1425
+        ],
+        [
+          1729,
+          184,
+          1426
+        ],
+        [
+          1731,
+          184,
+          1424
+        ]
+      ],
+      "block": "$froglight"
+    },
+    {
+      "op": "carve",
+      "box": [
+        1734,
+        175,
+        1426,
+        1734,
+        178,
+        1428
+      ],
+      "why": "THE CROSS PASSAGE: the divider cut three wide and four high at the platform"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        179,
+        1426,
+        1734,
+        179,
+        1428
+      ],
+      "block": "$floor",
+      "why": "its lintel"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1734,
+          180,
+          1427
+        ]
+      ],
+      "block": "$froglight"
+    },
+    {
+      "op": "comment",
+      "why": "THE EARTHING GALLERY: a platform at the works' level (y174, z1425..1428) across the whole hall, and one broad stair of three half steps down to the hall floor ('where the line is earthed')"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        174,
+        1425,
+        1749,
+        174,
+        1428
+      ],
+      "block": "$floor"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        174,
+        1425,
+        1742,
+        174,
+        1428
+      ],
+      "block": "$c0",
+      "why": "the signal line starts here, oxidised"
+    },
+    {
+      "op": "straight_stair",
+      "from": [
+        1735,
+        174,
+        1424
+      ],
+      "dir": "north",
+      "steps": 3,
+      "tread": "$tread",
+      "under": "$shell",
+      "headroom": 4,
+      "width": 15,
+      "why": "THE BROAD STAIR, fifteen wide, three half steps down onto the hall floor (y171)"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1736,
+          174,
+          1426
+        ],
+        [
+          1748,
+          174,
+          1426
+        ],
+        [
+          1738,
+          174,
+          1428
+        ],
+        [
+          1746,
+          174,
+          1428
+        ]
+      ],
+      "block": "$froglight",
+      "why": "ochre light set flush in the platform"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1735,
+          178,
+          1429
+        ],
+        [
+          1749,
+          178,
+          1429
+        ],
+        [
+          1735,
+          178,
+          1425
+        ],
+        [
+          1749,
+          178,
+          1425
+        ]
+      ],
+      "block": "$froglight",
+      "why": "and in the walls"
+    },
+    {
+      "op": "comment",
+      "why": "THE GROUNDING HALL. The signal line down the axis (x1742): bright at the dais, oxidised at the stair, a runway of deepslate tile seven wide beside it, ochre light set in the floor every third course."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1739,
+        171,
+        1395,
+        1745,
+        171,
+        1421
+      ],
+      "block": "$tiles",
+      "why": "a runway of deepslate tile seven wide down the middle"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        171,
+        1395,
+        1742,
+        171,
+        1400
+      ],
+      "block": "$c3",
+      "why": "the signal line: one course of waxed copper, bright at the dais"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        171,
+        1401,
+        1742,
+        171,
+        1406
+      ],
+      "block": "$c2"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        171,
+        1407,
+        1742,
+        171,
+        1412
+      ],
+      "block": "$c1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        171,
+        1413,
+        1742,
+        171,
+        1421
+      ],
+      "block": "$c0",
+      "why": "oxidised at the stair: the current rising as it comes in"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1740,
+          171,
+          1397
+        ],
+        [
+          1740,
+          171,
+          1400
+        ],
+        [
+          1740,
+          171,
+          1403
+        ],
+        [
+          1740,
+          171,
+          1406
+        ],
+        [
+          1740,
+          171,
+          1409
+        ],
+        [
+          1740,
+          171,
+          1412
+        ],
+        [
+          1740,
+          171,
+          1415
+        ],
+        [
+          1740,
+          171,
+          1418
+        ]
+      ],
+      "block": "$froglight"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1744,
+          171,
+          1397
+        ],
+        [
+          1744,
+          171,
+          1400
+        ],
+        [
+          1744,
+          171,
+          1403
+        ],
+        [
+          1744,
+          171,
+          1406
+        ],
+        [
+          1744,
+          171,
+          1409
+        ],
+        [
+          1744,
+          171,
+          1412
+        ],
+        [
+          1744,
+          171,
+          1415
+        ],
+        [
+          1744,
+          171,
+          1418
+        ]
+      ],
+      "block": "$froglight"
+    },
+    {
+      "op": "comment",
+      "why": "the west bank: four transformer bays along the wall, each a stage further up the oxidation ladder than the last, so the bank brightens toward the dais as the floor line does; tile plinth, waxed copper body, a grate vent on the aisle face, two lightning rods on top"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        172,
+        1398,
+        1737,
+        173,
+        1402
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        174,
+        1398,
+        1737,
+        177,
+        1402
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1737,
+        175,
+        1399,
+        1737,
+        176,
+        1401
+      ],
+      "block": "$g3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        178,
+        1398,
+        1737,
+        178,
+        1402
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1736,
+        179,
+        1399,
+        1736,
+        181,
+        1399
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1736,
+        179,
+        1401,
+        1736,
+        181,
+        1401
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        172,
+        1404,
+        1737,
+        173,
+        1408
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        174,
+        1404,
+        1737,
+        177,
+        1408
+      ],
+      "block": "$c2"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1737,
+        175,
+        1405,
+        1737,
+        176,
+        1407
+      ],
+      "block": "$g2"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        178,
+        1404,
+        1737,
+        178,
+        1408
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1736,
+        179,
+        1405,
+        1736,
+        181,
+        1405
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1736,
+        179,
+        1407,
+        1736,
+        181,
+        1407
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        172,
+        1410,
+        1737,
+        173,
+        1414
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        174,
+        1410,
+        1737,
+        177,
+        1414
+      ],
+      "block": "$c1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1737,
+        175,
+        1411,
+        1737,
+        176,
+        1413
+      ],
+      "block": "$g1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        178,
+        1410,
+        1737,
+        178,
+        1414
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1736,
+        179,
+        1411,
+        1736,
+        181,
+        1411
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1736,
+        179,
+        1413,
+        1736,
+        181,
+        1413
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        172,
+        1416,
+        1737,
+        173,
+        1420
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        174,
+        1416,
+        1737,
+        177,
+        1420
+      ],
+      "block": "$c0"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1737,
+        175,
+        1417,
+        1737,
+        176,
+        1419
+      ],
+      "block": "$g0"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        178,
+        1416,
+        1737,
+        178,
+        1420
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1736,
+        179,
+        1417,
+        1736,
+        181,
+        1417
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1736,
+        179,
+        1419,
+        1736,
+        181,
+        1419
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        172,
+        1403,
+        1737,
+        177,
+        1403
+      ],
+      "block": "$tuff",
+      "why": "a tuff seam between the bays"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1736,
+        178,
+        1403
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        172,
+        1409,
+        1737,
+        177,
+        1409
+      ],
+      "block": "$tuff",
+      "why": "a tuff seam between the bays"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1736,
+        178,
+        1409
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        172,
+        1415,
+        1737,
+        177,
+        1415
+      ],
+      "block": "$tuff",
+      "why": "a tuff seam between the bays"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1736,
+        178,
+        1415
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        180,
+        1398,
+        1735,
+        181,
+        1420
+      ],
+      "block": "$g1",
+      "why": "a weathered copper duct along the wall above the bank"
+    },
+    {
+      "op": "comment",
+      "why": "the east bank: four transformer bays along the wall, each a stage further up the oxidation ladder than the last, so the bank brightens toward the dais as the floor line does; tile plinth, waxed copper body, a grate vent on the aisle face, two lightning rods on top"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        172,
+        1398,
+        1749,
+        173,
+        1402
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        174,
+        1398,
+        1749,
+        177,
+        1402
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        175,
+        1399,
+        1747,
+        176,
+        1401
+      ],
+      "block": "$g3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        178,
+        1398,
+        1749,
+        178,
+        1402
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1748,
+        179,
+        1399,
+        1748,
+        181,
+        1399
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1748,
+        179,
+        1401,
+        1748,
+        181,
+        1401
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        172,
+        1404,
+        1749,
+        173,
+        1408
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        174,
+        1404,
+        1749,
+        177,
+        1408
+      ],
+      "block": "$c2"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        175,
+        1405,
+        1747,
+        176,
+        1407
+      ],
+      "block": "$g2"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        178,
+        1404,
+        1749,
+        178,
+        1408
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1748,
+        179,
+        1405,
+        1748,
+        181,
+        1405
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1748,
+        179,
+        1407,
+        1748,
+        181,
+        1407
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        172,
+        1410,
+        1749,
+        173,
+        1414
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        174,
+        1410,
+        1749,
+        177,
+        1414
+      ],
+      "block": "$c1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        175,
+        1411,
+        1747,
+        176,
+        1413
+      ],
+      "block": "$g1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        178,
+        1410,
+        1749,
+        178,
+        1414
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1748,
+        179,
+        1411,
+        1748,
+        181,
+        1411
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1748,
+        179,
+        1413,
+        1748,
+        181,
+        1413
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        172,
+        1416,
+        1749,
+        173,
+        1420
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        174,
+        1416,
+        1749,
+        177,
+        1420
+      ],
+      "block": "$c0"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        175,
+        1417,
+        1747,
+        176,
+        1419
+      ],
+      "block": "$g0"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        178,
+        1416,
+        1749,
+        178,
+        1420
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1748,
+        179,
+        1417,
+        1748,
+        181,
+        1417
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1748,
+        179,
+        1419,
+        1748,
+        181,
+        1419
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        172,
+        1403,
+        1749,
+        177,
+        1403
+      ],
+      "block": "$tuff",
+      "why": "a tuff seam between the bays"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1748,
+        178,
+        1403
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        172,
+        1409,
+        1749,
+        177,
+        1409
+      ],
+      "block": "$tuff",
+      "why": "a tuff seam between the bays"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1748,
+        178,
+        1409
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        172,
+        1415,
+        1749,
+        177,
+        1415
+      ],
+      "block": "$tuff",
+      "why": "a tuff seam between the bays"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1748,
+        178,
+        1415
+      ],
+      "block": "$lantern"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1749,
+        180,
+        1398,
+        1749,
+        181,
+        1420
+      ],
+      "block": "$g1",
+      "why": "a weathered copper duct along the wall above the bank"
+    },
+    {
+      "op": "comment",
+      "why": "THE CAB, x1738..1746 by z1390..1394, four over the floor (top y175): the control cab at the north end, a generator housing on its east, the exit stair and a pilaster on its west. The seat (1742, 175, 1392) is never written here."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        172,
+        1390,
+        1746,
+        174,
+        1394
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        175,
+        1390,
+        1746,
+        175,
+        1394
+      ],
+      "block": "$c3",
+      "why": "its top: bright waxed copper"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1739,
+        173,
+        1394,
+        1741,
+        174,
+        1394
+      ],
+      "block": "$g3",
+      "why": "vents in its face, either side of the centre"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1743,
+        173,
+        1394,
+        1745,
+        174,
+        1394
+      ],
+      "block": "$g3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        172,
+        1394,
+        1746,
+        172,
+        1394
+      ],
+      "block": "$tuff",
+      "why": "a tuff footing under the face"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1738,
+          176,
+          1394
+        ],
+        [
+          1746,
+          176,
+          1394
+        ]
+      ],
+      "block": "$lantern",
+      "why": "a lantern at each end of the cab's front edge"
+    },
+    {
+      "op": "comment",
+      "why": "the east housing, a generator casing: tile plinth, bright copper, a vent on its aisle face, rods on top"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        172,
+        1390,
+        1749,
+        173,
+        1397
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        174,
+        1390,
+        1749,
+        178,
+        1397
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        175,
+        1395,
+        1747,
+        177,
+        1396
+      ],
+      "block": "$g3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        179,
+        1390,
+        1749,
+        179,
+        1397
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1748,
+        180,
+        1392,
+        1748,
+        182,
+        1392
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1748,
+        180,
+        1395,
+        1748,
+        182,
+        1395
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "comment",
+      "why": "the west pilaster beside the exit stair: it closes the cab off from the stair and the stair from the cab, to the roof of the housing's height"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1737,
+        172,
+        1390,
+        1737,
+        181,
+        1396
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1737,
+        176,
+        1395,
+        1737,
+        177,
+        1396
+      ],
+      "block": "$g3"
+    },
+    {
+      "op": "comment",
+      "why": "THE LOAD BOARD set into the back wall's inner course (z1389): a frame of bright copper round nine columns of redstone lamps, six rows; the lit ones (each with a redstone block in the wall's outer course behind it, buried in the hill) rise to a peak over the leader's head. z1390, in front of it, stays air: the Challenge spawner's cell (1742, 175, 1390) has three open above it"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1737,
+        176,
+        1389,
+        1737,
+        182,
+        1389
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        176,
+        1389,
+        1747,
+        182,
+        1389
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        182,
+        1389,
+        1746,
+        182,
+        1389
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        176,
+        1389,
+        1738,
+        176,
+        1389
+      ],
+      "block": "$lamp_on"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        176,
+        1388,
+        1738,
+        176,
+        1388
+      ],
+      "block": "$rs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        177,
+        1389,
+        1738,
+        181,
+        1389
+      ],
+      "block": "$lamp_off"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1739,
+        176,
+        1389,
+        1739,
+        177,
+        1389
+      ],
+      "block": "$lamp_on"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1739,
+        176,
+        1388,
+        1739,
+        177,
+        1388
+      ],
+      "block": "$rs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1739,
+        178,
+        1389,
+        1739,
+        181,
+        1389
+      ],
+      "block": "$lamp_off"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1740,
+        176,
+        1389,
+        1740,
+        179,
+        1389
+      ],
+      "block": "$lamp_on"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1740,
+        176,
+        1388,
+        1740,
+        179,
+        1388
+      ],
+      "block": "$rs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1740,
+        180,
+        1389,
+        1740,
+        181,
+        1389
+      ],
+      "block": "$lamp_off"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1741,
+        176,
+        1389,
+        1741,
+        180,
+        1389
+      ],
+      "block": "$lamp_on"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1741,
+        176,
+        1388,
+        1741,
+        180,
+        1388
+      ],
+      "block": "$rs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1741,
+        181,
+        1389,
+        1741,
+        181,
+        1389
+      ],
+      "block": "$lamp_off"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        176,
+        1389,
+        1742,
+        181,
+        1389
+      ],
+      "block": "$lamp_on"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        176,
+        1388,
+        1742,
+        181,
+        1388
+      ],
+      "block": "$rs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1743,
+        176,
+        1389,
+        1743,
+        180,
+        1389
+      ],
+      "block": "$lamp_on"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1743,
+        176,
+        1388,
+        1743,
+        180,
+        1388
+      ],
+      "block": "$rs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1743,
+        181,
+        1389,
+        1743,
+        181,
+        1389
+      ],
+      "block": "$lamp_off"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1744,
+        176,
+        1389,
+        1744,
+        179,
+        1389
+      ],
+      "block": "$lamp_on"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1744,
+        176,
+        1388,
+        1744,
+        179,
+        1388
+      ],
+      "block": "$rs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1744,
+        180,
+        1389,
+        1744,
+        181,
+        1389
+      ],
+      "block": "$lamp_off"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1745,
+        176,
+        1389,
+        1745,
+        177,
+        1389
+      ],
+      "block": "$lamp_on"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1745,
+        176,
+        1388,
+        1745,
+        177,
+        1388
+      ],
+      "block": "$rs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1745,
+        178,
+        1389,
+        1745,
+        181,
+        1389
+      ],
+      "block": "$lamp_off"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        176,
+        1389,
+        1746,
+        176,
+        1389
+      ],
+      "block": "$lamp_on"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        176,
+        1388,
+        1746,
+        176,
+        1388
+      ],
+      "block": "$rs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        177,
+        1389,
+        1746,
+        181,
+        1389
+      ],
+      "block": "$lamp_off"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1739,
+        176,
+        1390,
+        1739,
+        181,
+        1390
+      ],
+      "block": "$rod",
+      "why": "two stacks of lightning rods in front of the board, either side of the leader"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1745,
+        176,
+        1390,
+        1745,
+        181,
+        1390
+      ],
+      "block": "$rod"
+    },
+    {
+      "op": "comment",
+      "why": "a rib of deepslate tile across the hall's ceiling over each seam; three bus runs down its length at y179, hung on chains: two weathered and one bright, the middle one live"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        184,
+        1403,
+        1749,
+        184,
+        1403
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        184,
+        1409,
+        1749,
+        184,
+        1409
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        184,
+        1415,
+        1749,
+        184,
+        1415
+      ],
+      "block": "$tiles"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        179,
+        1396,
+        1738,
+        179,
+        1421
+      ],
+      "block": "$c1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        179,
+        1396,
+        1742,
+        179,
+        1421
+      ],
+      "block": "$c3"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        179,
+        1396,
+        1746,
+        179,
+        1421
+      ],
+      "block": "$c1"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        180,
+        1400,
+        1738,
+        184,
+        1400
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        180,
+        1400,
+        1742,
+        184,
+        1400
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        180,
+        1400,
+        1746,
+        184,
+        1400
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        180,
+        1406,
+        1738,
+        184,
+        1406
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        180,
+        1406,
+        1742,
+        184,
+        1406
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        180,
+        1406,
+        1746,
+        184,
+        1406
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        180,
+        1412,
+        1738,
+        184,
+        1412
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        180,
+        1412,
+        1742,
+        184,
+        1412
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        180,
+        1412,
+        1746,
+        184,
+        1412
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        180,
+        1418,
+        1738,
+        184,
+        1418
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        180,
+        1418,
+        1742,
+        184,
+        1418
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        180,
+        1418,
+        1746,
+        184,
+        1418
+      ],
+      "block": "$chain_y"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1738,
+        178,
+        1403
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1742,
+        178,
+        1403
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1746,
+        178,
+        1403
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1738,
+        178,
+        1409
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1742,
+        178,
+        1409
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1746,
+        178,
+        1409
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1738,
+        178,
+        1415
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1742,
+        178,
+        1415
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1746,
+        178,
+        1415
+      ],
+      "block": "$hanging"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1736,
+          174,
+          1397
+        ],
+        [
+          1748,
+          174,
+          1397
+        ]
+      ],
+      "block": "$froglight"
+    },
+    {
+      "op": "comment",
+      "why": "THE WAY OUT PAST THE LEADER: the exit stair at the cab's west side (x1735..1736), three half steps up from the hall floor to the works' level, a platform, and an iron door in the divider onto the bay, ten blocks from the street door. The button is on the hall side, so nothing outside opens it."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        174,
+        1390,
+        1736,
+        174,
+        1393
+      ],
+      "block": "$floor",
+      "why": "the exit platform at the works' level, beside the cab"
+    },
+    {
+      "op": "straight_stair",
+      "from": [
+        1736,
+        174,
+        1394
+      ],
+      "dir": "south",
+      "steps": 3,
+      "tread": "$tread",
+      "under": "$shell",
+      "headroom": 3,
+      "width": 2,
+      "why": "the exit stair: three half steps up from the hall floor (y171) onto the platform (it ascends north)"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1734,
+        175,
+        1392
+      ],
+      "block": "minecraft:iron_door[facing=east,half=lower,hinge=left,open=false,powered=false]",
+      "why": "an iron door in the divider, opened by the button on the hall side and by nothing in the bay"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1734,
+        176,
+        1392
+      ],
+      "block": "minecraft:iron_door[facing=east,half=upper,hinge=left,open=false,powered=false]"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1735,
+        176,
+        1393
+      ],
+      "block": "minecraft:stone_button[face=wall,facing=east,powered=false]",
+      "why": "its button, on the wall beside it, on the hall side"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        177,
+        1391,
+        1734,
+        177,
+        1393
+      ],
+      "block": "$floor",
+      "why": "the door's lintel"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1735,
+          178,
+          1391
+        ],
+        [
+          1736,
+          178,
+          1394
+        ],
+        [
+          1735,
+          178,
+          1396
+        ]
+      ],
+      "block": "$froglight",
+      "why": "a light over the way out"
+    },
+    {
+      "op": "comment",
+      "why": "light flush in the roofs: the hillside north of the works rises to the roof's level, so the roof is a place a player can stand, and it is lit like every other"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1730,
+          184,
+          1393
+        ],
+        [
+          1730,
+          184,
+          1400
+        ]
+      ],
+      "block": "$froglight"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          1738,
+          185,
+          1396
+        ],
+        [
+          1738,
+          185,
+          1408
+        ],
+        [
+          1738,
+          185,
+          1420
+        ],
+        [
+          1746,
+          185,
+          1396
+        ],
+        [
+          1746,
+          185,
+          1408
+        ],
+        [
+          1746,
+          185,
+          1420
+        ],
+        [
+          1742,
+          185,
+          1402
+        ],
+        [
+          1742,
+          185,
+          1414
+        ],
+        [
+          1742,
+          185,
+          1426
+        ]
+      ],
+      "block": "$froglight"
+    }
+  ],
   "probes": [
     {
-      "what": "the signal line at the door (oxidised)",
+      "what": "the signal line at the stair (oxidised)",
       "at": [
-        1748,
-        158,
-        1412
+        1742,
+        171,
+        1418
       ],
       "block": "minecraft:waxed_oxidized_cut_copper"
     },
     {
-      "what": "the signal line by the dais (bright)",
+      "what": "the signal line by the cab (bright)",
       "at": [
-        1748,
-        158,
-        1430
+        1742,
+        171,
+        1398
       ],
       "block": "minecraft:waxed_cut_copper"
     },
     {
       "what": "air in the hall",
       "at": [
-        1748,
-        164,
-        1420
+        1742,
+        176,
+        1412
       ],
       "block": "minecraft:air"
     },
     {
-      "what": "the cable door",
+      "what": "the lane door",
       "at": [
-        1748,
-        159,
-        1409
+        1723,
+        176,
+        1392
       ],
       "block": "minecraft:air"
+    },
+    {
+      "what": "the cross passage",
+      "at": [
+        1734,
+        176,
+        1427
+      ],
+      "block": "minecraft:air"
+    },
+    {
+      "what": "the live bar",
+      "at": [
+        1725,
+        178,
+        1407
+      ],
+      "block": "minecraft:waxed_cut_copper"
+    },
+    {
+      "what": "the dead middle bar's foot (no lead)",
+      "at": [
+        1728,
+        177,
+        1404
+      ],
+      "block": "minecraft:air"
+    },
+    {
+      "what": "the straw floor",
+      "at": [
+        1730,
+        174,
+        1408
+      ],
+      "block": "minecraft:hay_block"
     },
     {
       "what": "a lit lamp on the board",
       "at": [
-        1748,
-        165,
-        1437
+        1742,
+        178,
+        1389
       ],
       "block": "minecraft:redstone_lamp"
     },
     {
-      "what": "the shell's south-west corner",
+      "what": "the iron door past the leader",
       "at": [
-        1737,
-        156,
-        1439
+        1734,
+        175,
+        1392
       ],
-      "block": "minecraft:deepslate_bricks"
+      "block": "minecraft:iron_door"
     },
     {
-      "what": "the shell's north-east top corner",
+      "what": "its button, on the hall side",
       "at": [
-        1759,
-        171,
-        1408
+        1735,
+        176,
+        1393
       ],
-      "block": "minecraft:deepslate_bricks"
+      "block": "minecraft:stone_button"
+    },
+    {
+      "what": "the old Grounding Hall's nave, taken down",
+      "at": [
+        1748,
+        164,
+        1420
+      ],
+      "block": "minecraft:stone"
+    },
+    {
+      "what": "the old hall's cab, taken down",
+      "at": [
+        1748,
+        160,
+        1435
+      ],
+      "block": "minecraft:stone"
+    },
+    {
+      "what": "the old stair's conduit under the pad, taken down",
+      "at": [
+        1747,
+        168,
+        1405
+      ],
+      "block": "minecraft:stone"
+    },
+    {
+      "what": "the old gallery's air, cleared",
+      "at": [
+        1747,
+        192,
+        1410
+      ],
+      "block": "minecraft:air"
+    },
+    {
+      "what": "the old rock mass's top bench, cleared",
+      "at": [
+        1750,
+        200,
+        1420
+      ],
+      "block": "minecraft:air"
     }
-  ],
-  "parts": [
-    {"op": "shell", "box": [1737, 156, 1408, 1759, 171, 1439], "thickness": 2, "block": "$shell", "why": "the shell: two courses of deepslate brick on all six faces, built, never the rock; the inside carved. x1737..1759 (the spawn-free zone's whole width), z1408..1439, y156..171"},
-    {"op": "fill", "box": [1739, 158, 1410, 1757, 158, 1437], "block": "$floor", "why": "the floor: polished deepslate, y158, the whole of the hall"},
-    {"op": "newel_stair", "ring": [1746, 1404, 1749, 1407], "top_y": 190, "bottom_y": 158, "start": [1748, 1407], "turn": "ccw", "tread": "$tread", "landing": "$shell", "newel": "$c1", "under": "$shell", "wall": "$shell", "wall_to_y": 189, "headroom": 3, "why": "the descent: the feeder's own stair, wound round a weathered-copper conduit in the north end of the gallery (ring x1746..1749 x z1404..1407), 32 levels in four turns from the gallery floor (y190) to the hall floor (y158). It leaves the gallery floor open only where the first treads need headroom, as Brock's does; the gallery's own chest, barrels and lanterns are not touched"},
-    {"op": "scatter", "positions": [[1747, 187, 1405], [1747, 180, 1405], [1747, 177, 1406], [1747, 170, 1406], [1748, 167, 1406], [1748, 160, 1406]], "block": "$lantern", "why": "lanterns set into the conduit beside every fifth tread, two courses over it, lighting the stair from its middle"},
-    {"op": "carve", "box": [1748, 159, 1408, 1748, 161, 1409], "why": "the cable door: one wide, three high, two long through the hall's north wall, level with the landing"},
-    {"op": "fill", "box": [1747, 159, 1410, 1747, 162, 1410], "block": "$c0", "why": "the door's jambs on the hall side, oxidised copper: the dead end of the line"},
-    {"op": "fill", "box": [1749, 159, 1410, 1749, 162, 1410], "block": "$c0"},
-    {"op": "fill", "box": [1747, 162, 1410, 1749, 162, 1410], "block": "$c0", "why": "and its lintel"},
-    {"op": "fill", "box": [1745, 158, 1410, 1751, 158, 1432], "block": "$tiles", "why": "a runway of deepslate tile seven wide down the middle, from the door to the foot of the dais"},
-    {"op": "fill", "box": [1748, 158, 1410, 1748, 158, 1415], "block": "$c0", "why": "the signal line: one course of waxed copper down the axis, oxidised at the door, weathered, exposed, then bright by the dais: the current rising as it comes in"},
-    {"op": "fill", "box": [1748, 158, 1416, 1748, 158, 1421], "block": "$c1"},
-    {"op": "fill", "box": [1748, 158, 1422, 1748, 158, 1427], "block": "$c2"},
-    {"op": "fill", "box": [1748, 158, 1428, 1748, 158, 1432], "block": "$c3"},
-    {"op": "scatter", "positions": [[1746, 158, 1411], [1746, 158, 1414], [1746, 158, 1417], [1746, 158, 1420], [1746, 158, 1423], [1746, 158, 1426], [1746, 158, 1429], [1746, 158, 1432]], "block": "$froglight", "why": "ochre froglights set flush in the floor either side of the line every third course, west"},
-    {"op": "scatter", "positions": [[1750, 158, 1411], [1750, 158, 1414], [1750, 158, 1417], [1750, 158, 1420], [1750, 158, 1423], [1750, 158, 1426], [1750, 158, 1429], [1750, 158, 1432]], "block": "$froglight", "why": "and east"},
-    {"op": "fill", "box": [1739, 159, 1411, 1741, 160, 1414], "block": "$tiles", "why": "the west bank: four transformer bays along the wall, each a stage further up the oxidation ladder than the last (oxidised, weathered, exposed, bright) so the bank brightens toward the dais as the floor line does; tile plinth, waxed copper body, a copper grate vent on the aisle face, two lightning rods stood on top"},
-    {"op": "fill", "box": [1739, 161, 1411, 1741, 164, 1414], "block": "$c0"},
-    {"op": "fill", "box": [1741, 162, 1412, 1741, 163, 1413], "block": "$g0"},
-    {"op": "fill", "box": [1739, 165, 1411, 1741, 165, 1414], "block": "$tiles"},
-    {"op": "fill", "box": [1740, 166, 1412, 1740, 168, 1412], "block": "$rod"},
-    {"op": "fill", "box": [1740, 166, 1413, 1740, 168, 1413], "block": "$rod"},
-    {"op": "fill", "box": [1739, 159, 1416, 1741, 160, 1419], "block": "$tiles"},
-    {"op": "fill", "box": [1739, 161, 1416, 1741, 164, 1419], "block": "$c1"},
-    {"op": "fill", "box": [1741, 162, 1417, 1741, 163, 1418], "block": "$g1"},
-    {"op": "fill", "box": [1739, 165, 1416, 1741, 165, 1419], "block": "$tiles"},
-    {"op": "fill", "box": [1740, 166, 1417, 1740, 168, 1417], "block": "$rod"},
-    {"op": "fill", "box": [1740, 166, 1418, 1740, 168, 1418], "block": "$rod"},
-    {"op": "fill", "box": [1739, 159, 1421, 1741, 160, 1424], "block": "$tiles"},
-    {"op": "fill", "box": [1739, 161, 1421, 1741, 164, 1424], "block": "$c2"},
-    {"op": "fill", "box": [1741, 162, 1422, 1741, 163, 1423], "block": "$g2"},
-    {"op": "fill", "box": [1739, 165, 1421, 1741, 165, 1424], "block": "$tiles"},
-    {"op": "fill", "box": [1740, 166, 1422, 1740, 168, 1422], "block": "$rod"},
-    {"op": "fill", "box": [1740, 166, 1423, 1740, 168, 1423], "block": "$rod"},
-    {"op": "fill", "box": [1739, 159, 1426, 1741, 160, 1429], "block": "$tiles"},
-    {"op": "fill", "box": [1739, 161, 1426, 1741, 164, 1429], "block": "$c3"},
-    {"op": "fill", "box": [1741, 162, 1427, 1741, 163, 1428], "block": "$g3"},
-    {"op": "fill", "box": [1739, 165, 1426, 1741, 165, 1429], "block": "$tiles"},
-    {"op": "fill", "box": [1740, 166, 1427, 1740, 168, 1427], "block": "$rod"},
-    {"op": "fill", "box": [1740, 166, 1428, 1740, 168, 1428], "block": "$rod"},
-    {"op": "fill", "box": [1739, 159, 1415, 1741, 164, 1415], "block": "$tuff", "why": "a tuff seam between the bays"},
-    {"op": "setblock", "pos": [1740, 165, 1415], "block": "$lantern"},
-    {"op": "fill", "box": [1739, 159, 1420, 1741, 164, 1420], "block": "$tuff"},
-    {"op": "setblock", "pos": [1740, 165, 1420], "block": "$lantern"},
-    {"op": "fill", "box": [1739, 159, 1425, 1741, 164, 1425], "block": "$tuff"},
-    {"op": "setblock", "pos": [1740, 165, 1425], "block": "$lantern"},
-    {"op": "fill", "box": [1739, 167, 1411, 1739, 168, 1429], "block": "$g1", "why": "a weathered copper duct along the wall above the bank"},
-    {"op": "fill", "box": [1755, 159, 1411, 1757, 160, 1414], "block": "$tiles", "why": "the east bank: four transformer bays along the wall, each a stage further up the oxidation ladder than the last (oxidised, weathered, exposed, bright) so the bank brightens toward the dais as the floor line does; tile plinth, waxed copper body, a copper grate vent on the aisle face, two lightning rods stood on top"},
-    {"op": "fill", "box": [1755, 161, 1411, 1757, 164, 1414], "block": "$c0"},
-    {"op": "fill", "box": [1755, 162, 1412, 1755, 163, 1413], "block": "$g0"},
-    {"op": "fill", "box": [1755, 165, 1411, 1757, 165, 1414], "block": "$tiles"},
-    {"op": "fill", "box": [1756, 166, 1412, 1756, 168, 1412], "block": "$rod"},
-    {"op": "fill", "box": [1756, 166, 1413, 1756, 168, 1413], "block": "$rod"},
-    {"op": "fill", "box": [1755, 159, 1416, 1757, 160, 1419], "block": "$tiles"},
-    {"op": "fill", "box": [1755, 161, 1416, 1757, 164, 1419], "block": "$c1"},
-    {"op": "fill", "box": [1755, 162, 1417, 1755, 163, 1418], "block": "$g1"},
-    {"op": "fill", "box": [1755, 165, 1416, 1757, 165, 1419], "block": "$tiles"},
-    {"op": "fill", "box": [1756, 166, 1417, 1756, 168, 1417], "block": "$rod"},
-    {"op": "fill", "box": [1756, 166, 1418, 1756, 168, 1418], "block": "$rod"},
-    {"op": "fill", "box": [1755, 159, 1421, 1757, 160, 1424], "block": "$tiles"},
-    {"op": "fill", "box": [1755, 161, 1421, 1757, 164, 1424], "block": "$c2"},
-    {"op": "fill", "box": [1755, 162, 1422, 1755, 163, 1423], "block": "$g2"},
-    {"op": "fill", "box": [1755, 165, 1421, 1757, 165, 1424], "block": "$tiles"},
-    {"op": "fill", "box": [1756, 166, 1422, 1756, 168, 1422], "block": "$rod"},
-    {"op": "fill", "box": [1756, 166, 1423, 1756, 168, 1423], "block": "$rod"},
-    {"op": "fill", "box": [1755, 159, 1426, 1757, 160, 1429], "block": "$tiles"},
-    {"op": "fill", "box": [1755, 161, 1426, 1757, 164, 1429], "block": "$c3"},
-    {"op": "fill", "box": [1755, 162, 1427, 1755, 163, 1428], "block": "$g3"},
-    {"op": "fill", "box": [1755, 165, 1426, 1757, 165, 1429], "block": "$tiles"},
-    {"op": "fill", "box": [1756, 166, 1427, 1756, 168, 1427], "block": "$rod"},
-    {"op": "fill", "box": [1756, 166, 1428, 1756, 168, 1428], "block": "$rod"},
-    {"op": "fill", "box": [1755, 159, 1415, 1757, 164, 1415], "block": "$tuff"},
-    {"op": "setblock", "pos": [1756, 165, 1415], "block": "$lantern"},
-    {"op": "fill", "box": [1755, 159, 1420, 1757, 164, 1420], "block": "$tuff"},
-    {"op": "setblock", "pos": [1756, 165, 1420], "block": "$lantern"},
-    {"op": "fill", "box": [1755, 159, 1425, 1757, 164, 1425], "block": "$tuff"},
-    {"op": "setblock", "pos": [1756, 165, 1425], "block": "$lantern"},
-    {"op": "fill", "box": [1757, 167, 1411, 1757, 168, 1429], "block": "$g1"},
-    {"op": "fill", "box": [1739, 159, 1430, 1742, 160, 1437], "block": "$tiles", "why": "the west housing: a generator casing, tile plinth, bright waxed copper, a vent on its face, rods on its top; it runs from z1430 to the back wall, so no aisle runs up beside the dais"},
-    {"op": "fill", "box": [1739, 161, 1430, 1742, 165, 1437], "block": "$c3"},
-    {"op": "fill", "box": [1739, 166, 1430, 1742, 166, 1437], "block": "$tiles"},
-    {"op": "fill", "box": [1740, 162, 1430, 1741, 164, 1430], "block": "$g3"},
-    {"op": "fill", "box": [1740, 167, 1432, 1740, 169, 1432], "block": "$rod"},
-    {"op": "fill", "box": [1740, 167, 1435, 1740, 169, 1435], "block": "$rod"},
-    {"op": "fill", "box": [1741, 167, 1432, 1741, 169, 1432], "block": "$rod"},
-    {"op": "fill", "box": [1741, 167, 1435, 1741, 169, 1435], "block": "$rod"},
-    {"op": "fill", "box": [1754, 159, 1430, 1757, 160, 1437], "block": "$tiles", "why": "the east housing: a generator casing, tile plinth, bright waxed copper, a vent on its face, rods on its top; it runs from z1430 to the back wall, so no aisle runs up beside the dais"},
-    {"op": "fill", "box": [1754, 161, 1430, 1757, 165, 1437], "block": "$c3"},
-    {"op": "fill", "box": [1754, 166, 1430, 1757, 166, 1437], "block": "$tiles"},
-    {"op": "fill", "box": [1755, 162, 1430, 1756, 164, 1430], "block": "$g3"},
-    {"op": "fill", "box": [1755, 167, 1432, 1755, 169, 1432], "block": "$rod"},
-    {"op": "fill", "box": [1755, 167, 1435, 1755, 169, 1435], "block": "$rod"},
-    {"op": "fill", "box": [1756, 167, 1432, 1756, 169, 1432], "block": "$rod"},
-    {"op": "fill", "box": [1756, 167, 1435, 1756, 169, 1435], "block": "$rod"},
-    {"op": "fill", "box": [1743, 159, 1433, 1753, 161, 1437], "block": "$tiles", "why": "the dais: a solid control cab at the south end, x1743..1753, z1433..1437, four courses over the floor (top y162), face at z1433; the housings close it on both sides"},
-    {"op": "fill", "box": [1743, 162, 1433, 1753, 162, 1437], "block": "$c3", "why": "its top: bright waxed copper (the seat at (1748, 162, 1435) is never written here: the seat function owns it)"},
-    {"op": "fill", "box": [1744, 160, 1433, 1746, 161, 1433], "block": "$g3", "why": "vents in its face, either side of the centre"},
-    {"op": "fill", "box": [1750, 160, 1433, 1752, 161, 1433], "block": "$g3"},
-    {"op": "fill", "box": [1743, 159, 1433, 1753, 159, 1433], "block": "$tuff", "why": "a tuff footing under the face"},
-    {"op": "scatter", "positions": [[1744, 163, 1434], [1752, 163, 1434]], "block": "$lantern", "why": "a lantern at each end of the cab's front edge"},
-    {"op": "fill", "box": [1743, 163, 1437, 1743, 169, 1437], "block": "$c3", "why": "the load board: a frame of bright copper round a grid of redstone lamps, nine columns by six rows across the back wall; the lit ones (each with a redstone block in the wall behind it) rise to a peak over the leader's head, the rest are dark"},
-    {"op": "fill", "box": [1753, 163, 1437, 1753, 169, 1437], "block": "$c3"},
-    {"op": "fill", "box": [1743, 169, 1437, 1753, 169, 1437], "block": "$c3"},
-    {"op": "fill", "box": [1744, 163, 1437, 1744, 163, 1437], "block": "$lamp_on"},
-    {"op": "fill", "box": [1744, 163, 1438, 1744, 163, 1438], "block": "$rs"},
-    {"op": "fill", "box": [1744, 164, 1437, 1744, 168, 1437], "block": "$lamp_off"},
-    {"op": "fill", "box": [1745, 163, 1437, 1745, 164, 1437], "block": "$lamp_on"},
-    {"op": "fill", "box": [1745, 163, 1438, 1745, 164, 1438], "block": "$rs"},
-    {"op": "fill", "box": [1745, 165, 1437, 1745, 168, 1437], "block": "$lamp_off"},
-    {"op": "fill", "box": [1746, 163, 1437, 1746, 166, 1437], "block": "$lamp_on"},
-    {"op": "fill", "box": [1746, 163, 1438, 1746, 166, 1438], "block": "$rs"},
-    {"op": "fill", "box": [1746, 167, 1437, 1746, 168, 1437], "block": "$lamp_off"},
-    {"op": "fill", "box": [1747, 163, 1437, 1747, 167, 1437], "block": "$lamp_on"},
-    {"op": "fill", "box": [1747, 163, 1438, 1747, 167, 1438], "block": "$rs"},
-    {"op": "fill", "box": [1747, 168, 1437, 1747, 168, 1437], "block": "$lamp_off"},
-    {"op": "fill", "box": [1748, 163, 1437, 1748, 168, 1437], "block": "$lamp_on"},
-    {"op": "fill", "box": [1748, 163, 1438, 1748, 168, 1438], "block": "$rs"},
-    {"op": "fill", "box": [1749, 163, 1437, 1749, 167, 1437], "block": "$lamp_on"},
-    {"op": "fill", "box": [1749, 163, 1438, 1749, 167, 1438], "block": "$rs"},
-    {"op": "fill", "box": [1749, 168, 1437, 1749, 168, 1437], "block": "$lamp_off"},
-    {"op": "fill", "box": [1750, 163, 1437, 1750, 166, 1437], "block": "$lamp_on"},
-    {"op": "fill", "box": [1750, 163, 1438, 1750, 166, 1438], "block": "$rs"},
-    {"op": "fill", "box": [1750, 167, 1437, 1750, 168, 1437], "block": "$lamp_off"},
-    {"op": "fill", "box": [1751, 163, 1437, 1751, 164, 1437], "block": "$lamp_on"},
-    {"op": "fill", "box": [1751, 163, 1438, 1751, 164, 1438], "block": "$rs"},
-    {"op": "fill", "box": [1751, 165, 1437, 1751, 168, 1437], "block": "$lamp_off"},
-    {"op": "fill", "box": [1752, 163, 1437, 1752, 163, 1437], "block": "$lamp_on"},
-    {"op": "fill", "box": [1752, 163, 1438, 1752, 163, 1438], "block": "$rs"},
-    {"op": "fill", "box": [1752, 164, 1437, 1752, 168, 1437], "block": "$lamp_off"},
-    {"op": "fill", "box": [1745, 163, 1436, 1745, 168, 1436], "block": "$rod", "why": "two stacks of lightning rods in front of the board, either side of the leader"},
-    {"op": "fill", "box": [1751, 163, 1436, 1751, 168, 1436], "block": "$rod"},
-    {"op": "fill", "box": [1739, 169, 1415, 1757, 169, 1415], "block": "$tiles", "why": "a rib of deepslate tile across the ceiling over each seam"},
-    {"op": "fill", "box": [1739, 169, 1420, 1757, 169, 1420], "block": "$tiles"},
-    {"op": "fill", "box": [1739, 169, 1425, 1757, 169, 1425], "block": "$tiles"},
-    {"op": "fill", "box": [1744, 166, 1410, 1744, 166, 1432], "block": "$c1", "why": "three bus runs down the length of the hall at y166, hung from the ceiling on chains: two weathered and one bright, the middle one live, as the building above carries them"},
-    {"op": "fill", "box": [1748, 166, 1410, 1748, 166, 1432], "block": "$c3"},
-    {"op": "fill", "box": [1752, 166, 1410, 1752, 166, 1432], "block": "$c1"},
-    {"op": "fill", "box": [1744, 167, 1412, 1744, 169, 1412], "block": "$chain_y"},
-    {"op": "fill", "box": [1748, 167, 1412, 1748, 169, 1412], "block": "$chain_y"},
-    {"op": "fill", "box": [1752, 167, 1412, 1752, 169, 1412], "block": "$chain_y"},
-    {"op": "fill", "box": [1744, 167, 1418, 1744, 169, 1418], "block": "$chain_y"},
-    {"op": "fill", "box": [1748, 167, 1418, 1748, 169, 1418], "block": "$chain_y"},
-    {"op": "fill", "box": [1752, 167, 1418, 1752, 169, 1418], "block": "$chain_y"},
-    {"op": "fill", "box": [1744, 167, 1424, 1744, 169, 1424], "block": "$chain_y"},
-    {"op": "fill", "box": [1748, 167, 1424, 1748, 169, 1424], "block": "$chain_y"},
-    {"op": "fill", "box": [1752, 167, 1424, 1752, 169, 1424], "block": "$chain_y"},
-    {"op": "fill", "box": [1744, 167, 1430, 1744, 169, 1430], "block": "$chain_y"},
-    {"op": "fill", "box": [1748, 167, 1430, 1748, 169, 1430], "block": "$chain_y"},
-    {"op": "fill", "box": [1752, 167, 1430, 1752, 169, 1430], "block": "$chain_y"},
-    {"op": "setblock", "pos": [1744, 165, 1415], "block": "$hanging"},
-    {"op": "setblock", "pos": [1748, 165, 1415], "block": "$hanging"},
-    {"op": "setblock", "pos": [1752, 165, 1415], "block": "$hanging"},
-    {"op": "setblock", "pos": [1744, 165, 1421], "block": "$hanging"},
-    {"op": "setblock", "pos": [1748, 165, 1421], "block": "$hanging"},
-    {"op": "setblock", "pos": [1752, 165, 1421], "block": "$hanging"},
-    {"op": "setblock", "pos": [1744, 165, 1427], "block": "$hanging"},
-    {"op": "setblock", "pos": [1748, 165, 1427], "block": "$hanging"},
-    {"op": "setblock", "pos": [1752, 165, 1427], "block": "$hanging"}
   ]
 }
