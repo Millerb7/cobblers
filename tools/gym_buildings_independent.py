@@ -1243,15 +1243,18 @@ def load_texts(funcs_dir, ids):
     return out
 
 
-def load_records(root=ROOT):
+def load_records(root=ROOT, include_superseded=False):
     """Every building that is BUILT: a record carrying `superseded_by` (2026-10-09: the gym is now one walk-through
     hall, data/gym_arenas/<gym>.json schema gym_hall/1) is kept as the record of what stood, is not emitted by
     tools/gym_buildings.py and is not run by any step, so there is no function of it to audit. The hall that
-    replaced it is audited by tools/gym_arenas_audit.py."""
+    replaced it is audited by tools/gym_arenas_audit.py. `include_superseded` reads those records too (the audit's
+    own tests do: with every building superseded they are the one real content that exercises it); the functions
+    must then have been emitted with `superseded_by` dropped in memory, as tests/test_gym_buildings_independent.py
+    does."""
     out = {}
     for p in sorted((root / "data" / "gym_buildings").glob("*.json")):
         d = json.loads(p.read_text(encoding="utf-8"))
-        if d.get("superseded_by"):
+        if d.get("superseded_by") and not include_superseded:
             continue
         out[p.stem] = d
     return out
@@ -1263,10 +1266,13 @@ def main(argv=None):
     ap.add_argument("--source-root", default=None)
     ap.add_argument("--gym", action="append", default=None, help="one record only, e.g. gym7 (repeatable)")
     ap.add_argument("--verbose", action="store_true", help="also print the measurements behind the checks")
+    ap.add_argument("--include-superseded", action="store_true",
+                    help="also audit the records a walk-through hall superseded (their functions must have been "
+                         "emitted anyway: R16G no longer builds them)")
     a = ap.parse_args(argv)
     import ground as G
 
-    records = load_records()
+    records = load_records(include_superseded=a.include_superseded)
     if not records:
         print("data/gym_buildings holds no record: there is nothing to audit")
         return 2

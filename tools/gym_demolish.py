@@ -225,6 +225,7 @@ def write_function(name, lines):
 
 
 def main(argv=None):
+    global PACK
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = p.add_subparsers(dest="cmd", required=True)
     for name in ("report", "build"):
@@ -233,6 +234,12 @@ def main(argv=None):
         if name == "build":
             q.add_argument("--out", default=str(PACK))
     a = p.parse_args(argv)
+    if a.cmd == "build" and Path(a.out) != PACK:
+        # --out was accepted and ignored: every build wrote build/datapacks/cobblers_gym_demolish, so a test that asked
+        # for a scratch pack replaced the real one and read it back (found 2026-10-09 by tests/test_gym_arenas_audit.py)
+        global FUNCS
+        PACK = Path(a.out)
+        FUNCS = PACK / "data" / "cobblers" / "function" / "gym_demolish"
     if a.source_root:
         import os
         os.environ["COBBLERS_SOURCE_ROOT"] = a.source_root

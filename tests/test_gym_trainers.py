@@ -176,13 +176,17 @@ def test_gym3_seats_are_proved_on_their_own_hall(g3):
         assert T.check_seat(h, gen, mod, tuple(s["seat"]), float(s["sight_distance"])) == [], s["id"]
 
 
-def test_gym3_mutation_moving_a_seat_into_the_hall_corner_breaks_its_cut(g3):
+def test_gym3_mutation_moving_a_seat_off_its_chokepoint_breaks_its_cut(g3):
+    # Removing this loses the proof, on the real walk-through hall (data/gym_arenas/gym3.json, which replaced the
+    # building on 2026-10-09), that the cut is a property of WHERE a junior stands: gym3_junior_01 stands at the foot of
+    # the transformer bank's stair, the one climb out of the bay; three blocks west of it, in the same bay, the same
+    # junior with the same sight no longer covers the stair and a walk along the bay's far wall goes round him.
     _G, h, gen, mod = g3
     s = [s for s in SEATS["trainers"] if s["id"] == "gym3_junior_01"][0]
-    # the hall's north-west corner, by the door: on the floor, inside the footprint, nowhere near the tower stair
-    corner = (1727, 175, 1394)
-    assert h.vox.dry_footing(*corner)
-    assert "cut" in codes(T.check_seat(h, gen, mod, corner, float(s["sight_distance"])))
+    assert T.check_seat(h, gen, mod, tuple(s["seat"]), float(s["sight_distance"])) == []      # control: where it stands
+    west = (s["seat"][0] - 3, s["seat"][1], s["seat"][2])
+    assert h.vox.dry_footing(*west)
+    assert "cut" in codes(T.check_seat(h, gen, mod, west, float(s["sight_distance"])))
 
 
 def test_gym3_mutation_shrinking_a_seats_sight_breaks_its_cut(g3):
@@ -191,12 +195,26 @@ def test_gym3_mutation_shrinking_a_seats_sight_breaks_its_cut(g3):
     assert "cut" in codes(T.check_seat(h, gen, mod, tuple(s["seat"]), 0.5))
 
 
-def test_gym3_the_leader_is_reached_only_by_the_designed_climb(g3):
-    _G, h, gen, _mod = g3
-    chain = [gen.nodes[k] for k in gen.dominators()]
-    # the record's stair (x1733) and cable ladder (x1749, z1410) are on every walk to Surge
-    assert any(p[0] == 1733 and p[1] in range(176, 182) for p in chain)
-    assert any(p[0] == 1749 and p[2] == 1410 for p in chain)
+def test_gym3_the_puzzle_is_on_every_walk_to_the_leader(g3):
+    # Removing this loses the proof that the hall's designed choice (the catwalk's three leads, a route step the
+    # record declares `how: choose`) cannot be walked round: cut its cells and no walk reaches Surge; cut a step that
+    # has a way round and one still does. Read from the hall's own route[], not a coordinate written here.
+    _G, _h, gen, _mod = g3
+    route = json.loads((ROOT / "data" / "gym_arenas" / "gym3.json").read_text(encoding="utf-8"))["route"]
+
+    def cut(step):
+        a, b = step["from"], step["to"]
+        lo = [min(a[i], b[i]) for i in range(3)]
+        hi = [max(a[i], b[i]) for i in range(3)]
+        return frozenset(k for p, k in gen.index.items() if all(lo[i] <= p[i] <= hi[i] for i in range(3)))
+
+    assert gen.reaches_leader()
+    choices = [st for st in route if st.get("how") == "choose"]
+    assert choices, "the hall declares no designed choice"
+    for st in choices:
+        assert cut(st) and not gen.reaches_leader(cut(st)), st["id"]
+    walked = [st for st in route if st.get("how") == "walk" and cut(st)]
+    assert any(gen.reaches_leader(cut(st)) for st in walked), "no walk step has a way round: the control is vacuous"
 
 
 def test_gym3_full_check_is_clean(g3):
