@@ -77,7 +77,7 @@
       "advancement": "cobbleverse:trainer/kanto/defeat_blaine",
       "upstream_mob": {"type": "kanto", "signatureItem": "lumymon:cinnabar_glasses", "maxTrainerWins": -1, "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0, "biomeTagBlacklist": ["is_void", "is_end", "is_wet"], "biomeTagWhitelist": ["cobbleverse:crimson_forest"]},
       "upstream_required": ["kanto_sabrina"],
-      "spawner": {"at": [6169, 87, 4981], "measured_by": "gym_buildings", "why": "three east of Blaine's spawner in his arena, the seat (6166, 87, 4981) on the dais (data/gym_arenas/gym7.json, The Core Gallery): smooth basalt over polished blackstone bricks, flush on four sides, air over it. Moved here from the hall cell (6178, 106, 5004) in the assay vault, which R16GA puts back to the building's smooth basalt over stone (gym7.json challenge_spawner)"}
+      "spawner": {"at": [6159, 106, 4982], "measured_by": "gym_arenas", "why": "five north of Blaine's seat (6159, 106, 4987) at the stage's north end in the walk-through Core Gallery (data/gym_arenas/gym7.json, schema gym_hall/1, 2026-10-09): smooth basalt over polished blackstone, air over it, the line between the two cells open floor. z4982 is the only dais row outside the old Assay House's bounds (z4983 and up are inside them), which tools/gym_arenas_audit.py reads as an old seat still standing; the seat is placed so this cell is within the 2..5 tests/test_challenge_mode.py holds", "superseded_at": [6169, 87, 4981], "superseded_why": "the cell the 2026-10-08 carve-below arena held, three east of its seat (6166, 87, 4981) on the old dais: taken down to stone by the hall's takedown (gym7_takedown)"}
     },
     "kanto_giovanni": {
       "lang": "giovanni",

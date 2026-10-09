@@ -4276,9 +4276,9 @@
       {
         "what": "the leader's spawner in the dais",
         "block": [
-          6166,
-          87,
-          4981,
+          6159,
+          106,
+          4987,
           "rctmod:trainer_spawner"
         ],
         "expect": true
@@ -4286,9 +4286,9 @@
       {
         "what": "its redstone",
         "block": [
-          6166,
-          86,
-          4981,
+          6159,
+          105,
+          4987,
           "minecraft:redstone_block"
         ],
         "expect": true
@@ -4296,9 +4296,9 @@
       {
         "what": "air over the seat",
         "block": [
-          6166,
-          88,
-          4981,
+          6159,
+          107,
+          4987,
           "minecraft:air"
         ],
         "expect": true
@@ -4306,9 +4306,9 @@
       {
         "what": "battle.trainer_pokemon",
         "block": [
-          6166,
-          83,
-          4990,
+          6167,
+          102,
+          4989,
           "cobblemonbattlepositions:trainer_pokemon_position"
         ],
         "expect": true
@@ -4316,9 +4316,9 @@
       {
         "what": "battle.player_pokemon",
         "block": [
-          6166,
-          83,
-          4996,
+          6173,
+          102,
+          4989,
           "cobblemonbattlepositions:player_pokemon_position"
         ],
         "expect": true
@@ -4326,9 +4326,9 @@
       {
         "what": "battle.trainer_stand",
         "block": [
-          6166,
-          86,
-          4982,
+          6160,
+          105,
+          4987,
           "cobblemonbattlepositions:trainer_stand_position"
         ],
         "expect": true
@@ -4336,19 +4336,19 @@
       {
         "what": "battle.player_stand",
         "block": [
-          6166,
-          83,
-          4999,
+          6176,
+          102,
+          4989,
           "cobblemonbattlepositions:player_stand_position"
         ],
         "expect": true
       },
       {
-        "what": "the floor's axis line",
+        "what": "the gallery floor's axis line",
         "block": [
-          6166,
-          84,
-          5003,
+          6170,
+          103,
+          4989,
           "minecraft:calcite"
         ],
         "expect": true
@@ -4356,9 +4356,9 @@
       {
         "what": "air in the gallery",
         "block": [
-          6166,
-          92,
-          4995,
+          6170,
+          112,
+          4989,
           "minecraft:air"
         ],
         "expect": true
@@ -4366,9 +4366,9 @@
       {
         "what": "the bore-hole's lava, sealed",
         "block": [
-          6166,
-          93,
-          4977,
+          6156,
+          112,
+          4989,
           "minecraft:lava"
         ],
         "expect": true
@@ -4376,9 +4376,9 @@
       {
         "what": "the bore-hole's glass",
         "block": [
-          6166,
-          93,
-          4979,
+          6157,
+          112,
+          4989,
           "minecraft:glass"
         ],
         "expect": true
@@ -4386,52 +4386,92 @@
       {
         "what": "the magma sill under it",
         "block": [
-          6166,
-          88,
-          4979,
+          6157,
+          107,
+          4989,
           "minecraft:magma_block"
         ],
         "expect": true
       },
       {
-        "what": "the south door",
+        "what": "the west door",
         "block": [
-          6166,
-          86,
-          5010,
+          6155,
+          108,
+          5003,
           "minecraft:air"
         ],
         "expect": true
       },
       {
-        "what": "the adit's corner landing",
+        "what": "the door at the stair's head",
         "block": [
-          6179,
-          95,
-          5012,
-          "minecraft:polished_blackstone_bricks"
+          6185,
+          107,
+          4989,
+          "minecraft:iron_door"
         ],
         "expect": true
       },
       {
-        "what": "the shell's north-west bottom corner",
+        "what": "its button, inside",
         "block": [
-          6154,
-          81,
-          4977,
-          "minecraft:blackstone"
+          6184,
+          108,
+          4988,
+          "minecraft:stone_button"
         ],
         "expect": true
       },
       {
-        "what": "the shell's south-east top corner",
+        "what": "the true hood, open to the flue's foot",
         "block": [
-          6178,
-          100,
-          5011,
-          "minecraft:blackstone"
+          6182,
+          108,
+          5004,
+          "minecraft:air"
         ],
         "expect": true
+      },
+      {
+        "what": "a false hood's wall",
+        "block": [
+          6182,
+          108,
+          4999,
+          "minecraft:polished_blackstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old arena's nave, taken down",
+        "block": [
+          6166,
+          90,
+          4989,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old Assay House's flue, cleared",
+        "block": [
+          6170,
+          118,
+          4995,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          6166,
+          87,
+          4981,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
       },
       {
         "what": "no spawner at the old seat",
