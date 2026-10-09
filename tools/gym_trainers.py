@@ -139,6 +139,9 @@ SOLID_NAMES = {
     "minecraft:waxed_cut_copper", "minecraft:waxed_exposed_cut_copper", "minecraft:waxed_oxidized_cut_copper",
     "minecraft:waxed_exposed_copper_grate", "minecraft:waxed_oxidized_copper_grate",
     "minecraft:waxed_weathered_copper_grate", "minecraft:ochre_froglight", "minecraft:redstone_lamp",
+    # gym 7's magma bays and its bore-hole: lava only ever sealed behind glass, so for the junior-sight model it is a
+    # wall; the arena audit (tools/gym_arenas_audit.py) is what refuses lava a player can reach
+    "minecraft:magma_block", "minecraft:lava",
     # full or near-full collision: a player stands on it and cannot pass it
     "minecraft:acacia_planks", "minecraft:andesite", "minecraft:azalea_leaves", "minecraft:bamboo_planks",
     "minecraft:barrel", "minecraft:basalt", "minecraft:birch_planks", "minecraft:blast_furnace", "minecraft:shroomlight",
