@@ -10,7 +10,7 @@
   "site": 1,
   "waterway": 1,
   "total": 72,
-  "not_zones": 30
+  "not_zones": 33
  },
  "derivation": {
   "tables_are_subregions": "data/encounter_design.json has 63 tables and data/regions.json 63 sub-regions, the same ids",
@@ -880,7 +880,7 @@
    "table": "data/encounter_design.json tables.tilpey_north_shore",
    "tier": 6,
    "levels": null,
-   "species": 20,
+   "species": 23,
    "geometry": "data/regions.json subregions.tilpey_north_shore polygons, 32-block raster",
    "land_share": 0.978,
    "legs": [
@@ -901,7 +901,7 @@
    "table": "data/encounter_design.json tables.tilpey_waters",
    "tier": 7,
    "levels": null,
-   "species": 12,
+   "species": 16,
    "geometry": "data/regions.json subregions.tilpey_waters polygons, 32-block raster",
    "land_share": 0.26,
    "legs": [],
@@ -916,7 +916,7 @@
    "table": "data/encounter_design.json tables.tilpey_south_shore",
    "tier": 7,
    "levels": null,
-   "species": 24,
+   "species": 25,
    "geometry": "data/regions.json subregions.tilpey_south_shore polygons, 32-block raster",
    "land_share": 0.947,
    "legs": [
@@ -936,7 +936,7 @@
    "table": "data/encounter_design.json tables.tilpey_west_meadows",
    "tier": 6,
    "levels": null,
-   "species": 18,
+   "species": 19,
    "geometry": "data/regions.json subregions.tilpey_west_meadows polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -951,7 +951,7 @@
    "table": "data/encounter_design.json tables.tilpey_east_shore",
    "tier": 6,
    "levels": null,
-   "species": 17,
+   "species": 18,
    "geometry": "data/regions.json subregions.tilpey_east_shore polygons, 32-block raster",
    "land_share": 0.907,
    "legs": [
@@ -1527,7 +1527,7 @@
     24,
     35
    ],
-   "species": 11,
+   "species": 12,
    "geometry": "data/waterways.json mt_clay_outflow polyline, half_width 8 (tools/waterways.py boxes_by_segment)",
    "legs": []
   },
@@ -1745,6 +1745,11 @@
    "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
   },
   {
+   "zone": "gull_rock_colony",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
    "zone": "lopunny_superfan_cellar",
    "what": "Habitat Block pool",
    "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
@@ -1776,6 +1781,16 @@
   },
   {
    "zone": "station_study_pool",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "sunset_watch_day",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "sunset_watch_dusk",
    "what": "Habitat Block pool",
    "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
   },
