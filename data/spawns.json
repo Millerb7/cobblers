@@ -22454,8 +22454,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.mt_clay_outflow.wooper",
-      "species": "wooper",
+      "id": "surface.mt_clay_outflow.wooper_paldean",
+      "species": "wooper paldean",
       "bucket": "common",
       "level": "24-30",
       "weight": 24.0,
@@ -22467,7 +22467,7 @@
           "minecraft:water"
         ]
       },
-      "eligibility_reason": "base stage",
+      "eligibility_reason": "base stage; the owner, 2026-10-09: \"the wooper creek should spawn the paldean versions\" (reverses the 2026-10-04 removal; data/waterways.json habitat_fixes)",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -22486,6 +22486,24 @@
         ]
       },
       "eligibility_reason": "evolves from Wooper at 20; the band begins at 24",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.mt_clay_outflow.clodsire",
+      "species": "clodsire",
+      "bucket": "rare",
+      "level": "24-30",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "Paldean Wooper's evolution (level 20 in the Cobblemon 1.8.0 jar, Paldea form); an adult of the creek's Wooper line, so rare; the owner, 2026-10-09: \"clodsire should be in wooper creek as well\"",
       "biomes": [],
       "spawnable_position": "grounded"
     },
