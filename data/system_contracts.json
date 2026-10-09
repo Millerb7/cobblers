@@ -262,6 +262,13 @@
         "tools/tm_gate.py",
         "experiments/EXP-067-tm-recipe-gate/README.md"
       ]
+    },
+    "dungeons": {
+      "what": "the rift dungeons: sealed instanced runs in cobblers:pocket entered through a rip, with a clock, escrowed rewards and the run tag; the engine (tools/dungeon.py) is designed, not built",
+      "paths": [
+        "docs/mechanics/DUNGEONS.md",
+        "docs/research/DUNGEON_DEATH.md"
+      ]
     }
   },
   "contracts": [
@@ -943,7 +950,7 @@
       "statement": "A resident's tags are never the blackout's exempt tag, so a resident that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the residents' generated keeper only counts it: no kill, hold, leash, wake, settle or merge selector of the pack reaches an entity tagged cobblers.guardian, and nothing in the pack adds or removes cobblers.guardian or the exempt tag.",
       "stated_in": [
         {
-          "at": "tools/blackout_pack.py:498",
+          "at": "tools/blackout_pack.py:510",
           "quote": "\"tag @s add cobblers.guardian\","
         },
         {
@@ -1118,6 +1125,48 @@
         "tests/test_system_contracts.py::test_contract_c23_the_tm_gate_unlocks_on_the_flags_the_progression_pack_grants",
         "tests/test_tm_gate.py::test_each_shelf_tm_unlocks_at_its_shelf_lines_badge"
       ]
+    },
+    {
+      "id": "C24",
+      "title": "A dungeon death is a blackout death with no recovery claim, and no claim is delivered into a slot",
+      "owner": "recovery_claims",
+      "consumers": [
+        "dungeons"
+      ],
+      "constrained_by": [
+        "dungeons"
+      ],
+      "statement": "A player holding data/blackout.json dungeon_exempt.player_tag who is beaten or killed by a wild Pokemon -- in battle, outside one, or by a timer kill, fall or lava that vanilla credits to a wild hit -- makes no item claim, binds no guardian and has no money held: the generated blackout charges the flat money once and queues the return to the checkpoint, keepInventory stays set, and it reads the PLAYER's tag, never the killer's. A claim settled while its owner holds the tag stays at state deliver (recovery/deliver and the login delivery return), and is delivered by dungeon_exempt.tail_end_function or backstop_function, which are the only things that remove the tag. The dungeons rely on it for DUNGEONS.md 2.5 (D20, E1); they keep it true by adding the tag before the arrival delay, never removing it themselves, keeping it for tail_ticks after every way out, and calling those two functions only in the overworld. A dungeon pack that removes the tag itself, or clears it before the blackout has read it, breaks it without touching the blackout.",
+      "stated_in": [
+        {
+          "at": "docs/mechanics/DUNGEONS.md:1102",
+          "quote": "a dungeon death is a blackout death with no recovery claim"
+        },
+        {
+          "at": "data/blackout.json:215",
+          "quote": "\"player_tag\": \"cobblers.dg_run\""
+        },
+        {
+          "at": "tools/blackout_pack.py:236",
+          "quote": "\"execute if entity @s[tag=%s] run scoreboard players set #exempt bo.tmp 1\" % dg_tag"
+        },
+        {
+          "at": "docs/research/DUNGEON_DEATH.md:145",
+          "quote": "## E1 as built"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c24_a_dungeon_death_makes_no_claim_and_nothing_is_delivered_into_a_slot",
+        "tests/test_dungeon_death.py::test_the_generated_pack_takes_no_items_in_a_dungeon",
+        "tests/test_dungeon_death.py::test_the_generated_pack_holds_delivery_for_a_player_inside_a_dungeon"
+      ],
+      "fails_today": {
+        "recorded": "2026-10-08",
+        "commit": "8b52ae7",
+        "cases": {
+          "engine:*": "the dungeon engine (tools/dungeon.py, DUNGEONS.md 11.3) is not built on this commit: there is no generated dungeon pack to add the tag, keep it, or call recovery/run_tail_end and recovery/run_tag_stale. The test expects tools/dungeon.py to expose build(load()) -> {path: text}, as tools/entei_boss.py does; the engine's builder adapts that one call if its API differs, and removes this entry when the cases pass"
+        }
+      }
     }
   ]
 }

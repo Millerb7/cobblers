@@ -513,6 +513,9 @@ def test_the_killed_by_pokemon_advancement_fires_for_a_pokemon_killer_only():
 
 
 EXEMPT_TAG = CFG["claims"]["exempt_tag"]                 # data/blackout.json: a victor carrying it makes no claim
+# data/blackout.json dungeon_exempt.player_tag (E1): the player is never in a dungeon run in this file's scenarios,
+# which tests/test_dungeon_death.py covers; the models below answer the player-side test with "not held"
+DUNGEON_TEST = "@s[tag=%s]" % (CFG.get("dungeon_exempt") or {}).get("player_tag")
 
 
 def _killed(attacker, wild=True, remembered=((P1, "Ash"), (P2, "Misty")), me=P1, then_death=False, tags=()):
@@ -536,6 +539,9 @@ def _killed(attacker, wild=True, remembered=((P1, "Ash"), (P2, "Misty")), me=P1,
             # `execute as <the victor> if entity @s[tag=...]`: the victor's own tags; no victor, no executor
             assert sim[0].as_sel == VICTOR_SEL, sim[0].as_sel
             return state.get("victor", False) and EXEMPT_TAG in tags
+        if kind == "entity" and toks[0] == DUNGEON_TEST:
+            assert sim[0].as_sel is None, sim[0].as_sel     # the test is on the player, never the victor
+            return False
         raise AssertionError("unmodelled test %s %s" % (kind, toks))
 
     s = loaded(world=world)
@@ -651,6 +657,9 @@ def _wild_loss(slots, balance, claims=None, victor_tags=()):
         if kind == "entity" and toks[0] == "@s[tag=%s]" % EXEMPT_TAG:
             assert sim[0].as_sel == WILD_UUID, sim[0].as_sel     # the test is on the victor, not the player
             return EXEMPT_TAG in victor_tags
+        if kind == "entity" and toks[0] == DUNGEON_TEST:
+            assert sim[0].as_sel is None, sim[0].as_sel     # the test is on the player, never the victor
+            return False
         if kind == "items":
             slot = toks[2]
             n = -106 if slot == "weapon.offhand" else int(slot.split(".")[1])
@@ -952,6 +961,8 @@ def _maintain(s, passes):
                 return P
             if kind == "entity" and toks[0].startswith("@s[distance=.."):
                 return True                              # within the leash
+            if kind == "entity" and toks[0] == DUNGEON_TEST:
+                return False                             # the delivery's player: not in a dungeon run
             raise AssertionError("unmodelled test %s %s" % (kind, toks))
         s.query = strict_query({"time query gametime": gt})
         s.world = world

@@ -1516,6 +1516,101 @@ def test_contract_c22_the_sketch_cap_fits_under_the_dynamax_level_the_config_all
         assert max(written) == cap and min(written) == 1, (event, written)
 
 
+# =================================================================================================================
+# C24. A dungeon death is a blackout death with no recovery claim, and no claim is delivered into a slot
+# =================================================================================================================
+
+C24_EXEMPT = BLACKOUT.get("dungeon_exempt") or {}
+C24_TAG = C24_EXEMPT.get("player_tag")
+
+
+def _c24_fn(key):
+    """dungeon_exempt's function name for `key`, as the pack's own path (recovery/...)."""
+    ns, _, path = C24_EXEMPT[key].partition(":")
+    assert ns == NS, C24_EXEMPT[key]
+    return path
+
+
+def _c24_untagging(s, held):
+    """Give the simulator a player whose tags are `held` and change with `tag @s add|remove`."""
+    orig = s.command
+
+    def command(cmd):
+        m = re.fullmatch(r"tag @s (add|remove) (\S+)", cmd)
+        if m:
+            (held.add if m.group(1) == "add" else held.discard)(m.group(2))
+        return orig(cmd)
+
+    def world(kind, toks):
+        m = re.fullmatch(r"@s\[tag=([^,\]]+)\]", toks[0]) if kind == "entity" else None
+        return bool(m) and m.group(1) in held
+    s.command, s.world = command, world
+
+
+def _c24_blackout(case):
+    import test_blackout_recovery_pid as RP
+    import test_dungeon_death as DD
+    assert C24_TAG and DD.DUNGEON_TAG == C24_TAG, "data/blackout.json has no dungeon_exempt.player_tag"
+    if case in ("battle", "kill"):
+        # 'kill' is M4: a wild Pokemon's kill outside battle, and also any death vanilla credits to a wild hit
+        s = DD._death(DD.FNS, case, player_tags=(C24_TAG,))
+        assert DD.seizure(s) == [], DD.seizure(s)
+        assert DD.blackout_cost(s), (s.log, s.get("@s", "bo.clm"))
+        control = DD._death(DD.FNS, case)
+        assert "called recovery/make" in DD.seizure(control), "the same death outside a run must claim"
+        assert "gamerule keepInventory true" in TB.commands("blackout/load")
+        return
+    # a claim settled by a helper while its owner is in a run: held at deliver, and nothing dropped at their feet
+    drops, s = DD._delivery(DD.FNS, (C24_TAG,))
+    assert drops == [] and [c["state"] for c in s.nbt[DD.LEDGER]["claims"]] == ["deliver"], drops
+    held = {C24_TAG}
+    _c24_untagging(s, held)
+    if case == "login":
+        s.query = RP.strict_query({"data get entity @s Pos[0]": 0, "data get entity @s Pos[2]": 0})
+        s.call("blackout/login")
+        assert RP._drops(s) == [] and held == {C24_TAG}, (RP._drops(s), held)
+        return
+    # the engine's two calls: the tag goes, the held claim is delivered once, and nothing else removes the tag
+    s.log.clear()
+    s.call(_c24_fn({"tail_end": "tail_end_function", "backstop": "backstop_function"}[case]))
+    assert held == set(), held
+    assert RP._drops(s) == [("cobblemon:ultra_ball", 3, tuple(DD.P1))], RP._drops(s)
+    assert [c["state"] for c in s.nbt[DD.LEDGER]["claims"]] == ["resolved"]
+    removers = sorted(n for n, lines in TB.FNS.items() for l in lines
+                      if not l.lstrip().startswith("#") and re.search(r"\btag \S+ remove %s\b" % re.escape(C24_TAG), l))
+    assert removers == [_c24_fn("tail_end_function")], removers
+
+
+def _c24_engine(case):
+    import dungeon as D       # tools/dungeon.py, DUNGEONS.md 11.3: not built on the recorded commit (fails_today)
+    fns = {p: t for p, t in D.build(D.load()).items() if p.endswith(".mcfunction")}
+    lines = [(p, l) for p, t in fns.items() for l in t.splitlines() if l.strip() and not l.lstrip().startswith("#")]
+    tag = re.escape(C24_TAG)
+    if case == "adds_the_tag":
+        assert [p for p, l in lines if re.search(r"\btag \S+ add %s\b" % tag, l)], "no dungeon function adds the run tag"
+    elif case == "never_removes_the_tag":
+        bad = [(p, l) for p, l in lines if re.search(r"\btag \S+ remove %s\b" % tag, l)]
+        assert not bad, ("only the blackout's tail-end function may remove the run tag", bad)
+    else:
+        for key in ("tail_end_function", "backstop_function"):
+            assert [p for p, l in lines if "function %s" % C24_EXEMPT[key] in l], ("never called", C24_EXEMPT[key])
+
+
+C24_CASES = ["blackout:battle", "blackout:kill", "blackout:login", "blackout:tail_end", "blackout:backstop",
+             "engine:adds_the_tag", "engine:never_removes_the_tag", "engine:calls_tail_end_and_backstop"]
+
+
+# Without it a loss inside a rift takes items into a guardian standing in a pocket slot nobody can return to, holds
+# the $600 there, or drops a helper's recovered claim at the owner's feet inside the slot; and nothing notices when the
+# dungeon engine removes the run tag itself or clears it before the blackout has read it (DUNGEONS.md 2.5, E1). The
+# blackout cases run the generated pack on tests/test_dungeon_death.py's harness (both paths, the control without the
+# tag, the login, the engine's two calls); the engine cases read the generated dungeon pack.
+@pytest.mark.parametrize("case", _params("C24", [(c, (c,)) for c in C24_CASES]))
+def test_contract_c24_a_dungeon_death_makes_no_claim_and_nothing_is_delivered_into_a_slot(case):
+    side, _, name = case.partition(":")
+    (_c24_blackout if side == "blackout" else _c24_engine)(name)
+
+
 def test_every_contract_names_existing_tests():
     for c in REGISTRY["contracts"]:
         assert c["tests"], c["id"]
