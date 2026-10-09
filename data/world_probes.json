@@ -3234,6 +3234,76 @@
         "expect": true
       },
       {
+        "what": "the gangway over the launch channel",
+        "block": [
+          1595,
+          92,
+          2892,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the iron door past Misty, in the south wall",
+        "block": [
+          1595,
+          93,
+          2894,
+          "minecraft:iron_door"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the door's button, on the hall side",
+        "block": [
+          1596,
+          94,
+          2893,
+          "minecraft:stone_button"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the vestibule is air",
+        "block": [
+          1595,
+          94,
+          2895,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shore stair's top tread",
+        "block": [
+          1595,
+          103,
+          2906,
+          "minecraft:prismarine_brick_stairs"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shore stair's landing",
+        "block": [
+          1595,
+          103,
+          2907,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "air over the landing, the stair-house mouth",
+        "block": [
+          1595,
+          105,
+          2907,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
         "what": "no spawner at the old seat",
         "block": [
           1605,

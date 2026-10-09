@@ -36,6 +36,14 @@ from the challenger's stand to the street (a door past the leader only an iron d
 arena can press). Its seat function sets the spawner where it is missing; nothing moves. reserved_boxes() names the
 volumes only these functions may write (tools/gym_demolish.py honours it).
 
+A WAY OUT TO THE SURFACE (`exit_passages`, 2026-10-09). The owner does not want a gym you go far down in and must climb
+back out of. Misty's gym is the one donor template, so its walk in is the template's (a well, the race, the ledger
+gallery) and its hall is deep: the way out is a passage from the hall to the shore. An `exit_passages[]` entry is
+its own declared box (writes, bounds and zone), where, and only where, the arena may meet the open air: no cover rule
+(its top is the surface), and an open cell may touch unwritten NATURAL AIR (never unwritten rock, never water). It
+carries a one-way door: an iron door in the hall's wall opened by a stone button on the hall side only, so the passage
+is a way out and never a way in past the race and the lifeguard. passage_checks() walks it both ways.
+
 WHAT THIS TOOL REFUSES TO WRITE, each derived in docs/world-building/GYM_ARENAS.md "Design rules":
   bounds        every write inside the record's bounds or a declared through_building box; the arena's x/z inside
                 its spawn-free zone (data/spawn_suppression.json), which is snapped to the 8-block grid
@@ -191,6 +199,12 @@ def takedown_boxes(doc):
     return out
 
 
+def passages(doc):
+    """[(box, entry)] of the record's `exit_passages`: each a declared box the arena may write in and meet the open air
+    in (see the module docstring). [] for a record without one."""
+    return [(norm(p["box"]), p) for p in (doc or {}).get("exit_passages") or []]
+
+
 def reserved_boxes(gym):
     """The volumes only this gym's own arena or hall functions may write (tools/gym_demolish.py honours them): an
     arena's bounds and through_building boxes; a hall's bounds and its takedown boxes. [] when the gym has no
@@ -203,6 +217,7 @@ def reserved_boxes(gym):
         out += [b for b, _w in takedown_boxes(d)]
     else:
         out += [tuple(norm(tb["box"])) for tb in d.get("through_building") or []]
+    out += [b for b, _p in passages(d)]
     return out
 
 
@@ -710,9 +725,12 @@ def check(doc, a, G, bdoc, bbounds, bmin):
 
     # bounds, zone, through_building
     zx0, zz0, zx1, zz1 = zone
-    if not (zx0 <= bounds[0] and bounds[3] <= zx1 and zz0 <= bounds[2] and bounds[5] <= zz1):
-        bad.append("bounds %s leave the spawn-free zone %s %s: extend the zone (8-block grid) or shrink the arena"
-                   % (list(bounds), doc["spawn_free_zone"], list(zone)))
+    pboxes = [pb for pb, _p in passages(doc)]
+    for bx in [bounds] + pboxes:
+        if not (zx0 <= bx[0] and bx[3] <= zx1 and zz0 <= bx[2] and bx[5] <= zz1):
+            bad.append("%s %s leave the spawn-free zone %s %s: extend the zone (8-block grid) or shrink the arena"
+                       % ("bounds" if bx == bounds else "exit passage box", list(bx), doc["spawn_free_zone"],
+                          list(zone)))
     for (x, z) in ((zx0, zz0), (zx1 + 1, zz1 + 1)):
         if x % 8 or z % 8:
             bad.append("spawn-free zone %s is not on the 8-block grid the suppression is written on" % list(zone))
@@ -721,13 +739,14 @@ def check(doc, a, G, bdoc, bbounds, bmin):
     for c in a.cells:
         if c in a.down:
             continue
-        in_t = any(inside(c, t) for t in through)
+        in_t = any(inside(c, t) for t in through) or any(inside(c, pb) for pb in pboxes)
         if not inside(c, bounds) and not in_t:
             stray.append(c)
         if bbounds and inside(c, bbounds) and not in_t:
             in_bld.append(c)
     if stray:
-        bad.append("%d write(s) outside bounds and every through_building box, first %s" % (len(stray), list(stray[0])))
+        bad.append("%d write(s) outside bounds, every through_building box and every exit passage box, first %s"
+                   % (len(stray), list(stray[0])))
     if in_bld:
         bad.append("%d write(s) inside the building's bounds but in no through_building box, first %s"
                    % (len(in_bld), list(in_bld[0])))
@@ -738,6 +757,8 @@ def check(doc, a, G, bdoc, bbounds, bmin):
         # a hall stands on the lot: nothing of it is under ground but what its shell rule below holds
         if any(inside((x, y, z), t) for t in through):
             continue
+        if any(inside((x, y, z), pb) for pb in pboxes):
+            continue   # an exit passage rises to the surface: its top is the open air, not cover (passage_checks)
         tops[(x, z)] = max(tops.get((x, z), -999), y)
     worst = None
     for (x, z), y in tops.items():
@@ -780,6 +801,8 @@ def check(doc, a, G, bdoc, bbounds, bmin):
                 continue   # a hall's open cells may meet the town's air; only under the pad is rock a cave
             if bbounds and inside(n, bbounds):
                 continue
+            if any(inside(n, pb) for pb in pboxes) and block_name(a.natural(*n)) == "minecraft:air":
+                continue   # an exit passage's mouth: the open air of the surface, and only inside its box
             leak.append((c, n))
     if leak:
         bad.append("%d open cell(s) of the arena touch unwritten ground (the shell must be built, never the rock), "
@@ -860,6 +883,7 @@ def check(doc, a, G, bdoc, bbounds, bmin):
                    % (list(ef), start_key, doc["entry"][start_key]))
     if hall:
         bad += hall_checks(doc, a, lot, lot_level, reach_cells)
+    bad += passage_checks(doc, a, bounds, reach_cells)
     if stand in reach_cells:
         bad.append("a player can walk onto the leader's own stand %s: the dais must not be climbable" % list(stand))
     d_entry = dist3(ef, stand)
@@ -994,6 +1018,64 @@ def walk(a, start, bounds, bbounds, max_fall=None, opened=()):
 
 
 ROOM_KINDS = ("entrance", "puzzle", "junior", "passage", "arena", "exit")
+
+
+def passage_checks(doc, a, bounds, reach_cells):
+    """What an exit passage (`exit_passages[]`, the module docstring) must hold: a one-way iron door in the hall's wall
+    opened by a button on the hall side only; the challenger's stand reaches `surface` on foot (no fall over 3, the
+    door opened by a button the walk reaches by hand); and with the door shut the shore and the hall are two separate
+    places, nothing the shore reaches within reach of the button."""
+    bad = []
+    ps = doc["battle"]["player_stand"]
+    stand = (ps[0], ps[1] + 2, ps[2])
+    buttons = button_doors(a)
+    for pb, p in passages(doc):
+        pid = p.get("id", "passage")
+        door, button, surf = tuple(p["door"]), tuple(p["button"]), tuple(p["surface"])
+        halves = {"lower": door, "upper": (door[0], door[1] + 1, door[2])}
+        for half, c in halves.items():
+            st = a.cells.get(c, "")
+            if block_name(st) != "minecraft:iron_door" or "half=%s" % half not in st or "open=false" not in st:
+                bad.append("%s: door %s half %s is %r, not a closed iron_door[half=%s]: a wooden door opens for "
+                           "anyone, and the passage must be a way out only" % (pid, list(door), half, st, half))
+        if not inside(door, bounds) or inside(door, pb):
+            bad.append("%s: the door %s belongs to the hall's wall (inside bounds, outside the passage box)"
+                       % (pid, list(door)))
+        if block_name(a.cells.get(button, "")) != "minecraft:stone_button":
+            bad.append("%s: button %s is not a stone_button in the model" % (pid, list(button)))
+        elif door not in buttons.get(button, set()):
+            bad.append("%s: the button %s does not open the door %s (it powers the block it is set on, which must "
+                       "touch a door half)" % (pid, list(button), list(door)))
+        if not inside(button, bounds) or inside(button, pb):
+            bad.append("%s: the button %s must be on the hall side of the door (inside bounds, outside the passage "
+                       "box)" % (pid, list(button)))
+        if surf in a.cells or inside(surf, pb) or inside(surf, bounds) or \
+                block_name(a.natural(*surf)) != "minecraft:air" or is_open(a.natural(surf[0], surf[1] - 1, surf[2])):
+            bad.append("%s: surface %s must be a standing cell on the world's own ground beside the passage, outside "
+                       "every box" % (pid, list(surf)))
+        # out: from the stand, no fall over 3; the door is opened by a button the walk reaches by hand
+        back = walk(a, stand, bounds, pb, max_fall=3)
+        opened = set()
+        for btn, doors in buttons.items():
+            if any(by_hand(a, c, btn) for c in back):
+                opened |= doors
+        if surf in back:
+            bad.append("%s: the surface %s is reached with the door shut" % (pid, list(surf)))
+        out = walk(a, stand, bounds, pb, max_fall=3, opened=opened)
+        if surf not in out:
+            bad.append("%s: EXIT: from the challenger's stand %s the surface %s is not reached on foot (no fall over "
+                       "3, the door opened by the button)" % (pid, list(stand), list(surf)))
+        # in: with the door shut, the shore reaches neither the hall nor the button
+        shore = walk(a, surf, bounds, pb)
+        hall_side = back | set(reach_cells)
+        if stand in shore or shore & hall_side:
+            bad.append("%s: the shore reaches the hall with the door shut, first %s" % (
+                pid, list(sorted(shore & hall_side)[0]) if shore & hall_side else list(stand)))
+        near = [c for c in shore if by_hand(a, c, button)]
+        if near:
+            bad.append("%s: the button %s is in reach from %s on the shore side: the door would open from outside"
+                       % (pid, list(button), list(near[0])))
+    return bad
 
 
 def hall_checks(doc, a, lot, lot_level, reach_cells):
@@ -1429,6 +1511,8 @@ def hold_boxes():
             pts += [(s[0], s[2]), (s[3], s[5])]
         for s in replaced_seats(doc):
             pts.append((s[0], s[2]))
+        for pb, _p in passages(doc):
+            pts += [(pb[0], pb[2]), (pb[3], pb[5])]
         out.append((min(q[0] for q in pts), min(q[1] for q in pts), max(q[0] for q in pts), max(q[1] for q in pts)))
     return out
 

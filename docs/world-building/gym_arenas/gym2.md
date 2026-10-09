@@ -141,3 +141,31 @@ was not built:
    the shore leaves; (d) `gym_hall/1` needs a superseded building and a lot level, and the template has neither. A
    door that opens only from inside would also be needed, so that it is never a way in past the race and the
    lifeguard. That is a tool change, not a data change, and it is the owner's call whether Misty gets it.
+
+## The way out past Misty, built (2026-10-09, the shore-stair unit)
+
+The owner asked for it: no gym you go far down in and climb back out of. The tool change section 2 above named was made
+(`exit_passages[]`, `data/gym_arenas/SCHEMA.md`), and the record now carries `shore_stair`:
+
+- **Gangway** at x1595: three spruce planks at y92 over the launch channel (z2891..2893), a dark oak rail each side,
+  from the quay's edge row (z2890) to the south wall. The water under it stays.
+- **Door**: an iron door at (1595, 93..94, 2894), facing into the hall; its stone button at (1596, 94, 2893) on the wall
+  face beside it, hall side. An iron door opens on a signal only, so it is a way out and never a way in past the race and
+  the lifeguard.
+- **Vestibule** (1595, 93..95, 2895) through the wall's outer course, then **eleven treads** rising south, one block per
+  course, one wide, three of headroom: y93 at z2896 to y103 at z2906; a three-block prismarine **landing** at
+  (1594..1596, 103, 2907), top y104, flush with the bank (ground y103 at x1593, z2905..2908, tools/ground.py rounded). The
+  standing cell on the shore is (1593, 104, 2907). Walls and roof are solid mud brick all the way; light is sea lanterns
+  in the walls (a lantern hung in the headroom of a flight stops an upright player, the gym 7 finding).
+- **Water, measured** (`bridges.water`): the lake's level is y103 and the nearest natural water cell to the passage box
+  is (1595, 103, 2908), directly south of the landing block, which is a full block; nothing wet is within the walls.
+  The box x1594..1596 z2896..2907 y92..108 is declared as the arena's one place to meet the open air.
+- **Spawn-free zone** `gym_misty` extended on the 8-block grid from z2895 to z2911 (the strip is the lake's north shore),
+  in `data/spawn_suppression.json` and its copy in `data/gym_interiors.json`.
+
+Why x1595: the ground south of the wall is y105 there, falling to y103 at the shore, and the stair climbs one a block, so
+eleven treads put its top at the lake's edge; further east the bank is under the lake before eleven blocks.
+
+Offline checks only: `tools/gym_arenas.py check` and `tools/gym_arenas_audit.py` (which derives the exit from the replayed
+blocks and shows the shore cannot reach the hall side with the door shut). Not verified in a running game: that the
+iron door opens from its button, that the stairs are walked by a client, that the lake does not reach the landing.

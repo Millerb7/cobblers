@@ -77,6 +77,19 @@ takedown is proved from two declared fields: every cell of the superseded buildi
 cell of `replaces.arena`'s boxes outside the hall's bounds is left a full block (`TAKEDOWN`). The shell rule holds
 under the lot's level; above it a hall meets the town's air and ground, which is the street, not a cave.
 
+AN EXIT TO THE SURFACE (a record's `exit_passages`, 2026-10-09: Misty's gangway, one-way iron door and shore stair). The
+audit reads one more declared field, each passage's `box` (like `bounds` and `through_building`: where the arena may
+write and meet the open air), and nothing else of it: not the door, the button or the shore cell. Everything is
+DERIVED from the replayed blocks. (1) From the challenger's stand, walking upright with no fall over 3, the door shut,
+the buttons within arm's reach of the nodes it reaches are found (button_opened) and the walk is repeated with the
+doors they open; it must come out on the world's own ground (a node whose support block nothing wrote) outside every
+declared box. (2) The reverse: from EVERY standing node on the natural surface of the window, with every door shut,
+the shore reaches neither the challenger's stand, nor any cell the stand's own walk reaches, nor the route's end, and
+no button within arm's reach of anything the shore reaches (a shut iron door opens only to a button the walk reaches).
+(3) Water: no node the exit walk reaches stands in water, and the flood check below counts the passage boxes as arena
+(a cell they hold that natural or written water reaches is a fault). Inside a passage box, and only there, an open cell
+may touch the world's natural AIR (the mouth) and the cover rule does not apply (its top is the surface).
+
 WHAT IT DOES NOT COVER: Battle Positions' search box and rctmod's sight line (the builder's check owns those); the
 seat's spawner contract; runtime behavior of anything (that is an experiment in a running server).
 """
@@ -593,6 +606,12 @@ def declared(gym):
     record is read."""
     d = load(ROOT / "data" / "gym_arenas" / ("%s.json" % gym))
     return norm(d["bounds"]), [norm(t["box"]) for t in d.get("through_building") or []], d
+
+
+def exit_boxes(rec):
+    """The declared boxes of the record's exit passages (`exit_passages[].box`): the third declared field, after
+    `bounds` and `through_building`. Nothing else of a passage is read."""
+    return [norm(p["box"]) for p in rec.get("exit_passages") or []]
 
 
 def challenge_spawner(leader):
@@ -1243,8 +1262,9 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
     import ground as ground_mod
     G = G or ground_mod.load()
     world, s, bounds, through, arena_writes, host_cells, logs = assemble(gym, pack, G, hosts=hosts)
+    xb = exit_boxes(declared(gym)[2])
     problems, facts = [], {"gym": gym, "leader": s["leader"], "logs": logs, "host": s["host"]}
-    region = [bounds, s["host_box"]] + through
+    region = [bounds, s["host_box"]] + through + xb
     box = (min(b[0] for b in region) - 2, min(b[1] for b in region) - 3, min(b[2] for b in region) - 2,
            max(b[3] for b in region) + 2, max(b[4] for b in region) + 3, max(b[5] for b in region) + 2)
 
@@ -1271,10 +1291,12 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
     seat = seats[0]
 
     # ---- bounds
-    stray = sorted(c for c in arena_writes if not inside(c, bounds) and not any(inside(c, t) for t in through))
+    stray = sorted(c for c in arena_writes if not inside(c, bounds) and not any(inside(c, t) for t in through)
+                   and not any(inside(c, x) for x in xb))
     facts["arena_cells_written"] = len(arena_writes)
     if stray:
-        problems.append("BOUNDS: %d arena write(s) outside bounds and every through_building box, first %s"
+        problems.append("BOUNDS: %d arena write(s) outside bounds, every through_building box and every exit "
+                        "passage box, first %s"
                         % (len(stray), list(stray[0])))
     seat_writes = [c for c, l in world.layer.items() if l == "seat"]
     stray_seat = [c for c in seat_writes if not inside(c, bounds) and not inside(c, s["host_box"])
@@ -1301,6 +1323,8 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
                 leaks.append((c, n))
             elif s["host_allows_natural_air"] and inside(n, s["host_box"]):
                 continue
+            elif nat == NAT_AIR and any(inside(n, x) for x in xb):
+                continue   # an exit passage's mouth: the open air, and only inside its declared box
             else:
                 sky.append((c, n, nat))
     facts["shell_leaks"] = len(leaks)
@@ -1315,8 +1339,8 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
     # ---- cover (an arena under a lot; a hall stands on it)
     tops = {}
     for c in ([] if hall else arena_writes):
-        if any(inside(c, t) for t in through):
-            continue
+        if any(inside(c, t) for t in through) or any(inside(c, x) for x in xb):
+            continue   # an exit passage rises to the surface: its top is the open air, held by EXIT below
         tops[(c[0], c[2])] = max(tops.get((c[0], c[2]), -999), c[1])
     host_low = {}
     for c in host_cells:
@@ -1448,6 +1472,75 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
             problems.append("STAIR: going up, no way off the arena's own descent onto the host's floor without a "
                             "jump; %d jump(s) at the edge, first %s" % (
                                 len(jumps), ["%s -> %s" % (list(a), list(b)) for a, b in jumps[:2]]))
+    # ---- an exit to the surface: out on foot, never in
+    if xb:
+        Wx = Walker(world, box)
+        shut = Wx.reach(stand)                       # the doors as written: iron doors shut
+        opened = button_opened(world, shut)
+        for c in opened:
+            Wx._sh[c] = (None, False, False, False)
+        out = Wx.reach(stand) if opened else shut
+
+        def feet(n):
+            return (n[0], int(math.floor(n[2] + EPS)), n[1])
+
+        def on_ground(n):
+            """Standing on the world's own SURFACE: the column's top natural block, which nothing wrote, outside the
+            arena's boxes and the host's (a dig's floor is natural rock too, but it is not the shore)."""
+            sup = w_strict.support(*n)
+            return sup is not None and not world.written(sup) and world.nature(*sup) == NAT and \
+                sup[1] == world.nature.natural_top(sup[0], sup[2])[0] and \
+                not inside(feet(n), bounds) and not inside(feet(n), s["host_box"]) and \
+                not any(inside(feet(n), x) for x in xb)
+
+        gained = sorted(n for n in out if on_ground(n))
+        leaked_out = sorted(n for n in shut if on_ground(n))
+        facts["exit"] = {"doors_opened": sorted(list(c) for c in opened), "shore_nodes_reached": len(gained),
+                         "shore_reached_with_doors_shut": len(leaked_out), "nodes_out": len(out)}
+        if not opened:
+            problems.append("EXIT: no button within arm's reach of anything the challenger's stand reaches opens a door")
+        if not gained:
+            problems.append("EXIT: from the challenger's stand %s no node on the world's own ground outside the "
+                            "arena's boxes is reached (upright, no fall over 3, the doors a reached button opens "
+                            "open)" % facts["challenger_stand"])
+        if leaked_out:
+            problems.append("EXIT: the shore is reached from the stand with every door shut, first %s: the door is "
+                            "no door" % (list(leaked_out[0]),))
+        # the reverse: every standing node on the natural surface of the window, doors shut. The HOST (the donor
+        # template's well, race and gallery over the dig) is the legitimate way in and is not modelled above the dig
+        # (the template is not in the repository): the walk is held outside its box, because what the passage must
+        # not be is a SECOND way in
+        Wi = Walker(world, box)
+        _inbox = Wi.inbox
+        Wi.inbox = lambda x, z, h: _inbox(x, z, h) and not inside((x, int(math.floor(h + EPS)), z), s["host_box"])
+        starts = []
+        for x in range(box[0], box[3] + 1):
+            for z in range(box[2], box[5] + 1):
+                nt = world.nature.natural_top(x, z)[0]
+                if world.nature.water_level(x, z) and world.nature.water_level(x, z) > nt:
+                    continue   # a lake bed: not a place to start on foot
+                n = Wi.settle(x, nt + 1, z)
+                if n and Wi.inbox(*n):
+                    starts.append(n)
+        shore_set = Wi.reach_many(starts) if starts else set()
+        hall_side = set(shut) | set(down) | set(up)
+        together = sorted(shore_set & hall_side)
+        facts["exit"].update({"shore_starts": len(starts), "shore_reach": len(shore_set),
+                              "shore_meets_hall_side": len(together)})
+        if stand in shore_set or together:
+            problems.append("EXIT: with every door shut the shore reaches the hall side, first %s: the passage is a "
+                            "way in" % (list((together or [stand])[0]),))
+        by_shore = button_opened(world, shore_set)
+        if by_shore:
+            problems.append("EXIT: a button that opens a door is within arm's reach of a cell the shore reaches "
+                            "(first door cell %s): the door would open from outside" % (list(sorted(by_shore)[0]),))
+        wet_walk = sorted(n for n in (out | shore_set)
+                          if any(inside((n[0], int(math.floor(n[2] + EPS)), n[1]), x) for x in xb)
+                          and is_water(world.get(n[0], int(math.floor(n[2] + EPS)), n[1])))
+        if wet_walk:
+            problems.append("WATER: %d cell(s) of an exit passage a player walks stand in water, first %s"
+                            % (len(wet_walk), list(wet_walk[0])))
+
     # ---- every order the apply allows: each gym step run again alone on the finished world (`--only <step>`)
     facts["order"] = {}
     for step in ("R16E", "R16F", "R16G", "R16GA"):
@@ -1509,7 +1602,7 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
         # boxes (the open sky beside a through_building box is the world's, lit by the sky)
         feet = (n[0], int(math.floor(n[2] + EPS)), n[1])
         sup = w_strict.support(*n)
-        if not (inside(feet, bounds) or any(inside(feet, t) for t in through)):
+        if not (inside(feet, bounds) or any(inside(feet, t) for t in through) or any(inside(feet, x) for x in xb)):
             return False
         return feet in arena_writes or (sup is not None and sup in arena_writes)
     in_arena = [n for n in standing if arena_cell(n)]
@@ -1583,7 +1676,7 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
     hot = flow(world, fbox, lsrc, 3)
     arena_fluid = {c for c in arena_writes if is_water(world.get(*c))}
     arena_lava = {c for c in arena_writes if is_lava(world.get(*c))}
-    in_ar = lambda c: inside(c, bounds) or any(inside(c, t) for t in through)
+    in_ar = lambda c: inside(c, bounds) or any(inside(c, t) for t in through) or any(inside(c, x) for x in xb)
     flooded = sorted(c for c in wet if in_ar(c) and c not in arena_fluid)
     facts["water_sources"] = len(wsrc)
     facts["world_water_columns_near"] = getattr(world.nature.water_level, "wet", None)
