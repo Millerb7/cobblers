@@ -31,7 +31,7 @@
   "challenge_spawner": {
     "old_at": [1605, 132, 2873],
     "old_restore": {"floor": "minecraft:smooth_quartz_stairs[facing=south,half=bottom,shape=inner_right,waterlogged=true]", "under": "minecraft:smooth_stone"},
-    "why": "the Challenge spawner the trainers cycle sets in the template hall (data/challenge_mode.json bosses.kanto_misty.spawner.at, measured there by unit M1) goes back to the rim stair and smooth stone it replaced; the cycle's new cell is two south of the seat on the same deck, (1627, 95, 2885), with the two cells over it left air."
+    "why": "the Challenge spawner the trainers cycle sets in the template hall (data/challenge_mode.json bosses.kanto_misty.spawner.at, measured there by unit M1) goes back to the rim stair and smooth stone it replaced; the cycle's new cell is two NORTH of the seat (1627, 95, 2887) on the same deck, (1627, 95, 2885), with the two cells over it left air."
   },
   "old_seat_restore": {
     "floor": "minecraft:smooth_quartz_stairs[facing=west,half=bottom,shape=straight,waterlogged=true]",
