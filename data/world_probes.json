@@ -4095,6 +4095,118 @@
           1924
         ]
       }
+    ],
+    "drowned_quarry": [
+      {
+        "what": "a pillar of the hall (stone bricks)",
+        "block": [
+          6500,
+          58,
+          4122,
+          "minecraft:stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the roof over the nave (stone, the shell)",
+        "block": [
+          6508,
+          69,
+          4132,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the flooded nave (water, no air)",
+        "block": [
+          6506,
+          60,
+          4132,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the flooded adit (water)",
+        "block": [
+          6406,
+          55,
+          4108,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the open cutting (water)",
+        "block": [
+          6360,
+          55,
+          4108,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the sump's gravel floor",
+        "block": [
+          6528,
+          46,
+          4132,
+          "minecraft:gravel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the sump's water",
+        "block": [
+          6528,
+          50,
+          4132,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the crane's mast (spruce log)",
+        "block": [
+          6492,
+          57,
+          4120,
+          "minecraft:spruce_log[axis=y]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a hall lantern, hung and waterlogged",
+        "block": [
+          6494,
+          68,
+          4118,
+          "minecraft:lantern[hanging=true,waterlogged=true]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the first timber set's beam",
+        "block": [
+          6396,
+          58,
+          4108,
+          "minecraft:spruce_log[axis=z]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Gyarados of the sump (one tagged cobblers.dq; absent while its return clock runs)",
+        "hold": [
+          6528,
+          47,
+          4132
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.dq]",
+        "count": 1
+      }
     ]
   }
 }

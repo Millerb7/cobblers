@@ -529,6 +529,12 @@ def _source_blocks():
     mc = _load("mining_caves.json")
     out["mining_caves"] = (_named_ids([mc["yields"], [{k: c[k] for k in ("wall", "shell", "floor", "stair", "timber")}
                                                       for c in mc["caves"]]], ("minecraft",)), ["mining_caves"])
+    # the Drowned Quarry (tools/drowned_quarry.py, 2026-10-09): the record's block palette, its pit floor and the wreck's
+    # planks; the water is the room, so a policy entry must name drowned_quarry to cover it
+    dq = _load("drowned_quarry.json")["geometry"]
+    out["drowned_quarry"] = (_named_ids([dq["blocks"], dq["pit"]["floor_block"], dq["dressing"]["wreck"],
+                                         dq["dressing"]["crane"]["block"]], ("minecraft",)) | {"minecraft:water"},
+                             ["drowned_quarry"])
     for p in PLACEMENTS["placements"]:
         if p.get("kind") == "earthwork" and p.get("commands"):
             key = "earthworks:%s" % p["settlement"]

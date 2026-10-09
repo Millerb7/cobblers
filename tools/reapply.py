@@ -115,6 +115,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Ursaluna's den west of Highwire (tools/ursaluna_cave.py, data/ursaluna_cave.json): a
                 # keeper loop holds the bear in its den, so world-local; carved, summoned and dressed by R18U
                 "cobblers_ursaluna_cave",
+                # 2026-10-09: the Drowned Quarry under Lake Tilpey's east wall (tools/drowned_quarry.py,
+                # data/drowned_quarry.json): a keeper loop holds its Gyarados, so world-local; carved and summoned by R18DQ
+                "cobblers_drowned_quarry",
                 # 2026-10-02: the Frostpeak research camp (tools/frostpeak_camp.py, data/frostpeak_camp.json): block
                 # functions and the instruments' display entities, run by R18F
                 "cobblers_frostpeak_camp",
@@ -425,6 +428,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_produce_buyer",
                # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
                "cobblers_ursaluna_cave",
+               # 2026-10-09: the Drowned Quarry's keeper holds its Gyarados on its own tick, like the den's
+               "cobblers_drowned_quarry",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
                # load in the global folder, where the live world would run it too
                "cobblers_residents", "cobblers_relic_underground",
@@ -812,6 +817,10 @@ def prepare_jobs(a):
     # replays the written functions against its own reading of the plan and fails the prepare on a broken build
     add("ursaluna_cave", "ursaluna_cave.py", *src)
     add("ursaluna_cave_audit", "ursaluna_cave_audit.py", *src)
+    # the Drowned Quarry (2026-10-09), then its independent audit, which replays the written functions into the natural
+    # lake and the rock and fails the prepare on a leak, a thin roof, a reach that gates nothing or a broken keeper
+    add("drowned_quarry", "drowned_quarry.py", *src)
+    add("drowned_quarry_audit", "drowned_quarry_audit.py", *src)
     add("frostpeak_camp:build", "frostpeak_camp.py", "build", *src)
     add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
     # Coldwater Station (2026-10-05): its builder's siting guards fail the job; its independent audit
@@ -2239,6 +2248,12 @@ def steps(with_spawns=False):
     import ursaluna_cave
     out.append(("R18U", "the Ursaluna's den west of Highwire (data/ursaluna_cave.json)",
                 ursaluna_cave.placement_steps() + [("npc", n) for n in ursaluna_cave.npc_placements()]))
+    # the Drowned Quarry (2026-10-09): carve the flooded working under Lake Tilpey's east wall, then summon the sleeping
+    # Gyarados through tools/chunk_look.py's look-then-act chain (a force-loaded chunk accepts a summon at once but its
+    # saved entities arrive later), after every lake pack (R9LL) so nothing re-skins the open cutting
+    import drowned_quarry
+    out.append(("R18DQ", "the Drowned Quarry under Lake Tilpey's east wall and its Gyarados (data/drowned_quarry.json)",
+                drowned_quarry.placement_steps()))
     # the Compact guards at the HQ's ring-0 door (2026-10-02, data/relic_underground.json geometry.hq.guard): the door
     # stays shut and the guard's dialogue moves a player at rift_crisis_pending or later inside; the inside guard lets
     # anyone out. NPCs, so after the restart that loaded cobblers_dialogue's classes, like R17N's, each turned to its yaw
