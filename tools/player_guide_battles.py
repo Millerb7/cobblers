@@ -329,12 +329,16 @@ def collect(jar=None):
     for f in sorted((ROOT / "data" / "gym_buildings").glob("gym*.json")):
         g = json.loads(f.read_text(encoding="utf-8"))
         halls[g["id"]] = (g.get("name"), g.get("settlement"))
-    # Misty's hall is the donor template's island (data/gym_junior_trainers.json gyms.gym2), with no data/gym_buildings
-    # record; data/gym_interiors.json's gym2 title names the carved cistern under it, not the hall the juniors and
-    # Misty stand in, so the page names it by its leader instead
+    # Misty's gym has no data/gym_buildings record. While her template stood, data/gym_interiors.json's gym2 title named
+    # the carved cistern under it, not the hall the juniors and Misty stood in, so the page named it by its leader;
+    # since 2026-10-09 it is her walk-through hall, named by its own record
     for g in doc("data/gym_interiors.json")["gyms"]:
         if g.get("built") and g["id"] not in halls:
             halls[g["id"]] = ("%s's gym" % g["leader_name"] if g.get("leader_name") else None, g.get("settlement"))
+        # a template superseded straight by a walk-through hall (gym 2 since 2026-10-09): the hall's own name
+        hall = ROOT / "data" / "gym_arenas" / ("%s.json" % g["id"])
+        if g["id"] not in halls and str(g.get("superseded_by") or "").startswith("data/gym_arenas/") and hall.exists():
+            halls[g["id"]] = (json.loads(hall.read_text(encoding="utf-8")).get("name"), g.get("settlement"))
     for gym, ids in sorted(met.items()):
         said = sorted(ids, key=lambda t: (recs[t].get("trainer_order") or 0, t))
         if said != ids:

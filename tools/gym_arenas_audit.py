@@ -561,9 +561,41 @@ def site(gym, building_pack=None, interior_pack=None):
                 "route_end": end, "route_start": starts[0] if starts else None, "hall_spawner": spawner,
                 "lots": lots, "host_allows_natural_air": True}
     i = [g for g in load(ROOT / "data" / "gym_interiors.json")["gyms"] if g["id"] == gym][0]
-    gallery = [st["at"] for st in i["route"] if st.get("room") == "r3_gallery"]
     lots = [(a["rect"][0], a["rect"][1], a["rect"][2], a["rect"][3], a.get("level"))
             for a in placements[i["settlement"]]["plan"].get("anchors") or [] if "gym" in (a.get("role") or "")]
+    if str(i.get("superseded_by") or "").startswith("data/gym_arenas/%s.json" % gym):
+        # a walk-through hall over a donor template (gym 2 since 2026-10-09): what stood is the template's box as the
+        # record measured it (shell.expect_box) and its works (dig); the lot has no level (it straddles the bank), so
+        # the town's ground round it is the heightmap itself
+        import ground as ground_mod
+        G = ground_mod.load()
+        x0, z0, x1, z1, _lv = lots[0]
+        bounds, _t, d = declared(gym)
+        rep_ = (d.get("replaces") or {}).get("arena") or {}
+        replaced = [tuple(i["leader"]["expect_spawner_at"])] + ([tuple(rep_["seat"])] if rep_.get("seat") else [])
+        old_arena = ([norm(rep_["bounds"])] if rep_.get("bounds") else []) + \
+            [norm(tb["box"]) for tb in rep_.get("through_building") or []]
+        cs = challenge_spawner(i["leader"]["id"])
+        if cs and any(inside(cs, b) for b in old_arena):
+            replaced.append(cs)
+        ring = [(x, z) for x in range(x0 - 1, x1 + 2) for z in range(z0 - 1, z1 + 2)]
+        low = min(G(x, z) for x, z in ring)
+        tb = norm(i["shell"]["expect_box"])
+        olds = [tb]
+        donor = [p for p in load(ROOT / "data" / "placements.json")["placements"]
+                 if isinstance(p, dict) and p.get("id") == i["donor"]][0]
+        if donor.get("plinth"):
+            # the quay plinth tools/place_donor.py fills under the template, from its `from_y` to the course under it
+            olds.append((tb[0], int(donor["plinth"]["from_y"]), tb[2], tb[3], tb[1] - 1, tb[5]))
+        return {"leader": i["leader"]["id"], "host": "hall", "host_fn": None, "lots": lots,
+                "host_box": (x0 - 1, low, z0 - 1, x1 + 1, bounds[4] + 2, z1 + 1),
+                "lot": (x0, z0, x1, z1, None), "route_end": None, "route_start": None,
+                "hall_spawner": tuple(i["leader"]["expect_spawner_at"]), "replaced_seats": replaced,
+                "old_building": tb, "old_buildings": olds,
+                "replaced_arena": old_arena + ([norm(i["dig"])] if i.get("dig") else []),
+                "replaced_passages": [norm(p["box"]) for p in rep_.get("exit_passages") or []],
+                "host_allows_natural_air": True}
+    gallery = [st["at"] for st in i["route"] if st.get("room") == "r3_gallery"]
     return {"leader": i["leader"]["id"], "host_box": norm(i["dig"]), "host_fn": Path(interior_pack or INTERIOR_PACK) / "data" / "cobblers" /
             "function" / "gym_interiors" / ("%s.mcfunction" % gym), "host": "dig",
             "template_box": norm(i["shell"]["expect_box"]),
@@ -1316,8 +1348,10 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
             n = (x + d[0], y + d[1], z + d[2])
             if world.written(n):
                 continue
-            if hall and n[1] >= s["lot"][4]:
-                continue   # a hall's open cells meet the town above the lot's level: the street, not a cave
+            if hall and n[1] >= (s["lot"][4] if s["lot"][4] is not None else world.nature.G(n[0], n[2])):
+                # a hall's open cells meet the town above the lot's level: the street, not a cave. A lot with no
+                # level (gym 2, on the bank) meets it at the ground's own top course, column by column
+                continue
             nat = world.nature(*n)
             if nat in (NAT, PAD):
                 leaks.append((c, n))
@@ -1570,8 +1604,30 @@ def audit_gym(gym, pack=ARENA_PACK, G=None, arch=None, size=None, hosts=(None, N
     # ---- a hall's takedown: nothing of what it replaces survives
     if hall:
         ob = s["old_building"]
-        miss = [(x, y, z) for x in range(ob[0], ob[3] + 1) for y in range(ob[1], ob[4] + 1)
-                for z in range(ob[2], ob[5] + 1) if not world.written((x, y, z))]
+        miss = [(x, y, z) for o in (s.get("old_buildings") or [ob]) for x in range(o[0], o[3] + 1)
+                for y in range(o[1], o[4] + 1) for z in range(o[2], o[5] + 1) if not world.written((x, y, z))]
+        # a replaced arena's way out to the surface (gym 2's never-built shore stair): back to the ground, column by
+        # column from the heightmap and the water mask: under the ground a full block, over it nothing a body or a
+        # fluid finds in its way (air, or the water the mask puts there). The course AT a wet column's water level,
+        # where the ground rounds to the level, is the one cell the export may hold either way, and is not judged
+        bad_pass = []
+        for p in s.get("replaced_passages") or []:
+            for x in range(p[0], p[3] + 1):
+                for z in range(p[2], p[5] + 1):
+                    g, _lvl, wl = world.nature.column(x, z)
+                    for y in range(p[1], p[4] + 1):
+                        st = world.get(x, y, z)
+                        if wl and g >= wl and y == wl:
+                            continue
+                        want_full = y <= g
+                        if want_full and shape(st) != (0.0, 1.0, None):
+                            bad_pass.append(((x, y, z), st))
+                        elif not want_full and not (name_of(st) in ("minecraft:air", "minecraft:cave_air")
+                                                    or st == NAT_AIR or is_water(st) or st == NAT_WATER):
+                            bad_pass.append(((x, y, z), st))
+        if bad_pass:
+            problems.append("TAKEDOWN: %d cell(s) of the replaced arena's exit passage(s) are not back to the ground, "
+                            "first %s holding %s" % (len(bad_pass), list(bad_pass[0][0]), bad_pass[0][1]))
         open_old = []
         for b in s["replaced_arena"]:
             for x in range(b[0], b[3] + 1):

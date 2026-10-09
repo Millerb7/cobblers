@@ -11,7 +11,7 @@ things the generator does not write:
   the ground    tools/ground.py, rounded - the heightmap, never a world save
   the rules     data/gym_interiors.json `rules`: max_fall 12, max_submerged_run 14
   the zones     data/spawn_suppression.json
-  Misty         data/gym_interiors.json gym2, the one interior still built, which nothing may touch
+  Misty         data/gym_interiors.json gym2 while it was built; since 2026-10-09 her walk-through hall (data/gym_arenas/gym2.json), which nothing may touch
   the physics   the movement model in tools/gym_buildings_independent.py, checked here against synthetic worlds
                 whose answer is worked out by hand
 
@@ -295,8 +295,11 @@ def test_every_building_is_an_interior_that_was_superseded(records):
     # gym 1) is no longer built, so it is not among the records this audit reads
     halls = {p.stem for p in (ROOT / "data" / "gym_buildings").glob("gym*.json")
              if json.loads(p.read_text(encoding="utf-8")).get("superseded_by")}
+    # and a donor gym superseded straight by a walk-through hall, with no building between (gym 2, 2026-10-09: the
+    # owner had the template taken down), was never a building this audit reads
+    halls |= {g["id"] for g in doc["gyms"] if str(g.get("superseded_by") or "").startswith("data/gym_arenas/")}
     assert set(records) == superseded - halls, (sorted(records), sorted(superseded - halls))
-    assert [g["id"] for g in doc["gyms"] if g.get("built")] == ["gym2"]
+    assert [g["id"] for g in doc["gyms"] if g.get("built")] == []
 
 
 def test_exactly_one_spawner_per_building_names_its_own_leader_and_no_healer_is_written(baseline):
@@ -441,14 +444,14 @@ def test_two_buildings_writing_the_same_cells_is_caught(emitted, records, placem
     assert "gym_cells" in rep.codes() or "lot" in rep.codes("gym3")
 
 
-def test_a_building_written_into_mistys_dig_is_caught(emitted, records, placements, ground):
-    # breaks if: the one interior still built can be overwritten by a new gym building without anybody noticing
+def test_a_building_written_into_mistys_hall_is_caught(emitted, records, placements, ground):
+    # breaks if: Misty's gym can be overwritten by a gym building without anybody noticing. It was her carved works
+    # under the template until 2026-10-09; it is her walk-through hall now (data/gym_arenas/gym2.json bounds)
     texts, _ = emitted
-    misty = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))["gyms"]
-    dig = [g for g in misty if g["id"] == "gym2"][0]["dig"]
+    hall = json.loads((ROOT / "data" / "gym_arenas" / "gym2.json").read_text(encoding="utf-8"))["bounds"]
     t = dict(texts)
     t["gym3"] = appended(texts["gym3"], "fill %d %d %d %d %d %d minecraft:stone"
-                         % (dig[0], dig[1], dig[2], dig[0] + 1, dig[1] + 1, dig[2] + 1))
+                         % (hall[0], hall[1], hall[2], hall[0] + 1, hall[1] + 1, hall[2] + 1))
     rep, _s, _w, _e = A.run(t, records, placements, ground, only={"gym3"})
     assert "misty" in rep.codes("gym3"), sorted(rep.codes("gym3"))
 

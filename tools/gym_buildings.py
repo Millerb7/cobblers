@@ -3,8 +3,9 @@
 
 The owner's call, 2026-09-29 (docs/world-building/GYM_BUILDINGS_BRIEF.md): "id rather have a large gym building
 with a puzzle inside than whatever that was". The COBBLEVERSE donor shell at gyms 1, 3, 4, 5 and 7 is taken down
-by tools/gym_demolish.py and replaced by a building we author. Gym 2, Misty's, is kept exactly as built and is
-not touched by either tool.
+by tools/gym_demolish.py and replaced by a building we author. Gym 2, Misty's, was kept as built until 2026-10-09,
+when the owner had its template taken down for a walk-through hall (data/gym_arenas/gym2.json, tools/gym_arenas.py);
+this tool has no record for it either way.
 
   python tools/gym_buildings.py report [--gym gym1] [--source-root <root>]
   python tools/gym_buildings.py build  [--out build/datapacks/cobblers_gym_buildings] [--source-root <root>]

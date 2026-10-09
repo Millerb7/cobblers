@@ -3077,8 +3077,8 @@
         "what": "the leader's spawner in the dais",
         "block": [
           1627,
-          95,
-          2887,
+          108,
+          2883,
           "rctmod:trainer_spawner"
         ],
         "expect": true
@@ -3087,8 +3087,8 @@
         "what": "its redstone",
         "block": [
           1627,
-          94,
-          2887,
+          107,
+          2883,
           "minecraft:redstone_block"
         ],
         "expect": true
@@ -3097,8 +3097,8 @@
         "what": "air over the seat",
         "block": [
           1627,
-          96,
-          2887,
+          109,
+          2883,
           "minecraft:air"
         ],
         "expect": true
@@ -3107,8 +3107,8 @@
         "what": "battle.trainer_pokemon",
         "block": [
           1620,
-          91,
-          2887,
+          104,
+          2883,
           "cobblemonbattlepositions:trainer_pokemon_position"
         ],
         "expect": true
@@ -3117,8 +3117,8 @@
         "what": "battle.player_pokemon",
         "block": [
           1612,
-          91,
-          2887,
+          104,
+          2883,
           "cobblemonbattlepositions:player_pokemon_position"
         ],
         "expect": true
@@ -3127,8 +3127,8 @@
         "what": "battle.trainer_stand",
         "block": [
           1626,
-          94,
-          2887,
+          107,
+          2883,
           "cobblemonbattlepositions:trainer_stand_position"
         ],
         "expect": true
@@ -3137,8 +3137,8 @@
         "what": "battle.player_stand",
         "block": [
           1609,
-          91,
-          2887,
+          104,
+          2883,
           "cobblemonbattlepositions:player_stand_position"
         ],
         "expect": true
@@ -3147,18 +3147,18 @@
         "what": "the quay under the leader's Pokemon",
         "block": [
           1620,
-          92,
-          2887,
+          105,
+          2883,
           "minecraft:prismarine_bricks"
         ],
         "expect": true
       },
       {
-        "what": "air over the quay in the middle of the hall",
+        "what": "air over the quay in the middle of the boat house",
         "block": [
           1616,
-          95,
-          2887,
+          108,
+          2883,
           "minecraft:air"
         ],
         "expect": true
@@ -3167,8 +3167,8 @@
         "what": "water in the launch channel",
         "block": [
           1614,
-          92,
-          2892,
+          105,
+          2888,
           "minecraft:water"
         ],
         "expect": true
@@ -3177,39 +3177,9 @@
         "what": "the lookout deck's front edge",
         "block": [
           1624,
-          95,
-          2887,
+          108,
+          2883,
           "minecraft:stripped_dark_oak_log"
-        ],
-        "expect": true
-      },
-      {
-        "what": "a roof beam",
-        "block": [
-          1614,
-          99,
-          2887,
-          "minecraft:dark_oak_log"
-        ],
-        "expect": true
-      },
-      {
-        "what": "the door in the ledger gallery's south wall",
-        "block": [
-          1606,
-          99,
-          2877,
-          "minecraft:dark_oak_door"
-        ],
-        "expect": true
-      },
-      {
-        "what": "the slipway's top landing is air over its floor",
-        "block": [
-          1606,
-          99,
-          2879,
-          "minecraft:air"
         ],
         "expect": true
       },
@@ -3217,91 +3187,151 @@
         "what": "the lifebuoy on the end wall",
         "block": [
           1630,
-          100,
-          2887,
+          113,
+          2883,
           "minecraft:red_terracotta"
         ],
         "expect": true
       },
       {
-        "what": "the shell's south-west bottom corner",
+        "what": "the door from the promenade",
         "block": [
-          1592,
-          88,
-          2895,
-          "minecraft:mud_bricks"
-        ],
-        "expect": true
-      },
-      {
-        "what": "the gangway over the launch channel",
-        "block": [
-          1595,
-          92,
-          2892,
-          "minecraft:spruce_planks"
-        ],
-        "expect": true
-      },
-      {
-        "what": "the iron door past Misty, in the south wall",
-        "block": [
-          1595,
-          93,
-          2894,
-          "minecraft:iron_door"
-        ],
-        "expect": true
-      },
-      {
-        "what": "the door's button, on the hall side",
-        "block": [
-          1596,
-          94,
-          2893,
-          "minecraft:stone_button"
-        ],
-        "expect": true
-      },
-      {
-        "what": "the vestibule is air",
-        "block": [
-          1595,
-          94,
-          2895,
+          1611,
+          110,
+          2860,
           "minecraft:air"
         ],
         "expect": true
       },
       {
-        "what": "the shore stair's top tread",
+        "what": "the step down to the race",
         "block": [
-          1595,
-          103,
-          2906,
+          1627,
+          108,
+          2865,
           "minecraft:prismarine_brick_stairs"
         ],
         "expect": true
       },
       {
-        "what": "the shore stair's landing",
+        "what": "the race's deep middle",
         "block": [
-          1595,
-          103,
-          2907,
-          "minecraft:prismarine_bricks"
+          1610,
+          106,
+          2869,
+          "minecraft:water"
         ],
         "expect": true
       },
       {
-        "what": "air over the landing, the stair-house mouth",
+        "what": "the true (west) mouth",
         "block": [
-          1595,
-          105,
-          2907,
+          1606,
+          108,
+          2873,
           "minecraft:air"
         ],
         "expect": true
+      },
+      {
+        "what": "the true mouth's light",
+        "block": [
+          1606,
+          109,
+          2877,
+          "minecraft:sea_lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the ledger",
+        "block": [
+          1600,
+          109,
+          2873,
+          "minecraft:bookshelf"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the slipway's lower tread",
+        "block": [
+          1595,
+          106,
+          2878,
+          "minecraft:prismarine_brick_stairs"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the iron door past Misty",
+        "block": [
+          1622,
+          106,
+          2890,
+          "minecraft:iron_door"
+        ],
+        "expect": true
+      },
+      {
+        "what": "its button, inside",
+        "block": [
+          1623,
+          107,
+          2889,
+          "minecraft:stone_button"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the template's hall taken down (its old spawner cell)",
+        "block": [
+          1605,
+          132,
+          2874,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the template's top taken down",
+        "block": [
+          1611,
+          140,
+          2875,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old boat house's quay, taken down",
+        "block": [
+          1616,
+          92,
+          2887,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the old works' cistern, filled",
+        "block": [
+          1610,
+          95,
+          2870,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "no spawner at the old seat",
+        "block": [
+          1627,
+          95,
+          2887,
+          "rctmod:trainer_spawner"
+        ],
+        "expect": false
       },
       {
         "what": "no spawner at the old seat",

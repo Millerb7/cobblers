@@ -144,6 +144,9 @@ SOLID_NAMES = {
     "minecraft:chiseled_tuff", "minecraft:chiseled_tuff_bricks", "minecraft:coarse_dirt",
     "minecraft:cobbled_deepslate", "minecraft:cobblestone", "minecraft:cobblestone_wall", "minecraft:composter",
     "minecraft:copper_block", "minecraft:copper_grate", "minecraft:cut_copper", "minecraft:dark_oak_planks",
+    # gym 2's walk-through hall, 2026-10-09 (its timber frame and its buoys): full cubes
+    "minecraft:dark_oak_log", "minecraft:stripped_dark_oak_log", "minecraft:red_terracotta",
+    "minecraft:white_terracotta",
     "minecraft:deepslate", "minecraft:deepslate_bricks", "minecraft:deepslate_tiles", "minecraft:glass",
     "minecraft:glowstone", "minecraft:granite", "minecraft:grindstone", "minecraft:hay_block",
     "minecraft:iron_bars", "minecraft:lectern", "minecraft:mangrove_log", "minecraft:mangrove_planks",
@@ -278,10 +281,15 @@ def walkthrough_hall(gym, G, rec):
     import gym_arenas as GA
     a, _ops, _problems, _facts = GA.build(rec, G)
     lot_rect, lot_level = GA.lot_of(rec)
-    lot_level = int(lot_level)
     x0, z0, x1, z1 = lot_rect
     ring = ring_columns(lot_rect)
-    ring_ground = {(x, z): max(G(x, z), lot_level) for x, z in ring}
+    if lot_level is None:
+        # a lot the town plan never levels (gym 2's, on the lake bank): the street round it is the heightmap itself
+        ring_ground = {(x, z): G(x, z) for x, z in ring}
+        lot_level = min(ring_ground.values())
+    else:
+        lot_level = int(lot_level)
+        ring_ground = {(x, z): max(G(x, z), lot_level) for x, z in ring}
     b = GA.norm(rec["bounds"])
     y0 = min(b[1], lot_level) - 3
     y1 = max([b[4]] + list(ring_ground.values())) + 4
@@ -444,7 +452,14 @@ def hall(gym, G=None, closures=()):
     proof is run with closed, each one named in the report -- never silently."""
     import ground as ground_mod
     G = G or ground_mod.load()
-    h = misty_hall(G) if gym == "gym2" else building_hall(gym, G)
+    import gym_arenas as GA
+    rec = GA.record_of(gym)
+    if gym == "gym2" and GA.is_hall(rec):
+        # Misty's template superseded by her walk-through hall (2026-10-09): there is no data/gym_buildings record
+        # between them, so the hall's own model is read directly
+        h = walkthrough_hall(gym, G, rec)
+    else:
+        h = misty_hall(G) if gym == "gym2" else building_hall(gym, G)
     h.closed = []
     for did, cells in closures:
         for c in cells:

@@ -13,9 +13,9 @@
     3696
    ],
    "seat_now": [
-    1826,
-    125,
-    3662
+    1831,
+    144,
+    3667
    ],
    "lot": [
     1806,
@@ -130,16 +130,16 @@
   {
    "gym": "gym2",
    "leader": "kanto_misty",
-   "building": "the COBBLEVERSE template cobbleverse:misty with a carved interior (data/gym_interiors.json gym2)",
+   "building": "the COBBLEVERSE template gym2_misty_gym, taken down for data/gym_arenas/gym2.json",
    "route_end_seat": [
-    1605,
-    132,
-    2874
+    1627,
+    108,
+    2883
    ],
    "seat_now": [
-    1605,
-    132,
-    2874
+    1627,
+    108,
+    2883
    ],
    "lot": [
     1592,
@@ -161,7 +161,7 @@
     1592,
     2856,
     1631,
-    2895
+    2911
    ],
    "window": [
     1560,
@@ -193,7 +193,7 @@
       106,
       2881
      ],
-     "state": "carved and standing"
+     "state": "filled back in by R16F (tools/gym_demolish.py)"
     }
    ],
    "team": {
@@ -217,22 +217,22 @@
      ],
      "shell_top_max": 102,
      "floor_y_max_for_team": 97,
-     "descent_from_route_end": 35
+     "descent_from_route_end": 11
     },
     "spawn_free_zone": {
      "box_xz": [
       1592,
       2856,
       1631,
-      2895
+      2911
      ],
      "size": [
       40,
-      40
+      56
      ],
-     "shell_top_max": 101,
-     "floor_y_max_for_team": 96,
-     "descent_from_route_end": 36
+     "shell_top_max": 99,
+     "floor_y_max_for_team": 94,
+     "descent_from_route_end": 14
     },
     "lot_plus_32": {
      "box_xz": [
@@ -247,7 +247,7 @@
      ],
      "shell_top_max": 86,
      "floor_y_max_for_team": 81,
-     "descent_from_route_end": 51
+     "descent_from_route_end": 27
     }
    }
   },
@@ -261,9 +261,9 @@
     1414
    ],
    "seat_now": [
-    1747,
-    190,
-    1414
+    1748,
+    162,
+    1435
    ],
    "lot": [
     1722,
@@ -385,9 +385,9 @@
     1480
    ],
    "seat_now": [
-    4308,
-    110,
-    1480
+    4311,
+    98,
+    1514
    ],
    "lot": [
     4288,
@@ -509,9 +509,9 @@
     2487
    ],
    "seat_now": [
-    4594,
-    131,
-    2487
+    4586,
+    103,
+    2461
    ],
    "lot": [
     4574,
@@ -633,8 +633,8 @@
     3312
    ],
    "seat_now": [
-    6196,
-    111,
+    6183,
+    101,
     3312
    ],
    "lot": [
@@ -743,9 +743,9 @@
     5001
    ],
    "seat_now": [
-    6178,
-    106,
-    5001
+    6166,
+    87,
+    4981
    ],
    "lot": [
     6154,
@@ -867,9 +867,9 @@
     6416
    ],
    "seat_now": [
-    3565,
-    120,
-    6416
+    3556,
+    94,
+    6419
    ],
    "lot": [
     3556,

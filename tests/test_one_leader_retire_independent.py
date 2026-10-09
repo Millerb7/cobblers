@@ -397,10 +397,11 @@ def _exec_into(monkeypatch, name, edits=(), d=None):
 
 # Without it the template restore (the audit's donor-substitution replay, 2026-10-08) could agree with anything:
 # the generator's template branch putting floor and under back the wrong way round must fail P1:restore for the
-# template bosses, with data/challenge_mode.json untouched. Judged as what the mutation ADDS to the unmutated run,
-# because Misty's retired cell is now in her arena (data/gym_arenas/gym2.json), where the unmutated generator already
-# fails P1:restore (the defect pinned above): her failure cannot show the mutation bites. The League's five stand in
-# their template, so for them the mutation is the only difference.
+# template bosses, with data/challenge_mode.json untouched. Judged as what the mutation ADDS to the unmutated run.
+# The League's five stand in their template, so for them the mutation is the only difference. Misty is no template
+# boss since 2026-10-09: her template came down and her Challenge cell is in her walk-through hall
+# (data/gym_arenas/gym2.json), where restore_blocks reads the hall's own model, so the unmutated run passes her and
+# the template-branch mutation cannot touch her.
 def test_the_template_restore_check_fails_a_generator_that_swaps_floor_and_under(monkeypatch, all_thirteen_problems):
     base = {m.split()[0] for c, m in all_thirteen_problems if c == "P1:restore"}
     try:
@@ -418,7 +419,7 @@ def test_the_template_restore_check_fails_a_generator_that_swaps_floor_and_under
     league = {u + SFX for u in ("kanto_league_lorelei", "kanto_league_bruno", "kanto_league_agatha",
                                 "kanto_league_lance", "kanto_champion_blue")}
     assert hit - base == league, (hit, base)
-    assert "kanto_misty" + SFX in base, "Misty's retire is judged against her arena now; see the strict xfail above"
+    assert "kanto_misty" + SFX not in base | hit, "Misty's retire is judged against her walk-through hall's own floor"
 
 
 # ------------------------------------------------------------------------------------------------ the League floors

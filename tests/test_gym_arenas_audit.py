@@ -299,24 +299,27 @@ def test_reach_down_to_the_challenger_and_back_up(real, gym):
     assert f["reach_down"] and f["reach_up"]
 
 
-def test_gym2_ledger_gallery_reaches_the_slipway_through_its_door_and_only_through_it(packs):
-    # Removing this loses the one proof gym 2's builder said its own check could not give: that the puzzle route's
-    # last room (the ledger gallery, data/gym_interiors.json gym2 route) leads to the arena and back. The second half
-    # walls the door to show the proof rests on the door and not on a path the model invented.
+def test_gym2_hall_is_walked_from_the_promenade_and_only_through_the_lit_mouth(packs):
+    # 2026-10-09: Misty's template came down for the walk-through Lifeboat House (data/gym_arenas/gym2.json). What the
+    # old test proved for the template's ledger gallery and the boat house's door, this proves for the hall: the
+    # promenade in front of its door leads to the challenger's stand and back, and the proof rests on the puzzle's one
+    # true mouth (x1606), not on a path the model invented. Walling that mouth (the two blind ones left as built, and
+    # the iron door past Misty shut, as this walker holds it) cuts the stand off from the street both ways.
     G, arenas, buildings = packs
     w, s, bounds, through, _aw, _hc, _logs = A.assemble("gym2", arenas, G, hosts=(buildings, None))
+    assert s["host"] == "hall"
     region = [bounds, s["host_box"]] + through
     box = (min(b[0] for b in region) - 2, min(b[1] for b in region) - 3, min(b[2] for b in region) - 2,
            max(b[3] for b in region) + 2, max(b[4] for b in region) + 3, max(b[5] for b in region) + 2)
     ps = A.markers(w, bounds)["player_stand_position"][0]
     stand = (ps[0], ps[2], ps[1] + A.spawn_height_offset())
     walker = A.Walker(w, box)
-    start = walker.settle(*s["route_end"])
-    assert s["route_end"] == (1603, 99, 2874)
+    start = walker.settle(1611, 110, 2857)   # the promenade in front of the door, ground y108 (tools/ground.py)
+    assert start is not None
     assert stand in walker.reach(start) and start in walker.reach(stand)
-    for y in (99, 100):
-        assert A.name_of(w.get(1606, y, 2877)) == "minecraft:dark_oak_door"
-        w.set((1606, y, 2877), "minecraft:stone", "test")
+    for y in (108, 109):
+        assert A.name_of(w.get(1606, y, 2872)) == "minecraft:air"
+        w.set((1606, y, 2872), "minecraft:stone", "test")
     walled = A.Walker(w, box)
     assert stand not in walled.reach(start) and start not in walled.reach(stand)
 
