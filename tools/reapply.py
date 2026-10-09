@@ -134,6 +134,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_old_orchard",
                 # 2026-10-02: the Copperway Khan in the south-east dunes and its milestones (tools/dune_ruin.py), run by R9DU
                 "cobblers_dune_ruin",
+                # 2026-10-09: Wardenhold, the snow-covered keep on Frostpeak Strand's southern lip (tools/frostpeak_keep.py),
+                # run by R9FK before R9E
+                "cobblers_frostpeak_keep",
                 # 2026-10-05: the mainline beats' evidence displays beside eight tellers (tools/reveal_evidence.py), run
                 # by R17NE after R17N
                 "cobblers_reveal_evidence",
@@ -816,6 +819,8 @@ def prepare_jobs(a):
     add("old_orchard_audit", "old_orchard_audit.py", *src)
     add("dune_ruin:build", "dune_ruin.py", "build", *src)
     add("dune_ruin_audit", "dune_ruin_audit.py", *src)
+    add("frostpeak_keep:build", "frostpeak_keep.py", "build", *src)
+    add("frostpeak_keep_audit", "frostpeak_keep_audit.py", *src)
     add("reveal_evidence:build", "reveal_evidence.py", "build")
     add("reveal_evidence_audit", "reveal_evidence_audit.py", *src)
     add("desert_wreck:build", "desert_wreck.py", "build", *src)
@@ -1927,6 +1932,12 @@ def steps(with_spawns=False):
     import dune_ruin
     out.append(("R9DU", "the Copperway Khan, its sealed store and the Copperway's milestones (data/dune_ruin.json)",
                 dune_ruin.placement_steps()))
+    # Wardenhold (2026-10-09, tools/frostpeak_keep.py): BEFORE R9E, because its build writes the two floor cells that carry the
+    # household's and the Froslass's Habitat Blocks (frostpeak_keep_hall_ward, frostpeak_keep_beacon_ward) - after R9E it
+    # would lay stone bricks over them
+    import frostpeak_keep
+    out.append(("R9FK", "Wardenhold, the snow-covered keep on Frostpeak Strand's southern lip (data/frostpeak_keep.json)",
+                frostpeak_keep.placement_steps()))
     # the Drovers' Hollow (2026-10-02, tools/drovers_hollow.py): BEFORE R9E, because its build writes the fold's floor -
     # after R9E it would lay coarse dirt over the herd's Habitat Block set in that floor
     import drovers_hollow

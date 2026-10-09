@@ -1,0 +1,188 @@
+{
+  "schema": "cobblers.frostpeak_keep/1",
+  "status": "authored 2026-10-09, not yet applied to any world; the sightline numbers are in docs/world-building/FROSTPEAK_KEEP.md",
+  "generated_by": "hand",
+  "built_by": "tools/frostpeak_keep.py build -> build/datapacks/cobblers_frostpeak_keep; audited by tools/frostpeak_keep_audit.py",
+  "owner_request": "The owner, 2026-10-09: \"A SNOW-COVERED CASTLE at Frostpeak Strand, visible from Highwire. Measure the sightline before siting it -- Distant Horizons renders far, but terrain between them may block it. It should read as a landmark from Highwire first and a place second, so the silhouette matters more than the interior. Propose what it is and why it is there.\"",
+  "name": "Wardenhold",
+  "name_status": "working name; naming is the owner's",
+  "what": "The northern end of the old Signal Wardens' line: a winter keep whose beacon spire was built to be seen from the shelf where Highwire now stands. The Wardens kept a chain of fire-signals from the Strand across the Tri Peaks so that ice-fall and storm warnings reached the south; Highwire sits on its shelf because that is where the line ended, and Surge's relay is the wire that replaced it. The order withdrew south; the fire went out; the snow kept the rest.",
+  "why_here": "Sited by measurement, not by taste (docs/world-building/FROSTPEAK_KEEP.md): the Strand is a slope that falls away north of the Tri Peaks, and from Highwire's shelf only its southern lip clears the ridge between them. The keep stands on that lip, as close to the Tri Peaks' crest as the Strand's boundary allows, with its spire as the tallest thing for 800 blocks. It is the reason the line of sight exists: the lore says the keep was placed to be seen, and the town was placed where it could see.",
+  "ground_rule": "Every Y is computed by tools/frostpeak_keep.py from tools/ground.py (the canonical heightmap, rounded). Nothing in this file is a Y.",
+  "site": {
+    "centre": [
+      1548,
+      636
+    ],
+    "region": "frostpeak_strand",
+    "pad_rule": "the courtyard floor (ry 0) is the highest ground under the base rectangle, so the keep never cuts into the hill: it fills a plinth below the floor instead",
+    "measured": "see docs/world-building/FROSTPEAK_KEEP.md"
+  },
+  "dims": {
+    "wall_hu": 24,
+    "wall_hv": 20,
+    "wall_thick": 3,
+    "wall_walk": 10,
+    "wall_parapet": 12,
+    "corner_half": 4,
+    "corner_wall": 26,
+    "corner_floors": [
+      10,
+      20
+    ],
+    "gate_towers_half": 3,
+    "gate_wall": 19,
+    "keep_half": 9,
+    "keep_cv": 4,
+    "keep_thick": 3,
+    "keep_floors": [
+      10,
+      20
+    ],
+    "keep_roof": 30,
+    "spire_half": 5,
+    "spire_floor": 46,
+    "spire_wall_top": 54,
+    "turret_half": 2,
+    "base_hu": 28,
+    "base_hv": 24,
+    "batter": 1.0,
+    "batter_reach": 40
+  },
+  "palette": {
+    "wall": [
+      [
+        "minecraft:deepslate_bricks",
+        0.45
+      ],
+      [
+        "minecraft:stone_bricks",
+        0.3
+      ],
+      [
+        "minecraft:cracked_deepslate_bricks",
+        0.1
+      ],
+      [
+        "minecraft:cracked_stone_bricks",
+        0.1
+      ],
+      [
+        "minecraft:tuff_bricks",
+        0.05
+      ]
+    ],
+    "base": [
+      [
+        "minecraft:cobbled_deepslate",
+        0.4
+      ],
+      [
+        "minecraft:stone",
+        0.25
+      ],
+      [
+        "minecraft:tuff",
+        0.2
+      ],
+      [
+        "minecraft:andesite",
+        0.15
+      ]
+    ],
+    "roof": "minecraft:snow_block",
+    "roof_trim": "minecraft:blue_ice",
+    "rime": "minecraft:packed_ice",
+    "rime_share": [
+      0.2,
+      0.7
+    ],
+    "paving": [
+      [
+        "minecraft:stone_bricks",
+        0.4
+      ],
+      [
+        "minecraft:cobblestone",
+        0.25
+      ],
+      [
+        "minecraft:gravel",
+        0.1
+      ],
+      [
+        "minecraft:cracked_stone_bricks",
+        0.25
+      ]
+    ]
+  },
+  "log": {
+    "why": "The Wardens' line log, as wall signs (the only block entities this pack writes: no chest, bed, barrel contents or book). Lines are at most 15 characters. It says what the keep is for and that the shelf answered it; it names no person and no town, so it commits the story to nothing it does not have.",
+    "entries": [
+      {
+        "u": -4,
+        "lines": [
+          "LINE LOG",
+          "Wardenhold,",
+          "north end.",
+          "Fire at dusk."
+        ]
+      },
+      {
+        "u": -2,
+        "lines": [
+          "Strand to col:",
+          "two fires, and",
+          "a flag by day."
+        ]
+      },
+      {
+        "u": 2,
+        "lines": [
+          "Col to shelf:",
+          "one fire. They",
+          "answer in kind."
+        ]
+      },
+      {
+        "u": 4,
+        "lines": [
+          "Ice and storm,",
+          "lost parties.",
+          "Line first.",
+          "Wood is dear."
+        ]
+      }
+    ],
+    "loft": [
+      {
+        "u": -3,
+        "lines": [
+          "LOOKOUT",
+          "South by east:",
+          "the shelf."
+        ]
+      },
+      {
+        "u": 3,
+        "lines": [
+          "Count the fire.",
+          "Two is well.",
+          "None: ride",
+          "to the col."
+        ]
+      }
+    ],
+    "last": {
+      "u": 1,
+      "v": 2,
+      "facing": "south",
+      "lines": [
+        "LAST ENTRY",
+        "Fire out. Snow",
+        "in the glass.",
+        "Someone stays."
+      ]
+    }
+  }
+}

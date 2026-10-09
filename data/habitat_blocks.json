@@ -7131,6 +7131,54 @@
       "mimic_why": "the den's rocky apron: probed in staging 2026-10-02, the 24 columns round this block at y158 are 10 stone, 8 cobblestone and 6 other; a grass_block disguise set the same day read as a lone grass tile there. Stone is also what this block was before (no mimic set, the default; MimicId minecraft:stone read off it that morning)."
     },
     {
+      "id": "frostpeak_keep_hall_ward",
+      "place": "Wardenhold's ground hall on Frostpeak Strand's southern lip (data/frostpeak_keep.json), in the hall's paving",
+      "pool": "cobblers:frostpeak_keep_hall",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1551,
+        "y": 127,
+        "z": 636
+      },
+      "mimic": "minecraft:stone_bricks",
+      "activated": {
+        "spawn_range": 12,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 4
+      },
+      "status": "planned",
+      "why": "The keep's household (the owner, 2026-10-09: a Pokemon that belongs): up to 4 of the Strand's own ice folk (Snorunt, Snom, Sneasel; data/spawns.json frostpeak_keep_hall) alive within 12 blocks of the hall's floor, refilled 2 at a time as they are caught or leave. ACTIVATED after the Ursaluna den's pattern (ursaluna_den_outskirts_ward): a natural ReplaceSpawns block only swaps what natural spawning picks and the keep stands on a hill where little does. cancel_range -1: the Strand's own table continues round it; the household is added, not substituted. Same band as the Strand (28-38), so the hall and the courtyard stay catchable. NOT VERIFIED in game; PLANNED until placed in staging.",
+      "mimic_why": "the hall's paving is stone bricks (data/frostpeak_keep.json palette.paving); tools/frostpeak_keep.py writes this floor cell as stone_bricks and runs BEFORE the Habitat Block step (R9FK, then R9E), so the block lands in a floor that is already there."
+    },
+    {
+      "id": "frostpeak_keep_beacon_ward",
+      "place": "Wardenhold's beacon chamber at the spire's head (data/frostpeak_keep.json), in the chamber floor",
+      "pool": "cobblers:frostpeak_keep_beacon",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1547,
+        "y": 173,
+        "z": 641
+      },
+      "mimic": "minecraft:stone_bricks",
+      "activated": {
+        "spawn_range": 8,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 1
+      },
+      "status": "planned",
+      "why": "The keep's last watch (the owner, 2026-10-09: a Pokemon that belongs, at the area's band): ONE Froslass at 40-44, above the Strand's 28-38 and under tier 5's next cap 45 (data/encounter_design.json rules.hearts.next_cap), alive in the beacon chamber at the head of a 25-block ladder climb (the Wardens' log ends 'Someone stays'). A nest in the Ursaluna den's sense: a creature, a place that suits it, strong enough that meeting it early is a mistake; every other room of the keep and the whole climb stay catchable. max_spawns 1, so it refills only when she is caught or gone. Pokemon cannot climb ladders, so she stays in the chamber. NOT VERIFIED in game (whether a floating ghost spawns on 'grounded' here, and what the alpha-free spawn does to the climb); PLANNED until placed in staging.",
+      "mimic_why": "the chamber floor is the keep's masonry; tools/frostpeak_keep.py writes this floor cell as stone_bricks and runs BEFORE the Habitat Block step (R9FK, then R9E)."
+    },
+    {
       "id": "driftmouth_stack_ne_high",
       "place": "Driftmouth Isle, the NE sea stack: inside its rock, 4 under the sea (the surface and the upper water)",
       "pool": "cobblers:driftmouth_isle_waters",

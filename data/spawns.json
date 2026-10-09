@@ -26436,6 +26436,58 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "habitat.frostpeak_keep_hall.snorunt",
+      "species": "snorunt",
+      "bucket": "common",
+      "level": "28-38",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "frostpeak_keep_hall",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.frostpeak_keep_hall.snom",
+      "species": "snom",
+      "bucket": "uncommon",
+      "level": "28-38",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "frostpeak_keep_hall",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.frostpeak_keep_hall.sneasel",
+      "species": "sneasel",
+      "bucket": "rare",
+      "level": "28-38",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "frostpeak_keep_hall",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.frostpeak_keep_beacon.froslass",
+      "species": "froslass",
+      "bucket": "rare",
+      "level": "40-44",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "frostpeak_keep_beacon",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "habitat.driftmouth_isle_waters.chinchou",
       "species": "chinchou",
       "bucket": "common",
@@ -60873,6 +60925,99 @@
         }
       ],
       "placement_status": "authored: data/habitat_blocks.json ursaluna_den_outskirts_ward, status planned"
+    },
+    {
+      "id": "frostpeak_keep_hall",
+      "display_name": "Wardenhold hall",
+      "intended_location": "Wardenhold's ground hall on Frostpeak Strand's southern lip (data/frostpeak_keep.json): one activated Habitat Block, frostpeak_keep_hall_ward in data/habitat_blocks.json, in the hall's paving at (1551, 127, 636), keeping up to 4 alive within 12",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 28,
+        "maximum": 38
+      },
+      "level_band_why": "the band of frostpeak_strand (data/spawns.json subregions: 28-38, tier 5), the sub-region the keep stands in (its base rectangle lies wholly inside the sub-region's polygon, tools/frostpeak_keep.py siting). Snorunt is a base stage that evolves at 42, Snom and Sneasel are base stages: none is older than its own evolution, as the Ursaluna den's Teddiursa rule.",
+      "entries": [
+        {
+          "species": "Snorunt",
+          "pokemon": "snorunt",
+          "types": [
+            "ice"
+          ],
+          "family": "snorunt",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "28-38",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Snom",
+          "pokemon": "snom",
+          "types": [
+            "ice",
+            "bug"
+          ],
+          "family": "snom",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "28-38",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Sneasel",
+          "pokemon": "sneasel",
+          "types": [
+            "dark",
+            "ice"
+          ],
+          "family": "sneasel",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "28-38",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json frostpeak_keep_hall_ward, status planned"
+    },
+    {
+      "id": "frostpeak_keep_beacon",
+      "display_name": "Wardenhold beacon chamber",
+      "intended_location": "Wardenhold's beacon chamber at the spire's head (data/frostpeak_keep.json): one activated Habitat Block, frostpeak_keep_beacon_ward in data/habitat_blocks.json, in the chamber floor at (1547, 173, 641), keeping ONE alive within 8",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 40,
+        "maximum": 44
+      },
+      "level_band_why": "above the Strand's 28-38 and under tier 5's next cap 45 (data/encounter_design.json rules.hearts.next_cap['5']): a place's one boss-strength creature (STATE 'Wild Pokemon above the cap are welcome where they make a place'), one alive at a time, at the top of a ladder; the path, the courtyard and the hall are the 28-38 band. Froslass is reached by a dawn stone, not a level (the Flapple/Appletun precedent in old_orchard_rows: 'player evolution (non-level method)').",
+      "entries": [
+        {
+          "species": "Froslass",
+          "pokemon": "froslass",
+          "types": [
+            "ice",
+            "ghost"
+          ],
+          "family": "snorunt",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "player evolution (non-level method)",
+          "level": "40-44",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json frostpeak_keep_beacon_ward, status planned"
     },
     {
       "id": "driftmouth_isle_waters",
