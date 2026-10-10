@@ -521,26 +521,27 @@ def check_sigils(dg_files, doc=None):
 # ------------------------------------------------------------------------------------------------- the payout
 
 
-def boss_payouts(dg_files, cd=None):
+def boss_payouts(dg_files, cd=None, short=None):
     """{band: (least, most) CobbleDollars credited for the run's boss stages together}, from each stage class's party
     and CobbleDollars' battleVictory arithmetic (docs/research/notes/paid-services-and-npc-payouts.md B2, VERIFIED
     bytecode there; nextBetween inclusive ASSUMED): B = int(5 * S * sum(L / 50)), amount = B + [B/2, 2B],
-    credit = floor(amount * multiplier). None when CobbleDollars pays no NPC win."""
+    credit = floor(amount * multiplier). None when CobbleDollars pays no NPC win. A run is ONE dungeon's: with more
+    than one dungeon pass `short` (its record's short id), or the bands sum every dungeon's boss together."""
     cd = cd if cd is not None else _j(CD_CONFIG)
     if not cd.get("earnCobbleDollarsFromNPC"):
         return None
     mult = cd["cobbleDollarsIncomeMultiplier"]
     per = {}
     for rel, text in dg_files.items():
-        m = re.match(r"data/[^/]+/npcs/dg_\w+_boss_b(\d+)_s(\d+)\.json$", rel)
-        if not m:
+        m = re.match(r"data/[^/]+/npcs/dg_(\w+?)_boss_b(\d+)_s(\d+)\.json$", rel)
+        if not m or (short is not None and m.group(1) != short):
             continue
         party = json.loads(text)["party"]["pokemon"]
         levels = [int(re.search(r"level=(\d+)", p).group(1)) for p in party]
         s = sum(levels)
         b = max(1, int(5 * s * sum(L / 50.0 for L in levels)))
         lo, hi = int((b + b // 2) * mult), int((b + 2 * b) * mult)
-        a = per.setdefault(int(m.group(1)), [0, 0])
+        a = per.setdefault(int(m.group(2)), [0, 0])
         a[0] += lo
         a[1] += hi
     return {k: tuple(v) for k, v in sorted(per.items())}
@@ -570,9 +571,10 @@ def main(argv=None):
             print("   PROBLEM %s" % x)
         n += len(probs)
     if a.payout:
-        pay = boss_payouts(dg)
-        for band, (lo, hi) in (pay or {}).items():
-            print("payout  band %d: the three boss stages credit $%d-$%d a run (not clawed back: step 6)" % (band, lo, hi))
+        shorts = sorted({m.group(1) for rel in dg for m in [re.match(r"data/[^/]+/npcs/dg_(\w+?)_boss_b\d+_s\d+\.json$", rel)] if m})
+        for short in shorts:
+            for band, (lo, hi) in (boss_payouts(dg, short=short) or {}).items():
+                print("payout  %s band %d: the three boss stages credit $%d-$%d a run (clawed back: engine.clawback)" % (short, band, lo, hi))
     print("dungeon_audit: %d problem(s)" % n)
     return 1 if n else 0
 

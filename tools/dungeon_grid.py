@@ -40,6 +40,7 @@ PASSABLE = AIR | {
     "minecraft:brown_mushroom", "minecraft:red_mushroom", "minecraft:oak_sign", "minecraft:oak_wall_sign",
     "minecraft:red_carpet", "minecraft:brown_carpet", "minecraft:green_carpet", "minecraft:gray_carpet",
     "minecraft:black_carpet", "minecraft:cyan_carpet", "minecraft:white_carpet", "minecraft:lime_carpet",
+    "minecraft:cave_vines", "minecraft:cave_vines_plant",      # glow berries: no collision box, like a vine
 }
 WATERS = {"minecraft:water"}
 HAZARDS = {

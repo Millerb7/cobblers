@@ -52,7 +52,11 @@
         {"op": "stream", "count": 1, "width": [2, 3], "pools": 1, "pool_size": [4, 7], "bed": "minecraft:mud", "plants": [], "not_kinds": ["entry_room", "exit_room", "boss_arena", "safe_room"]},
         {"op": "trunks", "block": "minecraft:jungle_log", "density": 0.20, "thick_p": 0.3, "vines_p": 0.7, "min_gap": 1, "vine_len": [3, 9], "salt": "a"},
         {"op": "trunks", "block": "minecraft:mangrove_log", "density": 0.05, "thick_p": 0.15, "vines_p": 0.4, "min_gap": 2, "vine_len": [2, 6], "salt": "b"},
+        {"op": "base_course", "where": "bottom", "block": "minecraft:mossy_stone_bricks", "kinds": ["gauntlet", "ambush", "dark_room", "habitat", "puzzle", "vault", "miniboss", "safe_room", "boss_arena"], "why": "the overgrown temple (DG-JUNGLE): the rooms the jungle record puts at its heart stand on a dressed-stone course under the moss, so the walls say temple before the roots do"},
+        {"op": "pillars", "every": 7, "block": "minecraft:chiseled_stone_bricks", "broken_p": 0.4, "kinds": ["gauntlet", "ambush", "dark_room", "habitat", "puzzle", "vault", "miniboss", "safe_room", "boss_arena"], "salt": "t"},
+        {"op": "columns", "level": "light", "block": "minecraft:mossy_stone_bricks", "cap": "minecraft:chiseled_stone_bricks", "density": 0.012, "thick_p": 0.35, "broken_p": 0.5, "fallen_p": 0.6, "kinds": ["gauntlet", "ambush", "dark_room", "habitat", "puzzle", "vault", "miniboss", "boss_arena"], "salt": "t"},
         {"op": "canopy", "leaf": "minecraft:jungle_leaves[persistent=true]", "layers": 2, "hole_p": 0.12, "light": "minecraft:shroomlight", "light_p": 0.02, "lit": true, "curtain_p": 0.035, "curtain_len": [2, 3]},
+        {"op": "glow_vines", "tip": "minecraft:cave_vines[berries=true]", "body": "minecraft:cave_vines_plant[berries=true]", "body_unlit": "minecraft:cave_vines_plant[berries=false]", "every": 7, "clear": 4, "min_height": 11, "lit": true, "why": "a canopy hall 20 high is lit by glow berries hanging from the leaves to four blocks over the floor (DG-JUNGLE): the hull's ceiling lights cannot reach that far down"},
         {"op": "wall_vines", "p": 0.16, "len": [3, 8], "blocks": [{"block": "minecraft:vine"}], "salt": "v"},
         {"op": "wall_vines", "p": 0.08, "blocks": [{"block": "minecraft:glow_lichen"}], "lit": true, "salt": "l"},
         {"op": "ground_cover", "plants": [

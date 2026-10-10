@@ -126,7 +126,7 @@ def enter(w, p):
     to_pass_edge(w)
     p.dim, p.pos = OW, outside()
     t0 = w.gametime
-    click(w, p, "cobblers:dungeons/rip_")
+    click(w, p, "cobblers:dungeons/rip_ns")
     t1 = until(w, lambda: p.dim == POCKET)
     return t0, t1
 
@@ -200,7 +200,7 @@ def test_the_run_tag_is_on_the_player_at_the_click_and_the_arrival_waits_at_leas
         to_pass_edge(w)
         w.tick(offset)
         t0 = w.gametime
-        click(w, p, "cobblers:dungeons/rip_")
+        click(w, p, "cobblers:dungeons/rip_ns")
         assert TAG in p.tags and p.dim == OW, (offset, p.tags, p.dim)
         assert sigils_held(p) == 0, "the sigil is taken at the click"
         t1 = until(w, lambda: p.dim == POCKET)
@@ -218,7 +218,10 @@ def test_every_npc_an_engine_spawn_makes_carries_the_exempt_tag_when_the_spawn_r
             w = new_world()
             p = player(w)
             p.dim = POCKET
-            p.pos = [90.0, 96.0, 1056.0 + 128 * (g - 1)]
+            # the member stands in the arena when a stage spawns: a full-length slot's arena is over 1,000 blocks east of
+            # its entry, outside the simulator's load range from x 90, so stand at the spot the spawn line names
+            spot = next(m for l in FNS[site] for m in [re.search(r'x:"([-\d.]+)",y:"([-\d.]+)",z:"([-\d.]+)"', l)] if m)
+            p.pos = [float(spot.group(1)) - 4, float(spot.group(2)), float(spot.group(3))]
             for obj, v in (("dg.band", band), ("dg.stage", stage), ("dg.slot", g), ("dg.run", 1)):
                 w.set(p.name, obj, v)
             w.set("#s%d" % g, "dg.run", 1)
@@ -453,7 +456,7 @@ def test_a_crafted_sigil_opens_the_rip_and_the_int_form_would_not():
         w = new_world(files)
         p = player(w, files=files)
         to_pass_edge(w)
-        click(w, p, "cobblers:dungeons/rip_")
+        click(w, p, "cobblers:dungeons/rip_ns")
         assert (score(w, p, "dg.st") == 1) == opens and (sigils_held(p) == 0) == opens, (opens, p.inventory)
 
 
@@ -597,15 +600,15 @@ def test_the_lockout_counts_an_hour_of_uptime_and_ignores_game_time():
     p.inventory.append(crafted_sigil(1))
     w.gametime += 50_000_000                        # /time set, a re-export: game time leaps
     w.tick(1)
-    click(w, p, "cobblers:dungeons/rip_")
+    click(w, p, "cobblers:dungeons/rip_ns")
     assert score(w, p, "dg.st") == 0 and sigils_held(p) == 1, "refused, sigil kept"
     until(w, lambda: w.get("#up", "dg.up") - stamp >= 72000 - PASS, 80000)
     to_pass_edge(w)
-    click(w, p, "cobblers:dungeons/rip_")
+    click(w, p, "cobblers:dungeons/rip_ns")
     assert score(w, p, "dg.st") == 0, "still refused one pass before the hour"
     w.tick(PASS)
     assert w.get("#up", "dg.up") - stamp == 72000
-    click(w, p, "cobblers:dungeons/rip_")
+    click(w, p, "cobblers:dungeons/rip_ns")
     assert score(w, p, "dg.st") == 1 and TAG in p.tags
 
 
@@ -660,7 +663,7 @@ def test_a_refunded_sigil_is_the_crafted_one_and_opens_the_rip_again():
     (s,) = [s for s in p.inventory if "cobblers_dg_sigil" in s[1]]
     assert s[:2] == crafted_sigil(1)[:2]
     w.tick(PASS * 7)                                # the tail ends
-    click(w, p, "cobblers:dungeons/rip_")
+    click(w, p, "cobblers:dungeons/rip_ns")
     assert score(w, p, "dg.st") == 1 and sigils_held(p) == 0
 
 

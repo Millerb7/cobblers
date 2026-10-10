@@ -289,7 +289,7 @@ def test_every_bound_is_the_hand_bound_of_its_party(built_with_stand):
         assert hi == want_hi, rel                        # the most is exact
         assert 0 < lo <= want_lo and lo >= want_lo * 0.99, (rel, lo, want_lo)   # the least is never above the true least
         n += 1
-    assert n == 18 + 6
+    assert n == 18 * len(DOC["dungeons"]) + 6      # each dungeon's boss: 6 bands x 3 stages; the test stand's 6
 
 
 # ---- the stands' classes -------------------------------------------------------------------------------------------

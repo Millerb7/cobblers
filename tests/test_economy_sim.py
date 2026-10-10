@@ -128,7 +128,7 @@ def test_the_published_band_ranges(world):
 
 def test_sim_boss_teams_equal_the_generated_npc_classes(world):
     import dungeon_audit as DA
-    got = DA.boss_payouts(DA.dungeon_files())
+    got = DA.boss_payouts(DA.dungeon_files(), short=world.dungeon["short"])      # the sim models one dungeon's run
     for band, (lo, hi) in got.items():
         r = [world.credit_range(t) for t in world.boss_teams[band]]
         assert (sum(x[0] for x in r), sum(x[1] for x in r)) == (lo, hi), band

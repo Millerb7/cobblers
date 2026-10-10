@@ -48,7 +48,9 @@ def demo_doc(theme="mine", rooms=None, per_dungeon=1):
     d = doc["dungeons"][0]
     d["theme"] = theme
     d["rooms"] = copy.deepcopy(rooms if rooms is not None else DEMO)
-    d.pop("spine")
+    d.pop("spine", None)
+    doc["dungeons"] = [d]       # the demo alone: the authored dungeons after it (wave 2) have their own tests
+    doc["engine"]["sigils"]["free_first_entry"]["dungeons"] = [x for x in doc["engine"]["sigils"]["free_first_entry"]["dungeons"] if x == d["id"]]
     doc["engine"]["slots"]["per_dungeon"] = per_dungeon
     return doc
 
@@ -519,7 +521,9 @@ def test_the_reapply_step_is_one_call_per_slot_when_a_dungeon_has_rooms():
     files = D.build(doc)
     for g in range(1, 5):
         assert "execute in %s run function cobblers:dungeons/shells/s%d" % (POCKET, g) in files["data/cobblers/function/dungeons/place/s%d.mcfunction" % g]
-    legacy = D.reapply_steps(BASE)
+    spine_only = copy.deepcopy(BASE)
+    spine_only["dungeons"] = [d for d in spine_only["dungeons"] if not R.has_rooms(d)][:1]
+    legacy = D.reapply_steps(spine_only)
     assert [v for k, v in legacy[0][2] if k == "fn" and "/place" in v] == ["cobblers:dungeons/place"]
 
 

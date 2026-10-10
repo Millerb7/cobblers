@@ -161,7 +161,12 @@ def test_slots_stay_out_of_every_other_pocket_user_and_the_record_refuses_an_ove
 def test_the_reapply_steps_count_the_entities_they_summon():
     steps = D.reapply_steps(DOC)
     assert [s[0] for s in steps] == ["R16DG", "R16DR"]
-    assert [v for k, v in steps[0][2] if k == "fn"][0] == "cobblers:dungeons/place"
+    places = [v for k, v in steps[0][2] if k == "fn" and "/place" in v]
+    if any("rooms" in d for d in DOC["dungeons"]):
+        # a full-length dungeon: one call per slot (tests/test_dungeon_rooms.py has the reason, EXP-081)
+        assert places == ["cobblers:dungeons/place/s%d" % s["g"] for s in D.slots(DOC)]
+    else:
+        assert places == ["cobblers:dungeons/place"]
     assert [v for k, v in steps[1][2] if k == "fn"][0] == "cobblers:dungeons/rips/place"
     check = [v for k, v in steps[0][2] if k == "check"][0]
     assert check[2] == 3 * len(D.slots(DOC))
@@ -181,6 +186,9 @@ def test_shell_writes_stay_inside_the_fill_and_forceload_limits():
     import function_limits as FL
     for s in D.slots(DOC):
         lines = FNS["shells/s%d" % s["g"]]
+        if "rooms" in s["dungeon"]:
+            # a full-length shell is one function per room, each force-loading what it writes (DUNGEON_ROOMS.md 5)
+            lines = [l for k, v in FNS.items() if k.startswith("shells/s%d/" % s["g"]) for l in v]
         assert FL.check_lines(lines) == []
         assert any(l.startswith("forceload add") for l in lines)
         assert D.shell_blocks(DOC, s) > 0

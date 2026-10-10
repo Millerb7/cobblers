@@ -346,7 +346,7 @@ def state_holder(slot, room):
 
 
 def room_fn(d, room, slot, name):
-    return F("room/%s/%s/s%d/%s" % (d["id"], room["id"], slot["k"], name))
+    return F("room/%s/%s/s%d/%s" % (d["id"], room["id"], slot["g"], name))
 
 
 # ------------------------------------------------------------------------------------------------- building
@@ -518,7 +518,8 @@ def default_anchors(room, params):
     a = {"center": [at(0.5), floor_at(room, at(0.5)), zc], "door_in_at": [ix0, room["floor_in"], room["z_in"], -90],
          "door_out_at": [ix1, room["floor_out"], room["z_out"], -90]}
     if kind in ("stand", "gauntlet", "ambush"):
-        n = int(params.get("trainers", 3))
+        t = params.get("trainers", 3)
+        n = len(t) if isinstance(t, list) else int(t)       # the params contract's list of trainers, or a count
         span = max(n - 1, 1)
         a["trainers"] = [[at(0.62 + (0.1 if k % 2 else 0)), fy, iz0 + 2 + (W - 5) * k // span if n > 1 else zc, 90]
                          for k in range(n)]
@@ -763,14 +764,14 @@ def runtime_functions(doc, d, slots_of_d):
             if r["door_out"] and r["gate"] == "cleared":
                 reset += gate_lines(doc, r, False, theme)
             reset += ex.get("reset", [])
-            out["room/%s/%s/s%d/clear" % (d["id"], r["id"], slot["k"])] = clear
-            out["room/%s/%s/s%d/enter" % (d["id"], r["id"], slot["k"])] = enter
-            out["room/%s/%s/s%d/reset" % (d["id"], r["id"], slot["k"])] = function_limits.ensure_loaded(reset)
+            out["room/%s/%s/s%d/clear" % (d["id"], r["id"], slot["g"])] = clear
+            out["room/%s/%s/s%d/enter" % (d["id"], r["id"], slot["g"])] = enter
+            out["room/%s/%s/s%d/reset" % (d["id"], r["id"], slot["g"])] = function_limits.ensure_loaded(reset)
             if ex.get("tick"):
-                out["room/%s/%s/s%d/tick" % (d["id"], r["id"], slot["k"])] = [HEAD, LOADED, "# room %s, slot %d: each pass the member is in it" % (r["id"], g)] + ex["tick"]
+                out["room/%s/%s/s%d/tick" % (d["id"], r["id"], slot["g"])] = [HEAD, LOADED, "# room %s, slot %d: each pass the member is in it" % (r["id"], g)] + ex["tick"]
             for k, v in ex.items():
                 if k not in ("enter", "clear", "reset", "tick"):
-                    out["room/%s/%s/s%d/%s" % (d["id"], r["id"], slot["k"], k)] = list(v)
+                    out["room/%s/%s/s%d/%s" % (d["id"], r["id"], slot["g"], k)] = list(v)
     first = slots_of_d[0]
     for r in layout(doc, d, first):
         out["room/%s/%s/clear" % (d["id"], r["id"])] = [HEAD, "# as a MEMBER: their slot's room %s opens its way on" % r["id"]] + _dispatch(slots_of_d, d, r, "clear")
