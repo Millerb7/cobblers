@@ -95,3 +95,9 @@ the record contract it publishes first); then the three authors on KIT2's merge;
   secret, present only on some runs (chance rising with band, perhaps a rumour on the board), caught under
   DUNGEON_CATCHES.md (fail-safe on the clock; Beast Ball for UBs, EXP-064) and weighing heavily in the greed points.
   UBs per ULTRA_BEAST_BOSSES.md (each unused UB a dungeon boss or prize). Pass 3 builds the hiding; GREED the values.
+- **The prize by stage (the owner, 2026-10-10, refining the above):** "Early dungeons can't really have legendaries, so
+  maybe it would just be a cool random Gabite or something to catch, and then late game, after gym 6, the player gets
+  Beast Balls and can go get real mons." So: before gym 6 the hidden prize is a RARE NON-LEGENDARY (a pseudo-legendary's
+  middle stage and the like, chosen per dungeon and band, catchable with ordinary balls); from gym 6 (the Beast Ball key,
+  EXP-064; the band that gym 6's cap falls in, read from data/progression.json, not assumed) the prize is the legendary
+  or Ultra Beast, caught with Beast Balls.
