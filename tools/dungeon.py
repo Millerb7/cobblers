@@ -113,6 +113,9 @@ OBJ = {
     "bdone": "dg.bdone",  # #s<g>: the boss has fallen this run (the gate is open)
 }
 OBJ_RE = re.compile(r"^[a-z0-9_.]{1,16}$")
+XAERO_EFFECTS = ("xaerominimap:no_minimap", "xaerominimap:no_entity_radar", "xaerominimap:no_waypoints",
+                 "xaerominimap:no_cave_maps", "xaeroworldmap:no_world_map", "xaeroworldmap:no_cave_maps")
+XAERO_S = 3   # seconds: over one keeper pass (20 ticks), so the effects never lapse in the pocket
 TAGS = {"pk": "dg.pk", "adv": "dg.adv", "lost": "dg.lost", "next": "dg.next", "warn": "dg.warn",
         "warned": "dg.warned", "away": "dg.away", "npc": "dg.npc", "boss": "dg.boss", "shell": "dg.shell",
         "shell_new": "dg.shell_new", "rip": "dg.rip", "rip_new": "dg.rip_new", "back": "dg.rip_back",
@@ -783,6 +786,9 @@ def functions(doc, blackout=None):
               "scoreboard players add #up %s %d" % (O["up"], P),
               "tag @a remove %s" % T["pk"],
               "execute in %s run tag @a[distance=0..] add %s" % (dim, T["pk"]),
+              "# no map in the pocket (the owner, 2026-10-10): Xaero's own effects, refreshed each pass, so leaving ends",
+              "# them within %d s (docs/research/notes/xaero-disable.md: nothing in Xaero is keyed on a dimension)" % XAERO_S] + [
+              "effect give @a[tag=%s] %s %d 0 true" % (T["pk"], eff, XAERO_S) for eff in XAERO_EFFECTS] + [
               "# a death in a run FIRST, handled once the player is alive again (after the blackout's own death path,",
               "# E1); a dead player is in @a, not in @e, so nothing here touches them until they respawn",
               "execute as @e[type=minecraft:player,scores={%s=1..,%s=1..}] at @s run function %s" % (O["dc"], O["st"], F("m/died")),
