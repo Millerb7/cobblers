@@ -346,9 +346,11 @@ threshold's clocks with this table or 4.2's):
   (`members_max` is 1).
 - **Pass 2, unproven or not done (KIT2):** nothing of 1a has run in Minecraft. The independent audit walks slot 1
   only and reuses its graph for the others ("SLOT ... not slot 1's moved"), so with `variants` slots 2-4 report SLOT
-  and SOFTLOCK findings that are its assumption, not the pack's (each variant put first passes it, except the mirrored
-  one, whose far-rip zone includes cells 12 above the rip in another room: its zone test has no line of sight and
-  `room_of_x` maps rooms by x); AUDIT2 must walk each variant and route. `tools/dungeon.py`'s return-margin warning
+  and SOFTLOCK findings that are its assumption, not the pack's. Each variant put first: a and c pass; the mirrored b
+  and d report BOSS ("reached the far rip without the boss"), because the far rip's interaction box (x 329..332) reaches
+  the wall of `deep`, the room touching the exit's east wall, and the audit's 3-block zone test has no line of sight
+  (a player in `deep` is 1.5 from it through two walls); the kit's own replay of the whole slot with gates shut cannot
+  reach the far rip. AUDIT2 must walk each variant and route, with line of sight, and not map rooms by x (`room_of_x`). `tools/dungeon.py`'s return-margin warning
   measures the way back to the back rip in x, which a route that turns and doubles back makes too short (the warning
   comes late); the board's leg distances are x offsets too. Relics or lore per secret, and a set across runs, are not
   built (only the `secret` anchor). Windows onto earlier rooms are not built. `can_break` on the secret block in
