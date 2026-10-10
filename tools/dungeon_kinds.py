@@ -726,6 +726,12 @@ def _open_ring(ctx, x, y, z):
     return True
 
 
+def _on_floor(ctx, x, y, z):
+    """The cell under (x, y, z) is solid: a 2 x 2 trunk or column stands on floor in every one of its feet, never
+    floating over a lower one (over a trench or a stream it left a one-high gap that sealed a cell: KIT2, the audit)."""
+    return ctx.grid.inside(x, y - 1, z) and R.G.classify(ctx.grid.block_at(x, y - 1, z)) == R.G.SOLID
+
+
 def _free(ctx, x, z):
     return not ctx.reserved(x, z)
 
@@ -748,7 +754,7 @@ def dress_trunks(ctx, spec):
             continue
         if any(max(abs(x - px), abs(z - pz)) < gap + thick for px, pz, pt in placed):
             continue
-        if not all(_air_col(ctx, fx, y, top, fz) for fx, fz in foot):
+        if not all(_air_col(ctx, fx, y, top, fz) and _on_floor(ctx, fx, y, fz) for fx, fz in foot):
             continue
         ctx.add(fill((x, y, z, x + thick - 1, top, z + thick - 1), spec["block"]))
         placed.append((x, z, thick))
@@ -921,7 +927,7 @@ def dress_columns(ctx, spec):
         if any(max(abs(x - px), abs(z - pz)) < 4 for px, pz in placed) or not _air_col(ctx, x, y, top, z):
             continue
         t = 2 if rg.random() < spec.get("thick_p", 0.3) else 1
-        if t == 2 and not all(_free(ctx, x + a, z + b) and _air_col(ctx, x + a, y, top, z + b) for a in (0, 1) for b in (0, 1)):
+        if t == 2 and not all(_free(ctx, x + a, z + b) and _air_col(ctx, x + a, y, top, z + b) and _on_floor(ctx, x + a, y, z + b) for a in (0, 1) for b in (0, 1)):
             t = 1
         h = top if rg.random() >= spec.get("broken_p", 0.5) else y + rg.randint(1, max(1, r["height"] - 3))
         ctx.add(fill((x, y, z, x + t - 1, min(h, top), z + t - 1), spec["block"]))
