@@ -166,6 +166,12 @@ def dungeons(doc):
     return doc["dungeons"]
 
 
+def lockout_of(doc, d):
+    """A dungeon's re-entry lockout: the engine's (D17, one hour), or a TEST dungeon's own, which a run longer than the
+    hour needs (the jungle and the ruin, 2026-10-09: a lockout under the clock never binds, V12)."""
+    return d.get("lockout_ticks", doc["engine"]["lockout_ticks"])
+
+
 def ladder(doc):
     return doc["engine"]["clock"]["ladder"]
 
@@ -397,10 +403,13 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
             bad.append("%s: clock_s_by_band: whole seconds, at least 60" % d["id"])
         if DR.has_rooms(d) and not any(d["id"] in p and "rooms do not build" in p for p in bad):
             bad += DC.clock_problems(doc, d)
-    longest = max(clock_s(d, b) for b in bands(doc) for d in dungeons(doc)) * 20
-    if e["lockout_ticks"] < longest:
-        bad.append("lockout_ticks %d is under the longest clock %d ticks: the lockout would never bind (V12)"
-                   % (e["lockout_ticks"], longest))
+    for d in dungeons(doc):
+        if "lockout_ticks" in d and not d.get("test"):
+            bad.append("%s: a lockout of its own is for a test dungeon only (D17: one hour per dungeon)" % d["id"])
+        longest = max(clock_s(d, b) for b in bands(doc)) * 20
+        if lockout_of(doc, d) < longest:
+            bad.append("%slockout_ticks %d is under the longest clock %d ticks: the lockout would never bind (V12)"
+                       % ("%s: " % d["id"] if "lockout_ticks" in d else "", lockout_of(doc, d), longest))
     k = e["keeper"]
     if k["period_ticks"] < 1 or k["arrive_delay_ticks"] < k["period_ticks"]:
         bad.append("keeper period %d / arrive delay %d" % (k["period_ticks"], k["arrive_delay_ticks"]))
@@ -728,7 +737,6 @@ def functions(doc, blackout=None):
     lad = ladder(doc)
     sl = slots(doc)
     ds = dungeons(doc)
-    lock = e["lockout_ticks"]
     hold = k["entry_hold_ticks"]
     tail_start = TAIL + P
     fy = e["pocket"]["floor_y"]
@@ -1037,7 +1045,7 @@ def functions(doc, blackout=None):
     for di, d in enumerate(ds, 1):
         lines += ["# the lockout left: lockout + the threshold stamp - #up (0 if they never crossed it)",
                   "scoreboard players set #rem %s 0" % O["t"],
-                  "execute if score @s %s matches -2147483648.. run scoreboard players set #rem %s %d" % (lk_obj(d), O["t"], lock),
+                  "execute if score @s %s matches -2147483648.. run scoreboard players set #rem %s %d" % (lk_obj(d), O["t"], lockout_of(doc, d)),
                   "execute if score @s %s matches -2147483648.. run scoreboard players operation #rem %s += @s %s"
                   % (lk_obj(d), O["t"], lk_obj(d)),
                   "execute if score @s %s matches -2147483648.. run scoreboard players operation #rem %s -= #up %s"
@@ -1156,11 +1164,11 @@ def functions(doc, blackout=None):
             dc.append("execute unless entity @s[advancements={%s=true}] run scoreboard players set #why %s 1" % (d["gate_flag"], O["t"]))
         dc += [
             "# 2: the lockout, on the uptime counter, from the threshold (2.5); a never-entrant is outside it",
-            "scoreboard players set #d %s %d" % (O["t"], lock),
+            "scoreboard players set #d %s %d" % (O["t"], lockout_of(doc, d)),
             "execute if score @s %s matches -2147483648.. run scoreboard players operation #d %s = #up %s" % (LK, O["t"], O["up"]),
             "execute if score @s %s matches -2147483648.. run scoreboard players operation #d %s -= @s %s" % (LK, O["t"], LK),
             "execute if score #why %s matches 0 if score #d %s matches 0..%d run scoreboard players set #why %s 2"
-            % (O["t"], O["t"], lock - 1, O["t"]),
+            % (O["t"], O["t"], lockout_of(doc, d) - 1, O["t"]),
             "execute if score #why %s matches 0 if score @s %s matches 1.. run scoreboard players set #why %s 3" % (O["t"], O["st"], O["t"]),
             "execute if score #why %s matches 0 if items entity @s armor.chest minecraft:elytra run scoreboard players set #why %s 4"
             % (O["t"], O["t"]),
@@ -1192,7 +1200,7 @@ def functions(doc, blackout=None):
         rem_tail = {"score": {"name": "#rem", "objective": O["t"]}, "color": "gold"}
         ref = [HEAD, "# a refusal, with its reason; nothing was taken",
                "execute if score #why %s matches 1 run %s" % (O["t"], say(m["refuse_gate"])),
-               "scoreboard players set #rem %s %d" % (O["t"], lock),
+               "scoreboard players set #rem %s %d" % (O["t"], lockout_of(doc, d)),
                "scoreboard players operation #rem %s -= #d %s" % (O["t"], O["t"]),
                "scoreboard players add #rem %s 1199" % O["t"],
                "scoreboard players operation #rem %s /= #1200 %s" % (O["t"], O["t"]),

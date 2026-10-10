@@ -435,7 +435,7 @@ OTHER_MUTANTS = {
     "V1: the slots' rows move into the probe row and the rescue box": ("V1", "meets", (
         'z0 = s["rows_from_z"] + (g - 1) * s["row_spacing"]', 'z0 = -700 + (g - 1) * s["row_spacing"]') + NO_PROBLEMS),
     "V12: the lockout is shorter than the longest clock": ("V12", "under the longest clock", (
-        'lock = e["lockout_ticks"]', 'lock = 40000') + NO_PROBLEMS),
+        'return d.get("lockout_ticks", doc["engine"]["lockout_ticks"])', 'return 40000') + NO_PROBLEMS),
     "C1: the NPC spawn is a plain line": ("C1", "plain line", (
         '"$spawnnpcat $(x) $(y) $(z) $(cls) $(level)"', '"spawnnpcat 0 96 0 cobblers:dg_ns_boss_b1_s1 18"')),
     "sigils: the predicate is the int form": ("sigils", "not the byte form", (

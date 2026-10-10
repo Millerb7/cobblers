@@ -76,7 +76,8 @@ def test_the_jungle_is_dungeon_two_a_test_dungeon_with_its_own_short_and_no_cloc
     assert JG["theme"] == "jungle" and JG["test"] is True and JG["test_why"]
     assert JG["gate_flag"] is None and "spine" not in JG
     assert JG["short"] not in [d["short"] for d in DOC["dungeons"] if d is not JG]
-    assert "clock_s_by_band" not in JG, "the per-dungeon clock is filled at integration with DG-NS's formula"
+    # filled at integration with DG-NS's formula; problems() refuses a clock under the derived one
+    assert set(JG["clock_s_by_band"]) == {str(b["band"]) for b in DOC["engine"]["bands"]}
 
 
 def test_the_engine_and_the_room_kit_find_no_problem_with_it():
@@ -166,7 +167,7 @@ def test_the_wild_rooms_and_the_set_pieces_carry_the_contracts_fields_within_the
         p = r["params"]
         assert p["species"] and set(p["count_by_band"]) == set(bands)
         lo, hi = p["level_spread"]
-        assert lo <= hi <= 0
+        assert 0 <= lo <= hi        # offsets BELOW the band's upper cap, as the nest kind reads them (tools/dungeon_fights.py)
     for r in rooms_of("miniboss"):
         p = r["params"]
         assert set(p["species_by_band"]) == set(bands) and p["level_offset"] <= 0 and p.get("catchable") is False

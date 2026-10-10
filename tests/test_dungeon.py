@@ -117,7 +117,8 @@ def test_the_timer_kill_is_kill_and_waits_for_the_clawback():
 
 
 def test_lockout_binds_and_counts_on_uptime_never_gametime():
-    assert DOC["engine"]["lockout_ticks"] >= max(D.clock_s(d, b) for b in DOC["engine"]["bands"] for d in DOC["dungeons"]) * 20
+    for d in DOC["dungeons"]:      # each dungeon's lockout (the engine's, or a test dungeon's own) covers its longest clock
+        assert D.lockout_of(DOC, d) >= max(D.clock_s(d, b) for b in DOC["engine"]["bands"]) * 20, d["id"]
     assert not any("time query gametime" in l for ls in FNS.values() for l in ls)
 
 
