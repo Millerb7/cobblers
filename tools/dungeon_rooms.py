@@ -483,12 +483,44 @@ def _spread(a, b, step):
     return [a + int((i + 0.5) * (b - a + 1) / n) for i in range(n)]
 
 
+FLOOR_LIGHT_SEARCH = [(0, 0), (1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1), (2, 0), (-2, 0),
+                      (0, 2), (0, -2)]
+
+
+def floor_lights(ctx, room, theme, tall, penalty):
+    """The theme's `hull.tall_lights` (opt-in): a room too tall for the ceiling lattice to reach its floor is lit from
+    the floor course instead, a light block set into it every `every` blocks (under standing water it shows through).
+    A lattice point whose floor cell is covered (a column, a wall, a kind's block) moves to the nearest open one."""
+    t = theme["hull"]
+    step = int(max(3, min(tall.get("every", t["light_every"]), 15 - t["min_light"] - 1 - penalty)))
+    block = tall.get("block", t["light"])
+    xs = _spread(room["ix0"], room["ix1"], step)
+    zs = _spread(room["iz0"], room["iz1"], step)
+    for x in xs:
+        for z in zs:
+            for dx, dz in FLOOR_LIGHT_SEARCH:
+                px, pz = x + dx, z + dz
+                if not (room["ix0"] <= px <= room["ix1"] and room["iz0"] <= pz <= room["iz1"]):
+                    continue
+                fl = floor_at(room, px)
+                under, at = ctx.grid.block_at(px, fl - 1, pz), ctx.grid.block_at(px, fl, pz)
+                if G.base(under) in G.AIR or G.classify(at) == G.SOLID:
+                    continue
+                ctx.add(setb((px, fl - 1, pz), block))
+                ctx.lights.append((px, fl - 1, pz))
+                break
+
+
 def hull_lights(ctx, room, theme, ref_y):
     """A lattice of light sources in the ceiling course (or lanterns hanging from it), spaced so that the nearest
     source is within reach of the lowest floor it must light (15 less the vertical drop, less the style's penalty)."""
     t = theme["hull"]
     penalty = t.get("light_penalty", 0)
-    step = lattice_spacing(theme, room, ref_y, penalty)
+    tall = t.get("tall_lights")
+    tall = tall if tall and 15 - t["min_light"] - (room["ceil_y"] - ref_y) - penalty < tall.get("under", 3) else None
+    if tall:
+        floor_lights(ctx, room, theme, tall, penalty)      # too tall for the ceiling to light the floor
+    step = int(t["light_every"]) if tall else lattice_spacing(theme, room, ref_y, penalty)
     ceil = room["ceil_y"]
     xs = _spread(room["ix0"], room["ix1"], step)
     zs = _spread(room["iz0"], room["iz1"], step)
@@ -501,6 +533,39 @@ def hull_lights(ctx, room, theme, ref_y):
             else:
                 ctx.add(setb((x, ceil, z), t["light"]))
                 ctx.lights.append((x, ceil, z))
+    if tall:
+        cap_dark_dressing(ctx, theme, tall, penalty)
+
+
+def dress_blocks(theme):
+    """The block ids (base) the theme's dress ops place: what a lamp may replace without touching a kind's blocks."""
+    out = set()
+    for spec in theme.get("dress", []):
+        for k in ("block", "cap"):
+            if isinstance(spec.get(k), str):
+                out.add(G.base(spec[k]))
+        for b in spec.get("blocks", []):
+            out.add(G.base(b["block"]))
+    return out
+
+
+def cap_dark_dressing(ctx, theme, tall, penalty):
+    """In a tall room, the tops of broken columns and piles stand between the floor's lights and the ceiling's: a
+    standable cell there out of reach of both gets the dressing block under it turned into the light (a lamp capping
+    the column). Only the theme's own dressing is replaced, never a kind's block."""
+    import numpy as np
+    block = tall.get("block", theme["hull"]["light"])
+    ok = dress_blocks(theme)
+    for x, y, z in sorted(ctx.standable_cells(), key=lambda c: (-c[1], c[0], c[2])):
+        ls = np.array(ctx.lights)
+        if 15 - int(np.abs(ls - np.array([x, y, z])).sum(axis=1).min()) - penalty >= 1:
+            continue
+        if G.base(ctx.grid.block_at(x, y - 1, z)) in ok:
+            ctx.add(setb((x, y - 1, z), block))
+            ctx.lights.append((x, y - 1, z))
+        elif ctx.grid.block_at(x, ctx.room["ceil_y"], z) == theme["hull"]["ceiling"]:
+            ctx.add(setb((x, ctx.room["ceil_y"], z), theme["hull"]["light"]))     # else a lamp in the ceiling over it
+            ctx.lights.append((x, ctx.room["ceil_y"], z))
 
 
 def default_anchors(room, params):
@@ -518,7 +583,8 @@ def default_anchors(room, params):
     a = {"center": [at(0.5), floor_at(room, at(0.5)), zc], "door_in_at": [ix0, room["floor_in"], room["z_in"], -90],
          "door_out_at": [ix1, room["floor_out"], room["z_out"], -90]}
     if kind in ("stand", "gauntlet", "ambush"):
-        n = int(params.get("trainers", 3))
+        t = params.get("trainers", 3)
+        n = len(t) if isinstance(t, list) else int(t)     # the params contract's list of trainers, or a bare count
         span = max(n - 1, 1)
         a["trainers"] = [[at(0.62 + (0.1 if k % 2 else 0)), fy, iz0 + 2 + (W - 5) * k // span if n > 1 else zc, 90]
                          for k in range(n)]
