@@ -557,7 +557,7 @@ def test_the_staged_boss_spawns_by_macro_chains_on_victory_and_opens_the_gate(pa
     click_rip(w, p)
     s = arrive_and_cross(w, p)
     pt = D.points(DOC, s)
-    p.pos = [pt["spot"][0] - 4.5, 96.0, s["cz"] + 0.5]
+    p.pos = [pt["spot"][0] - 4.5, float(pt["spot"][1]), pt["spot"][2] + 0.5]     # the arena's own floor and line (DG2-NS: a level down)
     for stage in (1, 2, 3):
         w.passes(1)
         npcs = [e for e in w.ents if e.kind == "cobblemon:npc" and e.alive]
