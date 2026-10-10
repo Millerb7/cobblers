@@ -443,11 +443,16 @@ threshold's clocks with this table or 4.2's):
 |---|---|---|---|---|---|---|---|
 | night_shift | 1,402 main (1,616 all routes) | **41** | **44** | **44** | **48** | **51** | **54** |
 | jungle | 1,303 all routes (1,070 main) | **41** | **46** | **47** | **52** | **55** | **59** |
-| flooded_ruin | 1,337 all routes (1,000 main) | **41** | **43** | **46** | **48** | **52** | **56** |
+| flooded_ruin | 1,950 all routes and the wing (1,045 main; 1,290-1,499 paid at band 1) | **42** | **44** | **47** | **49** | **54** | **57** |
 
 KIT3 (2026-10-10): "all routes" now walks each fork route's own way through its host and its join (`route_extras`,
 section 1b). The night shift's and the jungle's clocks still cover it; the ruin's, pinned to the tool plus its set piece's
 25 s, were re-derived (bands 1, 3, 6 one minute more: its catacomb route leaves and rejoins by side doors).
+
+DG3-RUIN (pass 3, 2026-10-10): the ruin re-authored with two crossroads (three ways out of the bell rotunda, two out of
+the nave crossing), a six-section aqueduct and a four-room wing (the seal, a shaft stair, a hard parkour, the prize) that
+the clock never pays. Its required time on the main route, each fork at its slowest way, the largest over the four
+variants: 1,955 / 2,075 / 2,195 / 2,315 / 2,525 / 2,675 s (32.6 minutes at band 1), plus the set piece's 25 s, x 1.25.
 
 ## 8. Not done, and unproven
 

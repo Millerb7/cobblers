@@ -1,21 +1,25 @@
-"""The Drowned Reliquary (data/dungeons.json `flooded_ruin`): the third test dungeon, re-authored for pass 2 (DG2-RUIN,
-2026-10-10, docs/mechanics/DUNGEON_PASS2.md).
+"""The Drowned Reliquary (data/dungeons.json `flooded_ruin`): the third test dungeon, re-authored for pass 2 (DG2-RUIN)
+and pass 3 (DG3-RUIN, 2026-10-10, docs/mechanics/DUNGEON_PASS2.md "Pass 3", DUNGEON_ROOMS.md 1b).
 
 The author's own tests (the independent audit is another agent's). What they hold the record to:
 
   shape     every room type the owner named is present (maze, puzzle, parkour, resources, nest, habitat, stand,
-            mini-boss) and at least three of ours; fewer, richer rooms; connectors at most 40 long and at least 7 wide;
-            most rooms take a non-box outline; the route turns (doors in four walls), doubles back (a room left by its
-            west wall) and drops (a landing door, two floor levels);
-  length    tools/dungeon_clock.py's required time about 32 minutes at band 1, the record's clock the tool's plus the
-            set piece's stated allowance, every band under D17's hour and no lockout of its own;
+            mini-boss) and at least three of ours; connectors at most 40 long and at least 7 wide; most rooms take a
+            non-box outline; the route turns (doors in four walls), doubles back (a room left by its west wall) and drops
+            (a landing door, two floor levels);
+  length    tools/dungeon_clock.py's required time on the MAIN route about 32 minutes at band 1 (forks at their slowest
+            non-optional route, the wing never), the record's clock the tool's plus the set piece's stated allowance,
+            every band under D17's hour and no lockout of its own;
   pacing    no two fight rooms back to back on any route; the safe room about two thirds in; the set piece the room
             before the boss;
-  choices   a fork (a fast dangerous route and a longer safe one, rejoining), an optional side room, two secrets (one
-            cracked, one balcony) carrying a relic and its lore, a shortcut back toward the entry, four distinct variants;
+  choices   (pass 3) two forks you can see, each out of a crossroads with a distinct look per route, one of them three
+            ways, the routes asking different things (danger, length, a puzzle); a WING of four rooms (a hard parkour, a
+            secret, the prize habitat at its dead end) off the nave; the prize's species per band and its gating; two
+            parkours (the main one six sections, the wing's hard); the vault inside KIT3's budget; three secrets (two
+            cracked, one balcony) carrying a relic and its lore; a shortcut back toward the entry; four distinct variants;
   walk      the room kit's own checks (tools/dungeon_rooms.py problems(): every variant and branch walked);
-  species   every species named, in every variant, is in the Cobblemon 1.8.0 jar; the habitat's is a legendary or
-            mythical, no Ultra Beast, and nothing else in data/ or DUNGEONS.md 8 uses it;
+  species   every species named, in every variant, is in the Cobblemon 1.8.0 jar; the prize's legendary is a legendary
+            or mythical, no Ultra Beast, and nothing else in data/ or DUNGEONS.md 8 uses it;
   params    the wave-2 params contract's fields, in range (levels never above the band's upper cap);
   rip       within 60 blocks of the Night Shift's, on the heightmap's ground, outside the old mine.
 
@@ -105,9 +109,12 @@ def test_every_room_type_the_owner_named_is_there_and_three_of_ours():
 
 def test_fewer_richer_rooms_short_wide_connectors_and_mostly_not_boxes():
     rs = records()
-    assert len(rs) <= 20, len(rs)
+    # pass 3 adds two forks and a wing; the MAIN route stays at most 18 rooms
+    assert len(rs) <= 28, len(rs)
+    assert len(main_layout()) <= 18, [r["id"] for r in main_layout()]
     conn = [r for r in rs if r["kind"] in CONNECTORS]
-    assert len(conn) <= 3, [r["id"] for r in conn]
+    # a fit landing per route that is not the fork's first, the nave (the second fork's join) and the wing's shaft stair
+    assert len(conn) <= 5, [r["id"] for r in conn]
     lay = R.layout(DOC, RUIN, slot1())
     for r in lay:
         if r["kind"] in CONNECTORS:
@@ -195,37 +202,190 @@ def test_the_safe_room_two_thirds_in_and_the_set_piece_before_the_boss():
 # ------------------------------------------------------------------------------------------------- choices
 
 
-def test_the_fork_is_fast_and_dangerous_against_safe_and_long_and_both_rejoin():
-    forks = [r for r in RUIN["rooms"] if r["kind"] == "fork"]
-    assert len(forks) == 1 and len(forks[0]["routes"]) == 2
-    fast, safe = forks[0]["routes"]
-    assert any(r["kind"] == "collapse_bridge" for r in fast["rooms"])
-    assert any(r["kind"] == "dark_room" for r in safe["rooms"])
+def _forks():
+    top = RUIN["rooms"]
+    return [(top[k - 1], r) for k, r in enumerate(top) if r["kind"] == "fork"]
+
+
+def test_two_forks_you_can_see_each_out_of_a_crossroads_one_of_them_three_ways():
+    forks = _forks()
+    assert len(forks) == 2 and all(h["kind"] == "crossroads" for h, _f in forks)
+    assert sorted(len(f["routes"]) for _h, f in forks) == [2, 3]
+    looks = set(R.load_themes()["themes"]["flooded_ruin"]["crossroads"]["looks"])
+    for _h, f in forks:
+        ls = [rt["look"] for rt in f["routes"]]
+        assert len(set(ls)) == len(ls) and set(ls) <= looks, ls
+        assert all(rt.get("sign") for rt in f["routes"]), f["id"]
+        assert not any(rt.get("optional") for rt in f["routes"]), "both forks are ways on; the wing is the optional part"
+    for s in R.variant_slots(DOC, RUIN, slots()):
+        lay = R.layout(DOC, RUIN, s)
+        by_id = {r["id"]: r for r in lay}
+        for h, f in forks:
+            host = by_id[h["id"]]
+            exits = [x for x in R.room_doors(host) if x["dir"] == "out" and not x.get("shortcut")]
+            assert len(exits) == len(f["routes"]), (s["k"], h["id"])
+            # every way leaves the host by its own door, the doors well apart: no two near-identical doors on one wall
+            for i, a in enumerate(exits):
+                for b in exits[i + 1:]:
+                    assert a["side"] != b["side"] or abs(a["c"] - b["c"]) >= 10, (s["k"], h["id"])
+            # and every route rejoins at the one room after the fork
+            join = next(r for r in lay if r["route"] == "main" and r["i"] > host["i"]
+                        and any(x.get("join_of") is not None for x in R.room_doors(r)))
+            ends = {lay[x["to"]]["route"] for x in R.room_doors(join) if x["dir"] == "in"}
+            assert ends == {"%s/%s" % (f["id"], rt["id"]) for rt in f["routes"]}, (s["k"], ends)
+    for b in R.slot_build(DOC, RUIN, slot1()):
+        if b.room["kind"] == "crossroads":
+            assert b.anchors.get("hub"), b.room["id"]   # the sight check from it is problems()'s (the walk test below)
+
+
+def _route_kinds(f):
+    return {rt["id"]: {r["kind"] for r in rt["rooms"]} for rt in f["routes"]}
+
+
+def test_the_routes_ask_different_things_danger_length_and_a_puzzle():
+    three = next(f for _h, f in _forks() if len(f["routes"]) == 3)
+    k3 = _route_kinds(three)
+    assert {frozenset(v - CONNECTORS) for v in k3.values()} == {
+        frozenset({"collapse_bridge"}), frozenset({"dark_room"}), frozenset({"puzzle"})}, k3
+    two = next(f for _h, f in _forks() if len(f["routes"]) == 2)
+    k2 = _route_kinds(two)
+    assert {frozenset(v - CONNECTORS) for v in k2.values()} == {frozenset({"maze"}), frozenset({"miniboss"})}, k2
+    # the danger way is the shortest walk of the three, the dark one winds, the puzzle way costs the most time at band 1
     rooms = C.walked(DOC, RUIN, slot1())[0]
-    walk = {k: sum(r["walk"] for r in rooms if r["route"] == "%s/%s" % (forks[0]["id"], k)) for k in (fast["id"], safe["id"])}
-    assert walk[fast["id"]] < walk[safe["id"]], walk
-    lay = R.layout(DOC, RUIN, slot1())
-    join = next(r for r in lay if r["route"] == "main" and any(x.get("join_of") is not None for x in R.room_doors(r)))
-    ends = {lay[x["to"]]["route"] for x in R.room_doors(join) if x["dir"] == "in"}
-    assert ends == {"%s/%s" % (forks[0]["id"], k) for k in (fast["id"], safe["id"])}, ends
-    assert join["kind"] == "safe_room"
+    walk = {rt["id"]: sum(r["walk"] for r in rooms if r["route"] == "%s/%s" % (three["id"], rt["id"])) for rt in three["routes"]}
+    danger = next(rt["id"] for rt in three["routes"] if "collapse_bridge" in k3[rt["id"]])
+    assert walk[danger] == min(walk.values()), walk
+    paid = {r["id"] for r in C.clock_rooms(DOC, RUIN, 1, rooms)}
+    puzzle = next(rt for rt in three["routes"] if "puzzle" in k3[rt["id"]])
+    assert {r["id"] for r in puzzle["rooms"]} <= paid, "the clock pays the slowest way of the three: the puzzle's"
 
 
-def test_the_side_room_is_optional_and_holds_the_legendary():
+def _wing():
     sides = [r for r in RUIN["rooms"] if r["kind"] == "side"]
     assert len(sides) == 1
-    last = sides[0]["rooms"][-1]
-    assert last["kind"] == "habitat"
-    lay = R.layout(DOC, RUIN, slot1())
-    hab = next(r for r in lay if r["id"] == last["id"])
-    assert hab["last"] and hab["route"] == sides[0]["id"]
-    assert not [x for x in R.room_doors(hab) if x["dir"] == "out"]
-    assert hab["id"] not in {r["id"] for r in C.clock_rooms(DOC, RUIN, 1, C.walked(DOC, RUIN, slot1())[0])}
+    return sides[0]
 
 
-def test_two_secrets_one_cracked_one_balcony_each_with_a_relic_and_its_lore():
+def test_the_wing_is_four_rooms_a_hard_parkour_a_secret_and_the_prize_at_its_dead_end_never_on_the_clock():
+    w = _wing()
+    kinds_ = [r["kind"] for r in w["rooms"]]
+    assert len(kinds_) == 4 and kinds_[0] not in R.BOX_ONLY_KINDS
+    assert any(r["kind"] == "parkour" and r["params"].get("hard") is True for r in w["rooms"])
+    assert any(s["type"] in ("cracked", "balcony") for r in w["rooms"] for s in r.get("secrets") or [])
+    last = w["rooms"][-1]
+    assert last["kind"] == "habitat" and last["params"].get("prize") and last.get("gate") == "open"
+    # the hard parkour guards the prize: it is the room before it
+    assert w["rooms"][-2]["kind"] == "parkour"
+    for s in R.variant_slots(DOC, RUIN, slots()):
+        lay = R.layout(DOC, RUIN, s)
+        hab = next(r for r in lay if r["id"] == last["id"])
+        assert hab["last"] and hab["route"] == w["id"]
+        assert not [x for x in R.room_doors(hab) if x["dir"] == "out"]
+        wing_ids = {r["id"] for r in w["rooms"]}
+        for b in DOC["engine"]["bands"]:
+            paid = {r["id"] for r in C.clock_rooms(DOC, RUIN, b["band"], C.walked(DOC, RUIN, s)[0])}
+            assert not paid & wing_ids, (s["k"], b["band"], paid & wing_ids)
+        # the wing goes DOWN under the main route: the sealed deep (the stair is the wing's own, its shaft beside the hall)
+        assert hab["floor_in"] < min(r["floor_in"] for r in lay if r["route"] == "main" and r["kind"] == "boss_arena")
+
+
+@pytest.fixture(scope="module")
+def jar():
+    import dungeon_prize as PZ
+    labels = PZ.jar_labels()
+    if labels is None:
+        pytest.skip("no Cobblemon 1.8 jar")
+    return labels
+
+
+def test_the_prize_is_a_rare_dragon_before_the_beast_ball_stage_and_regidrago_from_it(jar):
+    import dungeon_prize as PZ
+    room = _wing()["rooms"][-1]
+    pz = room["params"]["prize"]
+    lf = DOC["engine"]["prize"]["legendary_from_band"]
+    assert sorted(int(k) for k in pz["rare_by_band"]) == list(range(1, lf))
+    assert sorted(int(k) for k in pz["legendary_by_band"]) == list(range(lf, 7))
+    for sp in pz["rare_by_band"].values():
+        assert not jar[sp] & {"legendary", "mythical", "ultra_beast"}, sp
+    for sp in pz["legendary_by_band"].values():
+        assert jar[sp] & {"legendary", "mythical"} and "ultra_beast" not in jar[sp], sp   # no Ultra Beast prize yet (KIT3)
+    assert set(pz["legendary_by_band"].values()) == {"regidrago"}
+    assert PZ.room_problems(DOC, RUIN, room) == []
+    # no resident: a legendary standing there every run would be no hidden prize
+    assert "species" not in room["params"]
+    # the chance rises with the band and is never certain
+    ch = [PZ.chance(DOC, room, b) for b in range(1, 7)]
+    assert ch == sorted(ch) and 0 < ch[0] and ch[-1] < 100, ch
+    # the rare prizes are no set piece and no dungeon's other Pokemon (they may spawn wild in the world, data/spawns.json)
+    others = [r for r in variant_records() if r["id"] != room["id"]]
+    named = {x for _r, x in named_species() if _r != room["id"]} | {x for crews in RUIN["boss"]["teams"].values() for c in crews for x in c}
+    for sp in pz["rare_by_band"].values():
+        assert sp not in named, sp
+        word = re.compile(r"(?<![a-z])%s(?![a-z])" % sp)
+        for f in glob.glob(str(ROOT / "data" / "*.json")):
+            if Path(f).name in ("spawns.json", "encounter_design.json", "spawn_blocks.json", "dungeons.json"):
+                continue
+            assert not word.search(Path(f).read_text(encoding="utf-8").lower()), (sp, Path(f).name)
+    assert others
+
+
+def test_the_prize_is_rolled_spawned_at_the_lower_cap_and_only_its_legendary_takes_the_beast_ball():
+    import key_ball as KB
+    s = slot1()
+    files = D.build(DOC)
+    room = _wing()["rooms"][-1]
+    base = "data/cobblers/function/dungeons/room/flooded_ruin/%s/s%d/" % (room["id"], s["g"])
+    lf = DOC["engine"]["prize"]["legendary_from_band"]
+    for b in DOC["engine"]["bands"]:
+        sp = files[base + "prize/spawn_b%d.mcfunction" % b["band"]]
+        assert "level=%d no_ai" % b["caps"][0] in sp, b
+        assert sp.rstrip().endswith("prize/bind" if b["band"] >= lf else "prize/rare_bind"), b
+    tag = "tag @s add %s" % KB.boss_tag()
+    assert tag in files[base + "prize/bind.mcfunction"].split("\n")
+    assert tag not in files[base + "prize/rare_bind.mcfunction"].split("\n")
+    start = files["data/cobblers/function/dungeons/slot/s%d/start.mcfunction" % s["g"]]
+    assert start.count("random value 1..100") >= 6 and "A diver swears" in start
+    assert KB.boss_problems(KB.load()) == []
+
+
+def test_two_parkours_the_main_one_six_sections_with_its_fork_the_wings_hard_with_none():
+    import dungeon_parkour as P
+    main = next(r for r in records() if r["kind"] == "parkour" and not r["params"].get("hard"))
+    hard = next(r for r in records() if r["kind"] == "parkour" and r["params"].get("hard"))
+    assert main["params"]["sections"] == 6 and main["width"] == 25 and main["length"] >= 30 * 6 - 10 + 2
+    assert hard["params"]["sections"] >= 4 and hard["id"] in {r["id"] for r in _wing()["rooms"]}
+    assert main["id"] in {r["id"] for r in RUIN["rooms"]}, "the long one is on the main route"
+    for s in R.variant_slots(DOC, RUIN, slots()):
+        dd = R.resolve(DOC, RUIN, s)
+        bs = {b.room["id"]: b for b in R.slot_build(DOC, RUIN, s)}
+        route, ledges, _lv, fork_i = P.plan_route(dd, bs[main["id"]].room)
+        assert len(ledges) == 7 and fork_i is not None, (s["k"], len(ledges), fork_i)
+        route, ledges, _lv, fork_i = P.plan_route(dd, bs[hard["id"]].room)
+        assert len(ledges) == hard["params"]["sections"] + 1 and fork_i is None, (s["k"], len(ledges))
+        assert sum(1 for h in route.hops if h["n"] == P.FLAT_MAX) >= 4, s["k"]
+
+
+def test_the_vault_is_inside_the_budget_at_every_band_and_a_dearer_chest_is_not():
+    import dungeon_greed as DG
+    table = DG.load()
+    assert not [x for x in DG.vault_over(DOC, table) if x[0] == "flooded_ruin"]
+    budget = DG.vault_budget(DOC, table)
+    well = next(r for r in records() if r["kind"] == "vault")
+    for b in range(1, 7):
+        _k, spec = __import__("dungeon_puzzles").loot_for(well["params"], DOC["engine"]["bands"], b)
+        v = DG.chest_cp(table, spec)
+        assert v is not None and v <= 0.9 * budget[b] // well["params"]["chests"], (b, v)   # a margin for the budget moving
+    # mutation: a revive at band 1 (500 cp) is named, and refused once enforced
+    doc = copy.deepcopy(DOC)
+    d = next(x for x in doc["dungeons"] if x["id"] == "flooded_ruin")
+    next(r for r in R._walk_records(d["rooms"]) if r["kind"] == "vault")["params"]["loot_by_band"]["1"] = [{"item": "cobblemon:revive", "count": 1}]
+    table["vault_budget"]["enforce"] = True
+    assert any("flooded_ruin vault offering_well band 1" in p for p in DG.vault_problems(doc, table))
+
+
+def test_three_secrets_two_cracked_one_balcony_each_with_a_relic_and_its_lore():
     found = [(r, s) for r in records() for s in r.get("secrets") or []]
-    assert sorted(s["type"] for _r, s in found) == ["balcony", "cracked"]
+    assert sorted(s["type"] for _r, s in found) == ["balcony", "cracked", "cracked"]
     relics = []
     for r, s in found:
         p = r["params"]
@@ -363,7 +523,10 @@ def named_species():
         out += [(r["id"], x) for x in p.get("species", []) if r["kind"] == "nest"]
         out += [(r["id"], x) for x in p.get("species_by_band", {}).values()]
         if r["kind"] == "habitat":
-            out.append((r["id"], p["species"]))
+            if p.get("species"):
+                out.append((r["id"], p["species"]))
+            for key in ("rare_by_band", "legendary_by_band"):
+                out += [(r["id"], x) for x in (p.get("prize") or {}).get(key, {}).values()]
     for crews in RUIN["boss"]["teams"].values():
         for crew in crews:
             out += [("boss", x) for x in crew]
@@ -376,9 +539,11 @@ def test_every_species_named_is_in_the_jar(species):
     assert not missing, missing
 
 
-def test_the_habitat_is_a_legendary_or_mythical_no_ultra_beast_and_used_nowhere_else(species):
+def test_the_prizes_legendary_is_a_legendary_or_mythical_no_ultra_beast_and_used_nowhere_else(species):
     sp, key = species
-    hab = next(r for r in records() if r["kind"] == "habitat")["params"]["species"]
+    legs = set(next(r for r in records() if r["kind"] == "habitat")["params"]["prize"]["legendary_by_band"].values())
+    assert len(legs) == 1
+    hab = legs.pop()
     labels = set(sp[key(hab)].get("labels", []))
     assert labels & {"legendary", "mythical"} and "ultra_beast" not in labels, labels
     word = re.compile(r"(?<![a-z])%s(?![a-z])" % re.escape(hab))
@@ -414,7 +579,7 @@ def test_the_habitat_is_a_legendary_or_mythical_no_ultra_beast_and_used_nowhere_
     assert hab not in re.sub(r"[^a-z]", "", sec), "reserved in DUNGEONS.md 8"
     # no legendary, mythical or Ultra Beast fights for the salvagers or the boss
     for where, x in named_species():
-        if where == "sealed_chamber":
+        if x == hab:
             continue
         lb = set(sp[key(x)].get("labels", []))
         assert not lb & {"legendary", "mythical", "ultra_beast", "paradox"}, (where, x)
@@ -451,9 +616,9 @@ def test_the_fight_params_follow_the_contract_and_never_pass_the_bands_upper_cap
             assert 0 <= lo <= hi
         elif r["kind"] == "habitat":
             assert p.get("fight_only", False) is False and r["gate"] == ("open" if r["id"] in ends else "cleared"), r["id"]
-            for b, lvl in p["level_by_band"].items():
-                assert lvl <= max(bands[b]["caps"]), (b, lvl)
-            assert 95 <= p["level_by_band"]["6"] <= 100
+            # pass 3: the habitat is the wing's prize room, its Pokemon spawned at the band's LOWER cap by the kit
+            # (tools/dungeon_prize.py level_at), so no level of its own is authored to pass the upper cap
+            assert p.get("prize") and "level_by_band" not in p, r["id"]
         elif r["kind"] == "puzzle":
             assert p["variant"] in ("levers", "sequence", "plates") and p["penalty_s"] > 0
         elif r["kind"] == "vault":
