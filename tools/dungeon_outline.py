@@ -203,15 +203,16 @@ def shape_split(o, rg):
     frac = float(o.params.get("frac", 0.35))
     tw = max(3, int(round(o.nz * frac)))
     lift = np.zeros((o.nx, o.nz), dtype=np.int16)
-    # the terrace: rows next to the chosen long wall; the trench: the two rows below its edge
+    # the terrace: rows next to the chosen long wall; the trench: the three rows below its edge, deepest by the terrace
+    # and one block deep on the floor's side, so every trench cell is a one-block step from the floor, cut or not
     if side == "north":
         t_rows = range(0, tw)
-        d_rows = range(tw, min(o.nz, tw + 2))
+        d_rows = [j for j in (tw, tw + 1, tw + 2) if j < o.nz]
         step_dir = 1
         edge = tw - 1
     else:
         t_rows = range(o.nz - tw, o.nz)
-        d_rows = range(max(0, o.nz - tw - 2), o.nz - tw)
+        d_rows = [j for j in (o.nz - tw - 1, o.nz - tw - 2, o.nz - tw - 3) if j >= 0]
         step_dir = -1
         edge = o.nz - tw
     for j in t_rows:
@@ -219,8 +220,8 @@ def shape_split(o, rg):
     a, b = 6, o.nx - 7
     for i in range(o.nx):
         if a <= i <= b:
-            dd = min(depth, i - a + 1, b - i + 1)        # the trench ramps down from each end: walkable in and out
-            for j in d_rows:
+            for idx, j in enumerate(d_rows):
+                dd = min(depth, len(d_rows) - idx, i - a + 1, b - i + 1)   # and it ramps up at each end
                 lift[i, j] = -dd
     # the stairs up to the terrace: 3 wide at the west end (before the trench), one block a step, out from its edge
     for i in range(2, 5):
@@ -229,6 +230,40 @@ def shape_split(o, rg):
             if 0 <= j < o.nz:
                 lift[i, j] = level - k
     o.lift_ = lift
+    o.terrace = {"edge": edge, "dir": step_dir, "level": level, "i0": 2}
+
+
+def _stair_cells(o, i0):
+    """{(i, j): lift} for the terrace's 3-wide stair at columns i0..i0+2, and the floor cell at its foot (lift 0)."""
+    t = o.terrace
+    out = {}
+    for i in range(i0, i0 + 3):
+        out[(i, t["edge"])] = t["level"]
+        for k in range(1, t["level"] + 1):
+            j = t["edge"] + t["dir"] * k
+            if not 0 <= j < o.nz:
+                return None
+            out[(i, j)] = max(0, t["level"] - k)
+    return out
+
+
+def _repair_terrace(o, keep_local):
+    """A split's stair may be cut by what the room must keep level (a door's spur, an anchor): move it along the
+    terrace's edge, nearest first, to columns where nothing kept crosses it; the floor at its foot is made level, so
+    it never ends in the trench."""
+    t = getattr(o, "terrace", None)
+    if t is None:
+        return
+    for i0 in sorted(range(0, max(1, o.nx - 2)), key=lambda i: (abs(i - t["i0"]), i)):
+        cells = _stair_cells(o, i0)
+        if cells is None or any(c in keep_local for c in cells):
+            continue
+        for (i, j), h in cells.items():
+            o.open_[i, j] = True
+            o.lift_[i, j] = h
+        t["placed"] = i0
+        return
+    t["placed"] = None
 
 
 def shape_ring(o, rg):
@@ -297,6 +332,7 @@ def finish(o, keep, forced):
             o.open_[x - o.x0, z - o.z0] = True
             o.lift_[x - o.x0, z - o.z0] = 0
             o.water.discard((x, z))
+    _repair_terrace(o, {(x - o.x0, z - o.z0) for (x, z) in set(keep) | set(forced)})
     for (x, z), h in forced.items():
         if o.inside(x, z):
             o.open_[x - o.x0, z - o.z0] = True

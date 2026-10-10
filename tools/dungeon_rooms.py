@@ -1341,7 +1341,7 @@ def build_room(doc, d, slot, room, theme):
             if outline.inside(*c):
                 outline.open_[c[0] - outline.x0, c[1] - outline.z0] = False
         if not outline.is_box() or forced:
-            for op in O.ops(outline, room, theme, fill):
+            for op in O.ops(outline, room, theme, fill) + rail_ops(room, outline, forced, theme):
                 b.ops.append(op)
                 grid.apply(op)
         if outline.water:
@@ -1386,6 +1386,26 @@ def build_room(doc, d, slot, room, theme):
     b.gate_ops = gate_closing_ops(room, theme)
     b.grid = grid
     return b
+
+
+RAIL_FROM = 4      # a landing or a stair step this high or more over the floor beside it gets a rail on that side
+
+
+def rail_ops(room, outline, forced, theme):
+    """A rail of the theme's gate block (bars or a fence: nothing steps onto it) along every open side of a landing or
+    stair cell RAIL_FROM or more above the floor beside it, at the step's own feet level: a grand stair is not a ledge
+    to fall twelve blocks off. The column under the rail stays clear (it floats over the lower floor's headroom)."""
+    out = []
+    gate = gate_block(theme)
+    for (x, z), h in sorted(forced.items()):
+        if h < RAIL_FROM:
+            continue
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            n = (x + dx, z + dz)
+            if n in forced or not outline.open(*n) or outline.lift(*n) > h - 3:
+                continue
+            out.append(setb((n[0], floor_at(room, n[0]) + h, n[1]), gate))
+    return out
 
 
 def pass2_room(room, b=None):
@@ -1967,6 +1987,10 @@ def record_problems(doc, d):
     return bad
 
 
+BARRIER_KINDS = {"gauntlet", "ambush"}   # tools/dungeon_fights.py: a barrier 4 high (fy..fy+3) across the room
+BARRIER_LIFT_MAX = 2                      # standing 3 up, a flat jump of 3 clears a 4-high barrier's top (V6)
+
+
 def _overlap(a, b):
     return not (a["xb"] < b["xa"] or b["xb"] < a["xa"] or a["zb"] < b["za"] or b["zb"] < a["za"]
                 or a["ceil_y"] < b["hull_lo"] or b["ceil_y"] < a["hull_lo"])
@@ -2056,6 +2080,9 @@ def plan_problems(doc, d, slot):
         lm = max(lm, max(landing_lifts(r).values() or [0]))
         if lm and r["height"] - lm < 3:
             bad.append("%s: a floor lifted %d leaves under 3 of headroom (height %d)" % (lab, lm, r["height"]))
+        if r["kind"] in BARRIER_KINDS and (lm >= BARRIER_LIFT_MAX + 1 or any(s.get("type") == "balcony" for s in r.get("secrets") or [])):
+            bad.append("%s: a gauntlet's barriers are 4 high: a floor lifted %d (or a balcony) would let a player jump over "
+                       "one (at most %d here)" % (lab, lm, BARRIER_LIFT_MAX))
     for a_i, a in enumerate(rooms):
         for b in rooms[a_i + 1:]:
             if _overlap(a, b):
@@ -2142,6 +2169,11 @@ def walk_problems(doc, d, slot):
                 bad.append("%s: a pit at (%d, %d, %d): a player can get in and not back out" % (lab, x0 + lx, y0 + ly, z0 + lz))
         for door in room_doors(r):
             (cx0, cz0, cx1, cz1), _f, _l = _door_cols(r, door)
+            bx = G.norm_box(door["box"])
+            if not (bx[0] <= cx0 and cx1 <= bx[3] and bx[2] <= cz0 and cz1 <= bx[5] and bx[1] == door["y"]
+                    and bx[4] == door["y"] + DOOR_H - 1 and (bx[3] - bx[0] + 1) * (bx[5] - bx[2] + 1) == 6):
+                bad.append("%s: the gate box of its %s door %s does not cover the opening (%d..%d, %d..%d at y %d): a shut gate "
+                           "would leave a gap" % (lab, door["side"], list(bx), cx0, cx1, cz0, cz1, door["y"]))
             blocked = False
             for y in range(door["y"], door["y"] + DOOR_H):
                 for x in range(cx0, cx1 + 1):
