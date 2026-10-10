@@ -189,8 +189,10 @@ def test_bands_follow_the_level_cap(world):
     assert world.band_of(8, champion=True) == 6
 
 
-def test_the_ladder_rates(world):
-    assert [world.mult_of(t) for t in (0, 4, 5, 9, 10, 15, 20, 24)] == [1, 1, 1.25, 1.25, 1.5, 2, 3, 3]
+def test_the_greed_rates(world):
+    # the owner (2026-10-10): +0.1x per 2 points (200 cp), x3 at most; a coal ore is 5 cp, a diamond ore 100
+    assert [world.mult_of(cp) for cp in (0, 199, 200, 1000, 3999, 4000, 99999)] == [1, 1, 1.1, 1.5, 2.9, 3, 3]
+    assert (world.ore_cp("coal_ore"), world.ore_cp("diamond_ore")) == (5, 100)
 
 
 def test_the_sim_refuses_a_world_where_wild_battles_pay(docs):

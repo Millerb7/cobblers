@@ -443,14 +443,14 @@ def test_the_fight_params_follow_the_contract_and_never_pass_the_bands_upper_cap
                 assert len(tr) == len(p["trainers"]) and tr == sorted(tr) and all(0 < t < 1 for t in tr)
             assert r["gate"] == "cleared"
         elif r["kind"] == "miniboss":
-            assert set(p["species_by_band"]) == set(bands) and p["level_offset"] <= 0 and p.get("catchable") is False
+            assert set(p["species_by_band"]) == set(bands) and p["level_offset"] <= 0 and p.get("catchable", True) is True   # the owner, 2026-10-10: every dungeon Pokemon catchable
             assert r["gate"] == "cleared"
         elif r["kind"] == "nest":
             assert set(p["count_by_band"]) == set(bands) and p["species"]
             lo, hi = p["level_spread"]
             assert 0 <= lo <= hi
         elif r["kind"] == "habitat":
-            assert p.get("fight_only", True) is True and r["gate"] == ("open" if r["id"] in ends else "cleared"), r["id"]
+            assert p.get("fight_only", False) is False and r["gate"] == ("open" if r["id"] in ends else "cleared"), r["id"]
             for b, lvl in p["level_by_band"].items():
                 assert lvl <= max(bands[b]["caps"]), (b, lvl)
             assert 95 <= p["level_by_band"]["6"] <= 100

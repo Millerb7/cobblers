@@ -422,7 +422,6 @@ def kind_resources(doc, d, slot, room, theme):
     fy = room["floor_in"]
     bands = [b["band"] for b in doc["engine"]["bands"]]
     reset = ["# the seam's face: band 1's blocks first, then each higher band's difference (the entrant's band is frozen)"]
-    h = R.state_holder(slot, room)
     first = {}
     for j, (x, y, z) in enumerate(cells):
         first[j] = seam_block_for(theme, bands[0], j, n)
@@ -432,20 +431,15 @@ def kind_resources(doc, d, slot, room, theme):
             blk = seam_block_for(theme, b, j, n)
             if blk != seam_block_for(theme, b - 1, j, n):
                 reset.append("execute if score @s dg.band matches %d.. run setblock %d %d %d %s" % (b, x, y, z, blk))
-    reset += ["scoreboard players set %sm%d dg.rs 1" % (h, j) for j in range(n)]
-    tick = []
-    for j, (x, y, z) in enumerate(cells):
-        hj = "%sm%d" % (h, j)
-        tick += ["execute if score %s dg.rs matches 1 if block %d %d %d minecraft:air run scoreboard players set %s dg.rs 2" % (hj, x, y, z, hj),
-                 "execute if score %s dg.rs matches 2 run function %s" % (hj, R.F("greed/take")),
-                 "execute if score %s dg.rs matches 2 run scoreboard players set %s dg.rs 3" % (hj, hj)]
+    # no tick: what the member mines here is weighed by the mined stats wherever they mine it (tools/dungeon_greed.py,
+    # unit GREED 2026-10-10); the seam's own air watch, which called greed/take, would count the same block twice
     # the face is written once by the shell too, with band 1's blocks, so a bare shell is not a hole in the wall
     for j, (x, y, z) in enumerate(cells):
         ops.append(setb((x, y, z), first[j]))
     cx = (slab[0] + slab[3]) // 2
     return {"blocks": ops,
             "anchors": {"seam": [list(c) for c in cells], "seam_box": list(slab), "stand_at": [cx, fy, room["iz0"] + 3, 180]},
-            "functions": {"reset": reset, "tick": tick},
+            "functions": {"reset": reset},
             "reserve": [(slab[0] - 1, fy, slab[2], slab[3] + 1, fy, slab[5] + 3)],
             "meta": {"seam_cells": n}}
 

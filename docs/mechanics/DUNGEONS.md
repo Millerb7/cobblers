@@ -51,7 +51,7 @@ value this design chooses so the arithmetic can be done, to be replaced by a tim
 
 | # | Decision | Where it lands |
 |---|---|---|
-| D13 | **Greed ladder:** x1.25 at 5, x1.5 at 10, x2.0 at 15, x3 at 20, holding for the rest of the run: "smoother, and it keeps the decision live at every step" (Q1) | 3.3 |
+| D13 | **Greed ladder:** x1.25 at 5, x1.5 at 10, x2.0 at 15, x3 at 20, holding for the rest of the run: "smoother, and it keeps the decision live at every step" (Q1). **Superseded 2026-10-10 by the owner's points** (20 coal or a diamond = 1 point, every 2 points +0.1x, catches count; x3 cap and the hold kept): 3.3 | 3.3 |
 | D14 | **Slack 1.25** (Q2) | 4.2 |
 | D15 | **Logging out mid-run: the clock keeps running.** "A run you can pause by quitting is not timed" (Q4) | 2.6, 6 |
 | D16 | **Solo first** (Q6); **separate clocks in co-op**, each player with their own greed (Q7) | 6 |
@@ -138,10 +138,11 @@ and Entei's z -768 row are excluded; *relayed* from DM 5 and 6). The builder der
 
 ### 2.1 Tracking: a per-player countdown score, never game-time arithmetic
 
-- **One clock per player in the run**, `dg.clock` on the player, in **quarter-ticks** so 1.25x stays an integer (DM
-  1.1). A minute is 1,200 ticks, or 4,800 units.
-- Each keeper pass (20 ticks) subtracts `20 x rate`. The rates are 4 (x1), 5 (x1.25), 6 (x1.5), 8 (x2) and 12 (x3);
-  section 3.3 gives the ladder. **There is no rate 0** (D1).
+- **One clock per player in the run**, `dg.clock` on the player, in **tenth-ticks** so every 0.1x is an integer rate
+  (the owner, 2026-10-10; it was quarter-ticks for D13's x1.25). A minute is 1,200 ticks, or 12,000 units.
+- Each keeper pass (20 ticks) subtracts `20 x rate`. The rate is 10 (x1) plus 1 (0.1x) for every 2 points taken, to
+  30 (x3): `rate = min(30, 10 + floor(cp / 200))`, cp being hundredths of a point (section 3.3 and
+  `data/dungeon_greed.json`). **There is no rate 0** (D1).
 - **Why per player and not per slot.** DM 6 recommends one clock on the slot. The owner asks for a **per-player**
   multiplier, and a per-player multiplier on a shared clock is incoherent. In solo play the two are identical. In co-op
   (section 6) one partner's greed shortens only their own clock, and the shared gates still make a slow partner cost a
@@ -154,7 +155,7 @@ and Entei's z -768 row are excluded; *relayed* from DM 5 and 6). The builder der
   safe place to read the board. A player who idles there gains nothing, since the clock has not started and no leg is
   open behind it.
 - **The clock stops at a clean exit.** The remaining value is the run's time record (9.4).
-- **Fall penalty:** 15 s of clock, flat (1,200 units, 6.2).
+- **Fall penalty:** 15 s of clock, flat (3,000 units, 6.2).
 - **The same counter pattern fixes the lockout** (2.5). This is the arithmetic class that produced Entei's two clock
   defects (`data/entei_boss.json:112`; review N142, *relayed*).
 
@@ -437,23 +438,42 @@ keeper pass. It fires when their own clock is at or below 0 after the gap, or wh
      `minecraft.mined` stat, one objective per ore id. The rift pick is the right tool by construction, so the stat
      should count, but whether it counts in adventure mode under `can_break` is ASSUMED until **R1**. The stat is
      added when co-op is enabled.
-- **The ladder** (the owner's, D13: "smoother, and it keeps the decision live at every step"):
+- **Greed by points** (the owner, 2026-10-10, replacing D13's ladder of blocks: "any Pokemon caught should count as a
+  resource ... a system to weigh all valuables, like 20 coal or a diamond is 1 point, and 2 points is +0.1x").
+  `tools/dungeon_greed.py`, `data/dungeon_greed.json`. Everything a member takes in a live run (`dg.st` 3) is weighed
+  once, in the world, never from an inventory:
+  - **mined**: one `minecraft.mined:<block>` objective per valued block the rift pick can break (a seam, a wall, a pile),
+    zeroed at the threshold and converted each pass at the block's value (its drops x the items' prices). This replaces
+    the seam's own air watch and is the per-player measure item 4 above asked for (EXP-073: parse PASS, the count in
+    adventure mode is its open owner part);
+  - **opened**: a vault chest, at its loot's expected value for the band;
+  - **caught**: the `pokemon_captured` callback, by the kind of room the catcher stands in (ambient, nest, mini-boss
+    1 to 2 points by band; a habitat's prize 8 points, or 20 for a legendary or Ultra Beast from
+    `engine.prize.legendary_from_band`).
 
-  | Taken (this player, this run) | 0-4 | 5-9 | 10-14 | 15-19 | 20-24 |
-  |---|---|---|---|---|---|
-  | Rate (units per tick) | 4 | 5 | 6 | 8 | 12 |
-  | Clock speed | x1 | **x1.25** | x1.5 | x2 | **x3** |
+  | Points taken (this player, this run) | 0-1.99 | 2 | 4 | 10 | 20 | 40+ |
+  |---|---|---|---|---|---|---|
+  | Rate (units per tick) | 10 | 11 | 12 | 15 | 20 | 30 |
+  | Clock speed | x1 | x1.1 | x1.2 | x1.5 | x2 | **x3** (cap) |
+
+  A point is $100 of the economy's prices (the owner's anchors pinned: 20 coal, 1 diamond). Measured on the built
+  dungeons (`python tools/dungeon_greed.py`): a whole 24-block seam face is 1.6 points at bands 1-2, 3.0 at 3-4 and 5.45
+  at 5-6 (the mine and the ruin), 2.16 / 1.44 for the jungle's produce; so the seam alone barely moves the clock. The
+  vaults' authored loot is dear: 7 to 32 points a chest in the Night Shift, 20 to 150 in the jungle (revives, PP Ups,
+  an Ability Capsule at the bank's last or the counters' prices).
 
 - **The multiplier only rises, and holds for the rest of the run** (DM 2.2: "a one-way commitment, and that is the
   point"; D13). Leaving the seam does not cool it.
 - **What the player sees.**
-  - The seam's ores in a lit face, and a board beside it with the ladder.
-  - On the 5th, 10th, 15th and 20th block: the actionbar line "The rift tightens. Time runs x1.25." and the sound.
-    The face's remaining markers flare with particles, and the bar turns colour.
-  - The bar's name always shows `taken N` and the real time left (2.2).
-- **The price of greed, worked** (band 1, section 4.3): 5 blocks costs about 3.8 of the run's 6.4 spare minutes. 10 is
-  a gamble that needs sprinting. 15 or 20 means take it and run back out, giving up the third stand, the boss and the
-  bundle.
+  - The seam's ores in a lit face; the entry board states the rule ("every 2 points taken is +0.1x, to x3").
+  - Each time the rate rises: the actionbar line "The rift tightens. Time runs x1.3" (the rate read from the score) and
+    the sound; the bar turns yellow above x1 and red from x2.
+  - The bar's name shows `x<rate>`, `taken <points to a tenth>` once anything is taken, and the real time left (2.2).
+- **The price of greed, worked** (band 1, section 4.3; written for D13's blocks, NOT re-derived for points): 5 blocks
+  at x1.25 cost about 3.8 of the run's 6.4 spare minutes. Under points the same x1.25 is about 5 points (x1.2 at 4,
+  x1.3 at 6): five diamonds, a hundred coal, or five catches. `tools/dungeon_clock.py` still prices a run with
+  `slack_factor` 1.25 (the whole slack spent at x1.25), so a run that holds x1.2 from the threshold still finishes;
+  a band-1 seam face (1.6 points) is inside the free first 2 points.
 - **Economy.** The seam's ores enter `tools/economy_audit.py` as a renewable supply on the lockout clock, capped per
   run at the matching cave's per-reset yield (`data/mining_caves.json:66-71`, *relayed*). *Stands* from the old design.
   Diamonds are band 5+ only (9.3).

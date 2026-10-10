@@ -48,9 +48,10 @@ CD_CONFIG = ROOT / "modpack" / "config" / "cobbledollars" / "common.json"
 CREDIT_WINDOW_TICKS = 100
 # DUNGEONS.md 11.3 E1 item 1: "added by door_click ... before the 40-tick arrival delay"
 ARRIVAL_DELAY_TICKS = 40
-# DUNGEONS.md 2.1: "The rates are 4 (x1), 5 (x1.25), 6 (x1.5), 8 (x2) and 12 (x3)"; a minute is 4,800 units
-DESIGN_RATES = (4, 5, 6, 8, 12)
-UNITS_PER_TICK = 4
+# DUNGEONS.md 2.1 (the owner, 2026-10-10, replacing D13's five rates 4..12 in quarter-ticks): tenth-ticks, x1 is 10
+# and every 2 points taken is +1 (0.1x), to 30 (x3); a minute is 12,000 units. A sample of the rates, both ends included
+DESIGN_RATES = (10, 11, 15, 20, 30)
+UNITS_PER_TICK = 10
 
 POCKET = "cobblers:pocket"
 FN_RE = re.compile(r"^data/([^/]+)/function/(.+)\.mcfunction$")

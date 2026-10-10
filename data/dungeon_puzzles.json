@@ -14,8 +14,7 @@
     "plates_count": 4,
     "variants": 8,
     "vault_chests": 4,
-    "vault_clock_cost_s": 20,
-    "vault_ladder": false
+    "vault_clock_cost_s": 20
   },
   "limits": {"size": [3, 6], "chests": [1, 8], "variants_max": 8},
   "messages_why": "The on-screen lines of the puzzle and vault kinds, as short as they can be (the owner, 2026-10-10: 'puzzles should have less explanation; they are good though'). A puzzle is read off its console: the hints name the verb in a few words or are empty (no line is sent); only the clock costs are stated, because a player must be able to see what a mistake or a chest takes. {s} is seconds. tools/dungeon_puzzles.py say() reads this.",

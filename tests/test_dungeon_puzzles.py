@@ -37,6 +37,7 @@ import test_dungeon_rooms as TR  # noqa: E402
 
 FIX = json.loads((ROOT / "tests" / "fixtures" / "dungeon_puzzle_rooms.json").read_text(encoding="utf-8"))["rooms"]
 POCKET = TR.POCKET
+U1 = TR.BASE["engine"]["clock"]["units_per_tick"] * 20     # clock units a pass at x1 (tenth-ticks since unit GREED)
 THEMES = ("mine", "jungle", "flooded_ruin")
 
 
@@ -332,8 +333,8 @@ def levers_wrong_attempt(doc, w, p, s):
     w.blocks[seal] = DP.button(DP.blocks_of("mine"), True)
     clock = w.get(p.name, "dg.clock")
     w.passes(1)
-    pen = (doc["engine"]["clock"]["fall_penalty_s"] if "penalty_s" not in r["params"] else r["params"]["penalty_s"]) * 80
-    assert w.get(p.name, "dg.clock") == clock - 80 - pen, "one pass of the clock and the wrong seal's penalty"
+    pen = (doc["engine"]["clock"]["fall_penalty_s"] if "penalty_s" not in r["params"] else r["params"]["penalty_s"]) * U1
+    assert w.get(p.name, "dg.clock") == clock - U1 - pen, "one pass of the clock and the wrong seal's penalty"
     assert all(w.blocks[pos] == DP.lever(False) for pos in levs), "the levers flip back, where the player can see"
     assert w.get(hold(s, r), "dg.rs") == 1 and door_shut(w, r)
 
@@ -366,7 +367,7 @@ def test_levers_the_right_pattern_opens_the_gate_once_for_every_target_the_room_
         clock = w.get(p.name, "dg.clock")
         w.passes(1)
         assert w.get(hold(s, r), "dg.rs") == 2 and door_open(w, r), j
-        assert w.get(p.name, "dg.clock") == clock - 80, "a right seal costs nothing"
+        assert w.get(p.name, "dg.clock") == clock - U1, "a right seal costs nothing"
     assert len(seen) == k, "eight distinct targets"
 
 
@@ -381,8 +382,8 @@ def test_levers_the_seal_is_consumed_so_one_press_is_one_attempt(mk):
     w.passes(1)
     after_one = w.get(p.name, "dg.clock")
     w.passes(2)
-    assert after_one == clock - 80 - 12 * 80
-    assert w.get(p.name, "dg.clock") == after_one - 160, "no second penalty from the same press"
+    assert after_one == clock - U1 - 12 * U1
+    assert w.get(p.name, "dg.clock") == after_one - 2 * U1, "no second penalty from the same press"
 
 
 def test_levers_nothing_happens_before_entry_or_after_the_solve(mk):
@@ -394,7 +395,7 @@ def test_levers_nothing_happens_before_entry_or_after_the_solve(mk):
     w.blocks[seal] = DP.button(DP.blocks_of("mine"), True)
     clock = w.get(p.name, "dg.clock")
     w.passes(1)
-    assert w.get(p.name, "dg.clock") == clock - 80, "a member outside the room is not judged"
+    assert w.get(p.name, "dg.clock") == clock - U1, "a member outside the room is not judged"
     reset_slot(w, p, s)
     into(doc, w, p, "lev")
     w.call("cobblers:dungeons/room/night_shift/lev/s1/clear", PS.Ctx(p, p.dim, p.pos))
@@ -402,7 +403,7 @@ def test_levers_nothing_happens_before_entry_or_after_the_solve(mk):
     clock = w.get(p.name, "dg.clock")
     w.blocks[seal] = DP.button(DP.blocks_of("mine"), True)
     w.passes(1)
-    assert w.get(p.name, "dg.clock") == clock - 80, "a cleared room charges nothing"
+    assert w.get(p.name, "dg.clock") == clock - U1, "a cleared room charges nothing"
 
 
 def test_levers_the_slot_reset_puts_the_console_back_and_the_next_entry_rolls_again(mk):
@@ -472,7 +473,7 @@ def test_sequence_four_presses_in_one_keeper_pass_still_count_in_the_shown_order
     for i in order:
         press(w, ctl[i], B)
     w.passes(1)
-    assert w.get(hold(s, r), "dg.rs") == 2 and w.get(p.name, "dg.clock") == clock - 80, "no penalty for a quick hand"
+    assert w.get(hold(s, r), "dg.rs") == 2 and w.get(p.name, "dg.clock") == clock - U1, "no penalty for a quick hand"
 
 
 def sequence_wrong(doc, w, p, s):
@@ -486,8 +487,8 @@ def sequence_wrong(doc, w, p, s):
     clock = w.get(p.name, "dg.clock")
     press(w, ctl[wrong], B)
     w.passes(1)
-    pen = doc["engine"]["clock"]["fall_penalty_s"] * 80
-    assert w.get(p.name, "dg.clock") == clock - 80 - pen
+    pen = doc["engine"]["clock"]["fall_penalty_s"] * U1
+    assert w.get(p.name, "dg.clock") == clock - U1 - pen
     assert w.get(hold(s, r) + "g", "dg.rs") == 0, "the sequence starts over"
     assert all(w.blocks[c] == DP.button(B, False) for c in ctl)
     prog_y = r["floor_in"] + 3
@@ -517,7 +518,7 @@ def test_sequence_the_first_button_pressed_out_of_order_is_wrong_not_ignored(mk)
     clock = w.get(p.name, "dg.clock")
     press(w, ctl[order[1]], B)
     w.passes(1)
-    assert w.get(p.name, "dg.clock") == clock - 80 - doc["engine"]["clock"]["fall_penalty_s"] * 80
+    assert w.get(p.name, "dg.clock") == clock - U1 - doc["engine"]["clock"]["fall_penalty_s"] * U1
 
 
 # ------------------------------------------------------------------------------------------------- plates
@@ -570,7 +571,7 @@ def test_plates_a_wrong_plate_charges_the_clock_sends_the_member_back_and_restor
     step_on(w, cells[wrong], B)
     clock = w.get(p.name, "dg.clock")
     w.passes(1)
-    assert w.get(p.name, "dg.clock") == clock - 80 - 10 * 80
+    assert w.get(p.name, "dg.clock") == clock - U1 - 10 * U1
     assert [int(v) for v in p.pos[:3]] == [r["ix0"] + 2, fy, r["z_in"]], "sent back to the door"
     for i, c in enumerate(cells):
         assert w.blocks[c] == B["plate"] + "[powered=false]" or w.blocks[c] == B["plate"], "every plate is back"
@@ -588,7 +589,7 @@ def test_plates_a_later_plate_stepped_on_too_early_is_wrong(mk):
     clock = w.get(p.name, "dg.clock")
     step_on(w, cells[order[2]], B)
     w.passes(1)
-    assert w.get(p.name, "dg.clock") == clock - 80 - 10 * 80
+    assert w.get(p.name, "dg.clock") == clock - U1 - 10 * U1
 
 
 def test_plates_the_slot_reset_restores_the_field(mk):
@@ -634,28 +635,31 @@ def test_vault_the_reset_places_every_chest_from_air_with_the_entrants_bands_tab
 
 
 def test_vault_each_chest_opened_costs_the_clock_once_and_a_chest_is_never_charged_twice(mk):
+    # the charge of a pass is at the rate the member had when it began; a chest's loot raises it (unit GREED), so
+    # every pass after an opening is charged at the rate read back, never assumed x1
     doc, w, p, s = vault_world(mk, 1)
     b = built(doc, "vlt")
     r = into(doc, w, p, "vlt")
     cells = chest_cells(b)
     clock = w.get(p.name, "dg.clock")
     w.passes(2)
-    assert w.get(p.name, "dg.clock") == clock - 160, "unopened chests cost nothing"
+    assert w.get(p.name, "dg.clock") == clock - 2 * U1, "unopened chests cost nothing"
     del w.loot[cells[2]]                        # chest 2 is opened: its LootTable is gone
     clock = w.get(p.name, "dg.clock")
     w.passes(1)
-    assert w.get(p.name, "dg.clock") == clock - 80 - 25 * 80
+    assert w.get(p.name, "dg.clock") == clock - U1 - 25 * U1
+    rate = w.get(p.name, "dg.rate")
     w.passes(2)
-    assert w.get(p.name, "dg.clock") == clock - 80 - 25 * 80 - 160, "the same chest is not charged again"
+    assert w.get(p.name, "dg.clock") == clock - U1 - 25 * U1 - 2 * 20 * rate, "the same chest is not charged again"
     del w.loot[cells[0]], w.loot[cells[1]]
     clock = w.get(p.name, "dg.clock")
+    rate = w.get(p.name, "dg.rate")
     w.passes(1)
-    assert w.get(p.name, "dg.clock") == clock - 80 - 2 * 25 * 80, "two chests opened between two looks are two charges"
+    assert w.get(p.name, "dg.clock") == clock - 20 * rate - 2 * 25 * U1, "two chests opened between two looks are two charges"
     assert w.get(hold(s, r), "dg.rs") == 1
     del w.loot[cells[3]]
     w.passes(1)
     assert w.get(hold(s, r), "dg.rs") == 2, "the vault is done when every chest is"
-    assert w.get(p.name, "dg.greed") in (None, 0), "no ladder unless the record asks"
 
 
 def test_vault_the_reset_rearms_every_chest(mk):
@@ -669,20 +673,35 @@ def test_vault_the_reset_rearms_every_chest(mk):
     assert all(c in w.loot for c in cells) and w.get(hold(s, r), "dg.rs") == 0
     into(doc, w, p, "vlt")
     clock = w.get(p.name, "dg.clock")
+    rate = w.get(p.name, "dg.rate")
     del w.loot[cells[1]]
     w.passes(1)
-    assert w.get(p.name, "dg.clock") == clock - 80 - 25 * 80, "the re-armed chest charges again in the next run"
+    assert w.get(p.name, "dg.clock") == clock - 20 * rate - 25 * U1, "the re-armed chest charges again in the next run"
 
 
-def test_vault_with_the_ladder_on_each_chest_also_counts_as_a_greed_block(mk):
-    rooms = [dict(r, params=dict(r["params"], ladder=True)) if r["id"] == "vlt" else r for r in FIX]
-    doc, w, p, s = vault_world(mk, 1, rooms)
+def test_vault_each_chest_weighs_its_loot_once_at_its_expected_value(mk):
+    # unit GREED (2026-10-10). The fixture's band-1 chest, priced here from the table's rows and not by the generator:
+    # 4-8 iron ingots (mean 6) and, half the time, 2 emeralds
+    import dungeon_greed as DGR
+    t = DGR.load()
+    want = round(6 * t["items"]["minecraft:iron_ingot"]["cp"] + 0.5 * 2 * t["items"]["minecraft:emerald"]["cp"])
+    doc, w, p, s = vault_world(mk, 1)
     b = built(doc, "vlt")
     into(doc, w, p, "vlt")
     cells = chest_cells(b)
+    gp0 = w.get(p.name, "dg.gp") or 0
     del w.loot[cells[0]]
     w.passes(1)
-    assert w.get(p.name, "dg.greed") == 1
+    assert w.get(p.name, "dg.gp") - gp0 == want
+    w.passes(3)
+    assert w.get(p.name, "dg.gp") - gp0 == want, "an open chest is weighed once"
+    assert w.get(p.name, "dg.rate") == min(30, 10 + (gp0 + want) // 200)
+
+
+def test_vault_refuses_the_old_ladder_param(mk):
+    rooms = [dict(r, params=dict(r["params"], ladder=True)) if r["id"] == "vlt" else r for r in FIX]
+    with pytest.raises(Exception):
+        vault_world(mk, 1, rooms)
 
 
 # ------------------------------------------------------------------------------------------------- mutations of the generator
@@ -742,5 +761,5 @@ def test_mutating_the_chest_cost_to_free_fails_the_vault_cost_test(monkeypatch, 
     clock = w.get(p.name, "dg.clock")
     del w.loot[chest_cells(b)[0]]
     w.passes(1)
-    assert w.get(p.name, "dg.clock") != clock - 80 - 25 * 80, "a free chest is not what the record says"
-    assert real(doc) == 80
+    assert w.get(p.name, "dg.clock") != clock - U1 - 25 * U1, "a free chest is not what the record says"
+    assert real(doc) == U1

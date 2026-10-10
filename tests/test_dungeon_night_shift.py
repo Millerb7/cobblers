@@ -304,14 +304,14 @@ def test_the_params_follow_the_contract():
                 tr = p["triggers"]
                 assert len(tr) == len(p["trainers"]) and all(0 < x < 1 for x in tr) and tr == sorted(tr)
         elif k == "miniboss":
-            assert sorted(p["species_by_band"]) == sorted(bands) and p["level_offset"] <= 0 and p.get("catchable") is False
+            assert sorted(p["species_by_band"]) == sorted(bands) and p["level_offset"] <= 0 and p.get("catchable", True) is True   # the owner, 2026-10-10: every dungeon Pokemon catchable
         elif k == "nest":
             assert p["species"] and sorted(p["count_by_band"]) == sorted(bands) and len(p["level_spread"]) == 2
             assert max(p["count_by_band"].values()) <= 6
         elif k == "habitat":
             caps = {str(b["band"]): max(b["caps"]) for b in DOC["engine"]["bands"]}
             assert all(p["level_by_band"][b] <= caps[b] for b in bands), "never above the band's upper cap"
-            assert p.get("fight_only", True) is True
+            assert p.get("fight_only", False) is False   # the owner, 2026-10-10: a legendary is a prize, catchable from the Beast Ball band
         elif k == "puzzle":
             assert p["variant"] in ("levers", "sequence", "plates") and p["penalty_s"] > 0
             assert 3 <= p.get("size", p.get("length", p.get("count", 0))) <= 6
