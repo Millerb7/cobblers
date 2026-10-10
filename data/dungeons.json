@@ -116,7 +116,7 @@
       "does_not_cover": "a player offline in the tick after the win keeps dg.claw 1 until they return (the tick function then takes it); a battle with no result (flee, forfeit) pays nothing and so takes nothing"
     },
     "stands": {
-      "status": "the generator of the trainer classes and the stand battle's start, built by tools/dungeon_fights.py for wave 2 (the rooms); no room carries a stand yet",
+      "status": "the generator of the trainer classes and the stand battle's start, built by tools/dungeon_fights.py; the room kinds stand and gauntlet/ambush (unit DG-FIGHTS, 2026-10-09) seat them and dispatch each win to the room's clear; no authored dungeon carries one yet, the fixture tests/fixtures/dungeon_fights_rooms.json does",
       "members_by_band": {"1": 2, "2": 3, "3": 3, "4": 4, "5": 5, "6": 6},
       "level_rule": "DUNGEONS.md 5.3: members 2/3/3/4/5/6 by band, levels from the band's lower cap less low_offset to the lower cap less high_offset, the last (the ace) at the high end; band 6 spans band6_levels. Never above the band's lower cap",
       "low_offset": 2,

@@ -362,7 +362,7 @@ def test_declared_but_unregistered_kinds_build_as_themed_rooms_with_their_anchor
     d = doc["dungeons"][0]
     s = first_slot(doc)
     w = D.warnings(doc)
-    for kind in ("stand", "gauntlet", "miniboss", "nest", "habitat", "puzzle", "vault"):
+    for kind in [k for k in ("stand", "gauntlet", "miniboss", "nest", "habitat", "puzzle", "vault") if k not in R.KINDS]:
         assert any("kind %s not implemented yet" % kind in x for x in w), kind
     assert not any("kind maze" in x for x in w)
     rooms = {r["id"]: r for r in R.plan(doc, d, s)}

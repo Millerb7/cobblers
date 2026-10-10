@@ -1637,7 +1637,9 @@ def build(doc, **kw):
         files["data/%s/recipe/dg_sigil_b%d.json" % (NS, x["band"])] = json.dumps(sigil_recipe(x, doc), indent=2) + "\n"
     fns = functions(doc, kw.get("blackout"))
     import dungeon_fights as DF     # lazy: tools/dungeon_fights.py imports this module
-    fns.update(DF.functions(doc))   # the clawback and the stands' hooks (unit DG-CLAW)
+    fns.update(DF.functions(doc))   # the clawback (DG-CLAW), and the fight rooms' stands, wild Pokemon and healer (DG-FIGHTS)
+    DF.patch_functions(doc, fns)    # a run's end and the keeper's pass discard the slot's wild Pokemon
+    files.update(DF.pack_files(doc))    # the stands' NPC classes and the healer's advancement
     files["data/minecraft/tags/function/load.json"] = json.dumps({"values": [F("load")] + DF.load_entries()}, indent=2) + "\n"
     files["data/minecraft/tags/function/tick.json"] = json.dumps({"values": DF.tick_entries()}, indent=2) + "\n"
     ch, _ws, _wr = chains(doc)
@@ -1667,7 +1669,8 @@ def write(files, out):
 
 def warnings(doc):
     """Things that build but are not finished: kinds declared in a dungeon's rooms with no implementation yet."""
-    return DR.warnings(doc)
+    import dungeon_fights as DF     # lazy: tools/dungeon_fights.py imports this module
+    return DR.warnings(doc) + DF.warnings(doc)
 
 
 def report(doc):

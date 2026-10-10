@@ -118,6 +118,37 @@ entrance) and `line` (a trip box across the room); `miniboss` `boss`, `line`; `n
   `can_place_on` for the room's floor blocks; `reset` takes the placed ones back out. The torches are UNPROVEN (below).
 - **`safe_room`**: a rug, benches, lantern posts and a counter with the `healer` anchor behind it (the NPC is wave 2's).
 
+### 4a. The fight kinds (wave 2, `tools/dungeon_fights.py`, unit DG-FIGHTS; built and simulated, not run in Minecraft)
+
+Rung: datapack plus generator. `stand`, `gauntlet` (alias `ambush`), `miniboss`, `nest`, `habitat` and the `safe_room`
+healer register on import. Params (a room with the kit's placeholders, an int `trainers` or no species, still builds
+as a themed empty room and `D.warnings()` names it):
+
+- **`stand`**: `params.trainers` [{name, skin?, team_by_band}] or `params.pool`. All trainers stand visible from the first
+  pass; each fights when the member reaches its line (`sight` blocks before it, default 8), one after another; the room
+  clears after the last. A fight forfeited or fled is offered again after 4 passes out of battle.
+- **`gauntlet` / `ambush`**: the same `trainers`, hidden. `params.triggers` (fractions, increasing, at least 14 blocks
+  apart; default spread from 0.18) spring each: the trainer is spawned 12 blocks past the trigger, a barrier of the
+  theme's gate block stands 8 past it, full width, until the win. A member found past a standing barrier is put back
+  before it. The entry door is never touched.
+- **`miniboss`**: `species_by_band`, `level_offset` (<= 0 from the band's upper cap; band 6 stays 95-100), `aspects`?,
+  `scale`? (`scale_modifier=`), `catchable`? (honoured at band 6 only, D8).
+- **`habitat`**: `species`, `level_by_band` (1..the band's upper cap), `fight_only` (default true; band 6 only when
+  false), `ambience`? (particle ids; an id with a dot in its path is a sound), `title`?.
+- **`nest`**: `species`, `count_by_band` (1-12), `level_spread` [lo, hi] below the upper cap (band 6 floors at 95),
+  `spawns`?, `clear`? (`all` or `pass`), `catchable`? (default false; refused if a level could exceed the lower cap).
+- **`safe_room` + `params.healer: true`** (`uses`, default 1 per run): a bell on the counter; ringing it heals the
+  party with `healpokemon @s` when the member is out of battle. Not a `cobblemon:healing_machine`: its use fires the
+  blackout's checkpoint advancement.
+
+Wild Pokemon are spawned by the macro `spawnpokemonat` (vanilla `summon cobblemon:pokemon` is refused), bound at once
+with the keep tag, the slot's tag, the blackout's exempt tag, the run id and `PersistenceRequired`, and discarded at the
+room's reset, the slot's free and the keeper's pass (a stale run id). A wild room clears when its tagged Pokemon are
+absent on two passes in a row; one never seen in 5 passes opens the room anyway. Every NPC battle goes through DG-CLAW's
+clawback. Unproven in game: that a fainted or caught wild Pokemon's entity is gone, `no_ai` creatures accepting a
+battle, `any_block_use` on a bell in adventure, `healpokemon` restoring PP in the pocket. Tests:
+`tests/test_dungeon_fights_rooms.py`, fixture `tests/fixtures/dungeon_fights_rooms.json`.
+
 ## 5. The shell at full length
 
 `shells/s<g>` calls `shells/s<g>/<room>`, one function per room, each force-loading what it writes. `place/s<g>` runs
@@ -147,5 +178,5 @@ pick's list.
   fallback; the dark room is walkable without the torches.
 - **The collapse** is per keeper pass (1 s), so its granularity is a few blocks at sprint; and shared by co-op members
   (`members_max` is 1).
-- **Not here:** trainers, wild Pokemon, mini-bosses, nests, habitats, puzzles, vaults, the healer, the clawback, the boss's
+- **Not here:** puzzles, vaults (DG-PUZZLES), the boss's
   crews and the three dungeons' room lists (wave 2).
