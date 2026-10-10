@@ -1,15 +1,19 @@
-"""The Night Shift, pass 2 (unit DG2-NS, 2026-10-10): data/dungeons.json `night_shift` re-authored to the owner's notes
-(docs/mechanics/DUNGEON_PASS2.md): about 32 minutes required at band 1, rooms of many shapes, a route that climbs, drops,
-doubles back and turns across the strip, a fork, a side room, three secrets with relics and lore, a shortcut, four
-variants and the Collapse set piece; and its clock from tools/dungeon_clock.py.
+"""The Night Shift, pass 3 (unit DG3-NS, 2026-10-10; pass 2 was DG2-NS): data/dungeons.json `night_shift` re-authored
+to the owner's pass-3 notes (docs/mechanics/DUNGEON_PASS2.md "Pass 3", DUNGEON_ROOMS.md 1b): two crossroads you can see
+(the pit bottom THREE ways: danger, length or a puzzle; the onsetting two), an optional WING that rejoins (the old shaft:
+a hard parkour guarding the Sump, where the hidden PRIZE is), two parkours (the Collapse six sections and 25 wide, the
+ladders hard), the pay office inside the vault budget; and everything pass 2 made true: rooms of many shapes, a route
+that climbs, drops, doubles back and turns across the strip, three secrets with relics and lore, a shortcut, four
+variants, the Collapse set piece and the clock from tools/dungeon_clock.py.
 
-The builder's own tests (the dungeon's independent audit is another agent's). They build the record, walk it with the
-kit's walk check in every variant, measure its walked length, check that every room kind the owner named is in it and
-every species is in the Cobblemon 1.8.0 jar, and hold the clock to the formula. The MUTATIONS change the GENERATOR (the
-clock's fight pace, the per-dungeon clock lookup, the walk's jumps, the fork's join, the secrets' placement) and leave
+The builder's own tests (the dungeon's independent audit is another agent's; the brief that asked for them is the
+orchestrator's). They build the record, walk it with the kit's walk check in every variant, measure its walked length,
+check that every room kind the owner named is in it and every species is in the Cobblemon 1.8.0 jar, and hold the clock
+to the formula. The MUTATIONS change the GENERATOR (the clock's fight pace, the per-dungeon clock lookup, the walk's jumps,
+the fork's join, the secrets' placement, the clock's optional-route rule, the greed price of a chest) and leave
 data/dungeons.json alone.
 
-Not covered: anything in a running Minecraft.
+Not covered: anything in a running Minecraft (the looks, the rumour, the prize's spawn and the Beast Ball key).
 """
 from __future__ import annotations
 
@@ -87,8 +91,9 @@ def test_the_night_shift_is_on_rooms_builds_and_walks_with_no_problem_in_every_v
 
 def test_its_main_route_is_full_length_and_its_rooms_are_wide_and_its_connectors_short():
     rooms, total = DC.walked(DOC, NS)
-    assert 1200 <= main_walk(rooms) <= 1600, main_walk(rooms)
-    assert total > main_walk(rooms), "the fork's second route and the side room are walked too"
+    path = sum(r["walk"] for r in DC.clock_rooms(DOC, NS, 1, rooms))    # the main route and the slower way of each fork
+    assert 1400 <= path <= 1800, path
+    assert total >= path + 400, "the faster ways, the pay office and the old shaft's wing are walked as well"
     for s in R.variant_slots(DOC, NS, ns_slots()):
         assert main_walk(DC.walked(DOC, NS, s)[0]) >= 1100, s["g"]
     built = {r["id"]: r for r in R.layout(DOC, NS, ns_slots()[0])}
@@ -99,7 +104,7 @@ def test_its_main_route_is_full_length_and_its_rooms_are_wide_and_its_connectors
     for r in MAIN:
         if r["kind"] not in CONNECTORS + ("entry_room", "exit_room", "setpiece"):
             assert 28 <= r["width"] <= 62, (r["id"], r["width"])
-    assert len(ALL) < 21 and sum(r["kind"] in CONNECTORS for r in ALL) < 5, "fewer rooms and connectors than pass 1"
+    assert sum(r["kind"] in CONNECTORS for r in MAIN) <= 4, "the main route is rooms, not drifts"
 
 
 def test_most_rooms_are_not_boxes_and_the_route_turns_climbs_drops_and_doubles_back():
@@ -152,27 +157,61 @@ def test_the_pacing_breathes_between_fights_and_puts_greed_and_the_rest_where_th
 # ------------------------------------------------------------------------------------------------- replayability
 
 
-def test_the_fork_offers_a_fast_dangerous_way_and_a_safe_long_one_that_rejoin():
-    forks = [r for r in NS["rooms"] if r["kind"] == "fork"]
-    assert len(forks) >= 1
-    f = forks[0]
-    fast, safe = f["routes"][0], f["routes"][1]
-    assert any(r["kind"] in ("collapse_bridge", "parkour") for r in fast["rooms"]), "the fast way risks a fall"
-    assert not any(R.flags_of(r["kind"])["pit"] for r in safe["rooms"]), "the safe way has no drop"
-    rooms, _t = DC.walked(DOC, NS)
-    by_route = {}
+def crossroads():
+    rs = NS["rooms"]
+    return [(rs[k], rs[k + 1]) for k in range(len(rs) - 1) if rs[k]["kind"] == "crossroads"]
+
+
+def by_route(rooms):
+    out = {}
     for r in rooms:
-        by_route.setdefault(r["route"], []).append(r)
-    cost = {k: sum(DC.required(DOC, NS, 1, by_route["%s/%s" % (f["id"], k)]).values()) - DC.CUES_S
-            for k in (fast["id"], safe["id"])}
-    walk = {k: sum(r["walk"] for r in by_route["%s/%s" % (f["id"], k)]) for k in (fast["id"], safe["id"])}
-    assert walk[safe["id"]] > walk[fast["id"]], walk
-    assert cost[safe["id"]] > cost[fast["id"]] - DC.FALL_REDO_S - DOC["engine"]["clock"]["fall_penalty_s"], cost
+        out.setdefault(r["route"], []).append(r)
+    return out
+
+
+def test_two_crossroads_each_open_a_fork_you_can_see_one_of_them_three_ways_each_way_by_its_own_wall():
+    import dungeon_crossroads as XR
+    xs = crossroads()
+    assert len(xs) >= 2 and all(f["kind"] == "fork" for _x, f in xs)
+    assert any(len(f["routes"]) == 3 for _x, f in xs), "one of them three ways"
+    looks = set(XR.looks_of(R.theme_for(NS)))
+    for _x, f in xs:
+        ls = [rt["look"] for rt in f["routes"]]
+        assert len(set(ls)) == len(ls) and set(ls) <= looks, ls
+        assert all(rt.get("sign") for rt in f["routes"]), "every way is signed"
     for s in R.variant_slots(DOC, NS, ns_slots()):
+        assert XR.geometry_checks(DOC, NS, s) == [], s["g"]           # from the hub every exit's opening is in sight
         lay = R.layout(DOC, NS, s)
-        join = next(r for r in lay if r["route"] == "main" and any(x.get("join_of") is not None for x in r["doors"]))
-        ins = [x for x in join["doors"] if x["dir"] == "in"]
-        assert {lay[x["to"]]["route"] for x in ins} == {"%s/%s" % (f["id"], rt["id"]) for rt in f["routes"]}
+        for x, f in xs:
+            host = next(r for r in lay if r["id"] == x["id"])
+            outs = [d for d in host["doors"] if d["dir"] == "out"]
+            assert len(outs) == len(f["routes"]) and len({d["side"] for d in outs}) == len(outs), (s["g"], x["id"])
+            routes = {"%s/%s" % (f["id"], rt["id"]) for rt in f["routes"]}
+            assert {lay[d["to"]]["route"] for d in outs} == routes
+            after = [r for r in lay if r["route"] == "main" and r["i"] > host["i"]][0]
+            ins = [d for d in after["doors"] if d["dir"] == "in"]
+            assert {lay[d["to"]]["route"] for d in ins} == routes, "every way rejoins at the room after the fork"
+
+
+def test_the_pit_bottoms_three_ways_ask_different_things_danger_length_or_a_puzzle():
+    f = next(f for _x, f in crossroads() if len(f["routes"]) == 3)
+    kinds = {rt["id"]: [r["kind"] for r in rt["rooms"]] for rt in f["routes"]}
+    danger = [k for k, ks in kinds.items() if any(R.flags_of(x)["pit"] for x in ks)]
+    puzzle = [k for k, ks in kinds.items() if "puzzle" in ks]
+    long_ = [k for k in kinds if k not in danger + puzzle]
+    assert len(danger) == 1 and len(puzzle) == 1 and len(long_) == 1, kinds
+    assert not any(rt.get("optional") for rt in f["routes"]), "all three are the way on"
+    long_rt = next(rt for rt in f["routes"] if rt["id"] == long_[0])
+    assert all(r.get("gate", "open") == "open" for r in long_rt["rooms"]), "the long way asks nothing but walking"
+    for s in R.variant_slots(DOC, NS, ns_slots()):
+        rooms = DC.walked(DOC, NS, s)[0]
+        br = by_route(rooms)
+        walk = {k: sum(r["walk"] for r in br["%s/%s" % (f["id"], k)]) for k in kinds}
+        assert walk[long_[0]] > walk[danger[0]], (s["g"], walk)
+        cost = {k: sum(DC.required(DOC, NS, 1, br["%s/%s" % (f["id"], k)]).values()) for k in kinds}
+        assert cost[danger[0]] - DC.CUES_S > walk[danger[0]] / DC.WALK_BPS, "the danger is priced as a fall"
+        paid = {r["route"] for r in DC.clock_rooms(DOC, NS, 1, rooms)}
+        assert "%s/%s" % (f["id"], max(cost, key=cost.get)) in paid, "the clock covers the slowest way"
 
 
 def test_the_side_room_is_an_optional_dead_end():
@@ -188,8 +227,79 @@ def test_the_side_room_is_an_optional_dead_end():
     assert not paid & {r["id"] for sd in sides for r in sd["rooms"]}, "the clock does not pay for a side room"
 
 
+def wing():
+    f = next(f for _x, f in crossroads() if any(rt.get("optional") for rt in f["routes"]))
+    return f, next(rt for rt in f["routes"] if rt.get("optional"))
+
+
+def test_the_old_shaft_is_an_optional_wing_a_hard_parkour_guards_and_the_clock_never_pays():
+    f, w = wing()
+    assert any(not rt.get("optional") for rt in f["routes"]), "the other way is the way on"
+    rooms = w["rooms"]
+    ks = [r["kind"] for r in rooms]
+    assert 3 <= len(rooms) <= 4 and ks.count("parkour") == 1 and ks.count("habitat") == 1, ks
+    assert ks.index("parkour") < ks.index("habitat"), "the hard parkour guards the habitat"
+    assert all(k in CONNECTORS for k in ks[ks.index("habitat") + 1:]), "the habitat is the wing's end (then the road back)"
+    hab = rooms[ks.index("habitat")]
+    assert hab.get("secrets") and hab.get("gate", "open") == "open", "a secret in the wing; nothing waits on the prize"
+    ids = {r["id"] for r in rooms}
+    walks = [DC.walked(DOC, NS, s)[0] for s in R.variant_slots(DOC, NS, ns_slots())]
+    for rooms_w in walks:
+        assert sum(r["walk"] for r in rooms_w if r["id"] in ids) >= 250, "an immense wing, walked by the check"
+        for b in DOC["engine"]["bands"]:
+            assert not {r["id"] for r in DC.clock_rooms(DOC, NS, b["band"], rooms_w)} & ids, "the clock never pays it"
+    lay = R.layout(DOC, NS, ns_slots()[0])
+    assert all(r["optional"] for r in lay if r["id"] in ids)
+
+
+def test_mutating_the_clock_to_pay_optional_routes_makes_the_authored_clock_too_short(monkeypatch):
+    real = DC.clock_rooms
+
+    def pays_wing(doc, d, band, rooms):          # the optional route counted as if it were on the way on
+        return real(doc, d, band, [dict(r, route="main") if r.get("optional") else r for r in rooms])
+    monkeypatch.setattr(DC, "clock_rooms", pays_wing)
+    bad = DC.clock_problems(DOC, NS)
+    assert any("under the derived" in p for p in bad), bad[:2]
+
+
 def secrets():
     return [(r, s) for r in ALL for s in r.get("secrets") or []]
+
+
+def prize_rooms():
+    return [r for r in ALL if (r.get("params") or {}).get("prize")]
+
+
+def test_the_prize_is_hidden_at_the_wings_end_rare_before_the_beast_ball_stage_and_volcanion_from_it():
+    import dungeon_prize as PZ
+    habs = prize_rooms()
+    assert len(habs) == 1
+    hab = habs[0]
+    _f, w = wing()
+    assert hab in w["rooms"], "the prize is in the optional wing, never on the way on"
+    pz = hab["params"]["prize"]
+    lf = PZ.legendary_from(DOC)
+    nb = len(DOC["engine"]["bands"])
+    assert sorted(pz["rare_by_band"], key=int) == [str(b) for b in range(1, lf)]
+    assert sorted(pz["legendary_by_band"], key=int) == [str(b) for b in range(lf, nb + 1)]
+    assert set(pz["legendary_by_band"].values()) == {"volcanion"}, "the dungeon's own legendary (D18)"
+    assert "species" not in hab["params"], "no resident: the legendary is a find, not a fixture"
+    assert not [r["id"] for r in ALL if (r.get("params") or {}).get("species") == "volcanion"]
+    assert PZ.room_problems(DOC, NS, hab) == []                       # the jar's labels: rare is no legendary, and back
+    labels = PZ.jar_labels()
+    if labels is not None:
+        assert not any(labels[s] & PZ.LEGEND_LABELS for s in pz["rare_by_band"].values())
+        assert labels["volcanion"] & PZ.LEGEND_LABELS
+    files = D.build(ns_doc())
+    for s in D.slots(ns_doc()):
+        base = "data/cobblers/function/dungeons/room/night_shift/%s/s%d/prize/" % (hab["id"], s["g"])
+        bind = files[base + "bind.mcfunction"]
+        assert "cobblers.key_boss" in bind and "cobblers.key_boss" not in files[base + "rare_bind.mcfunction"]
+        for band in range(1, nb + 1):
+            want = (pz["legendary_by_band"] if band >= lf else pz["rare_by_band"])[str(band)]
+            assert 'species:"%s"' % want in files[base + "spawn_b%d.mcfunction" % band], (s["g"], band)
+        start = files["data/cobblers/function/dungeons/slot/s%d/start.mcfunction" % s["g"]]
+        assert "random value 1..100" in start, "rolled per run at the threshold: not there every run"
 
 
 def test_the_secrets_a_cracked_face_and_a_balcony_each_with_a_relic_and_lore():
@@ -271,6 +381,8 @@ def species_used():
                 out |= set(team)
         out |= set(p.get("species", [])) if isinstance(p.get("species"), list) else ({p["species"]} if "species" in p else set())
         out |= set(p.get("species_by_band", {}).values())
+        for key in ("rare_by_band", "legendary_by_band"):
+            out |= set((p.get("prize") or {}).get(key, {}).values())
     for stages in NS["boss"]["teams"].values():
         for s in stages:
             out |= set(s)
@@ -308,10 +420,12 @@ def test_the_params_follow_the_contract():
         elif k == "nest":
             assert p["species"] and sorted(p["count_by_band"]) == sorted(bands) and len(p["level_spread"]) == 2
             assert max(p["count_by_band"].values()) <= 6
-        elif k == "habitat":
+        elif k == "habitat" and "species" in p:
             caps = {str(b["band"]): max(b["caps"]) for b in DOC["engine"]["bands"]}
             assert all(p["level_by_band"][b] <= caps[b] for b in bands), "never above the band's upper cap"
             assert p.get("fight_only", False) is False   # the owner, 2026-10-10: a legendary is a prize, catchable from the Beast Ball band
+        elif k == "habitat":
+            assert p.get("prize") and r.get("gate", "open") == "open", r["id"]   # the prize's own test holds the rest
         elif k == "puzzle":
             assert p["variant"] in ("levers", "sequence", "plates") and p["penalty_s"] > 0
             assert 3 <= p.get("size", p.get("length", p.get("count", 0))) <= 6
@@ -330,8 +444,41 @@ def test_the_params_follow_the_contract():
                 assert p["variant"] in ("levers", "sequence", "plates") and 3 <= p.get("length", p.get("size", 0)) <= 6
 
 
-def test_the_habitat_legendary_is_used_nowhere_else_and_is_no_ultra_beast():
-    sp = next(r for r in ALL if r["kind"] == "habitat")["params"]["species"]
+def test_two_parkours_the_collapse_six_sections_and_25_wide_on_the_way_on_the_ladders_hard_in_the_wing():
+    pks = [r for r in ALL if r["kind"] == "parkour"]
+    assert len(pks) == 2
+    easy = [r for r in pks if not r["params"].get("hard")]
+    hard = [r for r in pks if r["params"].get("hard") is True]
+    assert len(easy) == 1 and len(hard) == 1
+    _f, w = wing()
+    assert hard[0] in w["rooms"] and easy[0] not in w["rooms"]
+    assert 5 <= easy[0]["params"]["sections"] <= 6 and easy[0]["width"] >= 25, "the owner: longer"
+    assert hard[0]["params"]["sections"] >= 5 and hard[0]["width"] >= 25
+    for r in pks:
+        assert r["length"] - 2 >= 30 * r["params"]["sections"] - 10, r["id"]     # DUNGEON_ROOMS.md 1b's interior
+    for s in R.variant_slots(DOC, NS, ns_slots()):
+        built = {b.room["id"]: b for b in R.slot_build(DOC, NS, s)}
+        e, h = built[easy[0]["id"]].meta, built[hard[0]["id"]].meta
+        assert len(e["ledges"]) == easy[0]["params"]["sections"] + 1 and e["fork"], (s["g"], "planned in full")
+        assert len(h["ledges"]) == hard[0]["params"]["sections"] + 1 and not h["fork"], (s["g"], "no easy fork")
+
+
+def test_the_pay_office_is_inside_the_vault_budget_and_a_dearer_chest_is_named():
+    import dungeon_greed as DG
+    vaults = [r for r in ALL if r["kind"] == "vault"]
+    assert vaults
+    assert not [x for x in DG.vault_over(DOC) if x[0] == "night_shift"], "every band, every chest"
+
+
+def test_mutating_the_chest_price_up_puts_the_pay_office_over_the_budget(monkeypatch):
+    import dungeon_greed as DG
+    real = DG.chest_cp
+    monkeypatch.setattr(DG, "chest_cp", lambda table, spec: None if real(table, spec) is None else 2 * real(table, spec))
+    assert any(x[:2] == ("night_shift", "pay_office") for x in DG.vault_over(DOC))
+
+
+def test_the_prize_legendary_is_used_nowhere_else_and_is_no_ultra_beast():
+    sp = next(iter(set(prize_rooms()[0]["params"]["prize"]["legendary_by_band"].values())))
     assert sp not in ULTRA_BEASTS
     hits = []
     for f in (ROOT / "data").rglob("*.json"):
@@ -407,7 +554,7 @@ def test_mutating_the_clock_lookup_back_to_the_bands_is_caught_by_the_audit_agai
 def test_mutating_the_walk_to_forbid_jumps_makes_the_jump_rooms_unwalkable_and_the_measure_refuses(monkeypatch):
     real = DC.walk_distance
     monkeypatch.setattr(DC, "walk_distance", lambda g, s, e, jumps=False, cls=None: real(g, s, e, False, cls))
-    with pytest.raises(R.RoomError, match="stulls|gantry|collapse"):
+    with pytest.raises(R.RoomError, match="stulls|gantry|collapse|ladders"):
         DC.walked(DOC, NS)
 
 
@@ -418,7 +565,7 @@ def test_mutating_the_fork_join_so_the_safe_route_is_not_stretched_is_caught(mon
         return real(doc, d, slot, i, r, inc, item, None if r.get("length") == "fit" else length_override)
     monkeypatch.setattr(R, "_place", no_fit)
     bad = D.problems(ns_doc())
-    assert any("lamp_road" in p or "powerhouse" in p for p in bad), bad[:3]
+    assert any(re.search(r"lamp_road|pump_road|haul_road|sump_road|powerhouse|haulage", p) for p in bad), bad[:3]
 
 
 def test_mutating_the_cracked_secret_to_plain_rock_is_caught(monkeypatch):

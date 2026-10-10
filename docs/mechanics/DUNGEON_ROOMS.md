@@ -441,7 +441,7 @@ threshold's clocks with this table or 4.2's):
 
 | Dungeon | Walked | Band 1 | Band 2 | Band 3 | Band 4 | Band 5 | Band 6 |
 |---|---|---|---|---|---|---|---|
-| night_shift | 1,402 main (1,616 all routes) | **41** | **44** | **44** | **48** | **51** | **54** |
+| night_shift | 1,243 main + 410 on the paid fork routes (2,208 all routes, the wing included) | **43** | **46** | **47** | **50** | **53** | **57** |
 | jungle | 1,929 all routes, wing and side room included (1,180 main, the slower way of each fork; pass 3, DG3-JUNGLE) | **42** | **47** | **47** | **52** | **55** | **59** |
 | flooded_ruin | 1,950 all routes and the wing (1,045 main; 1,290-1,499 paid at band 1) | **42** | **44** | **47** | **49** | **54** | **57** |
 
