@@ -213,12 +213,15 @@ def test_the_run_tag_is_on_the_player_at_the_click_and_the_arrival_waits_at_leas
 @pytest.mark.parametrize("site", [s for s, _h in DA.spawn_sites(FNS)])
 def test_every_npc_an_engine_spawn_makes_carries_the_exempt_tag_when_the_spawn_returns(site):
     g = int(re.search(r"/s(\d+)/spawn$", site).group(1))
+    # the member stands in the arena when the boss spawns: at the spawn's own coordinates (a full-length dungeon's
+    # arena is a thousand blocks from the entry, out of the simulator's loaded reach of a player at the entry)
+    at = re.search(r'\{x:"([-\d.]+)",y:"([-\d.]+)",z:"([-\d.]+)"', "\n".join(DA.body(FNS[site])))
     for band in range(1, 7):
         for stage in (1, 2, 3):
             w = new_world()
             p = player(w)
             p.dim = POCKET
-            p.pos = [90.0, 96.0, 1056.0 + 128 * (g - 1)]
+            p.pos = [float(at.group(1)) - 6, float(at.group(2)), float(at.group(3))]
             for obj, v in (("dg.band", band), ("dg.stage", stage), ("dg.slot", g), ("dg.run", 1)):
                 w.set(p.name, obj, v)
             w.set("#s%d" % g, "dg.run", 1)

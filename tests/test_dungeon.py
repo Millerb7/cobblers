@@ -117,7 +117,7 @@ def test_the_timer_kill_is_kill_and_waits_for_the_clawback():
 
 
 def test_lockout_binds_and_counts_on_uptime_never_gametime():
-    assert DOC["engine"]["lockout_ticks"] >= max(b["clock_s"] for b in DOC["engine"]["bands"]) * 20
+    assert DOC["engine"]["lockout_ticks"] >= max(D.clock_s(d, b) for b in DOC["engine"]["bands"] for d in DOC["dungeons"]) * 20
     assert not any("time query gametime" in l for ls in FNS.values() for l in ls)
 
 
@@ -161,7 +161,8 @@ def test_slots_stay_out_of_every_other_pocket_user_and_the_record_refuses_an_ove
 def test_the_reapply_steps_count_the_entities_they_summon():
     steps = D.reapply_steps(DOC)
     assert [s[0] for s in steps] == ["R16DG", "R16DR"]
-    assert [v for k, v in steps[0][2] if k == "fn"][0] == "cobblers:dungeons/place"
+    rooms = any(D.DR.has_rooms(d) for d in DOC["dungeons"])     # a rooms dungeon places one slot per call (EXP-081)
+    assert [v for k, v in steps[0][2] if k == "fn"][0] == ("cobblers:dungeons/place/s1" if rooms else "cobblers:dungeons/place")
     assert [v for k, v in steps[1][2] if k == "fn"][0] == "cobblers:dungeons/rips/place"
     check = [v for k, v in steps[0][2] if k == "check"][0]
     assert check[2] == 3 * len(D.slots(DOC))
@@ -180,9 +181,11 @@ def test_reapply_installs_the_pack_world_local_prepares_it_and_runs_its_steps_af
 def test_shell_writes_stay_inside_the_fill_and_forceload_limits():
     import function_limits as FL
     for s in D.slots(DOC):
-        lines = FNS["shells/s%d" % s["g"]]
-        assert FL.check_lines(lines) == []
-        assert any(l.startswith("forceload add") for l in lines)
+        # a rooms dungeon's shell is one function per room, each force-loading what it writes (DUNGEON_ROOMS.md 5)
+        names = [k for k in FNS if k == "shells/s%d" % s["g"] or k.startswith("shells/s%d/" % s["g"])]
+        for k in names:
+            assert FL.check_lines(FNS[k]) == [], k
+        assert any(l.startswith("forceload add") for k in names for l in FNS[k])
         assert D.shell_blocks(DOC, s) > 0
 
 
@@ -406,7 +409,7 @@ def test_a_clean_run_out_by_the_far_rip(pack):
     assert not p.inventory, "the sigil is taken at the rip"
     s = arrive_and_cross(w, p)
     assert p.gamemode == "adventure" and any(i[0] == "minecraft:iron_pickaxe" for i in p.inventory)
-    full = DOC["engine"]["bands"][0]["clock_s"] * 80
+    full = D.clock_s(DOC["dungeons"][0], DOC["engine"]["bands"][0]) * 80
     w.passes(3)
     assert w.get(p.name, "dg.clock") == full - 3 * 80, "three passes at x1 since the pass that crossed"
     assert w.get(p.name, "dg.lk_ns") is not None

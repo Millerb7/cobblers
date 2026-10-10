@@ -9,8 +9,8 @@ no say over blocks in a custom dimension. Written 2026-10-09 after the owner pla
 ## 1. The record
 
 `data/dungeons.json`, `dungeons[]`: a dungeon with `"theme": "<id>"` and `"rooms": [...]` is built by the room kit. One
-without `rooms` still builds from `spine.segments` exactly as before (the live `night_shift` is still on its spine: its
-migration is wave 2's, together with its full-length room list, and was not needed to prove the kit).
+without `rooms` still builds from `spine.segments` exactly as before (`night_shift` moved to rooms in wave 2, DG-NS; its
+old placeholder spine is kept as `tests/fixtures/dungeon_legacy_spine.json` so the spine path stays tested).
 
 ```
 {"id": "d1", "kind": "drift", "length": 36, "width": 11, "height": 6, "rise": 0, "gate": "open",
@@ -139,7 +139,46 @@ every standable cell lit (an optimistic Manhattan bound). Mutations that must fa
 platforms with wider gaps, a kind that places lava or sand or punches the floor, hull lights off, a wall block added to the
 pick's list.
 
-## 7. Not done, and unproven
+## 7. The clock of a full-length dungeon (`tools/dungeon_clock.py`, unit DG-NS)
+
+The bands' `clock_s` (29-39 minutes) were set for the short spine of `DUNGEONS.md` 4.2. A rooms dungeon carries its own
+`"clock_s_by_band": {"1": s, ..., "6": s}`; `tools/dungeon.py` uses it (the threshold's start, the board) and falls back
+to the band's when it is absent (`warnings()` names such a dungeon). `problems()` refuses one under the derived clock.
+Fill it with `python tools/dungeon_clock.py <id> --rooms`, which prints the walk per room and the clocks.
+
+**The walk** is measured, not declared: per room, the shortest walk from the cell inside its door in to the cell inside
+its door out over the built grid, on the walk check's own edges (a jump costs its length), plus 3 steps per door; the
+entry from the arrival, the exit to the far rip. It is 4-connected, so an open room's diagonal counts as its Manhattan
+length. A maze's figure depends on its seed and `loops` (the Night Shift's 79 x 45 maze walks 217 at `loops` 8 and 441
+at 1-3): measure, do not estimate.
+
+**required** (seconds, per band) is the sum of, with every pace `DUNGEONS.md` 4.1's PLANNING figure (XT1, EXP-079, has
+timed no fight; when it does, change the constants and re-derive):
+
+| Part | Seconds |
+|---|---|
+| walking | walk / 4.0, a maze's x 2.0 (dead ends), a dark room's x 1.5 |
+| a parkour room | walk / 1.5, plus 2 falls of (`fall_penalty_s` + 10) |
+| a collapse bridge | walked at 4.0, plus 1 fall |
+| each trainer (stand, gauntlet, every boss stage) | 120 + 30 x (members - 2): the owner's 2-minute small fight, +0.5 min a member; members are the team's size for the band (else `engine.stands.members_by_band`) |
+| boss | its stages' fights for the band, plus the gaps (`gap_ticks`) |
+| mini-boss | one fight of one member, 90 |
+| nest | with gate `cleared` and no `clear: "pass"`: `count_by_band` x 90; else 0 |
+| habitat | with gate `cleared`: 360 (4.2's "about 6 minutes"); else 0 |
+| puzzle 90, resources (the free tier) 30, safe room 20, the run's cues 30 | |
+| vault | 0: optional, priced by its own `clock_cost_s` |
+
+**clock** = ceil(required x `engine.clock.slack_factor` (1.25) / 60) x 60: whole minutes, as 4.2. Optional rooms (an open
+habitat, a nest that passes, the vault, greed past the free tier) are paid from the slack, as 4.2 intends.
+
+Each dungeon's clocks, written here by hand from the tool's output (the audit's V12 compares every generated
+threshold's clocks with this table or 4.2's):
+
+| Dungeon | Walked | Band 1 | Band 2 | Band 3 | Band 4 | Band 5 | Band 6 |
+|---|---|---|---|---|---|---|---|
+| night_shift | 1,338 | **36** | **38** | **39** | **42** | **44** | **47** |
+
+## 8. Not done, and unproven
 
 - **In game, nothing.** The owner's look decides the jungle; whether vines hold on the trunks and leaves do not decay
   (`persistent=true`), water stays in its channels, and the one-block step and jump limits feel right are all unrun.

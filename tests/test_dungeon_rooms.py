@@ -45,11 +45,25 @@ POCKET = BASE["engine"]["pocket"]["dimension"]
 
 def demo_doc(theme="mine", rooms=None, per_dungeon=1):
     doc = copy.deepcopy(BASE)
+    doc["dungeons"] = doc["dungeons"][:1]
     d = doc["dungeons"][0]
     d["theme"] = theme
     d["rooms"] = copy.deepcopy(rooms if rooms is not None else DEMO)
-    d.pop("spine")
+    d.pop("spine", None)
+    d.pop("clock_s_by_band", None)        # the demo is not the Night Shift: it runs on the bands' clocks
     doc["engine"]["slots"]["per_dungeon"] = per_dungeon
+    return doc
+
+
+def legacy_doc():
+    """The Night Shift on its old placeholder spine (tests/fixtures/dungeon_legacy_spine.json): the spine path of
+    tools/dungeon.py still builds a dungeon without rooms."""
+    doc = copy.deepcopy(BASE)
+    doc["dungeons"] = doc["dungeons"][:1]
+    d = doc["dungeons"][0]
+    for k in ("theme", "rooms", "rooms_why", "clock_s_by_band", "clock_why"):
+        d.pop(k, None)
+    d["spine"] = json.loads((ROOT / "tests" / "fixtures" / "dungeon_legacy_spine.json").read_text(encoding="utf-8"))["spine"]
     return doc
 
 
@@ -519,15 +533,16 @@ def test_the_reapply_step_is_one_call_per_slot_when_a_dungeon_has_rooms():
     files = D.build(doc)
     for g in range(1, 5):
         assert "execute in %s run function cobblers:dungeons/shells/s%d" % (POCKET, g) in files["data/cobblers/function/dungeons/place/s%d.mcfunction" % g]
-    legacy = D.reapply_steps(BASE)
+    legacy = D.reapply_steps(legacy_doc())
     assert [v for k, v in legacy[0][2] if k == "fn" and "/place" in v] == ["cobblers:dungeons/place"]
 
 
 def test_the_old_spine_still_builds_and_is_untouched():
-    assert "rooms" not in BASE["dungeons"][0] and BASE["dungeons"][0]["spine"]["segments"]
-    assert D.problems(BASE) == []
-    pt = D.points(BASE, D.slots(BASE)[0])
-    assert pt["length"] == sum(s["length"] for s in BASE["dungeons"][0]["spine"]["segments"])
+    old = legacy_doc()
+    assert "rooms" not in old["dungeons"][0] and old["dungeons"][0]["spine"]["segments"]
+    assert D.problems(old) == []
+    pt = D.points(old, D.slots(old)[0])
+    assert pt["length"] == sum(s["length"] for s in old["dungeons"][0]["spine"]["segments"])
 
 
 def test_the_pick_of_a_dungeon_with_rooms_may_break_its_seam_and_nothing_else_new():
@@ -536,7 +551,8 @@ def test_the_pick_of_a_dungeon_with_rooms_may_break_its_seam_and_nothing_else_ne
     give = D.pick_give(doc, d)
     for b in ("minecraft:melon", "minecraft:bamboo_block", "minecraft:honeycomb_block", "minecraft:pumpkin", "minecraft:stripped_jungle_log"):
         assert '"%s"' % b in give
-    assert D.pick_give(doc) == D.pick_give(BASE, BASE["dungeons"][0]), "the old spine's pick is the engine's list"
+    old = legacy_doc()
+    assert D.pick_give(doc) == D.pick_give(old, old["dungeons"][0]), "the old spine's pick is the engine's list"
     files = D.build(doc)
     assert "minecraft:melon" in files["data/cobblers/function/dungeons/slot/s1/arrive.mcfunction"]
 

@@ -518,7 +518,8 @@ def default_anchors(room, params):
     a = {"center": [at(0.5), floor_at(room, at(0.5)), zc], "door_in_at": [ix0, room["floor_in"], room["z_in"], -90],
          "door_out_at": [ix1, room["floor_out"], room["z_out"], -90]}
     if kind in ("stand", "gauntlet", "ambush"):
-        n = int(params.get("trainers", 3))
+        t = params.get("trainers", 3)
+        n = len(t) if isinstance(t, list) else int(t)       # the params contract's list of trainers, or a count
         span = max(n - 1, 1)
         a["trainers"] = [[at(0.62 + (0.1 if k % 2 else 0)), fy, iz0 + 2 + (W - 5) * k // span if n > 1 else zc, 90]
                          for k in range(n)]
