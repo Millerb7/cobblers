@@ -1635,6 +1635,8 @@ def build(doc, **kw):
             files["data/%s/npcs/%s.json" % (NS, name)] = json.dumps(cls, indent=2) + "\n"
     for x in sigils(doc):
         files["data/%s/recipe/dg_sigil_b%d.json" % (NS, x["band"])] = json.dumps(sigil_recipe(x, doc), indent=2) + "\n"
+    import dungeon_puzzles as DP    # lazy, as dungeon_fights is: the vault rooms' loot tables (unit DG-PUZZLES)
+    files.update(DP.pack_files(doc))
     fns = functions(doc, kw.get("blackout"))
     import dungeon_fights as DF     # lazy: tools/dungeon_fights.py imports this module
     fns.update(DF.functions(doc))   # the clawback and the stands' hooks (unit DG-CLAW)

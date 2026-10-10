@@ -1,0 +1,50 @@
+{
+  "schema": "cobblers.dungeon_puzzles/1",
+  "generated_by": "hand",
+  "why": "The blocks and defaults of the dungeon room kit's PUZZLE and VAULT kinds (tools/dungeon_puzzles.py). Vanilla blocks only, per dungeon theme (data/dungeon_themes.json). Kept apart from the themes file because that file is the room kit's and these kinds are a second module's.",
+  "rules": [
+    "Controls are blocks a player in adventure mode can USE and cannot break: a lever, a wooden button, a stone pressure plate, a chest. Adventure mode forbids breaking and placing, not using (vanilla; UNPROVEN in cobblers:pocket, see the module docstring).",
+    "A button is WOODEN, never stone: a wooden button stays pressed 30 ticks and the keeper looks once every 20, so no press can fall between two looks. A stone button (20 ticks) could.",
+    "A plate is STONE: it answers players and mobs, not a thrown item.",
+    "No concrete, no hazard, nothing the rift pick can break; the console is a solid block the controls attach to."
+  ],
+  "defaults": {
+    "levers_size": 3,
+    "sequence_length": 4,
+    "plates_count": 4,
+    "variants": 8,
+    "vault_chests": 4,
+    "vault_clock_cost_s": 20,
+    "vault_ladder": false
+  },
+  "limits": {"size": [3, 6], "chests": [1, 8], "variants_max": 8},
+  "default_loot_why": "What a vault holds when its record names no loot_by_band (the room kit's demo list, a draft). The authored dungeons set their own: this is a placeholder with some value per band, vanilla items only.",
+  "default_loot_by_band": {
+    "1": [{"item": "minecraft:iron_ingot", "count": [3, 6]}, {"item": "minecraft:gold_nugget", "count": [4, 8]}],
+    "3": [{"item": "minecraft:gold_ingot", "count": [3, 6]}, {"item": "minecraft:redstone", "count": [8, 16]}],
+    "5": [{"item": "minecraft:diamond", "count": [2, 4]}, {"item": "minecraft:emerald", "count": [3, 6]}]
+  },
+  "themes": {
+    "mine": {
+      "console": "minecraft:deepslate_bricks", "trim": "minecraft:chiseled_deepslate",
+      "lamp_on": "minecraft:glowstone", "lamp_off": "minecraft:coal_block", "seal": "minecraft:raw_gold_block",
+      "button": "minecraft:oak_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:gilded_blackstone", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "jungle": {
+      "console": "minecraft:mud_bricks", "trim": "minecraft:chiseled_stone_bricks",
+      "lamp_on": "minecraft:verdant_froglight", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:jungle_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:mossy_stone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "flooded_ruin": {
+      "console": "minecraft:dark_prismarine", "trim": "minecraft:prismarine_bricks",
+      "lamp_on": "minecraft:sea_lantern", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:mangrove_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:chiseled_stone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_terracotta", "minecraft:blue_terracotta", "minecraft:yellow_terracotta", "minecraft:lime_terracotta", "minecraft:purple_terracotta", "minecraft:orange_terracotta"]
+    }
+  }
+}
