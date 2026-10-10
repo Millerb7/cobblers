@@ -696,6 +696,8 @@ def dress_ground_cover(ctx, spec):
                 break
             if pl.get("solid") and ctx.reserved(x, z):
                 break
+            if R.G.classify(pl.get("block") or pl["double"]["lower"]) == R.G.NOSUP and not _open_ring(ctx, x, y, z):
+                break       # a big dripleaf beside a trunk or rock seals a nook: jumped into, never left (KIT2, LIFE)
             if pl.get("double"):
                 if not ctx.air(x, y + 1, z) or y + 1 > r["ceil_y"] - 4:
                     break
@@ -705,6 +707,23 @@ def dress_ground_cover(ctx, spec):
                 ctx.add(setb((x, y, z), pl["block"]))
             used.add((x, z))
             break
+
+
+def _open_ring(ctx, x, y, z):
+    """All eight cells round (x, z) at feet level y are open floor (air or a plant over a solid, head room above): a
+    block that stops a body there cannot be the only way out of anything."""
+    g = ctx.grid
+    for a in (-1, 0, 1):
+        for b in (-1, 0, 1):
+            if not (a or b):
+                continue
+            cx, cz = x + a, z + b
+            if not (g.inside(cx, y + 1, cz) and g.inside(cx, y - 1, cz)):
+                return False
+            if (R.G.classify(g.block_at(cx, y, cz)) != R.G.PASS or R.G.classify(g.block_at(cx, y + 1, cz)) != R.G.PASS
+                    or R.G.classify(g.block_at(cx, y - 1, cz)) != R.G.SOLID):
+                return False
+    return True
 
 
 def _free(ctx, x, z):
