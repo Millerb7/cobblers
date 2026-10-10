@@ -937,7 +937,8 @@ def dress_columns(ctx, spec):
         elif rg.random() < spec.get("fallen_p", 0.5):
             ln = rg.randint(3, 5)
             fx = x + t + rg.randint(0, 2)
-            if all(ctx.air(fx + k, y, z) and _free(ctx, fx + k, z) for k in range(ln)) and fx + ln < r["ix1"] - 2:
+            # the bound FIRST: ctx.air indexes the grid, and on a long room past its end it raised (IndexError, DG2-RUIN)
+            if fx + ln < r["ix1"] - 2 and all(ctx.air(fx + k, y, z) and _free(ctx, fx + k, z) for k in range(ln)):
                 ctx.add(fill((fx, y, z, fx + ln - 1, y, z), spec["block"]))
 
 
