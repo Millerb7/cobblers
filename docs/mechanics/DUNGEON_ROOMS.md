@@ -227,8 +227,9 @@ entrance) and `line` (a trip box across the room); `miniboss` `boss`, `line`; `n
 - **`resources`**: the seam: 24 ores (`params.seam_blocks`, `face_w`) on the face of a slab three thick against the north
   wall, so mining one opens a pocket and never the void. The shell writes band 1's blocks; `reset` (as the entrant) sets
   the band's from `dg.band` (1-2 coal/iron/copper, 3-4 add gold/redstone/lapis, 5-6 diamond; the jungle's are logs,
-  melon, bamboo, honeycomb, pumpkin). `tick` watches each cell and calls `greed/take` once per block gone (the
-  ladder of D13 is then the engine's). The pick of such a dungeon may break exactly its seam blocks (`pick_give(doc, d)`).
+  melon, bamboo, honeycomb, pumpkin). There is no `tick`: what the member mines is weighed by the engine's mined stats
+  wherever they mine it (`tools/dungeon_greed.py`, the owner 2026-10-10; the seam's old `greed/take` hook would count
+  a block twice). The pick of such a dungeon may break exactly its seam blocks (`pick_give(doc, d)`).
 - **`dark_room`**: no light of its own, lit candles found along the way, and `enter` gives 3 torches with
   `can_place_on` for the room's floor blocks; `reset` takes the placed ones back out. The torches are UNPROVEN (below).
 - **`safe_room`**: a rug, benches, lantern posts and a counter with the `healer` anchor behind it (the NPC is wave 2's).

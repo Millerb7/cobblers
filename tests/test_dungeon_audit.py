@@ -624,7 +624,7 @@ def test_a_crafted_sigil_opens_the_rip_and_the_int_form_would_not():
 
 
 # Without it the clock could fall at the wrong speed at some ladder rate (DUNGEONS.md 2.1: each pass subtracts 20 x
-# rate quarter-ticks; the rates 4, 5, 6, 8, 12).
+# rate tenth-ticks; a sample of the rates 10..30).
 @pytest.mark.parametrize("rate", DA.DESIGN_RATES)
 def test_the_clock_falls_twenty_ticks_of_its_rate_each_pass(rate):
     w = new_world()
@@ -639,18 +639,19 @@ def test_the_clock_falls_twenty_ticks_of_its_rate_each_pass(rate):
         assert score(w, p, "dg.clock") == 100000 - n * PASS * rate, (rate, n, score(w, p, "dg.clock"))
 
 
-# Without it the greed ladder could change the rate at the wrong count (D13: x1.25 at 5, x1.5 at 10, x2 at 15, x3 at
-# 20, holding).
-def test_the_greed_ladder_sets_the_owners_rates():
-    want = {1: 4, 4: 4, 5: 5, 9: 5, 10: 6, 14: 6, 15: 8, 19: 8, 20: 12, 30: 12}
+# Without it the greed rate could change at the wrong points (the owner, 2026-10-10, replacing D13's ladder: 20 coal
+# or a diamond is 1 point, every 2 points is +0.1x; x3 the most, never falling). One coal is 5 cp, so 40 coal is x1.1.
+def test_the_greed_rate_follows_the_owners_points():
     w = new_world()
     p = player(w)
     enter(w, p)
     cross(w, p)
-    for n in range(1, 31):
-        w.call("cobblers:dungeons/greed/take", PS_ctx(p))
-        if n in want:
-            assert score(w, p, "dg.rate") == want[n], (n, score(w, p, "dg.rate"))
+    for n in range(1, 801):
+        w.set("#gv", "dg.t", 5)                                # one coal's worth (the owner's 20 coal = 1 point)
+        w.call("cobblers:dungeons/greed/add", PS_ctx(p))
+        if n % 20 == 0:
+            want = min(30, 10 + (n // 20) // 2)
+            assert score(w, p, "dg.rate") == want, (n, score(w, p, "dg.rate"))
 
 
 # Without it a player could be killed mid-battle at 0, or killed while the NPC payout's clawback still measures
@@ -679,7 +680,7 @@ def test_at_zero_in_battle_the_kill_waits_for_the_battle_and_the_clawback():
 
 # Without it a logout pauses the clock (D15): the absence is charged on return at the player's rate, so after the
 # first pass back the clock is lower by every tick since the last pass they were seen, times the rate.
-@pytest.mark.parametrize("rate", (4, 12))
+@pytest.mark.parametrize("rate", (10, 30))
 @pytest.mark.parametrize("away_passes", (1, 7))
 def test_a_logout_charges_every_tick_away_at_the_players_rate(rate, away_passes):
     w = new_world()
@@ -706,9 +707,9 @@ def test_an_absent_players_slot_is_freed_at_their_deadline_and_not_before():
     enter(w, p)
     cross(w, p)
     to_pass_edge(w)
-    w.set(p.name, "dg.clock", 130 * 4 + PASS * 4)              # one more pass, present, takes 20 ticks
+    w.set(p.name, "dg.clock", 130 * DA.UNITS_PER_TICK + PASS * DA.UNITS_PER_TICK)              # one more pass, present, takes 20 ticks
     w.tick(PASS)
-    assert score(w, p, "dg.clock") == 130 * 4
+    assert score(w, p, "dg.clock") == 130 * DA.UNITS_PER_TICK
     p.online = False
     w.tick(PASS * 6)
     assert w.get("#s1", "dg.own") == score(w, p, "dg.id")

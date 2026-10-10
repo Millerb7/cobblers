@@ -694,8 +694,8 @@ def test_collapse_runtime_arms_cracks_falls_on_schedule_and_the_far_ledge_restor
     p.pos = [sx0 + 1.5, r["y_lo"], z + 0.5]
     n0 = len(w.block_writes)
     w.passes(1)
-    pen = doc["engine"]["clock"]["fall_penalty_s"] * 80
-    assert w.get(p.name, "dg.clock") == clock - 80 - pen, "one pass of the clock and the fall's penalty"
+    pen = doc["engine"]["clock"]["fall_penalty_s"] * doc["engine"]["clock"]["units_per_tick"] * 20
+    assert w.get(p.name, "dg.clock") == clock - doc["engine"]["clock"]["units_per_tick"] * 20 - pen, "one pass of the clock and the fall's penalty"
     assert int(p.pos[0]) == m["ledges"][0][0] + 2 and int(p.pos[1]) == fy, p.pos
     assert w.get(H, "dg.rs") == -1
     assert any(c.startswith("fill") and c.endswith("minecraft:deepslate_tiles") for _d, c in w.block_writes[n0:])

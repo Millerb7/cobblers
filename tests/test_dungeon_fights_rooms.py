@@ -140,7 +140,9 @@ def test_wild_levels_are_read_from_the_bands_never_above_the_upper_cap_and_band_
         assert lv == [up - 1], (b, lv)                                  # level_offset -1 in the fixture
         assert [level_of(l) for l in hab[b]] == [int(next(r for r in FIX if r["id"] == "hab1")["params"]["level_by_band"][str(b)])]
         assert all(1 <= level_of(l) <= up for l in nest[b]), (b, nest[b])
-        assert all(up - 6 <= level_of(l) <= up - 3 for l in nest[b]), (b, nest[b])
+        lo, hi = next(r for r in FIX if r["id"] == "nest1")["params"]["level_spread"]
+        if b < 6:                                                       # band 6 is lifted to 95-100 (below)
+            assert all(up - hi <= level_of(l) <= up - lo for l in nest[b]), (b, nest[b])
     assert 95 <= level_of(mini[6][0]) <= 100 and 95 <= level_of(nest[6][0]) <= 100
 
 
@@ -164,19 +166,24 @@ def test_every_wild_spawn_is_a_macro_line_bound_in_the_same_function_with_the_ke
     assert "PersistenceRequired:1b" in bind and "dg.run = #s1 dg.run" in bind
 
 
-def test_catching_is_off_everywhere_but_band_6_when_a_room_asks_and_the_nest_stays_uncatchable_unless_it_asks():
-    files = D.build(fights_doc("mine"))
-    for room in ("mini1", "hab1", "nest1"):
+def test_catching_follows_the_owners_rule_every_pokemon_and_a_legendary_from_the_beast_ball_band():
+    # the owner, 2026-10-10 (replacing D8's "catches only after the Champion" for dungeon Pokemon): nests and
+    # mini-bosses are catchable at every band unless the record says not; a habitat's legendary is a prize, catchable
+    # from engine.prize.legendary_from_band on unless the record is fight_only
+    lf = D.load()["engine"]["prize"]["legendary_from_band"]
+    files = D.build(fights_doc("mine"))                       # the fixture's habitat is fight_only
+    for room in ("mini1", "nest1"):
         for b, ls in spawn_lines(files, room).items():
-            assert all("uncatchable" in l for l in ls), (room, b)
+            assert not any("uncatchable" in l for l in ls), (room, b)
+    assert all("uncatchable" in l for ls in spawn_lines(files, "hab1").values() for l in ls)
     rooms = copy.deepcopy(FIX)
-    next(r for r in rooms if r["id"] == "mini1")["params"]["catchable"] = True
+    next(r for r in rooms if r["id"] == "mini1")["params"]["catchable"] = False
     next(r for r in rooms if r["id"] == "hab1")["params"]["fight_only"] = False
     files = D.build(fights_doc("mine", rooms))
-    for room in ("mini1", "hab1"):
-        ls = spawn_lines(files, room)
-        assert all("uncatchable" in l for b in range(1, 6) for l in ls[b]), "D8: catches only after the Champion"
-        assert not any("uncatchable" in l for l in ls[6])
+    assert all("uncatchable" in l for ls in spawn_lines(files, "mini1").values() for l in ls)
+    ls = spawn_lines(files, "hab1")
+    assert all("uncatchable" in l for b in range(1, lf) for l in ls[b])
+    assert not any("uncatchable" in l for b in range(lf, 7) for l in ls[b])
 
 
 def test_a_stand_id_is_unique_and_dispatched_to_its_trainers_won_function_and_every_class_file_exists():
@@ -232,7 +239,9 @@ def test_bad_params_are_problems_not_traps():
 
 def test_mutating_the_cap_in_the_generator_is_caught_by_the_level_check_that_reads_the_data(monkeypatch):
     monkeypatch.setattr(DF, "upper_cap", lambda b: max(b["caps"]) + 4)
-    files = D.build(fights_doc("mine"))
+    rooms = copy.deepcopy(FIX)       # the nest fight-only, so the catchable nest's own cap check does not refuse first
+    next(r for r in rooms if r["id"] == "nest1")["params"]["catchable"] = False
+    files = D.build(fights_doc("mine", rooms))
     mini = spawn_lines(files, "mini1")
     over = [b for b, caps in BANDS.items() if level_of(mini[b][0]) > max(caps)]
     assert over, "a generator that reads the cap wrong must put a level over the band's upper cap"
@@ -418,7 +427,7 @@ def test_a_miniboss_spawns_once_clears_only_after_two_absent_passes_and_is_not_a
     w.passes(1)
     ms = mons(w, "dg.r.mini1")
     assert len(ms) == 1 and KEEP in ms[0].tags and "dg.s1" in ms[0].tags
-    assert "level=24" in " ".join(ms[0].props) and "uncatchable" in ms[0].props and "no_ai" in ms[0].props
+    assert "level=24" in " ".join(ms[0].props) and "uncatchable" not in ms[0].props and "no_ai" in ms[0].props
     w.passes(3)
     assert len(mons(w, "dg.r.mini1")) == 1 and w.get(hold(s, r), "dg.rs") == 1, "alive: still guarding, not respawned"
     ms[0].alive = False                                                  # it faints in a battle
@@ -446,8 +455,9 @@ def test_a_band_6_run_meets_a_level_95_to_100_creature_and_a_nest_that_stays_in_
     w.passes(1)
     ns = mons(w, "dg.r.nest1")
     assert len(ns) == 6 and all(95 <= level_of(" ".join(m.props)) <= 100 for m in ns)
-    assert all("no_ai" not in m.props and "uncatchable" in m.props for m in ns), "a nest wanders and is fight-only unless it asks"
-    assert not w.catch(p, ns[0])
+    assert all("no_ai" not in m.props and "uncatchable" not in m.props for m in ns), \
+        "a nest wanders and is catchable unless it says not (the owner, 2026-10-10)"
+    assert w.catch(p, ns[0])
     ns[1].pos = [r["ix1"] + 40.0, 96.0, r["z_in"] + 0.5]                  # wandered out of the room
     w.passes(1)
     assert r["ix0"] <= ns[1].pos[0] <= r["ix1"], "the tick leashes a wanderer back"

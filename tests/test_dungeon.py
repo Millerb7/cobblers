@@ -35,6 +35,7 @@ FNS = {p[len("data/cobblers/function/dungeons/"):-len(".mcfunction")]: t.splitli
        for p, t in FILES.items() if p.endswith(".mcfunction")}
 POCKET = DOC["engine"]["pocket"]["dimension"]
 OW = "minecraft:overworld"
+U1 = DOC["engine"]["clock"]["units_per_tick"] * 20     # clock units a pass at x1 (tenth-ticks since unit GREED)
 
 
 def body(name):
@@ -431,9 +432,9 @@ def test_a_clean_run_out_by_the_far_rip(pack):
     assert not p.inventory, "the sigil is taken at the rip"
     s = arrive_and_cross(w, p)
     assert p.gamemode == "adventure" and any(i[0] == "minecraft:iron_pickaxe" for i in p.inventory)
-    full = D.clock_s(DOC["dungeons"][0], DOC["engine"]["bands"][0]) * 80
+    full = D.clock_s(DOC["dungeons"][0], DOC["engine"]["bands"][0]) * U1
     w.passes(3)
-    assert w.get(p.name, "dg.clock") == full - 3 * 80, "three passes at x1 since the pass that crossed"
+    assert w.get(p.name, "dg.clock") == full - 3 * U1, "three passes at x1 since the pass that crossed"
     assert w.get(p.name, "dg.lk_ns") is not None
     w.call("cobblers:dungeons/far", PS.Ctx(p, p.dim, p.pos))
     assert p.dim == OW and p.gamemode == "survival" and not any(i[0] == "minecraft:iron_pickaxe" for i in p.inventory)
@@ -511,10 +512,10 @@ def test_a_logout_keeps_the_clock_running_and_a_dead_run_kills_on_return(pack):
     w.passes(10)
     p.online = True
     w.passes(1)
-    assert w.get(p.name, "dg.clock") == before - 11 * 80, "the absence is charged at the rate, as if present"
+    assert w.get(p.name, "dg.clock") == before - 11 * U1, "the absence is charged at the rate, as if present"
     assert w.get(p.name, "dg.st") == 3
     # a long absence: the slot's deadline passes while they are away and the slot is freed without them
-    w.set(p.name, "dg.clock", 400)
+    w.set(p.name, "dg.clock", 5 * U1)
     w.passes(1)
     p.online = False
     w.passes(4)
@@ -536,18 +537,16 @@ def test_a_player_who_is_not_a_member_is_put_out_of_the_slots(pack):
     assert q.dim == OW and q.pos == [x, y, z]
 
 
-def test_the_greed_ladder_on_a_marker(pack):
+def test_the_greed_rate_on_a_marker(pack):
+    # the owner's rule (2026-10-10), stated here and not read from the generator: x1 + 0.1x every 2 points, to x3
     w = world(pack)
     m = PS.Ent("minecraft:marker", OW, (0.5, 70, 0.5), tags=("t",))
     w.ents.append(m)
-    want = {}
-    for r in D.ladder(DOC):
-        want[r["taken"]] = r["rate"]
-    rate = DOC["engine"]["clock"]["ladder"][0]["rate"]
-    for n in range(0, 26):
-        rate = want.get(n, rate)
-        w.call("cobblers:dungeons/greed/test_set", PS.Ctx(m, OW, m.pos), {"n": n})
-        assert w.get(m.uid, "dg.rate") == rate, n
+    for cp in range(0, 5001, 50):
+        w.call("cobblers:dungeons/greed/test_set", PS.Ctx(m, OW, m.pos), {"p": cp})
+        want = min(30, 10 + (cp // 100) // 2)
+        assert w.get(m.uid, "dg.rate") == want, cp
+        assert (w.get(m.uid, "dg.rx"), w.get(m.uid, "dg.ry")) == (want // 10, want % 10), cp
 
 
 def test_the_staged_boss_spawns_by_macro_chains_on_victory_and_opens_the_gate(pack):

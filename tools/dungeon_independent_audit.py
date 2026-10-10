@@ -72,6 +72,7 @@ FN = "cobblers:dungeons/"
 CHAIN_LIMIT = 65536            # vanilla gamerule maxCommandChainLength default
 ENTITY_REACH = 3.0             # 1.21 player.entity_interaction_range default
 BLOCK_REACH = 4.5              # 1.21 player.block_interaction_range default
+UNITS_PER_S = 200               # DUNGEONS.md 2.1 (the owner, 2026-10-10): tenth-ticks, 12,000 units a minute at x1
 EYE = 1.62
 PLAYER = "P"                   # the simulated player's name and uuid
 
@@ -3167,9 +3168,9 @@ def clock_audit(pack, doc, s, walk_sets, F):
             F.add("CLOCK", s, None, None, "band %s: the record's clock %d s is under %d s, the clock formula fed with this "
                   "audit's measured walk of %d blocks (tools/dungeon_clock.py measured %s)"
                   % (k, have, mine, sum(walks.values()), their_total))
-        if start and start.get(b["band"]) is not None and start[b["band"]] != have * 80:
+        if start and start.get(b["band"]) is not None and start[b["band"]] != have * UNITS_PER_S:
             F.add("CLOCK", s, None, None, "band %s: the threshold sets dg.clock %d, the record's %d s is %d"
-                  % (k, start[b["band"]], have, have * 80))
+                  % (k, start[b["band"]], have, have * UNITS_PER_S))
     return max(sum(w.values()) for _r, w in sets), their_total
 
 
