@@ -442,7 +442,7 @@ threshold's clocks with this table or 4.2's):
 | Dungeon | Walked | Band 1 | Band 2 | Band 3 | Band 4 | Band 5 | Band 6 |
 |---|---|---|---|---|---|---|---|
 | night_shift | 1,402 main (1,616 all routes) | **41** | **44** | **44** | **48** | **51** | **54** |
-| jungle | 1,303 all routes (1,070 main) | **41** | **46** | **47** | **52** | **55** | **59** |
+| jungle | 1,929 all routes, wing and side room included (1,180 main, the slower way of each fork; pass 3, DG3-JUNGLE) | **42** | **47** | **47** | **52** | **55** | **59** |
 | flooded_ruin | 1,337 all routes (1,000 main) | **41** | **43** | **46** | **48** | **52** | **56** |
 
 KIT3 (2026-10-10): "all routes" now walks each fork route's own way through its host and its join (`route_extras`,

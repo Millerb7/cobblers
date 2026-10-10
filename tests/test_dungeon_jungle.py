@@ -1,15 +1,20 @@
-"""The Overgrown Temple (`jungle`, dungeon 2 in data/dungeons.json), as re-authored for pass 2 by unit DG2-JUNGLE.
+"""The Overgrown Temple (`jungle`, dungeon 2 in data/dungeons.json), re-authored for pass 3 by unit DG3-JUNGLE on pass 2's
+rooms (DG2-JUNGLE).
 
 The author's own tests (the independent review is another agent's): the record builds and walks in all four variants
-(the room kit's walk check, every door of every room, both ways over the fork, the side room, the secrets with their
-tricks), its required time is about 32 minutes at band 1 with every clock at most an hour (so no lockout of its own),
-its rooms turn, climb, drop and double back with most of them shaped, it has every room type the owner named, a fork
-(fast and dangerous / safe and long), a side room, a cracked and a balcony secret with their relics, a shortcut back
-toward the entry, four distinct variants and the lights-out set piece before the boss, names only species in the
-Cobblemon 1.8.0 jar, and keeps its rip by the Night Shift's on dry ground. Two GENERATOR mutations: the glow vines off
-leave rooms dark, and rooms that never touch lose the shortcut; the walk and plan checks say so.
+(the room kit's walk check, every door of every room, every route of both forks, the wing and the side room, the secrets
+with their tricks), its MAIN route's required time is about 32 minutes at band 1 with every clock at most an hour (so no
+lockout of its own), its rooms turn, climb, drop and double back with most of them shaped, it has every room type the
+owner named. Pass 3 (DUNGEON_ROOMS.md 1b): two forks each through a crossroads that sees every way out, one of them
+three ways, the routes asking different things (a fight, a fall, the long way; a puzzle, the dark); a four-room optional
+WING (a connector, a climb, a hard parkour) ending in the PRIZE habitat (a rare non-legendary below the Beast Ball stage,
+Zarude from it) with a balcony secret; a six-section main parkour; the treasury inside the vault budget. Also a cracked
+and a balcony secret with their relics, a shortcut back toward the entry, four distinct variants and the lights-out set
+piece before the boss, names only species in the Cobblemon 1.8.0 jar, and keeps its rip by the Night Shift's on dry
+ground. Two GENERATOR mutations: the glow vines off leave rooms dark, and rooms that never touch lose the shortcut; the
+walk and plan checks say so.
 
-Not covered: anything in a running Minecraft, the fight and puzzle kinds' behaviour, the relics' reward (DG2-RELICS).
+Not covered: anything in a running Minecraft, the fight and puzzle kinds' behaviour, the prize's roll and catch in game.
 """
 from __future__ import annotations
 
@@ -54,6 +59,12 @@ def walks():
     return out
 
 
+@pytest.fixture(scope="module")
+def pack():
+    """The generated pack, built once for the module (tools/dungeon.py build)."""
+    return D.build(DOC)
+
+
 # ------------------------------------------------------------------------------------------------- the record
 
 
@@ -92,8 +103,9 @@ def test_the_clock_is_about_32_minutes_required_at_band_one_and_the_authored_clo
     assert "setpiece" in JG["clock_why"] or "set piece" in JG["clock_why"]
 
 
-def test_fewer_rooms_than_pass_one_wide_rooms_and_short_connectors(walks):
-    assert len(RECORDS) < 26                                 # pass 1 had 26 rooms; this counts both ways over the gorge and the side room
+def test_fewer_rooms_than_pass_one_on_the_way_wide_rooms_and_short_connectors(walks):
+    for rows in walks.values():                              # pass 1 had 26 rooms; the way the clock pays (main, one route a fork)
+        assert len(DC.clock_rooms(DOC, JG, 1, rows)) < 26
     for r in R.layout(DOC, JG, SLOT):
         if R.flags_of(r["kind"])["connector"]:
             assert r["length"] <= 40 and r["width"] >= 7, r["id"]
@@ -151,7 +163,9 @@ def test_the_pacing_no_two_fights_meet_on_any_route_the_heal_about_two_thirds_in
         assert 0.6 <= before / total <= 0.8, (vid, before / total)
     ids = [r["id"] for r in JG["rooms"]]
     kinds = [r["kind"] for r in JG["rooms"]]
-    assert kinds.index("resources") < min(kinds.index(k) for k in ("habitat", "miniboss", "boss_arena"))
+    wing = next(k for k, r in enumerate(JG["rooms"]) if r["kind"] == "side" and len(r["rooms"]) > 1)
+    assert kinds.index("resources") < min([kinds.index(k) for k in ("miniboss", "boss_arena")] + [wing])
+    assert ids.index("shrine") == wing - 1, "the wing leaves the shrine: healed before the hard parkour and the prize"
 
 
 def test_the_temple_is_dressed_stone_and_the_jungle_dense(walks):
@@ -167,26 +181,97 @@ def test_the_temple_is_dressed_stone_and_the_jungle_dense(walks):
 # ------------------------------------------------------------------------------------------------- replayability
 
 
-def test_one_fork_fast_and_dangerous_against_safe_and_long_rejoining_at_the_orchard(walks):
-    forks = [r for r in JG["rooms"] if r["kind"] == "fork"]
-    assert len(forks) == 1 and len(forks[0]["routes"]) == 2
-    fast, safe = forks[0]["routes"]
-    assert [r["kind"] for r in fast["rooms"]] == ["collapse_bridge"], "the fast way can drop the walker"
-    assert not {r["kind"] for r in safe["rooms"]} & {"collapse_bridge", "parkour", "setpiece"}
-    ids = [r["id"] for r in JG["rooms"]]
-    assert ids[ids.index(forks[0]["id"]) + 1] == "orchard"
+def route_walk(rows, fork, route):
+    return sum(r["walk"] for r in rows if r["route"] == "%s/%s" % (fork, route))
+
+
+def route_kinds(route):
+    return {r["kind"] for r in route["rooms"]}
+
+
+def test_two_forks_each_through_a_crossroads_that_sees_every_way_one_of_them_three_ways(walks):
+    top = JG["rooms"]
+    forks = [(k, r) for k, r in enumerate(top) if r["kind"] == "fork"]
+    assert len(forks) == 2
+    assert sorted(len(f["routes"]) for _k, f in forks) == [2, 3]
+    looks = set((DOC_THEMES()["jungle"].get("crossroads") or {}).get("looks") or {})
+    for k, f in forks:
+        host = top[k - 1]
+        assert host["kind"] == "crossroads", host["id"]
+        lk = [rt["look"] for rt in f["routes"]]
+        assert len(set(lk)) == len(lk) and set(lk) <= looks, lk
+        assert all(rt.get("sign") for rt in f["routes"]), "every way out of a crossroads is signed"
+        assert not any(rt.get("optional") for rt in f["routes"]), "both forks are the way on; the wing is the optional part"
+    for s in R.variant_slots(DOC, JG, SLOTS):                  # each exit on its own wall, the hub anchor built
+        rooms = R.layout(DOC, JG, s)
+        built = {b.room["id"]: b for b in R.slot_build(DOC, JG, s)}
+        for k, f in forks:
+            host = next(r for r in rooms if r["id"] == top[k - 1]["id"])
+            outs = [d["side"] for d in host["doors"] if d["dir"] == "out"]
+            assert len(outs) == len(f["routes"]) == len(set(outs)), outs
+            assert built[host["id"]].anchors.get("hub")
+            join = next(r for r in rooms if r["id"] == top[k + 1]["id"])
+            assert len([d for d in join["doors"] if d["dir"] == "in"]) == len(f["routes"]), "every way rejoins"
+
+
+def DOC_THEMES():
+    return json.loads((ROOT / "data" / "dungeon_themes.json").read_text(encoding="utf-8"))["themes"]
+
+
+def test_the_routes_ask_different_things_and_the_clock_pays_the_slower(walks):
+    gorge = next(r for r in JG["rooms"] if r["id"] == "gorge")
+    by = {rt["id"]: rt for rt in gorge["routes"]}
+    assert set(by) == {"poachers", "bridge", "gorge_floor"}
+    assert route_kinds(by["poachers"]) & {"stand", "gauntlet"}, "the poachers' trail is a fight"
+    assert "collapse_bridge" in route_kinds(by["bridge"]), "the bridge can drop the walker (a fall costs the clock)"
+    assert not route_kinds(by["gorge_floor"]) & {"collapse_bridge", "parkour", "stand", "gauntlet", "ambush", "nest"}
+    court = next(r for r in JG["rooms"] if r["id"] == "court_fork")
+    cb = {rt["id"]: rt for rt in court["routes"]}
+    assert "puzzle" in route_kinds(cb["glyph"]) and "dark_room" in route_kinds(cb["roots"])
+    assert "puzzle" not in route_kinds(cb["roots"])
     for vid, rows in walks.items():
-        w = {k: sum(r["walk"] for r in rows if r["route"] == "%s/%s" % (forks[0]["id"], k)) for k in (fast["id"], safe["id"])}
-        assert w[safe["id"]] > w[fast["id"]], (vid, w)       # longer to walk; the bridge's price is its fall
-        fall = DOC["engine"]["clock"]["fall_penalty_s"]
-        assert fall > 0
-    orchard = next(r for r in R.layout(DOC, JG, SLOT) if r["id"] == "orchard")
-    assert len([d for d in orchard["doors"] if d["dir"] == "in"]) == 2, "both ways come in by the orchard's west wall"
+        # the safe way is the long way; the dark way round the glyph door is longer than the door
+        assert route_walk(rows, "gorge", "gorge_floor") > route_walk(rows, "gorge", "bridge"), vid
+        assert route_walk(rows, "court_fork", "roots") > route_walk(rows, "court_fork", "glyph"), vid
+        for b in range(1, 7):
+            paid = {r["route"] for r in DC.clock_rooms(DOC, JG, b, rows) if r["route"] != "main"}
+            assert paid == {"gorge/poachers", "court_fork/glyph"}, (vid, b, paid)
 
 
-def test_one_side_room_a_dead_end_the_clock_does_not_count(walks):
-    sides = [r for r in JG["rooms"] if r["kind"] == "side"]
-    assert len(sides) == 1
+def wing():
+    (w,) = [r for r in JG["rooms"] if r["kind"] == "side" and len(r["rooms"]) > 1]
+    return w
+
+
+def test_a_four_room_optional_wing_a_connector_a_climb_a_hard_parkour_and_the_prize_at_its_end(walks):
+    w = wing()
+    kinds = [r["kind"] for r in w["rooms"]]
+    assert 3 <= len(kinds) <= 4 and R.flags_of(kinds[0])["connector"] and kinds[-1] == "habitat"
+    (pk,) = [r for r in w["rooms"] if r["kind"] == "parkour"]
+    assert pk["params"]["hard"] is True and pk["params"]["sections"] >= 5
+    end = w["rooms"][-1]
+    assert end["params"].get("prize") and end.get("gate", "open") == "open"
+    assert [s["type"] for s in end.get("secrets", [])] == ["balcony"] and end["params"].get("relic")
+    ids = {r["id"] for r in w["rooms"]}
+    for s in R.variant_slots(DOC, JG, SLOTS):
+        rooms = R.layout(DOC, JG, s)
+        by = {r["id"]: r for r in rooms}
+        assert all(by[i]["route"] == w["id"] for i in ids)
+        assert not [d for d in by[end["id"]]["doors"] if d["dir"] == "out"], "a dead end"
+        # it climbs over the temple: the hard parkour and the prize hall stand above main-route rooms
+        lo = by[pk["id"]]["hull_lo"]
+        under = [r["id"] for r in rooms if r["route"] == "main" and r["ceil_y"] < lo
+                 and r["xa"] <= by[pk["id"]]["xb"] and by[pk["id"]]["xa"] <= r["xb"]
+                 and r["za"] <= by[pk["id"]]["zb"] and by[pk["id"]]["za"] <= r["zb"]]
+        assert under, "the wing's parkour runs over the main route"
+    for rows in walks.values():
+        for b in range(1, 7):
+            assert not ids & {r["id"] for r in DC.clock_rooms(DOC, JG, b, rows)}, "the clock never counts the wing"
+
+
+def test_one_side_room_the_treasury_a_dead_end_the_clock_does_not_count(walks):
+    sides = [r for r in JG["rooms"] if r["kind"] == "side" and len(r["rooms"]) == 1]
+    assert len(sides) == 1 and sides[0]["rooms"][0]["kind"] == "vault"
     side_ids = {r["id"] for r in sides[0]["rooms"]}
     rooms = R.layout(DOC, JG, SLOT)
     for r in rooms:
@@ -196,6 +281,55 @@ def test_one_side_room_a_dead_end_the_clock_does_not_count(walks):
     assert not [d for d in last["doors"] if d["dir"] == "out"]
     for rows in walks.values():
         assert not side_ids & {r["id"] for r in DC.clock_rooms(DOC, JG, 1, rows)}
+
+
+def test_two_parkours_a_six_section_main_one_and_a_hard_one_in_the_wing():
+    pks = {r["id"]: r for r in RECORDS if r["kind"] == "parkour"}
+    assert len(pks) == 2
+    main = [r for r in JG["rooms"] if r["kind"] == "parkour"]
+    assert len(main) == 1 and main[0]["params"]["sections"] == 6 and main[0]["width"] == 25
+    assert main[0]["length"] >= 30 * 6 - 10 + 2 and not main[0]["params"].get("hard")
+    (hard,) = [r for r in pks.values() if r["params"].get("hard")]
+    assert hard["width"] == 25 and hard["length"] >= 30 * hard["params"]["sections"] - 10 + 2
+    for s in R.variant_slots(DOC, JG, SLOTS):                  # PARKOUR2 planned every section, the easy fork on the main one only
+        built = {b.room["id"]: b for b in R.slot_build(DOC, JG, s)}
+        for rid, r in pks.items():
+            m = built[rid].meta
+            assert len(m["ledges"]) == r["params"]["sections"] + 1, (rid, s["k"])
+            assert (m["fork"] is None) == bool(r["params"].get("hard")), (rid, m["fork"])
+
+
+def test_the_prize_is_rare_before_the_beast_ball_stage_and_zarude_from_it_spawned_only_when_rolled(pack):
+    import dungeon_prize as PZ
+    end = wing()["rooms"][-1]
+    pz = end["params"]["prize"]
+    lf = DOC["engine"]["prize"]["legendary_from_band"]
+    assert set(pz["rare_by_band"]) == {str(b) for b in range(1, lf)}
+    assert set(pz["legendary_by_band"]) == {str(b) for b in range(lf, 7)} and set(pz["legendary_by_band"].values()) == {"zarude"}
+    assert PZ.room_problems(DOC, JG, end) == []
+    assert "species" not in end["params"], "Zarude is the prize now, not a resident every run"
+    files = pack
+    for s in SLOTS:
+        base = R.room_fn(JG, end, s, "")
+        rel = lambda name: "data/%s/function/%s.mcfunction" % (R.NS, (base + name).split(":", 1)[1])  # noqa: E731
+        enter = files[rel("enter")]
+        for b in range(1, 7):
+            assert "dg.rs matches 1 if score @s dg.band matches %d run function %sprize/spawn_b%d" % (b, base, b) in enter
+            sp = files[rel("prize/spawn_b%d" % b)]
+            assert any(ln.endswith("prize/bind" if b >= lf else "prize/rare_bind") for ln in sp.split("\n")), (s["g"], b)
+        assert "random value 1..100" in "".join(v for k, v in files.items() if k.endswith("/slot/s%d/start.mcfunction" % s["g"]))
+
+
+def test_the_treasury_pays_no_more_than_the_runs_time_gathering():
+    import dungeon_greed as DG
+    over = [x for x in DG.vault_over(DOC) if x[0] == "jungle"]
+    assert over == [], over
+    budget = DG.vault_budget(DOC)
+    (vault,) = [r for r in RECORDS if r["kind"] == "vault"]
+    n = vault["params"]["chests"]
+    tbl = DG.load()
+    for b, spec in vault["params"]["loot_by_band"].items():
+        assert DG.chest_cp(tbl, spec) <= 0.95 * budget[int(b)] // n, (b, DG.chest_cp(tbl, spec), budget[int(b)] // n)
 
 
 def test_two_secrets_one_cracked_one_balcony_each_room_carrying_a_unique_relic_and_short_lore():
@@ -220,7 +354,7 @@ def test_two_secrets_one_cracked_one_balcony_each_room_carrying_a_unique_relic_a
             assert len(meta) == 1 and built[r["id"]].anchors.get("secret"), (r["id"], s["k"])
 
 
-def test_a_shortcut_back_toward_the_entry_opened_from_the_far_side_only():
+def test_a_shortcut_back_toward_the_entry_opened_from_the_far_side_only(pack):
     scs = [(r["id"], sc) for r in RECORDS for sc in r.get("shortcuts") or []]
     assert len(scs) == 1
     far_id, sc = scs[0]
@@ -230,7 +364,7 @@ def test_a_shortcut_back_toward_the_entry_opened_from_the_far_side_only():
         assert near["i"] < far["i"] and not far.get("layout_errors")
         assert [d for d in far.get("shortcut_doors", []) if d["dir"] == "out"]
         assert [d for d in near.get("shortcut_doors", []) if d["dir"] == "in"]
-    files = D.build(DOC)
+    files = pack
     assert any(k.endswith("/room/jungle/%s/s%d/shortcut_%s.mcfunction" % (far_id, SLOT["g"], sc["id"])) for k in files)
 
 
@@ -286,11 +420,8 @@ def test_the_wild_rooms_carry_the_contracts_fields_within_the_band_caps():
         assert set(p["species_by_band"]) == set(bands) and p["level_offset"] <= 0 and p.get("catchable", True) is True   # the owner, 2026-10-10: every dungeon Pokemon catchable
     for r in rooms_of("habitat"):
         p = r["params"]
-        assert p["fight_only"] is False and set(p["level_by_band"]) == set(bands)
-        assert r.get("gate", "open") == "open", "Zarude is optional: the slack pays for it (clock_why)"
-        for k, lv in p["level_by_band"].items():
-            assert lv <= max(bands[k]["caps"]), (k, lv)
-        assert 95 <= p["level_by_band"]["6"] <= 100
+        assert r.get("gate", "open") == "open", "the prize is optional: the slack pays for it (clock_why)"
+        assert p.get("prize") and not DF.is_wild_room(r), "a prize habitat with no resident (pass 3)"
     for r in rooms_of("puzzle"):
         p = r["params"]
         assert p["variant"] in ("levers", "sequence", "plates") and p["penalty_s"] > 0 and r["gate"] == "cleared"
@@ -324,6 +455,8 @@ def all_species():
                 out |= set(team)
         out |= set(p.get("species", [])) if isinstance(p.get("species"), list) else ({p["species"]} if "species" in p else set())
         out |= set(p.get("species_by_band", {}).values())
+        for key in ("rare_by_band", "legendary_by_band"):
+            out |= set((p.get("prize") or {}).get(key, {}).values())
     for crews in JG["boss"]["teams"].values():
         for c in crews:
             out |= set(c)
@@ -345,15 +478,25 @@ def test_every_species_is_in_the_cobblemon_jar(jar_species):
     assert sorted(s for s in all_species() if B.key(s) not in jar_species) == []
 
 
-def test_the_habitat_is_a_mythical_no_other_data_file_uses_and_not_an_ultra_beast(jar_species):
+def data_users(sp):
+    return sorted(p.name for p in (ROOT / "data").rglob("*.json")
+                  if p.name != "dungeons.json" and re.search(r"\b%s\b" % sp, p.read_text(encoding="utf-8"), re.I))
+
+
+def test_the_prize_is_a_mythical_no_other_data_file_uses_and_before_it_a_rare_that_is_no_set_piece(jar_species):
     import battle_sim as B
     (hab,) = rooms_of("habitat")
-    sp = hab["params"]["species"]
-    labels = set(jar_species[B.key(sp)].get("labels", []))
-    assert labels & {"legendary", "mythical"} and "ultra_beast" not in labels, labels
-    users = [p.name for p in (ROOT / "data").rglob("*.json")
-             if p.name != "dungeons.json" and re.search(r"\b%s\b" % sp, p.read_text(encoding="utf-8"), re.I)]
-    assert users == []
+    pz = hab["params"]["prize"]
+    for sp in set(pz["legendary_by_band"].values()):
+        labels = set(jar_species[B.key(sp)].get("labels", []))
+        # no Ultra Beast yet: KIT3 found key_ball's x5 would stack on the Beast Ball's own x5
+        assert labels & {"legendary", "mythical"} and "ultra_beast" not in labels, labels
+        assert data_users(sp) == []
+    for sp in set(pz["rare_by_band"].values()):
+        labels = set(jar_species[B.key(sp)].get("labels", []))
+        assert not labels & {"legendary", "mythical", "ultra_beast"}, labels
+        # Hakamo-o: wild only (the Long Isle's jungle, tier 8, rare; Jangmo-o its find), never a scene, gift or trainer
+        assert set(data_users(sp)) <= {"spawns.json", "encounter_design.json"}, data_users(sp)
 
 
 # ------------------------------------------------------------------------------------------------- the rip
@@ -411,8 +554,8 @@ def test_mutating_the_kit_so_rooms_never_touch_loses_the_shortcut_and_the_plan_c
     assert any("shortcut c1" in p and "does not touch" in p for p in bad), bad[:3]
 
 
-def test_the_build_writes_one_shell_function_per_room_inside_the_chain_budget():
-    files = D.build(DOC)
+def test_the_build_writes_one_shell_function_per_room_inside_the_chain_budget(pack):
+    files = pack
     shell = [k for k in files if "/shells/s%d/" % SLOT["g"] in k]
     assert len(shell) == len(R.layout(DOC, JG, SLOT))
     for s in SLOTS:
