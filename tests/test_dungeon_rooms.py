@@ -429,9 +429,15 @@ def test_every_room_gets_enter_clear_reset_and_the_slot_calls_them():
     doc = demo_doc("mine")
     files = D.build(doc)
     pre = "data/cobblers/function/dungeons/"
+    gates = {r["id"]: r["gate"] for r in R.layout(doc, doc["dungeons"][0], first_slot(doc))}
     for r in DEMO:
-        for fn in ("enter", "clear", "reset"):
+        for fn in ("enter", "reset"):
             assert pre + "room/night_shift/%s/s1/%s.mcfunction" % (r["id"], fn) in files, (r["id"], fn)
+        # a `cleared` room's clear always ships (an uncalled one is then a softlock the orphan check names); an OPEN
+        # room's ships only when something calls it, else it is an orphan prepare refuses
+        clear = pre + "room/night_shift/%s/s1/clear.mcfunction" % r["id"]
+        called = any("cobblers:dungeons/room/night_shift/%s/s1/clear" % r["id"] in v for k, v in files.items() if k != clear)
+        assert (clear in files) == (gates[r["id"]] == "cleared" or called), (r["id"], gates[r["id"]])
         # no per-room member dispatcher: nothing calls one, and prepare refuses a function no step or pack runs
         assert pre + "room/night_shift/%s/clear.mcfunction" % r["id"] not in files
     reset = files[pre + "slot/s1/reset.mcfunction"]

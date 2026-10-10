@@ -1685,6 +1685,20 @@ def build(doc, **kw):
             raise SystemExit("%s: %d command(s) the server would refuse; nothing written" % (rel, len(refused)))
         files[rel] = "\n".join(lines) + "\n"
     files[CALLBACK] = callback(doc)
+    # a room's s<g>/clear that nothing calls (a room whose door is open from the start: a drift, the exit) is a function
+    # no step or pack runs, which prepare refuses; the kit emits one per room so every kind can call it, and the pack
+    # keeps only the ones that are called (2026-10-09)
+    # Only an OPEN room's: a `cleared` room's clear is kept even uncalled, so the orphan check names a door nothing opens
+    # (a softlock) instead of the build hiding it.
+    rx = re.compile(r"^data/%s/function/%s/room/([^/]+)/([^/]+)/s\d+/clear\.mcfunction$" % (NS, FOLDER))
+    held = {(d["id"], r["id"]) for d in dungeons(doc) if DR.has_rooms(d)
+            for r in DR.layout(doc, d, [s for s in slots(doc) if s["dungeon"] is d][0]) if r.get("gate") == "cleared"}
+    for rel in [k for k in files if rx.match(k)]:
+        if rx.match(rel).groups() in held:
+            continue
+        ref = F(rel.split("/function/%s/" % FOLDER)[1][:-len(".mcfunction")])
+        if not any(ref in v for k, v in files.items() if k != rel and isinstance(v, str)):
+            del files[rel]
     return files
 
 
