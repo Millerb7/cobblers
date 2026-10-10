@@ -297,7 +297,9 @@ def backed(ctx, x, y, z, dx, dz, wall):
 
 
 def plan_veins(ctx, cfg, cap, rg, foot):
-    """Ore cells in the rock of a shaped room's walls: runs of up to `vein_max_run` along a wall, one or two rows."""
+    """Ore cells in the rock of a shaped room's walls: runs of up to `vein_max_run` along a wall, two rows high from the
+    floor (feet and eye level), so a mined column is a pocket a player can step into (the independent audit reads a face that
+    opens no standing cell as a secret that opens nothing)."""
     if not cfg.get("veins"):
         return []
     o = ctx.room.get("outline")
@@ -313,7 +315,6 @@ def plan_veins(ctx, cfg, cap, rg, foot):
             break
         dx, dz = FACE[face]
         along = (1, 0) if dz else (0, 1)
-        row = y + rg.randint(0, 1)
         run = []
         # grow the run along the face from the seed, both ways, while the rock stays legal
         seq = [0]
@@ -322,15 +323,16 @@ def plan_veins(ctx, cfg, cap, rg, foot):
         for k in seq:
             ox, oz = x + along[0] * k, z + along[1] * k
             rx, rz = ox + dx, oz + dz
-            if (rx, row, rz) in used or ctx.reserved(rx, rz) or (rx, rz) in foot:
+            if (rx, y, rz) in used or ctx.reserved(rx, rz) or (rx, rz) in foot:
                 continue
             if not ctx.open(ox, oz) or ctx.floor(ox, oz) is None or abs(ctx.floor(ox, oz) - y) > 0 or (ox, y, oz) not in ctx.res_reach:
                 continue
-            if backed(ctx, rx, row, rz, dx, dz, wall):
-                run.append((rx, row, rz))
-        for c in run[:max(0, cap - len(out))]:
-            used.add(c)
-            out.append({"pos": c, "host": ctx.grid.block_at(*c), "kind": "vein", "prom": 0.0})
+            if backed(ctx, rx, y, rz, dx, dz, wall) and backed(ctx, rx, y + 1, rz, dx, dz, wall):
+                run.append((rx, rz))
+        for rx, rz in run[:max(0, (cap - len(out)) // 2)]:
+            used.add((rx, y, rz))
+            for yy in (y, y + 1):
+                out.append({"pos": (rx, yy, rz), "host": ctx.grid.block_at(rx, yy, rz), "kind": "vein", "prom": 0.0})
     return out
 
 
@@ -363,17 +365,35 @@ def plan_cache(ctx, heaps, foot, rg):
 # ------------------------------------------------------------------------------------------------- the dress op
 
 
+VEIN_SHARE = 0.4        # of a band's bulk ore, at most, goes into wall veins (the rest into the heaps)
+
+
 def assign(cands, row, rg):
-    """{pos: resource} for one band: the rare ores on the crests (highest `prom`, heaps first), the bulk at random."""
+    """{pos: resource} for one band: the rare ores on the crests of the heaps (highest `prom`), the bulk at random, a wall
+    vein's two rows always one ore (a mined column is a pocket) and never more than VEIN_SHARE of the bulk in veins."""
     rare = sorted([k for k, n in row.items() if resources()[k]["rare"] for _ in range(n)], key=lambda k: (RARE_ORDER.index(k), k))
     order = sorted(cands, key=lambda c: (-c["prom"], c["pos"]))
     out = {}
     crest = [c for c in order if c["kind"] == "heap"]
     for res, c in zip(rare, crest):
         out[c["pos"]] = res
-    bulk = [k for k, n in sorted(row.items()) if not resources()[k]["rare"] for _ in range(n)]
+    left = {k: n for k, n in row.items() if not resources()[k]["rare"]}
+    total = sum(left.values())
+    by_pos = {c["pos"]: c for c in cands}
+    pairs = sorted((c["pos"], (c["pos"][0], c["pos"][1] + 1, c["pos"][2])) for c in cands
+                   if c["kind"] == "vein" and (c["pos"][0], c["pos"][1] + 1, c["pos"][2]) in by_pos and by_pos[(c["pos"][0], c["pos"][1] + 1, c["pos"][2])]["kind"] == "vein")
+    rg.shuffle(pairs)
+    n_pairs = min(len(pairs), int(total * VEIN_SHARE) // 2)
+    for lo, hi in pairs[:n_pairs]:
+        pool = sorted(k for k, n in left.items() if n >= 2)
+        if not pool:
+            break
+        res = pool[rg.randrange(len(pool))]
+        out[lo] = out[hi] = res
+        left[res] -= 2
+    bulk = [k for k, n in sorted(left.items()) for _ in range(n)]
     rg.shuffle(bulk)
-    rest = [c for c in order if c["pos"] not in out]
+    rest = [c for c in order if c["pos"] not in out and c["kind"] == "heap"]
     rg.shuffle(rest)
     for res, c in zip(bulk, rest):
         out[c["pos"]] = res

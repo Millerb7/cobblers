@@ -441,6 +441,20 @@ def test_the_picks_list_is_exactly_the_seam_the_piles_and_the_secret(d, s):
     assert held <= listed
 
 
+@pytest.mark.parametrize("d,s", [c for c in CASES if c[0]["id"] == "night_shift"], ids=["night_shift-s%d" % c[1]["k"] for c in CASES if c[0]["id"] == "night_shift"])
+def test_a_wall_vein_is_two_rows_of_one_ore_so_a_mined_column_is_a_pocket(d, s):
+    pick = dungeon_pick(d) - {THEMES[d["theme"]]["shapes"]["secret_block"]}
+    for b in resource_rooms(d, s):
+        veins = {tuple(c["pos"]) for c in b.meta["deposits"]["cands"] if c["kind"] == "vein"}
+        assert veins, "the mine's rock rooms hold wall veins"
+        for band in BANDS:
+            w, cells = replay(b, band, pick)
+            for (x, y, z) in veins:
+                if (x, y + 1, z) in veins:
+                    lo, hi = w.get((x, y, z)), w.get((x, y + 1, z))
+                    assert (lo in ORE_RES.keys()) == (hi in ORE_RES.keys()) and (lo == hi or lo not in ORE_RES), (band, (x, y, z), lo, hi)
+
+
 def test_every_item_a_pile_or_the_cache_can_yield_is_listed_for_the_greed_table():
     listed = {i for i, _src in X.items_yielded()}
     want = {e["item"] for e in DATA["resources"].values()} | {e["item"] for e in DATA["cache"]["items"].values()}
@@ -465,10 +479,15 @@ def _lower_face():
 def test_mutation_wall_ore_allowed_in_the_hull_is_caught(monkeypatch):
     d, s = _lower_face()
     assert all(room_findings(b, d) == [] for b in resource_rooms(d, s))
-    monkeypatch.setattr(X, "backed", lambda ctx, x, y, z, dx, dz, wall: (ctx.grid.inside(x, y, z) and ctx.air(x - dx, y, z - dz)))
+    def hull_only(ctx, x, y, z, dx, dz, wall):
+        # the interior bound turned inside out: only the hull's own wall column may hold ore (the fault the real check refuses)
+        r = ctx.room
+        interior = r["ix0"] <= x <= r["ix1"] and r["iz0"] <= z <= r["iz1"]
+        return (not interior) and ctx.grid.inside(x, y, z) and ctx.air(x - dx, y, z - dz)
+    monkeypatch.setattr(X, "backed", hull_only)
     found = []
     for b in _rebuild_resources_room(monkeypatch, d, s):
-        found += room_findings(b, d) + X.leak_problems("room", b)
+        found += room_findings(b, d)          # this file's own check, not the module's
     assert found, "ore in the hull wall was not caught"
 
 

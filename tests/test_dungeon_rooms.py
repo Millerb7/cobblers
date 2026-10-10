@@ -588,6 +588,15 @@ class RW(TD.DW):
             tag = "__blk_%d_%d_%d_%s" % (pos + (m.group(5).replace(":", "_"),))
             return "%s entity @s[tag=%s]" % (m.group(1), tag)
         cmd = re.sub(r"\b(if|unless) block (-?\d+) (-?\d+) (-?\d+) (\S+)", sub, cmd)
+
+        def loot(m):
+            # RESOURCES2: a resources room at band 5-6 watches its cache chest (`unless data block x y z LootTable`); this
+            # model never opens one, so the LootTable is always still there
+            tag = "__loot_%s_%s_%s" % m.group(2, 3, 4)
+            for q in self.players():
+                q.tags.add(tag)
+            return "%s entity @s[tag=%s]" % (m.group(1), tag)
+        cmd = re.sub(r"\b(if|unless) data block (-?\d+) (-?\d+) (-?\d+) LootTable", loot, cmd)
         for p in self.players():
             for tag in [t for t in p.tags if t.startswith("__blk_")]:
                 p.tags.discard(tag)
@@ -726,6 +735,8 @@ def test_the_seam_credits_one_block_taken_to_the_greed_ladder_once(rooms_pack):
     b = next(x for x in R.slot_build(doc, doc["dungeons"][0], s) if x.room["id"] == "seam")
     cells = [tuple(c) for c in b.anchors["seam"]]
     w.blocks = {c: "minecraft:deepslate_coal_ore" for c in cells}
+    for key in b.meta.get("deposits", {}).get("by_band", {}).get("1", {}):     # RESOURCES2: the room's band-1 piles stand too
+        w.blocks[tuple(int(v) for v in key.split(","))] = "minecraft:deepslate_coal_ore"
     p.pos = [r["ix0"] + 10.5, r["floor_in"], r["z_in"] + 0.5]
     w.passes(1)
     assert w.get(p.name, "dg.greed") == 0

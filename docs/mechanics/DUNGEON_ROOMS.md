@@ -422,11 +422,14 @@ and loot table are the seam's and the vault's own mechanisms, so nothing needed 
   The top cell of every heap column is an ore candidate; the crests of the tallest heaps take the rare ores. Heaps stand only
   where the walk check's own reach says a player can stand, on no reserved cell (an anchor, the trail, a door's approach), and
   clear any ground cover (the jungle's ferns and grass) above them.
-- **Veins**: ore in the rock of a shaped room's walls (cavern, L, broken hall), runs of up to 5 along a wall, one row at feet or
-  eye level, the EXPOSED layer of rock only and only where the other five neighbours are solid (so a vein never touches the
-  hull wall column, a door, a secret's chamber or the ceiling and floor courses). A box or oval room has no rock, so its wall ore
-  is the banks; the mine's cavern and L rooms get both (25 vein cells in each of the Night Shift's four variants). The jungle
-  has no veins (its rock is a bank of moss).
+- **Veins**: ore in the rock of a shaped room's walls (cavern, L, broken hall), runs of up to 5 along a wall, two rows high
+  from the floor (feet and eye level), the EXPOSED layer of rock only and only where the other five neighbours are solid (so a
+  vein never touches the hull wall column, a door, a secret's chamber or the ceiling and floor courses). The two rows of a
+  column are always one ore, so a mined column is a pocket a player can step into (the independent audit reads a face that opens
+  no standing cell as a secret that opens nothing: the first version, single cells, drew 21 findings in the Night Shift), and at
+  most 40% of a band's bulk ore sits in veins; the rare ores sit on heap crests only. A box or oval room has no rock, so its
+  wall ore is the banks; the mine's cavern and L rooms get both (24 vein cells, 12 columns, in each of the Night Shift's four
+  variants). The jungle has no veins (its rock is a bank of moss).
 - **The cache** (bands 5 and 6): a chest at the foot of the biggest heap with a loot table, the vault's form (the kit's
   proven-in-code way to hand over items; `LootTable` on a chest placed from air at the slot reset). It holds the **raw Mega
   stone** and **ancient debris** (below). Band 4 and under: no chest.
