@@ -101,3 +101,6 @@ the record contract it publishes first); then the three authors on KIT2's merge;
   middle stage and the like, chosen per dungeon and band, catchable with ordinary balls); from gym 6 (the Beast Ball key,
   EXP-064; the band that gym 6's cap falls in, read from data/progression.json, not assumed) the prize is the legendary
   or Ultra Beast, caught with Beast Balls.
+- **Hakamo-o as the jungle's early prize (the owner, 2026-10-10):** approved although it hands out the Jangmo-o line
+  before the Long Isle's rare spawn: "these dungeons are hard and getting through one would mean they deserve it." The
+  same reading holds for the other dungeons' rare prizes (the ruin's Sliggoo/Zweilous).
