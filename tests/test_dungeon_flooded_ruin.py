@@ -423,8 +423,16 @@ def test_the_habitat_is_a_legendary_or_mythical_no_ultra_beast_and_used_nowhere_
 # ------------------------------------------------------------------------------------------------- params
 
 
+def dead_ends():
+    """Ids of the rooms a side entry ends in (the record's own shape: the last room of a `side` container). A dead end has
+    no door out, so a gate there opens nothing: such a room is `open` (the sealed chamber, 2026-10-10: `cleared` was a
+    SOFTLOCK finding, its clear opening nothing)."""
+    return {c["rooms"][-1]["id"] for c in RUIN["rooms"] if c.get("kind") == "side" and c.get("rooms")}
+
+
 def test_the_fight_params_follow_the_contract_and_never_pass_the_bands_upper_cap():
     bands = {str(b["band"]): b for b in D.bands(DOC)}
+    ends = dead_ends()
     for r in variant_records():
         p = r.get("params", {})
         if r["kind"] in ("stand", "gauntlet", "ambush"):
@@ -442,7 +450,7 @@ def test_the_fight_params_follow_the_contract_and_never_pass_the_bands_upper_cap
             lo, hi = p["level_spread"]
             assert 0 <= lo <= hi
         elif r["kind"] == "habitat":
-            assert p.get("fight_only", True) is True and r["gate"] == "cleared"
+            assert p.get("fight_only", True) is True and r["gate"] == ("open" if r["id"] in ends else "cleared"), r["id"]
             for b, lvl in p["level_by_band"].items():
                 assert lvl <= max(bands[b]["caps"]), (b, lvl)
             assert 95 <= p["level_by_band"]["6"] <= 100

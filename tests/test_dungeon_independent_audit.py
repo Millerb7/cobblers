@@ -210,7 +210,12 @@ def test_a_maze_that_loses_its_entrance_passage_is_named(monkeypatch, ns_baselin
         return adj
     monkeypatch.setattr(K, "_maze_tree", broken)
     new = keys(mutated(monkeypatch, doc)) - base
-    assert ("WALK", "old_workings") in new, new
+    # the WALK finding names the room holding the reached cell nearest the far rip. Pass 2's route doubles back, so that
+    # is the room before the maze (winding_house in slots 1-3), not the maze: what matters is that the walk stops there
+    walks = {room for cat, room in new if cat == "WALK"}
+    assert walks, new
+    order = [r["id"] for r in R.layout(doc, doc["dungeons"][0], D.slots(doc)[0]) if r.get("route", "main") == "main"]
+    assert all(order.index(room) <= order.index("old_workings") for room in walks if room in order), (walks, order)
 
 
 def test_a_wild_room_whose_clear_call_is_gone_is_a_softlock(monkeypatch, ns_baseline):
@@ -266,17 +271,43 @@ def real():
 
 def test_every_gate_puzzle_vault_and_run_was_exercised(real):
     # Removing it lets the audit pass vacuously: a parser that finds no gate, puzzle, chest or run reports nothing wrong.
+    # Pass 2: the audit (all_slots=False) walks one slot per VARIANT, and a variant's rooms include its fork routes, side
+    # rooms and swaps; the expectation is summed over the variants from the data (data_records), never the generator
     doc, F, _info = real
     for d in doc["dungeons"]:
         st = F.stats[d["id"]]
-        gated = [r for r in d["rooms"] if A.gated(r)]
-        puzzles = [r for r in d["rooms"] if r["kind"] == "puzzle"]
-        chests = sum(int(r["params"].get("chests", 0)) for r in d["rooms"] if r["kind"] == "vault")
-        assert st["gates_opened"] == len(gated), (d["id"], st)
+        ks = range(1, len(d.get("variants") or [None]) + 1)
+        gated = [r for k in ks for r in data_records(d, k) if A.gated(r)]
+        puzzles = [r for k in ks for r in data_records(d, k) if r["kind"] == "puzzle"]
+        chests = sum(int(r.get("params", {}).get("chests", 0)) for k in ks for r in data_records(d, k) if r["kind"] == "vault")
+        assert st["gates_opened"] == len(gated), (d["id"], len(gated), st)
         assert st["puzzle_targets_solvable"] >= len(puzzles), (d["id"], st)
-        assert st["vault_chests_checked"] == chests, (d["id"], st)
+        assert st["vault_chests_checked"] == chests, (d["id"], chests, st)
         assert st["runs_finished"] >= 1 and st["battles"] >= 1, (d["id"], st)
         assert st["cells_reached"] > 10000 and st["exit_cells"] and st["back_cells"], (d["id"], st)
+
+
+def data_records(d, k):
+    """The room records slot k (1-based in its dungeon) builds, by the documented rule (DUNGEON_ROOMS.md 1a): a fork's
+    routes and a side entry's rooms are rooms of the run; slot k builds variants[(k - 1) % n], whose `swap` replaces a
+    room's fields by id (`params` merged one level)."""
+    vs = d.get("variants") or []
+    swap = (vs[(k - 1) % len(vs)].get("swap") or {}) if vs else {}
+
+    def walk(rooms):
+        for r in rooms:
+            if r.get("kind") == "fork":
+                for rt in r.get("routes", []):
+                    yield from walk(rt.get("rooms", []))
+            elif r.get("kind") == "side":
+                yield from walk(r.get("rooms", []))
+            else:
+                over = swap.get(r["id"])
+                if over:
+                    r = dict(r, **{key: v for key, v in over.items() if key != "params"},
+                             params=dict(r.get("params") or {}, **(over.get("params") or {})))
+                yield r
+    return list(walk(d.get("rooms") or []))
 
 
 def test_real_dungeons_have_no_trap_softlock_or_dead_end(real):
@@ -754,5 +785,8 @@ def test_life_seated_in_the_doorways_is_named(monkeypatch, pieces):
             return out
         return sorted(out, key=lambda c: (c[0] - dout[0]) ** 2 + (c[2] - dout[2]) ** 2)[:6]
     monkeypatch.setattr(L, "spots_of", by_the_door)
+    # since DG2-INTEGRATE spots_of keeps DOOR_KEEP cells off every door itself: the mutant takes that keep away too, or the
+    # nearest spots it picks are already clear of the door out
+    monkeypatch.setattr(L, "DOOR_KEEP", 0)
     F = build_mutated(monkeypatch, doc)
     assert found(F, "LIFE", None, "spawns in a doorway"), [A.fmt(f) for f in F]

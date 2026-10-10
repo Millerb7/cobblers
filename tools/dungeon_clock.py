@@ -147,9 +147,10 @@ def walk_back(doc, d, slot):
     re-crossed at a sprint."""
     sprint = doc["engine"]["return_margin"]["sprint_x10"] / 10.0
     key = (R._cache_key(doc, d, slot), slot["g"], sprint)
-    if key in _WALK_BACK:
-        return _WALK_BACK[key]
     builts = R.slot_build(doc, d, slot)
+    hit = _WALK_BACK.get(key)
+    if hit is not None and hit[0] is builts:        # the same built rooms (a test that swaps the kit's code clears R._BUILT)
+        return hit[1]
     rooms = []
     for i, b in enumerate(builts):
         r = b.room
@@ -192,10 +193,12 @@ def walk_back(doc, d, slot):
     for (i, _c), dv in dist.items():
         rid = rooms[i]["r"]["id"]
         out[rid] = max(out.get(rid, 0), int(math.ceil(dv)))
+    # a room no walk reaches from the arrival is the walk check's finding (problems() refuses the dungeon); here it is
+    # priced as the slot's longest walk back, so a build with that check switched off still writes a margin
+    far = max(out.values()) if out else 0
     for rm in rooms:
-        if rm["r"]["id"] not in out:
-            raise R.RoomError("%s room %s: no walk back to the arrival from any cell of it" % (d["id"], rm["r"]["id"]))
-    _WALK_BACK[key] = out
+        out.setdefault(rm["r"]["id"], far)
+    _WALK_BACK[key] = (builts, out)
     return out
 
 
