@@ -159,8 +159,8 @@ required and pairwise different.
   look's `window` block, 2 wide and 2 high at `c +- 3..4`, `y + 1..2`, each room in its own wall column, only where both
   rooms' walls meet there). `sign`: a string or up to 3 lines, at most 15 characters each, printable ASCII; a wall sign
   over the door on the host's side.
-- `params.hub`: `[fx, fz]` fractions of the box (default the centre): where the chooser stands. The anchor `hub` is the
-  nearest open, level cell; from it every exit's opening must be in sight (`problems()` casts a ray from eye height to each
+- `params.hub`: `[fx, fz]` fractions of the box (default the centre): where the chooser stands. The anchor `hub` stands there
+  (2 in from the walls at least; the kit keeps 5 x 5 open round every anchor); from it every exit's opening must be in sight (`problems()` casts a ray from eye height to each
   door's opening through the built grid).
 - `problems()` refuses: a crossroads not followed by a fork; a fork of more than 3 routes; a route after a crossroads
   without a look, an unknown look, two routes with one look; two exits of one host on the same wall closer than 10
@@ -213,6 +213,28 @@ limit RESOURCES2 set for a resources room. With the kit's four chests: **band 1 
 (0.8 to 3.8 points) a chest; a whole vault 330, 774, 792, 864, 1,441, 1,526 (floored).** Enforced by `problems()` when
 `vault_budget.enforce` is true; until the three authors rebalance their loot it is false and `D.warnings()` names every
 chest over (the pass-2 vaults are 7 to 150 points a chest).
+
+**As built (KIT3, 2026-10-10; simulated and audited, not run in Minecraft).**
+- Kit hooks: `R.LAYOUT_FNS` (a last pass over a laid slot: routes' `optional`, looks, signs, windows on both doors) and
+  `R.POST_DRESS_FNS` (after the theme's dressing, before pits are plugged and the hull lit: the looks' blocks; a lit
+  look's lamps count as lights). The fixture `tests/fixtures/dungeon_kit3_demo.json` (25 rooms, four variants): 0 problems
+  in the mine and the jungle; in the ruin one LIFE finding in `d1` (variant d), LIFE's own; the independent audit 0
+  findings on all four slots (band 1).
+- **A long parkour wants width 25** (measured with PARKOUR2's planner, four seeds each: 21 wide never plans 5 or 6
+  sections, 23 plans the hard one only, 25 plans both 3-4 times in 4). A door into it must stand at least 6 from its
+  north and south walls (its first ledge is 7 wide), so a wing's parkour is centred on the connector's door: plan the
+  strip's z bands (the fixture's wing runs along the north, the main route south).
+- **The clock walks every route's own way** (`tools/dungeon_clock.py route_extras`): a host's walk is to its main door
+  and the join's from its main door in; a route that leaves by another wall or arrives by another door adds the
+  difference to its first and last rooms (never below 0). Without it the fixture's band-3 clock was a minute short of
+  the independent audit's. The three pass-2 dungeons still pass with their clocks.
+- The independent audit (AUDIT2's) was extended in two places only, both reading the record as 1b states it: a `hard`
+  parkour asks for no fork; a choice of routes that takes an `optional` one is walked alone but never priced.
+- The board's rumour is a `data merge` of the board's text_display at the threshold; the arrival writes the plain text
+  back. A wild prize uses the fight rooms' macro spawn and the slot's claim (`wild/s<g>/bind`), so the slot's free and
+  the keeper's stale-run pass discard it as any wild Pokemon of the slot.
+- `data/dungeon_prize.json` is the prize's record for `data/key_ball.json` (`bosses`): its `species` is the REFERENCE
+  prize whose bind key_ball's check builds while no dungeon authors a legendary prize.
 
 ## 2. Themes (`data/dungeon_themes.json`)
 

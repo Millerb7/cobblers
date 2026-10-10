@@ -29,7 +29,9 @@ matches <i> run tp @s ...` in the fall, behind a guard that sends a stale value 
 RECORD. {"kind": "parkour", "length": 110, "width": 35, "height": 12, "params": {...}}; height at least 7 (the kit's
 check); a platform's standing level is at most `height - 6` above the door's. params, all optional: sections (default
 length // 33, at least 2), tiers (per section 1..3; default 1,2,3,3,2...), max_lv (4), fork (true when there are 3 or more
-sections; false turns it off; an int is the section index), seed (re-roll). The room is a BOX: a non-box `shape` is refused.
+sections; false turns it off; an int is the section index), seed (re-roll), hard (KIT3: every section tier 3 and no fork
+unless one is named; the parkour guarding a wing's payoff; sections up to 6, DUNGEON_ROOMS.md 1b). The room is a BOX: a
+non-box `shape` is refused.
 """
 from __future__ import annotations
 
@@ -307,7 +309,7 @@ def sections_of(room):
 
 
 def _fork_index(room, S):
-    f = room["params"].get("fork", S >= 3)
+    f = room["params"].get("fork", S >= 3 and not room["params"].get("hard"))   # a hard parkour has no easy way (KIT3)
     if f is True:
         i = S // 2
     elif f in (False, None):
@@ -361,6 +363,8 @@ def _plan_once(rg, room):
     lvmax = max(1, min(int(p.get("max_lv", 4)), room["height"] - 6))
     tiers_in = p.get("tiers")
     tiers = [int(tiers_in[i % len(tiers_in)]) if tiers_in else TIER_DEFAULT[min(i, len(TIER_DEFAULT) - 1)] for i in range(S)]
+    if p.get("hard") and not tiers_in:
+        tiers = [3] * S          # KIT3 (DUNGEON_ROOMS.md 1b): the parkour guarding a wing's payoff, every section tier 3
     fork_i = _fork_index(room, S)
     xs = [ix0 + round(i * (L - LEDGE_L) / S) for i in range(S + 1)]
     z_in, z_out = room["z_in"], room["z_out"]

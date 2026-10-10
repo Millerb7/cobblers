@@ -402,6 +402,9 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
     # the clock's greed: the value table and the rate (tools/dungeon_greed.py; replaced D13's ladder, 2026-10-10)
     import dungeon_greed as DG    # lazy, as dungeon_fights is
     bad += DG.problems(doc)
+    bad += DG.vault_problems(doc)     # KIT3: a vault chest within the economy's budget (when vault_budget.enforce)
+    import dungeon_prize as DPz       # lazy (KIT3): the hidden prize's engine defaults and its key_ball record
+    bad += DPz.engine_problems(doc) + DPz.problems_record(doc)
     caps = []
     for i, b in enumerate(bands(doc), 1):
         if b["band"] != i:
@@ -1716,6 +1719,8 @@ def build(doc, **kw):
     import dungeon_relics as DRel   # lazy, as dungeon_life is (unit DG2-RELICS): the secrets' relics and each dungeon's collection
     fns.update(DRel.functions(doc))
     DRel.patch_functions(doc, fns)  # the arrival line and the lobby's action bar
+    import dungeon_prize as DPz     # lazy (KIT3): the hidden prize's roll at the threshold and the board put back at arrival
+    DPz.patch_functions(doc, fns)
     files.update(DRel.pack_files(doc))  # a dungeon's collection advancement
     files.update(DF.pack_files(doc))    # the stands' NPC classes and the healer's advancement
     import dungeon_resources as DRS     # lazy (RESOURCES2): the resources rooms' cache loot tables
@@ -1769,7 +1774,8 @@ def warnings(doc):
     rooms dungeon still on the bands' clocks (set for the short spine; tools/dungeon_clock.py derives its own)."""
     import dungeon_fights as DF     # lazy: tools/dungeon_fights.py imports this module
     import dungeon_relics as DRel   # lazy (DG2-RELICS)
-    return DR.warnings(doc) + DF.warnings(doc) + DRel.warnings(doc) + [
+    import dungeon_greed as DG      # lazy (KIT3): vault chests over the budget while it is not enforced
+    return DR.warnings(doc) + DF.warnings(doc) + DRel.warnings(doc) + DG.vault_warnings(doc) + [
         "%s: no clock_s_by_band, so its clock is the bands' (the short spine's): run python tools/dungeon_clock.py %s"
         % (d["id"], d["id"]) for d in dungeons(doc) if DR.has_rooms(d) and "clock_s_by_band" not in d]
 

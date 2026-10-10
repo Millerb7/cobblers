@@ -111,6 +111,11 @@
     },
     "prize": {
       "legendary_from_band": 4,
+      "chance_by_band": [10, 12, 15, 20, 25, 30],
+      "chance_why": "KIT3 (DUNGEON_ROOMS.md 1b): the chance in percent, per run, that a prize habitat holds its prize, rolled at the threshold (tools/dungeon_prize.py). The owner, 2026-10-10: 'not as easily found', a chance 'rising with band'. DESIGN numbers for trainer-balance-designer to tune; a room's params.prize.chance_by_band overrides",
+      "rumour": "Pitmen at the gate whisper that something rare was seen deeper in.",
+      "level": "lower_cap",
+      "level_why": "KIT3: the prize is spawned at its band's LOWER cap, so no entrant of the band is over the cap against it and the level cap's ball refusal (tools/levelcap_pack.py, strictly over the thrower's cap) never fires. A prize above the cap would need that callback to exempt it, reopening the trap the owner closed on 2026-09-28: the owner's decision, not taken",
       "why": "The owner, 2026-10-10: every dungeon Pokemon is catchable; a legendary or Ultra Beast is a dungeon's PRIZE, and only from gym 6 on, with Beast Balls (EXP-064); before that the hidden prize is a rare non-legendary (pass 3 chooses it). Band 4 (caps 50, 55): the cap is the next required leader's ace (docs/mechanics/PROGRESSION_LADDER.md 4.1, gym_ace_levels 20..55), so a player holding gym 6's badge has cap 50, and the Beast Ball is first sold at cinderlee, gym7_town (data/markets.json counters, badge 7). Band 3 (caps 40, 45) would include a player who has not reached gym 6 (cap 40). tools/dungeon_fights.py reads it: a habitat below this band stays uncatchable"
     },
     "stands": {

@@ -28,7 +28,9 @@
   },
   "bosses": [
     {"id": "entei_boss", "tool": "tools/entei_boss.py", "data": "data/entei_boss.json", "module": "entei_boss",
-     "where": "slot/s<k>/bind, beside its own cobblers.eb tag and the blackout exempt tag; both the catch-mode and the farm-mode Entei carry it (the farm Entei is uncatchable, refused at the hit before these callbacks run, with Cobblemon's own message and its ball dropped back)"}
+     "where": "slot/s<k>/bind, beside its own cobblers.eb tag and the blackout exempt tag; both the catch-mode and the farm-mode Entei carry it (the farm Entei is uncatchable, refused at the hit before these callbacks run, with Cobblemon's own message and its ball dropped back)"},
+    {"id": "dungeon_prize", "tool": "tools/dungeon_prize.py", "data": "data/dungeon_prize.json", "module": "dungeon_prize",
+     "where": "room/<dungeon>/<room>/s<g>/prize/bind (KIT3, DUNGEON_ROOMS.md 1b): a habitat's hidden prize from engine.prize.legendary_from_band on (a legendary or Ultra Beast), beside the slot's claim and its own dg.prize tags; below that band the prize is a rare non-legendary bound by prize/rare_bind, untagged, caught by any ball"}
   ],
   "bosses_why": "a dungeon boss is one this list names; tools/key_ball.py check builds each one's pack and fails if any of its bind functions does not add `tag`. NOT dungeon bosses, so never tagged: the shrine legendaries, the lake trio, the Regis, Lugia, Hoopa, Ursaluna, the gulch Megas, raid dens.",
   "does_not_cover": [

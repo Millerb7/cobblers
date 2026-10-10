@@ -1,0 +1,10 @@
+{
+  "schema": "cobblers.dungeon_prize/1",
+  "generated_by": "hand",
+  "unit": "KIT3, 2026-10-10 (docs/mechanics/DUNGEON_ROOMS.md 1b)",
+  "why": "The dungeon's hidden prize as data/key_ball.json names a boss: a tool (tools/dungeon_prize.py), a module whose build(load()) returns its bind functions, and this record. The prizes themselves are authored per habitat room in data/dungeons.json (params.prize), with engine.prize's defaults (legendary_from_band, chance_by_band, rumour, level). From legendary_from_band on, the prize's bind adds key_ball's tag: only a Beast Ball catches it.",
+  "species": {
+    "id": "cobblemon:kartana",
+    "why": "The REFERENCE prize: while no dungeon authors a legendary prize, tools/dungeon_prize.py build() generates the Beast-Ball bind for this species, so data/key_ball.json's boss check (every bind adds the tag) still checks the generator, and key_ball's audit reads one species per boss record (species.id). Kartana: an Ultra Beast that renders today (docs/mechanics/ULTRA_BEAST_BOSSES.md F1: MissingMons RP) and no dungeon's boss. The species of every authored prize are listed by tools/dungeon_prize.py anchor_species()."
+  }
+}

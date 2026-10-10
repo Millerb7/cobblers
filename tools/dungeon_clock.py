@@ -218,6 +218,7 @@ def walked(doc, d, slot=None):
     clock counts one route of each fork (clock_rooms)."""
     slot = slot if slot is not None else _first_slot(doc, d)
     out = []
+    extra = route_extras(doc, d, slot)
     for b in R.slot_build(doc, d, slot):
         r = b.room
         g = b.grid
@@ -232,20 +233,59 @@ def walked(doc, d, slot=None):
             raise R.RoomError("%s room %s: no walk from its door in to its door out (the walk check names why)" % (d["id"], r["id"]))
         if dead_end:
             dist = 2 * (r["length"] - 2)
+        dist += extra.get(r["i"], 0)
         out.append({"id": r["id"], "kind": r["kind"], "walk": dist + (DOOR_STEPS if r["door_out"] else 0),
                     "x_len": r["length"], "width": r["width"], "gate": r["gate"], "params": r["params"],
-                    "route": r.get("route", "main")})
+                    "route": r.get("route", "main"), "optional": bool(r.get("optional"))})
     return out, sum(x["walk"] for x in out)
+
+
+def route_extras(doc, d, slot):
+    """{room index: extra walk} for the rooms that start and end a fork route other than route 0 (KIT3, 2026-10-10). A
+    host's walk is to its MAIN door out and the room after the fork's from its MAIN door in, which is route 0's way; a
+    route leaving by another wall (a crossroads' north or south door) or arriving at another door walks the difference.
+    It is put on the route's own first and last rooms, never below 0, so the slowest route is priced as walked (the
+    independent audit measured the gap: a three-way crossroads put a fixture's band-3 clock a minute short)."""
+    builts = R.slot_build(doc, d, slot)
+    by_i = {b.room["i"]: b for b in builts}
+    out = {}
+
+    def dist(b, a, z):
+        g = b.grid
+        return walk_distance(g, g.local(*a), g.local(*z), jumps=R.flags_of(b.room["kind"])["jumps"])
+
+    for b in builts:
+        room = b.room
+        start, end = R.room_start(room), R.room_end(room)
+        if end is None:
+            continue
+        base = None
+        for door in R.room_doors(room):
+            if door["dir"] == "out" and not door.get("main") and not door.get("shortcut") and door["to"] in by_i:
+                to = by_i[door["to"]].room
+                if "/" not in (to.get("route") or ""):
+                    continue            # a side room (a dead end, optional) is never paid
+                base = dist(b, start, end) if base is None else base
+                d1 = dist(b, start, R.inner_cell(room, door))
+                if base is not None and d1 is not None and d1 > base:
+                    out[door["to"]] = out.get(door["to"], 0) + d1 - base
+            if door["dir"] == "in" and door.get("join_of") is not None:
+                base = dist(b, start, end) if base is None else base
+                d2 = dist(b, R.inner_cell(room, door), end)
+                if base is not None and d2 is not None and d2 > base:
+                    out[door["join_of"]] = out.get(door["join_of"], 0) + d2 - base
+    return out
 
 
 def clock_rooms(doc, d, band, rooms):
     """The rooms the clock pays for: the main route, and of each fork the route that takes longest at this band (a
-    player may take either; the clock must cover the slower). Side rooms are optional: the slack pays for them."""
+    player may take either; the clock must cover the slower). Side rooms and wings are optional: the slack pays for
+    them, and so for a fork route marked optional (a wing that rejoins, DUNGEON_ROOMS.md 1b, KIT3)."""
     main = [r for r in rooms if r.get("route", "main") == "main"]
     forks = {}
     for r in rooms:
         rt = r.get("route", "main")
-        if "/" in rt:
+        if "/" in rt and not r.get("optional"):
             f, k = rt.split("/", 1)
             forks.setdefault(f, {}).setdefault(k, []).append(r)
     out = list(main)

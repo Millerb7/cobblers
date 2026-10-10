@@ -244,6 +244,82 @@ def problems(doc, table=None):
 # ------------------------------------------------------------------------------------------------- functions
 
 
+# ------------------------------------------------------------------------------------------------- the vault budget (KIT3)
+
+
+def vault_hours(doc):
+    """{band: required hours}: the shortest rooms dungeon's clock over the slack (tools/dungeon_resources.py
+    required_hours, RESOURCES2's figure); a band no dungeon prices runs on the engine band's clock_s."""
+    import dungeon_resources as RS
+    hours = RS.required_hours(doc)
+    slack = float(doc["engine"]["clock"]["slack_factor"])
+    for b in doc["engine"]["bands"]:
+        hours.setdefault(b["band"], b["clock_s"] / slack / 3600.0)
+    return hours
+
+
+def vault_budget(doc, table=None):
+    """{band: cp} a whole vault may hold (DUNGEON_ROOMS.md 1b): dollar_factor x the gathering tier open at the band's
+    lowest badge count x vault_hours, every price and rate read from tools/economy_sim.py World (1 cp = $1)."""
+    import dungeon_resources as RS
+    import economy_sim as E
+    table = table if table is not None else load()
+    factor = float((table.get("vault_budget") or {}).get("dollar_factor", 1.0))
+    w = E.World(E.load_docs())
+    out = {}
+    for band, h in sorted(vault_hours(doc).items()):
+        badges = RS.band_badges(doc, band)
+        tier = max(v for n, v in w.tier_hour.items() if w.tier_opens_badges[n] <= badges)
+        out[band] = int(math.floor(factor * tier * h + 1e-9))
+    return out
+
+
+def vault_over(doc, table=None):
+    """[(dungeon id, room id, band, chest cp, chest budget)] for every vault chest over its band's budget (every
+    variant's records, every band, the loot authored for that band or the one below it)."""
+    import dungeon_puzzles as DP
+    table = table if table is not None else load()
+    budget = vault_budget(doc, table)
+    R = _rooms()
+    out = []
+    seen = set()
+    for d in doc["dungeons"]:
+        if not R.has_rooms(d):
+            continue
+        for r in R.all_records(d):
+            if r.get("kind") != "vault" or (d["id"], r["id"]) in seen:
+                continue
+            seen.add((d["id"], r["id"]))
+            p = r.get("params") or {}
+            n = max(1, int(p.get("chests", 4)))
+            for band in sorted(budget):
+                _k, spec = DP.loot_for(p, doc["engine"]["bands"], band)
+                if spec is None:
+                    continue
+                v = chest_cp(table, spec)
+                lim = budget[band] // n
+                if v is not None and v > lim:
+                    out.append((d["id"], r["id"], band, v, lim))
+    return out
+
+
+def vault_problems(doc, table=None):
+    """problems() when vault_budget.enforce is true; else nothing (warnings() names the chests over)."""
+    table = table if table is not None else load()
+    if not (table.get("vault_budget") or {}).get("enforce"):
+        return []
+    return ["%s vault %s band %d: a chest is worth %d cp, over the band's budget of %d a chest (data/dungeon_greed.json "
+            "vault_budget: a vault never pays more than the run's time spent gathering)" % x for x in vault_over(doc, table)]
+
+
+def vault_warnings(doc, table=None):
+    table = table if table is not None else load()
+    if (table.get("vault_budget") or {}).get("enforce"):
+        return []
+    return ["%s vault %s band %d: a chest is worth %d cp, over the vault budget of %d a chest (not enforced yet)" % x
+            for x in vault_over(doc, table)]
+
+
 def objective_lines(doc, table=None):
     table = table or load()
     out = ["scoreboard objectives add %s dummy" % v for v in OBJ_G.values()]

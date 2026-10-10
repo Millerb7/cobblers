@@ -2292,8 +2292,21 @@ def route_audit(pack, s, shell, start, F, base_walks):
             if f["cat"] in ("WALK", "TRAP", "VOID") and (f["cat"], f["slot"], f["room"], f["at"]) not in known:
                 F.add(f["cat"], s, f["room"], f["at"], "[route %s alone] %s" % (label, f["msg"]))
         F.stats[s.dungeon]["fork_routes_walked"] += 1
-        if walks:
+        # DUNGEON_ROOMS.md 1b (KIT3): a route marked optional (a wing that rejoins) is walked alone like any route, but
+        # the clock never pays for it: a choice that takes one is not a clock the record must cover
+        if walks and not any((f, rid) in optional_routes(s) for f, rid in combo):
             out.append(([r for r in paid if r not in blocked], walks))
+    return out
+
+
+def optional_routes(s):
+    """{(fork id, route id)} the record marks `optional` (this file's reading of the top-level fork entries)."""
+    out = set()
+    for e in (getattr(s, "rec", None) or {}).get("rooms") or []:
+        if e.get("kind") == "fork":
+            for rt in e.get("routes") or []:
+                if rt.get("optional") is True:
+                    out.add((e["id"], rt.get("id")))
     return out
 
 
@@ -2809,7 +2822,8 @@ def parkour_audit(pack, s, gr, F):
                 forks.append((a, z))
         F.stats[s.dungeon]["parkour_fork_sections"] += len(forks)
         p = rec.get("params") or {}
-        want = p.get("fork", len(ledges) - 1 >= 3)
+        # DUNGEON_ROOMS.md 1b (KIT3): a `hard` parkour (the one guarding a wing's payoff) has no easy way unless it names one
+        want = p.get("fork", len(ledges) - 1 >= 3 and not p.get("hard"))
         if want is not False and want is not None and not forks:
             F.add("PARKOUR", s, r, None, "the record asks for a fork (params.fork %r, %d sections) and no section has a "
                   "second way that finishes when the first way's platforms are taken away" % (p.get("fork"), len(ledges) - 1))

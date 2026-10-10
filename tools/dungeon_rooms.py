@@ -73,9 +73,11 @@ DEFAULT_FLAGS = {"dress": "light", "rise": False, "connector": False, "pit": 0, 
 # outline: the kind accepts a non-box outline (None = True unless it has a pit, jumps or a snap: its own geometry).
 # reversible: the kind may be walked west (dir "west"): only kinds whose geometry and hooks do not assume +x.
 EXTENSION_MODULES = ["dungeon_kinds", "dungeon_fights", "dungeon_puzzles", "dungeon_parkour", "dungeon_setpieces",
-                     "dungeon_life", "dungeon_relics", "dungeon_resources"]   # imported in this order, absent ones skipped
+                     "dungeon_life", "dungeon_relics", "dungeon_resources", "dungeon_crossroads", "dungeon_prize"]   # imported in this order, absent ones skipped
 
 KINDS = {}
+LAYOUT_FNS = []       # fn(doc, d, slot, rooms, items): a last pass over a laid slot (dungeon_crossroads: routes' looks, windows)
+POST_DRESS_FNS = []   # fn(ctx): after the theme's dress ops, before pits are plugged and the hull is lit (dungeon_crossroads)
 PICK_EXTRA_FNS = []   # fn(d, themes) -> [block]: blocks beyond the seams and cracked faces a dungeon's pick may break (dungeon_resources)
 FLAGS = {}
 DRESS = {}          # name -> (fn, level)
@@ -350,13 +352,21 @@ def flatten(d):
     room). `dead_end`: the last room of a side entry (no door out)."""
     items = []
 
-    def chain(recs, route, first_attach, dead_end=False):
+    def chain(recs, route, first_attach, dead_end=False, meta=None):
         prev = None
+        meta = meta or {}
         for k, r in enumerate(recs):
             if r.get("kind") in CONTAINERS:
                 raise RoomError("%s: a %s inside a route is not supported (one level of forks)" % (r.get("id"), r["kind"]))
             att = first_attach if k == 0 else ("out", prev)
-            items.append({"rec": r, "route": route, "attach": att, "dead_end": dead_end and k == len(recs) - 1})
+            it = {"rec": r, "route": route, "attach": att, "dead_end": dead_end and k == len(recs) - 1,
+                  "optional": bool(meta.get("optional", False))}
+            if k == 0:
+                # KIT3 (DUNGEON_ROOMS.md 1b): a route's look and sign belong to the door its first room is entered by
+                for key in ("look", "sign"):
+                    if meta.get(key) is not None:
+                        it[key] = meta[key]
+            items.append(it)
             prev = len(items) - 1
         return prev
 
@@ -372,7 +382,7 @@ def flatten(d):
                 if not rt.get("rooms"):
                     raise RoomError("%s: route %s has no rooms" % (r["id"], rt.get("id")))
                 att = ("out", host) if k == 0 else ("from", host, dict(rt.get("from") or {}))
-                ends.append(chain(rt["rooms"], "%s/%s" % (r["id"], rt.get("id", k)), att))
+                ends.append(chain(rt["rooms"], "%s/%s" % (r["id"], rt.get("id", k)), att, meta=rt))
             pending = ends
             host = None
         elif kind == "side":
@@ -623,6 +633,8 @@ def layout(doc, d, slot):
         room["y_lo"] = min(room["y_lo"], min(room["floors"]) - room["outline"].sink())
         room["hull_lo"] = room["y_lo"] - 1
         room["box"][1] = room["y_lo"]
+    for fn in LAYOUT_FNS:
+        fn(doc, d, slot, rooms, items)
     return rooms
 
 
@@ -1388,6 +1400,8 @@ def build_room(doc, d, slot, room, theme):
             continue
         ctx = DressCtx(doc, d, slot, room, theme, b, grid, trail, keep, level, rng(d, room, "dress:" + spec["op"] + str(spec.get("salt", ""))))
         fn_(ctx, spec)
+    for post in POST_DRESS_FNS:
+        post(DressCtx(doc, d, slot, room, theme, b, grid, trail, keep, level, rng(d, room, "post:" + post.__name__)))
     if (level or (outline is not None and not outline.is_box())) and "catch" not in b.anchors:
         plug_pits(DressCtx(doc, d, slot, room, theme, b, grid, trail, keep, level, rg), fl)
     if not fl["dark"] and not b.meta.get("no_hull_lights"):
