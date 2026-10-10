@@ -1727,8 +1727,20 @@ def pits(grid, start, jumps, cls=None):
     or more from a walked cell into a neighbouring column that lands outside the walk (a 1x1 water hole between a column
     and a wall); (b) a standable cell outside the walk whose four sides are shut at body height (a 1x1 shaft between
     trunks, reached by climbing). Rooms with a catch floor (parkour, the collapse bridge) are made of drops on purpose
-    and are not asked."""
+    and are not asked.
+
+    A block that stops a body but holds nobody up (G.NOSUP: a big dripleaf) is asked both ways and the pits united: as
+    an obstacle (it blocks the way out of a nook a jump got into: the independent audit's TRAP on a shaped jungle drift)
+    and as air (a player who stands on it falls into its cell: LIFE's TRAP at jungle `treasury`)."""
     cls = grid.cls() if cls is None else cls
+    if (cls == G.NOSUP).any():
+        as_air = cls.copy()
+        as_air[as_air == G.NOSUP] = G.PASS
+        return _pits(grid, start, jumps, cls) | _pits(grid, start, jumps, as_air)
+    return _pits(grid, start, jumps, cls)
+
+
+def _pits(grid, start, jumps, cls):
     st, p = G.standable(cls)
     nx, ny, nz = st.shape
     reach = G.walk(grid, [start], jumps=jumps, cls=cls)
