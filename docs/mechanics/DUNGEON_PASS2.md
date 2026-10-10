@@ -89,3 +89,9 @@ the record contract it publishes first); then the three authors on KIT2's merge;
 - **Playtest, pass 2 (the owner, 2026-10-10):** the Night Shift finished with about 15 minutes of the clock to spare,
   flying over the maze in creative, mining a few ores, with a level-100 Urshifu against band 1 (the playtest switch).
   The owner: "seems good". Not a timing measurement of a normal run (no maze walk, one-shot fights, little greed).
+- **Legendaries and Ultra Beasts are the prize (the owner, 2026-10-10):** "I want them and legendaries and ultra beasts
+  to be the prize of a dungeon, but not as easily found." Read as: every dungeon Pokemon catchable (living rooms, nests,
+  mini-bosses at ordinary values); the legendary/UB catchable but HIDDEN: at the end of an optional wing behind a
+  secret, present only on some runs (chance rising with band, perhaps a rumour on the board), caught under
+  DUNGEON_CATCHES.md (fail-safe on the clock; Beast Ball for UBs, EXP-064) and weighing heavily in the greed points.
+  UBs per ULTRA_BEAST_BOSSES.md (each unused UB a dungeon boss or prize). Pass 3 builds the hiding; GREED the values.
