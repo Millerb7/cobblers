@@ -36,7 +36,12 @@ water only, every id present in the 1.21.1 jar. A dress op has a `level` (`light
 `full` places obstacles and only runs in rooms whose kind is dressed `full`, off a trail kept clear for the player), may
 carry `kinds` / `not_kinds`, and `lit: true` if it emits light (a dark room skips it). Ops: `base_course`, `pillars`,
 `timber`, `streak`, `floor_strip`, `floor_patches`, `ground_cover`, `trunks`, `canopy`, `wall_vines`, `stream`,
-`columns`, `piles`. New ops register with `register_dress(name, fn, level)`.
+`columns`, `piles`. New ops register with `register_dress(name, fn, level)`. A theme may opt in to
+`hull.tall_lights` (`block`, `every`, `under`; the ruin does): a room whose ceiling lattice would have to be closer than
+`under` to reach its floor is lit from the floor course instead (`floor_lights`, a light block every `every`, moved to the
+nearest open floor cell when covered), keeps a sparse ceiling lattice at `light_every`, and any standable cell neither
+reaches gets the theme's own dressing block under it turned into the light, else a light in the ceiling over it
+(`cap_dark_dressing`; never a kind's block). Without the key a theme lights exactly as before.
 
 The jungle is dense on purpose (the owner's word): jungle and mangrove logs floor to ceiling off a zig-zagging trail
 (one cell in five), two layers of leaves with holes, hanging curtains and froglights as the ceiling, vines on trunks

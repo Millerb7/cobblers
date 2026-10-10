@@ -75,7 +75,7 @@
     "flooded_ruin": {
       "name": "The drowned halls",
       "why": "Prismarine and mossy, cracked stone brick; standing water a block deep in channels and pools to wade, kelp, seagrass and sea pickles in it; columns that are broken off or lying on the floor; dim (sparse sea lanterns, the pickles' glow). Collapsed arches in the maze are the maze's cracked, mossy bands.",
-      "hull": {"wall": "minecraft:mossy_stone_bricks", "floor": "minecraft:prismarine_bricks", "ceiling": "minecraft:dark_prismarine", "light": "minecraft:sea_lantern", "light_every": 10, "min_light": 2},
+      "hull": {"wall": "minecraft:mossy_stone_bricks", "floor": "minecraft:prismarine_bricks", "ceiling": "minecraft:dark_prismarine", "light": "minecraft:sea_lantern", "light_every": 10, "min_light": 2, "tall_lights": {"block": "minecraft:sea_lantern", "every": 9, "under": 6, "why": "a hall whose ceiling lattice would have to be closer than 6 to reach the floor (tools/dungeon_rooms.py floor_lights: every room 8 or more high) is lit from below instead: sea lanterns set into the drowned floor every 9, glowing up through the water, a sparse lattice (light_every) left in the vault overhead, and a lamp capping any broken column the two cannot reach. The ruin stays dim, as the theme says, instead of a ceiling of lanterns every 3"}},
       "door": {"gate": "minecraft:iron_bars", "frame": "minecraft:chiseled_stone_bricks", "lintel": "minecraft:mossy_stone_bricks"},
       "rip": {"frame": "minecraft:crying_obsidian", "opening": "minecraft:black_terracotta"},
       "lamp": "minecraft:redstone_lamp",
@@ -86,10 +86,10 @@
         {"op": "base_course", "where": "top", "block": "minecraft:cracked_stone_bricks"},
         {"op": "pillars", "every": 6, "block": "minecraft:chiseled_stone_bricks", "broken_p": 0.35},
         {"op": "floor_patches", "per100": 7, "size": [2, 4], "blocks": [{"block": "minecraft:cracked_stone_bricks", "w": 3}, {"block": "minecraft:mossy_stone_bricks", "w": 3}, {"block": "minecraft:dark_prismarine", "w": 2}]},
-        {"op": "stream", "count": 1, "width": [2, 3], "pools": 2, "pool_size": [4, 8], "bed": "minecraft:dark_prismarine", "not_kinds": ["entry_room", "exit_room", "boss_arena", "safe_room"], "lit": true, "plants": [
+        {"op": "stream", "count": 2, "width": [2, 3], "pools": 3, "pool_size": [4, 8], "bed": "minecraft:dark_prismarine", "not_kinds": ["entry_room", "exit_room", "boss_arena", "safe_room"], "lit": true, "plants": [
           {"block": "minecraft:kelp[age=25]", "p": 0.12}, {"block": "minecraft:seagrass", "p": 0.2}, {"block": "minecraft:sea_pickle[pickles=4,waterlogged=true]", "p": 0.05}]},
-        {"op": "columns", "block": "minecraft:mossy_stone_bricks", "cap": "minecraft:chiseled_stone_bricks", "density": 0.012, "thick_p": 0.3, "broken_p": 0.55, "fallen_p": 0.6},
-        {"op": "piles", "density": 0.015, "blocks": [{"block": "minecraft:cracked_stone_bricks", "w": 3}, {"block": "minecraft:mossy_cobblestone", "w": 2}, {"block": "minecraft:stone_bricks", "w": 1}]},
+        {"op": "columns", "block": "minecraft:mossy_stone_bricks", "cap": "minecraft:chiseled_stone_bricks", "density": 0.018, "thick_p": 0.3, "broken_p": 0.55, "fallen_p": 0.6},
+        {"op": "piles", "density": 0.02, "blocks": [{"block": "minecraft:cracked_stone_bricks", "w": 3}, {"block": "minecraft:mossy_cobblestone", "w": 2}, {"block": "minecraft:stone_bricks", "w": 1}]},
         {"op": "wall_vines", "p": 0.06, "len": [2, 5], "blocks": [{"block": "minecraft:vine"}], "salt": "v"},
         {"op": "wall_vines", "p": 0.05, "blocks": [{"block": "minecraft:glow_lichen"}], "lit": true, "salt": "l"}
       ],
