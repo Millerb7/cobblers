@@ -2579,6 +2579,7 @@ def setpiece_audit(pack, s, start, gr, F):
             snap(sim, label)
 
         sim = fresh()
+        entered_w = sim.w.copy()      # the room as a member finds it: the gates before it cleared (open)
         snap(sim, "entered")
         for k in range(0, len(own), 3):                  # walked through, a keeper pass every 3 cells
             step(sim, own[k], "walked to %d %d %d" % gr.xyz(own[k]))
@@ -2707,14 +2708,18 @@ def setpiece_audit(pack, s, start, gr, F):
                 entrant(sim2, s, 1)
                 sim2.scores.update(scores)
                 sim2.call(FN + "slot/s%d/reset" % s.g if fid == "reset" else fid, Ctx(ex=sim2.player, pos=sim2.player.pos))
-                diff = np.argwhere(w2.g[box_slice(w2, b)] != start.g[start_sl])
+                # the slot reset puts back the START (every gate shut); the piece's own restore/drain runs mid-run and
+                # puts back the room as the member ENTERED it (the gates before it open): against the start, the open
+                # gate at its own door in read as a fault (8 false RESETs, 2026-10-10)
+                base = start if fid == "reset" else entered_w
+                diff = np.argwhere(w2.g[box_slice(w2, b)] != base.g[box_slice(base, b)])
                 if len(diff):
                     c = tuple(int(diff[0][k]) + b[k] for k in range(3))
                     tag = ("RESET", fid)
                     if tag not in reported:
                         reported.add(tag)
                         F.add("RESET", s, r, c, "[set piece %s, %s] after %s the room has %s where it started with %s "
-                              "(%d cells differ)" % (piece, label, fid.rsplit("/", 1)[-1], w2.get(*c), start.get(*c), len(diff)))
+                              "(%d cells differ)" % (piece, label, fid.rsplit("/", 1)[-1], w2.get(*c), base.get(*c), len(diff)))
 
 
 def _components(gr, nodes, ban):
@@ -2910,12 +2915,38 @@ def margin_audit(pack, doc, s, gr, F):
     sim.scores[(PLAYER, "dg.clock")] = 10 ** 8
     sim.scores[(PLAYER, "dg.rate")] = 1
 
-    def est(x):
+    # A rooms dungeon's margin prices the room's own walk back (dg.wb), set each pass by the generated
+    # slot/s<g>/rooms from the hull the member stands in; a spine dungeon's prices x. Both are READ from the generated
+    # text here and run through the real m/margin: never the generator's numbers (DG2-INTEGRATE moved the margin from x
+    # to dg.wb; this read x alone and reported 260 late rooms the pack does not have).
+    wb_boxes = []
+    for ln in pack.lines(FN + "slot/s%d/rooms" % s.g):
+        m = re.match(r"execute if entity @s\[([^\]]*)\] run scoreboard players set @s dg\.wb (\d+)$", ln)
+        if m:
+            wb_boxes.append((sel_box(split_args(m.group(1))), int(m.group(2))))
+
+    def wb_at(n):
+        x, y, z = gr.xyz(n)
+        val = None
+        for box, v in wb_boxes:            # in order: the last box that holds the cell stands, as the function does
+            if box and all(lo <= c + 0.5 < hi for c, (lo, hi) in zip((x, y, z), box)):
+                val = v
+        return val
+
+    def est(x, wb=None):
         sim.player.pos = (x + 0.5, 96.0, 0.5)
+        if wb is None:
+            sim.scores.pop((PLAYER, "dg.wb"), None)
+        else:
+            sim.scores[(PLAYER, "dg.wb")] = wb
         sim.call(FN + "m/margin", Ctx(ex=sim.player, pos=sim.player.pos))
         return sim.scores.get(("#bk", "dg.t"))
     x0 = int(min(gr.xyz(n)[0] for n in need))
-    e1, e2 = est(x0), est(x0 + 560)
+    rooms_mode = bool(wb_boxes)
+    if rooms_mode:
+        e1, e2 = est(x0, 0), est(x0, 560)
+    else:
+        e1, e2 = est(x0), est(x0 + 560)
     if e1 is None or e2 is None or e2 == e1:
         F.add("MARGIN", s, None, None, "m/margin gives no estimate the audit can read")
         return
@@ -2942,14 +2973,21 @@ def margin_audit(pack, doc, s, gr, F):
     worst = {}
     for n, d in dist.items():
         x = gr.xyz(n)[0]
-        late = d / pace - (e1 + (x - x0) / pace)
+        if rooms_mode:
+            w = wb_at(n)
+            if w is None:          # out of every hull (a door column): the member keeps the last room's value
+                continue
+            late = d / pace - (e1 + w / pace)
+        else:
+            late = d / pace - (e1 + (x - x0) / pace)
         r = room_of_node(s, gr, n)
         if late > worst.get(r, (0,))[0]:
             worst[r] = (late, n, d)
     F.stats[s.dungeon]["margin_rooms_checked"] += len({room_of_node(s, gr, n) for n in dist})
     for r, (late, n, d) in sorted(worst.items(), key=lambda kv: -kv[1][0]):
         F.add("MARGIN", s, r, gr.xyz(n), "the way-back warning comes %d s late here: the walk back is %d blocks, the "
-              "margin prices %d (x alone, plus its fixed extra)" % (math.ceil(late), d, round(d - late * pace)))
+              "margin prices %d (%s, plus its fixed extra)" % (math.ceil(late), d, round(d - late * pace),
+                                                                 "the room's dg.wb" if rooms_mode else "x alone"))
 
 
 # ------------------------------------------------------------------------------------------------- static checks
