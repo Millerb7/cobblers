@@ -26,6 +26,113 @@ consecutive rooms share a door: 3 wide, 4 high, two wall columns deep, exactly e
 First room `entry_room`, last `exit_room`, exactly one `boss_arena`; the engine reads the board, the threshold, the
 boss spot and the far rip from them (`dungeon.points()` returns the same keys for a rooms dungeon).
 
+## 1a. The pass-2 record (KIT2, 2026-10-10): outlines, doors anywhere, forks, secrets, shortcuts, variants
+
+Every field below is OPTIONAL; a record without them builds exactly as section 1 (a box room entered on its west wall,
+left by its east wall). The three pass-1 dungeons use none of them until their authors re-author them.
+
+**Shape.** `"shape"`: `box` | `oval` | `l` | `t` | `gallery` | `cavern` | `split` | `ring`, with `"shape_params"`:
+
+| Shape | What it is | `shape_params` (all optional) |
+|---|---|---|
+| `box` | the pass-1 room | |
+| `oval` | an ellipse in the room's box | `fill` 0.75-1.0 (how much of the box it fills) |
+| `l` | two arms; one corner of the box is rock | `corner` `ne`/`nw`/`se`/`sw` (the one cut), `cut` [fx, fz] fractions of the box (default [0.5, 0.5]) |
+| `t` | a bar along one long side and a stem | `bar` `north`/`south`, `stem` fraction of the length (0.4) |
+| `gallery` | a band curving across the box in z | `band` fraction of the width (0.55), `waves` (1.5) |
+| `cavern` | noise-carved: ragged walls, alcoves, rock pillars, an uneven floor | `pillars` per 100 cells (1.2), `alcoves` (4), `rough` max floor lift (1) |
+| `split` | two levels: a terrace along one long wall `level` higher, a trench `depth` deep between, crossed by the trail, stairs up at one end | `level` (4), `depth` (2), `side` `north`/`south`, `frac` the terrace's share of the width (0.35) |
+| `ring` | a plaza round a central feature (a raised ring of rock, a pool or columns) | `feature` `rock`/`pool`/`columns`, `radius` (fraction 0.3) |
+
+A dungeon with `"shape_mix": true` gives every room without `shape` its theme's default (`themes.<id>.shapes.mix`,
+by kind, weighted, deterministic per room). Kinds with their own geometry keep the box whatever the record says:
+`maze`, `parkour`, `collapse_bridge` and any kind registered with `pit`, `jumps` or a snap (register flag `outline`,
+default True otherwise; a kind may set it False). The outline only ever ADDS rock: the doors, every anchor (5 x 5 round
+it), every `reserve` box, the bbox centre (5 x 5) and the 3-wide trail between them stay open and at the base floor,
+so a kind built for a box still works inside any outline. The fill is `replace air`, so it never removes a kind's block.
+`xa..xb/za..zb`, `ix0..ix1/iz0..iz1` and `box` stay the room's BOUNDING box (selectors, keeper boxes); what is open is
+`room["outline"]`: `open(x, z)`, `lift(x, z)` (floor above the base floor; negative in a trench), `floor(x, z)`
+(feet level), `cells()`. `default_anchors()` places on open, level cells of the outline.
+
+**Doors.** `"in"` and `"out"` (the boxes in the built room keep their names `door_in` / `door_out`):
+```
+"in":  {"side": "west"|"north"|"south"|"east", "at": 3, "y": 0}
+"out": {"side": "east"|"north"|"south"|"west", "at": 3, "dz": 4, "y": 4}
+```
+`side` is the wall the door is in. `at` places a door in a north or south wall: the door's centre is `at` blocks from
+the interior's west edge (`ix0`), default 2 for `in` and `length - 5` for `out`. `dz` (east or west wall `out`) is
+`params.exit_dz`. `y` is a LANDING: the door's floor is `y` above the room's base floor, with a 3 x 3 landing in front of
+it and a one-block staircase down to the floor, built by the kit. The next room's `in` must be on the opposite wall
+(`out` south -> `in` north); its base floor is the door's floor less its own `in.y`. So the route turns (a door in a
+side wall puts the next room beside this one, across the strip) and climbs (landings, `rise`) anywhere.
+`"dir": "east"` (default) | `"west"` (default `in` east, `out` west; the room is laid toward -x: the route doubles
+back). `west` is allowed only for kinds registered `reversible` (`drift`, `stairs`). `"align": "center"|"north"|"south"`
+places a room entered by an east or west wall across the strip (default `center`, pass 1's).
+Rooms are placed door to door; `problems()` refuses two rooms whose boxes (walls, floor and ceiling courses included)
+overlap, a room outside the strip (x, z) or the dimension (y), and a door whose two sides do not meet. Rooms may be
+STACKED (one under another) when their boxes do not overlap.
+
+**Forks and side rooms.** Two entries may stand in `rooms` beside ordinary rooms:
+```
+{"id": "f1", "kind": "fork", "routes": [
+    {"id": "fast", "rooms": [ ... ]},
+    {"id": "safe", "from": {"side": "south", "at": 20, "y": 0}, "rooms": [ ... ]}]}
+{"id": "s1", "kind": "side", "from": {"side": "north", "at": 8}, "rooms": [ ... ]}
+```
+A fork's first route leaves by the previous room's `out`; every other route by its own `from` door on that room. All
+routes rejoin at the room after the fork, through its `in` wall: route 0 by its `in`, the others by doors where they
+arrive (the last room of a route may say `"length": "fit"` to be stretched to the join). A `side` entry is a dead end
+off the previous room by its `from` door; its last room has no door out. Room ids are unique across all routes; the
+room index `i` (state holder `#s<g>r<i>`) runs over the rooms in record order, routes included. `layout()` gives every
+room `route` (`"main"`, `"<fork>/<route>"`, `"<side>"`) and `doors` (every door of the room: `{"box", "side", "y",
+"to": <room i>, "dir": "in"|"out"}`); `door_in`/`door_out` remain the main ones. The entry, the boss arena and the exit
+are on the main route. A room's `gate: cleared` closes all its doors out.
+
+**Secrets.** `"secrets": [{"id": "s1", "type": "cracked"|"balcony", "side": "north"|"south", "at": 0.6}]` on a room.
+`cracked`: a chamber in the rock beside the room (5 x 4, 4 high) behind a 1 x 2 face of the theme's
+`shapes.secret_block`, the only block besides the seam the rift pick may break in that dungeon (`pick_blocks(d)`); the
+room's reset puts it back. `balcony`: a ledge up a staircase, and from its end a gap of 2 to an alcove in the wall only
+the ledge sees. Anchors: `secret` (the relic spot in each, walk-checked with the face broken / with jumps),
+`secret_door` (the breakable cells), `balcony`. Nothing else may place `shapes.secret_block`.
+
+**Shortcuts.** `"shortcuts": [{"id": "c1", "to": "<earlier room id>", "at": 10}]` on the FAR room: a door through both
+walls where the two rooms touch, closed by the theme's gate block, opened from the far side only (the far room's tick:
+the member stands on the `shortcut` anchor's cells) by `room/<d>/<far>/s<g>/shortcut_<id>`; the slot reset closes it.
+The two rooms must share a wall plane with 7 or more blocks of overlap and the same floor there.
+
+**Variants.** `"variants": [{"id": "a"}, {"id": "b", "mirror": true}, {"id": "c", "seed": "c"},
+{"id": "d", "seed": "d", "mirror": true, "swap": {"<room id>": {...fields...}}, "order": ["<top-level ids>"]}]` on a
+dungeon. Slot k builds `variants[(k - 1) % n]`: `mirror` swaps north and south (sides, `dz`, `align`, outlines), `seed`
+re-rolls every room's randomness (`rng(d, room, salt)` then depends on it), `swap` overrides a room's fields (`params`
+merged one level; an alternate kind), `order` permutes the top-level entries (entry first, exit last). `variant_of(doc,
+slot)` gives `{"index", "id", ...}`; every call that takes a slot (`layout`, `plan`, `slot_build`, `points`) builds that
+slot's variant; `problems()` walks every distinct variant. Entry (tools/dungeon.py) prefers a free slot whose variant is
+not the one the player last ran (`dg.lv_<short>`, 1-based), else any free slot.
+
+**For other units.** Place by the outline, never the box: `DressCtx.open(x, z)`, `.floor(x, z)`, `.walls()` (open cells
+beside rock with their face), `.standable_cells()` (already the real grid). Never place `shapes.secret_block`; keep
+off `ctx.reserved(x, z)` (now including landings, stairs, secrets, shortcuts).
+
+**As built (KIT2, 2026-10-10; built and checked on the simulator and the independent audit, not run in Minecraft).**
+- Code: `tools/dungeon_outline.py` (the shapes), `tools/dungeon_rooms.py` (placement door to door, forks, variants,
+  landings, rails, secrets, shortcuts, the checks), `tools/dungeon_kinds.py` (wall dressing on the real faces),
+  `tools/dungeon_grid.py` (`NOSUP`, `walk(strict=)`), `tools/dungeon_clock.py` (walk ends, routes, variants),
+  `tools/dungeon.py` (`pick_blocks`, the variant pick at entry, `dg.lv_<short>`). Fixture using every field:
+  `tests/fixtures/dungeon_kit2_demo.json` (21 rooms, a fork, a side room, both secrets, a shortcut, a hall entered 12
+  up a grand stair, a return walked west UNDER the route, 4 variants): 0 problems in all three themes.
+- `BOX_ONLY_KINDS` (`maze`, `parkour`, `collapse_bridge`, `setpiece`) never get a theme mix's outline and keep pass 1's
+  doors (west in, east out, no landing, no extra door, no secret); a kind registered `outline=False` likewise.
+- A landing or stair step `RAIL_FROM` (4) or more over the floor beside it gets a rail of the theme's gate block.
+- A lantern theme's room more than 14 over its floor hangs its lanterns on long chains to 6 over the floor beneath; any
+  standable cell a pass-2 room's lights leave dark gets the hull's light set into its floor (`light_dark_cells`).
+- Stacked rooms keep one block apart (`BED_UNDER`: a stream writes its bed under the floor course).
+- A gauntlet/ambush room refuses any floor lifted 3 or more and a balcony (its barrier is 4 high: V6 clears it).
+- Pass-1 records still build (0 problems) but their dressing changes where it was unsafe: the jump-in pit test plugs
+  2-5 nook cells in jungle `sanctum`, `tangle`, `undercroft`; `ground_cover` sets a big dripleaf only where all eight
+  cells round it are open floor (beside a trunk or rock it sealed nooks: a TRAP twice, here and in LIFE's run); a 2 x 2
+  trunk or column needs floor under all four feet (over a trench or a stream it floated and sealed a cell). The mine's
+  shells are byte-identical; jungle and ruin shells differ in where trunks, columns and dripleaves stand.
+
 ## 2. Themes (`data/dungeon_themes.json`)
 
 Three: `mine`, `jungle`, `flooded_ruin`. A theme names the hull (wall, floor, ceiling, light and its spacing), the door
@@ -62,6 +169,10 @@ sea pickles, columns standing, broken or lying down.
 | `declare_kind(name)` | a kind named before it exists: builds as a themed room with its anchors, `warnings()` lists it |
 | `EXTENSION_MODULES` | `dungeon_kinds`, `dungeon_fights`, `dungeon_puzzles`: imported at load, absent ones skipped. A wave-2 module registers its kinds on import and edits nothing here |
 | `EXTRA_CHECKS` | append `fn(doc, d, slot) -> [problem]` to add kind checks to `problems()` |
+| `variant_of(doc, d, slot)` / `resolve(doc, d, slot)` / `variant_slots(doc, d, slots)` | pass 2: the slot's variant, the record as that slot builds it, one slot per variant |
+| `flatten(d)` / `all_records(d)` | pass 2: rooms in record order with their route and how they attach; every record in every variant |
+| `room_doors(room)`, `main_door(room, "in"/"out")`, `inner_cell(room, door)`, `room_start(room)`, `room_end(room)` | pass 2: every door (`{side, c, y, box, dir, to, main, gate[, shortcut]}`), the cell inside one, the walk's ends |
+| `floor_xz(room, x, z)`, `open_near(room, x, z, r)`, `pick_blocks(d)` | pass 2: the outline's floor, the nearest open column, what the rift pick may break |
 
 An op is `("fill", box, block[, "keep" | "replace <block>"])` or `("set", pos, block)`; `fill(...)` and `setb(...)` build
 them. Kind flags: `dress` (`none|light|full`), `rise`, `connector`, `pit` (blocks of drop to a catch floor), `no_deploy`,
@@ -174,6 +285,15 @@ every standable cell lit (an optimistic Manhattan bound). Mutations that must fa
 platforms with wider gaps, a kind that places lava or sand or punches the floor, hull lights off, a wall block added to the
 pick's list.
 
+Pass 2 (KIT2) adds, per variant: every door of a room reached from its door in and back; every gate box covers its
+opening (a shut gate leaves no gap); no room writes outside its own box; no two rooms' boxes meet (stacked rooms one
+apart); each secret reached WITH its trick (face broken / the jumps of V6) and NOT without it; the pick's count is the
+seams plus the secrets' faces; pits gain (c) jump-ins (a flat jump of up to 3 and a fall onto a cell the strict jumping
+walk cannot leave) and a big dripleaf (`G.NOSUP`) is asked both as an obstacle and as air. Generator mutations that
+fail, run on the fixture (`mine`): the outline ignoring what it must keep (47), a cracked face of plain rock (4), the
+balcony's gap widened to 4 (4), no landing under a raised door (12), door boxes one off centre (184), fork routes not
+stretched (16), no spur to an extra door (4).
+
 ## 7. The clock of a full-length dungeon (`tools/dungeon_clock.py`, unit DG-NS)
 
 The bands' `clock_s` (29-39 minutes) were set for the short spine of `DUNGEONS.md` 4.2. A rooms dungeon carries its own
@@ -203,6 +323,10 @@ timed no fight; when it does, change the constants and re-derive):
 | puzzle 90, resources (the free tier) 30, safe room 20, the run's cues 30 | |
 | vault | 0: optional, priced by its own `clock_cost_s` |
 
+Pass 2: the walk runs from `room_start` to `room_end` (doors in any wall, at their landings); the clock counts the
+main route and, of each fork, the route that takes longer at that band (side rooms are optional: the slack pays), and
+takes the largest over the dungeon's variants.
+
 **clock** = ceil(required x `engine.clock.slack_factor` (1.25) / 60) x 60: whole minutes, as 4.2. Optional rooms (an open
 habitat, a nest that passes, the vault, greed past the free tier) are paid from the slack, as 4.2 intends.
 
@@ -223,5 +347,16 @@ threshold's clocks with this table or 4.2's):
   fallback; the dark room is walkable without the torches.
 - **The collapse** is per keeper pass (1 s), so its granularity is a few blocks at sprint; and shared by co-op members
   (`members_max` is 1).
+- **Pass 2, unproven or not done (KIT2):** nothing of 1a has run in Minecraft. The independent audit walks slot 1
+  only and reuses its graph for the others ("SLOT ... not slot 1's moved"), so with `variants` slots 2-4 report SLOT
+  and SOFTLOCK findings that are its assumption, not the pack's; with each variant put first, all twelve (four
+  variants x three themes) and the three authored dungeons with `shape_mix` report nothing else. On the way it found
+  four real faults, all fixed: a shaped streak writing past its room, a dripleaf nook, a floating 2 x 2 trunk, and a
+  room touching the exit whose far rip's click box reached through the wall (now `RIP_CLEAR`). AUDIT2 must walk each
+  variant and route on its own graph, and not map rooms by x (`room_of_x`). `tools/dungeon.py`'s return-margin warning
+  measures the way back to the back rip in x, which a route that turns and doubles back makes too short (the warning
+  comes late); the board's leg distances are x offsets too. Relics or lore per secret, and a set across runs, are not
+  built (only the `secret` anchor). Windows onto earlier rooms are not built. `can_break` on the secret block in
+  adventure is R2's shape (EXP-074), unrun for these ids.
 - **Not here:** puzzles, vaults (DG-PUZZLES), the boss's
   crews and the three dungeons' room lists (wave 2).

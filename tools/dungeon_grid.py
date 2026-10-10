@@ -26,6 +26,8 @@ from collections import deque
 import numpy as np
 
 PASS, SOLID, WATER, HAZARD = 0, 1, 2, 3
+NOSUP = 4      # stops a body but holds nobody up: a big dripleaf tilts under a player and drops them (KIT2, 2026-10-10)
+NOSUPS = {"minecraft:big_dripleaf"}
 
 AIR = {"minecraft:air", "minecraft:cave_air", "minecraft:void_air"}
 PASSABLE = AIR | {
@@ -62,6 +64,8 @@ def classify(block):
     b = base(block)
     if b in HAZARDS:
         return HAZARD
+    if b in NOSUPS:
+        return NOSUP
     if b in WATERS or b in ("minecraft:kelp", "minecraft:seagrass", "minecraft:tall_seagrass", "minecraft:kelp_plant"):
         return WATER if b in WATERS else PASS
     if b in PASSABLE:
@@ -169,8 +173,9 @@ JUMP_FLAT_MAX = 4      # cells from take-off to landing: a flat gap of at most 3
 JUMP_RISE_MAX = 3      # a rise of one with a gap of at most 2
 
 
-def walk(grid, starts, jumps=False, cls=None):
-    """The set of local (ix, iy, iz) standable cells reachable from the local start cells, on reversible edges only."""
+def walk(grid, starts, jumps=False, cls=None, strict=False):
+    """The set of local (ix, iy, iz) standable cells reachable from the local start cells, on reversible edges only.
+    strict: a jump also needs the gap clear at the take-off's feet level (nothing to vault: a dripleaf, a log)."""
     cls = grid.cls() if cls is None else cls
     st, p = standable(cls)
     nx, ny, nz = st.shape
@@ -214,6 +219,7 @@ def walk(grid, starts, jumps=False, cls=None):
                         continue
                     top = max(y, by)
                     clear = all(p[x + dx * k, top + 1, z + dz * k] and p[x + dx * k, top + 2, z + dz * k]
+                                and (not strict or p[x + dx * k, min(y, by), z + dz * k])
                                 for k in range(1, n))
                     if dy == 1:
                         clear = clear and p[x, y + 2, z] and p[x, y + 3, z]
