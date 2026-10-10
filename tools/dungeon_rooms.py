@@ -2031,6 +2031,7 @@ BARRIER_KINDS = {"gauntlet", "ambush"}   # tools/dungeon_fights.py: a barrier 4 
 BARRIER_LIFT_MAX = 2                      # standing 3 up, a flat jump of 3 clears a 4-high barrier's top (V6)
 
 
+RIP_CLEAR = 4      # the rips' interaction boxes are 3 wide and clicked from 3 (the audit's reach, no line of sight)
 BED_UNDER = 1      # a stream's bed is set one under the floor course (the water replaces the course): a room writes there
 
 
@@ -2127,6 +2128,18 @@ def plan_problems(doc, d, slot):
         if r["kind"] in BARRIER_KINDS and (lm >= BARRIER_LIFT_MAX + 1 or any(s.get("type") == "balcony" for s in r.get("secrets") or [])):
             bad.append("%s: a gauntlet's barriers are 4 high: a floor lifted %d (or a balcony) would let a player jump over "
                        "one (at most %d here)" % (lab, lm, BARRIER_LIFT_MAX))
+    rips = [(r["id"], (r["xa"] + 1, r["floor_in"], r["z_in"])) for r in rooms if r["kind"] == "entry_room"]
+    rips += [(r["id"], (r["xb"] - 1, r["floor_in"], r["z_in"])) for r in rooms if r["kind"] == "exit_room"]
+    for owner, (px, py, pz) in rips:
+        for r in rooms:
+            if r["id"] == owner:
+                continue
+            dx = max(r["ix0"] - px, 0, px - r["ix1"])
+            dz = max(r["iz0"] - pz, 0, pz - r["iz1"])
+            dy = max(r["y_lo"] - (py + 3), 0, py - (r["ceil_y"] - 1))
+            if max(dx, dy, dz) <= RIP_CLEAR:
+                bad.append("%s: room %s comes within %d of room %s's rip: its click box would reach through the wall "
+                           "(keep other rooms %d away)" % (label, r["id"], max(dx, dy, dz), owner, RIP_CLEAR + 1))
     for a_i, a in enumerate(rooms):
         for b in rooms[a_i + 1:]:
             if _overlap(a, b):
