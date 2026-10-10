@@ -73,7 +73,7 @@ DEFAULT_FLAGS = {"dress": "light", "rise": False, "connector": False, "pit": 0, 
 # outline: the kind accepts a non-box outline (None = True unless it has a pit, jumps or a snap: its own geometry).
 # reversible: the kind may be walked west (dir "west"): only kinds whose geometry and hooks do not assume +x.
 EXTENSION_MODULES = ["dungeon_kinds", "dungeon_fights", "dungeon_puzzles", "dungeon_parkour", "dungeon_setpieces",
-                     "dungeon_life"]   # imported in this order, absent ones skipped
+                     "dungeon_life", "dungeon_relics"]   # imported in this order, absent ones skipped
 
 KINDS = {}
 FLAGS = {}

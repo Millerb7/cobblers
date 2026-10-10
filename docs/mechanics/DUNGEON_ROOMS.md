@@ -355,8 +355,47 @@ threshold's clocks with this table or 4.2's):
   room touching the exit whose far rip's click box reached through the wall (now `RIP_CLEAR`). AUDIT2 must walk each
   variant and route on its own graph, and not map rooms by x (`room_of_x`). `tools/dungeon.py`'s return-margin warning
   measures the way back to the back rip in x, which a route that turns and doubles back makes too short (the warning
-  comes late); the board's leg distances are x offsets too. Relics or lore per secret, and a set across runs, are not
-  built (only the `secret` anchor). Windows onto earlier rooms are not built. `can_break` on the secret block in
+  comes late); the board's leg distances are x offsets too. Relics, lore and the set across runs: section 9. Windows
+  onto earlier rooms are not built. `can_break` on the secret block in
   adventure is R2's shape (EXP-074), unrun for these ids.
 - **Not here:** puzzles, vaults (DG-PUZZLES), the boss's
   crews and the three dungeons' room lists (wave 2).
+
+## 9. Relics: the rewards behind the secrets (DG2-RELICS, 2026-10-10; built and simulated, not run in Minecraft)
+
+Rung: **datapack plus generator** (`tools/dungeon_relics.py`, `data/dungeon_relics.json`, one `relics` entry last in each
+theme's `dress`); an advancement, a score and merged room hooks are enough, so no mod, scripting layer or companion
+process is proposed. A room with a secret carries `params.relic` (id, `[a-z][a-z0-9_]{1,31}`, unique in the dungeon),
+`params.lore` (printable ASCII, at most 160 characters) and optionally `params.relic_name` (at most 32; default the id in
+title case). A room with two secrets puts `relic` / `lore` / `relic_name` inside each secret record instead.
+
+- **Where.** A pedestal (the theme's `pedestal` block with its `armed` block on it) stands on the cell beside the secret's
+  `secret` anchor, toward the chamber's wall (cracked) or the alcove's end (balcony); the anchor stays walkable, so the
+  kit's walk check still reaches it WITH the trick and refuses it without.
+- **Pickup.** The room's `tick` runs `room/<d>/<room>/s<g>/relic_<id>` for a member within 1.6 of the pedestal's centre.
+  The function returns at once if the player holds the criterion `<id>` of `cobblers:dungeons/relics/<short>`. Otherwise it
+  grants that criterion, adds 1 to the player's `dg.rl_<short>`, gives the relic item (the theme's `items`, named, lored,
+  glinting, `custom_data` `cobblers_relic`), titles the name, tells the lore in chat, sounds a chime and sets the armed
+  block to the `taken` block for the run. **Once per player, ever:** the guard is the player's advancement, so a death, a
+  logout, the slot's reset and every later run leave it standing. A co-op member who has not taken it is given theirs by
+  walking up, whatever the pedestal shows.
+- **Reset.** The room's `reset` (the slot's) sets the state holder `#s<g>r<i>l<j>` to 0 and sets the armed block back:
+  the display is re-armed. No function revokes an advancement or resets, sets or removes a count (tested over the whole
+  generated pack).
+- **The collection.** One advancement per dungeon, `cobblers:dungeons/relics/<short>`: a `minecraft:impossible` criterion
+  per relic (the union over every variant), every one required, goal frame, toast and chat announcement. The last
+  relic completes it. `dg.rl_<short>` is the player's count (created at load by `relic/load`).
+- **The run board.** The board is one entity every member reads, so it carries a static line (how many are hidden). The
+  per-player count is a chat line at arrival (`relic/<short>/show`, appended to `slot/s<g>/arrive`) and an action-bar line
+  while the member stands within 5 of the board before the clock starts (`relic/<short>/bar`, appended to `m/lobby`).
+- **No economy.** The base items (clock, echo shard, disc fragment, heart of the sea) are in no bank price, counter,
+  buyer, trade or reward (tested against `modpack/config/cobbledollars/bank.json`, `data/markets.json`, `traders.json`,
+  `produce_buyer.json`, `rewards.json`, `direct_trades.json`); no CobbleDollars.
+- **Checks** (`D.problems()`): the record (id, lore, name, uniqueness across rooms and variants, a relic on a room with no
+  secret, a secret without a relic once the dungeon has any); the pedestal exists in the grid; the trigger, read back from
+  the GENERATED tick line, reaches no cell a player stands on without the secret's trick. A dungeon with secrets and no
+  relics builds and `D.warnings()` says so.
+- **Unproven in game:** the selector form `advancements={cobblers:dungeons/relics/ns={first_find=true}}`, `advancement
+  grant @s only <adv> <criterion>` on an impossible criterion, the item components as written, the sound and particle
+  ids (the particle is checked against the jar), and a goal-frame root advancement showing as a tab of its own. The pedestal
+  is blocks, not an item frame: an item frame is an entity the shell's chunk-look chain would have to track.

@@ -665,6 +665,11 @@ def board_text(doc, d, slot):
              "Dying here takes no items, only your money and what the run has earned.",
              "Leaving the game does not stop the rift.",
              "The rift has taken your sigil. Go back now and it is returned; past this board it is spent."]
+    if DR.has_rooms(d):
+        import dungeon_relics as DRel   # lazy (DG2-RELICS): one static line when the dungeon hides relics
+        line = DRel.board_line(doc, d)
+        if line:
+            lines.append(line)
     return "\n".join(lines)
 
 
@@ -1698,8 +1703,13 @@ def build(doc, **kw):
     import dungeon_life as DL       # lazy, as dungeon_fights is (unit LIFE): the ambient Pokemon's macro and per-slot claim
     fns.update(DL.functions(doc))
     DL.patch_functions(doc, fns)    # and a slot whose only animals are ambient discards them at its free and tend too
+    import dungeon_relics as DRel   # lazy, as dungeon_life is (unit DG2-RELICS): the secrets' relics and each dungeon's collection
+    fns.update(DRel.functions(doc))
+    DRel.patch_functions(doc, fns)  # the arrival line and the lobby's action bar
+    files.update(DRel.pack_files(doc))  # a dungeon's collection advancement
     files.update(DF.pack_files(doc))    # the stands' NPC classes and the healer's advancement
-    files["data/minecraft/tags/function/load.json"] = json.dumps({"values": [F("load")] + DF.load_entries() + DL.load_entries(doc)}, indent=2) + "\n"
+    files["data/minecraft/tags/function/load.json"] = json.dumps(
+        {"values": [F("load")] + DF.load_entries() + DL.load_entries(doc) + DRel.load_entries(doc)}, indent=2) + "\n"
     files["data/minecraft/tags/function/tick.json"] = json.dumps({"values": DF.tick_entries()}, indent=2) + "\n"
     ch, _ws, _wr = chains(doc)
     for ref, lines in ch.items():
@@ -1744,7 +1754,8 @@ def warnings(doc):
     """Things that build but are not finished: kinds declared in a dungeon's rooms with no implementation yet, and a
     rooms dungeon still on the bands' clocks (set for the short spine; tools/dungeon_clock.py derives its own)."""
     import dungeon_fights as DF     # lazy: tools/dungeon_fights.py imports this module
-    return DR.warnings(doc) + DF.warnings(doc) + [
+    import dungeon_relics as DRel   # lazy (DG2-RELICS)
+    return DR.warnings(doc) + DF.warnings(doc) + DRel.warnings(doc) + [
         "%s: no clock_s_by_band, so its clock is the bands' (the short spine's): run python tools/dungeon_clock.py %s"
         % (d["id"], d["id"]) for d in dungeons(doc) if DR.has_rooms(d) and "clock_s_by_band" not in d]
 

@@ -1,0 +1,47 @@
+{
+  "schema": "cobblers.dungeon_relics/1",
+  "generated_by": "hand (the authored side of tools/dungeon_relics.py; the room kit reads nothing here)",
+  "why": "The rewards behind the secrets (docs/mechanics/DUNGEON_PASS2.md, replayability 2). Every room that carries a secret also carries params.relic (an id, unique in the dungeon) and params.lore (one or two sentences, under lore_max characters; params.relic_name overrides the name made from the id). At the secret's relic spot a pedestal stands; a member who steps up to it is given the relic ONCE, for good: the guard is an advancement criterion on the player (cobblers:dungeons/relics/<short>, one criterion per relic), so it survives a death, a logout, the slot's reset and every later run. A criterion granted sets the player's count (dg.rl_<short>); the last one completes the advancement, which is the collection. The relic is a keepsake: an item no bank, counter or buyer prices, named and lored, no CobbleDollars, nothing sold. The slot's reset puts the pedestal back; it never touches the record.",
+  "rung": "datapack plus generator: an advancement per dungeon, a score per dungeon, and per-room functions merged into the kit's tick and reset hooks. No mod, no scripting layer.",
+  "lore_max": 160,
+  "name_max": 32,
+  "lore_wrap": 36,
+  "trigger_radius": 1.6,
+  "trigger_radius_why": "measured from the pedestal's centre at feet level: the spot beside it (1.0) and the cells diagonal to it (1.41) are inside, a cell two away (2.0) is not. problems() proves no cell a player can reach without the secret's trick is inside, from the built grid",
+  "sound_found": "minecraft:block.amethyst_block.chime",
+  "sound_done": "minecraft:ui.toast.challenge_complete",
+  "particle": "minecraft:end_rod",
+  "collection": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "frame": "goal",
+    "title": "%(name)s: every relic",
+    "description": "Every relic hidden in %(name)s, found.",
+    "colour": "gold"
+  },
+  "themes": {
+    "mine": {
+      "pedestal": "minecraft:chiseled_deepslate",
+      "armed": "minecraft:lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:clock", "minecraft:echo_shard", "minecraft:disc_fragment_5"],
+      "colour": "gold",
+      "why": "a chiselled deepslate plinth with a lantern lit on it; the lantern goes out when someone takes the relic"
+    },
+    "jungle": {
+      "pedestal": "minecraft:mossy_stone_bricks",
+      "armed": "minecraft:verdant_froglight",
+      "taken": "minecraft:moss_block",
+      "items": ["minecraft:heart_of_the_sea", "minecraft:disc_fragment_5", "minecraft:echo_shard"],
+      "colour": "green",
+      "why": "mossy temple brick with a froglight on it; the light is gone when the relic is"
+    },
+    "flooded_ruin": {
+      "pedestal": "minecraft:chiseled_stone_bricks",
+      "armed": "minecraft:soul_lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:echo_shard", "minecraft:heart_of_the_sea", "minecraft:clock"],
+      "colour": "aqua",
+      "why": "a carved brick plinth with a soul lantern, blue in the dark; it goes out when the relic is taken"
+    }
+  }
+}
