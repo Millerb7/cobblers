@@ -290,8 +290,18 @@ def test_every_bound_is_the_hand_bound_of_its_party(built_with_stand):
         assert 0 < lo <= want_lo and lo >= want_lo * 0.99, (rel, lo, want_lo)   # the least is never above the true least
         n += 1
     # each dungeon's boss: 6 bands x 3 stages; 6 bands for every trainer of every stand and gauntlet room the data
-    # carries (DG-INTEGRATE: the three full-length dungeons seat 15); the test stand's 6
-    trainers = sum(len(r["params"]["trainers"]) for d in DOC["dungeons"] for r in d.get("rooms") or []
+    # carries (DG-INTEGRATE: the three full-length dungeons seat 15); the test stand's 6. Since pass 2 a stand may sit in a
+    # fork's route or a side room or wing (DUNGEON_ROOMS.md 1a), so every record counts, not only the top-level ones
+    def records(rooms):
+        for r in rooms or []:
+            if r["kind"] == "fork":
+                for rt in r.get("routes") or []:
+                    yield from records(rt.get("rooms"))
+            elif r["kind"] == "side":
+                yield from records(r.get("rooms"))
+            else:
+                yield r
+    trainers = sum(len(r["params"]["trainers"]) for d in DOC["dungeons"] for r in records(d.get("rooms"))
                    if r["kind"] in ("stand", "gauntlet"))
     assert trainers > 0
     assert n == 18 * len(DOC["dungeons"]) + 6 * trainers + 6

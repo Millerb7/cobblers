@@ -306,10 +306,20 @@ def test_a_route_leaving_the_crossroads_by_a_side_wall_walks_its_own_way(monkeyp
     ids = {b.room["i"]: b.room["id"] for b in R.slot_build(doc, d, slot1(doc))}
     named = {ids[i] for i, v in ex.items() if v > 0}
     assert {"o_a", "s_a"} <= named and "g_a" not in named, named
-    with_extra = C.derive(doc, d)
+    # the walk the clock reads carries them. (Compared per route, not as the derived clock: the clock pays the SLOWEST
+    # route of each fork, rounded up to the minute, so whether these routes' extra shows in it depends on which route is
+    # slowest; DG3-INTEGRATE's safe-way fix lengthened the fixture's parkour and the clock sums came out equal)
+    rows, _t = C.walked(doc, d, slot1(doc))
+    with_extra = {r["id"]: r["walk"] for r in rows}
+    req_with = {k: sum(C.required(doc, {}, 3, [r for r in rows if r["route"] == k]).values()) for k in {r["route"] for r in rows}}
     monkeypatch.setattr(C, "route_extras", lambda *a, **k: {})
     R._BUILT.clear()
-    assert sum(C.derive(doc, d).values()) < sum(with_extra.values())
+    rows0, _t = C.walked(doc, d, slot1(doc))
+    without = {r["id"]: r["walk"] for r in rows0}
+    req_without = {k: sum(C.required(doc, {}, 3, [r for r in rows0 if r["route"] == k]).values()) for k in req_with}
+    assert with_extra["o_a"] > without["o_a"] and with_extra["s_a"] > without["s_a"] and with_extra["g_a"] == without["g_a"]
+    routes = {r["route"] for r in rows if r["id"] in ("o_a", "s_a")}
+    assert routes and all(req_with[k] > req_without[k] for k in routes), (req_with, req_without)
 
 
 # ------------------------------------------------------------------------------------------------- parkour
@@ -405,10 +415,36 @@ def test_key_ball_accepts_the_prize_and_bites_when_its_bind_drops_the_tag(monkey
     assert bad and all("dungeon_prize" in p for p in bad), bad
 
 
-def test_with_no_authored_prize_key_ball_checks_the_reference_bind():
-    files = PZ.build(D.load())
+def test_key_ball_checks_every_authored_legendary_prizes_bind_and_the_reference_only_without_one():
+    # pass 3 authors a legendary prize in each dungeon, so key_ball's check reads THEIR binds, one per slot
+    doc = copy.deepcopy(BASE)
+    want = set()
+    for slot in D.slots(doc):
+        for room in PZ.prize_rooms(doc, slot):
+            if any((PZ.species_at(doc, room, b["band"]) or (None, False))[1] for b in PZ.band_rows(doc)):
+                want.add("data/cobblers/function/dungeons/room/%s/%s/s%d/prize/bind.mcfunction"
+                         % (slot["dungeon"]["id"], room["id"], slot["g"]))
+    files = PZ.build(doc)
+    assert want and set(files) == want, sorted(set(files) ^ want)
+    assert {rel.split("/")[5] for rel in files} == {d["id"] for d in doc["dungeons"]}
+    assert all("tag @s add %s" % KB.boss_tag() in text.split("\n") for text in files.values())
+    # with no legendary prize authored anywhere, the reference prize's bind stands in
+    for d in doc["dungeons"]:
+        for r in _all_rooms(d):
+            if (r.get("params") or {}).get("prize"):
+                r["params"]["prize"].pop("legendary_by_band", None)
+    files = PZ.build(doc)
     assert list(files) == ["data/cobblers/function/dungeons/prize/reference/bind.mcfunction"]
     assert "tag @s add %s" % KB.boss_tag() in files[list(files)[0]].split("\n")
+
+
+def _all_rooms(d):
+    for e in d.get("rooms") or []:
+        yield e
+        for r in e.get("routes") or []:
+            yield from r.get("rooms") or []
+        if e.get("kind") == "side":
+            yield from e.get("rooms") or []
 
 
 @pytest.mark.parametrize("edit,needle", [
@@ -463,18 +499,22 @@ def test_the_engine_prize_defaults_rise_with_band_and_keep_the_lower_cap():
 
 def test_the_vault_budget_is_the_runs_gathering_wage_by_band():
     # the numbers DUNGEON_ROOMS.md 1b states, from the live data (tools/economy_sim.py World, the dungeons' clocks)
-    assert DG.vault_budget(BASE) == {1: 330, 2: 774, 3: 792, 4: 864, 5: 1441, 6: 1526}
+    # (the figures move with the shortest dungeon's clock: these are the pass-3 clocks')
+    assert DG.vault_budget(BASE) == {1: 347, 2: 792, 3: 846, 4: 882, 5: 1498, 6: 1611}
 
 
-def test_the_pass2_vaults_are_over_budget_and_named_until_enforced_then_refused():
-    over = DG.vault_over(BASE)
-    assert {(d, r) for d, r, *_ in over} >= {("night_shift", "pay_office"), ("jungle", "treasury")}
-    assert DG.vault_problems(BASE) == []                       # not enforced: the three dungeons still build
-    assert len(DG.vault_warnings(BASE)) == len(over)
-    assert all(w in DG.report(BASE) for w in DG.vault_warnings(BASE))   # python tools/dungeon_greed.py prints them
+def test_the_budget_is_enforced_and_every_authored_vault_is_inside_it_and_a_dearer_chest_is_refused():
     table = DG.load()
-    table["vault_budget"]["enforce"] = True
-    assert len(DG.vault_problems(BASE, table)) == len(over)
+    assert table["vault_budget"]["enforce"] is True
+    assert DG.vault_over(BASE) == [] and DG.vault_problems(BASE) == [] and DG.vault_warnings(BASE) == []
+    assert any("(enforced)" in line for line in DG.report(BASE))
+    # the closest real chest (the Night Shift's pay office at band 6): one more Revive puts it over
+    doc = copy.deepcopy(BASE)
+    vault = next(r for r in _all_rooms(doc["dungeons"][0]) if r["id"] == "pay_office")
+    loot = vault["params"]["loot_by_band"]
+    loot["6"] = list(loot["6"]) + [{"item": "cobblemon:revive", "count": 1}]
+    bad = DG.vault_problems(doc)
+    assert any("pay_office" in p and "band 6" in p for p in bad), bad
 
 
 def test_the_fixtures_vault_is_inside_the_budget_and_a_dearer_chest_is_not():

@@ -88,9 +88,13 @@ class Route:
 
 
 def _tier_opts(tier, relaxed):
-    """(hop sizes in cells, platform lengths) by tier; the lists are weighted by repeating."""
+    """(hop sizes in cells, platform lengths) by tier; the lists are weighted by repeating. Relaxed (the fallback when the
+    tier's own sizes cannot cover a leg's length) keeps the tier's longest hop and only adds short platforms: tier 1's way
+    (the fork's safe branch) never hops 4, whatever the leg (DG3-INTEGRATE: a leg of 4 cells, which 2 and 3 over 3-long
+    platforms cannot cover, fell back to a 4-cell hop on the main parkour's safe way in every seed). With platforms of 1
+    to 3, hops of 2 and 3 cover every length from 2."""
     if relaxed:
-        return [2, 3, 4], [1, 2, 3]
+        return ([2, 3] if tier == 1 else [2, 3, 4]), [1, 2, 3]
     return {1: ([2, 3], [3]), 2: ([3, 4, 3, 2], [3, 2, 3]), 3: ([4, 3, 4, 3, 2], [1, 2, 3, 1])}[tier]
 
 
@@ -384,9 +388,17 @@ def _plan_once(rg, room):
         # the fork sits mid-room, pulled toward the hard side as far as the safe way needs for its full detour (a bulge of
         # 8 past its row, below) and the hard row allows (no nearer the wall than MARGIN): in a narrow room the middle
         # left the safe way 5 and it was barely the long way (the ruin's aqueduct, 29 wide, DG2-INTEGRATE)
-        zf = min(mid, (iz1 - MARGIN) - 8 - 6)
-        zf = max(zf, iz0 + MARGIN + 6)
-        zc[fork_i] = zc[fork_i + 1] = min(max(zf, iz0 + 1 + half), iz1 - 1 - half)
+        # The two ways leave the fork ledge `row_off` either side of its centre: 6, or 5 when 6 leaves the safe way less
+        # than its full bulge (DG3-INTEGRATE: in the 25-wide rooms KIT3 recommends, 6 left a bulge of 6, so the safe way's
+        # z legs were 4 cells, which its short hops cannot cover, and it jumped 4 there in every seed). At 5 the two ways'
+        # platforms are still 6 apart in z (tier 3's up to 2 off its row, tier 1's 2), past any jump.
+        for row_off in (6, 5):
+            zf = min(mid, (iz1 - MARGIN) - 8 - row_off)
+            zf = max(zf, iz0 + MARGIN + row_off)
+            zf = min(max(zf, iz0 + 1 + half), iz1 - 1 - half)
+            if (iz1 - MARGIN) - (zf + row_off) >= 8:
+                break
+        zc[fork_i] = zc[fork_i + 1] = zf
     # ledge levels: 0 at the doors, 0..lvmax between, a step of at most 3 from the one before
     lvs = [0]
     for i in range(1, S):
@@ -410,10 +422,14 @@ def _plan_once(rg, room):
         A, B = ledges[i], ledges[i + 1]
         if i == fork_i:
             zf = zc[i]
-            hard_row, safe_row = zf - 6, zf + 6
+            hard_row, safe_row = zf - row_off, zf + row_off
             bulge = min(8, (iz1 - MARGIN) - safe_row)
             chain_straight(rg, route, A, B, hard_row, 3, lvmax, 2, "hard")
             chain_via(rg, route, A, B, safe_row, safe_row + bulge, safe_row, 1, lvmax, 0, "safe", flat=True)
+            # the fast way is told from the safe one by a jump the safe way never asks: at least one of FLAT_MAX cells
+            # (DG3-INTEGRATE: the Night Shift's slot 4 rolled a fast way of 3s only, as short as the safe way's jumps)
+            if not any(h["n"] == FLAT_MAX for h in route.hops if h["branch"] == "hard"):
+                raise R.RoomError("parkour: the fork's fast way has no jump of %d cells" % FLAT_MAX)
         else:
             r0, rB = zc[i], zc[i + 1]
             if abs(rB - r0) >= 8:

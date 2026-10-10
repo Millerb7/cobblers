@@ -184,6 +184,9 @@ DUNGEONS_DATA = json.loads((ROOT / "data" / "dungeons.json").read_text(encoding=
 TRAINER_KINDS, WILD_KINDS = ("stand", "gauntlet"), ("nest", "miniboss", "habitat")   # DUNGEON_ROOMS.md 4a
 
 
+KEY_TAG = json.loads((ROOT / "data" / "key_ball.json").read_text(encoding="utf-8"))["tag"]
+LEGENDARY_FROM = DUNGEONS_DATA["engine"]["prize"]["legendary_from_band"]
+KEEP_TAG = DUNGEONS_DATA["engine"]["sweep"]["keep_tag"]
 LIFE_KINDS = {"drift", "stairs", "maze", "puzzle", "vault", "resources", "dark_room", "safe_room"}
 
 
@@ -200,12 +203,25 @@ def expected_spawners():
             for r in slot_records(d, g - di * per):
                 if r["kind"] in TRAINER_KINDS:
                     out.update(("trainer", di, g, r["id"], k) for k in range(1, len(r["params"]["trainers"]) + 1))
-                elif r["kind"] in WILD_KINDS:
+                elif r["kind"] in WILD_KINDS and not (r["kind"] == "habitat" and "species" not in (r.get("params") or {})):
+                    # a habitat whose only Pokemon is the hidden prize (no `species` of its own, DUNGEON_ROOMS.md 1b) has
+                    # no resident spawn: its sites are the prize's, below
                     out.add(("wild", di, g, r["id"], None))
             # the ambient Pokemon (unit LIFE, tools/dungeon_life.py): ONE shared walker per slot, there when the dungeon has
             # a room of a kind that may have animals (the connectors, maze, puzzle, vault, resources, dark and safe rooms)
             if any(r["kind"] in LIFE_KINDS for r in slot_records(d, g - di * per)):
                 out.add(("life", di, g, None, None))
+            # the hidden prize (pass 3, DUNGEON_ROOMS.md 1b): a habitat's params.prize spawns, per band, the species its
+            # rare_by_band names below engine.prize.legendary_from_band or its legendary_by_band from it on; a band
+            # named by neither has no prize. One site per (room, band), whatever that band's chance
+            for r in slot_records(d, g - di * per):
+                pz = (r.get("params") or {}).get("prize")
+                if r["kind"] != "habitat" or not pz:
+                    continue
+                for band in range(1, 7):
+                    names = pz.get("legendary_by_band" if band >= LEGENDARY_FROM else "rare_by_band") or {}
+                    if names.get(str(band)):
+                        out.add(("prize", di, g, r["id"], band))
     return out
 
 
@@ -252,6 +268,10 @@ def classify_site(site):
     if m:
         di = next((i for i, d in enumerate(ds) if d["id"] == m.group(1)), None)
         return ("wild", di, int(m.group(3)), m.group(2), None)
+    m = re.fullmatch(r"cobblers:dungeons/room/([a-z0-9_]+)/([a-z0-9_]+)/s(\d+)/prize/spawn_b([1-6])", site)
+    if m:
+        di = next((i for i, d in enumerate(ds) if d["id"] == m.group(1)), None)
+        return ("prize", di, int(m.group(3)), m.group(2), int(m.group(4)))
     return None
 
 
@@ -343,12 +363,20 @@ def test_every_npc_an_engine_spawn_makes_carries_the_exempt_tag_when_the_spawn_r
             w.set("#s%d" % g, "dg.run", 1)
             w.call(site, PS_ctx(p))
             made = w.npcs + [e for e in w.spawned if e.kind == "cobblemon:pokemon"]
-            if kind == "wild":
+            if kind in ("wild", "prize"):
                 assert len(made) == len(lines) and not w.npcs, (site, band, len(lines), w.log)
             else:
                 assert len(made) == 1 and len(w.npcs) == 1, (site, band, stage, w.log)
             bare = [(e.kind, sorted(e.tags)) for e in made if EXEMPT not in e.tags]
             assert not bare, (site, band, stage, bare)
+            if kind == "prize":
+                # the prize is the slot's (its free and the keeper's stale pass discard it), carries the sweep's keep tag
+                # as every run-spawned Pokemon does (engine.sweep: the no-deploy sweep discards any Pokemon without it),
+                # and from legendary_from_band on the Beast Ball key's tag (data/key_ball.json); below it, not
+                assert len(made) == 1, (site, band, len(made))
+                tags = made[0].tags
+                assert "dg.s%d" % g in tags and KEEP_TAG in tags, (site, band, sorted(tags))
+                assert (KEY_TAG in tags) == (band >= LEGENDARY_FROM), (site, band, sorted(tags))
 
 
 def _exit_paths():

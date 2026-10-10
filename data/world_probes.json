@@ -2992,32 +2992,42 @@
         ]
       },
       {
-        "what": "the Night Shift rip (PLACEHOLDER, R16DR): its west post",
+        "what": "the Night Shift rip (PLACEHOLDER, R16DR): no frame since 2026-10-10; where its west post stood, the old mine's hill again (data/dungeons.json rip.restore)",
         "block": [
           1350,
           130,
           4117,
-          "minecraft:crying_obsidian"
+          "minecraft:dirt"
         ],
         "expect": true
       },
       {
-        "what": "... its dark opening",
+        "what": "... where its dark opening stood, the hill's grass skin again (rip.restore)",
         "block": [
           1352,
           131,
           4117,
-          "minecraft:black_terracotta"
+          "minecraft:grass_block"
         ],
         "expect": true
       },
       {
-        "what": "... its lintel",
+        "what": "... where its lintel stood, air (rip.restore)",
         "block": [
           1352,
           133,
           4117,
-          "minecraft:polished_blackstone_bricks"
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "... the scorched ground under the oval (rip.scorch)",
+        "block": [
+          1352,
+          129,
+          4118,
+          "minecraft:soul_soil"
         ],
         "expect": true
       },

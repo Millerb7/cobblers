@@ -11,7 +11,7 @@
     {"id": "d4", "kind": "drift", "length": 24, "width": 9, "height": 6},
     {"id": "vlt", "kind": "vault", "length": 40, "width": 21, "height": 7,
      "params": {"chests": 4, "clock_cost_s": 25, "loot_by_band": {
-       "1": [{"item": "minecraft:iron_ingot", "count": [4, 8]}, {"item": "minecraft:emerald", "count": 2, "chance": 0.5}],
+       "1": [{"item": "minecraft:iron_ingot", "count": [4, 8]}, {"item": "minecraft:gold_nugget", "count": 2, "chance": 0.5}],
        "4": "minecraft:chests/simple_dungeon"}}},
     {"id": "d5", "kind": "drift", "length": 24, "width": 9, "height": 6},
     {"id": "arena", "kind": "boss_arena", "length": 40, "width": 35, "height": 11},

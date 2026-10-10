@@ -697,6 +697,14 @@ A rip is built from these parts, none of which teleports by itself, so nothing c
   ticks while a player is within 48 blocks, so an unvisited rip costs one distance check;
 - **an interaction entity** filling the opening. A click runs `dg/door_click`, the proven arch click (EXP-034).
 
+**Since 2026-10-10 the overworld rip has no frame and no dark opening.** The owner, seeing the animated oval
+(`engine.rip_art`) in game: "do we have to have the old portal blocks around and behind it?" No: the oval stands free,
+with a small scorched patch of ground under it (`rip.scorch`) and a few purple particles drifting off it. `rip.frame` stays
+as the rip's PLANE, from which the oval, the click and the particles are measured (they stand where they did); R16DR's
+`rips/blocks_<short>` puts the plane back to what was there (`rip.restore`, measured by `python tools/dungeon.py
+--rip-restore` from `tools/ground.py` and, at the Night Shift, the old mine's hill as `tools/route1_old_mine.py` builds it),
+so a world that held a frame loses it. The parts below stand for the pocket's own rips.
+
 **Never** a `nether_portal` or `end_portal` block (DM 7.3: they teleport on their own), and never LegendaryMonuments'
 distortion portal (D4; DM 7.2: its destination is hard-coded, and one gap in a seal sends a player into a world-critical
 mod's dimension).

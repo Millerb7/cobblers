@@ -209,10 +209,10 @@ like any route. Every fork keeps at least one route that is not optional.
 **The vault budget** (`data/dungeon_greed.json` `vault_budget`): a vault chest's expected value (GREED's `chest_cp`)
 at band b is at most `dollar_factor` x the gathering tier open at the band's lowest badge count x the shortest dungeon's
 required hours, divided by the vault's chests: a vault never pays more than the same run's time spent gathering, the
-limit RESOURCES2 set for a resources room. With the kit's four chests: **band 1 82 cp, 2 193, 3 198, 4 216, 5 360, 6 381
-(0.8 to 3.8 points) a chest; a whole vault 330, 774, 792, 864, 1,441, 1,526 (floored).** Enforced by `problems()` when
-`vault_budget.enforce` is true; until the three authors rebalance their loot it is false and `python tools/dungeon_greed.py`
-(its report, `DG.vault_warnings()`) names every chest over (the pass-2 vaults are 7 to 150 points a chest).
+limit RESOURCES2 set for a resources room. With the kit's four chests and the pass-3 clocks: **band 1 86 cp, 2 198, 3 211, 4 220, 5 374, 6 402
+(0.9 to 4.0 points) a chest; a whole vault 347, 792, 846, 882, 1,498, 1,611 (floored).** The figures move with the shortest
+dungeon's clock. Enforced by `problems()` (`vault_budget.enforce` true since DG3-INTEGRATE: the pass-3 authors rebalanced
+every vault, and `python tools/dungeon_greed.py` names no chest over; the pass-2 vaults were 7 to 150 points a chest).
 
 **As built (KIT3, 2026-10-10; simulated and audited, not run in Minecraft).**
 - Kit hooks: `R.LAYOUT_FNS` (a last pass over a laid slot: routes' `optional`, looks, signs, windows on both doors) and
@@ -234,7 +234,15 @@ limit RESOURCES2 set for a resources room. With the kit's four chests: **band 1 
   back. A wild prize uses the fight rooms' macro spawn and the slot's claim (`wild/s<g>/bind`), so the slot's free and
   the keeper's stale-run pass discard it as any wild Pokemon of the slot.
 - `data/dungeon_prize.json` is the prize's record for `data/key_ball.json` (`bosses`): its `species` is the REFERENCE
-  prize whose bind key_ball's check builds while no dungeon authors a legendary prize.
+  prize whose bind key_ball's check builds while no dungeon authors a legendary prize. Since pass 3 all three do, so the
+  check reads their twelve binds (one per slot).
+- **DG3-INTEGRATE (2026-10-10), the fork's two ways.** In the 25-wide rooms recommended above, the safe way's detour had a
+  bulge of 6, so its two z legs were 4 cells, which tier 1's hops (2-3 over 3-long platforms) cannot cover; the planner fell
+  back to a 4-cell hop there in every seed and every dungeon: the "safe" way jumped as far as the fast one. Now the two ways
+  leave the fork ledge 5 either side of its centre when 6 would leave the safe way less than its full bulge of 8, and tier
+  1's fallback adds short platforms but never a longer hop; and the fast way must hold at least one 4-cell jump (the Night
+  Shift's slot 4 rolled one of 3s only). Measured on the three dungeons' twelve main parkours: the safe way's longest jump
+  3, 10 hops; the fast way's 4, 4-6 hops.
 
 ## 2. Themes (`data/dungeon_themes.json`)
 
@@ -444,6 +452,10 @@ threshold's clocks with this table or 4.2's):
 | night_shift | 1,243 main + 410 on the paid fork routes (2,208 all routes, the wing included) | **43** | **46** | **47** | **50** | **53** | **57** |
 | jungle | 1,929 all routes, wing and side room included (1,180 main, the slower way of each fork; pass 3, DG3-JUNGLE) | **42** | **47** | **47** | **52** | **55** | **59** |
 | flooded_ruin | 1,950 all routes and the wing (1,045 main; 1,290-1,499 paid at band 1) | **42** | **44** | **47** | **49** | **54** | **57** |
+
+DG3-INTEGRATE (2026-10-10): the parkour planner's safe-way fix (section 1b) moved the walks a little: all routes in slot 1
+now 2,212 (the Night Shift), 1,919 (the jungle) and 1,948 (the ruin), by `tools/dungeon_clock.py` as the independent
+audit reports it; every clock above still covers its derived one (`problems()` clean), so the clocks are unchanged.
 
 KIT3 (2026-10-10): "all routes" now walks each fork route's own way through its host and its join (`route_extras`,
 section 1b). The night shift's and the jungle's clocks still cover it; the ruin's, pinned to the tool plus its set piece's

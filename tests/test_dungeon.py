@@ -446,6 +446,28 @@ def test_a_clean_run_out_by_the_far_rip(pack):
     assert RUN_TAG not in p.tags and w.get(p.name, "tailend") == 1 and not w.get(p.name, "stale")
 
 
+@pytest.mark.parametrize("roll,present", [(1, True), (100, False)])
+def test_the_hidden_prize_roll_at_the_threshold_takes_both_outcomes(pack, roll, present):
+    # the threshold's `random value 1..100` (tools/dungeon_prize.py start_lines), queued in the simulator: a roll at
+    # or under the band's chance makes the prize present and tells the rumour; one over it leaves the room empty
+    import dungeon_prize as PZ
+    w = world(pack)
+    w.random_values = [roll] * 8
+    p = w.player("Gold", OW, (1352.5, 130, 4120.5))
+    p.inventory.append(soot())
+    click_rip(w, p)
+    s = arrive_and_cross(w, p)
+    rooms = PZ.prize_rooms(DOC, s)
+    assert rooms, "the Night Shift authors a prize room"
+    band = w.get(p.name, "dg.band")
+    assert 0 < PZ.chance(DOC, rooms[0], band) < 100
+    assert [x[:2] for x in w.random_log] == [(1, 100)] * len(rooms), w.random_log
+    for room in rooms:
+        assert w.get(PZ.holder(s, room), "dg.rs") == (1 if present else 0)
+    told = [m for m in p.messages if "Rumour: " in m]
+    assert bool(told) == present, p.messages
+
+
 def test_the_back_rip_before_the_threshold_returns_the_sigil_and_stamps_no_lockout(pack):
     w = world(pack)
     p = w.player("Brock", OW, (1352.5, 130, 4120.5))

@@ -131,18 +131,36 @@ def end_cell(g, r):
 
 # ================================================================================================= parkour
 
+_PARKOUR = []
+
+
 def parkour_rooms(every_slot=False):
     """The real parkour rooms: each dungeon's first slot, or (every_slot) every slot, since pass 2's variants re-roll per
-    slot and a quality that holds in slot 1 says nothing about slot 3."""
-    out = []
-    doc = D.load()
-    for d in doc["dungeons"]:
-        sls = [s for s in D.slots(doc) if s["dungeon"]["id"] == d["id"]]
-        for sl in (sls if every_slot else sls[:1]):
-            for b in R.slot_build(doc, d, sl):
-                if b.room["kind"] == "parkour":
-                    out.append((doc, d, sl, b))
-    return out
+    slot and a quality that holds in slot 1 says nothing about slot 3. Built once for the module (the twelve slots take
+    minutes) from the data as it stands; the tests that use it only read the builds or deep-copy a grid."""
+    if not _PARKOUR:
+        doc = D.load()
+        for d in doc["dungeons"]:
+            sls = [s for s in D.slots(doc) if s["dungeon"]["id"] == d["id"]]
+            for i, sl in enumerate(sls):
+                for b in R.slot_build(doc, d, sl):
+                    if b.room["kind"] == "parkour":
+                        _PARKOUR.append((i == 0, (doc, d, sl, b)))
+    return [x for first, x in _PARKOUR if every_slot or first]
+
+
+def parkour_records(d):
+    """The parkour records of a dungeon, read from the data (every room of every route and wing, DUNGEON_ROOMS.md 1a)."""
+    def walk(rooms):
+        for r in rooms or []:
+            if r["kind"] == "fork":
+                for rt in r.get("routes") or []:
+                    yield from walk(rt.get("rooms"))
+            elif r["kind"] == "side":
+                yield from walk(r.get("rooms"))
+            elif r["kind"] == "parkour":
+                yield r
+    return list(walk(d.get("rooms")))
 
 
 def islands(g, r):
@@ -226,7 +244,13 @@ def route_stats(g, r):
 
 def test_every_real_parkour_room_is_long_winding_climbing_and_has_hard_jumps_from_its_blocks():
     rooms = parkour_rooms(every_slot=True)
-    assert len(rooms) == 12, "one parkour per dungeon, in each of its four slots (variants)"
+    # pass 3 (DUNGEON_ROOMS.md 1b): a long main parkour and a hard one guarding a wing in each dungeon, in each of its
+    # four slots (variants)
+    doc = D.load()
+    per = doc["engine"]["slots"]["per_dungeon"]
+    assert all(len(parkour_records(d)) >= 2 for d in doc["dungeons"])
+    assert len(rooms) == per * sum(len(parkour_records(d)) for d in doc["dungeons"])
+    assert {b.room["id"] for _doc, _d, _sl, b in rooms} == {r["id"] for d in doc["dungeons"] for r in parkour_records(d)}
     for doc, d, sl, b in rooms:
         r, g = b.room, b.grid
         st = route_stats(g, r)
@@ -240,6 +264,11 @@ def test_every_real_parkour_room_is_long_winding_climbing_and_has_hard_jumps_fro
         # no jump on the whole route is beyond the rule: the planner's records, re-checked on the blocks
         for e in st["edges"].values():
             assert e[0] <= 4
+        if r["params"].get("hard"):
+            # KIT3's hard parkour has no fork (DUNGEON_ROOMS.md 1b), so nothing spreads it but its zig-zag, which the
+            # bends above already require; the half-width rule below is the forked parkour's (its two ways 10-12 apart
+            # and the safe way's bulge), and a hard one of four sections spans 11 of 25 (the ruin's sunk gallery, s11)
+            continue
         spread = max(c[2] for c in b.anchors["platforms"]) - min(c[2] for c in b.anchors["platforms"])
         assert spread >= (r["iz1"] - r["iz0"]) * 0.5, (lab, "the route uses the room's width", spread)
 
@@ -270,10 +299,17 @@ def test_parkour_hops_in_the_plan_agree_with_the_blocks_and_the_run_up_rule_hold
 
 
 def test_a_fork_has_two_ways_and_either_alone_gets_through():
+    hard_seen = 0
     for doc, d, sl, b in parkour_rooms(every_slot=True):
         r, g = b.room, b.grid
         fork = b.meta["fork"]
-        assert fork is not None, (d["id"], "every real parkour here is long enough for a fork")
+        if r["params"].get("hard"):
+            # KIT3's hard parkour (the one guarding a wing): no easy way, by design, and it is hard all through
+            assert fork is None and not any(h["branch"] for h in b.meta["hops"]), (d["id"], r["id"])
+            assert sum(1 for h in b.meta["hops"] if h["n"] == 4) >= 4, (d["id"], r["id"])
+            hard_seen += 1
+            continue
+        assert fork is not None, (d["id"], r["id"], "every real main parkour here is long enough for a fork")
         cls0 = g.cls()
         full = G.walk(g, [start_cell(g, r)], jumps=True, cls=cls0)
         assert end_cell(g, r) in full
@@ -314,6 +350,7 @@ def test_a_fork_has_two_ways_and_either_alone_gets_through():
                     if not (x1 - x0 >= 5 and z1 - z0 >= 5):
                         g3.apply(("fill", (x0, top - 1, z0, x1, top - 1, z1), "minecraft:air"))
         assert end_cell(g3, r) not in G.walk(g3, [start_cell(g3, r)], jumps=True, cls=g3.cls())
+    assert hard_seen, "the hard parkours were looked at"
 
 
 def test_no_platform_pair_is_a_short_cut_on_the_blocks():
