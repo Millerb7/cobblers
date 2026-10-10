@@ -71,6 +71,10 @@ def chain(base, box, shown, act, scopes, new_tag, count, holder, note="", all_sh
     boxes = [tuple(b) for b in box] if box and isinstance(box[0], (tuple, list)) else [tuple(box)]
     if not boxes or any(len(b) != 4 for b in boxes):
         raise ValueError("chain %s: a box is (x0, z0, x1, z1): %r" % (base, box))
+    for b in boxes:
+        n = (b[2] // 16 - b[0] // 16 + 1) * (b[3] // 16 - b[1] // 16 + 1)
+        if n > 256:     # vanilla: "Too many chunks in the specified area (maximum 256)"; the chain would never look
+            raise ValueError("chain %s: box %r is %d chunks; `forceload add` refuses more than 256" % (base, b, n))
     fls = ["%d %d %d %d" % b for b in boxes]
     # with a dimension, every line that searches or force-loads runs in it (see dim above); without, unchanged
     inrun = "execute in %s run " % dim if dim else ""

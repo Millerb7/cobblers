@@ -1581,8 +1581,13 @@ def chains(doc):
         acts += [line for line, _kind in ents]
         shown.append("@e[tag=%s]" % st)
         scopes += ["tag=%s,tag=%s" % (st, kind) for _line, kind in ents]
-        x, _y, z, dx, _dy, dz = points(doc, s)["box"]
-        boxes.append((x, z, x + dx, z + dz))
+        # a small box round each entity, never the slot's: a full-length slot is 292-348 chunks and `forceload add`
+        # refuses more than 256 in one area, so nothing loaded and the chain never saw its entities (staging,
+        # 2026-10-09: "0 of 36 standing ... it never finished")
+        for line, _kind in ents:
+            m = re.search(r"summon \S+ (-?[\d.]+) -?[\d.]+ (-?[\d.]+)", line)
+            ex, ez = int(float(m.group(1))), int(float(m.group(2)))
+            boxes.append((ex - 4, ez - 4, ex + 4, ez + 4))
     want_shell = sum(len(shell_entities(doc, s)) for s in sl)
     out = chunk_look.chain(F("shells/entities"), boxes, shown, acts, scopes, TAGS["shell_new"], "tag=%s" % TAGS["shell"],
                            SHELL_HOLDER, note="tools/dungeon.py", all_shown=True, dim=dim)
