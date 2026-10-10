@@ -1,0 +1,387 @@
+{
+ "why": "One of each DG-FIGHTS room kind, authored the way the three dungeons' room lists will write them (the PARAMS CONTRACT of the wave-2 brief). NOT a dungeon and not the kit's shared demo list: tests/test_dungeon_fights_rooms.py builds it in each theme.",
+ "rooms": [
+  {
+   "id": "entry",
+   "kind": "entry_room",
+   "length": 20,
+   "width": 15,
+   "height": 7
+  },
+  {
+   "id": "d1",
+   "kind": "drift",
+   "length": 30,
+   "width": 11,
+   "height": 6
+  },
+  {
+   "id": "stand1",
+   "kind": "stand",
+   "length": 64,
+   "width": 33,
+   "height": 8,
+   "gate": "cleared",
+   "params": {
+    "trainers": [
+     {
+      "name": "Gate Warden",
+      "team_by_band": {
+       "1": [
+        "geodude",
+        "onix"
+       ],
+       "2": [
+        "geodude",
+        "onix",
+        "graveler"
+       ],
+       "3": [
+        "geodude",
+        "onix",
+        "graveler"
+       ],
+       "4": [
+        "geodude",
+        "onix",
+        "graveler",
+        "golem"
+       ],
+       "5": [
+        "geodude",
+        "onix",
+        "graveler",
+        "golem",
+        "steelix"
+       ],
+       "6": [
+        "geodude",
+        "onix",
+        "graveler",
+        "golem",
+        "steelix",
+        "rhyperior"
+       ]
+      }
+     },
+     {
+      "name": "Shift Lead",
+      "team_by_band": {
+       "1": [
+        "voltorb",
+        "boldore"
+       ],
+       "2": [
+        "voltorb",
+        "boldore",
+        "magneton"
+       ],
+       "3": [
+        "voltorb",
+        "boldore",
+        "magneton"
+       ],
+       "4": [
+        "voltorb",
+        "boldore",
+        "magneton",
+        "probopass"
+       ],
+       "5": [
+        "voltorb",
+        "boldore",
+        "magneton",
+        "probopass",
+        "excadrill"
+       ],
+       "6": [
+        "voltorb",
+        "boldore",
+        "magneton",
+        "probopass",
+        "excadrill",
+        "magnemite"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "d2",
+   "kind": "drift",
+   "length": 24,
+   "width": 9,
+   "height": 6
+  },
+  {
+   "id": "ambush1",
+   "kind": "gauntlet",
+   "length": 84,
+   "width": 31,
+   "height": 7,
+   "gate": "cleared",
+   "params": {
+    "triggers": [
+     0.15,
+     0.42,
+     0.68
+    ],
+    "trainers": [
+     {
+      "name": "Lurker",
+      "team_by_band": {
+       "1": [
+        "zubat",
+        "golbat"
+       ],
+       "2": [
+        "zubat",
+        "golbat",
+        "crobat"
+       ],
+       "3": [
+        "zubat",
+        "golbat",
+        "crobat"
+       ],
+       "4": [
+        "zubat",
+        "golbat",
+        "crobat",
+        "gengar"
+       ],
+       "5": [
+        "zubat",
+        "golbat",
+        "crobat",
+        "gengar",
+        "haunter"
+       ],
+       "6": [
+        "zubat",
+        "golbat",
+        "crobat",
+        "gengar",
+        "haunter",
+        "mismagius"
+       ]
+      }
+     },
+     {
+      "name": "Cutpurse",
+      "team_by_band": {
+       "1": [
+        "meowth",
+        "persian"
+       ],
+       "2": [
+        "meowth",
+        "persian",
+        "sneasel"
+       ],
+       "3": [
+        "meowth",
+        "persian",
+        "sneasel"
+       ],
+       "4": [
+        "meowth",
+        "persian",
+        "sneasel",
+        "weavile"
+       ],
+       "5": [
+        "meowth",
+        "persian",
+        "sneasel",
+        "weavile",
+        "rattata"
+       ],
+       "6": [
+        "meowth",
+        "persian",
+        "sneasel",
+        "weavile",
+        "rattata",
+        "raticate"
+       ]
+      }
+     },
+     {
+      "name": "Tunnel Rat",
+      "team_by_band": {
+       "1": [
+        "dugtrio",
+        "sandshrew"
+       ],
+       "2": [
+        "dugtrio",
+        "sandshrew",
+        "sandslash"
+       ],
+       "3": [
+        "dugtrio",
+        "sandshrew",
+        "sandslash"
+       ],
+       "4": [
+        "dugtrio",
+        "sandshrew",
+        "sandslash",
+        "excadrill"
+       ],
+       "5": [
+        "dugtrio",
+        "sandshrew",
+        "sandslash",
+        "excadrill",
+        "garchomp"
+       ],
+       "6": [
+        "dugtrio",
+        "sandshrew",
+        "sandslash",
+        "excadrill",
+        "garchomp",
+        "diglett"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "d3",
+   "kind": "drift",
+   "length": 24,
+   "width": 9,
+   "height": 6
+  },
+  {
+   "id": "mini1",
+   "kind": "miniboss",
+   "length": 44,
+   "width": 31,
+   "height": 8,
+   "gate": "cleared",
+   "params": {
+    "species_by_band": {
+     "1": "onix",
+     "2": "steelix",
+     "3": "steelix",
+     "4": "aggron",
+     "5": "rhyperior",
+     "6": "metagross"
+    },
+    "level_offset": -1,
+    "scale": 1.4
+   }
+  },
+  {
+   "id": "d4",
+   "kind": "drift",
+   "length": 24,
+   "width": 9,
+   "height": 6
+  },
+  {
+   "id": "nest1",
+   "kind": "nest",
+   "length": 50,
+   "width": 33,
+   "height": 8,
+   "params": {
+    "species": [
+     "zubat",
+     "geodude",
+     "roggenrola",
+     "sableye"
+    ],
+    "count_by_band": {
+     "1": 3,
+     "2": 4,
+     "3": 4,
+     "4": 5,
+     "5": 6,
+     "6": 6
+    },
+    "level_spread": [
+     3,
+     6
+    ],
+    "spawns": 6
+   }
+  },
+  {
+   "id": "d5",
+   "kind": "drift",
+   "length": 24,
+   "width": 9,
+   "height": 6
+  },
+  {
+   "id": "hab1",
+   "kind": "habitat",
+   "length": 50,
+   "width": 31,
+   "height": 9,
+   "gate": "cleared",
+   "params": {
+    "species": "volcanion",
+    "level_by_band": {
+     "1": 25,
+     "2": 35,
+     "3": 45,
+     "4": 55,
+     "5": 62,
+     "6": 100
+    },
+    "fight_only": true,
+    "ambience": [
+     "end_rod",
+     "minecraft:block.beacon.ambient"
+    ]
+   }
+  },
+  {
+   "id": "d6",
+   "kind": "drift",
+   "length": 24,
+   "width": 9,
+   "height": 6
+  },
+  {
+   "id": "rest1",
+   "kind": "safe_room",
+   "length": 28,
+   "width": 21,
+   "height": 7,
+   "params": {
+    "healer": true,
+    "uses": 1
+   }
+  },
+  {
+   "id": "d7",
+   "kind": "drift",
+   "length": 24,
+   "width": 9,
+   "height": 6
+  },
+  {
+   "id": "arena",
+   "kind": "boss_arena",
+   "length": 40,
+   "width": 35,
+   "height": 11
+  },
+  {
+   "id": "exit",
+   "kind": "exit_room",
+   "length": 14,
+   "width": 11,
+   "height": 6
+  }
+ ]
+}
