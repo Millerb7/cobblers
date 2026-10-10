@@ -489,6 +489,10 @@ def report(doc, table=None):
             continue
         seen.add(key)
         lines.append("%s %s from band %d: %.2f points a chest" % (d["id"], rm["id"], k, (chest_cp(table, spec) or 0) / 100.0))
+    vb = vault_budget(doc, table)
+    lines.append("vault budget (KIT3, a whole vault; a chest is its share): " + ", ".join("b%d %d cp" % kv for kv in sorted(vb.items()))
+                 + (" (enforced)" if (table.get("vault_budget") or {}).get("enforce") else " (not enforced yet)"))
+    lines += vault_warnings(doc, table)
     return lines
 
 

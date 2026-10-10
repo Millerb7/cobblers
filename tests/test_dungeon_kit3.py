@@ -470,7 +470,8 @@ def test_the_pass2_vaults_are_over_budget_and_named_until_enforced_then_refused(
     over = DG.vault_over(BASE)
     assert {(d, r) for d, r, *_ in over} >= {("night_shift", "pay_office"), ("jungle", "treasury")}
     assert DG.vault_problems(BASE) == []                       # not enforced: the three dungeons still build
-    assert len(D.warnings(BASE)) >= len(over)
+    assert len(DG.vault_warnings(BASE)) == len(over)
+    assert all(w in DG.report(BASE) for w in DG.vault_warnings(BASE))   # python tools/dungeon_greed.py prints them
     table = DG.load()
     table["vault_budget"]["enforce"] = True
     assert len(DG.vault_problems(BASE, table)) == len(over)

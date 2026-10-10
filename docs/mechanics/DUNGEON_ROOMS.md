@@ -211,8 +211,8 @@ at band b is at most `dollar_factor` x the gathering tier open at the band's low
 required hours, divided by the vault's chests: a vault never pays more than the same run's time spent gathering, the
 limit RESOURCES2 set for a resources room. With the kit's four chests: **band 1 82 cp, 2 193, 3 198, 4 216, 5 360, 6 381
 (0.8 to 3.8 points) a chest; a whole vault 330, 774, 792, 864, 1,441, 1,526 (floored).** Enforced by `problems()` when
-`vault_budget.enforce` is true; until the three authors rebalance their loot it is false and `D.warnings()` names every
-chest over (the pass-2 vaults are 7 to 150 points a chest).
+`vault_budget.enforce` is true; until the three authors rebalance their loot it is false and `python tools/dungeon_greed.py`
+(its report, `DG.vault_warnings()`) names every chest over (the pass-2 vaults are 7 to 150 points a chest).
 
 **As built (KIT3, 2026-10-10; simulated and audited, not run in Minecraft).**
 - Kit hooks: `R.LAYOUT_FNS` (a last pass over a laid slot: routes' `optional`, looks, signs, windows on both doors) and

@@ -625,6 +625,6 @@
     "enforce": false,
     "unit": "KIT3, 2026-10-10 (docs/mechanics/DUNGEON_ROOMS.md 1b)",
     "why": "GREED found vault chests worth 7 to 150 points (one can cap the clock). A vault's chests together are worth at most dollar_factor x the gathering tier open at the band's lowest badge count x the shortest rooms dungeon's required hours (its clock over the 1.25 slack): the limit RESOURCES2 set for a resources room (tools/dungeon_resources.py budget(), every price and rate read from tools/economy_sim.py World), so a vault never pays more than the same run's time spent gathering, which costs no sigil, no clock and no death. A chest's budget is the vault's over its chest count; its value is GREED's chest_cp (the expected cp of its loot at the band). With the kit's four chests: 82, 193, 198, 216, 360, 381 cp a chest at bands 1-6.",
-    "enforce_why": "false until the three dungeons' authors (pass 3) rebalance their vault loot: the pass-2 vaults are over at every band and enforcing now would stop all three building. tools/dungeon.py warnings() names every chest over; set true with the rebalance (the integrator checks it)"
+    "enforce_why": "false until the three dungeons' authors (pass 3) rebalance their vault loot: the pass-2 vaults are over at every band and enforcing now would stop all three building. python tools/dungeon_greed.py (its report, vault_warnings()) names every chest over; set true with the rebalance (the integrator checks it)"
   }
 }

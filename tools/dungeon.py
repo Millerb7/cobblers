@@ -1774,8 +1774,7 @@ def warnings(doc):
     rooms dungeon still on the bands' clocks (set for the short spine; tools/dungeon_clock.py derives its own)."""
     import dungeon_fights as DF     # lazy: tools/dungeon_fights.py imports this module
     import dungeon_relics as DRel   # lazy (DG2-RELICS)
-    import dungeon_greed as DG      # lazy (KIT3): vault chests over the budget while it is not enforced
-    return DR.warnings(doc) + DF.warnings(doc) + DRel.warnings(doc) + DG.vault_warnings(doc) + [
+    return DR.warnings(doc) + DF.warnings(doc) + DRel.warnings(doc) + [
         "%s: no clock_s_by_band, so its clock is the bands' (the short spine's): run python tools/dungeon_clock.py %s"
         % (d["id"], d["id"]) for d in dungeons(doc) if DR.has_rooms(d) and "clock_s_by_band" not in d]
 
