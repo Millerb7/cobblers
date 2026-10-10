@@ -415,6 +415,7 @@ def seam_block_for(theme, band, j, n):
 
 
 def kind_resources(doc, d, slot, room, theme):
+    import dungeon_resources as DRS     # lazy: it imports the kit, which imports this module (RESOURCES2)
     t = theme["seam"]
     cells, slab = seam_cells(room)
     n = len(cells)
@@ -424,6 +425,15 @@ def kind_resources(doc, d, slot, room, theme):
     reset = ["# the seam's face: band 1's blocks first, then each higher band's difference (the entrant's band is frozen)"]
     h = R.state_holder(slot, room)
     first = {}
+    # a theme whose seam is `table` draws each band's mix from data/dungeon_resources.json (the economy's assumption);
+    # the jungle's produce face keeps the round robin over what the band allows
+    if DRS.seam_uses_table(d.get("theme")):
+        faces = {b: DRS.seam_face(d["theme"], b, n) for b in bands}
+
+        def seam_block_for(_theme, band, j, _n):
+            return faces[band][j]
+    else:
+        seam_block_for = globals()["seam_block_for"]
     for j, (x, y, z) in enumerate(cells):
         first[j] = seam_block_for(theme, bands[0], j, n)
         reset.append("setblock %d %d %d %s" % (x, y, z, first[j]))

@@ -73,9 +73,10 @@ DEFAULT_FLAGS = {"dress": "light", "rise": False, "connector": False, "pit": 0, 
 # outline: the kind accepts a non-box outline (None = True unless it has a pit, jumps or a snap: its own geometry).
 # reversible: the kind may be walked west (dir "west"): only kinds whose geometry and hooks do not assume +x.
 EXTENSION_MODULES = ["dungeon_kinds", "dungeon_fights", "dungeon_puzzles", "dungeon_parkour", "dungeon_setpieces",
-                     "dungeon_life", "dungeon_relics"]   # imported in this order, absent ones skipped
+                     "dungeon_life", "dungeon_relics", "dungeon_resources"]   # imported in this order, absent ones skipped
 
 KINDS = {}
+PICK_EXTRA_FNS = []   # fn(d, themes) -> [block]: blocks beyond the seams and cracked faces a dungeon's pick may break (dungeon_resources)
 FLAGS = {}
 DRESS = {}          # name -> (fn, level)
 LEVELS = {"none": 0, "light": 1, "full": 2}
@@ -1981,7 +1982,10 @@ def secret_blocks(d, themes=None):
 
 def pick_blocks(d, themes=None):
     """Every block the dungeon's rift pick may break: the seams' and the cracked secrets' faces (DUNGEON_ROOMS.md 1a)."""
+    load_extensions()
     out = seam_blocks(d, themes)
+    for fn in PICK_EXTRA_FNS:
+        out += [b for b in fn(d, themes) if b not in out]
     return out + [b for b in secret_blocks(d, themes) if b not in out]
 
 
@@ -2218,10 +2222,12 @@ def walk_problems(doc, d, slot):
                 bad.append("%s: block %s is a hazard" % (lab, name))
             if G.base(name) in breakable:
                 n_breakable += int((g.a == g.idx[name]).sum())
-        want = (len(b.anchors.get("seam", [])) if r["kind"] == "resources" else 0) + len(b.anchors.get("secret_door", []))
+        want = ((len(b.anchors.get("seam", [])) if r["kind"] == "resources" else 0) + len(b.anchors.get("secret_door", []))
+                + int(b.meta.get("breakable_extra", 0)))
         if n_breakable != want:
             bad.append("%s: %d blocks the rift pick can break (%d expected: a resources room's seam and the cracked secrets' "
-                       "faces). A wall, floor or dressing block the pick can break is a hole to the void" % (lab, n_breakable, want))
+                       "faces and the band-1 ore of its heaps and veins). A wall, floor or dressing block the pick can break is a hole to "
+                       "the void" % (lab, n_breakable, want))
         # every block the room writes is inside its own box (walls, floor and ceiling courses): its grid cannot see
         # anything past it, and past it is the void or another room. The one exception is a closed gate out, which
         # spans the neighbour's wall column too (door["box"])

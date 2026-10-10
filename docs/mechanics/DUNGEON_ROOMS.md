@@ -226,9 +226,11 @@ entrance) and `line` (a trip box across the room); `miniboss` `boss`, `line`; `n
   the parkour does. Reset restores it. Straight (no bend), at least 30 long and 9 wide.
 - **`resources`**: the seam: 24 ores (`params.seam_blocks`, `face_w`) on the face of a slab three thick against the north
   wall, so mining one opens a pocket and never the void. The shell writes band 1's blocks; `reset` (as the entrant) sets
-  the band's from `dg.band` (1-2 coal/iron/copper, 3-4 add gold/redstone/lapis, 5-6 diamond; the jungle's are logs,
+  the band's from `dg.band` (the mix per band is `data/dungeon_resources.json` `seam`; the jungle's face is logs,
   melon, bamboo, honeycomb, pumpkin). `tick` watches each cell and calls `greed/take` once per block gone (the
-  ladder of D13 is then the engine's). The pick of such a dungeon may break exactly its seam blocks (`pick_give(doc, d)`).
+  ladder of D13 is then the engine's). **Since RESOURCES2 (section 10) the room also holds heaps, wall veins and, at
+  bands 5 and 6, a cache chest**, all by band; the pick of such a dungeon may break exactly the seam, the table's ore
+  blocks and the cracked secrets' faces (`pick_give(doc, d)`).
 - **`dark_room`**: no light of its own, lit candles found along the way, and `enter` gives 3 torches with
   `can_place_on` for the room's floor blocks; `reset` takes the placed ones back out. The torches are UNPROVEN (below).
 - **`safe_room`**: a rug, benches, lantern posts and a counter with the `healer` anchor behind it (the NPC is wave 2's).
@@ -404,3 +406,106 @@ title case). A room with two secrets puts `relic` / `lore` / `relic_name` inside
   grant @s only <adv> <criterion>` on an impossible criterion, the item components as written, the sound and particle
   ids (the particle is checked against the jar), and a goal-frame root advancement showing as a tab of its own. The pedestal
   is blocks, not an item frame: an item frame is an entity the shell's chunk-look chain would have to track.
+
+## 10. Resource piles: ore by band, heaps, wall veins and the cache (RESOURCES2, 2026-10-10; built and simulated, not run in Minecraft)
+
+The owner, playing pass 2 on staging: "The resource rooms should have piles of ore, based on location in game as well: early
+game don't give them great stuff, but late in game a mega stone or two, diamonds, maybe a netherite." And ore in the walls
+counts as a resource too. Rung: **datapack plus generator** (`tools/dungeon_resources.py`, `data/dungeon_resources.json`, one
+`deposits` dress op in each theme's `dress`, `kinds: ["resources"]`, before `life`); the pick, the refill and the cache's chest
+and loot table are the seam's and the vault's own mechanisms, so nothing needed a mod, a scripting layer or a companion.
+
+**What a `resources` room holds.** The seam (kept: 24 blocks, the greed ladder's count) plus:
+- **Heaps**: free-standing mounds of the theme's rubble on the room's real outline, 2-3 high, stepped by one block (a
+  euclidean dome: neighbouring columns differ by at most one, so they climb), 3-8 of them, 1 block of free floor between. A
+  heap whose footprint meets a wall is clipped by it and is a bank against the wall (the room alternates banks and free heaps).
+  The top cell of every heap column is an ore candidate; the crests of the tallest heaps take the rare ores. Heaps stand only
+  where the walk check's own reach says a player can stand, on no reserved cell (an anchor, the trail, a door's approach), and
+  clear any ground cover (the jungle's ferns and grass) above them.
+- **Veins**: ore in the rock of a shaped room's walls (cavern, L, broken hall), runs of up to 5 along a wall, one row at feet or
+  eye level, the EXPOSED layer of rock only and only where the other five neighbours are solid (so a vein never touches the
+  hull wall column, a door, a secret's chamber or the ceiling and floor courses). A box or oval room has no rock, so its wall ore
+  is the banks; the mine's cavern and L rooms get both (25 vein cells in each of the Night Shift's four variants). The jungle
+  has no veins (its rock is a bank of moss).
+- **The cache** (bands 5 and 6): a chest at the foot of the biggest heap with a loot table, the vault's form (the kit's
+  proven-in-code way to hand over items; `LootTable` on a chest placed from air at the slot reset). It holds the **raw Mega
+  stone** and **ancient debris** (below). Band 4 and under: no chest.
+Candidate cells per room: 51-93 against a need of 33 (the richest band's count) times 1.5; the room's geometry is the same in
+every band and every run, and `dg.band` only decides which candidates are ore.
+
+**The table** (`data/dungeon_resources.json` `table`, one row per resource: `min_band`, `max_band`, counts per band, a why).
+Blocks of ore in the heaps and veins, on top of the seam's 24:
+
+| Band (caps) | coal | iron | copper | lapis | redstone | gold | emerald | diamond | cache |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 (20-25) | 8 | 6 | 6 | | | | | | |
+| 2 (30-35) | 8 | 8 | 6 | | | | | | |
+| 3 (40-45) | 6 | 8 | 6 | 4 | 4 | 2 | | | |
+| 4 (50-55) | 6 | 8 | 4 | 4 | 6 | 4 | 1 | | |
+| 5 (60-62) | | 6 | 4 | 4 | 6 | 6 | 2 | 2 | 1 raw Mega stone, 1 ancient debris |
+| 6 (100) | | 4 | | 4 | 6 | 8 | 3 | 3 | 1 raw Mega stone, 2 ancient debris |
+
+DUNGEONS.md 9.3's ladder is kept (1-2 coal/iron/copper; 3-4 add gold, redstone, lapis; 5-6 diamond). Additions: emerald from
+band 4 (worth nothing to the bank: the owner took it off on 2026-10-08), and the cache at bands 5 and 6. The seam's mix per
+band is now authored in the same file and equals `tools/economy_sim.py` `World.seam_face(band)` exactly (the sim's
+assumption; the old round robin over every ore the band allowed put 3 diamonds in the band-5 face where the sim and ECONOMY_SIM
+assume 1): 1-2 coal 11 / iron 9 / copper 4; 3-4 coal 9 / iron 9 / lapis 3 / gold 1 / redstone 2; 5-6 coal 9 / iron 9 /
+lapis 2 / gold 1 / redstone 2 / diamond 1.
+
+**The Mega stone and the debris, and why they are in a chest.** Read from `mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar`:
+`mega_showdown:mega_stone` is the RAW stone, the only thing every keyed stone is crafted from (`data/mega_showdown/recipe/aggronite.json`
+and 80 more: one raw stone, a species item, iron, a diamond; this pack raises it to 2 raw at the Cutters, `tools/mega_recipes.py`).
+It drops only from the block `mega_showdown:mega_stone_crystal` (`loot_table/blocks/mega_stone_crystal.json`, no Fortune), which is
+in `minecraft:needs_diamond_tool`; the ten `mega_meteorid_*_ore` blocks drop evolution stones, not Mega stones. The rift pick is
+an iron pickaxe, and whether a crystal broken in adventure under `can_break` drops its stone is the unrun half of
+SOUTHERN_RIFT_MEGA.md M-5, so the stone is FOUND in a chest, not mined: no new pick, no tool-tier assumption. Ancient debris is
+in the same vanilla tag (ASSUMED, not read from a jar), so it goes in the chest too. Which Mega: none. The cache holds the
+raw stone, never a keyed one ("I don't want mega stones being free", SOUTHERN_RIFT_MEGA.md 13): it still takes a species item,
+a diamond, the Cutters' counter behind the sixth badge and a bracelet, so it trivialises no gym and leaves the choice of Mega
+to the player.
+
+**How it was checked not to out-earn the game** (`tools/dungeon_resources.py budget()`, run by `tests/test_dungeon_resources.py`;
+every price, rate and tier is read from `tools/economy_sim.py` `World`, i.e. `data/bank.json`, not typed in): per band, for the
+shortest of the three dungeons (required hours = `clock_s_by_band` / the 1.25 slack):
+1. the bank value of the seam, the heaps and veins and the cache (average vanilla drops, bank buys) is at most `dollar_factor` (1.0)
+   x the gathering tier open at the band's lowest badge count x the required hours. Measured: band 1 $266 of $331 (early $620/h
+   x 0.533 h), 2 $282 of $774, 3 $534 of $792, 4 $578 of $864 (deep $1,350/h), 5 $1,112 of $1,442, 6 $1,428 of $1,526 (Nether
+   $2,120/h). So a dungeon hour of mining is never a better wage than the same hour in the caves, which cost no sigil, no clock
+   and no death. Band 6 has 6% to spare: it is the budget's binding band;
+2. every rare ore and cache item the bank buys is at most `item_rate_factor` (1.5) x its `rate_per_hour` x required hours:
+   diamond 3 of 4 (band 5) and 4 of 4 (band 6, seam's 1 included), gold 7 of 10 and 9 of 10, debris 1 and 2 of 10;
+3. the raw Mega stone is at most the Rift farm's rate (1.8 an hour, SOUTHERN_RIFT_MEGA.md 13: RELAYED and an assumption there)
+   x required hours: 1 of 1 at both bands (1.22 and 1.30 floored). A second raw stone at band 6 is OVER; "a mega stone or two" is
+   one a run until the owner says otherwise (one number, `cache.items.mega.count_by_band`). Tests mutate the table (a second
+   stone, doubled diamonds, 60 gold) and the budget fails each.
+Emeralds have no price, so only the table's count limits them. Not checked: the boss bundle and gems (items the sim does not
+price), co-op, and what a player makes selling to a Produce Buyer (the jungle's produce face is unpriced here and was before).
+
+**The reset and the take.** The shell writes band 1's ore; the room's `reset` (as the entrant, `dg.band`) writes every candidate cell
+back to its band-1 block, then each higher band's difference (`execute if score @s dg.band matches N.. run setblock`), zeroes
+every watcher and arms the ones that are ore at the entrant's band (`#s<g>r<i>o<j>`, `dg.rs` 1), and puts the cache chest back
+from air with the band's loot table (`cobblers:dungeons/cache/b5`, `/b6`, in the pack) and arms `#s<g>r<i>k`. `tick` is the seam's
+state machine (1 gone -> 2 -> `function cobblers:dungeons/greed/take` once -> 3), and the cache counts when its `LootTable` tag
+is gone (opened), as the vault does. `data/dungeon_resources.json` `calls_greed` (true) switches the calls off for GREED's points
+system if it counts items instead.
+
+**What the pick may break** (`R.pick_blocks`, via `R.PICK_EXTRA_FNS`): the seam's blocks, the table's ore block for the theme's
+family (deepslate ores in the mine; plain ores in the jungle's outcrop and the ruin's treasury), and the cracked secrets' faces.
+`walk_problems` counts the cells in the built grid and expects the seam, the faces and `meta.breakable_extra` (the band-1 ore
+cells this module wrote); the module's own check (`problems`, in `EXTRA_CHECKS`) breaks EVERY candidate of EVERY band and the seam
+in a copy of the grid and demands that nothing closed becomes reachable. Every cell is inside the interior with every neighbour
+solid or the room's own air, so a taken block opens a pocket in the room and never the hull or the void.
+
+**Items a pile, a vein, the seam or the cache can yield** (for the greed value table): `minecraft:coal`, `minecraft:raw_iron`,
+`minecraft:raw_copper` (2-5 a block), `minecraft:lapis_lazuli` (4-9), `minecraft:redstone` (4-5), `minecraft:raw_gold`,
+`minecraft:emerald`, `minecraft:diamond`, `mega_showdown:mega_stone` (cache, bands 5-6), `minecraft:ancient_debris` (cache, bands
+5-6); the jungle's produce face still yields stripped jungle logs, melon slices (3-7 a block), bamboo blocks, honeycomb blocks and
+pumpkins. `python tools/dungeon_resources.py` prints the list, the table and the budget.
+
+**Unproven in game:** that a chest placed with a `LootTable` hands over its items when opened in adventure mode in the pocket (the
+vault's own assumption); that heaps of stepped one-block rubble climb as the walk check says; the mining times (a heap of 30-50
+blocks is a minute or two with an iron pick, and every block taken calls the greed ladder: GREED decides what that costs); that
+the cache chest reads as a find at a heap's foot. The walk check proves a player reaches every heap, vein row and the cache's
+standing cell; it has not been seen. Where it collides with another system: `greed/take` per block (GREED), the independent audit's
+"the pick breaks nothing but seams and cracked faces" (it reads the generated `can_break`, which now holds the table's ore blocks;
+`tools/dungeon_independent_audit.py` is AUDIT2's, not touched here), and `life` (heap and cache ground is kept from its spots).

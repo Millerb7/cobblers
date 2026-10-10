@@ -901,6 +901,11 @@ in the pocket draws a spawn-condition Pokemon is moot while the pocket's `the_vo
 untested (DM 1.4; `data/portals.json` `pocket.generator.biome_why`, *relayed*). The owner allows spawn-condition
 blocks (`docs/STATE.md:147`).
 
+**Pass 2 (RESOURCES2, 2026-10-10):** a rooms dungeon's resources room also holds heaps of ore, ore in its rock walls and, at
+bands 5 and 6, a cache chest with the raw Mega stone and ancient debris, counted per band in `data/dungeon_resources.json`
+and checked against the bank's rates by `tools/dungeon_resources.py budget()`: `DUNGEON_ROOMS.md` section 10. The seam's 24
+blocks keep their size; their mix per band is now the one `tools/economy_sim.py` assumes.
+
 ### 9.4 Records, not bonuses (Q16)
 
 Best clock left and a flawless clear (no faint) are kept per player, per dungeon, per band, as the arena's best streak

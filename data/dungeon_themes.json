@@ -32,6 +32,7 @@
         {"op": "life_scenes", "why": "after the water (it is carved first and a scene avoids it) and BEFORE trunks, columns, piles and cover, which work round its footprint (ctx.trail); tools/dungeon_life.py"},
         {"op": "wall_vines", "p": 0.05, "blocks": [{"block": "minecraft:glow_lichen"}], "lit": true, "salt": "l", "not_kinds": ["entry_room", "exit_room", "safe_room"]},
         {"op": "piles", "density": 0.012, "blocks": [{"block": "minecraft:cobbled_deepslate", "w": 3}, {"block": "minecraft:cobblestone", "w": 2}, {"block": "minecraft:andesite", "w": 1}]},
+        {"op": "deposits", "kinds": ["resources"], "why": "a resources room's heaps, wall veins and cache, from the finished outline and before the life that works round them (tools/dungeon_resources.py, data/dungeon_resources.json)"},
         {"op": "life", "why": "LAST: ambient Pokemon, sound, candles, from the finished room (tools/dungeon_life.py)"},
         {"op": "relics", "why": "AFTER life: the pedestal, the pickup and the reset of a secret's relic (tools/dungeon_relics.py, data/dungeon_relics.json)"}
       ],
@@ -98,6 +99,7 @@
           {"p": 0.06, "double": {"lower": "minecraft:large_fern[half=lower]", "upper": "minecraft:large_fern[half=upper]"}, "on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]},
           {"block": "minecraft:moss_carpet", "p": 0.07},
           {"block": "minecraft:big_dripleaf[facing=north]", "p": 0.02, "solid": true, "on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]}]},
+        {"op": "deposits", "kinds": ["resources"], "why": "a resources room's heaps, wall veins and cache, from the finished outline and before the life that works round them (tools/dungeon_resources.py, data/dungeon_resources.json)"},
         {"op": "life", "why": "LAST: ambient Pokemon, sound, candles, from the finished room (tools/dungeon_life.py)"},
         {"op": "relics", "why": "AFTER life: the pedestal, the pickup and the reset of a secret's relic (tools/dungeon_relics.py, data/dungeon_relics.json)"}
       ],
@@ -155,6 +157,7 @@
         {"op": "piles", "density": 0.02, "blocks": [{"block": "minecraft:cracked_stone_bricks", "w": 3}, {"block": "minecraft:mossy_cobblestone", "w": 2}, {"block": "minecraft:stone_bricks", "w": 1}]},
         {"op": "wall_vines", "p": 0.06, "len": [2, 5], "blocks": [{"block": "minecraft:vine"}], "salt": "v"},
         {"op": "wall_vines", "p": 0.05, "blocks": [{"block": "minecraft:glow_lichen"}], "lit": true, "salt": "l"},
+        {"op": "deposits", "kinds": ["resources"], "why": "a resources room's heaps, wall veins and cache, from the finished outline and before the life that works round them (tools/dungeon_resources.py, data/dungeon_resources.json)"},
         {"op": "life", "why": "LAST: ambient Pokemon, sound, candles, from the finished room (tools/dungeon_life.py)"},
         {"op": "relics", "why": "AFTER life: the pedestal, the pickup and the reset of a secret's relic (tools/dungeon_relics.py, data/dungeon_relics.json)"}
       ],

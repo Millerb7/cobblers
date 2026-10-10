@@ -1736,6 +1736,8 @@ def build(doc, **kw):
     DRel.patch_functions(doc, fns)  # the arrival line and the lobby's action bar
     files.update(DRel.pack_files(doc))  # a dungeon's collection advancement
     files.update(DF.pack_files(doc))    # the stands' NPC classes and the healer's advancement
+    import dungeon_resources as DRS     # lazy (RESOURCES2): the resources rooms' cache loot tables
+    files.update(DRS.pack_files(doc))
     files["data/minecraft/tags/function/load.json"] = json.dumps(
         {"values": [F("load")] + DF.load_entries() + DL.load_entries(doc) + DRel.load_entries(doc)}, indent=2) + "\n"
     files["data/minecraft/tags/function/tick.json"] = json.dumps({"values": DF.tick_entries()}, indent=2) + "\n"

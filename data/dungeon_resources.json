@@ -1,0 +1,108 @@
+{
+  "schema": "cobblers.dungeon_resources/1",
+  "generated_by": "hand",
+  "status": "built and simulated 2026-10-10 (unit RESOURCES2); not run in Minecraft. Read by tools/dungeon_resources.py (the dress op `deposits`, the seam's mix, the cache's loot tables, the budget check); tests/test_dungeon_resources.py checks the numbers against tools/economy_sim.py",
+  "design": "docs/mechanics/DUNGEON_ROOMS.md section 10. The owner (2026-10-10, pass 2 on staging): 'The resource rooms should have piles of ore, based on location in game as well: early game don't give them great stuff, but late in game a mega stone or two, diamonds, maybe a netherite.' and ore in the walls counts as a resource too.",
+  "band_is": "the player's band, frozen at entry from the level cap (tools/dungeon.py `m/band`, dg.band): 1 = caps 20-25 (0-1 badges), 2 = 30-35, 3 = 40-45, 4 = 50-55, 5 = 60-62 (8 badges), 6 = 100 (the Champion fallen). The geometry of a room never changes with the band; the reset sets which cells are ore, and which ore, from dg.band",
+  "calls_greed": true,
+  "calls_greed_why": "every pile or vein block gone, and the cache opened, calls `greed/take` once, as a seam block does (DUNGEON_ROOMS.md 4 'resources'). GREED (the points system) owns what that call weighs; set this false when it counts items instead and the call would count twice",
+
+  "resources": {
+    "coal":     {"item": "minecraft:coal",         "drop": [1, 1], "rare": false, "blocks": {"stone": "minecraft:coal_ore",     "deepslate": "minecraft:deepslate_coal_ore"}},
+    "iron":     {"item": "minecraft:raw_iron",     "drop": [1, 1], "rare": false, "blocks": {"stone": "minecraft:iron_ore",     "deepslate": "minecraft:deepslate_iron_ore"}},
+    "copper":   {"item": "minecraft:raw_copper",   "drop": [2, 5], "rare": false, "blocks": {"stone": "minecraft:copper_ore",   "deepslate": "minecraft:deepslate_copper_ore"}},
+    "lapis":    {"item": "minecraft:lapis_lazuli", "drop": [4, 9], "rare": false, "blocks": {"stone": "minecraft:lapis_ore",    "deepslate": "minecraft:deepslate_lapis_ore"}},
+    "redstone": {"item": "minecraft:redstone",     "drop": [4, 5], "rare": false, "blocks": {"stone": "minecraft:redstone_ore", "deepslate": "minecraft:deepslate_redstone_ore"}},
+    "gold":     {"item": "minecraft:raw_gold",     "drop": [1, 1], "rare": true,  "blocks": {"stone": "minecraft:gold_ore",     "deepslate": "minecraft:deepslate_gold_ore"}},
+    "emerald":  {"item": "minecraft:emerald",      "drop": [1, 1], "rare": true,  "blocks": {"stone": "minecraft:emerald_ore",  "deepslate": "minecraft:deepslate_emerald_ore"}},
+    "diamond":  {"item": "minecraft:diamond",      "drop": [1, 1], "rare": true,  "blocks": {"stone": "minecraft:diamond_ore",  "deepslate": "minecraft:deepslate_diamond_ore"}}
+  },
+
+  "table_why": "Counts of ORE BLOCKS in a resources room's heaps and wall veins, per band, on top of the 24-block seam (`seam` below) and the cache (`cache`). Each row: min_band/max_band, counts per band, and why. The bands follow DUNGEONS.md 9.3 (1-2 coal/iron/copper; 3-4 add gold, redstone, lapis; 5-6 add diamond) with an addition the owner asked for in the late game: emerald (band 4 on). Whether every row stays under what the game's other sources pay is tools/dungeon_resources.py `budget()`, run by tests/test_dungeon_resources.py (docs/mechanics/DUNGEON_ROOMS.md section 10 gives the numbers).",
+  "table": {
+    "coal":     {"min_band": 1, "max_band": 4, "counts": {"1": 8, "2": 8, "3": 6, "4": 6},
+                 "why": "the early wage: coal is $4 a unit and 60 an hour in the bank's early tier (data/bank.json); a heap of it is the band-1 room's body. It thins out as the player gets past caring and is absent from bands 5-6 (nobody at the cap mines coal)"},
+    "iron":     {"min_band": 1, "max_band": 6, "counts": {"1": 6, "2": 8, "3": 8, "4": 8, "5": 6, "6": 4},
+                 "why": "raw iron ($8, 30 an hour) is the binding input of every gym answer kit (ECONOMY_OVERHAUL.md 1.4), so it stays in every band, fewer late when the kits are paid for"},
+    "copper":   {"min_band": 1, "max_band": 5, "counts": {"1": 6, "2": 6, "3": 6, "4": 4, "5": 4},
+                 "why": "raw copper drops 2-5 a block at $2 (40 an hour): cheap bulk that makes the early room look rich without paying"},
+    "lapis":    {"min_band": 3, "max_band": 6, "counts": {"3": 4, "4": 4, "5": 4, "6": 4},
+                 "why": "DUNGEONS.md 9.3 adds lapis, redstone and gold at band 3; lapis is 4-9 a block at $4 (15 an hour) and the TM recipes ask for 16-32 of it (ECONOMY_OVERHAUL.md 1.4)"},
+    "redstone": {"min_band": 3, "max_band": 6, "counts": {"3": 4, "4": 6, "5": 6, "6": 6},
+                 "why": "DUNGEONS.md 9.3, band 3 on; 4-5 a block at $2 (25 an hour): bulk that the late held-item recipes use (16 for a diamond-class held item)"},
+    "gold":     {"min_band": 3, "max_band": 6, "counts": {"3": 2, "4": 4, "5": 6, "6": 8},
+                 "why": "DUNGEONS.md 9.3, band 3 on; raw gold is $20 (10 an hour) and the one bulk ore the late game wants (a netherite ingot is 4 scrap and 4 gold): it grows with the band, the most of any common ore at band 6"},
+    "emerald":  {"min_band": 4, "max_band": 6, "counts": {"4": 1, "5": 2, "6": 3},
+                 "why": "the gem between gold and diamond for the late rooms (the owner: 'diamonds'): worth nothing to the bank, which does not buy emeralds (data/bank.json, the owner 2026-10-08), so it cannot out-earn anything"},
+    "diamond":  {"min_band": 5, "max_band": 6, "counts": {"5": 2, "6": 3},
+                 "why": "DUNGEONS.md 9.3: diamonds are band 5 and 6 only. $120 and 4 an hour in the bank's deep tier, so with the seam's 1 the room holds 3 at band 5 and 4 at band 6, under item_rate_factor times the bank's rate for the run's time (budget below)"}
+  },
+
+  "seam_why": "The 24-block face (the greed ladder's block count, DUNGEONS.md 3.3) keeps its size and its place; its mix per band is now AUTHORED here instead of round-robin over every ore the band allows (which put 3 diamonds in the band-5 face, against the 1 tools/economy_sim.py and ECONOMY_SIM_2026-10-09.md assume). Each row equals World.seam_face(band) of tools/economy_sim.py (the cave yields of data/mining_caves.json scaled to 24, 1 diamond from band 5): tests/test_dungeon_resources.py compares them. The jungle keeps its produce face (logs, melons, bamboo, honeycomb, pumpkins) unchanged.",
+  "seam": {
+    "1": {"coal": 11, "iron": 9, "copper": 4},
+    "2": {"coal": 11, "iron": 9, "copper": 4},
+    "3": {"coal": 9, "iron": 9, "lapis": 3, "gold": 1, "redstone": 2},
+    "4": {"coal": 9, "iron": 9, "lapis": 3, "gold": 1, "redstone": 2},
+    "5": {"coal": 9, "iron": 9, "lapis": 2, "gold": 1, "redstone": 2, "diamond": 1},
+    "6": {"coal": 9, "iron": 9, "lapis": 2, "gold": 1, "redstone": 2, "diamond": 1}
+  },
+
+  "cache": {
+    "container": "minecraft:chest",
+    "loot_dir": "dungeons/cache",
+    "min_band": 5,
+    "items": {
+      "mega": {"item": "mega_showdown:mega_stone", "count_by_band": {"5": 1, "6": 1}, "price_item": null,
+               "why": "the RAW Mega stone, one a run at bands 5 and 6. The owner declined free finished stones ('I don't want mega stones being free, I want this to be a sort of late game farm', SOUTHERN_RIFT_MEGA.md section 13) and the campaign's currency is the raw stone: a keyed stone costs 2 raw plus a diamond at the Cutters. So the cache holds the raw one, never a keyed one: it trivialises no gym (a player still needs the species item, the diamond, the Cutters' counter behind the sixth badge and a bracelet) and which Mega a stone becomes stays the player's choice. One a run is within the Rift farm's rate for a run's time (about 1.8 raw an hour there, RELAYED and ASSUMED in that document; budget.farm_raw_per_hour): two is not. 'A mega stone or two' (the owner) is one a run; a second is one number here and the owner's call"},
+      "debris": {"item": "minecraft:ancient_debris", "count_by_band": {"5": 1, "6": 2}, "price_item": "minecraft:ancient_debris",
+                 "why": "'maybe a netherite' (the owner): ancient debris, never scrap or an ingot, in the cache and not as a block to mine: debris needs a diamond tool (vanilla tag minecraft:needs_diamond_tool, ASSUMED here) and the rift pick is an iron pickaxe, so a mined debris would drop nothing. $200 an item and 10 an hour in the bank's Nether tier; a netherite ingot is 4 scrap, so even band 6's 2 are half an ingot of smelting and a quarter of the 8 debris in the key for Entei (ECONOMY_OVERHAUL.md U9: 2 ingots)"}
+    },
+    "jar": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar (C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods/): item id mega_showdown:mega_stone is the RAW stone, the only source Mega Showdown has for every keyed stone: data/mega_showdown/loot_table/blocks/mega_stone_crystal.json (the block mega_showdown:mega_stone_crystal drops one `mega_showdown:mega_stone`, no Fortune bonus); the advancement data/mega_showdown/advancement/mega_showdown/mega/find_raw_megastone.json fires on holding it; data/mega_showdown/recipe/aggronite.json (and the other 80) craft a keyed stone from one raw stone, a species item, iron and a diamond (this pack raises it to 2 raw at the Cutters, tools/mega_recipes.py). The mod has no ore that drops a stone: the ten mega_meteorid_*_ore blocks drop the evolution stones (loot_table/blocks/mega_meteorid_fire_ore.json), and mega_stone_crystal and keystone_ore are in data/minecraft/tags/block/needs_diamond_tool.json",
+    "why_a_chest": "the crystal block needs a diamond tool and the rift pick is an iron pickaxe; whether a crystal broken in adventure mode under can_break drops its stone is the unrun half of SOUTHERN_RIFT_MEGA.md M-5. A chest with a loot table is the vault's proven-in-code form (tools/dungeon_puzzles.py build_vault) and needs neither: the stone is found, not mined",
+    "reset": "the slot reset puts the chest back from air with the entrant's band's loot table (a setblock onto the same chest state fails and loads nothing, as the vault found) and nothing at a lower band"
+  },
+
+  "budget": {
+    "dollar_factor": 1.0,
+    "item_rate_factor": 1.5,
+    "farm_raw_per_hour": 1.8,
+    "farm_raw_source": "docs/world-building/SOUTHERN_RIFT_MEGA.md section 13 ('about 12 wins an hour, and 1.8 raw stones at 15%'): RELAYED, an assumption of that document, not measured",
+    "slack_factor_from": "data/dungeons.json engine.clock.slack_factor (1.25): a dungeon's required time is its clock_s_by_band / slack_factor",
+    "rule": "per band, for the shortest of the rooms dungeons: (a) the bank value of every ore block the seam and the heaps/veins hold and every cache item (average drops, bank buys) at most dollar_factor x the gathering tier open at that band's lowest badge count x the run's required hours; (b) for every rare ore and cache item the bank buys, items in the room at most item_rate_factor x the bank's declared rate_per_hour x required hours (rounded up); (c) the cache's raw stones at most farm_raw_per_hour x required hours (rounded up). A dungeon hour of mining is then never a better wage than the same hour in the caves, which cost no sigil, no clock and no death",
+    "why": "ECONOMY_OVERHAUL.md 1.3: 'Power is never priced in money a fighter can reach' and 'late mining is for materials'. The dungeon also pays a boss bundle and gems (items, clawed back in dollars), so it must not ALSO be the best mine in the game"
+  },
+
+  "themes": {
+    "mine": {
+      "family": "deepslate",
+      "rubble": [["minecraft:cobbled_deepslate", 5], ["minecraft:deepslate", 3], ["minecraft:tuff", 2], ["minecraft:raw_iron_block", 1], ["minecraft:raw_copper_block", 1], ["minecraft:coal_block", 1]],
+      "heaps": {"min": 3, "max": 8, "height": [2, 3]},
+      "veins": true,
+      "why": "ore heaps spilled from the face: deepslate rubble with raw-metal blocks (decoration the pick cannot break) and ore showing in the heap's crest, banks against the walls, and ore veins in the rock of the cavern's walls"
+    },
+    "jungle": {
+      "family": "stone",
+      "seam": "legacy",
+      "rubble": [["minecraft:mossy_cobblestone", 4], ["minecraft:andesite", 3], ["minecraft:tuff", 2], ["minecraft:cobblestone", 1]],
+      "heaps": {"min": 3, "max": 7, "height": [2, 3]},
+      "veins": false,
+      "why": "a mineral outcrop breaking through the jungle floor: mossy rubble and tuff with ore in it, banked against the clearing's edge. No wall veins: the clearing's rock is a bank of moss, which no ore sits in. The produce face stays"
+    },
+    "flooded_ruin": {
+      "family": "stone",
+      "rubble": [["minecraft:mossy_cobblestone", 4], ["minecraft:cobblestone", 3], ["minecraft:stone_bricks", 2], ["minecraft:raw_gold_block", 1]],
+      "heaps": {"min": 3, "max": 8, "height": [2, 3]},
+      "veins": true,
+      "why": "a collapsed treasury: the vault's fallen masonry heaped over its ore stock and banked against the broken walls, a raw-gold block or two showing in the rubble as the tease (the pick cannot break it), and ore in the mossy brick wherever the hall has rock"
+    }
+  },
+
+  "geometry": {
+    "capacity_factor": 1.5,
+    "headroom": 3,
+    "pad": 1,
+    "vein_max_run": 5,
+    "why": "the room must hold capacity_factor x the largest band's ore count as candidate cells (the crest of every heap column, every legal vein cell) so a band's ore is placed by choice and not by squeezing; the reset sets which candidates are ore. A heap column has `headroom` air above it and `pad` cells of free floor between heaps; no heap or cache stands on a reserved cell (an anchor, the trail, a door's approach) or where a player cannot stand (the walk check's own reach)"
+  }
+}
