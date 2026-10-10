@@ -19,7 +19,7 @@ old placeholder spine is kept as `tests/fixtures/dungeon_legacy_spine.json` so t
 `length` counts both end walls and is along the walked path; `width` is the interior (at most 62, the strip's 64 less
 two wall columns); `height` is clear height above the room's highest floor; `rise` is the floor change across the
 room (only `drift` and `stairs` may have one; a staircase of one-block steps); `gate: "cleared"` keeps `door_out`
-shut until `room/<dungeon>/<room>/clear` runs (default `open`; a `boss_arena` defaults to `cleared`). `params.exit_dz`
+shut until `room/<dungeon>/<room>/s<g>/clear` runs (default `open`; a `boss_arena` defaults to `cleared`). `params.exit_dz`
 bends the walked line in z (the next room's door is that far over). Rooms are laid along +x with their own end walls;
 consecutive rooms share a door: 3 wide, 4 high, two wall columns deep, exactly equal in `door_out` and the next
 `door_in`. A connector (`drift`, `stairs`) is at most 40 long and at least 7 wide (`problems()` refuses otherwise).
@@ -77,7 +77,6 @@ any other key becomes its own function. Names are `cobblers:dungeons/room/<dunge
 | `enter` | once per run, the first keeper pass a member's box meets the room's | as the member, at them. Guard is `#s<g>r<i> dg.rs` 0 -> 1 |
 | `tick` | every keeper pass the member is in the room, clock running | as the member |
 | `clear` | when called; opens `door_out` (if `cleared`), cues, sets `dg.rs` 2; idempotent | any context; carries `execute in` for blocks |
-| `room/<dungeon>/<room>/clear` | the same as a member, dispatching on `dg.slot` | as the member |
 | `reset` | at the slot's reset (`reserve`), state back to 0, gate shut, mutables restored | as the entrant, in the pocket, force-loaded |
 
 State is the objective `dg.rs`, holder `#s<g>r<i>` per room (0 not entered, 1 entered, 2 cleared) and `#s<g>r<i>m<j>`

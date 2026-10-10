@@ -264,7 +264,11 @@ def kind_parkour(doc, d, slot, room, theme):
     tick.append("execute if entity @s[%s] run function %s" % (R.sel_box(catch), R.room_fn(d, room, slot, "fall")))
     fall = [R.HEAD, LOADED, "# a fall onto the catch floor: back to the last ledge stood on, the clock charged, no damage (F1: resistance)",
             "scoreboard players remove @s dg.clock %d" % pen,
-            "effect give @s minecraft:resistance 3 4 true"]
+            "effect give @s minecraft:resistance 3 4 true",
+            # dg.ck is the member's own and other rooms set it: a member who walked back through another room after this
+            # room's enter can carry a value this room does not own, and with no teleport the catch floor is a pit
+            # (DG-AUDIT finding 1, the collapse bridges). Anything out of range means the first checkpoint.
+            "execute unless score @s dg.ck matches 0..%d run scoreboard players set @s dg.ck 0" % (len(ck) - 1)]
     for i, c in enumerate(ck):
         fall.append("execute if score @s dg.ck matches %d run tp @s %d.5 %d %d.5 %d 0" % (i, c[0], c[1], c[2], c[3]))
     fall += ["playsound minecraft:entity.player.hurt master @s ~ ~ ~ 0.6 1",
@@ -354,7 +358,11 @@ def kind_bridge(doc, d, slot, room, theme):
     tick.append("execute if entity @s[%s] run function %s" % (R.sel_box(catch), R.room_fn(d, room, slot, "fall")))
     fall = [R.HEAD, LOADED, "# a fall: back to the ledge last stood on, the clock charged, no damage (F1: resistance)",
             "scoreboard players remove @s dg.clock %d" % pen,
-            "effect give @s minecraft:resistance 3 4 true"]
+            "effect give @s minecraft:resistance 3 4 true",
+            # dg.ck is the member's own and other rooms set it: a member who walked back through another room after this
+            # room's enter can carry a value this room does not own, and with no teleport the catch floor is a pit
+            # (DG-AUDIT finding 1, the collapse bridges). Anything out of range means the first checkpoint.
+            "execute unless score @s dg.ck matches 0..%d run scoreboard players set @s dg.ck 0" % (len(ck) - 1)]
     for i, c in enumerate(ck):
         fall.append("execute if score @s dg.ck matches %d run tp @s %d.5 %d %d.5 %d 0" % (i, c[0], c[1], c[2], c[3]))
     fall += ["playsound minecraft:entity.player.hurt master @s ~ ~ ~ 0.6 1",

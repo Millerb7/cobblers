@@ -1539,11 +1539,14 @@ def functions(doc, blackout=None):
     out["recipes/one"] = one
 
     # ---- the re-apply steps' functions -----------------------------------------------------------------------
-    out["place"] = [HEAD, "# tools/reapply.py step R16DG: every slot's shell, in %s. The pocket's contents do not survive a" % dim,
-                    "# re-export (EXP-047), so the shells are re-applied, never hand-built. The entities follow (shells/entities)",
-                    "execute in %s run function %s" % (dim, F("shells/build"))]
-    out["shells/build"] = ["# runs with %s as its execution dimension (place carries it in)" % dim] + [
-        "function %s" % F("shells/s%d" % s["g"]) for s in sl]
+    if not any(DR.has_rooms(x) for x in ds):
+        # the short spine's one call; a full-length build re-applies per slot (place/s<g>, reapply_steps) and never calls
+        # these: emitted, they are orphans no step runs, and 296,949 commands past the chain limit (DG-AUDIT finding 5)
+        out["place"] = [HEAD, "# tools/reapply.py step R16DG: every slot's shell, in %s. The pocket's contents do not survive a" % dim,
+                        "# re-export (EXP-047), so the shells are re-applied, never hand-built. The entities follow (shells/entities)",
+                        "execute in %s run function %s" % (dim, F("shells/build"))]
+        out["shells/build"] = ["# runs with %s as its execution dimension (place carries it in)" % dim] + [
+            "function %s" % F("shells/s%d" % s["g"]) for s in sl]
     for s in sl:
         if any(DR.has_rooms(x) for x in ds):
             out["place/s%d" % s["g"]] = ["# one slot's shell, in %s: a re-apply step of its own, so no call holds the tick for long (EXP-081)" % dim,

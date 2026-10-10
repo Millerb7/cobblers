@@ -1158,6 +1158,7 @@ def parse_falls(pack, s, r):
     """The room tick's catch boxes (lines that run `fall`), the fall's teleports by dg.ck value, and the ledge boxes
     that set dg.ck."""
     catch, tps, sets = [], {}, []
+    norm = None     # (lo, hi, to): `execute unless score @s dg.ck matches lo..hi run scoreboard players set @s dg.ck to`
     tick = room_fn(s, r, "tick")
     fall = room_fn(s, r, "fall")
     for ln in pack.lines(tick):
@@ -1171,7 +1172,10 @@ def parse_falls(pack, s, r):
         m = re.match(r"execute if score @s dg\.ck matches (\d+) run tp @s (\S+) (\S+) (\S+)", ln)
         if m:
             tps[int(m.group(1))] = tuple(float(v) for v in m.group(2, 3, 4))
-    return catch, tps, sets
+        m = re.match(r"execute unless score @s dg\.ck matches (\d+)\.\.(\d+) run scoreboard players set @s dg\.ck (\d+)$", ln)
+        if m and not tps:       # only a guard that runs BEFORE the teleports re-routes them
+            norm = tuple(int(v) for v in m.groups())
+    return catch, tps, sets, norm
 
 
 def walk_audit(pack, s, shell, start, F):
@@ -1215,14 +1219,14 @@ def walk_audit(pack, s, shell, start, F):
     catch, catch_room, ck_any = set(), {}, set()
     falls = {}
     for r in s.rooms:
-        c, tps, sets = parse_falls(pack, s, r)
+        c, tps, sets, norm = parse_falls(pack, s, r)
         ck_any |= set(sets)
         if c:
-            falls[r] = (c, tps)
+            falls[r] = (c, tps, norm)
     need, rev, voids = None, None, None
     # pass 1: reach (catch nodes are not expanded), so the catch set can be restricted to reached nodes after
     need, rev, voids = minimax_forward(gr, [a], set())
-    for r, (cboxes, tps) in falls.items():
+    for r, (cboxes, tps, _norm) in falls.items():
         ticks = s.dispatch.get((r, "tick"), [])
         for n in need:
             x, y, z = gr.xyz(n)
@@ -1249,7 +1253,7 @@ def walk_audit(pack, s, shell, start, F):
     backv0 = minimax_back(rev, {n: -1 for n in backs}, None)
     # a catch node returns when every checkpoint its fall can send it to returns (the value is their worst)
     dests, stale = {}, {}
-    for r, (cb, tps) in falls.items():
+    for r, (cb, tps, norm) in falls.items():
         dn = []
         for k, p in sorted(tps.items()):
             i = gr.idx(*Sim.blk(p))
@@ -1259,7 +1263,9 @@ def walk_audit(pack, s, shell, start, F):
         dests[r] = dn
         if not tps:
             F.add("PARKOUR", s, r, None, "its fall teleports nowhere")
-        missing = sorted(ck_any - set(tps))
+        # a value the fall re-routes before its teleports (the guard) lands where the guard's value does, if that teleports
+        routed = {v for v in ck_any if norm and not norm[0] <= v <= norm[1] and norm[2] in tps}
+        missing = sorted(ck_any - set(tps) - routed)
         if missing:
             stale[r] = missing
     backv = backv0

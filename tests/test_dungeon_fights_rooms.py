@@ -381,7 +381,8 @@ def test_the_gauntlet_hides_its_trainers_raises_a_barrier_at_the_trigger_and_low
     stand_at(w, p, r, plan["trips"][0] + 1)
     w.passes(2)
     writes = [c for _d, c in w.block_writes[n:]]
-    shut = [c for c in writes if re.match(r"fill %d \d+ \d+ %d \d+ \d+ minecraft:iron_bars$" % (bx, bx), c)]
+    # the barrier fills AIR only (DG-AUDIT finding 3: over every block it destroyed the room's lanterns and canopy)
+    shut = [c for c in writes if re.match(r"fill %d \d+ \d+ %d \d+ \d+ minecraft:iron_bars replace minecraft:air$" % (bx, bx), c)]
     assert shut, writes
     assert len(npcs(w)) == 1 and len(w.started) == 1
     stand_at(w, p, r, bx + 3)                                           # past the barrier while it stands

@@ -724,12 +724,74 @@ def build_room(doc, d, slot, room, theme):
             continue
         ctx = DressCtx(doc, d, slot, room, theme, b, grid, trail, keep, level, rng(d, room, "dress:" + spec["op"] + str(spec.get("salt", ""))))
         fn_(ctx, spec)
+    if level and "catch" not in b.anchors:
+        plug_pits(DressCtx(doc, d, slot, room, theme, b, grid, trail, keep, level, rg), fl)
     if not fl["dark"] and not b.meta.get("no_hull_lights"):
         ctx = DressCtx(doc, d, slot, room, theme, b, grid, trail, keep, level, rg)
         hull_lights(ctx, room, theme, ref_y)
     b.gate_ops = gate_closing_ops(room, theme)
     b.grid = grid
     return b
+
+
+def room_start(room):
+    """The walk's start: the cell just inside the door in (the entry room's arrival), as walk_problems takes it."""
+    sx = room["xa"] + 3 if room["kind"] == "entry_room" else room["ix0"]
+    return sx, room["floor_in"], room["z_in"]
+
+
+def pits(grid, start, jumps, cls=None):
+    """Local standable cells a player can get INTO but not back out of: the walk (reversible edges) never enters them,
+    so it cannot see them. Two shapes, both found by DG-AUDIT (2026-10-09) after dressing made them: (a) a drop of two
+    or more from a walked cell into a neighbouring column that lands outside the walk (a 1x1 water hole between a column
+    and a wall); (b) a standable cell outside the walk whose four sides are shut at body height (a 1x1 shaft between
+    trunks, reached by climbing). Rooms with a catch floor (parkour, the collapse bridge) are made of drops on purpose
+    and are not asked."""
+    cls = grid.cls() if cls is None else cls
+    st, p = G.standable(cls)
+    nx, ny, nz = st.shape
+    reach = G.walk(grid, [start], jumps=jumps, cls=cls)
+    if start not in reach:
+        return set()
+    out = set()
+    dirs = ((1, 0), (-1, 0), (0, 1), (0, -1))
+    for x, y, z in reach:
+        for dx, dz in dirs:
+            ax, az = x + dx, z + dz
+            if not (0 <= ax < nx and 0 <= az < nz) or not (p[ax, y, az] and p[ax, y + 1, az]):
+                continue
+            cy = y
+            while cy > 1 and not st[ax, cy, az] and p[ax, cy - 1, az]:
+                cy -= 1
+            if st[ax, cy, az] and cy < y - 1 and (ax, cy, az) not in reach:
+                out.add((ax, cy, az))
+    for x, y, z in zip(*st.nonzero()):
+        c = (int(x), int(y), int(z))
+        if c in reach or c in out or y + 2 >= ny:
+            continue
+        shut = all(not (0 <= x + dx < nx and 0 <= z + dz < nz) or not (p[x + dx, y, z + dz] or p[x + dx, y + 1, z + dz])
+                   for dx, dz in dirs)
+        if shut and p[x, y + 2, z]:
+            out.add(c)
+    return out
+
+
+def plug_pits(ctx, fl):
+    """Raise the floor of every pit (pits()) one block at a time, in the hull's floor block, until none is left: a pit
+    the dressing made is a cell a player cannot leave (the owner's rule), and filling it costs the look nothing."""
+    grid, room = ctx.grid, ctx.room
+    start = grid.local(*room_start(room))
+    x0, y0, z0 = grid.box[:3]
+    block = ctx.theme["hull"]["floor"]
+    for _ in range(24):
+        found = pits(grid, start, fl["jumps"])
+        if not found:
+            return
+        for lx, ly, lz in sorted(found):
+            for k in range(2):      # the landing cell and the one above: a fall of two is undone in one pass
+                if ly + k < grid.shape[1] - 2:
+                    ctx.add(("set", (x0 + lx, y0 + ly + k, z0 + lz), block))
+    raise RoomError("%s room %s: pits the dressing made are still there after 24 passes" % (ctx.d["id"], room["id"]))
 
 
 # ------------------------------------------------------------------------------------------------- emission
@@ -794,10 +856,6 @@ def objective_lines():
     return ["scoreboard objectives add %s dummy" % v for v in OBJ_ROOM.values()]
 
 
-def _dispatch(slot_list, d, room, name):
-    return ["execute if score @s dg.slot matches %d run function %s" % (s["g"], room_fn(d, room, s, name)) for s in slot_list]
-
-
 def runtime_functions(doc, d, slots_of_d):
     """Every generated room function for the dungeon, all its slots. Returns {name: lines}."""
     out = {}
@@ -837,9 +895,8 @@ def runtime_functions(doc, d, slots_of_d):
             for k, v in ex.items():
                 if k not in ("enter", "clear", "reset", "tick"):
                     out["room/%s/%s/s%d/%s" % (d["id"], r["id"], slot["g"], k)] = list(v)
-    first = slots_of_d[0]
-    for r in layout(doc, d, first):
-        out["room/%s/%s/clear" % (d["id"], r["id"])] = [HEAD, "# as a MEMBER: their slot's room %s opens its way on" % r["id"]] + _dispatch(slots_of_d, d, r, "clear")
+    # (no per-room member dispatch room/<d>/<room>/clear: every kind calls its slot's own s<g>/clear, so a dispatcher is a
+    # function no step or pack runs, which prepare's orphan check refuses; 2026-10-09)
     return out
 
 
@@ -981,6 +1038,10 @@ def walk_problems(doc, d, slot):
         if s_local not in reach:
             bad.append("%s: the cell inside its entry (%d, %d, %d) is not standable" % (lab, sx, r["floor_in"], start))
             continue
+        if "catch" not in b.anchors:
+            x0, y0, z0 = g.box[:3]
+            for lx, ly, lz in sorted(pits(g, s_local, fl["jumps"], cls=cls))[:3]:
+                bad.append("%s: a pit at (%d, %d, %d): a player can get in and not back out" % (lab, x0 + lx, y0 + ly, z0 + lz))
         for key, col in (("door_in", r["xa"]), ("door_out", r["xb"])):
             box = r[key]
             if not box:

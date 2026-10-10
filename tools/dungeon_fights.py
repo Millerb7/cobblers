@@ -806,8 +806,12 @@ def kind_fight(doc, d, slot, room, theme):
     reserve = []
     ops = []
     fn_ = {}
-    barrier_fill = lambda k: "fill %d %d %d %d %d %d %s" % (plan["barriers"][k - 1], fy, iz0, plan["barriers"][k - 1], ceil - 1, iz1, gate)  # noqa: E731
-    barrier_off = lambda k: "fill %d %d %d %d %d %d minecraft:air replace %s" % (plan["barriers"][k - 1], fy, iz0, plan["barriers"][k - 1], ceil - 1, iz1, gate)  # noqa: E731
+    # the barrier is 4 high (no jump clears 4; the reserve keeps dressing out of its columns) and fills AIR only: to the
+    # ceiling and over every block, it overwrote the hull's lanterns and the canopy, and its removal left air for good
+    # (DG-AUDIT finding 3)
+    btop = min(fy + 3, ceil - 1)
+    barrier_fill = lambda k: "fill %d %d %d %d %d %d %s replace minecraft:air" % (plan["barriers"][k - 1], fy, iz0, plan["barriers"][k - 1], btop, iz1, gate)  # noqa: E731
+    barrier_off = lambda k: "fill %d %d %d %d %d %d minecraft:air replace %s" % (plan["barriers"][k - 1], fy, iz0, plan["barriers"][k - 1], btop, iz1, gate)  # noqa: E731
     if mode == "gauntlet":
         for k in range(1, n + 1):
             bx = plan["barriers"][k - 1]
@@ -828,8 +832,10 @@ def kind_fight(doc, d, slot, room, theme):
         # the barrier is a fence in the way, not a wall the member is trusted to respect: past it while it stands, back
         for k in range(1, n + 1):
             bx = plan["barriers"][k - 1]
-            tick.append("execute if score %s %s matches 1 if entity @s[%s] run tp @s %.1f ~ ~"
-                        % (T(k), rs, R.sel_box(_after(room, bx + 1)), bx - 1.5))
+            # into the column just before the barrier, at the floor: the reserve keeps that column clear of dressing, so
+            # the put-back never lands inside a block (keeping the member's own y and z did: DG-AUDIT finding 4)
+            tick.append("execute if score %s %s matches 1 if entity @s[%s] run tp @s %.1f %d ~"
+                        % (T(k), rs, R.sel_box(_after(room, bx + 1)), bx - 0.5, fy))
     for k in range(1, n + 1):
         conds = ["if score %s %s matches 0" % (T(k), rs)] + ["if score %s %s matches 2" % (T(j), rs) for j in range(1, k)]
         tick.append("execute %s if entity @s[%s] run function %s" % (" ".join(conds), R.sel_box(_after(room, plan["trips"][k - 1])), fn("go%d" % k)))
@@ -1000,11 +1006,13 @@ def kind_wild(doc, d, slot, room, theme):
             else:
                 tick.append("execute positioned %.1f %d %.1f run particle %s ~ ~1 ~ 1.5 1.5 1.5 0.02 6" % (lx + 0.5, ly, lz + 0.5, a))
     if not pass_mode:
+        # only a room whose door waits on its Pokemon watches for them: a "pass" nest's door is open already, and its
+        # fallback would be a function no step or pack calls (prepare's orphan check, 2026-10-09)
         tick += presence_lines(W, sel, fn("clear"), fn("nothing"))
-    fn_["nothing"] = [DG.HEAD, R.LOADED, "# The room's Pokemon never appeared (a failed spawn): open anyway, say so. A bad species id",
-                      "# must not trap a player",
-                      "title @s actionbar %s" % DG.text(MSG["nothing"], "gray"),
-                      "function %s" % fn("clear")]
+        fn_["nothing"] = [DG.HEAD, R.LOADED, "# The room's Pokemon never appeared (a failed spawn): open anyway, say so. A bad species id",
+                          "# must not trap a player",
+                          "title @s actionbar %s" % DG.text(MSG["nothing"], "gray"),
+                          "function %s" % fn("clear")]
     clear = ["scoreboard players set %s %s %d" % (W, rs, HOLD_DONE)]
     cx, cz = (room["ix0"] + room["ix1"]) // 2, (room["iz0"] + room["iz1"]) // 2
     reset = ["forceload add %d %d" % (cx, cz),

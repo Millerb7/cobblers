@@ -425,14 +425,15 @@ def test_registering_with_an_unknown_flag_or_a_kind_with_no_theme_op_is_an_error
     assert "x_kind" not in R.KINDS
 
 
-def test_every_room_gets_enter_clear_reset_and_the_member_dispatch_and_the_slot_calls_them():
+def test_every_room_gets_enter_clear_reset_and_the_slot_calls_them():
     doc = demo_doc("mine")
     files = D.build(doc)
     pre = "data/cobblers/function/dungeons/"
     for r in DEMO:
         for fn in ("enter", "clear", "reset"):
             assert pre + "room/night_shift/%s/s1/%s.mcfunction" % (r["id"], fn) in files, (r["id"], fn)
-        assert "dg.slot matches 1 run function cobblers:dungeons/room/night_shift/%s/s1/clear" % r["id"] in files[pre + "room/night_shift/%s/clear.mcfunction" % r["id"]]
+        # no per-room member dispatcher: nothing calls one, and prepare refuses a function no step or pack runs
+        assert pre + "room/night_shift/%s/clear.mcfunction" % r["id"] not in files
     reset = files[pre + "slot/s1/reset.mcfunction"]
     assert reset.count("/reset") == len(DEMO)
     clock = files[pre + "m/clock.mcfunction"]
@@ -652,12 +653,12 @@ def test_clear_opens_the_door_out_once_and_the_slot_reset_closes_it_and_zeroes_t
     p.pos = [r["ix0"] + 4.5, r["floor_in"], r["z_in"] + 0.5]
     w.passes(1)
     before = len(w.block_writes)
-    w.call("cobblers:dungeons/room/night_shift/stand1/clear", PS.Ctx(p, p.dim, p.pos))
+    w.call("cobblers:dungeons/room/night_shift/stand1/s1/clear", PS.Ctx(p, p.dim, p.pos))
     assert w.get(hold, "dg.rs") == 2
     writes = [c for _dim, c in w.block_writes[before:]]
     assert open_cmd in writes
     n = len(w.block_writes)
-    w.call("cobblers:dungeons/room/night_shift/stand1/clear", PS.Ctx(p, p.dim, p.pos))
+    w.call("cobblers:dungeons/room/night_shift/stand1/s1/clear", PS.Ctx(p, p.dim, p.pos))
     assert len(w.block_writes) == n, "clearing twice writes nothing the second time"
     n = len(w.block_writes)
     w.call("cobblers:dungeons/slot/s%d/reset" % s["g"], PS.Ctx(p, POCKET, p.pos))

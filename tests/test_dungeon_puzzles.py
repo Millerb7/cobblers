@@ -397,7 +397,7 @@ def test_levers_nothing_happens_before_entry_or_after_the_solve(mk):
     assert w.get(p.name, "dg.clock") == clock - 80, "a member outside the room is not judged"
     reset_slot(w, p, s)
     into(doc, w, p, "lev")
-    w.call("cobblers:dungeons/room/night_shift/lev/clear", PS.Ctx(p, p.dim, p.pos))
+    w.call("cobblers:dungeons/room/night_shift/lev/s1/clear", PS.Ctx(p, p.dim, p.pos))
     assert w.get(hold(s, r), "dg.rs") == 2
     clock = w.get(p.name, "dg.clock")
     w.blocks[seal] = DP.button(DP.blocks_of("mine"), True)
