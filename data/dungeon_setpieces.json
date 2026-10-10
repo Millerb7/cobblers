@@ -1,0 +1,57 @@
+{
+  "schema": "cobblers.dungeon_setpieces/1",
+  "why": "Palettes and cues for tools/dungeon_setpieces.py, the three set pieces of dungeons pass 2 (docs/mechanics/DUNGEON_PASS2.md, item 6). A piece reads its theme's entry, else `default`, over the theme's own hull and parkour blocks (a key missing from both falls back to those), so any piece builds in any theme; the entries below are the ones the three test dungeons use. Every block id is checked against the 1.21.1 jar by tests/test_dungeon_setpieces.py; no gravity block, no concrete, no hazard, nothing the rift pick can break. Sounds are vanilla sound events (not checkable in this checkout: a wrong id plays nothing). Particles are plain names with no options, which every 1.21 particle command accepts.",
+  "collapse": {
+    "why": "The mine's set piece: the floor falls away behind the player as they run (DUNGEONS pass 2 item 6). One segment of `seg` blocks cracks `lead` passes after the player steps onto the span and falls `warn` passes later, then the next, one a pass; a pass is the keeper's period (1 s).",
+    "default": {
+      "cue": "The floor is giving way. Run.",
+      "sound_crack": "minecraft:block.deepslate_tiles.break",
+      "sound_fall": "minecraft:entity.generic.explode",
+      "particle": "minecraft:large_smoke"
+    },
+    "mine": {
+      "span": "minecraft:deepslate_tiles",
+      "cracked": "minecraft:cracked_deepslate_tiles",
+      "track": "minecraft:polished_deepslate",
+      "sleeper": "minecraft:stripped_oak_log[axis=z]",
+      "post": "minecraft:oak_log[axis=y]",
+      "beam": "minecraft:stripped_oak_log[axis=z]"
+    }
+  },
+  "flood": {
+    "why": "The ruin's set piece: a sunken hall that fills while the player climbs out of it. The water never reaches the ledges (its top block is the one under the ledge's top block, so its surface is a block under the standing level), a layer of `step` passes at a time, and the hall's steps stay walkable under it.",
+    "default": {
+      "water": "minecraft:water",
+      "sound_start": "minecraft:block.piston.extend",
+      "sound_rise": "minecraft:block.water.ambient",
+      "cue": "Water is coming in."
+    },
+    "flooded_ruin": {
+      "step": "minecraft:cracked_stone_bricks",
+      "step_edge": "minecraft:mossy_stone_bricks",
+      "support": "minecraft:mossy_stone_bricks",
+      "pillar": "minecraft:mossy_stone_bricks",
+      "pillar_cap": "minecraft:chiseled_stone_bricks",
+      "rubble": "minecraft:mossy_cobblestone",
+      "lantern": "minecraft:sea_lantern"
+    }
+  },
+  "lights_out": {
+    "why": "The jungle's set piece: the canopy closes behind the player. A sheet of the ceiling block is laid across a zone `lag` blocks behind them (an opaque sheet under the room's ceiling lights puts out every light above it and touches nothing the player walks on); a faint light block every 5 cells along the way keeps the path findable; darkness is the vanilla effect and costs nothing.",
+    "default": {
+      "sheet": null,
+      "guide_light": "minecraft:light[level=4]",
+      "trunk": "minecraft:jungle_log[axis=y]",
+      "floor_plant": "minecraft:fern",
+      "floor_plant2": "minecraft:short_grass",
+      "carpet": "minecraft:moss_carpet",
+      "sound_close": "minecraft:block.moss.place",
+      "sound_ambient": "minecraft:ambient.cave",
+      "particle": "minecraft:spore_blossom_air",
+      "effect": "minecraft:darkness"
+    },
+    "jungle": {
+      "sheet": "minecraft:moss_block"
+    }
+  }
+}

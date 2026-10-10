@@ -275,10 +275,9 @@ def test_a_parkour_is_walkable_only_by_jumping_and_every_jump_is_inside_the_desi
     plats = b.anchors["platforms"]
     assert len(plats) >= 8
     assert G.JUMP_FLAT_MAX == 4 and G.JUMP_RISE_MAX == 3        # DUNGEONS.md V6: flat gap 3, rise 1 with gap 2
-    # and the generator keeps to the tighter limits it advertises: gaps of 1 or 2
-    xs = sorted(p[0] for p in plats)
-    steps = [b_ - a for a, b_ in zip(xs, xs[1:])]
-    assert all(s in (4, 5) or s >= 9 for s in steps), steps       # 3 wide + a gap of 1 or 2 (or a ledge between)
+    # and the generator (tools/dungeon_parkour.py, which replaced the kit's) keeps to those limits in every hop it plans:
+    # 4 cells flat, 3 with a rise or fall of one (tests/test_dungeon_setpieces.py re-derives them from the blocks)
+    assert b.meta["hops"] and all(2 <= h["n"] <= 4 and (h["n"] <= 3 or h["dy"] == 0) for h in b.meta["hops"])
 
 
 def test_a_fall_never_reaches_the_void_a_catch_floor_lies_under_every_column():
@@ -311,12 +310,13 @@ def test_mutating_the_maze_generator_to_cut_a_passage_makes_the_walk_check_fail(
 
 
 def test_mutating_the_parkour_generator_to_widen_the_gaps_makes_the_walk_check_fail(monkeypatch):
-    orig = K._platform_run
+    import dungeon_parkour as P
+    orig = P._tier_opts
 
-    def wide(free, rg):
-        m, gp = orig(free, rg)
-        return m, [g + 1 for g in gp]
-    monkeypatch.setattr(K, "_platform_run", wide)
+    def wide(tier, relaxed):
+        N, W = orig(tier, relaxed)
+        return [n + 1 for n in N], W      # every hop one cell longer than the grid's jump allows
+    monkeypatch.setattr(P, "_tier_opts", wide)
     p = R.problems(demo_doc("jungle"))
     assert any("jump (parkour)" in x and "cannot be walked" in x for x in p), p[:3]
 

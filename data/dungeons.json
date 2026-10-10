@@ -224,7 +224,7 @@
         "plume_gated_on": "V1 (EXP-080): whether the particles are seen from the approach path; the owner looks"
       },
       "theme": "mine",
-      "clock_s_by_band": {"1": 2160, "2": 2280, "3": 2340, "4": 2520, "5": 2640, "6": 2820},
+      "clock_s_by_band": {"1": 2220, "2": 2340, "3": 2400, "4": 2520, "5": 2700, "6": 2880},
       "clock_why": "python tools/dungeon_clock.py night_shift (2026-10-09): 1,338 blocks walked door to door; required 28.3 / 30.3 / 30.8 / 32.8 / 34.8 / 37.3 minutes by band (walk 6.0 with the maze x2 and the dark room x1.5, the Collapse 1.6 plus two falls, the bridge one fall, the Hand and the Haulage's two trainers 6.0-12.0, the mini-boss 1.5, the Foreman's three stages 9.1-12.1, the puzzle, the seam, the heal and the cues 2.8), x slack_factor 1.25, up to the minute: 36 / 38 / 39 / 42 / 44 / 47 minutes. Every pace is DUNGEONS.md 4.1's PLANNING figure: XT1 (EXP-079) has timed no fight. The den, the Sump's Volcanion and the vault are optional and are paid from the slack. tools/dungeon.py refuses a clock under the derived one",
       "rooms_why": "DG-NS (2026-10-09), after the owner played the placeholder ('That was it?'; 'make it wider'; 'full length dungeons'): the record moved from spine.segments to the room kit (docs/mechanics/DUNGEON_ROOMS.md). DUNGEONS.md 11.1's named beats are kept where they fit: the Lamp Room, the Main Drift, the Hand's stand, the Old Incline, the Powerhouse den (D11, now on the spine as a nest that does not gate), the Lower Face (the seam), the Wet Drift down to the Sump (the lake idea as a flooded habitat, Volcanion: DUNGEONS.md 8, approved D18), the Collapse (parkour, 4 sections), the Haulage (rails taken up: the Shotfirer and the Timberman step out of it), the gantry (now the collapsing bridge), the Shift Road rising to the Stope, the Shift Bell. The 300-block 5-wide drifts are gone: no connector is over 40 long or under 7 wide. Pacing: no two gating fights without a breather between (stand, puzzle, den, dark, mini-boss, seam, vault, sump, safe room, parkour, gauntlet, bridge, boss); the seam and the vault come before the hardest stretch (the sump, the Collapse, the Haulage, the Stope), so greed is a choice made with that ahead; the safe room two thirds in, after the Sump: from there the Collapse, the Haulage, the gantry and the Stope run with no heal. Trainer teams and the mini-boss and nest species are the mine's families (11 theme: Timburr, Machop, Geodude, Roggenrola, Onix, Diglett, Drilbur) and are PLACEHOLDERS for trainer-balance-designer, like the boss's crews",
       "rooms": [
@@ -326,7 +326,7 @@
       "gate_flag": null,
       "gate_flag_why": "a test dungeon: open at 0 badges and every band, like the Night Shift (DUNGEONS.md 11.2), so the owner can enter it at any band",
       "theme": "jungle",
-      "clock_s_by_band": {"1": 3720, "2": 4020, "3": 4140, "4": 4440, "5": 4860, "6": 5220},
+      "clock_s_by_band": {"1": 3720, "2": 4020, "3": 4200, "4": 4500, "5": 4920, "6": 5220},
       "clock_why": "tools/dungeon_clock.py jungle (DUNGEON_ROOMS.md 7), derived at integration 2026-10-09 from the walked rooms; planning paces, not measured (XT1 timed no fight)",
       "lockout_ticks": 108000,
       "lockout_why": "a TEST dungeon's own (tools/dungeon.py lockout_of): its longest clock is over D17's hour, and a lockout under the clock never binds (V12). 90 minutes of uptime. The owner decides whether these runs stay this long or are trimmed under the hour",
@@ -451,7 +451,7 @@
       "gate_flag": null,
       "gate_flag_why": "a test dungeon: open at 0 badges and to every band, like the Night Shift (DUNGEONS.md 11.2), so any band can be tried",
       "theme": "flooded_ruin",
-      "clock_s_by_band": {"1": 3540, "2": 3720, "3": 3900, "4": 4140, "5": 4440, "6": 4740},
+      "clock_s_by_band": {"1": 3540, "2": 3780, "3": 3900, "4": 4140, "5": 4500, "6": 4740},
       "clock_why": "tools/dungeon_clock.py flooded_ruin (DUNGEON_ROOMS.md 7), derived at integration 2026-10-09 from the walked rooms; planning paces, not measured (XT1 timed no fight)",
       "lockout_ticks": 108000,
       "lockout_why": "a TEST dungeon's own (tools/dungeon.py lockout_of): its longest clock is over D17's hour, and a lockout under the clock never binds (V12). 90 minutes of uptime. The owner decides whether these runs stay this long or are trimmed under the hour",
