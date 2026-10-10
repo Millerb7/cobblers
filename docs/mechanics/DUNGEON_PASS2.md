@@ -86,3 +86,6 @@ the record contract it publishes first); then the three authors on KIT2's merge;
   or 1 diamond = 1 point, 2 points = +0.1x clock; resource rooms are band-scaled piles. Open: Giratina fight-only or
   catchable once.
 - **Server:** the owner is testing; do not stop staging without asking.
+- **Playtest, pass 2 (the owner, 2026-10-10):** the Night Shift finished with about 15 minutes of the clock to spare,
+  flying over the maze in creative, mining a few ores, with a level-100 Urshifu against band 1 (the playtest switch).
+  The owner: "seems good". Not a timing measurement of a normal run (no maze walk, one-shot fights, little greed).
