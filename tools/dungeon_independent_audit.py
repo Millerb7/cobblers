@@ -18,9 +18,40 @@ How (an audit that shares the builder's derivation checks nothing, CLAUDE.md):
     the player starts is won through the real victory callback, wild Pokemon are defeated by removing them, puzzles
     are solved by search over their own controls.
 
+Pass 2 (AUDIT2, DUNGEON_ROOMS.md 1a and 9), all read from the generated text and walked on this file's own graph:
+  * EVERY slot is walked from its own shell (a variant -- mirror, seed, swap, order -- is a different dungeon); rooms
+    are found by their own shell boxes in x, y and z (`room_at`), never by x; a slot's records are its variant's as
+    1a describes them (`slot_records`, this file's reading, not the kit's resolve());
+  * forks: each route ALONE (the others' boxes solid) reaches the far rip and traps no one in its own gate order; the
+    clock pays for the slowest choice of routes and never for side rooms; side rooms are walked back out of (the trap
+    walk covers every reached cell);
+  * secrets: the rift pick (its generated can_break) breaks nothing but seams and cracked faces; a broken face opens
+    a chamber in its own room, walked back out of, and the slot reset puts the face back; a balcony alcove is reached
+    by jumping and not by a player who never jumps; each relic's pickup (`relic_<id>` in the tick) is reached with its
+    trick and not without; shortcuts open only from their far room, are never needed (the far rip is walked to with
+    them shut), trap no one when open, and the slot reset shuts them;
+  * set pieces: the member walked through the room, waiting at every fourth cell, and the pass holders run to their
+    end with the member parked outside every box; in every block state seen: no block where a player may stand, every
+    cell a player can be on reaches a ledge, a door or a teleporting floor, new water never stands on a ledge or runs
+    on into an open cell, standing on a ledge the way out is not cut, and the slot reset and the piece's own
+    restore/drain give back the room exactly;
+  * parkour v2: every ledge stood on, the chasm's lowest floor all catch, each ledge reached from the one before
+    without falling, and the fork two ways (with every platform of the first taken away, a second still finishes);
+  * life: every ambient spot (the storage table life/load writes) stands in its own room, on a cell a body stands on,
+    not in a doorway or the cell beside one; the room's reset, the slot's free and its tend (a stale run) remove them,
+    simulated through the generated storage walker;
+  * the return margin: m/margin run on the member gives the warning's estimate; the real walk back (this graph, every
+    gate open, at the margin's own pace) is compared per room: MARGIN names where the warning comes late.
+
+A swimmer at the water's top block climbs onto ground one over a step (two over the water block): this file's
+judgement of 1.21 (the flood's ledges rely on it), not run in game.
+
 Exit status 1 on any finding. What this does NOT cover: anything Minecraft decides at runtime (whether Cobblemon
 removes a fainted wild Pokemon, whether `runmolang` and `start_battle` behave as EXP-078 assumes, collision of
-partial blocks, a sprint player outrunning a one-second keeper pass), co-op (members_max 1), and fights' balance.
+partial blocks, a sprint player outrunning a one-second keeper pass, whether a walking player outruns the collapse --
+its pace against the walk's is not modelled, only that a fall is caught and the floor comes back), co-op (members_max
+1), fights' balance, where the kit's own trail runs (a Pokemon on the walked line is not checked, only doorways), and
+the route-and-gate states of two forks taken in different orders (each choice of routes is walked on its own).
 """
 import argparse
 import collections
@@ -194,6 +225,97 @@ def split_args(s):
     return [a.split("=", 1) if "=" in a else [a, ""] for a in out]
 
 
+def snbt(s):
+    """The SNBT the pack writes into storage: compounds, lists, quoted strings, numbers (suffix dropped), bare words."""
+    pos = [0]
+
+    def ws():
+        while pos[0] < len(s) and s[pos[0]] in " \t":
+            pos[0] += 1
+
+    def val():
+        ws()
+        c = s[pos[0]]
+        if c == "{":
+            pos[0] += 1
+            out = {}
+            ws()
+            if s[pos[0]] == "}":
+                pos[0] += 1
+                return out
+            while True:
+                ws()
+                if s[pos[0]] in "\"'":
+                    k = string()
+                else:
+                    m = re.compile(r"[A-Za-z0-9_.+-]+").match(s, pos[0])
+                    k = m.group(0)
+                    pos[0] = m.end()
+                ws()
+                assert s[pos[0]] == ":", s[pos[0]:pos[0] + 20]
+                pos[0] += 1
+                out[k] = val()
+                ws()
+                if s[pos[0]] == ",":
+                    pos[0] += 1
+                    continue
+                assert s[pos[0]] == "}", s[pos[0]:pos[0] + 20]
+                pos[0] += 1
+                return out
+        if c == "[":
+            pos[0] += 1
+            out = []
+            ws()
+            if s[pos[0]] == "]":
+                pos[0] += 1
+                return out
+            while True:
+                out.append(val())
+                ws()
+                if s[pos[0]] == ",":
+                    pos[0] += 1
+                    continue
+                assert s[pos[0]] == "]", s[pos[0]:pos[0] + 20]
+                pos[0] += 1
+                return out
+        if c in "\"'":
+            return string()
+        m = re.compile(r"[A-Za-z0-9_.+-]+").match(s, pos[0])
+        pos[0] = m.end()
+        w = m.group(0)
+        n = re.fullmatch(r"(-?\d+)[bBsSlL]?", w)
+        if n:
+            return int(n.group(1))
+        n = re.fullmatch(r"(-?\d*\.?\d+)[fFdD]?", w)
+        if n:
+            return float(n.group(1))
+        return {"true": 1, "false": 0}.get(w, w)
+
+    def string():
+        q = s[pos[0]]
+        pos[0] += 1
+        out = []
+        while s[pos[0]] != q:
+            if s[pos[0]] == "\\":
+                pos[0] += 1
+            out.append(s[pos[0]])
+            pos[0] += 1
+        pos[0] += 1
+        return "".join(out)
+    return val()
+
+
+def nbt_path(path):
+    """`a.b[0].c` -> ["a", "b", 0, "c"]."""
+    out = []
+    for part in path.split("."):
+        m = re.match(r"([^\[]*)((?:\[-?\d+\])*)$", part)
+        if m.group(1):
+            out.append(m.group(1))
+        out += [int(v) for v in re.findall(r"\[(-?\d+)\]", m.group(2))]
+    return out
+
+
 def in_range(v, rng):
     if v is None:
         return False
@@ -343,6 +465,57 @@ class Sim:
         self.depth = 0
         self.tick = 0
         self._parsed = {}
+        self.storage = {}
+
+    # -- command storage (`data ... storage`, `function ... with storage`): a dict per storage id
+    def _walk_path(self, ns, path, make):
+        node = self.storage.setdefault(ns, {}) if make else self.storage.get(ns)
+        steps = nbt_path(path)
+        for k, st in enumerate(steps):
+            last = k == len(steps) - 1
+            if node is None:
+                return None, None
+            if isinstance(st, int):
+                if not isinstance(node, list) or not -len(node) <= st < len(node):
+                    return None, None
+                if last:
+                    return node, st
+                node = node[st]
+            else:
+                if not isinstance(node, dict):
+                    return None, None
+                if last:
+                    return node, st
+                if st not in node:
+                    if not make:
+                        return None, None
+                    node[st] = {}
+                node = node[st]
+        return None, None
+
+    def storage_get(self, ns, path):
+        if not path:
+            return self.storage.get(ns)
+        parent, key = self._walk_path(ns, path, False)
+        if parent is None:
+            return None
+        if isinstance(key, int):
+            return parent[key]
+        return parent.get(key)
+
+    def storage_set(self, ns, path, value):
+        parent, key = self._walk_path(ns, path, True)
+        if parent is None:
+            return 0
+        parent[key] = value
+        return 1
+
+    def storage_del(self, ns, path):
+        parent, key = self._walk_path(ns, path, False)
+        if parent is None or (not isinstance(key, int) and key not in parent):
+            return 0
+        del parent[key]
+        return 1
 
     # -- entities and selectors
     def add_player(self, pos):
@@ -480,7 +653,12 @@ class Sim:
             return fr.value
         if head == "function":
             macro = None
-            if len(toks) > 2:
+            if len(toks) > 4 and toks[2] == "with" and toks[3] == "storage":
+                v = self.storage_get(toks[4], toks[5] if len(toks) > 5 else "")
+                if not isinstance(v, dict):
+                    return None            # vanilla: a macro call whose compound is missing fails
+                macro = {k: (x if isinstance(x, str) else str(x)) for k, x in v.items()}
+            elif len(toks) > 2:
                 macro = dict(re.findall(r'([A-Za-z0-9_]+):"((?:[^"\\]|\\.)*)"', toks[2]))
             return self.call(toks[1], ctx, macro)
         if head == "scoreboard":
@@ -548,6 +726,19 @@ class Sim:
                 if es and m:
                     return int(math.floor(es[0].pos[int(m.group(1))]))
                 return None
+            if toks[1] == "modify" and toks[2] == "storage" and len(toks) > 6 and toks[5] == "set":
+                if toks[6] == "value":
+                    return self.storage_set(toks[3], toks[4], snbt(" ".join(toks[7:])))
+                if toks[6] == "from" and toks[7] == "storage":
+                    v = self.storage_get(toks[8], toks[9] if len(toks) > 9 else "")
+                    return None if v is None else self.storage_set(toks[3], toks[4], json.loads(json.dumps(v)))
+            if toks[1] == "remove" and toks[2] == "storage":
+                return self.storage_del(toks[3], toks[4])
+            if toks[1] == "get" and toks[2] == "storage":
+                v = self.storage_get(toks[3], toks[4] if len(toks) > 4 else "")
+                return v if isinstance(v, int) else (len(v) if isinstance(v, (list, dict, str)) else None)
+            if toks[2] == "storage":
+                self.unknown["data storage " + toks[1]] += 1
             return 1
         if head == "schedule":
             if toks[1] == "function":
@@ -731,6 +922,12 @@ class Sim:
                 continue
             if t == "store":
                 kind, what = toks[i + 1], toks[i + 2]
+                if what == "storage":           # store <kind> storage <ns> <path> <type> <scale>
+                    r = self.execute(toks, i + 7, ctx, fr)
+                    v = (1 if r else 0) if kind == "success" else \
+                        (int(r) if isinstance(r, (int, float)) and not isinstance(r, bool) else (1 if r is True else 0))
+                    self.storage_set(toks[i + 3], toks[i + 4], int(v * float(toks[i + 6])))
+                    return r
                 if what != "score":
                     self.unknown["store " + what] += 1
                     r = self.execute(toks, i + 6 if what in ("block", "entity", "storage") else i + 5, ctx, fr)
@@ -770,6 +967,8 @@ class Sim:
             if toks[i + 1] == "block":
                 p = self.blk(self.pos3(toks[i + 2:i + 5], ctx))
                 return (toks[i + 5] + ":") in self.w.get(*p), 6
+            if toks[i + 1] == "storage":
+                return self.storage_get(toks[i + 2], toks[i + 3]) is not None, 4
             self.unknown["if data " + toks[i + 1]] += 1
             return False, 4
         if k == "items":
@@ -828,7 +1027,10 @@ def discover(pack, doc):
         mine = [s for s in out if s.dungeon == d["id"]]
         for k, s in enumerate(mine, 1):
             s.k = k
+            s.vi, s.recs, s.forks, s.sides = slot_records(d, k)
     for s in out:
+        if not hasattr(s, "recs"):
+            s.k, s.vi, s.recs, s.forks, s.sides = 0, None, {}, {}, {}
         s.boxes = {}
         for r in s.rooms:
             xs = []
@@ -851,10 +1053,14 @@ def discover(pack, doc):
             if m:
                 s.dispatch[(m.group(2), m.group(3))].append(sel_box(split_args(m.group(1))))
         s.arrive = None
+        s.pick = set()      # what the rift pick given at arrival may break (its can_break), base ids
         for ln in pack.lines(FN + "slot/s%d/arrive" % s.g):
             m = re.search(r"tp @s (\S+) (\S+) (\S+)", ln)
             if m:
                 s.arrive = tuple(float(v) for v in m.groups())
+            m = re.search(r"can_break=\{predicates:\[\{blocks:\[([^\]]*)\]", ln)
+            if m:
+                s.pick |= {base_id(b.strip().strip('"')) for b in m.group(1).split(",") if b.strip()}
         s.rips = {}
         short = (s.rec or {}).get("short", "?")
         for ln in pack.lines(FN + "shells/entities_act"):
@@ -875,11 +1081,61 @@ def discover(pack, doc):
     return out
 
 
+def slot_records(d, k):
+    """DUNGEON_ROOMS.md 1a as this file reads it (not the kit's resolve()): slot k builds variants[(k - 1) % n]; a
+    variant's `swap` replaces a room's fields, `params` merged one level; forks' routes and side rooms are rooms too.
+    Returns (variant index or None, {room id: record}, {fork id: {route id: [room ids]}}, {side id: [room ids]})."""
+    vs = (d or {}).get("variants") or []
+    vi = (k - 1) % len(vs) if vs else None
+    swap = (vs[vi].get("swap") or {}) if vs else {}
+    recs, forks, sides = {}, {}, {}
+
+    def take(entries, into):
+        for e in entries:
+            if e.get("kind") == "fork":
+                forks[e["id"]] = {}
+                for rt in e.get("routes") or []:
+                    forks[e["id"]][rt["id"]] = []
+                    take(rt.get("rooms") or [], forks[e["id"]][rt["id"]])
+            elif e.get("kind") == "side":
+                sides[e["id"]] = []
+                take(e.get("rooms") or [], sides[e["id"]])
+            else:
+                rec = dict(e)
+                for f, v in (swap.get(e["id"]) or {}).items():
+                    rec[f] = dict(rec.get("params") or {}, **v) if f == "params" and isinstance(v, dict) else v
+                recs[e["id"]] = rec
+                if into is not None:
+                    into.append(e["id"])
+    take((d or {}).get("rooms") or [], None)
+    return vi, recs, forks, sides
+
+
 def room_rec(s, r):
+    rec = getattr(s, "recs", {}).get(r)
+    if rec is not None:
+        return rec
     for x in (s.rec or {}).get("rooms", []):
         if x["id"] == r:
             return x
     return {"id": r, "kind": "?", "params": {}}
+
+
+def room_at(s, x, y, z):
+    """The room whose shell box (every block its shell function writes) holds the cell; where boxes meet (a shortcut's
+    door cut through the near wall, a door's shared columns), the smallest. Rooms are found by their own boxes in
+    all three axes: a route that turns, doubles back in x or is stacked under another room is mapped as built."""
+    best = None
+    for r, b in s.boxes.items():
+        if b[0] <= x <= b[3] and b[1] <= y <= b[4] and b[2] <= z <= b[5]:
+            v = (b[3] - b[0] + 1) * (b[4] - b[1] + 1) * (b[5] - b[2] + 1)
+            if best is None or v < best[0]:
+                best = (v, r)
+    return best[1] if best else None
+
+
+def room_of_node(s, gr, n):
+    return room_at(s, *gr.xyz(n))
 
 
 def gated(rec):
@@ -963,6 +1219,8 @@ class Graph:
         self.P = bytearray(passable.ravel().astype(np.uint8).tobytes())
         self.N = bytearray(node.ravel().astype(np.uint8).tobytes())
         self.CW = bytearray(climbw.ravel().astype(np.uint8).tobytes())
+        self.WA = bytearray(((f & WATER) != 0).ravel().astype(np.uint8).tobytes())
+        self.jumps = True           # False: the walk of a player who never jumps (a balcony secret's "without the trick")
         self.T = bytearray(((f & TALL) != 0).ravel().astype(np.uint8).tobytes())
         self.L = array("q", land.ravel().tobytes())
         g = gate if gate is not None else np.full(self.shape, -1, np.int16)
@@ -996,7 +1254,12 @@ class Graph:
                     out.append((t, max(G[v], G[v + SY], G[t] if t >= 0 else -1, G[t + SY] if t >= 0 else -1), 1))
             elif N[v + SY] and head2 and not self.T[v]:
                 out.append((v + SY, max(G[v + SY], G[v + 2 * SY], G[u + 2 * SY]), 1))
-            if head2:
+            elif self.WA[u] and not self.WA[u + SY] and head2 and P[u + 3 * SY] and N[v + 2 * SY] \
+                    and not self.T[v + SY]:
+                # out of the water's top block onto ground one higher than a step: a swimmer at the surface
+                # rises against the bank (the flood's ledges stand one over its surface, tools/dungeon_setpieces.py)
+                out.append((v + 2 * SY, max(G[v + 2 * SY], G[v + 3 * SY], G[u + 2 * SY], G[u + 3 * SY]), 2))
+            if head2 and self.jumps:
                 need = G[u + 2 * SY]
                 for k in (1, 2, 3):
                     w = u + d * k
@@ -1146,14 +1409,6 @@ def zone_nodes(gr, nodes, box, reach):
     return out
 
 
-def room_of_x(s, x):
-    for r in s.rooms:
-        b = s.boxes.get(r)
-        if b and b[0] <= x <= b[3]:
-            return r
-    return None
-
-
 def parse_falls(pack, s, r):
     """The room tick's catch boxes (lines that run `fall`), the fall's teleports by dg.ck value, and the ledge boxes
     that set dg.ck."""
@@ -1178,9 +1433,11 @@ def parse_falls(pack, s, r):
     return catch, tps, sets, norm
 
 
-def walk_audit(pack, s, shell, start, F):
+def walk_audit(pack, s, shell, start, F, blocked=()):
     """Entry to exit with every gate open; from every reached cell back to the back rip in every gate state; void
-    falls; catch floors; the slot's box; the per-room walk for the clock. Returns (graph, per-room walk, path)."""
+    falls; catch floors; the slot's box; the per-room walk for the clock. Returns (graph, per-room walk, path).
+    `blocked`: rooms whose whole shell box is made solid first (a fork's other routes: does this route alone finish,
+    and trap no one, in the gate order a player on it meets?)."""
     # the gates: run each room's clear in order on the start world; a cell a clear changes from solid to passable is
     # that room's gate cell. A clear that shuts a passable cell, or opens one another clear also touches, is reported.
     w = start.copy()
@@ -1189,7 +1446,12 @@ def walk_audit(pack, s, shell, start, F):
     sim.player.pos = (-1000.0, -1000.0, -1000.0)
     gate = np.full(w.shape, -1, np.int16)
     gated_rooms = []
+    for r in blocked:
+        b = s.boxes[r]
+        w.write(b[:3], b[3:], "minecraft:bedrock")
     for i, r in enumerate(s.rooms):
+        if r in blocked:
+            continue
         before = w.flags()
         sim.call(room_fn(s, r, "clear"), Ctx(ex=sim.player, pos=sim.player.pos))
         after = w.flags()
@@ -1237,16 +1499,17 @@ def walk_audit(pack, s, shell, start, F):
     if catch:
         need, rev, voids = minimax_forward(gr, [a], catch)
     for u in sorted(set(voids))[:1]:
-        F.add("VOID", s, room_of_x(s, gr.xyz(u)[0]), gr.xyz(u), "a step from here falls out of the shell into the void")
+        F.add("VOID", s, room_of_node(s, gr, u), gr.xyz(u), "a step from here falls out of the shell into the void")
     # the exit and the back rip
     far, back = s.rips.get("far"), s.rips.get("back")
     reached = list(need)
     exits = zone_nodes(gr, reached, far, ENTITY_REACH) if far else set()
     backs = zone_nodes(gr, reached, back, ENTITY_REACH) if back else set()
     if not exits:
-        xmax = max(gr.xyz(n)[0] for n in reached)
-        F.add("WALK", s, room_of_x(s, xmax), None, "the far rip cannot be reached with every gate open "
-              "(the walk ends at x %d)" % xmax)
+        far_c = ((far[0][0] + far[1][0]) / 2, (far[0][2] + far[1][2]) / 2) if far else (0, 0)
+        last = min(reached, key=lambda n: abs(gr.xyz(n)[0] - far_c[0]) + abs(gr.xyz(n)[2] - far_c[1]))
+        F.add("WALK", s, room_of_node(s, gr, last), gr.xyz(last), "the far rip cannot be reached with every gate open "
+              "(the nearest cell reached to it is here)")
     if not backs:
         F.add("TRAP", s, s.rooms[0], s.arrive, "the back rip cannot be reached from the arrival")
     big = 1 << 20
@@ -1299,7 +1562,7 @@ def walk_audit(pack, s, shell, start, F):
     for n, nv in need.items():
         bv = backv.get(n, big)
         if bv > nv:
-            by_room[room_of_x(s, gr.xyz(n)[0])].append((n, nv, bv))
+            by_room[room_of_node(s, gr, n)].append((n, nv, bv))
     for r, lst in by_room.items():
         never = [t for t in lst if t[2] >= big]
         until = [t for t in lst if t[2] < big]
@@ -1333,7 +1596,7 @@ def walk_audit(pack, s, shell, start, F):
     if s.box:
         out = [n for n in need if not hits_box((gr.xyz(n)[0] + 0.5, gr.xyz(n)[1], gr.xyz(n)[2] + 0.5), s.box)]
         if out:
-            F.add("BOUNDS", s, room_of_x(s, gr.xyz(out[0])[0]), gr.xyz(out[0]),
+            F.add("BOUNDS", s, room_of_node(s, gr, out[0]), gr.xyz(out[0]),
                   "%d reachable cells are outside the slot's box: standing there ends the run" % len(out))
     # holes: an interior column of a room with nothing solid in it, top to bottom
     sol = (gr.flags & SOLID) != 0
@@ -1355,9 +1618,11 @@ def walk_audit(pack, s, shell, start, F):
     if path:
         walks = collections.Counter()
         for i in range(1, len(path)):
-            r = room_of_x(s, gr.xyz(path[i])[0])
+            r = room_of_node(s, gr, path[i])
             x0, x1 = gr.xyz(path[i - 1])[0], gr.xyz(path[i])[0]
             walks[r] += abs(x1 - x0) + abs(gr.xyz(path[i])[2] - gr.xyz(path[i - 1])[2]) or 1
+    gr.info = {"arrive": a, "need": need, "rev": rev, "backv": backv, "exits": exits, "backs": backs, "catch": catch,
+               "catch_room": catch_room, "falls": falls, "dests": dests, "path": path}
     return gr, walks, (path, d, catch, need)
 
 
@@ -1407,7 +1672,7 @@ class Run:
 
     def here(self):
         p = self.sim.player.pos
-        return room_of_x(self.s, int(math.floor(p[0])))
+        return room_at(self.s, *(int(math.floor(v)) for v in p))
 
     def keeper(self):
         sim = self.sim
@@ -1749,7 +2014,7 @@ def vault_audit(pack, doc, s, start, gr, need, F):
         b = s.boxes[r]
         disp = s.dispatch.get((r, "enter"), [])
         pos = next(((gr.xyz(n)[0] + 0.5, float(gr.xyz(n)[1]), gr.xyz(n)[2] + 0.5) for n in need
-                    if b[0] < gr.xyz(n)[0] < b[3] and any(hits_box((gr.xyz(n)[0] + 0.5, gr.xyz(n)[1], gr.xyz(n)[2] + 0.5), bx)
+                    if in_box(s, r, gr, n) and any(hits_box((gr.xyz(n)[0] + 0.5, gr.xyz(n)[1], gr.xyz(n)[2] + 0.5), bx)
                                                           for bx in disp)), None)
         if pos is None or unit is None or cost is None:
             F.add("VAULT", s, r, None, "cannot test: no standing place in the room, no threshold clock or no clock_cost_s")
@@ -1794,7 +2059,7 @@ def puzzle_audit(pack, s, start, gr, need, F):
             if m:
                 rng = (int(m.group(1)), int(m.group(2)))
         b = s.boxes[r]
-        stand = [n for n in need if b[0] < gr.xyz(n)[0] < b[3]]
+        stand = [n for n in need if in_box(s, r, gr, n)]
         if not stand:
             F.add("PUZZLE", s, r, None, "no cell of the room is reached, so no control can be used")
             continue
@@ -1900,6 +2165,783 @@ def reset_audit(pack, s, start, F):
                 break
 
 
+# ------------------------------------------------------------------------------------------------- pass 2 (AUDIT2)
+# Routes, secrets, shortcuts, set pieces, parkour v2, life and the return margin, each read from the generated text and
+# walked on this file's own graph. What the pass-2 builders' checks (dungeon_rooms.problems, dungeon_setpieces,
+# dungeon_parkour, dungeon_life) decide is never asked.
+def tick_boxes(pack, s, r, target):
+    """[(conds, box)] of the room tick's lines `execute [if score H matches R]... if entity @s[box] run <target...>`;
+    conds [(holder, range, negate)]."""
+    out = []
+    for ln in pack.lines(room_fn(s, r, "tick")):
+        if " run " not in ln:
+            continue
+        head, body = ln.split(" run ", 1)
+        if not body.startswith(target):
+            continue
+        m = re.search(r"if entity @s\[([^\]]*)\]", head)
+        if not m:
+            continue
+        conds = [(h, rg, k == "unless") for k, h, rg in re.findall(r"(if|unless) score (\S+) dg\.rs matches (\S+)", head)]
+        out.append((conds, sel_box(split_args(m.group(1))), body))
+    return out
+
+
+def conds_hold(scores, conds):
+    return all(in_range(scores.get((h, "dg.rs")), rg) != neg for h, rg, neg in conds)
+
+
+def ledge_boxes(pack, s, r):
+    """{dg.ck value: box} of the tick's checkpoint lines."""
+    out = {}
+    for _c, box, body in tick_boxes(pack, s, r, "scoreboard players set @s dg.ck "):
+        out[int(body.split()[-1])] = box
+    return out
+
+
+def node_pos(gr, n):
+    x, y, z = gr.xyz(n)
+    return (x + 0.5, float(y), z + 0.5)
+
+
+def in_box(s, r, gr, n):
+    b = s.boxes.get(r)
+    x, y, z = gr.xyz(n)
+    return bool(b) and b[0] <= x <= b[3] and b[1] <= y <= b[4] and b[2] <= z <= b[5]
+
+
+def reach_from(gr, sources, catch=frozenset(), limit=400000):
+    seen = set(sources)
+    q = collections.deque(sources)
+    while q and len(seen) < limit:
+        u = q.popleft()
+        if u in catch:
+            continue
+        for v, _ne, _c in gr.edges(u):
+            if v >= 0 and v not in seen:
+                seen.add(v)
+                q.append(v)
+    return seen
+
+
+def returnable(gr, need, backs, catch):
+    """The reached nodes that can walk back to the back rip, every gate open (a catch node counts as returned: the
+    walk audit proves its teleport lands well)."""
+    rev = collections.defaultdict(list)
+    for u in need:
+        if u in catch:
+            continue
+        for v, _ne, _c in gr.edges(u):
+            if v >= 0:
+                rev[v].append(u)
+    ok = set(backs) | (set(catch) & set(need))
+    q = collections.deque(ok)
+    while q:
+        v = q.popleft()
+        for u in rev.get(v, ()):
+            if u not in ok:
+                ok.add(u)
+                q.append(u)
+    return ok
+
+
+def crop(world, lo, hi):
+    """A copy of the world's box lo..hi (sharing the palette), so a state's graph is built on the room, not the slot."""
+    lo = [max(lo[k], world.lo[k]) for k in range(3)]
+    hi = [min(hi[k], world.lo[k] + world.shape[k] - 1) for k in range(3)]
+    w = World.__new__(World)
+    w.lo = tuple(lo)
+    w.shape = tuple(hi[k] - lo[k] + 1 for k in range(3))
+    sl = tuple(slice(lo[k] - world.lo[k], hi[k] - world.lo[k] + 1) for k in range(3))
+    w.g = world.g[sl].copy()
+    w.pal, w.idx, w.writes_outside = world.pal, world.idx, []
+    # a solid frame, so no edge leaves the array (the frame is outside the room: callers count it as left)
+    v = w.bid("minecraft:bedrock")
+    w.g[0, :, :] = w.g[-1, :, :] = v
+    w.g[:, :, 0] = w.g[:, :, -1] = v
+    w.g[:, 0, :] = w.g[:, -1, :] = v
+    return w
+
+
+def box_slice(world, b, pad=0):
+    return tuple(slice(max(0, b[k] - pad - world.lo[k]), b[k + 3] + pad - world.lo[k] + 1) for k in range(3))
+
+
+def route_audit(pack, s, shell, start, F, base_walks):
+    """A fork's routes: each one ALONE (the other routes' boxes made solid) reaches the far rip and traps no one in the
+    gate order a player on it meets. Returns [(rooms the clock pays for, per-room walk)] per route choice."""
+    side = {r for rooms in s.sides.values() for r in rooms}
+    paid = [r for r in s.rooms if r not in side]
+    if not s.forks:
+        return [(paid, base_walks)] if base_walks else []
+    out = []
+    import itertools
+    known = {(f["cat"], f["slot"], f["room"], f["at"]) for f in F}
+    for combo in itertools.product(*[[(f, r) for r in routes] for f, routes in sorted(s.forks.items())]):
+        blocked = set()
+        for f, rid in combo:
+            for other, rooms in s.forks[f].items():
+                if other != rid:
+                    blocked |= set(rooms)
+        blocked &= set(s.boxes)
+        T = Findings()
+        _gr, walks, _extra = walk_audit(pack, s, shell, start, T, blocked=sorted(blocked))
+        label = ", ".join("%s/%s" % c for c in combo)
+        for f in T:
+            if f["cat"] in ("WALK", "TRAP", "VOID") and (f["cat"], f["slot"], f["room"], f["at"]) not in known:
+                F.add(f["cat"], s, f["room"], f["at"], "[route %s alone] %s" % (label, f["msg"]))
+        F.stats[s.dungeon]["fork_routes_walked"] += 1
+        if walks:
+            out.append(([r for r in paid if r not in blocked], walks))
+    return out
+
+
+def relic_triggers(pack, s, r):
+    """{relic id: (centre, radius)} from the tick's `execute positioned X Y Z if entity @s[distance=..R] run function
+    .../relic_<id>` lines."""
+    out = {}
+    for ln in pack.lines(room_fn(s, r, "tick")):
+        m = re.match(r"execute positioned (\S+) (\S+) (\S+) if entity @s\[distance=\.\.([0-9.]+)\] run function "
+                     + re.escape(room_fn(s, r, "relic_")) + r"(\w+)$", ln)
+        if m:
+            out[m.group(5)] = (tuple(float(v) for v in m.group(1, 2, 3)), float(m.group(4)))
+    return out
+
+
+def trigger_nodes(gr, s, r, centre, radius):
+    b = s.boxes[r]
+    out = set()
+    for x in range(int(centre[0] - radius) - 1, int(centre[0] + radius) + 2):
+        for z in range(int(centre[2] - radius) - 1, int(centre[2] + radius) + 2):
+            for y in range(int(centre[1] - radius) - 1, int(centre[1] + radius) + 2):
+                if not (b[0] <= x <= b[3] and b[2] <= z <= b[5]):
+                    continue
+                n = gr.idx(x, y, z)
+                if gr.N[n] and math.dist((x + 0.5, y, z + 0.5), centre) <= radius:
+                    out.add(n)
+    return out
+
+
+def secret_audit(pack, s, start, gr, F):
+    """Secrets (DUNGEON_ROOMS 1a, 9): the rift pick breaks nothing but seams and cracked faces; each cracked face opens
+    a chamber reached only through it, walked back out of, and put back by the slot reset; each balcony alcove is
+    reached with a jump and not without one; each relic's pickup is reached WITH its secret's trick and not without."""
+    info = getattr(gr, "info", None)
+    if not info:
+        return
+    need, backs, catch = info["need"], info["backs"], info["catch"]
+    lo = start.lo
+    # every cell of the start world the pick may break, by room
+    ids = [i for i, b in enumerate(start.pal) if base_id(b) in s.pick]
+    cells = [tuple(int(v) for v in p + np.array(lo)) for p in np.argwhere(np.isin(start.g, ids))] if ids else []
+    by_room = collections.defaultdict(list)
+    for c in cells:
+        by_room[room_at(s, *c)].append(c)
+    for r, cs in sorted(by_room.items(), key=lambda kv: str(kv[0])):
+        rec = room_rec(s, r) if r else {}
+        n_cracked = sum(1 for x in rec.get("secrets") or [] if x.get("type") == "cracked")
+        if rec.get("kind") == "resources":
+            continue
+        if not n_cracked:
+            F.add("SECRET", s, r, cs[0], "the rift pick may break %d cells here (%s) and the room has no seam and no "
+                  "cracked secret" % (len(cs), base_id(start.get(*cs[0]))))
+        elif len(cs) != 2 * n_cracked:
+            F.add("SECRET", s, r, cs[0], "%d cracked secrets and %d breakable cells (a face is 1 x 2)" % (n_cracked, len(cs)))
+    for r in s.rooms:
+        rec = room_rec(s, r)
+        secs = rec.get("secrets") or []
+        if not secs:
+            continue
+        trig = relic_triggers(pack, s, r)
+        F.stats[s.dungeon]["relic_triggers"] += len(trig)
+        tnodes = {k: trigger_nodes(gr, s, r, c, rad) for k, (c, rad) in trig.items()}
+        for k, ns in tnodes.items():
+            if not ns:
+                F.add("SECRET", s, r, trig[k][0], "relic %s: no cell a player can stand on is within its pickup" % k)
+        cracked = [x for x in secs if x.get("type") == "cracked"]
+        balcony = [x for x in secs if x.get("type") == "balcony"]
+        faces = [c for c in by_room.get(r, [])]
+        # the faces as groups (each 1 x 2 face is one group of touching cells)
+        groups = []
+        for c in faces:
+            for g in groups:
+                if any(sum(abs(c[i] - d[i]) for i in range(3)) == 1 for d in g):
+                    g.append(c)
+                    break
+            else:
+                groups.append([c])
+        if cracked and not groups:
+            F.add("SECRET", s, r, None, "%d cracked secrets and no face the pick may break" % len(cracked))
+        reached_by_group = {}
+        for gi, g in enumerate(groups):
+            w2 = gr.world.copy()                 # every gate open, this face broken
+            for c in g:
+                w2.write(c, c, "minecraft:air")
+            g2 = Graph(w2)
+            seen = reach_from(g2, [info["arrive"]], catch)
+            new = seen - set(need)
+            F.stats[s.dungeon]["cracked_faces_checked"] += 1
+            if not new:
+                F.add("SECRET", s, r, g[0], "breaking this face opens no cell a player could not already reach")
+            ok = returnable(g2, seen, set(backs), catch)
+            stuck = [n for n in new if n not in ok]
+            if stuck:
+                F.add("TRAP", s, r, g2.xyz(stuck[0]), "behind the cracked face: %d cells with no walk back" % len(stuck))
+            away = sorted(n for n in new if room_of_node(s, g2, n) != r)
+            if away:
+                F.add("SECRET", s, r, g2.xyz(away[0]), "breaking this face opens %d cells outside its own room (%s): a "
+                      "way round the route" % (len(away), room_of_node(s, g2, away[0])))
+            reached_by_group[gi] = seen
+            # the slot's reset puts the face back
+            w3 = start.copy()
+            for c in g:
+                w3.write(c, c, "minecraft:air")
+            sim = Sim(pack, w3)
+            entrant(sim, s, 1)
+            sim.call(FN + "slot/s%d/reset" % s.g, Ctx(ex=sim.player, pos=sim.player.pos))
+            for c in g:
+                if w3.get(*c) != start.get(*c):
+                    F.add("RESET", s, r, c, "a broken cracked face is %s after the slot's reset, %s before"
+                          % (w3.get(*c), start.get(*c)))
+                    break
+        nj = set()
+        if balcony:
+            gr.jumps = False
+            try:
+                nj = reach_from(gr, [n for n in need if not in_box(s, r, gr, n)], catch)
+            finally:
+                gr.jumps = True
+            jump_only = {n for n in need if in_box(s, r, gr, n)} - nj
+            F.stats[s.dungeon]["balcony_rooms_checked"] += 1
+            if not jump_only:
+                F.add("SECRET", s, r, None, "a balcony secret, and every cell of the room is reached without a jump")
+        # each relic is its secret's: the record names it on the secret (or on the room, for a room's only secret)
+        typ = {}
+        for x in secs:
+            rid = x.get("relic") or ((rec.get("params") or {}).get("relic") if len(secs) == 1 else None)
+            if rid:
+                typ[rid] = x.get("type")
+        for rid in sorted(set(typ) - set(trig)):
+            F.add("SECRET", s, r, None, "the record's relic %s has no pickup line in the room's tick" % rid)
+        for k, ns in tnodes.items():
+            t = typ.get(k)
+            if t is None:
+                F.add("SECRET", s, r, trig[k][0], "the tick picks up relic %s, which no secret of the record names" % k)
+                continue
+            if not ns:
+                continue
+            plain = ns & set(need)
+            if t == "cracked":
+                if plain:
+                    F.add("SECRET", s, r, gr.xyz(sorted(plain)[0]), "relic %s is picked up with every face whole" % k)
+                if not any(ns & reached_by_group[gi] for gi in reached_by_group):
+                    F.add("SECRET", s, r, trig[k][0], "relic %s is not reached with any cracked face broken" % k)
+            elif t == "balcony":
+                if not plain:
+                    F.add("SECRET", s, r, trig[k][0], "relic %s is not reached even with jumps" % k)
+                if ns & nj:
+                    F.add("SECRET", s, r, gr.xyz(sorted(ns & nj)[0]), "relic %s is picked up without a jump" % k)
+
+
+def shortcut_audit(pack, s, start, gr, F):
+    """Shortcuts (1a): `room/<d>/<far>/s<g>/shortcut_<id>` opens a way; it is opened only from the far room's own cells,
+    the far rip was reached with it shut (never the only way), opening it traps no one, and the slot reset shuts it."""
+    info = getattr(gr, "info", None)
+    if not info:
+        return
+    need, backs, catch = info["need"], info["backs"], info["catch"]
+    for r in s.rooms:
+        rec = room_rec(s, r)
+        pre = room_fn(s, r, "shortcut_")
+        fns = sorted(f for f in pack.fns if f.startswith(pre))
+        declared = {c["id"]: c for c in rec.get("shortcuts") or []}
+        for cid in sorted(set(declared) - {f[len(pre):] for f in fns}):
+            F.add("SHORTCUT", s, r, None, "the record's shortcut %s has no function %s%s" % (cid, pre, cid))
+        for fid in fns:
+            cid = fid[len(pre):]
+            near = (declared.get(cid) or {}).get("to")
+            F.stats[s.dungeon]["shortcuts_checked"] += 1
+            w = gr.world.copy()
+            before = w.flags()
+            sim = Sim(pack, w)
+            entrant(sim, s, 1)
+            sim.call(fid, Ctx(ex=sim.player, pos=sim.player.pos))
+            opened = ((before & SOLID) != 0) & ((w.flags() & SOLID) == 0)
+            if not opened.any():
+                F.add("SHORTCUT", s, r, None, "shortcut %s opens nothing" % cid)
+                continue
+            oc = [tuple(int(v) for v in p + np.array(w.lo)) for p in np.argwhere(opened)]
+            rooms = {room_at(s, *c) for c in oc}
+            if near and near not in rooms:
+                F.add("SHORTCUT", s, r, oc[0], "shortcut %s opens cells in %s, not into %s" % (cid, sorted(map(str, rooms)), near))
+            trig = [box for _c, box, body in tick_boxes(pack, s, r, "function " + fid)]
+            tn = {n for n in need if any(hits_box(node_pos(gr, n), b) for b in trig)}
+            if not tn:
+                F.add("SHORTCUT", s, r, None, "shortcut %s: no reached cell stands in its trigger" % cid)
+            wrong = {room_at(s, *gr.xyz(n)) for n in tn} - {r}
+            if wrong:
+                F.add("SHORTCUT", s, r, gr.xyz(sorted(tn)[0]), "shortcut %s is opened from %s, not from its own (far) "
+                      "room" % (cid, sorted(map(str, wrong))))
+            g2 = Graph(w)
+            seen = reach_from(g2, [info["arrive"]], catch)
+            ok = returnable(g2, seen, set(backs), catch)
+            stuck = [n for n in seen if n not in ok]
+            if stuck:
+                F.add("TRAP", s, r, g2.xyz(stuck[0]), "with shortcut %s open, %d cells cannot get back" % (cid, len(stuck)))
+            # the slot reset shuts it
+            w3 = start.copy()
+            sim = Sim(pack, w3)
+            entrant(sim, s, 1)
+            sim.call(fid, Ctx(ex=sim.player, pos=sim.player.pos))
+            sim.call(FN + "slot/s%d/reset" % s.g, Ctx(ex=sim.player, pos=sim.player.pos))
+            for c in oc:
+                if w3.get(*c) != start.get(*c):
+                    F.add("RESET", s, r, c, "shortcut %s is still open after the slot's reset (%s, was %s)"
+                          % (cid, w3.get(*c), start.get(*c)))
+                    break
+            # once opened in a run, the next run starts shut: the holder the function guards on is back at 0
+            hold = [h for h, _o in sim.scores if re.fullmatch(r"#s%dr\d+c\d+" % s.g, h)]
+            if any(sim.scores.get((h, "dg.rs")) not in (0, None) for h in hold):
+                F.add("RESET", s, r, None, "shortcut %s's once-a-run guard is not reset by the slot's reset" % cid)
+
+
+def _gravity(sim, w):
+    p = sim.player.pos
+    x, y, z = (int(math.floor(v)) for v in p)
+    k = 0
+    while k < 80:
+        below, at = block_flags(w.get(x, y - 1, z)), block_flags(w.get(x, y, z))
+        if at & (WATER | CLIMB) or (below & SOLID and not below & NOSUP):
+            break
+        y -= 1
+        k += 1
+    sim.player.pos = (p[0], float(y), p[2])
+
+
+def setpiece_audit(pack, s, start, gr, F):
+    """Set pieces (tools/dungeon_setpieces.py): the member is walked through the room and made to wait at points of
+    it while the REAL tick runs (a fall the floor gives way under is followed); every block state the room passes through
+    is collected, and in each one every cell a player can be on still reaches a ledge, a door out or a floor that
+    teleports; new water never touches a door, a ledge's top or a cell it would flow into; and the slot reset (and the
+    piece's own restore/drain) puts the room back exactly."""
+    info = getattr(gr, "info", None)
+    if not info:
+        return
+    need, path = info["need"], info["path"] or []
+    for i, r in enumerate(s.rooms):
+        rec = room_rec(s, r)
+        if rec.get("kind") != "setpiece":
+            continue
+        piece = (rec.get("params") or {}).get("piece", "?")
+        b = s.boxes[r]
+        ledges = ledge_boxes(pack, s, r)
+        own = [n for n in path if in_box(s, r, gr, n)] or sorted((n for n in need if in_box(s, r, gr, n)),
+                                                                 key=lambda n: gr.xyz(n)[0])
+        if not own:
+            F.add("SETPIECE", s, r, None, "no reached cell in the room")
+            continue
+        rescue = [(c, box) for tgt in ("function " + room_fn(s, r, ""),)
+                  for c, box, body in tick_boxes(pack, s, r, tgt)
+                  if any(ln.startswith("tp @s") or " run tp @s" in ln for ln in pack.lines(body.split()[1]))]
+        states = {}
+        restores = sorted({body.split()[1] for _c, _b, body in tick_boxes(pack, s, r, "function " + room_fn(s, r, ""))
+                           if body.split()[1].rsplit("/", 1)[-1] in ("restore", "drain")})
+
+        def snap(sim, label):
+            key = sim.w.g[box_slice(sim.w, b)].tobytes()
+            if key not in states:
+                states[key] = (sim.w.copy(), dict(sim.scores), label)
+
+        def fresh():
+            sim = Sim(pack, start.copy())
+            entrant(sim, s, 1)
+            sim.call(FN + "slot/s%d/reset" % s.g, Ctx(ex=sim.player, pos=sim.player.pos))
+            sim.player.pos = node_pos(gr, own[0])
+            sim.call(room_fn(s, r, "enter"), Ctx(ex=sim.player, pos=sim.player.pos))
+            return sim
+
+        def step(sim, n=None, label=""):
+            if n is not None:
+                sim.player.pos = node_pos(gr, n)
+            sim.tick += 1
+            sim.call(room_fn(s, r, "tick"), Ctx(ex=sim.player, pos=sim.player.pos))
+            _gravity(sim, sim.w)
+            snap(sim, label)
+
+        sim = fresh()
+        snap(sim, "entered")
+        for k in range(0, len(own), 3):                  # walked through, a keeper pass every 3 cells
+            step(sim, own[k], "walked to %d %d %d" % gr.xyz(own[k]))
+        for k in range(len(own) - 1, -1, -6):           # and back
+            step(sim, own[k], "walked back to %d %d %d" % gr.xyz(own[k]))
+        for st in range(0, len(own), 4):                 # walked to every fourth cell and kept waiting there
+            sim = fresh()
+            for k in range(0, st + 1, 3):
+                step(sim, own[k])
+            for t in range(45):
+                step(sim, None, "waited %d passes at %d %d %d" % ((t + 1,) + gr.xyz(own[st])))
+        # the holders swept: every pass counter the tick keeps (#s<g>r<i>m<j>) started at 0, the member parked where no
+        # box of the tick holds them (west of the room, then east of it: a piece keyed on x closes all or nothing),
+        # the tick run until nothing changes: every value the tick can reach, each pass's writes on the last's
+        hold = sorted({h for ln in pack.lines(room_fn(s, r, "tick"))
+                       for h in re.findall(r"#s%dr%dm\d+" % (s.g, i), ln)})
+        for side, px in (("west", b[0] - 40.5), ("east", b[3] + 40.5)):
+            sim = fresh()
+            for h in hold:
+                if sim.scores.get((h, "dg.rs"), 0) < 0:
+                    sim.scores[(h, "dg.rs")] = 0
+            sim.player.pos = (px, float(b[1] + 1), (b[2] + b[5]) / 2.0)
+            last = None
+            for t in range(120):
+                sim.tick += 1
+                sim.call(room_fn(s, r, "tick"), Ctx(ex=sim.player, pos=sim.player.pos))
+                sim.player.pos = (px, float(b[1] + 1), (b[2] + b[5]) / 2.0)
+                now = tuple(sim.scores.get((h, "dg.rs")) for h in hold)
+                snap(sim, "holders %s = %s, the member parked %s" % (",".join(h[-2:] for h in hold), now, side))
+                if now == last:
+                    break
+                last = now
+            F.stats[s.dungeon]["setpiece_holder_passes"] += t + 1
+        F.stats[s.dungeon]["setpiece_states"] += len(states)
+        pad = 12
+        start_sl = box_slice(start, b)
+        reported = set()
+        # the way on: from any state, a member standing on a ledge (and that ledge's tick run once) can still walk to the
+        # room's way out -- a piece that never puts back what it took is a run nobody finishes, even if nobody is trapped
+        k_out = max((k for k, n in enumerate(path or []) if in_box(s, r, gr, n)), default=None)
+        out_cells = [gr.xyz(n) for n in (path or [])[k_out + 1:k_out + 4]] if k_out is not None else []
+        perches = [[n for n in need if in_box(s, r, gr, n) and hits_box(node_pos(gr, n), lb)][:1]
+                   for _k, lb in sorted(ledges.items())] or [[own[0]]]
+        for key, (w, scores, label) in list(states.items()):
+            if not out_cells:
+                break
+            for perch in perches:
+                if not perch:
+                    continue
+                w2 = w.copy()
+                sim2 = Sim(pack, w2)
+                entrant(sim2, s, 1)
+                sim2.scores.update(scores)
+                sim2.player.pos = node_pos(gr, perch[0])
+                sim2.call(room_fn(s, r, "tick"), Ctx(ex=sim2.player, pos=sim2.player.pos))
+                cw = crop(w2, [b[0] - pad, b[1] - pad, b[2] - pad], [b[3] + pad, b[4] + pad, b[5] + pad])
+                g2 = Graph(cw)
+                src = g2.idx(*Sim.blk(sim2.player.pos))
+                tgt = {g2.idx(*c) for c in out_cells}
+                if not (reach_from(g2, [src]) & tgt) and ("WAYON",) not in reported:
+                    reported.add(("WAYON",))
+                    F.add("SOFTLOCK", s, r, Sim.blk(sim2.player.pos), "[set piece %s, %s] standing on this ledge "
+                          "(its tick run) the way out of the room stays cut" % (piece, label))
+        for key, (w, scores, label) in states.items():
+            cw = crop(w, [b[0] - pad, b[1] - pad, b[2] - pad], [b[3] + pad, b[4] + pad, b[5] + pad])
+            g2 = Graph(cw)
+            # where a player can be: every cell of the room the plain walk reached, fallen to where it lands now
+            starts = set()
+            encased = []
+            for n in need:
+                if not in_box(s, r, gr, n):
+                    continue
+                m = g2.idx(*gr.xyz(n))
+                if g2.N[m]:
+                    starts.add(m)
+                elif g2.P[m] and g2.L[m] >= 0:
+                    starts.add(g2.L[m])
+                elif not (g2.P[m] and g2.P[m + g2.SY]):
+                    encased.append(gr.xyz(n))       # the piece put a block where a player may be standing
+            if encased and ("ENCASE",) not in reported:
+                reported.add(("ENCASE",))
+                F.add("TRAP", s, r, encased[0], "[set piece %s, %s] %d cells a player may stand in are filled with "
+                      "blocks" % (piece, label, len(encased)))
+            good = set()
+            allc = reach_from(g2, list(starts))
+            for m in allc:
+                x, y, z = g2.xyz(m)
+                p = (x + 0.5, float(y), z + 0.5)
+                if not (b[0] <= x <= b[3] and b[1] <= y <= b[4] and b[2] <= z <= b[5]):
+                    good.add(m)
+                elif any(hits_box(p, lb) for lb in ledges.values()):
+                    good.add(m)
+                elif any(conds_hold(scores, c) and hits_box(p, box) for c, box in rescue):
+                    good.add(m)
+            stuck = walk_out(g2, list(allc), good, limit=10 ** 7)
+            if stuck and ("TRAP",) not in reported:
+                reported.add(("TRAP",))
+                F.add("TRAP", s, r, g2.xyz(stuck[0]), "[set piece %s, %s] %d cells a player can be on reach no ledge, "
+                      "door or teleporting floor" % (piece, label, len(stuck)))
+            # water the piece placed
+            sub, st0 = w.g[box_slice(w, b, 1)], start.g[box_slice(start, b, 1)]
+            wat = np.array([base_id(x) == "water" for x in w.pal])
+            new = wat[sub] & ~wat[st0]
+            if new.any():
+                o = [max(b[k] - 1, w.lo[k]) for k in range(3)]
+                for p in np.argwhere(new):
+                    c = tuple(int(p[k]) + o[k] for k in range(3))
+                    pos = (c[0] + 0.5, float(c[1]), c[2] + 0.5)
+                    flow = [d for d in ((1, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 0, -1), (0, -1, 0))
+                            if not block_flags(w.get(c[0] + d[0], c[1] + d[1], c[2] + d[2])) & (SOLID | WATER)]
+                    if any(hits_box(pos, lb) for lb in ledges.values()):
+                        msg = "water stands on a ledge's top"
+                    elif flow:
+                        msg = "water placed here flows on into %d open neighbours (it spreads past what the drain clears)" % len(flow)
+                    elif room_at(s, *c) != r:
+                        msg = "water placed outside the room's box"
+                    else:
+                        continue
+                    if ("FLOOD", msg[:20]) not in reported:
+                        reported.add(("FLOOD", msg[:20]))
+                        F.add("SETPIECE", s, r, c, "[%s, %s] %s" % (piece, label, msg))
+            # the slot reset, and the piece's own restore/drain, put the room back
+            for fid in ["reset"] + restores:
+                w2 = w.copy()
+                sim2 = Sim(pack, w2)
+                entrant(sim2, s, 1)
+                sim2.scores.update(scores)
+                sim2.call(FN + "slot/s%d/reset" % s.g if fid == "reset" else fid, Ctx(ex=sim2.player, pos=sim2.player.pos))
+                diff = np.argwhere(w2.g[box_slice(w2, b)] != start.g[start_sl])
+                if len(diff):
+                    c = tuple(int(diff[0][k]) + b[k] for k in range(3))
+                    tag = ("RESET", fid)
+                    if tag not in reported:
+                        reported.add(tag)
+                        F.add("RESET", s, r, c, "[set piece %s, %s] after %s the room has %s where it started with %s "
+                              "(%d cells differ)" % (piece, label, fid.rsplit("/", 1)[-1], w2.get(*c), start.get(*c), len(diff)))
+
+
+def _components(gr, nodes, ban):
+    """Connected sets of `nodes` (less `ban`) by walking only: no jump, no drop of more than one."""
+    comp = {}
+    k = 0
+    saved, gr.jumps = gr.jumps, False
+    try:
+        for n in nodes:
+            if n in comp or n in ban:
+                continue
+            comp[n] = k
+            q = collections.deque([n])
+            while q:
+                u = q.popleft()
+                for v, _ne, _c in gr.edges(u):
+                    if v >= 0 and v in nodes and v not in ban and v not in comp and abs(gr.xyz(v)[1] - gr.xyz(u)[1]) <= 1:
+                        comp[v] = k
+                        q.append(v)
+            k += 1
+    finally:
+        gr.jumps = saved
+    return comp
+
+
+def _route(gr, src, dst, allowed, forbid):
+    prev = {n: None for n in src}
+    q = collections.deque(src)
+    while q:
+        u = q.popleft()
+        if u in dst:
+            out = [u]
+            while prev[out[-1]] is not None:
+                out.append(prev[out[-1]])
+            return out[::-1]
+        for v, _ne, _c in gr.edges(u):
+            if v >= 0 and v in allowed and v not in forbid and v not in prev:
+                prev[v] = u
+                q.append(v)
+    return None
+
+
+def parkour_audit(pack, s, gr, F):
+    """Parkour v2 (tools/dungeon_parkour.py): every ledge is stood on; the lowest floor of the chasm is all catch (a fall
+    never lands where nothing teleports); from each ledge to the next there is a way on this file's jumps without
+    falling; and the fork is two ways: with every platform the first way stands on taken away, a second still
+    finishes."""
+    info = getattr(gr, "info", None)
+    if not info:
+        return
+    need, catch = info["need"], info["catch"]
+    for r in s.rooms:
+        rec = room_rec(s, r)
+        if rec.get("kind") != "parkour":
+            continue
+        ledges = ledge_boxes(pack, s, r)
+        room = {n for n in need if in_box(s, r, gr, n)}
+        if not room or not ledges:
+            F.add("PARKOUR", s, r, None, "no reached cell or no checkpoint line in the room")
+            continue
+        lnodes = {k: {n for n in room if hits_box(node_pos(gr, n), bx)} for k, bx in ledges.items()}
+        for k, ns in sorted(lnodes.items()):
+            if not ns:
+                F.add("PARKOUR", s, r, None, "checkpoint %d's ledge is never stood on" % k)
+        low = min(gr.xyz(n)[1] for n in room)
+        bare = [n for n in room if gr.xyz(n)[1] == low and n not in catch]
+        if bare:
+            F.add("PARKOUR", s, r, gr.xyz(bare[0]), "%d cells of the chasm's floor are not a catch floor: a fall there "
+                  "is not teleported" % len(bare))
+        allowed = room - set(catch)
+        ledge_all = set().union(*lnodes.values())
+        comps = _components(gr, allowed, ledge_all)
+        forks = []
+        order = sorted(lnodes)
+        for a, z in zip(order, order[1:]):
+            if not lnodes[a] or not lnodes[z]:
+                continue
+            p1 = _route(gr, lnodes[a], lnodes[z], allowed, set())
+            if p1 is None:
+                F.add("PARKOUR", s, r, None, "no way from ledge %d to ledge %d without falling" % (a, z))
+                continue
+            used = {comps[n] for n in p1 if n in comps}
+            forbid = {n for n, c in comps.items() if c in used}
+            p2 = _route(gr, lnodes[a], lnodes[z], allowed, forbid)
+            if p2 is not None:
+                forks.append((a, z))
+        F.stats[s.dungeon]["parkour_fork_sections"] += len(forks)
+        p = rec.get("params") or {}
+        want = p.get("fork", len(ledges) - 1 >= 3)
+        if want is not False and want is not None and not forks:
+            F.add("PARKOUR", s, r, None, "the record asks for a fork (params.fork %r, %d sections) and no section has a "
+                  "second way that finishes when the first way's platforms are taken away" % (p.get("fork"), len(ledges) - 1))
+
+
+def life_audit(pack, s, start, gr, F):
+    """LIFE's ambient Pokemon (tools/dungeon_life.py), read from the table the pack loads into storage: every spot is a
+    place it can stand, in its own room and clear of the doors; and the generated cleanup really removes them -- the
+    room's reset its own, the slot's free all of them, the slot's tend a stale run's."""
+    info = getattr(gr, "info", None)
+    if not info:
+        return
+    need = info["need"]
+    table = {}
+    for ln in pack.lines(FN + "life/load"):
+        m = re.match(r"data modify storage (\S+) life\.s%d\.r(\d+)v(\d+)b(\d+) set value (.*)$" % s.g, ln)
+        if m:
+            table[(int(m.group(2)), int(m.group(3)), int(m.group(4)))] = snbt(m.group(5))
+    if not table:
+        return
+    # door cells: a reached cell beside a reached cell of another room
+    doors = set()
+    for n in need:
+        ra = room_of_node(s, gr, n)
+        for d in (gr.SX, -gr.SX, 1, -1):
+            v = n + d
+            if v in need and room_of_node(s, gr, v) != ra:
+                doors.add(gr.xyz(n))
+    reported = set()
+    for (ri, v, band), entries in sorted(table.items()):
+        r = s.rooms[ri] if ri < len(s.rooms) else None
+        for e in entries:
+            c = tuple(int(math.floor(float(e[k]))) for k in ("x", "y", "z"))
+            F.stats[s.dungeon]["life_spots_checked"] += 1
+            if room_at(s, *c) != r:
+                msg = "an ambient %s's spot is in %s, not its room" % (e.get("species"), room_at(s, *c))
+            elif not gr.N[gr.idx(*c)]:
+                msg = "an ambient %s's spot is not a place it can stand (%s)" % (e.get("species"), start.get(*c))
+            elif any(abs(c[0] - d[0]) <= 1 and abs(c[2] - d[2]) <= 1 and abs(c[1] - d[1]) <= 1 for d in doors):
+                msg = "an ambient %s spawns in a doorway or the cell beside one" % e.get("species")
+            else:
+                continue
+            if (r, c) not in reported:         # one line per spot (the variants and bands share spots)
+                reported.add((r, c))
+                F.add("LIFE", s, r, c, msg)
+    # the cleanup, by simulation: enter every room with life, then each cleanup must leave none of what it owns
+    rooms = sorted({ri for ri, _v, _b in table})
+
+    def populated():
+        sim = Sim(pack, start.copy())
+        entrant(sim, s, 1)
+        sim.scores[("#s%d" % s.g, "dg.run")] = 1
+        sim.call(FN + "load", Ctx())
+        sim.call(FN + "life/load", Ctx())
+        sim.call(FN + "slot/s%d/reset" % s.g, Ctx(ex=sim.player, pos=sim.player.pos))
+        for ri in rooms:
+            sim.player.pos = node_pos(gr, next((n for n in need if room_of_node(s, gr, n) == s.rooms[ri]), info["arrive"]))
+            sim.call(room_fn(s, s.rooms[ri], "enter"), Ctx(ex=sim.player, pos=sim.player.pos))
+        return sim
+
+    def life(sim, ri=None):
+        return [e for e in sim.alive() if e.type == "cobblemon:pokemon" and "dg.lf" in e.tags and
+                (ri is None or sim.scores.get((e.name, "dg.rs")) == ri)]
+    sim = populated()
+    n0 = len(life(sim))
+    F.stats[s.dungeon]["life_spawned"] += n0
+    if not n0:
+        F.add("LIFE", s, None, None, "entering every room with ambient life spawns none in the simulation")
+        return
+    loose = [e for e in life(sim) if not {"dg.keep", "dg.s%d" % s.g}.issubset(e.tags)]
+    if loose:
+        F.add("LIFE", s, None, loose[0].pos, "%d ambient Pokemon lack the keep or slot tag" % len(loose))
+    for ri in rooms:
+        before = {e.name for e in life(sim) if sim.scores.get((e.name, "dg.rs")) != ri}
+        sim.call(room_fn(s, s.rooms[ri], "reset"), Ctx(ex=sim.player, pos=sim.player.pos))
+        if life(sim, ri):
+            F.add("LIFE", s, s.rooms[ri], None, "the room's reset leaves %d of its ambient Pokemon" % len(life(sim, ri)))
+        if {e.name for e in life(sim)} != before:
+            F.add("LIFE", s, s.rooms[ri], None, "the room's reset removes another room's ambient Pokemon")
+    for fid, how in (("free", None), ("tend", "stale")):
+        sim = populated()
+        if how == "stale":
+            sim.scores[("#s%d" % s.g, "dg.run")] = sim.scores.get(("#s%d" % s.g, "dg.run"), 0) + 1000
+        sim.call(FN + "slot/s%d/%s" % (s.g, fid), Ctx(ex=sim.player, pos=sim.player.pos))
+        if life(sim):
+            F.add("LIFE", s, None, None, "slot %s%s leaves %d ambient Pokemon" % (fid, " (a stale run)" if how else "",
+                                                                                 len(life(sim))))
+
+
+def margin_audit(pack, doc, s, gr, F):
+    """The return margin (m/margin) prices the way back by x alone. Run the generated margin on the member at a cell to
+    get its estimate; measure the real walk back to the back rip on this file's graph (every gate open) at the same
+    pace; report each room where the warning would come late, and by how much (DUNGEON_ROOMS 8: a finding for the
+    integrator, not a trap)."""
+    info = getattr(gr, "info", None)
+    if not info or not info["backs"]:
+        return
+    need, catch = info["need"], info["catch"]
+    di = [d["id"] for d in doc["dungeons"]].index(s.dungeon) + 1
+    sim = Sim(pack, World((0, 0, 0), (1, 1, 1)))
+    entrant(sim, s, 1)
+    sim.call(FN + "load", Ctx())
+    sim.scores[(PLAYER, "dg.dun")] = di
+    sim.scores[(PLAYER, "dg.clock")] = 10 ** 8
+    sim.scores[(PLAYER, "dg.rate")] = 1
+
+    def est(x):
+        sim.player.pos = (x + 0.5, 96.0, 0.5)
+        sim.call(FN + "m/margin", Ctx(ex=sim.player, pos=sim.player.pos))
+        return sim.scores.get(("#bk", "dg.t"))
+    x0 = int(min(gr.xyz(n)[0] for n in need))
+    e1, e2 = est(x0), est(x0 + 560)
+    if e1 is None or e2 is None or e2 == e1:
+        F.add("MARGIN", s, None, None, "m/margin gives no estimate the audit can read")
+        return
+    pace = 560.0 / (e2 - e1)                       # blocks a second the margin assumes
+    # the real walk back: Dijkstra from the back rip over reversed edges, jumps at their length, falls taken as caught
+    radj = collections.defaultdict(list)
+    for u in need:
+        if u in catch:
+            continue
+        for v, _ne, c in gr.edges(u):
+            if v >= 0:
+                radj[v].append((u, c))
+    dist = {n: 0 for n in info["backs"]}
+    heap = [(0, n) for n in info["backs"]]
+    heapq.heapify(heap)
+    while heap:
+        d, v = heapq.heappop(heap)
+        if d > dist.get(v, 1 << 60):
+            continue
+        for u, c in radj.get(v, ()):
+            if d + c < dist.get(u, 1 << 60):
+                dist[u] = d + c
+                heapq.heappush(heap, (d + c, u))
+    worst = {}
+    for n, d in dist.items():
+        x = gr.xyz(n)[0]
+        late = d / pace - (e1 + (x - x0) / pace)
+        r = room_of_node(s, gr, n)
+        if late > worst.get(r, (0,))[0]:
+            worst[r] = (late, n, d)
+    F.stats[s.dungeon]["margin_rooms_checked"] += len({room_of_node(s, gr, n) for n in dist})
+    for r, (late, n, d) in sorted(worst.items(), key=lambda kv: -kv[1][0]):
+        F.add("MARGIN", s, r, gr.xyz(n), "the way-back warning comes %d s late here: the walk back is %d blocks, the "
+              "margin prices %d (x alone, plus its fixed extra)" % (math.ceil(late), d, round(d - late * pace)))
+
+
 # ------------------------------------------------------------------------------------------------- static checks
 def count_commands(pack, fid, memo, stack=()):
     if fid in memo:
@@ -1980,9 +3022,11 @@ def static_audit(pack, doc, slots, F):
                     out[(t[0], tuple(t[1:]))] += 1
         return out
     for d, ss in by_d.items():
-        base = ss[0]
-        bw = writes(base)
-        for s in ss[1:]:
+        for s in ss:
+            base = next(t for t in ss if t.vi == s.vi)     # slots of one variant are one dungeon
+            if base is s:
+                continue
+            bw = writes(base)
             dz = (s.k - base.k) * sl["row_spacing"]
             moved = collections.Counter()
             for (h, t), n in bw.items():
@@ -2039,16 +3083,20 @@ def static_audit(pack, doc, slots, F):
         F.add("MONEY", None, "callback", None, "the battle_victory callback has no settle for a dg.npc loser")
 
 
-def clock_audit(pack, doc, s, walks, F):
+def clock_audit(pack, doc, s, walk_sets, F):
     """The record's clocks against tools/dungeon_clock.required() fed with THIS audit's walks, and the generated
-    threshold's clock against the record."""
+    threshold's clock against the record. `walk_sets`: [(rooms paid for, per-room walk)], one per choice of fork route
+    (side rooms are optional and never paid); the clock must cover the slowest."""
     sys.path.insert(0, str(ROOT / "tools"))
     import dungeon_clock as DC
-    rooms = []
-    for r in s.rooms:
-        rec = room_rec(s, r)
-        rooms.append({"id": r, "kind": rec.get("kind"), "walk": walks.get(r, 0), "gate": rec.get("gate", "cleared" if
-                      rec.get("kind") == "boss_arena" else "open"), "params": rec.get("params") or {}})
+    sets = []
+    for paid, walks in walk_sets:
+        rooms = []
+        for r in paid:
+            rec = room_rec(s, r)
+            rooms.append({"id": r, "kind": rec.get("kind"), "walk": walks.get(r, 0), "gate": rec.get("gate", "cleared" if
+                          rec.get("kind") == "boss_arena" else "open"), "params": rec.get("params") or {}})
+        sets.append((rooms, walks))
     slack = float(doc["engine"]["clock"]["slack_factor"])
     own = s.rec.get("clock_s_by_band") or {}
     try:
@@ -2064,7 +3112,8 @@ def clock_audit(pack, doc, s, walks, F):
     for b in doc["engine"]["bands"]:
         k = str(b["band"])
         have = int(own.get(k, b["clock_s"]))
-        req = sum(DC.required(doc, s.rec, b["band"], rooms).values())
+        req, walks = max(((sum(DC.required(doc, s.rec, b["band"], rooms).values()), walks) for rooms, walks in sets),
+                         key=lambda t: t[0])
         mine = int(math.ceil(req * slack / 60.0)) * 60
         if have < mine:
             F.add("CLOCK", s, None, None, "band %s: the record's clock %d s is under %d s, the clock formula fed with this "
@@ -2073,7 +3122,7 @@ def clock_audit(pack, doc, s, walks, F):
         if start and start.get(b["band"]) is not None and start[b["band"]] != have * 80:
             F.add("CLOCK", s, None, None, "band %s: the threshold sets dg.clock %d, the record's %d s is %d"
                   % (k, start[b["band"]], have, have * 80))
-    return sum(walks.values()), their_total
+    return max(sum(w.values()) for _r, w in sets), their_total
 
 
 # ------------------------------------------------------------------------------------------------- the audit
@@ -2101,52 +3150,49 @@ def audit(files, doc, blackout=None, only=None, bands=None, all_slots=True, mode
         if not ss:
             F.add("SLOT", None, d["id"], None, "the pack builds no slot for this dungeon")
             continue
+        variants_seen = set()
         for s in ss:
             first = s is ss[0]
-            if not first and not all_slots:
+            new_variant = s.vi not in variants_seen       # the first slot that builds this variant (None: no variants)
+            variants_seen.add(s.vi)
+            if not first and not all_slots and not new_variant:
                 continue
             say = progress or (lambda m: None)
             say("%s s%d: shell" % (s.dungeon, s.g))
+            have = set(s.rooms)
+            want = set(s.recs) if s.recs else have
+            if have != want:
+                F.add("SLOT", s, None, None, "the shell builds rooms %s the record (variant %s) does not have, and lacks %s"
+                      % (sorted(have - want), s.vi, sorted(want - have)))
             shell = slot_world(pack, s)
             start, _ = start_world(pack, s, shell)
-            if first:
-                say("%s s%d: walk" % (s.dungeon, s.g))
-                gr, walks, extra = walk_audit(pack, s, shell, start, F)
-                reset_audit(pack, s, start, F)
-                if extra:
-                    path, total, catch, need = extra
-                    puzzle_audit(pack, s, start, gr, need, F)
-                    vault_audit(pack, doc, s, start, gr, need, F)
-                    if walks:
-                        info[d["id"]] = clock_audit(pack, doc, s, walks, F)
-                    first_gr = (gr, path, catch)
-                else:
-                    first_gr = None
-            if first_gr is None or first_gr[1] is None:
+            # every slot is walked on ITS OWN shell: a variant (mirror, seed, swap, order) is a different dungeon
+            say("%s s%d: walk" % (s.dungeon, s.g))
+            gr, walks, extra = walk_audit(pack, s, shell, start, F)
+            if extra is None or extra[0] is None:
                 continue
-            gr, path, catch = first_gr
-            rg = gr
-            if not first:
-                if shell.shape != gr.world.shape:
-                    F.add("SLOT", s, None, None, "its shell's extent differs from slot %d's" % ss[0].k)
-                    continue
-                rg = _moved_graph(gr, shell.lo)     # same flat indices: the SLOT check proves the shells are moved copies
+            path, total, catch, need = extra
+            if new_variant:
+                reset_audit(pack, s, start, F)
+                puzzle_audit(pack, s, start, gr, need, F)
+                vault_audit(pack, doc, s, start, gr, need, F)
+            say("%s s%d: routes, secrets, shortcuts, set pieces, parkour, life, margin" % (s.dungeon, s.g))
+            walk_sets = route_audit(pack, s, shell, start, F, walks)
+            secret_audit(pack, s, start, gr, F)
+            shortcut_audit(pack, s, start, gr, F)
+            setpiece_audit(pack, s, start, gr, F)
+            parkour_audit(pack, s, gr, F)
+            if new_variant:
+                life_audit(pack, s, start, gr, F)
+            margin_audit(pack, doc, s, gr, F)
+            if walk_sets:
+                got = clock_audit(pack, doc, s, walk_sets, F)
+                info[d["id"]] = max(info.get(d["id"], got), got, key=lambda t: t[0])
             for band in (bands if first else bands[:1]):
                 for mode in (modes if first and band == bands[0] else ("win",)):
                     say("%s s%d: run band %d %s" % (s.dungeon, s.g, band, mode))
-                    Run(pack, s, start, band, caps, exempt, mode, F, rg, path, catch).go()
+                    Run(pack, s, start, band, caps, exempt, mode, F, gr, path, catch).go()
     return F, info
-
-
-def _moved_graph(gr, lo):
-    """Slot 1's walk graph, read in another slot's frame (its world's corner)."""
-    w = World.__new__(World)
-    w.lo = tuple(lo)
-    w.shape, w.g, w.pal, w.idx, w.writes_outside = gr.world.shape, gr.world.g, gr.world.pal, gr.world.idx, []
-    g2 = Graph.__new__(Graph)
-    g2.__dict__.update(gr.__dict__)
-    g2.world = w
-    return g2
 
 
 def _walk_json(o):
@@ -2165,7 +3211,8 @@ def main(argv=None):
     ap.add_argument("--data", default=str(DATA))
     ap.add_argument("--only", action="append", help="a dungeon id (repeatable)")
     ap.add_argument("--bands", help="comma list (default all six)")
-    ap.add_argument("--quick", action="store_true", help="slot 1 of each dungeon, band 1, every mode")
+    ap.add_argument("--quick", action="store_true", help="band 1; slot 1 of each dungeon (every mode) and the first "
+                    "slot of each other variant (a win); every pass-2 check on those slots")
     ap.add_argument("-v", action="store_true", help="progress")
     a = ap.parse_args(argv)
     doc = json.loads(Path(a.data).read_text(encoding="utf-8"))
