@@ -1754,6 +1754,31 @@ def pits(grid, start, jumps, cls=None):
                    for dx, dz in dirs)
         if shut and p[x, y + 2, z]:
             out.add(c)
+    out |= jump_pits(st, p, reach, G.walk(grid, [start], jumps=True, cls=cls, strict=True))
+    return out
+
+
+def jump_pits(st, p, reach, reach_j):
+    """(c), found by the independent audit on a shaped jungle drift (KIT2, 2026-10-10): a player can always JUMP. A flat
+    jump of a gap up to 3 (DUNGEONS.md V6), then any fall, from a walked cell, landing on a cell that even the jumping
+    walk (reversible jumps) cannot leave: a nook behind a dripleaf or a trunk, jumped into and never out of."""
+    nx, ny, nz = st.shape
+    out = set()
+    for x, y, z in reach:
+        if y + 3 >= ny:
+            continue
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            for n in range(2, G.JUMP_FLAT_MAX + 1):
+                tx, tz = x + dx * n, z + dz * n
+                if not (0 <= tx < nx and 0 <= tz < nz):
+                    break
+                if not all(p[x + dx * k, y + 1, z + dz * k] and p[x + dx * k, y + 2, z + dz * k] for k in range(1, n + 1)):
+                    break
+                cy = y + 1
+                while cy > 1 and not st[tx, cy, tz] and p[tx, cy - 1, tz]:
+                    cy -= 1
+                if st[tx, cy, tz] and cy <= y and (tx, cy, tz) not in reach_j:
+                    out.add((tx, cy, tz))
     return out
 
 
