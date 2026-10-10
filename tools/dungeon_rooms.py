@@ -1327,8 +1327,12 @@ def build_room(doc, d, slot, room, theme):
     must |= door_approach(room)
     keep |= door_approach(room)
     # the straight route the outline keeps open is kept from dressing too: with only the wiggly trail kept, trunks
-    # walled off an off-centre door's only way in shaped rooms (DG2-JUNGLE, three times)
-    keep |= route
+    # walled off an off-centre door's only way in shaped rooms (DG2-JUNGLE, three times). Only where an outline puts rock:
+    # the outline opens `must` (the straight route), not the wiggly trail, so there the trail can be cut and the route is
+    # the way through; in a box the trail is all open and keeping the straight route too cut a clear lane of sight down
+    # every jungle box (the density check's three clear rows, DG2-INTEGRATE)
+    if outline is not None and not outline.is_box():
+        keep |= route
     secret = secret_plan(doc, d, room, theme, must | set(forced))
     for c in secret["keep"]:
         keep.add(c)

@@ -335,9 +335,9 @@ threshold's clocks with this table or 4.2's):
 
 | Dungeon | Walked | Band 1 | Band 2 | Band 3 | Band 4 | Band 5 | Band 6 |
 |---|---|---|---|---|---|---|---|
-| night_shift | 1,404 main (1,602 all routes) | **41** | **44** | **45** | **48** | **51** | **55** |
-| jungle | 1,321 | **41** | **46** | **47** | **52** | **55** | **59** |
-| flooded_ruin | 1,272 | **40** | **43** | **45** | **48** | **52** | **55** |
+| night_shift | 1,402 main (1,600 all routes) | **41** | **44** | **44** | **48** | **51** | **54** |
+| jungle | 1,299 all routes (1,070 main) | **41** | **46** | **47** | **52** | **55** | **59** |
+| flooded_ruin | 1,304 all routes (1,000 main) | **40** | **43** | **45** | **48** | **52** | **55** |
 
 ## 8. Not done, and unproven
 
@@ -347,16 +347,21 @@ threshold's clocks with this table or 4.2's):
   fallback; the dark room is walkable without the torches.
 - **The collapse** is per keeper pass (1 s), so its granularity is a few blocks at sprint; and shared by co-op members
   (`members_max` is 1).
-- **Pass 2, unproven or not done (KIT2):** nothing of 1a has run in Minecraft. The independent audit walks slot 1
-  only and reuses its graph for the others ("SLOT ... not slot 1's moved"), so with `variants` slots 2-4 report SLOT
-  and SOFTLOCK findings that are its assumption, not the pack's; with each variant put first, all twelve (four
-  variants x three themes) and the three authored dungeons with `shape_mix` report nothing else. On the way it found
-  four real faults, all fixed: a shaped streak writing past its room, a dripleaf nook, a floating 2 x 2 trunk, and a
-  room touching the exit whose far rip's click box reached through the wall (now `RIP_CLEAR`). AUDIT2 must walk each
-  variant and route on its own graph, and not map rooms by x (`room_of_x`). `tools/dungeon.py`'s return-margin warning
-  measures the way back to the back rip in x, which a route that turns and doubles back makes too short (the warning
-  comes late); the board's leg distances are x offsets too. Relics, lore and the set across runs: section 9. Windows
-  onto earlier rooms are not built. `can_break` on the secret block in
+- **Pass 2, unproven or not done (KIT2):** nothing of 1a has run in Minecraft. The independent audit
+  (`tools/dungeon_independent_audit.py`, AUDIT2) walks EVERY slot on its own graph built from that slot's generated
+  pack -- each variant, each fork route alone, side rooms, secrets and relics with and without their trick, shortcuts,
+  the set pieces' states, LIFE's spots and cleanup -- and maps rooms by their own boxes, never by x. Before AUDIT2 it
+  walked slot 1 only and reused that graph for slots 2-4; on the way it found four real faults, all fixed: a shaped
+  streak writing past its room, a dripleaf nook, a floating 2 x 2 trunk, and a room touching the exit whose far rip's
+  click box reached through the wall (now `RIP_CLEAR`). **The return margin** (`m/margin`) priced the way back by the x
+  offset to the back rip, which a route that turns, doubles back and climbs makes too short (the audit measured the
+  warning up to 70 s late, the Night Shift). Since DG2-INTEGRATE a rooms dungeon prices it per room: `slot/s<g>/rooms`
+  sets `dg.wb` from the hull the member stands in to `tools/dungeon_clock.py` `walk_back` -- the longest walk back to
+  the arrival from any cell of that room, measured on the slot's built grids room to room through shared doors, no
+  shortcut, a parkour block counted at sprint / 1.5 -- and `m/margin` reads it (a spine dungeon keeps x). The audit's
+  margin check still samples `m/margin` at two x positions with no room state, so it cannot read the per-room margin
+  (its MARGIN findings after this change are its own model, not the pack's: an integrator's call). The board's leg
+  distances are still x offsets. Relics, lore and the set across runs: section 9. Windows onto earlier rooms are not built. `can_break` on the secret block in
   adventure is R2's shape (EXP-074), unrun for these ids.
 - **Not here:** puzzles, vaults (DG-PUZZLES), the boss's
   crews and the three dungeons' room lists (wave 2).

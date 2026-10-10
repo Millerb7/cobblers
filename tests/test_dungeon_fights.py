@@ -358,7 +358,8 @@ def boss_fight(pack_dir):
     TD.click_rip(w, p)
     s = TD.arrive_and_cross(w, p)
     pt = D.points(DOC, s)
-    p.pos = [pt["spot"][0] - 4.5, 96.0, s["cz"] + 0.5]
+    # the arena's own floor and middle (pass 2 seats the arena below floor_y and off the slot's centre line)
+    p.pos = [pt["spot"][0] - 4.5, float(pt["spot"][1]), pt["spot"][2] + 0.5]
     w.money[p.holder] = 1000
     w.passes(1)
     npc = next(e for e in w.ents if e.kind == "cobblemon:npc" and e.alive)

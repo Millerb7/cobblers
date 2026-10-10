@@ -64,6 +64,8 @@ def doc_with(theme, extra, per_dungeon=1):
                  [copy.deepcopy(DEMO[k]) for k in ("d5", "arena", "exit")]
     d.pop("spine", None)
     d.pop("clock_s_by_band", None)
+    d.pop("variants", None)        # the Night Shift's variants name its own rooms and re-roll per slot (as demo_doc does)
+    d.pop("shape_mix", None)
     doc["dungeons"] = [d]
     doc["engine"]["sigils"]["free_first_entry"]["dungeons"] = [d["id"]]
     doc["engine"]["slots"]["per_dungeon"] = per_dungeon
@@ -129,14 +131,17 @@ def end_cell(g, r):
 
 # ================================================================================================= parkour
 
-def parkour_rooms():
+def parkour_rooms(every_slot=False):
+    """The real parkour rooms: each dungeon's first slot, or (every_slot) every slot, since pass 2's variants re-roll per
+    slot and a quality that holds in slot 1 says nothing about slot 3."""
     out = []
     doc = D.load()
     for d in doc["dungeons"]:
-        sl = next(s for s in D.slots(doc) if s["dungeon"]["id"] == d["id"])
-        for b in R.slot_build(doc, d, sl):
-            if b.room["kind"] == "parkour":
-                out.append((doc, d, sl, b))
+        sls = [s for s in D.slots(doc) if s["dungeon"]["id"] == d["id"]]
+        for sl in (sls if every_slot else sls[:1]):
+            for b in R.slot_build(doc, d, sl):
+                if b.room["kind"] == "parkour":
+                    out.append((doc, d, sl, b))
     return out
 
 
@@ -220,12 +225,12 @@ def route_stats(g, r):
 
 
 def test_every_real_parkour_room_is_long_winding_climbing_and_has_hard_jumps_from_its_blocks():
-    rooms = parkour_rooms()
-    assert len(rooms) == 3
+    rooms = parkour_rooms(every_slot=True)
+    assert len(rooms) == 12, "one parkour per dungeon, in each of its four slots (variants)"
     for doc, d, sl, b in rooms:
         r, g = b.room, b.grid
         st = route_stats(g, r)
-        lab = "%s/%s" % (d["id"], r["id"])
+        lab = "%s/%s s%d" % (d["id"], r["id"], sl["g"])
         long_hops = [k for k, e in st["edges"].items() if e[0] == 4 and k[0] < k[1]]
         assert len(long_hops) >= 4, (lab, "hops of 4 cells (a gap of 3 blocks)", len(long_hops))
         assert st["turns"] >= 4, (lab, "bends on the shortest route", st["turns"])
@@ -265,7 +270,7 @@ def test_parkour_hops_in_the_plan_agree_with_the_blocks_and_the_run_up_rule_hold
 
 
 def test_a_fork_has_two_ways_and_either_alone_gets_through():
-    for doc, d, sl, b in parkour_rooms():
+    for doc, d, sl, b in parkour_rooms(every_slot=True):
         r, g = b.room, b.grid
         fork = b.meta["fork"]
         assert fork is not None, (d["id"], "every real parkour here is long enough for a fork")
@@ -353,15 +358,24 @@ def test_parkour_checkpoints_and_catch_floor_follow_the_kits_protocol():
             assert st[g.local(c[0], c[1], c[2])]
 
 
-def test_a_parkour_is_the_same_dungeon_in_every_slot():
+def test_a_parkour_is_the_same_dungeon_in_every_slot_of_its_variant():
+    """Pass 2 gives each slot its own variant (DUNGEON_ROOMS.md 1a: slot k builds variants[(k - 1) % n], `seed` re-rolls),
+    so slot 1 and slot 4 are no longer one plan. What still holds: the plan is a function of the VARIANT, never of where the
+    slot lies. Slot 4's strip asked to build slot 1's variant (its `k` set to slot 1's) plans slot 1's hops exactly."""
     doc = D.load()
     d = doc["dungeons"][2]
     slots = [s for s in D.slots(doc) if s["dungeon"]["id"] == d["id"]]
+    moved = dict(slots[3], k=slots[0]["k"])
+    assert moved["z0"] != slots[0]["z0"]
     a = next(b for b in R.slot_build(doc, d, slots[0]) if b.room["kind"] == "parkour")
-    c = next(b for b in R.slot_build(doc, d, slots[3]) if b.room["kind"] == "parkour")
+    c = next(b for b in R.slot_build(doc, d, moved) if b.room["kind"] == "parkour")
     ka = [(h["axis"], h["dir"], h["n"], h["dy"], h["branch"]) for h in a.meta["hops"]]
     kc = [(h["axis"], h["dir"], h["n"], h["dy"], h["branch"]) for h in c.meta["hops"]]
     assert ka == kc and len(ka) > 20
+    # and the variants that re-roll (a `seed`) really do plan another route: the replayability is not a label
+    k4 = [(h["axis"], h["dir"], h["n"], h["dy"], h["branch"]) for h in
+          next(b for b in R.slot_build(doc, d, slots[2]) if b.room["kind"] == "parkour").meta["hops"]]
+    assert R.variant_of(doc, d, slots[2]).get("seed") and k4 != ka
 
 
 def test_parkour_refuses_what_it_cannot_build():
@@ -399,12 +413,17 @@ def test_mutating_the_generator_to_hop_five_cells_makes_the_walk_check_fail(monk
 def test_mutating_the_generator_to_drop_the_run_up_rule_makes_the_blocks_check_fail(monkeypatch):
     monkeypatch.setattr(P, "RUN_UP", 0)       # the run-up rule is gone
     R._BUILT.clear()
-    b = next(x for x in R.slot_build(D.load(), D.load()["dungeons"][2], D.slots(D.load())[8]) if x.room["kind"] == "parkour")
+    doc = D.load()
     bad = []
-    for h in b.meta["hops"]:
-        run = (h["from"][1] - h["from"][0] + 1) if h["axis"] == "x" else (h["from"][3] - h["from"][2] + 1)
-        if h["n"] == 4 and run < 3:
-            bad.append(h)
+    # every real parkour in every slot (pass 2's variants re-roll per slot: no one slot is the whole of the dungeon)
+    for sl in D.slots(doc):
+        for b in R.slot_build(doc, sl["dungeon"], sl):
+            if b.room["kind"] != "parkour":
+                continue
+            for h in b.meta["hops"]:
+                run = (h["from"][1] - h["from"][0] + 1) if h["axis"] == "x" else (h["from"][3] - h["from"][2] + 1)
+                if h["n"] == 4 and run < 3:
+                    bad.append(h)
     assert bad, "with the rule removed a hop of 4 cells is taken from a platform shorter than 3"
 
 

@@ -183,7 +183,10 @@ DM 1.2 gives the reasons for each choice; its probe B1 is required before buildi
 Backtracking spends the same clock, so the number a player needs is how long the way back takes, not just the clock.
 The keeper computes it each pass, cheaply, because the run is linear:
 - `back_s = (x - x_entry) x 10 / 56`, the distance to the back rip at sprint (5.6 blocks a second, *relayed*
-  `docs/mechanics/GYM_INTERIORS.md:139`), plus a constant for re-crossing the parkour if the player is past it;
+  `docs/mechanics/GYM_INTERIORS.md:139`), plus a constant for re-crossing the parkour if the player is past it. A
+  rooms dungeon (pass 2) does not walk back in x: its route turns, doubles back and climbs. There the blocks are the
+  room's own walk back (`dg.wb`, set each pass from the hull the member stands in; `tools/dungeon_clock.py` `walk_back`,
+  measured on the built rooms, a parkour block at sprint / 1.5), see `DUNGEON_ROOMS.md` 8;
 - the warning fires when real time left is under `back_s + 60`;
 - it turns the bar purple and prints "The way back is closing" once.
 

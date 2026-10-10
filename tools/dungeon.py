@@ -103,6 +103,7 @@ OBJ = {
     "claw": "dg.claw",    # >= 1 while a clawback measures (the extension point; sudden death waits)
     "paid": "dg.paid",    # the band of the sigil taken (refunded before the threshold), 0 none
     "x": "dg.x",          # Pos[0], floored
+    "wb": "dg.wb",        # a rooms dungeon: the walk back to the back rip from the room the member stands in, blocks
     "dc": "dg.dc",        # deathCount
     "mm": "dg.mm", "s10": "dg.s10", "s1": "dg.s1",    # the clock's own time
     "lm": "dg.lm", "l10": "dg.l10", "l1": "dg.l1",    # real time left at the rate
@@ -227,6 +228,24 @@ def layout(doc, slot):
         w, h, n = seg["width"], seg["height"], seg["length"]
         out.append(dict(seg, i=i, xa=x, xb=x + n - 1, za=cz - w // 2 - 1, zb=cz + w // 2 + 1, h=h))
         x += n
+    return out
+
+
+def wb_lines(doc, slot):
+    """slot/s<g>/rooms' tail: the member's walk back (dg.wb, blocks at the margin's sprint) from the room whose box they
+    stand in (its hull), room by room in build order (hulls never overlap, so at most one holds them; out of every hull,
+    the last room's value stands). The blocks are tools/dungeon_clock.py walk_back: the longest walk back to the
+    arrival from any cell of the room, measured on the built grids of this slot's variant (DG2-INTEGRATE: the x offset
+    the margin used warned up to 70 s late on routes that double back and climb)."""
+    d = slot["dungeon"]
+    wb = DC.walk_back(doc, d, slot)
+    out = ["# the return margin's walk back from this room (m/margin reads it): tools/dungeon_clock.py walk_back"]
+    for b in DR.slot_build(doc, d, slot):
+        r = b.room
+        # the hull, walls to roof: the interior box (`box`, what entry tests) starts at y_lo and misses a sunken trench's
+        # feet and the door columns; hulls never overlap (problems() refuses it), so one box at most holds the member
+        hull = (r["xa"], r["hull_lo"], r["za"], r["xb"], r["ceil_y"], r["zb"])
+        out.append("execute if entity @s[%s] run scoreboard players set @s %s %d" % (DR.sel_box(hull), OBJ["wb"], wb[r["id"]]))
     return out
 
 
@@ -965,11 +984,19 @@ def functions(doc, blackout=None):
     rm = e["return_margin"]
     margin = [HEAD, "# 2.3 the return margin: real seconds left at the rate against the sprint back to the back rip + %d"
               % rm["warn_extra_s"],
+              "# A spine dungeon walks back in x. A rooms dungeon walks back the way its route went (it turns, doubles back",
+              "# and climbs): the blocks are the room's own (dg.wb, set each pass by slot/s<g>/rooms from the walk measured",
+              "# on the built rooms, tools/dungeon_clock.py walk_back); none yet (the first pass), no warning yet",
               "execute store result score @s %s run data get entity @s Pos[0]" % O["x"],
               "scoreboard players operation #bk %s = @s %s" % (O["t"], O["x"])]
     for di, d in enumerate(ds, 1):
-        margin.append("execute if score @s %s matches %d run scoreboard players remove #bk %s %d"
-                      % (O["dun"], di, O["t"], points(doc, dsel(di)[0])["back"][0]))
+        if DR.has_rooms(d):
+            margin += ["execute if score @s %s matches %d unless score @s %s matches 0.. run return 0" % (O["dun"], di, O["wb"]),
+                       "execute if score @s %s matches %d run scoreboard players operation #bk %s = @s %s"
+                       % (O["dun"], di, O["t"], O["wb"])]
+        else:
+            margin.append("execute if score @s %s matches %d run scoreboard players remove #bk %s %d"
+                          % (O["dun"], di, O["t"], points(doc, dsel(di)[0])["back"][0]))
     margin += [
         "scoreboard players operation #bk %s *= #10 %s" % (O["t"], O["t"]),
         "scoreboard players operation #bk %s /= #56 %s" % (O["t"], O["t"]),
@@ -1328,7 +1355,7 @@ def functions(doc, blackout=None):
             "execute in %s run function %s" % (dim, F("slot/s%d/reset" % g))]
         if DR.has_rooms(d):
             out["slot/s%d/reset" % g] = ["# slot %d's mutable blocks, room by room, in %s (reserve carries the dimension in)" % (g, dim)] + DR.reset_lines(doc, s)
-            out["slot/s%d/rooms" % g] = DR.rooms_lines(doc, s)
+            out["slot/s%d/rooms" % g] = DR.rooms_lines(doc, s) + wb_lines(doc, s)
         else:
             out["slot/s%d/reset" % g] = function_limits.ensure_loaded(
                 ["# slot %d's mutable blocks, in %s (reserve carries the dimension in)" % (g, dim)]
@@ -1345,7 +1372,8 @@ def functions(doc, blackout=None):
         start = [HEAD, "# As slot %d's member, crossing the threshold (x >= %d): the clock starts, the lockout is stamped and the"
                  % (g, pt["threshold_x"]),
                  "# sigil is spent (2.1, 2.5, 7.4)",
-                 "scoreboard players set @s %s 3" % O["st"]]
+                 "scoreboard players set @s %s 3" % O["st"],
+                 "scoreboard players reset @s %s" % O["wb"]]
         start += ["execute if score @s %s matches %d run scoreboard players set @s %s %d"
                   % (O["band"], b["band"], O["clock"], clock_s(d, b) * U) for b in bands(doc)]
         start += ["scoreboard players operation @s %s = @s %s" % (O["clk0"], O["clock"]),

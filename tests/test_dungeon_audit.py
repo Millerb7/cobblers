@@ -197,16 +197,39 @@ def expected_spawners():
     for di, d in enumerate(DUNGEONS_DATA["dungeons"]):
         for g in range(di * per + 1, (di + 1) * per + 1):
             out.add(("boss", di, g, None, None))
-            for r in d.get("rooms") or []:
+            for r in slot_records(d, g - di * per):
                 if r["kind"] in TRAINER_KINDS:
                     out.update(("trainer", di, g, r["id"], k) for k in range(1, len(r["params"]["trainers"]) + 1))
                 elif r["kind"] in WILD_KINDS:
                     out.add(("wild", di, g, r["id"], None))
             # the ambient Pokemon (unit LIFE, tools/dungeon_life.py): ONE shared walker per slot, there when the dungeon has
             # a room of a kind that may have animals (the connectors, maze, puzzle, vault, resources, dark and safe rooms)
-            if any(r["kind"] in LIFE_KINDS for r in d.get("rooms") or []):
+            if any(r["kind"] in LIFE_KINDS for r in slot_records(d, g - di * per)):
                 out.add(("life", di, g, None, None))
     return out
+
+
+def slot_records(d, k):
+    """Every room record slot k (1-based within its dungeon) builds, read from the data by the documented rule, not by
+    the generator (DUNGEON_ROOMS.md 1a): a fork's routes and a side room's rooms are rooms of the run; slot k builds
+    variants[(k - 1) % n], whose `swap` replaces a room's fields by id (`params` merged one level)."""
+    vs = d.get("variants") or []
+    swap = (vs[(k - 1) % len(vs)].get("swap") or {}) if vs else {}
+
+    def walk(rooms):
+        for r in rooms:
+            if r.get("kind") == "fork":
+                for rt in r.get("routes", []):
+                    yield from walk(rt.get("rooms", []))
+            elif r.get("kind") == "side":
+                yield from walk(r.get("rooms", []))
+            else:
+                over = swap.get(r["id"])
+                if over:
+                    r = dict(r, **{key: v for key, v in over.items() if key != "params"},
+                             params=dict(r.get("params") or {}, **(over.get("params") or {})))
+                yield r
+    return list(walk(d.get("rooms") or []))
 
 
 def classify_site(site):

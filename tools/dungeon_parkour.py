@@ -377,7 +377,12 @@ def _plan_once(rg, room):
         wid[fork_i] = wid[fork_i + 1] = FORK_W
         half = FORK_W // 2
         mid = (iz0 + iz1) // 2
-        zc[fork_i] = zc[fork_i + 1] = min(max(mid, iz0 + 1 + half), iz1 - 1 - half)
+        # the fork sits mid-room, pulled toward the hard side as far as the safe way needs for its full detour (a bulge of
+        # 8 past its row, below) and the hard row allows (no nearer the wall than MARGIN): in a narrow room the middle
+        # left the safe way 5 and it was barely the long way (the ruin's aqueduct, 29 wide, DG2-INTEGRATE)
+        zf = min(mid, (iz1 - MARGIN) - 8 - 6)
+        zf = max(zf, iz0 + MARGIN + 6)
+        zc[fork_i] = zc[fork_i + 1] = min(max(zf, iz0 + 1 + half), iz1 - 1 - half)
     # ledge levels: 0 at the doors, 0..lvmax between, a step of at most 3 from the one before
     lvs = [0]
     for i in range(1, S):
@@ -387,6 +392,11 @@ def _plan_once(rg, room):
         lvs[i] = min(lvs[i], lvs[i + 1] + 3)
     if fork_i is not None:
         lvs[fork_i + 1] = lvs[fork_i]
+    # a full parkour (three sections or more) climbs: some ledge stands at least 3 above the doors (or the room's whole
+    # headroom). A roll that keeps every ledge at 0..2 is a flat walk with hops and is re-rolled (DUNGEON_PASS2 note 4; the
+    # night shift's collapse, slot 1, 2026-10-10, climbed 2). A short room of two sections keeps its free roll
+    if S >= 3 and max(lvs) < min(3, lvmax):
+        raise R.RoomError("parkour: the ledges never climb %d (levels %s)" % (min(3, lvmax), lvs))
     route = Route()
     ledges = []
     for i in range(S + 1):
@@ -409,6 +419,10 @@ def _plan_once(rg, room):
                 mid_z = (zlo + zhi) // 2
                 rM = zhi - rg.randint(0, 2) if (r0 + rB) / 2 <= mid_z else zlo + rg.randint(0, 2)
                 chain_via(rg, route, A, B, r0, rM, rB, tiers[i], lvmax, 1)
+    # a full parkour (three sections or more) has hard jumps: at least 4 hops of FLAT_MAX cells (a gap of 3), however the
+    # tiers rolled (DUNGEON_PASS2 note 4: "longer and challenging jumps"; the jungle's canopy, slot 7, rolled 3)
+    if S >= 3 and sum(1 for h in route.hops if h["n"] == FLAT_MAX) < 4:
+        raise R.RoomError("parkour: only %d hops of %d cells" % (sum(1 for h in route.hops if h["n"] == FLAT_MAX), FLAT_MAX))
     cuts = shortcuts(route)
     if cuts:
         raise R.RoomError("parkour: platforms %s can be crossed without the plan's hops" % (cuts[:3],))

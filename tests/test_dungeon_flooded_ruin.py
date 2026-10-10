@@ -330,6 +330,11 @@ def test_the_tall_halls_are_lit_from_the_floor_and_the_ceiling_stays_sparse():
 @pytest.mark.parametrize("mutant", ["floor_lights", "cap_dark_dressing"])
 def test_mutating_the_tall_light_generator_off_leaves_cells_dark_and_the_walk_check_says_so(monkeypatch, mutant):
     monkeypatch.setattr(R, mutant, lambda *a, **k: None)
+    if mutant == "floor_lights":
+        # pass 2 (KIT2) runs light_dark_cells on every pass-2 room, and every tall hall here is one (an outline, a side
+        # door): it lights whatever the floor lights leave dark, so the floor lights alone going is not darkness any more.
+        # Both of the hall's light sources off is: the walk check must say so (the check is what this test is about)
+        monkeypatch.setattr(R, "light_dark_cells", lambda *a, **k: None)
     bad = R.problems(DOC, RUIN)
     assert any("have no light" in p for p in bad), bad
 

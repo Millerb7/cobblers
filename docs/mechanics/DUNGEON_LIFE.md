@@ -23,8 +23,11 @@ Rooms with their own wild Pokemon, trainers or a drop get **no animals** (`nest`
 `gauntlet`/`ambush`, `boss_arena`, `parkour`, `collapse_bridge`, `setpiece`, `entry_room`, `exit_room`): ambient life must
 never be mistaken for the room's fight, and a wild room clears on its own tagged Pokemon only. The scenes skip the same
 set except `nest`, `habitat`, `miniboss`, `stand`, `gauntlet`, which take scenes (a fight room with a camp in it is the
-point). Counts at this commit (slot 1, from `python tools/dungeon_life.py`): night_shift 11 of 21 rooms have animals, 27
-scenes, 12 candles; jungle 16 of 26, 34 scenes, 24 candles; flooded_ruin 16 of 26, 27 scenes, 32 candles.
+point). Counts for the pass-2 dungeons (slot 1, from `python tools/dungeon_life.py report`, DG2-INTEGRATE 2026-10-10):
+night_shift 9 of 18 rooms have animals (35 spots in each room's largest set, summed), 24 scenes, 4 candles; jungle 14 of
+22, 57 spots, 28 scenes, 8 candles; flooded_ruin 9 of 17, 34 spots, 12 scenes, 8 candles. Every spot keeps 3 cells (x
+and z) off every cell of every door of its room -- in, out, a side room's, a fork's, a shortcut's -- and the row just
+inside it (`DOOR_KEEP`, `door_cells`); a room with no such cell has no animals.
 
 ## 2. The animals
 

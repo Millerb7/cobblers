@@ -420,14 +420,39 @@ def _place(ctx, sc, cells, by_col, rg, reach0, anc0, light_only):
 # ------------------------------------------------------------------------------------------------- ambient Pokemon
 
 
+DOOR_KEEP = 3          # no spot within this many cells (in x and z) of any cell of any door of the room, or just inside one
+
+
+def door_cells(room):
+    """(x, z) of every door of the room -- in, out, a side room's, a fork's, a shortcut's (R.room_doors) -- its two wall
+    columns across the door's width and the row just inside it."""
+    out = set()
+    for door in R.room_doors(room):
+        bx = door["box"]
+        for x in range(min(bx[0], bx[3]), max(bx[0], bx[3]) + 1):
+            for z in range(min(bx[2], bx[5]), max(bx[2], bx[5]) + 1):
+                out.add((x, z))
+        ix, _y, iz = R.inner_cell(room, door)
+        for k in range(-(R.DOOR_W // 2), R.DOOR_W // 2 + 1):
+            out.add((ix, iz + k) if door["side"] in ("west", "east") else (ix + k, iz))
+    return out
+
+
 def spots_of(ctx, reach):
-    """Standable, reachable, dry cells of the room, off its doors: [(x, y, z)]."""
+    """Standable, reachable, dry cells of the room, clear of EVERY door of it by DOOR_KEEP cells: [(x, y, z)]. Only the
+    door in was kept off (and that only where 6 cells far from it remained), so Pokemon sat in or beside side, fork and
+    out doors (the independent audit's LIFE, 14 spots, DG2-INTEGRATE). A room with no clear cell has no ambient life."""
     g = ctx.grid
     room = ctx.room
     din = ctx.built.anchors.get("door_in_at")
+    near_door = set()
+    for (dx_, dz_) in door_cells(room):
+        for a in range(-(DOOR_KEEP - 1), DOOR_KEEP):
+            for b in range(-(DOOR_KEEP - 1), DOOR_KEEP):
+                near_door.add((dx_ + a, dz_ + b))
     out = []
     for x, y, z in ctx.standable_cells():
-        if g.local(x, y, z) not in reach:
+        if g.local(x, y, z) not in reach or (x, z) in near_door:
             continue
         b = g.block_at(x, y, z)
         if G.classify(b) == G.WATER or not feet_ok(b):
