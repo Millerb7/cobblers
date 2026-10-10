@@ -634,3 +634,38 @@ the cache chest reads as a find at a heap's foot. The walk check proves a player
 standing cell; it has not been seen. Where it collides with another system: GREED's table must hold a row for every block the piles can hold (it does: the eight ores of both families) and an item cp for the cache's two items (it does), the independent audit's
 "the pick breaks nothing but seams and cracked faces" (it reads the generated `can_break`, which now holds the table's ore blocks;
 `tools/dungeon_independent_audit.py` is AUDIT2's, not touched here), and `life` (heap and cache ground is kept from its spots).
+
+## 11. The nether themes (NETHER-THEMES, 2026-10-10; built, simulated and audited, not run in Minecraft)
+
+Five themes in `data/dungeon_themes.json`, one per vanilla nether biome: `nether_wastes` (netherrack, glowstone, nether brick,
+blackstone; the fire-and-coal one), `crimson_forest` (crimson stems and nether wart on a nylium floor, shroomlights),
+`warped_forest` (the same in teal, with the ghosts and imps), `soul_sand_valley` (soul soil, bone fossils, soul torches and
+lanterns), `basalt_deltas` (basalt and blackstone columns, ochre froglight seams). Rung: **datapack plus generator**, no kit
+code beyond two small hooks below. The rips for these dungeons stand in the Nether: `docs/research/notes/nether-rip-siting.md`
+(research only; the engine places rips in the overworld only today). Demo dungeon per theme, 25 rooms with a three-way
+crossroads: `tests/fixtures/dungeon_nether_demo.json`; tests: `tests/test_dungeon_nether_themes.py`.
+
+What an author of a nether dungeon must know (each learned the hard way while building these):
+- **No lava, fire, soul fire, magma, campfire, wither rose or bubble column anywhere in a theme.** The kit's walk check
+  classes them HAZARD and `tests/test_dungeon_rooms.py` refuses them in any theme's data. The heat is told by glow
+  (glowstone, shroomlight, froglight veins), colour and the Pokemon. A deliberate hazard would be a kit decision.
+- **No vines.** The `trunks` op hangs `minecraft:vine` (`vines_p` 0 in every nether theme) and `canopy` hangs vines beside its
+  curtains (`curtain_p` 0). The nether's weeping vines are not in the walk check's passable set.
+- **Roots and sprouts** (`crimson_roots`, `warped_roots`, `nether_sprouts`) are in `dungeon_grid.PASSABLE`; the fungi are not,
+  because the independent audit's table has them solid. They survive only on nylium or soul soil: the ground cover names
+  `on`, a `fallen` scene's `cover` is a wart block, and `floor_lights` never sets a light under a block in
+  `dungeon_rooms.NEEDS_SOIL` (roots, sprouts, fungi, soul torch, torch), or the plant would pop off its soil.
+- **The seam is the nether's quartz and gold ore, never ancient debris.** The 1.21.1 jar's `needs_diamond_tool` tag holds
+  debris and the rift pick is an iron pickaxe, so a mined debris yields nothing while GREED would weigh the block at 200 cp. A
+  nether resources room therefore has the seam alone: no `data/dungeon_resources.json` entry exists for these themes, so the
+  `deposits` op does nothing (heaps, veins and the Mega-stone cache need a nether ore family and a budget: an owner and
+  trainer-balance call). `nether_gold_ore` is priced in `data/dungeon_greed.json` (2-6 nuggets, read from the jar).
+- **Soul sand drags a walker to 40 percent in vanilla** and the kit does not model it. It is in the soul valley's floor
+  patches (small) and nowhere else a trail is laid on purpose.
+- **Species.** Every ambient line is an evolution chain of the jar, belongs to its biome by the jar's nether spawn pools or
+  by `NETHER_ENCOUNTERS.md` section 2, and keeps that document's rules: no Fire type outside the wastes and the crimson forest,
+  no doll or mis-assembled-model species (`COBBLEVERSE_COMPATIBILITY.md`: talonflame, arbok and turtonator were dropped for it),
+  no starter lines (kept for the rare prizes), no legendary.
+- **Water is legal** (the pocket is not ultrawarm), so the `flooded` look keeps its one-deep trench; it is never over soul sand.
+- Puzzle buttons `crimson_button`, `warped_button` and `polished_blackstone_button` were added to `dungeon_puzzles.py`'s
+  passable set (no collision box); the five themes have rows in `data/dungeon_puzzles.json` and `data/dungeon_relics.json`.

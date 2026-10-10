@@ -992,6 +992,9 @@ def _spread(a, b, step):
 
 FLOOR_LIGHT_SEARCH = [(0, 0), (1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1), (2, 0), (-2, 0),
                       (0, 2), (0, -2)]
+# blocks that survive only on a particular soil: a floor light is never set under one (the nether themes' ground cover)
+NEEDS_SOIL = {"minecraft:crimson_roots", "minecraft:warped_roots", "minecraft:nether_sprouts", "minecraft:crimson_fungus",
+              "minecraft:warped_fungus", "minecraft:soul_torch", "minecraft:torch"}
 
 
 def floor_lights(ctx, room, theme, tall, penalty):
@@ -1015,6 +1018,9 @@ def floor_lights(ctx, room, theme, tall, penalty):
                 under, at = ctx.grid.block_at(px, fl - 1, pz), ctx.grid.block_at(px, fl, pz)
                 if G.base(under) in G.AIR or G.classify(at) == G.SOLID:
                     continue
+                if G.base(at) in NEEDS_SOIL:
+                    continue        # a plant that needs its soil (roots, sprouts, a standing torch) would pop off a light block
+                                    # (NETHER-THEMES, 2026-10-10: found by tests/test_dungeon_nether_themes.py)
                 ctx.add(setb((px, fl - 1, pz), block))
                 ctx.lights.append((px, fl - 1, pz))
                 break

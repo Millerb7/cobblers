@@ -42,6 +42,46 @@
       "items": ["minecraft:echo_shard", "minecraft:heart_of_the_sea", "minecraft:clock"],
       "colour": "aqua",
       "why": "a carved brick plinth with a soul lantern, blue in the dark; it goes out when the relic is taken"
+    },
+    "nether_wastes": {
+      "pedestal": "minecraft:chiseled_nether_bricks",
+      "armed": "minecraft:lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:clock", "minecraft:echo_shard", "minecraft:disc_fragment_5"],
+      "colour": "red",
+      "why": "a chiselled nether-brick plinth with a lantern lit on it; the lantern goes out when someone takes the relic"
+    },
+    "crimson_forest": {
+      "pedestal": "minecraft:polished_blackstone_bricks",
+      "armed": "minecraft:shroomlight",
+      "taken": "minecraft:nether_wart_block",
+      "items": ["minecraft:echo_shard", "minecraft:disc_fragment_5", "minecraft:clock"],
+      "colour": "red",
+      "why": "a blackstone plinth with a shroomlight on it, red among the stems; the light is gone when the relic is"
+    },
+    "warped_forest": {
+      "pedestal": "minecraft:polished_blackstone_bricks",
+      "armed": "minecraft:shroomlight",
+      "taken": "minecraft:warped_wart_block",
+      "items": ["minecraft:echo_shard", "minecraft:disc_fragment_5", "minecraft:clock"],
+      "colour": "aqua",
+      "why": "a blackstone plinth with a shroomlight on it, teal among the stems; the light is gone when the relic is"
+    },
+    "soul_sand_valley": {
+      "pedestal": "minecraft:chiseled_polished_blackstone",
+      "armed": "minecraft:soul_lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:echo_shard", "minecraft:disc_fragment_5", "minecraft:clock"],
+      "colour": "aqua",
+      "why": "a blackstone plinth with a soul lantern, blue in the dark; it goes out when the relic is taken"
+    },
+    "basalt_deltas": {
+      "pedestal": "minecraft:polished_basalt",
+      "armed": "minecraft:ochre_froglight",
+      "taken": "minecraft:smooth_basalt",
+      "items": ["minecraft:clock", "minecraft:echo_shard", "minecraft:disc_fragment_5"],
+      "colour": "gold",
+      "why": "a basalt plinth with a froglight on it, glowing like the seams below; the glow is gone when the relic is"
     }
   }
 }

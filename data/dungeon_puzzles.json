@@ -55,6 +55,41 @@
       "button": "minecraft:mangrove_button", "plate": "minecraft:stone_pressure_plate",
       "plinth": "minecraft:chiseled_stone_bricks", "chest": "minecraft:chest",
       "marks": ["minecraft:red_terracotta", "minecraft:blue_terracotta", "minecraft:yellow_terracotta", "minecraft:lime_terracotta", "minecraft:purple_terracotta", "minecraft:orange_terracotta"]
+    },
+    "nether_wastes": {
+      "console": "minecraft:nether_bricks", "trim": "minecraft:chiseled_nether_bricks",
+      "lamp_on": "minecraft:glowstone", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:crimson_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:gilded_blackstone", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "crimson_forest": {
+      "console": "minecraft:crimson_planks", "trim": "minecraft:stripped_crimson_stem",
+      "lamp_on": "minecraft:shroomlight", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:crimson_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:polished_blackstone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "warped_forest": {
+      "console": "minecraft:warped_planks", "trim": "minecraft:stripped_warped_stem",
+      "lamp_on": "minecraft:shroomlight", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:warped_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:polished_blackstone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "soul_sand_valley": {
+      "console": "minecraft:polished_blackstone_bricks", "trim": "minecraft:chiseled_polished_blackstone",
+      "lamp_on": "minecraft:glowstone", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:warped_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:bone_block", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "basalt_deltas": {
+      "console": "minecraft:polished_blackstone_bricks", "trim": "minecraft:polished_basalt",
+      "lamp_on": "minecraft:ochre_froglight", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:crimson_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:gilded_blackstone", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
     }
   }
 }
