@@ -128,24 +128,48 @@ def walk_distance(grid, start, goal, jumps=False, cls=None):
     return None
 
 
-def walked(doc, d):
-    """[{id, kind, walk, x_len}] per room and the total: the door-to-door walk measured on the built grids (slot 1)."""
-    slot = _first_slot(doc, d)
+def walked(doc, d, slot=None):
+    """[{id, kind, walk, x_len, route}] per room and the total: the walk from the cell inside the main door in (the
+    entry's arrival) to the cell inside the main door out (the exit's far rip), measured on the built grids of `slot`
+    (default the dungeon's first). A side room (a dead end) is walked in and back. The total counts every room; the
+    clock counts one route of each fork (clock_rooms)."""
+    slot = slot if slot is not None else _first_slot(doc, d)
     out = []
     for b in R.slot_build(doc, d, slot):
         r = b.room
         g = b.grid
-        sx = r["xa"] + 3 if r["kind"] == "entry_room" else r["ix0"]
-        if r["door_out"]:
-            ex, ey, ez = r["ix1"], r["floor_out"], r["z_out"]
-        else:
-            ex, ey, ez = r["xb"] - 1, r["floor_in"], r["z_in"]
-        dist = walk_distance(g, g.local(sx, r["floor_in"], r["z_in"]), g.local(ex, ey, ez), jumps=R.flags_of(r["kind"])["jumps"])
+        start = R.room_start(r)
+        end = R.room_end(r)
+        dead_end = end is None
+        if dead_end:
+            # a side room's last room: in to its furthest anchor and back, never shorter than its length
+            end = start
+        dist = walk_distance(g, g.local(*start), g.local(*end), jumps=R.flags_of(r["kind"])["jumps"])
         if dist is None:
             raise R.RoomError("%s room %s: no walk from its door in to its door out (the walk check names why)" % (d["id"], r["id"]))
+        if dead_end:
+            dist = 2 * (r["length"] - 2)
         out.append({"id": r["id"], "kind": r["kind"], "walk": dist + (DOOR_STEPS if r["door_out"] else 0),
-                    "x_len": r["length"], "width": r["width"], "gate": r["gate"], "params": r["params"]})
+                    "x_len": r["length"], "width": r["width"], "gate": r["gate"], "params": r["params"],
+                    "route": r.get("route", "main")})
     return out, sum(x["walk"] for x in out)
+
+
+def clock_rooms(doc, d, band, rooms):
+    """The rooms the clock pays for: the main route, and of each fork the route that takes longest at this band (a
+    player may take either; the clock must cover the slower). Side rooms are optional: the slack pays for them."""
+    main = [r for r in rooms if r.get("route", "main") == "main"]
+    forks = {}
+    for r in rooms:
+        rt = r.get("route", "main")
+        if "/" in rt:
+            f, k = rt.split("/", 1)
+            forks.setdefault(f, {}).setdefault(k, []).append(r)
+    out = list(main)
+    for f, routes in forks.items():
+        best = max(routes.values(), key=lambda rs: sum(required(doc, {}, band, rs).values()))
+        out += best
+    return out
 
 
 def _members(team_by_band, band, doc):
@@ -201,11 +225,13 @@ def required(doc, d, band, rooms=None):
 
 def derive(doc, d):
     """{"<band>": clock seconds}: ceil(required x slack_factor) to the whole minute, per band."""
-    rooms, _total = walked(doc, d)
     slack = float(doc["engine"]["clock"]["slack_factor"])
     out = {}
+    slots = [s for s in R._slots_for(doc) if s["dungeon"]["id"] == d["id"]]
+    walks = [walked(doc, d, s)[0] for s in (R.variant_slots(doc, d, slots) or [None])]
     for b in doc["engine"]["bands"]:
-        req = sum(required(doc, d, b["band"], rooms).values())
+        # every variant (each slot's layout) and the slower route of every fork: the clock covers the longest run
+        req = max(sum(required(doc, d, b["band"], clock_rooms(doc, d, b["band"], rooms)).values()) for rooms in walks)
         out[str(b["band"])] = int(math.ceil(req * slack / 60.0)) * 60
     return out
 

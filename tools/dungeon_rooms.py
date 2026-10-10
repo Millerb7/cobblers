@@ -44,6 +44,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import dungeon_grid as G  # noqa: E402
+import dungeon_outline as O  # noqa: E402
 import function_limits  # noqa: E402
 
 THEMES_PATH = ROOT / "data" / "dungeon_themes.json"
@@ -65,9 +66,12 @@ MODES = ("keep",)
 # kinds the design names but wave 2 implements; they still build, as a themed room with their declared anchors
 DECLARED_KINDS = {"stand", "gauntlet", "miniboss", "nest", "habitat", "puzzle", "vault", "ambush"}
 BOX_ANCHORS = {"line", "arena", "catch", "seam_box", "span", "box", "unsafe"}
-NO_STAND = {"seam"}          # point anchors that are blocks in a wall or slab, not cells to stand in
+NO_STAND = {"seam", "secret", "secret_door"}   # point anchors not walk-checked plainly: blocks in a wall or slab (seam,
+# secret_door), and a secret's relic spot, which _secret_walks checks WITH its trick (and refuses if reached without)
 DEFAULT_FLAGS = {"dress": "light", "rise": False, "connector": False, "pit": 0, "no_deploy": False, "jumps": False,
-                 "dark": False, "length_snap": None, "width_snap": None}
+                 "dark": False, "length_snap": None, "width_snap": None, "outline": None, "reversible": False}
+# outline: the kind accepts a non-box outline (None = True unless it has a pit, jumps or a snap: its own geometry).
+# reversible: the kind may be walked west (dir "west"): only kinds whose geometry and hooks do not assume +x.
 EXTENSION_MODULES = ["dungeon_kinds", "dungeon_fights", "dungeon_puzzles"]   # imported in this order, absent ones skipped
 
 KINDS = {}
@@ -89,7 +93,12 @@ def register(name, fn, **flags):
     if bad:
         raise RoomError("register(%s): unknown flag(s) %s" % (name, sorted(bad)))
     KINDS[name] = fn
-    FLAGS[name] = dict(DEFAULT_FLAGS, **flags)
+    f = dict(DEFAULT_FLAGS, **flags)
+    if f["outline"] is None:
+        f["outline"] = not (f["pit"] or f["jumps"] or f["length_snap"] or f["width_snap"])
+    if "reversible" not in flags:
+        f["reversible"] = name in REVERSIBLE_DEFAULT
+    FLAGS[name] = f
     DECLARED_KINDS.discard(name)
 
 
@@ -105,7 +114,7 @@ def register_dress(name, fn, level="light"):
 
 def flags_of(kind):
     load_extensions()
-    return FLAGS.get(kind) or dict(DEFAULT_FLAGS, dress="full")
+    return FLAGS.get(kind) or dict(DEFAULT_FLAGS, dress="full", outline=True)
 
 
 def known_kind(kind):
@@ -126,7 +135,11 @@ def setb(pos, block):
 
 
 def rng(d, room, salt=""):
-    """A deterministic random generator for one room, the same in every slot of the dungeon."""
+    """A deterministic random generator for one room, the same in every slot of the dungeon that builds the same
+    variant: a variant's `seed` re-rolls it (a dungeon without variants keeps pass 1's key exactly)."""
+    seed = d.get("_seed")
+    if seed:
+        return random.Random("%s/%s/%s@%s" % (d["id"], room["id"], salt, seed))
     return random.Random("%s/%s/%s" % (d["id"], room["id"], salt))
 
 
@@ -199,36 +212,283 @@ def floor_at(room, x):
     return room["floors"][min(max(x - room["ix0"], 0), len(room["floors"]) - 1)]
 
 
-def layout(doc, d, slot):
-    """The dungeon's rooms with absolute pocket coordinates (geometry only, no anchors), for one slot.
+def door_floor(room, x):
+    """The floor a door at column x opens onto when it has no landing: the base floor (a pit room's ledges, not its
+    catch floor)."""
+    return floor_at(room, x) + room.get("pit", 0)
 
-    Each room carries its record fields and: i, theme; xa..xb / za..zb the outer box (walls included) and ix0..ix1 /
-    iz0..iz1 the interior; length and width as BUILT (a kind may snap them: a maze's are 4n+3 and 4m+1); z_in, z_out the
-    door lines; floor_in, floor_out the walking floor at the two doors; pit, y_lo (lowest feet level inside), hull_lo
-    (the floor course under it), ceil_y (the ceiling course), floors (base floor per interior column);
-    box [x0,y0,z0,x1,y1,z1] the interior, inclusive; door_in / door_out [x0,y0,z0,x1,y1,z1] (2 columns x 3 wide x 4
-    high; None for the first room's in and the last room's out); gate_in the previous room's gate."""
+
+OPP = {"west": "east", "east": "west", "north": "south", "south": "north"}
+WALLS = ("west", "east", "north", "south")
+CONTAINERS = ("fork", "side")
+REVERSIBLE_DEFAULT = {"drift", "stairs"}
+
+
+# ---- variants (DUNGEON_ROOMS.md 1a): slot k builds variants[(k - 1) % n] -------------------------------------------
+
+
+def variant_of(doc, d, slot):
+    """The variant slot `slot` builds: {"index", "id", ...the variant's fields}, or None for a dungeon without variants."""
+    vs = d.get("variants") or []
+    if not vs:
+        return None
+    idx = (int(slot.get("k", 1)) - 1) % len(vs)
+    return dict(vs[idx], index=idx)
+
+
+def _walk_records(rooms):
+    """Every room record in a rooms list, routes and side rooms included, in record order (containers excluded)."""
+    for r in rooms:
+        if r.get("kind") == "fork":
+            for rt in r.get("routes", []):
+                yield from _walk_records(rt.get("rooms", []))
+        elif r.get("kind") == "side":
+            yield from _walk_records(r.get("rooms", []))
+        else:
+            yield r
+
+
+def all_records(d):
+    """Every room record of the dungeon in every variant (a swap may bring a kind no other variant has)."""
+    out = list(_walk_records(d.get("rooms", [])))
+    for v in d.get("variants") or []:
+        for rid, over in (v.get("swap") or {}).items():
+            out.append(dict(over, id=rid, kind=over.get("kind", next((r["kind"] for r in out if r["id"] == rid), "drift"))))
+    return out
+
+
+def _mirror_spec(s):
+    s = dict(s)
+    if s.get("side") in ("north", "south"):
+        s["side"] = OPP[s["side"]]
+    if "dz" in s:
+        s["dz"] = -int(s["dz"])
+    return s
+
+
+def _mirror_rec(r):
+    for key in ("in", "out", "from"):
+        if isinstance(r.get(key), dict):
+            r[key] = _mirror_spec(r[key])
+    for rt in r.get("routes", []) if r.get("kind") == "fork" else []:
+        if isinstance(rt.get("from"), dict):
+            rt["from"] = _mirror_spec(rt["from"])
+    if "params" in r and "exit_dz" in r["params"]:
+        r["params"] = dict(r["params"], exit_dz=-int(r["params"]["exit_dz"]))
+    if r.get("align") in ("north", "south"):
+        r["align"] = OPP[r["align"]]
+    if r.get("secrets"):
+        r["secrets"] = [dict(s, side=OPP[s["side"]]) if s.get("side") in ("north", "south") else dict(s) for s in r["secrets"]]
+
+
+def _apply_all(rooms, fn):
+    for r in rooms:
+        fn(r)
+        if r.get("kind") == "fork":
+            for rt in r.get("routes", []):
+                _apply_all(rt.get("rooms", []), fn)
+        elif r.get("kind") == "side":
+            _apply_all(r.get("rooms", []), fn)
+
+
+_RESOLVED = {}
+
+
+def resolve(doc, d, slot):
+    """The dungeon record as slot `slot` builds it: its variant's order, swaps, mirror and seed applied. A dungeon
+    without variants is returned as it is (pass-1 records build exactly as before)."""
+    if "_variant" in d or not d.get("variants"):
+        return d
+    v = variant_of(doc, d, slot)
+    key = (json.dumps(d, sort_keys=True), v["index"])
+    if key in _RESOLVED:
+        return _RESOLVED[key]
+    out = json.loads(json.dumps(d))
+    out["_variant"] = v["id"]
+    out["_variant_index"] = v["index"]
+    out["_seed"] = str(v.get("seed", ""))
+    out["_mirror"] = bool(v.get("mirror"))
+    if v.get("order"):
+        by_id = {r["id"]: r for r in out["rooms"]}
+        out["rooms"] = [by_id[i] for i in v["order"] if i in by_id] + [r for r in out["rooms"] if r["id"] not in v["order"]]
+        out["_order_bad"] = sorted(set(v["order"]) - set(by_id)) or None
+    for rid, over in (v.get("swap") or {}).items():
+        def sw(r, rid=rid, over=over):
+            if r.get("id") == rid:
+                for k, val in over.items():
+                    if k == "params":
+                        r["params"] = dict(r.get("params", {}), **val)
+                    else:
+                        r[k] = json.loads(json.dumps(val))
+        _apply_all(out["rooms"], sw)
+    if out["_mirror"]:
+        _apply_all(out["rooms"], _mirror_rec)
+    _RESOLVED[key] = out
+    return out
+
+
+def variant_slots(doc, d, slots):
+    """One slot per distinct variant (the first of each), in slot order: what problems() walks."""
+    seen, out = set(), []
+    for s in slots:
+        v = variant_of(doc, d, s)
+        k = None if v is None else v["index"]
+        if k not in seen:
+            seen.add(k)
+            out.append(s)
+    return out
+
+
+# ---- the record flattened: forks and side rooms -------------------------------------------------------------------
+
+
+def flatten(d):
+    """[{rec, route, attach, end_of}] in record order. attach: None (the first room), ("out", h) the host's main door
+    out, ("from", h, spec) a door of its own on host h, ("join", [ends]) the room after a fork (ends[0] route 0's last
+    room). `dead_end`: the last room of a side entry (no door out)."""
+    items = []
+
+    def chain(recs, route, first_attach, dead_end=False):
+        prev = None
+        for k, r in enumerate(recs):
+            if r.get("kind") in CONTAINERS:
+                raise RoomError("%s: a %s inside a route is not supported (one level of forks)" % (r.get("id"), r["kind"]))
+            att = first_attach if k == 0 else ("out", prev)
+            items.append({"rec": r, "route": route, "attach": att, "dead_end": dead_end and k == len(recs) - 1})
+            prev = len(items) - 1
+        return prev
+
+    host = None
+    pending = None
+    for r in d["rooms"]:
+        kind = r.get("kind")
+        if kind == "fork":
+            if host is None:
+                raise RoomError("%s: a fork needs a room before it" % r["id"])
+            ends = []
+            for k, rt in enumerate(r.get("routes", [])):
+                if not rt.get("rooms"):
+                    raise RoomError("%s: route %s has no rooms" % (r["id"], rt.get("id")))
+                att = ("out", host) if k == 0 else ("from", host, dict(rt.get("from") or {}))
+                ends.append(chain(rt["rooms"], "%s/%s" % (r["id"], rt.get("id", k)), att))
+            pending = ends
+            host = None
+        elif kind == "side":
+            if host is None:
+                raise RoomError("%s: a side entry needs a room before it (not a fork)" % r["id"])
+            if not r.get("rooms"):
+                raise RoomError("%s: a side entry with no rooms" % r["id"])
+            chain(r["rooms"], r["id"], ("from", host, dict(r.get("from") or {})), dead_end=True)
+        else:
+            if pending is not None:
+                att = ("join", pending)
+                pending = None
+            else:
+                att = None if not items else ("out", host)
+            items.append({"rec": r, "route": "main", "attach": att, "dead_end": False})
+            host = len(items) - 1
+    if pending is not None:
+        raise RoomError("%s: a fork must be followed by the room its routes rejoin" % d["id"])
+    return items
+
+
+# ---- placement ---------------------------------------------------------------------------------------------------
+
+
+def _door_box(side, c, y, wall):
+    """The door's 2-column box: `wall` is this room's wall line on `side`; the other column is the neighbour's."""
+    if side == "west":
+        return [wall - 1, y, c - 1, wall, y + DOOR_H - 1, c + 1]
+    if side == "east":
+        return [wall, y, c - 1, wall + 1, y + DOOR_H - 1, c + 1]
+    if side == "north":
+        return [c - 1, y, wall - 1, c + 1, y + DOOR_H - 1, wall]
+    return [c - 1, y, wall, c + 1, y + DOOR_H - 1, wall + 1]
+
+
+def wall_line(room, side):
+    return {"west": room["xa"], "east": room["xb"], "north": room["za"], "south": room["zb"]}[side]
+
+
+def inner_cell(room, door):
+    """The cell just inside a door, at the door's floor: where the walk starts or must arrive."""
+    side, c, y = door["side"], door["c"], door["y"]
+    if side == "west":
+        return (room["ix0"], y, c)
+    if side == "east":
+        return (room["ix1"], y, c)
+    if side == "north":
+        return (c, y, room["iz0"])
+    return (c, y, room["iz1"])
+
+
+def _out_door(room, spec, main):
+    """A door out of a laid room from its spec ({"side", "at", "dz", "y"}): {"side", "c", "y"} on this room's wall."""
+    dir_ = room.get("dir", "east")
+    side = spec.get("side", "east" if dir_ == "east" else "west")
+    L = room["ix1"] - room["ix0"] + 1
+    if side in ("east", "west"):
+        ref = room["z_in"] if room["in_side"] in ("east", "west") else (room["iz0"] + room["iz1"]) // 2
+        dz = spec.get("dz", room["params"].get("exit_dz", 0) if main else 0)
+        c = ref + int(dz)
+    else:
+        at = spec.get("at", L - 3 if dir_ == "east" else 2)
+        c = room["ix0"] + int(at)
+    if side == ("west" if dir_ == "east" else "east") and main:
+        side = side       # a main door out on the in wall: plan_problems names it
+    y_base = room["floor_out"] if side in ("east", "west") else room["floor_in"]
+    return {"side": side, "c": c, "y": y_base + int(spec.get("y", 0))}
+
+
+def _place(doc, d, slot, i, r, inc, item, length_override=None):
+    """One room from its record and the door it is entered by (inc: {"side" this room's wall, "c", "y", "host_wall"}
+    or None for the first room). The out door is NOT attached here (that is the next room's business)."""
+    kind = r["kind"]
+    fl = flags_of(kind)
+    params = r.get("params", {})
+    dir_ = r.get("dir", "east")
+    raw_len = r["length"] if length_override is None else length_override
+    length = _snap(MIN_FIT_LENGTH if raw_len == "fit" else int(raw_len), fl["length_snap"])
+    width = _snap(r["width"], fl["width_snap"])
+    rise = r.get("rise", 0)
+    in_spec = dict(r.get("in") or {})
+    out_spec = dict(r.get("out") or {})
+    in_side = inc["side"] if inc else ("west" if dir_ == "east" else "east")
     fy = doc["engine"]["pocket"]["floor_y"]
-    x = slot["x0"]
-    z_in = slot["cz"]
-    floor = fy
-    out = []
-    prev_gate = "open"
-    decl = d["rooms"]
-    for i, r in enumerate(decl):
-        kind = r["kind"]
-        fl = flags_of(kind)
-        params = r.get("params", {})
-        length = _snap(r["length"], fl["length_snap"])
-        width = _snap(r["width"], fl["width_snap"])
-        rise = r.get("rise", 0)
-        last = i == len(decl) - 1
-        z_out = z_in if last else z_in + params.get("exit_dz", 0)
-        gate = r.get("gate", "cleared" if kind == "boss_arena" else "open")
-        pit = params.get("pit", fl["pit"])
-        floor_in, floor_out = floor, floor + rise
-        zlo, zhi = slot["z0"] + 1, slot["z0"] + STRIP_INTERIOR
-        dmin, dmax = min(z_in, z_out), max(z_in, z_out)
+    door_y_in = inc["y"] if inc else fy
+    floor = door_y_in - int(in_spec.get("y", 0))
+    zlo, zhi = slot["z0"] + 1, slot["z0"] + STRIP_INTERIOR
+    L_int = length - 2
+    # x
+    if inc is None:
+        xa = slot["x0"]
+    elif in_side == "west":
+        xa = inc["host_wall"] + 1
+    elif in_side == "east":
+        xa = inc["host_wall"] - 1 - (length - 1)
+    else:
+        at = int(in_spec.get("at", 2 if dir_ == "east" else L_int - 3))
+        xa = inc["c"] - at - 1
+    xb = xa + length - 1
+    ix0, ix1 = xa + 1, xb - 1
+    out_side = out_spec.get("side", "east" if dir_ == "east" else "west")
+    # z
+    if in_side in ("north", "south"):
+        a = inc["host_wall"] + 2 if in_side == "north" else inc["host_wall"] - 1 - width
+        z_in = a if in_side == "north" else a + width - 1
+        fits = zlo <= a and a + width - 1 <= zhi
+        if out_side in ("east", "west"):
+            z_out = (a + a + width - 1) // 2 + int(out_spec.get("dz", params.get("exit_dz", 0)))
+        else:
+            z_out = a if out_side == "north" else a + width - 1
+    else:
+        z_in = inc["c"] if inc else slot["cz"]
+        if out_side in ("east", "west"):
+            z_out = z_in + int(out_spec.get("dz", params.get("exit_dz", 0)))
+            dmin, dmax = min(z_in, z_out), max(z_in, z_out)
+        else:
+            z_out = None
+            dmin = dmax = z_in
         if fl["width_snap"]:
             # a grid room's rows are 4 apart with the door on a row centre: put the door row where it fits
             pitch, off = fl["width_snap"]
@@ -247,34 +507,203 @@ def layout(doc, d, slot):
             lo = max(zlo, dmax + 2 - (width - 1))
             hi = min(zhi - (width - 1), dmin - 2)
             fits = lo <= hi
-            a = min(max(round((dmin + dmax) / 2 - (width - 1) / 2), lo), hi) if fits else lo
-        xa, xb = x, x + length - 1
-        ix0, ix1 = xa + 1, xb - 1
-        n = ix1 - ix0 + 1
-        if rise and n > 1:
-            sign = 1 if rise > 0 else -1
-            floors = [floor_in + sign * ((abs(rise) * c) // (n - 1)) for c in range(n)]
+            align = r.get("align", "center")
+            if not fits:
+                a = lo
+            elif align == "north":
+                a = lo
+            elif align == "south":
+                a = hi
+            else:
+                a = min(max(round((dmin + dmax) / 2 - (width - 1) / 2), lo), hi)
+        if z_out is None:
+            z_out = a if out_side == "north" else a + width - 1
+    iz0, iz1 = a, a + width - 1
+    n = ix1 - ix0 + 1
+    if rise and n > 1:
+        sign = 1 if rise > 0 else -1
+        steps = [floor + sign * ((abs(rise) * c) // (n - 1)) for c in range(n)]
+        floors = steps if dir_ == "east" else steps[::-1]
+    else:
+        floors = [floor] * n
+    floor_in, floor_out = floor, floor + rise
+    shape = shape_of(d, r, fl)
+    sp = dict(r.get("shape_params") or {})
+    sink = O.shape_sink(shape, sp)
+    pit = params.get("pit", fl["pit"])
+    ceil_y = max(floor_in, floor_out) + r["height"]
+    y_lo = min(floor_in, floor_out) - pit - sink
+    if pit:
+        floors = [y_lo + sink] * n
+    gate = r.get("gate", "cleared" if kind == "boss_arena" else "open")
+    room = dict(r, i=i, theme=d.get("theme"), kind=kind, params=params, gate=gate, length=length, width=width,
+                rise=rise, dir=dir_, xa=xa, xb=xb, ix0=ix0, ix1=ix1, za=a - 1, zb=a + width, iz0=a, iz1=a + width - 1,
+                z_in=z_in, z_out=z_out, floor_in=floor_in, floor_out=floor_out, pit=pit, y_lo=y_lo, hull_lo=y_lo - 1,
+                ceil_y=ceil_y, floors=floors, fits=fits, gate_in="open", last=False, in_side=in_side,
+                out_side=out_side, route=item["route"], shape=shape, shape_params=sp, sink=sink,
+                no_deploy=bool(params.get("no_deploy", fl["no_deploy"])), doors=[], fit=raw_len == "fit")
+    room["floor_y"] = floor_in
+    room["box"] = [ix0, y_lo, a, ix1, ceil_y - 1, a + width - 1]
+    room["door_in"] = None
+    room["door_out"] = None
+    room["door_in_y"] = door_y_in
+    room["door_out_y"] = None
+    if inc is not None:
+        door = {"side": in_side, "c": inc["c"], "y": door_y_in, "dir": "in", "to": inc["host"], "main": inc["main"],
+                "gate": inc["gate"]}
+        door["box"] = _door_box(in_side, inc["c"], door_y_in, wall_line(room, in_side))
+        room["doors"].append(door)
+        if inc["main"]:
+            room["door_in"] = door["box"]
+            room["gate_in"] = inc["gate"]
+    return room
+
+
+MIN_FIT_LENGTH = 8
+
+
+def _attach(rooms, h, spec, main, i):
+    """The door out of room h (main or by spec) toward room i: its record on h, and the inc the new room is placed by."""
+    host = rooms[h]
+    dd = _out_door(host, spec, main)
+    box = _door_box(dd["side"], dd["c"], dd["y"], wall_line(host, dd["side"]))
+    door = {"side": dd["side"], "c": dd["c"], "y": dd["y"], "dir": "out", "to": i, "main": main, "gate": host["gate"],
+            "box": box}
+    host["doors"].append(door)
+    if main:
+        host["door_out"] = box
+        host["door_out_y"] = dd["y"]
+        if dd["side"] in ("east", "west"):
+            host["z_out"] = dd["c"]
+    return door, {"side": OPP[dd["side"]], "c": dd["c"], "y": dd["y"], "host_wall": wall_line(host, dd["side"]),
+                  "host": h, "main": main, "gate": host["gate"]}
+
+
+def layout(doc, d, slot):
+    """The dungeon's rooms with absolute pocket coordinates (geometry only, no anchors), for one slot (its variant).
+
+    Each room carries its record fields and: i, theme, route; xa..xb / za..zb the outer box (walls included) and
+    ix0..ix1 / iz0..iz1 the interior (the BOUNDING box: the open part is `outline`); length and width as BUILT (a kind
+    may snap them); in_side/out_side, z_in, z_out (the door lines of east/west doors; a north/south door's inner row);
+    floor_in, floor_out the room's BASE floor at its two ends and door_in_y / door_out_y the doors' floors (higher
+    on a landing); pit, sink, y_lo (lowest feet level inside), hull_lo, ceil_y, floors (base floor per interior column);
+    box [x0,y0,z0,x1,y1,z1] the interior, inclusive; door_in / door_out the main doors' 2-column boxes (None at the
+    ends), doors (every door: {side, c, y, box, dir, to, main, gate}); gate_in the main previous room's gate; outline
+    (dungeon_outline.Outline, raw: the kind's anchors and the route finish it in build_room)."""
+    d = resolve(doc, d, slot)
+    items = flatten(d)
+    rooms = []
+    for i, it in enumerate(items):
+        r = it["rec"]
+        att = it["attach"]
+        if att is None:
+            room = _place(doc, d, slot, i, r, None, it)
+        elif att[0] == "out":
+            _door, inc = _attach(rooms, att[1], dict(rooms[att[1]].get("out") or {}), True, i)
+            room = _place(doc, d, slot, i, r, inc, it)
+        elif att[0] == "from":
+            _door, inc = _attach(rooms, att[1], att[2], False, i)
+            room = _place(doc, d, slot, i, r, inc, it)
         else:
-            floors = [floor_in] * n
-        ceil_y = max(floor_in, floor_out) + r["height"]
-        y_lo = min(floor_in, floor_out) - pit
-        if pit:
-            floors = [y_lo] * n
-        room = dict(r, i=i, theme=d.get("theme"), kind=kind, params=params, gate=gate, length=length, width=width,
-                    rise=rise, xa=xa, xb=xb, ix0=ix0, ix1=ix1, za=a - 1, zb=a + width, iz0=a, iz1=a + width - 1,
-                    z_in=z_in, z_out=z_out, floor_in=floor_in, floor_out=floor_out, pit=pit, y_lo=y_lo,
-                    hull_lo=y_lo - 1, ceil_y=ceil_y, floors=floors, fits=fits, gate_in=prev_gate, last=last,
-                    no_deploy=bool(params.get("no_deploy", fl["no_deploy"])))
-        room["floor_y"] = floor_in
-        room["box"] = [ix0, y_lo, a, ix1, ceil_y - 1, a + width - 1]
-        room["door_in"] = None if i == 0 else [xa - 1, floor_in, z_in - 1, xa, floor_in + DOOR_H - 1, z_in + 1]
-        room["door_out"] = None if last else [xb, floor_out, z_out - 1, xb + 1, floor_out + DOOR_H - 1, z_out + 1]
-        out.append(room)
-        x += length
-        z_in = z_out
-        floor = floor_out
-        prev_gate = gate
-    return out
+            ends = att[1]
+            room = _join(doc, d, slot, rooms, items, i, r, it, ends)
+        if it["dead_end"]:
+            room["last"] = True
+        rooms.append(room)
+    if rooms:
+        rooms[-1]["last"] = True
+    place_shortcuts(rooms)
+    for room in rooms:
+        room["outline"] = make_outline(d, room)
+        room["y_lo"] = min(room["y_lo"], min(room["floors"]) - room["outline"].sink())
+        room["hull_lo"] = room["y_lo"] - 1
+        room["box"][1] = room["y_lo"]
+    return rooms
+
+
+def _join(doc, d, slot, rooms, items, i, r, it, ends):
+    """The room after a fork: placed by route 0's main door out; every other route's last room is stretched to its
+    in wall when it says length "fit", and its door out becomes one of this room's doors in."""
+    side0 = _out_door(rooms[ends[0]], dict(rooms[ends[0]].get("out") or {}), True)["side"]
+    if side0 in ("east", "west"):
+        sgn = 1 if side0 == "east" else -1
+        far = []
+        for e in ends:
+            far.append(sgn * (rooms[e]["xb"] if sgn > 0 else rooms[e]["xa"]))
+        target = max(far)
+        for e in ends:
+            rec = items[e]["rec"]
+            if rec.get("length") == "fit":
+                cur = rooms[e]
+                need = (target - cur["xa"] + 1) if sgn > 0 else (cur["xb"] - (-target) + 1)
+                inc = _reinc(rooms, cur)
+                rooms[e] = _place(doc, d, slot, e, rec, inc, items[e], length_override=max(MIN_FIT_LENGTH, need))
+                rooms[e]["fit"] = True
+                if inc is not None:
+                    _fix_host_door(rooms, inc["host"], e, rooms[e])
+    _door, inc = _attach(rooms, ends[0], dict(rooms[ends[0]].get("out") or {}), True, i)
+    room = _place(doc, d, slot, i, r, inc, it)
+    for e in ends[1:]:
+        dd = _out_door(rooms[e], dict(rooms[e].get("out") or {}), True)
+        box = _door_box(dd["side"], dd["c"], dd["y"], wall_line(rooms[e], dd["side"]))
+        rooms[e]["doors"].append({"side": dd["side"], "c": dd["c"], "y": dd["y"], "dir": "out", "to": i, "main": True,
+                                  "gate": rooms[e]["gate"], "box": box})
+        rooms[e]["door_out"] = box
+        rooms[e]["door_out_y"] = dd["y"]
+        side = OPP[dd["side"]]
+        room["doors"].append({"side": side, "c": dd["c"], "y": dd["y"], "dir": "in", "to": e, "main": False,
+                              "gate": rooms[e]["gate"], "box": _door_box(side, dd["c"], dd["y"], wall_line(room, side)),
+                              "join_of": e, "meets": wall_line(rooms[e], dd["side"])})
+    return room
+
+
+def _reinc(rooms, cur):
+    """The inc a laid room was placed by (from its own in door), to place it again with another length."""
+    din = next((x for x in cur["doors"] if x["dir"] == "in"), None)
+    if din is None:
+        return None
+    host = rooms[din["to"]]
+    hd = next(x for x in host["doors"] if x["dir"] == "out" and x["to"] == cur["i"])
+    return {"side": din["side"], "c": din["c"], "y": din["y"], "host_wall": wall_line(host, hd["side"]), "host": din["to"],
+            "main": din["main"], "gate": din["gate"]}
+
+
+def _fix_host_door(rooms, h, i, room):
+    for x in rooms[h]["doors"]:
+        if x["dir"] == "out" and x["to"] == i:
+            x["box"] = _door_box(x["side"], x["c"], x["y"], wall_line(rooms[h], x["side"]))
+
+
+def shape_of(d, r, fl):
+    """The room's shape: its own `shape`, else (a dungeon with shape_mix) its theme's mix for the kind, else box. A kind
+    registered outline=False is always a box."""
+    if not fl.get("outline", True):
+        return "box"
+    if r.get("shape"):
+        return r["shape"]
+    if not d.get("shape_mix"):
+        return "box"
+    t = load_themes()["themes"].get(d.get("theme"), {})
+    mix = (t.get("shapes") or {}).get("mix") or {}
+    choice = mix.get(r["kind"], mix.get("*", "box"))
+    if isinstance(choice, str):
+        return choice
+    rg = rng(d, r, "shape-mix")
+    tot = sum(w for _s, w in choice)
+    x = rg.uniform(0, tot)
+    for s, w in choice:
+        x -= w
+        if x <= 0:
+            return s
+    return choice[-1][0]
+
+
+def make_outline(d, room):
+    t = load_themes()["themes"].get(d.get("theme"), {})
+    sp = dict(((t.get("shapes") or {}).get("params") or {}).get(room["shape"], {}))
+    sp.update(room["shape_params"])
+    room["shape_params"] = sp
+    return O.make(room, room["shape"], sp, rng(d, room, "shape"), mirror=bool(d.get("_mirror")))
 
 
 def plan(doc, d, slot):
@@ -299,7 +728,8 @@ def points(doc, slot):
     y0 = min(r["hull_lo"] for r in rooms)
     y1 = max(r["ceil_y"] for r in rooms)
     za, zb = min(r["za"] for r in rooms), max(r["zb"] for r in rooms)
-    x1 = rooms[-1]["xb"]
+    x0 = min(r["xa"] for r in rooms)
+    x1 = max(r["xb"] for r in rooms)
     ab = arena["box"]
     return {
         "segs": segs, "rooms": rooms,
@@ -314,10 +744,10 @@ def points(doc, slot):
         "gate": tuple(arena["door_out"]) if arena["door_out"] else None,
         "far": (exit_["xb"] - 1, exit_["floor_in"], exit_["z_in"]),
         "far_wall_x": exit_["xb"],
-        "box": (slot["x0"], y0, za, x1 - slot["x0"], y1 - y0, zb - za),
+        "box": (x0, y0, za, x1 - x0, y1 - y0, zb - za),
         "no_deploy": [(r["xa"], r["hull_lo"], r["za"], r["xb"] - r["xa"], r["ceil_y"] - r["hull_lo"], r["zb"] - r["za"])
                       for r in rooms if r["no_deploy"]],
-        "length": x1 - slot["x0"] + 1,
+        "length": x1 - x0 + 1,
     }
 
 
@@ -329,12 +759,22 @@ def gate_block(theme):
 
 
 def gate_lines(doc, room, open_, theme=None):
-    """The mcfunction lines that open or close the room's door_out (pocket context: the caller adds `execute in`)."""
-    if not room.get("door_out"):
+    """The mcfunction lines that open or close the room's doors out (every one: a fork's junction has two), pocket
+    context: the caller adds `execute in`."""
+    boxes = out_boxes(room)
+    if not boxes:
         return []
-    x0, y0, z0, x1, y1, z1 = room["door_out"]
     block = "minecraft:air" if open_ else gate_block(theme if theme is not None else load_themes()["themes"][room["theme"]])
-    return ["fill %d %d %d %d %d %d %s" % (x0, y0, z0, x1, y1, z1, block)]
+    return ["fill %d %d %d %d %d %d %s" % (tuple(b) + (block,)) for b in boxes]
+
+
+def out_boxes(room):
+    """The boxes of the room's doors out (the main one first), shortcuts excluded."""
+    if "doors" not in room:
+        return [room["door_out"]] if room.get("door_out") else []
+    outs = [x["box"] for x in room["doors"] if x["dir"] == "out" and x["main"]]
+    outs += [x["box"] for x in room["doors"] if x["dir"] == "out" and not x["main"]]
+    return outs
 
 
 def slot_tag(slot):
@@ -386,6 +826,27 @@ class DressCtx:
     def reserved(self, x, z):
         return (x, z) in self.trail or (x, z) in self.keep
 
+    def open(self, x, z):
+        """The column is part of the room's outline (inside the box and not rock)."""
+        o = self.room.get("outline")
+        inside = self.room["ix0"] <= x <= self.room["ix1"] and self.room["iz0"] <= z <= self.room["iz1"]
+        return inside and (o is None or o.open(x, z))
+
+    def floor(self, x, z):
+        """The feet level of the open column (x, z), None in rock: the outline's lift over the base floor."""
+        return floor_xz(self.room, x, z) if self.open(x, z) else None
+
+    def walls(self):
+        """[(x, y, z, face)]: every open floor cell beside rock or the hull's wall, `face` the wall's direction from
+        the cell (north/south/east/west): where wall dressing goes on a real outline, not on the box's four sides."""
+        out = []
+        for (x, z) in sorted(self.room["outline"].cells() if self.room.get("outline") is not None else []):
+            y = self.floor(x, z)
+            for face, (dx, dz) in (("north", (0, -1)), ("south", (0, 1)), ("west", (-1, 0)), ("east", (1, 0))):
+                if not self.open(x + dx, z + dz):
+                    out.append((x, y, z, face))
+        return out
+
     def standable_cells(self):
         cls = self.grid.cls()
         st, _p = G.standable(cls)
@@ -401,7 +862,7 @@ class DressCtx:
 
 def _cache_key(doc, d, slot):
     load_extensions()
-    blob = json.dumps([d, slot["x0"], slot["z0"], slot["cz"], doc["engine"]["pocket"]["floor_y"],
+    blob = json.dumps([d, slot["x0"], slot["z0"], slot["cz"], slot.get("k", 1), doc["engine"]["pocket"]["floor_y"],
                        doc["engine"]["clock"]["fall_penalty_s"], doc["engine"]["clock"]["units_per_tick"],
                        load_themes(), sorted(KINDS), sorted(DRESS)], sort_keys=True)
     return hashlib.sha1(blob.encode("utf-8")).hexdigest()
@@ -415,8 +876,9 @@ def slot_build(doc, d, slot):
     key = _cache_key(doc, d, slot)
     if key not in _BUILT:
         theme = theme_for(d)
-        rooms = layout(doc, d, slot)
-        _BUILT[key] = [build_room(doc, d, slot, r, theme) for r in rooms]
+        rd = resolve(doc, d, slot)
+        rooms = layout(doc, rd, slot)
+        _BUILT[key] = [build_room(doc, rd, slot, r, theme) for r in rooms]
     return _BUILT[key]
 
 
@@ -442,33 +904,61 @@ def hull_ops(room, theme):
     return ops
 
 
+def _door_cols(room, door):
+    """(x0, z0, x1, z1) of the door opening in THIS room's own wall line, and the two frame columns beside it."""
+    side, c = door["side"], door["c"]
+    w = wall_line(room, side)
+    if side in ("west", "east"):
+        return (w, c - 1, w, c + 1), [(w, c - 2), (w, c + 2)], (w, c - 2, w, c + 2)
+    return (c - 1, w, c + 1, w), [(c - 2, w), (c + 2, w)], (c - 2, w, c + 2, w)
+
+
 def door_ops(room, theme):
-    """The openings in the room's own wall columns (air) and their frames. Gate closing is separate (gate_ops)."""
+    """The openings in the room's own wall columns (air) and their frames, for every door (gates open; closing is
+    gate_closing_ops). A shortcut's door is opened here too: its gate is written closed last."""
     d = theme["door"]
     out = []
-    for key, col in (("door_in", room["xa"]), ("door_out", room["xb"])):
-        box = room[key]
-        if not box:
-            continue
-        z = (box[2] + box[5]) // 2
-        fl = box[1]
-        out.append(fill((col, fl, z - 1, col, fl + DOOR_H - 1, z + 1), "minecraft:air"))
-        out.append(fill((col, fl, z - 2, col, fl + DOOR_H - 1, z - 2), d["frame"]))
-        out.append(fill((col, fl, z + 2, col, fl + DOOR_H - 1, z + 2), d["frame"]))
-        out.append(fill((col, fl + DOOR_H, z - 2, col, fl + DOOR_H, z + 2), d["lintel"]))
+    for door in room_doors(room):
+        (x0, z0, x1, z1), frames, (lx0, lz0, lx1, lz1) = _door_cols(room, door)
+        fl = door["y"]
+        out.append(fill((x0, fl, z0, x1, fl + DOOR_H - 1, z1), "minecraft:air"))
+        for fx, fz in frames:
+            out.append(fill((fx, fl, fz, fx, fl + DOOR_H - 1, fz), d["frame"]))
+        out.append(fill((lx0, fl + DOOR_H, lz0, lx1, fl + DOOR_H, lz1), d["lintel"]))
+    return out
+
+
+def room_doors(room):
+    """Every door of the room (doors in, out, a fork's, a shortcut's), as layout() and build_room() record them."""
+    if "doors" in room:
+        return list(room["doors"]) + list(room.get("shortcut_doors", []))
+    out = []
+    for key, side, c in (("door_in", "west", room.get("z_in")), ("door_out", "east", room.get("z_out"))):
+        if room.get(key):
+            out.append({"side": side, "c": c, "y": room[key][1], "box": room[key], "dir": "in" if key == "door_in" else "out",
+                        "main": True, "gate": room.get("gate_in", "open") if key == "door_in" else room["gate"]})
     return out
 
 
 def gate_closing_ops(room, theme):
-    """The closed gates this room's shell writes last: its own door_out (if cleared) and the previous room's, in this
-    room's column (the previous room closes the other column)."""
+    """The closed gates this room's shell writes last, in its own wall column: every door out of it if it is
+    `cleared`, every door in from a `cleared` room (that room closes the other column), every shortcut (always)."""
     out = []
     g = gate_block(theme)
-    if room["gate"] == "cleared" and room["door_out"]:
-        out.append(fill(tuple(room["door_out"]), g))
-    if room["gate_in"] == "cleared" and room["door_in"]:
-        out.append(fill((room["xa"], room["door_in"][1], room["door_in"][2], room["xa"], room["door_in"][4], room["door_in"][5]), g))
+    doors = room_doors(room)
+    for door in [x for x in doors if x["dir"] == "out"] + [x for x in doors if x["dir"] != "out"]:
+        if not (door.get("shortcut") or door.get("gate") == "cleared"):
+            continue
+        if door["dir"] == "out" and not door.get("shortcut"):
+            out.append(fill(tuple(door["box"]), g))        # both columns, as pass 1 wrote a cleared room's door out
+        else:
+            (x0, z0, x1, z1), _f, _l = _door_cols(room, door)
+            out.append(fill((x0, door["y"], z0, x1, door["y"] + DOOR_H - 1, z1), g))
     return out
+
+
+LONG_CHAIN_OVER = 14     # no pass-1 room is this tall over its floor in a lantern theme (the mine's tallest is 13)
+LANTERN_DROP = 6         # a long chain's lantern hangs this far over the floor under it (4 clear over a standing head)
 
 
 def lattice_spacing(theme, room, ref_y, penalty):
@@ -502,7 +992,9 @@ def floor_lights(ctx, room, theme, tall, penalty):
                 px, pz = x + dx, z + dz
                 if not (room["ix0"] <= px <= room["ix1"] and room["iz0"] <= pz <= room["iz1"]):
                     continue
-                fl = floor_at(room, px)
+                fl = floor_xz(room, px, pz)
+                if fl is None:
+                    continue
                 under, at = ctx.grid.block_at(px, fl - 1, pz), ctx.grid.block_at(px, fl, pz)
                 if G.base(under) in G.AIR or G.classify(at) == G.SOLID:
                     continue
@@ -520,12 +1012,30 @@ def hull_lights(ctx, room, theme, ref_y):
     tall = tall if tall and 15 - t["min_light"] - (room["ceil_y"] - ref_y) - penalty < tall.get("under", 3) else None
     if tall:
         floor_lights(ctx, room, theme, tall, penalty)      # too tall for the ceiling to light the floor
-    step = int(t["light_every"]) if tall else lattice_spacing(theme, room, ref_y, penalty)
     ceil = room["ceil_y"]
+    # pass 2: a lantern theme's room taller than LONG_CHAIN_OVER (a hall entered high up a grand stair) hangs its
+    # lanterns on long chains to LANTERN_DROP over the floor beneath, and spaces them for that drop
+    long_chain = not tall and t.get("light_style") == "lantern" and ceil - ref_y > LONG_CHAIN_OVER
+    if long_chain:
+        step = int(max(3, min(t["light_every"], 15 - t["min_light"] - LANTERN_DROP - penalty)))
+    else:
+        step = int(t["light_every"]) if tall else lattice_spacing(theme, room, ref_y, penalty)
     xs = _spread(room["ix0"], room["ix1"], step)
     zs = _spread(room["iz0"], room["iz1"], step)
-    for x in xs:
-        for z in zs:
+    for x0_ in xs:
+        for z0_ in zs:
+            pos = open_near(room, x0_, z0_, max(1, step // 2))
+            if pos is None:
+                continue        # all rock under this lattice point (an outline): nothing there to light
+            x, z = pos
+            if long_chain:
+                fl = floor_xz(room, x, z)
+                yl = (fl if fl is not None else ref_y) + LANTERN_DROP
+                if yl < ceil - 2 and all(ctx.air(x, y, z) for y in range(yl, ceil)):
+                    ctx.add(fill((x, yl + 1, z, x, ceil - 1, z), "minecraft:chain"))
+                    ctx.add(setb((x, yl, z), "minecraft:lantern[hanging=true]"))
+                    ctx.lights.append((x, yl, z))
+                    continue
             if t.get("light_style") == "lantern" and ceil - 2 >= ref_y + 3 and ctx.air(x, ceil - 1, z) and ctx.air(x, ceil - 2, z):
                 ctx.add(setb((x, ceil - 1, z), "minecraft:chain"))
                 ctx.add(setb((x, ceil - 2, z), "minecraft:lantern[hanging=true]"))
@@ -535,6 +1045,29 @@ def hull_lights(ctx, room, theme, ref_y):
                 ctx.lights.append((x, ceil, z))
     if tall:
         cap_dark_dressing(ctx, theme, tall, penalty)
+
+
+def floor_xz(room, x, z):
+    """Feet level of column (x, z): the outline's (base floor plus lift; None in rock), else the base floor."""
+    o = room.get("outline")
+    if o is None:
+        return floor_at(room, x)
+    return o.floor(x, z)
+
+
+def open_near(room, x, z, radius):
+    """(x, z) itself when its column is open, else the nearest open column within `radius` (Chebyshev rings), else
+    None. A room without an outline is all open."""
+    o = room.get("outline")
+    if o is None or o.open(x, z):
+        return (x, z)
+    for r in range(1, radius + 1):
+        ring = [(x + a, z + b) for a in range(-r, r + 1) for b in range(-r, r + 1) if max(abs(a), abs(b)) == r]
+        ring.sort(key=lambda p: (abs(p[0] - x) + abs(p[1] - z), p))
+        for p in ring:
+            if o.open(*p):
+                return p
+    return None
 
 
 def dress_blocks(theme):
@@ -582,6 +1115,10 @@ def default_anchors(room, params):
 
     a = {"center": [at(0.5), floor_at(room, at(0.5)), zc], "door_in_at": [ix0, room["floor_in"], room["z_in"], -90],
          "door_out_at": [ix1, room["floor_out"], room["z_out"], -90]}
+    for key, door in (("door_in_at", main_door(room, "in")), ("door_out_at", main_door(room, "out"))):
+        if door is not None:
+            x, y, z = inner_cell(room, door)
+            a[key] = [x, y, z, YAW_IN[door["side"]] if key == "door_in_at" else YAW_IN[OPP[door["side"]]]]
     if kind in ("stand", "gauntlet", "ambush"):
         n = params.get("trainers", 3)
         n = len(n) if isinstance(n, list) else int(n)       # a list of trainers (wave 2) or the kit's placeholder count
@@ -608,11 +1145,53 @@ def default_anchors(room, params):
         a["chests"] = [[at(0.55 + 0.35 * k / max(n - 1, 1)), fy, iz1, 180] for k in range(n)]
     elif kind == "safe_room":
         a["healer"] = [at(0.5), fy, iz0 + 2, 0]
+    if room.get("outline") is not None and not room["outline"].is_box():
+        for name in SNAP_ANCHORS:
+            if name in a:
+                a[name] = _snap_points(room, a[name])
     return a
 
 
+YAW_IN = {"west": -90, "east": 90, "north": 0, "south": 180}     # the yaw of someone who has just come in by that wall
+SNAP_ANCHORS = ("center", "trainers", "boss", "spawns", "legendary", "viewpoint", "healer", "rest", "display")
+
+
+def main_door(room, dir_):
+    for door in room.get("doors", []):
+        if door["dir"] == dir_ and door["main"]:
+            return door
+    return None
+
+
+def _snap_points(room, v):
+    """Default anchors moved onto open, level columns of the outline (the nearest within 8), y the base floor there."""
+    one = bool(v) and isinstance(v[0], (int, float))
+    pts = [v] if one else v
+    out = []
+    o = room["outline"]
+    for p in pts:
+        x, z = int(p[0]), int(p[2])
+        best = None
+        for r in range(0, 9):
+            ring = [(x + a, z + b) for a in range(-r, r + 1) for b in range(-r, r + 1) if max(abs(a), abs(b)) == r]
+            ring.sort(key=lambda q: (abs(q[0] - x) + abs(q[1] - z), q))
+            best = next((q for q in ring if o.open(*q) and o.lift(*q) == 0 and room["iz0"] + 1 <= q[1] <= room["iz1"] - 1
+                         and room["ix0"] + 1 <= q[0] <= room["ix1"] - 1), None)
+            if best:
+                break
+        q = list(p)
+        if best:
+            q[0], q[2] = best
+            q[1] = floor_at(room, best[0])
+        out.append(q)
+    return out[0] if one else out
+
+
 def route_points(room, anchors):
-    pts = [(room["ix0"], room["z_in"])]
+    din, dout = main_door(room, "in"), main_door(room, "out")
+    start = (room["ix0"], room["z_in"]) if din is None else inner_cell(room, din)[::2]
+    end = (room["ix1"], room["z_out"]) if dout is None else inner_cell(room, dout)[::2]
+    pts = [start]
     mid = []
     for name, v in anchors.items():
         if name in BOX_ANCHORS or name in ("door_in_at", "door_out_at", "center"):
@@ -623,8 +1202,31 @@ def route_points(room, anchors):
             if isinstance(p, (list, tuple)) and len(p) >= 3 and isinstance(p[0], (int, float)):
                 if room["ix0"] <= p[0] <= room["ix1"] and room["iz0"] <= p[2] <= room["iz1"]:
                     mid.append((int(p[0]), int(p[2])))
-    mid = sorted(set(mid))
-    return pts + mid + [(room["ix1"], room["z_out"])]
+    mid = sorted(set(mid) - {start, end})
+    return pts + mid + [end]
+
+
+def spur_points(room, pts):
+    """A polyline per door that is not the main in or out (a fork's, a join's, a side room's, a shortcut's): from the
+    cell inside it, 3 straight in, then to the nearest route point. The trail and the outline keep them open."""
+    out = []
+    for door in room_doors(room):
+        if door.get("main"):
+            continue
+        x, _y, z = inner_cell(room, door)
+        dx, dz = INWARD[door["side"]]
+        a = (x, z)
+        b = (x + 3 * dx, z + 3 * dz)
+        near = min(pts, key=lambda p: (abs(p[0] - b[0]) + abs(p[1] - b[1]), p))
+        out.append([a, b, (b[0], near[1]) if dz else (near[0], b[1]), near])
+    return out
+
+
+def trail_with_spurs(room, pts, spurs, rg, wiggle):
+    cells = make_trail(room, pts, rg, wiggle)
+    for sp in spurs:
+        cells |= make_trail(room, sp, rg, 0.0)
+    return cells
 
 
 def make_trail(room, pts, rg, wiggle):
@@ -694,11 +1296,11 @@ def build_room(doc, d, slot, room, theme):
     b.functions = {k: list(v) for k, v in res.get("functions", {}).items()}
     b.notes = list(res.get("notes", []))
     level = LEVELS[fl["dress"]]
-    ref_y = b.meta.get("light_ref_y", min(room["floor_in"], room["floor_out"]))
     rg = rng(d, room, "dress")
     pts = route_points(room, anchors)
     wiggle = theme.get("trail_wiggle", 0.0)
-    trail = make_trail(room, pts, rg, wiggle) if level else set()
+    spurs = spur_points(room, pts)
+    trail = trail_with_spurs(room, pts, spurs, rg, wiggle) if level else set()
     keep = set()
     for name, v in anchors.items():
         if name in BOX_ANCHORS:
@@ -712,6 +1314,56 @@ def build_room(doc, d, slot, room, theme):
         for x in range(bx[0], bx[3] + 1):
             for z in range(bx[2], bx[5] + 1):
                 keep.add((x, z))
+    # pass 2: the outline (rock where the shape has none), the landings at raised doors, the secrets, the shortcuts
+    forced = landing_lifts(room)
+    outline = room.get("outline")
+    route = trail_with_spurs(room, pts, spurs, rng(d, room, "route"), 0.0)
+    centre = ((room["ix0"] + room["ix1"]) // 2, (room["iz0"] + room["iz1"]) // 2)
+    must = set(keep) | route | {(centre[0] + a, centre[1] + c) for a in range(-2, 3) for c in range(-2, 3)}
+    must |= door_approach(room)
+    keep |= door_approach(room)
+    secret = secret_plan(doc, d, room, theme, must | set(forced))
+    for c in secret["keep"]:
+        keep.add(c)
+        must.add(c)
+    for ax_, az_ in secret["approach"]:
+        # a level way from each secret's foot to the route, so a terrace or a cavern hump never walls it into a pit
+        near = min(pts, key=lambda p: (abs(p[0] - ax_) + abs(p[1] - az_), p))
+        for c in make_trail(room, [(ax_, az_), (ax_, near[1]), near], rg, 0.0):
+            if c not in secret["rock"] and c not in secret["lift"]:
+                keep.add(c)
+                must.add(c)
+    keep |= set(forced) | set(secret["rock"]) | set(secret["lift"])
+    forced = {**forced, **secret["lift"]}
+    if outline is not None:
+        O.finish(outline, must - set(forced), forced)
+        for c in secret["rock"]:
+            if outline.inside(*c):
+                outline.open_[c[0] - outline.x0, c[1] - outline.z0] = False
+        if not outline.is_box() or forced:
+            for op in O.ops(outline, room, theme, fill):
+                b.ops.append(op)
+                grid.apply(op)
+        if outline.water:
+            b.meta["extra_drop"] = max(b.meta.get("extra_drop", 0), 1)
+        if outline.sink():
+            b.meta["extra_drop"] = max(b.meta.get("extra_drop", 0), outline.sink())
+    for op in secret["ops"]:
+        b.ops.append(op)
+        grid.apply(op)
+    b.lights.extend(secret["lights"])
+    for k, v in secret["anchors"].items():
+        b.anchors.setdefault(k, [])
+        b.anchors[k] = list(b.anchors[k]) + list(v)
+    for k, v in secret["functions"].items():
+        b.functions[k] = b.functions.get(k, []) + v
+    b.meta["secrets"] = secret["meta"]
+    sc = shortcut_hooks(doc, d, slot, room, theme)
+    for k, v in sc["functions"].items():
+        b.functions[k] = b.functions.get(k, []) + v
+    for k, v in sc["anchors"].items():
+        b.anchors[k] = list(b.anchors.get(k, [])) + v
+    ref_y = b.meta.get("light_ref_y", min(room["floor_in"], room["floor_out"]) - (outline.sink() if outline is not None else 0))
     for spec in theme.get("dress", []):
         entry = DRESS.get(spec["op"])
         if entry is None:
@@ -724,20 +1376,326 @@ def build_room(doc, d, slot, room, theme):
             continue
         ctx = DressCtx(doc, d, slot, room, theme, b, grid, trail, keep, level, rng(d, room, "dress:" + spec["op"] + str(spec.get("salt", ""))))
         fn_(ctx, spec)
-    if level and "catch" not in b.anchors:
+    if (level or (outline is not None and not outline.is_box())) and "catch" not in b.anchors:
         plug_pits(DressCtx(doc, d, slot, room, theme, b, grid, trail, keep, level, rg), fl)
     if not fl["dark"] and not b.meta.get("no_hull_lights"):
         ctx = DressCtx(doc, d, slot, room, theme, b, grid, trail, keep, level, rg)
         hull_lights(ctx, room, theme, ref_y)
+        if pass2_room(room, b):
+            light_dark_cells(ctx, theme)
     b.gate_ops = gate_closing_ops(room, theme)
     b.grid = grid
     return b
 
 
+def pass2_room(room, b=None):
+    """The room uses a pass-2 field (an outline, a door in a side wall or at a landing, an extra door, a secret, a
+    shortcut, a west walk): the extra passes that pass-1 rooms never ran (light_dark_cells) run on it."""
+    o = room.get("outline")
+    doors = room_doors(room)
+    return bool((o is not None and not o.is_box()) or room.get("secrets") or room.get("shortcut_doors")
+                or room.get("dir", "east") != "east" or len(doors) > 2
+                or any(x["side"] in ("north", "south") for x in doors) or landing_lifts(room))
+
+
+def light_dark_cells(ctx, theme, limit=400):
+    """Any standable cell the lattice leaves dark (an alcove, the top of a grand stair, a corner of a cavern) gets the
+    hull's light set into the floor under it (the hull's floor or the theme's own dressing, never a kind's block), else
+    into the ceiling over it, until none is dark: the same optimistic Manhattan bound the light check uses."""
+    import numpy as np
+    t = theme["hull"]
+    pen = t.get("light_penalty", 0)
+    ok = dress_blocks(theme) | {G.base(t["floor"])}
+    tried = set()
+    for _ in range(limit):
+        cells = [c for c in ctx.standable_cells() if c not in tried]
+        if not cells or not ctx.lights:
+            return
+        ls = np.array(ctx.lights)
+        arr = np.array(cells)
+        dist = np.abs(arr[:, None, :] - ls[None, :, :]).sum(axis=2).min(axis=1)
+        dark = [cells[k] for k in np.nonzero(15 - dist - pen < 1)[0]]
+        if not dark:
+            return
+        x, y, z = sorted(dark)[0]
+        tried.add((x, y, z))
+        if G.base(ctx.grid.block_at(x, y - 1, z)) in ok:
+            ctx.add(setb((x, y - 1, z), t["light"]))
+            ctx.lights.append((x, y - 1, z))
+        elif ctx.grid.inside(x, ctx.room["ceil_y"], z) and ctx.grid.block_at(x, ctx.room["ceil_y"], z) == t["ceiling"]:
+            ctx.add(setb((x, ctx.room["ceil_y"], z), t["light"]))
+            ctx.lights.append((x, ctx.room["ceil_y"], z))
+
+
+def door_approach(room):
+    """The 3 x 3 cells inside every door: kept open whatever the outline (a door never opens onto rock)."""
+    out = set()
+    for door in room_doors(room):
+        x, _y, z = inner_cell(room, door)
+        dx, dz = INWARD[door["side"]]
+        for k in range(3):
+            for w in (-1, 0, 1):
+                out.add((x + dx * k + (w if dz else 0), z + dz * k + (w if dx else 0)))
+    return out
+
+
+INWARD = {"west": (1, 0), "east": (-1, 0), "north": (0, 1), "south": (0, -1)}
+
+
+def landing_lifts(room):
+    """{(x, z): lift} for every door whose floor is above the base floor at its inner cell: a 3 x 3 landing at the
+    door's floor, then a 3-wide staircase of one-block steps down into the room."""
+    out = {}
+    for door in room_doors(room):
+        x, y, z = inner_cell(room, door)
+        rel = y - door_floor(room, x)
+        if rel <= 0:
+            continue
+        dx, dz = INWARD[door["side"]]
+        for k in range(3 + rel - 1):
+            h = rel if k < 3 else rel - (k - 2)
+            for w in (-1, 0, 1):
+                c = (x + dx * k + (w if dz else 0), z + dz * k + (w if dx else 0))
+                out[c] = max(out.get(c, 0), h)
+    return out
+
+
+# ------------------------------------------------------------------------------------------------- secrets
+
+
+SECRET_DEFAULTS = {"cracked": {"at": 0.6}, "balcony": {"at": 0.3, "level": 3}}
+
+
+def _along(room, at):
+    L = room["ix1"] - room["ix0"] + 1
+    return room["ix0"] + (int(L * at) if isinstance(at, float) and at <= 1 else int(at))
+
+
+def _rows(room, side, j):
+    """The z of interior row j counted from the `side` wall (j = 0 is the row against it)."""
+    return room["iz0"] + j if side == "north" else room["iz1"] - j
+
+
+def _cells_box(x0, x1, z0, z1):
+    return {(x, z) for x in range(min(x0, x1), max(x0, x1) + 1) for z in range(min(z0, z1), max(z0, z1) + 1)}
+
+
+def secret_plan(doc, d, room, theme, avoid):
+    """The geometry of the room's secrets (DUNGEON_ROOMS.md 1a): {keep, rock, lift, ops, lights, anchors, functions,
+    meta}. A secret is moved along its wall, nearest first, to a place clear of everything the room needs (`avoid`:
+    doors, anchors, reserve, trail, landings, the centre); one that finds none raises RoomError."""
+    out = {"keep": set(), "rock": set(), "lift": {}, "approach": [], "ops": [], "lights": [], "anchors": {}, "functions": {}, "meta": []}
+    secrets = room.get("secrets") or []
+    if not secrets:
+        return out
+    shp = (theme.get("shapes") or {})
+    light = theme["hull"]["light"]
+    wall = theme["hull"]["wall"]
+    used = set(avoid)
+    for s in secrets:
+        typ = s.get("type", "cracked")
+        if typ not in SECRET_DEFAULTS:
+            raise RoomError("%s room %s: secret %s has unknown type %r" % (d["id"], room["id"], s.get("id"), typ))
+        if typ == "cracked" and not shp.get("secret_block"):
+            raise RoomError("%s: theme %s has no shapes.secret_block for a cracked secret" % (d["id"], room["theme"]))
+        side = s.get("side", "north")
+        at = s.get("at", SECRET_DEFAULTS[typ]["at"])
+        x_pref = _along(room, at)
+        L = room["ix1"] - room["ix0"] + 1
+        placed = None
+        for shift in sorted(range(-L, L + 1), key=abs):
+            g = (_cracked if typ == "cracked" else _balcony)(room, side, x_pref + shift, s)
+            if g is None or g["foot"] & used:
+                continue
+            placed = g
+            break
+        if placed is None:
+            raise RoomError("%s room %s: secret %s (%s) finds no place along its %s wall clear of the doors, anchors and trail"
+                            % (d["id"], room["id"], s.get("id"), typ, side))
+        used |= placed["foot"]
+        out["keep"] |= placed["keep"]
+        out["approach"].append(placed["approach"])
+        out["rock"] |= placed["rock"]
+        out["lift"].update(placed["lift"])
+        out["ops"] += placed["ops"](wall, light, shp)
+        out["lights"] += placed["lights"]
+        for k, v in placed["anchors"].items():
+            out["anchors"].setdefault(k, []).extend(v)
+        if placed.get("reset"):
+            out["functions"].setdefault("reset", []).extend(
+                "setblock %d %d %d %s" % (x, y, z, shp["secret_block"]) for x, y, z in placed["reset"])
+        out["meta"].append({"id": s.get("id"), "type": typ, "side": side, "x": placed["x"], "relic": s.get("relic"),
+                            "anchor": placed["anchors"]["secret"][0]})
+    return out
+
+
+def _cracked(room, side, cx, s):
+    """A chamber 5 x 4 x 4 in a block of rock 7 x 5 against the wall, its face a 1 x 2 of the secret block."""
+    if cx - 3 < room["ix0"] or cx + 3 > room["ix1"] or room["iz1"] - room["iz0"] + 1 < 9:
+        return None
+    base = floor_at(room, cx)
+    if any(floor_at(room, x) != base for x in range(cx - 3, cx + 4)) or room["ceil_y"] - 1 < base + 4:
+        return None
+    z = lambda j: _rows(room, side, j)  # noqa: E731
+    rock = _cells_box(cx - 3, cx + 3, z(0), z(4))
+    keep = _cells_box(cx - 1, cx + 1, z(5), z(6))
+    face = [(cx, base, z(4)), (cx, base + 1, z(4))]
+
+    def ops(wall, light, shp):
+        return [fill((cx - 3, base, z(0), cx + 3, room["ceil_y"] - 1, z(4)), wall),
+                fill((cx - 2, base, z(0), cx + 2, base + 3, z(3)), "minecraft:air"),
+                setb((cx, base + 4, z(2)), light)] + [setb(c, shp["secret_block"]) for c in face]
+    return {"x": cx, "foot": rock | keep, "rock": rock, "keep": keep, "lift": {}, "ops": ops,
+            "lights": [(cx, base + 4, z(2))],
+            "anchors": {"secret": [[cx, base, z(2)]], "secret_door": [list(c) for c in face]}, "reset": face,
+            "approach": (cx, z(6))}
+
+
+def _balcony(room, side, sx, s):
+    """A ledge `level` up a 3-wide stair along the wall, a gap of 2, and an alcove in the rock at the ledge's height that
+    only a jump from the ledge's end reaches (and leaves): a flat jump of 3, DUNGEONS.md V6."""
+    lv = int(s.get("level", SECRET_DEFAULTS["balcony"]["level"]))
+    lx = sx + lv - 1
+    ax = lx + 9
+    if sx - 1 < room["ix0"] or ax + 3 > room["ix1"] or room["iz1"] - room["iz0"] + 1 < 9 or lv < 2:
+        return None
+    base = floor_at(room, sx)
+    if any(floor_at(room, x) != base for x in range(sx - 1, ax + 4)) or room["ceil_y"] - 1 < base + lv + 3:
+        return None
+    z = lambda j: _rows(room, side, j)  # noqa: E731
+    lift = {}
+    for k in range(lv - 1):
+        for j in range(3):
+            lift[(sx + k, z(j))] = k + 1
+    for x in range(lx, lx + 7):
+        for j in range(3):
+            lift[(x, z(j))] = lv
+    rock = _cells_box(ax, ax + 3, z(0), z(3))
+    keep = (_cells_box(sx - 1, sx - 1, z(0), z(2)) | _cells_box(sx - 1, lx + 8, z(3), z(3))
+            | _cells_box(lx + 7, lx + 8, z(0), z(2)))
+    foot = set(lift) | rock | keep
+
+    def ops(wall, light, shp):
+        return [fill((ax, base, z(0), ax + 3, room["ceil_y"] - 1, z(3)), wall),
+                fill((ax, base + lv, z(0), ax + 2, base + lv + 2, z(2)), "minecraft:air"),
+                setb((ax + 1, base + lv + 3, z(1)), light)]
+    return {"x": sx, "foot": foot, "rock": rock, "keep": keep, "lift": lift, "ops": ops,
+            "lights": [(ax + 1, base + lv + 3, z(1))],
+            "anchors": {"secret": [[ax + 1, base + lv, z(1)]], "balcony": [[lx + 6, base + lv, z(1), -90]]},
+            "approach": (sx - 1, z(3))}
+
+
+# ------------------------------------------------------------------------------------------------- shortcuts
+
+
+def _touch(far, near):
+    """How two laid rooms touch: (side of far's wall, lo, hi) the interior overlap along it, or None."""
+    if far["za"] == near["zb"] + 1:
+        return "north", max(far["ix0"], near["ix0"]), min(far["ix1"], near["ix1"])
+    if far["zb"] + 1 == near["za"]:
+        return "south", max(far["ix0"], near["ix0"]), min(far["ix1"], near["ix1"])
+    if far["xa"] == near["xb"] + 1:
+        return "west", max(far["iz0"], near["iz0"]), min(far["iz1"], near["iz1"])
+    if far["xb"] + 1 == near["xa"]:
+        return "east", max(far["iz0"], near["iz0"]), min(far["iz1"], near["iz1"])
+    return None
+
+
+def _yspan(r):
+    return r["hull_lo"], r["ceil_y"]
+
+
+def place_shortcuts(rooms):
+    """Every room's `shortcuts`: a door through its wall and the touching earlier room's (DUNGEON_ROOMS.md 1a). Errors
+    are kept on the far room (`layout_errors`) for plan_problems()."""
+    by_id = {r["id"]: r for r in rooms}
+    for far in rooms:
+        for k, sc in enumerate(far.get("shortcuts") or []):
+            err = far.setdefault("layout_errors", [])
+            near = by_id.get(sc.get("to"))
+            if near is None or near["i"] >= far["i"]:
+                err.append("shortcut %s: 'to' must name an earlier room (%r)" % (sc.get("id"), sc.get("to")))
+                continue
+            t = _touch(far, near)
+            if t is None:
+                err.append("shortcut %s: room %s does not touch room %s (their walls must be side by side)"
+                           % (sc.get("id"), far["id"], near["id"]))
+                continue
+            side, lo, hi = t
+            if hi - lo + 1 < 7:
+                err.append("shortcut %s: the rooms share only %d blocks of wall (7 needed)" % (sc.get("id"), max(0, hi - lo + 1)))
+                continue
+            c = min(max(lo + 2 + int(sc.get("at", (hi - lo) // 2 - 2)), lo + 2), hi - 2)
+            if side in ("north", "south"):
+                yf, yn = door_floor(far, c), door_floor(near, c)
+            else:
+                yf = door_floor(far, far["ix0"] if side == "west" else far["ix1"])
+                yn = door_floor(near, near["ix1"] if side == "west" else near["ix0"])
+            if yf != yn:
+                err.append("shortcut %s: the floors differ at the door (%d in %s, %d in %s)" % (sc.get("id"), yf, far["id"], yn, near["id"]))
+                continue
+            if yf + DOOR_H + 1 > min(far["ceil_y"], near["ceil_y"]):
+                err.append("shortcut %s: no room for a door under the ceilings" % sc.get("id"))
+                continue
+            box = _door_box(side, c, yf, wall_line(far, side))
+            sid = sc.get("id", "c%d" % k)
+            far.setdefault("shortcut_doors", []).append({"side": side, "c": c, "y": yf, "dir": "out", "to": near["i"], "main": False,
+                                                        "shortcut": sid, "k": k, "gate": "shortcut", "box": box})
+            near.setdefault("shortcut_doors", []).append({"side": OPP[side], "c": c, "y": yf, "dir": "in", "to": far["i"], "main": False,
+                                                         "shortcut": sid, "k": k, "gate": "shortcut", "box": box})
+
+
+def shortcut_hooks(doc, d, slot, room, theme):
+    """The far room's tick watches the cells inside each shortcut door and opens it, once a run, from that side only."""
+    out = {"functions": {}, "anchors": {}}
+    dim = doc["engine"]["pocket"]["dimension"]
+    for door in room.get("shortcut_doors", []):
+        x, y, z = inner_cell(room, door)
+        if door["dir"] == "in":
+            out["anchors"].setdefault("shortcut_back", []).append([x, y, z])
+            continue
+        out["anchors"].setdefault("shortcut", []).append([x, y, z])
+        h = "%sc%d" % (state_holder(slot, room), door["k"])
+        name = "shortcut_%s" % door["shortcut"]
+        dx, dz = INWARD[door["side"]]
+        cells = [(x + dx * k + (w if dz else 0), z + dz * k + (w if dx else 0)) for k in range(2) for w in (-1, 0, 1)]
+        bx = (min(c[0] for c in cells), y, min(c[1] for c in cells), max(c[0] for c in cells), y + 1, max(c[1] for c in cells))
+        out["functions"].setdefault("tick", []).append(
+            "execute if score %s dg.rs matches 0 if entity @s[%s] run function %s" % (h, sel_box(bx), room_fn(d, room, slot, name)))
+        b = door["box"]
+        out["functions"][name] = [
+            HEAD, LOADED, "# room %s, slot %d: shortcut %s opens from this (the far) side, once a run; the slot reset shuts it"
+            % (room["id"], slot["g"], door["shortcut"]),
+            "execute if score %s dg.rs matches 1.. run return 0" % h,
+            "scoreboard players set %s dg.rs 1" % h,
+            "execute in %s run fill %d %d %d %d %d %d minecraft:air" % ((dim,) + tuple(b)),
+            "execute at @s run playsound minecraft:block.iron_door.open master @s ~ ~ ~ 1 0.6",
+            "title @s actionbar %s" % text(theme["messages"].get("shortcut", "A way back opens."), "gray")]
+        out["functions"].setdefault("reset", []).extend([
+            "scoreboard players set %s dg.rs 0" % h,
+            "fill %d %d %d %d %d %d %s" % (tuple(b) + (gate_block(theme),))])
+    return out
+
+
 def room_start(room):
-    """The walk's start: the cell just inside the door in (the entry room's arrival), as walk_problems takes it."""
-    sx = room["xa"] + 3 if room["kind"] == "entry_room" else room["ix0"]
-    return sx, room["floor_in"], room["z_in"]
+    """The walk's start: the cell just inside the main door in, at its floor (the entry room's arrival), as
+    walk_problems takes it."""
+    if room["kind"] == "entry_room":
+        return room["xa"] + 3, room["floor_in"], room["z_in"]
+    door = main_door(room, "in")
+    if door is not None:
+        return inner_cell(room, door)
+    return room["ix0"], room["floor_in"], room["z_in"]
+
+
+def room_end(room):
+    """The walk's goal: the cell inside the main door out at its floor (the exit room's far rip; a dead end: None)."""
+    if room["kind"] == "exit_room":
+        return room["xb"] - 1, room["floor_in"], room["z_in"]
+    door = main_door(room, "out")
+    if door is not None:
+        return inner_cell(room, door)
+    return None
 
 
 def pits(grid, start, jumps, cls=None):
@@ -935,7 +1893,7 @@ def seam_blocks(d, themes=None):
     themes = themes if themes is not None else load_themes()
     t = theme_for(d, themes)
     out = []
-    for r in d.get("rooms", []):
+    for r in all_records(d):
         if r["kind"] == "resources":
             for e in t["seam"]["blocks"]:
                 if e["block"] not in out:
@@ -943,7 +1901,75 @@ def seam_blocks(d, themes=None):
     return out
 
 
+def secret_blocks(d, themes=None):
+    """The theme's secret block when any room (any route, any variant) has a `cracked` secret, else nothing."""
+    themes = themes if themes is not None else load_themes()
+    t = theme_for(d, themes)
+    blk = (t.get("shapes") or {}).get("secret_block")
+    if blk and any(s.get("type", "cracked") == "cracked" for r in all_records(d) for s in r.get("secrets") or []):
+        return [blk]
+    return []
+
+
+def pick_blocks(d, themes=None):
+    """Every block the dungeon's rift pick may break: the seams' and the cracked secrets' faces (DUNGEON_ROOMS.md 1a)."""
+    out = seam_blocks(d, themes)
+    return out + [b for b in secret_blocks(d, themes) if b not in out]
+
+
 # ------------------------------------------------------------------------------------------------- checks
+
+
+def record_problems(doc, d):
+    """The record's shape before any layout: ids, kinds, the containers, the variants."""
+    bad = []
+    label = d["id"]
+    top = d["rooms"]
+    try:
+        recs = list(_walk_records(top))
+    except (KeyError, TypeError) as e:
+        return ["%s: a room record is malformed (%s)" % (label, e)]
+    ids = [r["id"] for r in recs] + [r["id"] for r in top if r.get("kind") in CONTAINERS]
+    if len(set(ids)) != len(ids):
+        bad.append("%s: two rooms share an id" % label)
+    for r in recs:
+        if not all(c.islower() or c.isdigit() or c == "_" for c in r["id"]):
+            bad.append("%s: room id %r must be lower-case letters, digits and underscore" % (label, r["id"]))
+        if not known_kind(r["kind"]):
+            bad.append("%s room %s: unknown kind %r (register or declare it)" % (label, r["id"], r["kind"]))
+        if r.get("shape") is not None and r["shape"] not in O.SHAPES:
+            bad.append("%s room %s: unknown shape %r (%s)" % (label, r["id"], r["shape"], ", ".join(O.SHAPES)))
+        for key, sides in (("in", WALLS), ("out", WALLS)):
+            s = r.get(key)
+            if s is not None and (not isinstance(s, dict) or s.get("side", "west" if key == "in" else "east") not in sides):
+                bad.append("%s room %s: `%s` must be {\"side\": one of %s, ...}" % (label, r["id"], key, ", ".join(sides)))
+            if isinstance(s, dict) and int(s.get("y", 0)) < 0:
+                bad.append("%s room %s: a door's landing `y` is never negative (lower the room instead)" % (label, r["id"]))
+        if r.get("dir", "east") not in ("east", "west"):
+            bad.append("%s room %s: dir must be east or west" % (label, r["id"]))
+        for s in r.get("secrets") or []:
+            if s.get("type", "cracked") not in SECRET_DEFAULTS or s.get("side", "north") not in ("north", "south"):
+                bad.append("%s room %s: secret %s needs type cracked|balcony and side north|south" % (label, r["id"], s.get("id")))
+        if r.get("length") == "fit" and not flags_of(r["kind"])["connector"]:
+            bad.append("%s room %s: only a connector may have length \"fit\"" % (label, r["id"]))
+    main = [r for r in top if r.get("kind") not in CONTAINERS]
+    kinds = [r["kind"] for r in main]
+    for need in ("entry_room", "boss_arena", "exit_room"):
+        if kinds.count(need) != 1 or [x["kind"] for x in recs].count(need) != 1:
+            bad.append("%s: the rooms need exactly one %s, on the main route (has %d)" % (label, need, [x["kind"] for x in recs].count(need)))
+    if top and (top[0].get("kind") != "entry_room" or top[-1].get("kind") != "exit_room"):
+        bad.append("%s: the rooms must start with the entry room and end with the exit room" % label)
+    for c in [r for r in top if r.get("kind") == "fork"]:
+        if len(c.get("routes", [])) < 2:
+            bad.append("%s fork %s: a fork needs two routes or more" % (label, c["id"]))
+    if d.get("_order_bad"):
+        bad.append("%s variant %s: order names rooms that are not top-level entries: %s" % (label, d.get("_variant"), d["_order_bad"]))
+    return bad
+
+
+def _overlap(a, b):
+    return not (a["xb"] < b["xa"] or b["xb"] < a["xa"] or a["zb"] < b["za"] or b["zb"] < a["za"]
+                or a["ceil_y"] < b["hull_lo"] or b["ceil_y"] < a["hull_lo"])
 
 
 def plan_problems(doc, d, slot):
@@ -952,24 +1978,17 @@ def plan_problems(doc, d, slot):
     themes = load_themes()
     if d.get("theme") not in themes["themes"]:
         return ["%s: theme %r is not in data/dungeon_themes.json" % (label, d.get("theme"))]
-    rooms_decl = d["rooms"]
-    ids = [r["id"] for r in rooms_decl]
-    if len(set(ids)) != len(ids):
-        bad.append("%s: two rooms share an id" % label)
-    for r in rooms_decl:
-        if not all(c.islower() or c.isdigit() or c == "_" for c in r["id"]):
-            bad.append("%s: room id %r must be lower-case letters, digits and underscore" % (label, r["id"]))
-        if not known_kind(r["kind"]):
-            bad.append("%s room %s: unknown kind %r (register or declare it)" % (label, r["id"], r["kind"]))
-    kinds = [r["kind"] for r in rooms_decl]
-    for need in ("entry_room", "boss_arena", "exit_room"):
-        if kinds.count(need) != 1:
-            bad.append("%s: the rooms need exactly one %s (has %d)" % (label, need, kinds.count(need)))
-    if kinds and (kinds[0] != "entry_room" or kinds[-1] != "exit_room"):
-        bad.append("%s: the rooms must start with the entry room and end with the exit room" % label)
+    rd = resolve(doc, d, slot)
+    if rd.get("_variant") is not None:
+        label = "%s variant %s" % (d["id"], rd["_variant"])
+    bad += [p.replace(d["id"], label, 1) if rd.get("_variant") is not None else p for p in record_problems(doc, rd)]
     if bad:
         return bad
-    rooms = layout(doc, d, slot)
+    try:
+        rooms = layout(doc, d, slot)
+    except RoomError as e:
+        return ["%s: %s" % (label, e)]
+    sl = doc["engine"]["slots"]
     for r in rooms:
         fl = flags_of(r["kind"])
         lab = "%s room %s (%s)" % (label, r["id"], r["kind"])
@@ -985,6 +2004,8 @@ def plan_problems(doc, d, slot):
             bad.append("%s: only stairs and drifts may change floor level (rise %d)" % (lab, r["rise"]))
         if r["rise"] and abs(r["rise"]) > r["length"] - 3:
             bad.append("%s: a rise of %d needs a length of at least %d" % (lab, abs(r["rise"]), abs(r["rise"]) + 3))
+        if r["rise"] and (r["in_side"] not in ("east", "west") or r["out_side"] not in ("east", "west")):
+            bad.append("%s: a rise runs along x, so its doors must be in the east and west walls (use a landing `y` instead)" % lab)
         if fl["connector"] and (r["length"] > CONNECTOR_MAX_L or r["width"] < CONNECTOR_MIN_W):
             bad.append("%s: a connector is at most %d long and at least %d wide (this one is %dx%d)"
                        % (lab, CONNECTOR_MAX_L, CONNECTOR_MIN_W, r["length"], r["width"]))
@@ -996,24 +2017,104 @@ def plan_problems(doc, d, slot):
             bad.append("%s: the exit room has no door out" % lab)
         if r["hull_lo"] < FLOOR_MIN or r["ceil_y"] > CEIL_MAX:
             bad.append("%s: y %d..%d leaves the dimension (floor at least %d, ceiling at most %d)" % (lab, r["hull_lo"], r["ceil_y"], FLOOR_MIN, CEIL_MAX))
-        if abs(r["z_out"] - r["z_in"]) > STRIP_INTERIOR - 6:
+        if r["in_side"] in ("east", "west") and r["out_side"] in ("east", "west") and abs(r["z_out"] - r["z_in"]) > STRIP_INTERIOR - 6:
             bad.append("%s: the bend is wider than the strip" % lab)
-        if r["za"] < slot["z0"] or r["zb"] > slot["z0"] + 63:
-            bad.append("%s: z %d..%d leaves the strip %d..%d" % (lab, r["za"], r["zb"], slot["z0"], slot["z0"] + 63))
+        if r["za"] < slot["z0"] or r["zb"] > slot["z0"] + sl["strip_width_max"] - 1:
+            bad.append("%s: z %d..%d leaves the strip %d..%d" % (lab, r["za"], r["zb"], slot["z0"], slot["z0"] + sl["strip_width_max"] - 1))
+        if r["xa"] < slot["x0"] or r["xb"] > slot["x0"] + sl["strip_length"] - 1:
+            bad.append("%s: x %d..%d leaves the strip %d..%d" % (lab, r["xa"], r["xb"], slot["x0"], slot["x0"] + sl["strip_length"] - 1))
+        if r["dir"] == "west" and not fl["reversible"]:
+            bad.append("%s: only a kind registered reversible may be walked west (%s is built for +x)" % (lab, r["kind"]))
+        if r["route"] != "main" and r["kind"] in ("entry_room", "boss_arena", "exit_room"):
+            bad.append("%s: the entry, the boss arena and the exit are on the main route" % lab)
+        ends = {"entry_room": ("out", "east"), "exit_room": ("in", "west"), "boss_arena": ("in", "west")}
+        if r["kind"] in ends:
+            key, want = ends[r["kind"]]
+            if r[key + "_side"] != want:
+                bad.append("%s: its door %s must be in its %s wall (the engine's threshold, arena and far rip read x)" % (lab, key, want))
+        if r["kind"] == "boss_arena" and r["out_side"] != "east":
+            bad.append("%s: its door out must be in its east wall" % lab)
+        doors = room_doors(r)
+        if not fl["outline"] and (r["in_side"] != ("west" if r["dir"] == "east" else "east")
+                                  or (not r["last"] and r["out_side"] != ("east" if r["dir"] == "east" else "west"))
+                                  or len(doors) > 2 or any(x["y"] != door_floor(r, inner_cell(r, x)[0]) for x in doors)
+                                  or r.get("secrets")):
+            bad.append("%s: a kind with its own geometry (%s) keeps pass 1's doors: in the west wall, out the east, no landing, "
+                       "no extra door, no secret" % (lab, r["kind"]))
+        for e in r.get("layout_errors", []):
+            bad.append("%s: %s" % (lab, e))
+        for x in doors:
+            bad += _door_problems(lab, r, x, rooms)
+        by_wall = {}
+        for x in doors:
+            by_wall.setdefault(x["side"], []).append(x["c"])
+        for side, cs in by_wall.items():
+            cs = sorted(cs)
+            if any(b_ - a_ < 5 for a_, b_ in zip(cs, cs[1:])):
+                bad.append("%s: two doors in its %s wall are closer than 5 (their frames meet)" % (lab, side))
+        lm = int(r["outline"].lift_.max()) if r["outline"].lift_.size else 0
+        lm = max(lm, max(landing_lifts(r).values() or [0]))
+        if lm and r["height"] - lm < 3:
+            bad.append("%s: a floor lifted %d leaves under 3 of headroom (height %d)" % (lab, lm, r["height"]))
+    for a_i, a in enumerate(rooms):
+        for b in rooms[a_i + 1:]:
+            if _overlap(a, b):
+                bad.append("%s: rooms %s and %s overlap (x %d..%d / %d..%d, y %d..%d / %d..%d, z %d..%d / %d..%d)"
+                           % (label, a["id"], b["id"], a["xa"], a["xb"], b["xa"], b["xb"], a["hull_lo"], a["ceil_y"],
+                              b["hull_lo"], b["ceil_y"], a["za"], a["zb"], b["za"], b["zb"]))
+    return bad
+
+
+def _door_problems(lab, r, door, rooms):
+    bad = []
+    side, c, y = door["side"], door["c"], door["y"]
+    if side in ("east", "west"):
+        lo, hi = r["iz0"] + 2, r["iz1"] - 2
+    else:
+        lo, hi = r["ix0"] + 2, r["ix1"] - 2
+    if not lo <= c <= hi:
+        bad.append("%s: a door in its %s wall at %d is not 2 inside the wall's ends (%d..%d)" % (lab, side, c, lo, hi))
+        return bad
+    x, _y, z = inner_cell(r, door)
+    rel = y - door_floor(r, x)
+    if rel < 0:
+        bad.append("%s: a door in its %s wall is below the floor (door %d, floor %d)" % (lab, side, y, door_floor(r, x)))
+    if y + DOOR_H + 1 > r["ceil_y"]:
+        bad.append("%s: a door in its %s wall at y %d has no room for its lintel under the ceiling (%d)" % (lab, side, y, r["ceil_y"]))
+    if rel > 0:
+        depth = (r["ix1"] - r["ix0"] + 1) if side in ("east", "west") else (r["iz1"] - r["iz0"] + 1)
+        if 3 + rel - 1 > depth - 1:
+            bad.append("%s: a landing %d up in its %s wall needs %d blocks of room in front (has %d)" % (lab, rel, side, 3 + rel, depth))
+    other = rooms[door["to"]] if 0 <= door.get("to", -1) < len(rooms) else None
+    if other is not None:
+        w, ow = wall_line(r, side), wall_line(other, OPP[side])
+        step = {"west": -1, "east": 1, "north": -1, "south": 1}[side]
+        if ow != w + step:
+            bad.append("%s: its %s door does not meet room %s (walls %d and %d)" % (lab, side, other["id"], w, ow))
+        else:
+            if side in ("east", "west"):
+                olo, ohi = other["iz0"] + 2, other["iz1"] - 2
+            else:
+                olo, ohi = other["ix0"] + 2, other["ix1"] - 2
+            if not olo <= c <= ohi:
+                bad.append("%s: its %s door at %d lands on room %s's wall outside its interior (%d..%d)" % (lab, side, c, other["id"], olo, ohi))
     return bad
 
 
 def walk_problems(doc, d, slot):
-    """The walk check over the built grids: entry to exit and back (reversible edges), every point anchor reachable,
-    doors open and clear, no hazard, no gravity block, no fall into the void, no walkable cell without light."""
+    """The walk check over the built grids: from the door in (the entry's arrival) to every door and back (reversible
+    edges), every point anchor reachable, the secrets reachable (a cracked face broken; a balcony's gap jumped), doors
+    open and clear, no hazard, no gravity block, no fall into the void, no walkable cell without light."""
     bad = []
     themes = load_themes()
     theme = theme_for(d, themes)
     builts = slot_build(doc, d, slot)
-    breakable = set(doc["engine"]["rift_pick"]["can_break"]) | set(seam_blocks(d, themes))
+    rd = resolve(doc, d, slot)
+    label = d["id"] if rd.get("_variant") is None else "%s variant %s" % (d["id"], rd["_variant"])
+    breakable = set(doc["engine"]["rift_pick"]["can_break"]) | set(pick_blocks(d, themes))
     for b in builts:
         r = b.room
-        lab = "%s room %s (%s)" % (d["id"], r["id"], r["kind"])
+        lab = "%s room %s (%s)" % (label, r["id"], r["kind"])
         g = b.grid
         cls = g.cls()
         fl = flags_of(r["kind"])
@@ -1025,42 +2126,42 @@ def walk_problems(doc, d, slot):
                 bad.append("%s: block %s is a hazard" % (lab, name))
             if G.base(name) in breakable:
                 n_breakable += int((g.a == g.idx[name]).sum())
-        want = len(b.anchors.get("seam", [])) if r["kind"] == "resources" else 0
+        want = (len(b.anchors.get("seam", [])) if r["kind"] == "resources" else 0) + len(b.anchors.get("secret_door", []))
         if n_breakable != want:
-            bad.append("%s: %d blocks the rift pick can break (%d expected: only a resources room's seam). A wall, floor or "
-                       "dressing block the pick can break is a hole to the void" % (lab, n_breakable, want))
-        sx = r["ix0"]
-        start = r["z_in"]
-        if r["kind"] == "entry_room":
-            sx = r["xa"] + 3
-        s_local = g.local(sx, r["floor_in"], start)
+            bad.append("%s: %d blocks the rift pick can break (%d expected: a resources room's seam and the cracked secrets' "
+                       "faces). A wall, floor or dressing block the pick can break is a hole to the void" % (lab, n_breakable, want))
+        sx, sy, sz = room_start(r)
+        s_local = g.local(sx, sy, sz)
         reach = G.walk(g, [s_local], jumps=fl["jumps"], cls=cls)
         if s_local not in reach:
-            bad.append("%s: the cell inside its entry (%d, %d, %d) is not standable" % (lab, sx, r["floor_in"], start))
+            bad.append("%s: the cell inside its entry (%d, %d, %d) is not standable" % (lab, sx, sy, sz))
             continue
         if "catch" not in b.anchors:
             x0, y0, z0 = g.box[:3]
             for lx, ly, lz in sorted(pits(g, s_local, fl["jumps"], cls=cls))[:3]:
                 bad.append("%s: a pit at (%d, %d, %d): a player can get in and not back out" % (lab, x0 + lx, y0 + ly, z0 + lz))
-        for key, col in (("door_in", r["xa"]), ("door_out", r["xb"])):
-            box = r[key]
-            if not box:
+        for door in room_doors(r):
+            (cx0, cz0, cx1, cz1), _f, _l = _door_cols(r, door)
+            blocked = False
+            for y in range(door["y"], door["y"] + DOOR_H):
+                for x in range(cx0, cx1 + 1):
+                    for z in range(cz0, cz1 + 1):
+                        if not blocked and cls[g.local(x, y, z)] not in (G.PASS, G.WATER):
+                            key = "door_in" if door is main_door(r, "in") else "door_out" if door is main_door(r, "out") else "a %s door (%s)" % (door["side"], door["dir"])
+                            bad.append("%s: %s is blocked at (%d, %d, %d) with the gates open" % (lab, key, x, y, z))
+                            blocked = True
+            if door is main_door(r, "in"):
                 continue
-            for y in range(box[1], box[1] + DOOR_H):
-                for z in range(box[2], box[5] + 1):
-                    c = cls[g.local(col, y, z)]
-                    if c not in (G.PASS, G.WATER):
-                        bad.append("%s: %s is blocked at (%d, %d, %d) with the gates open" % (lab, key, col, y, z))
-                        break
-        if r["door_out"]:
-            e_local = g.local(r["ix1"], r["floor_out"], r["z_out"])
+            e = inner_cell(r, door)
+            e_local = g.local(*e)
+            what = "the door out" if door is main_door(r, "out") else "its %s door (%s%s)" % (
+                door["side"], door["dir"], ", shortcut %s" % door["shortcut"] if door.get("shortcut") else "")
             if e_local not in reach:
-                bad.append("%s: the door out (%d, %d, %d) cannot be walked to from the door in (%d, %d, %d)"
-                           % (lab, r["ix1"], r["floor_out"], r["z_out"], sx, r["floor_in"], start))
+                bad.append("%s: %s (%d, %d, %d) cannot be walked to from the door in (%d, %d, %d)" % ((lab, what) + tuple(e) + (sx, sy, sz)))
             else:
                 back = G.walk(g, [e_local], jumps=fl["jumps"], cls=cls)
                 if s_local not in back:
-                    bad.append("%s: the door in cannot be walked back to from the door out (a room you cannot leave)" % lab)
+                    bad.append("%s: the door in cannot be walked back to from %s (a room you cannot leave)" % (lab, what))
         if r["kind"] == "entry_room":
             bl = g.local(r["xa"] + 1, r["floor_in"], r["z_in"])
             if bl not in reach:
@@ -1076,6 +2177,7 @@ def walk_problems(doc, d, slot):
                 ok = any(g.inside(x, y - k, z) and g.local(x, y - k, z) in reach for k in (0, 1, 2))
                 if not ok:
                     bad.append("%s: anchor %s %s has no reachable standing cell at it" % (lab, name, p[:3]))
+        bad += _secret_walks(lab, b, g, s_local, fl)
         # no fall into the void: every interior column holds a solid within the room's drop of the walking floor
         x0, y0, z0 = g.box[:3]
         for x in range(r["ix0"], r["ix1"] + 1):
@@ -1109,25 +2211,61 @@ def walk_problems(doc, d, slot):
     return bad
 
 
+def _secret_walks(lab, b, g, s_local, fl):
+    """Each secret's relic spot is reached and left: a cracked one with its face broken (the pick's work), a balcony's
+    with the jumps of DUNGEONS.md V6. Neither may be reachable WITHOUT its trick (else it is no secret)."""
+    bad = []
+    meta = b.meta.get("secrets") or []
+    for s in meta:
+        x, y, z = s["anchor"]
+        if not g.inside(x, y, z):
+            bad.append("%s: secret %s's spot %s is outside the room" % (lab, s["id"], s["anchor"]))
+            continue
+        cell = g.local(x, y, z)
+        plain = G.walk(g, [s_local], jumps=fl["jumps"])
+        if cell in plain:
+            bad.append("%s: secret %s (%s) is reachable without its trick" % (lab, s["id"], s["type"]))
+        if s["type"] == "cracked":
+            g2 = G.Grid(g.box)
+            g2.a, g2.pal, g2.idx, g2.codes = g.a.copy(), list(g.pal), dict(g.idx), list(g.codes)
+            for p in b.anchors.get("secret_door", []):
+                g2.apply(("set", tuple(p[:3]), "minecraft:air"))
+            reach = G.walk(g2, [s_local], jumps=fl["jumps"])
+        else:
+            reach = G.walk(g, [s_local], jumps=True)
+        if cell not in reach:
+            bad.append("%s: secret %s (%s) cannot be reached even with its trick (spot %s)" % (lab, s["id"], s["type"], s["anchor"]))
+    return bad
+
+
 def problems(doc, d=None):
-    """The record's problems for every dungeon with rooms (or just d): the plan, then the walk check on slot 1."""
+    """The record's problems for every dungeon with rooms (or just d): the plan of every slot, then the build and the
+    walk check on one slot per variant (a dungeon without variants: slot 1, the slots being one dungeon)."""
     bad = []
     from_slots = _slots_for(doc)
     for dd in ([d] if d is not None else [x for x in doc["dungeons"] if has_rooms(x)]):
         sl = [s for s in from_slots if s["dungeon"]["id"] == dd["id"]]
         if not sl:
             continue
-        sp = plan_problems(doc, dd, sl[0])
-        bad += sp
-        if sp:
+        reps = variant_slots(doc, dd, sl)
+        stop = False
+        seen = []
+        for s in reps:
+            sp = plan_problems(doc, dd, s)
+            bad += [p for p in sp if p not in seen]
+            seen += sp
+            stop = stop or bool(sp)
+        if stop:
             continue
-        for s in sl[1:]:
-            bad += [p for p in plan_problems(doc, dd, s) if p not in sp]
-        try:
-            bad += extra_problems(doc, dd, sl[0])
-            bad += walk_problems(doc, dd, sl[0])
-        except (RoomError, KeyError) as e:
-            bad.append("%s: the rooms do not build: %s" % (dd["id"], e if isinstance(e, RoomError) else "missing theme key %s" % e))
+        for s in sl:
+            if s not in reps:
+                bad += [p for p in plan_problems(doc, dd, s) if p not in seen]
+        for s in reps:
+            try:
+                bad += extra_problems(doc, dd, s)
+                bad += walk_problems(doc, dd, s)
+            except (RoomError, KeyError) as e:
+                bad.append("%s: the rooms do not build: %s" % (dd["id"], e if isinstance(e, RoomError) else "missing theme key %s" % e))
     return bad
 
 
@@ -1159,7 +2297,7 @@ def warnings(doc):
         if not has_rooms(d):
             continue
         seen = set()
-        for r in d["rooms"]:
+        for r in all_records(d):
             if r["kind"] not in KINDS and r["kind"] not in seen:
                 seen.add(r["kind"])
                 out.append("%s: kind %s not implemented yet (it builds as a themed empty room with its declared anchors)" % (d["id"], r["kind"]))

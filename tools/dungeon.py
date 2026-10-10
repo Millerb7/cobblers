@@ -287,6 +287,11 @@ def lk_obj(d):
     return "dg.lk_%s" % d["short"]
 
 
+def lv_obj(d):
+    """The variant (1-based) of this dungeon the player last entered (DUNGEON_ROOMS.md 1a): entry prefers another."""
+    return "dg.lv_%s" % d["short"]
+
+
 # ------------------------------------------------------------------------------------------------- checks
 
 
@@ -533,7 +538,7 @@ def pick_give(doc, d=None):
     p = doc["engine"]["rift_pick"]
     breaks = list(p["can_break"])
     if d is not None and DR.has_rooms(d):
-        breaks += [b for b in DR.seam_blocks(d) if b not in breaks]
+        breaks += [b for b in DR.pick_blocks(d) if b not in breaks]
     return ("%s[minecraft:custom_data={%s:1b},minecraft:item_name=%s,minecraft:can_break={predicates:[{blocks:[%s]}]}]"
             % (p["item"], p["custom_data_key"], snbt_str(text(p["name"], p["colour"])),
                ",".join('"%s"' % b for b in breaks)))
@@ -752,6 +757,7 @@ def functions(doc, blackout=None):
     objs = ["scoreboard objectives add %s dummy" % v for kk, v in O.items() if kk != "dc"]
     objs += ["scoreboard objectives add %s deathCount" % O["dc"]]
     objs += ["scoreboard objectives add %s dummy" % lk_obj(d) for d in ds]
+    objs += ["scoreboard objectives add %s dummy" % lv_obj(d) for d in ds if d.get("variants")]
     if any(DR.has_rooms(d) for d in ds):
         objs += DR.objective_lines()
     out["load"] = [HEAD,
@@ -1180,6 +1186,11 @@ def functions(doc, blackout=None):
             "execute if score #why %s matches 0 run function %s" % (O["t"], F("m/band")),
             "# 7: a free slot of this dungeon",
             "scoreboard players set #pick %s 0" % O["t"]]
+        if d.get("variants"):
+            # DUNGEON_ROOMS.md 1a: a free slot whose layout variant is not the one this player last ran, else any free one
+            dc += ["execute if score #pick %s matches 0 if score %s %s matches 0 unless score @s %s matches %d run "
+                   "scoreboard players set #pick %s %d" % (O["t"], H(s), O["own"], lv_obj(d), DR.variant_of(doc, d, s)["index"] + 1,
+                                                            O["t"], s["g"]) for s in dsel(di)]
         dc += ["execute if score #pick %s matches 0 if score %s %s matches 0 run scoreboard players set #pick %s %d"
                % (O["t"], H(s), O["own"], O["t"], s["g"]) for s in dsel(di)]
         dc += ["execute if score #why %s matches 0 if score #pick %s matches 0 run scoreboard players set #why %s 7" % (O["t"], O["t"], O["t"]),
@@ -1223,6 +1234,9 @@ def functions(doc, blackout=None):
               "scoreboard players add #runs %s 1" % O["run"],
               "scoreboard players operation @s %s = #runs %s" % (O["run"], O["run"])]
         go += ["execute if score #pick %s matches %d run function %s" % (O["t"], s["g"], F("slot/s%d/reserve" % s["g"])) for s in dsel(di)]
+        if d.get("variants"):
+            go += ["execute if score #pick %s matches %d run scoreboard players set @s %s %d"
+                   % (O["t"], s["g"], lv_obj(d), DR.variant_of(doc, d, s)["index"] + 1) for s in dsel(di)]
         go += ["scoreboard players set @s %s %d" % (O["dun"], di),
                "scoreboard players set @s %s 1" % O["st"],
                "scoreboard players set @s %s %d" % (O["wait"], k["arrive_delay_ticks"] + P),

@@ -63,7 +63,7 @@ def kind_entry(doc, d, slot, room, theme):
     z = room["z_in"]
     return {"blocks": _rip(room, theme, room["xa"], z, fy),
             "anchors": {"arrive": [room["xa"] + 3, fy, z, -90], "back": [room["xa"] + 1, fy, z],
-                        "threshold": [room["xb"] - 1, fy, room["z_out"], -90]}}
+                        "threshold": [room["xb"] - 1, room.get("door_out_y") or fy, room["z_out"], -90]}}
 
 
 def kind_exit(doc, d, slot, room, theme):
@@ -518,21 +518,68 @@ def _air_col(ctx, x, y0, y1, z):
     return all(ctx.air(x, y, z) for y in range(y0, y1 + 1))
 
 
+def _shaped(ctx):
+    """The room has a real outline (not pass 1's box): wall dressing goes on its faces, not on the box's sides."""
+    o = ctx.room.get("outline")
+    return o is not None and not o.is_box()
+
+
+FACE = {"north": (0, -1), "south": (0, 1), "west": (-1, 0), "east": (1, 0)}
+
+
+def _faces(ctx, every=1):
+    """Open floor cells beside rock, one per `every` along x (the rock is the cell `face` of them)."""
+    walls = [w for w in ctx.walls() if ctx.room["ix0"] + 1 <= w[0] <= ctx.room["ix1"] - 1]
+    if every <= 1:
+        return walls
+    return [w for w in walls if (w[0] - ctx.room["ix0"]) % every == 0]
+
+
 def dress_base_course(ctx, spec):
     r = ctx.room
     y = r["y_lo"] if spec.get("where", "bottom") == "bottom" else r["ceil_y"] - 1
-    if r["rise"]:
+    if r["rise"] or _shaped(ctx):
         return
-    for zw in (r["za"], r["zb"]):
-        ctx.add(fill((r["ix0"], y, zw, r["ix1"], y, zw), spec["block"]))
+    for zw, side in ((r["za"], "north"), (r["zb"], "south")):
+        for a, b in _wall_runs(r, side, r["ix0"], r["ix1"]):
+            ctx.add(fill((a, y, zw, b, y, zw), spec["block"]))
+
+
+def _wall_runs(r, side, x0, x1):
+    """[x0..x1] less every door's opening and frame in the room's north or south wall (pass 2: doors there exist)."""
+    cut = sorted((d["c"] - 2, d["c"] + 2) for d in R.room_doors(r) if d["side"] == side)
+    out, a = [], x0
+    for lo, hi in cut:
+        if lo > a:
+            out.append((a, min(lo - 1, x1)))
+        a = max(a, hi + 1)
+    if a <= x1:
+        out.append((a, x1))
+    return [(p, q) for p, q in out if p <= q]
 
 
 def dress_pillars(ctx, spec):
     r = ctx.room
     every = int(spec.get("every", 6))
     rg = ctx.rng
+    if _shaped(ctx):
+        # half-columns standing proud of the rock: the rock cell behind a face, floor to ceiling (or broken)
+        wall = ctx.theme["hull"]["wall"]
+        for x, y, z, face in _faces(ctx, every):
+            if (x, z) in ctx.keep:
+                continue
+            dx, dz = FACE[face]
+            bx, bz = x + dx, z + dz
+            if ctx.room["iz0"] <= bz <= ctx.room["iz1"] and ctx.room["ix0"] <= bx <= ctx.room["ix1"] and rg.random() < 0.5:
+                top = r["ceil_y"] - 1
+                if rg.random() < spec.get("broken_p", 0):
+                    top -= rg.randint(1, max(1, r["height"] - 3))
+                ctx.add(fill((bx, y, bz, bx, top, bz), spec["block"], "replace " + R.G.base(wall)))
+        return
     for k, x in enumerate(range(r["ix0"] + 3, r["ix1"] - 2, every)):
-        for zw in (r["za"], r["zb"]):
+        for zw, side in ((r["za"], "north"), (r["zb"], "south")):
+            if not any(a <= x <= b for a, b in _wall_runs(r, side, x, x)):
+                continue        # a door's opening or frame in that wall (pass 2)
             top = r["ceil_y"] - 1
             if rg.random() < spec.get("broken_p", 0):
                 top -= rg.randint(1, max(1, r["height"] - 3))
@@ -543,8 +590,8 @@ def dress_pillars(ctx, spec):
 
 def dress_timber(ctx, spec):
     r = ctx.room
-    if r["rise"] or r["pit"]:
-        return
+    if r["rise"] or r["pit"] or _shaped(ctx):
+        return          # a timber set spans a straight drift wall to wall: a shaped room is rock, not a timbered drift
     every = int(spec.get("every", 8))
     fy = r["floor_in"]
     zc = (r["iz0"] + r["iz1"]) // 2
@@ -567,6 +614,19 @@ def dress_streak(ctx, spec):
     rg = ctx.rng
     wall = ctx.theme["hull"]["wall"]
     fy = r["floor_in"]
+    if _shaped(ctx):
+        faces = _faces(ctx)
+        for _ in range(int(spec.get("count", 4)) if faces else 0):
+            x, y, z, face = rg.choice(faces)
+            dx, dz = FACE[face]
+            ln = rg.randint(*spec.get("len", [3, 7]))
+            yy = y + rg.randint(1, 3)
+            blk = pick(rg, spec["blocks"])
+            for k in range(ln):
+                # along the face: across it for a north/south face, so the streak lies in the rock it is shown in
+                cx, cz = (x + dx + k, z + dz) if dz else (x + dx, z + dz + k)
+                ctx.add(fill((cx, yy, cz, cx, yy + rg.randint(0, 1), cz), blk, "replace " + R.G.base(wall)))
+        return
     for _ in range(int(spec.get("count", 4))):
         zw = rg.choice((r["za"], r["zb"]))
         ln = rg.randint(*spec.get("len", [3, 7]))
@@ -731,6 +791,23 @@ def dress_canopy(ctx, spec):
 def dress_wall_vines(ctx, spec):
     r = ctx.room
     rg = ctx.rng
+    if _shaped(ctx):
+        for x, y, z, face in _faces(ctx):
+            if rg.random() >= spec.get("p", 0.1) or face not in ("north", "south", "east", "west"):
+                continue
+            blk = pick(rg, spec["blocks"])
+            y1 = r["ceil_y"] - rg.randint(3, 5)
+            if "lichen" in blk:
+                yy = rg.randint(y + 1, max(y + 1, y1))
+                if ctx.air(x, yy, z):
+                    ctx.add(setb((x, yy, z), "%s[%s=true]" % (blk, face)))
+                continue
+            ln = rg.randint(*spec.get("len", [2, 6]))
+            for yy in range(y1, y1 - ln, -1):
+                if yy <= y or not ctx.air(x, yy, z):
+                    break
+                ctx.add(setb((x, yy, z), "%s[%s=true]" % (blk, face)))
+        return
     for z_in, face in ((r["iz0"], "north"), (r["iz1"], "south")):
         for x in range(r["ix0"] + 2, r["ix1"] - 1):
             if rg.random() >= spec.get("p", 0.1):
@@ -879,7 +956,7 @@ def dress_glow_vines(ctx, spec):
                 x, z = x0 + dx, z0 + dz
                 if not (r["ix0"] <= x <= r["ix1"] and r["iz0"] <= z <= r["iz1"]) or (x, z) in ctx.keep:
                     continue
-                y_tip = R.floor_at(r, x) + clear
+                y_tip = (R.floor_xz(r, x, z) if R.floor_xz(r, x, z) is not None else R.floor_at(r, x)) + clear
                 y = top
                 while y > y_tip and not ctx.air(x, y, z):
                     y -= 1
