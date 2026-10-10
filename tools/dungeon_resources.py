@@ -62,7 +62,6 @@ FACE = {"north": (0, -1), "south": (0, 1), "west": (-1, 0), "east": (1, 0)}
 YAW = {"south": 0, "west": 90, "east": -90, "north": 180}       # a stand cell looking at the chest: the direction it faces
 RARE_ORDER = ("diamond", "emerald", "gold")       # the crest takes these first: dearest first
 OPPOSITE = {"north": "south", "south": "north", "west": "east", "east": "west"}
-GREED_CALL = True       # a pile or vein block gone calls greed/take once, as a seam block does (data may override: calls_greed)
 
 _DATA = {}
 
@@ -423,6 +422,47 @@ def cache_table_id(band):
     return "cobblers:%s/b%d" % (data()["cache"]["loot_dir"], band)
 
 
+def greed_table():
+    import dungeon_greed as GR
+    return GR, GR.load()
+
+
+def cache_cp(band):
+    """The cache's value at `band` in cp, from GREED's table (item cp x count): the raw Mega stone 625, a debris 200."""
+    GR, table = greed_table()
+    total = 0
+    for _k, item, n in cache_items(band):
+        cp = GR.item_cp(table, item)
+        if cp is None:
+            raise ResError("data/dungeon_greed.json does not price %s (the cache's item)" % item)
+        total += cp * n
+    return total
+
+
+def cache_credit_lines(doc):
+    """The lines that credit an opened cache to the member's points, GREED's own chest entry (greed/add)."""
+    GR, _t = greed_table()
+    return GR.chest_lines(doc, {band: cache_cp(band) for band in BANDS if cache_items(band)})
+
+
+def block_cp(block):
+    GR, table = greed_table()
+    row = table["blocks"].get(block)
+    if row is None:
+        raise ResError("data/dungeon_greed.json has no row for %s (a block the piles can hold)" % block)
+    return int(row["cp"])
+
+
+def greed_cp(d_theme, band):
+    """Everything a full take of one resources room is worth at `band`, in cp: the seam, the heaps and veins, the cache."""
+    cfg = data()["themes"][d_theme]
+    total = 0
+    for src in ((seam_row(band) if cfg.get("seam", "table") == "table" else {}), table_row(band)):
+        for res, n in src.items():
+            total += n * block_cp(family_block(cfg, res))
+    return total + cache_cp(band)
+
+
 def holder(slot, room, tag):
     return R.state_holder(slot, room) + tag
 
@@ -489,22 +529,7 @@ def dress_deposits(ctx, spec):
             blk = block_at_band(c, band)
             if blk != block_at_band(c, band - 1):
                 reset.append("execute if score @s dg.band matches %d.. run setblock %d %d %d %s" % (band, *c["pos"], blk))
-    for j, c in enumerate(cands):
-        reset.append("scoreboard players set %s %s 0" % (holder(ctx.slot, r, "o%d" % j), OBJ))
-    for band in BANDS:
-        for j, c in enumerate(cands):
-            if c["pos"] in by_band[band]:
-                reset.append("execute if score @s dg.band matches %d run scoreboard players set %s %s 1"
-                             % (band, holder(ctx.slot, r, "o%d" % j), OBJ))
-    tick = []
-    call = bool(data().get("calls_greed", GREED_CALL))
-    for j, c in enumerate(cands):
-        hj = holder(ctx.slot, r, "o%d" % j)
-        x, y, z = c["pos"]
-        tick.append("execute if score %s %s matches 1 if block %d %d %d minecraft:air run scoreboard players set %s %s 2" % (hj, OBJ, x, y, z, hj, OBJ))
-        if call:
-            tick.append("execute if score %s %s matches 2 run function %s" % (hj, OBJ, R.F("greed/take")))
-        tick.append("execute if score %s %s matches 2 run scoreboard players set %s %s 3" % (hj, OBJ, hj, OBJ))
+    tick = []       # the ore itself has no hook: the engine weighs what is mined by the mined stats (tools/dungeon_greed.py)
     meta = {"cands": [{"pos": list(c["pos"]), "host": c["host"], "kind": c["kind"]} for c in cands],
             "by_band": {str(band): {"%d,%d,%d" % c["pos"]: by_band[band].get(c["pos"]) for c in cands if c["pos"] in by_band[band]}
                         for band in BANDS},
@@ -523,10 +548,11 @@ def dress_deposits(ctx, spec):
         reset.append("scoreboard players set %s %s 0" % (hk, OBJ))
         reset.append("execute if score @s dg.band matches %d.. run scoreboard players set %s %s 1"
                      % (int(data()["cache"]["min_band"]), hk, OBJ))
-        tick.append("execute if score %s %s matches 1 unless data block %d %d %d LootTable run scoreboard players set %s %s 2" % (hk, OBJ, x, y, z, hk, OBJ))
-        if call:
-            tick.append("execute if score %s %s matches 2 run function %s" % (hk, OBJ, R.F("greed/take")))
-        tick.append("execute if score %s %s matches 2 run scoreboard players set %s %s 3" % (hk, OBJ, hk, OBJ))
+        # opened (its LootTable tag gone, as the vault sees it): once, credit the chest's value for the entrant's band
+        tick.append("execute if score %s %s matches 1 unless data block %d %d %d LootTable run function %s"
+                    % (hk, OBJ, x, y, z, R.room_fn(d, r, ctx.slot, "cache_open")))
+        b.functions["cache_open"] = (["scoreboard players set %s %s 2" % (hk, OBJ)] + cache_credit_lines(ctx.doc)
+                                     + ["scoreboard players set %s %s 3" % (hk, OBJ)])
         b.anchors["cache"] = [[sx, sy, sz, YAW[OPPOSITE[cache["facing"]]]]]
         meta["cache"] = {"chest": [x, y, z], "facing": cache["facing"], "stand": [sx, sy, sz], "holder": hk}
     b.functions["tick"] = b.functions.get("tick", []) + tick
@@ -775,6 +801,11 @@ def report(doc):
     out.append("# budget")
     for band, verdict, detail in budget(doc):
         out.append("%s band %d: %s" % (verdict.upper() if verdict != "ok" else "ok", band, detail))
+    out.append("# what taking EVERYTHING in one room weighs on the clock (GREED's table, cp; +0.1x per rate.per_step_cp)")
+    rt = greed_table()[1]["rate"]
+    for theme in data()["themes"]:
+        out.append("  %s: %s" % (theme, ", ".join("b%d %d cp (x%.1f)" % (b, greed_cp(theme, b), min(rt["cap"], rt["base"] + greed_cp(theme, b) // rt["per_step_cp"]) / 10.0)
+                                                   for b in BANDS)))
     out.append("# items a pile or cache can yield")
     for item, src in items_yielded():
         out.append("  %s  (%s)" % (item, src))

@@ -13,9 +13,10 @@ needed a mod or a scripting layer.
      the macro, then the nearest unclaimed Pokemon within 2.5 blocks of the spot gets the claim; a plain `summon
      cobblemon:pokemon` is refused, .claude/rules/datapacks.md). The claim (`life/s<g>/bind`) is the fight rooms' own:
      the sweep's keep tag, the slot's tag, the blackout's exempt tag, the run id, PersistenceRequired; plus `dg.lf` and
-     the room's index in `dg.rs` (an entity holds it, as the fight Pokemon hold the run id). They are `uncatchable`
-     (D8: catches only after the Champion; a catchable ambient Pokemon would be a held catch, DUNGEON_CATCHES.md, an
-     owner decision), below the band's LOWER cap, and an evolution line is chosen by band (stage 0 at bands 1-2 ...).
+     the room's index in `dg.rs` (an entity holds it, as the fight Pokemon hold the run id). They are CATCHABLE
+     (the owner, 2026-10-10: "Living rooms yes", and a catch weighs on the clock, tools/dungeon_greed.py; the held-catch
+     removal of DUNGEON_CATCHES.md is not built, so a catch is kept whatever the run's end), below the band's LOWER cap
+     (so the level cap never refuses the ball), and an evolution line is chosen by band (stage 0 at bands 1-2 ...).
      Two variants per room are generated and one is chosen by the member's run id (an even run, an odd run), so a second run meets other animals.
      Cleanup: the room's reset discards its own; the slot's free and tend discard everything tagged `dg.s<g>` (the same
      lines tools/dungeon_fights.py patch_functions writes, written again here so a slot with no wild room is covered);
@@ -45,7 +46,7 @@ two lines (docs/mechanics/DUNGEON_LIFE.md 2.1). A built room carries `meta["life
 `tick` and `reset` (a kind's tick often starts with `return 0` on its own state, which would swallow lines after it).
 
 UNPROVEN IN GAME (docs/mechanics/DUNGEON_LIFE.md): that the macro-spawned, bound Pokemon wander inside the room and
-stay inside a loaded box (the nest's tp-back is not used here), that `uncatchable` Pokemon accept a player's battle
+stay inside a loaded box (the nest's tp-back is not used here), that the ambient Pokemon accept a player's battle
 request (a player may fight one; nothing in the run depends on it), the entity-score read `scores={dg.rs=..N}` on a
 Pokemon, a candle's `lit` set by setblock, a waxed sign's SNBT, and the sounds' loudness.
 """
@@ -529,7 +530,7 @@ def plan_ambient(ctx, cfg, reach):
                 for b in bands:
                     sp = line[stage_of(b["band"], len(line))]
                     lv = level_of(doc, b, off)
-                    props = "level=%d uncatchable" % lv + (" no_ai" if gp.get("sleep") else "")
+                    props = "level=%d" % lv + (" no_ai" if gp.get("sleep") else "")   # catchable: the owner, 2026-10-10
                     by_band[b["band"]] = {"species": sp, "level": lv, "props": props}
                 mons.append({"group": gp["id"], "pos": [x, y, z], "yaw": rg.choice((0, 90, 180, -90)), "bands": by_band})
         variants.append(mons)
@@ -780,8 +781,8 @@ def problems(doc, d, slot):
                         bad.append("%s: species %r is not a lowercase species id" % (lab, e["species"]))
                     if e["level"] > min(band["caps"]) and bn != 6:
                         bad.append("%s: a %s at level %d over band %d's lower cap %d" % (lab, e["species"], e["level"], bn, min(band["caps"])))
-                    if "uncatchable" not in e["props"].split():
-                        bad.append("%s: an ambient %s is catchable (D8)" % (lab, e["species"]))
+                    if "uncatchable" in e["props"].split():
+                        bad.append("%s: an ambient %s is uncatchable (the owner, 2026-10-10: living rooms are catchable, a catch weighs on the clock)" % (lab, e["species"]))
         for sc in life.get("scenes") or []:
             for cx, cy, cz, unlit, lit in sc["candles"]:
                 if not g.inside(cx, cy, cz) or G.base(g.block_at(cx, cy, cz)) != G.base(unlit):

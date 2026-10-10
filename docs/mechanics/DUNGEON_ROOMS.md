@@ -227,10 +227,11 @@ entrance) and `line` (a trip box across the room); `miniboss` `boss`, `line`; `n
 - **`resources`**: the seam: 24 ores (`params.seam_blocks`, `face_w`) on the face of a slab three thick against the north
   wall, so mining one opens a pocket and never the void. The shell writes band 1's blocks; `reset` (as the entrant) sets
   the band's from `dg.band` (the mix per band is `data/dungeon_resources.json` `seam`; the jungle's face is logs,
-  melon, bamboo, honeycomb, pumpkin). `tick` watches each cell and calls `greed/take` once per block gone (the
-  ladder of D13 is then the engine's). **Since RESOURCES2 (section 10) the room also holds heaps, wall veins and, at
-  bands 5 and 6, a cache chest**, all by band; the pick of such a dungeon may break exactly the seam, the table's ore
-  blocks and the cracked secrets' faces (`pick_give(doc, d)`).
+  melon, bamboo, honeycomb, pumpkin). There is no `tick` for the seam or the piles: what the member mines is weighed by the
+  engine's mined stats wherever they mine it (`tools/dungeon_greed.py`, the owner 2026-10-10; a per-block hook would count a
+  block twice). **Since RESOURCES2 (section 10) the room also holds heaps, wall veins and, at bands 5 and 6, a cache chest**,
+  all by band; the pick of such a dungeon may break exactly the seam, the table's ore blocks and the cracked secrets' faces
+  (`pick_give(doc, d)`).
 - **`dark_room`**: no light of its own, lit candles found along the way, and `enter` gives 3 torches with
   `can_place_on` for the room's floor blocks; `reset` takes the placed ones back out. The torches are UNPROVEN (below).
 - **`safe_room`**: a rug, benches, lantern posts and a counter with the `healer` anchor behind it (the NPC is wave 2's).
@@ -415,7 +416,7 @@ counts as a resource too. Rung: **datapack plus generator** (`tools/dungeon_reso
 `deposits` dress op in each theme's `dress`, `kinds: ["resources"]`, before `life`); the pick, the refill and the cache's chest
 and loot table are the seam's and the vault's own mechanisms, so nothing needed a mod, a scripting layer or a companion.
 
-**What a `resources` room holds.** The seam (kept: 24 blocks, the greed ladder's count) plus:
+**What a `resources` room holds.** The seam (kept: 24 blocks) plus:
 - **Heaps**: free-standing mounds of the theme's rubble on the room's real outline, 2-3 high, stepped by one block (a
   euclidean dome: neighbouring columns differ by at most one, so they climb), 3-8 of them, 1 block of free floor between. A
   heap whose footprint meets a wall is clipped by it and is a bank against the wall (the room alternates banks and free heaps).
@@ -444,12 +445,12 @@ Blocks of ore in the heaps and veins, on top of the seam's 24:
 | 1 (20-25) | 8 | 6 | 6 | | | | | | |
 | 2 (30-35) | 8 | 8 | 6 | | | | | | |
 | 3 (40-45) | 6 | 8 | 6 | 4 | 4 | 2 | | | |
-| 4 (50-55) | 6 | 8 | 4 | 4 | 6 | 4 | 1 | | |
-| 5 (60-62) | | 6 | 4 | 4 | 6 | 6 | 2 | 2 | 1 raw Mega stone, 1 ancient debris |
-| 6 (100) | | 4 | | 4 | 6 | 8 | 3 | 3 | 1 raw Mega stone, 2 ancient debris |
+| 4 (50-55) | 6 | 8 | 4 | 4 | 6 | 4 | | | |
+| 5 (60-62) | | 6 | 4 | 4 | 6 | 6 | 1 | 2 | 1 raw Mega stone, 1 ancient debris |
+| 6 (100) | | 4 | | 4 | 6 | 8 | 2 | 3 | 1 raw Mega stone, 2 ancient debris |
 
 DUNGEONS.md 9.3's ladder is kept (1-2 coal/iron/copper; 3-4 add gold, redstone, lapis; 5-6 diamond). Additions: emerald from
-band 4 (worth nothing to the bank: the owner took it off on 2026-10-08), and the cache at bands 5 and 6. The seam's mix per
+band 5 (worth nothing to the bank, the owner took it off on 2026-10-08; GREED prices it 400 cp), and the cache at bands 5 and 6. The seam's mix per
 band is now authored in the same file and equals `tools/economy_sim.py` `World.seam_face(band)` exactly (the sim's
 assumption; the old round robin over every ore the band allowed put 3 diamonds in the band-5 face where the sim and ECONOMY_SIM
 assume 1): 1-2 coal 11 / iron 9 / copper 4; 3-4 coal 9 / iron 9 / lapis 3 / gold 1 / redstone 2; 5-6 coal 9 / iron 9 /
@@ -485,12 +486,21 @@ Emeralds have no price, so only the table's count limits them. Not checked: the 
 price), co-op, and what a player makes selling to a Produce Buyer (the jungle's produce face is unpriced here and was before).
 
 **The reset and the take.** The shell writes band 1's ore; the room's `reset` (as the entrant, `dg.band`) writes every candidate cell
-back to its band-1 block, then each higher band's difference (`execute if score @s dg.band matches N.. run setblock`), zeroes
-every watcher and arms the ones that are ore at the entrant's band (`#s<g>r<i>o<j>`, `dg.rs` 1), and puts the cache chest back
-from air with the band's loot table (`cobblers:dungeons/cache/b5`, `/b6`, in the pack) and arms `#s<g>r<i>k`. `tick` is the seam's
-state machine (1 gone -> 2 -> `function cobblers:dungeons/greed/take` once -> 3), and the cache counts when its `LootTable` tag
-is gone (opened), as the vault does. `data/dungeon_resources.json` `calls_greed` (true) switches the calls off for GREED's points
-system if it counts items instead.
+back to its band-1 block, then each higher band's difference (`execute if score @s dg.band matches N.. run setblock`), and puts the
+cache chest back from air with the band's loot table (`cobblers:dungeons/cache/b5`, `/b6`, in the pack) and arms `#s<g>r<i>k`.
+**No block has a hook**: GREED (`tools/dungeon_greed.py`) weighs every block the pick breaks by the `minecraft.mined:<block>` stats,
+wherever the member mines it, at the block's cp in `data/dungeon_greed.json` (all eight ores of both families, in the table
+already), so a pile or a vein counts exactly as the seam does and nothing is counted twice. The one hook is the cache's: its `tick`
+line sees the `LootTable` tag go (opened, as the vault does) and runs `cache_open`, which credits the chest's value for the
+entrant's band through GREED's own chest entry (`dungeon_greed.chest_lines`, then `greed/add`), once.
+
+**Priced in GREED's points** (cp; 1 point = 100 cp = $100; +0.1x per 200 cp; cap x3 at 4,000 cp; `python tools/dungeon_resources.py`
+prints it): the cache is the raw Mega stone at 625 cp and a debris at 200 cp, so **825 cp at band 5 and 1,025 at band 6** (+0.4x
+and +0.5x), a little under a vault chest at its dearest. Taking EVERYTHING in one resources room (the seam, the piles, the
+veins and the cache) weighs 2,086 cp at band 5 (x2.0) and 2,782 at band 6 (x2.4); bands 1-4 weigh 285, 301, 549 and 993 cp (x1.1 to
+x1.4); the jungle, whose seam is produce, 130 to 2,875 less its emerald. So a full take at band 6 does not by itself reach the cap, but
+with a vault chest or a catch it will, which is the trade GREED builds. The emerald is the dearest ore at 400 cp (its last bank
+price), which is why there are 1 and 2 of it.
 
 **What the pick may break** (`R.pick_blocks`, via `R.PICK_EXTRA_FNS`): the seam's blocks, the table's ore block for the theme's
 family (deepslate ores in the mine; plain ores in the jungle's outcrop and the ruin's treasury), and the cracked secrets' faces.
@@ -507,8 +517,8 @@ pumpkins. `python tools/dungeon_resources.py` prints the list, the table and the
 
 **Unproven in game:** that a chest placed with a `LootTable` hands over its items when opened in adventure mode in the pocket (the
 vault's own assumption); that heaps of stepped one-block rubble climb as the walk check says; the mining times (a heap of 30-50
-blocks is a minute or two with an iron pick, and every block taken calls the greed ladder: GREED decides what that costs); that
+blocks is a minute or two with an iron pick, and every block mined weighs on the clock by GREED's mined stats, which are themselves unrun in adventure mode, EXP-073); that
 the cache chest reads as a find at a heap's foot. The walk check proves a player reaches every heap, vein row and the cache's
-standing cell; it has not been seen. Where it collides with another system: `greed/take` per block (GREED), the independent audit's
+standing cell; it has not been seen. Where it collides with another system: GREED's table must hold a row for every block the piles can hold (it does: the eight ores of both families) and an item cp for the cache's two items (it does), the independent audit's
 "the pick breaks nothing but seams and cracked faces" (it reads the generated `can_break`, which now holds the table's ore blocks;
 `tools/dungeon_independent_audit.py` is AUDIT2's, not touched here), and `life` (heap and cache ground is kept from its spots).

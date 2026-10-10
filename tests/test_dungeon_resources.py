@@ -55,7 +55,7 @@ THEMES = json.loads((ROOT / "data" / "dungeon_themes.json").read_text(encoding="
 DUNGEONS = [d for d in BASE["dungeons"] if R.has_rooms(d)]
 BANDS = (1, 2, 3, 4, 5, 6)
 ORE_RES = {blk: res for res, e in DATA["resources"].items() for blk in e["blocks"].values()}
-GREED_TAKE = "function cobblers:dungeons/greed/take"
+GREED = json.loads((ROOT / "data" / "dungeon_greed.json").read_text(encoding="utf-8"))
 
 _BUILDS = {}
 
@@ -86,7 +86,7 @@ class World:
         self.b = b
         self.blocks = {}
         self.scores = {}
-        self.takes = 0
+        self.credits = []          # the cp each greed/add credited
         self.opened = set()
 
     def get(self, pos):
@@ -121,21 +121,26 @@ class World:
             if self.scores.get(h) == int(v) and self.get((int(x), int(y), int(z))) == "minecraft:air":
                 self.scores[h2] = int(v2)
             return
-        m = re.match(r"^execute if score (\S+) dg\.rs matches (\d+) unless data block (-?\d+) (-?\d+) (-?\d+) LootTable run scoreboard players set (\S+) dg\.rs (\d+)$", ln)
+        m = re.match(r"^execute if score (\S+) dg\.rs matches (\d+) unless data block (-?\d+) (-?\d+) (-?\d+) LootTable run function (\S+)$", ln)
         if m:
-            h, v, x, y, z, h2, v2 = m.groups()
+            h, v, x, y, z, fn = m.groups()
             pos = (int(x), int(y), int(z))
             if self.scores.get(h) == int(v) and pos in self.opened:
-                self.scores[h2] = int(v2)
+                assert fn.endswith("/cache_open"), fn
+                self.run(self.b.functions["cache_open"], band)
+            return
+        m = re.match(r"^scoreboard players set (#gv) (\S+) (\d+)$", ln)
+        if m:
+            self.scores["#gv"] = int(m.group(3))
+            return
+        if ln == "function cobblers:dungeons/greed/add":
+            self.credits.append(self.scores.get("#gv", 0))
             return
         m = re.match(r"^execute if score (\S+) dg\.rs matches (\d+) run (.*)$", ln)
         if m:
             h, v, rest = m.groups()
-            if self.scores.get(h) == int(v):
-                if rest == GREED_TAKE:
-                    self.takes += 1
-                elif rest.startswith("scoreboard players set "):
-                    self.line(rest, band)
+            if self.scores.get(h) == int(v) and rest.startswith("scoreboard players set "):
+                self.line(rest, band)
             return
 
     def ore_cells(self, pick):
@@ -232,7 +237,7 @@ def test_early_bands_hold_nothing_great_and_diamonds_wait_for_band_5():
         assert "diamond" not in rows[band]
     for band in (5, 6):
         assert rows[band].get("diamond", 0) >= 2
-    assert "emerald" not in rows[3] and rows[4].get("emerald") == 1
+    assert "emerald" not in rows[4] and rows[5].get("emerald") == 1
 
 
 def test_the_budget_holds_and_names_every_band():
@@ -328,35 +333,73 @@ def test_the_mega_stone_is_the_raw_one_and_never_a_keyed_one():
         assert names == ["mega_showdown:mega_stone", "minecraft:ancient_debris"], p
 
 
+def greed_cp_of(item):
+    if item in GREED["items"]:
+        return GREED["items"][item]["cp"]
+    return next(g["cp"] for g in GREED["groups"].values() if item in g["ids"])
+
+
+def cache_value(band):
+    """The cache's value at `band` in cp, from the two data files and nothing of the generator's."""
+    return sum(greed_cp_of(e["item"]) * e["count_by_band"][str(band)] for e in DATA["cache"]["items"].values()
+               if str(band) in e["count_by_band"])
+
+
 @pytest.mark.parametrize("d,s", CASES, ids=IDS)
-def test_a_reset_re_arms_the_piles_and_every_block_taken_counts_once(d, s):
+def test_a_reset_re_arms_the_piles_and_the_cache_pays_its_points_once(d, s):
     secret = {THEMES[d["theme"]]["shapes"]["secret_block"]}
     pick = dungeon_pick(d) - secret
-    legacy = 24 if DATA["themes"][d["theme"]].get("seam", "table") != "table" else 0       # the jungle's produce face is watched too
+    legacy = 24 if DATA["themes"][d["theme"]].get("seam", "table") != "table" else 0       # the jungle's produce face
     for b in resource_rooms(d, s):
-        for band in (1, 3, 6):
+        tick = tick_lines(b)
+        # GREED's mined stats weigh the blocks: no pile or vein block has a hook (a second count)
+        assert not any("greed/take" in ln or re.search(r"r\d+o\d+", ln) for ln in tick + reset_lines(b)), "a per-block hook would count twice"
+        for band in (1, 3, 5, 6):
             w, cells = replay(b, band, pick)
-            n_ore = len(cells)
-            assert n_ore == sum(expected_row(d, band).values()) + legacy
-            watchers = {h for h, v in w.scores.items() if v == 1 and re.match(r"#s\d+r\d+[okm]\d*$", h)}
-            assert len(watchers) >= n_ore                       # every ore cell has an armed watcher (the cache's too)
+            assert len(cells) == sum(expected_row(d, band).values()) + legacy
             for pos in cells:
                 w.blocks[pos] = "minecraft:air"                 # mined
             for pos in w.chest():
                 w.opened.add(pos)
-            w.run(tick_lines(b), band)
-            w.run(tick_lines(b), band)                           # a second pass counts nothing again
-            cache = 1 if w.chest() else 0
-            assert w.takes == n_ore + cache, (band, w.takes, n_ore, cache)
-            # the slot's reset at ANOTHER band puts that band's room back, and arms it
+            w.run(tick, band)
+            w.run(tick, band)                                    # a second pass pays nothing again
+            assert w.credits == ([cache_value(band)] if w.chest() else []), (band, w.credits, cache_value(band))
+            # the slot's reset at ANOTHER band puts that band's room back and arms the cache again
             for other in (2, 5):
                 w.run(reset_lines(b), other)
-                again = w.ore_cells(pick)
-                assert dict(count_by_resource(again)) == dict(expected_row(d, other)), (band, other)
+                assert dict(count_by_resource(w.ore_cells(pick))) == dict(expected_row(d, other)), (band, other)
                 w.opened.clear()
-                before = w.takes
-                w.run(tick_lines(b), other)
-                assert w.takes == before                         # nothing is gone, nothing is counted
+                w.credits.clear()
+                w.run(tick, other)
+                assert w.credits == []                           # nothing opened, nothing paid
+                for pos in w.chest():
+                    w.opened.add(pos)
+                w.run(tick, other)
+                assert w.credits == ([cache_value(other)] if w.chest() else [])
+
+
+def test_every_block_the_piles_can_hold_has_a_greed_row_and_a_full_take_stays_under_the_cap():
+    rate = GREED["rate"]
+    cap_cp = (rate["cap"] - rate["base"]) * rate["per_step_cp"]
+    for res, e in DATA["resources"].items():
+        for blk in e["blocks"].values():
+            row = GREED["blocks"][blk]
+            assert row["cp"] > 0 and row["drops"] == {e["item"]: sum(e["drop"]) / 2}, blk
+    for theme in DATA["themes"]:
+        for band in BANDS:
+            assert X.greed_cp(theme, band) < cap_cp, (theme, band)
+        assert X.greed_cp(theme, 6) > X.greed_cp(theme, 3) > X.greed_cp(theme, 1)
+
+
+def test_a_table_three_times_as_rich_would_hit_the_clock_cap(monkeypatch):
+    rate = GREED["rate"]
+    cap_cp = (rate["cap"] - rate["base"]) * rate["per_step_cp"]
+
+    def triple(d):
+        for e in d["table"].values():
+            e["counts"] = {k: 3 * v for k, v in e["counts"].items()}
+    _with_data(monkeypatch, triple)
+    assert X.greed_cp("mine", 6) >= cap_cp
 
 
 def _neighbours(x, y, z):
@@ -534,16 +577,15 @@ def test_mutation_a_generator_that_places_fewer_ores_than_the_table_counts_is_ca
     assert len(found) == len(BANDS), found
 
 
-def test_mutation_a_reset_that_forgets_the_watchers_is_caught(monkeypatch):
+def test_mutation_a_reset_that_forgets_to_arm_the_cache_is_caught(monkeypatch):
     d, s = _lower_face()
     bs = _rebuild_resources_room(monkeypatch, d, s)
     b = bs[0]
-    pick = dungeon_pick(d)
-    keep = [ln for ln in reset_lines(b) if not re.match(r"^(execute if score @s dg\.band matches \d+ run )?scoreboard players set #s\d+r\d+[okm]\d* dg\.rs [01]$", ln)]
+    keep = [ln for ln in reset_lines(b) if not re.match(r"^execute if score @s dg\.band matches \d+\.\. run scoreboard players set #s\d+r\d+k dg\.rs 1$", ln)]
     assert len(keep) < len(reset_lines(b))
     w = World(b)
-    w.run(keep, 3)
-    for pos in w.ore_cells(pick):
-        w.blocks[pos] = "minecraft:air"
-    w.run(tick_lines(b), 3)
-    assert w.takes == 0          # nothing was armed: the real reset's arming is what makes the previous test count them
+    w.run(keep, 6)
+    for pos in w.chest():
+        w.opened.add(pos)
+    w.run(tick_lines(b), 6)
+    assert w.credits == []          # nothing was armed, nothing paid: the real reset's arming is what the test above counts

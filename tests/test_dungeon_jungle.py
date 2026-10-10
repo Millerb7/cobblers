@@ -283,10 +283,10 @@ def test_the_wild_rooms_carry_the_contracts_fields_within_the_band_caps():
         assert 0 <= lo <= hi
     for r in rooms_of("miniboss"):
         p = r["params"]
-        assert set(p["species_by_band"]) == set(bands) and p["level_offset"] <= 0 and p.get("catchable") is False
+        assert set(p["species_by_band"]) == set(bands) and p["level_offset"] <= 0 and p.get("catchable", True) is True   # the owner, 2026-10-10: every dungeon Pokemon catchable
     for r in rooms_of("habitat"):
         p = r["params"]
-        assert p["fight_only"] is True and set(p["level_by_band"]) == set(bands)
+        assert p["fight_only"] is False and set(p["level_by_band"]) == set(bands)
         assert r.get("gate", "open") == "open", "Zarude is optional: the slack pays for it (clock_why)"
         for k, lv in p["level_by_band"].items():
             assert lv <= max(bands[k]["caps"]), (k, lv)

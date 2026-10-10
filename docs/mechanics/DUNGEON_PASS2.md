@@ -68,3 +68,36 @@ the record contract it publishes first); then the three authors on KIT2's merge;
   the install match the tree.
 - The owner is a band-1 playtester (`cobblers.dg_playtest`, `dg.ptband` 1) with sigils.
 - Open owner calls: Giratina fight-only or catchable once; Wardenhold's beacon-room Froslass.
+
+## Pass 3 (the owner, 2026-10-10, playing pass 2 on staging; approved about 16M)
+- **The owner:** "The pathing and structure feels non-linear now and is great, I found 2 relics, but I see no diverging
+  paths ... it didn't seem like I could go a different direction ... the optional paths didn't feel immense. And the
+  parkour room should be longer, or just have more of them."
+- **Read of pass 2:** the Night Shift's fork leaves the ore cavern by two near-identical doors on one wall and rejoins
+  one room later; the side room is a single vault. Nothing signals a choice.
+- **Plan:** (1) a CROSSROADS room kind with sightlines down each way and distinct-looking exits (lit gantry vs dark
+  signed tunnel), 3-way splits, at least 2 forks per dungeon; (2) OPTIONAL WINGS of 2-4 rooms each with its own
+  challenge and payoff (mini-boss, relic, richer vault or ore pile, maybe the legendary), never counted in the required
+  ~32 minutes; (3) two parkour rooms per dungeon: a longer main one (5-6 sections) and a harder one guarding a wing;
+  (4) re-author the three dungeons. Starts after GREED (value-weighted clock) and RESOURCES2 (band-scaled ore piles,
+  mega stones, netherite) merge, so the records are not edited by two units at once.
+- **Other owner decisions this day:** Froslass stays; Zarude and Regidrago stay optional; living-room Pokemon are
+  catchable and every catch counts as a resource; every valuable mined anywhere (wall ore too) counts; points ~ 20 coal
+  or 1 diamond = 1 point, 2 points = +0.1x clock; resource rooms are band-scaled piles. Open: Giratina fight-only or
+  catchable once.
+- **Server:** the owner is testing; do not stop staging without asking.
+- **Playtest, pass 2 (the owner, 2026-10-10):** the Night Shift finished with about 15 minutes of the clock to spare,
+  flying over the maze in creative, mining a few ores, with a level-100 Urshifu against band 1 (the playtest switch).
+  The owner: "seems good". Not a timing measurement of a normal run (no maze walk, one-shot fights, little greed).
+- **Legendaries and Ultra Beasts are the prize (the owner, 2026-10-10):** "I want them and legendaries and ultra beasts
+  to be the prize of a dungeon, but not as easily found." Read as: every dungeon Pokemon catchable (living rooms, nests,
+  mini-bosses at ordinary values); the legendary/UB catchable but HIDDEN: at the end of an optional wing behind a
+  secret, present only on some runs (chance rising with band, perhaps a rumour on the board), caught under
+  DUNGEON_CATCHES.md (fail-safe on the clock; Beast Ball for UBs, EXP-064) and weighing heavily in the greed points.
+  UBs per ULTRA_BEAST_BOSSES.md (each unused UB a dungeon boss or prize). Pass 3 builds the hiding; GREED the values.
+- **The prize by stage (the owner, 2026-10-10, refining the above):** "Early dungeons can't really have legendaries, so
+  maybe it would just be a cool random Gabite or something to catch, and then late game, after gym 6, the player gets
+  Beast Balls and can go get real mons." So: before gym 6 the hidden prize is a RARE NON-LEGENDARY (a pseudo-legendary's
+  middle stage and the like, chosen per dungeon and band, catchable with ordinary balls); from gym 6 (the Beast Ball key,
+  EXP-064; the band that gym 6's cap falls in, read from data/progression.json, not assumed) the prize is the legendary
+  or Ultra Beast, caught with Beast Balls.

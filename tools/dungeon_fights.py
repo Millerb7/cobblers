@@ -652,7 +652,7 @@ def room_problems(doc, room):
         if not (isinstance(ls, list) and len(ls) == 2 and all(isinstance(v, int) and not isinstance(v, bool) for v in ls)
                 and 0 <= ls[0] <= ls[1]):
             bad.append("%s: level_spread is [lo, hi] offsets below the band's upper cap, 0 <= lo <= hi" % who)
-        elif p.get("catchable"):
+        elif p.get("catchable", True):
             for b in bands:
                 if upper_cap(b) - ls[0] > lower_cap(b):
                     bad.append("%s: a catchable nest at band %d would reach level %d, over the band's lower cap %d (the level "
@@ -900,12 +900,17 @@ def wild_spawns(doc, room, anchors):
         bn, up = b["band"], upper_cap(b)
         if kind == "miniboss":
             lv = up + int(p.get("level_offset", 0))
-            unc = not (p.get("catchable") and bn == 6)
+            # catchable at every band unless the record says not (the owner, 2026-10-10: every dungeon Pokemon is
+            # catchable). The level cap still refuses a ball at a level over the thrower's cap (data/level_cap.json)
+            unc = not p.get("catchable", True)
             a = anchors["boss"]
             out[bn] = [(p["species_by_band"][str(bn)], lv, props_of(lv, unc, True, p.get("aspects", ()), p.get("scale")), _pos4(a))]
         elif kind == "habitat":
             lv = int(p["level_by_band"][str(bn)])
-            unc = not (p.get("fight_only", True) is False and bn == 6)
+            # a legendary or Ultra Beast is a dungeon's prize (the owner, 2026-10-10): catchable from the Beast Ball stage
+            # (engine.prize.legendary_from_band) unless the record is fight_only. Below it the habitat's Pokemon stays
+            # uncatchable: pass 3 puts a rare non-legendary there instead
+            unc = bool(p.get("fight_only", False)) or bn < int(doc["engine"]["prize"]["legendary_from_band"])
             a = anchors["legendary"]
             out[bn] = [(p["species"], lv, props_of(lv, unc, True, p.get("aspects", ()), p.get("scale")), _pos4(a))]
         else:
@@ -917,7 +922,7 @@ def wild_spawns(doc, room, anchors):
                 if bn == 6:
                     lv = max(lv, doc["engine"]["stands"]["band6_levels"][0])     # a band-6 run is levels 95-100
                 sp = p["species"][j % len(p["species"])]
-                lst.append((sp, lv, props_of(lv, not p.get("catchable", False), False, p.get("aspects", ()), p.get("scale")),
+                lst.append((sp, lv, props_of(lv, not p.get("catchable", True), False, p.get("aspects", ()), p.get("scale")),
                             _pos4(spawns[j % len(spawns)])))
             out[bn] = lst
     return out

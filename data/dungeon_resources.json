@@ -4,8 +4,6 @@
   "status": "built and simulated 2026-10-10 (unit RESOURCES2); not run in Minecraft. Read by tools/dungeon_resources.py (the dress op `deposits`, the seam's mix, the cache's loot tables, the budget check); tests/test_dungeon_resources.py checks the numbers against tools/economy_sim.py",
   "design": "docs/mechanics/DUNGEON_ROOMS.md section 10. The owner (2026-10-10, pass 2 on staging): 'The resource rooms should have piles of ore, based on location in game as well: early game don't give them great stuff, but late in game a mega stone or two, diamonds, maybe a netherite.' and ore in the walls counts as a resource too.",
   "band_is": "the player's band, frozen at entry from the level cap (tools/dungeon.py `m/band`, dg.band): 1 = caps 20-25 (0-1 badges), 2 = 30-35, 3 = 40-45, 4 = 50-55, 5 = 60-62 (8 badges), 6 = 100 (the Champion fallen). The geometry of a room never changes with the band; the reset sets which cells are ore, and which ore, from dg.band",
-  "calls_greed": true,
-  "calls_greed_why": "every pile or vein block gone, and the cache opened, calls `greed/take` once, as a seam block does (DUNGEON_ROOMS.md 4 'resources'). GREED (the points system) owns what that call weighs; set this false when it counts items instead and the call would count twice",
 
   "resources": {
     "coal":     {"item": "minecraft:coal",         "drop": [1, 1], "rare": false, "blocks": {"stone": "minecraft:coal_ore",     "deepslate": "minecraft:deepslate_coal_ore"}},
@@ -18,7 +16,7 @@
     "diamond":  {"item": "minecraft:diamond",      "drop": [1, 1], "rare": true,  "blocks": {"stone": "minecraft:diamond_ore",  "deepslate": "minecraft:deepslate_diamond_ore"}}
   },
 
-  "table_why": "Counts of ORE BLOCKS in a resources room's heaps and wall veins, per band, on top of the 24-block seam (`seam` below) and the cache (`cache`). Each row: min_band/max_band, counts per band, and why. The bands follow DUNGEONS.md 9.3 (1-2 coal/iron/copper; 3-4 add gold, redstone, lapis; 5-6 add diamond) with an addition the owner asked for in the late game: emerald (band 4 on). Whether every row stays under what the game's other sources pay is tools/dungeon_resources.py `budget()`, run by tests/test_dungeon_resources.py (docs/mechanics/DUNGEON_ROOMS.md section 10 gives the numbers).",
+  "table_why": "Counts of ORE BLOCKS in a resources room's heaps and wall veins, per band, on top of the 24-block seam (`seam` below) and the cache (`cache`). Each row: min_band/max_band, counts per band, and why. The bands follow DUNGEONS.md 9.3 (1-2 coal/iron/copper; 3-4 add gold, redstone, lapis; 5-6 add diamond) with an addition of ours for the late game: emerald (band 5 on). Whether every row stays under what the game's other sources pay is tools/dungeon_resources.py `budget()`, run by tests/test_dungeon_resources.py (docs/mechanics/DUNGEON_ROOMS.md section 10 gives the numbers).",
   "table": {
     "coal":     {"min_band": 1, "max_band": 4, "counts": {"1": 8, "2": 8, "3": 6, "4": 6},
                  "why": "the early wage: coal is $4 a unit and 60 an hour in the bank's early tier (data/bank.json); a heap of it is the band-1 room's body. It thins out as the player gets past caring and is absent from bands 5-6 (nobody at the cap mines coal)"},
@@ -32,8 +30,8 @@
                  "why": "DUNGEONS.md 9.3, band 3 on; 4-5 a block at $2 (25 an hour): bulk that the late held-item recipes use (16 for a diamond-class held item)"},
     "gold":     {"min_band": 3, "max_band": 6, "counts": {"3": 2, "4": 4, "5": 6, "6": 8},
                  "why": "DUNGEONS.md 9.3, band 3 on; raw gold is $20 (10 an hour) and the one bulk ore the late game wants (a netherite ingot is 4 scrap and 4 gold): it grows with the band, the most of any common ore at band 6"},
-    "emerald":  {"min_band": 4, "max_band": 6, "counts": {"4": 1, "5": 2, "6": 3},
-                 "why": "the gem between gold and diamond for the late rooms (the owner: 'diamonds'): worth nothing to the bank, which does not buy emeralds (data/bank.json, the owner 2026-10-08), so it cannot out-earn anything"},
+    "emerald":  {"min_band": 5, "max_band": 6, "counts": {"5": 1, "6": 2},
+                 "why": "the gem between gold and diamond for the late rooms (the owner: 'diamonds'): worth nothing to the bank, which does not buy emeralds (data/bank.json, the owner 2026-10-08), so it cannot out-earn anything in dollars; GREED prices it at 400 cp (4 points) from its last bank price, the dearest ore of the table, which is why there are only 1 and 2"},
     "diamond":  {"min_band": 5, "max_band": 6, "counts": {"5": 2, "6": 3},
                  "why": "DUNGEONS.md 9.3: diamonds are band 5 and 6 only. $120 and 4 an hour in the bank's deep tier, so with the seam's 1 the room holds 3 at band 5 and 4 at band 6, under item_rate_factor times the bank's rate for the run's time (budget below)"}
   },

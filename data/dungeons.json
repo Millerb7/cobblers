@@ -44,22 +44,16 @@
       "boss_restart_why": "an engine choice: a forfeit or flee sends no battle result (DM 1.4), which would leave a stage standing with the exit gate shut. After this many passes out of battle with the stage standing and no result, the keeper starts the same stage's battle again"
     },
     "clock": {
-      "units_per_tick": 4,
+      "units_per_tick": 10,
       "period_ticks": 20,
-      "ladder": [
-        {"taken": 0, "rate": 4, "label": "x1", "colour": "white"},
-        {"taken": 5, "rate": 5, "label": "x1.25", "colour": "yellow"},
-        {"taken": 10, "rate": 6, "label": "x1.5", "colour": "yellow"},
-        {"taken": 15, "rate": 8, "label": "x2", "colour": "red"},
-        {"taken": 20, "rate": 12, "label": "x3", "colour": "red"}
-      ],
-      "ladder_basis": "D13 (the owner, 2026-10-08): x1.25 at 5, x1.5 at 10, x2.0 at 15, x3 at 20, per member, holding for the rest of the run. Quarter-ticks, so x1.25 is an integer rate (DUNGEONS.md 2.1)",
+      "greed": "data/dungeon_greed.json",
+      "greed_basis": "The owner, 2026-10-10, replacing D13's step ladder (x1.25 at 5 blocks ... x3 at 20): every valuable taken is weighed in points (20 coal = 1, a diamond = 1, a catch by kind and band) and each 2 points is +0.1x, to a cap of x3, per member, never falling (tools/dungeon_greed.py). Tenth-ticks, so 0.1x is one unit (DUNGEONS.md 2.1)",
       "warn_colour": "purple",
       "fall_penalty_s": 15,
       "slack_factor": 1.25,
       "titles_at_s": [300, 60],
       "countdown_last_s": 10,
-      "why": "DUNGEONS.md 2.1-2.2: dg.clock on the player in quarter-ticks, the keeper subtracting period_ticks x rate each pass; no rate 0 (D1); titles at 5:00 and 1:00 and each of the last 10 seconds"
+      "why": "DUNGEONS.md 2.1-2.2: dg.clock on the player in tenth-ticks, the keeper subtracting period_ticks x rate each pass; no rate 0 (D1); titles at 5:00 and 1:00 and each of the last 10 seconds"
     },
     "return_margin": {
       "sprint_x10": 56,
@@ -114,6 +108,10 @@
       "status": "BUILT 2026-10-09 (tools/dungeon_fights.py, unit DG-CLAW), NOT RUN IN GAME: every dungeon NPC battle (the boss's stages now, the stands through claw/begin and claw/bounds/<class>) takes CobbleDollars' own NPC-win payout back, by the arena's design (tools/arena_runtime.py cd/*; EXP-060, NOT_EXECUTED, is the arena's proof of the same timing assumption). claw/begin reads the balance before start_battle, a tick function re-reads it every tick until the result, the victory callback runs claw/settle, which takes the gain (at most dg.cmax, the most CobbleDollars can credit for that class) now or, if CobbleDollars' handler has not run yet, at the start of the next tick (dg.claw 1 while pending; sudden death's kill waits, E1 rule 6). The dungeon pays no purse of its own, so the whole payout goes back: $0 net",
       "assumptions": "the handler order and the inter-tick timing (EXP-060 for the arena); the exact level sum of an NPC's party (simple party, explicit level=); CobbleDollars crediting a win won inside cobblers:pocket like any other",
       "does_not_cover": "a player offline in the tick after the win keeps dg.claw 1 until they return (the tick function then takes it); a battle with no result (flee, forfeit) pays nothing and so takes nothing"
+    },
+    "prize": {
+      "legendary_from_band": 4,
+      "why": "The owner, 2026-10-10: every dungeon Pokemon is catchable; a legendary or Ultra Beast is a dungeon's PRIZE, and only from gym 6 on, with Beast Balls (EXP-064); before that the hidden prize is a rare non-legendary (pass 3 chooses it). Band 4 (caps 50, 55): the cap is the next required leader's ace (docs/mechanics/PROGRESSION_LADDER.md 4.1, gym_ace_levels 20..55), so a player holding gym 6's badge has cap 50, and the Beast Ball is first sold at cinderlee, gym7_town (data/markets.json counters, badge 7). Band 3 (caps 40, 45) would include a player who has not reached gym 6 (cap 40). tools/dungeon_fights.py reads it: a habitat below this band stays uncatchable"
     },
     "stands": {
       "status": "the generator of the trainer classes and the stand battle's start, built by tools/dungeon_fights.py; the room kinds stand and gauntlet/ambush (unit DG-FIGHTS, 2026-10-09) seat them and dispatch each win to the room's clear; no authored dungeon carries one yet, the fixture tests/fixtures/dungeon_fights_rooms.json does",
@@ -243,7 +241,7 @@
         ]}, "why": "the Hand's stand (11.1 segment 2): a T-shaped hewing chamber; the Hand and his butty stand in it, one after the other; the way on is a door 4 up a landing in the east wall, opened by the win"},
         {"id": "winding_house", "kind": "puzzle", "length": 52, "width": 31, "height": 9, "gate": "cleared", "shape": "t", "shape_params": {"bar": "south"}, "out": {"side": "east", "dz": 8}, "params": {"variant": "levers", "size": 4, "penalty_s": 20}, "why": "the winding house, a level up: set the cage winder's four levers to the lamp board (variant c: the bell signals, a sequence)"},
         {"id": "old_workings", "kind": "maze", "length": 79, "width": 45, "height": 8, "params": {"exit_dz": 8, "loops": 3}, "why": "the old workings: a maze of rubble walls and props the last shift left (loops 3: one way through is long, a few cut across)"},
-        {"id": "the_fall", "kind": "miniboss", "length": 56, "width": 46, "height": 14, "gate": "cleared", "shape": "oval", "params": {"species_by_band": {"1": "onix", "2": "onix", "3": "steelix", "4": "steelix", "5": "steelix", "6": "steelix"}, "scale": 1.6, "level_offset": -3, "catchable": false, "relic": "ns_pay_check", "relic_name": "Night Pay Check", "lore": "A brass pay check stamped NIGHT. Onix came up through the floor here; the men who saw it go down never drew their wages."}, "secrets": [{"id": "s_fall", "type": "cracked", "side": "south", "at": 0.3}], "why": "the fall: a round stope where the south drift came down, and what came up through it; a cracked face in its south wall"},
+        {"id": "the_fall", "kind": "miniboss", "length": 56, "width": 46, "height": 14, "gate": "cleared", "shape": "oval", "params": {"species_by_band": {"1": "onix", "2": "onix", "3": "steelix", "4": "steelix", "5": "steelix", "6": "steelix"}, "scale": 1.6, "level_offset": -3, "catchable": true, "relic": "ns_pay_check", "relic_name": "Night Pay Check", "lore": "A brass pay check stamped NIGHT. Onix came up through the floor here; the men who saw it go down never drew their wages."}, "secrets": [{"id": "s_fall", "type": "cracked", "side": "south", "at": 0.3}], "why": "the fall: a round stope where the south drift came down, and what came up through it; a cracked face in its south wall"},
         {"id": "lower_face", "kind": "resources", "length": 50, "width": 34, "height": 10, "align": "north", "out": {"side": "east", "dz": -16}, "secrets": [{"id": "s_face", "type": "cracked", "side": "north", "at": 0.45}], "params": {"relic": "ns_brass_tally", "relic_name": "Brass Tally No. 41", "lore": "A brass tally, number 41: the lamp man gave one out at the start of each shift and counted them back in. This one never came back."}, "why": "the Lower Face (11.1 segment 5): the seam, 24 blocks, the greed ladder, before the hardest stretch; three doors on: the pay office (south), the gantry and the dead lamps (east)"},
         {"id": "s_pay", "kind": "side", "from": {"side": "south", "at": 6}, "rooms": [
           {"id": "pay_office", "kind": "vault", "length": 36, "width": 22, "height": 8, "params": {"exit_dz": 4, "chests": 4, "clock_cost_s": 45, "loot_by_band": {
@@ -264,8 +262,8 @@
             {"id": "lamp_road", "kind": "drift", "length": "fit", "width": 9, "height": 6, "why": "the lamp road, out of the dark to the Powerhouse"}
           ]}
         ]},
-        {"id": "powerhouse", "kind": "nest", "length": 60, "width": 56, "height": 11, "shape": "ring", "shape_params": {"feature": "rock"}, "out": {"side": "east", "dz": -14}, "params": {"species": ["magnemite", "voltorb", "electabuzz", "joltik", "tynamo", "pawmi"], "count_by_band": {"1": 4, "2": 4, "3": 5, "4": 5, "5": 6, "6": 6}, "level_spread": [3, 6], "clear": "pass"}, "why": "the Powerhouse (11.1 5a, D11): the den of the mine's electric Pokemon round the old dynamo's rock; both routes rejoin here. Optional, it does not gate (clear pass): the slack pays for fighting it"},
-        {"id": "sump", "kind": "habitat", "length": 70, "width": 28, "height": 24, "align": "north", "shape": "split", "shape_params": {"side": "south"}, "in": {"side": "west", "y": 18}, "out": {"side": "west", "dz": 8}, "secrets": [{"id": "s_sump", "type": "balcony", "side": "north", "at": 0.3}], "params": {"species": "volcanion", "level_by_band": {"1": 25, "2": 35, "3": 45, "4": 55, "5": 62, "6": 100}, "fight_only": true, "ambience": ["minecraft:campfire_cosy_smoke", "minecraft:cloud", "minecraft:bubble_pop"], "relic": "ns_shift_log", "relic_name": "The Shift Log", "lore": "The shift log's last line: water in the sump, warm as a bath, and the Foreman says work on. The bell has not rung."}, "why": "the Sump (11.1 segment 7, DUNGEONS.md 8): entered 18 up on a gallery, a grand stair down into the steam, Volcanion on the terrace. Optional (the gate is open). The way on is a wet drift at the bottom, back west"},
+        {"id": "powerhouse", "kind": "nest", "length": 60, "width": 56, "height": 11, "shape": "ring", "shape_params": {"feature": "rock"}, "out": {"side": "east", "dz": -14}, "params": {"species": ["magnemite", "voltorb", "electabuzz", "joltik", "tynamo", "pawmi"], "count_by_band": {"1": 4, "2": 4, "3": 5, "4": 5, "5": 6, "6": 6}, "level_spread": [6, 9], "clear": "pass"}, "why": "the Powerhouse (11.1 5a, D11): the den of the mine's electric Pokemon round the old dynamo's rock; both routes rejoin here. Optional, it does not gate (clear pass): the slack pays for fighting it"},
+        {"id": "sump", "kind": "habitat", "length": 70, "width": 28, "height": 24, "align": "north", "shape": "split", "shape_params": {"side": "south"}, "in": {"side": "west", "y": 18}, "out": {"side": "west", "dz": 8}, "secrets": [{"id": "s_sump", "type": "balcony", "side": "north", "at": 0.3}], "params": {"species": "volcanion", "level_by_band": {"1": 25, "2": 35, "3": 45, "4": 55, "5": 62, "6": 100}, "fight_only": false, "ambience": ["minecraft:campfire_cosy_smoke", "minecraft:cloud", "minecraft:bubble_pop"], "relic": "ns_shift_log", "relic_name": "The Shift Log", "lore": "The shift log's last line: water in the sump, warm as a bath, and the Foreman says work on. The bell has not rung."}, "why": "the Sump (11.1 segment 7, DUNGEONS.md 8): entered 18 up on a gallery, a grand stair down into the steam, Volcanion on the terrace. Optional (the gate is open). The way on is a wet drift at the bottom, back west"},
         {"id": "wet_drift", "kind": "drift", "length": 40, "width": 13, "height": 7, "dir": "west", "align": "north", "why": "the Wet Drift: the route doubles back, west, under the Powerhouse"},
         {"id": "cable_way", "kind": "drift", "length": 36, "width": 11, "height": 7, "dir": "west", "align": "north", "out": {"side": "south", "at": 3}, "why": "the cable way, still west, then a turn south"},
         {"id": "lamp_cabin", "kind": "safe_room", "length": 56, "width": 34, "height": 8, "shape": "l", "shape_params": {"corner": "se"}, "in": {"side": "north", "at": 4}, "out": {"side": "east", "dz": 2}, "shortcuts": [{"id": "c_cabin", "to": "wet_drift"}], "params": {"healer": true}, "why": "the lamp cabin, under the Powerhouse: the shift's own rest, a healer at the counter, two thirds in; its shortcut opens back into the Wet Drift. From here the Collapse, the Haulage, the cave-in and the Stope run with no heal"},
@@ -327,7 +325,7 @@
         "items dropped in a slot: nothing collects them; a reset does not clear them",
         "an NPC or Pokemon that is not ours standing in a slot: the keeper binds any untagged cobblemon:npc in a slot's box as ours (the exempt tag), but a wild Pokemon there is untouched; the pocket's void biome spawns nothing (data/portals.json generator.biome_why, NOT VERIFIED for Cobblemon)",
         "a boss stage's NPC payout is clawed back (engine.clawback, built 2026-10-09) but the clawback is unproven in game: until EXP-060's timing assumption holds, the contract 'dungeon wins pay $0 net' is written, not observed",
-        "the stands, the seam, the parkour's catch bands, the lake and the den (step 6); the seam's call into the greed ladder is cobblers:dungeons/greed/take",
+        "the stands, the seam, the parkour's catch bands, the lake and the den (step 6); every credit to the greed rate is cobblers:dungeons/greed/add (tools/dungeon_greed.py: mined stats, chests, catches)",
         "a shell from an earlier, longer spine (engine.slots.clear_strip)",
         "a player in co-op: members_max is 1, and the second account (XD8) is needed for its proofs",
         "Cobblemon's battle state at a disconnect (LO1, owner half): a battle open at a logout is assumed to end with no result"
@@ -375,7 +373,7 @@
          "params": {"exit_dz": 8, "loops": 6, "seed": "c"},
          "why": "hedges of jungle, mangrove and azalea leaves on a spanning tree with loops, so a wrong turn is not always a dead end; it leaves toward the south of the strip"},
         {"id": "troop", "kind": "nest", "length": 52, "width": 30, "height": 14, "gate": "cleared", "shape": "cavern", "out": {"side": "north", "at": 40, "y": 2}, "name": "The troop's clearing",
-         "params": {"species": ["aipom", "pansage", "passimian", "oranguru"], "count_by_band": {"1": 2, "2": 3, "3": 3, "4": 4, "5": 4, "6": 4}, "level_spread": [2, 5], "spawns": 6},
+         "params": {"species": ["aipom", "pansage", "passimian", "oranguru"], "count_by_band": {"1": 2, "2": 3, "3": 3, "4": 4, "5": 4, "6": 4}, "level_spread": [5, 8], "spawns": 6},
          "why": "a monkey troop living on the jungle floor, a ragged cavern of moss banks; the way on is a ledge two up in the north wall at the far end, open when the troop is gone"},
         {"id": "root_stair", "kind": "drift", "length": 36, "width": 15, "height": 11, "shape": "cavern", "in": {"side": "south", "at": 3}, "out": {"side": "east", "y": 4}, "name": "The root stair",
          "why": "the route turns north out of the clearing and climbs: in by the south wall, out four up a landing into the canopy"},
@@ -441,14 +439,14 @@
          "params": {"healer": true},
          "why": "out of the dark into the shrine: the keeper heals the party, the one rest; after it the hard stretch on one heal (Zarude, the glyph door, the Tangle, the Gardener)"},
         {"id": "sanctum", "kind": "habitat", "length": 60, "width": 50, "height": 22, "shape": "split", "gate": "open", "name": "The sanctum",
-         "params": {"species": "zarude", "level_by_band": {"1": 25, "2": 35, "3": 45, "4": 55, "5": 62, "6": 100}, "fight_only": true, "ambience": ["minecraft:spore_blossom_air", "minecraft:falling_spore_blossom"], "relic": "jg_seed_idol", "relic_name": "Green seed idol", "lore": "A seed carved from green stone, warm to hold. The temple was raised to keep it, and Zarude was left to keep the temple."},
+         "params": {"species": "zarude", "level_by_band": {"1": 25, "2": 35, "3": 45, "4": 55, "5": 62, "6": 100}, "fight_only": false, "ambience": ["minecraft:spore_blossom_air", "minecraft:falling_spore_blossom"], "relic": "jg_seed_idol", "relic_name": "Green seed idol", "lore": "A seed carved from green stone, warm to hold. The temple was raised to keep it, and Zarude was left to keep the temple."},
          "secrets": [{"id": "perch", "type": "balcony", "side": "south", "at": 0.3}],
          "why": "the canopy hall, split in two levels, and the temple's keeper Zarude, the mythical of the deep jungle: OPEN, a fight the player may take or pass (the clock's slack pays for it). From the terrace a balcony looks over a gap to an alcove only it sees"},
         {"id": "glyph_door", "kind": "puzzle", "length": 44, "width": 30, "height": 12, "gate": "cleared", "name": "The glyph door",
          "params": {"variant": "levers", "size": 5, "controls": 5, "penalty_s": 20},
          "why": "five levers set to the glyph over the door; a wrong attempt costs the clock"},
         {"id": "tangle", "kind": "miniboss", "length": 50, "width": 40, "height": 16, "gate": "cleared", "shape": "oval", "name": "The Tangle",
-         "params": {"species_by_band": {"1": "tangela", "2": "tangela", "3": "tangrowth", "4": "tangrowth", "5": "tangrowth", "6": "tangrowth"}, "scale": 1.8, "level_offset": 0, "catchable": false},
+         "params": {"species_by_band": {"1": "tangela", "2": "tangela", "3": "tangrowth", "4": "tangrowth", "5": "tangrowth", "6": "tangrowth"}, "scale": 1.8, "level_offset": 0, "catchable": true},
          "why": "a vine mass grown huge on the temple's water: Tangela, then Tangrowth from band 3. Fight only (D8)"},
         {"id": "canopy_close", "kind": "setpiece", "length": 60, "width": 33, "height": 12, "name": "Where the canopy closes",
          "params": {"piece": "lights_out", "pit": 0, "no_deploy": false},
@@ -538,7 +536,7 @@
          "why": "PUZZLE: the sluice works along the north wall, four levers to set to the pattern carved over the gate before the water lets you through"},
         {"id": "aqueduct", "kind": "parkour", "length": 86, "width": 29, "height": 12, "align": "north", "params": {"sections": 3, "tiers": [2, 3, 3]},
          "why": "PARKOUR: the broken aqueduct along the north wall, its arches fallen into the undercroft; ledges and the stubs of piers to jump, three sections with a hard and a safe line in the middle one (86 long: a fork needs three sections, 30 each less 10; 60 held two and no split, DG2-INTEGRATE)"},
-        {"id": "cistern", "kind": "nest", "length": 36, "width": 29, "height": 11, "align": "north", "gate": "cleared", "shape": "ring", "shape_params": {"feature": "pool", "radius": 0.25}, "out": {"side": "south", "at": 3}, "params": {"species": ["frillish", "chinchou", "corphish", "shellos", "binacle"], "count_by_band": {"1": 2, "2": 2, "3": 3, "4": 3, "5": 4, "6": 4}, "level_spread": [2, 5]},
+        {"id": "cistern", "kind": "nest", "length": 36, "width": 29, "height": 11, "align": "north", "gate": "cleared", "shape": "ring", "shape_params": {"feature": "pool", "radius": 0.25}, "out": {"side": "south", "at": 3}, "params": {"species": ["frillish", "chinchou", "corphish", "shellos", "binacle"], "count_by_band": {"1": 2, "2": 2, "3": 3, "4": 3, "5": 4, "6": 4}, "level_spread": [5, 8]},
          "why": "NEST: the cistern head at the aqueduct's end, a colony living round its pool; the way on is a breach in the south wall beside the door you came in, shut until the colony is dealt with"},
         {"id": "undercroft", "kind": "resources", "length": 105, "width": 31, "height": 11, "shape": "split", "shape_params": {"side": "south", "level": 3, "depth": 2, "frac": 0.3}, "in": {"side": "north", "at": 99}, "out": {"side": "west", "dz": -7}, "shortcuts": [{"id": "sluice_gate", "to": "sluice", "at": 4}],
          "why": "RESOURCES: the undercroft, walked back WEST under the aqueduct along a broken terrace, ore showing in the foundations (every block taken speeds the clock); at its far end a sluice gate opens back into the sluice works, from this side only (the shortcut toward the entry)"},
@@ -567,10 +565,10 @@
         {"id": "chapel", "kind": "safe_room", "length": 40, "width": 51, "height": 10, "shape": "oval", "params": {"healer": true},
          "why": "SAFE ROOM: a dry chapel two thirds in, where both ways meet and an old keeper of the ruin tends whoever reaches it"},
         {"id": "s_sealed", "kind": "side", "from": {"side": "east", "dz": 33}, "rooms": [
-            {"id": "sealed_chamber", "kind": "habitat", "length": 48, "width": 29, "height": 20, "gate": "open", "shape": "ring", "align": "south", "params": {"species": "regidrago", "level_by_band": {"1": 20, "2": 30, "3": 40, "4": 50, "5": 60, "6": 100}, "fight_only": true, "ambience": ["minecraft:underwater", "minecraft:dripping_water", "minecraft:bubble_column_up"]},
+            {"id": "sealed_chamber", "kind": "habitat", "length": 48, "width": 29, "height": 20, "gate": "open", "shape": "ring", "align": "south", "params": {"species": "regidrago", "level_by_band": {"1": 20, "2": 30, "3": 40, "4": 50, "5": 60, "6": 100}, "fight_only": false, "ambience": ["minecraft:underwater", "minecraft:dripping_water", "minecraft:bubble_column_up"]},
              "why": "HABITAT (optional): the sealed chamber behind the chapel, flooded and tall, where the dragon the builders sealed away is still kept; a dead end, paid from the slack"}],
          "why": "the SIDE room: the sealed chamber, entered from the chapel's east wall beside the way on"},
-        {"id": "guardian", "kind": "miniboss", "length": 56, "width": 29, "height": 16, "gate": "cleared", "shape": "oval", "align": "north", "params": {"species_by_band": {"1": "golett", "2": "golett", "3": "golurk", "4": "golurk", "5": "golurk", "6": "golurk"}, "scale": 1.8, "level_offset": 0, "catchable": false, "relic": "fr_keepers_bell", "relic_name": "Keepers' bell", "lore": "A small bronze bell, green with age. The keepers rang it to wake the clay guardian, and again to put it to sleep."}, "secrets": [{"id": "keepers_ledge", "type": "balcony", "side": "north", "at": 0.15}],
+        {"id": "guardian", "kind": "miniboss", "length": 56, "width": 29, "height": 16, "gate": "cleared", "shape": "oval", "align": "north", "params": {"species_by_band": {"1": "golett", "2": "golett", "3": "golurk", "4": "golurk", "5": "golurk", "6": "golurk"}, "scale": 1.8, "level_offset": 0, "catchable": true, "relic": "fr_keepers_bell", "relic_name": "Keepers' bell", "lore": "A small bronze bell, green with age. The keepers rang it to wake the clay guardian, and again to put it to sleep."}, "secrets": [{"id": "keepers_ledge", "type": "balcony", "side": "north", "at": 0.15}],
          "why": "MINI-BOSS: the guardian of the inner halls, a clay automaton the builders left to keep the way; a keepers' ledge high on its north wall"},
         {"id": "drowned_hall", "kind": "setpiece", "length": 64, "width": 31, "height": 14, "params": {"piece": "flood", "pit": 10},
          "why": "SET PIECE (flood): the drowned hall before the flood chamber; the water comes in while you cross its basin and climb out"},

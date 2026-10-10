@@ -14,7 +14,8 @@ with `execute if block` / `execute if data block` by the keeper's per-room `tick
   kind `vault`    params.chests 1..8 (default 4), params.clock_cost_s per chest opened (default 20),
                   params.loot_by_band {band: loot-table id | [{"item", "count" | [lo, hi], "chance"?}]} (absent: the
                   data file's placeholder default_loot_by_band),
-                  params.ladder (default false: also count each chest as a taken greed block, engine.clock.ladder)
+                  each chest opened also weighs its loot on the clock (expected cp for the band, data/dungeon_greed.json;
+                  params.ladder is refused: the greed table replaced it)
 
 THE THREE VARIANTS (each solves by `clear`, which opens the gate like any room's; each wrong attempt costs
 `penalty_s` of the member's clock, shows it, and visibly resets the controls):
@@ -36,7 +37,7 @@ R.rng(dungeon, room): the four slots of a dungeon are one dungeon.
 THE VAULT (greed). Chests stand against the south wall, each on a plinth; each is placed with a LOOT TABLE for the
 entrant's band (reset, as the seam is: `dg.band`). Opening a chest unpacks its loot table, which removes the block
 entity's `LootTable` tag; the keeper sees `unless data block x y z LootTable` once and charges the clock
-(`scoreboard players remove @s dg.clock`), optionally calls greed/take. Item-stack loot becomes a generated loot table
+(`scoreboard players remove @s dg.clock`) and weighs the loot (greed/add, tools/dungeon_greed.py). Item-stack loot becomes a generated loot table
 (`pack_files(doc)`, one per room and band, tools/dungeon.py build() writes them); a string is any existing table id.
 A chest is always re-placed from air (a setblock onto an identical chest state fails and never loads its NBT).
 
@@ -473,7 +474,8 @@ def build_vault(doc, d, slot, room, theme):
     cost_s = int(c.p.get("clock_cost_s", load()["defaults"]["vault_clock_cost_s"]))
     if cost_s < 1:
         c.fail("clock_cost_s must be at least 1")
-    ladder = bool(c.p.get("ladder", load()["defaults"]["vault_ladder"]))
+    if "ladder" in c.p:
+        c.fail("params.ladder is gone: every chest is weighed by its loot (data/dungeon_greed.json, tools/dungeon_greed.py)")
     r = room
     fy, iz1 = c.fy, r["iz1"]
     xs = chest_xs(r, n)
@@ -501,10 +503,21 @@ def build_vault(doc, d, slot, room, theme):
     f = {}
     cost_u = cost_s * U(doc)
     all_open = " ".join("if score %s dg.rs matches 2" % h for h in hc)
+    # GREED (unit GREED, 2026-10-10): each chest opened also weighs its loot, the chest's expected value for the
+    # entrant's band, once (the open state goes 1 -> 2 and only the reset puts it back)
+    import dungeon_greed as DG
+    gt = DG.load()
+    band_cp = {}
+    for b in bands:
+        _k, val = loot_for(c.p, bands, b)
+        v = DG.chest_cp(gt, val) if val is not None else None
+        if v is None:
+            c.fail("the loot at band %d is not priced by data/dungeon_greed.json (add its items or its table)" % b)
+        band_cp[b] = v
     for j in range(n):
         f["open%d" % j] = ([sb_set(hc[j], 2), "scoreboard players remove @s dg.clock %d" % cost_u,
                             *say("chest_taken", "gold", s=cost_s), sound("minecraft:entity.item.pickup", 1, 0.8)]
-                           + (["function %s" % R.F("greed/take")] if ladder else [])
+                           + DG.chest_lines(doc, band_cp)
                            + ["execute %s run function %s" % (all_open, c.fn("clear"))])
     tick = [LOADED] + ["execute if score %s dg.rs matches 1 unless data block %s LootTable run function %s"
                        % (hc[j], at(chest[j]), c.fn("open%d" % j)) for j in range(n)]
@@ -517,7 +530,7 @@ def build_vault(doc, d, slot, room, theme):
     reset += [sb_set(h, 1) for h in hc]
     return {"blocks": ops, "anchors": {"chests": stand},
             "functions": dict(f, enter=enter, tick=tick, reset=reset),
-            "meta": {"vault": True, "chest_cells": [list(p) for p in chest], "n": n, "cost_s": cost_s, "ladder": ladder,
+            "meta": {"vault": True, "chest_cells": [list(p) for p in chest], "n": n, "cost_s": cost_s, "greed_cp": band_cp,
                      "expect": [(p, B["chest"]) for p in chest], "attached": []}}
 
 

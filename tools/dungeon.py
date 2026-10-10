@@ -86,10 +86,9 @@ OBJ = {
     "ptband": "dg.ptband",  # STAGING PLAYTEST: the band a player tagged PLAYTEST_TAG is given (the owner, 2026-10-09)
     "rb": "dg.rb",        # the recipe sync's band (never the run's)
     "cap": "dg.cap",      # the recipe sync's cap read
-    "clock": "dg.clock",  # quarter-ticks
+    "clock": "dg.clock",  # tenth-ticks (engine.clock.units_per_tick 10)
     "clk0": "dg.clk0",    # the band's full clock, the bar's max
-    "rate": "dg.rate",    # 4, 5, 6, 8, 12
-    "greed": "dg.greed",  # this member's seam count
+    "rate": "dg.rate",    # 10 (x1) .. 30 (x3), from the points taken (tools/dungeon_greed.py; its own objectives)
     "seen": "dg.seen",    # #up when last seen alive in the run
     "tail": "dg.tail",    # E1: ticks of tail left (>= 1 counting)
     "wait": "dg.wait",    # arrival countdown
@@ -174,10 +173,6 @@ def lockout_of(doc, d):
     """A dungeon's re-entry lockout: the engine's (D17, one hour), or a TEST dungeon's own, which a run longer than the
     hour needs (the jungle and the ruin, 2026-10-09: a lockout under the clock never binds, V12)."""
     return d.get("lockout_ticks", doc["engine"]["lockout_ticks"])
-
-
-def ladder(doc):
-    return doc["engine"]["clock"]["ladder"]
 
 
 def bands(doc):
@@ -404,12 +399,9 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
             if g["width"] + 2 > s["strip_width_max"]:
                 bad.append("%s: segment %d is wider than the strip" % (label, g["i"]))
     bad += DR.problems(doc)
-    # the clock
-    lad = ladder(doc)
-    if [r["taken"] for r in lad] != sorted(r["taken"] for r in lad) or lad[0]["taken"] != 0:
-        bad.append("clock.ladder: thresholds must rise from 0")
-    if [r["rate"] for r in lad] != sorted(set(r["rate"] for r in lad)) or lad[0]["rate"] != e["clock"]["units_per_tick"]:
-        bad.append("clock.ladder: rates must rise strictly from units_per_tick (x1); there is no rate 0 (D1)")
+    # the clock's greed: the value table and the rate (tools/dungeon_greed.py; replaced D13's ladder, 2026-10-10)
+    import dungeon_greed as DG    # lazy, as dungeon_fights is
+    bad += DG.problems(doc)
     caps = []
     for i, b in enumerate(bands(doc), 1):
         if b["band"] != i:
@@ -664,7 +656,8 @@ def board_text(doc, d, slot):
     for g in pt["segs"][1:]:
         label = "cracked lamps" if g.get("no_deploy") else names.get(g["kind"], g["kind"])
         legs.append("%s %d" % (label, int(g["xa"] - bx)))
-    lad = " ".join("%d:%s" % (r["taken"], r["label"]) for r in ladder(doc)[1:])
+    import dungeon_greed as DG    # lazy (unit GREED): the board states the rule from the table
+    grt = DG.load()["rate"]
     clocks = " ".join("%d:%d:%02d" % (b["band"], clock_s(d, b) // 60, clock_s(d, b) % 60) for b in bands(doc))
     if DR.has_rooms(d):
         legs = []
@@ -677,7 +670,8 @@ def board_text(doc, d, slot):
     lines = [d["name"].upper() + (" (placeholder spine)" if d.get("spine", {}).get("placeholder") else ""),
              "Legs (blocks from here): " + ", ".join(legs),
              "Clock by band: " + clocks,
-             "Seam blocks taken -> time runs: " + lad,
+             "Ore mined, chests opened, Pokemon caught: every %d points taken is +0.1x on the clock, to x%d."
+             % (grt["per_step_cp"] // 100, grt["cap"] // grt["base"]),
              "Falls cost %d seconds." % doc["engine"]["clock"]["fall_penalty_s"],
              "No Pokemon past the cracked lamps.",
              ("Optional legs: " + ", ".join(optional) + ".") if optional else "Optional legs: none in this spine.",
@@ -766,7 +760,9 @@ def functions(doc, blackout=None):
     dim = e["pocket"]["dimension"]
     k = e["keeper"]
     P = k["period_ticks"]
-    lad = ladder(doc)
+    import dungeon_greed as DG    # lazy (unit GREED): the value table, the mined objectives, the rate
+    gtab = DG.load()
+    GO = DG.OBJ_G
     sl = slots(doc)
     ds = dungeons(doc)
     hold = k["entry_hold_ticks"]
@@ -783,6 +779,7 @@ def functions(doc, blackout=None):
     # ---- load ------------------------------------------------------------------------------------------------
     objs = ["scoreboard objectives add %s dummy" % v for kk, v in O.items() if kk != "dc"]
     objs += ["scoreboard objectives add %s deathCount" % O["dc"]]
+    objs += DG.objective_lines(doc, gtab)
     objs += ["scoreboard objectives add %s dummy" % lk_obj(d) for d in ds]
     objs += ["scoreboard objectives add %s dummy" % lv_obj(d) for d in ds if d.get("variants")]
     if any(DR.has_rooms(d) for d in ds):
@@ -795,7 +792,7 @@ def functions(doc, blackout=None):
         "scoreboard players set #56 %s %d" % (O["t"], e["return_margin"]["sprint_x10"]),
         "scoreboard players set #60 %s 60" % O["t"],
         "scoreboard players set #80 %s %d" % (O["t"], e["clock"]["units_per_tick"] * 20),
-        "scoreboard players set #1200 %s 1200" % O["t"],
+        "scoreboard players set #1200 %s 1200" % O["t"]] + DG.load_lines(doc, gtab) + [
         "execute unless score #up %s matches -2147483648.. run scoreboard players set #up %s 0" % (O["up"], O["up"]),
         "execute unless score #next %s matches -2147483648.. run scoreboard players set #next %s 0" % (O["id"], O["id"]),
         "execute unless score #runs %s matches -2147483648.. run scoreboard players set #runs %s 0" % (O["run"], O["run"])] + [
@@ -804,10 +801,10 @@ def functions(doc, blackout=None):
         "schedule function %s %dt replace" % (F("keeper"), P),
         "schedule function %s %dt replace" % (F("rips/emit"), k["rip_particle_period_ticks"]),
         "schedule function %s %dt replace" % (F("recipes/sync"), k["recipe_sync_period_ticks"]),
-        "# hand-run hooks (EXP-084, staging): %s {n:<taken>} sets a member's seam count and its rate; %s {s:<seconds>}"
+        "# hand-run hooks (EXP-084, staging): %s {p:<cp>} sets a member's points taken and its rate; %s {s:<seconds>}"
         % (F("greed/test_set"), F("test/clock")),
         "# sets a member's clock; %s and %s run the arithmetic on any entity (a marker)." % (F("m/gap"), F("m/digits")),
-        "# THE SEAM'S INTERFACE (step 6, not built): %s, as a member, per seam block taken." % F("greed/take")]
+        "# GREED (tools/dungeon_greed.py): %s credits #gv cp, as a member; mined blocks, chests and catches call it." % F("greed/add")]
 
     # ---- the keeper ------------------------------------------------------------------------------------------
     keeper = [HEAD,
@@ -918,6 +915,7 @@ def functions(doc, blackout=None):
     U = e["clock"]["units_per_tick"] * 20       # units per second at x1
     clock = [HEAD, "# As a member whose clock runs (DUNGEONS.md 2.1-2.3): the charge, the titles, zero, the deadline, the",
              "# return margin, the bar and the boss",
+             "function %s" % F("greed/mined"),
              "scoreboard players operation #b %s = @s %s" % (O["t"], O["clock"]),
              "function %s" % F("m/charge")]
     for secs in e["clock"]["titles_at_s"]:
@@ -1036,30 +1034,8 @@ def functions(doc, blackout=None):
         "scoreboard players operation @s %s %%= #10 %s" % (O["l1"], O["t"]),
         "return 1"]
 
-    # ---- the greed ladder (D13): the seam's interface, and a test hook ----------------------------------------
-    rate = [HEAD, "# The rate from this member's seam count, holding once reached (D13). Runs on any entity (EXP-084).",
-            "scoreboard players operation #old %s = @s %s" % (O["t"], O["rate"]),
-            "scoreboard players set @s %s %d" % (O["rate"], lad[0]["rate"])]
-    rate += ["execute if score @s %s matches %d.. run scoreboard players set @s %s %d" % (O["greed"], r["taken"], O["rate"], r["rate"])
-             for r in lad[1:]]
-    rate += ["execute if score @s %s matches %d unless score #old %s matches %d run %s"
-             % (O["rate"], r["rate"], O["t"], r["rate"], actionbar(ds[0]["messages"]["tightens"] + r["label"] + ".", "red"))
-             for r in lad[1:]]
-    rate += ["execute unless score @s %s = #old %s if score @s %s matches %d.. run playsound "
-             "minecraft:block.respawn_anchor.deplete master @s ~ ~ ~ 1 1" % (O["rate"], O["t"], O["rate"], lad[1]["rate"]),
-             "return 1"]
-    out["greed/rate"] = rate
-    out["greed/take"] = [
-        HEAD, "# THE SEAM'S CALL (step 6): as a member whose clock runs, one seam block taken beyond nothing. The seam",
-        "# owns its free tier; this counts every block it reports and sets the rate from the ladder.",
-        "execute unless score @s %s matches 3 run return 0" % O["st"],
-        "scoreboard players add @s %s 1" % O["greed"],
-        "function %s" % F("greed/rate"),
-        "return 1"]
-    out["greed/test_set"] = [
-        HEAD, "# TEST HOOK (EXP-084): set this entity's seam count to $(n) and its rate from the ladder",
-        "$scoreboard players set @s %s $(n)" % O["greed"],
-        "function %s" % F("greed/rate")]
+    # ---- greed (tools/dungeon_greed.py, the owner 2026-10-10): points taken -> the rate, and its test hook ----------
+    out.update(DG.functions(doc, gtab))
     out["test/clock"] = [
         HEAD, "# TEST HOOK (EXP-084): set this member's clock to $(s) seconds of clock",
         "$scoreboard players set @s %s $(s)" % O["clock"],
@@ -1279,8 +1255,8 @@ def functions(doc, blackout=None):
                "scoreboard players set @s %s 1" % O["st"],
                "scoreboard players set @s %s %d" % (O["wait"], k["arrive_delay_ticks"] + P),
                "scoreboard players operation @s %s = #up %s" % (O["seen"], O["up"]),
-               "scoreboard players set @s %s 0" % O["greed"],
-               "scoreboard players set @s %s %d" % (O["rate"], lad[0]["rate"]),
+               "scoreboard players set @s %s 0" % GO["gp"],
+               "scoreboard players set @s %s %d" % (O["rate"], gtab["rate"]["base"]),
                "scoreboard players set @s %s 0" % O["clock"],
                "scoreboard players set @s %s 0" % O["stage"],
                "scoreboard players set @s %s 0" % O["bw"],
@@ -1379,6 +1355,7 @@ def functions(doc, blackout=None):
         start += ["scoreboard players operation @s %s = @s %s" % (O["clk0"], O["clock"]),
                   "scoreboard players operation @s %s = #up %s" % (lk_obj(d), O["up"]),
                   "scoreboard players set @s %s 0" % O["paid"],
+                  "function %s" % F("greed/zero"),
                   "bossbar add %s \"\"" % BAR,
                   "bossbar set %s players @s" % BAR,
                   "execute store result bossbar %s max run scoreboard players get @s %s" % (BAR, O["clk0"]),
@@ -1392,19 +1369,24 @@ def functions(doc, blackout=None):
 
         def sc(obj):
             return {"score": {"name": "@s", "objective": obj}}
-        for r in lad:
+        base = gtab["rate"]["base"]
+        for fast in (False, True):
             for taken in (False, True):
                 parts = ["", {"text": "Rift "}, sc(O["mm"]), {"text": ":"}, sc(O["s10"]), sc(O["s1"]),
-                         {"text": " \u00b7 %s" % r["label"]}]
-                if r["rate"] != lad[0]["rate"]:
-                    parts += [{"text": " \u00b7 ~"}, sc(O["lm"]), {"text": ":"}, sc(O["l10"]), sc(O["l1"]), {"text": " left"}]
+                         {"text": " · x"}, sc(GO["rx"]), {"text": "."}, sc(GO["ry"])]
+                if fast:
+                    parts += [{"text": " · ~"}, sc(O["lm"]), {"text": ":"}, sc(O["l10"]), sc(O["l1"]), {"text": " left"}]
                 if taken:
-                    parts += [{"text": " \u00b7 taken "}, sc(O["greed"])]
-                bar.append("execute if score @s %s matches %d if score @s %s matches %s run bossbar set %s name %s"
-                           % (O["rate"], r["rate"], O["greed"], "1.." if taken else "..0", BAR,
-                              json.dumps(parts, ensure_ascii=False)))
+                    parts += [{"text": " · taken "}, sc(GO["gw"]), {"text": "."}, sc(GO["gt"])]
+                bar.append("execute if score @s %s matches %s if score @s %s matches %s run bossbar set %s name %s"
+                           % (O["rate"], ("%d.." % (base + 1)) if fast else ("..%d" % base), GO["gp"], "1.." if taken else "..0",
+                              BAR, json.dumps(parts, ensure_ascii=False)))
         bar += ["execute store result bossbar %s value run scoreboard players get @s %s" % (BAR, O["clock"])]
-        bar += ["execute if score @s %s matches %d run bossbar set %s color %s" % (O["rate"], r["rate"], BAR, r["colour"]) for r in lad]
+        cols = gtab["rate"]["colours"]
+        for ci, (lo, col) in enumerate(cols):
+            hi = cols[ci + 1][0] - 1 if ci + 1 < len(cols) else None
+            bar.append("execute if score @s %s matches %d..%s run bossbar set %s color %s"
+                       % (O["rate"], lo, "" if hi is None else hi, BAR, col))
         bar += ["execute if entity @s[tag=%s] run bossbar set %s color %s" % (T["warn"], BAR, e["clock"]["warn_colour"])]
         out["slot/s%d/bar" % g] = bar
 
@@ -1753,6 +1735,8 @@ def build(doc, **kw):
             raise SystemExit("%s: %d command(s) the server would refuse; nothing written" % (rel, len(refused)))
         files[rel] = "\n".join(lines) + "\n"
     files[CALLBACK] = callback(doc)
+    import dungeon_greed as DG      # lazy (unit GREED): a catch in a live run weighs on the clock
+    files[DG.CALLBACK_PATH] = DG.callback(doc)
     # a room's s<g>/clear that nothing calls (a room whose door is open from the start: a drift, the exit) is a function
     # no step or pack runs, which prepare refuses; the kit emits one per room so every kind can call it, and the pack
     # keeps only the ones that are called (2026-10-09)

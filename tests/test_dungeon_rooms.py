@@ -695,8 +695,8 @@ def test_a_fall_onto_the_catch_floor_charges_the_clock_and_puts_the_member_on_th
     clock = w.get(p.name, "dg.clock")
     p.pos = [ck[1][0] + 6.5, r["y_lo"], ck[1][2] + 0.5]               # and fall past the platforms onto the catch floor
     w.passes(1)
-    penalty = doc["engine"]["clock"]["fall_penalty_s"] * 80
-    assert w.get(p.name, "dg.clock") == clock - 80 - penalty, "one pass of the clock and the fall's penalty"
+    penalty = doc["engine"]["clock"]["fall_penalty_s"] * doc["engine"]["clock"]["units_per_tick"] * 20
+    assert w.get(p.name, "dg.clock") == clock - doc["engine"]["clock"]["units_per_tick"] * 20 - penalty, "one pass of the clock and the fall's penalty"
     assert [int(v) for v in p.pos[:3]] == [ck[1][0], ck[1][1], ck[1][2]], "back on the ledge last stood on"
     assert any(e[0] == "minecraft:resistance" for e in p.effects), "no fall can hurt (F1)"
 
@@ -728,7 +728,9 @@ def test_a_crossing_collapses_the_span_behind_the_member_and_a_ledge_restores_it
     assert any(c.startswith("fill") and c.endswith(span_block) for _d, c in w.block_writes[before:]), "the span is written whole again"
 
 
-def test_the_seam_credits_one_block_taken_to_the_greed_ladder_once(rooms_pack):
+def test_the_seam_is_weighed_by_what_the_member_mined_and_never_by_its_own_holes(rooms_pack):
+    # unit GREED (2026-10-10): the seam no longer credits greed from its cells going to air; the mined stat does, once
+    import dungeon_greed as DGR
     doc, w = rooms_world(rooms_pack)
     p, s = enter_run(doc, w)
     r = room_of(doc, "seam")
@@ -739,16 +741,14 @@ def test_the_seam_credits_one_block_taken_to_the_greed_ladder_once(rooms_pack):
         w.blocks[tuple(int(v) for v in key.split(","))] = "minecraft:deepslate_coal_ore"
     p.pos = [r["ix0"] + 10.5, r["floor_in"], r["z_in"] + 0.5]
     w.passes(1)
-    assert w.get(p.name, "dg.greed") == 0
-    w.blocks[cells[3]] = "minecraft:air"
-    w.passes(1)
-    assert w.get(p.name, "dg.greed") == 1
-    w.passes(2)
-    assert w.get(p.name, "dg.greed") == 1, "the same hole is not counted twice"
     for c in cells[:8]:
         w.blocks[c] = "minecraft:air"
-    w.passes(1)
-    assert w.get(p.name, "dg.greed") == 8 and w.get(p.name, "dg.rate") == 5, "five taken is x1.25 (D13)"
+    w.passes(2)
+    assert w.get(p.name, "dg.gp") == 0, "a hole in the seam is not a credit by itself (the stat is the one measure)"
+    idx = {blk: i for i, blk, _v in DGR.counted(doc)}
+    w.set(p.name, "dg.m%d" % idx["minecraft:deepslate_coal_ore"], 8)      # the stat: eight mined
+    w.passes(2)
+    assert w.get(p.name, "dg.gp") == 8 * 5, "eight coal ores are eight coal: 40 cp, once"
 
 
 def test_the_dark_room_hands_out_torches_that_may_only_be_placed_on_its_floor():
