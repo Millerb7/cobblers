@@ -431,15 +431,46 @@ def design_clock_minutes():
     return [c for _b, c in sorted(out)]
 
 
+DUNGEON_ROOMS_MD = ROOT / "docs" / "mechanics" / "DUNGEON_ROOMS.md"
+BAND_CLOCK_RE = re.compile(r"if score @s dg\.band matches (\d+) run scoreboard players set @s dg\.clock (\d+)$")
+
+
+def design_room_clocks():
+    """DUNGEON_ROOMS.md 7's table: {dungeon id: [band 1..6 clock minutes]}, the bold cells of each row (added by
+    DG-NS, 2026-10-09: a full-length dungeon's clock is its own, not 4.2's)."""
+    out = {}
+    for l in DUNGEON_ROOMS_MD.read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in l.strip().strip("|").split("|")]
+        bold = [int(c.strip("*")) for c in cells if re.fullmatch(r"\*\*\d+\*\*", c)]
+        if l.startswith("|") and len(bold) == 6 and re.fullmatch(r"[a-z0-9_]+", cells[0]):
+            out[cells[0]] = bold
+    return out
+
+
 def check_v12(dg_files):
     bad = []
     dg = functions(dg_files)
     clocks = clocks_units(dg_files)
     if not clocks:
         return ["no band clock found in the generated pack"]
-    want = [m * 60 * 20 * UNITS_PER_TICK for m in design_clock_minutes()]
-    if sorted(want) != clocks:
-        bad.append("the generated clocks %s are not DUNGEONS.md 4.2's %s (units)" % (clocks, sorted(want)))
+    # every slot's threshold sets its dungeon's design clocks, in band order: the dungeon's row in DUNGEON_ROOMS.md 7
+    # (a full-length dungeon) or else DUNGEONS.md 4.2's. Slot g's dungeon is found by the slots rule of DUNGEONS.md 1
+    # (engine.slots.why: dungeon d holds slots (d-1)*per_dungeon+1 .. d*per_dungeon), from data/dungeons.json's order
+    rooms_tables = design_room_clocks()
+    spine_table = design_clock_minutes()
+    rec = json.loads(DUNGEONS_JSON.read_text(encoding="utf-8"))
+    per = rec["engine"]["slots"]["per_dungeon"]
+    for f, ls in dg.items():
+        got = sorted((int(m.group(1)), int(m.group(2))) for l in body(ls) for m in [BAND_CLOCK_RE.search(l)] if m)
+        if not got:
+            continue
+        m = re.search(r"/slot/s(\d+)/", f)
+        di = (int(m.group(1)) - 1) // per if m else -1
+        did = rec["dungeons"][di]["id"] if 0 <= di < len(rec["dungeons"]) else None
+        src, mins = ("DUNGEON_ROOMS.md 7 (%s)" % did, rooms_tables[did]) if did in rooms_tables else ("DUNGEONS.md 4.2", spine_table)
+        want = [x * 60 * 20 * UNITS_PER_TICK for x in mins]
+        if [u for _b, u in got] != want:
+            bad.append("%s: the generated clocks %s are not %s's %s (units)" % (f, [u for _b, u in got], src, want))
     longest = max(clocks) // UNITS_PER_TICK
     locks = []
     for f, ls in dg.items():

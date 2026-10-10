@@ -48,6 +48,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import chunk_look  # noqa: E402  (entity work after a forceload: look, then act)
+import dungeon_clock as DC  # noqa: E402  (a rooms dungeon's walked length and derived clock, clock_s_by_band)
 import dungeon_rooms as DR  # noqa: E402  (a dungeon with `rooms`: the room kit, docs/mechanics/DUNGEON_ROOMS.md)
 import function_limits  # noqa: E402
 import levelcap_pack as LC  # noqa: E402  (the NPC-battle cap check and its tag, as Heaven's Arena uses them)
@@ -171,6 +172,12 @@ def ladder(doc):
 
 def bands(doc):
     return doc["engine"]["bands"]
+
+
+def clock_s(d, band_entry):
+    """The dungeon's clock for a band, in seconds: its own clock_s_by_band (a full-length rooms dungeon, derived by
+    tools/dungeon_clock.py), else the band's clock_s (set for the short spine of DUNGEONS.md 4.2)."""
+    return int((d.get("clock_s_by_band") or {}).get(str(band_entry["band"]), band_entry["clock_s"]))
 
 
 def sigils(doc):
@@ -379,7 +386,18 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
             bad.append("band %d: clock %d s" % (b["band"], b["clock_s"]))
     if caps != sorted(caps):
         bad.append("bands: caps must rise with the band")
-    longest = max(b["clock_s"] for b in bands(doc)) * 20
+    for d in dungeons(doc):
+        own = d.get("clock_s_by_band")
+        if own is None:
+            continue
+        if set(own) != {str(b["band"]) for b in bands(doc)}:
+            bad.append("%s: clock_s_by_band must name every band (%s)" % (d["id"], sorted(own)))
+            continue
+        if any(not isinstance(v, int) or v < 60 for v in own.values()):
+            bad.append("%s: clock_s_by_band: whole seconds, at least 60" % d["id"])
+        if DR.has_rooms(d) and not any(d["id"] in p and "rooms do not build" in p for p in bad):
+            bad += DC.clock_problems(doc, d)
+    longest = max(clock_s(d, b) for b in bands(doc) for d in dungeons(doc)) * 20
     if e["lockout_ticks"] < longest:
         bad.append("lockout_ticks %d is under the longest clock %d ticks: the lockout would never bind (V12)"
                    % (e["lockout_ticks"], longest))
@@ -611,7 +629,7 @@ def board_text(doc, d, slot):
         label = "cracked lamps" if g.get("no_deploy") else names.get(g["kind"], g["kind"])
         legs.append("%s %d" % (label, int(g["xa"] - bx)))
     lad = " ".join("%d:%s" % (r["taken"], r["label"]) for r in ladder(doc)[1:])
-    clocks = " ".join("%d:%d:%02d" % (b["band"], b["clock_s"] // 60, b["clock_s"] % 60) for b in bands(doc))
+    clocks = " ".join("%d:%d:%02d" % (b["band"], clock_s(d, b) // 60, clock_s(d, b) % 60) for b in bands(doc))
     if DR.has_rooms(d):
         legs = []
         for g in pt["segs"][1:]:
@@ -1296,7 +1314,7 @@ def functions(doc, blackout=None):
                  "# sigil is spent (2.1, 2.5, 7.4)",
                  "scoreboard players set @s %s 3" % O["st"]]
         start += ["execute if score @s %s matches %d run scoreboard players set @s %s %d"
-                  % (O["band"], b["band"], O["clock"], b["clock_s"] * U) for b in bands(doc)]
+                  % (O["band"], b["band"], O["clock"], clock_s(d, b) * U) for b in bands(doc)]
         start += ["scoreboard players operation @s %s = @s %s" % (O["clk0"], O["clock"]),
                   "scoreboard players operation @s %s = #up %s" % (lk_obj(d), O["up"]),
                   "scoreboard players set @s %s 0" % O["paid"],
@@ -1670,9 +1688,12 @@ def write(files, out):
 
 
 def warnings(doc):
-    """Things that build but are not finished: kinds declared in a dungeon's rooms with no implementation yet."""
+    """Things that build but are not finished: kinds declared in a dungeon's rooms with no implementation yet, and a
+    rooms dungeon still on the bands' clocks (set for the short spine; tools/dungeon_clock.py derives its own)."""
     import dungeon_fights as DF     # lazy: tools/dungeon_fights.py imports this module
-    return DR.warnings(doc) + DF.warnings(doc)
+    return DR.warnings(doc) + DF.warnings(doc) + [
+        "%s: no clock_s_by_band, so its clock is the bands' (the short spine's): run python tools/dungeon_clock.py %s"
+        % (d["id"], d["id"]) for d in dungeons(doc) if DR.has_rooms(d) and "clock_s_by_band" not in d]
 
 
 def report(doc):

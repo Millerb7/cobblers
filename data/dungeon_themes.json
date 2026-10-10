@@ -24,8 +24,11 @@
         {"op": "base_course", "where": "top", "block": "minecraft:polished_deepslate"},
         {"op": "streak", "count": 6, "len": [3, 7], "blocks": [{"block": "minecraft:raw_iron_block", "w": 3}, {"block": "minecraft:raw_copper_block", "w": 2}, {"block": "minecraft:coal_block", "w": 3}, {"block": "minecraft:raw_gold_block", "w": 1}]},
         {"op": "floor_patches", "per100": 5, "size": [2, 4], "blocks": [{"block": "minecraft:coarse_dirt", "w": 3}, {"block": "minecraft:cobblestone", "w": 2}, {"block": "minecraft:andesite", "w": 2}]},
-        {"op": "floor_strip", "rail": "minecraft:smooth_basalt", "sleeper": "minecraft:stripped_oak_log", "every": 3, "kinds": ["drift", "stairs"]},
+        {"op": "streak", "count": 10, "len": [4, 9], "salt": "deep", "not_kinds": ["drift", "stairs", "entry_room", "exit_room"], "blocks": [{"block": "minecraft:raw_iron_block", "w": 2}, {"block": "minecraft:coal_block", "w": 3}, {"block": "minecraft:tuff", "w": 3}, {"block": "minecraft:raw_copper_block", "w": 1}]},
+        {"op": "floor_strip", "rail": "minecraft:smooth_basalt", "sleeper": "minecraft:stripped_oak_log", "every": 3, "kinds": ["drift", "stairs", "gauntlet", "ambush", "resources", "miniboss"]},
         {"op": "timber", "every": 8, "post": "minecraft:oak_log", "beam": "minecraft:stripped_oak_log", "lantern": true, "lit": true},
+        {"op": "stream", "count": 2, "width": [2, 4], "pools": 5, "pool_size": [5, 9], "bed": "minecraft:smooth_basalt", "plants": [], "kinds": ["habitat"], "why": "the Night Shift's sump: the mine broke into hot water (DUNGEONS.md 8, Volcanion). One deep, wading, as every theme's water"},
+        {"op": "wall_vines", "p": 0.05, "blocks": [{"block": "minecraft:glow_lichen"}], "lit": true, "salt": "l", "not_kinds": ["entry_room", "exit_room", "safe_room"]},
         {"op": "piles", "density": 0.012, "blocks": [{"block": "minecraft:cobbled_deepslate", "w": 3}, {"block": "minecraft:cobblestone", "w": 2}, {"block": "minecraft:andesite", "w": 1}]}
       ],
       "maze": {"wall": [{"block": "minecraft:cobbled_deepslate"}, {"block": "minecraft:cobblestone"}, {"block": "minecraft:andesite"}], "top": null, "post": "minecraft:oak_log", "height": 4},
