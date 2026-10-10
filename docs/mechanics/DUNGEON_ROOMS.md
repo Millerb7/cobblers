@@ -113,6 +113,23 @@ not the one the player last ran (`dg.lv_<short>`, 1-based), else any free slot.
 beside rock with their face), `.standable_cells()` (already the real grid). Never place `shapes.secret_block`; keep
 off `ctx.reserved(x, z)` (now including landings, stairs, secrets, shortcuts).
 
+**As built (KIT2, 2026-10-10; built and checked on the simulator and the independent audit, not run in Minecraft).**
+- Code: `tools/dungeon_outline.py` (the shapes), `tools/dungeon_rooms.py` (placement door to door, forks, variants,
+  landings, rails, secrets, shortcuts, the checks), `tools/dungeon_kinds.py` (wall dressing on the real faces),
+  `tools/dungeon_grid.py` (`NOSUP`, `walk(strict=)`), `tools/dungeon_clock.py` (walk ends, routes, variants),
+  `tools/dungeon.py` (`pick_blocks`, the variant pick at entry, `dg.lv_<short>`). Fixture using every field:
+  `tests/fixtures/dungeon_kit2_demo.json` (21 rooms, a fork, a side room, both secrets, a shortcut, a hall entered 12
+  up a grand stair, a return walked west UNDER the route, 4 variants): 0 problems in all three themes.
+- `BOX_ONLY_KINDS` (`maze`, `parkour`, `collapse_bridge`, `setpiece`) never get a theme mix's outline and keep pass 1's
+  doors (west in, east out, no landing, no extra door, no secret); a kind registered `outline=False` likewise.
+- A landing or stair step `RAIL_FROM` (4) or more over the floor beside it gets a rail of the theme's gate block.
+- A lantern theme's room more than 14 over its floor hangs its lanterns on long chains to 6 over the floor beneath; any
+  standable cell a pass-2 room's lights leave dark gets the hull's light set into its floor (`light_dark_cells`).
+- Stacked rooms keep one block apart (`BED_UNDER`: a stream writes its bed under the floor course).
+- A gauntlet/ambush room refuses any floor lifted 3 or more and a balcony (its barrier is 4 high: V6 clears it).
+- Pass-1 records build byte-identical except three jungle rooms (`sanctum`, `tangle`, `undercroft`), where the new
+  jump-in pit test plugs 2-5 nook cells each.
+
 ## 2. Themes (`data/dungeon_themes.json`)
 
 Three: `mine`, `jungle`, `flooded_ruin`. A theme names the hull (wall, floor, ceiling, light and its spacing), the door
@@ -149,6 +166,10 @@ sea pickles, columns standing, broken or lying down.
 | `declare_kind(name)` | a kind named before it exists: builds as a themed room with its anchors, `warnings()` lists it |
 | `EXTENSION_MODULES` | `dungeon_kinds`, `dungeon_fights`, `dungeon_puzzles`: imported at load, absent ones skipped. A wave-2 module registers its kinds on import and edits nothing here |
 | `EXTRA_CHECKS` | append `fn(doc, d, slot) -> [problem]` to add kind checks to `problems()` |
+| `variant_of(doc, d, slot)` / `resolve(doc, d, slot)` / `variant_slots(doc, d, slots)` | pass 2: the slot's variant, the record as that slot builds it, one slot per variant |
+| `flatten(d)` / `all_records(d)` | pass 2: rooms in record order with their route and how they attach; every record in every variant |
+| `room_doors(room)`, `main_door(room, "in"/"out")`, `inner_cell(room, door)`, `room_start(room)`, `room_end(room)` | pass 2: every door (`{side, c, y, box, dir, to, main, gate[, shortcut]}`), the cell inside one, the walk's ends |
+| `floor_xz(room, x, z)`, `open_near(room, x, z, r)`, `pick_blocks(d)` | pass 2: the outline's floor, the nearest open column, what the rift pick may break |
 
 An op is `("fill", box, block[, "keep" | "replace <block>"])` or `("set", pos, block)`; `fill(...)` and `setb(...)` build
 them. Kind flags: `dress` (`none|light|full`), `rise`, `connector`, `pit` (blocks of drop to a catch floor), `no_deploy`,
@@ -261,6 +282,15 @@ every standable cell lit (an optimistic Manhattan bound). Mutations that must fa
 platforms with wider gaps, a kind that places lava or sand or punches the floor, hull lights off, a wall block added to the
 pick's list.
 
+Pass 2 (KIT2) adds, per variant: every door of a room reached from its door in and back; every gate box covers its
+opening (a shut gate leaves no gap); no room writes outside its own box; no two rooms' boxes meet (stacked rooms one
+apart); each secret reached WITH its trick (face broken / the jumps of V6) and NOT without it; the pick's count is the
+seams plus the secrets' faces; pits gain (c) jump-ins (a flat jump of up to 3 and a fall onto a cell the strict jumping
+walk cannot leave) and a big dripleaf (`G.NOSUP`) is asked both as an obstacle and as air. Generator mutations that
+fail, run on the fixture (`mine`): the outline ignoring what it must keep (47), a cracked face of plain rock (4), the
+balcony's gap widened to 4 (4), no landing under a raised door (12), door boxes one off centre (184), fork routes not
+stretched (16), no spur to an extra door (4).
+
 ## 7. The clock of a full-length dungeon (`tools/dungeon_clock.py`, unit DG-NS)
 
 The bands' `clock_s` (29-39 minutes) were set for the short spine of `DUNGEONS.md` 4.2. A rooms dungeon carries its own
@@ -290,6 +320,10 @@ timed no fight; when it does, change the constants and re-derive):
 | puzzle 90, resources (the free tier) 30, safe room 20, the run's cues 30 | |
 | vault | 0: optional, priced by its own `clock_cost_s` |
 
+Pass 2: the walk runs from `room_start` to `room_end` (doors in any wall, at their landings); the clock counts the
+main route and, of each fork, the route that takes longer at that band (side rooms are optional: the slack pays), and
+takes the largest over the dungeon's variants.
+
 **clock** = ceil(required x `engine.clock.slack_factor` (1.25) / 60) x 60: whole minutes, as 4.2. Optional rooms (an open
 habitat, a nest that passes, the vault, greed past the free tier) are paid from the slack, as 4.2 intends.
 
@@ -310,5 +344,14 @@ threshold's clocks with this table or 4.2's):
   fallback; the dark room is walkable without the torches.
 - **The collapse** is per keeper pass (1 s), so its granularity is a few blocks at sprint; and shared by co-op members
   (`members_max` is 1).
+- **Pass 2, unproven or not done (KIT2):** nothing of 1a has run in Minecraft. The independent audit walks slot 1
+  only and reuses its graph for the others ("SLOT ... not slot 1's moved"), so with `variants` slots 2-4 report SLOT
+  and SOFTLOCK findings that are its assumption, not the pack's (each variant put first passes it, except the mirrored
+  one, whose far-rip zone includes cells 12 above the rip in another room: its zone test has no line of sight and
+  `room_of_x` maps rooms by x); AUDIT2 must walk each variant and route. `tools/dungeon.py`'s return-margin warning
+  measures the way back to the back rip in x, which a route that turns and doubles back makes too short (the warning
+  comes late); the board's leg distances are x offsets too. Relics or lore per secret, and a set across runs, are not
+  built (only the `secret` anchor). Windows onto earlier rooms are not built. `can_break` on the secret block in
+  adventure is R2's shape (EXP-074), unrun for these ids.
 - **Not here:** puzzles, vaults (DG-PUZZLES), the boss's
   crews and the three dungeons' room lists (wave 2).
