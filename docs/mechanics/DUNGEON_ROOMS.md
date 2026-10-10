@@ -441,9 +441,12 @@ threshold's clocks with this table or 4.2's):
 
 | Dungeon | Walked | Band 1 | Band 2 | Band 3 | Band 4 | Band 5 | Band 6 |
 |---|---|---|---|---|---|---|---|
-| night_shift | 1,402 main (1,600 all routes) | **41** | **44** | **44** | **48** | **51** | **54** |
-| jungle | 1,299 all routes (1,070 main) | **41** | **46** | **47** | **52** | **55** | **59** |
-| flooded_ruin | 1,304 all routes (1,000 main) | **40** | **43** | **45** | **48** | **52** | **55** |
+| night_shift | 1,402 main (1,616 all routes) | **41** | **44** | **44** | **48** | **51** | **54** |
+| jungle | 1,303 all routes (1,070 main) | **41** | **46** | **47** | **52** | **55** | **59** |
+| flooded_ruin | 1,337 all routes (1,000 main) | **40** | **43** | **45** | **48** | **52** | **55** |
+
+KIT3 (2026-10-10): "all routes" now walks each fork route's own way through its host and its join (`route_extras`,
+section 1b); the clocks above still cover it (the independent audit, 0 findings).
 
 ## 8. Not done, and unproven
 
