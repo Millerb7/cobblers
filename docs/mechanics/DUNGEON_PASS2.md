@@ -68,3 +68,21 @@ the record contract it publishes first); then the three authors on KIT2's merge;
   the install match the tree.
 - The owner is a band-1 playtester (`cobblers.dg_playtest`, `dg.ptband` 1) with sigils.
 - Open owner calls: Giratina fight-only or catchable once; Wardenhold's beacon-room Froslass.
+
+## Pass 3 (the owner, 2026-10-10, playing pass 2 on staging; approved about 16M)
+- **The owner:** "The pathing and structure feels non-linear now and is great, I found 2 relics, but I see no diverging
+  paths ... it didn't seem like I could go a different direction ... the optional paths didn't feel immense. And the
+  parkour room should be longer, or just have more of them."
+- **Read of pass 2:** the Night Shift's fork leaves the ore cavern by two near-identical doors on one wall and rejoins
+  one room later; the side room is a single vault. Nothing signals a choice.
+- **Plan:** (1) a CROSSROADS room kind with sightlines down each way and distinct-looking exits (lit gantry vs dark
+  signed tunnel), 3-way splits, at least 2 forks per dungeon; (2) OPTIONAL WINGS of 2-4 rooms each with its own
+  challenge and payoff (mini-boss, relic, richer vault or ore pile, maybe the legendary), never counted in the required
+  ~32 minutes; (3) two parkour rooms per dungeon: a longer main one (5-6 sections) and a harder one guarding a wing;
+  (4) re-author the three dungeons. Starts after GREED (value-weighted clock) and RESOURCES2 (band-scaled ore piles,
+  mega stones, netherite) merge, so the records are not edited by two units at once.
+- **Other owner decisions this day:** Froslass stays; Zarude and Regidrago stay optional; living-room Pokemon are
+  catchable and every catch counts as a resource; every valuable mined anywhere (wall ore too) counts; points ~ 20 coal
+  or 1 diamond = 1 point, 2 points = +0.1x clock; resource rooms are band-scaled piles. Open: Giratina fight-only or
+  catchable once.
+- **Server:** the owner is testing; do not stop staging without asking.
