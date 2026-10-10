@@ -815,7 +815,9 @@ def test_a_gap_is_crossed_only_by_a_jump_and_only_within_the_limits():
 def test_blocks_are_classified_conservatively_unknown_is_solid_and_a_plant_is_not():
     assert G.classify("minecraft:fern") == G.PASS and G.classify("minecraft:tall_grass[half=lower]") == G.PASS
     assert G.classify("minecraft:water") == G.WATER and G.classify("minecraft:lava") == G.HAZARD
-    assert G.classify("minecraft:some_future_block") == G.SOLID and G.classify("minecraft:big_dripleaf[facing=north]") == G.SOLID
+    assert G.classify("minecraft:some_future_block") == G.SOLID
+    # a big dripleaf tilts and drops a player: never ground (LIFE and DG-AUDIT found 1x1 shafts walled by one, 2026-10-10)
+    assert G.classify("minecraft:big_dripleaf[facing=north]") != G.SOLID
     assert G.forbidden("minecraft:white_concrete_powder") and G.forbidden("minecraft:gravel") and not G.forbidden("minecraft:stone")
 
 
