@@ -127,9 +127,11 @@ off `ctx.reserved(x, z)` (now including landings, stairs, secrets, shortcuts).
   standable cell a pass-2 room's lights leave dark gets the hull's light set into its floor (`light_dark_cells`).
 - Stacked rooms keep one block apart (`BED_UNDER`: a stream writes its bed under the floor course).
 - A gauntlet/ambush room refuses any floor lifted 3 or more and a balcony (its barrier is 4 high: V6 clears it).
-- Pass-1 records build byte-identical in the mine and the ruin. The jungle changes: the new jump-in pit test plugs 2-5
-  nook cells in `sanctum`, `tangle`, `undercroft`, and `ground_cover` now sets a big dripleaf only where all eight
-  cells round it are open floor (beside a trunk or rock it sealed nooks: a TRAP twice, here and in LIFE's run).
+- Pass-1 records still build (0 problems) but their dressing changes where it was unsafe: the jump-in pit test plugs
+  2-5 nook cells in jungle `sanctum`, `tangle`, `undercroft`; `ground_cover` sets a big dripleaf only where all eight
+  cells round it are open floor (beside a trunk or rock it sealed nooks: a TRAP twice, here and in LIFE's run); a 2 x 2
+  trunk or column needs floor under all four feet (over a trench or a stream it floated and sealed a cell). The mine's
+  shells are byte-identical; jungle and ruin shells differ in where trunks, columns and dripleaves stand.
 
 ## 2. Themes (`data/dungeon_themes.json`)
 
