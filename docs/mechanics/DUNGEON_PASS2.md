@@ -104,3 +104,18 @@ the record contract it publishes first); then the three authors on KIT2's merge;
 - **Hakamo-o as the jungle's early prize (the owner, 2026-10-10):** approved although it hands out the Jangmo-o line
   before the Long Isle's rare spawn: "these dungeons are hard and getting through one would mean they deserve it." The
   same reading holds for the other dungeons' rare prizes (the ruin's Sliggoo/Zweilous).
+
+## Next phase (the owner, 2026-10-10, after pass 3): "I like the current state"
+- **More room types, to tell whole dungeons apart:**
+  - bank vault: a code hidden through the dungeon in separate rooms (signs on walls), opening a vault with resources;
+  - fishing room: a vibey place to fish with better chances of cool species (starters or the like);
+  - egg room: eggs from a vendor, each with a description;
+  - fossil chamber: dig for a fossil; it counts as a resource (greed);
+  - gamble room: sacrifice an item for a chance at more, a wishing-well vibe;
+  - bait room: leave an item to lure a Pokemon, which then appears in the NEXT dungeon.
+- **Simulate each dungeon for the teams of its areas:** fights per band against the teams a player in that area has
+  (tools/battle_sim.py and the area level caps), so difficulty is measured, not guessed.
+- **A nether version for each nether biome:** a dungeon per biome (nether wastes, crimson forest, warped forest, soul
+  sand valley, basalt deltas), each its own theme, its rip in the nether.
+- Research first where unknown: Cobblemon 1.8 fishing pools and rods, Cobbreeding eggs, Cobblemon fossils and the
+  revival machine, and archaeology (brushing) in adventure mode; never assume a mechanism.
