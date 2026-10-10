@@ -1681,8 +1681,11 @@ def build(doc, **kw):
     import dungeon_fights as DF     # lazy: tools/dungeon_fights.py imports this module
     fns.update(DF.functions(doc))   # the clawback (DG-CLAW), and the fight rooms' stands, wild Pokemon and healer (DG-FIGHTS)
     DF.patch_functions(doc, fns)    # a run's end and the keeper's pass discard the slot's wild Pokemon
+    import dungeon_life as DL       # lazy, as dungeon_fights is (unit LIFE): the ambient Pokemon's macro and per-slot claim
+    fns.update(DL.functions(doc))
+    DL.patch_functions(doc, fns)    # and a slot whose only animals are ambient discards them at its free and tend too
     files.update(DF.pack_files(doc))    # the stands' NPC classes and the healer's advancement
-    files["data/minecraft/tags/function/load.json"] = json.dumps({"values": [F("load")] + DF.load_entries()}, indent=2) + "\n"
+    files["data/minecraft/tags/function/load.json"] = json.dumps({"values": [F("load")] + DF.load_entries() + DL.load_entries(doc)}, indent=2) + "\n"
     files["data/minecraft/tags/function/tick.json"] = json.dumps({"values": DF.tick_entries()}, indent=2) + "\n"
     ch, _ws, _wr = chains(doc)
     for ref, lines in ch.items():

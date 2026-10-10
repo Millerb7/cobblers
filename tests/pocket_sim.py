@@ -21,6 +21,9 @@ on WHICH dimension a selector searches needs both. What this one models:
               entity / store result score|storage / run; `return <n>` and `return run <cmd>` end the function.
   functions   `function f`, `function f {snbt}`, `function f with storage <id> <path>`; a function with any `$`
               line is a macro and fails whole without arguments or with one it lacks (MacroFunction).
+  storage     `data modify storage <id> <path> set value <snbt> | set from storage <id> <path>`, `data remove storage`,
+              `execute if|unless data storage <id> <path>`, `execute store result storage`; a path is dotted keys with
+              [n] list indexes (no quoted keys, no filters).
   and         time query gametime, advancement grant|revoke @s only, give, loot give, tellraw, tp (absolute, ~,
               yaw pitch), kill, tag add, effect give, data get entity <t> Pos[i] [scale], data merge|remove entity,
               schedule function, summon interaction, fill / setblock (recorded), forceload add|remove, and
@@ -538,6 +541,8 @@ class World:
             if t[1] == "remove" and t[2] == "entity":
                 self.one(t[3], ctx)
                 return 1
+            if t[1] in ("modify", "remove") and t[2] == "storage":
+                return self.data_storage(t[1:])
             raise Unsupported(" ".join(t))
         if h == "schedule" and t[1] == "function":
             self.scheduled[t[2]] = self.gametime + int(t[3].rstrip("t"))
@@ -594,16 +599,93 @@ class World:
             return len(es)
         raise Unsupported("command %r" % " ".join(t))
 
+    # ---- command storage (a path is dotted keys with [n] indexes) --------------------------------------------------
+    @staticmethod
+    def nbt_path(path):
+        toks = []
+        for part in path.split("."):
+            m = re.fullmatch(r"([A-Za-z0-9_+\-]*)((?:\[\d+\])*)", part)
+            if not m or (not m.group(1) and not m.group(2)):
+                raise Unsupported("nbt path %r" % path)
+            if m.group(1):
+                toks.append(m.group(1))
+            toks += [int(x) for x in re.findall(r"\[(\d+)\]", m.group(2))]
+        return toks
+
+    def storage_get(self, sid, path):
+        node = self.storage.get(sid)
+        if node is None:
+            raise Failed("no storage %s" % sid)
+        for tk in self.nbt_path(path):
+            if isinstance(tk, int):
+                if not isinstance(node, list) or tk >= len(node):
+                    raise Failed("no storage %s %s" % (sid, path))
+                node = node[tk]
+            else:
+                if not isinstance(node, dict) or tk not in node:
+                    raise Failed("no storage %s %s" % (sid, path))
+                node = node[tk]
+        return node
+
+    def storage_set(self, sid, path, value):
+        toks = self.nbt_path(path)
+        node = self.storage.setdefault(sid, {})
+        for k, tk in enumerate(toks):
+            last = k == len(toks) - 1
+            if isinstance(tk, int):
+                if not isinstance(node, list) or tk >= len(node):
+                    raise Failed("no list index %d in %s" % (tk, path))
+                if last:
+                    node[tk] = value
+                else:
+                    node = node[tk]
+            else:
+                if not isinstance(node, dict):
+                    raise Failed("not a compound at %s in %s" % (tk, path))
+                if last:
+                    node[tk] = value
+                else:
+                    node = node.setdefault(tk, [] if isinstance(toks[k + 1], int) else {})
+
+    def storage_remove(self, sid, path):
+        toks = self.nbt_path(path)
+        parent = self.storage_get(sid, ".".join(path.split(".")[:-1])) if "." in path and not isinstance(toks[-1], int) \
+            else None
+        if isinstance(toks[-1], int):
+            base = re.sub(r"\[\d+\]$", "", path)
+            lst = self.storage_get(sid, base)
+            if toks[-1] < len(lst):
+                del lst[toks[-1]]
+            return 1
+        if parent is None:
+            parent = self.storage.get(sid, {})
+        parent.pop(toks[-1], None)
+        return 1
+
+    def data_storage(self, t):
+        """data modify|remove storage ... (t is the tokens after `data`)."""
+        if t[0] == "remove":
+            self.storage_remove(t[2], t[3])
+            return 1
+        if t[0] == "modify" and t[1] == "storage" and t[4] == "set":
+            sid, path = t[2], t[3]
+            if t[5] == "value":
+                self.storage_set(sid, path, plain(MS.snbt(t[6])))
+                return 1
+            if t[5] == "from" and t[6] == "storage":
+                import copy
+                self.storage_set(sid, path, copy.deepcopy(self.storage_get(t[7], t[8])))
+                return 1
+        raise Unsupported("data " + " ".join(t))
+
     def function_cmd(self, t, ctx):
         name = t[1]
         if len(t) == 2:
             return self.call(name, ctx)
         if t[2] == "with" and t[3] == "storage":
-            src = self.storage.get(t[4], {})
-            for part in t[5].split("."):
-                if not isinstance(src, dict) or part not in src:
-                    raise Failed("no storage %s %s" % (t[4], t[5]))
-                src = src[part]
+            src = self.storage_get(t[4], t[5])
+            if not isinstance(src, dict):
+                raise Failed("storage %s %s is not a compound" % (t[4], t[5]))
             return self.call(name, ctx, dict(src))
         if t[2].startswith("{"):
             return self.call(name, ctx, MS.snbt(t[2]))
@@ -727,6 +809,14 @@ class World:
                     def pred(c, s=t[i + 2]):
                         return bool(self.select(s, c))
                     i += 3
+                elif kind == "data" and t[i + 2] == "storage":
+                    def pred(c, sid=t[i + 3], path=t[i + 4]):
+                        try:
+                            self.storage_get(sid, path)
+                            return True
+                        except Failed:
+                            return False
+                    i += 5
                 else:
                     raise Unsupported("execute %s %s" % (w, kind))
                 kept = []
@@ -761,11 +851,7 @@ class World:
             _, sid, path, typ, scale = st
             if typ != "int":
                 raise Unsupported("store type %s" % typ)
-            node = self.storage.setdefault(sid, {})
-            parts = path.split(".")
-            for p in parts[:-1]:
-                node = node.setdefault(p, {})
-            node[parts[-1]] = int(math.floor(value * scale))
+            self.storage_set(sid, path, int(math.floor(value * scale)))
 
     # ---- what a player does (each drives only the vanilla or Cobblemon hook, never a pack function by name) -------
     def _criterion_item(self, adv):

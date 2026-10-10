@@ -184,6 +184,9 @@ DUNGEONS_DATA = json.loads((ROOT / "data" / "dungeons.json").read_text(encoding=
 TRAINER_KINDS, WILD_KINDS = ("stand", "gauntlet"), ("nest", "miniboss", "habitat")   # DUNGEON_ROOMS.md 4a
 
 
+LIFE_KINDS = {"drift", "stairs", "maze", "puzzle", "vault", "resources", "dark_room", "safe_room"}
+
+
 def expected_spawners():
     """From data/dungeons.json alone (never the generator): every (kind of site, dungeon index, slot, room, trainer)
     a run can spawn from. Slot g belongs to dungeon (g - 1) // per_dungeon (engine.slots.why); a stand or gauntlet room
@@ -199,6 +202,10 @@ def expected_spawners():
                     out.update(("trainer", di, g, r["id"], k) for k in range(1, len(r["params"]["trainers"]) + 1))
                 elif r["kind"] in WILD_KINDS:
                     out.add(("wild", di, g, r["id"], None))
+            # the ambient Pokemon (unit LIFE, tools/dungeon_life.py): ONE shared walker per slot, there when the dungeon has
+            # a room of a kind that may have animals (the connectors, maze, puzzle, vault, resources, dark and safe rooms)
+            if any(r["kind"] in LIFE_KINDS for r in d.get("rooms") or []):
+                out.add(("life", di, g, None, None))
     return out
 
 
@@ -214,6 +221,10 @@ def classify_site(site):
     if m:
         di = next((i for i, d in enumerate(ds) if d["short"] == m.group(1)), None)
         return ("trainer", di, int(m.group(4)), m.group(2), int(m.group(3)))
+    m = re.fullmatch(r"cobblers:dungeons/life/s(\d+)/mon", site)
+    if m:
+        g = int(m.group(1))
+        return ("life", (g - 1) // DUNGEONS_DATA["engine"]["slots"]["per_dungeon"], g, None, None)
     m = re.fullmatch(r"cobblers:dungeons/room/([a-z0-9_]+)/([a-z0-9_]+)/s(\d+)/spawn_b[1-6]", site)
     if m:
         di = next((i for i, d in enumerate(ds) if d["id"] == m.group(1)), None)
@@ -265,6 +276,30 @@ def test_the_run_tag_is_on_the_player_at_the_click_and_the_arrival_waits_at_leas
 @pytest.mark.parametrize("site", [s for s, _h in DA.spawn_sites(FNS)])
 def test_every_npc_an_engine_spawn_makes_carries_the_exempt_tag_when_the_spawn_returns(site):
     kind, _di, g, _room, _k = classify_site(site)
+    if kind == "life":
+        # the ambient Pokemon (tools/dungeon_life.py) are DATA in command storage walked by life/s<g>/loop: load the table, put
+        # a room's list for each band into life.cur and run the walker as the member standing by the first spot
+        for band in range(1, 7):
+            w = new_world()
+            p = player(w)
+            p.dim = POCKET
+            w.call("cobblers:dungeons/life/load", PS_ctx(p))
+            table = w.storage["cobblers:dungeons"]["life"]["s%d" % g]
+            key = next(k for k in sorted(table) if k.endswith("v0b%d" % band) and table[k])
+            recs = table[key]
+            spot = recs[0]
+            p.pos = [float(spot["x"]) - 4, float(spot["y"]), float(spot["z"])]
+            for obj, v in (("dg.band", band), ("dg.slot", g), ("dg.run", 1)):
+                w.set(p.name, obj, v)
+            w.set("#s%d" % g, "dg.run", 1)
+            w.storage["cobblers:dungeons"]["life"]["cur"] = [dict(r) for r in recs]
+            w.call(site.replace("/mon", "/loop"), PS_ctx(p))
+            made = [e for e in w.spawned if e.kind == "cobblemon:pokemon"]
+            assert len(made) == len(recs) and not w.npcs, (site, band, len(made), len(recs), w.log)
+            bare = [(e.kind, sorted(e.tags)) for e in made if EXEMPT not in e.tags]
+            assert not bare, (site, band, bare)
+            assert all("dg.s%d" % g in e.tags and "dg.lf" in e.tags for e in made), (site, band, [sorted(e.tags) for e in made])
+        return
     fixed = re.search(r"/spawn_b([1-6])$", site)
     bands = [int(fixed.group(1))] if fixed else range(1, 7)
     stages = (1, 2, 3) if kind == "boss" else (1,)
