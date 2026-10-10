@@ -54,11 +54,28 @@ def test_every_npc_spawn_is_a_macro_line_and_every_spawner_binds_with_the_exempt
     assert spawn_lines and all(l.startswith("$") for _n, l in spawn_lines), spawn_lines
     callers = [n for n in FNS if any("dungeons/npc_at" in l for l in body(n))]
     assert callers
+    assert any(re.fullmatch(r"stand/.+/(show|start)", n) for n in callers), "the stands' spawns are not seen"
+
+    def reach(name):
+        seen, todo = set(), [name]
+        while todo:
+            f = todo.pop()
+            if f in seen or f not in FNS:
+                continue
+            seen.add(f)
+            todo.extend(re.findall(r"function cobblers:dungeons/(\S+)", " ".join(body(f))))
+        return seen
+
+    # every caller (a boss stage or a stand's trainer) binds the NPC it spawned, in the same function, as an untagged
+    # NPC at the spot, through its OWN slot's bind, which carries the exempt tag
     for n in callers:
-        binds = [l for l in body(n) if re.search(r"run function cobblers:dungeons/slot/s\d+/bind_boss$", l)]
+        g = re.search(r"(?:^slot/s|_s)(\d+)/", n).group(1)
+        binds = [l for l in body(n) if re.search(r"as @e\[type=cobblemon:npc,tag=!dg\.npc,[^\]]*\] run function "
+                                                    r"cobblers:dungeons/\S+$", l)]
         assert binds, n
-        bind = re.search(r"(slot/s\d+/bind)_boss$", binds[0]).group(1)
-        assert "tag @s add %s" % EXEMPT in body(bind)
+        to = re.search(r"run function cobblers:dungeons/(\S+)$", binds[-1]).group(1)
+        assert "slot/s%s/bind" % g in reach(to), (n, to)
+        assert "tag @s add %s" % EXEMPT in body("slot/s%s/bind" % g)
     # the keeper's backstop binds any untagged NPC in a slot a pass later
     for s in D.slots(DOC):
         assert any("tag=!dg.npc" in l and "slot/s%d/bind" % s["g"] in l for l in body("slot/s%d/tend" % s["g"]))

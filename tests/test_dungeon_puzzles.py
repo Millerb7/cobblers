@@ -27,6 +27,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tests"))
 
 import dungeon as D  # noqa: E402
+import dungeon_clock as DC  # noqa: E402
 import dungeon_grid as G  # noqa: E402
 import dungeon_puzzles as DP  # noqa: E402
 import dungeon_rooms as R  # noqa: E402
@@ -61,6 +62,9 @@ def built(doc, rid):
 @pytest.mark.parametrize("theme", THEMES)
 def test_every_variant_builds_in_every_theme_with_no_problem_and_the_controls_survive_the_dressing(theme):
     doc = pdoc(theme)
+    # the fixture as a finished rooms dungeon carries the clock derived from its own rooms (DUNGEON_ROOMS.md 7), as
+    # every authored one does since DG-INTEGRATE; without it D.warnings rightly names the missing clock_s_by_band
+    doc["dungeons"][0]["clock_s_by_band"] = DC.derive(doc, doc["dungeons"][0])
     assert R.problems(doc) == [] and D.warnings(doc) == [], (R.problems(doc), D.warnings(doc))
     for rid in ("lev", "seq", "plt", "vlt"):
         b = built(doc, rid)

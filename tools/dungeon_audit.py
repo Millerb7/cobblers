@@ -471,7 +471,20 @@ def check_v12(dg_files):
         want = [x * 60 * 20 * UNITS_PER_TICK for x in mins]
         if [u for _b, u in got] != want:
             bad.append("%s: the generated clocks %s are not %s's %s (units)" % (f, [u for _b, u in got], src, want))
-    longest = max(clocks) // UNITS_PER_TICK
+    # the lockout is per dungeon (its door, its dg.lk_<short>), so each door is held to the longest clock of ITS
+    # dungeon's slots (DG-INTEGRATE, 2026-10-09: one dungeon's 87-minute band 6 says nothing about another's lockout).
+    # Door door/<short> -> the dungeon whose `short` it is (data order) -> its slots by the same per_dungeon rule.
+    longest_of = {}
+    for f, ls in dg.items():
+        m = re.search(r"/slot/s(\d+)/", f)
+        if not m:
+            continue
+        di = (int(m.group(1)) - 1) // per
+        for l in body(ls):
+            c = BAND_CLOCK_RE.search(l)
+            if c:
+                longest_of[di] = max(longest_of.get(di, 0), int(c.group(2)) // UNITS_PER_TICK)
+    by_short = {d.get("short"): i for i, d in enumerate(rec["dungeons"])}
     locks = []
     for f, ls in dg.items():
         for l in body(ls):
@@ -481,8 +494,12 @@ def check_v12(dg_files):
     if not locks:
         bad.append("no lockout test found in any door function")
     for f, n, ls in locks:
-        if n < longest:
-            bad.append("%s locks out for %d ticks, under the longest clock %d (V12)" % (f, n, longest))
+        di = by_short.get(f.rsplit("/", 1)[1])
+        if di is None or di not in longest_of:
+            bad.append("%s: no dungeon (by its short) with a generated clock to hold its lockout to (V12)" % f)
+            continue
+        if n < longest_of[di]:
+            bad.append("%s locks out for %d ticks, under the longest clock of its dungeon, %d (V12)" % (f, n, longest_of[di]))
         b = body(ls)
         if "execute if score @s dg.lk_%s matches -2147483648.. run scoreboard players operation #d dg.t = #up dg.up" % f.rsplit("/", 1)[1] not in b:
             bad.append("%s does not measure the lockout on the uptime counter #up" % f)

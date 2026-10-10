@@ -213,6 +213,8 @@ threshold's clocks with this table or 4.2's):
 | Dungeon | Walked | Band 1 | Band 2 | Band 3 | Band 4 | Band 5 | Band 6 |
 |---|---|---|---|---|---|---|---|
 | night_shift | 1,338 | **36** | **38** | **39** | **42** | **44** | **47** |
+| jungle | 1,542 | **62** | **67** | **69** | **74** | **81** | **87** |
+| flooded_ruin | 1,720 | **59** | **62** | **65** | **69** | **74** | **79** |
 
 ## 8. Not done, and unproven
 

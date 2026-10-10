@@ -289,7 +289,12 @@ def test_every_bound_is_the_hand_bound_of_its_party(built_with_stand):
         assert hi == want_hi, rel                        # the most is exact
         assert 0 < lo <= want_lo and lo >= want_lo * 0.99, (rel, lo, want_lo)   # the least is never above the true least
         n += 1
-    assert n == 18 * len(DOC["dungeons"]) + 6      # each dungeon's boss: 6 bands x 3 stages; the test stand's 6
+    # each dungeon's boss: 6 bands x 3 stages; 6 bands for every trainer of every stand and gauntlet room the data
+    # carries (DG-INTEGRATE: the three full-length dungeons seat 15); the test stand's 6
+    trainers = sum(len(r["params"]["trainers"]) for d in DOC["dungeons"] for r in d.get("rooms") or []
+                   if r["kind"] in ("stand", "gauntlet"))
+    assert trainers > 0
+    assert n == 18 * len(DOC["dungeons"]) + 6 * trainers + 6
 
 
 # ---- the stands' classes -------------------------------------------------------------------------------------------

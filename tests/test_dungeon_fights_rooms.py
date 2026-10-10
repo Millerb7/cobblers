@@ -30,6 +30,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tests"))
 
 import dungeon as D  # noqa: E402
+import dungeon_clock as DC  # noqa: E402
 import dungeon_fights as DF  # noqa: E402
 import dungeon_rooms as R  # noqa: E402
 import pocket_sim as PS  # noqa: E402
@@ -52,8 +53,15 @@ def fights_doc(theme="mine", rooms=None):
     d = doc["dungeons"][0]
     d["theme"] = theme
     d["rooms"] = copy.deepcopy(rooms if rooms is not None else FIX)
-    d.pop("spine")
+    d.pop("spine", None)                # night_shift has been a rooms dungeon since the full-length rebuild
+    doc["dungeons"] = [d]               # the fixture is one dungeon's slot 1; the other dungeons are their own tests'
     doc["engine"]["slots"]["per_dungeon"] = 1
+    # a rooms dungeon carries the clock derived from ITS rooms (DUNGEON_ROOMS.md 7); night_shift's own clock is for its
+    # 21 rooms, not the fixture's, and problems() rightly refuses it here
+    try:
+        d["clock_s_by_band"] = DC.derive(doc, d)
+    except R.RoomError:
+        d.pop("clock_s_by_band", None)  # rooms that cannot build have no clock; problems() names the room's fault
     return doc
 
 

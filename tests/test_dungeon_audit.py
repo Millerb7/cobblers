@@ -180,11 +180,60 @@ def test_the_generated_packs_pass_the_static_audit(check):
     assert DA.CHECKS[check](DG, BO, None) == []
 
 
-# Without it the V15 spawn check could pass on a pack with no spawn site at all (the list would be empty).
+DUNGEONS_DATA = json.loads((ROOT / "data" / "dungeons.json").read_text(encoding="utf-8"))
+TRAINER_KINDS, WILD_KINDS = ("stand", "gauntlet"), ("nest", "miniboss", "habitat")   # DUNGEON_ROOMS.md 4a
+
+
+def expected_spawners():
+    """From data/dungeons.json alone (never the generator): every (kind of site, dungeon index, slot, room, trainer)
+    a run can spawn from. Slot g belongs to dungeon (g - 1) // per_dungeon (engine.slots.why); a stand or gauntlet room
+    spawns each of its params.trainers, a nest, mini-boss or habitat room spawns wild Pokemon, every slot spawns its
+    boss (DUNGEON_ROOMS.md 4a; DUNGEONS.md 3.2)."""
+    per = DUNGEONS_DATA["engine"]["slots"]["per_dungeon"]
+    out = set()
+    for di, d in enumerate(DUNGEONS_DATA["dungeons"]):
+        for g in range(di * per + 1, (di + 1) * per + 1):
+            out.add(("boss", di, g, None, None))
+            for r in d.get("rooms") or []:
+                if r["kind"] in TRAINER_KINDS:
+                    out.update(("trainer", di, g, r["id"], k) for k in range(1, len(r["params"]["trainers"]) + 1))
+                elif r["kind"] in WILD_KINDS:
+                    out.add(("wild", di, g, r["id"], None))
+    return out
+
+
+def classify_site(site):
+    """A spawn site's (kind, dungeon index, slot, room, trainer), read from its name against the data's ids; None for a
+    site the data explains nothing about."""
+    ds = DUNGEONS_DATA["dungeons"]
+    m = re.fullmatch(r"cobblers:dungeons/slot/s(\d+)/spawn", site)
+    if m:
+        g = int(m.group(1))
+        return ("boss", (g - 1) // DUNGEONS_DATA["engine"]["slots"]["per_dungeon"], g, None, None)
+    m = re.fullmatch(r"cobblers:dungeons/stand/([a-z0-9]+)_([a-z0-9_]+)_t(\d+)_s(\d+)/(show|start)", site)
+    if m:
+        di = next((i for i, d in enumerate(ds) if d["short"] == m.group(1)), None)
+        return ("trainer", di, int(m.group(4)), m.group(2), int(m.group(3)))
+    m = re.fullmatch(r"cobblers:dungeons/room/([a-z0-9_]+)/([a-z0-9_]+)/s(\d+)/spawn_b[1-6]", site)
+    if m:
+        di = next((i for i, d in enumerate(ds) if d["id"] == m.group(1)), None)
+        return ("wild", di, int(m.group(3)), m.group(2), None)
+    return None
+
+
+# Without it the V15 spawn check could pass on a pack with no spawn site at all (the list would be empty), or with one
+# of the dungeons' trainers or rooms spawning outside it. The expectation is the data's: every slot's boss, every trainer
+# of every stand and gauntlet, every nest, mini-boss and habitat, in every slot of its own dungeon, and nothing else.
 def test_the_spawn_check_sees_every_engine_spawn():
     sites = DA.spawn_sites(FNS)
-    assert sites and all(re.fullmatch(r"cobblers:dungeons/slot/s\d+/spawn", s) for s, _h in sites), sites
-    assert len(sites) == len([f for f in FNS if re.fullmatch(r"cobblers:dungeons/slot/s\d+/spawn", f)])
+    assert sites
+    got = {s: classify_site(s) for s, _h in sites}
+    unexplained = sorted(s for s, c in got.items() if c is None or c not in expected_spawners())
+    assert not unexplained, unexplained
+    missing = expected_spawners() - set(got.values())
+    assert not missing, sorted(missing, key=str)
+    assert len([s for s, c in got.items() if c[0] == "boss"]) == \
+        len([f for f in FNS if re.fullmatch(r"cobblers:dungeons/slot/s\d+/spawn", f)])
 
 
 # ================================================================================================ V15 / E1, behaviour
@@ -208,29 +257,40 @@ def test_the_run_tag_is_on_the_player_at_the_click_and_the_arrival_waits_at_leas
         assert TAG in p.tags
 
 
-# Without it a stage NPC stands in the slot without claims.exempt_tag until the keeper's backstop a pass later, and a
-# loss to it in that window is the victor-side gap D20 closes (V15: "tags the entity ... in the same function").
+# Without it an NPC or a Pokemon the run spawns stands in the slot without claims.exempt_tag until the keeper's backstop
+# a pass later, and a loss to it in that window is the victor-side gap D20 closes (V15: "tags the entity ... in the
+# same function"); a dungeon Pokemon claims nothing (DUNGEONS.md 2.5). Every site: the boss's stages, each stand's and
+# gauntlet's trainers (show and start), each nest's, mini-boss's and habitat's band spawn, run as the member at the
+# spot the spawn names, for every band and stage it reads.
 @pytest.mark.parametrize("site", [s for s, _h in DA.spawn_sites(FNS)])
 def test_every_npc_an_engine_spawn_makes_carries_the_exempt_tag_when_the_spawn_returns(site):
-    g = int(re.search(r"/s(\d+)/spawn$", site).group(1))
-    # the member stands in the arena when the boss spawns: at the spawn's own coordinates (a full-length dungeon's
-    # arena is a thousand blocks from the entry, out of the simulator's loaded reach of a player at the entry)
-    at = re.search(r'\{x:"([-\d.]+)",y:"([-\d.]+)",z:"([-\d.]+)"', "\n".join(DA.body(FNS[site])))
-    for band in range(1, 7):
-        for stage in (1, 2, 3):
+    kind, _di, g, _room, _k = classify_site(site)
+    fixed = re.search(r"/spawn_b([1-6])$", site)
+    bands = [int(fixed.group(1))] if fixed else range(1, 7)
+    stages = (1, 2, 3) if kind == "boss" else (1,)
+    # the macro spawn lines this site makes for a band: the boss's per band and stage, a trainer's one per band, a
+    # wild room's band function every line
+    lines = [l for l in DA.body(FNS[site]) if re.search(r"function cobblers:dungeons/(npc_at|wild_at) \{", l)]
+    for band in bands:
+        for stage in stages:
             w = new_world()
             p = player(w)
             p.dim = POCKET
-            # the member stands in the arena when a stage spawns: a full-length slot's arena is over 1,000 blocks east of
-            # its entry, outside the simulator's load range from x 90, so stand at the spot the spawn line names
-            spot = next(m for l in FNS[site] for m in [re.search(r'x:"([-\d.]+)",y:"([-\d.]+)",z:"([-\d.]+)"', l)] if m)
+            # the member stands in the room when it spawns: a full-length slot's rooms run over 1,000 blocks east of
+            # its entry, outside the simulator's load range from x 90, so stand by the first spot the spawn names
+            spot = next(m for l in lines for m in [re.search(r'x:"([-\d.]+)",y:"([-\d.]+)",z:"([-\d.]+)"', l)] if m)
             p.pos = [float(spot.group(1)) - 4, float(spot.group(2)), float(spot.group(3))]
             for obj, v in (("dg.band", band), ("dg.stage", stage), ("dg.slot", g), ("dg.run", 1)):
                 w.set(p.name, obj, v)
             w.set("#s%d" % g, "dg.run", 1)
             w.call(site, PS_ctx(p))
-            assert len(w.npcs) == 1, (site, band, stage, w.log)
-            assert EXEMPT in w.npcs[0].tags, (site, band, stage, w.npcs[0].tags)
+            made = w.npcs + [e for e in w.spawned if e.kind == "cobblemon:pokemon"]
+            if kind == "wild":
+                assert len(made) == len(lines) and not w.npcs, (site, band, len(lines), w.log)
+            else:
+                assert len(made) == 1 and len(w.npcs) == 1, (site, band, stage, w.log)
+            bare = [(e.kind, sorted(e.tags)) for e in made if EXEMPT not in e.tags]
+            assert not bare, (site, band, stage, bare)
 
 
 def _exit_paths():
@@ -386,6 +446,45 @@ def test_a_stage_spawn_that_does_not_tag_its_npc_is_caught():
     w.set("#s1", "dg.run", 1)
     w.call("cobblers:dungeons/slot/s1/spawn", PS_ctx(p))
     assert w.npcs and EXEMPT not in w.npcs[0].tags
+
+
+def _bare_after(files, site, band):
+    """Drive `site` of a (mutant) pack as test_every_npc_... does; the spawned entities without the exempt tag."""
+    fns = DA.functions(files)
+    _kind, _di, g, _room, _k = classify_site(site)
+    w = new_world(files)
+    p = player(w, files=files)
+    spot = next(m for l in DA.body(fns[site]) for m in [re.search(r'x:"([-\d.]+)",y:"([-\d.]+)",z:"([-\d.]+)"', l)] if m)
+    p.dim, p.pos = POCKET, [float(spot.group(1)) - 4, float(spot.group(2)), float(spot.group(3))]
+    for obj, v in (("dg.band", band), ("dg.stage", 1), ("dg.slot", g), ("dg.run", 1)):
+        w.set(p.name, obj, v)
+    w.set("#s%d" % g, "dg.run", 1)
+    w.call(site, PS_ctx(p))
+    made = w.npcs + [e for e in w.spawned if e.kind == "cobblemon:pokemon"]
+    assert made, (site, w.log)
+    return [e for e in made if EXEMPT not in e.tags]
+
+
+# Without them the stand and wild-room sites of the behaviour test are not shown to bite: a stand whose spawn stops
+# going through the slot's claim, and a room Pokemon bound without the exempt tag, each mutated in the GENERATOR
+# (tools/dungeon_fights.py; data untouched), leave a spawned entity bare (DG-INTEGRATE, 2026-10-09).
+def test_a_stand_trainer_that_skips_the_slots_claim_is_caught(monkeypatch):
+    anchor = '"function %s" % F("slot/s%d/' + 'bind" % slot_g),'
+    mod = mutated("dungeon_fights", anchor, '"# AUDIT MUTANT: the stand skips the slot claim",')
+    monkeypatch.setitem(sys.modules, "dungeon_fights", mod)
+    files = DA.dungeon_files()
+    site = next(s for s, _h in DA.spawn_sites(DA.functions(files)) if s.startswith("cobblers:dungeons/stand/")
+                and s.endswith("/start"))
+    assert _bare_after(files, site, 1)
+
+
+def test_a_room_pokemon_bound_without_the_exempt_tag_is_caught(monkeypatch):
+    anchor = '"tag @s add %s" % slot_tag(g), "tag @s add %s" % exempt,'
+    mod = mutated("dungeon_fights", anchor, '"tag @s add %s" % slot_tag(g),')
+    monkeypatch.setitem(sys.modules, "dungeon_fights", mod)
+    files = DA.dungeon_files()
+    site = next(s for s, _h in DA.spawn_sites(DA.functions(files)) if re.search(r"/spawn_b1$", s))
+    assert _bare_after(files, site, 1)
 
 
 # Without it a respawn handler that removes the run tag (the order E1 forbids) is not shown to be caught: the static
