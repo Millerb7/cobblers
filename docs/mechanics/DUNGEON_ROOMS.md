@@ -443,10 +443,11 @@ threshold's clocks with this table or 4.2's):
 |---|---|---|---|---|---|---|---|
 | night_shift | 1,402 main (1,616 all routes) | **41** | **44** | **44** | **48** | **51** | **54** |
 | jungle | 1,303 all routes (1,070 main) | **41** | **46** | **47** | **52** | **55** | **59** |
-| flooded_ruin | 1,337 all routes (1,000 main) | **40** | **43** | **45** | **48** | **52** | **55** |
+| flooded_ruin | 1,337 all routes (1,000 main) | **41** | **43** | **46** | **48** | **52** | **56** |
 
 KIT3 (2026-10-10): "all routes" now walks each fork route's own way through its host and its join (`route_extras`,
-section 1b); the clocks above still cover it (the independent audit, 0 findings).
+section 1b). The night shift's and the jungle's clocks still cover it; the ruin's, pinned to the tool plus its set piece's
+25 s, were re-derived (bands 1, 3, 6 one minute more: its catacomb route leaves and rejoins by side doors).
 
 ## 8. Not done, and unproven
 
