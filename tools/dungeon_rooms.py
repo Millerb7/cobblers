@@ -68,7 +68,7 @@ BOX_ANCHORS = {"line", "arena", "catch", "seam_box", "span", "box", "unsafe"}
 NO_STAND = {"seam"}          # point anchors that are blocks in a wall or slab, not cells to stand in
 DEFAULT_FLAGS = {"dress": "light", "rise": False, "connector": False, "pit": 0, "no_deploy": False, "jumps": False,
                  "dark": False, "length_snap": None, "width_snap": None}
-EXTENSION_MODULES = ["dungeon_kinds", "dungeon_fights", "dungeon_puzzles"]   # imported in this order, absent ones skipped
+EXTENSION_MODULES = ["dungeon_kinds", "dungeon_fights", "dungeon_puzzles", "dungeon_life"]   # imported in this order, absent ones skipped
 
 KINDS = {}
 FLAGS = {}

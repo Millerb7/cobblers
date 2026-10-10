@@ -259,7 +259,7 @@ def check_v15(dg_files, bo_files):
         spawn_at = [i for i, l in enumerate(ls) if helper in calls(l) or (site == helper and re.search(r"spawn(npc|pokemon)at", l))]
         later = ls[max(spawn_at) + 1:] if spawn_at else []
         tags = any("tag @s add %s" % exempt in [x for g in reach(dg, c) for x in body(dg[g])] for l in later
-                   if l.startswith("execute ") and " as @e[" in l for c in calls(l)) \
+                   if l.lstrip("$").startswith("execute ") and " as @e[" in l for c in calls(l)) \
             or any(re.search(r"\btag @e\[[^\]]*\] add %s\b" % re.escape(exempt), l) for l in later)
         if not tags:
             bad.append("%s spawns through %s and does not tag the spawned entity %s in the same function (V15)"

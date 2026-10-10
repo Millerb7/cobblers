@@ -152,6 +152,16 @@ def bar(msg, colour):
     return "title @s actionbar %s" % R.text(msg, colour)
 
 
+def say(key, colour="gray", **fmt):
+    """The on-screen line `data/dungeon_puzzles.json` messages.<key> as an actionbar command, or NOTHING when the text is
+    empty (the owner, 2026-10-10: 'puzzles should have less explanation'): the lines are a short hint, and a puzzle is
+    meant to be read off its console. Returned as a list so a caller can add it with `+`."""
+    msg = load().get("messages", {}).get(key, "")
+    for k, v in fmt.items():
+        msg = msg.replace("{%s}" % k, str(v))
+    return [bar(msg, colour)] if msg else []
+
+
 def sound(name, vol=1, pitch=1):
     return "playsound %s master @s ~ ~ ~ %s %s" % (name, vol, pitch)
 
@@ -206,10 +216,9 @@ def enter_pick(c, k, extra=()):
     return out
 
 
-def penalty_lines(c, msg):
-    return ["scoreboard players remove @s dg.clock %d" % c.pen,
-            sound("minecraft:block.anvil.land", 0.6, 1.4),
-            bar(msg.replace("{s}", str(c.pen_s)), "red")]
+def penalty_lines(c, key):
+    return (["scoreboard players remove @s dg.clock %d" % c.pen, sound("minecraft:block.anvil.land", 0.6, 1.4)]
+            + say(key, "red", s=c.pen_s))
 
 
 # ------------------------------------------------------------------------------------------------- levers
@@ -237,8 +246,7 @@ def build_levers(c):
     f = {}
     for j, pat in enumerate(pats):
         f["v%d" % j] = [LOADED] + ["setblock %s %s" % (at(lamp[k]), B["lamp_on"] if pat[k] else B["lamp_off"]) for k in range(n)]
-    hint = "Set each lever to its lamp, then press the gold seal."
-    enter = enter_pick(c, len(pats), [bar(hint, "gray")])
+    enter = enter_pick(c, len(pats), say("hint_levers"))
     tick = [LOADED, "execute unless score %s dg.rs matches 1 run return 0" % H,
             "execute if block %s %s run function %s" % (at(seal), btn_on, c.fn("confirm"))]
     confirm = [LOADED, "setblock %s %s" % (at(seal), button(B)), sb_set(hx, 0)]
@@ -249,7 +257,7 @@ def build_levers(c):
                        % (at(lamp[k]), B["lamp_on"], at(lev[k]), sb_set(hx, 1)))
     confirm += ["execute if score %s dg.rs matches 0 run function %s" % (hx, c.fn("clear")),
                 "execute if score %s dg.rs matches 1 run function %s" % (hx, c.fn("wrong"))]
-    wrong = [LOADED] + penalty_lines(c, "The seal rejects it. -{s} s.") + ["setblock %s %s" % (at(p), lever()) for p in lev]
+    wrong = [LOADED] + penalty_lines(c, "wrong_levers") + ["setblock %s %s" % (at(p), lever()) for p in lev]
     wrong += ["particle minecraft:angry_villager %s 0.8 0.4 0.4 0 8" % at((cx, fy + 2, z))]
     reset = ["# the console: levers down, the seal up, variant 0 on the lamps (the next entry rolls again)"]
     reset += [c.inn("setblock %s %s" % (at(p), lever())) for p in lev] + [c.inn("setblock %s %s" % (at(seal), button(B)))]
@@ -302,14 +310,14 @@ def build_sequence(c):
     tick = [LOADED, "execute unless score %s dg.rs matches 1 run return 0" % H, "function %s" % c.fn("chain"),
             "execute unless score %s dg.rs matches 1 run return 0" % H]
     tick += ["execute if block %s %s run function %s" % (at(btn[i]), btn_on, c.fn("wrong")) for i in range(n)]
-    wrong = [LOADED] + penalty_lines(c, "Wrong button. The sequence starts over. -{s} s.") + [sb_set(hg, 0)]
+    wrong = [LOADED] + penalty_lines(c, "wrong_sequence") + [sb_set(hg, 0)]
     wrong += ["setblock %s %s" % (at(p), B["lamp_off"]) for p in prog] + ["setblock %s %s" % (at(p), button(B)) for p in btn]
     reset = ["# the console: buttons up, progress dark, variant 0 on the row"]
     reset += [c.inn("setblock %s %s" % (at(p), button(B))) for p in btn] + [c.inn("setblock %s %s" % (at(p), B["lamp_off"])) for p in prog]
     reset += [sb_set(hg, 0), c.inn("function %s" % c.fn("v0"))]
     clear = [LOADED] + [c.inn("setblock %s %s" % (at(p), B["lamp_on"])) for p in prog]
     clear += [c.inn("particle minecraft:happy_villager %s 1.5 0.5 0.5 0 12 force" % at((cx, fy + 2, z)))]
-    enter = enter_pick(c, len(perms), [bar("Press the buttons in the order the row above shows.", "gray"), sb_set(hg, 0)])
+    enter = enter_pick(c, len(perms), say("hint_sequence") + [sb_set(hg, 0)])
     anchors = {"controls": [[x, fy + 1, z, 0] for x in xs], "display": [[cx, fy + 2, z, 0]]}
     expect = ([(p, B["button"]) for p in btn] + [((xs[i], fy + 2, iz0), marks[i]) for i in range(n)]
               + [(disp[p], marks[perms[0][p]]) for p in range(n)])
@@ -392,13 +400,13 @@ def build_plates(c):
     tick += ["execute if block %s %s run function %s" % (at(p), on, c.fn("wrong")) for p in pl]
     restore = ["setblock %s %s" % (at(pl[i]), plate) for i in range(n)] + ["setblock %s %s" % (at(tile[i]), marks[i]) for i in range(n)]
     restore += ["setblock %s %s" % (at(p), B["lamp_off"]) for p in prog]
-    wrong = [LOADED] + penalty_lines(c, "The wrong plate. Back to the door. -{s} s.")
+    wrong = [LOADED] + penalty_lines(c, "wrong_plates")
     wrong += ["tp @s %d.5 %d %d.5 %d 0" % tuple(start), sb_set(hg, 0)] + restore
     reset = ["# the field: every plate and tile restored, progress dark, variant 0 on the wall"]
     reset += [c.inn(x) for x in restore] + [sb_set(hg, 0), c.inn("function %s" % c.fn("v0"))]
     clear = [LOADED] + [c.inn("setblock %s %s" % (at(p), B["lamp_on"])) for p in prog]
     clear += [c.inn("particle minecraft:happy_villager %s 1.5 0.5 0.5 0 12 force" % at((cx, fy + 2, z)))]
-    enter = enter_pick(c, len(perms), [bar("Step on the plates in the order the wall shows. Not off it.", "gray"), sb_set(hg, 0)])
+    enter = enter_pick(c, len(perms), say("hint_plates") + [sb_set(hg, 0)])
     anchors = {"controls": [[x, fy, zc, 0] for x, zc in cells], "display": [[cx, fy + 2, z, 0]], "start": [start]}
     expect = ([(pl[i], plate) for i in range(n)] + [(tile[i], marks[i]) for i in range(n)] + [(disp[p], marks[perms[0][p]]) for p in range(n)])
     return {"blocks": ops, "anchors": anchors, "reserve": [(x - 1, fy - 1, zc - 1, x + 1, fy, zc + 1) for x, zc in cells],
@@ -495,12 +503,12 @@ def build_vault(doc, d, slot, room, theme):
     all_open = " ".join("if score %s dg.rs matches 2" % h for h in hc)
     for j in range(n):
         f["open%d" % j] = ([sb_set(hc[j], 2), "scoreboard players remove @s dg.clock %d" % cost_u,
-                            bar("The chest costs %d s of the clock." % cost_s, "gold"), sound("minecraft:entity.item.pickup", 1, 0.8)]
+                            *say("chest_taken", "gold", s=cost_s), sound("minecraft:entity.item.pickup", 1, 0.8)]
                            + (["function %s" % R.F("greed/take")] if ladder else [])
                            + ["execute %s run function %s" % (all_open, c.fn("clear"))])
     tick = [LOADED] + ["execute if score %s dg.rs matches 1 unless data block %s LootTable run function %s"
                        % (hc[j], at(chest[j]), c.fn("open%d" % j)) for j in range(n)]
-    enter = [bar("Each chest you open costs %d s of the clock." % cost_s, "gold")] + [sb_set(h, 1) for h in hc]
+    enter = say("hint_vault", "gold", s=cost_s) + [sb_set(h, 1) for h in hc]
     reset = ["# the chests: from air, with the entrant's band's loot table (a setblock onto the same chest state would fail and load nothing)"]
     reset += [c.inn("setblock %s minecraft:air" % at(p)) for p in chest]
     for j, p in enumerate(chest):

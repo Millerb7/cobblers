@@ -273,6 +273,14 @@ class RiftWorld(PS.World):
                                 return True
                         return False
                     i += 6
+                elif kind == "data" and t[i + 2] == "storage":
+                    def pred(c, sid=t[i + 3], path=t[i + 4]):
+                        try:
+                            self.storage_get(sid, path)
+                            return True
+                        except PS.Failed:
+                            return False
+                    i += 5
                 else:
                     raise PS.Unsupported("execute %s %s" % (w, kind))
                 kept = []

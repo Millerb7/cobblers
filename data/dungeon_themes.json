@@ -28,9 +28,34 @@
         {"op": "floor_strip", "rail": "minecraft:smooth_basalt", "sleeper": "minecraft:stripped_oak_log", "every": 3, "kinds": ["drift", "stairs", "gauntlet", "ambush", "resources", "miniboss"]},
         {"op": "timber", "every": 8, "post": "minecraft:oak_log", "beam": "minecraft:stripped_oak_log", "lantern": true, "lit": true},
         {"op": "stream", "count": 2, "width": [2, 4], "pools": 5, "pool_size": [5, 9], "bed": "minecraft:smooth_basalt", "plants": [], "kinds": ["habitat"], "why": "the Night Shift's sump: the mine broke into hot water (DUNGEONS.md 8, Volcanion). One deep, wading, as every theme's water"},
+        {"op": "life_scenes", "why": "after the water (it is carved first and a scene avoids it) and BEFORE trunks, columns, piles and cover, which work round its footprint (ctx.trail); tools/dungeon_life.py"},
         {"op": "wall_vines", "p": 0.05, "blocks": [{"block": "minecraft:glow_lichen"}], "lit": true, "salt": "l", "not_kinds": ["entry_room", "exit_room", "safe_room"]},
-        {"op": "piles", "density": 0.012, "blocks": [{"block": "minecraft:cobbled_deepslate", "w": 3}, {"block": "minecraft:cobblestone", "w": 2}, {"block": "minecraft:andesite", "w": 1}]}
+        {"op": "piles", "density": 0.012, "blocks": [{"block": "minecraft:cobbled_deepslate", "w": 3}, {"block": "minecraft:cobblestone", "w": 2}, {"block": "minecraft:andesite", "w": 1}]},
+        {"op": "life", "why": "LAST: ambient Pokemon, sound, candles, from the finished room (tools/dungeon_life.py)"}
       ],
+      "life": {
+        "why": "The old workings are not empty: bats in the roof, rock Pokemon in the walls, diggers in the spoil, a miner or two who never left. The dressing says what happened to the last shift: a camp with its fire gone cold, a cave-in with the beam across it, a nest of bones, a cairn with candles, a few waxed notes.",
+        "ambient": {"per_room": [1, 2], "groups": [
+          {"id": "bats", "lines": [["zubat", "golbat", "crobat"], ["woobat", "swoobat"]], "count": [2, 3], "weight": 3, "mode": "scatter", "not_kinds": ["safe_room"]},
+          {"id": "rock", "lines": [["geodude", "graveler", "golem"], ["roggenrola", "boldore", "gigalith"]], "count": [1, 2], "weight": 3, "mode": "cluster", "not_kinds": ["safe_room"]},
+          {"id": "diggers", "lines": [["diglett", "dugtrio"], ["drilbur", "excadrill"]], "count": [2, 3], "weight": 2, "mode": "cluster", "not_kinds": ["safe_room"]},
+          {"id": "miners", "lines": [["timburr", "gurdurr", "conkeldurr"]], "count": [1, 2], "weight": 1, "mode": "scatter", "not_kinds": ["safe_room"]},
+          {"id": "mourners", "lines": [["cubone", "marowak"]], "count": [1, 1], "weight": 1, "mode": "scatter", "not_kinds": ["safe_room"]},
+          {"id": "sleeper", "lines": [["geodude", "graveler"]], "count": [1, 1], "weight": 20, "sleep": true, "near": "rest", "kinds": ["safe_room"]}]},
+        "scenes": {"area_per": 700, "max": 3, "list": [
+          {"scene": "camp", "w": 2, "roles": {"bedroll": "minecraft:brown_carpet", "crate": "minecraft:barrel[facing=up]", "lamp": "minecraft:lantern[hanging=false]", "ring": "minecraft:cobblestone_slab[type=bottom]", "scorch": "minecraft:coal_block"}},
+          {"scene": "cave_in", "w": 3, "hug": true, "roles": {"rubble": [{"block": "minecraft:cobbled_deepslate", "w": 3}, {"block": "minecraft:cobblestone", "w": 2}, {"block": "minecraft:tuff", "w": 2}, {"block": "minecraft:andesite", "w": 1}], "beam": "minecraft:oak_log[axis={axis}]", "bone": "minecraft:bone_block[axis=y]", "skull": "minecraft:skeleton_skull[rotation={rot}]"}},
+          {"scene": "bones", "w": 1, "roles": {"bone": "minecraft:bone_block[axis=y]", "skull": "minecraft:skeleton_skull[rotation={rot}]", "nest": "minecraft:coarse_dirt"}},
+          {"scene": "crates", "w": 2, "hug": true, "roles": {"crate": "minecraft:barrel[facing=up]"}},
+          {"scene": "idol", "w": 1, "roles": {"plinth": "minecraft:deepslate_bricks", "pillar": "minecraft:polished_deepslate", "cap": "minecraft:chiseled_deepslate", "candle": "minecraft:candle[candles=3,lit=false]"}},
+          {"scene": "fallen", "w": 1, "hug": true, "roles": {"log": "minecraft:oak_log[axis={axis}]"}},
+          {"scene": "note", "w": 3, "hug": true, "roles": {"note": "minecraft:oak_sign"}}]},
+        "notes": [["Day nine.", "The lamps went", "out below the", "third cut."], ["Do not follow", "the rails.", "They go down."], ["The shift bell", "rang twice.", "Nobody came", "up."], ["Wages owed:", "three weeks.", "Paid in ore.", "I took it all."], ["Foreman says", "it is only", "a bad seam.", "It breathes."]],
+        "ambience": [
+          {"sound": "ambient.cave", "every": 16, "vol": 0.6, "pitch": 1.0},
+          {"sound": "block.gravel.fall", "every": 24, "vol": 0.5, "pitch": 0.8},
+          {"particle": "dust_plume", "count": 2, "delta": [1.2, 0.6, 1.2], "speed": 0.01, "not_kinds": ["safe_room"]}]
+      },
       "maze": {"wall": [{"block": "minecraft:cobbled_deepslate"}, {"block": "minecraft:cobblestone"}, {"block": "minecraft:andesite"}], "top": null, "post": "minecraft:oak_log", "height": 4},
       "parkour": {"ledge": "minecraft:stone_bricks", "ledge_top": "minecraft:polished_deepslate", "platform": "minecraft:oak_planks", "pillar": "minecraft:oak_log", "catch_floor": "minecraft:deepslate"},
       "bridge": {"span": "minecraft:oak_planks", "span_edge": "minecraft:stripped_oak_log", "rail": "minecraft:oak_fence", "post": "minecraft:lantern", "ledge": "minecraft:stone_bricks", "support": "minecraft:cobbled_deepslate"},
@@ -53,6 +78,7 @@
       "dress": [
         {"op": "floor_patches", "per100": 7, "size": [2, 5], "blocks": [{"block": "minecraft:podzol", "w": 3}, {"block": "minecraft:moss_block", "w": 3}, {"block": "minecraft:mud", "w": 1}, {"block": "minecraft:rooted_dirt", "w": 2}, {"block": "minecraft:coarse_dirt", "w": 1}]},
         {"op": "stream", "count": 1, "width": [2, 3], "pools": 1, "pool_size": [4, 7], "bed": "minecraft:mud", "plants": [], "not_kinds": ["entry_room", "exit_room", "boss_arena", "safe_room"]},
+        {"op": "life_scenes", "why": "after the water (it is carved first and a scene avoids it) and BEFORE trunks, columns, piles and cover, which work round its footprint (ctx.trail); tools/dungeon_life.py"},
         {"op": "trunks", "block": "minecraft:jungle_log", "density": 0.20, "thick_p": 0.3, "vines_p": 0.7, "min_gap": 1, "vine_len": [3, 9], "salt": "a"},
         {"op": "trunks", "block": "minecraft:mangrove_log", "density": 0.05, "thick_p": 0.15, "vines_p": 0.4, "min_gap": 2, "vine_len": [2, 6], "salt": "b"},
         {"op": "base_course", "where": "bottom", "block": "minecraft:mossy_stone_bricks", "kinds": ["gauntlet", "ambush", "dark_room", "habitat", "puzzle", "vault", "miniboss", "safe_room", "boss_arena"], "why": "the overgrown temple (DG-JUNGLE): the rooms the jungle record puts at its heart stand on a dressed-stone course under the moss, so the walls say temple before the roots do"},
@@ -68,8 +94,32 @@
           {"p": 0.05, "double": {"lower": "minecraft:tall_grass[half=lower]", "upper": "minecraft:tall_grass[half=upper]"}, "on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]},
           {"p": 0.06, "double": {"lower": "minecraft:large_fern[half=lower]", "upper": "minecraft:large_fern[half=upper]"}, "on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]},
           {"block": "minecraft:moss_carpet", "p": 0.07},
-          {"block": "minecraft:big_dripleaf[facing=north]", "p": 0.02, "solid": true, "on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]}]}
+          {"block": "minecraft:big_dripleaf[facing=north]", "p": 0.02, "solid": true, "on": ["minecraft:grass_block", "minecraft:podzol", "minecraft:moss_block", "minecraft:dirt", "minecraft:rooted_dirt", "minecraft:coarse_dirt", "minecraft:mud"]}]},
+        {"op": "life", "why": "LAST: ambient Pokemon, sound, candles, from the finished room (tools/dungeon_life.py)"}
       ],
+      "life": {
+        "why": "The overgrowth is busy: grubs and bugs in the leaf litter, grass and flower Pokemon in the clearings, snakes in the roots, mushrooms on the logs. The dressing is an expedition that did not come back: a camp under the trunks, a landslide of mud and stone, a nest of bones, a mossy shrine with candles, fallen logs, a few waxed notes.",
+        "ambient": {"per_room": [1, 2], "groups": [
+          {"id": "bugs", "lines": [["caterpie", "metapod", "butterfree"], ["sewaddle", "swadloon", "leavanny"], ["venipede", "whirlipede", "scolipede"]], "count": [2, 3], "weight": 3, "mode": "scatter", "not_kinds": ["safe_room"]},
+          {"id": "flora", "lines": [["oddish", "gloom", "vileplume"], ["bellsprout", "weepinbell", "victreebel"], ["hoppip", "skiploom", "jumpluff"]], "count": [2, 3], "weight": 3, "mode": "cluster", "not_kinds": ["safe_room"]},
+          {"id": "coils", "lines": [["snivy", "servine", "serperior"], ["treecko", "grovyle", "sceptile"]], "count": [1, 2], "weight": 2, "mode": "scatter", "not_kinds": ["safe_room"]},
+          {"id": "fungi", "lines": [["paras", "parasect"], ["foongus", "amoonguss"], ["shroomish", "breloom"]], "count": [2, 3], "weight": 2, "mode": "cluster", "not_kinds": ["safe_room"]},
+          {"id": "canopy", "lines": [["tropius"], ["kricketot", "kricketune"]], "count": [1, 2], "weight": 1, "mode": "scatter", "not_kinds": ["safe_room"]},
+          {"id": "sleeper", "lines": [["bulbasaur", "ivysaur", "venusaur"]], "count": [1, 1], "weight": 20, "sleep": true, "near": "rest", "kinds": ["safe_room"]}]},
+        "scenes": {"area_per": 600, "max": 3, "list": [
+          {"scene": "camp", "w": 2, "roles": {"bedroll": "minecraft:green_carpet", "crate": "minecraft:barrel[facing=up]", "lamp": "minecraft:lantern[hanging=false]", "ring": "minecraft:mossy_cobblestone_slab[type=bottom]", "scorch": "minecraft:coal_block"}},
+          {"scene": "cave_in", "w": 2, "hug": true, "roles": {"rubble": [{"block": "minecraft:rooted_dirt", "w": 2}, {"block": "minecraft:mossy_cobblestone", "w": 3}, {"block": "minecraft:mud_bricks", "w": 1}, {"block": "minecraft:mud", "w": 1}], "beam": "minecraft:jungle_log[axis={axis}]", "bone": "minecraft:bone_block[axis=y]", "skull": "minecraft:skeleton_skull[rotation={rot}]"}},
+          {"scene": "bones", "w": 2, "roles": {"bone": "minecraft:bone_block[axis=y]", "skull": "minecraft:skeleton_skull[rotation={rot}]", "nest": "minecraft:moss_block"}},
+          {"scene": "crates", "w": 1, "hug": true, "roles": {"crate": "minecraft:barrel[facing=up]"}},
+          {"scene": "idol", "w": 2, "roles": {"plinth": "minecraft:mossy_stone_bricks", "pillar": "minecraft:mossy_stone_bricks", "cap": "minecraft:chiseled_stone_bricks", "candle": "minecraft:candle[candles=3,lit=false]"}},
+          {"scene": "fallen", "w": 3, "roles": {"log": "minecraft:jungle_log[axis={axis}]", "cover": "minecraft:moss_carpet"}},
+          {"scene": "note", "w": 3, "hug": true, "roles": {"note": "minecraft:jungle_sign"}}]},
+        "notes": [["The idols all", "face inward.", "Why do they", "face inward?"], ["Roots in the", "tent by dawn.", "Left the pack."], ["Day six.", "The canopy", "closed over us.", "No sun since."], ["Do not eat", "the red ones.", "I ate the", "red ones."], ["Something is", "keeping count", "of us."]],
+        "ambience": [
+          {"sound": "entity.parrot.ambient", "every": 14, "vol": 0.5, "pitch": 0.9},
+          {"sound": "block.rooted_dirt.step", "every": 20, "vol": 0.5, "pitch": 0.7},
+          {"particle": "spore_blossom_air", "count": 4, "delta": [1.5, 1.0, 1.5], "speed": 0.01, "lift": 1.0}]
+      },
       "maze": {"wall": [{"block": "minecraft:jungle_leaves[persistent=true]"}, {"block": "minecraft:mangrove_leaves[persistent=true]"}, {"block": "minecraft:azalea_leaves[persistent=true]"}], "top": "minecraft:flowering_azalea_leaves[persistent=true]", "post": "minecraft:jungle_log", "height": 4},
       "parkour": {"ledge": "minecraft:grass_block", "ledge_top": "minecraft:podzol", "platform": "minecraft:jungle_wood", "pillar": "minecraft:jungle_log", "catch_floor": "minecraft:moss_block"},
       "bridge": {"span": "minecraft:bamboo_planks", "span_edge": "minecraft:bamboo_mosaic", "rail": "minecraft:bamboo_fence", "post": "minecraft:lantern", "ledge": "minecraft:grass_block", "support": "minecraft:moss_block"},
@@ -95,11 +145,34 @@
         {"op": "floor_patches", "per100": 7, "size": [2, 4], "blocks": [{"block": "minecraft:cracked_stone_bricks", "w": 3}, {"block": "minecraft:mossy_stone_bricks", "w": 3}, {"block": "minecraft:dark_prismarine", "w": 2}]},
         {"op": "stream", "count": 2, "width": [2, 3], "pools": 3, "pool_size": [4, 8], "bed": "minecraft:dark_prismarine", "not_kinds": ["entry_room", "exit_room", "boss_arena", "safe_room"], "lit": true, "plants": [
           {"block": "minecraft:kelp[age=25]", "p": 0.12}, {"block": "minecraft:seagrass", "p": 0.2}, {"block": "minecraft:sea_pickle[pickles=4,waterlogged=true]", "p": 0.05}]},
+        {"op": "life_scenes", "why": "after the water (it is carved first and a scene avoids it) and BEFORE trunks, columns, piles and cover, which work round its footprint (ctx.trail); tools/dungeon_life.py"},
         {"op": "columns", "block": "minecraft:mossy_stone_bricks", "cap": "minecraft:chiseled_stone_bricks", "density": 0.018, "thick_p": 0.3, "broken_p": 0.55, "fallen_p": 0.6},
         {"op": "piles", "density": 0.02, "blocks": [{"block": "minecraft:cracked_stone_bricks", "w": 3}, {"block": "minecraft:mossy_cobblestone", "w": 2}, {"block": "minecraft:stone_bricks", "w": 1}]},
         {"op": "wall_vines", "p": 0.06, "len": [2, 5], "blocks": [{"block": "minecraft:vine"}], "salt": "v"},
-        {"op": "wall_vines", "p": 0.05, "blocks": [{"block": "minecraft:glow_lichen"}], "lit": true, "salt": "l"}
+        {"op": "wall_vines", "p": 0.05, "blocks": [{"block": "minecraft:glow_lichen"}], "lit": true, "salt": "l"},
+        {"op": "life", "why": "LAST: ambient Pokemon, sound, candles, from the finished room (tools/dungeon_life.py)"}
       ],
+      "life": {
+        "why": "The drowned halls keep what the tide left: pond Pokemon in the wading channels, crabs in the shallows, ghosts and lamps that were people, old golems that never stopped. The dressing is a salvage crew that stayed: a camp above the tide line, a collapse, a nest of bones, a shrine with blue candles, a few waxed notes.",
+        "ambient": {"per_room": [1, 2], "groups": [
+          {"id": "ponds", "lines": [["wooper", "quagsire"], ["psyduck", "golduck"], ["marill", "azumarill"], ["lotad", "lombre", "ludicolo"]], "count": [2, 3], "weight": 3, "mode": "cluster", "not_kinds": ["safe_room"]},
+          {"id": "shore", "lines": [["krabby", "kingler"], ["shellos", "gastrodon"]], "count": [1, 2], "weight": 2, "mode": "scatter", "not_kinds": ["safe_room"]},
+          {"id": "haunts", "lines": [["yamask", "cofagrigus"], ["litwick", "lampent", "chandelure"], ["frillish", "jellicent"]], "count": [1, 2], "weight": 2, "mode": "scatter", "not_kinds": ["safe_room"]},
+          {"id": "ancients", "lines": [["baltoy", "claydol"], ["golett", "golurk"]], "count": [1, 2], "weight": 1, "mode": "scatter", "not_kinds": ["safe_room"]},
+          {"id": "sleeper", "lines": [["slowpoke", "slowbro"]], "count": [1, 1], "weight": 20, "sleep": true, "near": "rest", "kinds": ["safe_room"]}]},
+        "scenes": {"area_per": 700, "max": 3, "list": [
+          {"scene": "camp", "w": 2, "roles": {"bedroll": "minecraft:cyan_carpet", "crate": "minecraft:barrel[facing=up]", "lamp": "minecraft:soul_lantern[hanging=false]", "ring": "minecraft:stone_brick_slab[type=bottom]", "scorch": "minecraft:coal_block"}},
+          {"scene": "cave_in", "w": 3, "hug": true, "roles": {"rubble": [{"block": "minecraft:mossy_stone_bricks", "w": 3}, {"block": "minecraft:cracked_stone_bricks", "w": 2}, {"block": "minecraft:mossy_cobblestone", "w": 2}, {"block": "minecraft:prismarine_bricks", "w": 1}], "beam": "minecraft:dark_oak_log[axis={axis}]", "bone": "minecraft:bone_block[axis=y]", "skull": "minecraft:skeleton_skull[rotation={rot}]"}},
+          {"scene": "bones", "w": 1, "roles": {"bone": "minecraft:bone_block[axis=y]", "skull": "minecraft:skeleton_skull[rotation={rot}]", "nest": "minecraft:dark_prismarine"}},
+          {"scene": "crates", "w": 1, "hug": true, "roles": {"crate": "minecraft:barrel[facing=up]"}},
+          {"scene": "idol", "w": 2, "roles": {"plinth": "minecraft:prismarine_bricks", "pillar": "minecraft:mossy_stone_bricks", "cap": "minecraft:chiseled_stone_bricks", "candle": "minecraft:blue_candle[candles=3,lit=false]"}},
+          {"scene": "note", "w": 3, "hug": true, "roles": {"note": "minecraft:dark_oak_sign"}}]},
+        "notes": [["The water was", "knee deep", "when we", "arrived."], ["Tide mark:", "above the", "lintel.", "Not this year."], ["Do not wake", "the sleepers.", "They are not", "asleep."], ["Salvage rights", "claimed by the", "second crew.", "There was none."],["The lamps in", "the hall burn", "blue now."]],
+        "ambience": [
+          {"sound": "block.water.ambient", "every": 8, "vol": 0.5, "pitch": 1.0},
+          {"sound": "block.bubble_column.upwards_ambient", "every": 20, "vol": 0.4, "pitch": 0.8},
+          {"particle": "underwater", "count": 6, "delta": [2.0, 1.0, 2.0], "speed": 0.0, "lift": 1.0}]
+      },
       "maze": {"wall": [{"block": "minecraft:mossy_stone_bricks"}, {"block": "minecraft:cracked_stone_bricks"}, {"block": "minecraft:stone_bricks"}], "top": "minecraft:cracked_stone_bricks", "post": "minecraft:chiseled_stone_bricks", "height": 4},
       "parkour": {"ledge": "minecraft:prismarine_bricks", "ledge_top": "minecraft:mossy_stone_bricks", "platform": "minecraft:cracked_stone_bricks", "pillar": "minecraft:mossy_stone_bricks", "catch_floor": "minecraft:dark_prismarine"},
       "bridge": {"span": "minecraft:cracked_stone_bricks", "span_edge": "minecraft:mossy_stone_bricks", "rail": "minecraft:stone_brick_wall", "post": "minecraft:soul_lantern", "ledge": "minecraft:prismarine_bricks", "support": "minecraft:mossy_stone_bricks"},

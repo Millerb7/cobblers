@@ -18,6 +18,17 @@
     "vault_ladder": false
   },
   "limits": {"size": [3, 6], "chests": [1, 8], "variants_max": 8},
+  "messages_why": "The on-screen lines of the puzzle and vault kinds, as short as they can be (the owner, 2026-10-10: 'puzzles should have less explanation; they are good though'). A puzzle is read off its console: the hints name the verb in a few words or are empty (no line is sent); only the clock costs are stated, because a player must be able to see what a mistake or a chest takes. {s} is seconds. tools/dungeon_puzzles.py say() reads this.",
+  "messages": {
+    "hint_levers": "Match the lamps.",
+    "hint_sequence": "",
+    "hint_plates": "",
+    "hint_vault": "Each chest: {s} s.",
+    "chest_taken": "-{s} s.",
+    "wrong_levers": "-{s} s.",
+    "wrong_sequence": "-{s} s.",
+    "wrong_plates": "-{s} s."
+  },
   "default_loot_why": "What a vault holds when its record names no loot_by_band (the room kit's demo list, a draft). The authored dungeons set their own: this is a placeholder with some value per band, vanilla items only.",
   "default_loot_by_band": {
     "1": [{"item": "minecraft:iron_ingot", "count": [3, 6]}, {"item": "minecraft:gold_nugget", "count": [4, 8]}],
