@@ -1326,6 +1326,9 @@ def build_room(doc, d, slot, room, theme):
     must = set(keep) | route | {(centre[0] + a, centre[1] + c) for a in range(-2, 3) for c in range(-2, 3)}
     must |= door_approach(room)
     keep |= door_approach(room)
+    # the straight route the outline keeps open is kept from dressing too: with only the wiggly trail kept, trunks
+    # walled off an off-centre door's only way in shaped rooms (DG2-JUNGLE, three times)
+    keep |= route
     secret = secret_plan(doc, d, room, theme, must | set(forced))
     for c in secret["keep"]:
         keep.add(c)
@@ -2368,6 +2371,10 @@ def problems(doc, d=None):
                 bad += walk_problems(doc, dd, s)
             except (RoomError, KeyError) as e:
                 bad.append("%s: the rooms do not build: %s" % (dd["id"], e if isinstance(e, RoomError) else "missing theme key %s" % e))
+            except (IndexError, ValueError, TypeError) as e:
+                # a generator fault (dress_columns read past the grid once, DG2-JUNGLE): reported as a problem with its
+                # slot, never a crash of problems() that hides every other finding
+                bad.append("%s slot %d: the rooms do not build (%s: %s)" % (dd["id"], s["g"], type(e).__name__, e))
     return bad
 
 
