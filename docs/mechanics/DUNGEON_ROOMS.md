@@ -133,6 +133,87 @@ off `ctx.reserved(x, z)` (now including landings, stairs, secrets, shortcuts).
   trunk or column needs floor under all four feet (over a trench or a stream it floated and sealed a cell). The mine's
   shells are byte-identical; jungle and ruin shells differ in where trunks, columns and dripleaves stand.
 
+## 1b. The pass-3 record (KIT3, 2026-10-10): crossroads, wings, long parkour, the hidden prize, the vault budget
+
+The owner, playing pass 2: "I see no diverging paths ... the optional paths didn't feel immense. And the parkour room
+should be longer, or just have more of them." Every field below is OPTIONAL and a record without them builds exactly as
+1a. Code: `tools/dungeon_crossroads.py` (crossroads, looks, wings' checks), `tools/dungeon_prize.py` (the prize),
+`tools/dungeon_greed.py` (the vault budget).
+
+**Crossroads.** A room of `"kind": "crossroads"` is a fork's HOST: the entry right after it in `rooms` must be a `fork` of
+2 or 3 routes, and every route of that fork carries a `look`. Any fork may carry looks; after a crossroads they are
+required and pairwise different.
+```
+{"id": "x1", "kind": "crossroads", "length": 40, "width": 41, "height": 10, "shape": "ring",
+ "params": {"hub": [0.5, 0.5]}}
+{"id": "f1", "kind": "fork", "routes": [
+    {"id": "fast", "look": "lit", "sign": "GANTRY", "rooms": [...]},
+    {"id": "deep", "look": "dark", "sign": ["OLD DRIFT", "KEEP OUT"], "from": {"side": "north", "at": 20}, "rooms": [...]},
+    {"id": "wet", "look": "flooded", "from": {"side": "south", "at": 20}, "rooms": [...]}]}
+```
+- `look`: an id from the theme's `crossroads.looks`; every theme has `lit`, `dark` and `flooded` (the mine's lit gantry,
+  dark tunnel and flooded stair; the jungle's sunlit way, dark hollow and flooded stair; the ruin's lit colonnade, dark
+  crypt and flooded stair). A look restyles the door on BOTH sides (the host's wall and the route's first room's): frame
+  and lintel blocks, light blocks set into a lit frame, the 3 x 3 approach's floor (`deck`), a one-deep wading trench
+  across the approach for a `water` look (only where the door has no landing), and a WINDOW each side of the door (the
+  look's `window` block, 2 wide and 2 high at `c +- 3..4`, `y + 1..2`, each room in its own wall column, only where both
+  rooms' walls meet there). `sign`: a string or up to 3 lines, at most 15 characters each, printable ASCII; a wall sign
+  over the door on the host's side.
+- `params.hub`: `[fx, fz]` fractions of the box (default the centre): where the chooser stands. The anchor `hub` is the
+  nearest open, level cell; from it every exit's opening must be in sight (`problems()` casts a ray from eye height to each
+  door's opening through the built grid).
+- `problems()` refuses: a crossroads not followed by a fork; a fork of more than 3 routes; a route after a crossroads
+  without a look, an unknown look, two routes with one look; two exits of one host on the same wall closer than 10
+  (centre to centre: the "two near-identical doors on one wall" of pass 2); an exit the hub cannot see. A dungeon may hold
+  any number of forks (crossroads or not); forks and wings still nest one level only (no fork or side inside a route).
+
+**Wings.** A `side` entry of 2 to 4 rooms is a WING (1 room is the pass-2 side room; more than 4 is refused). A wing
+ends in a dead end. A wing that REJOINS is a fork route marked `"optional": true`: it rejoins at the room after the fork
+like any route. Every fork keeps at least one route that is not optional.
+- The clock (`tools/dungeon_clock.py`) never counts a side entry or an optional route: it pays the slowest NON-optional
+  route of each fork. The walk check walks every room of every route and wing in and back (the pass-2 checks, unchanged),
+  and the independent audit walks each route alone, optional ones included.
+- A wing's first room is entered through the host's side wall, so it cannot be a box-only kind (`maze`, `parkour`,
+  `collapse_bridge`, `setpiece`: west in, east out); put a connector first (`"in": {"side": "south"}`, out east), then
+  the parkour. `problems()` names it.
+
+**Parkour, longer.** `params.sections` 2..6 (PARKOUR2's own planner; a room of S sections needs an interior at least
+`30 S - 10` long: 140 for 5, 170 for 6). `params.hard: true` makes every section tier 3 (jumps of 4 cells with a run-up,
+3 with a rise) and turns the easy fork off: the parkour that guards a wing's payoff. PARKOUR2's jump limits are unchanged.
+
+**The hidden prize** (`habitat` rooms only, see below):
+```
+{"id": "lair", "kind": "habitat", "length": 30, "width": 21, "height": 10, "params": {
+  "prize": {"rare_by_band": {"1": "gabite", "2": "gabite", "3": "shelgon"},
+            "legendary_by_band": {"4": "nihilego", "5": "buzzwole", "6": "kartana"},
+            "chance_by_band": {"1": 15, "6": 40},
+            "rumour": "A pitman swears something glitters in the old pay office."}}}
+```
+- `rare_by_band` names a band below `engine.prize.legendary_from_band` (4: gym 6's cap, the Beast Ball stage), a
+  NON-legendary species (the jar's labels: no `legendary`, `mythical` or `ultra_beast`); `legendary_by_band` a band from
+  it on, a legendary, mythical or Ultra Beast. A band named by neither has no prize. `chance_by_band` (percent, 0-100)
+  overrides `engine.prize.chance_by_band`; `rumour` (printable ASCII, at most 120) overrides `engine.prize.rumour`.
+- **Per run.** At the threshold (`slot/s<g>/start`, after the sigil is spent, so leaving and re-entering cannot re-roll
+  it for free) the room rolls `random value 1..100` against the entrant's band's chance; `#s<g>r<i>p dg.rs` 1 means
+  present. Present: the run board shows the rumour as its last line and the member is told it in chat; the arrival puts the
+  board back. The room's `enter` spawns the band's prize at the anchor `prize` (the `legendary` anchor when the habitat
+  has no `species` of its own, else its own open spot); the room's reset and the slot's free discard it.
+- **The Pokemon.** Level: the band's LOWER cap (`engine.prize.level`), so no entrant of the band is ever over-capped by
+  it and the level cap's ball refusal (`tools/levelcap_pack.py`) never fires (below). Fixed, `no_ai`, catchable. From
+  `legendary_from_band` on it carries `data/key_ball.json`'s tag: only a Beast Ball catches it (EXP-064, unrun), x5.
+  Below, any ball. The catch is weighed by GREED as a habitat's (`catches.habitat`: rare 8 points, legendary 20).
+- `habitat` only: GREED weighs a catch by the kind of room the catcher stands in, so a prize in a nest or a mini-boss
+  room would be weighed as a nest catch. A habitat may carry a `species` of its own as well (its resident, as 4a).
+- A prize habitat's `gate` is `open` (an optional wing's payoff; `problems()` refuses `cleared`).
+
+**The vault budget** (`data/dungeon_greed.json` `vault_budget`): a vault chest's expected value (GREED's `chest_cp`)
+at band b is at most `dollar_factor` x the gathering tier open at the band's lowest badge count x the shortest dungeon's
+required hours, divided by the vault's chests: a vault never pays more than the same run's time spent gathering, the
+limit RESOURCES2 set for a resources room. With the kit's four chests: **band 1 82 cp, 2 193, 3 198, 4 216, 5 360, 6 381
+(0.8 to 3.8 points) a chest; a whole vault 330, 774, 792, 864, 1,441, 1,526 (floored).** Enforced by `problems()` when
+`vault_budget.enforce` is true; until the three authors rebalance their loot it is false and `D.warnings()` names every
+chest over (the pass-2 vaults are 7 to 150 points a chest).
+
 ## 2. Themes (`data/dungeon_themes.json`)
 
 Three: `mine`, `jungle`, `flooded_ruin`. A theme names the hull (wall, floor, ceiling, light and its spacing), the door
