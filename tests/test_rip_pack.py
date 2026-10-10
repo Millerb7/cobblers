@@ -179,7 +179,7 @@ def test_chain_kills_and_summons_the_oval_with_the_interaction_and_counts_unchan
     assert "kill @e[type=minecraft:item_display,tag=dg.rip_ns,tag=dg.rip_oval]" in act
     done = "\n".join(out["cobblers:dungeons/rips/entities_done"])
     assert "type=minecraft:item_display,tag=dg.rip_ns,tag=dg.rip_oval" in done     # de-duplicated like the interaction
-    assert want_rips == 1                                                          # the count is still the interactions
+    assert want_rips == len(DOC["dungeons"])                                       # the count is still the interactions, one a rip
 
 
 def test_problems_refuse_a_stretched_or_buried_oval():

@@ -51,6 +51,8 @@ def demo_doc(theme="mine", rooms=None, per_dungeon=1):
     d["rooms"] = copy.deepcopy(rooms if rooms is not None else DEMO)
     d.pop("spine", None)
     d.pop("clock_s_by_band", None)        # the demo is not the Night Shift: it runs on the bands' clocks
+    doc["dungeons"] = [d]       # the demo alone: the authored dungeons after it (wave 2) have their own tests
+    doc["engine"]["sigils"]["free_first_entry"]["dungeons"] = [x for x in doc["engine"]["sigils"]["free_first_entry"]["dungeons"] if x == d["id"]]
     doc["engine"]["slots"]["per_dungeon"] = per_dungeon
     return doc
 

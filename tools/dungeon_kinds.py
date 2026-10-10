@@ -849,6 +849,44 @@ def dress_piles(ctx, spec):
 # ------------------------------------------------------------------------------------------------- registration
 
 
+def dress_glow_vines(ctx, spec):
+    """Glow berries hanging from the canopy to a few blocks over the floor (DG-JUNGLE, 2026-10-09): the light a TALL room
+    needs, since the hull's ceiling lattice cannot reach a floor more than about 12 below it (lattice_spacing). Only in
+    rooms whose clear height over their lowest floor is at least `min_height`; a lattice `every` apart, each column
+    moved up to two cells off a trunk or column or an anchor's keep, from the first air under the leaves down to
+    `clear` blocks over the floor, so the player walks under every tip. Cave vines have no collision (dungeon_grid
+    PASSABLE). Each lit cell (berries=true) is a light of 14, not 15, so the spacing is reckoned at 14."""
+    r = ctx.room
+    clear = int(spec.get("clear", 4))
+    lowest = min(r["floors"]) if not r["pit"] else min(r["floor_in"], r["floor_out"])
+    if r["ceil_y"] - lowest < int(spec.get("min_height", 11)):
+        return
+    every = int(spec.get("every", 7))
+    tip, body = spec["tip"], spec["body"]
+    unlit = spec.get("body_unlit", body)
+    top = r["ceil_y"] - 1
+    for x0 in R._spread(r["ix0"] + 1, r["ix1"] - 1, every):
+        for z0 in R._spread(r["iz0"] + 1, r["iz1"] - 1, every):
+            for dx, dz in sorted(((a, b) for a in range(-2, 3) for b in range(-2, 3)), key=lambda t: abs(t[0]) + abs(t[1])):
+                x, z = x0 + dx, z0 + dz
+                if not (r["ix0"] <= x <= r["ix1"] and r["iz0"] <= z <= r["iz1"]) or (x, z) in ctx.keep:
+                    continue
+                y_tip = R.floor_at(r, x) + clear
+                y = top
+                while y > y_tip and not ctx.air(x, y, z):
+                    y -= 1
+                if y <= y_tip or ctx.air(x, y + 1, z):
+                    continue        # no leaf, log or ceiling to hang from, or nothing to hang
+                if not _air_col(ctx, x, y_tip, y, z):
+                    continue
+                for k, yy in enumerate(range(y, y_tip - 1, -1)):
+                    lit = yy == y_tip or k % 2 == 0
+                    ctx.add(setb((x, yy, z), tip if yy == y_tip else (body if lit else unlit)))
+                    if lit:
+                        ctx.lights.append((x, yy, z))
+                break
+
+
 R.register("drift", kind_drift, dress="full", rise=True, connector=True)
 R.register("stairs", kind_drift, dress="light", rise=True, connector=True)
 R.register("entry_room", kind_entry, dress="light")
@@ -874,5 +912,6 @@ R.register_dress("wall_vines", dress_wall_vines, "light")
 R.register_dress("stream", dress_stream, "light")
 R.register_dress("columns", dress_columns, "full")
 R.register_dress("piles", dress_piles, "full")
+R.register_dress("glow_vines", dress_glow_vines, "light")
 
 R.EXTRA_CHECKS.extend([check_maze, check_parkour, check_bridge])

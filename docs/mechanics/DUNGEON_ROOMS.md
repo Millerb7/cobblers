@@ -36,7 +36,7 @@ water only, every id present in the 1.21.1 jar. A dress op has a `level` (`light
 `full` places obstacles and only runs in rooms whose kind is dressed `full`, off a trail kept clear for the player), may
 carry `kinds` / `not_kinds`, and `lit: true` if it emits light (a dark room skips it). Ops: `base_course`, `pillars`,
 `timber`, `streak`, `floor_strip`, `floor_patches`, `ground_cover`, `trunks`, `canopy`, `wall_vines`, `stream`,
-`columns`, `piles`. New ops register with `register_dress(name, fn, level)`. A theme may opt in to
+`columns`, `piles`, `glow_vines` (glow berries hung from the canopy to 4 over the floor: a room taller than about 11 cannot be lit from its ceiling; the jungle uses it). New ops register with `register_dress(name, fn, level)`. A theme may opt in to
 `hull.tall_lights` (`block`, `every`, `under`; the ruin does): a room whose ceiling lattice would have to be closer than
 `under` to reach its floor is lit from the floor course instead (`floor_lights`, a light block every `every`, moved to the
 nearest open floor cell when covered), keeps a sparse ceiling lattice at `light_every`, and any standable cell neither
@@ -70,7 +70,7 @@ Kinds are deterministic: `rng(d, room, salt)` depends on dungeon and room ids, n
 dungeon (tested).
 
 **Hooks.** A kind's `functions` keys `enter`, `clear`, `reset`, `tick` are merged into the generated room functions;
-any other key becomes its own function. Names are `cobblers:dungeons/room/<dungeon>/<room>/s<k>/<name>`:
+any other key becomes its own function. Names are `cobblers:dungeons/room/<dungeon>/<room>/s<g>/<name>` (`g` the global slot number, as in `shells/s<g>`: the audit reads `/s<g>/` as the slot):
 
 | Function | Runs | Context |
 |---|---|---|
