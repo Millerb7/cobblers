@@ -707,9 +707,9 @@ def test_an_absent_players_slot_is_freed_at_their_deadline_and_not_before():
     enter(w, p)
     cross(w, p)
     to_pass_edge(w)
-    w.set(p.name, "dg.clock", 130 * 4 + PASS * 4)              # one more pass, present, takes 20 ticks
+    w.set(p.name, "dg.clock", 130 * DA.UNITS_PER_TICK + PASS * DA.UNITS_PER_TICK)              # one more pass, present, takes 20 ticks
     w.tick(PASS)
-    assert score(w, p, "dg.clock") == 130 * 4
+    assert score(w, p, "dg.clock") == 130 * DA.UNITS_PER_TICK
     p.online = False
     w.tick(PASS * 6)
     assert w.get("#s1", "dg.own") == score(w, p, "dg.id")
