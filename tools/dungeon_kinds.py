@@ -625,6 +625,8 @@ def dress_streak(ctx, spec):
             for k in range(ln):
                 # along the face: across it for a north/south face, so the streak lies in the rock it is shown in
                 cx, cz = (x + dx + k, z + dz) if dz else (x + dx, z + dz + k)
+                if not (r["ix0"] <= cx <= r["ix1"] and r["iz0"] <= cz <= r["iz1"]):
+                    break       # the rock of THIS room only: past its box is the void or another room's wall
                 ctx.add(fill((cx, yy, cz, cx, yy + rg.randint(0, 1), cz), blk, "replace " + R.G.base(wall)))
         return
     for _ in range(int(spec.get("count", 4))):
@@ -632,7 +634,7 @@ def dress_streak(ctx, spec):
         ln = rg.randint(*spec.get("len", [3, 7]))
         x0 = rg.randint(r["ix0"] + 2, max(r["ix0"] + 2, r["ix1"] - ln - 1))
         y = rg.randint(r["y_lo"] + 1, max(r["y_lo"] + 1, r["y_lo"] + 3))
-        ctx.add(fill((x0, y, zw, x0 + ln - 1, y + rg.randint(0, 1), zw), pick(rg, spec["blocks"]), "replace " + R.G.base(wall)))
+        ctx.add(fill((x0, y, zw, min(x0 + ln - 1, r["ix1"]), y + rg.randint(0, 1), zw), pick(rg, spec["blocks"]), "replace " + R.G.base(wall)))
 
 
 def dress_floor_strip(ctx, spec):
@@ -671,7 +673,7 @@ def dress_floor_patches(ctx, spec):
         w, h = rg.randint(*spec.get("size", [2, 4])), rg.randint(*spec.get("size", [2, 4]))
         x0 = rg.randint(r["ix0"] + 3, max(r["ix0"] + 3, r["ix1"] - w - 2))
         z0 = rg.randint(r["iz0"], max(r["iz0"], r["iz1"] - h))
-        ctx.add(fill((x0, y, z0, x0 + w - 1, y, z0 + h - 1), pick(rg, spec["blocks"]), base))
+        ctx.add(fill((x0, y, z0, min(x0 + w - 1, r["ix1"]), y, min(z0 + h - 1, r["iz1"])), pick(rg, spec["blocks"]), base))
 
 
 def dress_ground_cover(ctx, spec):

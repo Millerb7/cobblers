@@ -560,6 +560,9 @@ def _place(doc, d, slot, i, r, inc, item, length_override=None):
 
 
 MIN_FIT_LENGTH = 8
+# kinds whose own geometry winds, climbs and forks inside a box: the theme mix never gives them an outline (an explicit
+# `shape` on the record reaches the kind, which refuses it: tools/dungeon_parkour.py, tools/dungeon_setpieces.py)
+BOX_ONLY_KINDS = {"maze", "parkour", "collapse_bridge", "setpiece"}
 
 
 def _attach(rooms, h, spec, main, i):
@@ -677,7 +680,7 @@ def _fix_host_door(rooms, h, i, room):
 def shape_of(d, r, fl):
     """The room's shape: its own `shape`, else (a dungeon with shape_mix) its theme's mix for the kind, else box. A kind
     registered outline=False is always a box."""
-    if not fl.get("outline", True):
+    if not fl.get("outline", True) or (r["kind"] in BOX_ONLY_KINDS and not r.get("shape")):
         return "box"
     if r.get("shape"):
         return r["shape"]
@@ -1991,9 +1994,13 @@ BARRIER_KINDS = {"gauntlet", "ambush"}   # tools/dungeon_fights.py: a barrier 4 
 BARRIER_LIFT_MAX = 2                      # standing 3 up, a flat jump of 3 clears a 4-high barrier's top (V6)
 
 
+BED_UNDER = 1      # a stream's bed is set one under the floor course (the water replaces the course): a room writes there
+
+
 def _overlap(a, b):
+    """Two rooms' write boxes meet: walls, ceiling course, and the floor course with the bed row under it."""
     return not (a["xb"] < b["xa"] or b["xb"] < a["xa"] or a["zb"] < b["za"] or b["zb"] < a["za"]
-                or a["ceil_y"] < b["hull_lo"] or b["ceil_y"] < a["hull_lo"])
+                or a["ceil_y"] < b["hull_lo"] - BED_UNDER or b["ceil_y"] < a["hull_lo"] - BED_UNDER)
 
 
 def plan_problems(doc, d, slot):
@@ -2059,7 +2066,7 @@ def plan_problems(doc, d, slot):
         if r["kind"] == "boss_arena" and r["out_side"] != "east":
             bad.append("%s: its door out must be in its east wall" % lab)
         doors = room_doors(r)
-        if not fl["outline"] and (r["in_side"] != ("west" if r["dir"] == "east" else "east")
+        if (not fl["outline"] or r["kind"] in BOX_ONLY_KINDS) and (r["in_side"] != ("west" if r["dir"] == "east" else "east")
                                   or (not r["last"] and r["out_side"] != ("east" if r["dir"] == "east" else "west"))
                                   or len(doors) > 2 or any(x["y"] != door_floor(r, inner_cell(r, x)[0]) for x in doors)
                                   or r.get("secrets")):
@@ -2157,6 +2164,18 @@ def walk_problems(doc, d, slot):
         if n_breakable != want:
             bad.append("%s: %d blocks the rift pick can break (%d expected: a resources room's seam and the cracked secrets' "
                        "faces). A wall, floor or dressing block the pick can break is a hole to the void" % (lab, n_breakable, want))
+        # every block the room writes is inside its own box (walls, floor and ceiling courses): its grid cannot see
+        # anything past it, and past it is the void or another room. The one exception is a closed gate out, which
+        # spans the neighbour's wall column too (door["box"])
+        own = (r["xa"], r["hull_lo"] - BED_UNDER, r["za"], r["xb"], r["ceil_y"], r["zb"])
+        gate_boxes = {tuple(G.norm_box(x["box"])) for x in room_doors(r)}
+        for op in b.ops + b.gate_ops:
+            bx = G.norm_box(op[1] if op[0] == "fill" else tuple(op[1]) * 2)
+            if bx in gate_boxes:
+                continue
+            if not (own[0] <= bx[0] and bx[3] <= own[3] and own[1] <= bx[1] and bx[4] <= own[4] and own[2] <= bx[2] and bx[5] <= own[5]):
+                bad.append("%s: it writes outside its own box at %s (%s): the void or another room's wall" % (lab, list(bx), op[2]))
+                break
         sx, sy, sz = room_start(r)
         s_local = g.local(sx, sy, sz)
         reach = G.walk(g, [s_local], jumps=fl["jumps"], cls=cls)
