@@ -2500,7 +2500,10 @@ def shortcut_audit(pack, s, start, gr, F):
                           % (cid, w3.get(*c), start.get(*c)))
                     break
             # once opened in a run, the next run starts shut: the holder the function guards on is back at 0
-            hold = [h for h, _o in sim.scores if re.fullmatch(r"#s%dr\d+c\d+" % s.g, h)]
+            # the guard is the holder the shortcut function itself tests: a vault keeps its chests on the same
+            # #s<g>r<i>c<j> shape (tools/dungeon_puzzles.py), and those are not a shortcut's (false RESET, 2026-10-10)
+            guards = {h for ln in pack.lines(fid) for h in re.findall(r"#s%dr\d+c\d+" % s.g, ln)}
+            hold = [h for h, _o in sim.scores if h in guards]
             if any(sim.scores.get((h, "dg.rs")) not in (0, None) for h in hold):
                 F.add("RESET", s, r, None, "shortcut %s's once-a-run guard is not reset by the slot's reset" % cid)
 
@@ -2556,6 +2559,13 @@ def setpiece_audit(pack, s, start, gr, F):
             sim = Sim(pack, start.copy())
             entrant(sim, s, 1)
             sim.call(FN + "slot/s%d/reset" % s.g, Ctx(ex=sim.player, pos=sim.player.pos))
+            # a member in this room has cleared every room before it: their gates stand open, as the walk's gate
+            # states have them. Without this the reset's shut gate at this room's own door in (the previous room's
+            # door out) read as a block filling cells a player stands in (TRAP at every set piece, 2026-10-10)
+            for prev in s.rooms[:i]:
+                fn_clear = room_fn(s, prev, "clear")
+                if pack.lines(fn_clear):
+                    sim.call(fn_clear, Ctx(ex=sim.player, pos=sim.player.pos))
             sim.player.pos = node_pos(gr, own[0])
             sim.call(room_fn(s, r, "enter"), Ctx(ex=sim.player, pos=sim.player.pos))
             return sim
