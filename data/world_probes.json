@@ -7321,6 +7321,388 @@
         "entity": "@e[type=cobblemon:pokemon,tag=cobblers.fk_giratina]",
         "count": 1
       }
+    ],
+    "scar_tarn": [
+      {
+        "what": "the tarn's surface over its deepest column (bed y228)",
+        "block": [
+          1984,
+          237,
+          726,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tarn water at the surface",
+        "block": [
+          1966,
+          237,
+          737,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tarn water at the surface",
+        "block": [
+          1980,
+          237,
+          728,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tarn water at the surface",
+        "block": [
+          1990,
+          237,
+          718,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tarn water at the surface",
+        "block": [
+          1999,
+          237,
+          726,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tarn water at the surface",
+        "block": [
+          2009,
+          237,
+          721,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tarn water at the surface",
+        "block": [
+          2020,
+          237,
+          707,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tarn water at the surface",
+        "block": [
+          2033,
+          237,
+          712,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tarn water at the surface",
+        "block": [
+          2048,
+          237,
+          697,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the water is held: no water one block over the surface",
+        "block": [
+          1984,
+          238,
+          726,
+          "minecraft:water"
+        ],
+        "expect": false
+      },
+      {
+        "what": "rim of the tarn is not water",
+        "block": [
+          1965,
+          237,
+          737,
+          "minecraft:water"
+        ],
+        "expect": false
+      },
+      {
+        "what": "rim of the tarn, a lifted bank block",
+        "block": [
+          1965,
+          238,
+          737,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rim of the tarn is not water",
+        "block": [
+          1979,
+          237,
+          742,
+          "minecraft:water"
+        ],
+        "expect": false
+      },
+      {
+        "what": "rim of the tarn, a lifted bank block",
+        "block": [
+          1979,
+          238,
+          742,
+          "minecraft:coarse_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rim of the tarn is not water",
+        "block": [
+          1997,
+          237,
+          734,
+          "minecraft:water"
+        ],
+        "expect": false
+      },
+      {
+        "what": "rim of the tarn, a lifted bank block",
+        "block": [
+          1997,
+          238,
+          734,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rim of the tarn is not water",
+        "block": [
+          2015,
+          237,
+          698,
+          "minecraft:water"
+        ],
+        "expect": false
+      },
+      {
+        "what": "rim of the tarn, a lifted bank block",
+        "block": [
+          2015,
+          238,
+          698,
+          "minecraft:mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rim of the tarn is not water",
+        "block": [
+          2033,
+          237,
+          696,
+          "minecraft:water"
+        ],
+        "expect": false
+      },
+      {
+        "what": "rim of the tarn, a lifted bank block",
+        "block": [
+          2033,
+          238,
+          696,
+          "minecraft:mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rim of the tarn is not water",
+        "block": [
+          2051,
+          237,
+          689,
+          "minecraft:water"
+        ],
+        "expect": false
+      },
+      {
+        "what": "rim of the tarn, a lifted bank block",
+        "block": [
+          2051,
+          238,
+          689,
+          "minecraft:coarse_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a spruce's trunk",
+        "block": [
+          1928,
+          264,
+          720,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a spruce's trunk",
+        "block": [
+          1960,
+          259,
+          777,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a spruce's trunk",
+        "block": [
+          1975,
+          254,
+          762,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a spruce's trunk",
+        "block": [
+          1991,
+          240,
+          673,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a elder's trunk",
+        "block": [
+          2007,
+          255,
+          686,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a spruce's trunk",
+        "block": [
+          2021,
+          254,
+          676,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a spruce's trunk",
+        "block": [
+          2037,
+          248,
+          727,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a spruce's trunk",
+        "block": [
+          2050,
+          248,
+          680,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a snag's trunk",
+        "block": [
+          2064,
+          247,
+          713,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a snag's trunk",
+        "block": [
+          2078,
+          241,
+          693,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "painted ground",
+        "block": [
+          1937,
+          261,
+          753,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "painted ground",
+        "block": [
+          1964,
+          263,
+          712,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "painted ground",
+        "block": [
+          1987,
+          250,
+          754,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "painted ground",
+        "block": [
+          2007,
+          262,
+          761,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "painted ground",
+        "block": [
+          2032,
+          252,
+          736,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "painted ground",
+        "block": [
+          2057,
+          247,
+          670,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      }
     ]
   }
 }

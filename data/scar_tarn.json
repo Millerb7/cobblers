@@ -1,0 +1,114 @@
+{
+  "schema": "cobblers.scar-tarn/1",
+  "status": "authored 2026-10-11, generator tools/scar_tarn.py; NOT in any world. The recess is measured on the canonical heightmap, which the live world predates (docs/STATE.md 'Pads in the world': the Scar's pad is in the heightmap and in staging only), so this waits for the live re-export like the Scar itself.",
+  "owner": "2026-10-11: \"I like the Scar thematically, but I think we need something or an environment inhabiting the area now. It feels weird to see the big mountain completely empty. I thought the north-west side of the mountain has a cool recessed point, where some water could make for a pond, and we can plop some trees and alpha mons down to have taken over the afflicted area of the Scar or something.\"",
+  "place": {
+    "id": "scar_tarn",
+    "display_name": "The Scar Tarn",
+    "subregion": "mt_vessu",
+    "reading": "Where the mountain turns its back on the dead city: a closed bowl on the north-north-west shoulder of Mt Vessu, about 95 blocks north of the Scar's north cliff (the old avenue ends at z806) and 43 blocks below its pad (y280), holding a tarn that no one dug. Spruce and birch have come down into it from the ridges and stand thickest at the water; the ground under them is moss and podzol where the Scar's is bare stone and snow; a few terrace walls the same bricks as the Scar's lie half under the moss. It is not tended and it is not empty: the things that live here are bigger than the things on the slopes around it. Optional, off every route (Route 3 is 769 blocks away, Route 4 688), reached by walking down the mountain's north face from the Scar.",
+    "story_note": "Nothing here is canon beyond the owner's line (the afflicted ground taken over by nature and alphas). The brick stubs are the Scar's own palette (data/placements.json settlements.the_scar streets: cracked_stone_bricks, mossy_stone_bricks); they say 'the city reached this far' without naming why.",
+    "dark_by_design": "No lamps and no lanterns, like the Scar (docs/STATE.md 'Places are lit as towns': the Scar is dark by design)."
+  },
+  "measured": {
+    "how": "tools/scar_tarn.py report, from tools/ground.py (the canonical heightmap, rounded); a priority-flood fill of 1700..2500 x 550..1300 with the window's edge open found two closed hollows >= 2 deep over 40 columns on the massif: this one (2204 columns at fill level y239, max fill depth 11) and a larger one to the north-east at x2154..2354 z648..793 (14,903 columns, fill level y223, depth 30) that is NOT the north-west recess",
+    "summit": "Mt Vessu's summit is (1864, 760) y300; the Scar pad is y280 at (2110, 950); the hollow is NNW of the pad, 237 blocks north of its centre",
+    "spill_level": 239
+  },
+  "pond": {
+    "seed": [2017, 707],
+    "window": [1900, 620, 2140, 810],
+    "water_level": 237,
+    "water_level_why": "the top water block. The hollow's own spill is y239 (the lowest rim column); 237 leaves two blocks of natural freeboard at the lowest point of the rim and the generator lifts any rim column below 238 to 238, so a column that the world holds one block under the heightmap (tools/ground.py: 'one block low at water edges', 0.15%) still holds the water",
+    "bank_lift_to": 238,
+    "lining_depth": 3,
+    "bed": {"gravel": 40, "mud": 35, "clay": 25},
+    "bank": {"mud": 30, "moss_block": 40, "coarse_dirt": 20, "gravel": 10},
+    "lobe_seeds": [[1988, 727], [2017, 707]],
+    "lobe_seeds_why": "the hollow's two dips (ground y228 at x1988 z727 and y229 at x2017 z707); a Habitat Block stands in the bed of each so both halves of the tarn hold an alpha"
+  },
+  "growth": {
+    "seed": "scar_tarn/2026-10-11",
+    "radius": 48,
+    "cell": 5,
+    "max_probability": 0.9,
+    "falloff": 1.1,
+    "trunk_clear": 3,
+    "max_relief_3x3": 3,
+    "birch_within": 16,
+    "birch_share": 0.35,
+    "snag_share": 0.10,
+    "elder_share": 0.06,
+    "spruce_height": [9, 15],
+    "elder_height": [18, 24],
+    "birch_height": [7, 10],
+    "snag_height": [5, 10],
+    "paint_radius": 34,
+    "paint": {"moss_block": 45, "podzol": 30, "coarse_dirt": 15, "mossy_cobblestone": 10},
+    "plant_share": 0.30,
+    "plants": {"fern": 45, "short_grass": 30, "large_fern": 12, "azalea": 8, "moss_carpet": 5},
+    "boulders": 10,
+    "fallen_logs": 9,
+    "ruin_stubs": 5,
+    "ruin_distance": [10, 30]
+  },
+  "wards": {
+    "land": [
+      {"id": "scar_tarn_grove_north_ward", "target": [2040, 684], "pool": "scar_tarn_grove", "mimic": "minecraft:moss_block",
+       "place": "the tarn's north-east bank, in the spruce"},
+      {"id": "scar_tarn_grove_south_ward", "target": [1984, 746], "pool": "scar_tarn_grove", "mimic": "minecraft:moss_block",
+       "place": "the tarn's south-west bank, in the birch"}
+    ],
+    "water": [
+      {"id": "scar_tarn_waters_west_ward", "lobe": 0, "pool": "scar_tarn_waters", "mimic": "minecraft:mud",
+       "place": "the bed of the tarn's west dip"},
+      {"id": "scar_tarn_waters_east_ward", "lobe": 1, "pool": "scar_tarn_waters", "mimic": "minecraft:mud",
+       "place": "the bed of the tarn's east dip"}
+    ],
+    "land_activated": {"spawn_range": 16, "chance": 1.0, "trigger": "TICK", "cancel_range": -1, "max_spawns_per_activation": 1, "max_spawns": 2},
+    "water_activated": {"spawn_range": 16, "chance": 1.0, "trigger": "TICK", "cancel_range": -1, "max_spawns_per_activation": 1, "max_spawns": 1},
+    "settings_why": "the Ursaluna den's and the elder nests' settings (data/habitat_blocks.json ursaluna_den_outskirts_ward: spawn_range 16, chance 1.0, TICK, cancel_range -1), unchanged because nothing measured says another value is better; max_spawns 2 per grove ward and 1 per water ward = at most 6 alphas alive at once. Activated blocks refill as an alpha is beaten or caught, which makes the tarn a repeatable alpha-gem source (data/alpha_spoils.json): the owner's call whether that is wanted"
+  },
+  "alphas": {
+    "modifiers": "alpha=true",
+    "band": [29, 33],
+    "band_why": "Mt Vessu's table is 22-28 at tier 3 (data/spawns.json subregions mt_vessu level_band) and tier 3's next cap is 35 (data/encounter_design.json rules.hearts.next_cap['3']): an alpha band of 29-33 is one above the table's top and two under the next cap, the Wardenhold Froslass precedent (a place's one boss-strength creature, above its band, under the next cap). IN GAME the number is not what a player fights: the jar's cobblemon:alpha_level_matching sensor re-levels a wild alpha within 32 blocks of a player to their highest party level +8 (party 21-30) or +12 (31-45), at least the level it evolves at (data/encounter_design.json rules.hearts.alpha_level_matching, read from bytecode and not seen in game)",
+    "how": "an ACTIVATED Habitat Block keeps up to max_spawns of its pool alive; the pool entry's `modifiers` is a PokemonProperties the jar copies into the spawn detail (HabitatSpawn.createSpawnDetail: modifiers.copy(), setSpecies, PokemonSpawnDetail.setPokemon, read from the 1.8.0 jar's bytecode 2026-10-11) and PokemonProperties.commonApply calls Pokemon.setAlpha(true) when isAlpha is set, the same property the jar's own alpha spawns use ('fearow ... alpha=true'). NOT seen in game; the proof is EXP-066's alpha spoils on one of these",
+    "pools": {
+      "scar_tarn_waters": {
+        "display_name": "The Scar Tarn's waters",
+        "ward_ids": ["scar_tarn_waters_west_ward", "scar_tarn_waters_east_ward"],
+        "entries": [
+          {"species": "quagsire", "role": "common", "position": "submerged", "why": "Wooper evolves to Quagsire at 20, under the band; the slow brown water-dweller that would own a still tarn (it spawns submerged in marsh_creek already)"},
+          {"species": "lanturn", "role": "uncommon", "position": "submerged", "why": "Chinchou evolves to Lanturn at 27, under the band; the glow in a place with no lamps"},
+          {"species": "gyarados", "role": "rare", "position": "submerged", "why": "Magikarp evolves to Gyarados at 20, under the band; the one that has driven everything else out of the water"}
+        ]
+      },
+      "scar_tarn_grove": {
+        "display_name": "The Scar Tarn's grove",
+        "ward_ids": ["scar_tarn_grove_north_ward", "scar_tarn_grove_south_ward"],
+        "entries": [
+          {"species": "lycanroc", "role": "common", "position": "grounded", "why": "Rockruff evolves to Lycanroc at 25, under the band; a rock wolf on a mountain, and the one species of the three that already ranges Route 3 and 4 (mt_clay), the pack leader of a scarred slope"},
+          {"species": "gabite", "role": "uncommon", "position": "grounded", "why": "Gible evolves to Gabite at 24, under the band (Garchomp is 48); a mountain dragon that nests in a hollow, the cave/mountain dragon family (no Gible line in any Vessu roster)"},
+          {"species": "haunter", "role": "rare", "position": "grounded", "why": "Gastly evolves to Haunter at 25, under the band (Gengar is a trade); the dead city's ghost, drawn to the ruins at the bank. Ghost types fit any country, which is why it is the one that is here because of the Scar"}
+        ]
+      }
+    }
+  },
+  "blocks": {
+    "ids": [
+      "minecraft:water", "minecraft:gravel", "minecraft:mud", "minecraft:clay", "minecraft:dirt", "minecraft:coarse_dirt",
+      "minecraft:moss_block", "minecraft:moss_carpet", "minecraft:podzol", "minecraft:mossy_cobblestone", "minecraft:cobblestone",
+      "minecraft:mossy_stone_bricks", "minecraft:cracked_stone_bricks", "minecraft:mossy_stone_brick_slab",
+      "minecraft:spruce_log", "minecraft:spruce_leaves", "minecraft:birch_log", "minecraft:birch_leaves",
+      "minecraft:fern", "minecraft:large_fern", "minecraft:short_grass", "minecraft:azalea", "minecraft:air"
+    ],
+    "why": "every block the generator may write; it refuses any other. Water is the only spawn-condition block (data/spawn_blocks.json) and is whitelisted for 'scar_tarn' in data/spawn_block_policy.json. No concrete (contract C4), no leaves or flowers that a spawn condition names (oak and dark oak leaves, flowering azalea, lily pad and seagrass are why they are not used)"
+  },
+  "rules": {
+    "authored_clearance": 24,
+    "authored_clearance_why": "no written column nearer than this to an x/z another data file authors (the mt_vessu landmark outline's corners at (2154, 682) and (1940, 600) are 35 and 80+ away)",
+    "map_margin": 64
+  },
+  "probes": {"key": "scar_tarn", "trunks": 10, "ground": 6, "bank": 6, "water": 8}
+}

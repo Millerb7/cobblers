@@ -210,6 +210,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # BEFORE R9E (three activated Habitat Blocks stand in blocks it writes); no load or tick and no Pokemon
                 # of its own (the nests are the Habitat Blocks'), so not world-local
                 "cobblers_fungal_isle",
+                # 2026-10-11: the Scar Tarn on Mt Vessu's north-north-west shoulder (tools/scar_tarn.py, data/scar_tarn.json):
+                # a pond in a closed hollow, the spruce and birch grown round it and four mimic cells, built by R9ST BEFORE
+                # R9E (four activated Habitat Blocks hold the alpha pools there); no load or tick, so not world-local
+                "cobblers_scar_tarn",
                 # 2026-10-05: Hollin's Apricorn Farm at (2068, 5570) (tools/apricorn_farm.py, data/apricorn_farm.json):
                 # seven terraced groves, the yard and lanes, built by R9AF; block functions and the stall merchant's
                 # summon, nothing that runs on its own; the farmer and the merchant stood by R18AF
@@ -976,6 +980,10 @@ def prepare_jobs(a):
     # keep-clear regions, the Newmoon ceiling, spawn-condition blocks, small-mushroom support, the pool's containment, the
     # Habitat Blocks' mimics). No independent audit yet (docs/world-building/FUNGAL_ISLE.md, "What an audit must check")
     add("fungal_isle:build", "fungal_isle.py", "build", *src)
+    # the Scar Tarn (2026-10-11, tools/scar_tarn.py): the generator fails closed on its own guards (the hollow's spill, water
+    # containment at the heightmap and one block under it, the palette, spawn-condition blocks, the wards' mimics, the
+    # authored-points clearance). No independent audit yet (docs/world-building/SCAR_TARN.md, "What an audit must check")
+    add("scar_tarn:build", "scar_tarn.py", "build", *src)
     # Hollin's Apricorn Farm (2026-10-05): the generator fails closed on its own guards (allow-list, spawn blocks, wet
     # columns, overlaps, fruit attachment, gates, spots, siting). Then its independent audit (tools/apricorn_farm_audit.py,
     # another agent's, never imports the generator to derive): the built pack replayed over the heightmap, fruit
@@ -2193,6 +2201,11 @@ def steps(with_spawns=False):
     import fungal_isle
     out.append(("R9FI", "the Fungal Isle grown over: Cap Wood, Stump Court, Glowcap Hollow and the island's caps, stumps and logs (data/fungal_isle.json)",
                 fungal_isle.placement_steps()))
+    # the Scar Tarn (2026-10-11, tools/scar_tarn.py): one block pass held in a forceload of its box (188 x 140 blocks, 12 x 9 chunks),
+    # BEFORE R9E: the four mimic cells it writes (two on the banks, two in the bed) are where the activated Habitat Blocks stand
+    import scar_tarn
+    out.append(("R9ST", "the Scar Tarn: a pond in Mt Vessu's north-west hollow, the wood round it and its alpha wards (data/scar_tarn.json)",
+                scar_tarn.placement_steps()))
     # Hollin's Apricorn Farm (2026-10-05, tools/apricorn_farm.py): one block pass held in a forceload of the farm's box
     # (90 chunks), before R9E with the other block passes; the farmer and the stall keeper stand on it (R18AF)
     import apricorn_farm
