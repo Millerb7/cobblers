@@ -1,0 +1,146 @@
+{
+  "schema": "cobblers.compact-trainers/1",
+  "generated_by": "hand, 2026-10-11 (unit CP-CORE, minecraft-systems-dev, escalated to opus), from docs/story/HAVEN_COMPACT_PASS.md section 3 CP-04, CP-12 and CP-14",
+  "status": "PROVISIONAL TEAMS for trainer-balance-designer review (the design: 'Teams are themes and level bands; trainer-balance-designer sets the exact teams', W1-teams). Species, bands and themes follow the design point by point; the movesets are mine.",
+  "note": "TEAMS ONLY, as data/finale_trainers.json: each record is the party of ONE Cobblemon NPC (data/compact_points.json npcs[].fight), compiled into that NPC's class by tools/compile_dialogue.py battle_class() through its conversation's npc_battle, started by the conversation's choice (q.npc.start_battle(q.player, 'singles')), and read by the cobblers_compact pack's battle_victory callback (tools/compact_points.py), which writes `sets` into the WINNING player's data. tools/route_trainers.py does not read this file and rctmod places nothing from it.",
+  "bands": {
+    "measured_leader_aces": "data/trainers.json, 2026-10-11: gym_03_surge ace 30, gym_07_blaine ace 50, gym_08_giovanni ace 55 (the relayed 20/25/30/35/40/45/50/55 curve holds)",
+    "cp04": "after badge 2, before Surge: couriers 26-28, Varga 27-29 (design). Highest 29 < Surge's 30",
+    "cp12": "after badge 6, before Blaine: guards 47-49, the Field Commander 48-50 in the design. Capped at 49 here, because the design's own test list says 'every team's top level is under the next leader's ace' and Blaine's ace is 50: the design's band and its test disagree, and the test wins",
+    "cp14": "after badge 7, before Giovanni: 51-54 (design). Highest 54 < Giovanni's 55"
+  },
+  "species_signature": "The design's 'species the region does not have wild' (docs/story/ENCOUNTER_GAPS.md, generations 1-9 lists; O7 undecided, so the design's default is used): every species below EXCEPT Varga's Zubat, Roggenrola, Skorupi and Drilbur (her lines are fixed by data/hq_trainers.json hq_tower_trainer_07's Crobat, Gigalith, Drapion and Excadrill; of those only Excadrill is homeless) is on that list (tools/compact_points.py check reads the document's lists by name). Excluded from the pick: legendaries, mythicals, paradox species, starters and the pseudo-legendaries.",
+  "move_legality": "measured 2026-10-11 by `python tools/compact_points.py legality --jar <Cobblemon-fabric-1.8.0+1.21.1.jar>`: every species implemented, every move in the species' or a pre-evolution's learnset (level-up at or below the member's level, or TM, egg or tutor), every ability in the species' list. The test re-runs it when the jar is present.",
+  "trainers": [
+    {
+      "id": "compact_cp04_courier_1",
+      "display_name": "Compact Courier Odile",
+      "point": "cp04_records_run",
+      "sets": ["quest.evt_compact_records_run.courier_1_defeated"],
+      "review": "trainer-balance-designer",
+      "theme": "a records runner who came ready for an Electric town: leads with a Ground type (the design's gimmick)",
+      "team": [
+        {"species": "stunfisk", "level": 26, "moveset": ["mudshot", "suckerpunch", "thunderwave", "bulldoze"], "ability": "static"},
+        {"species": "herdier", "level": 26, "moveset": ["crunch", "retaliate", "playrough", "workup"], "ability": "intimidate"}
+      ]
+    },
+    {
+      "id": "compact_cp04_courier_2",
+      "display_name": "Compact Courier Imre",
+      "point": "cp04_records_run",
+      "sets": ["quest.evt_compact_records_run.courier_2_defeated"],
+      "review": "trainer-balance-designer",
+      "theme": "the second runner: Ground lead, a Psychic flier behind it",
+      "team": [
+        {"species": "dugtrio", "level": 27, "moveset": ["bulldoze", "nightslash", "suckerpunch", "mudbomb"], "ability": "sandforce"},
+        {"species": "swoobat", "level": 26, "moveset": ["heartstamp", "aircutter", "confusion", "assurance"], "ability": "unaware"}
+      ]
+    },
+    {
+      "id": "compact_cp04_courier_3",
+      "display_name": "Compact Courier Sefa",
+      "point": "cp04_records_run",
+      "sets": ["quest.evt_compact_records_run.courier_3_defeated"],
+      "review": "trainer-balance-designer",
+      "theme": "the last runner: a Rock/Ground lead that Electric moves do not touch",
+      "team": [
+        {"species": "graveler", "level": 27, "moveset": ["bulldoze", "rocktomb", "smackdown", "rockpolish"], "ability": "sturdy"},
+        {"species": "liepard", "level": 28, "moveset": ["fakeout", "assurance", "slash", "honeclaws"], "ability": "limber", "heldItem": "sitrus_berry"}
+      ]
+    },
+    {
+      "id": "compact_varga_1",
+      "display_name": "Compact Sergeant Varga",
+      "point": "cp04_records_run",
+      "sets": ["quest.evt_compact_records_run.varga_defeated"],
+      "review": "trainer-balance-designer",
+      "theme": "Varga's first meeting (design: 'Skorupi, Drilbur, Roggenrola and Zubat, 3-4 of them at 27-29'). The same four lines she brings to the HQ tower at 58-59 (data/hq_trainers.json hq_tower_trainer_07: Drapion, Excadrill, Gigalith, Crobat), so the tower's player knows every member. The Zubat at 27 is under-evolved on purpose (the design's line); the balance review may make it a Golbat",
+      "team": [
+        {"species": "zubat", "level": 27, "moveset": ["poisonfang", "wingattack", "aircutter", "astonish"], "ability": "innerfocus"},
+        {"species": "roggenrola", "level": 27, "moveset": ["smackdown", "headbutt", "stealthrock", "irondefense"], "ability": "sturdy"},
+        {"species": "skorupi", "level": 28, "moveset": ["knockoff", "poisonfang", "bugbite", "toxicspikes"], "ability": "battlearmor"},
+        {"species": "drilbur", "level": 29, "moveset": ["bulldoze", "metalclaw", "rockslide", "crushclaw"], "ability": "moldbreaker", "heldItem": "sitrus_berry"}
+      ]
+    },
+    {
+      "id": "compact_cp12_guard_1",
+      "display_name": "Compact Anchor Guard Rhoswen",
+      "point": "cp12_crater_activation",
+      "sets": ["quest.evt_compact_crater.guard_1_defeated"],
+      "review": "trainer-balance-designer",
+      "theme": "a fire-proofed crew (design: Water and Ground) holding the west anchor",
+      "team": [
+        {"species": "gastrodon", "level": 47, "moveset": ["muddywater", "earthpower", "recover", "icebeam"], "ability": "stormdrain"},
+        {"species": "lanturn", "level": 47, "moveset": ["surf", "discharge", "icebeam", "thunderwave"], "ability": "voltabsorb"},
+        {"species": "carracosta", "level": 48, "moveset": ["aquajet", "liquidation", "rockslide", "stealthrock"], "ability": "solidrock", "heldItem": "sitrus_berry"}
+      ]
+    },
+    {
+      "id": "compact_cp12_guard_2",
+      "display_name": "Compact Anchor Guard Tobin",
+      "point": "cp12_crater_activation",
+      "sets": ["quest.evt_compact_crater.guard_2_defeated"],
+      "review": "trainer-balance-designer",
+      "theme": "the Ground half of the crews, holding the south anchor",
+      "team": [
+        {"species": "golem", "level": 47, "moveset": ["earthquake", "stoneedge", "heavyslam", "suckerpunch"], "ability": "sturdy"},
+        {"species": "dugtrio", "level": 47, "moveset": ["earthquake", "nightslash", "suckerpunch", "rockslide"], "ability": "sandforce"},
+        {"species": "steelix", "level": 48, "moveset": ["earthquake", "ironhead", "stealthrock", "rockslide"], "ability": "sturdy", "heldItem": "sitrus_berry"}
+      ]
+    },
+    {
+      "id": "compact_cp12_guard_3",
+      "display_name": "Compact Anchor Guard Ysolde",
+      "point": "cp12_crater_activation",
+      "sets": ["quest.evt_compact_crater.guard_3_defeated"],
+      "review": "trainer-balance-designer",
+      "theme": "the east anchor's mixed crew, Water and Ground",
+      "team": [
+        {"species": "clodsire", "level": 48, "moveset": ["earthquake", "poisonjab", "recover", "toxicspikes"], "ability": "waterabsorb"},
+        {"species": "barbaracle", "level": 48, "moveset": ["razorshell", "stoneedge", "crosschop", "honeclaws"], "ability": "toughclaws"},
+        {"species": "kingdra", "level": 49, "moveset": ["hydropump", "dragonpulse", "icebeam", "agility"], "ability": "sniper", "heldItem": "sitrus_berry"}
+      ]
+    },
+    {
+      "id": "compact_cp12_commander",
+      "display_name": "Compact Field Commander Aubrecht",
+      "point": "cp12_crater_activation",
+      "sets": ["quest.evt_compact_crater.commander_defeated"],
+      "review": "trainer-balance-designer",
+      "theme": "built around the machine: Steel and Psychic, a lesser version of Director Elara Venn's own theme (data/finale_trainers.json finale_elara_venn: Bronzong, Hatterene, Klinklang, Porygon-Z, Reuniclus, Metagross), sharing none of her species. Five members (design); top 49, under Blaine's 50",
+      "team": [
+        {"species": "magnezone", "level": 48, "moveset": ["flashcannon", "thunderbolt", "voltswitch", "thunderwave"], "ability": "sturdy"},
+        {"species": "beheeyem", "level": 48, "moveset": ["psychic", "recover", "calmmind", "shadowball"], "ability": "analytic"},
+        {"species": "probopass", "level": 48, "moveset": ["powergem", "earthpower", "flashcannon", "thunderwave"], "ability": "sturdy"},
+        {"species": "copperajah", "level": 49, "moveset": ["heavyslam", "playrough", "earthquake", "stealthrock"], "ability": "sheerforce"},
+        {"species": "gothitelle", "level": 49, "moveset": ["psychic", "darkpulse", "trickroom", "thunderbolt"], "ability": "competitive", "heldItem": "sitrus_berry"}
+      ]
+    },
+    {
+      "id": "compact_cp14_loyalist_1",
+      "display_name": "Compact Loyalist Corrin",
+      "point": "cp14_split",
+      "sets": ["quest.evt_compact_split.loyalist_1_defeated"],
+      "review": "trainer-balance-designer",
+      "theme": "the detail sent to take the route packet back: Brann's guard style (Dark and Steel)",
+      "team": [
+        {"species": "mabosstiff", "level": 51, "moveset": ["crunch", "playrough", "firefang", "scaryface"], "ability": "intimidate"},
+        {"species": "scizor", "level": 52, "moveset": ["bulletpunch", "xscissor", "swordsdance", "knockoff"], "ability": "technician"},
+        {"species": "kingambit", "level": 53, "moveset": ["kowtowcleave", "ironhead", "suckerpunch", "stealthrock"], "ability": "defiant", "heldItem": "sitrus_berry"}
+      ]
+    },
+    {
+      "id": "compact_cp14_loyalist_2",
+      "display_name": "Compact Loyalist Hesper",
+      "point": "cp14_split",
+      "sets": ["quest.evt_compact_split.loyalist_2_defeated"],
+      "review": "trainer-balance-designer",
+      "theme": "the detail's second, harder fight: a fossil revived on another world leads it",
+      "team": [
+        {"species": "scolipede", "level": 51, "moveset": ["poisonjab", "xscissor", "rockslide", "protect"], "ability": "poisonpoint"},
+        {"species": "annihilape", "level": 52, "moveset": ["ragefist", "closecombat", "stoneedge", "uturn"], "ability": "defiant"},
+        {"species": "tyrantrum", "level": 54, "moveset": ["crunch", "dragonclaw", "earthquake", "stoneedge"], "ability": "strongjaw", "heldItem": "sitrus_berry"}
+      ]
+    }
+  ]
+}

@@ -7321,6 +7321,172 @@
         "entity": "@e[type=cobblemon:pokemon,tag=cobblers.fk_giratina]",
         "count": 1
       }
+    ],
+    "compact_cp04": [
+      {
+        "what": "Compact Courier Odile (npc_compact_cp04_courier_1), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=1707,y=175,z=1374,distance=..2]",
+        "count": 1,
+        "hold": [
+          1707,
+          175,
+          1374
+        ]
+      },
+      {
+        "what": "Compact Courier Imre (npc_compact_cp04_courier_2), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=1717,y=176,z=1368,distance=..2]",
+        "count": 1,
+        "hold": [
+          1717,
+          176,
+          1368
+        ]
+      },
+      {
+        "what": "Compact Courier Sefa (npc_compact_cp04_courier_3), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=1726,y=179,z=1368,distance=..2]",
+        "count": 1,
+        "hold": [
+          1726,
+          179,
+          1368
+        ]
+      },
+      {
+        "what": "Compact Sergeant Varga (npc_compact_cp04_varga), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=1721,y=179,z=1358,distance=..2]",
+        "count": 1,
+        "hold": [
+          1721,
+          179,
+          1358
+        ]
+      }
+    ],
+    "compact_cp12": [
+      {
+        "what": "Tomas Rill (npc_compact_cp12_tomas_rill), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=6130,y=108,z=4966,distance=..2]",
+        "count": 1,
+        "hold": [
+          6130,
+          108,
+          4966
+        ]
+      },
+      {
+        "what": "Oren Pell (npc_compact_cp12_oren_pell), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=6140,y=107,z=4973,distance=..2]",
+        "count": 1,
+        "hold": [
+          6140,
+          107,
+          4973
+        ]
+      },
+      {
+        "what": "Mila Aster (npc_compact_cp12_aster), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=6121,y=108,z=4978,distance=..2]",
+        "count": 1,
+        "hold": [
+          6121,
+          108,
+          4978
+        ]
+      },
+      {
+        "what": "Compact Anchor Guard Rhoswen (npc_compact_cp12_guard_1), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=6105,y=108,z=5003,distance=..2]",
+        "count": 1,
+        "hold": [
+          6105,
+          108,
+          5003
+        ]
+      },
+      {
+        "what": "Compact Anchor Guard Tobin (npc_compact_cp12_guard_2), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=6125,y=107,z=5012,distance=..2]",
+        "count": 1,
+        "hold": [
+          6125,
+          107,
+          5012
+        ]
+      },
+      {
+        "what": "Compact Anchor Guard Ysolde (npc_compact_cp12_guard_3), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=6145,y=107,z=5002,distance=..2]",
+        "count": 1,
+        "hold": [
+          6145,
+          107,
+          5002
+        ]
+      },
+      {
+        "what": "Compact Field Commander Aubrecht (npc_compact_cp12_commander), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=6125,y=107,z=5004,distance=..2]",
+        "count": 1,
+        "hold": [
+          6125,
+          107,
+          5004
+        ]
+      }
+    ],
+    "compact_cp14": [
+      {
+        "what": "Nia Calder (npc_compact_cp14_nia_calder), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=3631,y=116,z=6562,distance=..2]",
+        "count": 1,
+        "hold": [
+          3631,
+          116,
+          6562
+        ]
+      },
+      {
+        "what": "Dev Aster (npc_compact_cp14_aster), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=3627,y=115,z=6572,distance=..2]",
+        "count": 1,
+        "hold": [
+          3627,
+          115,
+          6572
+        ]
+      },
+      {
+        "what": "Holdfast Watch Sergeant (npc_compact_cp14_watch_sergeant), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=3647,y=115,z=6574,distance=..2]",
+        "count": 1,
+        "hold": [
+          3647,
+          115,
+          6574
+        ]
+      },
+      {
+        "what": "Compact Loyalist Corrin (npc_compact_cp14_loyalist_1), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=3659,y=114,z=6580,distance=..2]",
+        "count": 1,
+        "hold": [
+          3659,
+          114,
+          6580
+        ]
+      },
+      {
+        "what": "Compact Loyalist Hesper (npc_compact_cp14_loyalist_2), after R18CP",
+        "entity": "@e[type=cobblemon:npc,x=3671,y=113,z=6574,distance=..2]",
+        "count": 1,
+        "hold": [
+          3671,
+          113,
+          6574
+        ]
+      }
     ]
   }
 }

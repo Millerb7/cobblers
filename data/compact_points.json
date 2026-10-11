@@ -1,0 +1,305 @@
+{
+  "schema": "cobblers.compact-points/1",
+  "generated_by": "hand, 2026-10-11 (unit CP-CORE, minecraft-systems-dev, escalated to opus): the design's three priority points. Seats measured on tools/ground.py (the canonical heightmap, rounded); lines are functional stand-ins",
+  "source": "docs/story/HAVEN_COMPACT_PASS.md (design, unit COMPACT-STORY 2026-10-11) section 3 CP-04, CP-12 and CP-14, which carry the three ARC beats that existed in the documents and not in the game: the gym-3 records obstruction (docs/story/ARC.md:328-333), the Craters climax (ARC.md:516-526) and the public split at gym 8 (ARC.md:565-568; docs/story/FACTION.md:212).",
+  "consumed_by": "tools/compact_points.py: --write splices each point's quest (data/quests.json), its conversations (data/dialogue.json), its fields (data/progression.json quest_fields) and its presence probes (data/world_probes.json places.compact_*) from this file; build writes build/datapacks/cobblers_compact (the battle_victory callback and the won functions); reapply step R18CP places the NPCs (their classes are compiled into cobblers_dialogue by tools/compile_dialogue.py); check is the offline gate; verify is the world probe.",
+  "mechanism": "M2 of the design, the one it calls the default: a Cobblemon NPC that talks and then fights. Its conversation's entry rules gate every state on THIS player's quest.main_worldshift_reveal.stage (progression_in, so a badge carry opens it), a choice starts q.npc.start_battle(q.player, 'singles') (tools/compile_dialogue.py battle_action, the arena's in-game-proven start; the dialogue route itself is NOT yet run in game, compile_dialogue.py:43), and the cobblers_compact pack's battle_victory callback writes the fighter's `<who>_defeated` field into the WINNING player's data. Each fighter's battle is offered only once the previous fighter's field is true (the HQ tower's chain). The design's preferred forms for CP-04 and CP-12 (M3: a squad spawned per player, experiment X2) and CP-14 (a multi battle, X3) are unproven and are NOT built: experiments/EXP-091-compact-story-battles is their stub.",
+  "fallbacks_built": [
+    "CP-04: the design's own fallback M2, 'four Cobblemon NPCs, each fight gated on the previous one's defeated field'.",
+    "CP-12: the design's fallback M2. The three anchor shutdowns are the guards' post-win lines (a quest transition each), not clicked props: scene props are 'partial' (EXP-034 in progress) and a shutdown that rides the win is one mechanism fewer. A prop can replace the line later without touching a field.",
+    "CP-14: 'two singles, no heal between, with the watch officer's line between them': the watch sergeant's rally line is required between the two loyalists.",
+    "'No heal between' is NOT enforced in any of the three: nothing in Cobblemon or in this repository can tell that a player healed (a Center, a potion, a PC swap) between two NPC battles. The fighters stand within a few blocks of each other so the run reads as one; that is all."
+  ],
+  "open_questions_defaults": {
+    "O1": "built to ARC rules 3-5: before the Craters the fights come from secrecy (CP-04) and guarding a rescue (CP-12's crews); the loyalists after the line are the open opponents (CP-14).",
+    "O2": "no Compact NPC stands on a walked route line: every seat is 5+ blocks off data/route_paths.json and outside every plan street, so nothing is unavoidable and nobody is stuck.",
+    "O3": "all three points are OPTIONAL quests. CP-12 is the declared setter of crater_operation_stopped (data/progression.json), and the crater analyst's blaine_008 is KEPT as the stand-in setter for a player who never played CP-12 (and it closes CP-12 for that player). If the owner makes CP-12 a main beat, remove the analyst's two invocations and point his account at the rim.",
+    "O4": "Varga is the recurring rival: compact_varga_1 here, a sergeant, the same four lines as her tower team.",
+    "O5": "Elara is NOT present at the Craters: her order is read off the console by the Field Commander. She already stands once, as the HQ door keeper and the finale fight (data/hq_tower.json npcs), and a second Elara entity before the Deep is the owner's call.",
+    "O6": "a loss is the normal blackout; the conversation's cursor stays on the choice, so the next talk offers the fight again.",
+    "O7": "the species signature is used (data/compact_trainers.json species_signature).",
+    "O8": "doubles and multi are not built (X3 unrun).",
+    "O9": "not touched.",
+    "O10": "functional stand-in lines, every conversation marked placeholder, for Codex to replace."
+  },
+  "multiplayer": {
+    "state": "per player: every field is quest.<quest>.<field> in each player's own Cobblemon data; no player reads or writes another's.",
+    "entities": "one shared, static Cobblemon NPC per character, visible to everyone from the day R18CP places it; each player meets it at their own stage (a player before the window hears its `before` line).",
+    "late_join": "nothing is world-scoped, so a player who joins late finds every point at their own stage; the badge carry lifts a stage, which opens a window.",
+    "loss_or_disconnect": "the battle ends with no win; the callback writes nothing and the cursor is still on the choice, so the fight is offered again.",
+    "two_players_one_npc": "NOT KNOWN: whether Cobblemon lets a second player start a battle against an NPC already in one. Unrun (EXP-091 step 6).",
+    "order": "the three points are independent of each other; inside a point the chain is fixed (CP-04 courier 1, 2, 3, Varga; CP-12 Tomas, Oren, the three guards in any order, the Commander; CP-14 Nia, loyalist 1, the sergeant, loyalist 2)."
+  },
+  "points": [
+    {
+      "id": "cp04_records_run",
+      "design": "CP-04 The Records Run",
+      "quest": "evt_compact_records_run",
+      "settlement": "gym3_town",
+      "serves": "ARC Settlement 4, the first direct obstruction (ARC.md:328-331): a Compact team recovering Surge's records, which withdraws without harming anyone when exposed. FACTION gym3_town.",
+      "window": "misty_reveal_complete",
+      "window_why": "the design's 'at stage misty_reveal_complete (after badge 2, before Surge)'. Open from that stage on: optional (O3), so a player who meets it after Surge can still play it.",
+      "closed_when": null,
+      "site_why": "the couriers run the logs out of town up the array path (data/placements.json gym3_town plan street array_path, (1676, 1384) to (1700, 1378), toward surge_signal_array at (1928, 1248)). Four seats up the first 30 blocks past the path's end, where the shoulder is still level enough to stand on: past (1726, 1362) the ground climbs 20+ blocks in 15 (measured).",
+      "transitions": [
+        {"id": "recover_records", "requires": ["varga_defeated"], "sets": ["records_recovered", "completed"]}
+      ],
+      "npcs": [
+        {
+          "id": "npc_compact_cp04_courier_1",
+          "name": "Compact Courier Odile",
+          "at": [1707, 175, 1374], "ground": 174, "faces": [1695, 1385],
+          "fight": {"trainer": "compact_cp04_courier_1", "skill": 2, "won_say": "One case of Surge's logs recovered."},
+          "states": [
+            {"id": "after", "when": ["defeated"], "lines": ["Fine. One case is yours. The others are further up the path, and they are quicker than me."]},
+            {"id": "pre", "when": ["window"], "lines": ["These cases are Compact property. The logs in them came off our own transmitters before Surge's array caught them.", "Nobody here is hurt and nobody will be. We only need these records out of town before he reads them against Pallet."],
+             "fight": {"prompt": "If you mean to stop us, do it properly. Imre and Sefa are up the path with the rest.", "yes": "Hand the logs back.", "no": "Not now."}},
+            {"id": "before", "when": [], "lines": ["Relief paperwork. Nothing here for you, traveller."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp04_courier_2",
+          "name": "Compact Courier Imre",
+          "at": [1717, 176, 1368], "ground": 175, "faces": [1707, 1374],
+          "fight": {"trainer": "compact_cp04_courier_2", "skill": 2, "won_say": "A second case recovered."},
+          "states": [
+            {"id": "after", "when": ["defeated"], "lines": ["Take it. Sefa has the last case, and the sergeant is with her."]},
+            {"id": "pre", "when": ["window", "courier_1_defeated"], "lines": ["Odile let you through? Then you know what is in these.", "Surge would call it evidence. We call it the record of every family we moved."],
+             "fight": {"prompt": "I will not give it up for a speech.", "yes": "Then we battle.", "no": "Not now."}},
+            {"id": "wait", "when": ["window"], "lines": ["Keep walking. The records are Odile's to argue about, down by the Centre."]},
+            {"id": "before", "when": [], "lines": ["Just resting my legs. It is a steep town."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp04_courier_3",
+          "name": "Compact Courier Sefa",
+          "at": [1726, 179, 1368], "ground": 178, "faces": [1717, 1368],
+          "fight": {"trainer": "compact_cp04_courier_3", "skill": 2, "won_say": "The third case recovered."},
+          "states": [
+            {"id": "after", "when": ["defeated"], "lines": ["That was the last case. Sergeant Varga will want a word, and she will not be polite."]},
+            {"id": "pre", "when": ["window", "courier_2_defeated"], "lines": ["Two cases already. You are thorough.", "This one holds the timing marks. If Surge lines them up with Pallet's arrival, he will ask questions we are not allowed to answer."],
+             "fight": {"prompt": "Last chance to walk away.", "yes": "Hand it over.", "no": "Not now."}},
+            {"id": "wait", "when": ["window"], "lines": ["The sergeant says nobody comes up here until Imre waves them on."]},
+            {"id": "before", "when": [], "lines": ["Mind the edge. The path gets worse from here."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp04_varga",
+          "name": "Compact Sergeant Varga",
+          "at": [1721, 179, 1358], "ground": 178, "faces": [1717, 1368],
+          "fight": {"trainer": "compact_varga_1", "skill": 3, "won_say": "Varga stands aside. Talk to her; the records are yours to take back."},
+          "states": [
+            {"id": "done", "when": ["records_recovered"], "lines": ["Go and read your logs. I have a crew to move."]},
+            {"id": "after", "when": ["defeated"], "actions": ["recover_records"], "lines": ["Take them, then. Nobody in this town was hurt, and nobody will be. Remember that when you tell Surge what we are.", "We are leaving. This is not finished."], "ack": "recover_records"},
+            {"id": "pre", "when": ["window", "courier_3_defeated"], "lines": ["Three of my people, and you went through all of them. Sergeant Varga, Haven Compact.", "Those logs are ours. Every pulse in them is a family that is alive because we moved them.", "Surge will read them as a crime. Maybe you will too. I am not handing that over without a fight."],
+             "fight": {"prompt": "Well?", "yes": "The records go back to Surge.", "no": "Not now."}},
+            {"id": "wait", "when": ["window"], "lines": ["My couriers are working. Stay out of their way."]},
+            {"id": "before", "when": [], "lines": ["Move along. This is a work crew."]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cp12_crater_activation",
+      "design": "CP-12 The Crater Activation",
+      "quest": "evt_compact_crater",
+      "settlement": "gym7_town",
+      "serves": "ARC Settlement 8, the moral line played rather than reported (ARC.md:516-526; FACTION 'the point where the method becomes indefensible'; Codex C1). Its Commander's win is the declared setter of crater_operation_stopped (data/progression.json), replacing the crater analyst's blaine_008 as the setter while that line stays as the stand-in for a player who never plays this (O3).",
+      "window": "sabrina_reveal_complete",
+      "window_why": "the design's 'at stage sabrina_reveal_complete (after badge 6, before Blaine)'.",
+      "closed_when": {"any_flag": ["crater_operation_stopped", "gym7_cleared"], "unless": ["activation_stopped", "commander_defeated"],
+                      "why": "the design: 'a player past it must not see it again'. Past it = the operation already recorded as stopped by the analyst's stand-in (blaine_008 says 'The activation is stopped'), or Blaine already beaten. A player who beat the Commander here reads the epilogue instead, and any CP-12 NPC's epilogue runs stop_crater_activation, so a player who won and then walked away (or beat Blaine first) still gets the flag from the next CP-12 NPC they talk to."},
+      "site_why": "the ash flat south of Cinderlee's road, inside the Craters' outline (data/landmarks.json craters: its north edge runs (6096, 4980)-(6164, 4948)). The families' side (Tomas, Oren, the Asters) is north of the causeway the player crosses toward the gym; the three anchors and the console are south of it, on ground the craters' polygon contains. All of it is y106-107 (measured).",
+      "transitions": [
+        {"id": "confirm_occupied", "requires": [], "sets": ["occupied_confirmed"]},
+        {"id": "receive_calibration", "requires": ["occupied_confirmed"], "sets": ["calibration_received"]},
+        {"id": "shut_anchor_1", "requires": ["guard_1_defeated"], "sets": ["anchor_1_shut"]},
+        {"id": "shut_anchor_2", "requires": ["guard_2_defeated"], "sets": ["anchor_2_shut"]},
+        {"id": "shut_anchor_3", "requires": ["guard_3_defeated"], "sets": ["anchor_3_shut"]},
+        {"id": "stop_crater_activation", "requires": ["commander_defeated"], "sets": ["activation_stopped", "completed"],
+         "function": "cobblers:flag/crater_operation_stopped/grant",
+         "why": "crater_operation_stopped's declared setter (data/progression.json flags set_by). Granting a held advancement is a no-op, so a player the analyst's stand-in already granted loses nothing."}
+      ],
+      "npcs": [
+        {
+          "id": "npc_compact_cp12_tomas_rill",
+          "name": "Tomas Rill",
+          "at": [6130, 108, 4966], "ground": 107, "faces": [6125, 4950],
+          "states": [
+            {"id": "epilogue", "when": ["commander_defeated"], "actions": ["stop_crater_activation"], "lines": ["You stopped it. I do not know where these families go now. Neither does anyone above me."]},
+            {"id": "closed", "when": ["closed"], "lines": ["It is over. The crews packed up and the anchors went cold before you came. The families are still waiting for somewhere to go."]},
+            {"id": "told", "when": ["window", "occupied_confirmed"], "lines": ["Oren is by the east marker. He has the calibration record."]},
+            {"id": "open", "when": ["window"], "lines": ["Tomas Rill. I measure destinations for the Compact.", "I ran the model three times. The target is not empty: roads, homes, heat, people. Somebody lives where this activation would put us.", "I sent the result up. The answer came back: proceed.", "Oren has the calibration record. If anyone can tell you how to stop this cleanly, he can."], "ack": "confirm_occupied"},
+            {"id": "before", "when": [], "lines": ["Survey work. The Craters are hot ground; keep to the road."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp12_oren_pell",
+          "name": "Oren Pell",
+          "at": [6140, 107, 4973], "ground": 106, "faces": [6125, 4950],
+          "states": [
+            {"id": "epilogue", "when": ["commander_defeated"], "actions": ["stop_crater_activation"], "lines": ["The field is down. Hoopa is still bound, but this one did not fire."]},
+            {"id": "closed", "when": ["closed"], "lines": ["The operation is off. I am going back to the cradle crews before somebody tries again."]},
+            {"id": "told", "when": ["window", "calibration_received"], "lines": ["Three anchors, west, south and east. Then the console."]},
+            {"id": "open", "when": ["window", "occupied_confirmed"], "lines": ["Oren Pell. I keep the anchors calibrated, and the calibration is why this frightens me.", "Every forced use leaves Hoopa less steady. One this size may not come back down.", "Three anchors hold the field: west, south and east. Shut all three and the console has nothing to fire.", "The crews guarding them believe they are saving lives. They are. Be quick."], "ack": "receive_calibration"},
+            {"id": "wait", "when": ["window"], "lines": ["Talk to Tomas. I will not hand this record to anyone who has not seen his numbers."]},
+            {"id": "before", "when": [], "lines": ["Calibration crew. Please do not touch the markers."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp12_aster",
+          "name": "Mila Aster",
+          "at": [6121, 108, 4978], "ground": 107, "faces": [6125, 4950],
+          "states": [
+            {"id": "epilogue", "when": ["commander_defeated"], "actions": ["stop_crater_activation"], "lines": ["It did not fire. We are still here, on ash, with no home behind us either. I do not know if I am glad."]},
+            {"id": "closed", "when": ["closed"], "lines": ["The crews left. We did not. Nobody has told us where to go."]},
+            {"id": "open", "when": ["window"], "lines": ["Mila Aster. Dev and Jo are with the carts.", "They told us the new place was empty. Somebody says now it is not.", "If this does not fire, we stay here. If it does, someone else is standing where we were."]},
+            {"id": "before", "when": [], "lines": ["We came across with the Compact. They say the next move is the last one."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp12_guard_1",
+          "name": "Compact Anchor Guard Rhoswen",
+          "at": [6105, 108, 5003], "ground": 107, "faces": [6105, 4995],
+          "fight": {"trainer": "compact_cp12_guard_1", "skill": 3, "won_say": "The west anchor's guard stands aside. Talk to them to shut the anchor."},
+          "states": [
+            {"id": "epilogue", "when": ["commander_defeated"], "actions": ["stop_crater_activation"], "lines": ["Nothing left to guard. I hope you can live with what it costs them."]},
+            {"id": "closed", "when": ["closed"], "lines": ["The operation is off. There is nothing here to guard."]},
+            {"id": "done", "when": ["anchor_1_shut"], "lines": ["My anchor is cold."]},
+            {"id": "after", "when": ["defeated"], "actions": ["shut_anchor_1"], "lines": ["Go on, then. You pull the west anchor's coupling and the hum dies."], "ack": "shut_anchor_1"},
+            {"id": "pre", "when": ["window", "calibration_received"], "lines": ["You have Oren's record. Then you know what this does.", "There is a whole camp waiting on this field. Shut my anchor and they stay where they are."],
+             "fight": {"prompt": "Step back, or make me.", "yes": "Step away from the anchor.", "no": "Not yet."}},
+            {"id": "wait", "when": ["window"], "lines": ["Keep back from the anchor. This is a rescue operation, and it is nearly ready."]},
+            {"id": "before", "when": [], "lines": ["Keep back from the equipment."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp12_guard_2",
+          "name": "Compact Anchor Guard Tobin",
+          "at": [6125, 107, 5012], "ground": 106, "faces": [6125, 4995],
+          "fight": {"trainer": "compact_cp12_guard_2", "skill": 3, "won_say": "The south anchor's guard stands aside. Talk to them to shut the anchor."},
+          "states": [
+            {"id": "epilogue", "when": ["commander_defeated"], "actions": ["stop_crater_activation"], "lines": ["It is down. Go and tell the families yourself."]},
+            {"id": "closed", "when": ["closed"], "lines": ["The operation is off. There is nothing here to guard."]},
+            {"id": "done", "when": ["anchor_2_shut"], "lines": ["My anchor is cold."]},
+            {"id": "after", "when": ["defeated"], "actions": ["shut_anchor_2"], "lines": ["Fine. You pull the south anchor's coupling and the ground stops shaking."], "ack": "shut_anchor_2"},
+            {"id": "pre", "when": ["window", "calibration_received"], "lines": ["I know whose orders these are and I know what Tomas found.", "I also know who sleeps in those carts. I am not stepping aside for a stranger."],
+             "fight": {"prompt": "Well?", "yes": "Then I go through you.", "no": "Not yet."}},
+            {"id": "wait", "when": ["window"], "lines": ["Keep back from the anchor. This is a rescue operation, and it is nearly ready."]},
+            {"id": "before", "when": [], "lines": ["Keep back from the equipment."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp12_guard_3",
+          "name": "Compact Anchor Guard Ysolde",
+          "at": [6145, 107, 5002], "ground": 106, "faces": [6145, 4995],
+          "fight": {"trainer": "compact_cp12_guard_3", "skill": 3, "won_say": "The east anchor's guard stands aside. Talk to them to shut the anchor."},
+          "states": [
+            {"id": "epilogue", "when": ["commander_defeated"], "actions": ["stop_crater_activation"], "lines": ["So that is that. We start again from nothing."]},
+            {"id": "closed", "when": ["closed"], "lines": ["The operation is off. There is nothing here to guard."]},
+            {"id": "done", "when": ["anchor_3_shut"], "lines": ["My anchor is cold."]},
+            {"id": "after", "when": ["defeated"], "actions": ["shut_anchor_3"], "lines": ["Take it. You pull the east anchor's coupling and the air stops burning."], "ack": "shut_anchor_3"},
+            {"id": "pre", "when": ["window", "calibration_received"], "lines": ["Oren sent you. He would rather we all stood here forever than fire once more.", "Maybe he is right. I still have a job."],
+             "fight": {"prompt": "Last warning.", "yes": "Step away from the anchor.", "no": "Not yet."}},
+            {"id": "wait", "when": ["window"], "lines": ["Keep back from the anchor. This is a rescue operation, and it is nearly ready."]},
+            {"id": "before", "when": [], "lines": ["Keep back from the equipment."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp12_commander",
+          "name": "Compact Field Commander Aubrecht",
+          "at": [6125, 107, 5004], "ground": 106, "faces": [6125, 4995],
+          "fight": {"trainer": "compact_cp12_commander", "skill": 4, "won_say": "The activation is stopped. Talk to the Field Commander."},
+          "states": [
+            {"id": "done", "when": ["activation_stopped"], "lines": ["The console is dead. So is the plan."]},
+            {"id": "closed", "when": ["closed"], "lines": ["The operation is off. Leave the console alone."]},
+            {"id": "after", "when": ["defeated"], "actions": ["stop_crater_activation"], "lines": ["It is finished. The activation will not fire.", "Those families were waiting for this. Go and tell them yourself."], "ack": "stop_crater_activation"},
+            {"id": "pre", "when": ["window", "anchor_1_shut", "anchor_2_shut", "anchor_3_shut"], "lines": ["Field Commander Aubrecht. You shut my anchors.", "The director's order is on this console. Read it yourself: destination occupied, warning acknowledged, proceed.", "I did not write it. I am going to carry it out, because the people behind me have nowhere else."],
+             "fight": {"prompt": "This is the last thing between you and the console.", "yes": "Stand down.", "no": "Not yet."}},
+            {"id": "wait", "when": ["window"], "lines": ["Three anchors hold this field. While they stand, the console fires on the director's word."]},
+            {"id": "before", "when": [], "lines": ["Restricted work site. Turn back."]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cp14_split",
+      "design": "CP-14 The Split Goes Public",
+      "quest": "evt_compact_split",
+      "settlement": "gym8_town",
+      "serves": "ARC Settlement 9, the faction's break made public (ARC.md:565-568); FACTION gym8_town (:212) 'Nia at Holdfast'; Codex C3. The win keeps the dissenters' route packet (data/quests.json main_worldshift_reveal physical_evidence giovanni_dissenter_route_packet, site 'gym8_town southern watch'), which the Rift surveyor's lines already assume.",
+      "window": "blaine_reveal_complete",
+      "window_why": "the design's 'at stage blaine_reveal_complete and after'.",
+      "closed_when": null,
+      "site_why": "Holdfast's southern edge (the design's 'southern watch'): the open shelf south of the lower lane, (3623-3679, 6559-6589), y112-115, falling gently to the south-east (measured). The town's interior has no free ground: every column within 40 blocks of the watch officer is a street, a lot band or a placement.",
+      "transitions": [
+        {"id": "hear_split", "requires": [], "sets": ["speech_heard"]},
+        {"id": "rally", "requires": ["loyalist_1_defeated"], "sets": ["sergeant_rallied"]},
+        {"id": "keep_packet", "requires": ["loyalist_2_defeated"], "sets": ["packet_kept", "completed"]}
+      ],
+      "npcs": [
+        {
+          "id": "npc_compact_cp14_nia_calder",
+          "name": "Nia Calder",
+          "at": [3631, 116, 6562], "ground": 115, "faces": [3645, 6545],
+          "states": [
+            {"id": "epilogue", "when": ["packet_kept"], "lines": ["The packet stays with us. Take what it says to the Rift. I will meet you there."]},
+            {"id": "told", "when": ["window", "speech_heard"], "lines": ["Stay near the watch sergeant. They will come along the shore."]},
+            {"id": "open", "when": ["window"], "lines": ["Nia Calder. I run the Compact's clinics, and I am done keeping quiet.", "At the Craters our leadership chose an occupied destination. Some of us will not follow that order anywhere.", "We carry a route packet: where the loyalists are going and the way in. Giovanni's watch is holding it for us.", "They will send people for it. I would rather they met you here than our families."], "ack": "hear_split"},
+            {"id": "before", "when": [], "lines": ["The southern watch keeps this edge. Speak to them, not me."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp14_aster",
+          "name": "Dev Aster",
+          "at": [3627, 115, 6572], "ground": 114, "faces": [3631, 6562],
+          "states": [
+            {"id": "epilogue", "when": ["packet_kept"], "lines": ["They went back the way they came. Mila says we stay with Nia now, whatever that means."]},
+            {"id": "open", "when": ["window"], "lines": ["Dev Aster. We waited at the Craters for a transfer that never came.", "Now half the Compact calls us deserters for staying behind. We are only tired."]},
+            {"id": "before", "when": [], "lines": ["We are just passing through."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp14_watch_sergeant",
+          "name": "Holdfast Watch Sergeant",
+          "at": [3647, 115, 6574], "ground": 114, "faces": [3647, 6555],
+          "states": [
+            {"id": "done", "when": ["packet_kept"], "lines": ["The packet stays in Holdfast. Giovanni will want to read it."]},
+            {"id": "kept", "when": ["window", "loyalist_2_defeated"], "lines": ["That is both of them. The packet stays with the watch, and so do Nia's people."], "ack": "keep_packet"},
+            {"id": "rallied", "when": ["window", "sergeant_rallied"], "lines": ["The second one gives the orders. I have the packet. Go."]},
+            {"id": "between", "when": ["window", "loyalist_1_defeated"], "lines": ["One down. The second is the one who gives the orders, and he will not wait for you to rest.", "The watch is with you. Go."], "ack": "rally"},
+            {"id": "ready", "when": ["window", "speech_heard"], "lines": ["The first of them is at the shore post. Stop them before they reach the packet."]},
+            {"id": "wait", "when": ["window"], "lines": ["Hear Nia Calder out first. Then we will see who comes for her papers."]},
+            {"id": "before", "when": [], "lines": ["Holdfast's southern watch. Move along unless you have business."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp14_loyalist_1",
+          "name": "Compact Loyalist Corrin",
+          "at": [3659, 114, 6580], "ground": 113, "faces": [3647, 6574],
+          "fight": {"trainer": "compact_cp14_loyalist_1", "skill": 4, "won_say": "The first loyalist falls back. Talk to the watch sergeant."},
+          "states": [
+            {"id": "after", "when": ["defeated"], "lines": ["You are choosing deserters over your own region's safety. Fine. Hesper will not be so gentle."]},
+            {"id": "pre", "when": ["window", "speech_heard"], "lines": ["That packet belongs to the Compact. Nia had no right to give it away.", "Step aside. We are taking it back."],
+             "fight": {"prompt": "Last time I ask.", "yes": "The packet stays here.", "no": "Not now."}},
+            {"id": "wait", "when": ["window"], "lines": ["Mind your business, stranger."]},
+            {"id": "before", "when": [], "lines": ["Just waiting on a boat."]}
+          ]
+        },
+        {
+          "id": "npc_compact_cp14_loyalist_2",
+          "name": "Compact Loyalist Hesper",
+          "at": [3671, 113, 6574], "ground": 112, "faces": [3659, 6580],
+          "fight": {"trainer": "compact_cp14_loyalist_2", "skill": 4, "won_say": "The loyalists withdraw. Talk to the watch sergeant."},
+          "states": [
+            {"id": "after", "when": ["defeated"], "lines": ["Keep your packet. It will not save anyone. The Rift will do what we could not."]},
+            {"id": "pre", "when": ["window", "sergeant_rallied"], "lines": ["Corrin was the polite one.", "Every day we waste, the last of our worlds gets smaller. Give me the packet."],
+             "fight": {"prompt": "Now.", "yes": "No.", "no": "Not now."}},
+            {"id": "wait", "when": ["window"], "lines": ["Corrin speaks for us. Talk to him."]},
+            {"id": "before", "when": [], "lines": ["Nothing to see here."]}
+          ]
+        }
+      ]
+    }
+  ]
+}

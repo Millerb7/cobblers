@@ -53,6 +53,7 @@ are not features. Decisions they produce are recorded in `docs/decisions/`.
 | EXP-053 | Does the Ursaluna's wake turn the sleeping bear into a boss fight? | built and audited offline 2026-10-02 (copies the Celebi's wake); not run in game |
 | EXP-046 | Can a town hold a working Pokemon through restarts, unloads and players, doing visible work? | run headless on staging: held, protected against every `/damage` type, survives unload and restart, moves by `tp`; `spawnpokemonat` in a function works only after a `/reload` unless it is a macro; 13 workers placed and verified. Walk animation, clicks and a sword need the owner |
 | EXP-045 | Can a player Mega Evolve with a Mega Bracelet? | PASS in game 2026-09-27: worn in the Accessories slot before the battle; reverts after; not held, not equipped mid-battle |
+| EXP-091 | Do the Haven Compact's story fights (CP-04, CP-12, CP-14) run in game: 16 NPCs, 10 `npc_battle` fights, the win callback, CP-12 granting `crater_operation_stopped`? And the unproven forms (X2 per-player squads, X3 doubles/multi) | stub 2026-10-11: built offline (`tools/compact_points.py`, R18CP), not run |
 
 ## Template
 
