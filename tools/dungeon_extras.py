@@ -1031,11 +1031,12 @@ def _bank_loot_problems(doc, d, room, lab, bands):
     DG = _DG()
     gt = DG.load()
     n = int(p.get("chests", load()["bank_vault"]["defaults"]["chests"]))
-    key = id(doc)
+    key = (id(doc), d.get("id"))     # each dungeon's vaults on its own clock (tools/dungeon_greed.py vault_budget)
     try:
         if key not in _BUDGET:
-            _BUDGET.clear()
-            _BUDGET[key] = (doc, DG.vault_budget(doc, gt))
+            if any(k[0] != key[0] for k in _BUDGET):
+                _BUDGET.clear()
+            _BUDGET[key] = (doc, DG.vault_budget(doc, gt, d))
         budget = _BUDGET[key][1]
     except Exception as e:      # noqa: BLE001  (the economy simulator or a clock a fixture does not carry)
         return ["%s: the vault budget could not be derived (%s: %s)" % (lab, type(e).__name__, e)]

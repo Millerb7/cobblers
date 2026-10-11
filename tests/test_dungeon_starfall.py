@@ -92,12 +92,12 @@ def test_the_clock_is_about_32_minutes_required_at_band_one_and_the_authored_clo
     slack = DOC["engine"]["clock"]["slack_factor"]
     want = DC.derive(DOC, SF)
     own = SF["clock_s_by_band"]
-    # the formula plus the set piece's 25 s, raised at a band to the shortest OTHER rooms dungeon's clock so that this
-    # dungeon never becomes the shortest and moves every vault's budget (data/dungeon_greed.json vault_budget; clock_why)
-    others = [d for d in DOC["dungeons"] if d is not SF and d.get("rooms") and d.get("clock_s_by_band")]
+    # the formula plus the set piece's 25 s at every band (MEGA-INTEGRATE: each dungeon's vaults are priced on its own
+    # clock, so no band is raised to the shortest other dungeon's any more)
     for b, s in want.items():
-        floor = min(d["clock_s_by_band"][b] for d in others) if others else 0
-        assert s <= own[b] <= max(s + 120, floor), (b, own[b], s, floor)
+        req = max(sum(DC.required(DOC, SF, int(b), DC.clock_rooms(DOC, SF, int(b), w)).values()) for w in walks.values())
+        assert own[b] == int(-(-((req + 25) * slack) // 60)) * 60, (b, own[b], req)
+        assert s <= own[b] <= s + 120, (b, own[b], s)
     req1 = max(sum(DC.required(DOC, SF, 1, DC.clock_rooms(DOC, SF, 1, w)).values()) for w in walks.values())
     assert 30 * 60 <= req1 <= 35 * 60, req1 / 60
     assert abs(own["1"] - req1 * slack) <= 120

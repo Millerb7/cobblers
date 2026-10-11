@@ -153,12 +153,9 @@ def test_about_32_minutes_required_at_band_1_and_the_clock_is_the_tools_plus_the
     own = DS["clock_s_by_band"]
     for b, s in req.items():
         derived = math.ceil((s + SETPIECE_ALLOWANCE_S) * slack / 60) * 60
-        if b == 4:
-            # authored over the derived so this dungeon is not the shortest band-4 clock the vault and resources budgets
-            # read (clock_why); never under it
-            assert own["4"] == 2640 and own["4"] > derived, (own["4"], derived)
-        else:
-            assert own[str(b)] == derived, (b, own[str(b)])
+        # every band the formula's (MEGA-INTEGRATE: each dungeon's vaults are priced on its own clock, so band 4 is no
+        # longer authored over the derived to keep another dungeon's budget)
+        assert own[str(b)] == derived, (b, own[str(b)])
         assert own[str(b)] <= 3600
     assert "lockout_ticks" not in DS
     assert "25 s" in DS["clock_why"]

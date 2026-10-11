@@ -89,11 +89,12 @@ def test_the_clock_is_about_32_minutes_required_at_band_one_and_covers_the_formu
     slack = DOC["engine"]["clock"]["slack_factor"]
     want = DC.derive(DOC, PT)
     own = PT["clock_s_by_band"]
-    others4 = min(d["clock_s_by_band"]["4"] for d in DOC["dungeons"] if d is not PT and d.get("clock_s_by_band"))
     for b, s in want.items():
-        # the formula plus the set piece's allowance; band 4 is held at the shortest band-4 clock already standing, so
-        # the vault budget (set by the shortest clock) does not move for the other dungeons (clock_why)
-        assert s <= own[b] <= s + 120 or (b == "4" and own[b] == max(s, others4)), (b, own[b], s)
+        # the formula plus the set piece's allowance at every band (MEGA-INTEGRATE: each dungeon's vaults are priced on
+        # its own clock, so band 4 is no longer held at the shortest band-4 clock standing)
+        req = max(sum(DC.required(DOC, PT, int(b), DC.clock_rooms(DOC, PT, int(b), w)).values()) for w in walks.values())
+        assert own[b] == int(-(-((req + 25) * slack) // 60)) * 60, (b, own[b], req)
+        assert s <= own[b] <= s + 120, (b, own[b], s)
     req1 = max(sum(DC.required(DOC, PT, 1, DC.clock_rooms(DOC, PT, 1, w)).values()) for w in walks.values())
     assert 30 * 60 <= req1 <= 34 * 60, req1 / 60
     assert abs(own["1"] - (req1 + 25) * slack) <= 60
@@ -104,7 +105,9 @@ def test_the_clock_is_about_32_minutes_required_at_band_one_and_covers_the_formu
 def test_adding_the_patriarch_moves_no_other_dungeons_vault_budget():
     import dungeon_greed as DG
     without = dict(DOC, dungeons=[d for d in DOC["dungeons"] if d is not PT])
-    assert DG.vault_budget(DOC) == DG.vault_budget(without)
+    # each dungeon's vaults are priced on its own clock (MEGA-INTEGRATE), so no other dungeon's budget moves
+    for d in without["dungeons"]:
+        assert DG.vault_budget(DOC, dungeon=d) == DG.vault_budget(without, dungeon=d), d["id"]
     assert DG.vault_over(DOC) == []
 
 
@@ -264,7 +267,7 @@ def test_four_optional_rooms_off_the_main_route_none_paid(walks):
 
 def test_the_crows_hoard_pays_no_more_than_the_runs_time_gathering():
     import dungeon_greed as DG
-    budget = DG.vault_budget(DOC)
+    budget = DG.vault_budget(DOC, dungeon=PT)     # its own clock's (MEGA-INTEGRATE)
     v = by_id("crows_hoard")
     tbl = DG.load()
     for b, spec in v["params"]["loot_by_band"].items():

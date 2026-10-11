@@ -331,7 +331,7 @@ def test_the_treasury_pays_no_more_than_the_runs_time_gathering():
     import dungeon_greed as DG
     over = [x for x in DG.vault_over(DOC) if x[0] == "jungle"]
     assert over == [], over
-    budget = DG.vault_budget(DOC)
+    budget = DG.vault_budget(DOC, dungeon=JG)     # its own clock's (MEGA-INTEGRATE)
     (vault,) = [r for r in RECORDS if r["kind"] == "vault"]
     n = vault["params"]["chests"]
     tbl = DG.load()

@@ -500,16 +500,40 @@ def test_the_engine_prize_defaults_rise_with_band_and_keep_the_lower_cap():
 # ------------------------------------------------------------------------------------------------- the vault budget
 
 
+# by hand, from the raw data: tier $/h (data/bank.json rate x price): early 620, deep 1350, nether 2120; the tier open at
+# the band's lowest cap's badge count (cap 20+5k, 60 at 8): 0, 2, 4, 6, 8, 8 badges -> early, deep, deep, deep, nether
+# (gate gym8), nether. hours = a clock / slack 1.25 / 3600, i.e. clock / 4500 s.
+TIER_BY_BAND = {1: 620, 2: 1350, 3: 1350, 4: 1350, 5: 2120, 6: 2120}
+
+
+def _by_hand(clocks):
+    return {b: int(TIER_BY_BAND[b] * clocks[str(b)] / 4500.0 + 1e-9) for b in range(1, 7)}
+
+
 def test_the_vault_budget_is_the_runs_gathering_wage_by_band():
-    # the numbers DUNGEON_ROOMS.md 1b states, from the live data (tools/economy_sim.py World, the dungeons' clocks)
-    # (the figures move with the shortest dungeon's clock: these are the two-stage boss clocks', 2026-10-11)
-    # by hand, from the raw data: hours = the shortest rooms dungeon's clock / slack 1.25 / 3600, i.e. clock / 4500 s:
-    #   clocks 2340, 2460, 2400, 2640, 2940, 3120 s (the minimum over the three dungeons' clock_s_by_band, bands 1-6) -> hours
-    #   0.52, 0.54667, 0.53333, 0.58667, 0.65333, 0.69333; tier $/h (data/bank.json rate x price): early 620, deep 1350,
-    #   nether 2120; the tier open at the band's lowest cap's badge count (cap 20+5k, 60 at 8): 0, 2, 4, 6, 8, 8 badges
-    #   -> early, deep, deep, deep, nether (gate gym8), nether. floor(620*.52)=322, 1350*.54667=738, 1350*.53333=720,
-    #   1350*.58667=792, 2120*.65333=1385, 2120*.69333=1469.
-    assert DG.vault_budget(BASE) == {1: 322, 2: 738, 3: 720, 4: 792, 5: 1385, 6: 1469}
+    # MEGA-INTEGRATE (2026-10-11): a vault is paid out of the run it stands in, so each dungeon's budget comes from ITS
+    # OWN clock_s_by_band. Before, every vault was priced on the shortest dungeon's clock, and every new author padded a
+    # clock so as not to shrink the others' vaults.
+    rooms = [d for d in BASE["dungeons"] if d.get("rooms")]
+    assert len(rooms) >= 4
+    for d in rooms:
+        assert DG.vault_budget(BASE, dungeon=d) == _by_hand(d["clock_s_by_band"]), d["id"]
+    # without a dungeon: the floor over every dungeon (the shortest clock per band), what a kind's shared default loot
+    # (the bank vault's) is held to
+    floor = {str(b): min(d["clock_s_by_band"][str(b)] for d in rooms) for b in range(1, 7)}
+    assert DG.vault_budget(BASE) == _by_hand(floor)
+
+
+def test_a_shorter_dungeon_moves_no_other_dungeons_vault_budget():
+    doc = copy.deepcopy(BASE)
+    ns = doc["dungeons"][0]
+    before = DG.vault_budget(doc, dungeon=ns)
+    doc["dungeons"][1]["clock_s_by_band"] = {k: 600 for k in doc["dungeons"][1]["clock_s_by_band"]}
+    assert DG.vault_budget(doc, dungeon=ns) == before
+    assert DG.vault_budget(doc, dungeon=doc["dungeons"][1]) == _by_hand({str(b): 600 for b in range(1, 7)})
+    # and its own vault is now held to its own (small) run: the pay office's band-6 chest is over a 10-minute run's wage
+    ns["clock_s_by_band"] = {k: 600 for k in ns["clock_s_by_band"]}
+    assert any(p.startswith("night_shift vault pay_office") for p in DG.vault_problems(doc))
 
 
 def test_the_budget_is_enforced_and_every_authored_vault_is_inside_it_and_a_dearer_chest_is_refused():
@@ -544,5 +568,6 @@ def test_the_contract_is_published_in_dungeon_rooms_md():
     for word in ("crossroads", "look", "optional", "sections", "hard", "rare_by_band", "legendary_by_band", "chance_by_band",
                  "rumour", "vault_budget"):
         assert word in sec, word
-    nums = DG.vault_budget(BASE)
+    nums = DG.vault_budget(BASE, dungeon=BASE["dungeons"][0])     # the doc's worked example: the Night Shift's own
     assert "band 1 %d cp, 2 %d, 3 %d, 4 %d, 5 %d, 6 %d" % tuple(nums[b] // 4 for b in range(1, 7)) in sec
+    assert "its own clock" in sec

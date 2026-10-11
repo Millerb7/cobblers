@@ -11,8 +11,8 @@ the record to, from the owner's standing asks for every dungeon (docs/mechanics/
             route the clock pays); the set piece the room before the boss; the safe room with a healer and a shortcut back
             toward the entry; three secrets each with a relic; four distinct variants;
   length    tools/dungeon_clock.py's required time about 32 minutes at band 1; the record's clock the tool's plus the set
-            piece's 25 s x the slack, except band 4, held at the shortest other dungeon's so this one never lowers the
-            shared vault and resource budgets; every band under an hour and no lockout of its own;
+            piece's 25 s x the slack at every band (MEGA-INTEGRATE: vaults priced on their own dungeon's clock); every
+            band under an hour and no lockout of its own;
   variety   every trainer a rotation pool of two teams a band, the mini-boss a species pool, the boss an alternate crew
             per band; two boss stages with a full heal between;
   prize     the roster's pools, legendary bands 4-6 only and no rare band; the single forms are pool members that are not
@@ -180,12 +180,10 @@ def test_about_32_minutes_required_at_band_1_and_the_clock_is_the_tools_plus_the
     assert 30 * 60 <= req[1] <= 34 * 60, req[1] / 60
     slack = DOC["engine"]["clock"]["slack_factor"]
     own = ZD["clock_s_by_band"]
-    others = [d for d in DOC["dungeons"] if d["id"] != "zero_dig" and d.get("clock_s_by_band")]
     for b, s in req.items():
+        # every band the formula's (MEGA-INTEGRATE: each dungeon's vaults are priced on its own clock, so band 4 is no
+        # longer held at the shortest other dungeon's)
         want = math.ceil((s + SETPIECE_ALLOWANCE_S) * slack / 60) * 60
-        if b == 4:
-            # held so this dungeon is never the shortest at band 4 (the vault and resource budgets price the shortest)
-            want = max(want, min(int(d["clock_s_by_band"]["4"]) for d in others))
         assert own[str(b)] == want, (b, own[str(b)], want)
         assert own[str(b)] <= 3600
     assert "lockout_ticks" not in ZD

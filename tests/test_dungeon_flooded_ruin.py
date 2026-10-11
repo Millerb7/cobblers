@@ -378,7 +378,7 @@ def test_the_vault_is_inside_the_budget_at_every_band_and_a_dearer_chest_is_not(
     import dungeon_greed as DG
     table = DG.load()
     assert not [x for x in DG.vault_over(DOC, table) if x[0] == "flooded_ruin"]
-    budget = DG.vault_budget(DOC, table)
+    budget = DG.vault_budget(DOC, table, next(x for x in DOC["dungeons"] if x["id"] == "flooded_ruin"))   # its own clock's
     well = next(r for r in records() if r["kind"] == "vault")
     for b in range(1, 7):
         _k, spec = __import__("dungeon_puzzles").loot_for(well["params"], DOC["engine"]["bands"], b)

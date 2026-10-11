@@ -8,8 +8,8 @@ What they hold the record to:
             least three of ours; connectors at most 40 long and at least 7 wide; most rooms not boxes; the route turns,
             doubles back and drops;
   length    tools/dungeon_clock.py's required time on the MAIN route about 32 minutes at band 1, the clock the tool's plus
-            the collapse's 25 s, every band under D17's hour, and no band's clock under the shortest other dungeon's (so
-            the vault budget, which reads the shortest clock, does not move);
+            the collapse's 25 s, every band under D17's hour; its vaults priced on its own clock, so it moves no other
+            dungeon's vault budget (MEGA-INTEGRATE);
   pacing    no two fight rooms back to back on any route; the safe room about two thirds in; the collapse before the boss;
   choices   two forks you can see out of crossroads, one three ways; a four-room WING ending in the prize habitat; two
             parkours; at least three of the six optional rooms on side entries; three secrets with relics; a shortcut;
@@ -154,11 +154,14 @@ def test_about_32_minutes_required_at_band_1_and_the_clock_is_the_tools_plus_the
     assert C.clock_problems(DOC, FS) == []
 
 
-def test_no_band_is_shorter_than_the_shortest_other_dungeon_so_the_vault_budget_does_not_move():
-    others = [d for d in DOC["dungeons"] if d["id"] != FS["id"] and d.get("clock_s_by_band")]
-    for b in DOC["engine"]["bands"]:
-        k = str(b["band"])
-        assert FS["clock_s_by_band"][k] >= min(d["clock_s_by_band"][k] for d in others), k
+def test_the_vault_budget_of_its_vaults_is_its_own_clocks_and_no_other_dungeons_moves():
+    # MEGA-INTEGRATE (2026-10-11): each dungeon's vaults are priced on its own clock, so this dungeon's clock moves no
+    # other dungeon's vault budget (the old test held every band at or over the shortest other dungeon's)
+    import dungeon_greed as DG
+    without = dict(DOC, dungeons=[d for d in DOC["dungeons"] if d is not FS])
+    for d in without["dungeons"][:3]:
+        assert DG.vault_budget(DOC, dungeon=d) == DG.vault_budget(without, dungeon=d), d["id"]
+    assert not [x for x in DG.vault_over(DOC) if x[0] == FS["id"]]
 
 
 # ------------------------------------------------------------------------------------------------- pacing

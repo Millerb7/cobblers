@@ -173,11 +173,9 @@ def test_about_32_minutes_required_at_band_1_and_the_clock_is_the_tools_plus_the
     slack = DOC["engine"]["clock"]["slack_factor"]
     want = _expected_clock(req, slack)
     own = AB["clock_s_by_band"]
-    assert {b: v for b, v in own.items() if b != "4"} == {b: v for b, v in want.items() if b != "4"}
-    # band 4 (clock_why): raised to the other dungeons' shortest band-4 clock, so this test dungeon (campaign bands 5-6)
-    # never sets KIT3's band-4 vault budget, which the shortest clock decides; never under the tool's own
-    others = min(d["clock_s_by_band"]["4"] for d in DOC["dungeons"] if d["id"] != "ash_bell")
-    assert own["4"] == max(want["4"], others) and "raised to 44" in AB["clock_why"]
+    # every band the formula's (MEGA-INTEGRATE: each dungeon's vaults are priced on its own clock, so band 4 is no longer
+    # raised to keep another dungeon's vault budget)
+    assert own == want
     assert all(v <= 3600 for v in own.values()), "every band under D17's hour"
     assert "lockout_ticks" not in AB
     assert str(SETPIECE_ALLOWANCE_S) + " s" in AB["clock_why"]
