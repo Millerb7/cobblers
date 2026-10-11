@@ -21882,6 +21882,3532 @@
           "next": "a001"
         }
       ]
+    },
+    {
+      "id": "dlg_compact_cp04_courier_1",
+      "quest_id": "evt_compact_records_run",
+      "npc_id": "npc_compact_cp04_courier_1",
+      "npc_name": "Compact Courier Odile",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp04_records_run",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-04 The Records Run; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_records_run.courier_1_cursor",
+        "initial_node": "courier_1_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_records_run.courier_1_defeated",
+            "value": true
+          },
+          "node": "courier_1_after_1",
+          "why": "state after"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_records_run.courier_1_cursor",
+                "value": "courier_1_pre_choice"
+              }
+            ]
+          },
+          "node": "courier_1_pre_choice",
+          "why": "a player who left on the choice (a loss, a flee, 'not yet') is offered the battle again"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "misty_reveal_complete",
+              "surge_reveal_complete",
+              "erika_reveal_complete",
+              "koga_reveal_complete",
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "courier_1_pre_1",
+          "why": "state pre"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "always"
+          },
+          "node": "courier_1_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "courier_1_after_1",
+          "kind": "line",
+          "speaker": "courier_1",
+          "text": "Fine. One case is yours. The others are further up the path, and they are quicker than me.",
+          "next": "courier_1_after_1"
+        },
+        {
+          "id": "courier_1_pre_1",
+          "kind": "line",
+          "speaker": "courier_1",
+          "text": "These cases are Compact property. The logs in them came off our own transmitters before Surge's array caught them.",
+          "next": "courier_1_pre_2"
+        },
+        {
+          "id": "courier_1_pre_2",
+          "kind": "line",
+          "speaker": "courier_1",
+          "text": "Nobody here is hurt and nobody will be. We only need these records out of town before he reads them against Pallet.",
+          "next": "courier_1_pre_choice"
+        },
+        {
+          "id": "courier_1_pre_choice",
+          "kind": "choice",
+          "speaker": "courier_1",
+          "text": "If you mean to stop us, do it properly. Imre and Sefa are up the path with the rest.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Hand the logs back.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "courier_1_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "courier_1_over_cap",
+          "kind": "line",
+          "speaker": "courier_1",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and come back.",
+          "next": "courier_1_pre_choice"
+        },
+        {
+          "id": "courier_1_before_1",
+          "kind": "line",
+          "speaker": "courier_1",
+          "text": "Relief paperwork. Nothing here for you, traveller.",
+          "next": "courier_1_before_1"
+        }
+      ],
+      "speakers": {
+        "courier_1": "Compact Courier Odile"
+      },
+      "npc_battle": {
+        "trainers": "compact_trainers.json",
+        "trainer": "compact_cp04_courier_1",
+        "skill": 2
+      }
+    },
+    {
+      "id": "dlg_compact_cp04_courier_2",
+      "quest_id": "evt_compact_records_run",
+      "npc_id": "npc_compact_cp04_courier_2",
+      "npc_name": "Compact Courier Imre",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp04_records_run",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-04 The Records Run; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_records_run.courier_2_cursor",
+        "initial_node": "courier_2_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_records_run.courier_2_defeated",
+            "value": true
+          },
+          "node": "courier_2_after_1",
+          "why": "state after"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_records_run.courier_1_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_records_run.courier_2_cursor",
+                "value": "courier_2_pre_choice"
+              }
+            ]
+          },
+          "node": "courier_2_pre_choice",
+          "why": "a player who left on the choice (a loss, a flee, 'not yet') is offered the battle again"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_records_run.courier_1_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "courier_2_pre_1",
+          "why": "state pre"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "misty_reveal_complete",
+              "surge_reveal_complete",
+              "erika_reveal_complete",
+              "koga_reveal_complete",
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "courier_2_wait_1",
+          "why": "state wait"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "always"
+          },
+          "node": "courier_2_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "courier_2_after_1",
+          "kind": "line",
+          "speaker": "courier_2",
+          "text": "Take it. Sefa has the last case, and the sergeant is with her.",
+          "next": "courier_2_after_1"
+        },
+        {
+          "id": "courier_2_pre_1",
+          "kind": "line",
+          "speaker": "courier_2",
+          "text": "Odile let you through? Then you know what is in these.",
+          "next": "courier_2_pre_2"
+        },
+        {
+          "id": "courier_2_pre_2",
+          "kind": "line",
+          "speaker": "courier_2",
+          "text": "Surge would call it evidence. We call it the record of every family we moved.",
+          "next": "courier_2_pre_choice"
+        },
+        {
+          "id": "courier_2_pre_choice",
+          "kind": "choice",
+          "speaker": "courier_2",
+          "text": "I will not give it up for a speech.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Then we battle.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "courier_2_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "courier_2_over_cap",
+          "kind": "line",
+          "speaker": "courier_2",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and come back.",
+          "next": "courier_2_pre_choice"
+        },
+        {
+          "id": "courier_2_wait_1",
+          "kind": "line",
+          "speaker": "courier_2",
+          "text": "Keep walking. The records are Odile's to argue about, down by the Centre.",
+          "next": "courier_2_wait_1"
+        },
+        {
+          "id": "courier_2_before_1",
+          "kind": "line",
+          "speaker": "courier_2",
+          "text": "Just resting my legs. It is a steep town.",
+          "next": "courier_2_before_1"
+        }
+      ],
+      "speakers": {
+        "courier_2": "Compact Courier Imre"
+      },
+      "npc_battle": {
+        "trainers": "compact_trainers.json",
+        "trainer": "compact_cp04_courier_2",
+        "skill": 2
+      }
+    },
+    {
+      "id": "dlg_compact_cp04_courier_3",
+      "quest_id": "evt_compact_records_run",
+      "npc_id": "npc_compact_cp04_courier_3",
+      "npc_name": "Compact Courier Sefa",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp04_records_run",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-04 The Records Run; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_records_run.courier_3_cursor",
+        "initial_node": "courier_3_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_records_run.courier_3_defeated",
+            "value": true
+          },
+          "node": "courier_3_after_1",
+          "why": "state after"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_records_run.courier_2_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_records_run.courier_3_cursor",
+                "value": "courier_3_pre_choice"
+              }
+            ]
+          },
+          "node": "courier_3_pre_choice",
+          "why": "a player who left on the choice (a loss, a flee, 'not yet') is offered the battle again"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_records_run.courier_2_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "courier_3_pre_1",
+          "why": "state pre"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "misty_reveal_complete",
+              "surge_reveal_complete",
+              "erika_reveal_complete",
+              "koga_reveal_complete",
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "courier_3_wait_1",
+          "why": "state wait"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "always"
+          },
+          "node": "courier_3_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "courier_3_after_1",
+          "kind": "line",
+          "speaker": "courier_3",
+          "text": "That was the last case. Sergeant Varga will want a word, and she will not be polite.",
+          "next": "courier_3_after_1"
+        },
+        {
+          "id": "courier_3_pre_1",
+          "kind": "line",
+          "speaker": "courier_3",
+          "text": "Two cases already. You are thorough.",
+          "next": "courier_3_pre_2"
+        },
+        {
+          "id": "courier_3_pre_2",
+          "kind": "line",
+          "speaker": "courier_3",
+          "text": "This one holds the timing marks. If Surge lines them up with Pallet's arrival, he will ask questions we are not allowed to answer.",
+          "next": "courier_3_pre_choice"
+        },
+        {
+          "id": "courier_3_pre_choice",
+          "kind": "choice",
+          "speaker": "courier_3",
+          "text": "Last chance to walk away.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Hand it over.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "courier_3_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "courier_3_over_cap",
+          "kind": "line",
+          "speaker": "courier_3",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and come back.",
+          "next": "courier_3_pre_choice"
+        },
+        {
+          "id": "courier_3_wait_1",
+          "kind": "line",
+          "speaker": "courier_3",
+          "text": "The sergeant says nobody comes up here until Imre waves them on.",
+          "next": "courier_3_wait_1"
+        },
+        {
+          "id": "courier_3_before_1",
+          "kind": "line",
+          "speaker": "courier_3",
+          "text": "Mind the edge. The path gets worse from here.",
+          "next": "courier_3_before_1"
+        }
+      ],
+      "speakers": {
+        "courier_3": "Compact Courier Sefa"
+      },
+      "npc_battle": {
+        "trainers": "compact_trainers.json",
+        "trainer": "compact_cp04_courier_3",
+        "skill": 2
+      }
+    },
+    {
+      "id": "dlg_compact_cp04_varga",
+      "quest_id": "evt_compact_records_run",
+      "npc_id": "npc_compact_cp04_varga",
+      "npc_name": "Compact Sergeant Varga",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp04_records_run",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-04 The Records Run; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_records_run.varga_cursor",
+        "initial_node": "varga_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_records_run.records_recovered",
+            "value": true
+          },
+          "node": "varga_done_1",
+          "why": "state done"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_records_run.varga_defeated",
+            "value": true
+          },
+          "node": "varga_after_1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "recover_records"
+            }
+          ],
+          "why": "state after"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_records_run.courier_3_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_records_run.varga_cursor",
+                "value": "varga_pre_choice"
+              }
+            ]
+          },
+          "node": "varga_pre_choice",
+          "why": "a player who left on the choice (a loss, a flee, 'not yet') is offered the battle again"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_records_run.courier_3_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "varga_pre_1",
+          "why": "state pre"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "misty_reveal_complete",
+              "surge_reveal_complete",
+              "erika_reveal_complete",
+              "koga_reveal_complete",
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "varga_wait_1",
+          "why": "state wait"
+        },
+        {
+          "priority": 55,
+          "when": {
+            "kind": "always"
+          },
+          "node": "varga_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "varga_done_1",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Go and read your logs. I have a crew to move.",
+          "next": "varga_done_1"
+        },
+        {
+          "id": "varga_after_1",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Take them, then. Nobody in this town was hurt, and nobody will be. Remember that when you tell Surge what we are.",
+          "next": "varga_after_2"
+        },
+        {
+          "id": "varga_after_2",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "We are leaving. This is not finished.",
+          "next": "varga_after_2",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "recover_records"
+            }
+          ]
+        },
+        {
+          "id": "varga_pre_1",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Three of my people, and you went through all of them. Sergeant Varga, Haven Compact.",
+          "next": "varga_pre_2"
+        },
+        {
+          "id": "varga_pre_2",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Those logs are ours. Every pulse in them is a family that is alive because we moved them.",
+          "next": "varga_pre_3"
+        },
+        {
+          "id": "varga_pre_3",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Surge will read them as a crime. Maybe you will too. I am not handing that over without a fight.",
+          "next": "varga_pre_choice"
+        },
+        {
+          "id": "varga_pre_choice",
+          "kind": "choice",
+          "speaker": "varga",
+          "text": "Well?",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "The records go back to Surge.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "varga_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "varga_over_cap",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and come back.",
+          "next": "varga_pre_choice"
+        },
+        {
+          "id": "varga_wait_1",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "My couriers are working. Stay out of their way.",
+          "next": "varga_wait_1"
+        },
+        {
+          "id": "varga_before_1",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Move along. This is a work crew.",
+          "next": "varga_before_1"
+        }
+      ],
+      "speakers": {
+        "varga": "Compact Sergeant Varga"
+      },
+      "npc_battle": {
+        "trainers": "compact_trainers.json",
+        "trainer": "compact_varga_1",
+        "skill": 3
+      }
+    },
+    {
+      "id": "dlg_compact_cp12_tomas_rill",
+      "quest_id": "evt_compact_crater",
+      "npc_id": "npc_compact_cp12_tomas_rill",
+      "npc_name": "Tomas Rill",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp12_crater_activation",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-12 The Crater Activation; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_crater.tomas_rill_cursor",
+        "initial_node": "tomas_rill_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.commander_defeated",
+            "value": true
+          },
+          "node": "tomas_rill_epilogue_1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "stop_crater_activation"
+            }
+          ],
+          "why": "state epilogue"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "crater_operation_stopped"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym7_cleared"
+                  }
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.activation_stopped",
+                "value": false
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.commander_defeated",
+                "value": false
+              }
+            ]
+          },
+          "node": "tomas_rill_closed_1",
+          "why": "state closed"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.occupied_confirmed",
+                "value": true
+              }
+            ]
+          },
+          "node": "tomas_rill_told_1",
+          "why": "state told"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "tomas_rill_open_1",
+          "why": "state open"
+        },
+        {
+          "priority": 55,
+          "when": {
+            "kind": "always"
+          },
+          "node": "tomas_rill_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "tomas_rill_epilogue_1",
+          "kind": "line",
+          "speaker": "tomas_rill",
+          "text": "You stopped it. I do not know where these families go now. Neither does anyone above me.",
+          "next": "tomas_rill_epilogue_1"
+        },
+        {
+          "id": "tomas_rill_closed_1",
+          "kind": "line",
+          "speaker": "tomas_rill",
+          "text": "It is over. The crews packed up and the anchors went cold before you came. The families are still waiting for somewhere to go.",
+          "next": "tomas_rill_closed_1"
+        },
+        {
+          "id": "tomas_rill_told_1",
+          "kind": "line",
+          "speaker": "tomas_rill",
+          "text": "Oren is by the east marker. He has the calibration record.",
+          "next": "tomas_rill_told_1"
+        },
+        {
+          "id": "tomas_rill_open_1",
+          "kind": "line",
+          "speaker": "tomas_rill",
+          "text": "Tomas Rill. I measure destinations for the Compact.",
+          "next": "tomas_rill_open_2"
+        },
+        {
+          "id": "tomas_rill_open_2",
+          "kind": "line",
+          "speaker": "tomas_rill",
+          "text": "I ran the model three times. The target is not empty: roads, homes, heat, people. Somebody lives where this activation would put us.",
+          "next": "tomas_rill_open_3"
+        },
+        {
+          "id": "tomas_rill_open_3",
+          "kind": "line",
+          "speaker": "tomas_rill",
+          "text": "I sent the result up. The answer came back: proceed.",
+          "next": "tomas_rill_open_4"
+        },
+        {
+          "id": "tomas_rill_open_4",
+          "kind": "line",
+          "speaker": "tomas_rill",
+          "text": "Oren has the calibration record. If anyone can tell you how to stop this cleanly, he can.",
+          "next": "tomas_rill_open_4",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "confirm_occupied"
+            }
+          ]
+        },
+        {
+          "id": "tomas_rill_before_1",
+          "kind": "line",
+          "speaker": "tomas_rill",
+          "text": "Survey work. The Craters are hot ground; keep to the road.",
+          "next": "tomas_rill_before_1"
+        }
+      ],
+      "speakers": {
+        "tomas_rill": "Tomas Rill"
+      }
+    },
+    {
+      "id": "dlg_compact_cp12_oren_pell",
+      "quest_id": "evt_compact_crater",
+      "npc_id": "npc_compact_cp12_oren_pell",
+      "npc_name": "Oren Pell",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp12_crater_activation",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-12 The Crater Activation; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_crater.oren_pell_cursor",
+        "initial_node": "oren_pell_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.commander_defeated",
+            "value": true
+          },
+          "node": "oren_pell_epilogue_1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "stop_crater_activation"
+            }
+          ],
+          "why": "state epilogue"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "crater_operation_stopped"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym7_cleared"
+                  }
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.activation_stopped",
+                "value": false
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.commander_defeated",
+                "value": false
+              }
+            ]
+          },
+          "node": "oren_pell_closed_1",
+          "why": "state closed"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.calibration_received",
+                "value": true
+              }
+            ]
+          },
+          "node": "oren_pell_told_1",
+          "why": "state told"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.occupied_confirmed",
+                "value": true
+              }
+            ]
+          },
+          "node": "oren_pell_open_1",
+          "why": "state open"
+        },
+        {
+          "priority": 55,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "oren_pell_wait_1",
+          "why": "state wait"
+        },
+        {
+          "priority": 65,
+          "when": {
+            "kind": "always"
+          },
+          "node": "oren_pell_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "oren_pell_epilogue_1",
+          "kind": "line",
+          "speaker": "oren_pell",
+          "text": "The field is down. Hoopa is still bound, but this one did not fire.",
+          "next": "oren_pell_epilogue_1"
+        },
+        {
+          "id": "oren_pell_closed_1",
+          "kind": "line",
+          "speaker": "oren_pell",
+          "text": "The operation is off. I am going back to the cradle crews before somebody tries again.",
+          "next": "oren_pell_closed_1"
+        },
+        {
+          "id": "oren_pell_told_1",
+          "kind": "line",
+          "speaker": "oren_pell",
+          "text": "Three anchors, west, south and east. Then the console.",
+          "next": "oren_pell_told_1"
+        },
+        {
+          "id": "oren_pell_open_1",
+          "kind": "line",
+          "speaker": "oren_pell",
+          "text": "Oren Pell. I keep the anchors calibrated, and the calibration is why this frightens me.",
+          "next": "oren_pell_open_2"
+        },
+        {
+          "id": "oren_pell_open_2",
+          "kind": "line",
+          "speaker": "oren_pell",
+          "text": "Every forced use leaves Hoopa less steady. One this size may not come back down.",
+          "next": "oren_pell_open_3"
+        },
+        {
+          "id": "oren_pell_open_3",
+          "kind": "line",
+          "speaker": "oren_pell",
+          "text": "Three anchors hold the field: west, south and east. Shut all three and the console has nothing to fire.",
+          "next": "oren_pell_open_4"
+        },
+        {
+          "id": "oren_pell_open_4",
+          "kind": "line",
+          "speaker": "oren_pell",
+          "text": "The crews guarding them believe they are saving lives. They are. Be quick.",
+          "next": "oren_pell_open_4",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "receive_calibration"
+            }
+          ]
+        },
+        {
+          "id": "oren_pell_wait_1",
+          "kind": "line",
+          "speaker": "oren_pell",
+          "text": "Talk to Tomas. I will not hand this record to anyone who has not seen his numbers.",
+          "next": "oren_pell_wait_1"
+        },
+        {
+          "id": "oren_pell_before_1",
+          "kind": "line",
+          "speaker": "oren_pell",
+          "text": "Calibration crew. Please do not touch the markers.",
+          "next": "oren_pell_before_1"
+        }
+      ],
+      "speakers": {
+        "oren_pell": "Oren Pell"
+      }
+    },
+    {
+      "id": "dlg_compact_cp12_aster",
+      "quest_id": "evt_compact_crater",
+      "npc_id": "npc_compact_cp12_aster",
+      "npc_name": "Mila Aster",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp12_crater_activation",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-12 The Crater Activation; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_crater.aster_cursor",
+        "initial_node": "aster_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.commander_defeated",
+            "value": true
+          },
+          "node": "aster_epilogue_1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "stop_crater_activation"
+            }
+          ],
+          "why": "state epilogue"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "crater_operation_stopped"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym7_cleared"
+                  }
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.activation_stopped",
+                "value": false
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.commander_defeated",
+                "value": false
+              }
+            ]
+          },
+          "node": "aster_closed_1",
+          "why": "state closed"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "aster_open_1",
+          "why": "state open"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "always"
+          },
+          "node": "aster_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "aster_epilogue_1",
+          "kind": "line",
+          "speaker": "aster",
+          "text": "It did not fire. We are still here, on ash, with no home behind us either. I do not know if I am glad.",
+          "next": "aster_epilogue_1"
+        },
+        {
+          "id": "aster_closed_1",
+          "kind": "line",
+          "speaker": "aster",
+          "text": "The crews left. We did not. Nobody has told us where to go.",
+          "next": "aster_closed_1"
+        },
+        {
+          "id": "aster_open_1",
+          "kind": "line",
+          "speaker": "aster",
+          "text": "Mila Aster. Dev and Jo are with the carts.",
+          "next": "aster_open_2"
+        },
+        {
+          "id": "aster_open_2",
+          "kind": "line",
+          "speaker": "aster",
+          "text": "They told us the new place was empty. Somebody says now it is not.",
+          "next": "aster_open_3"
+        },
+        {
+          "id": "aster_open_3",
+          "kind": "line",
+          "speaker": "aster",
+          "text": "If this does not fire, we stay here. If it does, someone else is standing where we were.",
+          "next": "aster_open_3"
+        },
+        {
+          "id": "aster_before_1",
+          "kind": "line",
+          "speaker": "aster",
+          "text": "We came across with the Compact. They say the next move is the last one.",
+          "next": "aster_before_1"
+        }
+      ],
+      "speakers": {
+        "aster": "Mila Aster"
+      }
+    },
+    {
+      "id": "dlg_compact_cp12_guard_1",
+      "quest_id": "evt_compact_crater",
+      "npc_id": "npc_compact_cp12_guard_1",
+      "npc_name": "Compact Anchor Guard Rhoswen",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp12_crater_activation",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-12 The Crater Activation; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_crater.guard_1_cursor",
+        "initial_node": "guard_1_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.commander_defeated",
+            "value": true
+          },
+          "node": "guard_1_epilogue_1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "stop_crater_activation"
+            }
+          ],
+          "why": "state epilogue"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "crater_operation_stopped"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym7_cleared"
+                  }
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.activation_stopped",
+                "value": false
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.commander_defeated",
+                "value": false
+              }
+            ]
+          },
+          "node": "guard_1_closed_1",
+          "why": "state closed"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.anchor_1_shut",
+            "value": true
+          },
+          "node": "guard_1_done_1",
+          "why": "state done"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.guard_1_defeated",
+            "value": true
+          },
+          "node": "guard_1_after_1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "shut_anchor_1"
+            }
+          ],
+          "why": "state after"
+        },
+        {
+          "priority": 50,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.calibration_received",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.guard_1_cursor",
+                "value": "guard_1_pre_choice"
+              }
+            ]
+          },
+          "node": "guard_1_pre_choice",
+          "why": "a player who left on the choice (a loss, a flee, 'not yet') is offered the battle again"
+        },
+        {
+          "priority": 55,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.calibration_received",
+                "value": true
+              }
+            ]
+          },
+          "node": "guard_1_pre_1",
+          "why": "state pre"
+        },
+        {
+          "priority": 65,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "guard_1_wait_1",
+          "why": "state wait"
+        },
+        {
+          "priority": 75,
+          "when": {
+            "kind": "always"
+          },
+          "node": "guard_1_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "guard_1_epilogue_1",
+          "kind": "line",
+          "speaker": "guard_1",
+          "text": "Nothing left to guard. I hope you can live with what it costs them.",
+          "next": "guard_1_epilogue_1"
+        },
+        {
+          "id": "guard_1_closed_1",
+          "kind": "line",
+          "speaker": "guard_1",
+          "text": "The operation is off. There is nothing here to guard.",
+          "next": "guard_1_closed_1"
+        },
+        {
+          "id": "guard_1_done_1",
+          "kind": "line",
+          "speaker": "guard_1",
+          "text": "My anchor is cold.",
+          "next": "guard_1_done_1"
+        },
+        {
+          "id": "guard_1_after_1",
+          "kind": "line",
+          "speaker": "guard_1",
+          "text": "Go on, then. You pull the west anchor's coupling and the hum dies.",
+          "next": "guard_1_after_1",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "shut_anchor_1"
+            }
+          ]
+        },
+        {
+          "id": "guard_1_pre_1",
+          "kind": "line",
+          "speaker": "guard_1",
+          "text": "You have Oren's record. Then you know what this does.",
+          "next": "guard_1_pre_2"
+        },
+        {
+          "id": "guard_1_pre_2",
+          "kind": "line",
+          "speaker": "guard_1",
+          "text": "There is a whole camp waiting on this field. Shut my anchor and they stay where they are.",
+          "next": "guard_1_pre_choice"
+        },
+        {
+          "id": "guard_1_pre_choice",
+          "kind": "choice",
+          "speaker": "guard_1",
+          "text": "Step back, or make me.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Step away from the anchor.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "guard_1_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "guard_1_over_cap",
+          "kind": "line",
+          "speaker": "guard_1",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and come back.",
+          "next": "guard_1_pre_choice"
+        },
+        {
+          "id": "guard_1_wait_1",
+          "kind": "line",
+          "speaker": "guard_1",
+          "text": "Keep back from the anchor. This is a rescue operation, and it is nearly ready.",
+          "next": "guard_1_wait_1"
+        },
+        {
+          "id": "guard_1_before_1",
+          "kind": "line",
+          "speaker": "guard_1",
+          "text": "Keep back from the equipment.",
+          "next": "guard_1_before_1"
+        }
+      ],
+      "speakers": {
+        "guard_1": "Compact Anchor Guard Rhoswen"
+      },
+      "npc_battle": {
+        "trainers": "compact_trainers.json",
+        "trainer": "compact_cp12_guard_1",
+        "skill": 3
+      }
+    },
+    {
+      "id": "dlg_compact_cp12_guard_2",
+      "quest_id": "evt_compact_crater",
+      "npc_id": "npc_compact_cp12_guard_2",
+      "npc_name": "Compact Anchor Guard Tobin",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp12_crater_activation",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-12 The Crater Activation; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_crater.guard_2_cursor",
+        "initial_node": "guard_2_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.commander_defeated",
+            "value": true
+          },
+          "node": "guard_2_epilogue_1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "stop_crater_activation"
+            }
+          ],
+          "why": "state epilogue"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "crater_operation_stopped"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym7_cleared"
+                  }
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.activation_stopped",
+                "value": false
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.commander_defeated",
+                "value": false
+              }
+            ]
+          },
+          "node": "guard_2_closed_1",
+          "why": "state closed"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.anchor_2_shut",
+            "value": true
+          },
+          "node": "guard_2_done_1",
+          "why": "state done"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.guard_2_defeated",
+            "value": true
+          },
+          "node": "guard_2_after_1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "shut_anchor_2"
+            }
+          ],
+          "why": "state after"
+        },
+        {
+          "priority": 50,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.calibration_received",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.guard_2_cursor",
+                "value": "guard_2_pre_choice"
+              }
+            ]
+          },
+          "node": "guard_2_pre_choice",
+          "why": "a player who left on the choice (a loss, a flee, 'not yet') is offered the battle again"
+        },
+        {
+          "priority": 55,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.calibration_received",
+                "value": true
+              }
+            ]
+          },
+          "node": "guard_2_pre_1",
+          "why": "state pre"
+        },
+        {
+          "priority": 65,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "guard_2_wait_1",
+          "why": "state wait"
+        },
+        {
+          "priority": 75,
+          "when": {
+            "kind": "always"
+          },
+          "node": "guard_2_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "guard_2_epilogue_1",
+          "kind": "line",
+          "speaker": "guard_2",
+          "text": "It is down. Go and tell the families yourself.",
+          "next": "guard_2_epilogue_1"
+        },
+        {
+          "id": "guard_2_closed_1",
+          "kind": "line",
+          "speaker": "guard_2",
+          "text": "The operation is off. There is nothing here to guard.",
+          "next": "guard_2_closed_1"
+        },
+        {
+          "id": "guard_2_done_1",
+          "kind": "line",
+          "speaker": "guard_2",
+          "text": "My anchor is cold.",
+          "next": "guard_2_done_1"
+        },
+        {
+          "id": "guard_2_after_1",
+          "kind": "line",
+          "speaker": "guard_2",
+          "text": "Fine. You pull the south anchor's coupling and the ground stops shaking.",
+          "next": "guard_2_after_1",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "shut_anchor_2"
+            }
+          ]
+        },
+        {
+          "id": "guard_2_pre_1",
+          "kind": "line",
+          "speaker": "guard_2",
+          "text": "I know whose orders these are and I know what Tomas found.",
+          "next": "guard_2_pre_2"
+        },
+        {
+          "id": "guard_2_pre_2",
+          "kind": "line",
+          "speaker": "guard_2",
+          "text": "I also know who sleeps in those carts. I am not stepping aside for a stranger.",
+          "next": "guard_2_pre_choice"
+        },
+        {
+          "id": "guard_2_pre_choice",
+          "kind": "choice",
+          "speaker": "guard_2",
+          "text": "Well?",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Then I go through you.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "guard_2_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "guard_2_over_cap",
+          "kind": "line",
+          "speaker": "guard_2",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and come back.",
+          "next": "guard_2_pre_choice"
+        },
+        {
+          "id": "guard_2_wait_1",
+          "kind": "line",
+          "speaker": "guard_2",
+          "text": "Keep back from the anchor. This is a rescue operation, and it is nearly ready.",
+          "next": "guard_2_wait_1"
+        },
+        {
+          "id": "guard_2_before_1",
+          "kind": "line",
+          "speaker": "guard_2",
+          "text": "Keep back from the equipment.",
+          "next": "guard_2_before_1"
+        }
+      ],
+      "speakers": {
+        "guard_2": "Compact Anchor Guard Tobin"
+      },
+      "npc_battle": {
+        "trainers": "compact_trainers.json",
+        "trainer": "compact_cp12_guard_2",
+        "skill": 3
+      }
+    },
+    {
+      "id": "dlg_compact_cp12_guard_3",
+      "quest_id": "evt_compact_crater",
+      "npc_id": "npc_compact_cp12_guard_3",
+      "npc_name": "Compact Anchor Guard Ysolde",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp12_crater_activation",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-12 The Crater Activation; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_crater.guard_3_cursor",
+        "initial_node": "guard_3_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.commander_defeated",
+            "value": true
+          },
+          "node": "guard_3_epilogue_1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "stop_crater_activation"
+            }
+          ],
+          "why": "state epilogue"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "crater_operation_stopped"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym7_cleared"
+                  }
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.activation_stopped",
+                "value": false
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.commander_defeated",
+                "value": false
+              }
+            ]
+          },
+          "node": "guard_3_closed_1",
+          "why": "state closed"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.anchor_3_shut",
+            "value": true
+          },
+          "node": "guard_3_done_1",
+          "why": "state done"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.guard_3_defeated",
+            "value": true
+          },
+          "node": "guard_3_after_1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "shut_anchor_3"
+            }
+          ],
+          "why": "state after"
+        },
+        {
+          "priority": 50,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.calibration_received",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.guard_3_cursor",
+                "value": "guard_3_pre_choice"
+              }
+            ]
+          },
+          "node": "guard_3_pre_choice",
+          "why": "a player who left on the choice (a loss, a flee, 'not yet') is offered the battle again"
+        },
+        {
+          "priority": 55,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.calibration_received",
+                "value": true
+              }
+            ]
+          },
+          "node": "guard_3_pre_1",
+          "why": "state pre"
+        },
+        {
+          "priority": 65,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "guard_3_wait_1",
+          "why": "state wait"
+        },
+        {
+          "priority": 75,
+          "when": {
+            "kind": "always"
+          },
+          "node": "guard_3_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "guard_3_epilogue_1",
+          "kind": "line",
+          "speaker": "guard_3",
+          "text": "So that is that. We start again from nothing.",
+          "next": "guard_3_epilogue_1"
+        },
+        {
+          "id": "guard_3_closed_1",
+          "kind": "line",
+          "speaker": "guard_3",
+          "text": "The operation is off. There is nothing here to guard.",
+          "next": "guard_3_closed_1"
+        },
+        {
+          "id": "guard_3_done_1",
+          "kind": "line",
+          "speaker": "guard_3",
+          "text": "My anchor is cold.",
+          "next": "guard_3_done_1"
+        },
+        {
+          "id": "guard_3_after_1",
+          "kind": "line",
+          "speaker": "guard_3",
+          "text": "Take it. You pull the east anchor's coupling and the air stops burning.",
+          "next": "guard_3_after_1",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "shut_anchor_3"
+            }
+          ]
+        },
+        {
+          "id": "guard_3_pre_1",
+          "kind": "line",
+          "speaker": "guard_3",
+          "text": "Oren sent you. He would rather we all stood here forever than fire once more.",
+          "next": "guard_3_pre_2"
+        },
+        {
+          "id": "guard_3_pre_2",
+          "kind": "line",
+          "speaker": "guard_3",
+          "text": "Maybe he is right. I still have a job.",
+          "next": "guard_3_pre_choice"
+        },
+        {
+          "id": "guard_3_pre_choice",
+          "kind": "choice",
+          "speaker": "guard_3",
+          "text": "Last warning.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Step away from the anchor.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "guard_3_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "guard_3_over_cap",
+          "kind": "line",
+          "speaker": "guard_3",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and come back.",
+          "next": "guard_3_pre_choice"
+        },
+        {
+          "id": "guard_3_wait_1",
+          "kind": "line",
+          "speaker": "guard_3",
+          "text": "Keep back from the anchor. This is a rescue operation, and it is nearly ready.",
+          "next": "guard_3_wait_1"
+        },
+        {
+          "id": "guard_3_before_1",
+          "kind": "line",
+          "speaker": "guard_3",
+          "text": "Keep back from the equipment.",
+          "next": "guard_3_before_1"
+        }
+      ],
+      "speakers": {
+        "guard_3": "Compact Anchor Guard Ysolde"
+      },
+      "npc_battle": {
+        "trainers": "compact_trainers.json",
+        "trainer": "compact_cp12_guard_3",
+        "skill": 3
+      }
+    },
+    {
+      "id": "dlg_compact_cp12_commander",
+      "quest_id": "evt_compact_crater",
+      "npc_id": "npc_compact_cp12_commander",
+      "npc_name": "Compact Field Commander Aubrecht",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp12_crater_activation",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-12 The Crater Activation; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_crater.commander_cursor",
+        "initial_node": "commander_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.activation_stopped",
+            "value": true
+          },
+          "node": "commander_done_1",
+          "why": "state done"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "crater_operation_stopped"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym7_cleared"
+                  }
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.activation_stopped",
+                "value": false
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.commander_defeated",
+                "value": false
+              }
+            ]
+          },
+          "node": "commander_closed_1",
+          "why": "state closed"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_crater.commander_defeated",
+            "value": true
+          },
+          "node": "commander_after_1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "stop_crater_activation"
+            }
+          ],
+          "why": "state after"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.anchor_1_shut",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.anchor_2_shut",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.anchor_3_shut",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.commander_cursor",
+                "value": "commander_pre_choice"
+              }
+            ]
+          },
+          "node": "commander_pre_choice",
+          "why": "a player who left on the choice (a loss, a flee, 'not yet') is offered the battle again"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.anchor_1_shut",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.anchor_2_shut",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_crater.anchor_3_shut",
+                "value": true
+              }
+            ]
+          },
+          "node": "commander_pre_1",
+          "why": "state pre"
+        },
+        {
+          "priority": 55,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "commander_wait_1",
+          "why": "state wait"
+        },
+        {
+          "priority": 65,
+          "when": {
+            "kind": "always"
+          },
+          "node": "commander_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "commander_done_1",
+          "kind": "line",
+          "speaker": "commander",
+          "text": "The console is dead. So is the plan.",
+          "next": "commander_done_1"
+        },
+        {
+          "id": "commander_closed_1",
+          "kind": "line",
+          "speaker": "commander",
+          "text": "The operation is off. Leave the console alone.",
+          "next": "commander_closed_1"
+        },
+        {
+          "id": "commander_after_1",
+          "kind": "line",
+          "speaker": "commander",
+          "text": "It is finished. The activation will not fire.",
+          "next": "commander_after_2"
+        },
+        {
+          "id": "commander_after_2",
+          "kind": "line",
+          "speaker": "commander",
+          "text": "Those families were waiting for this. Go and tell them yourself.",
+          "next": "commander_after_2",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "stop_crater_activation"
+            }
+          ]
+        },
+        {
+          "id": "commander_pre_1",
+          "kind": "line",
+          "speaker": "commander",
+          "text": "Field Commander Aubrecht. You shut my anchors.",
+          "next": "commander_pre_2"
+        },
+        {
+          "id": "commander_pre_2",
+          "kind": "line",
+          "speaker": "commander",
+          "text": "The director's order is on this console. Read it yourself: destination occupied, warning acknowledged, proceed.",
+          "next": "commander_pre_3"
+        },
+        {
+          "id": "commander_pre_3",
+          "kind": "line",
+          "speaker": "commander",
+          "text": "I did not write it. I am going to carry it out, because the people behind me have nowhere else.",
+          "next": "commander_pre_choice"
+        },
+        {
+          "id": "commander_pre_choice",
+          "kind": "choice",
+          "speaker": "commander",
+          "text": "This is the last thing between you and the console.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Stand down.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "commander_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "commander_over_cap",
+          "kind": "line",
+          "speaker": "commander",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and come back.",
+          "next": "commander_pre_choice"
+        },
+        {
+          "id": "commander_wait_1",
+          "kind": "line",
+          "speaker": "commander",
+          "text": "Three anchors hold this field. While they stand, the console fires on the director's word.",
+          "next": "commander_wait_1"
+        },
+        {
+          "id": "commander_before_1",
+          "kind": "line",
+          "speaker": "commander",
+          "text": "Restricted work site. Turn back.",
+          "next": "commander_before_1"
+        }
+      ],
+      "speakers": {
+        "commander": "Compact Field Commander Aubrecht"
+      },
+      "npc_battle": {
+        "trainers": "compact_trainers.json",
+        "trainer": "compact_cp12_commander",
+        "skill": 4
+      }
+    },
+    {
+      "id": "dlg_compact_cp14_nia_calder",
+      "quest_id": "evt_compact_split",
+      "npc_id": "npc_compact_cp14_nia_calder",
+      "npc_name": "Nia Calder",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp14_split",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-14 The Split Goes Public; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_split.nia_calder_cursor",
+        "initial_node": "nia_calder_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_split.packet_kept",
+            "value": true
+          },
+          "node": "nia_calder_epilogue_1",
+          "why": "state epilogue"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_split.speech_heard",
+                "value": true
+              }
+            ]
+          },
+          "node": "nia_calder_told_1",
+          "why": "state told"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "nia_calder_open_1",
+          "why": "state open"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "always"
+          },
+          "node": "nia_calder_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "nia_calder_epilogue_1",
+          "kind": "line",
+          "speaker": "nia_calder",
+          "text": "The packet stays with us. Take what it says to the Rift. I will meet you there.",
+          "next": "nia_calder_epilogue_1"
+        },
+        {
+          "id": "nia_calder_told_1",
+          "kind": "line",
+          "speaker": "nia_calder",
+          "text": "Stay near the watch sergeant. They will come along the shore.",
+          "next": "nia_calder_told_1"
+        },
+        {
+          "id": "nia_calder_open_1",
+          "kind": "line",
+          "speaker": "nia_calder",
+          "text": "Nia Calder. I run the Compact's clinics, and I am done keeping quiet.",
+          "next": "nia_calder_open_2"
+        },
+        {
+          "id": "nia_calder_open_2",
+          "kind": "line",
+          "speaker": "nia_calder",
+          "text": "At the Craters our leadership chose an occupied destination. Some of us will not follow that order anywhere.",
+          "next": "nia_calder_open_3"
+        },
+        {
+          "id": "nia_calder_open_3",
+          "kind": "line",
+          "speaker": "nia_calder",
+          "text": "We carry a route packet: where the loyalists are going and the way in. Giovanni's watch is holding it for us.",
+          "next": "nia_calder_open_4"
+        },
+        {
+          "id": "nia_calder_open_4",
+          "kind": "line",
+          "speaker": "nia_calder",
+          "text": "They will send people for it. I would rather they met you here than our families.",
+          "next": "nia_calder_open_4",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "hear_split"
+            }
+          ]
+        },
+        {
+          "id": "nia_calder_before_1",
+          "kind": "line",
+          "speaker": "nia_calder",
+          "text": "The southern watch keeps this edge. Speak to them, not me.",
+          "next": "nia_calder_before_1"
+        }
+      ],
+      "speakers": {
+        "nia_calder": "Nia Calder"
+      }
+    },
+    {
+      "id": "dlg_compact_cp14_aster",
+      "quest_id": "evt_compact_split",
+      "npc_id": "npc_compact_cp14_aster",
+      "npc_name": "Dev Aster",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp14_split",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-14 The Split Goes Public; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_split.aster_cursor",
+        "initial_node": "aster_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_split.packet_kept",
+            "value": true
+          },
+          "node": "aster_epilogue_1",
+          "why": "state epilogue"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "aster_open_1",
+          "why": "state open"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "always"
+          },
+          "node": "aster_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "aster_epilogue_1",
+          "kind": "line",
+          "speaker": "aster",
+          "text": "They went back the way they came. Mila says we stay with Nia now, whatever that means.",
+          "next": "aster_epilogue_1"
+        },
+        {
+          "id": "aster_open_1",
+          "kind": "line",
+          "speaker": "aster",
+          "text": "Dev Aster. We waited at the Craters for a transfer that never came.",
+          "next": "aster_open_2"
+        },
+        {
+          "id": "aster_open_2",
+          "kind": "line",
+          "speaker": "aster",
+          "text": "Now half the Compact calls us deserters for staying behind. We are only tired.",
+          "next": "aster_open_2"
+        },
+        {
+          "id": "aster_before_1",
+          "kind": "line",
+          "speaker": "aster",
+          "text": "We are just passing through.",
+          "next": "aster_before_1"
+        }
+      ],
+      "speakers": {
+        "aster": "Dev Aster"
+      }
+    },
+    {
+      "id": "dlg_compact_cp14_watch_sergeant",
+      "quest_id": "evt_compact_split",
+      "npc_id": "npc_compact_cp14_watch_sergeant",
+      "npc_name": "Holdfast Watch Sergeant",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp14_split",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-14 The Split Goes Public; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_split.watch_sergeant_cursor",
+        "initial_node": "watch_sergeant_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_split.packet_kept",
+            "value": true
+          },
+          "node": "watch_sergeant_done_1",
+          "why": "state done"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_split.loyalist_2_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "watch_sergeant_kept_1",
+          "why": "state kept"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_split.sergeant_rallied",
+                "value": true
+              }
+            ]
+          },
+          "node": "watch_sergeant_rallied_1",
+          "why": "state rallied"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_split.loyalist_1_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "watch_sergeant_between_1",
+          "why": "state between"
+        },
+        {
+          "priority": 55,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_split.speech_heard",
+                "value": true
+              }
+            ]
+          },
+          "node": "watch_sergeant_ready_1",
+          "why": "state ready"
+        },
+        {
+          "priority": 65,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "watch_sergeant_wait_1",
+          "why": "state wait"
+        },
+        {
+          "priority": 75,
+          "when": {
+            "kind": "always"
+          },
+          "node": "watch_sergeant_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "watch_sergeant_done_1",
+          "kind": "line",
+          "speaker": "watch_sergeant",
+          "text": "The packet stays in Holdfast. Giovanni will want to read it.",
+          "next": "watch_sergeant_done_1"
+        },
+        {
+          "id": "watch_sergeant_kept_1",
+          "kind": "line",
+          "speaker": "watch_sergeant",
+          "text": "That is both of them. The packet stays with the watch, and so do Nia's people.",
+          "next": "watch_sergeant_kept_1",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "keep_packet"
+            }
+          ]
+        },
+        {
+          "id": "watch_sergeant_rallied_1",
+          "kind": "line",
+          "speaker": "watch_sergeant",
+          "text": "The second one gives the orders. I have the packet. Go.",
+          "next": "watch_sergeant_rallied_1"
+        },
+        {
+          "id": "watch_sergeant_between_1",
+          "kind": "line",
+          "speaker": "watch_sergeant",
+          "text": "One down. The second is the one who gives the orders, and he will not wait for you to rest.",
+          "next": "watch_sergeant_between_2"
+        },
+        {
+          "id": "watch_sergeant_between_2",
+          "kind": "line",
+          "speaker": "watch_sergeant",
+          "text": "The watch is with you. Go.",
+          "next": "watch_sergeant_between_2",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "rally"
+            }
+          ]
+        },
+        {
+          "id": "watch_sergeant_ready_1",
+          "kind": "line",
+          "speaker": "watch_sergeant",
+          "text": "The first of them is at the shore post. Stop them before they reach the packet.",
+          "next": "watch_sergeant_ready_1"
+        },
+        {
+          "id": "watch_sergeant_wait_1",
+          "kind": "line",
+          "speaker": "watch_sergeant",
+          "text": "Hear Nia Calder out first. Then we will see who comes for her papers.",
+          "next": "watch_sergeant_wait_1"
+        },
+        {
+          "id": "watch_sergeant_before_1",
+          "kind": "line",
+          "speaker": "watch_sergeant",
+          "text": "Holdfast's southern watch. Move along unless you have business.",
+          "next": "watch_sergeant_before_1"
+        }
+      ],
+      "speakers": {
+        "watch_sergeant": "Holdfast Watch Sergeant"
+      }
+    },
+    {
+      "id": "dlg_compact_cp14_loyalist_1",
+      "quest_id": "evt_compact_split",
+      "npc_id": "npc_compact_cp14_loyalist_1",
+      "npc_name": "Compact Loyalist Corrin",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp14_split",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-14 The Split Goes Public; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_split.loyalist_1_cursor",
+        "initial_node": "loyalist_1_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_split.loyalist_1_defeated",
+            "value": true
+          },
+          "node": "loyalist_1_after_1",
+          "why": "state after"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_split.speech_heard",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_split.loyalist_1_cursor",
+                "value": "loyalist_1_pre_choice"
+              }
+            ]
+          },
+          "node": "loyalist_1_pre_choice",
+          "why": "a player who left on the choice (a loss, a flee, 'not yet') is offered the battle again"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_split.speech_heard",
+                "value": true
+              }
+            ]
+          },
+          "node": "loyalist_1_pre_1",
+          "why": "state pre"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "loyalist_1_wait_1",
+          "why": "state wait"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "always"
+          },
+          "node": "loyalist_1_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "loyalist_1_after_1",
+          "kind": "line",
+          "speaker": "loyalist_1",
+          "text": "You are choosing deserters over your own region's safety. Fine. Hesper will not be so gentle.",
+          "next": "loyalist_1_after_1"
+        },
+        {
+          "id": "loyalist_1_pre_1",
+          "kind": "line",
+          "speaker": "loyalist_1",
+          "text": "That packet belongs to the Compact. Nia had no right to give it away.",
+          "next": "loyalist_1_pre_2"
+        },
+        {
+          "id": "loyalist_1_pre_2",
+          "kind": "line",
+          "speaker": "loyalist_1",
+          "text": "Step aside. We are taking it back.",
+          "next": "loyalist_1_pre_choice"
+        },
+        {
+          "id": "loyalist_1_pre_choice",
+          "kind": "choice",
+          "speaker": "loyalist_1",
+          "text": "Last time I ask.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "The packet stays here.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "loyalist_1_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "loyalist_1_over_cap",
+          "kind": "line",
+          "speaker": "loyalist_1",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and come back.",
+          "next": "loyalist_1_pre_choice"
+        },
+        {
+          "id": "loyalist_1_wait_1",
+          "kind": "line",
+          "speaker": "loyalist_1",
+          "text": "Mind your business, stranger.",
+          "next": "loyalist_1_wait_1"
+        },
+        {
+          "id": "loyalist_1_before_1",
+          "kind": "line",
+          "speaker": "loyalist_1",
+          "text": "Just waiting on a boat.",
+          "next": "loyalist_1_before_1"
+        }
+      ],
+      "speakers": {
+        "loyalist_1": "Compact Loyalist Corrin"
+      },
+      "npc_battle": {
+        "trainers": "compact_trainers.json",
+        "trainer": "compact_cp14_loyalist_1",
+        "skill": 4
+      }
+    },
+    {
+      "id": "dlg_compact_cp14_loyalist_2",
+      "quest_id": "evt_compact_split",
+      "npc_id": "npc_compact_cp14_loyalist_2",
+      "npc_name": "Compact Loyalist Hesper",
+      "scope": "player",
+      "generated_by": "tools/compact_points.py --write, from data/compact_points.json cp14_split",
+      "source": "docs/story/HAVEN_COMPACT_PASS.md section 3 CP-14 The Split Goes Public; data/compact_points.json",
+      "placeholder": "Claude, 2026-10-11 (unit CP-CORE): functional stand-in lines for Codex to replace (the design's O10 default), written from docs/story/HAVEN_COMPACT_PASS.md section 3 and ARC.md rules 3-5.",
+      "cursor": {
+        "progression_field": "quest.evt_compact_split.loyalist_2_cursor",
+        "initial_node": "loyalist_2_before_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 15,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_compact_split.loyalist_2_defeated",
+            "value": true
+          },
+          "node": "loyalist_2_after_1",
+          "why": "state after"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_split.sergeant_rallied",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_split.loyalist_2_cursor",
+                "value": "loyalist_2_pre_choice"
+              }
+            ]
+          },
+          "node": "loyalist_2_pre_choice",
+          "why": "a player who left on the choice (a loss, a flee, 'not yet') is offered the battle again"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_split.sergeant_rallied",
+                "value": true
+              }
+            ]
+          },
+          "node": "loyalist_2_pre_1",
+          "why": "state pre"
+        },
+        {
+          "priority": 35,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "loyalist_2_wait_1",
+          "why": "state wait"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "always"
+          },
+          "node": "loyalist_2_before_1",
+          "why": "state before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "loyalist_2_after_1",
+          "kind": "line",
+          "speaker": "loyalist_2",
+          "text": "Keep your packet. It will not save anyone. The Rift will do what we could not.",
+          "next": "loyalist_2_after_1"
+        },
+        {
+          "id": "loyalist_2_pre_1",
+          "kind": "line",
+          "speaker": "loyalist_2",
+          "text": "Corrin was the polite one.",
+          "next": "loyalist_2_pre_2"
+        },
+        {
+          "id": "loyalist_2_pre_2",
+          "kind": "line",
+          "speaker": "loyalist_2",
+          "text": "Every day we waste, the last of our worlds gets smaller. Give me the packet.",
+          "next": "loyalist_2_pre_choice"
+        },
+        {
+          "id": "loyalist_2_pre_choice",
+          "kind": "choice",
+          "speaker": "loyalist_2",
+          "text": "Now.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "No.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "loyalist_2_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "loyalist_2_over_cap",
+          "kind": "line",
+          "speaker": "loyalist_2",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and come back.",
+          "next": "loyalist_2_pre_choice"
+        },
+        {
+          "id": "loyalist_2_wait_1",
+          "kind": "line",
+          "speaker": "loyalist_2",
+          "text": "Corrin speaks for us. Talk to him.",
+          "next": "loyalist_2_wait_1"
+        },
+        {
+          "id": "loyalist_2_before_1",
+          "kind": "line",
+          "speaker": "loyalist_2",
+          "text": "Nothing to see here.",
+          "next": "loyalist_2_before_1"
+        }
+      ],
+      "speakers": {
+        "loyalist_2": "Compact Loyalist Hesper"
+      },
+      "npc_battle": {
+        "trainers": "compact_trainers.json",
+        "trainer": "compact_cp14_loyalist_2",
+        "skill": 4
+      }
     }
   ]
 }

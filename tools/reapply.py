@@ -234,6 +234,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # callback, not a step), so world-local below; the seven seated fighters ride in cobblers_trainers and
                 # the NPCs in cobblers_dialogue
                 "cobblers_compact_routes",
+                # 2026-10-11: the Haven Compact's story fights, CP-04, CP-12 and CP-14 (tools/compact_points.py,
+                # data/compact_points.json): a battle_victory callback and its won functions, no blocks; the NPCs are
+                # R18CP's. A callback acts on its own, so world-local below
+                "cobblers_compact",
                 # 2026-10-02: the Drovers' Hollow in the Rift Foot (tools/drovers_hollow.py): a longbarn, its fold and
                 # the old working under the bank, run by R9HF
                 "cobblers_drovers_hollow",
@@ -435,6 +439,8 @@ EXCLUDED = {
     "cobblers_tm_gate": "self-driving: its load tag sets doLimitedCrafting, its tick tag syncs each player's recipe book "
                         "once a plan, and an advancement per badge gives that badge's TMs; it writes no blocks "
                         "(tools/tm_gate.py)",
+    "cobblers_compact": "self-driving: a Cobblemon battle_victory callback runs its won functions as the player who beat "
+                        "a Compact story NPC; it writes no blocks, and its NPCs are placed by R18CP (tools/compact_points.py)",
     "cobblers_hoopa_cradle": "self-driving: its keeper gives each player holding rift_crisis_resolved who stands in the cradle their own level-60 Hoopa (data/hoopa_cradle.json)",
     "cobblers_spectrier_cap": "self-driving: its own minecraft tick tag judges each new wild Spectrier at the Crown "
                               "Cemetery (tools/spectrier_cap.py); it writes no blocks",
@@ -502,6 +508,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_hq_tower",
                # 2026-10-11: the Haven Compact points' battle_victory callback writes a player's defeat field on its own
                "cobblers_compact_routes",
+               # 2026-10-11: the Compact story fights' battle_victory callback writes player data on its own
+               "cobblers_compact",
                # 2026-10-03: species forms for the starters; global would change the live world's species too
                "cobblers_mythical_starters",
                # 2026-10-08: drop tables overlaying COBBLEVERSE's files at the same path; they win only above the global pack
@@ -775,6 +783,10 @@ def prepare_jobs(a):
     # then writes the battle_victory callback pack
     add("compact_routes:check", "compact_routes.py", "check")
     add("compact_routes:build", "compact_routes.py", "build")
+    # the Haven Compact's story fights (2026-10-11): the battle_victory callback and won functions; refuses nothing,
+    # so its offline gate (`compact_points.py check`) is the job after it
+    add("compact:build", "compact_points.py", "build")
+    add("compact:check", "compact_points.py", "check", *src)
     add("habitat_blocks:function", "habitat_blocks.py", "function")
     add("rewards_pack", "rewards_pack.py")
     # every conversation that compiles, in one pack: the NPCs', the props' and the actors' (refusals are listed)
@@ -2487,6 +2499,14 @@ def steps(with_spawns=False):
     # read by the cobblers_hq_tower pack's battle_victory callback
     out.append(("R18HQ", "the finale's NPCs: Nia Calder, Brann Saye, Elara Venn and Oren Pell (data/hq_tower.json npcs)",
                 [("npc", n) for n in hq_tower.npc_placements()]))
+    # the Haven Compact's story points (2026-10-11, tools/compact_points.py, data/compact_points.json): CP-04's couriers
+    # and Varga above Highwire, CP-12's crews and console on Cinderlee's crater flat, CP-14's dissenters and loyalists on
+    # Holdfast's southern shelf. NPCs whose classes load at boot from cobblers_dialogue (the fighters' with their
+    # parties), so placed over RCON after the restart like R18HQ's, each turned to its yaw. The wins are read by the
+    # cobblers_compact pack's battle_victory callback
+    import compact_points
+    out.append(("R18CP", "the Haven Compact's story points CP-04, CP-12 and CP-14 (data/compact_points.json)",
+                [("npc", n) for n in compact_points.npc_placements()]))
     # Codex's ten named residents (2026-10-02, data/resident_encounters.json): each one's dressing inside a forceload of
     # its recorded bbox, then - for the two with no presence gate (Old Jaw, Whiteback) - an RCON summon guarded on tag
     # AND species, and its bind. The eight gated ones are left to the pack's keeper, which brings each in the first time
