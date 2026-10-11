@@ -507,7 +507,7 @@ def check_route_trainers(E, problems):
     # the tower (tools/compile_dialogue.py, tools/hq_tower.py), so that file is not read here
     # and the gym juniors (data/gym_junior_trainers.json, 2026-10-06), seated by the same tool
     for f in ("route_trainers", "late_route_trainers", "mansion_guardians", "vr_trainers", "arena_trainers",
-              "hq_trainers", "gym_junior_trainers"):
+              "hq_trainers", "compact_route_trainers", "gym_junior_trainers"):
         expected += sum(1 for e in doc(DATA / ("%s.json" % f))["trainers"] if "seat" in e and e.get("seated") is not False)
     if len(seats) != expected:
         problems.append("route_trainers: %d seats placed, the seat files carry %d" % (len(seats), expected))

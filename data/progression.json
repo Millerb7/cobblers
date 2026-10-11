@@ -1470,6 +1470,317 @@
       "allowed_values": "node ids from dlg_viltri_north_bank"
     },
     {
+      "id": "quest.evt_compact_courier_spar.courier_ansel_cursor",
+      "quest_id": "evt_compact_courier_spar",
+      "field": "courier_ansel_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "courier_ansel_before",
+      "allowed_values": "node ids from dlg_compact_courier_ansel"
+    },
+    {
+      "id": "quest.evt_compact_courier_spar.compact_courier_ansel_defeated",
+      "quest_id": "evt_compact_courier_spar",
+      "field": "compact_courier_ansel_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-01: this player beat Courier Ansel Kerr, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_courier_spar.mila_aster_cursor",
+      "quest_id": "evt_compact_courier_spar",
+      "field": "mila_aster_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "mila_aster_before",
+      "allowed_values": "node ids from dlg_compact_mila_aster"
+    },
+    {
+      "id": "quest.evt_compact_landing.nia_landing_cursor",
+      "quest_id": "evt_compact_landing",
+      "field": "nia_landing_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "nia_landing_before",
+      "allowed_values": "node ids from dlg_compact_nia_landing"
+    },
+    {
+      "id": "quest.evt_compact_landing.tomas_landing_cursor",
+      "quest_id": "evt_compact_landing",
+      "field": "tomas_landing_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "tomas_landing_before",
+      "allowed_values": "node ids from dlg_compact_tomas_landing"
+    },
+    {
+      "id": "quest.compact_relay_tech_01.defeated",
+      "quest_id": "compact_relay_tech_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-03 The Relay on the Climb (Relay Technician Voss), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.compact_relay_tech_02.defeated",
+      "quest_id": "compact_relay_tech_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-03 The Relay on the Climb (Relay Technician Iwen), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.evt_compact_cirque_survey.ranger_halloran_cursor",
+      "quest_id": "evt_compact_cirque_survey",
+      "field": "ranger_halloran_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "ranger_halloran_before",
+      "allowed_values": "node ids from dlg_compact_ranger_halloran"
+    },
+    {
+      "id": "quest.evt_compact_cirque_survey.compact_ranger_halloran_defeated",
+      "quest_id": "evt_compact_cirque_survey",
+      "field": "compact_ranger_halloran_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-05: this player beat Cirque Ranger Teo Halloran, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_cirque_survey.surveyor_marn_cursor",
+      "quest_id": "evt_compact_cirque_survey",
+      "field": "surveyor_marn_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "surveyor_marn_before",
+      "allowed_values": "node ids from dlg_compact_surveyor_marn"
+    },
+    {
+      "id": "quest.evt_compact_cirque_survey.compact_surveyor_marn_defeated",
+      "quest_id": "evt_compact_cirque_survey",
+      "field": "compact_surveyor_marn_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-05: this player beat Destination Surveyor Ilse Marn, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_cirque_survey.sided_with",
+      "quest_id": "evt_compact_cirque_survey",
+      "field": "sided_with",
+      "type": "enum",
+      "scope": "player",
+      "initial": "none",
+      "allowed_values": [
+        "none",
+        "ranger",
+        "surveyor"
+      ],
+      "why": "CP-05: the player's choice at Survey of an Empty Cirque"
+    },
+    {
+      "id": "quest.evt_compact_pause_vote.nia_pause_cursor",
+      "quest_id": "evt_compact_pause_vote",
+      "field": "nia_pause_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "nia_pause_before",
+      "allowed_values": "node ids from dlg_compact_nia_pause"
+    },
+    {
+      "id": "quest.evt_compact_pause_vote.dev_aster_cursor",
+      "quest_id": "evt_compact_pause_vote",
+      "field": "dev_aster_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "dev_aster_before",
+      "allowed_values": "node ids from dlg_compact_dev_aster"
+    },
+    {
+      "id": "quest.evt_compact_pause_vote.sergeant_dorrin_cursor",
+      "quest_id": "evt_compact_pause_vote",
+      "field": "sergeant_dorrin_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "sergeant_dorrin_before",
+      "allowed_values": "node ids from dlg_compact_sergeant_dorrin"
+    },
+    {
+      "id": "quest.evt_compact_pause_vote.compact_sergeant_dorrin_defeated",
+      "quest_id": "evt_compact_pause_vote",
+      "field": "compact_sergeant_dorrin_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-06: this player beat Guard Sergeant Hale Dorrin, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.compact_anchor_crew_01.defeated",
+      "quest_id": "compact_anchor_crew_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-07 The Anchor Pull (Salvage Hand Brell), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.compact_anchor_crew_02.defeated",
+      "quest_id": "compact_anchor_crew_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-07 The Anchor Pull (Salvage Hand Quill), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.evt_compact_anchor_pull.varga_2_cursor",
+      "quest_id": "evt_compact_anchor_pull",
+      "field": "varga_2_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "varga_2_before",
+      "allowed_values": "node ids from dlg_compact_varga_2"
+    },
+    {
+      "id": "quest.evt_compact_anchor_pull.compact_varga_2_defeated",
+      "quest_id": "evt_compact_anchor_pull",
+      "field": "compact_varga_2_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-07: this player beat Lieutenant Varga, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.compact_reed_scout_01.defeated",
+      "quest_id": "compact_reed_scout_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-08 Shadows in the Reeds (Reed Scout Lio), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.compact_reed_scout_02.defeated",
+      "quest_id": "compact_reed_scout_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-08 Shadows in the Reeds (Reed Scout Mave), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.compact_reed_scout_03.defeated",
+      "quest_id": "compact_reed_scout_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-08 Shadows in the Reeds (Reed Scout Orrin), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.evt_compact_waiting_camp.camp_warden_cursor",
+      "quest_id": "evt_compact_waiting_camp",
+      "field": "camp_warden_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "camp_warden_before",
+      "allowed_values": "node ids from dlg_compact_camp_warden"
+    },
+    {
+      "id": "quest.evt_compact_waiting_camp.camp_mother_cursor",
+      "quest_id": "evt_compact_waiting_camp",
+      "field": "camp_mother_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "camp_mother_before",
+      "allowed_values": "node ids from dlg_compact_camp_mother"
+    },
+    {
+      "id": "quest.evt_compact_requisition.boarding_hask_cursor",
+      "quest_id": "evt_compact_requisition",
+      "field": "boarding_hask_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "boarding_hask_before",
+      "allowed_values": "node ids from dlg_compact_boarding_hask"
+    },
+    {
+      "id": "quest.evt_compact_requisition.compact_boarding_hask_defeated",
+      "quest_id": "evt_compact_requisition",
+      "field": "compact_boarding_hask_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-10: this player beat Boarding Officer Perrin Hask, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_bridge.bridge_guard_cursor",
+      "quest_id": "evt_compact_bridge",
+      "field": "bridge_guard_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "bridge_guard_before",
+      "allowed_values": "node ids from dlg_compact_bridge_guard"
+    },
+    {
+      "id": "quest.evt_compact_bridge.compact_bridge_guard_ode_defeated",
+      "quest_id": "evt_compact_bridge",
+      "field": "compact_bridge_guard_ode_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-11: this player beat Checkpoint Guard Tamsin Ode, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_bridge.varga_3_cursor",
+      "quest_id": "evt_compact_bridge",
+      "field": "varga_3_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "varga_3_before",
+      "allowed_values": "node ids from dlg_compact_varga_3"
+    },
+    {
+      "id": "quest.evt_compact_bridge.compact_varga_3_defeated",
+      "quest_id": "evt_compact_bridge",
+      "field": "compact_varga_3_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-11: this player beat Lieutenant Varga, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_rearguard.varga_4_cursor",
+      "quest_id": "evt_compact_rearguard",
+      "field": "varga_4_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "varga_4_before",
+      "allowed_values": "node ids from dlg_compact_varga_4"
+    },
+    {
+      "id": "quest.evt_compact_rearguard.compact_varga_4_defeated",
+      "quest_id": "evt_compact_rearguard",
+      "field": "compact_varga_4_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-13: this player beat Lieutenant Varga, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_rearguard.dissenter_medic_cursor",
+      "quest_id": "evt_compact_rearguard",
+      "field": "dissenter_medic_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "dissenter_medic_before",
+      "allowed_values": "node ids from dlg_compact_dissenter_medic"
+    },
+    {
       "id": "quest.evt_route3_nosepass_signs.started",
       "quest_id": "evt_route3_nosepass_signs",
       "field": "started",

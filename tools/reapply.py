@@ -229,6 +229,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # data/hq_tower.json): block functions run by R9HQ after R9RU; its gate cycle acts on its own (a tick
                 # driver that moves players), so world-local below
                 "cobblers_hq_tower",
+                # 2026-10-11: the Haven Compact's story points on the routes and in the towns (tools/compact_routes.py,
+                # data/compact_routes.json): one battle_victory callback and its won functions. It acts on its own (a
+                # callback, not a step), so world-local below; the seven seated fighters ride in cobblers_trainers and
+                # the NPCs in cobblers_dialogue
+                "cobblers_compact_routes",
                 # 2026-10-02: the Drovers' Hollow in the Rift Foot (tools/drovers_hollow.py): a longbarn, its fold and
                 # the old working under the bank, run by R9HF
                 "cobblers_drovers_hollow",
@@ -441,6 +446,9 @@ EXCLUDED = {
     "cobblers_trainers": "self-driving: each trainer's won function is an advancement reward rctmod fires for the winner, "
                          "and its tick cycle keeps each trainer home and refuses a rematch; the trainers themselves are "
                          "placed by R17 over RCON (summon_persistent), not by a function",
+    "cobblers_compact_routes": "self-driving: a Cobblemon battle_victory callback runs the won function of the NPC fighter a "
+                               "player beat, writing that player's own defeat field; the NPCs are placed by R17N "
+                               "(data/npc_seats.json) and the seated fighters by R17, not by a function",
     "cobblers_rewards": "self-driving: each find is an advancement that runs its own reward function as the player "
                         "who earns it; it writes no blocks (the containers are placed by R9C)",
     # Victory Road schema 2, retired 2026-09-23 when the owner chose a cave network (data/vr_caves.json)
@@ -492,6 +500,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_residents", "cobblers_relic_underground",
                # 2026-10-04: the HQ tower's gate cycle tags and moves players near the tower on its own tick
                "cobblers_hq_tower",
+               # 2026-10-11: the Haven Compact points' battle_victory callback writes a player's defeat field on its own
+               "cobblers_compact_routes",
                # 2026-10-03: species forms for the starters; global would change the live world's species too
                "cobblers_mythical_starters",
                # 2026-10-08: drop tables overlaying COBBLEVERSE's files at the same path; they win only above the global pack
@@ -761,6 +771,10 @@ def prepare_jobs(a):
     # data/hq_tower.json records, any write outside its interior, and a walk from the doorway that misses a seat, a
     # cache or the top
     add("hq_tower:build", "hq_tower.py", "build", *src)
+    # the Haven Compact's story points (2026-10-11): refuses a derived record that drifted from data/compact_routes.json,
+    # then writes the battle_victory callback pack
+    add("compact_routes:check", "compact_routes.py", "check")
+    add("compact_routes:build", "compact_routes.py", "build")
     add("habitat_blocks:function", "habitat_blocks.py", "function")
     add("rewards_pack", "rewards_pack.py")
     # every conversation that compiles, in one pack: the NPCs', the props' and the actors' (refusals are listed)

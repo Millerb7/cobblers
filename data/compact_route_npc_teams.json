@@ -1,0 +1,463 @@
+{
+  "schema": "cobblers.compact-npc-trainers/1",
+  "status": "generated; teams are PLACEHOLDERS for trainer-balance-designer",
+  "generated_by": "python tools/compact_routes.py write, from data/compact_routes.json",
+  "note": "Teams only. No seat: the NPCs stand where data/npc_seats.json says. No rctmod record: these fight as Cobblemon NPCs.",
+  "trainers": [
+    {
+      "id": "compact_courier_ansel",
+      "display_name": "Courier Ansel Kerr",
+      "point": "CP-01",
+      "npc": "npc_compact_courier_ansel",
+      "conversation": "dlg_compact_courier_ansel",
+      "sets": [
+        "quest.evt_compact_courier_spar.compact_courier_ansel_defeated"
+      ],
+      "skill": 2,
+      "team_note": "hardy haulers from somewhere else; both species have no authored wild home",
+      "team": [
+        {
+          "species": "cufant",
+          "level": 21,
+          "moveset": [
+            "stomp",
+            "bulldoze",
+            "rocksmash",
+            "rollout"
+          ]
+        },
+        {
+          "species": "stufful",
+          "level": 22,
+          "moveset": [
+            "strength",
+            "payback",
+            "brutalswing",
+            "babydolleyes"
+          ]
+        }
+      ],
+      "fights_as": "the Cobblemon NPC npc_compact_courier_ansel: its class's party is `team` (tools/compile_dialogue.py battle_class), started from dlg_compact_courier_ansel's choice, recorded by the cobblers_compact_routes battle_victory callback"
+    },
+    {
+      "id": "compact_ranger_halloran",
+      "display_name": "Cirque Ranger Teo Halloran",
+      "point": "CP-05",
+      "npc": "npc_compact_ranger_halloran",
+      "conversation": "dlg_compact_ranger_halloran",
+      "sets": [
+        "quest.evt_compact_cirque_survey.compact_ranger_halloran_defeated"
+      ],
+      "skill": 3,
+      "team_note": "mountain natives, Rock and Ice; NOT homeless species on purpose (he is local)",
+      "team": [
+        {
+          "species": "boldore",
+          "level": 31,
+          "moveset": [
+            "rockslide",
+            "stealthrock",
+            "smackdown",
+            "irondefense"
+          ]
+        },
+        {
+          "species": "cubchoo",
+          "level": 31,
+          "moveset": [
+            "icywind",
+            "slash",
+            "brine",
+            "snowscape"
+          ]
+        },
+        {
+          "species": "piloswine",
+          "level": 33,
+          "moveset": [
+            "icefang",
+            "earthquake",
+            "stealthrock",
+            "icywind"
+          ]
+        }
+      ],
+      "fights_as": "the Cobblemon NPC npc_compact_ranger_halloran: its class's party is `team` (tools/compile_dialogue.py battle_class), started from dlg_compact_ranger_halloran's choice, recorded by the cobblers_compact_routes battle_victory callback"
+    },
+    {
+      "id": "compact_surveyor_marn",
+      "display_name": "Destination Surveyor Ilse Marn",
+      "point": "CP-05",
+      "npc": "npc_compact_surveyor_marn",
+      "conversation": "dlg_compact_surveyor_marn",
+      "sets": [
+        "quest.evt_compact_cirque_survey.compact_surveyor_marn_defeated"
+      ],
+      "skill": 3,
+      "team_note": "instruments that sense: Psychic and Steel; all three have no authored wild home",
+      "team": [
+        {
+          "species": "elgyem",
+          "level": 31,
+          "moveset": [
+            "psybeam",
+            "headbutt",
+            "guardsplit",
+            "teleport"
+          ]
+        },
+        {
+          "species": "ferroseed",
+          "level": 32,
+          "moveset": [
+            "flashcannon",
+            "pinmissile",
+            "ingrain",
+            "ironhead"
+          ]
+        },
+        {
+          "species": "duosion",
+          "level": 33,
+          "moveset": [
+            "psyshock",
+            "psybeam",
+            "reflect",
+            "recover"
+          ]
+        }
+      ],
+      "fights_as": "the Cobblemon NPC npc_compact_surveyor_marn: its class's party is `team` (tools/compile_dialogue.py battle_class), started from dlg_compact_surveyor_marn's choice, recorded by the cobblers_compact_routes battle_victory callback"
+    },
+    {
+      "id": "compact_sergeant_dorrin",
+      "display_name": "Guard Sergeant Hale Dorrin",
+      "point": "CP-06",
+      "npc": "npc_compact_sergeant_dorrin",
+      "conversation": "dlg_compact_sergeant_dorrin",
+      "sets": [
+        "quest.evt_compact_pause_vote.compact_sergeant_dorrin_defeated"
+      ],
+      "skill": 3,
+      "team_note": "a small version of Brann's Steel and Fighting wall (data/finale_trainers.json), foreshadowing the finale",
+      "team": [
+        {
+          "species": "honedge",
+          "level": 32,
+          "moveset": [
+            "nightslash",
+            "shadowsneak",
+            "retaliate",
+            "irondefense"
+          ]
+        },
+        {
+          "species": "gurdurr",
+          "level": 33,
+          "moveset": [
+            "dynamicpunch",
+            "bulkup",
+            "rockthrow",
+            "scaryface"
+          ]
+        },
+        {
+          "species": "copperajah",
+          "level": 34,
+          "moveset": [
+            "heavyslam",
+            "stomp",
+            "irondefense",
+            "dig"
+          ]
+        }
+      ],
+      "fights_as": "the Cobblemon NPC npc_compact_sergeant_dorrin: its class's party is `team` (tools/compile_dialogue.py battle_class), started from dlg_compact_sergeant_dorrin's choice, recorded by the cobblers_compact_routes battle_victory callback"
+    },
+    {
+      "id": "compact_varga_2",
+      "display_name": "Lieutenant Varga",
+      "point": "CP-07",
+      "npc": "npc_compact_varga_2",
+      "conversation": "dlg_compact_varga_2",
+      "sets": [
+        "quest.evt_compact_anchor_pull.compact_varga_2_defeated"
+      ],
+      "skill": 4,
+      "team_note": "Varga's ladder, the same lines each time growing (design section 2): compact_varga_1 (CP-CORE, CP-04, as merged: Zubat 27, Roggenrola 27, Skorupi 28, Drilbur 29, RELAYED from commit de7c9df, not measured here), then here Skorupi, Excadrill, Boldore, Golbat and one more",
+      "team": [
+        {
+          "species": "skorupi",
+          "level": 37,
+          "moveset": [
+            "poisonfang",
+            "pinmissile",
+            "knockoff",
+            "toxicspikes"
+          ]
+        },
+        {
+          "species": "excadrill",
+          "level": 38,
+          "moveset": [
+            "earthquake",
+            "rockslide",
+            "xscissor",
+            "rapidspin"
+          ]
+        },
+        {
+          "species": "boldore",
+          "level": 37,
+          "moveset": [
+            "rockslide",
+            "stealthrock",
+            "smackdown",
+            "irondefense"
+          ]
+        },
+        {
+          "species": "golbat",
+          "level": 38,
+          "moveset": [
+            "bravebird",
+            "poisonfang",
+            "confuseray",
+            "airslash"
+          ]
+        },
+        {
+          "species": "krokorok",
+          "level": 39,
+          "moveset": [
+            "crunch",
+            "earthquake",
+            "rockslide",
+            "dig"
+          ]
+        }
+      ],
+      "fights_as": "the Cobblemon NPC npc_compact_varga_2: its class's party is `team` (tools/compile_dialogue.py battle_class), started from dlg_compact_varga_2's choice, recorded by the cobblers_compact_routes battle_victory callback"
+    },
+    {
+      "id": "compact_boarding_hask",
+      "display_name": "Boarding Officer Perrin Hask",
+      "point": "CP-10",
+      "npc": "npc_compact_boarding_hask",
+      "conversation": "dlg_compact_boarding_hask",
+      "sets": [
+        "quest.evt_compact_requisition.compact_boarding_hask_defeated"
+      ],
+      "skill": 3,
+      "team_note": "Water and Flying, with crew who know boats",
+      "team": [
+        {
+          "species": "mantine",
+          "level": 44,
+          "moveset": [
+            "waterpulse",
+            "airslash",
+            "bubblebeam",
+            "wingattack"
+          ]
+        },
+        {
+          "species": "jellicent",
+          "level": 45,
+          "moveset": [
+            "surf",
+            "shadowball",
+            "recover",
+            "willowisp"
+          ]
+        },
+        {
+          "species": "swanna",
+          "level": 46,
+          "moveset": [
+            "bravebird",
+            "hydropump",
+            "roost",
+            "icebeam"
+          ]
+        }
+      ],
+      "fights_as": "the Cobblemon NPC npc_compact_boarding_hask: its class's party is `team` (tools/compile_dialogue.py battle_class), started from dlg_compact_boarding_hask's choice, recorded by the cobblers_compact_routes battle_victory callback"
+    },
+    {
+      "id": "compact_bridge_guard_ode",
+      "display_name": "Checkpoint Guard Tamsin Ode",
+      "point": "CP-11",
+      "npc": "npc_compact_bridge_guard",
+      "conversation": "dlg_compact_bridge_guard",
+      "sets": [
+        "quest.evt_compact_bridge.compact_bridge_guard_ode_defeated"
+      ],
+      "skill": 3,
+      "team_note": "Brann's crews: Steel and Fighting",
+      "team": [
+        {
+          "species": "mienshao",
+          "level": 45,
+          "moveset": [
+            "drainpunch",
+            "uturn",
+            "poisonjab",
+            "fakeout"
+          ]
+        },
+        {
+          "species": "copperajah",
+          "level": 46,
+          "moveset": [
+            "heavyslam",
+            "earthquake",
+            "playrough",
+            "irondefense"
+          ]
+        },
+        {
+          "species": "doublade",
+          "level": 47,
+          "moveset": [
+            "shadowsneak",
+            "ironhead",
+            "swordsdance",
+            "shadowclaw"
+          ]
+        }
+      ],
+      "fights_as": "the Cobblemon NPC npc_compact_bridge_guard: its class's party is `team` (tools/compile_dialogue.py battle_class), started from dlg_compact_bridge_guard's choice, recorded by the cobblers_compact_routes battle_victory callback"
+    },
+    {
+      "id": "compact_varga_3",
+      "display_name": "Lieutenant Varga",
+      "point": "CP-11",
+      "npc": "npc_compact_varga_3",
+      "conversation": "dlg_compact_varga_3",
+      "sets": [
+        "quest.evt_compact_bridge.compact_varga_3_defeated"
+      ],
+      "skill": 4,
+      "team_note": "Varga's ladder: Drapion has evolved now (Skorupi became Drapion), alongside Excadrill and Boldore",
+      "team": [
+        {
+          "species": "drapion",
+          "level": 45,
+          "moveset": [
+            "crosspoison",
+            "knockoff",
+            "earthquake",
+            "swordsdance"
+          ]
+        },
+        {
+          "species": "excadrill",
+          "level": 46,
+          "moveset": [
+            "earthquake",
+            "ironhead",
+            "rockslide",
+            "rapidspin"
+          ]
+        },
+        {
+          "species": "boldore",
+          "level": 46,
+          "moveset": [
+            "rockslide",
+            "stealthrock",
+            "earthpower",
+            "irondefense"
+          ]
+        },
+        {
+          "species": "crobat",
+          "level": 47,
+          "moveset": [
+            "bravebird",
+            "crosspoison",
+            "taunt",
+            "roost"
+          ]
+        },
+        {
+          "species": "krookodile",
+          "level": 48,
+          "moveset": [
+            "earthquake",
+            "crunch",
+            "stoneedge",
+            "bulkup"
+          ]
+        }
+      ],
+      "fights_as": "the Cobblemon NPC npc_compact_varga_3: its class's party is `team` (tools/compile_dialogue.py battle_class), started from dlg_compact_varga_3's choice, recorded by the cobblers_compact_routes battle_victory callback"
+    },
+    {
+      "id": "compact_varga_4",
+      "display_name": "Lieutenant Varga",
+      "point": "CP-13",
+      "npc": "npc_compact_varga_4",
+      "conversation": "dlg_compact_varga_4",
+      "sets": [
+        "quest.evt_compact_rearguard.compact_varga_4_defeated"
+      ],
+      "skill": 5,
+      "team_note": "Varga's ladder, last before the tower: Drapion, Excadrill, Boldore, Crobat and one new member. In the tower (58-59) she has Drapion, Excadrill, Gigalith and Crobat",
+      "team": [
+        {
+          "species": "drapion",
+          "level": 51,
+          "moveset": [
+            "crosspoison",
+            "knockoff",
+            "earthquake",
+            "swordsdance"
+          ]
+        },
+        {
+          "species": "excadrill",
+          "level": 52,
+          "moveset": [
+            "earthquake",
+            "ironhead",
+            "rockslide",
+            "swordsdance"
+          ]
+        },
+        {
+          "species": "boldore",
+          "level": 52,
+          "moveset": [
+            "rockslide",
+            "stealthrock",
+            "earthpower",
+            "irondefense"
+          ]
+        },
+        {
+          "species": "crobat",
+          "level": 52,
+          "moveset": [
+            "bravebird",
+            "crosspoison",
+            "taunt",
+            "roost"
+          ]
+        },
+        {
+          "species": "hippowdon",
+          "level": 53,
+          "moveset": [
+            "earthquake",
+            "stoneedge",
+            "slackoff",
+            "stealthrock"
+          ]
+        }
+      ],
+      "fights_as": "the Cobblemon NPC npc_compact_varga_4: its class's party is `team` (tools/compile_dialogue.py battle_class), started from dlg_compact_varga_4's choice, recorded by the cobblers_compact_routes battle_victory callback"
+    }
+  ]
+}

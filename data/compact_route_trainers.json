@@ -1,0 +1,726 @@
+{
+  "schema": "cobblers.compact_route_trainers/1",
+  "status": "seated authored 2 from the heightmap and the walked lines; placed in no world yet",
+  "generated_by": "python tools/compact_routes.py write, from data/compact_routes.json (the table owns the teams, lines and anchors; the heightmap owns the seat)",
+  "consumed_by": "tools/route_trainers.py (the team, the mob, the lines, the defeat advancement and the cycle) and tools/reapply.py R17 (the summon)",
+  "design": "docs/story/HAVEN_COMPACT_PASS.md",
+  "ground": "tools/ground.py, the canonical heightmap rounded. No world save was read to decide any position",
+  "not_verified": "seat dryness (painted water is not in the heightmap) and anything a donor template or a mod put in the same cells are block reads in the exported world",
+  "trainers": [
+    {
+      "id": "compact_relay_tech_01",
+      "display_name": "Relay Technician Voss",
+      "point": "CP-03",
+      "seat": [
+        2110,
+        126,
+        1603
+      ],
+      "yaw": 0,
+      "faces": "the walked line at (2110, 1606), 3.0 blocks off",
+      "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png",
+      "eye_contact": true,
+      "sight_distance": 6.0,
+      "ground": {
+        "kind": "heightmap",
+        "y": 125,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "shoulder": {
+        "route": "route_03_misty_to_surge",
+        "path_index": 1285,
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 124,
+        "off_walked_line": 3.0
+      },
+      "why": "the first technician, eye contact, so the pair reads as a checkpoint on the climb",
+      "team": [
+        {
+          "species": "togedemaru",
+          "level": 26,
+          "moveset": [
+            "spark",
+            "fellstinger",
+            "nuzzle",
+            "defensecurl"
+          ]
+        },
+        {
+          "species": "tynamo",
+          "level": 27,
+          "moveset": [
+            "spark",
+            "chargebeam",
+            "thunderwave",
+            "tackle"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Keep off the mast. It is only a relay, and it is not yours to read.",
+        "player_win": "Fine. Look all you like. You will not find anything you can read.",
+        "player_loss": "Off the equipment, please. Go round by the trail."
+      },
+      "rct": {
+        "name": {
+          "literal": "Relay Technician Voss"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 0.95,
+            "switchBias": 0.3,
+            "statusMoveBias": 0.7,
+            "itemBias": 0.5,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "togedemaru",
+            "level": 26,
+            "moveset": [
+              "spark",
+              "fellstinger",
+              "nuzzle",
+              "defensecurl"
+            ]
+          },
+          {
+            "species": "tynamo",
+            "level": 27,
+            "moveset": [
+              "spark",
+              "chargebeam",
+              "thunderwave",
+              "tackle"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "compact_relay_tech_02",
+      "display_name": "Relay Technician Iwen",
+      "point": "CP-03",
+      "seat": [
+        2110,
+        123,
+        1612
+      ],
+      "yaw": 180,
+      "faces": "the walked line at (2110, 1606), 6.0 blocks off",
+      "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png",
+      "eye_contact": false,
+      "ground": {
+        "kind": "heightmap",
+        "y": 122,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "shoulder": {
+        "route": "route_03_misty_to_surge",
+        "path_index": 1285,
+        "offset": 6,
+        "along_path_cells": 0,
+        "side": "left",
+        "road_ground": 124,
+        "off_walked_line": 6.0
+      },
+      "why": "the second, beyond the first; a player who beat Voss meets Iwen next with no heal between (the doubles fallback)",
+      "team": [
+        {
+          "species": "joltik",
+          "level": 26,
+          "moveset": [
+            "electroball",
+            "bugbite",
+            "thunderwave",
+            "agility"
+          ]
+        },
+        {
+          "species": "ferroseed",
+          "level": 28,
+          "moveset": [
+            "flashcannon",
+            "pinmissile",
+            "ingrain",
+            "metalclaw"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Voss said you would come up. He does not say what the mast is for either.",
+        "player_win": "The mast hums because it is working. It is not a weapon. That is all I am allowed to say.",
+        "player_loss": "Keep to the trail. Please."
+      },
+      "rct": {
+        "name": {
+          "literal": "Relay Technician Iwen"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 0.95,
+            "switchBias": 0.3,
+            "statusMoveBias": 0.7,
+            "itemBias": 0.5,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "joltik",
+            "level": 26,
+            "moveset": [
+              "electroball",
+              "bugbite",
+              "thunderwave",
+              "agility"
+            ]
+          },
+          {
+            "species": "ferroseed",
+            "level": 28,
+            "moveset": [
+              "flashcannon",
+              "pinmissile",
+              "ingrain",
+              "metalclaw"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "compact_anchor_crew_01",
+      "display_name": "Salvage Hand Brell",
+      "point": "CP-07",
+      "seat": [
+        4369,
+        115,
+        2089
+      ],
+      "yaw": 90,
+      "faces": "the walked line at (4366, 2089), 3.0 blocks off",
+      "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
+      "eye_contact": false,
+      "ground": {
+        "kind": "heightmap",
+        "y": 114,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "shoulder": {
+        "route": "route_05_erika_to_koga",
+        "path_index": 534,
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "left",
+        "road_ground": 114,
+        "off_walked_line": 3.0
+      },
+      "why": "the first of the crew at the winch, on the road's shoulder",
+      "team": [
+        {
+          "species": "stunfisk",
+          "level": 36,
+          "moveset": [
+            "mudbomb",
+            "thundershock",
+            "muddywater",
+            "sludgebomb"
+          ]
+        },
+        {
+          "species": "scolipede",
+          "level": 36,
+          "moveset": [
+            "steamroller",
+            "poisonjab",
+            "megahorn",
+            "protect"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Keep walking. This is a salvage job, and a salvage job wants no audience.",
+        "player_win": "Fine, fine. Lieutenant Varga is at the crane. She will not be as polite.",
+        "player_loss": "Off the wet ground, please. You will sink the winch cable."
+      },
+      "rct": {
+        "name": {
+          "literal": "Salvage Hand Brell"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.05,
+            "switchBias": 0.5,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.7,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "stunfisk",
+            "level": 36,
+            "moveset": [
+              "mudbomb",
+              "thundershock",
+              "muddywater",
+              "sludgebomb"
+            ]
+          },
+          {
+            "species": "scolipede",
+            "level": 36,
+            "moveset": [
+              "steamroller",
+              "poisonjab",
+              "megahorn",
+              "protect"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "compact_anchor_crew_02",
+      "display_name": "Salvage Hand Quill",
+      "point": "CP-07",
+      "seat": [
+        4369,
+        115,
+        2144
+      ],
+      "yaw": -90,
+      "faces": "the walked line at (4372, 2144), 3.0 blocks off",
+      "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
+      "eye_contact": false,
+      "ground": {
+        "kind": "heightmap",
+        "y": 114,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "shoulder": {
+        "route": "route_05_erika_to_koga",
+        "path_index": 588,
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 114,
+        "off_walked_line": 3.0
+      },
+      "why": "the second, nearer the crane; the third fight in the chain is Varga",
+      "team": [
+        {
+          "species": "gurdurr",
+          "level": 37,
+          "moveset": [
+            "dynamicpunch",
+            "bulkup",
+            "rockthrow",
+            "chipaway"
+          ]
+        },
+        {
+          "species": "galvantula",
+          "level": 37,
+          "moveset": [
+            "electroball",
+            "bugbite",
+            "thunderwave",
+            "agility"
+          ]
+        },
+        {
+          "species": "tirtouga",
+          "level": 38,
+          "moveset": [
+            "aquajet",
+            "rockslide",
+            "bite",
+            "protect"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "That anchor is Compact property, and it is leaving this marsh tonight.",
+        "player_win": "Go and say it to Varga. She is at the crane, and she will want to hear it.",
+        "player_loss": "Please do not follow us to the crane."
+      },
+      "rct": {
+        "name": {
+          "literal": "Salvage Hand Quill"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.05,
+            "switchBias": 0.5,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.7,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "gurdurr",
+            "level": 37,
+            "moveset": [
+              "dynamicpunch",
+              "bulkup",
+              "rockthrow",
+              "chipaway"
+            ]
+          },
+          {
+            "species": "galvantula",
+            "level": 37,
+            "moveset": [
+              "electroball",
+              "bugbite",
+              "thunderwave",
+              "agility"
+            ]
+          },
+          {
+            "species": "tirtouga",
+            "level": 38,
+            "moveset": [
+              "aquajet",
+              "rockslide",
+              "bite",
+              "protect"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "compact_reed_scout_01",
+      "display_name": "Reed Scout Lio",
+      "point": "CP-08",
+      "seat": [
+        4920,
+        121,
+        2290
+      ],
+      "yaw": -118,
+      "faces": "the point (5160, 2160)",
+      "skin": "rctmod:textures/trainers/single/camper_jeff_0092.png",
+      "eye_contact": false,
+      "ground": {
+        "kind": "heightmap",
+        "y": 120,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "anchor": {
+        "near": [
+          4920,
+          2290
+        ],
+        "moved_blocks": 0.0
+      },
+      "why": "the western rim of the basin, nearest Fenhide, looking down at the marsh floor (y63 at its anchor)",
+      "team": [
+        {
+          "species": "morgrem",
+          "level": 38,
+          "moveset": [
+            "foulplay",
+            "darkpulse",
+            "playrough",
+            "partingshot"
+          ]
+        },
+        {
+          "species": "skuntank",
+          "level": 37,
+          "moveset": [
+            "poisonjab",
+            "crunch",
+            "flamethrower",
+            "toxic"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "How long have you been behind me?",
+        "player_win": "Koga's trackers are good. You are better. We were only watching who comes and goes.",
+        "player_loss": "You did not see me. Please keep it that way."
+      },
+      "rct": {
+        "name": {
+          "literal": "Reed Scout Lio"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.05,
+            "switchBias": 0.5,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.7,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "morgrem",
+            "level": 38,
+            "moveset": [
+              "foulplay",
+              "darkpulse",
+              "playrough",
+              "partingshot"
+            ]
+          },
+          {
+            "species": "skuntank",
+            "level": 37,
+            "moveset": [
+              "poisonjab",
+              "crunch",
+              "flamethrower",
+              "toxic"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "compact_reed_scout_02",
+      "display_name": "Reed Scout Mave",
+      "point": "CP-08",
+      "seat": [
+        5060,
+        101,
+        2250
+      ],
+      "yaw": -132,
+      "faces": "the point (5160, 2160)",
+      "skin": "rctmod:textures/trainers/single/camper_jeff_0092.png",
+      "eye_contact": false,
+      "ground": {
+        "kind": "heightmap",
+        "y": 100,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "anchor": {
+        "near": [
+          5060,
+          2250
+        ],
+        "moved_blocks": 0.0
+      },
+      "why": "the south-western rim, east of the first",
+      "team": [
+        {
+          "species": "dragalge",
+          "level": 39,
+          "moveset": [
+            "sludgebomb",
+            "dracometeor",
+            "focusblast",
+            "toxicspikes"
+          ]
+        },
+        {
+          "species": "mandibuzz",
+          "level": 38,
+          "moveset": [
+            "foulplay",
+            "bravebird",
+            "roost",
+            "toxic"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Oh, no. You are not supposed to find the third blind.",
+        "player_win": "Tell Koga we are not hunting him. We are counting who moves toward the anchors.",
+        "player_loss": "Not a word to the trackers, please."
+      },
+      "rct": {
+        "name": {
+          "literal": "Reed Scout Mave"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.05,
+            "switchBias": 0.5,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.7,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "dragalge",
+            "level": 39,
+            "moveset": [
+              "sludgebomb",
+              "dracometeor",
+              "focusblast",
+              "toxicspikes"
+            ]
+          },
+          {
+            "species": "mandibuzz",
+            "level": 38,
+            "moveset": [
+              "foulplay",
+              "bravebird",
+              "roost",
+              "toxic"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "compact_reed_scout_03",
+      "display_name": "Reed Scout Orrin",
+      "point": "CP-08",
+      "seat": [
+        5240,
+        108,
+        2250
+      ],
+      "yaw": 138,
+      "faces": "the point (5160, 2160)",
+      "skin": "rctmod:textures/trainers/single/camper_jeff_0092.png",
+      "eye_contact": false,
+      "ground": {
+        "kind": "heightmap",
+        "y": 107,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "anchor": {
+        "near": [
+          5240,
+          2250
+        ],
+        "moved_blocks": 0.0
+      },
+      "why": "the south-eastern rim, the farthest blind",
+      "team": [
+        {
+          "species": "liepard",
+          "level": 38,
+          "moveset": [
+            "nightslash",
+            "playrough",
+            "thunderwave",
+            "suckerpunch"
+          ]
+        },
+        {
+          "species": "arbok",
+          "level": 37,
+          "moveset": [
+            "gunkshot",
+            "crunch",
+            "glare",
+            "poisonfang"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Three of us out here and you are the first to walk up on me.",
+        "player_win": "That is all three. Please do not tell the Compact I told you what we were watching for.",
+        "player_loss": "Go back to your town. Nothing out here concerns you."
+      },
+      "rct": {
+        "name": {
+          "literal": "Reed Scout Orrin"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.05,
+            "switchBias": 0.5,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.7,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "liepard",
+            "level": 38,
+            "moveset": [
+              "nightslash",
+              "playrough",
+              "thunderwave",
+              "suckerpunch"
+            ]
+          },
+          {
+            "species": "arbok",
+            "level": 37,
+            "moveset": [
+              "gunkshot",
+              "crunch",
+              "glare",
+              "poisonfang"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

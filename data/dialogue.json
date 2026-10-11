@@ -8466,6 +8466,3524 @@
       }
     },
     {
+      "id": "dlg_compact_courier_ansel",
+      "quest_id": "evt_compact_courier_spar",
+      "npc_id": "npc_compact_courier_ansel",
+      "npc_name": "Courier Ansel Kerr",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-01 courier_spar: ARC Settlement 3, the sympathy beat; rule 3; FACTION 'The sympathy beat'; the Asters at Lake Viltri",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_courier_spar.courier_ansel_cursor",
+        "initial_node": "courier_ansel_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_courier_spar.compact_courier_ansel_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_compact_courier_spar.courier_ansel_cursor",
+                "values": [
+                  "courier_ansel_after_001",
+                  "courier_ansel_after_002"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_courier_spar.compact_courier_ansel_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "courier_ansel_after_001",
+          "why": "this player beat Courier Ansel Kerr (the cobblers_compact_routes callback set quest.evt_compact_courier_spar.compact_courier_ansel_defeated)"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_courier_spar.courier_ansel_cursor",
+                "value": "courier_ansel_choice"
+              }
+            ]
+          },
+          "node": "courier_ansel_choice"
+        },
+        {
+          "priority": 12,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "brock_account_heard",
+              "misty_reveal_complete",
+              "surge_reveal_complete",
+              "erika_reveal_complete",
+              "koga_reveal_complete",
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "courier_ansel_001"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "courier_ansel_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "courier_ansel_before",
+          "kind": "line",
+          "speaker": "ansel",
+          "text": "Mind the cart. The medicine is spoken for.",
+          "next": "courier_ansel_before"
+        },
+        {
+          "id": "courier_ansel_after_001",
+          "kind": "line",
+          "speaker": "ansel",
+          "text": "Good. That is what I wanted to see: a world that fights fair. The lake office will hear the cart is a day late.",
+          "next": "courier_ansel_after_002"
+        },
+        {
+          "id": "courier_ansel_after_002",
+          "kind": "line",
+          "speaker": "ansel",
+          "text": "Go on to the lake. Nia is working the landing, and she will not turn anyone away.",
+          "next": "courier_ansel_after_002"
+        },
+        {
+          "id": "courier_ansel_001",
+          "kind": "line",
+          "speaker": "ansel",
+          "text": "Wheel's gone, and the medicine has a delivery window. If you have a free hand, hold the cart steady.",
+          "next": "courier_ansel_002"
+        },
+        {
+          "id": "courier_ansel_002",
+          "kind": "line",
+          "speaker": "ansel",
+          "text": "We came out of a place that was ending. Nobody here asked us for anything but a bed, and I try to say thank you with work.",
+          "next": "courier_ansel_003"
+        },
+        {
+          "id": "courier_ansel_003",
+          "kind": "line",
+          "speaker": "ansel",
+          "text": "Tell me something. Are this world's trainers any good? Show me. Practice only, nobody gets hurt.",
+          "next": "courier_ansel_choice"
+        },
+        {
+          "id": "courier_ansel_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "Ansel rolls his shoulders and thumbs a Poke Ball.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "A practice match.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "courier_ansel_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_decline",
+              "text": "Another time.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "courier_ansel_over_cap",
+          "kind": "line",
+          "speaker": "ansel",
+          "text": "That one is too strong for a practice match. Leave it in the box and I will take you on.",
+          "next": "courier_ansel_choice",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py)"
+        }
+      ],
+      "speakers": {
+        "ansel": "Courier Ansel Kerr",
+        "narration": null
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. Each does its beat: the first sight of the Compact as people, nothing said about method (docs/story/HAVEN_COMPACT_PASS.md CP-01)",
+      "npc_battle": {
+        "trainers": "compact_route_npc_teams.json",
+        "trainer": "compact_courier_ansel",
+        "skill": 2
+      }
+    },
+    {
+      "id": "dlg_compact_mila_aster",
+      "quest_id": "evt_compact_courier_spar",
+      "npc_id": "npc_compact_mila_aster",
+      "npc_name": "Mila Aster",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-01 courier_spar: ARC Settlement 3, the sympathy beat; rule 3; FACTION 'The sympathy beat'; the Asters at Lake Viltri",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_courier_spar.mila_aster_cursor",
+        "initial_node": "mila_aster_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_courier_spar.mila_aster_cursor",
+                "value": "mila_aster_before"
+              }
+            ]
+          },
+          "node": "mila_aster_001",
+          "why": "first time in the window: the account opens"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "mila_aster_before",
+          "kind": "line",
+          "speaker": "mila",
+          "text": "Please do not lean on the cart.",
+          "next": "mila_aster_before"
+        },
+        {
+          "id": "mila_aster_001",
+          "kind": "line",
+          "speaker": "mila",
+          "text": "Do not mind Ansel. He has been waiting a week to meet someone who is not a clerk.",
+          "next": "mila_aster_002"
+        },
+        {
+          "id": "mila_aster_002",
+          "kind": "line",
+          "speaker": "mila",
+          "text": "My husband Dev and our son Jo are by the wheel. Jo has decided your Pokemon are his now.",
+          "next": "mila_aster_003"
+        },
+        {
+          "id": "mila_aster_003",
+          "kind": "line",
+          "speaker": "mila",
+          "text": "We were evacuated once already, before this. Nia carried us out herself. The Compact kept that promise, so we are keeping ours: we go where the next boat goes.",
+          "next": "mila_aster_004"
+        },
+        {
+          "id": "mila_aster_004",
+          "kind": "line",
+          "speaker": "mila",
+          "text": "Whatever you hear about the Compact on this road, I hope you remember the cart.",
+          "next": "mila_aster_repeat"
+        },
+        {
+          "id": "mila_aster_repeat",
+          "kind": "line",
+          "speaker": "mila",
+          "text": "Lake Viltri is a day's walk. Nia is on the landing. Tell her the Asters are well.",
+          "next": "mila_aster_repeat"
+        }
+      ],
+      "speakers": {
+        "mila": "Mila Aster"
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex; the Asters are FACTION's family (they must not be written as soldiers, rule 4)"
+    },
+    {
+      "id": "dlg_compact_nia_landing",
+      "quest_id": "evt_compact_landing",
+      "npc_id": "npc_compact_nia_landing",
+      "npc_name": "Nia Calder",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-02 landing: ARC Settlement 3; FACTION gym2_town; Codex C3 (in person what the relief clerk only reports)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_landing.nia_landing_cursor",
+        "initial_node": "nia_landing_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_landing.nia_landing_cursor",
+                "value": "nia_landing_before"
+              }
+            ]
+          },
+          "node": "nia_landing_001",
+          "why": "first time in the window: the account opens"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "nia_landing_before",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "Mind the crates, please.",
+          "next": "nia_landing_before"
+        },
+        {
+          "id": "nia_landing_001",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "You are the one who came down from Brock's valley. Sit. Let me look at that hand.",
+          "next": "nia_landing_002"
+        },
+        {
+          "id": "nia_landing_002",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "I treat whoever is hurt. The lake's own families, ours, it makes no difference to a burn.",
+          "next": "nia_landing_003"
+        },
+        {
+          "id": "nia_landing_003",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "The boats come in at night now. Crews unload, families sleep in rows on the promenade, and by morning the lake office has another page of names.",
+          "next": "nia_landing_004"
+        },
+        {
+          "id": "nia_landing_004",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "People call what we do rescue, and some call it theft. I have stopped arguing the word. I count the people.",
+          "next": "nia_landing_repeat"
+        },
+        {
+          "id": "nia_landing_repeat",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "The ledger at the relief office has the names. Read it before you decide what we are.",
+          "next": "nia_landing_repeat"
+        }
+      ],
+      "speakers": {
+        "nia": "Nia Calder"
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex"
+    },
+    {
+      "id": "dlg_compact_tomas_landing",
+      "quest_id": "evt_compact_landing",
+      "npc_id": "npc_compact_tomas_landing",
+      "npc_name": "Tomas Rill",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-02 landing: ARC Settlement 3; FACTION gym2_town; Codex C3 (in person what the relief clerk only reports)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_landing.tomas_landing_cursor",
+        "initial_node": "tomas_landing_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_landing.tomas_landing_cursor",
+                "value": "tomas_landing_before"
+              }
+            ]
+          },
+          "node": "tomas_landing_001",
+          "why": "first time in the window: the account opens"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "tomas_landing_before",
+          "kind": "line",
+          "speaker": "tomas",
+          "text": "Please do not touch the survey cases.",
+          "next": "tomas_landing_before"
+        },
+        {
+          "id": "tomas_landing_001",
+          "kind": "line",
+          "speaker": "tomas",
+          "text": "Careful with the cases. Those are twelve years of destination surveys.",
+          "next": "tomas_landing_002"
+        },
+        {
+          "id": "tomas_landing_002",
+          "kind": "line",
+          "speaker": "tomas",
+          "text": "I joined because a careful transfer saved my family. Careful, measured, with the ground checked first. That is all I believe in.",
+          "next": "tomas_landing_003"
+        },
+        {
+          "id": "tomas_landing_003",
+          "kind": "line",
+          "speaker": "tomas",
+          "text": "Your town, Pallet. I read the lake instruments for it. A large, clean transfer. Very large.",
+          "next": "tomas_landing_004"
+        },
+        {
+          "id": "tomas_landing_004",
+          "kind": "line",
+          "speaker": "tomas",
+          "text": "I will not tell you who did that. I am telling you the reading was clean.",
+          "next": "tomas_landing_repeat"
+        },
+        {
+          "id": "tomas_landing_repeat",
+          "kind": "line",
+          "speaker": "tomas",
+          "text": "A better map answers most arguments. I keep making better maps.",
+          "next": "tomas_landing_repeat"
+        }
+      ],
+      "speakers": {
+        "tomas": "Tomas Rill"
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. 'A large, clean transfer' is the design's line for Tomas about Pallet, without admitting the Compact caused it"
+    },
+    {
+      "id": "dlg_compact_ranger_halloran",
+      "quest_id": "evt_compact_cirque_survey",
+      "npc_id": "npc_compact_ranger_halloran",
+      "npc_name": "Cirque Ranger Teo Halloran",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-05 cirque_survey: ARC Settlement 5 setup ('every transfer exchanges occupied volume'); FACTION Tomas ('trusts better maps more than speeches')",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_cirque_survey.ranger_halloran_cursor",
+        "initial_node": "ranger_halloran_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.compact_ranger_halloran_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_compact_cirque_survey.ranger_halloran_cursor",
+                "values": [
+                  "ranger_halloran_after_001"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.compact_ranger_halloran_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "ranger_halloran_after_001",
+          "why": "this player beat Cirque Ranger Teo Halloran (the cobblers_compact_routes callback set quest.evt_compact_cirque_survey.compact_ranger_halloran_defeated)"
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.sided_with",
+                "value": "surveyor"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.ranger_halloran_cursor",
+                "value": "ranger_halloran_choice"
+              }
+            ]
+          },
+          "node": "ranger_halloran_choice"
+        },
+        {
+          "priority": 7,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.sided_with",
+                "value": "surveyor"
+              }
+            ]
+          },
+          "node": "ranger_halloran_fight_001",
+          "why": "the player stands with Destination Surveyor Ilse Marn, so this one tests them"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.sided_with",
+                "value": "ranger"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.compact_surveyor_marn_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "ranger_halloran_sided_after"
+        },
+        {
+          "priority": 9,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.sided_with",
+                "value": "ranger"
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.ranger_halloran_cursor",
+                "value": "ranger_halloran_side_choice"
+              }
+            ]
+          },
+          "node": "ranger_halloran_side_choice"
+        },
+        {
+          "priority": 14,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "surge_reveal_complete",
+              "erika_reveal_complete",
+              "koga_reveal_complete",
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "ranger_halloran_001"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "ranger_halloran_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "ranger_halloran_before",
+          "kind": "line",
+          "speaker": "teo",
+          "text": "The cirque is closed to survey crews until the herders say otherwise.",
+          "next": "ranger_halloran_before"
+        },
+        {
+          "id": "ranger_halloran_after_001",
+          "kind": "line",
+          "speaker": "teo",
+          "text": "Then her map stands. Read it first, though: it still counts nobody who lives in the huts below.",
+          "next": "ranger_halloran_after_001"
+        },
+        {
+          "id": "ranger_halloran_001",
+          "kind": "line",
+          "speaker": "teo",
+          "text": "The Compact's survey calls this cirque empty volume. I have summered sheep here nineteen years, and my children were born in that hut.",
+          "next": "ranger_halloran_002"
+        },
+        {
+          "id": "ranger_halloran_002",
+          "kind": "line",
+          "speaker": "teo",
+          "text": "Marn is not cruel. Her map is just wrong, and nobody has asked the herders.",
+          "next": "ranger_halloran_side_choice"
+        },
+        {
+          "id": "ranger_halloran_side_choice",
+          "kind": "choice",
+          "speaker": "teo",
+          "text": "Will you stand with the herders?",
+          "responses": [
+            {
+              "id": "r_side",
+              "text": "Stand with the ranger.",
+              "next": "ranger_halloran_side_thanks",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "side_ranger"
+                }
+              ]
+            },
+            {
+              "id": "r_hear",
+              "text": "Hear the surveyor first.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ranger_halloran_side_thanks",
+          "kind": "line",
+          "speaker": "teo",
+          "text": "Then lift her stakes, gently. She will want a fight for it. Do not hurt her. She is only wrong.",
+          "next": "ranger_halloran_side_repeat"
+        },
+        {
+          "id": "ranger_halloran_side_repeat",
+          "kind": "line",
+          "speaker": "teo",
+          "text": "Then lift her stakes, gently. She will want a fight for it. Do not hurt her. She is only wrong.",
+          "next": "ranger_halloran_side_repeat"
+        },
+        {
+          "id": "ranger_halloran_sided_after",
+          "kind": "line",
+          "speaker": "teo",
+          "text": "The surveyor has the herders' names now. Whatever else she is, she writes them down.",
+          "next": "ranger_halloran_sided_after"
+        },
+        {
+          "id": "ranger_halloran_fight_001",
+          "kind": "line",
+          "speaker": "teo",
+          "text": "So you stand with the survey. A map with a stake in my grazing, and you would hold it.",
+          "next": "ranger_halloran_fight_002"
+        },
+        {
+          "id": "ranger_halloran_fight_002",
+          "kind": "line",
+          "speaker": "teo",
+          "text": "Then show me the survey can stand.",
+          "next": "ranger_halloran_choice"
+        },
+        {
+          "id": "ranger_halloran_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "Teo whistles his dogs back and squares up.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Defend the survey.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "ranger_halloran_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_decline",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ranger_halloran_over_cap",
+          "kind": "line",
+          "speaker": "teo",
+          "text": "Not with that one. Put it in the box and I will fight you fair.",
+          "next": "ranger_halloran_choice",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py)"
+        }
+      ],
+      "speakers": {
+        "teo": "Cirque Ranger Teo Halloran",
+        "narration": null
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex",
+      "npc_battle": {
+        "trainers": "compact_route_npc_teams.json",
+        "trainer": "compact_ranger_halloran",
+        "skill": 3
+      }
+    },
+    {
+      "id": "dlg_compact_surveyor_marn",
+      "quest_id": "evt_compact_cirque_survey",
+      "npc_id": "npc_compact_surveyor_marn",
+      "npc_name": "Destination Surveyor Ilse Marn",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-05 cirque_survey: ARC Settlement 5 setup ('every transfer exchanges occupied volume'); FACTION Tomas ('trusts better maps more than speeches')",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_cirque_survey.surveyor_marn_cursor",
+        "initial_node": "surveyor_marn_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.compact_surveyor_marn_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_compact_cirque_survey.surveyor_marn_cursor",
+                "values": [
+                  "surveyor_marn_after_001"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.compact_surveyor_marn_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "surveyor_marn_after_001",
+          "why": "this player beat Destination Surveyor Ilse Marn (the cobblers_compact_routes callback set quest.evt_compact_cirque_survey.compact_surveyor_marn_defeated)"
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.sided_with",
+                "value": "ranger"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.surveyor_marn_cursor",
+                "value": "surveyor_marn_choice"
+              }
+            ]
+          },
+          "node": "surveyor_marn_choice"
+        },
+        {
+          "priority": 7,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.sided_with",
+                "value": "ranger"
+              }
+            ]
+          },
+          "node": "surveyor_marn_fight_001",
+          "why": "the player stands with Cirque Ranger Teo Halloran, so this one tests them"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.sided_with",
+                "value": "surveyor"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.compact_ranger_halloran_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "surveyor_marn_sided_after"
+        },
+        {
+          "priority": 9,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.sided_with",
+                "value": "surveyor"
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_cirque_survey.surveyor_marn_cursor",
+                "value": "surveyor_marn_side_choice"
+              }
+            ]
+          },
+          "node": "surveyor_marn_side_choice"
+        },
+        {
+          "priority": 14,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "surge_reveal_complete",
+              "erika_reveal_complete",
+              "koga_reveal_complete",
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "surveyor_marn_001"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "surveyor_marn_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "surveyor_marn_before",
+          "kind": "line",
+          "speaker": "ilse",
+          "text": "Survey in progress. Please keep clear of the stakes.",
+          "next": "surveyor_marn_before"
+        },
+        {
+          "id": "surveyor_marn_after_001",
+          "kind": "line",
+          "speaker": "ilse",
+          "text": "Four herder families, thirty-one children, none on my sheet. I will redraw it. Tell Nia I need her people to confirm the names.",
+          "next": "surveyor_marn_after_001"
+        },
+        {
+          "id": "surveyor_marn_001",
+          "kind": "line",
+          "speaker": "ilse",
+          "text": "Destination survey for the Merian cirque. Flat, dry, no structures on my instruments. By any measure I own, nobody lives here.",
+          "next": "surveyor_marn_002"
+        },
+        {
+          "id": "surveyor_marn_002",
+          "kind": "line",
+          "speaker": "ilse",
+          "text": "The ranger disagrees. I have not found what he is pointing at.",
+          "next": "surveyor_marn_side_choice"
+        },
+        {
+          "id": "surveyor_marn_side_choice",
+          "kind": "choice",
+          "speaker": "ilse",
+          "text": "Will you stand with the survey?",
+          "responses": [
+            {
+              "id": "r_side",
+              "text": "Stand with the surveyor.",
+              "next": "surveyor_marn_side_thanks",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "side_surveyor"
+                }
+              ]
+            },
+            {
+              "id": "r_hear",
+              "text": "Hear the ranger first.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "surveyor_marn_side_thanks",
+          "kind": "line",
+          "speaker": "ilse",
+          "text": "Then the ranger will not let it stand quietly. He will want a fight for his stakes. Be fair to him.",
+          "next": "surveyor_marn_side_repeat"
+        },
+        {
+          "id": "surveyor_marn_side_repeat",
+          "kind": "line",
+          "speaker": "ilse",
+          "text": "Then the ranger will not let it stand quietly. He will want a fight for his stakes. Be fair to him.",
+          "next": "surveyor_marn_side_repeat"
+        },
+        {
+          "id": "surveyor_marn_sided_after",
+          "kind": "line",
+          "speaker": "ilse",
+          "text": "The ranger has gone quiet. The map will be redrawn, but not today.",
+          "next": "surveyor_marn_sided_after"
+        },
+        {
+          "id": "surveyor_marn_fight_001",
+          "kind": "line",
+          "speaker": "ilse",
+          "text": "You stand with the herders. The stakes are mine, and the crew is waiting on this reading.",
+          "next": "surveyor_marn_fight_002"
+        },
+        {
+          "id": "surveyor_marn_fight_002",
+          "kind": "line",
+          "speaker": "ilse",
+          "text": "If the map is wrong I will redraw it. Convince me with something other than a speech.",
+          "next": "surveyor_marn_choice"
+        },
+        {
+          "id": "surveyor_marn_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "Ilse sets her instruments down, carefully, and takes out a Poke Ball.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Pull up the stakes.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "surveyor_marn_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_decline",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "surveyor_marn_over_cap",
+          "kind": "line",
+          "speaker": "ilse",
+          "text": "I will not fight that one. Put it away; the instruments are fragile.",
+          "next": "surveyor_marn_choice",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py)"
+        }
+      ],
+      "speakers": {
+        "ilse": "Destination Surveyor Ilse Marn",
+        "narration": null
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. The surveyor's after-line is Tomas's discipline at small scale: a better map, not a speech",
+      "npc_battle": {
+        "trainers": "compact_route_npc_teams.json",
+        "trainer": "compact_surveyor_marn",
+        "skill": 3
+      }
+    },
+    {
+      "id": "dlg_compact_nia_pause",
+      "quest_id": "evt_compact_pause_vote",
+      "npc_id": "npc_compact_nia_pause",
+      "npc_name": "Nia Calder",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-06 pause_vote: ARC Settlement 5 (the internal divide); FACTION gym4_town; the Asters at Peak Pond",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_pause_vote.nia_pause_cursor",
+        "initial_node": "nia_pause_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_pause_vote.nia_pause_cursor",
+                "value": "nia_pause_before"
+              }
+            ]
+          },
+          "node": "nia_pause_001",
+          "why": "first time in the window: the account opens"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "nia_pause_before",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "Excuse me; the council is about to sit.",
+          "next": "nia_pause_before"
+        },
+        {
+          "id": "nia_pause_001",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "Let me say this once in front of everyone. Pause the transfers until a destination can be proved empty.",
+          "next": "nia_pause_002"
+        },
+        {
+          "id": "nia_pause_002",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "I have held the hand of a woman from the source world, and a woman from this one, and I could not tell you which of them was more afraid.",
+          "next": "nia_pause_003"
+        },
+        {
+          "id": "nia_pause_003",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "A pause is not abandonment. It is the first time we would ask who is on the other side before we carry someone through.",
+          "next": "nia_pause_repeat"
+        },
+        {
+          "id": "nia_pause_repeat",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "The sergeant thinks waiting kills. He is not wrong that it can. I am asking for the cost to be visible.",
+          "next": "nia_pause_repeat"
+        }
+      ],
+      "speakers": {
+        "nia": "Nia Calder"
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex"
+    },
+    {
+      "id": "dlg_compact_dev_aster",
+      "quest_id": "evt_compact_pause_vote",
+      "npc_id": "npc_compact_dev_aster",
+      "npc_name": "Dev Aster",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-06 pause_vote: ARC Settlement 5 (the internal divide); FACTION gym4_town; the Asters at Peak Pond",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_pause_vote.dev_aster_cursor",
+        "initial_node": "dev_aster_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_pause_vote.dev_aster_cursor",
+                "value": "dev_aster_before"
+              }
+            ]
+          },
+          "node": "dev_aster_001",
+          "why": "first time in the window: the account opens"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "dev_aster_before",
+          "kind": "line",
+          "speaker": "dev",
+          "text": "Please, the council is sitting.",
+          "next": "dev_aster_before"
+        },
+        {
+          "id": "dev_aster_001",
+          "kind": "line",
+          "speaker": "dev",
+          "text": "We are the families housed here, on the green. Our home community is still waiting for the next boat.",
+          "next": "dev_aster_002"
+        },
+        {
+          "id": "dev_aster_002",
+          "kind": "line",
+          "speaker": "dev",
+          "text": "Mila says Nia is right. I say the sergeant is right. The honest answer is both, and we have a boy who needs a roof either way.",
+          "next": "dev_aster_003"
+        },
+        {
+          "id": "dev_aster_003",
+          "kind": "line",
+          "speaker": "dev",
+          "text": "Whatever you decide you are for, remember that there is a child asking when we are going home.",
+          "next": "dev_aster_repeat"
+        },
+        {
+          "id": "dev_aster_repeat",
+          "kind": "line",
+          "speaker": "dev",
+          "text": "Jo is asleep on the grass. Please keep your voice down.",
+          "next": "dev_aster_repeat"
+        }
+      ],
+      "speakers": {
+        "dev": "Dev Aster"
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex"
+    },
+    {
+      "id": "dlg_compact_sergeant_dorrin",
+      "quest_id": "evt_compact_pause_vote",
+      "npc_id": "npc_compact_sergeant_dorrin",
+      "npc_name": "Guard Sergeant Hale Dorrin",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-06 pause_vote: ARC Settlement 5 (the internal divide); FACTION gym4_town; the Asters at Peak Pond",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_pause_vote.sergeant_dorrin_cursor",
+        "initial_node": "sergeant_dorrin_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_pause_vote.compact_sergeant_dorrin_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_compact_pause_vote.sergeant_dorrin_cursor",
+                "values": [
+                  "sergeant_dorrin_after_001"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_pause_vote.compact_sergeant_dorrin_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "sergeant_dorrin_after_001",
+          "why": "this player beat Guard Sergeant Hale Dorrin (the cobblers_compact_routes callback set quest.evt_compact_pause_vote.compact_sergeant_dorrin_defeated)"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_pause_vote.sergeant_dorrin_cursor",
+                "value": "sergeant_dorrin_choice"
+              }
+            ]
+          },
+          "node": "sergeant_dorrin_choice"
+        },
+        {
+          "priority": 12,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "surge_reveal_complete",
+              "erika_reveal_complete",
+              "koga_reveal_complete",
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "sergeant_dorrin_001"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "sergeant_dorrin_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "sergeant_dorrin_before",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "The council is in session. Step back.",
+          "next": "sergeant_dorrin_before"
+        },
+        {
+          "id": "sergeant_dorrin_after_001",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "You fight to protect, not to take. Fine. Ask your questions. I will tell my crews to leave you be, and that is all I will promise.",
+          "next": "sergeant_dorrin_after_001"
+        },
+        {
+          "id": "sergeant_dorrin_001",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "I carried the dead out of the last failed extraction. Do not tell me about waiting.",
+          "next": "sergeant_dorrin_002"
+        },
+        {
+          "id": "sergeant_dorrin_002",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "You have been asking questions about the families on this green. Are you a threat to them? Tell me with your Pokemon.",
+          "next": "sergeant_dorrin_choice"
+        },
+        {
+          "id": "sergeant_dorrin_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "The sergeant folds his arms across the green.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Show him.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "sergeant_dorrin_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_decline",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sergeant_dorrin_over_cap",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Not with that one in your party. Leave it, and I will test you.",
+          "next": "sergeant_dorrin_choice",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py)"
+        }
+      ],
+      "speakers": {
+        "hale": "Guard Sergeant Hale Dorrin",
+        "narration": null
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. A grudging respect, not a defeat of the Compact (design CP-06)",
+      "npc_battle": {
+        "trainers": "compact_route_npc_teams.json",
+        "trainer": "compact_sergeant_dorrin",
+        "skill": 3
+      }
+    },
+    {
+      "id": "dlg_compact_varga_2",
+      "quest_id": "evt_compact_anchor_pull",
+      "npc_id": "npc_compact_varga_2",
+      "npc_name": "Lieutenant Varga",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-07 anchor_pull: ARC Settlement 6 ('each forced use makes the next less stable'); FACTION gym5_town (Oren's traces); SQ-G5-01. An echo: Koga's town remains the source",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_anchor_pull.varga_2_cursor",
+        "initial_node": "varga_2_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_anchor_pull.compact_varga_2_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_compact_anchor_pull.varga_2_cursor",
+                "values": [
+                  "varga_2_after_001",
+                  "varga_2_after_002",
+                  "varga_2_after_003"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_anchor_pull.compact_varga_2_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "varga_2_after_001",
+          "why": "this player beat Lieutenant Varga (the cobblers_compact_routes callback set quest.evt_compact_anchor_pull.compact_varga_2_defeated)"
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.compact_anchor_crew_01.defeated",
+                "value": false
+              }
+            ]
+          },
+          "node": "varga_2_blocked_1",
+          "why": "refused until quest.compact_anchor_crew_01.defeated"
+        },
+        {
+          "priority": 7,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.compact_anchor_crew_02.defeated",
+                "value": false
+              }
+            ]
+          },
+          "node": "varga_2_blocked_2",
+          "why": "refused until quest.compact_anchor_crew_02.defeated"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_anchor_pull.varga_2_cursor",
+                "value": "varga_2_choice"
+              }
+            ]
+          },
+          "node": "varga_2_choice"
+        },
+        {
+          "priority": 12,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "erika_reveal_complete",
+              "koga_reveal_complete",
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "varga_2_001"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "varga_2_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "varga_2_before",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Move along. This is salvage.",
+          "next": "varga_2_before"
+        },
+        {
+          "id": "varga_2_after_001",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Take the notebook. It is Oren Pell's, and he will deny he wrote it. 'The anchors drift further after each use. Hoopa's condition is worsening. I can no longer promise the next landing.'",
+          "next": "varga_2_after_002"
+        },
+        {
+          "id": "varga_2_after_002",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "He kept working because stopping would end every rescue in flight. I am not sure I disagree.",
+          "next": "varga_2_after_003"
+        },
+        {
+          "id": "varga_2_after_003",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "You will be telling Elara what you told my crew. I hope you are as sure then as you are now.",
+          "next": "varga_2_after_003"
+        },
+        {
+          "id": "varga_2_blocked_1",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "My crew is at the winch. Get past them first, or leave us to the cable.",
+          "next": "varga_2_blocked_1"
+        },
+        {
+          "id": "varga_2_blocked_2",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "My crew is at the winch. Get past them first, or leave us to the cable.",
+          "next": "varga_2_blocked_2"
+        },
+        {
+          "id": "varga_2_001",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "You were at Highwire, and you are here. I am Lieutenant Varga, and I stop being patient about now.",
+          "next": "varga_2_002"
+        },
+        {
+          "id": "varga_2_002",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "That anchor was set to carry a family to safety. It is rusting in a marsh because the exchange it served has gone wrong. I am taking it before Koga's trackers read the marks on it.",
+          "next": "varga_2_003"
+        },
+        {
+          "id": "varga_2_003",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "If you are the thing standing between me and that winch, I will move you.",
+          "next": "varga_2_choice"
+        },
+        {
+          "id": "varga_2_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "Varga plants her feet at the crane.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Take on the lieutenant.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "varga_2_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_decline",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "varga_2_over_cap",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Not with that one. I do not fight what the badges have not earned you the right to command. Put it away.",
+          "next": "varga_2_choice",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py)"
+        }
+      ],
+      "speakers": {
+        "varga": "Lieutenant Varga",
+        "narration": null
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. Oren's notebook is FACTION's admission that Hoopa is worsening (docs/story/FACTION.md); her last line is the tower's own, hq_trainers.json hq_tower_trainer_07 ('Say to her what you said to my team')",
+      "npc_battle": {
+        "trainers": "compact_route_npc_teams.json",
+        "trainer": "compact_varga_2",
+        "skill": 4
+      }
+    },
+    {
+      "id": "dlg_compact_camp_warden",
+      "quest_id": "evt_compact_waiting_camp",
+      "npc_id": "npc_compact_camp_warden",
+      "npc_name": "Camp Warden Ysolde Crane",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-09 waiting_camp: ARC Settlement 7 (the strongest moral case, 'largest remaining community'); FACTION gym6_town (the waiting families); rule 4",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_waiting_camp.camp_warden_cursor",
+        "initial_node": "camp_warden_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_waiting_camp.camp_warden_cursor",
+                "value": "camp_warden_before"
+              }
+            ]
+          },
+          "node": "camp_warden_001",
+          "why": "first time in the window: the account opens"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "camp_warden_before",
+          "kind": "line",
+          "speaker": "ysolde",
+          "text": "The camp is closed to visitors. Please move on.",
+          "next": "camp_warden_before"
+        },
+        {
+          "id": "camp_warden_001",
+          "kind": "line",
+          "speaker": "ysolde",
+          "text": "You have walked into the largest camp of families the Compact has left. Four hundred and nine names, and the boats have stopped coming for them.",
+          "next": "camp_warden_002"
+        },
+        {
+          "id": "camp_warden_002",
+          "kind": "line",
+          "speaker": "ysolde",
+          "text": "They are waiting for a transfer that has not been scheduled. Nobody here will tell you it is wrong, because they have nowhere else to put the hope.",
+          "next": "camp_warden_003"
+        },
+        {
+          "id": "camp_warden_003",
+          "kind": "line",
+          "speaker": "ysolde",
+          "text": "At dusk the marsh pushes its own creatures against our edge. Something in the air has frightened them since the last exchange. My guards hold the line; there are not enough of them.",
+          "next": "camp_warden_repeat"
+        },
+        {
+          "id": "camp_warden_repeat",
+          "kind": "line",
+          "speaker": "ysolde",
+          "text": "If you are going through, go quietly. The children sleep early.",
+          "next": "camp_warden_repeat"
+        }
+      ],
+      "speakers": {
+        "ysolde": "Camp Warden Ysolde Crane"
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. Rule 4: the families stay visible. The defence fight these lines set up is NOT built (see this point's mechanism)"
+    },
+    {
+      "id": "dlg_compact_camp_mother",
+      "quest_id": "evt_compact_waiting_camp",
+      "npc_id": "npc_compact_camp_mother",
+      "npc_name": "Odile Marsh",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-09 waiting_camp: ARC Settlement 7 (the strongest moral case, 'largest remaining community'); FACTION gym6_town (the waiting families); rule 4",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_waiting_camp.camp_mother_cursor",
+        "initial_node": "camp_mother_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_waiting_camp.camp_mother_cursor",
+                "value": "camp_mother_before"
+              }
+            ]
+          },
+          "node": "camp_mother_001",
+          "why": "first time in the window: the account opens"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "camp_mother_before",
+          "kind": "line",
+          "speaker": "odile",
+          "text": "Please, the little ones are sleeping.",
+          "next": "camp_mother_before"
+        },
+        {
+          "id": "camp_mother_001",
+          "kind": "line",
+          "speaker": "odile",
+          "text": "My daughter asks when the boats come. I tell her soon. I have told her soon for forty days.",
+          "next": "camp_mother_002"
+        },
+        {
+          "id": "camp_mother_002",
+          "kind": "line",
+          "speaker": "odile",
+          "text": "We were told our new home would be quiet and empty. I would like that, whatever it costs. I would like it to be true.",
+          "next": "camp_mother_003"
+        },
+        {
+          "id": "camp_mother_003",
+          "kind": "line",
+          "speaker": "odile",
+          "text": "If you meet the people deciding, tell them my daughter's name is Pell. Anya Pell. She is eight.",
+          "next": "camp_mother_repeat"
+        },
+        {
+          "id": "camp_mother_repeat",
+          "kind": "line",
+          "speaker": "odile",
+          "text": "Thank you for stopping. Nobody stops.",
+          "next": "camp_mother_repeat"
+        }
+      ],
+      "speakers": {
+        "odile": "Odile Marsh"
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. 'Pell' is not Oren's family; it is a coincidence Codex may drop"
+    },
+    {
+      "id": "dlg_compact_boarding_hask",
+      "quest_id": "evt_compact_requisition",
+      "npc_id": "npc_compact_boarding_hask",
+      "npc_name": "Boarding Officer Perrin Hask",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-10 requisition: ARC Settlement 7's last fact: 'the faction is preparing that transfer at a major energy source'",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_requisition.boarding_hask_cursor",
+        "initial_node": "boarding_hask_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_requisition.compact_boarding_hask_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_compact_requisition.boarding_hask_cursor",
+                "values": [
+                  "boarding_hask_after_001"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_requisition.compact_boarding_hask_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "boarding_hask_after_001",
+          "why": "this player beat Boarding Officer Perrin Hask (the cobblers_compact_routes callback set quest.evt_compact_requisition.compact_boarding_hask_defeated)"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_requisition.boarding_hask_cursor",
+                "value": "boarding_hask_choice"
+              }
+            ]
+          },
+          "node": "boarding_hask_choice"
+        },
+        {
+          "priority": 12,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "boarding_hask_001"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "boarding_hask_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "boarding_hask_before",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "The dock is closed for requisition. Move along.",
+          "next": "boarding_hask_before"
+        },
+        {
+          "id": "boarding_hask_after_001",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "You can walk the jetty. I will not stop you. But the boat is going south tonight with what is in the crates, and you know who is waiting at the far end.",
+          "next": "boarding_hask_after_001"
+        },
+        {
+          "id": "boarding_hask_001",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "The boats are needed. This is a requisition, and the boatman knows it. He did not want to sign.",
+          "next": "boarding_hask_002"
+        },
+        {
+          "id": "boarding_hask_002",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "There are families a day south of here who will not last another week, and I will not have a stranger on the gangplank asking what is in the crates.",
+          "next": "boarding_hask_003"
+        },
+        {
+          "id": "boarding_hask_003",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "I do not want to hurt you. I want you to let me work.",
+          "next": "boarding_hask_choice"
+        },
+        {
+          "id": "boarding_hask_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "Hask puts a hand on the gangplank rope.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Challenge the officer.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "boarding_hask_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_decline",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "boarding_hask_over_cap",
+          "kind": "line",
+          "speaker": "perrin",
+          "text": "Not with that one. The cap on what you may command is the cap, and I will not break it for you.",
+          "next": "boarding_hask_choice",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py)"
+        }
+      ],
+      "speakers": {
+        "perrin": "Boarding Officer Perrin Hask",
+        "narration": null
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. The officer gives away the last fact of Settlement 7 as a rescue boat; he is not told it is a transfer",
+      "npc_battle": {
+        "trainers": "compact_route_npc_teams.json",
+        "trainer": "compact_boarding_hask",
+        "skill": 3
+      }
+    },
+    {
+      "id": "dlg_compact_bridge_guard",
+      "quest_id": "evt_compact_bridge",
+      "npc_id": "npc_compact_bridge_guard",
+      "npc_name": "Checkpoint Guard Tamsin Ode",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-11 bridge: the escalation before the line: open force for the first time, but no occupied target chosen yet (rule 5). Brann is mentioned, not seen",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_bridge.bridge_guard_cursor",
+        "initial_node": "bridge_guard_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_bridge.compact_bridge_guard_ode_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_compact_bridge.bridge_guard_cursor",
+                "values": [
+                  "bridge_guard_after_001"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_bridge.compact_bridge_guard_ode_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "bridge_guard_after_001",
+          "why": "this player beat Checkpoint Guard Tamsin Ode (the cobblers_compact_routes callback set quest.evt_compact_bridge.compact_bridge_guard_ode_defeated)"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_bridge.bridge_guard_cursor",
+                "value": "bridge_guard_choice"
+              }
+            ]
+          },
+          "node": "bridge_guard_choice"
+        },
+        {
+          "priority": 12,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "bridge_guard_001"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "bridge_guard_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "bridge_guard_before",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "The crossing is under watch. State your business.",
+          "next": "bridge_guard_before"
+        },
+        {
+          "id": "bridge_guard_after_001",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Lieutenant Varga has the bridge's far end. I cannot speak for her.",
+          "next": "bridge_guard_after_001"
+        },
+        {
+          "id": "bridge_guard_001",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Captain Saye's orders: nobody goes south over this bridge to the Craters rim without a Compact escort.",
+          "next": "bridge_guard_002"
+        },
+        {
+          "id": "bridge_guard_002",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "The Bridgekeep keepers are angry with us, and they should be. I would be.",
+          "next": "bridge_guard_003"
+        },
+        {
+          "id": "bridge_guard_003",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "You can walk past me. I am not blocking the road. But if you want to cross as a courtesy, show me you are safe.",
+          "next": "bridge_guard_choice"
+        },
+        {
+          "id": "bridge_guard_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "Tamsin puts a hand to her badge and stands her ground.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Show her.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "bridge_guard_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_decline",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bridge_guard_over_cap",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Not with that one in your party. Keep it in the box and I will test you.",
+          "next": "bridge_guard_choice",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py)"
+        }
+      ],
+      "speakers": {
+        "tamsin": "Checkpoint Guard Tamsin Ode",
+        "narration": null
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex",
+      "npc_battle": {
+        "trainers": "compact_route_npc_teams.json",
+        "trainer": "compact_bridge_guard_ode",
+        "skill": 3
+      }
+    },
+    {
+      "id": "dlg_compact_varga_3",
+      "quest_id": "evt_compact_bridge",
+      "npc_id": "npc_compact_varga_3",
+      "npc_name": "Lieutenant Varga",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-11 bridge: the escalation before the line: open force for the first time, but no occupied target chosen yet (rule 5). Brann is mentioned, not seen",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_bridge.varga_3_cursor",
+        "initial_node": "varga_3_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_bridge.compact_varga_3_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_compact_bridge.varga_3_cursor",
+                "values": [
+                  "varga_3_after_001",
+                  "varga_3_after_002"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_bridge.compact_varga_3_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "varga_3_after_001",
+          "why": "this player beat Lieutenant Varga (the cobblers_compact_routes callback set quest.evt_compact_bridge.compact_varga_3_defeated)"
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_bridge.compact_bridge_guard_ode_defeated",
+                "value": false
+              }
+            ]
+          },
+          "node": "varga_3_blocked_1",
+          "why": "refused until quest.evt_compact_bridge.compact_bridge_guard_ode_defeated"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_bridge.varga_3_cursor",
+                "value": "varga_3_choice"
+              }
+            ]
+          },
+          "node": "varga_3_choice"
+        },
+        {
+          "priority": 12,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "sabrina_reveal_complete",
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "varga_3_001"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "varga_3_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "varga_3_before",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "The crossing is under watch.",
+          "next": "varga_3_before"
+        },
+        {
+          "id": "varga_3_after_001",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Cross if you like. The keepers can tell you what the south is, and I will not lie to them. Not about the bridge.",
+          "next": "varga_3_after_002"
+        },
+        {
+          "id": "varga_3_after_002",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "You are not what I expected to meet on the Craters road. I expected the Captain's orders to be easier than this.",
+          "next": "varga_3_after_002"
+        },
+        {
+          "id": "varga_3_blocked_1",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Tamsin holds the first post. Get past her, or turn back. The road is yours either way.",
+          "next": "varga_3_blocked_1"
+        },
+        {
+          "id": "varga_3_001",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "So you carried an anchor's notebook out of the marsh, and you are here. Tamsin sent word.",
+          "next": "varga_3_002"
+        },
+        {
+          "id": "varga_3_002",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "The bridge is the only way to the south. I will not pretend that is an accident.",
+          "next": "varga_3_003"
+        },
+        {
+          "id": "varga_3_003",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "People are in the south who must not be disturbed before the day. I would rather not have to put it harder than that.",
+          "next": "varga_3_choice"
+        },
+        {
+          "id": "varga_3_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "Varga takes off her gloves, one finger at a time.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Take on Varga.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "varga_3_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_decline",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "varga_3_over_cap",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Not with that one. I do not break the cap for anyone, and neither will you.",
+          "next": "varga_3_choice",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py)"
+        }
+      ],
+      "speakers": {
+        "varga": "Lieutenant Varga",
+        "narration": null
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex",
+      "npc_battle": {
+        "trainers": "compact_route_npc_teams.json",
+        "trainer": "compact_varga_3",
+        "skill": 4
+      }
+    },
+    {
+      "id": "dlg_compact_varga_4",
+      "quest_id": "evt_compact_rearguard",
+      "npc_id": "npc_compact_varga_4",
+      "npc_name": "Lieutenant Varga",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-13 rearguard: ARC Settlement 9 setup ('withdrawing toward the Rift's southern approach'); the start of the public split; rule 4 (the dissenters are families and medics, not soldiers)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_rearguard.varga_4_cursor",
+        "initial_node": "varga_4_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_rearguard.compact_varga_4_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_compact_rearguard.varga_4_cursor",
+                "values": [
+                  "varga_4_after_001",
+                  "varga_4_after_002"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_rearguard.compact_varga_4_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "varga_4_after_001",
+          "why": "this player beat Lieutenant Varga (the cobblers_compact_routes callback set quest.evt_compact_rearguard.compact_varga_4_defeated)"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_rearguard.varga_4_cursor",
+                "value": "varga_4_choice"
+              }
+            ]
+          },
+          "node": "varga_4_choice"
+        },
+        {
+          "priority": 12,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "blaine_reveal_complete",
+              "giovanni_reveal_complete",
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "varga_4_001"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "varga_4_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "varga_4_before",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Keep to the road.",
+          "next": "varga_4_before"
+        },
+        {
+          "id": "varga_4_after_001",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Let them go. Let them all go. If the Director asks, say I held the line until you came.",
+          "next": "varga_4_after_002"
+        },
+        {
+          "id": "varga_4_after_002",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "I do not know what is below the tower. I do know what I carried out of the Craters. Say to Elara what you said to my team.",
+          "next": "varga_4_after_002"
+        },
+        {
+          "id": "varga_4_001",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "They are leaving. Stores, records, the ones who think they know better than the Director, all going west to the Rift's mouth. I am holding them here.",
+          "next": "varga_4_002"
+        },
+        {
+          "id": "varga_4_002",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Not for me. The records carry the destination data, and the Director wants it back.",
+          "next": "varga_4_003"
+        },
+        {
+          "id": "varga_4_003",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Stand aside, or beat me. You know how I fight by now.",
+          "next": "varga_4_choice"
+        },
+        {
+          "id": "varga_4_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "Varga looks past the yard at the families on the road.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "One more time.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles",
+                  "over_cap_node": "varga_4_over_cap"
+                }
+              ]
+            },
+            {
+              "id": "r_decline",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "varga_4_over_cap",
+          "kind": "line",
+          "speaker": "varga",
+          "text": "Not with that one. I will not fight what the cap forbids you.",
+          "next": "varga_4_choice",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py)"
+        }
+      ],
+      "speakers": {
+        "varga": "Lieutenant Varga",
+        "narration": null
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. The last time before the tower; her closing line is the tower's own",
+      "npc_battle": {
+        "trainers": "compact_route_npc_teams.json",
+        "trainer": "compact_varga_4",
+        "skill": 5
+      }
+    },
+    {
+      "id": "dlg_compact_dissenter_medic",
+      "quest_id": "evt_compact_rearguard",
+      "npc_id": "npc_compact_dissenter_medic",
+      "npc_name": "Medic Corin Aldous",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-13 rearguard: ARC Settlement 9 setup ('withdrawing toward the Rift's southern approach'); the start of the public split; rule 4 (the dissenters are families and medics, not soldiers)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_compact_rearguard.dissenter_medic_cursor",
+        "initial_node": "dissenter_medic_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_rearguard.compact_varga_4_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_compact_rearguard.dissenter_medic_cursor",
+                "values": [
+                  "dissenter_medic_after_001"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_rearguard.compact_varga_4_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "dissenter_medic_after_001",
+          "why": "the field that changes what this character says is quest.evt_compact_rearguard.compact_varga_4_defeated"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_compact_rearguard.dissenter_medic_cursor",
+                "value": "dissenter_medic_before"
+              }
+            ]
+          },
+          "node": "dissenter_medic_001",
+          "why": "first time in the window: the account opens"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "dissenter_medic_before",
+          "kind": "line",
+          "speaker": "corin",
+          "text": "Please, the families are loading.",
+          "next": "dissenter_medic_before"
+        },
+        {
+          "id": "dissenter_medic_001",
+          "kind": "line",
+          "speaker": "corin",
+          "text": "We are taking the families west before the Director calls them back. Nia sent word. Holdfast will take them.",
+          "next": "dissenter_medic_002"
+        },
+        {
+          "id": "dissenter_medic_002",
+          "kind": "line",
+          "speaker": "corin",
+          "text": "Lieutenant Varga means to stop us. She is not cruel. She believes the records belong to the Compact, and she may be right.",
+          "next": "dissenter_medic_003"
+        },
+        {
+          "id": "dissenter_medic_003",
+          "kind": "line",
+          "speaker": "corin",
+          "text": "I am a medic. I would rather not pick up a Poke Ball.",
+          "next": "dissenter_medic_repeat"
+        },
+        {
+          "id": "dissenter_medic_repeat",
+          "kind": "line",
+          "speaker": "corin",
+          "text": "Holdfast. Nia will be waiting.",
+          "next": "dissenter_medic_repeat"
+        },
+        {
+          "id": "dissenter_medic_after_001",
+          "kind": "line",
+          "speaker": "corin",
+          "text": "She let us through. We will be at Holdfast. If you pass that way, tell Nia we have the packet.",
+          "next": "dissenter_medic_after_001"
+        }
+      ],
+      "speakers": {
+        "corin": "Medic Corin Aldous"
+      },
+      "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. The dissenters are medics and families (rule 4); 'the packet' is the giovanni_dissenter_route_packet evidence CP-14 uses"
+    },
+    {
       "id": "dlg_route3_nosepass_signs",
       "quest_id": "evt_route3_nosepass_signs",
       "npc_id": "npc_route3_trail_keeper",
