@@ -520,6 +520,11 @@
       "why": "the owner's anchor: one diamond",
       "cp": 100
     },
+    "minecraft:dripstone_block": {
+      "drops": {},
+      "why": "NEW-WARPED (2026-10-11): the warped wood's fossil bay dig block (data/dungeon_extras2.json fossils.dig), as RT-B's clay: a wall the pick opens to reach the fossil, not a valuable (0)",
+      "cp": 0
+    },
     "minecraft:emerald_ore": {
       "drops": {
         "minecraft:emerald": 1
