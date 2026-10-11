@@ -557,6 +557,12 @@ class World:
                 return 1
             if t[1] in ("modify", "remove") and t[2] == "storage":
                 return self.data_storage(t[1:])
+            # a block entity's data set to a value (a sign's line: tools/dungeon_extras.py's bank vault code), recorded
+            # with the block writes; nothing reads a block entity back here
+            if (t[1] == "modify" and t[2] == "block" and len(t) == 10 and t[7] == "set" and t[8] == "value"
+                    and all(re.fullmatch(r"-?\d+", c) for c in t[3:6])):
+                self.block_writes.append((ctx.dim, " ".join(t)))
+                return 1
             raise Unsupported(" ".join(t))
         if h == "schedule" and t[1] == "function":
             # `replace` (the default) drops the function's pending event and queues a new one behind everything already
