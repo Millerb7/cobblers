@@ -165,7 +165,7 @@
       "why": "Volcarona already lives in our crimson forest tables; its two paradoxes (Slither Wing, whose inherited spawn includes crimson_forest, and Iron Moth) and Victini (inherited crimson_forest spawn) make the forest's cathedral."
     },
     {
-      "id": "warped_lab", "name": "The Warped Laboratory", "status": "proposed (new)", "theme": "warped_forest (built theme)", "gate": "gym8_cleared", "first_band": 5,
+      "id": "warped_lab", "name": "The Warped Laboratory", "status": "authored as a TEST dungeon (data/dungeons.json warped_lab, NEW-WARPED 2026-10-11; gate and nether siting still proposed)", "theme": "warped_forest", "gate": "gym8_cleared", "first_band": 5,
       "legendary_pool_by_band": {
         "5": ["genesect", "ironvaliant", "ironjugulis"],
         "6": ["genesect", "ironvaliant", "ironjugulis"]

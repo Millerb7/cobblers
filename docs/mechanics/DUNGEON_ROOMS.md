@@ -458,6 +458,7 @@ threshold's clocks with this table or 4.2's):
 | moth_cathedral | 2,142-2,299 all routes, wing and side rooms included (1,519 paid at band 1, variant b; NEW-MOTH, 2026-10-11) | **40** | **43** | **41** | **44** | **51** | **54** |
 | dragonspiral | 2,244 all routes, the wing and the side rooms (1,095 main; 1,236 main in variant b; NEW-DRAGONSPIRAL, 2026-10-11; band 4 derived 41, authored 44 so it is not the shortest band-4 clock the vault budget reads) | **40** | **43** | **43** | **44** | **49** | **52** |
 | field_of_swords | 2,157 all routes, the wing and the side rooms (slot 1; NEW-SWORDS, 2026-10-11: required 32.1 min at band 1, plus the collapse's 25 s, x 1.25) | **41** | **46** | **43** | **46** | **54** | **57** |
+| warped_lab | 2,011 all routes, the wing and the side rooms included (NEW-WARPED, 2026-10-11; required 31.3 minutes at band 1 on the main route) | **40** | **43** | **41** | **45** | **51** | **54** |
 
 BOSS2 (2026-10-10): the boss is two stages and the stands of the tuned bands are a member or two smaller (sections `DUNGEONS.md` 3.2; `members_eased_by_band`), so every clock was re-derived with `tools/dungeon_clock.py` and the table above is the new one: every band is under an hour (the longest, the jungle's band 6, is 54 minutes), where the three-stage table ran to 59. Each is the tool's required time plus the set piece's 25 s, x 1.25, up to the minute (the tests pin the formula). The boss row of the part table now counts two stages and one gap.
 
