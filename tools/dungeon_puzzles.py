@@ -72,7 +72,8 @@ LOOT_DIR = "dungeons/vault"
 # wall-mounted buttons and levers have no collision: the walk check must see through them
 G.PASSABLE.update({"minecraft:jungle_button", "minecraft:mangrove_button", "minecraft:birch_button", "minecraft:spruce_button",
                    "minecraft:acacia_button", "minecraft:dark_oak_button", "minecraft:cherry_button", "minecraft:bamboo_button",
-                   "minecraft:lever", "minecraft:oak_button", "minecraft:stone_pressure_plate", "minecraft:oak_pressure_plate"})
+                   "minecraft:lever", "minecraft:oak_button", "minecraft:stone_pressure_plate", "minecraft:oak_pressure_plate",
+                   "minecraft:crimson_button", "minecraft:warped_button", "minecraft:polished_blackstone_button"})   # the nether themes (2026-10-10)
 
 
 # ------------------------------------------------------------------------------------------------- data

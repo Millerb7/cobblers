@@ -113,7 +113,9 @@ def theme_blocks(theme):
 
 
 def test_three_themes_exist_and_name_every_block_a_kind_needs():
-    assert set(THEMES) == {"mine", "jungle", "flooded_ruin"}
+    # the three dungeons' themes, and since NETHER-THEMES (2026-10-10) the five nether ones; every theme names every block
+    assert {"mine", "jungle", "flooded_ruin"} <= set(THEMES)
+    assert {"nether_wastes", "crimson_forest", "warped_forest", "soul_sand_valley", "basalt_deltas"} <= set(THEMES)
     for name, t in THEMES.items():
         for key in ("hull", "door", "rip", "lamp", "messages", "dress", "maze", "parkour", "bridge", "seam", "safe", "dark"):
             assert key in t, (name, key)

@@ -407,6 +407,16 @@
       "why": "a cracked secret's face: a wall the pick opens, not a valuable (0)",
       "cp": 0
     },
+    "minecraft:cracked_nether_bricks": {
+      "drops": {},
+      "why": "a cracked secret's face (the nether themes): a wall the pick opens, not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:cracked_polished_blackstone_bricks": {
+      "drops": {},
+      "why": "a cracked secret's face (the nether themes): a wall the pick opens, not a valuable (0)",
+      "cp": 0
+    },
     "minecraft:cracked_stone_bricks": {
       "drops": {},
       "why": "a cracked secret's face: a wall the pick opens, not a valuable (0)",
@@ -516,6 +526,13 @@
       },
       "why": "vanilla 3-7 slices (ASSUMED from vanilla's blocks/melon table, not read here)",
       "cp": 25
+    },
+    "minecraft:nether_gold_ore": {
+      "drops": {
+        "minecraft:gold_nugget": 4
+      },
+      "why": "READ from the 1.21.1 jar (data/minecraft/loot_table/blocks/nether_gold_ore.json): 2-6 gold nuggets uniform (mean 4), Fortune only; the rift pick has none",
+      "cp": 8
     },
     "minecraft:nether_quartz_ore": {
       "drops": {

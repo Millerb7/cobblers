@@ -43,6 +43,10 @@ PASSABLE = AIR | {
     "minecraft:red_carpet", "minecraft:brown_carpet", "minecraft:green_carpet", "minecraft:gray_carpet",
     "minecraft:black_carpet", "minecraft:cyan_carpet", "minecraft:white_carpet", "minecraft:lime_carpet",
     "minecraft:cave_vines", "minecraft:cave_vines_plant",      # glow berries: no collision box, like a vine
+    # the nether's roots and sprouts have no collision box either (NETHER-THEMES, 2026-10-10). The independent audit's own
+    # table already lists exactly these three as passable. The fungi are NOT here: its table has them solid, and a theme
+    # that scattered them drew LIFE and TRAP findings (a spot on a fungus is "not a place it can stand")
+    "minecraft:crimson_roots", "minecraft:warped_roots", "minecraft:nether_sprouts",
 }
 WATERS = {"minecraft:water"}
 HAZARDS = {
