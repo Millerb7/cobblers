@@ -128,7 +128,8 @@ the record contract it publishes first); then the three authors on KIT2's merge;
 - The Scar: "something or an environment inhabiting the area now ... the north-west side of the mountain has a cool
   recessed point, where some water could make for a pond, and we can plop some trees and alpha mons down to have taken
   over the afflicted area" -> SCAR-LIFE.
-- The Haven Compact: "enough inclusion of the evil faction through the world ... more story points for them that a
-  player would go through. Especially some fun new battles" -> COMPACT-STORY (design), builders after.
+- The Haven Compact: more of the faction through the world, more story points a player goes through, "especially some
+  fun new battles" -> COMPACT-STORY (design), builders after. The Compact is not evil: heroes to themselves, throughout
+  (the owner, 2026-10-11).
 - Boss: two stages with a full heal between, tuned 60-90% at the lower cap for bands 1-4 (done, 2ee3ccf); bands 5-6 untuned.
 - New rooms placed as optional side rooms in all three dungeons (15566ab).

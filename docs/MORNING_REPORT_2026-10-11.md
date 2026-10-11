@@ -40,8 +40,8 @@ Branch `build/2026-10-09-dungeon-playtest` (local; not pushed). Nothing below ha
 3. **Nether rips:** placed on the test trail for now, marked `siting_pending`. A throwaway world to find each biome, or
    one nether hub?
 4. **Zero Dig copies the Night Shift's layout room for room** (its own theme and fights): give it its own layout?
-5. **The Haven Compact framing:** "evil faction" vs your 2026-09-22 note "not evil" (ARC rules 3-5). Built as: secretive
-   until the Craters, open enemies only after. Also O2-O10 in the design doc.
+5. **The Haven Compact framing:** ANSWERED 2026-10-11: not evil, heroes to themselves throughout (ARC rules 3-5). Built
+   as: secretive until the Craters, open opponents only after, still believing they save people. Also O2-O10 in the design doc.
 6. **Eternatus** (out since 10-02), **Koraidon/Miraidon**, **Lugia/Registeel** homes, **Cistern/Temple Calendar** vs the
    jungle/ruin, and switching off old wild spawns of species that now have a dungeon home.
 7. **The Scar Tarn's alphas** respawn (a repeatable alpha source) and sit at 29-33 over the leg's cap of 30.

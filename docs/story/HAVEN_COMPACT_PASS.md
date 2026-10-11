@@ -4,9 +4,9 @@
 text: the lines are Codex's (`CAMPAIGN_OUTLINE.md:4-5`), and where a point needs a line this document says what the
 line must do. Teams are themes and level bands; `trainer-balance-designer` sets the exact teams.
 
-**The owner (2026-10-11):** "I want to make sure we have enough inclusion of the evil faction through the world, so we
-need to add more story points for them that a player would go through. Especially some fun new battles to add to the
-game."
+**The owner (2026-10-11):** enough inclusion of the Haven Compact through the world: more story points for them that a
+player would go through, "especially some fun new battles to add to the game". **And (the owner, 2026-10-11, on O1):
+the Compact is NOT evil. Its people are heroes to themselves, throughout.**
 
 **Numbers.** Measured ones say how they were measured. Leader aces 20/25/30/35/40/45/50/55 and leg lengths are
 **relayed** from `CAMPAIGN_OUTLINE.md:13-15` (which relays `docs/STATE.md:327` and `docs/HANDOVER_CODEX.md:31-38`).
@@ -18,7 +18,7 @@ anchored to an existing `data/` id, and the seat inside it is `world-content-dev
 | Premise | What the files say |
 |---|---|
 | The faction is the Haven Compact | **True.** `ARC.md:74-82`, `FACTION.md:1-23`, `data/rift_regions.json:245-253`. |
-| It is "the evil faction" | **Not as the owner has defined it.** `data/rift_regions.json:253`: "the Haven Compact, which already exists and is **not evil** (owner, 2026-09-22). Do not invent a new one." `CAMPAIGN_OUTLINE.md:220` (relaying the owner): "Its people are heroes to themselves." `ARC.md` rules 3-5 (`:62-66`): the player understands the rescue purpose *before* opposing it, displaced families stay visible, and the moral line is crossed at the Craters, not earlier. **This pass designs to those rules.** Before the Craters, Compact battles come from secrecy, guarding families, or disagreement. After the Craters, the loyalists who carry on are the opponents. Question O1 asks the owner to confirm this. |
+| It is a villainous faction | **No (the owner, 2026-09-22, confirmed 2026-10-11: heroes to themselves, throughout).** `data/rift_regions.json:253`: "the Haven Compact, which already exists and is **not evil** (owner, 2026-09-22). Do not invent a new one." `CAMPAIGN_OUTLINE.md:220` (relaying the owner): "Its people are heroes to themselves." `ARC.md` rules 3-5 (`:62-66`): the player understands the rescue purpose *before* opposing it, displaced families stay visible, and the moral line is crossed at the Craters, not earlier. **This pass designs to those rules.** Before the Craters, Compact battles come from secrecy, guarding families, or disagreement. After the Craters, the loyalists who carry on are the opponents. O1 is answered: this is the design. |
 | There are Compact battles in the world | **Only after badge 8.** The HQ tower has seven fights (`data/hq_trainers.json`: six "Compact" names plus Relay Technician Sorrel) and the finale has two (Brann and Elara, `data/finale_trainers.json`). `data/route_trainers.json` (13 seats on Routes 1-3) and `data/late_route_trainers.json` (28 seats on Routes 4-8) have no Compact trainer (a grep for compact/haven/faction across both finds nothing). |
 
 ## 1. Where the Compact appears today
@@ -172,7 +172,7 @@ curve). The order runs along the critical path.
   sergeant**. She meets the player for the first time and leaves angry.
 - **Serves:** ARC Settlement 4, the first direct obstruction. Today it is MISSING (`CAMPAIGN_OUTLINE.md:88-90`).
   FACTION `gym3_town` (`:207`).
-- **Battle:** **a grunt gauntlet: three couriers back to back with no heal, then Varga.** The fun gimmick: the
+- **Battle:** **a courier gauntlet: three couriers back to back with no heal, then Varga.** The fun gimmick: the
   raiders came prepared for an Electric town. Couriers 1-3 each lead with a Ground type, so a player who brought only
   Electric types to beat Surge has to think. Couriers: 2 Pokémon each, band 26-28. **Varga (`compact_varga_1`):**
   Skorupi, Drilbur, Roggenrola and Zubat, 3-4 of them at 27-29.
@@ -292,7 +292,7 @@ curve). The order runs along the critical path.
 - **What:** The moral line, played rather than reported (Codex C1, X6). It happens in this order:
   1. Tomas confirms the target is occupied. If the player sided with the ranger at CP-05, he says so.
   2. Oren hands over the calibration record.
-  3. Elara is seen giving the order. **This is the player's first sight of the villain** (O5).
+  3. Elara is seen giving the order. **This is the player's first sight of Elara as the opponent** (O5).
   4. The player shuts three anchors. Each is guarded, and each shutdown is a clicked prop after its guard falls.
   5. A Field Commander fights at the console.
   The Asters are among the families who were waiting for this transfer, so stopping it leaves them stranded
@@ -388,9 +388,9 @@ CP-01 and CP-06, which make the Asters and the divide visible. Then the rest.
 
 ## 5. Questions for the owner
 
-1. **O1. "Evil faction".** By your 2026-09-22 rule the Compact is not evil. Do you confirm that the fights before the
-   Craters come from secrecy, guarding families and disagreement, and that only the loyalists after the line are open
-   opponents? Or do you want them harder-edged earlier? That would mean changing `ARC.md` rules 3 and 5.
+1. **O1. ANSWERED (the owner, 2026-10-11): the Compact is NOT evil; heroes to themselves, throughout.** The fights
+   before the Craters come from secrecy, guarding families and disagreement; the loyalists who carry on past the line
+   are opponents who still believe they are saving people. `ARC.md` rules 3-5 stand.
 2. **O2. Unavoidable fights on the critical path.** May a Compact battle stand on the only crossing (CP-11, the
    outflow bridge) or in the way through Highwire (CP-04)? The recommendation is that the guards step aside after one
    attempt, so no player is ever stuck.

@@ -205,7 +205,7 @@
       "why": "the Swords of Justice and their three paradox doubles (Iron Leaves = Virizion, Iron Boulder = Terrakion, Iron Crown = Cobalion), and Keldeo, the sword in the spring, from band 5 after them (the unhomed note's 'three guarded shrines and a prize'). Iron Leaves and Iron Boulder render today; Iron Crown needs the subset."
     },
     {
-      "id": "zero_dig", "name": "The Zero Dig", "status": "proposed (new)", "theme": "desert excavation (new)", "gate": "gym7_cleared (proposed)", "first_band": 4,
+      "id": "zero_dig", "name": "The Zero Dig", "status": "cut from the install (the owner, 2026-10-11: the built Zero Dig copied the Night Shift; re-author it as its own dungeon after the owner has played three of the new ones, or leave it cut; its built record and test are in git history before this commit); proposed (new)", "theme": "desert excavation (new)", "gate": "gym7_cleared (proposed)", "first_band": 4,
       "rip": "a desert: the eastern dunes or the Long Isle uplands (world-content-dev sites it on ground)",
       "legendary_pool_by_band": {
         "4": ["greattusk", "irontreads", "sandyshocks", "ironhands", "ironthorns"],

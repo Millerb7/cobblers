@@ -22,7 +22,7 @@ relayed from `docs/HANDOVER_CODEX.md:31-38` (2026-09-16). Leader ace levels are 
 | "Challenge mode skips most of the story" | **No mechanism in the repo does this.** Challenge is Full-Team trainer rules, chosen at Oak, and nothing else (`docs/mechanics/OAK_AND_CHALLENGE.md:32-60`). What actually makes the story skippable is the **badge carry**, which works the same in **both modes**. Each badge lifts the player's reveal stage (`data/progression.json:84-90` and the same block for every gym), and each teller's locked line accepts "the badge OR the previous teller's account" (review N8). So the story can already be skipped up to the HQ door, in both modes. Section 3 sets out the two readings of the owner's sentence (O1). |
 | `crater_operation_stopped` has no setter | **True.** The id appears only in documents and as `missing_story_flag` in `quests.json:772` (searched with grep). Nothing grants it. The Kyogre design depends on it (`docs/world-building/KYOGRE_CAVE.md:88`). |
 | A badgeless player can walk the tellers to the finale's door | **True as written** (N8, `docs/OVERNIGHT_REVIEW_2026-10-06.md:15`). Unit A3 is building the gate in parallel, and this outline assumes nothing about its shape. One fact matters here: the cradle itself is already badge-gated. The relic knock box needs all eight gym flags (`RIFT_FINALE_CHAIN.md:33`). The gap is the HQ, Nia, and the two fights before that point. |
-| The villain is original; Giovanni is gym 8 and a civil defender | **True** (`docs/STATE.md:167`; `ARC.md:138-142,155-156`). The villain is Director Elara Venn of the Haven Compact (`FACTION.md:33-39`). |
+| The antagonist is original; Giovanni is gym 8 and a civil defender | **True** (`docs/STATE.md:167`; `ARC.md:138-142,155-156`). The antagonist is Director Elara Venn of the Haven Compact (`FACTION.md:33-39`), a hero to herself (the owner, 2026-10-11). |
 
 ---
 
@@ -217,8 +217,8 @@ remembers Kanto (`ARC.md:133-136`).
 stable and its effects wider (`ARC.md:428-430`). The Deep is a city of rescued families, fuelled by the Rift
 (`DEEP_CITY.md:30-32`). Under it, beneath the relic area, Hoopa is held in a cradle (`FACTION.md:71-75`).
 
-**The Compact and the villain.** The Compact is not evil. Its people are heroes to themselves (the owner, relayed in
-`HANDOVER_CODEX.md:310-311`).
+**The Compact and its leader.** The Compact is not evil. Its people are heroes to themselves, throughout (the owner,
+relayed in `HANDOVER_CODEX.md:310-311`; confirmed 2026-10-11).
 - Director Elara Venn lost her own town to a delayed evacuation. She treats delay as abandonment, and at the Craters
   she crosses the line knowingly (`FACTION.md:33-39,104-116`).
 - Captain Brann Saye commands the guards, and stands down once the operation is over.
@@ -312,7 +312,7 @@ bosses that are not yet proven to swap (E7). Two things are worth doing either w
   - Elara's representative at Tilpey Cross;
   - Nia at Holdfast.
 
-  The player never meets the villain before the Deep.
+  The player never meets Elara before the Deep.
 - **C4.** Maren after Pallet: nine appearances are written (`ARC.md:103-114`) and none is built. Is Maren ever a
   battle? The vision asks for rivals (`GAME_VISION.md:43`).
 - **C5.** Correct `quests.json` upstream: the steward (X3), the cradle evidence record (X2), and the two missing

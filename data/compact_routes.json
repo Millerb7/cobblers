@@ -4,7 +4,7 @@
   "generated_by": "hand. tools/compact_routes.py turns it into data/compact_route_trainers.json, data/compact_route_npc_teams.json and the records spliced into data/dialogue.json, data/quests.json, data/progression.json and data/npc_seats.json (python tools/compact_routes.py write), and into build/datapacks/cobblers_compact_routes (build)",
   "design": "docs/story/HAVEN_COMPACT_PASS.md section 3. This file builds CP-01, 02, 03, 05, 06, 07, 08, 09, 10, 11 and 13. CP-04, CP-12 and CP-14 are unit CP-CORE's and are NOT here",
   "owner_questions_defaults": {
-    "O1": "Not decided. Built to the design's default: the Compact is not evil. Before the Craters the fights come from secrecy, guarding families and disagreement; Rule 3 and 5 of docs/story/ARC.md stand. (The owner's 2026-10-11 brief says 'evil faction'; data/rift_regions.json:253 records the owner's 2026-09-22 rule that it is not.)",
+    "O1": "DECIDED (the owner, 2026-10-11): the Compact is NOT evil; its people are heroes to themselves, throughout. Before the Craters the fights come from secrecy, guarding families and disagreement; Rules 3-5 of docs/story/ARC.md stand. This confirms the owner's 2026-09-22 rule (data/rift_regions.json).",
     "O2": "Not decided. Default: no Compact fighter stands ON the road. Every actor is seated off the walked line or the plaza's walking space, so the only crossing (CP-11) and the way through every town stay open and no player can be stuck. Declining a fight costs nothing",
     "O3": "Not decided. Default: every point here is optional (no main-quest transition, no badge gate).",
     "O4": "Not decided. Default: Lieutenant Varga is the recurring rival (compact_varga_2..4 here; _1 is CP-CORE's at CP-04; the HQ tower's hq_tower_trainer_07 is her last).",
