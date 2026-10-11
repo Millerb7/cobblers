@@ -499,8 +499,14 @@ def test_the_engine_prize_defaults_rise_with_band_and_keep_the_lower_cap():
 
 def test_the_vault_budget_is_the_runs_gathering_wage_by_band():
     # the numbers DUNGEON_ROOMS.md 1b states, from the live data (tools/economy_sim.py World, the dungeons' clocks)
-    # (the figures move with the shortest dungeon's clock: these are the pass-3 clocks')
-    assert DG.vault_budget(BASE) == {1: 347, 2: 792, 3: 846, 4: 882, 5: 1498, 6: 1611}
+    # (the figures move with the shortest dungeon's clock: these are the two-stage boss clocks', 2026-10-11)
+    # by hand, from the raw data: hours = the shortest rooms dungeon's clock / slack 1.25 / 3600, i.e. clock / 4500 s:
+    #   clocks 2340, 2460, 2400, 2640, 2940, 3120 s (the minimum over the three dungeons' clock_s_by_band, bands 1-6) -> hours
+    #   0.52, 0.54667, 0.53333, 0.58667, 0.65333, 0.69333; tier $/h (data/bank.json rate x price): early 620, deep 1350,
+    #   nether 2120; the tier open at the band's lowest cap's badge count (cap 20+5k, 60 at 8): 0, 2, 4, 6, 8, 8 badges
+    #   -> early, deep, deep, deep, nether (gate gym8), nether. floor(620*.52)=322, 1350*.54667=738, 1350*.53333=720,
+    #   1350*.58667=792, 2120*.65333=1385, 2120*.69333=1469.
+    assert DG.vault_budget(BASE) == {1: 322, 2: 738, 3: 720, 4: 792, 5: 1385, 6: 1469}
 
 
 def test_the_budget_is_enforced_and_every_authored_vault_is_inside_it_and_a_dearer_chest_is_refused():

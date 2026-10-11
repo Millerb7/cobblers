@@ -209,8 +209,8 @@ like any route. Every fork keeps at least one route that is not optional.
 **The vault budget** (`data/dungeon_greed.json` `vault_budget`): a vault chest's expected value (GREED's `chest_cp`)
 at band b is at most `dollar_factor` x the gathering tier open at the band's lowest badge count x the shortest dungeon's
 required hours, divided by the vault's chests: a vault never pays more than the same run's time spent gathering, the
-limit RESOURCES2 set for a resources room. With the kit's four chests and the pass-3 clocks: **band 1 86 cp, 2 198, 3 211, 4 220, 5 374, 6 402
-(0.9 to 4.0 points) a chest; a whole vault 347, 792, 846, 882, 1,498, 1,611 (floored).** The figures move with the shortest
+limit RESOURCES2 set for a resources room. With the kit's four chests and the two-stage-boss clocks (2026-10-11): **band 1 80 cp, 2 184, 3 180, 4 198, 5 346, 6 367
+(0.8 to 3.7 points) a chest; a whole vault 322, 738, 720, 792, 1,385, 1,469 (floored).** The figures move with the shortest
 dungeon's clock. Enforced by `problems()` (`vault_budget.enforce` true since DG3-INTEGRATE: the pass-3 authors rebalanced
 every vault, and `python tools/dungeon_greed.py` names no chest over; the pass-2 vaults were 7 to 150 points a chest).
 

@@ -13,7 +13,7 @@
       {"id": "bank", "kind": "bank_vault", "length": 40, "width": 23, "height": 9, "align": "north", "params": {
         "clue_rooms": ["d1", "d2"], "digits": 4, "chests": 4, "penalty_s": 20, "max_tries": 5, "clock_cost_s": 20,
         "loot_by_band": {"1": [{"item": "minecraft:iron_ingot", "count": [2, 3]}], "3": [{"item": "minecraft:gold_ingot", "count": 2}],
-                         "5": [{"item": "minecraft:diamond", "count": 1}]}}}
+                         "5": [{"item": "minecraft:gold_ingot", "count": 3}]}}}
     ]},
     {"id": "d9", "kind": "drift", "length": 30, "width": 11, "height": 8, "align": "south"},
     {"id": "arena", "kind": "boss_arena", "length": 36, "width": 17, "height": 9, "align": "south"},
