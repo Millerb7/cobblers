@@ -291,6 +291,12 @@ def stand_problems(doc, room):
         for b in DG.bands(doc):
             team = tb.get(str(b["band"]))
             want = s["members_by_band"][str(b["band"])]
+            # a trainer may be eased below the band's size by a declared, explained number (the owner, 2026-10-10: tuned
+            # by tools/dungeon_sim.py to a 60-90% win at the band's lower cap); never more than 2 under, never under 2
+            eased = int((t.get("members_eased_by_band") or {}).get(str(b["band"]), 0))
+            if eased and (not t.get("members_eased_why") or not 1 <= eased <= 2 or want - eased < 2):
+                bad.append("%s band %d: members_eased_by_band needs a members_eased_why, 1-2 under and at least 2 members" % (who, b["band"]))
+            want -= eased
             if not team:
                 bad.append("%s: no team for band %d" % (who, b["band"]))
             elif len(team) != want:

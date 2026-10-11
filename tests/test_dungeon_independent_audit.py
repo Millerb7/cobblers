@@ -260,6 +260,48 @@ def test_a_lever_target_the_controls_cannot_set_is_unsolvable(monkeypatch, ns_ba
     assert ("PUZZLE", "winding_house") in new, new
 
 
+# BOSS2 (2026-10-10): the boss is two stages with a full heal between them. The audit's expectation is the RECORD's
+# (boss.heal_between_stages and the band's crew count), never the generated function's text; these mutate the
+# GENERATOR (tools/dungeon.py functions), leaving data/dungeons.json alone.
+def test_a_boss_chain_that_never_heals_between_its_stages_is_named(monkeypatch, ns_baseline):
+    doc, base = ns_baseline
+    orig = D.functions
+
+    def no_heal(*a, **k):
+        out = orig(*a, **k)
+        return {n: [ln for ln in v if "healpokemon" not in ln] if n.endswith("/next") else v for n, v in out.items()}
+    monkeypatch.setattr(D, "functions", no_heal)
+    new = keys(mutated(monkeypatch, doc)) - base
+    assert ("BOSS", "-") in new, new
+
+
+def test_a_boss_chain_that_heals_after_the_last_stage_too_is_named(monkeypatch, ns_baseline):
+    doc, base = ns_baseline
+    orig = D.functions
+
+    def heal_always(*a, **k):
+        out = orig(*a, **k)
+        return {n: [ln.split(" matches ")[0] + " matches ..99 run healpokemon @s" if "healpokemon" in ln else ln for ln in v]
+                if n.endswith("/next") else v for n, v in out.items()}
+    monkeypatch.setattr(D, "functions", heal_always)
+    new = keys(mutated(monkeypatch, doc)) - base
+    assert ("BOSS", "-") in new, new
+
+
+def test_a_boss_chain_with_an_extra_stage_is_named(monkeypatch, ns_baseline):
+    # the chain's stage count is the record's crews per band: a generator that runs one more is caught by the battle count
+    doc, base = ns_baseline
+    orig = D.functions
+
+    def one_more(*a, **k):
+        out = orig(*a, **k)
+        return {n: [ln.replace("matches ..2 run", "matches ..3 run").replace("matches 3.. run function", "matches 4.. run function")
+                    for ln in v] if n.endswith(("/next", "/boss")) else v for n, v in out.items()}
+    monkeypatch.setattr(D, "functions", one_more)
+    new = keys(mutated(monkeypatch, doc)) - base
+    assert any(cat in ("BOSS", "RUN", "SOFTLOCK") for cat, _room in new), new
+
+
 # ------------------------------------------------------------------------------------------------- the real dungeons
 @pytest.fixture(scope="module")
 def real():

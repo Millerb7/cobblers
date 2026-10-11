@@ -46,8 +46,8 @@ MOLANG = "data/cobblemon/callbacks/battle_victory/"
 BEGIN, SETTLE = "cobblers:dungeons/claw/begin", "cobblers:dungeons/claw/settle"
 
 # ---- the Foreman's crews and the hand arithmetic -------------------------------------------------------------------
-# Band 1 (base 20): the first stage's crew, ace Electabuzz at 18, the others at 17. Written out by hand.
-B1_S1_LEVELS = [17, 17, 18]
+# Band 1 (base 20): the first stage's crew (four since 2026-10-10: the last two stages of the first draft's three), ace Electabuzz at 19, the others at 18. Written out by hand.
+B1_S1_LEVELS = [18, 18, 18, 19]
 
 
 def hand_bounds(levels):
@@ -57,7 +57,7 @@ def hand_bounds(levels):
 
 
 def test_the_hand_bounds_of_the_first_stage():
-    assert hand_bounds(B1_S1_LEVELS) == (1012, 506)             # S = 52, B = 270
+    assert hand_bounds(B1_S1_LEVELS) == (1995, 997)             # S = 73, B = 532: 3B*5/4 = 1995, (B + B//2)*5/4 = 997
 
 
 # ---- the built pack, with a fixture stand merged in ----------------------------------------------------------------
@@ -256,7 +256,7 @@ def test_the_boss_classes_are_boss_teams_by_hand(built):
             assert cls["party"]["pokemon"][-1].endswith("level=%d" % (base + off))        # the ace last, at the stage
             assert len(crew) <= 6
             seen += 1
-    assert seen == 18
+    assert seen == 6 * len(bo["stage_level_offsets"])       # 6 bands x 2 stages (the owner, 2026-10-10)
 
 
 def test_a_boss_crew_is_never_above_the_bands_lower_cap(built):
@@ -289,7 +289,7 @@ def test_every_bound_is_the_hand_bound_of_its_party(built_with_stand):
         assert hi == want_hi, rel                        # the most is exact
         assert 0 < lo <= want_lo and lo >= want_lo * 0.99, (rel, lo, want_lo)   # the least is never above the true least
         n += 1
-    # each dungeon's boss: 6 bands x 3 stages; 6 bands for every trainer of every stand and gauntlet room the data
+    # each dungeon's boss: 6 bands x its stages (two since 2026-10-10, read from the record); 6 bands for every trainer of every stand and gauntlet room the data
     # carries (DG-INTEGRATE: the three full-length dungeons seat 15); the test stand's 6. Since pass 2 a stand may sit in a
     # fork's route or a side room or wing (DUNGEON_ROOMS.md 1a), so every record counts, not only the top-level ones
     def records(rooms):
@@ -304,10 +304,32 @@ def test_every_bound_is_the_hand_bound_of_its_party(built_with_stand):
     trainers = sum(len(r["params"]["trainers"]) for d in DOC["dungeons"] for r in records(d.get("rooms"))
                    if r["kind"] in ("stand", "gauntlet"))
     assert trainers > 0
-    assert n == 18 * len(DOC["dungeons"]) + 6 * trainers + 6
+    assert n == 6 * sum(len(d["boss"]["stage_level_offsets"]) for d in DOC["dungeons"]) + 6 * trainers + 6
 
 
 # ---- the stands' classes -------------------------------------------------------------------------------------------
+
+
+def test_a_trainer_may_stand_one_or_two_under_the_band_only_with_a_reason_and_never_under_two():
+    # the 2026-10-10 tuning (members_eased_by_band): the rule is the design's size less a declared easing, and the
+    # easing is explained, 1-2 members, and leaves at least two (hand arithmetic: band 4 is 4 members, band 2 is 3)
+    import copy
+    base = copy.deepcopy(ROOM)
+    assert DF.stand_problems(DOC, base) == []
+    t = base["params"]["trainers"][0]
+    t["team_by_band"]["4"] = ["raticate", "pidgeotto", "geodude"]                      # 3 where the band wants 4
+    assert any("band 4: 3 members" in b for b in DF.stand_problems(DOC, base)), "unexplained, it is refused"
+    t["members_eased_by_band"] = {"4": 1}
+    assert any("members_eased_why" in b for b in DF.stand_problems(DOC, base)), "eased with no reason is refused"
+    t["members_eased_why"] = "tuned"
+    assert DF.stand_problems(DOC, base) == []
+    t["team_by_band"]["4"] = ["raticate", "pidgeotto"]
+    assert DF.stand_problems(DOC, base), "two members at band 4 eased by only 1 is refused: 4 - 1 = 3"
+    t["members_eased_by_band"] = {"4": 2}
+    assert DF.stand_problems(DOC, base) == []                                           # 4 - 2 = 2, the least a stand can be
+    t["members_eased_by_band"] = {"4": 2, "2": 2}                                       # band 2: 3 - 2 = 1, under two
+    t["team_by_band"]["2"] = ["raticate"]
+    assert any("band 2" in b and "members_eased_by_band" in b for b in DF.stand_problems(DOC, base)), "never under two members"
 
 
 def test_stand_levels_follow_the_designs_members_and_levels():
@@ -386,7 +408,7 @@ def win(w, p, npc):
 
 
 @pytest.mark.parametrize("order", ["cobbledollars_first", "callback_first"])
-@pytest.mark.parametrize("credit", [506, 800, 1012])
+@pytest.mark.parametrize("credit", [997, 1500, 1995])
 def test_a_boss_win_pays_nothing_net_in_either_handler_order(pack_dir, order, credit):
     w, p, npc = boss_fight(pack_dir)
     w.tick(1)                                          # the tick function re-reads the baseline
@@ -407,7 +429,7 @@ def test_money_moved_in_battle_is_not_taken(pack_dir):
     w.tick(1)
     w.money[p.holder] -= 150                           # spent between ticks, mid-battle
     w.tick(1)                                          # the next tick's baseline includes it
-    w.money[p.holder] += 800
+    w.money[p.holder] += 1500                          # inside the stage's 997-1,995 range
     win(w, p, npc)
     assert w.money[p.holder] == 850                    # 1000 - 150: the payout alone went back
 
@@ -415,9 +437,9 @@ def test_money_moved_in_battle_is_not_taken(pack_dir):
 def test_the_take_is_bounded_by_the_most_the_class_can_pay(pack_dir):
     w, p, npc = boss_fight(pack_dir)
     w.tick(1)
-    w.money[p.holder] += 1012 + 5000                   # the payout at its maximum and a gift in the same window
+    w.money[p.holder] += 1995 + 5000                   # the payout at its maximum and a gift in the same window
     win(w, p, npc)
-    assert w.money[p.holder] == 1000 + 5000            # exactly the 1,012 hand maximum went back, no more
+    assert w.money[p.holder] == 1000 + 5000            # exactly the 1,995 hand maximum went back, no more
 
 
 def test_a_player_who_cannot_pay_it_back_loses_no_more_than_they_hold(pack_dir):

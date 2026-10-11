@@ -472,6 +472,8 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
         bo = d["boss"]
         if len(bo["stage_level_offsets"]) < 1:
             bad.append("%s: the boss has no stage" % d["id"])
+        if bo.get("heal_between_stages") and not bo.get("heal_cue"):
+            bad.append("%s: heal_between_stages needs a heal_cue" % d["id"])
         for b in bands(doc):
             lvl = min(b["caps"]) + max(bo["stage_level_offsets"])
             if lvl > min(b["caps"]):
@@ -1583,6 +1585,16 @@ def functions(doc, blackout=None):
         for st in range(2, nstages + 1):
             nxt.append("execute if score @s %s matches %d run title @s subtitle %s"
                        % (O["stage"], st, text("%s of %s" % (roman[st - 1], roman[nstages - 1]), "gray")))
+        if d["boss"].get("heal_between_stages"):
+            # the owner, 2026-10-10: two stages WITH a full heal between them. The safe room's own command
+            # (tools/dungeon_fights.py kind_safe_healer: `healpokemon @s`, run as the member out of battle: this function
+            # is queued by runmolang on in_battle == 0), only while another stage follows. Same assumption as the bell's:
+            # /healpokemon heals the whole party in the pocket (SP1); the revive of a fainted one is unproven.
+            nxt += ["execute if score @s %s matches ..%d run healpokemon @s" % (O["stage"], nstages),
+                    "execute if score @s %s matches ..%d run title @s actionbar %s"
+                    % (O["stage"], nstages, text(d["boss"]["heal_cue"], "green")),
+                    "execute if score @s %s matches ..%d run particle minecraft:happy_villager ~ ~1 ~ 0.5 0.5 0.5 0.1 14"
+                    % (O["stage"], nstages)]
         nxt += ["execute if score @s %s matches ..%d run playsound minecraft:entity.warden.emerge master @s ~ ~ ~ 1 0.8"
                 % (O["stage"], nstages),
                 "execute if score @s %s matches ..%d run scoreboard players set @s %s %d"

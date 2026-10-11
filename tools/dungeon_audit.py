@@ -623,7 +623,7 @@ def main(argv=None):
         shorts = sorted({m.group(1) for rel in dg for m in [re.match(r"data/[^/]+/npcs/dg_(\w+?)_boss_b\d+_s\d+\.json$", rel)] if m})
         for short in shorts:
             for band, (lo, hi) in (boss_payouts(dg, short=short) or {}).items():
-                print("payout  %s band %d: the three boss stages credit $%d-$%d a run (clawed back: engine.clawback)" % (short, band, lo, hi))
+                print("payout  %s band %d: the boss stages credit $%d-$%d a run (clawed back: engine.clawback)" % (short, band, lo, hi))
     print("dungeon_audit: %d problem(s)" % n)
     return 1 if n else 0
 

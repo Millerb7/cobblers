@@ -159,9 +159,9 @@ def test_recoil_and_drain_apply_to_the_user(pack):
     assert b.hp_now == pytest.approx(50.0 + 40.0)                         # half the 80 dealt
 
 
-# removing this lets a boss's second stage start from a healed team, which is the design's opposite (DUNGEONS.md 3.2); and
-# lets a heal event do nothing
-def test_no_heal_between_a_bosss_stages_and_a_heal_event_restores(pack, monkeypatch):
+# removing this lets a fight start from a healed team although no heal event stands before it, and lets a heal event do
+# nothing (the boss chain's own heal is such an event: test_what_ifs_change_only_what_they_name_and_leave_the_input_alone)
+def test_health_carries_between_fights_unless_a_heal_event_stands_between_and_a_heal_event_restores(pack, monkeypatch):
     team = [DS.make_player(pack, "machamp", 30, None, "tm", 2), DS.make_player(pack, "gengar", 30, None, "tm", 2)]
     seen = []
     real = DS.run_battle
@@ -178,7 +178,7 @@ def test_no_heal_between_a_bosss_stages_and_a_heal_event_restores(pack, monkeypa
               DS.event("fight", "after", "x", [("rattata", 10)], "stand")]
     out = DS.run_sequence(team, events, DS.Ctx(pack, None), "smart")
     assert len(seen) == 3 or not out["cleared"]
-    # stage 2 began with exactly the health stage 1 left: nothing healed in the 60-tick gap
+    # stage 2 began with exactly the health stage 1 left: no heal event stood between them in THIS sequence
     assert seen[1][0] == pytest.approx(seen[0][1])
     assert seen[0][0] == sum(m.hp for m in team)
     if len(seen) == 3:
@@ -232,7 +232,7 @@ def test_boss_events_match_the_authored_crews(doc):
         bo = d["boss"]
         for b in doc["engine"]["bands"]:
             ev = [e for e in DS.dungeon_paths(doc, d, b["band"])["paths"][0][1] if e["category"] == "boss"]
-            assert len(ev) == len(bo["stage_level_offsets"]) == 3
+            assert len(ev) == len(bo["stage_level_offsets"]) == 2     # two stages (the owner, 2026-10-10)
             for k, e in enumerate(ev):
                 crew = bo["teams"][str(b["band"])][k]
                 assert [s for s, _l in e["foes"]] == crew
@@ -240,6 +240,18 @@ def test_boss_events_match_the_authored_crews(doc):
                 assert e["foes"][-1][1] == ace
                 assert all(l == ace + bo["member_level_offset"] for _s, l in e["foes"][:-1])
                 assert ace <= max(b["caps"])
+
+
+def _trainers(node):
+    """Every trainer record (a dict with a team_by_band) anywhere under a dungeon record."""
+    if isinstance(node, dict):
+        if "team_by_band" in node:
+            yield node
+        for v in node.values():
+            yield from _trainers(v)
+    elif isinstance(node, list):
+        for v in node:
+            yield from _trainers(v)
 
 
 # removing this lets a stand seat the wrong number of members or a level above the cap it is built against
@@ -252,7 +264,11 @@ def test_stand_events_have_the_band_sizes_and_stay_under_the_cap(doc):
                 for e in seq:
                     if e["category"] not in ("stand", "gauntlet"):
                         continue
-                    assert len(e["foes"]) == st["members_by_band"][str(b["band"])], (d["id"], b["band"], e["label"])
+                    # the band's size less the trainer's declared easing (members_eased_by_band, the 2026-10-10 tuning)
+                    name = e["label"].split(": ", 1)[1]
+                    eased = max(int((t.get("members_eased_by_band") or {}).get(str(b["band"]), 0)) for t in _trainers(d)
+                                if t["name"] == name)
+                    assert len(e["foes"]) == st["members_by_band"][str(b["band"])] - eased, (d["id"], b["band"], e["label"])
                     lv = [l for _s, l in e["foes"]]
                     assert lv == sorted(lv)
                     if b["band"] == 6:
@@ -290,15 +306,19 @@ def test_the_prize_is_a_rare_below_the_beast_ball_band_and_a_legendary_from_it(d
                 assert e["legendary"] == (b["band"] >= start)
 
 
-# removing this lets a heal event go missing: the safe room is the run's only heal, and the sim must take it once
+# removing this lets a heal event go missing: the safe room's heal and the boss chain's (one between the stages) are the run's heals
 def test_every_dungeon_path_passes_one_heal_before_the_boss(doc):
     for d in doc["dungeons"]:
         homes = [it["rec"] for it in R.flatten(d) if it["rec"]["kind"] == "safe_room" and (it["rec"].get("params") or {}).get("healer")]
         for label, seq in DS.dungeon_paths(doc, d, 1)["paths"]:
             heals = [i for i, e in enumerate(seq) if e["kind"] == "heal"]
             boss = [i for i, e in enumerate(seq) if e["category"] == "boss"]
-            assert len(heals) == len(homes) >= 1
-            assert max(heals) < min(boss)
+            # the safe room's heal comes before the boss; the boss chain's own heal (one between each pair of stages,
+            # from the record's heal_between_stages) is the only heal after it
+            chain = len(boss) - 1 if d["boss"].get("heal_between_stages") else 0
+            assert len(heals) == len(homes) + chain and len(homes) >= 1
+            assert sorted(heals)[:len(homes)] == [i for i in heals if i < min(boss)] and len([i for i in heals if i < min(boss)]) == len(homes)
+            assert all(min(boss) < i < max(boss) for i in heals if i > min(boss))
             assert seq[-1]["category"] == "boss"
 
 
@@ -431,12 +451,19 @@ def test_what_ifs_change_only_what_they_name_and_leave_the_input_alone(doc):
     assert [e["foes"][-1] for e in cut] == [e["foes"][-1] for e in boss]            # the ace stays
     low = [e for e in DS.WHATIFS["boss -2 levels"](seq) if e["category"] == "boss"]
     assert [[l for _s, l in e["foes"]] for e in low] == [[l - 2 for _s, l in e["foes"]] for e in boss]
+    # the record heals between the two stages already (boss.heal_between_stages): the what-if adds none, and the
+    # base sequence has exactly one heal between the stages and none right before the first or after the last
+    assert d["boss"]["heal_between_stages"] is True
+    bidx = [i for i, e in enumerate(seq) if e["category"] == "boss"]
+    assert len(bidx) == 2 and seq[bidx[1] - 1]["kind"] == "heal" and seq[bidx[0] - 1]["kind"] != "heal"
+    assert bidx[1] == bidx[0] + 2 and seq[-1]["category"] == "boss"
     healed = DS.WHATIFS["heal between boss stages"](seq)
-    idx = [i for i, e in enumerate(healed) if e["kind"] == "heal"]
-    base_heals = [i for i, e in enumerate(seq) if e["kind"] == "heal"]
-    assert len(idx) == len(base_heals) + 2
-    stages = [i for i, e in enumerate(healed) if e["category"] == "boss"]
-    assert healed[stages[1] - 1]["kind"] == "heal" and healed[stages[2] - 1]["kind"] == "heal"
+    assert [e["kind"] for e in healed] == [e["kind"] for e in seq], "a heal already stands before stage 2"
+    # without the record's heal the what-if inserts one before stage 2 only
+    bare = [e for i, e in enumerate(seq) if i != bidx[1] - 1]
+    again = DS.WHATIFS["heal between boss stages"](bare)
+    stages = [i for i, e in enumerate(again) if e["category"] == "boss"]
+    assert len(again) == len(bare) + 1 and again[stages[1] - 1]["kind"] == "heal"
     assert healed[stages[0] - 1]["kind"] != "heal"
     stands = [e for e in DS.WHATIFS["stands -1 member"](seq) if e["category"] in ("stand", "gauntlet")]
     assert all(len(a["foes"]) == len(b["foes"]) - 1 for a, b in zip(stands, [e for e in seq if e["category"] in ("stand", "gauntlet")]))

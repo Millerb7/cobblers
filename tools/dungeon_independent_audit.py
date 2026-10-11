@@ -459,6 +459,7 @@ class Sim:
         self.scheduled = []
         self.calls = collections.Counter()
         self.unknown = collections.Counter()
+        self.healed = 0          # `healpokemon` runs (BOSS2: the boss chain heals the party between its two stages)
         self.events = []            # ("battle", npc) ("spawn_npc", ent) ("spawn_pkmn", ent) ("refused", npc)
         self.in_battle = False
         self.no_wild_spawn = False
@@ -755,6 +756,9 @@ class Sim:
         if head in ("title", "tellraw", "playsound", "particle", "effect", "give", "clear", "gamemode", "bossbar",
                     "forceload", "advancement", "ride", "item", "attribute", "say", "stopsound", "recipe", "xp",
                     "spawnpoint", "damage", "loot", "trigger", "gamerule"):
+            return 1
+        if head == "healpokemon":
+            self.healed += 1
             return 1
         self.unknown[head] += 1
         return 1
@@ -1715,6 +1719,8 @@ class Run:
                 self.claw_open = False
                 self.F.stats[self.s.dungeon]["battles"] += 1
                 if "dg.boss" in npc.tags:
+                    if self.boss_battles == 0:
+                        self.heal_mark = sim.healed
                     self.boss_battles += 1
                 if self.mode == "forfeit" and npc.meta.get("cls") not in self.forfeited:
                     self.forfeited.add(npc.meta.get("cls"))
@@ -1835,6 +1841,13 @@ class Run:
         if self.mode == "win" and stages and self.boss_battles != stages:
             self.say("BOSS", None, None, "the boss was fought %d times; the record's band has %d stages"
                      % (self.boss_battles, stages))
+        if self.mode == "win" and stages and self.boss_battles == stages:
+            # the heal between the stages comes from the RECORD (boss.heal_between_stages), never from the function text:
+            # one full heal between each pair of stages, none before the first and none after the last (the exit opens)
+            want = stages - 1 if (s.rec.get("boss") or {}).get("heal_between_stages") else 0
+            if sim.healed - self.heal_mark != want:
+                self.say("BOSS", None, None, "the boss chain healed the party %d times across its %d stages; the record wants %d"
+                         % (sim.healed - self.heal_mark, stages, want))
         sim.call(FN + "far", Ctx(ex=sim.player, pos=sim.player.pos))
         self.F.stats[s.dungeon]["runs_finished"] += 1
         return True

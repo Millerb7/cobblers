@@ -449,9 +449,11 @@ threshold's clocks with this table or 4.2's):
 
 | Dungeon | Walked | Band 1 | Band 2 | Band 3 | Band 4 | Band 5 | Band 6 |
 |---|---|---|---|---|---|---|---|
-| night_shift | 1,243 main + 410 on the paid fork routes (2,208 all routes, the wing included) | **43** | **46** | **47** | **50** | **53** | **57** |
-| jungle | 1,929 all routes, wing and side room included (1,180 main, the slower way of each fork; pass 3, DG3-JUNGLE) | **42** | **47** | **47** | **52** | **55** | **59** |
-| flooded_ruin | 1,950 all routes and the wing (1,045 main; 1,290-1,499 paid at band 1) | **42** | **44** | **47** | **49** | **54** | **57** |
+| night_shift | 1,243 main + 410 on the paid fork routes (2,208 all routes, the wing included) | **40** | **42** | **42** | **44** | **49** | **52** |
+| jungle | 1,929 all routes, wing and side room included (1,180 main, the slower way of each fork; pass 3, DG3-JUNGLE) | **39** | **42** | **40** | **44** | **51** | **54** |
+| flooded_ruin | 1,950 all routes and the wing (1,045 main; 1,290-1,499 paid at band 1) | **39** | **41** | **44** | **45** | **49** | **52** |
+
+BOSS2 (2026-10-10): the boss is two stages and the stands of the tuned bands are a member or two smaller (sections `DUNGEONS.md` 3.2; `members_eased_by_band`), so every clock was re-derived with `tools/dungeon_clock.py` and the table above is the new one: every band is under an hour (the longest, the jungle's band 6, is 54 minutes), where the three-stage table ran to 59. Each is the tool's required time plus the set piece's 25 s, x 1.25, up to the minute (the tests pin the formula). The boss row of the part table now counts two stages and one gap.
 
 DG3-INTEGRATE (2026-10-10): the parkour planner's safe-way fix (section 1b) moved the walks a little: all routes in slot 1
 now 2,212 (the Night Shift), 1,919 (the jungle) and 1,948 (the ruin), by `tools/dungeon_clock.py` as the independent

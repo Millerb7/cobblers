@@ -606,6 +606,14 @@ class World:
                 v = self.random.randint(lo, hi)
             self.random_log.append((lo, hi, v))
             return v
+        if h == "healpokemon" and len(t) == 2:
+            # Cobblemon's /healpokemon <player>: the party healed. Modelled as a log only (BOSS2: the boss chain's heal
+            # between stages; the safe room's bell uses the same command)
+            if not hasattr(self, "healed"):
+                self.healed = []
+            es = self.select(t[1], ctx)
+            self.healed.extend(e.name for e in es)
+            return len(es)
         if h == "cobbledollars":
             # CobbleDollarsCommand: query <target> returns the balance; give|remove <targets> <amount>, amount >= 1,
             # remove takes min(amount, balance)

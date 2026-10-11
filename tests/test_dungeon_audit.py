@@ -345,7 +345,7 @@ def test_every_npc_an_engine_spawn_makes_carries_the_exempt_tag_when_the_spawn_r
         return
     fixed = re.search(r"/spawn_b([1-6])$", site)
     bands = [int(fixed.group(1))] if fixed else range(1, 7)
-    stages = (1, 2, 3) if kind == "boss" else (1,)
+    stages = tuple(range(1, 1 + min(len(d["boss"]["stage_level_offsets"]) for d in json.loads((Path(__file__).resolve().parent.parent / "data" / "dungeons.json").read_text(encoding="utf-8"))["dungeons"]))) if kind == "boss" else (1,)
     # the macro spawn lines this site makes for a band: the boss's per band and stage, a trainer's one per band, a
     # wild room's band function every line
     lines = [l for l in DA.body(FNS[site]) if re.search(r"function cobblers:dungeons/(npc_at|wild_at) \{", l)]

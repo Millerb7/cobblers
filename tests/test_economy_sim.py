@@ -99,18 +99,22 @@ def test_boss_payout_per_run_matches_hand_arithmetic(world, docs):
         assert (sum(g[0] for g in got), sum(g[1] for g in got)) == (lo, hi), band
 
 
-# The Foreman's crews (data/dungeons.json boss.teams, 2026-10-09), their levels written out BY HAND from the data's
-# rule (the ace at the stage's level, base + offset with base the band's lower cap and offsets -2/-1/0; every other
-# member one level under it): band 1 (base 20) crews of 3/4/5, band 3 (base 40) of 4/4/6, band 6 (base 100) of 6/6/6.
+# The Foreman's crews (data/dungeons.json boss.teams, two stages since 2026-10-10: the LAST two of the first draft's
+# three), their levels written out BY HAND from the data's rule (the ace at the stage's level, base + offset with base
+# the band's lower cap and offsets -1/0; every other member one level under it): band 1 (base 20) crews of 4/5, band 3
+# (base 40) of 4/6, band 6 (base 100) of 6/6.
 # The pinned figures are this arithmetic, never a call into the code under test (CobbleDollars' battleVictory,
 # paid-services-and-npc-payouts.md B2): B = S*S // 10 for S the party's level sum, credit between (B + B//2) * 1.25 and
 # 3 * B * 1.25, both floored; the multiplier 1.25 is written as 5/4 so the integer arithmetic is exact.
+# By hand: band 1 sums 73 and 96 (B 532 and 921): lows 997 + 1726, highs 1995 + 3453. Band 3 sums 153 and 235 (B 2340
+# and 5522): lows 4387 + 10353, highs 8775 + 20707. Band 6 sums 589 and 595 (B 34692 and 35402): lows 65047 + 66378,
+# highs 130095 + 132757.
 HAND_CREWS = {
-    1: [[17, 17, 18], [18, 18, 18, 19], [19, 19, 19, 19, 20]],
-    3: [[37, 37, 37, 38], [38, 38, 38, 39], [39, 39, 39, 39, 39, 40]],
-    6: [[97, 97, 97, 97, 97, 98], [98, 98, 98, 98, 98, 99], [99, 99, 99, 99, 99, 100]],
+    1: [[18, 18, 18, 19], [19, 19, 19, 19, 20]],
+    3: [[38, 38, 38, 39], [39, 39, 39, 39, 39, 40]],
+    6: [[98, 98, 98, 98, 98, 99], [99, 99, 99, 99, 99, 100]],
 }
-HAND_RANGES = {1: (3229, 6460), 3: (18902, 37807), 6: (195152, 390307)}
+HAND_RANGES = {1: (2723, 5448), 3: (14740, 29482), 6: (131425, 262852)}
 
 
 def test_the_published_band_ranges(world):

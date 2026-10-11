@@ -389,6 +389,10 @@ keeper pass. It fires when their own clock is at or below 0 after the gap, or wh
 
 ### 3.2 The staged boss (D2)
 
+**Since 2026-10-10 the boss is TWO stages with a full heal between them** (the owner, after `tools/dungeon_sim.py` showed the three-stage chain with no heal was the wall: 'just two stages', then 'two stages with a full heal'). The stage count is `len(boss.stage_level_offsets)` in `data/dungeons.json` and every tool follows it; the text below was written for three and reads for N ("stage 3" is the last stage). The stages are the LAST two of the first draft's three: offsets -1 and 0, the two biggest crews. The heal is `healpokemon @s` run as the member by the chain's `slot/s<g>/next` after each stage but the last (the safe room's own command, tools/dungeon_fights.py; the record's `heal_between_stages` and `heal_cue`); the gap is still 60 ticks. ASSUMED, as the safe room's: `/healpokemon` heals the whole party in the pocket and revives the fainted (SP1, unproven in game). The simulator reads the same flag and puts a heal event between the stages.
+
+**Tuned to the simulator, 2026-10-10 (the owner: a 60-90% win at the band's lower cap, bands 1-4).** `python tools/dungeon_sim.py --no-clock --seed 7`, win at the lower cap, bands 1/2/3/4: the Night Shift 68/58/57/13 -> 68/69/68/63, the jungle 52/38/33/23 -> 67/65/65/68, the flooded ruin 100/82/92/64 -> 78/82/86/64 (before = two stages with the heal, as first built). The ruin went HARDER (a sixth member and stronger species in its band-1 second crew, a fifth member and Cofagrigus/Golurk in band 3); the other two went easier before the boss (the Night Shift's Shotfirer, Timberman and Butty, one member under; the jungle's Brask, Orrin and the two Wardens a member or two under and lesser aces) and, where that was not enough, one boss crew a member shorter (Night Shift band 4 stage 1; jungle band 3 both stages). Every change and its numbers are in the record: `boss.tuning` and each trainer's `members_eased_by_band` / `members_eased_why` (a trainer may stand 1-2 members under the band's size, never under 2, tools/dungeon_fights.py). One seed moves a cell by up to about 15 points (seed 3 put the Night Shift's band 3 at 51 and the ruin's band 2 at 98). **Bands 5 and 6 are UNTUNED**: the simulator only has Pokemon up to gym 8, so its numbers there are guesses (seed 7 at the lower cap: Night Shift 11/0, jungle 40/23, ruin 47/38).
+
 - **Mechanism: chained battles** (DM 3.2 b).
   1. On entering the boss arena, stage 1's NPC class is spawned (macro `spawnnpcat`) and the battle started, as a
      stand's is.
@@ -396,7 +400,7 @@ keeper pass. It fires when their own clock is at or below 0 after the gap, or wh
   3. On the next keeper pass with `in_battle` at 0, the keeper kills the stage NPC and plays the cue: title "He gets up
      again.", particles and a sound.
   4. After 60 ticks it spawns stage k+1's class at the same spot and starts the next battle.
-  5. After the last stage the exit gate opens and the boss's escrow flag is set.
+  5. After the last stage the exit gate opens and the boss's escrow flag is set. (Between 3 and 4, from 2026-10-10: the party is healed in full.)
 - **A loss at any stage** is a stand loss (3.1): the death rule (2.5), and every stage NPC carries the exempt tag.
 - **The chain is unproven.** No fight has ever started from a victory's follow-up (F3). Probe C1 runs this exact chain
   three times before the boss is built.
@@ -406,11 +410,10 @@ keeper pass. It fires when their own clock is at or below 0 after the gap, or wh
   a different moveset and held item. From band 4, stage 3 brings one escort. The boss is "beat it, it heals, it
   returns a level higher with a different moveset", and never above the band's cap (the arena rule,
   `tools/arena_runtime.py:25-28`, *relayed*).
-- **Classes:** 3 stages x 6 bands = 18 per boss, generated, or fewer if XD2's level-picked pools work (5.3). Classes load
+- **Classes:** stages x 6 bands (2 x 6 = 12 per boss since 2026-10-10; 18 in the first draft), generated, or fewer if XD2's level-picked pools work (5.3). Classes load
   only at a restart (`arena-per-player-opponents.md:63`, *relayed*).
-- **Between stages the player's party carries everything**, and the gap is 60 ticks plus the cue. There is no time to
-  heal, unless a player spends clock in their bag before stepping back to the line. Stage k+1 starts automatically, so
-  idling does not hold it off.
+- **Between stages the player's party is fully healed** (2026-10-10; before it the party carried everything, with no time to
+  heal). The gap is 60 ticks plus the cue, and stage k+1 starts automatically, so idling does not hold it off.
 - **Pre-League bosses are fight-only** (D8). The boss is an NPC, and an NPC's Pokemon cannot be caught
   (`beast-ball-key-1.8.0.md:151-152`, *relayed*). **A band-6 catch is a separate wild encounter** after the chain,
   where a dungeon wants one (Entei's pattern, 8 and 12).
@@ -584,7 +587,7 @@ under the band's lower cap so the level cap never refuses its balls, whose catch
 | Spawns, cues and gates over a run | 0.5 min | 3 stand spawns, 2 stage gaps of 60 ticks, arrival |
 | A small fight, band 1 (2 opposing members) | **2.0 min** | **the owner's number**; no fight has ever been timed (old 2.2) |
 | Each further opposing member | +0.5 min | *planning* |
-| Boss, 3 stages | 6-9 min by band | inside the owner's 5-10 |
+| Boss, 2 stages (3 in the first draft: 6-9 min) | 6.5-8 min by band (tools/dungeon_clock.py) | inside the owner's 5-10 |
 
 ### 4.2 The owner's case: 1,500 blocks of walking, three small fights, a boss, parkour
 
@@ -994,7 +997,7 @@ the Rift, and the rip in the notch is where it shows. Rosters come from the shif
 | 9 | The Haulage | `drift` | 250 | rails taken up (no rail blocks: they draw spawns, `tools/route1_old_mine.py:30-31`) |
 | 10 | The Timberman's stand | `stand` | 24 | as 2 |
 | 11 | The Shift Road | `drift` | 200 | rising to the stope |
-| 12 | The Stope | `boss_arena` | 30 | 27 x 27 x 14; the Foreman, three stages (3.2) |
+| 12 | The Stope | `boss_arena` | 30 | 27 x 27 x 14; the Foreman, three stages in this first plan, two since 2026-10-10 (3.2) |
 | 13 | The Shift Bell | `rip_room` (exit) | 16 | the far rip; escrow paid |
 | | **Total** | | **1,664** | 1,464 walking + 200 parkour, inside a 2,048 strip |
 

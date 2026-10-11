@@ -411,7 +411,9 @@ def test_the_params_follow_the_contract():
             assert r.get("gate") == "cleared" and p["trainers"], r["id"]
             for t in p["trainers"]:
                 assert t["name"] and sorted(t["team_by_band"]) == sorted(bands)
-                assert all(len(t["team_by_band"][b]) == members[b] for b in bands), (r["id"], t["name"])
+                eased = t.get("members_eased_by_band") or {}
+                assert all(len(t["team_by_band"][b]) == members[b] - eased.get(b, 0) for b in bands), (r["id"], t["name"])
+                assert not eased or t.get("members_eased_why"), (r["id"], t["name"])
             if k == "gauntlet":
                 tr = p["triggers"]
                 assert len(tr) == len(p["trainers"]) and all(0 < x < 1 for x in tr) and tr == sorted(tr)

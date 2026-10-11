@@ -579,13 +579,17 @@ def test_the_staged_boss_spawns_by_macro_chains_on_victory_and_opens_the_gate(pa
     s = arrive_and_cross(w, p)
     pt = D.points(DOC, s)
     p.pos = [pt["spot"][0] - 4.5, float(pt["spot"][1]), pt["spot"][2] + 0.5]     # the arena's own floor and line (DG2-NS: a level down)
-    for stage in (1, 2, 3):
+    n = len(DOC["dungeons"][0]["boss"]["stage_level_offsets"])
+    assert n == 2, "the owner, 2026-10-10: the boss is two stages with a full heal between them"
+    assert w.get(p.name, "dg.stage") in (0, 1) and not getattr(w, "healed", [])
+    for stage in range(1, n + 1):
         w.passes(1)
         npcs = [e for e in w.ents if e.kind == "cobblemon:npc" and e.alive]
         assert len(npcs) == 1 and {"dg.boss", "dg.npc", EXEMPT} <= npcs[0].tags, (stage, npcs)
         assert npcs[0].nbt["NPCClass"] == "cobblers:dg_ns_boss_b1_s%d" % stage
         w.passes(1)
         assert w.started and w.started[-1][0] == "Lance"
+        assert len(w.started) == stage, "one battle per stage"
         # the victory callback, as Cobblemon runs it with the NPC as the loser
         w.run_callback("battle_victory", context={
             "scriptable_losers": [{"is_npc": 1, "uuid": npcs[0].uid}], "player_winners": [{"player": {"username": "Lance"}}],
@@ -593,7 +597,12 @@ def test_the_staged_boss_spawns_by_macro_chains_on_victory_and_opens_the_gate(pa
         assert "dg.next" in p.tags
         w.passes(1)
         assert not npcs[0].alive and w.get(p.name, "dg.stage") == stage + 1
-        if stage < 3:
+        # a full heal between stages, none after the last (the exit opens instead)
+        assert len(getattr(w, "healed", [])) == min(stage, n - 1), (stage, getattr(w, "healed", []))
+        if stage < n:
             w.passes(3)                            # the gap
+    w.passes(6)
+    assert len(w.started) == n and not [e for e in w.ents if e.kind == "cobblemon:npc" and e.alive],         "exactly the authored number of stages ran: no third NPC, no third battle"
+    assert getattr(w, "healed", []) == [p.name] * (n - 1)
     assert w.get("#s%d" % s["g"], "dg.bdone") == 1 and w.get(p.name, "dg.bossd") == 1
     assert any(d == POCKET and "minecraft:air" in c and c.startswith("fill %d" % pt["gate"][0]) for d, c in w.block_writes)

@@ -6,7 +6,7 @@ difficulty measured against the teams a player realistically has when they reach
 
 WHAT IT DOES. For each dungeon x band x player cap (the band's lower and upper cap) it builds plausible teams from the
 species a player can have caught by then, at the cap, with movesets from the jar's learnsets, and walks them through
-the dungeon's fights IN ORDER, health and PP carried, with the safe room's one heal and NO heal between the boss's three
+the dungeon's fights IN ORDER, health and PP carried, with the safe room's one heal and the boss chain's full heal between its two
 stages (DUNGEONS.md 3.2). It reports the win rate, the fight that kills most runs, HP and PP left at the boss, any
 fight that is impossible or trivial, and prices the run's fight time against the clock.
 
@@ -609,6 +609,8 @@ def room_events(doc, d, rec, band, optional=False):
         for k in range(1, len(d["boss"]["stage_level_offsets"]) + 1):
             name = "dg_%s_boss_b%d_s%d" % (d["short"], band, k)
             party = parse_party(DG.boss_classes(doc, d)[name][0]["party"]["pokemon"])
+            if k > 1 and d["boss"].get("heal_between_stages"):      # the chain's healpokemon (tools/dungeon.py `next`)
+                out.append(event("heal", "the chain's heal before boss stage %d" % k, rec["id"], [], "heal", False))
             out.append(event("fight", "boss stage %d" % k, rec["id"], party, "boss", False, stage=k))
     return out
 
@@ -918,7 +920,7 @@ def _map_events(seq, cats, fn):
 def _insert_heals(seq, before_boss_stage):
     out = []
     for e in seq:
-        if e["kind"] == "fight" and e["category"] == "boss" and e.get("stage") in before_boss_stage:
+        if e["kind"] == "fight" and e["category"] == "boss" and e.get("stage") in before_boss_stage                 and not (out and out[-1]["kind"] == "heal"):
             out.append(event("heal", "a heal before boss stage %d (what-if)" % e["stage"], e["room"], [], "heal"))
         out.append(e)
     return out
@@ -941,7 +943,7 @@ def _midfield_heal(seq):
 WHATIFS = {
     "boss -1 member": lambda seq: _map_events(seq, ("boss",), lambda f: f[1:] if len(f) > 1 else f),
     "boss -2 levels": lambda seq: _map_events(seq, ("boss",), lambda f: [(sp, max(1, lv - 2)) for sp, lv in f]),
-    "heal between boss stages": lambda seq: _insert_heals(seq, (2, 3)),
+    "heal between boss stages": lambda seq: _insert_heals(seq, (2, 3)),   # a no-op where the record already heals
     "heal before the boss": lambda seq: _insert_heals(seq, (1,)),
     "second heal mid-field": _midfield_heal,
     "stands -1 member": lambda seq: _map_events(seq, ("stand", "gauntlet"), lambda f: f[1:] if len(f) > 1 else f),
@@ -1247,7 +1249,7 @@ def write_report(results, doc, clocks, opts, path):
     w("player is the one the dungeon is built against and the upper-cap player has the margin. Teams: `walked` (the six")
     w("earliest-available families), `balanced` (type coverage, random tie-break), `casual` (six random families), `scouted`")
     w("(the best response to this dungeon's roster). **Win** = the typical teams (walked+balanced+casual) clearing every required")
-    w("fight in sequence, health and PP carried, the safe room's one heal, no heal between the boss's stages.")
+    w("fight in sequence, health and PP carried, the safe room's one heal, a full heal between the boss's two stages (the record's heal_between_stages).")
     w("")
     w("## Headline")
     w("")
