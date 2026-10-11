@@ -311,10 +311,32 @@ def test_every_bound_is_the_hand_bound_of_its_party(built_with_stand):
                 yield from records(r.get("rooms"))
             else:
                 yield r
-    trainers = sum(len(r["params"]["trainers"]) for d in DOC["dungeons"] for r in records(d.get("rooms"))
-                   if r["kind"] in ("stand", "gauntlet"))
-    assert trainers > 0
-    assert n == 6 * sum(len(d["boss"]["stage_level_offsets"]) for d in DOC["dungeons"]) + 6 * trainers + 6
+    # PRIZE-POOLS (DUNGEON_ROOMS.md 14): a trainer's rotation pool is one class per team (team_pool_by_band), the boss's
+    # alternate crews one set of stages each (teams_alt_by_band), and a variant's swap that seats other trainers in a
+    # room (the documented rule: `params` merged one level) seats a class per trainer index it adds. Counted as the
+    # distinct (dungeon, room, trainer index, band, team) a class stands for, from the data alone
+    bands = [str(b["band"]) for b in DOC["engine"]["bands"]]
+    seats = set()
+    for d in DOC["dungeons"]:
+        for v in d.get("variants") or [{}]:
+            sw = v.get("swap") or {}
+            for r in records(d.get("rooms")):
+                o = sw.get(r["id"])
+                if o:
+                    r = dict(r, **{k: x for k, x in o.items() if k != "params"},
+                             params=dict(r.get("params") or {}, **(o.get("params") or {})))
+                if r["kind"] not in ("stand", "gauntlet"):
+                    continue
+                for i, t in enumerate(r["params"]["trainers"], 1):
+                    for b in bands:
+                        pool = (t.get("team_pool_by_band") or {}).get(b)
+                        teams = len(pool) if pool else (1 if (t.get("team_by_band") or {}).get(b) else 0)
+                        seats |= {(d["id"], r["id"], i, b, k) for k in range(1, teams + 1)}
+    assert seats
+    boss = sum(len(d["boss"]["stage_level_offsets"]) * ((1 if d["boss"]["teams"].get(b) else 0)
+                                                        + len((d["boss"].get("teams_alt_by_band") or {}).get(b) or []))
+               for d in DOC["dungeons"] for b in bands)
+    assert n == boss + len(seats) + 6
 
 
 # ---- the stands' classes -------------------------------------------------------------------------------------------

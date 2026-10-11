@@ -441,10 +441,13 @@ def test_key_ball_checks_every_authored_legendary_prizes_bind_and_the_reference_
     assert all("tag @s add %s" % KB.boss_tag() in text.split("\n") for text in files.values())
     # with no legendary prize authored anywhere, the reference prize's bind stands in
     for d in doc["dungeons"]:
-        for r in _all_rooms(d):
-            if (r.get("params") or {}).get("prize"):
-                r["params"]["prize"].pop("legendary_by_band", None)
-                r["params"]["prize"].pop("legendary_pool_by_band", None)     # the pools (section 14) name legendaries too
+        prizes = [r["params"]["prize"] for r in _all_rooms(d) if (r.get("params") or {}).get("prize")]
+        prizes += [s["params"]["prize"] for v in d.get("variants") or [] for s in (v.get("swap") or {}).values()
+                   if (s.get("params") or {}).get("prize")]
+        for pz in prizes:
+            # the single form, the room's own pool and the roster's pool (section 14) all name legendaries
+            for k in ("legendary_by_band", "legendary_pool_by_band", "roster"):
+                pz.pop(k, None)
     files = PZ.build(doc)
     assert list(files) == ["data/cobblers/function/dungeons/prize/reference/bind.mcfunction"]
     assert "tag @s add %s" % KB.boss_tag() in files[list(files)[0]].split("\n")
