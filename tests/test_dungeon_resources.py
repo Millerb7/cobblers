@@ -55,6 +55,7 @@ THEMES = json.loads((ROOT / "data" / "dungeon_themes.json").read_text(encoding="
 DUNGEONS = [d for d in BASE["dungeons"] if R.has_rooms(d)]
 BANDS = (1, 2, 3, 4, 5, 6)
 ORE_RES = {blk: res for res, e in DATA["resources"].items() for blk in e["blocks"].values()}
+FOSSILS = json.loads((ROOT / "data" / "dungeon_extras2.json").read_text(encoding="utf-8"))["fossils"]
 GREED = json.loads((ROOT / "data" / "dungeon_greed.json").read_text(encoding="utf-8"))
 
 _BUILDS = {}
@@ -178,17 +179,31 @@ def dungeon_pick(d):
     out = set(BASE["engine"]["rift_pick"]["can_break"])
     if any(r["kind"] == "resources" for r in recs):
         out |= {e["block"] for e in th["seam"]["blocks"]}
-        fam = DATA["themes"][d["theme"]]["family"]
-        for res, e in DATA["table"].items():
-            out.add(DATA["resources"][res]["blocks"][fam])
+        if has_table(d):
+            fam = DATA["themes"][d["theme"]]["family"]
+            for res, e in DATA["table"].items():
+                out.add(DATA["resources"][res]["blocks"][fam])
     if any(s.get("type", "cracked") == "cracked" for r in recs for s in r.get("secrets") or []):
         out.add(th["shapes"]["secret_block"])
+    if any(r["kind"] == "fossil_chamber" for r in recs):
+        # RT-B's fossil chamber: the pick breaks the theme's dig block and the fossil block (data/dungeon_extras2.json
+        # fossils, DUNGEON_ROOMS.md 13), in every dungeon that has one
+        dig = FOSSILS["dig"].get(d["theme"])
+        out |= ({dig} if dig else set()) | {FOSSILS["block"]}
     return out
+
+
+def has_table(d):
+    """A theme with a row in data/dungeon_resources.json. The nether themes have none: their resources room is the seam
+    alone, of the theme's own ores, no heaps, veins or cache (DUNGEON_ROOMS.md 11)."""
+    return d["theme"] in DATA["themes"]
 
 
 def expected_row(d, band):
     """{resource: blocks} a room of this dungeon must end with at `band`, from the data file."""
     row = Counter()
+    if not has_table(d):
+        return row
     for res, e in DATA["table"].items():
         if e["min_band"] <= band <= e["max_band"]:
             row[res] += int(e["counts"].get(str(band), 0))
@@ -280,7 +295,7 @@ def band_findings(b, d):
 def cache_findings(b, d):
     """The cache chest stands at exactly the bands the data gives one, with a loot table that is in the pack."""
     files = X.pack_files(BASE)
-    allowed = {int(k) for e in DATA["cache"]["items"].values() for k in e["count_by_band"]}
+    allowed = {int(k) for e in DATA["cache"]["items"].values() for k in e["count_by_band"]} if has_table(d) else set()
     bad = []
     for band in BANDS:
         w, _cells = replay(b, band, dungeon_pick(d))
@@ -349,7 +364,8 @@ def cache_value(band):
 def test_a_reset_re_arms_the_piles_and_the_cache_pays_its_points_once(d, s):
     secret = {THEMES[d["theme"]]["shapes"]["secret_block"]}
     pick = dungeon_pick(d) - secret
-    legacy = 24 if DATA["themes"][d["theme"]].get("seam", "table") != "table" else 0       # the jungle's produce face
+    # the jungle's produce face, and a nether theme's seam of its own ores (no table row: DUNGEON_ROOMS.md 11)
+    legacy = 24 if not has_table(d) or DATA["themes"][d["theme"]].get("seam", "table") != "table" else 0
     for b in resource_rooms(d, s):
         tick = tick_lines(b)
         # GREED's mined stats weigh the blocks: no pile or vein block has a hook (a second count)
@@ -477,7 +493,9 @@ def test_the_picks_list_is_exactly_the_seam_the_piles_and_the_secret(d, s):
             w, _c = replay(b, band, listed)
             seen |= {G.base(blk) for blk in w.blocks.values()}
         seen |= {G.base(n) for n in b.grid.names()}
-    extra = listed - set(BASE["engine"]["rift_pick"]["can_break"]) - {secret}
+    # the fossil chamber's dig and fossil blocks stand in that room, not here (tests/test_dungeon_extras2.py holds them)
+    fossil = {FOSSILS["block"], FOSSILS["dig"].get(d["theme"])} if any(r["kind"] == "fossil_chamber" for r in R.all_records(d)) else set()
+    extra = listed - set(BASE["engine"]["rift_pick"]["can_break"]) - {secret} - fossil
     assert extra <= seen, sorted(extra - seen)
     # nothing the rooms can hold from the table's ores is missing from the list
     held = {G.base(blk) for b in resource_rooms(d, s) for band in BANDS for blk in replay(b, band, listed)[0].blocks.values() if G.base(blk) in ORE_RES}

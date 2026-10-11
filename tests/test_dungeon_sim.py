@@ -18,6 +18,7 @@ lists what is not modelled (items, secondary effects, switching, the foe's real 
 server closes that gap.
 """
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -243,9 +244,10 @@ def test_boss_events_match_the_authored_crews(doc):
 
 
 def _trainers(node):
-    """Every trainer record (a dict with a team_by_band) anywhere under a dungeon record."""
+    """Every trainer record (a dict with a team_by_band, or a rotation pool's team_pool_by_band, PRIZE-POOLS) anywhere under
+    a dungeon record."""
     if isinstance(node, dict):
-        if "team_by_band" in node:
+        if "team_by_band" in node or "team_pool_by_band" in node:
             yield node
         for v in node.values():
             yield from _trainers(v)
@@ -265,7 +267,8 @@ def test_stand_events_have_the_band_sizes_and_stay_under_the_cap(doc):
                     if e["category"] not in ("stand", "gauntlet"):
                         continue
                     # the band's size less the trainer's declared easing (members_eased_by_band, the 2026-10-10 tuning)
-                    name = e["label"].split(": ", 1)[1]
+                    # a rotating stand's label ends " [team k/n]" (tools/dungeon_sim.py room_events, PRIZE-POOLS)
+                    name = re.sub(r" \[team \d+/\d+\]$", "", e["label"].split(": ", 1)[1])
                     eased = max(int((t.get("members_eased_by_band") or {}).get(str(b["band"]), 0)) for t in _trainers(d)
                                 if t["name"] == name)
                     assert len(e["foes"]) == st["members_by_band"][str(b["band"])] - eased, (d["id"], b["band"], e["label"])

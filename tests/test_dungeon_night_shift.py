@@ -485,7 +485,7 @@ def test_the_prize_legendary_is_used_nowhere_else_and_is_no_ultra_beast():
     assert sp not in ULTRA_BEASTS
     hits = []
     for f in (ROOT / "data").rglob("*.json"):
-        if f.name in ("dungeons.json", "id_authorship.json"):
+        if f.name in ("dungeons.json", "id_authorship.json", "dungeon_prize_roster.json"):  # COVERAGE's roster names every dungeon's prize by design
             continue
         if re.search(r'"%s"' % sp, f.read_text(encoding="utf-8"), re.I):
             hits.append(f.name)

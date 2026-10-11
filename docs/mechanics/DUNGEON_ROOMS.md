@@ -208,12 +208,18 @@ like any route. Every fork keeps at least one route that is not optional.
 - A prize habitat's `gate` is `open` (an optional wing's payoff; `problems()` refuses `cleared`).
 
 **The vault budget** (`data/dungeon_greed.json` `vault_budget`): a vault chest's expected value (GREED's `chest_cp`)
-at band b is at most `dollar_factor` x the gathering tier open at the band's lowest badge count x the shortest dungeon's
-required hours, divided by the vault's chests: a vault never pays more than the same run's time spent gathering, the
-limit RESOURCES2 set for a resources room. With the kit's four chests and the two-stage-boss clocks (2026-10-11): **band 1 80 cp, 2 184, 3 180, 4 198, 5 346, 6 367
-(0.8 to 3.7 points) a chest; a whole vault 322, 738, 720, 792, 1,385, 1,469 (floored).** The figures move with the shortest
-dungeon's clock. Enforced by `problems()` (`vault_budget.enforce` true since DG3-INTEGRATE: the pass-3 authors rebalanced
-every vault, and `python tools/dungeon_greed.py` names no chest over; the pass-2 vaults were 7 to 150 points a chest).
+at band b is at most `dollar_factor` x the gathering tier open at the band's lowest badge count x the required hours of
+the dungeon the vault stands in (its own `clock_s_by_band` over the 1.25 slack), divided by the vault's chests: a vault
+never pays more than the same run's time spent gathering, the limit RESOURCES2 set for a resources room. **Each dungeon's
+vaults are priced on its own clock** (MEGA-INTEGRATE, 2026-10-11; `tools/dungeon_greed.py` `vault_budget(doc, table,
+dungeon)`): until then every vault was priced on the SHORTEST dungeon's clock, so a new short dungeon shrank every other
+dungeon's vaults and six authors padded a band's clock to avoid it; those clocks are back at their derived values. The
+worked example, the Night Shift's own clocks with the kit's four chests: **band 1 82 cp, 2 189, 3 189, 4 198, 5 346, 6 367
+(0.8 to 3.7 points) a chest; a whole vault 330, 756, 756, 792, 1,385, 1,469 (floored).** Without a dungeon,
+`vault_budget` is the floor over every dungeon (the shortest clock per band), what loot shared by every dungeon (the bank
+vault's defaults) is held to. Enforced by `problems()` (`vault_budget.enforce` true since DG3-INTEGRATE: the pass-3
+authors rebalanced every vault, and `python tools/dungeon_greed.py` names no chest over; the pass-2 vaults were 7 to 150
+points a chest).
 
 **As built (KIT3, 2026-10-10; simulated and audited, not run in Minecraft).**
 - Kit hooks: `R.LAYOUT_FNS` (a last pass over a laid slot: routes' `optional`, looks, signs, windows on both doors) and
@@ -453,7 +459,17 @@ threshold's clocks with this table or 4.2's):
 | night_shift | 1,243 main + 410 on the paid fork routes (2,208 all routes, the wing included) | **40** | **42** | **42** | **44** | **49** | **52** |
 | jungle | 1,929 all routes, wing and side room included (1,180 main, the slower way of each fork; pass 3, DG3-JUNGLE) | **39** | **42** | **40** | **44** | **51** | **54** |
 | flooded_ruin | 1,950 all routes and the wing (1,045 main; 1,290-1,499 paid at band 1) | **39** | **41** | **44** | **45** | **49** | **52** |
-| ash_bell | 2,134 all routes, the wing and the side rooms included (NEW-ASHBELL, 2026-10-11; band 4 raised to the others' 44, its clock_why) | **41** | **44** | **43** | **44** | **50** | **53** |
+| ash_bell | 2,134 all routes, the wing and the side rooms included (NEW-ASHBELL, 2026-10-11; band 4 back to its derived 42 at MEGA-INTEGRATE) | **41** | **44** | **43** | **42** | **50** | **53** |
+| soul_ossuary | 2,153 all routes, the wing and the side rooms included (NEW-OSSUARY, 2026-10-11) | **39** | **44** | **43** | **45** | **52** | **55** |
+| moth_cathedral | 2,142-2,299 all routes, wing and side rooms included (1,519 paid at band 1, variant b; NEW-MOTH, 2026-10-11; band 4 back to its derived 41 at MEGA-INTEGRATE) | **40** | **43** | **41** | **41** | **51** | **54** |
+| dragonspiral | 2,244 all routes, the wing and the side rooms (1,095 main; 1,236 main in variant b; NEW-DRAGONSPIRAL, 2026-10-11; band 4 back to its derived 41 at MEGA-INTEGRATE) | **40** | **43** | **43** | **41** | **49** | **52** |
+| field_of_swords | 2,157 all routes, the wing and the side rooms (slot 1; NEW-SWORDS, 2026-10-11: required 32.1 min at band 1, plus the collapse's 25 s, x 1.25) | **41** | **46** | **43** | **46** | **54** | **57** |
+| warped_lab | 2,011 all routes, the wing and the side rooms included (NEW-WARPED, 2026-10-11; required 31.3 minutes at band 1 on the main route) | **40** | **43** | **41** | **45** | **51** | **54** |
+| starfall | 2,204 all routes, the wing and the side rooms (1,477 paid at band 1, variant a; NEW-STARFALL, 2026-10-11; bands 4-6 back to their derived 40 / 48 / 51 at MEGA-INTEGRATE) | **40** | **43** | **41** | **40** | **48** | **51** |
+| zero_dig | 2,196 all routes, the wing and the side rooms (1,075 main in variant a, 1,204 in d; NEW-ZERODIG 2026-10-11; band 4 back to its derived 43 at MEGA-INTEGRATE) | **41** | **43** | **43** | **43** | **49** | **52** |
+| patriarch | 2,314 all routes, the wing and four side rooms (1,322-1,402 paid at band 1 over the variants; NEW-PATRIARCH, 2026-10-11; band 4 back to its derived 40 at MEGA-INTEGRATE) | **41** | **45** | **40** | **40** | **54** | **58** |
+| crucible | required 30.8 min at band 1 on the main route, the largest over the variants (NEW-CRUCIBLE, 2026-10-11; its row added at MEGA-INTEGRATE from tools/dungeon_clock.py) | **40** | **43** | **41** | **44** | **50** | **54** |
+| street | required 33.5 min at band 1 on the main route, the largest over the variants (NEW-STREET, 2026-10-11; its row added at MEGA-INTEGRATE from tools/dungeon_clock.py) | **43** | **45** | **45** | **45** | **55** | **59** |
 
 BOSS2 (2026-10-10): the boss is two stages and the stands of the tuned bands are a member or two smaller (sections `DUNGEONS.md` 3.2; `members_eased_by_band`), so every clock was re-derived with `tools/dungeon_clock.py` and the table above is the new one: every band is under an hour (the longest, the jungle's band 6, is 54 minutes), where the three-stage table ran to 59. Each is the tool's required time plus the set piece's 25 s, x 1.25, up to the minute (the tests pin the formula). The boss row of the part table now counts two stages and one gap.
 

@@ -1762,6 +1762,20 @@ class Run:
                     ent.alive = False
                     self.F.stats[self.s.dungeon]["wild_defeated"] += 1
 
+    def detour(self, path, i):
+        """The planned path with path[i] (blocked) walked round on the world as it stands now: the shortest way from where
+        the member stands (path[i - 1]) to the nearest standable cell of the next 60 on the plan, every closed gate
+        solid as it is. None when there is no way round (the caller then waits, and reports a way that stays shut)."""
+        g2 = Graph(self.sim.w)
+        goals = {n for n in path[i + 1:i + 61] if g2.N[n]}
+        if not goals:
+            return None
+        _d, np_ = shortest(g2, path[i - 1], goals, self.catch)
+        if np_ is None:
+            return None
+        j = path.index(np_[-1], i + 1)
+        return path[:i] + np_[1:] + path[j + 1:]
+
     def standable(self, n):
         x, y, z = self.gr.xyz(n)
         w = self.sim.w
@@ -1801,6 +1815,7 @@ class Run:
             return False
         self.tps = []
         guard = 0
+        detoured = set()
         while i < len(path) and guard < 20000:
             guard += 1
             st = sim.scores.get((PLAYER, "dg.st"), 0)
@@ -1821,6 +1836,18 @@ class Run:
             else:
                 self.waiting = True
                 room = self.here()
+                # A cell that no room's clear opens (no gate) but that the run made solid after the walk was planned: the
+                # band's reset puts a resources room's cache chest down only at the bands with a cache, and the walk is
+                # planned on the start world, which has none (MEGA-INTEGRATE: the Street's L-shaped cut put it on this
+                # walker's line at bands 5-6). A player walks round it: the walker re-plans round it on the world as it
+                # stands, once per cell. A gate cell, or a block with no way round, still waits and is reported.
+                if waited == 0 and i > 0 and i not in detoured and self.gr.G[nxt] < 0 and self.gr.G[nxt + self.gr.SY] < 0:
+                    detoured.add(i)
+                    np_ = self.detour(path, i)
+                    if np_ is not None:
+                        path = np_
+                        self.F.stats[s.dungeon]["detours_round_reset_blocks"] += 1
+                        continue
                 if room and room_rec(s, room).get("kind") == "puzzle" and waited in (2, 30):
                     solve_puzzle(self, room)
                 self.keeper()

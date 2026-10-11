@@ -332,7 +332,8 @@ def test_the_prize_is_a_rare_dragon_before_the_beast_ball_stage_and_regidrago_fr
         assert sp not in named, sp
         word = re.compile(r"(?<![a-z])%s(?![a-z])" % sp)
         for f in glob.glob(str(ROOT / "data" / "*.json")):
-            if Path(f).name in ("spawns.json", "encounter_design.json", "spawn_blocks.json", "dungeons.json"):
+            if Path(f).name in ("spawns.json", "encounter_design.json", "spawn_blocks.json", "dungeons.json",
+                                "dungeon_prize_roster.json"):  # COVERAGE's roster names every dungeon's prize by design
                 continue
             assert not word.search(Path(f).read_text(encoding="utf-8").lower()), (sp, Path(f).name)
     assert others
@@ -378,7 +379,7 @@ def test_the_vault_is_inside_the_budget_at_every_band_and_a_dearer_chest_is_not(
     import dungeon_greed as DG
     table = DG.load()
     assert not [x for x in DG.vault_over(DOC, table) if x[0] == "flooded_ruin"]
-    budget = DG.vault_budget(DOC, table)
+    budget = DG.vault_budget(DOC, table, next(x for x in DOC["dungeons"] if x["id"] == "flooded_ruin"))   # its own clock's
     well = next(r for r in records() if r["kind"] == "vault")
     for b in range(1, 7):
         _k, spec = __import__("dungeon_puzzles").loot_for(well["params"], DOC["engine"]["bands"], b)
@@ -571,7 +572,7 @@ def test_the_prizes_legendary_is_a_legendary_or_mythical_no_ultra_beast_and_used
 
     for f in glob.glob(str(ROOT / "data" / "*.json")):
         name = Path(f).name
-        if name == "dungeons.json":
+        if name in ("dungeons.json", "dungeon_prize_roster.json"):  # COVERAGE's roster names every dungeon's prize by design
             continue
         text = Path(f).read_text(encoding="utf-8")
         if name == "adopted_legendary_sites.json":

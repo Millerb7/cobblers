@@ -248,27 +248,37 @@ def problems(doc, table=None):
 # ------------------------------------------------------------------------------------------------- the vault budget (KIT3)
 
 
-def vault_hours(doc):
-    """{band: required hours}: the shortest rooms dungeon's clock over the slack (tools/dungeon_resources.py
-    required_hours, RESOURCES2's figure); a band no dungeon prices runs on the engine band's clock_s."""
+def vault_hours(doc, dungeon=None):
+    """{band: required hours} of ONE dungeon's run: its own clock (clock_s_by_band, else the engine band's clock_s)
+    over the slack. A vault is paid out of the run it stands in, so it is priced on that run's clock (MEGA-INTEGRATE,
+    2026-10-11). Until then every vault was priced on the SHORTEST dungeon's clock, so adding a short dungeon shrank
+    every other dungeon's vaults and each new author padded a clock to avoid it.
+
+    With no dungeon: the shortest rooms dungeon's clock per band (tools/dungeon_resources.py required_hours), the
+    floor of every dungeon's budget -- what loot shared by every dungeon (a kind's default) may be held to."""
+    slack = float(doc["engine"]["clock"]["slack_factor"])
+    if dungeon is not None:
+        own = dungeon.get("clock_s_by_band") or {}
+        return {b["band"]: float(own.get(str(b["band"]), b["clock_s"])) / slack / 3600.0 for b in doc["engine"]["bands"]}
     import dungeon_resources as RS
     hours = RS.required_hours(doc)
-    slack = float(doc["engine"]["clock"]["slack_factor"])
     for b in doc["engine"]["bands"]:
         hours.setdefault(b["band"], b["clock_s"] / slack / 3600.0)
     return hours
 
 
-def vault_budget(doc, table=None):
+def vault_budget(doc, table=None, dungeon=None):
     """{band: cp} a whole vault may hold (DUNGEON_ROOMS.md 1b): dollar_factor x the gathering tier open at the band's
-    lowest badge count x vault_hours, every price and rate read from tools/economy_sim.py World (1 cp = $1)."""
+    lowest badge count x vault_hours(doc, dungeon), every price and rate read from tools/economy_sim.py World
+    (1 cp = $1). `dungeon` (a record of doc["dungeons"]) prices that dungeon's vaults on its own clock; without it, the
+    floor over every rooms dungeon (the shortest clock)."""
     import dungeon_resources as RS
     import economy_sim as E
     table = table if table is not None else load()
     factor = float((table.get("vault_budget") or {}).get("dollar_factor", 1.0))
     w = E.World(E.load_docs())
     out = {}
-    for band, h in sorted(vault_hours(doc).items()):
+    for band, h in sorted(vault_hours(doc, dungeon).items()):
         badges = RS.band_badges(doc, band)
         tier = max(v for n, v in w.tier_hour.items() if w.tier_opens_badges[n] <= badges)
         out[band] = int(math.floor(factor * tier * h + 1e-9))
@@ -277,17 +287,20 @@ def vault_budget(doc, table=None):
 
 def vault_over(doc, table=None):
     """[(dungeon id, room id, band, chest cp, chest budget)] for every vault chest over its band's budget (every
-    variant's records, every band, the loot authored for that band or the one below it)."""
+    variant's records, every band, the loot authored for that band or the one below it). Each dungeon's vaults are
+    held to ITS OWN budget (vault_budget(doc, table, d): its own clock)."""
     import dungeon_puzzles as DP
     table = table if table is not None else load()
-    budget = vault_budget(doc, table)
     R = _rooms()
     out = []
     seen = set()
     for d in doc["dungeons"]:
         if not R.has_rooms(d):
             continue
+        budget = None
         for r in R.all_records(d):
+            if r.get("kind") == "vault" and budget is None:
+                budget = vault_budget(doc, table, d)
             if r.get("kind") != "vault" or (d["id"], r["id"]) in seen:
                 continue
             seen.add((d["id"], r["id"]))

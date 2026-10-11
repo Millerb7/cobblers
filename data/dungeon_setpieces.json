@@ -16,6 +16,12 @@
       "sleeper": "minecraft:stripped_oak_log[axis=z]",
       "post": "minecraft:oak_log[axis=y]",
       "beam": "minecraft:stripped_oak_log[axis=z]"
+    },
+    "basalt_deltas": {
+      "span": "minecraft:polished_blackstone_bricks",
+      "cracked": "minecraft:cracked_polished_blackstone_bricks",
+      "track": "minecraft:polished_basalt",
+      "sound_crack": "minecraft:block.basalt.break"
     }
   },
   "flood": {
@@ -52,6 +58,27 @@
     },
     "jungle": {
       "sheet": "minecraft:moss_block"
+    },
+    "soul_sand_valley": {
+      "why": "NEW-OSSUARY (the Soul Ossuary's vigil): the soul lights die behind the walker. Ribs of bone for the trunks, warped roots and nether sprouts on the soul soil floor (both stand on soul soil, DUNGEON_ROOMS.md 11), black carpet, a smooth basalt sheet, the valley's own sounds and soul particles",
+      "sheet": "minecraft:smooth_basalt",
+      "trunk": "minecraft:bone_block[axis=y]",
+      "floor_plant": "minecraft:warped_roots",
+      "floor_plant2": "minecraft:nether_sprouts",
+      "carpet": "minecraft:black_carpet",
+      "sound_close": "minecraft:block.soul_soil.place",
+      "sound_ambient": "minecraft:ambient.soul_sand_valley.mood",
+      "particle": "minecraft:soul"
+    },
+    "crimson_forest": {
+      "sheet": "minecraft:nether_wart_block",
+      "trunk": "minecraft:crimson_stem[axis=y]",
+      "floor_plant": "minecraft:crimson_roots",
+      "floor_plant2": "minecraft:nether_sprouts",
+      "carpet": "minecraft:red_carpet",
+      "sound_close": "minecraft:block.shroomlight.break",
+      "sound_ambient": "minecraft:ambient.crimson_forest.mood",
+      "particle": "minecraft:crimson_spore"
     }
   }
 }

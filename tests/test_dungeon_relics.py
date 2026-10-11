@@ -412,9 +412,11 @@ def test_each_dungeon_keeps_its_own_collection_and_count():
     """The advancement and the objective are keyed by the dungeon's short id, which is unique."""
     d = doc_of("mine")["dungeons"][0]
     assert X.adv_id(d) == "cobblers:dungeons/relics/ns" and X.obj_of(d) == "dg.rl_ns"
+    # one per dungeon, however many there are (the count was pinned to the first three until MEGA-INTEGRATE)
+    n = len(BASE["dungeons"])
     shorts = [x["short"] for x in BASE["dungeons"]]
-    assert len(set(shorts)) == len(shorts) == 3
-    assert len({X.adv_id(x) for x in BASE["dungeons"]}) == len({X.obj_of(x) for x in BASE["dungeons"]}) == 3
+    assert n >= 3 and len(set(shorts)) == len(shorts) == n
+    assert len({X.adv_id(x) for x in BASE["dungeons"]}) == len({X.obj_of(x) for x in BASE["dungeons"]}) == n
 
 
 def test_the_run_board_the_arrival_and_the_lobby_carry_the_count():

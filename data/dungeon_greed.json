@@ -530,6 +530,11 @@
       "why": "the owner's anchor: one diamond",
       "cp": 100
     },
+    "minecraft:dripstone_block": {
+      "drops": {},
+      "why": "NEW-WARPED (2026-10-11): the warped wood's fossil bay dig block (data/dungeon_extras2.json fossils.dig), as RT-B's clay: a wall the pick opens to reach the fossil, not a valuable (0)",
+      "cp": 0
+    },
     "minecraft:emerald_ore": {
       "drops": {
         "minecraft:emerald": 1
@@ -564,6 +569,11 @@
       },
       "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe): 4-9",
       "cp": 26
+    },
+    "minecraft:light_gray_terracotta": {
+      "drops": {},
+      "why": "the soul valley's and the basalt delta's fossil bay dig block (data/dungeon_extras2.json fossils.dig): a wall the pick opens to reach the fossil, not a valuable (0). MEGA-INTEGRATE: light gray terracotta, not the brown that NEW-OSSUARY and NEW-CRUCIBLE chose, which the desert_excavation theme's hull is built of (a dig block is used by no theme). NEW-OSSUARY: the soul valley's fossil bay dig block (data/dungeon_extras2.json fossils.dig): a wall the pick opens to reach the fossil, not a valuable (0) NEW-CRUCIBLE: the basalt delta's fossil bay dig block (data/dungeon_extras2.json fossils.dig.basalt_deltas), as terracotta's: not a valuable (0)",
+      "cp": 0
     },
     "minecraft:melon": {
       "drops": {
@@ -701,7 +711,7 @@
     "dollar_factor": 1.0,
     "enforce": true,
     "unit": "KIT3, 2026-10-10 (docs/mechanics/DUNGEON_ROOMS.md 1b)",
-    "why": "GREED found vault chests worth 7 to 150 points (one can cap the clock). A vault's chests together are worth at most dollar_factor x the gathering tier open at the band's lowest badge count x the shortest rooms dungeon's required hours (its clock over the 1.25 slack): the limit RESOURCES2 set for a resources room (tools/dungeon_resources.py budget(), every price and rate read from tools/economy_sim.py World), so a vault never pays more than the same run's time spent gathering, which costs no sigil, no clock and no death. A chest's budget is the vault's over its chest count; its value is GREED's chest_cp (the expected cp of its loot at the band). With the kit's four chests and the clocks of 2026-10-10 (DG3): 86, 198, 211, 220, 374, 402 cp a chest at bands 1-6 (the figure moves with the shortest dungeon's clock).",
+    "why": "GREED found vault chests worth 7 to 150 points (one can cap the clock). A vault's chests together are worth at most dollar_factor x the gathering tier open at the band's lowest badge count x the required hours of the dungeon the vault stands in (its own clock over the 1.25 slack; MEGA-INTEGRATE 2026-10-11, tools/dungeon_greed.py vault_budget(doc, table, dungeon): until then the shortest rooms dungeon's, so a new short dungeon shrank every other dungeon's vaults and authors padded their clocks to avoid it): the limit RESOURCES2 set for a resources room (tools/dungeon_resources.py budget(), every price and rate read from tools/economy_sim.py World), so a vault never pays more than the same run's time spent gathering, which costs no sigil, no clock and no death. A chest's budget is the vault's over its chest count; its value is GREED's chest_cp (the expected cp of its loot at the band). With the kit's four chests and the Night Shift's own clocks (2026-10-11): 82, 189, 189, 198, 346, 367 cp a chest at bands 1-6 (each dungeon's figure moves with its own clock only; DUNGEON_ROOMS.md 1b).",
     "enforce_why": "true since DG3-INTEGRATE (2026-10-10): the pass-3 authors rebalanced every vault and python tools/dungeon_greed.py names no chest over at any band (the closest, the Night Shift pay office at band 6, 4.00 points a chest of 4.02). problems() now refuses a chest over budget."
   }
 }

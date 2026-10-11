@@ -215,14 +215,45 @@ def expected_spawners():
             # the hidden prize (pass 3, DUNGEON_ROOMS.md 1b): a habitat's params.prize spawns, per band, the species its
             # rare_by_band names below engine.prize.legendary_from_band or its legendary_by_band from it on; a band
             # named by neither has no prize. One site per (room, band), whatever that band's chance
-            for r in slot_records(d, g - di * per):
+            recs = slot_records(d, g - di * per)
+            ids = {r["id"] for r in recs}
+            for r in recs:
+                # the egg room's vendor, a non-battling NPC (RT-B, DUNGEON_ROOMS.md 13), spawned by the room's enter
+                if r["kind"] == "egg_room":
+                    out.add(("vendor", di, g, r["id"], None))
+                # the bait room's lure (RT-A, DUNGEON_ROOMS.md 12): the room its params.lure_room names spawns the Pokemon
+                # the run's bait brings, when that room is in this slot
+                lure = (r.get("params") or {}).get("lure_room")
+                if r["kind"] == "bait_room" and lure in ids and lure != r["id"]:
+                    out.add(("lure", di, g, lure, None))
+            for r in recs:
                 pz = (r.get("params") or {}).get("prize")
                 if r["kind"] != "habitat" or not pz:
                     continue
                 for band in range(1, 7):
-                    names = pz.get("legendary_by_band" if band >= LEGENDARY_FROM else "rare_by_band") or {}
-                    if names.get(str(band)):
+                    if prize_pool(pz, band):
                         out.add(("prize", di, g, r["id"], band))
+    return out
+
+
+ROSTER = json.loads((ROOT / "data" / "dungeon_prize_roster.json").read_text(encoding="utf-8"))
+
+
+def prize_pool(pz, band):
+    """The species a habitat's prize can be at `band`, by DUNGEON_ROOMS.md 1b and 14 read here: the single form
+    (`rare_by_band` / `legendary_by_band`, legendary from engine.prize.legendary_from_band), the room's own pool
+    (`*_pool_by_band`), then the roster entry `roster` names (data/dungeon_prize_roster.json, its pool of the same
+    name), without repeats, less every species whose roster model_gate is not in engine.prize.models_delivered."""
+    kind = "legendary" if band >= LEGENDARY_FROM else "rare"
+    entry = next((e for e in ROSTER.get("dungeons") or [] if e.get("id") == pz.get("roster")), None) or {}
+    delivered = DUNGEONS_DATA["engine"]["prize"].get("models_delivered") or []
+    one = (pz.get("%s_by_band" % kind) or {}).get(str(band))
+    out = []
+    for sp in ([one] if one else []) + list((pz.get("%s_pool_by_band" % kind) or {}).get(str(band)) or []) \
+            + list((entry.get("%s_pool_by_band" % kind) or {}).get(str(band)) or []):
+        gate = ((ROSTER.get("species") or {}).get(sp) or {}).get("model_gate")
+        if sp not in out and not (gate and gate not in delivered):
+            out.append(sp)
     return out
 
 
@@ -265,14 +296,21 @@ def classify_site(site):
     if m:
         g = int(m.group(1))
         return ("life", (g - 1) // DUNGEONS_DATA["engine"]["slots"]["per_dungeon"], g, None, None)
-    m = re.fullmatch(r"cobblers:dungeons/room/([a-z0-9_]+)/([a-z0-9_]+)/s(\d+)/spawn_b[1-6]", site)
+    # a wild room's band spawn, and (PRIZE-POOLS) its rotation's other members, spawn_b<n>_v<k>
+    m = re.fullmatch(r"cobblers:dungeons/room/([a-z0-9_]+)/([a-z0-9_]+)/s(\d+)/spawn_b[1-6](?:_v\d+)?", site)
     if m:
         di = next((i for i, d in enumerate(ds) if d["id"] == m.group(1)), None)
         return ("wild", di, int(m.group(3)), m.group(2), None)
-    m = re.fullmatch(r"cobblers:dungeons/room/([a-z0-9_]+)/([a-z0-9_]+)/s(\d+)/prize/spawn_b([1-6])", site)
+    # the hidden prize per band, and (PRIZE-POOLS) its pool's other members, prize/spawn_b<n>_<k>
+    m = re.fullmatch(r"cobblers:dungeons/room/([a-z0-9_]+)/([a-z0-9_]+)/s(\d+)/prize/spawn_b([1-6])(?:_\d+)?", site)
     if m:
         di = next((i for i, d in enumerate(ds) if d["id"] == m.group(1)), None)
         return ("prize", di, int(m.group(3)), m.group(2), int(m.group(4)))
+    # the egg room's vendor (its enter) and the bait room's lure (the lure room's lure)
+    m = re.fullmatch(r"cobblers:dungeons/room/([a-z0-9_]+)/([a-z0-9_]+)/s(\d+)/(enter|lure)", site)
+    if m:
+        di = next((i for i, d in enumerate(ds) if d["id"] == m.group(1)), None)
+        return ("vendor" if m.group(4) == "enter" else "lure", di, int(m.group(3)), m.group(2), None)
     return None
 
 
@@ -344,7 +382,30 @@ def test_every_npc_an_engine_spawn_makes_carries_the_exempt_tag_when_the_spawn_r
             assert not bare, (site, band, bare)
             assert all("dg.s%d" % g in e.tags and "dg.lf" in e.tags for e in made), (site, band, [sorted(e.tags) for e in made])
         return
-    fixed = re.search(r"/spawn_b([1-6])$", site)
+    if kind == "lure":
+        # the bait room's lure (RT-A): one line pair per (bait, band), each gated on the lure holder holding that bait's
+        # index; run as the member for every pair with the holder set, exactly one Pokemon each, exempt and kept
+        pairs = sorted({(m.group(1), int(m.group(2)), int(m.group(3))) for l in DA.body(FNS[site])
+                        for m in [re.search(r"if score (\S+) dg\.rs matches (\d+) if score @s dg\.band matches (\d+) in \S+ run "
+                                            r"function cobblers:dungeons/extras/s\d+/at \{", l)] if m})
+        assert pairs, site
+        for holder, bait, band in pairs:
+            w = new_world()
+            p = player(w)
+            p.dim = POCKET
+            spot = next(m for l in DA.body(FNS[site]) for m in [re.search(r'x:"([-\d.]+)",y:"([-\d.]+)",z:"([-\d.]+)"', l)] if m)
+            p.pos = [float(spot.group(1)) - 4, float(spot.group(2)), float(spot.group(3))]
+            for obj, v in (("dg.band", band), ("dg.slot", g), ("dg.run", 1)):
+                w.set(p.name, obj, v)
+            w.set("#s%d" % g, "dg.run", 1)
+            w.set(holder, "dg.rs", bait)
+            w.call(site, PS_ctx(p))
+            made = [e for e in w.spawned if e.kind == "cobblemon:pokemon"]
+            assert len(made) == 1 and not w.npcs, (site, holder, bait, band, w.log)
+            assert EXEMPT in made[0].tags and KEEP_TAG in made[0].tags and "dg.s%d" % g in made[0].tags, (site, sorted(made[0].tags))
+        return
+    # a pool's other members (PRIZE-POOLS: spawn_b<n>_v<k>, prize/spawn_b<n>_<k>) are their band's too
+    fixed = re.search(r"/spawn_b([1-6])(?:_v?\d+)?$", site)
     bands = [int(fixed.group(1))] if fixed else range(1, 7)
     stages = tuple(range(1, 1 + min(len(d["boss"]["stage_level_offsets"]) for d in json.loads((Path(__file__).resolve().parent.parent / "data" / "dungeons.json").read_text(encoding="utf-8"))["dungeons"]))) if kind == "boss" else (1,)
     # the macro spawn lines this site makes for a band: the boss's per band and stage, a trainer's one per band, a

@@ -152,6 +152,8 @@ def sweep(files):
     for rel in files:
         if rel.startswith(NPCS) and rel.endswith(".json"):
             stem = rel[len(NPCS):-len(".json")]
+            if not_a_fighter(files[rel]):
+                continue
             if "cobblers:dungeons/claw/bounds/%s" % stem not in fns:
                 bad.append("class %s has no claw/bounds function" % stem)
     if "cobblers:dungeons/claw/tick" not in json.loads(files["data/minecraft/tags/function/tick.json"])["values"]:
@@ -159,6 +161,14 @@ def sweep(files):
     if "cobblers:dungeons/claw/init" not in json.loads(files["data/minecraft/tags/function/load.json"])["values"]:
         bad.append("claw/init is not in load.json")
     return bad
+
+
+def not_a_fighter(text):
+    """An NPC class that cannot battle: no party, and its interaction a dialogue (the egg room's vendor, RT-B,
+    tools/dungeon_extras2.py npc_class). It has nothing to claw back, so no claw/bounds. A class with a party, or one
+    whose interaction is anything else, is still held to the bounds."""
+    c = json.loads(text)
+    return "party" not in c and (c.get("interaction") or {}).get("type") == "dialogue"
 
 
 def test_the_built_pack_is_covered(built):
@@ -279,7 +289,7 @@ def test_every_bound_is_the_hand_bound_of_its_party(built_with_stand):
     n = 0
     for rel, text in built_with_stand.items():
         m = re.fullmatch(NPCS + r"(dg_.+)\.json", rel)
-        if not m:
+        if not m or not_a_fighter(text):
             continue
         levels = [int(p.split("level=")[1]) for p in json.loads(text)["party"]["pokemon"]]
         body = built_with_stand["%sclaw/bounds/%s.mcfunction" % (FUNCS, m.group(1))]
@@ -301,10 +311,32 @@ def test_every_bound_is_the_hand_bound_of_its_party(built_with_stand):
                 yield from records(r.get("rooms"))
             else:
                 yield r
-    trainers = sum(len(r["params"]["trainers"]) for d in DOC["dungeons"] for r in records(d.get("rooms"))
-                   if r["kind"] in ("stand", "gauntlet"))
-    assert trainers > 0
-    assert n == 6 * sum(len(d["boss"]["stage_level_offsets"]) for d in DOC["dungeons"]) + 6 * trainers + 6
+    # PRIZE-POOLS (DUNGEON_ROOMS.md 14): a trainer's rotation pool is one class per team (team_pool_by_band), the boss's
+    # alternate crews one set of stages each (teams_alt_by_band), and a variant's swap that seats other trainers in a
+    # room (the documented rule: `params` merged one level) seats a class per trainer index it adds. Counted as the
+    # distinct (dungeon, room, trainer index, band, team) a class stands for, from the data alone
+    bands = [str(b["band"]) for b in DOC["engine"]["bands"]]
+    seats = set()
+    for d in DOC["dungeons"]:
+        for v in d.get("variants") or [{}]:
+            sw = v.get("swap") or {}
+            for r in records(d.get("rooms")):
+                o = sw.get(r["id"])
+                if o:
+                    r = dict(r, **{k: x for k, x in o.items() if k != "params"},
+                             params=dict(r.get("params") or {}, **(o.get("params") or {})))
+                if r["kind"] not in ("stand", "gauntlet"):
+                    continue
+                for i, t in enumerate(r["params"]["trainers"], 1):
+                    for b in bands:
+                        pool = (t.get("team_pool_by_band") or {}).get(b)
+                        teams = len(pool) if pool else (1 if (t.get("team_by_band") or {}).get(b) else 0)
+                        seats |= {(d["id"], r["id"], i, b, k) for k in range(1, teams + 1)}
+    assert seats
+    boss = sum(len(d["boss"]["stage_level_offsets"]) * ((1 if d["boss"]["teams"].get(b) else 0)
+                                                        + len((d["boss"].get("teams_alt_by_band") or {}).get(b) or []))
+               for d in DOC["dungeons"] for b in bands)
+    assert n == boss + len(seats) + 6
 
 
 # ---- the stands' classes -------------------------------------------------------------------------------------------
