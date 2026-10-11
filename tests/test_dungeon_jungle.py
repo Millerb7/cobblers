@@ -42,6 +42,13 @@ SLOT = SLOTS[0]
 RECORDS = list(R._walk_records(JG["rooms"]))     # every room of the record, routes and the side room (no swaps)
 FIGHTS = {"stand", "gauntlet", "ambush", "nest", "miniboss", "habitat", "boss_arena"}
 OWNER_NAMED = {"maze", "puzzle", "parkour", "resources", "nest", "habitat", "stand", "miniboss"}
+# the six optional kinds of DUNGEON_ROOMS.md 12-13 (PLACE-ROOMS, 2026-10-11): their side entries are not the pass-3 wing
+# or the treasury the tests below are about
+EXTRA_KINDS = {"bank_vault", "wishing_well", "bait_room", "fishing_room", "egg_room", "fossil_chamber"}
+
+
+def pass3_side(r):
+    return r["kind"] == "side" and not any(x["kind"] in EXTRA_KINDS for x in r["rooms"])
 OURS = {"gauntlet", "ambush", "vault", "dark_room", "collapse_bridge", "safe_room", "setpiece"}
 CONNECTORS = {"drift", "stairs"}
 
@@ -163,7 +170,7 @@ def test_the_pacing_no_two_fights_meet_on_any_route_the_heal_about_two_thirds_in
         assert 0.6 <= before / total <= 0.8, (vid, before / total)
     ids = [r["id"] for r in JG["rooms"]]
     kinds = [r["kind"] for r in JG["rooms"]]
-    wing = next(k for k, r in enumerate(JG["rooms"]) if r["kind"] == "side" and len(r["rooms"]) > 1)
+    wing = next(k for k, r in enumerate(JG["rooms"]) if pass3_side(r) and len(r["rooms"]) > 1)
     assert kinds.index("resources") < min([kinds.index(k) for k in ("miniboss", "boss_arena")] + [wing])
     assert ids.index("shrine") == wing - 1, "the wing leaves the shrine: healed before the hard parkour and the prize"
 
@@ -239,7 +246,7 @@ def test_the_routes_ask_different_things_and_the_clock_pays_the_slower(walks):
 
 
 def wing():
-    (w,) = [r for r in JG["rooms"] if r["kind"] == "side" and len(r["rooms"]) > 1]
+    (w,) = [r for r in JG["rooms"] if pass3_side(r) and len(r["rooms"]) > 1]
     return w
 
 
@@ -270,7 +277,7 @@ def test_a_four_room_optional_wing_a_connector_a_climb_a_hard_parkour_and_the_pr
 
 
 def test_one_side_room_the_treasury_a_dead_end_the_clock_does_not_count(walks):
-    sides = [r for r in JG["rooms"] if r["kind"] == "side" and len(r["rooms"]) == 1]
+    sides = [r for r in JG["rooms"] if pass3_side(r) and len(r["rooms"]) == 1]
     assert len(sides) == 1 and sides[0]["rooms"][0]["kind"] == "vault"
     side_ids = {r["id"] for r in sides[0]["rooms"]}
     rooms = R.layout(DOC, JG, SLOT)
@@ -561,3 +568,22 @@ def test_the_build_writes_one_shell_function_per_room_inside_the_chain_budget(pa
     for s in SLOTS:
         assert R.chain_problems(DOC, JG, s) == []
     assert R.total_blocks(DOC, SLOT) < 1.2e6
+
+
+def test_the_new_rooms_are_placed_off_the_route_and_every_one_is_optional():
+    """PLACE-ROOMS (2026-10-11, the owner: "I want to see the new rooms"): the jungle holds a fishing room, a wishing well
+    and a bait room, each on a side entry (never the main route, never a fork route), gate open, never paid by the
+    clock, in every variant; the bait's lure room is a living room on the main route."""
+    new = {"fishing_room", "wishing_well", "bait_room"}
+    for s in SLOTS:
+        lay = R.layout(DOC, JG, s)
+        mine = [r for r in lay if r["kind"] in new]
+        assert sorted(r["kind"] for r in mine) == sorted(new), s["g"]
+        for r in mine:
+            assert r["route"] != "main" and "/" not in r["route"] and r["gate"] == "open", (s["g"], r["id"])
+        bait = next(r for r in mine if r["kind"] == "bait_room")
+        lure = next(r for r in lay if r["id"] == bait["params"]["lure_room"])
+        assert lure["route"] == "main" and lure["kind"] not in FIGHTS | {"parkour"}, lure["id"]
+    rooms = DC.walked(DOC, JG)[0]
+    paid = {r["id"] for b in DOC["engine"]["bands"] for r in DC.clock_rooms(DOC, JG, b["band"], rooms)}
+    assert not paid & {r["id"] for r in rooms if r["kind"] in new}, "the clock never pays for an optional room"

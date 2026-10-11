@@ -249,7 +249,10 @@ def kind_fishing(doc, d, slot, room, theme):
     for (mx, mz) in g["marker"]:
         ops.append(setb((mx, fy - 2, mz), markers[bands[0]]))
     pier_set = {(cx, z) for z in g["pier_z"]}
-    water = [(x, z) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1) if (x, z) not in pier_set and abs(x - cx) >= 1]
+    # the two corners `expect` reads as plain water are never decor (PLACE-ROOMS, 2026-10-11: a jungle seed put seagrass
+    # on one and the room failed its own check)
+    water = [(x, z) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1)
+             if (x, z) not in pier_set and abs(x - cx) >= 1 and (x, z) not in ((x0, z0), (x1, z1))]
     rg.shuffle(water)
     decor = []
     for (x, z) in water[:int(cfg["decor"]["seagrass"])]:

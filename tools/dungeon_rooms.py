@@ -1007,6 +1007,7 @@ def floor_lights(ctx, room, theme, tall, penalty):
     block = tall.get("block", t["light"])
     xs = _spread(room["ix0"], room["ix1"], step)
     zs = _spread(room["iz0"], room["iz1"], step)
+    kept = {tuple(p) for p, _w in (ctx.built.meta or {}).get("expect", [])}     # a kind's own cells (see light_dark_cells)
     for x in xs:
         for z in zs:
             for dx, dz in FLOOR_LIGHT_SEARCH:
@@ -1014,7 +1015,7 @@ def floor_lights(ctx, room, theme, tall, penalty):
                 if not (room["ix0"] <= px <= room["ix1"] and room["iz0"] <= pz <= room["iz1"]):
                     continue
                 fl = floor_xz(room, px, pz)
-                if fl is None:
+                if fl is None or (px, fl - 1, pz) in kept:
                     continue
                 under, at = ctx.grid.block_at(px, fl - 1, pz), ctx.grid.block_at(px, fl, pz)
                 if G.base(under) in G.AIR or G.classify(at) == G.SOLID:
@@ -1113,11 +1114,12 @@ def cap_dark_dressing(ctx, theme, tall, penalty):
     import numpy as np
     block = tall.get("block", theme["hull"]["light"])
     ok = dress_blocks(theme)
+    kept = {tuple(p) for p, _w in (ctx.built.meta or {}).get("expect", [])}     # a kind's own cells (see light_dark_cells)
     for x, y, z in sorted(ctx.standable_cells(), key=lambda c: (-c[1], c[0], c[2])):
         ls = np.array(ctx.lights)
         if 15 - int(np.abs(ls - np.array([x, y, z])).sum(axis=1).min()) - penalty >= 1:
             continue
-        if G.base(ctx.grid.block_at(x, y - 1, z)) in ok:
+        if G.base(ctx.grid.block_at(x, y - 1, z)) in ok and (x, y - 1, z) not in kept:
             ctx.add(setb((x, y - 1, z), block))
             ctx.lights.append((x, y - 1, z))
         elif ctx.grid.block_at(x, ctx.room["ceil_y"], z) == theme["hull"]["ceiling"]:
@@ -1460,6 +1462,9 @@ def light_dark_cells(ctx, theme, limit=400):
     pen = t.get("light_penalty", 0)
     ok = dress_blocks(theme) | {G.base(t["floor"])}
     tried = set()
+    # a cell a kind names in meta "expect" is the kind's block even when the theme dresses with the same block (a fishing
+    # room's sea pickle in the flooded ruin): never set the light into it (PLACE-ROOMS, 2026-10-11)
+    kept = {tuple(p) for p, _w in (ctx.built.meta or {}).get("expect", [])}
     for _ in range(limit):
         cells = [c for c in ctx.standable_cells() if c not in tried]
         if not cells or not ctx.lights:
@@ -1472,7 +1477,7 @@ def light_dark_cells(ctx, theme, limit=400):
             return
         x, y, z = sorted(dark)[0]
         tried.add((x, y, z))
-        if G.base(ctx.grid.block_at(x, y - 1, z)) in ok:
+        if G.base(ctx.grid.block_at(x, y - 1, z)) in ok and (x, y - 1, z) not in kept:
             ctx.add(setb((x, y - 1, z), t["light"]))
             ctx.lights.append((x, y - 1, z))
         elif ctx.grid.inside(x, ctx.room["ceil_y"], z) and ctx.grid.block_at(x, ctx.room["ceil_y"], z) == t["ceiling"]:

@@ -124,7 +124,9 @@ def test_the_default_bank_loot_fits_the_vault_budget_of_the_real_dungeons():
 
 
 def test_a_dungeon_with_none_of_the_kinds_is_untouched():
-    real = D.load()
+    # the shared demo rooms, which hold none of the kinds (the real dungeons place them since PLACE-ROOMS, 2026-10-11)
+    real = TR.demo_doc("mine")
+    assert not [r for r in R._walk_records(real["dungeons"][0]["rooms"]) if r["kind"] in DX.OWN_KINDS]
     assert DX.functions(real) == {} and DX.pack_files(real) == {}
     for s in D.slots(real):
         assert DX.start_lines(real, s) == [], s["g"]
