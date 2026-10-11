@@ -146,6 +146,7 @@ def test_every_placed_trainer_has_exactly_one_line_of_each_kind(cycle):
     # + the gym juniors (2026-10-06, data/gym_junior_trainers.json), seated like Victory Road's ten
     want = (len(n("route_trainers.json")) + len(n("late_route_trainers.json")) + len(n("mansion_guardians.json"))
             + len(n("vr_trainers.json")) + len(seated_arena) + len(n("hq_trainers.json"))
+            + len(n("compact_route_trainers.json"))        # the Haven Compact's seven seated fighters (2026-10-11)
             + len(n("gym_junior_trainers.json")))
     assert len(IDS) == want and len(set(IDS)) == want, (len(IDS), want)
     assert not ({t["id"] for t in arena} - set(seated_arena)) & set(IDS), "an unseated arena champion is placed"

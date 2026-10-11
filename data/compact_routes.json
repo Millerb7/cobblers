@@ -1,0 +1,685 @@
+{
+  "schema": "cobblers.compact-points/1",
+  "status": "authored 2026-10-11 by unit CP-ROUTES (datapack-content-dev); generated records are valid files, NOT run in game. Teams and lines are PLACEHOLDERS: teams for trainer-balance-designer to review, lines for Codex (docs/story/HAVEN_COMPACT_PASS.md; CLAUDE.md: the story text is Codex's)",
+  "generated_by": "hand. tools/compact_routes.py turns it into data/compact_route_trainers.json, data/compact_route_npc_teams.json and the records spliced into data/dialogue.json, data/quests.json, data/progression.json and data/npc_seats.json (python tools/compact_routes.py write), and into build/datapacks/cobblers_compact_routes (build)",
+  "design": "docs/story/HAVEN_COMPACT_PASS.md section 3. This file builds CP-01, 02, 03, 05, 06, 07, 08, 09, 10, 11 and 13. CP-04, CP-12 and CP-14 are unit CP-CORE's and are NOT here",
+  "owner_questions_defaults": {
+    "O1": "Not decided. Built to the design's default: the Compact is not evil. Before the Craters the fights come from secrecy, guarding families and disagreement; Rule 3 and 5 of docs/story/ARC.md stand. (The owner's 2026-10-11 brief says 'evil faction'; data/rift_regions.json:253 records the owner's 2026-09-22 rule that it is not.)",
+    "O2": "Not decided. Default: no Compact fighter stands ON the road. Every actor is seated off the walked line or the plaza's walking space, so the only crossing (CP-11) and the way through every town stay open and no player can be stuck. Declining a fight costs nothing",
+    "O3": "Not decided. Default: every point here is optional (no main-quest transition, no badge gate).",
+    "O4": "Not decided. Default: Lieutenant Varga is the recurring rival (compact_varga_2..4 here; _1 is CP-CORE's at CP-04; the HQ tower's hq_tower_trainer_07 is her last).",
+    "O5": "Not applicable to these points (Elara at the Craters is CP-12, CP-CORE's).",
+    "O6": "Not decided. Default: a loss is the normal blackout (rctmod's own for the seated; Cobblemon's for the NPC fights).",
+    "O7": "Not decided. Default: Compact members carry species with no authored wild home in the region (docs/story/ENCOUNTER_GAPS.md), at least half of every Compact team; natives (the Merian ranger) do not.",
+    "O8": "Not decided; no doubles or multi battle is built. Every 'double' is the design's fallback: two singles back to back with no heal between.",
+    "O9": "Not touched (Victory Road's approach is not a point here).",
+    "O10": "Default: stand-in lines marked `placeholder` so nothing is blocked; Codex replaces them."
+  },
+  "ai_presets": {
+    "low": {"moveBias": 0.95, "switchBias": 0.3, "statusMoveBias": 0.7, "itemBias": 0.5, "maxSelectMargin": 0.35},
+    "mid": {"moveBias": 1.05, "switchBias": 0.5, "statusMoveBias": 0.85, "itemBias": 0.7, "maxSelectMargin": 0.25},
+    "high": {"moveBias": 1.1, "switchBias": 0.6, "statusMoveBias": 0.95, "itemBias": 0.9, "maxSelectMargin": 0.18}
+  },
+  "skins": {
+    "courier": "rctmod:textures/trainers/single/worker_braden_0460.png",
+    "technician": "rctmod:textures/trainers/single/engineer_bernie_00de.png",
+    "scout": "rctmod:textures/trainers/single/camper_jeff_0092.png",
+    "crew": "rctmod:textures/trainers/single/worker_braden_0460.png"
+  },
+  "subregions": {
+    "why": "where each actor must stand: the subregion polygons of data/regions.json (tests/test_compact_routes.py checks every seat against them, point in polygon, independent of the seat finder). Measured 2026-10-11",
+    "npc_compact_courier_ansel": "lake_viltri_hollow",
+    "npc_compact_mila_aster": "lake_viltri_hollow",
+    "compact_relay_tech_01": "foothill_woods",
+    "compact_relay_tech_02": "foothill_woods",
+    "npc_compact_ranger_halloran": "merian_cirque",
+    "npc_compact_surveyor_marn": "merian_cirque",
+    "compact_anchor_crew_01": "peak_pond_hollow",
+    "compact_anchor_crew_02": "peak_pond_hollow",
+    "npc_compact_varga_2": "peak_pond_hollow",
+    "compact_reed_scout_01": "marshy_marsh",
+    "compact_reed_scout_02": "marshy_marsh",
+    "compact_reed_scout_03": "marshy_marsh",
+    "npc_compact_camp_warden": "marsh_creek",
+    "npc_compact_camp_mother": "marsh_creek",
+    "npc_compact_boarding_hask": "tilpey_north_shore",
+    "npc_compact_bridge_guard": "tilpey_east_shore",
+    "npc_compact_varga_3": "tilpey_east_shore",
+    "npc_compact_varga_4": "plateau_west",
+    "npc_compact_dissenter_medic": "plateau_west"
+  },
+  "points": [
+    {
+      "id": "CP-01",
+      "slug": "courier_spar",
+      "title": "The Courier's Spar",
+      "quest": "evt_compact_courier_spar",
+      "from_stage": "brock_account_heard",
+      "band": [20, 23],
+      "where": "route_02_brock_to_misty, the last stretch before Lake Viltri (fraction 0.84 of the walked line, measured)",
+      "serves": "ARC Settlement 3, the sympathy beat; rule 3; FACTION 'The sympathy beat'; the Asters at Lake Viltri",
+      "mechanism": "M2 (npc_battle singles). NOT yet run in game",
+      "built": "the courier's talk-then-fight (2 Pokemon), Mila Aster's conversation, both seated off the road",
+      "not_built": "the cart and bundles (props in data/scenes.json, unbuilt), Dev and Jo Aster, the medicine gift (rewards are the economy's to price), the 'wheel thrown' set dressing",
+      "actors": [
+        {
+          "id": "npc_compact_courier_ansel", "role": "fighter", "name": "Courier Ansel Kerr", "speaker": "ansel",
+          "trainer": "compact_courier_ansel", "skill": 2, "ai": "low",
+          "seat": {"kind": "route_shoulder", "route": "route_02_brock_to_misty", "fraction": 0.84, "offsets": [4, 5, 6], "faces": "route"},
+          "team_note": "hardy haulers from somewhere else; both species have no authored wild home",
+          "team": [
+            {"species": "cufant", "level": 21, "moveset": ["stomp", "bulldoze", "rocksmash", "rollout"]},
+            {"species": "stufful", "level": 22, "moveset": ["strength", "payback", "brutalswing", "babydolleyes"]}
+          ],
+          "before": "Mind the cart. The medicine is spoken for.",
+          "intro": [
+            "Wheel's gone, and the medicine has a delivery window. If you have a free hand, hold the cart steady.",
+            "We came out of a place that was ending. Nobody here asked us for anything but a bed, and I try to say thank you with work.",
+            "Tell me something. Are this world's trainers any good? Show me. Practice only, nobody gets hurt."
+          ],
+          "ask": "Ansel rolls his shoulders and thumbs a Poke Ball.",
+          "fight": "A practice match.",
+          "decline": "Another time.",
+          "over_cap": "That one is too strong for a practice match. Leave it in the box and I will take you on.",
+          "after": [
+            "Good. That is what I wanted to see: a world that fights fair. The lake office will hear the cart is a day late.",
+            "Go on to the lake. Nia is working the landing, and she will not turn anyone away."
+          ],
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. Each does its beat: the first sight of the Compact as people, nothing said about method (docs/story/HAVEN_COMPACT_PASS.md CP-01)"
+        },
+        {
+          "id": "npc_compact_mila_aster", "role": "talker", "name": "Mila Aster", "speaker": "mila",
+          "seat": {"kind": "near_actor", "actor": "npc_compact_courier_ansel", "distance": [5, 8], "faces": {"actor": "npc_compact_courier_ansel"}},
+          "before": "Please do not lean on the cart.",
+          "lines": [
+            "Do not mind Ansel. He has been waiting a week to meet someone who is not a clerk.",
+            "My husband Dev and our son Jo are by the wheel. Jo has decided your Pokemon are his now.",
+            "We were evacuated once already, before this. Nia carried us out herself. The Compact kept that promise, so we are keeping ours: we go where the next boat goes.",
+            "Whatever you hear about the Compact on this road, I hope you remember the cart."
+          ],
+          "repeat": "Lake Viltri is a day's walk. Nia is on the landing. Tell her the Asters are well.",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex; the Asters are FACTION's family (they must not be written as soldiers, rule 4)"
+        }
+      ]
+    },
+    {
+      "id": "CP-02",
+      "slug": "landing",
+      "title": "Landing Night",
+      "quest": "evt_compact_landing",
+      "from_stage": "brock_account_heard",
+      "band": null,
+      "where": "gym2_town Viltri Quay, the plaza (data/placements.json gym2_town plaza rect, y107)",
+      "serves": "ARC Settlement 3; FACTION gym2_town; Codex C3 (in person what the relief clerk only reports)",
+      "mechanism": "M2 NPCs with conversations only. No battle, deliberately: the sympathy beat stays a place where nobody fights",
+      "built": "Nia Calder's and Tomas Rill's conversations on the plaza",
+      "not_built": "the unloading crews and the boats (props), Maren helping unload (the rival's scene), the field clinic dressing",
+      "actors": [
+        {
+          "id": "npc_compact_nia_landing", "role": "talker", "name": "Nia Calder", "speaker": "nia",
+          "seat": {"kind": "plaza", "settlement": "gym2_town", "near": [1620, 2822], "faces": [1620, 2800]},
+          "before": "Mind the crates, please.",
+          "lines": [
+            "You are the one who came down from Brock's valley. Sit. Let me look at that hand.",
+            "I treat whoever is hurt. The lake's own families, ours, it makes no difference to a burn.",
+            "The boats come in at night now. Crews unload, families sleep in rows on the promenade, and by morning the lake office has another page of names.",
+            "People call what we do rescue, and some call it theft. I have stopped arguing the word. I count the people."
+          ],
+          "repeat": "The ledger at the relief office has the names. Read it before you decide what we are.",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex"
+        },
+        {
+          "id": "npc_compact_tomas_landing", "role": "talker", "name": "Tomas Rill", "speaker": "tomas",
+          "seat": {"kind": "plaza", "settlement": "gym2_town", "near": [1628, 2822], "faces": [1620, 2800]},
+          "before": "Please do not touch the survey cases.",
+          "lines": [
+            "Careful with the cases. Those are twelve years of destination surveys.",
+            "I joined because a careful transfer saved my family. Careful, measured, with the ground checked first. That is all I believe in.",
+            "Your town, Pallet. I read the lake instruments for it. A large, clean transfer. Very large.",
+            "I will not tell you who did that. I am telling you the reading was clean."
+          ],
+          "repeat": "A better map answers most arguments. I keep making better maps.",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. 'A large, clean transfer' is the design's line for Tomas about Pallet, without admitting the Compact caused it"
+        }
+      ]
+    },
+    {
+      "id": "CP-03",
+      "slug": "relay",
+      "title": "The Relay on the Climb",
+      "quest": null,
+      "from_stage": null,
+      "band": [25, 28],
+      "where": "route_03_misty_to_surge near the pond west of Mt Clay (data/landmarks.json pond_west_of_mt_clay anchor (2110, 1706)), where the climb reaches Mt Clay's western foot",
+      "serves": "ARC Settlement 4 setup, an echo and never the source: Surge's town still supplies 'steered'",
+      "mechanism": "M1 rctmod seated pair, first with eye contact. The design's 'double battle' is the fallback: two singles back to back, no heal. These two stand at every stage by design",
+      "built": "two seated technicians (2 Pokemon each) and their lines",
+      "not_built": "the relay mast itself (an end rod on tinted glass, a prop), the doubles version (X3 unrun)",
+      "actors": [
+        {
+          "id": "compact_relay_tech_01", "role": "seated", "name": "Relay Technician Voss", "skin": "technician", "ai": "low",
+          "eye_contact": true, "sight_distance": 6.0,
+          "seat": {"kind": "route_shoulder", "route": "route_03_misty_to_surge", "near": [2110, 1706], "offsets": [3, 4, 5, 6], "faces": "route"},
+          "why": "the first technician, eye contact, so the pair reads as a checkpoint on the climb",
+          "team": [
+            {"species": "togedemaru", "level": 26, "moveset": ["spark", "fellstinger", "nuzzle", "defensecurl"]},
+            {"species": "tynamo", "level": 27, "moveset": ["spark", "chargebeam", "thunderwave", "tackle"]}
+          ],
+          "lines": {
+            "pre": "Keep off the mast. It is only a relay, and it is not yours to read.",
+            "player_win": "Fine. Look all you like. You will not find anything you can read.",
+            "player_loss": "Off the equipment, please. Go round by the trail."
+          }
+        },
+        {
+          "id": "compact_relay_tech_02", "role": "seated", "name": "Relay Technician Iwen", "skin": "technician", "ai": "low",
+          "eye_contact": false,
+          "seat": {"kind": "route_shoulder", "route": "route_03_misty_to_surge", "near": [2110, 1706], "min_apart_from": "compact_relay_tech_01", "apart": [9, 16], "offsets": [3, 4, 5, 6], "faces": "route"},
+          "why": "the second, beyond the first; a player who beat Voss meets Iwen next with no heal between (the doubles fallback)",
+          "team": [
+            {"species": "joltik", "level": 26, "moveset": ["electroball", "bugbite", "thunderwave", "agility"]},
+            {"species": "ferroseed", "level": 28, "moveset": ["flashcannon", "pinmissile", "ingrain", "metalclaw"]}
+          ],
+          "lines": {
+            "pre": "Voss said you would come up. He does not say what the mast is for either.",
+            "player_win": "The mast hums because it is working. It is not a weapon. That is all I am allowed to say.",
+            "player_loss": "Keep to the trail. Please."
+          }
+        }
+      ]
+    },
+    {
+      "id": "CP-05",
+      "slug": "cirque_survey",
+      "title": "Survey of an Empty Cirque",
+      "quest": "evt_compact_cirque_survey",
+      "from_stage": "surge_reveal_complete",
+      "band": [31, 33],
+      "where": "the Merian cirque path (data/placements.json merian_hut streets cirque_path, 2813 x, from z1222 to z1040), at the settlement's centre z1102",
+      "serves": "ARC Settlement 5 setup ('every transfer exchanges occupied volume'); FACTION Tomas ('trusts better maps more than speeches')",
+      "mechanism": "M2. The player picks a side by talking to the one they stand with; the OTHER one then offers the fight. Both routes end with the same fact: the survey missed people",
+      "built": "the ranger and the surveyor, the `sided_with` field, both fights (3 Pokemon each)",
+      "not_built": "the staked survey markers and the herders' maps (props); a later line that reads sided_with at the Craters belongs to CP-12 (CP-CORE)",
+      "extra_fields": [
+        {"field": "sided_with", "type": "enum", "initial": "none", "allowed_values": ["none", "ranger", "surveyor"]}
+      ],
+      "actors": [
+        {
+          "id": "npc_compact_ranger_halloran", "role": "sider", "name": "Cirque Ranger Teo Halloran", "speaker": "teo",
+          "trainer": "compact_ranger_halloran", "skill": 3, "ai": "mid", "side": "ranger", "other": "npc_compact_surveyor_marn",
+          "seat": {"kind": "street_shoulder", "settlement": "merian_hut", "street": "cirque_path", "near": [2813, 1102], "side_of": "west", "faces": {"actor": "npc_compact_surveyor_marn"}},
+          "team_note": "mountain natives, Rock and Ice; NOT homeless species on purpose (he is local)",
+          "team": [
+            {"species": "boldore", "level": 31, "moveset": ["rockslide", "stealthrock", "smackdown", "irondefense"]},
+            {"species": "cubchoo", "level": 31, "moveset": ["icywind", "slash", "brine", "snowscape"]},
+            {"species": "piloswine", "level": 33, "moveset": ["icefang", "earthquake", "stealthrock", "icywind"]}
+          ],
+          "before": "The cirque is closed to survey crews until the herders say otherwise.",
+          "intro": [
+            "The Compact's survey calls this cirque empty volume. I have summered sheep here nineteen years, and my children were born in that hut.",
+            "Marn is not cruel. Her map is just wrong, and nobody has asked the herders."
+          ],
+          "side_ask": "Will you stand with the herders?",
+          "side_yes": "Stand with the ranger.",
+          "side_no": "Hear the surveyor first.",
+          "side_thanks": "Then lift her stakes, gently. She will want a fight for it. Do not hurt her. She is only wrong.",
+          "fight_intro": [
+            "So you stand with the survey. A map with a stake in my grazing, and you would hold it.",
+            "Then show me the survey can stand."
+          ],
+          "ask": "Teo whistles his dogs back and squares up.",
+          "fight": "Defend the survey.",
+          "decline": "Not yet.",
+          "over_cap": "Not with that one. Put it in the box and I will fight you fair.",
+          "after": [
+            "Then her map stands. Read it first, though: it still counts nobody who lives in the huts below."
+          ],
+          "sided_after": "The surveyor has the herders' names now. Whatever else she is, she writes them down.",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex"
+        },
+        {
+          "id": "npc_compact_surveyor_marn", "role": "sider", "name": "Destination Surveyor Ilse Marn", "speaker": "ilse",
+          "trainer": "compact_surveyor_marn", "skill": 3, "ai": "mid", "side": "surveyor", "other": "npc_compact_ranger_halloran",
+          "seat": {"kind": "street_shoulder", "settlement": "merian_hut", "street": "cirque_path", "near": [2813, 1102], "side_of": "east", "faces": {"actor": "npc_compact_ranger_halloran"}},
+          "team_note": "instruments that sense: Psychic and Steel; all three have no authored wild home",
+          "team": [
+            {"species": "elgyem", "level": 31, "moveset": ["psybeam", "headbutt", "guardsplit", "teleport"]},
+            {"species": "ferroseed", "level": 32, "moveset": ["flashcannon", "pinmissile", "ingrain", "ironhead"]},
+            {"species": "duosion", "level": 33, "moveset": ["psyshock", "psybeam", "reflect", "recover"]}
+          ],
+          "before": "Survey in progress. Please keep clear of the stakes.",
+          "intro": [
+            "Destination survey for the Merian cirque. Flat, dry, no structures on my instruments. By any measure I own, nobody lives here.",
+            "The ranger disagrees. I have not found what he is pointing at."
+          ],
+          "side_ask": "Will you stand with the survey?",
+          "side_yes": "Stand with the surveyor.",
+          "side_no": "Hear the ranger first.",
+          "side_thanks": "Then the ranger will not let it stand quietly. He will want a fight for his stakes. Be fair to him.",
+          "fight_intro": [
+            "You stand with the herders. The stakes are mine, and the crew is waiting on this reading.",
+            "If the map is wrong I will redraw it. Convince me with something other than a speech."
+          ],
+          "ask": "Ilse sets her instruments down, carefully, and takes out a Poke Ball.",
+          "fight": "Pull up the stakes.",
+          "decline": "Not yet.",
+          "over_cap": "I will not fight that one. Put it away; the instruments are fragile.",
+          "after": [
+            "Four herder families, thirty-one children, none on my sheet. I will redraw it. Tell Nia I need her people to confirm the names."
+          ],
+          "sided_after": "The ranger has gone quiet. The map will be redrawn, but not today.",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. The surveyor's after-line is Tomas's discipline at small scale: a better map, not a speech"
+        }
+      ]
+    },
+    {
+      "id": "CP-06",
+      "slug": "pause_vote",
+      "title": "The Pause Vote",
+      "quest": "evt_compact_pause_vote",
+      "from_stage": "surge_reveal_complete",
+      "band": [32, 34],
+      "where": "gym4_town Greenhollow, the green (data/placements.json gym4_town plaza)",
+      "serves": "ARC Settlement 5 (the internal divide); FACTION gym4_town; the Asters at Peak Pond",
+      "mechanism": "M2",
+      "built": "Nia's pause argument, Dev Aster, and the guard sergeant's test (3 Pokemon)",
+      "not_built": "the public gathering dressing, Jo Aster, Tomas's dry-channel evidence (his own scene)",
+      "actors": [
+        {
+          "id": "npc_compact_nia_pause", "role": "talker", "name": "Nia Calder", "speaker": "nia",
+          "seat": {"kind": "plaza", "settlement": "gym4_town", "near": "plaza_centre_west", "faces": "plaza_centre"},
+          "before": "Excuse me; the council is about to sit.",
+          "lines": [
+            "Let me say this once in front of everyone. Pause the transfers until a destination can be proved empty.",
+            "I have held the hand of a woman from the source world, and a woman from this one, and I could not tell you which of them was more afraid.",
+            "A pause is not abandonment. It is the first time we would ask who is on the other side before we carry someone through."
+          ],
+          "repeat": "The sergeant thinks waiting kills. He is not wrong that it can. I am asking for the cost to be visible.",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex"
+        },
+        {
+          "id": "npc_compact_dev_aster", "role": "talker", "name": "Dev Aster", "speaker": "dev",
+          "seat": {"kind": "plaza", "settlement": "gym4_town", "near": "plaza_centre_east", "faces": "plaza_centre"},
+          "before": "Please, the council is sitting.",
+          "lines": [
+            "We are the families housed here, on the green. Our home community is still waiting for the next boat.",
+            "Mila says Nia is right. I say the sergeant is right. The honest answer is both, and we have a boy who needs a roof either way.",
+            "Whatever you decide you are for, remember that there is a child asking when we are going home."
+          ],
+          "repeat": "Jo is asleep on the grass. Please keep your voice down.",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex"
+        },
+        {
+          "id": "npc_compact_sergeant_dorrin", "role": "fighter", "name": "Guard Sergeant Hale Dorrin", "speaker": "hale",
+          "trainer": "compact_sergeant_dorrin", "skill": 3, "ai": "mid",
+          "seat": {"kind": "plaza", "settlement": "gym4_town", "near": "plaza_edge_north", "faces": "plaza_centre"},
+          "team_note": "a small version of Brann's Steel and Fighting wall (data/finale_trainers.json), foreshadowing the finale",
+          "team": [
+            {"species": "honedge", "level": 32, "moveset": ["nightslash", "shadowsneak", "retaliate", "irondefense"]},
+            {"species": "gurdurr", "level": 33, "moveset": ["dynamicpunch", "bulkup", "rockthrow", "scaryface"]},
+            {"species": "copperajah", "level": 34, "moveset": ["heavyslam", "stomp", "irondefense", "dig"]}
+          ],
+          "before": "The council is in session. Step back.",
+          "intro": [
+            "I carried the dead out of the last failed extraction. Do not tell me about waiting.",
+            "You have been asking questions about the families on this green. Are you a threat to them? Tell me with your Pokemon."
+          ],
+          "ask": "The sergeant folds his arms across the green.",
+          "fight": "Show him.",
+          "decline": "Not now.",
+          "over_cap": "Not with that one in your party. Leave it, and I will test you.",
+          "after": [
+            "You fight to protect, not to take. Fine. Ask your questions. I will tell my crews to leave you be, and that is all I will promise."
+          ],
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. A grudging respect, not a defeat of the Compact (design CP-06)"
+        }
+      ]
+    },
+    {
+      "id": "CP-07",
+      "slug": "anchor_pull",
+      "title": "The Anchor Pull",
+      "quest": "evt_compact_anchor_pull",
+      "from_stage": "erika_reveal_complete",
+      "band": [36, 39],
+      "where": "route_05_erika_to_koga, the wet ground toward glacial_tear (fractions 0.60 to 0.72 of the walked line)",
+      "serves": "ARC Settlement 6 ('each forced use makes the next less stable'); FACTION gym5_town (Oren's traces); SQ-G5-01. An echo: Koga's town remains the source",
+      "mechanism": "M1 for the two crew (seated, stand at every stage); M2 for Varga (compact_varga_2), whose conversation refuses until both crew are beaten. The design's TIMED version (the winch finishes in N minutes) is NOT built: X4 unrun",
+      "built": "two seated crew, Varga's gated fight (5 Pokemon) and Oren's notebook as her after-win lines",
+      "not_built": "the winch and crate props, the timer, the notebook as an item",
+      "actors": [
+        {
+          "id": "compact_anchor_crew_01", "role": "seated", "name": "Salvage Hand Brell", "skin": "crew", "ai": "mid",
+          "eye_contact": false,
+          "seat": {"kind": "route_shoulder", "route": "route_05_erika_to_koga", "fraction": 0.60, "offsets": [3, 4, 5, 6], "faces": "route"},
+          "why": "the first of the crew at the winch, on the road's shoulder",
+          "team": [
+            {"species": "stunfisk", "level": 36, "moveset": ["mudbomb", "thundershock", "muddywater", "sludgebomb"]},
+            {"species": "scolipede", "level": 36, "moveset": ["steamroller", "poisonjab", "megahorn", "protect"]}
+          ],
+          "lines": {
+            "pre": "Keep walking. This is a salvage job, and a salvage job wants no audience.",
+            "player_win": "Fine, fine. Lieutenant Varga is at the crane. She will not be as polite.",
+            "player_loss": "Off the wet ground, please. You will sink the winch cable."
+          }
+        },
+        {
+          "id": "compact_anchor_crew_02", "role": "seated", "name": "Salvage Hand Quill", "skin": "crew", "ai": "mid",
+          "eye_contact": false,
+          "seat": {"kind": "route_shoulder", "route": "route_05_erika_to_koga", "fraction": 0.66, "offsets": [3, 4, 5, 6], "faces": "route"},
+          "why": "the second, nearer the crane; the third fight in the chain is Varga",
+          "team": [
+            {"species": "gurdurr", "level": 37, "moveset": ["dynamicpunch", "bulkup", "rockthrow", "chipaway"]},
+            {"species": "galvantula", "level": 37, "moveset": ["electroball", "bugbite", "thunderwave", "agility"]},
+            {"species": "tirtouga", "level": 38, "moveset": ["aquajet", "rockslide", "bite", "protect"]}
+          ],
+          "lines": {
+            "pre": "That anchor is Compact property, and it is leaving this marsh tonight.",
+            "player_win": "Go and say it to Varga. She is at the crane, and she will want to hear it.",
+            "player_loss": "Please do not follow us to the crane."
+          }
+        },
+        {
+          "id": "npc_compact_varga_2", "role": "fighter", "name": "Lieutenant Varga", "speaker": "varga",
+          "trainer": "compact_varga_2", "skill": 4, "ai": "high",
+          "requires": [
+            {"field": "quest.compact_anchor_crew_01.defeated", "blocked": "My crew is at the winch. Get past them first, or leave us to the cable."},
+            {"field": "quest.compact_anchor_crew_02.defeated", "blocked": "My crew is at the winch. Get past them first, or leave us to the cable."}
+          ],
+          "seat": {"kind": "route_shoulder", "route": "route_05_erika_to_koga", "fraction": 0.72, "offsets": [5, 6], "faces": "route"},
+          "team_note": "Varga's ladder, the same lines each time growing (design section 2): compact_varga_1 (CP-CORE, CP-04, as merged: Zubat 27, Roggenrola 27, Skorupi 28, Drilbur 29, RELAYED from commit de7c9df, not measured here), then here Skorupi, Excadrill, Boldore, Golbat and one more",
+          "team": [
+            {"species": "skorupi", "level": 37, "moveset": ["poisonfang", "pinmissile", "knockoff", "toxicspikes"]},
+            {"species": "excadrill", "level": 38, "moveset": ["earthquake", "rockslide", "xscissor", "rapidspin"]},
+            {"species": "boldore", "level": 37, "moveset": ["rockslide", "stealthrock", "smackdown", "irondefense"]},
+            {"species": "golbat", "level": 38, "moveset": ["bravebird", "poisonfang", "confuseray", "airslash"]},
+            {"species": "krokorok", "level": 39, "moveset": ["crunch", "earthquake", "rockslide", "dig"]}
+          ],
+          "before": "Move along. This is salvage.",
+          "intro": [
+            "You were at Highwire, and you are here. I am Lieutenant Varga, and I stop being patient about now.",
+            "That anchor was set to carry a family to safety. It is rusting in a marsh because the exchange it served has gone wrong. I am taking it before Koga's trackers read the marks on it.",
+            "If you are the thing standing between me and that winch, I will move you."
+          ],
+          "ask": "Varga plants her feet at the crane.",
+          "fight": "Take on the lieutenant.",
+          "decline": "Not yet.",
+          "over_cap": "Not with that one. I do not fight what the badges have not earned you the right to command. Put it away.",
+          "after": [
+            "Take the notebook. It is Oren Pell's, and he will deny he wrote it. 'The anchors drift further after each use. Hoopa's condition is worsening. I can no longer promise the next landing.'",
+            "He kept working because stopping would end every rescue in flight. I am not sure I disagree.",
+            "You will be telling Elara what you told my crew. I hope you are as sure then as you are now."
+          ],
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. Oren's notebook is FACTION's admission that Hoopa is worsening (docs/story/FACTION.md); her last line is the tower's own, hq_trainers.json hq_tower_trainer_07 ('Say to her what you said to my team')"
+        }
+      ]
+    },
+    {
+      "id": "CP-08",
+      "slug": "reed_scouts",
+      "title": "Shadows in the Reeds",
+      "quest": null,
+      "from_stage": null,
+      "band": [37, 39],
+      "where": "marshy_marsh's dry rim (data/landmarks.json marshy_marsh, polygon x4860-5352, z2000-2348), three blinds apart from each other",
+      "serves": "ARC Settlement 6 ('Koga tracks covert movement'); gym5_town Fenhide",
+      "mechanism": "M1 seated singles, one per blind, found by walking the rim. The design's hide-and-seek pattern (evt_hide_and_seek) is NOT used; the scouts are seated and the finding is the walking. Seats need ground y64 or higher to keep them out of the painted water",
+      "built": "three seated scouts (2 Pokemon each) with lines",
+      "not_built": "the reed blinds as built props, Koga's tracker gear for finding all three (a reward), a quest record",
+      "actors": [
+        {
+          "id": "compact_reed_scout_01", "role": "seated", "name": "Reed Scout Lio", "skin": "scout", "ai": "mid", "eye_contact": false,
+          "seat": {"kind": "open", "near": [4920, 2290], "radius": 30, "min_ground": 64, "faces": [5160, 2160]},
+          "why": "the western rim of the basin, nearest Fenhide, looking down at the marsh floor (y63 at its anchor)",
+          "team_note": "ambush and stealth: Dark and Poison, an illusion user",
+          "team": [
+            {"species": "morgrem", "level": 38, "moveset": ["foulplay", "darkpulse", "playrough", "partingshot"]},
+            {"species": "skuntank", "level": 37, "moveset": ["poisonjab", "crunch", "flamethrower", "toxic"]}
+          ],
+          "lines": {
+            "pre": "How long have you been behind me?",
+            "player_win": "Koga's trackers are good. You are better. We were only watching who comes and goes.",
+            "player_loss": "You did not see me. Please keep it that way."
+          }
+        },
+        {
+          "id": "compact_reed_scout_02", "role": "seated", "name": "Reed Scout Mave", "skin": "scout", "ai": "mid", "eye_contact": false,
+          "seat": {"kind": "open", "near": [5060, 2250], "radius": 30, "min_ground": 64, "faces": [5160, 2160]},
+          "why": "the south-western rim, east of the first",
+          "team": [
+            {"species": "dragalge", "level": 39, "moveset": ["sludgebomb", "dracometeor", "focusblast", "toxicspikes"]},
+            {"species": "mandibuzz", "level": 38, "moveset": ["foulplay", "bravebird", "roost", "toxic"]}
+          ],
+          "lines": {
+            "pre": "Oh, no. You are not supposed to find the third blind.",
+            "player_win": "Tell Koga we are not hunting him. We are counting who moves toward the anchors.",
+            "player_loss": "Not a word to the trackers, please."
+          }
+        },
+        {
+          "id": "compact_reed_scout_03", "role": "seated", "name": "Reed Scout Orrin", "skin": "scout", "ai": "mid", "eye_contact": false,
+          "seat": {"kind": "open", "near": [5240, 2250], "radius": 30, "min_ground": 64, "faces": [5160, 2160]},
+          "why": "the south-eastern rim, the farthest blind",
+          "team": [
+            {"species": "liepard", "level": 38, "moveset": ["nightslash", "playrough", "thunderwave", "suckerpunch"]},
+            {"species": "arbok", "level": 37, "moveset": ["gunkshot", "crunch", "glare", "poisonfang"]}
+          ],
+          "lines": {
+            "pre": "Three of us out here and you are the first to walk up on me.",
+            "player_win": "That is all three. Please do not tell the Compact I told you what we were watching for.",
+            "player_loss": "Go back to your town. Nothing out here concerns you."
+          }
+        }
+      ]
+    },
+    {
+      "id": "CP-09",
+      "slug": "waiting_camp",
+      "title": "The Waiting Camp",
+      "quest": "evt_compact_waiting_camp",
+      "from_stage": "koga_reveal_complete",
+      "band": [41, 43],
+      "where": "route_06_koga_to_sabrina through Marsh Creek (fraction 0.58 of the walked line)",
+      "serves": "ARC Settlement 7 (the strongest moral case, 'largest remaining community'); FACTION gym6_town (the waiting families); rule 4",
+      "mechanism": "NON-BATTLE beat only. The defence fight (three distressed wild Pokemon at dusk) needs a story-zone-triggered per-player spawn (M4), which is unproven (scene actors are 'in progress', EXP-034; a zone keeper spawning wild Pokemon per player has no proof). EXP stub filed",
+      "built": "the camp warden's and a waiting mother's conversations",
+      "not_built": "the dusk defence battle (3 wild Pokemon, band 41-43), the camp dressing (tents, fires); see experiments/EXP-097-compact-routes",
+      "actors": [
+        {
+          "id": "npc_compact_camp_warden", "role": "talker", "name": "Camp Warden Ysolde Crane", "speaker": "ysolde",
+          "seat": {"kind": "route_shoulder", "route": "route_06_koga_to_sabrina", "fraction": 0.58, "offsets": [4, 5, 6], "faces": "route"},
+          "before": "The camp is closed to visitors. Please move on.",
+          "lines": [
+            "You have walked into the largest camp of families the Compact has left. Four hundred and nine names, and the boats have stopped coming for them.",
+            "They are waiting for a transfer that has not been scheduled. Nobody here will tell you it is wrong, because they have nowhere else to put the hope.",
+            "At dusk the marsh pushes its own creatures against our edge. Something in the air has frightened them since the last exchange. My guards hold the line; there are not enough of them."
+          ],
+          "repeat": "If you are going through, go quietly. The children sleep early.",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. Rule 4: the families stay visible. The defence fight these lines set up is NOT built (see this point's mechanism)"
+        },
+        {
+          "id": "npc_compact_camp_mother", "role": "talker", "name": "Odile Marsh", "speaker": "odile",
+          "seat": {"kind": "near_actor", "actor": "npc_compact_camp_warden", "distance": [5, 8], "faces": {"actor": "npc_compact_camp_warden"}},
+          "before": "Please, the little ones are sleeping.",
+          "lines": [
+            "My daughter asks when the boats come. I tell her soon. I have told her soon for forty days.",
+            "We were told our new home would be quiet and empty. I would like that, whatever it costs. I would like it to be true.",
+            "If you meet the people deciding, tell them my daughter's name is Pell. Anya Pell. She is eight."
+          ],
+          "repeat": "Thank you for stopping. Nobody stops.",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. 'Pell' is not Oren's family; it is a coincidence Codex may drop"
+        }
+      ]
+    },
+    {
+      "id": "CP-10",
+      "slug": "requisition",
+      "title": "The Requisitioned Boat",
+      "quest": "evt_compact_requisition",
+      "from_stage": "sabrina_reveal_complete",
+      "band": [44, 46],
+      "where": "gym6_town's lake dock (data/ferry_docks.json tilpey_sabrina_dock, near (6051, 3610)), on the landward approach",
+      "serves": "ARC Settlement 7's last fact: 'the faction is preparing that transfer at a major energy source'",
+      "mechanism": "M2 at the dock, never in the ferry's way. NOTE: the Tilpey launch's ferry line is not emitted today (data/ferries.json tilpey_launch blocked_by: a lake line cannot be declared), so there is no ferryman to be blocked",
+      "built": "the boarding officer's talk-then-fight (3 Pokemon)",
+      "not_built": "the loaded boats and equipment (props); the ferryman's own lines are tools/ferries.py's and are untouched; 'winning frees the boat for the day' needs the ferry line itself",
+      "actors": [
+        {
+          "id": "npc_compact_boarding_hask", "role": "fighter", "name": "Boarding Officer Perrin Hask", "speaker": "perrin",
+          "trainer": "compact_boarding_hask", "skill": 3, "ai": "mid",
+          "seat": {"kind": "open", "near": [6051, 3598], "radius": 16, "min_ground": 79, "faces": [6051, 3612], "min_from": [{"point": [6050, 3614], "dist": 8}]},
+          "team_note": "Water and Flying, with crew who know boats",
+          "team": [
+            {"species": "mantine", "level": 44, "moveset": ["waterpulse", "airslash", "bubblebeam", "wingattack"]},
+            {"species": "jellicent", "level": 45, "moveset": ["surf", "shadowball", "recover", "willowisp"]},
+            {"species": "swanna", "level": 46, "moveset": ["bravebird", "hydropump", "roost", "icebeam"]}
+          ],
+          "before": "The dock is closed for requisition. Move along.",
+          "intro": [
+            "The boats are needed. This is a requisition, and the boatman knows it. He did not want to sign.",
+            "There are families a day south of here who will not last another week, and I will not have a stranger on the gangplank asking what is in the crates.",
+            "I do not want to hurt you. I want you to let me work."
+          ],
+          "ask": "Hask puts a hand on the gangplank rope.",
+          "fight": "Challenge the officer.",
+          "decline": "Not now.",
+          "over_cap": "Not with that one. The cap on what you may command is the cap, and I will not break it for you.",
+          "after": [
+            "You can walk the jetty. I will not stop you. But the boat is going south tonight with what is in the crates, and you know who is waiting at the far end."
+          ],
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. The officer gives away the last fact of Settlement 7 as a rescue boat; he is not told it is a transfer"
+        }
+      ]
+    },
+    {
+      "id": "CP-11",
+      "slug": "bridge",
+      "title": "The Bridge Checkpoint",
+      "quest": "evt_compact_bridge",
+      "from_stage": "sabrina_reveal_complete",
+      "band": [45, 48],
+      "where": "route_07_sabrina_to_blaine, the north approach to the outflow bridge (data/bridges.json route7_tilpey_outflow: centre x6632, walkway x6630-6634, z3880 to z3960)",
+      "serves": "the escalation before the line: open force for the first time, but no occupied target chosen yet (rule 5). Brann is mentioned, not seen",
+      "mechanism": "M2. The design's double battle is the fallback: the guard, then Varga, as singles with no heal between (Varga refuses until the guard is beaten). Both stand BESIDE the approach (O2 default): the road to the bridge is never blocked, and a player may walk past without a fight",
+      "built": "the bridge guard and compact_varga_3 (5 Pokemon)",
+      "not_built": "the checkpoint props, Brann watching from the far end, the Bridgekeep keepers' anger (SQ-G6-02)",
+      "actors": [
+        {
+          "id": "npc_compact_bridge_guard", "role": "fighter", "name": "Checkpoint Guard Tamsin Ode", "speaker": "tamsin",
+          "trainer": "compact_bridge_guard_ode", "skill": 3, "ai": "mid",
+          "seat": {"kind": "open", "near": [6624, 3866], "radius": 12, "faces": [6632, 3876], "min_from": [{"box": [6600, 3868, 6664, 3972], "dist": 0}]},
+          "team_note": "Brann's crews: Steel and Fighting",
+          "team": [
+            {"species": "mienshao", "level": 45, "moveset": ["drainpunch", "uturn", "poisonjab", "fakeout"]},
+            {"species": "copperajah", "level": 46, "moveset": ["heavyslam", "earthquake", "playrough", "irondefense"]},
+            {"species": "doublade", "level": 47, "moveset": ["shadowsneak", "ironhead", "swordsdance", "shadowclaw"]}
+          ],
+          "before": "The crossing is under watch. State your business.",
+          "intro": [
+            "Captain Saye's orders: nobody goes south over this bridge to the Craters rim without a Compact escort.",
+            "The Bridgekeep keepers are angry with us, and they should be. I would be.",
+            "You can walk past me. I am not blocking the road. But if you want to cross as a courtesy, show me you are safe."
+          ],
+          "ask": "Tamsin puts a hand to her badge and stands her ground.",
+          "fight": "Show her.",
+          "decline": "Not now.",
+          "over_cap": "Not with that one in your party. Keep it in the box and I will test you.",
+          "after": [
+            "Lieutenant Varga has the bridge's far end. I cannot speak for her."
+          ],
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex"
+        },
+        {
+          "id": "npc_compact_varga_3", "role": "fighter", "name": "Lieutenant Varga", "speaker": "varga",
+          "trainer": "compact_varga_3", "skill": 4, "ai": "high",
+          "requires": [
+            {"field": "quest.evt_compact_bridge.compact_bridge_guard_ode_defeated", "blocked": "Tamsin holds the first post. Get past her, or turn back. The road is yours either way."}
+          ],
+          "seat": {"kind": "open", "near": [6640, 3866], "radius": 12, "faces": [6632, 3876], "min_from": [{"box": [6600, 3868, 6664, 3972], "dist": 0}]},
+          "team_note": "Varga's ladder: Drapion has evolved now (Skorupi became Drapion), alongside Excadrill and Boldore",
+          "team": [
+            {"species": "drapion", "level": 45, "moveset": ["crosspoison", "knockoff", "earthquake", "swordsdance"]},
+            {"species": "excadrill", "level": 46, "moveset": ["earthquake", "ironhead", "rockslide", "rapidspin"]},
+            {"species": "boldore", "level": 46, "moveset": ["rockslide", "stealthrock", "earthpower", "irondefense"]},
+            {"species": "crobat", "level": 47, "moveset": ["bravebird", "crosspoison", "taunt", "roost"]},
+            {"species": "krookodile", "level": 48, "moveset": ["earthquake", "crunch", "stoneedge", "bulkup"]}
+          ],
+          "before": "The crossing is under watch.",
+          "intro": [
+            "So you carried an anchor's notebook out of the marsh, and you are here. Tamsin sent word.",
+            "The bridge is the only way to the south. I will not pretend that is an accident.",
+            "People are in the south who must not be disturbed before the day. I would rather not have to put it harder than that."
+          ],
+          "ask": "Varga takes off her gloves, one finger at a time.",
+          "fight": "Take on Varga.",
+          "decline": "Not now.",
+          "over_cap": "Not with that one. I do not break the cap for anyone, and neither will you.",
+          "after": [
+            "Cross if you like. The keepers can tell you what the south is, and I will not lie to them. Not about the bridge.",
+            "You are not what I expected to meet on the Craters road. I expected the Captain's orders to be easier than this."
+          ],
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex"
+        }
+      ]
+    },
+    {
+      "id": "CP-13",
+      "slug": "rearguard",
+      "title": "The Rearguard",
+      "quest": "evt_compact_rearguard",
+      "from_stage": "blaine_reveal_complete",
+      "band": [51, 53],
+      "where": "tableland_stop Redbrow's yard (data/placements.json tableland_stop plaza rect, y161; the settlement centre (4876, 5729) is the footprint's, not the yard)",
+      "serves": "ARC Settlement 9 setup ('withdrawing toward the Rift's southern approach'); the start of the public split; rule 4 (the dissenters are families and medics, not soldiers)",
+      "mechanism": "M2. compact_varga_4, a rematch that scales (design section 2)",
+      "built": "compact_varga_4 (5 Pokemon) and the dissenter medic's conversation, whose lines change after Varga is beaten",
+      "not_built": "the loaded stores and records (props), the dissenters' reappearance at Holdfast (CP-14 is CP-CORE's)",
+      "actors": [
+        {
+          "id": "npc_compact_varga_4", "role": "fighter", "name": "Lieutenant Varga", "speaker": "varga",
+          "trainer": "compact_varga_4", "skill": 5, "ai": "high",
+          "seat": {"kind": "plaza", "settlement": "tableland_stop", "near": "plaza_centre_east", "faces": "plaza_centre"},
+          "team_note": "Varga's ladder, last before the tower: Drapion, Excadrill, Boldore, Crobat and one new member. In the tower (58-59) she has Drapion, Excadrill, Gigalith and Crobat",
+          "team": [
+            {"species": "drapion", "level": 51, "moveset": ["crosspoison", "knockoff", "earthquake", "swordsdance"]},
+            {"species": "excadrill", "level": 52, "moveset": ["earthquake", "ironhead", "rockslide", "swordsdance"]},
+            {"species": "boldore", "level": 52, "moveset": ["rockslide", "stealthrock", "earthpower", "irondefense"]},
+            {"species": "crobat", "level": 52, "moveset": ["bravebird", "crosspoison", "taunt", "roost"]},
+            {"species": "hippowdon", "level": 53, "moveset": ["earthquake", "stoneedge", "slackoff", "stealthrock"]}
+          ],
+          "before": "Keep to the road.",
+          "intro": [
+            "They are leaving. Stores, records, the ones who think they know better than the Director, all going west to the Rift's mouth. I am holding them here.",
+            "Not for me. The records carry the destination data, and the Director wants it back.",
+            "Stand aside, or beat me. You know how I fight by now."
+          ],
+          "ask": "Varga looks past the yard at the families on the road.",
+          "fight": "One more time.",
+          "decline": "Not yet.",
+          "over_cap": "Not with that one. I will not fight what the cap forbids you.",
+          "after": [
+            "Let them go. Let them all go. If the Director asks, say I held the line until you came.",
+            "I do not know what is below the tower. I do know what I carried out of the Craters. Say to Elara what you said to my team."
+          ],
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. The last time before the tower; her closing line is the tower's own"
+        },
+        {
+          "id": "npc_compact_dissenter_medic", "role": "talker", "name": "Medic Corin Aldous", "speaker": "corin",
+          "seat": {"kind": "plaza", "settlement": "tableland_stop", "near": "plaza_centre_west", "faces": "plaza_centre"},
+          "before": "Please, the families are loading.",
+          "lines": [
+            "We are taking the families west before the Director calls them back. Nia sent word. Holdfast will take them.",
+            "Lieutenant Varga means to stop us. She is not cruel. She believes the records belong to the Compact, and she may be right.",
+            "I am a medic. I would rather not pick up a Poke Ball."
+          ],
+          "after_requires": "quest.evt_compact_rearguard.compact_varga_4_defeated",
+          "after_lines": [
+            "She let us through. We will be at Holdfast. If you pass that way, tell Nia we have the packet."
+          ],
+          "repeat": "Holdfast. Nia will be waiting.",
+          "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. The dissenters are medics and families (rule 4); 'the packet' is the giovanni_dissenter_route_packet evidence CP-14 uses"
+        }
+      ]
+    }
+  ]
+}

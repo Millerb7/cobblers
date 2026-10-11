@@ -4540,6 +4540,542 @@
       "trainer_defeated_setter": "only the player-win callback: rctmod's defeat_count advancement for route_02_shore_trainer_01 (tools/route_trainers.py), which also tells the winner to look at the tackle box, where this conversation opens"
     },
     {
+      "id": "evt_compact_courier_spar",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-01 courier_spar: ARC Settlement 3, the sympathy beat; rule 3; FACTION 'The sympathy beat'; the Asters at Lake Viltri",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_compact_courier_ansel",
+        "dlg_compact_mila_aster"
+      ],
+      "objectives": [
+        {
+          "id": "beat_courier_ansel",
+          "active_when": {
+            "field": "quest.evt_compact_courier_spar.compact_courier_ansel_defeated",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_courier_spar.compact_courier_ansel_defeated",
+            "equals": true
+          },
+          "text": "Beat Courier Ansel Kerr."
+        },
+        {
+          "id": "hear_mila_aster",
+          "active_when": {
+            "field": "quest.evt_compact_courier_spar.mila_aster_cursor",
+            "equals": "mila_aster_before"
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_courier_spar.mila_aster_cursor",
+            "equals": "mila_aster_repeat"
+          },
+          "text": "Hear what Mila Aster has to say."
+        }
+      ],
+      "transitions": [],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: a conversation per NPC",
+        "actors": "Cobblemon NPCs open their own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_compact_courier_spar.courier_ansel_cursor",
+        "quest.evt_compact_courier_spar.compact_courier_ansel_defeated",
+        "quest.evt_compact_courier_spar.mila_aster_cursor"
+      ],
+      "stage_window": "from brock_account_heard to the end of the story (data/progression.json quest.main_worldshift_reveal.stage); no gate on any badge",
+      "defeat_setter": "only the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "evt_compact_landing",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-02 landing: ARC Settlement 3; FACTION gym2_town; Codex C3 (in person what the relief clerk only reports)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_compact_nia_landing",
+        "dlg_compact_tomas_landing"
+      ],
+      "objectives": [
+        {
+          "id": "hear_nia_landing",
+          "active_when": {
+            "field": "quest.evt_compact_landing.nia_landing_cursor",
+            "equals": "nia_landing_before"
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_landing.nia_landing_cursor",
+            "equals": "nia_landing_repeat"
+          },
+          "text": "Hear what Nia Calder has to say."
+        },
+        {
+          "id": "hear_tomas_landing",
+          "active_when": {
+            "field": "quest.evt_compact_landing.tomas_landing_cursor",
+            "equals": "tomas_landing_before"
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_landing.tomas_landing_cursor",
+            "equals": "tomas_landing_repeat"
+          },
+          "text": "Hear what Tomas Rill has to say."
+        }
+      ],
+      "transitions": [],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: a conversation per NPC",
+        "actors": "Cobblemon NPCs open their own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_compact_landing.nia_landing_cursor",
+        "quest.evt_compact_landing.tomas_landing_cursor"
+      ],
+      "stage_window": "from brock_account_heard to the end of the story (data/progression.json quest.main_worldshift_reveal.stage); no gate on any badge",
+      "defeat_setter": "only the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "evt_compact_cirque_survey",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-05 cirque_survey: ARC Settlement 5 setup ('every transfer exchanges occupied volume'); FACTION Tomas ('trusts better maps more than speeches')",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_compact_ranger_halloran",
+        "dlg_compact_surveyor_marn"
+      ],
+      "objectives": [
+        {
+          "id": "beat_ranger_halloran",
+          "active_when": {
+            "field": "quest.evt_compact_cirque_survey.compact_ranger_halloran_defeated",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_cirque_survey.compact_ranger_halloran_defeated",
+            "equals": true
+          },
+          "text": "Beat Cirque Ranger Teo Halloran."
+        },
+        {
+          "id": "beat_surveyor_marn",
+          "active_when": {
+            "field": "quest.evt_compact_cirque_survey.compact_surveyor_marn_defeated",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_cirque_survey.compact_surveyor_marn_defeated",
+            "equals": true
+          },
+          "text": "Beat Destination Surveyor Ilse Marn."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "side_ranger",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_compact_cirque_survey.sided_with",
+              "value": "none"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_compact_cirque_survey.sided_with",
+              "value": "ranger"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_compact_cirque_survey.ranger_halloran_cursor",
+              "value": "ranger_halloran_side_thanks"
+            }
+          ]
+        },
+        {
+          "id": "side_surveyor",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_compact_cirque_survey.sided_with",
+              "value": "none"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_compact_cirque_survey.sided_with",
+              "value": "surveyor"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_compact_cirque_survey.surveyor_marn_cursor",
+              "value": "surveyor_marn_side_thanks"
+            }
+          ]
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: a conversation per NPC",
+        "actors": "Cobblemon NPCs open their own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_compact_cirque_survey.ranger_halloran_cursor",
+        "quest.evt_compact_cirque_survey.compact_ranger_halloran_defeated",
+        "quest.evt_compact_cirque_survey.surveyor_marn_cursor",
+        "quest.evt_compact_cirque_survey.compact_surveyor_marn_defeated",
+        "quest.evt_compact_cirque_survey.sided_with"
+      ],
+      "stage_window": "from surge_reveal_complete to the end of the story (data/progression.json quest.main_worldshift_reveal.stage); no gate on any badge",
+      "defeat_setter": "only the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "evt_compact_pause_vote",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-06 pause_vote: ARC Settlement 5 (the internal divide); FACTION gym4_town; the Asters at Peak Pond",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_compact_nia_pause",
+        "dlg_compact_dev_aster",
+        "dlg_compact_sergeant_dorrin"
+      ],
+      "objectives": [
+        {
+          "id": "hear_nia_pause",
+          "active_when": {
+            "field": "quest.evt_compact_pause_vote.nia_pause_cursor",
+            "equals": "nia_pause_before"
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_pause_vote.nia_pause_cursor",
+            "equals": "nia_pause_repeat"
+          },
+          "text": "Hear what Nia Calder has to say."
+        },
+        {
+          "id": "hear_dev_aster",
+          "active_when": {
+            "field": "quest.evt_compact_pause_vote.dev_aster_cursor",
+            "equals": "dev_aster_before"
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_pause_vote.dev_aster_cursor",
+            "equals": "dev_aster_repeat"
+          },
+          "text": "Hear what Dev Aster has to say."
+        },
+        {
+          "id": "beat_sergeant_dorrin",
+          "active_when": {
+            "field": "quest.evt_compact_pause_vote.compact_sergeant_dorrin_defeated",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_pause_vote.compact_sergeant_dorrin_defeated",
+            "equals": true
+          },
+          "text": "Beat Guard Sergeant Hale Dorrin."
+        }
+      ],
+      "transitions": [],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: a conversation per NPC",
+        "actors": "Cobblemon NPCs open their own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_compact_pause_vote.nia_pause_cursor",
+        "quest.evt_compact_pause_vote.dev_aster_cursor",
+        "quest.evt_compact_pause_vote.sergeant_dorrin_cursor",
+        "quest.evt_compact_pause_vote.compact_sergeant_dorrin_defeated"
+      ],
+      "stage_window": "from surge_reveal_complete to the end of the story (data/progression.json quest.main_worldshift_reveal.stage); no gate on any badge",
+      "defeat_setter": "only the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "evt_compact_anchor_pull",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-07 anchor_pull: ARC Settlement 6 ('each forced use makes the next less stable'); FACTION gym5_town (Oren's traces); SQ-G5-01. An echo: Koga's town remains the source",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_compact_varga_2"
+      ],
+      "objectives": [
+        {
+          "id": "beat_varga_2",
+          "active_when": {
+            "field": "quest.evt_compact_anchor_pull.compact_varga_2_defeated",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_anchor_pull.compact_varga_2_defeated",
+            "equals": true
+          },
+          "text": "Beat Lieutenant Varga."
+        }
+      ],
+      "transitions": [],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: a conversation per NPC",
+        "actors": "Cobblemon NPCs open their own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_compact_anchor_pull.varga_2_cursor",
+        "quest.evt_compact_anchor_pull.compact_varga_2_defeated"
+      ],
+      "stage_window": "from erika_reveal_complete to the end of the story (data/progression.json quest.main_worldshift_reveal.stage); no gate on any badge",
+      "defeat_setter": "only the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "evt_compact_waiting_camp",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-09 waiting_camp: ARC Settlement 7 (the strongest moral case, 'largest remaining community'); FACTION gym6_town (the waiting families); rule 4",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_compact_camp_warden",
+        "dlg_compact_camp_mother"
+      ],
+      "objectives": [
+        {
+          "id": "hear_camp_warden",
+          "active_when": {
+            "field": "quest.evt_compact_waiting_camp.camp_warden_cursor",
+            "equals": "camp_warden_before"
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_waiting_camp.camp_warden_cursor",
+            "equals": "camp_warden_repeat"
+          },
+          "text": "Hear what Camp Warden Ysolde Crane has to say."
+        },
+        {
+          "id": "hear_camp_mother",
+          "active_when": {
+            "field": "quest.evt_compact_waiting_camp.camp_mother_cursor",
+            "equals": "camp_mother_before"
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_waiting_camp.camp_mother_cursor",
+            "equals": "camp_mother_repeat"
+          },
+          "text": "Hear what Odile Marsh has to say."
+        }
+      ],
+      "transitions": [],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: a conversation per NPC",
+        "actors": "Cobblemon NPCs open their own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_compact_waiting_camp.camp_warden_cursor",
+        "quest.evt_compact_waiting_camp.camp_mother_cursor"
+      ],
+      "stage_window": "from koga_reveal_complete to the end of the story (data/progression.json quest.main_worldshift_reveal.stage); no gate on any badge",
+      "defeat_setter": "only the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "evt_compact_requisition",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-10 requisition: ARC Settlement 7's last fact: 'the faction is preparing that transfer at a major energy source'",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_compact_boarding_hask"
+      ],
+      "objectives": [
+        {
+          "id": "beat_boarding_hask",
+          "active_when": {
+            "field": "quest.evt_compact_requisition.compact_boarding_hask_defeated",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_requisition.compact_boarding_hask_defeated",
+            "equals": true
+          },
+          "text": "Beat Boarding Officer Perrin Hask."
+        }
+      ],
+      "transitions": [],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: a conversation per NPC",
+        "actors": "Cobblemon NPCs open their own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_compact_requisition.boarding_hask_cursor",
+        "quest.evt_compact_requisition.compact_boarding_hask_defeated"
+      ],
+      "stage_window": "from sabrina_reveal_complete to the end of the story (data/progression.json quest.main_worldshift_reveal.stage); no gate on any badge",
+      "defeat_setter": "only the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "evt_compact_bridge",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-11 bridge: the escalation before the line: open force for the first time, but no occupied target chosen yet (rule 5). Brann is mentioned, not seen",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_compact_bridge_guard",
+        "dlg_compact_varga_3"
+      ],
+      "objectives": [
+        {
+          "id": "beat_bridge_guard",
+          "active_when": {
+            "field": "quest.evt_compact_bridge.compact_bridge_guard_ode_defeated",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_bridge.compact_bridge_guard_ode_defeated",
+            "equals": true
+          },
+          "text": "Beat Checkpoint Guard Tamsin Ode."
+        },
+        {
+          "id": "beat_varga_3",
+          "active_when": {
+            "field": "quest.evt_compact_bridge.compact_varga_3_defeated",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_bridge.compact_varga_3_defeated",
+            "equals": true
+          },
+          "text": "Beat Lieutenant Varga."
+        }
+      ],
+      "transitions": [],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: a conversation per NPC",
+        "actors": "Cobblemon NPCs open their own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_compact_bridge.bridge_guard_cursor",
+        "quest.evt_compact_bridge.compact_bridge_guard_ode_defeated",
+        "quest.evt_compact_bridge.varga_3_cursor",
+        "quest.evt_compact_bridge.compact_varga_3_defeated"
+      ],
+      "stage_window": "from sabrina_reveal_complete to the end of the story (data/progression.json quest.main_worldshift_reveal.stage); no gate on any badge",
+      "defeat_setter": "only the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "evt_compact_rearguard",
+      "source": "data/compact_routes.json (tools/compact_routes.py write) CP-13 rearguard: ARC Settlement 9 setup ('withdrawing toward the Rift's southern approach'); the start of the public split; rule 4 (the dissenters are families and medics, not soldiers)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_compact_varga_4",
+        "dlg_compact_dissenter_medic"
+      ],
+      "objectives": [
+        {
+          "id": "beat_varga_4",
+          "active_when": {
+            "field": "quest.evt_compact_rearguard.compact_varga_4_defeated",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_rearguard.compact_varga_4_defeated",
+            "equals": true
+          },
+          "text": "Beat Lieutenant Varga."
+        },
+        {
+          "id": "hear_dissenter_medic",
+          "active_when": {
+            "field": "quest.evt_compact_rearguard.dissenter_medic_cursor",
+            "equals": "dissenter_medic_before"
+          },
+          "complete_when": {
+            "field": "quest.evt_compact_rearguard.dissenter_medic_cursor",
+            "equals": "dissenter_medic_repeat"
+          },
+          "text": "Hear what Medic Corin Aldous has to say."
+        }
+      ],
+      "transitions": [],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: a conversation per NPC",
+        "actors": "Cobblemon NPCs open their own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_compact_rearguard.varga_4_cursor",
+        "quest.evt_compact_rearguard.compact_varga_4_defeated",
+        "quest.evt_compact_rearguard.dissenter_medic_cursor"
+      ],
+      "stage_window": "from blaine_reveal_complete to the end of the story (data/progression.json quest.main_worldshift_reveal.stage); no gate on any badge",
+      "defeat_setter": "only the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
       "id": "evt_route3_nosepass_signs",
       "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
       "scope": "player",
