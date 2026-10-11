@@ -386,8 +386,11 @@ def test_the_prize_spawns_at_the_bands_lower_cap_and_only_legendary_bands_carry_
         sp = lines(files, base + "prize/spawn_b%d" % b["band"])
         assert any("level=%d no_ai" % b["caps"][0] in l for l in sp), b
         leg = b["band"] >= doc["engine"]["prize"]["legendary_from_band"]
-        assert any(l.endswith("prize/bind" if leg else "prize/rare_bind") for l in sp)
-    assert "tag @s add %s" % tag in lines(files, base + "prize/bind")
+        # PRIZE-POOLS: this fixture's legendary prizes are Ultra Beasts (kartana, celesteela), bound by prize/bind_native
+        # (the key tag and the native tag: the key's x5 must not stack on the jar's own, tools/key_ball.py)
+        assert any(l.endswith("prize/bind_native" if leg else "prize/rare_bind") for l in sp)
+    assert "tag @s add %s" % tag in lines(files, base + "prize/bind_native")
+    assert "tag @s add %s" % KB.load()["native_tag"] in lines(files, base + "prize/bind_native")
     assert "tag @s add %s" % tag not in lines(files, base + "prize/rare_bind")
     reset = lines(files, base + "reset")
     assert any("dg.pz.w_lair_end" in l and "discard" in l for l in reset)

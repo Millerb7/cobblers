@@ -10,6 +10,10 @@
   "key_ball": "cobblemon:beast_ball",
   "multiplier": 5,
   "multiplier_why": "Cobblemon's own Ultra Beast figure for the Beast Ball (PokeBalls LabelModifier(5.0, true, 'ultra_beast'), research note section 1), so the story and the number agree; about 4 throws on a sleeping boss at 1 HP and 19 at full HP (research note section 5). Applied by set_catch_rate(catch_rate * multiplier), which feeds the jar's own formula, so the status, HP, in-battle and level-gap factors still apply.",
+  "native_tag": "cobblers.key_native",
+  "native_label": "ultra_beast",
+  "native_species_snapshot": ["blacephalon", "buzzwole", "celesteela", "guzzlord", "kartana", "naganadel", "nihilego", "pheromosa", "poipole", "stakataka", "xurkitree"],
+  "native_why": "the Ultra Beast double x5 (KIT3's finding; docs/mechanics/ULTRA_BEAST_BOSSES.md F2 and section 8). The jar's Beast Ball is LabelModifier(5.0f, true, \"ultra_beast\") (Cobblemon-fabric-1.8.0+1.21.1.jar com/cobblemon/mod/common/api/pokeball/PokeBalls.class <clinit>, research note beast-ball-key-1.8.0.md section 1; its strings beast_ball / ultra_beast / LabelModifier re-read 2026-10-11), applied by CobblemonCaptureCalculator.processCapture as ballBonus, a factor on `a` beside the catch rate (section 2 step 6). So on a Pokemon labelled ultra_beast the jar ALREADY gives the Beast Ball x5, and our rate callback's x5 on top made x25 (a catch-rate-45 Ultra Beast caught on the first throw at full HP). THE INTENDED EFFECTIVE MULTIPLIER IS x5 FOR EVERY KEY BOSS: a non-Ultra-Beast gets ours (x5) and the jar's 1.0; an Ultra Beast gets the jar's 5.0 and NOT ours. The bind of a boss whose species the jar labels `native_label` adds `native_tag` beside `tag` (key_ball.bind_tag_lines, the one place a boss tool takes its tags from), and the rate callback multiplies only when `tag` is present and `native_tag` is absent. Keyed on a tag and not a label, because no repo callback reads a species label from MoLang (ULTRA_BEAST_BOSSES.md section 8). The refusal callback is unchanged: every other ball is refused at an Ultra Beast boss too. `native_species_snapshot` is the jar's ultra_beast list (11, read 2026-10-11 from data/cobblemon/species/**), used only where the jar is not on the machine; where it is, a difference is a problem.",
   "refund": {
     "ball_count": 1,
     "skip_gamemode": "creative",
@@ -30,7 +34,7 @@
     {"id": "entei_boss", "tool": "tools/entei_boss.py", "data": "data/entei_boss.json", "module": "entei_boss",
      "where": "slot/s<k>/bind, beside its own cobblers.eb tag and the blackout exempt tag; both the catch-mode and the farm-mode Entei carry it (the farm Entei is uncatchable, refused at the hit before these callbacks run, with Cobblemon's own message and its ball dropped back)"},
     {"id": "dungeon_prize", "tool": "tools/dungeon_prize.py", "data": "data/dungeon_prize.json", "module": "dungeon_prize",
-     "where": "room/<dungeon>/<room>/s<g>/prize/bind (KIT3, DUNGEON_ROOMS.md 1b): a habitat's hidden prize from engine.prize.legendary_from_band on (a legendary or Ultra Beast), beside the slot's claim and its own dg.prize tags; below that band the prize is a rare non-legendary bound by prize/rare_bind, untagged, caught by any ball"}
+     "where": "room/<dungeon>/<room>/s<g>/prize/bind (KIT3, DUNGEON_ROOMS.md 1b): a habitat's hidden prize from engine.prize.legendary_from_band on (a legendary or Ultra Beast), beside the slot's claim and its own dg.prize tags; an Ultra Beast is bound by prize/bind_native, which also adds native_tag (PRIZE-POOLS: key_ball.bind_tag_lines; boss_problems sweeps every prize spawn line through dungeon_prize.key_sweep_files); below that band the prize is a rare non-legendary bound by prize/rare_bind, untagged, caught by any ball"}
   ],
   "bosses_why": "a dungeon boss is one this list names; tools/key_ball.py check builds each one's pack and fails if any of its bind functions does not add `tag`. NOT dungeon bosses, so never tagged: the shrine legendaries, the lake trio, the Regis, Lugia, Hoopa, Ursaluna, the gulch Megas, raid dens.",
   "does_not_cover": [
@@ -38,7 +42,9 @@
     "a ball from an addon whose item id is not its ball id: the refund gives the item named by the ball's ball_type; Cobblemon's own balls are their own items",
     "other ways to get a Beast Ball than buying it: cobblemon-additions chest loot (bca:item_groups/normal_balls, weight 3), the COBBLEVERSE-RCT legendary pokeballs loot table, the End city treasure table (research note section 7): not closed here",
     "the client tooltip ('0.1x otherwise' in the jar's lang, false in the jar and here): a lang override is client-side and not shipped",
-    "CobbleCuisine's catch-boost food: it changes the same event's rate and stacks with x5 (accepted, research note section 7)"
+    "CobbleCuisine's catch-boost food: it changes the same event's rate and stacks with x5 (accepted, research note section 7)",
+    "an UNTAGGED wild Ultra Beast (an inherited COBBLEVERSE spawn outside the suppression, a raid): it gets the jar's own x5 from any Beast Ball and every other ball works, as Cobblemon ships it; only a key-tagged boss is the key's",
+    "a species given the ultra_beast label by a datapack's species_additions and not by the jar: native_species reads the jar only (the 11 the jar labels are the 11 COBBLEVERSE-DP adds models for, docs/research/notes/ultra-beasts-1.8.0.md)"
   ],
   "runtime_checks": "experiments/EXP-064-beast-ball-key/README.md"
 }

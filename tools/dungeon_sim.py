@@ -64,6 +64,13 @@ WHAT IT CANNOT MODEL (the report repeats this; "unmeasured" means no run here mo
 OPTIONAL fights (a wing's prize, a nest with clear "pass", an optional fork route) are not in the required sequence; each
 is run on its own from a rested team and listed separately.
 
+ROTATION (PRIZE-POOLS, 2026-10-11). A dungeon whose trainers (team_pool_by_band), minibosses (species_pool_by_band),
+prizes (rare/legendary pools) or boss (teams_alt_by_band) carry pools is walked once per run variant v = 1..V (V the
+largest pool at the band; variant v takes member ((v-1) mod n)+1 of each pool of n), path labels "<route>~v<k>", so every
+pool member is walked in a run and fought on its own. The cell's `win` is over all variants; `pool min-max` (the table)
+and the per-cell rotation line give each variant's rate. Pools of different sizes are walked in lock-step, not in every
+combination: the min/max is over V variants, not over the product of the pools.
+
   python tools/dungeon_sim.py                       # all dungeons, all bands, a compact table + derived/dungeon_sim/report.md
   python tools/dungeon_sim.py --dungeon jungle --band 3 --samples 12
   python tools/dungeon_sim.py --under 3             # players three levels under the cap
@@ -577,20 +584,38 @@ def event(kind, label, room, foes, category, optional=False, **extra):
     return e
 
 
-def room_events(doc, d, rec, band, optional=False):
-    """The events of one room record at one band: fights from the generated classes, heals from the record."""
+def rotation_count(doc, d, band):
+    """V, the run variants the sim walks at `band` (PRIZE-POOLS): the largest pool among the dungeon's rotating trainers,
+    minibosses, prizes and the boss's crew lists. Variant v takes member pick(n, v) of every pool of n, so every member
+    of every pool is walked in at least one variant and fought on its own (its own iso label)."""
+    v = len(DG.boss_pool(d, band)) or 1
+    for it in R.flatten(d):
+        rec = it["rec"]
+        if rec["kind"] in DF.ROOM_KINDS:
+            v = max(v, DF.rotation_size(doc, rec, band))
+        if rec["kind"] == "habitat" and DP.prize_of(rec):
+            v = max(v, DP.pool_size(doc, rec, band))
+    return v
+
+
+def room_events(doc, d, rec, band, optional=False, variant=1):
+    """The events of one room record at one band: fights from the generated classes, heals from the record. `variant`
+    is the run's rotation index (rotation_count): each pool takes its member pick(n, variant)."""
     kind = rec["kind"]
     p = rec.get("params") or {}
     out = []
     if kind in DF.KINDS_STAND and DF.is_stand_room(rec):
         classes = DF.stand_classes(doc, d, rec)
         for n, t in enumerate(DF.trainers_of(doc, rec), 1):
-            name = DF.stand_class_name(d, rec, n, band)
+            size = len(DF.team_pool(t, band))
+            k = DF.pick(size, variant)
+            name = DF.stand_class_name(d, rec, n, band, k)
             party = parse_party(classes[name][0]["party"]["pokemon"])
             cat = "gauntlet" if DF.mode_of(rec) == "gauntlet" else "stand"
-            out.append(event("fight", "%s: %s" % (rec["id"], t["name"]), rec["id"], party, cat, optional))
+            out.append(event("fight", "%s: %s%s" % (rec["id"], t["name"], " [team %d/%d]" % (k, size) if size > 1 else ""),
+                             rec["id"], party, cat, optional))
     elif kind == "miniboss" and DF.is_wild_room(rec):
-        for sp, lv, _props, _pos in DF.wild_spawns(doc, rec, _ANCHORS)[band]:
+        for sp, lv, _props, _pos in DF.wild_spawns(doc, rec, _ANCHORS, variant)[band]:
             out.append(event("fight", "%s: %s" % (rec["id"], sp), rec["id"], [(sp, lv)], "miniboss", optional))
     elif kind == "nest" and DF.is_wild_room(rec):
         pass_mode = p.get("clear", "all") == "pass"
@@ -598,7 +623,7 @@ def room_events(doc, d, rec, band, optional=False):
             out.append(event("fight", "%s: %s #%d" % (rec["id"], sp, k), rec["id"], [(sp, lv)], "nest",
                              optional or pass_mode))
     elif kind == "habitat" and DP.prize_of(rec):
-        got = DP.species_at(doc, rec, band)
+        got = DP.species_at(doc, rec, band, variant)
         if got:
             sp, legendary = got
             out.append(event("fight", "%s: prize %s" % (rec["id"], sp), rec["id"], [(sp, DP.level_at(doc, band))],
@@ -606,12 +631,15 @@ def room_events(doc, d, rec, band, optional=False):
     elif kind == "safe_room" and p.get("healer"):
         out.append(event("heal", "%s: the safe room's heal" % rec["id"], rec["id"], [], "heal", optional))
     elif kind == "boss_arena":
+        size = len(DG.boss_pool(d, band))
+        crew = DF.pick(size, variant)
         for k in range(1, len(d["boss"]["stage_level_offsets"]) + 1):
-            name = "dg_%s_boss_b%d_s%d" % (d["short"], band, k)
+            name = DG.boss_class_name(d, band, k, crew)
             party = parse_party(DG.boss_classes(doc, d)[name][0]["party"]["pokemon"])
             if k > 1 and d["boss"].get("heal_between_stages"):      # the chain's healpokemon (tools/dungeon.py `next`)
                 out.append(event("heal", "the chain's heal before boss stage %d" % k, rec["id"], [], "heal", False))
-            out.append(event("fight", "boss stage %d" % k, rec["id"], party, "boss", False, stage=k))
+            out.append(event("fight", "boss stage %d%s" % (k, " [crew %d/%d]" % (crew, size) if size > 1 else ""),
+                             rec["id"], party, "boss", False, stage=k))
     return out
 
 
@@ -634,9 +662,21 @@ def route_choices(items):
     return combos or [("main", set())]
 
 
-def dungeon_paths(doc, d, band):
+def dungeon_paths(doc, d, band, variant=None):
     """{"paths": [(label, [events])], "optional": [events]}: the required sequence for each route combination, and the
-    fights off the required path (wings, fork routes marked optional, a nest that is only passed)."""
+    fights off the required path (wings, fork routes marked optional, a nest that is only passed). With rotation pools
+    (rotation_count > 1) and no `variant` given, every variant's paths are listed, labelled "<route>~v<k>", and the
+    optional fights of every variant; a given `variant` walks that one alone, unlabelled."""
+    if variant is None:
+        V = rotation_count(doc, d, band)
+        if V > 1:
+            paths, opt = [], []
+            for v in range(1, V + 1):
+                pe = dungeon_paths(doc, d, band, v)
+                paths += [("%s~v%d" % (label, v), seq) for label, seq in pe["paths"]]
+                opt += [e for e in pe["optional"] if all(e["label"] != o["label"] for o in opt)]
+            return {"paths": paths, "optional": opt}
+        variant = 1
     items = R.flatten(d)
     paths = []
     for label, chosen in route_choices(items):
@@ -644,7 +684,7 @@ def dungeon_paths(doc, d, band):
         for it in items:
             rt = it["route"]
             if rt == "main" or rt in chosen:
-                seq += [e for e in room_events(doc, d, it["rec"], band, optional=False)]
+                seq += [e for e in room_events(doc, d, it["rec"], band, optional=False, variant=variant)]
         paths.append((label, seq))
     opt = []
     for it in items:
@@ -652,7 +692,7 @@ def dungeon_paths(doc, d, band):
         wing = rt != "main" and "/" not in rt                   # a side entry: a dead-end wing
         opt_fork = "/" in rt and it.get("optional")
         if wing or opt_fork:
-            opt += [dict(e, optional=True) for e in room_events(doc, d, it["rec"], band, optional=True)
+            opt += [dict(e, optional=True) for e in room_events(doc, d, it["rec"], band, optional=True, variant=variant)
                     if e["kind"] == "fight"]
     # a nest that is only passed sits in the main sequence as optional events: lift them out
     base = []
@@ -1004,6 +1044,14 @@ def summarise(cellres):
     out["by_path"] = {k: rate(v) for k, v in by_path.items()}
     out["win_worst_path"] = min(out["by_path"].values()) if out["by_path"] else float("nan")
     out["worst_path"] = min(out["by_path"], key=out["by_path"].get) if out["by_path"] else None
+    # the rotation (PRIZE-POOLS): the win rate of each run variant ("<route>~v<k>"), and its spread over the pools
+    by_var = defaultdict(list)
+    for r in typ:
+        by_var[int(r["path"].rsplit("~v", 1)[1]) if "~v" in r["path"] else 1].append(r["cleared"])
+    out["by_variant"] = {k: rate(v) for k, v in sorted(by_var.items())}
+    out["variants"] = len(by_var)
+    out["win_min"] = min(out["by_variant"].values()) if by_var else float("nan")
+    out["win_max"] = max(out["by_variant"].values()) if by_var else float("nan")
     # where runs end: label of the failed event, over typical runs, on the path of the run
     fails = Counter()
     killers = defaultdict(Counter)
@@ -1211,19 +1259,28 @@ def table_rows(results, doc):
     return rows
 
 
+def pool_spread(s):
+    """'min-max (n)' of the typical win rate over a cell's rotation variants, or '-' when the cell does not rotate."""
+    if s.get("variants", 1) <= 1:
+        return "-"
+    return "%s-%s (%d)" % (pct(s["win_min"]).strip(), pct(s["win_max"]).strip(), s["variants"])
+
+
 def compact_table(results, doc):
-    lines = ["%-13s %-4s %-12s %-10s %-10s %-34s %-12s %-9s" % (
-        "dungeon", "band", "caps", "win lo/hi", "scouted", "hardest fight (lowest cap)", "boss reach/HP", "fight min")]
+    lines = ["%-13s %-4s %-12s %-10s %-10s %-34s %-12s %-9s %s" % (
+        "dungeon", "band", "caps", "win lo/hi", "scouted", "hardest fight (lowest cap)", "boss reach/HP", "fight min",
+        "pool min-max lo")]
     for did, b, by_cap in table_rows(results, doc):
         lo, hi = min(by_cap), max(by_cap)
         s_lo, s_hi = by_cap[lo], by_cap[hi]
         hardest = s_lo["killer"] or _hardest_iso(s_lo)
-        lines.append("%-13s %-4d %-12s %-10s %-10s %-34s %-12s %-9s" % (
+        lines.append("%-13s %-4d %-12s %-10s %-10s %-34s %-12s %-9s %s" % (
             did, b["band"], "/".join(str(c) for c in sorted(by_cap)),
             "%s/%s" % (pct(s_lo["win"]).strip(), pct(s_hi["win"]).strip()),
             "%s/%s" % (pct(s_lo["win_scouted"]).strip(), pct(s_hi["win_scouted"]).strip()),
             short(hardest or "-"), "%s/%s" % (pct(s_lo["reach_boss"]).strip(), pct(s_lo["boss_hp"]).strip()),
-            "n/a" if s_lo["fight_s_rested"] != s_lo["fight_s_rested"] else "%.1f" % (s_lo["fight_s_rested"] / 60.0)))
+            "n/a" if s_lo["fight_s_rested"] != s_lo["fight_s_rested"] else "%.1f" % (s_lo["fight_s_rested"] / 60.0),
+            pool_spread(s_lo)))
     return "\n".join(lines)
 
 
@@ -1317,6 +1374,9 @@ def write_report(results, doc, clocks, opts, path):
                           pct(s["boss_pp"]).strip(),
                           ("most failures at '%s' (%.0f%%)" % (s["killer"], s["killer_share"] * 100)) if s["killer"]
                           else "no typical run failed"))
+                if s.get("variants", 1) > 1:
+                    w("  - rotation (every pool member walked; PRIZE-POOLS): typical win by variant %s, min-max %s." % (
+                        ", ".join("v%d %s" % (k, pct(v).strip()) for k, v in s["by_variant"].items()), pool_spread(s)))
                 g = s.get("gym")
                 if g:
                     w("  - reference: the same teams against gym %d's leader (ace %d), rested: typical win %s, %s of the team's "
