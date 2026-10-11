@@ -561,3 +561,22 @@ def test_the_build_writes_one_shell_function_per_room_inside_the_chain_budget(pa
     for s in SLOTS:
         assert R.chain_problems(DOC, JG, s) == []
     assert R.total_blocks(DOC, SLOT) < 1.2e6
+
+
+def test_the_new_rooms_are_placed_off_the_route_and_every_one_is_optional():
+    """PLACE-ROOMS (2026-10-11, the owner: "I want to see the new rooms"): the jungle holds a fishing room, a wishing well
+    and a bait room, each on a side entry (never the main route, never a fork route), gate open, never paid by the
+    clock, in every variant; the bait's lure room is a living room on the main route."""
+    new = {"fishing_room", "wishing_well", "bait_room"}
+    for s in SLOTS:
+        lay = R.layout(DOC, JG, s)
+        mine = [r for r in lay if r["kind"] in new]
+        assert sorted(r["kind"] for r in mine) == sorted(new), s["g"]
+        for r in mine:
+            assert r["route"] != "main" and "/" not in r["route"] and r["gate"] == "open", (s["g"], r["id"])
+        bait = next(r for r in mine if r["kind"] == "bait_room")
+        lure = next(r for r in lay if r["id"] == bait["params"]["lure_room"])
+        assert lure["route"] == "main" and lure["kind"] not in FIGHTS | {"parkour"}, lure["id"]
+    rooms = DC.walked(DOC, JG)[0]
+    paid = {r["id"] for b in DOC["engine"]["bands"] for r in DC.clock_rooms(DOC, JG, b["band"], rooms)}
+    assert not paid & {r["id"] for r in rooms if r["kind"] in new}, "the clock never pays for an optional room"

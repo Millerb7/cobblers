@@ -583,3 +583,23 @@ def test_mutating_the_cracked_secret_to_plain_rock_is_caught(monkeypatch):
     monkeypatch.setattr(R, "_cracked", plain)
     bad = D.problems(ns_doc())
     assert any("s_face" in p or "lower_face" in p or "the_fall" in p for p in bad), bad[:3]
+
+
+def test_the_new_rooms_are_placed_off_the_route_and_every_one_is_optional():
+    """PLACE-ROOMS (2026-10-11, the owner: "I want to see the new rooms"): the Night Shift holds a bank vault, a fossil
+    chamber and an egg room, each on a side entry (never the main route, never a fork route), gate open, never paid by
+    the clock, in every variant; the vault's code is chalked in three main-route rooms before it."""
+    new = {"bank_vault", "fossil_chamber", "egg_room"}
+    for s in ns_slots():
+        lay = R.layout(DOC, NS, s)
+        mine = [r for r in lay if r["kind"] in new]
+        assert sorted(r["kind"] for r in mine) == sorted(new), s["g"]
+        for r in mine:
+            assert r["route"] != "main" and "/" not in r["route"] and r["gate"] == "open", (s["g"], r["id"])
+        bank = next(r for r in mine if r["kind"] == "bank_vault")
+        by_id = {r["id"]: r for r in lay}
+        clues = bank["params"]["clue_rooms"]
+        assert len(clues) == 3 and all(by_id[c]["route"] == "main" and by_id[c]["i"] < bank["i"] for c in clues)
+    rooms = DC.walked(DOC, NS)[0]
+    paid = {r["id"] for b in DOC["engine"]["bands"] for r in DC.clock_rooms(DOC, NS, b["band"], rooms)}
+    assert not paid & {r["id"] for r in rooms if r["kind"] in new}, "the clock never pays for an optional room"

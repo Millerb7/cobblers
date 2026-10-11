@@ -683,3 +683,19 @@ def test_the_slots_follow_the_dungeons_index_and_do_not_overlap():
     per = doc["engine"]["slots"]["per_dungeon"]
     assert [s["g"] for s in ss] == list(range(i * per + 1, i * per + per + 1))
     assert not [p for p in D.problems(doc) if "meets" in p]
+
+
+def test_the_new_rooms_are_placed_off_the_route_and_every_one_is_optional():
+    """PLACE-ROOMS (2026-10-11, the owner: "I want to see the new rooms"): the flooded ruin holds a fishing room, a
+    wishing well and a fossil chamber, each on a side entry (never the main route, never a fork route), gate open,
+    never paid by the clock, in every variant."""
+    new = {"fishing_room", "wishing_well", "fossil_chamber"}
+    for s in slots():
+        lay = R.layout(DOC, RUIN, s)
+        mine = [r for r in lay if r["kind"] in new]
+        assert sorted(r["kind"] for r in mine) == sorted(new), s["g"]
+        for r in mine:
+            assert r["route"] != "main" and "/" not in r["route"] and r["gate"] == "open", (s["g"], r["id"])
+    rooms = C.walked(DOC, RUIN)[0]
+    paid = {r["id"] for b in DOC["engine"]["bands"] for r in C.clock_rooms(DOC, RUIN, b["band"], rooms)}
+    assert not paid & {r["id"] for r in rooms if r["kind"] in new}, "the clock never pays for an optional room"
