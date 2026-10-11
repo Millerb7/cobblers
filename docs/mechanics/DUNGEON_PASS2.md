@@ -119,3 +119,16 @@ the record contract it publishes first); then the three authors on KIT2's merge;
   sand valley, basalt deltas), each its own theme, its rip in the nether.
 - Research first where unknown: Cobblemon 1.8 fishing pools and rods, Cobbreeding eggs, Cobblemon fossils and the
   revival machine, and archaeology (brushing) in adventure mode; never assume a mechanism.
+
+## Overnight 2026-10-11 (the owner, going to bed)
+- "Finish all dungeon work and make sure we have a lot of variety. And make sure all legendaries, mythicals, early power
+  mons, and ultra beasts are placed in these dungeons if not in the world normally. If we can squeeze someone into the
+  world, we should." -> COVERAGE (the table and `data/dungeon_prize_roster.json`), PRIZE-POOLS (pools, per-run trainer and
+  mini-boss rotation, the UB double-x5 fix, UB bosses), then new dungeons authored to the roster.
+- The Scar: "something or an environment inhabiting the area now ... the north-west side of the mountain has a cool
+  recessed point, where some water could make for a pond, and we can plop some trees and alpha mons down to have taken
+  over the afflicted area" -> SCAR-LIFE.
+- The Haven Compact: "enough inclusion of the evil faction through the world ... more story points for them that a
+  player would go through. Especially some fun new battles" -> COMPACT-STORY (design), builders after.
+- Boss: two stages with a full heal between, tuned 60-90% at the lower cap for bands 1-4 (done, 2ee3ccf); bands 5-6 untuned.
+- New rooms placed as optional side rooms in all three dungeons (15566ab).
