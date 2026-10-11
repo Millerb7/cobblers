@@ -78,12 +78,14 @@
     "data/dungeons.json"
    ],
    "fields": [
+    "rip",
     "theme"
    ],
    "ids": [
+    "crucible",
     "soul_ossuary"
    ],
-   "why": "NEW-OSSUARY (2026-10-11): the roster's theme is a design label for the owner ('soul_sand_valley (built theme)': which theme, and that it is already built); data/dungeons.json's is the theme id tools/dungeon_rooms.py builds from ('soul_sand_valley'). Same theme, two forms; the roster's is read by no tool (its consumer.not_consumed), the record's is the one the dungeon is built with."
+   "why": "NEW-OSSUARY (2026-10-11): the roster's theme is a design label for the owner ('soul_sand_valley (built theme)': which theme, and that it is already built); data/dungeons.json's is the theme id tools/dungeon_rooms.py builds from ('soul_sand_valley'). Same theme, two forms; the roster's is read by no tool (its consumer.not_consumed), the record's is the one the dungeon is built with. NEW-CRUCIBLE (2026-10-11): the roster's `crucible` is the campaign DESIGN (rip 'the Nether', theme 'basalt_deltas (built theme)', both prose for the owner: data/dungeon_prize_roster.json consumer.not_consumed); data/dungeons.json's is the BUILT test record (the test rip on the old mine's trail with its measured frame, rip.siting_pending, and the theme id the generator reads). Neither is dead: the roster says where the Crucible belongs, the record says where the test build stands today. tools/ read only data/dungeons.json's."
   },
   {
    "files": [

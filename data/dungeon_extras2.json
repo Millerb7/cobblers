@@ -132,7 +132,8 @@
       "desert_excavation": {"name": "Qasr, dig-cook", "why": "the dig's cook, who found the eggs in a cache and does not ask"},
       "night_crater": {"name": "Orla, star-seller", "why": "a seller of whatever fell with the star, eggs among it"},
       "crimson_forest": {"name": "Nell, cocoon-keeper", "why": "the Moth Cathedral's cocoon-keeper (NEW-MOTH, 2026-10-11), who sells a clutch kept warm by the lamps"},
-      "warped_forest": {"name": "Tamsin, incubator tech", "why": "the last tech of the lab's hatchery, still minding the warm racks (the Warped Laboratory, NEW-WARPED)"}
+      "warped_forest": {"name": "Tamsin, incubator tech", "why": "the last tech of the lab's hatchery, still minding the warm racks (the Warped Laboratory, NEW-WARPED)"},
+      "basalt_deltas": {"name": "Hesk, furnace-keeper", "why": "the Crucible's furnace-keeper, who keeps a clutch warm on the flue's back wall"}
     },
     "skin": "cobblemon:standard",
     "intro": "One egg a run. It hatches while you walk.",
@@ -169,7 +170,8 @@
     "dig": {"mine": "minecraft:terracotta", "jungle": "minecraft:clay", "flooded_ruin": "minecraft:sandstone",
             "city": "minecraft:clay", "great_tree": "minecraft:clay", "ice_spire": "minecraft:terracotta", "hill_keep": "minecraft:clay", "desert_excavation": "minecraft:sandstone", "night_crater": "minecraft:terracotta",
             "soul_sand_valley": "minecraft:brown_terracotta",
-            "warped_forest": "minecraft:dripstone_block"},
+            "warped_forest": "minecraft:dripstone_block",
+            "basalt_deltas": "minecraft:brown_terracotta"},
     "bay": {"width": 7, "rows": 3, "depth": 3, "variants": 8,
             "why": "7 wide counting a frame column each side, so 5 x 3 x 3 = 45 dig cells, against the north wall (the seam's slab depth): the frame and a lintel of the theme's wall block close it, so no one-wide nook forms. The fossil is rolled among 8 of the 15 middle-layer cells."},
     "particle": "minecraft:dust_plume",

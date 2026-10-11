@@ -16,6 +16,12 @@
       "sleeper": "minecraft:stripped_oak_log[axis=z]",
       "post": "minecraft:oak_log[axis=y]",
       "beam": "minecraft:stripped_oak_log[axis=z]"
+    },
+    "basalt_deltas": {
+      "span": "minecraft:polished_blackstone_bricks",
+      "cracked": "minecraft:cracked_polished_blackstone_bricks",
+      "track": "minecraft:polished_basalt",
+      "sound_crack": "minecraft:block.basalt.break"
     }
   },
   "flood": {
