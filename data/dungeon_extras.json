@@ -16,7 +16,8 @@
       "ice_spire": "FROST WRIT",
       "hill_keep": "ORDERS",
       "desert_excavation": "FIELD NOTE",
-      "night_crater": "STAR CHART"
+      "night_crater": "STAR CHART",
+      "crimson_forest": "WAX SEAL"
     },
     "messages": {
       "hint": "A code lock. The digits are written elsewhere.",

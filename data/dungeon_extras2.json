@@ -120,7 +120,8 @@
       "ice_spire": {"name": "Veda, hut-warden", "why": "a hut-warden who keeps her eggs against the stove"},
       "hill_keep": {"name": "Brannock, quartermaster", "why": "the garrison's quartermaster, selling eggs from the stores"},
       "desert_excavation": {"name": "Qasr, dig-cook", "why": "the dig's cook, who found the eggs in a cache and does not ask"},
-      "night_crater": {"name": "Orla, star-seller", "why": "a seller of whatever fell with the star, eggs among it"}
+      "night_crater": {"name": "Orla, star-seller", "why": "a seller of whatever fell with the star, eggs among it"},
+      "crimson_forest": {"name": "Nell, cocoon-keeper", "why": "the Moth Cathedral's cocoon-keeper (NEW-MOTH, 2026-10-11), who sells a clutch kept warm by the lamps"}
     },
     "skin": "cobblemon:standard",
     "intro": "One egg a run. It hatches while you walk.",
