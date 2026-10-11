@@ -606,6 +606,11 @@
       "drops": {},
       "why": "RT-B: a fossil bay's dig block: a wall the pick opens to reach the fossil, not a valuable (0)",
       "cp": 0
+    },
+    "minecraft:brown_terracotta": {
+      "drops": {},
+      "why": "NEW-CRUCIBLE: the basalt delta's fossil bay dig block (data/dungeon_extras2.json fossils.dig.basalt_deltas), as terracotta's: not a valuable (0)",
+      "cp": 0
     }
   },
   "loot_tables": {

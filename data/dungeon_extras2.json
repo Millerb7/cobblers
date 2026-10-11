@@ -59,7 +59,8 @@
     "vendor": {
       "mine": {"name": "Marn, egg-wife", "why": "a pit-wife who keeps a clutch under the lamp"},
       "jungle": {"name": "Ilo, nest-keeper", "why": "a nest-keeper of the canopy"},
-      "flooded_ruin": {"name": "Sef, tide-warden", "why": "a tide-warden with a basket of dry eggs"}
+      "flooded_ruin": {"name": "Sef, tide-warden", "why": "a tide-warden with a basket of dry eggs"},
+      "basalt_deltas": {"name": "Hesk, furnace-keeper", "why": "the Crucible's furnace-keeper, who keeps a clutch warm on the flue's back wall"}
     },
     "skin": "cobblemon:standard",
     "intro": "One egg a run. It hatches while you walk.",
@@ -93,7 +94,7 @@
   "fossils": {
     "why": "Dig for a fossil. NO brushing: the Wiki's adventure table lists brushing as impossible and every item's use-on-block needs can_place_on (NeoForge ItemStack patch), so the dig is the rift pick's: a bay of dig blocks with ONE fossil block hidden in the middle layer (rolled at the first step in from 8 spots), breakable under the pick's can_break exactly as the resources room's seam is. Mining the fossil block is counted by GREED's minecraft.mined stat; the room's tick sees the cell turn to air and gives the fossil from a loot table by band. Dust drifts from the wall in front of the hidden block so the dig has a place to start.",
     "block": "minecraft:calcite",
-    "dig": {"mine": "minecraft:terracotta", "jungle": "minecraft:clay", "flooded_ruin": "minecraft:sandstone"},
+    "dig": {"mine": "minecraft:terracotta", "jungle": "minecraft:clay", "flooded_ruin": "minecraft:sandstone", "basalt_deltas": "minecraft:brown_terracotta"},
     "bay": {"width": 7, "rows": 3, "depth": 3, "variants": 8,
             "why": "7 wide counting a frame column each side, so 5 x 3 x 3 = 45 dig cells, against the north wall (the seam's slab depth): the frame and a lintel of the theme's wall block close it, so no one-wide nook forms. The fossil is rolled among 8 of the 15 middle-layer cells."},
     "particle": "minecraft:dust_plume",

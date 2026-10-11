@@ -74,6 +74,20 @@
  "overlaps": [
   {
    "files": [
+    "data/dungeon_prize_roster.json",
+    "data/dungeons.json"
+   ],
+   "fields": [
+    "rip",
+    "theme"
+   ],
+   "ids": [
+    "crucible"
+   ],
+   "why": "NEW-CRUCIBLE (2026-10-11): the roster's `crucible` is the campaign DESIGN (rip 'the Nether', theme 'basalt_deltas (built theme)', both prose for the owner: data/dungeon_prize_roster.json consumer.not_consumed); data/dungeons.json's is the BUILT test record (the test rip on the old mine's trail with its measured frame, rip.siting_pending, and the theme id the generator reads). Neither is dead: the roster says where the Crucible belongs, the record says where the test build stands today. tools/ read only data/dungeons.json's."
+  },
+  {
+   "files": [
     "data/ferries.json",
     "data/ferry_docks.json"
    ],
