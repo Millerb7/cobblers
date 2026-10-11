@@ -117,7 +117,7 @@
       "actors": [
         {
           "id": "npc_compact_nia_landing", "role": "talker", "name": "Nia Calder", "speaker": "nia",
-          "seat": {"kind": "plaza", "settlement": "gym2_town", "near": [1620, 2822], "faces": [1620, 2800]},
+          "seat": {"kind": "plaza", "settlement": "gym2_town", "near": [1617, 2822], "faces": [1620, 2800], "near_why": "moved 3 west of (1620, 2822) at the 2026-10-11 install: that stand was 3.2 blocks from the boatwright's stall keeper (1623, 108, 2821), under tools/markets.py NPC_CLEAR 3.5"},
           "before": "Mind the crates, please.",
           "lines": [
             "You are the one who came down from Brock's valley. Sit. Let me look at that hand.",

@@ -70,11 +70,11 @@
       "conversation": "dlg_compact_nia_landing",
       "settlement": "gym2_town",
       "at": [
-        1620,
+        1617,
         108,
         2822
       ],
-      "yaw": 180,
+      "yaw": -172,
       "ground": {
         "kind": "plaza",
         "y": 107,
