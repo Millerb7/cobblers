@@ -24,6 +24,10 @@ on WHICH dimension a selector searches needs both. What this one models:
   storage     `data modify storage <id> <path> set value <snbt> | set from storage <id> <path>`, `data remove storage`,
               `execute if|unless data storage <id> <path>`, `execute store result storage`; a path is dotted keys with
               [n] list indexes (no quoted keys, no filters).
+  random      `random value <a>..<b>` with both bounds and a < b (a degenerate or unbounded range is Unsupported: its
+              vanilla error is not read from a jar here), returning a value in [a, b]: from `World.random_values` when a test queued one (each popped in order, and
+              refused if outside the range), else from a seeded Random (`World(..., seed=)`, default 0), so a run is
+              deterministic. Every roll is recorded in `World.random_log` as (a, b, value).
   and         time query gametime, advancement grant|revoke @s only, give, loot give, tellraw, tp (absolute, ~,
               yaw pitch), kill, tag add, effect give, data get entity <t> Pos[i] [scale], data merge|remove entity,
               schedule function, summon interaction, fill / setblock (recorded), forceload add|remove, and
@@ -37,6 +41,7 @@ from __future__ import annotations
 
 import json
 import math
+import random as _random
 import re
 from pathlib import Path
 
@@ -219,8 +224,11 @@ def _range(spec):
 
 
 class World:
-    def __init__(self, pack_dir, extra_functions=None):
+    def __init__(self, pack_dir, extra_functions=None, seed=0):
         self.pack = Path(pack_dir)
+        self.random = _random.Random(seed)
+        self.random_values = []     # values `random value` returns next, in order; empty -> self.random
+        self.random_log = []        # every roll: (lo, hi, value)
         self.functions, self.advs, self.loot, self.callbacks = {}, {}, {}, {}
         for p in self.pack.rglob("*"):
             if not p.is_file():
@@ -582,6 +590,22 @@ class World:
             self.ents.append(e)
             self.spawned.append(e)
             return 1
+        if h == "random" and len(t) in (3, 4) and t[1] == "value":
+            m = re.fullmatch(r"(-?\d+)\.\.(-?\d+)", t[2])
+            if not m:
+                raise Unsupported(" ".join(t))
+            lo, hi = int(m.group(1)), int(m.group(2))
+            if hi <= lo or hi - lo + 1 > 2147483646:
+                raise Unsupported(" ".join(t))
+            if not hasattr(self, "random_log"):         # a subclass with its own __init__ (test_system_contracts' worlds)
+                self.random, self.random_values, self.random_log = _random.Random(0), [], []
+            if self.random_values:
+                v = self.random_values.pop(0)
+                assert lo <= v <= hi, "a queued random value %d outside %d..%d" % (v, lo, hi)
+            else:
+                v = self.random.randint(lo, hi)
+            self.random_log.append((lo, hi, v))
+            return v
         if h == "cobbledollars":
             # CobbleDollarsCommand: query <target> returns the balance; give|remove <targets> <amount>, amount >= 1,
             # remove takes min(amount, balance)

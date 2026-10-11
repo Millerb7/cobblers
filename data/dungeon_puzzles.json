@@ -28,11 +28,11 @@
     "wrong_sequence": "-{s} s.",
     "wrong_plates": "-{s} s."
   },
-  "default_loot_why": "What a vault holds when its record names no loot_by_band (the room kit's demo list, a draft). The authored dungeons set their own: this is a placeholder with some value per band, vanilla items only.",
+  "default_loot_why": "What a vault holds when its record names no loot_by_band (the room kit's demo list, a draft). The authored dungeons set their own: this is a placeholder with some value per band, vanilla items only. Inside the vault budget (data/dungeon_greed.json vault_budget, enforced since DG3-INTEGRATE) even in the short demo dungeon: 52, 123 and 216 cp a chest (band 5 was 2 to 4 diamonds and 3 to 6 emeralds, 2,100 cp, eight times a band-5 chest's budget).",
   "default_loot_by_band": {
     "1": [{"item": "minecraft:iron_ingot", "count": [3, 6]}, {"item": "minecraft:gold_nugget", "count": [4, 8]}],
     "3": [{"item": "minecraft:gold_ingot", "count": [3, 6]}, {"item": "minecraft:redstone", "count": [8, 16]}],
-    "5": [{"item": "minecraft:diamond", "count": [2, 4]}, {"item": "minecraft:emerald", "count": [3, 6]}]
+    "5": [{"item": "minecraft:diamond", "count": [1, 2]}, {"item": "minecraft:gold_ingot", "count": [2, 4]}]
   },
   "themes": {
     "mine": {

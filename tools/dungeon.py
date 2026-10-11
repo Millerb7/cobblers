@@ -484,9 +484,22 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
             if bo["member_level_offset"] > 0:
                 bad.append("%s: a crew member above its stage's level" % d["id"])
         rip = d["rip"]
-        if rip["frame"]["x1"] - rip["frame"]["x0"] != 4:
-            bad.append("%s: the rip's frame is two posts and a 3-wide opening" % d["id"])
-        for blk in rip["palette"].values():
+        fr = rip["frame"]
+        # the rip's plane (where the frame stood until 2026-10-10): the oval's three columns and one either side, so the
+        # scorched patch's rim and the restored plane cover the oval's whole footprint
+        if fr["x1"] - fr["x0"] != 4:
+            bad.append("%s: the rip's plane is 5 wide (the oval's 3 and one either side)" % d["id"])
+        if "palette" in rip:
+            bad.append("%s: rip.palette is the frame's, which came down on 2026-10-10 (the oval stands free)" % d["id"])
+        rest = rip.get("restore") or {}
+        if sorted(rest) != sorted(str(x) for x in range(fr["x0"], fr["x1"] + 1)) or \
+                any(len(col) != fr["height"] for col in rest.values()):
+            bad.append("%s: rip.restore is not one column of %d blocks per x of the plane (python tools/dungeon.py --rip-restore)"
+                       % (d["id"], fr["height"]))
+        sc = rip.get("scorch") or {}
+        if not sc.get("core") or not sc.get("rim"):
+            bad.append("%s: no rip.scorch core and rim (the scorched ground under the oval)" % d["id"])
+        for blk in [b for col in rest.values() for b in col] + [sc.get("core") or "", sc.get("rim") or ""]:
             if "portal" in blk:
                 bad.append("%s: a portal block in the rip (7.1: they teleport on their own)" % d["id"])
         ov = rip.get("oval")
@@ -708,15 +721,82 @@ def shell_entities(doc, slot):
     return out
 
 
+def rip_scorch_cells(d):
+    """[(x, y, z, block)]: the small scorched patch on the ground under the oval (rip.scorch): the core under the oval's
+    three columns and one in front of its middle, a rim round them. y is the ground under the feet (frame y - 1)."""
+    f, sc = d["rip"]["frame"], d["rip"]["scorch"]
+    y, z, x0, x1 = f["y"] - 1, f["z"], f["x0"], f["x1"]
+    mid = (x0 + x1) // 2
+    core = [(x, z + 1) for x in range(x0 + 1, x1)] + [(mid, z + 2)]
+    rim = [(x0, z + 1), (x1, z + 1)] + [(x, z + 2) for x in range(x0 + 1, x1) if x != mid]
+    return [(x, y, zz, sc["core"]) for x, zz in core] + [(x, y, zz, sc["rim"]) for x, zz in rim]
+
+
 def rip_lines(d):
-    """The overworld rip's blocks (DUNGEONS.md 7.1): two posts, a lintel and a dark opening, in the frame's plane."""
+    """The overworld rip's blocks (DUNGEONS.md 7.1). Since 2026-10-10 the oval stands free (the owner, seeing the oval:
+    "do we have to have the old portal blocks around and behind it?"): no posts, lintel or dark opening. The plane where
+    the frame stood is put back to what was there (rip.restore, measured by rip_restore_measured from tools/ground.py and
+    the old mine's own plan, never a world), so a world that held the frame loses it, and a small scorched patch lies on
+    the ground under the oval (rip.scorch)."""
     r = d["rip"]
-    f, pal = r["frame"], r["palette"]
-    y0, y1, z = f["y"], f["y"] + f["height"] - 1, f["z"]
-    return ["fill %d %d %d %d %d %d %s" % (f["x0"], y0, z, f["x0"], y1 - 1, z, pal["frame"]),
-            "fill %d %d %d %d %d %d %s" % (f["x1"], y0, z, f["x1"], y1 - 1, z, pal["frame"]),
-            "fill %d %d %d %d %d %d %s" % (f["x0"], y1, z, f["x1"], y1, z, pal["lintel"]),
-            "fill %d %d %d %d %d %d %s" % (f["x0"] + 1, y0, z, f["x1"] - 1, y1 - 1, z, pal["opening"])]
+    f = r["frame"]
+    z = f["z"]
+    out = []
+    for x in range(f["x0"], f["x1"] + 1):
+        col = r["restore"][str(x)]
+        if len(col) != f["height"]:
+            raise ValueError("%s: rip.restore[%d] has %d blocks, the plane is %d high" % (d["id"], x, len(col), f["height"]))
+        y = f["y"]
+        while y < f["y"] + f["height"]:          # runs of one block, bottom up
+            blk = col[y - f["y"]]
+            y1 = y
+            while y1 + 1 < f["y"] + f["height"] and col[y1 + 1 - f["y"]] == blk:
+                y1 += 1
+            out.append("fill %d %d %d %d %d %d %s" % (x, y, z, x, y1, z, blk) if y1 > y else "setblock %d %d %d %s" % (x, y, z, blk))
+            y = y1 + 1
+    out += ["setblock %d %d %d %s" % c for c in rip_scorch_cells(d)]
+    return out
+
+
+def rip_restore_measured(d, g, mine_lines=()):
+    """{str(x): [block, ...]}: the rip's plane (frame x0..x1, y..y + height - 1, z) as it was before a frame stood in it,
+    bottom up. A cell the old mine's build writes (tools/route1_old_mine.py build(g): its hill reaches the Night Shift's
+    plane) is what that build left there, replayed in order; any other cell is air, and must be above the ground
+    (round(g(x, z)), tools/ground.py): a frame never stood below it. Writes data/dungeons.json rip.restore through
+    `python tools/dungeon.py --rip-restore`; tests re-measure it where the heightmap is present."""
+    f = d["rip"]["frame"]
+    z = f["z"]
+    want = {(x, y) for x in range(f["x0"], f["x1"] + 1) for y in range(f["y"], f["y"] + f["height"])}
+    state = {}
+    for ln in mine_lines:
+        t = ln.split()
+        if not t or t[0] not in ("fill", "setblock"):
+            continue
+        if t[0] == "setblock":
+            x, y, zz = (int(v) for v in t[1:4])
+            if zz == z and (x, y) in want:
+                state[(x, y)] = t[4]
+            continue
+        a = [int(v) for v in t[1:7]]
+        if not (min(a[2], a[5]) <= z <= max(a[2], a[5])):
+            continue
+        hit = [(x, y) for (x, y) in want if min(a[0], a[3]) <= x <= max(a[0], a[3]) and min(a[1], a[4]) <= y <= max(a[1], a[4])]
+        if hit and len(t) > 8:
+            raise ValueError("a fill with a mode over the rip's plane: %s" % ln)
+        for c in hit:
+            state[c] = t[7]
+    out = {}
+    for x in range(f["x0"], f["x1"] + 1):
+        col = []
+        for y in range(f["y"], f["y"] + f["height"]):
+            if (x, y) in state:
+                col.append(state[(x, y)])
+            elif y > g(x, z):
+                col.append("minecraft:air")
+            else:
+                raise ValueError("%s: the rip's plane cell (%d, %d, %d) is at or under the ground (%d)" % (d["id"], x, y, z, g(x, z)))
+        out[str(x)] = col
+    return out
 
 
 def rip_tag(d):
@@ -1541,12 +1621,13 @@ def functions(doc, blackout=None):
     emit = [HEAD, "# every %d ticks: each overworld rip's particles while a player is within %d blocks (7.1)"
             % (k["rip_particle_period_ticks"], k["rip_particle_range"])]
     for d in ds:
-        f = d["rip"]["frame"]
-        cx = (f["x0"] + f["x1"]) / 2.0 + 0.5
-        emit += ["execute in minecraft:overworld positioned %.1f %d %.1f if entity @a[distance=..%d] run particle "
-                 "minecraft:reverse_portal ~ ~1.5 ~ 0.8 1 0.2 0.02 16" % (cx, f["y"], f["z"] + 0.5, k["rip_particle_range"]),
-                 "execute in minecraft:overworld positioned %.1f %d %.1f if entity @a[distance=..%d] run particle "
-                 "minecraft:portal ~ ~1.5 ~ 0.8 1 0.4 0.4 8" % (cx, f["y"], f["z"] + 0.5, k["rip_particle_range"])]
+        # a few purple motes drifting off the oval (the owner, 2026-10-10: the frame came down, the oval stands free):
+        # centred on the oval itself, a little in front of it, never in the plane where the frame stood
+        ox, oy, oz = oval_pos(d)
+        emit += ["execute in minecraft:overworld positioned %.1f %.1f %.2f if entity @a[distance=..%d] run particle "
+                 "minecraft:reverse_portal ~ ~ ~ 0.7 1.1 0.2 0.01 5" % (ox, oy, oz + 0.2, k["rip_particle_range"]),
+                 "execute in minecraft:overworld positioned %.1f %.1f %.2f if entity @a[distance=..%d] run particle "
+                 "minecraft:portal ~ ~ ~ 0.8 1.2 0.4 0.3 3" % (ox, oy, oz + 0.2, k["rip_particle_range"])]
     emit.append("schedule function %s %dt replace" % (F("rips/emit"), k["rip_particle_period_ticks"]))
     out["rips/emit"] = emit
 
@@ -1602,7 +1683,8 @@ def functions(doc, blackout=None):
         "execute in minecraft:overworld run function %s" % F("rips/blocks_%s" % d["short"]) for d in ds]
     for d in ds:
         out["rips/blocks_%s" % d["short"]] = function_limits.ensure_loaded(
-            ["# %s's rip (data/dungeons.json rip: a PLACEHOLDER in the old mine's notch)" % d["name"]] + rip_lines(d))
+            ["# %s's rip (data/dungeons.json rip): no frame since 2026-10-10. Its plane put back to what was there, and the "
+             "scorched ground under the oval" % d["name"]] + rip_lines(d))
     return out
 
 
@@ -1794,8 +1876,23 @@ def main(argv=None):
     p.add_argument("--data", default=str(DATA))
     p.add_argument("--out", default=str(DEFAULT_OUT))
     p.add_argument("--report", action="store_true", help="the shells' block counts and boxes; write nothing")
+    p.add_argument("--rip-restore", action="store_true",
+                   help="measure each rip's plane as it was (tools/ground.py and the old mine's plan) and compare it with "
+                        "rip.restore; print the measured JSON; write nothing")
     a = p.parse_args(argv)
     doc = load(a.data)
+    if a.rip_restore:
+        import ground as GR             # lazy: only this measurement needs the heightmap
+        import route1_old_mine as MINE
+        g = GR.load()
+        mine = MINE.build(g)
+        bad = 0
+        for d in dungeons(doc):
+            got = rip_restore_measured(d, g, mine)
+            same = got == d["rip"].get("restore")
+            bad += not same
+            print("%s: %s %s" % (d["id"], "matches rip.restore" if same else "DIFFERS from rip.restore:", "" if same else json.dumps(got)))
+        return 1 if bad else 0
     if a.report:
         print("\n".join(report(doc) + ["WARNING: " + w for w in warnings(doc)]))
         return 0

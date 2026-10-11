@@ -3100,25 +3100,49 @@ def static_audit(pack, doc, slots, F):
             if moved != writes(s):
                 F.add("SLOT", s, None, None, "the shell is not slot %d's moved %d in z (%d writes differ)"
                       % (base.k, dz, sum((moved - writes(s)).values()) + sum((writes(s) - moved).values())))
-    # the overworld rips: each frame as the data places it, and no two rips' blocks or clicks within reach of each other
+    # the overworld rips, and no two rips' blocks or clicks within reach of each other. Since 2026-10-10 a rip has no
+    # frame (the owner: the oval stands free): its blocks are the record's plane put back to `rip.restore` (bottom up per
+    # x, from the plane's y) and a scorched patch on the ground in front of it (y - 1, z + 1..z + 2, `rip.scorch`'s two
+    # blocks). Read cell by cell from the pack's fills and setblocks and compared with the record, never the generator
     rips = []
     for d in doc["dungeons"]:
-        fr = d["rip"]["frame"]
-        want = (fr["x0"], fr["y"], fr["z"], fr["x1"], fr["y"] + fr["height"] - 1, fr["z"])
-        got = []
+        rp = d["rip"]
+        fr = rp["frame"]
+        want = (fr["x0"], fr["y"] - 1, fr["z"], fr["x1"], fr["y"] + fr["height"] - 1, fr["z"] + 2)
+        cells = {}
         for ln in pack.lines(FN + "rips/blocks_%s" % d["short"]):
             t = tokens(ln)
             if t[0] == "fill":
-                got.append([int(float(v)) for v in t[1:7]])
-        if got:
-            a = np.array(got)
-            have = (int(a[:, 0].min()), int(a[:, 1].min()), int(a[:, 2].min()),
-                    int(a[:, 3].max()), int(a[:, 4].max()), int(a[:, 5].max()))
-            if have != want:
-                F.add("RIP", None, d["id"], None, "the rip's blocks span %s, the record's frame %s" % (have, want))
-        else:
+                a = [int(float(v)) for v in t[1:7]]
+                for x in range(min(a[0], a[3]), max(a[0], a[3]) + 1):
+                    for y in range(min(a[1], a[4]), max(a[1], a[4]) + 1):
+                        for z in range(min(a[2], a[5]), max(a[2], a[5]) + 1):
+                            cells[(x, y, z)] = t[7]
+            elif t[0] == "setblock":
+                cells[tuple(int(float(v)) for v in t[1:4])] = t[4]
+        if not cells:
             F.add("RIP", None, d["id"], None, "no rip blocks for %s" % d["short"])
             continue
+        a = np.array(list(cells))
+        have = (int(a[:, 0].min()), int(a[:, 1].min()), int(a[:, 2].min()),
+                int(a[:, 0].max()), int(a[:, 1].max()), int(a[:, 2].max()))
+        if not all(want[i] <= have[i] for i in range(3)) or not all(have[i] <= want[i] for i in range(3, 6)):
+            F.add("RIP", None, d["id"], None, "the rip's blocks span %s, past the record's plane and patch %s" % (have, want))
+        for x in range(fr["x0"], fr["x1"] + 1):
+            col = (rp.get("restore") or {}).get(str(x)) or []
+            for i in range(fr["height"]):
+                got = cells.get((x, fr["y"] + i, fr["z"]))
+                if i >= len(col) or got != col[i]:
+                    F.add("RIP", None, d["id"], None, "the rip's plane at (%d, %d, %d) is %s, the record's restore %s"
+                          % (x, fr["y"] + i, fr["z"], got, col[i] if i < len(col) else None))
+        patch = {c: b for c, b in cells.items() if c[1] == fr["y"] - 1}
+        sc = rp.get("scorch") or {}
+        if not patch or any(b not in (sc.get("core"), sc.get("rim")) for b in patch.values()) \
+                or any(not (fr["z"] + 1 <= c[2] <= fr["z"] + 2) for c in patch):
+            F.add("RIP", None, d["id"], None, "the rip's ground patch is %s, not rip.scorch's blocks in front of the plane"
+                  % sorted(set(patch.values())))
+        if any(c[1] not in range(fr["y"] - 1, fr["y"] + fr["height"]) for c in cells):
+            F.add("RIP", None, d["id"], None, "the rip writes outside its plane's height and the ground under it")
         click = None
         for ln in pack.lines(FN + "rips/entities_act"):
             if "minecraft:interaction" in ln and '"dg.rip_%s"' % d["short"] in ln:

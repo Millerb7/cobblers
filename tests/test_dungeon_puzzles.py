@@ -681,10 +681,11 @@ def test_vault_the_reset_rearms_every_chest(mk):
 
 def test_vault_each_chest_weighs_its_loot_once_at_its_expected_value(mk):
     # unit GREED (2026-10-10). The fixture's band-1 chest, priced here from the table's rows and not by the generator:
-    # 4-8 iron ingots (mean 6) and, half the time, 2 emeralds
+    # 4-8 iron ingots (mean 6) and, half the time, 2 gold nuggets (emeralds until DG3-INTEGRATE: 454 cp a chest, over the
+    # enforced vault budget of the fixture's short dungeon, 59 a chest at band 1)
     import dungeon_greed as DGR
     t = DGR.load()
-    want = round(6 * t["items"]["minecraft:iron_ingot"]["cp"] + 0.5 * 2 * t["items"]["minecraft:emerald"]["cp"])
+    want = round(6 * t["items"]["minecraft:iron_ingot"]["cp"] + 0.5 * 2 * t["items"]["minecraft:gold_nugget"]["cp"])
     doc, w, p, s = vault_world(mk, 1)
     b = built(doc, "vlt")
     into(doc, w, p, "vlt")
