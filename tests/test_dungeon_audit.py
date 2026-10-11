@@ -182,7 +182,8 @@ def test_the_generated_packs_pass_the_static_audit(check):
 
 
 DUNGEONS_DATA = json.loads((ROOT / "data" / "dungeons.json").read_text(encoding="utf-8"))
-TRAINER_KINDS, WILD_KINDS = ("stand", "gauntlet"), ("nest", "miniboss", "habitat")   # DUNGEON_ROOMS.md 4a
+# DUNGEON_ROOMS.md 4a: `ambush` is the gauntlet's alias (the Moth Cathedral's Sexton's walk is one)
+TRAINER_KINDS, WILD_KINDS = ("stand", "gauntlet", "ambush"), ("nest", "miniboss", "habitat")
 
 
 KEY_TAG = json.loads((ROOT / "data" / "key_ball.json").read_text(encoding="utf-8"))["tag"]
@@ -423,6 +424,12 @@ def test_every_npc_an_engine_spawn_makes_carries_the_exempt_tag_when_the_spawn_r
             for obj, v in (("dg.band", band), ("dg.stage", stage), ("dg.slot", g), ("dg.run", 1)):
                 w.set(p.name, obj, v)
             w.set("#s%d" % g, "dg.run", 1)
+            if kind == "vendor":
+                # a room's enter runs once, the first time the member stands in it: its holder at 0 (the slot's reset)
+                for l in DA.body(FNS[site]):
+                    m = re.fullmatch(r"execute unless score (\S+) dg\.rs matches 0 run return 0", l)
+                    if m:
+                        w.set(m.group(1), "dg.rs", 0)
             w.call(site, PS_ctx(p))
             made = w.npcs + [e for e in w.spawned if e.kind == "cobblemon:pokemon"]
             if kind in ("wild", "prize"):

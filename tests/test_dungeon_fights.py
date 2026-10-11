@@ -325,7 +325,7 @@ def test_every_bound_is_the_hand_bound_of_its_party(built_with_stand):
                 if o:
                     r = dict(r, **{k: x for k, x in o.items() if k != "params"},
                              params=dict(r.get("params") or {}, **(o.get("params") or {})))
-                if r["kind"] not in ("stand", "gauntlet"):
+                if r["kind"] not in ("stand", "gauntlet", "ambush"):     # ambush: the gauntlet's alias (4a)
                     continue
                 for i, t in enumerate(r["params"]["trainers"], 1):
                     for b in bands:
