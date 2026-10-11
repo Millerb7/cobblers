@@ -366,6 +366,29 @@
         "mega_showdown:starminite",
         "mega_showdown:victreebelite"
       ]
+    },
+    "fossils": {
+      "cp": 300,
+      "source": "derived",
+      "why": "RT-B (the fossil chamber, data/dungeon_extras2.json fossils.greed_cp): a fossil is worth 3 points, three of the owner's diamonds. DESIGN number. 14 of the 15 have no source but a trainer's loot (docs/research/OBTAINABILITY_VANILLA_COBBLEMON.md) and a restored fossil is a Pokemon (a catch weighs 1 to 2 points); the chamber holds one per run, so it can weigh at most 3 points",
+      "ids_source": "Cobblemon 1.8.0 jar: data/cobblemon/tags/item/fossils.json (15)",
+      "ids": [
+        "cobblemon:helix_fossil",
+        "cobblemon:dome_fossil",
+        "cobblemon:old_amber_fossil",
+        "cobblemon:root_fossil",
+        "cobblemon:claw_fossil",
+        "cobblemon:skull_fossil",
+        "cobblemon:armor_fossil",
+        "cobblemon:cover_fossil",
+        "cobblemon:plume_fossil",
+        "cobblemon:jaw_fossil",
+        "cobblemon:sail_fossil",
+        "cobblemon:fossilized_bird",
+        "cobblemon:fossilized_fish",
+        "cobblemon:fossilized_drake",
+        "cobblemon:fossilized_dino"
+      ]
     }
   },
   "blocks": {
@@ -382,6 +405,18 @@
       },
       "why": "drops itself",
       "cp": 1
+    },
+    "minecraft:calcite": {
+      "drops": {
+        "cobblemon:helix_fossil": 1
+      },
+      "why": "RT-B: the fossil chamber's one fossil block per run. Calcite's own vanilla drop is itself and is worth nothing here; the room's tick gives the fossil when the cell turns to air, and this row weighs it: mining the block is the take (the `fossils` group's cp)",
+      "cp": 300
+    },
+    "minecraft:clay": {
+      "drops": {},
+      "why": "RT-B: a fossil bay's dig block: a wall the pick opens to reach the fossil, not a valuable (0)",
+      "cp": 0
     },
     "minecraft:coal_ore": {
       "drops": {
@@ -538,12 +573,22 @@
       "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe): 4-5",
       "cp": 9
     },
+    "minecraft:sandstone": {
+      "drops": {},
+      "why": "RT-B: a fossil bay's dig block: a wall the pick opens to reach the fossil, not a valuable (0)",
+      "cp": 0
+    },
     "minecraft:stripped_jungle_log": {
       "drops": {
         "minecraft:stripped_jungle_log": 1
       },
       "why": "drops itself",
       "cp": 1
+    },
+    "minecraft:terracotta": {
+      "drops": {},
+      "why": "RT-B: a fossil bay's dig block: a wall the pick opens to reach the fossil, not a valuable (0)",
+      "cp": 0
     }
   },
   "loot_tables": {

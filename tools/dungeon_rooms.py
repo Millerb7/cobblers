@@ -73,7 +73,8 @@ DEFAULT_FLAGS = {"dress": "light", "rise": False, "connector": False, "pit": 0, 
 # outline: the kind accepts a non-box outline (None = True unless it has a pit, jumps or a snap: its own geometry).
 # reversible: the kind may be walked west (dir "west"): only kinds whose geometry and hooks do not assume +x.
 EXTENSION_MODULES = ["dungeon_kinds", "dungeon_fights", "dungeon_puzzles", "dungeon_parkour", "dungeon_setpieces",
-                     "dungeon_life", "dungeon_relics", "dungeon_resources", "dungeon_crossroads", "dungeon_prize"]   # imported in this order, absent ones skipped
+                     "dungeon_life", "dungeon_relics", "dungeon_resources", "dungeon_crossroads", "dungeon_prize",
+                     "dungeon_extras2"]   # imported in this order, absent ones skipped
 
 KINDS = {}
 LAYOUT_FNS = []       # fn(doc, d, slot, rooms, items): a last pass over a laid slot (dungeon_crossroads: routes' looks, windows)
