@@ -244,9 +244,10 @@ def test_boss_events_match_the_authored_crews(doc):
 
 
 def _trainers(node):
-    """Every trainer record (a dict with a team_by_band) anywhere under a dungeon record."""
+    """Every trainer record (a dict with a team_by_band, or a rotation pool's team_pool_by_band, PRIZE-POOLS) anywhere under
+    a dungeon record."""
     if isinstance(node, dict):
-        if "team_by_band" in node:
+        if "team_by_band" in node or "team_pool_by_band" in node:
             yield node
         for v in node.values():
             yield from _trainers(v)

@@ -425,17 +425,26 @@ def test_key_ball_checks_every_authored_legendary_prizes_bind_and_the_reference_
     for slot in D.slots(doc):
         for room in PZ.prize_rooms(doc, slot):
             if any((PZ.species_at(doc, room, b["band"]) or (None, False))[1] for b in PZ.band_rows(doc)):
-                want.add("data/cobblers/function/dungeons/room/%s/%s/s%d/prize/bind.mcfunction"
+                want.add("data/cobblers/function/dungeons/room/%s/%s/s%d/prize/"
                          % (slot["dungeon"]["id"], room["id"], slot["g"]))
     files = PZ.build(doc)
-    assert want and set(files) == want, sorted(set(files) ^ want)
-    assert {rel.split("/")[5] for rel in files} == {d["id"] for d in doc["dungeons"]}
+    # each such room's binds: prize/bind, and prize/bind_native where a legendary of its pools is an Ultra Beast (the
+    # native tag, PRIZE-POOLS; tools/dungeon_prize.py bind_name). A room whose every legendary is an Ultra Beast (the
+    # Patriarch's cradle) has bind_native alone, so the room, not the file name, is what each slot must carry
+    got = {rel.rsplit("/", 1)[0] + "/" for rel in files}
+    assert all(rel.rsplit("/", 1)[1] in ("bind.mcfunction", "bind_native.mcfunction") for rel in files), sorted(files)
+    assert want and got == want, sorted(got ^ want)
+    # every dungeon that authors a legendary prize (since the roster's dungeons, not every dungeon does: a rare-only prize
+    # binds with any ball)
+    assert {rel.split("/")[5] for rel in files} == {w.split("/")[5] for w in want}
+    assert {w.split("/")[5] for w in want} >= {"night_shift", "jungle", "flooded_ruin"}
     assert all("tag @s add %s" % KB.boss_tag() in text.split("\n") for text in files.values())
     # with no legendary prize authored anywhere, the reference prize's bind stands in
     for d in doc["dungeons"]:
         for r in _all_rooms(d):
             if (r.get("params") or {}).get("prize"):
                 r["params"]["prize"].pop("legendary_by_band", None)
+                r["params"]["prize"].pop("legendary_pool_by_band", None)     # the pools (section 14) name legendaries too
     files = PZ.build(doc)
     assert list(files) == ["data/cobblers/function/dungeons/prize/reference/bind.mcfunction"]
     assert "tag @s add %s" % KB.boss_tag() in files[list(files)[0]].split("\n")

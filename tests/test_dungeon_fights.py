@@ -152,6 +152,8 @@ def sweep(files):
     for rel in files:
         if rel.startswith(NPCS) and rel.endswith(".json"):
             stem = rel[len(NPCS):-len(".json")]
+            if not_a_fighter(files[rel]):
+                continue
             if "cobblers:dungeons/claw/bounds/%s" % stem not in fns:
                 bad.append("class %s has no claw/bounds function" % stem)
     if "cobblers:dungeons/claw/tick" not in json.loads(files["data/minecraft/tags/function/tick.json"])["values"]:
@@ -159,6 +161,14 @@ def sweep(files):
     if "cobblers:dungeons/claw/init" not in json.loads(files["data/minecraft/tags/function/load.json"])["values"]:
         bad.append("claw/init is not in load.json")
     return bad
+
+
+def not_a_fighter(text):
+    """An NPC class that cannot battle: no party, and its interaction a dialogue (the egg room's vendor, RT-B,
+    tools/dungeon_extras2.py npc_class). It has nothing to claw back, so no claw/bounds. A class with a party, or one
+    whose interaction is anything else, is still held to the bounds."""
+    c = json.loads(text)
+    return "party" not in c and (c.get("interaction") or {}).get("type") == "dialogue"
 
 
 def test_the_built_pack_is_covered(built):
@@ -279,7 +289,7 @@ def test_every_bound_is_the_hand_bound_of_its_party(built_with_stand):
     n = 0
     for rel, text in built_with_stand.items():
         m = re.fullmatch(NPCS + r"(dg_.+)\.json", rel)
-        if not m:
+        if not m or not_a_fighter(text):
             continue
         levels = [int(p.split("level=")[1]) for p in json.loads(text)["party"]["pokemon"]]
         body = built_with_stand["%sclaw/bounds/%s.mcfunction" % (FUNCS, m.group(1))]
