@@ -629,6 +629,7 @@ def room_problems(doc, d, room):
         if pool_size(doc, room, b["band"]) > POOL_MAX:
             bad.append("%s band %d: a prize pool of %d species; at most %d" % (who, b["band"], pool_size(doc, room, b["band"]), POOL_MAX))
     ch = pz.get("chance_by_band") or {}
+    nb = len(band_rows(doc))
     if not isinstance(ch, dict) or any(not (str(k).isdigit() and 1 <= int(k) <= nb) or not isinstance(v, int)
                                        or isinstance(v, bool) or not 0 <= v <= 100 for k, v in ch.items()):
         bad.append("%s: prize.chance_by_band is {band: percent 0..100}" % who)

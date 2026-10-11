@@ -361,9 +361,9 @@ def stand_classes(doc, d, room):
 
 def stand_variants(doc, room, n, band, slot_g):
     """[(execute clause, pool team k)] for trainer n at `band`: one per room index, exactly one of which fires."""
-    t = trainers_of(doc, room)[n - 1]
-    size = len(team_pool(t, band))
-    N = rotation_size(doc, room, band)
+    ts = trainers_of(doc, room)
+    size = len(team_pool(ts[n - 1], band))
+    N = max([len(team_pool(t, band)) for t in ts] + [1])      # rotation_size, for a room record with no kind (tests)
     if size <= 1 or N <= 1:
         return [("", 1)]
     H = rot_holder(slot_g, room)
@@ -588,7 +588,7 @@ def miniboss_pool(p, band):
 
 def rotation_size(doc, room, band):
     """N, the room's rotation index range at `band` (1: no rotation)."""
-    kind, p = room["kind"], room.get("params") or {}
+    kind, p = room.get("kind"), room.get("params") or {}
     if kind in KINDS_STAND and is_stand_room(room):
         return max([len(team_pool(t, band)) for t in trainers_of(doc, room)] + [1])
     if kind == "miniboss" and is_wild_room(room):
