@@ -411,6 +411,11 @@
       "why": "a secret's face: a wall the pick opens, not a valuable (0); blue ice drops nothing without silk touch",
       "cp": 0
     },
+    "minecraft:brown_terracotta": {
+      "drops": {},
+      "why": "NEW-OSSUARY: the soul valley's fossil bay dig block (data/dungeon_extras2.json fossils.dig): a wall the pick opens to reach the fossil, not a valuable (0)",
+      "cp": 0
+    },
     "minecraft:calcite": {
       "drops": {
         "cobblemon:helix_fossil": 1
