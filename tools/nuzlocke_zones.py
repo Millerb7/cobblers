@@ -50,7 +50,7 @@ GRID = 32                       # the sub-region raster compile_spawns uses (SUB
 VR_SUBTITLE = "Victory Road"
 # fungal_*: the Fungal Isle's three nest pools (tools/fungal_isle.py), each a few dozen blocks inside fungal_north or
 # fungal_south and untitled by any settlement, so once placed they would otherwise raise below
-MICRO_SITE = re.compile(r"^(elder|sapling|fungal)_|_sapling_")
+MICRO_SITE = re.compile(r"^(elder|sapling|fungal|scar_tarn)_|_sapling_")
 
 
 def load(name):

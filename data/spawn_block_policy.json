@@ -127,6 +127,13 @@
     },
     {
       "blocks": [
+        "minecraft:water"
+      ],
+      "why": "The Scar Tarn on Mt Vessu (tools/scar_tarn.py, data/scar_tarn.json, 2026-10-11): about 1,900 columns of still water up to nine deep in a closed hollow at x1966..2068 z688..743 (water y237, the hollow's own spill y239). The water is the place (the owner: a pond on the mountain's north-west recess). minecraft:water is named by 84 spawn entries (data/spawn_blocks.json): which of them a cold alpine biome admits there is not known, and the tarn's own alpha pool is a Habitat Block pool that does not depend on it (data/scar_tarn.json alphas).",
+      "scope": "the Scar Tarn only (scar_tarn, tools/scar_tarn.py)"
+    },
+    {
+      "blocks": [
         "minecraft:quartz_block"
       ],
       "why": "the only spawns conditioned on it (carbink, corsola galarian, cursola, duraludon, archaludon and their herds) require #cobblemon:nether/is_quartz biomes. In an overworld town it has no effect.",
