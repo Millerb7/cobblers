@@ -204,6 +204,25 @@ for t in towns:
     placed_labels += 1
 print("settlements labelled:", placed_labels)
 
+# the dungeon rips (data/dungeons.json rip.click), drawn on their own: they hold no x/z key the density pass reads,
+# and a player looks for them by name. Rips within 120 blocks share one marker (the three stand on one trail).
+rips = [(d_["name"], d_["rip"]["click"]) for d_ in json.load(open(ROOT + "/data/dungeons.json", encoding="utf-8"))["dungeons"]
+        if isinstance(d_.get("rip", {}).get("click"), list)]
+groups = []
+for name, c in rips:
+    for g in groups:
+        if abs(g["x"] - c[0]) <= 120 and abs(g["z"] - c[2]) <= 120:
+            g["names"].append(name)
+            break
+    else:
+        groups.append({"x": c[0], "z": c[2], "names": [name]})
+for g in groups:
+    px, pz = PAD_L + g["x"] * scale, PAD_T + g["z"] * scale
+    d.polygon([(px, pz - 8), (px + 8, pz), (px, pz + 8), (px - 8, pz)], fill=(190, 80, 230), outline=(255, 255, 255))
+    for k, nm in enumerate(["Dungeon rips:"] + g["names"]):
+        d.text((px + 12, pz - 10 + k * 16), nm, font=FS, fill=(235, 190, 255), stroke_width=2, stroke_fill=(16, 16, 20))
+print("dungeon rips drawn:", sum(len(g["names"]) for g in groups), "in", len(groups), "marker(s)")
+
 d.text((PAD_L, 24), "Cobblers - where the authored content is", font=FB, fill=(238, 238, 242))
 d.text((PAD_L, 62), "%d points of interest in %d categories   |   8,192 blocks a side at %.2f blocks per pixel   |   cells are 1,024 blocks"
        % (len(allpts), len(cats), W / float(MAP)), font=FS, fill=(150, 150, 160))
