@@ -355,6 +355,20 @@
    ],
    "why": "`sunset_west` is BOTH a town (data/towns.json) and a spawn subregion (data/spawns.json), and each says which region it sits in: the subregion answers `sunset_isle`, the town answers `southern_coast`. Two different objects under one id, which is the fault; the two answers are each correct about their own object. Renaming one of them is the fix.",
    "finding": true
+  },
+  {
+   "files": [
+    "data/dungeon_prize_roster.json",
+    "data/dungeons.json"
+   ],
+   "fields": [
+    "rip",
+    "theme"
+   ],
+   "ids": [
+    "street"
+   ],
+   "why": "NEW-STREET (2026-10-11). The two fields mean different things in the two files. The roster's `theme` (\"city (new)\") and `rip` (a sentence naming the campaign site, the Scar's road end) are COVERAGE's proposal, read by no tool (tools/dungeon_prize.py reads only the roster's pools and model gates); data/dungeons.json's `theme` (\"city\", a key of data/dungeon_themes.json) and `rip` (the engine's frame, click and outside, here the TEST rip on the old mine's trail) are what the generator builds. Neither is dead: the roster records where the Street is meant to stand once the Scar is in the live world, the record where it stands for the owner's walk today. Each new dungeon of the roster that carries its own `rip` or a `theme` other than its engine key adds its id HERE (one entry per field pair: a second entry for the same files and field would overwrite this one's ids in tools/id_authorship.py)."
   }
  ],
  "findings_why": "`finding: true` is an overlap that is legal today and still a hazard: two different things sharing an id, or one field name meaning two things in two files. The check does not fail on them -- they are declared -- and they are written down so that the next session reads a judgement rather than making one again. Five of them, 2026-10-01."

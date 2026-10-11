@@ -696,6 +696,192 @@
         "anything in a running Minecraft: the walk check is on the generated blocks, and nothing of this dungeon has been entered",
         "the overworld around the test rip: tools/ground.py gives the ground, but trees or anything painted on the slope at x1396..1406 z4118..4124 are not cleared by anything here"
       ]
+    },
+    {
+      "id": "street",
+      "short": "st",
+      "name": "The Street That Ends at Nothing",
+      "test": true,
+      "test_why": "authored to data/dungeon_prize_roster.json `street` (COVERAGE, 2026-10-11) and docs/mechanics/DUNGEON_2_STREET.md as a TEST dungeon: its campaign rip is the Scar's road end, which waits for the live re-export that carries the Scar (DUNGEON_2_STREET.md P1, S-Q4); until then its rip stands on the old mine's test trail with the other test dungeons so the owner can walk it",
+      "gate_flag": null,
+      "gate_flag_why": "DUNGEON_2_STREET.md 2: gate_flag null, the geography gates it (the Scar after Surge); a test dungeon is open to every band so any band can be tried",
+      "theme": "city",
+      "theme_why": "the city theme (OVERWORLD2, data/dungeon_themes.json city): a ruined city block, brick fronts and an andesite road, lamps still lit, tram lines, a fallen facade, a burst main. The design's open sky (DUNGEON_2_STREET.md 5.2, E-S3: a barrier ceiling) is NOT built: the theme's hull is opaque (polished deepslate overhead, the 'dark deepslate sky' of the theme's own why), so the street is roofed",
+      "clock_s_by_band": {"1": 2580, "2": 2700, "3": 2700, "4": 2700, "5": 3300, "6": 3540},
+      "clock_why": "NEW-STREET (2026-10-11): tools/dungeon_clock.py's required time on the MAIN route, the largest over the four variants, each fork paying its slowest non-optional way at the band (the belfry's nest at every band), the wing and the six optional rooms never: 33.5 / 35.0 / 35.5 / 35.5 / 43.0 / 46.0 minutes (33.5 at band 1: the brief's about 32; the rooftops maze was cut from 69 to 51 long to get there), PLUS 25 s for the collapse set piece, which the tool does not price: one fall onto its catch floor (fall_penalty_s 15 + the tool's FALL_REDO_S 10, as the Night Shift's cave-in). Then x slack_factor 1.25 to the whole minute: 43 / 45 / 45 / 45 / 55 / 59 minutes. Every band is under D17's hour, so the dungeon has no lockout of its own. The slack (9-13 minutes) pays for what is optional: the wing (the drain, the cistern stair, the hard parkour and the prize), the savings bank (its code is found further down the street and the tram cut's shortcut brings a player back), the fountain, the canal, the stall, the secrets and greed past the free tier. Every pace is DUNGEONS.md 4.1's PLANNING figure (XT1 has timed no fight)",
+      "rooms_why": "NEW-STREET (2026-10-11), authored to DUNGEON_2_STREET.md's beats on the kit that exists: the Last Stop, the Lamplighter's avenue, the First Fold (the fold's own fallback, a puzzle: E-S2's seamless loop is not built), the Locksmith's, the route DOUBLING BACK west behind them (the back alley, the tram cut with its shortcut into the Fold), up a fire stair 16 to the ROOFTOPS and east again over the street it came along (a maze of chimneys, stacked over the Avenue and the Fold), the Cut (the sheared mountain's ore), the clock square's THREE-WAY crossroads (the boardwalk over the drowned square: fast, a collapse; the underpass: dark and long; the belfry: Bronzor's nest, a fight), the tram depot, the Road That Ends (the six-section main parkour), the Surveyor, the Far Kerb's healer, the crossing's two ways (the arcade's plates or the toy shop's Mimikyu and its shelf), the gate road, the night watch's ambush, the collapse where the street ends, the Warden's square, the street's end. The WING (four rooms, never on the clock) leaves the gate road down a cistern stair 24 under the street: a hard five-section parkour, then the drowned plaza and its hidden prize (the roster's pools). Pacing: no two fights back to back on any route in any variant; the heal after the Surveyor, so the night watch and the Warden meet a rested party (DUNGEON_PASS2 tuning). Four of the six optional rooms (the savings bank, the stall's eggs, the canal's fish, the dry fountain), each on a side entry.",
+      "rip": {
+        "test": true,
+        "test_why": "a test rip for the owner's walk-through, not the Street's campaign site (the Scar's road end, DUNGEON_2_STREET.md 3). Its x slot on the old mine's test trail is x1550 (the orchestrator's), east of the three test rips (x1350-1354 z4117, x1380-1384 z4118, x1400-1404 z4120) and far from the old mine (data/placements.json route1_old_mine plan.footprint.rect x1229..1374 z4071..4142)",
+        "frame": {"x0": 1552, "x1": 1556, "z": 4118, "y": 125, "height": 4},
+        "frame_why": "the rip's PLANE (no frame stands in it: the oval and the click are measured from it, as the other rips since 2026-10-10): x 1552..1556, y 125..128, z 4118; its opening faces south (the oval and the click on the plane's south side, z + 1)",
+        "ground": {"x": 1554, "z": 4119, "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1", "measured": "round(ground(x, z)) = 124 for every column x 1550..1561, z 4114..4119 and x 1552..1561, z 4114..4127 (the plane, its click and the stand in front), so the feet are y125; the ground west of x 1550 reads 125 (tools/ground.py, 2026-10-11). Dry land 62 above the sea"},
+        "outside": [1554.5, 125, 4122.5, 0],
+        "outside_why": "where a player leaving the run stands: two blocks south of the click interaction (z 4119..4121), on the ground (feet y125), facing south away from the rip",
+        "click": [1554, 125, 4119],
+        "click_why": "the interaction's centre column, just south of the opening (z 4119), 3 wide and 3 high",
+        "restore": {"1552": ["minecraft:air", "minecraft:air", "minecraft:air", "minecraft:air"], "1553": ["minecraft:air", "minecraft:air", "minecraft:air", "minecraft:air"], "1554": ["minecraft:air", "minecraft:air", "minecraft:air", "minecraft:air"], "1555": ["minecraft:air", "minecraft:air", "minecraft:air", "minecraft:air"], "1556": ["minecraft:air", "minecraft:air", "minecraft:air", "minecraft:air"]},
+        "restore_why": "the plane (z 4118, x 1552..1556, y 125..128): air, all of it above the ground (round(ground) 124 there, tools/ground.py). Measured by python tools/dungeon.py --rip-restore (2026-10-11)",
+        "scorch": {"core": "minecraft:soul_soil", "rim": "minecraft:coarse_dirt"},
+        "scorch_why": "as the other test rips': the oval stands free over a small scorched patch (tools/dungeon.py rip_scorch_cells); neither block is a spawn block nor slows a player",
+        "oval": {"width": 3.0, "height": 4.0, "in_front": 0.06},
+        "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
+        "plume": false,
+        "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
+      },
+      "shape_mix": true,
+      "shape_mix_why": "KIT2: a room without its own shape takes the city's mix (plazas, junctions, alleys, rooftops); the rooms that deserve one name it",
+      "variants": [
+        {"id": "a", "why": "as authored"},
+        {"id": "b", "mirror": true, "why": "north and south swapped: every turn goes the other way"},
+        {"id": "c", "seed": "st_c", "swap": {"first_fold": {"params": {"variant": "levers", "size": 4}}}, "why": "every room re-rolled (the backstreets, the parkours, the shapes), and the First Fold asks for the shutters set to the pattern (levers) instead of the knocks in order"},
+        {"id": "d", "seed": "st_d", "mirror": true, "order": ["last_stop", "avenue", "s_bank", "first_fold", "locksmith", "back_alley", "tram_cut", "roof_stair", "roof_turn", "roof_landing", "rooftops", "the_cut", "s_stall", "clock_square", "f_square", "tram_depot", "road_ends", "far_kerb", "s_canal", "surveyor", "s_fountain", "crossing", "f_crossing", "gate_road", "w_lane", "night_watch", "street_falls", "wardens_square", "street_end"], "why": "mirrored and re-rolled, and the Far Kerb comes before the Surveyor (the rest before the fight, not after it)"}
+      ],
+      "rooms": [
+        {"id": "last_stop", "kind": "entry_room", "length": 20, "width": 19, "height": 8, "out": {"side": "east", "dz": 3}, "name": "The Last Stop", "why": "a tram stop with no tram: the rift lets out on its platform, the board on the north wall; its east door is the threshold"},
+        {"id": "avenue", "kind": "stand", "length": 60, "width": 30, "height": 11, "gate": "cleared", "shape": "t", "shape_params": {"bar": "south"}, "align": "south", "params": {"trainers": [
+          {"name": "The Lamplighter", "team_pool_by_band": {"1": [["mareep", "magnemite"], ["chinchou", "helioptile"]], "2": [["flaaffy", "magnemite", "rotom"], ["chinchou", "helioptile", "rotom"]], "3": [["magneton", "rotom"], ["lanturn", "rotom"]], "4": [["ampharos", "lanturn", "rotom"], ["heliolisk", "eelektrik", "rotom"]], "5": [["ampharos", "magnezone", "lanturn", "electrode", "rotom"], ["lanturn", "heliolisk", "eelektross", "magnezone", "rotom"]], "6": [["ampharos", "magnezone", "lanturn", "electrode", "eelektross", "rotom"], ["lanturn", "heliolisk", "eelektross", "magnezone", "ampharos", "rotom"]]}, "team_pool_why": "PRIZE-POOLS rotation (DUNGEON_ROOMS.md 14): one of two crews a run, both lamps and wires, Rotom the ace in each", "members_eased_by_band": {"3": 1, "4": 1}, "members_eased_why": "the owner, 2026-10-10: tune each dungeon to a 60-90% simulated win at the band's lower cap, bands 1-4; bands 3-4 one member under: the fights before the Far Kerb's heal cost 105% of a team's health at cap 50, and runs reached the boss with a third of it (tools/dungeon_sim.py --dungeon street --seed 7, win at the lower cap). Bands 5-6 untuned."}
+        ]}, "name": "The Avenue", "why": "the STAND (DUNGEON_2_STREET.md 6.1, stand 2): the avenue's square at a dry well, where the Lamplighter still lights the posts for nobody; his lamps are the light Pokemon (Mareep's line, the lighthouse; Lanturn; Rotom in a bulb). The Litwick line of the design is the roster's prize, so it stands nowhere else here"},
+        {"id": "s_bank", "kind": "side", "from": {"side": "north", "at": 6}, "rooms": [
+          {"id": "bank_steps", "kind": "drift", "length": 12, "width": 15, "height": 8, "in": {"side": "south", "at": 2}, "out": {"side": "east", "dz": -5}, "name": "The bank steps", "why": "up the savings bank's steps off the avenue's north side"},
+          {"id": "savings_bank", "kind": "bank_vault", "length": 30, "width": 21, "height": 9, "params": {"clue_rooms": ["first_fold", "locksmith", "back_alley"]}, "name": "The savings bank", "why": "the street's savings bank, two doors from the rift: its strongroom's code is chalked further down the street (the First Fold, the Locksmith's, the back alley), and the tram cut's shortcut brings a player back to it. Optional (a dead end, gate open); its chests are held to the vault budget"}
+        ]},
+        {"id": "first_fold", "kind": "puzzle", "length": 48, "width": 30, "height": 10, "gate": "cleared", "align": "south", "params": {"variant": "sequence", "length": 4, "penalty_s": 20}, "name": "The First Fold", "why": "PUZZLE: the design's fold (DUNGEON_2_STREET.md 5.1) as its own FALLBACK, the closed fold: the street block repeats and will not let go until the houses are knocked at in the order their windows light; a wrong knock costs the clock. The seamless loop (E-S2, a keeper tp) is not built"},
+        {"id": "locksmith", "kind": "stand", "length": 52, "width": 30, "height": 11, "gate": "cleared", "shape": "l", "shape_params": {"corner": "sw"}, "align": "south", "out": {"side": "north", "at": 44}, "secrets": [{"id": "strongbox", "type": "cracked", "side": "south", "at": 0.35}], "params": {"relic": "st_skeleton_key", "relic_name": "The Locksmith's skeleton key", "lore": "A skeleton key that fits every door on the street. The Locksmith kept it for the day the street came back. It never did.", "trainers": [
+          {"name": "The Locksmith", "team_pool_by_band": {"1": [["klink", "pawniard"], ["klink", "mawile"]], "2": [["klink", "mawile", "klefki"], ["klink", "pawniard", "klefki"]], "3": [["klang", "mawile", "klefki"], ["klang", "pawniard", "klefki"]], "4": [["klang", "bisharp", "klefki"], ["klang", "skarmory", "klefki"]], "5": [["klinklang", "bisharp", "mawile", "skarmory", "klefki"], ["klinklang", "bisharp", "ferrothorn", "skarmory", "klefki"]], "6": [["klinklang", "kingambit", "mawile", "skarmory", "perrserker", "klefki"], ["klinklang", "kingambit", "ferrothorn", "skarmory", "mawile", "klefki"]]}, "team_pool_why": "PRIZE-POOLS rotation: one of two crews a run, locks, gears and blades, Klefki the ace in each", "members_eased_by_band": {"4": 1}, "members_eased_why": "as the Lamplighter's: the owner, 2026-10-10: tune each dungeon to a 60-90% simulated win at the band's lower cap, bands 1-4; band 4 one member under (tools/dungeon_sim.py --dungeon street --seed 7, win at the lower cap). Bands 5-6 untuned."}
+        ]}, "name": "The Locksmith's", "why": "the STAND (6.1, stand 5): the yard of a locksmith's shop, keys to every door in a city that has none: Klefki, the Klink line, Mawile, Pawniard's line (the Honedge line of the design is the roster's prize). His strongbox is walled up behind cracked cellar brick in the south wall; the way on is a door in the north wall at the yard's east end"},
+        {"id": "back_alley", "kind": "drift", "dir": "west", "length": 40, "width": 11, "height": 8, "shape": "gallery", "in": {"side": "south"}, "name": "The back alley", "why": "the route doubles back: WEST behind the Locksmith's, along his north wall"},
+        {"id": "tram_cut", "kind": "drift", "dir": "west", "length": 36, "width": 11, "height": 8, "shortcuts": [{"id": "c_fold", "to": "first_fold"}], "name": "The tram cut", "why": "still west, behind the First Fold: the SHORTCUT, a door back into the Fold (toward the entry) opened from this side only"},
+        {"id": "roof_stair", "kind": "stairs", "dir": "west", "length": 30, "width": 11, "height": 20, "rise": 16, "name": "The fire stair", "why": "sixteen up a fire stair to the rooftops"},
+        {"id": "roof_turn", "kind": "drift", "dir": "west", "length": 15, "width": 15, "height": 8, "shape": "oval", "align": "north", "out": {"side": "south", "at": 3}, "name": "The water tower", "why": "the turn at the top, round a water tower: out by its south wall onto the roofs over the street"},
+        {"id": "roof_landing", "kind": "drift", "length": 16, "width": 33, "height": 8, "in": {"side": "north", "at": 4}, "out": {"side": "east", "dz": 13}, "name": "The roof hatch", "why": "east again, now ON the roofs over the Avenue (stacked rooms)"},
+        {"id": "rooftops", "kind": "maze", "length": 51, "width": 29, "height": 8, "params": {"exit_dz": -4, "loops": 6}, "name": "The rooftops", "why": "LENGTH: a maze of chimney stacks, skylights and parapets over the street, walked east over the Avenue and the First Fold below (stacked rooms); loops 6, so a wrong turn is not always a dead end"},
+        {"id": "the_cut", "kind": "resources", "length": 50, "width": 34, "height": 12, "shape": "l", "shape_params": {"corner": "se"}, "align": "south", "out": {"side": "east", "dz": -23}, "name": "The Cut", "why": "RESOURCES (DUNGEON_2_STREET.md 7): where the exchange sheared the street off Mt Vessu, the paving stops at a raw face of the mountain's rock with its veins showing; the seam, the heaps, the greed ladder, before the hardest stretch"},
+        {"id": "s_stall", "kind": "side", "from": {"side": "north", "at": 8}, "rooms": [
+          {"id": "egg_stall", "kind": "egg_room", "length": 24, "width": 15, "height": 7, "in": {"side": "south", "at": 3}, "name": "Mags's stall", "why": "a market stall under a tarp off the Cut: the stall-keeper who stayed trades one egg a run for clock time. Optional (a dead end, gate open)"}
+        ]},
+        {"id": "clock_square", "kind": "crossroads", "length": 40, "width": 25, "height": 12, "shape": "ring", "shape_params": {"feature": "pool", "radius": 0.2}, "params": {"hub": [0.5, 0.5]}, "name": "The clock square", "why": "the THREE-WAY crossroads: a square round a dry basin under a stopped clock; from the basin every way is in sight: the boardwalk over the drowned square ahead, the underpass dark in the north wall, the belfry lit in the south"},
+        {"id": "f_square", "kind": "fork", "routes": [
+          {"id": "boardwalk", "look": "flooded", "sign": ["DROWNED SQUARE", "MIND THE DROP"], "rooms": [
+            {"id": "boardwalk", "kind": "collapse_bridge", "length": 64, "width": 15, "height": 12, "name": "The boardwalk", "why": "FAST AND DANGEROUS: a boardwalk over the drowned square that gives way behind you (a fall costs the clock)"},
+            {"id": "boardwalk_out", "kind": "drift", "length": "fit", "width": 11, "height": 8, "name": "The square's far side"}
+          ]},
+          {"id": "underpass", "look": "dark", "sign": ["UNDERPASS", "NO LIGHTS"], "from": {"side": "north", "at": 24}, "rooms": [
+            {"id": "subway_steps", "kind": "drift", "length": 22, "width": 9, "height": 7, "in": {"side": "south", "at": 4}, "name": "The subway steps", "why": "down out of the square into the dark"},
+            {"id": "underpass", "kind": "dark_room", "length": 64, "width": 17, "height": 7, "align": "north", "shape": "box", "params": {"candles": 4, "torches": 3}, "name": "The underpass", "why": "LONG AND DARK: the subway underpass, its lamps dead; candles someone left and three torches"},
+            {"id": "underpass_out", "kind": "drift", "length": "fit", "width": 9, "height": 7, "name": "The subway's far stair"}
+          ]},
+          {"id": "belfry", "look": "lit", "sign": "BELFRY", "from": {"side": "south", "at": 24}, "rooms": [
+            {"id": "belfry_stair", "kind": "drift", "length": 22, "width": 9, "height": 8, "in": {"side": "north", "at": 4}, "name": "The belfry door"},
+            {"id": "belfry", "kind": "nest", "length": 50, "width": 13, "height": 14, "gate": "cleared", "align": "south", "params": {"species": ["bronzor", "chingling", "woobat", "noibat", "misdreavus"], "count_by_band": {"1": 2, "2": 2, "3": 3, "4": 3, "5": 3, "6": 3}, "level_spread": [5, 8], "spawns": 6}, "name": "The belfry", "why": "A FIGHT (DUNGEON_2_STREET.md 6.3, the Belfry): the fallen tower's long bell loft, the bells gone and Bronzor hanging where they were, Chingling for the chimes, bats in the belfry; the way on is shut until they are dealt with"},
+            {"id": "belfry_out", "kind": "drift", "length": "fit", "width": 9, "height": 8, "name": "The belfry's back stair"}
+          ]}
+        ], "why": "FORK ONE, three ways out of the clock square that ask different things: the boardwalk (short, a fall costs time), the underpass (dark and long, a secret) or the belfry (a fight); all three rejoin at the tram depot"},
+        {"id": "tram_depot", "kind": "drift", "length": 30, "width": 60, "height": 10, "out": {"side": "east", "dz": 14}, "name": "The tram depot", "why": "the depot where the three ways meet, its trams rusted to the rails"},
+        {"id": "road_ends", "kind": "parkour", "length": 175, "width": 25, "height": 12, "params": {"seed": "st", "sections": 6}, "name": "The Road That Ends", "why": "the MAIN parkour (DUNGEON_2_STREET.md 4, segment 10): the road breaking off into nothing, six sections of slabs of road and fallen lamp posts hanging over the catch floor, a hard and a safe line where it forks"},
+        {"id": "surveyor", "kind": "stand", "length": 50, "width": 31, "height": 11, "gate": "cleared", "shape": "oval", "align": "south", "params": {"trainers": [
+          {"name": "The Surveyor", "team_pool_by_band": {"1": [["espurr", "gothita"], ["elgyem", "drowzee"]], "2": [["espurr", "gothita", "porygon"], ["elgyem", "drowzee", "porygon"]], "3": [["meowstic", "gothorita", "porygon"], ["beheeyem", "drowzee", "porygon"]], "4": [["meowstic", "gothitelle", "porygon"], ["beheeyem", "hypno", "porygon"]], "5": [["meowstic", "gothitelle", "beheeyem", "hypno", "porygon2"], ["beheeyem", "hypno", "gothitelle", "meowstic", "porygon2"]], "6": [["meowstic", "gothitelle", "beheeyem", "hypno", "bronzong", "porygon2"], ["beheeyem", "hypno", "gothitelle", "meowstic", "bronzong", "porygon2"]]}, "team_pool_why": "PRIZE-POOLS rotation: one of two crews a run, psychic and space, the Porygon line the ace in each", "members_eased_by_band": {"4": 1}, "members_eased_why": "the owner, 2026-10-10: tune each dungeon to a 60-90% simulated win at the band's lower cap, bands 1-4; band 4 one member under: the stretch after the Far Kerb's heal (the Surveyor, the night watch, the boss) cost 110%% of a team's health at cap 50 before easing (tools/dungeon_sim.py --dungeon street --seed 7, win at the lower cap). Bands 5-6 untuned."}
+        ]}, "name": "The survey office", "why": "the STAND (6.1, stand 12): the survey office's steps, where the Surveyor measures a street that will not hold still: Espurr's and Gothita's lines, Elgyem's, Porygon's"},
+        {"id": "s_fountain", "kind": "side", "from": {"side": "north", "at": 8}, "rooms": [
+          {"id": "fountain_walk", "kind": "drift", "length": 20, "width": 15, "height": 8, "in": {"side": "south", "at": 4}, "out": {"side": "east", "dz": -5}, "name": "The fountain walk", "why": "a walk off the survey office's north wall"},
+          {"id": "fountain", "kind": "wishing_well", "length": 24, "width": 15, "height": 8, "params": {"throws": 2}, "name": "The dry fountain", "why": "the street's old fountain: throw a priced item in, it may come back as more. Optional (a dead end, gate open)"}
+        ]},
+        {"id": "far_kerb", "kind": "safe_room", "length": 40, "width": 31, "height": 9, "align": "south", "params": {"healer": true}, "name": "The Far Kerb", "why": "SAFE ROOM: the street resumes as if nothing happened, and an all-night cafe has its lights on; the owner heals the party, the one rest"},
+        {"id": "s_canal", "kind": "side", "from": {"side": "north", "at": 8}, "rooms": [
+          {"id": "canal", "kind": "fishing_room", "length": 30, "width": 25, "height": 8, "in": {"side": "south", "at": 4}, "name": "The canal basin", "why": "a canal basin behind the cafe: a lent rod and the city's fish for the band. Optional (a dead end, gate open)"}
+        ]},
+        {"id": "crossing", "kind": "crossroads", "length": 40, "width": 33, "height": 12, "shape": "oval", "align": "south", "params": {"hub": [0.5, 0.5]}, "name": "The crossing", "why": "the second crossroads (two ways): the arcade lit ahead, the toy shop dark in the north wall, both seen from the traffic island in the middle"},
+        {"id": "f_crossing", "kind": "fork", "routes": [
+          {"id": "arcade", "look": "lit", "sign": "ARCADE", "rooms": [
+            {"id": "arcade", "kind": "puzzle", "length": 44, "width": 25, "height": 10, "gate": "cleared", "align": "south", "params": {"variant": "plates", "penalty_s": 20, "relic": "st_tram_ticket", "relic_name": "Last tram ticket", "lore": "A tram ticket punched for the last stop. On the back, in pencil: if the street folds again, wait at the lit house."}, "secrets": [{"id": "ticket_office", "type": "cracked", "side": "north", "at": 0.5}], "name": "The arcade", "why": "A PUZZLE (the lit way): a shopping arcade whose shutters lift for the floor plates stood on in the order the signs light; a wrong plate costs the clock. Its old ticket office is bricked up behind cracked cellar brick in the north wall"},
+            {"id": "arcade_out", "kind": "drift", "length": "fit", "width": 11, "height": 8, "name": "The arcade's far end"}
+          ]},
+          {"id": "toy_shop", "look": "dark", "sign": ["TOY SHOP", "CLOSED"], "from": {"side": "north", "at": 20}, "rooms": [
+            {"id": "shop_door", "kind": "drift", "length": 20, "width": 11, "height": 8, "in": {"side": "south", "at": 4}, "name": "The shop door"},
+            {"id": "toy_shop", "kind": "miniboss", "length": 50, "width": 25, "height": 14, "gate": "cleared", "shape": "oval", "align": "north", "params": {"species_pool_by_band": {"1": ["mimikyu", "sinistea"], "2": ["mimikyu", "sinistea"], "3": ["mimikyu", "polteageist"], "4": ["mimikyu", "polteageist"], "5": ["mimikyu", "polteageist"], "6": ["mimikyu", "polteageist"]}, "species_pool_why": "PRIZE-POOLS rotation: the toy shop keeps either the rag-costumed one or a haunted tea set (Sinistea, Polteageist from band 3)", "scale": 1.6, "level_offset": -1, "catchable": true, "relic": "st_music_box", "relic_name": "Wind-up music box", "lore": "A music box that still plays half a tune. The toy shop sold out of everything but this, and something in a rag costume kept it."}, "secrets": [{"id": "stock_shelf", "type": "balcony", "side": "north", "at": 0.2}], "name": "The toy shop", "why": "DANGER (the dark way): the toy shop, where something in a rag costume of a famous toy (or, some runs, a haunted tea set) will not let anyone leave; short, but a fight; a stockroom shelf high on its north wall"},
+            {"id": "shop_out", "kind": "drift", "length": "fit", "width": 11, "height": 8, "name": "The shop's back door"}
+          ]}
+        ], "why": "FORK TWO: the arcade's plates (a puzzle, no fight) or through the toy shop (a mini-boss and its shelf); both rejoin at the gate road"},
+        {"id": "gate_road", "kind": "drift", "length": 24, "width": 60, "height": 10, "out": {"side": "east", "dz": -6}, "name": "The gate road", "why": "where the arcade and the toy shop meet; a drain grate in its east wall's north end opens on the drowned lane (the wing), the way on is east by the south end"},
+        {"id": "w_lane", "kind": "side", "from": {"side": "east", "dz": -40}, "rooms": [
+          {"id": "lane_mouth", "kind": "drift", "length": 30, "width": 13, "height": 9, "shape": "gallery", "name": "The drain", "why": "the WING: through the drain grate in the gate road's east wall, along a storm drain under the street"},
+          {"id": "lane_stair", "kind": "drift", "length": 40, "width": 15, "height": 30, "shape": "box", "in": {"y": 24}, "name": "The cistern stair", "why": "a shaft stair twenty-four down into the drowned lane, under the street"},
+          {"id": "sunken_tramline", "kind": "parkour", "length": 145, "width": 25, "height": 12, "params": {"seed": "st_lane", "sections": 5, "hard": true}, "name": "The sunken tramline", "why": "the HARD parkour that guards the wing's payoff: five sections of long jumps over the drowned tramline, no easy line"},
+          {"id": "drowned_plaza", "kind": "habitat", "length": 44, "width": 31, "height": 14, "gate": "open", "shape": "ring", "shape_params": {"feature": "pool", "radius": 0.2}, "secrets": [{"id": "plinth", "type": "balcony", "side": "north", "at": 0.3}], "params": {"ambience": ["minecraft:dripping_water", "minecraft:bubble_pop"], "relic": "st_plinth_plate", "relic_name": "The plinth's brass plate", "lore": "The brass plate off the square's empty plinth. Whatever stood on it was not a statue: the plate reads only WAIT HERE.", "prize": {"roster": "street", "rumour": "A tram driver swears something moves in the drowned lane under the gate road."}}, "name": "The drowned plaza", "why": "the WING's end and the dungeon's PRIZE (DUNGEON_ROOMS.md 1b, 14): the old square under the street, half under water round its empty plinth. On some runs (engine.prize's chance) a rare Pokemon waits here, rolled from data/dungeon_prize_roster.json street's pools: a dead city's steel, ghosts and dragons before the Beast Ball stage, Palkia (DUNGEON_2_STREET.md 6.4, D18) at band 6"}
+        ], "why": "the optional WING: four rooms the clock never counts, down under the street, its own challenge (the hard parkour) and payoff (the plinth's plate behind the balcony, the hidden prize)"},
+        {"id": "night_watch", "kind": "gauntlet", "length": 64, "width": 29, "height": 11, "gate": "cleared", "shape": "gallery", "align": "south", "params": {"triggers": [0.3, 0.65], "trainers": [
+          {"name": "Watchman Odo", "team_by_band": {"1": ["lillipup", "growlithe"], "2": ["herdier", "growlithe"], "3": ["herdier", "houndoom"], "4": ["stoutland", "arcanine"], "5": ["stoutland", "mightyena", "houndoom", "boltund", "arcanine"], "6": ["stoutland", "mightyena", "houndoom", "boltund", "granbull", "arcanine"]}, "members_eased_by_band": {"2": 1, "3": 1, "4": 2}, "members_eased_why": "the owner, 2026-10-10: tune each dungeon to a 60-90% simulated win at the band's lower cap, bands 1-4; the night watch is the last stretch before the boss with no heal between, so its cost arrives as the boss's starting health (as the Night Shift's Haulage): bands 2-3 one member under, band 4 two under (band 4 was 9%% at cap 50 before easing) (tools/dungeon_sim.py --dungeon street --seed 7, win at the lower cap). Bands 5-6 untuned."},
+          {"name": "Bailiff Crane", "team_by_band": {"1": ["shuppet", "duskull"], "2": ["duskull", "sableye"], "3": ["dusclops", "banette"], "4": ["banette", "houndstone"], "5": ["banette", "dusknoir", "sableye", "cofagrigus", "houndstone"], "6": ["banette", "dusknoir", "sableye", "cofagrigus", "gengar", "houndstone"]}, "members_eased_by_band": {"2": 1, "3": 1, "4": 2}, "members_eased_why": "the owner, 2026-10-10: tune each dungeon to a 60-90% simulated win at the band's lower cap, bands 1-4; as Watchman Odo's: bands 2-3 one member under, band 4 two under (tools/dungeon_sim.py --dungeon street --seed 7, win at the lower cap). Bands 5-6 untuned."}
+        ]}, "name": "The night watch", "why": "AMBUSH: the Warden's last watch on the road to his square, a watchman and his dogs and a bailiff with the street's ghosts, stepping out of the doorways one after the other"},
+        {"id": "street_falls", "kind": "setpiece", "length": 64, "width": 25, "height": 11, "params": {"piece": "collapse"}, "name": "Where the street ends", "why": "SET PIECE (collapse, DUNGEON_PASS2 item 6): the road gives way behind you, segment by segment, into the nothing the street ends at; a fall lands on the catch floor and costs the clock"},
+        {"id": "wardens_square", "kind": "boss_arena", "length": 56, "width": 44, "height": 14, "shape": "ring", "align": "south", "name": "The Warden's square", "why": "the boss (DUNGEON_2_STREET.md 6.2): the Warden of the Last Street, two stages"},
+        {"id": "street_end", "kind": "exit_room", "length": 16, "width": 13, "height": 7, "name": "The street's end", "why": "the far rip, standing where the street stops"}
+      ],
+      "boss": {
+        "placeholder": true,
+        "placeholder_why": "a TEST dungeon's boss: species by theme, no authored moves or items; balance is trainer-balance-designer's (DUNGEONS.md 3.2, 5.3). Guzzlord, the roster's proposed boss (ULTRA_BEAST_BOSSES.md 4), is NOT used: its only model is in the ATMxMSD subset, which is not delivered (F1: no UB boss ships as a doll) and U-Q1 (a UB replacing the NPC ace) is the owner's",
+        "name": "The Warden of the Last Street",
+        "stage_level_offsets": [-1, 0],
+        "level_basis": "band_min_cap",
+        "level_basis_why": "as the Night Foreman's: the band's LOWER cap less the offset, never above any player's cap in the band",
+        "teams": {
+          "1": [["greavard", "klink", "espurr", "golett"], ["houndour", "magnemite", "greavard", "shuppet", "klink", "golett"]],
+          "2": [["greavard", "klang", "espurr", "golett"], ["houndour", "magneton", "greavard", "banette", "meowstic", "golett"]],
+          "3": [["klang", "meowstic", "golurk"], ["houndoom", "magneton", "greavard", "banette", "klang", "golurk"]],
+          "4": [["klinklang", "meowstic", "golurk"], ["houndoom", "magnezone", "houndstone", "banette", "golurk"]],
+          "5": [["houndstone", "klinklang", "meowstic", "magnezone", "golurk"], ["houndoom", "magnezone", "houndstone", "banette", "klinklang", "golurk"]],
+          "6": [["houndstone", "klinklang", "meowstic", "magnezone", "dusknoir", "golurk"], ["houndoom", "magnezone", "houndstone", "banette", "klinklang", "golurk"]]
+        },
+        "teams_why": "per band, one crew per stage, the ACE LAST: the Golett line (DUNGEON_2_STREET.md 6.2: a golem built to guard a city's people, for a warden whose city left without him), Golett to band 2, Golurk from band 3. The crew is the urban roster's (DUNGEON_2_STREET.md 6.1-6.2): Greavard and Houndstone (the escort), the Klink line, Espurr's, the street's ghosts and wires. Sizes as the Foreman's (4/5 at band 1 to 6/6 at band 6). No legendary, mythical or Ultra Beast",
+        "teams_alt_by_band": {
+          "1": [[["shuppet", "klink", "drowzee", "golett"], ["greavard", "magnemite", "duskull", "espurr", "houndour", "golett"]]],
+          "2": [[["greavard", "klang", "drowzee", "golett"], ["houndour", "magneton", "greavard", "duskull", "gothorita", "golett"]]],
+          "3": [[["klang", "hypno", "golurk"], ["houndoom", "magneton", "greavard", "dusclops", "gothorita", "golurk"]]],
+          "4": [[["klinklang", "hypno", "golurk"], ["houndoom", "magnezone", "houndstone", "dusclops", "golurk"]]],
+          "5": [[["houndstone", "klinklang", "hypno", "magnezone", "golurk"], ["houndoom", "magnezone", "houndstone", "dusknoir", "klinklang", "golurk"]]],
+          "6": [[["houndstone", "klinklang", "hypno", "magnezone", "dusknoir", "golurk"], ["houndoom", "magnezone", "houndstone", "gothitelle", "klinklang", "golurk"]]]
+        },
+        "teams_alt_why": "PRIZE-POOLS rotation (DUNGEON_ROOMS.md 14): one alternate pair of crews a band, rolled per run; the same ace, the Golett line, last in every crew",
+        "member_level_offset": -1,
+        "member_level_offset_why": "as the Night Foreman's",
+        "heal_between_stages": true,
+        "heal_cue": "Your party is healed. The street will not let him fall.",
+        "tuning": {"when": "2026-10-11", "why": "the owner, 2026-10-10: tune each dungeon to a 60-90% simulated win at the band's lower cap, bands 1-4, on two stages with a full heal between them", "measure": "python tools/dungeon_sim.py --dungeon street --seed 7: the typical win at the lower cap of bands 1-4, every rotation member walked (one seed moves a cell by up to about 15 points)", "win_before_tuning_bands_1_4": "65/73/37/9", "win_after_tuning_bands_1_4": "89/87/70/63", "changes": ["the night watch's two trainers one member under at bands 2-3 and two under at band 4 (the stretch before the boss with no heal)", "the Surveyor one under at band 4, the Lamplighter one under at bands 3-4, the Locksmith one under at band 4", "the boss's first stage at bands 3-4 three members (was four), its second stage at band 4 five (was six)", "the Far Kerb's heal moved after the Surveyor (was before it): the night watch and the Warden meet a rested party", "HARDER at band 1: the second crew six members (was five), 91% before"], "untuned": "bands 5 and 6 are UNTUNED, as the other dungeons': the simulator only has Pokemon up to gym 8 (seed 7: 1% and 0% at the lower cap)"},
+        "gap_ticks": 60,
+        "skill": 3,
+        "gated_on": "C1 (owner half, EXP-078), as the Night Foreman's",
+        "cue": {"title": "The street will not let him fall.", "done": "The street lets go. The way out is open."}
+      },
+      "messages": {
+        "enter": "The rift takes your {sigil}. Go back before the board and it is returned; past it, it is spent.",
+        "arrive": "Read the board. The clock starts past it.",
+        "start": "The street folds behind you. The clock is running.",
+        "exit": "You step back out of the rift, onto a street that stays put.",
+        "refund": "The rift gives your sigil back.",
+        "refuse_gate": "The rift will not open for you yet.",
+        "refuse_lockout": "The rift is still closing behind your last run. Try again in about ",
+        "refuse_run": "You are already in a rift.",
+        "refuse_elytra": "The rift will not take wings. Take off the elytra.",
+        "refuse_cap": "The rift cannot read your level cap yet. Try again in a moment.",
+        "refuse_over": "A Pokemon in your party is above your level cap. Put it in the PC and come back.",
+        "refuse_busy": "The rift is full. Wait for someone to come out.",
+        "refuse_sigil": "The rift wants a sigil of your band: ",
+        "refuse_weak": "This sigil is too weak for you now.",
+        "way_back": "The way back is closing.",
+        "away": "The rift did not wait.",
+        "closes": "The rift closes.",
+        "tightens": "The rift tightens. Time runs ",
+        "eject": "The rift puts you out."
+      },
+      "does_not_cover": [
+        "the design's fold (DUNGEON_2_STREET.md 5.1, E-S2: a seamless loop by a keeper tp, FX1 unrun): the First Fold is its stated fallback, a puzzle that keeps the way shut",
+        "the design's open sky (5.2, E-S3: a barrier ceiling, OS1 unrun): the city theme's hull is opaque",
+        "the design's Palkia lake leg under the Lower Street (6.4, E-S5): Palkia is the band-6 member of the wing's prize pool instead (the roster's), behind the hard parkour",
+        "the prize at bands 4 and 5: the roster's pools there (Zeraora, Magearna, Guzzlord) are all model-gated (atm_subset, engine.prize.models_delivered empty), so tools/dungeon_prize.pool_at gives no prize at those bands until the subset is delivered",
+        "Guzzlord as the boss (the roster's proposal): gated on the ATMxMSD models and the owner's U-Q1",
+        "anything in a running Minecraft: the walk check is on the generated blocks, and nothing of this dungeon has been entered",
+        "the overworld around the test rip: tools/ground.py gives the ground, but anything standing on it at x1550..1560 z4116..4124 is not cleared by anything here"
+      ]
     }
   ]
 }
