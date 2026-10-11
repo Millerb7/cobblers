@@ -1811,6 +1811,9 @@ def build(doc, **kw):
     fns.update(DX.functions(doc))
     DX.patch_functions(doc, fns)        # the code and the lure at each threshold, the bait objective at load
     files.update(DX.pack_files(doc))    # the bank vaults' loot tables
+    import dungeon_extras2 as DX2       # lazy (RT-B): the fishing pools, the egg vendors' classes and dialogues, the fossil loot tables
+    files.update(DX2.pack_files(doc))
+    DX2.patch_functions(doc, fns)       # the lent rod is taken back wherever the rift pick is
     files["data/minecraft/tags/function/load.json"] = json.dumps(
         {"values": [F("load")] + DF.load_entries() + DL.load_entries(doc) + DRel.load_entries(doc)}, indent=2) + "\n"
     files["data/minecraft/tags/function/tick.json"] = json.dumps({"values": DF.tick_entries()}, indent=2) + "\n"

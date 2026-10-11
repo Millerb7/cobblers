@@ -706,3 +706,54 @@ registered through `EXTENSION_MODULES`; three lines in `tools/dungeon.py` build(
 - **Unproven in game:** a keypad press read once a keeper pass (two in one pass are taken in ascending order); `data modify block` on a waxed sign;
   item entities resting in the pool and read as `@e[type=item]` in the pocket; `data get entity @s Item.count`; the `give @s $(item) $(n)` macro for a
   Cobblemon item; a lure staying in its room; the sound ids. A bait stays stored while the next run is in a dungeon without a bait room.
+
+## 13. Three optional rooms: fishing, eggs, fossils (RT-B, 2026-10-10; built and simulated, not run in Minecraft)
+
+The owner's "next phase" (`DUNGEON_PASS2.md`): rooms that tell whole dungeons apart. Rung: **datapack plus generator**
+(`tools/dungeon_extras2.py`, `data/dungeon_extras2.json`, registered in `EXTENSION_MODULES`); the research
+(`docs/research/notes/dungeon-room-mechanisms.md` 1-3) found each possible with nothing above that rung. Every room is
+optional (`gate` open, no clock in `required`), never closes a way on, resets with the slot and is one dungeon in all four
+slots. The in-game halves are `experiments/EXP-090-dungeon-fish-egg-fossil`.
+
+**`fishing_room`** (width at least 25: the pool keeps 4 blocks from the doors' line; length at least 17; height 7; `params.pool_length` odd 5-9, `pool_width` 3-9, `species` a key of
+`fishing.species`). A pool of one-deep water (the walk check's wading depth; a deeper one is a pit) on the side of the room away
+from the doors, over a bed one under the floor course (`BED_UNDER`), a plank pier, lantern posts, seagrass and sea pickles.
+The fish: a boxed `spawn_pool_world` file in the dungeon pack (`data/cobblemon/spawn_pool_world/cobblers_dg_<short>_fishing.json`,
+`spawnablePositionType: fishing`, `dimensions: [cobblers:pocket]`, the dungeon's slot rows as `minX..maxZ`) whose entries
+require the entrant's BAND MARKER in `neededNearbyBlocks`. Why not the research's first choice, a Habitat Block: a spawn entry
+and a Habitat Block both fail to see the entrant's band, the pool must differ by band (stage of the line, levels at or under
+the band's lower cap so the level-cap catch block never refuses), and a command-placed Habitat Block activates only after a
+chunk reload (EXP-021) with fishing influence untested; the marker is set by the slot reset from `dg.band`, as the seam's
+blocks are. Three cells of the pool bed under the pier hold it (white, magenta, light blue, pink, gray, cyan terracotta for
+bands 1-6; no theme or puzzle uses them: tested); a bobber anywhere in the 9 x 7 pool is within 4 blocks of one. All 591 stock
+fishing entries name a biome, a structure or a dimension and the pocket's biome is `the_void`, so only these fire (tested
+against the jar). The wanted species (the starters of each line at the band's stage) are in the `common` bucket (83% of
+rolls); each band has a species in each bucket so no rolled bucket is empty. The room lends a marked Poke Rod at the first
+step in and takes it back wherever the engine takes the rift pick back (`patch_functions` adds one line after each
+`clear @s <pick>`). A fished catch is weighed by GREED as a nest catch (`CATCH_ALIAS`; equal to an ambient catch today).
+State: nothing per run but the marker (reset).
+
+**`egg_room`** (at least 19 x 13 x 5). A counter and a vendor, a non-battling NPC class (`interaction: dialogue`, no party)
+per slot and band, spawned at the first step in by the macro `npc_at`, bound to the slot (`slot/s<g>/bind`, so the slot's
+free and the keeper's stale pass kill it) and killed by the room's reset. The dialogue lists the band's three offers with
+a one-line description each; a button runs `take_b<band>_<k>` as the player: refused outside a live run, for another
+band's vendor, after the run's one egg (`#s<g>r<i>e` 1) and when fewer than `eggs.price.min_left_s` (60) of the clock would
+remain; otherwise it takes the band's price in CLOCK seconds (90-150, about one small fight: the engine's own currency, the
+vault's; no CobbleDollars, no item), credits the egg as a nest catch through `greed/add`, and runs
+`givepokemonegg @s <species>` (Cobbreeding 2.3.0 registers the literal; the jar read, not run). Eggs: starters at bands 1-4,
+Larvitar/Bagon/Gible at 5, Dratini/Beldum/Deino at 6. No legendary, no Jangmo-o line.
+
+**`fossil_chamber`** (at least 21 x 11 x 6). No brushing (impossible in adventure mode, research 3). A bay against the north
+wall: a frame and lintel of the theme's wall block around 5 x 3 x 3 dig cells (terracotta, clay, sandstone: used by no
+theme), the back layer on the hull wall. ONE fossil block (`minecraft:calcite`) hides in the middle layer; `enter` rolls
+its spot among 8 (`random value 0..7`, `#s<g>r<i>f`); dust drifts in front of the face above it. The rift pick may break the
+dig block and calcite (`PICK_EXTRA_FNS`, counted by the kit's per-room breakable total, `meta.breakable_extra`). GREED weighs
+the mined calcite at 300 cp (`blocks` row; the `fossils` group is the 15 ids of `cobblemon:fossils`, 3 points: a DESIGN
+number, one block a run); the room's tick sees the cell turn to air and gives one fossil from the band's loot table
+(`cobblers:dungeons/fossil/<dungeon>/<room>/b<band>`: bands 1-2 Omanyte/Kabuto first, the Galar fossils only at band 6).
+State: `#s<g>r<i>` 1 armed, 2 given (the kit's `clear`); the reset refills the bay with the fossil at spot 0.
+
+**Collisions to know:** the independent audit's SECRET rule skips a `fossil_chamber` as it skips `resources`; the kit's
+walk check still counts the breakable cells per room against `meta.breakable_extra` and the bay's own check demands a solid
+frame, lintel and wall. `dungeon.py` build() gains two lines (`DX2.pack_files`, `DX2.patch_functions`). A lent rod survives
+only a route out of the pocket that does not run a pick-clearing line.

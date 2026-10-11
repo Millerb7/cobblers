@@ -62,6 +62,7 @@ MINED = "dg.m%d"          # one per counted block, criterion minecraft.mined:<bl
 SOURCES = ("owner", "bank", "bank_removed", "market", "derived", "unpriced")
 KINDS = ("ambient", "nest", "miniboss", "habitat")
 CATCH_KINDS = ("nest", "miniboss", "habitat")       # the room kinds a catch is read from; elsewhere is ambient
+CATCH_ALIAS = {"fishing_room": "nest"}              # RT-B: a fished catch is a living room's, weighed as a nest's
 ID = re.compile(r"^[a-z0-9_.-]+:[a-z0-9_/.-]+$")
 
 
@@ -433,7 +434,7 @@ def functions(doc, table=None):
             continue
         rows = []
         for b in R.slot_build(doc, d, s):
-            k = b.room["kind"]
+            k = CATCH_ALIAS.get(b.room["kind"], b.room["kind"])
             if k in CATCH_KINDS:
                 rows.append("execute if entity @s[%s] run scoreboard players set #gk %s %d" % (R.sel_box(b.room["box"]), t, kinds[k]))
         if rows:

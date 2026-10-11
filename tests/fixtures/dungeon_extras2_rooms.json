@@ -1,0 +1,15 @@
+{
+  "why": "A room list of RT-B's three kinds only (tools/dungeon_extras2.py), one of each, for tests/test_dungeon_extras2.py. It is NOT a dungeon and not the shared demo list (tests/fixtures/dungeon_demo_rooms.json); the authored dungeons are other units'.",
+  "rooms": [
+    {"id": "entry", "kind": "entry_room", "length": 20, "width": 15, "height": 7},
+    {"id": "d1", "kind": "drift", "length": 30, "width": 9, "height": 6},
+    {"id": "fish", "kind": "fishing_room", "length": 44, "width": 25, "height": 8},
+    {"id": "d2", "kind": "drift", "length": 24, "width": 9, "height": 6},
+    {"id": "eggs", "kind": "egg_room", "length": 36, "width": 21, "height": 7},
+    {"id": "d3", "kind": "drift", "length": 24, "width": 9, "height": 6},
+    {"id": "dig", "kind": "fossil_chamber", "length": 36, "width": 21, "height": 8},
+    {"id": "d4", "kind": "drift", "length": 24, "width": 9, "height": 6},
+    {"id": "arena", "kind": "boss_arena", "length": 40, "width": 35, "height": 11},
+    {"id": "exit", "kind": "exit_room", "length": 14, "width": 11, "height": 6}
+  ]
+}

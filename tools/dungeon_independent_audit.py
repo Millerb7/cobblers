@@ -2354,7 +2354,10 @@ def secret_audit(pack, s, start, gr, F):
     for r, cs in sorted(by_room.items(), key=lambda kv: str(kv[0])):
         rec = room_rec(s, r) if r else {}
         n_cracked = sum(1 for x in rec.get("secrets") or [] if x.get("type") == "cracked")
-        if rec.get("kind") == "resources":
+        if rec.get("kind") in ("resources", "fossil_chamber"):
+            # a seam (RESOURCES2) or a fossil bay (RT-B, tools/dungeon_extras2.py): a room whose job is to be dug. The kit's
+            # walk check still counts every breakable cell against the room's declared total, and the bay's own check
+            # demands a solid wall behind, over and beside it
             continue
         if not n_cracked:
             F.add("SECRET", s, r, cs[0], "the rift pick may break %d cells here (%s) and the room has no seam and no "
