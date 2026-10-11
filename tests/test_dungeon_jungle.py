@@ -321,9 +321,13 @@ def test_the_prize_is_rare_before_the_beast_ball_stage_and_zarude_from_it_spawne
         rel = lambda name: "data/%s/function/%s.mcfunction" % (R.NS, (base + name).split(":", 1)[1])  # noqa: E731
         enter = files[rel("enter")]
         for b in range(1, 7):
-            assert "dg.rs matches 1 if score @s dg.band matches %d run function %sprize/spawn_b%d" % (b, base, b) in enter
+            # the roster's pool (PRIZE-POOLS, section 14) rolls one member a run: member 1's spawn carries the pool's
+            # holder clause when the pool has more than one, so the clause is optional here
+            assert re.search(r"dg\.rs matches 1 if score @s dg\.band matches %d (?:(?:if|unless) score \S+ dg\.rs matches [\d.]+ )?"
+                             r"run function %sprize/spawn_b%d$" % (b, re.escape(base), b), enter, re.M), (s["g"], b)
             sp = files[rel("prize/spawn_b%d" % b)]
-            assert any(ln.endswith("prize/bind" if b >= lf else "prize/rare_bind") for ln in sp.split("\n")), (s["g"], b)
+            want = ("prize/bind", "prize/bind_native") if b >= lf else ("prize/rare_bind",)
+            assert any(ln.endswith(want) for ln in sp.split("\n")), (s["g"], b)
         assert "random value 1..100" in "".join(v for k, v in files.items() if k.endswith("/slot/s%d/start.mcfunction" % s["g"]))
 
 
@@ -487,7 +491,7 @@ def test_every_species_is_in_the_cobblemon_jar(jar_species):
 
 def data_users(sp):
     return sorted(p.name for p in (ROOT / "data").rglob("*.json")
-                  if p.name != "dungeons.json" and re.search(r"\b%s\b" % sp, p.read_text(encoding="utf-8"), re.I))
+                  if p.name not in ("dungeons.json", "dungeon_prize_roster.json") and re.search(r"\b%s\b" % sp, p.read_text(encoding="utf-8"), re.I))
 
 
 def test_the_prize_is_a_mythical_no_other_data_file_uses_and_before_it_a_rare_that_is_no_set_piece(jar_species):
