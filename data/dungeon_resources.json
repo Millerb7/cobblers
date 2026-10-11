@@ -93,6 +93,49 @@
       "heaps": {"min": 3, "max": 8, "height": [2, 3]},
       "veins": true,
       "why": "a collapsed treasury: the vault's fallen masonry heaped over its ore stock and banked against the broken walls, a raw-gold block or two showing in the rubble as the tease (the pick cannot break it), and ore in the mossy brick wherever the hall has rock"
+    },
+    "city": {
+      "family": "stone",
+      "rubble": [["minecraft:bricks", 3], ["minecraft:cobblestone", 3], ["minecraft:stone_bricks", 2], ["minecraft:raw_iron_block", 1]],
+      "heaps": {"min": 3, "max": 8, "height": [2, 3]},
+      "veins": true,
+      "why": "a foundry cellar's spoil and fallen masonry: brick and cobble heaped over the ore stock the street's smiths left, banked against the broken facade, a raw-iron block or two showing in the rubble as the tease (the pick cannot break it), and ore in the brick wherever the hall has rock"
+    },
+    "great_tree": {
+      "family": "stone",
+      "seam": "legacy",
+      "rubble": [["minecraft:mossy_cobblestone", 4], ["minecraft:tuff", 2], ["minecraft:rooted_dirt", 2], ["minecraft:coarse_dirt", 1]],
+      "heaps": {"min": 3, "max": 7, "height": [2, 3]},
+      "veins": false,
+      "why": "a mineral outcrop the roots grew round: mossy rubble and tuff with ore in it, banked against the hollow's edge. No wall veins: the tree's wall is bark, which no ore sits in. The honey and wood produce face stays (the jungle's)"
+    },
+    "ice_spire": {
+      "family": "stone",
+      "rubble": [["minecraft:snow_block", 4], ["minecraft:diorite", 2], ["minecraft:tuff", 2], ["minecraft:raw_iron_block", 1], ["minecraft:raw_copper_block", 1]],
+      "heaps": {"min": 3, "max": 7, "height": [2, 3]},
+      "veins": false,
+      "why": "ore the ice carried down: drifts of snow and diorite with ore in the crest, banked against the wall. No wall veins: the wall is snow block"
+    },
+    "hill_keep": {
+      "family": "stone",
+      "rubble": [["minecraft:cobblestone", 4], ["minecraft:stone_bricks", 3], ["minecraft:mossy_cobblestone", 2], ["minecraft:raw_copper_block", 1]],
+      "heaps": {"min": 3, "max": 8, "height": [2, 3]},
+      "veins": true,
+      "why": "the quarry the keep was cut from: cobble and dressed-stone spoil with ore in the heap's crest, banked against the wall, and ore in the stone-brick wherever the hall has rock"
+    },
+    "desert_excavation": {
+      "family": "stone",
+      "rubble": [["minecraft:cut_red_sandstone", 3], ["minecraft:coarse_dirt", 3], ["minecraft:brown_terracotta", 1], ["minecraft:raw_gold_block", 1]],
+      "heaps": {"min": 3, "max": 8, "height": [2, 3]},
+      "veins": true,
+      "why": "spoil from the dig: cut stone and dirt heaps with ore in the crest, a raw-gold block showing as the tease (the pick cannot break it), and ore in the strata wherever the trench has rock. No sand anywhere (gravity)"
+    },
+    "night_crater": {
+      "family": "deepslate",
+      "rubble": [["minecraft:tuff", 3], ["minecraft:blackstone", 3], ["minecraft:obsidian", 1], ["minecraft:raw_iron_block", 1], ["minecraft:amethyst_block", 1]],
+      "heaps": {"min": 3, "max": 8, "height": [2, 3]},
+      "veins": true,
+      "why": "deep ore thrown up by the strike: glassed rock and tuff heaps with deepslate ore in the crest, raw meteor iron showing as the tease (the pick cannot break it), banked against the wall, and veins in the blackstone"
     }
   },
 

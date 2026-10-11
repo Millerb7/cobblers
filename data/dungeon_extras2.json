@@ -10,7 +10,8 @@
     "markers": {"1": "minecraft:white_terracotta", "2": "minecraft:magenta_terracotta", "3": "minecraft:light_blue_terracotta",
                 "4": "minecraft:pink_terracotta", "5": "minecraft:gray_terracotta", "6": "minecraft:cyan_terracotta",
                 "why": "one block per band, three cells in the pool bed under the pier. None is used by any theme or by the puzzles' marks (data/dungeon_puzzles.json uses red, blue, yellow, lime, purple, orange)."},
-    "bed": {"mine": "minecraft:stone", "jungle": "minecraft:mud", "flooded_ruin": "minecraft:prismarine"},
+    "bed": {"mine": "minecraft:stone", "jungle": "minecraft:mud", "flooded_ruin": "minecraft:prismarine",
+            "city": "minecraft:stone_bricks", "great_tree": "minecraft:mud", "ice_spire": "minecraft:smooth_quartz", "hill_keep": "minecraft:stone_bricks", "desert_excavation": "minecraft:smooth_sandstone", "night_crater": "minecraft:smooth_basalt"},
     "decor": {"seagrass": 5, "sea_pickles": 3, "why": "water cells away from the pier"},
     "rod": {"id": "cobblemon:poke_rod", "name": "Lent Rod", "colour": "aqua",
             "why": "The player's own rod is not assumed: the room lends one (a plain Poke Rod marked cobblers_lent_rod) at the first step in. It is taken back wherever the engine takes the rift pick back (a run's end, the far rip, the back rip: tools/dungeon_extras2.py patch_functions adds one line after each `clear @s <pick>`), and by the slot reset. A player who keeps their own rod simply has two."},
@@ -43,6 +44,60 @@
         "4": {"common": [["wartortle", 30], ["dewott", 25], ["prinplup", 20]], "uncommon": [["seadra", 15], ["starmie", 12]], "rare": [["cloyster", 8]], "ultra-rare": [["dragonair", 5]]},
         "5": {"common": [["blastoise", 30], ["samurott", 25], ["empoleon", 20]], "uncommon": [["kingdra", 15], ["starmie", 15]], "rare": [["milotic", 8]], "ultra-rare": [["dragonite", 5]]},
         "6": {"common": [["blastoise", 30], ["samurott", 25], ["empoleon", 20]], "uncommon": [["kingdra", 15], ["starmie", 15]], "rare": [["milotic", 8]], "ultra-rare": [["dragonite", 5]]}
+      },
+      "city": {
+        "why": "an urban canal and a flooded cellar: the carp and pond lines (Magikarp, Poliwag, Goldeen, Wooper, Psyduck, Finneon), a stray starter on top",
+        "1": {"common": [["squirtle", 30], ["magikarp", 25], ["poliwag", 20]], "uncommon": [["goldeen", 15], ["wooper", 15]], "rare": [["psyduck", 8]], "ultra-rare": [["finneon", 5]]},
+        "2": {"common": [["squirtle", 30], ["magikarp", 25], ["poliwag", 20]], "uncommon": [["goldeen", 15], ["wooper", 15]], "rare": [["psyduck", 8]], "ultra-rare": [["finneon", 5]]},
+        "3": {"common": [["wartortle", 30], ["poliwhirl", 25], ["seaking", 20]], "uncommon": [["quagsire", 15], ["golduck", 15]], "rare": [["lumineon", 8]], "ultra-rare": [["gyarados", 5]]},
+        "4": {"common": [["wartortle", 30], ["poliwhirl", 25], ["seaking", 20]], "uncommon": [["quagsire", 15], ["golduck", 15]], "rare": [["lumineon", 8]], "ultra-rare": [["gyarados", 5]]},
+        "5": {"common": [["blastoise", 30], ["politoed", 25], ["seaking", 20]], "uncommon": [["quagsire", 15], ["golduck", 15]], "rare": [["lumineon", 8]], "ultra-rare": [["gyarados", 5]]},
+        "6": {"common": [["blastoise", 30], ["politoed", 25], ["seaking", 20]], "uncommon": [["quagsire", 15], ["golduck", 15]], "rare": [["lumineon", 8]], "ultra-rare": [["gyarados", 5]]}
+      },
+      "great_tree": {
+        "why": "a spring among the roots: the wood-pool lines (Marill, Lotad, Poliwag, Wooper, Azurill), the water starters on top",
+        "1": {"common": [["oshawott", 30], ["marill", 25], ["lotad", 20]], "uncommon": [["poliwag", 15], ["wooper", 15]], "rare": [["azurill", 8]], "ultra-rare": [["mudkip", 5]]},
+        "2": {"common": [["oshawott", 30], ["marill", 25], ["lotad", 20]], "uncommon": [["poliwag", 15], ["wooper", 15]], "rare": [["azurill", 8]], "ultra-rare": [["mudkip", 5]]},
+        "3": {"common": [["dewott", 30], ["azumarill", 25], ["lombre", 20]], "uncommon": [["poliwhirl", 15], ["quagsire", 15]], "rare": [["golduck", 8]], "ultra-rare": [["marshtomp", 5]]},
+        "4": {"common": [["dewott", 30], ["azumarill", 25], ["lombre", 20]], "uncommon": [["poliwhirl", 15], ["quagsire", 15]], "rare": [["golduck", 8]], "ultra-rare": [["marshtomp", 5]]},
+        "5": {"common": [["samurott", 30], ["azumarill", 25], ["ludicolo", 20]], "uncommon": [["politoed", 15], ["quagsire", 15]], "rare": [["golduck", 8]], "ultra-rare": [["swampert", 5]]},
+        "6": {"common": [["samurott", 30], ["azumarill", 25], ["ludicolo", 20]], "uncommon": [["politoed", 15], ["quagsire", 15]], "rare": [["golduck", 8]], "ultra-rare": [["swampert", 5]]}
+      },
+      "ice_spire": {
+        "why": "meltwater in the spire: the cold-water lines (Seel, Spheal, Shellder, Staryu), Lapras as the prize, Piplup on top",
+        "1": {"common": [["piplup", 30], ["seel", 25], ["spheal", 20]], "uncommon": [["shellder", 15], ["staryu", 15]], "rare": [["magikarp", 8]], "ultra-rare": [["lapras", 5]]},
+        "2": {"common": [["piplup", 30], ["seel", 25], ["spheal", 20]], "uncommon": [["shellder", 15], ["staryu", 15]], "rare": [["magikarp", 8]], "ultra-rare": [["lapras", 5]]},
+        "3": {"common": [["prinplup", 30], ["dewgong", 25], ["sealeo", 20]], "uncommon": [["cloyster", 15], ["starmie", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["lapras", 5]]},
+        "4": {"common": [["prinplup", 30], ["dewgong", 25], ["sealeo", 20]], "uncommon": [["cloyster", 15], ["starmie", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["lapras", 5]]},
+        "5": {"common": [["empoleon", 30], ["dewgong", 25], ["walrein", 20]], "uncommon": [["cloyster", 15], ["starmie", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["lapras", 5]]},
+        "6": {"common": [["empoleon", 30], ["dewgong", 25], ["walrein", 20]], "uncommon": [["cloyster", 15], ["starmie", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["lapras", 5]]}
+      },
+      "hill_keep": {
+        "why": "the keep's moat and spring: carp and pond fish (Magikarp, Goldeen, Barboach, Psyduck, Krabby), Totodile on top",
+        "1": {"common": [["totodile", 30], ["magikarp", 25], ["goldeen", 20]], "uncommon": [["barboach", 15], ["psyduck", 15]], "rare": [["krabby", 8]], "ultra-rare": [["feebas", 5]]},
+        "2": {"common": [["totodile", 30], ["magikarp", 25], ["goldeen", 20]], "uncommon": [["barboach", 15], ["psyduck", 15]], "rare": [["krabby", 8]], "ultra-rare": [["feebas", 5]]},
+        "3": {"common": [["croconaw", 30], ["seaking", 25], ["whiscash", 20]], "uncommon": [["golduck", 15], ["kingler", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["feebas", 5]]},
+        "4": {"common": [["croconaw", 30], ["seaking", 25], ["whiscash", 20]], "uncommon": [["golduck", 15], ["kingler", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["feebas", 5]]},
+        "5": {"common": [["feraligatr", 30], ["seaking", 25], ["whiscash", 20]], "uncommon": [["golduck", 15], ["kingler", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["milotic", 5]]},
+        "6": {"common": [["feraligatr", 30], ["seaking", 25], ["whiscash", 20]], "uncommon": [["golduck", 15], ["kingler", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["milotic", 5]]}
+      },
+      "desert_excavation": {
+        "why": "the water table the dig broke into: mud and oasis fish (Barboach, Wooper, Magikarp, Corphish, Krabby), Mudkip on top",
+        "1": {"common": [["mudkip", 30], ["barboach", 25], ["wooper", 20]], "uncommon": [["magikarp", 15], ["krabby", 15]], "rare": [["corphish", 8]], "ultra-rare": [["feebas", 5]]},
+        "2": {"common": [["mudkip", 30], ["barboach", 25], ["wooper", 20]], "uncommon": [["magikarp", 15], ["krabby", 15]], "rare": [["corphish", 8]], "ultra-rare": [["feebas", 5]]},
+        "3": {"common": [["marshtomp", 30], ["whiscash", 25], ["quagsire", 20]], "uncommon": [["gyarados", 15], ["kingler", 15]], "rare": [["crawdaunt", 8]], "ultra-rare": [["feebas", 5]]},
+        "4": {"common": [["marshtomp", 30], ["whiscash", 25], ["quagsire", 20]], "uncommon": [["gyarados", 15], ["kingler", 15]], "rare": [["crawdaunt", 8]], "ultra-rare": [["feebas", 5]]},
+        "5": {"common": [["swampert", 30], ["whiscash", 25], ["quagsire", 20]], "uncommon": [["gyarados", 15], ["kingler", 15]], "rare": [["crawdaunt", 8]], "ultra-rare": [["milotic", 5]]},
+        "6": {"common": [["swampert", 30], ["whiscash", 25], ["quagsire", 20]], "uncommon": [["gyarados", 15], ["kingler", 15]], "rare": [["crawdaunt", 8]], "ultra-rare": [["milotic", 5]]}
+      },
+      "night_crater": {
+        "why": "the lake the crater filled: star and lamp fish (Staryu, Chinchou, Magikarp, Finneon, Corsola), Piplup on top",
+        "1": {"common": [["piplup", 30], ["staryu", 25], ["chinchou", 20]], "uncommon": [["magikarp", 15], ["finneon", 15]], "rare": [["corsola", 8]], "ultra-rare": [["horsea", 5]]},
+        "2": {"common": [["piplup", 30], ["staryu", 25], ["chinchou", 20]], "uncommon": [["magikarp", 15], ["finneon", 15]], "rare": [["corsola", 8]], "ultra-rare": [["horsea", 5]]},
+        "3": {"common": [["prinplup", 30], ["starmie", 25], ["lanturn", 20]], "uncommon": [["corsola", 15], ["lumineon", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["seadra", 5]]},
+        "4": {"common": [["prinplup", 30], ["starmie", 25], ["lanturn", 20]], "uncommon": [["corsola", 15], ["lumineon", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["seadra", 5]]},
+        "5": {"common": [["empoleon", 30], ["starmie", 25], ["lanturn", 20]], "uncommon": [["corsola", 15], ["lumineon", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["kingdra", 5]]},
+        "6": {"common": [["empoleon", 30], ["starmie", 25], ["lanturn", 20]], "uncommon": [["corsola", 15], ["lumineon", 15]], "rare": [["gyarados", 8]], "ultra-rare": [["kingdra", 5]]}
       }
     }
   },
@@ -59,7 +114,13 @@
     "vendor": {
       "mine": {"name": "Marn, egg-wife", "why": "a pit-wife who keeps a clutch under the lamp"},
       "jungle": {"name": "Ilo, nest-keeper", "why": "a nest-keeper of the canopy"},
-      "flooded_ruin": {"name": "Sef, tide-warden", "why": "a tide-warden with a basket of dry eggs"}
+      "flooded_ruin": {"name": "Sef, tide-warden", "why": "a tide-warden with a basket of dry eggs"},
+      "city": {"name": "Mags, stall-keeper", "why": "a stall-keeper who stayed after the street ended, with a crate of eggs under a tarp"},
+      "great_tree": {"name": "Hobb, bee-keeper", "why": "a bee-keeper of the bark, whose eggs keep warm beside the honey"},
+      "ice_spire": {"name": "Veda, hut-warden", "why": "a hut-warden who keeps her eggs against the stove"},
+      "hill_keep": {"name": "Brannock, quartermaster", "why": "the garrison's quartermaster, selling eggs from the stores"},
+      "desert_excavation": {"name": "Qasr, dig-cook", "why": "the dig's cook, who found the eggs in a cache and does not ask"},
+      "night_crater": {"name": "Orla, star-seller", "why": "a seller of whatever fell with the star, eggs among it"}
     },
     "skin": "cobblemon:standard",
     "intro": "One egg a run. It hatches while you walk.",
@@ -93,7 +154,8 @@
   "fossils": {
     "why": "Dig for a fossil. NO brushing: the Wiki's adventure table lists brushing as impossible and every item's use-on-block needs can_place_on (NeoForge ItemStack patch), so the dig is the rift pick's: a bay of dig blocks with ONE fossil block hidden in the middle layer (rolled at the first step in from 8 spots), breakable under the pick's can_break exactly as the resources room's seam is. Mining the fossil block is counted by GREED's minecraft.mined stat; the room's tick sees the cell turn to air and gives the fossil from a loot table by band. Dust drifts from the wall in front of the hidden block so the dig has a place to start.",
     "block": "minecraft:calcite",
-    "dig": {"mine": "minecraft:terracotta", "jungle": "minecraft:clay", "flooded_ruin": "minecraft:sandstone"},
+    "dig": {"mine": "minecraft:terracotta", "jungle": "minecraft:clay", "flooded_ruin": "minecraft:sandstone",
+            "city": "minecraft:clay", "great_tree": "minecraft:clay", "ice_spire": "minecraft:terracotta", "hill_keep": "minecraft:clay", "desert_excavation": "minecraft:sandstone", "night_crater": "minecraft:terracotta"},
     "bay": {"width": 7, "rows": 3, "depth": 3, "variants": 8,
             "why": "7 wide counting a frame column each side, so 5 x 3 x 3 = 45 dig cells, against the north wall (the seam's slab depth): the frame and a lintel of the theme's wall block close it, so no one-wide nook forms. The fossil is rolled among 8 of the 15 middle-layer cells."},
     "particle": "minecraft:dust_plume",

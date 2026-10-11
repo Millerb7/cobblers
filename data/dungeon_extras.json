@@ -10,7 +10,13 @@
     "clue_header": {
       "mine": "PAY SLIP",
       "jungle": "BARK CARVING",
-      "flooded_ruin": "TABLET"
+      "flooded_ruin": "TABLET",
+      "city": "WALL NOTICE",
+      "great_tree": "HEARTWOOD",
+      "ice_spire": "FROST WRIT",
+      "hill_keep": "ORDERS",
+      "desert_excavation": "FIELD NOTE",
+      "night_crater": "STAR CHART"
     },
     "messages": {
       "hint": "A code lock. The digits are written elsewhere.",

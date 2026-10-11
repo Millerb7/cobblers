@@ -406,12 +406,22 @@
       "why": "drops itself",
       "cp": 1
     },
+    "minecraft:blue_ice": {
+      "drops": {},
+      "why": "a secret's face: a wall the pick opens, not a valuable (0); blue ice drops nothing without silk touch",
+      "cp": 0
+    },
     "minecraft:calcite": {
       "drops": {
         "cobblemon:helix_fossil": 1
       },
       "why": "RT-B: the fossil chamber's one fossil block per run. Calcite's own vanilla drop is itself and is worth nothing here; the room's tick gives the fossil when the cell turns to air, and this row weighs it: mining the block is the take (the `fossils` group's cp)",
       "cp": 300
+    },
+    "minecraft:chiseled_sandstone": {
+      "drops": {},
+      "why": "a secret's face: a wall the pick opens, not a valuable (0)",
+      "cp": 0
     },
     "minecraft:clay": {
       "drops": {},
@@ -601,6 +611,11 @@
       },
       "why": "drops itself",
       "cp": 1
+    },
+    "minecraft:stripped_oak_wood": {
+      "drops": {},
+      "why": "a secret's face: a wall the pick opens, not a valuable (0)",
+      "cp": 0
     },
     "minecraft:terracotta": {
       "drops": {},
