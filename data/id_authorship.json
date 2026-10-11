@@ -355,6 +355,21 @@
    ],
    "why": "`sunset_west` is BOTH a town (data/towns.json) and a spawn subregion (data/spawns.json), and each says which region it sits in: the subregion answers `sunset_isle`, the town answers `southern_coast`. Two different objects under one id, which is the fault; the two answers are each correct about their own object. Renaming one of them is the fix.",
    "finding": true
+  },
+  {
+   "files": [
+    "data/dungeon_prize_roster.json",
+    "data/dungeons.json"
+   ],
+   "fields": [
+    "rip",
+    "theme"
+   ],
+   "ids": [
+    "patriarch"
+   ],
+   "why": "Under the Patriarch, authored on the room kit by NEW-PATRIARCH (2026-10-11). data/dungeons.json is what tools/dungeon.py builds: `theme` is the kit's theme id (great_tree) and `rip` is the TEST rip on the carts' trail (x 1575..1579, z 4118, `test: true`). data/dungeon_prize_roster.json is COVERAGE's design record, whose consumer note names only the two pool fields as read by tools/: its `theme` is the label written before the theme existed ('great tree (new)') and its `rip` is the campaign site the design names ('the Patriarch's foot', DUNGEON_3_PATRIARCH.md 3). Two meanings under one field name, neither dead: the roster says where the rip is to go, dungeons.json where the test rip stands. When the owner places the real rip, dungeons.json's rip moves to the foot and this entry should be re-read (the roster's theme can then read great_tree).",
+   "finding": true
   }
  ],
  "findings_why": "`finding: true` is an overlap that is legal today and still a hazard: two different things sharing an id, or one field name meaning two things in two files. The check does not fail on them -- they are declared -- and they are written down so that the next session reads a judgement rather than making one again. Five of them, 2026-10-01."
