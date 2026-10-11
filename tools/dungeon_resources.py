@@ -711,7 +711,7 @@ def check_data(doc=None):
 
 def problems(doc, d, slot):
     """Per room problems the kit's walk check cannot see (it counts breakable cells; this proves they cannot leak)."""
-    if not has_resources_rooms(d) or theme_cfg(d) is None:
+    if not has_resources_rooms(d):
         return []
     bad = []
     for b in R.slot_build(doc, d, slot):
@@ -720,7 +720,9 @@ def problems(doc, d, slot):
             continue
         meta = b.meta.get("deposits")
         lab = "%s room %s" % (d["id"], r["id"])
-        if meta is None:
+        # a theme with no resource table (the nether's, DUNGEON_ROOMS.md 11) has no deposits by design, and its seam is
+        # still proved not to leak (MEGA-INTEGRATE: until then such a dungeon skipped this check altogether)
+        if meta is None and theme_cfg(d) is not None:
             bad.append("%s: it is a resources room and has no deposits (the theme's dress list lacks the `deposits` op)" % lab)
             continue
         bad += leak_problems(lab, b)
@@ -733,7 +735,8 @@ def leak_problems(lab, b):
     import numpy as np
     r = b.room
     g = b.grid
-    meta = b.meta["deposits"]
+    # a theme with no resource table (the nether themes, DUNGEON_ROOMS.md 11) has no deposits: its seam is still checked
+    meta = b.meta.get("deposits") or {"cands": []}
     cells = [tuple(c["pos"]) for c in meta["cands"]] + [tuple(c[:3]) for c in b.anchors.get("seam", [])]
     bad = []
     for (x, y, z) in cells:
