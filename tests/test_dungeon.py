@@ -70,7 +70,8 @@ def test_every_npc_spawn_is_a_macro_line_and_every_spawner_binds_with_the_exempt
     # every caller (a boss stage or a stand's trainer) binds the NPC it spawned, in the same function, as an untagged
     # NPC at the spot, through its OWN slot's bind, which carries the exempt tag
     for n in callers:
-        g = re.search(r"(?:^slot/s|_s)(\d+)/", n).group(1)
+        # the slot: slot/s<g>/..., stand/<x>_s<g>/..., or a room's room/<d>/<r>/s<g>/... (the egg room's vendor, RT-B)
+        g = re.search(r"(?:^slot/s|_s|/s)(\d+)/", n).group(1)
         binds = [l for l in body(n) if re.search(r"as @e\[type=cobblemon:npc,tag=!dg\.npc,[^\]]*\] run function "
                                                     r"cobblers:dungeons/\S+$", l)]
         assert binds, n
@@ -459,7 +460,9 @@ def test_the_hidden_prize_roll_at_the_threshold_takes_both_outcomes(pack, roll, 
     # or under the band's chance makes the prize present and tells the rumour; one over it leaves the room empty
     import dungeon_prize as PZ
     w = world(pack)
-    w.random_values = [roll] * 8
+    # the 1..100 rolls only: the same threshold also rolls the bank vault's code digits (0..9, RT-A) and a pool's member
+    # (1..n, PRIZE-POOLS), which take the seeded generator
+    w.random_by_range = {(1, 100): [roll] * 8}
     p = w.player("Gold", OW, (1352.5, 130, 4120.5))
     p.inventory.append(soot())
     click_rip(w, p)
@@ -468,7 +471,7 @@ def test_the_hidden_prize_roll_at_the_threshold_takes_both_outcomes(pack, roll, 
     assert rooms, "the Night Shift authors a prize room"
     band = w.get(p.name, "dg.band")
     assert 0 < PZ.chance(DOC, rooms[0], band) < 100
-    assert [x[:2] for x in w.random_log] == [(1, 100)] * len(rooms), w.random_log
+    assert [x for x in w.random_log if x[:2] == (1, 100)] == [(1, 100, roll)] * len(rooms), w.random_log
     for room in rooms:
         assert w.get(PZ.holder(s, room), "dg.rs") == (1 if present else 0)
     told = [m for m in p.messages if "Rumour: " in m]

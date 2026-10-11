@@ -625,7 +625,12 @@ class World:
                 raise Unsupported(" ".join(t))
             if not hasattr(self, "random_log"):         # a subclass with its own __init__ (test_system_contracts' worlds)
                 self.random, self.random_values, self.random_log = _random.Random(0), [], []
-            if self.random_values:
+            by_range = getattr(self, "random_by_range", None) or {}
+            if by_range.get((lo, hi)):
+                # a queue for one range only (lo, hi): a test that rolls one thing (the prize's 1..100) while other rolls
+                # of the same pass (a bank vault's code digits 0..9, a pool's 1..n) take the seeded generator
+                v = by_range[(lo, hi)].pop(0)
+            elif self.random_values:
                 v = self.random_values.pop(0)
                 assert lo <= v <= hi, "a queued random value %d outside %d..%d" % (v, lo, hi)
             else:
