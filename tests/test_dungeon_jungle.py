@@ -42,6 +42,13 @@ SLOT = SLOTS[0]
 RECORDS = list(R._walk_records(JG["rooms"]))     # every room of the record, routes and the side room (no swaps)
 FIGHTS = {"stand", "gauntlet", "ambush", "nest", "miniboss", "habitat", "boss_arena"}
 OWNER_NAMED = {"maze", "puzzle", "parkour", "resources", "nest", "habitat", "stand", "miniboss"}
+# the six optional kinds of DUNGEON_ROOMS.md 12-13 (PLACE-ROOMS, 2026-10-11): their side entries are not the pass-3 wing
+# or the treasury the tests below are about
+EXTRA_KINDS = {"bank_vault", "wishing_well", "bait_room", "fishing_room", "egg_room", "fossil_chamber"}
+
+
+def pass3_side(r):
+    return r["kind"] == "side" and not any(x["kind"] in EXTRA_KINDS for x in r["rooms"])
 OURS = {"gauntlet", "ambush", "vault", "dark_room", "collapse_bridge", "safe_room", "setpiece"}
 CONNECTORS = {"drift", "stairs"}
 
@@ -163,7 +170,7 @@ def test_the_pacing_no_two_fights_meet_on_any_route_the_heal_about_two_thirds_in
         assert 0.6 <= before / total <= 0.8, (vid, before / total)
     ids = [r["id"] for r in JG["rooms"]]
     kinds = [r["kind"] for r in JG["rooms"]]
-    wing = next(k for k, r in enumerate(JG["rooms"]) if r["kind"] == "side" and len(r["rooms"]) > 1)
+    wing = next(k for k, r in enumerate(JG["rooms"]) if pass3_side(r) and len(r["rooms"]) > 1)
     assert kinds.index("resources") < min([kinds.index(k) for k in ("miniboss", "boss_arena")] + [wing])
     assert ids.index("shrine") == wing - 1, "the wing leaves the shrine: healed before the hard parkour and the prize"
 
@@ -239,7 +246,7 @@ def test_the_routes_ask_different_things_and_the_clock_pays_the_slower(walks):
 
 
 def wing():
-    (w,) = [r for r in JG["rooms"] if r["kind"] == "side" and len(r["rooms"]) > 1]
+    (w,) = [r for r in JG["rooms"] if pass3_side(r) and len(r["rooms"]) > 1]
     return w
 
 
@@ -270,7 +277,7 @@ def test_a_four_room_optional_wing_a_connector_a_climb_a_hard_parkour_and_the_pr
 
 
 def test_one_side_room_the_treasury_a_dead_end_the_clock_does_not_count(walks):
-    sides = [r for r in JG["rooms"] if r["kind"] == "side" and len(r["rooms"]) == 1]
+    sides = [r for r in JG["rooms"] if pass3_side(r) and len(r["rooms"]) == 1]
     assert len(sides) == 1 and sides[0]["rooms"][0]["kind"] == "vault"
     side_ids = {r["id"] for r in sides[0]["rooms"]}
     rooms = R.layout(DOC, JG, SLOT)

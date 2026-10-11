@@ -78,6 +78,15 @@ def records(d=RUIN):
     return list(R._walk_records(d["rooms"]))
 
 
+# the six optional kinds of DUNGEON_ROOMS.md 12-13 (PLACE-ROOMS, 2026-10-11): placed after pass 3 on side entries of
+# their own; the pass-3 counts and the sealed wing below are about the rest
+EXTRA_KINDS = {"bank_vault", "wishing_well", "bait_room", "fishing_room", "egg_room", "fossil_chamber"}
+
+
+def pass3_side(r):
+    return r["kind"] == "side" and not any(x["kind"] in EXTRA_KINDS for x in r["rooms"])
+
+
 def kinds():
     return [r["kind"] for r in records()]
 
@@ -108,7 +117,7 @@ def test_every_room_type_the_owner_named_is_there_and_three_of_ours():
 
 
 def test_fewer_richer_rooms_short_wide_connectors_and_mostly_not_boxes():
-    rs = records()
+    rs = [r for r in records() if r["kind"] not in EXTRA_KINDS]
     # pass 3 adds two forks and a wing; the MAIN route stays at most 18 rooms
     assert len(rs) <= 28, len(rs)
     assert len(main_layout()) <= 18, [r["id"] for r in main_layout()]
@@ -261,7 +270,7 @@ def test_the_routes_ask_different_things_danger_length_and_a_puzzle():
 
 
 def _wing():
-    sides = [r for r in RUIN["rooms"] if r["kind"] == "side"]
+    sides = [r for r in RUIN["rooms"] if pass3_side(r)]
     assert len(sides) == 1
     return sides[0]
 

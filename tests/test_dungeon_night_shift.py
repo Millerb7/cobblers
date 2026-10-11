@@ -109,7 +109,8 @@ def test_its_main_route_is_full_length_and_its_rooms_are_wide_and_its_connectors
 
 def test_most_rooms_are_not_boxes_and_the_route_turns_climbs_drops_and_doubles_back():
     lay = R.layout(DOC, NS, ns_slots()[0])
-    eligible = [r for r in lay if r["kind"] not in R.BOX_ONLY_KINDS]
+    # a kind registered outline=False (the bank vault, PLACE-ROOMS) is a box by construction, as the box-only kinds are
+    eligible = [r for r in lay if r["kind"] not in R.BOX_ONLY_KINDS and R.flags_of(r["kind"])["outline"]]
     shaped = [r for r in eligible if r["shape"] != "box"]
     assert len(shaped) * 2 > len(lay) and len(shaped) >= len(eligible) - 4, [r["id"] for r in eligible if r["shape"] == "box"]
     assert len({r["shape"] for r in shaped}) >= 6
