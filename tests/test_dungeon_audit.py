@@ -434,6 +434,10 @@ def test_every_npc_an_engine_spawn_makes_carries_the_exempt_tag_when_the_spawn_r
             made = w.npcs + [e for e in w.spawned if e.kind == "cobblemon:pokemon"]
             if kind in ("wild", "prize"):
                 assert len(made) == len(lines) and not w.npcs, (site, band, len(lines), w.log)
+            elif kind == "vendor":
+                # the room's enter also walks LIFE's animals in (tools/dungeon_life.py): one NPC, the vendor; every
+                # Pokemon the enter made is still held to the exempt tag below
+                assert len(w.npcs) == 1, (site, band, len(w.npcs), w.log)
             else:
                 assert len(made) == 1 and len(w.npcs) == 1, (site, band, stage, w.log)
             bare = [(e.kind, sorted(e.tags)) for e in made if EXEMPT not in e.tags]
