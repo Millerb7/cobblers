@@ -90,6 +90,48 @@
       "button": "minecraft:crimson_button", "plate": "minecraft:stone_pressure_plate",
       "plinth": "minecraft:gilded_blackstone", "chest": "minecraft:chest",
       "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "city": {
+      "console": "minecraft:stone_bricks", "trim": "minecraft:chiseled_stone_bricks",
+      "lamp_on": "minecraft:sea_lantern", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:birch_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:smooth_stone", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "great_tree": {
+      "console": "minecraft:dark_oak_planks", "trim": "minecraft:stripped_dark_oak_wood",
+      "lamp_on": "minecraft:shroomlight", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:dark_oak_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:mossy_stone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "ice_spire": {
+      "console": "minecraft:quartz_bricks", "trim": "minecraft:chiseled_quartz_block",
+      "lamp_on": "minecraft:sea_lantern", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:birch_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:smooth_quartz", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "hill_keep": {
+      "console": "minecraft:stone_bricks", "trim": "minecraft:chiseled_stone_bricks",
+      "lamp_on": "minecraft:shroomlight", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:spruce_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:mossy_stone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "desert_excavation": {
+      "console": "minecraft:cut_red_sandstone", "trim": "minecraft:chiseled_red_sandstone",
+      "lamp_on": "minecraft:glowstone", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:acacia_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:smooth_red_sandstone", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "night_crater": {
+      "console": "minecraft:polished_blackstone_bricks", "trim": "minecraft:chiseled_polished_blackstone",
+      "lamp_on": "minecraft:pearlescent_froglight", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:polished_blackstone_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:amethyst_block", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
     }
   }
 }

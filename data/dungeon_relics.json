@@ -82,6 +82,54 @@
       "items": ["minecraft:clock", "minecraft:echo_shard", "minecraft:disc_fragment_5"],
       "colour": "gold",
       "why": "a basalt plinth with a froglight on it, glowing like the seams below; the glow is gone when the relic is"
+    },
+    "city": {
+      "pedestal": "minecraft:chiseled_stone_bricks",
+      "armed": "minecraft:lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:clock", "minecraft:echo_shard", "minecraft:disc_fragment_5"],
+      "colour": "yellow",
+      "why": "a carved brick plinth with a street lantern on it, lit; the lantern goes out when someone takes the relic"
+    },
+    "great_tree": {
+      "pedestal": "minecraft:stripped_dark_oak_wood",
+      "armed": "minecraft:shroomlight",
+      "taken": "minecraft:moss_block",
+      "items": ["minecraft:heart_of_the_sea", "minecraft:disc_fragment_5", "minecraft:echo_shard"],
+      "colour": "gold",
+      "why": "a bark plinth with a shroomlight on it, honey-warm; the light is gone when the relic is"
+    },
+    "ice_spire": {
+      "pedestal": "minecraft:chiseled_quartz_block",
+      "armed": "minecraft:soul_lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:echo_shard", "minecraft:clock", "minecraft:disc_fragment_5"],
+      "colour": "aqua",
+      "why": "a quartz plinth with a soul lantern, blue as the ice; it goes out when the relic is taken"
+    },
+    "hill_keep": {
+      "pedestal": "minecraft:chiseled_stone_bricks",
+      "armed": "minecraft:lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:clock", "minecraft:disc_fragment_5", "minecraft:echo_shard"],
+      "colour": "red",
+      "why": "a carved stone plinth with a guard lantern on it; it goes out when someone takes the relic"
+    },
+    "desert_excavation": {
+      "pedestal": "minecraft:chiseled_red_sandstone",
+      "armed": "minecraft:lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:clock", "minecraft:echo_shard", "minecraft:disc_fragment_5"],
+      "colour": "gold",
+      "why": "a carved plinth with a work lamp on it; the lamp goes out when someone takes the relic"
+    },
+    "night_crater": {
+      "pedestal": "minecraft:amethyst_block",
+      "armed": "minecraft:crying_obsidian",
+      "taken": "minecraft:obsidian",
+      "items": ["minecraft:echo_shard", "minecraft:disc_fragment_5", "minecraft:clock"],
+      "colour": "light_purple",
+      "why": "an amethyst plinth with crying obsidian on it, purple in the dark; the glow is gone when the relic is"
     }
   }
 }
