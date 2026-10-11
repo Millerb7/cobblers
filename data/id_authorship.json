@@ -74,6 +74,19 @@
  "overlaps": [
   {
    "files": [
+    "data/dungeon_prize_roster.json",
+    "data/dungeons.json"
+   ],
+   "fields": [
+    "theme"
+   ],
+   "ids": [
+    "soul_ossuary"
+   ],
+   "why": "NEW-OSSUARY (2026-10-11): the roster's theme is a design label for the owner ('soul_sand_valley (built theme)': which theme, and that it is already built); data/dungeons.json's is the theme id tools/dungeon_rooms.py builds from ('soul_sand_valley'). Same theme, two forms; the roster's is read by no tool (its consumer.not_consumed), the record's is the one the dungeon is built with."
+  },
+  {
+   "files": [
     "data/ferries.json",
     "data/ferry_docks.json"
    ],

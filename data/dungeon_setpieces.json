@@ -52,6 +52,17 @@
     },
     "jungle": {
       "sheet": "minecraft:moss_block"
+    },
+    "soul_sand_valley": {
+      "why": "NEW-OSSUARY (the Soul Ossuary's vigil): the soul lights die behind the walker. Ribs of bone for the trunks, warped roots and nether sprouts on the soul soil floor (both stand on soul soil, DUNGEON_ROOMS.md 11), black carpet, a smooth basalt sheet, the valley's own sounds and soul particles",
+      "sheet": "minecraft:smooth_basalt",
+      "trunk": "minecraft:bone_block[axis=y]",
+      "floor_plant": "minecraft:warped_roots",
+      "floor_plant2": "minecraft:nether_sprouts",
+      "carpet": "minecraft:black_carpet",
+      "sound_close": "minecraft:block.soul_soil.place",
+      "sound_ambient": "minecraft:ambient.soul_sand_valley.mood",
+      "particle": "minecraft:soul"
     }
   }
 }
