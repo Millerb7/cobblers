@@ -460,6 +460,7 @@ threshold's clocks with this table or 4.2's):
 | field_of_swords | 2,157 all routes, the wing and the side rooms (slot 1; NEW-SWORDS, 2026-10-11: required 32.1 min at band 1, plus the collapse's 25 s, x 1.25) | **41** | **46** | **43** | **46** | **54** | **57** |
 | warped_lab | 2,011 all routes, the wing and the side rooms included (NEW-WARPED, 2026-10-11; required 31.3 minutes at band 1 on the main route) | **40** | **43** | **41** | **45** | **51** | **54** |
 | starfall | 2,204 all routes, the wing and the side rooms (1,477 paid at band 1, variant a; NEW-STARFALL, 2026-10-11; bands 4-6 raised to the shortest other dungeon's clock, data/dungeons.json clock_why) | **40** | **43** | **41** | **44** | **49** | **52** |
+| zero_dig | 2,196 all routes, the wing and the side rooms (1,075 main in variant a, 1,204 in d; NEW-ZERODIG 2026-10-11; band 4 held a minute over the derived 43, `clock_why`) | **41** | **43** | **43** | **44** | **49** | **52** |
 
 BOSS2 (2026-10-10): the boss is two stages and the stands of the tuned bands are a member or two smaller (sections `DUNGEONS.md` 3.2; `members_eased_by_band`), so every clock was re-derived with `tools/dungeon_clock.py` and the table above is the new one: every band is under an hour (the longest, the jungle's band 6, is 54 minutes), where the three-stage table ran to 59. Each is the tool's required time plus the set piece's 25 s, x 1.25, up to the minute (the tests pin the formula). The boss row of the part table now counts two stages and one gap.
 
