@@ -42,6 +42,7 @@ Nothing here has run in a server. The offline model is tests/test_dungeon_fights
 """
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -205,9 +206,10 @@ def boss_functions(doc, mult=None):
                  % d["id"], "# their band, then the baseline (dungeon.py's slot/s<g>/go calls this before start_battle)"]
         for name, (cls, _lvl) in DG.boss_classes(doc, d).items():
             out["claw/bounds/%s" % name] = bounds_function(name, cls, mult)
-            m = re.fullmatch(r"dg_%s_boss_b(\d+)_s(\d+)" % re.escape(d["short"]), name)
-            lines.append("execute if score @s %s matches %s if score @s %s matches %s run function %s"
-                         % (O("band"), m.group(1), O("stage"), m.group(2), F("claw/bounds/%s" % name)))
+            m = re.fullmatch(r"dg_%s_boss_b(\d+)_s(\d+)(?:_v(\d+))?" % re.escape(d["short"]), name)
+            cond = DG.boss_cond(d, int(m.group(1)), int(m.group(3) or 1))
+            lines.append("execute if score @s %s matches %s if score @s %s matches %s %srun function %s"
+                         % (O("band"), m.group(1), O("stage"), m.group(2), cond, F("claw/bounds/%s" % name)))
         lines.append("function %s" % F("claw/begin"))
         out["claw/boss_begin_%s" % d["short"]] = lines
     return out
@@ -288,8 +290,20 @@ def stand_problems(doc, room):
         if not isinstance(t.get("name"), str) or not t["name"]:
             bad.append("%s: no name" % who)
         tb = t.get("team_by_band") or {}
+        tp = t.get("team_pool_by_band")
+        if tp is not None:
+            if not isinstance(tp, dict) or any(not isinstance(v, list) or not 1 <= len(v) <= POOL_MAX for v in tp.values()):
+                bad.append("%s: team_pool_by_band is {band: [team, ...]}, 1..%d teams a band" % (who, POOL_MAX))
+                tp = {}
+            for k in sorted(set(tp) & set(tb)):
+                bad.append("%s band %s: team_by_band and team_pool_by_band both name it (the pool is the band's teams)"
+                           % (who, k))
+            for k, v in tp.items():
+                if len({json.dumps(x) for x in v}) != len(v):
+                    bad.append("%s band %s: team_pool_by_band repeats a team" % (who, k))
         for b in DG.bands(doc):
-            team = tb.get(str(b["band"]))
+            pool = team_pool(t, b["band"])
+            team = pool[0] if pool else None
             want = s["members_by_band"][str(b["band"])]
             # a trainer may be eased below the band's size by a declared, explained number (the owner, 2026-10-10: tuned
             # by tools/dungeon_sim.py to a 60-90% win at the band's lower cap); never more than 2 under, never under 2
@@ -299,11 +313,15 @@ def stand_problems(doc, room):
             want -= eased
             if not team:
                 bad.append("%s: no team for band %d" % (who, b["band"]))
-            elif len(team) != want:
-                bad.append("%s band %d: %d members, DUNGEONS.md 5.3 says %d" % (who, b["band"], len(team), want))
-            elif any(not isinstance(x, str) or not SPECIES.fullmatch(x) for x in team):
-                bad.append("%s band %d: a species is not a lowercase id" % (who, b["band"]))
-        if set(tb) - {str(b["band"]) for b in DG.bands(doc)}:
+            for v, team in enumerate(pool, 1):
+                tag = "" if len(pool) == 1 else " pool team %d" % v
+                if not isinstance(team, list) or not team:
+                    bad.append("%s band %d%s: a team is a non-empty list" % (who, b["band"], tag))
+                elif len(team) != want:
+                    bad.append("%s band %d%s: %d members, DUNGEONS.md 5.3 says %d" % (who, b["band"], tag, len(team), want))
+                elif any(not isinstance(x, str) or not SPECIES.fullmatch(x) for x in team):
+                    bad.append("%s band %d%s: a species is not a lowercase id" % (who, b["band"], tag))
+        if set(tb) - {str(b["band"]) for b in DG.bands(doc)} or set(tp or {}) - {str(b["band"]) for b in DG.bands(doc)}:
             bad.append("%s: a team for a band that does not exist" % who)
     return bad
 
@@ -318,12 +336,14 @@ def npc_class(name, resource, skill, team):
             "party": {"type": "simple", "pokemon": team}}
 
 
-def stand_class_name(d, room, n, band):
-    return "dg_%s_st_%s_t%d_b%d" % (d["short"], room_slug(room), n, band)
+def stand_class_name(d, room, n, band, k=1):
+    """Pool team k (1-based) of trainer n at `band`; team 1 keeps the name it had before rotation existed."""
+    base = "dg_%s_st_%s_t%d_b%d" % (d["short"], room_slug(room), n, band)
+    return base if k == 1 else "%s_v%d" % (base, k)
 
 
 def stand_classes(doc, d, room):
-    """{class name: (class json, the ace's level)} -- one class per trainer per band for the room's stand."""
+    """{class name: (class json, the ace's level)} -- one class per trainer per band per pool team for the room's stand."""
     bad = stand_problems(doc, room)
     if bad:
         raise FightError("; ".join(bad))
@@ -331,12 +351,23 @@ def stand_classes(doc, d, room):
     out = {}
     for n, t in enumerate(trainers_of(doc, room), 1):
         for b in DG.bands(doc):
-            team = t["team_by_band"][str(b["band"])]
-            lv = stand_levels(doc, b, len(team))
-            out[stand_class_name(d, room, n, b["band"])] = (
-                npc_class(t["name"], t.get("skin") or DG.NPC_RESOURCE, s["skill"],
-                          ["%s level=%d" % (sp, lv[i]) for i, sp in enumerate(team)]), lv[-1])
+            for k, team in enumerate(team_pool(t, b["band"]), 1):
+                lv = stand_levels(doc, b, len(team))
+                out[stand_class_name(d, room, n, b["band"], k)] = (
+                    npc_class(t["name"], t.get("skin") or DG.NPC_RESOURCE, s["skill"],
+                              ["%s level=%d" % (sp, lv[i]) for i, sp in enumerate(team)]), lv[-1])
     return out
+
+
+def stand_variants(doc, room, n, band, slot_g):
+    """[(execute clause, pool team k)] for trainer n at `band`: one per room index, exactly one of which fires."""
+    t = trainers_of(doc, room)[n - 1]
+    size = len(team_pool(t, band))
+    N = rotation_size(doc, room, band)
+    if size <= 1 or N <= 1:
+        return [("", 1)]
+    H = rot_holder(slot_g, room)
+    return [(rot_cond(H, v, N), pick(size, v)) for v in range(1, N + 1)]
 
 
 def stand_key(d, room, n, slot_g):
@@ -374,12 +405,13 @@ def stand_functions(doc, d, room, n, slot_g, spot, sid, mult=None):
              "# the battle starts go_ticks later (L1/C1: a tick after the spawn)",
              "execute in %s run kill @e[type=cobblemon:npc,tag=%s]" % (dim, keytag)]
     for b in DG.bands(doc):
-        cname = stand_class_name(d, room, n, b["band"])
-        start.append("execute if score @s %s matches %d in %s run function %s {x:\"%.1f\",y:\"%d\",z:\"%.1f\",cls:\"%s:%s\","
-                     "level:\"%d\"}" % (O("band"), b["band"], dim, F("npc_at"), x + 0.5, y, z + 0.5, DG.NS, cname,
-                                        classes[cname][1]))
-        start.append("execute if score @s %s matches %d run function %s" % (O("band"), b["band"],
-                                                                           F("claw/bounds/%s" % cname)))
+        for cond, k in stand_variants(doc, room, n, b["band"], slot_g):
+            cname = stand_class_name(d, room, n, b["band"], k)
+            start.append("execute if score @s %s matches %d %sin %s run function %s {x:\"%.1f\",y:\"%d\",z:\"%.1f\",cls:\"%s:%s\","
+                         "level:\"%d\"}" % (O("band"), b["band"], cond, dim, F("npc_at"), x + 0.5, y, z + 0.5, DG.NS, cname,
+                                            classes[cname][1]))
+            start.append("execute if score @s %s matches %d %srun function %s" % (O("band"), b["band"], cond,
+                                                                                 F("claw/bounds/%s" % cname)))
     start += ["execute in %s positioned %.1f %d %.1f as @e[type=cobblemon:npc,tag=!%s,distance=..1.5,sort=nearest,limit=1] "
               "run function %s" % (dim, x + 0.5, y, z + 0.5, DG.TAGS["npc"], F("%s/bind" % base)),
               "tag @s add %s" % pendtag,
@@ -524,6 +556,97 @@ def keep_tag(doc):
     return doc["engine"]["sweep"]["keep_tag"]
 
 
+# ------------------------------------------------------------------------------------------------- rotation (PRIZE-POOLS)
+# The owner (2026-10-11): "a lot of variety". A trainer's `team_pool_by_band` {band: [team, ...]} or a miniboss's
+# `species_pool_by_band` {band: [species, ...]} is the band's pool, replacing `team_by_band` / `species_by_band` for that
+# band. ONE index a room per run is rolled at the threshold (slot/s<g>/start, beside the prize's roll: the sigil is
+# spent, so re-entering cannot re-roll for free) into the room's holder #s<g>r<i>x in dg.rs; member k of a pool of n
+# is taken when ((index - 1) mod n) + 1 == k, so two trainers of one room with pools of different sizes still each get
+# one. An unset or stray index falls to member 1 (rot_cond: `unless ... matches 2..N`), so exactly one line fires
+# whatever the score holds and a room entered without a threshold (a playtest teleport) still spawns its fight.
+ROT = "x"
+POOL_MAX = 6
+
+
+def team_pool(t, band):
+    """[team] a trainer fields at `band`: its rotation pool, else its one team ([] when it names neither)."""
+    tp = (t.get("team_pool_by_band") or {}).get(str(band))
+    if tp:
+        return list(tp)
+    tb = (t.get("team_by_band") or {}).get(str(band))
+    return [tb] if tb else []
+
+
+def miniboss_pool(p, band):
+    """[species] a miniboss can be at `band`: its rotation pool, else its one species."""
+    sp = (p.get("species_pool_by_band") or {}).get(str(band))
+    if sp:
+        return list(sp)
+    one = (p.get("species_by_band") or {}).get(str(band))
+    return [one] if one else []
+
+
+def rotation_size(doc, room, band):
+    """N, the room's rotation index range at `band` (1: no rotation)."""
+    kind, p = room["kind"], room.get("params") or {}
+    if kind in KINDS_STAND and is_stand_room(room):
+        return max([len(team_pool(t, band)) for t in trainers_of(doc, room)] + [1])
+    if kind == "miniboss" and is_wild_room(room):
+        return max(len(miniboss_pool(p, band)), 1)
+    return 1
+
+
+def rotates(doc, room):
+    return any(rotation_size(doc, room, b["band"]) > 1 for b in DG.bands(doc))
+
+
+def pick(n, v):
+    """The 1-based pool member a room index `v` takes from a pool of `n`."""
+    return (v - 1) % n + 1
+
+
+def rot_holder(slot_g, room):
+    return R.state_holder({"g": slot_g}, room) + ROT
+
+
+def rot_cond(H, v, N):
+    """The execute clause (with a trailing space) for index v of N: v 1 is the fallback for any other value."""
+    if N <= 1:
+        return ""
+    if v == 1:
+        return "unless score %s dg.rs matches 2..%d " % (H, N)
+    return "if score %s dg.rs matches %d " % (H, v)
+
+
+def rotation_start_lines(doc, slot):
+    """slot/s<g>/start (as the member, at the threshold): the run's index for every rotating room of the slot."""
+    d = slot["dungeon"]
+    if not R.has_rooms(d):
+        return []
+    out = []
+    for room in R.layout(doc, d, slot):
+        if room["kind"] not in ROOM_KINDS or not rotates(doc, room):
+            continue
+        H = rot_holder(slot["g"], room)
+        out += ["# room %s's rotation (PRIZE-POOLS): which pool member each of its fights is this run" % room["id"],
+                "scoreboard players set %s dg.rs 1" % H]
+        for b in DG.bands(doc):
+            N = rotation_size(doc, room, b["band"])
+            if N > 1:
+                out.append("execute if score @s %s matches %d store result score %s dg.rs run random value 1..%d"
+                           % (O("band"), b["band"], H, N))
+    return out
+
+
+def legend_labels(species):
+    """The legendary/mythical/Ultra Beast labels the jar gives `species` (empty when not one, or no jar here)."""
+    import dungeon_prize as DP       # lazy: dungeon_prize imports this module
+    labels = DP.jar_labels()
+    if labels is None:
+        return set()
+    return set(labels.get(species, ())) & DP.LEGEND_LABELS
+
+
 def is_stand_room(room):
     """A real stand or gauntlet: trainers listed, or a pool. An int `trainers` is the kit's placeholder."""
     p = room.get("params") or {}
@@ -534,7 +657,7 @@ def is_wild_room(room):
     p = room.get("params") or {}
     k = room["kind"]
     if k == "miniboss":
-        return "species_by_band" in p
+        return "species_by_band" in p or "species_pool_by_band" in p
     if k == "habitat":
         return "species" in p and "level_by_band" in p
     if k == "nest":
@@ -610,11 +733,28 @@ def room_problems(doc, room):
     if kind == "miniboss":
         if not is_wild_room(room):
             return []
-        sb = p["species_by_band"]
+        sb = p.get("species_by_band") or {}
+        spp = p.get("species_pool_by_band")
+        if not isinstance(sb, dict) or spp is not None and (
+                not isinstance(spp, dict) or any(not isinstance(v, list) or not 1 <= len(v) <= POOL_MAX
+                                                 or len(set(map(str, v))) != len(v) for v in spp.values())):
+            bad.append("%s: species_by_band is {band: species}; species_pool_by_band {band: [species, ...]}, 1..%d distinct a band"
+                       % (who, POOL_MAX))
+            return bad
+        for k in sorted(set(sb) & set(spp or {})):
+            bad.append("%s band %s: species_by_band and species_pool_by_band both name it (the pool is the band's species)" % (who, k))
         for b in bands:
-            sp = sb.get(str(b["band"])) if isinstance(sb, dict) else None
-            if not isinstance(sp, str) or not PROP_ID.fullmatch(sp):
+            pool = miniboss_pool(p, b["band"])
+            if not pool:
                 bad.append("%s: species_by_band needs a lowercase species id for band %d" % (who, b["band"]))
+            for sp in pool:
+                if not isinstance(sp, str) or not PROP_ID.fullmatch(sp):
+                    bad.append("%s: species_by_band needs a lowercase species id for band %d" % (who, b["band"]))
+                elif p.get("catchable", True) and legend_labels(sp):
+                    # a catchable miniboss carries no key tag: a legendary or Ultra Beast there is caught by any ball, at
+                    # ordinary values, past the Beast Ball gate (the owner, 2026-10-10: a legendary is a dungeon's PRIZE)
+                    bad.append("%s band %d: %s is %s; a catchable miniboss is never one (a legendary or Ultra Beast is a "
+                               "habitat's prize, or a boss)" % (who, b["band"], sp, "/".join(sorted(legend_labels(sp)))))
         off = p.get("level_offset", 0)
         if not isinstance(off, int) or isinstance(off, bool) or off > 0:
             bad.append("%s: level_offset is an integer <= 0 (from the band's upper cap: never above it)" % who)
@@ -769,18 +909,20 @@ def stand_show_functions(doc, d, room, n, slot_g, spot):
         slot_g, room["id"], n), "# at once; no battle until the member reaches the trainer's line (room tick -> fight)",
         "execute in %s run kill @e[type=cobblemon:npc,tag=%s]" % (dim, keytag)]
     for b in DG.bands(doc):
-        cname = stand_class_name(d, room, n, b["band"])
-        show.append("execute if score @s %s matches %d in %s run function %s {x:\"%.1f\",y:\"%d\",z:\"%.1f\",cls:\"%s:%s\","
-                    "level:\"%d\"}" % (O("band"), b["band"], dim, F("npc_at"), x + 0.5, y, z + 0.5, DG.NS, cname,
-                                       classes[cname][1]))
+        for cond, k in stand_variants(doc, room, n, b["band"], slot_g):
+            cname = stand_class_name(d, room, n, b["band"], k)
+            show.append("execute if score @s %s matches %d %sin %s run function %s {x:\"%.1f\",y:\"%d\",z:\"%.1f\",cls:\"%s:%s\","
+                        "level:\"%d\"}" % (O("band"), b["band"], cond, dim, F("npc_at"), x + 0.5, y, z + 0.5, DG.NS, cname,
+                                           classes[cname][1]))
     show.append("execute in %s positioned %.1f %d %.1f as @e[type=cobblemon:npc,tag=!%s,distance=..1.5,sort=nearest,limit=1] "
                 "run function %s" % (dim, x + 0.5, y, z + 0.5, DG.TAGS["npc"], F("%s/bind" % base)))
     fight = [h, "# As the member at trainer %d's line: the battle with the trainer who is standing there. They are bound already," % n,
              "# so this is the second half of `start` (bounds for the clawback, the pending tag, go_ticks later the battle)",
              "execute in %s unless entity %s run return run function %s" % (dim, npc_sel, F("%s/start" % base))]
     for b in DG.bands(doc):
-        fight.append("execute if score @s %s matches %d run function %s"
-                     % (O("band"), b["band"], F("claw/bounds/%s" % stand_class_name(d, room, n, b["band"]))))
+        for cond, k in stand_variants(doc, room, n, b["band"], slot_g):
+            fight.append("execute if score @s %s matches %d %srun function %s"
+                         % (O("band"), b["band"], cond, F("claw/bounds/%s" % stand_class_name(d, room, n, b["band"], k))))
     fight += ["tag @s add %s" % pendtag,
               "scoreboard players set @s %s %d" % (TRIES, s["retries"]),
               "schedule function %s %dt append" % (F("%s/go" % base), s["go_ticks"])]
@@ -897,8 +1039,9 @@ def _pos4(a):
     return a + (0,) * (4 - len(a))
 
 
-def wild_spawns(doc, room, anchors):
-    """{band: [(species, level, props, (x, y, z, yaw))]} for a miniboss, nest or habitat room."""
+def wild_spawns(doc, room, anchors, variant=1):
+    """{band: [(species, level, props, (x, y, z, yaw))]} for a miniboss, nest or habitat room. `variant` is the room's
+    rotation index: a miniboss takes member pick(len(pool), variant) of the band's species pool."""
     p = room.get("params") or {}
     kind = room["kind"]
     out = {}
@@ -910,7 +1053,9 @@ def wild_spawns(doc, room, anchors):
             # catchable). The level cap still refuses a ball at a level over the thrower's cap (data/level_cap.json)
             unc = not p.get("catchable", True)
             a = anchors["boss"]
-            out[bn] = [(p["species_by_band"][str(bn)], lv, props_of(lv, unc, True, p.get("aspects", ()), p.get("scale")), _pos4(a))]
+            pool = miniboss_pool(p, bn)
+            out[bn] = [(pool[pick(len(pool), variant) - 1], lv, props_of(lv, unc, True, p.get("aspects", ()), p.get("scale")),
+                        _pos4(a))]
         elif kind == "habitat":
             lv = int(p["level_by_band"][str(bn)])
             # a legendary or Ultra Beast is a dungeon's prize (the owner, 2026-10-10): catchable from the Beast Ball stage
@@ -981,19 +1126,36 @@ def kind_wild(doc, d, slot, room, theme):
         sx, sy, sz, yaw = next(iter(spawns.values()))[0][3]
         bind += ["data merge entity @s {NoAI:1b}", "tp @s %.1f %d %.1f %d 0" % (sx + 0.5, sy, sz + 0.5, yaw)]
     fn_["bind"] = bind
-    # one spawn function per band
-    for bn, lst in spawns.items():
-        lines = [DG.HEAD, "# As the member, the room's first pass: band %d's Pokemon, spawned by the MACRO wild_at (EXP-046: a plain" % bn,
-                 "# spawnpokemonat parsed at boot does nothing), each bound the same function (an unclaimed one is despawned)"]
-        for sp, lv, props, (x, y, z, _yaw) in lst:
-            lines.append("execute in %s run function %s %s" % (dim, F("wild_at"), macro_args(
-                x="%.1f" % (x + 0.5), y=str(y), z="%.1f" % (z + 0.5), species=sp, props=props)))
-            lines.append("execute in %s positioned %.1f %d %.1f as @e[type=cobblemon:pokemon,tag=!%s,distance=..%g,sort=nearest,limit=1] "
-                         "run function %s" % (dim, x + 0.5, y, z + 0.5, kp, BIND_RADIUS, fn("bind")))
-        fn_["spawn_b%d" % bn] = lines
+    # one spawn function per band (per band and pool member for a rotating miniboss: spawn_b<b> is member 1)
+    by_variant = {1: spawns}
+    if kind == "miniboss":
+        for k in range(2, max(len(miniboss_pool(p, b["band"])) for b in DG.bands(doc)) + 1):
+            by_variant[k] = wild_spawns(doc, room, defaults, k)
+
+    def spawn_name(bn, k):
+        return "spawn_b%d" % bn if k == 1 else "spawn_b%d_v%d" % (bn, k)
+    enter_spawn = []
+    for bn in spawns:
+        size = len(miniboss_pool(p, bn)) if kind == "miniboss" else 1
+        for k in range(1, size + 1):
+            lines = [DG.HEAD, "# As the member, the room's first pass: band %d's Pokemon%s, spawned by the MACRO wild_at (EXP-046: a plain"
+                     % (bn, "" if size == 1 else " (pool member %d of %d)" % (k, size)),
+                     "# spawnpokemonat parsed at boot does nothing), each bound the same function (an unclaimed one is despawned)"]
+            for sp, lv, props, (x, y, z, _yaw) in by_variant[k][bn]:
+                lines.append("execute in %s run function %s %s" % (dim, F("wild_at"), macro_args(
+                    x="%.1f" % (x + 0.5), y=str(y), z="%.1f" % (z + 0.5), species=sp, props=props)))
+                lines.append("execute in %s positioned %.1f %d %.1f as @e[type=cobblemon:pokemon,tag=!%s,distance=..%g,sort=nearest,limit=1] "
+                             "run function %s" % (dim, x + 0.5, y, z + 0.5, kp, BIND_RADIUS, fn("bind")))
+            fn_[spawn_name(bn, k)] = lines
+        N = rotation_size(doc, room, bn)
+        for v in range(1, N + 1):
+            cond = rot_cond(hold(slot, room, ROT), v, N) if size > 1 else ""
+            enter_spawn.append("execute if score @s %s matches %d %srun function %s" % (O("band"), bn, cond, fn(spawn_name(bn, pick(size, v)))))
+            if size == 1:
+                break
     enter = ["title @s actionbar %s" % DG.text(MSG[kind], "gray"),
              "scoreboard players set %s %s 0" % (W, rs), "scoreboard players set %s %s 0" % (V, rs)]
-    enter += ["execute if score @s %s matches %d run function %s" % (O("band"), bn, fn("spawn_b%d" % bn)) for bn in spawns]
+    enter += enter_spawn
     pass_mode = kind == "nest" and p.get("clear", "all") == "pass"
     if pass_mode:
         enter.append("function %s" % fn("clear"))
@@ -1031,6 +1193,7 @@ def kind_wild(doc, d, slot, room, theme):
              "scoreboard players set %s %s 0" % (W, rs), "scoreboard players set %s %s 0" % (V, rs)]
     res = {"functions": dict(fn_, enter=enter, tick=tick, clear=clear, reset=reset),
            "meta": {"wild": True, "spawns": {bn: [(s, lv, pr) for s, lv, pr, _ in lst] for bn, lst in spawns.items()},
+                    "pools": {bn: (miniboss_pool(p, bn) if kind == "miniboss" else [lst[0][0]] if lst else []) for bn, lst in spawns.items()},
                     "assumed": "a fainted, caught or despawned wild Pokemon's entity is gone (the gulch Megas' and residents' rule); "
                                "spawnpokemonat props level/aspect/scale_modifier/uncatchable/no_ai"}}
     if kind == "nest":
@@ -1212,6 +1375,12 @@ def patch_functions(doc, fns):
             for name, line in (("slot/s%d/free" % g, line_free), ("slot/s%d/tend" % g, line_tend)):
                 if line not in fns[name]:
                     fns[name].append(line)
+    # the rotation's roll at each slot's threshold (PRIZE-POOLS): the rooms', then the boss's crew list
+    for slot in DG.slots(doc):
+        st = rotation_start_lines(doc, slot) + DG.boss_start_lines(doc, slot["dungeon"])
+        if st:
+            name = "slot/s%d/start" % slot["g"]
+            fns[name] = list(fns[name]) + st
 
 
 def warnings(doc):

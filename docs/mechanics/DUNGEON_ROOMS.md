@@ -193,6 +193,7 @@ like any route. Every fork keeps at least one route that is not optional.
   NON-legendary species (the jar's labels: no `legendary`, `mythical` or `ultra_beast`); `legendary_by_band` a band from
   it on, a legendary, mythical or Ultra Beast. A band named by neither has no prize. `chance_by_band` (percent, 0-100)
   overrides `engine.prize.chance_by_band`; `rumour` (printable ASCII, at most 120) overrides `engine.prize.rumour`.
+  **Pools** (`rare_pool_by_band`, `legendary_pool_by_band`, `roster`; one species rolled a run): section 14.
 - **Per run.** At the threshold (`slot/s<g>/start`, after the sigil is spent, so leaving and re-entering cannot re-roll
   it for free) the room rolls `random value 1..100` against the entrant's band's chance; `#s<g>r<i>p dg.rs` 1 means
   present. Present: the run board shows the rumour as its last line and the member is told it in chat; the arrival puts the
@@ -759,3 +760,70 @@ State: `#s<g>r<i>` 1 armed, 2 given (the kit's `clear`); the reset refills the b
 walk check still counts the breakable cells per room against `meta.breakable_extra` and the bay's own check demands a solid
 frame, lintel and wall. `dungeon.py` build() gains two lines (`DX2.pack_files`, `DX2.patch_functions`). A lent rod survives
 only a route out of the pocket that does not run a pick-clearing line.
+
+## 14. Prize pools, per-run rotation, Ultra Beast bosses (PRIZE-POOLS, 2026-10-11; built and simulated, not run in Minecraft)
+
+The owner (2026-10-11): "finish all dungeon work and make sure we have a lot of variety"; every legendary, mythical,
+early power mon and Ultra Beast gets a home. Rung: datapack plus generator (`random value` at the threshold, score
+conditions, the existing macro spawns and NPC classes). Nothing needs a mod or a scripting layer.
+
+**The Ultra Beast double x5 (fixed first).** The jar's Beast Ball is `LabelModifier(5.0, true, "ultra_beast")` applied
+as `ballBonus` (`docs/research/notes/beast-ball-key-1.8.0.md` sections 1-2); the key callback multiplied the catch rate by
+5 again, so a tagged Ultra Beast was x25. **The intended effective multiplier is x5 for every key boss.** A boss tool takes
+its tags from `key_ball.bind_tag_lines(species)`: the key tag, plus `native_tag` (`cobblers.key_native`) when the jar labels
+the species `ultra_beast` (11 species; `data/key_ball.json` `native_species_snapshot` where the jar is absent). The rate
+callback skips its x5 at a `native_tag` boss; the refusal callback is unchanged. `key_ball.boss_problems` sweeps every
+spawn line of every boss tool (`dungeon_prize.key_sweep_files`): an Ultra Beast bound without the native tag, or a
+non-Ultra-Beast bound with it, is a problem. Not run in game (probe UB3).
+
+**Prize pools.** `params.prize` may carry, beside or instead of the single form:
+```
+"prize": {"roster": "night_shift",
+          "rare_by_band": {"1": "pupitar"}, "rare_pool_by_band": {"1": ["gabite", "fraxure"]},
+          "legendary_pool_by_band": {"4": ["volcanion", "kartana"], "6": ["kartana", "celesteela"]}}
+```
+- A band's pool is, in order and without repeats: the single form, the room's `*_pool_by_band` list, then the roster's.
+  Same rules per member as the single form (side of `legendary_from_band`, jar species, legend labels), at most 16.
+- **The roster.** `roster` names an entry of `data/dungeon_prize_roster.json` (unit COVERAGE); the three dungeons' prize
+  habitats name their own dungeon id. Read shapes: `{"dungeons": {id: entry}}`, `{"dungeons": [{"id": id, ...}]}`, or
+  `{id: entry}`; an entry's `rare_pool_by_band` / `legendary_pool_by_band` join the room's pools. File absent: the room's
+  own pools stand alone (so the record builds before COVERAGE lands). File present but no entry, or an entry naming
+  neither pool: a problem. The roster's proposed UB bosses are not read (bosses are `boss.teams_alt_by_band`, below).
+- **Per run.** After the presence roll, `#s<g>r<i>ps dg.rs` is set to 1 and, when present and the band's pool has n > 1,
+  rolled `1..n`. `enter` runs `prize/spawn_b<b>` (member 1, also any other value) or `prize/spawn_b<b>_<k>`. Level: the
+  band's lower cap. Binds: `prize/rare_bind` (any ball), `prize/bind` (the key), `prize/bind_native` (the key, an Ultra Beast).
+- **The rumour names no species** (the owner's "not as easily found"; a co-op partner reads the same board).
+- **Labels (COVERAGE's F1).** A legendary-pool member is labelled `legendary`, `mythical`, `ultra_beast` or `paradox` by
+  the jar (20 paradoxes carry only `paradox`); a rare one carries none of the four. A `restricted` species (the jar's 27
+  box legendaries) sits in band 6 only.
+- **Model gate (COVERAGE's F3).** A species whose roster record `species.<id>.model_gate` names a gate (`atm_subset`) is
+  dropped from every pool until `engine.prize.models_delivered` lists that gate (empty today), so no prize spawns as the
+  doll. Without the roster file nothing is gated.
+
+**Rotation of trainers, minibosses and the boss.** One index a room per run, rolled at the threshold into
+`#s<g>r<i>x dg.rs` (the boss: the member's `dg.bv`); pool member `((index-1) mod n)+1` fights. Member 1 is also every
+value outside `2..N`, so exactly one spawn line fires whatever the score holds (a playtest teleport with no threshold
+still gets its fight).
+- A trainer's `team_pool_by_band` `{band: [team, ...]}` (1-6 teams, each the band's member count) replaces its
+  `team_by_band` for that band; naming both for one band is a problem. Classes: `..._t<n>_b<b>` (team 1), `..._v<k>`.
+- A miniboss's `species_pool_by_band` `{band: [species, ...]}` (1-6) replaces `species_by_band` for that band. Spawns:
+  `spawn_b<b>` (member 1), `spawn_b<b>_v<k>`. **A catchable miniboss is never a legendary, mythical or Ultra Beast**
+  (new check: it carries no key tag, so any ball would take it past the Beast Ball gate).
+- The boss's `teams_alt_by_band` `{band: [stages, ...]}` (1-5 alternates, each one crew per stage) adds crew lists after
+  `teams[band]`. Classes `dg_<short>_boss_b<b>_s<k>_v<v>`; `claw/boss_begin_<short>` picks the bounds by `dg.bv` too.
+
+**Ultra Beast bosses (ULTRA_BEAST_BOSSES.md section 3).** A UB can be a boss stage's ace today as data: bands 1-5 are
+the NPC chain (an NPC's Pokemon is refused at the hit as `not_wild`, F4, ASSUMED U4), so no key tag is involved. A rotating
+pair (the Patriarch's Kartana/Celesteela) is `teams_alt_by_band`, rolled at random, not the design's day parity or
+first-uncaught pick. **Not built:** the band-6 WILD last stage (E-P6: spawn, both key tags through `bind_tag_lines`,
+catch-once advancement, farm mode); the wormhole leg kind; model delivery (F1: seven of the nine render as the doll, and
+no check here refuses one, V-UB5). A UB catch today is only a band-4+ habitat prize.
+
+**The simulator** (`tools/dungeon_sim.py`) walks a rotating dungeon once per variant v = 1..V (V the largest pool at the
+band), paths labelled `<route>~v<k>`, so every member is walked and fought on its own; the table's `pool min-max lo`
+and the per-cell rotation line give the spread. Pools are walked in lock-step, not in every combination.
+
+**Collisions to know:** `tests/test_dungeon_kit3.py`'s key-ball test expects only `prize/bind.mcfunction` files from
+`dungeon_prize.build`; a roster that puts an Ultra Beast in a legendary pool adds `prize/bind_native.mcfunction` and that
+test's set equality fails until it allows the new name. `tools/dungeon_audit.py`'s boss payout reads `_s<k>.json` only, so
+alternates' classes are not in its per-band payout (the first crew list's are).

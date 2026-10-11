@@ -295,6 +295,13 @@ def clock_rooms(doc, d, band, rooms):
     return out
 
 
+def _team(t, band):
+    """A trainer's team at `band`: the first of its rotation pool (PRIZE-POOLS: every pool team has the same size,
+    tools/dungeon_fights.stand_problems), else its single team."""
+    pool = (t.get("team_pool_by_band") or {}).get(str(band))
+    return pool[0] if pool else (t.get("team_by_band") or {}).get(str(band))
+
+
 def _members(team_by_band, band, doc):
     t = (team_by_band or {}).get(str(band))
     return len(t) if t else int(doc["engine"]["stands"]["members_by_band"][str(band)])
@@ -326,7 +333,7 @@ def required(doc, d, band, rooms=None):
         if k == "collapse_bridge":
             parts["falls"] += fall_s
         elif k in TRAINER_KINDS:
-            parts["trainers"] += sum(fight_s(_members(t.get("team_by_band"), band, doc)) for t in _trainers(doc, r))
+            parts["trainers"] += sum(fight_s(_members({str(band): _team(t, band)}, band, doc)) for t in _trainers(doc, r))
         elif k == "miniboss":
             parts["wild"] += fight_s(1)
         elif k == "nest" and p.get("clear") != "pass" and r["gate"] == "cleared":

@@ -93,6 +93,7 @@ OBJ = {
     "tail": "dg.tail",    # E1: ticks of tail left (>= 1 counting)
     "wait": "dg.wait",    # arrival countdown
     "stage": "dg.stage",  # the boss stage reached (0 not begun)
+    "bv": "dg.bv",        # the member: which of the boss's crews (teams, then boss.teams_alt_by_band) this run, rolled at the threshold
     "bw": "dg.bw",        # ticks until the next stage spawns
     "bgo": "dg.bgo",      # 1: start the stage's battle on the next pass (L1: a tick after the macro spawn)
     "idle": "dg.idle",    # passes out of battle with a stage standing and no result
@@ -474,15 +475,25 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
             bad.append("%s: the boss has no stage" % d["id"])
         if bo.get("heal_between_stages") and not bo.get("heal_cue"):
             bad.append("%s: heal_between_stages needs a heal_cue" % d["id"])
+        alt = bo.get("teams_alt_by_band")
+        if alt is not None and (not isinstance(alt, dict) or any(not isinstance(v, list) or not 1 <= len(v) <= BOSS_ALT_MAX
+                                                                 for v in alt.values())
+                                or set(alt) - {str(b["band"]) for b in bands(doc)}):
+            bad.append("%s: boss.teams_alt_by_band is {band: [stages, ...]}, 1..%d alternates a band that exists"
+                       % (d["id"], BOSS_ALT_MAX))
         for b in bands(doc):
             lvl = min(b["caps"]) + max(bo["stage_level_offsets"])
             if lvl > min(b["caps"]):
                 bad.append("%s band %d: a stage above the band's lower cap" % (d["id"], b["band"]))
-            st = bo["teams"].get(str(b["band"]))
-            if not st or len(st) != len(bo["stage_level_offsets"]):
-                bad.append("%s band %d: not one crew per stage" % (d["id"], b["band"]))
-            elif any(not 1 <= len(t) <= 6 for t in st):
-                bad.append("%s band %d: a crew of 0 or more than 6" % (d["id"], b["band"]))
+            pool = boss_pool(d, b["band"]) if bo["teams"].get(str(b["band"])) else [None]
+            for k, st in enumerate(pool, 1):
+                who = "" if k == 1 else " alternate %d" % (k - 1)
+                if not st or not isinstance(st, list) or len(st) != len(bo["stage_level_offsets"]):
+                    bad.append("%s band %d%s: not one crew per stage" % (d["id"], b["band"], who))
+                elif any(not isinstance(t, list) or not 1 <= len(t) <= 6 for t in st):
+                    bad.append("%s band %d%s: a crew of 0 or more than 6" % (d["id"], b["band"], who))
+            if len({json.dumps(x) for x in pool}) != len(pool):
+                bad.append("%s band %d: boss.teams_alt_by_band repeats a crew list" % (d["id"], b["band"]))
             if bo["member_level_offset"] > 0:
                 bad.append("%s: a crew member above its stage's level" % d["id"])
         rip = d["rip"]
@@ -584,19 +595,61 @@ def pick_match(doc):
 # ------------------------------------------------------------------------------------------------- NPC classes
 
 
+BOSS_ALT_MAX = 5
+
+
+def boss_pool(d, band):
+    """[stages] the boss can field at `band`: `teams[band]` first, then boss.teams_alt_by_band's alternates (PRIZE-POOLS,
+    the owner's "a lot of variety"; a rotating pair of Ultra Beast aces, ULTRA_BEAST_BOSSES.md 4, is two of these). One is
+    rolled per run at the threshold into the member's dg.bv; an unset or stray dg.bv falls to the first (boss_cond)."""
+    bo = d["boss"]
+    first = bo["teams"].get(str(band))
+    return ([first] if first else []) + list((bo.get("teams_alt_by_band") or {}).get(str(band)) or [])
+
+
+def boss_class_name(d, band, stage, k=1):
+    base = "dg_%s_boss_b%d_s%d" % (d["short"], band, stage)
+    return base if k == 1 else "%s_v%d" % (base, k)
+
+
+def boss_cond(d, band, k):
+    """The execute clause (trailing space) for crew list k at `band`, as the member: k 1 is also every other dg.bv."""
+    n = len(boss_pool(d, band))
+    if n <= 1:
+        return ""
+    if k == 1:
+        return "unless score @s %s matches 2..%d " % (OBJ["bv"], n)
+    return "if score @s %s matches %d " % (OBJ["bv"], k)
+
+
+def boss_start_lines(doc, d):
+    """slot/s<g>/start lines (as the member, at the threshold): the run's boss crew list, when the boss rotates."""
+    out = []
+    for b in bands(doc):
+        n = len(boss_pool(d, b["band"]))
+        if n > 1:
+            if not out:
+                out = ["# the boss's crew list this run (PRIZE-POOLS rotation; boss.teams_alt_by_band)",
+                       "scoreboard players set @s %s 1" % OBJ["bv"]]
+            out.append("execute if score @s %s matches %d store result score @s %s run random value 1..%d"
+                       % (OBJ["band"], b["band"], OBJ["bv"], n))
+    return out
+
+
 def boss_classes(doc, d):
-    """{class name: (class json, level)} for every band x stage of the dungeon's boss."""
+    """{class name: (class json, level)} for every band x crew list x stage of the dungeon's boss."""
     bo = d["boss"]
     out = {}
-    for b in bands(doc):
+    plan = [(b, v, stages) for b in bands(doc) for v, stages in enumerate(boss_pool(d, b["band"]), 1)]
+    for b, v, stages in plan:
         base = min(b["caps"])
         for k, off in enumerate(bo["stage_level_offsets"], 1):
             lvl = base + off
-            crew = bo["teams"][str(b["band"])][k - 1]
+            crew = stages[k - 1]
             # the ace is the crew's LAST entry, at the stage's level; the others one level under (member_level_offset)
             team = ["%s level=%d" % (sp, lvl + (0 if i == len(crew) - 1 else bo["member_level_offset"]))
                     for i, sp in enumerate(crew)]
-            name = "dg_%s_boss_b%d_s%d" % (d["short"], b["band"], k)
+            name = boss_class_name(d, b["band"], k, v)
             # the shape of Heaven's Arena's classes (tools/arena_runtime.py npc_class) and the probes' (C1, EXP-078)
             out[name] = ({"hitbox": "player", "names": [bo["name"]], "resourceIdentifier": NPC_RESOURCE,
                           "canDespawn": False, "isInvulnerable": True, "isMovable": False, "isLeashable": False,
@@ -1528,13 +1581,13 @@ def functions(doc, blackout=None):
                  "# EXP-078: a plain line naming our class fails to parse at load), bound in the same function and again by",
                  "# tend; the battle starts on the next pass (dg.bgo), a tick after the spawn (L1)",
                  "execute in %s run kill @e[type=cobblemon:npc,tag=%s,tag=%s]" % (dim, T["boss"], stag)]
-        for b in bands(doc):
+        for b, v in [(b, v) for b in bands(doc) for v in range(1, len(boss_pool(d, b["band"])) + 1)]:
             for st in range(1, len(d["boss"]["stage_level_offsets"]) + 1):
-                cname = "dg_%s_boss_b%d_s%d" % (d["short"], b["band"], st)
-                spawn.append("execute if score @s %s matches %d if score @s %s matches %d in %s run function %s "
+                cname = boss_class_name(d, b["band"], st, v)
+                spawn.append("execute if score @s %s matches %d if score @s %s matches %d %sin %s run function %s "
                              "{x:\"%.1f\",y:\"%d\",z:\"%.1f\",cls:\"%s:%s\",level:\"%d\"}"
-                             % (O["band"], b["band"], O["stage"], st, dim, F("npc_at"), sx + 0.5, sy, sz + 0.5, NS, cname,
-                                classes[cname][1]))
+                             % (O["band"], b["band"], O["stage"], st, boss_cond(d, b["band"], v), dim, F("npc_at"),
+                                sx + 0.5, sy, sz + 0.5, NS, cname, classes[cname][1]))
         spawn += ["execute in %s positioned %.1f %d %.1f as @e[type=cobblemon:npc,tag=!%s,distance=..1.5,sort=nearest,limit=1] "
                   "run function %s" % (dim, sx + 0.5, sy, sz + 0.5, T["npc"], F("slot/s%d/bind_boss" % g)),
                   "scoreboard players set @s %s 1" % O["bgo"],
