@@ -10,8 +10,8 @@ their clock, stamps the lockout and spends the sigil. The back rip and the far r
 threshold, the escrow after it). At zero the player is killed when their battle ends (sudden death); a logout charges
 the absence on return, and a run that died while they were away kills them on return.
 
-THE KEEPER, every period_ticks (one schedule, re-scheduled from load like tools/entei_boss.py's). It counts #up and
-DISPATCHES the pass to the next tick: keeper/head (dg.pk, the deaths), slot/s<g>/pass for each live slot (its members,
+THE KEEPER, every period_ticks (one schedule, re-scheduled from load like tools/entei_boss.py's). It only
+DISPATCHES the pass to the next tick: keeper/head (#up, dg.pk, the deaths), slot/s<g>/pass for each live slot (its members,
 then its tending), keeper/end (the sweep, the tails, the backstops), each `schedule function ... 1t replace`, so each
 is its own command chain and the longest is one slot's work, not every slot's (maxCommandChainLength, 65,536, is
 spent per scheduled call; `function` and `execute as` spend the caller's):
@@ -956,7 +956,7 @@ def functions(doc, blackout=None):
     # THE CHAIN SPLIT (ENGINE-SCALE, 2026-10-11). maxCommandChainLength (65,536) is a quota per EXECUTION CONTEXT: a
     # scheduled function, a #tick entry or a command typed opens one, and every command it reaches, through `function`,
     # `function ... with` and every `execute as` fork, spends from it. One keeper reaching every slot's member pass
-    # was 78,856 commands by static count with four dungeons. So the keeper only counts #up and DISPATCHES the pass:
+    # was 78,856 commands by static count with four dungeons. So the keeper only DISPATCHES the pass:
     # keeper/head, then slot/s<g>/pass for each live slot (owned, or a player in a run names it), then keeper/end, each
     # `schedule function ... 1t replace`. The timer queue runs them on the next tick in the order scheduled (trigger
     # time, then sequence), each in its own context, so one chain is at most one slot's work. The pass's order is the
@@ -965,8 +965,8 @@ def functions(doc, blackout=None):
               "# Every %d ticks (DUNGEONS.md 11.3): #up, then the pass dispatched to the next tick, each part its own scheduled"
               % P,
               "# call and so its own command chain (maxCommandChainLength is per scheduled call; `execute as` and `function`",
-              "# do not start a new one): keeper/head, each live slot's slot/s<g>/pass in slot order, keeper/end",
-              "scoreboard players add #up %s %d" % (O["up"], P),
+              "# do not start a new one): keeper/head (which counts #up, so it moves on the pass's own tick), each live",
+              "# slot's slot/s<g>/pass in slot order, keeper/end",
               DISPATCH % F("keeper/head")]
     for s in sl:
         keeper += ["execute if score %s %s matches 1.. run %s" % (H(s), O["own"], DISPATCH % F("slot/s%d/pass" % s["g"])),
@@ -979,6 +979,8 @@ def functions(doc, blackout=None):
     head = [HEAD,
               "# The keeper's pass, first part (scheduled by the keeper). Scheduled, so it runs in the overworld: every pocket",
               "# test carries `in %s` or the dg.pk tag, never a bare box test on @s." % dim,
+              "# #up, the uptime counter, on the tick the pass runs (every stamp and test on it is in the pass or a click)",
+              "scoreboard players add #up %s %d" % (O["up"], P),
               "tag @a remove %s" % T["pk"],
               "execute in %s run tag @a[distance=0..] add %s" % (dim, T["pk"]),
               "# no map in the pocket (the owner, 2026-10-10): Xaero's own effects, refreshed each pass, so leaving ends",

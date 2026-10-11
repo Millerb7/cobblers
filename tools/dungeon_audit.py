@@ -509,7 +509,11 @@ def check_v12(dg_files):
         bad.append("the lockout stamp is not the uptime counter: %s" % stamps)
     keeper = [(f, body(ls)) for f, ls in dg.items() if f.endswith("/keeper")]
     for f, b in keeper:
-        step = [int(m.group(1)) for l in b for m in [re.fullmatch(r"scoreboard players add #up dg\.up (\d+)", l)] if m]
+        # the keeper's own lines, and those of what it dispatches to the next tick unconditionally (a top-level
+        # `schedule function X 1t replace`: its pass's first part, ENGINE-SCALE), each run exactly once a keeper
+        disp = [m.group(1) for l in b for m in [re.fullmatch(r"schedule function (\S+) 1t replace", l)] if m]
+        once = b + [l for x in disp if x in dg for l in body(dg[x])]
+        step = [int(m.group(1)) for l in once for m in [re.fullmatch(r"scoreboard players add #up dg\.up (\d+)", l)] if m]
         again = [int(m.group(1)) for l in b for m in [re.fullmatch(r"schedule function %s (\d+)t replace" % re.escape(f), l)] if m]
         if not step or step != again:
             bad.append("%s adds %s to #up a pass but re-schedules every %s ticks: #up would not count ticks" % (f, step, again))

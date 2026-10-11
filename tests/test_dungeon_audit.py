@@ -108,8 +108,9 @@ def score(w, p, obj):
 
 
 def to_pass_edge(w):
-    """Tick until the keeper has just run (the next keeper is PASS ticks away)."""
-    while (w.scheduled.get("cobblers:dungeons/keeper", 0) - w.gametime) != PASS:
+    """Tick until the keeper's pass has just run. The keeper dispatches its pass to the next tick (ENGINE-SCALE: each
+    part its own scheduled call), so the pass has run one tick after the keeper: the next keeper is PASS - 1 away."""
+    while (w.scheduled.get("cobblers:dungeons/keeper", 0) - w.gametime) != PASS - 1:
         w.tick(1)
 
 
