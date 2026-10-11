@@ -1078,9 +1078,11 @@ def discover(pack, doc):
                 if kind:
                     s.rips[kind] = ((p[0] - w / 2, p[1], p[2] - w / 2), (p[0] + w / 2, p[1] + h, p[2] + w / 2))
         s.box = None
-        for ln in pack.lines(FN + "m/member"):
+        # the member pass: the slot's own copy (slot/s<g>/member, since the keeper's chain was split per slot), else
+        # the one shared copy an older pack has; the put-out it returns into is the slot's own (slot/s<g>/left) or m/left
+        for ln in pack.lines(FN + "slot/s%d/member" % s.g) or pack.lines(FN + "m/member"):
             m = re.match(r"execute if score @s dg\.slot matches %d unless entity @s\[([^\]]*)\] run return run function "
-                         % s.g + re.escape(FN) + "m/left", ln)
+                         % s.g + re.escape(FN) + r"(?:m|slot/s%d)/left$" % s.g, ln)
             if m:
                 s.box = sel_box(split_args(m.group(1)))
     return out
@@ -1686,7 +1688,17 @@ class Run:
         for fid in sched:
             if fid != FN + "keeper":
                 sim.call(fid, Ctx())
+        pending, sim.scheduled = sim.scheduled, []
         sim.call(FN + "keeper", Ctx())
+        # what the keeper call itself schedules runs at once, in the order scheduled: on the server it is the next tick
+        # (a scheduled call each, each its own command chain), before the member has moved; this file's grain is a
+        # pass. Anything those calls schedule waits for the next pass, as anything a pass scheduled always has
+        disp, sim.scheduled = sim.scheduled, []
+        for fid in disp:
+            if fid != FN + "keeper":
+                sim.call(fid, Ctx())
+        later = sim.scheduled + [f for f in disp if f == FN + "keeper"]
+        sim.scheduled = [f for f in pending if f not in later] + later
         self.after_pass()
 
     def after_pass(self):

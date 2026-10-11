@@ -1957,7 +1957,7 @@ def rooms_lines(doc, slot):
     """slot/s<g>/rooms: as the member (clock running), each pass: first entries, then the room ticks."""
     d = slot["dungeon"]
     lines = [HEAD, "# As slot %d's member, each pass with the clock running: the room they stand in (box tests on @s are" % slot["g"],
-             "# coordinate-only; m/member has already put out anyone not in the pocket)"]
+             "# coordinate-only; slot/s<g>/member has already put out anyone not in the pocket)"]
     for b in slot_build(doc, d, slot):
         r = b.room
         box = sel_box(r["box"])

@@ -103,25 +103,32 @@ def test_the_tail_end_and_the_backstop_run_only_outside_the_pocket():
     tail = body("m/tail")
     i = tail.index("execute at @s run function %s" % TAIL_END)
     assert "execute if entity @s[tag=dg.pk] run return 0" in tail[:i]
-    stale = [l for l in body("keeper") if BACKSTOP in l]
+    stale = [l for l in body("keeper/end") if BACKSTOP in l]     # the keeper's pass, last part (ENGINE-SCALE)
     assert len(stale) == 1 and "tag=!dg.pk" in stale[0] and "tag=%s" % RUN_TAG in stale[0]
     callers = {n for n in FNS for l in body(n) if TAIL_END in l or BACKSTOP in l}
-    assert callers == {"m/tail", "keeper"}
+    assert callers == {"m/tail", "keeper/end"}
 
 
 def test_every_way_out_starts_a_tail_of_at_least_the_credit_window():
-    end = body("m/end")
-    starts = [int(l.split()[-1]) for l in end if l.startswith("scoreboard players set @s dg.tail ")]
-    # counted down period_ticks a pass from the next pass, so at least tail_ticks elapse
-    assert starts and starts[0] - DOC["engine"]["keeper"]["period_ticks"] >= EX["tail_ticks"]
-    for way in ("back", "far", "m/died", "m/left", "m/void"):
+    # m/end, and each slot's own copy its member pass ends through (ENGINE-SCALE: slot/s<g>/void and left)
+    slots = [s["g"] for s in D.slots(DOC)]
+    for e in ["m/end"] + ["slot/s%d/end" % g for g in slots]:
+        end = body(e)
+        starts = [int(l.split()[-1]) for l in end if l.startswith("scoreboard players set @s dg.tail ")]
+        # counted down period_ticks a pass from the next pass, so at least tail_ticks elapse
+        assert starts and starts[0] - DOC["engine"]["keeper"]["period_ticks"] >= EX["tail_ticks"], e
+    for way in ("back", "far", "m/died"):
         assert "function cobblers:dungeons/m/end" in body(way), way
+    for g in slots:
+        for way in ("slot/s%d/left" % g, "slot/s%d/void" % g):
+            assert "function cobblers:dungeons/slot/s%d/end" % g in body(way), way
 
 
 def test_survival_is_restored_and_the_pick_taken_by_its_component_on_every_way_out():
     pick = D.pick_match(DOC)
     assert "custom_data~{cobblers_dg_pick:1b}" in pick
-    for n in ("m/end", "m/restore") + tuple("check_%s" % d["short"] for d in DOC["dungeons"]):
+    for n in ("m/end", "m/restore") + tuple("check_%s" % d["short"] for d in DOC["dungeons"]) + tuple(
+            "slot/s%d/end" % s["g"] for s in D.slots(DOC)):
         b = body(n)
         assert any("gamemode survival @s" in l for l in b), n
         assert "clear @s %s" % pick in b, n

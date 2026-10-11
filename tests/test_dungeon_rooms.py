@@ -446,7 +446,7 @@ def test_every_room_gets_enter_clear_reset_and_the_slot_calls_them():
         assert pre + "room/night_shift/%s/clear.mcfunction" % r["id"] not in files
     reset = files[pre + "slot/s1/reset.mcfunction"]
     assert reset.count("/reset") == len(DEMO)
-    clock = files[pre + "m/clock.mcfunction"]
+    clock = files[pre + "slot/s1/clock.mcfunction"]
     assert "slot/s1/rooms" in clock and clock.index("slot/s1/rooms") < clock.index("slot/s1/boss")
 
 

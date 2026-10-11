@@ -297,10 +297,16 @@ class World:
             self.gametime += 1
             for f in self.tick_fns:
                 self.call(f, self.server_ctx())
-            for f, due in sorted(self.scheduled.items()):
-                if due <= self.gametime:
-                    del self.scheduled[f]
-                    self.call(f, self.server_ctx())
+            # vanilla's timer queue (1.21.1 TimerQueue): due events by trigger time, then in the order they were
+            # scheduled; each runs as its own call (its own command chain). An event re-scheduled by an earlier one this
+            # tick is skipped here and runs when it is next due
+            seq = self.__dict__.setdefault("sched_seq", {})
+            due_now = sorted(((due, seq.get(f, 0), f) for f, due in self.scheduled.items() if due <= self.gametime))
+            for due, n, f in due_now:
+                if self.scheduled.get(f) != due or seq.get(f, 0) != n:
+                    continue
+                del self.scheduled[f]
+                self.call(f, self.server_ctx())
 
     # ---- scores -------------------------------------------------------------------------------------------------
     def get(self, holder, obj):
@@ -553,7 +559,21 @@ class World:
                 return self.data_storage(t[1:])
             raise Unsupported(" ".join(t))
         if h == "schedule" and t[1] == "function":
-            self.scheduled[t[2]] = self.gametime + int(t[3].rstrip("t"))
+            # `replace` (the default) drops the function's pending event and queues a new one behind everything already
+            # queued; `append` adds one unless the same function is already due that tick. One pending time per
+            # function is modelled: an append beside a pending event at another time is Unsupported
+            due = self.gametime + int(t[3].rstrip("t"))
+            mode = t[4] if len(t) > 4 else "replace"
+            if mode not in ("replace", "append"):
+                raise Unsupported(" ".join(t))
+            if mode == "append" and t[2] in self.scheduled:
+                if self.scheduled[t[2]] == due:
+                    return 1
+                raise Unsupported("schedule append beside a pending event at another tick: " + " ".join(t))
+            seq = self.__dict__.setdefault("sched_seq", {})
+            self.__dict__["sched_n"] = self.__dict__.get("sched_n", 0) + 1
+            seq[t[2]] = self.sched_n
+            self.scheduled[t[2]] = due
             return 1
         if h == "summon":
             pos = [ctx.pos[i] + float(c[1:] or 0) if c.startswith("~") else float(c) for i, c in enumerate(t[2:5])]

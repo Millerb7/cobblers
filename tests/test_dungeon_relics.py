@@ -425,8 +425,8 @@ def test_the_run_board_the_arrival_and_the_lobby_carry_the_count():
     board = D.board_text(doc, d, s)
     assert "Relics hidden here: %d." % len(IDS) in board
     assert "function cobblers:dungeons/relic/ns/show" in fn(files, "slot/s1/arrive")
-    lobby = "\n".join(fn(files, "m/lobby"))
     for g in (1, 2, 3, 4):
+        lobby = "\n".join(fn(files, "slot/s%d/lobby" % g))       # each slot's own lobby (ENGINE-SCALE)
         assert re.search(r"dg\.slot matches %d positioned [\d.]+ [\d.]+ [\d.]+ if entity @s\[distance=\.\.5\] run function cobblers:dungeons/relic/ns/bar" % g, lobby)
     show = "\n".join(fn(files, "relic/ns/show"))
     assert "/%d" % len(IDS) in show and "dg.rl_ns" in show

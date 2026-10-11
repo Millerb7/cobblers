@@ -767,7 +767,7 @@ def test_a_return_to_a_dead_run_is_killed_first_on_the_first_pass():
     w.tick(PASS)
     assert a.dead
     mine = [c for c, who in w.calls[mark:] if who == a.name]
-    assert mine[:4] == ["cobblers:dungeons/m/member", "cobblers:dungeons/m/gap", "cobblers:dungeons/m/void",
+    assert mine[:4] == ["cobblers:dungeons/slot/s1/member", "cobblers:dungeons/m/gap", "cobblers:dungeons/slot/s1/void",
                         "cobblers:dungeons/m/deadkill"], mine
     assert TAG in w.deaths[-1]["tags"] and not b.dead and b.dim == POCKET
     w.tick(1)

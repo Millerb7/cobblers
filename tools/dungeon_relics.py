@@ -376,7 +376,7 @@ def patch_functions(doc, fns):
         g = slot["g"]
         fns["slot/s%d/arrive" % g].append("function %s" % R.F("relic/%s/show" % d["short"]))
         bx, by, bz = DG.points(doc, slot)["board"]
-        fns["m/lobby"].append("execute if score @s %s matches %d positioned %.1f %.1f %.1f if entity @s[distance=..%d] run function %s"
+        fns["slot/s%d/lobby" % g].append("execute if score @s %s matches %d positioned %.1f %.1f %.1f if entity @s[distance=..%d] run function %s"
                               % (DG.OBJ["slot"], g, bx, by, bz, BOARD_RADIUS, R.F("relic/%s/bar" % d["short"])))
 
 

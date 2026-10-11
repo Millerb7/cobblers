@@ -10,7 +10,11 @@ their clock, stamps the lockout and spends the sigil. The back rip and the far r
 threshold, the escrow after it). At zero the player is killed when their battle ends (sudden death); a logout charges
 the absence on return, and a run that died while they were away kills them on return.
 
-THE KEEPER, every period_ticks (one schedule, re-scheduled from load like tools/entei_boss.py's):
+THE KEEPER, every period_ticks (one schedule, re-scheduled from load like tools/entei_boss.py's). It counts #up and
+DISPATCHES the pass to the next tick: keeper/head (dg.pk, the deaths), slot/s<g>/pass for each live slot (its members,
+then its tending), keeper/end (the sweep, the tails, the backstops), each `schedule function ... 1t replace`, so each
+is its own command chain and the longest is one slot's work, not every slot's (maxCommandChainLength, 65,536, is
+spent per scheduled call; `function` and `execute as` spend the caller's):
   #up         the uptime counter: the lockout, the absence gap and the slot deadlines count on it, never gametime
   dg.pk       every player in cobblers:pocket is tagged, so every later box test on @s is dimension-safe (a box test
               on @s is coordinate-only: tests/pocket_sim.py; the slots' coordinates are real overworld coordinates)
@@ -117,6 +121,9 @@ OBJ_RE = re.compile(r"^[a-z0-9_.]{1,16}$")
 XAERO_EFFECTS = ("xaerominimap:no_minimap", "xaerominimap:no_entity_radar", "xaerominimap:no_waypoints",
                  "xaerominimap:no_cave_maps", "xaeroworldmap:no_world_map", "xaeroworldmap:no_cave_maps")
 XAERO_S = 3   # seconds: over one keeper pass (20 ticks), so the effects never lapse in the pocket
+# How the keeper starts each part of its pass: a scheduled call of its own on the next tick, so each part is its own
+# command chain (see "THE CHAIN SPLIT" in functions). `function %s` here would re-join every slot into one chain.
+DISPATCH = "schedule function %s 1t replace"
 TAGS = {"pk": "dg.pk", "adv": "dg.adv", "lost": "dg.lost", "next": "dg.next", "warn": "dg.warn",
         "warned": "dg.warned", "away": "dg.away", "npc": "dg.npc", "boss": "dg.boss", "shell": "dg.shell",
         "shell_new": "dg.shell_new", "rip": "dg.rip", "rip_new": "dg.rip_new", "back": "dg.rip_back",
@@ -936,7 +943,8 @@ def functions(doc, blackout=None):
         "execute unless score #runs %s matches -2147483648.. run scoreboard players set #runs %s 0" % (O["run"], O["run"])] + [
         "execute unless score %s %s matches -2147483648.. run scoreboard players set %s %s 0" % (H(s), O["own"], H(s), O["own"])
         for s in sl] + [
-        "schedule function %s %dt replace" % (F("keeper"), P),
+        "# the keeper one tick early: it dispatches its pass to the next tick, so the pass lands period_ticks after a boot",
+        "schedule function %s %dt replace" % (F("keeper"), max(1, P - 1)),
         "schedule function %s %dt replace" % (F("rips/emit"), k["rip_particle_period_ticks"]),
         "schedule function %s %dt replace" % (F("recipes/sync"), k["recipe_sync_period_ticks"]),
         "# hand-run hooks (EXP-084, staging): %s {p:<cp>} sets a member's points taken and its rate; %s {s:<seconds>}"
@@ -945,10 +953,32 @@ def functions(doc, blackout=None):
         "# GREED (tools/dungeon_greed.py): %s credits #gv cp, as a member; mined blocks, chests and catches call it." % F("greed/add")]
 
     # ---- the keeper ------------------------------------------------------------------------------------------
+    # THE CHAIN SPLIT (ENGINE-SCALE, 2026-10-11). maxCommandChainLength (65,536) is a quota per EXECUTION CONTEXT: a
+    # scheduled function, a #tick entry or a command typed opens one, and every command it reaches, through `function`,
+    # `function ... with` and every `execute as` fork, spends from it. One keeper reaching every slot's member pass
+    # was 78,856 commands by static count with four dungeons. So the keeper only counts #up and DISPATCHES the pass:
+    # keeper/head, then slot/s<g>/pass for each live slot (owned, or a player in a run names it), then keeper/end, each
+    # `schedule function ... 1t replace`. The timer queue runs them on the next tick in the order scheduled (trigger
+    # time, then sequence), each in its own context, so one chain is at most one slot's work. The pass's order is the
+    # old keeper's: deaths, the members and their slot's tending, the sweep, the tails and the backstops.
     keeper = [HEAD,
-              "# Every %d ticks (DUNGEONS.md 11.3). Scheduled, so it runs in the overworld: every pocket test carries" % P,
-              "# `in %s` or the dg.pk tag, never a bare box test on @s." % dim,
+              "# Every %d ticks (DUNGEONS.md 11.3): #up, then the pass dispatched to the next tick, each part its own scheduled"
+              % P,
+              "# call and so its own command chain (maxCommandChainLength is per scheduled call; `execute as` and `function`",
+              "# do not start a new one): keeper/head, each live slot's slot/s<g>/pass in slot order, keeper/end",
               "scoreboard players add #up %s %d" % (O["up"], P),
+              DISPATCH % F("keeper/head")]
+    for s in sl:
+        keeper += ["execute if score %s %s matches 1.. run %s" % (H(s), O["own"], DISPATCH % F("slot/s%d/pass" % s["g"])),
+                   "execute unless score %s %s matches 1.. if entity @e[type=minecraft:player,scores={%s=1..,%s=%d}] run %s"
+                   % (H(s), O["own"], O["st"], O["slot"], s["g"], DISPATCH % F("slot/s%d/pass" % s["g"]))]
+    keeper += [DISPATCH % F("keeper/end"),
+               "schedule function %s %dt replace" % (F("keeper"), P)]
+    out["keeper"] = keeper
+
+    head = [HEAD,
+              "# The keeper's pass, first part (scheduled by the keeper). Scheduled, so it runs in the overworld: every pocket",
+              "# test carries `in %s` or the dg.pk tag, never a bare box test on @s." % dim,
               "tag @a remove %s" % T["pk"],
               "execute in %s run tag @a[distance=0..] add %s" % (dim, T["pk"]),
               "# no map in the pocket (the owner, 2026-10-10): Xaero's own effects, refreshed each pass, so leaving ends",
@@ -958,13 +988,23 @@ def functions(doc, blackout=None):
               "# E1); a dead player is in @a, not in @e, so nothing here touches them until they respawn",
               "execute as @e[type=minecraft:player,scores={%s=1..,%s=1..}] at @s run function %s" % (O["dc"], O["st"], F("m/died")),
               "scoreboard players set @e[type=minecraft:player,scores={%s=1..}] %s 0" % (O["dc"], O["dc"]),
-              "# then the living members",
-              "execute as @e[type=minecraft:player,scores={%s=1..}] at @s run function %s" % (O["st"], F("m/member"))]
-    keeper += ["execute if score %s %s matches 1.. run function %s" % (H(s), O["own"], F("slot/s%d/tend" % s["g"])) for s in sl]
+              "# then the living members, slot by slot: slot/s<g>/pass (each its own chain), then keeper/end"]
+    out["keeper/head"] = head
+
+    for s in sl:
+        out["slot/s%d/pass" % s["g"]] = [
+            HEAD, "# Slot %d's part of the keeper's pass (scheduled by the keeper, after keeper/head): its own command chain," % s["g"],
+            "# so it is bounded by this slot's work. Its living members (dg.slot %d), then the slot itself if owned" % s["g"],
+            "execute as @e[type=minecraft:player,scores={%s=1..,%s=%d}] at @s run function %s"
+            % (O["st"], O["slot"], s["g"], F("slot/s%d/member" % s["g"])),
+            "execute if score %s %s matches 1.. run function %s" % (H(s), O["own"], F("slot/s%d/tend" % s["g"]))]
+
+    end = [HEAD, "# The keeper's pass, last part (scheduled by the keeper, after every slot's pass): the sweep, the tails and",
+           "# the backstops. dg.pk is keeper/head's, set this same tick"]
     for di, d in enumerate(ds, 1):
-        keeper.append("execute in %s as @e[type=minecraft:player,%s] at @s run function %s"
-                      % (dim, sel_box(band_box(doc, di)), F("check_%s" % d["short"])))
-    keeper += [
+        end.append("execute in %s as @e[type=minecraft:player,%s] at @s run function %s"
+                   % (dim, sel_box(band_box(doc, di)), F("check_%s" % d["short"])))
+    end += [
         "# E1: the tails, then the backstops over the overworld (never in the pocket)",
         "execute as @e[type=minecraft:player,scores={%s=1..}] run function %s" % (O["tail"], F("m/tail")),
         "execute as @e[type=minecraft:player,tag=%s,tag=!%s] unless score @s %s matches 1.. unless score @s %s matches 1.. "
@@ -972,33 +1012,39 @@ def functions(doc, blackout=None):
         "execute as @e[type=minecraft:player,tag=%s,tag=!%s] unless score @s %s matches 1.. run function %s"
         % (T["adv"], T["pk"], O["st"], F("m/restore")),
         "execute as @e[type=minecraft:player,tag=!%s] unless score @s %s matches 2.. if items entity @s container.* %s "
-        "run clear @s %s" % (T["pk"], O["st"], pick_match(doc), pick_match(doc)),
-        "schedule function %s %dt replace" % (F("keeper"), P)]
-    out["keeper"] = keeper
+        "run clear @s %s" % (T["pk"], O["st"], pick_match(doc), pick_match(doc))]
+    out["keeper/end"] = end
 
     # ---- a member, alive, each pass --------------------------------------------------------------------------
-    member = [HEAD,
-              "# As and at a living player in a run (dg.st 1..4). DUNGEONS.md 2.6: the absence gap and the dead-run check",
-              "# run first, before anything else of the pass.",
-              "scoreboard players set #stop %s 0" % O["t"],
-              "function %s" % F("m/gap")]
-    member += ["execute if score @s %s matches %d unless score @s %s = %s %s run function %s"
-               % (O["slot"], s["g"], O["run"], H(s), O["run"], F("m/void")) for s in sl]
-    member += [
-        "execute if score #stop %s matches 0 if score @s %s matches 3..4 if score #gap %s matches 1.. if score @s %s matches ..0 "
-        "run function %s" % (O["t"], O["st"], O["t"], O["clock"], F("m/void")),
-        "execute if score #stop %s matches 1 run return 0" % O["t"],
-        "scoreboard players operation @s %s = #up %s" % (O["seen"], O["up"]),
-        "execute if score @s %s matches 1 run return run function %s" % (O["st"], F("m/arriving")),
-        "# a member in the entry room or later must stand in their own slot, in the pocket (dg.pk: dimension-safe)",
-        "execute unless entity @s[tag=%s] run return run function %s" % (T["pk"], F("m/left"))]
-    member += ["execute if score @s %s matches %d unless entity @s[%s] run return run function %s"
-               % (O["slot"], s["g"], sel_box(points(doc, s)["box"]), F("m/left")) for s in sl]
-    member += [
-        "execute if score @s %s matches 2 run return run function %s" % (O["st"], F("m/lobby")),
-        "execute if score @s %s matches 3 run function %s" % (O["st"], F("m/clock")),
-        "execute if score @s %s matches 4 run function %s" % (O["st"], F("m/sudden"))]
-    out["m/member"] = member
+    # One copy per slot (slot/s<g>/member and the functions it reaches: void, left, end, arriving, lobby, clock,
+    # deadline, zero, sudden; m/lines_<short> for its dungeon), each naming only its own slot's functions, so
+    # slot/s<g>/pass's chain holds one slot's work, never every slot's. The shared m/end and m/lines stay for the
+    # callers that do not know the slot (m/died in keeper/head, the rips' exits).
+    # Every line keeps its `if score @s dg.slot matches <g>` test: the same text the single shared copy had.
+    def SF(s, name):
+        return F("slot/s%d/%s" % (s["g"], name))
+
+    for s in sl:
+        member = [HEAD,
+                  "# As and at a living player in a run (dg.st 1..4) in slot %d. DUNGEONS.md 2.6: the absence gap and the" % s["g"],
+                  "# dead-run check run first, before anything else of the pass.",
+                  "scoreboard players set #stop %s 0" % O["t"],
+                  "function %s" % F("m/gap"),
+                  "execute if score @s %s matches %d unless score @s %s = %s %s run function %s"
+                  % (O["slot"], s["g"], O["run"], H(s), O["run"], SF(s, "void")),
+                  "execute if score #stop %s matches 0 if score @s %s matches 3..4 if score #gap %s matches 1.. if score @s %s matches ..0 "
+                  "run function %s" % (O["t"], O["st"], O["t"], O["clock"], SF(s, "void")),
+                  "execute if score #stop %s matches 1 run return 0" % O["t"],
+                  "scoreboard players operation @s %s = #up %s" % (O["seen"], O["up"]),
+                  "execute if score @s %s matches 1 run return run function %s" % (O["st"], SF(s, "arriving")),
+                  "# a member in the entry room or later must stand in their own slot, in the pocket (dg.pk: dimension-safe)",
+                  "execute unless entity @s[tag=%s] run return run function %s" % (T["pk"], SF(s, "left")),
+                  "execute if score @s %s matches %d unless entity @s[%s] run return run function %s"
+                  % (O["slot"], s["g"], sel_box(points(doc, s)["box"]), SF(s, "left")),
+                  "execute if score @s %s matches 2 run return run function %s" % (O["st"], SF(s, "lobby")),
+                  "execute if score @s %s matches 3 run function %s" % (O["st"], SF(s, "clock")),
+                  "execute if score @s %s matches 4 run function %s" % (O["st"], SF(s, "sudden"))]
+        out["slot/s%d/member" % s["g"]] = member
 
     out["m/gap"] = [
         HEAD, "# DUNGEONS.md 2.6: the time away, charged at the member's rate. Runs on any entity (a marker, EXP-084).",
@@ -1014,100 +1060,102 @@ def functions(doc, blackout=None):
         "execute if score @s %s matches 1.. run %s" % (O["clock"], actionbar(ds[0]["messages"]["away"], "red")),
         "return 1"]
 
-    out["m/void"] = [
-        HEAD, "# As a member whose run is dead: their slot's run is not theirs (reset or reused while they were away), or",
-        "# their clock is at or below 0 after the gap (2.6). Past the threshold: killed into the blackout. Before it: the",
-        "# run is void, the sigil returned (the threshold refund, 7.4)",
-        "scoreboard players set #stop %s 1" % O["t"],
-        "execute if score @s %s matches 3..4 run return run function %s" % (O["st"], F("m/deadkill")),
-        "function %s" % F("m/refund"),
-        "function %s" % F("m/end"),
-        "execute if entity @s[tag=%s] run function %s" % (T["pk"], F("m/out"))]
+    for s in sl:
+        out["slot/s%d/void" % s["g"]] = [
+            HEAD, "# As a member of slot %d whose run is dead: their slot's run is not theirs (reset or reused while they were" % s["g"],
+            "# away), or their clock is at or below 0 after the gap (2.6). Past the threshold: killed into the blackout.",
+            "# Before it: the run is void, the sigil returned (the threshold refund, 7.4)",
+            "scoreboard players set #stop %s 1" % O["t"],
+            "execute if score @s %s matches 3..4 run return run function %s" % (O["st"], F("m/deadkill")),
+            "function %s" % F("m/refund"),
+            "function %s" % SF(s, "end"),
+            "execute if entity @s[tag=%s] run function %s" % (T["pk"], F("m/out_%s" % s["dungeon"]["short"]))]
     out["m/deadkill"] = [
         HEAD, "# 2.6: the dead-run kill on return, before anything else of the pass; the death handling runs on respawn",
         "scoreboard players set @s %s 4" % O["cause"],
         say(e["death"]["away_line"], "red"),
         "kill @s"]
 
-    # ---- arriving (state 1) ----------------------------------------------------------------------------------
-    arr = [HEAD, "# As a member who has paid and not yet arrived: the arrival delay, counted on them",
-           "scoreboard players remove @s %s %d" % (O["wait"], P),
-           "execute if score @s %s matches 1.. run return 0" % O["wait"]]
-    arr += ["execute if score @s %s matches %d run return run function %s" % (O["slot"], s["g"], F("slot/s%d/arrive" % s["g"]))
-            for s in sl]
-    out["m/arriving"] = arr
-
-    # ---- the entry room (state 2) ----------------------------------------------------------------------------
-    lobby = [HEAD, "# As a member in the entry room: the clock has not started. Their slot holds for entry_hold_ticks of absence"]
-    lobby += ["execute if score @s %s matches %d run scoreboard players operation %s %s = #up %s"
-              % (O["slot"], s["g"], H(s), O["dead"], O["up"]) for s in sl]
-    lobby += ["execute if score @s %s matches %d run scoreboard players add %s %s %d"
-              % (O["slot"], s["g"], H(s), O["dead"], hold) for s in sl]
-    lobby += ["execute store result score @s %s run data get entity @s Pos[0]" % O["x"]]
-    for s in sl:
-        lobby.append("execute if score @s %s matches %d if score @s %s matches %d.. run function %s"
-                     % (O["slot"], s["g"], O["x"], points(doc, s)["threshold_x"], F("slot/s%d/start" % s["g"])))
-    out["m/lobby"] = lobby
-
-    # ---- the clock (state 3) ---------------------------------------------------------------------------------
     U = e["clock"]["units_per_tick"] * 20       # units per second at x1
-    clock = [HEAD, "# As a member whose clock runs (DUNGEONS.md 2.1-2.3): the charge, the titles, zero, the deadline, the",
-             "# return margin, the bar and the boss",
-             "function %s" % F("greed/mined"),
-             "scoreboard players operation #b %s = @s %s" % (O["t"], O["clock"]),
-             "function %s" % F("m/charge")]
-    for secs in e["clock"]["titles_at_s"]:
-        clock.append("execute if score #b %s matches %d.. if score @s %s matches 1..%d run title @s title %s"
-                     % (O["t"], secs * U + 1, O["clock"], secs * U, text("%d:%02d" % (secs // 60, secs % 60), "gold")))
-    clock += [
-        "execute if score @s %s matches ..0 run return run function %s" % (O["clock"], F("m/zero")),
-        "execute if score @s %s matches 1..%d run function %s" % (O["clock"], e["clock"]["countdown_last_s"] * U, F("m/countdown")),
-        "function %s" % F("m/deadline"),
-        "function %s" % F("m/margin"),
-        "function %s" % F("m/digits")]
-    clock += ["execute if score @s %s matches %d run function %s" % (O["slot"], s["g"], F("slot/s%d/bar" % s["g"])) for s in sl]
-    clock += ["execute if score @s %s matches %d run function %s" % (O["slot"], s["g"], F("slot/s%d/rooms" % s["g"]))
-              for s in sl if DR.has_rooms(s["dungeon"])]
-    clock += ["execute if score @s %s matches %d run function %s" % (O["slot"], s["g"], F("slot/s%d/boss" % s["g"])) for s in sl]
-    out["m/clock"] = clock
-
     out["m/charge"] = [
         HEAD, "# One pass of the clock: period x rate quarter-ticks (2.1). Runs on any entity (EXP-084).",
         "scoreboard players operation #d %s = @s %s" % (O["t"], O["rate"]),
         "scoreboard players operation #d %s *= #20 %s" % (O["t"], O["t"]),
         "scoreboard players operation @s %s -= #d %s" % (O["clock"], O["t"]),
         "return 1"]
-    out["m/deadline"] = [
-        HEAD, "# 2.6: the slot's deadline, #up + clock / rate, rewritten every pass the member is present",
-        "scoreboard players operation #dl %s = @s %s" % (O["t"], O["clock"]),
-        "scoreboard players operation #dl %s /= @s %s" % (O["t"], O["rate"]),
-        "scoreboard players operation #dl %s += #up %s" % (O["t"], O["up"])] + [
-        "execute if score @s %s matches %d run scoreboard players operation %s %s = #dl %s"
-        % (O["slot"], s["g"], H(s), O["dead"], O["t"]) for s in sl]
     out["m/countdown"] = [
         HEAD, "# a title for each of the last seconds (2.2)",
         "scoreboard players operation #cs %s = @s %s" % (O["t"], O["clock"]),
         "scoreboard players operation #cs %s /= #80 %s" % (O["t"], O["t"]),
         "scoreboard players add #cs %s 1" % O["t"],
         'title @s title {"score":{"name":"#cs","objective":"%s"},"color":"red"}' % O["t"]]
-    out["m/zero"] = [
-        HEAD, "# The clock reached 0 (2.5): sudden death. Nothing is earned from here; the kill waits for the battle's end",
-        "scoreboard players set @s %s 0" % O["clock"],
-        "scoreboard players set @s %s 4" % O["st"],
-        "title @s title %s" % text(ds[0]["messages"]["closes"], "dark_red"),
-        "playsound minecraft:block.respawn_anchor.deplete master @s ~ ~ ~ 1 0.6",
-        "function %s" % F("m/digits")] + [
-        "execute if score @s %s matches %d run function %s" % (O["slot"], s["g"], F("slot/s%d/bar" % s["g"])) for s in sl] + [
-        "function %s" % F("m/sudden")]
-    out["m/sudden"] = [
-        HEAD, "# 2.5 sudden death: the clock holds at 0, the slot's deadline is now (a logout frees it), and the player is",
-        "# killed the first pass q.player.in_battle reads 0. runmolang's nested command is queued (EXP-022), so the",
-        "# kill is its own function, which checks again",
-        "scoreboard players set @s %s 0" % O["clock"]] + [
-        "execute if score @s %s matches %d run scoreboard players operation %s %s = #up %s"
-        % (O["slot"], s["g"], H(s), O["dead"], O["up"]) for s in sl] + [
-        "runmolang \"(q.player.in_battle == 0) ? { q.run_command('execute as ' + q.player.uuid + ' at @s run function "
-        "%s'); };\" @s" % F("m/timeout")]
+    for s in sl:
+        g = s["g"]
+        # ---- arriving (state 1) ------------------------------------------------------------------------------
+        out["slot/s%d/arriving" % g] = [
+            HEAD, "# As a member of slot %d who has paid and not yet arrived: the arrival delay, counted on them" % g,
+            "scoreboard players remove @s %s %d" % (O["wait"], P),
+            "execute if score @s %s matches 1.. run return 0" % O["wait"],
+            "execute if score @s %s matches %d run return run function %s" % (O["slot"], g, SF(s, "arrive"))]
+
+        # ---- the entry room (state 2) ------------------------------------------------------------------------
+        out["slot/s%d/lobby" % g] = [
+            HEAD, "# As a member in slot %d's entry room: the clock has not started. The slot holds for entry_hold_ticks of" % g,
+            "# absence",
+            "execute if score @s %s matches %d run scoreboard players operation %s %s = #up %s"
+            % (O["slot"], g, H(s), O["dead"], O["up"]),
+            "execute if score @s %s matches %d run scoreboard players add %s %s %d" % (O["slot"], g, H(s), O["dead"], hold),
+            "execute store result score @s %s run data get entity @s Pos[0]" % O["x"],
+            "execute if score @s %s matches %d if score @s %s matches %d.. run function %s"
+            % (O["slot"], g, O["x"], points(doc, s)["threshold_x"], SF(s, "start"))]
+
+        # ---- the clock (state 3) -----------------------------------------------------------------------------
+        clock = [HEAD, "# As slot %d's member whose clock runs (DUNGEONS.md 2.1-2.3): the charge, the titles, zero, the" % g,
+                 "# deadline, the return margin, the bar, the rooms and the boss",
+                 "function %s" % F("greed/mined"),
+                 "scoreboard players operation #b %s = @s %s" % (O["t"], O["clock"]),
+                 "function %s" % F("m/charge")]
+        for secs in e["clock"]["titles_at_s"]:
+            clock.append("execute if score #b %s matches %d.. if score @s %s matches 1..%d run title @s title %s"
+                         % (O["t"], secs * U + 1, O["clock"], secs * U, text("%d:%02d" % (secs // 60, secs % 60), "gold")))
+        clock += [
+            "execute if score @s %s matches ..0 run return run function %s" % (O["clock"], SF(s, "zero")),
+            "execute if score @s %s matches 1..%d run function %s" % (O["clock"], e["clock"]["countdown_last_s"] * U, F("m/countdown")),
+            "function %s" % SF(s, "deadline"),
+            "function %s" % F("m/margin"),
+            "function %s" % F("m/digits"),
+            "execute if score @s %s matches %d run function %s" % (O["slot"], g, SF(s, "bar"))]
+        if DR.has_rooms(s["dungeon"]):
+            clock.append("execute if score @s %s matches %d run function %s" % (O["slot"], g, SF(s, "rooms")))
+        clock.append("execute if score @s %s matches %d run function %s" % (O["slot"], g, SF(s, "boss")))
+        out["slot/s%d/clock" % g] = clock
+
+        out["slot/s%d/deadline" % g] = [
+            HEAD, "# 2.6: slot %d's deadline, #up + clock / rate, rewritten every pass the member is present" % g,
+            "scoreboard players operation #dl %s = @s %s" % (O["t"], O["clock"]),
+            "scoreboard players operation #dl %s /= @s %s" % (O["t"], O["rate"]),
+            "scoreboard players operation #dl %s += #up %s" % (O["t"], O["up"]),
+            "execute if score @s %s matches %d run scoreboard players operation %s %s = #dl %s"
+            % (O["slot"], g, H(s), O["dead"], O["t"])]
+        out["slot/s%d/zero" % g] = [
+            HEAD, "# Slot %d's member's clock reached 0 (2.5): sudden death. Nothing is earned from here; the kill waits for" % g,
+            "# the battle's end",
+            "scoreboard players set @s %s 0" % O["clock"],
+            "scoreboard players set @s %s 4" % O["st"],
+            "title @s title %s" % text(ds[0]["messages"]["closes"], "dark_red"),
+            "playsound minecraft:block.respawn_anchor.deplete master @s ~ ~ ~ 1 0.6",
+            "function %s" % F("m/digits"),
+            "execute if score @s %s matches %d run function %s" % (O["slot"], g, SF(s, "bar")),
+            "function %s" % SF(s, "sudden")]
+        out["slot/s%d/sudden" % g] = [
+            HEAD, "# 2.5 sudden death in slot %d: the clock holds at 0, the slot's deadline is now (a logout frees it), and" % g,
+            "# the player is killed the first pass q.player.in_battle reads 0. runmolang's nested command is queued",
+            "# (EXP-022), so the kill is its own function, which checks again",
+            "scoreboard players set @s %s 0" % O["clock"],
+            "execute if score @s %s matches %d run scoreboard players operation %s %s = #up %s"
+            % (O["slot"], g, H(s), O["dead"], O["up"]),
+            "runmolang \"(q.player.in_battle == 0) ? { q.run_command('execute as ' + q.player.uuid + ' at @s run function "
+            "%s'); };\" @s" % F("m/timeout")]
     out["m/timeout"] = [
         HEAD, "# As a member at 0 and out of battle. E1 rule 6: a clawback still measuring (dg.claw) runs to completion",
         "# first; the next pass asks again. The kill is `kill`, which goes through a totem (B2, EXP-071)",
@@ -1194,14 +1242,20 @@ def functions(doc, blackout=None):
     died += ["function %s" % F("m/lines"), "function %s" % F("m/end")]
     out["m/died"] = died
 
-    lines = [HEAD, "# DUNGEONS.md 2.5's chat lines, in order"]
     ch = e["death"]["chat"]
-    lines += [say(ch[0], "green"), say(ch[1], "gray"),
-              "execute if score @s %s matches 1.. run %s" % (O["esc"], say("Lost with the run: what it had earned.", "gray")),
-              "execute unless score @s %s matches 1.. run %s" % (O["esc"], say("The run had earned nothing yet.", "gray")),
-              say(ch[2], "gray")]
-    for di, d in enumerate(ds, 1):
-        lines += ["# the lockout left: lockout + the threshold stamp - #up (0 if they never crossed it)",
+
+    def lines_for(which):
+        lines = [HEAD, "# DUNGEONS.md 2.5's chat lines, in order"]
+        lines += [say(ch[0], "green"), say(ch[1], "gray"),
+                  "execute if score @s %s matches 1.. run %s" % (O["esc"], say("Lost with the run: what it had earned.", "gray")),
+                  "execute unless score @s %s matches 1.. run %s" % (O["esc"], say("The run had earned nothing yet.", "gray")),
+                  say(ch[2], "gray")]
+        for di, d in which:
+            lines += lockout_lines(di, d)
+        return lines
+
+    def lockout_lines(di, d):
+        lines = ["# the lockout left: lockout + the threshold stamp - #up (0 if they never crossed it)",
                   "scoreboard players set #rem %s 0" % O["t"],
                   "execute if score @s %s matches -2147483648.. run scoreboard players set #rem %s %d" % (lk_obj(d), O["t"], lockout_of(doc, d)),
                   "execute if score @s %s matches -2147483648.. run scoreboard players operation #rem %s += @s %s"
@@ -1217,39 +1271,51 @@ def functions(doc, blackout=None):
                              ["", {"text": "%s opens to you again in about " % d["name"], "color": "gray"},
                               {"score": {"name": "#rem", "objective": O["t"]}, "color": "gold"},
                               {"text": " minutes, for another %s." % x["name"], "color": "gray"}], ensure_ascii=False)))
-    out["m/lines"] = lines
+        return lines
+    out["m/lines"] = lines_for(list(enumerate(ds, 1)))
+    for di, d in enumerate(ds, 1):
+        # a slot's member pass reads its own dungeon's lockout only (slot/s<g>/left), so its chain holds no other's
+        out["m/lines_%s" % d["short"]] = lines_for([(di, d)])
 
-    out["m/left"] = [
-        HEAD, "# As a member who is alive and online but not standing in their own slot in the pocket: the blackout's",
-        "# return after a loss (dg.lost from the victory callback), or anything else that moved them. The run ends",
-        "# with the death rule's costs (2.5); the blackout has charged for a loss. No kill",
-        "execute if entity @s[tag=%s] run scoreboard players set @s %s 2" % (T["lost"], O["cause"]),
-        "execute unless score @s %s matches 1.. run scoreboard players set @s %s 3" % (O["cause"], O["cause"])] + [
-        "execute if score @s %s matches %s run title @s title %s" % (O["cause"], c, text(tt["title"], "dark_red"))
-        for c, tt in sorted(titles.items()) if c in ("2", "3")] + [
-        "function %s" % F("m/lines"),
-        "function %s" % F("m/end"),
-        "execute if entity @s[tag=%s] run function %s" % (T["pk"], F("m/out"))]
+    for s in sl:
+        out["slot/s%d/left" % s["g"]] = [
+            HEAD, "# As a member of slot %d who is alive and online but not standing in their own slot in the pocket: the" % s["g"],
+            "# blackout's return after a loss (dg.lost from the victory callback), or anything else that moved them. The run",
+            "# ends with the death rule's costs (2.5); the blackout has charged for a loss. No kill",
+            "execute if entity @s[tag=%s] run scoreboard players set @s %s 2" % (T["lost"], O["cause"]),
+            "execute unless score @s %s matches 1.. run scoreboard players set @s %s 3" % (O["cause"], O["cause"])] + [
+            "execute if score @s %s matches %s run title @s title %s" % (O["cause"], c, text(tt["title"], "dark_red"))
+            for c, tt in sorted(titles.items()) if c in ("2", "3")] + [
+            "function %s" % F("m/lines_%s" % s["dungeon"]["short"]),
+            "function %s" % SF(s, "end"),
+            "execute if entity @s[tag=%s] run function %s" % (T["pk"], F("m/out_%s" % s["dungeon"]["short"]))]
 
-    end = [HEAD, "# EVERY way out of a run ends here (V13, E1): escrow cleared (a clean exit has paid first), survival if WE set",
-           "# adventure, the pick taken by its component, the slot freed if it is still this run's (its bar with it), and",
-           "# the run tag's TAIL started. The tag itself is never removed here: only %s does, at the tail's end" % TAIL_END,
-           "scoreboard players set @s %s 0" % O["esc"],
-           "execute if entity @s[tag=%s] run gamemode survival @s" % T["adv"],
-           "tag @s remove %s" % T["adv"],
-           "clear @s %s" % pick_match(doc)]
-    end += ["execute if score @s %s matches %d if score @s %s = %s %s run function %s"
-            % (O["slot"], s["g"], O["run"], H(s), O["run"], F("slot/s%d/free" % s["g"])) for s in sl]
-    end += ["tag @s remove %s" % t for t in (T["lost"], T["next"], T["warn"], T["warned"])] + [
-        "scoreboard players set @s %s 0" % O["st"],
-        "scoreboard players set @s %s 0" % O["slot"],
-        "scoreboard players set @s %s 0" % O["cause"],
-        "scoreboard players set @s %s 0" % O["stage"],
-        "scoreboard players set @s %s 0" % O["bgo"],
-        "scoreboard players set @s %s 0" % O["bw"],
-        "# E1 rule 3: at least tail_ticks (%d) of tail, counted %d a pass from the next pass" % (TAIL, P),
-        "scoreboard players set @s %s %d" % (O["tail"], tail_start)]
-    out["m/end"] = end
+    def end_lines(which, note):
+        end = [HEAD, "# EVERY way out of a run ends here or in a slot's own copy (V13, E1): escrow cleared (a clean exit has paid",
+               "# first), survival if WE set adventure, the pick taken by its component, the slot freed if it is still this",
+               "# run's (its bar with it), and the run tag's TAIL started. The tag itself is never removed here: only %s does,"
+               % TAIL_END, "# at the tail's end. %s" % note,
+               "scoreboard players set @s %s 0" % O["esc"],
+               "execute if entity @s[tag=%s] run gamemode survival @s" % T["adv"],
+               "tag @s remove %s" % T["adv"],
+               "clear @s %s" % pick_match(doc)]
+        end += ["execute if score @s %s matches %d if score @s %s = %s %s run function %s"
+                % (O["slot"], s["g"], O["run"], H(s), O["run"], F("slot/s%d/free" % s["g"])) for s in which]
+        end += ["tag @s remove %s" % t for t in (T["lost"], T["next"], T["warn"], T["warned"])] + [
+            "scoreboard players set @s %s 0" % O["st"],
+            "scoreboard players set @s %s 0" % O["slot"],
+            "scoreboard players set @s %s 0" % O["cause"],
+            "scoreboard players set @s %s 0" % O["stage"],
+            "scoreboard players set @s %s 0" % O["bgo"],
+            "scoreboard players set @s %s 0" % O["bw"],
+            "# E1 rule 3: at least tail_ticks (%d) of tail, counted %d a pass from the next pass" % (TAIL, P),
+            "scoreboard players set @s %s %d" % (O["tail"], tail_start)]
+        return end
+    out["m/end"] = end_lines(sl, "Any slot's member (a death, a rip): every slot's free behind its own test")
+    for s in sl:
+        # the member pass's copy: only this slot's free, so slot/s<g>/pass never reaches another slot's work
+        out["slot/s%d/end" % s["g"]] = end_lines([s], "Slot %d's copy, for its member pass (slot/s%d/void, left)"
+                                                 % (s["g"], s["g"]))
 
     tail = [HEAD, "# E1: the tail. At its end, OUTSIDE the pocket, the blackout's tail end runs as the player: it removes the",
             "# run tag and delivers any claim held while they were in the run. In the pocket it waits (in a slot band,",
@@ -1534,7 +1600,7 @@ def functions(doc, blackout=None):
             "scoreboard players set %s %s 0" % (S, O["own"]),
             "scoreboard players set %s %s 0" % (S, O["bdone"]),
             "# the slot forgets its run id (no run is numbered 0: #runs counts from 1), so a member who was away when it",
-            "# freed matches nothing on return and m/member voids the run (data/dungeons.json absence; the audit's finding)",
+            "# freed matches nothing on return and slot/s<g>/member voids the run (data/dungeons.json absence; the audit's finding)",
             "scoreboard players set %s %s 0" % (S, O["run"]),
             "bossbar set %s players" % BAR,
             "bossbar remove %s" % BAR,
