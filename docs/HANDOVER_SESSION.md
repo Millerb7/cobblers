@@ -1,106 +1,54 @@
-# Handover: session ce7100f5, the night of 2026-10-08/09
+# Handover: session ce7100f5, ending 2026-10-11 (the owner: "hand over now")
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts. The owner's report:
-`docs/MORNING_REPORT_2026-10-09-NIGHT.md` (its section 5 is tonight's review list).
+`docs/MORNING_REPORT_2026-10-11.md`; the owner's decisions on it are in STATE ("Dungeons, the owner 2026-10-11").
 
-## 1. The branches
-- **`claude/night-shift-engine-gym-9b76f2`** (this worktree), on main `43efdad` + #131 (`8df1ca3`, docs, still an open PR:
-  merge #131 first or let this branch carry it). Holds: EXP-059 parked, E1, the probe pack and its results, the
-  engine core, the eight gym arenas, the audits and their fixes, the designs, STATE and this handover. Re-read the head
-  before quoting it (`git rev-parse HEAD`). **No PR opened yet**: one draft PR for the batch is the next step
-  (memory: one big PR per batch).
-- **The world brief, MERGED into this branch (the merges and fixes are its last commits); the agent branches it came from** (`worktree-agent-<id>`, each one commit or two on `0b3a8b2`/
-  `1bcb087`): swamp nest a775e90e671b31012 `3af7466`; Drowned Quarry ac7dfdcff287b1624 `bd39246`; Tilpey spawns
-  a033d07c5517417a9 `a9aa8f5`; Fungal Isle ac9d376819faa18f3 `f2f4ea4`; Sundown Watch ab7d2c93d44329266 `49a3580`;
-  Wardenhold af825b9f9e7b000df `5a52d69`; ice lodge a54e72cf1167a8edc `7a669dc`; economy sim a8fe0288bd86a9c7f
-  `36cb6bd`; Crownbreaker aac996cb89c97f615 `1e99d60`; Undertow a6f9e8dcc018e1c00 `aaa9a82`; Gull Rock
-  a6574158502118a45 `01f9b13`; Route 5 a7b3215c5d44b18d7 `2c90346`; Route 4 aef58650877204df6 `2a48d77`; the C3 place
-  a81e02708207b16e7 `7344e73`. Audits: water a11b8677bd0e5af4f `9052c96`, land afb9e845577a94967 `70c6cf5`, both merged.
+## 1. Branch
+`build/2026-10-09-dungeon-playtest` in worktree `.claude/worktrees/night-shift-engine-gym-9b76f2`, LOCAL ONLY (never
+pushed since d77fd0d; no PR covers it). Re-read the head (`git rev-parse HEAD`); at hand-over it is the commit after
+a44f8d9 that adds this file and STATE. One big draft PR for the batch is owed (memory: one big PR per batch).
 
-## 2. Where it stopped
-- **Staging RUNNING for the owner**, 12G, watchdog 60000, Terminal panel tab "staging server". Lock released.
-  Installed from prepare 203/203 at `0b3a8b2`; R16GA, R16DG, R16DR applied (0 problems), restarted, read back (8 of 8
-  arena spawners; presence extra 386/393). The world brief is NOT installed.
-- **Next, as commands:** the world brief is merged, validated (0 errors, 0 faults) and audited (except the Long Count);
-  decide Gull Rock's wake with the owner; then prepare, install (hold the bank: copy `config/cobbledollars/bank.json` before,
-  restore after), boot with `max-tick-time=-1`, `run --only <the new steps> --no-reload`, restore 60000, restart, read back.
-  New steps: R9HM R18HM (swamp), R18DQ (quarry), R9FI (fungal), R9SW R18SW (sunset), R9FK (keep), R18IL (lodge),
-  R9TP (Crownbreaker), R9BD R18BD (Undertow), R9RK R18RK (Gull Rock), R9LC R18LC + R9F (the Long Count), R12R5 (Route 5),
-  R12R4 (Route 4), then R17.
+## 2. Where it stopped, as commands
+- **Still running when this session ended:** the integrator MEGA-INTEGRATE, branch `worktree-agent-a957ab31010595219`
+  (last commit cc37ff3 at hand-over; 10 dungeon branches merged there, per-dungeon vault budgets, padded clocks back to
+  derived, shared tests fixed; it was in its final test chunks). Its report goes to the dead session: read its branch
+  instead. When it has stopped (`git log` shows no new commits for a while, or its worktree has no running pytest):
+  `git merge --no-edit worktree-agent-a957ab31010595219` here, then `python tools/validate_data.py`, `python tools/id_authorship.py`,
+  `python tools/dungeon_audit.py`, `python tools/dungeon_independent_audit.py` (full, ~2+ min with 14 dungeons).
+- **Zero Dig:** the owner: "re-author it as its own dungeon or cut it" and "NOTHING ELSE GETS AUTHORED until I have
+  played at least three". So CUT it from this install: remove the `zero_dig` record (and its rip, its roster status, its
+  test file and §7 row), keep the history in git; re-authoring waits for the owner's play.
+- **Compact framing:** the owner: NOT evil, heroes to themselves, throughout. Grep the new docs and data for "evil"
+  (DUNGEON_PASS2.md's overnight section quotes "evil faction"; HAVEN_COMPACT_PASS.md O1) and reframe; the built points
+  already follow ARC rules 3-5.
+- **Then build and install** (staging; the owner may be on it: ask before stopping): lock, `reapply.py prepare`
+  (~50 min), stop, hold `config/cobbledollars/bank.json`, `install --cobbleverse-dp C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/datapacks/COBBLEVERSE-DP-v31.zip`,
+  restore the bank, `max-tick-time=-1`, boot at 12G in the terminal panel, `run --only R16DG,R16DR,R9ST,R18CP,R17N,R17 --no-reload`
+  (dungeon shells and rips; the Scar Tarn; the Compact core points; the Compact route NPCs and seated trainers: confirm
+  the step ids with `python tools/reapply.py prepare --list` and `steps()`), watchdog 60000, restart, check the process
+  twice, release the lock.
+- **Tell the owner which three to play first** (recommendation): **the Street** (city; its bands 1-3 rare pool means the
+  prize shows at the owner's playtest band; rooftops over the street it walked), **the Patriarch** (great tree; rare pool
+  1-3 and legendaries from 4; a 40-block descent back under the first fork), **Ash Bell** (nether wastes; the first new
+  dungeon through the engine-scale fix). Set the playtest band with `scoreboard players set <player> dg.ptband <n>`
+  (tag `cobblers.dg_playtest`). Rips for the new dungeons are on the test trail by the old mine, x1420-1680 z~4118.
 
 ## 3. Waiting on the owner
-- The probes' owner halves (report section 2) and EXP-084's 15 owner steps; XT1 decides the clocks.
-- **Q20** (the Night Shift's free first run) and **Q23** (ungated sigil recipes): still no alternative given.
-- The review list's owner choices (report section 5, items 6, 7 and 9); the catch design's Q-C1 and Q-C6; dungeons 2
-  and 3's S-Q1..5 and P-Q1..5.
-- Carried: the stale steps and the chunk-race steps from the previous handover; EXP-061/062/064-068 in game.
+- **The draw design (report before any rework):** dungeons are not tied to biomes; progression gates the draw. Propose:
+  what decides the band (progression vs sigil; the owner leans progression), which dungeons can be drawn per band,
+  rotation per band, two players at one rip (own instance, own band: confirm in tools/dungeon.py slot assignment), where
+  rips go. Design only, one agent at most, on the owner's go.
+- Open from the report: Eternatus, Koraidon/Miraidon, Lugia/Registeel, Cistern/Temple Calendar, switching off old wild
+  spawns, the Scar Tarn's respawning over-cap alphas, Giratina, bands 5-6 tuning, Compact O2-O10.
 
 ## 4. Do not rediscover
-- **Never `datapack enable` on staging**: it is a full reload and OOMs this build at 16G (2026-10-09). Copy a pack in
-  with the server stopped and boot.
-- A pack must be in `SERVER_PACKS` (or the spawn packs) to be installed; `WORLD_LOCAL` alone is not enough (guard test
-  `tests/test_install_check.py::test_every_world_local_pack_is_in_an_install_list`).
-- Prepare refuses a build whose jobs predate the last change to `data/` or `tools/`: `--from` after an edit does not
-  complete it; run it whole. `COBBLERS_SERVER_ROOT` must be set or `sea_drift_audit` fails.
-- `reapply.py run` refuses while `max-tick-time` is not -1.
-- RCON replies are cut at 4096 bytes; `datapack list` cannot be read whole. `datapack list available` lists ALL packs.
-- MobsBeGone deletes every summoned vanilla mob except villagers and wandering traders.
-- A predicate against a crafted sigil must use the byte form `{cobblers_dg_sigil:1b}`.
-- Concrete (and possibly concrete powder: unresolved) is a spawn-condition block contract C4 refuses in built packs.
-- Summoning in the same RCON burst as a `forceload add` finds nothing (N155): wait a moment.
-- Agents briefed with a path in this session's scratchpad wrote their own scripts there once and were refused
-  ("Modify Shared Resources"): brief them to keep scratch inside their worktree.
-- `derived/` for a new worktree: robocopy from `session-handover-decisions-de63f6` (done here).
+- The keeper's chain: one scheduled pass per live slot (tools/dungeon.py DISPATCH); a re-joined chain makes the audit's
+  LIMIT fire (tested). Never `datapack enable` on staging (OOM). A pack must be in SERVER_PACKS to install.
+- The vault budget: per dungeon from its own clock (MEGA-INTEGRATE); before that, authors padded clocks.
+- 29 prize species need the AllTheMons subset (`model_gate`); no required prize may depend on it.
+- Cost rules (memory: fanout-model-and-width-limits): authors on Sonnet, Opus for audits/design, max three
+  unattended agents, play before building.
 
 ## 5. Cost
-`python tools/session_cost.py` at the handover: this session **18.9M** weighted over 412 turns (context 687k: far over
-the line; a cold session must start fresh); agents **107.0M** against about 100M estimated before spawning. Over
-estimate: the arena pilot (10.4M vs 5M), Fungal Isle (6.6 vs 4), the C7 rookery (5.3 vs 4), Route 5 (5.2 vs 4),
-Route 4 (7.2 vs 4), the Long Count (6.2+ vs 4). Under: the seven arena authors (7.1M vs 18M), E1 (0.9 vs 2.6), the
-challenge tests (1.1 vs 2.6).
-
-## 6. The PR
-[#132](https://github.com/Millerb7/cobblers/pull/132), draft, `claude/night-shift-engine-gym-9b76f2` -> main, FROZEN
-once reported: further work goes on a new branch. Re-read its head before quoting (`gh pr view 132 --json headRefOid`).
-
-## 7. After the handover (the owner, 2026-10-09 morning, playing staging)
-- **The rip's look: the owner chose the Cobblemon Ultra Beasts wormhole** (https://www.curseforge.com/minecraft/mc-mods/cobblemon-ultra-beasts: a pink cloud ring round a blue centre, an oval). NOT installed. Next: read its jar and licence (`dependency-auditor`): can its portal be placed by command without its timer and dimension, and may its texture ship in our client pack? If either is no, draw our own oval in that style as an animated texture on a display entity at the rip.
-- **Playtest switch** (branch `build/2026-10-09-dungeon-playtest`, stacked on #132): a player tagged `cobblers.dg_playtest` skips the rip's over-cap refusal and runs at band `dg.ptband` (1-6). Staging only, set by hand. The owner wanted a level-100 team against band 1. The band otherwise follows the level cap, and a cap of 100 (the Champion flag) means band 6, so the band-1 sigil was refused.
-- **Wooper Creek spawns PALDEAN Wooper (the owner, 2026-10-09 morning).** This reverses the 2026-10-04 wrong-country
-  sweep, which took `wooper paldean` out of the creek's hand-authored waterway entries in `data/spawns.json`. Its note
-  is in `data/waterways.json` (the Wooper creek): in the 1.8.0 jar Paldean Wooper is native only to savanna, arid and mud
-  biomes, and `tools/spawn_habitat_audit.py` KNOWN carries the removal. The aspect is `paldean` (jar
-  `species/generation2/wooper.json`, form Paldea), written `wooper paldean` as `sandshrew alolan` is. To do: restore
-  it on the creek's entries, mark the audit's misfit as the owner's decision (not KNOWN-removed), compile, prepare,
-  install. Not done this session.
-- **And Clodsire on Wooper Creek (the owner, 2026-10-09 morning)**, the Paldean line's evolution, as a creek spawn at the
-  creek's level band. Hummock Mere's Clodsire (L52, the named swamp nest, merged and not installed) stays as it is: one
-  is a resident, the other the line's wild adult.
-- **Staging is STOPPED (the owner, 2026-10-09 09:23: "shut down server and prep it for next test ... don't start the
-  server yet").** Stopped cleanly with RCON (`save-all flush`, `stop`), java gone, port free, lock released. Watchdog
-  60000. The world holds tonight's install plus the playtest dungeons pack (`build/2026-10-09-dungeon-playtest`), which
-  loads at the next boot. Boot it when the owner asks, at 12G, in the terminal panel. Then, over RCON or in game,
-  `tag <player> add cobblers.dg_playtest` and `scoreboard players set <player> dg.ptband 1` give a level-100 team the
-  band-1 run, with the band-1 sigil (`miner_pottery_sherd` with `cobblers_dg_sigil:1b`).
-
-## 8. The next job: the gyms rebuilt as one walk-through building (the owner, 2026-10-09, after playing them)
-In substance: **"the fight areas are way better but getting to them sucks."** A gym should be **a single building the
-player walks through to the boss**, with a mini puzzle on the way and engaged fights (the juniors). Not "climb up and
-around, then go down five flights of stairs to a room I can't leave". **The arena rooms' vibes were good: expand from
-them, and fold the old building's puzzle into the one building.**
-- **A defect from play: "a room I can't leave from".** The independent audit (`tools/gym_arenas_audit.py`) found every
-  arena walkable down AND back up, so play and the walk model disagree. Find out which gym and why (a stair a client
-  cannot climb, a door that does not open from inside, the descent not readable as a way out) before the rebuild
-  repeats it.
-- **What carries over:** each arena's room, its leader seat and Battle Positions (`data/gym_arenas/`), the size rules
-  and the measured team sizes (`docs/world-building/GYM_ARENAS.md`), the moved spawners and the Challenge cells
-  (`data/challenge_mode.json`), the juniors (`data/gym_junior_trainers.json`) and each building's puzzle beats
-  (`data/gym_buildings/<gym>.json` `route`, `rooms`; Misty's in `data/gym_interiors.json`).
-- **What changes:** the building is the approach. Entrance, then puzzle rooms with juniors, then the arena as the last
-  room, on one level or a gentle grade. No long descent. The exit is the way you came, or a door past the leader. Fixed
-  lots still bind (STATE "Gyms"); Misty's is the one donor template. The rest are ours, so the building above ground
-  may itself be rebuilt.
-- **Cost (an estimate, not a measurement):** one design pass over all eight, keeping each leader's civic role
-  (`content-architect`, about 2M); the shared tool's change from carve-below to walk-through (one builder, about 4M,
-  the arena pilot's shape); eight per-gym builders (about 2.6M each, about 21M); an independent audit including
-  "can a client leave every room" (about 3M). About 30M. Say so to the owner and get approval before spawning.
+`python tools/session_cost.py`: this session 82.6M+ weighted over 1,320+ turns, context 925k at the end (far past the
+line); agents 422.4M in all, about 223M of it on the night of 2026-10-11 against an estimate of 40-60M.
