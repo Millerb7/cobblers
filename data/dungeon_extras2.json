@@ -59,7 +59,8 @@
     "vendor": {
       "mine": {"name": "Marn, egg-wife", "why": "a pit-wife who keeps a clutch under the lamp"},
       "jungle": {"name": "Ilo, nest-keeper", "why": "a nest-keeper of the canopy"},
-      "flooded_ruin": {"name": "Sef, tide-warden", "why": "a tide-warden with a basket of dry eggs"}
+      "flooded_ruin": {"name": "Sef, tide-warden", "why": "a tide-warden with a basket of dry eggs"},
+      "crimson_forest": {"name": "Nell, cocoon-keeper", "why": "the Moth Cathedral's cocoon-keeper (NEW-MOTH, 2026-10-11), who sells a clutch kept warm by the lamps"}
     },
     "skin": "cobblemon:standard",
     "intro": "One egg a run. It hatches while you walk.",

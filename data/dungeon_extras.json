@@ -10,7 +10,8 @@
     "clue_header": {
       "mine": "PAY SLIP",
       "jungle": "BARK CARVING",
-      "flooded_ruin": "TABLET"
+      "flooded_ruin": "TABLET",
+      "crimson_forest": "WAX SEAL"
     },
     "messages": {
       "hint": "A code lock. The digits are written elsewhere.",

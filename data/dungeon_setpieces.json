@@ -52,6 +52,16 @@
     },
     "jungle": {
       "sheet": "minecraft:moss_block"
+    },
+    "crimson_forest": {
+      "sheet": "minecraft:nether_wart_block",
+      "trunk": "minecraft:crimson_stem[axis=y]",
+      "floor_plant": "minecraft:crimson_roots",
+      "floor_plant2": "minecraft:nether_sprouts",
+      "carpet": "minecraft:red_carpet",
+      "sound_close": "minecraft:block.shroomlight.break",
+      "sound_ambient": "minecraft:ambient.crimson_forest.mood",
+      "particle": "minecraft:crimson_spore"
     }
   }
 }
