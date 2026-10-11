@@ -81,9 +81,12 @@ def test_the_engine_and_the_room_kit_find_no_problem_with_it_in_any_variant():
 def test_the_clock_is_about_32_minutes_required_at_band_one_and_the_authored_clock_covers_the_formula(walks):
     want = DC.derive(DOC, MC)
     own = MC["clock_s_by_band"]
+    others = [d["clock_s_by_band"] for d in DOC["dungeons"] if d is not MC and d.get("clock_s_by_band")]
     for b, s in want.items():
-        # the formula plus the set piece's 25 s allowance, and band 4 a minute more for the shared vault budget (clock_why)
-        assert s <= own[b] <= s + 120, (b, own[b], s)
+        # the formula plus the set piece's 25 s allowance; never the shortest dungeon where that alone would cut the shared
+        # vault budget (band 4 stands at the others' shortest clock: clock_why)
+        assert s <= own[b] <= max(s + 120, min(o[b] for o in others)), (b, own[b], s)
+        assert own[b] >= min(o[b] for o in others) or b != "4", "band 4 must not shorten the vault budget"
     req1 = max(sum(DC.required(DOC, MC, 1, DC.clock_rooms(DOC, MC, 1, w)).values()) for w in walks.values())
     assert 30 * 60 <= req1 <= 34 * 60, req1 / 60
     assert 38 * 60 <= own["1"] <= 42 * 60
