@@ -773,12 +773,7 @@ def check(doc, d, slot):
         if pool_species_key(r, d) not in fishing_cfg()["species"]:
             bad.append("%s room %s: params.species %r is not a table of fishing.species" % (d["id"], r["id"], pool_species_key(r, d)))
     markers = set(fishing_cfg()["markers"][k] for k in fishing_cfg()["markers"] if k.isdigit())
-    # the fossil bay's blocks are reserved where the dungeon's rift pick can break them: calcite everywhere, and the dig
-    # block of THIS dungeon's theme (pick_extra: the pick breaks its own theme's dig block only). Until MEGA-INTEGRATE every
-    # theme's dig block was reserved in every dungeon, so the soul valley's brown terracotta (NEW-OSSUARY) refused every
-    # room of the Zero Dig, whose desert hull is built of it and whose pick never breaks it.
-    dig = fossil_cfg()["dig"].get(d.get("theme"))
-    own = {"fishing_room": markers, "fossil_chamber": {fossil_cfg()["block"]} | ({dig} if dig else set())}
+    own = {"fishing_room": markers, "fossil_chamber": {fossil_cfg()["block"]} | set(fossil_cfg()["dig"].values())}
     for b in R.slot_build(doc, d, slot):
         r = b.room
         lab = "%s room %s (%s)" % (d["id"], r["id"], r["kind"])

@@ -411,11 +411,6 @@
       "why": "a secret's face: a wall the pick opens, not a valuable (0); blue ice drops nothing without silk touch",
       "cp": 0
     },
-    "minecraft:brown_terracotta": {
-      "drops": {},
-      "why": "NEW-OSSUARY: the soul valley's fossil bay dig block (data/dungeon_extras2.json fossils.dig): a wall the pick opens to reach the fossil, not a valuable (0) NEW-CRUCIBLE: the basalt delta's fossil bay dig block (data/dungeon_extras2.json fossils.dig.basalt_deltas), as terracotta's: not a valuable (0)",
-      "cp": 0
-    },
     "minecraft:calcite": {
       "drops": {
         "cobblemon:helix_fossil": 1
@@ -574,6 +569,11 @@
       },
       "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe): 4-9",
       "cp": 26
+    },
+    "minecraft:light_gray_terracotta": {
+      "drops": {},
+      "why": "the soul valley's and the basalt delta's fossil bay dig block (data/dungeon_extras2.json fossils.dig): a wall the pick opens to reach the fossil, not a valuable (0). MEGA-INTEGRATE: light gray terracotta, not the brown that NEW-OSSUARY and NEW-CRUCIBLE chose, which the desert_excavation theme's hull is built of (a dig block is used by no theme). NEW-OSSUARY: the soul valley's fossil bay dig block (data/dungeon_extras2.json fossils.dig): a wall the pick opens to reach the fossil, not a valuable (0) NEW-CRUCIBLE: the basalt delta's fossil bay dig block (data/dungeon_extras2.json fossils.dig.basalt_deltas), as terracotta's: not a valuable (0)",
+      "cp": 0
     },
     "minecraft:melon": {
       "drops": {
