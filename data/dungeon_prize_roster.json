@@ -1,0 +1,402 @@
+{
+  "schema": "cobblers.dungeon_prize_roster/1",
+  "generated_by": "hand",
+  "status": "PROPOSED design (unit COVERAGE, 2026-10-11). Nothing here is built, generated, placed or seen in game. The three existing dungeons' pools START with the species data/dungeons.json carries today, so a consumer that rolls from a pool still offers the approved prize. The thirteen proposed dungeons are proposals for the owner; four of them are the dungeons DUNGEONS.md 10 already lists (D18), nine are new. Read with docs/mechanics/LEGENDARY_COVERAGE.md.",
+  "why": "The owner, 2026-10-11: 'Make sure all legendaries, mythicals, early power mons, and ultra beasts are placed in these dungeons if not in the world normally. If we can squeeze someone into the world, we should.' and 'make sure we have a lot of variety'. Pass 3's prize (DUNGEON_ROOMS.md 1b) names ONE species per band; a run here rolls one species from the band's POOL (the PRIZE-POOLS unit adds that to tools/dungeon_prize.py). Each legendary, mythical, Ultra Beast and paradox has exactly one home: a world site, a boss, or one dungeon's legendary pool (it may sit in several of that dungeon's bands). Rare non-legendary lines may repeat across dungeons: they are ordinary species.",
+  "consumer": {
+    "fields": "dungeons[].rare_pool_by_band and dungeons[].legendary_pool_by_band: {band (string '1'..'6'): [species id, ...]}. A band absent from both has no prize. The first entry of an existing dungeon's list is the species its habitat names today (data/dungeons.json params.prize).",
+    "not_consumed": "species, world_proposals, fallback_homes, owner_calls and ub_boss are design records for the doc, the owner and the boss work; tools/ need read none of them",
+    "label_rule_for_the_tool": "a legendary pool holds species the 1.8.0 jar labels legendary, mythical, ultra_beast OR paradox; a rare pool holds none of the four. tools/dungeon_prize.py LEGEND_LABELS today is {legendary, mythical, ultra_beast}: it would REFUSE every paradox below in a legendary pool and ACCEPT one as a rare prize. PRIZE-POOLS must add paradox (finding, LEGENDARY_COVERAGE.md 6)."
+  },
+  "rules": {
+    "legendary_from_band": 4,
+    "legendary_from_band_why": "relayed from data/dungeons.json engine.prize.legendary_from_band and checked: data/gym_trainers.json generation_contract gym_ace_levels [20, 25, 30, 35, 40, 45, 50, 55], the cap is the next required leader's ace, so a player holding gym 6's badge has cap 50, band 4 (caps 50, 55). data/progression.json carries no caps ('chapters carry no level_cap here'), so the brief's 'read from progression.json' could not be followed literally.",
+    "restricted_band6_only": "a species the 1.8.0 jar labels `restricted` (the box legendaries: Dialga, Palkia, Ho-Oh, Kyurem, Reshiram, Zekrom, Xerneas, Yveltal, Zacian, Zamazenta, Zygarde, Terapagos, Koraidon, Miraidon, Eternatus, ...) sits only in band 6 (cap 100, after the Champion). Every other legendary, mythical, Ultra Beast and paradox from band 4. The line is the jar's own label, not a tuned threshold. Arceus (mythical, not labelled restricted) is held to band 6 by hand as the capstone.",
+    "rare_level_rule": "a rare prize spawns at its band's lower cap (20, 30, 40: engine.prize.level). A middle stage is offered in a band only if its natural evolution level (1.8.0 jar) is at most 10 above that level: band 1 at most 30 (Metang 20, Gabite 24, Pupitar 30, Dragonair 30, Shelgon 30), band 2 at most 40 (Fraxure 38, Hakamo-o 35, Arctibax 35, Doublade 35, Sliggoo 40), band 3 at most 50 (Zweilous 50, Drakloak 50, Lampent 41). Base stages at any band. TWO EXISTING ENTRIES BREAK IT and are kept because the owner approved them (DUNGEON_PASS2.md, 2026-10-10: 'these dungeons are hard and getting through one would mean they deserve it'): Hakamo-o at band 1 (35, 15 over) and Sliggoo at band 1 (40, 20 over).",
+    "paradox": "the owner, 2026-10-08: paradoxes are dungeon content, 'late dungeons, as threats and rare rewards, chosen by each dungeon's theme'. Here they sit only in legendary pools, so no paradox is met before gym 6 (band 4) in any dungeon, and each is placed by its theme. Flutter Mane is a starter line (STATE 157) and stays placed.",
+    "boss_legendaries": "D18's boss legendaries (Yveltal, Dialga, Heatran; Entei built) stay BOSS catches, never pool entries: one home each. D18's lake legendaries (Palkia, Suicune, Walking Wake, Tapu Fini) go into pools, as the Night Shift's lake Volcanion became its pass-3 prize.",
+    "ultra_beasts": "each of the nine unused Ultra Beasts is in exactly one dungeon's legendary pool (its catch, Beast Ball, band 4+) and is that dungeon's proposed boss (ub_boss, ULTRA_BEAST_BOSSES.md). Recommended: the boss stays NPC-held at every band (fight-only, the built chain) and the catch is the hidden prize, which makes that document's wild band-6 stage (E-P6) unnecessary for Ultra Beasts.",
+    "model_gate": "atm_subset: the species' only model is in ATMxMSD (modpack/manifest/client-pack-atm-subset.json lists it). The owner decided the AllTheMons subset goes to players directly (STATE 157); until a player's client has it the species renders as the doll. A consumer may drop gated species from a pool until delivery."
+  },
+  "dungeons": [
+    {
+      "id": "night_shift", "name": "The Night Shift", "status": "existing", "theme": "mine", "gate": null, "first_band": 1,
+      "rare_pool_by_band": {
+        "1": ["pupitar", "metang", "gabite", "shelgon"],
+        "2": ["fraxure", "pupitar", "gabite", "metang"],
+        "3": ["shelgon", "pupitar", "gabite", "metang"]
+      },
+      "legendary_pool_by_band": {
+        "4": ["volcanion", "diancie", "xurkitree"],
+        "5": ["volcanion", "diancie", "xurkitree"],
+        "6": ["volcanion", "diancie", "xurkitree", "zygarde", "terapagos"]
+      },
+      "ub_boss": {"species": "xurkitree", "role": "spine boss", "source": "ULTRA_BEAST_BOSSES.md 4 (the Foreman stayed with it); owner questions U-Q1, U-Q2 open"},
+      "rare_why": "a mine's lines: Larvitar (rock/ground), Beldum (steel), Gible (cave dragon), Axew (cave tusks), Bagon (Meteor Falls' cave dragon). Bagon, Beldum and Gible have no early wild home (Salamence only in the Rift at 56-62; Beldum and Gible only in the Mega field, band 4), so the mine is their first.",
+      "why": "Volcanion stays first (D18, built). Diancie: a gem at the back of a gem mine (unhomed note's own pick). Xurkitree: the lit wiring (UB doc). Zygarde: dripstone caves, its inherited spawn biome. Terapagos: a crystal cavern; the DP spawns it on amethyst in caves."
+    },
+    {
+      "id": "jungle", "name": "The Overgrown Temple", "status": "existing (test dungeon)", "theme": "jungle", "gate": null, "first_band": 1,
+      "rare_pool_by_band": {
+        "1": ["hakamoo", "larvesta", "riolu", "jangmoo"],
+        "2": ["hakamoo", "larvesta", "dreepy"],
+        "3": ["hakamoo", "drakloak", "larvesta"]
+      },
+      "legendary_pool_by_band": {
+        "4": ["zarude", "okidogi", "munkidori", "fezandipiti", "shaymin"],
+        "5": ["zarude", "okidogi", "munkidori", "fezandipiti", "shaymin", "ogerpon"],
+        "6": ["zarude", "ogerpon", "okidogi", "munkidori", "fezandipiti", "shaymin"]
+      },
+      "ub_boss": null,
+      "ub_boss_why": "Buzzwole and Pheromosa (the jungle pair) belong to the Temple Calendar (UB doc 4). If the owner makes this test dungeon the Temple Calendar, they move here with Dialga and Tapu Fini.",
+      "rare_why": "Hakamo-o stays first (owner-approved). Jangmo-o's only wild home is the Long Isle at 48-53. Larvesta: the sun-moth a temple worships. Riolu and Dreepy/Drakloak: a temple's guardians and ghosts.",
+      "why": "Zarude stays first (built). The Loyal Three and Ogerpon: a jungle shrine's three thieves and the masked one they wronged (Ogerpon from band 5, after the Three). Shaymin: the flowering canopy sanctum."
+    },
+    {
+      "id": "flooded_ruin", "name": "The Drowned Reliquary", "status": "existing (test dungeon)", "theme": "flooded_ruin", "gate": null, "first_band": 1,
+      "rare_pool_by_band": {
+        "1": ["sliggoo", "dragonair", "deino"],
+        "2": ["sliggoo", "dragonair", "arctibax"],
+        "3": ["zweilous", "sliggoo", "dragonair", "arctibax"]
+      },
+      "legendary_pool_by_band": {
+        "4": ["regidrago", "regieleki", "phione"],
+        "5": ["regidrago", "regieleki", "phione", "manaphy"],
+        "6": ["regidrago", "regieleki", "manaphy"]
+      },
+      "ub_boss": null,
+      "rare_why": "Sliggoo and Zweilous stay (owner-approved). Dragonair: the sea dragon of a drowned shrine. Arctibax (ice/dragon) in cold deep water; it has no wild home at all.",
+      "why": "Regidrago stays first (built; the room is a sealed_chamber). Regieleki: its Galar pair, same chamber. Manaphy and Phione: a sunken sea temple, the best water theme in the catalogue (unhomed note); Manaphy from band 5."
+    },
+    {
+      "id": "street", "name": "The Street That Ends at Nothing", "status": "proposed (DUNGEONS.md 10 #2, D18)", "theme": "city (new)", "gate": null, "first_band": 1,
+      "rip": "the Scar, the road's end (DUNGEONS.md 10; DUNGEON_2_STREET.md)",
+      "rare_pool_by_band": {
+        "1": ["beldum", "honedge", "deino", "litwick"],
+        "2": ["doublade", "metang", "dreepy"],
+        "3": ["zweilous", "drakloak", "doublade", "lampent"]
+      },
+      "legendary_pool_by_band": {
+        "4": ["zeraora", "magearna", "guzzlord"],
+        "5": ["zeraora", "magearna", "guzzlord"],
+        "6": ["palkia", "guzzlord", "zeraora", "magearna"]
+      },
+      "ub_boss": {"species": "guzzlord", "role": "spine boss", "source": "ULTRA_BEAST_BOSSES.md 4 (it ate the rest of the street)"},
+      "rare_why": "a dead city's steel and ghosts: Honedge (a sword in a hall), Litwick (the street lamps), Beldum, Deino, Dreepy. Honedge has no wild home below 48.",
+      "why": "Palkia: D18's pick (space folded under a drowned plaza), restricted, band 6. Guzzlord: its boss. Zeraora (a city's thunderclap) and Magearna (a machine an old city made: the bank-vault room's natural prize)."
+    },
+    {
+      "id": "patriarch", "name": "Under the Patriarch", "status": "proposed (DUNGEONS.md 10 #3, D18)", "theme": "great tree (new)", "gate": null, "first_band": 1, "intended_from": "about gym 6-7 (DUNGEONS.md 10)",
+      "rip": "the Patriarch's foot (DUNGEONS.md 10)",
+      "boss_legendary": {"species": "yveltal", "source": "D18 / DUNGEON_3_PATRIARCH.md: the boss chain, band-6 catch"},
+      "rare_pool_by_band": {
+        "1": ["axew", "dreepy", "larvesta", "munchlax"],
+        "2": ["fraxure", "larvesta", "dreepy"],
+        "3": ["drakloak", "fraxure", "larvesta"]
+      },
+      "legendary_pool_by_band": {
+        "4": ["suicune", "kartana", "celesteela"],
+        "5": ["suicune", "kartana", "celesteela"],
+        "6": ["xerneas", "zacian", "zamazenta", "suicune", "kartana", "celesteela"]
+      },
+      "ub_boss": {"species": ["kartana", "celesteela"], "role": "wormhole leg, the pair rotates", "source": "ULTRA_BEAST_BOSSES.md 4"},
+      "rare_why": "a great wood's lines: Munchlax under the honey bark (no wild Munchlax anywhere; Snorlax only at 38-43), Axew and Dreepy in the root hollows, Larvesta.",
+      "why": "Suicune: D18's lake pick (the pool the roots drink from). Kartana and Celesteela: the two that came through the roots (UB doc), the only two UBs that render without the ATM subset. Xerneas: Yveltal's pair, the life-tree to its death-tree. Zacian and Zamazenta: the misty wood of heroes; their inherited spawn is the dark forest. Restricted ones at band 6."
+    },
+    {
+      "id": "cistern", "name": "The Last Cistern", "status": "proposed (DUNGEONS.md 10 #4, D18)", "theme": "flooded_ruin (reused)", "gate": null, "first_band": 1, "intended_from": "about gym 7 (DUNGEONS.md 10)",
+      "rip": "the Dry Cistern (DUNGEONS.md 10)",
+      "rare_pool_by_band": {
+        "1": ["frigibax", "dratini", "goomy"],
+        "2": ["arctibax", "dragonair", "sliggoo"],
+        "3": ["arctibax", "dragonair", "zweilous"]
+      },
+      "legendary_pool_by_band": {
+        "4": ["walkingwake", "nihilego", "ironbundle"],
+        "5": ["walkingwake", "nihilego", "ironbundle"],
+        "6": ["walkingwake", "nihilego", "ironbundle"]
+      },
+      "ub_boss": {"species": "nihilego", "role": "spine boss", "source": "ULTRA_BEAST_BOSSES.md 4 (the keeper is its host)"},
+      "rare_why": "cold still water: the Frigibax line (no wild home), Dratini, Goomy.",
+      "why": "Walking Wake: D18's pick (the reservoir the pumps still fill). Nihilego: its boss, poison in the water. Iron Bundle (ice/water paradox): the cold reservoir."
+    },
+    {
+      "id": "temple_calendar", "name": "The Temple Calendar", "status": "proposed (DUNGEONS.md 10 #5, D18)", "theme": "jungle (reused)", "gate": "gym8_cleared (proposed, DUNGEON_PLACEMENT.md Q13 OPEN)", "first_band": 5,
+      "rip": "a Long Isle jungle temple (DUNGEONS.md 10; ground not measured)",
+      "boss_legendary": {"species": "dialga", "source": "D18: the boss chain, band-6 catch"},
+      "rare_pool_by_band": {},
+      "rare_pool_why": "first band 5: bands 1-3 never enter",
+      "legendary_pool_by_band": {
+        "5": ["tapufini", "buzzwole", "pheromosa", "meloetta", "brutebonnet", "screamtail"],
+        "6": ["tapufini", "buzzwole", "pheromosa", "meloetta", "brutebonnet", "screamtail"]
+      },
+      "ub_boss": {"species": ["buzzwole", "pheromosa"], "role": "wormhole leg, the calendar picks which", "source": "ULTRA_BEAST_BOSSES.md 4"},
+      "why": "Tapu Fini: D18's pick (a misted temple pool). Buzzwole and Pheromosa: the calendar's pair. Meloetta: the temple's song (a puzzle room's payoff). Brute Bonnet and Scream Tail: the ancient paradoxes a calendar of past days lets through; both inherit jungle and floral spawns."
+    },
+    {
+      "id": "crucible", "name": "The Crucible", "status": "proposed (DUNGEONS.md 10 'later')", "theme": "basalt_deltas (built theme)", "gate": "champion_cleared (DUNGEONS.md 10)", "first_band": 6,
+      "rip": "the Nether (the engine places rips in the overworld only today: DUNGEON_ROOMS.md 11)",
+      "boss_legendary": {"species": "heatran", "source": "DUNGEONS.md 10 / entei_boss.json: Heatran after Entei"},
+      "rare_pool_by_band": {},
+      "legendary_pool_by_band": {
+        "6": ["stakataka", "gougingfire"]
+      },
+      "ub_boss": {"species": "stakataka", "role": "wormhole leg", "source": "MOVED from the Tower After the Fire's pair (UB doc 4): the Tower is the single Entei room (data/entei_boss.json), not a rooms dungeon, so it has no habitat for a prize"},
+      "why": "Gouging Fire: its inherited spawn is the basalt deltas. Stakataka: a wall of stone in the basalt columns."
+    },
+    {
+      "id": "ash_bell", "name": "The Ash Bell", "status": "proposed (new)", "theme": "nether_wastes (built theme)", "gate": "gym8_cleared (the Nether's gate, data/nether_gate.json)", "first_band": 5,
+      "legendary_pool_by_band": {
+        "5": ["raikou", "ragingbolt"],
+        "6": ["hooh", "raikou", "ragingbolt"]
+      },
+      "rare_pool_by_band": {},
+      "ub_boss": null,
+      "why": "The burned bell of the Entei story told in fire and coal: Ho-Oh (restricted, band 6), Raikou (Entei's sibling; the owner named it as a Nether boss: NETHER_DUNGEON_SCOPE.md 7), Raging Bolt (Raikou's ancient paradox)."
+    },
+    {
+      "id": "moth_cathedral", "name": "The Moth Cathedral", "status": "proposed (new)", "theme": "crimson_forest (built theme)", "gate": "gym8_cleared", "first_band": 5,
+      "legendary_pool_by_band": {
+        "5": ["victini", "slitherwing", "ironmoth"],
+        "6": ["victini", "slitherwing", "ironmoth"]
+      },
+      "rare_pool_by_band": {},
+      "ub_boss": null,
+      "why": "Volcarona already lives in our crimson forest tables; its two paradoxes (Slither Wing, whose inherited spawn includes crimson_forest, and Iron Moth) and Victini (inherited crimson_forest spawn) make the forest's cathedral."
+    },
+    {
+      "id": "warped_lab", "name": "The Warped Laboratory", "status": "proposed (new)", "theme": "warped_forest (built theme)", "gate": "gym8_cleared", "first_band": 5,
+      "legendary_pool_by_band": {
+        "5": ["genesect", "ironvaliant", "ironjugulis"],
+        "6": ["genesect", "ironvaliant", "ironjugulis"]
+      },
+      "rare_pool_by_band": {},
+      "ub_boss": null,
+      "why": "the teal, unnatural forest as someone's abandoned work: Genesect (an ancient thing rebuilt; the DP also revives it from a fossil, a second SOURCE, not a second data author) and two future paradoxes."
+    },
+    {
+      "id": "soul_ossuary", "name": "The Soul Ossuary", "status": "proposed (new)", "theme": "soul_sand_valley (built theme)", "gate": "gym8_cleared", "first_band": 5,
+      "legendary_pool_by_band": {
+        "5": ["marshadow", "blacephalon", "pecharunt", "roaringmoon"],
+        "6": ["marshadow", "blacephalon", "pecharunt", "roaringmoon"]
+      },
+      "rare_pool_by_band": {},
+      "ub_boss": {"species": "blacephalon", "role": "spine boss (an ossuary keeper holds it)", "source": "MOVED from the Tower After the Fire's pair (UB doc 4), as Stakataka"},
+      "why": "bones and soul fire: Marshadow (fighting/ghost, the shadow), Blacephalon (fire/ghost), Pecharunt (poison/ghost), Roaring Moon (dragon/dark ancient paradox)."
+    },
+    {
+      "id": "dragonspiral", "name": "The Dragonspiral", "status": "proposed (new)", "theme": "ice spire (new)", "gate": "champion_cleared (proposed)", "first_band": 6,
+      "legendary_pool_by_band": {
+        "6": ["kyurem", "reshiram", "zekrom"]
+      },
+      "rare_pool_by_band": {},
+      "ub_boss": null,
+      "why": "the Tao trio, all restricted (band 6): a frozen spire where Kyurem holds the other two (the unhomed note's 'twin-room dungeon' for Reshiram and Zekrom, and its frozen cavern for Kyurem). Post-Champion, so no band 4-5 run meets an empty prize."
+    },
+    {
+      "id": "field_of_swords", "name": "The Field of Swords", "status": "proposed (new)", "theme": "hill keep (new)", "gate": "gym6_cleared (proposed)", "first_band": 4,
+      "legendary_pool_by_band": {
+        "4": ["cobalion", "terrakion", "virizion", "ironleaves", "ironboulder", "ironcrown"],
+        "5": ["cobalion", "terrakion", "virizion", "ironleaves", "ironboulder", "ironcrown", "keldeo"],
+        "6": ["keldeo", "cobalion", "terrakion", "virizion", "ironleaves", "ironboulder", "ironcrown"]
+      },
+      "rare_pool_by_band": {},
+      "ub_boss": null,
+      "why": "the Swords of Justice and their three paradox doubles (Iron Leaves = Virizion, Iron Boulder = Terrakion, Iron Crown = Cobalion), and Keldeo, the sword in the spring, from band 5 after them (the unhomed note's 'three guarded shrines and a prize'). Iron Leaves and Iron Boulder render today; Iron Crown needs the subset."
+    },
+    {
+      "id": "zero_dig", "name": "The Zero Dig", "status": "proposed (new)", "theme": "desert excavation (new)", "gate": "gym7_cleared (proposed)", "first_band": 4,
+      "rip": "a desert: the eastern dunes or the Long Isle uplands (world-content-dev sites it on ground)",
+      "legendary_pool_by_band": {
+        "4": ["greattusk", "irontreads", "sandyshocks", "ironhands", "ironthorns"],
+        "5": ["greattusk", "irontreads", "sandyshocks", "ironhands", "ironthorns"],
+        "6": ["koraidon", "miraidon", "greattusk", "irontreads", "sandyshocks", "ironhands", "ironthorns"]
+      },
+      "rare_pool_by_band": {},
+      "ub_boss": null,
+      "why": "a dig into a crater where time is wrong: the arid paradoxes (Great Tusk, Iron Treads, Sandy Shocks and Iron Hands all inherit desert or arid spawns; Iron Thorns the mountain) and, at band 6, Koraidon and Miraidon, the past and the future (restricted; DUNGEON_PLACEMENT.md Q14 is OPEN: dungeon or overworld)."
+    },
+    {
+      "id": "starfall", "name": "The Starfall Crater", "status": "proposed (new)", "theme": "night sky crater (new)", "gate": "gym8_cleared (proposed)", "first_band": 5,
+      "legendary_pool_by_band": {
+        "5": ["jirachi", "deoxys", "cresselia"],
+        "6": ["arceus", "jirachi", "deoxys", "cresselia"]
+      },
+      "rare_pool_by_band": {},
+      "ub_boss": null,
+      "why": "what fell from the sky: Deoxys (a meteor), Jirachi (a wishing star), Cresselia (the full moon; Darkrai is homed on Newmoon Island), and at band 6 Arceus as the capstone. The owner ruled out Arceus plates as Entei-room rewards (entei_boss.json), so the temple-of-plates route is closed and a prize roll is the cheaper home."
+    }
+  ],
+  "world_proposals": [
+    {"species": ["tornadus", "thundurus", "landorus"], "place": "the Tri Peaks: one sealed_chamber at each summit (The Tri Peaks, Mt Vessu, Mt Clay)", "file": "data/legendaries.json (kind sealed_chamber, tools/legendaries.py KINDS)", "why": "three storm genies, three peaks; STATE records the Tri Peaks as 'too barren' (the owner) and it carries no legendary today. Gate and level per the file's own rule (level at the gate's cap).", "fallback": {"dungeon": "dragonspiral", "bands": ["6"]}},
+    {"species": ["enamorus"], "place": "the Tri Peaks' saddle, after the three (requires_met, as Regigigas)", "file": "data/legendaries.json", "why": "the fourth Force comes when the three are met: the Regigigas pattern the file already has", "fallback": {"dungeon": "dragonspiral", "bands": ["6"]}},
+    {"species": ["tapukoko"], "place": "Sunset Isle west (savanna)", "file": "data/legendaries.json (sealed_chamber)", "why": "an island guardian on an island; its inherited spawn is savanna", "fallback": {"dungeon": "temple_calendar", "bands": ["5", "6"]}},
+    {"species": ["tapulele"], "place": "Sunset Isle east (flower meadow)", "file": "data/legendaries.json (sealed_chamber)", "why": "an island guardian; its inherited spawn is floral", "fallback": {"dungeon": "temple_calendar", "bands": ["5", "6"]}},
+    {"species": ["tapubulu"], "place": "Jungle Isle", "file": "data/legendaries.json (sealed_chamber)", "why": "the grass guardian of the jungle island", "fallback": {"dungeon": "temple_calendar", "bands": ["5", "6"]}},
+    {"species": ["frigibax"], "place": "the Crags, Glacial Tear (subregion the_crags, band 25-32)", "file": "data/encounter_design.json (expanded into data/spawns.json by tools/build_encounters.py)", "why": "ice/dragon in a glacier cirque; the line has no wild home anywhere. Ultra-rare, base stage at the subregion's band. Renders only with the ATM subset.", "fallback": "already in the cistern's and the Drowned Reliquary's rare pools"},
+    {"species": ["bagon"], "place": "the Tri Peaks (alpine peaks, band 20-28)", "file": "data/encounter_design.json", "why": "the dragon that jumps off cliffs dreaming of flight; Bagon and Shelgon have no wild home (Salamence only in the Rift at 56-62)", "fallback": "already in the Night Shift's rare pools (Shelgon)"}
+  ],
+  "fallback_homes": [
+    {"species": "lugia", "world_home": "data/legendaries.json lugia, BLOCKED (owner_decision: the trench does not exist and cannot be heightmap terrain)", "fallback": {"dungeon": "flooded_ruin", "bands": ["6"]}, "why": "the sea's guardian under a drowned reliquary, if the trench is refused"},
+    {"species": "registeel", "world_home": "data/legendaries.json registeel, BLOCKED (owner_decision: which part of the Rift)", "fallback": {"dungeon": "night_shift", "bands": ["4", "5", "6"]}, "why": "steel in a mine, if the Rift site is never chosen"},
+    {"species": "kyogre", "world_home": "designed, not built: docs/world-building/KYOGRE_CAVE.md", "fallback": {"dungeon": "cistern", "bands": ["6"]}, "why": "the deep water, if the cave is never built"},
+    {"species": "rayquaza", "world_home": "designed, not built: KYOGRE_CAVE.md sky island", "fallback": {"dungeon": "starfall", "bands": ["6"]}, "why": "the sky, if the island is never built"}
+  ],
+  "owner_calls": [
+    {"species": "eternatus", "now": "OUT by the owner until a Galar Particle supply is authored (adopted_legendary_sites.json owner_decisions_2026_10_02)", "proposal": {"dungeon": "starfall", "bands": ["6"]}, "why": "a dungeon prize needs no particles; the 2026-10-11 'all legendaries' instruction and the 2026-10-02 decision disagree, and only the owner can say which stands. NOT in any pool."},
+    {"species": ["yveltal", "dialga", "heatran"], "now": "D18 boss catches (band 6, Entei pattern), designed, not built", "proposal": "kept as bosses; the alternative is the prize form (a pool entry) and a fight-only boss", "why": "one home each: a boss catch and a pool entry would be two"},
+    {"species": ["stakataka", "blacephalon"], "now": "UB doc: the Tower After the Fire's pair, waiting for the Tower's re-home onto the engine", "proposal": "the Crucible and the Soul Ossuary", "why": "the Tower is the single Entei room; a prize needs a habitat room"},
+    {"species": ["koraidon", "miraidon"], "now": "DUNGEON_PLACEMENT.md Q14 OPEN (dungeon or overworld)", "proposal": "the Zero Dig, band 6", "why": "read the 2026-10-11 instruction as 'dungeon'"},
+    {"species": "inherited_spawns", "now": "most pool species also have an ultra-rare COBBLEVERSE-DP spawn outside the route boxes (the live world has no suppression)", "proposal": "switch off the inherited spawns of every species given a dungeon home (data/spawn_suppression.json removed_species), as the owner did for the paradoxes", "why": "UB doc U-Q3 widened: a free, untagged second source undoes 'not as easily found' and the Beast Ball key"}
+  ],
+  "power_lines": {
+    "why": "the owner's 'early power mons': the ten pseudo-legendary lines, plus eight rare strong lines chosen here (why per line). 'Placed early' = a wild spawn in data/spawns.json at or under about level 35 (band 2), read 2026-10-11.",
+    "lines": {
+      "dratini": {"kind": "pseudo", "now": "placed early: Shrew Lake shores 18-22, Driftmouth waters", "dungeon": ["flooded_ruin", "cistern"]},
+      "larvitar": {"kind": "pseudo", "now": "placed: Frostpeak 33-34", "dungeon": ["night_shift"]},
+      "bagon": {"kind": "pseudo", "now": "MISSING early: Salamence only (Rift 56-62); egg room band 5", "dungeon": ["night_shift"], "world": "Tri Peaks (proposal)"},
+      "beldum": {"kind": "pseudo", "now": "MISSING early: Mega field only (gulch_mine.json, band 4); egg room band 6", "dungeon": ["night_shift", "street"]},
+      "gible": {"kind": "pseudo", "now": "MISSING early: Mega field only (band 4); egg room band 5", "dungeon": ["night_shift"]},
+      "deino": {"kind": "pseudo", "now": "placed early: Fungal Isle south 23-28", "dungeon": ["flooded_ruin", "street"]},
+      "goomy": {"kind": "pseudo", "now": "placed early: Fungal Isle north, Marshy Marsh 23-43", "dungeon": ["flooded_ruin", "cistern"]},
+      "jangmoo": {"kind": "pseudo", "now": "MISSING early: Hakamo-o/Kommo-o on the Long Isle at 48-53 only", "dungeon": ["jungle"]},
+      "dreepy": {"kind": "pseudo", "now": "placed: Sunset Watch 30-38", "dungeon": ["jungle", "street", "patriarch"]},
+      "frigibax": {"kind": "pseudo", "now": "MISSING: no wild home; implemented by COBBLEVERSE-DP only; model in the ATM subset only", "dungeon": ["flooded_ruin", "cistern"], "world": "the Crags (proposal)"},
+      "riolu": {"kind": "similar", "why": "Lucario: a strong early fighter, rare in the games", "now": "placed early: Viltri's Path 18-22", "dungeon": ["jungle"]},
+      "axew": {"kind": "similar", "why": "Haxorus: a three-stage dragon, 540", "now": "placed: Northgate east 38-42", "dungeon": ["night_shift", "patriarch"]},
+      "larvesta": {"kind": "similar", "why": "Volcarona 550; slow (59); a starter here", "now": "placed: starter; the Craters 38+", "dungeon": ["jungle", "patriarch"]},
+      "honedge": {"kind": "similar", "why": "Aegislash", "now": "MISSING early: Doublade/Aegislash from 48 only", "dungeon": ["street"]},
+      "litwick": {"kind": "similar", "why": "Chandelure, special attack 145", "now": "placed early: Route 1 ghost mansion 6-15", "dungeon": ["street"]},
+      "togepi": {"kind": "similar", "why": "Togekiss", "now": "placed early: Shrew Lake shores 18-22; egg room band 2", "dungeon": []},
+      "munchlax": {"kind": "similar", "why": "Snorlax", "now": "MISSING: no wild Munchlax; Snorlax at North Pine Isle 38-43; bait room bands 5-6", "dungeon": ["patriarch"]},
+      "scyther": {"kind": "similar", "why": "500 BST at its first stage", "now": "placed early: Route 1 maze forest 9-11 and six more", "dungeon": []}
+    }
+  },
+  "species": {
+    "articuno": {"kind": "legendary", "status": "placed", "where": "adopted shrine, Frostpeak summit (adopted_legendary_sites.json)"},
+    "zapdos": {"kind": "legendary", "status": "placed", "where": "adopted tower, Fungal Isle east coast"},
+    "moltres": {"kind": "legendary", "status": "placed", "where": "adopted tower, the Craters"},
+    "mewtwo": {"kind": "legendary", "status": "placed", "where": "COBBLEVERSE-DP fossil revive; the owner: 'Mewtwo stays on the fossil route' (entei_boss.json). Reachability of the revive not verified"},
+    "mew": {"kind": "mythical", "status": "placed", "where": "adopted temple (Champion door)"},
+    "raikou": {"kind": "legendary", "status": "to_dungeon", "home": "ash_bell", "bands": ["5", "6"], "why": "Entei's sibling; the owner named it for the Nether"},
+    "entei": {"kind": "legendary", "status": "placed", "where": "the Tower After the Fire, built (entei_boss.json)"},
+    "suicune": {"kind": "legendary", "status": "to_dungeon", "home": "patriarch", "bands": ["4", "5", "6"], "why": "D18's lake pick for the Patriarch"},
+    "lugia": {"kind": "legendary", "status": "blocked", "where": "legendaries.json, blocked on the owner (no trench)", "fallback": "flooded_ruin band 6"},
+    "hooh": {"kind": "legendary", "status": "to_dungeon", "home": "ash_bell", "bands": ["6"], "why": "the burned bell; restricted"},
+    "celebi": {"kind": "mythical", "status": "placed", "where": "Route 1 sapling (sapling_celebi.json) and celebi_wake"},
+    "regirock": {"kind": "legendary", "status": "placed", "where": "legendaries.json sealed chamber, Scorched Plateau"},
+    "regice": {"kind": "legendary", "status": "placed", "where": "legendaries.json sealed chamber, Glacial Tear"},
+    "registeel": {"kind": "legendary", "status": "blocked", "where": "legendaries.json, blocked on the owner (which part of the Rift)", "fallback": "night_shift bands 4-6"},
+    "latias": {"kind": "legendary", "status": "placed", "where": "Shrew Station Eon shrine (research_station.json)"},
+    "latios": {"kind": "legendary", "status": "placed", "where": "Shrew Station Eon shrine"},
+    "kyogre": {"kind": "legendary", "status": "planned", "where": "KYOGRE_CAVE.md (designed, not built); Coldwater Station leads to it", "fallback": "cistern band 6"},
+    "groudon": {"kind": "legendary", "status": "placed", "where": "legendaries.json, the Craters"},
+    "rayquaza": {"kind": "legendary", "status": "planned", "where": "KYOGRE_CAVE.md sky island (designed, not built)", "fallback": "starfall band 6"},
+    "jirachi": {"kind": "mythical", "status": "to_dungeon", "home": "starfall", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "a wishing star"},
+    "deoxys": {"kind": "mythical", "status": "to_dungeon", "home": "starfall", "bands": ["5", "6"], "why": "a meteor"},
+    "uxie": {"kind": "legendary", "status": "placed", "where": "legendaries.json lake grotto, Lake Tilpey"},
+    "mesprit": {"kind": "legendary", "status": "placed", "where": "legendaries.json lake grotto, Arrow Lake"},
+    "azelf": {"kind": "legendary", "status": "placed", "where": "legendaries.json lake grotto, Marshy Marsh"},
+    "dialga": {"kind": "legendary", "status": "planned", "where": "D18: the Temple Calendar's boss, band-6 catch (designed)", "home": "temple_calendar (boss)"},
+    "palkia": {"kind": "legendary", "status": "to_dungeon", "home": "street", "bands": ["6"], "why": "D18's lake pick for the Street; restricted"},
+    "heatran": {"kind": "legendary", "status": "planned", "where": "DUNGEONS.md 10: the Crucible's boss after Entei (designed)", "home": "crucible (boss)"},
+    "regigigas": {"kind": "legendary", "status": "placed", "where": "legendaries.json, beside the Displaced City"},
+    "giratina": {"kind": "legendary", "status": "placed", "where": "Wardenhold (frostpeak_keep_quest.json)"},
+    "cresselia": {"kind": "legendary", "status": "to_dungeon", "home": "starfall", "bands": ["5", "6"], "why": "the full moon, Darkrai's counterpart"},
+    "phione": {"kind": "mythical", "status": "to_dungeon", "home": "flooded_ruin", "bands": ["4", "5"], "model_gate": "atm_subset", "why": "the sunken sea temple"},
+    "manaphy": {"kind": "mythical", "status": "to_dungeon", "home": "flooded_ruin", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "the sunken sea temple's prince"},
+    "darkrai": {"kind": "mythical", "status": "placed", "where": "Newmoon Island over the Fungal Isle (sweep_newmoon_island)"},
+    "shaymin": {"kind": "mythical", "status": "to_dungeon", "home": "jungle", "bands": ["4", "5", "6"], "why": "the flowering canopy sanctum; no world archetype fits a meadow"},
+    "arceus": {"kind": "mythical", "status": "to_dungeon", "home": "starfall", "bands": ["6"], "why": "the capstone, held to band 6 by hand"},
+    "victini": {"kind": "mythical", "status": "to_dungeon", "home": "moth_cathedral", "bands": ["5", "6"], "why": "its inherited spawn is the crimson forest"},
+    "cobalion": {"kind": "legendary", "status": "to_dungeon", "home": "field_of_swords", "bands": ["4", "5", "6"], "why": "a Sword of Justice"},
+    "terrakion": {"kind": "legendary", "status": "to_dungeon", "home": "field_of_swords", "bands": ["4", "5", "6"], "why": "a Sword of Justice"},
+    "virizion": {"kind": "legendary", "status": "to_dungeon", "home": "field_of_swords", "bands": ["4", "5", "6"], "why": "a Sword of Justice"},
+    "tornadus": {"kind": "legendary", "status": "to_world", "home": "Tri Peaks summit (proposal)", "fallback": "dragonspiral band 6"},
+    "thundurus": {"kind": "legendary", "status": "to_world", "home": "Tri Peaks summit (proposal)", "fallback": "dragonspiral band 6"},
+    "reshiram": {"kind": "legendary", "status": "to_dungeon", "home": "dragonspiral", "bands": ["6"], "why": "the Tao trio; restricted"},
+    "zekrom": {"kind": "legendary", "status": "to_dungeon", "home": "dragonspiral", "bands": ["6"], "why": "the Tao trio; restricted"},
+    "landorus": {"kind": "legendary", "status": "to_world", "home": "Tri Peaks summit (proposal)", "fallback": "dragonspiral band 6"},
+    "kyurem": {"kind": "legendary", "status": "to_dungeon", "home": "dragonspiral", "bands": ["6"], "why": "the frozen one that holds the other two; restricted"},
+    "keldeo": {"kind": "mythical", "status": "to_dungeon", "home": "field_of_swords", "bands": ["5", "6"], "why": "the sword in the spring, after the three"},
+    "meloetta": {"kind": "mythical", "status": "to_dungeon", "home": "temple_calendar", "bands": ["5", "6"], "why": "the temple's song"},
+    "genesect": {"kind": "mythical", "status": "to_dungeon", "home": "warped_lab", "bands": ["5", "6"], "why": "an ancient thing rebuilt in a lab; the DP's fossil revive also exists (unverified reachable)"},
+    "xerneas": {"kind": "legendary", "status": "to_dungeon", "home": "patriarch", "bands": ["6"], "why": "Yveltal's pair, the life-tree; restricted"},
+    "yveltal": {"kind": "legendary", "status": "planned", "where": "D18: the Patriarch's boss, band-6 catch (designed)", "home": "patriarch (boss)"},
+    "zygarde": {"kind": "legendary", "status": "to_dungeon", "home": "night_shift", "bands": ["6"], "why": "dripstone caves; restricted"},
+    "diancie": {"kind": "mythical", "status": "to_dungeon", "home": "night_shift", "bands": ["4", "5", "6"], "why": "the gem at the back of the mine"},
+    "hoopa": {"kind": "mythical", "status": "placed", "where": "the Hoopa cradle (hoopa_cradle.json)"},
+    "volcanion": {"kind": "mythical", "status": "placed", "where": "the Night Shift's prize, bands 4-6 (data/dungeons.json, built)", "home": "night_shift", "bands": ["4", "5", "6"]},
+    "typenull": {"kind": "legendary", "status": "placed", "where": "mythical starter (mythical_starters.json)"},
+    "silvally": {"kind": "legendary", "status": "placed", "where": "starter line (Type: Null)"},
+    "tapukoko": {"kind": "legendary", "status": "to_world", "home": "Sunset Isle west (proposal)", "fallback": "temple_calendar bands 5-6"},
+    "tapulele": {"kind": "legendary", "status": "to_world", "home": "Sunset Isle east (proposal)", "fallback": "temple_calendar bands 5-6"},
+    "tapubulu": {"kind": "legendary", "status": "to_world", "home": "Jungle Isle (proposal)", "fallback": "temple_calendar bands 5-6"},
+    "tapufini": {"kind": "legendary", "status": "to_dungeon", "home": "temple_calendar", "bands": ["5", "6"], "why": "D18's lake pick for the Temple Calendar"},
+    "cosmog": {"kind": "legendary", "status": "placed", "where": "mythical starter"},
+    "cosmoem": {"kind": "legendary", "status": "placed", "where": "starter line (Cosmog)"},
+    "solgaleo": {"kind": "legendary", "status": "placed", "where": "starter line (Cosmog)"},
+    "lunala": {"kind": "legendary", "status": "placed", "where": "starter line (Cosmog)"},
+    "nihilego": {"kind": "ultra_beast", "status": "to_dungeon", "home": "cistern", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "poison in the reservoir; the cistern's boss"},
+    "buzzwole": {"kind": "ultra_beast", "status": "to_dungeon", "home": "temple_calendar", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "the calendar's pair"},
+    "pheromosa": {"kind": "ultra_beast", "status": "to_dungeon", "home": "temple_calendar", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "the calendar's pair"},
+    "xurkitree": {"kind": "ultra_beast", "status": "to_dungeon", "home": "night_shift", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "the lit wiring; the Night Shift's boss"},
+    "celesteela": {"kind": "ultra_beast", "status": "to_dungeon", "home": "patriarch", "bands": ["4", "5", "6"], "why": "grew up through the roots; renders today"},
+    "kartana": {"kind": "ultra_beast", "status": "to_dungeon", "home": "patriarch", "bands": ["4", "5", "6"], "why": "cuts the roots; renders today"},
+    "guzzlord": {"kind": "ultra_beast", "status": "to_dungeon", "home": "street", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "it ate the rest of the street; its boss"},
+    "necrozma": {"kind": "legendary", "status": "placed", "where": "the dawn and dusk towers (adopted)"},
+    "magearna": {"kind": "mythical", "status": "to_dungeon", "home": "street", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "a machine an old city made"},
+    "marshadow": {"kind": "mythical", "status": "to_dungeon", "home": "soul_ossuary", "bands": ["5", "6"], "why": "the shadow among the bones"},
+    "poipole": {"kind": "ultra_beast", "status": "placed", "where": "mythical starter; the two towers (spawns.json placement_sites)"},
+    "naganadel": {"kind": "ultra_beast", "status": "placed", "where": "starter line (Poipole)"},
+    "stakataka": {"kind": "ultra_beast", "status": "to_dungeon", "home": "crucible", "bands": ["6"], "model_gate": "atm_subset", "why": "a stone wall in the basalt; moved from the Tower pair"},
+    "blacephalon": {"kind": "ultra_beast", "status": "to_dungeon", "home": "soul_ossuary", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "fire and ghost; moved from the Tower pair"},
+    "zeraora": {"kind": "mythical", "status": "to_dungeon", "home": "street", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "a city's thunderclap"},
+    "meltan": {"kind": "mythical", "status": "placed", "where": "mythical starter"},
+    "melmetal": {"kind": "mythical", "status": "placed", "where": "starter line (Meltan)"},
+    "zacian": {"kind": "legendary", "status": "to_dungeon", "home": "patriarch", "bands": ["6"], "why": "the misty wood of heroes; restricted"},
+    "zamazenta": {"kind": "legendary", "status": "to_dungeon", "home": "patriarch", "bands": ["6"], "why": "the misty wood of heroes; restricted"},
+    "eternatus": {"kind": "legendary", "status": "out", "where": "OUT by the owner until a Galar Particle supply exists", "proposal": "starfall band 6, owner's call"},
+    "kubfu": {"kind": "legendary", "status": "placed", "where": "mythical starter"},
+    "urshifu": {"kind": "legendary", "status": "placed", "where": "starter line (Kubfu)"},
+    "zarude": {"kind": "mythical", "status": "placed", "where": "the Overgrown Temple's prize, bands 4-6 (data/dungeons.json, built)", "home": "jungle", "bands": ["4", "5", "6"]},
+    "regieleki": {"kind": "legendary", "status": "to_dungeon", "home": "flooded_ruin", "bands": ["4", "5", "6"], "why": "Regidrago's pair, the same sealed chamber"},
+    "regidrago": {"kind": "legendary", "status": "placed", "where": "the Drowned Reliquary's prize, bands 4-6 (data/dungeons.json, built)", "home": "flooded_ruin", "bands": ["4", "5", "6"]},
+    "glastrier": {"kind": "legendary", "status": "placed", "where": "crown spire (adopted, hidden)"},
+    "spectrier": {"kind": "legendary", "status": "placed", "where": "crown cemetery, once per player (spectrier_cap.json)"},
+    "calyrex": {"kind": "legendary", "status": "placed", "where": "crown cemetery (adopted)"},
+    "enamorus": {"kind": "legendary", "status": "to_world", "home": "Tri Peaks saddle after the three (proposal)", "fallback": "dragonspiral band 6"},
+    "greattusk": {"kind": "paradox", "status": "to_dungeon", "home": "zero_dig", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "arid paradox"},
+    "screamtail": {"kind": "paradox", "status": "to_dungeon", "home": "temple_calendar", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "an ancient paradox through the calendar; floral"},
+    "brutebonnet": {"kind": "paradox", "status": "to_dungeon", "home": "temple_calendar", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "an ancient paradox; jungle"},
+    "fluttermane": {"kind": "paradox", "status": "placed", "where": "starter line (Misdreavus -> Mismagius -> Flutter Mane, STATE 157)", "model_gate": "atm_subset"},
+    "slitherwing": {"kind": "paradox", "status": "to_dungeon", "home": "moth_cathedral", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "Volcarona's ancient paradox; crimson forest"},
+    "sandyshocks": {"kind": "paradox", "status": "to_dungeon", "home": "zero_dig", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "arid paradox"},
+    "irontreads": {"kind": "paradox", "status": "to_dungeon", "home": "zero_dig", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "arid paradox, Great Tusk's double"},
+    "ironbundle": {"kind": "paradox", "status": "to_dungeon", "home": "cistern", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "ice/water: the cold reservoir"},
+    "ironhands": {"kind": "paradox", "status": "to_dungeon", "home": "zero_dig", "bands": ["4", "5", "6"], "why": "desert paradox; renders today (Planeta RP)"},
+    "ironjugulis": {"kind": "paradox", "status": "to_dungeon", "home": "warped_lab", "bands": ["5", "6"], "why": "a future paradox; renders today (Planeta RP)"},
+    "ironmoth": {"kind": "paradox", "status": "to_dungeon", "home": "moth_cathedral", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "Volcarona's future paradox"},
+    "ironthorns": {"kind": "paradox", "status": "to_dungeon", "home": "zero_dig", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "a future paradox"},
+    "roaringmoon": {"kind": "paradox", "status": "to_dungeon", "home": "soul_ossuary", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "dragon/dark ancient paradox"},
+    "ironvaliant": {"kind": "paradox", "status": "to_dungeon", "home": "warped_lab", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "a future paradox"},
+    "koraidon": {"kind": "legendary", "status": "to_dungeon", "home": "zero_dig", "bands": ["6"], "why": "the past; restricted; Q14 open"},
+    "miraidon": {"kind": "legendary", "status": "to_dungeon", "home": "zero_dig", "bands": ["6"], "why": "the future; restricted; Q14 open"},
+    "walkingwake": {"kind": "paradox", "status": "to_dungeon", "home": "cistern", "bands": ["4", "5", "6"], "why": "D18's lake pick for the Cistern; renders today (jar)"},
+    "ironleaves": {"kind": "paradox", "status": "to_dungeon", "home": "field_of_swords", "bands": ["4", "5", "6"], "why": "Virizion's paradox; renders today (jar)"},
+    "wochien": {"kind": "legendary", "status": "placed", "where": "Nether shrine, stays where it generates (adopted_legendary_sites.json catalogue)"},
+    "chienpao": {"kind": "legendary", "status": "placed", "where": "Nether shrine, stays where it generates"},
+    "tinglu": {"kind": "legendary", "status": "placed", "where": "Nether shrine, stays where it generates"},
+    "chiyu": {"kind": "legendary", "status": "placed", "where": "Nether shrine, stays where it generates"},
+    "okidogi": {"kind": "legendary", "status": "to_dungeon", "home": "jungle", "bands": ["4", "5", "6"], "why": "one of the Loyal Three"},
+    "munkidori": {"kind": "legendary", "status": "to_dungeon", "home": "jungle", "bands": ["4", "5", "6"], "why": "one of the Loyal Three; inherited jungle spawn"},
+    "fezandipiti": {"kind": "legendary", "status": "to_dungeon", "home": "jungle", "bands": ["4", "5", "6"], "why": "one of the Loyal Three"},
+    "ogerpon": {"kind": "legendary", "status": "to_dungeon", "home": "jungle", "bands": ["5", "6"], "why": "the masked one, after the Three"},
+    "gougingfire": {"kind": "paradox", "status": "to_dungeon", "home": "crucible", "bands": ["6"], "model_gate": "atm_subset", "why": "its inherited spawn is the basalt deltas"},
+    "ragingbolt": {"kind": "paradox", "status": "to_dungeon", "home": "ash_bell", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "Raikou's ancient paradox"},
+    "ironboulder": {"kind": "paradox", "status": "to_dungeon", "home": "field_of_swords", "bands": ["4", "5", "6"], "why": "Terrakion's paradox; renders today (Planeta RP)"},
+    "ironcrown": {"kind": "paradox", "status": "to_dungeon", "home": "field_of_swords", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "Cobalion's paradox"},
+    "terapagos": {"kind": "legendary", "status": "to_dungeon", "home": "night_shift", "bands": ["6"], "why": "a crystal cavern; restricted"},
+    "pecharunt": {"kind": "mythical", "status": "to_dungeon", "home": "soul_ossuary", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "poison and ghost"}
+  }
+}
