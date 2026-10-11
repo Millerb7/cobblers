@@ -1,0 +1,82 @@
+{
+  "schema": "cobblers.dungeon_extras/1",
+  "generated_by": "hand",
+  "why": "The tables of three room kinds the owner asked for after pass 3 (docs/mechanics/DUNGEON_PASS2.md 'Next phase'): bank_vault (a code on signs in other rooms opens a vault), wishing_well (throw an item in, a gamble on its value) and bait_room (leave a bait; the NEXT run spawns a Pokemon lured by it). Read by tools/dungeon_extras.py. Control blocks come from data/dungeon_puzzles.json (the same console, button, lamp and plinth); GREED's prices from data/dungeon_greed.json. Nothing here is an authored dungeon's content: a dungeon's record names the rooms.",
+  "bank_vault": {
+    "defaults": {"digits": 4, "penalty_s": 20, "max_tries": 5, "clock_cost_s": 20, "chests": 4},
+    "limits": {"digits": [3, 5], "chests": [1, 6], "max_tries": [1, 9], "per_clue_room": 3, "min_length": 30, "min_width": 21, "min_height": 8},
+    "enforce_budget": true,
+    "budget_why": "A bank vault's chests are weighed like a vault's (GREED chest_cp) and held to the same limit KIT3 set (data/dungeon_greed.json vault_budget): all the chests together at most dollar_factor x the gathering tier open at the band's lowest badge count x the shortest dungeon's required hours. The kit's own vault does not enforce it yet (its authors have not rebalanced); a new kind starts inside it.",
+    "clue_header": {
+      "mine": "PAY SLIP",
+      "jungle": "BARK CARVING",
+      "flooded_ruin": "TABLET"
+    },
+    "messages": {
+      "hint": "A code lock. The digits are written elsewhere.",
+      "wrong": "-{s} s.",
+      "jam": "The lock seizes.",
+      "open": "The vault door gives.",
+      "chest_taken": "-{s} s.",
+      "sign_vault": ["VAULT", "CODE LOCK"]
+    },
+    "default_loot_by_band": {
+      "1": [{"item": "minecraft:iron_ingot", "count": [3, 6]}, {"item": "minecraft:gold_nugget", "count": [4, 8]}],
+      "3": [{"item": "minecraft:gold_ingot", "count": [3, 6]}, {"item": "minecraft:redstone", "count": [8, 16]}],
+      "5": [{"item": "minecraft:diamond", "count": [1, 2]}, {"item": "minecraft:emerald", "count": 1, "chance": 0.2}]
+    }
+  },
+  "wishing_well": {
+    "defaults": {"throws": 2, "min_cp": 20},
+    "limits": {"throws": [1, 5], "min_length": 20, "min_width": 15, "min_height": 7, "max_count": 64},
+    "ev_cap": 0.9,
+    "ev_why": "The well pays a share of the thrown item's GREED value (cp), rounded DOWN into a currency item, so the pay is at most share x value whatever is thrown: no item is worth more in the well than at the bank. The expected share of a band's table (sum of weight x share) is held at or under ev_cap, so throwing the reward back in loses more each time, and a gambler still has a 'more' tail (share 200 to 500) and a 'nothing' mass.",
+    "gaming_why": "What cannot be gamed, and how. (1) Worthless items: the well prices a thrown item from GREED's table and refuses anything unpriced, a placeholder price (source 'unpriced': rare candy, exp candies, bamboo blocks) or under min_cp; it throws the item back out of the well. (2) Re-throwing the reward: at most `throws` per run; the expected share is under ev_cap so it loses on average; and GREED charges only a gain (pay minus thrown value, only when above 0), a ratchet that never refunds a loss, so a chain of throws is charged at least the net gain it makes. (3) Carried-in wealth: a gain is charged, not free; the clock only gets faster. (4) Stacks: the value is cp x count, so a stack of cheap items is the sum, and the pay is capped at max_count of the currency item.",
+    "shares_by_band": {
+      "1": [[38, 0], [25, 50], [17, 100], [12, 200], [6, 300], [2, 500]],
+      "2": [[38, 0], [25, 50], [17, 100], [12, 200], [6, 300], [2, 500]],
+      "3": [[36, 0], [25, 50], [18, 100], [12, 200], [7, 300], [2, 500]],
+      "4": [[36, 0], [25, 50], [18, 100], [12, 200], [7, 300], [2, 500]],
+      "5": [[35, 0], [25, 50], [19, 100], [12, 200], [7, 300], [2, 500]],
+      "6": [[35, 0], [25, 50], [19, 100], [12, 200], [7, 300], [2, 500]]
+    },
+    "shares_why": "[weight, share in percent of the thrown value]. Weights sum to 100 (the well rolls random value 1..100). Share 0 is 'nothing'; 50 and 100 are the middling returns; 200, 300 and 500 are the 'more' (a chance of a better return than the gift).",
+    "ladders_by_band": {
+      "1": [["minecraft:coal", "coal"], ["minecraft:iron_ingot", "iron ingots"], ["minecraft:gold_ingot", "gold ingots"]],
+      "2": [["minecraft:iron_ingot", "iron ingots"], ["minecraft:gold_ingot", "gold ingots"], ["cobblemon:great_ball", "great balls"]],
+      "3": [["minecraft:iron_ingot", "iron ingots"], ["minecraft:gold_ingot", "gold ingots"], ["minecraft:diamond", "diamonds"], ["cobblemon:great_ball", "great balls"]],
+      "4": [["minecraft:iron_ingot", "iron ingots"], ["minecraft:gold_ingot", "gold ingots"], ["minecraft:diamond", "diamonds"], ["cobblemon:ultra_ball", "ultra balls"]],
+      "5": [["minecraft:iron_ingot", "iron ingots"], ["minecraft:diamond", "diamonds"], ["minecraft:emerald", "emeralds"], ["cobblemon:max_revive", "max revives"]],
+      "6": [["minecraft:iron_ingot", "iron ingots"], ["minecraft:diamond", "diamonds"], ["minecraft:emerald", "emeralds"], ["minecraft:netherite_ingot", "netherite ingots"]]
+    },
+    "ladders_why": "[item, plural name] in rising GREED price (the generator reads each price from data/dungeon_greed.json). The pay is made in the dearest item whose price the pay reaches: a small win is iron, a big one a better thing ('more or better'). The first item must be cheap enough that the smallest real pay (min_cp x the smallest non-zero share) buys one.",
+    "messages": {
+      "hint": "Throw something of worth into the well.",
+      "cheap": "The well wants something of worth.",
+      "dry": "The well is dry.",
+      "nothing": "The well keeps it.",
+      "returns": "The well returns"
+    }
+  },
+  "bait_room": {
+    "defaults": {},
+    "limits": {"min_length": 20, "min_width": 15, "min_height": 7},
+    "why": "BAIT is any item named here; Cobblemon's own bait (the fishing effects in data/cobblemon/spawn_bait_effects of the 1.8.0 jar) is a rod mechanic and is NOT used: only the item ids are. The species is ours: what the lure brings, by bait and band. The Pokemon is spawned at the band's LOWER cap (the prize's reasoning, tools/dungeon_prize.py: the level cap's ball refusal never fires), wandering and catchable, in a living room of the run, and weighs on the clock as an ambient catch.",
+    "baits": [
+      {"id": "cobblemon:oran_berry", "name": "oran berry", "species_by_band": {"1": "marill", "2": "marill", "3": "azumarill", "4": "azumarill", "5": "snorlax", "6": "snorlax"}},
+      {"id": "cobblemon:pecha_berry", "name": "pecha berry", "species_by_band": {"1": "snubbull", "2": "snubbull", "3": "granbull", "4": "granbull", "5": "clefable", "6": "clefable"}},
+      {"id": "cobblemon:razz_berry", "name": "razz berry", "species_by_band": {"1": "ponyta", "2": "ponyta", "3": "rapidash", "4": "rapidash", "5": "arcanine", "6": "arcanine"}},
+      {"id": "cobblemon:sitrus_berry", "name": "sitrus berry", "species_by_band": {"1": "chansey", "2": "chansey", "3": "chansey", "4": "blissey", "5": "blissey", "6": "blissey"}},
+      {"id": "cobblemon:poke_snack", "name": "poke snack", "species_by_band": {"1": "eevee", "2": "eevee", "3": "eevee", "4": "eevee", "5": "eevee", "6": "eevee"}},
+      {"id": "cobblemon:poke_bait", "name": "poke bait", "species_by_band": {"1": "scyther", "2": "scyther", "3": "scyther", "4": "scizor", "5": "scizor", "6": "scizor"}}
+    ],
+    "messages": {
+      "hint": "Leave a bait on the altar.",
+      "laid": "The bait is laid. Something will follow it.",
+      "full": "The altar already holds a bait.",
+      "cheap": "That is no bait.",
+      "lure": "Something has followed your scent.",
+      "lure_title": "A lured creature"
+    }
+  }
+}

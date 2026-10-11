@@ -1725,6 +1725,10 @@ def build(doc, **kw):
     files.update(DF.pack_files(doc))    # the stands' NPC classes and the healer's advancement
     import dungeon_resources as DRS     # lazy (RESOURCES2): the resources rooms' cache loot tables
     files.update(DRS.pack_files(doc))
+    import dungeon_extras as DX         # lazy (RT-A): bank vault, wishing well, bait room (nothing while no dungeon authors one)
+    fns.update(DX.functions(doc))
+    DX.patch_functions(doc, fns)        # the code and the lure at each threshold, the bait objective at load
+    files.update(DX.pack_files(doc))    # the bank vaults' loot tables
     files["data/minecraft/tags/function/load.json"] = json.dumps(
         {"values": [F("load")] + DF.load_entries() + DL.load_entries(doc) + DRel.load_entries(doc)}, indent=2) + "\n"
     files["data/minecraft/tags/function/tick.json"] = json.dumps({"values": DF.tick_entries()}, indent=2) + "\n"

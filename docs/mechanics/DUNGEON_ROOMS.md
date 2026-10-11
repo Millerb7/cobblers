@@ -634,3 +634,28 @@ the cache chest reads as a find at a heap's foot. The walk check proves a player
 standing cell; it has not been seen. Where it collides with another system: GREED's table must hold a row for every block the piles can hold (it does: the eight ores of both families) and an item cp for the cache's two items (it does), the independent audit's
 "the pick breaks nothing but seams and cracked faces" (it reads the generated `can_break`, which now holds the table's ore blocks;
 `tools/dungeon_independent_audit.py` is AUDIT2's, not touched here), and `life` (heap and cache ground is kept from its spots).
+
+## 11. Bank vault, wishing well, bait room (RT-A, 2026-10-10; built and simulated, not run in Minecraft)
+
+The owner's "next phase" room types (DUNGEON_PASS2.md). Rung: **datapack plus generator** (`tools/dungeon_extras.py`, `data/dungeon_extras.json`,
+registered through `EXTENSION_MODULES`; three lines in `tools/dungeon.py` build()); nothing needed a scripting layer, a companion or a mod. Fixture:
+`tests/fixtures/dungeon_extras_rooms.json` (one of each; the authored dungeons place them later). Tests: `tests/test_dungeon_extras.py`.
+
+- **`bank_vault`** (a `side` entry or an `optional` fork route only, gate `open`; at least 30 x 21 x 8). `params`: `clue_rooms` (room ids of the same
+  dungeon, not the entry, exit, boss arena or another vault), `digits` 3..5 (4), `chests` 1..6 (4), `penalty_s` (20), `max_tries` (5), `clock_cost_s`
+  (20 a chest), `loot_by_band` (the vault's form; default in the data). The code is rolled at the threshold (`random value 0..9` a digit) and written
+  to a wall sign (the theme's `crossroads.sign`, at floor + 2, off the trail) in each clue room by that room's `enter`; digits are dealt round robin, at
+  most 3 a sign; the reset writes `?` back. A keypad of ten wooden buttons, a sign over each, a lamp per digit; the code is compared on the last press;
+  wrong costs `penalty_s`, `max_tries` wrong codes jam it for the run. The chamber's gate (the theme's gate block, 3 x 4) is shut in the shell and open in
+  the walk check's grid; `clear` opens it. Chests are the vault's mechanism (LootTable placed from air, `DG.chest_lines`), held to KIT3's vault budget.
+- **`wishing_well`** (at least 20 x 15 x 7, `params.throws` 2, `min_cp` 20). An item entity resting in the pool is read by `Item.id` against GREED's table
+  (placeholder `unpriced` rows and anything under `min_cp` refused and thrown back out), value cp x count; `random value 1..100` picks a share of it
+  (data `shares_by_band`: nothing 35-38 %, up to 500 %), paid in the dearest item of the band's ladder the pay reaches, rounded down, at most 64.
+  Expected share under 0.9 whatever is thrown. GREED is charged the gain, `pay - value`, only when positive. Why that cannot be gamed: data `gaming_why`.
+- **`bait_room`** (at least 20 x 15 x 7, `params.lure_room` a living room). A bait from the data table is taken one at a time onto the PLAYER's `dg.bait`
+  (survives logout and death); the next run's threshold in a dungeon with a bait room moves it into the run and zeroes it; the lure room's first pass
+  spawns the bait's species for the band at the band's lower cap, catchable and wandering, tagged `dg.lure`, a wild Pokemon of the slot. Cobblemon's
+  bait items exist in the 1.8.0 jar (`cobblemon:poke_bait`, `poke_snack`, the berries) but its `spawn_bait_effects` are fishing-rod effects, not used.
+- **Unproven in game:** a keypad press read once a keeper pass (two in one pass are taken in ascending order); `data modify block` on a waxed sign;
+  item entities resting in the pool and read as `@e[type=item]` in the pocket; `data get entity @s Item.count`; the `give @s $(item) $(n)` macro for a
+  Cobblemon item; a lure staying in its room; the sound ids. A bait stays stored while the next run is in a dungeon without a bait room.
