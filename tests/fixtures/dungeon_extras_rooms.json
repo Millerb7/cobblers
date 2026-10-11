@@ -1,0 +1,22 @@
+{
+  "why": "A room list holding one of each of the three extras kinds (tools/dungeon_extras.py), for tests/test_dungeon_extras.py. It is NOT a dungeon and not the shared demo list (tests/fixtures/dungeon_demo_rooms.json): the authored dungeons place these rooms later. d1 and d2 carry the bank vault's clue signs, d3 is the bait room's lure room, the vault sits in a wing off the hall.",
+  "rooms": [
+    {"id": "entry", "kind": "entry_room", "length": 20, "width": 15, "height": 8},
+    {"id": "d1", "kind": "drift", "length": 30, "width": 11, "height": 8},
+    {"id": "well", "kind": "wishing_well", "length": 34, "width": 19, "height": 8, "params": {"throws": 2}},
+    {"id": "d2", "kind": "drift", "length": 30, "width": 11, "height": 8},
+    {"id": "bait", "kind": "bait_room", "length": 34, "width": 17, "height": 8, "params": {"lure_room": "d3"}},
+    {"id": "d3", "kind": "drift", "length": 32, "width": 13, "height": 8},
+    {"id": "hall", "kind": "drift", "length": 30, "width": 21, "height": 8, "align": "south"},
+    {"id": "wing", "kind": "side", "from": {"side": "north", "at": 8}, "rooms": [
+      {"id": "bw_a", "kind": "drift", "length": 28, "width": 9, "height": 7, "in": {"side": "south", "at": 4}},
+      {"id": "bank", "kind": "bank_vault", "length": 40, "width": 23, "height": 9, "align": "north", "params": {
+        "clue_rooms": ["d1", "d2"], "digits": 4, "chests": 4, "penalty_s": 20, "max_tries": 5, "clock_cost_s": 20,
+        "loot_by_band": {"1": [{"item": "minecraft:iron_ingot", "count": [2, 3]}], "3": [{"item": "minecraft:gold_ingot", "count": 2}],
+                         "5": [{"item": "minecraft:diamond", "count": 1}]}}}
+    ]},
+    {"id": "d9", "kind": "drift", "length": 30, "width": 11, "height": 8, "align": "south"},
+    {"id": "arena", "kind": "boss_arena", "length": 36, "width": 17, "height": 9, "align": "south"},
+    {"id": "exit", "kind": "exit_room", "length": 16, "width": 13, "height": 7, "align": "south"}
+  ]
+}
