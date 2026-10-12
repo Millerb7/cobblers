@@ -2621,6 +2621,17 @@ def steps(with_spawns=False):
     return out
 
 
+# The plants an NPC must not stand in (2026-10-11: three Compact NPCs were seated in a flower, a flowering azalea and a
+# sweet berry bush from the foliage paint; the berry bush slows and hurts whoever walks into the NPC). The npc action
+# clears exactly these at the NPC's feet and head before it looks for or spawns the NPC; nothing else is replaced.
+STAND_CLEAR = ("#minecraft:flowers", "#minecraft:saplings", "minecraft:sweet_berry_bush")
+
+
+def stand_clear_commands(x, y, z):
+    """The fills that clear STAND_CLEAR at (x, y, z) and the block above it, each replacing only that tag."""
+    return ["fill %d %d %d %d %d %d minecraft:air replace %s" % (x, y, z, x, y + 1, z, t) for t in STAND_CLEAR]
+
+
 def watchdog_setting(server_dir):
     """The max-tick-time value in <server>/server.properties (only that key is read), or None when it is not set,
     which leaves the server's default watchdog of 60 s."""
@@ -2869,6 +2880,8 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                     if "passed" in rc("execute if loaded %d %d %d" % (x, y, z)):
                         break
                     time.sleep(1)
+                for c in stand_clear_commands(x, y, z):
+                    rc(c)
                 # once: an NPC already standing there (a re-run) is left alone rather than doubled. A chunk's
                 # entities load after its blocks, so "loaded" above does not mean the NPC is visible yet: a query
                 # the moment the chunk loaded missed one that was there (staging, 2026-09-23). Look for a while.
