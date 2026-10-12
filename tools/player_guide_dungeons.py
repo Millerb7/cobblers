@@ -387,6 +387,21 @@ def collect(jar=None):
 # ------------------------------------------------------------------------------------------------ rendering
 
 
+def render_first_rift(m):
+    """The rift guide book's text (tools/dungeon_guide.py sections(), the SAME function the book is built from, so the book
+    handed to a player on their first arrival and this section cannot drift)."""
+    import dungeon_guide as GB
+    g = ['<section %s><h2>Your first rift</h2>' % player_site.section_attr("first-rift")]
+    g.append('<p>The first time you arrive in a dungeon run, the rift hands you a written book, the <b>%s</b>. This section is '
+             'its text, so you can read it before you go. It holds the rules every dungeon shares; what differs from one '
+             'dungeon to the next is on the board in its entry room and on its card below.</p>' % esc(GB.TITLE))
+    for _key, title, paras in GB.sections(m["doc"]):
+        g.append('<h3>%s</h3>' % esc(title))
+        g.extend('<p>%s</p>' % esc(p) for p in paras)
+    g.append('</section>')
+    return "".join(g)
+
+
 def render_basics(m):
     dex, bands, nb = m["dex"], m["bands"], m["nb"]
     g = []
@@ -654,13 +669,14 @@ def render_dungeon(m, x):
 
 
 def render(m):
-    secs = [("basics", "How a run works"), ("optional", "Optional rooms")] + \
+    secs = [("first-rift", "Your first rift"), ("basics", "How a run works"), ("optional", "Optional rooms")] + \
         [(slug(x["id"]), x["name"]) for x in m["dungeons"]]
     toc = "".join('<li><a href="#%s">%s</a></li>' % (esc(k), esc(t)) for k, t in secs)
     body = ['<main><h1>Dungeons</h1><p class="lead">Thirteen dungeons, each a timed run through a pocket world. How a run '
-            'works, then the six optional rooms, then each dungeon.</p>',
+            'works, then the six optional rooms, then each dungeon. New to rifts? Start with Your first rift.</p>',
             '<nav class="box toc" id="contents"><b>Contents</b><ol>%s</ol></nav>' % toc,
             player_site.filter_nav(secs, label="Show one part")]
+    body.append(render_first_rift(m))
     body.append(render_basics(m))
     body.append(render_optional(m))
     for x in m["dungeons"]:
