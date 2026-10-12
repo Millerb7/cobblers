@@ -33,6 +33,9 @@ What each check expects comes from the authored record or the build's own plan, 
           reverse.
   extra   data/world_probes.json: per-place probes the builders of 2026-10-02 named (block or entity), so the new
           southern places are checked by the same runner.
+  gatehouse  (not in the default --only; run it after R9Z) the Rift's open gatehouses, 2026-10-12: the retired shell
+          gone (barrier, roof, walls, the old stand) and the new passage, posts, lanterns and the guard's stand there.
+          Expected from data/rift_zones.json through tools/gatehouse_audit.py's Frame.
 
 NOT covered: the Deep's 196 buildings block by block (`tools/deep_city.py verify --world`, which reads the saved
 world), the Rift's gatehouses (re-run R9Z: its fixes landed after the 2026-10-01 apply), trainers' seats
@@ -265,6 +268,61 @@ def relic(rc, source_root=None):
     return out
 
 
+def gatehouse(rc):
+    """The Rift's open gatehouses, standing (2026-10-12): per gate R9Z builds, the retired shell GONE and the new one
+    there. Expected from data/rift_zones.json through tools/gatehouse_audit.py's Frame (its own rows and lanes), never from
+    the world: air over the old barrier row and the old roof, the old wall columns open at head height, a floor under the
+    passage, a blackstone post on each side of the line with its lantern, and ONE guard stand on the pad and none on the
+    retired shell's block."""
+    import gatehouse_audit as GA
+    spec = json.loads((ROOT / "data" / "rift_zones.json").read_text(encoding="utf-8"))
+    gh = spec["gatehouse"]
+    held = GA.held(spec)
+    out = []
+    for name, gid, rec, _arr, _knock in GA.gates(spec):
+        if name.split("_")[0] in held:
+            continue
+        fr = GA.Frame(rec, gh)
+        fy = fr.fy
+        ax, az = fr.at(0, 0)
+        _hold(rc, ax, fy, az)
+        bad = []
+
+        def need(x, y, z, want, why):
+            if not _block(rc, x, y, z, want):
+                bad.append("%s at (%d, %d, %d)" % (why, x, y, z))
+        for k in range(fr.k0, fr.k1 + 1):
+            for t in (-1, 0, 1, 3):
+                x, z = fr.at(t, k)
+                need(x, fy - 1, z, "!air", "no floor")
+                need(x, fy, z, "minecraft:air", "not clear at the feet" if t != 1 else "the old barrier is still there")
+                need(x, fy + 1, z, "minecraft:air", "not clear at the head")
+                need(x, fy + 2, z, "minecraft:air", "the old roof")
+                need(x, fy + 3, z, "minecraft:air", "not clear four high")
+        for k in (fr.k0 - 1, fr.k1 + 1):
+            x, z = fr.at(1, k)
+            need(x, fy, z, "minecraft:blackstone", "no post")
+            need(x, fy + gh["post_height"], z, "minecraft:blackstone", "no beam on the post")
+            need(x, fy + gh["post_height"] + 1, z, "minecraft:lantern", "no lantern")
+        for t in (-1, 3):                       # the retired shell's wall columns, beside the passage, at head height
+            for k in (fr.k0 - 1, fr.k1 + 1):
+                x, z = fr.at(t, k)
+                if _block(rc, x, fy + 1, z, "minecraft:obsidian"):
+                    bad.append("the old obsidian wall at (%d, %d, %d)" % (x, fy + 1, z))
+        px, pz = fr.at(0, fr.k0 - 1 if gh["guard_side"] < 0 else fr.k1 + 1)
+        n_pad = _count(rc, "@e[type=minecraft:armor_stand,tag=cobblers_rift_guard,x=%d,y=%d,z=%d,distance=..1]"
+                       % (px, fy, pz))
+        n_old = _count(rc, "@e[type=minecraft:armor_stand,tag=cobblers_rift_guard,x=%d,y=%d,z=%d,distance=..1]"
+                       % (ax, fy, az))
+        if n_pad != 1:
+            bad.append("%d guard stands on the pad (%d, %d, %d), expected 1" % (n_pad, px, fy, pz))
+        if n_old:
+            bad.append("%d guard stand(s) still on the retired shell's block (%d, %d, %d)" % (n_old, ax, fy, az))
+        out.append(("gatehouse", "%s (%s)" % (name, gid), (ax, fy, az), "; ".join(bad[:6])))
+        _free(rc, ax, az)
+    return out
+
+
 def extra(rc):
     p = ROOT / "data" / "world_probes.json"
     if not p.exists():
@@ -303,7 +361,7 @@ def main(argv=None):
     want = a.only.split(",")
     rows = []
     for name, fn in (("arena", arena), ("gulch", gulch), ("dens", lambda r: dens(r, a.den_wait)),
-                     ("relic", lambda r: relic(r, a.source_root)), ("extra", extra)):
+                     ("relic", lambda r: relic(r, a.source_root)), ("extra", extra), ("gatehouse", gatehouse)):
         if name in want:
             rows += fn(rc)
     fails = [r for r in rows if r[3]]

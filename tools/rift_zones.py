@@ -7,7 +7,14 @@
 
 WHAT THIS IS. docs/mechanics/RIFT_ZONES.md is the design; data/rift_zones.json is the data, and records every
 place this implementation and that design disagree. docs/world-building/RIFT_ZONES_BUILD.md is the build note.
-Nothing here has been installed, run on a server or seen by a player.
+Nothing here has been seen by a player.
+
+THE GATEHOUSE IS OPEN (the owner, 2026-10-12: "It shouldn't be a one-block corridor to squeeze through; it should
+just be a guard that stops you if you can't enter."). It is no longer a walled, roofed corridor with a barrier: it is a
+passage at least 5 wide with four clear blocks over it, a guard on a pad beside it, two posts and a beam as dressing, and
+the zone's own LINE advancement doing the stopping. `build` first takes down what the retired shell put in the world
+(gatehouse.legacy) and restores the terrain; tools/gatehouse_audit.py audits the result independently, and
+docs/world-building/RIFT_ZONES_BUILD.md says how it is re-applied (reapply step R9Z).
 
 THE RUNG (CLAUDE.md principle 6). A datapack with functions, rungs 5 and 6, and no rung above. Cobblemon has no
 player-zone concept; no installed addon gates an area; Cobbleverse ships none; no config key expresses "a player
@@ -1338,6 +1345,33 @@ def cmd_report(a, quiet=False):
             if b != "minecraft:barrier" and ('"%s"' % b) in named:
                 bad("wall block %s is named by data/spawn_blocks.json" % b)
 
+    # 10b. the open gatehouse's own preconditions (the owner, 2026-10-12): never narrower than min_width, never anything
+    #      over the way lower than min_clear, the beam sitting on posts of its own height, a terrain for every gate, the
+    #      guard on a side, and the frozen legacy numbers present for the demolition
+    gh_ = spec["gatehouse"]
+    if gh_["walkway"] < gh_["min_width"]:
+        bad("gatehouse.walkway is %d, under min_width %d (the owner: at least 5 blocks wide)"
+            % (gh_["walkway"], gh_["min_width"]))
+    if gh_["clear_above"] + 1 < gh_["min_clear"] or gh_["arch_at"] < gh_["min_clear"]:
+        bad("gatehouse.clear_above %d / arch_at %d leave less than min_clear %d blocks of air over the floor"
+            % (gh_["clear_above"], gh_["arch_at"], gh_["min_clear"]))
+    if gh_["post_height"] != gh_["arch_at"]:
+        bad("gatehouse.post_height %d is not arch_at %d: the beam would float or sink into the posts"
+            % (gh_["post_height"], gh_["arch_at"]))
+    if gh_["guard_side"] not in (-1, 1):
+        bad("gatehouse.guard_side %r is not -1 or 1" % (gh_["guard_side"],))
+    for k in ("walkway", "knock_out", "walkway_in", "roof_at", "barrier_height", "blocks"):
+        if k not in gh_.get("legacy", {}):
+            bad("gatehouse.legacy has no %s: the demolition of the retired shell derives its footprint from it" % k)
+    for zid, z in live.items():
+        for gname, _gid, gd, _a, _t, _e, _k in gates_of(zid, z):
+            code = gh_["terrain"].get(gname)
+            if code not in gh_["terrain_blocks"]:
+                bad("gatehouse.terrain has no known terrain for gate %s (%r)" % (gname, code))
+            dr = gate_dressing(gd["block"], gd["outward"], gh_)
+            if dr["pad"] in set(walkway_path(gd["block"], gd["outward"], gh_)):
+                bad("%s: the guard's pad %s is a column of the walkway, in the walk line" % (gname, dr["pad"]))
+
     # 11. what the data says it settles must still be true
     s = spec["settles"]
     if list(rr["sited"]["hoopa_cradle"]["centre"]) != [3357, 3306]:
@@ -1749,7 +1783,9 @@ def zone_functions(zid, z):
         out.append("%s/admit" % zid)   # qualify on entry, called only by the zone check
     for name, *_ in gates_of(zid, z):
         pre = zid if name == zid else "%s/%s" % (zid, name[len(zid) + 1:])
-        out += ["%s/%s" % (pre, f) for f in ("knock", "exit", "grant", "qualify")]
+        if name != zid:
+            out.append("%s/turn_back" % pre)   # a post turns back to its own door
+        out += ["%s/%s" % (pre, f) for f in ("knock", "line", "grant", "qualify")]
     return out
 
 
@@ -1780,7 +1816,10 @@ def _chunk_volume(x, z):
 def guard_functions(guards):
     """{name under rift_zones/: lines}: the guards' placeholders through tools/chunk_look.py's look-then-act chain.
 
-    guards: [(gate name, guard id, x, y, z, custom name)], one per gate R9Z builds. The guards stand far apart, so
+    guards: [(gate name, guard id, x, y, z, custom name, (old x, old z), yaw)], one per gate R9Z builds. (x, y, z) is
+    the guard's PAD, the column beside the passage (gate_dressing); (old x, old z) is where the retired shell's
+    placeholder stood, in the middle of the walkway, which is killed too so no stand is left in the walk line. yaw
+    faces the stand down the approach. The guards stand far apart, so
     the chain holds each guard's chunk (a list of boxes) and its look requires a guard stand in EVERY one of those
     chunks (all_shown): one chunk's saved stands arriving says nothing about another's. Then, once, it kills the
     stands on each guard's block and summons each guard with cobblers_rift_guard_new; 100 ticks on it kills, on each
@@ -1789,18 +1828,24 @@ def guard_functions(guards):
     import chunk_look as CL
     if not guards:
         return {}
+    # the 6-tuple form (gate, id, x, y, z, name) is still accepted: no retired block to clear, facing south
+    guards = [g if len(g) == 8 else tuple(g) + ((g[2], g[4]), 0.0) for g in guards]
     new = GUARD_TAG + "_new"
     kind = "type=minecraft:armor_stand,tag=%s" % GUARD_TAG
     block = lambda x, y, z: "%s,x=%d,y=%d,z=%d,dx=0,dy=1,dz=0" % (kind, x, y, z)
-    chunks = sorted({(x >> 4, z >> 4) for _g, _i, x, _y, z, _n in guards})
-    act = ["# %d guard placeholders: the stands on each guard's block, then one of each" % len(guards)]
-    act += ["kill @e[%s]" % block(x, y, z) for _g, _i, x, y, z, _n in guards]
+    chunks = sorted({(x >> 4, z >> 4) for _g, _i, x, _y, z, _n, _o, _w in guards}
+                    | {(o[0] >> 4, o[1] >> 4) for _g, _i, _x, _y, _z, _n, o, _w in guards})
+    act = ["# %d guard placeholders: the stands on each guard's pad and on the retired shell's block, then one of each"
+           % len(guards)]
+    act += ["kill @e[%s]" % block(x, y, z) for _g, _i, x, y, z, _n, _o, _w in guards]
+    act += ["kill @e[%s]" % block(o[0], y, o[1]) for _g, _i, _x, y, _z, _n, o, _w in guards]
     act += ["summon minecraft:armor_stand %d %d %d {Invulnerable:1b,NoGravity:1b,CustomNameVisible:1b,"
-            "CustomName:'%s',Tags:[\"%s\",\"%s\",\"%s\"]}" % (x, y, z, name, GUARD_TAG, gname, new)
-            for gname, _i, x, y, z, name in guards]
+            "Rotation:[%sf,0f],CustomName:'%s',Tags:[\"%s\",\"%s\",\"%s\"]}"
+            % (x, y, z, yaw, name, GUARD_TAG, gname, new)
+            for gname, _i, x, y, z, name, _o, yaw in guards]
     fns = CL.chain(GUARDS_FN, [(cx * 16, cz * 16, cx * 16 + 15, cz * 16 + 15) for cx, cz in chunks],
                    ["@e[%s,%s]" % (kind, _chunk_volume(cx * 16, cz * 16)) for cx, cz in chunks], act,
-                   [block(x, y, z) for _g, _i, x, y, z, _n in guards], new, kind, GUARDS_HOLDER,
+                   [block(x, y, z) for _g, _i, x, y, z, _n, _o, _w in guards], new, kind, GUARDS_HOLDER,
                    note="tools/rift_zones.py", all_shown=True)
     pre = "%s:%s/" % (NS, FOLDER)
     return {ref[len(pre):]: lines for ref, lines in fns.items()}
@@ -1978,6 +2023,122 @@ def gate_places(block, outward, gh):
             "barrier": rows[1],
             "exit": rows[gh["exit_in"]],
             "arrive": [rows[gh["arrive_in"]][zero]]}
+
+
+# ----------------------------------------------------------------------------- the open gatehouse (2026-10-12)
+#
+# The owner, after playing: "It shouldn't be a one-block corridor to squeeze through; it should just be a guard that
+# stops you if you can't enter." So a gatehouse is no longer a roofed, walled corridor with a barrier across it. The
+# walkway rectangle above (walkway_rows) is still the passage: the knock box, the arrival and the approach are laid
+# on it exactly as before. What changed is everything built ON it: nothing is walled, roofed or closed; the guard
+# stands beside the way; two posts and a beam are dressing; and the zone's own rule does the stopping (the LINE).
+
+def gate_dressing(block, outward, gh):
+    """{"pad": (x, z), "posts": [(x, z), (x, z)], "beam": [(x, z) per lane]} -- what stands beside and over the passage.
+
+    pad    the guard's column: the lane just OUTSIDE the passage on the low-lane side, on the guard's own row
+           (t = 0). Never a lane of the walkway, so nobody walking the passage walks into the guard.
+    posts  the columns just outside the passage on both sides, on the row t = posts_at (directly behind the guard's).
+    beam   the passage's own lanes on that row; the beam rides on the posts over them, arch_at blocks above the floor.
+    """
+    ax = gate_axis(outward)
+    ix, iz = -ax[0], -ax[1]
+    cx, cz = gate_across(ax)
+    lanes = gate_lanes(gh)
+    lo, hi = lanes[0] - 1, lanes[-1] + 1
+    pad_k = lo if gh["guard_side"] < 0 else hi
+    t = int(gh["posts_at"])
+
+    def at(row, k):
+        return (block[0] + ix * row + cx * k, block[1] + iz * row + cz * k)
+    return {"pad": at(0, pad_k), "posts": [at(t, lo), at(t, hi)], "beam": [at(t, k) for k in lanes]}
+
+
+def gate_line(block, outward, gh):
+    """(x0, z0, x1, z1) -- the LINE's columns: rows t = 1 .. line_in behind the guard, the passage's lanes and
+    line_across more either side. A player without the pass who stands in it is turned back; see gatehouse.line_why."""
+    ax = gate_axis(outward)
+    ix, iz = -ax[0], -ax[1]
+    cx, cz = gate_across(ax)
+    lanes = gate_lanes(gh)
+    ks = (lanes[0] - gh["line_across"], lanes[-1] + gh["line_across"])
+    pts = [(block[0] + ix * t + cx * k, block[1] + iz * t + cz * k)
+           for t in (1, int(gh["line_in"])) for k in ks]
+    return (min(p[0] for p in pts), min(p[1] for p in pts), max(p[0] for p in pts), max(p[1] for p in pts))
+
+
+def wall_gap(block, outward, gh):
+    """{(x, z)} -- the columns a cross-wall leaves open where the gate stands in it: every row of the walkway, the
+    passage's lanes and wall_gap_margin more either side."""
+    ax = gate_axis(outward)
+    ix, iz = -ax[0], -ax[1]
+    cx, cz = gate_across(ax)
+    lanes = gate_lanes(gh)
+    ks = range(lanes[0] - gh["wall_gap_margin"], lanes[-1] + gh["wall_gap_margin"] + 1)
+    return {(block[0] + ix * t + cx * k, block[1] + iz * t + cz * k)
+            for t in range(-gh["knock_out"], gh["walkway_in"] + 1) for k in ks}
+
+
+def legacy_footprint(block, outward, gh):
+    """{"path": [...], "walls": [...], "posts": [...]} -- every column the RETIRED shell (gatehouse.legacy) wrote to,
+    derived from the frozen numbers it was built with and from the gate's own block and axis, which have not moved:
+    the walkway rectangle, the complement ring that walled it and the two post columns at each mouth. It spanned
+    y = floor - 1 .. floor + 3 (floor, walls to +2, roof and frame to +3). The approach columns it also wrote are the
+    gate record's `approach`, which the open gatehouse still uses and so re-lays."""
+    lg = dict(gh, **{k: gh["legacy"][k] for k in ("walkway", "knock_out", "walkway_in")})
+    rows = walkway_rows(block, outward, lg)
+    path = walkway_path(block, outward, lg)
+    walls = walkway_shell(path, outward)
+    posts = [p for _row, ps in gate_frame(rows, outward) for p in ps]
+    return {"path": path, "walls": walls, "posts": posts}
+
+
+def floor_block(terrain, x, z):
+    """The paving block for one column of a passage or approach: the terrain's own palette, worn rather than tiled."""
+    f = terrain["floor"]
+    return f[(x * 7 + z * 13) % len(f)]
+
+
+def runs_by_block(cells_blocks):
+    """[(x0, x1, z, block)] -- {(x, z): block} merged into runs of consecutive x of one block."""
+    out = []
+    byz = {}
+    for (x, z), b in cells_blocks.items():
+        byz.setdefault(z, []).append((x, b))
+    for z in sorted(byz):
+        xs = sorted(byz[z])
+        a, ab = xs[0]
+        prev = a
+        for x, b in xs[1:]:
+            if x != prev + 1 or b != ab:
+                out.append((a, prev, z, ab))
+                a, ab = x, b
+            prev = x
+        out.append((a, prev, z, ab))
+    return out
+
+
+def restore_lines(cols, g, terrain):
+    """fill lines that put every column of `cols` ({(x, z): [lo, hi]}) back to terrain over its y range: stone to
+    three under the ground, `under` to one under, `surface` at the ground (all three from lo up), air above to hi.
+    Ground is the heightmap's `g`, rounded (CLAUDE.md, ground rule); nothing here reads a world. A column whose
+    range starts above the ground (a bridged approach the old shell laid in air) only gets air."""
+    groups = {}
+    for (x, z), (lo, hi) in cols.items():
+        groups.setdefault((g(x, z), lo, hi), []).append((x, z))
+    lines = []
+    for (gy, lo, hi), cells in sorted(groups.items()):
+        for (x0, x1, z) in x_runs(cells):
+            if lo <= min(gy - 3, hi):
+                lines.append("fill %d %d %d %d %d %d %s" % (x0, lo, z, x1, min(gy - 3, hi), z, terrain["deep"]))
+            if max(lo, gy - 2) <= min(gy - 1, hi):
+                lines.append("fill %d %d %d %d %d %d %s" % (x0, max(lo, gy - 2), z, x1, min(gy - 1, hi), z,
+                                                           terrain["under"]))
+            if lo <= gy <= hi:
+                lines.append("fill %d %d %d %d %d %d %s" % (x0, gy, z, x1, gy, z, terrain["surface"]))
+            if max(lo, gy + 1) <= hi:
+                lines.append("fill %d %d %d %d %d %d minecraft:air" % (x0, max(lo, gy + 1), z, x1, hi, z))
+    return lines
 
 
 def box_of(cols, fy):
@@ -2181,27 +2342,45 @@ def cmd_walkable(a):
     paths = sorted(out.glob("gatehouse_*.mcfunction"))
     if not paths:
         raise ZoneError("no gatehouse function in %s; run `build` first" % out)
-    barrier_block = load()["gatehouse"]["blocks"]["barrier"]
+    spec = load()
+    gates = {g[0]: g for zid, z in spec["zones"].items() if z.get("guard") for g in gates_of(zid, z)}
     bad = 0
     for p in paths:
         world = simulate_function(p.read_text(encoding="utf-8").splitlines())
         pieces = walk_pieces(standable_cells(world))
         n_stand = sum(len(x) for x in pieces)
-        barriers = sorted(k for k, b in world.items() if b == barrier_block)
-        # the barrier is meant to be the ONLY break: with it opened the walkway must come out one piece.
-        opened = dict(world)
-        for k in barriers:
-            opened[k] = "minecraft:air"
-        whole = walk_pieces(standable_cells(opened))
-        ok = len(pieces) == 2 and len(whole) == 1
+        # OPEN since 2026-10-12: there is no barrier, so one piece must carry the guard's pad, the arrival, the whole
+        # knock box and the last column of every approach lane at BOTH ends. Other pieces are allowed (the restored
+        # terrain beside the passage, the beam's top); a break between those places is not.
+        name = p.stem[len("gatehouse_"):]
+        _n, _gid, gd, arr, _tb, _eb, knock = gates[name]
+        fy = gd["ground_y"] + 1
+        gh = spec["gatehouse"]
+        cells = {(x, fy, z_) for x in range(knock[0], knock[3] + 1) for z_ in range(knock[2], knock[5] + 1)}
+        want = [("pad", (gate_dressing(gd["block"], gd["outward"], gh)["pad"][0], fy,
+                         gate_dressing(gd["block"], gd["outward"], gh)["pad"][1])),
+                ("arrival", (int(arr[0] - 0.5), int(arr[1]), int(arr[2] - 0.5)))]
+        want += [("knock", c) for c in sorted(cells)]
+        for side in ("outer", "inner"):
+            for run in gd["approach"][side]:
+                x, z_, feet, _ff = run[-1]
+                want.append(("%s approach end" % side, (x, feet, z_)))
+        owner = {}
+        for i, pc in enumerate(pieces):
+            for c in pc:
+                owner[c] = i
+        missing = [(w, c) for w, c in want if c not in owner]
+        split = sorted({owner[c] for _w, c in want if c in owner})
+        ok = not missing and len(split) == 1
         bad += 0 if ok else 1
-        print("%-42s %2d standable, %d piece(s) %-12s %d barrier block(s), barrier open -> %d piece(s)  %s"
-              % (p.stem, n_stand, len(pieces), [len(x) for x in pieces], len(barriers), len(whole),
-                 "OK" if ok else "BROKEN"))
-        if not ok or getattr(a, "verbose", False):
+        print("%-42s %3d standable, %d piece(s) %-14s  %s"
+              % (p.stem, n_stand, len(pieces), [len(x) for x in pieces][:6], "OK" if ok else "BROKEN"))
+        if not ok:
+            print("    not standable: %s; the places lie in pieces %s" % (missing[:6], split))
+        if getattr(a, "verbose", False):
             for i, piece in enumerate(pieces):
                 print("    piece %d: %s" % (i + 1, [(c[0], c[2]) for c in piece]))
-    print("%d of %d gatehouses walkable end to end with the barrier as the only break"
+    print("%d of %d gatehouses walkable: pad, arrival, knock box and both approaches in one piece"
           % (len(paths) - bad, len(paths)))
     return 1 if bad else 0
 
@@ -2302,29 +2481,45 @@ def cmd_build(a):
             "advancement revoke @s only %s:%s/%s_zone" % (NS, FOLDER, zid)] + entry + [
             "execute if entity %s unless score @s %s matches 1..%s run function %s/%s/turn_back"
             % (ex, obj, skip, F, zid)]
-        fn["%s/turn_back" % zid] = [
-            "# a bed or respawn anchor set inside the zone goes first, so a respawn cannot loop (RIFT_ZONES.md 4)",
-            "execute if entity @s[gamemode=!creative] run spawnpoint @s %d %d %d" % (int(tx), int(ty), int(tz)),
-            "# the mount first, then the player (UNPROVEN that Cobblemon riding survives this)",
-            "execute on vehicle run tp @s %s %d %s" % (tx, ty, tz),
-            "tp @s %s %d %s %s 0" % (tx, ty, tz, tyaw),
-            "title @s actionbar %s" % text("Turned back: %s opens with %s." % (z["name"], short), color="gold")]
-        if z.get("turn_back_hint"):
-            # the zone's own sentence saying where the pass is earned (data/rift_zones.json zones.*.turn_back_hint):
-            # an actionbar is gone in two seconds, so the hint goes to chat, where it stays. Only here: a turn-back
-            # runs once per crossing (the player is moved out), where a knock box re-fires while they stand in it
-            fn["%s/turn_back" % zid].append("tellraw @s %s" % text(z["turn_back_hint"], color="gray"))
+        def turn_back_lines(tx_, ty_, tz_, tyaw_, hint=True):
+            lines = [
+                "# a bed or respawn anchor set inside the zone goes first, so a respawn cannot loop (RIFT_ZONES.md 4)",
+                "execute if entity @s[gamemode=!creative] run spawnpoint @s %d %d %d" % (int(tx_), int(ty_), int(tz_)),
+                "# the mount first, then the player (UNPROVEN that Cobblemon riding survives this)",
+                "execute on vehicle run tp @s %s %d %s" % (tx_, ty_, tz_),
+                "tp @s %s %d %s %s 0" % (tx_, ty_, tz_, tyaw_),
+                "title @s actionbar %s" % text("Turned back: %s opens with %s." % (z["name"], short), color="gold")]
+            if hint and z.get("turn_back_hint"):
+                # the zone's own sentence saying where the pass is earned (data/rift_zones.json zones.*.turn_back_hint):
+                # an actionbar is gone in two seconds, so the hint goes to chat, where it stays. Only here: a turn-back
+                # runs once per crossing (the player is moved out), where a knock box re-fires while they stand in it
+                lines.append("tellraw @s %s" % text(z["turn_back_hint"], color="gray"))
+            return lines
+        fn["%s/turn_back" % zid] = turn_back_lines(tx, ty, tz, tyaw)
 
-        # one gate's own four functions, for the zone's guard and for every post
-        for name, gid, _gd, arr, tb, eb, knock in gates:
+        # one gate's own functions, for the zone's guard and for every post: knock (qualify), line (turn back or
+        # admit), grant and qualify. The exit box and its function are retired (gatehouse.exit_retired).
+        for name, gid, gd_, arr, tb, eb, knock in gates:
             gax, gay, gaz, gayaw = arr
             gtx, gty, gtz, gtyaw = tb
             pre = zid if name == zid else "%s/%s" % (zid, name[len(zid) + 1:])
+            if name != zid:
+                # a post turns back to ITS OWN door, not across the Rift to the zone's first gate
+                fn["%s/turn_back" % pre] = turn_back_lines(gtx, gty, gtz, gtyaw)
+            lx0, lz0, lx1, lz1 = gate_line(gd_["block"], gd_["outward"], spec["gatehouse"])
             if enforced:
-                files["data/%s/advancement/%s/%s_exit.json" % (NS, FOLDER, name)] = adv(
-                    [box_cond(eb[:3], eb[3:])], "%s/%s/exit" % (F, pre))
+                files["data/%s/advancement/%s/%s_line.json" % (NS, FOLDER, name)] = adv(
+                    [box_cond((lx0, gd_["ground_y"] - 3, lz0), (lx1, gd_["ground_y"] + 8, lz1))],
+                    "%s/%s/line" % (F, pre))
                 files["data/%s/advancement/%s/%s_knock.json" % (NS, FOLDER, name)] = adv(
                     [box_cond(knock[:3], knock[3:])], "%s/%s/knock" % (F, pre))
+            fn["%s/line" % pre] = [
+                "# THE LINE at %s (data/rift_zones.json gatehouse.line_why). The gatehouse has no barrier: this is what" % gid,
+                "# stops a player without the pass, at the guard, with the zone's own message. The rows behind the",
+                "# guard from t = 1 to t = %d are the box; the knock rows in front of it are not." % spec["gatehouse"]["line_in"],
+                "advancement revoke @s only %s:%s/%s_line" % (NS, FOLDER, name)] + entry + [
+                "execute if entity %s unless score @s %s matches 1.. run function %s/%s/turn_back"
+                % (ex, obj, F, pre)]
             fn["%s/knock" % pre] = [
                 "# THE THING THAT CALLS QUALIFY. A player standing in the walkway in front of %s is asking to be" % gid,
                 "# let through, so the guard answers. data/gulch_mine.json gate.knock is the same shape at the",
@@ -2332,10 +2527,6 @@ def cmd_build(a):
                 "# have sealed the Rift (tools/reapply.py EXCLUDED, 2026-09-30).",
                 "advancement revoke @s only %s:%s/%s_knock" % (NS, FOLDER, name),
                 "function %s/%s/qualify" % (F, pre)]
-            fn["%s/exit" % pre] = [
-                "# the way out past %s, for anyone, pass or not" % gid,
-                "advancement revoke @s only %s:%s/%s_exit" % (NS, FOLDER, name),
-                "tp @s %s %d %s %s 0" % (gtx, gty, gtz, gtyaw)]
             fn["%s/grant" % pre] = [
                 "# the pass, and the way in past %s. Called by %s/qualify, and by %s's dialogue once Codex" % (gid, pre, gid),
                 "# writes it (docs/HANDOVER_CODEX.md item 23): the dialogue never has to know the objective's name.",
@@ -2389,7 +2580,8 @@ def cmd_build(a):
             # the cross-wall filled the walkway's own columns as a second seal on top of the shell's.
             keep = set()
             for (_n, _gid, gd, _a, _t, _e, _k) in zgates:
-                keep.update(walkway_path(gd["block"], gd["outward"], gh))
+                # the gap the wall leaves: the walkway and wall_gap_margin lanes either side (gatehouse.wall_gap_why)
+                keep.update(wall_gap(gd["block"], gd["outward"], gh))
                 keep.update((c[0], c[1]) for c in approach_columns(gd))
             lines = ["# the %s cross-wall (data/rift_zones.json cuts[%s]): %d columns on walkable floor, core %d,"
                      % (w, w, c["columns"], spec["wall"]["core"]),
@@ -2406,84 +2598,111 @@ def cmd_build(a):
             name = "wall_%s" % w
             fn[name] = lines
             index.append(name)
-        # the gatehouse shell at each gate's block: every guard and every post has one, walled zone or not.
+        # the gatehouse at each gate's block: every guard and every post has one, walled zone or not.
         # G2's stands on Victory Road at the trailhead, outside the Rift's rim, where the rim itself is the
         # barrier and no cross-wall is built; Z2's three posts stand at the three sculpted descents, for the
-        # same reason.
+        # same reason. OPEN since 2026-10-12 (gatehouse.why): the old shell comes down first, the passage is laid
+        # clear, and what stands is two posts, a beam and the guard beside the way.
+        wtop = {(x, z_): top for (x, z_, top) in cols} if w else {}
         for (gname, gid, gd, _a, _t, _e, knock) in zgates:
             gq = gd["block"]
             fy = gd["ground_y"] + 1
             sh = gh["blocks"]
-            # the walked set first, then the shell as its complement. Emitted in that order and in three
-            # passes -- floor, walls, then the walkway's air and roof -- so that no column of the shell can
-            # land on a column of the walkway: a per-step pair could, and did (measured_defects).
             rows = walkway_rows(gq, gd["outward"], gh)
             path = walkway_path(gq, gd["outward"], gh)
-            walls = walkway_shell(path, gd["outward"])
             places = gate_places(gq, gd["outward"], gh)
-            lin = sh["lintel"]
-            gl = ["# the %s gatehouse shell (RIFT_ZONES.md section 6; data/rift_zones.json gatehouse): a %d-wide roofed"
-                  % (gid, gh["walkway"]),
-                  "# walkway on a cardinal axis %s, walled and roofed in %s, a gate frame of %s at each mouth, and"
-                  % (tuple(gate_axis(gd["outward"])), sh["shell"], lin),
-                  "# a %d-high barrier across the full width directly behind the guard. The armour stand where"
-                  % gh["barrier_height"],
-                  "# Codex's NPC will stand is placed by rift_zones/guards. The walkway rows OUTSIDE the guard and"
-                  " the guard's own",
-                  "# row are the knock box %s: standing there runs %s's qualify." % (knock, gid),
-                  "# %d walkway columns, %d rows of %d, from %s to %s, walled by %d columns."
-                  % (len(path), len(rows), gh["walkway"], tuple(path[0]), tuple(path[-1]), len(walls))]
-            # the approach first (data/rift_zones.json gatehouse.approach_why): straight on from each mouth, one
-            # block up or down per column until the walkway meets the ground, cut where the ground stands higher
-            # and bridged where it falls away, three blocks of air over every column -- one run per lane since
-            # the walkway went six wide. The shell is written after, so an approach column can never open a
-            # column of the shell; `report` checks that none falls on one, which would mean the approach is
-            # stale against the shell's geometry.
+            dress = gate_dressing(gq, gd["outward"], gh)
+            terr = gh["terrain_blocks"][gh["terrain"][gname]]
             ap = approach_columns(gd)
+            old = legacy_footprint(gq, gd["outward"], gh)
+            ax = gate_axis(gd["outward"])
+            gl = ["# the %s gatehouse (RIFT_ZONES.md section 6; data/rift_zones.json gatehouse), OPEN since 2026-10-12:"
+                  % gid,
+                  "# a %d-wide passage on the cardinal axis %s with nothing built over or across it, %d blocks of air"
+                  % (gh["walkway"], tuple(ax), gh["clear_above"] + 1),
+                  "# over the floor, two %s posts and a beam %d up as dressing, and the guard on a pad beside the way."
+                  % (sh["post"], gh["arch_at"]),
+                  "# What stops a player without the pass is the zone's line box (rift_zones/%s_line), not a block." % gname,
+                  "# The armour stand where Codex's NPC will stand is placed by rift_zones/guards. The walkway rows in",
+                  "# front of the guard and its own row are the knock box %s: standing there runs %s's qualify."
+                  % (knock, gid),
+                  "# %d walkway columns, %d rows of %d, from %s to %s."
+                  % (len(path), len(rows), gh["walkway"], tuple(path[0]), tuple(path[-1]))]
+            # 1. TAKE THE RETIRED SHELL DOWN (gatehouse.legacy). Every column it wrote to, over the y range it wrote,
+            # goes back to terrain: the paint's own code for the place (gatehouse.terrain), the ground from the
+            # heightmap (rounded, never a world). That includes the cross-wall's columns in the gap, which the old
+            # wall closed up to its crest and the new gap (wall_gap) leaves open. Re-running this over a world that
+            # never had the old shell only re-writes the terrain with itself.
+            dem = {}
+
+            def want(c, lo, hi):
+                cur = dem.get(c)
+                dem[c] = [min(lo, cur[0]), max(hi, cur[1])] if cur else [lo, hi]
+            for c in old["path"] + old["walls"] + old["posts"]:
+                want(c, fy - 1, fy + 3)
+            for (x, z_, feet, fill_from) in ap:
+                want((x, z_), feet - 1 if fill_from is None else fill_from, feet + 2)
+            for c in wall_gap(gq, gd["outward"], gh):
+                if c in wtop:
+                    want(c, g(*c), wtop[c])
+            for c in dem:
+                dem[c] = [min(dem[c][0], g(*c)), dem[c][1]]
+                if c in wtop:
+                    dem[c][1] = max(dem[c][1], wtop[c])
+            gl.append("# 1. the retired shell taken down and the terrain it stood on restored (%s: %s): %d columns"
+                      % (gh["terrain"][gname], terr["surface"], len(dem)))
+            gl += restore_lines(dem, g, terr)
+            # 2. THE PASSAGE: floor flat at the guard's feet level across the walkway's rows, the pad and the two post
+            # columns; paved in the terrain's worn palette, bridged on `under` where the ground falls away, air
+            # clear_above over the floor and cut open to the sky wherever the ground stands higher than that.
+            flat = set(path) | {dress["pad"]} | set(dress["posts"])
+            top_air = fy + gh["clear_above"]
+            gl.append("# 2. the passage: %d columns flat at y%d, air to y%d (higher ground cut open)"
+                      % (len(flat), fy - 1, top_air))
+            bridge = {}
+            for c in sorted(flat):
+                gy = g(*c)
+                if gy < fy - 2:
+                    bridge.setdefault(gy, []).append(c)
+            for gy, cells in sorted(bridge.items()):
+                for (x0, x1, z_) in x_runs(cells):
+                    gl.append("fill %d %d %d %d %d %d %s" % (x0, gy + 1, z_, x1, fy - 2, z_, terr["under"]))
+            for (x0, x1, z_, b) in runs_by_block({c: floor_block(terr, *c) for c in flat}):
+                gl.append("fill %d %d %d %d %d %d %s" % (x0, fy - 1, z_, x1, fy - 1, z_, b))
+            air = {}
+            for c in sorted(flat):
+                air.setdefault(max(top_air, g(*c)), []).append(c)
+            for top, cells in sorted(air.items()):
+                for (x0, x1, z_) in x_runs(cells):
+                    gl.append("fill %d %d %d %d %d %d minecraft:air" % (x0, fy, z_, x1, top, z_))
+            # the approach (data/rift_zones.json gatehouse.approach_why): straight on from each mouth, one block up or
+            # down per column until the walkway meets the ground, cut where the ground stands higher and bridged
+            # where it falls away -- one run per lane. Paved like the passage, and open to the sky like it.
             if ap:
                 gl.append("# the approach, %d column(s) over %d lanes a side [x, z, feet, bridged from]"
                           % (len(ap), gh["walkway"]))
-            # Every approach column gets a floor of the shell's block: a bridged one from the ground up, a cut one
-            # in place of the ground's own top. That makes the way out read as part of the gatehouse, and it puts
-            # the whole walked run in this function, where `walkable` can measure it without the heightmap.
             for (x, z_, feet, fill_from) in ap:
-                gl.append("fill %d %d %d %d %d %d %s" % (x, feet - 1 if fill_from is None else fill_from, z_,
-                                                         x, feet - 1, z_, sh["shell"]))
-                gl.append("fill %d %d %d %d %d %d minecraft:air" % (x, feet, z_, x, feet + 2, z_))
-            # the floor under walkway and walls; the walls, up to and level with the roof; then the walkway's
-            # air and its roof, so no column of the shell can land on a column of the walkway (B12).
-            for (x0, x1, z_) in x_runs(set(path) | set(walls)):
-                gl.append("fill %d %d %d %d %d %d %s" % (x0, fy - 1, z_, x1, fy - 1, z_, sh["shell"]))
-            for (x0, x1, z_) in x_runs(set(walls)):
-                gl.append("fill %d %d %d %d %d %d %s" % (x0, fy, z_, x1, fy + 2, z_, sh["shell"]))
-            for (x0, x1, z_) in x_runs(set(path)):
-                gl.append("fill %d %d %d %d %d %d minecraft:air" % (x0, fy, z_, x1, fy + 1, z_))
-                gl.append("fill %d %d %d %d %d %d %s" % (x0, fy + 2, z_, x1, fy + 2, z_, sh["shell"]))
-            # the gate frame at each mouth (gatehouse.frame_why): the roof over the end row and a lintel course
-            # above it, post to post, and the two posts standing one block proud of the walls, all in the lintel
-            # block. It reads as a gateway from the approach; nothing of it is at the walkway's own two levels.
-            gl.append("# the gate frame at each mouth, in %s" % lin)
-            for row, posts in gate_frame(rows, gd["outward"]):
-                for (x0, x1, z_) in x_runs(set(row)):
-                    gl.append("fill %d %d %d %d %d %d %s" % (x0, fy + 2, z_, x1, fy + 2, z_, lin))
-                for (x0, x1, z_) in x_runs(set(row) | set(posts)):
-                    gl.append("fill %d %d %d %d %d %d %s" % (x0, fy + 3, z_, x1, fy + 3, z_, lin))
-                for (x, z_) in posts:
-                    gl.append("fill %d %d %d %d %d %d %s" % (x, fy, z_, x, fy + 3, z_, lin))
-            # the barrier is the whole walkway row directly behind the guard (t = 1), every lane: the only break
-            # the walkway is allowed to have, and with no lane round it.
+                if fill_from is not None and fill_from <= feet - 2:
+                    gl.append("fill %d %d %d %d %d %d %s" % (x, fill_from, z_, x, feet - 2, z_, terr["under"]))
+                gl.append("fill %d %d %d %d %d %d %s" % (x, feet - 1, z_, x, feet - 1, z_, floor_block(terr, x, z_)))
+                gl.append("fill %d %d %d %d %d %d minecraft:air" % (x, feet, z_, x, max(feet + gh["clear_above"], g(x, z_)), z_))
+            # 3. THE DRESSING: two posts either side of the line, a beam across between them, a lantern standing on
+            # each post. Nothing of it is over the passage lower than arch_at: the beam is the only thing over it.
+            gl.append("# 3. dressing: two %s posts %d high, a beam at +%d, a lantern on each post"
+                      % (sh["post"], gh["post_height"], gh["arch_at"]))
+            for (x, z_) in dress["posts"]:
+                gl.append("fill %d %d %d %d %d %d %s" % (x, fy, z_, x, fy + gh["post_height"] - 1, z_, sh["post"]))
+            arch_y = fy + gh["arch_at"]
+            for (x0, x1, z_) in x_runs(set(dress["beam"]) | set(dress["posts"])):
+                gl.append("fill %d %d %d %d %d %d %s" % (x0, arch_y, z_, x1, arch_y, z_, sh["beam"]))
+            for (x, z_) in dress["posts"]:
+                gl.append("setblock %d %d %d %s" % (x, arch_y + 1, z_, sh["lantern"]))
             if tuple(gq) not in places["knock"]:
-                raise ZoneError("%s's guard block %s is not on its own walkway's knock rows; the barrier has "
-                                "nowhere to stand" % (gid, gq))
-            gl.append("# the barrier across the full width directly behind the guard: this is what actually stops"
-                      " a player")
-            for (x0, x1, z_) in x_runs(set(places["barrier"])):
-                gl.append("fill %d %d %d %d %d %d %s" % (x0, fy, z_, x1, fy + gh["barrier_height"] - 1, z_,
-                                                         sh["barrier"]))
-            gl.append("setblock %d %d %d %s" % (gq[0], fy + 2, gq[1], sh["lamp"]))
+                raise ZoneError("%s's guard block %s is not on its own walkway's knock rows" % (gid, gq))
             # the placeholder is NOT summoned here any more: see `guards` below
             if zid not in held:
-                guards.append((gname, gid, gq[0], fy, gq[1]))
+                guards.append((gname, gid, dress["pad"][0], fy, dress["pad"][1], gq[0], gq[1],
+                               yaw_towards(*gd["outward"])))
             name = "gatehouse_%s" % gname
             fn[name] = gl
             index.append(name)
@@ -2494,8 +2713,8 @@ def cmd_build(a):
     # 2026-10-01; the Victory Road descent post's block holds G2's old stand, from before G2 moved to the trailhead,
     # under another tag). Until 2026-10-08 this waited a fixed 40 ticks (tools/traders.py's pattern), the wait that
     # let R17M's stall merchants double on staging that day (N155); now tools/chunk_look.py's look-then-act chain.
-    fn.update(guard_functions([(gname, gid, x, y, z_, text("%s (placeholder)" % gid))
-                               for (gname, gid, x, y, z_) in guards]))
+    fn.update(guard_functions([(gname, gid, x, y, z_, text("%s (placeholder)" % gid), (ox_, oz_), yaw)
+                               for (gname, gid, x, y, z_, ox_, oz_, yaw) in guards]))
 
     out = PACKS / PACK
     # the pack is rebuilt from nothing. This loop used to be a no-op, so a file the data no longer produces --
