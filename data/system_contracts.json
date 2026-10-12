@@ -1201,14 +1201,14 @@
       "constrained_by": [
         "caves"
       ],
-      "statement": "A cave boss (data/caves.json occupant.mode area_boss: today Miraidon at The Relay Fault) carries tags that are never the blackout's exempt tag, so a boss that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the cave keeper (cobblers:caves/boss/<id>/*) only counts it: the guardian is found as present by its tag and species near the spot, and no kill, hold, wake, settle or duplicate selector of the pack reaches an entity tagged cobblers.guardian. Nothing in the pack adds or removes cobblers.guardian or the exempt tag. The keeper's return clock starts only when no boss and no guardian is present for two loaded passes, so a player's items are never left with a guardian that was despawned, replaced or respawned under them.",
+      "statement": "A cave boss (data/caves.json occupant.mode area_boss: Miraidon at The Relay Fault, Dialga at The Clock Cellar, Koraidon at Sunscar) carries tags that are never the blackout's exempt tag, so a boss that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the cave keeper (cobblers:caves/boss/<id>/*) only counts it: the guardian is found as present by its tag and species near the spot, and no kill, hold, wake, settle or duplicate selector of the pack reaches an entity tagged cobblers.guardian. Nothing in the pack adds or removes cobblers.guardian or the exempt tag. The keeper's return clock starts only when no boss and no guardian is present for two loaded passes, so a player's items are never left with a guardian that was despawned, replaced or respawned under them.",
       "stated_in": [
         {
           "at": "tools/blackout_pack.py:510",
           "quote": "\"tag @s add cobblers.guardian\","
         },
         {
-          "at": "tools/caves.py:835",
+          "at": "tools/caves.py:839",
           "quote": "and NEVER a guardian"
         },
         {

@@ -289,6 +289,15 @@ in this pass.
 | K5 | The Clock Cellar (**OWNER**) | Tilpey Cross (6196, 3398) (`:899-901`) | Tilpey shores (6) | power line, e.g. Munchlax | Dialga boss if Q13 frees it, else `power_line` |
 | K6 | Sunscar (wild) | a dune cliff in `east_coast_dunes` (7) or `south_east_dunes` (8) | wild | none | Koraidon boss, `champion_cleared` |
 
+**Built offline 2026-10-12 (unit CAVE-KIT-2; `data/caves.json`, not installed, not seen in a game).** K4 is `cave_strait_grotto`
+(mouth (2888, 6606) facing south, floor y67, hall y57; Tapu Fini and Nihilego, the chamber pool's two ultra-rare entries at level 60,
+behind `gym8_cleared`; the chamber is dry, because the `pool` feature stays refused until its water has a spawn-block policy entry);
+K5 is `cave_clock_cellar` (mouth (6368, 3482) facing west, floor y98; Dialga, a post-Champion area boss, level 70, moved out of the
+Temple Calendar's boss slot by the orchestrator's decision); K6 is `cave_sunscar` (mouth (6814, 5272) facing east, floor y136; Koraidon,
+a post-Champion area boss, level 70, out of the cut Zero Dig's pool). Nihilego's "outer sea bands" home does not exist, so it is K4's
+second ultra-rare entry (a K7 would have repeated K4's block); it keeps `model_gate atm_subset`. The roster
+(`data/dungeon_prize_roster.json`) records all four as `to_world`.
+
 K1, K2, K3 and K5 are near towns (K5 depends on the owner). K4 and K6 are wild: K4 is on the open strait shore, sited
 away from Sunset West's footprint. Near-town caves are early-reachable side trips: the antechamber pays at first visit,
 and the legendary waits behind its partition, visible. This is the owner's revisiting rule (`STATE.md:165`). Each

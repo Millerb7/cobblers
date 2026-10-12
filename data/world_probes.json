@@ -8100,6 +8100,266 @@
         ],
         "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_miraidon]",
         "count": 1
+      },
+      {
+        "what": "cave_strait_grotto: air at the standing block outside the mouth",
+        "block": [
+          2888,
+          68,
+          6608,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_strait_grotto: air in the middle of the chamber",
+        "block": [
+          2888,
+          59,
+          6556,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_strait_grotto: the chamber's floor under the habitat block's neighbour",
+        "block": [
+          2889,
+          57,
+          6556,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_strait_grotto: the shell over the chamber's roof",
+        "block": [
+          2888,
+          66,
+          6556,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_strait_grotto: the mouth's timber beam",
+        "block": [
+          2886,
+          72,
+          6606,
+          "minecraft:spruce_log[axis=x]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_strait_grotto: the door's barrier (closed)",
+        "block": [
+          2887,
+          58,
+          6568,
+          "minecraft:barrier"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_strait_grotto: the Habitat Block cave_strait_grotto_antechamber_ward",
+        "block": [
+          2888,
+          57,
+          6573,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_strait_grotto: the Habitat Block cave_strait_grotto_chamber_ward",
+        "block": [
+          2888,
+          57,
+          6556,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_clock_cellar: air at the standing block outside the mouth",
+        "block": [
+          6366,
+          99,
+          3482,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_clock_cellar: air in the middle of the chamber",
+        "block": [
+          6420,
+          90,
+          3482,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_clock_cellar: the chamber's floor under the habitat block's neighbour",
+        "block": [
+          6421,
+          88,
+          3482,
+          "minecraft:smooth_stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_clock_cellar: the shell over the chamber's roof",
+        "block": [
+          6420,
+          97,
+          3482,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_clock_cellar: the mouth's timber beam",
+        "block": [
+          6368,
+          103,
+          3480,
+          "minecraft:spruce_log[axis=z]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_clock_cellar: the door's barrier (closed)",
+        "block": [
+          6408,
+          89,
+          3481,
+          "minecraft:barrier"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_clock_cellar: the Habitat Block cave_clock_cellar_antechamber_ward",
+        "block": [
+          6403,
+          88,
+          3482,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_clock_cellar: the Habitat Block cave_clock_cellar_chamber_ward",
+        "block": [
+          6420,
+          88,
+          3482,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_clock_cellar: the boss (one tagged cobblers.cv_dialga once a champion has come near; absent while the clock runs)",
+        "hold": [
+          6420,
+          89,
+          3482
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_dialga]",
+        "count": 1
+      },
+      {
+        "what": "cave_sunscar: air at the standing block outside the mouth",
+        "block": [
+          6816,
+          137,
+          5272,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_sunscar: air in the middle of the chamber",
+        "block": [
+          6762,
+          128,
+          5272,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_sunscar: the chamber's floor under the habitat block's neighbour",
+        "block": [
+          6763,
+          126,
+          5272,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_sunscar: the shell over the chamber's roof",
+        "block": [
+          6762,
+          135,
+          5272,
+          "minecraft:sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_sunscar: the mouth's timber beam",
+        "block": [
+          6814,
+          141,
+          5270,
+          "minecraft:spruce_log[axis=z]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_sunscar: the door's barrier (closed)",
+        "block": [
+          6774,
+          127,
+          5271,
+          "minecraft:barrier"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_sunscar: the Habitat Block cave_sunscar_antechamber_ward",
+        "block": [
+          6779,
+          126,
+          5272,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_sunscar: the Habitat Block cave_sunscar_chamber_ward",
+        "block": [
+          6762,
+          126,
+          5272,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_sunscar: the boss (one tagged cobblers.cv_koraidon once a champion has come near; absent while the clock runs)",
+        "hold": [
+          6762,
+          127,
+          5272
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_koraidon]",
+        "count": 1
       }
     ],
     "maze_shrines": [

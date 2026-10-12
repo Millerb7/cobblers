@@ -103,6 +103,11 @@ def pool_of(h):
     return h["pool"]["id"]
 
 
+def species_id(name):
+    """A species' id as data/spawns.json writes it: lower case, no spaces ('Tapu Fini' -> 'tapufini')."""
+    return name.lower().replace(" ", "")
+
+
 # ------------------------------------------------------------------ the layout: rows along the axis
 
 def layout(spec, cave):
@@ -660,11 +665,18 @@ def static_problems(spec):
                     if hi > cap:
                         out.append("%s: pool %s: %s level %s is over the gate's cap %d" % (cid, pool_of(h), e["species"], e["level"], cap))
         if occ["mode"] == "rare_spawn":
-            ents = [e for h in c["habitat"] for e in h["pool"]["entries"] if e["species"].lower() == occ["species"]]
+            ents = [e for h in c["habitat"] for e in h["pool"]["entries"] if species_id(e["species"]) == occ["species"]]
             if not ents or ents[0]["bucket"] != "ultra-rare":
                 out.append("%s: the rare-spawn occupant %s must be an ultra-rare entry of a habitat pool" % (cid, occ["species"]))
+            # a second beast the same chamber hosts (K4: Nihilego beside Tapu Fini) is an ultra-rare entry of a chamber pool too
+            for co in occ.get("co_occupants") or []:
+                cents = [e for h in c["habitat"] if h["part"] == "chamber" for e in h["pool"]["entries"] if species_id(e["species"]) == co]
+                if len(cents) != 1 or cents[0]["bucket"] != "ultra-rare":
+                    out.append("%s: the co-occupant %s must be one ultra-rare entry of the chamber's pool" % (cid, co))
+        elif occ.get("co_occupants"):
+            out.append("%s: co_occupants are for a rare-spawn chamber only" % cid)
         if occ["mode"] == "power_line":
-            ents = [e for h in c["habitat"] for e in h["pool"]["entries"] if e["species"].lower() == occ["species"]]
+            ents = [e for h in c["habitat"] for e in h["pool"]["entries"] if species_id(e["species"]) == occ["species"]]
             if not ents or ents[0]["bucket"] not in ("rare", "ultra-rare"):
                 out.append("%s: the power-line occupant %s must be a rare entry of a habitat pool" % (cid, occ["species"]))
     return out

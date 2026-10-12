@@ -1,9 +1,9 @@
 {
   "schema": "cobblers.caves/1",
-  "status": "built offline 2026-10-12 (unit CAVE-KIT): K1, K2 and K3 sited from the canonical heightmap and plan data by tools/caves.py author; not installed, not applied, not seen in a game. The owner confirms the sites",
+  "status": "built offline 2026-10-12 (unit CAVE-KIT): K1, K2 and K3 (unit CAVE-KIT) and K4, K5 and K6 (unit CAVE-KIT-2) sited from the canonical heightmap and plan data by tools/caves.py author; not installed, not applied, not seen in a game. The owner confirms the sites",
   "builder": "tools/caves.py (site, author, report, build); applied by tools/reapply.py step R9CK; the independent audit is tools/caves_audit.py (written by the same session, so NOT independent in the sense of CLAUDE.md principle 16: its derivation is separate and a generator mutation proves it bites, but a second agent should grade it)",
   "design": "docs/mechanics/LEGENDARY_HOMES.md section 4 (the cave kit), K1, K2 and K3; the owner's decisions of 2026-10-12 (Koraidon and Miraidon are post-Champion area bosses; Dialga goes to K5; Tapu Fini is a repeatable chamber spawn at K4; the boss respawn rule as proposed; rarity targets as proposed)",
-  "not_built": "K4, K5 and K6 (sited and built by later units). The kit supports the chamber features none, columns and crystal; a `pool` feature (K4) is refused by the generator until its water has a spawn-block policy entry. Passages are straight (no `turn`): a cave is one axis from its mouth to its chamber. Natural-style Habitat Blocks in the passages are not emitted; only activated blocks (HB-1 and RS-1 are unmeasured)",
+  "not_built": "The kit supports the chamber features none, columns and crystal; a `pool` feature is refused by the generator until its water has a spawn-block policy entry (K4, The Strait Grotto, therefore has a dry chamber: its Tapu Fini and Nihilego spawn from the Habitat Block's pool on the grounded floor, which is unmeasured for water-typed species, HB-1). A rare-spawn chamber may host a second ultra-rare beast (`occupant.co_occupants`, K4's Nihilego), which the generator and the audit check as an ultra-rare entry of the chamber pool. Passages are straight (no `turn`): a cave is one axis from its mouth to its chamber. Natural-style Habitat Blocks in the passages are not emitted; only activated blocks (HB-1 and RS-1 are unmeasured)",
   "seed": 20261012,
   "geometry": {
     "passage_height": 4,
@@ -41,7 +41,7 @@
     "water_changed_reach": 8,
     "tree_reach": 4,
     "report_radius": 64,
-  "spawn_free_margin": 8,
+    "spawn_free_margin": 8,
     "why": "tools/mining_caves.py Clearance, reused as it stands (see its docstring): every written column keeps these distances from the town footprints, the routed legs and route paths, the routes' spawn-corridor boxes, every x/z another data file authors (this file, the exempt Habitat Block ids and the exempt files below skipped), every earthwork and placed template, every other built pack's writes, painted water and the water export's changed columns; a surface column keeps tree_reach from a painted tree. authored_clearance is 32 here (12 for the mining caves): a cave is a place, not a gallery. `report` also lists everything within report_radius so the owner can see what is near"
   },
   "authored_exempt": {
@@ -613,6 +613,651 @@
           28
         ],
         "tier": 3
+      }
+    },
+    {
+      "id": "cave_strait_grotto",
+      "kind": "K4",
+      "name": "The Strait Grotto",
+      "status": "planned",
+      "role": "Tapu Fini's chamber: a repeatable chamber spawn behind a partition that opens at badge 8 (gym8_cleared), level 60; Nihilego is the chamber's second ultra-rare entry, the sea's other visitor",
+      "reading": "Boat crews on the Sunset strait say the shore cliff east of the harbour breathes in with the tide. The grotto they found is dry and cut in a lean pale stone, with a pool of mist-wet prismarine at its far end; the old women of the quay say the guardian of the water sleeps there, and that on the worst nights something that is not of this sea comes up out of the dark to look at it.",
+      "near": "sunset_west",
+      "host_anchor": [
+        2900,
+        6650
+      ],
+      "ring": {
+        "min": 40,
+        "max": 260
+      },
+      "palette": {
+        "shell": "minecraft:stone",
+        "floor": "minecraft:prismarine_bricks",
+        "stair": "minecraft:prismarine_brick_stairs",
+        "timber": "minecraft:spruce_log",
+        "fence": "minecraft:spruce_fence",
+        "column": "minecraft:dark_prismarine"
+      },
+      "passages": [
+        {
+          "kind": "incline",
+          "length": 10,
+          "width": 3,
+          "height": 4
+        },
+        {
+          "kind": "drift",
+          "length": 18,
+          "width": 3,
+          "height": 4
+        }
+      ],
+      "antechamber": {
+        "half_width": 4,
+        "length": 9,
+        "height": 5
+      },
+      "chamber": {
+        "shape": "oval",
+        "rx": 10,
+        "rz": 8,
+        "h": 8,
+        "feature": "columns"
+      },
+      "gate": {
+        "kind": "partition",
+        "flags": [
+          "gym8_cleared"
+        ]
+      },
+      "light": {
+        "lantern_every": 6,
+        "chamber_lanterns": 4,
+        "dark_by_design": false
+      },
+      "occupant": {
+        "mode": "rare_spawn",
+        "species": "tapufini",
+        "level": 60,
+        "co_occupants": [
+          "nihilego"
+        ],
+        "catch_rule": "any ball at cap 60 (eight badges); the partition opens only for a player holding gym8_cleared",
+        "why": "Tapu Fini, the guardian of the strait (the owner, 2026-10-12: a repeatable chamber spawn, K4). An ultra-rare entry of the chamber's activated Habitat Block, one of two ultra-rare entries (weight 1 each, 1.375% of a block's spawns between them), so about 0.69% per spawn for each (docs/mechanics/LEGENDARY_HOMES.md section 4). The inherited COBBLEVERSE-DP spawn of Tapu Fini (ultra-rare, 50-70, rivers) is switched off (data/spawn_suppression.json managed_species). The chamber has no water: the design's `pool` feature is not built (it needs a spawn-block policy entry), and the Habitat Block's pool spawns on the grounded floor",
+        "co_occupant_why": "Nihilego (ultra beast, level 60 = the badge-8 cap, so catchable at the cap; docs/mechanics/LEGENDARY_HOMES.md names 'the outer sea bands', which do not exist: data/spawns.json marine_zones holds only the Windward Sea at levels 16-30). The kit takes it as the chamber pool's second ultra-rare entry, so no new machinery: a 'second chamber' or a K7 would only repeat this block. MODEL GATE: Nihilego is in modpack/manifest/client-pack-atm-subset.json (the substitute doll without the AllTheMons subset), so the roster records model_gate atm_subset; the entry is optional content that nothing requires (the Buzzwole and Pheromosa precedent, data/encounter_design.json rare_spawns)"
+      },
+      "habitat": [
+        {
+          "id": "cave_strait_grotto_antechamber_ward",
+          "part": "antechamber",
+          "pool": {
+            "id": "cave_strait_grotto_antechamber",
+            "display_name": "The Strait Grotto, the antechamber",
+            "why": "the grotto's outer room: shore dwellers that crawl in from the strand, at the band of the harbour's shore",
+            "entries": [
+              {
+                "species": "Binacle",
+                "bucket": "common",
+                "weight": 24.0,
+                "level": "band",
+                "family_priority": "anchor",
+                "reason": "base stage; evolves to Barbaracle at 39, over the band's top"
+              },
+              {
+                "species": "Pyukumuku",
+                "bucket": "common",
+                "weight": 12.0,
+                "level": "band",
+                "family_priority": "common",
+                "reason": "does not evolve; a slow sea thing washed into a dry hall"
+              },
+              {
+                "species": "Dwebble",
+                "bucket": "uncommon",
+                "weight": 6.0,
+                "level": "band",
+                "family_priority": "uncommon",
+                "reason": "base stage; evolves to Crustle at 34; a shell carried indoors"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cave_strait_grotto_chamber_ward",
+          "part": "chamber",
+          "pool": {
+            "id": "cave_strait_grotto_chamber",
+            "display_name": "The Strait Grotto, the chamber",
+            "why": "the guardian's hall, entered with eight badges (cap 60): fully grown shore things at 52-58, and in the ultra-rare bucket Tapu Fini and Nihilego at 60",
+            "entries": [
+              {
+                "species": "Kingler",
+                "bucket": "common",
+                "weight": 24.0,
+                "level": "52-58",
+                "family_priority": "anchor",
+                "reason": "Krabby evolves to Kingler at 28; 52-58 is past it"
+              },
+              {
+                "species": "Crawdaunt",
+                "bucket": "common",
+                "weight": 12.0,
+                "level": "52-58",
+                "family_priority": "common",
+                "reason": "Corphish evolves to Crawdaunt at 30; 52-58 is past it"
+              },
+              {
+                "species": "Barbaracle",
+                "bucket": "uncommon",
+                "weight": 6.0,
+                "level": "52-58",
+                "family_priority": "uncommon",
+                "reason": "Binacle evolves to Barbaracle at 39; 52-58 is past it"
+              },
+              {
+                "species": "Toxapex",
+                "bucket": "rare",
+                "weight": 2.0,
+                "level": "52-58",
+                "family_priority": "rare",
+                "reason": "Mareanie evolves to Toxapex at 38; 52-58 is past it; the poison of the deep shore"
+              },
+              {
+                "species": "Tapu Fini",
+                "bucket": "ultra-rare",
+                "weight": 1.0,
+                "level": "60",
+                "family_priority": "ultra-rare",
+                "reason": "THE OCCUPANT: legendary, fixed at 60, the cap of an eight-badge player (data/legendaries.json level_caps.upper_bound_by_badges); the partition opens only at gym8_cleared"
+              },
+              {
+                "species": "Nihilego",
+                "bucket": "ultra-rare",
+                "weight": 1.0,
+                "level": "60",
+                "family_priority": "ultra-rare",
+                "reason": "THE SECOND VISITOR: an ultra beast at 60, the same cap, behind the same door; its home was 'the outer sea bands', which do not exist (see occupant.co_occupant_why)"
+              }
+            ]
+          }
+        }
+      ],
+      "mouth": {
+        "anchor": [
+          2888,
+          6606
+        ],
+        "front": "south",
+        "frame": "timber",
+        "sited_by": "tools/caves.py author: the best of search() (distance from host_anchor + 0.3 x the cells dug / 10) over the canonical heightmap and the keep_clear rules"
+      },
+      "site": {
+        "mouth_floor": 67,
+        "hall_floor": 57,
+        "chamber_centre": [
+          2888,
+          57,
+          6556
+        ],
+        "subregion": "south_strand",
+        "subregion_band": [
+          43,
+          53
+        ],
+        "tier": 8
+      }
+    },
+    {
+      "id": "cave_clock_cellar",
+      "kind": "K5",
+      "name": "The Clock Cellar",
+      "status": "planned",
+      "role": "Dialga's chamber: a post-Champion area boss (a native alpha kept by a keeper) behind a partition that opens at champion_cleared; a power line (Munchlax) in the antechamber. Dialga left the Temple Calendar's boss slot for this cave (the orchestrator, 2026-10-12, so that every legendary has a place)",
+      "reading": "Under the hills above Tilpey Cross the shore farmers keep a cellar nobody dug. Its stairs are worn to a lip by feet that were never theirs, and the hall at the bottom ticks. Past the second door it is quiet, and the quiet is the loudest thing in it.",
+      "near": "gym6_town",
+      "host_anchor": [
+        6196,
+        3398
+      ],
+      "ring": {
+        "min": 70,
+        "max": 300
+      },
+      "palette": {
+        "shell": "minecraft:stone",
+        "floor": "minecraft:smooth_stone",
+        "stair": "minecraft:stone_brick_stairs",
+        "timber": "minecraft:spruce_log",
+        "fence": "minecraft:spruce_fence",
+        "column": "minecraft:chiseled_stone_bricks"
+      },
+      "passages": [
+        {
+          "kind": "incline",
+          "length": 10,
+          "width": 3,
+          "height": 4
+        },
+        {
+          "kind": "drift",
+          "length": 20,
+          "width": 3,
+          "height": 4
+        }
+      ],
+      "antechamber": {
+        "half_width": 4,
+        "length": 9,
+        "height": 5
+      },
+      "chamber": {
+        "shape": "oval",
+        "rx": 9,
+        "rz": 8,
+        "h": 8,
+        "feature": "columns"
+      },
+      "gate": {
+        "kind": "partition",
+        "flags": [
+          "champion_cleared"
+        ]
+      },
+      "light": {
+        "lantern_every": 6,
+        "chamber_lanterns": 4,
+        "dark_by_design": false
+      },
+      "occupant": {
+        "mode": "area_boss",
+        "species": "dialga",
+        "level": 70,
+        "catch_rule": "any ball once the Champion has fallen: a native alpha re-levels to party + 20 (max 100) near a player, and the cap is 100 after champion_cleared, so nothing is strictly above it (docs/mechanics/LEGENDARY_HOMES.md section 3); a player without the flag cannot pass the partition",
+        "why": "Dialga, time (the orchestrator, 2026-10-12, on the owner's 'every mon placed by morning': it leaves the Temple Calendar's boss slot, which is cut with the Zero Dig's neighbours, for a world cave). One alive on the server: a keeper in the residents' shape (tools/drowned_quarry.py keeper_files), which never touches a blackout guardian. Level 70 as Miraidon",
+        "properties": [
+          "alpha=true",
+          "min_perfect_ivs=3",
+          "nature=modest",
+          "moves=flashcannon,dragonpulse,aurasphere,earthpower",
+          "held_item=cobblemon:sitrus_berry",
+          "no_ai"
+        ],
+        "properties_why": "keys from the jar's PokemonProperties set (docs/research/notes/legendary-species-1.8.0.md section 2); flashcannon (level 32), aurasphere (48) and earthpower (72, tutor and tm) from Dialga's own 1.8.0 learnset (read from the Cobblemon-fabric-1.8.0 jar: data/cobblemon/species/generation4/dialga.json), dragonpulse a tutor and tm move; nature modest (special attack 150 is its best stat); sitrus berry as K3; `no_ai` as K3. The moves and item are trainer-balance-designer's to change",
+        "tag": "cobblers.cv_dialga",
+        "dormant_tag": "cobblers.cv_dialga_dormant",
+        "guardian_tag": "cobblers.guardian",
+        "dormant_nbt": {
+          "Unbattleable": "1b",
+          "NoAI": "1b",
+          "NoGravity": "1b",
+          "PoseType": "\"SLEEP\"",
+          "RecalculatePose": "0b",
+          "HideLabel": "1b",
+          "PersistenceRequired": "1b",
+          "Invulnerable": "1b",
+          "Silent": "1b"
+        },
+        "awake_nbt": {
+          "Unbattleable": "0b",
+          "RecalculatePose": "1b",
+          "HideLabel": "0b",
+          "Silent": "0b"
+        },
+        "sound": "minecraft:block.beacon.activate",
+        "message": "Every clock in the cellar strikes at once, and then stops. Something in the hall turns toward the door.",
+        "keeper": {
+          "period_ticks": 40,
+          "spawn_radius": 64,
+          "spawn_clear": 10,
+          "trigger_radius": 16,
+          "settle_radius": 40,
+          "cooldown_faint_ticks": 24000,
+          "cooldown_catch_ticks": 72000,
+          "absent_passes": 2,
+          "guardian_search_radius": 24,
+          "home_tolerance": 1.0,
+          "catch_radius": 24
+        },
+        "keeper_why": "the respawn rule of the design (LEGENDARY_HOMES.md section 3, confirmed by the owner 2026-10-12): one alive server-wide, 24,000 ticks after a faint and 72,000 after a catch, repeatable, spawned only while a player holding champion_cleared is within spawn_radius of its spot and nobody stands within spawn_clear of it. period 40 and absent_passes 2, the quarry's"
+      },
+      "habitat": [
+        {
+          "id": "cave_clock_cellar_antechamber_ward",
+          "part": "antechamber",
+          "pool": {
+            "id": "cave_clock_cellar_antechamber",
+            "display_name": "The Clock Cellar, the antechamber",
+            "why": "the cellar's outer room: things that keep to a hollow under a hill, at the band of Tilpey's shore, and Munchlax (the power line) in the rare bucket",
+            "entries": [
+              {
+                "species": "Misdreavus",
+                "bucket": "common",
+                "weight": 24.0,
+                "level": "band",
+                "family_priority": "anchor",
+                "reason": "base stage; evolves to Mismagius by a Dusk Stone only"
+              },
+              {
+                "species": "Chingling",
+                "bucket": "common",
+                "weight": 12.0,
+                "level": "band",
+                "family_priority": "common",
+                "reason": "base stage; evolves by friendship only; a bell in a cellar"
+              },
+              {
+                "species": "Nosepass",
+                "bucket": "uncommon",
+                "weight": 6.0,
+                "level": "band",
+                "family_priority": "uncommon",
+                "reason": "base stage; evolves to Probopass in a magnetic place, not by a level"
+              },
+              {
+                "species": "Munchlax",
+                "bucket": "rare",
+                "weight": 2.0,
+                "level": "band",
+                "family_priority": "rare",
+                "reason": "base stage; evolves to Snorlax by friendship. THE POWER LINE: Munchlax is MISSING early (Snorlax only at 38-43; data/dungeon_prize_roster.json power_lines)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cave_clock_cellar_chamber_ward",
+          "part": "chamber",
+          "pool": {
+            "id": "cave_clock_cellar_chamber",
+            "display_name": "The Clock Cellar, the chamber",
+            "why": "the hall that ticks, entered after the Champion: grown steel and ghost things at 58-64. The boss is NOT in this pool; the keeper (cobblers_caves) brings it",
+            "entries": [
+              {
+                "species": "Bronzong",
+                "bucket": "common",
+                "weight": 24.0,
+                "level": "58-64",
+                "family_priority": "anchor",
+                "reason": "Bronzor evolves to Bronzong at 33; 58-64 is past it; the bell of the cellar"
+              },
+              {
+                "species": "Probopass",
+                "bucket": "common",
+                "weight": 12.0,
+                "level": "58-64",
+                "family_priority": "common",
+                "reason": "Nosepass evolves to Probopass in a magnetic place; fully grown"
+              },
+              {
+                "species": "Mismagius",
+                "bucket": "uncommon",
+                "weight": 6.0,
+                "level": "58-64",
+                "family_priority": "uncommon",
+                "reason": "Misdreavus evolves to Mismagius by a Dusk Stone; fully grown"
+              },
+              {
+                "species": "Spiritomb",
+                "bucket": "rare",
+                "weight": 2.0,
+                "level": "58-64",
+                "family_priority": "rare",
+                "reason": "does not evolve; the thing that lives in the keystone"
+              }
+            ]
+          }
+        }
+      ],
+      "mouth": {
+        "anchor": [
+          6368,
+          3482
+        ],
+        "front": "west",
+        "frame": "timber",
+        "sited_by": "tools/caves.py author: the best of search() (distance from host_anchor + 0.3 x the cells dug / 10) over the canonical heightmap and the keep_clear rules"
+      },
+      "site": {
+        "mouth_floor": 98,
+        "hall_floor": 88,
+        "chamber_centre": [
+          6420,
+          88,
+          3482
+        ],
+        "subregion": "tilpey_east_shore",
+        "subregion_band": [
+          33,
+          43
+        ],
+        "tier": 6
+      }
+    },
+    {
+      "id": "cave_sunscar",
+      "kind": "K6",
+      "name": "Sunscar",
+      "status": "planned",
+      "role": "Koraidon's chamber: a post-Champion area boss (a native alpha kept by a keeper) behind a partition that opens at champion_cleared, in the east dunes (wild). Koraidon left the cut Zero Dig's band-6 pool for this cave",
+      "reading": "The dune people say the cliff cracked in the old drought and has been warm ever since. They do not go in. There is a door past the heat, and on a still evening you can hear something on the other side of it, pacing.",
+      "near": "east_coast_dunes",
+      "host_anchor": [
+        6850,
+        5300
+      ],
+      "ring": {
+        "min": 40,
+        "max": 320
+      },
+      "palette": {
+        "shell": "minecraft:sandstone",
+        "floor": "minecraft:smooth_sandstone",
+        "stair": "minecraft:sandstone_stairs",
+        "timber": "minecraft:spruce_log",
+        "fence": "minecraft:spruce_fence",
+        "column": "minecraft:cut_sandstone"
+      },
+      "passages": [
+        {
+          "kind": "incline",
+          "length": 10,
+          "width": 3,
+          "height": 4
+        },
+        {
+          "kind": "drift",
+          "length": 20,
+          "width": 3,
+          "height": 4
+        }
+      ],
+      "antechamber": {
+        "half_width": 4,
+        "length": 9,
+        "height": 5
+      },
+      "chamber": {
+        "shape": "oval",
+        "rx": 9,
+        "rz": 8,
+        "h": 8,
+        "feature": "columns"
+      },
+      "gate": {
+        "kind": "partition",
+        "flags": [
+          "champion_cleared"
+        ]
+      },
+      "light": {
+        "lantern_every": 6,
+        "chamber_lanterns": 4,
+        "dark_by_design": false
+      },
+      "occupant": {
+        "mode": "area_boss",
+        "species": "koraidon",
+        "level": 70,
+        "catch_rule": "any ball once the Champion has fallen: a native alpha re-levels to party + 20 (max 100) near a player, and the cap is 100 after champion_cleared, so nothing is strictly above it (docs/mechanics/LEGENDARY_HOMES.md section 3); a player without the flag cannot pass the partition",
+        "why": "Koraidon, the past (the owner, 2026-10-12: Koraidon and Miraidon are post-Champion area bosses). One alive on the server: a keeper in the residents' shape (tools/drowned_quarry.py keeper_files), which never touches a blackout guardian. Level 70 as Miraidon",
+        "properties": [
+          "alpha=true",
+          "min_perfect_ivs=3",
+          "nature=jolly",
+          "moves=collisioncourse,flareblitz,dragonclaw,closecombat",
+          "held_item=cobblemon:sitrus_berry",
+          "no_ai"
+        ],
+        "properties_why": "keys from the jar's PokemonProperties set (docs/research/notes/legendary-species-1.8.0.md section 2); collisioncourse (level 56) and dragonclaw (42) from Koraidon's own 1.8.0 learnset (read from the Cobblemon-fabric-1.8.0 jar: data/cobblemon/species/generation9/koraidon.json), flareblitz (level 98) and closecombat (84) on its tm list; nature jolly (speed 135 and attack 135); sitrus berry as K3; `no_ai` as K3. The moves and item are trainer-balance-designer's to change",
+        "tag": "cobblers.cv_koraidon",
+        "dormant_tag": "cobblers.cv_koraidon_dormant",
+        "guardian_tag": "cobblers.guardian",
+        "dormant_nbt": {
+          "Unbattleable": "1b",
+          "NoAI": "1b",
+          "NoGravity": "1b",
+          "PoseType": "\"SLEEP\"",
+          "RecalculatePose": "0b",
+          "HideLabel": "1b",
+          "PersistenceRequired": "1b",
+          "Invulnerable": "1b",
+          "Silent": "1b"
+        },
+        "awake_nbt": {
+          "Unbattleable": "0b",
+          "RecalculatePose": "1b",
+          "HideLabel": "0b",
+          "Silent": "0b"
+        },
+        "sound": "minecraft:block.beacon.activate",
+        "message": "The heat in the rock gathers. Something in the hall stops pacing and turns toward the door.",
+        "keeper": {
+          "period_ticks": 40,
+          "spawn_radius": 64,
+          "spawn_clear": 10,
+          "trigger_radius": 16,
+          "settle_radius": 40,
+          "cooldown_faint_ticks": 24000,
+          "cooldown_catch_ticks": 72000,
+          "absent_passes": 2,
+          "guardian_search_radius": 24,
+          "home_tolerance": 1.0,
+          "catch_radius": 24
+        },
+        "keeper_why": "the respawn rule of the design (LEGENDARY_HOMES.md section 3, confirmed by the owner 2026-10-12): one alive server-wide, 24,000 ticks after a faint and 72,000 after a catch, repeatable, spawned only while a player holding champion_cleared is within spawn_radius of its spot and nobody stands within spawn_clear of it. period 40 and absent_passes 2, the quarry's"
+      },
+      "habitat": [
+        {
+          "id": "cave_sunscar_antechamber_ward",
+          "part": "antechamber",
+          "pool": {
+            "id": "cave_sunscar_antechamber",
+            "display_name": "Sunscar, the antechamber",
+            "why": "the cliff's outer room: dune things that keep out of the sun, at the band of the east dunes",
+            "entries": [
+              {
+                "species": "Hippowdon",
+                "bucket": "common",
+                "weight": 24.0,
+                "level": "band",
+                "family_priority": "anchor",
+                "reason": "final stage; does not evolve"
+              },
+              {
+                "species": "Cacturne",
+                "bucket": "common",
+                "weight": 12.0,
+                "level": "band",
+                "family_priority": "common",
+                "reason": "final stage; does not evolve"
+              },
+              {
+                "species": "Camerupt",
+                "bucket": "uncommon",
+                "weight": 6.0,
+                "level": "band",
+                "family_priority": "uncommon",
+                "reason": "final stage; does not evolve"
+              },
+              {
+                "species": "Torkoal",
+                "bucket": "rare",
+                "weight": 2.0,
+                "level": "band",
+                "family_priority": "rare",
+                "reason": "does not evolve; a coal in a warm hall"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cave_sunscar_chamber_ward",
+          "part": "chamber",
+          "pool": {
+            "id": "cave_sunscar_chamber",
+            "display_name": "Sunscar, the chamber",
+            "why": "the pacing hall, entered after the Champion: grown dune things at 58-64. The boss is NOT in this pool; the keeper (cobblers_caves) brings it",
+            "entries": [
+              {
+                "species": "Flygon",
+                "bucket": "common",
+                "weight": 24.0,
+                "level": "58-64",
+                "family_priority": "anchor",
+                "reason": "Trapinch evolves to Vibrava at 35 and to Flygon at 45; 58-64 is past both"
+              },
+              {
+                "species": "Krookodile",
+                "bucket": "common",
+                "weight": 12.0,
+                "level": "58-64",
+                "family_priority": "common",
+                "reason": "Sandile evolves to Krokorok at 29 and to Krookodile at 40; 58-64 is past both"
+              },
+              {
+                "species": "Camerupt",
+                "bucket": "uncommon",
+                "weight": 6.0,
+                "level": "58-64",
+                "family_priority": "uncommon",
+                "reason": "Numel evolves to Camerupt at 33; 58-64 is past it"
+              },
+              {
+                "species": "Excadrill",
+                "bucket": "rare",
+                "weight": 2.0,
+                "level": "58-64",
+                "family_priority": "rare",
+                "reason": "Drilbur evolves to Excadrill at 31 (by a level, not an item); 58-64 is past it"
+              }
+            ]
+          }
+        }
+      ],
+      "mouth": {
+        "anchor": [
+          6814,
+          5272
+        ],
+        "front": "east",
+        "frame": "timber",
+        "sited_by": "tools/caves.py author: the best of search() (distance from host_anchor + 0.3 x the cells dug / 10) over the canonical heightmap and the keep_clear rules"
+      },
+      "site": {
+        "mouth_floor": 136,
+        "hall_floor": 126,
+        "chamber_centre": [
+          6762,
+          126,
+          5272
+        ],
+        "subregion": "east_cones",
+        "subregion_band": [
+          38,
+          48
+        ],
+        "tier": 7
       }
     }
   ]

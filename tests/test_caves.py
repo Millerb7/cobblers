@@ -1,4 +1,5 @@
-"""The cave kit and its first three caves (tools/caves.py, tools/caves_audit.py, data/caves.json).
+"""The cave kit and its six caves, K1-K6 (tools/caves.py, tools/caves_audit.py, data/caves.json). The keeper tests run once per area
+boss (Miraidon, Dialga, Koraidon) through the `boss_ctx` fixture; K4's Tapu Fini and Nihilego are a rare-spawn chamber.
 
 Written by the same session that wrote the generator and the audit (the owner's brief, 2026-10-12: one unit built the kit, its
 audit and its tests; CLAUDE.md principle 16 wants different agents, so a second agent should grade this file). What keeps it from
@@ -41,12 +42,13 @@ import nbt_sim as N  # noqa: E402
 
 SPEC = json.loads((ROOT / "data" / "caves.json").read_text(encoding="utf-8"))
 CAVES = {c["id"]: c for c in SPEC["caves"]}
-BOSS = next(c for c in SPEC["caves"] if c["occupant"]["mode"] == "area_boss")
-OCC = BOSS["occupant"]
-KEEP = OCC["keeper"]
+BOSSES = [c for c in SPEC["caves"] if c["occupant"]["mode"] == "area_boss"]
+BOSS_IDS = [c["id"] for c in BOSSES]
 OBJ = SPEC["gate"]["objective"]
 CHAMPION = "cobblers:flag/champion_cleared"
 GYM6 = "cobblers:flag/gym6_cleared"
+GYM8 = "cobblers:flag/gym8_cleared"
+GATED = [("cave_singing_hollow", GYM6), ("cave_strait_grotto", GYM8), ("cave_relay_fault", CHAMPION), ("cave_clock_cellar", CHAMPION), ("cave_sunscar", CHAMPION)]
 
 
 def _ground():
@@ -108,6 +110,31 @@ def test_the_first_three_caves_are_the_designs_k1_k2_k3():
     assert (KEEP["cooldown_faint_ticks"], KEEP["cooldown_catch_ticks"]) == (24000, 72000)
 
 
+def test_the_next_three_caves_are_the_designs_k4_k5_k6():
+    # LEGENDARY_HOMES.md section 4 and the owner's / orchestrator's decisions of 2026-10-12; without it a gate flag, a level or a
+    # boss slot could drift from what was decided (Tapu Fini at badge 8, Dialga and Koraidon after the Champion)
+    k4, k5, k6 = (CAVES[i] for i in ("cave_strait_grotto", "cave_clock_cellar", "cave_sunscar"))
+    assert [c["kind"] for c in (k4, k5, k6)] == ["K4", "K5", "K6"]
+    assert k4["gate"] == {"kind": "partition", "flags": ["gym8_cleared"]}
+    assert (k4["occupant"]["mode"], k4["occupant"]["species"], k4["occupant"]["level"]) == ("rare_spawn", "tapufini", 60)
+    assert k4["occupant"]["co_occupants"] == ["nihilego"]
+    for c, sp in ((k5, "dialga"), (k6, "koraidon")):
+        assert c["gate"] == {"kind": "partition", "flags": ["champion_cleared"]}, c["id"]
+        assert (c["occupant"]["mode"], c["occupant"]["species"], c["occupant"]["level"]) == ("area_boss", sp, 70), c["id"]
+        assert "alpha=true" in c["occupant"]["properties"]
+    assert set(BOSS_IDS) == {"cave_relay_fault", "cave_clock_cellar", "cave_sunscar"}
+
+
+def test_every_boss_has_its_own_tags_and_the_same_respawn_clocks():
+    # one keeper per boss: shared tags would make one boss's keeper count, hold or remove another's
+    tags = [c["occupant"][k] for c in BOSSES for k in ("tag", "dormant_tag")]
+    assert len(tags) == len(set(tags)) == 2 * len(BOSSES)
+    for c in BOSSES:
+        k = c["occupant"]["keeper"]
+        assert (k["cooldown_faint_ticks"], k["cooldown_catch_ticks"]) == (24000, 72000), c["id"]
+        assert c["occupant"]["guardian_tag"] == "cobblers.guardian", c["id"]
+
+
 def test_every_cave_is_sited_with_its_site_recorded():
     for c in SPEC["caves"]:
         assert c["mouth"]["front"] in C.FRONTS and len(c["mouth"]["anchor"]) == 2, c["id"]
@@ -136,6 +163,14 @@ def _edit(spec, cave, f):
      lambda c: c["habitat"][1]["pool"]["entries"][-1].update(bucket="rare"), "ultra-rare"),
     ("a power line that is not a rare entry", "cave_stoneford_cut",
      lambda c: c["habitat"][0]["pool"]["entries"][-1].update(bucket="common"), "rare entry"),
+    ("a co-occupant that is not ultra-rare", "cave_strait_grotto",
+     lambda c: next(e for e in c["habitat"][1]["pool"]["entries"] if e["species"] == "Nihilego").update(bucket="rare"), "co-occupant nihilego"),
+    ("a co-occupant that is not in the chamber's pool", "cave_strait_grotto",
+     lambda c: c["occupant"].update(co_occupants=["buzzwole"]), "co-occupant buzzwole"),
+    ("co-occupants on a boss cave", "cave_clock_cellar", lambda c: c["occupant"].update(co_occupants=["nihilego"]), "rare-spawn chamber only"),
+    ("a chamber pool over the badge-8 cap", "cave_strait_grotto",
+     lambda c: c["habitat"][1]["pool"]["entries"][0].update(level="55-61"), "over the gate's cap 60"),
+    ("a boss slot gated below the Champion at the east dunes", "cave_sunscar", lambda c: c["gate"].update(flags=["gym8_cleared"]), "champion_cleared"),
 ])
 def test_the_loader_refuses_a_record_that_breaks_a_rule(name, cave, edit, needle):
     # without it the kit would build a trap or an unwinnable boss from a record nobody could tell was wrong
@@ -238,28 +273,35 @@ def test_a_keeper_that_holds_a_guardian_is_refused(monkeypatch, ground):
     assert any("can reach a guardian" in p for p in probs), probs
 
 
-def test_a_keeper_that_adds_the_guardian_tag_is_refused(monkeypatch, ground):
+@pytest.mark.parametrize("bid", BOSS_IDS)
+def test_a_keeper_that_adds_the_guardian_tag_is_refused(monkeypatch, ground, bid):
+    # one mutation per boss keeper (the generator's output for THAT boss only), so each generated keeper is shown to be checked
     def fix(fn):
-        k = "boss/%s/bind" % BOSS["id"]
-        fn[k] = fn[k] + ["tag @s add cobblers.guardian"]
+        k = "boss/%s/bind" % bid
+        if k in fn:
+            fn[k] = fn[k] + ["tag @s add cobblers.guardian"]
     probs = _mutated(monkeypatch, ground, lambda mp: _wrap_files(mp, "boss_files", fix))
     assert any("adds or removes cobblers.guardian" in p for p in probs), probs
 
 
-def test_a_wrong_respawn_clock_is_refused(monkeypatch, ground):
+@pytest.mark.parametrize("bid", BOSS_IDS)
+def test_a_wrong_respawn_clock_is_refused(monkeypatch, ground, bid):
     def fix(fn):
-        k = "boss/%s/keep" % BOSS["id"]
-        fn[k] = [l.replace("24000", "12000") for l in fn[k]]
+        k = "boss/%s/keep" % bid
+        if k in fn:
+            fn[k] = [l.replace("24000", "12000") for l in fn[k]]
     probs = _mutated(monkeypatch, ground, lambda mp: _wrap_files(mp, "boss_files", fix))
-    assert any("clocks" in p for p in probs), probs
+    assert any("clocks" in p and bid in p for p in probs), probs
 
 
-def test_a_spawn_that_asks_for_no_flag_is_refused(monkeypatch, ground):
+@pytest.mark.parametrize("bid", BOSS_IDS)
+def test_a_spawn_that_asks_for_no_flag_is_refused(monkeypatch, ground, bid):
     def fix(fn):
-        k = "boss/%s/keep" % BOSS["id"]
-        fn[k] = [re.sub(r",advancements=\{[^}]*\}", "", l) for l in fn[k]]
+        k = "boss/%s/keep" % bid
+        if k in fn:
+            fn[k] = [re.sub(r",advancements=\{[^}]*\}", "", l) for l in fn[k]]
     probs = _mutated(monkeypatch, ground, lambda mp: _wrap_files(mp, "boss_files", fix))
-    assert any("holding" in p for p in probs), probs
+    assert any("holding" in p and bid in p for p in probs), probs
 
 
 def test_a_gate_that_shuts_people_in_is_refused(monkeypatch, ground):
@@ -344,12 +386,51 @@ def test_the_occupants_levels_sit_under_their_gates_caps():
     assert mel["bucket"] == "ultra-rare" and mel["level"] == "50" and int(mel["level"]) <= int(caps["6"])
     gib = next(e for e in sp["entries"] if e["id"] == "habitat.cave_stoneford_cut_chamber.gible")
     assert gib["bucket"] == "rare" and gib["level"] == "9-14" and CAVES["cave_stoneford_cut"]["site"]["subregion_band"] == [9, 14]
+    # K4: Tapu Fini and Nihilego are the chamber's only ultra-rare entries, both at the badge-8 cap, 1.0 weight each
+    ents = [e for e in sp["entries"] if e.get("scope") == "cave_strait_grotto_chamber" and e["bucket"] == "ultra-rare"]
+    assert sorted(e["species"] for e in ents) == ["nihilego", "tapufini"]
+    assert all(e["level"] == "60" and int(e["level"]) <= int(caps["8"]) and e["weight"] == 1.0 for e in ents)
 
 
-def test_no_pool_names_miraidon_or_koraidon_which_only_a_keeper_brings():
+def test_no_pool_names_a_species_which_only_a_keeper_brings():
+    # Miraidon, Dialga and Koraidon are the keepers' alone: a pool entry would be a second home for the same Pokemon
     sp = json.loads((ROOT / "data" / "spawns.json").read_text(encoding="utf-8"))
     mine = {h["pool"]["id"] for c in SPEC["caves"] for h in c["habitat"]}
-    assert not [e for e in sp["entries"] if e.get("scope") in mine and e["species"] in ("miraidon", "koraidon")]
+    bosses = {c["occupant"]["species"] for c in BOSSES}
+    assert bosses == {"miraidon", "dialga", "koraidon"}
+    assert not [e for e in sp["entries"] if e.get("scope") in mine and e["species"] in bosses]
+
+
+def test_the_roster_gives_each_cave_occupant_exactly_that_cave_as_its_home_and_no_dungeon_pool_keeps_it():
+    # data/dungeon_prize_roster.json is the 'one home each' record (LEGENDARY_HOMES.md section 1): the occupant of a cave must not
+    # also be a dungeon's catch, and the roster must say where it lives. Dialga left the Temple Calendar's boss slot, Koraidon the
+    # Zero Dig's pool, Tapu Fini the Temple Calendar's and Nihilego the Cistern's (their ub_boss FIGHT lines stay: not a catch).
+    roster = json.loads((ROOT / "data" / "dungeon_prize_roster.json").read_text(encoding="utf-8"))
+    placed = {}
+    for c in SPEC["caves"]:
+        o = c["occupant"]
+        if o["mode"] in ("rare_spawn", "area_boss"):
+            placed[o["species"]] = c["id"]
+            for co in o.get("co_occupants") or []:
+                placed[co] = c["id"]
+    assert {"miraidon", "dialga", "koraidon", "meloetta", "tapufini", "nihilego"} <= set(placed)
+    for sp, cid in placed.items():
+        rec = roster["species"][sp]
+        assert rec["status"] == "to_world" and rec["home"].startswith(cid), (sp, rec)
+        for d in roster["dungeons"]:
+            pooled = {s for band in (d.get("legendary_pool_by_band") or {}).values() for s in band}
+            pooled |= {s for band in (d.get("rare_pool_by_band") or {}).values() for s in band}
+            assert sp not in pooled, "%s is still in %s's pool" % (sp, d["id"])
+            bl = d.get("boss_legendary")
+            assert not (bl and bl.get("species") == sp), "%s is still %s's boss legendary" % (sp, d["id"])
+    assert roster["species"]["nihilego"]["model_gate"] == "atm_subset"
+
+
+def test_the_inherited_spawns_of_the_cave_beasts_stay_off():
+    # K4's two beasts are given a home by the cave; an inherited wild spawn beside it would be a second, uncatchable one (finding 2)
+    sup = json.loads((ROOT / "data" / "spawn_suppression.json").read_text(encoding="utf-8"))
+    off = set(sup["managed_species"]["species"]) | set(sup["removed_species"]["species"])
+    assert {"tapufini", "nihilego", "koraidon", "miraidon"} <= off
 
 
 # ------------------------------------------------------------------ the wiring
@@ -396,8 +477,11 @@ def test_the_load_tag_and_the_callback_are_in_the_pack(ground):
     files = C.pack_files(spec, plan)
     assert json.loads(files["data/minecraft/tags/function/load.json"])["values"] == ["cobblers:caves/load"]
     cb = files["data/cobblemon/callbacks/pokemon_captured/cobblers_caves.molang"]
-    assert "cobblemon:miraidon" in cb and "cobblemon:meloetta" not in cb and "cobblemon:gible" not in cb
-    assert "cobblers:caves/boss/%s/caught" % BOSS["id"] in cb and cb.count("'") % 2 == 0
+    for b in BOSSES:
+        assert "cobblemon:%s" % b["occupant"]["species"] in cb and "cobblers:caves/boss/%s/caught" % b["id"] in cb, b["id"]
+    for other in ("meloetta", "gible", "tapufini", "nihilego"):
+        assert "cobblemon:%s" % other not in cb, other                # only a keeper's boss has a catch clock
+    assert cb.count("'") % 2 == 0
 
 
 # ------------------------------------------------------------------ the keeper and the gate, run
@@ -470,10 +554,43 @@ def world(gt=5_000_000):
     return w
 
 
-BID = BOSS["id"]
-TAG, DORM, GUARD = OCC["tag"], OCC["dormant_tag"], OCC["guardian_tag"]
-PASS = KEEP["period_ticks"]
-GONE, RESP, CAUGHT = ("#%s_%s" % (BID, s) for s in ("gone", "resp", "caught"))
+def _bind(bid):
+    """Point the module's boss globals at one area boss. The keeper tests run once per boss (Miraidon, Dialga, Koraidon): each
+    cave has its own tags, clocks and spot, and a test that read only the first would leave the others unproved."""
+    g = globals()
+    g["BOSS"] = next(c for c in SPEC["caves"] if c["id"] == bid)
+    g["OCC"] = g["BOSS"]["occupant"]
+    g["KEEP"] = g["OCC"]["keeper"]
+    g["BID"] = bid
+    g["TAG"], g["DORM"], g["GUARD"] = g["OCC"]["tag"], g["OCC"]["dormant_tag"], g["OCC"]["guardian_tag"]
+    g["PASS"] = g["KEEP"]["period_ticks"]
+    g["GONE"], g["RESP"], g["CAUGHT"] = ("#%s_%s" % (bid, x) for x in ("gone", "resp", "caught"))
+
+
+_bind(BOSS_IDS[0])
+
+
+class as_boss:
+    """`with as_boss(id):` runs a block against that boss and restores the previous one (tests/test_system_contracts.py C25)."""
+
+    def __init__(self, bid):
+        self.bid, self.prev = bid, None
+
+    def __enter__(self):
+        self.prev = BID
+        _bind(self.bid)
+
+    def __exit__(self, *exc):
+        _bind(self.prev)
+
+
+@pytest.fixture(params=BOSS_IDS)
+def boss_ctx(request):
+    with as_boss(request.param):
+        yield request.param
+
+
+KEEPER = pytest.mark.usefixtures("boss_ctx")
 
 
 def bosses(w):
@@ -506,21 +623,24 @@ def summoned(w):
     return bosses(w)[0], p
 
 
+@KEEPER
 def test_nothing_exists_at_load_and_the_clock_is_the_never_value():
     w = world()
     assert bosses(w) == [] and score(w, GONE) == C.NEVER
 
 
-def test_a_champion_who_comes_near_brings_one_dormant_alpha_miraidon_to_the_chamber_centre():
+@KEEPER
+def test_a_champion_who_comes_near_brings_one_dormant_alpha_boss_to_the_chamber_centre():
     w = world()
     _gm, spot = spot_of()
     b, _p = summoned(w)
     assert b["pos"] == spot and DORM in b["tags"] and b["nbt"]["PoseType"] == "SLEEP" and b["nbt"]["PersistenceRequired"] == N.Byte(1)
-    assert b["nbt"]["Pokemon"]["Species"] == "cobblemon:miraidon" and b["nbt"]["Pokemon"]["Level"] == 70
+    assert b["nbt"]["Pokemon"]["Species"] == "cobblemon:%s" % OCC["species"] and b["nbt"]["Pokemon"]["Level"] == OCC["level"] == 70
     assert "alpha=true" in b["props"] and "no_ai" in b["props"] and any(p.startswith("moves=") for p in b["props"])
     assert score(w, GONE) == C.PRESENT
 
 
+@KEEPER
 def test_a_player_without_the_flag_never_brings_it_in():
     w = world()
     player_at(w, 20, 0, flags=())
@@ -528,6 +648,7 @@ def test_a_player_without_the_flag_never_brings_it_in():
     assert passes(w, 5) == [0] * 5
 
 
+@KEEPER
 def test_nobody_near_brings_nothing_and_a_spectator_champion_counts_for_nothing():
     w = world()
     player_at(w, KEEP["spawn_radius"] + 30, 0)
@@ -535,6 +656,7 @@ def test_nobody_near_brings_nothing_and_a_spectator_champion_counts_for_nothing(
     assert passes(w, 4) == [0] * 4
 
 
+@KEEPER
 def test_it_does_not_come_in_front_of_anyone():
     w = world()
     near = player_at(w, KEEP["spawn_clear"] - 4, 0)
@@ -543,12 +665,14 @@ def test_it_does_not_come_in_front_of_anyone():
     assert passes(w, 1) == [1]
 
 
+@KEEPER
 def test_a_second_summons_never_makes_a_second_one():
     w = world()
     summoned(w)
     assert passes(w, 6) == [1] * 6
 
 
+@KEEPER
 def test_it_wakes_for_a_player_in_the_chamber_and_not_for_one_outside_it():
     w = world()
     gm, spot = spot_of()
@@ -564,6 +688,7 @@ def test_it_wakes_for_a_player_in_the_chamber_and_not_for_one_outside_it():
     assert DORM not in b["tags"] and b["nbt"]["Unbattleable"] == N.Byte(0) and b["nbt"]["NoAI"] == N.Byte(1)
 
 
+@KEEPER
 def test_an_awake_one_is_not_dragged_home_through_the_fight_and_lies_down_when_everyone_has_gone():
     w = world()
     gm, spot = spot_of()
@@ -579,6 +704,7 @@ def test_an_awake_one_is_not_dragged_home_through_the_fight_and_lies_down_when_e
     assert DORM in b["tags"] and b["pos"] == spot and b["nbt"]["Unbattleable"] == N.Byte(1)
 
 
+@KEEPER
 def test_a_sleeping_one_moved_off_its_spot_is_put_back():
     w = world()
     _gm, spot = spot_of()
@@ -593,6 +719,7 @@ def _gone_for(w, b, n=2):
     passes(w, n)                                                   # absent_passes loaded passes in a row
 
 
+@KEEPER
 def test_after_a_faint_it_returns_in_24000_ticks_and_not_before():
     w = world()
     b, p = summoned(w)
@@ -606,6 +733,7 @@ def test_after_a_faint_it_returns_in_24000_ticks_and_not_before():
     assert score(w, GONE) == C.PRESENT
 
 
+@KEEPER
 def test_after_a_catch_it_returns_in_72000_ticks_and_not_before():
     w = world()
     b, p = summoned(w)
@@ -626,6 +754,7 @@ def test_after_a_catch_it_returns_in_72000_ticks_and_not_before():
     assert passes(w, 1) == [1]
 
 
+@KEEPER
 def test_a_catch_flag_left_while_the_boss_lives_is_cleared_and_never_stretches_the_next_clock():
     w = world()
     b, p = summoned(w)
@@ -638,6 +767,7 @@ def test_a_catch_flag_left_while_the_boss_lives_is_cleared_and_never_stretches_t
     assert score(w, RESP) == 24000
 
 
+@KEEPER
 def test_a_chunk_that_is_not_loaded_never_starts_the_clock():
     w = world()
     b, _p = summoned(w)
@@ -647,6 +777,7 @@ def test_a_chunk_that_is_not_loaded_never_starts_the_clock():
     assert score(w, GONE) == C.PRESENT
 
 
+@KEEPER
 def test_a_restart_never_moves_a_started_clock_or_the_never_value():
     w = world()
     assert score(w, GONE) == C.NEVER
@@ -659,6 +790,7 @@ def test_a_restart_never_moves_a_started_clock_or_the_never_value():
     assert score(w, GONE) == t
 
 
+@KEEPER
 def test_a_guardian_is_never_held_woken_settled_or_killed():
     # C25: the boss that blacks a player out becomes the claim's guardian (tag cobblers.guardian); the keeper only counts it
     w = world()
@@ -676,13 +808,14 @@ def test_a_guardian_is_never_held_woken_settled_or_killed():
     assert b in w.entities and b["pos"] == (spot[0] + 5.0, spot[1], spot[2])
 
 
+@KEEPER
 def test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_spawns():
     w = world()
     _gm, spot = spot_of()
     b, p = summoned(w)
     w.entities.remove(b)
-    rebuilt = w.pokemon((spot[0] + 6.0, spot[1], spot[2]), tags=(GUARD,), species="miraidon")
-    rebuilt["nbt"]["Pokemon"]["Species"] = "cobblemon:miraidon"
+    rebuilt = w.pokemon((spot[0] + 6.0, spot[1], spot[2]), tags=(GUARD,), species=OCC["species"])
+    rebuilt["nbt"]["Pokemon"]["Species"] = "cobblemon:%s" % OCC["species"]
     passes(w, 3)
     assert score(w, GONE) == C.PRESENT
     w.gt = 10 ** 8
@@ -690,16 +823,17 @@ def test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_sp
     assert passes(w, 3) == [0, 0, 0] and len([e for e in w.entities if e["kind"] == "pokemon"]) == 1
 
 
+@KEEPER
 def test_a_duplicate_is_removed_and_never_a_guardian():
     w = world()
     _gm, spot = spot_of()
     b, _p = summoned(w)
-    second = w.pokemon((spot[0] + 1.0, spot[1], spot[2]), tags=(TAG,), species="miraidon")
-    second["nbt"]["Pokemon"]["Species"] = "cobblemon:miraidon"
+    second = w.pokemon((spot[0] + 1.0, spot[1], spot[2]), tags=(TAG,), species=OCC["species"])
+    second["nbt"]["Pokemon"]["Species"] = "cobblemon:%s" % OCC["species"]
     passes(w, 1)
     assert len(bosses(w)) == 1
-    guard = w.pokemon((spot[0] + 1.0, spot[1], spot[2]), tags=(TAG, GUARD), species="miraidon")
-    guard["nbt"]["Pokemon"]["Species"] = "cobblemon:miraidon"
+    guard = w.pokemon((spot[0] + 1.0, spot[1], spot[2]), tags=(TAG, GUARD), species=OCC["species"])
+    guard["nbt"]["Pokemon"]["Species"] = "cobblemon:%s" % OCC["species"]
     passes(w, 2)
     assert guard in w.entities
 
@@ -721,7 +855,7 @@ def _gate_world():
     return w
 
 
-@pytest.mark.parametrize("cid,flag", [("cave_singing_hollow", GYM6), ("cave_relay_fault", CHAMPION)])
+@pytest.mark.parametrize("cid,flag", GATED)
 def test_the_door_opens_for_a_flagged_player_in_the_antechamber_and_not_for_anyone_else(cid, flag):
     fns, plan = _fns_cached()
     gm = next(p["geometry"] for p in plan if p["cave"]["id"] == cid)
@@ -732,7 +866,7 @@ def test_the_door_opens_for_a_flagged_player_in_the_antechamber_and_not_for_anyo
         w.blocks[c] = "minecraft:barrier"
     z = gm["ante_zone"]
     mid = ((z[0] + z[3]) / 2 + 0.5, z[1], (z[2] + z[5]) / 2 + 0.5)
-    other = "cobblers:flag/gym5_cleared" if flag == GYM6 else GYM6
+    other = {GYM6: "cobblers:flag/gym5_cleared", GYM8: "cobblers:flag/gym7_cleared"}.get(flag, GYM6)
     stranger = w.player(mid, flags=(other,))
     for _ in range(3):
         w.call("caves/tick")
@@ -747,7 +881,7 @@ def test_the_door_opens_for_a_flagged_player_in_the_antechamber_and_not_for_anyo
     w.call("caves/tick")
 
 
-@pytest.mark.parametrize("cid,flag", [("cave_singing_hollow", GYM6), ("cave_relay_fault", CHAMPION)])
+@pytest.mark.parametrize("cid,flag", GATED)
 def test_the_door_never_closes_on_a_player_inside_and_closes_when_the_last_has_gone(cid, flag):
     fns, plan = _fns_cached()
     gm = next(p["geometry"] for p in plan if p["cave"]["id"] == cid)
