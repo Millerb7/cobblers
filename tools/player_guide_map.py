@@ -600,7 +600,11 @@ def build_page(pack_pools, source_note):
                           key=lambda r: (r in ("waterways", "routes"), r == "routes",
                                          re.sub(r"^The ", "", reg_name.get(r, r))))
     reg_color = {}
-    for i, r in enumerate(sorted(r for r in regions_used if r not in ("routes", "waterways", "windward_deep"))):
+    # every sea's region is blue (2026-10-12: all water has a region); the land regions take the spread hues
+    seas = sorted({a["region"] for a in areas if a["kind"] == "sea"} - {"windward_deep"})
+    for i, r in enumerate(seas):
+        reg_color[r] = "hsl(%d 80%% %d%%)" % (190 + 12 * i, 50 + 4 * (i % 3))
+    for i, r in enumerate(sorted(r for r in regions_used if r not in ("routes", "waterways", "windward_deep") and r not in seas)):
         reg_color[r] = "hsl(%d 72%% 52%%)" % hue(i)
     reg_color["routes"] = "repeating-linear-gradient(45deg,#fff 0 3px,#222 3px 6px)"
     reg_color["waterways"] = "#00d0e0"

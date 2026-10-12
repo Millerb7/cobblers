@@ -1,0 +1,282 @@
+{
+ "schema": "cobblers.marine_seas/1",
+ "status": "authored 2026-10-12 (the owner: \"All water should have regions as well\"); draft: balance pass owed. Compiled, not seen in game.",
+ "generated_into": "data/spawns.json marine_zones and entries (mechanism marine_coordinate_boxes) by tools/marine_seas.py; the Windward Sea stays as authored there.",
+ "why": "Until 2026-10-12 the Windward Sea was the only defined ocean. The north coast and the Pine Isles' waters, the strait, the east and south seas, the waters round the Sunset and Fungal isles and the border margin had no region, no Nuzlocke zone, no location title, and fell back to Cobbleverse's inherited ocean spawns. The sea is one connected body (the canonical heightmap, ground below y62, a 16-block raster over the border at -1024..9215: 58.85 km2 in one component, plus Lake Tilpey's 0.72 km2 apart); a sea is therefore a division of it, drawn along the planned marine regions of data/regions.json (frostwater_shelf, eastern_reach, southern_shallows, the_outer_deep) and along the coast's nearest leg of the critical path.",
+ "common": {
+  "status": "authored 2026-10-12; compiled, not seen in game",
+  "draft": "balance pass owed: trainer-balance-designer reviews the rosters, weights and levels (docs/mechanics/ENCOUNTER_DESIGN.md)",
+  "distance_measure": "blocks from the nearest land sub-region cell (tools/compile_spawns.py marine_bands), on this zone's coarse grid; a cell with more than max_land_share of its fine cells on land is dropped, one with less is kept whole (the overlap is land, where a submerged or surface entry cannot spawn)",
+  "policy": "exclusive_curated: the pack's inherited spawns are suppressed over every band box (tools/suppress_inherited_spawns.py --subregions)",
+  "access": "Open water needs a Pokemon that carries a player on water, as for the Windward Sea (data/water_mounts.json); a sea past the first legs is reached by one that has a water mount.",
+  "depth": "deep-water entries carry maxY 40 (22 blocks under the surface), as in the Windward Sea; surface entries carry canSeeSky true. The seabed of each sea is the marine region's own plan (data/regions.json seabed_plan)."
+ },
+ "position_overrides": {
+  "wingull": "surface", "pelipper": "surface", "wattrel": "surface", "kilowattrel": "surface", "cramorant": "surface",
+  "eiscue": "surface", "lapras": "surface"
+ },
+ "seas": [
+  {
+   "id": "outer_deep",
+   "display_name": "The Outer Deep",
+   "marine_region": "the_outer_deep",
+   "theme": "open ocean past every shore: the great whales and the lantern-and-claw fauna of the dark water",
+   "legs": "ring of the border margin (512 or more outside the 0-8191 box); nearest coasts run leg 1 in the west to leg 8 in the south, so it is one band at Victory Road's tier 7 band of 40-50",
+   "clip_boxes": [
+    {"min_x": -1024, "max_x": 9215, "min_z": -1024, "max_z": -513},
+    {"min_x": -1024, "max_x": 9215, "min_z": 8704, "max_z": 9215},
+    {"min_x": -1024, "max_x": -513, "min_z": -512, "max_z": 8703},
+    {"min_x": 8704, "max_x": 9215, "min_z": -512, "max_z": 8703}
+   ],
+   "clip_basis": "data/regions.json marine_regions the_outer_deep: every block 512 or more outside the 0-8191 box, to the border at -1024 and 9215, four strips on 128-block edges. Where the Windward Sea's clip box already takes the west strip (z2592-5215) the Windward Sea keeps it: marine_bands claims a cell once, in zone order.",
+   "grid": 128,
+   "max_land_share": 0.5,
+   "level_logic": "one band, the tier 7 band 40-50 (cap 50): every shore's deep water is at or under it, so the Outer Deep is the place nothing on the coast prepares a player for. Levels are not tied to one leg because the margin borders all of them.",
+   "bands": [
+    {
+     "id": "outer_deep", "display_name": "The Outer Deep", "from_blocks": 0, "to_blocks": null,
+     "tier": 7, "level_band": [40, 50],
+     "basis": "the margin 512 blocks and more off any shore, one band: the open ocean's great whales (Wailord), the lantern fish, the jellyfish and the bottom feeders of the dark water. Deep-water entries carry maxY 40.",
+     "families": [
+      ["wailmer", "anchor"], ["tentacool", "common"], ["frillish", "common", {"maxY": 40}], ["chinchou", "common", {"maxY": 40}],
+      ["alomomola", "uncommon"], ["veluza", "uncommon"], ["mantyke", "uncommon"], ["relicanth", "rare", {"maxY": 40}],
+      ["clamperl", "rare", {"maxY": 40}], ["dhelmise", "rare", {"maxY": 40}], ["lapras", "ultra"]
+     ],
+     "heart": {"families": [["wailord", "presence"], ["tentacruel", "presence"], ["lanturn", "presence", {"maxY": 40}], ["alomomola", "presence"]]}
+    }
+   ]
+  },
+  {
+   "id": "frostwater_shelf",
+   "display_name": "The Frostwater Shelf",
+   "marine_region": "frostwater_shelf",
+   "theme": "a cold shelf under the Northern Range: seals, ice and the kelp forest's shellfish",
+   "legs": "coast legs 3 (west, x under 2048), 4 (x 2048-4096) and 5 (x 4096-4608), measured as the nearest route path leg over 64-block sea cells within 400 blocks of land",
+   "clip_boxes": [
+    {"min_x": -1024, "max_x": 991, "min_z": -1024, "max_z": 2591},
+    {"min_x": 992, "max_x": 4607, "min_z": -1024, "max_z": 2559}
+   ],
+   "clip_basis": "data/regions.json marine_regions frostwater_shelf: the sea north of z2560-2591 from the west border to x4607 (the Northgate strait begins at x4608). The 32-block strip at the Windward Sea's z2592 seam is the Windward Sea's.",
+   "grid": 128,
+   "max_land_share": 0.5,
+   "level_logic": "the Windward Sea's scheme, one gym cap per band, starting at the coast's own leg: shallows 26-30 (leg 3, cap 30), open water 30-35 (cap 35), the deep 35-40 (cap 40). The west coast is leg 3 and the east end of the zone leg 5, so the bands read as the three legs the shore runs along.",
+   "bands": [
+    {
+     "id": "frostwater_shallows", "display_name": "Frostwater Shelf: the shallows", "from_blocks": 0, "to_blocks": 128,
+     "tier": 3, "level_band": [26, 30],
+     "basis": "the shelf within 128 blocks of the north coast: the seals of the cold shore (Spheal, Seel), the shellfish and the kelp's poison weed (Skrelp). Everything at or under the leg 3 cap of 30 but its hearts.",
+     "families": [
+      ["spheal", "anchor"], ["seel", "common"], ["shellder", "common"], ["arrokuda", "uncommon"], ["wattrel", "uncommon"],
+      ["skrelp", "rare"], ["clauncher", "rare"], ["lapras", "ultra"]
+     ],
+     "heart": {"families": [["spheal", "presence"], ["sealeo", "presence"], ["dewgong", "presence"], ["barraskewda", "presence"]]}
+    },
+    {
+     "id": "frostwater_open", "display_name": "Frostwater Shelf: open water", "from_blocks": 128, "to_blocks": 384,
+     "tier": 4, "level_band": [30, 35],
+     "basis": "the open cold water beyond the shelf: the herd seals grown (Sealeo, Dewgong), dolphins and the drifting sunfish-kin.",
+     "families": [
+      ["spheal", "anchor"], ["seel", "common"], ["finizen", "common"], ["shellder", "uncommon"], ["eiscue", "uncommon"],
+      ["alomomola", "uncommon"], ["mantyke", "rare"], ["qwilfish hisuian", "rare"], ["clauncher", "ultra"]
+     ],
+     "heart": {"families": [["sealeo", "presence"], ["dewgong", "presence"], ["palafin", "presence"], ["alomomola", "presence"]]}
+    },
+    {
+     "id": "frostwater_depths", "display_name": "Frostwater Shelf: the deep", "from_blocks": 384, "to_blocks": null,
+     "tier": 5, "level_band": [35, 40],
+     "basis": "the dark cold water past the shelf break: the great seals (Walrein) and the whales.",
+     "families": [
+      ["spheal", "anchor"], ["seel", "common"], ["wailmer", "common"], ["finizen", "uncommon"], ["alomomola", "uncommon"],
+      ["veluza", "uncommon"], ["mantyke", "rare"], ["dhelmise", "rare", {"maxY": 40}], ["lapras", "ultra"]
+     ],
+     "heart": {"families": [["walrein", "presence"], ["dewgong", "presence"], ["palafin", "presence"], ["wailord", "presence"]]}
+    }
+   ]
+  },
+  {
+   "id": "pine_strait",
+   "display_name": "The Pine Strait",
+   "marine_region": "frostwater_shelf",
+   "theme": "the rocky narrows between the Northern Downs and the Northgate and Pine isles: crabs, barnacles, shellfish and the sea birds that nest on the rocks",
+   "legs": "coast legs 5 to 7 (the north-east coast) and the Northgate and Pine isles' tier 6 (data/encounter_design.json tables)",
+   "clip_boxes": [
+    {"min_x": 4608, "max_x": 9215, "min_z": -1024, "max_z": 2559}
+   ],
+   "clip_basis": "data/regions.json marine_regions frostwater_shelf polygon, east of x4608 to the border and north of z2560: the waters round Northgate Isle and the Pine Isles and the channel between them and the mainland.",
+   "grid": 128,
+   "max_land_share": 0.5,
+   "level_logic": "one gym cap per band from the isles' tier 6 (cap 45) down to the leg 5 coast: shallows 36-40 (cap 40), open water 40-45 (cap 45), the deep 45-50 (cap 50). A player reaches these isles at leg 5 to 6.",
+   "bands": [
+    {
+     "id": "pine_strait_shallows", "display_name": "Pine Strait: the shallows", "from_blocks": 0, "to_blocks": 128,
+     "tier": 5, "level_band": [36, 40],
+     "basis": "the rocky shore of the strait: crabs and barnacles (Krabby, Binacle, Wimpod), the tide-pool shellfish and the gulls.",
+     "families": [
+      ["krabby", "anchor"], ["binacle", "common"], ["wimpod", "common"], ["shellos", "common"], ["chewtle", "uncommon"],
+      ["wingull", "uncommon"], ["pyukumuku", "rare"], ["corphish", "rare"], ["veluza", "ultra"]
+     ],
+     "heart": {"families": [["kingler", "presence"], ["golisopod", "presence"], ["barbaracle", "presence"], ["drednaw", "presence"]]}
+    },
+    {
+     "id": "pine_strait_open", "display_name": "Pine Strait: open water", "from_blocks": 128, "to_blocks": 384,
+     "tier": 6, "level_band": [40, 45],
+     "basis": "the channel: starfish, claw-fish and the cormorants that fish it.",
+     "families": [
+      ["staryu", "anchor"], ["clauncher", "common"], ["skrelp", "common"], ["mareanie", "uncommon"], ["cramorant", "uncommon"],
+      ["qwilfish", "uncommon"], ["alomomola", "rare"], ["remoraid", "rare"], ["lapras", "ultra"]
+     ],
+     "heart": {"families": [["starmie", "presence"], ["clawitzer", "presence"], ["toxapex", "presence"], ["octillery", "presence"]]}
+    },
+    {
+     "id": "pine_strait_depths", "display_name": "Pine Strait: the deep", "from_blocks": 384, "to_blocks": null,
+     "tier": 7, "level_band": [45, 50],
+     "basis": "the deep water north of the isles: whales, rays and the old guardians of the sea floor.",
+     "families": [
+      ["wailmer", "anchor"], ["tentacool", "common"], ["mantyke", "common"], ["frillish", "uncommon", {"maxY": 40}],
+      ["relicanth", "rare", {"maxY": 40}], ["dhelmise", "rare", {"maxY": 40}], ["horsea", "ultra"]
+     ],
+     "heart": {"families": [["wailord", "presence"], ["tentacruel", "presence"], ["mantine", "presence"], ["jellicent", "presence", {"maxY": 40}]]}
+    }
+   ]
+  },
+  {
+   "id": "eastern_reach",
+   "display_name": "The Eastern Reach",
+   "marine_region": "eastern_reach",
+   "theme": "the open eastern water off the Marsh Country, Lake Tilpey's coast and the Long Isle: schooling fish and the sharks that follow them",
+   "legs": "coast legs 6 to 7 and the Long Isle's tier 7 (data/encounter_design.json tables)",
+   "clip_boxes": [
+    {"min_x": 6144, "max_x": 9215, "min_z": 2560, "max_z": 9215}
+   ],
+   "clip_basis": "data/regions.json marine_regions eastern_reach and the east of southern_shallows: east of x6144 from z2560 to the border, round the Long Isle (the Long Isle's own south shore is here, not the Southern Shallows').",
+   "grid": 128,
+   "max_land_share": 0.5,
+   "level_logic": "one gym cap per band from leg 6 (cap 45): shallows 41-45, open water 45-50 (cap 50), the deep 50-55 (cap 55). The east coast is leg 7, the Long Isle tier 7: shallows meet them one leg under.",
+   "bands": [
+    {
+     "id": "eastern_reach_shallows", "display_name": "Eastern Reach: the shallows", "from_blocks": 0, "to_blocks": 128,
+     "tier": 6, "level_band": [41, 45],
+     "basis": "the shelf off the east coast and the Long Isle: a school fish (Wishiwashi), the pilot fish and the gliding sea birds.",
+     "families": [
+      ["wishiwashi", "anchor"], ["arrokuda", "common"], ["remoraid", "common"], ["wattrel", "uncommon"], ["corsola", "rare"],
+      ["luvdisc", "rare"], ["mantyke", "ultra"]
+     ],
+     "heart": {"families": [["octillery", "presence"], ["barraskewda", "presence"], ["kilowattrel", "presence"], ["wishiwashi", "presence"]]}
+    },
+    {
+     "id": "eastern_reach_open", "display_name": "Eastern Reach: open water", "from_blocks": 128, "to_blocks": 384,
+     "tier": 7, "level_band": [45, 50],
+     "basis": "the open reach: sharks (Carvanha) hunting the schools, the whales and the spiny puffers.",
+     "families": [
+      ["carvanha", "anchor"], ["wailmer", "common"], ["qwilfish", "common"], ["finizen", "uncommon"], ["tentacool", "uncommon"],
+      ["pincurchin", "rare"], ["clamperl", "rare", {"maxY": 40}], ["alomomola", "ultra"]
+     ],
+     "heart": {"families": [["sharpedo", "presence"], ["palafin", "presence"], ["tentacruel", "presence"], ["wailord", "presence"]]}
+    },
+    {
+     "id": "eastern_reach_depths", "display_name": "Eastern Reach: the deep", "from_blocks": 384, "to_blocks": null,
+     "tier": 8, "level_band": [50, 55],
+     "basis": "the deep east: great whales and the bottom-water hunters.",
+     "families": [
+      ["wailmer", "anchor"], ["carvanha", "common"], ["veluza", "uncommon"], ["alomomola", "uncommon"], ["mantyke", "uncommon"], ["dondozo", "rare"],
+      ["dhelmise", "rare", {"maxY": 40}], ["lapras", "ultra"]
+     ],
+     "heart": {"families": [["wailord", "presence"], ["sharpedo", "presence"], ["veluza", "presence"], ["alomomola", "presence"]]}
+    }
+   ]
+  },
+  {
+   "id": "southern_shallows",
+   "display_name": "The Southern Shallows",
+   "marine_region": "southern_shallows",
+   "theme": "the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle",
+   "legs": "coast leg 8 (Route 8, the south strand, tier 8 band 43-53)",
+   "clip_boxes": [
+    {"min_x": 2048, "max_x": 6143, "min_z": 5120, "max_z": 9215}
+   ],
+   "clip_basis": "data/regions.json marine_regions southern_shallows: south of the continent from x2048 to x6143, to the border at z9215. West of x2048 is the Sunset Sea; east of x6144 the Eastern Reach.",
+   "grid": 128,
+   "max_land_share": 0.5,
+   "level_logic": "one gym cap per band from leg 7 (cap 50): shallows 46-50 (inside the south strand's tier 8 band of 43-53), open water 50-55, the deep 55-60 (Victory Road's cap).",
+   "bands": [
+    {
+     "id": "southern_reef", "display_name": "Southern Shallows: the reef", "from_blocks": 0, "to_blocks": 128,
+     "tier": 7, "level_band": [46, 50],
+     "basis": "the coral reef: Corsola, the sand-diggers (Wiglett), the heart fish (Luvdisc), the spiny reef-dwellers.",
+     "families": [
+      ["corsola", "anchor"], ["luvdisc", "common"], ["wiglett", "common"], ["staryu", "uncommon"], ["mareanie", "uncommon"],
+      ["bruxish", "rare"], ["pyukumuku", "rare"], ["mantyke", "ultra"]
+     ],
+     "heart": {"families": [["wugtrio", "presence"], ["toxapex", "presence"], ["starmie", "presence"], ["bruxish", "presence"]]}
+    },
+    {
+     "id": "southern_open", "display_name": "Southern Shallows: open water", "from_blocks": 128, "to_blocks": 384,
+     "tier": 8, "level_band": [50, 55],
+     "basis": "the warm open water: jellyfish, sea horses and the claw-fish.",
+     "families": [
+      ["tentacool", "anchor"], ["horsea", "common"], ["clauncher", "common"], ["bruxish", "uncommon"], ["finneon", "uncommon", {"maxY": 40}],
+      ["skrelp", "rare"], ["clamperl", "rare", {"maxY": 40}], ["alomomola", "ultra"]
+     ],
+     "heart": {"families": [["tentacruel", "presence"], ["kingdra", "presence"], ["clawitzer", "presence"], ["dragalge", "presence"]]}
+    },
+    {
+     "id": "southern_depths", "display_name": "Southern Shallows: the deep", "from_blocks": 384, "to_blocks": null,
+     "tier": 9, "level_band": [55, 60],
+     "basis": "the warm deep: the rays, the old jellyfish and the dragon-kin of the open south.",
+     "families": [
+      ["mantyke", "anchor"], ["frillish", "common", {"maxY": 40}], ["horsea", "common"], ["lumineon", "uncommon", {"maxY": 40}],
+      ["skrelp", "uncommon"], ["relicanth", "rare", {"maxY": 40}], ["dhelmise", "rare", {"maxY": 40}], ["lapras", "ultra"]
+     ],
+     "heart": {"families": [["mantine", "presence"], ["jellicent", "presence", {"maxY": 40}], ["kingdra", "presence"], ["dragalge", "presence"]]}
+    }
+   ]
+  },
+  {
+   "id": "sunset_sea",
+   "display_name": "The Sunset Sea",
+   "marine_region": "southern_shallows",
+   "theme": "the glowing south-west water round Fungal Isle and Sunset Isle, where the lantern fish rise at dusk",
+   "legs": "coast legs 1 to 3 (Pallet Fields' south coast, Fungal Isle tier 3) and Sunset Isle's west half (tier 5)",
+   "clip_boxes": [
+    {"min_x": -1024, "max_x": 991, "min_z": 5216, "max_z": 9215},
+    {"min_x": 992, "max_x": 2047, "min_z": 5120, "max_z": 9215}
+   ],
+   "clip_basis": "data/regions.json marine_regions southern_shallows polygon, west of x2048 from the Windward Sea's south edge (z5216) to the border: the continuation of the Windward Sea's coast to the south.",
+   "grid": 128,
+   "max_land_share": 0.5,
+   "level_logic": "a transition from the Windward Sea (16-30 along Route 1) toward the south's 46-60: one gym cap per band from leg 2 (cap 25): shallows 21-25, open water 25-30, the deep 30-35. Fungal Isle is tier 3, so the deep meets the island's own cap plus a leg.",
+   "bands": [
+    {
+     "id": "sunset_shallows", "display_name": "Sunset Sea: the shallows", "from_blocks": 0, "to_blocks": 128,
+     "tier": 2, "level_band": [21, 25],
+     "basis": "the shelf round Fungal Isle and Pallet's south coast: the first lantern fish (Finneon), the ink-fish (Inkay), sea horses and starfish.",
+     "families": [
+      ["finneon", "anchor"], ["inkay", "common"], ["horsea", "common"], ["staryu", "common"], ["luvdisc", "uncommon"],
+      ["shellos", "uncommon"], ["corsola", "rare"], ["frillish", "rare"], ["mantyke", "ultra"]
+     ],
+     "heart": {"families": [["inkay", "presence"], ["lanturn", "presence"], ["malamar", "presence"], ["finneon", "presence"]]}
+    },
+    {
+     "id": "sunset_open", "display_name": "Sunset Sea: open water", "from_blocks": 128, "to_blocks": 384,
+     "tier": 3, "level_band": [25, 30],
+     "basis": "the dusk water: Chinchou rising to the lights, the ink-fish grown, the first drifting jellyfish.",
+     "families": [
+      ["chinchou", "anchor", {"maxY": 40}], ["finneon", "common", {"maxY": 40}], ["inkay", "common"], ["frillish", "uncommon", {"maxY": 40}],
+      ["luvdisc", "uncommon"], ["clamperl", "rare", {"maxY": 40}], ["dhelmise", "rare", {"maxY": 40}], ["alomomola", "ultra"]
+     ],
+     "heart": {"families": [["lanturn", "presence", {"maxY": 40}], ["lumineon", "presence", {"maxY": 40}], ["malamar", "presence"], ["chinchou", "presence", {"maxY": 40}]]}
+    },
+    {
+     "id": "sunset_depths", "display_name": "Sunset Sea: the deep", "from_blocks": 384, "to_blocks": null,
+     "tier": 4, "level_band": [30, 35],
+     "basis": "the dark water past Sunset Isle, lit from below: the lantern fish grown (Lanturn, Lumineon) and the great jellyfish.",
+     "families": [
+      ["chinchou", "anchor", {"maxY": 40}], ["finneon", "common", {"maxY": 40}], ["wailmer", "common"], ["frillish", "uncommon", {"maxY": 40}],
+      ["relicanth", "rare", {"maxY": 40}], ["dhelmise", "rare", {"maxY": 40}], ["lapras", "ultra"]
+     ],
+     "heart": {"families": [["lumineon", "presence", {"maxY": 40}], ["jellicent", "presence", {"maxY": 40}], ["malamar", "presence"], ["lanturn", "presence", {"maxY": 40}]]}
+    }
+   ]
+  }
+ ]
+}

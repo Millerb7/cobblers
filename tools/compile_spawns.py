@@ -31,7 +31,9 @@ Necrozma towers (docs/mechanics/NETHER_ENCOUNTERS.md section 4).
 
 Marine files (spawn_pool_world/marine/<band>.json), from spawns.json marine_zones: open sea no sub-region, route or
 waterway covers, split into bands by distance from land (marine_bands below); every ambient entry scoped to a band
-(mechanism marine_coordinate_boxes). The first is the Windward Sea off Route 1 (2026-09-26).
+(mechanism marine_coordinate_boxes). The first is the Windward Sea off Route 1 (2026-09-26); six more seas (the Outer
+Deep, the Frostwater Shelf, the Pine Strait, the Eastern Reach, the Southern Shallows, the Sunset Sea; 2026-10-12) are
+authored in data/marine_seas.json and generated into marine_zones by tools/marine_seas.py.
 
 Nether files (spawn_pool_world/nether/<table>_<ring>.json), from spawns.json nether_tables and the entries with mechanism
 nether_ring_boxes (tools/build_encounters.py, from data/encounter_design.json "nether"): each table's roster over its
@@ -792,6 +794,25 @@ def marine_bands(spawns, regions, routes, waterways=(), grid=MARINE_GRID):
     coast; measured 2026-09-26 over 3,959 Windward Sea cells (to z5199) against the heightmap coast (tools/ground.py,
     heightmap 0d9b5f1e, land = ground >= y62 on an 8-block raster), this distance is the coast distance within
     -20 / 0 / +41 blocks at p5 / p50 / p95, so the bands need no heightmap at compile time.
+
+    Since 2026-10-12 (the six seas of data/marine_seas.json, tools/marine_seas.py) a zone may carry
+
+      clip_boxes      a list of clip boxes instead of the one clip_box
+      grid            a coarse cell size, a multiple of the 32-block grid (the Windward Sea keeps 32, byte for byte). A
+                      coarse cell is taken whole when its centre is in the clip, no fine cell in it is claimed, corridor-
+                      or waterway-touched, and no more than max_land_share of its fine cells are land; one over the
+                      share is dropped (a sliver of water beside land); one refused for any other reason is split into
+                      the fine cells that pass alone. A cell holding land is at the coast: its distance is 0. Why: every
+                      compiled box is a spawn condition the server holds in memory, and the six seas' bands on the 32-block
+                      grid came to 1,798 to 2,262 boxes (for band cuts from 96/256 to 256/640) where grid 128 comes to 419
+                      (measured 2026-10-12)
+      max_land_share  the most land a coarse cell may hold. Measured 2026-10-12 on the six seas at grid 128, over the
+                      58.85 km2 of sea: 0 leaves 2.57 km2 (4.4%) in no box and no water in two boxes; 0.25 leaves 1.08 km2
+                      and 0.04 km2 of water in a sub-region's box as well; 0.5 (the seas' value) leaves 0.40 km2 (0.7%) and
+                      0.10 km2 doubled
+
+    Zones are claimed in order: a fine cell an earlier zone took is never given to a later one, so two zones never share
+    a block. Distances are found by bucketing the land cells on a reach-sized lattice, not all pairs.
     """
     zones = spawns.get("marine_zones") or []
     if not zones:
@@ -803,41 +824,92 @@ def marine_bands(spawns, regions, routes, waterways=(), grid=MARINE_GRID):
     corridor = subregion_boxes.route_boxes(routes)
     narrow = list(waterways) + spawn_free_zones()
     out = {}
+    claimed = set()          # fine cells an earlier zone took: two zones never share a block, so no weight doubles
     for zone in zones:
-        x0, x1, z0, z1 = zone["clip_box"]["min_x"], zone["clip_box"]["max_x"], zone["clip_box"]["min_z"], zone["clip_box"]["max_z"]
-        cells = []
-        for gx in range(x0 // grid, x1 // grid + 1):
-            for gz in range(z0 // grid, z1 // grid + 1):
-                mx, mz = gx * grid + grid / 2.0, gz * grid + grid / 2.0
-                if not (x0 <= mx <= x1 and z0 <= mz <= z1) or (gx, gz) in land:
-                    continue
-                if any(b[0] <= mx <= b[1] and b[2] <= mz <= b[3] for b in corridor):
-                    continue
-                cx0, cz0 = gx * grid, gz * grid
-                if any(not (b[1] < cx0 or cx0 + grid - 1 < b[0] or b[3] < cz0 or cz0 + grid - 1 < b[2]) for b in narrow):
-                    continue
-                cells.append((gx, gz))
+        clips = [(c["min_x"], c["max_x"], c["min_z"], c["max_z"])
+                 for c in (zone.get("clip_boxes") or [zone["clip_box"]])]
+        x0, x1 = min(c[0] for c in clips), max(c[1] for c in clips)
+        z0, z1 = min(c[2] for c in clips), max(c[3] for c in clips)
+        g = int(zone.get("grid") or grid)
+        if g % grid:
+            raise SystemExit("marine zone %s: grid %d is not a multiple of %d" % (zone["id"], g, grid))
+        k = g // grid
+        share = float(zone.get("max_land_share") or 0.0)
+
+        def in_clip(mx, mz):
+            return any(c[0] <= mx <= c[1] and c[2] <= mz <= c[3] for c in clips)
+
+        def fine_free(gx, gz):
+            """Not claimed by an earlier zone, its centre in no route corridor box, no waterway or spawn-free zone touching it."""
+            mx, mz = gx * grid + grid / 2.0, gz * grid + grid / 2.0
+            if (gx, gz) in claimed or any(b[0] <= mx <= b[1] and b[2] <= mz <= b[3] for b in corridor):
+                return False
+            cx0, cz0 = gx * grid, gz * grid
+            return not any(not (b[1] < cx0 or cx0 + grid - 1 < b[0] or b[3] < cz0 or cz0 + grid - 1 < b[2]) for b in narrow)
+
+        def fine_ok(gx, gz):
+            """The fine-cell tests every cell has always passed: in the clip, not land, and free."""
+            return in_clip(gx * grid + grid / 2.0, gz * grid + grid / 2.0) and (gx, gz) not in land and fine_free(gx, gz)
+
+        # (ix, iz, size): a coarse cell of k x k fine cells (size k) or one fine cell (size 1). A coarse cell is taken
+        # whole when its centre is in the clip, no fine cell in it is claimed, corridor- or waterway-touched, and no more
+        # than max_land_share of them are land (the overlap is land, where a submerged or surface entry cannot spawn).
+        # One with more land than that is dropped: its water is a sliver beside land. One refused for any other reason
+        # (a clip or zone seam, a corridor, a waterway) is split into the fine cells that pass on their own.
+        items = []
+        if k == 1:
+            items = [(gx, gz, 1) for gx in range(x0 // grid, x1 // grid + 1) for gz in range(z0 // grid, z1 // grid + 1)
+                     if fine_ok(gx, gz)]
+        else:
+            for cx in range(x0 // g - 1, x1 // g + 2):
+                for cz in range(z0 // g - 1, z1 // g + 2):
+                    subs = [(cx * k + i, cz * k + j) for i in range(k) for j in range(k)]
+                    nland = sum(1 for sc in subs if sc in land)
+                    if nland > share * len(subs):
+                        continue
+                    if all(in_clip(sc[0] * grid + grid / 2.0, sc[1] * grid + grid / 2.0) and fine_free(*sc) for sc in subs):
+                        items.append((cx, cz, k))
+                    else:
+                        items.extend((sc[0], sc[1], 1) for sc in subs if fine_ok(*sc))
         bands = zone["bands"]
-        reach = max(b["from_blocks"] for b in bands) + grid
-        near = [(gx, gz) for gx, gz in land
-                if x0 - reach <= gx * grid <= x1 + reach and z0 - reach <= gz * grid <= z1 + reach]
-        by_band = {b["id"]: set() for b in bands}
-        if cells:
-            pts = np.array([(gx * grid + grid / 2.0, gz * grid + grid / 2.0) for gx, gz in cells])
-            lp = np.array([(gx * grid + grid / 2.0, gz * grid + grid / 2.0) for gx, gz in near]) if near else None
-            dist = np.full(len(cells), float("inf"))
-            if lp is not None:
-                for i in range(0, len(pts), 1024):
-                    d = np.sqrt(((pts[i:i + 1024, None, :] - lp[None, :, :]) ** 2).sum(-1)).min(1) - grid / 2.0
-                    dist[i:i + 1024] = d
-            for (gx, gz), d in zip(cells, dist):
+        reach = max(b["from_blocks"] for b in bands) + g
+        # land cells bucketed on a (reach)-sized lattice: an item looks at its 3x3 buckets only. One whose nearest land
+        # is farther than the reach gets inf, which falls in the last band exactly as the true distance (>= reach) would
+        # (the last band begins at reach - cell at the latest), so this classifies as the all-pairs minimum did.
+        bsz = max(1, reach // grid)
+        buckets = {}
+        for gx, gz in land:
+            buckets.setdefault((gx // bsz, gz // bsz), []).append((gx * grid + grid / 2.0, gz * grid + grid / 2.0))
+        by_band = {b["id"]: {} for b in bands}          # band -> {size: {(ix, iz)}}
+        if items:
+            dist = np.full(len(items), float("inf"))
+            centre = [((ix * sz + sz / 2.0) * grid, (iz * sz + sz / 2.0) * grid) for ix, iz, sz in items]
+            groups = {}
+            for i, (cx_, cz_) in enumerate(centre):
+                groups.setdefault((int(cx_ // grid) // bsz, int(cz_ // grid) // bsz), []).append(i)
+            for (bx, bz), idx in groups.items():
+                cand = [p for dx in (-1, 0, 1) for dz in (-1, 0, 1) for p in buckets.get((bx + dx, bz + dz), ())]
+                if not cand:
+                    continue
+                lp = np.array(cand)
+                pts = np.array([centre[i] for i in idx])
+                for j in range(0, len(pts), 512):
+                    d = np.sqrt(((pts[j:j + 512, None, :] - lp[None, :, :]) ** 2).sum(-1)).min(1)
+                    dist[np.array(idx[j:j + 512])] = d
+            for (ix, iz, sz), d in zip(items, dist):
+                d = max(0.0, d - sz * grid / 2.0)       # a coarse cell holding land is at the coast: distance 0
                 for b in bands:
-                    if b["from_blocks"] <= d < (b.get("to_blocks") if b.get("to_blocks") is not None else float("inf")):
-                        by_band[b["id"]].add((gx, gz))
+                    if b["from_blocks"] <= d and (b.get("to_blocks") is None or d < b["to_blocks"]):
+                        by_band[b["id"]].setdefault(sz, set()).add((ix, iz))
                         break
-        for bid, bc in by_band.items():
-            out[bid] = sorted((int(ix0 * grid), int((ix1 + 1) * grid - 1), int(iz0 * grid), int((iz1 + 1) * grid - 1))
-                              for ix0, ix1, iz0, iz1 in subregion_boxes.merge_rectangles(bc))
+                claimed.update((ix * sz + i, iz * sz + j) for i in range(sz) for j in range(sz))
+        for bid, by_size in by_band.items():
+            boxes = []
+            for sz, bc in by_size.items():
+                cell = sz * grid
+                boxes += [(int(ix0 * cell), int((ix1 + 1) * cell - 1), int(iz0 * cell), int((iz1 + 1) * cell - 1))
+                          for ix0, ix1, iz0, iz1 in subregion_boxes.merge_rectangles(bc)]
+            out[bid] = sorted(boxes)
     return out
 
 
