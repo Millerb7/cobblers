@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.legendaries/1",
-  "status": "authored 2026-09-29; 7 of 10 encounters sited and emitted, 3 blocked, each block now named as TECHNICAL or DECISION. SIX are built in cobblers-dryrun12: reapply step R14L ran 14 commands with 0 problems at 2026-09-29T02:51 (derived/reapply/run_20260929_023305.json). UXIE IS SITED AND EMITTED BUT NOT YET BUILT: its blocker (the pending water export) is gone because the export is applied and is now the canonical heightmap, so the mouth could be measured on the bed it will actually stand in. It needs one re-apply. Registeel and Lugia are DECISIONS for the owner, not computations, and Celebi's wake is a trigger question. Regigigas is built and its gate cannot be satisfied until Registeel is sited: see its gate.unsatisfiable_why. Celebi's wake is designed and built as gate + trigger (docs/mechanics/CELEBI_WAKE.md); Celebi is level 55, was 70 and uncatchable against every cap. 2026-10-12: seven more encounters sited and emitted (tornadus, thundurus, landorus, enamorus, tapukoko, tapulele, tapubulu) from data/dungeon_prize_roster.json world_proposals; none built in any world, none seen.",
+  "status": "authored 2026-09-29; 7 of 10 encounters sited and emitted, 3 blocked, each block now named as TECHNICAL or DECISION. SIX are built in cobblers-dryrun12: reapply step R14L ran 14 commands with 0 problems at 2026-09-29T02:51 (derived/reapply/run_20260929_023305.json). UXIE IS SITED AND EMITTED BUT NOT YET BUILT: its blocker (the pending water export) is gone because the export is applied and is now the canonical heightmap, so the mouth could be measured on the bed it will actually stand in. It needs one re-apply. Registeel and Lugia are DECISIONS for the owner, not computations, and Celebi's wake is a trigger question. Regigigas is built and its gate cannot be satisfied until Registeel is sited: see its gate.unsatisfiable_why. Celebi's wake is designed and built as gate + trigger (docs/mechanics/CELEBI_WAKE.md); Celebi is level 55, was 70 and uncatchable against every cap. 2026-10-12: seven more encounters sited and emitted (tornadus, thundurus, landorus, enamorus, tapukoko, tapulele, tapubulu) from data/dungeon_prize_roster.json world_proposals; none built in any world, none seen. 2026-10-12 (the owner): REGIGIGAS MOVED from the Glacial Tear to the North Pine Isle, portal (7720, 552); its old chamber, built in staging, is kept as a `retired_sites` entry and tools/legendaries.py emits a fail-closed cleanup R14L runs before any summon (not yet run on any server).",
   "notes": [
     "The authored legendary encounters: the lake trio (docs/mechanics/WATER_MAP.md section 5), the four bespoke concepts (docs/world-building/STRUCTURE_DECISIONS.md section 4, docs/story/ENCOUNTERS.md:392-395) and the wake of the sleeping Celebi (data/sapling_celebi.json, EXP-023). Every other legendary is Tier B: paste a structure into a fitting biome and gate it by badge count, and none of that is here.",
     "A legendary is an ENTITY, so a re-export erases it and it is summoned over RCON by tools/reapply.py (step R14L), never by a pack: `spawnpokemonat` inside a function spawns nothing until a /reload (EXP-046 question 1). The pack does what functions can: the chamber's blocks, the gate, the keeper.",
@@ -438,14 +438,14 @@
     },
     {
       "id": "regigigas",
-      "title": "Regigigas, beneath the glacier beside the Displaced City",
+      "title": "Regigigas, sealed under the North Pine Isle",
       "species": "regigigas",
       "level": 60,
       "level_basis": "5 below the provisional 8-badge cap of 70. PROVISIONAL.",
       "cap_at_gate": 60,
       "kind": "sealed_chamber",
       "status": "sited",
-      "site": "glacial_tear",
+      "site": "north_pine_isle",
       "gate": {
         "flags": [
           "gym8_cleared"
@@ -460,10 +460,10 @@
         "unsatisfiable_why": "CLEARED 2026-09-30: Registeel is sited at (4195, 3896) in upper_rift, so its met advancement can now be granted and Regigigas is reachable. The note this replaces read: LIVE IN BUILT CONTENT - cobblers:legendary/registeel/met is an impossible-trigger advancement granted by exactly one command, in the met function of a SITED encounter."
       },
       "portal": [
-        3560,
-        1760
+        7720,
+        552
       ],
-      "portal_why": "Under the glacier, 111 blocks east of the Displaced City cavern's east wall (the cavern is x3250-3449 z1650-1849, docs/STATE.md), so 87 blocks clear of its 24-block shell, and on the far side from its tunnel, whose bore runs WEST from the cavern to the city's surface footprint (tools/cavern_plan.py: mouth at the footprint's max_x, then +70 toward the cavern centre). Ground y126, 122-131 over 33 by 33.",
+      "portal_why": "MOVED 2026-10-12 (the owner: 'move Regigigas up to Northlight's islands'; the orchestrator chose Regigigas over Regice because it sleeps under Snowpoint Temple in the source games and its requires_met gate makes a far-north island the end of the three-golem pilgrimage). The North Pine Isle's interior, 84 blocks east of the isle's spawn focus (data/encounter_design.json north_pine_isle heart (7632, 528)), on the isle's eastern plateau. Measured 2026-10-12 on tools/ground.py with this record's own geometry (bearing 90, drop 46, passage 14, 21 by 21 by 11, plug 8): ground y97, y96-97 over the whole hull x7715-7760 z538-566 and over 33 by 33 round the portal; floor y51, ceiling y62; sleeve top y95 (a 1-block lip under the mouth); 30 blocks of rock over the envelope; no column at or under the sea (y62) within 289 blocks of the hull and none under y92 within 48. Nearest authored positions in data/ from the hull: the spawn focus above (84), elder_north_pine_isle_1 and its Habitat Blocks (7986, 458) (240), the Dawn tower placement (7480, 99, 316) (323), Whiteback (704), elder_north_pine_isle_2 (752), the swim hop (7392, 900) (465), Northlight's footprint (937), the ice mines nl_ice_a/b (1119); the Pine Isles have no spawn-free zone, route, ferry dock or other legendary chamber in data/. The site came from a search over both isles for a portal on ground at least y72 and flat to 3 blocks over 33 by 33, with the sleeve lip and roof the audit demands, dry for 24 blocks round the hull, and the hull at least 64 (elders) to 96 (the Dawn tower, Whiteback, the Lopunny house, the ferry dock and the swim hop) clear of every authored position found in data/ on both isles; the measured numbers above are what stands, not the search's radii.",
       "approach": {
         "bearing_deg": 90,
         "drop": 46,
@@ -477,13 +477,61 @@
       },
       "plug_depth": 8,
       "spawn_free_zone": [
-        3552,
-        1744,
-        3600,
-        1776
+        7712,
+        536,
+        7760,
+        568
       ],
-      "why": "STRUCTURE_DECISIONS section 4: 'it gives the Displaced City a reason to exist below the ice'. A bigger chamber than a golem's, because Regigigas is the thing the golems open.",
-      "level_why": "lowered from 65 to the upper bound of its own gate (8 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'"
+      "why": "STRUCTURE_DECISIONS section 4 had it 'beneath the glacier, in or beside the Displaced City' (a sealed site signposted from afar, opened only by bringing the three golems). MOVED 2026-10-12 to the North Pine Isle, the snowbound end of the pilgrimage: a snowy temple feel here is the isle itself (snowy_taiga paint) over the chamber kind's one palette, because the kind has no per-record palette option and none was invented. A bigger chamber than a golem's, because Regigigas is the thing the golems open. The Displaced City loses 'Regigigas is sealed beside it' as a reason to exist (data/towns.json displaced_city, edited the same day).",
+      "level_why": "lowered from 65 to the upper bound of its own gate (8 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.' UNCHANGED BY THE MOVE: level 60 is the gym-8 cap band wherever the chamber stands, and a legendary stands above its area's wild levels by design (measured 2026-10-12: the 22 data/spawns.json entries scoped north_pine_isle run level 25-50, most 33-43, so 60 is above every one).",
+      "measured": {
+        "ground_y": 97,
+        "floor_y": 51,
+        "ceiling_y": 62,
+        "roof_clearance": 30,
+        "sleeve_lip": 1,
+        "legendary_at": [
+          7754,
+          52,
+          552
+        ],
+        "by": "tools/legendaries.py geometry on tools/ground.py, 2026-10-12"
+      },
+      "retired_sites": [
+        {
+          "id": "first_chamber",
+          "retired": "2026-10-12",
+          "why": "Regigigas's first chamber, under the glacier 111 blocks east of the Displaced City cavern (the upper trough, subregion paint glacier_trough), built and its legendary summoned in staging (R14L read it back 1 of 1 on 2026-10-12). Moving the record would otherwise leave a carved chamber, an open shaft under a stone plug and a second Regigigas, so tools/legendaries.py emits a fail-closed cleanup for it (cobblers:legendary/regigigas/retire_first_chamber, run by R14L before any summons).",
+          "portal": [
+            3560,
+            1760
+          ],
+          "approach": {
+            "bearing_deg": 90,
+            "drop": 46,
+            "passage": 14
+          },
+          "chamber": {
+            "width": 21,
+            "length": 21,
+            "height": 11,
+            "alcove": 0
+          },
+          "plug_depth": 8,
+          "bore": 3,
+          "shell_margin": 4,
+          "pedestal_block": "minecraft:smooth_basalt",
+          "frozen_why": "bore, shell_margin and pedestal_block are defaults.bore, defaults.shell_margin and defaults.pedestal_block AS THEY STOOD when this chamber was carved (3, 4, smooth_basalt); the pedestal is the probe that says the chamber is still there. They are frozen here so a later change to the defaults cannot change what the cleanup thinks it is undoing; the retired geometry is the same tools/legendaries.py geometry() over these numbers.",
+          "terrain": {
+            "code": "DEEP_SNOW",
+            "surface": "minecraft:snow_block",
+            "under": "minecraft:stone",
+            "deep": "minecraft:stone",
+            "surface_verified": false,
+            "why": "The paint at the old portal is subregion upper_trough, preset glacier_trough, terrain DEEP_SNOW (data/regions.json paint_presets). Below the ground the restore is stone, the convention tools/gym_demolish.py uses ('rock back under the ground'); the carve's own envelope, sleeve and plug were stone, so below gy-3 the restore is an identity. UNVERIFIED and offline-unknowable (the heightmap has heights, not block ids; docs/world-building/DROVERS_HOLLOW.md makes the same admission): the surface block. snow_block is the block our own tools stand on the same snow (docs/world-building/MEGA_DENS.md, the Abomasnow pad) and is a guess for the 3 by 3 the plug's top leaves at y126; a one-line change here if the owner finds the patch wrong in game."
+          }
+        }
+      ]
     },
     {
       "id": "groudon",

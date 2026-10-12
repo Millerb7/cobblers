@@ -22,7 +22,7 @@ work.
 | **Regirock** | The Scorched Plateau, portal (4800, 5200), y144 | `gym4_cleared` *(proposed)* | **emitted** |
 | **Regice** | The Glacial Tear's Upper Trough, portal (3900, 2050), y101 | `gym6_cleared` *(proposed)* | **emitted** |
 | **Registeel** | The Rift's anomalous chamber, upper Rift, portal (4195, 3896) | `gym7_cleared` *(proposed)* | **sited and emitted** (`data/legendaries.json`; was "blocked: the Rift plan", corrected 2026-10-12) |
-| **Regigigas** | Beside the Displaced City, portal (3560, 1760), y126 | `gym8_cleared` *(proposed)* **and the three golems met** | **emitted; reachable now that Registeel is sited** |
+| **Regigigas** | The North Pine Isle's eastern plateau, portal (7720, 552), y97 (**moved 2026-10-12** from beside the Displaced City, portal (3560, 1760), see section 4b) | `gym8_cleared` *(proposed)* **and the three golems met** | **emitted; reachable now that Registeel is sited**; the old chamber has a fail-closed cleanup |
 | **Groudon** | The Craters' eastern bowl, portal (6672, 5508), y108 | `gym8_cleared` *(proposed)* | **emitted** |
 | **Lugia** | The Maelstrom Trench | Dive **and** `champion_cleared` | **blocked: no seabed** |
 | **Celebi's wake** | The Route 1 sapling | `gym8_cleared` *(proposed)* | **gate built, trigger open** |
@@ -166,6 +166,37 @@ and principle 7 forbids guessing the rest of the enum.
 The keeper — dedupe, and put it back on its pedestal — runs **only while the
 chamber is shut**, so it can never drag a Pokémon out of a battle in progress.
 
+### 4b. A chamber that moves: `retired_sites` (2026-10-12)
+
+The owner moved Regigigas to the Pine Isles (portal (7720, 552): ground y97, flat to 1 block over the whole hull,
+floor y51, 30 blocks of rock over the envelope; nearest authored position the isle's spawn focus at 84 blocks, then
+the elder at 240 and the Dawn tower at 323; `portal_why` in the record has the full list). Regigigas rather than
+Regice because it sleeps under Snowpoint Temple in the source games and its `requires_met` gate makes a far-north
+island the end of the three-golem pilgrimage. Gate, level (60, the gym-8 band; the isle's wild spawns run 25-50) and
+`requires_met` are unchanged. The chamber kind has one palette (`defaults`), so the "snowy temple" is the isle's own
+snowy_taiga paint over it; no per-record palette was invented.
+
+The first chamber (under the Glacial Tear's upper trough, portal (3560, 1760)) was built in staging and its legendary
+summoned. Moving only the record would have left a carved chamber, an open shaft and a second Regigigas, so the record
+keeps it as a `retired_sites` entry holding every number the carve used (`bore`, `shell_margin` and `pedestal_block`
+frozen as they stood), and `tools/legendaries.py` emits, per entry, a look-then-act cleanup that **R14L runs first**
+(before any summon), read back like the summons are:
+
+- `cobblers:legendary/<id>/retire_<site>` (a `tools/chunk_look.py` chain): holds the old hull's chunks, waits for the
+  saved entities, then runs the act below, and counts the players it held.
+- the act tags every player standing in the old chamber, passage or shaft (`cobblers_leg_retire_held`). While anyone is
+  tagged it does nothing, so nobody is buried, and the step's read-back of 0 held fails the run by name.
+- otherwise, only if the old pedestal block still stands (so a second run writes nothing), it calls `..._restore`:
+  clears the retired chamber's open score (the live chamber is unopened, and `carve_once` skips a score of 1), puts
+  every void back to rock, puts every sleeve and plug column back to the heightmap's terrain (rock under, `surface`
+  at the ground, air above), and replaces the pedestal LAST. Ground is `tools/ground.py`, never a world.
+- it kills `type=cobblemon:pokemon` carrying the record's own tag inside the old chamber's box. The live Regigigas
+  carries the same tag and stands elsewhere, outside that box.
+
+The surface block is data (`terrain.surface`, `surface_verified: false`): the paint at the old portal is DEEP_SNOW and
+the block it exports is not knowable offline, so snow_block is a guess for the 3 by 3 the plug top leaves. Players
+who already hold `cobblers:legendary/regigigas/met` from the old chamber keep it; nothing revokes it.
+
 ---
 
 ## 5. The Celebi's wake: what was settled and what was not
@@ -233,7 +264,16 @@ grid and coverage, and — for each grotto — that its declared keep zone reall
 exists in `data/water_shape.json` and really covers the sleeve, measured on the
 heightmap.
 
-**376 checks, 0 failures**, and proved to fail on six tampered inputs: a gate
+For a retired site (section 4b) it derives the old chamber again in its own arithmetic
+(`legendaries_audit.own_old_site`, which never calls `legendaries.geometry`), applies the restore function's writes as
+text to a grid of the old hull, and requires: every cell the carve opened is put back, every cell written is the
+terrain the heightmap gives there, nothing is written outside the hull or above the plug's top, the pedestal is the last
+write, the act's kill is held to the record's tag and a box that holds the old legendary and not the live one, the
+restore is called only behind the held guard and the pedestal probe, nothing else in the pack reaches the hull, and the
+step runs first and reads 0 held. Not covered: other packs, and a running server.
+
+**376 checks, 0 failures** (before section 4b; now 1,221 over fifteen chambers and one retired site), and proved to
+fail on six tampered inputs: a gate
 stripped out of a `near` line, a write moved outside the shell, an empty pack,
 no pack at all, every encounter blocked, and a level above the catch cap.
 

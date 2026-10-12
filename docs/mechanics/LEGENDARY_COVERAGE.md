@@ -222,7 +222,7 @@ later.
 | 483 | Dialga | legendary | planned (designed, not built): D18: the Temple Calendar's boss, band-6 catch (designed) | temple_calendar (boss) |  |
 | 484 | Palkia | legendary | **dungeon**: nowhere authored | street, band 6 | D18's lake pick for the Street; restricted |
 | 485 | Heatran | legendary | planned (designed, not built): DUNGEONS.md 10: the Crucible's boss after Entei (designed) | crucible (boss) |  |
-| 486 | Regigigas | legendary | placed: legendaries.json, beside the Displaced City | stays |  |
+| 486 | Regigigas | legendary | placed: legendaries.json, the North Pine Isle (moved 2026-10-12 from beside the Displaced City) | stays |  |
 | 487 | Giratina | legendary | placed: Wardenhold (frostpeak_keep_quest.json) | stays |  |
 | 488 | Cresselia | legendary | **dungeon**: nowhere authored | starfall, bands 5, 6 | the full moon, Darkrai's counterpart |
 | 489 | Phione (ATM subset) | mythical | **dungeon**: nowhere authored | flooded_ruin, bands 4, 5 | the sunken sea temple |

@@ -391,7 +391,7 @@ The surface design therefore retains about 183 names of headroom before the roug
 
 - **Lugia:** the Maelstrom Trench.
 - **Regirock, Regice and Registeel:** one linked three-golem puzzle; no ambient spawn.
-- **Regigigas:** beneath the glacier, opened through the golem puzzle.
+- **Regigigas:** sealed under the North Pine Isle (moved 2026-10-12 from beneath the glacier), opened through the golem puzzle.
 - **Groudon:** deep below the Mining Town volcano.
 
 No other legendary location is assigned here. These are location locks only: one-time versus repeatable behavior, shared versus player state, simultaneous triggers, failures and late joiners remain deferred to the static-encounter and progression experiments.

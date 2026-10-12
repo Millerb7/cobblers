@@ -1441,8 +1441,8 @@
    "working_name": "The Displaced City",
    "display_name": "The Displaced City",
    "display_name_why": "The story's name throughout (ARC, SIDEQUESTS, SIDE_EVENTS), kept. It is what outsiders call it; the residents' own name for their summit town is unwritten (docs/story/handoffs/DISPLACED_CITY_AND_SCAR.md question 13). No signpost points to it, so only its title shows it. 18 characters: it would wrap on a sign.",
-   "for": "A summit town the Worldshift moved into a cherry-grove cavern beneath the Glacial Tear: streets still laid out for a mountaintop, trees living on light that is not the sun. The region's great mystery; Regigigas is sealed beside it.",
-   "why_here": "Beneath the glacier rather than off a Rift side-chamber: the Rift now has a purpose (Victory Road to the League), while the glacier head has none on the path; Regigigas was already planned beneath the glacier; ice above a blossoming city below is the absurdity the spec asks for; and the Scar on Mt Vessu is about 1,150 blocks away across the Merian cirque, so the two can be connected by sight and story. The surface site is the entrance on the trough's south-west flank.",
+   "for": "A summit town the Worldshift moved into a cherry-grove cavern beneath the Glacial Tear: streets still laid out for a mountaintop, trees living on light that is not the sun. The region's great mystery. (Regigigas was to be sealed beside it; the owner moved it to the North Pine Isle on 2026-10-12, data/legendaries.json regigigas.)",
+   "why_here": "Beneath the glacier rather than off a Rift side-chamber: the Rift now has a purpose (Victory Road to the League), while the glacier head has none on the path; Regigigas was already planned beneath the glacier (moved to the North Pine Isle 2026-10-12, so this reason no longer holds); ice above a blossoming city below is the absurdity the spec asks for; and the Scar on Mt Vessu is about 1,150 blocks away across the Merian cirque, so the two can be connected by sight and story. The surface site is the entrance on the trough's south-west flank.",
    "centre": {
     "x": 2969,
     "z": 1710,
@@ -1518,8 +1518,7 @@
     "excavation_estimate_blocks": "about 1.0-1.6 million for the cavern (200 x 200 x 40, less rock left standing) plus a 400-block access tunnel",
     "tool": "Axiom / WorldEdit volume build",
     "linked": [
-     "the_scar",
-     "regigigas (sealed chamber beside the city)"
+     "the_scar"
     ],
     "depth_verified": {
      "date": "2026-09-14",

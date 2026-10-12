@@ -306,7 +306,7 @@
     "dialga": {"kind": "legendary", "status": "to_world", "home": "cave_clock_cellar (K5: The Clock Cellar, data/caves.json)", "where": "the hills above Tilpey Cross; a post-Champion area boss: one native alpha kept by a keeper (cobblers_caves), level 70, behind champion_cleared, 24,000 ticks back after a faint and 72,000 after a catch", "why": "time; restricted. Moved from the Temple Calendar's boss slot on 2026-10-12 (the orchestrator, on the owner's 'every mon placed by morning')"},
     "palkia": {"kind": "legendary", "status": "to_dungeon", "home": "street", "bands": ["6"], "why": "D18's lake pick for the Street; restricted"},
     "heatran": {"kind": "legendary", "status": "to_dungeon", "where": "the Crucible, band 6 prize (the owner, 2026-10-12: the fallback; no legendary boss stage is built for it; was DUNGEONS.md 10's boss after Entei)", "home": "crucible", "bands": ["6"]},
-    "regigigas": {"kind": "legendary", "status": "placed", "where": "legendaries.json, beside the Displaced City"},
+    "regigigas": {"kind": "legendary", "status": "placed", "where": "legendaries.json, the North Pine Isle (moved from beside the Displaced City, 2026-10-12)"},
     "giratina": {"kind": "legendary", "status": "placed", "where": "Wardenhold (frostpeak_keep_quest.json)"},
     "cresselia": {"kind": "legendary", "status": "to_dungeon", "home": "starfall", "bands": ["5", "6"], "why": "the full moon, Darkrai's counterpart"},
     "phione": {"kind": "mythical", "status": "to_dungeon", "home": "flooded_ruin", "bands": ["4", "5"], "model_gate": "atm_subset", "why": "the sunken sea temple"},

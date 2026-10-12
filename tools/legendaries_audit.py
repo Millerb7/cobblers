@@ -458,6 +458,9 @@ def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world
     rep.check(checked_writes > 0, "NOTHING TO CHECK: no block write was tested")
     rep.check(checked_gates > 0, "NOTHING TO CHECK: no gate line was tested")
 
+    # ---- 4b. a retired chamber site: put back, and nothing of it left in the pack's writes ----------------------
+    _retired_sites(doc, ground, pack, fn_dir, rep)
+
     # ---- 5. the gate-only records ------------------------------------------
     for rec in gate_only:
         rid = rec["id"]
@@ -481,6 +484,286 @@ def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world
                       "%s: a gate_only record must not be driven; its trigger is an open question" % rid)
 
     return rep
+
+
+# ------------------------------------------------------------------ a retired chamber site (2026-10-12)
+#
+# A record that MOVES keeps its old chamber in `retired_sites`; tools/legendaries.py emits a cleanup for it. This
+# section judges that cleanup the way section 4 judges a carve, and with the same independence rule: the old
+# chamber is derived HERE, from the record's declared numbers and the heightmap, in this file's own arithmetic. It
+# never calls L.geometry(), so a geometry() that scales, shifts or transposes the chamber (the generator being
+# mutated, the data untouched) is caught by the restore failing to cover what this derivation says was carved.
+#
+# What it proves, offline: the restore writes (a) every cell the old carve opened (chamber, passage, shaft, ladder,
+# lanterns, pedestal) back to rock, (b) every sleeve and plug cell whose terrain is not the carve's own stone back
+# to the terrain the heightmap says it is (surface at the ground, air above it), (c) nothing outside the old hull
+# and nothing over the plug's top, and (d) nothing else in the pack writes, loads, tp's to or selects into that hull.
+# The cleanup's guard, probe, kill selector and step order are read as TEXT.
+#
+# It does NOT prove: that the surface block is what the world had (terrain.surface_verified says it is a guess),
+# that nothing OUTSIDE this pack (another pack, a later structure) touches the hull, or anything about a running
+# server. Those are the staging read-back (the pedestal probe, the held count) and the owner's eyes.
+
+AXES = {0: (0, -1), 90: (1, 0), 180: (0, 1), 270: (-1, 0)}
+HELD = "cobblers_leg_retire_held"
+VOL = re.compile(r"x=(-?\d+),y=(-?\d+),z=(-?\d+),dx=(-?\d+),dy=(-?\d+),dz=(-?\d+)")
+
+
+def own_old_site(site, ground):
+    """The retired chamber, from the record's numbers and the heightmap alone: boxes as inclusive
+    (x0, y0, z0, x1, y1, z1). Written separately from tools/legendaries.py geometry() on purpose."""
+    px, pz = (int(v) for v in site["portal"])
+    my = int(ground(px, pz))
+    ap, ch = site["approach"], site["chamber"]
+    dx, dz = AXES[int(ap["bearing_deg"])]
+    bore, m = int(site["bore"]), int(site["shell_margin"])
+    r = bore // 2
+    width, length, height = int(ch["width"]), int(ch["length"]), int(ch["height"])
+    drop, passage, plug = int(ap["drop"]), int(ap["passage"]), int(site["plug_depth"])
+    floor = my - drop
+
+    def box(s0, s1, a0, a1, y0, y1):
+        xs = (px + dx * s0 - dz * a0, px + dx * s1 - dz * a1)
+        zs = (pz + dz * s0 + dx * a0, pz + dz * s1 + dx * a1)
+        return (min(xs), y0, min(zs), max(xs), y1, max(zs))
+
+    s0 = r + passage + 1
+    s1 = s0 + length - 1
+    out = {"my": my, "floor": floor}
+    out["chamber"] = box(s0, s1, -(width // 2), width // 2, floor + 1, floor + height)
+    out["passage"] = box(r + 1, r + passage, -r, r, floor + 1, floor + bore)
+    out["shaft"] = box(-r, r, -r, r, floor + 1, my - plug)
+    out["plug"] = box(-r, r, -r, r, my - plug + 1, my)
+    out["ladder"] = box(-r, -r, 0, 0, floor + 1, my - plug)
+    out["pedestal"] = box(s1 - 2, s1 - 2, 0, 0, floor, floor)
+    out["legendary"] = (out["pedestal"][0], floor + 1, out["pedestal"][2])
+    voids = (out["chamber"], out["passage"], out["shaft"])
+    top = floor + height + m
+    out["envelope"] = (min(b[0] for b in voids) - m, floor + 1 - m, min(b[2] for b in voids) - m,
+                       max(b[3] for b in voids) + m, top, max(b[5] for b in voids) + m)
+    sx0, sz0, sx1, sz1 = px - r - m, pz - r - m, px + r + m, pz + r + m
+    out["sleeve"] = (sx0, top + 1, sz0, sx1, int(ground.box(sx0, sz0, sx1, sz1).min()) - 1, sz1)
+    parts = [out["envelope"], out["sleeve"], out["plug"]]
+    out["hull"] = (min(b[0] for b in parts), min(b[1] for b in parts), min(b[2] for b in parts),
+                   max(b[3] for b in parts), max(b[4] for b in parts), max(b[5] for b in parts))
+    return out
+
+
+def _vol_box(m):
+    x, y, z, dx, dy, dz = (int(v) for v in m.groups())
+    return (x, y, z, x + dx, y + dy, z + dz)
+
+
+def _meets(a, b):
+    return a[0] <= b[3] and b[0] <= a[3] and a[1] <= b[4] and b[1] <= a[4] and a[2] <= b[5] and b[2] <= a[5]
+
+
+def _reaches(hull, line):
+    """True when a coordinate-bearing command of `line` reaches the hull: fill, setblock, forceload, positioned,
+    tp, a selector volume. (Not covered: a command that reaches it by ~ offset or a distance from a far point.)"""
+    s = line.strip()
+    if not s or s.startswith("#"):
+        return False
+    for rx in (FILL, SETBLOCK):
+        mm = rx.match(s)
+        if mm:
+            vals = [int(v) for v in mm.groups()[:6 if rx is FILL else 3]]
+            b = L._box(*vals) if rx is FILL else (vals[0], vals[1], vals[2], vals[0], vals[1], vals[2])
+            if _meets(b, hull):
+                return True
+    for mm in re.finditer(r"forceload (?:add|remove) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+))?", s):
+        a, b, c, d = mm.groups()
+        x0, z0 = int(a), int(b)
+        x1, z1 = (int(c), int(d)) if c is not None else (x0, z0)
+        if _meets((min(x0, x1), hull[1], min(z0, z1), max(x0, x1), hull[4], max(z0, z1)), hull):
+            return True
+    for mm in re.finditer(r"(?:positioned|tp @s) (-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)", s):
+        x, y, z = (int(float(v) // 1) for v in mm.groups())
+        if _meets((x, y, z, x, y, z), hull):
+            return True
+    for mm in VOL.finditer(s):
+        if _meets(_vol_box(mm), hull):
+            return True
+    return False
+
+
+def _retired_sites(doc, ground, pack, fn_dir, rep):
+    import numpy as np
+    sites = L.retired(doc)
+    ns = doc["namespace"]
+    files = sorted(p.relative_to(fn_dir).as_posix() for p in fn_dir.rglob("*.mcfunction")) if fn_dir.is_dir() else []
+    # every retire_* function in the pack belongs to a declared site, and every declared site has all five
+    declared = set()
+    for rec, site in sites:
+        for suf in ("", "_look", "_act", "_done", "_restore"):
+            declared.add("%s/retire_%s%s.mcfunction" % (rec["id"], site["id"], suf))
+    stray = [f for f in files if "/retire_" in f and f not in declared]
+    rep.check(not stray, "the pack carries retire functions no record declares: %s" % stray)
+    steps = None
+    for rec, site in sites:
+        rid, sid = rec["id"], site["id"]
+        where = "%s retired site %s" % (rid, sid)
+        for f in sorted(d for d in declared if d.startswith(rid + "/retire_%s" % sid)):
+            rep.check(f in files, "%s: the pack has no %s" % (where, f))
+        restore_f = fn_dir / rid / ("retire_%s_restore.mcfunction" % sid)
+        act_f = fn_dir / rid / ("retire_%s_act.mcfunction" % sid)
+        done_f = fn_dir / rid / ("retire_%s_done.mcfunction" % sid)
+        if not (restore_f.is_file() and act_f.is_file() and done_f.is_file()):
+            continue
+        if int((site["chamber"] or {}).get("alcove") or 0):
+            rep.errors.append("%s: an alcove chamber's door is not modelled by this audit" % where)
+            continue
+        o = own_old_site(site, ground)
+        hull = o["hull"]
+        t = site["terrain"]
+        carve_block = doc["defaults"]["envelope_block"]
+
+        # ---- the restore, applied as text to a grid of the hull ---------------------------------------------
+        X0, Y0, Z0, X1, Y1, Z1 = hull
+        ids = {}
+        for b in ("minecraft:air", t["surface"], t["under"], t["deep"], carve_block):
+            ids.setdefault(b, len(ids) + 1)
+        written = np.zeros((X1 - X0 + 1, Y1 - Y0 + 1, Z1 - Z0 + 1), np.int16)
+        outside = 0
+        nwrites = 0
+        for line in restore_f.read_text(encoding="utf-8").splitlines():
+            s = line.strip()
+            mm = FILL.match(s)
+            if mm:
+                b, blk = L._box(*(int(v) for v in mm.groups()[:6])), mm.group(7)
+            else:
+                mm = SETBLOCK.match(s)
+                if not mm:
+                    continue
+                x, y, z = (int(v) for v in mm.groups()[:3])
+                b, blk = (x, y, z, x, y, z), mm.group(4)
+            nwrites += 1
+            if not _inside(b, hull):
+                outside += 1
+                continue
+            ids.setdefault(blk, len(ids) + 1)
+            written[b[0] - X0:b[3] - X0 + 1, b[1] - Y0:b[4] - Y0 + 1, b[2] - Z0:b[5] - Z0 + 1] = ids[blk]
+        rep.check(nwrites >= 3, "%s: only %d writes in the restore; that is not a chamber put back" % (where, nwrites))
+        rep.check(outside == 0, "%s: %d restore write(s) outside the old hull %s" % (where, outside, hull))
+
+        # what the terrain is at every cell: the heightmap's ground, the site's three blocks
+        gcol = ground.box(X0, Z0, X1, Z1).T
+        rel = np.arange(Y0, Y1 + 1)[None, :, None] - gcol[:, None, :]
+        expect = np.where(rel > 0, ids["minecraft:air"],
+                          np.where(rel == 0, ids[t["surface"]],
+                                   np.where(rel >= -2, ids[t["under"]], ids[t["deep"]]))).astype(np.int16)
+
+        def mask(*boxes):
+            m_ = np.zeros(written.shape, bool)
+            for b in boxes:
+                m_[b[0] - X0:b[3] - X0 + 1, b[1] - Y0:b[4] - Y0 + 1, b[2] - Z0:b[5] - Z0 + 1] = True
+            return m_
+
+        opened = mask(o["chamber"], o["passage"], o["shaft"], o["ladder"], o["pedestal"])
+        stone = mask(o["envelope"], o["sleeve"], o["plug"]) & ~opened
+        need = opened | (stone & (expect != ids[carve_block]))
+        missing = need & (written == 0)
+        wrong = (written != 0) & (written != expect)
+        rep.check(int(need.sum()) > 0, "%s: NOTHING TO CHECK: no cell needs restoring" % where)
+        rep.check(int(missing.sum()) == 0,
+                  "%s: %d cell(s) the old carve changed are not put back (first %s)"
+                  % (where, int(missing.sum()), [tuple(int(v) + o_ for v, o_ in zip(c, (X0, Y0, Z0)))
+                                                 for c in np.argwhere(missing)[:3]]))
+        rep.check(int(wrong.sum()) == 0,
+                  "%s: %d cell(s) written with a block that is not the terrain there (first %s)"
+                  % (where, int(wrong.sum()), [tuple(int(v) + o_ for v, o_ in zip(c, (X0, Y0, Z0)))
+                                               for c in np.argwhere(wrong)[:3]]))
+        px, py, pz = o["pedestal"][0], o["pedestal"][1], o["pedestal"][2]
+        rep.check(int(written[px - X0, py - Y0, pz - Z0]) == ids[t["deep"]],
+                  "%s: the pedestal (%d, %d, %d) is not put back to %s" % (where, px, py, pz, t["deep"]))
+        restore_text = restore_f.read_text(encoding="utf-8")
+        rep.check(restore_text.count("scoreboard players set #%s %s 0" % (rid, doc["objective"])) == 1,
+                  "%s: the restore must clear the retired chamber's open score exactly once" % where)
+        body = [l.strip() for l in restore_text.splitlines() if l.strip() and not l.strip().startswith("#")]
+        rep.check(bool(body) and body[-1].startswith("setblock %d %d %d " % (px, py, pz)),
+                  "%s: the pedestal must be the LAST write, so an interrupted restore is run again" % where)
+
+        # ---- the act: guard, probe, kill, as text ------------------------------------------------------------
+        base = "%s:legendary/%s/retire_%s" % (ns, rid, sid)
+        guard = "@a[tag=%s]" % HELD
+        tagged = []
+        probe_ok = kill_ok = False
+        stray_lines = []
+        for line in act_f.read_text(encoding="utf-8").splitlines():
+            s = line.strip()
+            if not s or s.startswith("#"):
+                continue
+            mm = re.match(r"^tag @a\[(%s)\] add %s$" % (VOL.pattern, HELD), s)
+            if mm:
+                tagged.append(_vol_box(VOL.search(mm.group(1))))
+                continue
+            if s == "tag @a remove %s" % HELD or s.startswith("scoreboard players set #") or s.startswith("schedule function"):
+                continue
+            mm = re.match(r"^execute unless entity %s if block (-?\d+) (-?\d+) (-?\d+) (\S+) run function (\S+)$"
+                          % re.escape(guard), s)
+            if mm:
+                probe_ok = ((int(mm.group(1)), int(mm.group(2)), int(mm.group(3))) == (px, py, pz)
+                            and mm.group(4) == site["pedestal_block"] and mm.group(5) == base + "_restore")
+                continue
+            mm = re.match(r"^execute unless entity %s run kill @e\[(.*)\]$" % re.escape(guard), s)
+            if mm:
+                sel = mm.group(1)
+                vm = VOL.search(sel)
+                kb = _vol_box(vm) if vm else None
+                tag = "tag=%s" % (doc["tag_prefix"] + rid)
+                lx, ly, lz = o["legendary"]
+                live = None
+                if rec.get("status") == "sited":
+                    live = L.geometry(rec, doc, ground)["legendary"]
+                kill_ok = bool(kb and "type=cobblemon:pokemon" in sel and tag in sel.split(",")
+                               and _inside(kb, o["envelope"])
+                               and kb[0] <= lx <= kb[3] and kb[1] <= ly <= kb[4] and kb[2] <= lz <= kb[5]
+                               and not (live and kb[0] <= live[0] <= kb[3] and kb[1] <= live[1] <= kb[4]
+                                        and kb[2] <= live[2] <= kb[5]))
+                continue
+            stray_lines.append(s)
+        rep.check(not stray_lines, "%s: the act holds lines this audit does not recognise: %s" % (where, stray_lines[:3]))
+        rep.check(probe_ok, "%s: the restore is not called only while the held count is 0 and the old pedestal "
+                            "(%s at %d %d %d) stands" % (where, site["pedestal_block"], px, py, pz))
+        rep.check(kill_ok, "%s: the kill is not held to the record's own tag, the pokemon type and a box inside the old "
+                           "chamber that holds the old legendary and not the live one" % where)
+        for name in ("chamber", "passage"):
+            rep.check(any(_inside(o[name], tb) for tb in tagged),
+                      "%s: no held-player box covers the old %s %s" % (where, name, o[name]))
+        shaft_to_top = (o["shaft"][0], o["shaft"][1], o["shaft"][2], o["shaft"][3], o["my"], o["shaft"][5])
+        rep.check(any(_inside(shaft_to_top, tb) for tb in tagged),
+                  "%s: no held-player box covers the old shaft up to the plug's top %s" % (where, shaft_to_top))
+        rep.check("if entity @e[tag=%s]" % HELD in done_f.read_text(encoding="utf-8"),
+                  "%s: the chain does not count the held players, so a refused restore would read as done" % where)
+        callers = [f for f in files if "/retire_" not in f
+                   and ("retire_%s_restore" % sid) in (fn_dir / f).read_text(encoding="utf-8")]
+        rep.check(not callers, "%s: functions outside the cleanup call its restore: %s" % (where, callers))
+
+        # ---- nothing else in the pack reaches the old hull ---------------------------------------------------
+        for f in files:
+            if "/retire_%s" % sid in f and f.startswith(rid + "/"):
+                continue
+            hit = [l.strip()[:100] for l in (fn_dir / f).read_text(encoding="utf-8").splitlines() if _reaches(hull, l)]
+            rep.check(not hit, "%s: %s still reaches the old hull %s: %s" % (where, f, hull, hit[:2]))
+
+        # ---- it is run first, read back as 0 held, and the live chamber is elsewhere --------------------------
+        if steps is None:
+            steps = L.placement_steps(doc, ground)
+        want_fn = ("fn", base)
+        rep.check(want_fn in steps, "%s: R14L's steps do not run the cleanup" % where)
+        if want_fn in steps:
+            i = steps.index(want_fn)
+            chk = steps[i + 2] if i + 2 < len(steps) else None
+            rep.check(steps[i + 1][0] == "wait" and chk and chk[0] == "check" and chk[1][0] == "chunk_look"
+                      and chk[1][2] == 0 and chk[1][1] == "legret_%s_%s" % (rid, sid),
+                      "%s: the cleanup is not followed by its wait and a read-back of 0 held" % where)
+            firsts = [j for j, s_ in enumerate(steps) if s_[0] == "cmd" and s_[1].startswith("forceload add")
+                      or s_[0] == "fn" and s_[1].endswith("/place")]
+            rep.check(not firsts or i < min(firsts), "%s: the cleanup does not run before the first chamber step" % where)
+        if rec.get("status") == "sited":
+            live_hull = L.geometry(rec, doc, ground)["bbox"]
+            rep.check(not _meets(live_hull, hull), "%s: the live chamber's hull %s meets the retired hull %s"
+                      % (where, live_hull, hull))
 
 
 def _keep_covers(rec, g, doc, water, landmarks, ground, rep):
