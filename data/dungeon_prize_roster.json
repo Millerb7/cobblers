@@ -127,11 +127,12 @@
       "rare_pool_by_band": {},
       "rare_pool_why": "first band 5: bands 1-3 never enter",
       "legendary_pool_by_band": {
-        "5": ["tapufini", "buzzwole", "pheromosa", "meloetta", "brutebonnet", "screamtail"],
-        "6": ["tapufini", "buzzwole", "pheromosa", "meloetta", "brutebonnet", "screamtail"]
+        "5": ["tapufini", "meloetta", "brutebonnet", "screamtail"],
+        "6": ["tapufini", "meloetta", "brutebonnet", "screamtail"]
       },
+      "pool_moved_2026_10_12": "Buzzwole and Pheromosa left this pool for the world: rare spawns on the Long Isle's jungle end (data/encounter_design.json rare_spawns), one home each. Their ub_boss line below stays: an NPC-held fight, not a second catch (docs/mechanics/LEGENDARY_HOMES.md section 1, the overlap rule)",
       "ub_boss": {"species": ["buzzwole", "pheromosa"], "role": "wormhole leg, the calendar picks which", "source": "ULTRA_BEAST_BOSSES.md 4"},
-      "why": "Tapu Fini: D18's pick (a misted temple pool). Buzzwole and Pheromosa: the calendar's pair. Meloetta: the temple's song (a puzzle room's payoff). Brute Bonnet and Scream Tail: the ancient paradoxes a calendar of past days lets through; both inherit jungle and floral spawns."
+      "why": "Tapu Fini: D18's pick (a misted temple pool). Buzzwole and Pheromosa: the calendar's pair (their catch has since moved to the world, see pool_moved_2026_10_12). Meloetta: the temple's song (a puzzle room's payoff). Brute Bonnet and Scream Tail: the ancient paradoxes a calendar of past days lets through; both inherit jungle and floral spawns."
     },
     {
       "id": "crucible", "name": "The Crucible", "status": "proposed (DUNGEONS.md 10 'later')", "theme": "basalt_deltas (built theme)", "gate": "champion_cleared (DUNGEONS.md 10)", "first_band": 6,
@@ -238,7 +239,7 @@
   ],
   "fallback_homes": [
     {"species": "lugia", "world_home": "data/legendaries.json lugia, BLOCKED (owner_decision: the trench does not exist and cannot be heightmap terrain)", "fallback": {"dungeon": "flooded_ruin", "bands": ["6"]}, "why": "the sea's guardian under a drowned reliquary, if the trench is refused"},
-    {"species": "registeel", "world_home": "data/legendaries.json registeel, BLOCKED (owner_decision: which part of the Rift)", "fallback": {"dungeon": "night_shift", "bands": ["4", "5", "6"]}, "why": "steel in a mine, if the Rift site is never chosen"},
+    {"species": "registeel", "world_home": "data/legendaries.json registeel, SITED (sealed_chamber in the upper Rift, portal (4195, 3896), gate gym7_cleared; R14L placed it, docs/REPORT_2026-09-30_DAY.md)", "fallback": {"dungeon": "night_shift", "bands": ["4", "5", "6"]}, "why": "steel in a mine, had the Rift site never been chosen. It was (2026-09-30), so the world home stands and this fallback is unused; corrected 2026-10-12 (docs/mechanics/LEGENDARY_HOMES.md finding 1)"},
     {"species": "kyogre", "world_home": "designed, not built: docs/world-building/KYOGRE_CAVE.md", "fallback": {"dungeon": "cistern", "bands": ["6"]}, "why": "the deep water, if the cave is never built"},
     {"species": "rayquaza", "world_home": "designed, not built: KYOGRE_CAVE.md sky island", "fallback": {"dungeon": "starfall", "bands": ["6"]}, "why": "the sky, if the island is never built"}
   ],
@@ -286,7 +287,7 @@
     "celebi": {"kind": "mythical", "status": "placed", "where": "Route 1 sapling (sapling_celebi.json) and celebi_wake"},
     "regirock": {"kind": "legendary", "status": "placed", "where": "legendaries.json sealed chamber, Scorched Plateau"},
     "regice": {"kind": "legendary", "status": "placed", "where": "legendaries.json sealed chamber, Glacial Tear"},
-    "registeel": {"kind": "legendary", "status": "blocked", "where": "legendaries.json, blocked on the owner (which part of the Rift)", "fallback": "night_shift bands 4-6"},
+    "registeel": {"kind": "legendary", "status": "placed", "where": "legendaries.json sealed chamber (registeel), the upper Rift, portal (4195, 3896), gym7_cleared", "fallback": "night_shift bands 4-6 (unused: the world home is sited)"},
     "latias": {"kind": "legendary", "status": "placed", "where": "Shrew Station Eon shrine (research_station.json)"},
     "latios": {"kind": "legendary", "status": "placed", "where": "Shrew Station Eon shrine"},
     "kyogre": {"kind": "legendary", "status": "planned", "where": "KYOGRE_CAVE.md (designed, not built); Coldwater Station leads to it", "fallback": "cistern band 6"},
@@ -337,9 +338,9 @@
     "cosmoem": {"kind": "legendary", "status": "placed", "where": "starter line (Cosmog)"},
     "solgaleo": {"kind": "legendary", "status": "placed", "where": "starter line (Cosmog)"},
     "lunala": {"kind": "legendary", "status": "placed", "where": "starter line (Cosmog)"},
-    "nihilego": {"kind": "ultra_beast", "status": "to_dungeon", "home": "cistern", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "poison in the reservoir; the cistern's boss"},
-    "buzzwole": {"kind": "ultra_beast", "status": "to_dungeon", "home": "temple_calendar", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "the calendar's pair"},
-    "pheromosa": {"kind": "ultra_beast", "status": "to_dungeon", "home": "temple_calendar", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "the calendar's pair"},
+    "nihilego": {"kind": "ultra_beast", "status": "to_dungeon", "home": "cistern", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "poison in the reservoir; the cistern's boss. 2026-10-12: its inherited DP spawn (ocean, 60-78) is switched off (spawn_suppression.json managed_species); the design's rare world spawn in 'the outer sea bands' has NO home yet, because no such band exists (spawns.json marine_zones holds only the Windward Sea, levels 16-30), so it stays in the Cistern's pool"},
+    "buzzwole": {"kind": "ultra_beast", "status": "placed", "where": "data/encounter_design.json rare_spawns: long_isle_south (the Long Isle's jungle end, tier 8), ultra-rare weight 0.05, level 55 (the cap after gym 7), not an alpha", "home": "world_rare_spawn", "model_gate": "atm_subset", "why": "moved from the Temple Calendar's pool (2026-10-12, the owner: a legendary as a wild spawn is repeatable and very rare); the inherited DP spawn is switched off (data/spawn_suppression.json managed_species). The Temple Calendar keeps its ub_boss fight. Substituted for the design's jungle_west, which is under the sea"},
+    "pheromosa": {"kind": "ultra_beast", "status": "placed", "where": "data/encounter_design.json rare_spawns: long_isle_south, as buzzwole", "home": "world_rare_spawn", "model_gate": "atm_subset", "why": "buzzwole's pair, moved from the Temple Calendar's pool (2026-10-12); the inherited DP spawn is switched off. Substituted for the design's jungle_east, which is under the sea"},
     "xurkitree": {"kind": "ultra_beast", "status": "to_dungeon", "home": "night_shift", "bands": ["4", "5", "6"], "model_gate": "atm_subset", "why": "the lit wiring; the Night Shift's boss"},
     "celesteela": {"kind": "ultra_beast", "status": "to_dungeon", "home": "patriarch", "bands": ["4", "5", "6"], "why": "grew up through the roots; renders today"},
     "kartana": {"kind": "ultra_beast", "status": "to_dungeon", "home": "patriarch", "bands": ["4", "5", "6"], "why": "cuts the roots; renders today"},

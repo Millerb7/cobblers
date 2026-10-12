@@ -55,6 +55,12 @@ Every heart entry carries "alpha": rules.hearts.alpha (the owner, 2026-10-05: th
 tools/compile_spawns.py writes as alpha=true; fails closed on a copied-through heart entry whose flag differs, and on
 an alpha flag outside a heart. A native alpha re-levels to a nearby player's party (rules.hearts.alpha_level_matching).
 
+rare spawns (design `rare_spawns`, the owner, 2026-10-12: a wild legendary is repeatable and very rare): a legendary,
+mythical or Ultra Beast in a base table's ultra-rare bucket at a fractional weight (rules.rare_spawns.max_weight), at
+exactly its table's tier cap, never an alpha, with a model_gate where the client draws the species as the substitute doll.
+Written as ordinary base-roster entries (and mirrored into the sub-region's entries) marked "legendary_rare"; never a
+family, never in a route corridor, never in a heart. See build_rare_spawns for what fails closed.
+
 route_species_selection: per route, the sub-regions data/routes.json's geography transitions cross; from each such
 table only families in rules.corridor_roles (never a find), plus rules.corridor_rare_min of the crossed on-path
 tables' rare- and ultra-role species, reserved first (the owner, 2026-10-05: every area has a rare and an ultra-rare). Each species is scored by its chance in the
@@ -667,6 +673,72 @@ def heart_above_cap(base_rows, heart_rows, cap):
     return out
 
 
+RARE_LABELS = {"legendary", "mythical", "ultra_beast"}
+
+
+def build_rare_spawns(dex, rules, design, dolls):
+    """({table id: [row]}, [problem]) for design `rare_spawns` (the owner, 2026-10-12: a wild legendary is repeatable
+    and very rare; docs/mechanics/LEGENDARY_HOMES.md section 2).
+
+    A rare spawn is a legendary, mythical or Ultra Beast (the jar's label) in a base table's ultra-rare bucket at a
+    fractional weight, never an alpha, at the level of its table's tier cap so that a player at the cap can catch it.
+    It is not a family: it is not walked through evolutions, joins no route corridor (route_species_selection reads the
+    families only) and has no heart. Fails closed on: an unknown table or species; a species the jar does not label
+    legendary, mythical or ultra_beast; a bucket other than rules.rare_spawns.bucket; a weight outside
+    (0, rules.rare_spawns.max_weight]; a level other than the tier cap; a species the client draws as the substitute doll
+    that does not declare model_gate atm_subset, and a declared gate the doll list does not back; a table that is
+    heart-only or has no land (an `off`-path table is fine); the same species twice in a table; and a species the table's
+    own families already name."""
+    rr = rules.get("rare_spawns") or {}
+    problems, out, seen = [], {}, set()
+    tables = design["tables"]
+    for r in design.get("rare_spawns") or []:
+        where = "rare_spawns.%s" % r.get("id")
+        sp, tid = r.get("species"), r.get("table")
+        if tid not in tables:
+            problems.append("%s: table %r is not a design table" % (where, tid))
+            continue
+        if not isinstance(sp, str) or not dex.has(sp):
+            problems.append("%s: %r is not a species in the Cobblemon jar" % (where, sp))
+            continue
+        labels = set(dex.record(sp)[0].get("labels") or [])
+        if not labels & RARE_LABELS:
+            problems.append("%s: %s carries none of %s in the jar (labels %s): it is not a legendary to be rare"
+                            % (where, sp, sorted(RARE_LABELS), sorted(labels)))
+        if (tid, sp) in seen:
+            problems.append("%s: %s is a rare spawn of %s twice" % (where, sp, tid))
+        seen.add((tid, sp))
+        t = tables[tid]
+        cap, _band = tier_rules(rules, t["tier"])
+        if r.get("level") != cap:
+            problems.append("%s: level %r is not table %s's tier %d cap %d (a rare spawn is catchable at the cap, never above it)"
+                            % (where, r.get("level"), tid, t["tier"], cap))
+        w = r.get("weight")
+        if not isinstance(w, (int, float)) or isinstance(w, bool) or not 0 < w <= rr.get("max_weight", 0):
+            problems.append("%s: weight %r is not in (0, %s] (rules.rare_spawns.max_weight)" % (where, w, rr.get("max_weight")))
+        if sp in {f[0].split()[0] for f in (t.get("land") or []) + (t.get("water") or [])}:
+            problems.append("%s: %s is already one of table %s's families" % (where, sp, tid))
+        if not t.get("land"):
+            problems.append("%s: table %s has no land families, and a rare spawn is grounded" % (where, tid))
+        doll = dex.split(sp)[0] in dolls
+        gate = r.get("model_gate")
+        if doll and gate != "atm_subset":
+            problems.append("%s: %s is drawn by the client as the substitute doll (modpack/manifest/client-pack-atm-subset.json); "
+                            "declare model_gate atm_subset or choose another species" % (where, sp))
+        if gate is not None and (gate not in (rr.get("model_gate") or {}) or not doll):
+            problems.append("%s: model_gate %r is not backed: %s is %s in the doll list" % (
+                where, gate, sp, "named" if doll else "NOT named"))
+        pos, _ = dex.position(sp, False, False, sp)
+        out.setdefault(tid, []).append({
+            "name": sp, "bucket": rr.get("bucket", "ultra-rare"), "level": "%d-%d" % (cap, cap), "weight": float(w),
+            "conditions": {}, "position": pos, "family": dex.family(sp), "priority": "legendary", "role": "legendary",
+            "half": "land", "legendary_rare": True, "model_gate": gate,
+            "reason": "rare world spawn (the owner, 2026-10-12): ultra-rare bucket at weight %s beside the table's own ultra "
+                      "family, level %d = the tier %d cap, not an alpha (data/encounter_design.json rare_spawns.%s)"
+                      % (w, cap, t["tier"], r["id"])})
+    return out, problems
+
+
 def entry_of(dex, r, scope, kind, authored, heart=None, alpha=False):
     sid = r["name"].replace(" ", "_")
     e = {"id": ("surface.%s.%s" if kind == SURFACE else "habitat.%s.%s") % (scope, ("heart." + sid) if heart else sid),
@@ -680,6 +752,10 @@ def entry_of(dex, r, scope, kind, authored, heart=None, alpha=False):
     if kind == SURFACE:
         e["biomes"] = []
     e["spawnable_position"] = r["position"]
+    if r.get("legendary_rare"):
+        e["legendary_rare"] = True
+        if r.get("model_gate"):
+            e["model_gate"] = r["model_gate"]
     auth = authored.get((scope, r["name"]))
     if auth:
         e["spawnable_position"] = auth["position"]
@@ -688,10 +764,15 @@ def entry_of(dex, r, scope, kind, authored, heart=None, alpha=False):
 
 
 def mirror_of(dex, r):
-    return {"species": dex.display(r["name"]), "pokemon": r["name"], "types": dex.types(r["name"]),
-            "family": r["family"], "family_priority": r["priority"], "ambient": True,
-            "eligibility_reason": r["reason"], "level": r["level"], "bucket": r["bucket"], "weight": r["weight"],
-            "conditions": r["conditions"]}
+    m = {"species": dex.display(r["name"]), "pokemon": r["name"], "types": dex.types(r["name"]),
+         "family": r["family"], "family_priority": r["priority"], "ambient": True,
+         "eligibility_reason": r["reason"], "level": r["level"], "bucket": r["bucket"], "weight": r["weight"],
+         "conditions": r["conditions"]}
+    if r.get("legendary_rare"):
+        m["legendary_rare"] = True
+        if r.get("model_gate"):
+            m["model_gate"] = r["model_gate"]
+    return m
 
 
 def table_chances(rows):
@@ -1082,6 +1163,8 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
             if dex.split(r["name"])[0] in dolls:
                 problems.append("%s: %s is drawn by the client as the substitute doll "
                                 "(modpack/manifest/client-pack-atm-subset.json)" % (pid, r["name"]))
+    rare_rows, rare_problems = build_rare_spawns(dex, rules, design, dolls)
+    problems += rare_problems
     if problems:
         raise DesignError("\n".join(problems))
 
@@ -1094,6 +1177,8 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
         gen_entries[(SURFACE, tid)] = [entry_of(dex, r, tid, SURFACE, authored) for r in gen_rows[tid]]
         gen_entries[(SURFACE, tid)] += [entry_of(dex, r, tid, SURFACE, authored, heart_geo[tid], alpha)
                                         for r in heart_rows.get(tid, [])]
+        # a rare spawn rides beside the table's families (the base roster of its cells), after the hearts
+        gen_entries[(SURFACE, tid)] += [entry_of(dex, r, tid, SURFACE, authored) for r in rare_rows.get(tid, [])]
     for pid in pools:
         gen_entries[(HABITAT, pid)] = [entry_of(dex, r, pid, HABITAT, authored) for r in gen_rows[pid]]
     nether_gen, nether_records, nether_problems = generate_nether(design, dex, dolls)
@@ -1143,7 +1228,7 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
         rec["level_band"] = {"minimum": lo, "maximum": hi,
                              "basis_route": route_ids.get(t["tier"], "victory_road" if t["tier"] == 9 else None),
                              "tier": t["tier"]}
-        rec["entries"] = [mirror_of(dex, r) for r in gen_rows[rec["id"]]]
+        rec["entries"] = [mirror_of(dex, r) for r in gen_rows[rec["id"]]] + [mirror_of(dex, r) for r in rare_rows.get(rec["id"], [])]
         rec.pop("conditions_note", None)
         rec.pop("heart", None)
         if rec["id"] in heart_rows:

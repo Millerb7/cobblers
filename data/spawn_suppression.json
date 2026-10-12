@@ -60,6 +60,21 @@
     "fail_closed": "tools/suppress_inherited_spawns.py verify_removed_species: after writing, every inherited resource path the server loads is re-read from its effective source and the pack's output, and the run fails if any still-enabled file names a listed species (tests/test_suppress_removed_species.py)",
     "not_covered": "a Pokemon a trainer, a scripted event, a starter grant or a player puts in the world; our own compiled pools are checked separately (tools/validate_data.py check wild-paradox)"
   },
+  "managed_species": {
+    "policy": "never wild by INHERITED spawn, anywhere, exactly as removed_species; but unlike it these species MAY have a spawn WE author (a curated rare spawn, a chamber): tools/suppress_inherited_spawns.py removes the union of the two lists from the inherited pools, tools/validate_data.py check wild-paradox reads removed_species only, so our own pool is not flagged",
+    "why": "the owner, 2026-10-12 (docs/mechanics/LEGENDARY_HOMES.md finding 2, decision 6): COBBLEVERSE-DP's own wild spawns of these five sit above every cap until the Champion (Meloetta rare 50-55, Tapu Fini ultra-rare 50-70, Nihilego ultra-rare 60-78, Buzzwole ultra-rare 60-70, Pheromosa ultra-rare 55-65), so they spawn where nobody can catch them, and a curated home beside an uncatchable inherited one breaks the roster's 'one home each' rule (data/dungeon_prize_roster.json). The homes are ours: a rare world spawn (data/encounter_design.json rare_spawns) or a chamber",
+    "species": ["meloetta", "tapufini", "nihilego", "buzzwole", "pheromosa"],
+    "homes": {
+      "buzzwole": "rare world spawn: data/encounter_design.json rare_spawns, long_isle_south (the jungle end of the Long Isle, tier 8, level 55)",
+      "pheromosa": "rare world spawn: data/encounter_design.json rare_spawns, long_isle_south",
+      "nihilego": "PENDING: docs/mechanics/LEGENDARY_HOMES.md names 'the outer sea bands', and no such band exists (data/spawns.json marine_zones holds only the Windward Sea, levels 16-30); until the owner picks a water home it is not wild anywhere",
+      "meloetta": "PENDING: Cave K2 (docs/mechanics/LEGENDARY_HOMES.md), not built; until then it is not wild anywhere",
+      "tapufini": "PENDING: Cave K4 (docs/mechanics/LEGENDARY_HOMES.md), not built; until then it is not wild anywhere"
+    },
+    "inherited_sources_2026-10-12": "COBBLEVERSE-DP-v31.zip data/cobblemon/spawn_pool_world/0648_meloetta.json, 0788_tapufini.json, 0793_nihilego.json, 0794_buzzwole.json and 0795_pheromosa.json (one detail each, pheromosa two), read from the snapshot cobblers-local/server-snapshot-2026-10-05; each file holds only that species, so each is re-emitted \"enabled\": false (the shape of removed_species)",
+    "native_expression": "as removed_species",
+    "runtime_status": "generated only; not installed, not seen in game"
+  },
   "spawn_free_zones": [
     {
       "id": "league_precinct",

@@ -4348,6 +4348,38 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.long_isle_south.buzzwole",
+      "species": "buzzwole",
+      "bucket": "ultra-rare",
+      "level": "55-55",
+      "weight": 0.05,
+      "ambient": true,
+      "scope": "long_isle_south",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "rare world spawn (the owner, 2026-10-12): ultra-rare bucket at weight 0.05 beside the table's own ultra family, level 55 = the tier 8 cap, not an alpha (data/encounter_design.json rare_spawns.buzzwole)",
+      "biomes": [],
+      "spawnable_position": "grounded",
+      "legendary_rare": true,
+      "model_gate": "atm_subset"
+    },
+    {
+      "id": "surface.long_isle_south.pheromosa",
+      "species": "pheromosa",
+      "bucket": "ultra-rare",
+      "level": "55-55",
+      "weight": 0.05,
+      "ambient": true,
+      "scope": "long_isle_south",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "rare world spawn (the owner, 2026-10-12): ultra-rare bucket at weight 0.05 beside the table's own ultra family, level 55 = the tier 8 cap, not an alpha (data/encounter_design.json rare_spawns.pheromosa)",
+      "biomes": [],
+      "spawnable_position": "grounded",
+      "legendary_rare": true,
+      "model_gate": "atm_subset"
+    },
+    {
       "id": "surface.merian_cirque.bergmite",
       "species": "bergmite",
       "bucket": "common",
@@ -36576,6 +36608,42 @@
               "minecraft:water"
             ]
           }
+        },
+        {
+          "species": "Buzzwole",
+          "pokemon": "buzzwole",
+          "types": [
+            "bug",
+            "fighting"
+          ],
+          "family": "buzzwole",
+          "family_priority": "legendary",
+          "ambient": true,
+          "eligibility_reason": "rare world spawn (the owner, 2026-10-12): ultra-rare bucket at weight 0.05 beside the table's own ultra family, level 55 = the tier 8 cap, not an alpha (data/encounter_design.json rare_spawns.buzzwole)",
+          "level": "55-55",
+          "bucket": "ultra-rare",
+          "weight": 0.05,
+          "conditions": {},
+          "legendary_rare": true,
+          "model_gate": "atm_subset"
+        },
+        {
+          "species": "Pheromosa",
+          "pokemon": "pheromosa",
+          "types": [
+            "bug",
+            "fighting"
+          ],
+          "family": "pheromosa",
+          "family_priority": "legendary",
+          "ambient": true,
+          "eligibility_reason": "rare world spawn (the owner, 2026-10-12): ultra-rare bucket at weight 0.05 beside the table's own ultra family, level 55 = the tier 8 cap, not an alpha (data/encounter_design.json rare_spawns.pheromosa)",
+          "level": "55-55",
+          "bucket": "ultra-rare",
+          "weight": 0.05,
+          "conditions": {},
+          "legendary_rare": true,
+          "model_gate": "atm_subset"
         }
       ],
       "biomes": [

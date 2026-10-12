@@ -751,6 +751,12 @@ def test_no_spawned_species_is_drawn_as_the_substitute_doll(pack):
     # elder nests, waterways, marine bands and other habitat pools are outside this design (section 9) and are
     # not checked here.
     dolls = {BS.key(s) for s in json.loads(ATM_SUBSET.read_text(encoding="utf-8"))["species"]}
+    # The one deliberate exception (2026-10-12): a rare world spawn that declares model_gate atm_subset
+    # (data/encounter_design.json rare_spawns), in its own table's sub-region file and nowhere else. A player without
+    # the AllTheMons subset sees a doll for an optional legendary that nothing requires.
+    design = json.loads((ROOT / "data" / "encounter_design.json").read_text(encoding="utf-8"))
+    declared = {("spawn_pool_world/subregions/%s.json" % r["table"], BS.key(r["species"]))
+                for r in design.get("rare_spawns") or [] if r.get("model_gate") == "atm_subset"}
     files = (sorted((pack / "spawn_pool_world" / "subregions").glob("*.json"))
              + sorted((pack / "spawn_pool_world" / "routes").glob("*.json"))
              + sorted((pack / "habitat_pools").glob("vrc_*.json")))
@@ -759,6 +765,6 @@ def test_no_spawned_species_is_drawn_as_the_substitute_doll(pack):
         d = json.loads(p.read_text(encoding="utf-8"))
         for e in d.get("spawns") or []:
             s = species_of(e)
-            if s in dolls:
+            if s in dolls and (p.relative_to(pack).as_posix(), s) not in declared:
                 hits.setdefault(p.relative_to(pack).as_posix(), set()).add(s)
     assert not hits, {k: sorted(v) for k, v in hits.items()}

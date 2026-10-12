@@ -19,7 +19,8 @@ applies it to every inherited file:
   - first, drop every detail (and herd member) of a species data/spawn_suppression.json removed_species lists, in
     every dimension and outside every box; a file left with no detail is re-emitted as the inherited file with
     "enabled": false (EXP-012 V4/V5). The list is the 22 paradoxes (the owner, 2026-10-08: paradoxes are dungeon
-    content, never wild). Fails closed if the server's Cobblemon jar labels a paradox the list lacks, and, after
+    content, never wild) plus managed_species (2026-10-12: Meloetta, Tapu Fini, Nihilego, Buzzwole, Pheromosa, whose
+    inherited spawns sit above every cap; their homes are ours). Fails closed if the server's Cobblemon jar labels a paradox the list lacks, and, after
     writing, if any inherited path the server loads is still enabled and names a listed species (verify_removed_species)
 
 The boxes stay plain minX/maxX/minZ/maxZ with no dimension. Bound to the overworld (review N153's first fix) they
@@ -210,9 +211,12 @@ def remove_species(doc, removed):
 
 
 def removed_species(path):
-    """The species data/spawn_suppression.json removed_species lists (normalised as species_token does)."""
+    """The species no inherited pool may spawn: data/spawn_suppression.json removed_species (the 22 paradoxes) plus
+    managed_species (2026-10-12: the five legendaries whose inherited spawns sit above every cap and whose homes are
+    ours), normalised as species_token does. managed_species is optional in the file."""
     doc = json.loads(Path(path).read_text(encoding="utf-8"))
-    return {species_token(s) for s in doc["removed_species"]["species"]}
+    names = list(doc["removed_species"]["species"]) + list((doc.get("managed_species") or {}).get("species") or [])
+    return {species_token(s) for s in names}
 
 
 def jar_paradoxes(server):

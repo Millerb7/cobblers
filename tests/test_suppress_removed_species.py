@@ -169,3 +169,68 @@ def test_a_paradox_in_our_spawn_data_is_caught(tmp_path, where):
         spawns["nether_tables"][0]["species"].append("ironmoth")
     errors = _check(tmp_path, spawns)
     assert errors and "removed_species" in errors[0], errors
+
+
+# ------------------------------------------------------------------------------------------------ managed_species
+# 2026-10-12 (docs/mechanics/LEGENDARY_HOMES.md finding 2): the five legendaries whose inherited DP spawns sit above
+# every cap. They go through the same mechanism, but they are NOT paradoxes, so our own authored spawn of Buzzwole or
+# Pheromosa (data/encounter_design.json rare_spawns) must not trip check wild-paradox.
+
+MELOETTA = POOL + "0648_meloetta.json"
+MANAGED = ("meloetta", "tapufini", "nihilego", "buzzwole", "pheromosa")
+
+
+def _managed_run(tmp_path):
+    server, world, sup = _server(tmp_path)
+    with zipfile.ZipFile(server / "datapacks" / "COBBLEVERSE-DP-v31.zip", "a") as z:
+        z.writestr(MELOETTA, json.dumps({"enabled": True, "spawns": [_detail("meloetta-1", "meloetta")]}))
+        z.writestr(POOL + "0795_pheromosa.json",
+                   json.dumps({"enabled": True, "spawns": [_detail("pheromosa-1", "pheromosa"), _detail("pheromosa-2", "pheromosa")]}))
+        z.writestr(POOL + "mixed2.json", json.dumps({"enabled": True, "spawns": [_detail("b1", "buzzwole"), _detail("k1", "kecleon")]}))
+    doc = json.loads(sup.read_text(encoding="utf-8"))
+    doc["managed_species"] = {"species": ["meloetta", "pheromosa", "buzzwole"]}
+    sup.write_text(json.dumps(doc), encoding="utf-8")
+    out = tmp_path / "out"
+    SIS.main(["--server", str(server), "--world", str(world), "--out", str(out), "--suppression", str(sup)])
+    return out
+
+
+def test_managed_species_are_removed_from_the_inherited_pools_like_the_paradoxes(tmp_path):
+    # Without it Meloetta/Pheromosa/Buzzwole keep spawning above every cap, uncatchable, beside the curated home.
+    out = _managed_run(tmp_path)
+    assert _doc(out, MELOETTA)["enabled"] is False
+    assert _doc(out, POOL + "0795_pheromosa.json")["enabled"] is False
+    assert [s["id"] for s in _doc(out, POOL + "mixed2.json")["spawns"]] == ["k1"], "the mixed file kept Buzzwole or lost Kecleon"
+    assert not _live_naming(out, ["meloetta", "pheromosa", "buzzwole", "fluttermane"])
+
+
+def test_a_generator_that_ignores_managed_species_leaves_them_live(tmp_path, monkeypatch):
+    # Mutates the GENERATOR (removed_species reads the paradox list only, the 2026-10-08 shape): the run succeeds,
+    # because its own fail-closed scan shares the list, and the INDEPENDENT scan below is what sees Meloetta live.
+    def paradox_only(path):
+        doc = json.loads(Path(path).read_text(encoding="utf-8"))
+        return {SIS.species_token(s) for s in doc["removed_species"]["species"]}
+
+    monkeypatch.setattr(SIS, "removed_species", paradox_only)
+    out = _managed_run(tmp_path)
+    assert _live_naming(out, ["meloetta", "pheromosa", "buzzwole"]), "the mutation changed nothing: the check would not notice"
+
+
+def test_the_authored_managed_list_is_the_five_apart_from_the_22_and_each_has_a_home_line():
+    doc = json.loads((ROOT / "data" / "spawn_suppression.json").read_text(encoding="utf-8"))
+    managed = doc["managed_species"]
+    assert sorted(managed["species"]) == sorted(MANAGED)
+    assert not set(managed["species"]) & set(doc["removed_species"]["species"]), "a managed species is also a paradox"
+    assert set(managed["homes"]) == set(managed["species"])
+    design = json.loads((ROOT / "data" / "encounter_design.json").read_text(encoding="utf-8"))
+    homed = {r["species"] for r in design.get("rare_spawns") or []}
+    # the home line must agree with the design: a species with a rare spawn says so, a PENDING one has none
+    for sp, line in managed["homes"].items():
+        assert line.startswith("rare world spawn") == (sp in homed), "%s: home line %r vs rare_spawns %s" % (sp, line, sorted(homed))
+    assert homed <= set(managed["species"]), "a rare spawn names a species the inherited suppression does not manage"
+
+
+def test_our_own_rare_spawn_of_a_managed_species_is_not_a_wild_paradox(tmp_path):
+    spawns = json.loads((ROOT / "data" / "spawns.json").read_text(encoding="utf-8"))
+    assert any(e["species"] in MANAGED for e in spawns["entries"]), "no authored spawn names a managed species"
+    assert _check(tmp_path, spawns) == []

@@ -7,6 +7,21 @@ these creatures could be found." Decided by the owner the same day: a wild legen
 limit; an area boss is a **catchable native alpha** at a landmark, fought at the area's top level, ordinary balls (the
 Beast Ball key is dungeon-only, `docs/STATE.md:156`); the first pass is **6-8 caves** from a reusable **cave kit**.
 
+**Built so far (2026-10-12, datapack-content-dev; generated and tested offline, not installed, not seen in game):**
+- Unit 6, part: `data/spawn_suppression.json` `managed_species` switches off the five inherited DP spawns (Meloetta, Tapu
+  Fini, Nihilego, Buzzwole, Pheromosa) through the existing `tools/suppress_inherited_spawns.py` mechanism (each of the
+  five lives alone in its own DP file, so each is re-emitted `"enabled": false`).
+- Buzzwole and Pheromosa are rare world spawns (`data/encounter_design.json` `rare_spawns`, expanded by
+  `tools/build_encounters.py`) **on `long_isle_south`, not on `jungle_west` / `jungle_east`**: those two sub-regions are
+  under the sea (`docs/STATE.md`: every column in the Jungle Isle polygon at or below y61, sea level y62), so their
+  tier-8 tables spawn on no land. `long_isle_south` is the same tier and theme. Weight 0.05, ultra-rare, level 55 (the
+  cap after gym 7), `model_gate: atm_subset`. Reverse by changing `table`.
+- **Nihilego has NO home yet.** "The outer sea bands" do not exist: `data/spawns.json` `marine_zones` holds one zone, the
+  Windward Sea (levels 16-30), and no tier-9 table has water. Its inherited spawn is off; it stays in the Cistern's pool.
+  Needs the owner (a new marine band, or a tier-8 water body such as the Long Isle's jungle water).
+- Registeel's "blocked" lines corrected (finding 1), the bucket weights corrected in `ENCOUNTER_DESIGN.md` (finding 4),
+  and R14L made safe to re-run (look-then-act chain, `tools/legendaries.py`; `tests/test_legendaries_rerun.py`).
+
 Labels: *read* = read at the cited line this session; *relayed* = taken from a document and not re-measured;
 *ASSUMED* = no source; each ASSUMED item is an experiment in section 6.
 
