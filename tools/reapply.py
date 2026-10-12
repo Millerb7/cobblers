@@ -2612,8 +2612,10 @@ def steps(with_spawns=False):
     out.append(("R14C", "the Celebi in the Route 1 sapling", sapling_celebi.placement_steps(sapling_celebi.load())
                 + [("check", "celebi")]))
     # the authored legendaries: the chambers are blocks, but each legendary is an entity that an export erases,
-    # so it is summoned over RCON here for the same reason as the Celebi (spawnpokemonat in a function spawns
-    # nothing until a /reload, EXP-046). Only the sited encounters are placed; a blocked one writes nothing.
+    # so it is summoned here, through a macro line inside each chamber's look-then-act chain (tools/chunk_look.py,
+    # N155; spawnpokemonat as a plain function line spawns nothing, EXP-046). The chain summons only when the chunk
+    # shows its saved entities and no tagged legendary stands, and the carve is skipped once a gate has opened, so
+    # R14L is safe to re-run (2026-10-12). Only the sited encounters are placed; a blocked one writes nothing.
     import legendaries
     out.append(("R14L", "the authored legendary chambers and their legendaries (data/legendaries.json)",
                 legendaries.placement_steps(legendaries.load())))

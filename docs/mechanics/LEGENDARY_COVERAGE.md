@@ -24,9 +24,9 @@ legendary, 23 mythical, 11 Ultra Beasts, 20 paradoxes; VERIFIED, read with Pytho
 
 | Where | Count | Who |
 |---|---|---|
-| Already placed | **43** | world sites (adopted, authored, the Nether shrines), the eight starter lines, Entei's built room, and the three prizes the built dungeons already carry (Volcanion, Zarude, Regidrago) |
+| Already placed | **43** (44 with Registeel, 2026-10-12; Buzzwole and Pheromosa also left the Temple Calendar's pool for the world the same day, `data/dungeon_prize_roster.json`) | world sites (adopted, authored, the Nether shrines), the eight starter lines, Entei's built room, and the three prizes the built dungeons already carry (Volcanion, Zarude, Regidrago) |
 | Placed by a design, not built | 5 | Kyogre and Rayquaza (`KYOGRE_CAVE.md`); Yveltal, Dialga and Heatran as D18 boss catches |
-| Homed but blocked on the owner | 2 | Lugia (no trench), Registeel (which part of the Rift); each gets a dungeon fallback |
+| Homed but blocked on the owner | 1 | Lugia (no trench), which gets a dungeon fallback. *Corrected 2026-10-12: Registeel is not blocked. `data/legendaries.json` has it `sited` (upper Rift, portal (4195, 3896), gate `gym7_cleared`) and R14L placed it (`docs/REPORT_2026-09-30_DAY.md:64`); it counts under "Already placed" below, and its Night Shift fallback is unused.* |
 | **To the world** (proposals) | **7** | Tornadus, Thundurus, Landorus, Enamorus (the Tri Peaks); Tapu Koko, Tapu Lele, Tapu Bulu (the isles); each has a dungeon fallback |
 | **To dungeons** | **67** | pool entries across 16 dungeons, every one in exactly one dungeon |
 | Out by the owner | 1 | Eternatus: a dungeon home is proposed, NOT put in a pool (section 7) |
@@ -178,8 +178,9 @@ later.
    ground and a `sealed_chamber` record (`tools/legendaries.py` KINDS has `lake_grotto`, `sealed_chamber`, `sapling_wake`);
    the Tri Peaks carries no legendary today and the owner called it "too barren". If the owner prefers dungeons, each
    proposal's `fallback` puts it in a pool at once.
-3. **Blocked and planned world homes:** Lugia (fallback: the Drowned Reliquary, band 6), Registeel (the Night Shift,
-   bands 4-6), Kyogre (the Cistern, band 6), Rayquaza (the Starfall Crater, band 6). Fallbacks only; the world homes stand.
+3. **Blocked and planned world homes:** Lugia (fallback: the Drowned Reliquary, band 6), Kyogre (the Cistern, band 6),
+   Rayquaza (the Starfall Crater, band 6). Fallbacks only; the world homes stand. (Registeel was listed here with the
+   Night Shift, bands 4-6; corrected 2026-10-12: it is sited in the upper Rift, so that fallback is unused.)
 4. **Koraidon and Miraidon** (`DUNGEON_PLACEMENT.md` Q14, open): placed in the Zero Dig, band 6, reading the new
    instruction as "dungeon".
 5. **Yveltal, Dialga, Heatran:** kept as D18 boss catches. The alternative is the prize form (a pool entry) with a
@@ -206,7 +207,7 @@ later.
 | 251 | Celebi | mythical | placed: Route 1 sapling (sapling_celebi.json) and celebi_wake | stays |  |
 | 377 | Regirock | legendary | placed: legendaries.json sealed chamber, Scorched Plateau | stays |  |
 | 378 | Regice | legendary | placed: legendaries.json sealed chamber, Glacial Tear | stays |  |
-| 379 | Registeel | legendary | blocked (owner decision): legendaries.json, blocked on the owner (which part of the Rift) | keeps its world home; fallback night_shift bands 4-6 |  |
+| 379 | Registeel | legendary | placed: legendaries.json sealed chamber (registeel), the upper Rift, portal (4195, 3896), gate gym7_cleared (sited; was listed as blocked, corrected 2026-10-12) | stays; the night_shift fallback is unused |  |
 | 380 | Latias | legendary | placed: Shrew Station Eon shrine (research_station.json) | stays |  |
 | 381 | Latios | legendary | placed: Shrew Station Eon shrine | stays |  |
 | 382 | Kyogre | legendary | planned (designed, not built): KYOGRE_CAVE.md (designed, not built); Coldwater Station leads to it | keeps its world home; fallback cistern band 6 |  |

@@ -8,9 +8,12 @@ refuses to write a block for it. That is the fail-closed half: a chamber that ca
 cannot reach a world by accident.
 
 WHAT A FUNCTION CAN AND CANNOT DO HERE
-  - A Pokemon is summoned over RCON by tools/reapply.py (step R14L). `spawnpokemonat` inside a datapack
-    function spawns nothing until a /reload (EXP-046 question 1), so the pack never spawns one. Same
-    pattern as tools/sapling_celebi.py.
+  - A Pokemon is summoned by tools/reapply.py (step R14L), which runs each chamber's look-then-act chain
+    (tools/chunk_look.py; 2026-10-12): the summon is a MACRO line in the chamber's function, because a plain
+    `spawnpokemonat` in a function parsed at server start spawns nothing (EXP-046), and it fires only when the
+    chunk's saved entities have arrived and no tagged legendary stands. So R14L is safe to re-run: it leaves an
+    existing legendary alone and adds only a missing one, and it does not re-seal a chamber a player has opened
+    (carve_once). Same pattern as tools/drowned_quarry.py.
   - Cobblemon ignores Invulnerable and a sword killed the sleeping Celebi in three hits (EXP-023), so a
     dormant legendary is protected by BLOCKS, not by a flag: a barrier partition in a grotto, a stone plug
     in a sealed chamber. Once the gate opens the legendary is as killable as any placed Pokemon; that is a
@@ -421,6 +424,35 @@ def files(doc, ground):
         fn["legendary/%s/dress_new" % rid] = [
             "execute positioned %s as @e[type=cobblemon:pokemon,tag=!%s,distance=..3,limit=1,sort=nearest] "
             "run function %s:legendary/%s/dress" % (at, tag, ns, rid)]
+        # R14L is safe to re-run (2026-10-12): the summon is the act of a look-then-act chain (tools/chunk_look.py,
+        # N155), so it fires only once the legendary's chunk has shown its saved entities (or blind, a first run),
+        # and only when no tagged one stands. A macro line summons it (EXP-046: a plain spawnpokemonat in a function
+        # parsed at server start spawns nothing). The carve is skipped once the gate has opened.
+        base, holder, box, scope, new_tag = chain_parts(rec, doc, g)
+        sx, sy, sz = ("%.1f" % (lx + 0.5), int(ly), "%.1f" % (lz + 0.5))
+        fn["legendary/%s/spawn_at" % rid] = [
+            "$spawnpokemonat $(x) $(y) $(z) %s level=%d no_ai" % (rec["species"], int(rec["level"]))]
+        spawn_new = [
+            "# the chain's act, only when no tagged %s stands: summon it unless some Pokemon already stands at the spot"
+            " (an interrupted summon, which dress_new takes), dress it, mark it for the chain's de-duplication" % rec["species"],
+            "execute positioned %s unless entity @e[type=cobblemon:pokemon,distance=..3] run function %s:legendary/%s/spawn_at "
+            "{x:\"%s\",y:%d,z:\"%s\"}" % (at, ns, rid, sx, sy, sz),
+            "function %s:legendary/%s/dress_new" % (ns, rid)]
+        # (a lake grotto's door is shut by the carve itself, and dress merges DORMANT: the old step's `close` is not
+        # needed here, and it would write the door outside the chain's small held box)
+        spawn_new.append("execute positioned %s as @e[%s,distance=..3,limit=1,sort=nearest] run tag @s add %s"
+                         % (at, scope, new_tag))
+        fn["legendary/%s/spawn_new" % rid] = spawn_new
+        fn["legendary/%s/carve_once" % rid] = [
+            "# a re-run must not re-seal a chamber a player has opened: carve only while the gate is shut (the score is"
+            " 1 once the plug is out, or the door is open)",
+            "execute unless score #%s %s matches 1 run function %s:legendary/%s/carve" % (rid, obj, ns, rid)]
+        from chunk_look import chain as _chain
+        act = ["# the summon, once a look has seen this chunk's saved entities (or blind after the limit: a first run)",
+               "execute unless entity @e[%s] run function %s:legendary/%s/spawn_new" % (scope, ns, rid)]
+        for ref, lines in _chain(base, box, ["@e[%s]" % scope], act, [scope], new_tag, scope, holder,
+                                 note="tools/legendaries.py").items():
+            fn[ref.split(":", 1)[1]] = lines
         fn["legendary/%s/keep" % rid] = [
             "# only while the chamber is shut: never drag a Pokemon out of a battle in progress",
             "execute store result score #%s_n %s if entity @e[tag=%s]" % (rid, obj, tag),
@@ -515,29 +547,34 @@ def cache_problems(doc, ground, rewards=None):
 # ------------------------------------------------------------------ the re-application
 
 
+def chain_parts(rec, doc, g):
+    """(base, holder, box, scope, new tag) of one legendary's look-then-act chain (tools/chunk_look.py)."""
+    lx, _ly, lz = g["legendary"]
+    tag = doc["tag_prefix"] + rec["id"]
+    return ("%s:legendary/%s/place" % (doc["namespace"], rec["id"]), "legendary_%s" % rec["id"],
+            (lx - 4, lz - 4, lx + 4, lz + 4), "type=cobblemon:pokemon,tag=%s" % tag, tag + ".new")
+
+
 def placement_steps(doc, ground=None):
-    """tools/reapply.py R14L: hold the chunks, carve, summon over RCON, dress, shut the gate, release."""
+    """tools/reapply.py R14L, safe to re-run: per chamber, hold the chunks, carve (not once the gate has opened),
+    release, then the look-then-act chain that summons the legendary only if none stands, and its count read back.
+
+    The chain holds and releases its own chunks, so the step's hold is released BEFORE it (a forceload is per
+    chunk, not counted). A re-run therefore leaves an existing legendary alone and adds only a missing one."""
+    import chunk_look as CL
     import ground as G
     ground = ground or G.load()
     steps = []
     ns = doc["namespace"]
     for rec in emitted(doc):
         rid = rec["id"]
-        tag = doc["tag_prefix"] + rid
         g = geometry(rec, doc, ground)
         x0, _y0, z0, x1, _y1, z1 = g["bbox"]
-        lx, ly, lz = g["legendary"]
-        at = "%.1f %d %.1f" % (lx + 0.5, ly, lz + 0.5)
+        base, holder, _box, _scope, _new = chain_parts(rec, doc, g)
         steps += [("cmd", "forceload add %d %d %d %d" % (x0, z0, x1, z1)), ("wait", 3),
-                  ("fn", "%s:legendary/%s/carve" % (ns, rid)),
-                  ("cmd", "execute unless entity @e[tag=%s] positioned %s unless entity "
-                          "@e[type=cobblemon:pokemon,distance=..3] run spawnpokemonat %s %s level=%d no_ai"
-                   % (tag, at, at, rec["species"], int(rec["level"]))),
-                  ("wait", 1),
-                  ("fn", "%s:legendary/%s/dress_new" % (ns, rid))]
-        if rec["kind"] == "lake_grotto":
-            steps.append(("fn", "%s:legendary/%s/close" % (ns, rid)))
-        steps.append(("cmd", "forceload remove %d %d %d %d" % (x0, z0, x1, z1)))
+                  ("fn", "%s:legendary/%s/carve_once" % (ns, rid)),
+                  ("cmd", "forceload remove %d %d %d %d" % (x0, z0, x1, z1))]
+        steps += CL.steps(base, holder, 1, "%s's legendary" % rid)
     return steps
 
 

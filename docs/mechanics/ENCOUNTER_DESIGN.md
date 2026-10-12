@@ -81,9 +81,14 @@ evolutions forward from that species and gives each stage a level range and a sh
 | find | rare | 2 | **off-path only**: the reason to leave the path (section 6) |
 
 A family's stages share its weight and its bucket. A table holds 3-6 land families and, where it has water, 2-4 water
-families. Cobbleverse's bucket weights decide how often a bucket is drawn (common 88.5, uncommon 10, rare 1.2,
-ultra-rare 0.3), so a find is about one land spawn in eighty there: findable by someone who looks, not by someone
-passing through.
+families. The bucket weights decide how often a bucket is drawn. **The server runs the v2 file** (`version: 2`,
+`C:/Users/wnd/Documents/github/cobblers-server/config/cobblemon/spawning/best-spawner-config.json`, read 2026-10-12):
+world buckets **common 94, uncommon 5, rare 0.5, ultra-rare 0.2, boss 0.3**; fishing, snacks and activated Habitat Blocks
+83.25 / 11.25 / 4.125 / 1.375 (common / uncommon / rare / ultra-rare). So a find (rare bucket) is about one land spawn
+in two hundred (0.5 of 100 where every bucket has a candidate), findable by someone who looks, not by someone passing
+through. *Corrected 2026-10-12: this section quoted 88.5 / 10 / 1.2 / 0.3, the base pack's v1 file
+(`base-pack/cobbleverse/config/cobblemon/spawning/best-spawner-config.json`), which the server does not run; the
+"one in eighty" followed from it.*
 
 ## 5. Waters: every lake and coast has its own fish
 
@@ -285,7 +290,7 @@ past the next cap, and a heart over the above-cap share below.
 | Number | Proposed | Derived from | Measured on the compiled pack |
 |---|---|---|---|
 | Most a heart may cover of its sub-region | **1/9 (0.111)** of the compiled area | The owner's three words for a place -- outskirts, middle, heart -- as three rings of equal width: the inner ring of a disc is (1/3)^2 = 1/9 of it, so 8/9 stays the base table ("most of a place is catchable"). A summit's line is the lowest whole Y at or above which at most 1/9 of the area lies; a focus radius is the largest multiple of 16 blocks at or under 1/9, or a feature's own radius if smaller (the crater bowl, 96). | 28 hearts, 4.8% (the Great Crater's bowl) to 11.1% |
-| Most of a heart's spawn chance above the cap | **11.2%** | Above-cap spawns are presences, and a presence is never common (the owner: "the big, rarer presences"). Cobbleverse draws uncommon and rare together (10 + 1.2) / (88.5 + 10 + 1.2) = 11.2% of the time, so that is the ceiling by construction. | 0.9% (Lake Viltri's hollow, land) to 10.2% (the Lower Trough, water), over the heart contexts holding a presence; 0 in every base table and every corridor |
+| Most of a heart's spawn chance above the cap | **11.2%** | Above-cap spawns are presences, and a presence is never common (the owner: "the big, rarer presences"). Cobbleverse draws uncommon and rare together (10 + 1.2) / (88.5 + 10 + 1.2) = 11.2% of the time, so that is the ceiling by construction. **Stale premise, 2026-10-12:** those are the base pack's v1 weights; the server's v2 file gives (5 + 0.5) / (94 + 5 + 0.5) = 5.5%, so the "by construction" ceiling is about half of 11.2%, and the measured shares in the next column (0.9% to 10.2%) were computed with the v1 weights (`tools/build_encounters.py` `BUCKET_P`, `tools/encounter_audit.py` `BUCKETS`, both still v1) and overstate the uncommon/rare shares the server draws by about 2x. The 11.2% number is unchanged pending the owner; the tools are not re-derived. | 0.9% (Lake Viltri's hollow, land) to 10.2% (the Lower Trough, water), over the heart contexts holding a presence; 0 in every base table and every corridor |
 | How far above the cap a presence may go | **to the next leg's cap**: cap + 5 on tiers 1-8, and 62 at tier 9 | "Seen first and caught on a return": a presence is catchable on the next leg. Caps step 5 a leg (`data/trainers.json` gym aces 20-55, the Elite Four at 60); after the Elite Four the next level a player can carry is the champion's top, 62 (`champion_blue`, measured). | Top levels 25 (tier 1) to 62 (tier 9) |
 | How "catchable pockets near the path" is measured | **No heart cell within 128 blocks of a route corridor box** (Chebyshev gap) | Section 1's own measure of "near the path" (128 blocks). So the whole band beside the path is the base table, catchable, in every sub-region. | Nearest heart box to any route box: 129 blocks (five hearts: Mt Clay, the Tri Peaks, the Crags, the Lower Trough, the east cones) |
 

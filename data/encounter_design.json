@@ -39,6 +39,14 @@
       "alpha_level_matching": "KEPT (the owner, 2026-10-05: \"keep the alpha scaling\"; nothing overlaid). NOT the authored band in game: the jar's behaviour data/cobblemon/behaviours/pokemon/auto/pokemon_non_party.json gives a wild alpha the sensor cobblemon:alpha_level_matching, which (AlphaLevelMatchingSensor$Companion.getTargetLevel) re-levels it, whenever a player is within 32 blocks and it is not battling, to that player's highest party level +4 (under 21), +8 (21-30), +12 (31-45), +16 (46-65) or +20, at most 100 and at least the level its species evolves at. The authored level is the level it spawns at; the level a player fights is the party's plus the step. Read from bytecode, not seen in game. Whether to keep this (it makes every boss above the party, so above every cap and past the next leg's) or overlay the behaviour without the sensor is the owner's decision.",
       "local_alpha": "every area's heart holds at least one species from its own base table (the owner's question above, 2026-10-05). Where a heart named none, it gains the strongest local stage: the highest base-stat total among the area's common and uncommon base species, mainline starters excluded (section 11), ties to the higher weight then the name; role uncommon at the presences' weight 3, so it stands beside them as one more boss"
     },
+    "rare_spawns": {
+      "why": "the owner, 2026-10-12 (docs/mechanics/LEGENDARY_HOMES.md section 2): a legendary as a wild spawn is REPEATABLE and very rare. A rare spawn is a legendary, mythical or Ultra Beast (the jar's own label) in a table's ultra-rare bucket, never an alpha (an alpha re-levels to the party and is uncatchable below the Champion), at the level of its table's tier cap so a player at the cap catches it with any ball and a player under it meets one they cannot catch (the above-cap rule). It rides beside the table's own ultra family at a fractional weight",
+      "bucket": "ultra-rare",
+      "max_weight": 0.1,
+      "max_weight_why": "one tenth of the table's own ultra-rare family (weight 1). The bucket is drawn first, then an entry within it (ENCOUNTER_DESIGN.md section 4), so P(per spawn) = ultra-rare bucket share x w / (family 1 + w): at the server's world buckets (94/5/0.5/0.2, config/cobblemon/spawning/best-spawner-config.json) 0.2 / 100 x 0.05 / 1.05 = 0.0095% at the recommended 0.05, about one in 10,500 land spawns, and 0.018% at the ceiling 0.1. Not measured in game (RS-0, LEGENDARY_HOMES.md section 6)",
+      "level": "the table's tier cap, exactly (rules.tiers[tier].cap)",
+      "model_gate": {"atm_subset": "the species' only model is in ATMxMSD (modpack/manifest/client-pack-atm-subset.json lists it): a player without the AllTheMons subset sees a substitute doll. Acceptable for an optional rare spawn that nothing requires (docs/STATE.md: no required prize may depend on it). Declared per spawn; build_encounters fails closed when a doll species declares none, and when a spawn declares one for a species the list does not name"}
+    },
     "corridor_roles": ["anchor", "common", "uncommon"],
     "corridor_rare_min": {"rare": 2, "ultra": 1},
     "corridor_rare_min_why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"; the ruling the same day: a route corridor gets a rare and an ultra-rare table, reserved from the crossed on-path tables' rare- and ultra-role families (never an off-path find), but no heart (section 10: the path stays catchable)",
@@ -110,6 +118,28 @@
       ]
     }
   },
+  "rare_spawns": [
+    {
+      "id": "buzzwole",
+      "species": "buzzwole",
+      "table": "long_isle_south",
+      "level": 55,
+      "weight": 0.05,
+      "model_gate": "atm_subset",
+      "why": "an Ultra Beast on the jungle end of the Long Isle (tier 8, cap 55): Buzzwole's inherited spawn was jungle (#cobblemon:is_jungle, ultra-rare, 60-70). docs/mechanics/LEGENDARY_HOMES.md sites it on jungle_west, which has been under the sea since the water export (docs/STATE.md: every column inside its polygon at or below y61, sea level y62; data/regions.json jungle_west measured ground max y61), so its tier-8 table spawns on no land. long_isle_south is the same tier, the same theme and the isle the Jungle Isle's elders were moved to; this is a substitution the owner may reverse by changing `table`",
+      "gate": "place, then cap: the table is tier 8, off the path, and level 55 is the tier 8 cap (rules.tiers), so a player at the cap catches it with any ball and one under it meets one they cannot"
+    },
+    {
+      "id": "pheromosa",
+      "species": "pheromosa",
+      "table": "long_isle_south",
+      "level": 55,
+      "weight": 0.05,
+      "model_gate": "atm_subset",
+      "why": "Buzzwole's pair on the same ground (LEGENDARY_HOMES.md puts it on jungle_east, drowned as jungle_west is). Its inherited spawn was ultra-rare, 55-65, on Terralith's steppe and valleys, which this world does not have",
+      "gate": "as buzzwole"
+    }
+  ],
   "tables": {
     "pallet_meadows": {"tier": 1, "levels": [4, 8], "themes": ["meadow"], "placement": "path",
       "families_why": "hoppip common, not uncommon (play test 2026-10-05: a pre-Brock pool needs a Grass or Water answer at a weight that matters). Measured on the compiled pools: Pallet's own land spawns were 3.1% Grass or Water (Bulbasaur and Hoppip at uncommon) and Route 1's Pallet stretch 0%; Hoppip has Absorb from level 1 and Bullet Seed at 13 (jar learnset), and a common Hoppip makes the corridor's per-table floor (rules.corridor_table_min), so the first stretch of Route 1 carries it too",
