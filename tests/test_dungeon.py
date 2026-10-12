@@ -486,10 +486,31 @@ def test_the_back_rip_before_the_threshold_returns_the_sigil_and_stamps_no_locko
     w.passes(4)
     assert w.get(p.name, "dg.st") == 2
     w.call("cobblers:dungeons/back", PS.Ctx(p, p.dim, p.pos))
-    assert p.dim == OW and [i[0] for i in p.inventory] == ["minecraft:miner_pottery_sherd"]
+    # the rift guide (given once at the first arrival, and kept) is not the sigil: it is the only other thing left
+    assert p.dim == OW and [i[0] for i in p.inventory if i[0] != "minecraft:written_book"] == ["minecraft:miner_pottery_sherd"]
     assert w.get(p.name, "dg.lk_ns") is None
     click_rip(w, p)
     assert w.get(p.name, "dg.st") == 1, "no lockout before the threshold"
+
+
+def test_the_rift_guide_is_given_once_at_the_first_arrival_and_never_again(pack):
+    # The owner, 2026-10-12: the signs cannot be read, so a first-time player is handed a book. The tag
+    # cobblers.dg_book gates it: a second run, after the first ended, arrives with no second book.
+    w = world(pack)
+    p = w.player("Ash", OW, (1352.5, 130, 4120.5))
+    p.inventory.append(soot())
+    click_rip(w, p)
+    assert not [i for i in p.inventory if i[0] == "minecraft:written_book"], "not given at the rip, only at arrival"
+    w.passes(4)
+    assert w.get(p.name, "dg.st") == 2
+    books = [i for i in p.inventory if i[0] == "minecraft:written_book"]
+    assert len(books) == 1 and "cobblers.dg_book" in p.tags
+    assert books[0][1]["minecraft:written_book_content"]["title"] == "Rift Guide"
+    w.call("cobblers:dungeons/back", PS.Ctx(p, p.dim, p.pos))
+    click_rip(w, p)
+    w.passes(4)
+    assert w.get(p.name, "dg.st") == 2, "the second run arrived"
+    assert len([i for i in p.inventory if i[0] == "minecraft:written_book"]) == 1, "a second book was given"
 
 
 def test_refusals_take_nothing(pack):

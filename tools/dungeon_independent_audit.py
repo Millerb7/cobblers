@@ -3191,11 +3191,23 @@ def static_audit(pack, doc, slots, F):
                     F.add("RIP", None, d["id"], None, "the rip's plane at (%d, %d, %d) is %s, the record's restore %s"
                           % (x, fr["y"] + i, fr["z"], got, col[i] if i < len(col) else None))
         patch = {c: b for c, b in cells.items() if c[1] == fr["y"] - 1}
-        sc = rp.get("scorch") or {}
-        if not patch or any(b not in (sc.get("core"), sc.get("rim")) for b in patch.values()) \
+        # the patch's two blocks come from the dungeon's THEME (2026-10-12: the ground under a rip shows the biome inside
+        # it): the theme's hull floor under the oval, its hull wall round it, read here from data/dungeon_themes.json
+        # itself and not from tools/dungeon.py rip_scorch; an explicit rip.scorch on the record overrides either
+        hull = json.loads((ROOT / "data" / "dungeon_themes.json").read_text(encoding="utf-8"))["themes"][d["theme"]]["hull"]
+        sc = {"core": hull["floor"], "rim": hull["wall"], **(rp.get("scorch") or {})}
+        if not patch or set(patch.values()) != {sc["core"], sc["rim"]} \
                 or any(not (fr["z"] + 1 <= c[2] <= fr["z"] + 2) for c in patch):
-            F.add("RIP", None, d["id"], None, "the rip's ground patch is %s, not rip.scorch's blocks in front of the plane"
-                  % sorted(set(patch.values())))
+            F.add("RIP", None, d["id"], None, "the rip's ground patch is %s, not the theme's %s (floor) and %s (wall) in front of the plane"
+                  % (sorted(set(patch.values())), sc["core"], sc["rim"]))
+        # the core is the oval's three columns and the one cell in front of the middle; the rim every other cell of the patch
+        mid = (fr["x0"] + fr["x1"]) // 2
+        core_at = {(x, fr["z"] + 1) for x in range(fr["x0"] + 1, fr["x1"]) } | {(mid, fr["z"] + 2)}
+        if sc["core"] != sc["rim"]:
+            wrong = [c for c, b in patch.items() if (b == sc["core"]) != ((c[0], c[2]) in core_at)]
+            if wrong:
+                F.add("RIP", None, d["id"], None, "the rip's patch has the core and rim blocks on the wrong cells (%d of them, first %s)"
+                      % (len(wrong), sorted(wrong)[0]))
         if any(c[1] not in range(fr["y"] - 1, fr["y"] + fr["height"]) for c in cells):
             F.add("RIP", None, d["id"], None, "the rip writes outside its plane's height and the ground under it")
         click = None

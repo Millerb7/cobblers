@@ -516,12 +516,22 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
                 any(len(col) != fr["height"] for col in rest.values()):
             bad.append("%s: rip.restore is not one column of %d blocks per x of the plane (python tools/dungeon.py --rip-restore)"
                        % (d["id"], fr["height"]))
-        sc = rip.get("scorch") or {}
-        if not sc.get("core") or not sc.get("rim"):
-            bad.append("%s: no rip.scorch core and rim (the scorched ground under the oval)" % d["id"])
+        try:
+            sc = rip_scorch(d)
+        except (KeyError, DR.RoomError) as ex:
+            sc = {}
+            bad.append("%s: the rip's ground has no theme to take its blocks from (%s); give rip.scorch core and rim" % (d["id"], ex))
         for blk in [b for col in rest.values() for b in col] + [sc.get("core") or "", sc.get("rim") or ""]:
             if "portal" in blk:
                 bad.append("%s: a portal block in the rip (7.1: they teleport on their own)" % d["id"])
+        under = rip.get("under")
+        if under is not None and sc:
+            cells = {"%d,%d" % (x, z) for x, _y, z, _b in rip_scorch_cells(d)}
+            if set(under) != cells:
+                bad.append("%s: rip.under must record exactly the scorch's %d cells (x,z), not %d" % (d["id"], len(cells), len(under)))
+            # (a recorded block may equal the patch's: a jungle's grass was already grass)
+            if any("portal" in b or not re.match(r"^[a-z0-9_]+:[a-z0-9_/.]+(\[[^\]]*\])?$", b) for b in under.values()):
+                bad.append("%s: rip.under holds a portal block or a string that is not a block state" % d["id"])
         ov = rip.get("oval")
         art = e.get("rip_art")
         if not ov or not art:
@@ -783,10 +793,24 @@ def shell_entities(doc, slot):
     return out
 
 
-def rip_scorch_cells(d):
-    """[(x, y, z, block)]: the small scorched patch on the ground under the oval (rip.scorch): the core under the oval's
+def rip_scorch(d, themes=None):
+    """{"core": block, "rim": block}: the ground laid under a rip's oval. The dungeon's THEME decides (the owner,
+    2026-10-12: "the blocks under a rift ... should represent the biome inside the rift"): the core is the theme's
+    hull.floor and the rim its hull.wall (data/dungeon_themes.json), so a jungle rip stands on grass ringed with moss and a
+    soul sand valley's on soul soil. The floor is what the player walks on inside; the wall is the second block that
+    dresses every room, so the pair reads as the biome without a new palette to keep. Where a theme's floor and wall are
+    the same block (the nether wastes, the soul sand valley) the patch is one block. An explicit `rip.scorch`
+    (core and/or rim) on the record still overrides the theme's block."""
+    hull = DR.theme_for(d, themes)["hull"]
+    out = {"core": hull["floor"], "rim": hull["wall"]}
+    out.update(d["rip"].get("scorch") or {})
+    return out
+
+
+def rip_scorch_cells(d, themes=None):
+    """[(x, y, z, block)]: the small patch of themed ground under the oval (rip_scorch): the core under the oval's
     three columns and one in front of its middle, a rim round them. y is the ground under the feet (frame y - 1)."""
-    f, sc = d["rip"]["frame"], d["rip"]["scorch"]
+    f, sc = d["rip"]["frame"], rip_scorch(d, themes)
     y, z, x0, x1 = f["y"] - 1, f["z"], f["x0"], f["x1"]
     mid = (x0 + x1) // 2
     core = [(x, z + 1) for x in range(x0 + 1, x1)] + [(mid, z + 2)]
@@ -798,8 +822,13 @@ def rip_lines(d):
     """The overworld rip's blocks (DUNGEONS.md 7.1). Since 2026-10-10 the oval stands free (the owner, seeing the oval:
     "do we have to have the old portal blocks around and behind it?"): no posts, lintel or dark opening. The plane where
     the frame stood is put back to what was there (rip.restore, measured by rip_restore_measured from tools/ground.py and
-    the old mine's own plan, never a world), so a world that held the frame loses it, and a small scorched patch lies on
-    the ground under the oval (rip.scorch)."""
+    the old mine's own plan, never a world), so a world that held the frame loses it, and a small patch of the dungeon's
+    own ground lies under the oval (rip_scorch: the theme's floor and wall; rip_close_lines gives the ground back)."""
+    return rip_plane_lines(d) + ["setblock %d %d %d %s" % c for c in rip_scorch_cells(d)]
+
+
+def rip_plane_lines(d):
+    """The commands that put the rip's plane back to rip.restore: rip_lines lays them, rip_close_lines lays them again."""
     r = d["rip"]
     f = r["frame"]
     z = f["z"]
@@ -816,7 +845,37 @@ def rip_lines(d):
                 y1 += 1
             out.append("fill %d %d %d %d %d %d %s" % (x, y, z, x, y1, z, blk) if y1 > y else "setblock %d %d %d %s" % (x, y, z, blk))
             y = y1 + 1
-    out += ["setblock %d %d %d %s" % c for c in rip_scorch_cells(d)]
+    return out
+
+
+def rip_close_lines(d):
+    """The commands that take one rip away and give the ground back (the owner, 2026-10-12: "once the rift closes the
+    ground would go back"): the oval and the click removed (the rip's tag), the plane put back to rip.restore, and every
+    cell of the themed patch set to the block recorded in rip.under, the ground that was there before the patch.
+
+    NOTHING CALLS THIS YET. No event closes a rip today: the thirteen rips are permanent test rips, and the draw design
+    (docs/mechanics/DUNGEON_DRAW.md 2.6, 3) is what will remove them ("the test rips' `restore` data carries over for the
+    removal"). It is deliberately not emitted into the pack: a function nothing runs is an orphan that prepare refuses.
+    Whoever builds the close emits these lines as a function of the pack and calls it from the close.
+
+    It fails closed: a rip with no rip.under cannot be given its ground back, and a patch that put back a guess would
+    leave a wrong block where the world had another. rip.under is {"x,z": block}, keyed by the patch's cells (y is the
+    patch's), recorded once from a world that does not yet hold the patch: a read to RECORD, never to place anything
+    (CLAUDE.md, ground comes from the heightmap). The heightmap cannot supply it: it holds heights, not the surface block."""
+    under = d["rip"].get("under")
+    if not under:
+        raise DungeonError("%s: rip.under is not recorded, so the ground under the oval cannot be given back (read the "
+                           "original surface blocks of the patch's %d cells from a world without the patch)"
+                           % (d["id"], len(rip_scorch_cells(d))))
+    cells = rip_scorch_cells(d)
+    missing = [(x, z) for x, _y, z, _b in cells if "%d,%d" % (x, z) not in under]
+    if missing:
+        raise DungeonError("%s: rip.under has no block for %s" % (d["id"], missing))
+    tag = rip_tag(d)
+    out = ["kill @e[type=minecraft:interaction,tag=%s]" % tag,
+           "kill @e[type=minecraft:item_display,tag=%s]" % tag]
+    out += rip_plane_lines(d)
+    out += ["setblock %d %d %d %s" % (x, y, z, under["%d,%d" % (x, z)]) for x, y, z, _b in cells]
     return out
 
 
@@ -913,7 +972,8 @@ def functions(doc, blackout=None):
     hold = k["entry_hold_ticks"]
     tail_start = TAIL + P
     fy = e["pocket"]["floor_y"]
-    out = {}
+    import dungeon_guide as DGd   # lazy: the rift guide book, given at a player's first arrival
+    out = {"guide_book": DGd.function_lines(doc)}
 
     def dsel(d_index):
         return [s for s in sl if s["di"] == d_index]
@@ -1548,6 +1608,8 @@ def functions(doc, blackout=None):
             "gamemode adventure @s",
             "tag @s add %s" % T["adv"],
             "give @s %s 1" % pick_give(doc, d),
+            "# the rift guide, once per player (tools/dungeon_guide.py: the same text is on the players' site)",
+            DGd.arrive_line(),
             "scoreboard players set @s %s 2" % O["st"],
             "scoreboard players operation @s %s = #up %s" % (O["seen"], O["up"]),
             "title @s actionbar %s" % text(d["messages"]["arrive"], "light_purple")]
