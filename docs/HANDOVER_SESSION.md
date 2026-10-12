@@ -1,39 +1,36 @@
-# Handover: session 74260a, ending 2026-10-11 late
+# Handover: session 74260a, ending 2026-10-12 morning (far past the context line)
 
-A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
+A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts. The owner's
+summary: `docs/MORNING_REPORT_2026-10-12.md`.
 
 ## 1. Branch
-`build/2026-10-12-rift-guide` (PR #134, draft, against main) in worktree `.claude/worktrees/night-shift-engine-gym-9b76f2`. PR #133 (the batch) is MERGED to main at 3dc7c00.
-one big draft PR for the batch is owed). Re-read the head (`git rev-parse HEAD`; c7243b4 plus this file). The three
-agent branches (guide, vaults, one_of generator) are merged; 335 merged worktrees and 460 merged branches were removed
-(135 worktrees and 146 branches remain: dirty, locked or unmerged ones kept on purpose).
+`build/2026-10-12-overnight` in worktree `.claude/worktrees/night-shift-engine-gym-9b76f2`, LOCAL ONLY, no PR (re-read
+the head). It sits on PR #134 (`build/2026-10-12-rift-guide`, draft, head 88bdde1, the guide book and themed rip
+ground). #133 (the dungeon batch) is MERGED to main at 3dc7c00. Owed: one draft PR for the overnight branch
+(after or with #134).
 
 ## 2. Where it stopped
-- **Staging is UP; the owner is playing the Street, the Patriarch and Ash Bell.** Installed: prepare 229/229 at
-  e18ec16. NOT installed: the vaults, the guide, the NPC plant clearing (all merged after it). The lock is released.
-- **Verified snapshot:** `D:\cobblers-snapshots\staging-2026-10-11-after-dungeons` (sha256-matched). Snapshots live on D:.
-- **Next (after the owner reports back; nothing new is authored before that):**
-  1. `python tools/dungeon_independent_audit.py` (33 min) on the merged vaults; `python tools/player_site.py` (every
-     page's nav gets the guide); confirm the new ball and held-item ids in the Cobblemon 1.8.0 jar; declare or read
-     `data/frostpeak_keep_quest.json` (the one failing site test, older than this work).
-  2. Next install: snapshot to D: first; env `COBBLERS_SERVER_LOCK`, `COBBLERS_LOCK_OWNER`,
-     `COBBLERS_SERVER_ROOT=C:/Users/wnd/Documents/github/cobblers-server`; full prepare (~51 min); RCON stop; hold
-     `config/cobbledollars/bank.json`; install with `--cobbleverse-dp C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/datapacks/COBBLEVERSE-DP-v31.zip`
-    ; restore the bank; `max-tick-time=-1`; **boot at 24G**;
-     `run --only R16DG,R17N,R17,R18CP --no-reload` (the vaults are in the shells; the npc steps clear plants); watchdog
-     60000; restart at 12G; check twice.
+- **Staging is UP at 20G** (terminal tab "staging server 20G"), installed from prepare 236/236 at 09ff917 and
+  applied (STATE "Latest install (2026-10-12 overnight)"). The lock is released.
+- **Merged AFTER that install (not in the world):** the paradox pools (worktree-agent-af27ca7b40c6cb147). Next
+  install: prepare, then `run --only R16DG` at **24G** (and the shells' entity chain at 24G), restart at 20G.
+- **Owed checks:** `python tools/npc_seats.py verify` (the 12G server died under it; never ran at 20G);
+  `presence_audit` for caves, maze_shrines, gatehouse.
 
 ## 3. Waiting on the owner
-- Their play report on the three dungeons (bands via `scoreboard players set <player> dg.ptband <n>`, tag
-  `cobblers.dg_playtest`).
-- The draw design, D1-D5 in `docs/mechanics/DUNGEON_DRAW.md`.
-- Deleting the old worlds (they run the commands themselves; listed in STATE "Snapshots go to D:").
+The morning report's "Decisions waiting on you" (Heatran/Yveltal, the defaults taken, Tapu Bulu's site, the world
+tree, C4, the gulch gate), plus DUNGEON_DRAW.md D1-D5.
 
 ## 4. Do not rediscover
-- R16DG at 13 dungeons OOMs 12G (memory: apply-heap-24g). The independent audit takes ~33 min.
-- The "solid block at its feet" verify fails on plants; the npc action now clears them (`stand_clear_commands`).
-- The guide reads vault stacks; any new stack form must be taught to `tools/player_guide_dungeons.py` `stack_text`.
-- New Compact NPCs collided with older placements twice; prepare's `markets:audit` and `ambient_idle:build` catch it.
+- The play heap is 20G: the idle live set is 12.4 GB (jcmd GC.run, GC.heap_info). A server that stops answering RCON
+  with CPU pinned and a silent latest.log is out of memory; the OOM lines are only in the console tab.
+- R16DG's entity read-back can under-count on a loaded server (154, 151) and over-count after blind acts (158); a
+  re-run at 24G settles it at 156.
+- Prepare's late failures tonight: stale nuzlocke_zones after new encounter tables; the caves' own Habitat Blocks
+  counted as another pack's writes (fixed in caves.py and, independently, caves_audit.py).
+- Merges between agent branches conflict on data/dungeon_prize_roster.json and data/world_probes.json; resolve the
+  probes structurally (load both, add the new place group), never by hand.
 
 ## 5. Cost
-`python tools/session_cost.py`: far past the hand-over line at the end (the owner chose to continue here).
+`python tools/session_cost.py`: this session ran far past the hand-over line at the owner's request; its agents
+tonight were ten builders and two designers.
