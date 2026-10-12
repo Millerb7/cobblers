@@ -100,7 +100,7 @@
       "legendary_pool_by_band": {
         "4": ["suicune", "kartana", "celesteela", "brutebonnet"],
         "5": ["suicune", "kartana", "celesteela", "brutebonnet"],
-        "6": ["xerneas", "zacian", "zamazenta", "suicune", "kartana", "celesteela", "brutebonnet"]
+        "6": ["xerneas", "zacian", "zamazenta", "suicune", "kartana", "celesteela", "brutebonnet", "yveltal"]
       },
       "paradox_added_2026_10_12": "Brute Bonnet (from the unbuilt Temple Calendar): an ancient grass/dark fungus-cap paradox, the great tree's root hollows. Pool 3 -> 4, 6 -> 7",
       "ub_boss": {"species": ["kartana", "celesteela"], "role": "wormhole leg, the pair rotates", "source": "ULTRA_BEAST_BOSSES.md 4"},
@@ -141,7 +141,7 @@
       "boss_legendary": {"species": "heatran", "source": "DUNGEONS.md 10 / entei_boss.json: Heatran after Entei"},
       "rare_pool_by_band": {},
       "legendary_pool_by_band": {
-        "6": ["stakataka", "gougingfire", "ironhands"]
+        "6": ["stakataka", "gougingfire", "ironhands", "heatran"]
       },
       "paradox_added_2026_10_12": "Iron Hands (from the cut Zero Dig): a fighting/electric future brute at the forge's hammer. The ONLY non-model-gated species of this pool: Stakataka and Gouging Fire are both atm_subset, so band 6 had no prize at all until delivery and now has this one. Pool 2 -> 3",
       "ub_boss": {"species": "stakataka", "role": "wormhole leg", "source": "MOVED from the Tower After the Fire's pair (UB doc 4): the Tower is the single Entei room (data/entei_boss.json), not a rooms dungeon, so it has no habitat for a prize"},
@@ -305,7 +305,7 @@
     "azelf": {"kind": "legendary", "status": "placed", "where": "legendaries.json lake grotto, Marshy Marsh"},
     "dialga": {"kind": "legendary", "status": "to_world", "home": "cave_clock_cellar (K5: The Clock Cellar, data/caves.json)", "where": "the hills above Tilpey Cross; a post-Champion area boss: one native alpha kept by a keeper (cobblers_caves), level 70, behind champion_cleared, 24,000 ticks back after a faint and 72,000 after a catch", "why": "time; restricted. Moved from the Temple Calendar's boss slot on 2026-10-12 (the orchestrator, on the owner's 'every mon placed by morning')"},
     "palkia": {"kind": "legendary", "status": "to_dungeon", "home": "street", "bands": ["6"], "why": "D18's lake pick for the Street; restricted"},
-    "heatran": {"kind": "legendary", "status": "planned", "where": "DUNGEONS.md 10: the Crucible's boss after Entei (designed)", "home": "crucible (boss)"},
+    "heatran": {"kind": "legendary", "status": "to_dungeon", "where": "the Crucible, band 6 prize (the owner, 2026-10-12: the fallback; no legendary boss stage is built for it; was DUNGEONS.md 10's boss after Entei)", "home": "crucible", "bands": ["6"]},
     "regigigas": {"kind": "legendary", "status": "placed", "where": "legendaries.json, beside the Displaced City"},
     "giratina": {"kind": "legendary", "status": "placed", "where": "Wardenhold (frostpeak_keep_quest.json)"},
     "cresselia": {"kind": "legendary", "status": "to_dungeon", "home": "starfall", "bands": ["5", "6"], "why": "the full moon, Darkrai's counterpart"},
@@ -328,7 +328,7 @@
     "meloetta": {"kind": "mythical", "status": "to_world", "home": "cave_singing_hollow (K2: The Singing Hollow, data/caves.json)", "where": "Viltri Quay's lake cliff; a repeatable ultra-rare chamber spawn at level 50 behind gym6_cleared; its inherited COBBLEVERSE-DP rare spawn (50-55, sunflower plains) is NOT yet removed (LEGENDARY_HOMES.md finding 2)", "why": "the song cave (the owner, 2026-10-12)"},
     "genesect": {"kind": "mythical", "status": "to_dungeon", "home": "warped_lab", "bands": ["5", "6"], "why": "an ancient thing rebuilt in a lab; the DP's fossil revive also exists (unverified reachable)"},
     "xerneas": {"kind": "legendary", "status": "to_dungeon", "home": "patriarch", "bands": ["6"], "why": "Yveltal's pair, the life-tree; restricted"},
-    "yveltal": {"kind": "legendary", "status": "planned", "where": "D18: the Patriarch's boss, band-6 catch (designed)", "home": "patriarch (boss)"},
+    "yveltal": {"kind": "legendary", "status": "to_dungeon", "where": "the Patriarch, band 6 prize (the owner, 2026-10-12: the fallback; no legendary boss stage is built for it; was D18's boss)", "home": "patriarch", "bands": ["6"]},
     "zygarde": {"kind": "legendary", "status": "to_dungeon", "home": "night_shift", "bands": ["6"], "why": "dripstone caves; restricted"},
     "diancie": {"kind": "mythical", "status": "to_dungeon", "home": "night_shift", "bands": ["4", "5", "6"], "why": "the gem at the back of the mine"},
     "hoopa": {"kind": "mythical", "status": "placed", "where": "the Hoopa cradle (hoopa_cradle.json)"},

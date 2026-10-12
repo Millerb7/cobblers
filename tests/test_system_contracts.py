@@ -558,17 +558,13 @@ def _whitelisted(block, ids):
     return any(block in w["blocks"] and any(i in (w.get("scope") or "") for i in ids) for w in POLICY["whitelist"])
 
 
-# Without it a world pack decides encounters wherever it builds with nobody deciding it (TOWN_CENTERS.md rule 7:
-# spawn-neutral by default; data/spawn_blocks.json): each generator checks its own list, differently, and a block
-# allowed in one place under a whitelist written for another passes. One rule over every generator's list: a spawn
-# condition is placed only where a data/spawn_block_policy.json entry whose scope names that place allows it.
-@pytest.mark.parametrize("source", _params("C4", [(k, (k,)) for k in sorted(SOURCES)]))
-def test_contract_c4_no_generated_world_pack_places_a_spawn_condition_its_place_is_not_whitelisted_for(source):
-    blocks, ids = SOURCES[source]
-    assert blocks, "%s names no block: the check would pass on nothing" % source
-    bad = sorted(b for b in blocks & SPAWN_BLOCKS if not _whitelisted(b, ids))
-    assert not bad, "%s places %s, each a spawn condition (data/spawn_blocks.json), and no policy entry is scoped to %s" % (
-        source, bad, ids)
+# Without it C4 could drift from the owner's decision again (2026-10-12: "a contract that forbids a decision is
+# wrong, not the decision"). Spawn-condition blocks are ALLOWED in world packs since 2026-10-05; C4 now records that,
+# and this test fails if the contract or the policy stops saying so.
+def test_contract_c4_follows_the_owners_spawn_block_decision():
+    assert POLICY["owner_decision_2026_10_05"].startswith("Spawn-condition blocks: ALLOW")
+    assert "ALLOWED" in C4["statement"] and "2026-10-05" in C4["statement"]
+    assert not C4.get("fails_today"), "C4 records no failure: the refusal it recorded was the contract's error"
 
 
 # Without it the scope rule could pass anything: the bell whitelisted for "Brock's town meeting point" covers no
@@ -608,24 +604,6 @@ def _built_pack_cases():
                if p.is_dir() and next(p.glob("data/*/function/**/*.mcfunction"), None)} if BUILT_PACKS.is_dir() else set()
     recorded = {pat.split(":", 1)[1] for pat in (C4.get("fails_today") or {}).get("cases", {}) if pat.startswith("built:")}
     return [("built:%s" % p, (p,)) for p in sorted(present | recorded)] or [("built:none", (None,))]
-
-
-# Without it a built pack (whatever tool wrote it) places a spawn condition no policy entry names at all. One case per
-# pack present under build/datapacks; a fresh checkout has none, and the test says so. A pack recorded in C4's
-# fails_today is strict xfail: the day its block gets a policy entry or leaves the pack, the case passes and fails.
-@pytest.mark.parametrize("pack", _params("C4", _built_pack_cases()))
-def test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows(pack):
-    fns = sorted((BUILT_PACKS / pack).glob("data/*/function/**/*.mcfunction")) if pack else []
-    if not fns:
-        pytest.skip("NOT_EXECUTED: %s has no built functions under %s (run the generators or reapply.py prepare)"
-                    % (pack or "no pack", BUILT_PACKS))
-    allowed = {b for w in POLICY["whitelist"] for b in w["blocks"]}
-    bad = {}
-    for f in fns:
-        placed = _command_blocks(f.read_text(encoding="utf-8", errors="replace").splitlines())
-        for b in sorted((placed & SPAWN_BLOCKS) - allowed):
-            bad.setdefault(b, []).append(f.relative_to(BUILT_PACKS / pack).as_posix())
-    assert not bad, {b: (len(v), v[0]) for b, v in bad.items()}
 
 
 # =================================================================================================================

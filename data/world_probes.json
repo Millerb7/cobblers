@@ -8099,7 +8099,7 @@
           1330
         ],
         "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_miraidon]",
-        "count": 1
+        "count_max": 1
       },
       {
         "what": "cave_strait_grotto: air at the standing block outside the mouth",
@@ -8269,7 +8269,7 @@
           3482
         ],
         "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_dialga]",
-        "count": 1
+        "count_max": 1
       },
       {
         "what": "cave_sunscar: air at the standing block outside the mouth",
@@ -8359,7 +8359,7 @@
           5272
         ],
         "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_koraidon]",
-        "count": 1
+        "count_max": 1
       }
     ],
     "maze_shrines": [

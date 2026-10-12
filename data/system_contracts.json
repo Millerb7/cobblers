@@ -470,12 +470,12 @@
     },
     {
       "id": "C4",
-      "title": "No world pack places a spawn condition its place is not whitelisted for",
+      "title": "World packs may place spawn-condition blocks (the owner allowed them, 2026-10-05); every tool reading them is accounted for",
       "owner": "world_block_packs",
       "consumers": [
         "wild_spawns"
       ],
-      "statement": "Every block a generator's allowed or named list holds (and every block an earthwork places) is either named by no loaded spawn condition, or allowed by a data/spawn_block_policy.json entry whose scope names that place.",
+      "statement": "Spawn-condition blocks are ALLOWED in world packs: the owner, 2026-10-05, \"give me all the spawns\" (data/spawn_block_policy.json owner_decision_2026_10_05), confirmed 2026-10-12: \"a contract that forbids a decision is wrong, not the decision\". A generated pack may place them; every tool that reads data/spawn_blocks.json is listed here (source, checker or not covered), so nothing reads the conditions unaccounted for. Before 2026-10-12 this contract forbade any such block no policy entry scoped to the place, contradicting the decision.",
       "stated_in": [
         {
           "at": "docs/world-building/TOWN_CENTERS.md:74",
@@ -487,19 +487,9 @@
         }
       ],
       "tests": [
-        "tests/test_system_contracts.py::test_contract_c4_no_generated_world_pack_places_a_spawn_condition_its_place_is_not_whitelisted_for",
-        "tests/test_system_contracts.py::test_contract_c4_every_tool_that_reads_the_spawn_conditions_is_accounted_for",
-        "tests/test_system_contracts.py::test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows"
+        "tests/test_system_contracts.py::test_contract_c4_follows_the_owners_spawn_block_decision",
+        "tests/test_system_contracts.py::test_contract_c4_every_tool_that_reads_the_spawn_conditions_is_accounted_for"
       ],
-      "fails_today": {
-        "recorded": "2026-10-08",
-        "commit": "eef6004",
-        "measured": "the built-pack check run against the integration checkout's build/datapacks (12,691 functions): exactly these two packs place a spawn condition no data/spawn_block_policy.json entry names",
-        "cases": {
-          "built:cobblers_lake_life": "tools/lake_life.py:924 sets minecraft:sugar_cane (the lake banks' reeds), a spawn condition (data/spawn_blocks.json), and no policy entry names it. The owner ALLOWED spawn-condition blocks (2026-10-05: docs/STATE.md 'Spawn-condition blocks: ALLOW', data/spawn_block_policy.json owner_decision_2026_10_05), so the fix is a policy entry scoped to lake_life naming where and what it draws, like the mining_caves entry; it is not added here because data/spawn_block_policy.json belongs to datapack-content-dev (docs/STATE.md file-ownership table)",
-          "built:cobblers_ambient_idle": "data/ambient_towns/gym2_town.json:245 props a minecraft:pumpkin (built into ambient_idle/t/gym2_town/props.mcfunction), a spawn condition; the policy whitelists only minecraft:carved_pumpkin, for gym4_town's marrow show. Same owner decision, same owner of the fix: a policy entry scoped to gym2_town, or a prop that is not a spawn condition"
-        }
-      },
       "tools": {
         "arena_dome_audit.py": "checker: the built cobblers_arena_dome functions (Heaven's Arena's dome), forbidden blocks against data/spawn_blocks.json",
         "bank.py": "checker: the CobbleDollars bank's buy list (data/bank.json) against data/spawn_blocks.json: a bought item that is a spawn-condition block is refused unless `in_place` (harvested where it stands). It places no block. Unlisted from its first commit on 2026-10-05 until the material exchange (2026-10-06) found this contract failing on it",

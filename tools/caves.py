@@ -1100,7 +1100,7 @@ def probe_records(spec, plan):
             o = cave["occupant"]
             rows.append({"what": "%s: the boss (one tagged %s once a champion has come near; absent while the clock runs)" % (cid, o["tag"]),
                          "hold": [gm["centre"][0], gm["centre"][1] + 1, gm["centre"][2]],
-                         "entity": "@e[type=cobblemon:pokemon,tag=%s]" % o["tag"], "count": 1})
+                         "entity": "@e[type=cobblemon:pokemon,tag=%s]" % o["tag"], "count_max": 1})
     return {"caves": rows}
 
 

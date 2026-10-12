@@ -341,7 +341,10 @@ def extra(rc):
                 x, y, z = pr["hold"]
                 _hold(rc, x, y, z, dim=dim)
                 n = _count(rc, pr["entity"])
-                out.append((place, pr["what"], (x, y, z), "" if n == pr["count"] else "%d, expected %d" % (n, pr["count"])))
+                if "count_max" in pr:   # an entity that may rightly be absent (a cave boss before any champion came near)
+                    out.append((place, pr["what"], (x, y, z), "" if n <= pr["count_max"] else "%d, expected at most %d" % (n, pr["count_max"])))
+                else:
+                    out.append((place, pr["what"], (x, y, z), "" if n == pr["count"] else "%d, expected %d" % (n, pr["count"])))
             _free(rc, x, z, dim)
     return out
 
