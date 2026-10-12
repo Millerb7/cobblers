@@ -3885,6 +3885,546 @@
       "proof_still_required": "the early fishing pool, and Only Bottle Caps' 3% silver Bottle Cap treasure chance; the jetty stands over flats about one block deep, so vanilla's open-water treasure check may not pass there"
     },
     {
+      "id": "evt_fisher_viltri",
+      "source": "data/fishermen.json (tools/fishermen.py write): Lake Viltri's north shore, on the strip between Misty's gym and the east pier",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_fisher_viltri"
+      ],
+      "objectives": [
+        {
+          "id": "rod",
+          "active_when": {
+            "field": "quest.evt_fisher_viltri.rod_claimed",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_fisher_viltri.rod_claimed",
+            "equals": true
+          },
+          "text": "Wick Doran, Lake Viltri's north shore, on the strip between Misty's gym and the east pier, has a Great Rod for anyone with your first badge."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "give_rod",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_fisher_viltri.rod_claimed",
+              "value": false
+            },
+            {
+              "kind": "flag",
+              "flag": "gym1_cleared"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_rod",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_fisher_viltri.rod_claimed",
+              "idempotency_key": "evt_fisher_viltri:reward_rod:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_fisher_viltri.rod_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_fisher_viltri.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_fisher_viltri.dialogue_cursor",
+              "value": "fd_done"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_rod",
+          "status": "item_id_verified (Cobblemon 1.8.0 jar)",
+          "contents": [
+            {
+              "item": "cobblemon:great_rod",
+              "count": 1,
+              "verification": "cobblemon:great_rod: item model and recipe result in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "one Great Rod per player, once, behind your first badge (gym1_cleared): data/fishermen.json. Crafting the same rod stays allowed (smithing table: template, a rod, the ball); this is the natural source (CLAUDE.md/STATE: every Cobblemon item is obtainable without crafting)."
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: one NPC",
+        "actors": "the Cobblemon NPC opens its own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_fisher_viltri.rod_claimed",
+        "quest.evt_fisher_viltri.completed",
+        "quest.evt_fisher_viltri.dialogue_cursor"
+      ],
+      "gate": {
+        "flag": "gym1_cleared",
+        "says": "your first badge",
+        "why": "a stronger rod than the Poke Rod is a reward for progress; both the conversation's entry rule and the give transition require it"
+      },
+      "proof_still_required": "the seat in a built world (feet and head clear, the water in reach of a cast: tools/npc_seats.py verify), and a player taking the rod once, then a second player taking theirs"
+    },
+    {
+      "id": "evt_fisher_glacial_tear",
+      "source": "data/fishermen.json (tools/fishermen.py write): the river that comes down from the Glacial Tear, a short way off Route 4 between the third town and the fourth",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_fisher_glacial_tear"
+      ],
+      "objectives": [
+        {
+          "id": "rod",
+          "active_when": {
+            "field": "quest.evt_fisher_glacial_tear.rod_claimed",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_fisher_glacial_tear.rod_claimed",
+            "equals": true
+          },
+          "text": "Hanne Brook, the river that comes down from the Glacial Tear, a short way off Route 4 between the third town and the fourth, has a Net Rod for anyone with your third badge."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "give_rod",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_fisher_glacial_tear.rod_claimed",
+              "value": false
+            },
+            {
+              "kind": "flag",
+              "flag": "gym3_cleared"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_rod",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_fisher_glacial_tear.rod_claimed",
+              "idempotency_key": "evt_fisher_glacial_tear:reward_rod:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_fisher_glacial_tear.rod_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_fisher_glacial_tear.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_fisher_glacial_tear.dialogue_cursor",
+              "value": "fd_done"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_rod",
+          "status": "item_id_verified (Cobblemon 1.8.0 jar)",
+          "contents": [
+            {
+              "item": "cobblemon:net_rod",
+              "count": 1,
+              "verification": "cobblemon:net_rod: item model and recipe result in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "one Net Rod per player, once, behind your third badge (gym3_cleared): data/fishermen.json. Crafting the same rod stays allowed (smithing table: template, a rod, the ball); this is the natural source (CLAUDE.md/STATE: every Cobblemon item is obtainable without crafting)."
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: one NPC",
+        "actors": "the Cobblemon NPC opens its own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_fisher_glacial_tear.rod_claimed",
+        "quest.evt_fisher_glacial_tear.completed",
+        "quest.evt_fisher_glacial_tear.dialogue_cursor"
+      ],
+      "gate": {
+        "flag": "gym3_cleared",
+        "says": "your third badge",
+        "why": "a stronger rod than the Poke Rod is a reward for progress; both the conversation's entry rule and the give transition require it"
+      },
+      "proof_still_required": "the seat in a built world (feet and head clear, the water in reach of a cast: tools/npc_seats.py verify), and a player taking the rod once, then a second player taking theirs"
+    },
+    {
+      "id": "evt_fisher_peak_pond",
+      "source": "data/fishermen.json (tools/fishermen.py write): Peak Pond's east shore, the pond the fourth town keeps like a garden",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_fisher_peak_pond"
+      ],
+      "objectives": [
+        {
+          "id": "rod",
+          "active_when": {
+            "field": "quest.evt_fisher_peak_pond.rod_claimed",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_fisher_peak_pond.rod_claimed",
+            "equals": true
+          },
+          "text": "Pell Ashwick, Peak Pond's east shore, the pond the fourth town keeps like a garden, has a Ultra Rod for anyone with your fourth badge."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "give_rod",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_fisher_peak_pond.rod_claimed",
+              "value": false
+            },
+            {
+              "kind": "flag",
+              "flag": "gym4_cleared"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_rod",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_fisher_peak_pond.rod_claimed",
+              "idempotency_key": "evt_fisher_peak_pond:reward_rod:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_fisher_peak_pond.rod_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_fisher_peak_pond.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_fisher_peak_pond.dialogue_cursor",
+              "value": "fd_done"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_rod",
+          "status": "item_id_verified (Cobblemon 1.8.0 jar)",
+          "contents": [
+            {
+              "item": "cobblemon:ultra_rod",
+              "count": 1,
+              "verification": "cobblemon:ultra_rod: item model and recipe result in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "one Ultra Rod per player, once, behind your fourth badge (gym4_cleared): data/fishermen.json. Crafting the same rod stays allowed (smithing table: template, a rod, the ball); this is the natural source (CLAUDE.md/STATE: every Cobblemon item is obtainable without crafting)."
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: one NPC",
+        "actors": "the Cobblemon NPC opens its own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_fisher_peak_pond.rod_claimed",
+        "quest.evt_fisher_peak_pond.completed",
+        "quest.evt_fisher_peak_pond.dialogue_cursor"
+      ],
+      "gate": {
+        "flag": "gym4_cleared",
+        "says": "your fourth badge",
+        "why": "a stronger rod than the Poke Rod is a reward for progress; both the conversation's entry rule and the give transition require it"
+      },
+      "proof_still_required": "the seat in a built world (feet and head clear, the water in reach of a cast: tools/npc_seats.py verify), and a player taking the rod once, then a second player taking theirs"
+    },
+    {
+      "id": "evt_fisher_northlight_shore",
+      "source": "data/fishermen.json (tools/fishermen.py write): the beach by the Northlight landing, where the packet puts in",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_fisher_northlight_shore"
+      ],
+      "objectives": [
+        {
+          "id": "rod",
+          "active_when": {
+            "field": "quest.evt_fisher_northlight_shore.rod_claimed",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_fisher_northlight_shore.rod_claimed",
+            "equals": true
+          },
+          "text": "Ingrid Salt, the beach by the Northlight landing, where the packet puts in, has a Lure Rod for anyone with your fifth badge."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "give_rod",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_fisher_northlight_shore.rod_claimed",
+              "value": false
+            },
+            {
+              "kind": "flag",
+              "flag": "gym5_cleared"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_rod",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_fisher_northlight_shore.rod_claimed",
+              "idempotency_key": "evt_fisher_northlight_shore:reward_rod:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_fisher_northlight_shore.rod_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_fisher_northlight_shore.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_fisher_northlight_shore.dialogue_cursor",
+              "value": "fd_done"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_rod",
+          "status": "item_id_verified (Cobblemon 1.8.0 jar)",
+          "contents": [
+            {
+              "item": "cobblemon:lure_rod",
+              "count": 1,
+              "verification": "cobblemon:lure_rod: item model and recipe result in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "one Lure Rod per player, once, behind your fifth badge (gym5_cleared): data/fishermen.json. Crafting the same rod stays allowed (smithing table: template, a rod, the ball); this is the natural source (CLAUDE.md/STATE: every Cobblemon item is obtainable without crafting)."
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: one NPC",
+        "actors": "the Cobblemon NPC opens its own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_fisher_northlight_shore.rod_claimed",
+        "quest.evt_fisher_northlight_shore.completed",
+        "quest.evt_fisher_northlight_shore.dialogue_cursor"
+      ],
+      "gate": {
+        "flag": "gym5_cleared",
+        "says": "your fifth badge",
+        "why": "a stronger rod than the Poke Rod is a reward for progress; both the conversation's entry rule and the give transition require it"
+      },
+      "proof_still_required": "the seat in a built world (feet and head clear, the water in reach of a cast: tools/npc_seats.py verify), and a player taking the rod once, then a second player taking theirs"
+    },
+    {
+      "id": "evt_fisher_sunset_harbour",
+      "source": "data/fishermen.json (tools/fishermen.py write): Sunset West's harbour flats, south of the west pier where the strand runs out into the water",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_fisher_sunset_harbour"
+      ],
+      "objectives": [
+        {
+          "id": "rod",
+          "active_when": {
+            "field": "quest.evt_fisher_sunset_harbour.rod_claimed",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_fisher_sunset_harbour.rod_claimed",
+            "equals": true
+          },
+          "text": "Corin Vale, Sunset West's harbour flats, south of the west pier where the strand runs out into the water, has a Dive Rod for anyone with your seventh badge."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "give_rod",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_fisher_sunset_harbour.rod_claimed",
+              "value": false
+            },
+            {
+              "kind": "flag",
+              "flag": "gym7_cleared"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_rod",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_fisher_sunset_harbour.rod_claimed",
+              "idempotency_key": "evt_fisher_sunset_harbour:reward_rod:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_fisher_sunset_harbour.rod_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_fisher_sunset_harbour.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_fisher_sunset_harbour.dialogue_cursor",
+              "value": "fd_done"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_rod",
+          "status": "item_id_verified (Cobblemon 1.8.0 jar)",
+          "contents": [
+            {
+              "item": "cobblemon:dive_rod",
+              "count": 1,
+              "verification": "cobblemon:dive_rod: item model and recipe result in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "one Dive Rod per player, once, behind your seventh badge (gym7_cleared): data/fishermen.json. Crafting the same rod stays allowed (smithing table: template, a rod, the ball); this is the natural source (CLAUDE.md/STATE: every Cobblemon item is obtainable without crafting)."
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "none: one NPC",
+        "actors": "the Cobblemon NPC opens its own conversation for the player who clicked",
+        "concurrent_players": "independent fields; no player reads or writes another's"
+      },
+      "progression_field_refs": [
+        "quest.evt_fisher_sunset_harbour.rod_claimed",
+        "quest.evt_fisher_sunset_harbour.completed",
+        "quest.evt_fisher_sunset_harbour.dialogue_cursor"
+      ],
+      "gate": {
+        "flag": "gym7_cleared",
+        "says": "your seventh badge",
+        "why": "a stronger rod than the Poke Rod is a reward for progress; both the conversation's entry rule and the give transition require it"
+      },
+      "proof_still_required": "the seat in a built world (feet and head clear, the water in reach of a cast: tools/npc_seats.py verify), and a player taking the rod once, then a second player taking theirs"
+    },
+    {
       "id": "evt_route2_rollaway_geodude",
       "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
       "scope": "player",

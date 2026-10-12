@@ -1358,6 +1358,136 @@
       "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
     },
     {
+      "id": "quest.evt_fisher_viltri.rod_claimed",
+      "quest_id": "evt_fisher_viltri",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Wick Doran's Great Rod (data/fishermen.json (tools/fishermen.py write))"
+    },
+    {
+      "id": "quest.evt_fisher_viltri.completed",
+      "quest_id": "evt_fisher_viltri",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_fisher_viltri.dialogue_cursor",
+      "quest_id": "evt_fisher_viltri",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "fd_1",
+      "allowed_values": "node ids from dlg_fisher_viltri"
+    },
+    {
+      "id": "quest.evt_fisher_glacial_tear.rod_claimed",
+      "quest_id": "evt_fisher_glacial_tear",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Hanne Brook's Net Rod (data/fishermen.json (tools/fishermen.py write))"
+    },
+    {
+      "id": "quest.evt_fisher_glacial_tear.completed",
+      "quest_id": "evt_fisher_glacial_tear",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_fisher_glacial_tear.dialogue_cursor",
+      "quest_id": "evt_fisher_glacial_tear",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "fd_1",
+      "allowed_values": "node ids from dlg_fisher_glacial_tear"
+    },
+    {
+      "id": "quest.evt_fisher_peak_pond.rod_claimed",
+      "quest_id": "evt_fisher_peak_pond",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Pell Ashwick's Ultra Rod (data/fishermen.json (tools/fishermen.py write))"
+    },
+    {
+      "id": "quest.evt_fisher_peak_pond.completed",
+      "quest_id": "evt_fisher_peak_pond",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_fisher_peak_pond.dialogue_cursor",
+      "quest_id": "evt_fisher_peak_pond",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "fd_1",
+      "allowed_values": "node ids from dlg_fisher_peak_pond"
+    },
+    {
+      "id": "quest.evt_fisher_northlight_shore.rod_claimed",
+      "quest_id": "evt_fisher_northlight_shore",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Ingrid Salt's Lure Rod (data/fishermen.json (tools/fishermen.py write))"
+    },
+    {
+      "id": "quest.evt_fisher_northlight_shore.completed",
+      "quest_id": "evt_fisher_northlight_shore",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_fisher_northlight_shore.dialogue_cursor",
+      "quest_id": "evt_fisher_northlight_shore",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "fd_1",
+      "allowed_values": "node ids from dlg_fisher_northlight_shore"
+    },
+    {
+      "id": "quest.evt_fisher_sunset_harbour.rod_claimed",
+      "quest_id": "evt_fisher_sunset_harbour",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Corin Vale's Dive Rod (data/fishermen.json (tools/fishermen.py write))"
+    },
+    {
+      "id": "quest.evt_fisher_sunset_harbour.completed",
+      "quest_id": "evt_fisher_sunset_harbour",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_fisher_sunset_harbour.dialogue_cursor",
+      "quest_id": "evt_fisher_sunset_harbour",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "fd_1",
+      "allowed_values": "node ids from dlg_fisher_sunset_harbour"
+    },
+    {
       "id": "quest.evt_route2_rollaway_geodude.started",
       "quest_id": "evt_route2_rollaway_geodude",
       "field": "started",

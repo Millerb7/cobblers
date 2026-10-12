@@ -790,6 +790,11 @@ def prepare_jobs(a):
     # then writes the battle_victory callback pack
     add("compact_routes:check", "compact_routes.py", "check")
     add("compact_routes:build", "compact_routes.py", "build")
+    # the fishermen who hand out rods (2026-10-12, data/fishermen.json): refuses a derived record that drifted from the
+    # table, then the rod check (every rod Cobblemon registers and its sources; fails below the declared floor of NPC
+    # rods or on a stronger rod given with no badge gate). They are NPCs of data/npc_seats.json: placed by R17N
+    add("fishermen:check", "fishermen.py", "check")
+    add("rod_sources", "rod_sources.py")
     # the Haven Compact's story fights (2026-10-11): the battle_victory callback and won functions; refuses nothing,
     # so its offline gate (`compact_points.py check`) is the job after it
     add("compact:build", "compact_points.py", "build")

@@ -1,0 +1,143 @@
+{
+  "schema": "cobblers.fishermen/1",
+  "status": "authored 2026-10-12 (the owner: \"I need a check to make sure we have more fisherman NPCs handing out some rods throughout the game; doesn't have to be every rod.\"). tools/fishermen.py write derives the quests, conversations, fields and seats from this table; tools/rod_sources.py is the check. Not applied to any world; nothing here was seen in game.",
+  "generated_by": "hand",
+  "built_by": "tools/fishermen.py write -> data/dialogue.json, data/quests.json, data/progression.json, data/npc_seats.json (spliced by id); the NPCs are placed by tools/reapply.py R17N",
+  "rod_universe": {
+    "why": "every rod item Cobblemon 1.8.0 registers. Read from Cobblemon-fabric-1.8.0+1.21.1.jar: assets/cobblemon/models/item/<id>.json and data/cobblemon/recipe/<id>.json both exist for exactly these 48 ids (cobblemon:pokerod_smithing_template is also in both folders, as the recipes' template; its name does not end in _rod and it is not a rod). Every recipe is minecraft:smithing_transform: template cobblemon:pokerod_smithing_template, base #minecraft:enchantable/fishing, addition the rod's ball (cobblemon:<name>_ball), result the rod.",
+    "ids": [
+      "poke_rod", "great_rod", "ultra_rod", "master_rod", "premier_rod", "safari_rod", "sport_rod", "park_rod",
+      "net_rod", "dive_rod", "nest_rod", "repeat_rod", "timer_rod", "luxury_rod", "quick_rod", "fast_rod",
+      "friend_rod", "heavy_rod", "level_rod", "love_rod", "lure_rod", "moon_rod", "heal_rod", "dusk_rod",
+      "dream_rod", "cherish_rod", "beast_rod", "azure_rod", "citrine_rod", "roseate_rod", "slate_rod", "verdant_rod",
+      "ancient_poke_rod", "ancient_great_rod", "ancient_ultra_rod", "ancient_feather_rod", "ancient_wing_rod",
+      "ancient_jet_rod", "ancient_heavy_rod", "ancient_leaden_rod", "ancient_gigaton_rod", "ancient_origin_rod",
+      "ancient_azure_rod", "ancient_citrine_rod", "ancient_ivory_rod", "ancient_roseate_rod", "ancient_slate_rod",
+      "ancient_verdant_rod"
+    ],
+    "template_source": "data/cobblemon/loot_table/injection/gameplay/fishing/treasure.json: cobblemon:pokerod_smithing_template at random_chance 0.167 in vanilla fishing's treasure (jar, read 2026-10-12)",
+    "vanilla_rod_source": "data/markets.json: four stalls sell minecraft:fishing_rod at 350",
+    "what_a_ball_does": "NOT researched (docs/STATE.md 'Early fishing balance'). The rods below are chosen as a ladder of the basic Ball tiers and waters (docs/mechanics/WATER_PROPOSAL.md 5.1), not for any effect of the ball."
+  },
+  "check": {
+    "min_npc_rods": 6,
+    "min_npc_rods_why": "the owner asked for more fishermen handing out some rods, not every rod: First Cast's Poke Rod plus these five, each a different rod at a different water. The check fails below this number, so a fisherman cannot be deleted or unseated without it being said.",
+    "min_waters": 5,
+    "min_waters_why": "the lake, the river, the pond, the north coast and the Sunset harbour: the five distinct kinds of water the owner named (a lake, a river, a coast, a sea town) with the pond between the lake and the river"
+  },
+  "seat_rules": {
+    "water_distance": [2, 4],
+    "water_distance_why": "a fisherman stands 2 to 4 blocks from a column the heightmap and the water model hold under water (data/landmarks.json basins and tools/water_mask.py for a lake or the sea; the graded polyline of the named course in data/rivers.json for a river), on ground at or above that water's surface",
+    "min_route": 3.5,
+    "min_npc": 5.0,
+    "min_npc_why": "tools/markets.py NPC_CLEAR is 3.5 (reapply's 'an NPC is already there' radius is 2); the finder keeps 5 from every seated NPC and trainer and then checks 3.5 against ferrymen, scene and reward NPCs and trader clerks"
+  },
+  "fishermen": [
+    {
+      "id": "npc_fisher_viltri",
+      "slug": "viltri",
+      "name": "Wick Doran",
+      "rod": "great_rod",
+      "gate": {"flag": "gym1_cleared", "says": "your first badge"},
+      "water": {"kind": "lake", "body": "lake_viltri"},
+      "near": [1632, 2895],
+      "radius": 25,
+      "drop": ["ferry dock", "town gym2_town"],
+      "where": "Lake Viltri's north shore, on the strip between Misty's gym and the east pier",
+      "stage": "early (the second town)",
+      "lines": {
+        "hello_1": "Misty's crew work the deep end off the piers. I keep the shallows, where nothing is in a hurry.",
+        "hello_2": "A good line is for someone who has already won something with a bad one.",
+        "offer": "Wick lifts a Great Rod from beside his stool and holds it out.",
+        "thanks": "It will take more than the one you're carrying. Keep it off the pier posts.",
+        "done": "Quiet today. It usually is, and I like it that way.",
+        "wait": "Come back with your first badge. I only hand a good line to someone who has used the last one."
+      }
+    },
+    {
+      "id": "npc_fisher_glacial_tear",
+      "slug": "glacial_tear",
+      "name": "Hanne Brook",
+      "rod": "net_rod",
+      "gate": {"flag": "gym3_cleared", "says": "your third badge"},
+      "water": {"kind": "river", "course": "major_river_trunk"},
+      "near": [3333, 1833],
+      "radius": 60,
+      "drop": [],
+      "where": "the river that comes down from the Glacial Tear, a short way off Route 4 between the third town and the fourth",
+      "stage": "mid (between gyms 3 and 4)",
+      "lines": {
+        "hello_1": "This river comes a long way down from the Glacial Tear before it belongs to anybody. Cold the whole length.",
+        "hello_2": "The current doesn't care what you're after. You learn to cast across it, not into it.",
+        "offer": "Hanne takes a Net Rod from where it leans against her pack and holds it out.",
+        "thanks": "Mind the current. It will have the rod if you let it.",
+        "done": "Cold water, patient fish. Same as ever.",
+        "wait": "Come back with your third badge. The road past here is long and I'd rather you'd earned the walk."
+      }
+    },
+    {
+      "id": "npc_fisher_peak_pond",
+      "slug": "peak_pond",
+      "name": "Pell Ashwick",
+      "rod": "ultra_rod",
+      "gate": {"flag": "gym4_cleared", "says": "your fourth badge"},
+      "water": {"kind": "lake", "body": "peak_pond"},
+      "near": [4147, 1498],
+      "radius": 25,
+      "drop": [],
+      "where": "Peak Pond's east shore, the pond the fourth town keeps like a garden",
+      "stage": "mid (after the fourth badge)",
+      "lines": {
+        "hello_1": "The town keeps this pond like a garden. Nobody told the fish.",
+        "hello_2": "They were here before the road. So was I, near enough.",
+        "offer": "Pell hands over an Ultra Rod, handle first, without getting up.",
+        "thanks": "Not for show. Use it on the far side, where the water goes dark.",
+        "done": "Still the same pond. Still the same me.",
+        "wait": "The pond is the town's and so is my best line. Come back with your fourth badge and ask again."
+      }
+    },
+    {
+      "id": "npc_fisher_northlight_shore",
+      "slug": "northlight_shore",
+      "name": "Ingrid Salt",
+      "rod": "lure_rod",
+      "gate": {"flag": "gym5_cleared", "says": "your fifth badge"},
+      "water": {"kind": "sea"},
+      "near": [6895, 1968],
+      "radius": 30,
+      "drop": [],
+      "where": "the beach by the Northlight landing, where the packet puts in",
+      "stage": "late-mid (after the fifth badge, the packet's own gate)",
+      "lines": {
+        "hello_1": "The packet from the south-west lands here and is gone before the wake settles.",
+        "hello_2": "The sea keeps no timetable, but it keeps a mood. I fish between the boats.",
+        "offer": "Ingrid draws a Lure Rod out of the sand where it stood and brushes it off.",
+        "thanks": "Keep it out of the surf at night. The packet's lantern is the only light on this shore.",
+        "done": "Tide's turning. It always is.",
+        "wait": "Come back with your fifth badge. The packet won't carry you north without one, and I won't hand a rod to someone who can't cross water."
+      }
+    },
+    {
+      "id": "npc_fisher_sunset_harbour",
+      "slug": "sunset_harbour",
+      "name": "Corin Vale",
+      "rod": "dive_rod",
+      "gate": {"flag": "gym7_cleared", "says": "your seventh badge"},
+      "water": {"kind": "sea"},
+      "near": [2607, 6541],
+      "radius": 30,
+      "drop": ["town sunset_west"],
+      "where": "Sunset West's harbour flats, south of the west pier where the strand runs out into the water",
+      "stage": "late (after the seventh badge)",
+      "lines": {
+        "hello_1": "Everyone on the strand fishes. I mend, which is how I know whose lines are worth it.",
+        "hello_2": "The deep water past the piers is not for beginners. It's for people the town has stopped worrying about.",
+        "offer": "Corin lifts a Dive Rod off the mended pile and holds it out.",
+        "thanks": "Don't loop the line round a pier post. They're older than the town.",
+        "done": "Another net to mend. There's always another net.",
+        "wait": "Come back with your seventh badge. The deep water isn't for beginners, and neither is this rod."
+      }
+    }
+  ],
+  "placeholder": "Claude, 2026-10-12: the names and lines are stand-ins for Codex; the structure (one rod, once per player, behind a badge flag) is the design."
+}

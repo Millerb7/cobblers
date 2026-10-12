@@ -762,6 +762,91 @@
       },
       "faces": "the Scorchbone Dig's pit, due east, at (4183, 5621) on the bone bed, 15 blocks off",
       "why": "Hollis Quarne, the Scorchbone Dig's foreman (data/fossil_dig.json npc; tools/fossil_dig.py seat_problems checks this seat is the spot its plan leaves open, two blocks of air on the ground + 1): on the dig's west lip between the camp and the pit, two blocks north of the rim stair's line (z 5623), about 259 blocks from the nearest route path. Not in a data/towns.json town, so settlement null."
+    },
+    {
+      "id": "npc_fisher_viltri",
+      "conversation": "dlg_fisher_viltri",
+      "at": [
+        1632,
+        104,
+        2895
+      ],
+      "yaw": -27,
+      "ground": {
+        "kind": "heightmap",
+        "y": 103,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the water at (1633, 2897), 2.2 blocks off",
+      "why": "Wick Doran (data/fishermen.json): Lake Viltri's north shore, on the strip between Misty's gym and the east pier; early (the second town)"
+    },
+    {
+      "id": "npc_fisher_glacial_tear",
+      "conversation": "dlg_fisher_glacial_tear",
+      "at": [
+        3350,
+        102,
+        1859
+      ],
+      "yaw": -146,
+      "ground": {
+        "kind": "heightmap",
+        "y": 101,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the water at (3352, 1856), 3.6 blocks off",
+      "why": "Hanne Brook (data/fishermen.json): the river that comes down from the Glacial Tear, a short way off Route 4 between the third town and the fourth; mid (between gyms 3 and 4)"
+    },
+    {
+      "id": "npc_fisher_peak_pond",
+      "conversation": "dlg_fisher_peak_pond",
+      "at": [
+        4147,
+        106,
+        1498
+      ],
+      "yaw": 124,
+      "ground": {
+        "kind": "heightmap",
+        "y": 105,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the water at (4144, 1496), 3.6 blocks off",
+      "why": "Pell Ashwick (data/fishermen.json): Peak Pond's east shore, the pond the fourth town keeps like a garden; mid (after the fourth badge)"
+    },
+    {
+      "id": "npc_fisher_northlight_shore",
+      "conversation": "dlg_fisher_northlight_shore",
+      "at": [
+        6895,
+        63,
+        1968
+      ],
+      "yaw": 34,
+      "ground": {
+        "kind": "heightmap",
+        "y": 62,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the water at (6893, 1971), 3.6 blocks off",
+      "why": "Ingrid Salt (data/fishermen.json): the beach by the Northlight landing, where the packet puts in; late-mid (after the fifth badge, the packet's own gate)"
+    },
+    {
+      "id": "npc_fisher_sunset_harbour",
+      "conversation": "dlg_fisher_sunset_harbour",
+      "at": [
+        2607,
+        63,
+        6541
+      ],
+      "yaw": 124,
+      "ground": {
+        "kind": "heightmap",
+        "y": 62,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the water at (2604, 6539), 3.6 blocks off",
+      "why": "Corin Vale (data/fishermen.json): Sunset West's harbour flats, south of the west pier where the strand runs out into the water; late (after the seventh badge)"
     }
   ],
   "not_seated": [

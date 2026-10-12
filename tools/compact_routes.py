@@ -741,9 +741,10 @@ def splice_list(rel, key, ids, new, after_id):
     return False
 
 
-def splice_quests(ids, new):
+def splice_quests(ids, new, before=None):
     """data/quests.json is hand-formatted (it does not round-trip through json.dumps), so records are spliced as text:
-    the old blocks of this table's ids out, the new ones in before QUEST_BEFORE."""
+    the old blocks of this table's ids out, the new ones in before QUEST_BEFORE (or `before`, which tools/fishermen.py
+    names so that two tables splicing into the same file never meet at one line)."""
     p = DATA / "quests.json"
     text = p.read_text(encoding="utf-8")
     lines = text.split("\n")
@@ -757,7 +758,7 @@ def splice_quests(ids, new):
             drop.update(range(s, bounds[s]))
     kept = [l for i, l in enumerate(lines) if i not in drop]
     starts2 = [i for i, l in enumerate(kept) if l == "    {" and kept[i + 1].startswith('      "id": "')]
-    at = next(i for i in starts2 if kept[i + 1].split('"')[3] == QUEST_BEFORE)
+    at = next(i for i in starts2 if kept[i + 1].split('"')[3] == (before or QUEST_BEFORE))
     block = []
     for q in new:
         body = json.dumps(q, indent=2, ensure_ascii=False).split("\n")

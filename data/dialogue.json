@@ -7219,6 +7219,576 @@
       }
     },
     {
+      "id": "dlg_fisher_viltri",
+      "quest_id": "evt_fisher_viltri",
+      "npc_id": "npc_fisher_viltri",
+      "source": "data/fishermen.json (tools/fishermen.py write)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_fisher_viltri.dialogue_cursor",
+        "initial_node": "fd_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_fisher_viltri.completed",
+            "value": true
+          },
+          "node": "fd_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_fisher_viltri.rod_claimed",
+            "value": true
+          },
+          "node": "fd_4"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "not",
+            "condition": {
+              "kind": "flag",
+              "flag": "gym1_cleared"
+            }
+          },
+          "node": "fd_wait"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "fd_1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "fd_1",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Misty's crew work the deep end off the piers. I keep the shallows, where nothing is in a hurry.",
+          "next": "fd_2"
+        },
+        {
+          "id": "fd_2",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "A good line is for someone who has already won something with a bad one.",
+          "next": "fd_3"
+        },
+        {
+          "id": "fd_3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Wick lifts a Great Rod from beside his stool and holds it out.",
+          "next": "fd_4",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "give_rod"
+            }
+          ]
+        },
+        {
+          "id": "fd_4",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "It will take more than the one you're carrying. Keep it off the pier posts.",
+          "next": "fd_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "fd_done",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Quiet today. It usually is, and I like it that way.",
+          "next": "fd_done"
+        },
+        {
+          "id": "fd_wait",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Come back with your first badge. I only hand a good line to someone who has used the last one.",
+          "next": "fd_wait"
+        }
+      ],
+      "speakers": {
+        "fisher": "Wick Doran",
+        "narration": null
+      },
+      "npc_name": "Wick Doran",
+      "placeholder": "Claude, 2026-10-12: the names and lines are stand-ins for Codex; the structure (one rod, once per player, behind a badge flag) is the design."
+    },
+    {
+      "id": "dlg_fisher_glacial_tear",
+      "quest_id": "evt_fisher_glacial_tear",
+      "npc_id": "npc_fisher_glacial_tear",
+      "source": "data/fishermen.json (tools/fishermen.py write)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_fisher_glacial_tear.dialogue_cursor",
+        "initial_node": "fd_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_fisher_glacial_tear.completed",
+            "value": true
+          },
+          "node": "fd_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_fisher_glacial_tear.rod_claimed",
+            "value": true
+          },
+          "node": "fd_4"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "not",
+            "condition": {
+              "kind": "flag",
+              "flag": "gym3_cleared"
+            }
+          },
+          "node": "fd_wait"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "fd_1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "fd_1",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "This river comes a long way down from the Glacial Tear before it belongs to anybody. Cold the whole length.",
+          "next": "fd_2"
+        },
+        {
+          "id": "fd_2",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "The current doesn't care what you're after. You learn to cast across it, not into it.",
+          "next": "fd_3"
+        },
+        {
+          "id": "fd_3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Hanne takes a Net Rod from where it leans against her pack and holds it out.",
+          "next": "fd_4",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "give_rod"
+            }
+          ]
+        },
+        {
+          "id": "fd_4",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Mind the current. It will have the rod if you let it.",
+          "next": "fd_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "fd_done",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Cold water, patient fish. Same as ever.",
+          "next": "fd_done"
+        },
+        {
+          "id": "fd_wait",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Come back with your third badge. The road past here is long and I'd rather you'd earned the walk.",
+          "next": "fd_wait"
+        }
+      ],
+      "speakers": {
+        "fisher": "Hanne Brook",
+        "narration": null
+      },
+      "npc_name": "Hanne Brook",
+      "placeholder": "Claude, 2026-10-12: the names and lines are stand-ins for Codex; the structure (one rod, once per player, behind a badge flag) is the design."
+    },
+    {
+      "id": "dlg_fisher_peak_pond",
+      "quest_id": "evt_fisher_peak_pond",
+      "npc_id": "npc_fisher_peak_pond",
+      "source": "data/fishermen.json (tools/fishermen.py write)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_fisher_peak_pond.dialogue_cursor",
+        "initial_node": "fd_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_fisher_peak_pond.completed",
+            "value": true
+          },
+          "node": "fd_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_fisher_peak_pond.rod_claimed",
+            "value": true
+          },
+          "node": "fd_4"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "not",
+            "condition": {
+              "kind": "flag",
+              "flag": "gym4_cleared"
+            }
+          },
+          "node": "fd_wait"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "fd_1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "fd_1",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "The town keeps this pond like a garden. Nobody told the fish.",
+          "next": "fd_2"
+        },
+        {
+          "id": "fd_2",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "They were here before the road. So was I, near enough.",
+          "next": "fd_3"
+        },
+        {
+          "id": "fd_3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Pell hands over an Ultra Rod, handle first, without getting up.",
+          "next": "fd_4",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "give_rod"
+            }
+          ]
+        },
+        {
+          "id": "fd_4",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Not for show. Use it on the far side, where the water goes dark.",
+          "next": "fd_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "fd_done",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Still the same pond. Still the same me.",
+          "next": "fd_done"
+        },
+        {
+          "id": "fd_wait",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "The pond is the town's and so is my best line. Come back with your fourth badge and ask again.",
+          "next": "fd_wait"
+        }
+      ],
+      "speakers": {
+        "fisher": "Pell Ashwick",
+        "narration": null
+      },
+      "npc_name": "Pell Ashwick",
+      "placeholder": "Claude, 2026-10-12: the names and lines are stand-ins for Codex; the structure (one rod, once per player, behind a badge flag) is the design."
+    },
+    {
+      "id": "dlg_fisher_northlight_shore",
+      "quest_id": "evt_fisher_northlight_shore",
+      "npc_id": "npc_fisher_northlight_shore",
+      "source": "data/fishermen.json (tools/fishermen.py write)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_fisher_northlight_shore.dialogue_cursor",
+        "initial_node": "fd_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_fisher_northlight_shore.completed",
+            "value": true
+          },
+          "node": "fd_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_fisher_northlight_shore.rod_claimed",
+            "value": true
+          },
+          "node": "fd_4"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "not",
+            "condition": {
+              "kind": "flag",
+              "flag": "gym5_cleared"
+            }
+          },
+          "node": "fd_wait"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "fd_1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "fd_1",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "The packet from the south-west lands here and is gone before the wake settles.",
+          "next": "fd_2"
+        },
+        {
+          "id": "fd_2",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "The sea keeps no timetable, but it keeps a mood. I fish between the boats.",
+          "next": "fd_3"
+        },
+        {
+          "id": "fd_3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Ingrid draws a Lure Rod out of the sand where it stood and brushes it off.",
+          "next": "fd_4",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "give_rod"
+            }
+          ]
+        },
+        {
+          "id": "fd_4",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Keep it out of the surf at night. The packet's lantern is the only light on this shore.",
+          "next": "fd_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "fd_done",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Tide's turning. It always is.",
+          "next": "fd_done"
+        },
+        {
+          "id": "fd_wait",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Come back with your fifth badge. The packet won't carry you north without one, and I won't hand a rod to someone who can't cross water.",
+          "next": "fd_wait"
+        }
+      ],
+      "speakers": {
+        "fisher": "Ingrid Salt",
+        "narration": null
+      },
+      "npc_name": "Ingrid Salt",
+      "placeholder": "Claude, 2026-10-12: the names and lines are stand-ins for Codex; the structure (one rod, once per player, behind a badge flag) is the design."
+    },
+    {
+      "id": "dlg_fisher_sunset_harbour",
+      "quest_id": "evt_fisher_sunset_harbour",
+      "npc_id": "npc_fisher_sunset_harbour",
+      "source": "data/fishermen.json (tools/fishermen.py write)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_fisher_sunset_harbour.dialogue_cursor",
+        "initial_node": "fd_1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_fisher_sunset_harbour.completed",
+            "value": true
+          },
+          "node": "fd_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_fisher_sunset_harbour.rod_claimed",
+            "value": true
+          },
+          "node": "fd_4"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "not",
+            "condition": {
+              "kind": "flag",
+              "flag": "gym7_cleared"
+            }
+          },
+          "node": "fd_wait"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "fd_1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "fd_1",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Everyone on the strand fishes. I mend, which is how I know whose lines are worth it.",
+          "next": "fd_2"
+        },
+        {
+          "id": "fd_2",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "The deep water past the piers is not for beginners. It's for people the town has stopped worrying about.",
+          "next": "fd_3"
+        },
+        {
+          "id": "fd_3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Corin lifts a Dive Rod off the mended pile and holds it out.",
+          "next": "fd_4",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "give_rod"
+            }
+          ]
+        },
+        {
+          "id": "fd_4",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Don't loop the line round a pier post. They're older than the town.",
+          "next": "fd_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "fd_done",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Another net to mend. There's always another net.",
+          "next": "fd_done"
+        },
+        {
+          "id": "fd_wait",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Come back with your seventh badge. The deep water isn't for beginners, and neither is this rod.",
+          "next": "fd_wait"
+        }
+      ],
+      "speakers": {
+        "fisher": "Corin Vale",
+        "narration": null
+      },
+      "npc_name": "Corin Vale",
+      "placeholder": "Claude, 2026-10-12: the names and lines are stand-ins for Codex; the structure (one rod, once per player, behind a badge flag) is the design."
+    },
+    {
       "id": "dlg_route2_rollaway_geodude",
       "quest_id": "evt_route2_rollaway_geodude",
       "npc_id": "npc_route2_miner",
