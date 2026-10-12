@@ -6,10 +6,10 @@
  "counts": {
   "cave": 6,
   "land": 61,
-  "sea": 3,
+  "sea": 19,
   "site": 1,
   "waterway": 1,
-  "total": 72,
+  "total": 88,
   "not_zones": 33
  },
  "derivation": {
@@ -1512,6 +1512,278 @@
    ],
    "species": 9,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 256-the border blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "outer_deep",
+   "kind": "sea",
+   "name": "The Outer Deep",
+   "subtitle": "The Outer Deep",
+   "region": "the_outer_deep",
+   "table": "data/spawns.json marine_zones.outer_deep bands.outer_deep",
+   "tier": null,
+   "levels": [
+    40,
+    50
+   ],
+   "species": 16,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 0-the border blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "frostwater_shallows",
+   "kind": "sea",
+   "name": "Frostwater Shelf: the shallows",
+   "subtitle": "The Frostwater Shelf",
+   "region": "frostwater_shelf",
+   "table": "data/spawns.json marine_zones.frostwater_shelf bands.frostwater_shallows",
+   "tier": null,
+   "levels": [
+    26,
+    30
+   ],
+   "species": 10,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 0-128 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "frostwater_open",
+   "kind": "sea",
+   "name": "Frostwater Shelf: open water",
+   "subtitle": "The Frostwater Shelf",
+   "region": "frostwater_shelf",
+   "table": "data/spawns.json marine_zones.frostwater_shelf bands.frostwater_open",
+   "tier": null,
+   "levels": [
+    30,
+    35
+   ],
+   "species": 11,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 128-384 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "frostwater_depths",
+   "kind": "sea",
+   "name": "Frostwater Shelf: the deep",
+   "subtitle": "The Frostwater Shelf",
+   "region": "frostwater_shelf",
+   "table": "data/spawns.json marine_zones.frostwater_shelf bands.frostwater_depths",
+   "tier": null,
+   "levels": [
+    35,
+    40
+   ],
+   "species": 13,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 384-the border blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "pine_strait_shallows",
+   "kind": "sea",
+   "name": "Pine Strait: the shallows",
+   "subtitle": "The Pine Strait",
+   "region": "frostwater_shelf",
+   "table": "data/spawns.json marine_zones.pine_strait bands.pine_strait_shallows",
+   "tier": null,
+   "levels": [
+    36,
+    40
+   ],
+   "species": 10,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 0-128 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "pine_strait_open",
+   "kind": "sea",
+   "name": "Pine Strait: open water",
+   "subtitle": "The Pine Strait",
+   "region": "frostwater_shelf",
+   "table": "data/spawns.json marine_zones.pine_strait bands.pine_strait_open",
+   "tier": null,
+   "levels": [
+    40,
+    45
+   ],
+   "species": 12,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 128-384 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "pine_strait_depths",
+   "kind": "sea",
+   "name": "Pine Strait: the deep",
+   "subtitle": "The Pine Strait",
+   "region": "frostwater_shelf",
+   "table": "data/spawns.json marine_zones.pine_strait bands.pine_strait_depths",
+   "tier": null,
+   "levels": [
+    45,
+    50
+   ],
+   "species": 9,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 384-the border blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "eastern_reach_shallows",
+   "kind": "sea",
+   "name": "Eastern Reach: the shallows",
+   "subtitle": "The Eastern Reach",
+   "region": "eastern_reach",
+   "table": "data/spawns.json marine_zones.eastern_reach bands.eastern_reach_shallows",
+   "tier": null,
+   "levels": [
+    41,
+    45
+   ],
+   "species": 8,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 0-128 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "eastern_reach_open",
+   "kind": "sea",
+   "name": "Eastern Reach: open water",
+   "subtitle": "The Eastern Reach",
+   "region": "eastern_reach",
+   "table": "data/spawns.json marine_zones.eastern_reach bands.eastern_reach_open",
+   "tier": null,
+   "levels": [
+    45,
+    50
+   ],
+   "species": 10,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 128-384 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "eastern_reach_depths",
+   "kind": "sea",
+   "name": "Eastern Reach: the deep",
+   "subtitle": "The Eastern Reach",
+   "region": "eastern_reach",
+   "table": "data/spawns.json marine_zones.eastern_reach bands.eastern_reach_depths",
+   "tier": null,
+   "levels": [
+    50,
+    55
+   ],
+   "species": 9,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 384-the border blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "southern_reef",
+   "kind": "sea",
+   "name": "Southern Shallows: the reef",
+   "subtitle": "The Southern Shallows",
+   "region": "southern_shallows",
+   "table": "data/spawns.json marine_zones.southern_shallows bands.southern_reef",
+   "tier": null,
+   "levels": [
+    46,
+    50
+   ],
+   "species": 10,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 0-128 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "southern_open",
+   "kind": "sea",
+   "name": "Southern Shallows: open water",
+   "subtitle": "The Southern Shallows",
+   "region": "southern_shallows",
+   "table": "data/spawns.json marine_zones.southern_shallows bands.southern_open",
+   "tier": null,
+   "levels": [
+    50,
+    55
+   ],
+   "species": 12,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 128-384 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "southern_depths",
+   "kind": "sea",
+   "name": "Southern Shallows: the deep",
+   "subtitle": "The Southern Shallows",
+   "region": "southern_shallows",
+   "table": "data/spawns.json marine_zones.southern_shallows bands.southern_depths",
+   "tier": null,
+   "levels": [
+    55,
+    60
+   ],
+   "species": 10,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 384-the border blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "sunset_shallows",
+   "kind": "sea",
+   "name": "Sunset Sea: the shallows",
+   "subtitle": "The Sunset Sea",
+   "region": "southern_shallows",
+   "table": "data/spawns.json marine_zones.sunset_sea bands.sunset_shallows",
+   "tier": null,
+   "levels": [
+    21,
+    25
+   ],
+   "species": 9,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 0-128 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "sunset_open",
+   "kind": "sea",
+   "name": "Sunset Sea: open water",
+   "subtitle": "The Sunset Sea",
+   "region": "southern_shallows",
+   "table": "data/spawns.json marine_zones.sunset_sea bands.sunset_open",
+   "tier": null,
+   "levels": [
+    25,
+    30
+   ],
+   "species": 10,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 128-384 blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
+   "zone": "sunset_depths",
+   "kind": "sea",
+   "name": "Sunset Sea: the deep",
+   "subtitle": "The Sunset Sea",
+   "region": "southern_shallows",
+   "table": "data/spawns.json marine_zones.sunset_sea bands.sunset_depths",
+   "tier": null,
+   "levels": [
+    30,
+    35
+   ],
+   "species": 9,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 384-the border blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
   },
