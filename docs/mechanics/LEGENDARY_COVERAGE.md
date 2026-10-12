@@ -332,3 +332,36 @@ later.
   seen in game.
 - Pokemon lore used for theme (the Swords' paradox doubles, the Loyal Three, the Tapus' islands) is recalled, not read;
   it is flavour, and no rule here rests on it.
+
+## 9. The nine homeless paradoxes, re-homed (2026-10-12)
+
+The Zero Dig is cut and the Temple Calendar and the Last Cistern were never built, so nine paradoxes had a roster home
+that cannot be entered. Each moved into the legendary pool of a BUILT dungeon by theme
+(`data/dungeon_prize_roster.json`, read by `tools/dungeon_prize.pool_at` through each habitat's `prize.roster`). The three
+unbuilt dungeons' pools are now `{}`; one home each. The table is the whole change, with the band range each keeps.
+
+| Paradox | From | To | Bands | Why | Model gate |
+|---|---|---|---|---|---|
+| Iron Treads | zero_dig | night_shift | 4-6 | a steel/ground machine is a mine's find | atm_subset |
+| Great Tusk | zero_dig | field_of_swords | 4-6 | ground/fighting, the open hills | atm_subset |
+| Sandy Shocks | zero_dig | ash_bell | 5-6 | electric/ground waste beside Raikou and Raging Bolt | atm_subset |
+| Iron Hands | zero_dig | crucible | 6 | a forge-hammer brute; the only non-gated species of that pool | none |
+| Iron Thorns | zero_dig | warped_lab | 5-6 | a future paradox beside the lab's other two | atm_subset |
+| Scream Tail | temple_calendar | jungle | 4-6 | floral ancient paradox in the flowering jungle | atm_subset |
+| Brute Bonnet | temple_calendar | patriarch | 4-6 | ancient grass/dark, the great tree's root hollows | atm_subset |
+| Iron Bundle | cistern | dragonspiral | 6 | ice/water future paradox in an ice spire | atm_subset |
+| Walking Wake | cistern | flooded_ruin | 4-6 | the drowned reliquary's water | none |
+
+No pool doubles (largest growth: the Crucible 2 -> 3 at its one band). Every pool keeps at least one species that is not
+model-gated at each band it has, except the pools that were already all-gated before this change (the Street's bands 4-5,
+which this change does not touch). The Crucible's band 6 was all-gated (Stakataka, Gouging Fire) and now offers Iron Hands
+until the AllTheMons subset is delivered. Not verified in game: file validity and the pool tests only.
+
+### Heatran and Yveltal stay planned
+
+Both are listed as D18 boss catches (`boss_legendary` in the roster), but a rooms dungeon has no legendary boss stage: the
+boss is a chain of NPC trainer stages (`data/dungeons.json` `boss.teams`), and the only legendary mechanism in
+`tools/dungeon_fights.py` is the prize habitat (`anchors["legendary"]`). The Crucible and Patriarch records say so in their
+`does_not_cover`. Heatran's room is `data/heatran_boss.json` (designed, not built); Yveltal needs the wild band-6 last stage
+and the sealed cocoon (E-P6, E-P7). The prize form (a pool entry) is the roster's own stated alternative; it is the owner's
+call, not taken here.

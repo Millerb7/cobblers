@@ -322,7 +322,8 @@ def test_the_prize_is_exactly_the_rosters_band_6_restricted_trio_and_nothing_bel
     pz = room["params"]["prize"]
     entry = next(e for e in ROSTER["dungeons"] if e["id"] == "dragonspiral")
     assert pz["roster"] == "dragonspiral"
-    assert entry["legendary_pool_by_band"] == {"6": ["kyurem", "reshiram", "zekrom"]} and not entry.get("rare_pool_by_band")
+    # the Tao trio plus Iron Bundle (re-homed here 2026-10-12 from the unbuilt Last Cistern; model-gated, so the trio stays the pool until delivery)
+    assert entry["legendary_pool_by_band"] == {"6": ["kyurem", "reshiram", "zekrom", "ironbundle"]} and not entry.get("rare_pool_by_band")
     # the room adds nothing of its own: the roster is the pool
     assert not {k for k in pz if k.endswith("_by_band")}, pz
     assert "species" not in room["params"], "no resident: the trio is the hidden prize"

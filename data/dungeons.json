@@ -1600,7 +1600,7 @@
       "does_not_cover": [
         "Heatran: the Crucible's legendary is the designed boss ROOM (data/heatran_boss.json, NETHER_ENCOUNTERS.md 3.2, not built), not this chain; the roster gives it that one home",
         "the Ultra Beast boss (the roster's ub_boss stakataka, a wormhole leg): the wormhole leg kind is not built (DUNGEON_ROOMS.md 14), and Stakataka renders as the doll until the ATM subset is delivered",
-        "the band-6 prize: the roster's pool (stakataka, gougingfire) is model-gated (atm_subset) and engine.prize.models_delivered is empty, so band 6 has no prize until delivery; bands 4 and 5 have none (the roster names none)",
+        "the band-6 prize beyond Iron Hands: the roster's pool is stakataka, gougingfire (both model-gated, atm_subset) and ironhands (not gated; added 2026-10-12), and engine.prize.models_delivered is empty, so band 6 offers Iron Hands only until delivery; bands 4 and 5 have none (the roster names none)",
         "the Nether site: siting_pending (rip.siting_pending); the test rip is on the overworld trail",
         "anything in a running Minecraft: the walk check is on the generated blocks, and nothing of this dungeon has been entered",
         "the overworld around the test rip: tools/ground.py gives the ground, but trees or anything painted on the slope at x1419..1427 z4118..4124 are not cleared by anything here"
