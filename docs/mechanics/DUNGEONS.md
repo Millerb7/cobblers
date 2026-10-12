@@ -702,7 +702,7 @@ A rip is built from these parts, none of which teleports by itself, so nothing c
 
 **Since 2026-10-10 the overworld rip has no frame and no dark opening.** The owner, seeing the animated oval
 (`engine.rip_art`) in game: "do we have to have the old portal blocks around and behind it?" No: the oval stands free,
-with a small scorched patch of ground under it (`rip.scorch`) and a few purple particles drifting off it. `rip.frame` stays
+with a small patch of ground under it and a few purple particles drifting off it. Since 2026-10-12 the patch is the dungeon's own THEME (the owner: "should represent the biome inside the rift, and once the rift closes the ground goes back"): its core is the theme's `hull.floor`, its rim `hull.wall` (`tools/dungeon.py` `rip_scorch`; an explicit `rip.scorch` still overrides), and `rip_close_lines` puts the ground back from `rip.under`, which is not yet recorded (it needs a read of a world that never had a patch) and which nothing calls yet (no rip closes today). `rip.frame` stays
 as the rip's PLANE, from which the oval, the click and the particles are measured (they stand where they did); R16DR's
 `rips/blocks_<short>` puts the plane back to what was there (`rip.restore`, measured by `python tools/dungeon.py
 --rip-restore` from `tools/ground.py` and, at the Night Shift, the old mine's hill as `tools/route1_old_mine.py` builds it),
