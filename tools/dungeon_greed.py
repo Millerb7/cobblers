@@ -102,19 +102,71 @@ def block_cp(table, block):
 
 def chest_cp(table, spec):
     """The expected cp of one vault chest: a loot table id (the table's loot_tables row) or a list of stacks
-    {"item", "count": n | [lo, hi], "chance"?} (tools/dungeon_puzzles.py loot_table). None if any part is unpriced."""
+    {"item", "count": n | [lo, hi], "chance"?} or {"one_of": [{"item", "weight", "count"?}, ...], "chance"?}
+    (tools/dungeon_puzzles.py loot_table). None if any part is unpriced or a one_of is malformed.
+
+    A one_of is ONE pool that yields one option, drawn by weight, so its value is the PROBABILITY-WEIGHTED expected
+    value: chance x sum(weight_i / sum(weight) x mean count_i x cp_i). This reads the stack itself, not
+    dungeon_puzzles.loot_table's output or helpers, so the price and the generator share no derivation."""
     if isinstance(spec, str):
         row = table.get("loot_tables", {}).get(spec)
         return None if row is None else int(row["cp"])
     total = 0.0
     for s in spec:
+        if "one_of" in s:
+            if one_of_bad(s):
+                return None
+            wsum = float(sum(o["weight"] for o in s["one_of"]))
+            ev = 0.0
+            for o in s["one_of"]:
+                v = item_cp(table, o["item"])
+                if v is None:
+                    return None
+                ev += o["weight"] / wsum * _mean_count(o.get("count", 1)) * v
+            total += float(s.get("chance", 1.0)) * ev
+            continue
         v = item_cp(table, s["item"])
         if v is None:
             return None
-        c = s.get("count", 1)
-        mean = float(c) if isinstance(c, int) else (c[0] + c[1]) / 2.0
-        total += float(s.get("chance", 1.0)) * mean * v
+        total += float(s.get("chance", 1.0)) * _mean_count(s.get("count", 1)) * v
     return int(round(total))
+
+
+def _mean_count(c):
+    return float(c) if isinstance(c, int) else (c[0] + c[1]) / 2.0
+
+
+def stack_items(s):
+    """The item ids a vault stack can drop: one for the plain form, every option's for a one_of."""
+    return [o.get("item") for o in s["one_of"]] if "one_of" in s and isinstance(s["one_of"], list) else [s.get("item")]
+
+
+def one_of_bad(s):
+    """The faults of a one_of stack, as the price needs it: a non-empty list of namespaced items with positive integer
+    weights and a count of 1..64 or [lo, hi], a chance in (0, 1], and no other keys. [] if sound."""
+    bad = []
+    opts = s.get("one_of")
+    if not isinstance(opts, list) or not opts:
+        return ["one_of must be a non-empty list"]
+    for o in opts:
+        if not isinstance(o, dict) or not ID.match(str(o.get("item", ""))):
+            bad.append("option %r has no namespaced item" % (o,))
+            continue
+        if set(o) - {"item", "weight", "count"}:
+            bad.append("%s: keys beside item, weight and count: %s" % (o["item"], sorted(set(o) - {"item", "weight", "count"})))
+        w, c = o.get("weight"), o.get("count", 1)
+        if not (isinstance(w, int) and not isinstance(w, bool) and w >= 1):
+            bad.append("%s: weight %r is not a positive integer" % (o["item"], w))
+        if not (isinstance(c, int) and not isinstance(c, bool) and 1 <= c <= 64) and not (
+                isinstance(c, list) and len(c) == 2 and all(isinstance(x, int) and not isinstance(x, bool) for x in c)
+                and 1 <= c[0] <= c[1] <= 64):
+            bad.append("%s: count %r is not 1..64 or [lo, hi]" % (o["item"], c))
+    ch = s.get("chance", 1.0)
+    if not (isinstance(ch, (int, float)) and not isinstance(ch, bool) and 0 < ch <= 1):
+        bad.append("chance %r is not in (0, 1]" % (ch,))
+    if set(s) - {"one_of", "chance"}:
+        bad.append("keys beside one_of and chance: %s" % sorted(set(s) - {"one_of", "chance"}))
+    return bad
 
 
 def legendary_from_band(doc):
@@ -218,9 +270,12 @@ def problems(doc, table=None):
             bad.append("the rift pick can break %s and the greed table has no row for it: mining it would be free" % blk)
     for d, rm, k, spec in vault_specs(doc):
         if chest_cp(table, spec) is None:
+            malformed = [] if isinstance(spec, str) else ["one_of: " + "; ".join(one_of_bad(s)) for s in spec
+                                                           if isinstance(s, dict) and "one_of" in s and one_of_bad(s)]
             bad.append("%s vault %s band %d: its loot is not priced by the greed table (%s)"
                        % (d["id"], rm["id"], k, spec if isinstance(spec, str) else
-                          ", ".join(s["item"] for s in spec if item_cp(table, s["item"]) is None)))
+                          "; ".join(malformed + [", ".join(i for s in spec if isinstance(s, dict)
+                                                           for i in stack_items(s) if item_cp(table, i) is None)])))
     c = table.get("catches", {})
     if tuple(sorted(c.get("kinds", {}), key=lambda k: c["kinds"][k])) != KINDS or sorted(c.get("kinds", {}).values()) != [1, 2, 3, 4]:
         bad.append("greed.catches.kinds must be ambient 1, nest 2, miniboss 3, habitat 4")

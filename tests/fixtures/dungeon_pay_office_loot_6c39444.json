@@ -1,0 +1,107 @@
+{
+ "_note": "tools/dungeon_puzzles.py loot_table() output at 6c39444 (before the one_of form) for the Night Shift pay_office, with the stacks it was made from; the old stack form must stay byte-identical.",
+ "bands": {
+  "1": {
+   "stacks": [
+    {
+     "item": "cobblemon:potion",
+     "count": 1
+    },
+    {
+     "item": "minecraft:iron_ingot",
+     "count": 4
+    },
+    {
+     "item": "cobblemon:exp_candy_xs",
+     "count": 2
+    }
+   ],
+   "text": "{\n  \"type\": \"minecraft:chest\",\n  \"pools\": [\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:potion\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 1\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"minecraft:iron_ingot\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 4\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:exp_candy_xs\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 2\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n"
+  },
+  "2": {
+   "stacks": [
+    {
+     "item": "cobblemon:super_potion",
+     "count": 1
+    },
+    {
+     "item": "minecraft:iron_ingot",
+     "count": 2
+    },
+    {
+     "item": "cobblemon:exp_candy_s",
+     "count": 2
+    }
+   ],
+   "text": "{\n  \"type\": \"minecraft:chest\",\n  \"pools\": [\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:super_potion\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 1\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"minecraft:iron_ingot\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 2\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:exp_candy_s\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 2\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n"
+  },
+  "3": {
+   "stacks": [
+    {
+     "item": "cobblemon:super_potion",
+     "count": 1
+    },
+    {
+     "item": "minecraft:gold_ingot",
+     "count": 1
+    },
+    {
+     "item": "cobblemon:exp_candy_s",
+     "count": 3
+    }
+   ],
+   "text": "{\n  \"type\": \"minecraft:chest\",\n  \"pools\": [\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:super_potion\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 1\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"minecraft:gold_ingot\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 1\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:exp_candy_s\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 3\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n"
+  },
+  "4": {
+   "stacks": [
+    {
+     "item": "cobblemon:super_potion",
+     "count": 1
+    },
+    {
+     "item": "minecraft:gold_ingot",
+     "count": 2
+    },
+    {
+     "item": "cobblemon:exp_candy_m",
+     "count": 3
+    }
+   ],
+   "text": "{\n  \"type\": \"minecraft:chest\",\n  \"pools\": [\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:super_potion\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 1\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"minecraft:gold_ingot\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 2\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:exp_candy_m\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 3\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n"
+  },
+  "5": {
+   "stacks": [
+    {
+     "item": "cobblemon:hyper_potion",
+     "count": 1
+    },
+    {
+     "item": "minecraft:iron_ingot",
+     "count": 2
+    },
+    {
+     "item": "cobblemon:exp_candy_m",
+     "count": 3
+    }
+   ],
+   "text": "{\n  \"type\": \"minecraft:chest\",\n  \"pools\": [\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:hyper_potion\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 1\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"minecraft:iron_ingot\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 2\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:exp_candy_m\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 3\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n"
+  },
+  "6": {
+   "stacks": [
+    {
+     "item": "cobblemon:hyper_potion",
+     "count": 1
+    },
+    {
+     "item": "minecraft:gold_ingot",
+     "count": 1
+    },
+    {
+     "item": "cobblemon:exp_candy_l",
+     "count": 3
+    }
+   ],
+   "text": "{\n  \"type\": \"minecraft:chest\",\n  \"pools\": [\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:hyper_potion\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 1\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"minecraft:gold_ingot\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 1\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"rolls\": 1,\n      \"entries\": [\n        {\n          \"type\": \"minecraft:item\",\n          \"name\": \"cobblemon:exp_candy_l\",\n          \"functions\": [\n            {\n              \"function\": \"minecraft:set_count\",\n              \"count\": 3\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n"
+  }
+ }
+}
