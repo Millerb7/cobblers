@@ -41,6 +41,14 @@
       "description": "For every Pokemon you can meet in the wild, what it drops when you defeat it and how often; and for every dropped item, which Pokemon to look for.",
       "generator": "tools/player_guide_drops.py",
       "order": 35
+    },
+    {
+      "file": "dungeons.html",
+      "title": "Dungeons",
+      "label": "Dungeons",
+      "description": "How rift runs work (sigils, the clock, points, deaths, relics and the optional rooms) and, for each dungeon, its clock at every band, its vault, its ore, what you can catch and the chance of its hidden prize.",
+      "generator": "tools/player_guide_dungeons.py",
+      "order": 40
     }
   ]
 }
