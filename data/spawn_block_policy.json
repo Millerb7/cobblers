@@ -578,6 +578,15 @@
       "why": "the two places are about warm air and blossom coming out of a frozen hillside; a petal on moss and a leaf in a drift are the picture, and the pool is the steam",
       "consequence": "read from data/spawn_blocks.json 2026-10-09: petals and cherry leaves are neededNearbyBlocks of combee, cutiefly, comfey and ribombee (#cobblemon:flowers); water of freshwater species. Which of them spawn is decided by the pools in data/spawns.json (the hollow is inside Route 4's corridor, the gate 235 blocks outside it), not by these blocks",
       "decided": "this file's owner_decision_2026_10_05 allows spawn-condition blocks; this entry names where, as contract C4 requires. Chosen by the builder of the gap fill, 2026-10-09, for the owner's review"
+    },
+    {
+      "blocks": [
+        "minecraft:water"
+      ],
+      "scope": "the Tide Shrine's tide-pool ring (sanctuaries: tools/sanctuaries.py, data/sanctuaries.json sanctuary_tide_shrine, pack cobblers_sanctuaries): one block deep in the court's floor, a ring of about 60 cells between radius 5 and 6.5 round the court's centre, and the stone water bowls inside its wall",
+      "why": "the owner, 2026-10-12: the cave was to become 'something that looks good'; Tapu Fini's shrine is a tide pool, and the brief names one ('a misty tide-pool shrine on the strait shore'). Shallow still water in a stone ring, bridged by four causeways so the centre is reached on foot",
+      "consequence": "a few dozen cells of still water one deep inside a walled court that already holds an activated Habitat Block (sanctuary_tide_shrine_court_ward, spawn_range 8): water-conditioned natural spawns in the ring are possible and would be the strait's own shore species (south_strand). If a playtest shows them crowding the court, the fix is a smaller ring, not removing the shrine's water",
+      "decided": "the owner, 2026-10-05: spawn-condition blocks ALLOWED (this file's owner_decision_2026_10_05); this entry names where, as the contract C4 requires"
     }
   ],
   "checked_paving": {

@@ -271,12 +271,21 @@
       ]
     },
     "caves": {
-      "what": "the cave kit: K1 Stoneford Cut, K2 The Singing Hollow, K3 The Relay Fault; each gate's barrier door, the antechambers' and chambers' activated Habitat Blocks, and K3's area-boss keeper (cobblers_caves)",
+      "what": "the cave kit: since 2026-10-12 the natural caves N1-N3 only (a mouth, a winding passage, a hall; no gate, occupant or keeper). K1-K6 were retired the same day and their gates and keepers moved to the sanctuaries",
       "paths": [
         "data/caves.json",
         "tools/caves.py",
         "tools/caves_audit.py",
         "docs/mechanics/LEGENDARY_HOMES.md"
+      ]
+    },
+    "sanctuaries": {
+      "what": "the legendary sanctuaries S2-S6 (open-air set pieces that replace the cave kit's K2-K6): each court's barrier door, the rare-spawn courts' activated Habitat Blocks, the three area bosses' keeper (cobblers_sanctuaries), and the retired caves' restore",
+      "paths": [
+        "data/sanctuaries.json",
+        "tools/sanctuaries.py",
+        "tools/sanctuaries_audit.py",
+        "tests/test_sanctuaries.py"
       ]
     }
   },
@@ -580,7 +589,9 @@
         "new_places_land_audit.py": "checker: B4 of the 2026-10-09 places (the independent land audit: reads data/spawn_blocks.json to refuse a spawn-condition block the policy does not allow)",
         "long_count.py": "checker: the Long Count's builder (data/long_count.json, 2026-10-09): check_all() reads data/spawn_blocks.json and refuses to build a site that writes a block a spawn condition names (an oak leaf is one, so the young trees' leaves are azalea leaves). A builder's guard, not an audit; the independent audit (tools/long_count_audit.py) is owed, data/long_count.json audit_checklist",
         "caves.py": "source: caves",
-        "caves_audit.py": "checker: the built cobblers_caves pack (source caves): every block it writes against data/spawn_blocks.json and the policy entries scoped to caves"
+        "caves_audit.py": "checker: the built cobblers_caves pack (source caves): every block it writes against data/spawn_blocks.json and the policy entries scoped to caves",
+        "sanctuaries.py": "source: sanctuaries",
+        "sanctuaries_audit.py": "checker: the built cobblers_sanctuaries pack (source sanctuaries): every block it writes against data/spawn_blocks.json and the policy entries scoped to sanctuaries"
       }
     },
     {
@@ -1184,35 +1195,35 @@
     },
     {
       "id": "C25",
-      "title": "A cave boss that blacks a player out becomes the claim's guardian, and the cave keeper never touches a guardian",
+      "title": "A sanctuary boss that blacks a player out becomes the claim's guardian, and the sanctuary keeper never touches a guardian",
       "owner": "recovery_claims",
       "consumers": [
-        "caves"
+        "sanctuaries"
       ],
       "constrained_by": [
-        "caves"
+        "sanctuaries"
       ],
-      "statement": "A cave boss (data/caves.json occupant.mode area_boss: Miraidon at The Relay Fault, Dialga at The Clock Cellar, Koraidon at Sunscar) carries tags that are never the blackout's exempt tag, so a boss that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the cave keeper (cobblers:caves/boss/<id>/*) only counts it: the guardian is found as present by its tag and species near the spot, and no kill, hold, wake, settle or duplicate selector of the pack reaches an entity tagged cobblers.guardian. Nothing in the pack adds or removes cobblers.guardian or the exempt tag. The keeper's return clock starts only when no boss and no guardian is present for two loaded passes, so a player's items are never left with a guardian that was despawned, replaced or respawned under them.",
+      "statement": "A sanctuary boss (data/sanctuaries.json occupant.mode area_boss: Miraidon at The Broken Relay, Dialga at The Stopped Clock, Koraidon at Sunscar; the cave kit's keeper, moved there on 2026-10-12 with its rules unchanged) carries tags that are never the blackout's exempt tag, so a boss that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the keeper (cobblers:sanctuaries/boss/<id>/*) only counts it: the guardian is found as present by its tag and species near the spot, and no kill, hold, wake, settle or duplicate selector of the pack reaches an entity tagged cobblers.guardian. Nothing in the pack adds or removes cobblers.guardian or the exempt tag. The keeper's return clock starts only when no boss and no guardian is present for two loaded passes, so a player's items are never left with a guardian that was despawned, replaced or respawned under them.",
       "stated_in": [
         {
           "at": "tools/blackout_pack.py:510",
           "quote": "\"tag @s add cobblers.guardian\","
         },
         {
-          "at": "tools/caves.py:839",
+          "at": "tools/sanctuaries.py:1624",
           "quote": "and NEVER a guardian"
         },
         {
-          "at": "data/caves.json:470",
+          "at": "data/sanctuaries.json:392",
           "quote": "\"guardian_tag\": \"cobblers.guardian\""
         }
       ],
       "tests": [
-        "tests/test_system_contracts.py::test_contract_c25_a_cave_boss_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it",
-        "tests/test_caves.py::test_a_guardian_is_never_held_woken_settled_or_killed",
-        "tests/test_caves.py::test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_spawns",
-        "tests/test_caves.py::test_a_duplicate_is_removed_and_never_a_guardian",
-        "tests/test_caves.py::test_a_keeper_that_can_kill_a_guardian_is_refused"
+        "tests/test_system_contracts.py::test_contract_c25_a_sanctuary_boss_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it",
+        "tests/test_sanctuaries.py::test_a_guardian_is_never_held_woken_settled_or_killed",
+        "tests/test_sanctuaries.py::test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_spawns",
+        "tests/test_sanctuaries.py::test_a_duplicate_is_removed_and_never_a_guardian",
+        "tests/test_sanctuaries.py::test_a_keeper_that_can_reach_a_guardian_is_refused"
       ]
     }
   ]

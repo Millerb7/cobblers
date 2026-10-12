@@ -50,8 +50,9 @@ GRID = 32                       # the sub-region raster compile_spawns uses (SUB
 VR_SUBTITLE = "Victory Road"
 # fungal_*: the Fungal Isle's three nest pools (tools/fungal_isle.py), each a few dozen blocks inside fungal_north or
 # fungal_south and untitled by any settlement, so once placed they would otherwise raise below
-# cave_*: the cave kit's pools (tools/caves.py, data/caves.json), each a few dozen blocks inside the sub-region its chamber is in
-MICRO_SITE = re.compile(r"^(elder|sapling|fungal|scar_tarn|cave)_|_sapling_")
+# cave_*: the cave kit's pools (tools/caves.py, data/caves.json), each a few dozen blocks inside the sub-region its chamber is in;
+# sanctuary_*: the legendary sanctuaries' court pools that replaced them on 2026-10-12 (tools/sanctuaries.py), the same kind of site
+MICRO_SITE = re.compile(r"^(elder|sapling|fungal|scar_tarn|cave|sanctuary)_|_sapling_")
 
 
 def load(name):

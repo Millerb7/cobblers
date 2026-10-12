@@ -23,7 +23,7 @@ CATEGORY = {
     "trainers.json": "trainers", "route_trainers.json": "trainers", "vr_trainers.json": "trainers",
     "arena_trainers.json": "trainers", "gym_trainers.json": "trainers", "late_route_trainers.json": "trainers",
     "shrines.json": "shrines", "maze_shrines.json": "shrines", "legendaries.json": "legendaries",
-    "caves.json": "caves", "fishermen.json": "settlements",
+    "caves.json": "caves", "sanctuaries.json": "legendaries", "fishermen.json": "settlements",
     "adopted_legendary_sites.json": "legendaries",
     "landmarks.json": "landmarks", "signposts.json": "landmarks", "elder_trees.json": "landmarks",
     "themed_saplings.json": "landmarks", "foliage.json": "landmarks",
@@ -255,6 +255,12 @@ for c in _load("caves.json", "caves"):
     x, z = c["mouth"]["anchor"]
     marker(x, z, "square", (240, 140, 40), "%s (%s)" % (c["name"], ((c.get("occupant") or {}).get("species") or "natural").capitalize()), (255, 200, 140))
     layers["caves"] += 1
+for s_ in _load("sanctuaries.json", "sanctuaries"):     # the open-air legendary sanctuaries that replaced the kitted caves (2026-10-12)
+    if not s_.get("site"):
+        continue
+    x, z = s_["site"]["centre"]
+    marker(x, z, "square", (240, 200, 60), "%s (%s)" % (s_["name"], s_["occupant"]["species"].capitalize()), (255, 230, 150))
+    layers["sanctuaries"] += 1
 maze = _load("maze_shrines.json", "shrines")
 for sh in maze:
     marker(sh["at"][0], sh["at"][1], "triangle", (90, 210, 120), None, None)

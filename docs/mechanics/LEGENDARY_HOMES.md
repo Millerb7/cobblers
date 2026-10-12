@@ -218,6 +218,19 @@ rctmod record to forget. **What does apply:**
 
 ## 4. The cave kit
 
+> **Superseded for K1-K6 on 2026-10-12** (the owner, after walking up to the Singing Hollow's mouth: "I hate the cave look, it
+> feels out of place, and the inside being a small tunnel to a legendary feels worse. Need a different solution than a cave";
+> and "we don't need the non-legendaries, just make something that looks good"). K1 (Stoneford Cut, Gible) is retired with no
+> successor; K2-K6 are open-air **sanctuaries** in `data/sanctuaries.json` (`tools/sanctuaries.py`, audit
+> `tools/sanctuaries_audit.py`, step R9SY after R9CK and before R9E): S2 The Singing Hollow (Meloetta, a ruined theatre on the
+> hill over Lake Viltri's south shore), S3 The Broken Relay (Miraidon, a fenced compound under a snapped copper mast), S4 The
+> Tide Shrine (Tapu Fini and Nihilego, sea-stone monoliths round a tide-pool court), S5 The Stopped Clock (Dialga, a sundial
+> court under a ruined clock tower), S6 Sunscar (Koraidon, a half-buried sun arena). The occupants' mechanics are unchanged
+> (the gate is the court's barrier door, the old antechamber is the forecourt); the antechamber pools and the boss caves'
+> chamber pools went with the caves. The six retired caves are frozen in `retired_caves` and restored to the heightmap's
+> terrain before anything is built over them. The rest of this section describes the kit as it stands for the natural caves
+> (N1-N3) and as it stood for K1-K6.
+
 **One record per cave in `data/caves.json`.** The generator is `tools/caves.py` (`site`, `author`, `report`, `build`,
 as `tools/mining_caves.py:44-47` has). The pack is `cobblers_caves` with the plan `derived/caves/plan.json`. The record
 holds:
