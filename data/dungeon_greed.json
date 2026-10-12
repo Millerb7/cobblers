@@ -8,7 +8,7 @@
     "bank: what data/bank.json pays now (money the player can actually get)",
     "bank_removed: its last price in base_removed / buys_removed (taken off for arbitrage, still worth it)",
     "market: a data/markets.json counter's unit price, for items nothing ever bought (their replacement cost)",
-    "derived: from a recipe or trade that links it to a priced item",
+    "derived: from a recipe or trade that links it to a priced item; or (DUNGEON_VAULTS, 2026-10-11) for an item nothing sells, from the price of the sold item of its class, the class and the item named in the row (docs/mechanics/DUNGEON_VAULTS.md 3)",
     "unpriced: 1 cp, the floor, so a take is never free; the balance designer's to price"
   ],
   "rate": {
@@ -37,6 +37,17 @@
       "source": "market",
       "ref": "data/markets.json counters northlight_station (no bank price ever: its replacement cost, price / count)",
       "why": "nothing ever bought it; a counter sells it at $10000 each"
+    },
+    "cobblemon:cherish_ball": {
+      "cp": 500,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): a trophy ball with no catch bonus (docs/research/notes/reward-item-inventory.md 4), sold nowhere; priced between the Poke Ball ($200, its catch class) and the situational balls ($600) for its rarity: only three strongrooms give it, at bands 5-6. A DESIGN price"
+    },
+    "cobblemon:dive_ball": {
+      "cp": 600,
+      "source": "market",
+      "ref": "data/markets.json counters pacifidlog (no bank price ever: its replacement cost, price / count)",
+      "why": "nothing ever bought it; a counter sells it at $3000 for 5"
     },
     "cobblemon:exp_candy_l": {
       "cp": 1,
@@ -75,6 +86,12 @@
       "ref": "data/markets.json counters highwire (no bank price ever: its replacement cost, price / count)",
       "why": "nothing ever bought it; a counter sells it at $350 each"
     },
+    "cobblemon:heavy_ball": {
+      "cp": 600,
+      "source": "market",
+      "ref": "data/markets.json counters redbrow (no bank price ever: its replacement cost, price / count)",
+      "why": "nothing ever bought it; a counter sells it at $3000 for 5"
+    },
     "cobblemon:hyper_potion": {
       "cp": 375,
       "source": "bank_removed",
@@ -111,6 +128,18 @@
       "ref": "data/markets.json counters greenhollow (no bank price ever: its replacement cost, price / count)",
       "why": "nothing ever bought it; a counter sells it at $1000 each"
     },
+    "cobblemon:net_ball": {
+      "cp": 600,
+      "source": "market",
+      "ref": "data/markets.json counters pacifidlog (no bank price ever: its replacement cost, price / count)",
+      "why": "nothing ever bought it; a counter sells it at $3000 for 5"
+    },
+    "cobblemon:poke_ball": {
+      "cp": 200,
+      "source": "market",
+      "ref": "data/traders.json mart (every town's Poke Mart, from the first visit: 'at the general shopkeeper's prices (200, 200, 100)', mart.why); no data/markets.json counter sells it",
+      "why": "nothing ever bought it; every Mart sells it at $200"
+    },
     "cobblemon:potion": {
       "cp": 50,
       "source": "bank_removed",
@@ -139,6 +168,11 @@
       "source": "bank_removed",
       "ref": "data/bank.json buys_removed (the bank's last price for it)",
       "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $5"
+    },
+    "cobblemon:sport_ball": {
+      "cp": 350,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): sold nowhere; priced as a Great Ball ($1750 for 5, data/markets.json highwire), the shop ball nearest its catch power (ASSUMED: the Sport Ball's Cobblemon catch rate is not read here). Two strongrooms give it, at bands 3-4"
     },
     "cobblemon:super_potion": {
       "cp": 175,
@@ -388,6 +422,133 @@
         "cobblemon:fossilized_fish",
         "cobblemon:fossilized_drake",
         "cobblemon:fossilized_dino"
+      ]
+    },
+    "utility_balls": {
+      "cp": 600,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): the situational balls no counter, trader or trade sells (the dungeon vaults are their source), priced as the situational balls a counter does sell: Dive, Net, Lure and Heavy at $3000 for 5 (data/markets.json pacifidlog, redbrow), the same class (a catch bonus under a condition). One price for the class so a theme's pick never moves a chest's value. A DESIGN price",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 4 (VERIFIED in the 1.7.42 REI index, collapsible.json5:719-750); not re-read from the Cobblemon 1.8.0 jar",
+      "ids": [
+        "cobblemon:quick_ball",
+        "cobblemon:timer_ball",
+        "cobblemon:dusk_ball",
+        "cobblemon:repeat_ball",
+        "cobblemon:nest_ball",
+        "cobblemon:level_ball",
+        "cobblemon:love_ball",
+        "cobblemon:moon_ball",
+        "cobblemon:fast_ball",
+        "cobblemon:dream_ball"
+      ]
+    },
+    "comfort_balls": {
+      "cp": 200,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): the balls sold nowhere whose worth is a perk (Heal, Luxury, Friend) or a look (Premier, Park, Safari: the owner's cosmetic set, 2026-10-11), priced as a Poke Ball, $200 (data/traders.json mart). ASSUMED: none catches much better than a Poke Ball in Cobblemon 1.8 (their catch rates are not read here). A DESIGN price",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 4 (VERIFIED in the 1.7.42 REI index); not re-read from the 1.8.0 jar",
+      "ids": [
+        "cobblemon:premier_ball",
+        "cobblemon:heal_ball",
+        "cobblemon:luxury_ball",
+        "cobblemon:friend_ball",
+        "cobblemon:park_ball",
+        "cobblemon:safari_ball"
+      ]
+    },
+    "resist_berries": {
+      "cp": 8,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): a type-resist berry is a one-use held item; no berry grows in this world (docs/research/notes/reward-item-inventory.md 3) and nothing sells these. Priced as the Lum Berry's last bank price ($8, data/bank.json buys_removed), the dearest berry the bank ever bought. Under the wishing well's min_cp (20), so one alone is never thrown",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 3 (VERIFIED in the 1.7.42 REI index, collapsible.json5:516-587); not re-read from the 1.8.0 jar",
+      "ids": [
+        "cobblemon:occa_berry",
+        "cobblemon:passho_berry",
+        "cobblemon:wacan_berry",
+        "cobblemon:rindo_berry",
+        "cobblemon:yache_berry",
+        "cobblemon:chople_berry",
+        "cobblemon:kebia_berry",
+        "cobblemon:shuca_berry",
+        "cobblemon:coba_berry",
+        "cobblemon:payapa_berry",
+        "cobblemon:tanga_berry",
+        "cobblemon:charti_berry",
+        "cobblemon:kasib_berry",
+        "cobblemon:haban_berry",
+        "cobblemon:colbur_berry",
+        "cobblemon:babiri_berry",
+        "cobblemon:chilan_berry",
+        "cobblemon:roseli_berry"
+      ]
+    },
+    "type_boosters": {
+      "cp": 1000,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): the type-boosting held items no counter sells, priced as the ones the counters do sell at $1000 each (Mystic Water, Miracle Seed, Poison Barb, Twisted Spoon, Charcoal Stick, Soft Sand; data/markets.json)",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 3 (VERIFIED in the 1.7.42 REI index, collapsible.json5:991-1093); not re-read from the 1.8.0 jar",
+      "ids": [
+        "cobblemon:black_belt",
+        "cobblemon:black_glasses",
+        "cobblemon:dragon_fang",
+        "cobblemon:fairy_feather",
+        "cobblemon:never_melt_ice",
+        "cobblemon:sharp_beak",
+        "cobblemon:silk_scarf",
+        "cobblemon:silver_powder",
+        "cobblemon:spell_tag"
+      ]
+    },
+    "held_utility": {
+      "cp": 2500,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): situational held items sold nowhere (weather rocks, terrain seeds, lenses, herbs, orbs, Quick Claw, Shell Bell, Lucky Egg), priced between the counters' trade-evolution items ($2160: Metal Coat, Protector, data/markets.json fossick) and Rocky Helmet ($3000, fossick). The Lucky Egg is a dungeon-exclusive progression item (docs/STATE.md), weighed here as a held item. A DESIGN price",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 3 (VERIFIED in the 1.7.42 REI index, collapsible.json5:991-1093); not re-read from the 1.8.0 jar",
+      "ids": [
+        "cobblemon:quick_claw",
+        "cobblemon:shell_bell",
+        "cobblemon:big_root",
+        "cobblemon:grassy_seed",
+        "cobblemon:psychic_seed",
+        "cobblemon:misty_seed",
+        "cobblemon:damp_rock",
+        "cobblemon:heat_rock",
+        "cobblemon:icy_rock",
+        "cobblemon:smooth_rock",
+        "cobblemon:utility_umbrella",
+        "cobblemon:flame_orb",
+        "cobblemon:light_clay",
+        "cobblemon:mental_herb",
+        "cobblemon:white_herb",
+        "cobblemon:bright_powder",
+        "cobblemon:wide_lens",
+        "cobblemon:zoom_lens",
+        "cobblemon:scope_lens",
+        "cobblemon:muscle_band",
+        "cobblemon:wise_glasses",
+        "cobblemon:metronome",
+        "cobblemon:red_card",
+        "cobblemon:eject_button",
+        "cobblemon:lucky_egg"
+      ]
+    },
+    "held_competitive": {
+      "cp": 3600,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): competitive held items sold nowhere, priced as the competitive ones a counter sells: Focus Sash, Expert Belt and Eviolite at $3600 (data/markets.json northlight_station). Not the six direct-trade items (Choice Band, Specs, Scarf, Life Orb, Leftovers, Destiny Knot: data/direct_trades.json), which stay the late game's trades",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 3 (VERIFIED in the 1.7.42 REI index, collapsible.json5:991-1093); not re-read from the 1.8.0 jar",
+      "ids": [
+        "cobblemon:heavy_duty_boots",
+        "cobblemon:weakness_policy",
+        "cobblemon:covert_cloak",
+        "cobblemon:loaded_dice",
+        "cobblemon:throat_spray",
+        "cobblemon:blunder_policy",
+        "cobblemon:ability_shield",
+        "cobblemon:mirror_herb",
+        "cobblemon:eject_pack",
+        "cobblemon:punching_glove",
+        "cobblemon:air_balloon"
       ]
     }
   },
@@ -708,10 +869,11 @@
     "drops": "items a wild Pokemon drops in a run are not measured: no source event is proven for them (a minecraft.picked_up stat is a candidate, untested)"
   },
   "vault_budget": {
-    "dollar_factor": 1.0,
+    "dollar_factor": 2.0,
+    "dollar_factor_why": "DUNGEON_VAULTS (2026-10-11), the owner: 'I think the vault isn't rewarding enough.' At 1.0 a chest held 80-370 cp, under one Great Ball (350) at bands 1-4, so no vault could hold a ball a chest. At 2.0 a vault may pay twice the run's time gathering: it costs a code or a dead end, 20-45 s of clock a chest, and the GREED charge of its expected value, which gathering does not. Nothing a vault now gives sells to the bank (data/bank.json buys only minerals), so the extra value is balls, held items and candy, not money; the one cash route is the wishing well (2 throws a run, expected share 0.9 or under). The owner's to confirm (docs/mechanics/DUNGEON_VAULTS.md 7)",
     "enforce": true,
     "unit": "KIT3, 2026-10-10 (docs/mechanics/DUNGEON_ROOMS.md 1b)",
-    "why": "GREED found vault chests worth 7 to 150 points (one can cap the clock). A vault's chests together are worth at most dollar_factor x the gathering tier open at the band's lowest badge count x the required hours of the dungeon the vault stands in (its own clock over the 1.25 slack; MEGA-INTEGRATE 2026-10-11, tools/dungeon_greed.py vault_budget(doc, table, dungeon): until then the shortest rooms dungeon's, so a new short dungeon shrank every other dungeon's vaults and authors padded their clocks to avoid it): the limit RESOURCES2 set for a resources room (tools/dungeon_resources.py budget(), every price and rate read from tools/economy_sim.py World), so a vault never pays more than the same run's time spent gathering, which costs no sigil, no clock and no death. A chest's budget is the vault's over its chest count; its value is GREED's chest_cp (the expected cp of its loot at the band). With the kit's four chests and the Night Shift's own clocks (2026-10-11): 82, 189, 189, 198, 346, 367 cp a chest at bands 1-6 (each dungeon's figure moves with its own clock only; DUNGEON_ROOMS.md 1b).",
-    "enforce_why": "true since DG3-INTEGRATE (2026-10-10): the pass-3 authors rebalanced every vault and python tools/dungeon_greed.py names no chest over at any band (the closest, the Night Shift pay office at band 6, 4.00 points a chest of 4.02). problems() now refuses a chest over budget."
+    "why": "GREED found vault chests worth 7 to 150 points (one can cap the clock). A vault's chests together are worth at most dollar_factor x the gathering tier open at the band's lowest badge count x the required hours of the dungeon the vault stands in (its own clock over the 1.25 slack; MEGA-INTEGRATE 2026-10-11, tools/dungeon_greed.py vault_budget(doc, table, dungeon): until then the shortest rooms dungeon's, so a new short dungeon shrank every other dungeon's vaults and authors padded their clocks to avoid it): the limit RESOURCES2 set for a resources room (tools/dungeon_resources.py budget(), every price and rate read from tools/economy_sim.py World), so a vault never pays more than the same run's time spent gathering, which costs no sigil, no clock and no death. A chest's budget is the vault's over its chest count; its value is GREED's chest_cp (the expected cp of its loot at the band). With the kit's four chests and the Night Shift's own clocks (2026-10-11) at dollar_factor 1.0: 82, 189, 189, 198, 346, 367 cp a chest at bands 1-6; at 2.0 (DUNGEON_VAULTS): 165, 378, 378, 396, 692, 734 (each dungeon's figure moves with its own clock only; DUNGEON_ROOMS.md 1b).",
+    "enforce_why": "true since DG3-INTEGRATE (2026-10-10): problems() refuses a chest over budget. DUNGEON_VAULTS (2026-10-11) re-authored every vault and bank vault to about 90% of the dollar_factor-2 budget (docs/mechanics/DUNGEON_VAULTS.md 2), computed by hand, not by the tool: the orchestrator's python tools/dungeon_greed.py run is the check."
   }
 }
