@@ -6,6 +6,12 @@ The first three caves: K1 Stoneford Cut (an ungated early cave, Gible its rare s
 repeatable chamber spawn behind a partition that opens at gym6_cleared, Beldum its antechamber's power line) and K3 The Relay
 Fault (Miraidon, a post-Champion area boss kept by a keeper, behind a partition that opens at champion_cleared).
 
+A fourth kind of cave, mode `natural` (the owner, 2026-10-12: "They don't have to go anywhere or have a reward; just a cave would seem
+natural"): N1 Hoarfrost Hollow (south Pine Isle), N2 Greenwither Cleft (Long Isle south), N3 Dusk Burrow (Sunset West). A mouth with no
+timber frame, an incline, passages that WIND (`bend`, data/caves.json geometry.rules), a dead-end hall with `knobs`, ore in the exposed
+walls and patches in the floor (`dressing`); dark by design. No gate, occupant, Habitat Block, reward or keeper, and the loader refuses a
+record that carries one.
+
 What it reuses, by name (CLAUDE.md principle 6: nothing new where a pattern exists):
 
   siting and clearance   tools/mining_caves.py Clearance (towns, routed legs and route paths, spawn-corridor boxes, authored
@@ -79,8 +85,10 @@ NEVER = -2147483647       # a boss's clock: never yet brought in
 FRONTS = M.FRONTS
 YAW = {"north": 180, "south": 0, "west": 90, "east": 270}   # facing the mouth, up the passage's -d: Minecraft yaw 0 is south, 90 west
 KINDS = ("incline", "drift", "crawl")
-FEATURES = ("none", "columns", "crystal")
+FEATURES = ("none", "columns", "crystal", "knobs")
 MODES = ("power_line", "rare_spawn", "area_boss")
+NATURAL = "natural"               # a cave `mode`: no gate, occupant, Habitat Block, reward or keeper; a mouth, a winding passage, a hall
+NATURAL_FORBIDDEN = ("occupant", "gate", "habitat", "antechamber", "reward", "keeper")
 GENERATED = "tools/caves.py"
 POLICY_SCOPE = "caves"
 # ground: the functions that read a world, each only to check (tools/ground_rule.py); this tool reads none
@@ -97,6 +105,15 @@ def load(path=SPEC):
 
 def base(block):
     return block.split("[")[0].split("{")[0]
+
+
+def is_natural(cave):
+    return cave.get("mode") == NATURAL
+
+
+def occupant_mode(cave):
+    """The occupant's mode, or 'natural' for a cave that has none by design."""
+    return NATURAL if is_natural(cave) else cave["occupant"]["mode"]
 
 
 def pool_of(h):
@@ -120,33 +137,37 @@ def layout(spec, cave):
     first = ps[0]
     hw0, h0 = (first["width"] - 1) // 2, first["height"]
     drop = first["length"]
-    rows.append({"d": 0, "kind": "mouth", "hw": hw0, "h": h0})
+    rows.append({"d": 0, "kind": "mouth", "hw": hw0, "h": h0, "c": 0})
     for d in range(1, drop + 1):
-        rows.append({"d": d, "kind": "stair", "hw": hw0, "h": h0})
+        rows.append({"d": d, "kind": "stair", "hw": hw0, "h": h0, "c": 0})
     d = drop + 1
+    c0 = 0                       # a passage's lateral offset where it starts: a `bend` walks it sideways, rounding to the nearest step
     for pi, p in enumerate(ps[1:], 1):
-        for _ in range(p["length"]):
-            rows.append({"d": d, "kind": "level", "hw": (p["width"] - 1) // 2, "h": p["height"], "seg": p["kind"], "pi": pi})
+        n, b = p["length"], p.get("bend", 0)
+        for i in range(n):
+            rows.append({"d": d, "kind": "level", "hw": (p["width"] - 1) // 2, "h": p["height"], "seg": p["kind"], "pi": pi,
+                         "c": c0 + math.floor(b * (i + 1) / n + 0.5)})
             d += 1
+        c0 += b
     ante = door = link = None
     a = cave.get("antechamber")
     if a:
         ante = (d, d + a["length"] - 1)
         for _ in range(a["length"]):
-            rows.append({"d": d, "kind": "ante", "hw": a["half_width"], "h": a["height"]})
+            rows.append({"d": d, "kind": "ante", "hw": a["half_width"], "h": a["height"], "c": c0})
             d += 1
     if (cave.get("gate") or {}).get("kind") == "partition":
         door = d
-        rows.append({"d": d, "kind": "door", "hw": geo["door_half_width"], "h": geo["door_height"]})
+        rows.append({"d": d, "kind": "door", "hw": geo["door_half_width"], "h": geo["door_height"], "c": c0})
         d += 1
         link = (d, d + geo["link_rows"] - 1)
         for _ in range(geo["link_rows"]):
-            rows.append({"d": d, "kind": "link", "hw": geo["door_half_width"], "h": geo["door_height"]})
+            rows.append({"d": d, "kind": "link", "hw": geo["door_half_width"], "h": geo["door_height"], "c": c0})
             d += 1
     ch = cave["chamber"]
     dc = d + ch["rz"]
     return {"rows": rows, "drop": drop, "ante": ante, "door": door, "link": link,
-            "chamber": {"d0": d, "dc": dc, "d1": dc + ch["rz"], "rx": ch["rx"], "rz": ch["rz"], "h": ch["h"]},
+            "chamber": {"d0": d, "dc": dc, "d1": dc + ch["rz"], "rx": ch["rx"], "rz": ch["rz"], "h": ch["h"], "uc": c0},
             "total": dc + ch["rz"] + 1}
 
 
@@ -155,18 +176,19 @@ def in_oval(u, d, dc, rx, rz):
 
 
 def oval_cells(ch):
+    """[(u, d)] of the chamber, u across the whole cave: its centre line is u = ch["uc"] (0 unless a passage bent)."""
     out = []
     for d in range(ch["d0"], ch["d1"] + 1):
         for u in range(-ch["rx"], ch["rx"] + 1):
             if in_oval(u, d, ch["dc"], ch["rx"], ch["rz"]):
-                out.append((u, d))
+                out.append((u + ch["uc"], d))
     return out
 
 
 def lamp_posts(spec, cave, lay):
     """[(u, d)] where a lantern post stands on a level floor: passages, antechamber corners, chamber."""
     geo = spec["geometry"]
-    if (cave.get("light") or {}).get("dark_by_design"):
+    if (cave.get("light") or {}).get("dark_by_design") or is_natural(cave):
         return []
     every = (cave.get("light") or {}).get("lantern_every", geo["lantern_every"])
     out = []
@@ -177,7 +199,7 @@ def lamp_posts(spec, cave, lay):
             continue
         first = firsts.setdefault(r["pi"], r["d"])
         if (r["d"] - first) % every == every // 2:
-            out.append((-r["hw"] if k % 2 == 0 else r["hw"], r["d"]))
+            out.append((r["c"] + (-r["hw"] if k % 2 == 0 else r["hw"]), r["d"]))
             k += 1
     if lay["ante"]:
         a0, a1 = lay["ante"]
@@ -186,7 +208,8 @@ def lamp_posts(spec, cave, lay):
     ch = lay["chamber"]
     n = (cave.get("light") or {}).get("chamber_lanterns", 4)
     ur, dr = round(0.6 * ch["rx"]), round(0.55 * ch["rz"])
-    spots = [(-ur, ch["dc"] - dr), (ur, ch["dc"] - dr), (-ur, ch["dc"] + dr), (ur, ch["dc"] + dr)]
+    uc = ch["uc"]
+    spots = [(uc - ur, ch["dc"] - dr), (uc + ur, ch["dc"] - dr), (uc - ur, ch["dc"] + dr), (uc + ur, ch["dc"] + dr)]
     out += spots[:n]
     return out
 
@@ -197,14 +220,15 @@ def feature_cells(spec, cave, lay):
     f = rec.get("feature", "none")
     if f == "columns":
         c = round(0.5 * ch["rx"])
-        return [(-c, ch["dc"]), (c, ch["dc"])], []
-    if f == "crystal":
+        return [(ch["uc"] - c, ch["dc"]), (ch["uc"] + c, ch["dc"])], []
+    if f in ("crystal", "knobs"):
+        # `knobs` (the natural caves' dripstone stubs) are placed by the crystal's rule, from their own count
         post = {(u, d) for u, d in lamp_posts(spec, cave, lay)}
         cells = [(u, d) for u, d in oval_cells(ch)
-                 if (u * u) / (ch["rx"] ** 2) + ((d - ch["dc"]) ** 2) / (ch["rz"] ** 2) >= 0.16 and (u, d) not in post]
+                 if ((u - ch["uc"]) ** 2) / (ch["rx"] ** 2) + ((d - ch["dc"]) ** 2) / (ch["rz"] ** 2) >= 0.16 and (u, d) not in post]
         seed, fid = spec["seed"], M.sid(cave["id"])
         cells.sort(key=lambda c: (M.h32(seed, fid, c[0], c[1]), c))
-        return [], cells[:rec.get("crystal_count", 8)]
+        return [], cells[:rec.get("crystal_count" if f == "crystal" else "knob_count", 8)]
     if f == "pool":
         raise CaveError("%s: the `pool` chamber feature is not built (K4's water needs a spawn-block policy entry first)" % cave["id"])
     return [], []
@@ -234,6 +258,7 @@ def geometry(spec, cave, ground, anchor=None, front=None):
     y0 = mouth_floor(rows[0], ground, xz)
     yh = y0 - drop
     probs, cells = [], {}
+    natural = is_natural(cave)
     cols = {}                                    # (x, z) -> {"top", "m", "cut", "kind"}: the air columns
 
     def ft_of(r):
@@ -267,7 +292,7 @@ def geometry(spec, cave, ground, anchor=None, front=None):
         else:
             cut = False
         r["ft"], r["cut"] = ft, cut
-        for u in range(-hw, hw + 1):
+        for u in range(r["c"] - hw, r["c"] + hw + 1):
             x, z = xz(u, r["d"])
             g = ground(x, z)
             top = max(g, at) + geo["clear_above"] if cut else at
@@ -288,21 +313,22 @@ def geometry(spec, cave, ground, anchor=None, front=None):
         g = ground(x, z)
         if g - top < cov["room"]:
             probs.append("chamber column (%d, %d): %d of ground over its air top y%d, under %d" % (x, z, g - top, top, cov["room"]))
-    # the mouth's timber frame
+    # the mouth's timber frame (a natural cave has none: its mouth is the rock's own opening)
     hw0, h0 = rows[0]["hw"], rows[0]["h"]
-    for u in (-hw0 - 1, hw0 + 1):
-        x, z = xz(u, 0)
-        g = ground(x, z)
-        for y in range(g + 1, y0 + 1):
-            cells[(x, y, z)] = "fill"
-        for y in range(y0 + 1, y0 + h0 + 1):
-            cells[(x, y, z)] = "post"
-    for u in range(-hw0 - 1, hw0 + 2):
-        x, z = xz(u, 0)
-        cells[(x, y0 + h0 + 1, z)] = "beam"
-    x, z = xz(0, 0)
-    if cells.get((x, y0 + h0, z)) == "air":
-        cells[(x, y0 + h0, z)] = "hanglantern"
+    if not natural:
+        for u in (-hw0 - 1, hw0 + 1):
+            x, z = xz(u, 0)
+            g = ground(x, z)
+            for y in range(g + 1, y0 + 1):
+                cells[(x, y, z)] = "fill"
+            for y in range(y0 + 1, y0 + h0 + 1):
+                cells[(x, y, z)] = "post"
+        for u in range(-hw0 - 1, hw0 + 2):
+            x, z = xz(u, 0)
+            cells[(x, y0 + h0 + 1, z)] = "beam"
+        x, z = xz(0, 0)
+        if cells.get((x, y0 + h0, z)) == "air":
+            cells[(x, y0 + h0, z)] = "hanglantern"
     # the door's barrier
     if lay["door"] is not None:
         r = next(q for q in rows if q["d"] == lay["door"])
@@ -321,7 +347,7 @@ def geometry(spec, cave, ground, anchor=None, front=None):
     cs, xs_ = feature_cells(spec, cave, lay)
     for u, d in cs:
         x, z = xz(u, d)
-        if not in_oval(u, d, ch["dc"], ch["rx"], ch["rz"]):
+        if not in_oval(u - ch["uc"], d, ch["dc"], ch["rx"], ch["rz"]):
             probs.append("column (u=%d, d=%d) is outside the chamber" % (u, d))
             continue
         for y in range(yh + 1, yh + ch["h"] + 1):
@@ -331,7 +357,7 @@ def geometry(spec, cave, ground, anchor=None, front=None):
     for u, d in xs_:
         x, z = xz(u, d)
         if cells.get((x, yh + 1, z)) == "air":
-            cells[(x, yh + 1, z)] = "crystal"
+            cells[(x, yh + 1, z)] = "knob" if cave["chamber"].get("feature") == "knobs" else "crystal"
     # the shell: a column hull round every air column
     shell = {}
     for (x, z), c in cols.items():
@@ -350,6 +376,20 @@ def geometry(spec, cave, ground, anchor=None, front=None):
         for y in range(lo, min(hi, cap) + 1):
             if (x, y, z) not in cells:
                 cells[(x, y, z)] = "shell"
+    if natural:
+        # the rock's own dressing (data/caves.json geometry.rules): ore showing in the walls, and patches of another floor
+        dr, seed, fid = cave["dressing"], spec["seed"], M.sid(cave["id"])
+        veins, patches = [], []
+        for (x, y, z), role in cells.items():
+            if role == "shell" and M.h32(seed, fid, x, y, z) % dr["vein_one_in"] == 0 and any(
+                    cells.get((x + a, y + b, z + c)) == "air" for a, b, c in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))):
+                veins.append((x, y, z))
+            elif role == "floor" and M.h32(seed, fid, x, z, 7) % dr["patch_one_in"] == 0:
+                patches.append((x, y, z))
+        for c in veins:
+            cells[c] = "vein"
+        for c in patches:
+            cells[c] = "patch"
     tops = {}
     for (x, y, z) in cells:
         tops[(x, z)] = max(tops.get((x, z), -999), y)
@@ -375,7 +415,7 @@ def geometry(spec, cave, ground, anchor=None, front=None):
            "columns": sorted({(x, z) for x, _y, z in cells}), "surface": surface, "cutting_rows": cutting,
            "dug": sum(1 for (x, y, z), r in cells.items() if r in ("air", "lantern", "fence") and y <= ground(x, z)),
            "stand": [xz(0, -2)[0], y0 + 1, xz(0, -2)[1]], "tunnel_rows": [r["d"] for r in rows if not r["cut"]],
-           "centre": [xz(0, ch["dc"])[0], yh, xz(0, ch["dc"])[1]]}
+           "centre": [xz(ch["uc"], ch["dc"])[0], yh, xz(ch["uc"], ch["dc"])[1]]}
     if lay["ante"]:
         a0, a1 = lay["ante"]
         ahw = cave["antechamber"]["half_width"]
@@ -386,9 +426,9 @@ def geometry(spec, cave, ground, anchor=None, front=None):
         dr = next(q for q in rows if q["d"] == lay["door"])
         out["door_box"] = wbox(-dr["hw"], dr["hw"], lay["door"], lay["door"], yh + 1, yh + dr["h"])
         # never shut anyone in: the door row, the link and the chamber, one block round
-        out["inside_zone"] = wbox(-max(ch["rx"], dr["hw"]) - 1, max(ch["rx"], dr["hw"]) + 1, lay["door"] - 1, ch["d1"] + 1,
+        out["inside_zone"] = wbox(ch["uc"] - max(ch["rx"], dr["hw"]) - 1, ch["uc"] + max(ch["rx"], dr["hw"]) + 1, lay["door"] - 1, ch["d1"] + 1,
                                   yh, yh + max(ch["h"], dr["h"]) + 1)
-    out["chamber_zone"] = wbox(-ch["rx"], ch["rx"], ch["d0"], ch["d1"], yh + 1, yh + ch["h"])
+    out["chamber_zone"] = wbox(ch["uc"] - ch["rx"], ch["uc"] + ch["rx"], ch["d0"], ch["d1"], yh + 1, yh + ch["h"])
     out["ground"] = ground
     return out
 
@@ -398,7 +438,7 @@ def geometry(spec, cave, ground, anchor=None, front=None):
 def extent(spec, cave):
     lay = layout(spec, cave)
     ch = lay["chamber"]
-    hws = [r["hw"] for r in lay["rows"]] + [ch["rx"]]
+    hws = [abs(r["c"]) + r["hw"] for r in lay["rows"]] + [abs(ch["uc"]) + ch["rx"]]
     return max(hws) + spec["geometry"]["margins"]["room"] + 2, lay["total"] + spec["geometry"]["margins"]["room"] + 2
 
 
@@ -588,6 +628,46 @@ def level_range(entry, band):
     return int(lv), int(lv)
 
 
+def natural_problems(spec, c):
+    """A natural cave (the owner, 2026-10-12: 'a cave would seem natural'): a mouth, a winding passage, a dead-end hall, and nothing
+    in it. It carries none of occupant / gate / habitat / antechamber / reward / keeper, and it is dark by design."""
+    cid, out = c["id"], []
+    for k in NATURAL_FORBIDDEN:
+        if k in c:
+            out.append("%s: a natural cave carries no %s" % (cid, k))
+    for k in ("shell", "floor", "stair", "vein", "patch", "knob"):
+        if k not in c["palette"]:
+            out.append("%s: palette lacks %s" % (cid, k))
+    for k in ("timber", "fence", "column"):
+        if k in c["palette"]:
+            out.append("%s: a natural cave has no mouth frame, lantern post or column: palette carries %s" % (cid, k))
+    if not (c.get("light") or {}).get("dark_by_design"):
+        out.append("%s: a natural cave is dark by design (light.dark_by_design true; STATE: the night is fightorflight's)" % cid)
+    dr = c.get("dressing") or {}
+    for k in ("vein_one_in", "patch_one_in"):
+        if not isinstance(dr.get(k), int) or dr[k] < 2:
+            out.append("%s: dressing.%s must be an integer of at least 2" % (cid, k))
+    ps = c["passages"]
+    if len(ps) < 3:
+        out.append("%s: a winding passage needs at least two level passages after the incline" % cid)
+    if not any(p.get("bend") for p in ps[1:]):
+        out.append("%s: a natural cave winds: at least one passage must carry a bend" % cid)
+    for i, p in enumerate(ps):
+        b = p.get("bend", 0)
+        if i == 0 and b:
+            out.append("%s: the incline does not bend" % cid)
+        if abs(b) > p["length"]:
+            out.append("%s: passage %d bends %d over %d rows: a row moves at most one step sideways" % (cid, i, b, p["length"]))
+        if i and p["width"] < 3:
+            out.append("%s: passage %d is %d wide: a bend needs the rows to overlap (width >= 3)" % (cid, i, p["width"]))
+    ch = c["chamber"]
+    if ch["shape"] != "oval" or ch["rx"] < 3 or ch["rz"] < 3 or ch["h"] < 4:
+        out.append("%s: chamber must be an oval with rx, rz >= 3 and h >= 4" % cid)
+    if ch.get("feature", "none") not in ("none", "knobs"):
+        out.append("%s: a natural chamber's feature is none or knobs, not %r" % (cid, ch.get("feature")))
+    return out
+
+
 def static_problems(spec):
     out = []
     geo = spec["geometry"]
@@ -605,6 +685,10 @@ def static_problems(spec):
         if not ps or ps[0]["kind"] != "incline":
             out.append("%s: the first passage must be an incline" % cid)
             continue
+        if c.get("mode") is not None and not is_natural(c):
+            out.append("%s: mode %r is not 'natural' (a cave with an occupant has none)" % (cid, c["mode"]))
+        if any(p.get("bend") for p in ps) and not is_natural(c):
+            out.append("%s: only a natural cave may bend (the antechamber and gate zones are straight)" % cid)
         for i, p in enumerate(ps):
             if p["kind"] not in KINDS:
                 out.append("%s: passage %d kind %r is not one of %s" % (cid, i, p["kind"], ", ".join(KINDS)))
@@ -614,6 +698,9 @@ def static_problems(spec):
                 out.append("%s: passage %d height/length" % (cid, i))
             if i > 0 and p["kind"] == "incline":
                 out.append("%s: only the first passage may be an incline" % cid)
+        if is_natural(c):
+            out += natural_problems(spec, c)
+            continue
         a = c.get("antechamber")
         if a and a["half_width"] < 2:
             out.append("%s: antechamber half_width < 2" % cid)
@@ -739,6 +826,12 @@ def block_of(cave, role, front):
         return p["column"]
     if role == "crystal":
         return CLUSTER
+    if role == "vein":
+        return p["vein"]
+    if role == "patch":
+        return p["patch"]
+    if role == "knob":
+        return p["knob"]
     if role == "barrier":
         return BARRIER
     return AIR
@@ -916,9 +1009,9 @@ def callbacks(spec, plan):
              "'then waits the long clock. Anywhere else it does nothing.';", "t.id = q.pokemon.species.identifier;"]
     n = 0
     for e in plan:
-        occ = e["cave"]["occupant"]
-        if occ["mode"] != "area_boss":
+        if occupant_mode(e["cave"]) != "area_boss":
             continue
+        occ = e["cave"]["occupant"]
         cx, cy, cz = e["geometry"]["centre"]
         k = occ["keeper"]
         cmd = ("execute as ' + q.player.uuid + ' at @s if entity @s[x=%d,y=%d,z=%d,distance=..%d] run function %s:%s/boss/%s/caught"
@@ -944,7 +1037,7 @@ def pack_files(spec, plan):
             tick.append("execute positioned %d %d %d if entity @a[distance=..%d] run function %s:%s/gate/%s/near"
                         % (cx, cy, cz, spec["gate"]["reach"], NS, FOLDER, cave["id"]))
             fns.update(gate_files(spec, e))
-        if cave["occupant"]["mode"] == "area_boss":
+        if occupant_mode(cave) == "area_boss":
             bf = boss_files(spec, e)
             fns.update(bf)
             load_.append("function %s:%s/boss/%s/load" % (NS, FOLDER, cave["id"]))
@@ -1087,6 +1180,19 @@ def probe_records(spec, plan):
         x, y, z = gm["stand"]
         blk("air at the standing block outside the mouth", (x, y, z), AIR)
         blk("air in the middle of the chamber", (gm["centre"][0], gm["yh"] + 2, gm["centre"][2]), AIR)
+        if is_natural(cave):
+            # a mouth, a winding passage and a hall, nothing else: each probe's block is the one the cell's role gives (the dressing
+            # may put ore or a patch there); there is no beam, no door, no Habitat Block and no boss to probe
+            xz = M.frame(tuple(gm["anchor"]), front)
+            lay = gm["layout"]
+            mid = [r for r in lay["rows"] if r["kind"] == "level"]
+            for what, r in (("the first bend", mid[len(mid) // 3]), ("the last bend", mid[(2 * len(mid)) // 3])):
+                px, pz = xz(r["c"], r["d"])
+                blk("air in %s of the winding passage (row %d, %d across)" % (what, r["d"], r["c"]), (px, r["ft"] + 1, pz), AIR)
+            for what, c in (("the chamber's floor beside its middle", (gm["centre"][0] + 1, gm["yh"], gm["centre"][2])),
+                            ("the rock over the chamber's roof", (gm["centre"][0], gm["yh"] + cave["chamber"]["h"] + 1, gm["centre"][2]))):
+                blk(what, c, base(block_of(cave, cells[c], front)))
+            continue
         blk("the chamber's floor under the habitat block's neighbour", (gm["centre"][0] + 1, gm["yh"], gm["centre"][2]), cave["palette"]["floor"])
         blk("the shell over the chamber's roof", (gm["centre"][0], gm["yh"] + cave["chamber"]["h"] + 1, gm["centre"][2]), cave["palette"]["shell"])
         beam = next(c for c, r in sorted(cells.items()) if r == "beam")
@@ -1096,7 +1202,7 @@ def probe_records(spec, plan):
             blk("the door's barrier (closed)", (d[0], d[1], d[2]), BARRIER)
         for hid, pos in habitat_positions(e).items():
             blk("the Habitat Block %s" % hid, pos, "cobblemon:habitat_block")
-        if cave["occupant"]["mode"] == "area_boss":
+        if occupant_mode(cave) == "area_boss":
             o = cave["occupant"]
             rows.append({"what": "%s: the boss (one tagged %s once a champion has come near; absent while the clock runs)" % (cid, o["tag"]),
                          "hold": [gm["centre"][0], gm["centre"][1] + 1, gm["centre"][2]],
@@ -1156,7 +1262,7 @@ def plan_json(spec, plan, counts):
                              "total_rows": lay["total"], "dug": gm["dug"], "cells": len(gm["cells"]),
                              "ante_zone": gm.get("ante_zone"), "door_box": gm.get("door_box"), "inside_zone": gm.get("inside_zone"),
                              "chamber_zone": gm["chamber_zone"], "habitat": {k: list(v) for k, v in habitat_positions(e).items()},
-                             "occupant": {"mode": cave["occupant"]["mode"], "species": cave["occupant"]["species"]}}
+                             "occupant": {"mode": occupant_mode(cave), "species": (cave.get("occupant") or {}).get("species")}}
     return {"schema": "cobblers.derived.caves/1", "build_functions": build_functions(spec), "commands": counts, "caves": caves}
 
 
@@ -1269,7 +1375,7 @@ def main(argv=None):
         gm = e["geometry"]
         print("  %-18s %s mouth %s front %-5s floor y%d hall y%d  %d rows, %d cells, %d dug, %d cutting rows  %s" % (
             e["cave"]["id"], e["cave"]["kind"], gm["anchor"], gm["front"], gm["y0"], gm["yh"], gm["layout"]["total"], len(gm["cells"]),
-            gm["dug"], gm["cutting_rows"], e["cave"]["occupant"]["mode"]))
+            gm["dug"], gm["cutting_rows"], occupant_mode(e["cave"])))
     for n in notes:
         print("  NOTE:", n)
     if probs:

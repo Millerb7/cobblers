@@ -8360,6 +8360,186 @@
         ],
         "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_koraidon]",
         "count_max": 1
+      },
+      {
+        "what": "cave_hoarfrost_hollow: air at the standing block outside the mouth",
+        "block": [
+          6712,
+          97,
+          1350,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_hoarfrost_hollow: air in the middle of the chamber",
+        "block": [
+          6752,
+          92,
+          1351,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_hoarfrost_hollow: air in the first bend of the winding passage (row 15, 5 across)",
+        "block": [
+          6729,
+          91,
+          1355,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_hoarfrost_hollow: air in the last bend of the winding passage (row 24, -1 across)",
+        "block": [
+          6738,
+          91,
+          1349,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_hoarfrost_hollow: the chamber's floor beside its middle",
+        "block": [
+          6753,
+          90,
+          1351,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_hoarfrost_hollow: the rock over the chamber's roof",
+        "block": [
+          6752,
+          96,
+          1351,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_greenwither_cleft: air at the standing block outside the mouth",
+        "block": [
+          7420,
+          126,
+          7090,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_greenwither_cleft: air in the middle of the chamber",
+        "block": [
+          7466,
+          120,
+          7089,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_greenwither_cleft: air in the first bend of the winding passage (row 17, -5 across)",
+        "block": [
+          7439,
+          119,
+          7085,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_greenwither_cleft: air in the last bend of the winding passage (row 27, 1 across)",
+        "block": [
+          7449,
+          119,
+          7091,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_greenwither_cleft: the chamber's floor beside its middle",
+        "block": [
+          7467,
+          118,
+          7089,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_greenwither_cleft: the rock over the chamber's roof",
+        "block": [
+          7466,
+          125,
+          7089,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_dusk_burrow: air at the standing block outside the mouth",
+        "block": [
+          964,
+          109,
+          7630,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_dusk_burrow: air in the middle of the chamber",
+        "block": [
+          1004,
+          105,
+          7627,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_dusk_burrow: air in the first bend of the winding passage (row 15, 3 across)",
+        "block": [
+          981,
+          104,
+          7633,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_dusk_burrow: air in the last bend of the winding passage (row 24, -3 across)",
+        "block": [
+          990,
+          104,
+          7627,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_dusk_burrow: the chamber's floor beside its middle",
+        "block": [
+          1005,
+          103,
+          7627,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_dusk_burrow: the rock over the chamber's roof",
+        "block": [
+          1004,
+          109,
+          7627,
+          "minecraft:stone"
+        ],
+        "expect": true
       }
     ],
     "maze_shrines": [

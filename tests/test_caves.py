@@ -42,7 +42,9 @@ import nbt_sim as N  # noqa: E402
 
 SPEC = json.loads((ROOT / "data" / "caves.json").read_text(encoding="utf-8"))
 CAVES = {c["id"]: c for c in SPEC["caves"]}
-BOSSES = [c for c in SPEC["caves"] if c["occupant"]["mode"] == "area_boss"]
+KITTED = [c for c in SPEC["caves"] if c.get("mode") != "natural"]      # K1-K6: an occupant, a Habitat Block, usually a gate
+NATURALS = [c for c in SPEC["caves"] if c.get("mode") == "natural"]    # N1-N3: a mouth, a winding passage and a hall, nothing in them
+BOSSES = [c for c in KITTED if c["occupant"]["mode"] == "area_boss"]
 BOSS_IDS = [c["id"] for c in BOSSES]
 OBJ = SPEC["gate"]["objective"]
 CHAMPION = "cobblers:flag/champion_cleared"
@@ -364,13 +366,13 @@ def test_the_derived_records_match_the_geometry(pack):
 
 
 def test_the_cave_records_in_the_shared_files_are_ours_only_and_complete():
-    ours = {h["id"] for c in SPEC["caves"] for h in c["habitat"]}
+    ours = {h["id"] for c in KITTED for h in c["habitat"]}
     blocks = {b["id"]: b for b in json.loads((ROOT / "data" / "habitat_blocks.json").read_text(encoding="utf-8"))["blocks"]}
     assert ours <= set(blocks) and all(blocks[i].get("generated_by") == "tools/caves.py" for i in ours)
     gen = {b["id"] for b in blocks.values() if b.get("generated_by") == "tools/caves.py"}
     assert gen == ours, "a generated Habitat Block the record no longer names: %s" % sorted(gen - ours)
     sp = json.loads((ROOT / "data" / "spawns.json").read_text(encoding="utf-8"))
-    pools = {c["id"]: [h["pool"]["id"] for h in c["habitat"]] for c in SPEC["caves"]}
+    pools = {c["id"]: [h["pool"]["id"] for h in c["habitat"]] for c in KITTED}
     have = {h["id"] for h in sp["habitats"]}
     assert {p for ps in pools.values() for p in ps} <= have
     scopes = {e.get("scope") for e in sp["entries"]}
@@ -395,7 +397,7 @@ def test_the_occupants_levels_sit_under_their_gates_caps():
 def test_no_pool_names_a_species_which_only_a_keeper_brings():
     # Miraidon, Dialga and Koraidon are the keepers' alone: a pool entry would be a second home for the same Pokemon
     sp = json.loads((ROOT / "data" / "spawns.json").read_text(encoding="utf-8"))
-    mine = {h["pool"]["id"] for c in SPEC["caves"] for h in c["habitat"]}
+    mine = {h["pool"]["id"] for c in KITTED for h in c["habitat"]}
     bosses = {c["occupant"]["species"] for c in BOSSES}
     assert bosses == {"miraidon", "dialga", "koraidon"}
     assert not [e for e in sp["entries"] if e.get("scope") in mine and e["species"] in bosses]
@@ -407,7 +409,7 @@ def test_the_roster_gives_each_cave_occupant_exactly_that_cave_as_its_home_and_n
     # Zero Dig's pool, Tapu Fini the Temple Calendar's and Nihilego the Cistern's (their ub_boss FIGHT lines stay: not a catch).
     roster = json.loads((ROOT / "data" / "dungeon_prize_roster.json").read_text(encoding="utf-8"))
     placed = {}
-    for c in SPEC["caves"]:
+    for c in KITTED:
         o = c["occupant"]
         if o["mode"] in ("rare_spawn", "area_boss"):
             placed[o["species"]] = c["id"]
@@ -908,7 +910,7 @@ def test_the_door_never_closes_on_a_player_inside_and_closes_when_the_last_has_g
 def test_the_gates_driver_runs_only_while_somebody_is_near_the_chamber():
     fns, _plan = _fns_cached()
     tick = fns["tick"]
-    gated = [c for c in SPEC["caves"] if c["gate"]["kind"] == "partition"]
+    gated = [c for c in KITTED if c["gate"]["kind"] == "partition"]
     for c in gated:
         line = next(l for l in tick if "/gate/%s/near" % c["id"] in l)
         assert re.search(r"if entity @a\[distance=\.\.%d\]" % SPEC["gate"]["reach"], line), line
@@ -975,3 +977,207 @@ def test_only_the_files_own_habitat_points_are_exempt_from_the_other_pack_rule()
     import caves as CV
     pts = CV.own_habitat_points(CV.load() if hasattr(CV, "load") else __import__("json").loads(CV.SPEC.read_text(encoding="utf-8")))
     assert (1574, 3628) in pts and (1575, 3628) not in pts and (1574, 3629) not in pts
+
+
+# ------------------------------------------------------------------ the natural caves (the owner, 2026-10-12)
+# "We need to have caves on Northlight, Long Isle, and Sunset. They don't have to go anywhere or have a reward; just a cave would
+# seem natural." A `natural` cave: a mouth, a winding passage, a dead-end hall; no gate, occupant, Habitat Block, reward or keeper.
+
+NATURAL_IDS = {"cave_hoarfrost_hollow": ("N1", "south_pine_isle"), "cave_greenwither_cleft": ("N2", "long_isle_south"),
+               "cave_dusk_burrow": ("N3", "sunset_west")}
+
+
+def test_the_three_natural_caves_stand_on_the_three_islands_the_owner_named():
+    # without it a natural cave could be sited on another island, or one of the three could be missing
+    assert {c["id"] for c in NATURALS} == set(NATURAL_IDS)
+    for c in NATURALS:
+        kind, sub = NATURAL_IDS[c["id"]]
+        assert c["kind"] == kind and c["site"]["subregion"] == sub, c["id"]
+    assert {CAVES[i]["near"] for i in NATURAL_IDS} == {"pine_isles", "long_isle_south", "sunset_isle"}
+
+
+def test_the_natural_caves_differ_in_size_and_each_one_winds():
+    # "vary sizes so the three feel different": three distinct hall volumes and lengths, and a bend in each
+    sizes = {(c["chamber"]["rx"], c["chamber"]["rz"], c["chamber"]["h"]) for c in NATURALS}
+    lengths = {C.layout(SPEC, c)["total"] for c in NATURALS}
+    assert len(sizes) == 3 and len(lengths) == 3, (sizes, lengths)
+    for c in NATURALS:
+        assert any(p.get("bend") for p in c["passages"][1:]), c["id"]
+        assert C.layout(SPEC, c)["chamber"]["uc"] == sum(p.get("bend", 0) for p in c["passages"])
+
+
+def test_a_natural_cave_carries_none_of_occupant_gate_habitat_antechamber_reward_keeper():
+    # the committed record: a dead end with nothing in it (the owner: no reward, no occupant)
+    for c in NATURALS:
+        assert not set(C.NATURAL_FORBIDDEN) & set(c), c["id"]
+        assert c["mode"] == "natural" and c["light"]["dark_by_design"] is True
+
+
+@pytest.mark.parametrize("field,value", [
+    ("occupant", {"mode": "power_line", "species": "gible"}), ("gate", {"kind": "none"}), ("habitat", []),
+    ("antechamber", {"length": 4, "half_width": 3, "height": 5}), ("reward", {"item": "x"}), ("keeper", {})])
+def test_a_natural_cave_with_a_forbidden_field_is_refused(field, value):
+    # breaks if: a natural cave quietly grows an occupant, a gate or a reward; the loader must name the field
+    probs = C.static_problems(_edit(SPEC, "cave_hoarfrost_hollow", lambda c: c.update({field: value})))
+    assert any("a natural cave carries no %s" % field in p for p in probs), probs
+
+
+@pytest.mark.parametrize("name,edit,needle", [
+    ("no bend at all", lambda c: [p.pop("bend", None) for p in c["passages"]], "must carry a bend"),
+    ("a bend longer than its passage", lambda c: c["passages"][1].update(bend=40), "moves at most one step"),
+    ("a narrow bending passage", lambda c: c["passages"][1].update(width=1), "width >= 3"),
+    ("lit by design", lambda c: c["light"].update(dark_by_design=False), "dark by design"),
+    ("a mouth frame's timber in the palette", lambda c: c["palette"].update(timber="minecraft:spruce_log"), "no mouth frame"),
+    ("no ore in the walls", lambda c: c["palette"].pop("vein"), "palette lacks vein"),
+    ("a chamber feature of the kitted caves", lambda c: c["chamber"].update(feature="crystal"), "none or knobs"),
+    ("an incline that bends", lambda c: c["passages"][0].update(bend=1), "incline does not bend"),
+])
+def test_the_loader_refuses_a_natural_cave_that_does_not_wind_or_is_lit(name, edit, needle):
+    probs = C.static_problems(_edit(SPEC, "cave_greenwither_cleft", edit))
+    assert any(needle in p for p in probs), (name, probs)
+
+
+def test_a_kitted_cave_may_not_bend_or_take_the_natural_mode():
+    # the antechamber and gate zones are straight boxes; a bend there would move the door from its zone
+    probs = C.static_problems(_edit(SPEC, "cave_stoneford_cut", lambda c: c["passages"][1].update(bend=3)))
+    assert any("only a natural cave may bend" in p for p in probs), probs
+    probs = C.static_problems(_edit(SPEC, "cave_stoneford_cut", lambda c: c.update(mode="mystery")))
+    assert any("is not 'natural'" in p for p in probs), probs
+
+
+def test_nothing_in_the_shared_files_or_the_pack_names_a_natural_cave(pack):
+    # no Habitat Block, no spawn pool or entry, no gate or boss function, no probe for a boss: a natural cave is a hole in the rock
+    fns, cb, _p = pack
+    hb = (ROOT / "data" / "habitat_blocks.json").read_text(encoding="utf-8")
+    sp = (ROOT / "data" / "spawns.json").read_text(encoding="utf-8")
+    for cid in NATURAL_IDS:
+        assert cid not in hb and cid not in sp, cid
+        assert [n for n in fns if cid in n] == ["build_%s" % cid], [n for n in fns if cid in n]
+        assert not any(cid in l for n, ls in fns.items() if n != "build_%s" % cid for l in ls), cid
+        assert cid not in cb
+        assert "scoreboard players set #%s_open" % cid not in "\n".join(fns["build_%s" % cid])
+
+
+def test_the_natural_caves_write_only_their_palette_and_air_and_no_light(pack):
+    # dark by design: not a lantern, a post, a beam, a column, a door or a crystal; and every written block is the cave's own palette
+    fns, _cb, _p = pack
+    for c in NATURALS:
+        written = A.replay(fns["build_%s" % c["id"]])
+        used = {A.base(v) for v in written.values()}
+        assert used <= set(A.base(v) for v in c["palette"].values()) | {"minecraft:air"}, (c["id"], used)
+        assert not [b for b in used if any(w in b for w in A.LIGHT)], c["id"]
+
+
+def test_the_natural_caves_dressing_is_present_and_shows(pack):
+    # nonempty on purpose: ore only where it shows (an air neighbour), patches on floors, knobs standing on the hall's floor
+    fns, _cb, plan = pack
+    for e in plan:
+        c = e["cave"]
+        if c.get("mode") != "natural":
+            continue
+        w = A.replay(fns["build_%s" % c["id"]])
+        vein, patch, knob = (A.base(c["palette"][k]) for k in ("vein", "patch", "knob"))
+        cells = e["geometry"]["cells"]
+        veins = [p for p, r in cells.items() if r == "vein"]
+        assert veins and all(A.base(w[p]) == vein for p in veins), c["id"]
+        for (x, y, z) in veins:
+            assert any(w.get((x + a, y + b, z + d)) in A.PASS for a, b, d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))), (c["id"], x, y, z)
+        assert [p for p, r in cells.items() if r == "patch"], c["id"]
+        knobs = [p for p, r in cells.items() if r == "knob"]
+        assert 1 <= len(knobs) <= c["chamber"]["knob_count"] and all(p[1] == e["geometry"]["yh"] + 1 for p in knobs), c["id"]
+
+
+def test_the_natural_caves_probes_are_in_the_probe_file_for_r9ck():
+    # tools/presence_audit.py reads places.caves; R9CK builds the caves and the probes come from the same record
+    probes = json.loads((ROOT / "data" / "world_probes.json").read_text(encoding="utf-8"))["places"]["caves"]
+    for cid in NATURAL_IDS:
+        mine = [p for p in probes if p["what"].startswith(cid + ":")]
+        assert len(mine) == 6, (cid, len(mine))
+        assert not [p for p in mine if "boss" in p["what"] or "Habitat" in p["what"] or "beam" in p["what"] or "door" in p["what"]]
+    assert 'caves.placement_steps()' in _reapply()
+
+
+def _natural_only(fix):
+    def wrapped(cave, gm):
+        if cave.get("mode") == "natural":
+            fix(cave, gm)
+    return wrapped
+
+
+def test_a_generator_that_straightens_the_passage_is_caught(monkeypatch, ground):
+    # mutate the GENERATOR (the bend is dropped from every row inside caves.layout), the record untouched: the audit's own
+    # derivation of the offset rows must disagree, and its read of the written air must see a passage that does not wind
+    real = C.layout
+
+    def layout(spec, cave):
+        lay = real(spec, cave)
+        if C.is_natural(cave):
+            for r in lay["rows"]:
+                r["c"] = 0
+            lay["chamber"]["uc"] = 0
+        return lay
+    probs = _mutated(monkeypatch, ground, lambda mp: mp.setattr(C, "layout", layout))
+    assert any("not in the rules" in p or "differ from the rules" in p for p in probs), probs
+    assert any("does not wind" in p or "never turns back" in p for p in probs), probs
+
+
+def test_a_generator_that_changes_the_dressing_rule_is_caught(monkeypatch, ground):
+    # mutate the hash the dressing keys on (inside tools/mines.h32 as caves.py calls it): ore and patches land on other cells
+    real = C.M.h32
+
+    def h32(*vals):
+        return real(*vals) + (1 if len(vals) == 5 else 0)
+    probs = _mutated(monkeypatch, ground, lambda mp: mp.setattr(C.M, "h32", h32))
+    assert any("not in the rules" in p or "differ from the rules" in p or "not written" in p for p in probs), probs
+
+
+def test_a_generator_that_hangs_a_lantern_in_a_natural_cave_is_caught(monkeypatch, ground):
+    def fix(cave, gm):
+        x, _y, z = gm["centre"]
+        gm["cells"][(x, gm["yh"] + 3, z)] = "lantern"
+    probs = _mutated(monkeypatch, ground, lambda mp: _wrap_geometry(mp, _natural_only(fix)))
+    assert any("writes minecraft:lantern" in p for p in probs) and any("not in the rules" in p or "differ from the rules" in p for p in probs), probs
+
+
+def test_a_generator_that_blocks_the_passage_is_caught_by_the_walk(monkeypatch, ground):
+    # one whole row of a winding passage turned to rock: the hall can no longer be walked to from outside the mouth
+    def fix(cave, gm):
+        if cave["id"] != "cave_greenwither_cleft":
+            return
+        lay = gm["layout"]
+        row = [r for r in lay["rows"] if r["kind"] == "level"][6]
+        cells = gm["cells"]
+        xz = C.M.frame(tuple(gm["anchor"]), gm["front"])
+        for u in range(row["c"] - row["hw"], row["c"] + row["hw"] + 1):
+            x, z = xz(u, row["d"])
+            for y in range(row["ft"] + 1, row["ft"] + row["h"] + 1):
+                cells[(x, y, z)] = "shell"
+    probs = _mutated(monkeypatch, ground, lambda mp: _wrap_geometry(mp, fix))
+    assert any("not walkable" in p for p in probs), probs
+
+
+def test_a_generator_that_gives_a_natural_cave_a_keeper_is_caught(monkeypatch, ground):
+    # a boss function for a cave that has no boss: the audit refuses it by name, whatever the record says
+    def wrapped(*a, **k):
+        out = real(*a, **k)
+        out["data/cobblers/function/caves/boss/cave_dusk_burrow/keep.mcfunction"] = "say hello\n"
+        return out
+    real = C.pack_files
+    monkeypatch.setattr(C, "pack_files", wrapped)
+    fns, cb, _p = make_pack(_raw_ground())
+    probs = audit(ground, fns, cb)
+    assert any("boss functions exist for a natural cave" in p for p in probs), probs
+
+
+def test_a_natural_cave_given_a_habitat_block_record_is_caught_by_the_audit(monkeypatch, ground, pack):
+    fns, cb, _p = pack
+    real = A.jload
+
+    def jload(name):
+        doc = real(name)
+        if name == "habitat_blocks.json":
+            doc = copy.deepcopy(doc)
+            doc["blocks"].append({"id": "x", "place": "Dusk Burrow (cave_dusk_burrow, N3) in data/caves.json", "style": "activated"})
+        return doc
+    monkeypatch.setattr(A, "jload", jload)
+    assert any("Habitat Block x names a natural cave" in p for p in audit(ground, fns, cb))
