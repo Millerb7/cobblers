@@ -801,7 +801,13 @@ def keep_clear(spec, written_by_cave, inputs_root, ground, R=64):
                     bx, bz = (int(m.group(5)), int(m.group(7))) if m.group(5) else (ax, az)
                     ew.append((min(ax, bx), min(az, bz), max(ax, bx), max(az, bz), p["id"]))
         rects("earthwork command", ew, kc["earthwork_gap"] + 1)
-        rects("another pack's write", [(a, b, c, d, w) for a, b, c, d, k, w in others if k == "write"], kc["pack_gap"] + 1)
+        # the caves' own Habitat Blocks are written by tools/habitat_blocks.py into cobblers_habitats: a single column at a
+        # record data/habitat_blocks.json itself marks generated_by tools/caves.py is the cave's own, not a neighbour's
+        # (read here from the records, not from tools/caves.py)
+        own_hb = {(b["position"]["x"], b["position"]["z"]) for b in json.loads((ROOT / "data" / "habitat_blocks.json")
+                  .read_text(encoding="utf-8"))["blocks"] if b.get("generated_by") == "tools/caves.py"}
+        rects("another pack's write", [(a, b, c, d, w) for a, b, c, d, k, w in others if k == "write"
+                                       and not (a == c and b == d and (a, b) in own_hb)], kc["pack_gap"] + 1)
         rects("another pack's placed structure origin", [(a, b, c, d, w) for a, b, c, d, k, w in others if k != "write"], TEMPLATE_HINT)
         rects("an x/z another data file authors", [(int(round(x)), int(round(z)), int(round(x)), int(round(z)), f) for x, z, f in pts],
               kc["authored_clearance"] + 1)
