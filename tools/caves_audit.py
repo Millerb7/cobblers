@@ -644,6 +644,8 @@ def record_problems(spec, cave, ex):
     g = cave.get("gate") or {"kind": "none"}
     cap = min((100 if f == "champion_cleared" else int(caps[f[3]])) for f in g["flags"]) if g.get("flags") else None
     sub = {s["id"]: s for s in sp["subregions"]}
+    # every species a keeper brings (the spec's own area bosses): no pool may name one, in any cave (a boss in a pool is a second home)
+    bosses = {c["occupant"]["species"] for c in spec["caves"] if c["occupant"]["mode"] == "area_boss"}
     for h in cave.get("habitat") or []:
         b = blocks.get(h["id"])
         if b is None:
@@ -684,7 +686,7 @@ def record_problems(spec, cave, ex):
                 probs.append("%s: pool %s %s level %s is over the gate's cap %d" % (cid, h["pool"]["id"], e["species"], e["level"], cap))
             if not gated and band and hi > band["maximum"]:
                 probs.append("%s: pool %s %s level %s is over the sub-region's band top %d" % (cid, h["pool"]["id"], e["species"], e["level"], band["maximum"]))
-            if e["species"] in ("miraidon", "koraidon"):
+            if e["species"] in bosses:
                 probs.append("%s: pool %s names a boss species, which only a keeper brings" % (cid, h["pool"]["id"]))
         occ = cave["occupant"]
         if occ["mode"] == "rare_spawn":
@@ -696,6 +698,12 @@ def record_problems(spec, cave, ex):
                     probs.append("%s: the occupant's level is over the gate's cap" % cid)
                 if len([e for e in entries if e["bucket"] == "ultra-rare"]) != 2:
                     probs.append("%s: the ultra-rare bucket must hold the occupant and one local family (two entries)" % cid)
+                for co in occ.get("co_occupants") or []:
+                    cm = [e for e in entries if e["species"] == co]
+                    if len(cm) != 1 or cm[0]["bucket"] != "ultra-rare":
+                        probs.append("%s: the co-occupant %s must be one ultra-rare entry of the chamber's pool" % (cid, co))
+                    elif cap is not None and int(str(cm[0]["level"]).split("-")[-1]) > cap:
+                        probs.append("%s: the co-occupant %s is over the gate's cap" % (cid, co))
         if occ["mode"] == "power_line" and h["part"] == "chamber":
             mine = [e for e in entries if e["species"] == occ["species"]]
             if len(mine) != 1 or mine[0]["bucket"] not in ("rare", "ultra-rare"):

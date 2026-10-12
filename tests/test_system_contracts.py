@@ -1511,11 +1511,19 @@ def test_contract_c25_a_cave_boss_that_blacks_a_player_out_becomes_the_guardian_
     import test_caves as TC
     from gulch_sim import World  # noqa: F401  (the harness test_caves builds on)
     fns, _plan = TC._fns_cached()
+    # every area boss the cave kit has (Miraidon, Dialga, Koraidon): each keeper is its own generated function set
+    assert len(TC.BOSS_IDS) >= 3, TC.BOSS_IDS
+    for boss_id in TC.BOSS_IDS:
+        with TC.as_boss(boss_id):
+            _c25_one_boss(RP, TC, fns)
+
+
+def _c25_one_boss(RP, TC, fns):
     bind = fns["boss/%s/bind" % TC.BID]
     tags = tuple(m.group(1) for line in bind for m in [re.match(r"^tag @s add (\S+)$", line)] if m)
     assert TC.TAG in tags and "cobblers.guardian" not in tags, tags
     s = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=tags)
-    assert RP.fn_calls(s, "recovery/make") and len(RP.ledger(s)["claims"]) == 1, "a loss to the boss made no claim"
+    assert RP.fn_calls(s, "recovery/make") and len(RP.ledger(s)["claims"]) == 1, "a loss to the boss made no claim: %s" % TC.BID
     assert s.get("@s", "bo.lost") > 0
     TC.test_a_guardian_is_never_held_woken_settled_or_killed()
     TC.test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_spawns()
@@ -1533,7 +1541,7 @@ def test_contract_c25_a_cave_boss_that_blacks_a_player_out_becomes_the_guardian_
     zone = gm["chamber_zone"]
     TC.player_at(w, 0, 0).update(pos=((zone[0] + zone[3]) / 2 + 0.5, zone[1], (zone[2] + zone[5]) / 2 + 0.5))
     TC.passes(w, 2)
-    assert TC.DORM not in b["tags"], "the control did not wake the guardian: the guardian test above cannot fail"
+    assert TC.DORM not in b["tags"], "the control did not wake the guardian: the guardian test above cannot fail (%s)" % TC.BID
 
 
 def _defs(path):
