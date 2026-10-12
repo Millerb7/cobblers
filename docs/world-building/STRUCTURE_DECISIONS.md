@@ -229,3 +229,10 @@ is not enabled and it would duplicate the Celebi planned for the Route 1 sapling
 glades (r10-11) and three secret glades (r8-9); its dead ends are 3 blocks wide. Either structure needs roughly a
 30-block clearing, which is a hole in a maze whose whole point is enclosure, and their loot is late-game on a first
 route. Both stay as candidates for a place with room: see the region rosters for where a shrine would fit.
+
+What does fit is small (the owner, 2026-10-12: "some shrines or legendary stuff to the starter forest in those clearings"):
+one hand-sized shrine in each of the six glades, not a donor structure. A three-wide stele with two carved tablets, an
+offering bowl and a find of its own in each of the three glades (the lake spirits Mesprit, Azelf and Uxie, each tablet
+saying truthfully where it sleeps), and a five-wide, older, overgrown shrine in each secret glade (Celebi, Tapu Bulu and
+Tornadus) standing over the find `tools/route_events.py` already placed there. `data/maze_shrines.json`,
+`tools/maze_shrines.py`, `tools/maze_shrines_audit.py`, reapply step R12MS. The sapling and mansion clearings are untouched.

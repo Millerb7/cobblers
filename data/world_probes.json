@@ -7869,6 +7869,158 @@
         ],
         "expect": true
       }
+    ],
+    "maze_shrines": [
+      {
+        "what": "mesprit_stone: minecraft:cauldron",
+        "block": [
+          1466,
+          121,
+          4890,
+          "minecraft:cauldron"
+        ],
+        "expect": true
+      },
+      {
+        "what": "mesprit_stone: minecraft:chiseled_stone_bricks",
+        "block": [
+          1467,
+          123,
+          4890,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "mesprit_stone: minecraft:barrel",
+        "block": [
+          1465,
+          121,
+          4889,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "azelf_stone: minecraft:cauldron",
+        "block": [
+          1413,
+          124,
+          4585,
+          "minecraft:cauldron"
+        ],
+        "expect": true
+      },
+      {
+        "what": "azelf_stone: minecraft:chiseled_stone_bricks",
+        "block": [
+          1412,
+          126,
+          4585,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "azelf_stone: minecraft:barrel",
+        "block": [
+          1414,
+          124,
+          4586,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "uxie_stone: minecraft:cauldron",
+        "block": [
+          1534,
+          121,
+          4415,
+          "minecraft:cauldron"
+        ],
+        "expect": true
+      },
+      {
+        "what": "uxie_stone: minecraft:chiseled_stone_bricks",
+        "block": [
+          1534,
+          123,
+          4414,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "uxie_stone: minecraft:barrel",
+        "block": [
+          1533,
+          121,
+          4416,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "bulu_fern_shrine: minecraft:cauldron",
+        "block": [
+          1600,
+          118,
+          4934,
+          "minecraft:cauldron"
+        ],
+        "expect": true
+      },
+      {
+        "what": "bulu_fern_shrine: minecraft:chiseled_stone_bricks",
+        "block": [
+          1600,
+          119,
+          4933,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "celebi_hollow_shrine: minecraft:cauldron",
+        "block": [
+          1260,
+          127,
+          4806,
+          "minecraft:cauldron"
+        ],
+        "expect": true
+      },
+      {
+        "what": "celebi_hollow_shrine: minecraft:chiseled_stone_bricks",
+        "block": [
+          1260,
+          128,
+          4807,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tornadus_ring_shrine: minecraft:cauldron",
+        "block": [
+          1660,
+          120,
+          4375,
+          "minecraft:cauldron"
+        ],
+        "expect": true
+      },
+      {
+        "what": "tornadus_ring_shrine: minecraft:chiseled_stone_bricks",
+        "block": [
+          1660,
+          121,
+          4374,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      }
     ]
   }
 }

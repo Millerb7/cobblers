@@ -69,6 +69,7 @@ SECRET_FILES = (
     ("lopunny_house.json", "resident"),
     ("rookery.json", "resident"),
     ("shrines.json", "shrine"),
+    ("maze_shrines.json", "shrine"),
     ("rewards.json", "cache"),
     ("sea_drift.json", "cache"),
     ("portals.json", "portal"),

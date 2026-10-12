@@ -1,0 +1,246 @@
+{
+  "schema": "cobblers.maze-shrines/1",
+  "status": "proposed 2026-10-12 at the owner's request (\"We need to add some shrines or legendary stuff to the starter forest in those clearings.\"); built as data and functions by tools/maze_shrines.py, audited by tools/maze_shrines_audit.py, not yet seen in any world",
+  "note": "One small shrine in each of the Route 1 maze forest's three glades (where the braids rejoin) and three secret glades (where the hidden squeeze paths end). The sapling clearing (the sleeping Celebi, data/sapling_celebi.json) and the mansion clearing (the Gastly mansion) are left as they are. A glade stele carries two tablets naming one of the lake spirits and where it sleeps, an offering bowl, and a small find of its own; a secret glade's older shrine speaks of Celebi, Tapu Bulu or Tornadus and stands over the find tools/route_events.py already placed there. Every hint is true: `legendary` names an encounter of data/legendaries.json and tools/maze_shrines_audit.py reads its species, site and status back.",
+  "fields": {
+    "id": "unique, lowercase; the function is cobblers:maze_shrines/<id>",
+    "name": "a working name for the shrine",
+    "glade": "the id of an opening in tools/maze_forest.py CLEARINGS (kind glade or secret)",
+    "kind": "stele | old_shrine (tools/maze_shrines.py KINDS)",
+    "at": "[x, z] of the shrine's front-centre column; its floor is the highest heightmap ground under it plus one",
+    "facing": "the side its front (the offerings) faces: north | east | south | west",
+    "legendary": "{id: a data/legendaries.json encounter id, species, site: that encounter's `site`, direction: optional compass word the tablet says, checked against the bearing from the shrine to the encounter's mouth or portal}",
+    "signs": "{upper, lower}: the two carved tablets, four lines each, at most 14 characters a line. The upper names the spirit, the lower says where it sleeps",
+    "reward": "stele only: the data/rewards.json record of its own find (the barrel is this shrine's; the advancement is rewards_pack's)",
+    "existing_find": "old_shrine only: the data/rewards.json record route_events.py already placed in the glade, which this shrine must keep clear of",
+    "why": "why this glade, this legendary and this piece"
+  },
+  "rules": {
+    "note": "Clearances in blocks, enforced by tools/maze_shrines.py and checked again, independently, by tools/maze_shrines_audit.py",
+    "disc_margin": 0.5,
+    "path_clearance": 1,
+    "post_clearance": 1,
+    "max_line_chars": 14,
+    "max_find_items": 6
+  },
+  "blocks": {
+    "note": "Every block a shrine may write. Vanilla 1.21.1 only; tools/maze_shrines_audit.py checks each id against the 1.21.1 client jar's blockstates and against data/spawn_blocks.json. The potted plants are their own block ids, none a spawn condition; the flowers themselves are, and are not used.",
+    "ids": [
+      "minecraft:barrel",
+      "minecraft:candle",
+      "minecraft:cauldron",
+      "minecraft:chiseled_stone_bricks",
+      "minecraft:cracked_stone_bricks",
+      "minecraft:lantern",
+      "minecraft:moss_carpet",
+      "minecraft:mossy_cobblestone",
+      "minecraft:mossy_cobblestone_slab",
+      "minecraft:mossy_stone_brick_slab",
+      "minecraft:mossy_stone_bricks",
+      "minecraft:oak_fence",
+      "minecraft:potted_azure_bluet",
+      "minecraft:potted_fern",
+      "minecraft:spruce_wall_sign",
+      "minecraft:stone_brick_slab",
+      "minecraft:stone_bricks",
+      "minecraft:vine"
+    ]
+  },
+  "shrines": [
+    {
+      "id": "mesprit_stone",
+      "name": "the Feeling Stone",
+      "glade": "braid1_join",
+      "kind": "stele",
+      "at": [
+        1465,
+        4890
+      ],
+      "facing": "west",
+      "legendary": {
+        "id": "mesprit",
+        "species": "mesprit",
+        "site": "arrow_lake",
+        "direction": "east"
+      },
+      "signs": {
+        "upper": [
+          "MESPRIT",
+          "keeper of",
+          "what you feel",
+          ""
+        ],
+        "lower": [
+          "Asleep under",
+          "Arrow Lake,",
+          "far to the",
+          "east."
+        ]
+      },
+      "reward": "r1_glade_mesprit",
+      "why": "the first glade, where braid 1 rejoins: the first of the three lake spirits a player meets, on the first fork of the first route. The Emotion spirit sleeps under Arrow Lake (data/legendaries.json mesprit, 3 badges), a lake east of this forest. Compact, tended: a stele in the pocket east of the junction, its front to the walkers"
+    },
+    {
+      "id": "azelf_stone",
+      "name": "the Willing Stone",
+      "glade": "braid2_join",
+      "kind": "stele",
+      "at": [
+        1414,
+        4585
+      ],
+      "facing": "east",
+      "legendary": {
+        "id": "azelf",
+        "species": "azelf",
+        "site": "marshy_marsh"
+      },
+      "signs": {
+        "upper": [
+          "AZELF",
+          "keeper of",
+          "willpower",
+          ""
+        ],
+        "lower": [
+          "Asleep beneath",
+          "the drowned",
+          "roots of",
+          "Marshy Marsh."
+        ]
+      },
+      "reward": "r1_glade_azelf",
+      "why": "the second glade, beyond the sapling: Azelf's mouth is under the root tangle of the drowned trees in Marshy Marsh (data/legendaries.json azelf, 5 badges)"
+    },
+    {
+      "id": "uxie_stone",
+      "name": "the Knowing Stone",
+      "glade": "braid3_join",
+      "kind": "stele",
+      "at": [
+        1534,
+        4416
+      ],
+      "facing": "south",
+      "legendary": {
+        "id": "uxie",
+        "species": "uxie",
+        "site": "lake_tilpey",
+        "direction": "east"
+      },
+      "signs": {
+        "upper": [
+          "UXIE",
+          "keeper of",
+          "knowledge",
+          ""
+        ],
+        "lower": [
+          "Asleep under",
+          "an island in",
+          "Lake Tilpey,",
+          "far east."
+        ]
+      },
+      "reward": "r1_glade_uxie",
+      "why": "the third glade, the last before the exit stretch and Brock: Uxie sleeps under the island's apron in Lake Tilpey (data/legendaries.json uxie, 7 badges), far east"
+    },
+    {
+      "id": "bulu_fern_shrine",
+      "name": "the Green Shrine",
+      "glade": "fern_glade",
+      "kind": "old_shrine",
+      "at": [
+        1600,
+        4935
+      ],
+      "facing": "south",
+      "legendary": {
+        "id": "tapubulu",
+        "species": "tapubulu",
+        "site": "long_isle_south_hill"
+      },
+      "signs": {
+        "upper": [
+          "TAPU BULU",
+          "keeper of",
+          "the wild green",
+          ""
+        ],
+        "lower": [
+          "Sealed under",
+          "the southern",
+          "hills of the",
+          "Long Isle."
+        ]
+      },
+      "existing_find": "r1_fern_glade",
+      "why": "the fern glade at the end of the hidden path east of braid 1: ferns and old stone for the grass guardian, whose chamber is under the Long Isle's southern hills (data/legendaries.json tapubulu, 6 badges). Older than the stelae: cracked, mossed, candle-lit, the find's barrel left where it was"
+    },
+    {
+      "id": "celebi_hollow_shrine",
+      "name": "the Hollow Shrine",
+      "glade": "west_hollow",
+      "kind": "old_shrine",
+      "at": [
+        1260,
+        4805
+      ],
+      "facing": "north",
+      "legendary": {
+        "id": "celebi_wake",
+        "species": "celebi",
+        "site": "route_1_sapling"
+      },
+      "signs": {
+        "upper": [
+          "CELEBI",
+          "who walks",
+          "through time",
+          ""
+        ],
+        "lower": [
+          "Asleep in the",
+          "sapling at the",
+          "wood's heart.",
+          "Not yet."
+        ]
+      },
+      "existing_find": "r1_west_hollow",
+      "why": "the west hollow, the secret glade nearest the sapling (about 210 blocks from it): the forest's own guardian, asleep on the Route 1 sapling's branch (data/sapling_celebi.json, data/legendaries.json celebi_wake). The tablet says it sleeps and says 'not yet'; it names no wake item (docs/story/EARLY_ROUTE_BUILD_HANDOFF.md forbids a Route 1 voice naming one)"
+    },
+    {
+      "id": "tornadus_ring_shrine",
+      "name": "the Ring Shrine",
+      "glade": "north_ring",
+      "kind": "old_shrine",
+      "at": [
+        1660,
+        4376
+      ],
+      "facing": "south",
+      "legendary": {
+        "id": "tornadus",
+        "species": "tornadus",
+        "site": "tri_peaks_summit",
+        "direction": "north"
+      },
+      "signs": {
+        "upper": [
+          "TORNADUS",
+          "the wind that",
+          "walks alone.",
+          ""
+        ],
+        "lower": [
+          "Sealed under",
+          "the summit of",
+          "the Tri Peaks,",
+          "far north."
+        ]
+      },
+      "existing_find": "r1_north_ring",
+      "why": "the ring of trees at the end of the hidden path off the exit stretch, the last glade before Brock: a ring of leaves is where the wind is loudest, and Tornadus is sealed under the Tri Peaks' summit (data/legendaries.json tornadus, 4 badges), far north"
+    }
+  ]
+}
