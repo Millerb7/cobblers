@@ -103,6 +103,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-09: Route 5's event sites (tools/route5_events.py): block functions run by R12R5; the scenes,
                 # NPCs and conversations they carry are data/scenes.json's, placed by R17
                 "cobblers_route5_events",
+                # 2026-10-12: a shrine in each of the Route 1 maze forest's six glades (tools/maze_shrines.py,
+                # data/maze_shrines.json): block functions run by R12MS, after the forest (R6) and the event sites (R12)
+                "cobblers_maze_shrines",
                 # 2026-09-27: each dressed town's landmark and set dressing (tools/town_dressing.py,
                 # data/town_dressing.json), run by R16B after the donors and the lights
                 "cobblers_town_dressing",
@@ -865,6 +868,11 @@ def prepare_jobs(a):
     # Route 5's event sites (2026-10-09, tools/route5_events.py): fails on drift between the build and the four scene
     # records or the cache record in data/, or on anything standing on the walked line
     add("route5_events", "route5_events.py", *src)
+    # the shrines in the Route 1 maze forest's glades (2026-10-12): the build fails on a site the forest's plan, the
+    # heightmap or a find's trigger box forbids or on a rewards record that disagrees with it, then the independent
+    # audit replays the written functions against the plan, the legendaries and the finds
+    add("maze_shrines:build", "maze_shrines.py", "build", *src)
+    add("maze_shrines_audit", "maze_shrines_audit.py", *src)
     add("challenge_mode_audit", "challenge_mode_audit.py")
     # Heaven's Arena's per-player opponents (2026-10-03): the ladder, the champions' exam teams and the dome's venues.
     # It FAILS while data/arena_dome.json has no venues: an arena with nowhere to fight is not a pack to install
@@ -2390,6 +2398,10 @@ def steps(with_spawns=False):
     # Routes 1-3's event sites after the signposts and every town, and before the things that stand in them
     out.append(("R12", "Routes 1-3 event sites (tools/route_events.py)",
                 [("fn", "cobblers:route_events/%s" % f) for f in indexed("cobblers_route_events", "route_events")]))
+    # the shrines in the maze forest's glades (tools/maze_shrines.py): after the forest's tiles (R6), the signposts (R15)
+    # and Routes 1-3's event sites (R12), whose barrels they stand clear of; before R17 places what stands in them
+    out.append(("R12MS", "Route 1 maze forest glade shrines (tools/maze_shrines.py, data/maze_shrines.json)",
+                [("fn", "cobblers:maze_shrines/%s" % f) for f in indexed("cobblers_maze_shrines", "maze_shrines")]))
     # Route 5's event sites (tools/route5_events.py): a pack of their own so Routes 1-3's cannot move, run right after
     # theirs and before R17 places the props, NPCs and actors that stand in them
     out.append(("R12R5", "Route 5 event sites (tools/route5_events.py)",
