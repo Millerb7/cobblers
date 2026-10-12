@@ -10,7 +10,10 @@ A fourth kind of cave, mode `natural` (the owner, 2026-10-12: "They don't have t
 natural"): N1 Hoarfrost Hollow (south Pine Isle), N2 Greenwither Cleft (Long Isle south), N3 Dusk Burrow (Sunset West). A mouth with no
 timber frame, an incline, passages that WIND (`bend`, data/caves.json geometry.rules), a dead-end hall with `knobs`, ore in the exposed
 walls and patches in the floor (`dressing`); dark by design. No gate, occupant, Habitat Block, reward or keeper, and the loader refuses a
-record that carries one.
+record that carries one. Its mouth is a HILLSIDE MOUTH (the owner, 2026-10-12: "an organic opening in a slope, no trench, no frame, no cut
+stone"): hillside_mouth() roofs the opening with a rock lid, arches it, grows a mound of the hill's own surface block over and beside it
+and lays a scree apron (and vines), and no row is an open cutting. The cutting the first mouths built (the cave's frozen `legacy`) is put
+back to terrain from the heightmap by restore_<id>, which build_<id> calls first, so R9CK stays one function a cave and re-run safe.
 
 What it reuses, by name (CLAUDE.md principle 6: nothing new where a pattern exists):
 
@@ -89,6 +92,9 @@ FEATURES = ("none", "columns", "crystal", "knobs")
 MODES = ("power_line", "rare_spawn", "area_boss")
 NATURAL = "natural"               # a cave `mode`: no gate, occupant, Habitat Block, reward or keeper; a mouth, a winding passage, a hall
 NATURAL_FORBIDDEN = ("occupant", "gate", "habitat", "antechamber", "reward", "keeper")
+# a natural mouth is found rock: none of these in any block it writes (the owner, 2026-10-12: no cut stone, no timber, no frame)
+NATURAL_BAD_BLOCKS = ("stairs", "slab", "brick", "smooth", "polished", "chiseled", "cut_", "wall", "fence", "_log", "_wood", "_planks",
+                      "lantern", "torch", "door", "trapdoor")
 GENERATED = "tools/caves.py"
 POLICY_SCOPE = "caves"
 # ground: the functions that read a world, each only to check (tools/ground_rule.py); this tool reads none
@@ -242,9 +248,73 @@ def mouth_floor(rows0, ground, xz):
     return gs[(len(gs) - 1) // 2]
 
 
-def geometry(spec, cave, ground, anchor=None, front=None):
+def pick(lst, *k):
+    """The entry of a block list that h32 gives these integers (the natural mouth's scree and rubble)."""
+    return lst[M.h32(*k) % len(lst)]
+
+
+def hillside_mouth(spec, cave, cells, ground, xz, front, rows, lay, y0):
+    """The natural cave's hillside mouth (data/caves.json geometry.rules, HILLSIDE MOUTH): the arch, the lid and the mound over the
+    mouth and the incline, the scree apron in front, the vines. Adds cells (never overwrites one the cave already has, but the arch);
+    returns nothing. The floor of those rows is picked in geometry()."""
+    nm, hs, seed, fid = spec["geometry"]["natural_mouth"], cave["hillside"], spec["seed"], M.sid(cave["id"])
+    drop, hw, h0 = lay["drop"], rows[0]["hw"], rows[0]["h"]
+    lid = nm["lid"]
+    top = {e: (y0 if e == 0 else y0 - e + 1) + h0 for e in range(drop + 1)}        # T(e): the air top of the mouth and incline rows
+    cap = cave["terrain"]["surface"]
+    # the arch: the upper corner cells of the first rows are rock
+    for d in range(nm["arch_rows"]):
+        for u in (-hw, hw):
+            x, z = xz(u, d)
+            if cells.get((x, top[d], z)) == "air":
+                cells[(x, top[d], z)] = "b:" + pick(hs["rubble"], seed, fid, x, top[d], z, 11)
+    reach = h0 + lid + 6
+    for d in range(-reach, drop + reach + 1):
+        for u in range(-hw - reach, hw + reach + 1):
+            if abs(u) <= hw and d < 0:
+                continue                                          # the entry corridor stays open
+            lat = max(0, abs(u) - hw)
+            dist = 0 if 0 <= d <= drop else (-d if d < 0 else d - drop)
+            k = max(lat, dist)
+            if k > nm["reach"]:
+                continue
+            x, z = xz(u, d)
+            mtop = max(top[e] + lid - nm["slope"] * max(lat, abs(d - e)) for e in range(drop + 1))
+            if k >= 2:
+                mtop -= M.h32(seed, fid, x, z, 9) % 2
+            g = ground(x, z)
+            if mtop <= g:
+                continue
+            face = d <= 1 and abs(u) <= hw + nm["face_extra"]
+            for y in range(g + 1, mtop + 1):
+                if (x, y, z) in cells:
+                    continue
+                if y == mtop and not face and M.h32(seed, fid, x, z, 13) % nm["speckle_one_in"] != 0:
+                    cells[(x, y, z)] = "b:" + cap
+                else:
+                    cells[(x, y, z)] = "b:" + pick(hs["rubble"], seed, fid, x, y, z, 11)
+    # the scree apron in front of the opening
+    for d in range(-nm["apron_reach"], 0):
+        for u in range(-hw, hw + 1):
+            x, z = xz(u, d)
+            if M.h32(seed, fid, x, z, 6) % 100 < 100 - 20 * (-d - 1):
+                cells[(x, ground(x, z), z)] = "b:" + pick(hs["scree"], seed, fid, x, z, 5)
+    # vines over the lintel
+    if hs.get("vine"):
+        face_dir = {"west": "east", "east": "west", "north": "south", "south": "north"}[front]
+        for u in range(-hw, hw + 1):
+            x, z = xz(u, -1)
+            bx, bz = xz(u, 0)
+            for y in range(top[0] + 1, top[0] + lid + 1):
+                if y > ground(x, z) and (bx, y, bz) in cells:
+                    cells[(x, y, z)] = "vine:" + face_dir
+
+
+def geometry(spec, cave, ground, anchor=None, front=None, legacy=False):
     """Everything a cave writes, from its mouth and the ground: {"cells": {(x, y, z): role}, ...}. Roles: air, floor, stair,
-    fill, shell, post, beam, fence, lantern, hanglantern, column, crystal, barrier. Every broken rule is a problem."""
+    fill, shell, post, beam, fence, lantern, hanglantern, column, crystal, barrier; a natural cave's hillside mouth also writes
+    `b:<block>` (a literal block) and `vine:<side>`. Every broken rule is a problem. `legacy` is the natural cave's retired
+    mouth (an open cutting and a stair, no hood): only its cells are meant to be read, for the restore."""
     geo = spec["geometry"]
     m = cave.get("mouth") or {}
     anchor = tuple(anchor or m["anchor"])
@@ -259,6 +329,8 @@ def geometry(spec, cave, ground, anchor=None, front=None):
     yh = y0 - drop
     probs, cells = [], {}
     natural = is_natural(cave)
+    hood = natural and not legacy                 # a hillside mouth: no cutting, a lid and a mound (geometry.rules)
+    seed, fid = spec["seed"], M.sid(cave["id"])
     cols = {}                                    # (x, z) -> {"top", "m", "cut", "kind"}: the air columns
 
     def ft_of(r):
@@ -285,19 +357,24 @@ def geometry(spec, cave, ground, anchor=None, front=None):
         ft = ft_of(r)
         at = ft + r["h"]
         hw = r["hw"]
-        if r["kind"] in ("mouth", "stair"):
+        mouthrow = r["kind"] in ("mouth", "stair")
+        if mouthrow and not hood:
             gmin = min(ground(*xz(u, r["d"])) for u in range(-hw - 1, hw + 2))
             cut = gmin < at + 1 + cov["passage"]
             cutting += 1 if cut else 0
         else:
-            cut = False
+            cut = False                              # a hillside mouth opens no cutting: its lid is written below
         r["ft"], r["cut"] = ft, cut
         for u in range(r["c"] - hw, r["c"] + hw + 1):
             x, z = xz(u, r["d"])
             g = ground(x, z)
             top = max(g, at) + geo["clear_above"] if cut else at
-            put_col(x, z, ft, top, r["kind"], cut, "stair" if r["kind"] == "stair" else "floor")
-            if not cut and g - top < kind_cover(r["kind"]):
+            if hood and mouthrow:
+                role = "b:" + pick(cave["hillside"]["scree"], seed, fid, x, z, 3)
+            else:
+                role = "stair" if r["kind"] == "stair" else "floor"
+            put_col(x, z, ft, top, r["kind"], cut or (hood and mouthrow), role)     # a hillside mouth's shell is a cutting's: margin 1, up to the ground
+            if not cut and not (hood and mouthrow) and g - top < kind_cover(r["kind"]):
                 probs.append("row d=%d (%s) column (%d, %d): %d of ground over its air top y%d, under %d"
                              % (r["d"], r["kind"], x, z, g - top, top, kind_cover(r["kind"])))
     if cutting > geo["max_cutting_rows"]:
@@ -376,6 +453,12 @@ def geometry(spec, cave, ground, anchor=None, front=None):
         for y in range(lo, min(hi, cap) + 1):
             if (x, y, z) not in cells:
                 cells[(x, y, z)] = "shell"
+    if hood:
+        hillside_mouth(spec, cave, cells, ground, xz, front, rows, lay, y0)
+        rise = min(ground(*xz(u, drop)) for u in range(-rows[0]["hw"], rows[0]["hw"] + 1)) - y0
+        if rise < geo["natural_mouth"]["rise_min"]:
+            probs.append("the ground rises only %d over the incline (row %d), under rise_min %d: the mouth is not in a slope"
+                         % (rise, drop, geo["natural_mouth"]["rise_min"]))
     if natural:
         # the rock's own dressing (data/caves.json geometry.rules): ore showing in the walls, and patches of another floor
         dr, seed, fid = cave["dressing"], spec["seed"], M.sid(cave["id"])
@@ -635,12 +718,27 @@ def natural_problems(spec, c):
     for k in NATURAL_FORBIDDEN:
         if k in c:
             out.append("%s: a natural cave carries no %s" % (cid, k))
-    for k in ("shell", "floor", "stair", "vein", "patch", "knob"):
+    for k in ("shell", "floor", "vein", "patch", "knob"):
         if k not in c["palette"]:
             out.append("%s: palette lacks %s" % (cid, k))
-    for k in ("timber", "fence", "column"):
+    for k in ("timber", "fence", "column", "stair"):
         if k in c["palette"]:
-            out.append("%s: a natural cave has no mouth frame, lantern post or column: palette carries %s" % (cid, k))
+            out.append("%s: a natural cave has no mouth frame, lantern post, column or stair: palette carries %s" % (cid, k))
+    hs, tr, lg = c.get("hillside") or {}, c.get("terrain") or {}, c.get("legacy") or {}
+    for k in ("scree", "rubble"):
+        if not isinstance(hs.get(k), list) or not hs[k]:
+            out.append("%s: hillside.%s must be a list of blocks" % (cid, k))
+        for b in hs.get(k) or []:
+            if any(w in b for w in NATURAL_BAD_BLOCKS):
+                out.append("%s: hillside.%s names %s: a natural mouth has no cut, smooth, brick, stair, slab, wall, fence, timber or lantern block" % (cid, k, b))
+    for k in ("surface", "under", "deep"):
+        if not tr.get(k):
+            out.append("%s: terrain.%s is missing (the cap of the mound and the restore)" % (cid, k))
+    for k in ("mouth", "passages", "chamber"):
+        if k not in lg:
+            out.append("%s: legacy.%s is missing (the retired mouth the restore takes down)" % (cid, k))
+    if c.get("passages") and c["passages"][0].get("height", 0) < 3:
+        out.append("%s: the incline is under 3 high" % cid)
     if not (c.get("light") or {}).get("dark_by_design"):
         out.append("%s: a natural cave is dark by design (light.dark_by_design true; STATE: the night is fightorflight's)" % cid)
     dr = c.get("dressing") or {}
@@ -806,6 +904,10 @@ def model(spec=None, source_root=None, inputs_root=None, need_packs=False):
 
 def block_of(cave, role, front):
     p = cave["palette"]
+    if role.startswith("b:"):                  # a natural mouth's literal block (scree, rubble, the surface cap)
+        return role[2:]
+    if role.startswith("vine:"):
+        return "minecraft:vine[%s=true]" % role[5:]
     if role in ("fill", "shell"):
         return p["shell"]
     if role == "floor":
@@ -841,6 +943,73 @@ def build_name(cave):
     return "build_%s" % cave["id"]
 
 
+def restore_name(cave):
+    return "restore_%s" % cave["id"]
+
+
+def legacy_geometry(spec, cave, ground):
+    """The retired mouth of a natural cave (its `legacy` record: an open cutting, a stair, the shell round them), as the cells the
+    rules wrote then. Only its cells and bounds are read, by the restore; its problems are not."""
+    lg = cave["legacy"]
+    old = dict(cave, passages=lg["passages"], chamber=lg["chamber"], mouth=dict(cave["mouth"], **lg["mouth"]))
+    return geometry(spec, old, ground, tuple(lg["mouth"]["anchor"]), lg["mouth"]["front"], legacy=True)
+
+
+def x_runs(cells):
+    """[(x0, x1, z)] -- {(x, z)} merged into runs of consecutive x on one z."""
+    out = []
+    byz = {}
+    for x, z in cells:
+        byz.setdefault(z, []).append(x)
+    for z in sorted(byz):
+        xs = sorted(byz[z])
+        a = prev = xs[0]
+        for x in xs[1:]:
+            if x != prev + 1:
+                out.append((a, prev, z))
+                a = x
+            prev = x
+        out.append((a, prev, z))
+    return out
+
+
+def restore_lines(cave, old, ground):
+    """fill lines that put every column the retired mouth wrote to back to terrain over the y range it wrote: terrain.deep from the
+    lowest cell to ground - 3, terrain.under at ground - 2 .. ground - 1, terrain.surface at the ground, air above to the highest
+    cell. Ground is the heightmap's, rounded (CLAUDE.md, ground rule); nothing here reads a world. Idempotent."""
+    tr = cave["terrain"]
+    span = {}
+    for (x, y, z) in old["cells"]:
+        lo, hi = span.get((x, z), (y, y))
+        span[(x, z)] = (min(lo, y), max(hi, y))
+    groups = {}
+    for (x, z), (lo, hi) in span.items():
+        groups.setdefault((ground(x, z), lo, hi), []).append((x, z))
+    lines = []
+    for (gy, lo, hi), cols in sorted(groups.items()):
+        for (x0, x1, z) in x_runs(cols):
+            if lo <= min(gy - 3, hi):
+                lines.append("fill %d %d %d %d %d %d %s" % (x0, lo, z, x1, min(gy - 3, hi), z, tr["deep"]))
+            if max(lo, gy - 2) <= min(gy - 1, hi):
+                lines.append("fill %d %d %d %d %d %d %s" % (x0, max(lo, gy - 2), z, x1, min(gy - 1, hi), z, tr["under"]))
+            if lo <= gy <= hi:
+                lines.append("fill %d %d %d %d %d %d %s" % (x0, gy, z, x1, gy, z, tr["surface"]))
+            if max(lo, gy + 1) <= hi:
+                lines.append("fill %d %d %d %d %d %d minecraft:air" % (x0, max(lo, gy + 1), z, x1, hi, z))
+    return lines
+
+
+def restore_files(spec, entry):
+    """{restore_<id>: lines} for a natural cave: the retired mouth taken down. Called first by build_<id>."""
+    cave = entry["cave"]
+    ground = entry["geometry"]["ground"]
+    old = legacy_geometry(spec, cave, ground)
+    head = ["# Generated by tools/caves.py from data/caves.json: the retired mouth of %s (%s) taken down (%s legacy)" % (cave["name"], cave["id"], cave["id"]),
+            "# chunks-loaded-by: %s:%s/%s (the re-application holds the box before it runs)" % (NS, FOLDER, build_name(cave)),
+            "# every column the retired cutting and its shell wrote goes back to terrain from the heightmap; re-running it only writes the terrain with itself"]
+    return {restore_name(cave): head + restore_lines(cave, old, ground)}
+
+
 def build_lines(spec, entry):
     cave, gm = entry["cave"], entry["geometry"]
     front = gm["front"]
@@ -849,6 +1018,8 @@ def build_lines(spec, entry):
             "# chunks-loaded-by: the re-application (forceload add over RCON before this runs)",
             "# one final block for every cell: the shell, the floor and stairs, the air, the timber, the lantern posts, the"
             " feature and, behind a gate, the barrier door (closed)"]
+    if is_natural(cave):
+        head.append("function %s/%s" % (F, restore_name(cave)))
     lines = head + M.column_runs(cells)
     if (cave.get("gate") or {}).get("kind") == "partition":
         lines.append("scoreboard players set #%s_open %s 0" % (cave["id"], spec["gate"]["objective"]))
@@ -1031,6 +1202,8 @@ def pack_files(spec, plan):
     for e in plan:
         cave, gm = e["cave"], e["geometry"]
         fns[build_name(cave)] = build_lines(spec, e)
+        if is_natural(cave):
+            fns.update(restore_files(spec, e))
         if (cave.get("gate") or {}).get("kind") == "partition":
             cx, cy, cz = gm["centre"]
             load_.append("execute unless score #%s_open %s matches -2147483648.. run scoreboard players set #%s_open %s 0" % (cave["id"], obj, cave["id"], obj))
@@ -1072,9 +1245,15 @@ def build_functions(spec=None):
     return ["%s/%s" % (F, build_name(c)) for c in spec["caves"]]
 
 
-def forceload_box(gm):
+def forceload_box(gm, old=None):
+    """The box a cave's build holds loaded; for a natural cave also the retired mouth's (`old`, its legacy geometry), which the
+    restore writes to."""
     b = gm["bounds"]
-    return (b[0] - 2, b[2] - 2, b[3] + 2, b[5] + 2)
+    box = (b[0] - 2, b[2] - 2, b[3] + 2, b[5] + 2)
+    if old:
+        o = old["bounds"]
+        box = (min(box[0], o[0] - 2), min(box[1], o[2] - 2), max(box[2], o[3] + 2), max(box[3], o[5] + 2))
+    return box
 
 
 def placement_steps(spec=None, g=None):
@@ -1086,7 +1265,7 @@ def placement_steps(spec=None, g=None):
     for cave in spec["caves"]:
         if not cave.get("mouth"):
             raise SystemExit("%s has no mouth: python tools/caves.py author" % cave["id"])
-        hold = "%d %d %d %d" % forceload_box(geometry(spec, cave, g))
+        hold = "%d %d %d %d" % forceload_box(geometry(spec, cave, g), legacy_geometry(spec, cave, g) if is_natural(cave) else None)
         out += [("cmd", "forceload add " + hold), ("wait", 4), ("fn", "%s/%s" % (F, build_name(cave))), ("cmd", "forceload remove " + hold)]
     return out
 
@@ -1192,6 +1371,14 @@ def probe_records(spec, plan):
             for what, c in (("the chamber's floor beside its middle", (gm["centre"][0] + 1, gm["yh"], gm["centre"][2])),
                             ("the rock over the chamber's roof", (gm["centre"][0], gm["yh"] + cave["chamber"]["h"] + 1, gm["centre"][2]))):
                 blk(what, c, base(block_of(cave, cells[c], front)))
+            # the hillside mouth: rock over the opening (no open cutting) and the arch's corner cell, whichever rock the rules pick
+            hw0, h0 = lay["rows"][0]["hw"], lay["rows"][0]["h"]
+            t0 = gm["y0"] + h0
+            for what, (u, y) in (("the rock over the mouth (the lid; there is no open cutting)", (0, t0 + 1)),
+                                 ("the arch's upper corner (rock, not air)", (hw0, t0))):
+                px, pz = xz(u, 0)
+                if (px, y, pz) in cells:
+                    blk(what, (px, y, pz), base(block_of(cave, cells[(px, y, pz)], front)))
             continue
         blk("the chamber's floor under the habitat block's neighbour", (gm["centre"][0] + 1, gm["yh"], gm["centre"][2]), cave["palette"]["floor"])
         blk("the shell over the chamber's roof", (gm["centre"][0], gm["yh"] + cave["chamber"]["h"] + 1, gm["centre"][2]), cave["palette"]["shell"])

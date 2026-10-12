@@ -202,9 +202,10 @@ def _mutated(monkeypatch, ground, patch):
 def _wrap_geometry(monkeypatch, fix):
     real = C.geometry
 
-    def geometry(spec, cave, g, anchor=None, front=None):
-        gm = real(spec, cave, g, anchor, front)
-        fix(cave, gm)
+    def geometry(spec, cave, g, anchor=None, front=None, **kw):
+        gm = real(spec, cave, g, anchor, front, **kw)
+        if not kw.get("legacy"):                       # the retired mouth's cells (the restore) are not the cave a mutation is about
+            fix(cave, gm)
         return gm
     monkeypatch.setattr(C, "geometry", geometry)
 
@@ -1052,8 +1053,9 @@ def test_nothing_in_the_shared_files_or_the_pack_names_a_natural_cave(pack):
     sp = (ROOT / "data" / "spawns.json").read_text(encoding="utf-8")
     for cid in NATURAL_IDS:
         assert cid not in hb and cid not in sp, cid
-        assert [n for n in fns if cid in n] == ["build_%s" % cid], [n for n in fns if cid in n]
-        assert not any(cid in l for n, ls in fns.items() if n != "build_%s" % cid for l in ls), cid
+        own = {"build_%s" % cid, "restore_%s" % cid}                    # the build and the retired mouth's restore, and nothing else
+        assert sorted(n for n in fns if cid in n) == sorted(own), [n for n in fns if cid in n]
+        assert not any(cid in l for n, ls in fns.items() if n not in own for l in ls), cid
         assert cid not in cb
         assert "scoreboard players set #%s_open" % cid not in "\n".join(fns["build_%s" % cid])
 
@@ -1064,7 +1066,8 @@ def test_the_natural_caves_write_only_their_palette_and_air_and_no_light(pack):
     for c in NATURALS:
         written = A.replay(fns["build_%s" % c["id"]])
         used = {A.base(v) for v in written.values()}
-        assert used <= set(A.base(v) for v in c["palette"].values()) | {"minecraft:air"}, (c["id"], used)
+        mouth = {A.base(b) for k in ("scree", "rubble") for b in c["hillside"][k]} | {A.base(c["terrain"]["surface"]), "minecraft:vine"}
+        assert used <= set(A.base(v) for v in c["palette"].values()) | mouth | {"minecraft:air"}, (c["id"], used)
         assert not [b for b in used if any(w in b for w in A.LIGHT)], c["id"]
 
 
@@ -1092,7 +1095,7 @@ def test_the_natural_caves_probes_are_in_the_probe_file_for_r9ck():
     probes = json.loads((ROOT / "data" / "world_probes.json").read_text(encoding="utf-8"))["places"]["caves"]
     for cid in NATURAL_IDS:
         mine = [p for p in probes if p["what"].startswith(cid + ":")]
-        assert len(mine) == 6, (cid, len(mine))
+        assert len(mine) == 8, (cid, len(mine))                           # stand, hall, two bends, floor, roof, and the mouth's lid and arch
         assert not [p for p in mine if "boss" in p["what"] or "Habitat" in p["what"] or "beam" in p["what"] or "door" in p["what"]]
     assert 'caves.placement_steps()' in _reapply()
 
@@ -1181,3 +1184,153 @@ def test_a_natural_cave_given_a_habitat_block_record_is_caught_by_the_audit(monk
         return doc
     monkeypatch.setattr(A, "jload", jload)
     assert any("Habitat Block x names a natural cave" in p for p in audit(ground, fns, cb))
+
+
+# ------------------------------------------------------------------ the hillside mouths (the owner, 2026-10-12)
+# "I hate the cave look, it feels out of place": the first natural mouths were an open stone cutting in meadow. Now each is an opening in
+# a grown hillside (lid, arch, mound, scree apron), the retired cutting is restored from the heightmap first (restore_<id>, run by
+# build_<id>), and the audit reads the properties off the written cells: no air open to the sky, no cut or timber block, a walk to the hall.
+
+LEGACY_CUTS = {"cave_hoarfrost_hollow": 7, "cave_greenwither_cleft": 7, "cave_dusk_burrow": 6}     # the applied cuttings, measured before the rework
+
+
+def _natural_plan(pack):
+    return [e for e in pack[2] if e["cave"].get("mode") == "natural"]
+
+
+def test_each_natural_mouth_opens_no_cutting_and_is_roofed_over_its_opening(pack):
+    # the generator's own cells: no cutting row, and the cell over the middle of the mouth's top air is rock, not sky
+    for e in _natural_plan(pack):
+        gm, c = e["geometry"], e["cave"]
+        assert gm["cutting_rows"] == 0 and not any(r["cut"] for r in gm["layout"]["rows"]), c["id"]
+        xz = C.M.frame(tuple(gm["anchor"]), gm["front"])
+        h0 = gm["layout"]["rows"][0]["h"]
+        x, z = xz(0, 0)
+        assert gm["cells"][(x, gm["y0"] + h0, z)] == "air", c["id"]
+        assert gm["cells"][(x, gm["y0"] + h0 + 1, z)].startswith("b:"), c["id"]
+
+
+def test_each_natural_mouth_sits_in_a_slope_and_never_writes_a_cut_block(pack):
+    # the incline's ground rises at least rise_min (measured on the heightmap) and no written block is cut, smooth, a stair or timber
+    fns, _cb, _plan = pack
+    nm = SPEC["geometry"]["natural_mouth"]
+    for e in _natural_plan(pack):
+        gm, c = e["geometry"], e["cave"]
+        xz = C.M.frame(tuple(gm["anchor"]), gm["front"])
+        hw = gm["layout"]["rows"][0]["hw"]
+        rise = min(_raw_ground()(*xz(u, gm["layout"]["drop"])) for u in range(-hw, hw + 1)) - gm["y0"]
+        assert rise >= nm["rise_min"], (c["id"], rise)
+        used = {A.base(v) for v in A.replay(fns["build_%s" % c["id"]]).values()}
+        assert not [b for b in used if any(w in b for w in A.BAD_NATURAL)], (c["id"], used)
+
+
+def test_the_legacy_records_reproduce_the_cuttings_that_were_applied():
+    # the restore takes down what the retired rules built: frozen numbers, so the demolition does not move when the record does
+    for cid, cuts in LEGACY_CUTS.items():
+        gm = C.legacy_geometry(SPEC, CAVES[cid], _raw_ground())
+        assert gm["cutting_rows"] == cuts, cid
+
+
+def test_the_restore_puts_terrain_back_and_a_second_run_changes_nothing(pack):
+    # re-run safety: restore then build, twice over a world holding the retired cave, gives the same world, with nothing of the old
+    # cutting left (every retired cell is rewritten by the restore or the build); the restore writes only the terrain's own blocks
+    fns, _cb, _plan = pack
+    g = _raw_ground()
+    for c in NATURALS:
+        cid = c["id"]
+        old = C.legacy_geometry(SPEC, c, g)
+        world = {cell: "OLD" for cell in old["cells"]}
+        rest, build = A.replay(fns["restore_%s" % cid]), A.replay(fns["build_%s" % cid])
+        once = {**world, **rest, **build}
+        twice = {**once, **rest, **build}
+        assert once == twice, cid
+        assert "OLD" not in once.values(), cid
+        tr = c["terrain"]
+        assert {A.base(v) for v in rest.values()} <= {tr["deep"], tr["under"], tr["surface"], "minecraft:air"}, cid
+        calls = [l for l in fns["build_%s" % cid] if l.startswith("function ")]
+        assert calls == ["function cobblers:caves/restore_%s" % cid], (cid, calls)
+        # the retired cutting's open air above the ground is air again wherever the new mouth does not stand
+        for (x, y, z), r in old["cells"].items():
+            if y > g(x, z) and (x, y, z) not in build:
+                assert once[(x, y, z)] == "minecraft:air", (cid, x, y, z)
+
+
+def test_the_reapply_step_holds_the_retired_mouth_too(ground):
+    # the restore writes where the old cave stood: R9CK's forceload hold must cover both boxes
+    steps = C.placement_steps(SPEC, _raw_ground())
+    holds = {s[1] for s in steps if s[0] == "cmd" and s[1].startswith("forceload add")}
+    for c in NATURALS:
+        new = C.forceload_box(C.geometry(SPEC, c, _raw_ground()))
+        old = C.forceload_box(C.legacy_geometry(SPEC, c, _raw_ground()))
+        want = "forceload add %d %d %d %d" % (min(new[0], old[0]), min(new[1], old[1]), max(new[2], old[2]), max(new[3], old[3]))
+        assert want in holds, (c["id"], want)
+
+
+@pytest.mark.parametrize("name,edit,needle", [
+    ("a stair in the rubble", lambda c: c["hillside"]["rubble"].append("minecraft:stone_stairs"), "no cut, smooth"),
+    ("a brick in the scree", lambda c: c["hillside"]["scree"].append("minecraft:stone_bricks"), "no cut, smooth"),
+    ("timber in the scree", lambda c: c["hillside"]["scree"].append("minecraft:spruce_planks"), "no cut, smooth"),
+    ("no legacy", lambda c: c.pop("legacy"), "legacy.mouth is missing"),
+    ("no terrain", lambda c: c.pop("terrain"), "terrain.surface is missing"),
+    ("a stair in the palette", lambda c: c["palette"].update(stair="minecraft:stone_stairs"), "no mouth frame, lantern post, column or stair"),
+    ("an incline too low to walk down", lambda c: c["passages"][0].update(height=2), "under 3 high"),
+])
+def test_the_loader_refuses_a_natural_mouth_that_is_built_not_found(name, edit, needle):
+    probs = C.static_problems(_edit(SPEC, "cave_dusk_burrow", edit))
+    assert any(needle in p for p in probs), (name, probs)
+
+
+def test_a_mouth_the_ground_does_not_rise_into_is_refused_by_the_generator():
+    # rise_min is the siting rule: an incline that enters flat ground is not an opening in a slope
+    s = copy.deepcopy(SPEC)
+    s["geometry"]["natural_mouth"]["rise_min"] = 9
+    gm = C.geometry(s, next(c for c in s["caves"] if c["id"] == "cave_dusk_burrow"), _raw_ground())
+    assert any("not in a slope" in p for p in gm["problems"]), gm["problems"]
+
+
+def test_a_generator_that_opens_the_cutting_again_is_caught(monkeypatch, ground):
+    # mutate the GENERATOR (the hillside mouth is not built, so the lid, mound and apron are gone and the air is open to the sky)
+    probs = _mutated(monkeypatch, ground, lambda mp: mp.setattr(C, "hillside_mouth", lambda *a, **k: None))
+    assert any("open to the sky" in p for p in probs), probs
+    assert any("not written" in p or "differ from the rules" in p for p in probs), probs
+
+
+def test_a_generator_that_picks_cut_stone_for_the_mouth_is_caught(monkeypatch, ground):
+    probs = _mutated(monkeypatch, ground, lambda mp: mp.setattr(C, "pick", lambda lst, *k: "minecraft:stone_stairs"))
+    assert any("the mouth writes minecraft:stone_stairs" in p for p in probs), probs
+
+
+def test_a_generator_with_a_thin_lid_is_caught(monkeypatch, ground):
+    # the cell two over the middle of the opening's top is left to the sky: the roof there is one block, not lid
+    def fix(cave, gm):
+        xz = C.M.frame(tuple(gm["anchor"]), gm["front"])
+        x, z = xz(0, 0)
+        gm["cells"].pop((x, gm["y0"] + gm["layout"]["rows"][0]["h"] + 2, z), None)
+    probs = _mutated(monkeypatch, ground, lambda mp: _wrap_geometry(mp, _natural_only(fix)))
+    assert any("solid blocks over them" in p or "open to the sky" in p for p in probs), probs
+
+
+def test_a_generator_that_forgets_the_restore_is_caught(monkeypatch, ground):
+    real = C.restore_lines
+    probs = _mutated(monkeypatch, ground, lambda mp: mp.setattr(C, "restore_lines", lambda *a: real(*a)[:-6]))
+    assert any("are not restored" in p or "not taken down" in p for p in probs), probs
+
+
+def test_a_generator_whose_restore_writes_the_wrong_terrain_is_caught(monkeypatch, ground):
+    real = C.restore_lines
+    probs = _mutated(monkeypatch, ground, lambda mp: mp.setattr(
+        C, "restore_lines", lambda *a: [l.replace("minecraft:stone", "minecraft:cobblestone") for l in real(*a)]))
+    assert any("wrong block" in p for p in probs), probs
+
+
+def test_a_build_that_does_not_call_its_restore_is_caught(monkeypatch, ground):
+    real = C.build_lines
+    probs = _mutated(monkeypatch, ground, lambda mp: mp.setattr(C, "build_lines", lambda *a: [l for l in real(*a) if not l.startswith("function ")]))
+    assert any("does not call restore_" in p for p in probs), probs
+
+
+def test_a_restore_that_reaches_outside_the_retired_mouth_is_caught(monkeypatch, ground):
+    real = C.restore_lines
+    probs = _mutated(monkeypatch, ground, lambda mp: mp.setattr(
+        C, "restore_lines", lambda *a: real(*a) + ["fill 6700 80 1300 6700 80 1300 minecraft:stone"]))
+    assert any("outside the retired mouth" in p for p in probs), probs
