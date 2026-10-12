@@ -7868,6 +7868,236 @@
           "minecraft:podzol"
         ],
         "expect": true
+      },
+      {
+        "what": "the to_the_scar_west wood, a spruce's trunk",
+        "block": [
+          1882,
+          260,
+          960,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_west wood, a spruce's trunk",
+        "block": [
+          1948,
+          281,
+          946,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_west wood, a snag's trunk",
+        "block": [
+          1975,
+          281,
+          971,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_west wood, painted ground",
+        "block": [
+          1883,
+          260,
+          969,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_west wood, painted ground",
+        "block": [
+          1963,
+          280,
+          1034,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_east wood, a spruce's trunk",
+        "block": [
+          2064,
+          281,
+          791,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_east wood, a spruce's trunk",
+        "block": [
+          2185,
+          280,
+          784,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_east wood, a spruce's trunk",
+        "block": [
+          2232,
+          281,
+          905,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_east wood, painted ground",
+        "block": [
+          2061,
+          279,
+          777,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_east wood, painted ground",
+        "block": [
+          2215,
+          280,
+          844,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back wood, a spruce's trunk",
+        "block": [
+          1970,
+          157,
+          616,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back wood, a spruce's trunk",
+        "block": [
+          1996,
+          160,
+          609,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back wood, a spruce's trunk",
+        "block": [
+          2018,
+          164,
+          611,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back wood, painted ground",
+        "block": [
+          2024,
+          246,
+          666,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back wood, painted ground",
+        "block": [
+          2038,
+          243,
+          660,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back_east wood, a spruce's trunk",
+        "block": [
+          2085,
+          220,
+          637,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back_east wood, a elder's trunk",
+        "block": [
+          2144,
+          232,
+          642,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back_east wood, a snag's trunk",
+        "block": [
+          2188,
+          162,
+          589,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_side wood, a elder's trunk",
+        "block": [
+          2241,
+          281,
+          886,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_side wood, a elder's trunk",
+        "block": [
+          2296,
+          278,
+          903,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_side wood, a spruce's trunk",
+        "block": [
+          2320,
+          268,
+          909,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_side wood, painted ground",
+        "block": [
+          2236,
+          280,
+          884,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_side wood, painted ground",
+        "block": [
+          2313,
+          270,
+          925,
+          "minecraft:podzol"
+        ],
+        "expect": true
       }
     ],
     "caves": [

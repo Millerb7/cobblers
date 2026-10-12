@@ -503,6 +503,7 @@
         "shrines_audit.py": "checker: the built shrines functions, against data/shrines.json blocks and the spawn conditions",
         "maze_shrines.py": "source: maze_shrines",
         "maze_shrines_audit.py": "checker: the built maze_shrines functions, against data/maze_shrines.json blocks and the spawn conditions",
+        "scar_tarn_audit.py": "checker: the built scar_tarn functions (the tarn and its five wood arms, 2026-10-12): check_forest() reads data/spawn_blocks.json and the scar_tarn whitelist in data/spawn_block_policy.json and fails any spawn-condition block but the allowed water",
         "gym_interiors.py": "not covered: a block source (data/gym_interiors.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by gym_interiors_audit.py",
         "gym_interiors_audit.py": "checker: the built gym_interiors functions, against data/gym_interiors.json blocks and the spawn conditions",
         "rift_mines_audit.py": "checker: the built rift_mines pack (source rift_mines)",

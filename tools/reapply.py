@@ -1041,7 +1041,8 @@ def prepare_jobs(a):
     add("fungal_isle:build", "fungal_isle.py", "build", *src)
     # the Scar Tarn (2026-10-11, tools/scar_tarn.py): the generator fails closed on its own guards (the hollow's spill, water
     # containment at the heightmap and one block under it, the palette, spawn-condition blocks, the wards' mimics, the
-    # authored-points clearance). No independent audit yet (docs/world-building/SCAR_TARN.md, "What an audit must check")
+    # authored-points clearance). Its independent audit is tools/scar_tarn_audit.py (not a prepare job: it replays the pack
+    # over the heightmap, about a minute; run it by hand after the generator or the data change)
     add("scar_tarn:build", "scar_tarn.py", "build", *src)
     # Hollin's Apricorn Farm (2026-10-05): the generator fails closed on its own guards (allow-list, spawn blocks, wet
     # columns, overlaps, fruit attachment, gates, spots, siting). Then its independent audit (tools/apricorn_farm_audit.py,
@@ -2422,8 +2423,12 @@ def steps(with_spawns=False):
     import fungal_isle
     out.append(("R9FI", "the Fungal Isle grown over: Cap Wood, Stump Court, Glowcap Hollow and the island's caps, stumps and logs (data/fungal_isle.json)",
                 fungal_isle.placement_steps()))
-    # the Scar Tarn (2026-10-11, tools/scar_tarn.py): one block pass held in a forceload of its box (188 x 140 blocks, 12 x 9 chunks),
-    # BEFORE R9E: the four mimic cells it writes (two on the banks, two in the bed) are where the activated Habitat Blocks stand
+    # the Scar Tarn (2026-10-11, tools/scar_tarn.py): the tarn's own block pass held in a forceload of its box (188 x 140 blocks,
+    # 12 x 9 chunks), BEFORE R9E: the four mimic cells it writes (two on the banks, two in the bed) are where the activated Habitat
+    # Blocks stand. 2026-10-12: then the wood's five arms (data/scar_tarn.json growth.arms: toward the Scar, down the back and the
+    # side), each its own function held in its own forceload (hold, wait, fn, release), laid over the wood already there: the
+    # tarn's function is byte for byte the one before, so a re-run adds trees and moves none. A re-run of R9ST writes the four
+    # mimic blocks back over the Habitat Blocks, so run R9E after it: `run --only R9ST,R9E`
     import scar_tarn
     out.append(("R9ST", "the Scar Tarn: a pond in Mt Vessu's north-west hollow, the wood round it and its alpha wards (data/scar_tarn.json)",
                 scar_tarn.placement_steps()))
