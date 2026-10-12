@@ -325,6 +325,12 @@ class DW(PS.World):
             for e in self.select(t[2], ctx):
                 e.gamemode = t[1]
             return 1
+        if h == "give" and t[2].startswith("minecraft:written_book["):
+            # the rift guide: its components read by the simulator's own SNBT parser (PS.parse_item)
+            item, comps = PS.parse_item(t[2])
+            for e in self.select(t[1], ctx):
+                e.inventory.append([item, comps, int(t[3]) if len(t) > 3 else 1])
+            return 1
         if h == "give":
             m = self.ITEM.match(t[2].replace("custom_data={", "custom_data~{"))
             for e in self.select(t[1], ctx):
