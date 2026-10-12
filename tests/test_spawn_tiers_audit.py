@@ -307,8 +307,8 @@ def test_the_real_compiled_pack_meets_every_tier(real_pack):
 def test_prepare_runs_the_audit_after_the_compile_and_the_habitat_audit():
     import reapply
     names = [n for n, _f in reapply.prepare_jobs(types.SimpleNamespace(source_root="x", server_dir="x"))]
-    assert names.index("spawn_tiers_audit") == names.index("spawn_habitat_audit") + 1
-    assert names.index("spawn_habitat_audit") == names.index("compile_spawns") + 1
+    # after, not adjacent: other audits of the compiled pools (training_grounds_audit, 7194e31) may sit between
+    assert names.index("compile_spawns") < names.index("spawn_habitat_audit") < names.index("spawn_tiers_audit")
 
 
 # ---- independence: the generator, mutated, on a fixture-sized input; the input data never changes ----
