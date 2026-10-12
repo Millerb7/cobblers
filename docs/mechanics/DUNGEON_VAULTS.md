@@ -120,7 +120,7 @@ Weak spots:
 
 ## 7. Open questions for the owner
 
-1. **The budget (the change this design rests on).** The enforced KIT3 budget allowed 80-370 cp a chest at
+1. **The budget (the change this design rests on). DECIDED (the owner, 2026-10-11): DOUBLE IT, `dollar_factor` 2.0: "a richer vault should cost more clock -- that is the greed mechanic working."** The enforced KIT3 budget allowed 80-370 cp a chest at
    dollar_factor 1.0. That is under one Great Ball at bands 1-4, so the ask did not fit. I set `dollar_factor` to
    2.0: a vault may pay twice the run's time spent gathering, and a full vault costs about +0.6x clock at bands 2-4
    instead of about +0.3x. The alternative is to keep 1.0 and halve every `chance` above, which gives about 1 unsold

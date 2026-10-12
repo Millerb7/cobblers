@@ -518,8 +518,13 @@ def test_the_engine_prize_defaults_rise_with_band_and_keep_the_lower_cap():
 TIER_BY_BAND = {1: 620, 2: 1350, 3: 1350, 4: 1350, 5: 2120, 6: 2120}
 
 
+# x the owner's dollar_factor, read raw from the data file, not through tools/dungeon_greed.py (the owner, 2026-10-11:
+# "a richer vault should cost more clock", 2.0)
+FACTOR = float(json.loads((ROOT / "data" / "dungeon_greed.json").read_text(encoding="utf-8"))["vault_budget"]["dollar_factor"])
+
+
 def _by_hand(clocks):
-    return {b: int(TIER_BY_BAND[b] * clocks[str(b)] / 4500.0 + 1e-9) for b in range(1, 7)}
+    return {b: int(FACTOR * TIER_BY_BAND[b] * clocks[str(b)] / 4500.0 + 1e-9) for b in range(1, 7)}
 
 
 def test_the_vault_budget_is_the_runs_gathering_wage_by_band():

@@ -214,8 +214,10 @@ never pays more than the same run's time spent gathering, the limit RESOURCES2 s
 vaults are priced on its own clock** (MEGA-INTEGRATE, 2026-10-11; `tools/dungeon_greed.py` `vault_budget(doc, table,
 dungeon)`): until then every vault was priced on the SHORTEST dungeon's clock, so a new short dungeon shrank every other
 dungeon's vaults and six authors padded a band's clock to avoid it; those clocks are back at their derived values. The
-worked example, the Night Shift's own clocks with the kit's four chests: **band 1 82 cp, 2 189, 3 189, 4 198, 5 346, 6 367
-(0.8 to 3.7 points) a chest; a whole vault 330, 756, 756, 792, 1,385, 1,469 (floored).** Without a dungeon,
+worked example, the Night Shift's own clocks with the kit's four chests, at `dollar_factor` **2.0** (the owner, 2026-10-11:
+"double it; a richer vault should cost more clock -- that is the greed mechanic working"; it was 1.0): **band 1 165 cp,
+2 378, 3 378, 4 396, 5 692, 6 734 a chest; a whole vault 661, 1,512, 1,512, 1,584, 2,770, 2,939** (floored; read from
+`vault_budget(doc, dungeon=night_shift)`). The resources room's own `dollar_factor` (`data/dungeon_resources.json`) stays 1.0. Without a dungeon,
 `vault_budget` is the floor over every dungeon (the shortest clock per band), what loot shared by every dungeon (the bank
 vault's defaults) is held to. Enforced by `problems()` (`vault_budget.enforce` true since DG3-INTEGRATE: the pass-3
 authors rebalanced every vault, and `python tools/dungeon_greed.py` names no chest over; the pass-2 vaults were 7 to 150

@@ -167,9 +167,22 @@ def count_text(c):
     return str(c) if isinstance(c, int) else "%d-%d" % (c[0], c[1])
 
 
+def pct_text(p):
+    """A probability as a percentage: whole numbers, one decimal under 10% so a rare roll never reads 0%."""
+    v = p * 100
+    return ("%.1f%%" % v).replace(".0%", "%") if v < 10 else "%d%%" % round(v)
+
+
 def stack_text(dex, s):
     chance = s.get("chance")
-    tail = "" if chance is None else " (%d%% chance)" % round(chance * 100)
+    tail = "" if chance is None else " (%s chance)" % pct_text(chance)
+    if "one_of" in s:
+        # the weighted form (tools/dungeon_puzzles.py loot_table): one roll picks one option by weight
+        opts = s["one_of"]
+        total = sum(o["weight"] for o in opts)
+        parts = ["%s x %s (%s)" % (count_text(o.get("count", 1)), dex.item(o["item"]), pct_text(o["weight"] / total))
+                 for o in opts]
+        return "one of: %s%s" % (", ".join(parts), tail)
     return "%s x %s%s" % (count_text(s.get("count", 1)), dex.item(s["item"]), tail)
 
 
