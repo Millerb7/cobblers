@@ -253,7 +253,7 @@ def marker(x, z, shape, fill, label, colour):
 layers = collections.Counter()
 for c in _load("caves.json", "caves"):
     x, z = c["mouth"]["anchor"]
-    marker(x, z, "square", (240, 140, 40), "%s (%s)" % (c["name"], c["occupant"]["species"].capitalize()), (255, 200, 140))
+    marker(x, z, "square", (240, 140, 40), "%s (%s)" % (c["name"], ((c.get("occupant") or {}).get("species") or "natural").capitalize()), (255, 200, 140))
     layers["caves"] += 1
 maze = _load("maze_shrines.json", "shrines")
 for sh in maze:

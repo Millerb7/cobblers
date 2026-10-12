@@ -29,6 +29,10 @@ What it checks, per cave:
              macro line; the callback sets the caught flag only within catch_radius of the spot
   records    the Habitat Blocks and pools in data/habitat_blocks.json and data/spawns.json match the rules (position, mimic, range,
              pool, ultra-rare occupant, levels under the gate's cap) and nothing else of the file's is touched
+  natural    (mode `natural`) the cave carries no occupant, gate, habitat, antechamber, reward or keeper; no Habitat Block, pool, spawn
+             entry or function of the pack names it but its build; nothing it writes is timber, a lantern, a barrier or a crystal; and
+             the centre line of its written passage air moves at least 4 across and turns back (it winds), read off the cells and not
+             the record. Its offset rows, the ore in exposed walls and the floor patches are derived from the rules text like the rest
   keep clear (--inputs-root <full checkout>) the nearest distance from every written column to towns, route paths and legs, corridor
              boxes, placements, earthworks, other packs' writes, authored x/z, painted water and the water export
 
@@ -126,10 +130,17 @@ class Plan:
         self.spans.append((1, self.drop, "stair", hw0, h0))
         d = self.drop + 1
         self.passages = []
+        self.off = {}                    # row d -> the lateral offset of its centre line (a natural cave's bend, from the rules text)
+        c0 = 0
         for i, q in enumerate(ps[1:], 1):
-            self.spans.append((d, d + q["length"] - 1, "level", (q["width"] - 1) // 2, q["height"]))
-            self.passages.append((d, d + q["length"] - 1, (q["width"] - 1) // 2, q["kind"]))
-            d += q["length"]
+            n, b = q["length"], q.get("bend", 0)
+            self.spans.append((d, d + n - 1, "level", (q["width"] - 1) // 2, q["height"]))
+            self.passages.append((d, d + n - 1, (q["width"] - 1) // 2, q["kind"]))
+            for k in range(n):
+                self.off[d + k] = c0 + (2 * b * (k + 1) + n) // (2 * n)
+            c0 += b
+            d += n
+        self.uc = c0
         a = cave.get("antechamber")
         self.ante = None
         if a:
@@ -154,7 +165,9 @@ class Plan:
         return None
 
     def in_chamber(self, u, d):
+        """u across the whole cave: the oval is centred on u = self.uc."""
         c = self.ch
+        u = u - self.uc
         return c["d0"] <= d <= c["d1"] and u * u * c["rz"] ** 2 + (d - c["dc"]) ** 2 * c["rx"] ** 2 <= c["rx"] ** 2 * c["rz"] ** 2
 
 
@@ -196,7 +209,8 @@ def expected(spec, cave, ground):
             gmin = min(ground(*xz(u, d)) for u in range(-hw - 1, hw + 2))
             cut = gmin < top_air + 1 + cov["passage"]
             cuts += cut
-        for u in range(-hw, hw + 1):
+        c = P.off.get(d, 0)
+        for u in range(c - hw, c + hw + 1):
             x, z = xz(u, d)
             g = ground(x, z)
             top = max(g, top_air) + geo["clear_above"] if cut else top_air
@@ -205,7 +219,7 @@ def expected(spec, cave, ground):
             if not cut and g - top < (cov["room"] if kind == "ante" else cov["passage"]):
                 probs.append("cover: row %d column (%d, %d) has %d of ground over its air top" % (d, x, z, g - top))
     for d in range(P.ch["d0"], P.ch["d1"] + 1):
-        for u in range(-P.ch["rx"], P.ch["rx"] + 1):
+        for u in range(P.uc - P.ch["rx"], P.uc + P.ch["rx"] + 1):
             if P.in_chamber(u, d):
                 x, z = xz(u, d)
                 top = yh + P.ch["h"]
@@ -226,19 +240,21 @@ def expected(spec, cave, ground):
         for u in range(-hw0, hw0 + 1):
             x, z = xz(u, d)
             set_((x, ft(d), z), stair, "stair")
-    # the mouth's frame
-    for u in (-hw0 - 1, hw0 + 1):
-        x, z = xz(u, 0)
-        for y in range(ground(x, z) + 1, y0 + 1):
-            set_((x, y, z), pal["shell"], "fill")
-        for y in range(y0 + 1, y0 + h0 + 1):
-            set_((x, y, z), "%s[axis=y]" % pal["timber"], "post")
-    for u in range(-hw0 - 1, hw0 + 2):
-        x, z = xz(u, 0)
-        set_((x, y0 + h0 + 1, z), "%s[axis=%s]" % (pal["timber"], "x" if front in ("north", "south") else "z"), "beam")
-    x, z = xz(0, 0)
-    if role.get((x, y0 + h0, z)) == "air":
-        set_((x, y0 + h0, z), "minecraft:lantern[hanging=true]", "hanglantern")
+    # the mouth's frame (a natural cave has none)
+    natural = cave.get("mode") == "natural"
+    if not natural:
+        for u in (-hw0 - 1, hw0 + 1):
+            x, z = xz(u, 0)
+            for y in range(ground(x, z) + 1, y0 + 1):
+                set_((x, y, z), pal["shell"], "fill")
+            for y in range(y0 + 1, y0 + h0 + 1):
+                set_((x, y, z), "%s[axis=y]" % pal["timber"], "post")
+        for u in range(-hw0 - 1, hw0 + 2):
+            x, z = xz(u, 0)
+            set_((x, y0 + h0 + 1, z), "%s[axis=%s]" % (pal["timber"], "x" if front in ("north", "south") else "z"), "beam")
+        x, z = xz(0, 0)
+        if role.get((x, y0 + h0, z)) == "air":
+            set_((x, y0 + h0, z), "minecraft:lantern[hanging=true]", "hanglantern")
     # the door
     door_cells = []
     if P.door is not None:
@@ -251,21 +267,21 @@ def expected(spec, cave, ground):
     # lantern posts
     posts = []
     every = (cave.get("light") or {}).get("lantern_every", geo["lantern_every"])
-    if not (cave.get("light") or {}).get("dark_by_design"):
+    if not natural and not (cave.get("light") or {}).get("dark_by_design"):
         k = 0
         for d0, d1, hw, kind in P.passages:
             if kind == "crawl" or hw < 1:
                 continue
             for d in range(d0, d1 + 1):
                 if (d - d0) % every == every // 2:
-                    posts.append((-hw if k % 2 == 0 else hw, d))
+                    posts.append((P.off.get(d, 0) + (-hw if k % 2 == 0 else hw), d))
                     k += 1
         if P.ante:
             a0, a1, ahw, _ah = P.ante
             posts += [(-(ahw - 1), a1 - 1), (ahw - 1, a1 - 1)]
         ur, dr = round(0.6 * P.ch["rx"]), round(0.55 * P.ch["rz"])
         n = (cave.get("light") or {}).get("chamber_lanterns", 4)
-        posts += [(-ur, P.ch["dc"] - dr), (ur, P.ch["dc"] - dr), (-ur, P.ch["dc"] + dr), (ur, P.ch["dc"] + dr)][:n]
+        posts += [(P.uc - ur, P.ch["dc"] - dr), (P.uc + ur, P.ch["dc"] - dr), (P.uc - ur, P.ch["dc"] + dr), (P.uc + ur, P.ch["dc"] + dr)][:n]
     for u, d in posts:
         x, z = xz(u, d)
         if role.get((x, yh + 1, z)) == "air" and role.get((x, yh + 2, z)) == "air":
@@ -277,19 +293,22 @@ def expected(spec, cave, ground):
     feat = cave["chamber"].get("feature", "none")
     if feat == "columns":
         c = round(0.5 * P.ch["rx"])
-        for u in (-c, c):
+        for u in (P.uc - c, P.uc + c):
             x, z = xz(u, P.ch["dc"])
             for y in range(yh + 1, yh + P.ch["h"] + 1):
                 set_((x, y, z), pal["column"], "column")
-    elif feat == "crystal":
+    elif feat in ("crystal", "knobs"):
         rx, rz, dc = P.ch["rx"], P.ch["rz"], P.ch["dc"]
-        cand = [(u, d) for d in range(P.ch["d0"], P.ch["d1"] + 1) for u in range(-rx, rx + 1)
-                if P.in_chamber(u, d) and (u / rx) ** 2 + ((d - dc) / rz) ** 2 >= 0.16 and (u, d) not in set(posts)]
+        cand = [(u, d) for d in range(P.ch["d0"], P.ch["d1"] + 1) for u in range(P.uc - rx, P.uc + rx + 1)
+                if P.in_chamber(u, d) and ((u - P.uc) / rx) ** 2 + ((d - dc) / rz) ** 2 >= 0.16 and (u, d) not in set(posts)]
         cand.sort(key=lambda c: (h32(spec["seed"], sid(cave["id"]), c[0], c[1]), c))
-        for u, d in cand[:cave["chamber"].get("crystal_count", 8)]:
+        for u, d in cand[:cave["chamber"].get("crystal_count", 8) if feat == "crystal" else cave["chamber"]["knob_count"]]:
             x, z = xz(u, d)
             if role.get((x, yh + 1, z)) == "air":
-                set_((x, yh + 1, z), "minecraft:amethyst_cluster[facing=up]", "crystal")
+                if feat == "crystal":
+                    set_((x, yh + 1, z), "minecraft:amethyst_cluster[facing=up]", "crystal")
+                else:
+                    set_((x, yh + 1, z), pal["knob"], "knob")
     # the shell: round every air column, the hull of its neighbours' intervals, under the ground
     hull = {}
     for (x, z), (f, top, m, cut, _k) in air_cols.items():
@@ -303,6 +322,18 @@ def expected(spec, cave, ground):
         for y in range(lo, min(hi, cap) + 1):
             if (x, y, z) not in E:
                 set_((x, y, z), pal["shell"], "shell")
+    # a natural cave's dressing, from the rules text: ore showing in the walls, patches in the floor
+    if natural:
+        dr, sidc = cave["dressing"], sid(cave["id"])
+        nb = ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))
+        todo = []
+        for (x, y, z), why in role.items():
+            if why == "shell" and h32(spec["seed"], sidc, x, y, z) % dr["vein_one_in"] == 0 and any(role.get((x + a, y + b, z + c)) == "air" for a, b, c in nb):
+                todo.append(((x, y, z), pal["vein"], "vein"))
+            elif why == "floor" and h32(spec["seed"], sidc, x, z, 7) % dr["patch_one_in"] == 0:
+                todo.append(((x, y, z), pal["patch"], "patch"))
+        for c, blk, why in todo:
+            set_(c, blk, why)
     return {"E": E, "role": role, "air_cols": air_cols, "y0": y0, "yh": yh, "plan": P, "xz": xz, "cuts": cuts, "door_cells": door_cells,
             "posts": posts, "problems": probs}
 
@@ -434,7 +465,7 @@ def walk_problems(spec, cave, ex, written, ground):
     probs = []
     P = ex["plan"]
     xz, yh = ex["xz"], ex["yh"]
-    centre = xz(0, P.ch["dc"])
+    centre = xz(P.uc, P.ch["dc"])
     ante = xz(0, (P.ante[0] + P.ante[1]) // 2) if P.ante else None
     closed = walk(cave, ex, written, ground, False)
     opened = walk(cave, ex, written, ground, True)
@@ -527,7 +558,63 @@ def gate_problems(spec, cave, ex, fns, written):
     return probs
 
 
+def natural_problems(spec, cave, ex, fns, written):
+    """A natural cave has nothing in it: no occupant, gate, antechamber, reward, keeper, Habitat Block or pool, no function but its
+    build, no timber, lantern, fence, column or barrier, and its passage really winds (read off the written air, not the record)."""
+    cid = cave["id"]
+    probs = []
+    for k in ("occupant", "gate", "habitat", "antechamber", "reward", "keeper"):
+        if k in cave:
+            probs.append("%s: a natural cave carries %s" % (cid, k))
+    pal = cave["palette"]
+    if set(pal) != {"shell", "floor", "stair", "vein", "patch", "knob"}:
+        probs.append("%s: a natural cave's palette is shell, floor, stair, vein, patch and knob, not %s" % (cid, sorted(pal)))
+    for name, lines in fns.items():
+        if name != "build_%s" % cid and any(cid in l for l in lines):
+            probs.append("%s: the pack function %s names a natural cave" % (cid, name))
+    if any(cid in k for k in fns if k != "build_%s" % cid):
+        probs.append("%s: the pack has a function of its own for a cave that has none (gate, boss or driver)" % cid)
+    for b in jload("habitat_blocks.json")["blocks"]:
+        if cid in json.dumps(b):
+            probs.append("%s: Habitat Block %s names a natural cave" % (cid, b["id"]))
+    sp = jload("spawns.json")
+    for h in sp["habitats"]:
+        if cid in json.dumps(h):
+            probs.append("%s: spawn pool %s names a natural cave" % (cid, h["id"]))
+    for e in sp["entries"]:
+        if cid in json.dumps(e):
+            probs.append("%s: spawn entry %s names a natural cave" % (cid, e["id"]))
+    for b in sorted({base(v) for v in written.values()} & {"minecraft:lantern", "minecraft:barrier", "minecraft:amethyst_cluster"}):
+        probs.append("%s: a natural cave writes %s" % (cid, b))
+    timber = sorted({base(v) for v in written.values() if base(v).endswith(("_log", "_fence", "_wood", "_planks"))})
+    if timber:
+        probs.append("%s: a natural cave writes timber: %s" % (cid, ", ".join(timber)))
+    # the passage winds: the centre line of the written air along the level rows, read off the cells
+    P = ex["plan"]
+    xz, yh = ex["xz"], ex["yh"]
+    centres = []
+    for d0, d1, _hw, _k in P.passages:
+        for d in range(d0, d1 + 1):
+            us = []
+            for u in range(-80, 81):
+                x, z = xz(u, d)
+                if written.get((x, yh + 1, z)) in PASS:
+                    us.append(u)
+            if not us:
+                probs.append("%s: row %d of the passage has no air at floor level" % (cid, d))
+                return probs
+            centres.append((min(us) + max(us)) / 2)
+    if max(centres) - min(centres) < 4:
+        probs.append("%s: the passage's centre line moves only %.1f across: it does not wind" % (cid, max(centres) - min(centres)))
+    steps = [b - a for a, b in zip(centres, centres[1:]) if b != a]
+    if not any(s1 * s2 < 0 for s1, s2 in zip(steps, steps[1:])):
+        probs.append("%s: the passage's centre line never turns back: it is a diagonal, not a winding way" % (cid))
+    return probs
+
+
 def keeper_problems(spec, cave, ex, fns, callback):
+    if cave.get("mode") == "natural":
+        return ["%s: boss functions exist for a natural cave" % cave["id"]] if any(k.startswith("boss/%s/" % cave["id"]) for k in fns) else []
     occ = cave["occupant"]
     cid = cave["id"]
     mine = {k: v for k, v in fns.items() if k.startswith("boss/%s/" % cid)}
@@ -581,7 +668,7 @@ def keeper_problems(spec, cave, ex, fns, callback):
         probs.append("%s: the bound boss is not kept from the despawner" % cid)
     if "tag @s add %s" % occ["tag"] not in bind:
         probs.append("%s: bind does not tag the boss" % cid)
-    cx, cy, cz = ex["xz"](0, ex["plan"].ch["dc"])[0], ex["yh"], ex["xz"](0, ex["plan"].ch["dc"])[1]
+    cx, cy, cz = ex["xz"](ex["plan"].uc, ex["plan"].ch["dc"])[0], ex["yh"], ex["xz"](ex["plan"].uc, ex["plan"].ch["dc"])[1]
     want = "x=%d,y=%d,z=%d,distance=..%d" % (cx, cy + 1, cz, k["catch_radius"])
     if want not in callback:
         probs.append("%s: the capture callback does not set the caught flag within %d of the spot (%s)" % (cid, k["catch_radius"], want))
@@ -614,7 +701,7 @@ def foreign_problems(spec, cave, ex, written):
     spots = []
     for h in cave.get("habitat") or []:
         if h["part"] == "chamber":
-            cx, cz = xz(0, P.ch["dc"])
+            cx, cz = xz(P.uc, P.ch["dc"])
             spots.append((h["id"], (cx, yh, cz), cave["chamber"]["rx"]))
         else:
             cx, cz = xz(0, (P.ante[0] + P.ante[1]) // 2)
@@ -645,14 +732,14 @@ def record_problems(spec, cave, ex):
     cap = min((100 if f == "champion_cleared" else int(caps[f[3]])) for f in g["flags"]) if g.get("flags") else None
     sub = {s["id"]: s for s in sp["subregions"]}
     # every species a keeper brings (the spec's own area bosses): no pool may name one, in any cave (a boss in a pool is a second home)
-    bosses = {c["occupant"]["species"] for c in spec["caves"] if c["occupant"]["mode"] == "area_boss"}
+    bosses = {c["occupant"]["species"] for c in spec["caves"] if c.get("mode") != "natural" and c["occupant"]["mode"] == "area_boss"}
     for h in cave.get("habitat") or []:
         b = blocks.get(h["id"])
         if b is None:
             probs.append("%s: Habitat Block %s is not in data/habitat_blocks.json" % (cid, h["id"]))
             continue
         if h["part"] == "chamber":
-            c = xz(0, P.ch["dc"])
+            c = xz(P.uc, P.ch["dc"])
             want = (c[0], yh, c[1])
         else:
             a0, a1 = P.ante[0], P.ante[1]
@@ -868,6 +955,8 @@ def audit(spec, fns, callback, ground, walk_it=True):
             probs += walk_problems(spec, cave, ex, written, ground)
         probs += gate_problems(spec, cave, ex, fns, written)
         probs += keeper_problems(spec, cave, ex, fns, callback)
+        if cave.get("mode") == "natural":
+            probs += natural_problems(spec, cave, ex, fns, written)
         probs += record_problems(spec, cave, ex)
         probs += foreign_problems(spec, cave, ex, written)
     for k in fns:
