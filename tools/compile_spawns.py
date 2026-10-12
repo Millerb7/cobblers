@@ -100,6 +100,17 @@ def box_condition(min_x, max_x, min_z, max_z, entry):
     if entry.get("biomes"):
         cond["biomes"] = list(entry["biomes"])
     cond.update(entry.get("conditions") or {})
+    bind_dimension(cond)
+    return cond
+
+
+def bind_dimension(cond):
+    """An entry that names no dimension is an overworld entry (open_sky_forced's reading): WRITE it, because Cobblemon
+    1.8.0 reads an absent `dimensions` as every dimension (docs/research/notes/spawn-dimension-condition-1.8.0.md), so a
+    coordinate box also matched the same x/z in the Nether and in cobblers:pocket, the dungeons' dimension (staging,
+    2026-10-12: coast Pokemon spawning on a dungeon shell's roof). An authored list, empty included, is kept as written."""
+    if "dimensions" not in cond:
+        cond["dimensions"] = [OVERWORLD]
     return cond
 
 
@@ -843,6 +854,7 @@ def marine_condition(min_x, max_x, min_z, max_z, entry):
     if entry.get("biomes"):
         cond["biomes"] = list(entry["biomes"])
     cond.update(entry.get("conditions") or {})
+    bind_dimension(cond)
     return cond
 
 
