@@ -8594,9 +8594,9 @@
       {
         "what": "cave_hoarfrost_hollow: air at the standing block outside the mouth",
         "block": [
-          6712,
-          97,
-          1350,
+          6722,
+          100,
+          1348,
           "minecraft:air"
         ],
         "expect": true
@@ -8604,9 +8604,9 @@
       {
         "what": "cave_hoarfrost_hollow: air in the middle of the chamber",
         "block": [
-          6752,
-          92,
-          1351,
+          6762,
+          95,
+          1349,
           "minecraft:air"
         ],
         "expect": true
@@ -8614,9 +8614,9 @@
       {
         "what": "cave_hoarfrost_hollow: air in the first bend of the winding passage (row 15, 5 across)",
         "block": [
-          6729,
-          91,
-          1355,
+          6739,
+          94,
+          1353,
           "minecraft:air"
         ],
         "expect": true
@@ -8624,9 +8624,9 @@
       {
         "what": "cave_hoarfrost_hollow: air in the last bend of the winding passage (row 24, -1 across)",
         "block": [
-          6738,
-          91,
-          1349,
+          6748,
+          94,
+          1347,
           "minecraft:air"
         ],
         "expect": true
@@ -8634,9 +8634,9 @@
       {
         "what": "cave_hoarfrost_hollow: the chamber's floor beside its middle",
         "block": [
-          6753,
-          90,
-          1351,
+          6763,
+          93,
+          1349,
           "minecraft:stone"
         ],
         "expect": true
@@ -8644,9 +8644,29 @@
       {
         "what": "cave_hoarfrost_hollow: the rock over the chamber's roof",
         "block": [
-          6752,
-          96,
-          1351,
+          6762,
+          99,
+          1349,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_hoarfrost_hollow: the rock over the mouth (the lid; there is no open cutting)",
+        "block": [
+          6724,
+          103,
+          1348,
+          "minecraft:cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_hoarfrost_hollow: the arch's upper corner (rock, not air)",
+        "block": [
+          6724,
+          102,
+          1349,
           "minecraft:stone"
         ],
         "expect": true
@@ -8654,8 +8674,8 @@
       {
         "what": "cave_greenwither_cleft: air at the standing block outside the mouth",
         "block": [
-          7420,
-          126,
+          7412,
+          123,
           7090,
           "minecraft:air"
         ],
@@ -8664,8 +8684,8 @@
       {
         "what": "cave_greenwither_cleft: air in the middle of the chamber",
         "block": [
-          7466,
-          120,
+          7458,
+          117,
           7089,
           "minecraft:air"
         ],
@@ -8674,8 +8694,8 @@
       {
         "what": "cave_greenwither_cleft: air in the first bend of the winding passage (row 17, -5 across)",
         "block": [
-          7439,
-          119,
+          7431,
+          116,
           7085,
           "minecraft:air"
         ],
@@ -8684,8 +8704,8 @@
       {
         "what": "cave_greenwither_cleft: air in the last bend of the winding passage (row 27, 1 across)",
         "block": [
-          7449,
-          119,
+          7441,
+          116,
           7091,
           "minecraft:air"
         ],
@@ -8694,20 +8714,40 @@
       {
         "what": "cave_greenwither_cleft: the chamber's floor beside its middle",
         "block": [
-          7467,
-          118,
+          7459,
+          115,
           7089,
-          "minecraft:stone"
+          "minecraft:moss_block"
         ],
         "expect": true
       },
       {
         "what": "cave_greenwither_cleft: the rock over the chamber's roof",
         "block": [
-          7466,
-          125,
+          7458,
+          122,
           7089,
           "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_greenwither_cleft: the rock over the mouth (the lid; there is no open cutting)",
+        "block": [
+          7414,
+          126,
+          7090,
+          "minecraft:mossy_cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_greenwither_cleft: the arch's upper corner (rock, not air)",
+        "block": [
+          7414,
+          125,
+          7091,
+          "minecraft:cobblestone"
         ],
         "expect": true
       },
@@ -8767,6 +8807,26 @@
           1004,
           109,
           7627,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_dusk_burrow: the rock over the mouth (the lid; there is no open cutting)",
+        "block": [
+          966,
+          112,
+          7630,
+          "minecraft:andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_dusk_burrow: the arch's upper corner (rock, not air)",
+        "block": [
+          966,
+          111,
+          7631,
           "minecraft:stone"
         ],
         "expect": true
