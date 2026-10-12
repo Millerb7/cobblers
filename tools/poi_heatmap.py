@@ -22,7 +22,8 @@ CATEGORY = {
     "placements.json": "buildings", "structures.json": "buildings",
     "trainers.json": "trainers", "route_trainers.json": "trainers", "vr_trainers.json": "trainers",
     "arena_trainers.json": "trainers", "gym_trainers.json": "trainers", "late_route_trainers.json": "trainers",
-    "shrines.json": "shrines", "legendaries.json": "legendaries",
+    "shrines.json": "shrines", "maze_shrines.json": "shrines", "legendaries.json": "legendaries",
+    "caves.json": "caves", "fishermen.json": "settlements",
     "adopted_legendary_sites.json": "legendaries",
     "landmarks.json": "landmarks", "signposts.json": "landmarks", "elder_trees.json": "landmarks",
     "themed_saplings.json": "landmarks", "foliage.json": "landmarks",
@@ -205,13 +206,13 @@ for t in towns:
 print("settlements labelled:", placed_labels)
 
 # the dungeon rips (data/dungeons.json rip.click), drawn on their own: they hold no x/z key the density pass reads,
-# and a player looks for them by name. Rips within 120 blocks share one marker (the three stand on one trail).
+# and a player looks for them by name. Rips within 400 blocks share one label (the test rips stand on one trail).
 rips = [(d_["name"], d_["rip"]["click"]) for d_ in json.load(open(ROOT + "/data/dungeons.json", encoding="utf-8"))["dungeons"]
         if isinstance(d_.get("rip", {}).get("click"), list)]
 groups = []
 for name, c in rips:
     for g in groups:
-        if abs(g["x"] - c[0]) <= 120 and abs(g["z"] - c[2]) <= 120:
+        if abs(g["x"] - c[0]) <= 400 and abs(g["z"] - c[2]) <= 400:   # the test trail: 13 rips over ~330 blocks
             g["names"].append(name)
             break
     else:
@@ -220,8 +221,64 @@ for g in groups:
     px, pz = PAD_L + g["x"] * scale, PAD_T + g["z"] * scale
     d.polygon([(px, pz - 8), (px + 8, pz), (px, pz + 8), (px - 8, pz)], fill=(190, 80, 230), outline=(255, 255, 255))
     for k, nm in enumerate(["Dungeon rips:"] + g["names"]):
-        d.text((px + 12, pz - 10 + k * 16), nm, font=FS, fill=(235, 190, 255), stroke_width=2, stroke_fill=(16, 16, 20))
+        # listed to the WEST of the marker: the test rips stand beside the maze forest, whose shrines are east
+        d.text((px - 12 - d.textlength(nm, font=FS), pz - 10 + k * 16), nm, font=FS, fill=(235, 190, 255),
+               stroke_width=2, stroke_fill=(16, 16, 20))
 print("dungeon rips drawn:", sum(len(g["names"]) for g in groups), "in", len(groups), "marker(s)")
+
+# named layers a player or the owner looks for by name (2026-10-12): caves, shrines, legendary chambers, fishermen
+def _load(f, key):
+    try:
+        return json.load(open(ROOT + "/data/" + f, encoding="utf-8"))[key]
+    except (OSError, KeyError):
+        return []
+
+
+def marker(x, z, shape, fill, label, colour):
+    px, pz = PAD_L + x * scale, PAD_T + z * scale
+    if shape == "square":
+        d.rectangle([px - 6, pz - 6, px + 6, pz + 6], fill=fill, outline=(255, 255, 255))
+    elif shape == "triangle":
+        d.polygon([(px, pz - 8), (px + 7, pz + 6), (px - 7, pz + 6)], fill=fill, outline=(255, 255, 255))
+    elif shape == "star":
+        d.polygon([(px, pz - 9), (px + 3, pz - 3), (px + 9, pz - 3), (px + 4, pz + 2), (px + 6, pz + 9),
+                   (px, pz + 5), (px - 6, pz + 9), (px - 4, pz + 2), (px - 9, pz - 3), (px - 3, pz - 3)],
+                  fill=fill, outline=(30, 30, 30))
+    else:
+        d.ellipse([px - 5, pz - 5, px + 5, pz + 5], fill=fill, outline=(255, 255, 255))
+    if label:
+        d.text((px + 11, pz - 8), label, font=FS, fill=colour, stroke_width=2, stroke_fill=(16, 16, 20))
+
+
+layers = collections.Counter()
+for c in _load("caves.json", "caves"):
+    x, z = c["mouth"]["anchor"]
+    marker(x, z, "square", (240, 140, 40), "%s (%s)" % (c["name"], c["occupant"]["species"].capitalize()), (255, 200, 140))
+    layers["caves"] += 1
+maze = _load("maze_shrines.json", "shrines")
+for sh in maze:
+    marker(sh["at"][0], sh["at"][1], "triangle", (90, 210, 120), None, None)
+    layers["maze shrines"] += 1
+if maze:   # six shrines in one forest: one label for the group
+    mx = sum(s_["at"][0] for s_ in maze) / len(maze)
+    mz = max(s_["at"][1] for s_ in maze)
+    d.text((PAD_L + max(s_["at"][0] for s_ in maze) * scale + 16, PAD_T + mz * scale - 4), "Maze-forest shrines (%d)" % len(maze), font=FS,
+           fill=(170, 240, 180), stroke_width=2, stroke_fill=(16, 16, 20))
+for sh in _load("shrines.json", "shrines"):
+    marker(sh["at"][0], sh["at"][1], "triangle", (60, 160, 90), None, None)
+    layers["wayside shrines"] += 1
+for e in _load("legendaries.json", "encounters"):
+    pt = e.get("portal") or e.get("mouth")
+    if isinstance(pt, list) and len(pt) >= 2:
+        marker(pt[0], pt[-1], "star", (250, 210, 60), e["species"].capitalize(), (255, 230, 140))
+        layers["legendary chambers"] += 1
+seats = {s_["id"]: s_["at"] for s_ in _load("npc_seats.json", "seats")}
+for f in _load("fishermen.json", "fishermen"):
+    at = seats.get(f["id"])
+    if at:
+        marker(at[0], at[2], "circle", (70, 170, 240), "%s (%s)" % (f["name"], f["rod"].replace("_", " ")), (170, 215, 255))
+        layers["fishermen"] += 1
+print("named layers:", dict(layers))
 
 d.text((PAD_L, 24), "Cobblers - where the authored content is", font=FB, fill=(238, 238, 242))
 d.text((PAD_L, 62), "%d points of interest in %d categories   |   8,192 blocks a side at %.2f blocks per pixel   |   cells are 1,024 blocks"
@@ -233,6 +290,18 @@ d.text((lx, ly), "POINTS COUNTED", font=F, fill=(238, 238, 242))
 ly += 30
 for c, v in sorted(cats.items(), key=lambda kv: -len(kv[1])):
     d.text((lx, ly), "%-12s %4d" % (c, len(v)), font=FS, fill=(205, 205, 215))
+    ly += 23
+ly += 18
+d.text((lx, ly), "MARKERS", font=F, fill=(238, 238, 242))
+ly += 28
+for shape, fill, label in (("diamond", (190, 80, 230), "dungeon rips"), ("square", (240, 140, 40), "caves"),
+                           ("triangle", (90, 210, 120), "shrines"), ("star", (250, 210, 60), "legendary chambers"),
+                           ("circle", (70, 170, 240), "fishermen (rods)")):
+    if shape == "diamond":
+        d.polygon([(lx + 8, ly), (lx + 16, ly + 8), (lx + 8, ly + 16), (lx, ly + 8)], fill=fill, outline=(255, 255, 255))
+    else:
+        marker((lx + 8 - PAD_L) / scale, (ly + 8 - PAD_T) / scale, shape, fill, None, None)
+    d.text((lx + 26, ly), label, font=FS, fill=(205, 205, 215))
     ly += 23
 ly += 18
 d.text((lx, ly), "DENSITY", font=F, fill=(238, 238, 242))
