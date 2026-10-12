@@ -1,36 +1,51 @@
-# Handover: session 74260a (2026-10-11 evening), IN PROGRESS
+# Handover: session 74260a, ending 2026-10-11 evening (over the context line)
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
 ## 1. Branch
 `build/2026-10-09-dungeon-playtest` in worktree `.claude/worktrees/night-shift-engine-gym-9b76f2`, LOCAL ONLY (no PR;
-one big draft PR for the batch is owed). Re-read the head with `git rev-parse HEAD` (e18ec16 when this was written).
-The integrator branch `worktree-agent-a957ab31010595219` is fully merged (final head 72a920a; it stopped at 15:27).
+one big draft PR for the batch is owed). Re-read the head with `git rev-parse HEAD`. Installed build: prepare
+229/229 at e18ec16. The integrator branch is fully merged (72a920a). Three agent branches wait to be merged (section 2).
 
 ## 2. Where it stopped
-- Done: the integrator merged; Zero Dig cut (fda6fa6); the Compact's "evil" framing removed (fda6fa6); the draw
-  design written, `docs/mechanics/DUNGEON_DRAW.md` (f2bcd5d, design only, waiting on the owner); two Compact seat
-  collisions fixed that prepare caught (4ff9b35 Nia at Viltri, e18ec16 the CP-12 east guard at Cinderlee).
-- Running when written: the full `reapply.py prepare` at e18ec16. Then: RCON stop staging (the owner approved,
-  2026-10-11), hold `config/cobbledollars/bank.json`, install, restore the bank, `max-tick-time=-1`, boot at 12G in
-  the terminal panel, `run --only R16DG,R16DR,R9ST,R18CP,R17N,R17 --no-reload`, watchdog 60000, restart, check the
-  process twice, release the lock.
-- **The server lock is HELD** by "Claude Code session 74260a" at `C:\Users\wnd\Documents\github\.cobblers-server-agent.lock`.
-- Env a prepare needs in this shell: `COBBLERS_SERVER_LOCK` (lock path), `COBBLERS_LOCK_OWNER` (its owner line), and
-  `COBBLERS_SERVER_ROOT=C:/Users/wnd/Documents/github/cobblers-server` (sea_drift_audit reads Cobblemon's jar
-  through it; unset, the audit fails on Clauncher).
+- **Staging is UP for the owner to play**: 12G, terminal panel tab "staging server", PID 20076 at hand-over, watchdog
+  60000, the dungeons, Scar Tarn and Compact applied (STATE "Latest install (2026-10-11 evening)"). The server lock
+  is released.
+- **Next, in order (a new session; no server needed until the last step):**
+  1. Merge `worktree-agent-ab58f8c4e3d5f1aab` (1e3a58c, the `one_of` loot generator), then
+     `worktree-agent-aa63c56da70fb431e` (4d02fca, the vault tables; needs the first), then
+     `worktree-agent-ab7b02f38664ec26c` (60c2305, the player dungeon guide).
+  2. Cheap checks: `python tools/validate_data.py`, `python tools/id_authorship.py`, `python tools/dungeon_audit.py`,
+     `python tools/dungeon_greed.py` (if it has a check), `python -m pytest tests/test_dungeon_vault_one_of.py
+     tests/test_player_guide_dungeons.py -q --tb=line`, then the full `python tools/dungeon_independent_audit.py`
+     (33 min). Fix `tests/test_dungeon_kit3.py` and DUNGEON_ROOMS.md 1b for `dollar_factor` 2.0 ONLY if the owner
+     keeps 2.0 (DUNGEON_VAULTS.md Q1); confirm the new ball and held-item ids in the Cobblemon 1.8.0 jar.
+  3. `python tools/player_guide_dungeons.py` then `python tools/player_site.py` (every page's nav gets the guide).
+  4. Next install: env `COBBLERS_SERVER_LOCK`, `COBBLERS_LOCK_OWNER`, `COBBLERS_SERVER_ROOT=C:/Users/wnd/Documents/github/cobblers-server`
+     (sea_drift_audit needs it), full prepare (~51 min), RCON stop, hold `config/cobbledollars/bank.json`, install
+     with `--cobbleverse-dp C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/datapacks/COBBLEVERSE-DP-v31.zip`,
+     restore the bank, `max-tick-time=-1`, **boot at 24G for R16DG** (12G runs out of memory at 13 dungeons),
+     `run --only R16DG --no-reload` (the vaults are in the shells), watchdog 60000, restart at 12G, check twice.
 
 ## 3. Waiting on the owner
-- The draw design: D1-D5 in `docs/mechanics/DUNGEON_DRAW.md` section 4.
-- Play the Street, the Patriarch, Ash Bell first (`scoreboard players set <player> dg.ptband <n>`, tag
-  `cobblers.dg_playtest`).
+- **Vault budget (DUNGEON_VAULTS.md Q1):** `dollar_factor` 2.0 (richer vaults, the greed clock speeds up more) or 1.0
+  (every chance halves).
+- **The draw design:** D1-D5 in `docs/mechanics/DUNGEON_DRAW.md` (design only; no rework until approved).
+- **Play first:** the Street, the Patriarch, Ash Bell. Tag `cobblers.dg_playtest`, then
+  `scoreboard players set <player> dg.ptband <n>`; rips on the test trail by the old mine, x1350-1677 z~4118.
+  Nothing new is authored until three are played.
+- Whether the guide's level of detail is spoiler-light enough (nest and mini-boss species, fork looks, vault rooms).
 
 ## 4. Do not rediscover
-- The independent audit takes about 33 min on 13 dungeons (2014 s measured), not 2.
-- `tests/test_dungeon_probes.py::test_staging_only_never_installed` fails in an agent worktree only because
-  `R.steps()` needs a prepared build/; not a defect.
-- New Compact NPCs were authored without the markets and ambient clearance checks; prepare's `markets:audit` and
-  `ambient_idle:build` are where such collisions surface.
+- R16DG at 13 dungeons OOMs a 12G heap; the save survived (checked chunk by chunk). 24G ran it in 69 s.
+- The independent audit takes ~33 min, not 2. `test_staging_only_never_installed` fails in an agent worktree only
+  because `R.steps()` needs a prepared build/.
+- New Compact NPCs collided twice with older placements (fixed 4ff9b35, e18ec16); prepare's `markets:audit` and
+  `ambient_idle:build` catch these. Three more stand in a solid block (STATE, What is open).
+- The vault budget per chest is KIT3's (bank tier rates x clocks), 80 to ~546 cp at factor 1.0: below one Great Ball
+  at bands 1-4. A `one_of` is priced at its expected value.
+- C: is 100% full (7 GB); the pagefile is on D: (47 GB commit free at 21:00).
 
 ## 5. Cost
-`python tools/session_cost.py`: 247k context, 2.9M weighted at 115 turns when written.
+`python tools/session_cost.py`: hand over verdict at ~300k context (more than 32k a turn); agents 4.4M weighted together (guide, vault
+designer on Opus, generator builder).
