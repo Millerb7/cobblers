@@ -1,0 +1,619 @@
+{
+  "schema": "cobblers.caves/1",
+  "status": "built offline 2026-10-12 (unit CAVE-KIT): K1, K2 and K3 sited from the canonical heightmap and plan data by tools/caves.py author; not installed, not applied, not seen in a game. The owner confirms the sites",
+  "builder": "tools/caves.py (site, author, report, build); applied by tools/reapply.py step R9CK; the independent audit is tools/caves_audit.py (written by the same session, so NOT independent in the sense of CLAUDE.md principle 16: its derivation is separate and a generator mutation proves it bites, but a second agent should grade it)",
+  "design": "docs/mechanics/LEGENDARY_HOMES.md section 4 (the cave kit), K1, K2 and K3; the owner's decisions of 2026-10-12 (Koraidon and Miraidon are post-Champion area bosses; Dialga goes to K5; Tapu Fini is a repeatable chamber spawn at K4; the boss respawn rule as proposed; rarity targets as proposed)",
+  "not_built": "K4, K5 and K6 (sited and built by later units). The kit supports the chamber features none, columns and crystal; a `pool` feature (K4) is refused by the generator until its water has a spawn-block policy entry. Passages are straight (no `turn`): a cave is one axis from its mouth to its chamber. Natural-style Habitat Blocks in the passages are not emitted; only activated blocks (HB-1 and RS-1 are unmeasured)",
+  "seed": 20261012,
+  "geometry": {
+    "passage_height": 4,
+    "link_rows": 3,
+    "door_half_width": 1,
+    "door_height": 4,
+    "max_fill": 3,
+    "clear_above": 2,
+    "approach_rows": 3,
+    "approach_tolerance": 2,
+    "max_cutting_rows": 9,
+    "lantern_every": 6,
+    "length_min": 40,
+    "length_max": 90,
+    "margins": {
+      "passage": 2,
+      "room": 3,
+      "cutting": 1
+    },
+    "cover_min": {
+      "passage": 3,
+      "room": 4
+    },
+    "rules": "A cave is entered at its `mouth.anchor` (the middle column of the mouth) from its `mouth.front` (tools/mines.py frame(): north means the player stands north and the passage runs +z; south runs -z; west runs +x; east runs -x; u runs across, +x on a north or south front and +z on a west or east one; d runs into the hill, d = 0 is the mouth line). The mouth floor y0 is the lower median of the heightmap's ground (tools/ground.py, rounded) over row d = -1, u = -(hw+1) .. hw+1, where hw is the first passage's half width. Rows, in order: d = 0 the mouth (floor y0; timber posts at u = +-(hw+1) from y0+1 to y0+H and a beam of timber over u = -(hw+1) .. hw+1 at y0+H+1, H the first passage's height; one hanging lantern under the beam at u = 0); then the `passages` one after another, the first an `incline` of `length` = drop rows d = 1 .. drop, row d with floor top ft = y0 - d + 1 (a stair block facing the mouth's side, as the mining caves), the later ones level `drift` or `crawl` rows at yh = y0 - drop; then the `antechamber` if any (a room of half width `half_width`, `length` rows, `height`), then, if the cave has a gate, the door row (one row, half width door_half_width, height door_height, filled with barrier blocks over its whole cross-section) and `link_rows` rows of drift at half width door_half_width; then the oval `chamber`: centred on u = 0 at row dc = (its first row) + rz, a cell (u, d) is inside when u*u*rz*rz + (d-dc)^2*rx*rx <= rx*rx*rz*rz, air from yh+1 to yh+h over a floor at yh. Every row of a passage, link or room is air from its floor top + 1 to its floor top + height over u = -hw .. hw (the room's half width); an incline row whose least ground over u = -(hw+1) .. hw+1 is under its air top + 1 + cover_min.passage is an open cutting (air up to the higher of the ground and the air top, plus clear_above), every other row, and every room, must be a tunnel: ground over its air top >= the cover_min of its kind (passage 3, room 4). At most max_cutting_rows rows are cuttings. Shell: every non-air cell in the same column hull that lies within `margin` (passage 2, room 3, cutting 1) in x and z of an air column, from the lowest air cell minus the margin to the highest air cell plus the margin, is the cave's shell block, but only at or under ground - 1 (at or under ground next to a cutting). Wherever an air column's floor is more than one block over the ground, the cells from ground + 1 up to the floor (under a stair, under a floor, under a mouth post) are `fill` of the shell block, at most max_fill deep; the mouth's posts stand on such fill the same way. Lanterns stand on posts (a spruce fence block with a standing lantern on it, never a light block): on every row d of a level passage with (d - the passage's first row) % lantern_every == lantern_every // 2, alternately on the left and right wall column (u = -hw first, then +hw, counting across the whole cave), on the antechamber's two end corners (u = +-(half_width - 1) at its last row minus one), and four in the chamber at u = +-round(0.6 rx), d = dc +- round(0.55 rz). A chamber feature `columns` puts two full-height columns (the cave's column block) at u = +-round(0.5 rx), d = dc; `crystal` stands amethyst clusters (facing up) on the floor at the chamber cells the hash h32(seed, sid(cave id), u, d) orders first (tools/mines.py's mix; ties by (u, d)), `crystal_count` of them, skipping lantern posts and any cell with (u/rx)^2 + ((d-dc)/rz)^2 under 0.16. Rounding is Python's round(). The Habitat Block of a part replaces the floor cell at that part's centre (the chamber's centre; the antechamber's middle)."
+  },
+  "keep_clear": {
+    "town_margin": 24,
+    "road_clear": 25,
+    "corridor_clearance": 16,
+    "authored_clearance": 32,
+    "earthwork_gap": 4,
+    "placement_reach": 24,
+    "pack_gap": 4,
+    "water_reach": 8,
+    "water_changed_reach": 8,
+    "tree_reach": 4,
+    "report_radius": 64,
+  "spawn_free_margin": 8,
+    "why": "tools/mining_caves.py Clearance, reused as it stands (see its docstring): every written column keeps these distances from the town footprints, the routed legs and route paths, the routes' spawn-corridor boxes, every x/z another data file authors (this file, the exempt Habitat Block ids and the exempt files below skipped), every earthwork and placed template, every other built pack's writes, painted water and the water export's changed columns; a surface column keeps tree_reach from a painted tree. authored_clearance is 32 here (12 for the mining caves): a cave is a place, not a gallery. `report` also lists everything within report_radius so the owner can see what is near"
+  },
+  "authored_exempt": {
+    "ids": "computed by tools/caves.py: every Habitat Block id this file authors (habitat[].id of each cave) is skipped by id in tools/southern_residents.py authored_points, because it stands inside the cave it belongs to; every other Habitat Block in data/habitat_blocks.json stays a keep-clear point",
+    "files": {
+      "world_probes.json": "this tool's own presence probes (places.caves in data/world_probes.json) are positions inside the caves"
+    }
+  },
+  "gate": {
+    "objective": "cobblers.cv",
+    "period_ticks": 20,
+    "reach": 48,
+    "door_block": "minecraft:barrier",
+    "why": "legendaries.py's partition pattern (tools/legendaries.py files(): near / open / close): the door opens while a flagged player stands in the antechamber and closes when none does and nobody stands in the door, link or chamber. The driver runs only while somebody is within `reach` of the chamber centre, so whoever trips it holds the chunks it writes"
+  },
+  "flag_namespace": "cobblers",
+  "habitat_defaults": {
+    "spawn_range_from": "chamber rx (the chamber's reach)",
+    "chance": 1.0,
+    "trigger": "TICK",
+    "cancel_range": -1,
+    "max_spawns": 3,
+    "max_spawns_per_activation": 1,
+    "status": "planned"
+  },
+  "caves": [
+    {
+      "id": "cave_stoneford_cut",
+      "kind": "K1",
+      "name": "Stoneford Cut",
+      "status": "planned",
+      "role": "the pilot: an ungated early cave with a strong line (Gible) as its rare spawn",
+      "reading": "A cutting the quarrymen left unfinished in the hill south of Stoneford's road: a gravel ramp, a timbered drift and a bowl of cut stone at the end of it where the Geodude have settled. A small, dull-looking dragon is said to turn up in the dust.",
+      "near": "gym1_town",
+      "host_anchor": [
+        1743,
+        3628
+      ],
+      "ring": {
+        "min": 100,
+        "max": 320
+      },
+      "palette": {
+        "shell": "minecraft:stone",
+        "floor": "minecraft:polished_andesite",
+        "stair": "minecraft:cobblestone_stairs",
+        "timber": "minecraft:spruce_log",
+        "fence": "minecraft:spruce_fence",
+        "column": "minecraft:stone_bricks"
+      },
+      "passages": [
+        {
+          "kind": "incline",
+          "length": 8,
+          "width": 3,
+          "height": 4
+        },
+        {
+          "kind": "drift",
+          "length": 24,
+          "width": 3,
+          "height": 4
+        }
+      ],
+      "antechamber": null,
+      "chamber": {
+        "shape": "oval",
+        "rx": 8,
+        "rz": 6,
+        "h": 6,
+        "feature": "none"
+      },
+      "gate": {
+        "kind": "none"
+      },
+      "light": {
+        "lantern_every": 6,
+        "chamber_lanterns": 4,
+        "dark_by_design": false
+      },
+      "occupant": {
+        "mode": "power_line",
+        "species": "gible",
+        "level": "band",
+        "catch_rule": "any ball; the level is inside the sub-region's band, under the tier cap",
+        "why": "Gible is MISSING early in data/dungeon_prize_roster.json power_lines (Mega field only, band 4; egg room band 5): this is its first wild home. A rare-bucket entry of the chamber's activated Habitat Block, once in about twenty-four spawns of the block"
+      },
+      "habitat": [
+        {
+          "id": "cave_stoneford_cut_chamber_ward",
+          "part": "chamber",
+          "pool": {
+            "id": "cave_stoneford_cut_chamber",
+            "display_name": "Stoneford Cut, the chamber",
+            "why": "the Cut's bowl of cut stone: the rock dwellers of Viltri Plateau's band, and Gible in the rare bucket",
+            "entries": [
+              {
+                "species": "Geodude",
+                "bucket": "common",
+                "weight": 24.0,
+                "level": "band",
+                "family_priority": "anchor",
+                "reason": "base stage; evolves to Graveler at 25, over the band's top"
+              },
+              {
+                "species": "Zubat",
+                "bucket": "common",
+                "weight": 12.0,
+                "level": "band",
+                "family_priority": "common",
+                "reason": "base stage; evolves to Golbat at 22, over the band's top; the dark of a closed chamber"
+              },
+              {
+                "species": "Roggenrola",
+                "bucket": "uncommon",
+                "weight": 6.0,
+                "level": "band",
+                "family_priority": "uncommon",
+                "reason": "base stage; evolves to Boldore at 25, over the band's top; a rock that looks like the wall"
+              },
+              {
+                "species": "Gible",
+                "bucket": "rare",
+                "weight": 2.0,
+                "level": "band",
+                "family_priority": "rare",
+                "reason": "base stage; evolves to Gabite at 24, over the band's top. THE POWER LINE: no wild Gible exists before band 4 (data/dungeon_prize_roster.json power_lines), and this is its first home"
+              }
+            ]
+          }
+        }
+      ],
+      "mouth": {
+        "anchor": [
+          1535,
+          3628
+        ],
+        "front": "west",
+        "frame": "timber",
+        "sited_by": "tools/caves.py author: the best of search() (distance from host_anchor + 0.3 x the cells dug / 10) over the canonical heightmap and the keep_clear rules"
+      },
+      "site": {
+        "mouth_floor": 128,
+        "hall_floor": 120,
+        "chamber_centre": [
+          1574,
+          120,
+          3628
+        ],
+        "subregion": "viltri_plateau",
+        "subregion_band": [
+          9,
+          14
+        ],
+        "tier": 1
+      }
+    },
+    {
+      "id": "cave_singing_hollow",
+      "kind": "K2",
+      "name": "The Singing Hollow",
+      "status": "planned",
+      "role": "Meloetta's chamber: a repeatable chamber spawn behind a partition that opens at badge 6; a power line (Beldum) in the antechamber",
+      "reading": "Fishermen on Lake Viltri say the cliff sings when the wind is from the water. The hollow they found is real: an antechamber of tuff where small steel things hang from the roof, and beyond a door nobody can see, a round hall that rings.",
+      "near": "gym2_town",
+      "host_anchor": [
+        1605,
+        2801
+      ],
+      "ring": {
+        "min": 80,
+        "max": 300
+      },
+      "palette": {
+        "shell": "minecraft:tuff",
+        "floor": "minecraft:polished_tuff",
+        "stair": "minecraft:tuff_stairs",
+        "timber": "minecraft:spruce_log",
+        "fence": "minecraft:spruce_fence",
+        "column": "minecraft:tuff_bricks"
+      },
+      "passages": [
+        {
+          "kind": "incline",
+          "length": 12,
+          "width": 3,
+          "height": 4
+        },
+        {
+          "kind": "drift",
+          "length": 14,
+          "width": 3,
+          "height": 4
+        }
+      ],
+      "antechamber": {
+        "half_width": 4,
+        "length": 9,
+        "height": 5
+      },
+      "chamber": {
+        "shape": "oval",
+        "rx": 10,
+        "rz": 7,
+        "h": 8,
+        "feature": "crystal",
+        "crystal_count": 9
+      },
+      "gate": {
+        "kind": "partition",
+        "flags": [
+          "gym6_cleared"
+        ]
+      },
+      "light": {
+        "lantern_every": 6,
+        "chamber_lanterns": 4,
+        "dark_by_design": false
+      },
+      "occupant": {
+        "mode": "rare_spawn",
+        "species": "meloetta",
+        "level": 50,
+        "catch_rule": "any ball at cap 50 (six badges); the partition opens only for a player holding gym6_cleared",
+        "why": "Meloetta, the song cave (docs/research/notes/unhomed-legendaries-1.8.0.md:113). An ultra-rare entry of the chamber's activated Habitat Block beside one local ultra family (Chimecho): half of the ultra-rare bucket, 1.375% of a block's spawns, so about 0.69% per spawn (docs/mechanics/LEGENDARY_HOMES.md section 4). The inherited COBBLEVERSE-DP spawn of Meloetta (rare bucket, 50-55, sunflower plains) is NOT removed by this unit: see data/spawn_suppression.json and LEGENDARY_HOMES.md finding 2"
+      },
+      "habitat": [
+        {
+          "id": "cave_singing_hollow_ante_ward",
+          "part": "antechamber",
+          "pool": {
+            "id": "cave_singing_hollow_ante",
+            "display_name": "The Singing Hollow, the antechamber",
+            "why": "the hollow's outer room: sound-makers at the band of Lake Viltri Hollow, and Beldum (the power line) in the rare bucket",
+            "entries": [
+              {
+                "species": "Whismur",
+                "bucket": "common",
+                "weight": 24.0,
+                "level": "band",
+                "family_priority": "anchor",
+                "reason": "base stage; evolves to Loudred at 20, over the band's top (13-19)"
+              },
+              {
+                "species": "Jigglypuff",
+                "bucket": "common",
+                "weight": 12.0,
+                "level": "band",
+                "family_priority": "common",
+                "reason": "base stage; evolves by a Moon Stone only; a singer"
+              },
+              {
+                "species": "Chingling",
+                "bucket": "uncommon",
+                "weight": 6.0,
+                "level": "band",
+                "family_priority": "uncommon",
+                "reason": "base stage; evolves by friendship only; a bell in a hollow"
+              },
+              {
+                "species": "Beldum",
+                "bucket": "rare",
+                "weight": 2.0,
+                "level": "band",
+                "family_priority": "rare",
+                "reason": "base stage; evolves to Metang at 20, over the band's top. THE POWER LINE: Beldum is MISSING early (Mega field only, band 4; data/dungeon_prize_roster.json power_lines)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cave_singing_hollow_chamber_ward",
+          "part": "chamber",
+          "pool": {
+            "id": "cave_singing_hollow_chamber",
+            "display_name": "The Singing Hollow, the chamber",
+            "why": "the ringing hall, entered with six badges (cap 50): fully grown singers at 42-50, and in the ultra-rare bucket Meloetta (50) beside Chimecho",
+            "entries": [
+              {
+                "species": "Exploud",
+                "bucket": "common",
+                "weight": 24.0,
+                "level": "42-50",
+                "family_priority": "anchor",
+                "reason": "Whismur evolves to Loudred at 20 and to Exploud at 40; 42-50 is past both"
+              },
+              {
+                "species": "Chatot",
+                "bucket": "common",
+                "weight": 12.0,
+                "level": "42-50",
+                "family_priority": "common",
+                "reason": "does not evolve; the mimic in a hall of echoes"
+              },
+              {
+                "species": "Wigglytuff",
+                "bucket": "uncommon",
+                "weight": 6.0,
+                "level": "42-50",
+                "family_priority": "uncommon",
+                "reason": "final stage of Jigglypuff, a Moon Stone evolution; a hall that sings back"
+              },
+              {
+                "species": "Chimecho",
+                "bucket": "ultra-rare",
+                "weight": 1.0,
+                "level": "42-50",
+                "family_priority": "ultra-rare",
+                "reason": "does not evolve (Chingling's final stage); the local ultra family that shares the ultra-rare bucket with Meloetta"
+              },
+              {
+                "species": "Meloetta",
+                "bucket": "ultra-rare",
+                "weight": 1.0,
+                "level": "50",
+                "family_priority": "ultra-rare",
+                "reason": "THE OCCUPANT: mythical, fixed at 50, the cap of a six-badge player (data/legendaries.json level_caps.upper_bound_by_badges); the partition opens only at gym6_cleared"
+              }
+            ]
+          }
+        }
+      ],
+      "mouth": {
+        "anchor": [
+          1501,
+          2825
+        ],
+        "front": "north",
+        "frame": "timber",
+        "sited_by": "tools/caves.py author: the best of search() (distance from host_anchor + 0.3 x the cells dug / 10) over the canonical heightmap and the keep_clear rules"
+      },
+      "site": {
+        "mouth_floor": 104,
+        "hall_floor": 92,
+        "chamber_centre": [
+          1501,
+          92,
+          2872
+        ],
+        "subregion": "lake_viltri_hollow",
+        "subregion_band": [
+          13,
+          19
+        ],
+        "tier": 2
+      }
+    },
+    {
+      "id": "cave_relay_fault",
+      "kind": "K3",
+      "name": "The Relay Fault",
+      "status": "planned",
+      "role": "Miraidon's chamber: a post-Champion area boss (a native alpha kept by a keeper) behind a partition that opens at champion_cleared; a power line (Honedge) in the antechamber",
+      "reading": "A split in the shoulder of Mt Vessu runs toward the signal array above Highwire. The linesmen who walked it said the rock hummed, and left it. Now the hum is a voice, and past the second door something waits that was not made in this age.",
+      "near": "gym3_town",
+      "host_anchor": [
+        1688,
+        1410
+      ],
+      "ring": {
+        "min": 70,
+        "max": 260
+      },
+      "palette": {
+        "shell": "minecraft:deepslate",
+        "floor": "minecraft:polished_deepslate",
+        "stair": "minecraft:cobbled_deepslate_stairs",
+        "timber": "minecraft:spruce_log",
+        "fence": "minecraft:spruce_fence",
+        "column": "minecraft:deepslate_bricks"
+      },
+      "passages": [
+        {
+          "kind": "incline",
+          "length": 10,
+          "width": 3,
+          "height": 4
+        },
+        {
+          "kind": "drift",
+          "length": 20,
+          "width": 3,
+          "height": 4
+        }
+      ],
+      "antechamber": {
+        "half_width": 4,
+        "length": 9,
+        "height": 5
+      },
+      "chamber": {
+        "shape": "oval",
+        "rx": 9,
+        "rz": 8,
+        "h": 8,
+        "feature": "columns"
+      },
+      "gate": {
+        "kind": "partition",
+        "flags": [
+          "champion_cleared"
+        ]
+      },
+      "light": {
+        "lantern_every": 6,
+        "chamber_lanterns": 4,
+        "dark_by_design": false
+      },
+      "occupant": {
+        "mode": "area_boss",
+        "species": "miraidon",
+        "level": 70,
+        "catch_rule": "any ball once the Champion has fallen: a native alpha re-levels to party + 20 (max 100) near a player, and the cap is 100 after champion_cleared, so nothing is strictly above it (docs/mechanics/LEGENDARY_HOMES.md section 3); a player without the flag cannot pass the partition",
+        "why": "Miraidon, the future (the owner, 2026-10-12: Koraidon and Miraidon are post-Champion area bosses). One alive on the server: a keeper in the residents' shape (tools/drowned_quarry.py keeper_files), which never touches a blackout guardian",
+        "properties": [
+          "alpha=true",
+          "min_perfect_ivs=3",
+          "nature=timid",
+          "moves=electrodrift,dragonpulse,calmmind,voltswitch",
+          "held_item=cobblemon:sitrus_berry",
+          "no_ai"
+        ],
+        "properties_why": "keys from the jar's PokemonProperties set (docs/research/notes/legendary-species-1.8.0.md section 2); the four moves are in Miraidon's own 1.8.0 learnset (electrodrift level 56, dragonpulse level 42, calmmind and voltswitch tm); nature timid (it is a fast special attacker: speed 135, special attack 135); sitrus berry as data/entei_boss.json's catch set; `no_ai` as tools/drowned_quarry.py's Gyarados, so it holds its chamber and the fight comes to it. The moves and item are trainer-balance-designer's to change",
+        "tag": "cobblers.cv_miraidon",
+        "dormant_tag": "cobblers.cv_miraidon_dormant",
+        "guardian_tag": "cobblers.guardian",
+        "dormant_nbt": {
+          "Unbattleable": "1b",
+          "NoAI": "1b",
+          "NoGravity": "1b",
+          "PoseType": "\"SLEEP\"",
+          "RecalculatePose": "0b",
+          "HideLabel": "1b",
+          "PersistenceRequired": "1b",
+          "Invulnerable": "1b",
+          "Silent": "1b"
+        },
+        "awake_nbt": {
+          "Unbattleable": "0b",
+          "RecalculatePose": "1b",
+          "HideLabel": "0b",
+          "Silent": "0b"
+        },
+        "sound": "minecraft:block.beacon.activate",
+        "message": "The hum in the rock stops. Something in the hall turns toward the door.",
+        "keeper": {
+          "period_ticks": 40,
+          "spawn_radius": 64,
+          "spawn_clear": 10,
+          "trigger_radius": 16,
+          "settle_radius": 40,
+          "cooldown_faint_ticks": 24000,
+          "cooldown_catch_ticks": 72000,
+          "absent_passes": 2,
+          "guardian_search_radius": 24,
+          "home_tolerance": 1.0,
+          "catch_radius": 24
+        },
+        "keeper_why": "the respawn rule of the design (LEGENDARY_HOMES.md section 3, confirmed by the owner 2026-10-12): one alive server-wide, 24,000 ticks after a faint and 72,000 after a catch, repeatable, spawned only while a player holding champion_cleared is within spawn_radius of its spot and nobody stands within spawn_clear of it. period 40 and absent_passes 2, the quarry's"
+      },
+      "habitat": [
+        {
+          "id": "cave_relay_fault_ante_ward",
+          "part": "antechamber",
+          "pool": {
+            "id": "cave_relay_fault_ante",
+            "display_name": "The Relay Fault, the antechamber",
+            "why": "the fault's outer room: the steel and electric things that gather round a hum, at Mt Vessu's band, and Honedge (the power line) in the rare bucket",
+            "entries": [
+              {
+                "species": "Magnemite",
+                "bucket": "common",
+                "weight": 24.0,
+                "level": "band",
+                "family_priority": "anchor",
+                "reason": "base stage; evolves to Magneton at 30, over the band's top"
+              },
+              {
+                "species": "Voltorb",
+                "bucket": "common",
+                "weight": 12.0,
+                "level": "band",
+                "family_priority": "common",
+                "reason": "base stage; evolves to Electrode at 30, over the band's top"
+              },
+              {
+                "species": "Bronzor",
+                "bucket": "uncommon",
+                "weight": 6.0,
+                "level": "band",
+                "family_priority": "uncommon",
+                "reason": "base stage; evolves to Bronzong at 33, over the band's top"
+              },
+              {
+                "species": "Honedge",
+                "bucket": "rare",
+                "weight": 2.0,
+                "level": "band",
+                "family_priority": "rare",
+                "reason": "base stage; evolves to Doublade at 35, over the band's top. THE POWER LINE: Honedge is MISSING early (Doublade and Aegislash from 48 only; data/dungeon_prize_roster.json power_lines)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cave_relay_fault_chamber_ward",
+          "part": "chamber",
+          "pool": {
+            "id": "cave_relay_fault_chamber",
+            "display_name": "The Relay Fault, the chamber",
+            "why": "the hall of the hum, entered after the Champion: grown electric and steel things at 58-64. The boss is NOT in this pool; the keeper (cobblers_caves) brings it",
+            "entries": [
+              {
+                "species": "Manectric",
+                "bucket": "common",
+                "weight": 24.0,
+                "level": "58-64",
+                "family_priority": "anchor",
+                "reason": "Electrike evolves to Manectric at 26; 58-64 is past it"
+              },
+              {
+                "species": "Bronzong",
+                "bucket": "common",
+                "weight": 12.0,
+                "level": "58-64",
+                "family_priority": "common",
+                "reason": "Bronzor evolves to Bronzong at 33; 58-64 is past it"
+              },
+              {
+                "species": "Magneton",
+                "bucket": "uncommon",
+                "weight": 6.0,
+                "level": "58-64",
+                "family_priority": "uncommon",
+                "reason": "Magnemite evolves to Magneton at 30; its next evolution is by a magnetic place, not a level"
+              },
+              {
+                "species": "Rotom",
+                "bucket": "rare",
+                "weight": 2.0,
+                "level": "58-64",
+                "family_priority": "rare",
+                "reason": "does not evolve; the thing that lives in the wiring"
+              }
+            ]
+          }
+        }
+      ],
+      "mouth": {
+        "anchor": [
+          1580,
+          1382
+        ],
+        "front": "south",
+        "frame": "timber",
+        "sited_by": "tools/caves.py author: the best of search() (distance from host_anchor + 0.3 x the cells dug / 10) over the canonical heightmap and the keep_clear rules"
+      },
+      "site": {
+        "mouth_floor": 141,
+        "hall_floor": 131,
+        "chamber_centre": [
+          1580,
+          131,
+          1330
+        ],
+        "subregion": "the_tri_peaks",
+        "subregion_band": [
+          20,
+          28
+        ],
+        "tier": 3
+      }
+    }
+  ]
+}

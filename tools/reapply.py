@@ -384,6 +384,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # ECONOMY_OVERHAUL.md section 3): blocks run by R9OC; the galleries' restore on approach acts on its own
                 # (a tick driver, tools/mines.py's), so world-local below
                 "cobblers_mining_caves",
+                # 2026-10-12: the cave kit's first three caves (tools/caves.py, data/caves.json, LEGENDARY_HOMES.md section 4):
+                # blocks run by R9CK BEFORE R9E (a Habitat Block stands in each part's floor); the gates' barrier doors and the
+                # area boss's keeper act on their own (tick drivers, a capture callback), so world-local below
+                "cobblers_caves",
                 # 2026-09-29: the dive and sky portals and the pocket dimension (tools/portals.py, data/portals.json,
                 # ADR-004, EXP-047). It ships a `dimension` and a `dimension_type`, which register only at a server
                 # BOOT, not at a /reload: installing this pack needs a restart before R16P will run. The arches are
@@ -478,6 +482,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_ferries", "cobblers_ambient", "cobblers_ambient_idle", "cobblers_levelcap", "cobblers_mines",
                # 2026-10-10: the mining caves' restore drives itself on its own tick, like the stone faces'
                "cobblers_mining_caves",
+               # 2026-10-12: the caves' gates open and close their barrier doors on a tick, and the area boss's keeper SPAWNS a
+               # wild alpha on its own and reads a capture callback: never global, or the live world would run it too
+               "cobblers_caves",
                "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
                # 2026-10-08: the Entei keeper SPAWNS a legendary per player on its own and gives items: never global
                "cobblers_entei_boss",
@@ -1204,6 +1211,12 @@ def prepare_jobs(a):
     # other built pack's writes and reads them from build/datapacks; it fails closed on a write where a cave may not
     # stand. Before mines_audit, which lists reapply's steps (R9OC's build functions come from the data)
     add("mining_caves:build", "mining_caves.py", "build", *src)
+    # the cave kit (data/caves.json; LEGENDARY_HOMES.md section 4): the same reason, and the Habitat Blocks and pools it keeps in
+    # data/habitat_blocks.json and data/spawns.json are refused here if they drifted from the geometry. Its audit (tools/caves_audit.py)
+    # re-derives every cell from the rules text and replays the pack: cells both ways, the seal, the cover, the walk with the door
+    # closed and open, the gate, the keeper's guardian safety and clocks, the records, and the keep-clear distances. Fail-closed
+    add("caves:build", "caves.py", "build", *src)
+    add("caves_audit", "caves_audit.py", "--inputs-root", str(ROOT), *src)
     add("mines_audit", "mines_audit.py", *src)
     # the idle Pokemon (tools/ambient_idle.py): LAST of the builds, because it seats them on the BUILT town -- it
     # replays every pack's block writes through steps() (tools/npc_spot_sweep.py) and refuses a spot a signpost, a
@@ -2066,6 +2079,12 @@ def steps(with_spawns=False):
     out.append(("R9OC", "the refillable mining caves: %s (data/mining_caves.json)" % ", ".join(
                     "%s with %d galleries" % (c["id"], len(c["galleries"])) for c in mining_caves.load()["caves"]),
                 [("fn", f) for f in mining_caves.build_functions()]))
+    # the cave kit (tools/caves.py, data/caves.json; LEGENDARY_HOMES.md section 4): K1, K2 and K3, one block pass each held in a
+    # forceload of its box, BEFORE R9E (each part's Habitat Block replaces a floor cell this writes). The gates' doors and the area
+    # boss's keeper drive themselves (cobblers:caves/tick and /boss/<id>/keeper) and need no step
+    import caves
+    out.append(("R9CK", "the cave kit: %s (data/caves.json)" % ", ".join("%s %s" % (c["kind"], c["id"]) for c in caves.load()["caves"]),
+                caves.placement_steps()))
     # the city stands on the pit R9B sinks, after R9C (the caves write round the mouth the city keeps clear) and before
     # R9E (Habitat Blocks sit on finished floors) and the lights (R16). Structure, then the Centre and Mart by
     # /place template, then what hangs on the structure (ladders, hatches, panes, doors, signs, lamps). R9DC, not R9D:

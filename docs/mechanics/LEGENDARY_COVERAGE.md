@@ -96,7 +96,7 @@ dungeon first entered at band 4 or later has no rare pool.
 | **The Street That Ends at Nothing** `street` (proposed) | city (new) | none, 1 | Beldum, Honedge, Deino, Litwick / Doublade, Metang, Dreepy / Zweilous, Drakloak, Doublade, Lampent | Zeraora, Magearna, Guzzlord / Zeraora, Magearna, Guzzlord / Palkia, Guzzlord, Zeraora, Magearna | Guzzlord (spine boss) |
 | **Under the Patriarch** `patriarch` (proposed) | great tree (new) | none, 1 | Axew, Dreepy, Larvesta, Munchlax / Fraxure, Larvesta, Dreepy / Drakloak, Fraxure, Larvesta | Suicune, Kartana, Celesteela / Suicune, Kartana, Celesteela / Xerneas, Zacian, Zamazenta, Suicune, Kartana, Celesteela | Kartana, Celesteela (wormhole leg, the pair rotates); boss legendary Yveltal |
 | **The Last Cistern** `cistern` (proposed) | flooded_ruin (reused) | none, 1 | Frigibax, Dratini, Goomy / Arctibax, Dragonair, Sliggoo / Arctibax, Dragonair, Zweilous | Walking Wake, Nihilego, Iron Bundle / Walking Wake, Nihilego, Iron Bundle / Walking Wake, Nihilego, Iron Bundle | Nihilego (spine boss) |
-| **The Temple Calendar** `temple_calendar` (proposed) | jungle (reused) | gym8_cleared (proposed, DUNGEON_PLACEMENT.md Q13 OPEN), 5 | - / - / - | - / Tapu Fini, Buzzwole, Pheromosa, Meloetta, Brute Bonnet, Scream Tail / Tapu Fini, Buzzwole, Pheromosa, Meloetta, Brute Bonnet, Scream Tail | Buzzwole, Pheromosa (wormhole leg, the calendar picks which); boss legendary Dialga |
+| **The Temple Calendar** `temple_calendar` (proposed) | jungle (reused) | gym8_cleared (proposed, DUNGEON_PLACEMENT.md Q13 OPEN), 5 | - / - / - | - / Tapu Fini, Buzzwole, Pheromosa, Brute Bonnet, Scream Tail / Tapu Fini, Buzzwole, Pheromosa, Brute Bonnet, Scream Tail | Buzzwole, Pheromosa (wormhole leg, the calendar picks which); boss legendary Dialga |
 | **The Crucible** `crucible` (proposed) | basalt_deltas (built theme) | champion_cleared (DUNGEONS.md 10), 6 | - / - / - | - / - / Stakataka, Gouging Fire | Stakataka (wormhole leg); boss legendary Heatran |
 | **The Ash Bell** `ash_bell` (proposed) | nether_wastes (built theme) | gym8_cleared (the Nether's gate, data/nether_gate.json), 5 | - / - / - | - / Raikou, Raging Bolt / Ho-Oh, Raikou, Raging Bolt | - |
 | **The Moth Cathedral** `moth_cathedral` (proposed) | crimson_forest (built theme) | gym8_cleared, 5 | - / - / - | - / Victini, Slither Wing, Iron Moth / Victini, Slither Wing, Iron Moth | - |
@@ -104,7 +104,7 @@ dungeon first entered at band 4 or later has no rare pool.
 | **The Soul Ossuary** `soul_ossuary` (proposed) | soul_sand_valley (built theme) | gym8_cleared, 5 | - / - / - | - / Marshadow, Blacephalon, Pecharunt, Roaring Moon / Marshadow, Blacephalon, Pecharunt, Roaring Moon | Blacephalon (spine boss (an ossuary keeper holds it)) |
 | **The Dragonspiral** `dragonspiral` (proposed) | ice spire (new) | champion_cleared (proposed), 6 | - / - / - | - / - / Kyurem, Reshiram, Zekrom | - |
 | **The Field of Swords** `field_of_swords` (proposed) | hill keep (new) | gym6_cleared (proposed), 4 | - / - / - | Cobalion, Terrakion, Virizion, Iron Leaves, Iron Boulder, Iron Crown / Cobalion, Terrakion, Virizion, Iron Leaves, Iron Boulder, Iron Crown, Keldeo / Keldeo, Cobalion, Terrakion, Virizion, Iron Leaves, Iron Boulder, Iron Crown | - |
-| **The Zero Dig** `zero_dig` (proposed; CUT from the install 2026-10-11, the owner: the built one copied the Night Shift, re-authoring waits on the owner's play) | desert excavation (new) | gym7_cleared (proposed), 4 | - / - / - | Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns / Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns / Koraidon, Miraidon, Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns | - |
+| **The Zero Dig** `zero_dig` (proposed; CUT from the install 2026-10-11, the owner: the built one copied the Night Shift, re-authoring waits on the owner's play) | desert excavation (new) | gym7_cleared (proposed), 4 | - / - / - | Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns / Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns / Koraidon, Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns | - |
 | **The Starfall Crater** `starfall` (proposed) | night sky crater (new) | gym8_cleared (proposed), 5 | - / - / - | - / Jirachi, Deoxys, Cresselia / Arceus, Jirachi, Deoxys, Cresselia | - |
 
 **New themes these need:** city (the Street), great tree (the Patriarch), ice spire (the Dragonspiral), hill keep (the
@@ -181,8 +181,9 @@ later.
 3. **Blocked and planned world homes:** Lugia (fallback: the Drowned Reliquary, band 6), Kyogre (the Cistern, band 6),
    Rayquaza (the Starfall Crater, band 6). Fallbacks only; the world homes stand. (Registeel was listed here with the
    Night Shift, bands 4-6; corrected 2026-10-12: it is sited in the upper Rift, so that fallback is unused.)
-4. **Koraidon and Miraidon** (`DUNGEON_PLACEMENT.md` Q14, open): placed in the Zero Dig, band 6, reading the new
-   instruction as "dungeon".
+4. **Koraidon and Miraidon** (`DUNGEON_PLACEMENT.md` Q14, answered 2026-10-12): post-Champion area bosses in the world.
+   Miraidon is built at The Relay Fault (K3, `data/caves.json`); Koraidon is K6 (Sunscar), not yet built, and stays in the
+   Zero Dig's band-6 pool until then.
 5. **Yveltal, Dialga, Heatran:** kept as D18 boss catches. The alternative is the prize form (a pool entry) with a
    fight-only boss.
 6. **The UB bosses' form** (section 3, last bullet) and `ULTRA_BEAST_BOSSES.md`'s open U-Q1 to U-Q7.
@@ -240,7 +241,7 @@ later.
 | 645 | Landorus | legendary | **world** (proposal): nowhere authored | Tri Peaks summit (proposal); fallback dragonspiral band 6 |  |
 | 646 | Kyurem | legendary | **dungeon**: nowhere authored | dragonspiral, band 6 | the frozen one that holds the other two; restricted |
 | 647 | Keldeo | mythical | **dungeon**: nowhere authored | field_of_swords, bands 5, 6 | the sword in the spring, after the three |
-| 648 | Meloetta | mythical | **dungeon**: nowhere authored | temple_calendar, bands 5, 6 | the temple's song |
+| 648 | Meloetta | mythical | **world** (built offline 2026-10-12, not applied): The Singing Hollow, `cave_singing_hollow` (K2), a repeatable ultra-rare chamber spawn at level 50 behind gym6_cleared | cave kit, `data/caves.json` | the song cave; its inherited DP spawn is not yet removed |
 | 649 | Genesect | mythical | **dungeon**: nowhere authored | warped_lab, bands 5, 6 | an ancient thing rebuilt in a lab; the DP's fossil revive also exists (unverified reachable) |
 | 716 | Xerneas | legendary | **dungeon**: nowhere authored | patriarch, band 6 | Yveltal's pair, the life-tree; restricted |
 | 717 | Yveltal | legendary | planned (designed, not built): D18: the Patriarch's boss, band-6 catch (designed) | patriarch (boss) |  |
@@ -306,7 +307,7 @@ later.
 | 1005 | Roaring Moon (ATM subset) | paradox | **dungeon**: nowhere authored | soul_ossuary, bands 5, 6 | dragon/dark ancient paradox |
 | 1006 | Iron Valiant (ATM subset) | paradox | **dungeon**: nowhere authored | warped_lab, bands 5, 6 | a future paradox |
 | 1007 | Koraidon | legendary | **dungeon**: nowhere authored | zero_dig, band 6 | the past; restricted; Q14 open |
-| 1008 | Miraidon | legendary | **dungeon**: nowhere authored | zero_dig, band 6 | the future; restricted; Q14 open |
+| 1008 | Miraidon | legendary | **world** (built offline 2026-10-12, not applied): The Relay Fault, `cave_relay_fault` (K3), a post-Champion area boss kept by a keeper, level 70, behind champion_cleared | cave kit, `data/caves.json` | the future; restricted; Q14 answered 2026-10-12 |
 | 1009 | Walking Wake | paradox | **dungeon**: nowhere authored | cistern, bands 4, 5, 6 | D18's lake pick for the Cistern; renders today (jar) |
 | 1010 | Iron Leaves | paradox | **dungeon**: nowhere authored | field_of_swords, bands 4, 5, 6 | Virizion's paradox; renders today (jar) |
 | 1014 | Okidogi | legendary | **dungeon**: nowhere authored | jungle, bands 4, 5, 6 | one of the Loyal Three |

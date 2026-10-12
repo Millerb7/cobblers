@@ -7869,6 +7869,238 @@
         ],
         "expect": true
       }
+    ],
+    "caves": [
+      {
+        "what": "cave_stoneford_cut: air at the standing block outside the mouth",
+        "block": [
+          1533,
+          129,
+          3628,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_stoneford_cut: air in the middle of the chamber",
+        "block": [
+          1574,
+          122,
+          3628,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_stoneford_cut: the chamber's floor under the habitat block's neighbour",
+        "block": [
+          1575,
+          120,
+          3628,
+          "minecraft:polished_andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_stoneford_cut: the shell over the chamber's roof",
+        "block": [
+          1574,
+          127,
+          3628,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_stoneford_cut: the mouth's timber beam",
+        "block": [
+          1535,
+          133,
+          3626,
+          "minecraft:spruce_log[axis=z]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_stoneford_cut: the Habitat Block cave_stoneford_cut_chamber_ward",
+        "block": [
+          1574,
+          120,
+          3628,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_singing_hollow: air at the standing block outside the mouth",
+        "block": [
+          1501,
+          105,
+          2823,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_singing_hollow: air in the middle of the chamber",
+        "block": [
+          1501,
+          94,
+          2872,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_singing_hollow: the chamber's floor under the habitat block's neighbour",
+        "block": [
+          1502,
+          92,
+          2872,
+          "minecraft:polished_tuff"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_singing_hollow: the shell over the chamber's roof",
+        "block": [
+          1501,
+          101,
+          2872,
+          "minecraft:tuff"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_singing_hollow: the mouth's timber beam",
+        "block": [
+          1499,
+          109,
+          2825,
+          "minecraft:spruce_log[axis=x]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_singing_hollow: the door's barrier (closed)",
+        "block": [
+          1500,
+          93,
+          2861,
+          "minecraft:barrier"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_singing_hollow: the Habitat Block cave_singing_hollow_ante_ward",
+        "block": [
+          1501,
+          92,
+          2856,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_singing_hollow: the Habitat Block cave_singing_hollow_chamber_ward",
+        "block": [
+          1501,
+          92,
+          2872,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_relay_fault: air at the standing block outside the mouth",
+        "block": [
+          1580,
+          142,
+          1384,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_relay_fault: air in the middle of the chamber",
+        "block": [
+          1580,
+          133,
+          1330,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_relay_fault: the chamber's floor under the habitat block's neighbour",
+        "block": [
+          1581,
+          131,
+          1330,
+          "minecraft:polished_deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_relay_fault: the shell over the chamber's roof",
+        "block": [
+          1580,
+          140,
+          1330,
+          "minecraft:deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_relay_fault: the mouth's timber beam",
+        "block": [
+          1578,
+          146,
+          1382,
+          "minecraft:spruce_log[axis=x]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_relay_fault: the door's barrier (closed)",
+        "block": [
+          1579,
+          132,
+          1342,
+          "minecraft:barrier"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_relay_fault: the Habitat Block cave_relay_fault_ante_ward",
+        "block": [
+          1580,
+          131,
+          1347,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_relay_fault: the Habitat Block cave_relay_fault_chamber_ward",
+        "block": [
+          1580,
+          131,
+          1330,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_relay_fault: the boss (one tagged cobblers.cv_miraidon once a champion has come near; absent while the clock runs)",
+        "hold": [
+          1580,
+          132,
+          1330
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_miraidon]",
+        "count": 1
+      }
     ]
   }
 }
