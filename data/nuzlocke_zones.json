@@ -515,7 +515,7 @@
    "table": "data/encounter_design.json tables.long_isle_south",
    "tier": 8,
    "levels": null,
-   "species": 19,
+   "species": 21,
    "geometry": "data/regions.json subregions.long_isle_south polygons, 32-block raster",
    "land_share": 0.997,
    "legs": [],
