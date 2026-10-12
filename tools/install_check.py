@@ -10,7 +10,9 @@ disagreement does. `tools/reapply.py install` runs it last and stops on any prob
             world's folder) must be installed and byte-identical to its build; the patched COBBLEVERSE datapack must
             be the one `tools/patch_cobbleverse_riding.py` makes; and no `cobblers_*` pack may sit in the global folder
             unless the repo installs it there. The live world's own datapacks folder is never read (CLAUDE.md): pass
-            --world-dir only for a staging or disposable world.
+            --world-dir only for a staging or disposable world. A pack `tools/reapply.py strip` moved out (recorded
+            in build/install_record.json, and classed `build` in build/pack_roles.json) is absent by design; a
+            stripped pack the roles call runtime, or whose held copy is gone, is a problem.
   configs   tools/server_config_record.py check
   property  every key in REQUIRED_PROPERTIES has its required value in server.properties (enable-command-block=true)
 
@@ -49,21 +51,60 @@ def compare(name, built, installed):
     return []
 
 
-def packs(server_dir, world_dir=None):
+def stripped(server_dir, record=None, roles=None):
+    """{pack: its strip record} for the packs `tools/reapply.py strip` moved out of this server, as recorded in
+    build/install_record.json; and [problems] with that record: a stripped pack that build/pack_roles.json does not
+    class `build` (a runtime pack must never be out), or one whose held copy is gone."""
+    import json
+    import reapply as RA
+    record = Path(record) if record is not None else RA.INSTALLED
+    if not record.is_file():
+        return {}, []
+    try:
+        rec = json.loads(record.read_text(encoding="utf-8")).get(str(Path(server_dir).resolve())) or {}
+    except ValueError:
+        return {}, ["%s is unreadable: no stripped pack can be accepted as absent" % record]
+    out = dict(rec.get("stripped") or {})
+    if not out:
+        return {}, []
+    problems = []
+    roles_path = Path(roles) if roles is not None else RA.ROLES
+    try:
+        role = {n: r.get("role") for n, r in json.loads(roles_path.read_text(encoding="utf-8"))["packs"].items()}
+    except (OSError, ValueError, KeyError):
+        role = {}
+        problems.append("%s cannot be read: the %d stripped pack(s) cannot be confirmed build-only (%s)"
+                        % (roles_path, len(out), ", ".join(sorted(out))))
+    for name, r in sorted(out.items()):
+        if role and role.get(name) != "build":
+            problems.append("%s: stripped, but %s classes it %s: a runtime pack is missing; run `tools/reapply.py "
+                            "install`" % (name, roles_path.name, role.get(name)))
+        if not Path(r.get("to") or "").is_dir():
+            problems.append("%s: stripped to %s, which is gone: `tools/reapply.py install` copies it from build/"
+                            % (name, r.get("to")))
+    return out, problems
+
+
+def packs(server_dir, world_dir=None, record=None, roles=None):
     import reapply as RA
     import runtime_guard
     server_dir = Path(server_dir)
     gdp = runtime_guard.check(server_dir / "datapacks", "read the installed packs in")
-    problems = []
+    out, problems = stripped(server_dir, record, roles)
+    def compare_or_stripped(name, built, installed):
+        # a pack `strip` moved out is absent by design; any other absence is still "built but NOT INSTALLED"
+        if name in out and not Path(installed).exists():
+            return []
+        return compare(name, built, installed)
     world_local = set(RA.WORLD_LOCAL)
     for name in RA.SERVER_PACKS:
         if name in world_local:
             if world_dir:
-                problems += compare(name, RA.PACKS / name, Path(world_dir) / "datapacks" / name)
+                problems += compare_or_stripped(name, RA.PACKS / name, Path(world_dir) / "datapacks" / name)
             if (gdp / name).exists():
                 problems.append("%s: in the global folder, but it belongs in the world's folder" % name)
         else:
-            problems += compare(name, RA.PACKS / name, gdp / name)
+            problems += compare_or_stripped(name, RA.PACKS / name, gdp / name)
             # a copy in the world's own folder shadows the global one, and is never refreshed by install: on staging
             # (2026-09-27) the town dressing, the Deep's city and the bridges were copied there by hand, and the
             # dressing's copy stayed the 04:15 build after the 12:22 rebuild
@@ -76,9 +117,9 @@ def packs(server_dir, world_dir=None):
                 if not (Path(world_dir) / "datapacks" / name / "pack.mcmeta").is_file():
                     problems.append("cobblers_suppress: NOT INSTALLED in the world (it is generated at install)")
                 continue
-            problems += compare(name, RA.PACKS / name, Path(world_dir) / "datapacks" / name)
+            problems += compare_or_stripped(name, RA.PACKS / name, Path(world_dir) / "datapacks" / name)
         for src in RA.WORLD_PACKS:
-            problems += compare(src.name, src, Path(world_dir) / "datapacks" / src.name)
+            problems += compare_or_stripped(src.name, src, Path(world_dir) / "datapacks" / src.name)
     expected_global = {n for n in RA.SERVER_PACKS if n not in world_local}
     for p in sorted(gdp.glob("cobblers_*")):
         if p.name not in expected_global:
