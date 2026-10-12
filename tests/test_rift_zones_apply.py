@@ -144,15 +144,15 @@ def r9z(index):
 # moment it is installed: on 2026-10-02 that was z5, the League's precinct, turning back every survival player
 # (data/rift_zones.json measured_defects[held_zone_checks_shut_the_league]).
 def advancement_problems(adv, rule=lambda _zid, z: enforced(z)):
-    """[] when every zone `rule(zid, zone)` says is enforced ships its zone check, knocks and exits, and every other zone ships
-    no advancement at all."""
+    """[] when every zone `rule(zid, zone)` says is enforced ships its zone check, knocks and lines, and every other zone ships
+    no advancement at all. (The exit box is retired, gatehouse.exit_retired: there is no barrier to leave through.)"""
     names = {p.stem for p in adv.glob("*.json")}
     bad = []
     for zid, z in live_zones().items():
         mine = {n for n in names if n == "%s_zone" % zid or n.startswith("%s_" % zid)}
         if rule(zid, z):
             gates = [g[0] for g in RZ.gates_of(zid, z)]
-            want = {"%s_zone" % zid} | {"%s_%s" % (g, k) for g in gates for k in ("knock", "exit")}
+            want = {"%s_zone" % zid} | {"%s_%s" % (g, k) for g in gates for k in ("knock", "line")}
             if not want <= mine:
                 bad.append("%s is enforced and is missing %s" % (zid, sorted(want - mine)))
         elif mine:
@@ -283,11 +283,19 @@ def _lines(fn, name):
 # clean-up a later tick kills every OTHER guard stand on that block, but only once the fresh one is there.
 # Since 2026-10-08 (N155) the summon waits for a look that sees a guard stand in EVERY guard's chunk, or blind,
 # read by tools/chunk_look_audit.py with the guards' positions taken from the data here.
+def pad_of(gate):
+    """(x, z) of one gate's guard pad, from the audit's own frame (tools/gatehouse_audit.py), which shares no code with
+    the generator: the lane just outside the passage on the guard's own row (t = 0)."""
+    import gatehouse_audit as GA
+    fr = GA.Frame(gate[2], GH)
+    return fr.at(0, fr.k0 - 1)
+
+
 def test_one_placeholder_per_built_gate_and_the_old_ones_go():
     import chunk_look_audit as CA
     fn, _adv = fast()
     pack = fn.parents[3]
-    sites = [tuple(g[2]["block"]) for zid, z in live_zones().items() if built(z) for g in RZ.gates_of(zid, z)]
+    sites = [pad_of(g)[:2] for zid, z in live_zones().items() if built(z) for g in RZ.gates_of(zid, z)]
     assert CA.problems(pack, "cobblers:rift_zones/guards", "cobblers_rift_guard", "R9Z guards", sites=sites) == []
     fn, _adv = fast()
     for p in fn.glob("gatehouse_*.mcfunction"):
@@ -296,7 +304,8 @@ def test_one_placeholder_per_built_gate_and_the_old_ones_go():
     for zid, z in live_zones().items():
         if built(z):
             for g in RZ.gates_of(zid, z):
-                want[g[0]] = (g[2]["block"][0], g[2]["ground_y"] + 1, g[2]["block"][1])
+                x_, z_ = pad_of(g)[0], pad_of(g)[1]
+                want[g[0]] = (x_, g[2]["ground_y"] + 1, z_)
     placed = {}
     for ln in _lines(fn, "guards_act"):
         if ln.startswith("summon minecraft:armor_stand"):
@@ -313,6 +322,16 @@ def test_one_placeholder_per_built_gate_and_the_old_ones_go():
         assert len(hits) == 1, name
         cond, kill = hits[0].split(" run ", 1)
         assert "tag=cobblers_rift_guard_new" in cond and "tag=!cobblers_rift_guard_new" in kill, hits[0]
+    # the retired shell's placeholder stood on the guard's block, in the middle of the walkway: it is killed too, or the
+    # world keeps a stand in the walk line
+    acts = _lines(fn, "guards_act")
+    for zid, z in live_zones().items():
+        if built(z):
+            for g in RZ.gates_of(zid, z):
+                old = "x=%d,y=%d,z=%d,dx=0,dy=1,dz=0" % (g[2]["block"][0], g[2]["ground_y"] + 1, g[2]["block"][1])
+                assert any(ln.startswith("kill @e[") and old in ln for ln in acts), g[0]
+    # and every stand faces down the approach (a Rotation in the summon)
+    assert all("Rotation:[" in ln for ln in acts if ln.startswith("summon minecraft:armor_stand"))
     assert any(ln.startswith("schedule function cobblers:rift_zones/guards_look") for ln in _lines(fn, "guards"))
     assert any(ln.startswith("schedule function cobblers:rift_zones/guards_done") for ln in _lines(fn, "guards_act"))
     assert RZ.guard_count(SPEC) == len(want)
@@ -388,7 +407,7 @@ def start_heading(gd):
 
 def walk_problems(gate, block):
     """[] when a player can: walk from the approach outside into the knock box and back out again; walk from
-    the arrival into the zone; walk from the zone into the exit box. Start points are on the gate's surveyed
+    the arrival into the zone. (The exit box is retired, gatehouse.exit_retired.) Start points are on the gate's surveyed
     line (start_heading), walkway_in + 6 blocks inside and knock_out + 6 outside, at the heightmap's ground there."""
     name, _gid, gd, arr, _tb, eb, knock = gate
     q, ow, fy = gd["block"], start_heading(gd), gd["ground_y"] + 1
@@ -410,8 +429,6 @@ def walk_problems(gate, block):
     a = (int(arr[0] - 0.5), int(arr[1]), int(arr[2] - 0.5))
     if in_c not in reach(a, q):
         bad.append("%s: from the arrival %s no player walks into the zone at %s" % (name, a, in_c))
-    if not any((c[0], c[2]) == (eb[0], eb[2]) and c[1] == eb[1] for c in reach(in_c, q)):
-        bad.append("%s: from the zone at %s no player reaches the exit box %s" % (name, in_c, eb[:3]))
     bad += straight_on_problems(gate, block)
     return bad
 
@@ -551,65 +568,95 @@ def gates_in_a_wall(fn):
     return out
 
 
-def bypassed(gate, block):
-    """True when, barrier shut, a player outside walks round to inside within 28 of the guard."""
-    _n, _gid, gd, *_ = gate
-    q, ow, fy = gd["block"], start_heading(gd), gd["ground_y"] + 1
-    feet, reach = walker(block)
-    o = (int(round(q[0] + ow[0] * (GH["knock_out"] + 6))), int(round(q[1] + ow[1] * (GH["knock_out"] + 6))))
-    i = (int(round(q[0] - ow[0] * (GH["walkway_in"] + 6))), int(round(q[1] - ow[1] * (GH["walkway_in"] + 6))))
-    return feet(i[0], i[1], fy) in reach(feet(o[0], o[1], fy), q)
+def gap_problems(gate, block):
+    """[] when, with every wall up, each row of the gatehouse's passage is an unbroken run of at least
+    gatehouse.min_width columns a player can stand in with four blocks of air over their feet, and the sky is open
+    over the passage's lanes (a wall standing over the way is a tunnel however high its roof). The rows and lanes are
+    tools/gatehouse_audit.py's own (Frame), which shares no code with the generator. The post row is exempt from the
+    sky check: the beam rides there, five blocks up, by design."""
+    name, _gid, gd, *_ = gate
+    import gatehouse_audit as GA
+    fr = GA.Frame(gd, GH)
+    fy, bad = fr.fy, []
+    for t in range(fr.t0, fr.t1 + 1):
+        run = best = 0
+        for k in range(fr.k0 - 8, fr.k1 + 9):
+            x, z = fr.at(t, k)
+            ok = any(block(x, y, z) in PASSABLE and block(x, y + 1, z) in PASSABLE and block(x, y - 1, z) not in PASSABLE
+                     and all(block(x, y + i, z) in PASSABLE for i in range(2, 4)) for y in (fy - 1, fy, fy + 1))
+            run = run + 1 if ok else 0
+            best = max(best, run)
+        # the post row is held to the owner's minimum only: its two posts stand in the margin by design
+        want = GH["min_width"] if t == GH["posts_at"] else GH["walkway"] + 2 * GH["wall_gap_margin"]
+        if best < GH["min_width"] or best < want:
+            bad.append("%s row t=%d: %d standable column(s) with four blocks clear across the passage, under %d "
+                       "(the owner's minimum is %d; the wall leaves the passage and %d lanes either side, %d)"
+                       % (name, t, best, max(GH["min_width"], want), GH["min_width"], GH["wall_gap_margin"], want))
+        if t == GH["posts_at"]:
+            continue
+        for k in range(fr.k0, fr.k1 + 1):
+            x, z = fr.at(t, k)
+            roof = [y for y in range(fy + 4, fy + 40) if block(x, y, z) not in PASSABLE]
+            if roof:
+                bad.append("%s row t=%d lane %d: %s stands over the passage at y%d" % (name, t, k, block(x, roof[0], z), roof[0]))
+                break
+    return bad
 
 
-# Without it a wall re-cut to meet its gatehouse could open a way round the barrier, and the walk above would
-# pass happily, because it asks only whether a player CAN get through. Opening league_gate's column at G5's inner
-# mouth is exactly such a re-cut.
+# Without it a wall R9Z runs can close, squeeze or roof the way through a gatehouse it crosses: with every wall up, the
+# gap is at least five wide on every row and open to the sky. This replaces the barrier-is-the-only-way-past test,
+# which asserted the opposite of what the owner wants (2026-10-12: no barrier, the zone's rule stops a player).
 @pytest.mark.slow
-def test_the_barrier_is_the_only_way_past_a_gatehouse_in_a_wall():
+def test_a_gatehouse_in_a_wall_is_an_open_gap_at_least_five_wide_with_every_wall_up():
     (fn, _adv), g = real()
     walled = gates_in_a_wall(fn)
     assert {x[0] for x in walled} == {"z4", "z5"}, [x[0] for x in walled]
     block = world_of(fn, everything(fn), g)
-    assert [x[0] for x in walled if bypassed(x, block)] == []
+    bad = [p for x in walled for p in gap_problems(x, block)]
+    assert bad == [], "\n".join(bad[:6])
 
 
-def _mutated_build(old, new, label):
+# Without this the gap check could pass for reasons of its own. Narrowing the wall's gap in the GENERATOR (wall_gap keeps
+# four lanes, data untouched) leaves wall standing two columns closer to the passage than the design says, and the check
+# must find it at G4 by name. G4 ONLY, measured: behind_league crosses G4's walkway rows t=-2..0, outside the post row,
+# while league_gate meets G5 only on the post row (t=1), where the two posts stand in the margin and the row is held to
+# the owner's five alone. The next test proves the sky check at both.
+@pytest.mark.slow
+def test_narrowing_the_walls_gap_in_build_narrows_the_open_run():
+    (fn, _adv), g = real()
+    mfn, _madv = _mutated_build(
+        [('    ks = range(lanes[0] - gh["wall_gap_margin"], lanes[-1] + gh["wall_gap_margin"] + 1)',
+          '    ks = range(lanes[0] + 1, lanes[-1])')], "rift_zones_narrow_gap")
+    block = world_of(mfn, everything(fn), g)
+    walled = gates_in_a_wall(fn)
+    assert {x[0] for x in walled if gap_problems(x, block)} == {"z4"}
+
+
+# Without this the sky check could pass for reasons of its own. Two mechanisms keep the wall off the passage (the wall's
+# own gap, and the gatehouse's demolition of every wall column in its footprint); the GENERATOR is made to do neither,
+# data untouched, and the wall's crest must be found standing over the way at both walled gates.
+@pytest.mark.slow
+def test_a_wall_left_standing_over_the_passage_is_found():
+    (fn, _adv), g = real()
+    mfn, _madv = _mutated_build(
+        [('    ks = range(lanes[0] - gh["wall_gap_margin"], lanes[-1] + gh["wall_gap_margin"] + 1)',
+          '    ks = range(0, 0)'),
+         ('                    dem[c][1] = max(dem[c][1], wtop[c])', '                    pass')], "rift_zones_wall_over")
+    block = world_of(mfn, everything(fn), g)
+    walled = gates_in_a_wall(fn)
+    got = {x[0]: gap_problems(x, block) for x in walled}
+    assert all(got[n] and any("stands over the passage" in b for b in got[n]) for n in ("z4", "z5")), got
+
+
+def _mutated_build(pairs, label):
     src = (ROOT / "tools" / "rift_zones.py").read_text(encoding="utf-8")
-    assert src.count(old) == 1, "the line to mutate is not in tools/rift_zones.py exactly once: %r" % old
+    for old, new in pairs:
+        assert src.count(old) == 1, "the line to mutate is not in tools/rift_zones.py exactly once: %r" % old
+        src = src.replace(old, new)
     mod = types.ModuleType(label)
     mod.__file__ = str(ROOT / "tools" / "rift_zones.py")
-    exec(compile(src.replace(old, new), mod.__file__, "exec"), mod.__dict__)
+    exec(compile(src, mod.__file__, "exec"), mod.__dict__)
     return build(module=mod, real_ground=True)
-
-
-# Without this the bypass check could pass for reasons of its own. Dropping the gatehouse's side walls from the
-# GENERATOR (walkway_shell returns nothing; data untouched) must open a way round G4.
-#
-# G4 ONLY since 2026-10-03, measured, and the reason is geometry rather than a weaker check: the six-wide G5
-# runs north-south (zones.z5.guard.axis) and league_gate crosses it AT the barrier row, its diagonal meeting the
-# barrier's two end lanes -- (3570, 2678) against (3571, 2679) at the west end, corner to corner, and (3577, 2679)
-# beside (3576, 2679) at the east -- so with no side walls at all the cross-wall and the barrier still close G5.
-# At G4 behind_league crosses the walkway's two OUTER rows, outside the barrier, and only the side walls stop a
-# player stepping sideways off the guard's row. The proof that the bypass check bites at G5 is the next test.
-@pytest.mark.slow
-def test_dropping_the_shell_from_build_opens_a_way_round_the_gate_its_wall_does_not_close():
-    (fn, _adv), g = real()
-    mfn, _madv = _mutated_build("    return sorted(walls, key=lambda p: (p[1], p[0]))", "    return []",
-                                "rift_zones_no_shell")
-    block = world_of(mfn, everything(fn), g)
-    assert {x[0] for x in gates_in_a_wall(fn) if bypassed(x, block)} == {"z4"}
-
-
-# Without this the bypass check could pass at G5 for reasons of its own. Narrowing the barrier to the guard's own
-# lane in the GENERATOR (gate_places; data untouched) leaves five lanes of walkway running past it, and the
-# bypass check must find the way round at BOTH walled gates.
-@pytest.mark.slow
-def test_narrowing_the_barrier_to_one_lane_opens_a_way_round_both_walled_gates():
-    (fn, _adv), g = real()
-    mfn, _madv = _mutated_build('            "barrier": rows[1],', '            "barrier": [rows[1][zero]],',
-                                "rift_zones_narrow_barrier")
-    block = world_of(mfn, everything(fn), g)
-    assert {x[0] for x in gates_in_a_wall(fn) if bypassed(x, block)} == {"z4", "z5"}
 
 
 # Without it the straight-on check could pass for reasons of its own: building from the PRE-FIX approach -- G5's
@@ -731,7 +778,10 @@ def test_dropping_the_approach_from_build_breaks_the_gates_that_need_it():
     run, gates = gates_r9z_runs(fn)
     block = world_of(mfn, run, g)
     broken = {gate[0] for gate in gates if walk_problems(gate, block)}
-    assert {"z2_victory_road_descent", "z2_wilds_slip"} <= broken, broken
+    # Only the wilds slip needs its approach now (its outer mouth stands 5 above the floor). The Victory Road descent
+    # post's mouths stand 1 above it, which the roofed corridor of the retired shell forbade a step up into and the open
+    # passage does not (2026-10-12), so dropping its approach no longer breaks the walk.
+    assert {"z2_wilds_slip"} <= broken, broken
     assert not broken & {"z1", "z2"}, "z1 and z2 meet their ground without an approach: %s" % broken
 
 
@@ -984,3 +1034,105 @@ def test_a_player_at_the_knock_is_still_answered_by_the_guard():
     passless["turned_back"] = False
     _run(fn, "function %s:%s/z5/zone" % (RZ.NS, RZ.FOLDER), passless)
     assert not passless["turned_back"]
+
+
+# ------------------------------------------------------------------ the line
+#
+# The gatehouse has no barrier (2026-10-12). What stops a player without the pass is the LINE: a minecraft:location
+# advancement over the rows behind the guard (gatehouse.line_why), whose function turns a passless player back to the
+# gate's own door and admits one who qualifies. The same interpreter as above runs the emitted JSON and functions.
+
+def _enforced_gates():
+    return [(zid, z, g) for zid, z in live_zones().items() if enforced(z) for g in RZ.gates_of(zid, z)]
+
+
+def _pre(zid, name):
+    return zid if name == zid else "%s/%s" % (zid, name[len(zid) + 1:])
+
+
+def _row_point(gate, t):
+    """A feet position in the middle of row t of one gate's passage, from the audit's own Frame."""
+    import gatehouse_audit as GA
+    fr = GA.Frame(gate[2], GH)
+    x, z = fr.at(t, 0)
+    return (x + 0.5, float(fr.fy), z + 0.5)
+
+
+# Without it a gate ships a line that covers the knock box (where the guard answers instead), or none behind the guard
+# at all, and the zone is guarded by nothing but its distant boundary.
+def test_every_enforced_gate_has_a_line_behind_its_guard_and_none_over_its_knock_box():
+    _fn, adv = fast()
+    gates = _enforced_gates()
+    assert gates
+    for zid, z, g in gates:
+        name = g[0]
+        for t in (1, 3, GH["line_in"]):
+            assert _fires(adv, "%s_line" % name, _row_point(g, t)), "%s: the line does not cover row t=%d" % (name, t)
+        for t in (0, -1, -GH["knock_out"], GH["line_in"] + 4):
+            assert not _fires(adv, "%s_line" % name, _row_point(g, t)), "%s: the line covers row t=%d" % (name, t)
+
+
+# Without it a player without the pass can walk through an open gate: the line must turn them back to THIS gate's own
+# door (a post's, not the zone's first gate's, across the Rift), and say so.
+def test_a_player_without_the_pass_who_crosses_a_gates_line_is_turned_back_to_that_gates_door():
+    fn, adv = fast()
+    for zid, z, g in _enforced_gates():
+        name = g[0]
+        pos = _row_point(g, 3)
+        tx, ty, tz, _yaw = g[4]
+        player = {"pos": pos, "gamemode": "survival", "advancements": set(), "scores": {}, "turned_back": False}
+        _run(fn, "function %s:%s/%s/line" % (RZ.NS, RZ.FOLDER, _pre(zid, name)), player)
+        assert player["turned_back"], "%s let a passless player stand on its line" % name
+        assert player["pos"] == (tx, float(int(ty)), tz), (name, player["pos"], g[4])
+        # creative and spectator are never moved (the exempt selector)
+        for mode in ("creative", "spectator"):
+            p2 = {"pos": pos, "gamemode": mode, "advancements": set(), "scores": {}, "turned_back": False}
+            _run(fn, "function %s:%s/%s/line" % (RZ.NS, RZ.FOLDER, _pre(zid, name)), p2)
+            assert not p2["turned_back"], (name, mode)
+
+
+# Without it the open gate turns back a player who QUALIFIES for the zone as well: walking straight through must work,
+# which the barrier's knock box used to ask a player to stop for.
+def test_a_player_who_qualifies_walks_straight_through_a_gates_line():
+    fn, adv = fast()
+    obj = SPEC["pass"]["objective_prefix"]
+    seen = 0
+    for zid, z, g in _enforced_gates():
+        p = z["pass"]
+        pos = _row_point(g, 3)
+        if p["kind"] not in ("badges", "flag") or not p.get("advancements"):
+            continue
+        scores = {obj + zid: 1} if p.get("knock_needs_score") else {}
+        player = {"pos": pos, "gamemode": "survival", "advancements": set(p["advancements"]), "scores": dict(scores),
+                  "turned_back": False}
+        _run(fn, "function %s:%s/%s/line" % (RZ.NS, RZ.FOLDER, _pre(zid, g[0])), player)
+        assert not player["turned_back"], "%s turned back a qualified player" % g[0]
+        assert player["scores"].get(obj + zid) == 1, g[0]
+        seen += 1
+        if p.get("knock_needs_score"):
+            # z5: the flag alone is no pass at the surface (pass.knock_needs_score), so the line turns it back
+            flag_only = {"pos": pos, "gamemode": "survival", "advancements": set(p["advancements"]), "scores": {},
+                         "turned_back": False}
+            _run(fn, "function %s:%s/%s/line" % (RZ.NS, RZ.FOLDER, _pre(zid, g[0])), flag_only)
+            assert flag_only["turned_back"], "%s admitted a flag holder who never earned the score" % g[0]
+    assert seen >= 5, seen
+
+
+def _mutant_module(old, new):
+    src = (ROOT / "tools" / "rift_zones.py").read_text(encoding="utf-8")
+    assert src.count(old) == 1, old
+    mod = types.ModuleType("rift_zones_line_mutant")
+    mod.__file__ = str(ROOT / "tools" / "rift_zones.py")
+    exec(compile(src.replace(old, new), mod.__file__, "exec"), mod.__dict__)
+    return mod
+
+
+# Without this the line tests could pass for reasons of their own. The GENERATOR is made to put the line on the knock
+# rows instead of behind the guard (gate_line; data untouched), and the first test above must fail on it.
+def test_a_line_laid_over_the_knock_rows_is_found():
+    mfn, madv = build(module=_mutant_module(
+        '           for t in (1, int(gh["line_in"])) for k in ks]', '           for t in (-1, 0) for k in ks]'))
+    # z2's line no longer covers row t=3, behind the guard
+    g = next(x for x in RZ.gates_of("z2", live_zones()["z2"]) if x[0] == "z2")
+    assert not _fires(madv, "z2_line", _row_point(g, 3))
+    assert _fires(madv, "z2_line", _row_point(g, 0)), "the mutation did not move the line onto the knock rows"
