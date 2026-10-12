@@ -49,10 +49,12 @@ later script) can reproduce the server exactly.
   re-application at `-Xmx16G`, and **R16DG (the dungeon shells) at `-Xmx24G`**: with 13 dungeons (52 slots) it ran a
   12 GB heap out of memory and hung the server (2026-10-11, staging; killed, the save survived); at 24G it took 69 s.
   The live world's eventual apply needs the same: boot at 24G for the apply, then restart at the play heap.
-  **The play heap is now 20G, not 12G (measured 2026-10-12):** after the overnight build the idle server's live set,
-  read with `jcmd <pid> GC.run` then `GC.heap_info` and nobody online, was 12.4 GB, so a 12G server thrashed and
-  ran out of memory within an hour of an idle boot. 20G leaves about 8 GB for players and chunk loading. What grew
-  it is not measured (candidates: the dungeon pack's functions, the spawn suppression's ~3.8 GB, tonight's packs).
+  **The heap grew because every datapack function stays parsed in memory** (measured 2026-10-12: a class histogram put
+  ~7 GB of Brigadier parse objects on 6.5M installed function lines; the idle live set was 12.4 GB). Since then the
+  one-shot BUILD packs are removed after each apply (`tools/pack_roles.py` classifies them; `python tools/reapply.py
+  strip` moves them out with the server stopped; `install` puts them back for the next apply). After the strip the
+  idle live set measured **5.66 GB** (jcmd GC.run + GC.heap_info), so the play heap is back to **12G**. The cycle:
+  prepare, install, boot at 24G, run, stop, strip, boot at 12G.
   Measured on this host: 63 GB RAM, pagefile on D:, 47 GB commit free at 24G; a 16G boot once failed a native commit
   when C: was full and other apps were open (2026-10-06).
   Raise to 8G if the log shows long GC pauses. Do not exceed roughly half the host RAM.
