@@ -967,3 +967,11 @@ def test_the_audit_refuses_a_cave_inside_a_spawn_free_zone_too(monkeypatch, grou
         return doc
     monkeypatch.setattr(A, "jload", jload)
     assert any("spawn-free zone test_zone" in p for p in audit(ground, fns, cb)), "the audit did not see the zone"
+
+
+def test_only_the_files_own_habitat_points_are_exempt_from_the_other_pack_rule():
+    # breaks if: the exemption swallows a real neighbour (a write one column off an own point must still count),
+    # or the caves' own Habitat Blocks in cobblers_habitats fail the build (2026-10-12 prepare, K1)
+    import caves as CV
+    pts = CV.own_habitat_points(CV.load() if hasattr(CV, "load") else __import__("json").loads(CV.SPEC.read_text(encoding="utf-8")))
+    assert (1574, 3628) in pts and (1575, 3628) not in pts and (1574, 3629) not in pts

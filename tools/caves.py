@@ -417,7 +417,16 @@ def authored_doc(spec):
 
 def clearance(spec, cave, g0, inputs_root=None, need_packs=False):
     return MC.Clearance({"keep_clear": spec["keep_clear"]}, check_box(spec, cave), g0, inputs_root, own_pack=PACK,
-                        need_packs=need_packs, own_file=SPEC, authored_doc=authored_doc(spec))
+                        need_packs=need_packs, own_file=SPEC, authored_doc=authored_doc(spec),
+                        own_points=own_habitat_points(spec))
+
+
+def own_habitat_points(spec):
+    """{(x, z)} of this file's own Habitat Blocks as data/habitat_blocks.json records them: their single-column
+    writes land in cobblers_habitats (tools/habitat_blocks.py), which the other-pack rule would otherwise count."""
+    ids = {h["id"] for c in spec["caves"] for h in c.get("habitat") or []}
+    blocks = json.loads(HABITATS.read_text(encoding="utf-8"))["blocks"]
+    return {(b["position"]["x"], b["position"]["z"]) for b in blocks if b["id"] in ids}
 
 
 def block_range(cave, part):

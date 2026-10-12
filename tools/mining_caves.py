@@ -323,7 +323,8 @@ def resettable(spec):
 class Clearance:
     """(x, z) -> why a cave may not write there, or None, over one box; built from other systems' data and packs only."""
 
-    def __init__(self, spec, box, g0, inputs_root=None, own_pack=PACK, need_packs=False, own_file=None, authored_doc=None):
+    def __init__(self, spec, box, g0, inputs_root=None, own_pack=PACK, need_packs=False, own_file=None, authored_doc=None,
+                 own_points=()):
         # own_file / authored_doc (2026-10-12, tools/caves.py reuses this class for the cave kit): the data file whose
         # own x/z are skipped, and the doc authored_points() reads its exempt ids and files from; the defaults are this
         # tool's own, so the mining caves behave exactly as before
@@ -475,6 +476,10 @@ class Clearance:
                 m = np.zeros(shape, bool)
                 for (xa, za, xb, zb) in pack_boxes(p):
                     if xb < x0 - pg or xa > x1 + pg or zb < z0 - pg or za > z1 + pg:
+                        continue
+                    # a single-column write at one of the caller's OWN points (tools/caves.py: its chambers' Habitat
+                    # Blocks, which tools/habitat_blocks.py writes into cobblers_habitats) is not another pack's work
+                    if xa == xb and za == zb and (xa, za) in own_points:
                         continue
                     put_rect(m, xa - pg, za - pg, xb + pg, zb + pg)
                 if m.any():
