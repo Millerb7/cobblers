@@ -1,6 +1,12 @@
 # Legendary homes in the overworld: rare spawns, area bosses and the cave kit
 
-**Status: PROPOSED design (content-architect, 2026-10-12). Nothing here is built, generated, placed or seen in game.**
+**Status: PROPOSED design (content-architect, 2026-10-12). Built offline the same night, by the CAVE-KIT unit: the cave kit (`tools/caves.py`,
+`tools/caves_audit.py`, `data/caves.json`) and its first three caves, K1 Stoneford Cut, K2 The Singing Hollow and K3 The Relay Fault, with
+the area-boss keeper for Miraidon (contract C25). Generated and audited offline; NOT installed, NOT applied (step R9CK), NOT seen in game.
+The owner's decisions of 2026-10-12 that this build follows: Koraidon and Miraidon are post-Champion area bosses; Dialga goes to K5;
+Tapu Fini is a repeatable chamber spawn (K4); the boss respawn rule and the rarity targets as proposed. Everything else here is still
+proposed: K4, K5 and K6, the world rare spawns (section 2), the inherited-spawn suppression of finding 2 (Meloetta's DP spawn is
+therefore still live), and the experiments of section 6 (RS-1, AB-1 and HB-1 decide whether K2's and K3's chambers behave as designed).**
 The owner, 2026-10-12: "It might be cool to make some of them world spawns that are very rare, and make some of them
 bosses in areas. I also would like more caves built out near towns or randomly placed that could have a room where
 these creatures could be found." Decided by the owner the same day: a wild legendary is **repeatable**, rarity its only

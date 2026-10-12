@@ -529,6 +529,11 @@ def _source_blocks():
     mc = _load("mining_caves.json")
     out["mining_caves"] = (_named_ids([mc["yields"], [{k: c[k] for k in ("wall", "shell", "floor", "stair", "timber")}
                                                       for c in mc["caves"]]], ("minecraft",)), ["mining_caves"])
+    # the cave kit (tools/caves.py, 2026-10-12): each cave's palette (shell, floor, stair, timber, fence, column) and the fixed blocks
+    # it places (air, the barrier door, the lantern, the amethyst cluster); a policy entry must name caves to cover any of them
+    cv = _load("caves.json")
+    out["caves"] = (_named_ids([[c["palette"] for c in cv["caves"]], [cv["gate"]["door_block"]]], ("minecraft",))
+                    | {"minecraft:air", "minecraft:lantern", "minecraft:amethyst_cluster"}, ["caves"])
     # the Drowned Quarry (tools/drowned_quarry.py, 2026-10-09): the record's block palette, its pit floor and the wreck's
     # planks; the water is the room, so a policy entry must name drowned_quarry to cover it
     dq = _load("drowned_quarry.json")["geometry"]
@@ -1485,6 +1490,51 @@ def test_contract_c20_the_nether_gate_returns_through_the_blackouts_own_checkpoi
 # =================================================================================================================
 # The registry itself
 # =================================================================================================================
+
+# =================================================================================================================
+# C25. A cave boss that blacks a player out becomes the claim's guardian; the cave keeper never touches a guardian
+# =================================================================================================================
+#
+# The cave kit's area boss (tools/caves.py boss_files: Miraidon at The Relay Fault) is a wild alpha a keeper brings. Two systems
+# must agree about it: the blackout, which binds the wild victor that beats a player as the guardian of that player's item
+# claim (tag cobblers.guardian), and the keeper, which spawns, holds, wakes, settles and removes the boss on its own loop. If
+# the boss carried the exempt tag the player would lose their items to nobody; if the keeper killed, held, woke, settled or
+# replaced a guardian the player's items would be held by a Pokemon that vanished or moved under them.
+#
+# Three legs, all run: (1) the blackout's generated functions, on tests/test_blackout_recovery_pid.py's simulator, with the tags the
+# keeper's generated bind gives the boss as the victor: a claim is made and not exempted; (2) the keeper's generated functions on
+# tests/gulch_sim.py's world with a guardian standing in the chamber (tests/test_caves.py): never held, woken, settled or killed,
+# counted as present, and a duplicate removed but never the guardian; (3) the control: the same keeper with its guardian clause
+# stripped DOES wake the guardian, so leg 2 can fail.
+def test_contract_c25_a_cave_boss_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it():
+    import test_blackout_recovery_pid as RP
+    import test_caves as TC
+    from gulch_sim import World  # noqa: F401  (the harness test_caves builds on)
+    fns, _plan = TC._fns_cached()
+    bind = fns["boss/%s/bind" % TC.BID]
+    tags = tuple(m.group(1) for line in bind for m in [re.match(r"^tag @s add (\S+)$", line)] if m)
+    assert TC.TAG in tags and "cobblers.guardian" not in tags, tags
+    s = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=tags)
+    assert RP.fn_calls(s, "recovery/make") and len(RP.ledger(s)["claims"]) == 1, "a loss to the boss made no claim"
+    assert s.get("@s", "bo.lost") > 0
+    TC.test_a_guardian_is_never_held_woken_settled_or_killed()
+    TC.test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_spawns()
+    TC.test_a_duplicate_is_removed_and_never_a_guardian()
+    # the control: strip the guardian clause from the keeper and the guardian is woken
+    loose = {"caves/" + k: [line.replace(",tag=!cobblers.guardian", "").replace("tag=!cobblers.guardian,", "") for line in v] for k, v in fns.items()}
+    w = TC.Lake(loose)
+    w.gt = 5_000_000
+    w.call("caves/load")
+    gm, spot = TC.spot_of()
+    TC.player_at(w, TC.KEEP["spawn_clear"] + 8, 0)
+    TC.passes(w, TC.KEEP["absent_passes"])
+    (b,) = TC.bosses(w)
+    b["tags"].add(TC.GUARD)
+    zone = gm["chamber_zone"]
+    TC.player_at(w, 0, 0).update(pos=((zone[0] + zone[3]) / 2 + 0.5, zone[1], (zone[2] + zone[5]) / 2 + 0.5))
+    TC.passes(w, 2)
+    assert TC.DORM not in b["tags"], "the control did not wake the guardian: the guardian test above cannot fail"
+
 
 def _defs(path):
     tree = ast.parse((ROOT / path).read_text(encoding="utf-8"))

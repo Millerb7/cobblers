@@ -269,6 +269,15 @@
         "docs/mechanics/DUNGEONS.md",
         "docs/research/DUNGEON_DEATH.md"
       ]
+    },
+    "caves": {
+      "what": "the cave kit: K1 Stoneford Cut, K2 The Singing Hollow, K3 The Relay Fault; each gate's barrier door, the antechambers' and chambers' activated Habitat Blocks, and K3's area-boss keeper (cobblers_caves)",
+      "paths": [
+        "data/caves.json",
+        "tools/caves.py",
+        "tools/caves_audit.py",
+        "docs/mechanics/LEGENDARY_HOMES.md"
+      ]
     }
   },
   "contracts": [
@@ -576,7 +585,9 @@
         "buried_dune.py": "checker: Undertow Basin's builder (data/buried_dune.json, 2026-10-09): siting() reads data/spawn_blocks.json and refuses to build a plan that writes a block a spawn condition names. It writes no sand at all (the basin and trails are cut out of the dune; its palette is air, sandstone, bone block and the light block), so no policy entry is needed. A builder's guard, not an audit; tests/test_buried_dune.py re-reads the pack's commands against the conditions without importing the generator",
         "new_places_water_audit.py": "checker: the 2026-10-09 independent water audit of five new places (reads data/spawn_blocks.json and data/spawn_block_policy.json to refuse a spawn-condition block outside the policy's scoped entries)",
         "new_places_land_audit.py": "checker: B4 of the 2026-10-09 places (the independent land audit: reads data/spawn_blocks.json to refuse a spawn-condition block the policy does not allow)",
-        "long_count.py": "checker: the Long Count's builder (data/long_count.json, 2026-10-09): check_all() reads data/spawn_blocks.json and refuses to build a site that writes a block a spawn condition names (an oak leaf is one, so the young trees' leaves are azalea leaves). A builder's guard, not an audit; the independent audit (tools/long_count_audit.py) is owed, data/long_count.json audit_checklist"
+        "long_count.py": "checker: the Long Count's builder (data/long_count.json, 2026-10-09): check_all() reads data/spawn_blocks.json and refuses to build a site that writes a block a spawn condition names (an oak leaf is one, so the young trees' leaves are azalea leaves). A builder's guard, not an audit; the independent audit (tools/long_count_audit.py) is owed, data/long_count.json audit_checklist",
+        "caves.py": "source: caves",
+        "caves_audit.py": "checker: the built cobblers_caves pack (source caves): every block it writes against data/spawn_blocks.json and the policy entries scoped to caves"
       }
     },
     {
@@ -1176,6 +1187,39 @@
         "tests/test_system_contracts.py::test_contract_c24_a_dungeon_death_makes_no_claim_and_nothing_is_delivered_into_a_slot",
         "tests/test_dungeon_death.py::test_the_generated_pack_takes_no_items_in_a_dungeon",
         "tests/test_dungeon_death.py::test_the_generated_pack_holds_delivery_for_a_player_inside_a_dungeon"
+      ]
+    },
+    {
+      "id": "C25",
+      "title": "A cave boss that blacks a player out becomes the claim's guardian, and the cave keeper never touches a guardian",
+      "owner": "recovery_claims",
+      "consumers": [
+        "caves"
+      ],
+      "constrained_by": [
+        "caves"
+      ],
+      "statement": "A cave boss (data/caves.json occupant.mode area_boss: today Miraidon at The Relay Fault) carries tags that are never the blackout's exempt tag, so a boss that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the cave keeper (cobblers:caves/boss/<id>/*) only counts it: the guardian is found as present by its tag and species near the spot, and no kill, hold, wake, settle or duplicate selector of the pack reaches an entity tagged cobblers.guardian. Nothing in the pack adds or removes cobblers.guardian or the exempt tag. The keeper's return clock starts only when no boss and no guardian is present for two loaded passes, so a player's items are never left with a guardian that was despawned, replaced or respawned under them.",
+      "stated_in": [
+        {
+          "at": "tools/blackout_pack.py:510",
+          "quote": "\"tag @s add cobblers.guardian\","
+        },
+        {
+          "at": "tools/caves.py:835",
+          "quote": "and NEVER a guardian"
+        },
+        {
+          "at": "data/caves.json:470",
+          "quote": "\"guardian_tag\": \"cobblers.guardian\""
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c25_a_cave_boss_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it",
+        "tests/test_caves.py::test_a_guardian_is_never_held_woken_settled_or_killed",
+        "tests/test_caves.py::test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_spawns",
+        "tests/test_caves.py::test_a_duplicate_is_removed_and_never_a_guardian",
+        "tests/test_caves.py::test_a_keeper_that_can_kill_a_guardian_is_refused"
       ]
     }
   ]
