@@ -537,6 +537,13 @@ def _source_blocks():
     cv = _load("caves.json")
     out["caves"] = (_named_ids([[c["palette"] for c in cv["caves"]], [cv["gate"]["door_block"]]], ("minecraft",))
                     | {"minecraft:air", "minecraft:lantern", "minecraft:amethyst_cluster"}, ["caves"])
+    # the legendary sanctuaries (tools/sanctuaries.py, 2026-10-12): every block a sanctuary's palette names, the retired caves'
+    # restore terrain, and the fixed blocks it places (air, the barrier door, the lantern, the chain, the water of the Tide Shrine's
+    # ring, the bowls); a policy entry must name sanctuaries to cover any of them
+    sy = _load("sanctuaries.json")
+    out["sanctuaries"] = (_named_ids([[s["palette"] for s in sy["sanctuaries"]], [rc["terrain"] for rc in sy["retired_caves"]],
+                                      [sy["gate"]["door_block"]]], ("minecraft",))
+                          | {"minecraft:air", "minecraft:lantern", "minecraft:chain", "minecraft:water"}, ["sanctuaries"])
     # the Drowned Quarry (tools/drowned_quarry.py, 2026-10-09): the record's block palette, its pit floor and the wreck's
     # planks; the water is the room, so a policy entry must name drowned_quarry to cover it
     dq = _load("drowned_quarry.json")["geometry"]
@@ -1473,26 +1480,27 @@ def test_contract_c20_the_nether_gate_returns_through_the_blackouts_own_checkpoi
 # =================================================================================================================
 
 # =================================================================================================================
-# C25. A cave boss that blacks a player out becomes the claim's guardian; the cave keeper never touches a guardian
+# C25. A sanctuary boss that blacks a player out becomes the claim's guardian; the keeper never touches a guardian
 # =================================================================================================================
 #
-# The cave kit's area boss (tools/caves.py boss_files: Miraidon at The Relay Fault) is a wild alpha a keeper brings. Two systems
-# must agree about it: the blackout, which binds the wild victor that beats a player as the guardian of that player's item
-# claim (tag cobblers.guardian), and the keeper, which spawns, holds, wakes, settles and removes the boss on its own loop. If
-# the boss carried the exempt tag the player would lose their items to nobody; if the keeper killed, held, woke, settled or
-# replaced a guardian the player's items would be held by a Pokemon that vanished or moved under them.
+# The sanctuaries' area bosses (tools/sanctuaries.py boss_files: Miraidon at The Broken Relay, Dialga at The Stopped Clock, Koraidon
+# at Sunscar; the cave kit's keeper, moved there on 2026-10-12) are wild alphas a keeper brings. Two systems must agree about them:
+# the blackout, which binds the wild victor that beats a player as the guardian of that player's item claim (tag cobblers.guardian),
+# and the keeper, which spawns, holds, wakes, settles and removes the boss on its own loop. If the boss carried the exempt tag the
+# player would lose their items to nobody; if the keeper killed, held, woke, settled or replaced a guardian the player's items would
+# be held by a Pokemon that vanished or moved under them.
 #
 # Three legs, all run: (1) the blackout's generated functions, on tests/test_blackout_recovery_pid.py's simulator, with the tags the
 # keeper's generated bind gives the boss as the victor: a claim is made and not exempted; (2) the keeper's generated functions on
-# tests/gulch_sim.py's world with a guardian standing in the chamber (tests/test_caves.py): never held, woken, settled or killed,
+# tests/gulch_sim.py's world with a guardian standing in the court (tests/test_sanctuaries.py): never held, woken, settled or killed,
 # counted as present, and a duplicate removed but never the guardian; (3) the control: the same keeper with its guardian clause
 # stripped DOES wake the guardian, so leg 2 can fail.
-def test_contract_c25_a_cave_boss_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it():
+def test_contract_c25_a_sanctuary_boss_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it():
     import test_blackout_recovery_pid as RP
-    import test_caves as TC
-    from gulch_sim import World  # noqa: F401  (the harness test_caves builds on)
+    import test_sanctuaries as TC
+    from gulch_sim import World  # noqa: F401  (the harness test_sanctuaries builds on)
     fns, _plan = TC._fns_cached()
-    # every area boss the cave kit has (Miraidon, Dialga, Koraidon): each keeper is its own generated function set
+    # every area boss the sanctuaries have (Miraidon, Dialga, Koraidon): each keeper is its own generated function set
     assert len(TC.BOSS_IDS) >= 3, TC.BOSS_IDS
     for boss_id in TC.BOSS_IDS:
         with TC.as_boss(boss_id):
@@ -1510,10 +1518,10 @@ def _c25_one_boss(RP, TC, fns):
     TC.test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_spawns()
     TC.test_a_duplicate_is_removed_and_never_a_guardian()
     # the control: strip the guardian clause from the keeper and the guardian is woken
-    loose = {"caves/" + k: [line.replace(",tag=!cobblers.guardian", "").replace("tag=!cobblers.guardian,", "") for line in v] for k, v in fns.items()}
+    loose = {"sanctuaries/" + k: [line.replace(",tag=!cobblers.guardian", "").replace("tag=!cobblers.guardian,", "") for line in v] for k, v in fns.items()}
     w = TC.Lake(loose)
     w.gt = 5_000_000
-    w.call("caves/load")
+    w.call("sanctuaries/load")
     gm, spot = TC.spot_of()
     TC.player_at(w, TC.KEEP["spawn_clear"] + 8, 0)
     TC.passes(w, TC.KEEP["absent_passes"])

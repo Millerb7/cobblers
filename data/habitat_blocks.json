@@ -8096,114 +8096,18 @@
       "mimic_why": "the block the pack writes at that position: the tarn's south-west bank, in the birch"
     },
     {
-      "id": "cave_stoneford_cut_chamber_ward",
-      "place": "Stoneford Cut (cave_stoneford_cut, K1) in data/caves.json: the chamber's floor cell",
-      "pool": "cobblers:cave_stoneford_cut_chamber",
+      "id": "sanctuary_singing_hollow_court_ward",
+      "place": "The Singing Hollow (sanctuary_singing_hollow, S2) in data/sanctuaries.json: the court's centre floor cell",
+      "pool": "cobblers:sanctuary_singing_hollow_court",
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 1574,
-        "y": 120,
-        "z": 3628
-      },
-      "mimic": "minecraft:polished_andesite",
-      "activated": {
-        "spawn_range": 8,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns": 3,
-        "max_spawns_per_activation": 1
-      },
-      "status": "planned",
-      "generated_by": "tools/caves.py",
-      "why": "The chamber's occupants (tools/caves.py; docs/mechanics/LEGENDARY_HOMES.md section 4): one activated block in the floor, spawn_range 8 (the part's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. Its position is the floor cell at the part's centre; it is written after the cave's build (R9CK before R9E). Whether an activated block in a sealed room fills only that room is unmeasured (HB-1)."
-    },
-    {
-      "id": "cave_singing_hollow_ante_ward",
-      "place": "The Singing Hollow (cave_singing_hollow, K2) in data/caves.json: the antechamber's floor cell",
-      "pool": "cobblers:cave_singing_hollow_ante",
-      "style": "activated",
-      "replace_spawns": false,
-      "position": {
-        "x": 1501,
-        "y": 92,
-        "z": 2856
+        "x": 1469,
+        "y": 124,
+        "z": 3131
       },
       "mimic": "minecraft:polished_tuff",
       "activated": {
-        "spawn_range": 8,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns": 3,
-        "max_spawns_per_activation": 1
-      },
-      "status": "planned",
-      "generated_by": "tools/caves.py",
-      "why": "The antechamber's occupants (tools/caves.py; docs/mechanics/LEGENDARY_HOMES.md section 4): one activated block in the floor, spawn_range 8 (the part's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. Its position is the floor cell at the part's centre; it is written after the cave's build (R9CK before R9E). Whether an activated block in a sealed room fills only that room is unmeasured (HB-1)."
-    },
-    {
-      "id": "cave_singing_hollow_chamber_ward",
-      "place": "The Singing Hollow (cave_singing_hollow, K2) in data/caves.json: the chamber's floor cell",
-      "pool": "cobblers:cave_singing_hollow_chamber",
-      "style": "activated",
-      "replace_spawns": false,
-      "position": {
-        "x": 1501,
-        "y": 92,
-        "z": 2872
-      },
-      "mimic": "minecraft:polished_tuff",
-      "activated": {
-        "spawn_range": 10,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns": 3,
-        "max_spawns_per_activation": 1
-      },
-      "status": "planned",
-      "generated_by": "tools/caves.py",
-      "why": "The chamber's occupants (tools/caves.py; docs/mechanics/LEGENDARY_HOMES.md section 4): one activated block in the floor, spawn_range 10 (the part's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. Its position is the floor cell at the part's centre; it is written after the cave's build (R9CK before R9E). Whether an activated block in a sealed room fills only that room is unmeasured (HB-1)."
-    },
-    {
-      "id": "cave_relay_fault_ante_ward",
-      "place": "The Relay Fault (cave_relay_fault, K3) in data/caves.json: the antechamber's floor cell",
-      "pool": "cobblers:cave_relay_fault_ante",
-      "style": "activated",
-      "replace_spawns": false,
-      "position": {
-        "x": 1580,
-        "y": 131,
-        "z": 1347
-      },
-      "mimic": "minecraft:polished_deepslate",
-      "activated": {
-        "spawn_range": 8,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns": 3,
-        "max_spawns_per_activation": 1
-      },
-      "status": "planned",
-      "generated_by": "tools/caves.py",
-      "why": "The antechamber's occupants (tools/caves.py; docs/mechanics/LEGENDARY_HOMES.md section 4): one activated block in the floor, spawn_range 8 (the part's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. Its position is the floor cell at the part's centre; it is written after the cave's build (R9CK before R9E). Whether an activated block in a sealed room fills only that room is unmeasured (HB-1)."
-    },
-    {
-      "id": "cave_relay_fault_chamber_ward",
-      "place": "The Relay Fault (cave_relay_fault, K3) in data/caves.json: the chamber's floor cell",
-      "pool": "cobblers:cave_relay_fault_chamber",
-      "style": "activated",
-      "replace_spawns": false,
-      "position": {
-        "x": 1580,
-        "y": 131,
-        "z": 1330
-      },
-      "mimic": "minecraft:polished_deepslate",
-      "activated": {
         "spawn_range": 9,
         "chance": 1.0,
         "trigger": "TICK",
@@ -8212,21 +8116,21 @@
         "max_spawns_per_activation": 1
       },
       "status": "planned",
-      "generated_by": "tools/caves.py",
-      "why": "The chamber's occupants (tools/caves.py; docs/mechanics/LEGENDARY_HOMES.md section 4): one activated block in the floor, spawn_range 9 (the part's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. Its position is the floor cell at the part's centre; it is written after the cave's build (R9CK before R9E). Whether an activated block in a sealed room fills only that room is unmeasured (HB-1)."
+      "generated_by": "tools/sanctuaries.py",
+      "why": "The court's occupants (tools/sanctuaries.py, an open-air sanctuary replacing the cave kit's chamber): one activated block in the court's centre floor cell, spawn_range 9 (the court's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. It is written after the sanctuary's build (the sanctuary step before R9E). Whether an activated block's spawns stay inside an open court's walls is unmeasured (HB-1)."
     },
     {
-      "id": "cave_strait_grotto_antechamber_ward",
-      "place": "The Strait Grotto (cave_strait_grotto, K4) in data/caves.json: the antechamber's floor cell",
-      "pool": "cobblers:cave_strait_grotto_antechamber",
+      "id": "sanctuary_tide_shrine_court_ward",
+      "place": "The Tide Shrine (sanctuary_tide_shrine, S4) in data/sanctuaries.json: the court's centre floor cell",
+      "pool": "cobblers:sanctuary_tide_shrine_court",
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 2888,
-        "y": 57,
-        "z": 6573
+        "x": 2881,
+        "y": 72,
+        "z": 6571
       },
-      "mimic": "minecraft:prismarine_bricks",
+      "mimic": "minecraft:calcite",
       "activated": {
         "spawn_range": 8,
         "chance": 1.0,
@@ -8236,128 +8140,8 @@
         "max_spawns_per_activation": 1
       },
       "status": "planned",
-      "generated_by": "tools/caves.py",
-      "why": "The antechamber's occupants (tools/caves.py; docs/mechanics/LEGENDARY_HOMES.md section 4): one activated block in the floor, spawn_range 8 (the part's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. Its position is the floor cell at the part's centre; it is written after the cave's build (R9CK before R9E). Whether an activated block in a sealed room fills only that room is unmeasured (HB-1)."
-    },
-    {
-      "id": "cave_strait_grotto_chamber_ward",
-      "place": "The Strait Grotto (cave_strait_grotto, K4) in data/caves.json: the chamber's floor cell",
-      "pool": "cobblers:cave_strait_grotto_chamber",
-      "style": "activated",
-      "replace_spawns": false,
-      "position": {
-        "x": 2888,
-        "y": 57,
-        "z": 6556
-      },
-      "mimic": "minecraft:prismarine_bricks",
-      "activated": {
-        "spawn_range": 10,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns": 3,
-        "max_spawns_per_activation": 1
-      },
-      "status": "planned",
-      "generated_by": "tools/caves.py",
-      "why": "The chamber's occupants (tools/caves.py; docs/mechanics/LEGENDARY_HOMES.md section 4): one activated block in the floor, spawn_range 10 (the part's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. Its position is the floor cell at the part's centre; it is written after the cave's build (R9CK before R9E). Whether an activated block in a sealed room fills only that room is unmeasured (HB-1)."
-    },
-    {
-      "id": "cave_clock_cellar_antechamber_ward",
-      "place": "The Clock Cellar (cave_clock_cellar, K5) in data/caves.json: the antechamber's floor cell",
-      "pool": "cobblers:cave_clock_cellar_antechamber",
-      "style": "activated",
-      "replace_spawns": false,
-      "position": {
-        "x": 6403,
-        "y": 88,
-        "z": 3482
-      },
-      "mimic": "minecraft:smooth_stone",
-      "activated": {
-        "spawn_range": 8,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns": 3,
-        "max_spawns_per_activation": 1
-      },
-      "status": "planned",
-      "generated_by": "tools/caves.py",
-      "why": "The antechamber's occupants (tools/caves.py; docs/mechanics/LEGENDARY_HOMES.md section 4): one activated block in the floor, spawn_range 8 (the part's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. Its position is the floor cell at the part's centre; it is written after the cave's build (R9CK before R9E). Whether an activated block in a sealed room fills only that room is unmeasured (HB-1)."
-    },
-    {
-      "id": "cave_clock_cellar_chamber_ward",
-      "place": "The Clock Cellar (cave_clock_cellar, K5) in data/caves.json: the chamber's floor cell",
-      "pool": "cobblers:cave_clock_cellar_chamber",
-      "style": "activated",
-      "replace_spawns": false,
-      "position": {
-        "x": 6420,
-        "y": 88,
-        "z": 3482
-      },
-      "mimic": "minecraft:smooth_stone",
-      "activated": {
-        "spawn_range": 9,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns": 3,
-        "max_spawns_per_activation": 1
-      },
-      "status": "planned",
-      "generated_by": "tools/caves.py",
-      "why": "The chamber's occupants (tools/caves.py; docs/mechanics/LEGENDARY_HOMES.md section 4): one activated block in the floor, spawn_range 9 (the part's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. Its position is the floor cell at the part's centre; it is written after the cave's build (R9CK before R9E). Whether an activated block in a sealed room fills only that room is unmeasured (HB-1)."
-    },
-    {
-      "id": "cave_sunscar_antechamber_ward",
-      "place": "Sunscar (cave_sunscar, K6) in data/caves.json: the antechamber's floor cell",
-      "pool": "cobblers:cave_sunscar_antechamber",
-      "style": "activated",
-      "replace_spawns": false,
-      "position": {
-        "x": 6779,
-        "y": 126,
-        "z": 5272
-      },
-      "mimic": "minecraft:smooth_sandstone",
-      "activated": {
-        "spawn_range": 8,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns": 3,
-        "max_spawns_per_activation": 1
-      },
-      "status": "planned",
-      "generated_by": "tools/caves.py",
-      "why": "The antechamber's occupants (tools/caves.py; docs/mechanics/LEGENDARY_HOMES.md section 4): one activated block in the floor, spawn_range 8 (the part's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. Its position is the floor cell at the part's centre; it is written after the cave's build (R9CK before R9E). Whether an activated block in a sealed room fills only that room is unmeasured (HB-1)."
-    },
-    {
-      "id": "cave_sunscar_chamber_ward",
-      "place": "Sunscar (cave_sunscar, K6) in data/caves.json: the chamber's floor cell",
-      "pool": "cobblers:cave_sunscar_chamber",
-      "style": "activated",
-      "replace_spawns": false,
-      "position": {
-        "x": 6762,
-        "y": 126,
-        "z": 5272
-      },
-      "mimic": "minecraft:smooth_sandstone",
-      "activated": {
-        "spawn_range": 9,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns": 3,
-        "max_spawns_per_activation": 1
-      },
-      "status": "planned",
-      "generated_by": "tools/caves.py",
-      "why": "The chamber's occupants (tools/caves.py; docs/mechanics/LEGENDARY_HOMES.md section 4): one activated block in the floor, spawn_range 9 (the part's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. Its position is the floor cell at the part's centre; it is written after the cave's build (R9CK before R9E). Whether an activated block in a sealed room fills only that room is unmeasured (HB-1)."
+      "generated_by": "tools/sanctuaries.py",
+      "why": "The court's occupants (tools/sanctuaries.py, an open-air sanctuary replacing the cave kit's chamber): one activated block in the court's centre floor cell, spawn_range 8 (the court's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. It is written after the sanctuary's build (the sanctuary step before R9E). Whether an activated block's spawns stay inside an open court's walls is unmeasured (HB-1)."
     }
   ]
 }
