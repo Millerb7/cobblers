@@ -12,7 +12,7 @@ with `execute if block` / `execute if data block` by the keeper's per-room `tick
                   params.count     plates: 3..6 (default 4)
                   params.penalty_s clock charged for a wrong attempt (default engine.clock.fall_penalty_s)
   kind `vault`    params.chests 1..8 (default 4), params.clock_cost_s per chest opened (default 20),
-                  params.loot_by_band {band: loot-table id | [{"item", "count" | [lo, hi], "chance"?}]} (absent: the
+                  params.loot_by_band {band: loot-table id | [{"item", "count" | [lo, hi], "chance"?} | {"one_of": [{"item", "weight", "count"?}], "chance"?}]} (absent: the
                   data file's placeholder default_loot_by_band),
                   each chest opened also weighs its loot on the clock (expected cp for the band, data/dungeon_greed.json;
                   params.ladder is refused: the greed table replaced it)
@@ -454,14 +454,25 @@ def table_id(d, room, key, value):
     return value if isinstance(value, str) else "cobblers:%s/%s/%s/b%d" % (LOOT_DIR, d["id"], room["id"], key)
 
 
+def _set_count(cnt):
+    return [{"function": "minecraft:set_count",
+             "count": cnt if isinstance(cnt, int) else {"type": "minecraft:uniform", "min": cnt[0], "max": cnt[1]}}]
+
+
 def loot_table(stacks):
+    """One pool a stack. A stack is {"item", "count"?, "chance"?} (one entry) or {"one_of": [{"item", "weight",
+    "count"?}, ...], "chance"?}: ONE pool, rolls 1, one entry an option with its weight and its own set_count, so a
+    chest holds at most one of them; the chance (if any) is on the pool, so the whole pool is the roll."""
     pools = []
     for s in stacks:
-        entry = {"type": "minecraft:item", "name": s["item"]}
-        cnt = s.get("count", 1)
-        entry["functions"] = [{"function": "minecraft:set_count",
-                               "count": cnt if isinstance(cnt, int) else {"type": "minecraft:uniform", "min": cnt[0], "max": cnt[1]}}]
-        pool = {"rolls": 1, "entries": [entry]}
+        if "one_of" in s:
+            entries = [{"type": "minecraft:item", "name": o["item"], "weight": o["weight"],
+                        "functions": _set_count(o.get("count", 1))} for o in s["one_of"]]
+            pool = {"rolls": 1, "entries": entries}
+        else:
+            entry = {"type": "minecraft:item", "name": s["item"]}
+            entry["functions"] = _set_count(s.get("count", 1))
+            pool = {"rolls": 1, "entries": [entry]}
         if "chance" in s:
             pool["conditions"] = [{"condition": "minecraft:random_chance", "chance": s["chance"]}]
         pools.append(pool)
@@ -563,6 +574,41 @@ def pack_files(doc):
 # ------------------------------------------------------------------------------------------------- checks
 
 
+def _count_ok(cnt):
+    return ((isinstance(cnt, int) and not isinstance(cnt, bool) and 1 <= cnt <= 64)
+            or (isinstance(cnt, list) and len(cnt) == 2 and all(isinstance(x, int) and not isinstance(x, bool) for x in cnt)
+                and 1 <= cnt[0] <= cnt[1] <= 64))
+
+
+def one_of_problems(label, s):
+    """The faults of one {"one_of": [{"item", "weight", "count"?}, ...], "chance"?} stack: only those two keys, a
+    non-empty list of options each a namespaced item with a positive integer weight and a 1..64 or [lo, hi] count,
+    and a chance in (0, 1] when given."""
+    bad = []
+    extra = sorted(set(s) - {"one_of", "chance"})
+    if extra:
+        bad.append("%s one_of stack carries %s beside one_of and chance (put them on an option)" % (label, ", ".join(extra)))
+    opts = s["one_of"]
+    if not isinstance(opts, list) or not opts:
+        return bad + ["%s one_of must be a non-empty list of options" % label]
+    for o in opts:
+        if not isinstance(o, dict) or ":" not in str(o.get("item", "")):
+            bad.append("%s one_of option %r needs an item id (namespace:path)" % (label, o))
+            continue
+        w = o.get("weight")
+        if not (isinstance(w, int) and not isinstance(w, bool) and w >= 1):
+            bad.append("%s one_of option %s weight %r must be a positive integer" % (label, o["item"], w))
+        if not _count_ok(o.get("count", 1)):
+            bad.append("%s one_of option %s count %r must be 1..64 or [lo, hi]" % (label, o["item"], o.get("count")))
+        if set(o) - {"item", "weight", "count"}:
+            bad.append("%s one_of option %s carries %s beyond item, weight and count" % (label, o["item"], sorted(set(o) - {"item", "weight", "count"})))
+    if "chance" in s:
+        ch = s["chance"]
+        if not (isinstance(ch, (int, float)) and not isinstance(ch, bool) and 0 < ch <= 1):
+            bad.append("%s one_of chance %r must be in (0, 1]" % (label, ch))
+    return bad
+
+
 def check_loot(c_label, params, bands):
     bad = []
     lb = loot_of(params)
@@ -577,11 +623,14 @@ def check_loot(c_label, params, bands):
                 bad.append("%s: loot_by_band[%s] %r is not a loot table id (namespace:path)" % (c_label, k, v))
         elif isinstance(v, list) and v:
             for s in v:
+                if isinstance(s, dict) and "one_of" in s:
+                    bad += one_of_problems("%s: loot_by_band[%s]" % (c_label, k), s)
+                    continue
                 if not isinstance(s, dict) or ":" not in str(s.get("item", "")):
                     bad.append("%s: loot_by_band[%s] stack %r needs an item id" % (c_label, k, s))
                     continue
                 cnt = s.get("count", 1)
-                if not ((isinstance(cnt, int) and 1 <= cnt <= 64) or (isinstance(cnt, list) and len(cnt) == 2 and 1 <= cnt[0] <= cnt[1] <= 64)):
+                if not _count_ok(cnt):
                     bad.append("%s: loot_by_band[%s] %s count %r must be 1..64 or [lo, hi]" % (c_label, k, s["item"], cnt))
         else:
             bad.append("%s: loot_by_band[%s] must be a loot table id or a non-empty list of stacks" % (c_label, k))
