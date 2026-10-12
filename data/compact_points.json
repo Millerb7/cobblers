@@ -192,7 +192,7 @@
         {
           "id": "npc_compact_cp12_guard_3",
           "name": "Compact Anchor Guard Ysolde",
-          "at": [6145, 107, 5002], "ground": 106, "faces": [6145, 4995],
+          "at": [6145, 107, 5007], "ground": 106, "faces": [6145, 4995], "at_why": "moved 5 south of (6145, 5002) at the 2026-10-11 install: that stand was a block from the causeway race's Rapidash (data/ambient_towns/gym7_town.json cinderlee_causeway_race, (6146, 107, 5001)); ground y106 at (6145, 5007) by tools/ground.py (105.93)",
           "fight": {"trainer": "compact_cp12_guard_3", "skill": 3, "won_say": "The east anchor's guard stands aside. Talk to them to shut the anchor."},
           "states": [
             {"id": "epilogue", "when": ["commander_defeated"], "actions": ["stop_crater_activation"], "lines": ["So that is that. We start again from nothing."]},

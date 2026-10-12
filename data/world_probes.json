@@ -7417,12 +7417,12 @@
       },
       {
         "what": "Compact Anchor Guard Ysolde (npc_compact_cp12_guard_3), after R18CP",
-        "entity": "@e[type=cobblemon:npc,x=6145,y=107,z=5002,distance=..2]",
+        "entity": "@e[type=cobblemon:npc,x=6145,y=107,z=5007,distance=..2]",
         "count": 1,
         "hold": [
           6145,
           107,
-          5002
+          5007
         ]
       },
       {
