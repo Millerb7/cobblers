@@ -35,6 +35,7 @@ FNS = {p[len("data/cobblers/function/dungeons/"):-len(".mcfunction")]: t.splitli
        for p, t in FILES.items() if p.endswith(".mcfunction")}
 POCKET = DOC["engine"]["pocket"]["dimension"]
 OW = "minecraft:overworld"
+U1 = DOC["engine"]["clock"]["units_per_tick"] * 20     # clock units a pass at x1 (tenth-ticks since unit GREED)
 
 
 def body(name):
@@ -54,11 +55,29 @@ def test_every_npc_spawn_is_a_macro_line_and_every_spawner_binds_with_the_exempt
     assert spawn_lines and all(l.startswith("$") for _n, l in spawn_lines), spawn_lines
     callers = [n for n in FNS if any("dungeons/npc_at" in l for l in body(n))]
     assert callers
+    assert any(re.fullmatch(r"stand/.+/(show|start)", n) for n in callers), "the stands' spawns are not seen"
+
+    def reach(name):
+        seen, todo = set(), [name]
+        while todo:
+            f = todo.pop()
+            if f in seen or f not in FNS:
+                continue
+            seen.add(f)
+            todo.extend(re.findall(r"function cobblers:dungeons/(\S+)", " ".join(body(f))))
+        return seen
+
+    # every caller (a boss stage or a stand's trainer) binds the NPC it spawned, in the same function, as an untagged
+    # NPC at the spot, through its OWN slot's bind, which carries the exempt tag
     for n in callers:
-        binds = [l for l in body(n) if re.search(r"run function cobblers:dungeons/slot/s\d+/bind_boss$", l)]
+        # the slot: slot/s<g>/..., stand/<x>_s<g>/..., or a room's room/<d>/<r>/s<g>/... (the egg room's vendor, RT-B)
+        g = re.search(r"(?:^slot/s|_s|/s)(\d+)/", n).group(1)
+        binds = [l for l in body(n) if re.search(r"as @e\[type=cobblemon:npc,tag=!dg\.npc,[^\]]*\] run function "
+                                                    r"cobblers:dungeons/\S+$", l)]
         assert binds, n
-        bind = re.search(r"(slot/s\d+/bind)_boss$", binds[0]).group(1)
-        assert "tag @s add %s" % EXEMPT in body(bind)
+        to = re.search(r"run function cobblers:dungeons/(\S+)$", binds[-1]).group(1)
+        assert "slot/s%s/bind" % g in reach(to), (n, to)
+        assert "tag @s add %s" % EXEMPT in body("slot/s%s/bind" % g)
     # the keeper's backstop binds any untagged NPC in a slot a pass later
     for s in D.slots(DOC):
         assert any("tag=!dg.npc" in l and "slot/s%d/bind" % s["g"] in l for l in body("slot/s%d/tend" % s["g"]))
@@ -85,25 +104,32 @@ def test_the_tail_end_and_the_backstop_run_only_outside_the_pocket():
     tail = body("m/tail")
     i = tail.index("execute at @s run function %s" % TAIL_END)
     assert "execute if entity @s[tag=dg.pk] run return 0" in tail[:i]
-    stale = [l for l in body("keeper") if BACKSTOP in l]
+    stale = [l for l in body("keeper/end") if BACKSTOP in l]     # the keeper's pass, last part (ENGINE-SCALE)
     assert len(stale) == 1 and "tag=!dg.pk" in stale[0] and "tag=%s" % RUN_TAG in stale[0]
     callers = {n for n in FNS for l in body(n) if TAIL_END in l or BACKSTOP in l}
-    assert callers == {"m/tail", "keeper"}
+    assert callers == {"m/tail", "keeper/end"}
 
 
 def test_every_way_out_starts_a_tail_of_at_least_the_credit_window():
-    end = body("m/end")
-    starts = [int(l.split()[-1]) for l in end if l.startswith("scoreboard players set @s dg.tail ")]
-    # counted down period_ticks a pass from the next pass, so at least tail_ticks elapse
-    assert starts and starts[0] - DOC["engine"]["keeper"]["period_ticks"] >= EX["tail_ticks"]
-    for way in ("back", "far", "m/died", "m/left", "m/void"):
+    # m/end, and each slot's own copy its member pass ends through (ENGINE-SCALE: slot/s<g>/void and left)
+    slots = [s["g"] for s in D.slots(DOC)]
+    for e in ["m/end"] + ["slot/s%d/end" % g for g in slots]:
+        end = body(e)
+        starts = [int(l.split()[-1]) for l in end if l.startswith("scoreboard players set @s dg.tail ")]
+        # counted down period_ticks a pass from the next pass, so at least tail_ticks elapse
+        assert starts and starts[0] - DOC["engine"]["keeper"]["period_ticks"] >= EX["tail_ticks"], e
+    for way in ("back", "far", "m/died"):
         assert "function cobblers:dungeons/m/end" in body(way), way
+    for g in slots:
+        for way in ("slot/s%d/left" % g, "slot/s%d/void" % g):
+            assert "function cobblers:dungeons/slot/s%d/end" % g in body(way), way
 
 
 def test_survival_is_restored_and_the_pick_taken_by_its_component_on_every_way_out():
     pick = D.pick_match(DOC)
     assert "custom_data~{cobblers_dg_pick:1b}" in pick
-    for n in ("m/end", "m/restore") + tuple("check_%s" % d["short"] for d in DOC["dungeons"]):
+    for n in ("m/end", "m/restore") + tuple("check_%s" % d["short"] for d in DOC["dungeons"]) + tuple(
+            "slot/s%d/end" % s["g"] for s in D.slots(DOC)):
         b = body(n)
         assert any("gamemode survival @s" in l for l in b), n
         assert "clear @s %s" % pick in b, n
@@ -117,7 +143,8 @@ def test_the_timer_kill_is_kill_and_waits_for_the_clawback():
 
 
 def test_lockout_binds_and_counts_on_uptime_never_gametime():
-    assert DOC["engine"]["lockout_ticks"] >= max(b["clock_s"] for b in DOC["engine"]["bands"]) * 20
+    for d in DOC["dungeons"]:      # each dungeon's lockout (the engine's, or a test dungeon's own) covers its longest clock
+        assert D.lockout_of(DOC, d) >= max(D.clock_s(d, b) for b in DOC["engine"]["bands"]) * 20, d["id"]
     assert not any("time query gametime" in l for ls in FNS.values() for l in ls)
 
 
@@ -161,7 +188,12 @@ def test_slots_stay_out_of_every_other_pocket_user_and_the_record_refuses_an_ove
 def test_the_reapply_steps_count_the_entities_they_summon():
     steps = D.reapply_steps(DOC)
     assert [s[0] for s in steps] == ["R16DG", "R16DR"]
-    assert [v for k, v in steps[0][2] if k == "fn"][0] == "cobblers:dungeons/place"
+    places = [v for k, v in steps[0][2] if k == "fn" and "/place" in v]
+    if any("rooms" in d for d in DOC["dungeons"]):
+        # a full-length dungeon: one call per slot (tests/test_dungeon_rooms.py has the reason, EXP-081)
+        assert places == ["cobblers:dungeons/place/s%d" % s["g"] for s in D.slots(DOC)]
+    else:
+        assert places == ["cobblers:dungeons/place"]
     assert [v for k, v in steps[1][2] if k == "fn"][0] == "cobblers:dungeons/rips/place"
     check = [v for k, v in steps[0][2] if k == "check"][0]
     assert check[2] == 3 * len(D.slots(DOC))
@@ -180,9 +212,11 @@ def test_reapply_installs_the_pack_world_local_prepares_it_and_runs_its_steps_af
 def test_shell_writes_stay_inside_the_fill_and_forceload_limits():
     import function_limits as FL
     for s in D.slots(DOC):
-        lines = FNS["shells/s%d" % s["g"]]
-        assert FL.check_lines(lines) == []
-        assert any(l.startswith("forceload add") for l in lines)
+        # a rooms dungeon's shell is one function per room, each force-loading what it writes (DUNGEON_ROOMS.md 5)
+        names = [k for k in FNS if k == "shells/s%d" % s["g"] or k.startswith("shells/s%d/" % s["g"])]
+        for k in names:
+            assert FL.check_lines(FNS[k]) == [], k
+        assert any(l.startswith("forceload add") for k in names for l in FNS[k])
         assert D.shell_blocks(DOC, s) > 0
 
 
@@ -406,9 +440,9 @@ def test_a_clean_run_out_by_the_far_rip(pack):
     assert not p.inventory, "the sigil is taken at the rip"
     s = arrive_and_cross(w, p)
     assert p.gamemode == "adventure" and any(i[0] == "minecraft:iron_pickaxe" for i in p.inventory)
-    full = DOC["engine"]["bands"][0]["clock_s"] * 80
+    full = D.clock_s(DOC["dungeons"][0], DOC["engine"]["bands"][0]) * U1
     w.passes(3)
-    assert w.get(p.name, "dg.clock") == full - 3 * 80, "three passes at x1 since the pass that crossed"
+    assert w.get(p.name, "dg.clock") == full - 3 * U1, "three passes at x1 since the pass that crossed"
     assert w.get(p.name, "dg.lk_ns") is not None
     w.call("cobblers:dungeons/far", PS.Ctx(p, p.dim, p.pos))
     assert p.dim == OW and p.gamemode == "survival" and not any(i[0] == "minecraft:iron_pickaxe" for i in p.inventory)
@@ -418,6 +452,30 @@ def test_a_clean_run_out_by_the_far_rip(pack):
     assert RUN_TAG in p.tags, "the tail lasts at least tail_ticks"
     w.passes(2)
     assert RUN_TAG not in p.tags and w.get(p.name, "tailend") == 1 and not w.get(p.name, "stale")
+
+
+@pytest.mark.parametrize("roll,present", [(1, True), (100, False)])
+def test_the_hidden_prize_roll_at_the_threshold_takes_both_outcomes(pack, roll, present):
+    # the threshold's `random value 1..100` (tools/dungeon_prize.py start_lines), queued in the simulator: a roll at
+    # or under the band's chance makes the prize present and tells the rumour; one over it leaves the room empty
+    import dungeon_prize as PZ
+    w = world(pack)
+    # the 1..100 rolls only: the same threshold also rolls the bank vault's code digits (0..9, RT-A) and a pool's member
+    # (1..n, PRIZE-POOLS), which take the seeded generator
+    w.random_by_range = {(1, 100): [roll] * 8}
+    p = w.player("Gold", OW, (1352.5, 130, 4120.5))
+    p.inventory.append(soot())
+    click_rip(w, p)
+    s = arrive_and_cross(w, p)
+    rooms = PZ.prize_rooms(DOC, s)
+    assert rooms, "the Night Shift authors a prize room"
+    band = w.get(p.name, "dg.band")
+    assert 0 < PZ.chance(DOC, rooms[0], band) < 100
+    assert [x for x in w.random_log if x[:2] == (1, 100)] == [(1, 100, roll)] * len(rooms), w.random_log
+    for room in rooms:
+        assert w.get(PZ.holder(s, room), "dg.rs") == (1 if present else 0)
+    told = [m for m in p.messages if "Rumour: " in m]
+    assert bool(told) == present, p.messages
 
 
 def test_the_back_rip_before_the_threshold_returns_the_sigil_and_stamps_no_lockout(pack):
@@ -457,7 +515,9 @@ def test_timeout_kills_once_out_of_battle_and_the_death_ends_the_run_with_a_tail
     assert w.get(p.name, "dg.st") == 4 and not p.dead, "sudden death holds while in battle"
     w.set(p.name, "dg.claw", 1)
     w.in_battle.discard(p.name)
-    w.passes(2)
+    # dg.claw is 1 only between a win's callback and the start of the next tick (claw/tick resolves it, unit DG-CLAW),
+    # so the wait is asked of the kill's own function directly: ticking would let the clawback finish first
+    w.call("cobblers:dungeons/m/timeout", PS.Ctx(p, p.dim, p.pos))
     assert not p.dead, "the clawback runs to completion before the kill (E1 rule 6)"
     w.set(p.name, "dg.claw", 0)
     w.passes(1)
@@ -484,10 +544,10 @@ def test_a_logout_keeps_the_clock_running_and_a_dead_run_kills_on_return(pack):
     w.passes(10)
     p.online = True
     w.passes(1)
-    assert w.get(p.name, "dg.clock") == before - 11 * 80, "the absence is charged at the rate, as if present"
+    assert w.get(p.name, "dg.clock") == before - 11 * U1, "the absence is charged at the rate, as if present"
     assert w.get(p.name, "dg.st") == 3
     # a long absence: the slot's deadline passes while they are away and the slot is freed without them
-    w.set(p.name, "dg.clock", 400)
+    w.set(p.name, "dg.clock", 5 * U1)
     w.passes(1)
     p.online = False
     w.passes(4)
@@ -509,18 +569,16 @@ def test_a_player_who_is_not_a_member_is_put_out_of_the_slots(pack):
     assert q.dim == OW and q.pos == [x, y, z]
 
 
-def test_the_greed_ladder_on_a_marker(pack):
+def test_the_greed_rate_on_a_marker(pack):
+    # the owner's rule (2026-10-10), stated here and not read from the generator: x1 + 0.1x every 2 points, to x3
     w = world(pack)
     m = PS.Ent("minecraft:marker", OW, (0.5, 70, 0.5), tags=("t",))
     w.ents.append(m)
-    want = {}
-    for r in D.ladder(DOC):
-        want[r["taken"]] = r["rate"]
-    rate = DOC["engine"]["clock"]["ladder"][0]["rate"]
-    for n in range(0, 26):
-        rate = want.get(n, rate)
-        w.call("cobblers:dungeons/greed/test_set", PS.Ctx(m, OW, m.pos), {"n": n})
-        assert w.get(m.uid, "dg.rate") == rate, n
+    for cp in range(0, 5001, 50):
+        w.call("cobblers:dungeons/greed/test_set", PS.Ctx(m, OW, m.pos), {"p": cp})
+        want = min(30, 10 + (cp // 100) // 2)
+        assert w.get(m.uid, "dg.rate") == want, cp
+        assert (w.get(m.uid, "dg.rx"), w.get(m.uid, "dg.ry")) == (want // 10, want % 10), cp
 
 
 def test_the_staged_boss_spawns_by_macro_chains_on_victory_and_opens_the_gate(pack):
@@ -530,14 +588,18 @@ def test_the_staged_boss_spawns_by_macro_chains_on_victory_and_opens_the_gate(pa
     click_rip(w, p)
     s = arrive_and_cross(w, p)
     pt = D.points(DOC, s)
-    p.pos = [pt["spot"][0] - 4.5, 96.0, s["cz"] + 0.5]
-    for stage in (1, 2, 3):
+    p.pos = [pt["spot"][0] - 4.5, float(pt["spot"][1]), pt["spot"][2] + 0.5]     # the arena's own floor and line (DG2-NS: a level down)
+    n = len(DOC["dungeons"][0]["boss"]["stage_level_offsets"])
+    assert n == 2, "the owner, 2026-10-10: the boss is two stages with a full heal between them"
+    assert w.get(p.name, "dg.stage") in (0, 1) and not getattr(w, "healed", [])
+    for stage in range(1, n + 1):
         w.passes(1)
         npcs = [e for e in w.ents if e.kind == "cobblemon:npc" and e.alive]
         assert len(npcs) == 1 and {"dg.boss", "dg.npc", EXEMPT} <= npcs[0].tags, (stage, npcs)
         assert npcs[0].nbt["NPCClass"] == "cobblers:dg_ns_boss_b1_s%d" % stage
         w.passes(1)
         assert w.started and w.started[-1][0] == "Lance"
+        assert len(w.started) == stage, "one battle per stage"
         # the victory callback, as Cobblemon runs it with the NPC as the loser
         w.run_callback("battle_victory", context={
             "scriptable_losers": [{"is_npc": 1, "uuid": npcs[0].uid}], "player_winners": [{"player": {"username": "Lance"}}],
@@ -545,7 +607,12 @@ def test_the_staged_boss_spawns_by_macro_chains_on_victory_and_opens_the_gate(pa
         assert "dg.next" in p.tags
         w.passes(1)
         assert not npcs[0].alive and w.get(p.name, "dg.stage") == stage + 1
-        if stage < 3:
+        # a full heal between stages, none after the last (the exit opens instead)
+        assert len(getattr(w, "healed", [])) == min(stage, n - 1), (stage, getattr(w, "healed", []))
+        if stage < n:
             w.passes(3)                            # the gap
+    w.passes(6)
+    assert len(w.started) == n and not [e for e in w.ents if e.kind == "cobblemon:npc" and e.alive],         "exactly the authored number of stages ran: no third NPC, no third battle"
+    assert getattr(w, "healed", []) == [p.name] * (n - 1)
     assert w.get("#s%d" % s["g"], "dg.bdone") == 1 and w.get(p.name, "dg.bossd") == 1
     assert any(d == POCKET and "minecraft:air" in c and c.startswith("fill %d" % pt["gate"][0]) for d, c in w.block_writes)

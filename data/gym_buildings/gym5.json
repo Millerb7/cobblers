@@ -1,6 +1,7 @@
 {
   "schema": "gym_building/1",
   "id": "gym5",
+  "superseded_by": "data/gym_arenas/gym5.json (schema gym_hall/1, the walk-through Reed House, 2026-10-09). This record is kept as the record of what stood: tools/gym_buildings.py no longer emits its function and R16G no longer runs it; the hall's own first part clears every cell of these bounds, and its read-back probes the old watch floor's air. Its model is still read (tools/gym_arenas.py's takedown coverage check; tools/challenge_mode.py restore_blocks).",
   "status": "authored 2026-09-29; file-valid only. Nothing here has been seen in a running game.",
   "settlement": "gym5_town",
   "supersedes_donor": "gym5_gym_building",

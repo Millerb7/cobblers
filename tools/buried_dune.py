@@ -564,7 +564,7 @@ def summon_chain(doc, plan):
            % (home, b["tag"], sel, P),
            "tag @e[type=cobblemon:pokemon,tag=%s] add %s" % (rtag, s["new_tag"])]
     x0, z0 = a[0] - 8, a[2] - 8
-    chain = CL.chain(s["base"], (x0, z0, x0 + 16, z0 + 16), ["type=cobblemon:pokemon,tag=%s" % rtag], act,
+    chain = CL.chain(s["base"], (x0, z0, x0 + 16, z0 + 16), ["@e[type=cobblemon:pokemon,tag=%s]" % rtag], act,
                      ["type=cobblemon:pokemon,tag=%s,tag=!%s" % (rtag, gtag)], s["new_tag"],
                      "type=cobblemon:pokemon,tag=%s" % rtag, s["holder"], note="tools/buried_dune.py")
     return CL.files(chain)

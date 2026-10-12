@@ -22454,8 +22454,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.mt_clay_outflow.wooper",
-      "species": "wooper",
+      "id": "surface.mt_clay_outflow.wooper_paldean",
+      "species": "wooper paldean",
       "bucket": "common",
       "level": "24-30",
       "weight": 24.0,
@@ -22467,7 +22467,7 @@
           "minecraft:water"
         ]
       },
-      "eligibility_reason": "base stage",
+      "eligibility_reason": "base stage; the owner, 2026-10-09: \"the wooper creek should spawn the paldean versions\" (reverses the 2026-10-04 removal; data/waterways.json habitat_fixes)",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -22486,6 +22486,24 @@
         ]
       },
       "eligibility_reason": "evolves from Wooper at 20; the band begins at 24",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.mt_clay_outflow.clodsire",
+      "species": "clodsire",
+      "bucket": "rare",
+      "level": "24-30",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "Paldean Wooper's evolution (level 20 in the Cobblemon 1.8.0 jar, Paldea form); an adult of the creek's Wooper line, so rare; the owner, 2026-10-09: \"clodsire should be in wooper creek as well\"",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -31755,6 +31773,90 @@
       "conditions": {},
       "eligibility_reason": "base stage with no level evolution inside the band",
       "spawnable_position": "submerged"
+    },
+    {
+      "id": "habitat.scar_tarn_waters.quagsire",
+      "species": "quagsire",
+      "bucket": "common",
+      "level": "29-33",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "scar_tarn_waters",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "Wooper evolves to Quagsire at 20, under the band; the slow brown water-dweller that would own a still tarn (it spawns submerged in marsh_creek already)",
+      "spawnable_position": "submerged",
+      "modifiers": "alpha=true"
+    },
+    {
+      "id": "habitat.scar_tarn_waters.lanturn",
+      "species": "lanturn",
+      "bucket": "uncommon",
+      "level": "29-33",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "scar_tarn_waters",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "Chinchou evolves to Lanturn at 27, under the band; the glow in a place with no lamps",
+      "spawnable_position": "submerged",
+      "modifiers": "alpha=true"
+    },
+    {
+      "id": "habitat.scar_tarn_waters.gyarados",
+      "species": "gyarados",
+      "bucket": "rare",
+      "level": "29-33",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "scar_tarn_waters",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "Magikarp evolves to Gyarados at 20, under the band; the one that has driven everything else out of the water",
+      "spawnable_position": "submerged",
+      "modifiers": "alpha=true"
+    },
+    {
+      "id": "habitat.scar_tarn_grove.lycanroc",
+      "species": "lycanroc",
+      "bucket": "common",
+      "level": "29-33",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "scar_tarn_grove",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "Rockruff evolves to Lycanroc at 25, under the band; a rock wolf on a mountain, and the one species of the three that already ranges Route 3 and 4 (mt_clay), the pack leader of a scarred slope",
+      "spawnable_position": "grounded",
+      "modifiers": "alpha=true"
+    },
+    {
+      "id": "habitat.scar_tarn_grove.gabite",
+      "species": "gabite",
+      "bucket": "uncommon",
+      "level": "29-33",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "scar_tarn_grove",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "Gible evolves to Gabite at 24, under the band (Garchomp is 48); a mountain dragon that nests in a hollow, the cave/mountain dragon family (no Gible line in any Vessu roster)",
+      "spawnable_position": "grounded",
+      "modifiers": "alpha=true"
+    },
+    {
+      "id": "habitat.scar_tarn_grove.haunter",
+      "species": "haunter",
+      "bucket": "rare",
+      "level": "29-33",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "scar_tarn_grove",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "Gastly evolves to Haunter at 25, under the band (Gengar is a trade); the dead city's ghost, drawn to the ruins at the bank. Ghost types fit any country, which is why it is the one that is here because of the Scar",
+      "spawnable_position": "grounded",
+      "modifiers": "alpha=true"
     }
   ],
   "placement_sites_note": "A placed structure's grounds with a roster of its own (mechanism placement_coordinate_boxes, an entry's scope a site id). tools/compile_spawns.py lays a site's entries over its placement's footprint (data/placements.json position and size) widened by margin, less the path and the spawn-free zones, inside the sub-region holding it, and appends them to that sub-region's file on top of its roster. Grounded entries are forced canSeeSky like every land entry, so a site spawns on the open grounds round the structure and its sky-open surfaces (a tower's summit), never inside under a roof. Hand-authored; tools/build_encounters.py copies it through.",
@@ -62942,6 +63044,116 @@
           "conditions": {}
         }
       ]
+    },
+    {
+      "id": "scar_tarn_waters",
+      "display_name": "The Scar Tarn's waters",
+      "intended_location": "the Scar Tarn on Mt Vessu's north-north-west shoulder (data/scar_tarn.json): 2 activated Habitat Block(s), scar_tarn_waters_west_ward, scar_tarn_waters_east_ward in data/habitat_blocks.json, keeping up to 1 alive within 16 each",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 29,
+        "maximum": 33
+      },
+      "level_band_why": "Mt Vessu's table is 22-28 at tier 3 (data/spawns.json subregions mt_vessu level_band) and tier 3's next cap is 35 (data/encounter_design.json rules.hearts.next_cap['3']): an alpha band of 29-33 is one above the table's top and two under the next cap, the Wardenhold Froslass precedent (a place's one boss-strength creature, above its band, under the next cap). IN GAME the number is not what a player fights: the jar's cobblemon:alpha_level_matching sensor re-levels a wild alpha within 32 blocks of a player to their highest party level +8 (party 21-30) or +12 (31-45), at least the level it evolves at (data/encounter_design.json rules.hearts.alpha_level_matching, read from bytecode and not seen in game)",
+      "why": "Alpha Pokemon (entries carry modifiers 'alpha=true') that have taken over the Scar Tarn: quagsire: Wooper evolves to Quagsire at 20, under the band; the slow brown water-dweller that would own a still tarn (it spawns submerged in marsh_creek already); lanturn: Chinchou evolves to Lanturn at 27, under the band; the glow in a place with no lamps; gyarados: Magikarp evolves to Gyarados at 20, under the band; the one that has driven everything else out of the water",
+      "entries": [
+        {
+          "species": "Quagsire",
+          "pokemon": "quagsire",
+          "family": "quagsire",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "Wooper evolves to Quagsire at 20, under the band; the slow brown water-dweller that would own a still tarn (it spawns submerged in marsh_creek already)",
+          "level": "29-33",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {},
+          "modifiers": "alpha=true"
+        },
+        {
+          "species": "Lanturn",
+          "pokemon": "lanturn",
+          "family": "lanturn",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "Chinchou evolves to Lanturn at 27, under the band; the glow in a place with no lamps",
+          "level": "29-33",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {},
+          "modifiers": "alpha=true"
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "family": "gyarados",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "Magikarp evolves to Gyarados at 20, under the band; the one that has driven everything else out of the water",
+          "level": "29-33",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {},
+          "modifiers": "alpha=true"
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json scar_tarn_waters_west_ward, scar_tarn_waters_east_ward, status planned"
+    },
+    {
+      "id": "scar_tarn_grove",
+      "display_name": "The Scar Tarn's grove",
+      "intended_location": "the Scar Tarn on Mt Vessu's north-north-west shoulder (data/scar_tarn.json): 2 activated Habitat Block(s), scar_tarn_grove_north_ward, scar_tarn_grove_south_ward in data/habitat_blocks.json, keeping up to 2 alive within 16 each",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 29,
+        "maximum": 33
+      },
+      "level_band_why": "Mt Vessu's table is 22-28 at tier 3 (data/spawns.json subregions mt_vessu level_band) and tier 3's next cap is 35 (data/encounter_design.json rules.hearts.next_cap['3']): an alpha band of 29-33 is one above the table's top and two under the next cap, the Wardenhold Froslass precedent (a place's one boss-strength creature, above its band, under the next cap). IN GAME the number is not what a player fights: the jar's cobblemon:alpha_level_matching sensor re-levels a wild alpha within 32 blocks of a player to their highest party level +8 (party 21-30) or +12 (31-45), at least the level it evolves at (data/encounter_design.json rules.hearts.alpha_level_matching, read from bytecode and not seen in game)",
+      "why": "Alpha Pokemon (entries carry modifiers 'alpha=true') that have taken over the Scar Tarn: lycanroc: Rockruff evolves to Lycanroc at 25, under the band; a rock wolf on a mountain, and the one species of the three that already ranges Route 3 and 4 (mt_clay), the pack leader of a scarred slope; gabite: Gible evolves to Gabite at 24, under the band (Garchomp is 48); a mountain dragon that nests in a hollow, the cave/mountain dragon family (no Gible line in any Vessu roster); haunter: Gastly evolves to Haunter at 25, under the band (Gengar is a trade); the dead city's ghost, drawn to the ruins at the bank. Ghost types fit any country, which is why it is the one that is here because of the Scar",
+      "entries": [
+        {
+          "species": "Lycanroc",
+          "pokemon": "lycanroc",
+          "family": "lycanroc",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "Rockruff evolves to Lycanroc at 25, under the band; a rock wolf on a mountain, and the one species of the three that already ranges Route 3 and 4 (mt_clay), the pack leader of a scarred slope",
+          "level": "29-33",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {},
+          "modifiers": "alpha=true"
+        },
+        {
+          "species": "Gabite",
+          "pokemon": "gabite",
+          "family": "gabite",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "Gible evolves to Gabite at 24, under the band (Garchomp is 48); a mountain dragon that nests in a hollow, the cave/mountain dragon family (no Gible line in any Vessu roster)",
+          "level": "29-33",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {},
+          "modifiers": "alpha=true"
+        },
+        {
+          "species": "Haunter",
+          "pokemon": "haunter",
+          "family": "haunter",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "Gastly evolves to Haunter at 25, under the band (Gengar is a trade); the dead city's ghost, drawn to the ruins at the bank. Ghost types fit any country, which is why it is the one that is here because of the Scar",
+          "level": "29-33",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {},
+          "modifiers": "alpha=true"
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json scar_tarn_grove_north_ward, scar_tarn_grove_south_ward, status planned"
     }
   ],
   "route_species_selection_note": "Generated by tools/build_encounters.py from data/encounter_design.json (docs/mechanics/ENCOUNTER_DESIGN.md section 6): per route, the families in rules.corridor_roles (never a find) of every sub-region its corridor crosses (data/routes.json geography transitions), at most corridor_species_limit: every crossed table's water species kept, rules.corridor_rare_min of the crossed on-path tables' rare- and ultra-role species reserved (the owner, 2026-10-05), and the rest by chance times corridor length. tools/compile_spawns.py reads this list and does not choose. Do not edit by hand.",

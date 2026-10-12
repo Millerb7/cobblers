@@ -1,95 +1,62 @@
-# Gym 6: Sabrina, The Observation Well
+# Gym 6: Sabrina, the Hall of Lenses and the Observation Well
 
-`data/gym_arenas/gym6.json` (schema `gym_arena/1`, read by `tools/gym_arenas.py`). Authored 2026-10-08. Offline
-checks only: nothing here has been built in a world or seen in a running game.
+`data/gym_arenas/gym6.json` (schema `gym_hall/1`, read by `tools/gym_arenas.py`; `SCHEMA.md` has the format and
+`docs/world-building/GYM_WALKTHROUGH.md` the design for all eight). Authored 2026-10-09 as the walk-through
+replacement for the carved Observation Well (schema `gym_arena/1`, applied to staging 2026-10-09, kept in the record
+under `replaces.arena`) and for the Hall of Lenses building (`data/gym_buildings/gym6.json`, now `superseded_by`).
+Offline checks only: nothing here has been built in a world or seen in a running game.
 
 ## The reading
 
-Sabrina is the Rift researcher. Her town is the region's place of study (`TOWN_CHARACTER.md` gym6_town: calcite,
-smooth quartz, polished diorite, purpur and end rods as accents) and the Hall of Lenses above is where the work is
-read. The arena is where it is **observed**: a deep, tall well with a great lens hung over the floor. It is the
-tallest room of the eight (21 courses clear over the floor; Brock's is 14) and a vertical room, not a long one: the
-long approach is a descent, a terrace to see the room from, and a glass-screened flight down its wall.
+Sabrina is the Rift researcher; her town is the region's place of study (`TOWN_CHARACTER.md` gym6_town: calcite,
+smooth quartz, polished diorite, purpur as the accent). The carved Well's vibe was kept and expanded: the tallest room
+of the eight, a vertical room with a great biconvex tinted lens hung over the floor and its image let into the floor
+as a purpur ring round the two Pokemon marks, Sabrina on a purpur dais under THE EYE (purpur lid, quartz white,
+froglight pupil). What changed is the way there: no descent of 31 courses and no tube, one building on the lot.
 
-The lens is a biconvex disc of tinted glass in an amethyst rim, radius 6, centre (6192, 3320), hung from the ceiling
-on four chains with end rods under its rim. Its image is let into the floor as an amethyst ring (radius 6) and a
-purpur ring round a froglight focus, with the two Pokemon marks inside it, as the building's own lens floor is the
-shape the observatory's lens makes at noon. Sabrina stands on a purpur dais in a stepped apse at the west end, under
-THE EYE (the town's sign, three times in the building: purpur, amethyst iris, pearlescent-froglight pupil), lit from
-behind her. Nothing here is per player.
+## The walk (all measured from the generated model, `tools/gym_arenas.py check`)
 
-## The walk in
+Lot 6180..6212 x 3302..3334, pad y97, facing south; the hall stands on x6180..6211, z3305..3331. 44 moves from the
+street cell (6196, 97, 3335) to the challenger's stand (6197, 98, 3312); up four, down four, all half steps.
 
-1. In the lens chamber (the end of the building's route), a stair mouth is cut in the chamber floor at
-   (6200, 111, 3314), east of the lens, a few cells from where Sabrina stood. Its first tread is level with the
-   floor; the floor cells over the next treads open as the headroom is cut (the stair is the only way into them).
-2. The stair winds down a quartz newel inside a solid quartz tube: 47 treads, 31 levels (y111 to y80), four turns.
-   The tube passes through the chamber floor, hangs through the open well of the hall (x6199..6204, z3312..3317, y98
-   to y110, between the decoy stacks and the gallery), the hall floor, the rock under the pad, and the arena's
-   ceiling, and hangs 9 courses below it into the room like the barrel of the instrument. Froglights are set into
-   the newel every two courses.
-3. A landing at (6201, 80, 3313), a door (6201, 81..83, 3312) and the **terrace**: a landing of polished diorite hung
-   fourteen courses over the floor, x6196..6213 by z3306..3311, tinted-glass screens two high round its open edges.
-   The player looks west down the whole room: the lens just below eye level, the floor far below, the eye on the far wall
-   and Sabrina small on her dais, 20.1 away at the nearest terrace cell (outside rctmod's reach of 16).
-4. The **east flight**: fourteen smooth-quartz stairs down the east wall (z3312..3325, y80 to y67) over a solid
-   wedge, a glass screen along its open side with froglights set in it. It lets out at (6211, 67, 3326), the first
-   floor cell, 30.9 from Sabrina.
-5. The floor, west toward the dais, between the lens's image and the pilasters, to the apse. By cardinal steps the
-   whole walk from the building's route end to the dais foot is 113 steps (BFS over the model, steps down of at most
-   one), 52 of them to the landing and 81 to the floor.
+1. **The door**, on the town's axis (x6196), into **the reading stacks**: a foyer 30 by 7, seven courses clear,
+   shelving along the divider wall. The Archive Reader stands in the middle of it.
+2. **Three eye-arches** in the divider wall (z3323). Two are blind reading cells (the west one is where the iron door
+   out of the Well lets out); the east one, under THE EYE, goes through. The Gallery Medium stands just inside it.
+3. **The turret stair**: four half steps up, five wide (the old ladder is gone), into **the lens chamber** (floor y101,
+   five by twelve). The Stack Warden stands at the stair's head.
+4. **Three apertures** in the chamber's west wall (two courses thick): only the middle one goes through; the other two
+   are one course deep. The Lens Keeper stands in front of the true one.
+5. **The Observation Well**, the last room, 23 by 13 and 22 courses clear (y98..119): the aperture opens onto a terrace
+   at the east end (19.0 from Sabrina, past forceBattleMaxDistance + 1 = 17) and a broad stair of four takes the
+   player to the floor. The lens' lowest course is y113, sixteen over the floor (Hatterene, the tallest, is 6.13).
+   Sabrina's seat is (6183, 101, 3312) in the dais top; the dais is four courses and runs wall to wall.
 
-## Where they stand
+Out past her by the **iron door** in the Well's south wall (6190, 98..99, 3319), opened by the stone button inside the
+Well at (6191, 99, 3318) and by nothing outside, into the west reading cell and back through its arch; or back the way
+you came (the stair is walked both ways).
 
-| | |
-|---|---|
-| Sabrina's seat | (6181, 70, 3320), flush in the dais top, redstone block at y69 (the seat function writes both) |
-| Dais | x6178..6184 by z3314..3325, y67..70: purpur body, smooth quartz top, amethyst lip at x6184, chiseled quartz face; 4 courses over the floor (rule: 2 to 5) |
-| Apse | the room narrows round the dais in steps (z3306..3309 to x6189, z3310..3311 to x6187, z3312..3313 to x6185, mirrored on the south), solid floor to ceiling, so no aisle runs up beside the dais |
-| Trainer stand | (6182, 69, 3320), under the dais top one in front of the seat |
-| Sabrina's Pokemon | (6190, 65, 3320), 5.50 from the dais face |
-| Challenger's Pokemon | (6194, 65, 3320), 4 from Sabrina's |
-| Challenger stands | (6197, 65, 3320), 3 behind their Pokemon |
+## Why two cells differ from the other halls
 
-## Dimensions
+- The west wall stands on the lot's edge (x6180) so the dais reaches x6181. Sabrina is outside
+  `single_leader.rollout`, so a Challenge spawner stands beside her seat, and a Challenge cell inside the old
+  building's bounds (which begin at x6182) is a replaced seat to both the builder and the independent audit: it would
+  be called dead the moment the cycle set it. It is at (6181, 101, 3312).
+- No amethyst and no end rod: `tools/gym_trainers.py`'s movement model has no row for either (it fails closed), so the
+  rim and the bands are purpur and the lamps are the town's pearlescent froglight.
 
-- Shell: x6176..6215, y64..89, z3304..3335, 40 x 26 x 32, two courses of calcite on all six faces. It is the whole
-  spawn-free zone `gym_sabrina` (6176, 3304, 6215, 3335, measured from `data/spawn_suppression.json`), so the zone
-  needed no change.
-- Interior: x6178..6213 (36), z3306..3333 (28), y67..87 (21 over the floor course y66; stand y67).
-- Top course y89 under the building's lowest course y92 (natural y90, y91): COVER 2, slack 0.
-- Cells written: 41,659 (34,052 distinct cells; 374 commands in `cobblers:gym_arenas/gym6`).
-- Light: 855 standable cells, minimum 5, median 10, 121 under 8.
+## Takedown
 
-## What was measured against the leader's size
+`gym6_takedown` fills the carved Well's bounds (6176..6215 x 64..89 x 3304..3335) and the last two courses of its
+descent tube (y90..91) with stone; the hall's first part clears the lot above the pad (y97..128), stones y92..96 under
+the old building, and writes every cell of the old building's bounds.
 
-- Sabrina's team (`data/gym_arena_sizes.json`): widest hitbox exeggutor 1.53, tallest hatterene 2.80 hitbox, model
-  top 6.13, clear radius 2.09 (slowbro's model sweep), clear height 6.13. The check wants no block within 2.09 of
-  either marker up to floor + ceil(6.13) + 1 = y74.
-- Nearest solid to Sabrina's Pokemon marker within y67..74 is 5.50 (the dais face): 3.41 over the clear radius. To
-  the challenger's marker it is 8.86 (a terrace post). The lens's lowest course is y77, ten courses over the floor
-  (3.87 over hatterene's 6.13; three courses over the check's own ceiling). Both from the built model.
-- The Pokemon markers are 4.00 apart against the widest hitbox 1.53.
-- 122 cells can start a battle (within 16 with a line of sight); both Pokemon blocks and both stands are found from
-  all 122. The terrace and the east flight are beyond reach, so no high cell starts a battle that Battle Positions
-  could not place.
+## Juniors (`python tools/gym_trainers.py check --gym gym6`: proved)
 
-## The seat move
-
-Sabrina is not in `single_leader.rollout`, so she keeps a second, Challenge spawner. `challenge_spawner.old_at` is
-(6194, 111, 3312), restored to smooth quartz over air (read from the building's model, not typed).
-`data/challenge_mode.json` `bosses.kanto_sabrina.spawner.at` moves from (6194, 111, 3312) to (6181, 70, 3318): two
-north of the seat on the dais top (z3318, the same row of dais, a full purpur-and-quartz block with air above). No
-zone change.
+Archive Reader (6203, 98, 3327) d4.0; Gallery Medium (6208, 98, 3322) d3.0; Stack Warden (6207, 102, 3316) d2.5;
+Lens Keeper (6206, 102, 3312) d2.5. Pass order 01, 02, 04, 03, tops 42, 43, 44, 44, all under Sabrina's 45.
 
 ## Not verified
 
-- Nothing has been built in a world. The block placement, light, the chains and end rods, the stair states
-  (`smooth_quartz_stairs[facing=...]`) and the glass screens are model results only.
-- Whether the tube's walls and the 6 x 6 quartz column standing in the Hall of Lenses' well read well from the
-  hall and gallery (it is the one place the arena shows in the building), and that no later building step puts
-  anything in it. The building's own audits were not rerun.
-- That the Battle Positions blocks send Sabrina's Pokemon to their marks, that a battle on sight starts at 16 from a
-  leader four courses up, and that a flying Pokemon stays under the lens.
-- The decoy stacks D2 and D3 and the gallery are untouched, but the tube is a new solid in the well: whether any
-  Pokemon spawn, or a player in the well, behaves differently there was not tested.
+Everything in a running game: the iron door's redstone, the stair feel, the sightlines through the aperture, the
+exterior mass from the axis. The audit's body model and the movement model are models.

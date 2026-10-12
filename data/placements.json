@@ -28001,37 +28001,6 @@
       "chosen_because": "measured and argued in data/adopted_legendary_sites.json adopted_crown_spire, the first HIDDEN site (tools/hidden_sites.py check): a bench on Northgate Isle's eastern highland, an island no route, ferry or town reaches, 99 blocks from its elder spruce; 1,957 of the footprint's 2,009 columns already stand at y130, so the paste moves 52 blocks. Scheduled 2026-10-03, off tools/ground.py, rounded."
     },
     {
-      "id": "legendary_giratina_shrine",
-      "pack_template": "legendarymonuments:giratina_island/main/222",
-      "template": "legendarymonuments:giratina_island/main/222",
-      "source": {
-        "pack": "LegendaryMonuments-Cobbleverse.jar",
-        "path": "data/legendarymonuments/structure/giratina_island/main/222.nbt",
-        "licence": "Legendary Monuments (Cobbleverse build): installed on the server; never copied into the repository. Placed by resource id from the installed jar."
-      },
-      "cell": "C5",
-      "kind": "donor",
-      "position": {
-        "x": 4374,
-        "y": 66,
-        "z": 2862
-      },
-      "size": [
-        42,
-        43,
-        38
-      ],
-      "rotation": "none",
-      "mirror": "none",
-      "anchor_mode": "corner",
-      "y_mode": "absolute",
-      "status": "planned",
-      "sweep_site": "sweep_giratina_shrine",
-      "jigsaws": "final_state",
-      "jigsaws_why": "the piece is the centre of Legendary Monuments' Distortion World island and carries six jigsaw blocks (template [23, 0, 20] and five at layer 42); a raw place template leaves them standing. Their own final states: distortion_deepslate under the slab, air on top (read 2026-10-06 from the server snapshot's jar). tools/place_donor.py sets each one after the paste.",
-      "chosen_because": "measured and argued in data/adopted_legendary_sites.json sweep_giratina_shrine (tools/legendary_sweep.py check): the piece's 12-layer distortion slab sunk so its top layer is the footprint's cheapest seat, y77, in the Glacial Tear's lower trough; the glass dome and the altar stand above it. Not a Rift dead end: the Rift has no footprint that clears its routes, its zones and the 800-block spread (measured 2026-10-06, 0 candidates). Scheduled 2026-10-06, off tools/ground.py, rounded."
-    },
-    {
       "id": "legendary_newmoon_island",
       "pack_template": "lumymon:newmoon_island",
       "template": "lumymon:newmoon_island",
@@ -28388,6 +28357,38 @@
           "minecraft:structure_block"
         ],
         "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+      },
+      {
+        "id": "legendary_giratina_shrine",
+        "pack_template": "legendarymonuments:giratina_island/main/222",
+        "template": "legendarymonuments:giratina_island/main/222",
+        "source": {
+          "pack": "LegendaryMonuments-Cobbleverse.jar",
+          "path": "data/legendarymonuments/structure/giratina_island/main/222.nbt",
+          "licence": "Legendary Monuments (Cobbleverse build): installed on the server; never copied into the repository. Placed by resource id from the installed jar."
+        },
+        "cell": "C5",
+        "kind": "donor",
+        "position": {
+          "x": 4374,
+          "y": 66,
+          "z": 2862
+        },
+        "size": [
+          42,
+          43,
+          38
+        ],
+        "rotation": "none",
+        "mirror": "none",
+        "anchor_mode": "corner",
+        "y_mode": "absolute",
+        "status": "retired",
+        "sweep_site": "sweep_giratina_shrine",
+        "jigsaws": "final_state",
+        "jigsaws_why": "the piece is the centre of Legendary Monuments' Distortion World island and carries six jigsaw blocks (template [23, 0, 20] and five at layer 42); a raw place template leaves them standing. Their own final states: distortion_deepslate under the slab, air on top (read 2026-10-06 from the server snapshot's jar). tools/place_donor.py sets each one after the paste.",
+        "chosen_because": "measured and argued in data/adopted_legendary_sites.json sweep_giratina_shrine (tools/legendary_sweep.py check): the piece's 12-layer distortion slab sunk so its top layer is the footprint's cheapest seat, y77, in the Glacial Tear's lower trough; the glass dome and the altar stand above it. Not a Rift dead end: the Rift has no footprint that clears its routes, its zones and the 800-block spread (measured 2026-10-06, 0 candidates). Scheduled 2026-10-06, off tools/ground.py, rounded.",
+        "retired": "RETIRED 2026-10-09 by the owner, on staging, looking at the shrine at (4374, 66, 2862): \"giratina being plopped right here sucks, move it to the castle in the north\", and then \"get rid of his sphere though, he just lives in the castle.\" Giratina now lives in Wardenhold, the ruined keep on Frostpeak Strand (data/frostpeak_keep_quest.json giratina, tools/frostpeak_keep_quest.py, step R18FK), with the burrow people's quest to defeat it. Nothing of this set piece is carried over (no sphere, no dome, no altar, no Red Chain). The template already pasted on staging is taken down by cobblers:frostpeak_keep_quest/shrine_takedown (R18FK), back to the heightmap's ground (tools/ground.py, rounded) and the water mask's water. Kept here as it was, never deleted: hand-measured seat and chosen_because notes."
       }
     ]
   }

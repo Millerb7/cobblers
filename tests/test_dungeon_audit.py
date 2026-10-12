@@ -108,8 +108,9 @@ def score(w, p, obj):
 
 
 def to_pass_edge(w):
-    """Tick until the keeper has just run (the next keeper is PASS ticks away)."""
-    while (w.scheduled.get("cobblers:dungeons/keeper", 0) - w.gametime) != PASS:
+    """Tick until the keeper's pass has just run. The keeper dispatches its pass to the next tick (ENGINE-SCALE: each
+    part its own scheduled call), so the pass has run one tick after the keeper: the next keeper is PASS - 1 away."""
+    while (w.scheduled.get("cobblers:dungeons/keeper", 0) - w.gametime) != PASS - 1:
         w.tick(1)
 
 
@@ -126,7 +127,7 @@ def enter(w, p):
     to_pass_edge(w)
     p.dim, p.pos = OW, outside()
     t0 = w.gametime
-    click(w, p, "cobblers:dungeons/rip_")
+    click(w, p, "cobblers:dungeons/rip_ns")
     t1 = until(w, lambda: p.dim == POCKET)
     return t0, t1
 
@@ -180,11 +181,153 @@ def test_the_generated_packs_pass_the_static_audit(check):
     assert DA.CHECKS[check](DG, BO, None) == []
 
 
-# Without it the V15 spawn check could pass on a pack with no spawn site at all (the list would be empty).
+DUNGEONS_DATA = json.loads((ROOT / "data" / "dungeons.json").read_text(encoding="utf-8"))
+# DUNGEON_ROOMS.md 4a: `ambush` is the gauntlet's alias (the Moth Cathedral's Sexton's walk is one)
+TRAINER_KINDS, WILD_KINDS = ("stand", "gauntlet", "ambush"), ("nest", "miniboss", "habitat")
+
+
+KEY_TAG = json.loads((ROOT / "data" / "key_ball.json").read_text(encoding="utf-8"))["tag"]
+LEGENDARY_FROM = DUNGEONS_DATA["engine"]["prize"]["legendary_from_band"]
+KEEP_TAG = DUNGEONS_DATA["engine"]["sweep"]["keep_tag"]
+LIFE_KINDS = {"drift", "stairs", "maze", "puzzle", "vault", "resources", "dark_room", "safe_room"}
+
+
+def expected_spawners():
+    """From data/dungeons.json alone (never the generator): every (kind of site, dungeon index, slot, room, trainer)
+    a run can spawn from. Slot g belongs to dungeon (g - 1) // per_dungeon (engine.slots.why); a stand or gauntlet room
+    spawns each of its params.trainers, a nest, mini-boss or habitat room spawns wild Pokemon, every slot spawns its
+    boss (DUNGEON_ROOMS.md 4a; DUNGEONS.md 3.2)."""
+    per = DUNGEONS_DATA["engine"]["slots"]["per_dungeon"]
+    out = set()
+    for di, d in enumerate(DUNGEONS_DATA["dungeons"]):
+        for g in range(di * per + 1, (di + 1) * per + 1):
+            out.add(("boss", di, g, None, None))
+            for r in slot_records(d, g - di * per):
+                if r["kind"] in TRAINER_KINDS:
+                    out.update(("trainer", di, g, r["id"], k) for k in range(1, len(r["params"]["trainers"]) + 1))
+                elif r["kind"] in WILD_KINDS and not (r["kind"] == "habitat" and "species" not in (r.get("params") or {})):
+                    # a habitat whose only Pokemon is the hidden prize (no `species` of its own, DUNGEON_ROOMS.md 1b) has
+                    # no resident spawn: its sites are the prize's, below
+                    out.add(("wild", di, g, r["id"], None))
+            # the ambient Pokemon (unit LIFE, tools/dungeon_life.py): ONE shared walker per slot, there when the dungeon has
+            # a room of a kind that may have animals (the connectors, maze, puzzle, vault, resources, dark and safe rooms)
+            if any(r["kind"] in LIFE_KINDS for r in slot_records(d, g - di * per)):
+                out.add(("life", di, g, None, None))
+            # the hidden prize (pass 3, DUNGEON_ROOMS.md 1b): a habitat's params.prize spawns, per band, the species its
+            # rare_by_band names below engine.prize.legendary_from_band or its legendary_by_band from it on; a band
+            # named by neither has no prize. One site per (room, band), whatever that band's chance
+            recs = slot_records(d, g - di * per)
+            ids = {r["id"] for r in recs}
+            for r in recs:
+                # the egg room's vendor, a non-battling NPC (RT-B, DUNGEON_ROOMS.md 13), spawned by the room's enter
+                if r["kind"] == "egg_room":
+                    out.add(("vendor", di, g, r["id"], None))
+                # the bait room's lure (RT-A, DUNGEON_ROOMS.md 12): the room its params.lure_room names spawns the Pokemon
+                # the run's bait brings, when that room is in this slot
+                lure = (r.get("params") or {}).get("lure_room")
+                if r["kind"] == "bait_room" and lure in ids and lure != r["id"]:
+                    out.add(("lure", di, g, lure, None))
+            for r in recs:
+                pz = (r.get("params") or {}).get("prize")
+                if r["kind"] != "habitat" or not pz:
+                    continue
+                for band in range(1, 7):
+                    if prize_pool(pz, band):
+                        out.add(("prize", di, g, r["id"], band))
+    return out
+
+
+ROSTER = json.loads((ROOT / "data" / "dungeon_prize_roster.json").read_text(encoding="utf-8"))
+
+
+def prize_pool(pz, band):
+    """The species a habitat's prize can be at `band`, by DUNGEON_ROOMS.md 1b and 14 read here: the single form
+    (`rare_by_band` / `legendary_by_band`, legendary from engine.prize.legendary_from_band), the room's own pool
+    (`*_pool_by_band`), then the roster entry `roster` names (data/dungeon_prize_roster.json, its pool of the same
+    name), without repeats, less every species whose roster model_gate is not in engine.prize.models_delivered."""
+    kind = "legendary" if band >= LEGENDARY_FROM else "rare"
+    entry = next((e for e in ROSTER.get("dungeons") or [] if e.get("id") == pz.get("roster")), None) or {}
+    delivered = DUNGEONS_DATA["engine"]["prize"].get("models_delivered") or []
+    one = (pz.get("%s_by_band" % kind) or {}).get(str(band))
+    out = []
+    for sp in ([one] if one else []) + list((pz.get("%s_pool_by_band" % kind) or {}).get(str(band)) or []) \
+            + list((entry.get("%s_pool_by_band" % kind) or {}).get(str(band)) or []):
+        gate = ((ROSTER.get("species") or {}).get(sp) or {}).get("model_gate")
+        if sp not in out and not (gate and gate not in delivered):
+            out.append(sp)
+    return out
+
+
+def slot_records(d, k):
+    """Every room record slot k (1-based within its dungeon) builds, read from the data by the documented rule, not by
+    the generator (DUNGEON_ROOMS.md 1a): a fork's routes and a side room's rooms are rooms of the run; slot k builds
+    variants[(k - 1) % n], whose `swap` replaces a room's fields by id (`params` merged one level)."""
+    vs = d.get("variants") or []
+    swap = (vs[(k - 1) % len(vs)].get("swap") or {}) if vs else {}
+
+    def walk(rooms):
+        for r in rooms:
+            if r.get("kind") == "fork":
+                for rt in r.get("routes", []):
+                    yield from walk(rt.get("rooms", []))
+            elif r.get("kind") == "side":
+                yield from walk(r.get("rooms", []))
+            else:
+                over = swap.get(r["id"])
+                if over:
+                    r = dict(r, **{key: v for key, v in over.items() if key != "params"},
+                             params=dict(r.get("params") or {}, **(over.get("params") or {})))
+                yield r
+    return list(walk(d.get("rooms") or []))
+
+
+def classify_site(site):
+    """A spawn site's (kind, dungeon index, slot, room, trainer), read from its name against the data's ids; None for a
+    site the data explains nothing about."""
+    ds = DUNGEONS_DATA["dungeons"]
+    m = re.fullmatch(r"cobblers:dungeons/slot/s(\d+)/spawn", site)
+    if m:
+        g = int(m.group(1))
+        return ("boss", (g - 1) // DUNGEONS_DATA["engine"]["slots"]["per_dungeon"], g, None, None)
+    m = re.fullmatch(r"cobblers:dungeons/stand/([a-z0-9]+)_([a-z0-9_]+)_t(\d+)_s(\d+)/(show|start)", site)
+    if m:
+        di = next((i for i, d in enumerate(ds) if d["short"] == m.group(1)), None)
+        return ("trainer", di, int(m.group(4)), m.group(2), int(m.group(3)))
+    m = re.fullmatch(r"cobblers:dungeons/life/s(\d+)/mon", site)
+    if m:
+        g = int(m.group(1))
+        return ("life", (g - 1) // DUNGEONS_DATA["engine"]["slots"]["per_dungeon"], g, None, None)
+    # a wild room's band spawn, and (PRIZE-POOLS) its rotation's other members, spawn_b<n>_v<k>
+    m = re.fullmatch(r"cobblers:dungeons/room/([a-z0-9_]+)/([a-z0-9_]+)/s(\d+)/spawn_b[1-6](?:_v\d+)?", site)
+    if m:
+        di = next((i for i, d in enumerate(ds) if d["id"] == m.group(1)), None)
+        return ("wild", di, int(m.group(3)), m.group(2), None)
+    # the hidden prize per band, and (PRIZE-POOLS) its pool's other members, prize/spawn_b<n>_<k>
+    m = re.fullmatch(r"cobblers:dungeons/room/([a-z0-9_]+)/([a-z0-9_]+)/s(\d+)/prize/spawn_b([1-6])(?:_\d+)?", site)
+    if m:
+        di = next((i for i, d in enumerate(ds) if d["id"] == m.group(1)), None)
+        return ("prize", di, int(m.group(3)), m.group(2), int(m.group(4)))
+    # the egg room's vendor (its enter) and the bait room's lure (the lure room's lure)
+    m = re.fullmatch(r"cobblers:dungeons/room/([a-z0-9_]+)/([a-z0-9_]+)/s(\d+)/(enter|lure)", site)
+    if m:
+        di = next((i for i, d in enumerate(ds) if d["id"] == m.group(1)), None)
+        return ("vendor" if m.group(4) == "enter" else "lure", di, int(m.group(3)), m.group(2), None)
+    return None
+
+
+# Without it the V15 spawn check could pass on a pack with no spawn site at all (the list would be empty), or with one
+# of the dungeons' trainers or rooms spawning outside it. The expectation is the data's: every slot's boss, every trainer
+# of every stand and gauntlet, every nest, mini-boss and habitat, in every slot of its own dungeon, and nothing else.
 def test_the_spawn_check_sees_every_engine_spawn():
     sites = DA.spawn_sites(FNS)
-    assert sites and all(re.fullmatch(r"cobblers:dungeons/slot/s\d+/spawn", s) for s, _h in sites), sites
-    assert len(sites) == len([f for f in FNS if re.fullmatch(r"cobblers:dungeons/slot/s\d+/spawn", f)])
+    assert sites
+    got = {s: classify_site(s) for s, _h in sites}
+    unexplained = sorted(s for s, c in got.items() if c is None or c not in expected_spawners())
+    assert not unexplained, unexplained
+    missing = expected_spawners() - set(got.values())
+    assert not missing, sorted(missing, key=str)
+    assert len([s for s, c in got.items() if c[0] == "boss"]) == \
+        len([f for f in FNS if re.fullmatch(r"cobblers:dungeons/slot/s\d+/spawn", f)])
 
 
 # ================================================================================================ V15 / E1, behaviour
@@ -200,7 +343,7 @@ def test_the_run_tag_is_on_the_player_at_the_click_and_the_arrival_waits_at_leas
         to_pass_edge(w)
         w.tick(offset)
         t0 = w.gametime
-        click(w, p, "cobblers:dungeons/rip_")
+        click(w, p, "cobblers:dungeons/rip_ns")
         assert TAG in p.tags and p.dim == OW, (offset, p.tags, p.dim)
         assert sigils_held(p) == 0, "the sigil is taken at the click"
         t1 = until(w, lambda: p.dim == POCKET)
@@ -208,23 +351,105 @@ def test_the_run_tag_is_on_the_player_at_the_click_and_the_arrival_waits_at_leas
         assert TAG in p.tags
 
 
-# Without it a stage NPC stands in the slot without claims.exempt_tag until the keeper's backstop a pass later, and a
-# loss to it in that window is the victor-side gap D20 closes (V15: "tags the entity ... in the same function").
+# Without it an NPC or a Pokemon the run spawns stands in the slot without claims.exempt_tag until the keeper's backstop
+# a pass later, and a loss to it in that window is the victor-side gap D20 closes (V15: "tags the entity ... in the
+# same function"); a dungeon Pokemon claims nothing (DUNGEONS.md 2.5). Every site: the boss's stages, each stand's and
+# gauntlet's trainers (show and start), each nest's, mini-boss's and habitat's band spawn, run as the member at the
+# spot the spawn names, for every band and stage it reads.
 @pytest.mark.parametrize("site", [s for s, _h in DA.spawn_sites(FNS)])
 def test_every_npc_an_engine_spawn_makes_carries_the_exempt_tag_when_the_spawn_returns(site):
-    g = int(re.search(r"/s(\d+)/spawn$", site).group(1))
-    for band in range(1, 7):
-        for stage in (1, 2, 3):
+    kind, _di, g, _room, _k = classify_site(site)
+    if kind == "life":
+        # the ambient Pokemon (tools/dungeon_life.py) are DATA in command storage walked by life/s<g>/loop: load the table, put
+        # a room's list for each band into life.cur and run the walker as the member standing by the first spot
+        for band in range(1, 7):
             w = new_world()
             p = player(w)
             p.dim = POCKET
-            p.pos = [90.0, 96.0, 1056.0 + 128 * (g - 1)]
+            w.call("cobblers:dungeons/life/load", PS_ctx(p))
+            table = w.storage["cobblers:dungeons"]["life"]["s%d" % g]
+            key = next(k for k in sorted(table) if k.endswith("v0b%d" % band) and table[k])
+            recs = table[key]
+            spot = recs[0]
+            p.pos = [float(spot["x"]) - 4, float(spot["y"]), float(spot["z"])]
+            for obj, v in (("dg.band", band), ("dg.slot", g), ("dg.run", 1)):
+                w.set(p.name, obj, v)
+            w.set("#s%d" % g, "dg.run", 1)
+            w.storage["cobblers:dungeons"]["life"]["cur"] = [dict(r) for r in recs]
+            w.call(site.replace("/mon", "/loop"), PS_ctx(p))
+            made = [e for e in w.spawned if e.kind == "cobblemon:pokemon"]
+            assert len(made) == len(recs) and not w.npcs, (site, band, len(made), len(recs), w.log)
+            bare = [(e.kind, sorted(e.tags)) for e in made if EXEMPT not in e.tags]
+            assert not bare, (site, band, bare)
+            assert all("dg.s%d" % g in e.tags and "dg.lf" in e.tags for e in made), (site, band, [sorted(e.tags) for e in made])
+        return
+    if kind == "lure":
+        # the bait room's lure (RT-A): one line pair per (bait, band), each gated on the lure holder holding that bait's
+        # index; run as the member for every pair with the holder set, exactly one Pokemon each, exempt and kept
+        pairs = sorted({(m.group(1), int(m.group(2)), int(m.group(3))) for l in DA.body(FNS[site])
+                        for m in [re.search(r"if score (\S+) dg\.rs matches (\d+) if score @s dg\.band matches (\d+) in \S+ run "
+                                            r"function cobblers:dungeons/extras/s\d+/at \{", l)] if m})
+        assert pairs, site
+        for holder, bait, band in pairs:
+            w = new_world()
+            p = player(w)
+            p.dim = POCKET
+            spot = next(m for l in DA.body(FNS[site]) for m in [re.search(r'x:"([-\d.]+)",y:"([-\d.]+)",z:"([-\d.]+)"', l)] if m)
+            p.pos = [float(spot.group(1)) - 4, float(spot.group(2)), float(spot.group(3))]
+            for obj, v in (("dg.band", band), ("dg.slot", g), ("dg.run", 1)):
+                w.set(p.name, obj, v)
+            w.set("#s%d" % g, "dg.run", 1)
+            w.set(holder, "dg.rs", bait)
+            w.call(site, PS_ctx(p))
+            made = [e for e in w.spawned if e.kind == "cobblemon:pokemon"]
+            assert len(made) == 1 and not w.npcs, (site, holder, bait, band, w.log)
+            assert EXEMPT in made[0].tags and KEEP_TAG in made[0].tags and "dg.s%d" % g in made[0].tags, (site, sorted(made[0].tags))
+        return
+    # a pool's other members (PRIZE-POOLS: spawn_b<n>_v<k>, prize/spawn_b<n>_<k>) are their band's too
+    fixed = re.search(r"/spawn_b([1-6])(?:_v?\d+)?$", site)
+    bands = [int(fixed.group(1))] if fixed else range(1, 7)
+    stages = tuple(range(1, 1 + min(len(d["boss"]["stage_level_offsets"]) for d in json.loads((Path(__file__).resolve().parent.parent / "data" / "dungeons.json").read_text(encoding="utf-8"))["dungeons"]))) if kind == "boss" else (1,)
+    # the macro spawn lines this site makes for a band: the boss's per band and stage, a trainer's one per band, a
+    # wild room's band function every line
+    lines = [l for l in DA.body(FNS[site]) if re.search(r"function cobblers:dungeons/(npc_at|wild_at) \{", l)]
+    for band in bands:
+        for stage in stages:
+            w = new_world()
+            p = player(w)
+            p.dim = POCKET
+            # the member stands in the room when it spawns: a full-length slot's rooms run over 1,000 blocks east of
+            # its entry, outside the simulator's load range from x 90, so stand by the first spot the spawn names
+            spot = next(m for l in lines for m in [re.search(r'x:"([-\d.]+)",y:"([-\d.]+)",z:"([-\d.]+)"', l)] if m)
+            p.pos = [float(spot.group(1)) - 4, float(spot.group(2)), float(spot.group(3))]
             for obj, v in (("dg.band", band), ("dg.stage", stage), ("dg.slot", g), ("dg.run", 1)):
                 w.set(p.name, obj, v)
             w.set("#s%d" % g, "dg.run", 1)
+            if kind == "vendor":
+                # a room's enter runs once, the first time the member stands in it: its holder at 0 (the slot's reset)
+                for l in DA.body(FNS[site]):
+                    m = re.fullmatch(r"execute unless score (\S+) dg\.rs matches 0 run return 0", l)
+                    if m:
+                        w.set(m.group(1), "dg.rs", 0)
             w.call(site, PS_ctx(p))
-            assert len(w.npcs) == 1, (site, band, stage, w.log)
-            assert EXEMPT in w.npcs[0].tags, (site, band, stage, w.npcs[0].tags)
+            made = w.npcs + [e for e in w.spawned if e.kind == "cobblemon:pokemon"]
+            if kind in ("wild", "prize"):
+                assert len(made) == len(lines) and not w.npcs, (site, band, len(lines), w.log)
+            elif kind == "vendor":
+                # the room's enter also walks LIFE's animals in (tools/dungeon_life.py): one NPC, the vendor; every
+                # Pokemon the enter made is still held to the exempt tag below
+                assert len(w.npcs) == 1, (site, band, len(w.npcs), w.log)
+            else:
+                assert len(made) == 1 and len(w.npcs) == 1, (site, band, stage, w.log)
+            bare = [(e.kind, sorted(e.tags)) for e in made if EXEMPT not in e.tags]
+            assert not bare, (site, band, stage, bare)
+            if kind == "prize":
+                # the prize is the slot's (its free and the keeper's stale pass discard it), carries the sweep's keep tag
+                # as every run-spawned Pokemon does (engine.sweep: the no-deploy sweep discards any Pokemon without it),
+                # and from legendary_from_band on the Beast Ball key's tag (data/key_ball.json); below it, not
+                assert len(made) == 1, (site, band, len(made))
+                tags = made[0].tags
+                assert "dg.s%d" % g in tags and KEEP_TAG in tags, (site, band, sorted(tags))
+                assert (KEY_TAG in tags) == (band >= LEGENDARY_FROM), (site, band, sorted(tags))
 
 
 def _exit_paths():
@@ -382,6 +607,45 @@ def test_a_stage_spawn_that_does_not_tag_its_npc_is_caught():
     assert w.npcs and EXEMPT not in w.npcs[0].tags
 
 
+def _bare_after(files, site, band):
+    """Drive `site` of a (mutant) pack as test_every_npc_... does; the spawned entities without the exempt tag."""
+    fns = DA.functions(files)
+    _kind, _di, g, _room, _k = classify_site(site)
+    w = new_world(files)
+    p = player(w, files=files)
+    spot = next(m for l in DA.body(fns[site]) for m in [re.search(r'x:"([-\d.]+)",y:"([-\d.]+)",z:"([-\d.]+)"', l)] if m)
+    p.dim, p.pos = POCKET, [float(spot.group(1)) - 4, float(spot.group(2)), float(spot.group(3))]
+    for obj, v in (("dg.band", band), ("dg.stage", 1), ("dg.slot", g), ("dg.run", 1)):
+        w.set(p.name, obj, v)
+    w.set("#s%d" % g, "dg.run", 1)
+    w.call(site, PS_ctx(p))
+    made = w.npcs + [e for e in w.spawned if e.kind == "cobblemon:pokemon"]
+    assert made, (site, w.log)
+    return [e for e in made if EXEMPT not in e.tags]
+
+
+# Without them the stand and wild-room sites of the behaviour test are not shown to bite: a stand whose spawn stops
+# going through the slot's claim, and a room Pokemon bound without the exempt tag, each mutated in the GENERATOR
+# (tools/dungeon_fights.py; data untouched), leave a spawned entity bare (DG-INTEGRATE, 2026-10-09).
+def test_a_stand_trainer_that_skips_the_slots_claim_is_caught(monkeypatch):
+    anchor = '"function %s" % F("slot/s%d/' + 'bind" % slot_g),'
+    mod = mutated("dungeon_fights", anchor, '"# AUDIT MUTANT: the stand skips the slot claim",')
+    monkeypatch.setitem(sys.modules, "dungeon_fights", mod)
+    files = DA.dungeon_files()
+    site = next(s for s, _h in DA.spawn_sites(DA.functions(files)) if s.startswith("cobblers:dungeons/stand/")
+                and s.endswith("/start"))
+    assert _bare_after(files, site, 1)
+
+
+def test_a_room_pokemon_bound_without_the_exempt_tag_is_caught(monkeypatch):
+    anchor = '"tag @s add %s" % slot_tag(g), "tag @s add %s" % exempt,'
+    mod = mutated("dungeon_fights", anchor, '"tag @s add %s" % slot_tag(g),')
+    monkeypatch.setitem(sys.modules, "dungeon_fights", mod)
+    files = DA.dungeon_files()
+    site = next(s for s, _h in DA.spawn_sites(DA.functions(files)) if re.search(r"/spawn_b1$", s))
+    assert _bare_after(files, site, 1)
+
+
 # Without it a respawn handler that removes the run tag (the order E1 forbids) is not shown to be caught: the static
 # remover check and the measured tail both fail.
 def test_removing_the_run_tag_in_the_respawn_handler_is_caught():
@@ -429,7 +693,7 @@ OTHER_MUTANTS = {
     "V1: the slots' rows move into the probe row and the rescue box": ("V1", "meets", (
         'z0 = s["rows_from_z"] + (g - 1) * s["row_spacing"]', 'z0 = -700 + (g - 1) * s["row_spacing"]') + NO_PROBLEMS),
     "V12: the lockout is shorter than the longest clock": ("V12", "under the longest clock", (
-        'lock = e["lockout_ticks"]', 'lock = 40000') + NO_PROBLEMS),
+        'return d.get("lockout_ticks", doc["engine"]["lockout_ticks"])', 'return 40000') + NO_PROBLEMS),
     "C1: the NPC spawn is a plain line": ("C1", "plain line", (
         '"$spawnnpcat $(x) $(y) $(z) $(cls) $(level)"', '"spawnnpcat 0 96 0 cobblers:dg_ns_boss_b1_s1 18"')),
     "sigils: the predicate is the int form": ("sigils", "not the byte form", (
@@ -453,7 +717,7 @@ def test_a_crafted_sigil_opens_the_rip_and_the_int_form_would_not():
         w = new_world(files)
         p = player(w, files=files)
         to_pass_edge(w)
-        click(w, p, "cobblers:dungeons/rip_")
+        click(w, p, "cobblers:dungeons/rip_ns")
         assert (score(w, p, "dg.st") == 1) == opens and (sigils_held(p) == 0) == opens, (opens, p.inventory)
 
 
@@ -461,7 +725,7 @@ def test_a_crafted_sigil_opens_the_rip_and_the_int_form_would_not():
 
 
 # Without it the clock could fall at the wrong speed at some ladder rate (DUNGEONS.md 2.1: each pass subtracts 20 x
-# rate quarter-ticks; the rates 4, 5, 6, 8, 12).
+# rate tenth-ticks; a sample of the rates 10..30).
 @pytest.mark.parametrize("rate", DA.DESIGN_RATES)
 def test_the_clock_falls_twenty_ticks_of_its_rate_each_pass(rate):
     w = new_world()
@@ -476,18 +740,19 @@ def test_the_clock_falls_twenty_ticks_of_its_rate_each_pass(rate):
         assert score(w, p, "dg.clock") == 100000 - n * PASS * rate, (rate, n, score(w, p, "dg.clock"))
 
 
-# Without it the greed ladder could change the rate at the wrong count (D13: x1.25 at 5, x1.5 at 10, x2 at 15, x3 at
-# 20, holding).
-def test_the_greed_ladder_sets_the_owners_rates():
-    want = {1: 4, 4: 4, 5: 5, 9: 5, 10: 6, 14: 6, 15: 8, 19: 8, 20: 12, 30: 12}
+# Without it the greed rate could change at the wrong points (the owner, 2026-10-10, replacing D13's ladder: 20 coal
+# or a diamond is 1 point, every 2 points is +0.1x; x3 the most, never falling). One coal is 5 cp, so 40 coal is x1.1.
+def test_the_greed_rate_follows_the_owners_points():
     w = new_world()
     p = player(w)
     enter(w, p)
     cross(w, p)
-    for n in range(1, 31):
-        w.call("cobblers:dungeons/greed/take", PS_ctx(p))
-        if n in want:
-            assert score(w, p, "dg.rate") == want[n], (n, score(w, p, "dg.rate"))
+    for n in range(1, 801):
+        w.set("#gv", "dg.t", 5)                                # one coal's worth (the owner's 20 coal = 1 point)
+        w.call("cobblers:dungeons/greed/add", PS_ctx(p))
+        if n % 20 == 0:
+            want = min(30, 10 + (n // 20) // 2)
+            assert score(w, p, "dg.rate") == want, (n, score(w, p, "dg.rate"))
 
 
 # Without it a player could be killed mid-battle at 0, or killed while the NPC payout's clawback still measures
@@ -504,7 +769,9 @@ def test_at_zero_in_battle_the_kill_waits_for_the_battle_and_the_clawback():
     assert not p.dead and score(w, p, "dg.clock") == 0 and score(w, p, "dg.st") == 4
     w.battle.discard(p.name)
     w.set(p.name, "dg.claw", 1)
-    w.tick(PASS * 3)
+    # dg.claw is 1 only between a win's callback and the start of the next tick (claw/tick resolves it, unit DG-CLAW),
+    # so the wait is asked of the kill's own function directly: ticking would let the clawback finish first
+    w.call("cobblers:dungeons/m/timeout", PS_ctx(p))
     assert not p.dead
     w.set(p.name, "dg.claw", 0)
     w.tick(PASS)
@@ -514,7 +781,7 @@ def test_at_zero_in_battle_the_kill_waits_for_the_battle_and_the_clawback():
 
 # Without it a logout pauses the clock (D15): the absence is charged on return at the player's rate, so after the
 # first pass back the clock is lower by every tick since the last pass they were seen, times the rate.
-@pytest.mark.parametrize("rate", (4, 12))
+@pytest.mark.parametrize("rate", (10, 30))
 @pytest.mark.parametrize("away_passes", (1, 7))
 def test_a_logout_charges_every_tick_away_at_the_players_rate(rate, away_passes):
     w = new_world()
@@ -541,9 +808,9 @@ def test_an_absent_players_slot_is_freed_at_their_deadline_and_not_before():
     enter(w, p)
     cross(w, p)
     to_pass_edge(w)
-    w.set(p.name, "dg.clock", 130 * 4 + PASS * 4)              # one more pass, present, takes 20 ticks
+    w.set(p.name, "dg.clock", 130 * DA.UNITS_PER_TICK + PASS * DA.UNITS_PER_TICK)              # one more pass, present, takes 20 ticks
     w.tick(PASS)
-    assert score(w, p, "dg.clock") == 130 * 4
+    assert score(w, p, "dg.clock") == 130 * DA.UNITS_PER_TICK
     p.online = False
     w.tick(PASS * 6)
     assert w.get("#s1", "dg.own") == score(w, p, "dg.id")
@@ -573,7 +840,7 @@ def test_a_return_to_a_dead_run_is_killed_first_on_the_first_pass():
     w.tick(PASS)
     assert a.dead
     mine = [c for c, who in w.calls[mark:] if who == a.name]
-    assert mine[:4] == ["cobblers:dungeons/m/member", "cobblers:dungeons/m/gap", "cobblers:dungeons/m/void",
+    assert mine[:4] == ["cobblers:dungeons/slot/s1/member", "cobblers:dungeons/m/gap", "cobblers:dungeons/slot/s1/void",
                         "cobblers:dungeons/m/deadkill"], mine
     assert TAG in w.deaths[-1]["tags"] and not b.dead and b.dim == POCKET
     w.tick(1)
@@ -595,15 +862,15 @@ def test_the_lockout_counts_an_hour_of_uptime_and_ignores_game_time():
     p.inventory.append(crafted_sigil(1))
     w.gametime += 50_000_000                        # /time set, a re-export: game time leaps
     w.tick(1)
-    click(w, p, "cobblers:dungeons/rip_")
+    click(w, p, "cobblers:dungeons/rip_ns")
     assert score(w, p, "dg.st") == 0 and sigils_held(p) == 1, "refused, sigil kept"
     until(w, lambda: w.get("#up", "dg.up") - stamp >= 72000 - PASS, 80000)
     to_pass_edge(w)
-    click(w, p, "cobblers:dungeons/rip_")
+    click(w, p, "cobblers:dungeons/rip_ns")
     assert score(w, p, "dg.st") == 0, "still refused one pass before the hour"
     w.tick(PASS)
     assert w.get("#up", "dg.up") - stamp == 72000
-    click(w, p, "cobblers:dungeons/rip_")
+    click(w, p, "cobblers:dungeons/rip_ns")
     assert score(w, p, "dg.st") == 1 and TAG in p.tags
 
 
@@ -658,7 +925,7 @@ def test_a_refunded_sigil_is_the_crafted_one_and_opens_the_rip_again():
     (s,) = [s for s in p.inventory if "cobblers_dg_sigil" in s[1]]
     assert s[:2] == crafted_sigil(1)[:2]
     w.tick(PASS * 7)                                # the tail ends
-    click(w, p, "cobblers:dungeons/rip_")
+    click(w, p, "cobblers:dungeons/rip_ns")
     assert score(w, p, "dg.st") == 1 and sigils_held(p) == 0
 
 
@@ -685,11 +952,9 @@ def test_a_player_whose_slot_was_freed_never_resumes_a_run_in_it():
 
 
 # Without it the design's "dungeon wins pay $0 net" (DUNGEONS.md 11.4 new contracts) is silently untrue: a won boss
-# stage is an NPC win, and CobbleDollars credits it (earnCobbleDollarsFromNPC true). Nothing in the pack measures a
-# clawback: dg.claw is never set to 1. Size today: tools/dungeon_audit.py --payout (band 1 $202-$405 a run, band 6
-# $11,062-$22,125), once an hour per player and dungeon.
-@pytest.mark.xfail(strict=True, reason="DEFECT (known, step 6): a won boss stage keeps CobbleDollars' NPC payout; "
-                                       "no function starts the dg.claw clawback")
-def test_a_won_boss_stage_pays_nothing_net():
+# stage is an NPC win, and CobbleDollars credits it (earnCobbleDollarsFromNPC true). This was a strict xfail until unit
+# DG-CLAW built the clawback (tools/dungeon_fights.py; tests/test_dungeon_fights.py is its real test). Size without it:
+# tools/dungeon_audit.py --payout.
+def test_a_won_boss_stage_pays_nothing_net():      # the defect closed by unit DG-CLAW (tools/dungeon_fights.py)
     assert DA.boss_payouts(DG) is None or any(
         re.search(r"scoreboard players set @s dg\.claw [1-9]", l) for ls in FNS.values() for l in DA.body(ls))

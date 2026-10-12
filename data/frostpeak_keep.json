@@ -19,8 +19,9 @@
     "measured": "see docs/world-building/FROSTPEAK_KEEP.md"
   },
   "dims": {
-    "wall_hu": 24,
+    "wall_hu": 32,
     "wall_hv": 20,
+    "wall_hv_north": 28,
     "wall_thick": 3,
     "wall_walk": 10,
     "wall_parapet": 12,
@@ -44,10 +45,12 @@
     "spire_floor": 46,
     "spire_wall_top": 54,
     "turret_half": 2,
-    "base_hu": 28,
+    "base_hu": 36,
     "base_hv": 24,
+    "base_hv_north": 32,
     "batter": 1.0,
-    "batter_reach": 40
+    "batter_reach": 40,
+    "courtyard_why": "2026-10-09, the owner: \"Make the castle have a bigger courtyard\". The Strand's boundary closes the south side at z660 (the base rectangle's south edge already lies on it), so the courtyard grows to the sides and north: the curtain wall from 49 x 41 to 65 x 49 (wall_hu 24 -> 32; north half wall_hv_north 28, south half wall_hv 20 as before), the base rectangle from x1520-1576 z612-660 to x1512-1584 z604-660 (base_hu 36, base_hv_north 32). Measured on tools/ground.py: every edge column of the new rectangle lies in frostpeak_strand's polygon (x1585 at z660 would not), and its highest ground is still y127, so the courtyard floor and the spire's height do not move. The keep, the spire and the centre (1548, 636) are unchanged; the north side's crag grows (the ground under the north edge is y101)."
   },
   "palette": {
     "wall": [
@@ -218,5 +221,346 @@
       "minecraft:tuff",
       "minecraft:tuff_bricks"
     ]
+  },
+  "ruin": {
+    "why": "2026-10-09, the owner: \"Make the castle have a bigger courtyard and be semi destroyed.\" What brought it down is Giratina (giratina below; the owner the same day: \"move it to the castle in the north ... he just lives in the castle\"): the winter it came, the cold and the dark split the stone, the north-east tower went, two turrets of the keep and the keep's north-west corner with them, and the people who had kept the keep fled across to Mt Vessu's face (data/frostpeak_keep_quest.json burrow). Every cut and heap is deterministic (tools/frostpeak_keep.py ruin(), unit() noise), so a rebuild writes the same ruin. Coordinates are (u east, v south) from the site centre, as dims.",
+    "spire_rule": "nothing here touches the spire (tools/frostpeak_keep.py in_spire: the shaft and chamber |u|,|v-keep_cv| <= spire_half up to spire_wall_top + 1, the cone one wider above): it is the landmark from Highwire and stays whole; the sightline is re-measured in docs/world-building/FROSTPEAK_KEEP.md section 1.",
+    "corner_tower": {
+      "corner": [
+        1,
+        -1
+      ],
+      "stump": [
+        4,
+        12
+      ],
+      "why": "the north-east corner tower, the one nearest Giratina's lair: its cone and its walls above a jagged stump of ry 4-12 are gone, and its stones lie in the courtyard's north-east corner and outside the wall."
+    },
+    "turrets": [
+      {
+        "corner": [
+          1,
+          1
+        ],
+        "stump": 31,
+        "why": "the keep's south-east turret, the one that faces Highwire: a one-course stump over the roof, so from the shelf the keep shows its other turret cones and a gap, and reads as broken while the spire stands."
+      },
+      {
+        "corner": [
+          -1,
+          -1
+        ],
+        "stump": 30,
+        "why": "the north-west turret went with the corner of the roof under it (keep_corner)."
+      }
+    ],
+    "keep_corner": {
+      "u": [
+        -9,
+        -6
+      ],
+      "v": [
+        -5,
+        0
+      ],
+      "down_to": [
+        22,
+        27
+      ],
+      "debris_u": [
+        -6,
+        -4
+      ],
+      "debris_v": [
+        -2,
+        0
+      ],
+      "why": "the keep's north-west corner: its walls cut to a jagged line ry 22-27 (at least two courses over the loft floor at ry 20, so nobody walks out of the loft) and the roof over that corner gone, so the loft is open to the sky there; the roof's fall lies one or two high on the loft floor in that corner, clear of both stair strips (the loft's flights run on u -6..-5 below the floor and u 5..6 above it)."
+    },
+    "breaches": [
+      {
+        "wall": "west",
+        "along": [
+          -14,
+          -4
+        ],
+        "floor": 0,
+        "slope": 1.0,
+        "why": "a gap to the courtyard floor in the middle of the west wall: a second way in, over its rubble"
+      },
+      {
+        "wall": "north",
+        "along": [
+          15,
+          25
+        ],
+        "floor": 3,
+        "slope": 0.9,
+        "why": "the north wall east of the gatehouse, broken down to ry 3-8"
+      },
+      {
+        "wall": "east",
+        "along": [
+          -24,
+          -14
+        ],
+        "floor": 2,
+        "slope": 1.0,
+        "why": "the east wall beside the fallen tower"
+      },
+      {
+        "wall": "south",
+        "along": [
+          9,
+          23
+        ],
+        "floor": 6,
+        "slope": 0.7,
+        "why": "the south wall's walk and parapet gone east of the keep; the wall stands to ry 6-11"
+      }
+    ],
+    "rubble": [
+      {
+        "at": [
+          24,
+          -21
+        ],
+        "r": 6,
+        "h": 4,
+        "why": "the north-east tower's fall, inside"
+      },
+      {
+        "at": [
+          34,
+          -30
+        ],
+        "r": 4,
+        "h": 3,
+        "why": "and outside it"
+      },
+      {
+        "at": [
+          -26,
+          -9
+        ],
+        "r": 4,
+        "h": 2,
+        "why": "the west breach, inside"
+      },
+      {
+        "at": [
+          -33,
+          -9
+        ],
+        "r": 3,
+        "h": 2,
+        "why": "and outside"
+      },
+      {
+        "at": [
+          20,
+          -23
+        ],
+        "r": 3,
+        "h": 2,
+        "why": "the north breach, inside"
+      },
+      {
+        "at": [
+          20,
+          -31
+        ],
+        "r": 3,
+        "h": 2,
+        "why": "and outside"
+      },
+      {
+        "at": [
+          34,
+          -19
+        ],
+        "r": 3,
+        "h": 2,
+        "why": "the east breach, outside"
+      },
+      {
+        "at": [
+          -12,
+          -8
+        ],
+        "r": 4,
+        "h": 3,
+        "why": "the keep's north-west corner and turret, fallen into the courtyard"
+      },
+      {
+        "at": [
+          13,
+          13
+        ],
+        "r": 3,
+        "h": 2,
+        "why": "the south-east turret's fall, beside the keep"
+      },
+      {
+        "at": [
+          -20,
+          -18
+        ],
+        "r": 2,
+        "h": 1,
+        "why": "scatter"
+      },
+      {
+        "at": [
+          10,
+          -20
+        ],
+        "r": 2,
+        "h": 1,
+        "why": "scatter"
+      }
+    ],
+    "keep_clear": [
+      [
+        -3,
+        -32,
+        3,
+        -5
+      ],
+      [
+        -17,
+        12,
+        -11,
+        24
+      ],
+      [
+        -14,
+        -3,
+        -10,
+        1
+      ],
+      [
+        -29,
+        -26,
+        -25,
+        -22
+      ],
+      [
+        -29,
+        14,
+        -25,
+        18
+      ],
+      [
+        25,
+        14,
+        29,
+        18
+      ],
+      [
+        -10,
+        -25,
+        -6,
+        -21
+      ],
+      [
+        6,
+        -25,
+        10,
+        -21
+      ]
+    ],
+    "keep_clear_why": "boxes (u0, v0, u1, v1) no rubble covers: the gate's way to the keep door (and the keep door), the postern lane, the well, the courtyard doors of the three standing corner towers and of the two gatehouse towers. Giratina's lair clears itself (nest.clear_r).",
+    "rubble_blocks": [
+      [
+        "minecraft:cobblestone",
+        0.3
+      ],
+      [
+        "minecraft:cobbled_deepslate",
+        0.25
+      ],
+      [
+        "minecraft:cracked_stone_bricks",
+        0.15
+      ],
+      [
+        "minecraft:cracked_deepslate_bricks",
+        0.1
+      ],
+      [
+        "minecraft:gravel",
+        0.1
+      ],
+      [
+        "minecraft:stone_bricks",
+        0.1
+      ]
+    ],
+    "frost_share": 0.45,
+    "frost_blocks": [
+      [
+        "minecraft:packed_ice",
+        0.5
+      ],
+      [
+        "minecraft:snow_block",
+        0.5
+      ]
+    ],
+    "frost_why": "frost and ice over the damage: nearly half the rubble heaps' top blocks are packed ice or snow block, the west wind's rime (palette.rime_share) still plasters the broken faces, and the snow pass lays layers on the rest.",
+    "nest": {
+      "at": [
+        17,
+        -15
+      ],
+      "r": 6,
+      "clear_r": 4,
+      "ice": [
+        [
+          "minecraft:packed_ice",
+          0.55
+        ],
+        [
+          "minecraft:blue_ice",
+          0.25
+        ],
+        [
+          "minecraft:snow_block",
+          0.2
+        ]
+      ],
+      "spike_block": "minecraft:packed_ice",
+      "spikes": [
+        [
+          22,
+          -17,
+          4
+        ],
+        [
+          21,
+          -11,
+          3
+        ],
+        [
+          13,
+          -19,
+          5
+        ],
+        [
+          12,
+          -12,
+          2
+        ],
+        [
+          19,
+          -20,
+          3
+        ]
+      ],
+      "why": "where Giratina lies: the north courtyard's east half, between the fallen tower and the keep, its floor gone to ice for six blocks round and its frost thrown up in five packed-ice spikes. Measured from the record: 17 blocks from the gate-to-keep-door line (u 0) at its nearest, 19.2 from the keep door, 19.7 from the inside of the gate, so a player walking from the gate to the keep passes it outside its wake radius (data/frostpeak_keep_quest.json giratina.trigger_radius) and sees it lying there.",
+      "clear_h": 9,
+      "clear_why": "Giratina (Altered) is 4.5 wide and 6.5 tall at base scale, times baseScale 1.1 (data/cobblemon/species_additions/giratina.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar): about 5 x 7.2 blocks. Nothing stands within 4 of its spot up to ry 9; the spikes are 5.4-5.8 out."
+    }
   }
 }

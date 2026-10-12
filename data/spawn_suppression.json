@@ -98,9 +98,9 @@
         1592,
         2856,
         1631,
-        2895
+        2911
       ],
-      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Misty's gym (gym2_misty_gym, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Misty's gym (gym2_misty_gym, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share. Extended 2026-10-09 from z2895 to z2911 (still 8-grid: 2912 is a multiple of 8) to hold the way out past Misty, the stair-house of data/gym_arenas/gym2.json exit_passages (x1594..1596, z2896..2907): the strip x1592..1631 z2896..2911 is the lake's north shore, so no wild Pokemon spawns there either. Kept at z2911 when the template came down for the walk-through hall (2026-10-09): the stair was dropped, but the hall's door past Misty opens onto this shore at (1622, 2892).",
       "mechanism": "as the League precinct's",
       "not_covered": "Pokemon a player sends out, and the gym's own trainers"
     },
@@ -263,6 +263,18 @@
       "why": "the owner, 2026-10-05: \"disable spawns inside heavens arena\". The dome (data/arena_dome.json site: centre (3586, 3164) r34, so x3552-3620, z3130-3198) and its entrance tower (tower.box to z3203), snapped out to the 8-block grid the route boxes share. Clear of the mouth plaza keep-clear (z3064-3124).",
       "mechanism": "tools/compile_spawns.py cuts it out of every route, sub-region and waterway pool, and tools/suppress_inherited_spawns.py adds it to the inherited pools' anticondition boxes, so neither the campaign's rosters nor Cobblemon's and Cobbleverse's defaults spawn inside it",
       "not_covered": "Pokemon a player sends out, the arena's own NPC opponents (tools/arena_runtime.py), and anything a trainer spawner or scripted event puts there"
+    },
+    {
+      "id": "wardenhold_burrow",
+      "box": [
+        1824,
+        720,
+        1871,
+        759
+      ],
+      "why": "the owner, 2026-10-09: the burrow is \"clear of spawns\". The burrow's x/z (mouth x1827 to the watch room x1865, z721-751) snapped out to the 8-block grid the route boxes share (data/spawn_suppression.json league_precinct's rule). The boxes are x/z only, so the face over it is spawn-free too. Recorded in data/frostpeak_keep_quest.json burrow.spawn_free_zone.",
+      "mechanism": "tools/compile_spawns.py cuts it out of every route, sub-region and waterway pool, and tools/suppress_inherited_spawns.py adds it to the inherited pools' anticondition boxes, so neither the campaign's rosters nor Cobblemon's and Cobbleverse's defaults spawn inside it",
+      "not_covered": "Pokemon a player sends out, and anything a trainer spawner or scripted event puts there"
     }
   ]
 }

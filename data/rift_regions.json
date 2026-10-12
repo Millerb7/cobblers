@@ -8,7 +8,7 @@
   "label_text": "The owner's annotation writes each region's name across it in the same black the outlines use, so a flood fill stops at the letters and they survive as islands inside the region. Carved, that left 'the deep (town)' standing in rock in the middle of the chamber (found on the owner's map, 2026-09-22). Every tracer must fill the holes; tools/rift_deep.py fill_holes does, and columns_with_label_holes keeps what each count was before."
  },
  "owner_intent": [
-  "The Deep sits very low in the ground: almost a futuristic city fuelled by the Rift. It hosts the evil group's HQ, among other things.",
+  "The Deep sits very low in the ground: almost a futuristic city fuelled by the Rift. It hosts the Haven Compact's HQ, among other things.",
   "A tunnel runs from the Deep up to the Elite Four: it acts as Victory Road, where trainers stand.",
   "The entrance to the Elite Four is sealed off unless you go through the town first.",
   "A physical edge between the excavation site and the relic area and shrine stops new players.",
@@ -90,7 +90,7 @@
     "median": 83,
     "max": 112
    },
-   "role": "town: a sunken city fuelled by the Rift; the evil group's HQ; the start of the tunnel",
+   "role": "town: a sunken city fuelled by the Rift; the Haven Compact's HQ; the start of the tunnel",
    "floor_y": 0,
    "floor_y_why": "The owner, 2026-09-22, having flown the whole Rift: the earlier y40 becomes y0. Measured in world at the Deep's centre (3603, 3222): the surface is y83, the build floor is y-64 and the bottom layer is bedrock, so a floor at y0 leaves 83 blocks of rock overhead and 64 below for the cavern's shell. At y40 the cover was 43.",
    "measured_in_world": {

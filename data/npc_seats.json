@@ -32,6 +32,304 @@
       }
     },
     {
+      "id": "npc_compact_courier_ansel",
+      "conversation": "dlg_compact_courier_ansel",
+      "at": [
+        1742,
+        109,
+        2900
+      ],
+      "yaw": -135,
+      "ground": {
+        "kind": "heightmap",
+        "y": 108,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the walked line at (1745, 2897), 4.2 blocks off",
+      "why": "CP-01 The Courier's Spar (data/compact_routes.json): route_02_brock_to_misty, the last stretch before Lake Viltri (fraction 0.84 of the walked line, measured)"
+    },
+    {
+      "id": "npc_compact_mila_aster",
+      "conversation": "dlg_compact_mila_aster",
+      "at": [
+        1737,
+        108,
+        2896
+      ],
+      "yaw": -51,
+      "ground": {
+        "kind": "heightmap",
+        "y": 107,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "npc_compact_courier_ansel at (1742, 2900)",
+      "why": "CP-01 The Courier's Spar (data/compact_routes.json): route_02_brock_to_misty, the last stretch before Lake Viltri (fraction 0.84 of the walked line, measured)"
+    },
+    {
+      "id": "npc_compact_nia_landing",
+      "conversation": "dlg_compact_nia_landing",
+      "settlement": "gym2_town",
+      "at": [
+        1617,
+        108,
+        2822
+      ],
+      "yaw": -172,
+      "ground": {
+        "kind": "plaza",
+        "y": 107,
+        "source": "data/placements.json gym2_town plan.plaza"
+      },
+      "faces": "the point (1620, 2800)",
+      "why": "CP-02 Landing Night (data/compact_routes.json): gym2_town Viltri Quay, the plaza (data/placements.json gym2_town plaza rect, y107)"
+    },
+    {
+      "id": "npc_compact_tomas_landing",
+      "conversation": "dlg_compact_tomas_landing",
+      "settlement": "gym2_town",
+      "at": [
+        1628,
+        108,
+        2822
+      ],
+      "yaw": 160,
+      "ground": {
+        "kind": "plaza",
+        "y": 107,
+        "source": "data/placements.json gym2_town plan.plaza"
+      },
+      "faces": "the point (1620, 2800)",
+      "why": "CP-02 Landing Night (data/compact_routes.json): gym2_town Viltri Quay, the plaza (data/placements.json gym2_town plaza rect, y107)"
+    },
+    {
+      "id": "npc_compact_ranger_halloran",
+      "conversation": "dlg_compact_ranger_halloran",
+      "settlement": "merian_hut",
+      "at": [
+        2809,
+        108,
+        1102
+      ],
+      "yaw": -90,
+      "ground": {
+        "kind": "heightmap",
+        "y": 107,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "npc_compact_surveyor_marn at (2817, 1102)",
+      "why": "CP-05 Survey of an Empty Cirque (data/compact_routes.json): the Merian cirque path (data/placements.json merian_hut streets cirque_path, 2813 x, from z1222 to z1040), at the settlement's centre z1102"
+    },
+    {
+      "id": "npc_compact_surveyor_marn",
+      "conversation": "dlg_compact_surveyor_marn",
+      "settlement": "merian_hut",
+      "at": [
+        2817,
+        108,
+        1102
+      ],
+      "yaw": 90,
+      "ground": {
+        "kind": "heightmap",
+        "y": 107,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "npc_compact_ranger_halloran at (2809, 1102)",
+      "why": "CP-05 Survey of an Empty Cirque (data/compact_routes.json): the Merian cirque path (data/placements.json merian_hut streets cirque_path, 2813 x, from z1222 to z1040), at the settlement's centre z1102"
+    },
+    {
+      "id": "npc_compact_nia_pause",
+      "conversation": "dlg_compact_nia_pause",
+      "settlement": "gym4_town",
+      "at": [
+        4297,
+        111,
+        1556
+      ],
+      "yaw": -90,
+      "ground": {
+        "kind": "plaza",
+        "y": 110,
+        "source": "data/placements.json gym4_town plan.plaza"
+      },
+      "faces": "the middle of the plaza at (4310, 1556)",
+      "why": "CP-06 The Pause Vote (data/compact_routes.json): gym4_town Greenhollow, the green (data/placements.json gym4_town plaza)"
+    },
+    {
+      "id": "npc_compact_dev_aster",
+      "conversation": "dlg_compact_dev_aster",
+      "settlement": "gym4_town",
+      "at": [
+        4323,
+        111,
+        1556
+      ],
+      "yaw": 90,
+      "ground": {
+        "kind": "plaza",
+        "y": 110,
+        "source": "data/placements.json gym4_town plan.plaza"
+      },
+      "faces": "the middle of the plaza at (4310, 1556)",
+      "why": "CP-06 The Pause Vote (data/compact_routes.json): gym4_town Greenhollow, the green (data/placements.json gym4_town plaza)"
+    },
+    {
+      "id": "npc_compact_sergeant_dorrin",
+      "conversation": "dlg_compact_sergeant_dorrin",
+      "settlement": "gym4_town",
+      "at": [
+        4310,
+        111,
+        1528
+      ],
+      "yaw": 0,
+      "ground": {
+        "kind": "plaza",
+        "y": 110,
+        "source": "data/placements.json gym4_town plan.plaza"
+      },
+      "faces": "the middle of the plaza at (4310, 1556)",
+      "why": "CP-06 The Pause Vote (data/compact_routes.json): gym4_town Greenhollow, the green (data/placements.json gym4_town plaza)"
+    },
+    {
+      "id": "npc_compact_varga_2",
+      "conversation": "dlg_compact_varga_2",
+      "at": [
+        4417,
+        114,
+        2200
+      ],
+      "yaw": -135,
+      "ground": {
+        "kind": "heightmap",
+        "y": 113,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the walked line at (4421, 2196), 5.7 blocks off",
+      "why": "CP-07 The Anchor Pull (data/compact_routes.json): route_05_erika_to_koga, the wet ground toward glacial_tear (fractions 0.60 to 0.72 of the walked line)"
+    },
+    {
+      "id": "npc_compact_camp_warden",
+      "conversation": "dlg_compact_camp_warden",
+      "at": [
+        5544,
+        120,
+        2973
+      ],
+      "yaw": 0,
+      "ground": {
+        "kind": "heightmap",
+        "y": 119,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the walked line at (5544, 2977), 4.0 blocks off",
+      "why": "CP-09 The Waiting Camp (data/compact_routes.json): route_06_koga_to_sabrina through Marsh Creek (fraction 0.58 of the walked line)"
+    },
+    {
+      "id": "npc_compact_camp_mother",
+      "conversation": "dlg_compact_camp_mother",
+      "at": [
+        5539,
+        120,
+        2969
+      ],
+      "yaw": -51,
+      "ground": {
+        "kind": "heightmap",
+        "y": 119,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "npc_compact_camp_warden at (5544, 2973)",
+      "why": "CP-09 The Waiting Camp (data/compact_routes.json): route_06_koga_to_sabrina through Marsh Creek (fraction 0.58 of the walked line)"
+    },
+    {
+      "id": "npc_compact_boarding_hask",
+      "conversation": "dlg_compact_boarding_hask",
+      "at": [
+        6051,
+        81,
+        3598
+      ],
+      "yaw": 0,
+      "ground": {
+        "kind": "heightmap",
+        "y": 80,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the point (6051, 3612)",
+      "why": "CP-10 The Requisitioned Boat (data/compact_routes.json): gym6_town's lake dock (data/ferry_docks.json tilpey_sabrina_dock, near (6051, 3610)), on the landward approach"
+    },
+    {
+      "id": "npc_compact_bridge_guard",
+      "conversation": "dlg_compact_bridge_guard",
+      "at": [
+        6624,
+        79,
+        3866
+      ],
+      "yaw": -39,
+      "ground": {
+        "kind": "heightmap",
+        "y": 78,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the point (6632, 3876)",
+      "why": "CP-11 The Bridge Checkpoint (data/compact_routes.json): route_07_sabrina_to_blaine, the north approach to the outflow bridge (data/bridges.json route7_tilpey_outflow: centre x6632, walkway x6630-6634, z3880 to z3960)"
+    },
+    {
+      "id": "npc_compact_varga_3",
+      "conversation": "dlg_compact_varga_3",
+      "at": [
+        6640,
+        79,
+        3866
+      ],
+      "yaw": 39,
+      "ground": {
+        "kind": "heightmap",
+        "y": 78,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the point (6632, 3876)",
+      "why": "CP-11 The Bridge Checkpoint (data/compact_routes.json): route_07_sabrina_to_blaine, the north approach to the outflow bridge (data/bridges.json route7_tilpey_outflow: centre x6632, walkway x6630-6634, z3880 to z3960)"
+    },
+    {
+      "id": "npc_compact_varga_4",
+      "conversation": "dlg_compact_varga_4",
+      "settlement": "tableland_stop",
+      "at": [
+        4849,
+        162,
+        5690
+      ],
+      "yaw": 90,
+      "ground": {
+        "kind": "plaza",
+        "y": 161,
+        "source": "data/placements.json tableland_stop plan.plaza"
+      },
+      "faces": "the middle of the plaza at (4843, 5690)",
+      "why": "CP-13 The Rearguard (data/compact_routes.json): tableland_stop Redbrow's yard (data/placements.json tableland_stop plaza rect, y161; the settlement centre (4876, 5729) is the footprint's, not the yard)"
+    },
+    {
+      "id": "npc_compact_dissenter_medic",
+      "conversation": "dlg_compact_dissenter_medic",
+      "settlement": "tableland_stop",
+      "at": [
+        4837,
+        162,
+        5690
+      ],
+      "yaw": -90,
+      "ground": {
+        "kind": "plaza",
+        "y": 161,
+        "source": "data/placements.json tableland_stop plan.plaza"
+      },
+      "faces": "the middle of the plaza at (4843, 5690)",
+      "why": "CP-13 The Rearguard (data/compact_routes.json): tableland_stop Redbrow's yard (data/placements.json tableland_stop plaza rect, y161; the settlement centre (4876, 5729) is the footprint's, not the yard)"
+    },
+    {
       "id": "npc_main_surge_signal_clerk",
       "conversation": "dlg_main_surge_signal_clerk",
       "settlement": "gym3_town",

@@ -7998,6 +7998,102 @@
       },
       "status": "planned",
       "why": "data/rookery.json colony: written by tools/rookery.py records --write from its model, in rock its build pass writes (the mimic is that rock). Keeps up to 3 of the colony alive within 16, the elder nests' and Driftmouth Isle's settings; cancel_range -1, so the strait's own spawns continue. 34 blocks from the Gullmother's anchor, the nearest the nest rule allows. Over-water ACTIVATED spawning is not verified"
+    },
+    {
+      "id": "scar_tarn_waters_west_ward",
+      "place": "the Scar Tarn (data/scar_tarn.json): the bed of the tarn's west dip",
+      "pool": "cobblers:scar_tarn_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1984,
+        "y": 228,
+        "z": 726
+      },
+      "mimic": "minecraft:mud",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 1
+      },
+      "status": "planned",
+      "why": "written by tools/scar_tarn.py records --write from the plan (data/scar_tarn.json wards). An activated block keeps up to 1 of the pool alive within 16 blocks and refills as they are beaten, caught or despawn; the pool's entries carry modifiers \"alpha=true\", so what it keeps is a wild ALPHA (owner, 2026-10-11: alpha mons taken over the afflicted ground). cancel_range -1: Mt Vessu's own spawns continue round it. Stands in a cell the pack writes (minecraft:mud), so the pack runs BEFORE R9E. UNPROVEN in game: that the habitat spawn carries the alpha (read from the jar's bytecode, data/scar_tarn.json alphas.how).",
+      "mimic_why": "the block the pack writes at that position: the bed of the tarn's west dip"
+    },
+    {
+      "id": "scar_tarn_waters_east_ward",
+      "place": "the Scar Tarn (data/scar_tarn.json): the bed of the tarn's east dip",
+      "pool": "cobblers:scar_tarn_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2011,
+        "y": 229,
+        "z": 707
+      },
+      "mimic": "minecraft:mud",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 1
+      },
+      "status": "planned",
+      "why": "written by tools/scar_tarn.py records --write from the plan (data/scar_tarn.json wards). An activated block keeps up to 1 of the pool alive within 16 blocks and refills as they are beaten, caught or despawn; the pool's entries carry modifiers \"alpha=true\", so what it keeps is a wild ALPHA (owner, 2026-10-11: alpha mons taken over the afflicted ground). cancel_range -1: Mt Vessu's own spawns continue round it. Stands in a cell the pack writes (minecraft:mud), so the pack runs BEFORE R9E. UNPROVEN in game: that the habitat spawn carries the alpha (read from the jar's bytecode, data/scar_tarn.json alphas.how).",
+      "mimic_why": "the block the pack writes at that position: the bed of the tarn's east dip"
+    },
+    {
+      "id": "scar_tarn_grove_north_ward",
+      "place": "the Scar Tarn (data/scar_tarn.json): the tarn's north-east bank, in the spruce",
+      "pool": "cobblers:scar_tarn_grove",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2040,
+        "y": 248,
+        "z": 684
+      },
+      "mimic": "minecraft:moss_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 2
+      },
+      "status": "planned",
+      "why": "written by tools/scar_tarn.py records --write from the plan (data/scar_tarn.json wards). An activated block keeps up to 2 of the pool alive within 16 blocks and refills as they are beaten, caught or despawn; the pool's entries carry modifiers \"alpha=true\", so what it keeps is a wild ALPHA (owner, 2026-10-11: alpha mons taken over the afflicted ground). cancel_range -1: Mt Vessu's own spawns continue round it. Stands in a cell the pack writes (minecraft:moss_block), so the pack runs BEFORE R9E. UNPROVEN in game: that the habitat spawn carries the alpha (read from the jar's bytecode, data/scar_tarn.json alphas.how).",
+      "mimic_why": "the block the pack writes at that position: the tarn's north-east bank, in the spruce"
+    },
+    {
+      "id": "scar_tarn_grove_south_ward",
+      "place": "the Scar Tarn (data/scar_tarn.json): the tarn's south-west bank, in the birch",
+      "pool": "cobblers:scar_tarn_grove",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1984,
+        "y": 242,
+        "z": 746
+      },
+      "mimic": "minecraft:moss_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 2
+      },
+      "status": "planned",
+      "why": "written by tools/scar_tarn.py records --write from the plan (data/scar_tarn.json wards). An activated block keeps up to 2 of the pool alive within 16 blocks and refills as they are beaten, caught or despawn; the pool's entries carry modifiers \"alpha=true\", so what it keeps is a wild ALPHA (owner, 2026-10-11: alpha mons taken over the afflicted ground). cancel_range -1: Mt Vessu's own spawns continue round it. Stands in a cell the pack writes (minecraft:moss_block), so the pack runs BEFORE R9E. UNPROVEN in game: that the habitat spawn carries the alpha (read from the jar's bytecode, data/scar_tarn.json alphas.how).",
+      "mimic_why": "the block the pack writes at that position: the tarn's south-west bank, in the birch"
     }
   ]
 }

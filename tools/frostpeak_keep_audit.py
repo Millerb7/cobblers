@@ -34,6 +34,9 @@ Checks (each must hold):
                      every sign is within reach of a standable cell
   K10 limits         tools/function_limits.py finds nothing the server would refuse
   K11 non-empty      enough written to be a castle
+  K12 lair           Giratina's body (its hitbox, from the Mega Showdown jar) clear of every written block, a floor
+                     under it, the gate-to-keep-door line outside its wake radius (data/frostpeak_keep_quest.json),
+                     and cells a walker from the north reaches inside that radius (it can be woken)
 
   python tools/frostpeak_keep_audit.py [--pack DIR] [--source-root R]   exit 1 on any problem
 """
@@ -278,6 +281,22 @@ class World:
         return seen
 
 
+MSD_JAR = Path("C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods/mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar")
+GIRATINA_FALLBACK = (4.95, 7.15)    # 4.5 x 6.5 x baseScale 1.1, as read from MSD_JAR on 2026-10-09
+
+
+def giratina_size():
+    """(width, height) in blocks of Giratina's hitbox: Mega Showdown's species addition, which implements it, read from
+    the jar when the offline snapshot is here; else the figures read from it on 2026-10-09."""
+    if not MSD_JAR.is_file():
+        return GIRATINA_FALLBACK
+    import zipfile
+    with zipfile.ZipFile(MSD_JAR) as z:
+        d = json.loads(z.read("data/cobblemon/species_additions/giratina.json"))
+    s = d.get("baseScale", 1.0)
+    return d["hitbox"]["width"] * s, d["hitbox"]["height"] * s
+
+
 def audit(pack, g):
     doc = load_json(ROOT / "data" / "frostpeak_keep.json")
     rep = Report()
@@ -292,7 +311,9 @@ def audit(pack, g):
     # ---- K1 the courtyard floor and the cleared box, from the heightmap and the record
     cx, cz = doc["site"]["centre"]
     hu, hv = doc["dims"]["base_hu"], doc["dims"]["base_hv"]
-    x0, z0, x1, z1 = cx - hu, cz - hv, cx + hu, cz + hv
+    # the courtyard reaches further north (2026-10-09): base_hv_north is the rectangle's north half when the record has one
+    hvn = doc["dims"].get("base_hv_north", hv)
+    x0, z0, x1, z1 = cx - hu, cz - hvn, cx + hu, cz + hv
     pad = max(g(x, z) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1))
     big = [a for a in airs if (a[3] - a[0] + 1) * (a[4] - a[1] + 1) * (a[5] - a[2] + 1) > BIG_AIR]
     # function_limits splits a fill over 32768 blocks, so the one cleared box may arrive as stacked slabs: their union
@@ -419,7 +440,9 @@ def audit(pack, g):
     kc = doc["dims"]["keep_cv"]
     sf = doc["dims"]["spire_floor"]
     kr = doc["dims"]["keep_roof"]
-    north = (cx, g(cx, z0 - 30) + 1, z0 - 30)
+    # the approach starts on the natural hill beyond the plinth's batter (its reach), never on the batter itself
+    nz = z0 - doc["dims"]["batter_reach"] - 3
+    north = (cx, g(cx, nz) + 1, nz)
     r1 = W.reach(north)
     goals = {"courtyard": (cx, pad + 1, cz - 10), "the hall": (cx + 3, pad + 1, cz + kc - 1), "the archive": (cx + 2, pad + 11, cz + kc + 2),
              "the loft": (cx - 2, pad + 21, cz + kc + 2), "the keep roof": (cx + 7, pad + kr + 1, cz + kc), "the beacon floor": (cx + 1, pad + sf + 1, cz + kc)}
@@ -435,6 +458,34 @@ def audit(pack, g):
                 unread.append((x, y, z))
     rep.check(not unread, "K9 walking", "%d signs have no standable cell within 3 blocks: %s" % (len(unread), unread[:2]))
 
+    # ---- K12 Giratina's lair (2026-10-09): room for its body, a floor under it, the gate-to-door walk outside its wake
+    # radius, and somewhere a player can stand inside it. Its size is read from the Mega Showdown jar that implements it
+    # when the snapshot is here; the spot from the record (ruin.nest.at), the radius from data/frostpeak_keep_quest.json
+    nest = (doc.get("ruin") or {}).get("nest")
+    qf = ROOT / "data" / "frostpeak_keep_quest.json"
+    if nest and qf.is_file():
+        gq = load_json(qf)["giratina"]
+        trig = gq["trigger_radius"]
+        lx, lz = cx + nest["at"][0], cz + nest["at"][1]
+        w, h = giratina_size()
+        # the cells the body overlaps: it stands centred on the block's middle, so x from floor(lx + .5 - w/2) to
+        # floor(lx + .5 + w/2), and from the feet up through ceil(h) blocks
+        a0, a1, tall = int(math.floor(.5 - w / 2.0)), int(math.floor(.5 + w / 2.0)), int(math.ceil(h))
+        crowd = [(x, y, z) for x in range(lx + a0, lx + a1 + 1) for z in range(lz + a0, lz + a1 + 1)
+                 for y in range(pad + 1, pad + 1 + tall) if (x, y, z) in blocks and short(blocks[(x, y, z)]) not in ("snow",)]
+        rep.check(not crowd, "K12 lair", "%d written blocks inside Giratina's body (%.1f wide, %.1f tall) at (%d, %d), first %s"
+                  % (len(crowd), w, h, lx, lz, crowd[:1]))
+        rep.check((lx, pad, lz) in blocks and short(blocks[(lx, pad, lz)]) not in FREE, "K12 lair",
+                  "no floor under Giratina's spot (%d, %d, %d)" % (lx, pad, lz))
+        hvn = doc["dims"].get("wall_hv_north", doc["dims"]["wall_hv"])
+        gate = (cx, cz - hvn + doc["dims"]["wall_thick"])
+        door = (cx, cz + doc["dims"]["keep_cv"] - doc["dims"]["keep_half"])
+        near = min(math.hypot(lx + .5 - (gate[0] + .5), lz + .5 - (z_ + .5)) for z_ in range(gate[1], door[1] + 1))
+        rep.check(near > trig, "K12 lair", "the gate-to-keep-door line passes %.1f from Giratina, inside its wake radius %d" % (near, trig))
+        inside = [c for c in r1 if math.dist((c[0] + .5, c[1], c[2] + .5), (lx + .5, pad + 1, lz + .5)) <= trig]
+        rep.check(len(inside) > 20, "K12 lair", "only %d cells a walker reaches from the north are inside the wake radius" % len(inside))
+        rep.counts_extra = {"lair_line_distance": round(near, 1), "lair_wake_cells": len(inside), "giratina_size": [w, h]}
+
     # ---- K10 limits, K11 non-empty
     bad = function_limits.check_lines(lines, "frostpeak_keep/build")
     rep.check(not bad, "K10 limits", "tools/function_limits.py: %s" % (bad[:2],))
@@ -445,7 +496,8 @@ def audit(pack, g):
     need = {"blocks": 20000, "snow_block": 600, "packed_ice": 300, "blue_ice": 30, "ladders": 60, "stairs": 60, "signs": 6}
     low = {k: (count[k], v) for k, v in need.items() if count[k] < v}
     rep.check(not low, "K11 non-empty", "too little written (have, need): %s" % low)
-    rep.counts = dict(count, pad=pad, top_y=top_y, reached_from_north=len(r1), reached_from_south=len(r2))
+    rep.counts = dict(count, pad=pad, top_y=top_y, reached_from_north=len(r1), reached_from_south=len(r2),
+                      **getattr(rep, "counts_extra", {}))
     return rep
 
 

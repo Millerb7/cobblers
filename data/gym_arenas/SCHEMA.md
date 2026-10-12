@@ -14,7 +14,7 @@ Run `python tools/gym_arenas.py check --gym gymN` until it prints no `PROBLEM`. 
 
 | Field | Meaning |
 |---|---|
-| `schema`, `id`, `gym` | `"gym_arena/1"`, the file stem, the gym id (`gym1`; the building is `data/gym_buildings/<gym>.json`, or Misty's template for `gym2`) |
+| `schema`, `id`, `gym` | `"gym_arena/1"`, the file stem, the gym id (`gym1`; the building is `data/gym_buildings/<gym>.json`; gym2 had Misty's template until 2026-10-09) |
 | `status`, `name`, `reading` | what is proven, the arena's name, and why it reads as this leader's and no other's |
 | `leader.id`, `leader.seat` | the upstream trainer id (`kanto_brock`) and THE seat: the spawner, flush in the dais top. **This is the one source of the leader's seat** once the file exists (`gym_arenas.leader_seats()`); the building's `leader.spawner` becomes where the move starts |
 | `spawn_free_zone` | the id in `data/spawn_suppression.json` `spawn_free_zones`; the arena's x/z must lie inside it (extend it on the 8-block grid if not) |
@@ -61,3 +61,76 @@ there.
 | `cobblers:gym_arenas/verify` | by hand in game | one red line per probe that fails |
 
 R16GA ends with the `gym_arenas` check (`gym_arenas.verify`), which reads every probe back over RCON.
+
+# Schema `gym_hall/1`: the gym as one walk-through building (2026-10-09)
+
+The owner, after playing the arenas: "a single building that a player walks through to the boss, a mini puzzle in
+between with engaged fights", not a climb up and around and a long descent to a room you cannot leave. A
+`gym_hall/1` record is the WHOLE gym, standing on its lot: entrance, the old building's puzzle condensed, the juniors
+at its chokepoints, and the arena as the last room. Same file (`data/gym_arenas/<gym>.json`), same tool
+(`tools/gym_arenas.py check|build|probes`), same ops, same seat contract, same Battle Positions and clear-disc rules.
+The design for all eight is `docs/world-building/GYM_WALKTHROUGH.md`; gym 1 is the worked example.
+
+Converting a gym: (1) keep the carved arena's record as built under `replaces.arena` (bounds, through_building,
+seat, floor_y, battle): it is what the takedown fills, measured, never guessed; (2) add `superseded_by:
+"data/gym_arenas/<gym>.json ..."` to `data/gym_buildings/<gym>.json` (R16G then stops building it; the record stays);
+(3) re-seat the gym's juniors in `data/gym_junior_trainers.json` until `python tools/gym_trainers.py check --gym
+<gym>` proves them; (4) if the leader is outside `single_leader.rollout`, keep `data/challenge_mode.json
+bosses.<id>.spawner.at` beside the new seat on the dais (the old cell under `superseded_at`); (5) `python
+tools/gym_arenas.py probes --write`.
+
+## Fields that differ from `gym_arena/1`
+
+| Field | Meaning |
+|---|---|
+| `schema` | `"gym_hall/1"` |
+| `bounds` | the gym lot in x and z (data/placements.json, checked), from the lowest write (the Battle Positions blocks at `floor_y - 1`) to over the roof. Must contain the superseded building's bounds: every cell of them is written by the hall (`check` names any that is not). Start `parts` with a `carve` of the lot above the pad |
+| `footprint` | `[x0, z0, x1, z1]` of the building's walls: `tools/gym_trainers.py` holds every junior's sight inside it |
+| `replaces` | `{arena: {...the carved record as built...} or null, building: "data/gym_buildings/<gym>.json", why}`. The takedown (`<gym>_takedown`) fills `replaces.arena.bounds` and each `through_building` box below the lot level with stone, each fill skipped while a player is inside its box |
+| `entry.street` | a cell just off the lot where a player arrives (replaces `route_end`); `entry.floor` is the arena's first floor cell, farther than forceBattleMaxDistance + 1 from the leader |
+| `exit` | `{door, button, why}` for a door past the leader, or `{why}` alone for "back the way you came". A door past the leader must never be a way in: an `iron_door` (both halves) and a `stone_button[face=wall,...]` INSIDE the arena room. `check` refuses a button anyone outside the arena room can press (reach 4.5, in sight) and a door that no button reached from the stand opens |
+| `rooms[]` | `{id, kind, box, why}` in walking order, kinds `entrance`, `puzzle`, `junior`, `passage`, `arena`, `exit`; the LAST is the arena and holds the seat |
+| `route[]` | `{step, id, from, to, how, why}`, the walk as data/gym_buildings records it (documentation: the checks walk the model) |
+| `through_building`, `challenge_spawner` | not used: no building under it, and the takedown removes every old seat |
+
+## What `check` adds for a hall
+
+Lot bounds; the old building fully overwritten; `replaces.arena` present; no spawner left at a replaced seat (the
+old arena's seat, the building's spawner, a Challenge cell inside either); the way out, from the challenger's stand
+to a cell off the lot on foot, no fall over 3, a door only where a reached button opens it; the rooms. Cover is not
+checked (a hall stands on its lot); the shell rule holds only under the pad.
+
+## What it emits for a hall
+
+`<gym>_takedown` (rock into the old arena), `<gym>` (the hall), `<gym>_seat` (the spawner and its redstone, set where
+missing once the hall stands: no move), `<gym>_old_leader` (both ids killed anywhere on the lot except round the new
+seat, and in the old arena). R16G runs takedown, hall and seat after the other buildings; R16GA runs them with the
+sweep and the read-back. `tools/gym_demolish.py` (R16F) never writes inside a hall's bounds or its takedown, nor
+inside an arena's bounds and through boxes, nor inside the box a building clears (`gym_buildings.clear_box`).
+
+# `exit_passages[]`: a way out to the surface (both schemas, 2026-10-09)
+
+The owner does not want a gym you go far down in and must climb back out of. A hall that stands on its lot leaves by
+its own door; a gym that is DEEP (Misty's was, until 2026-10-09: the donor template, a 38-block well down, the race,
+the ledger gallery, then our boat house) needs a passage up. No record carries one today: Misty's template came down
+for a walk-through hall, and a hall's `replaces.arena.exit_passages` keeps the one it replaced, which
+tools/gym_demolish.py sets back to the ground (rock under it, air or the mapped water over it). An `exit_passages[]`
+entry is the smallest thing that lets a record say it:
+
+| Field | Meaning |
+|---|---|
+| `id`, `why` | a name, and the measurement it rests on (where the ground is, where the water is) |
+| `box` | the passage's own declared box. Writes are allowed in `bounds`, a `through_building` box, or here; every x/z must lie inside the `spawn_free_zone` (extend it on the 8-block grid). Inside it, and only inside it: the COVER rule does not apply (its top is the surface) and an open cell may touch unwritten NATURAL AIR (the mouth). It may never touch unwritten rock (the shell rule) or water, so its walls and roof are written |
+| `door`, `button` | the iron door's LOWER cell and the stone button, both inside `bounds` (the hall's wall) and outside `box`. Both door halves must be `iron_door[open=false]`; the button is `stone_button[face=wall]` on the hall side, powering the wall block it is set on, which touches a door half. An iron door opens on a signal only, so nothing outside opens it: the passage is a way out and never a way in |
+| `surface` | a standing cell on the world's own ground beside the passage (air, over an unwritten block), outside `bounds` and `box`: where the walk out must arrive |
+
+`check` adds: the door and button as above; from the challenger's stand, no fall over 3, the door opened by a button
+the walk reaches by hand, the walk reaches `surface`; with the door shut it does not (and the shore, walked from
+`surface`, reaches neither the hall side nor the button within reach of 4.5). `reserved_boxes()` and `hold_boxes()` include
+the box, so the demolition leaves it alone and the read-back forceloads it. The audit (`tools/gym_arenas_audit.py`)
+reads only `box` and derives the rest from the replayed blocks (its docstring, "AN EXIT TO THE SURFACE").
+
+Authoring: lay the passage with the existing ops. A stair that RISES to the south is a `straight_stair` written from its
+top, `dir: north` (the op steps down in `dir`), the side walls and roof a `repeat` stepped the same way, a landing flush
+with the bank, and light from sea lanterns in the walls: never a lantern hung in the headroom, which stops an upright
+player on a flight (the gym 7 finding). Gym 2's `shore_stair` was the worked example (commit ca4c84b, never built).

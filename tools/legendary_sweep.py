@@ -54,7 +54,10 @@ FLOAT_GAP_MIN = 16         # a floating template's bottom over the highest groun
 HOOPA = (3357, 3306)       # data/hoopa_cradle.json spot: an encounter since 2026-10-06, so in the spread
 KINDS = ("sunk", "floating")
 STATUSES = ("adopted", "placed_by_sweep", "ours_authored", "planned", "stays_where_it_generates", "out_by_owner",
-            "refused", "unplaced", "not_loaded")
+            "refused", "unplaced", "not_loaded",
+            # placed, then taken down by the owner (2026-10-09: the Giratina piece; adopted_legendary_sites.json
+            # superseded_sweep_sites)
+            "retired")
 
 
 def load(path=SITES):

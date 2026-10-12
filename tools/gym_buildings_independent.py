@@ -15,8 +15,8 @@ not write:
   the rules     data/gym_interiors.json `rules`: max_fall 12 (a longer fall must land on hay),
                 max_submerged_run 14
   the zones     data/spawn_suppression.json: the gym's spawn-free box
-  Misty         data/gym_interiors.json gym2: the one interior still built, whose dig and shell no new
-                building may touch
+  Misty         data/gym_interiors.json gym2: while built, its dig and shell; since 2026-10-09, superseded by
+                the walk-through hall data/gym_arenas/gym2.json, whose bounds no gym building may touch
   the world     every other data/*.json file, scanned for anything that already claims the same columns
   the physics   a player-movement model written here (walk, step, sprint jump with a reach table, ladders,
                 swimming, soul-sand bubble columns, fall damage) run over the voxels the functions produce,
@@ -722,7 +722,7 @@ def check_overlap(rep, worlds, root, misty):
             for label, b in misty:
                 hits = [c for c in w.cells if b[0] <= c[0] <= b[3] and b[1] <= c[1] <= b[4] and b[2] <= c[2] <= b[5]]
                 if hits:
-                    rep.add(gid, "OVERLAP", "misty", "%d cell(s) inside Misty's %s %s, which is still built and "
+                    rep.add(gid, "OVERLAP", "misty", "%d cell(s) inside Misty's %s %s, which stands and "
                             "must not be touched, e.g. %s" % (len(hits), label, box_str(b), sorted(hits)[0]))
     boxes = {gid: w.extent for gid, w in worlds.items()}
     for f in sorted((root / "data").glob("*.json")):
@@ -1202,6 +1202,11 @@ def run(texts, records, placements, ground, root=ROOT, only=None):
                 misty.append(("dig", tuple(g["dig"])))
             if (g.get("shell") or {}).get("expect_box"):
                 misty.append(("shell", tuple(g["shell"]["expect_box"])))
+        elif g["id"] == "gym2" and str(g.get("superseded_by") or "").startswith("data/gym_arenas/"):
+            # 2026-10-09: Misty's template and works came down for her walk-through hall; what no gym building may
+            # touch is now that hall, read by its one declared field (`bounds`, as the arena audit reads it)
+            hall = json.loads((root / g["superseded_by"].split(" ")[0]).read_text(encoding="utf-8"))
+            misty.append(("walk-through hall", tuple(hall["bounds"])))
     sites, worlds, extras = {}, {}, {}
     for gid in sorted(records):
         if only and gid not in only:
@@ -1243,10 +1248,20 @@ def load_texts(funcs_dir, ids):
     return out
 
 
-def load_records(root=ROOT):
+def load_records(root=ROOT, include_superseded=False):
+    """Every building that is BUILT: a record carrying `superseded_by` (2026-10-09: the gym is now one walk-through
+    hall, data/gym_arenas/<gym>.json schema gym_hall/1) is kept as the record of what stood, is not emitted by
+    tools/gym_buildings.py and is not run by any step, so there is no function of it to audit. The hall that
+    replaced it is audited by tools/gym_arenas_audit.py. `include_superseded` reads those records too (the audit's
+    own tests do: with every building superseded they are the one real content that exercises it); the functions
+    must then have been emitted with `superseded_by` dropped in memory, as tests/test_gym_buildings_independent.py
+    does."""
     out = {}
     for p in sorted((root / "data" / "gym_buildings").glob("*.json")):
-        out[p.stem] = json.loads(p.read_text(encoding="utf-8"))
+        d = json.loads(p.read_text(encoding="utf-8"))
+        if d.get("superseded_by") and not include_superseded:
+            continue
+        out[p.stem] = d
     return out
 
 
@@ -1256,10 +1271,13 @@ def main(argv=None):
     ap.add_argument("--source-root", default=None)
     ap.add_argument("--gym", action="append", default=None, help="one record only, e.g. gym7 (repeatable)")
     ap.add_argument("--verbose", action="store_true", help="also print the measurements behind the checks")
+    ap.add_argument("--include-superseded", action="store_true",
+                    help="also audit the records a walk-through hall superseded (their functions must have been "
+                         "emitted anyway: R16G no longer builds them)")
     a = ap.parse_args(argv)
     import ground as G
 
-    records = load_records()
+    records = load_records(include_superseded=a.include_superseded)
     if not records:
         print("data/gym_buildings holds no record: there is nothing to audit")
         return 2

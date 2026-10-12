@@ -21,6 +21,13 @@ on WHICH dimension a selector searches needs both. What this one models:
               entity / store result score|storage / run; `return <n>` and `return run <cmd>` end the function.
   functions   `function f`, `function f {snbt}`, `function f with storage <id> <path>`; a function with any `$`
               line is a macro and fails whole without arguments or with one it lacks (MacroFunction).
+  storage     `data modify storage <id> <path> set value <snbt> | set from storage <id> <path>`, `data remove storage`,
+              `execute if|unless data storage <id> <path>`, `execute store result storage`; a path is dotted keys with
+              [n] list indexes (no quoted keys, no filters).
+  random      `random value <a>..<b>` with both bounds and a < b (a degenerate or unbounded range is Unsupported: its
+              vanilla error is not read from a jar here), returning a value in [a, b]: from `World.random_values` when a test queued one (each popped in order, and
+              refused if outside the range), else from a seeded Random (`World(..., seed=)`, default 0), so a run is
+              deterministic. Every roll is recorded in `World.random_log` as (a, b, value).
   and         time query gametime, advancement grant|revoke @s only, give, loot give, tellraw, tp (absolute, ~,
               yaw pitch), kill, tag add, effect give, data get entity <t> Pos[i] [scale], data merge|remove entity,
               schedule function, summon interaction, fill / setblock (recorded), forceload add|remove, and
@@ -34,6 +41,7 @@ from __future__ import annotations
 
 import json
 import math
+import random as _random
 import re
 from pathlib import Path
 
@@ -216,8 +224,11 @@ def _range(spec):
 
 
 class World:
-    def __init__(self, pack_dir, extra_functions=None):
+    def __init__(self, pack_dir, extra_functions=None, seed=0):
         self.pack = Path(pack_dir)
+        self.random = _random.Random(seed)
+        self.random_values = []     # values `random value` returns next, in order; empty -> self.random
+        self.random_log = []        # every roll: (lo, hi, value)
         self.functions, self.advs, self.loot, self.callbacks = {}, {}, {}, {}
         for p in self.pack.rglob("*"):
             if not p.is_file():
@@ -246,6 +257,11 @@ class World:
         self.block_writes = []
         self.calls, self.spawned, self.log = [], [], []
         self.rolls = []             # loot rolls: each an index into the pool's entries; empty -> the first
+        self.money = {}             # CobbleDollars balances by score holder (`cobbledollars query|give|remove`)
+        self.tick_fns = []          # the pack's tick-tagged functions, run first in every tick
+        tick_tag = self.pack / "data" / "minecraft" / "tags" / "function" / "tick.json"
+        if tick_tag.is_file():
+            self.tick_fns = json.loads(tick_tag.read_text(encoding="utf-8"))["values"]
 
     # ---- the world --------------------------------------------------------------------------------------------
     def player(self, name, dim, pos, advancements=()):
@@ -279,10 +295,18 @@ class World:
     def tick(self, n=1):
         for _ in range(n):
             self.gametime += 1
-            for f, due in sorted(self.scheduled.items()):
-                if due <= self.gametime:
-                    del self.scheduled[f]
-                    self.call(f, self.server_ctx())
+            for f in self.tick_fns:
+                self.call(f, self.server_ctx())
+            # vanilla's timer queue (1.21.1 TimerQueue): due events by trigger time, then in the order they were
+            # scheduled; each runs as its own call (its own command chain). An event re-scheduled by an earlier one this
+            # tick is skipped here and runs when it is next due
+            seq = self.__dict__.setdefault("sched_seq", {})
+            due_now = sorted(((due, seq.get(f, 0), f) for f, due in self.scheduled.items() if due <= self.gametime))
+            for due, n, f in due_now:
+                if self.scheduled.get(f) != due or seq.get(f, 0) != n:
+                    continue
+                del self.scheduled[f]
+                self.call(f, self.server_ctx())
 
     # ---- scores -------------------------------------------------------------------------------------------------
     def get(self, holder, obj):
@@ -531,9 +555,31 @@ class World:
             if t[1] == "remove" and t[2] == "entity":
                 self.one(t[3], ctx)
                 return 1
+            if t[1] in ("modify", "remove") and t[2] == "storage":
+                return self.data_storage(t[1:])
+            # a block entity's data set to a value (a sign's line: tools/dungeon_extras.py's bank vault code), recorded
+            # with the block writes; nothing reads a block entity back here
+            if (t[1] == "modify" and t[2] == "block" and len(t) == 10 and t[7] == "set" and t[8] == "value"
+                    and all(re.fullmatch(r"-?\d+", c) for c in t[3:6])):
+                self.block_writes.append((ctx.dim, " ".join(t)))
+                return 1
             raise Unsupported(" ".join(t))
         if h == "schedule" and t[1] == "function":
-            self.scheduled[t[2]] = self.gametime + int(t[3].rstrip("t"))
+            # `replace` (the default) drops the function's pending event and queues a new one behind everything already
+            # queued; `append` adds one unless the same function is already due that tick. One pending time per
+            # function is modelled: an append beside a pending event at another time is Unsupported
+            due = self.gametime + int(t[3].rstrip("t"))
+            mode = t[4] if len(t) > 4 else "replace"
+            if mode not in ("replace", "append"):
+                raise Unsupported(" ".join(t))
+            if mode == "append" and t[2] in self.scheduled:
+                if self.scheduled[t[2]] == due:
+                    return 1
+                raise Unsupported("schedule append beside a pending event at another tick: " + " ".join(t))
+            seq = self.__dict__.setdefault("sched_seq", {})
+            self.__dict__["sched_n"] = self.__dict__.get("sched_n", 0) + 1
+            seq[t[2]] = self.sched_n
+            self.scheduled[t[2]] = due
             return 1
         if h == "summon":
             pos = [ctx.pos[i] + float(c[1:] or 0) if c.startswith("~") else float(c) for i, c in enumerate(t[2:5])]
@@ -570,18 +616,139 @@ class World:
             self.ents.append(e)
             self.spawned.append(e)
             return 1
+        if h == "random" and len(t) in (3, 4) and t[1] == "value":
+            m = re.fullmatch(r"(-?\d+)\.\.(-?\d+)", t[2])
+            if not m:
+                raise Unsupported(" ".join(t))
+            lo, hi = int(m.group(1)), int(m.group(2))
+            if hi <= lo or hi - lo + 1 > 2147483646:
+                raise Unsupported(" ".join(t))
+            if not hasattr(self, "random_log"):         # a subclass with its own __init__ (test_system_contracts' worlds)
+                self.random, self.random_values, self.random_log = _random.Random(0), [], []
+            by_range = getattr(self, "random_by_range", None) or {}
+            if by_range.get((lo, hi)):
+                # a queue for one range only (lo, hi): a test that rolls one thing (the prize's 1..100) while other rolls
+                # of the same pass (a bank vault's code digits 0..9, a pool's 1..n) take the seeded generator
+                v = by_range[(lo, hi)].pop(0)
+            elif self.random_values:
+                v = self.random_values.pop(0)
+                assert lo <= v <= hi, "a queued random value %d outside %d..%d" % (v, lo, hi)
+            else:
+                v = self.random.randint(lo, hi)
+            self.random_log.append((lo, hi, v))
+            return v
+        if h == "healpokemon" and len(t) == 2:
+            # Cobblemon's /healpokemon <player>: the party healed. Modelled as a log only (BOSS2: the boss chain's heal
+            # between stages; the safe room's bell uses the same command)
+            if not hasattr(self, "healed"):
+                self.healed = []
+            es = self.select(t[1], ctx)
+            self.healed.extend(e.name for e in es)
+            return len(es)
+        if h == "cobbledollars":
+            # CobbleDollarsCommand: query <target> returns the balance; give|remove <targets> <amount>, amount >= 1,
+            # remove takes min(amount, balance)
+            assert len(t) in (3, 4) and t[1] in ("query", "give", "remove"), "unmodelled: %s" % " ".join(t)
+            es = self.select(t[2], ctx)
+            if len(es) != 1 and t[1] == "query":
+                raise Failed("cobbledollars query needs one player")
+            if t[1] == "query":
+                return self.money.get(es[0].holder, 0)
+            n = int(t[3])
+            assert n >= 1, "the jar refuses an amount under 1: %s" % " ".join(t)
+            for e in es:
+                bal = self.money.get(e.holder, 0)
+                self.money[e.holder] = bal + n if t[1] == "give" else bal - min(n, bal)
+            return len(es)
         raise Unsupported("command %r" % " ".join(t))
+
+    # ---- command storage (a path is dotted keys with [n] indexes) --------------------------------------------------
+    @staticmethod
+    def nbt_path(path):
+        toks = []
+        for part in path.split("."):
+            m = re.fullmatch(r"([A-Za-z0-9_+\-]*)((?:\[\d+\])*)", part)
+            if not m or (not m.group(1) and not m.group(2)):
+                raise Unsupported("nbt path %r" % path)
+            if m.group(1):
+                toks.append(m.group(1))
+            toks += [int(x) for x in re.findall(r"\[(\d+)\]", m.group(2))]
+        return toks
+
+    def storage_get(self, sid, path):
+        node = self.storage.get(sid)
+        if node is None:
+            raise Failed("no storage %s" % sid)
+        for tk in self.nbt_path(path):
+            if isinstance(tk, int):
+                if not isinstance(node, list) or tk >= len(node):
+                    raise Failed("no storage %s %s" % (sid, path))
+                node = node[tk]
+            else:
+                if not isinstance(node, dict) or tk not in node:
+                    raise Failed("no storage %s %s" % (sid, path))
+                node = node[tk]
+        return node
+
+    def storage_set(self, sid, path, value):
+        toks = self.nbt_path(path)
+        node = self.storage.setdefault(sid, {})
+        for k, tk in enumerate(toks):
+            last = k == len(toks) - 1
+            if isinstance(tk, int):
+                if not isinstance(node, list) or tk >= len(node):
+                    raise Failed("no list index %d in %s" % (tk, path))
+                if last:
+                    node[tk] = value
+                else:
+                    node = node[tk]
+            else:
+                if not isinstance(node, dict):
+                    raise Failed("not a compound at %s in %s" % (tk, path))
+                if last:
+                    node[tk] = value
+                else:
+                    node = node.setdefault(tk, [] if isinstance(toks[k + 1], int) else {})
+
+    def storage_remove(self, sid, path):
+        toks = self.nbt_path(path)
+        parent = self.storage_get(sid, ".".join(path.split(".")[:-1])) if "." in path and not isinstance(toks[-1], int) \
+            else None
+        if isinstance(toks[-1], int):
+            base = re.sub(r"\[\d+\]$", "", path)
+            lst = self.storage_get(sid, base)
+            if toks[-1] < len(lst):
+                del lst[toks[-1]]
+            return 1
+        if parent is None:
+            parent = self.storage.get(sid, {})
+        parent.pop(toks[-1], None)
+        return 1
+
+    def data_storage(self, t):
+        """data modify|remove storage ... (t is the tokens after `data`)."""
+        if t[0] == "remove":
+            self.storage_remove(t[2], t[3])
+            return 1
+        if t[0] == "modify" and t[1] == "storage" and t[4] == "set":
+            sid, path = t[2], t[3]
+            if t[5] == "value":
+                self.storage_set(sid, path, plain(MS.snbt(t[6])))
+                return 1
+            if t[5] == "from" and t[6] == "storage":
+                import copy
+                self.storage_set(sid, path, copy.deepcopy(self.storage_get(t[7], t[8])))
+                return 1
+        raise Unsupported("data " + " ".join(t))
 
     def function_cmd(self, t, ctx):
         name = t[1]
         if len(t) == 2:
             return self.call(name, ctx)
         if t[2] == "with" and t[3] == "storage":
-            src = self.storage.get(t[4], {})
-            for part in t[5].split("."):
-                if not isinstance(src, dict) or part not in src:
-                    raise Failed("no storage %s %s" % (t[4], t[5]))
-                src = src[part]
+            src = self.storage_get(t[4], t[5])
+            if not isinstance(src, dict):
+                raise Failed("storage %s %s is not a compound" % (t[4], t[5]))
             return self.call(name, ctx, dict(src))
         if t[2].startswith("{"):
             return self.call(name, ctx, MS.snbt(t[2]))
@@ -599,6 +766,11 @@ class World:
             for hd in self.holders(t[3], ctx):
                 cur = self.get(hd, t[4]) or 0
                 self.set(hd, t[4], n if op == "set" else cur + n if op == "add" else cur - n)
+            return 1
+        if op == "reset":
+            for hd in self.holders(t[3], ctx):
+                for obj in ([t[4]] if len(t) > 4 else [o for (h2, o) in list(self.scores) if h2 == hd]):
+                    self.scores.pop((hd, obj), None)
             return 1
         if op == "get":
             (hd,) = self.holders(t[3], ctx)
@@ -700,6 +872,14 @@ class World:
                     def pred(c, s=t[i + 2]):
                         return bool(self.select(s, c))
                     i += 3
+                elif kind == "data" and t[i + 2] == "storage":
+                    def pred(c, sid=t[i + 3], path=t[i + 4]):
+                        try:
+                            self.storage_get(sid, path)
+                            return True
+                        except Failed:
+                            return False
+                    i += 5
                 else:
                     raise Unsupported("execute %s %s" % (w, kind))
                 kept = []
@@ -734,11 +914,7 @@ class World:
             _, sid, path, typ, scale = st
             if typ != "int":
                 raise Unsupported("store type %s" % typ)
-            node = self.storage.setdefault(sid, {})
-            parts = path.split(".")
-            for p in parts[:-1]:
-                node = node.setdefault(p, {})
-            node[parts[-1]] = int(math.floor(value * scale))
+            self.storage_set(sid, path, int(math.floor(value * scale)))
 
     # ---- what a player does (each drives only the vanilla or Cobblemon hook, never a pack function by name) -------
     def _criterion_item(self, adv):

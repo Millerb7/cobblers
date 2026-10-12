@@ -281,7 +281,7 @@ The owner drew the Rift's regions on the heightmap (`land_8k_16_annotated_rift.p
 | e4 tower | x3527-3792 z2335-2653 | 84-103 | the League, moved here |
 | gate | x3511-3635 z2612-2686 | 83-90 | between the entrance shelf and the tower |
 | entrance to e4 | x3462-3613 z2661-3025 | 83-85 | a shelf reached only by the tunnel |
-| **the Deep** (town) | x3421-3786 z3015-3429 | 82-83 | the widest floor; a sunken city fuelled by the Rift; the evil group's HQ |
+| **the Deep** (town) | x3421-3786 z3015-3429 | 82-83 | the widest floor; a sunken city fuelled by the Rift; the Haven Compact's HQ |
 | relic area / shrine | x3285-3429 z3229-3384 | 86-100 | between the Deep and the dig |
 | rift excavation site | x2950-3308 z3213-3327 | 87-98 | the dig camp; a physical edge on its east side stops new players |
 | the sink | x3509-4132 z3351-3755 | 82-120 | the veins drain down it into the Deep |
@@ -317,7 +317,7 @@ The owner drew the Rift's regions on the heightmap (`land_8k_16_annotated_rift.p
 
 **Open:**
 - **The city's buildings.** Nothing in the pack is futuristic as a building. The terraces, retaining walls, lifts,
-  light bridges, and pylons drawing on the veins can be generated. The buildings themselves, the evil group's HQ
+  light bridges, and pylons drawing on the veins can be generated. The buildings themselves, the Haven Compact's HQ
   first, need a source: prefabs the owner builds (Axiom kits), or donors. The materials that suit are Mega
   Showdown's meteorite blocks, Moar Concrete, Rechiseled, glass, and the veins' own crystals.
 - **Spawns.** The eleven regions do not match the four spawn sub-regions (`rift_trunk`, `rift_west_spur`,

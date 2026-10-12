@@ -185,9 +185,9 @@ def synthetic(tmp_path):
     jar = A.Jar(make_jar(tmp_path / "fake-cobblemon.jar"))
     pack = make_pack(tmp_path / "pack")
 
-    def run(known=None, regions=None, pack_dir=pack):
+    def run(known=None, regions=None, pack_dir=pack, decided=None):
         rows, stale = A.audit(pack_dir, jar, regions or make_regions(), WATERWAYS, MARINE_SPAWNS, DOC,
-                              known=known or {}, starter_families=1)
+                              known=known or {}, starter_families=1, owner_decided=decided or {})
         return {(r["place_id"], r["species"], json.dumps(r["conditions"], sort_keys=True)): r for r in rows}, stale
     return run, jar, tmp_path
 
@@ -317,6 +317,21 @@ def test_known_ruling_holds_a_misfit_and_a_stale_ruling_is_reported(synthetic):
     assert stale == [("strand", "crab")]
 
 
+def test_owner_decided_is_a_per_entry_exception_that_goes_stale(synthetic):
+    # without it the owner's 2026-10-09 Wooper creek decision would need a widened climate rule, or would outlive itself
+    run = synthetic[0]
+    rows, stale = run(decided={("strand", "icecrab"): "the owner said so", ("strand", "crab"): "fits now"})
+    r = rows[("strand", "icecrab", "{}")]
+    assert r["class"] == "JUDGED" and "owner-decided: the owner said so" in r["why"] and "steps" in r["why"]
+    assert cls(rows, "peak", "digger") == "MISFIT"                     # the same rule still bites every other entry
+    assert stale == [("strand", "crab")]
+
+
+def test_the_wooper_creek_decision_names_exactly_its_two_entries():
+    # without it the exception could widen to the creek's other species unnoticed
+    assert set(A.OWNER_DECIDED) == {("mt_clay_outflow", "wooper paldean"), ("mt_clay_outflow", "clodsire")}
+
+
 def test_cli_fails_on_an_unjudged_misfit(synthetic, tmp_path, monkeypatch, capsys):
     # without it prepare would carry on past a wrong-country spawn
     _run, _jar, base = synthetic
@@ -326,6 +341,7 @@ def test_cli_fails_on_an_unjudged_misfit(synthetic, tmp_path, monkeypatch, capsy
     (base / "doc.md").write_text(DOC, encoding="utf-8")
     monkeypatch.setattr(A, "owner_starters", lambda doc, jar, families=27: {})
     monkeypatch.setattr(A, "KNOWN", {})
+    monkeypatch.setattr(A, "OWNER_DECIDED", {})
     code = A.main(["--pack", str(base / "pack"), "--jar", str(base / "fake-cobblemon.jar"),
                    "--regions", str(base / "regions.json"), "--waterways", str(base / "ww.json"),
                    "--spawns", str(base / "sp.json"), "--design-doc", str(base / "doc.md"), "--show", "MISFIT"])

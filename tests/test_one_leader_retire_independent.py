@@ -246,9 +246,11 @@ def test_a_rerun_in_the_lag_window_kills_nobody_only_because_of_the_block_test(b
     # Every boss that did not move must be among them, so the mutation still bites wherever `has` is the only guard.
     # A gym leader whose spawner moved into its arena (data/gym_arenas/<gym>.json leader.seat, read here from the
     # file, not from tools/gym_arenas.py) is excused ONLY if the arena seat is out of the kill's radius from the
-    # retired cell, measured: Brock, 45.5 from his, is; the other seven keep their Challenge cell beside the new
-    # seat (2-3 blocks), so they stay in the radius and must be reachable like any unmoved boss. Excusing all eight
-    # arena leaders (cd7c55a) would have let the mutation stop biting on seven of them unseen.
+    # retired cell, measured. None is now: since gym 1 became a walk-through hall (2026-10-09) Brock's recorded cell is
+    # beside his seat on the stage (2 blocks), as the other seven keep theirs beside theirs, so all eight stay in the
+    # radius and must be reachable like any unmoved boss. (Before, his cell was the gallery's, 45.5 from his arena seat,
+    # and he alone was excused.) Excusing all eight arena leaders (cd7c55a) would have let the mutation stop biting
+    # on seven of them unseen.
     out_of_radius = set()
     for up, seat in _arena_seats().items():
         kill_r = {float(m.group(1)) for m in (re.search(r"run kill @e\[type=rctmod:trainer,distance=\.\.(\d+),nbt=\{TrainerId:\"%s\""
@@ -258,7 +260,7 @@ def test_a_rerun_in_the_lag_window_kills_nobody_only_because_of_the_block_test(b
         c = d["bosses"][up]["spawner"]["at"]
         if dist((c[0] + 0.5, c[1], c[2] + 0.5), stand(seat)) > kill_r.pop():   # the kill's anchor, as `reachable` has it
             out_of_radius.add(up)
-    assert out_of_radius == {"kanto_brock"}, out_of_radius
+    assert out_of_radius == set(), out_of_radius
     unmoved = {up for up, e in d["bosses"].items() if not (e.get("single_leader") or {}).get("move")
                and up not in out_of_radius}
     assert unmoved <= set(reachable)
@@ -395,10 +397,11 @@ def _exec_into(monkeypatch, name, edits=(), d=None):
 
 # Without it the template restore (the audit's donor-substitution replay, 2026-10-08) could agree with anything:
 # the generator's template branch putting floor and under back the wrong way round must fail P1:restore for the
-# template bosses, with data/challenge_mode.json untouched. Judged as what the mutation ADDS to the unmutated run,
-# because Misty's retired cell is now in her arena (data/gym_arenas/gym2.json), where the unmutated generator already
-# fails P1:restore (the defect pinned above): her failure cannot show the mutation bites. The League's five stand in
-# their template, so for them the mutation is the only difference.
+# template bosses, with data/challenge_mode.json untouched. Judged as what the mutation ADDS to the unmutated run.
+# The League's five stand in their template, so for them the mutation is the only difference. Misty is no template
+# boss since 2026-10-09: her template came down and her Challenge cell is in her walk-through hall
+# (data/gym_arenas/gym2.json), where restore_blocks reads the hall's own model, so the unmutated run passes her and
+# the template-branch mutation cannot touch her.
 def test_the_template_restore_check_fails_a_generator_that_swaps_floor_and_under(monkeypatch, all_thirteen_problems):
     base = {m.split()[0] for c, m in all_thirteen_problems if c == "P1:restore"}
     try:
@@ -416,7 +419,7 @@ def test_the_template_restore_check_fails_a_generator_that_swaps_floor_and_under
     league = {u + SFX for u in ("kanto_league_lorelei", "kanto_league_bruno", "kanto_league_agatha",
                                 "kanto_league_lance", "kanto_champion_blue")}
     assert hit - base == league, (hit, base)
-    assert "kanto_misty" + SFX in base, "Misty's retire is judged against her arena now; see the strict xfail above"
+    assert "kanto_misty" + SFX not in base | hit, "Misty's retire is judged against her walk-through hall's own floor"
 
 
 # ------------------------------------------------------------------------------------------------ the League floors

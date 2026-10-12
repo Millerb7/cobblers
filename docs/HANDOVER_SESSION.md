@@ -1,64 +1,39 @@
-# Handover: session ce7100f5, the night of 2026-10-08/09
+# Handover: session 74260a, ending 2026-10-11 late
 
-A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts. The owner's report:
-`docs/MORNING_REPORT_2026-10-09-NIGHT.md` (its section 5 is tonight's review list).
+A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
-## 1. The branches
-- **`claude/night-shift-engine-gym-9b76f2`** (this worktree), on main `43efdad` + #131 (`8df1ca3`, docs, still an open PR:
-  merge #131 first or let this branch carry it). Holds: EXP-059 parked, E1, the probe pack and its results, the
-  engine core, the eight gym arenas, the audits and their fixes, the designs, STATE and this handover. Re-read the head
-  before quoting it (`git rev-parse HEAD`). **No PR opened yet**: one draft PR for the batch is the next step
-  (memory: one big PR per batch).
-- **The world brief, MERGED into this branch (the merges and fixes are its last commits); the agent branches it came from** (`worktree-agent-<id>`, each one commit or two on `0b3a8b2`/
-  `1bcb087`): swamp nest a775e90e671b31012 `3af7466`; Drowned Quarry ac7dfdcff287b1624 `bd39246`; Tilpey spawns
-  a033d07c5517417a9 `a9aa8f5`; Fungal Isle ac9d376819faa18f3 `f2f4ea4`; Sundown Watch ab7d2c93d44329266 `49a3580`;
-  Wardenhold af825b9f9e7b000df `5a52d69`; ice lodge a54e72cf1167a8edc `7a669dc`; economy sim a8fe0288bd86a9c7f
-  `36cb6bd`; Crownbreaker aac996cb89c97f615 `1e99d60`; Undertow a6f9e8dcc018e1c00 `aaa9a82`; Gull Rock
-  a6574158502118a45 `01f9b13`; Route 5 a7b3215c5d44b18d7 `2c90346`; Route 4 aef58650877204df6 `2a48d77`; the C3 place
-  a81e02708207b16e7 `7344e73`. Audits: water a11b8677bd0e5af4f `9052c96`, land afb9e845577a94967 `70c6cf5`, both merged.
+## 1. Branch
+`build/2026-10-09-dungeon-playtest` in worktree `.claude/worktrees/night-shift-engine-gym-9b76f2`, LOCAL ONLY (no PR;
+one big draft PR for the batch is owed). Re-read the head (`git rev-parse HEAD`; c7243b4 plus this file). The three
+agent branches (guide, vaults, one_of generator) are merged; 335 merged worktrees and 460 merged branches were removed
+(135 worktrees and 146 branches remain: dirty, locked or unmerged ones kept on purpose).
 
 ## 2. Where it stopped
-- **Staging RUNNING for the owner**, 12G, watchdog 60000, Terminal panel tab "staging server". Lock released.
-  Installed from prepare 203/203 at `0b3a8b2`; R16GA, R16DG, R16DR applied (0 problems), restarted, read back (8 of 8
-  arena spawners; presence extra 386/393). The world brief is NOT installed.
-- **Next, as commands:** the world brief is merged, validated (0 errors, 0 faults) and audited (except the Long Count);
-  decide Gull Rock's wake with the owner; then prepare, install (hold the bank: copy `config/cobbledollars/bank.json` before,
-  restore after), boot with `max-tick-time=-1`, `run --only <the new steps> --no-reload`, restore 60000, restart, read back.
-  New steps: R9HM R18HM (swamp), R18DQ (quarry), R9FI (fungal), R9SW R18SW (sunset), R9FK (keep), R18IL (lodge),
-  R9TP (Crownbreaker), R9BD R18BD (Undertow), R9RK R18RK (Gull Rock), R9LC R18LC + R9F (the Long Count), R12R5 (Route 5),
-  R12R4 (Route 4), then R17.
+- **Staging is UP; the owner is playing the Street, the Patriarch and Ash Bell.** Installed: prepare 229/229 at
+  e18ec16. NOT installed: the vaults, the guide, the NPC plant clearing (all merged after it). The lock is released.
+- **Verified snapshot:** `D:\cobblers-snapshots\staging-2026-10-11-after-dungeons` (sha256-matched). Snapshots live on D:.
+- **Next (after the owner reports back; nothing new is authored before that):**
+  1. `python tools/dungeon_independent_audit.py` (33 min) on the merged vaults; `python tools/player_site.py` (every
+     page's nav gets the guide); confirm the new ball and held-item ids in the Cobblemon 1.8.0 jar; declare or read
+     `data/frostpeak_keep_quest.json` (the one failing site test, older than this work).
+  2. Next install: snapshot to D: first; env `COBBLERS_SERVER_LOCK`, `COBBLERS_LOCK_OWNER`,
+     `COBBLERS_SERVER_ROOT=C:/Users/wnd/Documents/github/cobblers-server`; full prepare (~51 min); RCON stop; hold
+     `config/cobbledollars/bank.json`; install with `--cobbleverse-dp C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/datapacks/COBBLEVERSE-DP-v31.zip`
+    ; restore the bank; `max-tick-time=-1`; **boot at 24G**;
+     `run --only R16DG,R17N,R17,R18CP --no-reload` (the vaults are in the shells; the npc steps clear plants); watchdog
+     60000; restart at 12G; check twice.
 
 ## 3. Waiting on the owner
-- The probes' owner halves (report section 2) and EXP-084's 15 owner steps; XT1 decides the clocks.
-- **Q20** (the Night Shift's free first run) and **Q23** (ungated sigil recipes): still no alternative given.
-- The review list's owner choices (report section 5, items 6, 7 and 9); the catch design's Q-C1 and Q-C6; dungeons 2
-  and 3's S-Q1..5 and P-Q1..5.
-- Carried: the stale steps and the chunk-race steps from the previous handover; EXP-061/062/064-068 in game.
+- Their play report on the three dungeons (bands via `scoreboard players set <player> dg.ptband <n>`, tag
+  `cobblers.dg_playtest`).
+- The draw design, D1-D5 in `docs/mechanics/DUNGEON_DRAW.md`.
+- Deleting the old worlds (they run the commands themselves; listed in STATE "Snapshots go to D:").
 
 ## 4. Do not rediscover
-- **Never `datapack enable` on staging**: it is a full reload and OOMs this build at 16G (2026-10-09). Copy a pack in
-  with the server stopped and boot.
-- A pack must be in `SERVER_PACKS` (or the spawn packs) to be installed; `WORLD_LOCAL` alone is not enough (guard test
-  `tests/test_install_check.py::test_every_world_local_pack_is_in_an_install_list`).
-- Prepare refuses a build whose jobs predate the last change to `data/` or `tools/`: `--from` after an edit does not
-  complete it; run it whole. `COBBLERS_SERVER_ROOT` must be set or `sea_drift_audit` fails.
-- `reapply.py run` refuses while `max-tick-time` is not -1.
-- RCON replies are cut at 4096 bytes; `datapack list` cannot be read whole. `datapack list available` lists ALL packs.
-- MobsBeGone deletes every summoned vanilla mob except villagers and wandering traders.
-- A predicate against a crafted sigil must use the byte form `{cobblers_dg_sigil:1b}`.
-- Concrete (and possibly concrete powder: unresolved) is a spawn-condition block contract C4 refuses in built packs.
-- Summoning in the same RCON burst as a `forceload add` finds nothing (N155): wait a moment.
-- Agents briefed with a path in this session's scratchpad wrote their own scripts there once and were refused
-  ("Modify Shared Resources"): brief them to keep scratch inside their worktree.
-- `derived/` for a new worktree: robocopy from `session-handover-decisions-de63f6` (done here).
+- R16DG at 13 dungeons OOMs 12G (memory: apply-heap-24g). The independent audit takes ~33 min.
+- The "solid block at its feet" verify fails on plants; the npc action now clears them (`stand_clear_commands`).
+- The guide reads vault stacks; any new stack form must be taught to `tools/player_guide_dungeons.py` `stack_text`.
+- New Compact NPCs collided with older placements twice; prepare's `markets:audit` and `ambient_idle:build` catch it.
 
 ## 5. Cost
-`python tools/session_cost.py` at the handover: this session **18.9M** weighted over 412 turns (context 687k: far over
-the line; a cold session must start fresh); agents **107.0M** against about 100M estimated before spawning. Over
-estimate: the arena pilot (10.4M vs 5M), Fungal Isle (6.6 vs 4), the C7 rookery (5.3 vs 4), Route 5 (5.2 vs 4),
-Route 4 (7.2 vs 4), the Long Count (6.2+ vs 4). Under: the seven arena authors (7.1M vs 18M), E1 (0.9 vs 2.6), the
-challenge tests (1.1 vs 2.6).
-
-## 6. The PR
-[#132](https://github.com/Millerb7/cobblers/pull/132), draft, `claude/night-shift-engine-gym-9b76f2` -> main, FROZEN
-once reported: further work goes on a new branch. Re-read its head before quoting (`gh pr view 132 --json headRefOid`).
+`python tools/session_cost.py`: far past the hand-over line at the end (the owner chose to continue here).

@@ -174,6 +174,17 @@ REGIONAL = [("alolan", ("alolan", "alola")), ("galarian", ("galarian", "galar"))
 KNOWN = {
 }
 
+# (place, pokemon string as compiled) -> the owner's decision, quoted, for a misfit the owner chose on purpose AFTER
+# the sweep. It is a per-entry exception, never a change to a climate rule: the entry still misfits and the row says
+# so, classed JUDGED with the quote. Unlike a KNOWN ruling it is not a defect to fix; like one, it goes STALE when
+# the entry no longer misfits or is gone, so it cannot outlive its decision.
+OWNER_DECIDED = {
+    ("mt_clay_outflow", "wooper paldean"): 'the owner, 2026-10-09: "the wooper creek should spawn the paldean versions" '
+                                           "(reverses the 2026-10-04 removal; data/waterways.json habitat_fixes)",
+    ("mt_clay_outflow", "clodsire"): 'the owner, 2026-10-09: "clodsire should be in wooper creek as well" '
+                                     "(Paldean Wooper's evolution; data/waterways.json habitat_fixes)",
+}
+
 
 class AuditError(Exception):
     pass
@@ -554,9 +565,10 @@ def judge_env(info, climates, water, under, water_kind):
     return True, "native to %s" % "/".join(sorted(nat_clim, key=LADDER.get))
 
 
-def audit(pack, jar, regions, waterways, spawns, doc_text, known=None, starter_families=27):
-    """(rows, stale KNOWN keys). Every compiled entry group gets one row with its class and why."""
+def audit(pack, jar, regions, waterways, spawns, doc_text, known=None, starter_families=27, owner_decided=None):
+    """(rows, stale KNOWN / OWNER_DECIDED keys). Every compiled entry group gets one row with its class and why."""
     known = KNOWN if known is None else known
+    decided = OWNER_DECIDED if owner_decided is None else owner_decided
     places = Places(regions, waterways, spawns)
     starters = owner_starters(doc_text, jar, starter_families)
     groups = defaultdict(lambda: {"count": 0, "heart": False, "ids": []})
@@ -568,7 +580,7 @@ def audit(pack, jar, regions, waterways, spawns, doc_text, known=None, starter_f
         g["heart"] |= heart
         if len(g["ids"]) < 3:
             g["ids"].append(s["id"])
-    rows, used_known = [], set()
+    rows, used_known, used_decided = [], set(), set()
     for (kind, pid, pokemon, pos, condj), g in sorted(groups.items()):
         cond = json.loads(condj)
         place = places.place(kind, pid)
@@ -584,6 +596,9 @@ def audit(pack, jar, regions, waterways, spawns, doc_text, known=None, starter_f
                 cls, why = "FIT-BY-CONDITION", "%s; within its conditions %s: %s" % (why, condj, why2)
             elif skey[0] in starters:
                 cls, why = "JUDGED", "%s; the owner's placement, %s" % (why, starters[skey[0]])
+            elif (pid, pokemon) in decided:
+                cls, why = "JUDGED", "%s; owner-decided: %s" % (why, decided[(pid, pokemon)])
+                used_decided.add((pid, pokemon))
             elif (pid, pokemon) in known:
                 cls, why = "KNOWN", "%s; ruling: %s" % (why, known[(pid, pokemon)])
                 used_known.add((pid, pokemon))
@@ -593,7 +608,7 @@ def audit(pack, jar, regions, waterways, spawns, doc_text, known=None, starter_f
                      "position": pos, "conditions": cond, "heart": g["heart"], "entries": g["count"],
                      "basis": info[3], "native_climates": sorted(info[0], key=LADDER.get),
                      "water_kinds": sorted(info[1]), "why": why, "example_ids": g["ids"]})
-    stale = sorted(set(known) - used_known)
+    stale = sorted((set(known) - used_known) | (set(decided) - used_decided))
     return rows, stale
 
 
@@ -649,7 +664,7 @@ def main(argv=None):
             print("%-16s %-44s %-20s %-9s %s" % (r["class"], r["place"], r["species"] + (" (heart)" if r["heart"] else ""),
                                                  r["position"], r["why"]))
     for k in stale:
-        print("STALE            KNOWN ruling for %s at %s: the entry no longer misfits (or is gone); remove it" % (k[1], k[0]))
+        print("STALE            KNOWN / OWNER_DECIDED ruling for %s at %s: the entry no longer misfits (or is gone); remove it" % (k[1], k[0]))
     by_type = sum(1 for r in rows if r["basis"].startswith("type"))
     print("judged %d compiled entry groups (%d entries) from %s against %s: %s; %d judged by type (no vanilla native)"
           % (len(rows), sum(r["entries"] for r in rows), a.pack, Path(jar.path).name,

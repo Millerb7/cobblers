@@ -75,6 +75,7 @@ VR_SEATS = _load("vr_trainers.json")["trainers"]   # Victory Road's ten, seated 
 LATE_SEATS = _load("late_route_trainers.json")["trainers"]   # routes 4-8's 28, seated 2026-09-30
 ARENA_SEATS = _load("arena_trainers.json")["trainers"]       # Heaven's Arena's seven tier champions, 2026-10-01
 HQ_SEATS = _load("hq_trainers.json")["trainers"]             # the Compact HQ tower's seven, 2026-10-04
+COMPACT_SEATS = _load("compact_route_trainers.json")["trainers"]   # the Haven Compact's seven route fighters, 2026-10-11
 GYM_JUNIOR_SEATS = _load("gym_junior_trainers.json")["trainers"]  # the gym juniors, 2026-10-06
 FINALE = _load("finale_trainers.json")["trainers"]           # Brann and Elara: teams only, fought as Cobblemon NPCs
 ROUTE_TRAINER_IDS = {r["id"] for r in _load("trainers.json")["trainers"]}
@@ -629,6 +630,7 @@ def test_r17_placements_are_the_route_seats_then_the_guardians():
            [(v["id"], tuple(v["seat"]), v["yaw"]) for v in VR_SEATS] + \
            [(a["id"], tuple(a["seat"]), a["yaw"]) for a in ARENA_SEATS if "seat" in a and a.get("seated", True)] + \
            [(h["id"], tuple(h["seat"]), h["yaw"]) for h in HQ_SEATS] + \
+           [(c["id"], tuple(c["seat"]), c["yaw"]) for c in COMPACT_SEATS] + \
            [(j["id"], tuple(j["seat"]), j["yaw"]) for j in GYM_JUNIOR_SEATS]
     # 13 route + 28 late route + 5 guardians + 10 Victory Road + the arena's SEATED records. It was 18, then 28, then
     # 56, then 63 with the arena's seven, and is 56 since 2026-10-03: the owner retired the spire's battles ("have the
@@ -644,7 +646,8 @@ def test_r17_placements_are_the_route_seats_then_the_guardians():
     assert not any("seat" in f for f in FINALE)
     # and the gym juniors (data/gym_junior_trainers.json, 2026-10-06), appended after the tower: 2,2,2,2,3,3,3,4
     assert len(GYM_JUNIOR_SEATS) == 21
-    assert len(want) == 56 + len(HQ_SEATS) + len(GYM_JUNIOR_SEATS)
+    assert len(COMPACT_SEATS) == 7        # CP-03's two, CP-07's two and CP-08's three (data/compact_routes.json)
+    assert len(want) == 56 + len(HQ_SEATS) + len(COMPACT_SEATS) + len(GYM_JUNIOR_SEATS)
     assert RT.placements() == want
 
 

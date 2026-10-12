@@ -9,7 +9,11 @@ tools/entei_boss.py slot/s<k>/bind). Then two MoLang callbacks, beside Cobblemon
 (EXP-042: a callback fires only from data/cobblemon/callbacks/<event>/):
 
   pokemon_catch_rate_calculated   a key ball (cobblemon:beast_ball) at a tagged boss: the rate x `multiplier`. Never
-                                  fired for a Master Ball (it is guaranteed before the rate is asked for).
+                                  fired for a Master Ball (it is guaranteed before the rate is asked for). NOT for a
+                                  boss that also carries `native_tag` (an Ultra Beast): the jar's own Beast Ball
+                                  modifier already gives it x5, and ours on top was x25 (data/key_ball.json native_why).
+                                  A boss tool takes its tags from bind_tag_lines(species), which adds `native_tag` for
+                                  every species the jar labels `native_label`; boss_problems sweeps every spawn line.
   poke_ball_capture_calculated    any other ball at a tagged boss: set_shakes(0), so it breaks free, and, thrown by a
                                   player, key_ball/refused runs as them with the ball's id: one of the same ball back
                                   (not in creative) and the refusal line. Fired after every ball's maths, the Master
@@ -66,6 +70,10 @@ REFUSED = "%s:key_ball/refused" % NS
 TAG_RE = re.compile(r"^[A-Za-z0-9_.+-]{1,64}$")          # an entity tag: no spaces, no quotes
 ID_RE = re.compile(r"^[a-z0-9_.-]+:[a-z0-9_./-]+$")
 NEVER = {"condition": "fabric:not", "value": {"condition": "fabric:true"}}
+JAR = Path("C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods/Cobblemon-fabric-1.8.0+1.21.1.jar")
+# a spawn line of the dungeon engine's wild macro (tools/dungeon.py wild_at): species:"<id>", then a line binding it
+SPAWN_SPECIES = re.compile(r'function [a-z0-9_.-]+:[a-z0-9_./-]*wild_at \{[^}]*species:"([a-z0-9_-]+)"')
+RUN_FUNCTION = re.compile(r"run function ([a-z0-9_.-]+):([a-z0-9_./-]+)$")
 
 
 class KeyBallError(ValueError):
@@ -84,6 +92,51 @@ def boss_tag(doc=None):
     return (doc if doc is not None else load())["tag"]
 
 
+_NATIVE = {}
+
+
+def jar_native_species(label, jar=JAR):
+    """sorted species the Cobblemon jar's own species files label `label`, or None when the jar is not here. Read
+    here and not through tools/dungeon_prize.py, so the check does not share the boss tool's reader."""
+    key = (label, str(jar))
+    if key not in _NATIVE:
+        if not Path(jar).is_file():
+            _NATIVE[key] = None
+        else:
+            import zipfile
+            out = []
+            with zipfile.ZipFile(jar) as z:
+                for n in z.namelist():
+                    if n.startswith("data/cobblemon/species/") and n.endswith(".json"):
+                        try:
+                            j = json.loads(z.read(n))
+                        except ValueError:
+                            continue
+                        if label in (j.get("labels") or []):
+                            out.append(n.rsplit("/", 1)[1][:-5])
+            _NATIVE[key] = sorted(out)
+    return _NATIVE[key]
+
+
+def native_species(doc=None):
+    """The species the key ball's own jar modifier already favours (data/key_ball.json native_label): the jar's list,
+    else the record's snapshot where the jar is not on this machine."""
+    doc = doc if doc is not None else load()
+    got = jar_native_species(doc["native_label"])
+    return set(got if got is not None else doc["native_species_snapshot"])
+
+
+def bind_tag_lines(species, doc=None):
+    """The tag lines a boss tool's bind runs for a key boss of `species`: the key tag, and for an Ultra Beast (the jar's
+    native_label) the native tag, so the rate callback leaves the jar's own x5 alone (data/key_ball.json native_why)."""
+    doc = doc if doc is not None else load()
+    sp = str(species).split(":")[-1]
+    out = ["tag @s add %s" % doc["tag"]]
+    if sp in native_species(doc):
+        out.append("tag @s add %s" % doc["native_tag"])
+    return out
+
+
 def problems(doc, blackout=None):
     """[problem] in the record itself and against the blackout's claim list."""
     bad = []
@@ -94,6 +147,18 @@ def problems(doc, blackout=None):
     m = doc.get("multiplier")
     if isinstance(m, bool) or not isinstance(m, (int, float)) or m <= 1:
         bad.append("multiplier %r: the key must raise the rate (> 1)" % (m,))
+    if not TAG_RE.match(str(doc.get("native_tag", ""))) or doc.get("native_tag") == doc.get("tag"):
+        bad.append("native_tag %r is not an entity tag distinct from tag (the Ultra Beast x25 guard)" % doc.get("native_tag"))
+    if doc.get("native_label") != "ultra_beast":
+        bad.append("native_label %r: the jar's Beast Ball is LabelModifier(5.0, true, \"ultra_beast\")" % doc.get("native_label"))
+    snap = doc.get("native_species_snapshot")
+    if not (isinstance(snap, list) and snap and all(isinstance(s, str) for s in snap)):
+        bad.append("native_species_snapshot: the jar's ultra_beast species, a non-empty list")
+    else:
+        jar = jar_native_species(doc.get("native_label") or "")
+        if jar is not None and sorted(snap) != jar:
+            bad.append("native_species_snapshot differs from the jar's %s list: %s" % (
+                doc.get("native_label"), ", ".join(sorted(set(snap) ^ set(jar)))))
     msg = doc.get("message") or ""
     if not msg:
         bad.append("no refusal message")
@@ -135,30 +200,73 @@ def boss_problems(doc):
     with its own tool (module.build(module.load())); writes nothing."""
     bad = []
     want = "tag @s add %s" % doc["tag"]
+    nat = "tag @s add %s" % doc["native_tag"]
+    natives = native_species(doc)
     for b in doc.get("bosses") or []:
         mod = importlib.import_module(b["module"])
         files = mod.build(mod.load())
-        binds = {rel: text for rel, text in files.items() if rel.endswith("/bind.mcfunction")}
+        binds = {rel: text for rel, text in files.items() if re.search(r"/bind(_native)?\.mcfunction$", rel)}
         if not binds:
             bad.append("boss %s: its pack has no bind function to tag the boss in" % b["id"])
         for rel, text in sorted(binds.items()):
             if want not in text.split("\n"):
                 bad.append("boss %s: %s does not run `%s`" % (b["id"], rel, want))
+            if rel.endswith("/bind_native.mcfunction") and nat not in text.split("\n"):
+                bad.append("boss %s: %s does not run `%s`" % (b["id"], rel, nat))
+        # the Ultra Beast sweep: every wild_at spawn line's species against the function the next line binds it with
+        sweep = dict(files)
+        if hasattr(mod, "key_sweep_files"):
+            sweep.update(mod.key_sweep_files(mod.load()))
+        bad += ["boss %s: %s" % (b["id"], p) for p in native_sweep(sweep, want, nat, natives)]
+    return bad
+
+
+def native_sweep(files, want, nat, natives):
+    """[problem] for each spawn line (the wild_at macro, species:"x") whose bind adds the key tag and either misses the
+    native tag on an Ultra Beast (x25) or carries it on anything else (x1). The bind is the function the NEXT line runs."""
+    bad = []
+    for rel, text in sorted(files.items()):
+        lines = text.split("\n")
+        for i, ln in enumerate(lines):
+            m = SPAWN_SPECIES.search(ln)
+            if not m:
+                continue
+            f = RUN_FUNCTION.search(lines[i + 1]) if i + 1 < len(lines) else None
+            target = files.get("data/%s/function/%s.mcfunction" % f.groups()) if f else None
+            if target is None:
+                continue
+            tl = target.split("\n")
+            if want not in tl:
+                continue
+            sp = m.group(1)
+            if sp in natives and nat not in tl:
+                bad.append("%s spawns %s (an Ultra Beast) and binds it with the key tag but not %s: the jar's x5 and ours "
+                           "would make x25" % (rel, sp, nat.split()[-1]))
+            elif sp not in natives and nat in tl:
+                bad.append("%s spawns %s (not an Ultra Beast) and binds it with %s: the key's x5 would be lost (x1)"
+                           % (rel, sp, nat.split()[-1]))
     return bad
 
 
 def callbacks(doc):
     """The two MoLang callbacks. Only == and nested ?{} (the forms the repo's other callbacks use); no apostrophe
     inside a comment string, because MoLang strings are single-quoted."""
-    tag, key, mult = doc["tag"], doc["key_ball"], doc["multiplier"]
+    tag, key, mult, native = doc["tag"], doc["key_ball"], doc["multiplier"], doc["native_tag"]
     return {
         CALLBACK % "pokemon_catch_rate_calculated": "\n".join([
             "'Generated by tools/key_ball.py from data/key_ball.json. A key ball at a dungeon boss (tagged %s):';" % tag,
-            "'its catch rate times %s, fed to the jar formula. Any other target or ball: untouched.';" % mult,
+            "'its catch rate times %s, fed to the jar formula. Any other target or ball: untouched. Not at a boss';" % mult,
+            "'also tagged %s (an Ultra Beast): the jar gives the Beast Ball x5 on those already.';" % native,
             "t.pk = q.pokemon_entity;",
             "t.pk.has_tag('%s') ? {" % tag,
-            "  q.poke_ball_entity.ball_type == '%s' ? {" % key,
-            "    q.set_catch_rate(q.catch_rate * %s);" % mult,
+            "  t.nat = 0;",
+            "  t.pk.has_tag('%s') ? {" % native,
+            "    t.nat = 1;",
+            "  };",
+            "  t.nat == 0 ? {",
+            "    q.poke_ball_entity.ball_type == '%s' ? {" % key,
+            "      q.set_catch_rate(q.catch_rate * %s);" % mult,
+            "    };",
             "  };",
             "};", ""]),
         CALLBACK % "poke_ball_capture_calculated": "\n".join([

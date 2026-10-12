@@ -14,3 +14,7 @@ Resource packs are never installed on the dedicated server.
 ## Server-delivered pack (proposed, ADR-006)
 
 `tools/client_model_fix.py build --server-pack` writes `build/client/cobblers-client-AllTheMons-subset.zip`: the same Cobblemon fixes plus the ATMxMSD files for the species that would otherwise render as the substitute doll. It is never committed. Its path list is `../manifest/client-pack-atm-subset.json`. Hosting it waits on the ATMxMSD licence question in `docs/research/CLIENT_MODEL_FIXES.md`.
+
+## Dungeon rip pack (client only, built on demand)
+
+`python tools/rip_pack.py build` writes `build/client/cobblers-rip.zip`: the animated pink-lavender-blue oval the dungeon rips show (`data/dungeons.json` `engine.rip_art`, drawn by `tools/rip_art.py`; original art, nothing copied from any mod). It overrides one vanilla item model (`minecraft:amethyst_shard`) for one `custom_model_data` (4180) and adds a flat oval model plus an animated texture. Players copy the zip into their instance's `resourcepacks/` and enable it above the other packs, or run `python tools/rip_pack.py install --instance <dir>`. Never installed on the server; never committed (build output); not embedded in the `.mrpack` (images are refused there). Without it the rip shows a large flat amethyst shard.

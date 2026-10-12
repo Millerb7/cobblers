@@ -306,6 +306,78 @@ def test_a_sign_line_too_long_is_caught(ground, tmp_path, monkeypatch):
     assert "K4" in failing(A.audit(tmp_path, ground))
 
 
+# ------------------------------------------------------------------------------------------------ 2026-10-09: the ruin
+# The owner: "Make the castle have a bigger courtyard and be semi destroyed", and Giratina moved in (the owner, the same
+# day). Written by the agent that built the ruin, disclosed as above; the mutations below edit the GENERATOR.
+def unruined():
+    """The record as it stood before 2026-10-09, restated from data/frostpeak_keep.json dims.courtyard_why (wall_hu 24,
+    base_hu 28, symmetric north and south, no ruin)."""
+    doc = K.load()
+    d = dict(doc["dims"], wall_hu=24, base_hu=28)
+    d.pop("wall_hv_north")
+    d.pop("base_hv_north")
+    old = dict(doc, dims=d)
+    old.pop("ruin")
+    return old
+
+
+def open_courtyard(doc):
+    """Cells of the courtyard floor inside the curtain wall's inner face and not under the keep (this test's own count)."""
+    d = doc["dims"]
+    hvn = d.get("wall_hv_north", d["wall_hv"])
+    t, kh, kc = d["wall_thick"], d["keep_half"], d["keep_cv"]
+    return sum(1 for u in range(-(d["wall_hu"] - t), d["wall_hu"] - t + 1) for v in range(-(hvn - t), d["wall_hv"] - t + 1)
+               if not (abs(u) <= kh and abs(v - kc) <= kh))
+
+
+def test_the_courtyard_is_bigger_and_still_on_the_same_pad(clean):
+    new, old = open_courtyard(K.load()), open_courtyard(unruined())
+    assert new >= 1.5 * old, (new, old)                   # 2176 against 1144
+    assert clean[2]["info"]["pad"] == 127                  # the highest ground under the wider rectangle is still y127
+
+
+def test_the_ruin_never_touches_the_spire():
+    V_new, _ = K.building(K.load())
+    V_old, _ = K.building(unruined())
+    d = K.load()["dims"]
+    # every block of the spire stands where it stood (its material may differ: the west wind's rime now reaches faces
+    # the fallen north-west turret used to cover, which is the frost the ruin asks for)
+    spire = {k: s for k, s in V_old.b.items() if K.in_spire(d, *k) and s != K.AIR}
+    moved = [k for k in spire if V_new.b.get(k, K.AIR) == K.AIR]
+    assert len(spire) > 500 and not moved, moved[:3]
+
+
+def test_the_ruin_is_there(clean):
+    _out, _files, p = clean
+    doc = K.load()
+    cx, cz = doc["site"]["centre"]
+    pad = p["info"]["pad"]
+    d = doc["dims"]
+    hvn = d["wall_hv_north"]
+    # the fallen north-east tower: nothing of it over ry 13 (its stump is ry 4-12); the north-west one keeps its cone
+    fallen = [k for k in p["blocks"] if abs(k[0] - (cx + d["wall_hu"] - 1)) <= 5 and abs(k[2] - (cz - hvn + 1)) <= 5 and k[1] > pad + 13]
+    standing = [k for k in p["blocks"] if abs(k[0] - (cx - d["wall_hu"] + 1)) <= 5 and abs(k[2] - (cz - hvn + 1)) <= 5 and k[1] > pad + 30]
+    assert not fallen and standing
+    # the west breach: at its middle the wall (solid to ry 10 before) is gone above its rubble (at most ry 3)
+    assert not any((cx - d["wall_hu"] + k, pad + y, cz - 9) in p["blocks"] for k in range(3) for y in range(4, 11))
+    rubble = sum(1 for s in p["blocks"].values() if s in ("minecraft:cobblestone", "minecraft:gravel", "minecraft:cobbled_deepslate"))
+    assert rubble > 300
+
+
+def test_rubble_on_the_lair_is_caught(ground, tmp_path, monkeypatch):
+    nu, nv = K.load()["ruin"]["nest"]["at"]
+    mutate_building(monkeypatch, lambda V: V.put(nu + 1, 3, nv, "minecraft:cobblestone"))
+    built(ground, tmp_path)
+    assert "K12" in failing(A.audit(tmp_path, ground))
+
+
+def test_a_lair_without_its_floor_is_caught(ground, tmp_path, monkeypatch):
+    nu, nv = K.load()["ruin"]["nest"]["at"]
+    mutate_building(monkeypatch, lambda V: V.b.pop((nu, 0, nv), None))
+    built(ground, tmp_path)
+    assert "K12" in failing(A.audit(tmp_path, ground))
+
+
 def test_a_plinth_that_ends_above_the_hill_is_refused(ground, monkeypatch):
     monkeypatch.setattr(K, "load", lambda: dict(json.loads(K.DATA.read_text(encoding="utf-8")),
                                                  dims=dict(json.loads(K.DATA.read_text(encoding="utf-8"))["dims"], batter_reach=6)))

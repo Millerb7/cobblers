@@ -454,6 +454,22 @@ class Model:
             if r is not None and obj in w["objectives"]:
                 w["scores"][obj] = r
             return r
+        # Oak's waystone (2026-10-09, edit to the model only): compile_dialogue's give stores the command's success in a
+        # score and tags a failure. A give moves neither the starter state nor the main stage, so it is modelled as a
+        # success that touches nothing this audit checks; the score is kept so the unless-check below reads it
+        m = re.fullmatch(r"store success score @s (\S+) (.*)", rest)
+        if m:
+            obj, more = m.group(1), m.group(2)
+            r = self._sub(w, more)
+            if obj in w["objectives"]:
+                w["scores"][obj] = 1 if r else 0
+            return r
+        m = re.fullmatch(r"unless score @s (\S+) matches (-?\d+) (.*)", rest)
+        if m:
+            obj, n, more = m.group(1), int(m.group(2)), m.group(3)
+            if w["scores"].get(obj) == n:
+                return None
+            return self._sub(w, more)
         # a progression flag probe (compile_dialogue's `flag` condition; first in Oak's dialogue 2026-10-06, the League
         # rules choice). The explored players hold no flag, so it never passes (integrator edit to the model only)
         m = re.fullmatch(r"if entity @s\[advancements=\{cobblers:flag/[a-z0-9_]+=true\}\] (.*)", rest)
@@ -496,6 +512,9 @@ class Model:
         # mode tag move neither the starter state nor the main stage, so they are modelled as successes that touch
         # nothing this audit checks. Their own guarantees are docs/mechanics/OAK_AND_CHALLENGE.md's audit list
         m = re.fullmatch(r"rctmod player set series ([a-z0-9_]+) @s", cmd)
+        if m:
+            return 1
+        m = re.fullmatch(r"give @s [a-z0-9_]+:[a-z0-9_/]+ \d+", cmd)
         if m:
             return 1
         m = re.fullmatch(r"function cobblers:flag/([a-z0-9_]+)/grant", cmd)

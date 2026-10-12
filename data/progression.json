@@ -318,12 +318,19 @@
       "id": "crater_operation_stopped",
       "set_by": {
         "kind": "quest_transition",
-        "quest": "main_worldshift_reveal",
-        "transition": "record_crater_operation_stopped",
-        "invoked_by": "dlg_main_blaine_crater_analyst",
-        "invoked_at": "line blaine_008 (acknowledged, before complete_blaine_reveal), and the blaine_repeat entry rule (priority 7) for a player who heard the account before the setter existed; NPC npc_main_blaine_crater_analyst in gym7_town (Cinderlee). A stand-in: the design's beat is the Craters climax ('The player stops the activation; crater_operation_stopped records it', docs/story/FACTION.md:211; ARC.md:48), which is not written (docs/story/CAMPAIGN_OUTLINE.md section 4 C1, Codex). When it lands, move invoked_by and both invocations to it."
+        "quest": "evt_compact_crater",
+        "transition": "stop_crater_activation",
+        "invoked_by": "dlg_compact_cp12_commander",
+        "invoked_at": "the Field Commander's post-win state (its entry rule's action and its last line's acknowledgement), after the player has beaten the three anchor guards and the Commander: CP-12 The Crater Activation (docs/story/HAVEN_COMPACT_PASS.md section 3; data/compact_points.json cp12_crater_activation), the Craters climax ARC.md:516-526 describes ('The player stops the activation; crater_operation_stopped records it', FACTION.md:211). Moved here 2026-10-11 (unit CP-CORE) from main_worldshift_reveal record_crater_operation_stopped.",
+        "stand_in_setter": {
+          "quest": "main_worldshift_reveal",
+          "transition": "record_crater_operation_stopped",
+          "invoked_by": "dlg_main_blaine_crater_analyst, line blaine_008 and the blaine_repeat entry rule (priority 7)",
+          "kept_because": "CP-12 is an OPTIONAL quest until the owner answers the design's O3 ('Should CP-12 become the setter of crater_operation_stopped, replacing the stand-in line blaine_008? Both stay optional unless you say so'). A player who never plays CP-12 still gets the flag from the analyst's account, as before 2026-10-11, and the flag closes CP-12 for them (data/compact_points.json closed_when). If O3 makes CP-12 a main beat: delete the analyst's two invocations and this record.",
+          "same_grant": "both transitions run cobblers:flag/crater_operation_stopped/grant; granting a held advancement is a no-op, so whichever runs second changes nothing"
+        }
       },
-      "why": "Approved in docs/story/ARC.md:27 and :48 ('Sets crater_operation_stopped, then gym7_cleared') and docs/story/FACTION.md:237 ('Stopping it sets crater_operation_stopped; defeating Blaine separately sets gym7_cleared'). Had no setter until 2026-10-09 (review N9, sweep U58). Read by nothing in data yet; the Kyogre 'two sleepers' beat is designed to (docs/world-building/KYOGRE_CAVE.md:88). Per player, like every flag here: an advancement granted by cobblers:flag/crater_operation_stopped/grant, which the transition runs as and at the listening player.",
+      "why": "Approved in docs/story/ARC.md:27 and :48 ('Sets crater_operation_stopped, then gym7_cleared') and docs/story/FACTION.md:237 ('Stopping it sets crater_operation_stopped; defeating Blaine separately sets gym7_cleared'). Had no setter until 2026-10-09 (review N9, sweep U58). Read since 2026-10-11 by CP-12's own conversations (dlg_compact_cp12_*: held without activation_stopped, it closes the point); the Kyogre 'two sleepers' beat is designed to (docs/world-building/KYOGRE_CAVE.md:88). Per player, like every flag here: an advancement granted by cobblers:flag/crater_operation_stopped/grant, which the transition runs as and at the listening player.",
       "multiplayer": "per player. ARC.md speaks of the operation's defeat as one world event; a world-scoped flag is state the dialogue compiler refuses, and an owner call (as for rift_crisis_resolved)."
     },
     {
@@ -775,6 +782,15 @@
       "scope": "player",
       "initial": false,
       "why": "Oak's lab scene (data/scenes.json oak_lab): set when Oak's conversation opened by itself as this player walked into the lab, so it opens once and every later talk is a click on Oak (data/quests.json greet_in_lab)."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.waystone_claimed",
+      "quest_id": "main_worldshift_reveal",
+      "field": "waystone_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Oak's gift of one waystone (data/player_waystone.json, data/rewards.json oak_waystone): the claim of grant_reward_once in data/quests.json grant_oak_waystone, written only when the item was given. Permanent and per player: a player who loses the item has no second grant, by the owner's 'one per player' (2026-10-09)."
     },
     {
       "id": "quest.main_worldshift_reveal.lab_starter_cursor",
@@ -1459,6 +1475,317 @@
       "scope": "player",
       "initial": "n1",
       "allowed_values": "node ids from dlg_viltri_north_bank"
+    },
+    {
+      "id": "quest.evt_compact_courier_spar.courier_ansel_cursor",
+      "quest_id": "evt_compact_courier_spar",
+      "field": "courier_ansel_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "courier_ansel_before",
+      "allowed_values": "node ids from dlg_compact_courier_ansel"
+    },
+    {
+      "id": "quest.evt_compact_courier_spar.compact_courier_ansel_defeated",
+      "quest_id": "evt_compact_courier_spar",
+      "field": "compact_courier_ansel_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-01: this player beat Courier Ansel Kerr, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_courier_spar.mila_aster_cursor",
+      "quest_id": "evt_compact_courier_spar",
+      "field": "mila_aster_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "mila_aster_before",
+      "allowed_values": "node ids from dlg_compact_mila_aster"
+    },
+    {
+      "id": "quest.evt_compact_landing.nia_landing_cursor",
+      "quest_id": "evt_compact_landing",
+      "field": "nia_landing_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "nia_landing_before",
+      "allowed_values": "node ids from dlg_compact_nia_landing"
+    },
+    {
+      "id": "quest.evt_compact_landing.tomas_landing_cursor",
+      "quest_id": "evt_compact_landing",
+      "field": "tomas_landing_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "tomas_landing_before",
+      "allowed_values": "node ids from dlg_compact_tomas_landing"
+    },
+    {
+      "id": "quest.compact_relay_tech_01.defeated",
+      "quest_id": "compact_relay_tech_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-03 The Relay on the Climb (Relay Technician Voss), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.compact_relay_tech_02.defeated",
+      "quest_id": "compact_relay_tech_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-03 The Relay on the Climb (Relay Technician Iwen), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.evt_compact_cirque_survey.ranger_halloran_cursor",
+      "quest_id": "evt_compact_cirque_survey",
+      "field": "ranger_halloran_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "ranger_halloran_before",
+      "allowed_values": "node ids from dlg_compact_ranger_halloran"
+    },
+    {
+      "id": "quest.evt_compact_cirque_survey.compact_ranger_halloran_defeated",
+      "quest_id": "evt_compact_cirque_survey",
+      "field": "compact_ranger_halloran_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-05: this player beat Cirque Ranger Teo Halloran, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_cirque_survey.surveyor_marn_cursor",
+      "quest_id": "evt_compact_cirque_survey",
+      "field": "surveyor_marn_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "surveyor_marn_before",
+      "allowed_values": "node ids from dlg_compact_surveyor_marn"
+    },
+    {
+      "id": "quest.evt_compact_cirque_survey.compact_surveyor_marn_defeated",
+      "quest_id": "evt_compact_cirque_survey",
+      "field": "compact_surveyor_marn_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-05: this player beat Destination Surveyor Ilse Marn, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_cirque_survey.sided_with",
+      "quest_id": "evt_compact_cirque_survey",
+      "field": "sided_with",
+      "type": "enum",
+      "scope": "player",
+      "initial": "none",
+      "allowed_values": [
+        "none",
+        "ranger",
+        "surveyor"
+      ],
+      "why": "CP-05: the player's choice at Survey of an Empty Cirque"
+    },
+    {
+      "id": "quest.evt_compact_pause_vote.nia_pause_cursor",
+      "quest_id": "evt_compact_pause_vote",
+      "field": "nia_pause_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "nia_pause_before",
+      "allowed_values": "node ids from dlg_compact_nia_pause"
+    },
+    {
+      "id": "quest.evt_compact_pause_vote.dev_aster_cursor",
+      "quest_id": "evt_compact_pause_vote",
+      "field": "dev_aster_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "dev_aster_before",
+      "allowed_values": "node ids from dlg_compact_dev_aster"
+    },
+    {
+      "id": "quest.evt_compact_pause_vote.sergeant_dorrin_cursor",
+      "quest_id": "evt_compact_pause_vote",
+      "field": "sergeant_dorrin_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "sergeant_dorrin_before",
+      "allowed_values": "node ids from dlg_compact_sergeant_dorrin"
+    },
+    {
+      "id": "quest.evt_compact_pause_vote.compact_sergeant_dorrin_defeated",
+      "quest_id": "evt_compact_pause_vote",
+      "field": "compact_sergeant_dorrin_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-06: this player beat Guard Sergeant Hale Dorrin, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.compact_anchor_crew_01.defeated",
+      "quest_id": "compact_anchor_crew_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-07 The Anchor Pull (Salvage Hand Brell), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.compact_anchor_crew_02.defeated",
+      "quest_id": "compact_anchor_crew_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-07 The Anchor Pull (Salvage Hand Quill), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.evt_compact_anchor_pull.varga_2_cursor",
+      "quest_id": "evt_compact_anchor_pull",
+      "field": "varga_2_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "varga_2_before",
+      "allowed_values": "node ids from dlg_compact_varga_2"
+    },
+    {
+      "id": "quest.evt_compact_anchor_pull.compact_varga_2_defeated",
+      "quest_id": "evt_compact_anchor_pull",
+      "field": "compact_varga_2_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-07: this player beat Lieutenant Varga, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.compact_reed_scout_01.defeated",
+      "quest_id": "compact_reed_scout_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-08 Shadows in the Reeds (Reed Scout Lio), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.compact_reed_scout_02.defeated",
+      "quest_id": "compact_reed_scout_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-08 Shadows in the Reeds (Reed Scout Mave), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.compact_reed_scout_03.defeated",
+      "quest_id": "compact_reed_scout_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-08 Shadows in the Reeds (Reed Scout Orrin), set by its rctmod defeat_count advancement (tools/route_trainers.py); data/compact_route_trainers.json"
+    },
+    {
+      "id": "quest.evt_compact_waiting_camp.camp_warden_cursor",
+      "quest_id": "evt_compact_waiting_camp",
+      "field": "camp_warden_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "camp_warden_before",
+      "allowed_values": "node ids from dlg_compact_camp_warden"
+    },
+    {
+      "id": "quest.evt_compact_waiting_camp.camp_mother_cursor",
+      "quest_id": "evt_compact_waiting_camp",
+      "field": "camp_mother_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "camp_mother_before",
+      "allowed_values": "node ids from dlg_compact_camp_mother"
+    },
+    {
+      "id": "quest.evt_compact_requisition.boarding_hask_cursor",
+      "quest_id": "evt_compact_requisition",
+      "field": "boarding_hask_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "boarding_hask_before",
+      "allowed_values": "node ids from dlg_compact_boarding_hask"
+    },
+    {
+      "id": "quest.evt_compact_requisition.compact_boarding_hask_defeated",
+      "quest_id": "evt_compact_requisition",
+      "field": "compact_boarding_hask_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-10: this player beat Boarding Officer Perrin Hask, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_bridge.bridge_guard_cursor",
+      "quest_id": "evt_compact_bridge",
+      "field": "bridge_guard_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "bridge_guard_before",
+      "allowed_values": "node ids from dlg_compact_bridge_guard"
+    },
+    {
+      "id": "quest.evt_compact_bridge.compact_bridge_guard_ode_defeated",
+      "quest_id": "evt_compact_bridge",
+      "field": "compact_bridge_guard_ode_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-11: this player beat Checkpoint Guard Tamsin Ode, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_bridge.varga_3_cursor",
+      "quest_id": "evt_compact_bridge",
+      "field": "varga_3_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "varga_3_before",
+      "allowed_values": "node ids from dlg_compact_varga_3"
+    },
+    {
+      "id": "quest.evt_compact_bridge.compact_varga_3_defeated",
+      "quest_id": "evt_compact_bridge",
+      "field": "compact_varga_3_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-11: this player beat Lieutenant Varga, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_rearguard.varga_4_cursor",
+      "quest_id": "evt_compact_rearguard",
+      "field": "varga_4_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "varga_4_before",
+      "allowed_values": "node ids from dlg_compact_varga_4"
+    },
+    {
+      "id": "quest.evt_compact_rearguard.compact_varga_4_defeated",
+      "quest_id": "evt_compact_rearguard",
+      "field": "compact_varga_4_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "CP-13: this player beat Lieutenant Varga, set by the cobblers_compact_routes battle_victory callback (tools/compact_routes.py build)"
+    },
+    {
+      "id": "quest.evt_compact_rearguard.dissenter_medic_cursor",
+      "quest_id": "evt_compact_rearguard",
+      "field": "dissenter_medic_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "dissenter_medic_before",
+      "allowed_values": "node ids from dlg_compact_dissenter_medic"
     },
     {
       "id": "quest.evt_route3_nosepass_signs.started",
@@ -3936,6 +4263,460 @@
         "stand",
         "repeat"
       ]
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.started",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Maren Holt in the burrow (dlg_wardenhold_maren start)."
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.reported",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "reported",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player told Maren they beat Giratina (the report transition, which reads the player tag cobblers.fk_giratina_beaten)."
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.reward_claimed",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the claim field of grant_reward_once reward_wardenhold_giratina."
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.dialogue_cursor",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "m001",
+      "allowed_values": [
+        "m001",
+        "m002",
+        "m003",
+        "m004",
+        "m005",
+        "m006",
+        "hub",
+        "w001",
+        "w002",
+        "h001",
+        "h002",
+        "f001",
+        "f002",
+        "f003",
+        "done01"
+      ]
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.sef_cursor",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "sef_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "s001",
+      "allowed_values": [
+        "s001",
+        "s002",
+        "s003",
+        "s004",
+        "s005",
+        "a001"
+      ]
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.pell_cursor",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "pell_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "p001",
+      "allowed_values": [
+        "p001",
+        "p002",
+        "p003",
+        "p004",
+        "a001"
+      ]
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.giratina_beaten",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "giratina_beaten",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:frostpeak_keep_quest/giratina_defeated in cobblers_frostpeak_keep_quest (tools/frostpeak_keep_quest.py), mirrored as the player tag cobblers.fk_giratina_beaten which the dialogue reads; NOT Cobblemon player data: a battle callback cannot write q.player.data()",
+      "why": "data/frostpeak_keep_quest.json: this player was in a battle in which Wardenhold's Giratina fainted."
+    },
+    {
+      "id": "quest.evt_wardenhold_giratina.giratina_caught",
+      "quest_id": "evt_wardenhold_giratina",
+      "field": "giratina_caught",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:frostpeak_keep_quest/giratina_caught in cobblers_frostpeak_keep_quest, read by its catch gate (giratina/catch_check)",
+      "why": "data/frostpeak_keep_quest.json giratina.catch: once per player."
+    },
+    {
+      "id": "quest.evt_compact_records_run.courier_1_cursor",
+      "quest_id": "evt_compact_records_run",
+      "field": "courier_1_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "courier_1_before_1",
+      "allowed_values": "node ids from dlg_compact_cp04_courier_1"
+    },
+    {
+      "id": "quest.evt_compact_records_run.courier_2_cursor",
+      "quest_id": "evt_compact_records_run",
+      "field": "courier_2_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "courier_2_before_1",
+      "allowed_values": "node ids from dlg_compact_cp04_courier_2"
+    },
+    {
+      "id": "quest.evt_compact_records_run.courier_3_cursor",
+      "quest_id": "evt_compact_records_run",
+      "field": "courier_3_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "courier_3_before_1",
+      "allowed_values": "node ids from dlg_compact_cp04_courier_3"
+    },
+    {
+      "id": "quest.evt_compact_records_run.varga_cursor",
+      "quest_id": "evt_compact_records_run",
+      "field": "varga_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "varga_before_1",
+      "allowed_values": "node ids from dlg_compact_cp04_varga"
+    },
+    {
+      "id": "quest.evt_compact_records_run.courier_1_defeated",
+      "quest_id": "evt_compact_records_run",
+      "field": "courier_1_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "the cobblers_compact battle_victory callback (tools/compact_points.py)"
+    },
+    {
+      "id": "quest.evt_compact_records_run.courier_2_defeated",
+      "quest_id": "evt_compact_records_run",
+      "field": "courier_2_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "the cobblers_compact battle_victory callback (tools/compact_points.py)"
+    },
+    {
+      "id": "quest.evt_compact_records_run.courier_3_defeated",
+      "quest_id": "evt_compact_records_run",
+      "field": "courier_3_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "the cobblers_compact battle_victory callback (tools/compact_points.py)"
+    },
+    {
+      "id": "quest.evt_compact_records_run.varga_defeated",
+      "quest_id": "evt_compact_records_run",
+      "field": "varga_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "the cobblers_compact battle_victory callback (tools/compact_points.py)"
+    },
+    {
+      "id": "quest.evt_compact_records_run.records_recovered",
+      "quest_id": "evt_compact_records_run",
+      "field": "records_recovered",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition recover_records"
+    },
+    {
+      "id": "quest.evt_compact_records_run.completed",
+      "quest_id": "evt_compact_records_run",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition recover_records"
+    },
+    {
+      "id": "quest.evt_compact_crater.tomas_rill_cursor",
+      "quest_id": "evt_compact_crater",
+      "field": "tomas_rill_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "tomas_rill_before_1",
+      "allowed_values": "node ids from dlg_compact_cp12_tomas_rill"
+    },
+    {
+      "id": "quest.evt_compact_crater.oren_pell_cursor",
+      "quest_id": "evt_compact_crater",
+      "field": "oren_pell_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "oren_pell_before_1",
+      "allowed_values": "node ids from dlg_compact_cp12_oren_pell"
+    },
+    {
+      "id": "quest.evt_compact_crater.aster_cursor",
+      "quest_id": "evt_compact_crater",
+      "field": "aster_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "aster_before_1",
+      "allowed_values": "node ids from dlg_compact_cp12_aster"
+    },
+    {
+      "id": "quest.evt_compact_crater.guard_1_cursor",
+      "quest_id": "evt_compact_crater",
+      "field": "guard_1_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "guard_1_before_1",
+      "allowed_values": "node ids from dlg_compact_cp12_guard_1"
+    },
+    {
+      "id": "quest.evt_compact_crater.guard_2_cursor",
+      "quest_id": "evt_compact_crater",
+      "field": "guard_2_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "guard_2_before_1",
+      "allowed_values": "node ids from dlg_compact_cp12_guard_2"
+    },
+    {
+      "id": "quest.evt_compact_crater.guard_3_cursor",
+      "quest_id": "evt_compact_crater",
+      "field": "guard_3_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "guard_3_before_1",
+      "allowed_values": "node ids from dlg_compact_cp12_guard_3"
+    },
+    {
+      "id": "quest.evt_compact_crater.commander_cursor",
+      "quest_id": "evt_compact_crater",
+      "field": "commander_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "commander_before_1",
+      "allowed_values": "node ids from dlg_compact_cp12_commander"
+    },
+    {
+      "id": "quest.evt_compact_crater.guard_1_defeated",
+      "quest_id": "evt_compact_crater",
+      "field": "guard_1_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "the cobblers_compact battle_victory callback (tools/compact_points.py)"
+    },
+    {
+      "id": "quest.evt_compact_crater.guard_2_defeated",
+      "quest_id": "evt_compact_crater",
+      "field": "guard_2_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "the cobblers_compact battle_victory callback (tools/compact_points.py)"
+    },
+    {
+      "id": "quest.evt_compact_crater.guard_3_defeated",
+      "quest_id": "evt_compact_crater",
+      "field": "guard_3_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "the cobblers_compact battle_victory callback (tools/compact_points.py)"
+    },
+    {
+      "id": "quest.evt_compact_crater.commander_defeated",
+      "quest_id": "evt_compact_crater",
+      "field": "commander_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "the cobblers_compact battle_victory callback (tools/compact_points.py)"
+    },
+    {
+      "id": "quest.evt_compact_crater.occupied_confirmed",
+      "quest_id": "evt_compact_crater",
+      "field": "occupied_confirmed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition confirm_occupied"
+    },
+    {
+      "id": "quest.evt_compact_crater.calibration_received",
+      "quest_id": "evt_compact_crater",
+      "field": "calibration_received",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition receive_calibration"
+    },
+    {
+      "id": "quest.evt_compact_crater.anchor_1_shut",
+      "quest_id": "evt_compact_crater",
+      "field": "anchor_1_shut",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition shut_anchor_1"
+    },
+    {
+      "id": "quest.evt_compact_crater.anchor_2_shut",
+      "quest_id": "evt_compact_crater",
+      "field": "anchor_2_shut",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition shut_anchor_2"
+    },
+    {
+      "id": "quest.evt_compact_crater.anchor_3_shut",
+      "quest_id": "evt_compact_crater",
+      "field": "anchor_3_shut",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition shut_anchor_3"
+    },
+    {
+      "id": "quest.evt_compact_crater.activation_stopped",
+      "quest_id": "evt_compact_crater",
+      "field": "activation_stopped",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition stop_crater_activation"
+    },
+    {
+      "id": "quest.evt_compact_crater.completed",
+      "quest_id": "evt_compact_crater",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition stop_crater_activation"
+    },
+    {
+      "id": "quest.evt_compact_split.nia_calder_cursor",
+      "quest_id": "evt_compact_split",
+      "field": "nia_calder_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "nia_calder_before_1",
+      "allowed_values": "node ids from dlg_compact_cp14_nia_calder"
+    },
+    {
+      "id": "quest.evt_compact_split.aster_cursor",
+      "quest_id": "evt_compact_split",
+      "field": "aster_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "aster_before_1",
+      "allowed_values": "node ids from dlg_compact_cp14_aster"
+    },
+    {
+      "id": "quest.evt_compact_split.watch_sergeant_cursor",
+      "quest_id": "evt_compact_split",
+      "field": "watch_sergeant_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "watch_sergeant_before_1",
+      "allowed_values": "node ids from dlg_compact_cp14_watch_sergeant"
+    },
+    {
+      "id": "quest.evt_compact_split.loyalist_1_cursor",
+      "quest_id": "evt_compact_split",
+      "field": "loyalist_1_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "loyalist_1_before_1",
+      "allowed_values": "node ids from dlg_compact_cp14_loyalist_1"
+    },
+    {
+      "id": "quest.evt_compact_split.loyalist_2_cursor",
+      "quest_id": "evt_compact_split",
+      "field": "loyalist_2_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "loyalist_2_before_1",
+      "allowed_values": "node ids from dlg_compact_cp14_loyalist_2"
+    },
+    {
+      "id": "quest.evt_compact_split.loyalist_1_defeated",
+      "quest_id": "evt_compact_split",
+      "field": "loyalist_1_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "the cobblers_compact battle_victory callback (tools/compact_points.py)"
+    },
+    {
+      "id": "quest.evt_compact_split.loyalist_2_defeated",
+      "quest_id": "evt_compact_split",
+      "field": "loyalist_2_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "the cobblers_compact battle_victory callback (tools/compact_points.py)"
+    },
+    {
+      "id": "quest.evt_compact_split.speech_heard",
+      "quest_id": "evt_compact_split",
+      "field": "speech_heard",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition hear_split"
+    },
+    {
+      "id": "quest.evt_compact_split.sergeant_rallied",
+      "quest_id": "evt_compact_split",
+      "field": "sergeant_rallied",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition rally"
+    },
+    {
+      "id": "quest.evt_compact_split.packet_kept",
+      "quest_id": "evt_compact_split",
+      "field": "packet_kept",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition keep_packet"
+    },
+    {
+      "id": "quest.evt_compact_split.completed",
+      "quest_id": "evt_compact_split",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition keep_packet"
     }
   ],
   "gym_markers": {

@@ -1,0 +1,2568 @@
+{
+ "why": "NETHER-THEMES (2026-10-10): one full-length demo dungeon per nether theme, for the theme's own tests (tests/test_dungeon_nether_themes.py) and for the authors of the five nether dungeons. Each is the same 25-entry shape (about 30 rooms with the crossroads routes) (an entry, a three-way crossroads with a lit, a dark and a flooded way out and their signs, a court the ways rejoin in, a maze, a resources room with the nether seam, a safe room with a healer, a stand, a parkour, a dark room, a collapse bridge, a nest, a mini-boss, a puzzle, a vault, a habitat, an ambush gauntlet, the arena, the exit) with the theme's own Pokemon in the fights; shape_mix on; four variants. A fixture for tests, not a dungeon anyone plays: the nether dungeons are authored in data/dungeons.json later.",
+ "variants": [
+  {
+   "id": "a"
+  },
+  {
+   "id": "b",
+   "mirror": true
+  },
+  {
+   "id": "c",
+   "seed": "c"
+  },
+  {
+   "id": "d",
+   "seed": "d",
+   "mirror": true
+  }
+ ],
+ "themes": {
+  "nether_wastes": {
+   "shape_mix": true,
+   "rooms": [
+    {
+     "id": "entry",
+     "kind": "entry_room",
+     "length": 20,
+     "width": 15,
+     "height": 8
+    },
+    {
+     "id": "d1",
+     "kind": "drift",
+     "length": 30,
+     "width": 11,
+     "height": 8
+    },
+    {
+     "id": "cross",
+     "kind": "crossroads",
+     "length": 40,
+     "width": 37,
+     "height": 10,
+     "shape": "oval",
+     "params": {
+      "hub": [
+       0.45,
+       0.5
+      ]
+     }
+    },
+    {
+     "id": "f1",
+     "kind": "fork",
+     "routes": [
+      {
+       "id": "gantry",
+       "look": "lit",
+       "sign": "GANTRY",
+       "rooms": [
+        {
+         "id": "g_a",
+         "kind": "drift",
+         "length": 34,
+         "width": 11,
+         "height": 8
+        },
+        {
+         "id": "g_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 11,
+         "height": 8
+        }
+       ]
+      },
+      {
+       "id": "old",
+       "look": "dark",
+       "sign": [
+        "OLD DRIFT",
+        "KEEP OUT"
+       ],
+       "from": {
+        "side": "north",
+        "at": 26
+       },
+       "rooms": [
+        {
+         "id": "o_a",
+         "kind": "drift",
+         "length": 22,
+         "width": 9,
+         "height": 7,
+         "in": {
+          "side": "south",
+          "at": 4
+         }
+        },
+        {
+         "id": "o_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 9,
+         "height": 7
+        }
+       ]
+      },
+      {
+       "id": "sump",
+       "look": "flooded",
+       "sign": "SUMP",
+       "from": {
+        "side": "south",
+        "at": 26
+       },
+       "rooms": [
+        {
+         "id": "s_a",
+         "kind": "drift",
+         "length": 22,
+         "width": 9,
+         "height": 7,
+         "in": {
+          "side": "north",
+          "at": 4
+         }
+        },
+        {
+         "id": "s_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 9,
+         "height": 7
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "court",
+     "kind": "drift",
+     "length": 24,
+     "width": 60,
+     "height": 9
+    },
+    {
+     "id": "hall_a",
+     "kind": "drift",
+     "length": 40,
+     "width": 21,
+     "height": 8
+    },
+    {
+     "id": "maze",
+     "kind": "maze",
+     "length": 53,
+     "width": 41,
+     "height": 8,
+     "params": {
+      "exit_dz": 8
+     }
+    },
+    {
+     "id": "d2",
+     "kind": "drift",
+     "length": 30,
+     "width": 9,
+     "height": 6,
+     "rise": 3
+    },
+    {
+     "id": "seam",
+     "kind": "resources",
+     "length": 40,
+     "width": 25,
+     "height": 7
+    },
+    {
+     "id": "d3",
+     "kind": "stairs",
+     "length": 20,
+     "width": 9,
+     "height": 7,
+     "rise": -3
+    },
+    {
+     "id": "rest",
+     "kind": "safe_room",
+     "length": 28,
+     "width": 21,
+     "height": 7,
+     "params": {
+      "healer": true,
+      "uses": 1
+     }
+    },
+    {
+     "id": "stand1",
+     "kind": "stand",
+     "length": 44,
+     "width": 33,
+     "height": 8,
+     "gate": "cleared",
+     "params": {
+      "trainers": [
+       {
+        "name": "Vent Warden",
+        "team_by_band": {
+         "1": [
+          "slugma",
+          "numel"
+         ],
+         "2": [
+          "slugma",
+          "numel",
+          "magmar"
+         ],
+         "3": [
+          "slugma",
+          "numel",
+          "magmar"
+         ],
+         "4": [
+          "slugma",
+          "numel",
+          "magmar",
+          "camerupt"
+         ],
+         "5": [
+          "slugma",
+          "numel",
+          "magmar",
+          "camerupt",
+          "magcargo"
+         ],
+         "6": [
+          "slugma",
+          "numel",
+          "magmar",
+          "camerupt",
+          "magcargo",
+          "magmortar"
+         ]
+        }
+       },
+       {
+        "name": "Brand Keeper",
+        "team_by_band": {
+         "1": [
+          "charcadet",
+          "sizzlipede"
+         ],
+         "2": [
+          "charcadet",
+          "sizzlipede",
+          "salandit"
+         ],
+         "3": [
+          "charcadet",
+          "sizzlipede",
+          "salandit"
+         ],
+         "4": [
+          "charcadet",
+          "sizzlipede",
+          "salandit",
+          "heatmor"
+         ],
+         "5": [
+          "charcadet",
+          "sizzlipede",
+          "salandit",
+          "heatmor",
+          "centiskorch"
+         ],
+         "6": [
+          "charcadet",
+          "sizzlipede",
+          "salandit",
+          "heatmor",
+          "centiskorch",
+          "coalossal"
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "d4",
+     "kind": "drift",
+     "length": 30,
+     "width": 11,
+     "height": 6
+    },
+    {
+     "id": "jump",
+     "kind": "parkour",
+     "length": 74,
+     "width": 31,
+     "height": 9
+    },
+    {
+     "id": "dark",
+     "kind": "dark_room",
+     "length": 44,
+     "width": 25,
+     "height": 7
+    },
+    {
+     "id": "bridge",
+     "kind": "collapse_bridge",
+     "length": 50,
+     "width": 17,
+     "height": 9
+    },
+    {
+     "id": "nest",
+     "kind": "nest",
+     "length": 40,
+     "width": 31,
+     "height": 8,
+     "params": {
+      "species": [
+       "slugma",
+       "magby",
+       "numel",
+       "sizzlipede"
+      ],
+      "count_by_band": {
+       "1": 3,
+       "2": 4,
+       "3": 4,
+       "4": 5,
+       "5": 6,
+       "6": 6
+      },
+      "level_spread": [
+       6,
+       9
+      ],
+      "spawns": 6
+     }
+    },
+    {
+     "id": "mini",
+     "kind": "miniboss",
+     "length": 36,
+     "width": 25,
+     "height": 8,
+     "gate": "cleared",
+     "params": {
+      "species_by_band": {
+       "1": "torkoal",
+       "2": "magcargo",
+       "3": "camerupt",
+       "4": "centiskorch",
+       "5": "magmortar",
+       "6": "coalossal"
+      },
+      "level_offset": -1,
+      "scale": 1.3
+     }
+    },
+    {
+     "id": "puz",
+     "kind": "puzzle",
+     "length": 34,
+     "width": 23,
+     "height": 7,
+     "params": {
+      "controls": 3
+     }
+    },
+    {
+     "id": "vault",
+     "kind": "vault",
+     "length": 30,
+     "width": 21,
+     "height": 7,
+     "params": {
+      "chests": 4,
+      "clock_cost_s": 20
+     }
+    },
+    {
+     "id": "hab",
+     "kind": "habitat",
+     "length": 44,
+     "width": 31,
+     "height": 9,
+     "gate": "cleared",
+     "params": {
+      "species": "heatran",
+      "level_by_band": {
+       "1": 25,
+       "2": 35,
+       "3": 45,
+       "4": 55,
+       "5": 62,
+       "6": 100
+      },
+      "fight_only": true,
+      "title": "the wastes' deepest vent"
+     }
+    },
+    {
+     "id": "gaunt",
+     "kind": "gauntlet",
+     "length": 84,
+     "width": 31,
+     "height": 7,
+     "params": {
+      "trainers": [
+       {
+        "name": "Ash Lurker",
+        "team_by_band": {
+         "1": [
+          "salandit",
+          "sizzlipede"
+         ],
+         "2": [
+          "salandit",
+          "sizzlipede",
+          "magby"
+         ],
+         "3": [
+          "salandit",
+          "sizzlipede",
+          "magby"
+         ],
+         "4": [
+          "salandit",
+          "sizzlipede",
+          "magby",
+          "torkoal"
+         ],
+         "5": [
+          "salandit",
+          "sizzlipede",
+          "magby",
+          "torkoal",
+          "magmar"
+         ],
+         "6": [
+          "salandit",
+          "sizzlipede",
+          "magby",
+          "torkoal",
+          "magmar",
+          "centiskorch"
+         ]
+        }
+       },
+       {
+        "name": "Ash Lurker II",
+        "team_by_band": {
+         "1": [
+          "centiskorch",
+          "magmar"
+         ],
+         "2": [
+          "centiskorch",
+          "magmar",
+          "torkoal"
+         ],
+         "3": [
+          "centiskorch",
+          "magmar",
+          "torkoal"
+         ],
+         "4": [
+          "centiskorch",
+          "magmar",
+          "torkoal",
+          "magby"
+         ],
+         "5": [
+          "centiskorch",
+          "magmar",
+          "torkoal",
+          "magby",
+          "sizzlipede"
+         ],
+         "6": [
+          "centiskorch",
+          "magmar",
+          "torkoal",
+          "magby",
+          "sizzlipede",
+          "salandit"
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "d5",
+     "kind": "drift",
+     "length": 24,
+     "width": 9,
+     "height": 6
+    },
+    {
+     "id": "arena",
+     "kind": "boss_arena",
+     "length": 40,
+     "width": 35,
+     "height": 11
+    },
+    {
+     "id": "exit",
+     "kind": "exit_room",
+     "length": 14,
+     "width": 11,
+     "height": 6
+    }
+   ],
+   "clock_s_by_band": {
+    "1": 2700,
+    "2": 2880,
+    "3": 2940,
+    "4": 3120,
+    "5": 3300,
+    "6": 3540
+   }
+  },
+  "crimson_forest": {
+   "shape_mix": true,
+   "rooms": [
+    {
+     "id": "entry",
+     "kind": "entry_room",
+     "length": 20,
+     "width": 15,
+     "height": 8
+    },
+    {
+     "id": "d1",
+     "kind": "drift",
+     "length": 30,
+     "width": 11,
+     "height": 8
+    },
+    {
+     "id": "cross",
+     "kind": "crossroads",
+     "length": 40,
+     "width": 37,
+     "height": 10,
+     "shape": "oval",
+     "params": {
+      "hub": [
+       0.45,
+       0.5
+      ]
+     }
+    },
+    {
+     "id": "f1",
+     "kind": "fork",
+     "routes": [
+      {
+       "id": "gantry",
+       "look": "lit",
+       "sign": "GANTRY",
+       "rooms": [
+        {
+         "id": "g_a",
+         "kind": "drift",
+         "length": 34,
+         "width": 11,
+         "height": 8
+        },
+        {
+         "id": "g_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 11,
+         "height": 8
+        }
+       ]
+      },
+      {
+       "id": "old",
+       "look": "dark",
+       "sign": [
+        "OLD DRIFT",
+        "KEEP OUT"
+       ],
+       "from": {
+        "side": "north",
+        "at": 26
+       },
+       "rooms": [
+        {
+         "id": "o_a",
+         "kind": "drift",
+         "length": 22,
+         "width": 9,
+         "height": 7,
+         "in": {
+          "side": "south",
+          "at": 4
+         }
+        },
+        {
+         "id": "o_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 9,
+         "height": 7
+        }
+       ]
+      },
+      {
+       "id": "sump",
+       "look": "flooded",
+       "sign": "SUMP",
+       "from": {
+        "side": "south",
+        "at": 26
+       },
+       "rooms": [
+        {
+         "id": "s_a",
+         "kind": "drift",
+         "length": 22,
+         "width": 9,
+         "height": 7,
+         "in": {
+          "side": "north",
+          "at": 4
+         }
+        },
+        {
+         "id": "s_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 9,
+         "height": 7
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "court",
+     "kind": "drift",
+     "length": 24,
+     "width": 60,
+     "height": 9
+    },
+    {
+     "id": "hall_a",
+     "kind": "drift",
+     "length": 40,
+     "width": 21,
+     "height": 8
+    },
+    {
+     "id": "maze",
+     "kind": "maze",
+     "length": 53,
+     "width": 41,
+     "height": 8,
+     "params": {
+      "exit_dz": 8
+     }
+    },
+    {
+     "id": "d2",
+     "kind": "drift",
+     "length": 30,
+     "width": 9,
+     "height": 6,
+     "rise": 3
+    },
+    {
+     "id": "seam",
+     "kind": "resources",
+     "length": 40,
+     "width": 25,
+     "height": 7
+    },
+    {
+     "id": "d3",
+     "kind": "stairs",
+     "length": 20,
+     "width": 9,
+     "height": 7,
+     "rise": -3
+    },
+    {
+     "id": "rest",
+     "kind": "safe_room",
+     "length": 28,
+     "width": 21,
+     "height": 7,
+     "params": {
+      "healer": true,
+      "uses": 1
+     }
+    },
+    {
+     "id": "stand1",
+     "kind": "stand",
+     "length": 44,
+     "width": 33,
+     "height": 8,
+     "gate": "cleared",
+     "params": {
+      "trainers": [
+       {
+        "name": "Stem Warden",
+        "team_by_band": {
+         "1": [
+          "houndour",
+          "venipede"
+         ],
+         "2": [
+          "houndour",
+          "venipede",
+          "paras"
+         ],
+         "3": [
+          "houndour",
+          "venipede",
+          "paras"
+         ],
+         "4": [
+          "houndour",
+          "venipede",
+          "paras",
+          "houndoom"
+         ],
+         "5": [
+          "houndour",
+          "venipede",
+          "paras",
+          "houndoom",
+          "oinkologne"
+         ],
+         "6": [
+          "houndour",
+          "venipede",
+          "paras",
+          "houndoom",
+          "oinkologne",
+          "scolipede"
+         ]
+        }
+       },
+       {
+        "name": "Wart Tender",
+        "team_by_band": {
+         "1": [
+          "lechonk",
+          "litleo"
+         ],
+         "2": [
+          "lechonk",
+          "litleo",
+          "mankey"
+         ],
+         "3": [
+          "lechonk",
+          "litleo",
+          "mankey"
+         ],
+         "4": [
+          "lechonk",
+          "litleo",
+          "mankey",
+          "fletchinder"
+         ],
+         "5": [
+          "lechonk",
+          "litleo",
+          "mankey",
+          "fletchinder",
+          "pyroar"
+         ],
+         "6": [
+          "lechonk",
+          "litleo",
+          "mankey",
+          "fletchinder",
+          "pyroar",
+          "primeape"
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "d4",
+     "kind": "drift",
+     "length": 30,
+     "width": 11,
+     "height": 6
+    },
+    {
+     "id": "jump",
+     "kind": "parkour",
+     "length": 74,
+     "width": 31,
+     "height": 9
+    },
+    {
+     "id": "dark",
+     "kind": "dark_room",
+     "length": 44,
+     "width": 25,
+     "height": 7
+    },
+    {
+     "id": "bridge",
+     "kind": "collapse_bridge",
+     "length": 50,
+     "width": 17,
+     "height": 9
+    },
+    {
+     "id": "nest",
+     "kind": "nest",
+     "length": 40,
+     "width": 31,
+     "height": 8,
+     "params": {
+      "species": [
+       "lechonk",
+       "venipede",
+       "paras",
+       "larvesta"
+      ],
+      "count_by_band": {
+       "1": 3,
+       "2": 4,
+       "3": 4,
+       "4": 5,
+       "5": 6,
+       "6": 6
+      },
+      "level_spread": [
+       6,
+       9
+      ],
+      "spawns": 6
+     }
+    },
+    {
+     "id": "mini",
+     "kind": "miniboss",
+     "length": 36,
+     "width": 25,
+     "height": 8,
+     "gate": "cleared",
+     "params": {
+      "species_by_band": {
+       "1": "oinkologne",
+       "2": "parasect",
+       "3": "scolipede",
+       "4": "houndoom",
+       "5": "pyroar",
+       "6": "primeape"
+      },
+      "level_offset": -1,
+      "scale": 1.3
+     }
+    },
+    {
+     "id": "puz",
+     "kind": "puzzle",
+     "length": 34,
+     "width": 23,
+     "height": 7,
+     "params": {
+      "controls": 3
+     }
+    },
+    {
+     "id": "vault",
+     "kind": "vault",
+     "length": 30,
+     "width": 21,
+     "height": 7,
+     "params": {
+      "chests": 4,
+      "clock_cost_s": 20
+     }
+    },
+    {
+     "id": "hab",
+     "kind": "habitat",
+     "length": 44,
+     "width": 31,
+     "height": 9,
+     "gate": "cleared",
+     "params": {
+      "species": "volcarona",
+      "level_by_band": {
+       "1": 25,
+       "2": 35,
+       "3": 45,
+       "4": 55,
+       "5": 62,
+       "6": 100
+      },
+      "fight_only": true,
+      "title": "the crimson heart"
+     }
+    },
+    {
+     "id": "gaunt",
+     "kind": "gauntlet",
+     "length": 84,
+     "width": 31,
+     "height": 7,
+     "params": {
+      "trainers": [
+       {
+        "name": "Root Lurker",
+        "team_by_band": {
+         "1": [
+          "venipede",
+          "paras"
+         ],
+         "2": [
+          "venipede",
+          "paras",
+          "spinarak"
+         ],
+         "3": [
+          "venipede",
+          "paras",
+          "spinarak"
+         ],
+         "4": [
+          "venipede",
+          "paras",
+          "spinarak",
+          "parasect"
+         ],
+         "5": [
+          "venipede",
+          "paras",
+          "spinarak",
+          "parasect",
+          "ariados"
+         ],
+         "6": [
+          "venipede",
+          "paras",
+          "spinarak",
+          "parasect",
+          "ariados",
+          "houndoom"
+         ]
+        }
+       },
+       {
+        "name": "Root Lurker II",
+        "team_by_band": {
+         "1": [
+          "houndoom",
+          "ariados"
+         ],
+         "2": [
+          "houndoom",
+          "ariados",
+          "parasect"
+         ],
+         "3": [
+          "houndoom",
+          "ariados",
+          "parasect"
+         ],
+         "4": [
+          "houndoom",
+          "ariados",
+          "parasect",
+          "spinarak"
+         ],
+         "5": [
+          "houndoom",
+          "ariados",
+          "parasect",
+          "spinarak",
+          "paras"
+         ],
+         "6": [
+          "houndoom",
+          "ariados",
+          "parasect",
+          "spinarak",
+          "paras",
+          "venipede"
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "d5",
+     "kind": "drift",
+     "length": 24,
+     "width": 9,
+     "height": 6
+    },
+    {
+     "id": "arena",
+     "kind": "boss_arena",
+     "length": 40,
+     "width": 35,
+     "height": 11
+    },
+    {
+     "id": "exit",
+     "kind": "exit_room",
+     "length": 14,
+     "width": 11,
+     "height": 6
+    }
+   ],
+   "clock_s_by_band": {
+    "1": 2700,
+    "2": 2880,
+    "3": 2940,
+    "4": 3120,
+    "5": 3300,
+    "6": 3540
+   }
+  },
+  "warped_forest": {
+   "shape_mix": true,
+   "rooms": [
+    {
+     "id": "entry",
+     "kind": "entry_room",
+     "length": 20,
+     "width": 15,
+     "height": 8
+    },
+    {
+     "id": "d1",
+     "kind": "drift",
+     "length": 30,
+     "width": 11,
+     "height": 8
+    },
+    {
+     "id": "cross",
+     "kind": "crossroads",
+     "length": 40,
+     "width": 37,
+     "height": 10,
+     "shape": "oval",
+     "params": {
+      "hub": [
+       0.45,
+       0.5
+      ]
+     }
+    },
+    {
+     "id": "f1",
+     "kind": "fork",
+     "routes": [
+      {
+       "id": "gantry",
+       "look": "lit",
+       "sign": "GANTRY",
+       "rooms": [
+        {
+         "id": "g_a",
+         "kind": "drift",
+         "length": 34,
+         "width": 11,
+         "height": 8
+        },
+        {
+         "id": "g_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 11,
+         "height": 8
+        }
+       ]
+      },
+      {
+       "id": "old",
+       "look": "dark",
+       "sign": [
+        "OLD DRIFT",
+        "KEEP OUT"
+       ],
+       "from": {
+        "side": "north",
+        "at": 26
+       },
+       "rooms": [
+        {
+         "id": "o_a",
+         "kind": "drift",
+         "length": 22,
+         "width": 9,
+         "height": 7,
+         "in": {
+          "side": "south",
+          "at": 4
+         }
+        },
+        {
+         "id": "o_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 9,
+         "height": 7
+        }
+       ]
+      },
+      {
+       "id": "sump",
+       "look": "flooded",
+       "sign": "SUMP",
+       "from": {
+        "side": "south",
+        "at": 26
+       },
+       "rooms": [
+        {
+         "id": "s_a",
+         "kind": "drift",
+         "length": 22,
+         "width": 9,
+         "height": 7,
+         "in": {
+          "side": "north",
+          "at": 4
+         }
+        },
+        {
+         "id": "s_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 9,
+         "height": 7
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "court",
+     "kind": "drift",
+     "length": 24,
+     "width": 60,
+     "height": 9
+    },
+    {
+     "id": "hall_a",
+     "kind": "drift",
+     "length": 40,
+     "width": 21,
+     "height": 8
+    },
+    {
+     "id": "maze",
+     "kind": "maze",
+     "length": 53,
+     "width": 41,
+     "height": 8,
+     "params": {
+      "exit_dz": 8
+     }
+    },
+    {
+     "id": "d2",
+     "kind": "drift",
+     "length": 30,
+     "width": 9,
+     "height": 6,
+     "rise": 3
+    },
+    {
+     "id": "seam",
+     "kind": "resources",
+     "length": 40,
+     "width": 25,
+     "height": 7
+    },
+    {
+     "id": "d3",
+     "kind": "stairs",
+     "length": 20,
+     "width": 9,
+     "height": 7,
+     "rise": -3
+    },
+    {
+     "id": "rest",
+     "kind": "safe_room",
+     "length": 28,
+     "width": 21,
+     "height": 7,
+     "params": {
+      "healer": true,
+      "uses": 1
+     }
+    },
+    {
+     "id": "stand1",
+     "kind": "stand",
+     "length": 44,
+     "width": 33,
+     "height": 8,
+     "gate": "cleared",
+     "params": {
+      "trainers": [
+       {
+        "name": "Hollow Warden",
+        "team_by_band": {
+         "1": [
+          "misdreavus",
+          "impidimp"
+         ],
+         "2": [
+          "misdreavus",
+          "impidimp",
+          "morelull"
+         ],
+         "3": [
+          "misdreavus",
+          "impidimp",
+          "morelull"
+         ],
+         "4": [
+          "misdreavus",
+          "impidimp",
+          "morelull",
+          "morgrem"
+         ],
+         "5": [
+          "misdreavus",
+          "impidimp",
+          "morelull",
+          "morgrem",
+          "shiinotic"
+         ],
+         "6": [
+          "misdreavus",
+          "impidimp",
+          "morelull",
+          "morgrem",
+          "shiinotic",
+          "mismagius"
+         ]
+        }
+       },
+       {
+        "name": "Spore Reader",
+        "team_by_band": {
+         "1": [
+          "elgyem",
+          "foongus"
+         ],
+         "2": [
+          "elgyem",
+          "foongus",
+          "toedscool"
+         ],
+         "3": [
+          "elgyem",
+          "foongus",
+          "toedscool"
+         ],
+         "4": [
+          "elgyem",
+          "foongus",
+          "toedscool",
+          "beheeyem"
+         ],
+         "5": [
+          "elgyem",
+          "foongus",
+          "toedscool",
+          "beheeyem",
+          "amoonguss"
+         ],
+         "6": [
+          "elgyem",
+          "foongus",
+          "toedscool",
+          "beheeyem",
+          "amoonguss",
+          "toedscruel"
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "d4",
+     "kind": "drift",
+     "length": 30,
+     "width": 11,
+     "height": 6
+    },
+    {
+     "id": "jump",
+     "kind": "parkour",
+     "length": 74,
+     "width": 31,
+     "height": 9
+    },
+    {
+     "id": "dark",
+     "kind": "dark_room",
+     "length": 44,
+     "width": 25,
+     "height": 7
+    },
+    {
+     "id": "bridge",
+     "kind": "collapse_bridge",
+     "length": 50,
+     "width": 17,
+     "height": 9
+    },
+    {
+     "id": "nest",
+     "kind": "nest",
+     "length": 40,
+     "width": 31,
+     "height": 8,
+     "params": {
+      "species": [
+       "misdreavus",
+       "impidimp",
+       "morelull",
+       "toedscool"
+      ],
+      "count_by_band": {
+       "1": 3,
+       "2": 4,
+       "3": 4,
+       "4": 5,
+       "5": 6,
+       "6": 6
+      },
+      "level_spread": [
+       6,
+       9
+      ],
+      "spawns": 6
+     }
+    },
+    {
+     "id": "mini",
+     "kind": "miniboss",
+     "length": 36,
+     "width": 25,
+     "height": 8,
+     "gate": "cleared",
+     "params": {
+      "species_by_band": {
+       "1": "mismagius",
+       "2": "beheeyem",
+       "3": "shiinotic",
+       "4": "toedscruel",
+       "5": "hatterene",
+       "6": "grimmsnarl"
+      },
+      "level_offset": -1,
+      "scale": 1.3
+     }
+    },
+    {
+     "id": "puz",
+     "kind": "puzzle",
+     "length": 34,
+     "width": 23,
+     "height": 7,
+     "params": {
+      "controls": 3
+     }
+    },
+    {
+     "id": "vault",
+     "kind": "vault",
+     "length": 30,
+     "width": 21,
+     "height": 7,
+     "params": {
+      "chests": 4,
+      "clock_cost_s": 20
+     }
+    },
+    {
+     "id": "hab",
+     "kind": "habitat",
+     "length": 44,
+     "width": 31,
+     "height": 9,
+     "gate": "cleared",
+     "params": {
+      "species": "darkrai",
+      "level_by_band": {
+       "1": 25,
+       "2": 35,
+       "3": 45,
+       "4": 55,
+       "5": 62,
+       "6": 100
+      },
+      "fight_only": true,
+      "title": "the warped dark"
+     }
+    },
+    {
+     "id": "gaunt",
+     "kind": "gauntlet",
+     "length": 84,
+     "width": 31,
+     "height": 7,
+     "params": {
+      "trainers": [
+       {
+        "name": "Stem Lurker",
+        "team_by_band": {
+         "1": [
+          "impidimp",
+          "misdreavus"
+         ],
+         "2": [
+          "impidimp",
+          "misdreavus",
+          "inkay"
+         ],
+         "3": [
+          "impidimp",
+          "misdreavus",
+          "inkay"
+         ],
+         "4": [
+          "impidimp",
+          "misdreavus",
+          "inkay",
+          "morgrem"
+         ],
+         "5": [
+          "impidimp",
+          "misdreavus",
+          "inkay",
+          "morgrem",
+          "hatenna"
+         ],
+         "6": [
+          "impidimp",
+          "misdreavus",
+          "inkay",
+          "morgrem",
+          "hatenna",
+          "grimmsnarl"
+         ]
+        }
+       },
+       {
+        "name": "Stem Lurker II",
+        "team_by_band": {
+         "1": [
+          "grimmsnarl",
+          "hatenna"
+         ],
+         "2": [
+          "grimmsnarl",
+          "hatenna",
+          "morgrem"
+         ],
+         "3": [
+          "grimmsnarl",
+          "hatenna",
+          "morgrem"
+         ],
+         "4": [
+          "grimmsnarl",
+          "hatenna",
+          "morgrem",
+          "inkay"
+         ],
+         "5": [
+          "grimmsnarl",
+          "hatenna",
+          "morgrem",
+          "inkay",
+          "misdreavus"
+         ],
+         "6": [
+          "grimmsnarl",
+          "hatenna",
+          "morgrem",
+          "inkay",
+          "misdreavus",
+          "impidimp"
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "d5",
+     "kind": "drift",
+     "length": 24,
+     "width": 9,
+     "height": 6
+    },
+    {
+     "id": "arena",
+     "kind": "boss_arena",
+     "length": 40,
+     "width": 35,
+     "height": 11
+    },
+    {
+     "id": "exit",
+     "kind": "exit_room",
+     "length": 14,
+     "width": 11,
+     "height": 6
+    }
+   ],
+   "clock_s_by_band": {
+    "1": 2700,
+    "2": 2880,
+    "3": 2940,
+    "4": 3120,
+    "5": 3300,
+    "6": 3540
+   }
+  },
+  "soul_sand_valley": {
+   "shape_mix": true,
+   "rooms": [
+    {
+     "id": "entry",
+     "kind": "entry_room",
+     "length": 20,
+     "width": 15,
+     "height": 8
+    },
+    {
+     "id": "d1",
+     "kind": "drift",
+     "length": 30,
+     "width": 11,
+     "height": 8
+    },
+    {
+     "id": "cross",
+     "kind": "crossroads",
+     "length": 40,
+     "width": 37,
+     "height": 10,
+     "shape": "oval",
+     "params": {
+      "hub": [
+       0.45,
+       0.5
+      ]
+     }
+    },
+    {
+     "id": "f1",
+     "kind": "fork",
+     "routes": [
+      {
+       "id": "gantry",
+       "look": "lit",
+       "sign": "GANTRY",
+       "rooms": [
+        {
+         "id": "g_a",
+         "kind": "drift",
+         "length": 34,
+         "width": 11,
+         "height": 8
+        },
+        {
+         "id": "g_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 11,
+         "height": 8
+        }
+       ]
+      },
+      {
+       "id": "old",
+       "look": "dark",
+       "sign": [
+        "OLD DRIFT",
+        "KEEP OUT"
+       ],
+       "from": {
+        "side": "north",
+        "at": 26
+       },
+       "rooms": [
+        {
+         "id": "o_a",
+         "kind": "drift",
+         "length": 22,
+         "width": 9,
+         "height": 7,
+         "in": {
+          "side": "south",
+          "at": 4
+         }
+        },
+        {
+         "id": "o_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 9,
+         "height": 7
+        }
+       ]
+      },
+      {
+       "id": "sump",
+       "look": "flooded",
+       "sign": "SUMP",
+       "from": {
+        "side": "south",
+        "at": 26
+       },
+       "rooms": [
+        {
+         "id": "s_a",
+         "kind": "drift",
+         "length": 22,
+         "width": 9,
+         "height": 7,
+         "in": {
+          "side": "north",
+          "at": 4
+         }
+        },
+        {
+         "id": "s_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 9,
+         "height": 7
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "court",
+     "kind": "drift",
+     "length": 24,
+     "width": 60,
+     "height": 9
+    },
+    {
+     "id": "hall_a",
+     "kind": "drift",
+     "length": 40,
+     "width": 21,
+     "height": 8
+    },
+    {
+     "id": "maze",
+     "kind": "maze",
+     "length": 53,
+     "width": 41,
+     "height": 8,
+     "params": {
+      "exit_dz": 8
+     }
+    },
+    {
+     "id": "d2",
+     "kind": "drift",
+     "length": 30,
+     "width": 9,
+     "height": 6,
+     "rise": 3
+    },
+    {
+     "id": "seam",
+     "kind": "resources",
+     "length": 40,
+     "width": 25,
+     "height": 7
+    },
+    {
+     "id": "d3",
+     "kind": "stairs",
+     "length": 20,
+     "width": 9,
+     "height": 7,
+     "rise": -3
+    },
+    {
+     "id": "rest",
+     "kind": "safe_room",
+     "length": 28,
+     "width": 21,
+     "height": 7,
+     "params": {
+      "healer": true,
+      "uses": 1
+     }
+    },
+    {
+     "id": "stand1",
+     "kind": "stand",
+     "length": 44,
+     "width": 33,
+     "height": 8,
+     "gate": "cleared",
+     "params": {
+      "trainers": [
+       {
+        "name": "Bone Warden",
+        "team_by_band": {
+         "1": [
+          "duskull",
+          "cubone"
+         ],
+         "2": [
+          "duskull",
+          "cubone",
+          "gastly"
+         ],
+         "3": [
+          "duskull",
+          "cubone",
+          "gastly"
+         ],
+         "4": [
+          "duskull",
+          "cubone",
+          "gastly",
+          "dusclops"
+         ],
+         "5": [
+          "duskull",
+          "cubone",
+          "gastly",
+          "dusclops",
+          "marowak"
+         ],
+         "6": [
+          "duskull",
+          "cubone",
+          "gastly",
+          "dusclops",
+          "marowak",
+          "haunter"
+         ]
+        }
+       },
+       {
+        "name": "Wick Keeper",
+        "team_by_band": {
+         "1": [
+          "shuppet",
+          "drifloon"
+         ],
+         "2": [
+          "shuppet",
+          "drifloon",
+          "sandygast"
+         ],
+         "3": [
+          "shuppet",
+          "drifloon",
+          "sandygast"
+         ],
+         "4": [
+          "shuppet",
+          "drifloon",
+          "sandygast",
+          "banette"
+         ],
+         "5": [
+          "shuppet",
+          "drifloon",
+          "sandygast",
+          "banette",
+          "drifblim"
+         ],
+         "6": [
+          "shuppet",
+          "drifloon",
+          "sandygast",
+          "banette",
+          "drifblim",
+          "palossand"
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "d4",
+     "kind": "drift",
+     "length": 30,
+     "width": 11,
+     "height": 6
+    },
+    {
+     "id": "jump",
+     "kind": "parkour",
+     "length": 74,
+     "width": 31,
+     "height": 9
+    },
+    {
+     "id": "dark",
+     "kind": "dark_room",
+     "length": 44,
+     "width": 25,
+     "height": 7
+    },
+    {
+     "id": "bridge",
+     "kind": "collapse_bridge",
+     "length": 50,
+     "width": 17,
+     "height": 9
+    },
+    {
+     "id": "nest",
+     "kind": "nest",
+     "length": 40,
+     "width": 31,
+     "height": 8,
+     "params": {
+      "species": [
+       "duskull",
+       "shuppet",
+       "sandygast",
+       "cubone"
+      ],
+      "count_by_band": {
+       "1": 3,
+       "2": 4,
+       "3": 4,
+       "4": 5,
+       "5": 6,
+       "6": 6
+      },
+      "level_spread": [
+       6,
+       9
+      ],
+      "spawns": 6
+     }
+    },
+    {
+     "id": "mini",
+     "kind": "miniboss",
+     "length": 36,
+     "width": 25,
+     "height": 8,
+     "gate": "cleared",
+     "params": {
+      "species_by_band": {
+       "1": "dusclops",
+       "2": "banette",
+       "3": "marowak",
+       "4": "palossand",
+       "5": "dusknoir",
+       "6": "gengar"
+      },
+      "level_offset": -1,
+      "scale": 1.3
+     }
+    },
+    {
+     "id": "puz",
+     "kind": "puzzle",
+     "length": 34,
+     "width": 23,
+     "height": 7,
+     "params": {
+      "controls": 3
+     }
+    },
+    {
+     "id": "vault",
+     "kind": "vault",
+     "length": 30,
+     "width": 21,
+     "height": 7,
+     "params": {
+      "chests": 4,
+      "clock_cost_s": 20
+     }
+    },
+    {
+     "id": "hab",
+     "kind": "habitat",
+     "length": 44,
+     "width": 31,
+     "height": 9,
+     "gate": "cleared",
+     "params": {
+      "species": "spiritomb",
+      "level_by_band": {
+       "1": 25,
+       "2": 35,
+       "3": 45,
+       "4": 55,
+       "5": 62,
+       "6": 100
+      },
+      "fight_only": true,
+      "title": "the valley's oldest grave"
+     }
+    },
+    {
+     "id": "gaunt",
+     "kind": "gauntlet",
+     "length": 84,
+     "width": 31,
+     "height": 7,
+     "params": {
+      "trainers": [
+       {
+        "name": "Grave Lurker",
+        "team_by_band": {
+         "1": [
+          "duskull",
+          "gastly"
+         ],
+         "2": [
+          "duskull",
+          "gastly",
+          "shuppet"
+         ],
+         "3": [
+          "duskull",
+          "gastly",
+          "shuppet"
+         ],
+         "4": [
+          "duskull",
+          "gastly",
+          "shuppet",
+          "dusclops"
+         ],
+         "5": [
+          "duskull",
+          "gastly",
+          "shuppet",
+          "dusclops",
+          "haunter"
+         ],
+         "6": [
+          "duskull",
+          "gastly",
+          "shuppet",
+          "dusclops",
+          "haunter",
+          "dusknoir"
+         ]
+        }
+       },
+       {
+        "name": "Grave Lurker II",
+        "team_by_band": {
+         "1": [
+          "dusknoir",
+          "haunter"
+         ],
+         "2": [
+          "dusknoir",
+          "haunter",
+          "dusclops"
+         ],
+         "3": [
+          "dusknoir",
+          "haunter",
+          "dusclops"
+         ],
+         "4": [
+          "dusknoir",
+          "haunter",
+          "dusclops",
+          "shuppet"
+         ],
+         "5": [
+          "dusknoir",
+          "haunter",
+          "dusclops",
+          "shuppet",
+          "gastly"
+         ],
+         "6": [
+          "dusknoir",
+          "haunter",
+          "dusclops",
+          "shuppet",
+          "gastly",
+          "duskull"
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "d5",
+     "kind": "drift",
+     "length": 24,
+     "width": 9,
+     "height": 6
+    },
+    {
+     "id": "arena",
+     "kind": "boss_arena",
+     "length": 40,
+     "width": 35,
+     "height": 11
+    },
+    {
+     "id": "exit",
+     "kind": "exit_room",
+     "length": 14,
+     "width": 11,
+     "height": 6
+    }
+   ],
+   "clock_s_by_band": {
+    "1": 2700,
+    "2": 2880,
+    "3": 2880,
+    "4": 3120,
+    "5": 3300,
+    "6": 3480
+   }
+  },
+  "basalt_deltas": {
+   "shape_mix": true,
+   "rooms": [
+    {
+     "id": "entry",
+     "kind": "entry_room",
+     "length": 20,
+     "width": 15,
+     "height": 8
+    },
+    {
+     "id": "d1",
+     "kind": "drift",
+     "length": 30,
+     "width": 11,
+     "height": 8
+    },
+    {
+     "id": "cross",
+     "kind": "crossroads",
+     "length": 40,
+     "width": 37,
+     "height": 10,
+     "shape": "oval",
+     "params": {
+      "hub": [
+       0.45,
+       0.5
+      ]
+     }
+    },
+    {
+     "id": "f1",
+     "kind": "fork",
+     "routes": [
+      {
+       "id": "gantry",
+       "look": "lit",
+       "sign": "GANTRY",
+       "rooms": [
+        {
+         "id": "g_a",
+         "kind": "drift",
+         "length": 34,
+         "width": 11,
+         "height": 8
+        },
+        {
+         "id": "g_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 11,
+         "height": 8
+        }
+       ]
+      },
+      {
+       "id": "old",
+       "look": "dark",
+       "sign": [
+        "OLD DRIFT",
+        "KEEP OUT"
+       ],
+       "from": {
+        "side": "north",
+        "at": 26
+       },
+       "rooms": [
+        {
+         "id": "o_a",
+         "kind": "drift",
+         "length": 22,
+         "width": 9,
+         "height": 7,
+         "in": {
+          "side": "south",
+          "at": 4
+         }
+        },
+        {
+         "id": "o_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 9,
+         "height": 7
+        }
+       ]
+      },
+      {
+       "id": "sump",
+       "look": "flooded",
+       "sign": "SUMP",
+       "from": {
+        "side": "south",
+        "at": 26
+       },
+       "rooms": [
+        {
+         "id": "s_a",
+         "kind": "drift",
+         "length": 22,
+         "width": 9,
+         "height": 7,
+         "in": {
+          "side": "north",
+          "at": 4
+         }
+        },
+        {
+         "id": "s_b",
+         "kind": "drift",
+         "length": "fit",
+         "width": 9,
+         "height": 7
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "court",
+     "kind": "drift",
+     "length": 24,
+     "width": 60,
+     "height": 9
+    },
+    {
+     "id": "hall_a",
+     "kind": "drift",
+     "length": 40,
+     "width": 21,
+     "height": 8
+    },
+    {
+     "id": "maze",
+     "kind": "maze",
+     "length": 53,
+     "width": 41,
+     "height": 8,
+     "params": {
+      "exit_dz": 8
+     }
+    },
+    {
+     "id": "d2",
+     "kind": "drift",
+     "length": 30,
+     "width": 9,
+     "height": 6,
+     "rise": 3
+    },
+    {
+     "id": "seam",
+     "kind": "resources",
+     "length": 40,
+     "width": 25,
+     "height": 7
+    },
+    {
+     "id": "d3",
+     "kind": "stairs",
+     "length": 20,
+     "width": 9,
+     "height": 7,
+     "rise": -3
+    },
+    {
+     "id": "rest",
+     "kind": "safe_room",
+     "length": 28,
+     "width": 21,
+     "height": 7,
+     "params": {
+      "healer": true,
+      "uses": 1
+     }
+    },
+    {
+     "id": "stand1",
+     "kind": "stand",
+     "length": 44,
+     "width": 33,
+     "height": 8,
+     "gate": "cleared",
+     "params": {
+      "trainers": [
+       {
+        "name": "Column Warden",
+        "team_by_band": {
+         "1": [
+          "roggenrola",
+          "onix"
+         ],
+         "2": [
+          "roggenrola",
+          "onix",
+          "gligar"
+         ],
+         "3": [
+          "roggenrola",
+          "onix",
+          "gligar"
+         ],
+         "4": [
+          "roggenrola",
+          "onix",
+          "gligar",
+          "boldore"
+         ],
+         "5": [
+          "roggenrola",
+          "onix",
+          "gligar",
+          "boldore",
+          "gliscor"
+         ],
+         "6": [
+          "roggenrola",
+          "onix",
+          "gligar",
+          "boldore",
+          "gliscor",
+          "gigalith"
+         ]
+        }
+       },
+       {
+        "name": "Ridge Surveyor",
+        "team_by_band": {
+         "1": [
+          "rhyhorn",
+          "durant"
+         ],
+         "2": [
+          "rhyhorn",
+          "durant",
+          "koffing"
+         ],
+         "3": [
+          "rhyhorn",
+          "durant",
+          "koffing"
+         ],
+         "4": [
+          "rhyhorn",
+          "durant",
+          "koffing",
+          "rhydon"
+         ],
+         "5": [
+          "rhyhorn",
+          "durant",
+          "koffing",
+          "rhydon",
+          "steelix"
+         ],
+         "6": [
+          "rhyhorn",
+          "durant",
+          "koffing",
+          "rhydon",
+          "steelix",
+          "rhyperior"
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "d4",
+     "kind": "drift",
+     "length": 30,
+     "width": 11,
+     "height": 6
+    },
+    {
+     "id": "jump",
+     "kind": "parkour",
+     "length": 74,
+     "width": 31,
+     "height": 9
+    },
+    {
+     "id": "dark",
+     "kind": "dark_room",
+     "length": 44,
+     "width": 25,
+     "height": 7
+    },
+    {
+     "id": "bridge",
+     "kind": "collapse_bridge",
+     "length": 50,
+     "width": 17,
+     "height": 9
+    },
+    {
+     "id": "nest",
+     "kind": "nest",
+     "length": 40,
+     "width": 31,
+     "height": 8,
+     "params": {
+      "species": [
+       "roggenrola",
+       "rhyhorn",
+       "onix",
+       "koffing"
+      ],
+      "count_by_band": {
+       "1": 3,
+       "2": 4,
+       "3": 4,
+       "4": 5,
+       "5": 6,
+       "6": 6
+      },
+      "level_spread": [
+       6,
+       9
+      ],
+      "spawns": 6
+     }
+    },
+    {
+     "id": "mini",
+     "kind": "miniboss",
+     "length": 36,
+     "width": 25,
+     "height": 8,
+     "gate": "cleared",
+     "params": {
+      "species_by_band": {
+       "1": "onix",
+       "2": "boldore",
+       "3": "rhydon",
+       "4": "steelix",
+       "5": "gliscor",
+       "6": "rhyperior"
+      },
+      "level_offset": -1,
+      "scale": 1.3
+     }
+    },
+    {
+     "id": "puz",
+     "kind": "puzzle",
+     "length": 34,
+     "width": 23,
+     "height": 7,
+     "params": {
+      "controls": 3
+     }
+    },
+    {
+     "id": "vault",
+     "kind": "vault",
+     "length": 30,
+     "width": 21,
+     "height": 7,
+     "params": {
+      "chests": 4,
+      "clock_cost_s": 20
+     }
+    },
+    {
+     "id": "hab",
+     "kind": "habitat",
+     "length": 44,
+     "width": 31,
+     "height": 9,
+     "gate": "cleared",
+     "params": {
+      "species": "regirock",
+      "level_by_band": {
+       "1": 25,
+       "2": 35,
+       "3": 45,
+       "4": 55,
+       "5": 62,
+       "6": 100
+      },
+      "fight_only": true,
+      "title": "the delta's oldest column"
+     }
+    },
+    {
+     "id": "gaunt",
+     "kind": "gauntlet",
+     "length": 84,
+     "width": 31,
+     "height": 7,
+     "params": {
+      "trainers": [
+       {
+        "name": "Ash Lurker",
+        "team_by_band": {
+         "1": [
+          "roggenrola",
+          "onix"
+         ],
+         "2": [
+          "roggenrola",
+          "onix",
+          "koffing"
+         ],
+         "3": [
+          "roggenrola",
+          "onix",
+          "koffing"
+         ],
+         "4": [
+          "roggenrola",
+          "onix",
+          "koffing",
+          "boldore"
+         ],
+         "5": [
+          "roggenrola",
+          "onix",
+          "koffing",
+          "boldore",
+          "gligar"
+         ],
+         "6": [
+          "roggenrola",
+          "onix",
+          "koffing",
+          "boldore",
+          "gligar",
+          "gigalith"
+         ]
+        }
+       },
+       {
+        "name": "Ash Lurker II",
+        "team_by_band": {
+         "1": [
+          "gigalith",
+          "gligar"
+         ],
+         "2": [
+          "gigalith",
+          "gligar",
+          "boldore"
+         ],
+         "3": [
+          "gigalith",
+          "gligar",
+          "boldore"
+         ],
+         "4": [
+          "gigalith",
+          "gligar",
+          "boldore",
+          "koffing"
+         ],
+         "5": [
+          "gigalith",
+          "gligar",
+          "boldore",
+          "koffing",
+          "onix"
+         ],
+         "6": [
+          "gigalith",
+          "gligar",
+          "boldore",
+          "koffing",
+          "onix",
+          "roggenrola"
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "d5",
+     "kind": "drift",
+     "length": 24,
+     "width": 9,
+     "height": 6
+    },
+    {
+     "id": "arena",
+     "kind": "boss_arena",
+     "length": 40,
+     "width": 35,
+     "height": 11
+    },
+    {
+     "id": "exit",
+     "kind": "exit_room",
+     "length": 14,
+     "width": 11,
+     "height": 6
+    }
+   ],
+   "clock_s_by_band": {
+    "1": 2700,
+    "2": 2880,
+    "3": 2940,
+    "4": 3120,
+    "5": 3300,
+    "6": 3540
+   }
+  }
+ }
+}

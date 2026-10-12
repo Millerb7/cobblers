@@ -251,13 +251,20 @@ def packs(tmp_path_factory):
     if not (A.SNAPSHOT / "mods").exists():
         pytest.skip("no server snapshot with the jars at %s" % A.SNAPSHOT)
     out = tmp_path_factory.mktemp("arena_audit")
-    arenas, buildings = out / "arenas", out / "buildings"
+    arenas, buildings, demolish = out / "arenas", out / "buildings", out / "demolish"
     for cmd in ([sys.executable, str(ROOT / "tools" / "gym_arenas.py"), "build", "--out", str(arenas)],
                 [sys.executable, str(ROOT / "tools" / "gym_buildings.py"), "build", "--out", str(buildings)],
+                [sys.executable, str(ROOT / "tools" / "gym_demolish.py"), "build", "--out", str(demolish)],
                 [sys.executable, str(ROOT / "tools" / "gym_interiors.py"), "build"]):
         r = subprocess.run(cmd, capture_output=True, text=True)
         assert r.returncode == 0, "%s failed: %s" % (cmd[1], (r.stderr or r.stdout)[-800:])
-    return G, arenas, buildings
+    # R16F is replayed from the demolition pack: built here too, so the audit never reads a stale or absent
+    # build/datapacks/cobblers_gym_demolish (on a fresh checkout it is absent and every gym's replay fails with
+    # "run its generator first")
+    mp = pytest.MonkeyPatch()
+    mp.setattr(A, "DEMOLISH_PACK", demolish)
+    yield G, arenas, buildings
+    mp.undo()
 
 
 @pytest.fixture(scope="module")
@@ -299,24 +306,27 @@ def test_reach_down_to_the_challenger_and_back_up(real, gym):
     assert f["reach_down"] and f["reach_up"]
 
 
-def test_gym2_ledger_gallery_reaches_the_slipway_through_its_door_and_only_through_it(packs):
-    # Removing this loses the one proof gym 2's builder said its own check could not give: that the puzzle route's
-    # last room (the ledger gallery, data/gym_interiors.json gym2 route) leads to the arena and back. The second half
-    # walls the door to show the proof rests on the door and not on a path the model invented.
+def test_gym2_hall_is_walked_from_the_promenade_and_only_through_the_lit_mouth(packs):
+    # 2026-10-09: Misty's template came down for the walk-through Lifeboat House (data/gym_arenas/gym2.json). What the
+    # old test proved for the template's ledger gallery and the boat house's door, this proves for the hall: the
+    # promenade in front of its door leads to the challenger's stand and back, and the proof rests on the puzzle's one
+    # true mouth (x1606), not on a path the model invented. Walling that mouth (the two blind ones left as built, and
+    # the iron door past Misty shut, as this walker holds it) cuts the stand off from the street both ways.
     G, arenas, buildings = packs
     w, s, bounds, through, _aw, _hc, _logs = A.assemble("gym2", arenas, G, hosts=(buildings, None))
+    assert s["host"] == "hall"
     region = [bounds, s["host_box"]] + through
     box = (min(b[0] for b in region) - 2, min(b[1] for b in region) - 3, min(b[2] for b in region) - 2,
            max(b[3] for b in region) + 2, max(b[4] for b in region) + 3, max(b[5] for b in region) + 2)
     ps = A.markers(w, bounds)["player_stand_position"][0]
     stand = (ps[0], ps[2], ps[1] + A.spawn_height_offset())
     walker = A.Walker(w, box)
-    start = walker.settle(*s["route_end"])
-    assert s["route_end"] == (1603, 99, 2874)
+    start = walker.settle(1611, 110, 2857)   # the promenade in front of the door, ground y108 (tools/ground.py)
+    assert start is not None
     assert stand in walker.reach(start) and start in walker.reach(stand)
-    for y in (99, 100):
-        assert A.name_of(w.get(1606, y, 2877)) == "minecraft:dark_oak_door"
-        w.set((1606, y, 2877), "minecraft:stone", "test")
+    for y in (108, 109):
+        assert A.name_of(w.get(1606, y, 2872)) == "minecraft:air"
+        w.set((1606, y, 2872), "minecraft:stone", "test")
     walled = A.Walker(w, box)
     assert stand not in walled.reach(start) and start not in walled.reach(stand)
 
@@ -328,7 +338,8 @@ def test_the_arena_descent_is_climbed_without_a_jump(real, gym):
     # mutation), which is invisible to a walk that may jump.
     f = real[gym]
     assert not kinds(f, "STAIR"), kinds(f, "STAIR")
-    assert f.get("host_floor_without_jump", 0) > 0
+    # a walk-through hall (2026-10-09) has no descent and no host floor: its walk is street to stand and back (EXIT)
+    assert f.get("host") == "hall" or f.get("host_floor_without_jump", 0) > 0
 
 
 @pytest.mark.parametrize("gym", A.GYMS)
@@ -353,7 +364,8 @@ def test_cover_over_the_arena(real, gym):
     # Removing this lets an arena's top stand at or above the ground in the worst case of the heightmap's rounding.
     f = real[gym]
     assert not kinds(f, "COVER"), kinds(f, "COVER")
-    assert f["cover_min"] >= 1
+    # a walk-through hall stands on its lot: nothing of it is under cover (the shell rule holds under the pad)
+    assert f.get("host") == "hall" or f["cover_min"] >= 1
 
 
 @pytest.mark.parametrize("gym", A.GYMS)

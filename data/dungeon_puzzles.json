@@ -1,0 +1,137 @@
+{
+  "schema": "cobblers.dungeon_puzzles/1",
+  "generated_by": "hand",
+  "why": "The blocks and defaults of the dungeon room kit's PUZZLE and VAULT kinds (tools/dungeon_puzzles.py). Vanilla blocks only, per dungeon theme (data/dungeon_themes.json). Kept apart from the themes file because that file is the room kit's and these kinds are a second module's.",
+  "rules": [
+    "Controls are blocks a player in adventure mode can USE and cannot break: a lever, a wooden button, a stone pressure plate, a chest. Adventure mode forbids breaking and placing, not using (vanilla; UNPROVEN in cobblers:pocket, see the module docstring).",
+    "A button is WOODEN, never stone: a wooden button stays pressed 30 ticks and the keeper looks once every 20, so no press can fall between two looks. A stone button (20 ticks) could.",
+    "A plate is STONE: it answers players and mobs, not a thrown item.",
+    "No concrete, no hazard, nothing the rift pick can break; the console is a solid block the controls attach to."
+  ],
+  "defaults": {
+    "levers_size": 3,
+    "sequence_length": 4,
+    "plates_count": 4,
+    "variants": 8,
+    "vault_chests": 4,
+    "vault_clock_cost_s": 20
+  },
+  "limits": {"size": [3, 6], "chests": [1, 8], "variants_max": 8},
+  "messages_why": "The on-screen lines of the puzzle and vault kinds, as short as they can be (the owner, 2026-10-10: 'puzzles should have less explanation; they are good though'). A puzzle is read off its console: the hints name the verb in a few words or are empty (no line is sent); only the clock costs are stated, because a player must be able to see what a mistake or a chest takes. {s} is seconds. tools/dungeon_puzzles.py say() reads this.",
+  "messages": {
+    "hint_levers": "Match the lamps.",
+    "hint_sequence": "",
+    "hint_plates": "",
+    "hint_vault": "Each chest: {s} s.",
+    "chest_taken": "-{s} s.",
+    "wrong_levers": "-{s} s.",
+    "wrong_sequence": "-{s} s.",
+    "wrong_plates": "-{s} s."
+  },
+  "default_loot_why": "What a vault holds when its record names no loot_by_band (the room kit's demo list, a draft). The authored dungeons set their own: this is a placeholder with some value per band, vanilla items only. Inside the vault budget (data/dungeon_greed.json vault_budget, enforced since DG3-INTEGRATE) even in the short demo dungeon: 52, 123 and 216 cp a chest (band 5 was 2 to 4 diamonds and 3 to 6 emeralds, 2,100 cp, eight times a band-5 chest's budget).",
+  "default_loot_by_band": {
+    "1": [{"item": "minecraft:iron_ingot", "count": [3, 6]}, {"item": "minecraft:gold_nugget", "count": [4, 8]}],
+    "3": [{"item": "minecraft:gold_ingot", "count": [3, 6]}, {"item": "minecraft:redstone", "count": [8, 16]}],
+    "5": [{"item": "minecraft:diamond", "count": [1, 2]}, {"item": "minecraft:gold_ingot", "count": [2, 4]}]
+  },
+  "themes": {
+    "mine": {
+      "console": "minecraft:deepslate_bricks", "trim": "minecraft:chiseled_deepslate",
+      "lamp_on": "minecraft:glowstone", "lamp_off": "minecraft:coal_block", "seal": "minecraft:raw_gold_block",
+      "button": "minecraft:oak_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:gilded_blackstone", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "jungle": {
+      "console": "minecraft:mud_bricks", "trim": "minecraft:chiseled_stone_bricks",
+      "lamp_on": "minecraft:verdant_froglight", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:jungle_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:mossy_stone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "flooded_ruin": {
+      "console": "minecraft:dark_prismarine", "trim": "minecraft:prismarine_bricks",
+      "lamp_on": "minecraft:sea_lantern", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:mangrove_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:chiseled_stone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_terracotta", "minecraft:blue_terracotta", "minecraft:yellow_terracotta", "minecraft:lime_terracotta", "minecraft:purple_terracotta", "minecraft:orange_terracotta"]
+    },
+    "nether_wastes": {
+      "console": "minecraft:nether_bricks", "trim": "minecraft:chiseled_nether_bricks",
+      "lamp_on": "minecraft:glowstone", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:crimson_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:gilded_blackstone", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "crimson_forest": {
+      "console": "minecraft:crimson_planks", "trim": "minecraft:stripped_crimson_stem",
+      "lamp_on": "minecraft:shroomlight", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:crimson_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:polished_blackstone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "warped_forest": {
+      "console": "minecraft:warped_planks", "trim": "minecraft:stripped_warped_stem",
+      "lamp_on": "minecraft:shroomlight", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:warped_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:polished_blackstone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "soul_sand_valley": {
+      "console": "minecraft:polished_blackstone_bricks", "trim": "minecraft:chiseled_polished_blackstone",
+      "lamp_on": "minecraft:glowstone", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:warped_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:bone_block", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "basalt_deltas": {
+      "console": "minecraft:polished_blackstone_bricks", "trim": "minecraft:polished_basalt",
+      "lamp_on": "minecraft:ochre_froglight", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:crimson_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:gilded_blackstone", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "city": {
+      "console": "minecraft:stone_bricks", "trim": "minecraft:chiseled_stone_bricks",
+      "lamp_on": "minecraft:sea_lantern", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:birch_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:smooth_stone", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "great_tree": {
+      "console": "minecraft:dark_oak_planks", "trim": "minecraft:stripped_dark_oak_wood",
+      "lamp_on": "minecraft:shroomlight", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:dark_oak_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:mossy_stone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "ice_spire": {
+      "console": "minecraft:quartz_bricks", "trim": "minecraft:chiseled_quartz_block",
+      "lamp_on": "minecraft:sea_lantern", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:birch_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:smooth_quartz", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "hill_keep": {
+      "console": "minecraft:stone_bricks", "trim": "minecraft:chiseled_stone_bricks",
+      "lamp_on": "minecraft:shroomlight", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:spruce_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:mossy_stone_bricks", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "desert_excavation": {
+      "console": "minecraft:cut_red_sandstone", "trim": "minecraft:chiseled_red_sandstone",
+      "lamp_on": "minecraft:glowstone", "lamp_off": "minecraft:coal_block", "seal": "minecraft:gold_block",
+      "button": "minecraft:acacia_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:smooth_red_sandstone", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    },
+    "night_crater": {
+      "console": "minecraft:polished_blackstone_bricks", "trim": "minecraft:chiseled_polished_blackstone",
+      "lamp_on": "minecraft:pearlescent_froglight", "lamp_off": "minecraft:blackstone", "seal": "minecraft:gold_block",
+      "button": "minecraft:polished_blackstone_button", "plate": "minecraft:stone_pressure_plate",
+      "plinth": "minecraft:amethyst_block", "chest": "minecraft:chest",
+      "marks": ["minecraft:red_wool", "minecraft:blue_wool", "minecraft:yellow_wool", "minecraft:lime_wool", "minecraft:purple_wool", "minecraft:orange_wool"]
+    }
+  }
+}

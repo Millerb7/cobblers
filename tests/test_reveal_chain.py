@@ -119,11 +119,22 @@ class Commands:
         m = re.fullmatch(r"if score @s (\S+) matches (-?\d+) (.*)", rest)
         if m:
             return self.sub(w, m.group(3)) if w["scores"].get(m.group(1)) == int(m.group(2)) else None
+        m = re.fullmatch(r"unless score @s (\S+) matches (-?\d+) (.*)", rest)
+        if m:
+            # a missing score does not match, so `unless` passes (Oak's give-failed tag, 9cca93c)
+            return self.sub(w, m.group(3)) if w["scores"].get(m.group(1)) != int(m.group(2)) else None
         m = re.fullmatch(r"store result score @s (\S+) (.*)", rest)
         if m:
             r = self.sub(w, m.group(2))
             if r is not None and m.group(1) in w["objectives"]:
                 w["scores"][m.group(1)] = r
+            return r
+        m = re.fullmatch(r"store success score @s (\S+) (.*)", rest)
+        if m:
+            # `store success`: 1 when the command succeeded (a result over 0), else 0 (Oak's waystone, 9cca93c)
+            r = self.sub(w, m.group(2))
+            if m.group(1) in w["objectives"]:
+                w["scores"][m.group(1)] = 1 if r else 0
             return r
         raise AssertionError("an execute the walk does not model: %r" % rest)
 
@@ -137,6 +148,11 @@ class Commands:
             if m.group(1) not in w["objectives"]:
                 return None
             w["scores"][m.group(1)] = int(m.group(2))
+            return 1
+        m = re.fullmatch(r"give @s (\S+) (\d+)", cmd)
+        if m:
+            # GiveCommand returns the number of targets: one player here
+            w.setdefault("given", []).append((m.group(1), int(m.group(2))))
             return 1
         if cmd == "openstarterscreen @s":
             # OpenStarterScreenCommand.kt @1.8.0 as tools/compile_dialogue.py relays it: 0 for a player who has chosen

@@ -173,6 +173,8 @@ def _gym_models():
     import gym_buildings as GB
     out = {}
     for _p, d in GB.records():
+        if d.get("superseded_by"):
+            continue   # a walk-through hall replaced it (2026-10-09): the building is not built, its cells are the hall's
         e, _r, _l = GB.build_one(d)
         out[d["leader"]["id"]] = (d, e)
     return out
@@ -197,6 +199,8 @@ def _building_bounds():
     out = {}
     for p in sorted((ROOT / "data" / "gym_buildings").glob("gym*.json")):
         g = json.loads(p.read_text(encoding="utf-8"))
+        if g.get("superseded_by"):
+            continue   # not built: its gym is a walk-through hall in data/gym_arenas (2026-10-09)
         out[g["leader"]["id"]] = g["bounds"]
     return out
 

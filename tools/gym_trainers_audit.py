@@ -6,7 +6,10 @@ model and gym 2's replay of `place_donor.commands()` / `gym_interiors.gym2_comma
 models -- and with its own movement graph, sight sets and cuts. Its tests share that derivation. This audit shares
 none of it (CLAUDE.md, "How to prove an audit is independent"):
 
-  the blocks     the EMITTED function text: build/datapacks/cobblers_gym_buildings (gyms 1, 3-8),
+  the blocks     the EMITTED function text: build/datapacks/cobblers_gym_arenas for a gym that is one walk-through
+                 hall (data/gym_arenas/<gym>.json schema gym_hall/1, its building record `superseded_by`: the hall
+                 function and its seat function, over the lot's pad from data/placements.json; gyms 1, 3-8 since
+                 2026-10-09), build/datapacks/cobblers_gym_buildings for a building still built,
                  cobblers_donor place_gym2_misty_gym_go + cobblers_gym_interiors (gym 2), replayed by a fill /
                  setblock interpreter written here; gym 2's `place template` resolved by reading misty.nbt out
                  of COBBLEVERSE-DP-v31.zip with an NBT reader written here. Nothing from tools/gym_buildings.py,
@@ -186,7 +189,13 @@ def jar(prefix):
 def inputs_missing(build=None):
     """Names of the inputs this audit cannot run without (tests skip on them, the CLI fails on them)."""
     out = []
-    for p in ("cobblers_gym_buildings", "cobblers_gym_interiors", "cobblers_donor", "cobblers_trainers"):
+    # a gym that is one walk-through hall is replayed from cobblers_gym_arenas; the building pack is read only for a
+    # gym whose building is still built (none of them since 2026-10-09, but the rule is read from the data)
+    need = ["cobblers_gym_interiors", "cobblers_donor", "cobblers_trainers"]
+    need.append("cobblers_gym_arenas" if any(is_walkthrough(g) for g in GYMS) else "cobblers_gym_buildings")
+    if not all(is_walkthrough(g) for g in GYMS if g != "gym2"):
+        need.append("cobblers_gym_buildings")
+    for p in dict.fromkeys(need):
         if not pack_dir(p, build):
             out.append("pack " + p)
     if not donor_zip():
@@ -490,11 +499,99 @@ class Hall:
 
 
 def gym_record(gym):
-    return load(ROOT / "data" / "gym_buildings" / ("%s.json" % gym))
+    """The gym's old record: our building's, or for gym 2 (a donor template, 2026-10-09 replaced by a hall) its
+    data/gym_interiors.json record, which carries the same `settlement` and `superseded_by`."""
+    b = ROOT / "data" / "gym_buildings" / ("%s.json" % gym)
+    if b.is_file():
+        return load(b)
+    i = load(ROOT / "data" / "gym_interiors.json")
+    recs = i.get("gyms") if isinstance(i.get("gyms"), list) else []
+    return next((r for r in recs if r.get("id") == gym), None) or i.get(gym) or {}
+
+
+def force_battle_distance():
+    """rctmod's forceBattleMaxDistance from the overlay's server config."""
+    for line in (ROOT / "modpack" / "config" / "rctmod-server.toml").read_text(encoding="utf-8").splitlines():
+        m = re.match(r"\s*forceBattleMaxDistance\s*=\s*([0-9.]+)", line)
+        if m:
+            return float(m.group(1))
+    raise SystemExit("modpack/config/rctmod-server.toml has no forceBattleMaxDistance")
+
+
+def arena_record(gym):
+    p = ROOT / "data" / "gym_arenas" / ("%s.json" % gym)
+    return load(p) if p.is_file() else None
+
+
+def is_walkthrough(gym):
+    """True when the gym is one walk-through hall (2026-10-09): its building record carries `superseded_by` and
+    data/gym_arenas/<gym>.json is a gym_hall/1 record. The building's function is then not emitted at all."""
+    a = arena_record(gym)
+    return bool(gym_record(gym).get("superseded_by")) and bool(a) and a.get("schema") == "gym_hall/1"
+
+
+SEAT_SET = re.compile(r"\brun setblock (-?\d+) (-?\d+) (-?\d+) (\S+)")
+
+
+def walkthrough_hall(gym, G, build=None):
+    """A gym that is one walk-through hall: the lot's pad (data/placements.json, the town plan's gym anchor), the
+    EMITTED hall function replayed over it, then the emitted seat function (its `execute ... run setblock` lines
+    applied as if their marker condition held: the hall stands, that is when R16G/R16GA run it). Nothing is imported
+    from tools/gym_arenas.py or tools/gym_trainers.py. The takedown function only fills rock under the pad (every
+    one of its lines is an `execute ... run fill`, which this replay skips) and does not change a walk."""
+    rec, arena = gym_record(gym), arena_record(gym)
+    plan = load(ROOT / "data" / "placements.json")["settlements"][rec["settlement"]]["plan"]
+    # the gym's lot anchor: role "gym", or gym 2's "waterfront_gym", a lot with no level (the template stood on its own
+    # rock): its ground is then the heightmap's, column by column
+    anchor = [a for a in plan.get("anchors") or [] if a.get("role") in ("gym", "waterfront_gym")][0]
+    lot = tuple(anchor["rect"])
+    level = int(anchor["level"]) if anchor.get("level") is not None else None
+    ring = {}
+    for x in range(lot[0] - RING, lot[2] + RING + 1):
+        for z in range(lot[1] - RING, lot[3] + RING + 1):
+            if level is None or not (lot[0] <= x <= lot[2] and lot[1] <= z <= lot[3]):
+                ring[(x, z)] = G(x, z)
+    if level is None:
+        level = min(ring.values())
+
+    def base(x, y, z):
+        if lot[0] <= x <= lot[2] and lot[1] <= z <= lot[3] and (x, z) not in ring:
+            return "minecraft:stone" if y <= level else "minecraft:air"
+        return "minecraft:stone" if y <= ring.get((x, z), level) else "minecraft:air"
+
+    w = World(base)
+    pack = pack_dir("cobblers_gym_arenas", build)
+    fdir = pack / "data" / "cobblers" / "function" / "gym_arenas"
+    w.run_file(fdir / ("%s.mcfunction" % gym))
+    for line in (fdir / ("%s_seat.mcfunction" % gym)).read_text(encoding="utf-8").splitlines():
+        m = SEAT_SET.search(line) if line.lstrip().startswith("execute") else None
+        if m:
+            w.cells[(int(m.group(1)), int(m.group(2)), int(m.group(3)))] = m.group(4)
+    inlot = [c for c in w.cells if lot[0] <= c[0] <= lot[2] and lot[1] <= c[2] <= lot[3]]
+    stray = sorted(c for c in w.cells if not (lot[0] <= c[0] <= lot[2] and lot[1] <= c[2] <= lot[3]))
+    top = max([c[1] for c in inlot] + list(ring.values())) + 4
+    bot = min([c[1] for c in inlot] + [level] + list(ring.values())) - 3
+    box = (lot[0] - RING, bot, lot[1] - RING, lot[2] + RING, top, lot[3] + RING)
+    spawners = [c for c in inlot if bare(w.cells[c]).split("{")[0] == "rctmod:trainer_spawner"]
+    h = Hall(gym, w, box, lot, tuple(arena["footprint"]), None, "foot")
+    h.level, h.ring, h.declared_spawner = level, ring, tuple(arena["leader"]["seat"])
+    h.spawners, h.stray = spawners, stray
+    h.spawner = h.declared_spawner if h.declared_spawner in spawners else (spawners[0] if spawners else None)
+    if h.spawner:
+        h.leader = (h.spawner[0], h.spawner[1] + 1, h.spawner[2])
+    h.healers = sorted(c for c in inlot if bare(w.cells[c]) == "cobblemon:healing_machine")
+    # a leader on a dais four blocks over the floor is never within the 3.0 of a hand; it engages by sight, from
+    # rctmod's forceBattleMaxDistance (modpack/config/rctmod-server.toml, read here, not from the builder), with the
+    # same clear line
+    h.leader_reach = force_battle_distance()
+    return h
 
 
 def building_hall(gym, G, build=None):
-    """Gyms 1, 3-8: the lot's pad, the emitted gym function and the healer sweep, replayed."""
+    """Gyms 1, 3-8: the lot's pad, the emitted gym function and the healer sweep, replayed -- or, for a gym that is
+    now one walk-through hall, that hall's emitted functions (walkthrough_hall)."""
+    if is_walkthrough(gym):
+        return walkthrough_hall(gym, G, build)
     rec = gym_record(gym)
     lot = tuple(rec["site"]["lot_rect"])
     level = int(rec["site"]["lot_level"])
@@ -570,7 +667,9 @@ def misty_hall(G, build=None):
 
 
 def hall(gym, G, build=None):
-    return misty_hall(G, build) if gym == "gym2" else building_hall(gym, G, build)
+    if gym == "gym2" and not is_walkthrough(gym):
+        return misty_hall(G, build)
+    return building_hall(gym, G, build)
 
 
 # ------------------------------------------------------------------------------------------------ movement
@@ -844,10 +943,11 @@ def clear_line(h, a, b, step=0.1):
 def engage_set(h, g):
     lf = feet(h.leader)
     chest = (lf[0], lf[1] + 1.0, lf[2])
+    reach = getattr(h, "leader_reach", ENGAGE)
     out = set()
     for p in g.adj:
         pf = feet(p)
-        if dist3(pf, lf) <= ENGAGE and clear_line(h, (pf[0], pf[1] + EYE, pf[2]), chest):
+        if dist3(pf, lf) <= reach and clear_line(h, (pf[0], pf[1] + EYE, pf[2]), chest):
             out.add(p)
     return out
 
@@ -1121,6 +1221,10 @@ def audit_gym(gym, juniors, recs, lead, sp, G, pack, home, others, build=None, s
     probs, notes, info, warns = [], [], {}, []
     if h.unknown:
         probs.append(("blocks", gym, "unclassified block names: %s" % sorted(h.unknown)))
+    if getattr(h, "healers", None):
+        probs.append(("blocks", gym, "a healing machine in the replayed hall at %s: no gym holds one" % h.healers[:2]))
+    if is_walkthrough(gym) and h.stray:
+        probs.append(("blocks", gym, "the hall writes %d cell(s) outside its lot, first %s" % (len(h.stray), h.stray[0])))
     if not h.spawner:
         probs.append(("leader", gym, "no rctmod:trainer_spawner in the replayed blocks"))
         return {"problems": probs, "warnings": warns, "notes": notes, "info": info}

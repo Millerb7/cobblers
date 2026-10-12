@@ -104,7 +104,8 @@ def test_a_nether_bound_entry_compiles_without_the_sky_on_every_path(tmp_path):
     assert CS.main(["--spawns", str(spawns), "--out", str(out)]) == 0
     base = out / "data" / "cobblers" / "spawn_pool_world"
     bound = [(p.name, s) for p in base.rglob("*.json") for s in json.loads(p.read_text(encoding="utf-8")).get("spawns") or []
-             if s["condition"].get("dimensions")]
+             if s["condition"].get("dimensions") not in (None, ["minecraft:overworld"])]   # every overworld box names its
+    # dimension since 2026-10-12 (compile_spawns.bind_dimension), so "bound" means bound OFF the overworld
     assert bound, "the Nether-bound entry %s compiled nowhere" % target["id"]
     assert all(s["condition"]["dimensions"] == [NETHER] for _, s in bound)
     forced = [(n, s["id"]) for n, s in bound if "canSeeSky" in s["condition"]]

@@ -1,0 +1,135 @@
+{
+  "schema": "cobblers.dungeon_relics/1",
+  "generated_by": "hand (the authored side of tools/dungeon_relics.py; the room kit reads nothing here)",
+  "why": "The rewards behind the secrets (docs/mechanics/DUNGEON_PASS2.md, replayability 2). Every room that carries a secret also carries params.relic (an id, unique in the dungeon) and params.lore (one or two sentences, under lore_max characters; params.relic_name overrides the name made from the id). At the secret's relic spot a pedestal stands; a member who steps up to it is given the relic ONCE, for good: the guard is an advancement criterion on the player (cobblers:dungeons/relics/<short>, one criterion per relic), so it survives a death, a logout, the slot's reset and every later run. A criterion granted sets the player's count (dg.rl_<short>); the last one completes the advancement, which is the collection. The relic is a keepsake: an item no bank, counter or buyer prices, named and lored, no CobbleDollars, nothing sold. The slot's reset puts the pedestal back; it never touches the record.",
+  "rung": "datapack plus generator: an advancement per dungeon, a score per dungeon, and per-room functions merged into the kit's tick and reset hooks. No mod, no scripting layer.",
+  "lore_max": 160,
+  "name_max": 32,
+  "lore_wrap": 36,
+  "trigger_radius": 1.6,
+  "trigger_radius_why": "measured from the pedestal's centre at feet level: the spot beside it (1.0) and the cells diagonal to it (1.41) are inside, a cell two away (2.0) is not. problems() proves no cell a player can reach without the secret's trick is inside, from the built grid",
+  "sound_found": "minecraft:block.amethyst_block.chime",
+  "sound_done": "minecraft:ui.toast.challenge_complete",
+  "particle": "minecraft:end_rod",
+  "collection": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "frame": "goal",
+    "title": "%(name)s: every relic",
+    "description": "Every relic hidden in %(name)s, found.",
+    "colour": "gold"
+  },
+  "themes": {
+    "mine": {
+      "pedestal": "minecraft:chiseled_deepslate",
+      "armed": "minecraft:lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:clock", "minecraft:echo_shard", "minecraft:disc_fragment_5"],
+      "colour": "gold",
+      "why": "a chiselled deepslate plinth with a lantern lit on it; the lantern goes out when someone takes the relic"
+    },
+    "jungle": {
+      "pedestal": "minecraft:mossy_stone_bricks",
+      "armed": "minecraft:verdant_froglight",
+      "taken": "minecraft:moss_block",
+      "items": ["minecraft:heart_of_the_sea", "minecraft:disc_fragment_5", "minecraft:echo_shard"],
+      "colour": "green",
+      "why": "mossy temple brick with a froglight on it; the light is gone when the relic is"
+    },
+    "flooded_ruin": {
+      "pedestal": "minecraft:chiseled_stone_bricks",
+      "armed": "minecraft:soul_lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:echo_shard", "minecraft:heart_of_the_sea", "minecraft:clock"],
+      "colour": "aqua",
+      "why": "a carved brick plinth with a soul lantern, blue in the dark; it goes out when the relic is taken"
+    },
+    "nether_wastes": {
+      "pedestal": "minecraft:chiseled_nether_bricks",
+      "armed": "minecraft:lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:clock", "minecraft:echo_shard", "minecraft:disc_fragment_5"],
+      "colour": "red",
+      "why": "a chiselled nether-brick plinth with a lantern lit on it; the lantern goes out when someone takes the relic"
+    },
+    "crimson_forest": {
+      "pedestal": "minecraft:polished_blackstone_bricks",
+      "armed": "minecraft:shroomlight",
+      "taken": "minecraft:nether_wart_block",
+      "items": ["minecraft:echo_shard", "minecraft:disc_fragment_5", "minecraft:clock"],
+      "colour": "red",
+      "why": "a blackstone plinth with a shroomlight on it, red among the stems; the light is gone when the relic is"
+    },
+    "warped_forest": {
+      "pedestal": "minecraft:polished_blackstone_bricks",
+      "armed": "minecraft:shroomlight",
+      "taken": "minecraft:warped_wart_block",
+      "items": ["minecraft:echo_shard", "minecraft:disc_fragment_5", "minecraft:clock"],
+      "colour": "aqua",
+      "why": "a blackstone plinth with a shroomlight on it, teal among the stems; the light is gone when the relic is"
+    },
+    "soul_sand_valley": {
+      "pedestal": "minecraft:chiseled_polished_blackstone",
+      "armed": "minecraft:soul_lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:echo_shard", "minecraft:disc_fragment_5", "minecraft:clock"],
+      "colour": "aqua",
+      "why": "a blackstone plinth with a soul lantern, blue in the dark; it goes out when the relic is taken"
+    },
+    "basalt_deltas": {
+      "pedestal": "minecraft:polished_basalt",
+      "armed": "minecraft:ochre_froglight",
+      "taken": "minecraft:smooth_basalt",
+      "items": ["minecraft:clock", "minecraft:echo_shard", "minecraft:disc_fragment_5"],
+      "colour": "gold",
+      "why": "a basalt plinth with a froglight on it, glowing like the seams below; the glow is gone when the relic is"
+    },
+    "city": {
+      "pedestal": "minecraft:chiseled_stone_bricks",
+      "armed": "minecraft:lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:clock", "minecraft:echo_shard", "minecraft:disc_fragment_5"],
+      "colour": "yellow",
+      "why": "a carved brick plinth with a street lantern on it, lit; the lantern goes out when someone takes the relic"
+    },
+    "great_tree": {
+      "pedestal": "minecraft:stripped_dark_oak_wood",
+      "armed": "minecraft:shroomlight",
+      "taken": "minecraft:moss_block",
+      "items": ["minecraft:heart_of_the_sea", "minecraft:disc_fragment_5", "minecraft:echo_shard"],
+      "colour": "gold",
+      "why": "a bark plinth with a shroomlight on it, honey-warm; the light is gone when the relic is"
+    },
+    "ice_spire": {
+      "pedestal": "minecraft:chiseled_quartz_block",
+      "armed": "minecraft:soul_lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:echo_shard", "minecraft:clock", "minecraft:disc_fragment_5"],
+      "colour": "aqua",
+      "why": "a quartz plinth with a soul lantern, blue as the ice; it goes out when the relic is taken"
+    },
+    "hill_keep": {
+      "pedestal": "minecraft:chiseled_stone_bricks",
+      "armed": "minecraft:lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:clock", "minecraft:disc_fragment_5", "minecraft:echo_shard"],
+      "colour": "red",
+      "why": "a carved stone plinth with a guard lantern on it; it goes out when someone takes the relic"
+    },
+    "desert_excavation": {
+      "pedestal": "minecraft:chiseled_red_sandstone",
+      "armed": "minecraft:lantern[hanging=false]",
+      "taken": "minecraft:air",
+      "items": ["minecraft:clock", "minecraft:echo_shard", "minecraft:disc_fragment_5"],
+      "colour": "gold",
+      "why": "a carved plinth with a work lamp on it; the lamp goes out when someone takes the relic"
+    },
+    "night_crater": {
+      "pedestal": "minecraft:amethyst_block",
+      "armed": "minecraft:crying_obsidian",
+      "taken": "minecraft:obsidian",
+      "items": ["minecraft:echo_shard", "minecraft:disc_fragment_5", "minecraft:clock"],
+      "colour": "light_purple",
+      "why": "an amethyst plinth with crying obsidian on it, purple in the dark; the glow is gone when the relic is"
+    }
+  }
+}

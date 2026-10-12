@@ -1,0 +1,23 @@
+{
+  "why": "DG2-RELICS: a short rooms dungeon whose secrets carry relics: a room with TWO cracked secrets (per-secret relic and lore), a room with one balcony secret (room-level params.relic / lore / relic_name), four variants (mirror, seed, an alternate record), a second cracked secret in the swapped room. A fixture for tests/test_dungeon_relics.py, not a dungeon anyone plays; every theme builds it.",
+  "rooms": [
+    {"id": "entry", "kind": "entry_room", "length": 20, "width": 15, "height": 8},
+    {"id": "a", "kind": "safe_room", "length": 44, "width": 25, "height": 9,
+     "secrets": [
+       {"id": "a_north", "type": "cracked", "side": "north", "at": 0.45, "relic": "first_find",
+        "lore": "Somebody bricked this up in a hurry and left the lamp lit.", "relic_name": "The Lamp Left Lit"},
+       {"id": "a_south", "type": "cracked", "side": "south", "at": 0.6, "relic": "second_find",
+        "lore": "A tally of shifts, scratched in the stone by hands that stopped counting."}]},
+    {"id": "b", "kind": "safe_room", "length": 46, "width": 25, "height": 10,
+     "secrets": [{"id": "b_ledge", "type": "balcony", "side": "north", "at": 0.15}],
+     "params": {"relic": "high_find", "lore": "Kept above the water line on purpose: whoever stood here wanted it seen and never reached."}},
+    {"id": "arena", "kind": "boss_arena", "length": 36, "width": 21, "height": 9},
+    {"id": "exit", "kind": "exit_room", "length": 16, "width": 13, "height": 7}
+  ],
+  "variants": [
+    {"id": "a"},
+    {"id": "b", "mirror": true},
+    {"id": "c", "seed": "c"},
+    {"id": "d", "seed": "d", "mirror": true, "swap": {"b": {"width": 27}}}
+  ]
+}

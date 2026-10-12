@@ -95,6 +95,17 @@ class Cmds:
             if r is not None and m.group(1) in w["objectives"]:
                 w["scores"][m.group(1)] = r
             return r
+        # a give's own bookkeeping (tools/compile_dialogue.py give): the success count goes to a score, and a failure
+        # leaves a tag the Molang side reads. Oak's waystone is the first thing he gives (2026-10-09)
+        m = re.fullmatch(r"store success score @s (\S+) (.*)", rest)
+        if m:
+            r = self.sub(w, m.group(2))
+            if m.group(1) in w["objectives"]:
+                w["scores"][m.group(1)] = 1 if r else 0
+            return r
+        m = re.fullmatch(r"unless score @s (\S+) matches (-?\d+) (.*)", rest)
+        if m:
+            return self.sub(w, m.group(3)) if w["scores"].get(m.group(1)) != int(m.group(2)) else None
         raise AssertionError("an execute this model does not interpret: %r" % rest)
 
     def leaf(self, w, cmd):
@@ -116,6 +127,10 @@ class Cmds:
         if m:
             w["opened"].append(m.group(1))
             return 1
+        m = re.fullmatch(r"give @s ([a-z0-9_]+:[a-z0-9_/]+) (\d+)", cmd)
+        if m:
+            w["gave"].append((m.group(1), int(m.group(2))))
+            return 1
         if cmd == "openstarterscreen @s":
             if w["chosen"]:
                 return 0
@@ -132,7 +147,7 @@ CMDS = Cmds()
 
 def fresh(**kw):
     w = {"data": {}, "tags": set(), "flags": set(), "scores": {}, "objectives": set(), "chosen": False,
-         "screen": False, "series": [], "opened": [], "granted": []}
+         "screen": False, "series": [], "opened": [], "granted": [], "gave": []}
     w.update(kw)
     return w
 

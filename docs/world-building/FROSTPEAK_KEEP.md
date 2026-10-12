@@ -1,6 +1,15 @@
 # Wardenhold: the snow-covered keep on Frostpeak Strand
 
-> **Status 2026-10-09: built in the repository, applied to no world, seen in no game.** The owner asked for "a
+> **Update 2026-10-09 (second pass): ruined, bigger, inhabited. Built in the repository; NOT applied, NOT seen in game.**
+> The owner: "Have it inhabited by a big legendary we haven't used yet", "Have the people of the castle burrowing in the
+> mountainside at 1825 736", "Make the castle have a bigger courtyard and be semi destroyed", "Have the legendary be lvl
+> 50-60 and be a quest to kill it"; then, the same day, "giratina being plopped right here sucks, move it to the castle in
+> the north" and "get rid of his sphere though, he just lives in the castle." Section 7 is that pass; sections 1-6 below
+> are the first build, corrected where the pass changed them. Files added: `data/frostpeak_keep_quest.json`,
+> `tools/frostpeak_keep_quest.py` (burrow, Giratina, quest callbacks, the old shrine's takedown; step **R18FK**),
+> `tools/frostpeak_keep_quest_audit.py`, `tests/test_frostpeak_keep_quest.py`.
+>
+> **Status 2026-10-09 (first pass): built in the repository, applied to no world, seen in no game.** The owner asked for "a
 > SNOW-COVERED CASTLE at Frostpeak Strand, visible from Highwire. Measure the sightline before siting it ... It should
 > read as a landmark from Highwire first and a place second, so the silhouette matters more than the interior. Propose
 > what it is and why it is there." The name, the story and the two Pokemon are **proposals for the owner to accept or
@@ -169,3 +178,72 @@ re-place them (EXP-021).
   keep reads as a Distant Horizons LOD.
 - **Collisions:** none found. The base rectangle is 305+ blocks from every authored x/z and 682 from every route corridor.
   Highwire's own streets are untouched; the keep is on the far side of the Tri Peaks.
+
+## 7. The second pass (2026-10-09): ruined, bigger, inhabited
+
+Sections 5 and 6 above describe the first pass ("no quest", "27 checks"); this section supersedes them where they differ.
+
+**The courtyard.** The Strand's boundary closes the south side at z660 (the base rectangle's south edge already lay on
+it), so it grows to the sides and north: curtain wall 49 x 41 -> **65 x 49** (`wall_hu` 32, `wall_hv_north` 28), base
+rectangle x1520-1576 z612-660 -> **x1512-1584 z604-660**. Measured on `tools/ground.py`: every edge column inside
+frostpeak_strand's polygon (x1585 at z660 would not be), highest ground still **y127**, so the pad and the spire's height
+do not move. Open courtyard floor (inside the wall's inner face, not under the keep): **1,144 -> 2,176 cells**.
+
+**The ruin** (`data/frostpeak_keep.json ruin`, deterministic): the north-east corner tower fallen to a ry 4-12 stump,
+its inside rubble; the keep's south-east turret (the one facing Highwire) a one-course stump and its north-west turret gone
+with that corner of the roof, the loft open to the sky there (walls cut to ry 22-27, two courses over the loft floor);
+breaches in the west wall (to the floor: a second way in over rubble), the north wall east of the gate, the east wall
+and the south wall's walk; eleven rubble heaps, 45% of their tops packed ice or snow block, the west wind's rime on the
+broken faces. **The spire is never touched** (`in_spire`; a test holds every spire block where it stood).
+
+**The sightline, before -> after** (`tools/frostpeak_keep_siting.py site 1548 636`): the spire's features are identical
+(finial +47 at the belvedere, +32 at the worst street; arcade floor +23 / +8). The whole-silhouette fraction falls
+**0.28 -> 0.23** street mean (min 0.19 -> 0.18), because the wider wall adds outline the terrain hides. The independent
+land audit (`tools/new_places_land_audit.py`, another author's): finial seen from **10/10** streets, **48** blocks of the
+spire's axis from the belvedere (as before), its own silhouette mean **0.31 -> 0.27**.
+
+**Giratina** (the owner's choice, replacing the unused-legendary pick). Mega Showdown 1.0.2 implements it and ships its
+model, poser, texture and resolver for both formes (read from the jar, 2026-10-09): every player draws it from a jar the
+server requires. It lies in the north courtyard's east half at **(1565.5, 128, 621.5)**, on a lair of packed and blue ice
+with five packed-ice spikes, 17.0 blocks from the gate-to-door line (wake radius 14), so crossing the yard does not wake it
+(the keep audit's K12 measures it on the written blocks, with Giratina's hitbox from the jar). **Level 55**: Giovanni's
+ace, the upper bound of the cap after seven badges; `data/level_cap.json` breaks every ball over the thrower's cap, so it
+is catchable at a cap of 55 (seven badges) or after gym 8. Kept by the residents' state machine (`tools/drowned_quarry.py`
+keeper, copied): dormant, woken within 14, asleep again when nobody is within 64, **returns one hour of server time after
+it is beaten, caught or killed**. **The Froslass in the beacon chamber stays**: a different creature in a different room
+(the 25-block ladder's prize, 40-44), and retiring it would rewrite the independent land audit's model of the keep.
+
+**The catch (PROPOSED, for the owner to confirm):** ordinary balls (an overworld legendary, not a dungeon boss; not in
+`data/key_ball.json`); **defeat it first, then catch it, once per player** (a returning boss would otherwise be a
+Giratina farm). The gate is the Ursaluna den's `poke_ball_capture_calculated` handshake.
+
+**The old shrine is taken down** (the owner: "get rid of his sphere"). `legendary_giratina_shrine` and
+`sweep_giratina_shrine` are retired into `superseded_*` (kept, never deleted); the Red Chain and Griseous caches likewise.
+R18FK's `shrine_takedown` sets the box x4374-4415 y66-108 z2862-2899 to air, then rock to the heightmap's ground (y72-80
+there), water where the mask says (none). **Its top block is stone**: the trough's painted cover is in no data file.
+The Griseous Core and Orb move to the quest's reward, so the Origin forme keeps its one source.
+
+**The burrow** (Mt Vessu's west face; (1825, 736) is ground y196 on a slope rising a block a block to the foot of a
+42-block cliff at x1831-1832). A mouth cutting at x1829 (floor y197, level with the slope), a timbered tunnel 13 x 3 x 3,
+a hall 15 x 15 x 5 (hearth, benches, table, pillars), sleeping 11 x 7 (hay and hides), stores 11 x 7 (barrels, hay,
+kelp), a watch room 7 x 7 (an empty lectern and the count on the wall: "Forty-one went out the gate. Thirty-eight came
+here."). Rock over every room east of the face: 51 blocks or more. Lit by 21 lanterns (least block light at a standable
+cell: 7); spawn-free (`data/spawn_suppression.json wardenhold_burrow`, x1824-1871 z720-759, all y). **Residents:**
+**Maren Holt** (the quest giver, at the hall table), **Old Sef** (the hearth: Giratina's name and story), **Pell** (the
+watch room: the count).
+
+**The quest** `evt_wardenhold_giratina`: Maren asks; `battle_fainted` credits **every** player of a battle in which the
+wild Giratina fainted at Wardenhold (advancement `cobblers:frostpeak_keep_quest/giratina_defeated` + player tag
+`cobblers.fk_giratina_beaten`, re-synced by the keeper); "I beat it." -> **reward: a Griseous Core and a Griseous Orb**
+(`data/rewards.json wardenhold_giratina`, npc_grant, once). Sef and Pell change their lines once the tag is set.
+
+**Mechanism order:** Cobblemon native (callbacks, `spawnpokemonat`, NPCs and dialogue) -> datapack -> functions. No mod.
+**State:** per player: the advancements, the tag, the quest fields in Cobblemon player data. Server-wide: Giratina's
+return clock (`cobblers.fkq` #gone, set only when first seen gone, never by a restart). A late joiner finds it asleep or
+on its clock; a player who dies in the fight respawns by the blackout as anywhere (a victorious Giratina becomes that
+claim's guardian and is never touched by the keeper); a second player in the same battle is credited too.
+
+**Verified (run here):** both generators; the keep audit (31 checks clean, K12 new); the quest audit (27 checks
+clean); the siting before and after; `tests/test_frostpeak_keep*.py`, the land audit's tests, the system contracts, the
+sweep and dialogue suites. **Not verified:** anything in game: the sleep pose, the wake, the battle callback reaching
+every player, the capture gate, the residents, the takedown's look; `reapply.py steps()` (needs prepare).

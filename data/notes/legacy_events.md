@@ -30,7 +30,7 @@ current A–H by 1–8 scheme. Treat them as names, not locations.
 | `e4-river-camp` | ranger_camp | medium | Friendly NPC waypoint on the riverbank, rest and information |
 | `e4-ford` | fishing_spot | small | Shallow crossing doubling as a water encounter |
 | `e4-grove` | berry_grove | small | Riverside harvesting counterpart to the lowland grove |
-| `e4-cache` | rocket_cache | small | First villain-faction breadcrumb, a hidden stash rather than a fight |
+| `e4-cache` | rocket_cache | small | First faction breadcrumb, a hidden stash rather than a fight |
 | `e5-cavern` | cavern_entrance | medium | Entrance to an underground area in the rocky uplands |
 | `e5-overlook` | ridge_overlook | small | High vantage point, intended to reveal the region below |
 | `e5-shrine` | shrine | small | Mountain counterpart to the forest shrine |

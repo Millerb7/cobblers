@@ -1,0 +1,879 @@
+{
+  "schema": "cobblers.dungeon_greed/1",
+  "generated_by": "hand (seeded 2026-10-10 by unit GREED from the cited prices; edit the rows, never a derived number: tools/dungeon_greed.py problems() re-derives every block's cp from its drops)",
+  "owner_brief": "The owner, 2026-10-10: \"any Pokemon caught should count as a resource, so the clock should run faster. We will need a system to weigh all valuables, like 20 coal or a diamond is 1 point, and 2 points is +0.1x faster or something.\" And (staging, same day): ore mined in a wall did not count, and \"it should\".",
+  "unit": "cp, a hundredth of a point. 1 point = 100 cp = $100 of the economy's prices (the owner's two anchors sit at $80 and $120 a point, so $100 is between them and each anchor is pinned exactly)",
+  "price_order": [
+    "owner: the owner's anchors, pinned",
+    "bank: what data/bank.json pays now (money the player can actually get)",
+    "bank_removed: its last price in base_removed / buys_removed (taken off for arbitrage, still worth it)",
+    "market: a data/markets.json counter's unit price, for items nothing ever bought (their replacement cost)",
+    "derived: from a recipe or trade that links it to a priced item; or (DUNGEON_VAULTS, 2026-10-11) for an item nothing sells, from the price of the sold item of its class, the class and the item named in the row (docs/mechanics/DUNGEON_VAULTS.md 3)",
+    "unpriced: 1 cp, the floor, so a take is never free; the balance designer's to price"
+  ],
+  "rate": {
+    "base": 10,
+    "per_step_cp": 200,
+    "cap": 30,
+    "colours": [
+      [
+        10,
+        "white"
+      ],
+      [
+        11,
+        "yellow"
+      ],
+      [
+        20,
+        "red"
+      ]
+    ],
+    "why": "the owner's +0.1x per 2 points. units_per_tick (data/dungeons.json engine.clock) is 10, so x1 is 10 and each 0.1x is one unit: rate = 10 + floor(cp / 200). The cap is x3 (30), the D13 ladder's top, the owner's, reached at 40 points. The first 1.99 points are free (x1): the old ladder's free tier was 4 blocks. Per member, and it never falls: the points only rise, and the rate is only ever raised"
+  },
+  "items": {
+    "cobblemon:ability_capsule": {
+      "cp": 10000,
+      "source": "market",
+      "ref": "data/markets.json counters northlight_station (no bank price ever: its replacement cost, price / count)",
+      "why": "nothing ever bought it; a counter sells it at $10000 each"
+    },
+    "cobblemon:cherish_ball": {
+      "cp": 500,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): a trophy ball with no catch bonus (docs/research/notes/reward-item-inventory.md 4), sold nowhere; priced between the Poke Ball ($200, its catch class) and the situational balls ($600) for its rarity: only three strongrooms give it, at bands 5-6. A DESIGN price"
+    },
+    "cobblemon:dive_ball": {
+      "cp": 600,
+      "source": "market",
+      "ref": "data/markets.json counters pacifidlog (no bank price ever: its replacement cost, price / count)",
+      "why": "nothing ever bought it; a counter sells it at $3000 for 5"
+    },
+    "cobblemon:exp_candy_l": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "nothing in the economy prices it (no bank price, past or present, no counter): the floor, so a take is never free. The balance designer's to price"
+    },
+    "cobblemon:exp_candy_m": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "nothing in the economy prices it (no bank price, past or present, no counter): the floor, so a take is never free. The balance designer's to price"
+    },
+    "cobblemon:exp_candy_s": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "nothing in the economy prices it (no bank price, past or present, no counter): the floor, so a take is never free. The balance designer's to price"
+    },
+    "cobblemon:exp_candy_xl": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "nothing in the economy prices it (no bank price, past or present, no counter): the floor, so a take is never free. The balance designer's to price"
+    },
+    "cobblemon:exp_candy_xs": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "nothing in the economy prices it (no bank price, past or present, no counter): the floor, so a take is never free. The balance designer's to price"
+    },
+    "cobblemon:full_restore": {
+      "cp": 750,
+      "source": "bank_removed",
+      "ref": "data/bank.json base_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $750"
+    },
+    "cobblemon:great_ball": {
+      "cp": 350,
+      "source": "market",
+      "ref": "data/markets.json counters highwire (no bank price ever: its replacement cost, price / count)",
+      "why": "nothing ever bought it; a counter sells it at $350 each"
+    },
+    "cobblemon:heavy_ball": {
+      "cp": 600,
+      "source": "market",
+      "ref": "data/markets.json counters redbrow (no bank price ever: its replacement cost, price / count)",
+      "why": "nothing ever bought it; a counter sells it at $3000 for 5"
+    },
+    "cobblemon:hyper_potion": {
+      "cp": 375,
+      "source": "bank_removed",
+      "ref": "data/bank.json base_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $375"
+    },
+    "cobblemon:leaf_stone": {
+      "cp": 2100,
+      "source": "market",
+      "ref": "data/markets.json counters steepside (no bank price ever: its replacement cost, price / count)",
+      "why": "nothing ever bought it; a counter sells it at $2100 each"
+    },
+    "cobblemon:lum_berry": {
+      "cp": 8,
+      "source": "bank_removed",
+      "ref": "data/bank.json buys_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $8"
+    },
+    "cobblemon:max_potion": {
+      "cp": 625,
+      "source": "bank_removed",
+      "ref": "data/bank.json base_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $625"
+    },
+    "cobblemon:max_revive": {
+      "cp": 1000,
+      "source": "bank_removed",
+      "ref": "data/bank.json base_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $1000"
+    },
+    "cobblemon:miracle_seed": {
+      "cp": 1000,
+      "source": "market",
+      "ref": "data/markets.json counters greenhollow (no bank price ever: its replacement cost, price / count)",
+      "why": "nothing ever bought it; a counter sells it at $1000 each"
+    },
+    "cobblemon:net_ball": {
+      "cp": 600,
+      "source": "market",
+      "ref": "data/markets.json counters pacifidlog (no bank price ever: its replacement cost, price / count)",
+      "why": "nothing ever bought it; a counter sells it at $3000 for 5"
+    },
+    "cobblemon:poke_ball": {
+      "cp": 200,
+      "source": "market",
+      "ref": "data/traders.json mart (every town's Poke Mart, from the first visit: 'at the general shopkeeper's prices (200, 200, 100)', mart.why); no data/markets.json counter sells it",
+      "why": "nothing ever bought it; every Mart sells it at $200"
+    },
+    "cobblemon:potion": {
+      "cp": 50,
+      "source": "bank_removed",
+      "ref": "data/bank.json base_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $50"
+    },
+    "cobblemon:pp_up": {
+      "cp": 2500,
+      "source": "bank_removed",
+      "ref": "data/bank.json base_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $2500"
+    },
+    "cobblemon:rare_candy": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "nothing in the economy prices it (no bank price, past or present, no counter): the floor, so a take is never free. The balance designer's to price"
+    },
+    "cobblemon:revive": {
+      "cp": 500,
+      "source": "bank_removed",
+      "ref": "data/bank.json base_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $500"
+    },
+    "cobblemon:sitrus_berry": {
+      "cp": 5,
+      "source": "bank_removed",
+      "ref": "data/bank.json buys_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $5"
+    },
+    "cobblemon:sport_ball": {
+      "cp": 350,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): sold nowhere; priced as a Great Ball ($1750 for 5, data/markets.json highwire), the shop ball nearest its catch power (ASSUMED: the Sport Ball's Cobblemon catch rate is not read here). Two strongrooms give it, at bands 3-4"
+    },
+    "cobblemon:super_potion": {
+      "cp": 175,
+      "source": "bank_removed",
+      "ref": "data/bank.json base_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $175"
+    },
+    "cobblemon:ultra_ball": {
+      "cp": 800,
+      "source": "market",
+      "ref": "data/markets.json counters tilpey_cross (no bank price ever: its replacement cost, price / count)",
+      "why": "nothing ever bought it; a counter sells it at $800 each"
+    },
+    "mega_showdown:mega_stone": {
+      "cp": 625,
+      "source": "derived",
+      "why": "the raw stone: a keyed stone (1350) is 2 raw + a diamond (100) at the bench (data/gulch_mine.json cutters.offer), so (1350 - 100) / 2"
+    },
+    "minecraft:ancient_debris": {
+      "cp": 200,
+      "source": "bank",
+      "ref": "data/bank.json buys",
+      "why": "the bank pays $200 (the Nether's prize); a point is $100"
+    },
+    "minecraft:bamboo_block": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "nothing in the economy prices it (no bank price, past or present, no counter): the floor, so a take is never free. The balance designer's to price"
+    },
+    "minecraft:coal": {
+      "cp": 5,
+      "source": "owner",
+      "why": "the owner's anchor, 2026-10-10: 20 coal is 1 point (the bank pays $4, so the anchor sits a dollar over it)"
+    },
+    "minecraft:copper_ingot": {
+      "cp": 3,
+      "source": "bank",
+      "ref": "data/bank.json buys",
+      "why": "the bank pays $3 (raw + 1); a point is $100"
+    },
+    "minecraft:diamond": {
+      "cp": 100,
+      "source": "owner",
+      "why": "the owner's anchor, 2026-10-10: a diamond is 1 point (the bank pays $120)"
+    },
+    "minecraft:emerald": {
+      "cp": 400,
+      "source": "bank_removed",
+      "ref": "data/bank.json base_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $400"
+    },
+    "minecraft:gold_ingot": {
+      "cp": 22,
+      "source": "bank_removed",
+      "ref": "data/bank.json buys_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $22"
+    },
+    "minecraft:gold_nugget": {
+      "cp": 2,
+      "source": "derived",
+      "why": "a ninth of a gold ingot ($22 / 9 = 2.4): nine craft one"
+    },
+    "minecraft:honeycomb_block": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "nothing in the economy prices it (no bank price, past or present, no counter): the floor, so a take is never free. The balance designer's to price"
+    },
+    "minecraft:iron_ingot": {
+      "cp": 9,
+      "source": "bank",
+      "ref": "data/bank.json buys",
+      "why": "the bank pays $9 (raw + 1); a point is $100"
+    },
+    "minecraft:lapis_lazuli": {
+      "cp": 4,
+      "source": "bank",
+      "ref": "data/bank.json buys",
+      "why": "the bank pays $4 (early ore, 4-9 a block); a point is $100"
+    },
+    "minecraft:melon_slice": {
+      "cp": 5,
+      "source": "bank_removed",
+      "ref": "data/bank.json base_removed (the bank's last price for it)",
+      "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $5"
+    },
+    "minecraft:netherite_ingot": {
+      "cp": 900,
+      "source": "bank",
+      "ref": "data/bank.json buys",
+      "why": "the bank pays $900 (4 scrap + 4 gold ingots); a point is $100"
+    },
+    "minecraft:netherite_scrap": {
+      "cp": 202,
+      "source": "bank",
+      "ref": "data/bank.json buys",
+      "why": "the bank pays $202 (debris smelted); a point is $100"
+    },
+    "minecraft:pumpkin": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "nothing in the economy prices it (no bank price, past or present, no counter): the floor, so a take is never free. The balance designer's to price"
+    },
+    "minecraft:quartz": {
+      "cp": 2,
+      "source": "bank",
+      "ref": "data/bank.json buys",
+      "why": "the bank pays $2 (the commonest Nether ore); a point is $100"
+    },
+    "minecraft:raw_copper": {
+      "cp": 2,
+      "source": "bank",
+      "ref": "data/bank.json buys",
+      "why": "the bank pays $2 (early ore); a point is $100"
+    },
+    "minecraft:raw_gold": {
+      "cp": 20,
+      "source": "bank",
+      "ref": "data/bank.json buys",
+      "why": "the bank pays $20 (deep ore); a point is $100"
+    },
+    "minecraft:raw_iron": {
+      "cp": 8,
+      "source": "bank",
+      "ref": "data/bank.json buys",
+      "why": "the bank pays $8 (early ore); a point is $100"
+    },
+    "minecraft:redstone": {
+      "cp": 2,
+      "source": "bank",
+      "ref": "data/bank.json buys",
+      "why": "the bank pays $2 (deep ore, 4-5 a block); a point is $100"
+    },
+    "minecraft:stripped_jungle_log": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "nothing in the economy prices it (no bank price, past or present, no counter): the floor, so a take is never free. The balance designer's to price"
+    }
+  },
+  "groups": {
+    "mega_stones": {
+      "cp": 1350,
+      "source": "derived",
+      "why": "a keyed Mega Stone: the owner, \"a player should take an hour to get a mega mon ish\" (data/gulch_mine.json cutters.offer.why), at the deep miner's hour, $1,350 (data/bank.json income_estimate.deep_hour, an ESTIMATE)",
+      "ids_source": "Mega Showdown 1.0.2 jar: data/mega_showdown/tags/item/mega_stone.json (47) plus the item models ending -ite / -ite_x / -ite_y the tag leaves out (the Z-A stones), less deoxys_meteorite and tera_pouch_white (not stones)",
+      "ids": [
+        "mega_showdown:abomasite",
+        "mega_showdown:absolite",
+        "mega_showdown:aerodactylite",
+        "mega_showdown:aggronite",
+        "mega_showdown:alakazite",
+        "mega_showdown:altarianite",
+        "mega_showdown:ampharosite",
+        "mega_showdown:audinite",
+        "mega_showdown:banettite",
+        "mega_showdown:beedrillite",
+        "mega_showdown:blastoisinite",
+        "mega_showdown:blazikenite",
+        "mega_showdown:cameruptite",
+        "mega_showdown:charizardite_y",
+        "mega_showdown:charizardite_x",
+        "mega_showdown:diancite",
+        "mega_showdown:galladite",
+        "mega_showdown:garchompite",
+        "mega_showdown:gardevoirite",
+        "mega_showdown:gengarite",
+        "mega_showdown:glalitite",
+        "mega_showdown:gyaradosite",
+        "mega_showdown:heracronite",
+        "mega_showdown:houndoominite",
+        "mega_showdown:kangaskhanite",
+        "mega_showdown:latiasite",
+        "mega_showdown:latiosite",
+        "mega_showdown:lopunnite",
+        "mega_showdown:lucarionite",
+        "mega_showdown:manectite",
+        "mega_showdown:mawilite",
+        "mega_showdown:medichamite",
+        "mega_showdown:metagrossite",
+        "mega_showdown:mewtwonite_y",
+        "mega_showdown:mewtwonite_x",
+        "mega_showdown:pidgeotite",
+        "mega_showdown:pinsirite",
+        "mega_showdown:sablenite",
+        "mega_showdown:salamencite",
+        "mega_showdown:scizorite",
+        "mega_showdown:sceptilite",
+        "mega_showdown:sharpedonite",
+        "mega_showdown:slowbronite",
+        "mega_showdown:steelixite",
+        "mega_showdown:swampertite",
+        "mega_showdown:tyranitarite",
+        "mega_showdown:venusaurite",
+        "mega_showdown:barbaracite",
+        "mega_showdown:chandelurite",
+        "mega_showdown:chesnaughtite",
+        "mega_showdown:chimechite",
+        "mega_showdown:clefablite",
+        "mega_showdown:crabominite",
+        "mega_showdown:delphoxite",
+        "mega_showdown:dragalgite",
+        "mega_showdown:dragoninite",
+        "mega_showdown:drampanite",
+        "mega_showdown:eelektrossite",
+        "mega_showdown:emboarite",
+        "mega_showdown:excadrite",
+        "mega_showdown:falinksite",
+        "mega_showdown:feraligite",
+        "mega_showdown:floettite",
+        "mega_showdown:froslassite",
+        "mega_showdown:glimmoranite",
+        "mega_showdown:golurkite",
+        "mega_showdown:greninjite",
+        "mega_showdown:hawluchanite",
+        "mega_showdown:malamarite",
+        "mega_showdown:meganiumite",
+        "mega_showdown:meowsticite",
+        "mega_showdown:pyroarite",
+        "mega_showdown:raichunite_x",
+        "mega_showdown:raichunite_y",
+        "mega_showdown:scolipite",
+        "mega_showdown:scovillainite",
+        "mega_showdown:scraftinite",
+        "mega_showdown:skarmorite",
+        "mega_showdown:staraptite",
+        "mega_showdown:starminite",
+        "mega_showdown:victreebelite"
+      ]
+    },
+    "fossils": {
+      "cp": 300,
+      "source": "derived",
+      "why": "RT-B (the fossil chamber, data/dungeon_extras2.json fossils.greed_cp): a fossil is worth 3 points, three of the owner's diamonds. DESIGN number. 14 of the 15 have no source but a trainer's loot (docs/research/OBTAINABILITY_VANILLA_COBBLEMON.md) and a restored fossil is a Pokemon (a catch weighs 1 to 2 points); the chamber holds one per run, so it can weigh at most 3 points",
+      "ids_source": "Cobblemon 1.8.0 jar: data/cobblemon/tags/item/fossils.json (15)",
+      "ids": [
+        "cobblemon:helix_fossil",
+        "cobblemon:dome_fossil",
+        "cobblemon:old_amber_fossil",
+        "cobblemon:root_fossil",
+        "cobblemon:claw_fossil",
+        "cobblemon:skull_fossil",
+        "cobblemon:armor_fossil",
+        "cobblemon:cover_fossil",
+        "cobblemon:plume_fossil",
+        "cobblemon:jaw_fossil",
+        "cobblemon:sail_fossil",
+        "cobblemon:fossilized_bird",
+        "cobblemon:fossilized_fish",
+        "cobblemon:fossilized_drake",
+        "cobblemon:fossilized_dino"
+      ]
+    },
+    "utility_balls": {
+      "cp": 600,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): the situational balls no counter, trader or trade sells (the dungeon vaults are their source), priced as the situational balls a counter does sell: Dive, Net, Lure and Heavy at $3000 for 5 (data/markets.json pacifidlog, redbrow), the same class (a catch bonus under a condition). One price for the class so a theme's pick never moves a chest's value. A DESIGN price",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 4 (VERIFIED in the 1.7.42 REI index, collapsible.json5:719-750); not re-read from the Cobblemon 1.8.0 jar",
+      "ids": [
+        "cobblemon:quick_ball",
+        "cobblemon:timer_ball",
+        "cobblemon:dusk_ball",
+        "cobblemon:repeat_ball",
+        "cobblemon:nest_ball",
+        "cobblemon:level_ball",
+        "cobblemon:love_ball",
+        "cobblemon:moon_ball",
+        "cobblemon:fast_ball",
+        "cobblemon:dream_ball"
+      ]
+    },
+    "comfort_balls": {
+      "cp": 200,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): the balls sold nowhere whose worth is a perk (Heal, Luxury, Friend) or a look (Premier, Park, Safari: the owner's cosmetic set, 2026-10-11), priced as a Poke Ball, $200 (data/traders.json mart). ASSUMED: none catches much better than a Poke Ball in Cobblemon 1.8 (their catch rates are not read here). A DESIGN price",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 4 (VERIFIED in the 1.7.42 REI index); not re-read from the 1.8.0 jar",
+      "ids": [
+        "cobblemon:premier_ball",
+        "cobblemon:heal_ball",
+        "cobblemon:luxury_ball",
+        "cobblemon:friend_ball",
+        "cobblemon:park_ball",
+        "cobblemon:safari_ball"
+      ]
+    },
+    "resist_berries": {
+      "cp": 8,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): a type-resist berry is a one-use held item; no berry grows in this world (docs/research/notes/reward-item-inventory.md 3) and nothing sells these. Priced as the Lum Berry's last bank price ($8, data/bank.json buys_removed), the dearest berry the bank ever bought. Under the wishing well's min_cp (20), so one alone is never thrown",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 3 (VERIFIED in the 1.7.42 REI index, collapsible.json5:516-587); not re-read from the 1.8.0 jar",
+      "ids": [
+        "cobblemon:occa_berry",
+        "cobblemon:passho_berry",
+        "cobblemon:wacan_berry",
+        "cobblemon:rindo_berry",
+        "cobblemon:yache_berry",
+        "cobblemon:chople_berry",
+        "cobblemon:kebia_berry",
+        "cobblemon:shuca_berry",
+        "cobblemon:coba_berry",
+        "cobblemon:payapa_berry",
+        "cobblemon:tanga_berry",
+        "cobblemon:charti_berry",
+        "cobblemon:kasib_berry",
+        "cobblemon:haban_berry",
+        "cobblemon:colbur_berry",
+        "cobblemon:babiri_berry",
+        "cobblemon:chilan_berry",
+        "cobblemon:roseli_berry"
+      ]
+    },
+    "type_boosters": {
+      "cp": 1000,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): the type-boosting held items no counter sells, priced as the ones the counters do sell at $1000 each (Mystic Water, Miracle Seed, Poison Barb, Twisted Spoon, Charcoal Stick, Soft Sand; data/markets.json)",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 3 (VERIFIED in the 1.7.42 REI index, collapsible.json5:991-1093); not re-read from the 1.8.0 jar",
+      "ids": [
+        "cobblemon:black_belt",
+        "cobblemon:black_glasses",
+        "cobblemon:dragon_fang",
+        "cobblemon:fairy_feather",
+        "cobblemon:never_melt_ice",
+        "cobblemon:sharp_beak",
+        "cobblemon:silk_scarf",
+        "cobblemon:silver_powder",
+        "cobblemon:spell_tag"
+      ]
+    },
+    "held_utility": {
+      "cp": 2500,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): situational held items sold nowhere (weather rocks, terrain seeds, lenses, herbs, orbs, Quick Claw, Shell Bell, Lucky Egg), priced between the counters' trade-evolution items ($2160: Metal Coat, Protector, data/markets.json fossick) and Rocky Helmet ($3000, fossick). The Lucky Egg is a dungeon-exclusive progression item (docs/STATE.md), weighed here as a held item. A DESIGN price",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 3 (VERIFIED in the 1.7.42 REI index, collapsible.json5:991-1093); not re-read from the 1.8.0 jar",
+      "ids": [
+        "cobblemon:quick_claw",
+        "cobblemon:shell_bell",
+        "cobblemon:big_root",
+        "cobblemon:grassy_seed",
+        "cobblemon:psychic_seed",
+        "cobblemon:misty_seed",
+        "cobblemon:damp_rock",
+        "cobblemon:heat_rock",
+        "cobblemon:icy_rock",
+        "cobblemon:smooth_rock",
+        "cobblemon:utility_umbrella",
+        "cobblemon:flame_orb",
+        "cobblemon:light_clay",
+        "cobblemon:mental_herb",
+        "cobblemon:white_herb",
+        "cobblemon:bright_powder",
+        "cobblemon:wide_lens",
+        "cobblemon:zoom_lens",
+        "cobblemon:scope_lens",
+        "cobblemon:muscle_band",
+        "cobblemon:wise_glasses",
+        "cobblemon:metronome",
+        "cobblemon:red_card",
+        "cobblemon:eject_button",
+        "cobblemon:lucky_egg"
+      ]
+    },
+    "held_competitive": {
+      "cp": 3600,
+      "source": "derived",
+      "why": "DUNGEON_VAULTS (2026-10-11): competitive held items sold nowhere, priced as the competitive ones a counter sells: Focus Sash, Expert Belt and Eviolite at $3600 (data/markets.json northlight_station). Not the six direct-trade items (Choice Band, Specs, Scarf, Life Orb, Leftovers, Destiny Knot: data/direct_trades.json), which stay the late game's trades",
+      "ids_source": "docs/research/notes/reward-item-inventory.md section 3 (VERIFIED in the 1.7.42 REI index, collapsible.json5:991-1093); not re-read from the 1.8.0 jar",
+      "ids": [
+        "cobblemon:heavy_duty_boots",
+        "cobblemon:weakness_policy",
+        "cobblemon:covert_cloak",
+        "cobblemon:loaded_dice",
+        "cobblemon:throat_spray",
+        "cobblemon:blunder_policy",
+        "cobblemon:ability_shield",
+        "cobblemon:mirror_herb",
+        "cobblemon:eject_pack",
+        "cobblemon:punching_glove",
+        "cobblemon:air_balloon"
+      ]
+    }
+  },
+  "blocks": {
+    "minecraft:ancient_debris": {
+      "drops": {
+        "minecraft:ancient_debris": 1
+      },
+      "why": "drops itself",
+      "cp": 200
+    },
+    "minecraft:bamboo_block": {
+      "drops": {
+        "minecraft:bamboo_block": 1
+      },
+      "why": "drops itself",
+      "cp": 1
+    },
+    "minecraft:blue_ice": {
+      "drops": {},
+      "why": "a secret's face: a wall the pick opens, not a valuable (0); blue ice drops nothing without silk touch",
+      "cp": 0
+    },
+    "minecraft:calcite": {
+      "drops": {
+        "cobblemon:helix_fossil": 1
+      },
+      "why": "RT-B: the fossil chamber's one fossil block per run. Calcite's own vanilla drop is itself and is worth nothing here; the room's tick gives the fossil when the cell turns to air, and this row weighs it: mining the block is the take (the `fossils` group's cp)",
+      "cp": 300
+    },
+    "minecraft:chiseled_sandstone": {
+      "drops": {},
+      "why": "a secret's face: a wall the pick opens, not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:clay": {
+      "drops": {},
+      "why": "RT-B: a fossil bay's dig block: a wall the pick opens to reach the fossil, not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:coal_ore": {
+      "drops": {
+        "minecraft:coal": 1
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe)",
+      "cp": 5
+    },
+    "minecraft:copper_ore": {
+      "drops": {
+        "minecraft:raw_copper": 3.5
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe): 2-5",
+      "cp": 7
+    },
+    "minecraft:cracked_deepslate_bricks": {
+      "drops": {},
+      "why": "a cracked secret's face: a wall the pick opens, not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:cracked_deepslate_tiles": {
+      "drops": {},
+      "why": "a cracked secret's face: a wall the pick opens, not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:cracked_nether_bricks": {
+      "drops": {},
+      "why": "a cracked secret's face (the nether themes): a wall the pick opens, not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:cracked_polished_blackstone_bricks": {
+      "drops": {},
+      "why": "a cracked secret's face (the nether themes): a wall the pick opens, not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:cracked_stone_bricks": {
+      "drops": {},
+      "why": "a cracked secret's face: a wall the pick opens, not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:deepslate_coal_ore": {
+      "drops": {
+        "minecraft:coal": 1
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe)",
+      "cp": 5
+    },
+    "minecraft:deepslate_copper_ore": {
+      "drops": {
+        "minecraft:raw_copper": 3.5
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe): 2-5",
+      "cp": 7
+    },
+    "minecraft:deepslate_diamond_ore": {
+      "drops": {
+        "minecraft:diamond": 1
+      },
+      "why": "the owner's anchor: one diamond",
+      "cp": 100
+    },
+    "minecraft:deepslate_emerald_ore": {
+      "drops": {
+        "minecraft:emerald": 1
+      },
+      "why": "vanilla: one emerald, no Fortune",
+      "cp": 400
+    },
+    "minecraft:deepslate_gold_ore": {
+      "drops": {
+        "minecraft:raw_gold": 1
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe)",
+      "cp": 20
+    },
+    "minecraft:deepslate_iron_ore": {
+      "drops": {
+        "minecraft:raw_iron": 1
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe)",
+      "cp": 8
+    },
+    "minecraft:deepslate_lapis_ore": {
+      "drops": {
+        "minecraft:lapis_lazuli": 6.5
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe): 4-9",
+      "cp": 26
+    },
+    "minecraft:deepslate_redstone_ore": {
+      "drops": {
+        "minecraft:redstone": 4.5
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe): 4-5",
+      "cp": 9
+    },
+    "minecraft:diamond_ore": {
+      "drops": {
+        "minecraft:diamond": 1
+      },
+      "why": "the owner's anchor: one diamond",
+      "cp": 100
+    },
+    "minecraft:dripstone_block": {
+      "drops": {},
+      "why": "NEW-WARPED (2026-10-11): the warped wood's fossil bay dig block (data/dungeon_extras2.json fossils.dig), as RT-B's clay: a wall the pick opens to reach the fossil, not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:emerald_ore": {
+      "drops": {
+        "minecraft:emerald": 1
+      },
+      "why": "vanilla: one emerald, no Fortune",
+      "cp": 400
+    },
+    "minecraft:gold_ore": {
+      "drops": {
+        "minecraft:raw_gold": 1
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe)",
+      "cp": 20
+    },
+    "minecraft:honeycomb_block": {
+      "drops": {
+        "minecraft:honeycomb_block": 1
+      },
+      "why": "drops itself",
+      "cp": 1
+    },
+    "minecraft:iron_ore": {
+      "drops": {
+        "minecraft:raw_iron": 1
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe)",
+      "cp": 8
+    },
+    "minecraft:lapis_ore": {
+      "drops": {
+        "minecraft:lapis_lazuli": 6.5
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe): 4-9",
+      "cp": 26
+    },
+    "minecraft:light_gray_terracotta": {
+      "drops": {},
+      "why": "the soul valley's and the basalt delta's fossil bay dig block (data/dungeon_extras2.json fossils.dig): a wall the pick opens to reach the fossil, not a valuable (0). MEGA-INTEGRATE: light gray terracotta, not the brown that NEW-OSSUARY and NEW-CRUCIBLE chose, which the desert_excavation theme's hull is built of (a dig block is used by no theme). NEW-OSSUARY: the soul valley's fossil bay dig block (data/dungeon_extras2.json fossils.dig): a wall the pick opens to reach the fossil, not a valuable (0) NEW-CRUCIBLE: the basalt delta's fossil bay dig block (data/dungeon_extras2.json fossils.dig.basalt_deltas), as terracotta's: not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:melon": {
+      "drops": {
+        "minecraft:melon_slice": 5
+      },
+      "why": "vanilla 3-7 slices (ASSUMED from vanilla's blocks/melon table, not read here)",
+      "cp": 25
+    },
+    "minecraft:nether_gold_ore": {
+      "drops": {
+        "minecraft:gold_nugget": 4
+      },
+      "why": "READ from the 1.21.1 jar (data/minecraft/loot_table/blocks/nether_gold_ore.json): 2-6 gold nuggets uniform (mean 4), Fortune only; the rift pick has none",
+      "cp": 8
+    },
+    "minecraft:nether_quartz_ore": {
+      "drops": {
+        "minecraft:quartz": 1
+      },
+      "why": "vanilla: one quartz, no Fortune",
+      "cp": 2
+    },
+    "minecraft:pumpkin": {
+      "drops": {
+        "minecraft:pumpkin": 1
+      },
+      "why": "drops itself",
+      "cp": 1
+    },
+    "minecraft:redstone_ore": {
+      "drops": {
+        "minecraft:redstone": 4.5
+      },
+      "why": "tools/economy_sim.py ORE_DROPS (vanilla, no Fortune: the rift pick is a plain iron pickaxe): 4-5",
+      "cp": 9
+    },
+    "minecraft:sandstone": {
+      "drops": {},
+      "why": "RT-B: a fossil bay's dig block: a wall the pick opens to reach the fossil, not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:stripped_jungle_log": {
+      "drops": {
+        "minecraft:stripped_jungle_log": 1
+      },
+      "why": "drops itself",
+      "cp": 1
+    },
+    "minecraft:stripped_oak_wood": {
+      "drops": {},
+      "why": "a secret's face: a wall the pick opens, not a valuable (0)",
+      "cp": 0
+    },
+    "minecraft:terracotta": {
+      "drops": {},
+      "why": "RT-B: a fossil bay's dig block: a wall the pick opens to reach the fossil, not a valuable (0)",
+      "cp": 0
+    }
+  },
+  "loot_tables": {
+    "minecraft:chests/underwater_ruin_small": {
+      "cp": 100,
+      "source": "placeholder",
+      "why": "a vanilla table nobody here has read (no 1.21.1 jar on this machine): one point a chest, a placeholder so a chest is never free. Read the table and price it"
+    },
+    "minecraft:chests/underwater_ruin_big": {
+      "cp": 100,
+      "source": "placeholder",
+      "why": "a vanilla table nobody here has read (no 1.21.1 jar on this machine): one point a chest, a placeholder so a chest is never free. Read the table and price it"
+    },
+    "minecraft:chests/shipwreck_treasure": {
+      "cp": 100,
+      "source": "placeholder",
+      "why": "a vanilla table nobody here has read (no 1.21.1 jar on this machine): one point a chest, a placeholder so a chest is never free. Read the table and price it"
+    },
+    "minecraft:chests/buried_treasure": {
+      "cp": 100,
+      "source": "placeholder",
+      "why": "a vanilla table nobody here has read (no 1.21.1 jar on this machine): one point a chest, a placeholder so a chest is never free. Read the table and price it"
+    },
+    "minecraft:chests/simple_dungeon": {
+      "cp": 100,
+      "source": "placeholder",
+      "why": "as the others: the puzzle tests' vault fixture names it (tests/fixtures/dungeon_puzzle_rooms.json); one point a chest until the table is read"
+    }
+  },
+  "catches": {
+    "kinds": {
+      "ambient": 1,
+      "nest": 2,
+      "miniboss": 3,
+      "habitat": 4
+    },
+    "kinds_why": "which room the catch was made in (the catcher's position at the pokemon_captured callback; the caught entity is gone by then, docs/research/notes/dungeon-catches-on-the-clock.md section 6). Anywhere that is not a nest, miniboss or habitat room counts as ambient",
+    "cp_by_band": {
+      "ambient": [
+        100,
+        100,
+        150,
+        150,
+        200,
+        200
+      ],
+      "nest": [
+        100,
+        100,
+        150,
+        150,
+        200,
+        200
+      ],
+      "miniboss": [
+        100,
+        100,
+        150,
+        150,
+        200,
+        200
+      ]
+    },
+    "why": "A catch is the owner's resource. The anchor is the owner's own \"catch ten [a nest], and the run gets urgent\" (docs/mechanics/DUNGEON_CATCHES.md 1 and 4: ten catches was x1.5): ten nest catches at 1 point are 10 points, x1.5. A band's ambient and nest Pokemon are a later stage of their line higher up (tools/dungeon_life.py stage_of), so 1.5 points at bands 3-4 and 2 at 5-6. A mini-boss is an ordinary catch (the owner, 2026-10-10: every dungeon Pokemon is catchable, at ordinary values), weighed as a nest's. DESIGN numbers: trainer-balance-designer's to tune",
+    "habitat": {
+      "rare_cp": 800,
+      "legendary_cp": 2000,
+      "legendary_from_band": "data/dungeons.json engine.prize.legendary_from_band",
+      "why": "A habitat holds the dungeon's PRIZE (the owner, 2026-10-10). Before the Beast Ball stage it is a rare non-legendary (a pseudo-legendary's middle stage, such as a Gabite; pass 3 chooses it): 8 points, +0.4x, eight ordinary catches, because it is the rarest thing the run offers and it is optional. From that band on it is a legendary or an Ultra Beast: 20 points, +1.0x alone, so a run that takes it runs the rest of its clock at least twice as fast. The room is about 6 minutes of fight (tools/dungeon_clock.py HABITAT_S); the clock says what the prize is worth. DESIGN numbers, below the cap (40 points) so a prize never ends a run on its own"
+    }
+  },
+  "not_counted": {
+    "relics": "a relic (tools/dungeon_relics.py) has no economy by design and rewards finding a secret; counting it would tax the exploration it pays for",
+    "escrow": "the boss and stand payouts are paid at a clean exit, after the clock (DUNGEONS.md 9.1)",
+    "drops": "items a wild Pokemon drops in a run are not measured: no source event is proven for them (a minecraft.picked_up stat is a candidate, untested)"
+  },
+  "vault_budget": {
+    "dollar_factor": 2.0,
+    "dollar_factor_why": "DECIDED by the owner 2026-10-11: double it; a richer vault should cost more clock, that is the greed mechanic working. DUNGEON_VAULTS (2026-10-11), the owner: 'I think the vault isn't rewarding enough.' At 1.0 a chest held 80-370 cp, under one Great Ball (350) at bands 1-4, so no vault could hold a ball a chest. At 2.0 a vault may pay twice the run's time gathering: it costs a code or a dead end, 20-45 s of clock a chest, and the GREED charge of its expected value, which gathering does not. Nothing a vault now gives sells to the bank (data/bank.json buys only minerals), so the extra value is balls, held items and candy, not money; the one cash route is the wishing well (2 throws a run, expected share 0.9 or under). The owner's to confirm (docs/mechanics/DUNGEON_VAULTS.md 7)",
+    "enforce": true,
+    "unit": "KIT3, 2026-10-10 (docs/mechanics/DUNGEON_ROOMS.md 1b)",
+    "why": "GREED found vault chests worth 7 to 150 points (one can cap the clock). A vault's chests together are worth at most dollar_factor x the gathering tier open at the band's lowest badge count x the required hours of the dungeon the vault stands in (its own clock over the 1.25 slack; MEGA-INTEGRATE 2026-10-11, tools/dungeon_greed.py vault_budget(doc, table, dungeon): until then the shortest rooms dungeon's, so a new short dungeon shrank every other dungeon's vaults and authors padded their clocks to avoid it): the limit RESOURCES2 set for a resources room (tools/dungeon_resources.py budget(), every price and rate read from tools/economy_sim.py World), so a vault never pays more than the same run's time spent gathering, which costs no sigil, no clock and no death. A chest's budget is the vault's over its chest count; its value is GREED's chest_cp (the expected cp of its loot at the band). With the kit's four chests and the Night Shift's own clocks (2026-10-11) at dollar_factor 1.0: 82, 189, 189, 198, 346, 367 cp a chest at bands 1-6; at 2.0 (DUNGEON_VAULTS): 165, 378, 378, 396, 692, 734 (each dungeon's figure moves with its own clock only; DUNGEON_ROOMS.md 1b).",
+    "enforce_why": "true since DG3-INTEGRATE (2026-10-10): problems() refuses a chest over budget. DUNGEON_VAULTS (2026-10-11) re-authored every vault and bank vault to about 90% of the dollar_factor-2 budget (docs/mechanics/DUNGEON_VAULTS.md 2), computed by hand, not by the tool: the orchestrator's python tools/dungeon_greed.py run is the check."
+  }
+}

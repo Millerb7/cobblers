@@ -115,10 +115,13 @@ def test_r17_places_every_trainer_at_its_seat(steps):
     JUNIORS = json.loads((ROOT / "data" / "gym_junior_trainers.json").read_text(encoding="utf-8"))["trainers"]
     # and the HQ tower's seven (data/hq_trainers.json), which this test had never been told about
     HQ = json.loads((ROOT / "data" / "hq_trainers.json").read_text(encoding="utf-8"))["trainers"]
+    # and the Haven Compact's seven route fighters (data/compact_route_trainers.json, 2026-10-11)
+    COMPACT = json.loads((ROOT / "data" / "compact_route_trainers.json").read_text(encoding="utf-8"))["trainers"]
     want = [(t["id"], tuple(t["seat"]), t["yaw"])
-            for t in SEATS + LATE + GUARDIANS + VR_SEATS + SEATED_ARENA + JUNIORS + HQ]
-    assert (len(SEATS), len(LATE), len(GUARDIANS), len(VR_SEATS), len(ARENA), len(JUNIORS), len(HQ)) ==         (13, 28, 5, 10, 7, 21, 7)
-    assert len(want) == len(set(want)) == 84
+            for t in SEATS + LATE + GUARDIANS + VR_SEATS + SEATED_ARENA + JUNIORS + HQ + COMPACT]
+    assert (len(SEATS), len(LATE), len(GUARDIANS), len(VR_SEATS), len(ARENA), len(JUNIORS), len(HQ), len(COMPACT)) == \
+        (13, 28, 5, 10, 7, 21, 7, 7)
+    assert len(want) == len(set(want)) == 91
     assert sorted(_acts(steps, "R17", "trainer")) == sorted(want)
 
 

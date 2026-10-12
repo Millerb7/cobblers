@@ -100,6 +100,17 @@ def box_condition(min_x, max_x, min_z, max_z, entry):
     if entry.get("biomes"):
         cond["biomes"] = list(entry["biomes"])
     cond.update(entry.get("conditions") or {})
+    bind_dimension(cond)
+    return cond
+
+
+def bind_dimension(cond):
+    """An entry that names no dimension is an overworld entry (open_sky_forced's reading): WRITE it, because Cobblemon
+    1.8.0 reads an absent `dimensions` as every dimension (docs/research/notes/spawn-dimension-condition-1.8.0.md), so a
+    coordinate box also matched the same x/z in the Nether and in cobblers:pocket, the dungeons' dimension (staging,
+    2026-10-12: coast Pokemon spawning on a dungeon shell's roof). An authored list, empty included, is kept as written."""
+    if "dimensions" not in cond:
+        cond["dimensions"] = [OVERWORLD]
     return cond
 
 
@@ -448,11 +459,17 @@ def compile_habitat(h, entries):
     # properties string, so "corsola galarian" there would be an invalid species and fail the data load; the form goes
     # in `modifiers` (a PokemonProperties), as the jar's own habitat pools write it ("modifiers": "galarian";
     # docs/research/notes/habitat-blocks-underground.md, HabitatSpawn.kt). 2026-10-05, tools/desert_wreck.py's pool.
+    # An entry's own `modifiers` (2026-10-11, the Scar Tarn: "alpha=true") is a PokemonProperties string joined after any
+    # form in the species string; HabitatSpawn.createSpawnDetail copies it into the spawn (Cobblemon 1.8.0 bytecode), so
+    # the same key a pokemon string uses ("fearow ... alpha=true") makes the habitat's spawn an alpha.
+    def modifiers_of(e):
+        return " ".join(e["species"].split()[1:] + e.get("modifiers", "").split())
+
     doc = {"name": "cobblers.habitat.%s.name" % h["id"], "type": "cobblemon:natural",
            "spawns": [dict({"species": e["species"].split()[0], "bucket": e["bucket"],
                             "spawnablePositionType": position_type(e),
                             "weight": e["weight"], "levelRange": e["level"], "phases": "1-25"},
-                           **({"modifiers": " ".join(e["species"].split()[1:])} if len(e["species"].split()) > 1 else {}),
+                           **({"modifiers": modifiers_of(e)} if modifiers_of(e) else {}),
                            **({"timeRange": e["conditions"]["timeRange"]}
                               if (e.get("conditions") or {}).get("timeRange") else {})) for e in compiled]}
     compiled_names = {display.get(e["species"], e["species"]) for e in compiled}
@@ -837,6 +854,7 @@ def marine_condition(min_x, max_x, min_z, max_z, entry):
     if entry.get("biomes"):
         cond["biomes"] = list(entry["biomes"])
     cond.update(entry.get("conditions") or {})
+    bind_dimension(cond)
     return cond
 
 

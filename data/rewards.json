@@ -2221,87 +2221,6 @@
       }
     },
     {
-      "id": "sweep_red_chain",
-      "kind": "cache",
-      "place": "the Distortion shrine in the Glacial Tear's lower trough (data/adopted_legendary_sites.json sweep_giratina_shrine): at the foot of Giratina's altar, under the black glass dome",
-      "requires_flags": [
-        "champion_cleared"
-      ],
-      "contents": [
-        {
-          "item": "lumymon:red_chain",
-          "count": 1,
-          "verification": "assets/lumymon/models/item/red_chain.json in LumyMon-0.6.6.jar"
-        }
-      ],
-      "message": "Coiled at the foot of the altar, cold and heavier than it looks: a Red Chain.",
-      "why": "the ONE source of lumymon:red_chain in our world, the item lumymon:giratina_altar consumes or wants (GiratinaAltar's RED_CHAIN, LumyMon-0.6.6 class strings). Measured 2026-10-06 against the server snapshot: the only other producers are a recipe in the DISABLED Sinnoh pack and rctmod's team_galactic_cyrus loot, a trainer our campaign never seats. Giratina rolls 85-99 (the altar's own strings), so only the Champion's cap (100) can hold it: requires_flags champion_cleared, once per player.",
-      "built_by": "the pasted template itself (data/placements.json legendary_giratina_shrine, tools/place_donor.py, reapply step R9): the container is lumymon:giratina_altar at template [23, 12, 20]",
-      "trigger": {
-        "min": [
-          4393,
-          78,
-          2878
-        ],
-        "max": [
-          4401,
-          80,
-          2886
-        ]
-      },
-      "container": {
-        "block": "lumymon:giratina_altar",
-        "at": [
-          4397,
-          78,
-          2882
-        ]
-      }
-    },
-    {
-      "id": "giratina_griseous",
-      "kind": "cache",
-      "place": "the Distortion shrine in the Glacial Tear's lower trough (data/adopted_legendary_sites.json sweep_giratina_shrine): at the foot of Giratina's altar, under the black glass dome",
-      "requires_flags": [
-        "champion_cleared"
-      ],
-      "contents": [
-        {
-          "item": "mega_showdown:griseous_core",
-          "count": 1,
-          "verification": "verified in the jar by the REWARD unit 2026-10-08 (docs/mechanics/ITEM_ROUTES.md Cache routes)"
-        },
-        {
-          "item": "mega_showdown:griseous_orb",
-          "count": 1,
-          "verification": "verified in the jar by the REWARD unit 2026-10-08; its only other route is recipe/griseous_orb.json from ghost and dragon gems nothing in our world drops"
-        }
-      ],
-      "message": "Behind the chain, two cold relics of the Distortion World: a Griseous Core and a Griseous Orb.",
-      "why": "docs/mechanics/ITEM_ROUTES.md 2.3 and review N118: Giratina is adopted, so its form items need a source; gated like the chain on champion_cleared. Declared as an extra cache on sweep_giratina_shrine (tools/legendary_sweep.py extra_caches, commit 4197551).",
-      "built_by": "the pasted template itself (data/placements.json legendary_giratina_shrine, tools/place_donor.py, reapply step R9): the container is lumymon:giratina_altar at template [23, 12, 20]",
-      "trigger": {
-        "min": [
-          4393,
-          78,
-          2878
-        ],
-        "max": [
-          4401,
-          80,
-          2886
-        ]
-      },
-      "container": {
-        "block": "lumymon:giratina_altar",
-        "at": [
-          4397,
-          78,
-          2882
-        ]
-      }
-    },
-    {
       "id": "sweep_nightmare_weaver",
       "kind": "cache",
       "place": "Newmoon Island, hanging over the Fungal Isle's west end (data/adopted_legendary_sites.json sweep_newmoon_island): at Darkrai's shrine, in the island's top room",
@@ -2514,6 +2433,139 @@
           2073
         ]
       }
+    },
+    {
+      "id": "oak_waystone",
+      "kind": "npc_grant",
+      "place": "Oak's lab, Pallet Town: Professor Oak, in his own conversation after the send-off",
+      "npc_at": [
+        1493,
+        118,
+        5317
+      ],
+      "quest": "main_worldshift_reveal",
+      "contents": [
+        {
+          "item": "waystones:waystone",
+          "count": 1,
+          "verification": "assets/waystones/models/item/waystone.json in waystones-fabric-1.21.1-21.1.37.jar"
+        }
+      ],
+      "why": "The owner, 2026-10-09: a player's own waystone, given by Oak once after the starter, so a player can make a house anywhere; one per player, its crafting recipe closed (data/player_waystone.json, tools/player_waystone.py). A given item, because the claim has to be a field Oak's dialogue can read and a lost item must not be regranted. Broken, the waystone drops as itself (the mod's own loot table), so a player who moves keeps it.",
+      "built_by": "no build: Oak is placed by reapply step R17 (data/npc_seats.json npc_main_pallet_oak) and his conversation is compiled by tools/compile_dialogue.py; the recipes are closed by cobblers_player_waystone"
+    },
+    {
+      "id": "wardenhold_giratina",
+      "kind": "npc_grant",
+      "place": "the Wardenhold folk's burrow in Mt Vessu's face: Maren Holt, after the player tells her they beat Giratina",
+      "npc_at": [
+        1851,
+        198,
+        732
+      ],
+      "quest": "evt_wardenhold_giratina",
+      "contents": [
+        {
+          "item": "mega_showdown:griseous_core",
+          "count": 1,
+          "verification": "assets/mega_showdown/models/item/griseous_core.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        },
+        {
+          "item": "mega_showdown:griseous_orb",
+          "count": 1,
+          "verification": "assets/mega_showdown/models/item/griseous_orb.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        }
+      ],
+      "why": "the owner moved Giratina to Wardenhold (2026-10-09) and retired its shrine, whose champion-gated cache was the Griseous Core's and Orb's one source (data/rewards.json superseded_rewards giratina_griseous; docs/mechanics/ITEM_ROUTES.md 2.3, review N118: Giratina's form items need a source). They stay its form items' one source, given by the people whose yard it holds, once, to a player who has beaten it. Economy: form items, sold nowhere (data/markets.json), and no money; not power priced in dollars (docs/mechanics/ECONOMY_OVERHAUL.md 1.3). Item ids verified 2026-10-09 in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar (assets/mega_showdown/models/item/griseous_core.json, griseous_orb.json).",
+      "built_by": "no build: Maren is placed by reapply step R18FK (tools/frostpeak_keep_quest.py npc_placements) and her conversation compiled by tools/compile_dialogue.py"
     }
-  ]
+  ],
+  "superseded_rewards": {
+    "note": "caches whose place was retired; kept as they were. tools/rewards_pack.py builds `rewards` only.",
+    "records": [
+      {
+        "id": "sweep_red_chain",
+        "kind": "cache",
+        "place": "the Distortion shrine in the Glacial Tear's lower trough (data/adopted_legendary_sites.json sweep_giratina_shrine): at the foot of Giratina's altar, under the black glass dome",
+        "requires_flags": [
+          "champion_cleared"
+        ],
+        "contents": [
+          {
+            "item": "lumymon:red_chain",
+            "count": 1,
+            "verification": "assets/lumymon/models/item/red_chain.json in LumyMon-0.6.6.jar"
+          }
+        ],
+        "message": "Coiled at the foot of the altar, cold and heavier than it looks: a Red Chain.",
+        "why": "the ONE source of lumymon:red_chain in our world, the item lumymon:giratina_altar consumes or wants (GiratinaAltar's RED_CHAIN, LumyMon-0.6.6 class strings). Measured 2026-10-06 against the server snapshot: the only other producers are a recipe in the DISABLED Sinnoh pack and rctmod's team_galactic_cyrus loot, a trainer our campaign never seats. Giratina rolls 85-99 (the altar's own strings), so only the Champion's cap (100) can hold it: requires_flags champion_cleared, once per player.",
+        "built_by": "the pasted template itself (data/placements.json legendary_giratina_shrine, tools/place_donor.py, reapply step R9): the container is lumymon:giratina_altar at template [23, 12, 20]",
+        "trigger": {
+          "min": [
+            4393,
+            78,
+            2878
+          ],
+          "max": [
+            4401,
+            80,
+            2886
+          ]
+        },
+        "container": {
+          "block": "lumymon:giratina_altar",
+          "at": [
+            4397,
+            78,
+            2882
+          ]
+        },
+        "retired": "RETIRED 2026-10-09 by the owner, on staging, looking at the shrine at (4374, 66, 2862): \"giratina being plopped right here sucks, move it to the castle in the north\", and then \"get rid of his sphere though, he just lives in the castle.\" Giratina now lives in Wardenhold, the ruined keep on Frostpeak Strand (data/frostpeak_keep_quest.json giratina, tools/frostpeak_keep_quest.py, step R18FK), with the burrow people's quest to defeat it. Nothing of this set piece is carried over (no sphere, no dome, no altar, no Red Chain). The template already pasted on staging is taken down by cobblers:frostpeak_keep_quest/shrine_takedown (R18FK), back to the heightmap's ground (tools/ground.py, rounded) and the water mask's water. Kept here as it was, never deleted: hand-measured seat and chosen_because notes. The Red Chain had no use but this altar, so it has no source now and needs none."
+      },
+      {
+        "id": "giratina_griseous",
+        "kind": "cache",
+        "place": "the Distortion shrine in the Glacial Tear's lower trough (data/adopted_legendary_sites.json sweep_giratina_shrine): at the foot of Giratina's altar, under the black glass dome",
+        "requires_flags": [
+          "champion_cleared"
+        ],
+        "contents": [
+          {
+            "item": "mega_showdown:griseous_core",
+            "count": 1,
+            "verification": "verified in the jar by the REWARD unit 2026-10-08 (docs/mechanics/ITEM_ROUTES.md Cache routes)"
+          },
+          {
+            "item": "mega_showdown:griseous_orb",
+            "count": 1,
+            "verification": "verified in the jar by the REWARD unit 2026-10-08; its only other route is recipe/griseous_orb.json from ghost and dragon gems nothing in our world drops"
+          }
+        ],
+        "message": "Behind the chain, two cold relics of the Distortion World: a Griseous Core and a Griseous Orb.",
+        "why": "docs/mechanics/ITEM_ROUTES.md 2.3 and review N118: Giratina is adopted, so its form items need a source; gated like the chain on champion_cleared. Declared as an extra cache on sweep_giratina_shrine (tools/legendary_sweep.py extra_caches, commit 4197551).",
+        "built_by": "the pasted template itself (data/placements.json legendary_giratina_shrine, tools/place_donor.py, reapply step R9): the container is lumymon:giratina_altar at template [23, 12, 20]",
+        "trigger": {
+          "min": [
+            4393,
+            78,
+            2878
+          ],
+          "max": [
+            4401,
+            80,
+            2886
+          ]
+        },
+        "container": {
+          "block": "lumymon:giratina_altar",
+          "at": [
+            4397,
+            78,
+            2882
+          ]
+        },
+        "retired": "RETIRED 2026-10-09 by the owner, on staging, looking at the shrine at (4374, 66, 2862): \"giratina being plopped right here sucks, move it to the castle in the north\", and then \"get rid of his sphere though, he just lives in the castle.\" Giratina now lives in Wardenhold, the ruined keep on Frostpeak Strand (data/frostpeak_keep_quest.json giratina, tools/frostpeak_keep_quest.py, step R18FK), with the burrow people's quest to defeat it. Nothing of this set piece is carried over (no sphere, no dome, no altar, no Red Chain). The template already pasted on staging is taken down by cobblers:frostpeak_keep_quest/shrine_takedown (R18FK), back to the heightmap's ground (tools/ground.py, rounded) and the water mask's water. Kept here as it was, never deleted: hand-measured seat and chosen_because notes. The Griseous Core and Orb are now the burrow people's reward for the quest (data/rewards.json wardenhold_giratina, kind npc_grant), so Giratina's Origin forme keeps its one source."
+      }
+    ]
+  }
 }

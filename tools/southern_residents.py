@@ -344,6 +344,9 @@ def authored_points(doc, own_file=None):
     tool calls this one (tools/northern_residents.py, whose sites are checked against THIS file as any other)."""
     own_path = Path(own_file) if own_file else DATA
     own = owned_ids(doc)
+    # records the rule's own data declares may stand nearer (rules.authored_clearance_exempt: {id: why}); a named
+    # exception, never a smaller number
+    own = set(own) | set((doc.get("rules") or {}).get("authored_clearance_exempt") or {})
     pts = []
 
     def num(v):
@@ -372,8 +375,9 @@ def authored_points(doc, own_file=None):
             else:
                 for v in o:
                     walk(v, f)
+    skip_files = set((doc.get("rules") or {}).get("authored_clearance_exempt_files") or {})
     for p in sorted((ROOT / "data").glob("*.json")):
-        if p.resolve() == own_path.resolve():
+        if p.resolve() == own_path.resolve() or p.name in skip_files:
             continue
         walk(json.loads(p.read_text(encoding="utf-8")), p.name)
     return pts

@@ -153,6 +153,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-09: Wardenhold, the snow-covered keep on Frostpeak Strand's southern lip (tools/frostpeak_keep.py),
                 # run by R9FK before R9E
                 "cobblers_frostpeak_keep",
+                # 2026-10-09: Wardenhold's people and its Giratina (tools/frostpeak_keep_quest.py): the burrow in Mt
+                # Vessu's face, the old Distortion shrine's takedown, Giratina's keeper and the quest's callbacks; a
+                # keeper loop, so world-local below; built, summoned and its residents placed by R18FK
+                "cobblers_frostpeak_keep_quest",
                 # 2026-10-05: the mainline beats' evidence displays beside eight tellers (tools/reveal_evidence.py), run
                 # by R17NE after R17N
                 "cobblers_reveal_evidence",
@@ -206,6 +210,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # BEFORE R9E (three activated Habitat Blocks stand in blocks it writes); no load or tick and no Pokemon
                 # of its own (the nests are the Habitat Blocks'), so not world-local
                 "cobblers_fungal_isle",
+                # 2026-10-11: the Scar Tarn on Mt Vessu's north-north-west shoulder (tools/scar_tarn.py, data/scar_tarn.json):
+                # a pond in a closed hollow, the spruce and birch grown round it and four mimic cells, built by R9ST BEFORE
+                # R9E (four activated Habitat Blocks hold the alpha pools there); no load or tick, so not world-local
+                "cobblers_scar_tarn",
                 # 2026-10-05: Hollin's Apricorn Farm at (2068, 5570) (tools/apricorn_farm.py, data/apricorn_farm.json):
                 # seven terraced groves, the yard and lanes, built by R9AF; block functions and the stall merchant's
                 # summon, nothing that runs on its own; the farmer and the merchant stood by R18AF
@@ -225,6 +233,15 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # data/hq_tower.json): block functions run by R9HQ after R9RU; its gate cycle acts on its own (a tick
                 # driver that moves players), so world-local below
                 "cobblers_hq_tower",
+                # 2026-10-11: the Haven Compact's story points on the routes and in the towns (tools/compact_routes.py,
+                # data/compact_routes.json): one battle_victory callback and its won functions. It acts on its own (a
+                # callback, not a step), so world-local below; the seven seated fighters ride in cobblers_trainers and
+                # the NPCs in cobblers_dialogue
+                "cobblers_compact_routes",
+                # 2026-10-11: the Haven Compact's story fights, CP-04, CP-12 and CP-14 (tools/compact_points.py,
+                # data/compact_points.json): a battle_victory callback and its won functions, no blocks; the NPCs are
+                # R18CP's. A callback acts on its own, so world-local below
+                "cobblers_compact",
                 # 2026-10-02: the Drovers' Hollow in the Rift Foot (tools/drovers_hollow.py): a longbarn, its fold and
                 # the old working under the bank, run by R9HF
                 "cobblers_drovers_hollow",
@@ -256,8 +273,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
                 "cobblers_gym_interiors",
                 # 2026-09-29: the five rejected sets of gym works filled in and their COBBLEVERSE shells taken down
-                # (tools/gym_demolish.py, data/gym_interiors.json `superseded_by`). Gyms 1, 3, 4, 5 and 7 only:
-                # Misty's (gym 2) is kept exactly as built. Block functions run by R16F, after R16E
+                # (tools/gym_demolish.py, data/gym_interiors.json `superseded_by`). Gyms 1, 3, 4, 5 and 7, and
+                # since 2026-10-09 Misty's (gym 2: works and plinth; her walk-through hall clears the template).
+                # Block functions run by R16F, after R16E
                 "cobblers_gym_demolish",
                 # 2026-09-29: the authored gym buildings (tools/gym_buildings.py, data/gym_buildings/*.json): one
                 # hall per gym with its puzzle inside it, on the lot the shell stood on. Block functions run by
@@ -301,6 +319,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-08: the Beast Ball is the key to dungeon bosses (tools/key_ball.py, data/key_ball.json): two
                 # Cobblemon callbacks and the jar's beast_ball recipe closed; no blocks, no step; world-local below
                 "cobblers_key_ball",
+                # 2026-10-09: every Waystones recipe (placeable waystones, sharestones, portstones, the warp plate and the
+                # warp items) closed, so Oak's gift is a player's only waystone (tools/player_waystone.py,
+                # data/player_waystone.json): recipe and advancement overrides only; no function, no step; world-local below
+                "cobblers_player_waystone",
                 # 2026-10-08: crafted TMs unlock per player at their badge (tools/tm_gate.py, data/tm_gate.json): the
                 # gamerule doLimitedCrafting, a tick sync of the recipe book and closed unlock advancements, generated
                 # from the server's own jars; no blocks, no step; world-local below
@@ -325,6 +347,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-30: the nine built ferry docks (tools/ferry_docks.py, data/ferry_docks.json).
                 # Blocks in the overworld, so WORLD_LOCAL like the other block packs
                 "cobblers_ferry_docks",
+                # 2026-10-09: the hub waystones (tools/hub_waystones.py, data/hub_waystones.json): one waystone each at
+                # Shrew Station, Coldwater Station and the north-east landing, set by R18W after those places' own
+                # builds. Block functions run by a step; nothing runs on its own, so not world-local
+                "cobblers_hub_waystones",
                 # 2026-09-30: the lake beds tools/rift_skin.py painted over before it was fixed the same day
                 # (F5). A REPAIR for worlds exported before the fix: the skin no longer writes those cells, so
                 # nothing puts back the gravel and clay tools/paint_maps.py paints, and re-running R1 leaves
@@ -411,9 +437,14 @@ EXCLUDED = {
     "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores; its tick tag runs the over-cap party notice near trainers",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
     "cobblers_key_ball": "self-driving: two Cobblemon callbacks (pokemon_catch_rate_calculated, poke_ball_capture_calculated) run it and call key_ball/refused; its recipe overrides act at load; it writes no blocks (tools/key_ball.py)",
+    "cobblers_player_waystone": "load-time only: 54 Waystones recipes and their 54 unlock advancements written back closed "
+                                "(fabric:load_conditions that never pass); it ships no function and runs nothing "
+                                "(tools/player_waystone.py)",
     "cobblers_tm_gate": "self-driving: its load tag sets doLimitedCrafting, its tick tag syncs each player's recipe book "
                         "once a plan, and an advancement per badge gives that badge's TMs; it writes no blocks "
                         "(tools/tm_gate.py)",
+    "cobblers_compact": "self-driving: a Cobblemon battle_victory callback runs its won functions as the player who beat "
+                        "a Compact story NPC; it writes no blocks, and its NPCs are placed by R18CP (tools/compact_points.py)",
     "cobblers_hoopa_cradle": "self-driving: its keeper gives each player holding rift_crisis_resolved who stands in the cradle their own level-60 Hoopa (data/hoopa_cradle.json)",
     "cobblers_spectrier_cap": "self-driving: its own minecraft tick tag judges each new wild Spectrier at the Crown "
                               "Cemetery (tools/spectrier_cap.py); it writes no blocks",
@@ -425,6 +456,9 @@ EXCLUDED = {
     "cobblers_trainers": "self-driving: each trainer's won function is an advancement reward rctmod fires for the winner, "
                          "and its tick cycle keeps each trainer home and refuses a rematch; the trainers themselves are "
                          "placed by R17 over RCON (summon_persistent), not by a function",
+    "cobblers_compact_routes": "self-driving: a Cobblemon battle_victory callback runs the won function of the NPC fighter a "
+                               "player beat, writing that player's own defeat field; the NPCs are placed by R17N "
+                               "(data/npc_seats.json) and the seated fighters by R17, not by a function",
     "cobblers_rewards": "self-driving: each find is an advancement that runs its own reward function as the player "
                         "who earns it; it writes no blocks (the containers are placed by R9C)",
     # Victory Road schema 2, retired 2026-09-23 when the owner chose a cave network (data/vr_caves.json)
@@ -452,6 +486,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_dungeons",
                # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
                "cobblers_key_ball",
+               # 2026-10-09: closes the Waystones recipes; global would close them in the live world too
+               "cobblers_player_waystone",
                # 2026-10-08: sets a gamerule and rewrites every player's recipe book: never global, or the live world
                # would run it too
                "cobblers_tm_gate",
@@ -467,11 +503,17 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_ursaluna_cave",
                # 2026-10-09: the Drowned Quarry's keeper holds its Gyarados on its own tick, like the den's
                "cobblers_drowned_quarry",
+               # 2026-10-09: Wardenhold's Giratina keeper, the same loop, and its catch gate
+               "cobblers_frostpeak_keep_quest",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
                # load in the global folder, where the live world would run it too
                "cobblers_residents", "cobblers_relic_underground",
                # 2026-10-04: the HQ tower's gate cycle tags and moves players near the tower on its own tick
                "cobblers_hq_tower",
+               # 2026-10-11: the Haven Compact points' battle_victory callback writes a player's defeat field on its own
+               "cobblers_compact_routes",
+               # 2026-10-11: the Compact story fights' battle_victory callback writes player data on its own
+               "cobblers_compact",
                # 2026-10-03: species forms for the starters; global would change the live world's species too
                "cobblers_mythical_starters",
                # 2026-10-08: drop tables overlaying COBBLEVERSE's files at the same path; they win only above the global pack
@@ -741,6 +783,14 @@ def prepare_jobs(a):
     # data/hq_tower.json records, any write outside its interior, and a walk from the doorway that misses a seat, a
     # cache or the top
     add("hq_tower:build", "hq_tower.py", "build", *src)
+    # the Haven Compact's story points (2026-10-11): refuses a derived record that drifted from data/compact_routes.json,
+    # then writes the battle_victory callback pack
+    add("compact_routes:check", "compact_routes.py", "check")
+    add("compact_routes:build", "compact_routes.py", "build")
+    # the Haven Compact's story fights (2026-10-11): the battle_victory callback and won functions; refuses nothing,
+    # so its offline gate (`compact_points.py check`) is the job after it
+    add("compact:build", "compact_points.py", "build")
+    add("compact:check", "compact_points.py", "check", *src)
     add("habitat_blocks:function", "habitat_blocks.py", "function")
     add("rewards_pack", "rewards_pack.py")
     # every conversation that compiles, in one pack: the NPCs', the props' and the actors' (refusals are listed)
@@ -890,6 +940,10 @@ def prepare_jobs(a):
     add("dune_ruin_audit", "dune_ruin_audit.py", *src)
     add("frostpeak_keep:build", "frostpeak_keep.py", "build", *src)
     add("frostpeak_keep_audit", "frostpeak_keep_audit.py", *src)
+    # Wardenhold's people and its Giratina (2026-10-09), then their independent audit (the burrow walked and lit, the
+    # lair recomputed from the keep's record, the callbacks, the old shrine's takedown replayed over its own box)
+    add("frostpeak_keep_quest:build", "frostpeak_keep_quest.py", "build", *src)
+    add("frostpeak_keep_quest_audit", "frostpeak_keep_quest_audit.py", *src)
     add("reveal_evidence:build", "reveal_evidence.py", "build")
     add("reveal_evidence_audit", "reveal_evidence_audit.py", *src)
     add("desert_wreck:build", "desert_wreck.py", "build", *src)
@@ -952,6 +1006,10 @@ def prepare_jobs(a):
     # keep-clear regions, the Newmoon ceiling, spawn-condition blocks, small-mushroom support, the pool's containment, the
     # Habitat Blocks' mimics). No independent audit yet (docs/world-building/FUNGAL_ISLE.md, "What an audit must check")
     add("fungal_isle:build", "fungal_isle.py", "build", *src)
+    # the Scar Tarn (2026-10-11, tools/scar_tarn.py): the generator fails closed on its own guards (the hollow's spill, water
+    # containment at the heightmap and one block under it, the palette, spawn-condition blocks, the wards' mimics, the
+    # authored-points clearance). No independent audit yet (docs/world-building/SCAR_TARN.md, "What an audit must check")
+    add("scar_tarn:build", "scar_tarn.py", "build", *src)
     # Hollin's Apricorn Farm (2026-10-05): the generator fails closed on its own guards (allow-list, spawn blocks, wet
     # columns, overlaps, fruit attachment, gates, spots, siting). Then its independent audit (tools/apricorn_farm_audit.py,
     # another agent's, never imports the generator to derive): the built pack replayed over the heightmap, fruit
@@ -1018,6 +1076,9 @@ def prepare_jobs(a):
     # Coldwater Station's independent audit (never imports its builder, tools/portals.py or tools/frostpeak_camp.py):
     # the built functions replayed over the heightmap, and the freshly built sea packs held off its sealed arch
     add("coldwater_station_audit", "coldwater_station_audit.py", "--require-sea", *src)
+    # the hub waystones (2026-10-09, data/hub_waystones.json): fails closed on a stone off dry level ground or inside a
+    # column the research station's, Coldwater Station's or the dock's own plan writes
+    add("hub_waystones:build", "hub_waystones.py", "build", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -1118,6 +1179,9 @@ def prepare_jobs(a):
     # the Beast Ball key (data/key_ball.json): fails closed if any boss tool's bind does not add the shared tag, if the
     # refusal message hints at the key, or if data/blackout.json can take a Beast Ball
     add("key_ball", "key_ball.py")
+    # no craftable waystone or warp item (data/player_waystone.json): fails closed if the closed list is not the Waystones
+    # jar's own, if the gift's recipe is left open, or if the quest, reward and Oak's dialogue do not agree
+    add("player_waystone", "player_waystone.py", "build", "--require-jar")
     # the Nether's badge-8 gate (data/nether_gate.json; fails closed if the flag is not the eighth badge's, the pallet
     # is off the canonical ground, or the gated dimension is the pocket's)
     add("nether_gate", "nether_gate.py")
@@ -1830,6 +1894,39 @@ def rift_zone_steps(index, spec):
     return run, held
 
 
+def gym_step_functions():
+    """{step id: [function id, in run order]} for the steps that write the gym lots, from the committed data alone
+    (no built pack needed), so tools/gym_arenas_audit.py can replay every order an apply allows.
+
+    R16E  tools/gym_interiors.py: each carved interior still built (none since 2026-10-09); its healer sweep writes
+          no gym block
+    R16F  tools/gym_demolish.py: the old works refilled and the donor shells taken down, every superseded gym
+    R16G  tools/gym_buildings.py: every building not superseded by a walk-through hall; THEN every gym arena or hall
+          function (a hall's takedown first); THEN every seat move
+    R16GA tools/gym_arenas.py: per gym, (takedown,) the arena or hall, its seat (the sweeps and the read-back are
+          R16GA's own actions, not block writes)
+
+    WHY R16G RE-RUNS THE ARENAS (2026-10-09, "a room I can't leave from"): a building's function clears its bounds
+    and rebuilds its masonry every run, and the descent of the arena under it passes through that masonry. Run
+    after R16GA with no R16GA after it -- `--only R16G`, which the seat-move comment above names as a supported run
+    -- it sealed the descent of all seven building-hosted arenas, with anyone below inside (gym_arenas_audit's order
+    replay). Re-carving in the same step is what keeps every step's result walkable on its own. A walk-through hall
+    has no building under it to re-run; its function is its own building."""
+    import gym_arenas
+    import gym_buildings as GB
+    gym_doc = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
+    out = {"R16E": ["cobblers:gym_interiors/%s" % g["id"] for g in gym_doc.get("gyms") or [] if g.get("built")],
+           "R16F": ["cobblers:gym_demolish/%s" % g["id"] for g in gym_doc.get("gyms") or [] if g.get("superseded_by")],
+           "R16G": ["cobblers:gym_buildings/%s" % g for g in sorted(GB.built())], "R16GA": []}
+    arenas = gym_arenas.records()
+    for _p, d in arenas:
+        fns = (["cobblers:gym_arenas/%s_takedown" % d["id"]] if gym_arenas.is_hall(d) else []) +             ["cobblers:gym_arenas/%s" % d["id"]]
+        out["R16G"] += fns
+        out["R16GA"] += fns + ["cobblers:gym_arenas/%s_seat" % d["id"]]
+    out["R16G"] += ["cobblers:gym_arenas/%s_seat" % d["id"] for _p, d in arenas]
+    return out
+
+
 def steps(with_spawns=False):
     """[(step id, title, [(kind, value)])]; kind is fn (a function), wait (seconds), check (a callable name)."""
     doc = placements()
@@ -2130,6 +2227,11 @@ def steps(with_spawns=False):
     import fungal_isle
     out.append(("R9FI", "the Fungal Isle grown over: Cap Wood, Stump Court, Glowcap Hollow and the island's caps, stumps and logs (data/fungal_isle.json)",
                 fungal_isle.placement_steps()))
+    # the Scar Tarn (2026-10-11, tools/scar_tarn.py): one block pass held in a forceload of its box (188 x 140 blocks, 12 x 9 chunks),
+    # BEFORE R9E: the four mimic cells it writes (two on the banks, two in the bed) are where the activated Habitat Blocks stand
+    import scar_tarn
+    out.append(("R9ST", "the Scar Tarn: a pond in Mt Vessu's north-west hollow, the wood round it and its alpha wards (data/scar_tarn.json)",
+                scar_tarn.placement_steps()))
     # Hollin's Apricorn Farm (2026-10-05, tools/apricorn_farm.py): one block pass held in a forceload of the farm's box
     # (90 chunks), before R9E with the other block passes; the farmer and the stall keeper stand on it (R18AF)
     import apricorn_farm
@@ -2192,23 +2294,25 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:gym_interiors/healers")]
                 + [("fn", "cobblers:gym_interiors/%s" % g) for g in gym_built]))
     # the demolition (tools/gym_demolish.py): the five rejected sets of works filled back in and their COBBLEVERSE
-    # shells taken down, at every gym data/gym_interiors.json marks `superseded_by`. Gym 2 is never in this list -
-    # Misty's is kept exactly as built (the owner, 2026-09-29). After R16E, whose healer sweep still runs over all
-    # eight shells, and before the buildings that stand where the shells were
+    # shells taken down, at every gym data/gym_interiors.json marks `superseded_by`. Gym 2 joined on 2026-10-09 (the
+    # owner had Misty's template taken down): its works and quay plinth here, the template by its walk-through hall
+    # (data/gym_arenas/gym2.json). After R16E, whose healer sweep still runs over all eight shells, and before the
+    # buildings that stand where the shells were
     gym_gone = [g["id"] for g in gym_doc.get("gyms") or [] if g.get("superseded_by")]
     out.append(("R16F", "the rejected gym works filled in and %d donor shell(s) taken down" % len(gym_gone),
                 [("fn", "cobblers:gym_demolish/%s" % g) for g in gym_gone]))
     # the authored gym buildings (tools/gym_buildings.py): one hall per record in data/gym_buildings/, each with
     # its puzzle inside it and the leader's spawner at the end of it. Listed from the committed data, not the built
     # pack, so the step exists whether or not the pack is built here; the prepare's audit fails on a missing one
-    gym_halls = sorted(p.stem for p in (ROOT / "data" / "gym_buildings").glob("*.json"))
     import gym_arenas
     # each arena's seat move straight after the buildings, in this step: a building puts its spawner back in the
     # hall every run, so R16G run alone (--only R16G) would otherwise leave a second spawner for a leader whose arena
-    # stands. The move tests that its arena is built, so on a world without one it does nothing (R16GA moves it)
-    out.append(("R16G", "the authored gym buildings (%d), and each arena's leader moved back into it" % len(gym_halls),
-                [("fn", "cobblers:gym_buildings/%s" % g) for g in gym_halls]
-                + [("fn", "cobblers:gym_arenas/%s_seat" % d["id"]) for _p, d in gym_arenas.records()]))
+    # stands. The move tests that its arena is built, so on a world without one it does nothing (R16GA moves it).
+    # And each arena re-carved between them (gym_step_functions): see there
+    gsf = gym_step_functions()
+    out.append(("R16G", "the authored gym buildings (%d), each arena re-carved through it and its leader moved "
+                "back into it" % len([f for f in gsf["R16G"] if ":gym_buildings/" in f]),
+                [("fn", f) for f in gsf["R16G"]]))
     # the gym arenas (tools/gym_arenas.py, data/gym_arenas/): carved below each building that has one, AFTER R16G
     # (the descent starts in the building, and the building puts its spawner back every run) and after R16E/R16F
     # (the healer sweep and the refilled works). Per arena: the build, the seat move (the building's spawner into
@@ -2383,6 +2487,13 @@ def steps(with_spawns=False):
     import drowned_quarry
     out.append(("R18DQ", "the Drowned Quarry under Lake Tilpey's east wall and its Gyarados (data/drowned_quarry.json)",
                 drowned_quarry.placement_steps()))
+    # Wardenhold's people and its Giratina (2026-10-09): the retired Distortion shrine taken down to the heightmap's
+    # ground, the burrow dug into Mt Vessu's face, Giratina summoned into the ruined keep's yard through
+    # tools/chunk_look.py's chain (after R9FK, whose build writes the lair's ice), then the three residents, whose
+    # classes load at boot from cobblers_dialogue
+    import frostpeak_keep_quest
+    out.append(("R18FK", "Wardenhold's burrow, its Giratina and the old shrine's takedown (data/frostpeak_keep_quest.json)",
+                frostpeak_keep_quest.placement_steps()))
     # the Compact guards at the HQ's ring-0 door (2026-10-02, data/relic_underground.json geometry.hq.guard): the door
     # stays shut and the guard's dialogue moves a player at rift_crisis_pending or later inside; the inside guard lets
     # anyone out. NPCs, so after the restart that loaded cobblers_dialogue's classes, like R17N's, each turned to its yaw
@@ -2401,6 +2512,14 @@ def steps(with_spawns=False):
     # read by the cobblers_hq_tower pack's battle_victory callback
     out.append(("R18HQ", "the finale's NPCs: Nia Calder, Brann Saye, Elara Venn and Oren Pell (data/hq_tower.json npcs)",
                 [("npc", n) for n in hq_tower.npc_placements()]))
+    # the Haven Compact's story points (2026-10-11, tools/compact_points.py, data/compact_points.json): CP-04's couriers
+    # and Varga above Highwire, CP-12's crews and console on Cinderlee's crater flat, CP-14's dissenters and loyalists on
+    # Holdfast's southern shelf. NPCs whose classes load at boot from cobblers_dialogue (the fighters' with their
+    # parties), so placed over RCON after the restart like R18HQ's, each turned to its yaw. The wins are read by the
+    # cobblers_compact pack's battle_victory callback
+    import compact_points
+    out.append(("R18CP", "the Haven Compact's story points CP-04, CP-12 and CP-14 (data/compact_points.json)",
+                [("npc", n) for n in compact_points.npc_placements()]))
     # Codex's ten named residents (2026-10-02, data/resident_encounters.json): each one's dressing inside a forceload of
     # its recorded bbox, then - for the two with no presence gate (Old Jaw, Whiteback) - an RCON summon guarded on tag
     # AND species, and its bind. The eight gated ones are left to the pack's keeper, which brings each in the first time
@@ -2477,6 +2596,12 @@ def steps(with_spawns=False):
     import ice_lodge
     out.append(("R18IL", "the Merian Ice Lodge: frozen tarn, shelters, lodge and the holekeeper (data/ice_lodge.json)",
                 ice_lodge.placement_steps()))
+    # the hub waystones (2026-10-09, tools/hub_waystones.py): AFTER Shrew Station (R9RS), the ferry docks (R16H) and
+    # Coldwater Station (R18CW), whose builds clear and pave the ground a stone stands on; each holds its own chunks.
+    # The sweep in each function removes an older waystone first, so a re-run never stacks one
+    import hub_waystones
+    out.append(("R18W", "the hub waystones: Shrew Station, Coldwater Station, the north-east landing (data/hub_waystones.json)",
+                hub_waystones.placement_steps()))
     # the town traders: each town's look-then-act chain (tools/chunk_look.py, N155) started at once, waited for whole,
     # and each town's count read back; no step-level forceload, each chain holds and releases its own plaza
     import traders
@@ -2494,6 +2619,17 @@ def steps(with_spawns=False):
                 legendaries.placement_steps(legendaries.load())))
     out.append(("V", "floor verify and trader verify", [("check", "verify")]))
     return out
+
+
+# The plants an NPC must not stand in (2026-10-11: three Compact NPCs were seated in a flower, a flowering azalea and a
+# sweet berry bush from the foliage paint; the berry bush slows and hurts whoever walks into the NPC). The npc action
+# clears exactly these at the NPC's feet and head before it looks for or spawns the NPC; nothing else is replaced.
+STAND_CLEAR = ("#minecraft:flowers", "#minecraft:saplings", "minecraft:sweet_berry_bush")
+
+
+def stand_clear_commands(x, y, z):
+    """The fills that clear STAND_CLEAR at (x, y, z) and the block above it, each replacing only that tag."""
+    return ["fill %d %d %d %d %d %d minecraft:air replace %s" % (x, y, z, x, y + 1, z, t) for t in STAND_CLEAR]
 
 
 def watchdog_setting(server_dir):
@@ -2744,6 +2880,8 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                     if "passed" in rc("execute if loaded %d %d %d" % (x, y, z)):
                         break
                     time.sleep(1)
+                for c in stand_clear_commands(x, y, z):
+                    rc(c)
                 # once: an NPC already standing there (a re-run) is left alone rather than doubled. A chunk's
                 # entities load after its blocks, so "loaded" above does not mean the NPC is visible yet: a query
                 # the moment the chunk loaded missed one that was there (staging, 2026-09-23). Look for a while.

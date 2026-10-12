@@ -176,13 +176,17 @@ def test_gym3_seats_are_proved_on_their_own_hall(g3):
         assert T.check_seat(h, gen, mod, tuple(s["seat"]), float(s["sight_distance"])) == [], s["id"]
 
 
-def test_gym3_mutation_moving_a_seat_into_the_hall_corner_breaks_its_cut(g3):
+def test_gym3_mutation_moving_a_seat_off_its_chokepoint_breaks_its_cut(g3):
+    # Removing this loses the proof, on the real walk-through hall (data/gym_arenas/gym3.json, which replaced the
+    # building on 2026-10-09), that the cut is a property of WHERE a junior stands: gym3_junior_01 stands at the foot of
+    # the transformer bank's stair, the one climb out of the bay; three blocks west of it, in the same bay, the same
+    # junior with the same sight no longer covers the stair and a walk along the bay's far wall goes round him.
     _G, h, gen, mod = g3
     s = [s for s in SEATS["trainers"] if s["id"] == "gym3_junior_01"][0]
-    # the hall's north-west corner, by the door: on the floor, inside the footprint, nowhere near the tower stair
-    corner = (1727, 175, 1394)
-    assert h.vox.dry_footing(*corner)
-    assert "cut" in codes(T.check_seat(h, gen, mod, corner, float(s["sight_distance"])))
+    assert T.check_seat(h, gen, mod, tuple(s["seat"]), float(s["sight_distance"])) == []      # control: where it stands
+    west = (s["seat"][0] - 3, s["seat"][1], s["seat"][2])
+    assert h.vox.dry_footing(*west)
+    assert "cut" in codes(T.check_seat(h, gen, mod, west, float(s["sight_distance"])))
 
 
 def test_gym3_mutation_shrinking_a_seats_sight_breaks_its_cut(g3):
@@ -191,12 +195,26 @@ def test_gym3_mutation_shrinking_a_seats_sight_breaks_its_cut(g3):
     assert "cut" in codes(T.check_seat(h, gen, mod, tuple(s["seat"]), 0.5))
 
 
-def test_gym3_the_leader_is_reached_only_by_the_designed_climb(g3):
-    _G, h, gen, _mod = g3
-    chain = [gen.nodes[k] for k in gen.dominators()]
-    # the record's stair (x1733) and cable ladder (x1749, z1410) are on every walk to Surge
-    assert any(p[0] == 1733 and p[1] in range(176, 182) for p in chain)
-    assert any(p[0] == 1749 and p[2] == 1410 for p in chain)
+def test_gym3_the_puzzle_is_on_every_walk_to_the_leader(g3):
+    # Removing this loses the proof that the hall's designed choice (the catwalk's three leads, a route step the
+    # record declares `how: choose`) cannot be walked round: cut its cells and no walk reaches Surge; cut a step that
+    # has a way round and one still does. Read from the hall's own route[], not a coordinate written here.
+    _G, _h, gen, _mod = g3
+    route = json.loads((ROOT / "data" / "gym_arenas" / "gym3.json").read_text(encoding="utf-8"))["route"]
+
+    def cut(step):
+        a, b = step["from"], step["to"]
+        lo = [min(a[i], b[i]) for i in range(3)]
+        hi = [max(a[i], b[i]) for i in range(3)]
+        return frozenset(k for p, k in gen.index.items() if all(lo[i] <= p[i] <= hi[i] for i in range(3)))
+
+    assert gen.reaches_leader()
+    choices = [st for st in route if st.get("how") == "choose"]
+    assert choices, "the hall declares no designed choice"
+    for st in choices:
+        assert cut(st) and not gen.reaches_leader(cut(st)), st["id"]
+    walked = [st for st in route if st.get("how") == "walk" and cut(st)]
+    assert any(gen.reaches_leader(cut(st)) for st in walked), "no walk step has a way round: the control is vacuous"
 
 
 def test_gym3_full_check_is_clean(g3):
@@ -212,22 +230,27 @@ def test_gym3_full_check_is_clean(g3):
     assert tops == sorted(tops), list(zip(order, tops))
 
 
-def test_gym2_the_proof_needs_defect_d1_closed_and_says_so():
-    if not T.donor_zip():
-        pytest.skip("gym 2 needs COBBLEVERSE-DP-v31.zip (set COBBLERS_DONOR_ZIP)")
+def test_gym2_the_hall_proof_assumes_no_defect_and_knows_its_one_way_in():
+    # 2026-10-09: Misty's template (and with it defect D1, the well's scaffolding open under its floating island) is
+    # taken down for the walk-through Lifeboat House (data/gym_arenas/gym2.json). What this test held for the template
+    # it holds for the hall: the proof passes for a rider who can land anywhere open to the sky, it passes WITHOUT any
+    # cell assumed closed (a defect may not be proved away silently), and the model knows the gym's one way in.
     G = _heightmap_or_skip()
     seats = [s for s in SEATS["trainers"] if s["gym"] == "gym2"]
     problems, row = T.check_gym("gym2", seats, ROSTER, G)
     assert problems == []
     assert row["arrival"] == "sky"
-    assert row["assumed_closed"] and all(c["open_as_built"] for c in row["assumed_closed"])
-    # while D1 is open a walker climbs the well into the hall past both juniors: the report must say so
-    assert all(j["cut_holds_with_defects_open"] is False for j in row["juniors"])
-    # as built, on foot, the only way to Misty is the well: nothing reaches her once its breakout is blocked
+    assert row["assumed_closed"] == [], "gym 2 assumes cells closed again: a defect is being proved away"
+    # as built, on foot, the only way to Misty is the one step down in the cistern wall (x1626..1627, z2865): a
+    # walker (MODEST: short jumps only) reaches nothing of her once the step, the hall floor at its head and the quay
+    # at its foot are blocked (x1624..1629, z2864..2866; the head and foot too, because even a MODEST jump carries
+    # a player from the hall floor over the one-course step onto the quay)
     h0 = T.hall("gym2", G)
-    walk = T.Graph(h0, True, "walk")
-    shaft = frozenset(walk.index[(1620, y, 2867)] for y in range(100, 133) if (1620, y, 2867) in walk.index)
-    assert walk.reaches_leader() and not walk.reaches_leader(shaft)
+    walk = T.Graph(h0, False, "walk")
+    step = frozenset(walk.index[(x, y, z)] for x in range(1624, 1630) for z in (2864, 2865, 2866)
+                     for y in range(107, 112) if (x, y, z) in walk.index)
+    assert step, "the step down is no position in the model: the hall moved, and this test must follow it"
+    assert walk.reaches_leader() and not walk.reaches_leader(step)
 
 
 # ------------------------------------------------------------------------------------------------ the rosters

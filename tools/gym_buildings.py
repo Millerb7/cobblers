@@ -3,8 +3,9 @@
 
 The owner's call, 2026-09-29 (docs/world-building/GYM_BUILDINGS_BRIEF.md): "id rather have a large gym building
 with a puzzle inside than whatever that was". The COBBLEVERSE donor shell at gyms 1, 3, 4, 5 and 7 is taken down
-by tools/gym_demolish.py and replaced by a building we author. Gym 2, Misty's, is kept exactly as built and is
-not touched by either tool.
+by tools/gym_demolish.py and replaced by a building we author. Gym 2, Misty's, was kept as built until 2026-10-09,
+when the owner had its template taken down for a walk-through hall (data/gym_arenas/gym2.json, tools/gym_arenas.py);
+this tool has no record for it either way.
 
   python tools/gym_buildings.py report [--gym gym1] [--source-root <root>]
   python tools/gym_buildings.py build  [--out build/datapacks/cobblers_gym_buildings] [--source-root <root>]
@@ -72,7 +73,8 @@ def load(path):
 
 
 def records(only=None):
-    """Every data/gym_buildings/*.json, by id, in file order."""
+    """Every data/gym_buildings/*.json, by id, in file order. A record with `superseded_by` is still returned (its
+    model is read), but `build` writes no function for it and reapply step R16G does not run one: built()."""
     out = []
     for p in sorted(DATA.glob("*.json")):
         doc = load(p)
@@ -86,6 +88,25 @@ def records(only=None):
     if only and not out:
         raise SystemExit("no data/gym_buildings/%s.json" % only)
     return out
+
+
+def built():
+    """The ids R16G builds: every record not superseded by a walk-through hall."""
+    return [doc["id"] for _p, doc in records() if not doc.get("superseded_by")]
+
+
+def clear_box(doc):
+    """The box the record's FIRST part clears to air, when it is one inside its bounds (every building opens so: "clear
+    the lot above the pad, so the build is the same on a fresh export and on a re-apply"), else None. Every cell of it
+    is written by this building on every run; tools/gym_demolish.py leaves it to the building."""
+    parts = [q for q in doc.get("parts") or [] if q.get("op") != "comment"]
+    if not parts:
+        return None
+    first = parts[0]
+    if first.get("op") == "fill" and first.get("block") == "minecraft:air" and not first.get("mode") \
+            and inside(first["box"], doc["bounds"]):
+        return list(norm(first["box"]))
+    return None
 
 
 def gym_lot(settlement):
@@ -446,6 +467,11 @@ def main(argv=None):
                                           "Cobblers: the authored gym buildings (tools/gym_buildings.py)"}},
                                           indent=2) + "\n", encoding="utf-8")
         for doc, e, _s in out:
+            if doc.get("superseded_by"):
+                # the gym is now one walk-through hall (data/gym_arenas/<gym>.json, schema gym_hall/1) whose own
+                # step takes this building down; the record stays as the record of what stood (its model is still
+                # read: tools/challenge_mode.py restore_blocks, the hall's takedown coverage), but nothing builds it
+                continue
             write_function(doc["id"], e.ops)
             done.append(doc["id"])
         (FUNCS / "index.txt").write_text("\n".join(done) + "\n", encoding="utf-8")

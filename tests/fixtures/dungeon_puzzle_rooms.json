@@ -1,0 +1,20 @@
+{
+  "why": "A room list of the puzzle and vault kinds only (tools/dungeon_puzzles.py), one of each variant, for tests/test_dungeon_puzzles.py. It is NOT a dungeon and not the shared demo list (tests/fixtures/dungeon_demo_rooms.json); the authored dungeons are wave 2's.",
+  "rooms": [
+    {"id": "entry", "kind": "entry_room", "length": 20, "width": 15, "height": 7},
+    {"id": "d1", "kind": "drift", "length": 30, "width": 9, "height": 6},
+    {"id": "lev", "kind": "puzzle", "length": 40, "width": 25, "height": 7, "gate": "cleared", "params": {"variant": "levers", "size": 4, "penalty_s": 12}},
+    {"id": "d2", "kind": "drift", "length": 24, "width": 9, "height": 6},
+    {"id": "seq", "kind": "puzzle", "length": 44, "width": 25, "height": 8, "gate": "cleared", "params": {"variant": "sequence", "length": 4}},
+    {"id": "d3", "kind": "drift", "length": 24, "width": 9, "height": 6},
+    {"id": "plt", "kind": "puzzle", "length": 58, "width": 33, "height": 7, "gate": "cleared", "params": {"variant": "plates", "count": 4, "penalty_s": 10}},
+    {"id": "d4", "kind": "drift", "length": 24, "width": 9, "height": 6},
+    {"id": "vlt", "kind": "vault", "length": 40, "width": 21, "height": 7,
+     "params": {"chests": 4, "clock_cost_s": 25, "loot_by_band": {
+       "1": [{"item": "minecraft:iron_ingot", "count": [4, 8]}, {"item": "minecraft:gold_nugget", "count": 2, "chance": 0.5}],
+       "4": "minecraft:chests/simple_dungeon"}}},
+    {"id": "d5", "kind": "drift", "length": 24, "width": 9, "height": 6},
+    {"id": "arena", "kind": "boss_arena", "length": 40, "width": 35, "height": 11},
+    {"id": "exit", "kind": "exit_room", "length": 14, "width": 11, "height": 6}
+  ]
+}

@@ -48,9 +48,10 @@ CD_CONFIG = ROOT / "modpack" / "config" / "cobbledollars" / "common.json"
 CREDIT_WINDOW_TICKS = 100
 # DUNGEONS.md 11.3 E1 item 1: "added by door_click ... before the 40-tick arrival delay"
 ARRIVAL_DELAY_TICKS = 40
-# DUNGEONS.md 2.1: "The rates are 4 (x1), 5 (x1.25), 6 (x1.5), 8 (x2) and 12 (x3)"; a minute is 4,800 units
-DESIGN_RATES = (4, 5, 6, 8, 12)
-UNITS_PER_TICK = 4
+# DUNGEONS.md 2.1 (the owner, 2026-10-10, replacing D13's five rates 4..12 in quarter-ticks): tenth-ticks, x1 is 10
+# and every 2 points taken is +1 (0.1x), to 30 (x3); a minute is 12,000 units. A sample of the rates, both ends included
+DESIGN_RATES = (10, 11, 15, 20, 30)
+UNITS_PER_TICK = 10
 
 POCKET = "cobblers:pocket"
 FN_RE = re.compile(r"^data/([^/]+)/function/(.+)\.mcfunction$")
@@ -259,7 +260,7 @@ def check_v15(dg_files, bo_files):
         spawn_at = [i for i, l in enumerate(ls) if helper in calls(l) or (site == helper and re.search(r"spawn(npc|pokemon)at", l))]
         later = ls[max(spawn_at) + 1:] if spawn_at else []
         tags = any("tag @s add %s" % exempt in [x for g in reach(dg, c) for x in body(dg[g])] for l in later
-                   if l.startswith("execute ") and " as @e[" in l for c in calls(l)) \
+                   if l.lstrip("$").startswith("execute ") and " as @e[" in l for c in calls(l)) \
             or any(re.search(r"\btag @e\[[^\]]*\] add %s\b" % re.escape(exempt), l) for l in later)
         if not tags:
             bad.append("%s spawns through %s and does not tag the spawned entity %s in the same function (V15)"
@@ -431,16 +432,60 @@ def design_clock_minutes():
     return [c for _b, c in sorted(out)]
 
 
+DUNGEON_ROOMS_MD = ROOT / "docs" / "mechanics" / "DUNGEON_ROOMS.md"
+BAND_CLOCK_RE = re.compile(r"if score @s dg\.band matches (\d+) run scoreboard players set @s dg\.clock (\d+)$")
+
+
+def design_room_clocks():
+    """DUNGEON_ROOMS.md 7's table: {dungeon id: [band 1..6 clock minutes]}, the bold cells of each row (added by
+    DG-NS, 2026-10-09: a full-length dungeon's clock is its own, not 4.2's)."""
+    out = {}
+    for l in DUNGEON_ROOMS_MD.read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in l.strip().strip("|").split("|")]
+        bold = [int(c.strip("*")) for c in cells if re.fullmatch(r"\*\*\d+\*\*", c)]
+        if l.startswith("|") and len(bold) == 6 and re.fullmatch(r"[a-z0-9_]+", cells[0]):
+            out[cells[0]] = bold
+    return out
+
+
 def check_v12(dg_files):
     bad = []
     dg = functions(dg_files)
     clocks = clocks_units(dg_files)
     if not clocks:
         return ["no band clock found in the generated pack"]
-    want = [m * 60 * 20 * UNITS_PER_TICK for m in design_clock_minutes()]
-    if sorted(want) != clocks:
-        bad.append("the generated clocks %s are not DUNGEONS.md 4.2's %s (units)" % (clocks, sorted(want)))
-    longest = max(clocks) // UNITS_PER_TICK
+    # every slot's threshold sets its dungeon's design clocks, in band order: the dungeon's row in DUNGEON_ROOMS.md 7
+    # (a full-length dungeon) or else DUNGEONS.md 4.2's. Slot g's dungeon is found by the slots rule of DUNGEONS.md 1
+    # (engine.slots.why: dungeon d holds slots (d-1)*per_dungeon+1 .. d*per_dungeon), from data/dungeons.json's order
+    rooms_tables = design_room_clocks()
+    spine_table = design_clock_minutes()
+    rec = json.loads(DUNGEONS_JSON.read_text(encoding="utf-8"))
+    per = rec["engine"]["slots"]["per_dungeon"]
+    for f, ls in dg.items():
+        got = sorted((int(m.group(1)), int(m.group(2))) for l in body(ls) for m in [BAND_CLOCK_RE.search(l)] if m)
+        if not got:
+            continue
+        m = re.search(r"/slot/s(\d+)/", f)
+        di = (int(m.group(1)) - 1) // per if m else -1
+        did = rec["dungeons"][di]["id"] if 0 <= di < len(rec["dungeons"]) else None
+        src, mins = ("DUNGEON_ROOMS.md 7 (%s)" % did, rooms_tables[did]) if did in rooms_tables else ("DUNGEONS.md 4.2", spine_table)
+        want = [x * 60 * 20 * UNITS_PER_TICK for x in mins]
+        if [u for _b, u in got] != want:
+            bad.append("%s: the generated clocks %s are not %s's %s (units)" % (f, [u for _b, u in got], src, want))
+    # the lockout is per dungeon (its door, its dg.lk_<short>), so each door is held to the longest clock of ITS
+    # dungeon's slots (DG-INTEGRATE, 2026-10-09: one dungeon's 87-minute band 6 says nothing about another's lockout).
+    # Door door/<short> -> the dungeon whose `short` it is (data order) -> its slots by the same per_dungeon rule.
+    longest_of = {}
+    for f, ls in dg.items():
+        m = re.search(r"/slot/s(\d+)/", f)
+        if not m:
+            continue
+        di = (int(m.group(1)) - 1) // per
+        for l in body(ls):
+            c = BAND_CLOCK_RE.search(l)
+            if c:
+                longest_of[di] = max(longest_of.get(di, 0), int(c.group(2)) // UNITS_PER_TICK)
+    by_short = {d.get("short"): i for i, d in enumerate(rec["dungeons"])}
     locks = []
     for f, ls in dg.items():
         for l in body(ls):
@@ -450,8 +495,12 @@ def check_v12(dg_files):
     if not locks:
         bad.append("no lockout test found in any door function")
     for f, n, ls in locks:
-        if n < longest:
-            bad.append("%s locks out for %d ticks, under the longest clock %d (V12)" % (f, n, longest))
+        di = by_short.get(f.rsplit("/", 1)[1])
+        if di is None or di not in longest_of:
+            bad.append("%s: no dungeon (by its short) with a generated clock to hold its lockout to (V12)" % f)
+            continue
+        if n < longest_of[di]:
+            bad.append("%s locks out for %d ticks, under the longest clock of its dungeon, %d (V12)" % (f, n, longest_of[di]))
         b = body(ls)
         if "execute if score @s dg.lk_%s matches -2147483648.. run scoreboard players operation #d dg.t = #up dg.up" % f.rsplit("/", 1)[1] not in b:
             bad.append("%s does not measure the lockout on the uptime counter #up" % f)
@@ -460,7 +509,11 @@ def check_v12(dg_files):
         bad.append("the lockout stamp is not the uptime counter: %s" % stamps)
     keeper = [(f, body(ls)) for f, ls in dg.items() if f.endswith("/keeper")]
     for f, b in keeper:
-        step = [int(m.group(1)) for l in b for m in [re.fullmatch(r"scoreboard players add #up dg\.up (\d+)", l)] if m]
+        # the keeper's own lines, and those of what it dispatches to the next tick unconditionally (a top-level
+        # `schedule function X 1t replace`: its pass's first part, ENGINE-SCALE), each run exactly once a keeper
+        disp = [m.group(1) for l in b for m in [re.fullmatch(r"schedule function (\S+) 1t replace", l)] if m]
+        once = b + [l for x in disp if x in dg for l in body(dg[x])]
+        step = [int(m.group(1)) for l in once for m in [re.fullmatch(r"scoreboard players add #up dg\.up (\d+)", l)] if m]
         again = [int(m.group(1)) for l in b for m in [re.fullmatch(r"schedule function %s (\d+)t replace" % re.escape(f), l)] if m]
         if not step or step != again:
             bad.append("%s adds %s to #up a pass but re-schedules every %s ticks: #up would not count ticks" % (f, step, again))
@@ -475,11 +528,12 @@ def check_c1(dg_files):
     dg = functions(dg_files)
     classes = {"%s:%s" % (m.group(1), m.group(2)) for rel in dg_files
                for m in [re.match(r"data/([^/]+)/npcs/(.+)\.json$", rel)] if m}
+    helpers = spawn_helpers(dg)   # once: computed per line it made the check O(lines^2), 62 s on a 700-block dungeon
     for f, ls in dg.items():
         for l in body(ls):
             if re.search(r"\bspawnnpcat\b", l) and not l.startswith("$"):
                 bad.append("%s: spawnnpcat on a plain line fails to parse at load (EXP-078): %s" % (f, l))
-            for h in spawn_helpers(dg):
+            for h in helpers:
                 if h in calls(l):
                     m = re.search(r'cls:"([^"]+)"', l)
                     if m and m.group(1) not in classes:
@@ -520,26 +574,27 @@ def check_sigils(dg_files, doc=None):
 # ------------------------------------------------------------------------------------------------- the payout
 
 
-def boss_payouts(dg_files, cd=None):
+def boss_payouts(dg_files, cd=None, short=None):
     """{band: (least, most) CobbleDollars credited for the run's boss stages together}, from each stage class's party
     and CobbleDollars' battleVictory arithmetic (docs/research/notes/paid-services-and-npc-payouts.md B2, VERIFIED
     bytecode there; nextBetween inclusive ASSUMED): B = int(5 * S * sum(L / 50)), amount = B + [B/2, 2B],
-    credit = floor(amount * multiplier). None when CobbleDollars pays no NPC win."""
+    credit = floor(amount * multiplier). None when CobbleDollars pays no NPC win. A run is ONE dungeon's: with more
+    than one dungeon pass `short` (its record's short id), or the bands sum every dungeon's boss together."""
     cd = cd if cd is not None else _j(CD_CONFIG)
     if not cd.get("earnCobbleDollarsFromNPC"):
         return None
     mult = cd["cobbleDollarsIncomeMultiplier"]
     per = {}
     for rel, text in dg_files.items():
-        m = re.match(r"data/[^/]+/npcs/dg_\w+_boss_b(\d+)_s(\d+)\.json$", rel)
-        if not m:
+        m = re.match(r"data/[^/]+/npcs/dg_(\w+?)_boss_b(\d+)_s(\d+)\.json$", rel)
+        if not m or (short is not None and m.group(1) != short):
             continue
         party = json.loads(text)["party"]["pokemon"]
         levels = [int(re.search(r"level=(\d+)", p).group(1)) for p in party]
         s = sum(levels)
         b = max(1, int(5 * s * sum(L / 50.0 for L in levels)))
         lo, hi = int((b + b // 2) * mult), int((b + 2 * b) * mult)
-        a = per.setdefault(int(m.group(1)), [0, 0])
+        a = per.setdefault(int(m.group(2)), [0, 0])
         a[0] += lo
         a[1] += hi
     return {k: tuple(v) for k, v in sorted(per.items())}
@@ -569,9 +624,10 @@ def main(argv=None):
             print("   PROBLEM %s" % x)
         n += len(probs)
     if a.payout:
-        pay = boss_payouts(dg)
-        for band, (lo, hi) in (pay or {}).items():
-            print("payout  band %d: the three boss stages credit $%d-$%d a run (not clawed back: step 6)" % (band, lo, hi))
+        shorts = sorted({m.group(1) for rel in dg for m in [re.match(r"data/[^/]+/npcs/dg_(\w+?)_boss_b\d+_s\d+\.json$", rel)] if m})
+        for short in shorts:
+            for band, (lo, hi) in (boss_payouts(dg, short=short) or {}).items():
+                print("payout  %s band %d: the boss stages credit $%d-$%d a run (clawed back: engine.clawback)" % (short, band, lo, hi))
     print("dungeon_audit: %d problem(s)" % n)
     return 1 if n else 0
 

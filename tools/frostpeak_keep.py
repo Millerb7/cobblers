@@ -185,17 +185,25 @@ def solid_tower(V, doc, cu, cv, half, y0, top, roof_base):
     return pyramid(V, doc, cu, cv, top + 1, roof_base)
 
 
+def north(d, key):
+    """The courtyard reaches further north than south (2026-10-09, the owner: "a bigger courtyard"): the Strand's
+    boundary closes the south side at z660, so the curtain wall and the base rectangle grow north and to the sides.
+    `wall_hv_north` / `base_hv_north` are the north halves; the old symmetric keys stay the south halves."""
+    return d.get(key + "_north", d[key])
+
+
 def building(doc):
     """The building above the courtyard floor, in (u, ry, v), plus the notes the later stages need."""
     d = doc["dims"]
     pal = doc["palette"]
     V = Vox()
     HU, HV, T = d["wall_hu"], d["wall_hv"], d["wall_thick"]
+    HVN = north(d, "wall_hv")
     notes = {}
     # ---- the courtyard floor, ry 0, inside the base rectangle (the plinth stage lays what is below)
     for u in range(-d["base_hu"], d["base_hu"] + 1):
-        for v in range(-d["base_hv"], d["base_hv"] + 1):
-            outside = abs(u) > HU or abs(v) > HV
+        for v in range(-north(d, "base_hv"), d["base_hv"] + 1):
+            outside = abs(u) > HU or v > HV or v < -HVN
             if outside:
                 V.put(u, 0, v, pick([("minecraft:snow_block", 0.3), ("minecraft:stone", 0.3), ("minecraft:tuff", 0.2),
                                      ("minecraft:cobbled_deepslate", 0.2)], unit("terrace", u, v)))
@@ -204,25 +212,25 @@ def building(doc):
     # ---- the curtain wall
     walk, par = d["wall_walk"], d["wall_parapet"]
     for u in range(-HU, HU + 1):
-        for v in range(-HV, HV + 1):
-            if abs(u) <= HU - T and abs(v) <= HV - T:
+        for v in range(-HVN, HV + 1):
+            if abs(u) <= HU - T and -HVN + T <= v <= HV - T:
                 continue
             for y in range(1, walk):
                 V.put(u, y, v, wall_state(doc, u, y, v))
             V.put(u, walk, v, wall_state(doc, u, walk, v))
-            outer = abs(u) == HU or abs(v) == HV
+            outer = abs(u) == HU or v in (-HVN, HV)
             if outer:
                 V.put(u, walk + 1, v, wall_state(doc, u, walk + 1, v))
-                merlon = (u % 2 == 0) if abs(v) == HV else (v % 2 == 0)
+                merlon = (u % 2 == 0) if v in (-HVN, HV) else (v % 2 == 0)
                 if merlon:
                     V.put(u, par, v, wall_state(doc, u, par, v))
     # ---- the gate: a five-wide arch in the north wall, its portcullis raised
     for u in range(-2, 3):
-        for v in range(-HV, -HV + T):
+        for v in range(-HVN, -HVN + T):
             for y in range(1, 5 if abs(u) == 2 else 6):
                 V.put(u, y, v, AIR)
     for u in (-1, 0, 1):
-        V.put(u, 5, -HV + 1, "minecraft:iron_bars")
+        V.put(u, 5, -HVN + 1, "minecraft:iron_bars")
     # ---- the postern: three wide, four high, in the south wall west of the keep's axis
     PU = -14
     for u in range(PU - 1, PU + 2):
@@ -235,7 +243,7 @@ def building(doc):
     ch = d["corner_half"]
     for su in (-1, 1):
         for sv in (-1, 1):
-            cu, cv = su * (HU - 1), sv * (HV - 1)
+            cu, cv = su * (HU - 1), (HV - 1) if sv > 0 else -(HVN - 1)
             uf, vf = cu - su * ch, cv - sv * ch                # the faces toward the courtyard
             doors = [(uf, cv - sv * 2, 1, 2), (uf + su, cv - sv * 2, 1, 2),                      # ground door, courtyard side
                      (uf, cv, walk + 1, walk + 2), (uf + su, cv, walk + 1, walk + 2),            # the wall walk, one way
@@ -244,7 +252,7 @@ def building(doc):
     # ---- the gatehouse towers, astride the north wall
     gh = d["gate_towers_half"]
     for su in (-1, 1):
-        cu, cv = su * 8, -HV + 1
+        cu, cv = su * 8, -HVN + 1
         uf = cu - su * gh
         doors = [(uf, cv, walk + 1, walk + 2), (uf + su, cv, walk + 1, walk + 2),
                  (cu + su * gh, cv, walk + 1, walk + 2), (cu + su * (gh - 1), cv, walk + 1, walk + 2),
@@ -342,6 +350,9 @@ def building(doc):
     spire_top = pyramid(V, doc, 0, kc, swt + 2 + SPIRE_LIFT, sh + 1)
     notes["spire_top_ry"] = spire_top
     notes["beacon"] = {"floor_ry": sf, "ladder": (0, lv), "nest": (-1, sf, kc + 1), "brazier": (0, sf + 1, kc)}
+    # ---- the ruin (2026-10-09, the owner: "semi destroyed"): what fell, then the rubble, then Giratina's frozen lair
+    if doc.get("ruin"):
+        ruin(V, doc, d, notes)
     # ---- the west wind's rime on the exposed west faces (the repository's one wind; data/frostpeak_summit.json wind)
     lo, hi = pal["rime_share"]
     top_ry = max(y for (_u, y, _v) in V.b)
@@ -360,6 +371,118 @@ def building(doc):
     V.put(-12, 1, -1, pal["rime"])
     furnish(V, doc, d)
     return V, notes
+
+
+def in_spire(d, u, y, v):
+    """The spire's shaft, chamber and cone: nothing the ruin does may touch it (the landmark from Highwire)."""
+    sh, kc = d["spire_half"], d["keep_cv"]
+    if d["keep_roof"] < y <= d["spire_wall_top"] + 1:                 # the shaft, the chamber and its ceiling
+        return abs(u) <= sh and abs(v - kc) <= sh
+    return y > d["spire_wall_top"] + 1 and abs(u) <= sh + 1 and abs(v - kc) <= sh + 1     # the cone overhangs by one
+
+
+def rubble_state(r, u, y, v, top):
+    if top and unit("frost", u, y, v) < r["frost_share"]:
+        return pick([tuple(e) for e in r["frost_blocks"]], unit("frostpick", u, y, v))
+    return pick([tuple(e) for e in r["rubble_blocks"]], unit("rubble", u, y, v))
+
+
+def cleared(r, u, v):
+    return any(b[0] <= u <= b[2] and b[1] <= v <= b[3] for b in r["keep_clear"])
+
+
+def ruin(V, doc, d, notes):
+    """The keep half ruined, from data/frostpeak_keep.json `ruin`. Every cut is deterministic (unit()), so a rebuild
+    writes the same ruin. The spire is never touched (in_spire), so the landmark reads from Highwire as before."""
+    r = doc["ruin"]
+    HU, HV, T = d["wall_hu"], d["wall_hv"], d["wall_thick"]
+    HVN = north(d, "wall_hv")
+    kh, kc, kr, th = d["keep_half"], d["keep_cv"], d["keep_roof"], d["turret_half"]
+
+    def drop(pred):
+        for k in [k for k in V.b if pred(*k)]:
+            del V.b[k]
+            V.special.pop(k, None)
+
+    # 1. a corner tower fell: its cone and its walls above a jagged stump
+    ct = r["corner_tower"]
+    su, sv = ct["corner"]
+    cu, cv = su * (HU - 1), (HV - 1) if sv > 0 else -(HVN - 1)
+    ch = d["corner_half"] + 1                                      # the cone's base overhangs the walls by one
+    lo, hi = ct["stump"]
+    drop(lambda u, y, v: abs(u - cu) <= ch and abs(v - cv) <= ch and y > lo + int(unit("stump", u, v) * (hi - lo + 1)))
+    # its floors and ladder fell with it: the shell's inside is rubble to ry 3, and nothing hangs in the stump
+    ih_ = d["corner_half"] - 2
+    drop(lambda u, y, v: abs(u - cu) <= ih_ and abs(v - cv) <= ih_ and y >= 1)
+    for u in range(cu - ih_, cu + ih_ + 1):
+        for v in range(cv - ih_, cv + ih_ + 1):
+            for y in range(1, 4):
+                V.put(u, y, v, rubble_state(r, u, y, v, y == 3))
+    notes["fallen_tower"] = (cu, cv)
+    # 2. turrets of the keep fell, each to its stump (the roof's level: gone; one course over it: a stump)
+    notes["fallen_turrets"] = []
+    for ft in r["turrets"]:
+        tu, tv = ft["corner"]
+        tcu, tcv = tu * (kh - th), kc + tv * (kh - th)
+        drop(lambda u, y, v: abs(u - tcu) <= th + 1 and abs(v - tcv) <= th + 1 and y > ft["stump"]
+             and not in_spire(d, u, y, v))
+        notes["fallen_turrets"].append((tcu, tcv))
+    # 3. the keep's roof came in at one corner, and its walls with it down to a jagged line over the loft floor
+    kcn = r["keep_corner"]
+    (u0, u1), (v0, v1), (lo, hi) = kcn["u"], kcn["v"], kcn["down_to"]
+    drop(lambda u, y, v: u0 <= u <= u1 and v0 <= v <= v1 and y > lo + int(unit("kcut", u, v) * (hi - lo + 1))
+         and not in_spire(d, u, y, v))
+    # the roof's fall, lying on the loft floor in that corner (never on a stair: the loft's flights are on the strips)
+    lf = d["keep_floors"][1]
+    for u in range(kcn["debris_u"][0], kcn["debris_u"][1] + 1):
+        for v in range(kcn["debris_v"][0], kcn["debris_v"][1] + 1):
+            n = 1 + int(unit("loftfall", u, v) * 2)
+            for y in range(lf + 1, lf + 1 + n):
+                if (u, y, v) not in V.b:
+                    V.put(u, y, v, rubble_state(r, u, y, v, y == lf + n))
+    # 4. breaches in the curtain wall: a V cut along the wall, down to `floor` at its middle
+    for br in r["breaches"]:
+        a0, a1 = br["along"]
+        mid = (a0 + a1) / 2.0
+        for s in range(a0, a1 + 1):
+            cap = br["floor"] + int(br["slope"] * abs(s - mid) + unit("breach", br["wall"], s) * 1.5)
+            for k in range(T):
+                u, v = {"west": (-HU + k, s), "east": (HU - k, s), "north": (s, -HVN + k), "south": (s, HV - k)}[br["wall"]]
+                for y in range(cap + 1, d["wall_parapet"] + 2):
+                    if (u, y, v) in V.b:
+                        del V.b[(u, y, v)]
+    # 5. the rubble: heaps where things fell, frosted on top; never on the clear boxes (the gate's way to the keep door,
+    # the well, the postern lane, Giratina's lair)
+    bhu, bhv, bhvn = d["base_hu"], d["base_hv"], north(d, "base_hv")
+    for hp in r["rubble"]:
+        hu_, hv_ = hp["at"]
+        rad = hp["r"]
+        for u in range(int(hu_ - rad), int(hu_ + rad) + 1):
+            for v in range(int(hv_ - rad), int(hv_ + rad) + 1):
+                dist = math.hypot(u - hu_, v - hv_)
+                if dist > rad or abs(u) > bhu or not -bhvn <= v <= bhv or cleared(r, u, v):
+                    continue
+                n = int(round(hp["h"] * (1 - dist / rad) ** 0.8 + unit("heap", u, v) - 0.5))
+                y0 = hp.get("on", 0) + 1
+                for y in range(y0, y0 + max(0, n)):
+                    if (u, y, v) not in V.b:
+                        V.put(u, y, v, rubble_state(r, u, y, v, y == y0 + n - 1))
+    # 6. the lair: Giratina's spot, its floor gone to ice and its frost thrown up in spikes round it
+    ns = r["nest"]
+    nu, nv = ns["at"]
+    for u in range(int(nu - ns["r"]), int(nu + ns["r"]) + 1):
+        for v in range(int(nv - ns["r"]), int(nv + ns["r"]) + 1):
+            dist = math.hypot(u - nu, v - nv)
+            if dist <= ns["r"]:
+                V.put(u, 0, v, pick([tuple(e) for e in ns["ice"]], unit("nest", u, v)))
+            if dist <= ns["clear_r"]:
+                for y in range(1, ns["clear_h"] + 1):
+                    if (u, y, v) in V.b:
+                        del V.b[(u, y, v)]
+    for su_, sv_, h in ns["spikes"]:
+        for y in range(1, h + 1):
+            V.put(su_, y, sv_, ns["spike_block"])
+    notes["giratina"] = (nu, nv)
 
 
 def furnish(V, doc, d):
@@ -407,7 +530,11 @@ def furnish(V, doc, d):
 SNOWABLE = ("stone_bricks", "cracked_stone_bricks", "deepslate_bricks", "cracked_deepslate_bricks", "tuff_bricks",
             "cobblestone", "gravel", "stone", "tuff", "cobbled_deepslate", "andesite")
 STAIR = "minecraft:stone_brick_stairs[facing=south,half=bottom,shape=straight]"  # every flight here climbs south (the 2026-10-09 audit, B8)
-NOT_PLACES = {"regions.json", "landmarks.json", "cells.json", "visibility.json", "frostpeak_keep.json"}
+# files whose x/z are not another place's: the planning layers, this keep's own record and its other half (the
+# burrow and Giratina, data/frostpeak_keep_quest.json), and the presence probes, every one of which re-states a place
+# authored in its own file (2026-10-09: the Giratina probe's hold is the lair itself)
+NOT_PLACES = {"regions.json", "landmarks.json", "cells.json", "visibility.json", "frostpeak_keep.json",
+              "frostpeak_keep_quest.json", "world_probes.json"}
 
 
 def strand_polygon():
@@ -431,7 +558,7 @@ def in_polygon(x, z, poly):
 def base_rect(doc):
     cx, cz = doc["site"]["centre"]
     d = doc["dims"]
-    return cx - d["base_hu"], cz - d["base_hv"], cx + d["base_hu"], cz + d["base_hv"]
+    return cx - d["base_hu"], cz - north(d, "base_hv"), cx + d["base_hu"], cz + d["base_hv"]
 
 
 def siting(doc, g):
@@ -478,14 +605,15 @@ def plan(doc, g):
         F[cell] = "minecraft:stone_bricks"
     base = [tuple(e) for e in pal["base"]]
     hu, hv, reach, bat = d["base_hu"], d["base_hv"], d["batter_reach"], d["batter"]
+    hvn = north(d, "base_hv")
     plinth = 0
     edge_over = -99
     # ---- the plinth: rock under the rectangle, battered out to meet the hill; the gate ramp (u -2..2) is stairs down
     # the batter on the north axis, one block of fall per block of run (batter 1.0), replacing the batter's top block
     for x in range(cx - hu - reach, cx + hu + reach + 1):
-        for z in range(cz - hv - reach, cz + hv + reach + 1):
+        for z in range(cz - hvn - reach, cz + hv + reach + 1):
             u, v = x - cx, z - cz
-            du, dv = max(abs(u) - hu, 0), max(abs(v) - hv, 0)
+            du, dv = max(abs(u) - hu, 0), max(v - hv, -v - hvn, 0)
             dist = math.hypot(du, dv)
             if dist > reach:
                 continue
@@ -507,10 +635,10 @@ def plan(doc, g):
                 if (x, y, z) not in F:
                     F[(x, y, z)] = s
                 plinth += 1
-            if abs(u) <= 2 and v < -hv and bat == 1.0:
+            if abs(u) <= 2 and v < -hvn and bat == 1.0:
                 F[(x, top, z)] = STAIR
     for u in range(-2, 3):
-        F[(cx + u, pad, cz - hv)] = STAIR
+        F[(cx + u, pad, cz - hvn)] = STAIR
     if edge_over > 1:
         raise KeepError("the plinth's batter ends %d blocks above the hill at its reach (%d): raise dims.batter_reach" % (edge_over, reach))
     # ---- the postern lane: a cutting south of the south wall, a flight of stairs up to the hill. The flat part is
@@ -627,6 +755,14 @@ def build(g):
                                       "tools/frostpeak_keep.py from data/frostpeak_keep.json)"}},
              "data/%s/function/%s/build.mcfunction" % (NS, FN): commands(p)}
     return files, p
+
+
+def giratina_spot(doc, pad):
+    """(x, feet y, z) of Giratina's lair: the nest's centre (data/frostpeak_keep.json ruin.nest.at), on the
+    courtyard floor. Read by tools/frostpeak_keep_quest.py (its keeper and summon)."""
+    cx, cz = doc["site"]["centre"]
+    nu, nv = doc["ruin"]["nest"]["at"]
+    return (cx + nu + 0.5, pad + 1, cz + nv + 0.5)
 
 
 def hold_box(doc=None):

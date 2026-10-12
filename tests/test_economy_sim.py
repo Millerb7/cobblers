@@ -83,12 +83,10 @@ def hand_boss_teams(docs):
     for band in docs["dungeons"]["engine"]["bands"]:
         base = min(band["caps"])
         stages = []
-        n = len(d["stage_level_offsets"])
         for i, off in enumerate(d["stage_level_offsets"], 1):
-            lv = [base + off]
-            if i == n and band["band"] >= d["escort_from_band"]:
-                lv.append(base + d["escort_level_offset"])
-            stages.append(lv)
+            crew = d["teams"][str(band["band"])][i - 1]
+            # the ace (last) at the stage's level, the crew member_level_offset under it
+            stages.append([base + off + (0 if j == len(crew) - 1 else d["member_level_offset"]) for j in range(len(crew))])
         out[band["band"]] = stages
     return out
 
@@ -101,19 +99,40 @@ def test_boss_payout_per_run_matches_hand_arithmetic(world, docs):
         assert (sum(g[0] for g in got), sum(g[1] for g in got)) == (lo, hi), band
 
 
+# The Foreman's crews (data/dungeons.json boss.teams, two stages since 2026-10-10: the LAST two of the first draft's
+# three), their levels written out BY HAND from the data's rule (the ace at the stage's level, base + offset with base
+# the band's lower cap and offsets -1/0; every other member one level under it): band 1 (base 20) crews of 4/5, band 3
+# (base 40) of 4/6, band 6 (base 100) of 6/6.
+# The pinned figures are this arithmetic, never a call into the code under test (CobbleDollars' battleVictory,
+# paid-services-and-npc-payouts.md B2): B = S*S // 10 for S the party's level sum, credit between (B + B//2) * 1.25 and
+# 3 * B * 1.25, both floored; the multiplier 1.25 is written as 5/4 so the integer arithmetic is exact.
+# By hand: band 1 sums 73 and 96 (B 532 and 921): lows 997 + 1726, highs 1995 + 3453. Band 3 sums 153 and 235 (B 2340
+# and 5522): lows 4387 + 10353, highs 8775 + 20707. Band 6 sums 589 and 595 (B 34692 and 35402): lows 65047 + 66378,
+# highs 130095 + 132757.
+HAND_CREWS = {
+    1: [[18, 18, 18, 19], [19, 19, 19, 19, 20]],
+    3: [[38, 38, 38, 39], [39, 39, 39, 39, 39, 40]],
+    6: [[98, 98, 98, 98, 98, 99], [99, 99, 99, 99, 99, 100]],
+}
+HAND_RANGES = {1: (2723, 5448), 3: (14740, 29482), 6: (131425, 262852)}
+
+
 def test_the_published_band_ranges(world):
-    # the three figures the brief relays (the engine audit's); re-derived here, not trusted
-    def run_range(b):
-        r = [world.credit_range(t) for t in world.boss_teams[b]]
-        return sum(x[0] for x in r), sum(x[1] for x in r)
-    assert run_range(1) == (202, 405)
-    assert run_range(3) == (855, 1710)
-    assert run_range(6) == (11062, 22125)
+    for band, crews in HAND_CREWS.items():
+        lo = hi = 0
+        for levels in crews:
+            b = max(1, sum(levels) ** 2 // 10)
+            lo += (b + b // 2) * 5 // 4
+            hi += 3 * b * 5 // 4
+        assert (lo, hi) == HAND_RANGES[band], band            # the pinned figures are the hand arithmetic
+        got = [world.credit_range(t) for t in world.boss_teams[band]]
+        assert [sorted(t) for t in world.boss_teams[band]] == [sorted(c) for c in crews], band
+        assert (sum(x[0] for x in got), sum(x[1] for x in got)) == HAND_RANGES[band], band
 
 
 def test_sim_boss_teams_equal_the_generated_npc_classes(world):
     import dungeon_audit as DA
-    got = DA.boss_payouts(DA.dungeon_files())
+    got = DA.boss_payouts(DA.dungeon_files(), short=world.dungeon["short"])      # the sim models one dungeon's run
     for band, (lo, hi) in got.items():
         r = [world.credit_range(t) for t in world.boss_teams[band]]
         assert (sum(x[0] for x in r), sum(x[1] for x in r)) == (lo, hi), band
@@ -174,8 +193,10 @@ def test_bands_follow_the_level_cap(world):
     assert world.band_of(8, champion=True) == 6
 
 
-def test_the_ladder_rates(world):
-    assert [world.mult_of(t) for t in (0, 4, 5, 9, 10, 15, 20, 24)] == [1, 1, 1.25, 1.25, 1.5, 2, 3, 3]
+def test_the_greed_rates(world):
+    # the owner (2026-10-10): +0.1x per 2 points (200 cp), x3 at most; a coal ore is 5 cp, a diamond ore 100
+    assert [world.mult_of(cp) for cp in (0, 199, 200, 1000, 3999, 4000, 99999)] == [1, 1, 1.1, 1.5, 2.9, 3, 3]
+    assert (world.ore_cp("coal_ore"), world.ore_cp("diamond_ore")) == (5, 100)
 
 
 def test_the_sim_refuses_a_world_where_wild_battles_pay(docs):
@@ -188,11 +209,25 @@ def test_the_sim_refuses_a_world_where_wild_battles_pay(docs):
 # ---------------------------------------------------------------------------------------------------- the defects
 
 
-def test_the_clawback_scenario_pays_no_boss_money_and_the_defect_does(world):
-    sim = run(world, ["greedy"], ["design", "as_built"], runs=40)
+def test_the_clawback_scenario_pays_no_boss_money_and_its_failure_does(world):
+    # as built the clawback exists (tools/dungeon_fights.py): no boss money; defect1 is the clawback failing
+    sim = run(world, ["greedy"], ["design", "as_built", "defect1"], runs=40)
     d = sum(x["ledger"]["boss_pay"] for x in sim["design"]["greedy"])
     a = sum(x["ledger"]["boss_pay"] for x in sim["as_built"]["greedy"])
-    assert d == 0 and a > 10000
+    f = sum(x["ledger"]["boss_pay"] for x in sim["defect1"]["greedy"])
+    assert d == 0 and a == 0 and f > 10000
+
+
+def test_as_built_assumes_only_a_clawback_the_pack_builds():
+    # as_built pays no boss money because the pack takes it back: the claim must be true of the BUILT pack
+    import dungeon as D
+    files = D.build(D.load())
+    callback = files[D.CALLBACK]
+    assert "function cobblers:dungeons/claw/settle" in callback
+    assert "cobbledollars remove @s $(amount)" in files["data/cobblers/function/dungeons/claw/claw.mcfunction"]
+    go = next(v for k, v in files.items() if k.endswith("/slot/s1/go.mcfunction"))
+    assert go.index("function cobblers:dungeons/claw/boss_begin_ns") < go.index("q.npc.start_battle(")
+    assert E.SCENARIOS["as_built"]["pay_boss"] is False
 
 
 def test_defect_one_alone_accounts_for_the_boss_money(world):
@@ -202,8 +237,8 @@ def test_defect_one_alone_accounts_for_the_boss_money(world):
     # the recipe window can only overpay, by at most one sigil's difference
     assert end("defect2") <= end("design")
     assert end("design") - end("defect2") <= max(world.sigil_value[b + 1] - world.sigil_value[b] for b in range(1, 6))
-    # and the two together are the sum of the parts (paired draws)
-    assert abs((end("as_built") - end("design")) - ((end("defect1") - end("design")) + (end("defect2") - end("design")))) < 1e-6
+    # the clawback exists, so as built is the design plus the window alone (paired draws)
+    assert abs(end("as_built") - end("defect2")) < 1e-6
 
 
 def test_unclawed_stands_would_print_money(world):

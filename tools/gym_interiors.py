@@ -613,8 +613,15 @@ def build(a):
     print("healers: %d gyms, %d fills" % (len(rows), sum(r["fills"] for r in rows)))
 
     built = [g for g in doc["gyms"] if g.get("built")]
+    # every gym has been superseded by a building or a walk-through hall since 2026-10-09 (gym 2 last), so no carved
+    # interior is left and this pack is the healer sweep alone. That is allowed only when EVERY record says so: a
+    # record that is neither built nor superseded_by anything is a mistake, not a retirement (fail closed)
+    loose = [g["id"] for g in doc["gyms"] if not g.get("built") and not g.get("superseded_by")]
+    if loose:
+        raise SystemExit("data/gym_interiors.json: %s neither `built` nor `superseded_by` anything (fail closed)"
+                         % loose)
     if not built:
-        raise SystemExit("data/gym_interiors.json: no gym is `built`; there is nothing to generate (fail closed)")
+        print("no carved interior: every gym in data/gym_interiors.json is superseded_by its building or hall")
     for gym in built:
         if gym["id"] not in BUILDERS:
             raise SystemExit("%s is marked built but this tool has no builder for it; gym 6 waits on EXP-034 and "
