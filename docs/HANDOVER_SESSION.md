@@ -3,7 +3,7 @@
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
 ## 1. Branch
-`build/2026-10-09-dungeon-playtest` in worktree `.claude/worktrees/night-shift-engine-gym-9b76f2`, LOCAL ONLY (no PR;
+`build/2026-10-12-rift-guide` (PR #134, draft, against main) in worktree `.claude/worktrees/night-shift-engine-gym-9b76f2`. PR #133 (the batch) is MERGED to main at 3dc7c00.
 one big draft PR for the batch is owed). Re-read the head (`git rev-parse HEAD`; c7243b4 plus this file). The three
 agent branches (guide, vaults, one_of generator) are merged; 335 merged worktrees and 460 merged branches were removed
 (135 worktrees and 146 branches remain: dirty, locked or unmerged ones kept on purpose).
