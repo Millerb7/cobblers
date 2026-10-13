@@ -95,6 +95,19 @@ SPECIAL_NAMES = {"mrmime": "Mr. Mime", "mimejr": "Mime Jr.", "mrrime": "Mr. Rime
 FORMS = {"alolan": "Alolan", "galarian": "Galarian", "hisuian": "Hisuian", "paldean": "Paldean"}
 
 
+_DEX = []
+
+
+def _legend_class(pokemon):
+    """True for a species the Cobblemon jar labels legendary, mythical, ultra beast or paradox (the dungeon guide's
+    Dex): those are a discovery, never a listing, on this page and on drops.html, which reads wild_species()."""
+    if not _DEX:
+        import player_guide_battles as PB
+        import player_guide_dungeons as PG
+        _DEX.append(PG.Dex(PB.find_jar()))
+    return _DEX[0].is_legend(pokemon.split()[0])
+
+
 def species_name(pokemon):
     parts = pokemon.split()
     base = SPECIAL_NAMES.get(parts[0], parts[0].replace("_", " ").title())
@@ -228,6 +241,8 @@ def summarise(by_box, bucket_weights):
                 a["inb"].append(v.get("inb_day") if v.get("inb_day") is not None else v.get("inb_night"))
     rows = []
     for k in sorted(acc, key=lambda k: (list(POSITIONS).index(k[0]), BUCKETS.index(k[2]), k[1], k[3])):
+        if _legend_class(k[1]):
+            continue    # the site never names a legendary-class species (2026-10-12: Buzzwole, Pheromosa rare spawns)
         a = acc[k]
         cond = json.loads(k[5])
         row = {"pos": k[0], "sp": k[1], "name": species_name(k[1]), "bucket": k[2], "lv": [k[3], k[4]],
