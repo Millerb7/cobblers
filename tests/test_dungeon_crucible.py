@@ -48,7 +48,7 @@ import dungeon_fights as DF  # noqa: E402
 import dungeon_rooms as R  # noqa: E402
 
 DOC = D.load()
-RIP = {r["legacy_dungeon"]: r for r in DOC["rips"] if r.get("legacy_dungeon")}   # the test rips (data/dungeon_rips.json)
+RIP = {r["legacy_dungeon"]: r for r in DOC["retired_rips"]}   # the 13 test rips, RETIRED 2026-10-13 (retired_rips in data/dungeon_rips.json): the records are kept
 CR = next(d for d in DOC["dungeons"] if d["id"] == "crucible")
 OWNER_KINDS = {"maze", "puzzle", "parkour", "resources", "nest", "habitat", "stand", "miniboss"}
 OURS = {"gauntlet", "ambush", "vault", "dark_room", "collapse_bridge", "safe_room"}

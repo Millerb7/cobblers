@@ -148,7 +148,7 @@ def test_loop_is_seamless_and_it_moves(strip):
 
 # ------------------------------------------------------------------------------------------------ the world side
 def test_summon_line_carries_the_asset_and_stands_in_front_of_the_frame():
-    d = DOC["rips"][0]          # the Night Shift's test rip (data/dungeon_rips.json)
+    d = DOC["rips"][0]          # the first standing rip (data/dungeon_rips.json; the Night Shift's trail rip was retired 2026-10-13)
     line = D.oval_summon(DOC, d)
     f, o = d["frame"], d["oval"]
     assert line.startswith("summon minecraft:item_display ")
@@ -157,11 +157,11 @@ def test_summon_line_carries_the_asset_and_stands_in_front_of_the_frame():
     assert "scale:[3.00f,4.00f,1f]" in line
     m = re.match(r"summon minecraft:item_display (\S+) (\S+) (\S+) ", line)
     x, y, z = (float(g) for g in m.groups())
-    assert x == (f["x0"] + f["x1"]) / 2 + 0.5 == 1352.5              # the frame's column
-    assert y - o["height"] / 2 == f["y"] == 130                      # foot on the frame's y
+    assert x == (f["x0"] + f["x1"]) / 2 + 0.5                        # the frame's column
+    assert y - o["height"] / 2 == f["y"]                             # foot on the frame's y
     assert f["z"] < z <= f["z"] + 1.5 and z > f["z"] + 1             # in front of the opening's face, not in the block
     assert line.count("{") == line.count("}") and line.count("[") == line.count("]")
-    for tag in ("dg.rip_ns", "dg.rip_oval", "dg.rip_new"):
+    for tag in (D.rip_tag(d), "dg.rip_oval", "dg.rip_new"):
         assert '"%s"' % tag in line
 
 
@@ -176,9 +176,10 @@ def test_chain_kills_and_summons_the_oval_with_the_interaction_and_counts_unchan
     out, _want_shell, want_rips = D.chains(DOC)
     act = "\n".join(out["cobblers:dungeons/rips/entities_act"])
     assert "summon minecraft:interaction" in act and "summon minecraft:item_display" in act
-    assert "kill @e[type=minecraft:item_display,tag=dg.rip_ns,tag=dg.rip_oval]" in act
+    tag = D.rip_tag(DOC["rips"][0])
+    assert "kill @e[type=minecraft:item_display,tag=%s,tag=dg.rip_oval]" % tag in act
     done = "\n".join(out["cobblers:dungeons/rips/entities_done"])
-    assert "type=minecraft:item_display,tag=dg.rip_ns,tag=dg.rip_oval" in done     # de-duplicated like the interaction
+    assert "type=minecraft:item_display,tag=%s,tag=dg.rip_oval" % tag in done      # de-duplicated like the interaction
     assert want_rips == len(DOC["rips"])                                           # the count is still the interactions, one a rip
 
 
@@ -195,10 +196,11 @@ def test_problems_refuse_a_stretched_or_buried_oval():
 
 
 def test_world_probe_names_the_display_and_its_model_value():
-    probes = json.loads((ROOT / "data" / "world_probes.json").read_text(encoding="utf-8"))["places"]["dungeon_night_shift"]
-    disp = [p for p in probes if "item_display" in p.get("entity", "")]
-    assert len(disp) == 2 and all(p["count"] == 1 for p in disp)
-    assert any("custom_model_data" in p["entity"] and "4180" in p["entity"] for p in disp)
+    # since 2026-10-13 the oval probes are the generated dungeon_rips place's (the Night Shift's hand-written ones went with its
+    # retired trail rip): one standing-rip probe carries the item and the model value
+    probes = json.loads((ROOT / "data" / "world_probes.json").read_text(encoding="utf-8"))["places"]["dungeon_rips"]
+    nbt = [p for p in probes if "custom_model_data" in p.get("entity", "")]
+    assert len(nbt) == 1 and nbt[0]["count"] == 1 and "4180" in nbt[0]["entity"] and "amethyst_shard" in nbt[0]["entity"]
 
 
 def test_no_portal_block_or_network_in_the_art_tools():

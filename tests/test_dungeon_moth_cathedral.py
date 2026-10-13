@@ -32,7 +32,7 @@ import dungeon_rooms as R  # noqa: E402
 import dungeon_setpieces as SP  # noqa: E402
 
 DOC = D.load()
-RIP = {r["legacy_dungeon"]: r for r in DOC["rips"] if r.get("legacy_dungeon")}   # the test rips (data/dungeon_rips.json)
+RIP = {r["legacy_dungeon"]: r for r in DOC["retired_rips"]}   # the 13 test rips, RETIRED 2026-10-13 (retired_rips in data/dungeon_rips.json): the records are kept
 MC = next(d for d in DOC["dungeons"] if d["id"] == "moth_cathedral")
 SLOTS = [s for s in D.slots(DOC) if s["dungeon"]["id"] == "moth_cathedral"]
 SLOT = SLOTS[0]

@@ -240,7 +240,9 @@ def test_the_players_page_prints_the_books_paragraphs(cmd):
 def test_a_rips_patch_is_its_themes_floor_and_wall():
     themes = j("dungeon_themes.json")["themes"]
     seen = set()
-    for rec in DOC["rips"]:                      # since 2026-10-13 the rips are data/dungeon_rips.json's, each with its theme
+    # since 2026-10-13 the rips are data/dungeon_rips.json's, each with its theme. The 20 standing rips wear 8 patches; the 13
+    # retired trail rips' records are kept and carry the other themes, so the table of themes is still what is checked
+    for rec in DOC["rips"] + DOC["retired_rips"]:
         hull = themes[rec["scorch_theme"]]["hull"]
         assert "scorch" not in rec, "%s still carries an explicit scorch" % rec["id"]
         cells = D.rip_scorch_cells(rec)

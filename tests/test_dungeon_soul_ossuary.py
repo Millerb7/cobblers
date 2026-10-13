@@ -35,7 +35,7 @@ import dungeon_setpieces as SP  # noqa: E402
 
 DID = "soul_ossuary"
 DOC = D.load()
-RIP = {r["legacy_dungeon"]: r for r in DOC["rips"] if r.get("legacy_dungeon")}   # the test rips (data/dungeon_rips.json)
+RIP = {r["legacy_dungeon"]: r for r in DOC["retired_rips"]}   # the 13 test rips, RETIRED 2026-10-13 (retired_rips in data/dungeon_rips.json): the records are kept
 SO = next(d for d in DOC["dungeons"] if d["id"] == DID)
 SLOTS = [s for s in D.slots(DOC) if s["dungeon"]["id"] == DID]
 SLOT = SLOTS[0]
