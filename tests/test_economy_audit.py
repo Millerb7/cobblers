@@ -607,7 +607,8 @@ def test_a_barter_cheaper_than_its_money_price_is_a_bypass_and_a_bank_premium_fa
     assert f == ["BARTER BYPASS (placed) l: the worst-case inputs are worth $120, under the output's $130 (its cheapest "
                  "money path, buy at c for $130): cheaper than the counter"], f
     f, r = E.barter_value_checks([b], {"lines": []}, conv, {"m:ing": 10}, {"m:out": (120.0, "buy at c for $120")})
-    assert f == [] and any(x.startswith("barter value (placed) l: inputs worth $120 against $120") for x in r)
+    assert f == [] and any(x.startswith("barter value (placed) l: inputs worth $120 (1.20 P) against $120 (1.20 P")
+                           for x in r)
     f, _r = E.barter_value_checks([b], {"lines": []}, conv, {"m:ing": 10, "m:out": 200}, {})
     assert f == ["BARTER PREMIUM (placed) l: the Bank pays $200 for 1 x m:out, inputs worth $120"], f
     v = E.Barter("v", "placed", [("m:ing", 12)], (None, ("m:ing", 12)), ("cobblemon:protein", 1))
@@ -729,15 +730,185 @@ def test_a_generator_that_shelves_training_a_tier_early_is_a_leak():
     assert any(f.startswith("TIER LEAK gym1_mart sells cobblemon:power_") for f in fails), fails[:5]
 
 
-# Without it a barter re-priced under the counter inside the generator would pass: cost B at 9/10 of its count makes
-# the Master Ball 1 block + 18 ingots, $24,300 against the counter's $27,000.
+# Without it a barter re-priced under its worth inside the generator would pass. Since ECONOMY_V2 (E4) the Master Ball
+# has no money line, so the check holds it against the spine: the owner's 2 netherite ingots at the Bank's $900, $1,800.
+# Cost B at 9/10 of its count (data untouched) makes it 1 ingot + 4 scrap, $900 + 4 x $202 = $1,708; and the Choice
+# Specs 1 diamond block + 3 ingots, $1,080 + $2,700 = $3,780, under the Assault Vest's $4,500 as it stood.
 @needs_jars
 def test_a_generator_that_prices_a_barter_at_nine_tenths_is_a_bypass():
     d = mutant("direct_trades", 'r["buyB"] = _cost(offer["buyB"])',
                'r["buyB"] = dict(_cost(offer["buyB"]), count=int(offer["buyB"]["count"]) * 9 // 10)')
     fails, _r, _n = E.audit(SNAP, VANILLA, use_jars=True, direct_trades_mod=d)
     assert any(f.startswith("BARTER BYPASS (placed) emitted:cobblemon:master_ball: the worst-case inputs are worth "
-                            "$24300, under the output's $27000") for f in fails), fails[:8]
+                            "$1708, under the output's $1800 (the spine: 2 x minecraft:netherite_ingot at the Bank")
+               for f in fails), fails[:8]
+    assert any(f.startswith("BARTER BYPASS (placed) emitted:cobblemon:choice_specs: the worst-case inputs are worth "
+                            "$3780, under the output's $4500") for f in fails), fails[:8]
+
+
+# ============================================================================================ ECONOMY_V2 (B4, 2026-10-13)
+# docs/mechanics/ECONOMY_V2.md 5.2 A3 (no dollar path to the top tier), A5 (no cobblemon: id in the Bank), A2 (the $1
+# unit floor) and the spine valuation of a barter whose output has no money line. Written by an agent that built none
+# of B1/B3/B5. NOT covered: A1 (every price re-derived from the spine: a tier wage's split across its items is not
+# determined by the data), A4 (the Trading Post: B2 is not built, E3 is open), A6 beyond the wandering trader's stated
+# table (other villagers' trades, and whether a breedable villager is obtainable: U5), and anything in a running game.
+
+# Without it the Master Ball's worth would follow the data's own reference: valued at the owner's 2 ingots ($1,800),
+# not at a reference edited to 1 ingot ($900), 1 ingot + 3 scrap ($1,506) is a bypass and the drift is reported.
+def test_the_master_ball_is_held_to_the_owners_spine_worth_not_to_the_datas_reference():
+    doc = {"lines": [{"sell": {"id": "cobblemon:master_ball"},
+                      "reference": {"bank": [{"item": "minecraft:netherite_ingot", "count": 1}]}}]}
+    b = E.Barter("mb", "placed", [("minecraft:netherite_ingot", 1), ("minecraft:netherite_scrap", 3)],
+                 (("minecraft:netherite_ingot", 1), ("minecraft:netherite_scrap", 3)), ("cobblemon:master_ball", 1))
+    bank = {"minecraft:netherite_ingot": 900, "minecraft:netherite_scrap": 202}
+    f, r = E.barter_value_checks([b], doc, [], bank, {})
+    assert f == ["BARTER BYPASS (placed) mb: the worst-case inputs are worth $1506, under the output's $1800 (the "
+                 "spine: 2 x minecraft:netherite_ingot at the Bank, the owner's E4 (ECONOMY_V2.md section 7): 'about 2 "
+                 "netherite ingots'): cheaper than the counter"], f
+    assert any(x.startswith("barter spine cobblemon:master_ball: the data's reference is $900") for x in r), r
+
+
+# Without it a top-tier line could stand unjudged: a placed Focus Sash line whose output has no money line, no reference
+# and no spine worth fails as unvalued; a non-top-tier output in the same state is only reported.
+def test_a_top_tier_barter_with_nothing_to_value_it_against_fails():
+    pays = [("m:ing", 3)]
+    sash = E.Barter("s", "placed", pays, (None, ("m:ing", 3)), ("cobblemon:focus_sash", 1))
+    other = E.Barter("o", "placed", pays, (None, ("m:ing", 3)), ("m:trinket", 1))
+    f, r = E.barter_value_checks([sash, other], {"lines": []}, [], {"m:ing": 10}, {})
+    assert f == ["BARTER UNVALUED (placed) s: inputs worth $30 and no money line, reference or spine worth for "
+                 "cobblemon:focus_sash to hold them against"], f
+    assert any(x.startswith("barter value (placed) o: inputs worth $30; the output has no money price") for x in r)
+
+
+# Without it a dollar path to the top tier through a bought emerald would go unseen. Hand-built graph: $5 buys an
+# emerald, the wandering trader sells t:shard for it, a recipe presses a shard into a diamond, and 9 diamonds barter
+# for a Focus Sash. The diamond and the sash are reached (each with its path); the netherite inputs, never sold, are
+# not. Without the emerald on sale nothing is reached.
+def test_a_dollar_path_through_an_emerald_a_recipe_and_a_barter_reaches_the_top_tier():
+    conv = [("x:press", "crafting", [({"t:shard"}, 1)], "minecraft:diamond", 1)]
+    sash = E.Barter("s", "placed", [("minecraft:diamond", 9)], (None, ("minecraft:diamond", 9)),
+                    ("cobblemon:focus_sash", 1))
+    f, r = E.top_tier_checks([_sale("minecraft:emerald", 5)], conv, [sash], wandering=("t:shard",))
+    assert sorted(x.split(" has a dollar path")[0] for x in f) == ["TOP TIER INPUT minecraft:diamond",
+                                                                    "TOP TIER OUTPUT cobblemon:focus_sash"], f
+    dia = next(x for x in f if x.startswith("TOP TIER INPUT minecraft:diamond"))
+    assert "crafting x:press from t:shard" in dia and "minecraft:emerald: buy at shop for $5" in dia, dia
+    assert any("emerald is reachable from dollars" in x for x in r), r
+    f, r = E.top_tier_checks([_sale("m:bread", 1)], conv, [sash], wandering=("t:shard",))
+    assert f == [] and any("emerald is not reachable from dollars" in x for x in r), (f, r)
+
+
+# Without it a counter not yet sited could shelve a top-tier input and pass until the day it opens: an unsited sale is
+# a dollar path, named as such. A line's own inputs join the set: a Master Ball line paying t:sigil makes t:sigil one.
+def test_an_unsited_seller_and_a_lines_own_inputs_are_in_the_top_tier_search():
+    f, _r = E.top_tier_checks([_sale("minecraft:netherite_scrap", 300, sited=False)], [], [])
+    assert f == ["TOP TIER INPUT minecraft:netherite_scrap has a dollar path: minecraft:netherite_scrap: buy at shop "
+                 "for $300 (UNSITED)"], f
+    ball = E.Barter("b", "placed", [("t:sigil", 2)], (None, ("t:sigil", 2)), ("cobblemon:master_ball", 1))
+    f, _r = E.top_tier_checks([_sale("t:sigil", 50)], [], [ball], wandering=())
+    assert [x.split(" has")[0] for x in f] == ["TOP TIER OUTPUT cobblemon:master_ball", "TOP TIER INPUT t:sigil"], f
+
+
+_FLOOR_MARKETS = {"income_basis": {"leg_by_badge": {"1": 4000, "3": 10000, "8": 68000}}}
+_FLOOR_GATE = {"gate_flag": "cobblers:flag/gym8_cleared"}
+
+
+def _floor_bank(**nether):
+    return {"effort_model": {"max_leg_hours": 4, "tiers": {"early": {"opens_leg": 1}, "deep": {"opens_leg": 3},
+                                                           "nether": dict({"opens_leg": 8}, **nether)}},
+            "buys": [{"item": "minecraft:coal", "tier": "early", "rate_per_hour": "60"},
+                     {"item": "minecraft:iron_ingot", "tier": "early", "rate_per_hour": "0"},
+                     {"item": "t:glut", "tier": "early", "rate_per_hour": "900", "rate_per_hour_upper": "1501"},
+                     {"item": "t:edge", "tier": "early", "rate_per_hour": "1500"}]}
+
+
+# Without it a bulk block could sit in the Bank at the $1 floor and pay more an hour than fighting. By hand: leg 1's
+# fight hour is 4000 / 4 = $1,000, the floor's ceiling 1.5 x that = $1,500. t:glut's UPPER rate 1501 is over (its
+# typical 900 is not: the upper one is judged); t:edge at exactly 1500 is not; cobblestone, declaring nothing, is
+# judged at the design's 3,300 and fails; netherrack at 15,000 opens at leg 8 (68000 / 4 x 1.5 = $25,500) and passes,
+# the gap A2 leaves to the renewable-bulk rule. A pp_max entry fails the namespace rule; the elytra, with no rate, is
+# reported; the bank's own nether opens_leg is not believed over the gate.
+def test_the_bank_holds_no_cobblemon_id_and_nothing_gathered_past_the_unit_floor():
+    entries = [{"item": i, "price": p} for i, p in (("minecraft:coal", 4), ("minecraft:iron_ingot", 9), ("t:glut", 1),
+                                                    ("t:edge", 1), ("minecraft:cobblestone", 1),
+                                                    ("minecraft:netherrack", 1), ("cobblemon:pp_max", 3500),
+                                                    ("minecraft:elytra", 25000))]
+    f, r = E.bank_v2_checks(entries, _floor_bank(opens_leg=7), _FLOOR_MARKETS, _FLOOR_GATE)
+    assert sorted(x.split(":")[0] + ":" + x.split(":")[1].split(" ")[0] for x in f) == [
+        "NAMESPACE cobblemon:pp_max", "UNIT FLOOR minecraft:cobblestone", "UNIT FLOOR t:glut"], f
+    assert any(x.startswith("UNIT FLOOR minecraft:cobblestone: 3300 an hour (ECONOMY_V2 2.2 (ESTIMATE)) at the $1 floor "
+                            "pays $3300 an hour, over 1.5 x the leg-1 fight hour ($1500)") for x in f), f
+    assert "unit floor minecraft:elytra: no rate declared or stated, so A2 cannot judge it" in r, r
+    assert any(x.startswith("unit floor: data/bank.json says the nether tier opens at leg 7; the gate says leg 8")
+               for x in r), r
+
+
+# Without it the real Bank's v2 rules would be unproved: no cobblemon: id and nothing past the floor in what install
+# copies, and the two dormant End goods reported, not passed.
+def test_the_real_bank_passes_the_namespace_and_unit_floor_rules(real):
+    fails, reps, _n = real
+    assert not [f for f in fails if f.startswith(("NAMESPACE", "UNIT FLOOR"))], fails
+    assert "unit floor minecraft:elytra: no rate declared or stated, so A2 cannot judge it" in reps
+
+
+# Without it a dollar path into the top tier on the real sellers, recipes and barter would pass. The search must have
+# read the barter edges and, with the jars, the recipes.
+def test_no_dollar_path_reaches_the_top_tier_on_the_real_data(real):
+    fails, reps, _n = real
+    assert not [f for f in fails if f.startswith("TOP TIER")], [f for f in fails if f.startswith("TOP TIER")]
+    summary = next(x for x in reps if x.startswith("top tier: 8 outputs and "))
+    m = re.search(r"against (\d+) seller offers, (\d+) recipes, (\d+) barter edges", summary)
+    assert int(m.group(1)) > 0 and int(m.group(3)) >= 8, summary
+    if HAVE_JARS:
+        assert int(m.group(2)) > 0, summary
+    assert not [x for x in reps if x.startswith("top tier cobblemon:")], "a top-tier item has no barter route"
+
+
+# Without it a generator putting the superseded money lines back on the counter would pass: tools/markets.py's
+# merchant_shop shelving superseded_stock (data untouched) sells the Master Ball at Northlight for $27,000 again.
+def test_a_generator_that_shelves_the_superseded_top_tier_lines_is_a_dollar_path():
+    m = mutant("markets", 'for it in stall["stock"]]}]',
+               'for it in stall["stock"] + list(stall.get("superseded_stock") or [])]}]')
+    fails, _r, _n = E.audit(None, None, use_jars=False, markets_mod=m)
+    tops = [f for f in fails if f.startswith("TOP TIER OUTPUT")]
+    assert any(f.startswith("TOP TIER OUTPUT cobblemon:master_ball has a dollar path: cobblemon:master_ball: buy at "
+                            "markets northlight_station") and "for $27000" in f for f in tops), tops
+    assert {f.split(" has")[0].rsplit(" ", 1)[1] for f in tops} == {
+        "cobblemon:master_ball", "cobblemon:ability_capsule", "cobblemon:focus_sash", "cobblemon:expert_belt",
+        "cobblemon:eviolite", "cobblemon:assault_vest"}, tops
+
+
+# Without it a shelved top-tier INPUT would pass: tools/markets.py's merchant_shop adding a $5,000 diamond block to
+# every merchant (data untouched) is a dollar path to the block and, through the jars' uncrafting recipe, the diamond.
+def test_a_generator_that_shelves_a_diamond_block_is_a_dollar_path_to_a_top_tier_input():
+    m = mutant("markets", 'for it in stall["stock"]]}]',
+               'for it in stall["stock"] + [{"item": "minecraft:diamond_block", "price": 5000, "count": 1}]]}]')
+    fails, _r, _n = E.audit(SNAP if HAVE_JARS else None, VANILLA if HAVE_JARS else None, use_jars=HAVE_JARS,
+                            markets_mod=m)
+    tops = {f.split(" has")[0] for f in fails if f.startswith("TOP TIER")}
+    assert "TOP TIER INPUT minecraft:diamond_block" in tops, sorted(tops)
+    if HAVE_JARS:
+        assert "TOP TIER INPUT minecraft:diamond" in tops, sorted(tops)
+
+
+# Without it bank.py could emit a cobblemon: entry again: its base_removed filter widened for pp_max (data/bank.json
+# untouched) puts the base's $3,500 PP Max back in the Bank, and the namespace rule names it.
+def test_a_generator_that_buys_pp_max_again_fails_the_namespace_rule():
+    b = mutant("bank", 'if e["item"] not in gone]', 'if e["item"] not in gone or e["item"] == "cobblemon:pp_max"]')
+    assert "cobblemon:pp_max" in {e["item"] for e in E.bank_entries_emitted(b)}
+    fails, _r, _n = E.audit(None, None, use_jars=False, bank_mod=b)
+    assert any(f.startswith("NAMESPACE cobblemon:pp_max is in the Bank at $") for f in fails), fails[:5]
+
+
+# Without it a bulk block appended by the generator would pass the floor: bank.py's entries() emitting cobblestone at $1
+# (data untouched; bank.py's own R-V2-1 reads only data/bank.json buys and does not see it) fails A2 at the design's
+# 3,300 an hour against leg 1's ceiling.
+def test_a_generator_that_banks_cobblestone_fails_the_unit_floor():
+    b = mutant("bank", '[{"item": b["item"], "price": b["price"]} for b in doc["buys"]]',
+               '[{"item": b["item"], "price": b["price"]} for b in doc["buys"]] + '
+               '[{"item": "minecraft:cobblestone", "price": 1}]')
+    fails, _r, _n = E.audit(None, None, use_jars=False, bank_mod=b)
+    assert any(f.startswith("UNIT FLOOR minecraft:cobblestone: 3300 an hour") for f in fails), fails[:5]
 
 
 # Without it a step holding one chunk of two would pass: the Northlight box shrunk to end at the villager's own x.

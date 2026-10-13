@@ -12,6 +12,9 @@ WHAT IS READ FROM DATA (change the file and the result moves; tests/test_economy
   data/dungeons.json  the bands, clocks, sigil recipes, the greed ladder, the boss's aces, escorts and level offsets
   data/blackout.json  the flat death charge (cap x percent)
   data/produce_buyer.json, data/training_services.json, data/mining_caves.json (the seam's ore mix)
+  data/direct_trades.json  the Station Exchange's approved lines: the Master Ball and the top tier have no money line
+                      since ECONOMY_V2 (the owner, 2026-10-13), so their price is the barter's inputs in hours of digging
+                      (T12), at the bank's declared rates
   modpack/config/cobbledollars/common.json   the income multiplier and which battles pay
 
 THE PAYOUT (docs/research/notes/paid-services-and-npc-payouts.md B2, read from CobbleDollars' battleVictory bytecode;
@@ -70,8 +73,21 @@ DOC_PATHS = {
     "blackout": "data/blackout.json", "produce": "data/produce_buyer.json",
     "services": "data/training_services.json", "caves": "data/mining_caves.json",
     "nether_gate": "data/nether_gate.json", "key_ball": "data/key_ball.json", "entei": "data/entei_boss.json",
+    "trades": "data/direct_trades.json",
     "cd": "modpack/config/cobbledollars/common.json",
 }
+# docs/mechanics/ECONOMY_V2.md 2.4 and section 7 (E4, E5; the owner, 2026-10-13): the top tier has no money line, only
+# the Station Exchange's barter. Stated from the design, not read from data/bank.json exchanges.barter_only.
+TOP_TIER = ("cobblemon:master_ball", "cobblemon:ability_capsule", "cobblemon:focus_sash", "cobblemon:expert_belt",
+            "cobblemon:eviolite", "cobblemon:assault_vest", "cobblemon:choice_specs", "cobblemon:destiny_knot")
+# vanilla 1.21.1 crafting (ASSUMED, vanilla knowledge): a storage block is nine of its item, a netherite ingot is four
+# scrap (one smelted debris each) and four gold ingots (one smelted raw gold each)
+RAW_OF = {"minecraft:ancient_debris": {"minecraft:ancient_debris": 1}, "minecraft:netherite_scrap": {"minecraft:ancient_debris": 1},
+          "minecraft:netherite_ingot": {"minecraft:ancient_debris": 4, "minecraft:raw_gold": 4},
+          "minecraft:netherite_block": {"minecraft:ancient_debris": 36, "minecraft:raw_gold": 36},
+          "minecraft:diamond": {"minecraft:diamond": 1}, "minecraft:diamond_block": {"minecraft:diamond": 9},
+          "minecraft:gold_ingot": {"minecraft:raw_gold": 1}, "minecraft:raw_gold": {"minecraft:raw_gold": 1}}
+BLOCK_OF = {"minecraft:netherite_block": "minecraft:netherite_ingot", "minecraft:diamond_block": "minecraft:diamond"}
 
 # DUNGEONS.md 4.2, "Required" column (minutes), RELAYED. Clock = ceil(required x 1.25); the test checks this against
 # dungeons.json bands[].clock_s so a re-timed clock that leaves this stale is caught.
@@ -183,7 +199,8 @@ class World:
         # counters
         self.shelf_due, self.late_shelf = self.read_shelf()
         self.beast_ball = self.counter_price("cobblemon:beast_ball")
-        self.master_ball = self.counter_price("cobblemon:master_ball")
+        # the Master Ball has no money line (ECONOMY_V2 E4): its price is the barter's inputs, in hours of digging
+        self.master_ball = self.barter_hours("cobblemon:master_ball")
         self.services = docs["services"]["services"]
 
     # --- gathering time for a recipe, at the bank's declared rates (DUNGEONS.md 7.4's "Gathering" column)
@@ -207,6 +224,42 @@ class World:
                 if it["item"] == item:
                     return int(it["price"])
         raise SimError("no counter sells %s" % item)
+
+    def barter_hours(self, item):
+        """The approved Station Exchange line selling `item` (data/direct_trades.json lines), priced in hours of
+        digging at the bank's declared rates (ECONOMY_V2.md 3.2's method): {id, inputs, raw, debris_h, debris_h_upper,
+        diamond_h, gold_h, hours, hours_upper, bank_value}. `hours` is the pickaxe route with a gold ranch (gold counts
+        zero, 3.2's rule), `hours_upper` the bed-or-TNT rate where the bank declares one; `gold_h` the extra hours when
+        the gold is mined instead. Cost A counts as authored (the trade's undiscounted price). SimError when no approved
+        line sells it, or an input has no raw form here."""
+        lines = [ln for ln in self.docs["trades"].get("lines") or []
+                 if (ln.get("approved") is True or ln.get("status") == "approved")
+                 and (ln.get("sell") or {}).get("id") == item]
+        if not lines:
+            raise SimError("no approved barter line sells %s" % item)
+        ln = lines[0]
+        inputs = [(c["id"], int(c.get("count", 1))) for c in (ln.get("buy"), ln.get("buyB")) if c]
+        raw = {}
+        for i, n in inputs:
+            if i not in RAW_OF:
+                raise SimError("barter %s pays %s, which has no raw form in RAW_OF" % (ln.get("id"), i))
+            for r, k in RAW_OF[i].items():
+                raw[r] = raw.get(r, 0) + n * k
+        bk = {b["item"]: b for b in self.docs["bank"]["buys"]}
+
+        def h(r, upper=False):
+            b = bk[r]
+            rate = float((b.get("rate_per_hour_upper") if upper else None) or b["rate_per_hour"])
+            return raw.get(r, 0) / rate
+
+        out = {"id": ln.get("id"), "inputs": inputs, "raw": raw,
+               "debris_h": h("minecraft:ancient_debris"), "debris_h_upper": h("minecraft:ancient_debris", True),
+               "diamond_h": h("minecraft:diamond"), "gold_h": h("minecraft:raw_gold"),
+               "bank_value": sum(n * (self.price[i] if i in self.price else 9 * self.price[BLOCK_OF[i]])
+                                 for i, n in inputs)}
+        out["hours"] = out["debris_h"] + out["diamond_h"]
+        out["hours_upper"] = out["debris_h_upper"] + out["diamond_h"]
+        return out
 
     def read_shelf(self):
         """({leg: [price, ...]} the critical path's convenience lines due that leg, a pick-one group at its dearest,
@@ -699,7 +752,8 @@ def sinks(w):
     shelf_all = sum(p for p, _a, _i, _path in w.late_shelf)
     rows = [
         ("The late shelf: every counter line not on the curve (off-path counters, critical power, stretch), one of each",
-         shelf_all, shelf_all, "data/markets.json counters; includes the Master Ball and one Beast Ball"),
+         shelf_all, shelf_all, "data/markets.json counters; includes one Beast Ball. The Master Ball and the top tier "
+                               "are not on it: barter only, priced in hours in T12"),
         ("Level-raise service for a team of six at every cap step (%d steps x 6 x $%d)" % (len(caps), sv["raise"]["price"]),
          len(caps) * 6 * sv["raise"]["price"], len(caps) * 6 * sv["raise"]["price"], "optional; STATE says ~$30,000"),
         ("Effort training, one Pokemon (EV spread)", sv["ev"]["price"], sv["ev"]["price"], "per Pokemon"),
@@ -938,6 +992,26 @@ def build_report(w, runs=300, seed=1, dungeon_runs=3000):
         P("| %s | $%s | $%s | %s | %s |" % (label, money(v), money(y), ratio(v, y), verdict_flag(v / y) if v > 0 else "pays nothing / a sink"))
     P("\nSinks that run on a clock: Entei with a Tower Ash every 20 minutes of uptime is -$%s an hour in ash alone (+ drops that no counter or bank buys)." % money(
         3 * 2 * w.price["minecraft:netherite_ingot"]))
+
+    P("\n### T12. The top tier is bought with digging, not money (the Station Exchange's approved lines; ECONOMY_V2.md 3.2's method)\n")
+    P("| Item | Barter | Debris | Diamonds | Hours, pickaxe | Hours, bed or TNT | Extra hours if gold is mined | Inputs at the bank | Leg-8 fight hours |")
+    P("|---|---|---:|---:|---:|---:|---:|---:|---:|")
+    fh8 = w.fight_hour("8")
+    tops = []
+    for item in TOP_TIER:
+        try:
+            t = w.barter_hours(item)
+        except SimError as exc:
+            P("| %s | %s | | | | | | | |" % (item, exc))
+            continue
+        tops.append((item, t))
+        P("| %s | %s | %d | %d | %.2f | %.2f | +%.2f | $%s | %.2f |" % (
+            item, " + ".join("%d %s" % (n, i.split(":")[1]) for i, n in t["inputs"]), t["raw"].get("minecraft:ancient_debris", 0),
+            t["raw"].get("minecraft:diamond", 0), t["hours"], t["hours_upper"], t["gold_h"], money(t["bank_value"]),
+            t["bank_value"] / fh8))
+    data["top_tier"] = {item: {k: t[k] for k in ("hours", "hours_upper", "gold_h", "bank_value")} for item, t in tops}
+    P("\nThe rates are data/bank.json's declared ones (ASSUMED until timed). Gold counts zero with a ranch; the extra-hours "
+      "column is the gold mined instead. Cost A counts as authored.")
     return data, out
 
 

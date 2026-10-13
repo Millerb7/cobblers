@@ -81,6 +81,21 @@ Where each expectation comes from:
               less than the output's cheapest money path, or, where it has none, the counter lines the line names as
               its reference (the owner, 2026-10-08: "an alternative path, not a bypass"). PREMIUM: FAILURE when the
               Bank pays more for the output than the inputs are worth to it. An arena prize sold as stock is REPORTED.
+              Since ECONOMY_V2 (2026-10-13) a reference line is a money line as it stood (stock or superseded_stock),
+              or `reference.bank`, the spine (1 P = $100): items valued at the effective Bank; the Master Ball's spine
+              worth is the owner's E4 (OWNER_SPINE: 2 netherite ingots at the Bank), stated here, so a data reference
+              that drifts from it is REPORTED and not used. A placed top-tier line with no derivable value FAILS.
+  top tier    ECONOMY_V2 5.2 A3 (top_tier_checks): a reachability search from dollars (every seller, sited or not; every
+              jar recipe; every barter edge; the vanilla wandering trader's emerald offers, a STATED table) to the
+              top tier (TOP_TIER, from the design) and its inputs (TOP_TIER_INPUTS + every input of a line selling
+              one). FAILURE for each reached. Rule B1 above stays a REPORT for the experiment lines.
+  bank v2     ECONOMY_V2 5.2 A5 and A2 (bank_v2_checks), over the emitted and committed bank, base entries included:
+              FAILURE for a cobblemon: id; FAILURE when an entry's upper rate x $1 exceeds 1.5 x the fight hour of the
+              leg its tier opens (income_basis.leg_by_badge / max_leg_hours; the nether leg from data/nether_gate.json,
+              not the bank's claim). An entry with no declared rate is judged at the design's 2.2 estimate (BULK_RATES)
+              or REPORTED. NOT here: A1 (re-deriving every price from the spine: the per-item split of a tier's wage
+              is not determined by the data), A4 (the Trading Post: unit B2 is not built, E3 open) and A6 (villager
+              trades beyond the wandering trader's table).
   forceload   every block the R18DT functions read or write and every summon they place, read from the EMITTED
               functions, must lie in a chunk a forceload holds when the step runs them, and no hold may be released
               before a function they schedule has had its ticks (tools/direct_trades.py steps(), the reapply step).
@@ -1581,6 +1596,56 @@ def buyer_checks(files, best, jars=None):
 # ------------------------------------------------------------------------------------------------ barter
 MONEY = "$"
 BARTER_ROUNDS = 16
+# ---- ECONOMY_V2 (docs/mechanics/ECONOMY_V2.md; the owner's answers, section 7, 2026-10-13). Stated HERE from the design,
+# never read from data/bank.json exchanges.barter_only or tools/bank.py (the builder's list and checks).
+P_DOLLARS = 100             # 1.1: 1 P = $100 (the owner's E11: the unit field is worth_p)
+# 2.4 + E4 + E5: the top tier has no dollar line; it is bought at the Station Exchange with what dollars cannot buy
+TOP_TIER = ("cobblemon:master_ball", "cobblemon:ability_capsule", "cobblemon:focus_sash", "cobblemon:expert_belt",
+            "cobblemon:eviolite", "cobblemon:assault_vest", "cobblemon:choice_specs", "cobblemon:destiny_knot")
+# 3.3 and 5.2 A3: the inputs no dollar may reach (each top-tier barter line's own inputs are added to these)
+TOP_TIER_INPUTS = ("minecraft:ancient_debris", "minecraft:netherite_scrap", "minecraft:netherite_ingot",
+                   "minecraft:netherite_block", "minecraft:diamond", "minecraft:diamond_block")
+# E4: the Master Ball's worth on the spine is "about 2 netherite ingots" ("30 is too steep, it should be more
+# accessible"), valued at the Bank's own ingot price (1.1: the minerals are already on the spine)
+OWNER_SPINE = {"cobblemon:master_ball": (("minecraft:netherite_ingot", 2),
+                                         "the owner's E4 (ECONOMY_V2.md section 7): 'about 2 netherite ingots'")}
+# 2 and 5.2 A2: a bank entry's upper hour at the $1 unit floor is at most this many times its opening leg's fight hour
+UNIT_FLOOR_FACTOR = 1.5
+# 2.2's ESTIMATE rates per hour (and tier) for the bulk and renewable goods v2 sends to the Trading Post. A2 applies
+# them to any bank entry that declares no rate of its own, so a bulk block that drifts into the Bank (a base entry
+# un-removed, a generator change) is judged rather than skipped. Wood and crops are below the floor at these rates;
+# the AFK rule, not A2, keeps them out.
+BULK_RATES = dict(
+    [(i, (3300, "early")) for i in ("minecraft:cobblestone", "minecraft:cobbled_deepslate", "minecraft:stone",
+                                    "minecraft:andesite", "minecraft:diorite", "minecraft:granite", "minecraft:tuff",
+                                    "minecraft:dirt", "minecraft:sand", "minecraft:red_sand", "minecraft:gravel")]
+    + [(i, (15000, "nether")) for i in ("minecraft:netherrack", "minecraft:blackstone", "minecraft:basalt",
+                                        "minecraft:soul_sand")]
+    + [(i, (2000, "early")) for i in ("minecraft:melon_slice", "minecraft:dried_kelp", "minecraft:sugar_cane",
+                                      "minecraft:bamboo", "minecraft:cactus")]
+    + [("cobblemon:relic_coin", (2000, "early")), ("minecraft:wheat", (1000, "early")),
+       ("minecraft:nether_wart", (1000, "nether"))])
+# Vanilla 1.21.1's wandering trader, every offer priced in emeralds (WanderingTraderTrades: code, not JSON, so this
+# is a STATED table from vanilla knowledge, ASSUMED until read from the jar; 1.21.2+ reworked it). A3 adds each as an
+# emerald -> item edge, so a dollar path through a bought emerald is followed.
+WANDERING_TRADER = (
+    "minecraft:sea_pickle", "minecraft:slime_ball", "minecraft:glowstone", "minecraft:nautilus_shell", "minecraft:fern",
+    "minecraft:sugar_cane", "minecraft:pumpkin", "minecraft:kelp", "minecraft:cactus", "minecraft:dandelion",
+    "minecraft:poppy", "minecraft:blue_orchid", "minecraft:allium", "minecraft:azure_bluet", "minecraft:red_tulip",
+    "minecraft:orange_tulip", "minecraft:white_tulip", "minecraft:pink_tulip", "minecraft:oxeye_daisy",
+    "minecraft:cornflower", "minecraft:lily_of_the_valley", "minecraft:wheat_seeds", "minecraft:beetroot_seeds",
+    "minecraft:pumpkin_seeds", "minecraft:melon_seeds", "minecraft:acacia_sapling", "minecraft:birch_sapling",
+    "minecraft:dark_oak_sapling", "minecraft:jungle_sapling", "minecraft:oak_sapling", "minecraft:spruce_sapling",
+    "minecraft:cherry_sapling", "minecraft:mangrove_propagule", "minecraft:red_dye", "minecraft:white_dye",
+    "minecraft:blue_dye", "minecraft:pink_dye", "minecraft:black_dye", "minecraft:green_dye", "minecraft:light_gray_dye",
+    "minecraft:magenta_dye", "minecraft:yellow_dye", "minecraft:gray_dye", "minecraft:purple_dye",
+    "minecraft:light_blue_dye", "minecraft:lime_dye", "minecraft:orange_dye", "minecraft:brown_dye", "minecraft:cyan_dye",
+    "minecraft:brain_coral_block", "minecraft:bubble_coral_block", "minecraft:fire_coral_block",
+    "minecraft:horn_coral_block", "minecraft:tube_coral_block", "minecraft:vine", "minecraft:brown_mushroom",
+    "minecraft:red_mushroom", "minecraft:lily_pad", "minecraft:small_dripleaf", "minecraft:sand", "minecraft:red_sand",
+    "minecraft:pointed_dripstone", "minecraft:rooted_dirt", "minecraft:moss_block", "minecraft:tropical_fish_bucket",
+    "minecraft:pufferfish_bucket", "minecraft:packed_ice", "minecraft:blue_ice", "minecraft:gunpowder",
+    "minecraft:podzol")
 # vanilla 1.21.1 MerchantOffer: the codec's keys and defaults, read from the client jar's bytecode (class dbu, its
 # RecordCodecBuilder: uses 0, maxUses 4, rewardExp true, specialPrice 0, demand 0, priceMultiplier 0.0f, xp 1)
 OFFER_DEFAULTS = {"uses": 0, "maxUses": 4, "rewardExp": True, "specialPrice": 0, "demand": 0, "priceMultiplier": 0.0,
@@ -1842,8 +1907,9 @@ def gains(seeds, conversions, sales, bank_prices):
     return out
 
 
-def barter_checks(sales, conversions, bank_prices, best, doc=None, dt_mod=None):
-    """(failures, reports, notes) for the barter edges."""
+def barter_checks(sales, conversions, bank_prices, best, doc=None, dt_mod=None, edges_out=None):
+    """(failures, reports, notes) for the barter edges. `edges_out`, a list, receives every edge audited: the emitted
+    villagers' offers and the proposal lines."""
     fails, reps, notes = [], [], []
     if doc is None:
         if not DIRECT_TRADES.is_file():
@@ -1864,7 +1930,9 @@ def barter_checks(sales, conversions, bank_prices, best, doc=None, dt_mod=None):
     elif files is not None:
         notes.append("NOT CHECKED: forceload cover (the barter generator given has no step list)")
     proposal = [b for b in data_edges if b.group == "proposal"]
-    seeds = {MONEY} | {i for b in placed + proposal for i, _n in b.pays} | {b.gets[0] for b in placed + proposal}
+    if edges_out is not None:
+        edges_out += placed + proposal
+    seeds ={MONEY} | {i for b in placed + proposal for i, _n in b.pays} | {b.gets[0] for b in placed + proposal}
     base = gains(seeds, conversions, sales, bank_prices)
     with_placed = gains(seeds, conversions + [b.conversion() for b in placed], sales, bank_prices)
     with_all = gains(seeds, conversions + [b.conversion() for b in placed + proposal], sales, bank_prices)
@@ -1977,14 +2045,31 @@ def barter_value_checks(edges, doc, conversions, bank_prices, best):
     as stock is REPORTED (data/bank.json kinds.not_built records why it was kept off the counters)."""
     fails, reps = [], []
     md = read_json(DATA / "markets.json")
-    counter = {(c["id"], s.get("id")): float(s["price"]) for c in md.get("counters") or [] for s in c.get("stock") or []}
+    # a reference line is a money line as it stood: since ECONOMY_V2 (E5) the top tier's lines sit in superseded_stock
+    counter = {(c["id"], s.get("id")): float(s["price"]) for c in md.get("counters") or []
+               for s in (c.get("stock") or []) + (c.get("superseded_stock") or [])}
     ref_by_out = {}
     for ln in doc.get("lines") or []:
         ref = ln.get("reference") or {}
+        out_id = (ln.get("sell") or {}).get("id")
         try:
-            ref_by_out[(ln.get("sell") or {}).get("id")] = sum(counter[(ref["counter"], lid)] for lid in ref["lines"])
-        except (KeyError, TypeError):
+            if ref.get("lines"):
+                ref_by_out[out_id] = (sum(counter[(ref["counter"], lid)] for lid in ref["lines"]),
+                                      "the money line(s) %s as they stood" % "+".join(ref["lines"]))
+            elif ref.get("bank"):
+                ref_by_out[out_id] = (sum(int(r.get("count", 1)) * bank_prices[r["item"]] for r in ref["bank"]),
+                                      "the spine: %s at the Bank" % " + ".join("%d x %s" % (int(r.get("count", 1)),
+                                                                                        r["item"]) for r in ref["bank"]))
+        except (KeyError, TypeError, AttributeError):
             pass
+    for out_id, ((item, n), why) in OWNER_SPINE.items():
+        if item not in bank_prices:
+            continue
+        own = (n * float(bank_prices[item]), "the spine: %d x %s at the Bank, %s" % (n, item, why))
+        if out_id in ref_by_out and abs(ref_by_out[out_id][0] - own[0]) > 1e-6:
+            reps.append("barter spine %s: the data's reference is $%.0f (%s); the owner's is $%.0f, and is the one "
+                        "used" % (out_id, ref_by_out[out_id][0], ref_by_out[out_id][1], own[0]))
+        ref_by_out[out_id] = own
     prizes = _arena_prizes()
     for b in edges:
         if b.experiment:
@@ -2002,17 +2087,24 @@ def barter_value_checks(edges, doc, conversions, bank_prices, best):
         if out in best:
             price, how = best[out][0] * cnt, "its cheapest money path, %s" % best[out][1]
         elif out in ref_by_out:
-            price, how = ref_by_out[out] * cnt, "the counter lines named as its reference"
+            price, how = ref_by_out[out][0] * cnt, ref_by_out[out][1]
         else:
             price, how = None, None
         if unknown:
             reps.append("barter value (%s) %s: NOT DERIVABLE, no value for %s" % (b.group, b.id, ", ".join(unknown)))
+            if b.group == "placed" and out in TOP_TIER:
+                fails.append("BARTER UNVALUED (placed) %s: no value for %s, so the line cannot be shown not to be a "
+                             "bypass" % (b.id, ", ".join(unknown)))
         elif price is None:
             reps.append("barter value (%s) %s: inputs worth $%.0f; the output has no money price to compare"
                         % (b.group, b.id, vals))
+            if b.group == "placed" and out in TOP_TIER:
+                fails.append("BARTER UNVALUED (placed) %s: inputs worth $%.0f and no money line, reference or spine "
+                             "worth for %s to hold them against" % (b.id, vals, out))
         else:
-            reps.append("barter value (%s) %s: inputs worth $%.0f against $%.0f (%s): %.3f"
-                        % (b.group, b.id, vals, price, how, vals / price if price else float("inf")))
+            reps.append("barter value (%s) %s: inputs worth $%.0f (%.2f P) against $%.0f (%.2f P, %s): %.3f"
+                        % (b.group, b.id, vals, vals / P_DOLLARS, price, price / P_DOLLARS, how,
+                           vals / price if price else float("inf")))
             if vals < price - 1e-6:
                 fails.append("BARTER BYPASS (%s) %s: the worst-case inputs are worth $%.0f, under the output's $%.0f "
                              "(%s): cheaper than the counter" % (b.group, b.id, vals, price, how))
@@ -2025,6 +2117,139 @@ def barter_value_checks(edges, doc, conversions, bank_prices, best):
             reps.append("barter trophy (%s) %s: %s is a once-per-player arena prize (data/arena_fights.json %s); "
                         "data/bank.json kinds.not_built kept it off the counters so a trophy does not become stock"
                         % (b.group, b.id, out, ", ".join(prizes[out])))
+    return fails, reps
+
+
+# ------------------------------------------------------------------------------------------------ ECONOMY_V2
+def money_reach(sales, conversions):
+    """{item: (how, [inputs])}: every item dollars can obtain. Any seller's offer (sited or not: an unsited line is a
+    dollar path the day it is sited), closed under every conversion whose every input slot dollars can fill. Pure
+    reachability: no prices, so no rounding, and no round limit (it runs to a fixed point)."""
+    reach = {}
+    for s in sorted(sales, key=lambda s: (not s.sited, s.unit)):
+        if s.item not in reach:
+            reach[s.item] = ("buy at %s for $%g%s" % (s.where, s.unit, "" if s.sited else " (UNSITED)"), [])
+    changed = True
+    while changed:
+        changed = False
+        for name, kind, ings, rid, _rcount in conversions:
+            if rid in reach:
+                continue
+            picks = []
+            for acc, _n in ings:
+                hit = next((i for i in sorted(acc) if i in reach), None)
+                if hit is None:
+                    break
+                picks.append(hit)
+            else:
+                reach[rid] = ("%s %s from %s" % (kind, name, " + ".join(picks)), picks)
+                changed = True
+    return reach
+
+
+def reach_chain(reach, item, depth=0):
+    how, picks = reach[item]
+    text = "%s: %s" % (item, how)
+    if depth < 4:
+        for p in picks:
+            if p != item:
+                text += " | " + reach_chain(reach, p, depth + 1)
+    return text
+
+
+def top_tier_checks(sales, conversions, edges, wandering=WANDERING_TRADER):
+    """(failures, reports): ECONOMY_V2 5.2 A3. No dollar reaches a top-tier output (TOP_TIER) or any of its inputs
+    (TOP_TIER_INPUTS and every input of a barter line selling one), through every seller (counters, stalls, the
+    Marts' template shops, the default shop, sited or not), every recipe in the jars, every barter edge (placed,
+    proposed and experiment) and the vanilla wandering trader's emerald offers. The Bank only buys, so it adds no
+    edge from dollars; the Produce Buyer pays dollars only. FAILURE for each one reached, with the path."""
+    fails, reps = [], []
+    inputs = set(TOP_TIER_INPUTS)
+    for b in edges:
+        if not b.experiment and b.gets and b.gets[0] in TOP_TIER:
+            inputs |= {i for i, _n in b.pays}
+    wt = [("wandering_trader:%s" % i.split(":", 1)[1], "wandering trader offer (vanilla 1.21.1, STATED)",
+           [({"minecraft:emerald"}, 1)], i, 1) for i in wandering]
+    reach = money_reach(sales, list(conversions) + [b.conversion() for b in edges] + wt)
+    for kind, items in (("OUTPUT", TOP_TIER), ("INPUT", sorted(inputs - set(TOP_TIER)))):
+        for item in items:
+            if item in reach:
+                fails.append("TOP TIER %s %s has a dollar path: %s" % (kind, item, reach_chain(reach, item)))
+    barterable = {b.gets[0] for b in edges if not b.experiment and b.group == "placed" and b.gets}
+    for item in TOP_TIER:
+        if item not in barterable:
+            reps.append("top tier %s: no placed barter line sells it, so it has no route at all" % item)
+    reps.append("top tier: %d outputs and %d inputs checked against %d seller offers, %d recipes, %d barter edges and "
+                "%d wandering-trader offers; emerald is %s" % (
+                    len(TOP_TIER), len(inputs - set(TOP_TIER)), len(sales), len(conversions), len(edges), len(wt),
+                    "reachable from dollars (%s)" % reach["minecraft:emerald"][0] if "minecraft:emerald" in reach
+                    else "not reachable from dollars"))
+    return fails, reps
+
+
+def fight_hours(markets_doc, bank_doc):
+    """{leg: the leg's fight hour}: data/markets.json income_basis.leg_by_badge / data/bank.json max_leg_hours (both
+    the only sources there are: an expectation and an ASSUMPTION, labelled so there)."""
+    legs = (markets_doc.get("income_basis") or {}).get("leg_by_badge") or {}
+    H = float((bank_doc.get("effort_model") or {}).get("max_leg_hours") or 0)
+    if H <= 0:
+        raise AuditError("data/bank.json effort_model.max_leg_hours is missing or not positive")
+    return {int(k): float(v) / H for k, v in legs.items()}
+
+
+def opening_legs(bank_doc, gate_doc):
+    """{tier: the leg it opens in}. early: leg 1 (the Bank opens at every merchant in every town, ECONOMY_V2 1.2);
+    nether: the leg after the Nether gate's gym (data/nether_gate.json gate_flag, MEASURED there), never the bank's own
+    claim; deep: data/bank.json's opens_leg, which has no other source."""
+    tiers = (bank_doc.get("effort_model") or {}).get("tiers") or {}
+    out = {"early": 1, "deep": int((tiers.get("deep") or {}).get("opens_leg") or 1)}
+    m = re.search(r"gym(\d+)_cleared", str(gate_doc.get("gate_flag") or ""))
+    out["nether"] = int(m.group(1)) if m else 8
+    return out
+
+
+def bank_v2_checks(entries, bank_doc, markets_doc, gate_doc):
+    """(failures, reports): ECONOMY_V2 5.2 A5 and A2 on the bank the player reaches (tools/bank.py's output, base
+    entries included).
+      A5 NAMESPACE: FAILURE for any cobblemon: id (R-V2-3).
+      A2 UNIT FLOOR: an entry's rate (data/bank.json rate_per_hour_upper, else rate_per_hour; else BULK_RATES, the
+         design's estimate) x $1 must be at most UNIT_FLOOR_FACTOR x the fight hour of the leg its tier opens. An entry
+         with no rate from either source is REPORTED, never passed silently. A crafted entry (declared rate 0) is
+         judged by its inputs' rows, not its own."""
+    fails, reps = [], []
+    for e in entries:
+        if str(e["item"]).startswith("cobblemon:"):
+            fails.append("NAMESPACE %s is in the Bank at $%s: no cobblemon: item is bankable (ECONOMY_V2 R-V2-3)"
+                         % (e["item"], e["price"]))
+    fh = fight_hours(markets_doc, bank_doc)
+    legs = opening_legs(bank_doc, gate_doc)
+    claimed = ((bank_doc.get("effort_model") or {}).get("tiers") or {}).get("nether", {}).get("opens_leg")
+    if claimed is not None and int(claimed) != legs["nether"]:
+        reps.append("unit floor: data/bank.json says the nether tier opens at leg %s; the gate says leg %d (used)"
+                    % (claimed, legs["nether"]))
+    declared = {b["item"]: b for b in bank_doc.get("buys") or []}
+    for e in sorted({e["item"]: e for e in entries}.values(), key=lambda e: e["item"]):
+        item = e["item"]
+        b = declared.get(item)
+        if b is not None:
+            rate = float(b.get("rate_per_hour_upper") or b.get("rate_per_hour") or 0)
+            tier, src = b.get("tier"), "data/bank.json"
+            if rate == 0:
+                continue                      # crafted or smelted: its raw input carries the rate
+        elif item in BULK_RATES:
+            rate, tier = BULK_RATES[item]
+            src = "ECONOMY_V2 2.2 (ESTIMATE)"
+        else:
+            reps.append("unit floor %s: no rate declared or stated, so A2 cannot judge it" % item)
+            continue
+        leg = legs.get(tier)
+        if leg not in fh:
+            reps.append("unit floor %s: tier %r opens at no leg with a fight hour" % (item, tier))
+            continue
+        cap = UNIT_FLOOR_FACTOR * fh[leg]
+        if rate > cap:
+            fails.append("UNIT FLOOR %s: %g an hour (%s) at the $1 floor pays $%.0f an hour, over %g x the leg-%d fight "
+                         "hour ($%.0f): not bankable" % (item, rate, src, rate, UNIT_FLOOR_FACTOR, leg, cap))
     return fails, reps
 
 
@@ -2262,10 +2487,19 @@ def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, us
     reps += unsited_arbitrage(bank_prices, sales)
     notes.append("arbitrage: %d bank prices against %d sale offers (%d sited) and %d recipes"
                  % (len(bank_prices), len(sales), sum(1 for s in sales if s.sited), len(conversions)))
-    f, r, n = barter_checks(sales, conversions, bank_prices, best, doc=direct_trades_doc, dt_mod=direct_trades_mod)
+    edges = []
+    f, r, n = barter_checks(sales, conversions, bank_prices, best, doc=direct_trades_doc, dt_mod=direct_trades_mod,
+                            edges_out=edges)
     fails += f
     reps += r
     notes += n
+    f, r = top_tier_checks(sales, conversions, edges)
+    fails += f
+    reps += r
+    f, r = bank_v2_checks(emitted + [e for e in committed if e not in emitted], bank_doc, markets_doc,
+                          read_json(DATA / "nether_gate.json"))
+    fails += f
+    reps += r
 
     f, r = vitamin_checks(best, bank_prices)
     fails += f

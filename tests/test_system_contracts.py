@@ -1773,6 +1773,38 @@ def test_contract_c24_a_dungeon_death_makes_no_claim_and_nothing_is_delivered_in
     _c24(case)
 
 
+# =================================================================================================================
+# C28. No dollar path reaches a top-tier item or any of its inputs (ECONOMY_V2 5.2 A3, the owner's E4 and E5)
+# =================================================================================================================
+#
+# The economy's sellers as GENERATED (tools/markets.py's merchants, Hollin's stall, the default shop, and with the
+# offline snapshot every Mart's template shop), the server's jar recipes (with the snapshot and the vanilla jar), and
+# the Station Exchange's offers as tools/direct_trades.py emits them plus every proposal line, searched together by
+# tools/economy_audit.py's top_tier_checks. Control: the same search with the superseded $27,000 Master Ball line
+# offered again finds it, so the search can fail. NOT covered: villager trades other than the wandering trader's stated
+# table, loot, quests, co-op pooling (E10), and whether a merchant really sells what its NBT lists (a running game).
+def test_contract_c28_no_dollar_path_reaches_a_top_tier_item_or_its_inputs():
+    import economy_audit as EA
+    snap, vanilla = EA.default_server_dir(), EA.default_vanilla_jar()
+    sales = EA.market_sales() + EA.apricorn_sales() + EA.default_shop_sales()
+    conversions = []
+    if snap and Path(snap).is_dir():
+        sales += EA.trader_sales(snap)[0]
+        if vanilla and Path(vanilla).is_file():
+            conversions = EA.load_jars(str(snap), str(vanilla)).conversions()
+    doc = _load("direct_trades.json")
+    data_edges = EA.barter_data(doc)
+    _f, placed = EA.emitted_checks(data_edges, EA.barter_emitted(doc=doc), doc)
+    edges = placed + [b for b in data_edges if b.group == "proposal"]
+    assert any(b.gets[0] == "cobblemon:master_ball" for b in placed), "the emitted Station Exchange sells no Master Ball"
+    fails, reps = EA.top_tier_checks(sales, conversions, edges)
+    assert fails == [], fails
+    assert not [r for r in reps if r.startswith("top tier cobblemon:")], "a top-tier item has no barter route"
+    old = EA.Sale("markets northlight_station (superseded master_ball)", None, "cobblemon:master_ball", 27000.0, True)
+    control, _r = EA.top_tier_checks(sales + [old], conversions, edges)
+    assert [c.split(" has")[0] for c in control] == ["TOP TIER OUTPUT cobblemon:master_ball"], control
+
+
 def test_every_contract_names_existing_tests():
     for c in REGISTRY["contracts"]:
         assert c["tests"], c["id"]
