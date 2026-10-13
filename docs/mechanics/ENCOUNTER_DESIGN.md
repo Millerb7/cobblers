@@ -151,7 +151,7 @@ in the north-east, 6 to 7 down the east, 8 along the south, 1 to 3 in the south-
 | Sea (zone) | Region | Where | Sea km2 in its clip | Bands (levels) |
 |---|---|---|---|---|
 | The Windward Sea (`windward_sea`, 2026-09-26) | `windward_deep` | x-1024..991, z2592..5215 | 4.07 | 16-20, 20-25, 25-30 |
-| The Outer Deep (`outer_deep`) | `the_outer_deep` | the four 512-block strips of the border margin | 19.92 | one band, 40-50 |
+| The Outer Deep (`outer_deep`) | `the_outer_deep` | the four 512-block strips of the border margin | 19.92 | one band, 45-55 (40-50 until the balance pass) |
 | The Frostwater Shelf (`frostwater_shelf`) | `frostwater_shelf` | north of z2560-2591, x to 4607 | 11.38 | 26-30, 30-35, 35-40 |
 | The Pine Strait (`pine_strait`) | `frostwater_shelf` | x4608.., north of z2560: the Northgate and Pine isles' waters | 11.49 | 36-40, 40-45, 45-50 |
 | The Eastern Reach (`eastern_reach`) | `eastern_reach` | x6144.., z2560..9215 | 13.24 | 41-45, 45-50, 50-55 |
@@ -169,8 +169,60 @@ ultra-rare and an alpha heart (the heart is the band cell farthest from every ro
 every heart holding an exact local). Themes: cold seals and shellfish (Frostwater), crabs, barnacles and gulls on the rocky
 strait (Pine Strait), schooling fish and their sharks (Eastern Reach), coral, sand and warm-water reef-dwellers
 (Southern Shallows), lantern fish and ink-fish (Sunset Sea), the great whales and the dark-water fauna (Outer Deep). No
-legendary, mythical, Ultra Beast, paradox or dungeon prize (`tests/test_marine_seas.py`). **Every roster is a draft: balance
-pass owed (trainer-balance-designer).** Nothing here is seen in game.
+legendary, mythical, Ultra Beast, paradox or dungeon prize (`tests/test_marine_seas.py`). **Balance pass done 2026-10-13**
+(below); the `draft` flag is cleared. Nothing here is seen in game.
+
+#### Balance pass (trainer-balance-designer, 2026-10-13)
+
+What the draft got wrong, read from `data/marine_seas.json` as drafted:
+
+- **Six seas read as one.** Nine filler families ran through most of them: Mantyke in 9 of the 16 bands, Alomomola in 8,
+  Dhelmise and Lapras in 7 each, Wailmer and Frillish in 6. The Outer Deep had no family of its own.
+- **Three section 5 finds were spent in the seas.** Skrelp, the north-west coast's find, was a rare in the Frostwater
+  shallows beside that coast. Dondozo, the Arrow creeks' find, was in the Eastern Reach's deep. Lapras, the Frostpeak
+  strand's find, was an ultra-rare in seven bands.
+- **The Outer Deep's level logic was false.** It read "every shore's deep water is at or under it" (40-50), but the
+  Eastern Reach's deep is 50-55 and the Southern Shallows' 55-60. Sailing out from either, the levels fell.
+
+The rules the rosters now keep (written into the table's `balance_pass`):
+
+1. A family is in at most two of the six seas. Bands of one sea count once, and the Windward Sea is not counted.
+2. Each sea has families no other sea and not the Windward Sea carries.
+3. Rosters escalate inside a sea: the same families, later stages, further out.
+4. A heart is **three presences** (uncommon bucket, weight 3, alpha), one of them an exact local, and nothing else.
+5. No legendary, mythical, Ultra Beast, paradox, dungeon prize, mainline starter line or line of the eight starters.
+
+**Alphas.** No sea heart ever held a common-bucket alpha, so the seas were never "full of alphas"; the land and Nether
+hearts are where that happens. Four presences became three. The share of a heart's spawns that are alphas is about
+5/99.7 x 9/21 = 2.1%. That is computed here for the Pine Strait shallows heart from the table's weights and the v2
+bucket weights section 4 relays; the draft's figure was 2.5%. Outside the heart, which is at most a ninth of a band,
+the share is zero. This assumes every bucket has a candidate at the position.
+
+Levels are unchanged except the Outer Deep. Per sea (signature species in **bold**):
+
+| Sea | Bands | Theme and signatures | What changed and why |
+|---|---|---|---|
+| Sunset Sea | 21-25, 25-30, 30-35 (tiers 2-4) | Dusk lights. **Inkay/Malamar**, **Omanyte** (new, ultra-rare in the deep). Its stages are its own: the base Lanturn and Lumineon, which the Windward Sea never shows (its Lanturn and Lumineon carry weight 0). Finneon anchors the shallows, Chinchou the open water and the deep | Out: Horsea, Staryu, Corsola, Mantyke, Dhelmise, Relicanth, Wailmer, Lapras (all fillers or other seas' signatures). In: Bruxish, Omanyte; Clamperl and Alomomola reach the deep too. A rider still on leg 1 (cap 20) off Pallet's south shore meets 21-25. That is kept: mounts come at about the gym-1 cap (the Windward Sea's access note, relayed), and the Windward shallows at 16-20 lie beside it |
+| Frostwater Shelf | 26-30, 30-35, 35-40 (tiers 3-5) | The cold north. **Spheal line**, **Seel**, **Shellder**, **Eiscue**, **Hisuian Qwilfish**. Finizen, then Wailmer, then Lapras show as ultra-rares, one band at a time | Out: Skrelp (the north-west coast's find, beside that coast), Clauncher (the South strand's family), Wattrel, Alomomola, Mantyke, Veluza, Dhelmise. Lapras is only in the deep, at 384 blocks or more from the Frostpeak strand's find. Hearts: Sealeo/Dewgong/Barraskewda, then Sealeo/Dewgong/Palafin, then Walrein/Wailord/Dewgong |
+| Pine Strait | 36-40, 40-45, 45-50 (tiers 5-7) | The rocky narrows. **Krabby/Kingler**, **Binacle/Barbaracle**, **Wimpod/Golisopod**, **Cramorant**, **Clauncher/Clawitzer**, Tirtouga/Carracosta (ultra-rare), and Clamperl beds that grow Huntail and Gorebyss at tier 7 | Out: Chewtle (already in two water tables: Arrow Lake and Marsh creek), Corphish (Lake Viltri's), Pyukumuku (a warm-reef animal, now the Southern Shallows'), Staryu, Skrelp, Mareanie, Qwilfish, Remoraid, Horsea, Wailmer, Tentacool, Mantyke, Frillish, Relicanth, Veluza, Alomomola, Lapras. The deep's heart is the sea-floor's old guardians: Golisopod, Huntail, Gorebyss |
+| Eastern Reach | 41-45, 45-50, 50-55 (tiers 6-8) | Schools and their hunters. **Wishiwashi**, **Wattrel/Kilowattrel**, **Pincurchin**, **Veluza**, with Barraskewda, Octillery, Sharpedo and Palafin | Out: Dondozo (the Arrow creeks' find), Corsola and Luvdisc (the reef's), Tentacool, Wailmer, Clamperl, Dhelmise, Lapras, Alomomola. Tirtouga is the deep's ultra-rare, its second sea. Hearts: Wishiwashi/Kilowattrel/Mantine, then Sharpedo/Palafin/Octillery, then Sharpedo/Veluza/Mantine |
+| Southern Shallows | 46-50, 50-55, 55-60 (tiers 7-9) | The warm south. **Corsola**, **Mareanie/Toxapex**, **Pyukumuku**, **Skrelp/Dragalge** (Skrelp's only sea, far from its find), Wugtrio, Bruxish, Kingdra, Mantine | Out: Clauncher, Frillish/Jellicent, Relicanth, Dhelmise, Clamperl, Alomomola, Lapras. In: Wishiwashi (ultra-rare, the deep). Finneon moves from the open water's uncommon to its ultra-rare (Lumineon only, at that band) and stays the deep's uncommon. Hearts: Toxapex/Wugtrio/Starmie, then Kingdra/Dragalge/Tentacruel, then Mantine/Kingdra/Lumineon |
+| The Outer Deep | **45-55** (tier 8; was 40-50, tier 7) | The edge of the world, every family full-grown. Wailord, Tentacruel, Jellicent and Lanturn (the Windward Sea's first stages, here last), Alomomola, Dhelmise, **Relicanth** (in no other of the six), Lapras | 45-55 meets the Pine Strait's deep (45-50) and the Eastern Reach's (50-55) with no step down. It falls one cap below the Southern deep only, and stands two to three caps over the Frostwater and Sunset deeps, which is a far edge's job. Out: Veluza, Mantyke, Clamperl. Heart: Wailord/Jellicent/Relicanth at 55-60 |
+
+**Recommended, not done: split the Outer Deep in two.** The ring borders legs 1 to 8, so one band cannot follow the
+nearest leg. Two zones would: the western margin, beside the Frostwater and Sunset seas, at 40-45; the eastern and
+southern margin, beside the Pine Strait, the Eastern Reach and the Southern Shallows, at 55-60. That changes zone ids
+named in `data/nuzlocke_zones.json` (generated) and `data/id_authorship.json` (an exact id set), and this pass edits
+`data/marine_seas.json` only. A datapack-content-dev unit would do it with both.
+
+**Numbers not measured here:**
+
+- The coast legs per sea and the km2 are the drafter's 2026-10-12 measurements.
+- The v2 bucket weights are section 4's reading of the server file.
+- Species ids were checked against the keys of `docs/research/notes/drops-1.8.0.json`. Staryu, Starmie, Clauncher,
+  Clawitzer, Wiglett, Wugtrio and Pincurchin are not keys there; that note seems to omit species with no drop table.
+  They are taken as real only because the draft's compiled `data/spawns.json` carries them: the generator walked them
+  from the jar.
 
 **Boxes are the server's memory.** A box compiles to one spawn condition per roster entry, held in the server's heap, and
 `tools/suppress_inherited_spawns.py --subregions` adds one anticondition per merged box to every inherited detail. On the
