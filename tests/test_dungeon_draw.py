@@ -28,6 +28,7 @@ DS = DOC["dungeons"]
 RIPS = DOC["rips"]
 OW = "minecraft:overworld"
 FLAG = "cobblers:flag/%s"
+SIGILS = 200          # a stock of sigils: the draw tests click far more often than a player could pay
 UNGATED_BAND1 = [d["id"] for d in DS if d["first_band"] <= 1 and not d["gate_flag"]]
 
 
@@ -58,7 +59,7 @@ def at_rip(w, rip_id="rip_trail_ns", name="Ash", band=1, flags=(), tags=()):
     r = next(x for x in RIPS if x["id"] == rip_id)
     p = w.player(name, OW, (r["outside"][0], r["outside"][1], r["outside"][2]), advancements=[FLAG % f for f in flags])
     p.tags.update(tags)
-    p.inventory.append(sigil(band, 20))
+    p.inventory.append(sigil(band, SIGILS))
     return p
 
 
@@ -80,7 +81,9 @@ def abandon(w, p):
     w.set(p.name, "dg.st", 0)
     w.set(p.name, "dg.slot", 0)
     p.tags.discard(TD.RUN_TAG)
-    w.passes(1)                                   # the uptime moves, so the next draw's ages differ
+    # the uptime moves a keeper pass's worth (keeper/head: `scoreboard players add #up dg.up 20`), so the next draw's ages
+    # differ; the pass itself is not run (a slot held by a made-up owner would be tended by it)
+    w.set("#up", "dg.up", (w.get("#up", "dg.up") or 0) + DOC["engine"]["keeper"]["period_ticks"])
 
 
 def draws(w, p, n, rip_id="rip_trail_ns"):
@@ -224,7 +227,7 @@ def test_with_every_open_dungeon_locked_the_draw_names_one_and_its_door_refuses_
         w.set(p.name, "dg.lk_%s" % d["short"], 4900)
     click(w, p)
     assert w.get(p.name, "dg.st") in (None, 0) and not w.get(p.name, "dg.rip"), "refused: no run, no rip recorded"
-    assert any(i[0] == sigil(1)[0] for i in p.inventory) and sum(i[2] for i in p.inventory if i[0] == sigil(1)[0]) == 20, \
+    assert any(i[0] == sigil(1)[0] for i in p.inventory) and sum(i[2] for i in p.inventory if i[0] == sigil(1)[0]) == SIGILS, \
         "a refusal never touches a sigil"
     assert not any(w.get(p.name, "dg.dr_%s" % d["short"]) is not None for d in DS), "a refused click is not a draw"
 
@@ -236,7 +239,7 @@ def test_with_every_slot_of_every_open_dungeon_held_the_door_says_busy_and_nothi
         w.set("#s%d" % s["g"], "dg.own", 77)
     click(w, p)
     assert w.get(p.name, "dg.st") in (None, 0)
-    assert sum(i[2] for i in p.inventory if i[0] == sigil(1)[0]) == 20
+    assert sum(i[2] for i in p.inventory if i[0] == sigil(1)[0]) == SIGILS
 
 
 def test_no_sigil_is_a_refusal_that_does_not_stamp_or_record_the_rip(pack):
@@ -255,7 +258,7 @@ def test_a_player_already_in_a_run_is_refused_and_the_run_is_untouched(pack):
     run, slot, dun, rip = (w.get(p.name, o) for o in ("dg.run", "dg.slot", "dg.dun", "dg.rip"))
     click(w, p, "rip_the_rift")
     assert (w.get(p.name, "dg.run"), w.get(p.name, "dg.slot"), w.get(p.name, "dg.dun"), w.get(p.name, "dg.rip")) == (run, slot, dun, rip)
-    assert sum(i[2] for i in p.inventory if i[0] == sigil(1)[0]) == 19, "one sigil, once"
+    assert sum(i[2] for i in p.inventory if i[0] == sigil(1)[0]) == SIGILS - 1, "one sigil, once"
 
 
 def test_the_way_out_is_the_rip_the_run_was_entered_by(pack):
@@ -269,7 +272,7 @@ def test_the_way_out_is_the_rip_the_run_was_entered_by(pack):
         w.call("cobblers:dungeons/back", PS.Ctx(p, p.dim, p.pos))
         r = next(x for x in RIPS if x["id"] == rip_id)
         assert p.dim == OW and [round(v, 1) for v in p.pos] == [round(float(v), 1) for v in r["outside"][:3]], (rip_id, p.pos)
-        assert sum(i[2] for i in p.inventory if i[0] == sigil(1)[0]) == 20, "the back rip refunds the sigil"
+        assert sum(i[2] for i in p.inventory if i[0] == sigil(1)[0]) == SIGILS, "the back rip refunds the sigil"
 
 
 # ------------------------------------------------------------------------------------------------- the staging playtest

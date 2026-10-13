@@ -774,7 +774,10 @@ def shell_entities(doc, slot):
 
 def rips(doc):
     """The rips (data/dungeon_rips.json), in file order. Their position in it is their index (dg.rip), 1-based and
-    append-only: a rip that leaves the list renumbers the ones after it, so a removal is a re-apply of the whole pack."""
+    append-only: a rip that leaves the list renumbers the ones after it, so a removal is a re-apply of the whole pack.
+    A doc built without load() (a test's reduced copy of the record) takes the file's rips on first use."""
+    if "rips" not in doc:
+        doc["rips"] = json.loads(RIPS.read_text(encoding="utf-8"))["rips"]
     return doc["rips"]
 
 
@@ -1009,30 +1012,22 @@ def rip_problems(doc):
         ox, oy, oz, _yaw = r["outside"]
         if not (isinstance(ox, (int, float)) and abs(ox - (fr["x0"] + fr["x1"]) / 2.0) <= 3 and abs(oz - fr["z"]) <= 8):
             bad.append("%s: the exit point is not within 3 blocks of the plane's middle column and 8 of its row" % rid)
-        if r.get("legacy_dungeon") is not None and r["legacy_dungeon"] not in {d["id"] for d in dungeons(doc)}:
-            bad.append("%s: legacy_dungeon %r is not a dungeon" % (rid, r["legacy_dungeon"]))
     return bad
 
 
 def draw_problems(doc):
-    """[problem] in the draw's inputs (docs/mechanics/DUNGEON_DRAW.md 2.2, 2.3): every dungeon has a first_band that is a
-    band, a gate_flag that is null or an advancement id, and every band has a candidate that no gate or lockout can empty
-    (the ungated dungeons whose first_band is 1 are those: at least two, so the draw rotates even at band 1)."""
+    """[problem] in the draw's inputs (docs/mechanics/DUNGEON_DRAW.md 2.2, 2.3): a dungeon's first_band (1 when absent: a
+    reduced copy or a fixture) is a band, and its gate_flag is null or an advancement id. That every band of the real record
+    has two ungated dungeons to rotate through is tests/test_dungeon_rips.py's, not a property of every copy."""
     bad = []
     nb = [b["band"] for b in bands(doc)]
     for d in dungeons(doc):
-        fb = d.get("first_band")
+        fb = d.get("first_band", 1)
         if not isinstance(fb, int) or isinstance(fb, bool) or fb not in nb:
             bad.append("%s: first_band %r is not a band (%s)" % (d["id"], fb, nb))
         gf = d.get("gate_flag")
         if gf is not None and not re.match(r"^[a-z0-9_.-]+:[a-z0-9_./-]+$", str(gf)):
             bad.append("%s: gate_flag %r is not an advancement id" % (d["id"], gf))
-    if not bad:
-        for b in nb:
-            open_ = [d["id"] for d in dungeons(doc) if d["first_band"] <= b and not d.get("gate_flag")]
-            if len(open_) < 2:
-                bad.append("band %d has %d ungated dungeon(s) to draw (%s): the draw needs two so it can rotate and never strands a "
-                           "player whose one dungeon is locked out or full" % (b, len(open_), open_))
     return bad
 
 
@@ -1680,16 +1675,17 @@ def functions(doc, blackout=None):
     for di, d in enumerate(ds, 1):
         i = di
         L = lockout_of(doc, d)
-        dr += ["# %s: first band %d, gate %s" % (d["id"], d["first_band"], d["gate_flag"] or "none"),
+        fb, gf = d.get("first_band", 1), d.get("gate_flag")
+        dr += ["# %s: first band %d, gate %s" % (d["id"], fb, gf or "none"),
                "scoreboard players set #c%d %s 0" % (i, O["t"]),
                "scoreboard players set #f%d %s 0" % (i, O["t"])]
-        if d["gate_flag"]:
+        if gf:
             dr += ["execute if score @s %s matches %d.. if entity @s[advancements={%s=true}] run scoreboard players set #c%d %s 2"
-                   % (O["band"], d["first_band"], d["gate_flag"], i, O["t"]),
+                   % (O["band"], fb, gf, i, O["t"]),
                    "execute if score @s %s matches %d.. if entity @s[tag=%s] run scoreboard players set #c%d %s 2"
-                   % (O["band"], d["first_band"], PLAYTEST_TAG, i, O["t"])]
+                   % (O["band"], fb, PLAYTEST_TAG, i, O["t"])]
         else:
-            dr.append("execute if score @s %s matches %d.. run scoreboard players set #c%d %s 2" % (O["band"], d["first_band"], i, O["t"]))
+            dr.append("execute if score @s %s matches %d.. run scoreboard players set #c%d %s 2" % (O["band"], fb, i, O["t"]))
         dr += ["scoreboard players set #l%d %s %d" % (i, O["t"], L),
                "execute if score @s %s matches -2147483648.. run scoreboard players operation #l%d %s = #up %s" % (lk_obj(d), i, O["t"], O["up"]),
                "execute if score @s %s matches -2147483648.. run scoreboard players operation #l%d %s -= @s %s" % (lk_obj(d), i, O["t"], lk_obj(d))]

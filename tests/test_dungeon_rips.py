@@ -135,6 +135,20 @@ def test_the_presence_probes_in_world_probes_are_the_ones_the_tool_writes():
     assert len(places["dungeon_rips"]) == 3 * (len(RIPS) - 1)
 
 
+def test_every_band_has_two_ungated_dungeons_so_the_draw_rotates_and_never_strands_a_player():
+    # a band with one open dungeon would repeat it every click, and a player locked out of it (or finding it full) would
+    # have nothing to be drawn. Band 1-3 are the five early dungeons; the gated late ones only ever add to a band
+    for b in DUNGEONS["engine"]["bands"]:
+        open_ = [d["id"] for d in DUNGEONS["dungeons"] if d["first_band"] <= b["band"] and not d["gate_flag"]]
+        assert len(open_) >= 2, (b["band"], open_)
+        if b["band"] <= 3:
+            assert len(open_) == 5 and all(ROSTER[i]["rare_pool_by_band"].get(str(b["band"])) for i in open_), (b["band"], open_)
+
+
+def test_every_test_rips_legacy_dungeon_is_a_dungeon():
+    assert {r["legacy_dungeon"] for r in RIPS if r.get("legacy_dungeon")} == {d["id"] for d in DUNGEONS["dungeons"]}
+
+
 def test_a_rip_that_floats_or_leaves_its_region_is_found():
     # the check bites: move a region rip's plane one block and the rules name it (the mutation is on the record the
     # tool reads, so this tests the CHECK; the generator is tested by the independent audit)

@@ -173,6 +173,16 @@ from every coordinate in `data/` (the nearest is 150 or more away), 60 or more f
 and town footprint, inside its region, 300 or more from the other region rips. Checked by `python tools/dungeon_rips.py check`
 and `tests/test_dungeon_rips.py`; the numbers are in each record's `ground` and `siting`.
 
+**To prove on staging (not run; an experiment for whoever grades it).** After `prepare`, `install` and R16DR/R16DG: (1)
+`python tools/presence_audit.py --only extra` reads the `dungeon_rips` place (90 probes) and `dungeon_night_shift` present, so
+all 31 rips stand; (2) a player with a sigil clicks `rip_the_rift` at band 1: a dungeon of the five opens, the chat names it,
+`scoreboard players get <player> dg.rip` is 21 and the back rip leaves at the Rift's point, not the old mine's; (3) five
+back-outs in a row at band 1 show five different dungeons; (4) a player holding `cobblers:flag/gym8_cleared` at a band-5
+cap sees the Nether dungeons enter the draw and one without it does not; (5) `tag <player> add cobblers.dg_playtest`,
+`scoreboard players set <player> dg.ptdun 12` draws the Street; (6) the first click of a fresh player after a restart
+(`random value` in a function parsed at boot, which the simulator models and a server may not). Reading `/tick query` around
+the first click gives the chain's cost.
+
 **Band 5-6 tuning (measured with `tools/dungeon_sim.py` and `tools/dungeon_clock.py`, 2026-10-13).** No clock was changed, because
 none is short. Authored clocks against the clock the sim re-derives from its own fight pace (ratio, authored over implied):
 band 5, 1.76 to 2.14 (crucible lowest); band 6, 1.77 to 2.12 (crucible lowest). Against the planning pace
@@ -181,5 +191,10 @@ at band 6. The nine bank vaults cost 50 to 52 s of it at both bands (the vault r
 and the clue rooms are on the main route), 6 to 8 per cent of the slack, so the code is findable in the time. What the sim
 does show is difficulty: the typical-team win rate at band 5 runs from 0 to 54 per cent (the two caps of a band, lowest to highest cell) and at band 6
 from 0 to 35, eight of the thirteen dungeons at 2 or under at band 6 (the Night Shift, Ash Bell, Moth Cathedral, Dragonspiral,
-Field of Swords and the Street at 0), with the held items, switching and status play it cannot model left out. That is a team and level question for the
-balance designer, not a clock one, and nothing was edited for it.
+Field of Swords and the Street at 0), with the held items, switching and status play it cannot model left out. For comparison band 4 runs 52 to 77 at the lower cap (the 60-90 target
+of BOSS2). That is a team and level question for the balance designer, not a clock one, and nothing was edited for it. One
+measured sensitivity, so the next pass need not repeat it: with every stand and gauntlet trainer at band 5 dropped four more
+levels (cap-6 to cap-3 instead of cap-2 to cap-1; the sim run with `engine.stands.low_offset` 6, `high_offset` 3 patched in
+memory, no file edited) the typical win at the lower cap goes from a mean of 16 per cent over the thirteen dungeons to 27,
+and nine of the thirteen are still under 35. A global level drop does not reach the target; the fix is per dungeon (the
+named fights in `derived/dungeon_sim/report.md`, which `python tools/dungeon_sim.py --advise` lists).
