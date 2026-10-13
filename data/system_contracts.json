@@ -624,7 +624,8 @@
         "sanctuaries.py": "source: sanctuaries",
         "rayquaza_sky.py": "checker: its own cells (tools/rayquaza_sky.py spawn_block_problems refuses, at build, every block data/spawn_blocks.json lists unless a data/spawn_block_policy.json entry scoped to rayquaza_sky allows it; none does); its built packs cobblers_rayquaza and cobblers_rayquaza_build are also judged by the built-pack check like every other pack",
         "sanctuaries_audit.py": "checker: the built cobblers_sanctuaries pack (source sanctuaries): every block it writes against data/spawn_blocks.json and the policy entries scoped to sanctuaries",
-        "kyogre_cave.py": "checker: tools/kyogre_cave.py static_problems refuses any block of the Kyogre cave's geometry and reef (data/kyogre_cave.json) that data/spawn_blocks.json names a spawn condition, so the cave writes none"
+        "kyogre_cave.py": "checker: tools/kyogre_cave.py static_problems refuses any block of the Kyogre cave's geometry and reef (data/kyogre_cave.json) that data/spawn_blocks.json names a spawn condition, so the cave writes none",
+        "kyogre_rayquaza_audit.py": "checker: the independent audit of the Kyogre cave and Rayquaza's sky reads data/spawn_blocks.json to measure (not fail) the spawn-condition blocks the built packs write; water is the cave's design (2026-10-13)"
       }
     },
     {
