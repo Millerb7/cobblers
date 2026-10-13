@@ -81,9 +81,14 @@ evolutions forward from that species and gives each stage a level range and a sh
 | find | rare | 2 | **off-path only**: the reason to leave the path (section 6) |
 
 A family's stages share its weight and its bucket. A table holds 3-6 land families and, where it has water, 2-4 water
-families. Cobbleverse's bucket weights decide how often a bucket is drawn (common 88.5, uncommon 10, rare 1.2,
-ultra-rare 0.3), so a find is about one land spawn in eighty there: findable by someone who looks, not by someone
-passing through.
+families. The bucket weights decide how often a bucket is drawn. **The server runs the v2 file** (`version: 2`,
+`C:/Users/wnd/Documents/github/cobblers-server/config/cobblemon/spawning/best-spawner-config.json`, read 2026-10-12):
+world buckets **common 94, uncommon 5, rare 0.5, ultra-rare 0.2, boss 0.3**; fishing, snacks and activated Habitat Blocks
+83.25 / 11.25 / 4.125 / 1.375 (common / uncommon / rare / ultra-rare). So a find (rare bucket) is about one land spawn
+in two hundred (0.5 of 100 where every bucket has a candidate), findable by someone who looks, not by someone passing
+through. *Corrected 2026-10-12: this section quoted 88.5 / 10 / 1.2 / 0.3, the base pack's v1 file
+(`base-pack/cobbleverse/config/cobblemon/spawning/best-spawner-config.json`), which the server does not run; the
+"one in eighty" followed from it.*
 
 ## 5. Waters: every lake and coast has its own fish
 
@@ -129,6 +134,52 @@ freshwater lake in the jar are the ones already seated (Gyarados, Basculegion, K
 tables. Considered and left out for a stated reason: Dragonair (the jar has it in oceans and below y32, not on a
 lake), Clamperl and its line (deep ocean), Wooper and its line (swamp), Overqwil (cold ocean), Marill and Vaporeon
 (starter-family species).
+
+### 5a. The seas: every water has a region (the owner, 2026-10-12)
+
+> Is the Windward Sea the only defined ocean? All water should have regions as well.
+
+It was: `data/spawns.json` `marine_zones` held only the Windward Sea, so the north coast and the Pine Isles' waters, the
+strait, the east and south seas, the waters round the Sunset and Fungal isles and the border margin had no region, no
+Nuzlocke zone, no location title, and fell back to Cobbleverse's inherited ocean spawns. **Measured on the canonical
+heightmap** (ground below y62 on a 16-block raster, the border margin at -1024..9215 taken as sea): the sea is ONE
+connected body of 58.85 km2 (plus Lake Tilpey's 0.72 km2 apart), so a "sea" is a division of it. The divisions follow
+the planned marine regions of `data/regions.json` and the nearest leg of the critical path along each coast (the nearest
+route-path leg of every 64-block sea cell within 400 blocks of land: 3 in the north-west, 4 to 5 along the north, 5 to 7
+in the north-east, 6 to 7 down the east, 8 along the south, 1 to 3 in the south-west):
+
+| Sea (zone) | Region | Where | Sea km2 in its clip | Bands (levels) |
+|---|---|---|---|---|
+| The Windward Sea (`windward_sea`, 2026-09-26) | `windward_deep` | x-1024..991, z2592..5215 | 4.07 | 16-20, 20-25, 25-30 |
+| The Outer Deep (`outer_deep`) | `the_outer_deep` | the four 512-block strips of the border margin | 19.92 | one band, 40-50 |
+| The Frostwater Shelf (`frostwater_shelf`) | `frostwater_shelf` | north of z2560-2591, x to 4607 | 11.38 | 26-30, 30-35, 35-40 |
+| The Pine Strait (`pine_strait`) | `frostwater_shelf` | x4608.., north of z2560: the Northgate and Pine isles' waters | 11.49 | 36-40, 40-45, 45-50 |
+| The Eastern Reach (`eastern_reach`) | `eastern_reach` | x6144.., z2560..9215 | 13.24 | 41-45, 45-50, 50-55 |
+| The Southern Shallows (`southern_shallows`) | `southern_shallows` | x2048..6143, z5120..9215 | 9.25 | 46-50, 50-55, 55-60 |
+| The Sunset Sea (`sunset_sea`) | `southern_shallows` | x-1024..2047, z5120/5216..9215: Fungal and Sunset isles | 9.42 | 21-25, 25-30, 30-35 |
+
+(The clips overlap only at the margin, where `compile_spawns.marine_bands` hands a cell to the first zone to claim it:
+Windward, then the Outer Deep.) **Levels** are the Windward Sea's scheme: one gym cap per band, starting at the coast's
+own leg (`[cap(L) - 4, cap(L)]`, then up to cap(L+1), then cap(L+2); never over 60). A band's `tier` is the leg whose cap
+tops it, and it sets the maturity of its families (section 3) and the next-leg cap its presences reach (section 10). The
+shallows are 0-128 blocks from land, the open water 128-384, the deep beyond (the Windward Sea's own are 96/256). **Rosters**
+are `data/marine_seas.json`, expanded by `tools/marine_seas.py` through `build_encounters.expand_family` and `build_heart`,
+so they follow sections 3, 4 and 10: stages from the jar's evolutions inside the band, maturity by tier, a rare, an
+ultra-rare and an alpha heart (the heart is the band cell farthest from every route corridor, a ninth of the band at most,
+every heart holding an exact local). Themes: cold seals and shellfish (Frostwater), crabs, barnacles and gulls on the rocky
+strait (Pine Strait), schooling fish and their sharks (Eastern Reach), coral, sand and warm-water reef-dwellers
+(Southern Shallows), lantern fish and ink-fish (Sunset Sea), the great whales and the dark-water fauna (Outer Deep). No
+legendary, mythical, Ultra Beast, paradox or dungeon prize (`tests/test_marine_seas.py`). **Every roster is a draft: balance
+pass owed (trainer-balance-designer).** Nothing here is seen in game.
+
+**Boxes are the server's memory.** A box compiles to one spawn condition per roster entry, held in the server's heap, and
+`tools/suppress_inherited_spawns.py --subregions` adds one anticondition per merged box to every inherited detail. On the
+32-block grid the six seas' bands came to 1,798 to 2,262 boxes. A zone may now carry a coarse `grid` (128) and a
+`max_land_share` (0.5): 419 base boxes for the six seas (550 with their hearts), the compiled total 4,364 to 4,914 boxes
+(+12.6%) and 48,881 to 53,777 spawn details (+10.0%), and the suppression's merged boxes 926 to 869 (the seas fill the gaps
+between the land boxes and the union merges). Of the 58.85 km2 of sea, 97.3% is in a marine box, 2.0% more only in a
+sub-region's or a route's box, 0.7% (0.40 km2, slivers beside land) in none, where inherited spawns still live; and 0.1
+km2 of water is in a marine box and a sub-region's both.
 
 ## 6. Off the path: every place has a find
 
@@ -285,7 +336,7 @@ past the next cap, and a heart over the above-cap share below.
 | Number | Proposed | Derived from | Measured on the compiled pack |
 |---|---|---|---|
 | Most a heart may cover of its sub-region | **1/9 (0.111)** of the compiled area | The owner's three words for a place -- outskirts, middle, heart -- as three rings of equal width: the inner ring of a disc is (1/3)^2 = 1/9 of it, so 8/9 stays the base table ("most of a place is catchable"). A summit's line is the lowest whole Y at or above which at most 1/9 of the area lies; a focus radius is the largest multiple of 16 blocks at or under 1/9, or a feature's own radius if smaller (the crater bowl, 96). | 28 hearts, 4.8% (the Great Crater's bowl) to 11.1% |
-| Most of a heart's spawn chance above the cap | **11.2%** | Above-cap spawns are presences, and a presence is never common (the owner: "the big, rarer presences"). Cobbleverse draws uncommon and rare together (10 + 1.2) / (88.5 + 10 + 1.2) = 11.2% of the time, so that is the ceiling by construction. | 0.9% (Lake Viltri's hollow, land) to 10.2% (the Lower Trough, water), over the heart contexts holding a presence; 0 in every base table and every corridor |
+| Most of a heart's spawn chance above the cap | **11.2%** | Above-cap spawns are presences, and a presence is never common (the owner: "the big, rarer presences"). Cobbleverse draws uncommon and rare together (10 + 1.2) / (88.5 + 10 + 1.2) = 11.2% of the time, so that is the ceiling by construction. **Stale premise, 2026-10-12:** those are the base pack's v1 weights; the server's v2 file gives (5 + 0.5) / (94 + 5 + 0.5) = 5.5%, so the "by construction" ceiling is about half of 11.2%, and the measured shares in the next column (0.9% to 10.2%) were computed with the v1 weights (`tools/build_encounters.py` `BUCKET_P`, `tools/encounter_audit.py` `BUCKETS`, both still v1) and overstate the uncommon/rare shares the server draws by about 2x. The 11.2% number is unchanged pending the owner; the tools are not re-derived. | 0.9% (Lake Viltri's hollow, land) to 10.2% (the Lower Trough, water), over the heart contexts holding a presence; 0 in every base table and every corridor |
 | How far above the cap a presence may go | **to the next leg's cap**: cap + 5 on tiers 1-8, and 62 at tier 9 | "Seen first and caught on a return": a presence is catchable on the next leg. Caps step 5 a leg (`data/trainers.json` gym aces 20-55, the Elite Four at 60); after the Elite Four the next level a player can carry is the champion's top, 62 (`champion_blue`, measured). | Top levels 25 (tier 1) to 62 (tier 9) |
 | How "catchable pockets near the path" is measured | **No heart cell within 128 blocks of a route corridor box** (Chebyshev gap) | Section 1's own measure of "near the path" (128 blocks). So the whole band beside the path is the base table, catchable, in every sub-region. | Nearest heart box to any route box: 129 blocks (five hearts: Mt Clay, the Tri Peaks, the Crags, the Lower Trough, the east cones) |
 
@@ -394,8 +445,10 @@ the area as well right?"** Built 2026-10-05: valid data and a measured compiled 
   - the Windward depths, open sea and shallows: Alomomola, Qwilfish and Staryu;
   - the Mt Clay outflow: Basculin.
 
-  The marine and waterway levels are the upper half of their base band. After the change all 67 hearts hold an exact
-  local: 148 of 248 heart species, 60%. The non-local signature bosses stay as authored (Frostpeak's Avalugg and
+  The marine and waterway levels are the upper half of their base band. After the change all 83 hearts hold an exact
+  local (67 until 2026-10-12, when the 16 bands of the six new seas, `data/marine_seas.json`, each took one: the
+  Windward Sea's three, the waterway's and the 63 land tables are the 67; the 148 of 248 heart species, 60%, below
+  counted those 67). The non-local signature bosses stay as authored (Frostpeak's Avalugg and
   Mamoswine, Arrow creeks' Braviary and the rest).
 
 ### What the tests make of it

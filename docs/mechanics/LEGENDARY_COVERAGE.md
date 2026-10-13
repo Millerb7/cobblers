@@ -24,9 +24,9 @@ legendary, 23 mythical, 11 Ultra Beasts, 20 paradoxes; VERIFIED, read with Pytho
 
 | Where | Count | Who |
 |---|---|---|
-| Already placed | **43** | world sites (adopted, authored, the Nether shrines), the eight starter lines, Entei's built room, and the three prizes the built dungeons already carry (Volcanion, Zarude, Regidrago) |
+| Already placed | **43** (44 with Registeel, 2026-10-12; Buzzwole and Pheromosa also left the Temple Calendar's pool for the world the same day, `data/dungeon_prize_roster.json`) | world sites (adopted, authored, the Nether shrines), the eight starter lines, Entei's built room, and the three prizes the built dungeons already carry (Volcanion, Zarude, Regidrago) |
 | Placed by a design, not built | 5 | Kyogre and Rayquaza (`KYOGRE_CAVE.md`); Yveltal, Dialga and Heatran as D18 boss catches |
-| Homed but blocked on the owner | 2 | Lugia (no trench), Registeel (which part of the Rift); each gets a dungeon fallback |
+| Homed but blocked on the owner | 1 | Lugia (no trench), which gets a dungeon fallback. *Corrected 2026-10-12: Registeel is not blocked. `data/legendaries.json` has it `sited` (upper Rift, portal (4195, 3896), gate `gym7_cleared`) and R14L placed it (`docs/REPORT_2026-09-30_DAY.md:64`); it counts under "Already placed" below, and its Night Shift fallback is unused.* |
 | **To the world** (proposals) | **7** | Tornadus, Thundurus, Landorus, Enamorus (the Tri Peaks); Tapu Koko, Tapu Lele, Tapu Bulu (the isles); each has a dungeon fallback |
 | **To dungeons** | **67** | pool entries across 16 dungeons, every one in exactly one dungeon |
 | Out by the owner | 1 | Eternatus: a dungeon home is proposed, NOT put in a pool (section 7) |
@@ -96,7 +96,7 @@ dungeon first entered at band 4 or later has no rare pool.
 | **The Street That Ends at Nothing** `street` (proposed) | city (new) | none, 1 | Beldum, Honedge, Deino, Litwick / Doublade, Metang, Dreepy / Zweilous, Drakloak, Doublade, Lampent | Zeraora, Magearna, Guzzlord / Zeraora, Magearna, Guzzlord / Palkia, Guzzlord, Zeraora, Magearna | Guzzlord (spine boss) |
 | **Under the Patriarch** `patriarch` (proposed) | great tree (new) | none, 1 | Axew, Dreepy, Larvesta, Munchlax / Fraxure, Larvesta, Dreepy / Drakloak, Fraxure, Larvesta | Suicune, Kartana, Celesteela / Suicune, Kartana, Celesteela / Xerneas, Zacian, Zamazenta, Suicune, Kartana, Celesteela | Kartana, Celesteela (wormhole leg, the pair rotates); boss legendary Yveltal |
 | **The Last Cistern** `cistern` (proposed) | flooded_ruin (reused) | none, 1 | Frigibax, Dratini, Goomy / Arctibax, Dragonair, Sliggoo / Arctibax, Dragonair, Zweilous | Walking Wake, Nihilego, Iron Bundle / Walking Wake, Nihilego, Iron Bundle / Walking Wake, Nihilego, Iron Bundle | Nihilego (spine boss) |
-| **The Temple Calendar** `temple_calendar` (proposed) | jungle (reused) | gym8_cleared (proposed, DUNGEON_PLACEMENT.md Q13 OPEN), 5 | - / - / - | - / Tapu Fini, Buzzwole, Pheromosa, Meloetta, Brute Bonnet, Scream Tail / Tapu Fini, Buzzwole, Pheromosa, Meloetta, Brute Bonnet, Scream Tail | Buzzwole, Pheromosa (wormhole leg, the calendar picks which); boss legendary Dialga |
+| **The Temple Calendar** `temple_calendar` (proposed) | jungle (reused) | gym8_cleared (proposed, DUNGEON_PLACEMENT.md Q13 OPEN), 5 | - / - / - | - / Tapu Fini, Buzzwole, Pheromosa, Brute Bonnet, Scream Tail / Tapu Fini, Buzzwole, Pheromosa, Brute Bonnet, Scream Tail | Buzzwole, Pheromosa (wormhole leg, the calendar picks which); boss legendary Dialga |
 | **The Crucible** `crucible` (proposed) | basalt_deltas (built theme) | champion_cleared (DUNGEONS.md 10), 6 | - / - / - | - / - / Stakataka, Gouging Fire | Stakataka (wormhole leg); boss legendary Heatran |
 | **The Ash Bell** `ash_bell` (proposed) | nether_wastes (built theme) | gym8_cleared (the Nether's gate, data/nether_gate.json), 5 | - / - / - | - / Raikou, Raging Bolt / Ho-Oh, Raikou, Raging Bolt | - |
 | **The Moth Cathedral** `moth_cathedral` (proposed) | crimson_forest (built theme) | gym8_cleared, 5 | - / - / - | - / Victini, Slither Wing, Iron Moth / Victini, Slither Wing, Iron Moth | - |
@@ -104,7 +104,7 @@ dungeon first entered at band 4 or later has no rare pool.
 | **The Soul Ossuary** `soul_ossuary` (proposed) | soul_sand_valley (built theme) | gym8_cleared, 5 | - / - / - | - / Marshadow, Blacephalon, Pecharunt, Roaring Moon / Marshadow, Blacephalon, Pecharunt, Roaring Moon | Blacephalon (spine boss (an ossuary keeper holds it)) |
 | **The Dragonspiral** `dragonspiral` (proposed) | ice spire (new) | champion_cleared (proposed), 6 | - / - / - | - / - / Kyurem, Reshiram, Zekrom | - |
 | **The Field of Swords** `field_of_swords` (proposed) | hill keep (new) | gym6_cleared (proposed), 4 | - / - / - | Cobalion, Terrakion, Virizion, Iron Leaves, Iron Boulder, Iron Crown / Cobalion, Terrakion, Virizion, Iron Leaves, Iron Boulder, Iron Crown, Keldeo / Keldeo, Cobalion, Terrakion, Virizion, Iron Leaves, Iron Boulder, Iron Crown | - |
-| **The Zero Dig** `zero_dig` (proposed; CUT from the install 2026-10-11, the owner: the built one copied the Night Shift, re-authoring waits on the owner's play) | desert excavation (new) | gym7_cleared (proposed), 4 | - / - / - | Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns / Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns / Koraidon, Miraidon, Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns | - |
+| **The Zero Dig** `zero_dig` (proposed; CUT from the install 2026-10-11, the owner: the built one copied the Night Shift, re-authoring waits on the owner's play) | desert excavation (new) | gym7_cleared (proposed), 4 | - / - / - | Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns / Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns / Koraidon, Great Tusk, Iron Treads, Sandy Shocks, Iron Hands, Iron Thorns | - |
 | **The Starfall Crater** `starfall` (proposed) | night sky crater (new) | gym8_cleared (proposed), 5 | - / - / - | - / Jirachi, Deoxys, Cresselia / Arceus, Jirachi, Deoxys, Cresselia | - |
 
 **New themes these need:** city (the Street), great tree (the Patriarch), ice spire (the Dragonspiral), hill keep (the
@@ -178,10 +178,12 @@ later.
    ground and a `sealed_chamber` record (`tools/legendaries.py` KINDS has `lake_grotto`, `sealed_chamber`, `sapling_wake`);
    the Tri Peaks carries no legendary today and the owner called it "too barren". If the owner prefers dungeons, each
    proposal's `fallback` puts it in a pool at once.
-3. **Blocked and planned world homes:** Lugia (fallback: the Drowned Reliquary, band 6), Registeel (the Night Shift,
-   bands 4-6), Kyogre (the Cistern, band 6), Rayquaza (the Starfall Crater, band 6). Fallbacks only; the world homes stand.
-4. **Koraidon and Miraidon** (`DUNGEON_PLACEMENT.md` Q14, open): placed in the Zero Dig, band 6, reading the new
-   instruction as "dungeon".
+3. **Blocked and planned world homes:** Lugia (fallback: the Drowned Reliquary, band 6), Kyogre (the Cistern, band 6),
+   Rayquaza (the Starfall Crater, band 6). Fallbacks only; the world homes stand. (Registeel was listed here with the
+   Night Shift, bands 4-6; corrected 2026-10-12: it is sited in the upper Rift, so that fallback is unused.)
+4. **Koraidon and Miraidon** (`DUNGEON_PLACEMENT.md` Q14, answered 2026-10-12): post-Champion area bosses in the world.
+   Miraidon is built at The Relay Fault (K3, `data/caves.json`); Koraidon is K6 (Sunscar), not yet built, and stays in the
+   Zero Dig's band-6 pool until then.
 5. **Yveltal, Dialga, Heatran:** kept as D18 boss catches. The alternative is the prize form (a pool entry) with a
    fight-only boss.
 6. **The UB bosses' form** (section 3, last bullet) and `ULTRA_BEAST_BOSSES.md`'s open U-Q1 to U-Q7.
@@ -206,7 +208,7 @@ later.
 | 251 | Celebi | mythical | placed: Route 1 sapling (sapling_celebi.json) and celebi_wake | stays |  |
 | 377 | Regirock | legendary | placed: legendaries.json sealed chamber, Scorched Plateau | stays |  |
 | 378 | Regice | legendary | placed: legendaries.json sealed chamber, Glacial Tear | stays |  |
-| 379 | Registeel | legendary | blocked (owner decision): legendaries.json, blocked on the owner (which part of the Rift) | keeps its world home; fallback night_shift bands 4-6 |  |
+| 379 | Registeel | legendary | placed: legendaries.json sealed chamber (registeel), the upper Rift, portal (4195, 3896), gate gym7_cleared (sited; was listed as blocked, corrected 2026-10-12) | stays; the night_shift fallback is unused |  |
 | 380 | Latias | legendary | placed: Shrew Station Eon shrine (research_station.json) | stays |  |
 | 381 | Latios | legendary | placed: Shrew Station Eon shrine | stays |  |
 | 382 | Kyogre | legendary | planned (designed, not built): KYOGRE_CAVE.md (designed, not built); Coldwater Station leads to it | keeps its world home; fallback cistern band 6 |  |
@@ -220,7 +222,7 @@ later.
 | 483 | Dialga | legendary | planned (designed, not built): D18: the Temple Calendar's boss, band-6 catch (designed) | temple_calendar (boss) |  |
 | 484 | Palkia | legendary | **dungeon**: nowhere authored | street, band 6 | D18's lake pick for the Street; restricted |
 | 485 | Heatran | legendary | planned (designed, not built): DUNGEONS.md 10: the Crucible's boss after Entei (designed) | crucible (boss) |  |
-| 486 | Regigigas | legendary | placed: legendaries.json, beside the Displaced City | stays |  |
+| 486 | Regigigas | legendary | placed: legendaries.json, the North Pine Isle (moved 2026-10-12 from beside the Displaced City) | stays |  |
 | 487 | Giratina | legendary | placed: Wardenhold (frostpeak_keep_quest.json) | stays |  |
 | 488 | Cresselia | legendary | **dungeon**: nowhere authored | starfall, bands 5, 6 | the full moon, Darkrai's counterpart |
 | 489 | Phione (ATM subset) | mythical | **dungeon**: nowhere authored | flooded_ruin, bands 4, 5 | the sunken sea temple |
@@ -239,7 +241,7 @@ later.
 | 645 | Landorus | legendary | **world** (proposal): nowhere authored | Tri Peaks summit (proposal); fallback dragonspiral band 6 |  |
 | 646 | Kyurem | legendary | **dungeon**: nowhere authored | dragonspiral, band 6 | the frozen one that holds the other two; restricted |
 | 647 | Keldeo | mythical | **dungeon**: nowhere authored | field_of_swords, bands 5, 6 | the sword in the spring, after the three |
-| 648 | Meloetta | mythical | **dungeon**: nowhere authored | temple_calendar, bands 5, 6 | the temple's song |
+| 648 | Meloetta | mythical | **world** (built offline 2026-10-12, not applied): The Singing Hollow, `cave_singing_hollow` (K2), a repeatable ultra-rare chamber spawn at level 50 behind gym6_cleared | cave kit, `data/caves.json` | the song cave; its inherited DP spawn is not yet removed |
 | 649 | Genesect | mythical | **dungeon**: nowhere authored | warped_lab, bands 5, 6 | an ancient thing rebuilt in a lab; the DP's fossil revive also exists (unverified reachable) |
 | 716 | Xerneas | legendary | **dungeon**: nowhere authored | patriarch, band 6 | Yveltal's pair, the life-tree; restricted |
 | 717 | Yveltal | legendary | planned (designed, not built): D18: the Patriarch's boss, band-6 catch (designed) | patriarch (boss) |  |
@@ -305,7 +307,7 @@ later.
 | 1005 | Roaring Moon (ATM subset) | paradox | **dungeon**: nowhere authored | soul_ossuary, bands 5, 6 | dragon/dark ancient paradox |
 | 1006 | Iron Valiant (ATM subset) | paradox | **dungeon**: nowhere authored | warped_lab, bands 5, 6 | a future paradox |
 | 1007 | Koraidon | legendary | **dungeon**: nowhere authored | zero_dig, band 6 | the past; restricted; Q14 open |
-| 1008 | Miraidon | legendary | **dungeon**: nowhere authored | zero_dig, band 6 | the future; restricted; Q14 open |
+| 1008 | Miraidon | legendary | **world** (built offline 2026-10-12, not applied): The Relay Fault, `cave_relay_fault` (K3), a post-Champion area boss kept by a keeper, level 70, behind champion_cleared | cave kit, `data/caves.json` | the future; restricted; Q14 answered 2026-10-12 |
 | 1009 | Walking Wake | paradox | **dungeon**: nowhere authored | cistern, bands 4, 5, 6 | D18's lake pick for the Cistern; renders today (jar) |
 | 1010 | Iron Leaves | paradox | **dungeon**: nowhere authored | field_of_swords, bands 4, 5, 6 | Virizion's paradox; renders today (jar) |
 | 1014 | Okidogi | legendary | **dungeon**: nowhere authored | jungle, bands 4, 5, 6 | one of the Loyal Three |
@@ -330,3 +332,36 @@ later.
   seen in game.
 - Pokemon lore used for theme (the Swords' paradox doubles, the Loyal Three, the Tapus' islands) is recalled, not read;
   it is flavour, and no rule here rests on it.
+
+## 9. The nine homeless paradoxes, re-homed (2026-10-12)
+
+The Zero Dig is cut and the Temple Calendar and the Last Cistern were never built, so nine paradoxes had a roster home
+that cannot be entered. Each moved into the legendary pool of a BUILT dungeon by theme
+(`data/dungeon_prize_roster.json`, read by `tools/dungeon_prize.pool_at` through each habitat's `prize.roster`). The three
+unbuilt dungeons' pools are now `{}`; one home each. The table is the whole change, with the band range each keeps.
+
+| Paradox | From | To | Bands | Why | Model gate |
+|---|---|---|---|---|---|
+| Iron Treads | zero_dig | night_shift | 4-6 | a steel/ground machine is a mine's find | atm_subset |
+| Great Tusk | zero_dig | field_of_swords | 4-6 | ground/fighting, the open hills | atm_subset |
+| Sandy Shocks | zero_dig | ash_bell | 5-6 | electric/ground waste beside Raikou and Raging Bolt | atm_subset |
+| Iron Hands | zero_dig | crucible | 6 | a forge-hammer brute; the only non-gated species of that pool | none |
+| Iron Thorns | zero_dig | warped_lab | 5-6 | a future paradox beside the lab's other two | atm_subset |
+| Scream Tail | temple_calendar | jungle | 4-6 | floral ancient paradox in the flowering jungle | atm_subset |
+| Brute Bonnet | temple_calendar | patriarch | 4-6 | ancient grass/dark, the great tree's root hollows | atm_subset |
+| Iron Bundle | cistern | dragonspiral | 6 | ice/water future paradox in an ice spire | atm_subset |
+| Walking Wake | cistern | flooded_ruin | 4-6 | the drowned reliquary's water | none |
+
+No pool doubles (largest growth: the Crucible 2 -> 3 at its one band). Every pool keeps at least one species that is not
+model-gated at each band it has, except the pools that were already all-gated before this change (the Street's bands 4-5,
+which this change does not touch). The Crucible's band 6 was all-gated (Stakataka, Gouging Fire) and now offers Iron Hands
+until the AllTheMons subset is delivered. Not verified in game: file validity and the pool tests only.
+
+### Heatran and Yveltal stay planned
+
+Both are listed as D18 boss catches (`boss_legendary` in the roster), but a rooms dungeon has no legendary boss stage: the
+boss is a chain of NPC trainer stages (`data/dungeons.json` `boss.teams`), and the only legendary mechanism in
+`tools/dungeon_fights.py` is the prize habitat (`anchors["legendary"]`). The Crucible and Patriarch records say so in their
+`does_not_cover`. Heatran's room is `data/heatran_boss.json` (designed, not built); Yveltal needs the wild band-6 last stage
+and the sealed cocoon (E-P6, E-P7). The prize form (a pool entry) is the roster's own stated alternative; it is the owner's
+call, not taken here.

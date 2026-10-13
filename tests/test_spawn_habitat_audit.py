@@ -447,4 +447,4 @@ def test_prepare_runs_the_audit_right_after_the_spawns_compile():
     # without it the audit exists and never runs: the owner's "a success report is not the work"
     import reapply
     names = [n for n, _f in reapply.prepare_jobs(types.SimpleNamespace(source_root="x", server_dir="x"))]
-    assert names.index("spawn_habitat_audit") == names.index("compile_spawns") + 1
+    assert names.index("compile_spawns") < names.index("spawn_habitat_audit")   # after it; not necessarily adjacent

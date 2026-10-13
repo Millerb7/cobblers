@@ -3016,25 +3016,110 @@
       "kept_because": "the one-wide shape is what every measured_defects entry before 2026-10-03 was measured against; its records quote columns of it."
     },
     "axis_why": "2026-10-03, with the width: a six-wide corridor on a diagonal staircases in Minecraft (every row offset from the last, its walls stepped, its roof a saw), so every gatehouse runs along x or z. `trace` measures the heading as before (a route's walked line, else the traced mask's nearest edge), keeps it as each gate's `surveyed_outward`, and snaps it to the nearest cardinal (tools/rift_zones.py gate_axis); `axis_snap` records the angle turned and how far the surveyed line drifts across the walkway over its length. A gate whose surveyed axis is not the way THROUGH it may carry its own cardinal `axis` with a why (G5).",
-    "frame_why": "2026-10-03: a gate frame at each mouth in `blocks.lintel`, so the gatehouse reads as a gate from the approach and not as the end of a tunnel: the roof over each end row and a lintel course above it, post to post, with the two posts standing one block proud of the walls. Nothing of it is at the walkway's own two levels, so it changes no walked column.",
-    "roof_at": 2,
-    "barrier_height": 2,
+    "frame_why": "RETIRED 2026-10-12 (the open gatehouse, gatehouse.why; the shell this describes is gatehouse.legacy): 2026-10-03: a gate frame at each mouth in `blocks.lintel`, so the gatehouse reads as a gate from the approach and not as the end of a tunnel: the roof over each end row and a lintel course above it, post to post, with the two posts standing one block proud of the walls. Nothing of it is at the walkway's own two levels, so it changes no walked column.",
     "arrive_in": 3,
     "turn_back_out": 8,
     "exit_in": 2,
     "walkway_in": 6,
     "knock_out": 2,
-    "knock_why": "the two walkway blocks directly OUTSIDE the guard AND the guard's own column, under the gatehouse's own roof, where a player stands face to face with it. This box is what calls the zone's qualify: a minecraft:location advancement over it, exactly as data/gulch_mine.json gate.knock does at the gulch's grille, whose reward function runs cobblers:rift_zones/<zone>/qualify. Before this existed nothing called qualify at all and the walls would have sealed the Rift (tools/reapply.py EXCLUDED, 2026-09-30). Since 2026-10-03 (width_why) it is every lane of those rows, six wide, so a player resting against the barrier in any lane is in it; the exit box is likewise the whole row behind the barrier.",
-    "rest_why": "2026-10-02: the knock box and the exit box are where a player COMES TO REST, against the barrier, and not a column they cross on the way. A minecraft:location advancement is tested about once a second (every 20 ticks; tools/gulch_mine.py and docs/mechanics/GYM_INTERIORS.md record the same cadence), and a walking player crosses a one-block box in about a quarter of that, so a box that is only crossed fires on roughly one pass in four. Neither the armour stand nor a Cobblemon NPC (isPushable false) stops a player, so a player walking up to the guard stops against the barrier IN the guard's own column: the knock box now covers it (t = -2..0), and at an inside-sited gate (G1, G4, whose zones begin at the guard's feet) a player resting there is no longer turned back by the zone check before the guard has answered. The exit box was 5 blocks in, between the arrival (3 in) and the zone: a passed player walking in crossed it and was thrown back outside on about one walk in four, and a player walking out stopped against the barrier at 2 in, past it, with nothing happening. It is now 2 in, the column directly behind the barrier, which is where a player walking out comes to rest. `walkway_in` keeps the walkway's inner end where it was (6 in), so moving the exit does not shorten the shell (data/rift_zones.json measured_defects[gate_boxes_are_crossed_not_stood_in]).",
+    "knock_why": "2026-10-12: there is no roof or barrier now; the knock box is still the passage's rows t = -knock_out .. 0, in front of and level with the guard, the one place in the zone where a passless player is answered instead of turned back. the two walkway blocks directly OUTSIDE the guard AND the guard's own column, under the gatehouse's own roof, where a player stands face to face with it. This box is what calls the zone's qualify: a minecraft:location advancement over it, exactly as data/gulch_mine.json gate.knock does at the gulch's grille, whose reward function runs cobblers:rift_zones/<zone>/qualify. Before this existed nothing called qualify at all and the walls would have sealed the Rift (tools/reapply.py EXCLUDED, 2026-09-30). Since 2026-10-03 (width_why) it is every lane of those rows, six wide, so a player resting against the barrier in any lane is in it; the exit box is likewise the whole row behind the barrier.",
+    "rest_why": "RETIRED 2026-10-12 (the open gatehouse, gatehouse.why; the shell this describes is gatehouse.legacy): 2026-10-02: the knock box and the exit box are where a player COMES TO REST, against the barrier, and not a column they cross on the way. A minecraft:location advancement is tested about once a second (every 20 ticks; tools/gulch_mine.py and docs/mechanics/GYM_INTERIORS.md record the same cadence), and a walking player crosses a one-block box in about a quarter of that, so a box that is only crossed fires on roughly one pass in four. Neither the armour stand nor a Cobblemon NPC (isPushable false) stops a player, so a player walking up to the guard stops against the barrier IN the guard's own column: the knock box now covers it (t = -2..0), and at an inside-sited gate (G1, G4, whose zones begin at the guard's feet) a player resting there is no longer turned back by the zone check before the guard has answered. The exit box was 5 blocks in, between the arrival (3 in) and the zone: a passed player walking in crossed it and was thrown back outside on about one walk in four, and a player walking out stopped against the barrier at 2 in, past it, with nothing happening. It is now 2 in, the column directly behind the barrier, which is where a player walking out comes to rest. `walkway_in` keeps the walkway's inner end where it was (6 in), so moving the exit does not shorten the shell (data/rift_zones.json measured_defects[gate_boxes_are_crossed_not_stood_in]).",
     "approach_why": "2026-10-02: the walkway is laid flat at the guard's feet, and the ground at its two mouths is not always there. Measured on the canonical heightmap: the Victory Road descent post's and G5's inner mouths stand 1 above the walkway and the wilds slip's outer mouth 5 above and inner 2 above, so a passed player arriving inside could not climb out (a one-block step cannot be jumped from under a roof two blocks up) and nobody could reach the wilds slip's knock box at all. Each gate's `approach` (measured by `trace`, from tools/ground.py) is the run of columns, straight on from each mouth, that the build cuts to air three high so the walkway meets the ground: the mouth column at the walkway's own level, then one block up per column until the natural ground is reached. Nothing is filled: a mouth that falls more than one block to the ground fails `trace` closed rather than being bridged (data/rift_zones.json measured_defects[gatehouse_mouths_do_not_meet_the_ground]). Since 2026-10-03 the walkway is six wide and each mouth's approach is one run per lane (tools/rift_zones.py approach_runs), each by the same one-block rule from its own lane's mouth column; `approach.outer` and `approach.inner` are lists of six runs.",
-    "why": "docs/mechanics/RIFT_ZONES.md section 6's drawn section, widened by the owner on 2026-10-03 (width_why): a six-wide walkway on a cardinal axis (axis_why), walled and roofed in obsidian at y+2 so nothing jumps the guard, a gate frame at each mouth (frame_why), and a two-high barrier across the full width directly behind the guard. The barrier is what physically stops a player; the guard reads as the thing that stops them. The passed player arrives 3 rows inside in the guard's lane facing in; an unqualified player is put 8 blocks outside facing away; the exit box is the whole row directly behind the barrier (rest_why). RIFT_ZONES.md section 6 still draws it one wide: that document is behind this record.",
     "blocks": {
-      "shell": "minecraft:obsidian",
-      "barrier": "minecraft:barrier",
-      "lintel": "minecraft:blackstone",
-      "lamp": "minecraft:crying_obsidian"
+      "post": "minecraft:blackstone",
+      "beam": "minecraft:blackstone",
+      "lantern": "minecraft:lantern"
     },
-    "not_built_here": "the guard NPCs themselves. tools/rift_zones.py places an armour stand placeholder at each guard's block, exactly as data/rift_sculpt.json entrance_policy does for its five trailheads: 'Guards' trailheads are marked with an armour stand placeholder and not staffed; Codex writes them'."
+    "not_built_here": "the guard NPCs themselves. tools/rift_zones.py places an armour stand placeholder at each guard's block, exactly as data/rift_sculpt.json entrance_policy does for its five trailheads: 'Guards' trailheads are marked with an armour stand placeholder and not staffed; Codex writes them'. Since 2026-10-12 the placeholder stands on the pad beside the passage (gate_dressing), faces down the approach, and the retired shell's stand on the guard's block is killed.",
+    "legacy": {
+      "retired": "2026-10-12",
+      "what": "the 2026-10-03 shell: a six-wide walkway on a cardinal axis, walled and roofed in obsidian at y+2, a blackstone gate frame at each mouth, a two-high barrier across the row directly behind the guard and a crying obsidian lamp over the guard. The owner, 2026-10-12, after playing: \"It shouldn't be a one-block corridor to squeeze through; it should just be a guard that stops you if you can't enter.\" Walls, roof, barrier and frame are no longer built; tools/rift_zones.py `build` first takes down everything this shell put in the world (legacy_footprint) and restores the terrain it stood on.",
+      "walkway": 6,
+      "knock_out": 2,
+      "walkway_in": 6,
+      "roof_at": 2,
+      "barrier_height": 2,
+      "blocks": {
+        "shell": "minecraft:obsidian",
+        "barrier": "minecraft:barrier",
+        "lintel": "minecraft:blackstone",
+        "lamp": "minecraft:crying_obsidian"
+      },
+      "frozen_why": "a copy, not a reference: these are the numbers the world was BUILT with. Changing gatehouse.walkway or knock_out later must not change what the demolition takes down, or it would leave the old columns standing."
+    },
+    "superseded_shell_why": "RETIRED 2026-10-12 (the open gatehouse, gatehouse.why; the shell this describes is gatehouse.legacy): docs/mechanics/RIFT_ZONES.md section 6's drawn section, widened by the owner on 2026-10-03 (width_why): a six-wide walkway on a cardinal axis (axis_why), walled and roofed in obsidian at y+2 so nothing jumps the guard, a gate frame at each mouth (frame_why), and a two-high barrier across the full width directly behind the guard. The barrier is what physically stops a player; the guard reads as the thing that stops them. The passed player arrives 3 rows inside in the guard's lane facing in; an unqualified player is put 8 blocks outside facing away; the exit box is the whole row directly behind the barrier (rest_why). RIFT_ZONES.md section 6 still draws it one wide: that document is behind this record.",
+    "why": "2026-10-12, the owner after playing: \"Go through the rift guards at each section and make sure they seem polished; I've had issues with the look sometimes. It shouldn't be a one-block corridor to squeeze through; it should just be a guard that stops you if you can't enter.\" So a gatehouse is an OPEN passage, `walkway` blocks wide (six, never under min_width = 5, and the widest trail it joins is six: the sculpt's entrances are 3 to 6 wide, data/rift_sculpt.json), with nothing built over or across it lower than min_clear = 4 blocks. The guard stands BESIDE the way, on a pad flush with the floor in the column just outside the passage, facing the approach. The stopping is the zone's own rule: the line box (line_in rows past the guard) turns back a player without the pass, with the zone's turn-back message, and admits one with it; nothing physical closes the way. Dressing only: two blackstone posts either side of the line (post_height high) with a lantern on each, and a beam across at arch_at, five clear blocks over the path. Everything the retired shell built is taken down first (legacy), and the terrain it stood on is restored per gate from the paint's own terrain code (terrain, terrain_blocks).",
+    "min_width": 5,
+    "min_clear": 4,
+    "min_width_why": "the owner, 2026-10-12: at least 5 blocks wide, the trail's own width where the trail is wider. The six-wide walkway (width_why) already meets it; the widest sculpted way into a zone is 6 (rift_sculpt.json entrances: haul road 6, wilds slip 5, Victory Road descent 4, rim post 3), so 6 is the trail's own width and no gate narrows it.",
+    "clear_above": 4,
+    "clear_above_why": "air is written from the floor's top to feet + clear_above (five blocks of air over the floor: feet, head and three more), and wherever the ground stands higher than that over the passage it is cut away to the sky, so there is never a tunnel of natural ground over the way either",
+    "post_height": 5,
+    "arch_at": 5,
+    "arch_why": "the beam sits on the two posts at feet + arch_at: clear air under it from the floor's top is arch_at blocks, over min_clear",
+    "posts_at": 1,
+    "posts_why": "the posts and the beam stand on the row directly behind the guard's (t = 1), the line a player crosses to enter; the guard's pad is the column beside the passage on the row t = 0, in front of the lane-side post",
+    "guard_side": -1,
+    "guard_side_why": "the guard stands on the low-lane side (gate_lanes()[0] - 1): across a north-south gate that is the west side, across an east-west one the north side. Fixed, not chosen per gate, so report, build and the tests read one convention.",
+    "line_in": 12,
+    "line_across": 2,
+    "line_why": "the LINE: a location advancement over the rows t = 1 .. line_in behind the guard, the passage's lanes and line_across more either side. A player without the pass who crosses it is turned back to the gate's turn-back point with the zone's message; a player who meets the zone's test is admitted (the zone check's qualify-on-entry, run first). 12 rows because a location advancement is tested once every 20 ticks and a sprint-jumper covers 7.1 blocks in that time: a box shorter than that can be crossed between two tests. The rows t <= 0 are the knock box and are not in it.",
+    "wall_gap_margin": 2,
+    "wall_gap_why": "where the gate stands in a cross-wall the wall leaves the passage's lanes and wall_gap_margin more either side, so the wall's two ends stand clear of the posts and the guard's pad; a gap the width of the passage alone would be a slot through a seventeen-block wall",
+    "exit_retired": "2026-10-12: the exit box and its function are no longer emitted. They existed because the barrier closed the way out as well as in; with no barrier a qualified player walking in crosses the exit row (t = exit_in) and the box, tested once a second, would have thrown about one in four of them back out. The record keeps the box (zones.*.exit) because trace still measures it.",
+    "terrain": {
+      "z1": "GRAVEL",
+      "z2": "GRASS",
+      "z2_victory_road_descent": "GRAVEL",
+      "z2_rim_post_descent": "STONE_MIX",
+      "z2_wilds_slip": "ROCK",
+      "z4": "GRAVEL",
+      "z5": "GRAVEL"
+    },
+    "terrain_why": "the paint's terrain code over each gate's old footprint, measured 2026-10-12 with tools/relic_underground.py painted_terrain (tools/paint_maps.py's own rule from the committed regions): z1 GRAVEL 84 of 84 columns, victory_road_descent GRAVEL 84 of 84, rim_post_descent STONE_MIX 84 of 84, wilds_slip ROCK 89 and GRAVEL 20 of 109, z4 GRAVEL 84 of 84, z5 GRAVEL 84 of 84. z2 (G2, on Victory Road) GRASS for the 68 of 84 columns the paint model answers; the other 16 are in no sub-region and are taken to be the same. Not read from a world (CLAUDE.md, ground rule): the old shell covers the world's own block there.",
+    "terrain_blocks": {
+      "GRASS": {
+        "surface": "minecraft:grass_block",
+        "under": "minecraft:dirt",
+        "deep": "minecraft:stone",
+        "floor": [
+          "minecraft:dirt_path",
+          "minecraft:dirt_path",
+          "minecraft:coarse_dirt"
+        ]
+      },
+      "GRAVEL": {
+        "surface": "minecraft:gravel",
+        "under": "minecraft:stone",
+        "deep": "minecraft:stone",
+        "floor": [
+          "minecraft:gravel",
+          "minecraft:gravel",
+          "minecraft:coarse_dirt"
+        ]
+      },
+      "STONE_MIX": {
+        "surface": "minecraft:stone",
+        "under": "minecraft:stone",
+        "deep": "minecraft:stone",
+        "floor": [
+          "minecraft:stone",
+          "minecraft:andesite",
+          "minecraft:gravel"
+        ]
+      },
+      "ROCK": {
+        "surface": "minecraft:stone",
+        "under": "minecraft:stone",
+        "deep": "minecraft:stone",
+        "floor": [
+          "minecraft:stone",
+          "minecraft:andesite",
+          "minecraft:stone"
+        ]
+      }
+    },
+    "terrain_blocks_why": "surface is the top block the restored ground gets, under the two blocks below it, deep stone below that to the bottom of what the old shell touched. floor is what the new passage and its approach are paved with, picked per column by (x * 7 + z * 13) mod 3 so the trail is worn rather than tiled. Falling blocks (gravel) are only ever placed on a solid block, never over air."
   },
   "wall": {
     "core": 2,

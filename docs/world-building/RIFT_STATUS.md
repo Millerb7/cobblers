@@ -479,6 +479,7 @@ exists, so this needs the owner to split "the rock" from "the rooms" before it c
 - **The Mega farms and their drop roll** — held on one owner question (a gym-6 zone of their own,
   or 8 badges?), and "the drop roll's functions are generated only once a farm den exists".
   Item 1 supplies the zone machinery that makes either answer cheap.
-- **Registeel's chamber** — `data/legendaries.json` `registeel.status` is `blocked`, `blocked_by`
-  "owner_decision: which part of the Rift"; the record also warns the final clearance proof
+- **Registeel's chamber** — *(stale when written; corrected 2026-10-12: `data/legendaries.json` `registeel.status` is
+  `sited`, portal (4195, 3896), and R14L placed it. The record still carries `blocked_by` text.)* It read `blocked`,
+  `blocked_by` "owner_decision: which part of the Rift"; the record also warns the final clearance proof
   "CANNOT be done in an isolated worktree".

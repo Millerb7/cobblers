@@ -207,8 +207,12 @@ def emitted(fn_dir):
 
 
 class World:
-    def __init__(self, heights, vox):
+    def __init__(self, heights, vox, closed=frozenset()):
         self.h, self.vox = heights, vox
+        # columns the walker may not enter: a gatehouse's door. Since 2026-10-12 a gatehouse is OPEN (no barrier block):
+        # the zone's line turns a passless player back, which no walk over blocks can see, so the door is closed by
+        # name here and the property left to check is that the WALLS leave no other way (z4_breaches).
+        self.closed = closed
 
     def g(self, x, z):
         return int(self.h[z - FRAME[1], x - FRAME[0]])
@@ -243,7 +247,7 @@ class World:
         x, z, _y = node
         for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             nx, nz = x + dx, z + dz
-            if FRAME[0] <= nx <= FRAME[2] and FRAME[1] <= nz <= FRAME[3]:
+            if FRAME[0] <= nx <= FRAME[2] and FRAME[1] <= nz <= FRAME[3] and (nx, nz) not in self.closed:
                 for ny in self.feet(nx, nz):
                     yield (nx, nz, ny)
 
@@ -324,10 +328,27 @@ def run_generator(tmp, mutation=None, trace=True, gate_on_report=True):
     return spec_of(tmp / "rift_zones.json"), tmp / "packs" / mod.PACK / "data" / mod.NS / "function" / mod.FOLDER
 
 
+def door_cells(spec, zid="z4"):
+    """The columns of one zone's gate that stand in for the old barrier: the corridor from the outer mouth to the end of
+    the line (gatehouse.line_in rows behind the guard), the passage's lanes and line_across more either side. Rows and
+    lanes from tools/gatehouse_audit.py's Frame, which shares no code with the generator."""
+    import gatehouse_audit as GA
+    gh = spec["gatehouse"]
+    fr = GA.Frame(spec["zones"][zid]["guard"], gh)
+    return frozenset(fr.at(t, k) for t in range(fr.t0, gh["line_in"] + 1)
+                     for k in range(fr.k0 - gh["line_across"], fr.k1 + gh["line_across"] + 1))
+
+
 def z4_breaches(spec, world):
-    """Where a z4 walker and the rest of the world meet without the barrier: (pocket, [what is wrong])."""
+    """Where a z4 walker and the rest of the world meet other than at G4's door: (pocket, [what is wrong]).
+
+    The door is closed in `world` (World.closed, door_cells) and the walk starts just inside it, past the line's last
+    row: z4's arrival stands in the line now, three rows behind the guard."""
+    import gatehouse_audit as GA
     z4 = spec["zones"]["z4"]
-    pocket = world.flood([(int(z4["arrive"][0]), int(z4["arrive"][2]))], SEAL_UP, SEAL_DOWN)
+    fr = GA.Frame(z4["guard"], spec["gatehouse"])
+    inner = fr.at(spec["gatehouse"]["line_in"] + 2, 0)
+    pocket = world.flood([inner], SEAL_UP, SEAL_DOWN)
     cols = columns(pocket)
     bad = []
     edge = [c for c in cols if c[0] in (FRAME[0], FRAME[2]) or c[1] in (FRAME[1], FRAME[3])]
@@ -390,9 +411,9 @@ def test_no_league_position_stands_in_any_zone_but_the_leagues_own():
 # Without it, the behind_league wall could stop short of the rim, or G4 be walked round, and a player without 120
 # species would step into z4 (or a z4 player out of it) with only the zone check between them.
 @pytest.mark.slow
-def test_a_walker_cannot_cross_between_z4_and_anywhere_else_but_through_the_barrier(heights, tmp_path):
+def test_a_walker_cannot_cross_between_z4_and_anywhere_else_but_through_the_door(heights, tmp_path):
     spec, fn = run_generator(tmp_path, trace=False)
-    cols, bad = z4_breaches(spec, World(heights, emitted(fn)))
+    cols, bad = z4_breaches(spec, World(heights, emitted(fn), door_cells(spec)))
     assert bad == [], "\n".join(bad)
     assert sum(1 for c in cols if in_boxes(spec["zones"]["z4"]["boxes"], *c)) > 1000, "the pocket is not z4's floor"
 
@@ -451,5 +472,5 @@ def test_dropping_the_rim_fill_from_the_generator_lets_a_walker_round_the_wall(h
     spec, fn = run_generator(tmp_path, "no_rim_fill", gate_on_report=False)
     cut = next(c for c in spec["cuts"] if c["id"] == "behind_league")
     assert cut["columns"] < 294, "the mutation no longer shortens the wall"
-    _cols, bad = z4_breaches(spec, World(heights, emitted(fn)))
+    _cols, bad = z4_breaches(spec, World(heights, emitted(fn), door_cells(spec)))
     assert bad, "a wall stopping short of the rim still sealed z4: the seal check does not bite"

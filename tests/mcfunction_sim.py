@@ -263,6 +263,27 @@ class World:
         self.rct_cap = {}             # player uid -> the level cap `rctmod player get level_cap` returns
         self.calls = []               # (tick, function) for every function run
         self.tags = {"load": [], "tick": []}
+        self.terrain = lambda x, y, z: "minecraft:air"   # what stands in a cell no logged write has touched
+
+    def block_at(self, x, y, z):
+        """The block in a cell: the latest plain `fill` / `setblock` in the log that covers it, else terrain(x, y, z).
+        A write with a filter (`replace <block>`) is not modelled and is skipped, so a test that needs a block state
+        gives it as terrain or writes it plainly. Added 2026-10-12 for `execute if block` (tools/legendaries.py's
+        retired-chamber cleanup probes the old pedestal)."""
+        x, y, z = (int(math.floor(v)) for v in (x, y, z))
+        for entry in reversed(self.log):
+            kind, detail = entry[1], entry[2]
+            if kind == "fill":
+                a, b, tok = detail
+                if (len(tok) == 1 or (len(tok) == 2 and tok[1] in ("replace", "destroy"))) and \
+                        all(min(a[i], b[i]) <= v <= max(a[i], b[i]) for i, v in enumerate((x, y, z))):
+                    return tok[0]
+            elif kind == "setblock":
+                t = detail.split()
+                if len(t) in (4, 5) and (len(t) == 4 or t[4] in ("replace", "destroy")) \
+                        and tuple(int(float(v)) for v in t[:3]) == (x, y, z):
+                    return t[3]
+        return self.terrain(x, y, z)
 
     # -- loading
     @classmethod
@@ -817,6 +838,12 @@ class World:
                     x, y, z = self.coords(toks[i + 2:i + 5], ctx)
                     count = 1 if self.loaded(x, z) else 0
                     n = 5
+                elif kind == "block":
+                    x, y, z = self.coords(toks[i + 2:i + 5], ctx)
+                    # an unloaded chunk matches no block (vanilla: the test fails, not errors)
+                    count = 1 if self.loaded(x, z) and \
+                        self.block_at(x, y, z).split("[")[0] == toks[i + 5].split("[")[0] else 0
+                    n = 6
                 elif kind == "data" and toks[i + 2] == "entity":
                     ents = self.select(toks[i + 3], ctx)
                     count = 1 if len(ents) == 1 and toks[i + 4] in ents[0].nbt else 0

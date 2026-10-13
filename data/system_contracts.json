@@ -269,6 +269,15 @@
         "docs/mechanics/DUNGEONS.md",
         "docs/research/DUNGEON_DEATH.md"
       ]
+    },
+    "caves": {
+      "what": "the cave kit: K1 Stoneford Cut, K2 The Singing Hollow, K3 The Relay Fault; each gate's barrier door, the antechambers' and chambers' activated Habitat Blocks, and K3's area-boss keeper (cobblers_caves)",
+      "paths": [
+        "data/caves.json",
+        "tools/caves.py",
+        "tools/caves_audit.py",
+        "docs/mechanics/LEGENDARY_HOMES.md"
+      ]
     }
   },
   "contracts": [
@@ -461,12 +470,12 @@
     },
     {
       "id": "C4",
-      "title": "No world pack places a spawn condition its place is not whitelisted for",
+      "title": "World packs may place spawn-condition blocks (the owner allowed them, 2026-10-05); every tool reading them is accounted for",
       "owner": "world_block_packs",
       "consumers": [
         "wild_spawns"
       ],
-      "statement": "Every block a generator's allowed or named list holds (and every block an earthwork places) is either named by no loaded spawn condition, or allowed by a data/spawn_block_policy.json entry whose scope names that place.",
+      "statement": "Spawn-condition blocks are ALLOWED in world packs: the owner, 2026-10-05, \"give me all the spawns\" (data/spawn_block_policy.json owner_decision_2026_10_05), confirmed 2026-10-12: \"a contract that forbids a decision is wrong, not the decision\". A generated pack may place them; every tool that reads data/spawn_blocks.json is listed here (source, checker or not covered), so nothing reads the conditions unaccounted for. Before 2026-10-12 this contract forbade any such block no policy entry scoped to the place, contradicting the decision.",
       "stated_in": [
         {
           "at": "docs/world-building/TOWN_CENTERS.md:74",
@@ -478,19 +487,9 @@
         }
       ],
       "tests": [
-        "tests/test_system_contracts.py::test_contract_c4_no_generated_world_pack_places_a_spawn_condition_its_place_is_not_whitelisted_for",
-        "tests/test_system_contracts.py::test_contract_c4_every_tool_that_reads_the_spawn_conditions_is_accounted_for",
-        "tests/test_system_contracts.py::test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows"
+        "tests/test_system_contracts.py::test_contract_c4_follows_the_owners_spawn_block_decision",
+        "tests/test_system_contracts.py::test_contract_c4_every_tool_that_reads_the_spawn_conditions_is_accounted_for"
       ],
-      "fails_today": {
-        "recorded": "2026-10-08",
-        "commit": "eef6004",
-        "measured": "the built-pack check run against the integration checkout's build/datapacks (12,691 functions): exactly these two packs place a spawn condition no data/spawn_block_policy.json entry names",
-        "cases": {
-          "built:cobblers_lake_life": "tools/lake_life.py:924 sets minecraft:sugar_cane (the lake banks' reeds), a spawn condition (data/spawn_blocks.json), and no policy entry names it. The owner ALLOWED spawn-condition blocks (2026-10-05: docs/STATE.md 'Spawn-condition blocks: ALLOW', data/spawn_block_policy.json owner_decision_2026_10_05), so the fix is a policy entry scoped to lake_life naming where and what it draws, like the mining_caves entry; it is not added here because data/spawn_block_policy.json belongs to datapack-content-dev (docs/STATE.md file-ownership table)",
-          "built:cobblers_ambient_idle": "data/ambient_towns/gym2_town.json:245 props a minecraft:pumpkin (built into ambient_idle/t/gym2_town/props.mcfunction), a spawn condition; the policy whitelists only minecraft:carved_pumpkin, for gym4_town's marrow show. Same owner decision, same owner of the fix: a policy entry scoped to gym2_town, or a prop that is not a spawn condition"
-        }
-      },
       "tools": {
         "arena_dome_audit.py": "checker: the built cobblers_arena_dome functions (Heaven's Arena's dome), forbidden blocks against data/spawn_blocks.json",
         "bank.py": "checker: the CobbleDollars bank's buy list (data/bank.json) against data/spawn_blocks.json: a bought item that is a spawn-condition block is refused unless `in_place` (harvested where it stands). It places no block. Unlisted from its first commit on 2026-10-05 until the material exchange (2026-10-06) found this contract failing on it",
@@ -502,6 +501,8 @@
         "shrines.py": "not covered: a block source (data/shrines.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by shrines_audit.py and by the built-packs test here",
         "route4_events.py": "checker: refuses any spawn-condition block it writes that its SPAWN_OK does not declare (pink_petals, cherry_leaves and water, at the hollow and the gate, each with a data/spawn_block_policy.json entry scoped to route4_events); its built functions are checked by the built-packs test here and by tests/test_route4_events.py",
         "shrines_audit.py": "checker: the built shrines functions, against data/shrines.json blocks and the spawn conditions",
+        "maze_shrines.py": "source: maze_shrines",
+        "maze_shrines_audit.py": "checker: the built maze_shrines functions, against data/maze_shrines.json blocks and the spawn conditions",
         "gym_interiors.py": "not covered: a block source (data/gym_interiors.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by gym_interiors_audit.py",
         "gym_interiors_audit.py": "checker: the built gym_interiors functions, against data/gym_interiors.json blocks and the spawn conditions",
         "rift_mines_audit.py": "checker: the built rift_mines pack (source rift_mines)",
@@ -576,7 +577,9 @@
         "buried_dune.py": "checker: Undertow Basin's builder (data/buried_dune.json, 2026-10-09): siting() reads data/spawn_blocks.json and refuses to build a plan that writes a block a spawn condition names. It writes no sand at all (the basin and trails are cut out of the dune; its palette is air, sandstone, bone block and the light block), so no policy entry is needed. A builder's guard, not an audit; tests/test_buried_dune.py re-reads the pack's commands against the conditions without importing the generator",
         "new_places_water_audit.py": "checker: the 2026-10-09 independent water audit of five new places (reads data/spawn_blocks.json and data/spawn_block_policy.json to refuse a spawn-condition block outside the policy's scoped entries)",
         "new_places_land_audit.py": "checker: B4 of the 2026-10-09 places (the independent land audit: reads data/spawn_blocks.json to refuse a spawn-condition block the policy does not allow)",
-        "long_count.py": "checker: the Long Count's builder (data/long_count.json, 2026-10-09): check_all() reads data/spawn_blocks.json and refuses to build a site that writes a block a spawn condition names (an oak leaf is one, so the young trees' leaves are azalea leaves). A builder's guard, not an audit; the independent audit (tools/long_count_audit.py) is owed, data/long_count.json audit_checklist"
+        "long_count.py": "checker: the Long Count's builder (data/long_count.json, 2026-10-09): check_all() reads data/spawn_blocks.json and refuses to build a site that writes a block a spawn condition names (an oak leaf is one, so the young trees' leaves are azalea leaves). A builder's guard, not an audit; the independent audit (tools/long_count_audit.py) is owed, data/long_count.json audit_checklist",
+        "caves.py": "source: caves",
+        "caves_audit.py": "checker: the built cobblers_caves pack (source caves): every block it writes against data/spawn_blocks.json and the policy entries scoped to caves"
       }
     },
     {
@@ -1176,6 +1179,39 @@
         "tests/test_system_contracts.py::test_contract_c24_a_dungeon_death_makes_no_claim_and_nothing_is_delivered_into_a_slot",
         "tests/test_dungeon_death.py::test_the_generated_pack_takes_no_items_in_a_dungeon",
         "tests/test_dungeon_death.py::test_the_generated_pack_holds_delivery_for_a_player_inside_a_dungeon"
+      ]
+    },
+    {
+      "id": "C25",
+      "title": "A cave boss that blacks a player out becomes the claim's guardian, and the cave keeper never touches a guardian",
+      "owner": "recovery_claims",
+      "consumers": [
+        "caves"
+      ],
+      "constrained_by": [
+        "caves"
+      ],
+      "statement": "A cave boss (data/caves.json occupant.mode area_boss: Miraidon at The Relay Fault, Dialga at The Clock Cellar, Koraidon at Sunscar) carries tags that are never the blackout's exempt tag, so a boss that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the cave keeper (cobblers:caves/boss/<id>/*) only counts it: the guardian is found as present by its tag and species near the spot, and no kill, hold, wake, settle or duplicate selector of the pack reaches an entity tagged cobblers.guardian. Nothing in the pack adds or removes cobblers.guardian or the exempt tag. The keeper's return clock starts only when no boss and no guardian is present for two loaded passes, so a player's items are never left with a guardian that was despawned, replaced or respawned under them.",
+      "stated_in": [
+        {
+          "at": "tools/blackout_pack.py:510",
+          "quote": "\"tag @s add cobblers.guardian\","
+        },
+        {
+          "at": "tools/caves.py:839",
+          "quote": "and NEVER a guardian"
+        },
+        {
+          "at": "data/caves.json:470",
+          "quote": "\"guardian_tag\": \"cobblers.guardian\""
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c25_a_cave_boss_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it",
+        "tests/test_caves.py::test_a_guardian_is_never_held_woken_settled_or_killed",
+        "tests/test_caves.py::test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_spawns",
+        "tests/test_caves.py::test_a_duplicate_is_removed_and_never_a_guardian",
+        "tests/test_caves.py::test_a_keeper_that_can_kill_a_guardian_is_refused"
       ]
     }
   ]

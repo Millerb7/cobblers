@@ -8,9 +8,12 @@ refuses to write a block for it. That is the fail-closed half: a chamber that ca
 cannot reach a world by accident.
 
 WHAT A FUNCTION CAN AND CANNOT DO HERE
-  - A Pokemon is summoned over RCON by tools/reapply.py (step R14L). `spawnpokemonat` inside a datapack
-    function spawns nothing until a /reload (EXP-046 question 1), so the pack never spawns one. Same
-    pattern as tools/sapling_celebi.py.
+  - A Pokemon is summoned by tools/reapply.py (step R14L), which runs each chamber's look-then-act chain
+    (tools/chunk_look.py; 2026-10-12): the summon is a MACRO line in the chamber's function, because a plain
+    `spawnpokemonat` in a function parsed at server start spawns nothing (EXP-046), and it fires only when the
+    chunk's saved entities have arrived and no tagged legendary stands. So R14L is safe to re-run: it leaves an
+    existing legendary alone and adds only a missing one, and it does not re-seal a chamber a player has opened
+    (carve_once). Same pattern as tools/drowned_quarry.py.
   - Cobblemon ignores Invulnerable and a sword killed the sleeping Celebi in three hits (EXP-023), so a
     dormant legendary is protected by BLOCKS, not by a flag: a barrier partition in a grotto, a stone plug
     in a sealed chamber. Once the gate opens the legendary is as killable as any placed Pokemon; that is a
@@ -29,6 +32,14 @@ THE CHAMBER, PARAMETRIC BY DESIGN
                     shown to everyone and only answer to a badge (WATER_BUILD_PLAN 4.2).
     sealed_chamber  a stone plug at the surface -> a dry ladder shaft -> a short adit -> the chamber. The
                     plug IS the gate and it never closes again, so nobody is sealed in.
+
+A RECORD THAT MOVES (2026-10-12, Regigigas to the North Pine Isle) keeps its old chamber in `retired_sites`, each
+entry the numbers that chamber was carved from (bore, shell_margin and pedestal_block frozen as they stood). For
+each, files() emits a look-then-act cleanup that R14L runs BEFORE any summon: it refuses while a player stands in
+a retired void (and the step reads the held count back, so the run stops), restores the voids to rock and the
+sleeve and plug columns to the heightmap's terrain, clears the retired chamber's open score, and kills the record's
+own legendary in the old chamber's box. The restore runs only while the old pedestal stands, so a second run
+writes nothing; its ground is the heightmap (never a world) and its surface block is data, `terrain.surface`.
 
   python tools/legendaries.py                     # -> build/datapacks/cobblers_legendaries
   python tools/legendaries.py --report            # the geometry of every record, nothing written
@@ -93,14 +104,52 @@ def load(path=DATA):
         g = r.get("gate")
         if not isinstance(g, dict) or not isinstance(g.get("flags"), list) or not g["flags"]:
             raise LegendaryError("%s: gate.flags must be a non-empty list (no legendary is ungated)" % rid)
+        _check_retired(r)
     if not seen:
         raise LegendaryError("%s: no encounters" % path)
     return doc
 
 
+RETIRED_KEYS = ("id", "retired", "why", "portal", "approach", "chamber", "plug_depth", "bore", "shell_margin",
+                "pedestal_block", "terrain")
+TERRAIN_KEYS = ("surface", "under", "deep")
+
+
+def _check_retired(rec):
+    """A record's `retired_sites` (2026-10-12): the chambers it used to have, each frozen with the numbers it was
+    carved from so tools/legendaries.py can undo it. Fail closed on anything the cleanup would have to guess."""
+    seen = set()
+    for s in rec.get("retired_sites") or []:
+        sid = s.get("id")
+        where = "%s retired site %r" % (rec["id"], sid)
+        if not isinstance(sid, str) or not sid.replace("_", "").isalnum() or sid != sid.lower():
+            raise LegendaryError("%s: the id must be a lowercase [a-z0-9_] name" % where)
+        if sid in seen:
+            raise LegendaryError("%s: declared twice" % where)
+        seen.add(sid)
+        if rec["kind"] != "sealed_chamber":
+            raise LegendaryError("%s: only a sealed_chamber can be retired (a lake grotto's undoing is the water's, "
+                                 "and nothing here writes it)" % where)
+        for k in RETIRED_KEYS:
+            if k not in s:
+                raise LegendaryError("%s: no %s; the cleanup would have to guess it" % (where, k))
+        for k in TERRAIN_KEYS:
+            if not isinstance(s["terrain"].get(k), str) or not s["terrain"][k].startswith("minecraft:"):
+                raise LegendaryError("%s: terrain.%s must be a minecraft: block id" % (where, k))
+        if not (isinstance(s["portal"], list) and len(s["portal"]) == 2):
+            raise LegendaryError("%s: portal must be [x, z]" % where)
+        if s["portal"] == rec.get("portal"):
+            raise LegendaryError("%s: the retired portal is the record's live portal; nothing moved" % where)
+
+
 def emitted(doc):
     """The records this tool writes blocks and gate code for: sited only, never a blocked one."""
     return [r for r in doc["encounters"] if r["status"] == "sited"]
+
+
+def retired(doc):
+    """[(record, site)] for every retired chamber site of every record, in file order."""
+    return [(r, s) for r in doc["encounters"] for s in (r.get("retired_sites") or [])]
 
 
 def gate_only(doc):
@@ -232,6 +281,135 @@ def _lanterns(chamber, alcove, axis, y):
     xs = sorted({x0 + (x1 - x0) // 4, (x0 + x1) // 2, x1 - (x1 - x0) // 4})
     zs = sorted({z0 + (z1 - z0) // 4, (z0 + z1) // 2, z1 - (z1 - z0) // 4})
     return [(x, y, z) for x in xs for z in zs]
+
+
+# ------------------------------------------------------------------ a retired chamber (2026-10-12)
+
+RETIRE_HELD = "cobblers_leg_retire_held"   # worn by a player standing in a retired void: the restore refused
+
+
+def retired_geometry(rec, site, doc, ground):
+    """geometry() over a retired site's frozen numbers (bore and shell_margin as they stood when it was carved)."""
+    pseudo = {"id": rec["id"], "kind": "sealed_chamber", "portal": site["portal"], "approach": site["approach"],
+              "chamber": site["chamber"], "plug_depth": site["plug_depth"]}
+    pdoc = {"defaults": dict(doc["defaults"], bore=site["bore"], shell_margin=site["shell_margin"])}
+    return geometry(pseudo, pdoc, ground)
+
+
+def retire_parts(rec, site, doc):
+    """(chain base, restore function, score holder, chain's new tag) of one retired site's cleanup."""
+    base = "%s:legendary/%s/retire_%s" % (doc["namespace"], rec["id"], site["id"])
+    return base, base + "_restore", "legret_%s_%s" % (rec["id"], site["id"]), doc["tag_prefix"] + rec["id"] + ".retire"
+
+
+def _vol(box):
+    x0, y0, z0, x1, y1, z1 = box
+    return "x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d" % (x0, y0, z0, x1 - x0, y1 - y0, z1 - z0)
+
+
+def retire_rects(cols):
+    """{(x, z): key} -> [(x0, x1, z0, z1, key)]: runs of equal key along x, rows of equal runs merged over z."""
+    rows = {}
+    for (x, z), k in sorted(cols.items(), key=lambda c: (c[0][1], c[0][0])):
+        runs = rows.setdefault(z, [])
+        if runs and runs[-1][1] == x - 1 and runs[-1][2] == k:
+            runs[-1][1] = x
+        else:
+            runs.append([x, x, k])
+    out, zs = [], sorted(rows)
+    i = 0
+    while i < len(zs):
+        j = i
+        while j + 1 < len(zs) and zs[j + 1] == zs[j] + 1 and rows[zs[j + 1]] == rows[zs[i]]:
+            j += 1
+        for x0, x1, k in rows[zs[i]]:
+            out.append((x0, x1, zs[i], zs[j], k))
+        i = j + 1
+    return out
+
+
+def terrain_lines(cols, ground, terrain):
+    """fill lines putting every column of `cols` ({(x, z): (lo, hi)}) back to terrain over its y range: `deep` to three
+    under the ground, `under` to one under, `surface` at the ground, air above, up to hi. The ground is the heightmap's,
+    rounded (never a world). tools/rift_zones.py restore_lines' rule, which tools/gym_demolish.py shares in spirit."""
+    keyed = {c: (ground(c[0], c[1]), lo, hi) for c, (lo, hi) in cols.items()}
+    out = []
+    for x0, x1, z0, z1, (gy, lo, hi) in retire_rects(keyed):
+        def band(a, b, block):
+            if a <= b:
+                out.append("fill %d %d %d %d %d %d %s" % (x0, a, z0, x1, b, z1, block))
+        band(lo, min(gy - 3, hi), terrain["deep"])
+        band(max(lo, gy - 2), min(gy - 1, hi), terrain["under"])
+        band(max(lo, gy), min(gy, hi), terrain["surface"])
+        band(max(lo, gy + 1), hi, "minecraft:air")
+    return out
+
+
+def retire_restore_lines(rec, site, doc, ground):
+    """The retired chamber, put back: the open score cleared (the new chamber is unopened), every carved void back
+    to rock, every column the sleeve and plug wrote back to terrain from the heightmap, the pedestal last (the
+    probe that gates all of it, so an interrupted run is run again)."""
+    g = retired_geometry(rec, site, doc, ground)
+    t = site["terrain"]
+    mx, mz = g["anchor"]
+    my = g["mouth_y"]
+    r = int(site["bore"]) // 2
+    out = ["# Generated by tools/legendaries.py from data/legendaries.json: %s, retired site %s (%s)."
+           % (rec["title"], site["id"], site["retired"]),
+           "# chunks-loaded-by: %s (its forceload holds the retired site's whole hull)" % retire_parts(rec, site, doc)[0],
+           "# Run only while the pedestal still stands, so a second run writes nothing; it is also the LAST write, so a",
+           "# run that stopped half way is run again. The retired chamber's open score is cleared first: the live",
+           "# chamber elsewhere is unopened, and carve_once skips a chamber whose score is 1.",
+           "scoreboard players set #%s %s 0" % (rec["id"], doc["objective"])]
+    for name in ("chamber", "passage", "shaft"):
+        out += _fill(g[name], t["deep"])
+    cols = {}
+    env_top = g["envelope"][4]
+    sx0, sz0, sx1, sz1 = g["sleeve_footprint"]
+    for x in range(sx0, sx1 + 1):
+        for z in range(sz0, sz1 + 1):
+            plug = abs(x - mx) <= r and abs(z - mz) <= r
+            lo, hi = env_top + 1, (max(g["sleeve_top"], my) if plug else g["sleeve_top"])
+            if lo <= hi:
+                cols[(x, z)] = (lo, hi)
+    out += ["# the sleeve and the plug: every column back to the heightmap's terrain (%s at the ground)" % t["surface"]]
+    out += terrain_lines(cols, ground, t)
+    px, py, pz = g["pedestal"]
+    out.append("setblock %d %d %d %s" % (px, py, pz, t["deep"]))
+    return out
+
+
+def retire_functions(rec, site, doc, ground):
+    """{'ns:path': lines} of one retired site's cleanup: a look-then-act chain (tools/chunk_look.py) that, once its
+    hull shows its saved entities (or blind after the chain's limit), refuses if a player stands in a void, else
+    restores the chamber (only while its pedestal stands) and kills the record's own legendary standing in it.
+
+    The kill is the chamber's own and nothing else: type cobblemon:pokemon, the record's tag, and the retired
+    chamber's box. The live chamber's legendary carries the same tag and stands elsewhere, outside that box.
+    The chain counts the players it held (RETIRE_HELD); the step reads 0 back, so a refusal stops the run."""
+    import chunk_look as CL
+    g = retired_geometry(rec, site, doc, ground)
+    base, restore, holder, new_tag = retire_parts(rec, site, doc)
+    tag = doc["tag_prefix"] + rec["id"]
+    scope = "type=cobblemon:pokemon,tag=%s,%s" % (tag, _vol(_grow(g["chamber"], 2)))
+    # the three voids a player could stand in, each its own box (one hull would take in the surface over the chamber
+    # on ground that stands lower than the plug); the shaft's box ends at the plug's top, the surface block
+    shaft = g["shaft"]
+    voids = [g["chamber"], g["passage"], (shaft[0], shaft[1], shaft[2], shaft[3], g["mouth_y"], shaft[5])]
+    held = "@a[tag=%s]" % RETIRE_HELD
+    px, py, pz = g["pedestal"]
+    bb = g["bbox"]
+    act = ["# the cleanup of %s's retired site %s (tools/legendaries.py retire_functions)" % (rec["id"], site["id"]),
+           "# a player standing in a void is held, and nothing below is done while anyone is: the step reads the held count",
+           "tag @a remove %s" % RETIRE_HELD]
+    act += ["tag @a[%s] add %s" % (_vol(v), RETIRE_HELD) for v in voids]
+    act += ["execute unless entity %s if block %d %d %d %s run function %s"
+            % (held, px, py, pz, site["pedestal_block"], restore),
+            "execute unless entity %s run kill @e[%s]" % (held, scope)]
+    fns = CL.chain(base, (bb[0], bb[2], bb[3], bb[5]), ["@e[%s]" % scope], act, [scope], new_tag,
+                   "tag=%s" % RETIRE_HELD, holder, note="tools/legendaries.py")
+    fns[restore] = retire_restore_lines(rec, site, doc, ground)
+    return fns
 
 
 # ------------------------------------------------------------------ the pack
@@ -421,6 +599,35 @@ def files(doc, ground):
         fn["legendary/%s/dress_new" % rid] = [
             "execute positioned %s as @e[type=cobblemon:pokemon,tag=!%s,distance=..3,limit=1,sort=nearest] "
             "run function %s:legendary/%s/dress" % (at, tag, ns, rid)]
+        # R14L is safe to re-run (2026-10-12): the summon is the act of a look-then-act chain (tools/chunk_look.py,
+        # N155), so it fires only once the legendary's chunk has shown its saved entities (or blind, a first run),
+        # and only when no tagged one stands. A macro line summons it (EXP-046: a plain spawnpokemonat in a function
+        # parsed at server start spawns nothing). The carve is skipped once the gate has opened.
+        base, holder, box, scope, new_tag = chain_parts(rec, doc, g)
+        sx, sy, sz = ("%.1f" % (lx + 0.5), int(ly), "%.1f" % (lz + 0.5))
+        fn["legendary/%s/spawn_at" % rid] = [
+            "$spawnpokemonat $(x) $(y) $(z) %s level=%d no_ai" % (rec["species"], int(rec["level"]))]
+        spawn_new = [
+            "# the chain's act, only when no tagged %s stands: summon it unless some Pokemon already stands at the spot"
+            " (an interrupted summon, which dress_new takes), dress it, mark it for the chain's de-duplication" % rec["species"],
+            "execute positioned %s unless entity @e[type=cobblemon:pokemon,distance=..3] run function %s:legendary/%s/spawn_at "
+            "{x:\"%s\",y:%d,z:\"%s\"}" % (at, ns, rid, sx, sy, sz),
+            "function %s:legendary/%s/dress_new" % (ns, rid)]
+        # (a lake grotto's door is shut by the carve itself, and dress merges DORMANT: the old step's `close` is not
+        # needed here, and it would write the door outside the chain's small held box)
+        spawn_new.append("execute positioned %s as @e[%s,distance=..3,limit=1,sort=nearest] run tag @s add %s"
+                         % (at, scope, new_tag))
+        fn["legendary/%s/spawn_new" % rid] = spawn_new
+        fn["legendary/%s/carve_once" % rid] = [
+            "# a re-run must not re-seal a chamber a player has opened: carve only while the gate is shut (the score is"
+            " 1 once the plug is out, or the door is open)",
+            "execute unless score #%s %s matches 1 run function %s:legendary/%s/carve" % (rid, obj, ns, rid)]
+        from chunk_look import chain as _chain
+        act = ["# the summon, once a look has seen this chunk's saved entities (or blind after the limit: a first run)",
+               "execute unless entity @e[%s] run function %s:legendary/%s/spawn_new" % (scope, ns, rid)]
+        for ref, lines in _chain(base, box, ["@e[%s]" % scope], act, [scope], new_tag, scope, holder,
+                                 note="tools/legendaries.py").items():
+            fn[ref.split(":", 1)[1]] = lines
         fn["legendary/%s/keep" % rid] = [
             "# only while the chamber is shut: never drag a Pokemon out of a battle in progress",
             "execute store result score #%s_n %s if entity @e[tag=%s]" % (rid, obj, tag),
@@ -437,6 +644,11 @@ def files(doc, ground):
     for rec in gate_only(doc):
         rid = rec["id"]
         fn |= _celebi_wake(rec, doc, ns)
+
+    # a record that MOVED leaves its old chamber behind in any world it was built in: the cleanup (R14L runs it first)
+    for rec, site in retired(doc):
+        for ref, lines in retire_functions(rec, site, doc, ground).items():
+            fn[ref.split(":", 1)[1]] = lines
 
     tick.append("schedule function %s:legendary/tick %dt replace" % (ns, period))
     for rec in gate_only(doc):
@@ -515,29 +727,41 @@ def cache_problems(doc, ground, rewards=None):
 # ------------------------------------------------------------------ the re-application
 
 
+def chain_parts(rec, doc, g):
+    """(base, holder, box, scope, new tag) of one legendary's look-then-act chain (tools/chunk_look.py)."""
+    lx, _ly, lz = g["legendary"]
+    tag = doc["tag_prefix"] + rec["id"]
+    return ("%s:legendary/%s/place" % (doc["namespace"], rec["id"]), "legendary_%s" % rec["id"],
+            (lx - 4, lz - 4, lx + 4, lz + 4), "type=cobblemon:pokemon,tag=%s" % tag, tag + ".new")
+
+
 def placement_steps(doc, ground=None):
-    """tools/reapply.py R14L: hold the chunks, carve, summon over RCON, dress, shut the gate, release."""
+    """tools/reapply.py R14L, safe to re-run: per chamber, hold the chunks, carve (not once the gate has opened),
+    release, then the look-then-act chain that summons the legendary only if none stands, and its count read back.
+
+    The chain holds and releases its own chunks, so the step's hold is released BEFORE it (a forceload is per
+    chunk, not counted). A re-run therefore leaves an existing legendary alone and adds only a missing one.
+
+    FIRST, the cleanup of every retired chamber site (retire_functions): a chain per site that restores the old
+    chamber and kills the record's own legendary standing in it, read back as 0 players held. It runs before any
+    summon so the old legendary is gone before the live one is added, and it is safe to run twice."""
+    import chunk_look as CL
     import ground as G
     ground = ground or G.load()
     steps = []
     ns = doc["namespace"]
+    for rec, site in retired(doc):
+        base, _restore, holder, _new = retire_parts(rec, site, doc)
+        steps += CL.steps(base, holder, 0, "%s's retired site %s (players held in it)" % (rec["id"], site["id"]))
     for rec in emitted(doc):
         rid = rec["id"]
-        tag = doc["tag_prefix"] + rid
         g = geometry(rec, doc, ground)
         x0, _y0, z0, x1, _y1, z1 = g["bbox"]
-        lx, ly, lz = g["legendary"]
-        at = "%.1f %d %.1f" % (lx + 0.5, ly, lz + 0.5)
+        base, holder, _box, _scope, _new = chain_parts(rec, doc, g)
         steps += [("cmd", "forceload add %d %d %d %d" % (x0, z0, x1, z1)), ("wait", 3),
-                  ("fn", "%s:legendary/%s/carve" % (ns, rid)),
-                  ("cmd", "execute unless entity @e[tag=%s] positioned %s unless entity "
-                          "@e[type=cobblemon:pokemon,distance=..3] run spawnpokemonat %s %s level=%d no_ai"
-                   % (tag, at, at, rec["species"], int(rec["level"]))),
-                  ("wait", 1),
-                  ("fn", "%s:legendary/%s/dress_new" % (ns, rid))]
-        if rec["kind"] == "lake_grotto":
-            steps.append(("fn", "%s:legendary/%s/close" % (ns, rid)))
-        steps.append(("cmd", "forceload remove %d %d %d %d" % (x0, z0, x1, z1)))
+                  ("fn", "%s:legendary/%s/carve_once" % (ns, rid)),
+                  ("cmd", "forceload remove %d %d %d %d" % (x0, z0, x1, z1))]
+        steps += CL.steps(base, holder, 1, "%s's legendary" % rid)
     return steps
 
 
@@ -567,6 +791,10 @@ def main(argv=None):
                      g["envelope"], volume(g["envelope"]),
                      g["env_footprint_min_ground"] - g["envelope"][4], g["sleeve_top"],
                      g["mouth_y"] - g["sleeve_top"] - 1))
+        for rec, site in retired(doc):
+            g = retired_geometry(rec, site, doc, g_)
+            print("%-12s RETIRED %-14s anchor %s ground y%d  floor y%d  hull %s  (%s)"
+                  % (rec["id"], site["id"], g["anchor"], g["mouth_y"], g["floor_y"], g["bbox"], site["retired"]))
         return 0
 
     out = Path(a.out)

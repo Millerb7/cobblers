@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.legendaries/1",
-  "status": "authored 2026-09-29; 7 of 10 encounters sited and emitted, 3 blocked, each block now named as TECHNICAL or DECISION. SIX are built in cobblers-dryrun12: reapply step R14L ran 14 commands with 0 problems at 2026-09-29T02:51 (derived/reapply/run_20260929_023305.json). UXIE IS SITED AND EMITTED BUT NOT YET BUILT: its blocker (the pending water export) is gone because the export is applied and is now the canonical heightmap, so the mouth could be measured on the bed it will actually stand in. It needs one re-apply. Registeel and Lugia are DECISIONS for the owner, not computations, and Celebi's wake is a trigger question. Regigigas is built and its gate cannot be satisfied until Registeel is sited: see its gate.unsatisfiable_why. Celebi's wake is designed and built as gate + trigger (docs/mechanics/CELEBI_WAKE.md); Celebi is level 55, was 70 and uncatchable against every cap.",
+  "status": "authored 2026-09-29; 7 of 10 encounters sited and emitted, 3 blocked, each block now named as TECHNICAL or DECISION. SIX are built in cobblers-dryrun12: reapply step R14L ran 14 commands with 0 problems at 2026-09-29T02:51 (derived/reapply/run_20260929_023305.json). UXIE IS SITED AND EMITTED BUT NOT YET BUILT: its blocker (the pending water export) is gone because the export is applied and is now the canonical heightmap, so the mouth could be measured on the bed it will actually stand in. It needs one re-apply. Registeel and Lugia are DECISIONS for the owner, not computations, and Celebi's wake is a trigger question. Regigigas is built and its gate cannot be satisfied until Registeel is sited: see its gate.unsatisfiable_why. Celebi's wake is designed and built as gate + trigger (docs/mechanics/CELEBI_WAKE.md); Celebi is level 55, was 70 and uncatchable against every cap. 2026-10-12: seven more encounters sited and emitted (tornadus, thundurus, landorus, enamorus, tapukoko, tapulele, tapubulu) from data/dungeon_prize_roster.json world_proposals; none built in any world, none seen. 2026-10-12 (the owner): REGIGIGAS MOVED from the Glacial Tear to the North Pine Isle, portal (7720, 552); its old chamber, built in staging, is kept as a `retired_sites` entry and tools/legendaries.py emits a fail-closed cleanup R14L runs before any summon (not yet run on any server).",
   "notes": [
     "The authored legendary encounters: the lake trio (docs/mechanics/WATER_MAP.md section 5), the four bespoke concepts (docs/world-building/STRUCTURE_DECISIONS.md section 4, docs/story/ENCOUNTERS.md:392-395) and the wake of the sleeping Celebi (data/sapling_celebi.json, EXP-023). Every other legendary is Tier B: paste a structure into a fitting biome and gate it by badge count, and none of that is here.",
     "A legendary is an ENTITY, so a re-export erases it and it is summoned over RCON by tools/reapply.py (step R14L), never by a pack: `spawnpokemonat` inside a function spawns nothing until a /reload (EXP-046 question 1). The pack does what functions can: the chamber's blocks, the gate, the keeper.",
@@ -438,14 +438,14 @@
     },
     {
       "id": "regigigas",
-      "title": "Regigigas, beneath the glacier beside the Displaced City",
+      "title": "Regigigas, sealed under the North Pine Isle",
       "species": "regigigas",
       "level": 60,
       "level_basis": "5 below the provisional 8-badge cap of 70. PROVISIONAL.",
       "cap_at_gate": 60,
       "kind": "sealed_chamber",
       "status": "sited",
-      "site": "glacial_tear",
+      "site": "north_pine_isle",
       "gate": {
         "flags": [
           "gym8_cleared"
@@ -460,10 +460,10 @@
         "unsatisfiable_why": "CLEARED 2026-09-30: Registeel is sited at (4195, 3896) in upper_rift, so its met advancement can now be granted and Regigigas is reachable. The note this replaces read: LIVE IN BUILT CONTENT - cobblers:legendary/registeel/met is an impossible-trigger advancement granted by exactly one command, in the met function of a SITED encounter."
       },
       "portal": [
-        3560,
-        1760
+        7720,
+        552
       ],
-      "portal_why": "Under the glacier, 111 blocks east of the Displaced City cavern's east wall (the cavern is x3250-3449 z1650-1849, docs/STATE.md), so 87 blocks clear of its 24-block shell, and on the far side from its tunnel, whose bore runs WEST from the cavern to the city's surface footprint (tools/cavern_plan.py: mouth at the footprint's max_x, then +70 toward the cavern centre). Ground y126, 122-131 over 33 by 33.",
+      "portal_why": "MOVED 2026-10-12 (the owner: 'move Regigigas up to Northlight's islands'; the orchestrator chose Regigigas over Regice because it sleeps under Snowpoint Temple in the source games and its requires_met gate makes a far-north island the end of the three-golem pilgrimage). The North Pine Isle's interior, 84 blocks east of the isle's spawn focus (data/encounter_design.json north_pine_isle heart (7632, 528)), on the isle's eastern plateau. Measured 2026-10-12 on tools/ground.py with this record's own geometry (bearing 90, drop 46, passage 14, 21 by 21 by 11, plug 8): ground y97, y96-97 over the whole hull x7715-7760 z538-566 and over 33 by 33 round the portal; floor y51, ceiling y62; sleeve top y95 (a 1-block lip under the mouth); 30 blocks of rock over the envelope; no column at or under the sea (y62) within 289 blocks of the hull and none under y92 within 48. Nearest authored positions in data/ from the hull: the spawn focus above (84), elder_north_pine_isle_1 and its Habitat Blocks (7986, 458) (240), the Dawn tower placement (7480, 99, 316) (323), Whiteback (704), elder_north_pine_isle_2 (752), the swim hop (7392, 900) (465), Northlight's footprint (937), the ice mines nl_ice_a/b (1119); the Pine Isles have no spawn-free zone, route, ferry dock or other legendary chamber in data/. The site came from a search over both isles for a portal on ground at least y72 and flat to 3 blocks over 33 by 33, with the sleeve lip and roof the audit demands, dry for 24 blocks round the hull, and the hull at least 64 (elders) to 96 (the Dawn tower, Whiteback, the Lopunny house, the ferry dock and the swim hop) clear of every authored position found in data/ on both isles; the measured numbers above are what stands, not the search's radii.",
       "approach": {
         "bearing_deg": 90,
         "drop": 46,
@@ -477,13 +477,61 @@
       },
       "plug_depth": 8,
       "spawn_free_zone": [
-        3552,
-        1744,
-        3600,
-        1776
+        7712,
+        536,
+        7760,
+        568
       ],
-      "why": "STRUCTURE_DECISIONS section 4: 'it gives the Displaced City a reason to exist below the ice'. A bigger chamber than a golem's, because Regigigas is the thing the golems open.",
-      "level_why": "lowered from 65 to the upper bound of its own gate (8 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'"
+      "why": "STRUCTURE_DECISIONS section 4 had it 'beneath the glacier, in or beside the Displaced City' (a sealed site signposted from afar, opened only by bringing the three golems). MOVED 2026-10-12 to the North Pine Isle, the snowbound end of the pilgrimage: a snowy temple feel here is the isle itself (snowy_taiga paint) over the chamber kind's one palette, because the kind has no per-record palette option and none was invented. A bigger chamber than a golem's, because Regigigas is the thing the golems open. The Displaced City loses 'Regigigas is sealed beside it' as a reason to exist (data/towns.json displaced_city, edited the same day).",
+      "level_why": "lowered from 65 to the upper bound of its own gate (8 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.' UNCHANGED BY THE MOVE: level 60 is the gym-8 cap band wherever the chamber stands, and a legendary stands above its area's wild levels by design (measured 2026-10-12: the 22 data/spawns.json entries scoped north_pine_isle run level 25-50, most 33-43, so 60 is above every one).",
+      "measured": {
+        "ground_y": 97,
+        "floor_y": 51,
+        "ceiling_y": 62,
+        "roof_clearance": 30,
+        "sleeve_lip": 1,
+        "legendary_at": [
+          7754,
+          52,
+          552
+        ],
+        "by": "tools/legendaries.py geometry on tools/ground.py, 2026-10-12"
+      },
+      "retired_sites": [
+        {
+          "id": "first_chamber",
+          "retired": "2026-10-12",
+          "why": "Regigigas's first chamber, under the glacier 111 blocks east of the Displaced City cavern (the upper trough, subregion paint glacier_trough), built and its legendary summoned in staging (R14L read it back 1 of 1 on 2026-10-12). Moving the record would otherwise leave a carved chamber, an open shaft under a stone plug and a second Regigigas, so tools/legendaries.py emits a fail-closed cleanup for it (cobblers:legendary/regigigas/retire_first_chamber, run by R14L before any summons).",
+          "portal": [
+            3560,
+            1760
+          ],
+          "approach": {
+            "bearing_deg": 90,
+            "drop": 46,
+            "passage": 14
+          },
+          "chamber": {
+            "width": 21,
+            "length": 21,
+            "height": 11,
+            "alcove": 0
+          },
+          "plug_depth": 8,
+          "bore": 3,
+          "shell_margin": 4,
+          "pedestal_block": "minecraft:smooth_basalt",
+          "frozen_why": "bore, shell_margin and pedestal_block are defaults.bore, defaults.shell_margin and defaults.pedestal_block AS THEY STOOD when this chamber was carved (3, 4, smooth_basalt); the pedestal is the probe that says the chamber is still there. They are frozen here so a later change to the defaults cannot change what the cleanup thinks it is undoing; the retired geometry is the same tools/legendaries.py geometry() over these numbers.",
+          "terrain": {
+            "code": "DEEP_SNOW",
+            "surface": "minecraft:snow_block",
+            "under": "minecraft:stone",
+            "deep": "minecraft:stone",
+            "surface_verified": false,
+            "why": "The paint at the old portal is subregion upper_trough, preset glacier_trough, terrain DEEP_SNOW (data/regions.json paint_presets). Below the ground the restore is stone, the convention tools/gym_demolish.py uses ('rock back under the ground'); the carve's own envelope, sleeve and plug were stone, so below gy-3 the restore is an identity. UNVERIFIED and offline-unknowable (the heightmap has heights, not block ids; docs/world-building/DROVERS_HOLLOW.md makes the same admission): the surface block. snow_block is the block our own tools stand on the same snow (docs/world-building/MEGA_DENS.md, the Abomasnow pad) and is a guess for the 3 by 3 the plug's top leaves at y126; a one-line change here if the owner finds the patch wrong in game."
+          }
+        }
+      ]
     },
     {
       "id": "groudon",
@@ -623,6 +671,409 @@
       "spawn_free_zone": null,
       "why": "The sleeping Celebi is inert and walled in barriers precisely because Cobblemon ignores Invulnerable and a sword killed it (EXP-023). The wake is the moment those barriers come off. It is also the moment the keeper has to stop keeping: celebi/keep teleports the Celebi home every 40 ticks, which would pin a woken one through its own battle. Both are in this function and its caller.",
       "level_why": "already at or under the upper bound of its gate (8 badges = 60)"
+    },
+    {
+      "id": "tornadus",
+      "title": "Tornadus, sealed under the Tri Peaks' summit",
+      "species": "tornadus",
+      "level": 40,
+      "level_basis": "the cap of badge 4 (RCT cap 40, tools/legendaries_audit.py rct_caps), the upper bound; PROPOSED, not seen by the owner.",
+      "cap_at_gate": 40,
+      "kind": "sealed_chamber",
+      "status": "sited",
+      "site": "tri_peaks_summit",
+      "gate": {
+        "flags": [
+          "gym4_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "PROPOSED, NOT DECIDED. Gym 4 and not gym 3: the summit stands above Route 3 and Surge's town, on the early route, so a Force genie behind the third badge would be an early free catch; at four badges it is Regirock's tier (data/legendaries.json regirock) and the level is the cap's upper bound. The three genies spread over badges 4, 5 and 6 and Enamorus follows at 7."
+      },
+      "portal": [
+        1850,
+        1350
+      ],
+      "portal_why": "The Tri Peaks' own summit (data/landmarks.json tri_peaks measured_summit: highest in the outline y287 at (1848, 1352)). The portal stands 2 blocks from that column, on ground y287 flat to 2 over its 11 by 11 sleeve. Measured 2026-10-12 from the hull (envelope plus sleeve, x1845-1886 z1337-1363), clear of: Surge's town (data/towns.json gym3_town footprint x1660-1715 z1382-1437, 130 blocks west; the gym's own spawn-free box is 89), the Habitat Blocks and themed sapling at (1870, 1430) and (1864, 1432) (67 and 69 blocks; spawn range 16), Surge's signal array (1928, 1248) (98 blocks), the gym-3 survey window (61, a survey area) and the first, superseded gym-3 site footprint in data/towns.json site_history (34, history only). No other authored x/z in data/ lies within 66 blocks of the hull; route_paths.json is among the files read.",
+      "approach": {
+        "bearing_deg": 90,
+        "drop": 36,
+        "passage": 12
+      },
+      "chamber": {
+        "width": 19,
+        "length": 19,
+        "height": 10,
+        "alcove": 0
+      },
+      "plug_depth": 6,
+      "spawn_free_zone": [
+        1848,
+        1336,
+        1888,
+        1360
+      ],
+      "why": "The owner, 2026-10-12: 'Build the rest of those mons that belong in the world'; data/dungeon_prize_roster.json world_proposals: 'one sealed_chamber at each summit (The Tri Peaks, Mt Vessu, Mt Clay)'. The incarnate storm genie on the Tri Peaks' own crest, above Surge's town and Route 3's grade.",
+      "level_why": "the upper bound of badge 4's RCT cap (40; tools/legendaries_audit.py rct_caps, data/legendaries.json level_caps), the owner's 2026-09-29 rule: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
+      "measured": {
+        "ground_y": 287,
+        "floor_y": 251,
+        "ceiling_y": 261,
+        "roof_clearance": 5,
+        "sleeve_lip": 2,
+        "legendary_at": [
+          1880,
+          252,
+          1350
+        ],
+        "by": "tools/legendaries.py geometry on tools/ground.py, 2026-10-12"
+      }
+    },
+    {
+      "id": "thundurus",
+      "title": "Thundurus, sealed under Mt Vessu's southern shoulder",
+      "species": "thundurus",
+      "level": 45,
+      "level_basis": "the cap of badge 5 (RCT cap 45, tools/legendaries_audit.py rct_caps), the upper bound; PROPOSED, not seen by the owner.",
+      "cap_at_gate": 45,
+      "kind": "sealed_chamber",
+      "status": "sited",
+      "site": "mt_vessu_shoulder",
+      "gate": {
+        "flags": [
+          "gym5_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "PROPOSED, NOT DECIDED. Gym 5, the middle genie: the Scar and Wardenhold on the same plateau are late-early content, and Surge's own tier is 3."
+      },
+      "portal": [
+        1888,
+        822
+      ],
+      "portal_why": "Mt Vessu's summit plateau, on its south-south-east shoulder: ground y274 flat to 3, 66 blocks (not 0) from the highest column (1864, 760) y300. The summit column itself (1864, 760) was measured and not used: it stands 21 blocks from Wardenhold's watch room (data/frostpeak_keep_quest.json burrow rooms, x1829-1864 z721-751). This site's hull (x1875-1901 z817-858) is 69 blocks from the nearest burrow room box (1844-1854, 745-751), 58 from the burrow's spawn-free box (z720-759), 59 from the Scar's footprint (data/towns.json the_scar x1960-2260 z800-1100), 109 from the Scar Tarn's nearest authored point (1984, 746) and 7 outside the pond's search window in data/scar_tarn.json (x1900-2140 z620-810; a search box, not water). Surge's signal array (1928, 1248) is 390 blocks south. Not a hidden site, so tools/hidden_sites.py's 96-block clearance does not apply; 58 is the tightest margin and it is a spawn box.",
+      "approach": {
+        "bearing_deg": 180,
+        "drop": 38,
+        "passage": 12
+      },
+      "chamber": {
+        "width": 19,
+        "length": 19,
+        "height": 10,
+        "alcove": 0
+      },
+      "plug_depth": 6,
+      "spawn_free_zone": [
+        1872,
+        816,
+        1904,
+        856
+      ],
+      "why": "Roster world_proposals: 'one sealed_chamber at each summit'. The storm genie on Mt Vessu, the massif's highest summit, whose south-east flank carries Surge's storm-facing signal array (data/landmarks.json surge_signal_array).",
+      "level_why": "the upper bound of badge 5's RCT cap (45; tools/legendaries_audit.py rct_caps, data/legendaries.json level_caps), the owner's 2026-09-29 rule: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
+      "measured": {
+        "ground_y": 274,
+        "floor_y": 236,
+        "ceiling_y": 246,
+        "roof_clearance": 2,
+        "sleeve_lip": 3,
+        "legendary_at": [
+          1888,
+          237,
+          852
+        ],
+        "by": "tools/legendaries.py geometry on tools/ground.py, 2026-10-12"
+      }
+    },
+    {
+      "id": "landorus",
+      "title": "Landorus, sealed under Mt Clay's summit",
+      "species": "landorus",
+      "level": 50,
+      "level_basis": "the cap of badge 6 (RCT cap 50, tools/legendaries_audit.py rct_caps), the upper bound; PROPOSED, not seen by the owner.",
+      "cap_at_gate": 50,
+      "kind": "sealed_chamber",
+      "status": "sited",
+      "site": "mt_clay_summit",
+      "gate": {
+        "flags": [
+          "gym6_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "PROPOSED, NOT DECIDED. Gym 6, the last genie, so the three keys to Enamorus are all in hand by badge 6 and Enamorus follows at 7."
+      },
+      "portal": [
+        2621,
+        1480
+      ],
+      "portal_why": "Mt Clay's highest column (data/landmarks.json mt_clay measured_summit: (2621, 1480) y263). Ground y263 flat to 1 over the sleeve. Measured 2026-10-12: no authored x/z in data/ outside the landmark, region and cell records lies within 113 blocks of the hull (x2616-2657 z1467-1493); the nearest is the river vertex (2504, 1444), 114 away. route_paths.json is among the files read.",
+      "approach": {
+        "bearing_deg": 90,
+        "drop": 36,
+        "passage": 12
+      },
+      "chamber": {
+        "width": 19,
+        "length": 19,
+        "height": 10,
+        "alcove": 0
+      },
+      "plug_depth": 6,
+      "spawn_free_zone": [
+        2616,
+        1464,
+        2656,
+        1496
+      ],
+      "why": "Roster world_proposals: 'one sealed_chamber at each summit'. The earth genie on the clay peak, the most remote of the three and the last to be found.",
+      "level_why": "the upper bound of badge 6's RCT cap (50; tools/legendaries_audit.py rct_caps, data/legendaries.json level_caps), the owner's 2026-09-29 rule: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
+      "measured": {
+        "ground_y": 263,
+        "floor_y": 227,
+        "ceiling_y": 237,
+        "roof_clearance": 8,
+        "sleeve_lip": 1,
+        "legendary_at": [
+          2651,
+          228,
+          1480
+        ],
+        "by": "tools/legendaries.py geometry on tools/ground.py, 2026-10-12"
+      }
+    },
+    {
+      "id": "enamorus",
+      "title": "Enamorus, sealed under the Tri Peaks' saddle",
+      "species": "enamorus",
+      "level": 55,
+      "level_basis": "the cap of badge 7 (RCT cap 55, tools/legendaries_audit.py rct_caps), the upper bound; PROPOSED, not seen by the owner.",
+      "cap_at_gate": 55,
+      "kind": "sealed_chamber",
+      "status": "sited",
+      "site": "tri_peaks_saddle",
+      "gate": {
+        "flags": [
+          "gym7_cleared"
+        ],
+        "requires_met": [
+          "tornadus",
+          "thundurus",
+          "landorus"
+        ],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "PROPOSED for the badge, PROPOSED for the three keys (the Regigigas pattern, data/legendaries.json regigigas gate). Gym 7 so the keys are held a badge before the door opens."
+      },
+      "portal": [
+        1983,
+        1195
+      ],
+      "portal_why": "The col between the Tri Peaks' crest and the Mt Vessu massif: the maximin pass between the two summits on the heightmap (stride 8) is y248, and the lowest ground along the ridge is about y245 around (1983, 1195). The portal stands there: ground y245 flat to 0 over its sleeve. The hull (x1978-2023 z1181-1209) is 63 blocks from Surge's signal array (1928, 1248), 81 from the Scar's footprint (data/towns.json the_scar, south edge z1100) and 120 from the placement at (2110, 1098); no other authored x/z in data/ lies within 130 blocks. (The region is Mt Vessu's; the saddle joins it to the Tri Peaks' crest, about 200 blocks south-west.)",
+      "approach": {
+        "bearing_deg": 90,
+        "drop": 34,
+        "passage": 14
+      },
+      "chamber": {
+        "width": 21,
+        "length": 21,
+        "height": 11,
+        "alcove": 0
+      },
+      "plug_depth": 8,
+      "spawn_free_zone": [
+        1976,
+        1184,
+        2024,
+        1208
+      ],
+      "why": "Roster world_proposals: 'the Tri Peaks' saddle, after the three (requires_met, as Regigigas)'. The fourth Force comes when the three are met; a bigger chamber, as Regigigas's is bigger than a golem's.",
+      "level_why": "the upper bound of badge 7's RCT cap (55; tools/legendaries_audit.py rct_caps, data/legendaries.json level_caps), the owner's 2026-09-29 rule: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
+      "measured": {
+        "ground_y": 245,
+        "floor_y": 211,
+        "ceiling_y": 222,
+        "roof_clearance": 13,
+        "sleeve_lip": 0,
+        "legendary_at": [
+          2017,
+          212,
+          1195
+        ],
+        "by": "tools/legendaries.py geometry on tools/ground.py, 2026-10-12"
+      }
+    },
+    {
+      "id": "tapukoko",
+      "title": "Tapu Koko, sealed under Sunset West's heights",
+      "species": "tapukoko",
+      "level": 45,
+      "level_basis": "the cap of badge 5 (RCT cap 45, tools/legendaries_audit.py rct_caps), the upper bound; PROPOSED, not seen by the owner.",
+      "cap_at_gate": 45,
+      "kind": "sealed_chamber",
+      "status": "sited",
+      "site": "sunset_west_heights",
+      "gate": {
+        "flags": [
+          "gym5_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "PROPOSED, NOT DECIDED. Gym 5: data/encounter_design.json puts the Sunset West at tier 5 ('a mid-game island') and the ferry (data/ferries.json sunset_strait) is ungated, so the badge is the only gate."
+      },
+      "portal": [
+        1362,
+        7154
+      ],
+      "portal_why": "Sunset West (savanna preset), on the east side of the isle's western heights: ground y137 flat to 1 (the subregion's highest ground is y146.8, at the Dusk tower). The hull (x1357-1398 z7141-7167) is 155 blocks east of the Dusk tower's footprint (x1156-1202 z7216-7261) and 179 from the isle's heart focus (1424, 7344); the Sundown Watch (data/sunset_watch.json x1010-1130 z7440-7540) is 350+ away. Measured 2026-10-12: no other authored x/z in data/ lies within 200 blocks of the hull (the Dusk tower's own corner record is 207).",
+      "approach": {
+        "bearing_deg": 90,
+        "drop": 28,
+        "passage": 12
+      },
+      "chamber": {
+        "width": 19,
+        "length": 19,
+        "height": 10,
+        "alcove": 0
+      },
+      "plug_depth": 6,
+      "spawn_free_zone": [
+        1360,
+        7144,
+        1400,
+        7168
+      ],
+      "why": "Roster world_proposals: 'Sunset Isle west (savanna)'. An island guardian on an island; its inherited spawn is savanna.",
+      "level_why": "the upper bound of badge 5's RCT cap (45; tools/legendaries_audit.py rct_caps, data/legendaries.json level_caps), the owner's 2026-09-29 rule: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
+      "measured": {
+        "ground_y": 137,
+        "floor_y": 109,
+        "ceiling_y": 119,
+        "roof_clearance": 5,
+        "sleeve_lip": 1,
+        "legendary_at": [
+          1392,
+          110,
+          7154
+        ],
+        "by": "tools/legendaries.py geometry on tools/ground.py, 2026-10-12"
+      }
+    },
+    {
+      "id": "tapulele",
+      "title": "Tapu Lele, sealed under Sunset East's meadow",
+      "species": "tapulele",
+      "level": 55,
+      "level_basis": "the cap of badge 7 (RCT cap 55, tools/legendaries_audit.py rct_caps), the upper bound; PROPOSED, not seen by the owner.",
+      "cap_at_gate": 55,
+      "kind": "sealed_chamber",
+      "status": "sited",
+      "site": "sunset_east_meadow",
+      "gate": {
+        "flags": [
+          "gym7_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "PROPOSED, NOT DECIDED. Gym 7: data/encounter_design.json puts Sunset East at tier 8 (the east end, nearest Route 8), and it is the most remote of the three guardians."
+      },
+      "portal": [
+        3198,
+        7722
+      ],
+      "portal_why": "Sunset East (flower_meadow preset), its highest ground: a broad gentle plateau y106-114 at the isle's south-east (the subregion's maximum is y114.2). Ground y114 flat to 1. The hull (x3162-3203 z7709-7735) is 259 blocks from the nearest authored x/z or box (data/far_south.json resident bbox x2898-2913 z7626-7638); the ferry landing (2575, 6899) and the old orchard (x2734-2875 z7036-7128) are 800+ away. It is the far end of the isle, deliberately remote; a nearer high meadow at (2944, 7500) was scanned and is only y100.",
+      "approach": {
+        "bearing_deg": 270,
+        "drop": 28,
+        "passage": 12
+      },
+      "chamber": {
+        "width": 19,
+        "length": 19,
+        "height": 10,
+        "alcove": 0
+      },
+      "plug_depth": 6,
+      "spawn_free_zone": [
+        3160,
+        7712,
+        3200,
+        7736
+      ],
+      "why": "Roster world_proposals: 'Sunset Isle east (flower meadow)'. An island guardian; its inherited spawn is floral.",
+      "level_why": "the upper bound of badge 7's RCT cap (55; tools/legendaries_audit.py rct_caps, data/legendaries.json level_caps), the owner's 2026-09-29 rule: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
+      "measured": {
+        "ground_y": 114,
+        "floor_y": 86,
+        "ceiling_y": 96,
+        "roof_clearance": 7,
+        "sleeve_lip": 1,
+        "legendary_at": [
+          3168,
+          87,
+          7722
+        ],
+        "by": "tools/legendaries.py geometry on tools/ground.py, 2026-10-12"
+      }
+    },
+    {
+      "id": "tapubulu",
+      "title": "Tapu Bulu, sealed under the Long Isle's southern hills",
+      "species": "tapubulu",
+      "level": 50,
+      "level_basis": "the cap of badge 6 (RCT cap 50, tools/legendaries_audit.py rct_caps), the upper bound; PROPOSED, not seen by the owner.",
+      "cap_at_gate": 50,
+      "kind": "sealed_chamber",
+      "status": "sited",
+      "site": "long_isle_south_hill",
+      "gate": {
+        "flags": [
+          "gym6_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "PROPOSED, NOT DECIDED. Gym 6: data/encounter_design.json long_isle_south is tier 8 and quotes 'the owner's 44-50 lies across tiers 7 and 8' for its wild roster; 50 is badge 6's upper bound."
+      },
+      "portal": [
+        7508,
+        7662
+      ],
+      "portal_why": "NOT the Jungle Isle: the roster's 'Jungle Isle' is under the sea (every column of data/towns.json jungle_ruins' footprint x5010-5310 z7313-7613 is y55-61, and 0 of 423,801 columns in x4850-5500 z7150-7800 stand above sea level y62; docs/STATE.md 'The Jungle Isle is gone'). The Long Isle's south (long_isle_south, jungle preset, data/regions.json) is dry jungle (elevation p10 71, median 119, max 149), the same island the four elders of the drowned Jungle Isle were moved to. This site is a hill in it: ground y143 flat to 1. The hull (x7495-7521 z7657-7698) is 133 blocks from the encounter-design focus (7440, 7536), 137 from an elder tree and Habitat Block at (7576, 7824) and 184 from the sky portal sky_far_reach (7613, 7498); data/portals.json min_from_legendary_mouth is 120 and is measured portal to portal point, which here is 195. Scanned first: a higher hill at (7544, 7590) was rejected because it is 103 from that portal.",
+      "approach": {
+        "bearing_deg": 180,
+        "drop": 28,
+        "passage": 12
+      },
+      "chamber": {
+        "width": 19,
+        "length": 19,
+        "height": 10,
+        "alcove": 0
+      },
+      "plug_depth": 6,
+      "spawn_free_zone": [
+        7496,
+        7656,
+        7520,
+        7696
+      ],
+      "why": "Roster world_proposals proposed 'Jungle Isle' (gone); relocated to the Long Isle's jungle south, the grass guardian in the jungle. The owner reviews the site.",
+      "level_why": "the upper bound of badge 6's RCT cap (50; tools/legendaries_audit.py rct_caps, data/legendaries.json level_caps), the owner's 2026-09-29 rule: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
+      "measured": {
+        "ground_y": 143,
+        "floor_y": 115,
+        "ceiling_y": 125,
+        "roof_clearance": 2,
+        "sleeve_lip": 1,
+        "legendary_at": [
+          7508,
+          116,
+          7692
+        ],
+        "by": "tools/legendaries.py geometry on tools/ground.py, 2026-10-12"
+      }
     }
   ],
   "open_questions": [

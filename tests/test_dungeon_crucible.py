@@ -400,7 +400,9 @@ def test_the_prize_is_the_rosters_and_rare_only_before_the_beast_ball_stage(jar)
     # no legendary of the room's own: the legendary pool is exactly the roster's (band 6)
     assert not pz.get("legendary_by_band") and not pz.get("legendary_pool_by_band")
     entry = PZ.roster_entry("crucible")
-    assert entry["legendary_pool_by_band"] == {"6": ["stakataka", "gougingfire"]}
+    # Iron Hands (re-homed from the cut Zero Dig) and Heatran (the owner's fallback for its boss stage), both 2026-10-12,
+    # are the pool's species that are not model-gated
+    assert entry["legendary_pool_by_band"] == {"6": ["stakataka", "gougingfire", "ironhands", "heatran"]}
     assert PZ.room_problems(DOC, CR, room) == []
     ch = [PZ.chance(DOC, room, b) for b in range(1, 7)]
     assert ch == sorted(ch) and 0 < ch[0] and ch[-1] < 100, ch
@@ -414,9 +416,10 @@ def test_the_band_6_prize_waits_for_the_models_and_then_is_the_rosters_pair():
     if doc["engine"]["prize"].get("models_delivered"):
         pytest.skip("the ATM subset is delivered: the gate no longer applies")
     assert gated == [True, True]
-    assert [PZ.pool_at(doc, room, b) for b in (4, 5, 6)] == [None, None, None]
+    # before delivery band 6 offers Iron Hands and Heatran (neither gated); bands 4 and 5 have no pool
+    assert [PZ.pool_at(doc, room, b) for b in (4, 5, 6)] == [None, None, (["ironhands", "heatran"], True)]
     doc["engine"]["prize"]["models_delivered"] = ["atm_subset"]
-    assert PZ.pool_at(doc, room, 6) == (["stakataka", "gougingfire"], True)
+    assert PZ.pool_at(doc, room, 6) == (["stakataka", "gougingfire", "ironhands", "heatran"], True)
     assert PZ.pool_at(doc, room, 4) is None and PZ.pool_at(doc, room, 5) is None
 
 
@@ -426,13 +429,17 @@ def test_the_rare_prize_is_spawned_at_the_lower_cap_and_takes_any_ball():
     room = next(r for r in R.layout(DOC, CR, s) if r["id"] == _prize_room()["id"])
     fns, _enter, spawns, _pos = PZ.prize_functions(DOC, CR, s, room)
     if not DOC["engine"]["prize"].get("models_delivered"):
-        assert sorted(spawns) == [1, 2, 3], sorted(spawns)
+        # band 6 spawns Iron Hands, the one non-gated species of the roster pool (2026-10-12); 4 and 5 have none
+        assert sorted(spawns) == [1, 2, 3, 6], sorted(spawns)
     for b in (1, 2, 3):
         text = "\n".join(fns["prize/spawn_b%d" % b])
         assert "level=%d no_ai" % DOC["engine"]["bands"][b - 1]["caps"][0] in text, b
         assert text.rstrip().endswith("prize/rare_bind"), b
         assert all(not leg for _sp, _lv, leg in spawns[b])
-    assert "prize/bind" not in fns and "prize/bind_native" not in fns
+    if not DOC["engine"]["prize"].get("models_delivered"):
+        # band 6's legendary spawns are Iron Hands (a paradox) and Heatran, each binding through prize/bind (2026-10-12)
+        assert [(sp, leg) for sp, _lv, leg in spawns[6]] == [("ironhands", True), ("heatran", True)], spawns[6]
+        assert "prize/bind" in fns
 
 
 # ------------------------------------------------------------------------------------------------- the walk

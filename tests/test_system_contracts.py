@@ -521,6 +521,9 @@ def _source_blocks():
     # the three wayside places of 2026-10-03: each generator refuses any block outside its record's blocks.ids, so the
     # list is the place's whole palette; a policy entry must name the place itself to cover one of them
     # the Scorchbone Dig (tools/fossil_dig.py, 2026-10-05) loads its record the same way (wayside_kit.load_record)
+    # the glade shrines in the Route 1 maze forest (tools/maze_shrines.py, 2026-10-12): the generator refuses a block outside
+    # its record's blocks.ids and the audit checks the written functions; a policy entry must name maze_shrines to cover one
+    out["maze_shrines"] = (set(_load("maze_shrines.json")["blocks"]["ids"]), ["maze_shrines"])
     for place in ("challengers_cairn", "dry_cistern", "survey_benchmark", "fossil_dig", "ice_lodge", "scar_tarn"):
         out[place] = (set(_load("%s.json" % place)["blocks"]["ids"]), [place])
     # the refillable mining caves (tools/mining_caves.py, 2026-10-10): every block the record names that a cave
@@ -529,6 +532,11 @@ def _source_blocks():
     mc = _load("mining_caves.json")
     out["mining_caves"] = (_named_ids([mc["yields"], [{k: c[k] for k in ("wall", "shell", "floor", "stair", "timber")}
                                                       for c in mc["caves"]]], ("minecraft",)), ["mining_caves"])
+    # the cave kit (tools/caves.py, 2026-10-12): each cave's palette (shell, floor, stair, timber, fence, column) and the fixed blocks
+    # it places (air, the barrier door, the lantern, the amethyst cluster); a policy entry must name caves to cover any of them
+    cv = _load("caves.json")
+    out["caves"] = (_named_ids([[c["palette"] for c in cv["caves"]], [cv["gate"]["door_block"]]], ("minecraft",))
+                    | {"minecraft:air", "minecraft:lantern", "minecraft:amethyst_cluster"}, ["caves"])
     # the Drowned Quarry (tools/drowned_quarry.py, 2026-10-09): the record's block palette, its pit floor and the wreck's
     # planks; the water is the room, so a policy entry must name drowned_quarry to cover it
     dq = _load("drowned_quarry.json")["geometry"]
@@ -550,17 +558,13 @@ def _whitelisted(block, ids):
     return any(block in w["blocks"] and any(i in (w.get("scope") or "") for i in ids) for w in POLICY["whitelist"])
 
 
-# Without it a world pack decides encounters wherever it builds with nobody deciding it (TOWN_CENTERS.md rule 7:
-# spawn-neutral by default; data/spawn_blocks.json): each generator checks its own list, differently, and a block
-# allowed in one place under a whitelist written for another passes. One rule over every generator's list: a spawn
-# condition is placed only where a data/spawn_block_policy.json entry whose scope names that place allows it.
-@pytest.mark.parametrize("source", _params("C4", [(k, (k,)) for k in sorted(SOURCES)]))
-def test_contract_c4_no_generated_world_pack_places_a_spawn_condition_its_place_is_not_whitelisted_for(source):
-    blocks, ids = SOURCES[source]
-    assert blocks, "%s names no block: the check would pass on nothing" % source
-    bad = sorted(b for b in blocks & SPAWN_BLOCKS if not _whitelisted(b, ids))
-    assert not bad, "%s places %s, each a spawn condition (data/spawn_blocks.json), and no policy entry is scoped to %s" % (
-        source, bad, ids)
+# Without it C4 could drift from the owner's decision again (2026-10-12: "a contract that forbids a decision is
+# wrong, not the decision"). Spawn-condition blocks are ALLOWED in world packs since 2026-10-05; C4 now records that,
+# and this test fails if the contract or the policy stops saying so.
+def test_contract_c4_follows_the_owners_spawn_block_decision():
+    assert POLICY["owner_decision_2026_10_05"].startswith("Spawn-condition blocks: ALLOW")
+    assert "ALLOWED" in C4["statement"] and "2026-10-05" in C4["statement"]
+    assert not C4.get("fails_today"), "C4 records no failure: the refusal it recorded was the contract's error"
 
 
 # Without it the scope rule could pass anything: the bell whitelisted for "Brock's town meeting point" covers no
@@ -600,24 +604,6 @@ def _built_pack_cases():
                if p.is_dir() and next(p.glob("data/*/function/**/*.mcfunction"), None)} if BUILT_PACKS.is_dir() else set()
     recorded = {pat.split(":", 1)[1] for pat in (C4.get("fails_today") or {}).get("cases", {}) if pat.startswith("built:")}
     return [("built:%s" % p, (p,)) for p in sorted(present | recorded)] or [("built:none", (None,))]
-
-
-# Without it a built pack (whatever tool wrote it) places a spawn condition no policy entry names at all. One case per
-# pack present under build/datapacks; a fresh checkout has none, and the test says so. A pack recorded in C4's
-# fails_today is strict xfail: the day its block gets a policy entry or leaves the pack, the case passes and fails.
-@pytest.mark.parametrize("pack", _params("C4", _built_pack_cases()))
-def test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows(pack):
-    fns = sorted((BUILT_PACKS / pack).glob("data/*/function/**/*.mcfunction")) if pack else []
-    if not fns:
-        pytest.skip("NOT_EXECUTED: %s has no built functions under %s (run the generators or reapply.py prepare)"
-                    % (pack or "no pack", BUILT_PACKS))
-    allowed = {b for w in POLICY["whitelist"] for b in w["blocks"]}
-    bad = {}
-    for f in fns:
-        placed = _command_blocks(f.read_text(encoding="utf-8", errors="replace").splitlines())
-        for b in sorted((placed & SPAWN_BLOCKS) - allowed):
-            bad.setdefault(b, []).append(f.relative_to(BUILT_PACKS / pack).as_posix())
-    assert not bad, {b: (len(v), v[0]) for b, v in bad.items()}
 
 
 # =================================================================================================================
@@ -1485,6 +1471,59 @@ def test_contract_c20_the_nether_gate_returns_through_the_blackouts_own_checkpoi
 # =================================================================================================================
 # The registry itself
 # =================================================================================================================
+
+# =================================================================================================================
+# C25. A cave boss that blacks a player out becomes the claim's guardian; the cave keeper never touches a guardian
+# =================================================================================================================
+#
+# The cave kit's area boss (tools/caves.py boss_files: Miraidon at The Relay Fault) is a wild alpha a keeper brings. Two systems
+# must agree about it: the blackout, which binds the wild victor that beats a player as the guardian of that player's item
+# claim (tag cobblers.guardian), and the keeper, which spawns, holds, wakes, settles and removes the boss on its own loop. If
+# the boss carried the exempt tag the player would lose their items to nobody; if the keeper killed, held, woke, settled or
+# replaced a guardian the player's items would be held by a Pokemon that vanished or moved under them.
+#
+# Three legs, all run: (1) the blackout's generated functions, on tests/test_blackout_recovery_pid.py's simulator, with the tags the
+# keeper's generated bind gives the boss as the victor: a claim is made and not exempted; (2) the keeper's generated functions on
+# tests/gulch_sim.py's world with a guardian standing in the chamber (tests/test_caves.py): never held, woken, settled or killed,
+# counted as present, and a duplicate removed but never the guardian; (3) the control: the same keeper with its guardian clause
+# stripped DOES wake the guardian, so leg 2 can fail.
+def test_contract_c25_a_cave_boss_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it():
+    import test_blackout_recovery_pid as RP
+    import test_caves as TC
+    from gulch_sim import World  # noqa: F401  (the harness test_caves builds on)
+    fns, _plan = TC._fns_cached()
+    # every area boss the cave kit has (Miraidon, Dialga, Koraidon): each keeper is its own generated function set
+    assert len(TC.BOSS_IDS) >= 3, TC.BOSS_IDS
+    for boss_id in TC.BOSS_IDS:
+        with TC.as_boss(boss_id):
+            _c25_one_boss(RP, TC, fns)
+
+
+def _c25_one_boss(RP, TC, fns):
+    bind = fns["boss/%s/bind" % TC.BID]
+    tags = tuple(m.group(1) for line in bind for m in [re.match(r"^tag @s add (\S+)$", line)] if m)
+    assert TC.TAG in tags and "cobblers.guardian" not in tags, tags
+    s = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=tags)
+    assert RP.fn_calls(s, "recovery/make") and len(RP.ledger(s)["claims"]) == 1, "a loss to the boss made no claim: %s" % TC.BID
+    assert s.get("@s", "bo.lost") > 0
+    TC.test_a_guardian_is_never_held_woken_settled_or_killed()
+    TC.test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_spawns()
+    TC.test_a_duplicate_is_removed_and_never_a_guardian()
+    # the control: strip the guardian clause from the keeper and the guardian is woken
+    loose = {"caves/" + k: [line.replace(",tag=!cobblers.guardian", "").replace("tag=!cobblers.guardian,", "") for line in v] for k, v in fns.items()}
+    w = TC.Lake(loose)
+    w.gt = 5_000_000
+    w.call("caves/load")
+    gm, spot = TC.spot_of()
+    TC.player_at(w, TC.KEEP["spawn_clear"] + 8, 0)
+    TC.passes(w, TC.KEEP["absent_passes"])
+    (b,) = TC.bosses(w)
+    b["tags"].add(TC.GUARD)
+    zone = gm["chamber_zone"]
+    TC.player_at(w, 0, 0).update(pos=((zone[0] + zone[3]) / 2 + 0.5, zone[1], (zone[2] + zone[5]) / 2 + 0.5))
+    TC.passes(w, 2)
+    assert TC.DORM not in b["tags"], "the control did not wake the guardian: the guardian test above cannot fail (%s)" % TC.BID
+
 
 def _defs(path):
     tree = ast.parse((ROOT / path).read_text(encoding="utf-8"))

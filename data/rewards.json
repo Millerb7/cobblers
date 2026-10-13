@@ -323,6 +323,121 @@
       }
     },
     {
+      "id": "r1_glade_mesprit",
+      "kind": "cache",
+      "place": "Route 1's maze forest: the first glade, where braid 1 rejoins, at the foot of the Feeling Stone",
+      "contents": [
+        {
+          "item": "cobblemon:oran_berry",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/oran_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_fern_glade and r1_west_hollow; the jar was not re-opened on 2026-10-12)"
+        }
+      ],
+      "message": "At the stone's foot, an offering left by someone who walked here before you: three Oran Berries.",
+      "why": "the owner, 2026-10-12: shrines in the starter forest's clearings. A first-route find for a first-route glade, three berries and nothing more (the glades' finds are the smallest in the forest: the secret glades already hold a Great Ball pair, Potions and a Revive). Verification strings copied from r1_fern_glade's and r1_west_hollow's, not re-checked against a jar here",
+      "built_by": "tools/maze_shrines.py (the barrel, in the function cobblers:maze_shrines/mesprit_stone, reapply step R12MS); positions written by `maze_shrines.py records --write`",
+      "trigger": {
+        "min": [
+          1464,
+          120,
+          4888
+        ],
+        "max": [
+          1466,
+          123,
+          4890
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          1465,
+          121,
+          4889
+        ]
+      }
+    },
+    {
+      "id": "r1_glade_azelf",
+      "kind": "cache",
+      "place": "Route 1's maze forest: the second glade, where braid 2 rejoins, at the foot of the Willing Stone",
+      "contents": [
+        {
+          "item": "cobblemon:pecha_berry",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/pecha_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_fern_glade and r1_west_hollow; the jar was not re-opened on 2026-10-12)"
+        },
+        {
+          "item": "cobblemon:potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_fern_glade and r1_west_hollow; the jar was not re-opened on 2026-10-12)"
+        }
+      ],
+      "message": "At the stone's foot, left in a hollow of the roots: two Pecha Berries and a Potion.",
+      "why": "as r1_glade_mesprit: two Pecha Berries and one Potion, early consumables with no lasting effect on a player's power. Verification strings copied from r1_west_hollow's, not re-checked against a jar here",
+      "built_by": "tools/maze_shrines.py (the barrel, in the function cobblers:maze_shrines/azelf_stone, reapply step R12MS); positions written by `maze_shrines.py records --write`",
+      "trigger": {
+        "min": [
+          1413,
+          123,
+          4585
+        ],
+        "max": [
+          1415,
+          126,
+          4587
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          1414,
+          124,
+          4586
+        ]
+      }
+    },
+    {
+      "id": "r1_glade_uxie",
+      "kind": "cache",
+      "place": "Route 1's maze forest: the third glade, where braid 3 rejoins, at the foot of the Knowing Stone",
+      "contents": [
+        {
+          "item": "cobblemon:oran_berry",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/oran_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_fern_glade and r1_west_hollow; the jar was not re-opened on 2026-10-12)"
+        },
+        {
+          "item": "cobblemon:potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_fern_glade and r1_west_hollow; the jar was not re-opened on 2026-10-12)"
+        }
+      ],
+      "message": "At the stone's foot, tucked behind the offering bowl: two Oran Berries and a Potion.",
+      "why": "as r1_glade_mesprit: the last glade before the exit stretch and Brock, two Oran Berries and a Potion. Verification strings copied from r1_fern_glade's and r1_west_hollow's, not re-checked against a jar here",
+      "built_by": "tools/maze_shrines.py (the barrel, in the function cobblers:maze_shrines/uxie_stone, reapply step R12MS); positions written by `maze_shrines.py records --write`",
+      "trigger": {
+        "min": [
+          1532,
+          120,
+          4415
+        ],
+        "max": [
+          1534,
+          123,
+          4417
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          1533,
+          121,
+          4416
+        ]
+      }
+    },
+    {
       "id": "r5_shepherds_tin",
       "kind": "cache",
       "place": "Route 5's bell cairns, east of the road at walked ~375: the barrel in the lee between the three cairns",

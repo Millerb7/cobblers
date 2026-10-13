@@ -534,13 +534,22 @@ def render_optional(m):
     # bait
     g.append('<h3>Bait room</h3><p>Leave a bait on the altar. Something follows its scent and appears in a room of your '
              '<b>next</b> run, wandering and catchable. Which bait lures what:</p>')
+    br = e1["bait_room"]
+    tiers = br.get("tiers")          # absent: the older table, no shiny or alpha chance (this page then prints none)
+    if tiers:
+        g.append('<p>The lure is caught at your band\'s <b>lower</b> cap. It has two separate chances: to be <b>shiny</b> and to be '
+                 'an <b>alpha</b>. Either, both or neither can happen; the chances depend on the bait\'s tier.</p>')
     rows = []
-    for bt in e1["bait_room"]["baits"]:
+    for bt in br["baits"]:
         cells = [esc(bt["name"].capitalize())]
+        if tiers:
+            t = tiers[bt["tier"]]
+            cells += [esc(bt["tier"].replace("_", " ").capitalize()), "%g%%" % round(t["shiny_chance"] * 100, 4),
+                      "%g%%" % round(t["alpha_chance"] * 100, 4)]
         for b in nb:
             cells.append(esc(dex.show(bt["species_by_band"][str(b)]) or "?"))
         rows.append(cells)
-    g.append(table(["Bait"] + ["Band %d" % b for b in nb], rows))
+    g.append(table(["Bait"] + (["Tier", "Shiny chance", "Alpha chance"] if tiers else []) + ["Band %d" % b for b in nb], rows))
     # fishing
     g.append('<h3>Fishing pool</h3><p>A still pool with a rod hanging on a post (lent to you for the run). What bites '
              'depends on the dungeon and on your band, and is listed on the dungeon\'s card. The fish are caught like any '

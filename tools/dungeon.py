@@ -1927,6 +1927,23 @@ def chains(doc):
     return out, want_shell, len(dungeons(doc))
 
 
+# The one-shot placement R16DG and R16DR run once over RCON: every slot's shell (place, place/s<g>, shells/build,
+# shells/s<g> and everything under it) and every rip's blocks (rips/place, rips/blocks_<short>). Written to
+# build/datapacks/cobblers_dungeons_build under the SAME ids (tools/pack_split.py): 2,002 functions, 894,253 of the
+# pack's 1,084,145 command lines from data/dungeons.json at 314916d (tools/pack_roles.py, 2026-10-12). NOT the look-then-act chains (shells/entities,
+# rips/entities): small, and their scheduled steps must never outlive a pack mid-chain. A runtime function that ever
+# calls one of these stops the split (pack_split's guard) and, from another pack, keeps the _build pack loaded
+# (pack_roles classes it runtime).
+BUILD_ONLY = re.compile(r"^%s:%s/(place(/s\d+)?|shells/build|shells/s\d+(/[a-z0-9_./\-]+)?|rips/place|rips/blocks_[a-z0-9_]+)$"
+                        % (NS, FOLDER))
+BUILD_DESCRIPTION = ("Cobblers: the dungeon engine's one-shot placement, the slot shells and the overworld rips "
+                     "(tools/dungeon.py; run by tools/reapply.py R16DG and R16DR, then strippable)")
+
+
+def build_only(fid):
+    return bool(BUILD_ONLY.match(fid))
+
+
 def reapply_steps(doc=None):
     """tools/reapply.py's two steps: R16DG the shells and their entities, R16DR the overworld rips."""
     doc = doc if doc is not None else load()
@@ -2100,9 +2117,13 @@ def main(argv=None):
         return 0
     files = build(doc)
     write(files, a.out)
+    # the one-shot shells and rips into their own pack (tools/pack_split.py, 2026-10-12): same function ids, so R16DG and
+    # R16DR are unchanged; `reapply.py strip` can take the build half out of the heap after the run
+    import pack_split
+    n, bout = pack_split.split(a.out, build_only, BUILD_DESCRIPTION)
     for w in warnings(doc):
         print("WARNING: " + w)
-    print("cobblers_dungeons: %d files -> %s" % (len(files), a.out))
+    print("cobblers_dungeons: %d files -> %s (%d one-shot placement functions -> %s)" % (len(files) - n, a.out, n, bout))
     return 0
 
 

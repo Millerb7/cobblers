@@ -391,6 +391,39 @@
    ],
    "why": "`sunset_west` is BOTH a town (data/towns.json) and a spawn subregion (data/spawns.json), and each says which region it sits in: the subregion answers `sunset_isle`, the town answers `southern_coast`. Two different objects under one id, which is the fault; the two answers are each correct about their own object. Renaming one of them is the fix.",
    "finding": true
+  },
+  {
+   "files": [
+    "data/marine_seas.json",
+    "data/spawns.json"
+   ],
+   "fields": [
+    "bands"
+   ],
+   "ids": [
+    "eastern_reach",
+    "frostwater_shelf",
+    "outer_deep",
+    "pine_strait",
+    "southern_shallows",
+    "sunset_sea"
+   ],
+   "why": "ONE entry for the six seas of 2026-10-12 (the owner: \"All water should have regions as well\"). data/marine_seas.json is the AUTHORED table (per band: the families, roles, tier, level band and the heart's species); data/spawns.json marine_zones is what tools/marine_seas.py GENERATES from it (the same bands with the compiler's fields and a mirror of each band's compiled roster, in the shape the Windward Sea's hand-authored bands carry), and tools/compile_spawns.py reads it. Neither is dead: the table is the source, the zone record is the compile input, and `python tools/marine_seas.py --check` fails if they drift apart. The Windward Sea (windward_sea) is authored in data/spawns.json only and is not in the table."
+  },
+  {
+   "files": [
+    "data/regions.json",
+    "data/spawns.json"
+   ],
+   "fields": [
+    "status"
+   ],
+   "ids": [
+    "eastern_reach",
+    "frostwater_shelf",
+    "southern_shallows"
+   ],
+   "why": "a marine region (data/regions.json marine_regions: `status` \"planned\" is the SEA FLOOR's build state) and the spawn zone drawn over it (data/spawns.json marine_zones: `status` is the roster's authoring and compile state, \"authored 2026-10-12; compiled, not seen in game\"). One field name, two things: the region's status says whether its seabed and biomes are built, the zone's says whether its encounters are authored. Neither is dead and neither reads the other. The zone's `marine_region` field names the region it sits in."
   }
  ],
  "findings_why": "`finding: true` is an overlap that is legal today and still a hazard: two different things sharing an id, or one field name meaning two things in two files. The check does not fail on them -- they are declared -- and they are written down so that the next session reads a judgement rather than making one again. Five of them, 2026-10-01."

@@ -111,6 +111,57 @@ away on it: a `floor + 32` rule measured the throat at **710 blocks** against th
 wall line is therefore the traced frontier, not a ground threshold; the heightmap is used only for each
 column's own height.
 
+## The gatehouse is open (2026-10-12, supersedes `RIFT_ZONES.md` section 6's drawn section)
+
+The owner, after playing: *"Go through the rift guards at each section and make sure they seem polished; I've had
+issues with the look sometimes. It shouldn't be a one-block corridor to squeeze through; it should just be a guard
+that stops you if you can't enter."*
+
+What the player met until now (measured from `tools/rift_zones.py` as of `8cf8a42`, not recalled): a six-wide
+walkway on a cardinal axis, **walled in obsidian, roofed at y+2 (two blocks of headroom), a blackstone frame at each
+mouth, and a two-high `minecraft:barrier` across the row behind the guard**; the approach was cut with three blocks
+of air and floored in obsidian; the guard's armour stand stood IN the walkway, on lane 0. Where the gate crossed a
+cross-wall (G4, G5) the wall's gap was the walkway alone, a six-wide slot through a seventeen-block wall.
+
+What stands now, per gate (`data/rift_zones.json` `gatehouse`; `tools/rift_zones.py` `cmd_build`):
+
+| Part | Rule |
+|---|---|
+| Passage | `walkway` = 6 lanes (floor `min_width` = 5; the widest sculpted way in is 6), flat at the guard's feet, paved in the terrain's own worn palette (`terrain_blocks`), five blocks of air over it, higher ground cut open to the sky |
+| Approach | unchanged data (`approach`), paved and opened the same way |
+| Guard | the placeholder stands on a **pad** in the lane just outside the passage, on its own row, facing down the approach (`Rotation`), never in the walk line |
+| Dressing | two blackstone posts (5 high) either side of the row behind the guard, a beam across at +5, a lantern on each post: never a light block, nothing lower than 4 over the way |
+| Stopping | the **line**: a `minecraft:location` advancement over rows 1..12 behind the guard (`<gate>_line`), whose function turns a player without the pass back to that gate's own turn-back point with the zone's message, and admits one who qualifies (the zone check's qualify-on-entry runs first). No block stops anyone |
+| Wall gap | where a cross-wall meets the gate it leaves the passage and `wall_gap_margin` = 2 lanes either side, ten wide |
+
+**The exit box is retired.** It existed because the barrier closed the way out as well as in. With the way open, a
+qualified player walking in crosses its row and a once-a-second location test would throw about one in four of them
+back out. `exit` stays in the zone records (trace still measures it); no advancement or function is emitted for it.
+
+**Taking the old shell down.** The retired shell is in the live world (R9Z ran, staging 2026-10-01 onward). The
+gatehouse function therefore begins by restoring every column the shell wrote to, over the y range it wrote, from the
+heightmap's rounded ground: stone to three under, two blocks of `under`, the `surface` block on top, air above, up to
+the wall's crest where the old wall closed the gap. The terrain code per gate is the paint's own (`gatehouse.terrain`,
+measured with `painted_terrain`), never read from a world. The old numbers are frozen in `gatehouse.legacy`, so a later
+change to `walkway` cannot leave old columns standing. Re-running the function over a world that never had the shell
+only writes the terrain over itself. The old guard placeholder (on the guard's block) is killed by `guards_act`.
+
+**Re-applying.** One prepare job and one apply step: `python tools/reapply.py prepare --only rift_zones:build`
+rebuilds `cobblers_rift_zones`; `python tools/reapply.py install ...` puts the pack (with the new `<gate>_line`
+advancements and without the exit ones) on the server; `python tools/reapply.py run --server-dir <server> --only R9Z`
+runs the walls and gatehouses of the zones that can be passed, then the guards chain. Nothing else re-applies them.
+
+**Audit.** `python tools/gatehouse_audit.py` (after `rift_zones.py build`) parses only the emitted text and the data and
+checks width (>= 5 on every row), clearance (4 over the floor, passage and approach), that nothing of the retired shell
+survives, the guard's seat (beside the way, feet and head clear, facing out, 3.5 from every other NPC) and that the pad,
+arrival, knock box and both approaches are one walkable piece. `tests/test_rift_zones.py` proves each check bites by
+mutating the generator (narrowed lanes, a low beam, a tunnel of natural ground, the guard in the lane, no demolition);
+`tests/test_rift_zones_apply.py` adds the walls-up gap, the line's behaviour, and their mutations.
+
+**Not seen in a game.** None of this has been looked at by a player. Whether it READS as a gate, whether the posts
+and beam read as polished, and whether the line's once-a-second test catches a sprint-jumper (12 rows are meant to) are
+the in-game checks owed.
+
 ## The walls
 
 A wall is the frontier the two zones share, filtered to the columns standing on walkable floor (within 15 of

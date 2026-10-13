@@ -162,7 +162,11 @@ PRESET_CLIMATE = {
 # can stand that far apart, twice). A coast that is not near the sea is a lake shore. Marine bands are salt only;
 # waterways fresh only.
 WATER_POSITIONS = {"submerged", "surface", "seafloor", "fishing"}
-MARINE_TEMPERATURE = {"cold": "cold", "temperate": "temperate", "warm": "warm"}
+MARINE_TEMPERATURE = {"cold": ("cold",), "temperate": ("temperate",), "warm": ("warm",),
+                      # the Outer Deep (data/regions.json: "graded north to south") borders every coast, so no one
+                      # climate is its country: a species is judged against all three (2026-10-12, with the seas'
+                      # zones in data/marine_seas.json), and fits where it fits any
+                      "graded north to south": ("cold", "temperate", "warm")}
 
 REGIONAL = [("alolan", ("alolan", "alola")), ("galarian", ("galarian", "galar")), ("hisuian", ("hisuian", "hisui")),
             ("paldean", ("paldean", "paldea")), ("valencian", ("valencian",))]
@@ -455,7 +459,7 @@ class Places:
             t = (reg.get("climate") or {}).get("temperature")
             if t not in MARINE_TEMPERATURE:
                 raise AuditError("marine region %s has temperature %r, not one this audit classes" % (reg["id"], t))
-            return {"climates": {MARINE_TEMPERATURE[t]}, "water": {"salt"}, "ground_p10": None,
+            return {"climates": set(MARINE_TEMPERATURE[t]), "water": {"salt"}, "ground_p10": None,
                     "label": "%s (%s sea, %s)" % (pid, reg["id"], t)}
         if kind == "waterways":
             w = self.waterways.get(pid)

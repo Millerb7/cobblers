@@ -615,6 +615,76 @@
       "why": "data/legendaries.json"
     },
     {
+      "id": "quest.legendary_tornadus.met",
+      "quest_id": "legendary_tornadus",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/tornadus/met in cobblers_legendaries",
+      "why": "data/legendaries.json. The Tri Peaks' summit genie; one of the three keys to Enamorus's chamber."
+    },
+    {
+      "id": "quest.legendary_thundurus.met",
+      "quest_id": "legendary_thundurus",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/thundurus/met in cobblers_legendaries",
+      "why": "data/legendaries.json. Mt Vessu's genie; one of the three keys to Enamorus's chamber."
+    },
+    {
+      "id": "quest.legendary_landorus.met",
+      "quest_id": "legendary_landorus",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/landorus/met in cobblers_legendaries",
+      "why": "data/legendaries.json. Mt Clay's genie; one of the three keys to Enamorus's chamber."
+    },
+    {
+      "id": "quest.legendary_enamorus.met",
+      "quest_id": "legendary_enamorus",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/enamorus/met in cobblers_legendaries",
+      "why": "data/legendaries.json. Opened only after the three genies are met (its gate's requires_met)."
+    },
+    {
+      "id": "quest.legendary_tapukoko.met",
+      "quest_id": "legendary_tapukoko",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/tapukoko/met in cobblers_legendaries",
+      "why": "data/legendaries.json. Sunset West's island guardian."
+    },
+    {
+      "id": "quest.legendary_tapulele.met",
+      "quest_id": "legendary_tapulele",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/tapulele/met in cobblers_legendaries",
+      "why": "data/legendaries.json. Sunset East's island guardian."
+    },
+    {
+      "id": "quest.legendary_tapubulu.met",
+      "quest_id": "legendary_tapubulu",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/tapubulu/met in cobblers_legendaries",
+      "why": "data/legendaries.json. The Long Isle's jungle guardian."
+    },
+    {
       "id": "quest.legendary_lugia.met",
       "quest_id": "legendary_lugia",
       "field": "met",
@@ -1286,6 +1356,136 @@
       "scope": "player",
       "initial": "idle",
       "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_fisher_viltri.rod_claimed",
+      "quest_id": "evt_fisher_viltri",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Wick Doran's Great Rod (data/fishermen.json (tools/fishermen.py write))"
+    },
+    {
+      "id": "quest.evt_fisher_viltri.completed",
+      "quest_id": "evt_fisher_viltri",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_fisher_viltri.dialogue_cursor",
+      "quest_id": "evt_fisher_viltri",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "fd_1",
+      "allowed_values": "node ids from dlg_fisher_viltri"
+    },
+    {
+      "id": "quest.evt_fisher_glacial_tear.rod_claimed",
+      "quest_id": "evt_fisher_glacial_tear",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Hanne Brook's Net Rod (data/fishermen.json (tools/fishermen.py write))"
+    },
+    {
+      "id": "quest.evt_fisher_glacial_tear.completed",
+      "quest_id": "evt_fisher_glacial_tear",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_fisher_glacial_tear.dialogue_cursor",
+      "quest_id": "evt_fisher_glacial_tear",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "fd_1",
+      "allowed_values": "node ids from dlg_fisher_glacial_tear"
+    },
+    {
+      "id": "quest.evt_fisher_peak_pond.rod_claimed",
+      "quest_id": "evt_fisher_peak_pond",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Pell Ashwick's Ultra Rod (data/fishermen.json (tools/fishermen.py write))"
+    },
+    {
+      "id": "quest.evt_fisher_peak_pond.completed",
+      "quest_id": "evt_fisher_peak_pond",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_fisher_peak_pond.dialogue_cursor",
+      "quest_id": "evt_fisher_peak_pond",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "fd_1",
+      "allowed_values": "node ids from dlg_fisher_peak_pond"
+    },
+    {
+      "id": "quest.evt_fisher_northlight_shore.rod_claimed",
+      "quest_id": "evt_fisher_northlight_shore",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Ingrid Salt's Lure Rod (data/fishermen.json (tools/fishermen.py write))"
+    },
+    {
+      "id": "quest.evt_fisher_northlight_shore.completed",
+      "quest_id": "evt_fisher_northlight_shore",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_fisher_northlight_shore.dialogue_cursor",
+      "quest_id": "evt_fisher_northlight_shore",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "fd_1",
+      "allowed_values": "node ids from dlg_fisher_northlight_shore"
+    },
+    {
+      "id": "quest.evt_fisher_sunset_harbour.rod_claimed",
+      "quest_id": "evt_fisher_sunset_harbour",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Corin Vale's Dive Rod (data/fishermen.json (tools/fishermen.py write))"
+    },
+    {
+      "id": "quest.evt_fisher_sunset_harbour.completed",
+      "quest_id": "evt_fisher_sunset_harbour",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_fisher_sunset_harbour.dialogue_cursor",
+      "quest_id": "evt_fisher_sunset_harbour",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "fd_1",
+      "allowed_values": "node ids from dlg_fisher_sunset_harbour"
     },
     {
       "id": "quest.evt_route2_rollaway_geodude.started",

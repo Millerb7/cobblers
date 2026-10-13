@@ -958,6 +958,9 @@ def authored_things(root, exclude_ids):
             for k, v in o.items():
                 if fname == "regions.json" and k in ("polygons", "polygon"):
                     continue                    # region boundaries follow terrain; they are not things
+                if k == "clip_boxes":
+                    continue                    # a marine zone's extent (data/marine_seas.json, spawns.json marine_zones,
+                                                # 2026-10-12): a region's bounds like the polygons above, not a thing
                 if k in ("polygons", "polygon"):
                     for poly in _polys(v):
                         polys.append(("%s %s/%s" % (fname, path, k), poly))

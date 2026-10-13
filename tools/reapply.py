@@ -15,6 +15,11 @@ with a check after each, and audit the result. docs/world-building/REEXPORT.md i
         with the server running, booted with max-tick-time=-1 in its server.properties (the run refuses otherwise;
         restore it afterwards), and the coordination lock held: R2 to R16 in order, timed, each function's reply
         checked, the checkpoints below enforced; writes derived/reapply/run_<time>.json
+  python tools/reapply.py strip --server-dir <server> --world-dir <world folder>
+        with the server STOPPED, after a run: move every pack build/pack_roles.json classes `build` (nothing calls it at
+        play time) out of both datapacks folders into <server>/../cobblers-server-retired/stripped_<time>/, recorded in
+        build/install_record.json; `install` puts them back, and `run` refuses a step that needs a stripped pack.
+        Every loaded function line stays parsed in the heap (docs/research/notes/function-heap.md)
   python tools/reapply.py audit --server-dir <server> --world <stopped world copy>
         with the server STOPPED: build_audit (cavern, forest, world tree, islet), town_audit for every place, the
         signposts, and the light check (tools/light_plan.py: nothing walkable under a roof or in the cavern at block
@@ -103,6 +108,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-09: Route 5's event sites (tools/route5_events.py): block functions run by R12R5; the scenes,
                 # NPCs and conversations they carry are data/scenes.json's, placed by R17
                 "cobblers_route5_events",
+                # 2026-10-12: a shrine in each of the Route 1 maze forest's six glades (tools/maze_shrines.py,
+                # data/maze_shrines.json): block functions run by R12MS, after the forest (R6) and the event sites (R12)
+                "cobblers_maze_shrines",
                 # 2026-09-27: each dressed town's landmark and set dressing (tools/town_dressing.py,
                 # data/town_dressing.json), run by R16B after the donors and the lights
                 "cobblers_town_dressing",
@@ -316,6 +324,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # cobblers:pocket, a self-driving keeper, a battle_victory callback and NPC classes; world-local below.
                 # Its slot shells are built by R16DG and its overworld rips by R16DR, after R16Q
                 "cobblers_dungeons",
+                # 2026-10-12: those shells' and rips' functions, under the same ids, in a pack of their own
+                # (tools/pack_split.py) so `strip` can take them out of the heap after the run; world-local below
+                "cobblers_dungeons_build",
                 # 2026-10-08: the Beast Ball is the key to dungeon bosses (tools/key_ball.py, data/key_ball.json): two
                 # Cobblemon callbacks and the jar's beast_ball recipe closed; no blocks, no step; world-local below
                 "cobblers_key_ball",
@@ -384,6 +395,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # ECONOMY_OVERHAUL.md section 3): blocks run by R9OC; the galleries' restore on approach acts on its own
                 # (a tick driver, tools/mines.py's), so world-local below
                 "cobblers_mining_caves",
+                # 2026-10-12: the cave kit's first three caves (tools/caves.py, data/caves.json, LEGENDARY_HOMES.md section 4):
+                # blocks run by R9CK BEFORE R9E (a Habitat Block stands in each part's floor); the gates' barrier doors and the
+                # area boss's keeper act on their own (tick drivers, a capture callback), so world-local below
+                "cobblers_caves",
                 # 2026-09-29: the dive and sky portals and the pocket dimension (tools/portals.py, data/portals.json,
                 # ADR-004, EXP-047). It ships a `dimension` and a `dimension_type`, which register only at a server
                 # BOOT, not at a /reload: installing this pack needs a restart before R16P will run. The arches are
@@ -478,12 +493,17 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_ferries", "cobblers_ambient", "cobblers_ambient_idle", "cobblers_levelcap", "cobblers_mines",
                # 2026-10-10: the mining caves' restore drives itself on its own tick, like the stone faces'
                "cobblers_mining_caves",
+               # 2026-10-12: the caves' gates open and close their barrier doors on a tick, and the area boss's keeper SPAWNS a
+               # wild alpha on its own and reads a capture callback: never global, or the live world would run it too
+               "cobblers_caves",
                "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
                # 2026-10-08: the Entei keeper SPAWNS a legendary per player on its own and gives items: never global
                "cobblers_entei_boss",
                # 2026-10-08: the dungeon keeper KILLS players on a timer, spawns NPCs, takes and gives items and sets game
                # modes on its own: never global
                "cobblers_dungeons",
+               # 2026-10-12: the dungeons' one-shot shells and rips, beside the pack they were split from
+               "cobblers_dungeons_build",
                # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
                "cobblers_key_ball",
                # 2026-10-09: closes the Waystones recipes; global would close them in the live world too
@@ -749,6 +769,9 @@ def prepare_jobs(a):
     # problem. The boxes and wall lines are committed data; `trace` is not run here, because it needs the
     # owner's annotated source map, which prepare does not have
     add("rift_zones:build", "rift_zones.py", "build", *src)
+    # the open gatehouses (2026-10-12), audited on the pack just built and the heightmap: width, clear air, the retired
+    # shell gone, the guard beside the way, one walkable piece. It reads the emitted text and the data only
+    add("gatehouse_audit", "gatehouse_audit.py", *src)
     # Victory Road's closure (z5.pass.admit_within, knock_needs_score, also_boxes; 2026-10-08), on the two packs just
     # built and the heightmap: no flag holder reaches the League but up through the caves, and the caves walk to it.
     # Fail-closed; it reads the emitted packs, never either builder's model
@@ -787,6 +810,11 @@ def prepare_jobs(a):
     # then writes the battle_victory callback pack
     add("compact_routes:check", "compact_routes.py", "check")
     add("compact_routes:build", "compact_routes.py", "build")
+    # the fishermen who hand out rods (2026-10-12, data/fishermen.json): refuses a derived record that drifted from the
+    # table, then the rod check (every rod Cobblemon registers and its sources; fails below the declared floor of NPC
+    # rods or on a stronger rod given with no badge gate). They are NPCs of data/npc_seats.json: placed by R17N
+    add("fishermen:check", "fishermen.py", "check")
+    add("rod_sources", "rod_sources.py")
     # the Haven Compact's story fights (2026-10-11): the battle_victory callback and won functions; refuses nothing,
     # so its offline gate (`compact_points.py check`) is the job after it
     add("compact:build", "compact_points.py", "build")
@@ -850,6 +878,11 @@ def prepare_jobs(a):
     # Route 5's event sites (2026-10-09, tools/route5_events.py): fails on drift between the build and the four scene
     # records or the cache record in data/, or on anything standing on the walked line
     add("route5_events", "route5_events.py", *src)
+    # the shrines in the Route 1 maze forest's glades (2026-10-12): the build fails on a site the forest's plan, the
+    # heightmap or a find's trigger box forbids or on a rewards record that disagrees with it, then the independent
+    # audit replays the written functions against the plan, the legendaries and the finds
+    add("maze_shrines:build", "maze_shrines.py", "build", *src)
+    add("maze_shrines_audit", "maze_shrines_audit.py", *src)
     add("challenge_mode_audit", "challenge_mode_audit.py")
     # Heaven's Arena's per-player opponents (2026-10-03): the ladder, the champions' exam teams and the dome's venues.
     # It FAILS while data/arena_dome.json has no venues: an arena with nowhere to fight is not a pack to install
@@ -1196,6 +1229,12 @@ def prepare_jobs(a):
     # other built pack's writes and reads them from build/datapacks; it fails closed on a write where a cave may not
     # stand. Before mines_audit, which lists reapply's steps (R9OC's build functions come from the data)
     add("mining_caves:build", "mining_caves.py", "build", *src)
+    # the cave kit (data/caves.json; LEGENDARY_HOMES.md section 4): the same reason, and the Habitat Blocks and pools it keeps in
+    # data/habitat_blocks.json and data/spawns.json are refused here if they drifted from the geometry. Its audit (tools/caves_audit.py)
+    # re-derives every cell from the rules text and replays the pack: cells both ways, the seal, the cover, the walk with the door
+    # closed and open, the gate, the keeper's guardian safety and clocks, the records, and the keep-clear distances. Fail-closed
+    add("caves:build", "caves.py", "build", *src)
+    add("caves_audit", "caves_audit.py", "--inputs-root", str(ROOT), *src)
     add("mines_audit", "mines_audit.py", *src)
     # the idle Pokemon (tools/ambient_idle.py): LAST of the builds, because it seats them on the BUILT town -- it
     # replays every pack's block writes through steps() (tools/npc_spot_sweep.py) and refuses a spot a signpost, a
@@ -1486,8 +1525,15 @@ def _prepare_checks(t0):
     for d in donors(doc):
         if "cobblers:structures/place_%s" % d not in ran:
             raise SystemExit("donor %r is placed in data/placements.json but no re-apply step stamps it" % d)
-    return ("checks passed in %.0f s: %d places, %d pack donors, %d steps, every function pack covered"
-            % (time.time() - t0, len(places()), len(donors()), len(steps())))
+    # LAST, once cobblers_reapply is assembled above: every installed pack classed runtime or build and every step's
+    # pack closure (tools/pack_roles.py -> build/pack_roles.json), which `strip` and `run` read (2026-10-12, the
+    # parsed-function heap: docs/research/notes/function-heap.md). The old file goes first, so a failure leaves none
+    ROLES.unlink(missing_ok=True)
+    roles_out = py(TOOLS / "pack_roles.py")
+    roles_line = [ln for ln in roles_out.strip().splitlines() if ln.startswith("build:")][-1:] or ["pack_roles: no summary"]
+    print(roles_line[0])
+    return ("checks passed in %.0f s: %d places, %d pack donors, %d steps, every function pack covered; %s"
+            % (time.time() - t0, len(places()), len(donors()), len(steps()), roles_line[0]))
 
 
 def replace_pack(dest, src, retired_root):
@@ -1616,6 +1662,149 @@ def install(a):
                          % (len(problems), "\n  ".join(problems)))
     _record_install(a.server_dir, a.world_dir, stamp, done=True)
     print("install check: every pack and config the repo builds is installed and current (prepare %s)" % stamp_id(stamp))
+
+
+# ------------------------------------------------------------------------------------------- strip (2026-10-12)
+# Minecraft keeps every line of every loaded function parsed for as long as its pack is loaded: on staging the idle heap
+# was 12.4 GB with nobody online, ~7-8 GB of it Brigadier's parsed commands, one parsed line per installed function line
+# (6.49M instances against 6.56M lines; relayed from the orchestrator's measurement, docs/research/notes/function-heap.md).
+# Most of those lines are one-shot placement a step ran once. `strip` MOVES every pack tools/pack_roles.py classed
+# `build` out of both datapacks folders into a holding folder beside the retired packs, with the server stopped, and
+# records it; `install` puts them all back; `run` refuses a step whose call closure needs a stripped pack.
+ROLES = BUILD / "pack_roles.json"
+
+
+def server_running():
+    """[reasons the server may be up]: port 25565 answering, or a java process. Fail closed: a process list that cannot
+    be read is a reason."""
+    import socket
+    why = []
+    s = socket.socket()
+    try:
+        if s.connect_ex(("127.0.0.1", 25565)) == 0:
+            why.append("port 25565 is in use")
+    finally:
+        s.close()
+    if os.name == "nt":
+        cmds = [["tasklist", "/FI", "IMAGENAME eq %s" % im, "/NH", "/FO", "CSV"] for im in ("java.exe", "javaw.exe")]
+    else:
+        cmds = [["ps", "-A", "-o", "comm="]]
+    for c in cmds:
+        try:
+            r = subprocess.run(c, capture_output=True, text=True, timeout=60)
+        except (OSError, subprocess.SubprocessError) as e:
+            why.append("cannot list processes (%s): %s" % (" ".join(c[:1]), e))
+            continue
+        if r.returncode != 0:
+            why.append("cannot list processes (%s exit %d)" % (c[0], r.returncode))
+            continue
+        hits = [ln.strip() for ln in r.stdout.splitlines()
+                if re.search(r"(^|[\\/\"])javaw?(\.exe)?\"?(,|$)", ln.strip(), re.I)]
+        if hits:
+            why.append("a java process is running: %s" % hits[0][:80])
+    return why
+
+
+def load_roles(path=None):
+    """build/pack_roles.json, or SystemExit naming why it cannot be trusted."""
+    path = Path(path) if path is not None else ROLES
+    if not path.is_file():
+        raise SystemExit("no %s: run `reapply.py prepare` (job pack_roles) first" % path)
+    try:
+        roles = json.loads(path.read_text(encoding="utf-8"))
+    except ValueError as e:
+        raise SystemExit("%s is unreadable: %s" % (path, e))
+    if roles.get("everything_reachable"):
+        raise SystemExit("%s: an unresolved function reference is reachable at runtime, so no pack is build-only: "
+                         "nothing may be stripped (see its 'unresolved')" % path)
+    if "steps" not in roles:
+        raise SystemExit("%s has no per-step closure (built with --no-steps): rebuild it with prepare" % path)
+    return roles
+
+
+def pack_home(name, server_dir, world_dir):
+    """(folder label, the installed pack's path) as install places it."""
+    world = {Path(p).name for p in WORLD_PACKS} | set(SPAWN_PACKS) | set(WORLD_LOCAL)
+    if name in world:
+        return "world", Path(world_dir) / "datapacks" / name
+    return "global", Path(server_dir) / "datapacks" / name
+
+
+def strip(a):
+    why = server_running()
+    if why:
+        raise SystemExit("reapply strip refused: the server may be running (%s). Stop it first." % "; ".join(why))
+    inst = require_installed(a.server_dir)
+    if Path(inst.get("world_dir") or "").resolve() != Path(a.world_dir).resolve():
+        raise SystemExit("reapply strip refused: the last install into %s was into the world %s, not %s"
+                         % (a.server_dir, inst.get("world_dir"), a.world_dir))
+    roles = load_roles()
+    if Path(roles.get("packs_dir") or "").resolve() != PACKS.resolve():
+        raise SystemExit("reapply strip refused: %s classified %s, not this build (%s)" % (ROLES, roles.get("packs_dir"), PACKS))
+    known = set(SERVER_PACKS) | set(SPAWN_PACKS) | {Path(p).name for p in WORLD_PACKS}
+    build = sorted(n for n, r in roles["packs"].items() if r.get("role") == "build")
+    unknown = [n for n in build if n not in known]
+    if unknown:
+        raise SystemExit("reapply strip refused: %s names build pack(s) install does not install: %s" % (ROLES, unknown))
+    dp = runtime_guard.check(Path(a.server_dir) / "datapacks", "strip packs from")
+    runtime_guard.check(a.world_dir, "strip world packs from")
+    import install_check as IC
+    # every pack to move must be installed and be the build: a divergent copy is someone's, and is not ours to move
+    plan, bad = [], []
+    already = inst.get("stripped") or {}
+    for name in build:
+        if name in already:
+            continue
+        where, src = pack_home(name, a.server_dir, a.world_dir)
+        built = PACKS / name if (PACKS / name).is_dir() else next(Path(p) for p in WORLD_PACKS if Path(p).name == name)
+        problems = IC.compare(name, built, src)
+        if problems:
+            bad += problems
+        plan.append((name, where, src))
+    if bad:
+        raise SystemExit("reapply strip refused, nothing moved: %d pack(s) are not installed as built:\n  %s\n"
+                         "run `reapply.py install` first" % (len(bad), "\n  ".join(bad)))
+    hold = Path(a.server_dir).resolve().parent / "cobblers-server-retired" / ("stripped_%s" % time.strftime("%Y%m%d_%H%M%S"))
+    key = str(Path(a.server_dir).resolve())
+    rec_all = json.loads(INSTALLED.read_text(encoding="utf-8"))
+    rec = rec_all[key]
+    rec.setdefault("stripped", {})
+    lines = 0
+    for name, where, src in plan:
+        dst = hold / where / name
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(src), str(dst))
+        rec["stripped"][name] = {"from": str(src), "to": str(dst), "folder": where,
+                                 "lines": roles["packs"][name].get("lines", 0), "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+        lines += roles["packs"][name].get("lines", 0)
+        # recorded after every move, so a strip that dies half way says exactly what it moved
+        INSTALLED.write_text(json.dumps(rec_all, indent=1), encoding="utf-8")
+        print("stripped %s (%s folder) -> %s" % (name, where, dst))
+    total = roles.get("totals", {}).get("lines") or 0
+    print("strip: %d pack(s) moved out (%d already out), %d of %d function lines (%.1f%%); held in %s. "
+          "`reapply.py install` puts them back; `reapply.py run` refuses a step that needs one"
+          % (len(plan), len(already), lines, total, 100.0 * lines / total if total else 0.0, hold))
+
+
+def stripped_needed(inst, todo, roles_path=None):
+    """[(step, [stripped packs it needs])] for the selected steps. Fail closed: when anything is stripped, a step the
+    roles file does not know, or no roles file, refuses."""
+    stripped = set(inst.get("stripped") or {})
+    if not stripped:
+        return []
+    try:
+        roles = load_roles(roles_path)
+    except SystemExit as e:
+        raise SystemExit("reapply run refused: %d pack(s) are stripped (%s) and their roles cannot be read: %s. "
+                         "`reapply.py install` puts them back" % (len(stripped), ", ".join(sorted(stripped)), e.code))
+    out = []
+    for sid, _title, _acts in todo:
+        needs = roles["steps"].get(sid)
+        if needs is None:
+            out.append((sid, sorted(stripped)))
+        elif stripped & set(needs):
+            out.append((sid, sorted(stripped & set(needs))))
+    return out
 
 
 class Rcon:
@@ -2058,6 +2247,12 @@ def steps(with_spawns=False):
     out.append(("R9OC", "the refillable mining caves: %s (data/mining_caves.json)" % ", ".join(
                     "%s with %d galleries" % (c["id"], len(c["galleries"])) for c in mining_caves.load()["caves"]),
                 [("fn", f) for f in mining_caves.build_functions()]))
+    # the cave kit (tools/caves.py, data/caves.json; LEGENDARY_HOMES.md section 4): K1, K2 and K3, one block pass each held in a
+    # forceload of its box, BEFORE R9E (each part's Habitat Block replaces a floor cell this writes). The gates' doors and the area
+    # boss's keeper drive themselves (cobblers:caves/tick and /boss/<id>/keeper) and need no step
+    import caves
+    out.append(("R9CK", "the cave kit: %s (data/caves.json)" % ", ".join("%s %s" % (c["kind"], c["id"]) for c in caves.load()["caves"]),
+                caves.placement_steps()))
     # the city stands on the pit R9B sinks, after R9C (the caves write round the mouth the city keeps clear) and before
     # R9E (Habitat Blocks sit on finished floors) and the lights (R16). Structure, then the Centre and Mart by
     # /place template, then what hangs on the structure (ladders, hatches, panes, doors, signs, lamps). R9DC, not R9D:
@@ -2363,6 +2558,10 @@ def steps(with_spawns=False):
     # Routes 1-3's event sites after the signposts and every town, and before the things that stand in them
     out.append(("R12", "Routes 1-3 event sites (tools/route_events.py)",
                 [("fn", "cobblers:route_events/%s" % f) for f in indexed("cobblers_route_events", "route_events")]))
+    # the shrines in the maze forest's glades (tools/maze_shrines.py): after the forest's tiles (R6), the signposts (R15)
+    # and Routes 1-3's event sites (R12), whose barrels they stand clear of; before R17 places what stands in them
+    out.append(("R12MS", "Route 1 maze forest glade shrines (tools/maze_shrines.py, data/maze_shrines.json)",
+                [("fn", "cobblers:maze_shrines/%s" % f) for f in indexed("cobblers_maze_shrines", "maze_shrines")]))
     # Route 5's event sites (tools/route5_events.py): a pack of their own so Routes 1-3's cannot move, run right after
     # theirs and before R17 places the props, NPCs and actors that stand in them
     out.append(("R12R5", "Route 5 event sites (tools/route5_events.py)",
@@ -2612,8 +2811,10 @@ def steps(with_spawns=False):
     out.append(("R14C", "the Celebi in the Route 1 sapling", sapling_celebi.placement_steps(sapling_celebi.load())
                 + [("check", "celebi")]))
     # the authored legendaries: the chambers are blocks, but each legendary is an entity that an export erases,
-    # so it is summoned over RCON here for the same reason as the Celebi (spawnpokemonat in a function spawns
-    # nothing until a /reload, EXP-046). Only the sited encounters are placed; a blocked one writes nothing.
+    # so it is summoned here, through a macro line inside each chamber's look-then-act chain (tools/chunk_look.py,
+    # N155; spawnpokemonat as a plain function line spawns nothing, EXP-046). The chain summons only when the chunk
+    # shows its saved entities and no tagged legendary stands, and the carve is skipped once a gate has opened, so
+    # R14L is safe to re-run (2026-10-12). Only the sited encounters are placed; a blocked one writes nothing.
     import legendaries
     out.append(("R14L", "the authored legendary chambers and their legendaries (data/legendaries.json)",
                 legendaries.placement_steps(legendaries.load())))
@@ -2724,7 +2925,6 @@ def stale(a):
 def run(a):
     # before the first RCON command: the server must hold an install of the current complete prepare
     inst = require_installed(a.server_dir)
-    rc = Rcon(a.server_dir)
     OUT.mkdir(parents=True, exist_ok=True)
     rec = {"started": time.strftime("%Y-%m-%dT%H:%M:%S"), "steps": [], "prepare": inst.get("prepare"),
            "world_dir": inst.get("world_dir"),
@@ -2750,6 +2950,13 @@ def run(a):
     rec["of_steps"] = len(ids)
     if not todo:
         raise SystemExit("reapply run: no steps selected; nothing would be applied")
+    # a pack `strip` moved out is not loaded: a step that calls into one would answer "Unknown function" half way
+    need = stripped_needed(inst, todo)
+    if need:
+        raise SystemExit("reapply run refused: %d selected step(s) need pack(s) `reapply.py strip` moved out of the "
+                         "server:\n  %s\n`reapply.py install` (server stopped) puts them back"
+                         % (len(need), "\n  ".join("%s needs %s" % (s, ", ".join(p)) for s, p in need)))
+    rc = Rcon(a.server_dir)
     if getattr(a, "no_reload", False):
         print("no reload: the packs loaded at boot (a second /reload on this pack stack exhausted a 10 GB heap twice on staging, 2026-09-24)")
     else:
@@ -3181,6 +3388,10 @@ def main(argv=None):
                    if (ROOT.parent.parent.parent / "COBBLEVERSE").is_dir()
                    else str(ROOT / "COBBLEVERSE" / "datapacks" / "COBBLEVERSE-DP-v31.zip"),
                    help="the upstream COBBLEVERSE-DP-v31.zip (not committed: no-redistribution), patched at install")
+    q = sub.add_parser("strip", help="with the server STOPPED, after a run: move every build-only pack "
+                       "(build/pack_roles.json) out of both datapacks folders; install puts them back")
+    q.add_argument("--server-dir", required=True)
+    q.add_argument("--world-dir", required=True)
     q = sub.add_parser("run")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--from", dest="from_step")
@@ -3214,7 +3425,8 @@ def main(argv=None):
     runtime_guard.require_lock("reapply %s" % a.cmd)
     if a.cmd == "run":
         require_watchdog_off(a.server_dir)             # before the first RCON command (REEXPORT.md step 5b)
-    return {"carry": carry, "prepare": prepare, "install": install, "run": run, "audit": audit}[a.cmd](a) or 0
+    return {"carry": carry, "prepare": prepare, "install": install, "run": run, "audit": audit,
+            "strip": strip}[a.cmd](a) or 0
 
 
 if __name__ == "__main__":

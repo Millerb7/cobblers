@@ -30,6 +30,11 @@ scripting layer, companion or mod is proposed. The kinds register through `dunge
                      is zeroed (consumed once); the room named by `params.lure_room` (a living room: any room that may hold
                      ambient life) spawns the bait's Pokemon for the band on its first pass, catchable, at the band's lower
                      level cap, a wild Pokemon of the slot (discarded at the slot's free and the keeper's stale pass).
+                     TIERS (the owner, 2026-10-12): when data/dungeon_extras.json `bait_room.tiers` exists each bait names a
+                     tier, and the lure gets two SEPARATE rolls (random value 1..10000 each): shiny, then alpha, at the tier's
+                     `shiny_chance` / `alpha_chance`; the spawn's props gain `shiny=true` and/or `alpha=true`. A lure may be
+                     shiny only, alpha only, both or neither; it stays at the band's lower cap. No `tiers`: no rolls, the
+                     generated text is unchanged.
 
 SELLING, GAMING AND THE CLOCK. GREED (tools/dungeon_greed.py) only ever ADDS points and the clock rate only ever rises; a
 credit makes the clock FASTER, so loot is a cost to the run's time. The well therefore credits the NET GAIN of a throw,
@@ -46,7 +51,8 @@ What it does NOT cover (all UNPROVEN in game): a button read per keeper pass (tw
 ascending digit order, so a fast typist can transpose; the lock forgives 5 wrong codes); that `data modify block` rewrites a
 waxed sign's `front_text.messages[n]`; that a thrown item rests inside the pool's selector box and `execute ... as @e[type=
 item]` sees it in the pocket; `data get entity @s Item.count`; the macro `give @s $(item) $(n)` for a Cobblemon item; that a
-spawned lure stays in its room; the sound ids other than the ones the kit already uses. The simulator
+spawned lure stays in its room; that `spawnpokemonat` honours `shiny=true` / `alpha=true` (an alpha's level and size are the
+jar's to decide); the sound ids other than the ones the kit already uses. The simulator
 (tests/test_dungeon_extras.py) proves the functions, not the game. Nothing here holds a coordination lock or touches a server.
 
   python tools/dungeon_extras.py       # the tables' checks, the well's expected shares, the bank's chest budget
@@ -76,7 +82,15 @@ STORE = "cobblers:dungeons"           # command storage: well.item / well.n (the
 DEPTH = 7                             # the bank's chamber: rows from the partition to the south wall
 PANEL_HALF = 5                        # the keypad's console runs cx +- 5
 KEYPAD_ROW = {1: (0, 1), 2: (1, 1), 3: (2, 1), 4: (3, 1), 5: (4, 1), 6: (0, 0), 7: (1, 0), 8: (2, 0), 9: (3, 0), 0: (4, 0)}
-LEGEND = {"legendary", "mythical", "ultra_beast"}
+LEGEND = {"legendary", "mythical", "ultra_beast", "paradox"}      # paradox joined 2026-10-12 (the owner: no prize-class lure)
+# The lure's property tokens (PokemonProperties, Cobblemon 1.8.0 jar, com/cobblemon/mod/common/api/pokemon/
+# PokemonProperties$Companion.class, constant pool read 2026-10-12): the parser's keys include `shiny` -> setShiny(Boolean) and
+# `alpha` (alias `is_alpha`) -> setAlpha(Boolean); the class holds the boolean words "yes", "true", "no", "false". `alpha=true`
+# is also what the repo's habitat spawn entries already carry (tools/spawn_tiers_audit.py, tools/scar_tarn.py). UNPROVEN in
+# game: that `spawnpokemonat` honours them (it parses the same PokemonProperties) -- see the module docstring's list.
+PROP_SHINY, PROP_ALPHA = "shiny=true", "alpha=true"
+ROLL_N = 10000                        # each roll is `random value 1..ROLL_N`; a chance is stored as a count out of it
+ROLL_S, ROLL_A, FLAG_S, FLAG_A = "#lrs", "#lra", "#lfs", "#lfa"      # dg.t temporaries: the two rolls and the two outcomes
 COBBLEMON_JAR = Path("C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods/Cobblemon-fabric-1.8.0+1.21.1.jar")
 ID = re.compile(r"^[a-z0-9_.-]+:[a-z0-9_/.-]+$")
 SPECIES = re.compile(r"^[a-z0-9_]+$")
@@ -603,6 +617,82 @@ def post_dress(ctx):
             lure_hook(ctx, i, rec)
 
 
+def tier_of(bait_room, bait):
+    """The bait's tier record ({shiny_chance, alpha_chance, why}), or None while the table has no `tiers` (no rolls)."""
+    tiers = bait_room.get("tiers")
+    if not tiers:
+        return None
+    return tiers.get(bait.get("tier"))
+
+
+def threshold(p):
+    """A chance as a count out of ROLL_N: the roll `random value 1..ROLL_N` succeeds when it is 1..threshold."""
+    return int(round(float(p) * ROLL_N))
+
+
+def lure_roll_lines(bait_room, holder_z):
+    """The lure's two SEPARATE rolls, as function lines: one `random value` for shiny (#lrs) and a second for alpha (#lra),
+    then the flags #lfs / #lfa set to 1 by the bait's tier (a chance of 0 writes no line: it can never set the flag). A
+    lure may therefore be shiny only, alpha only, both or neither. [] when the table has no `tiers` (behaviour unchanged)."""
+    if not bait_room.get("tiers"):
+        return []
+    out = ["# the lure's two SEPARATE rolls (random value 1..%d each): shiny, then alpha; the bait's tier sets each chance" % ROLL_N,
+           "execute store result score %s %s run random value 1..%d" % (ROLL_S, OBJ_T, ROLL_N),
+           "execute store result score %s %s run random value 1..%d" % (ROLL_A, OBJ_T, ROLL_N),
+           "scoreboard players set %s %s 0" % (FLAG_S, OBJ_T), "scoreboard players set %s %s 0" % (FLAG_A, OBJ_T)]
+    for bi, bait in enumerate(bait_room["baits"], 1):
+        t = tier_of(bait_room, bait)
+        if t is None:
+            continue
+        for roll, flag, key in ((ROLL_S, FLAG_S, "shiny_chance"), (ROLL_A, FLAG_A, "alpha_chance")):
+            n = threshold(t[key])
+            if n > 0:
+                out.append("execute if score %s dg.rs matches %d if score %s %s matches 1..%d run scoreboard players set %s %s 1"
+                           % (holder_z, bi, roll, OBJ_T, n, flag, OBJ_T))
+    return out
+
+
+def lure_variants(bait_room, bait):
+    """[(extra execute condition, extra props)] of the spawn lines one bait and band need: one plain line while the table has
+    no tiers (the text this module always wrote), else one per (shiny, alpha) outcome its tier can produce. Property syntax:
+    PROP_SHINY / PROP_ALPHA (see there)."""
+    t = tier_of(bait_room, bait)
+    if t is None:
+        return [("", "")]
+    out = []
+    ns, na = threshold(t["shiny_chance"]), threshold(t["alpha_chance"])
+    for s in (0, 1):
+        if (s == 1 and ns == 0) or (s == 0 and ns >= ROLL_N):
+            continue
+        for a in (0, 1):
+            if (a == 1 and na == 0) or (a == 0 and na >= ROLL_N):
+                continue
+            out.append((" if score %s %s matches %d if score %s %s matches %d" % (FLAG_S, OBJ_T, s, FLAG_A, OBJ_T, a),
+                        (" " + PROP_SHINY if s else "") + (" " + PROP_ALPHA if a else "")))
+    return out
+
+
+def lure_lines(BR, band_props, Hz, dim, at_fn, bind_fn, keep, pos, bind_radius):
+    """The lure function's body: the rolls (none while the table has no `tiers`), then per bait and band the spawn line(s)
+    (the macro `spawnpokemonat`, one per shiny/alpha outcome the bait's tier can produce) and the bind line.
+    `band_props` is {band: the base props string (level=...)}."""
+    from dungeon_fights import macro_args
+    x, y, z = pos
+    lines = lure_roll_lines(BR, Hz)
+    for bi, bait in enumerate(BR["baits"], 1):
+        for bn, props in band_props.items():
+            sp = bait["species_by_band"].get(str(bn))
+            if not sp:
+                continue
+            cond = "if score %s dg.rs matches %d if score @s dg.band matches %d" % (Hz, bi, bn)
+            for flag_cond, extra in lure_variants(BR, bait):
+                lines.append("execute %s%s in %s run function %s %s" % (cond, flag_cond, dim, at_fn, macro_args(
+                    x="%.1f" % (x + 0.5), y=str(y), z="%.1f" % (z + 0.5), species=sp, props=props + extra)))
+            lines.append("execute %s in %s positioned %.1f %d %.1f as @e[type=cobblemon:pokemon,tag=!%s,distance=..%g,sort=nearest,limit=1] run function %s"
+                         % (cond, dim, x + 0.5, y, z + 0.5, keep, bind_radius, bind_fn))
+    return lines
+
+
 def lure_hook(ctx, i, rec):
     doc, room = ctx.doc, ctx.room
     import dungeon_prize as DPz
@@ -627,20 +717,9 @@ def lure_hook(ctx, i, rec):
         raise R.RoomError("%s room %s: no reachable floor to lure a Pokemon onto" % (ctx.d["id"], room["id"]))
     x, y, z = best[1]
     keep = doc["engine"]["sweep"]["keep_tag"]
-    lines = []
-    for bi, bait in enumerate(load()["bait_room"]["baits"], 1):
-        for b in doc["engine"]["bands"]:
-            bn = b["band"]
-            sp = bait["species_by_band"].get(str(bn))
-            if not sp:
-                continue
-            lv = DPz.level_at(doc, bn)
-            props = DF.props_of(lv, False, False)
-            cond = "if score %s dg.rs matches %d if score @s dg.band matches %d" % (Hz, bi, bn)
-            lines.append("execute %s in %s run function %s %s" % (cond, dim, D.F("extras/s%d/at" % g), DF.macro_args(
-                x="%.1f" % (x + 0.5), y=str(y), z="%.1f" % (z + 0.5), species=sp, props=props)))
-            lines.append("execute %s in %s positioned %.1f %d %.1f as @e[type=cobblemon:pokemon,tag=!%s,distance=..%g,sort=nearest,limit=1] run function %s"
-                         % (cond, dim, x + 0.5, y, z + 0.5, keep, DF.BIND_RADIUS, D.F("extras/s%d/bind" % g)))
+    BR = load()["bait_room"]
+    band_props = {b["band"]: DF.props_of(DPz.level_at(doc, b["band"]), False, False) for b in doc["engine"]["bands"]}
+    lines = lure_lines(BR, band_props, Hz, dim, D.F("extras/s%d/at" % g), D.F("extras/s%d/bind" % g), keep, (x, y, z), DF.BIND_RADIUS)
     b_ = ctx.built
     b_.functions["lure"] = [LOADED, "# As the member, the room's first pass: the Pokemon the run's bait brings (the bait room's lure score, by band)"] + lines + [
         bar(msg(BAIT, "lure"), "light_purple")]
@@ -925,7 +1004,41 @@ def table_problems(doc, force=False):
                     if sp not in labels:
                         bad.append("%s: %s is not a species in the Cobblemon 1.8.0 jar" % (who, sp))
                     elif labels[sp] & LEGEND:
-                        bad.append("%s: %s is a legendary, mythical or Ultra Beast: a lure is an ordinary catch (those are the prize)" % (who, sp))
+                        bad.append("%s: %s is a legendary, mythical, Ultra Beast or paradox: a lure is an ordinary catch (those are the prize)" % (who, sp))
+        bad += tier_problems(X["bait_room"])
+    return bad
+
+
+def tier_problems(bait_room):
+    """The bait tiers' checks (data shape: bait_room.tiers {id: {shiny_chance, alpha_chance, why}}, each bait's `tier` and `source`).
+    No `tiers` key: a bait may not name a tier (nothing would roll it); with it: every bait names one that exists."""
+    bad = []
+    tiers = bait_room.get("tiers")
+    baits = bait_room["baits"]
+    if tiers is None:
+        return ["bait_room bait %d (%s): names tier %r but the table has no `tiers`" % (i, b.get("id"), b["tier"])
+                for i, b in enumerate(baits, 1) if "tier" in b]
+    if not (isinstance(tiers, dict) and tiers):
+        return ["bait_room.tiers is an object of tier id -> {shiny_chance, alpha_chance, why}"]
+    for tid, t in tiers.items():
+        who = "bait_room tier %r" % tid
+        if not isinstance(t, dict):
+            bad.append("%s: an object" % who)
+            continue
+        for key in ("shiny_chance", "alpha_chance"):
+            v = t.get(key)
+            if isinstance(v, bool) or not isinstance(v, (int, float)) or not (0 <= v <= 1):
+                bad.append("%s: %s must be a number in [0, 1] (is %r)" % (who, key, v))
+            elif abs(v * ROLL_N - round(v * ROLL_N)) > 1e-6:
+                bad.append("%s: %s %r is finer than the roll's 1 in %d" % (who, key, v, ROLL_N))
+        if not (isinstance(t.get("why"), str) and t["why"].strip()):
+            bad.append("%s: needs a non-empty `why`" % who)
+    for i, b in enumerate(baits, 1):
+        who = "bait_room bait %d (%s)" % (i, b.get("id"))
+        if not isinstance(b.get("tier"), str) or b["tier"] not in tiers:
+            bad.append("%s: tier %r is not one of tiers %s" % (who, b.get("tier"), sorted(tiers)))
+        if "source" in b and not (isinstance(b["source"], str) and b["source"].strip()):
+            bad.append("%s: `source` is a non-empty text" % who)
     return bad
 
 
