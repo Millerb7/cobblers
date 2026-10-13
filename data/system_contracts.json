@@ -287,6 +287,21 @@
         "tools/sanctuaries_audit.py",
         "tests/test_sanctuaries.py"
       ]
+    },
+    "legendaries": {
+      "what": "the authored legendary chambers and their per-player met advancements (cobblers:legendary/<id>/met, cobblers_legendaries)",
+      "paths": [
+        "data/legendaries.json",
+        "tools/legendaries.py"
+      ]
+    },
+    "rayquaza_sky": {
+      "what": "Rayquaza's sealed arch on the great cone, the floating island and pillar, the arch crossing, the fall rescue and Rayquaza's keeper (cobblers_rayquaza, cobblers_rayquaza_build), and the empty override of cobbleverse:spawn_rayquaza",
+      "paths": [
+        "data/rayquaza_sky.json",
+        "tools/rayquaza_sky.py",
+        "tests/test_rayquaza_sky.py"
+      ]
     }
   },
   "contracts": [
@@ -591,6 +606,7 @@
         "caves.py": "source: caves",
         "caves_audit.py": "checker: the built cobblers_caves pack (source caves): every block it writes against data/spawn_blocks.json and the policy entries scoped to caves",
         "sanctuaries.py": "source: sanctuaries",
+        "rayquaza_sky.py": "checker: its own cells (tools/rayquaza_sky.py spawn_block_problems refuses, at build, every block data/spawn_blocks.json lists unless a data/spawn_block_policy.json entry scoped to rayquaza_sky allows it; none does); its built packs cobblers_rayquaza and cobblers_rayquaza_build are also judged by the built-pack check like every other pack",
         "sanctuaries_audit.py": "checker: the built cobblers_sanctuaries pack (source sanctuaries): every block it writes against data/spawn_blocks.json and the policy entries scoped to sanctuaries"
       }
     },
@@ -1224,6 +1240,74 @@
         "tests/test_sanctuaries.py::test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_spawns",
         "tests/test_sanctuaries.py::test_a_duplicate_is_removed_and_never_a_guardian",
         "tests/test_sanctuaries.py::test_a_keeper_that_can_reach_a_guardian_is_refused"
+      ]
+    },
+    {
+      "id": "C26",
+      "title": "Rayquaza's arch and keeper open only on advancements their owners define and grant",
+      "owner": "legendaries",
+      "consumers": [
+        "rayquaza_sky"
+      ],
+      "constrained_by": [
+        "progression"
+      ],
+      "statement": "Rayquaza's gate (data/rayquaza_sky.json gate: champion_cleared plus met Kyogre and met Groudon, the owner's answer of 2026-10-06) is three advancements read in one selector by cobblers:rayquaza/qualify: cobblers:flag/champion_cleared, which tools/progression_pack.py writes; cobblers:legendary/groudon/met, which tools/legendaries.py defines and grants in Groudon's chamber; and cobblers:legendary/kyogre/met, the chambers' convention for Kyogre (data/progression.json quest.legendary_kyogre.met). Each must be defined by a pack that also grants it, or the arch never opens and the keeper never spawns for anyone. Rayquaza's own met and caught advancements are cobblers_rayquaza's, so data/legendaries.json must not also carry a rayquaza encounter. Today Kyogre's cave is being built in parallel and no pack grants cobblers:legendary/kyogre/met: the gate fails closed, which is recorded below rather than papered over.",
+      "stated_in": [
+        {
+          "at": "data/rayquaza_sky.json:85",
+          "quote": "\"requires_met\": [\"kyogre\", \"groudon\"],"
+        },
+        {
+          "at": "tools/legendaries.py:638",
+          "quote": "\"advancement grant @s only %s:legendary/%s/met\" % (ns, rid),"
+        },
+        {
+          "at": "data/progression.json:708",
+          "quote": "\"id\": \"quest.legendary_kyogre.met\","
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c26_rayquazas_gate_opens_only_on_advancements_their_owners_define_and_grant",
+        "tests/test_rayquaza_sky.py::test_rayquaza_is_not_also_a_legendaries_encounter",
+        "tests/test_rayquaza_sky.py::test_nothing_spawns_for_a_player_who_does_not_hold_the_gate_or_has_caught_it"
+      ],
+      "fails_today": {
+        "recorded": "2026-10-13",
+        "commit": "d685aed",
+        "cases": {
+          "kyogre_met": "No pack defines or grants cobblers:legendary/kyogre/met on this commit: data/legendaries.json has no kyogre encounter and Kyogre's cave (docs/world-building/KYOGRE_CAVE.md sections 3-5, built in parallel on 2026-10-13) has not landed. Until it does nobody qualifies for Rayquaza's arch, which is the safe failure. The fix is Kyogre's build granting that advancement (or a record in data/legendaries.json, whose pack defines and grants every encounter's met); either removes this entry."
+        }
+      }
+    },
+    {
+      "id": "C27",
+      "title": "A Rayquaza that blacks a player out becomes the claim's guardian, and Rayquaza's keeper never touches a guardian",
+      "owner": "recovery_claims",
+      "consumers": [
+        "rayquaza_sky"
+      ],
+      "constrained_by": [
+        "rayquaza_sky"
+      ],
+      "statement": "C25's guarantee, for Rayquaza's keeper (tools/rayquaza_sky.py, cobblers:rayquaza/*): Rayquaza's bind gives it tags that are never the blackout's exempt tag, so a Rayquaza that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the keeper only counts it (found as present by its tag and species near the crown), and no hold, wake, hush, settle, withdraw, discard or duplicate selector of the pack reaches an entity tagged cobblers.guardian. The withdrawal, which this keeper adds to the sanctuaries' shape, is reached only through hold, which is only ever run as tag=!cobblers.guardian.",
+      "stated_in": [
+        {
+          "at": "tools/blackout_pack.py:510",
+          "quote": "\"tag @s add cobblers.guardian\","
+        },
+        {
+          "at": "tools/rayquaza_sky.py:738",
+          "quote": "woken, settled or withdrawn."
+        },
+        {
+          "at": "data/rayquaza_sky.json:100",
+          "quote": "\"guardian_tag\": \"cobblers.guardian\","
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c27_a_rayquaza_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it",
+        "tests/test_rayquaza_sky.py::test_a_guardian_is_never_held_withdrawn_or_discarded"
       ]
     }
   ]

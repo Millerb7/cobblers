@@ -1,0 +1,172 @@
+{
+  "schema": "cobblers.rayquaza_sky/1",
+  "generated_by": "hand (2026-10-13, unit RAYQUAZA); every y the build writes is computed by tools/rayquaza_sky.py from the canonical heightmap (tools/ground.py, rounded), never from a world",
+  "status": "built offline 2026-10-13: data, generator, packs, step R14R and probes. Not installed, not applied, not seen in a game",
+  "builder": "tools/rayquaza_sky.py (report, build, sync); applied by tools/reapply.py step R14R (after R14L); the independent audit is a separate test-author's to write",
+  "design": {
+    "source": "docs/world-building/KYOGRE_CAVE.md section 6 'Rayquaza: a sky island behind a relic arch', and the owner's answers of 2026-10-06 in its section 9 (5: remove the End's shiny Rayquaza by override; 6: champion_cleared plus met Kyogre and Groudon, level 70, the arch on the great cone's summit)",
+    "lessons_2026_10_12": [
+      "Visible early, earned later: the island is SEEN from the ground well before it can be reached, a floating island with its own silhouette over the cone, the arch readable as a sealed relic, signs in the world's voice telling an unqualified player why it is shut",
+      "No engineering looks: weathered, varied, built for Rayquaza (sky, ozone, old sky-pillar motifs); lanterns on posts, never light blocks",
+      "Flight is not gated anywhere in this pack (docs/world-building/WORLD_TREE_PLAN.md), so the gate is the ARCH's crossing and the encounter exists only for a qualified player; a player who flies up early finds a sealed, empty shrine",
+      "Memory: the one-shot geometry is a BUILD pack (cobblers_rayquaza_build, tools/pack_split.py) that reapply.py strip removes after the apply; the runtime pack is small"
+    ],
+    "supersedes": "KYOGRE_CAVE.md section 6 put the island in cobblers:pocket at (0, 4096). The 2026-10-12 lesson 'visible early' cannot be met by a pocket dimension, so the island is in the overworld over the great cone and the pocket island is not built. The pillar's roofed climb and the rescue survive in overworld form: the climb is inside the pillar, and a fall off the island is caught by Slow Falling instead of a teleport"
+  },
+  "seed": 20261013,
+  "namespace": "cobblers",
+  "pack": "cobblers_rayquaza",
+  "objective": "cobblers.ray",
+  "site": {
+    "landmark": "craters",
+    "summit": {"x": 6408, "z": 5128, "y": 304},
+    "summit_measured": "2026-10-13 by tools/ground.py over x 6200..6800, z 4800..5400: the highest column is (6408, 5128) at y304 (data/landmarks.json craters measured_summit.highest_in_outline says the same, 303.6). The top is a broad dome: 1,256 columns at or over y300 (x 6390..6427, z 5107..5168); the south ridge holds ~y300 for 80 blocks, the natural way up on foot",
+    "ground_under": "build/paint (the night-shift checkout, 2026-10-13): blackstone, basalt, gravel and magma over x 6370..6450, z 5090..5170, no painted trees; a scan of all 32,534 built function files found no write by another pack in x 6330..6490, z 5050..5210",
+    "neighbours": "nothing authored within 250 blocks of the summit: Blaine's gym town (gym7_town centre 6074, 4995) is 360 west, Moltres's tower (6252, 168, 5344) 266 south-west, Groudon's eastern bowl (6672, 5508) 463 south-east"
+  },
+  "arch": {
+    "centre": {"x": 6408, "z": 5136},
+    "front": "south",
+    "front_why": "the player comes up the south ridge and walks north through the doorway, toward the island's shadow",
+    "plinth": {"half_x": 7, "half_z": 6, "step": 1, "max_cut": 3, "max_fill": 4,
+               "why": "the plinth's top is the median of the heightmap over its footprint; the summit dome moves 1-3 blocks over that footprint, so a cut or fill past these is a siting fault and the build refuses"},
+    "doorway": {"half_width": 1, "height": 5, "depth_half": 1},
+    "pier_width": 3,
+    "pier_height": 10,
+    "lintel": [6, 8],
+    "stumps": {"count": 6, "radius": 12, "max_height": 4},
+    "sigils": {
+      "sea": "minecraft:dark_prismarine",
+      "sky": "minecraft:waxed_oxidized_chiseled_copper",
+      "fire": "minecraft:red_nether_bricks",
+      "why": "three marks over the doorway: the sea's (Kyogre), the sky's (Rayquaza) between them, the fire's (Groudon). No light block: magma is a light source and was not used"
+    },
+    "signs": {
+      "wood": "spruce",
+      "left": ["THE SKY ARCH", "is shut to all", "but one who has", "met the sea"],
+      "right": ["and the mountain", "fire, and stood", "above the", "League."]
+    }
+  },
+  "island": {
+    "centre": {"x": 6408, "z": 5124},
+    "half_x": 24,
+    "half_z": 32,
+    "size_why": "KYOGRE_CAVE.md section 6: 'about 64 x 48'. The long axis runs north-south, so from Blaine's town in the west it shows its 64-block side",
+    "top_y": 368,
+    "top_why": "64 over the summit (y304): high enough to read as floating from every side of the cone, with the underside's lowest point about 30 over the summit and 25 over the arch's top; the pillar's broken crown tops out under y415, 160 under the runtime ceiling y575 (data/world.json built_ceiling, cobblers_height)",
+    "depth_max": 30,
+    "depth_min": 3,
+    "rim_noise": 0.14,
+    "satellites": [
+      {"bearing": 35, "out": 14, "dy": -18, "radius": 3, "spire": true},
+      {"bearing": 145, "out": 11, "dy": 6, "radius": 2, "spire": false},
+      {"bearing": 220, "out": 15, "dy": -9, "radius": 4, "spire": true},
+      {"bearing": 315, "out": 10, "dy": 12, "radius": 2, "spire": false}
+    ],
+    "satellites_why": "four small rocks off the rim give the island a broken, drifting silhouette; `out` is blocks beyond the rim on that bearing (0 north, clockwise), `dy` from the island's top. Copper spires stand in for lightning rods: minecraft:lightning_rod is a spawn condition (data/spawn_blocks.json) and would draw strikes beside a dormant legendary"
+  },
+  "pillar": {
+    "offset": {"x": 0, "z": -12},
+    "outer_radius": 6.5,
+    "inner_radius": 4.5,
+    "core_radius": 1.5,
+    "height": 40,
+    "lap_rise": 10,
+    "top_floor": 35,
+    "crown": {"min": 0, "max": 6},
+    "door_bearing": 180,
+    "return_bearing": 270,
+    "landing_bearing": 225,
+    "ramp_start_bearing": 0,
+    "why": "KYOGRE_CAVE.md section 6: 'a broken pillar 40 high; the climb is inside the pillar and roofed'. The climb is a helix of half-block steps between a solid core and the wall, ten blocks a lap, so it is walked without a jump on its outer side; it opens through the top floor onto the broken crown, where Rayquaza waits in the open"
+  },
+  "gate": {
+    "flags": ["champion_cleared"],
+    "requires_met": ["kyogre", "groudon"],
+    "met_advancement": "cobblers:legendary/%s/met",
+    "why": "the owner, 2026-10-06 (KYOGRE_CAVE.md section 9, answer 6): champion_cleared plus met Kyogre and Groudon. The met advancements are the chambers' convention (tools/legendaries.py: cobblers:legendary/<id>/met, data/progression.json quest.legendary_<id>.met). Groudon's is granted today by cobblers_legendaries. Kyogre's is being built in parallel (KYOGRE_CAVE.md sections 3-5): until a pack grants cobblers:legendary/kyogre/met nobody qualifies, which fails closed (contract C26). The design's sky tag (cobblers.sky, gym4_cleared) is implied by champion_cleared and is not checked",
+    "period_ticks": 10,
+    "arch_reach": 24,
+    "island_reach": 112
+  },
+  "occupant": {
+    "species": "rayquaza",
+    "level": 70,
+    "level_why": "the owner, 2026-10-06 (answer 6). After the Champion the cap is 100 (data/legendaries.json level_caps), so it is catchable",
+    "properties": ["no_ai"],
+    "properties_why": "as tools/legendaries.py's chambers: `no_ai`, so it holds the crown. Moves, nature and item are trainer-balance-designer's to add",
+    "tag": "cobblers.rayquaza",
+    "dormant_tag": "cobblers.rayquaza_dormant",
+    "guardian_tag": "cobblers.guardian",
+    "availability": "once per player, keyed on the catch: a player holding cobblers:legendary/rayquaza/caught never makes it spawn or wake again; a qualified friend still can",
+    "dormant_nbt": {"Unbattleable": "1b", "NoAI": "1b", "NoGravity": "1b", "PoseType": "\"SLEEP\"", "RecalculatePose": "0b",
+                    "HideLabel": "1b", "PersistenceRequired": "1b", "Invulnerable": "1b", "Silent": "1b"},
+    "awake_nbt": {"Unbattleable": "0b", "RecalculatePose": "1b", "HideLabel": "0b", "Silent": "0b"},
+    "nbt_why": "data/sanctuaries.json's area bosses, unchanged: NoAI and NoGravity stay set awake, so it never flies off its crown",
+    "keeper": {
+      "period_ticks": 40,
+      "spawn_radius": 72,
+      "spawn_clear": 8,
+      "settle_radius": 48,
+      "cooldown_faint_ticks": 24000,
+      "cooldown_catch_ticks": 6000,
+      "absent_passes": 2,
+      "guardian_search_radius": 24,
+      "home_tolerance": 1.0,
+      "catch_radius": 24
+    },
+    "keeper_why": "tools/sanctuaries.py boss_files' clock and guardian rules (C25), with three changes: the qualifying predicate is the gate plus caught=false, computed as player tags each pass; a dormant one is WITHDRAWN when no qualified player who has not caught it is within spawn_radius, so it never sleeps there for an early flyer; and the catch clock is short (6,000) because the catcher is excluded for ever by the advancement. A withdrawal sends it under the world before the kill so its drops (3-5 dragon's breath) cannot be farmed by walking away and back",
+    "messages": {
+      "cross": "The arch answers. The wind takes you up.",
+      "sealed_league": "The arch is cold. Its sky mark waits for one who has stood above the League.",
+      "sealed_sea": "The sea mark on the lintel is dark. You have not met what sleeps under the sea.",
+      "sealed_fire": "The fire mark on the lintel is dark. You have not met what sleeps under the mountain.",
+      "return": "The sky lets you down.",
+      "wake": "Rayquaza uncoils over the broken crown. The air smells of a storm that has not come.",
+      "hush": "Rayquaza will not answer while one the sea and the mountain have not seen stands on the crown.",
+      "met": "You have found Rayquaza."
+    },
+    "dais_sign": ["The crown is", "bare. The sky", "answers only", "through the arch."]
+  },
+  "rescue": {
+    "effect": "minecraft:slow_falling",
+    "seconds": 8,
+    "margin": 16,
+    "why": "a fall off the island lands 60-90 blocks down on the cone. Every pass, a player inside the box under the island (its footprint grown by `margin`, from 3 over the highest ground in it up to 1 under the island's top) gets Slow Falling, which in vanilla stops fall damage. Anybody standing on the island is above the box"
+  },
+  "palette": {
+    "plinth": ["minecraft:stone_bricks", "minecraft:mossy_stone_bricks", "minecraft:cracked_stone_bricks", "minecraft:cobblestone"],
+    "pier": ["minecraft:mossy_stone_bricks", "minecraft:stone_bricks", "minecraft:cracked_stone_bricks", "minecraft:mossy_cobblestone"],
+    "keystone": "minecraft:chiseled_stone_bricks",
+    "grass": "minecraft:grass_block",
+    "moss": "minecraft:moss_block",
+    "dirt": ["minecraft:dirt", "minecraft:coarse_dirt", "minecraft:rooted_dirt"],
+    "rock": ["minecraft:stone", "minecraft:andesite", "minecraft:tuff", "minecraft:mossy_cobblestone"],
+    "underside": ["minecraft:tuff", "minecraft:cobbled_deepslate", "minecraft:deepslate", "minecraft:andesite"],
+    "wall": ["minecraft:stone_bricks", "minecraft:mossy_stone_bricks", "minecraft:cracked_stone_bricks", "minecraft:mossy_cobblestone"],
+    "band": "minecraft:waxed_oxidized_cut_copper",
+    "core": "minecraft:polished_andesite",
+    "ramp_full": "minecraft:stone_bricks",
+    "ramp_slab": "minecraft:stone_brick_slab[type=bottom,waterlogged=false]",
+    "floor": "minecraft:stone_bricks",
+    "dais": "minecraft:chiseled_stone_bricks",
+    "dais_ring": "minecraft:waxed_oxidized_cut_copper",
+    "spire": ["minecraft:waxed_oxidized_copper", "minecraft:waxed_weathered_cut_copper", "minecraft:waxed_oxidized_cut_copper_slab[type=bottom,waterlogged=false]"],
+    "post": "minecraft:mossy_cobblestone_wall",
+    "lantern": "minecraft:lantern[hanging=false,waterlogged=false]",
+    "lantern_hanging": "minecraft:lantern[hanging=true,waterlogged=false]",
+    "plants": ["minecraft:short_grass", "minecraft:fern", "minecraft:moss_carpet"],
+    "roots": "minecraft:hanging_roots[waterlogged=false]",
+    "path": ["minecraft:gravel", "minecraft:coarse_dirt"],
+    "why": "the sky arch's own palette (data/portals.json palettes.sky: mossy, cracked and plain stone bricks, cobblestone, a chiseled keystone) for the relic; a green, mossy island over the black volcanic cone so the silhouette reads; oxidised copper for the old weather instruments' patina. Every block is checked against data/spawn_blocks.json and refused if it is a spawn condition"
+  },
+  "upstream_neutralised": {
+    "function": "cobbleverse:spawn_rayquaza",
+    "path": "data/cobbleverse/function/spawn_rayquaza.mcfunction",
+    "upstream_text": "execute in minecraft:the_end run spawnpokemonat 0 70 0 rayquaza shiny=yes level=100 persistent=true",
+    "called_by": "cobbleverse:end_dimension (`execute as @s run schedule function cobbleverse:spawn_rayquaza 10s` then `reload`), the reward function of the advancement minecraft:story/enter_the_end as COBBLEVERSE-DP-v31 overrides it: so every player's FIRST entry into the End would spawn one more shiny level-100 Rayquaza at the arrival platform",
+    "read_from": "C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/datapacks/COBBLEVERSE-DP-v31.zip, 2026-10-13 (the files named above, read in the zip; nothing in it was changed)",
+    "how": "cobblers_rayquaza ships an empty function at the same path. The pack is world-local, which loads above the global COBBLEVERSE datapack (tools/reapply.py WORLD_LOCAL, as cobblers_dimension_overrides relies on), so the schedule still fires and runs nothing. The advancement and its `reload` are left as upstream ships them",
+    "decision": "the owner, 2026-10-06 (KYOGRE_CAVE.md section 9, answer 5)"
+  }
+}

@@ -245,7 +245,7 @@
     {"species": "lugia", "world_home": "data/legendaries.json lugia, BLOCKED (owner_decision: the trench does not exist and cannot be heightmap terrain)", "fallback": {"dungeon": "flooded_ruin", "bands": ["6"]}, "why": "the sea's guardian under a drowned reliquary, if the trench is refused"},
     {"species": "registeel", "world_home": "data/legendaries.json registeel, SITED (sealed_chamber in the upper Rift, portal (4195, 3896), gate gym7_cleared; R14L placed it, docs/REPORT_2026-09-30_DAY.md)", "fallback": {"dungeon": "night_shift", "bands": ["4", "5", "6"]}, "why": "steel in a mine, had the Rift site never been chosen. It was (2026-09-30), so the world home stands and this fallback is unused; corrected 2026-10-12 (docs/mechanics/LEGENDARY_HOMES.md finding 1)"},
     {"species": "kyogre", "world_home": "designed, not built: docs/world-building/KYOGRE_CAVE.md", "fallback": {"dungeon": "cistern", "bands": ["6"]}, "why": "the deep water, if the cave is never built"},
-    {"species": "rayquaza", "world_home": "designed, not built: KYOGRE_CAVE.md sky island", "fallback": {"dungeon": "starfall", "bands": ["6"]}, "why": "the sky, if the island is never built"}
+    {"species": "rayquaza", "world_home": "BUILT OFFLINE 2026-10-13, not applied: the sky island over the Craters' great cone behind its sealed arch (data/rayquaza_sky.json, tools/rayquaza_sky.py, step R14R); gate champion_cleared + met Kyogre + met Groudon, level 70, once per player on the catch. Nobody qualifies until a pack grants cobblers:legendary/kyogre/met (contract C26)", "fallback": {"dungeon": "starfall", "bands": ["6"]}, "why": "the sky, if the island is never applied"}
   ],
   "owner_calls": [
     {"species": "eternatus", "now": "OUT by the owner until a Galar Particle supply is authored (adopted_legendary_sites.json owner_decisions_2026_10_02)", "proposal": {"dungeon": "starfall", "bands": ["6"]}, "why": "a dungeon prize needs no particles; the 2026-10-11 'all legendaries' instruction and the 2026-10-02 decision disagree, and only the owner can say which stands. NOT in any pool."},
@@ -297,7 +297,7 @@
     "latios": {"kind": "legendary", "status": "placed", "where": "Shrew Station Eon shrine"},
     "kyogre": {"kind": "legendary", "status": "planned", "where": "KYOGRE_CAVE.md (designed, not built); Coldwater Station leads to it", "fallback": "cistern band 6"},
     "groudon": {"kind": "legendary", "status": "placed", "where": "legendaries.json, the Craters"},
-    "rayquaza": {"kind": "legendary", "status": "planned", "where": "KYOGRE_CAVE.md sky island (designed, not built)", "fallback": "starfall band 6"},
+    "rayquaza": {"kind": "legendary", "status": "placed", "where": "the sky island over the Craters' great cone, behind the sealed arch (data/rayquaza_sky.json; built offline 2026-10-13, step R14R, not applied; its gate waits on Kyogre's met, C26)", "fallback": "starfall band 6"},
     "jirachi": {"kind": "mythical", "status": "to_dungeon", "home": "starfall", "bands": ["5", "6"], "model_gate": "atm_subset", "why": "a wishing star"},
     "deoxys": {"kind": "mythical", "status": "to_dungeon", "home": "starfall", "bands": ["5", "6"], "why": "a meteor"},
     "uxie": {"kind": "legendary", "status": "placed", "where": "legendaries.json lake grotto, Lake Tilpey"},

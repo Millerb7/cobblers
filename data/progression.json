@@ -705,6 +705,36 @@
       "why": "data/legendaries.json. The gate function exists; the trigger that calls it is an open question."
     },
     {
+      "id": "quest.legendary_kyogre.met",
+      "quest_id": "legendary_kyogre",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/kyogre/met, the chambers' convention (tools/legendaries.py). NO PACK GRANTS IT on 2026-10-13: Kyogre's cave (docs/world-building/KYOGRE_CAVE.md sections 3-5) is being built in parallel and owns the grant",
+      "why": "added 2026-10-13 by the Rayquaza unit, because Rayquaza's gate reads it (data/rayquaza_sky.json gate.requires_met; contract C26). The Kyogre builder owns the record and the grant; until a pack grants it nobody opens Rayquaza's arch"
+    },
+    {
+      "id": "quest.legendary_rayquaza.met",
+      "quest_id": "legendary_rayquaza",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/rayquaza/met in cobblers_rayquaza (tools/rayquaza_sky.py), granted to a qualified player on the pillar's crown while Rayquaza is there, and to its catcher",
+      "why": "data/rayquaza_sky.json. Rayquaza is not a data/legendaries.json encounter: its keeper and island are tools/rayquaza_sky.py's"
+    },
+    {
+      "id": "quest.legendary_rayquaza.caught",
+      "quest_id": "legendary_rayquaza",
+      "field": "caught",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/rayquaza/caught in cobblers_rayquaza, granted by its pokemon_captured callback to the catcher of a Rayquaza within 24 of the crown",
+      "why": "data/rayquaza_sky.json occupant.availability: once per player, keyed on the catch. A player holding it never makes Rayquaza spawn or wake again"
+    },
+    {
       "id": "quest.evt_route1_thirsty_stranger.started",
       "quest_id": "evt_route1_thirsty_stranger",
       "field": "started",

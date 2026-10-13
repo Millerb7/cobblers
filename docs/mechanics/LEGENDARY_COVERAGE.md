@@ -25,7 +25,7 @@ legendary, 23 mythical, 11 Ultra Beasts, 20 paradoxes; VERIFIED, read with Pytho
 | Where | Count | Who |
 |---|---|---|
 | Already placed | **43** (44 with Registeel, 2026-10-12; Buzzwole and Pheromosa also left the Temple Calendar's pool for the world the same day, `data/dungeon_prize_roster.json`) | world sites (adopted, authored, the Nether shrines), the eight starter lines, Entei's built room, and the three prizes the built dungeons already carry (Volcanion, Zarude, Regidrago) |
-| Placed by a design, not built | 5 | Kyogre and Rayquaza (`KYOGRE_CAVE.md`); Yveltal, Dialga and Heatran as D18 boss catches |
+| Placed by a design, not built | 4 | Kyogre (`KYOGRE_CAVE.md`); Yveltal, Dialga and Heatran as D18 boss catches. *Rayquaza left this row 2026-10-13: its sky island over the Craters' great cone is built offline (`data/rayquaza_sky.json`, `tools/rayquaza_sky.py`, step R14R), not applied, and nobody qualifies for its arch until a pack grants Kyogre's met (contract C26); it counts under "Already placed" once applied.* |
 | Homed but blocked on the owner | 1 | Lugia (no trench), which gets a dungeon fallback. *Corrected 2026-10-12: Registeel is not blocked. `data/legendaries.json` has it `sited` (upper Rift, portal (4195, 3896), gate `gym7_cleared`) and R14L placed it (`docs/REPORT_2026-09-30_DAY.md:64`); it counts under "Already placed" below, and its Night Shift fallback is unused.* |
 | **To the world** (proposals) | **7** | Tornadus, Thundurus, Landorus, Enamorus (the Tri Peaks); Tapu Koko, Tapu Lele, Tapu Bulu (the isles); each has a dungeon fallback |
 | **To dungeons** | **67** | pool entries across 16 dungeons, every one in exactly one dungeon |
@@ -213,7 +213,7 @@ later.
 | 381 | Latios | legendary | placed: Shrew Station Eon shrine | stays |  |
 | 382 | Kyogre | legendary | planned (designed, not built): KYOGRE_CAVE.md (designed, not built); Coldwater Station leads to it | keeps its world home; fallback cistern band 6 |  |
 | 383 | Groudon | legendary | placed: legendaries.json, the Craters | stays |  |
-| 384 | Rayquaza | legendary | planned (designed, not built): KYOGRE_CAVE.md sky island (designed, not built) | keeps its world home; fallback starfall band 6 |  |
+| 384 | Rayquaza | legendary | placed (built offline 2026-10-13, not applied): the sky island over the Craters' great cone behind a sealed relic arch, `data/rayquaza_sky.json`, step R14R; gate `champion_cleared` + met Kyogre + met Groudon, level 70, once per player on the catch; the End's shiny level-100 copy overridden empty | keeps its world home; fallback starfall band 6 |  |
 | 385 | Jirachi (ATM subset) | mythical | **dungeon**: nowhere authored | starfall, bands 5, 6 | a wishing star |
 | 386 | Deoxys | mythical | **dungeon**: nowhere authored | starfall, bands 5, 6 | a meteor |
 | 480 | Uxie | legendary | placed: legendaries.json lake grotto, Lake Tilpey | stays |  |

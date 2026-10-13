@@ -40,6 +40,7 @@ from __future__ import annotations
 import ast
 import copy
 import fnmatch
+import functools
 import inspect
 import json
 import math
@@ -1531,6 +1532,89 @@ def _c25_one_boss(RP, TC, fns):
     TC.player_at(w, 0, 0).update(pos=((zone[0] + zone[3]) / 2 + 0.5, zone[1], (zone[2] + zone[5]) / 2 + 0.5))
     TC.passes(w, 2)
     assert TC.DORM not in b["tags"], "the control did not wake the guardian: the guardian test above cannot fail (%s)" % TC.BID
+
+
+# =================================================================================================================
+# C26. Rayquaza's arch and keeper open only on advancements their owners define and grant
+# =================================================================================================================
+#
+# cobblers:rayquaza/qualify reads three advancements in one selector. Each is someone else's: the champion flag the
+# progression pack's, Groudon's and Kyogre's met the chambers'. One that no pack defines or grants means nobody ever
+# qualifies (the arch stays shut for good and the keeper never spawns), so each is checked against the pack its owner
+# generates: the advancement file exists, and a function of that pack grants it. Kyogre's fails today (fails_today).
+
+def _c26_cases():
+    import rayquaza_sky as RQ
+    spec = RQ.load()
+    out = []
+    for adv in RQ.gate_advancements(spec):
+        pid = adv.split(":", 1)[1].replace("flag/", "").replace("legendary/", "").replace("/", "_")
+        out.append((pid, (adv,)))
+    return _params("C26", out)
+
+
+@functools.lru_cache(maxsize=None)
+def _c26_owner_files():
+    import ground as G
+    import legendaries as LG
+    import progression_pack as PP
+    prog = PP.files(PP.plan(PP.load(ROOT / "data" / "progression.json"), None, PLACEMENTS))
+    leg = LG.files(LG.load(), G.Ground())
+    return prog, leg
+
+
+@pytest.mark.parametrize("adv", _c26_cases())
+def test_contract_c26_rayquazas_gate_opens_only_on_advancements_their_owners_define_and_grant(adv):
+    import rayquaza_sky as RQ
+    spec = RQ.load()
+    qualify = RQ.runtime_files(spec, RQ.geometry(spec))["qualify"]
+    assert any(adv + "=true" in line and "add %s" % RQ.OK in line for line in qualify), "qualify does not read %s" % adv
+    prog, leg = _c26_owner_files()
+    ns, path = adv.split(":", 1)
+    key = "data/%s/advancement/%s.json" % (ns, path)
+    owner = prog if path.startswith("flag/") else leg
+    assert key in owner, "%s: no owner pack defines it" % adv
+    if not path.startswith("flag/"):
+        rid = path.split("/")[1]
+        # legendaries.py writes its grant as a pattern; the generated function names the id itself
+        granted = any("advancement grant @s only %s" % adv in text for f, text in owner.items() if f.endswith(".mcfunction"))
+        assert granted, "%s is defined but no function of its pack grants it (%s)" % (adv, rid)
+    # Rayquaza's own advancements are cobblers_rayquaza's alone
+    assert not [k for k in leg if "/legendary/rayquaza/" in k]
+
+
+# =================================================================================================================
+# C27. A Rayquaza that blacks a player out becomes the guardian; Rayquaza's keeper never touches a guardian
+# =================================================================================================================
+#
+# C25's three legs for tools/rayquaza_sky.py's keeper: (1) the blackout makes a claim on a loss to a victor carrying the
+# tags Rayquaza's bind gives it; (2) the keeper, RUN on tests/gulch_sim.py's world, never holds, withdraws or discards a
+# guardian (tests/test_rayquaza_sky.py); (3) the control: the same keeper with its guardian clause stripped DOES withdraw
+# the guardian, so leg 2 can fail.
+def test_contract_c27_a_rayquaza_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it():
+    import test_blackout_recovery_pid as RP
+    import test_rayquaza_sky as TR
+    bind = TR.fns()["rayquaza/bind"]
+    tags = tuple(m.group(1) for line in bind for m in [re.match(r"^tag @s add (\S+)$", line)] if m)
+    assert TR.TAG in tags and "cobblers.guardian" not in tags, tags
+    s = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=tags)
+    assert RP.fn_calls(s, "recovery/make") and len(RP.ledger(s)["claims"]) == 1, "a loss to Rayquaza made no claim"
+    model = TR._model()
+    TR.test_a_guardian_is_never_held_withdrawn_or_discarded(model)
+    # the control: strip the guardian clause and the guardian, left alone with nobody near, is withdrawn
+    from test_sanctuaries import Lake
+    loose = {k: [line.replace(",tag=!cobblers.guardian", "").replace("tag=!cobblers.guardian,", "") for line in v]
+             for k, v in TR.fns().items()}
+    w = Lake(loose)
+    w.gt = 5_000_000
+    w.call("rayquaza/load")
+    p = TR.near(model, w, TR.KEEP["spawn_clear"] + 4, 0, -30)
+    TR.passes(w, 2)
+    (r,) = TR.rays(w)
+    r["tags"].add(TR.GUARD)
+    w.entities.remove(p)
+    TR.passes(w, 2)
+    assert not w.alive(r), "the control did not touch the guardian: the guardian test above cannot fail"
 
 
 def _defs(path):

@@ -428,6 +428,13 @@ These are outlines, not designs. Each needs its own document before a builder st
 
 ### Rayquaza: a sky island behind a relic arch
 
+> **Built offline 2026-10-13 (`data/rayquaza_sky.json`, `tools/rayquaza_sky.py`, step R14R), with one change to this
+> outline:** the island is in the OVERWORLD over the great cone (top y368, 64 over the summit), not in `cobblers:pocket`,
+> because the owner's 2026-10-12 lesson "visible early, earned later" cannot be met by a pocket dimension. Flight is not gated,
+> so the gate is the arch's crossing plus a keeper that spawns Rayquaza only for a qualified player who has not caught it; a
+> fall off the island gets Slow Falling instead of a pocket rescue. The End's shiny Rayquaza is overridden empty. The outline
+> below is kept as written.
+
 - **The arch.** A **sealed sky arch**, a seventh, built outside `data/portals.json` for the same reason as Coldwater's.
   `portals.py load()` refuses a gate whose count is not a multiple of six with one vault in each six, the owner's 1-in-6
   rule (`coldwater_station.json:55`).

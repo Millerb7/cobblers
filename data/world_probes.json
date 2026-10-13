@@ -8975,6 +8975,138 @@
         ],
         "expect": true
       }
+    ],
+    "rayquaza_sky": [
+      {
+        "what": "rayquaza_sky: the arch's keystone",
+        "block": [
+          6408,
+          308,
+          5137,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: the sky mark on the lintel",
+        "block": [
+          6408,
+          309,
+          5137,
+          "minecraft:waxed_oxidized_chiseled_copper"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: air in the doorway",
+        "block": [
+          6408,
+          304,
+          5136,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: the island's top at its centre",
+        "block": [
+          6408,
+          369,
+          5124,
+          "minecraft:gravel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: the island's lowest block",
+        "block": [
+          6408,
+          339,
+          5124,
+          "minecraft:deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: air under the island",
+        "block": [
+          6408,
+          335,
+          5124,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: the pillar's first step",
+        "block": [
+          6404,
+          376,
+          5110,
+          "minecraft:stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: the alcove back down, open",
+        "block": [
+          6403,
+          369,
+          5111,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: the crown's dais",
+        "block": [
+          6408,
+          404,
+          5112,
+          "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: the crown's floor",
+        "block": [
+          6411,
+          403,
+          5111,
+          "minecraft:stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: the arch's left sign",
+        "block": [
+          6405,
+          304,
+          5138,
+          "minecraft:spruce_wall_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: the first drifting rock's top",
+        "block": [
+          6436,
+          350,
+          5084,
+          "minecraft:mossy_cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "rayquaza_sky: Rayquaza (one tagged cobblers.rayquaza while a qualified player who has not caught it is near the crown; absent otherwise)",
+        "hold": [
+          6408,
+          405,
+          5112
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.rayquaza]",
+        "count_max": 1
+      }
     ]
   }
 }

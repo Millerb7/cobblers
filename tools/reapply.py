@@ -404,6 +404,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # gates' barrier doors and the area bosses' keeper act on their own (tick drivers, a capture callback), so
                 # world-local below
                 "cobblers_sanctuaries",
+                # 2026-10-13: Rayquaza's home (tools/rayquaza_sky.py, data/rayquaza_sky.json): the arch on the great cone, the
+                # island and its pillar are one-shot blocks in the _build pack, run by R14R and stripped after the run; the
+                # runtime pack's arch crossing, rescue and keeper act on their own (tick drivers, a capture callback), and it
+                # overrides cobbleverse:spawn_rayquaza empty, so world-local below (above the global COBBLEVERSE datapack)
+                "cobblers_rayquaza",
+                "cobblers_rayquaza_build",
                 # 2026-09-29: the dive and sky portals and the pocket dimension (tools/portals.py, data/portals.json,
                 # ADR-004, EXP-047). It ships a `dimension` and a `dimension_type`, which register only at a server
                 # BOOT, not at a /reload: installing this pack needs a restart before R16P will run. The arches are
@@ -503,6 +509,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_caves",
                # 2026-10-12: the sanctuaries took the caves' gates and keepers over: the same reasons
                "cobblers_sanctuaries",
+               # 2026-10-13: Rayquaza's keeper SPAWNS a legendary and teleports players on its own, and its override of
+               # cobbleverse:spawn_rayquaza must sit above the global COBBLEVERSE datapack; its _build pack beside it
+               "cobblers_rayquaza", "cobblers_rayquaza_build",
                "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
                # 2026-10-08: the Entei keeper SPAWNS a legendary per player on its own and gives items: never global
                "cobblers_entei_boss",
@@ -920,6 +929,9 @@ def prepare_jobs(a):
     # export's keep zone stops prepare here, before anything is installed
     add("legendaries", "legendaries.py")
     add("legendaries:audit", "legendaries_audit.py")
+    # Rayquaza's arch, island and pillar (data/rayquaza_sky.json): the runtime pack and its _build pack; it refuses a spawn
+    # condition, a light block, a plinth past its cut and fill limits, an island within 8 of the cone, and probes that drifted
+    add("rayquaza_sky:build", "rayquaza_sky.py", "build", *src)
     add("rift_storm", "rift_storm.py")
     add("signposts:function", "signposts.py", "function", *src)
     # the bridges, then their offline audit against the heightmap and the water: a bridge that would stand in the
@@ -2846,6 +2858,13 @@ def steps(with_spawns=False):
     import legendaries
     out.append(("R14L", "the authored legendary chambers and their legendaries (data/legendaries.json)",
                 legendaries.placement_steps(legendaries.load())))
+    # Rayquaza's home (tools/rayquaza_sky.py, data/rayquaza_sky.json; 2026-10-13): the arch on the great cone's summit, the
+    # floating island and its pillar, one build function that force-loads what it writes for its own run. Its keeper brings
+    # Rayquaza itself, only for a qualified player who has not caught it, so the step summons nothing; safe to re-run (it
+    # writes the same cells)
+    import rayquaza_sky
+    out.append(("R14R", "Rayquaza's sealed arch, sky island and pillar on the great cone (data/rayquaza_sky.json)",
+                rayquaza_sky.placement_steps()))
     out.append(("V", "floor verify and trader verify", [("check", "verify")]))
     return out
 
