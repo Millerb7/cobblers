@@ -399,6 +399,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # blocks run by R9CK BEFORE R9E (a Habitat Block stands in each part's floor); the gates' barrier doors and the
                 # area boss's keeper act on their own (tick drivers, a capture callback), so world-local below
                 "cobblers_caves",
+                # 2026-10-12: the legendary sanctuaries (tools/sanctuaries.py, data/sanctuaries.json), the open-air set pieces that
+                # replace the cave kit's K2-K6: blocks and the retired caves' restore run by R9SY (after R9CK, BEFORE R9E); the
+                # gates' barrier doors and the area bosses' keeper act on their own (tick drivers, a capture callback), so
+                # world-local below
+                "cobblers_sanctuaries",
                 # 2026-09-29: the dive and sky portals and the pocket dimension (tools/portals.py, data/portals.json,
                 # ADR-004, EXP-047). It ships a `dimension` and a `dimension_type`, which register only at a server
                 # BOOT, not at a /reload: installing this pack needs a restart before R16P will run. The arches are
@@ -496,6 +501,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                # 2026-10-12: the caves' gates open and close their barrier doors on a tick, and the area boss's keeper SPAWNS a
                # wild alpha on its own and reads a capture callback: never global, or the live world would run it too
                "cobblers_caves",
+               # 2026-10-12: the sanctuaries took the caves' gates and keepers over: the same reasons
+               "cobblers_sanctuaries",
                "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
                # 2026-10-08: the Entei keeper SPAWNS a legendary per player on its own and gives items: never global
                "cobblers_entei_boss",
@@ -1041,7 +1048,8 @@ def prepare_jobs(a):
     add("fungal_isle:build", "fungal_isle.py", "build", *src)
     # the Scar Tarn (2026-10-11, tools/scar_tarn.py): the generator fails closed on its own guards (the hollow's spill, water
     # containment at the heightmap and one block under it, the palette, spawn-condition blocks, the wards' mimics, the
-    # authored-points clearance). No independent audit yet (docs/world-building/SCAR_TARN.md, "What an audit must check")
+    # authored-points clearance). Its independent audit is tools/scar_tarn_audit.py (not a prepare job: it replays the pack
+    # over the heightmap, about a minute; run it by hand after the generator or the data change)
     add("scar_tarn:build", "scar_tarn.py", "build", *src)
     # Hollin's Apricorn Farm (2026-10-05): the generator fails closed on its own guards (allow-list, spawn blocks, wet
     # columns, overlaps, fruit attachment, gates, spots, siting). Then its independent audit (tools/apricorn_farm_audit.py,
@@ -1235,6 +1243,12 @@ def prepare_jobs(a):
     # closed and open, the gate, the keeper's guardian safety and clocks, the records, and the keep-clear distances. Fail-closed
     add("caves:build", "caves.py", "build", *src)
     add("caves_audit", "caves_audit.py", "--inputs-root", str(ROOT), *src)
+    # the legendary sanctuaries (data/sanctuaries.json): the same reason (their siting keeps clear of every other built pack's
+    # writes), and the Habitat Blocks, pools and probes they keep in data/ are refused if they drifted. Its audit
+    # (tools/sanctuaries_audit.py) replays the pack over the heightmap: the walk with the door closed and open, nothing floating,
+    # the graded land, lanterns on posts, the gate, the keeper's guardian safety, and the retired caves' restore. Fail-closed
+    add("sanctuaries:build", "sanctuaries.py", "build", *src)
+    add("sanctuaries_audit", "sanctuaries_audit.py", *src)
     add("mines_audit", "mines_audit.py", *src)
     # the idle Pokemon (tools/ambient_idle.py): LAST of the builds, because it seats them on the BUILT town -- it
     # replays every pack's block writes through steps() (tools/npc_spot_sweep.py) and refuses a spot a signpost, a
@@ -2253,6 +2267,16 @@ def steps(with_spawns=False):
     import caves
     out.append(("R9CK", "the cave kit: %s (data/caves.json)" % ", ".join("%s %s" % (c["kind"], c["id"]) for c in caves.load()["caves"]),
                 caves.placement_steps()))
+    # the legendary sanctuaries (tools/sanctuaries.py, data/sanctuaries.json; 2026-10-12, the open-air set pieces that replace the
+    # cave kit's K2-K6): AFTER R9CK and BEFORE R9E. Per retired cave (K1-K6, applied in staging by R9CK before they were retired):
+    # hold its box and its successor's, restore every column it wrote to the heightmap's terrain, read back that nobody stood in it
+    # (a held player refuses the restore and fails the step), then build the sanctuary, whose own build refuses while the old cave
+    # still shows. R9E then sets the courts' Habitat Blocks in the floors this writes. The gates and keepers drive themselves
+    import sanctuaries
+    out.append(("R9SY", "the legendary sanctuaries: %s, over the retired caves %s (data/sanctuaries.json)" % (
+                    ", ".join("%s %s" % (s_["kind"], s_["id"]) for s_ in sanctuaries.load()["sanctuaries"]),
+                    ", ".join(rc["cave"]["kind"] for rc in sanctuaries.load()["retired_caves"])),
+                sanctuaries.placement_steps()))
     # the city stands on the pit R9B sinks, after R9C (the caves write round the mouth the city keeps clear) and before
     # R9E (Habitat Blocks sit on finished floors) and the lights (R16). Structure, then the Centre and Mart by
     # /place template, then what hangs on the structure (ladders, hatches, panes, doors, signs, lamps). R9DC, not R9D:
@@ -2422,8 +2446,12 @@ def steps(with_spawns=False):
     import fungal_isle
     out.append(("R9FI", "the Fungal Isle grown over: Cap Wood, Stump Court, Glowcap Hollow and the island's caps, stumps and logs (data/fungal_isle.json)",
                 fungal_isle.placement_steps()))
-    # the Scar Tarn (2026-10-11, tools/scar_tarn.py): one block pass held in a forceload of its box (188 x 140 blocks, 12 x 9 chunks),
-    # BEFORE R9E: the four mimic cells it writes (two on the banks, two in the bed) are where the activated Habitat Blocks stand
+    # the Scar Tarn (2026-10-11, tools/scar_tarn.py): the tarn's own block pass held in a forceload of its box (188 x 140 blocks,
+    # 12 x 9 chunks), BEFORE R9E: the four mimic cells it writes (two on the banks, two in the bed) are where the activated Habitat
+    # Blocks stand. 2026-10-12: then the wood's five arms (data/scar_tarn.json growth.arms: toward the Scar, down the back and the
+    # side), each its own function held in its own forceload (hold, wait, fn, release), laid over the wood already there: the
+    # tarn's function is byte for byte the one before, so a re-run adds trees and moves none. A re-run of R9ST writes the four
+    # mimic blocks back over the Habitat Blocks, so run R9E after it: `run --only R9ST,R9E`
     import scar_tarn
     out.append(("R9ST", "the Scar Tarn: a pond in Mt Vessu's north-west hollow, the wood round it and its alpha wards (data/scar_tarn.json)",
                 scar_tarn.placement_steps()))

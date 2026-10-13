@@ -67,9 +67,9 @@
     "homes": {
       "buzzwole": "rare world spawn: data/encounter_design.json rare_spawns, long_isle_south (the jungle end of the Long Isle, tier 8, level 55)",
       "pheromosa": "rare world spawn: data/encounter_design.json rare_spawns, long_isle_south",
-      "nihilego": "chamber spawn: data/caves.json cave_strait_grotto (K4), the second ultra-rare entry of the chamber's pool beside Tapu Fini, level 60 behind gym8_cleared (the design's 'outer sea bands' do not exist: data/spawns.json marine_zones holds only the Windward Sea, levels 16-30); built offline, not installed",
-      "meloetta": "chamber spawn: data/caves.json cave_singing_hollow (K2), level 50 behind gym6_cleared; built offline, not installed",
-      "tapufini": "chamber spawn: data/caves.json cave_strait_grotto (K4), level 60 behind gym8_cleared; built offline, not installed"
+      "nihilego": "court spawn: data/sanctuaries.json sanctuary_tide_shrine (S4, the open-air shrine that replaced the cave K4 on 2026-10-12), the second ultra-rare entry of the court's pool beside Tapu Fini, level 60 behind gym8_cleared (the design's 'outer sea bands' do not exist: data/spawns.json marine_zones holds only the Windward Sea, levels 16-30); built offline, not installed",
+      "meloetta": "court spawn: data/sanctuaries.json sanctuary_singing_hollow (S2, the open-air theatre that replaced the cave K2 on 2026-10-12), level 50 behind gym6_cleared; built offline, not installed",
+      "tapufini": "court spawn: data/sanctuaries.json sanctuary_tide_shrine (S4, which replaced the cave K4 on 2026-10-12), level 60 behind gym8_cleared; built offline, not installed"
     },
     "inherited_sources_2026-10-12": "COBBLEVERSE-DP-v31.zip data/cobblemon/spawn_pool_world/0648_meloetta.json, 0788_tapufini.json, 0793_nihilego.json, 0794_buzzwole.json and 0795_pheromosa.json (one detail each, pheromosa two), read from the snapshot cobblers-local/server-snapshot-2026-10-05; each file holds only that species, so each is re-emitted \"enabled\": false (the shape of removed_species)",
     "native_expression": "as removed_species",

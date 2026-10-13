@@ -7868,505 +7868,245 @@
           "minecraft:podzol"
         ],
         "expect": true
+      },
+      {
+        "what": "the to_the_scar_west wood, a spruce's trunk",
+        "block": [
+          1882,
+          260,
+          960,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_west wood, a spruce's trunk",
+        "block": [
+          1948,
+          281,
+          946,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_west wood, a snag's trunk",
+        "block": [
+          1975,
+          281,
+          971,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_west wood, painted ground",
+        "block": [
+          1883,
+          260,
+          969,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_west wood, painted ground",
+        "block": [
+          1963,
+          280,
+          1034,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_east wood, a spruce's trunk",
+        "block": [
+          2064,
+          281,
+          791,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_east wood, a spruce's trunk",
+        "block": [
+          2185,
+          280,
+          784,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_east wood, a spruce's trunk",
+        "block": [
+          2232,
+          281,
+          905,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_east wood, painted ground",
+        "block": [
+          2061,
+          279,
+          777,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the to_the_scar_east wood, painted ground",
+        "block": [
+          2215,
+          280,
+          844,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back wood, a spruce's trunk",
+        "block": [
+          1970,
+          157,
+          616,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back wood, a spruce's trunk",
+        "block": [
+          1996,
+          160,
+          609,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back wood, a spruce's trunk",
+        "block": [
+          2018,
+          164,
+          611,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back wood, painted ground",
+        "block": [
+          2024,
+          246,
+          666,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back wood, painted ground",
+        "block": [
+          2038,
+          243,
+          660,
+          "minecraft:podzol"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back_east wood, a spruce's trunk",
+        "block": [
+          2085,
+          220,
+          637,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back_east wood, a elder's trunk",
+        "block": [
+          2144,
+          232,
+          642,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_back_east wood, a snag's trunk",
+        "block": [
+          2188,
+          162,
+          589,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_side wood, a elder's trunk",
+        "block": [
+          2241,
+          281,
+          886,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_side wood, a elder's trunk",
+        "block": [
+          2296,
+          278,
+          903,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_side wood, a spruce's trunk",
+        "block": [
+          2320,
+          268,
+          909,
+          "minecraft:spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_side wood, painted ground",
+        "block": [
+          2236,
+          280,
+          884,
+          "minecraft:moss_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the down_the_side wood, painted ground",
+        "block": [
+          2313,
+          270,
+          925,
+          "minecraft:podzol"
+        ],
+        "expect": true
       }
     ],
     "caves": [
       {
-        "what": "cave_stoneford_cut: air at the standing block outside the mouth",
-        "block": [
-          1533,
-          129,
-          3628,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_stoneford_cut: air in the middle of the chamber",
-        "block": [
-          1574,
-          122,
-          3628,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_stoneford_cut: the chamber's floor under the habitat block's neighbour",
-        "block": [
-          1575,
-          120,
-          3628,
-          "minecraft:polished_andesite"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_stoneford_cut: the shell over the chamber's roof",
-        "block": [
-          1574,
-          127,
-          3628,
-          "minecraft:stone"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_stoneford_cut: the mouth's timber beam",
-        "block": [
-          1535,
-          133,
-          3626,
-          "minecraft:spruce_log[axis=z]"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_stoneford_cut: the Habitat Block cave_stoneford_cut_chamber_ward",
-        "block": [
-          1574,
-          120,
-          3628,
-          "cobblemon:habitat_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_singing_hollow: air at the standing block outside the mouth",
-        "block": [
-          1501,
-          105,
-          2823,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_singing_hollow: air in the middle of the chamber",
-        "block": [
-          1501,
-          94,
-          2872,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_singing_hollow: the chamber's floor under the habitat block's neighbour",
-        "block": [
-          1502,
-          92,
-          2872,
-          "minecraft:polished_tuff"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_singing_hollow: the shell over the chamber's roof",
-        "block": [
-          1501,
-          101,
-          2872,
-          "minecraft:tuff"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_singing_hollow: the mouth's timber beam",
-        "block": [
-          1499,
-          109,
-          2825,
-          "minecraft:spruce_log[axis=x]"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_singing_hollow: the door's barrier (closed)",
-        "block": [
-          1500,
-          93,
-          2861,
-          "minecraft:barrier"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_singing_hollow: the Habitat Block cave_singing_hollow_ante_ward",
-        "block": [
-          1501,
-          92,
-          2856,
-          "cobblemon:habitat_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_singing_hollow: the Habitat Block cave_singing_hollow_chamber_ward",
-        "block": [
-          1501,
-          92,
-          2872,
-          "cobblemon:habitat_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_relay_fault: air at the standing block outside the mouth",
-        "block": [
-          1580,
-          142,
-          1384,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_relay_fault: air in the middle of the chamber",
-        "block": [
-          1580,
-          133,
-          1330,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_relay_fault: the chamber's floor under the habitat block's neighbour",
-        "block": [
-          1581,
-          131,
-          1330,
-          "minecraft:polished_deepslate"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_relay_fault: the shell over the chamber's roof",
-        "block": [
-          1580,
-          140,
-          1330,
-          "minecraft:deepslate"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_relay_fault: the mouth's timber beam",
-        "block": [
-          1578,
-          146,
-          1382,
-          "minecraft:spruce_log[axis=x]"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_relay_fault: the door's barrier (closed)",
-        "block": [
-          1579,
-          132,
-          1342,
-          "minecraft:barrier"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_relay_fault: the Habitat Block cave_relay_fault_ante_ward",
-        "block": [
-          1580,
-          131,
-          1347,
-          "cobblemon:habitat_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_relay_fault: the Habitat Block cave_relay_fault_chamber_ward",
-        "block": [
-          1580,
-          131,
-          1330,
-          "cobblemon:habitat_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_relay_fault: the boss (one tagged cobblers.cv_miraidon once a champion has come near; absent while the clock runs)",
-        "hold": [
-          1580,
-          132,
-          1330
-        ],
-        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_miraidon]",
-        "count_max": 1
-      },
-      {
-        "what": "cave_strait_grotto: air at the standing block outside the mouth",
-        "block": [
-          2888,
-          68,
-          6608,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_strait_grotto: air in the middle of the chamber",
-        "block": [
-          2888,
-          59,
-          6556,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_strait_grotto: the chamber's floor under the habitat block's neighbour",
-        "block": [
-          2889,
-          57,
-          6556,
-          "minecraft:prismarine_bricks"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_strait_grotto: the shell over the chamber's roof",
-        "block": [
-          2888,
-          66,
-          6556,
-          "minecraft:stone"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_strait_grotto: the mouth's timber beam",
-        "block": [
-          2886,
-          72,
-          6606,
-          "minecraft:spruce_log[axis=x]"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_strait_grotto: the door's barrier (closed)",
-        "block": [
-          2887,
-          58,
-          6568,
-          "minecraft:barrier"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_strait_grotto: the Habitat Block cave_strait_grotto_antechamber_ward",
-        "block": [
-          2888,
-          57,
-          6573,
-          "cobblemon:habitat_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_strait_grotto: the Habitat Block cave_strait_grotto_chamber_ward",
-        "block": [
-          2888,
-          57,
-          6556,
-          "cobblemon:habitat_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_clock_cellar: air at the standing block outside the mouth",
-        "block": [
-          6366,
-          99,
-          3482,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_clock_cellar: air in the middle of the chamber",
-        "block": [
-          6420,
-          90,
-          3482,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_clock_cellar: the chamber's floor under the habitat block's neighbour",
-        "block": [
-          6421,
-          88,
-          3482,
-          "minecraft:smooth_stone"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_clock_cellar: the shell over the chamber's roof",
-        "block": [
-          6420,
-          97,
-          3482,
-          "minecraft:stone"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_clock_cellar: the mouth's timber beam",
-        "block": [
-          6368,
-          103,
-          3480,
-          "minecraft:spruce_log[axis=z]"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_clock_cellar: the door's barrier (closed)",
-        "block": [
-          6408,
-          89,
-          3481,
-          "minecraft:barrier"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_clock_cellar: the Habitat Block cave_clock_cellar_antechamber_ward",
-        "block": [
-          6403,
-          88,
-          3482,
-          "cobblemon:habitat_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_clock_cellar: the Habitat Block cave_clock_cellar_chamber_ward",
-        "block": [
-          6420,
-          88,
-          3482,
-          "cobblemon:habitat_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_clock_cellar: the boss (one tagged cobblers.cv_dialga once a champion has come near; absent while the clock runs)",
-        "hold": [
-          6420,
-          89,
-          3482
-        ],
-        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_dialga]",
-        "count_max": 1
-      },
-      {
-        "what": "cave_sunscar: air at the standing block outside the mouth",
-        "block": [
-          6816,
-          137,
-          5272,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_sunscar: air in the middle of the chamber",
-        "block": [
-          6762,
-          128,
-          5272,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_sunscar: the chamber's floor under the habitat block's neighbour",
-        "block": [
-          6763,
-          126,
-          5272,
-          "minecraft:smooth_sandstone"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_sunscar: the shell over the chamber's roof",
-        "block": [
-          6762,
-          135,
-          5272,
-          "minecraft:sandstone"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_sunscar: the mouth's timber beam",
-        "block": [
-          6814,
-          141,
-          5270,
-          "minecraft:spruce_log[axis=z]"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_sunscar: the door's barrier (closed)",
-        "block": [
-          6774,
-          127,
-          5271,
-          "minecraft:barrier"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_sunscar: the Habitat Block cave_sunscar_antechamber_ward",
-        "block": [
-          6779,
-          126,
-          5272,
-          "cobblemon:habitat_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_sunscar: the Habitat Block cave_sunscar_chamber_ward",
-        "block": [
-          6762,
-          126,
-          5272,
-          "cobblemon:habitat_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "cave_sunscar: the boss (one tagged cobblers.cv_koraidon once a champion has come near; absent while the clock runs)",
-        "hold": [
-          6762,
-          127,
-          5272
-        ],
-        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_koraidon]",
-        "count_max": 1
-      },
-      {
         "what": "cave_hoarfrost_hollow: air at the standing block outside the mouth",
         "block": [
-          6712,
-          97,
-          1350,
+          6722,
+          100,
+          1348,
           "minecraft:air"
         ],
         "expect": true
@@ -8374,9 +8114,9 @@
       {
         "what": "cave_hoarfrost_hollow: air in the middle of the chamber",
         "block": [
-          6752,
-          92,
-          1351,
+          6762,
+          95,
+          1349,
           "minecraft:air"
         ],
         "expect": true
@@ -8384,9 +8124,9 @@
       {
         "what": "cave_hoarfrost_hollow: air in the first bend of the winding passage (row 15, 5 across)",
         "block": [
-          6729,
-          91,
-          1355,
+          6739,
+          94,
+          1353,
           "minecraft:air"
         ],
         "expect": true
@@ -8394,9 +8134,9 @@
       {
         "what": "cave_hoarfrost_hollow: air in the last bend of the winding passage (row 24, -1 across)",
         "block": [
-          6738,
-          91,
-          1349,
+          6748,
+          94,
+          1347,
           "minecraft:air"
         ],
         "expect": true
@@ -8404,9 +8144,9 @@
       {
         "what": "cave_hoarfrost_hollow: the chamber's floor beside its middle",
         "block": [
-          6753,
-          90,
-          1351,
+          6763,
+          93,
+          1349,
           "minecraft:stone"
         ],
         "expect": true
@@ -8414,9 +8154,29 @@
       {
         "what": "cave_hoarfrost_hollow: the rock over the chamber's roof",
         "block": [
-          6752,
-          96,
-          1351,
+          6762,
+          99,
+          1349,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_hoarfrost_hollow: the rock over the mouth (the lid; there is no open cutting)",
+        "block": [
+          6724,
+          103,
+          1348,
+          "minecraft:cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_hoarfrost_hollow: the arch's upper corner (rock, not air)",
+        "block": [
+          6724,
+          102,
+          1349,
           "minecraft:stone"
         ],
         "expect": true
@@ -8424,8 +8184,8 @@
       {
         "what": "cave_greenwither_cleft: air at the standing block outside the mouth",
         "block": [
-          7420,
-          126,
+          7412,
+          123,
           7090,
           "minecraft:air"
         ],
@@ -8434,8 +8194,8 @@
       {
         "what": "cave_greenwither_cleft: air in the middle of the chamber",
         "block": [
-          7466,
-          120,
+          7458,
+          117,
           7089,
           "minecraft:air"
         ],
@@ -8444,8 +8204,8 @@
       {
         "what": "cave_greenwither_cleft: air in the first bend of the winding passage (row 17, -5 across)",
         "block": [
-          7439,
-          119,
+          7431,
+          116,
           7085,
           "minecraft:air"
         ],
@@ -8454,8 +8214,8 @@
       {
         "what": "cave_greenwither_cleft: air in the last bend of the winding passage (row 27, 1 across)",
         "block": [
-          7449,
-          119,
+          7441,
+          116,
           7091,
           "minecraft:air"
         ],
@@ -8464,20 +8224,40 @@
       {
         "what": "cave_greenwither_cleft: the chamber's floor beside its middle",
         "block": [
-          7467,
-          118,
+          7459,
+          115,
           7089,
-          "minecraft:stone"
+          "minecraft:moss_block"
         ],
         "expect": true
       },
       {
         "what": "cave_greenwither_cleft: the rock over the chamber's roof",
         "block": [
-          7466,
-          125,
+          7458,
+          122,
           7089,
           "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_greenwither_cleft: the rock over the mouth (the lid; there is no open cutting)",
+        "block": [
+          7414,
+          126,
+          7090,
+          "minecraft:mossy_cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_greenwither_cleft: the arch's upper corner (rock, not air)",
+        "block": [
+          7414,
+          125,
+          7091,
+          "minecraft:cobblestone"
         ],
         "expect": true
       },
@@ -8537,6 +8317,26 @@
           1004,
           109,
           7627,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_dusk_burrow: the rock over the mouth (the lid; there is no open cutting)",
+        "block": [
+          966,
+          112,
+          7630,
+          "minecraft:andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cave_dusk_burrow: the arch's upper corner (rock, not air)",
+        "block": [
+          966,
+          111,
+          7631,
           "minecraft:stone"
         ],
         "expect": true
@@ -8690,6 +8490,488 @@
           121,
           4374,
           "minecraft:chiseled_stone_bricks"
+        ],
+        "expect": true
+      }
+    ],
+    "sanctuaries": [
+      {
+        "what": "sanctuary_singing_hollow: air over the court's centre",
+        "block": [
+          1469,
+          126,
+          3131,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_singing_hollow: the court's floor beside its centre",
+        "block": [
+          1470,
+          124,
+          3131,
+          "minecraft:polished_tuff"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_singing_hollow: the set piece's highest block",
+        "block": [
+          1470,
+          138,
+          3124,
+          "minecraft:tuff_brick_slab"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_singing_hollow: the door's barrier (closed)",
+        "block": [
+          1468,
+          125,
+          3123,
+          "minecraft:barrier"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_singing_hollow: the Habitat Block sanctuary_singing_hollow_court_ward",
+        "block": [
+          1469,
+          124,
+          3131,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_broken_relay: air over the court's centre",
+        "block": [
+          1588,
+          147,
+          1340,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_broken_relay: the court's floor beside its centre",
+        "block": [
+          1589,
+          145,
+          1340,
+          "minecraft:deepslate_tiles"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_broken_relay: the set piece's highest block",
+        "block": [
+          1576,
+          175,
+          1344,
+          "minecraft:waxed_oxidized_cut_copper"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_broken_relay: the door's barrier (closed)",
+        "block": [
+          1597,
+          146,
+          1339,
+          "minecraft:barrier"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_broken_relay: the boss (one tagged cobblers.cv_miraidon once a champion has come near; absent while the clock runs)",
+        "hold": [
+          1588,
+          146,
+          1340
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_miraidon]",
+        "count_max": 1
+      },
+      {
+        "what": "sanctuary_tide_shrine: air over the court's centre",
+        "block": [
+          2881,
+          74,
+          6571,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_tide_shrine: the court's floor beside its centre",
+        "block": [
+          2882,
+          72,
+          6571,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_tide_shrine: the set piece's highest block",
+        "block": [
+          2872,
+          88,
+          6575,
+          "minecraft:prismarine"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_tide_shrine: the door's barrier (closed)",
+        "block": [
+          2891,
+          73,
+          6570,
+          "minecraft:barrier"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_tide_shrine: the Habitat Block sanctuary_tide_shrine_court_ward",
+        "block": [
+          2881,
+          72,
+          6571,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_stopped_clock: air over the court's centre",
+        "block": [
+          6428,
+          103,
+          3561,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_stopped_clock: the court's floor beside its centre",
+        "block": [
+          6429,
+          101,
+          3561,
+          "minecraft:polished_andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_stopped_clock: the set piece's highest block",
+        "block": [
+          6443,
+          132,
+          3558,
+          "minecraft:stone_brick_wall"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_stopped_clock: the door's barrier (closed)",
+        "block": [
+          6417,
+          102,
+          3560,
+          "minecraft:barrier"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_stopped_clock: the boss (one tagged cobblers.cv_dialga once a champion has come near; absent while the clock runs)",
+        "hold": [
+          6428,
+          102,
+          3561
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_dialga]",
+        "count_max": 1
+      },
+      {
+        "what": "sanctuary_sunscar: air over the court's centre",
+        "block": [
+          6789,
+          141,
+          5273,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_sunscar: the court's floor beside its centre",
+        "block": [
+          6790,
+          139,
+          5273,
+          "minecraft:gilded_blackstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_sunscar: the set piece's highest block",
+        "block": [
+          6801,
+          154,
+          5277,
+          "minecraft:gilded_blackstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_sunscar: the door's barrier (closed)",
+        "block": [
+          6800,
+          140,
+          5272,
+          "minecraft:barrier"
+        ],
+        "expect": true
+      },
+      {
+        "what": "sanctuary_sunscar: the boss (one tagged cobblers.cv_koraidon once a champion has come near; absent while the clock runs)",
+        "hold": [
+          6789,
+          140,
+          5273
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.cv_koraidon]",
+        "count_max": 1
+      },
+      {
+        "what": "retired_cave_stoneford_cut (retired 2026-10-12): the old chamber's middle, restored",
+        "block": [
+          1574,
+          122,
+          3628,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_stoneford_cut (retired 2026-10-12): the old probe block minecraft:polished_andesite, gone",
+        "block": [
+          1575,
+          120,
+          3628,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_stoneford_cut (retired 2026-10-12): the old probe block minecraft:spruce_log, gone",
+        "block": [
+          1535,
+          133,
+          3626,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_singing_hollow (retired 2026-10-12): the old chamber's middle, restored",
+        "block": [
+          1501,
+          94,
+          2872,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_singing_hollow (retired 2026-10-12): the old probe block minecraft:polished_tuff, gone",
+        "block": [
+          1502,
+          92,
+          2872,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_singing_hollow (retired 2026-10-12): the old probe block minecraft:spruce_log, gone",
+        "block": [
+          1499,
+          109,
+          2825,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_singing_hollow (retired 2026-10-12): the old barrier, gone",
+        "block": [
+          1500,
+          93,
+          2861,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_relay_fault (retired 2026-10-12): the old chamber's middle, restored",
+        "block": [
+          1580,
+          133,
+          1330,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_relay_fault (retired 2026-10-12): the old probe block minecraft:polished_deepslate, gone",
+        "block": [
+          1581,
+          131,
+          1330,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_relay_fault (retired 2026-10-12): the old probe block minecraft:spruce_log, gone",
+        "block": [
+          1578,
+          146,
+          1382,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_relay_fault (retired 2026-10-12): the old barrier, gone",
+        "block": [
+          1579,
+          132,
+          1342,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_strait_grotto (retired 2026-10-12): the old chamber's middle, restored",
+        "block": [
+          2888,
+          59,
+          6556,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_strait_grotto (retired 2026-10-12): the old probe block minecraft:prismarine_bricks, gone",
+        "block": [
+          2889,
+          57,
+          6556,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_strait_grotto (retired 2026-10-12): the old probe block minecraft:spruce_log, gone",
+        "block": [
+          2886,
+          72,
+          6606,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_strait_grotto (retired 2026-10-12): the old barrier, gone",
+        "block": [
+          2887,
+          58,
+          6568,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_clock_cellar (retired 2026-10-12): the old chamber's middle, restored",
+        "block": [
+          6420,
+          90,
+          3482,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_clock_cellar (retired 2026-10-12): the old probe block minecraft:smooth_stone, gone",
+        "block": [
+          6421,
+          88,
+          3482,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_clock_cellar (retired 2026-10-12): the old probe block minecraft:spruce_log, gone",
+        "block": [
+          6368,
+          103,
+          3480,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_clock_cellar (retired 2026-10-12): the old barrier, gone",
+        "block": [
+          6408,
+          89,
+          3481,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_sunscar (retired 2026-10-12): the old chamber's middle, restored",
+        "block": [
+          6762,
+          128,
+          5272,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_sunscar (retired 2026-10-12): the old probe block minecraft:smooth_sandstone, gone",
+        "block": [
+          6763,
+          126,
+          5272,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_sunscar (retired 2026-10-12): the old probe block minecraft:spruce_log, gone",
+        "block": [
+          6814,
+          141,
+          5270,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "retired_cave_sunscar (retired 2026-10-12): the old barrier, gone",
+        "block": [
+          6774,
+          127,
+          5271,
+          "minecraft:stone"
         ],
         "expect": true
       }

@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.scar-tarn/1",
-  "status": "authored 2026-10-11, generator tools/scar_tarn.py; NOT in any world. The recess is measured on the canonical heightmap, which the live world predates (docs/STATE.md 'Pads in the world': the Scar's pad is in the heightmap and in staging only), so this waits for the live re-export like the Scar itself.",
+  "status": "authored 2026-10-11, generator tools/scar_tarn.py; the tarn and its own wood were applied to staging 2026-10-11 (docs/STATE.md), growth.arms (2026-10-12) is in the repository only. NOT in the live world. The recess is measured on the canonical heightmap, which the live world predates (docs/STATE.md 'Pads in the world': the Scar's pad is in the heightmap and in staging only), so this waits for the live re-export like the Scar itself.",
   "owner": "2026-10-11: \"I like the Scar thematically, but I think we need something or an environment inhabiting the area now. It feels weird to see the big mountain completely empty. I thought the north-west side of the mountain has a cool recessed point, where some water could make for a pond, and we can plop some trees and alpha mons down to have taken over the afflicted area of the Scar or something.\"",
   "place": {
     "id": "scar_tarn",
@@ -50,7 +50,47 @@
     "boulders": 10,
     "fallen_logs": 9,
     "ruin_stubs": 5,
-    "ruin_distance": [10, 30]
+    "ruin_distance": [10, 30],
+    "arms": {
+      "why": "The owner, 2026-10-12, looking at the tarn on the map: \"The forest should expand toward the Scar, maybe envelop some of it, and then down the back and side of the mountain.\" The wood above (water-centred, radius 48) is LAYER 1 and is left byte for byte as it was, so a re-apply over the wood already in staging adds to it and moves nothing. The arms are LAYER 2: tongues of the same wood (the same kinds, shares, heights, ground cover and plants as the keys above) laid along spines read off the heightmap. Each arm is its own function (cobblers:scar_tarn/arm_<id>), held in its own forceload by step R9ST.",
+      "seed": "scar_tarn/2026-10-12/arms",
+      "window": [1860, 540, 2420, 1110],
+      "cell": 5,
+      "max_relief_3x3": 2,
+      "max_relief_why": "a trunk stands only where the 3x3 around it varies by two blocks or less (a 45 degree slope along an axis, about 35 on a diagonal); the tarn's own wood allows three. The red bands on the map (the hollow's north wall, the west wall under Thundurus's shoulder, the pad's feather) have none, so the wood thins and stops at them: it climbs by the gentle spurs and does not cross the cliffs",
+      "min_ground_y": 100,
+      "inside_landmark": "mt_vessu",
+      "inside_landmark_why": "every written column is inside the Mt Vessu outline (data/landmarks.json) so the wood is the mountain's and does not run out onto Tri-Peaks or the lowland; the 24-block authored clearance from that outline (a line the audit sweeps) keeps it that far inside",
+      "keep_clear_core": {"margin": 3, "why": "the city's core, so it stays readable: the convex hull of the rectangles the house lots fill along the cross road, the north road and the south road (data/placements.json settlements.the_scar.plan: half the road's width + setback 2 + lot depth 11 each side, one lot + gap past each end) grown by 3. The 24-block clearance from every street line already keeps the wood out of the lots; this closes the two chamfered corners of the hull (north-west and north-east) that no street line reaches"},
+      "paint_gain": 1.15,
+      "paint_gain_why": "the ground cover's probability is the tree probability times this, capped at 0.92: moss and podzol thin out with the trees",
+      "avoid_boxes": [
+        {"id": "thundurus_plug_and_approach", "box": [1848, 792, 1928, 882],
+         "why": "Thundurus's sealed chamber (data/legendaries.json thundurus: portal (1888, 822), plug_depth 6, approach bearing 180 passage 12, chamber 19 x 19, spawn_free_zone [1872, 816, 1904, 856]): the spawn-free box plus 24 on every side. Nothing is grown on the plug, over the shaft or on the walk-up to it"}
+      ],
+      "lobes": [
+        {"id": "to_the_scar_west",
+         "why": "TOWARD THE SCAR, west half: from the tarn's south shore over the gentle ramp (y240 to 280) onto the pad's north apron, then round the pad's west rim. The pad is the Scar's own ground (y280, pressed flat, radius 150 round (2110, 950)); this is its outskirts, the ground the city stopped at, and it envelops the city's north-west corner from the avenue's end round to the cross road's west end. The field is drawn wide on purpose, over the whole north-west quadrant of the disc, and the keep-clear net (24 from every authored x/z and line, the avoid boxes) carves the city and Thundurus's plug out of it: the wood ends at the ruins' edge (the lots reach 16 from a road) and leaves the streets, the plaza and the houses readable",
+         "spine": [[2050, 768, 34], [2025, 815, 52], [1975, 872, 70], [1950, 935, 72], [1945, 1000, 66], [1955, 1050, 40]],
+         "max_probability": 0.6, "falloff": 1.1, "boulders": 5, "fallen_logs": 4, "ruin_stubs": 3},
+        {"id": "to_the_scar_east",
+         "why": "TOWARD THE SCAR, east half: along the pad's north apron east of the old avenue, thinning toward the north-east rim; the avenue's own approach (24 either side of x2110) stays open so the road still ends at the cliff in clear air",
+         "spine": [[2070, 775, 30], [2140, 812, 52], [2200, 850, 62], [2245, 905, 56], [2255, 965, 40]],
+         "max_probability": 0.55, "falloff": 1.1, "boulders": 4, "fallen_logs": 3, "ruin_stubs": 3},
+        {"id": "down_the_back",
+         "why": "DOWN THE BACK: Mt Vessu's north face, the slope that turns its back on the Scar. The hollow's north wall (z636 to 700, red on the relief map) is bare cliff; under it the face is a gentle slope (20 to 30 degrees) that falls to the Mt Vessu outline at z556 to 600, and the 24-block authored clearance from that outline leaves a band about 50 deep (z584 to 634). The wood spills over the wall at its low points and runs down into that band. West half, under the tarn",
+         "spine": [[2035, 655, 26], [2020, 620, 50], [1985, 600, 45]],
+         "max_probability": 0.7, "falloff": 1.0, "boulders": 6, "fallen_logs": 5, "ruin_stubs": 0},
+        {"id": "down_the_back_east",
+         "why": "DOWN THE BACK, east half: the same band under the tarn's east end and along the gap between the hollow wall and the north-east ring",
+         "spine": [[2110, 628, 34], [2170, 612, 46], [2235, 618, 42]],
+         "max_probability": 0.6, "falloff": 1.0, "boulders": 4, "fallen_logs": 3, "ruin_stubs": 0},
+        {"id": "down_the_side",
+         "why": "DOWN THE SIDE: the east flank, where the pad's feather falls away east of the Scar, 25 to 30 degrees down to the outline at x2384 to 2396. Read off the heightmap: the other flank is not available. West of the pad the mountain drops 100 blocks in 50 (x1830 to 1880, y217 to 291, the wall under Thundurus's shoulder) and inside the outline's 24-block margin there is no gentle ground between that wall and the outline at x1792 to 1820, so the side the wood can reach is the east. It continues the north-east arm round the pad's rim and down",
+         "spine": [[2245, 880, 34], [2290, 895, 52], [2330, 935, 60], [2335, 995, 48]],
+         "max_probability": 0.6, "falloff": 1.0, "boulders": 5, "fallen_logs": 4, "ruin_stubs": 0}
+      ]
+    }
   },
   "wards": {
     "land": [
@@ -108,7 +148,11 @@
   "rules": {
     "authored_clearance": 24,
     "authored_clearance_why": "no written column nearer than this to an x/z another data file authors (the mt_vessu landmark outline's corners at (2154, 682) and (1940, 600) are 35 and 80+ away)",
-    "map_margin": 64
+    "map_margin": 64,
+    "authored_box_exempt": [
+      {"file": "towns.json", "box": [1960, 800, 2260, 1100],
+       "why": "the Scar's town footprint, a 300 x 300 planning square round the pad (data/towns.json the_scar). The arms grow in its outskirts on purpose (the owner, 2026-10-12: envelop some of it), so the 'a box holds no written column' sweep is replaced for it by the audit's own Scar rules: nothing within 24 of a street line (the generic line sweep, unchanged), nothing in a ruin's footprint or the plaza, and no trunk in the city's lot bands or core. Its nine 3 x 3 points and every other authored point and line keep the 24-block clearance"}
+    ]
   },
-  "probes": {"key": "scar_tarn", "trunks": 10, "ground": 6, "bank": 6, "water": 8}
+  "probes": {"key": "scar_tarn", "trunks": 10, "ground": 6, "bank": 6, "water": 8, "arm_trunks": 3, "arm_ground": 2}
 }

@@ -35,6 +35,22 @@
       "order": 30
     },
     {
+      "file": "tms.html",
+      "title": "TMs",
+      "label": "TMs",
+      "description": "Every TM and when you can have it: the badge that opens each one, its move, type and power, and where to craft, buy or win it.",
+      "generator": "tools/player_guide_tms.py",
+      "order": 32
+    },
+    {
+      "file": "held-items.html",
+      "title": "Held items",
+      "label": "Held items",
+      "description": "Every item a Pokemon can hold and every way to get it: shops, crafting, dungeon vaults, wild drops and wild Pokemon that carry one.",
+      "generator": "tools/player_guide_held_items.py",
+      "order": 33
+    },
+    {
       "file": "drops.html",
       "title": "What wild Pokemon drop",
       "label": "Drops",

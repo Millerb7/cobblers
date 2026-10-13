@@ -23,8 +23,20 @@ taken over the afflicted area of the Scar or something." Rungs, in CLAUDE.md pri
                 into the spawn (HabitatSpawn.createSpawnDetail; tools/compile_spawns.py compile_habitat writes it). This
                 pack runs BEFORE R9E (step R9ST) because the four blocks stand in cells it writes.
 
+  the arms      2026-10-12, the owner: "The forest should expand toward the Scar, maybe envelop some of it, and then down the
+                back and side of the mountain." Layer 2 (data/scar_tarn.json growth.arms), written AFTER the tarn's own wood
+                (layer 1, unchanged: its function is byte for byte what it was) and after the wards, one function each
+                (arm_<lobe>.mcfunction, held in its own forceload by step R9ST). A lobe is a spine of (x, z, radius) knots read
+                off the heightmap; the tree probability falls from `max_probability` at the spine to 0 at the radius. Every
+                tree is checked against a keep-clear net (the authored 24 round every x/z, line and box another record
+                authors, the avoid boxes round Thundurus's plug, the city's core hull, everything outside the Mt Vessu
+                outline) dilated by its canopy, and against slope (3x3 relief <= growth.arms.max_relief_3x3), so the wood
+                thins out at the cliffs and the city and does not cross them.
+
 OUR LIST IS NOT THE WORLD. The clearance sweep covers every x/z any data/*.json authors (tools/southern_residents.py
-authored_points), not what a donor template, a mod or a player put there; the Scar's own ruins are 120+ blocks south.
+authored_points), not what a donor template, a mod or a player put there. The Scar's own ruins are covered for the arms by the
+city's own geometry (placements.json streets and house lots, ruins.json footprints), which is what data/ says stands there,
+not what is in the world.
 
   python tools/scar_tarn.py build   [--out DIR]        write build/datapacks/cobblers_scar_tarn
   python tools/scar_tarn.py report                      numbers, containment, counts; nothing written
@@ -39,6 +51,7 @@ import argparse
 import hashlib
 import json
 import math
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -128,9 +141,21 @@ class Plan:
 
     def __init__(self, doc, g):
         self.doc, self.g = doc, g
-        self.X0, self.Z0, self.X1, self.Z1 = doc["pond"]["window"]
-        self.A = g.box(self.X0, self.Z0, self.X1, self.Z1)
-        self.ops = {p: [] for p in self.PHASES}      # phase -> [(x, y, z, state, mode)]
+        self.X0, self.Z0, self.X1, self.Z1 = doc["pond"]["window"]        # the POND's window (layer 1, and the water's flood)
+        arms = doc["growth"].get("arms")
+        ux0, uz0, ux1, uz1 = arms["window"] if arms else (self.X0, self.Z0, self.X1, self.Z1)
+        self.UX0, self.UZ0, self.UX1, self.UZ1 = min(self.X0, ux0), min(self.Z0, uz0), max(self.X1, ux1), max(self.Z1, uz1)
+        self.A = g.box(self.UX0, self.UZ0, self.UX1, self.UZ1)             # ground over the union of the pond's and the arms' windows
+        self.lim = (self.X0, self.Z0, self.X1, self.Z1)  # the box a write may land in: the pond's window for layer 1, the union for the arms
+        self.mask_org = (self.X0, self.Z0)
+        self.units = {"build": {p: [] for p in self.PHASES}}   # function -> phase -> [(x, y, z, state, mode)]
+        self.unit_cols = {"build": set()}
+        self.unit = "build"
+        self.ops = self.units["build"]
+        self.arm_trees = []                            # layer 2: {"kind", "x", "z", "y0", "h", "lobe"}
+        self.arm_lobe_counts = {}
+        self.l1_paint = set()                          # columns layer 1 painted
+        self.arm_paint = set()                         # columns an arm painted (layer 1's probe rows are drawn from the rest)
         self.final = {}
         self.cols = set()                              # every column a write lands in
         self.solid_cols = set()                        # columns a trunk, boulder, log or brick stands in
@@ -145,16 +170,27 @@ class Plan:
         self.seed = doc["growth"]["seed"]
 
     def gr(self, x, z):
-        return int(self.A[z - self.Z0, x - self.X0])
+        return int(self.A[z - self.UZ0, x - self.UX0])
 
     def inside(self, x, z):
+        x0, z0, x1, z1 = self.lim
+        return x0 <= x <= x1 and z0 <= z <= z1
+
+    def inside_pond(self, x, z):
         return self.X0 <= x <= self.X1 and self.Z0 <= z <= self.Z1
+
+    def begin(self, unit):
+        """Start writing into function `unit` (layer 2: one function per arm)."""
+        self.units.setdefault(unit, {p: [] for p in self.PHASES})
+        self.unit_cols.setdefault(unit, set())
+        self.unit, self.ops = unit, self.units[unit]
 
     def put(self, phase, x, y, z, state, mode="replace"):
         if not self.inside(x, z) or self.blocked(x, z):
             return                                     # inside an authored point's clearance: nothing is written
         self.ops[phase].append((x, y, z, state, mode))
         self.cols.add((x, z))
+        self.unit_cols[self.unit].add((x, z))
         if mode == "keep":
             cur = self.final.get((x, y, z))
             if cur is not None or y <= self.gr(x, z):
@@ -183,7 +219,8 @@ class Plan:
         return mask
 
     def blocked(self, x, z):
-        return bool(self.mask[z - self.Z0, x - self.X0])
+        ox, oz = self.mask_org
+        return bool(self.mask[z - oz, x - ox])
 
 
 def flood(plan, seed, level, limit=None):
@@ -201,7 +238,7 @@ def flood(plan, seed, level, limit=None):
             n = (x + dx, z + dz)
             if n in seen:
                 continue
-            if not plan.inside(*n):
+            if not plan.inside_pond(*n):
                 escaped = True
                 continue
             if plan.gr(*n) <= level - 1:
@@ -322,8 +359,12 @@ def place_tree(plan, kind, x, z, h):
             sx_, sz_ = (x + sgn, z) if ax == "x" else (x, z + sgn)
             plan.put("structures", sx_, g + h - dy, sz_, "minecraft:spruce_log[axis=%s]" % ax, "keep")
     plan.solid_cols.add((x, z))
-    plan.trees.append({"kind": kind, "x": x, "z": z, "y0": g + 1, "h": h})
-    plan.count("tree_" + kind)
+    if plan.unit == "build":
+        plan.trees.append({"kind": kind, "x": x, "z": z, "y0": g + 1, "h": h})
+        plan.count("tree_" + kind)
+    else:
+        plan.arm_trees.append({"kind": kind, "x": x, "z": z, "y0": g + 1, "h": h, "unit": plan.unit})
+        plan.count("arm_tree_" + kind)
 
 
 def build_growth(plan):
@@ -458,6 +499,7 @@ def build_growth(plan):
             continue
         blk = pick(G["paint"], seed, "pb", x // 3, z // 3)
         plan.put("paint", x, plan.gr(x, z), z, "minecraft:" + blk)
+        plan.l1_paint.add((x, z))
         painted[(x, z)] = blk
     plan.count("painted_columns", sum(1 for v in painted.values() if v))
     # plants on the dirt-tag ground only
@@ -524,6 +566,389 @@ def build_wards(plan):
         plan.wards[w["id"]] = (x, plan.gr(x, z), z)
 
 
+# ------------------------------------------------------------------------------------------------------- layer 2: the arms
+# The owner, 2026-10-12: "The forest should expand toward the Scar, maybe envelop some of it, and then down the back and
+# side of the mountain." Layer 1 above is the tarn's own wood and is not touched; the arms are laid along spines in
+# data/scar_tarn.json growth.arms, one function each, with the same kinds, heights, paint and plants.
+SKIP_FILES = {"scar_tarn.json", "cells.json", "regions.json", "world.json"}   # planning labels, not things (the audit's list)
+OWN = re.compile(r"scar_tarn")
+
+
+def _num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def _xz(p):
+    return isinstance(p, list) and len(p) in (2, 3) and all(_num(v) for v in p) and 0 <= p[0] <= 8192 and 0 <= p[-1] <= 8192
+
+
+def authored_lines_boxes(window, m, exempt_boxes=()):
+    """(lines, boxes) any OTHER data/*.json authors near `window` (within m + 400 for a line, m for a box): a line is a list of
+    two or more [x, z] / [x, y, z] points; a box is a dict carrying min_x/min_z/max_x/max_z or x0/z0/x1/z1. Records whose path
+    or id names scar_tarn are this place's own. A box over 1024 x 1024 is a region label, not a thing."""
+    x0, z0, x1, z1 = window
+    lines, boxes = [], []
+
+    def walk(o, path):
+        if OWN.search(path):
+            return
+        if isinstance(o, dict):
+            if OWN.search(str(o.get("id", ""))) or OWN.search(str(o.get("scope", ""))):
+                return
+            for a, b, c, d in (("min_x", "min_z", "max_x", "max_z"), ("x0", "z0", "x1", "z1")):
+                if all(_num(o.get(k)) for k in (a, b, c, d)):
+                    boxes.append((o[a], o[b], o[c], o[d]))
+            for k, v in o.items():
+                walk(v, "%s.%s" % (path, k))
+        elif isinstance(o, list):
+            if _xz(o):
+                return
+            if len(o) >= 2 and all(_xz(p) for p in o):
+                pts = [(p[0], p[-1]) for p in o]
+                if any(x0 - m - 400 <= x <= x1 + m + 400 and z0 - m - 400 <= z <= z1 + m + 400 for x, z in pts):
+                    lines.append(pts)
+                return
+            for i, v in enumerate(o):
+                walk(v, "%s[%d]" % (path, i))
+
+    for fn in sorted((ROOT / "data").glob("*.json")):
+        if fn.name in SKIP_FILES:
+            continue
+        try:
+            walk(json.loads(fn.read_text(encoding="utf-8")), "")
+        except ValueError:
+            continue
+    ex = {tuple(b) for b in exempt_boxes}
+    boxes = [b for b in boxes if tuple(b) not in ex and (b[2] - b[0]) * (b[3] - b[1]) <= 1024 * 1024
+             and not (b[2] < x0 - m or b[0] > x1 + m or b[3] < z0 - m or b[1] > z1 + m)]
+    return lines, boxes
+
+
+def seg_dist_grid(xx, zz, a, b):
+    """Distance from every cell of the (xx, zz) mesh to the segment a-b."""
+    ax, az = a
+    bx, bz = b
+    dx, dz = bx - ax, bz - az
+    L = float(dx * dx + dz * dz)
+    t = np.zeros(xx.shape) if L == 0 else np.clip(((xx - ax) * dx + (zz - az) * dz) / L, 0, 1)
+    return np.hypot(xx - (ax + t * dx), zz - (az + t * dz))
+
+
+def polygon_mask(xx, zz, ring):
+    """True where the cell centre is inside the polygon ring (even-odd)."""
+    inside = np.zeros(xx.shape, bool)
+    n = len(ring)
+    for i in range(n):
+        (ax, az), (bx, bz) = ring[i], ring[(i + 1) % n]
+        if az == bz:
+            continue
+        cross = ((az > zz) != (bz > zz)) & (xx < (bx - ax) * (zz - az) / (bz - az) + ax)
+        inside ^= cross
+    return inside
+
+
+def dilate_square(mask, r):
+    """The mask grown by r columns each way (a square, which holds every canopy the generator draws)."""
+    out = mask.copy()
+    for _ in range(r):
+        a = out.copy()
+        a[1:, :] |= out[:-1, :]
+        a[:-1, :] |= out[1:, :]
+        b = a.copy()
+        b[:, 1:] |= a[:, :-1]
+        b[:, :-1] |= a[:, 1:]
+        out = b
+    return out
+
+
+def convex_hull(points):
+    """Counter-clockwise convex hull (monotone chain) of [(x, z), ...]."""
+    pts = sorted(set(points))
+
+    def cross(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lo, up = [], []
+    for p in pts:
+        while len(lo) >= 2 and cross(lo[-2], lo[-1], p) <= 0:
+            lo.pop()
+        lo.append(p)
+    for p in reversed(pts):
+        while len(up) >= 2 and cross(up[-2], up[-1], p) <= 0:
+            up.pop()
+        up.append(p)
+    return lo[:-1] + up[:-1]
+
+
+def scar_core(margin):
+    """The city's core: the convex hull of the rectangles its house lots fill along the three roads (the road's width/2 + the
+    lots' setback + their depth each side, and one lot + gap past each end), grown by margin. Read from data/placements.json
+    settlements.the_scar.plan, so a re-laid city moves it."""
+    pl = jload("placements.json")["settlements"]["the_scar"]["plan"]
+    streets = {s_["id"]: s_ for s_ in pl["streets"]}
+    lots = pl["house_lots"]
+    corners = []
+    for rid in lots["along"]:
+        st = streets[rid]
+        (ax, az), (bx, bz) = st["polyline"][0], st["polyline"][-1]
+        half = st["width"] / 2.0 + lots["setback"] + lots["size"][1] + margin
+        end = lots["size"][0] + lots["gap"] + margin
+        x0, x1, z0, z1 = min(ax, bx) - end, max(ax, bx) + end, min(az, bz) - half, max(az, bz) + half
+        corners += [(x0, z0), (x1, z0), (x1, z1), (x0, z1)]
+    return convex_hull(corners)
+
+
+def arms_mask(plan):
+    """A (z, x) boolean array over the union window: True where an arm may write nothing. The authored clearance from every
+    x/z, line and box another record authors (the same 24 the tarn's own wood keeps), the avoid boxes, everything outside the
+    Mt Vessu outline and every column whose ground is under min_ground_y."""
+    import southern_residents as SR
+    doc = plan.doc
+    AR = doc["growth"]["arms"]
+    m = doc["rules"]["authored_clearance"]
+    x0, z0, x1, z1 = plan.UX0, plan.UZ0, plan.UX1, plan.UZ1
+    zz, xx = np.mgrid[z0:z1 + 1, x0:x1 + 1]
+    mask = np.zeros(zz.shape, bool)
+    mine = {(w[0], w[2]) for w in plan.wards.values()}
+    for (px, pz, f) in SR.authored_points({"residents": []}, own_file=DATA):
+        if not (x0 - m <= px <= x1 + m and z0 - m <= pz <= z1 + m):
+            continue
+        if f == "habitat_blocks.json" and (px, pz) in mine:
+            continue
+        mask |= np.hypot(xx - px, zz - pz) < m + 1.5
+    lines, boxes = authored_lines_boxes((x0, z0, x1, z1), m, [e["box"] for e in doc["rules"].get("authored_box_exempt") or []])
+    for pts in lines:
+        for a, b in zip(pts, pts[1:]):
+            if max(a[0], b[0]) < x0 - m or min(a[0], b[0]) > x1 + m or max(a[1], b[1]) < z0 - m or min(a[1], b[1]) > z1 + m:
+                continue
+            mask |= seg_dist_grid(xx, zz, a, b) < m + 0.5
+    for (bx0, bz0, bx1, bz1) in boxes:
+        mask |= (xx >= bx0 - m) & (xx <= bx1 + m) & (zz >= bz0 - m) & (zz <= bz1 + m)
+    for ab in AR["avoid_boxes"]:
+        bx0, bz0, bx1, bz1 = ab["box"]
+        mask |= (xx >= bx0) & (xx <= bx1) & (zz >= bz0) & (zz <= bz1)
+    core = AR.get("keep_clear_core")
+    if core:
+        mask |= polygon_mask(xx + 0.5, zz + 0.5, scar_core(core["margin"]))
+    lm = next(l for l in jload("landmarks.json")["landmarks"] if l["id"] == AR["inside_landmark"])
+    ring = [tuple(p) for p in lm["extent"]["polygons"][0]]
+    mask |= ~polygon_mask(xx + 0.5, zz + 0.5, ring)
+    mask |= plan.A < AR["min_ground_y"]
+    return mask
+
+
+def relief_grid(A, window_ok=None):
+    """Max - min of each cell's 3 x 3 (edge cells repeat the border)."""
+    P = np.pad(A, 1, mode="edge")
+    mx = np.full(A.shape, -10 ** 9)
+    mn = np.full(A.shape, 10 ** 9)
+    for a in (0, 1, 2):
+        for b in (0, 1, 2):
+            s = P[a:a + A.shape[0], b:b + A.shape[1]]
+            mx = np.maximum(mx, s)
+            mn = np.minimum(mn, s)
+    return mx - mn
+
+
+def lobe_p(lobe, xx, zz):
+    """The lobe's tree probability over the mesh: pmax * (1 - u) ** falloff, u = distance to the spine over its radius there."""
+    best = np.full(xx.shape, 9.0)
+    k = lobe["spine"]
+    for (ax, az, ar), (bx, bz, br) in zip(k, k[1:]):
+        dx, dz = bx - ax, bz - az
+        L = float(dx * dx + dz * dz)
+        t = np.clip(((xx - ax) * dx + (zz - az) * dz) / L, 0, 1)
+        d = np.hypot(xx - (ax + t * dx), zz - (az + t * dz))
+        best = np.minimum(best, d / (ar + t * (br - ar)))
+    return np.where(best < 1.0, lobe["max_probability"] * (1.0 - np.minimum(best, 1.0)) ** lobe["falloff"], 0.0)
+
+
+def canopy_radius(kind, h):
+    return {"spruce": 2 + h // 6, "elder": 2 + h // 6, "birch": 2, "snag": 1}[kind]
+
+
+def build_arms(plan):
+    doc = plan.doc
+    G = doc["growth"]
+    AR = G["arms"]
+    P_ = doc["pond"]
+    yS = P_["water_level"]
+    seed = AR["seed"]
+    cell = AR["cell"]
+    rmax_relief = AR["max_relief_3x3"]
+    plan.lim = (plan.UX0, plan.UZ0, plan.UX1, plan.UZ1)
+    plan.mask, plan.mask_org = arms_mask(plan), (plan.UX0, plan.UZ0)
+    M = plan.mask
+    ox, oz = plan.UX0, plan.UZ0
+    zz, xx = np.mgrid[oz:plan.UZ1 + 1, ox:plan.UX1 + 1]
+    lobes = AR["lobes"]
+    Pbest = np.zeros(zz.shape)
+    LI = np.full(zz.shape, -1)
+    for i, lb in enumerate(lobes):
+        Pi = lobe_p(lb, xx, zz)
+        better = Pi > Pbest
+        Pbest = np.where(better, Pi, Pbest)
+        LI = np.where(better, i, LI)
+    R3 = relief_grid(plan.A)
+    DIL = {r: dilate_square(M, r) for r in range(0, 7)}
+    edge = 8
+    cands = []
+    for cx in range(plan.UX0 + edge, plan.UX1 - edge, cell):
+        for cz in range(plan.UZ0 + edge, plan.UZ1 - edge, cell):
+            x = cx + h32(seed, "jx", cx, cz) % cell
+            z = cz + h32(seed, "jz", cx, cz) % cell
+            iz, ix = z - oz, x - ox
+            if Pbest[iz, ix] <= 0 or M[iz, ix] or (x, z) in plan.W or (x, z) in plan.ring8 or (x, z) in plan.solid_cols:
+                continue
+            if R3[iz, ix] > rmax_relief:
+                continue
+            cands.append((x, z))
+    # water distance only where the tarn is within reach
+    wx = [c[0] for c in plan.W]
+    wz = [c[1] for c in plan.W]
+    near = [c for c in cands if min(wx) - 70 <= c[0] <= max(wx) + 70 and min(wz) - 70 <= c[1] <= max(wz) + 70]
+    dist = {c: 999.0 for c in cands}
+    dist.update(water_distance(plan, near))
+    counts = {lb["id"]: {"trees": 0} for lb in lobes}
+    pool = {lb["id"]: [] for lb in lobes}            # candidates a tree did not take: boulders, logs, stubs
+    for (x, z) in cands:
+        iz, ix = z - oz, x - ox
+        li = int(LI[iz, ix])
+        lb = lobes[li]
+        d = dist[(x, z)]
+        g = plan.gr(x, z)
+        if d <= G["trunk_clear"]:
+            continue
+        p = Pbest[iz, ix]
+        t = frac(seed, "tk", x, z)
+        if t < G["snag_share"]:
+            kind, h = "snag", G["snag_height"][0] + h32(seed, "th", x, z) % (G["snag_height"][1] - G["snag_height"][0] + 1)
+        elif t < G["snag_share"] + G["elder_share"] and d > 6:
+            kind, h = "elder", G["elder_height"][0] + h32(seed, "th", x, z) % (G["elder_height"][1] - G["elder_height"][0] + 1)
+        elif d <= G["birch_within"] and frac(seed, "tb", x, z) < G["birch_share"]:
+            kind, h = "birch", G["birch_height"][0] + h32(seed, "th", x, z) % (G["birch_height"][1] - G["birch_height"][0] + 1)
+        else:
+            kind, h = "spruce", G["spruce_height"][0] + h32(seed, "th", x, z) % (G["spruce_height"][1] - G["spruce_height"][0] + 1)
+        if DIL[canopy_radius(kind, h)][iz, ix]:
+            continue
+        if frac(seed, "tp", x, z) >= p:
+            pool[lb["id"]].append((x, z))
+            continue
+        plan.begin("arm_" + lb["id"])
+        place_tree(plan, kind, x, z, h)
+        counts[lb["id"]]["trees"] += 1
+
+    def usable(c):
+        x, z = c
+        return (plan.inside(x, z) and not plan.blocked(x, z) and c not in plan.solid_cols and c not in plan.W
+                and c not in plan.ring8 and R3[z - oz, x - ox] <= 3)
+
+    for i, lb in enumerate(lobes):
+        unit = "arm_" + lb["id"]
+        plan.begin(unit)
+        free = [c for c in pool[lb["id"]] if usable(c) and dist[c] > 4]
+        # brick stubs: the Scar's own palette, a few to a lobe that runs along the city
+        made = []
+        for (x, z) in sorted(free, key=lambda c: h32(seed, "rs", lb["id"], c[0], c[1])):
+            if len(made) >= lb.get("ruin_stubs", 0):
+                break
+            if any(math.hypot(x - s[0], z - s[1]) < 24 for s in made):
+                continue
+            ax = "x" if h32(seed, "ra", x, z) % 2 else "z"
+            length = 5 + h32(seed, "rl", x, z) % 5
+            line = [(x + k, z) if ax == "x" else (x, z + k) for k in range(length)]
+            if not all(usable(c) for c in line):
+                continue
+            gs = [plan.gr(*c) for c in line]
+            if max(gs) - min(gs) > 2:
+                continue
+            for (cx_, cz_) in line:
+                gg = plan.gr(cx_, cz_)
+                top = 1 + h32(seed, "rt", cx_, cz_) % 3
+                for y in range(gg + 1, gg + top + 1):
+                    blk = "minecraft:mossy_stone_bricks" if h32(seed, "rb", cx_, y, cz_) % 100 < 55 else "minecraft:cracked_stone_bricks"
+                    plan.put("structures", cx_, y, cz_, blk)
+                if top >= 2 and h32(seed, "rc", cx_, cz_) % 4 == 0:
+                    plan.put("structures", cx_, gg + top + 1, cz_, "minecraft:mossy_stone_brick_slab[type=bottom,waterlogged=false]")
+                plan.solid_cols.add((cx_, cz_))
+            made.append((x, z))
+            plan.count("arm_brick_stub")
+        counts[lb["id"]]["stubs"] = len(made)
+        # boulders
+        nb = 0
+        for (x, z) in sorted(free, key=lambda c: h32(seed, "bo", lb["id"], c[0], c[1])):
+            if nb >= lb.get("boulders", 0):
+                break
+            if (x, z) in plan.solid_cols:
+                continue
+            rr = 1 + h32(seed, "br", x, z) % 2
+            cols = [(x + a, z + b, rr - int(math.hypot(a, b) + 0.5)) for a in range(-rr, rr + 1) for b in range(-rr, rr + 1)]
+            cols = [(cx_, cz_, hh) for cx_, cz_, hh in cols if hh >= 1 and usable((cx_, cz_))]
+            if not cols:
+                continue
+            for cx_, cz_, hh in cols:
+                gg = plan.gr(cx_, cz_)
+                for y in range(gg + 1, gg + hh + 1):
+                    plan.put("structures", cx_, y, cz_, "minecraft:mossy_cobblestone" if h32(seed, "bm", cx_, y, cz_) % 3 else "minecraft:cobblestone")
+                plan.solid_cols.add((cx_, cz_))
+            nb += 1
+        plan.count("arm_boulder", nb)
+        counts[lb["id"]]["boulders"] = nb
+        # fallen logs
+        nl = 0
+        for (x, z) in sorted(free, key=lambda c: h32(seed, "fl", lb["id"], c[0], c[1])):
+            if nl >= lb.get("fallen_logs", 0):
+                break
+            ax = "x" if h32(seed, "fa", x, z) % 2 else "z"
+            length = 5 + h32(seed, "fn", x, z) % 4
+            line = [(x + k, z) if ax == "x" else (x, z + k) for k in range(length)]
+            if not all(usable(c) for c in line):
+                continue
+            gs = [plan.gr(*c) for c in line]
+            if max(gs) - min(gs) > 1:
+                continue
+            for (cx_, cz_), gg in zip(line, gs):
+                plan.put("structures", cx_, gg + 1, cz_, "minecraft:spruce_log[axis=%s]" % ax)
+                plan.solid_cols.add((cx_, cz_))
+                if h32(seed, "fm", cx_, cz_) % 100 < 40:
+                    plan.put("plants", cx_, gg + 2, cz_, "minecraft:moss_carpet", "keep")
+            nl += 1
+        plan.count("arm_fallen_log", nl)
+        counts[lb["id"]]["fallen_logs"] = nl
+    # the ground: moss, podzol and coarse dirt thinning with the trees; plants on the dirt-tag ground only
+    gain = AR["paint_gain"]
+    npaint = nplant = 0
+    iz_s, ix_s = np.nonzero(Pbest > 0)
+    for iz, ix in sorted(zip(iz_s.tolist(), ix_s.tolist()), key=lambda t: (t[1], t[0])):
+        x, z = ix + ox, iz + oz
+        if M[iz, ix] or (x, z) in plan.W or (x, z) in plan.ring8 or (x, z) in plan.solid_cols or (x, z) in plan.l1_paint:
+            continue
+        if R3[iz, ix] > 3 or plan.gr(x, z) < yS + 1:
+            continue
+        if frac(seed, "pp", x // 3, z // 3) >= min(0.92, gain * Pbest[iz, ix]):
+            continue
+        blk = pick(G["paint"], seed, "pb", x // 3, z // 3)
+        plan.begin("arm_" + lobes[int(LI[iz, ix])]["id"])
+        g = plan.gr(x, z)
+        plan.put("paint", x, g, z, "minecraft:" + blk)
+        plan.arm_paint.add((x, z))
+        npaint += 1
+        if blk not in ("moss_block", "podzol", "coarse_dirt") or frac(seed, "pl", x, z) >= G["plant_share"]:
+            continue
+        kind = pick(G["plants"], seed, "pk", x, z)
+        plan.put("clear", x, g + 1, z, AIR, "snow")
+        if kind == "large_fern":
+            plan.put("plants", x, g + 1, z, "minecraft:large_fern[half=lower]", "keep")
+            plan.put("plants", x, g + 2, z, "minecraft:large_fern[half=upper]", "keep")
+        else:
+            plan.put("plants", x, g + 1, z, "minecraft:" + kind, "keep")
+        nplant += 1
+    plan.count("arm_painted_columns", npaint)
+    plan.count("arm_plants", nplant)
+    plan.arm_lobe_counts = counts
+    plan.begin("build")
+    plan.lim = (plan.X0, plan.Z0, plan.X1, plan.Z1)
+
+
 def plan(doc=None, g=None, source_root=None):
     import ground as G
     doc = doc or load()
@@ -533,6 +958,8 @@ def plan(doc=None, g=None, source_root=None):
     pl.pond = build_pond(pl)
     build_growth(pl)
     build_wards(pl)
+    if doc["growth"].get("arms"):
+        build_arms(pl)
     pl.problems = check_plan(pl)
     return pl
 
@@ -579,9 +1006,9 @@ def compact(cells):
     return out
 
 
-def phase_cells(pl, phase):
+def phase_cells(pl, phase, unit="build"):
     cells = {}
-    for (x, y, z, state, mode) in pl.ops[phase]:
+    for (x, y, z, state, mode) in pl.units[unit][phase]:
         if mode == "keep":
             if (x, y, z) in cells:
                 continue
@@ -589,37 +1016,50 @@ def phase_cells(pl, phase):
     return cells
 
 
-def build_lines(pl):
-    head = ["# Generated by tools/scar_tarn.py from data/scar_tarn.json. Re-run to rebuild; do not edit.",
-            "# The Scar Tarn: the pond, its bank, the growth round it and the four Habitat Block mimics.",
-            "# Run BEFORE R9E (step R9ST): the four activated Habitat Blocks scar_tarn_*_ward stand in cells this writes."]
+def build_lines(pl, unit="build"):
+    if unit == "build":
+        head = ["# Generated by tools/scar_tarn.py from data/scar_tarn.json. Re-run to rebuild; do not edit.",
+                "# The Scar Tarn: the pond, its bank, the growth round it and the four Habitat Block mimics.",
+                "# Run BEFORE R9E (step R9ST): the four activated Habitat Blocks scar_tarn_*_ward stand in cells this writes."]
+    else:
+        head = ["# Generated by tools/scar_tarn.py from data/scar_tarn.json growth.arms. Re-run to rebuild; do not edit.",
+                "# The Scar Tarn's wood, %s: an arm of the same wood (spruce, birch, snags, moss and ferns), laid along the" % unit[len("arm_"):],
+                "# heightmap. Writes no water and no Habitat Block mimic; run in step R9ST, BEFORE R9E."]
     out = list(head)
     for ph in Plan.PHASES:
-        cells = phase_cells(pl, ph)
+        cells = phase_cells(pl, ph, unit)
         out.append("# %s (%d cells)" % (ph, len(cells)))
         out += compact(cells)
     return out
 
 
-def box(pl):
-    xs = [c[0] for c in pl.cols]
-    zs = [c[1] for c in pl.cols]
+def box(pl, unit="build"):
+    cols = pl.unit_cols[unit]
+    xs = [c[0] for c in cols]
+    zs = [c[1] for c in cols]
     return min(xs), min(zs), max(xs), max(zs)
+
+
+def units(pl):
+    """The functions the pack holds: build first (the tarn and its own wood), then each arm that wrote anything, in the record's order."""
+    order = ["build"] + ["arm_" + lb["id"] for lb in (pl.doc["growth"].get("arms") or {}).get("lobes", [])]
+    return [u for u in order if u in pl.units and pl.unit_cols.get(u)]
 
 
 def files(doc=None, g=None, pl=None, check=True):
     pl = pl or plan(doc, g)
     if check and pl.problems:
         raise TarnError("scar_tarn: %d problem(s): %s" % (len(pl.problems), "; ".join(pl.problems[:4])))
-    lines = function_limits.ensure_loaded(build_lines(pl))
-    bad = function_limits.check_lines(lines, "build")
-    if bad:
-        raise TarnError("build: %d command(s) the server would refuse: %s" % (len(bad), bad[:3]))
     out = {
         "pack.mcmeta": json.dumps({"pack": {"pack_format": PACK_FORMAT, "description":
                                             "Cobblers: the Scar Tarn (tools/scar_tarn.py)"}}, indent=2) + "\n",
-        "data/%s/function/%s/build.mcfunction" % (NS, FN): "\n".join(lines) + "\n",
     }
+    for u in units(pl):
+        lines = function_limits.ensure_loaded(build_lines(pl, u))
+        bad = function_limits.check_lines(lines, u)
+        if bad:
+            raise TarnError("%s: %d command(s) the server would refuse: %s" % (u, len(bad), bad[:3]))
+        out["data/%s/function/%s/%s.mcfunction" % (NS, FN, u)] = "\n".join(lines) + "\n"
     return out, pl
 
 
@@ -633,12 +1073,31 @@ def write(out_files, out=OUT):
         f.write_text(text, encoding="utf-8", newline="\n")
 
 
+def hold_boxes(b):
+    """The box (x0, z0, x1, z1) as `forceload add` boxes of at most 256 chunks each (the command's limit), split along z."""
+    x0, z0, x1, z1 = b
+    cw = x1 // 16 - x0 // 16 + 1
+    rows = max(1, 256 // cw)
+    out = []
+    cz = z0 // 16
+    last = z1 // 16
+    while cz <= last:
+        cz1 = min(last, cz + rows - 1)
+        out.append((x0, max(z0, cz * 16), x1, min(z1, cz1 * 16 + 15)))
+        cz = cz1 + 1
+    return out
+
+
 def placement_steps(doc=None, g=None, pl=None):
-    """For tools/reapply.py, step R9ST BEFORE R9E: hold the box, build, release (the Drovers' Hollow's shape)."""
+    """For tools/reapply.py, step R9ST BEFORE R9E: for each function (the tarn's build, then each arm of the wood) hold its
+    box, run it, release (the Drovers' Hollow's shape). The tarn's own first step is the one this step always had."""
     pl = pl or plan(doc, g)
-    hold = "%d %d %d %d" % box(pl)
-    return [("cmd", "forceload add " + hold), ("wait", WAIT_SECONDS), ("fn", "%s:%s/build" % (NS, FN)),
-            ("cmd", "forceload remove " + hold)]
+    steps = []
+    for u in units(pl):
+        holds = ["forceload add %d %d %d %d" % b for b in hold_boxes(box(pl, u))]
+        steps += [("cmd", h) for h in holds] + [("wait", WAIT_SECONDS), ("fn", "%s:%s/%s" % (NS, FN, u))]
+        steps += [("cmd", h.replace("add", "remove", 1)) for h in holds]
+    return steps
 
 
 # ------------------------------------------------------------------------------------------------------ the checks
@@ -675,7 +1134,7 @@ def check_plan(pl):
     doc = pl.doc
     probs = []
     allowed = set(doc["blocks"]["ids"])
-    written = {base(st) for ph in pl.ops.values() for (_x, _y, _z, st, _m) in ph}
+    written = {base(st) for ops in pl.units.values() for ph in ops.values() for (_x, _y, _z, st, _m) in ph}
     for b in sorted(written - allowed):
         probs.append("writes %s, not in blocks.ids" % b)
     spawn = set(jload("spawn_blocks.json")["blocks"])
@@ -715,7 +1174,7 @@ def authored_sweep(pl):
     import southern_residents as SR
     mine = {(w[0], w[2]) for w in pl.wards.values()}
     pts = [(x, z, f) for x, z, f in SR.authored_points({"residents": []}, own_file=DATA)
-           if pl.X0 - 60 <= x <= pl.X1 + 60 and pl.Z0 - 60 <= z <= pl.Z1 + 60
+           if pl.UX0 - 60 <= x <= pl.UX1 + 60 and pl.UZ0 - 60 <= z <= pl.UZ1 + 60
            and not (f == "habitat_blocks.json" and (x, z) in mine)]
     if not pts:
         return []
@@ -854,10 +1313,28 @@ def presence_probes(pl):
         row("a %s's trunk" % t["kind"], t["x"], t["y0"], t["z"], "minecraft:spruce_log" if t["kind"] != "birch" else "minecraft:birch_log")
     # the ground painted round it
     painted = sorted({(x, y, z): base(st) for (x, y, z), st in pl.final.items()
-                      if base(st) in ("minecraft:moss_block", "minecraft:podzol") and y == pl.gr(x, z) and (x, y, z) not in wards}.items())
+                      if base(st) in ("minecraft:moss_block", "minecraft:podzol") and y == pl.gr(x, z) and (x, y, z) not in wards
+                      and (x, z) not in pl.arm_paint}.items())
     step = max(1, len(painted) // pr["ground"])
     for (x, y, z), b in painted[::step][:pr["ground"]]:
         row("painted ground", x, y, z, b)
+    # layer 2, the arms: appended after the tarn's own rows so those stay as they were. A few trunks and painted columns each
+    for u in units(pl):
+        if u == "build":
+            continue
+        trees = sorted((t for t in pl.arm_trees if t["unit"] == u), key=lambda t: (t["x"], t["z"]))
+        if trees:
+            step = max(1, len(trees) // pr["arm_trunks"])
+            for t in trees[::step][:pr["arm_trunks"]]:
+                row("the %s wood, a %s's trunk" % (u[len("arm_"):], t["kind"]), t["x"], t["y0"], t["z"],
+                    "minecraft:spruce_log" if t["kind"] != "birch" else "minecraft:birch_log")
+        mine = sorted({(x, y, z): base(st) for (x, y, z), st in pl.final.items()
+                       if base(st) in ("minecraft:moss_block", "minecraft:podzol") and y == pl.gr(x, z)
+                       and (x, z) in pl.unit_cols[u] and (x, z) in pl.arm_paint}.items())
+        if mine:
+            step = max(1, len(mine) // pr["arm_ground"])
+            for (x, y, z), b in mine[::step][:pr["arm_ground"]]:
+                row("the %s wood, painted ground" % u[len("arm_"):], x, y, z, b)
     return {pr["key"]: rows}
 
 
@@ -867,7 +1344,7 @@ def report(pl):
     a = box(pl)
     xs = [c[0] for c in pl.W]
     zs = [c[1] for c in pl.W]
-    fns = build_lines(pl)
+    fns = [l for u in units(pl) for l in build_lines(pl, u)]
     n = sum(1 for l in fns if l and not l.startswith("#"))
     lines = ["pond: seed %s, water y%d, %d columns, %d water blocks, deepest %d, bbox x%d..%d z%d..%d; the lowest natural rim "
              "column is y%d (bank lifted to y%d on %d of %d rim columns)"
@@ -875,6 +1352,9 @@ def report(pl):
                 P["natural_rim_min"], pl.doc["pond"]["bank_lift_to"], pl.counts["bank_lifted"], pl.counts["bank_columns"]),
              "containment: %d leak(s) at drop 0, %d at drop 1" % (len(containment(pl, 0)), len(containment(pl, 1))),
              "growth: %s" % ", ".join("%s %d" % kv for kv in sorted(pl.counts.items()) if kv[0].startswith(("tree_", "brick", "boulder", "fallen", "plants", "painted"))),
+             "arms: %s" % ", ".join("%s %d" % kv for kv in sorted(pl.counts.items()) if kv[0].startswith("arm_")),
+             "arm lobes: %s" % json.dumps(pl.arm_lobe_counts),
+             "units: %s" % ", ".join("%s box x%d..%d z%d..%d %d columns" % (u, box(pl, u)[0], box(pl, u)[2], box(pl, u)[1], box(pl, u)[3], len(pl.unit_cols[u])) for u in units(pl)),
              "wards: %s" % json.dumps({k: list(v) for k, v in pl.wards.items()}),
              "written box x%d..%d z%d..%d (%d columns); %d commands" % (a[0], a[2], a[1], a[3], len(pl.cols), n),
              "steps R9ST: %s" % json.dumps([list(s) for s in placement_steps(pl=pl)]),

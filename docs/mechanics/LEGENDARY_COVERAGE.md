@@ -182,7 +182,7 @@ later.
    Rayquaza (the Starfall Crater, band 6). Fallbacks only; the world homes stand. (Registeel was listed here with the
    Night Shift, bands 4-6; corrected 2026-10-12: it is sited in the upper Rift, so that fallback is unused.)
 4. **Koraidon and Miraidon** (`DUNGEON_PLACEMENT.md` Q14, answered 2026-10-12): post-Champion area bosses in the world.
-   Miraidon is built at The Relay Fault (K3, `data/caves.json`); Koraidon is K6 (Sunscar), not yet built, and stays in the
+   Miraidon is built at The Broken Relay (S3, `data/sanctuaries.json`; the cave K3 it replaced is retired); Koraidon is at Sunscar (S6) since 2026-10-12. Before that it was not yet built, and stayed in the
    Zero Dig's band-6 pool until then.
 5. **Yveltal, Dialga, Heatran:** kept as D18 boss catches. The alternative is the prize form (a pool entry) with a
    fight-only boss.
@@ -241,7 +241,7 @@ later.
 | 645 | Landorus | legendary | **world** (proposal): nowhere authored | Tri Peaks summit (proposal); fallback dragonspiral band 6 |  |
 | 646 | Kyurem | legendary | **dungeon**: nowhere authored | dragonspiral, band 6 | the frozen one that holds the other two; restricted |
 | 647 | Keldeo | mythical | **dungeon**: nowhere authored | field_of_swords, bands 5, 6 | the sword in the spring, after the three |
-| 648 | Meloetta | mythical | **world** (built offline 2026-10-12, not applied): The Singing Hollow, `cave_singing_hollow` (K2), a repeatable ultra-rare chamber spawn at level 50 behind gym6_cleared | cave kit, `data/caves.json` | the song cave; its inherited DP spawn is not yet removed |
+| 648 | Meloetta | mythical | **world** (built offline 2026-10-12, not applied): The Singing Hollow, `sanctuary_singing_hollow` (S2, an open-air ruined theatre; it replaced the cave K2 the same day), a repeatable ultra-rare court spawn at level 50 behind gym6_cleared | sanctuaries, `data/sanctuaries.json` | the song theatre; its inherited DP spawn is not yet removed |
 | 649 | Genesect | mythical | **dungeon**: nowhere authored | warped_lab, bands 5, 6 | an ancient thing rebuilt in a lab; the DP's fossil revive also exists (unverified reachable) |
 | 716 | Xerneas | legendary | **dungeon**: nowhere authored | patriarch, band 6 | Yveltal's pair, the life-tree; restricted |
 | 717 | Yveltal | legendary | planned (designed, not built): D18: the Patriarch's boss, band-6 catch (designed) | patriarch (boss) |  |
@@ -307,7 +307,7 @@ later.
 | 1005 | Roaring Moon (ATM subset) | paradox | **dungeon**: nowhere authored | soul_ossuary, bands 5, 6 | dragon/dark ancient paradox |
 | 1006 | Iron Valiant (ATM subset) | paradox | **dungeon**: nowhere authored | warped_lab, bands 5, 6 | a future paradox |
 | 1007 | Koraidon | legendary | **dungeon**: nowhere authored | zero_dig, band 6 | the past; restricted; Q14 open |
-| 1008 | Miraidon | legendary | **world** (built offline 2026-10-12, not applied): The Relay Fault, `cave_relay_fault` (K3), a post-Champion area boss kept by a keeper, level 70, behind champion_cleared | cave kit, `data/caves.json` | the future; restricted; Q14 answered 2026-10-12 |
+| 1008 | Miraidon | legendary | **world** (built offline 2026-10-12, not applied): The Broken Relay, `sanctuary_broken_relay` (S3, an open-air relay compound; it replaced the cave K3 the same day), a post-Champion area boss kept by a keeper, level 70, behind champion_cleared | sanctuaries, `data/sanctuaries.json` | the future; restricted; Q14 answered 2026-10-12 |
 | 1009 | Walking Wake | paradox | **dungeon**: nowhere authored | cistern, bands 4, 5, 6 | D18's lake pick for the Cistern; renders today (jar) |
 | 1010 | Iron Leaves | paradox | **dungeon**: nowhere authored | field_of_swords, bands 4, 5, 6 | Virizion's paradox; renders today (jar) |
 | 1014 | Okidogi | legendary | **dungeon**: nowhere authored | jungle, bands 4, 5, 6 | one of the Loyal Three |

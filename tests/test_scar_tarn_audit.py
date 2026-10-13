@@ -248,7 +248,7 @@ def test_the_overlap_sweep_names_points_lines_and_boxes_and_skips_our_own(tmp_pa
 def H():
     import terrain as T
     try:
-        return A.heights_from_heightmap(DOC["pond"]["window"])
+        return A.heights_from_heightmap(A.audit_window(DOC))
     except T.TerrainUnavailable as e:
         pytest.skip("the canonical heightmap is unusable: %s" % e)
 
@@ -270,10 +270,16 @@ def run_generator(tmp_path, args, mutations=()):
     return r.stdout
 
 
-def built_lines(tmp_path, mutations=()):
+def built_functions(tmp_path, mutations=()):
+    """{function name: lines} the mutated generator's CLI writes (build, then each arm)."""
     out = tmp_path / "pack"
     run_generator(tmp_path, ["build", "--out", str(out)], mutations)
-    return A.read_function(out)
+    return A.read_functions(out)
+
+
+def built_lines(tmp_path, mutations=()):
+    """The tarn's own function only (the water checks: no arm writes water), as the audit's original tests ran it."""
+    return built_functions(tmp_path, mutations)["build"]
 
 
 def water_findings(lines, H):
@@ -296,12 +302,40 @@ def test_the_built_tarn_holds_its_water_at_drop_0_and_1_and_nothing_escapes_at_2
 
 
 def test_the_built_tarn_clears_every_authored_thing_the_pad_and_the_paths(H, baseline):
-    # removing this lets the growth spread over another place's record or the Scar's avenue unseen.
+    # removing this lets the tarn's own growth spread over another place's record or the Scar's avenue unseen.
     rep = A.Report()
     cols = A.written_columns(baseline, H)
     A.check_overlaps(cols, DOC, rep)
     A.check_paths(cols, DOC, rep)
     assert rep.findings == []
+
+
+@pytest.fixture(scope="module")
+def baseline_functions(H, tmp_path_factory):
+    return built_functions(tmp_path_factory.mktemp("basefn"))
+
+
+def test_the_built_wood_passes_every_forest_rule_and_every_arm_has_trees(H, baseline_functions):
+    # removing this loses the one check of the arms against the ground, the outline, the Scar, Thundurus and the limits.
+    rep = A.Report()
+    stats = A.check_forest(baseline_functions, H, DOC, rep)
+    assert rep.findings == []
+    assert sorted(stats) == sorted("arm_" + lb["id"] for lb in DOC["growth"]["arms"]["lobes"])
+    assert all(v["trunks"] > 20 for v in stats.values()), stats
+
+
+def test_the_whole_pack_overlaps_the_authored_things_and_the_pad_only_where_the_arms_are_allowed(H, baseline_functions):
+    # removing this lets the arms spread over another record's thing or the tarn's own function over the pad. The arms are
+    # exempt from the pad's radius rule on purpose (check_forest holds them to the city's own geometry); the tarn is not.
+    rep = A.Report()
+    lines = [l for ls in baseline_functions.values() for l in ls]
+    cols = A.written_columns(lines, H)
+    A.check_overlaps(cols, DOC, rep)
+    A.check_paths(cols, DOC, rep, pad_cols=A.written_columns(baseline_functions["build"], H))
+    assert rep.findings == []
+    rep2 = A.Report()
+    A.check_paths(cols, DOC, rep2)          # without the exemption the arms are on the pad and the rule says so
+    assert any("inside the pad's radius" in f for f in rep2.findings), rep2.findings
 
 
 def test_the_shipped_wards_and_pools_pass(H, baseline):
@@ -382,3 +416,68 @@ def test_the_unmutated_records_pass_the_alpha_check(tmp_path):
     A.check_alphas(wards, spawns, json.loads((ROOT / "data" / "regions.json").read_text(encoding="utf-8")),
                    json.loads((ROOT / "data" / "encounter_design.json").read_text(encoding="utf-8")), A.Jar(jp), rep)
     assert rep.findings == []
+
+
+# ------------------------------------------------------------------------------------------------ the forest, synthetic
+def test_the_hull_the_polygon_test_and_the_log_columns_on_hand_computed_input():
+    # removing this leaves the forest rules' geometry unproven on input whose answer is known without running anything.
+    # hull of a 10 x 10 square's corners with an interior point is the four corners; (5, 5) is inside, (11, 5) is not,
+    # and a cell centre (x + .5) of column 9 is inside while column 10's is not (the square spans 0..10).
+    sq = A.hull([(0, 0), (10, 0), (10, 10), (0, 10), (5, 5)])
+    assert sorted(sq) == [(0, 0), (0, 10), (10, 0), (10, 10)]
+    got = A.inside_polygon(np.array([[5, 5], [11, 5], [9, 9], [10, 5]], float), sq)
+    assert got.tolist() == [True, False, True, False]
+    assert A.ring_inside(5.5, 5.5, sq) and not A.ring_inside(10.5, 5.5, sq)
+    lines = ["setblock 4 70 5 minecraft:spruce_log[axis=y]", "fill 7 71 8 7 74 8 minecraft:birch_log[axis=y]",
+             "setblock 9 70 9 minecraft:spruce_log[axis=x]", "fill 1 70 1 3 70 1 minecraft:mossy_cobblestone"]
+    assert A.log_columns(lines) == {(4, 5): 70, (7, 8): 71}
+
+
+def test_read_function_runs_build_first_then_each_arm_in_name_order(tmp_path):
+    # removing this lets the audit replay the arms before the pond they stand round, or skip one.
+    d = tmp_path / "data" / "cobblers" / "function" / "scar_tarn"
+    d.mkdir(parents=True)
+    for n in ("arm_b", "build", "arm_a"):
+        (d / (n + ".mcfunction")).write_text("# %s\nsetblock 0 0 0 minecraft:stone\n" % n, encoding="utf-8")
+    fns = A.read_functions(tmp_path)
+    assert list(fns) == ["build", "arm_a", "arm_b"]
+    assert [l for l in A.read_function(tmp_path) if l.startswith("#")] == ["# build", "# arm_a", "# arm_b"]
+    assert A.read_functions(tmp_path / "nowhere") is None
+
+
+# --------------------------------------------------------------------------------------- the forest, generator mutations
+AVOID_OFF = [("    for ab in AR[\"avoid_boxes\"]:", "    for ab in []:")]
+# the points net AND the generator's own fail-closed guard over the same points (authored_sweep): the guard would otherwise
+# refuse to build the mutant and the audit would never see it
+POINTS_OFF = [("        mask |= np.hypot(xx - px, zz - pz) < m + 1.5", "        mask |= np.hypot(xx - px, zz - pz) < 0.5"),
+              ("    probs += authored_sweep(pl)\n    return probs", "    return probs")]
+CORE_OFF = [("    if core:\n        mask |= polygon_mask(", "    if False:\n        mask |= polygon_mask(")]
+RELIEF_OFF = [("            if R3[iz, ix] > rmax_relief:", "            if False:")]
+STREETS_OFF = [("            mask |= seg_dist_grid(xx, zz, a, b) < m + 0.5", "            mask |= seg_dist_grid(xx, zz, a, b) < 1.5")]
+OUTLINE_OFF = STREETS_OFF + [("    mask |= ~polygon_mask(xx + 0.5, zz + 0.5, ring)", "    pass")]
+# Thundurus is held by two nets that overlap (the avoid box, and the 24-block circles round its portal, chamber and spawn-free
+# box), so one net removed changes nothing and proves nothing: the mutation removes both. The city likewise (the 24-block
+# line sweep, the 24-block circles round its x/z points, the core hull).
+THUNDURUS_OFF = AVOID_OFF + POINTS_OFF
+CITY_OFF = POINTS_OFF + STREETS_OFF + CORE_OFF
+
+
+@pytest.mark.parametrize("mutations,expect", [
+    (THUNDURUS_OFF, "Thundurus's spawn-free box"),
+    (CORE_OFF, "inside the city's core"),
+    (RELIEF_OFF, "arm trunk(s) on ground steeper"),
+    (CITY_OFF, "from the Scar's"),
+    (CITY_OFF, "inside the city's core"),
+    (CITY_OFF, "a ruin at"),
+    (OUTLINE_OFF, "outside the mt_vessu outline"),
+], ids=["thundurus_nets_removed", "city_core_removed", "slope_limit_removed", "city_nets_removed_street",
+        "city_nets_removed_core", "city_nets_removed_ruin", "outline_nets_removed"])
+def test_a_mutated_generator_is_caught_by_the_forest_rules(H, tmp_path, mutations, expect):
+    # removing this leaves the forest rules unproven against the code they audit: each mutation edits tools/scar_tarn.py's
+    # text only (data/scar_tarn.json untouched), so a rule that shared the generator's derivation would move with it and pass.
+    # The baseline run is clean (test above), so the finding is the mutation's. Each lobe is drawn wide enough to reach what
+    # the removed net protects, which is why removing the net puts a tree there.
+    fns = built_functions(tmp_path, mutations)
+    rep = A.Report()
+    A.check_forest(fns, H, DOC, rep)
+    assert any(expect in f for f in rep.findings), (expect, rep.findings[:4])

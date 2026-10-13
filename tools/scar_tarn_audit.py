@@ -669,6 +669,9 @@ def check_overlaps(cols, doc, rep, data_dir=DATA):
             x0, z0, x1, z1 = geo
             if (x1 - x0) * (z1 - z0) > 1024 * 1024:
                 continue        # a region-scale bound is a label, not a thing
+            if any(list(e["box"]) == [x0, z0, x1, z1] for e in (doc["rules"].get("authored_box_exempt") or [])):
+                rep.note("overlaps", "data/%s%s box %s is exempt (rules.authored_box_exempt): checked by the forest rules instead" % (f, path, geo))
+                continue
             inside = int(((C[:, 0] >= x0) & (C[:, 0] <= x1) & (C[:, 1] >= z0) & (C[:, 1] <= z1)).sum())
             if inside:
                 rep.err("overlaps", "data/%s%s box %s holds %d written column(s)" % (f, path, geo, inside))
@@ -681,8 +684,10 @@ def check_overlaps(cols, doc, rep, data_dir=DATA):
                                          "named, not failed)" % (f, path, geo, d))
 
 
-def check_paths(cols, doc, rep, data_dir=DATA):
-    """The Scar's pad and streets, and every route path: never under a written column."""
+def check_paths(cols, doc, rep, data_dir=DATA, pad_cols=None):
+    """The Scar's pad and streets, and every route path: never under a written column. `pad_cols` (default: cols) are the columns
+    the pad's radius rule applies to: with growth.arms, the TARN's own function only, because the arms grow in the pad's
+    outskirts on purpose (the owner, 2026-10-12: envelop some of the Scar) and check_forest holds them to the city's own geometry."""
     C = np.asarray(cols, float)
     if not len(C):
         return
@@ -694,7 +699,8 @@ def check_paths(cols, doc, rep, data_dir=DATA):
         rep.err("paths", "no Scar pad (data/sculpt.json pads) or town centre (data/towns.json)")
     else:
         cx, cz = town["centre"]["x"], town["centre"]["z"]
-        d = float(np.hypot(C[:, 0] - cx, C[:, 1] - cz).min())
+        PC = C if pad_cols is None else (np.asarray(pad_cols, float) if len(pad_cols) else C[:0])
+        d = float(np.hypot(PC[:, 0] - cx, PC[:, 1] - cz).min()) if len(PC) else 1e9
         if d <= pad["radius"]:
             rep.err("paths", "a written column is %.0f from the Scar's centre (%d, %d), inside the pad's radius %d" % (d, cx, cz, pad["radius"]))
         if d <= pad["radius"] + pad.get("feather", 0):
@@ -731,6 +737,244 @@ def check_paths(cols, doc, rep, data_dir=DATA):
         rep.note("paths", "nearest route path: %s, %.0f blocks from the written columns' mean" % (best[1], best[0]))
 
 
+# ----------------------------------------------------------------------------------------------------------- the forest
+# The owner, 2026-10-12: the wood should expand toward the Scar, envelop some of it, and go down the back and side of the
+# mountain (data/scar_tarn.json growth.arms: one function each, `arm_<lobe>.mcfunction`). Everything below is this file's
+# own derivation, from the emitted functions, the heightmap and the OTHER records' geometry: nothing is read from
+# tools/scar_tarn.py.
+STREET_MARGIN = 4        # a written column is at least half a street's width + this from its centre line
+RUIN_MARGIN = 8          # nothing written within this of a ruin footprint or the plaza
+CORE_MARGIN = 3          # the city's core box (the three house-lot bands and their ends) is grown by this
+THUNDURUS_ZONE_CLEAR = 20
+THUNDURUS_PORTAL_CLEAR = 24
+TRUNK_RELIEF_MAX = 3     # the tarn's own wood rule: nothing steeper than this under any trunk, in any function
+LOG_STATES = ("minecraft:spruce_log", "minecraft:birch_log")
+STRUCTURE = {"minecraft:spruce_log", "minecraft:birch_log", "minecraft:cobblestone", "minecraft:mossy_cobblestone",
+             "minecraft:mossy_stone_bricks", "minecraft:cracked_stone_bricks", "minecraft:mossy_stone_brick_slab"}
+LIGHT_WORDS = ("torch", "lantern", "glowstone", "shroomlight", "sea_lantern", "froglight", "campfire", "minecraft:light",
+               "lava", "fire", "magma", "redstone_lamp", "jack_o_lantern", "beacon", "end_rod", "candle")
+
+
+def read_functions(pack):
+    """{function name: lines} for build and every arm_*, build first, arms in name order; None if build is missing."""
+    d = Path(pack) / "data" / "cobblers" / "function" / "scar_tarn"
+    if not (d / "build.mcfunction").exists():
+        return None
+    names = ["build"] + sorted(p.stem for p in d.glob("arm_*.mcfunction"))
+    return {n: (d / (n + ".mcfunction")).read_text(encoding="utf-8").splitlines() for n in names}
+
+
+def audit_window(doc):
+    """The box the audit reads the heightmap over: the pond's window and the arms' window together."""
+    x0, z0, x1, z1 = doc["pond"]["window"]
+    arms = (doc.get("growth") or {}).get("arms")
+    if arms:
+        a0, b0, a1, b1 = arms["window"]
+        x0, z0, x1, z1 = min(x0, a0), min(z0, b0), max(x1, a1), max(z1, b1)
+    return x0, z0, x1, z1
+
+
+def ring_inside(x, z, ring):
+    """Even-odd ray cast, point (x, z) against a polygon ring [(x, z), ...]."""
+    inside = False
+    n = len(ring)
+    for i in range(n):
+        (ax, az), (bx, bz) = ring[i], ring[(i + 1) % n]
+        if (az > z) != (bz > z) and x < (bx - ax) * (z - az) / (bz - az) + ax:
+            inside = not inside
+    return inside
+
+
+def relief3(H, x, z):
+    vals = [H(x + a, z + b) for a in (-1, 0, 1) for b in (-1, 0, 1) if H.has(x + a, z + b)]
+    return max(vals) - min(vals)
+
+
+def log_columns(lines):
+    """{(x, z): lowest y} of every upright log (`axis=y`) a function writes: a tree's trunk, not a fallen log."""
+    out = {}
+    for raw in lines:
+        line = raw.strip()
+        m = RE_SET.match(line)
+        if m:
+            x0, y0, z0 = int(m.group(1)), int(m.group(2)), int(m.group(3))
+            x1, y1, z1, state = x0, y0, z0, m.group(4)
+        else:
+            m = RE_FILL.match(line)
+            if not m:
+                continue
+            v = [int(m.group(i)) for i in range(1, 7)]
+            x0, y0, z0, x1, y1, z1, state = min(v[0], v[3]), min(v[1], v[4]), min(v[2], v[5]), max(v[0], v[3]), max(v[1], v[4]), max(v[2], v[5]), m.group(7)
+        if base(state) in LOG_STATES and "axis=y" in state:
+            for x in range(x0, x1 + 1):
+                for z in range(z0, z1 + 1):
+                    out[(x, z)] = min(out.get((x, z), y0), y0)
+    return out
+
+
+def scar_geometry(data_dir):
+    """The Scar's streets, plaza, ruin footprints and the city's core box, from placements.json and ruins.json."""
+    pl = jload(Path(data_dir) / "placements.json")["settlements"]["the_scar"]["plan"]
+    streets = {s["id"]: s for s in pl["streets"]}
+    lots = pl["house_lots"]
+    reach = lots["setback"] + lots["size"][1]
+    corners = []
+    for rid in lots["along"]:
+        s = streets[rid]
+        (ax, az), (bx, bz) = s["polyline"][0], s["polyline"][-1]
+        half = s["width"] / 2.0 + reach
+        end = lots["size"][0] + lots["gap"]
+        x0, x1 = min(ax, bx) - end - CORE_MARGIN, max(ax, bx) + end + CORE_MARGIN
+        z0, z1 = min(az, bz) - half - CORE_MARGIN, max(az, bz) + half + CORE_MARGIN
+        corners += [(x0, z0), (x1, z0), (x1, z1), (x0, z1)]
+    core = hull(corners)
+    ruins = [tuple(r["footprint"]) for r in jload(Path(data_dir) / "ruins.json")["sites"]["the_scar"]["ruins"]]
+    return {"streets": list(streets.values()), "plaza": tuple(pl["plaza"]["rect"]), "ruins": ruins, "core": core}
+
+
+def hull(points):
+    """Convex hull (monotone chain) of [(x, z), ...], counter-clockwise."""
+    pts = sorted(set(points))
+
+    def cross(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lo, up = [], []
+    for p in pts:
+        while len(lo) >= 2 and cross(lo[-2], lo[-1], p) <= 0:
+            lo.pop()
+        lo.append(p)
+    for p in reversed(pts):
+        while len(up) >= 2 and cross(up[-2], up[-1], p) <= 0:
+            up.pop()
+        up.append(p)
+    return lo[:-1] + up[:-1]
+
+
+def inside_polygon(C, ring):
+    """Boolean per row of C (n x 2): the cell centre (x + 0.5, z + 0.5) is inside the polygon (even-odd)."""
+    x, z = C[:, 0] + 0.5, C[:, 1] + 0.5
+    inside = np.zeros(len(C), bool)
+    n = len(ring)
+    for i in range(n):
+        (ax, az), (bx, bz) = ring[i], ring[(i + 1) % n]
+        if az == bz:
+            continue
+        inside ^= ((az > z) != (bz > z)) & (x < (bx - ax) * (z - az) / (bz - az) + ax)
+    return inside
+
+
+def _box_dist(C, box):
+    x0, z0, x1, z1 = box
+    dx = np.maximum(np.maximum(x0 - C[:, 0], C[:, 0] - x1), 0)
+    dz = np.maximum(np.maximum(z0 - C[:, 1], C[:, 1] - z1), 0)
+    return np.hypot(dx, dz)
+
+
+def check_forest(functions, H, doc, rep, data_dir=DATA):
+    """The arms (growth.arms) against the ground and against everything else that stands on Mt Vessu."""
+    arms = (doc.get("growth") or {}).get("arms")
+    if not arms:
+        return {}
+    names = [n for n in functions if n.startswith("arm_")]
+    want = ["arm_" + lb["id"] for lb in arms["lobes"]]
+    if sorted(names) != sorted(want):
+        rep.err("forest", "the pack's arm functions %s are not the record's lobes %s" % (sorted(names), sorted(want)))
+    lines = [l for n in ["build"] + sorted(names) for l in functions.get(n, [])]
+    W, probs = replay(lines, H, 0)
+    for p in probs[:4]:
+        rep.err("forest", "replay: " + p)
+    cols = np.asarray(sorted({(x, z) for x, _y, z in W.written}), float)
+    if not len(cols):
+        rep.err("forest", "the functions write no column")
+        return {}
+    stats = {}
+    # 1. the trunks: standing on ground a tree can stand on, and not under the sea
+    cap = int(arms["max_relief_3x3"])
+    steep = []
+    for n in sorted(names):
+        trunks = log_columns(functions[n])
+        stats[n] = {"trunks": len(trunks), "functions_lines": len([l for l in functions[n] if l and not l.startswith("#")])}
+        if not trunks:
+            rep.err("forest", "%s writes no tree" % n)
+        for (x, z), y in sorted(trunks.items()):
+            if relief3(H, x, z) > cap:
+                steep.append((n, x, z, relief3(H, x, z)))
+            if H(x, z) < arms["min_ground_y"]:
+                rep.err("forest", "%s: a trunk at (%d, %d) stands on ground y%d, under the record's floor y%d" % (n, x, z, H(x, z), arms["min_ground_y"]))
+            if y != H(x, z) + 1:
+                rep.err("forest", "%s: the trunk at (%d, %d) starts at y%d, not on the ground (y%d)" % (n, x, z, y, H(x, z)))
+    if steep:
+        rep.err("forest", "%d arm trunk(s) on ground steeper than the 3x3 relief %d, e.g. %s" % (len(steep), cap, steep[:3]))
+    allsteep = [(x, z) for (x, z) in log_columns(functions["build"]) if relief3(H, x, z) > TRUNK_RELIEF_MAX]
+    if allsteep:
+        rep.err("forest", "%d tarn trunk(s) on 3x3 relief over %d, e.g. %s" % (len(allsteep), TRUNK_RELIEF_MAX, allsteep[:3]))
+    # 2. every column an arm writes is inside the mountain's outline
+    lm = next(l for l in jload(Path(data_dir) / "landmarks.json")["landmarks"] if l["id"] == arms["inside_landmark"])
+    ring = [tuple(p) for p in lm["extent"]["polygons"][0]]
+    arm_cols = set()
+    for n in sorted(names):
+        for raw in functions[n]:
+            m = RE_SET.match(raw.strip())
+            if m:
+                arm_cols.add((int(m.group(1)), int(m.group(3))))
+                continue
+            m = RE_FILL.match(raw.strip())
+            if m:
+                v = [int(m.group(i)) for i in range(1, 7)]
+                for x in range(min(v[0], v[3]), max(v[0], v[3]) + 1):
+                    for z in range(min(v[2], v[5]), max(v[2], v[5]) + 1):
+                        arm_cols.add((x, z))
+    outside = [c for c in sorted(arm_cols) if not ring_inside(c[0] + 0.5, c[1] + 0.5, ring)]
+    if outside:
+        rep.err("forest", "%d arm column(s) outside the %s outline, e.g. %s" % (len(outside), arms["inside_landmark"], outside[:3]))
+    # 3. the Scar: its streets, plaza, ruins and core are the city, and the city stays readable
+    G = scar_geometry(data_dir)
+    for s in G["streets"]:
+        pts = s["polyline"]
+        d = min(float(_seg_dist(cols, a, b).min()) for a, b in zip(pts, pts[1:]))
+        need = s["width"] / 2.0 + STREET_MARGIN
+        if d < need:
+            rep.err("forest", "a written column is %.1f from the Scar's %s (needs half its width %s + %d)" % (d, s["id"], s["width"] / 2.0, STREET_MARGIN))
+        rep.note("forest", "the Scar's %s: nearest written column %.0f" % (s["id"], d))
+    for what, box in [("the plaza", G["plaza"])] + [("a ruin at %s" % (f[:2],), f) for f in G["ruins"]]:
+        d = float(_box_dist(cols, box).min())
+        if d < RUIN_MARGIN:
+            rep.err("forest", "a written column is %.1f from %s %s (needs %d)" % (d, what, box, RUIN_MARGIN))
+    inner = int(inside_polygon(cols, G["core"]).sum())
+    if inner:
+        rep.err("forest", "%d written column(s) inside the city's core, the hull of the three house-lot bands and their ends %s" % (inner, G["core"]))
+    rep.note("forest", "the city's core hull %s holds %d written column(s)" % (G["core"], inner))
+    # 4. Thundurus: the sealed chamber's plug, shaft and approach (the spawn-free box and the portal)
+    th = next(e for e in jload(Path(data_dir) / "legendaries.json")["encounters"] if e["id"] == "thundurus")
+    dz_ = float(_box_dist(cols, tuple(th["spawn_free_zone"])).min())
+    if dz_ < THUNDURUS_ZONE_CLEAR:
+        rep.err("forest", "a written column is %.1f from Thundurus's spawn-free box %s (needs %d)" % (dz_, th["spawn_free_zone"], THUNDURUS_ZONE_CLEAR))
+    dp = float(np.hypot(cols[:, 0] - th["portal"][0], cols[:, 1] - th["portal"][1]).min())
+    if dp < THUNDURUS_PORTAL_CLEAR:
+        rep.err("forest", "a written column is %.1f from Thundurus's portal %s (needs %d)" % (dp, th["portal"], THUNDURUS_PORTAL_CLEAR))
+    rep.note("forest", "Thundurus: nearest written column %.0f from its spawn-free box, %.0f from its portal" % (dz_, dp))
+    # 5. no light, no fire, no spawn-condition block but the whitelisted water
+    text = "\n".join(l for l in lines if not l.startswith("#"))
+    found = sorted({w for w in LIGHT_WORDS if w in text})
+    if found:
+        rep.err("forest", "the functions write light or fire blocks: %s (the Scar is dark by design, data/scar_tarn.json place.dark_by_design)" % found)
+    spawn = set(jload(Path(data_dir) / "spawn_blocks.json")["blocks"])
+    ok = {b for w in jload(Path(data_dir) / "spawn_block_policy.json")["whitelist"] if "scar_tarn" in (w.get("scope") or "")
+          for b in w.get("blocks") or []}
+    written = set(re.findall(r"minecraft:[a-z_]+", text))
+    extra = sorted(written & spawn - ok)
+    if extra:
+        rep.err("forest", "spawn-condition blocks written that the policy does not allow for scar_tarn: %s" % extra)
+    rep.note("forest", "spawn-condition blocks written (allowed): %s" % sorted(written & spawn & ok))
+    # 6. each function inside the server's limits
+    import function_limits
+    for n, ls in functions.items():
+        bad = function_limits.check_lines(ls, n)
+        if bad:
+            rep.err("forest", "%s: %d command(s) the server would refuse, e.g. %s" % (n, len(bad), bad[:2]))
+    return stats
+
+
 # ------------------------------------------------------------------------------------------------------------ run
 def build_pack(out):
     """The generator's CLI, not its functions."""
@@ -742,11 +986,12 @@ def build_pack(out):
 
 
 def read_function(pack):
-    f = Path(pack) / FUNCTION
-    return f.read_text(encoding="utf-8").splitlines() if f.exists() else None
+    """Every function of the pack as one run of lines: build, then each arm in name order (each holds its own chunks)."""
+    fns = read_functions(pack)
+    return None if fns is None else [l for ls in fns.values() for l in ls]
 
 
-def audit(lines, H, doc, wards, spawns, regions, design, jar, data_dir=DATA, drops=DROPS):
+def audit(lines, H, doc, wards, spawns, regions, design, jar, data_dir=DATA, drops=DROPS, functions=None):
     rep = Report()
     if not lines:
         rep.err("pack", "no build.mcfunction to replay")
@@ -758,7 +1003,12 @@ def audit(lines, H, doc, wards, spawns, regions, design, jar, data_dir=DATA, dro
     check_alphas(wards, spawns, regions, design, jar, rep)
     cols = written_columns(lines, H)
     check_overlaps(cols, doc, rep, data_dir)
-    check_paths(cols, doc, rep, data_dir)
+    pad_cols = None
+    if functions is not None and (doc.get("growth") or {}).get("arms"):
+        pad_cols = written_columns(functions["build"], H)
+    check_paths(cols, doc, rep, data_dir, pad_cols)
+    if functions is not None:
+        stats["forest"] = check_forest(functions, H, doc, rep, data_dir)
     return rep, stats
 
 
@@ -774,8 +1024,9 @@ def main(argv=None):
     doc = jload(a.data)
     with tempfile.TemporaryDirectory(prefix="scar_tarn_audit_") as tmp:
         pack = Path(a.pack) if a.pack else build_pack(Path(tmp) / "pack")
+        functions = read_functions(pack)
         lines = read_function(pack)
-    H = heights_from_heightmap(doc["pond"]["window"], a.source_root)
+    H = heights_from_heightmap(audit_window(doc), a.source_root)
     if a.records:
         wards, spawns = records_inputs(a.records)
         spawns["subregions"] = jload(DATA / "spawns.json").get("subregions")
@@ -784,7 +1035,11 @@ def main(argv=None):
         spawns = jload(DATA / "spawns.json")
     jp = find_jar(a.jar)
     jar = Jar(jp) if jp else None
-    rep, stats = audit(lines, H, doc, wards, spawns, jload(DATA / "regions.json"), jload(DATA / "encounter_design.json"), jar)
+    rep, stats = audit(lines, H, doc, wards, spawns, jload(DATA / "regions.json"), jload(DATA / "encounter_design.json"), jar,
+                       functions=functions)
+    forest = stats.pop("forest", {})
+    for n, v in sorted(forest.items()):
+        print("forest %s: %d trunks, %d commands" % (n, v["trunks"], v["functions_lines"]))
     for d, s in sorted(stats.items()):
         print("drop %d: %d water, %d open face(s), flow reaches %d cell(s), %d over a free cell, %s"
               % (d, s["water"], s["open_faces"], s["reached"], s["falls"], "ESCAPES the window" if s["escaped"] else "inside the window"))

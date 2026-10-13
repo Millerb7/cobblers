@@ -71,7 +71,9 @@ BUCKETS = ("common", "uncommon", "rare", "ultra-rare")
 POSITIONS = {"grounded": "On land", "surface": "On the water's surface", "submerged": "Swimming underwater",
              "seafloor": "On the lake or sea floor"}
 BOX_KEYS = ("minX", "maxX", "minZ", "maxZ")
-KNOWN_CONDITIONS = set(BOX_KEYS) | {"canSeeSky", "timeRange", "isRaining", "minY", "maxY", "neededNearbyBlocks", "biomes"}
+KNOWN_CONDITIONS = set(BOX_KEYS) | {"canSeeSky", "timeRange", "isRaining", "minY", "maxY", "neededNearbyBlocks", "biomes",
+                                    "dimensions"}
+OVERWORLD = "minecraft:overworld"
 TIMES = ("day", "night")
 
 # Settlements whose label would give a discovery away. Every other data/towns.json town is labelled, and a town that
@@ -91,6 +93,19 @@ SPECIAL_NAMES = {"mrmime": "Mr. Mime", "mimejr": "Mime Jr.", "mrrime": "Mr. Rime
                  "hooh": "Ho-Oh", "jangmoo": "Jangmo-o", "hakamoo": "Hakamo-o", "kommoo": "Kommo-o",
                  "typenull": "Type: Null", "flabebe": "Flabebe", "hooh_": "Ho-Oh"}
 FORMS = {"alolan": "Alolan", "galarian": "Galarian", "hisuian": "Hisuian", "paldean": "Paldean"}
+
+
+_DEX = []
+
+
+def _legend_class(pokemon):
+    """True for a species the Cobblemon jar labels legendary, mythical, ultra beast or paradox (the dungeon guide's
+    Dex): those are a discovery, never a listing, on this page and on drops.html, which reads wild_species()."""
+    if not _DEX:
+        import player_guide_battles as PB
+        import player_guide_dungeons as PG
+        _DEX.append(PG.Dex(PB.find_jar()))
+    return _DEX[0].is_legend(pokemon.split()[0])
 
 
 def species_name(pokemon):
@@ -137,6 +152,11 @@ def condition_text(cond):
         if k not in KNOWN_CONDITIONS:
             raise SystemExit("compiled condition key %r is not one this page knows how to describe; add it to "
                              "tools/player_guide_map.py rather than letting the page misreport it" % k)
+    # tools/compile_spawns.py bind_dimension writes the overworld into every entry that names none (commit 3dc7c009); the
+    # map is the overworld, so that says nothing a player needs. Any other dimension would put an entry on the wrong map.
+    if "dimensions" in cond and cond["dimensions"] != [OVERWORLD]:
+        raise SystemExit("compiled dimensions %r is not the overworld; the map would place the entry wrongly"
+                         % (cond["dimensions"],))
     if cond.get("timeRange"):
         if cond["timeRange"] not in TIMES:
             raise SystemExit("timeRange %r is not day or night; the day/night rates would be wrong" % cond["timeRange"])
@@ -221,6 +241,8 @@ def summarise(by_box, bucket_weights):
                 a["inb"].append(v.get("inb_day") if v.get("inb_day") is not None else v.get("inb_night"))
     rows = []
     for k in sorted(acc, key=lambda k: (list(POSITIONS).index(k[0]), BUCKETS.index(k[2]), k[1], k[3])):
+        if _legend_class(k[1]):
+            continue    # the site never names a legendary-class species (2026-10-12: Buzzwole, Pheromosa rare spawns)
         a = acc[k]
         cond = json.loads(k[5])
         row = {"pos": k[0], "sp": k[1], "name": species_name(k[1]), "bucket": k[2], "lv": [k[3], k[4]],

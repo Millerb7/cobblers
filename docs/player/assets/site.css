@@ -232,4 +232,21 @@ section.doc li{margin:.15rem 0}
 .page-drops .also{font-size:.8rem;margin:2px 0 0}
 @media (max-width:560px){.page-drops main{padding:8px 10px 20px}.page-drops table{font-size:.8rem}
 .page-drops .id,.page-drops .pct{display:none}}
+/* tms.html and held-items.html (tools/player_guide_tms.py, tools/player_guide_held_items.py) */
+.page-tms main,.page-held main{max-width:1080px;margin:0 auto;padding:12px 16px 20px}
+.page-tms h1,.page-held h1{font-size:1.7rem;margin:14px 0 4px}
+.page-tms h2,.page-held h2{font-size:1.35rem;margin:30px 0 6px;padding-bottom:4px;border-bottom:2px solid var(--accent)}
+.page-tms h2 small,.page-held h2 small{font-size:.8rem;font-weight:400;color:var(--muted)}
+.page-tms table,.page-held table{border-collapse:collapse;width:100%;font-size:.88rem;margin:6px 0}
+.page-tms th,.page-tms td,.page-held th,.page-held td{text-align:left;padding:.3rem .45rem;border-bottom:1px solid var(--rule);
+vertical-align:top}
+.page-tms th,.page-held th{font-weight:600;color:var(--muted);font-size:.78rem}
+.page-tms td.n,.page-tms th.n,.page-held td.n,.page-held th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.page-tms td ul,.page-held td ul{margin:0;padding-left:1.1rem}
+.page-tms td li,.page-held td li{margin:0 0 2px}
+.page-tms .id,.page-held .id{color:var(--muted);font-size:.78rem;display:block}
+.page-tms .chips button,.page-held .chips button{font-size:.8rem;padding:2px 9px}
+.page-held .none{color:var(--muted)}
+@media (max-width:560px){.page-tms main,.page-held main{padding:8px 10px 20px}.page-tms table,.page-held table{font-size:.8rem}
+.page-tms .id,.page-held .id{display:none}}
 @media print{.site-header{position:static}.seg,#theme,.filter,.search{display:none}}

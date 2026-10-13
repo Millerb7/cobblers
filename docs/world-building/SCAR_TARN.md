@@ -3,7 +3,8 @@
 The owner, 2026-10-11: the Scar is good, but the mountain is empty. A recess on its north-west side could hold a pond,
 with trees and alpha Pokemon "down to have taken over the afflicted area". Record `data/scar_tarn.json`, generator
 `tools/scar_tarn.py`, pack `cobblers_scar_tarn`, step **R9ST** (before R9E), tests `tests/test_scar_tarn.py`.
-Optional, off every route. Status: in the repository only; not in any world.
+Optional, off every route. Status: the tarn and its own wood were applied to staging 2026-10-11 (STATE "Latest install");
+the arms below (2026-10-12) are in the repository only. The live world predates the Scar's pad and has neither.
 
 ## Where, measured (canonical heightmap, rounded; `python tools/scar_tarn.py report`)
 
@@ -20,11 +21,46 @@ Optional, off every route. Status: in the repository only; not in any world.
 ## What is built
 
 Vanilla blocks only, `blocks.ids` in the record (the generator refuses any other): the pond with a clay/mud lining, a
-moss/mud/coarse-dirt/gravel bank; 190 trees (spruce, a few 18-24 block spruce elders, birch near the water, dead snags),
+moss/mud/coarse-dirt/gravel bank; 190 trees round the water and, in the arms, 846 more (spruce, a few 18-24 block spruce
+elders, birch near the water, dead snags),
 9 fallen logs, 10 mossy boulders, five stubs of `mossy_stone_bricks`/`cracked_stone_bricks` (the Scar's own palette), moss,
 podzol and coarse dirt thinning to 34 blocks out, ferns, grass, azalea and moss carpet on the dirt-tag ground. No lamps (the
 Scar is dark by design). Water is the one spawn-condition block, whitelisted for `scar_tarn` in
 `data/spawn_block_policy.json`. Nothing is written within 24 blocks of an x/z another data file authors.
+
+## The wood's arms (2026-10-12)
+
+The owner, looking at the tarn on the map: "The forest should expand toward the Scar, maybe envelop some of it, and then down
+the back and side of the mountain." (`growth.arms` in the record; `build_arms` in the generator.) The tarn's own wood is
+layer 1 and its function `build.mcfunction` is byte for byte what it was (`tests/test_scar_tarn.py` pins its sha256), so a
+re-apply adds trees and moves none. The arms are layer 2: five lobes, each a spine of (x, z, radius) knots, each its own
+function `arm_<lobe>.mcfunction`, the same kinds, heights, ground cover and plants, a tree probability that falls from the
+spine to zero at the radius (a natural edge). Slopes decide where the wood can go: a trunk needs the 3x3 around it to vary by
+two blocks or less (the tarn's own wood allows three), so the wood thins and stops at the cliffs.
+
+- **To the Scar** (`to_the_scar_west`, `to_the_scar_east`): from the tarn's south shore over the ramp (y240 to 280) onto the
+  pad's north apron, then round the pad's west rim to the cross road's latitude and round its north-east rim. The pad (y280,
+  radius 150 round (2110, 950)) is the Scar's own ground; this is its outskirts, so the wood envelops the city's north,
+  west and east edges and stops at the ruins. Three brick stubs in the Scar's palette per lobe.
+- **Down the back** (`down_the_back`, `down_the_back_east`): the north face. The hollow's north wall (z636 to 700) is bare
+  cliff; under it the face is a gentle 20 to 30 degree slope down to the Mt Vessu outline at z556 to 600, and the 24-block
+  clearance from that outline leaves a band z584 to 634. The wood runs down into it.
+- **Down the side** (`down_the_side`): the EAST flank, where the pad's feather falls away east of the Scar. West of the pad the
+  mountain drops 100 blocks in 50 (x1830 to 1880) under Thundurus's shoulder and inside the outline's margin there is no
+  gentle ground, so the heightmap leaves the east. (Chosen from the heightmap, not from the brief: the brief did not say which
+  side.)
+
+Kept clear (the keep-clear net the generator carves each lobe with, and the audit re-derives on its own): every x/z, line and
+box any other record authors, 24 blocks (the tarn's own rule): the Scar's streets and the avenue's approach, Thundurus's
+portal, chamber and spawn-free box (plus the avoid box `thundurus_plug_and_approach`), Wardenhold's burrow, the mines' faces,
+every route path; the city's core (the hull of the three house-lot bands, so the houses and the plaza stay readable); and
+everything outside the Mt Vessu outline. No light block, no spawn-condition block but water (still the tarn's only). The one
+exemption: the Scar's town footprint box (a 300 x 300 planning square) is `rules.authored_box_exempt`, replaced by the
+geometric rules above.
+
+Step R9ST runs the tarn's function and then each arm (hold, wait, function, release); a re-run over the wood already in the
+world adds the arms and rewrites the tarn identically, but R9ST writes the four ward mimic blocks back over the Habitat
+Blocks, so run it as `run --only R9ST,R9E`. The alphas (wards, pools, band) are untouched.
 
 ## The alphas
 
@@ -51,6 +87,17 @@ tarn is a repeatable gem source: the owner's call.
 3. The activated blocks keep their pools alive, and what a spawned entity is: an alpha at all (`/data get entity` on one
    for the alpha flag, or its size).
 4. The player's level against it (the sensor), and that it is optional in practice.
+
+## The audit (tools/scar_tarn_audit.py)
+
+Written for the tarn by an agent that built none of it. The forest rules (`check_forest`) were added 2026-10-12 by the session
+that built the arms (the audit's rules are its own code, read from the emitted functions, the heightmap and the OTHER
+records' geometry, and it is proven by mutating the GENERATOR in `tests/test_scar_tarn_audit.py`; it is not the owner's
+independent reviewer). It checks each arm: trunks on ground within the record's relief, above the record's floor, standing at
+the ground; every arm column inside the outline; the Scar's streets (half-width + 4), ruin footprints and plaza (8), the
+city's core hull; Thundurus's spawn-free box (20) and portal (24); no light, no fire, no spawn-condition block but the
+whitelisted water; each function inside the server's limits. Not covered: the world (the heightmap stands in for the
+save), what a mod or a donor template put there.
 
 ## What an audit must check (independent, by an agent that built none of it)
 
