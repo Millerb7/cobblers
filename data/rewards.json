@@ -518,7 +518,7 @@
       }
     },
     {
-      "id": "r4_packer",
+      "id": "r4_packer", "npc_placed_by": "R17",
       "kind": "npc_grant",
       "place": "Headwall camp: the string that bolted",
       "npc_at": [
@@ -538,7 +538,7 @@
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R17); its position written by `route4_events.py --write`"
     },
     {
-      "id": "r4_gate",
+      "id": "r4_gate", "npc_placed_by": "R17",
       "kind": "npc_grant",
       "place": "The thaw gate: the summit is below",
       "npc_at": [
@@ -2550,7 +2550,7 @@
       }
     },
     {
-      "id": "oak_waystone",
+      "id": "oak_waystone", "npc_placed_by": "R17N",
       "kind": "npc_grant",
       "place": "Oak's lab, Pallet Town: Professor Oak, in his own conversation after the send-off",
       "npc_at": [
@@ -2570,7 +2570,7 @@
       "built_by": "no build: Oak is placed by reapply step R17 (data/npc_seats.json npc_main_pallet_oak) and his conversation is compiled by tools/compile_dialogue.py; the recipes are closed by cobblers_player_waystone"
     },
     {
-      "id": "wardenhold_giratina",
+      "id": "wardenhold_giratina", "npc_placed_by": "R18FK",
       "kind": "npc_grant",
       "place": "the Wardenhold folk's burrow in Mt Vessu's face: Maren Holt, after the player tells her they beat Giratina",
       "npc_at": [

@@ -657,6 +657,10 @@ def npcs():
     for r in rw.get("rewards") or []:
         if r.get("kind") != "npc_grant":
             continue
+        # the NPC another step already stands up (its own `built_by` says which): placing it here as well put a
+        # second copy beside it (Oak, the Route 4 packer and Maren, caught by tests/test_npc_seats.py's sweep)
+        if r.get("npc_placed_by"):
+            continue
         conv = next((c for c in dl["conversations"] if c.get("quest_id") == r["quest"]), None)
         if conv is None:
             raise SystemExit("reward %s names quest %s, and no conversation in data/dialogue.json runs it" % (r["id"], r["quest"]))
