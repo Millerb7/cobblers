@@ -36,7 +36,7 @@ import dungeon_rooms as R  # noqa: E402
 import dungeon_setpieces as SP  # noqa: E402
 
 DOC = D.load()
-RIP = {r["legacy_dungeon"]: r for r in DOC["rips"] if r.get("legacy_dungeon")}   # the test rips (data/dungeon_rips.json)
+RIP = {r["legacy_dungeon"]: r for r in DOC["retired_rips"]}   # the 13 test rips, RETIRED 2026-10-13 (retired_rips in data/dungeon_rips.json): the records are kept
 JG = next(d for d in DOC["dungeons"] if d["id"] == "jungle")
 SLOTS = [s for s in D.slots(DOC) if s["dungeon"]["id"] == "jungle"]
 SLOT = SLOTS[0]
@@ -517,7 +517,7 @@ def test_the_prize_is_a_mythical_no_other_data_file_uses_and_before_it_a_rare_th
 def test_the_rip_stands_by_the_night_shifts_on_the_trail_clear_of_the_old_mine_and_the_other_rips():
     import route1_old_mine as M
     f = RIP[JG["id"]]["frame"]
-    ns = DOC["rips"][0]["frame"]
+    ns = DOC["retired_rips"][0]["frame"]
     cx, cz = (f["x0"] + f["x1"]) / 2, f["z"]
     assert ((cx - (ns["x0"] + ns["x1"]) / 2) ** 2 + (cz - ns["z"]) ** 2) ** 0.5 <= 60
     assert f["x0"] > max(M.TRAIL[-1][0], max(x for x, _z in M.TRAIL)) + 4, "east of the old mine's footprint"

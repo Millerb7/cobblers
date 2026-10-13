@@ -55,7 +55,7 @@ def rip_fn(rip_id):
     return "cobblers:dungeons/" + D.rip_door(next(x for x in RIPS if x["id"] == rip_id))
 
 
-def at_rip(w, rip_id="rip_trail_ns", name="Ash", band=1, flags=(), tags=()):
+def at_rip(w, rip_id="rip_pallet_fields", name="Ash", band=1, flags=(), tags=()):
     r = next(x for x in RIPS if x["id"] == rip_id)
     p = w.player(name, OW, (r["outside"][0], r["outside"][1], r["outside"][2]), advancements=[FLAG % f for f in flags])
     p.tags.update(tags)
@@ -63,7 +63,7 @@ def at_rip(w, rip_id="rip_trail_ns", name="Ash", band=1, flags=(), tags=()):
     return p
 
 
-def click(w, p, rip_id="rip_trail_ns"):
+def click(w, p, rip_id="rip_pallet_fields"):
     w.call(rip_fn(rip_id), PS.Ctx(p, p.dim, p.pos))
 
 
@@ -86,7 +86,7 @@ def abandon(w, p):
     w.set("#up", "dg.up", (w.get("#up", "dg.up") or 0) + DOC["engine"]["keeper"]["period_ticks"])
 
 
-def draws(w, p, n, rip_id="rip_trail_ns"):
+def draws(w, p, n, rip_id="rip_pallet_fields"):
     out = []
     for _ in range(n):
         click(w, p, rip_id)
@@ -254,7 +254,7 @@ def test_no_sigil_is_a_refusal_that_does_not_stamp_or_record_the_rip(pack):
 def test_a_player_already_in_a_run_is_refused_and_the_run_is_untouched(pack):
     w = draw_world(pack)
     p = at_rip(w)
-    click(w, p, "rip_trail_ns")
+    click(w, p, "rip_pallet_fields")
     run, slot, dun, rip = (w.get(p.name, o) for o in ("dg.run", "dg.slot", "dg.dun", "dg.rip"))
     click(w, p, "rip_the_rift")
     assert (w.get(p.name, "dg.run"), w.get(p.name, "dg.slot"), w.get(p.name, "dg.dun"), w.get(p.name, "dg.rip")) == (run, slot, dun, rip)
@@ -263,7 +263,7 @@ def test_a_player_already_in_a_run_is_refused_and_the_run_is_untouched(pack):
 
 def test_the_way_out_is_the_rip_the_run_was_entered_by(pack):
     # the same dungeon can now open from any rip, so the exit point is the rip's, not the dungeon's
-    for rip_id in ("rip_trail_ns", "rip_the_rift", "rip_pine_isles", "rip_eastern_dunes"):
+    for rip_id in ("rip_pallet_fields", "rip_the_rift", "rip_pine_isles", "rip_eastern_dunes"):
         w = draw_world(pack)
         p = at_rip(w, rip_id)
         click(w, p, rip_id)

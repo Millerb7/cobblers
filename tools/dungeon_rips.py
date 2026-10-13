@@ -28,10 +28,17 @@ THE RULES a region rip (kind "region") is held to, each with where its number co
               round it: a rip is a wild place and a wild place is not inside a spawn-free precinct.
   region      the window's four corners inside the region's polygon (data/regions.json), so a rip stands in the region it
               names.
-  spread      at least SPREAD (300) blocks from every other rip of another trail: the 13 test rips on the old mine's trail
-              are one cluster (kind "test_trail") and are not held to it.
+  spread      at least SPREAD (300) blocks from every other standing rip. (The 13 test rips on the old mine's trail, kind
+              "test_trail", were RETIRED 2026-10-13 and live under retired_rips: they are not standing, so they are not held to
+              it and nothing is held to a distance from them.)
+  gate        NOT a rule. A rip may stand in a place the player cannot yet reach (the owner, 2026-10-13: "every area in game
+              should be capable of spawning a rift, so leave it even if its gated"). data/rift_zones.json says which Rift
+              zone a window stands in and what its pass is; the check records that as the rip's `reachable_after` and prints it
+              as information. A record that disagrees with the zones is a problem (a stale record), a gated rip is not.
 
-What this does NOT cover (CLAUDE.md "Our list is not the world"): anything in the world that no file in data/ authors, a
+What this does NOT cover (CLAUDE.md "Our list is not the world"): the gate reads data/rift_zones.json's live zones only,
+not the Gulch's own zone (data/gulch_mine.json, gym 6) or any other gate a player meets on the way (a ferry, a badge-locked
+route); anything in the world that no file in data/ authors, a
 tree or a boulder in the plane (rip.restore puts air there), a donor template's outbuilding, a mod's structure. The
 clearance is from our records, not from the world; the rip is checked on the heightmap and never on a save. Nether rips are
 NOT sited: the Nether has no heightmap (docs/research/notes/nether-rip-siting.md) and the engine places rips in the
@@ -59,6 +66,7 @@ PLANE_H = 4
 # the window round a rip, relative to the plane's middle column and its z: x -4..+4, z -1..+5
 WIN = (-4, -1, 4, 5)
 ROUTE_FILES = ("data/route_paths.json",)
+ZONES = ROOT / "data" / "rift_zones.json"
 
 
 def load(path=DATA):
@@ -92,6 +100,42 @@ def region_polys():
 
 def in_region(polys, x, z):
     return any(in_ring(ring, x, z) for ring in polys)
+
+
+def zone_gates():
+    """[(zone id, zone name, [box], pass)] for the live Rift zones in data/rift_zones.json: a zone with boxes and a pass.
+    A box is [x0, z0, x1, z1]; z5's second set (also_boxes) is part of the zone. z3 is superseded and has no boxes."""
+    doc = json.loads(ZONES.read_text(encoding="utf-8"))
+    out = []
+    for zid, z in doc["zones"].items():
+        boxes = list(z.get("boxes") or []) + list((z.get("also_boxes") or {}).get("boxes") or [])
+        if boxes and z.get("pass"):
+            out.append((zid, z["name"], boxes, z["pass"]))
+    return out
+
+
+def gate_of(frame, zones=None):
+    """The `reachable_after` record for the rip whose window is `frame`'s: the Rift zone the window (any corner or its
+    centre) stands in, and that zone's pass as data/rift_zones.json states it; None when it stands in no live zone.
+    Information, not a rule: a gated rip is allowed."""
+    zones = zones if zones is not None else zone_gates()
+    win = window(frame)
+    pts = [(win[0], win[1]), (win[2], win[1]), (win[0], win[3]), (win[2], win[3]), (mid_x(frame), frame["z"] + 2)]
+    for zid, name, boxes, ps in zones:
+        if any(b[0] <= x <= b[2] and b[1] <= z <= b[3] for b in boxes for x, z in pts):
+            g = {"zone": zid, "zone_name": name, "kind": ps["kind"]}
+            for k in ("threshold", "advancements", "flags"):
+                if k in ps:
+                    g[k] = ps[k]
+            g["from"] = "data/rift_zones.json zones.%s (boxes and pass)" % zid
+            return g
+    return None
+
+
+def gate_text(g):
+    need = ("%s badges" % g["threshold"] if g["kind"] == "badges" else "%s species caught" % g["threshold"] if g["kind"] == "caught"
+            else "flag " + ", ".join(g.get("flags") or ["?"]))
+    return "inside Rift zone %s (%s): a player reaches it after %s" % (g["zone"], g["zone_name"], need)
 
 
 def precinct_boxes():
@@ -308,6 +352,9 @@ def record(g, rip_id, name, region_id, m, z, theme, pts=None):
         "plume": False,
     }
     rec["restore"] = D.rip_restore_measured(rec, g)
+    gate = gate_of(f)
+    if gate:
+        rec["reachable_after"] = gate
     if pts is not None:
         near = nearest(win, pts)
         rn = nearest(win, pts, ROUTE_FILES)
@@ -324,7 +371,8 @@ def problems(doc=None, g=None):
         bad.append("schema must be %s" % SCHEMA)
     rips = doc["rips"]
     ids = [r["id"] for r in rips]
-    if len(set(ids)) != len(ids):
+    retired = doc.get("retired_rips") or []
+    if len(set(ids)) != len(ids) or {r["id"] for r in retired} & set(ids):
         bad.append("two rips share an id")
     for r in rips:
         if not r["id"].startswith("rip_"):
@@ -336,11 +384,17 @@ def problems(doc=None, g=None):
             bad.append("%s: the click is the plane's middle column, one block in front" % r["id"])
         if r["kind"] not in ("test_trail", "region"):
             bad.append("%s: kind %r" % (r["id"], r["kind"]))
+    zones = zone_gates()
+    for r in rips:
+        want = gate_of(r["frame"], zones)
+        if r.get("reachable_after") != want:
+            bad.append("%s: reachable_after is %s, data/rift_zones.json puts the rip at %s (python tools/dungeon_rips.py check; "
+                       "a gated rip is allowed, a stale record is not)" % (r["id"], r.get("reachable_after"), want))
     if g is None:
         return bad
     polys = region_polys()
     boxes = precinct_boxes()
-    pts = points(ids)
+    pts = points(ids + [r["id"] for r in retired])
     region_rips = [r for r in rips if r["kind"] == "region"]
     for r in region_rips:
         others = [(o["id"], mid_x(o["frame"]), o["frame"]["z"]) for o in rips if o is not r and o["kind"] != "test_trail"]
@@ -350,11 +404,13 @@ def problems(doc=None, g=None):
     return bad
 
 
-def probes(doc=None, skip=("rip_trail_ns",)):
-    """{"dungeon_rips": [probe]} in data/world_probes.json's shape, for tools/presence_audit.py --only extra: per rip its
-    interaction, its oval and the themed core block under it (what R16DR leaves in the world). The Night Shift's rip is
-    skipped: data/world_probes.json dungeon_night_shift already carries its three. The probes are written from the same
-    record and the same rip_tag / rip_scorch_cells the pack is, so they prove the WORLD against the plan, not the plan."""
+def probes(doc=None, skip=()):
+    """{"dungeon_rips": [probe]} in data/world_probes.json's shape, for tools/presence_audit.py --only extra: per standing
+    rip its interaction, its oval and the themed core block under it (what R16DR leaves in the world), and once the oval's
+    item and model value; per RETIRED rip (2026-10-13) the opposite: no interaction, no oval, the ground under where the oval
+    stood back to retired.ground and the plane's bottom middle cell back to rip.restore. The probes are written from the same
+    record and the same rip_tag / rip_scorch_cells the pack is, so they prove the WORLD against the plan, not the plan.
+    A count of 0 proves little by itself (an entity not yet loaded is also 0): presence_audit holds the chunk first."""
     import dungeon as D
     ddoc = D.load()
     doc = doc if doc is not None else load()
@@ -370,6 +426,27 @@ def probes(doc=None, skip=("rip_trail_ns",)):
                     "entity": "@e[type=minecraft:item_display,tag=%s,tag=%s]" % (tag, oval), "count": 1, "hold": hold})
         x, y, z, blk = D.rip_scorch_cells(r)[0]
         out.append({"what": "%s: the themed ground under the oval (%s)" % (r["name"], blk), "block": [x, y, z, blk], "expect": True})
+        if len(out) == 3:
+            art = ddoc["engine"]["rip_art"]
+            out.append({"what": "%s: its oval is the right item and model value (%s with custom_model_data %d)" % (r["name"], art["item"], art["custom_model_data"]),
+                        "entity": "@e[type=minecraft:item_display,tag=%s,tag=%s,nbt={item:{id:\"%s\",components:{\"minecraft:custom_model_data\":%d}}}]"
+                                  % (tag, oval, art["item"], art["custom_model_data"]),
+                        "count": 1, "hold": hold})
+    for r in doc.get("retired_rips") or []:
+        tag, oval = D.rip_tag(r), ddoc["engine"]["rip_art"]["tag"]
+        hold = list(r["click"])
+        out.append({"what": "%s (RETIRED): no interaction (after R16DR's retire sweep)" % r["name"],
+                    "entity": "@e[type=minecraft:interaction,tag=%s]" % tag, "count": 0, "hold": hold})
+        out.append({"what": "%s (RETIRED): no oval" % r["name"],
+                    "entity": "@e[type=minecraft:item_display,tag=%s,tag=%s]" % (tag, oval), "count": 0, "hold": hold})
+        x, y, z, _blk = D.rip_scorch_cells(r)[0]
+        back = r["retired"]["ground"]["%d,%d" % (x, z)].split("[")[0]
+        out.append({"what": "%s (RETIRED): the ground under where the oval stood is back (%s)" % (r["name"], back),
+                    "block": [x, y, z, back], "expect": True})
+        f = r["frame"]
+        plane = r["restore"][str(mid_x(f))][0].split("[")[0]
+        out.append({"what": "%s (RETIRED): the plane's bottom middle cell is what the plane held before (%s, rip.restore)" % (r["name"], plane),
+                    "block": [mid_x(f), f["y"], f["z"], plane], "expect": True})
     return {"dungeon_rips": out}
 
 
@@ -401,7 +478,12 @@ def main(argv=None):
         bad = problems(doc, g)
         for b in bad:
             print("PROBLEM " + b)
-        print("%d rips (%d region), %d problem(s)" % (len(doc["rips"]), sum(r["kind"] == "region" for r in doc["rips"]), len(bad)))
+        for r in doc["rips"]:
+            if r.get("reachable_after"):
+                print("INFO %s: %s (information, not a problem: a gated rip is allowed)" % (r["id"], gate_text(r["reachable_after"])))
+        print("%d rips (%d region), %d retired, %d gated, %d problem(s)" % (
+            len(doc["rips"]), sum(r["kind"] == "region" for r in doc["rips"]), len(doc.get("retired_rips") or []),
+            sum(bool(r.get("reachable_after")) for r in doc["rips"]), len(bad)))
         return 1 if bad else 0
     if a.cmd == "probes":
         pb = probes(doc)
@@ -414,8 +496,9 @@ def main(argv=None):
             print(k, len(v), "probes", "(written)" if a.write else "")
         return 0
     others = [(o["id"], mid_x(o["frame"]), o["frame"]["z"]) for o in doc["rips"] if o["kind"] != "test_trail"]
+    every_id = [o["id"] for o in doc["rips"]] + [o["id"] for o in doc.get("retired_rips") or []]
     if a.cmd == "find":
-        for sc, m, z, gy, d, dr in find(g, a.region, a.top, a.stride, others, [o["id"] for o in doc["rips"]]):
+        for sc, m, z, gy, d, dr in find(g, a.region, a.top, a.stride, others, every_id):
             print("score %.1f  mid_x %d  z %d  ground y%d  nearest authored %d  nearest route vertex %d" % (sc, m, z, gy, d, dr))
         return 0
     if a.cmd == "find-all":
@@ -424,13 +507,13 @@ def main(argv=None):
         for rid in region_polys():
             if rid in have:
                 continue
-            res = find(g, rid, a.top, a.stride, others, [o["id"] for o in doc["rips"]], shared)
+            res = find(g, rid, a.top, a.stride, others, every_id, shared)
             print(rid, "(no candidate)" if not res else "")
             for sc, m, z, gy, d, dr in res:
                 print("   score %.1f  mid_x %d  z %d  ground y%d  nearest authored %d  nearest route vertex %d" % (sc, m, z, gy, d, dr))
             sys.stdout.flush()
         return 0
-    print(json.dumps(record(g, a.id, a.name, a.region, a.mid_x, a.z, a.theme, points([o["id"] for o in doc["rips"]])), indent=2))
+    print(json.dumps(record(g, a.id, a.name, a.region, a.mid_x, a.z, a.theme, points(every_id)), indent=2))
     return 0
 
 

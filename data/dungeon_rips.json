@@ -1,1034 +1,189 @@
 {
   "schema": "cobblers.dungeon_rips/1",
-  "generated_by": "hand (the 13 test_trail rips, carried over from data/dungeons.json dungeons[].rip on 2026-10-13) and tools/dungeon_rips.py record (the region rips)",
-  "status": "BUILT 2026-10-13, NOT RUN IN GAME. The rips are places, not dungeons: a click at any rip draws a dungeon by the player's progression (docs/mechanics/DUNGEON_DRAW.md; tools/dungeon.py 'draw'). Region rips are sited and checked by tools/dungeon_rips.py check on the canonical heightmap; the 13 test_trail rips stand where the owner played them and keep their themed ground.",
+  "generated_by": "tools/dungeon_rips.py record (the region rips; the two added 2026-10-13 are Pallet Fields and Shrew Lakes) and hand (retired_rips: the 13 test_trail rips, carried over from data/dungeons.json dungeons[].rip on 2026-10-13 and retired the same day)",
+  "status": "BUILT 2026-10-13, NOT RUN IN GAME. The rips are places, not dungeons: a click at any rip draws a dungeon by the player's progression (docs/mechanics/DUNGEON_DRAW.md; tools/dungeon.py 'draw'). Every region with dry ground has one (20 rips; Jungle Isle is under water and has none). Region rips are sited and checked by tools/dungeon_rips.py check on the canonical heightmap. A rip may stand behind a gate (the owner, 2026-10-13: \"every area in game should be capable of spawning a rift, so leave it even if its gated\"): reachable_after names it, as information. The 13 test_trail rips on the old mine's trail were RETIRED 2026-10-13 (the owner: \"the rips near old mine have to go\") and are kept under retired_rips; R16DR takes them out of the world (rips/retire, rips/entities_retired).",
   "rips": [
     {
-      "id": "rip_trail_ns",
-      "name": "The old mine's trail, rip 1",
-      "kind": "test_trail",
+      "id": "rip_pallet_fields",
+      "name": "A rift in Pallet Fields",
+      "kind": "region",
       "region": "pallet_fields",
-      "legacy_dungeon": "night_shift",
-      "scorch_theme": "mine",
-      "placeholder": true,
-      "placeholder_why": "the owner places the rip 'in the notch before the old mine's adit, x1347 z4120, on the carts' trail' (DUNGEONS.md 896; tools/route1_old_mine.py:49-61 PORTAL_X 1347, Z_AXIS 4120, TRAIL (1357,4120),(1366,4121),(1374,4123)). The rip cell proper is step 4's (world-content-dev, with its data/placements.json record). This working placeholder stands against the notch's NORTH side, east of the portal face, its opening facing south onto the trail, so the 5-wide notch (z 4118..4122) and the adit stay clear",
-      "frame": {
-        "x0": 1350,
-        "x1": 1354,
-        "z": 4117,
-        "y": 130,
-        "height": 4
-      },
-      "frame_why": "the rip's PLANE: where the frame stood until 2026-10-10, when it came down at the owner's word (rip.scorch_why). No block stands in it now (rip.restore puts back what was there); the oval, the click and the particles are still measured from it, so they stand where the player knows them. Was: posts at x 1350 and 1354, the opening x 1351..1353 at y 130..132, the lintel at y 133, in the plane z 4117 (the hill, one block north of the notch's north edge z 4118)",
-      "ground": {
-        "x": 1348,
-        "z": 4120,
-        "rule": "tools/route1_old_mine.py build: the notch's feet = g(PORTAL_X + 1, Z_AXIS) + 1 with g = tools/ground.py (the canonical heightmap, rounded); its floor is levelled to feet - 1 across the notch",
-        "measured": "round(ground(1348, 4120)) = 129, so the feet are y130 (tools/ground.py, 2026-10-08); ground over x 1341..1353, z 4114..4126 reads 129 throughout"
-      },
-      "outside": [
-        1352.5,
-        130,
-        4120.5,
-        -90
-      ],
-      "outside_why": "where a player leaving the run stands: on the trail in the notch, facing east down the carts' way out (yaw -90). On the notch floor (y129 coarse dirt, tools/route1_old_mine.py), so clear and walkable",
-      "click": [
-        1352,
-        130,
-        4118
-      ],
-      "click_why": "the interaction's centre column, in the notch just south of the opening (z 4118), 3 wide and 3 high, so it is clicked from the trail",
-      "restore": {
-        "1350": [
-          "minecraft:dirt",
-          "minecraft:dirt",
-          "minecraft:grass_block[snowy=false]",
-          "minecraft:air"
-        ],
-        "1351": [
-          "minecraft:dirt",
-          "minecraft:grass_block[snowy=false]",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1352": [
-          "minecraft:dirt",
-          "minecraft:grass_block[snowy=false]",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1353": [
-          "minecraft:grass_block[snowy=false]",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1354": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "restore_why": "the plane where the frame stood (z 4117, x 1350..1354, y 130..133), bottom up per x, as it was before the frame: the old mine's hill reaches it (tools/route1_old_mine.py build(g), g = tools/ground.py rounded, replayed: dirt and its grass skin up to y 132 at x 1350), the rest air above the ground (y 129). Measured by python tools/dungeon.py --rip-restore (2026-10-10, DG3-INTEGRATE), which exits 1 when the record and the measurement differ",
-      "scorch_why": "the owner (2026-10-10), seeing the oval in game: \"do we have to have the old portal blocks around and behind it?\" No: the frame came down and the oval stands free, with a small scorched patch of ground under it (tools/dungeon.py rip_scorch_cells: soul soil under the oval's three columns and one in front of its middle, a coarse dirt rim, on the ground at the frame's y - 1). Neither block is a spawn block (data/spawn_blocks.json) nor slows a player (soul soil, not soul sand) SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "the owner (2026-10-09): the rip is an upright OVAL, 3 wide by 4 tall (engine.rip_art). It stands on the frame's own column (centre x = (x0 + x1) / 2 + 0.5), its foot at the frame's y, and 0.06 of a block SOUTH of the opening's face (frame z + 1), so the black terracotta is its dark backdrop and the click interaction (centre z 4118.5, 3 wide) is unchanged. A display entity has no hitbox: a click goes through it to the interaction",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080): whether the particles are seen from the approach path; the owner looks"
-    },
-    {
-      "id": "rip_trail_jg",
-      "name": "The old mine's trail, rip 2",
-      "kind": "test_trail",
-      "region": "pallet_fields",
-      "legacy_dungeon": "jungle",
       "scorch_theme": "jungle",
-      "test": true,
-      "test_why": "a test dungeon's rip (the owner, 2026-10-09): within 60 blocks of the Night Shift's on the carts' trail, so the three test rips are walked to together; its real place is decided with the dungeon",
       "frame": {
-        "x0": 1380,
-        "x1": 1384,
-        "z": 4118,
-        "y": 127,
+        "x0": 1290,
+        "x1": 1294,
+        "z": 5169,
+        "y": 120,
         "height": 4
       },
-      "frame_why": "the rip's PLANE: where the frame stood until 2026-10-10, when it came down at the owner's word (rip.scorch_why). No block stands in it now (rip.restore puts back what was there); the oval, the click and the particles are still measured from it, so they stand where the player knows them. Was: posts at x 1380 and 1384, the opening x 1381..1383 at y 127..129, the lintel at y 130, in the plane z 4118, its face south onto the trail's end. East of the old mine's footprint (its rect ends at x 1374, the trail's last point, tools/route1_old_mine.py footprint) and of its clear margin; 26 blocks east of the Night Shift's frame (x 1350..1354, z 4117)",
       "ground": {
-        "x": 1382,
-        "z": 4119,
-        "rule": "tools/ground.py, the canonical heightmap rounded: the frame stands on the ground, its feet at ground + 1",
-        "measured": "round(ground(x, z)) = 126 for x 1378..1389 at z 4118, x 1379..1390 at z 4119 and x 1380..1391 at z 4121 (tools/ground.py, 2026-10-09; sea level 62, so dry; route1_old_mine.rise() is 0 there, off the hill)"
-      },
-      "outside": [
-        1382.5,
-        127,
-        4121.5,
-        0
-      ],
-      "outside_why": "where a player leaving the run stands: two blocks south of the opening, on the ground (126) facing south away from the rip, toward the trail",
-      "click": [
-        1382,
-        127,
-        4119
-      ],
-      "click_why": "the interaction box in front of the opening's middle column, at the feet's level (as the Night Shift's)",
-      "restore": {
-        "1380": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1381": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1382": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1383": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1384": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "restore_why": "the plane where the frame stood (z 4118, x 1380..1384, y 127..130): air, all of it above the ground (round(ground) 126 there, tools/ground.py; off the old mine's hill). Measured by python tools/dungeon.py --rip-restore (2026-10-10, DG3-INTEGRATE)",
-      "scorch_why": "the owner (2026-10-10), seeing the oval in game: \"do we have to have the old portal blocks around and behind it?\" No: the frame came down and the oval stands free, with a small scorched patch of ground under it (tools/dungeon.py rip_scorch_cells: soul soil under the oval's three columns and one in front of its middle, a coarse dirt rim, on the ground at the frame's y - 1). Neither block is a spawn block (data/spawn_blocks.json) nor slows a player (soul soil, not soul sand) SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "the Night Shift's oval: the texture frame's 3:4 (engine.rip_art)",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
-    },
-    {
-      "id": "rip_trail_fr",
-      "name": "The old mine's trail, rip 3",
-      "kind": "test_trail",
-      "region": "pallet_fields",
-      "legacy_dungeon": "flooded_ruin",
-      "scorch_theme": "flooded_ruin",
-      "test": true,
-      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site. Within 60 blocks of the Night Shift's frame (x1350-1354 z4117), east along the carts' trail (tools/route1_old_mine.py TRAIL ends (1374, 4123)), outside the old mine's footprint (data/placements.json route1_old_mine plan.footprint.rect x1229..1374 z4071..4142)",
-      "frame": {
-        "x0": 1400,
-        "x1": 1404,
-        "z": 4120,
-        "y": 126,
-        "height": 4
-      },
-      "frame_why": "the rip's PLANE: where the frame stood until 2026-10-10, when it came down at the owner's word (rip.scorch_why). No block stands in it now (rip.restore puts back what was there); the oval, the click and the particles are still measured from it, so they stand where the player knows them. Was: posts at x 1400 and 1404, the opening x 1401..1403 at y 126..128, the lintel at y 129, in the plane z 4120, standing free on the slope east of the old mine; its opening faces south (the engine's oval and click are on the frame's south side, z + 1). Centre (1402, 4120) is 50 blocks from the Night Shift frame's centre (1352, 4117)",
-      "ground": {
-        "x": 1402,
-        "z": 4121,
-        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
-        "measured": "round(ground(x, z)) = 125 for every column x 1396..1406, z 4118..4122 (the frame, its click and the stand in front), so the feet are y126; ground over x 1386..1406, z 4118..4134 reads 125-127, dry land on a gentle slope falling east (tools/ground.py, 2026-10-09). No authored water near: Peak Pond's basin is at x 3870-4200, z 1260-1700 (data/landmarks.json peak_pond), and the ground here is 125, 63 above the sea"
-      },
-      "outside": [
-        1402.5,
-        126,
-        4124.5,
-        0
-      ],
-      "outside_why": "where a player leaving the run stands: two blocks south of the click interaction (z 4120..4123), on the ground (feet y126), facing south away from the rip toward the trail",
-      "click": [
-        1402,
-        126,
-        4121
-      ],
-      "click_why": "the interaction's centre column, just south of the opening (z 4121), 3 wide and 3 high",
-      "restore": {
-        "1400": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1401": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1402": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1403": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1404": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "restore_why": "the plane where the frame stood (z 4120, x 1400..1404, y 126..129): air, all of it above the ground (round(ground) 125 there, tools/ground.py). Measured by python tools/dungeon.py --rip-restore (2026-10-10, DG3-INTEGRATE)",
-      "scorch_why": "the owner (2026-10-10), seeing the oval in game: \"do we have to have the old portal blocks around and behind it?\" No: the frame came down and the oval stands free, with a small scorched patch of ground under it (tools/dungeon.py rip_scorch_cells: soul soil under the oval's three columns and one in front of its middle, a coarse dirt rim, on the ground at the frame's y - 1). Neither block is a spawn block (data/spawn_blocks.json) nor slows a player (soul soil, not soul sand) SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
-    },
-    {
-      "id": "rip_trail_ab",
-      "name": "The old mine's trail, rip 4",
-      "kind": "test_trail",
-      "region": null,
-      "legacy_dungeon": "ash_bell",
-      "scorch_theme": "nether_wastes",
-      "test": true,
-      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site (a Nether dungeon's rip belongs in the Nether, which the engine cannot place yet). On the old mine's carts' trail east of the three test rips (the Drowned Reliquary's plane x1400-1404 z4120, 46 blocks west of this one), outside the old mine's footprint (data/placements.json route1_old_mine plan.footprint.rect x1229..1374 z4071..4142)",
-      "frame": {
-        "x0": 1448,
-        "x1": 1452,
-        "z": 4118,
-        "y": 125,
-        "height": 4
-      },
-      "frame_why": "the rip's PLANE (no frame stands: the oval is free, as the three test rips' since 2026-10-10): x 1448..1452, y 125..128, in the plane z 4118; its oval and click face south (z + 1). Centre (1450, 4118) is 48 blocks from the Drowned Reliquary's (1402, 4120)",
-      "ground": {
-        "x": 1450,
-        "z": 4119,
-        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
-        "measured": "round(ground(x, z)) = 124 for every column x 1444..1456, z 4114..4119 except (1455, 4119) at 125, so the plane and the click stand on 124 and the feet are y125; z 4120 reads 124-125 and z 4121..4125 reads 125 across x 1444..1456 (tools/ground.py, 2026-10-11). Dry land 62 above the sea"
-      },
-      "outside": [
-        1450.5,
-        126,
-        4122.5,
-        0
-      ],
-      "outside_why": "where a player leaving the run stands: four blocks south of the plane (z 4122, ground 125, feet y126), clear of the click interaction, facing south toward the trail",
-      "click": [
-        1450,
-        125,
-        4119
-      ],
-      "click_why": "the interaction's centre column, just south of the opening (z 4119), 3 wide and 3 high",
-      "restore": {
-        "1448": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1449": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1450": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1451": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1452": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "restore_why": "the plane (z 4118, x 1448..1452, y 125..128): air, all of it above the ground (round(ground) 124 there, tools/ground.py); the old mine's build writes nothing this far east. Measured by python tools/dungeon.py --rip-restore (2026-10-11)",
-      "scorch_why": "as the three test rips': soul soil under the oval, a coarse dirt rim (neither a spawn block nor slowing a player) SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
-    },
-    {
-      "id": "rip_trail_so",
-      "name": "The old mine's trail, rip 5",
-      "kind": "test_trail",
-      "region": "shrew_lakes",
-      "legacy_dungeon": "soul_ossuary",
-      "scorch_theme": "soul_sand_valley",
-      "test": true,
-      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site: on the test trail east of the three test rips (frames x1350-1354 z4117, x1380-1384 z4118, x1400-1404 z4120), at the x slot the brief gave (x1525), outside the old mine's footprint (data/placements.json route1_old_mine plan.footprint.rect x1229..1374 z4071..4142)",
-      "frame": {
-        "x0": 1523,
-        "x1": 1527,
-        "z": 4118,
-        "y": 126,
-        "height": 4
-      },
-      "frame_why": "the rip's PLANE (the frame itself came down on 2026-10-10 for every rip, rip.scorch_why): x 1523..1527 at y 126..129 in the plane z 4118, its face south onto the trail; the oval, the click and the particles are measured from it. Centre (1525, 4118) is 123 blocks east of the flooded ruin's (1402, 4120)",
-      "ground": {
-        "x": 1525,
-        "z": 4119,
-        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
-        "measured": "round(ground(x, z)) = 125 for every column x 1520..1537, z 4112..4128 (the plane, its click, the stand in front and a margin), so the feet are y126; sea level 62, so dry (tools/ground.py, 2026-10-11)"
-      },
-      "outside": [
-        1525.5,
-        126,
-        4121.5,
-        0
-      ],
-      "outside_why": "where a player leaving the run stands: two blocks south of the click interaction, on the ground (feet y126), facing south away from the rip toward the trail",
-      "click": [
-        1525,
-        126,
-        4119
-      ],
-      "click_why": "the interaction's centre column, just south of the opening (z 4119), 3 wide and 3 high",
-      "restore": {
-        "1523": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1524": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1525": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1526": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1527": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "restore_why": "the plane (z 4118, x 1523..1527, y 126..129): air, all of it above the ground (round(ground) 125 there, tools/ground.py). Checked by python tools/dungeon.py --rip-restore",
-      "scorch_why": "as every rip since 2026-10-10 (the owner: no portal blocks round the oval): soul soil under the oval's three columns and one in front of its middle, a coarse dirt rim (tools/dungeon.py rip_scorch_cells); neither is a spawn block nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
-    },
-    {
-      "id": "rip_trail_mc",
-      "name": "The old mine's trail, rip 6",
-      "kind": "test_trail",
-      "region": null,
-      "legacy_dungeon": "moth_cathedral",
-      "scorch_theme": "crimson_forest",
-      "test": true,
-      "test_why": "a test dungeon's rip (the owner, 2026-10-09: the test rips stand together on the carts' trail): the x slot x1475 the orchestrator gave this unit, 71 east of the flooded ruin's frame (x1400..1404); its real place is a nether rip",
-      "frame": {
-        "x0": 1473,
-        "x1": 1477,
-        "z": 4118,
-        "y": 125,
-        "height": 4
-      },
-      "frame_why": "the rip's PLANE (frameless since 2026-10-10: the oval, the click and the particles are measured from it, no block stands in it): x 1473..1477, y 125..128, z 4118, its face south onto the trail",
-      "ground": {
-        "x": 1475,
-        "z": 4119,
-        "rule": "tools/ground.py, the canonical heightmap rounded: the feet are ground + 1",
-        "measured": "round(ground(x, z)) = 124 for every column x 1465..1487, z 4114..4120 and x 1466..1487 at z 4121 (tools/ground.py, 2026-10-11, unit NEW-MOTH); sea level 62, so dry land 62 above the sea"
-      },
-      "outside": [
-        1475.5,
-        125,
-        4121.5,
-        0
-      ],
-      "outside_why": "where a player leaving the run stands: three blocks south of the plane, on the ground (124) facing south away from the rip, toward the trail",
-      "click": [
-        1475,
-        125,
-        4119
-      ],
-      "click_why": "the interaction box in front of the opening's middle column, at the feet's level (as the Night Shift's)",
-      "restore": {
-        "1473": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1474": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1475": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1476": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1477": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "restore_why": "the plane (z 4118, x 1473..1477, y 125..128): air, all of it above the ground (round(ground) 124 there, tools/ground.py); no frame ever stood here",
-      "scorch_why": "as the other rips' (the owner, 2026-10-10): a small scorched patch under the free-standing oval SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "the Night Shift's oval: the texture frame's 3:4 (engine.rip_art)",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
-    },
-    {
-      "id": "rip_trail_dsp",
-      "name": "The old mine's trail, rip 7",
-      "kind": "test_trail",
-      "region": "shrew_lakes",
-      "legacy_dungeon": "dragonspiral",
-      "scorch_theme": "ice_spire",
-      "test": true,
-      "test_why": "a test rip (the brief's x slot 1600 on the test trail, z about 4118), walked to along the carts' trail from the three test rips (x1350-1404); its campaign site is decided with the dungeon. Not a nether dungeon",
-      "frame": {
-        "x0": 1604,
-        "x1": 1608,
-        "z": 4117,
-        "y": 123,
-        "height": 4
-      },
-      "frame_why": "the rip's PLANE (frameless, as the three: rip.scorch_why): x 1604..1608, y 123..126, in the plane z 4117, the opening's face south (z 4118). Six east of x1600, the nearest columns where the plane and the click row read one ground",
-      "ground": {
-        "x": 1606,
-        "z": 4118,
-        "rule": "tools/ground.py, the canonical heightmap rounded: the feet are ground + 1",
-        "measured": "round(ground(x, z)) = 122 for x 1604..1608 at z 4117 and 4118 (the plane and the click row) and at (1606, 4121) where the leaving player stands, so the feet are y123 (tools/ground.py, 2026-10-11); sea level 62, so dry. The ground over x 1588..1612, z 4113..4126 reads 122-123: a gentle rise to the west and south"
-      },
-      "outside": [
-        1606.5,
-        123,
-        4121.5,
-        0
-      ],
-      "outside_why": "where a player leaving the run stands: three blocks south of the click row, on the ground (122, feet y123), facing south away from the rip",
-      "click": [
-        1606,
-        123,
-        4118
-      ],
-      "click_why": "the interaction box in front of the opening's middle column, at the feet's level (as the others')",
-      "restore": {
-        "1604": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1605": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1606": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1607": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1608": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "restore_why": "the plane (z 4117, x 1604..1608, y 123..126): air, all of it above the ground (round(ground) 122 there, tools/ground.py). python tools/dungeon.py --rip-restore",
-      "scorch_why": "the three test rips' scorch (rip_scorch_cells): soul soil under the oval, a coarse dirt rim; neither a spawn block (data/spawn_blocks.json) nor slow SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
-    },
-    {
-      "id": "rip_trail_fs",
-      "name": "The old mine's trail, rip 8",
-      "kind": "test_trail",
-      "region": "shrew_lakes",
-      "legacy_dungeon": "field_of_swords",
-      "scorch_theme": "hill_keep",
-      "test": true,
-      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site: on the test trail at the x slot the orchestrator gave this unit (x1625; the plane at x 1625..1629 since MEGA-INTEGRATE, centre 1627, so it stands more than 20 from the Dragonspiral's at 1606), east of the three existing rips (x1350-1404) and 31 blocks east of Route 1's walked line (x1594-1595 at z4100-4128, data/route_paths.json), well outside the old mine's footprint (x1229..1374)",
-      "frame": {
-        "x0": 1625,
-        "x1": 1629,
-        "z": 4118,
-        "y": 122,
-        "height": 4
-      },
-      "frame_why": "the rip's PLANE (no frame stands since 2026-10-10: rip.scorch_why); the oval, the click and the particles are measured from it. The plane x 1625..1629, y 122..125, z 4118, its oval facing south",
-      "ground": {
-        "x": 1627,
-        "z": 4119,
-        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
-        "measured": "round(ground(x, z)) = 121 for the plane x 1625..1629 at z 4118, the click x 1626..1628 at z 4119 and the stand x 1627 at z 4121 (tools/ground.py, re-measured at MEGA-INTEGRATE 2026-10-11 when the rip moved 2 east, 19 blocks from the Dragonspiral's), so the feet are y122. round(ground(x, z)) = 121 for every column x 1621..1629 at z 4117..4119 and x 1622..1630 at z 4120..4121 (the plane, the click and the stand in front), so the feet are y122; the ground over x 1613..1637, z 4112..4127 reads 120-122, dry land 59 above the sea (tools/ground.py, 2026-10-11)"
-      },
-      "outside": [
-        1627.5,
-        122,
-        4121.5,
-        0
-      ],
-      "outside_why": "where a player leaving the run stands: two blocks south of the click interaction, on the ground (feet y122), facing south away from the rip toward the trail",
-      "click": [
-        1627,
-        122,
-        4119
-      ],
-      "click_why": "the interaction's centre column, just south of the plane (z 4119), 3 wide and 3 high",
-      "restore": {
-        "1625": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1626": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1627": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1628": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1629": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "restore_why": "the plane (z 4118, x 1625..1629, y 122..125): air, all of it above the ground (round(ground) 121 there, tools/ground.py). Measured by python tools/dungeon.py --rip-restore (2026-10-11) Moved 2 east at MEGA-INTEGRATE (2026-10-11): the plane's columns re-measured, ground 121, so still air.",
-      "scorch_why": "as the other rips: soul soil under the oval and a coarse dirt rim (tools/dungeon.py rip_scorch_cells); neither is a spawn block (data/spawn_blocks.json) nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
-    },
-    {
-      "id": "rip_trail_wl",
-      "name": "The old mine's trail, rip 9",
-      "kind": "test_trail",
-      "region": "shrew_lakes",
-      "legacy_dungeon": "warped_lab",
-      "scorch_theme": "warped_forest",
-      "test": true,
-      "test_why": "a test rip on the test trail (x slot 1500, the launch brief), east of the three test rips (x1350-1404), so the owner reaches all four from one walk; its campaign site is the Nether's",
-      "frame": {
-        "x0": 1500,
-        "x1": 1504,
-        "z": 4118,
-        "y": 125,
-        "height": 4
-      },
-      "frame_why": "the rip's PLANE (no frame stands in it: the oval stands free, as the other three since 2026-10-10): x 1500..1504 in the plane z 4118, the oval's face south (the click and the stand at z + 1). 96 blocks east of the Drowned Reliquary's plane (x 1400..1404, z 4120), far outside the old mine's footprint (x1229..1374)",
-      "ground": {
-        "x": 1502,
-        "z": 4119,
-        "rule": "tools/ground.py, the canonical heightmap rounded: the feet are ground + 1",
-        "measured": "round(ground(x, z)) = 124 for every column x 1488..1512, z 4112..4124 (tools/ground.py, 2026-10-11), 125 from z 4126 south; sea level 62, and no lake or river of data/rivers.json within 400 blocks (shrew_lake's basin starts at x 2508): dry land"
-      },
-      "outside": [
-        1502.5,
-        125,
-        4121.5,
-        0
-      ],
-      "outside_why": "two blocks south of the click, on the ground (feet y125), facing south away from the rip",
-      "click": [
-        1502,
-        125,
-        4119
-      ],
-      "click_why": "the interaction's centre column just south of the plane (z 4119), at the feet's level",
-      "restore": {
-        "1500": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1501": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1502": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1503": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1504": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "restore_why": "the plane (z 4118, x 1500..1504, y 125..128): air, all above the ground (round(ground) 124). Measured by python tools/dungeon.py --rip-restore (2026-10-11)",
-      "scorch_why": "the other rips' scorched patch (soul soil under the oval, a coarse dirt rim): neither a spawn block (data/spawn_blocks.json) nor slow SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
-    },
-    {
-      "id": "rip_trail_cr",
-      "name": "The old mine's trail, rip 10",
-      "kind": "test_trail",
-      "region": "pallet_fields",
-      "legacy_dungeon": "crucible",
-      "scorch_theme": "basalt_deltas",
-      "test": true,
-      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site (the Crucible's is in the Nether: DUNGEONS.md 10, data/dungeon_prize_roster.json). On the old mine's carts' trail east of the Drowned Reliquary's (x1400-1404 z4120), outside the old mine's footprint (data/placements.json route1_old_mine plan.footprint.rect x1229..1374 z4071..4142)",
-      "frame": {
-        "x0": 1421,
-        "x1": 1425,
-        "z": 4118,
-        "y": 126,
-        "height": 4
-      },
-      "frame_why": "the rip's PLANE (no frame stands; the oval, the click and the particles are measured from it, as the other test rips' since 2026-10-10): x 1421..1425 at y 126..129 in the plane z 4118, its opening facing south. Centre (1423, 4118) is 21 blocks from the Drowned Reliquary's (1402, 4120) and 71 from the Night Shift's (1352, 4117): the launch brief's x slot 1425, moved 2 west onto level ground",
-      "ground": {
-        "x": 1423,
-        "z": 4119,
-        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
-        "measured": "round(ground(x, z)) = 125 for every column x 1413..1426, z 4118..4122 and x 1413..1437, z 4123..4128 (the plane, its click and the stand in front), so the feet are y126; east of x 1426 the ground falls to 124 (tools/ground.py, 2026-10-11). No authored water near: data/rivers.json and data/landmarks.json name no point within 80 blocks, and the ground is 125, 63 above the sea"
-      },
-      "outside": [
-        1423.5,
-        126,
-        4122.5,
-        0
-      ],
-      "outside_why": "where a player leaving the run stands: three blocks south of the click interaction (z 4119), on the ground (feet y126), facing south toward the trail",
-      "click": [
-        1423,
-        126,
-        4119
-      ],
-      "click_why": "the interaction's centre column, just south of the opening (z 4119), 3 wide and 3 high",
-      "restore": {
-        "1421": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1422": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1423": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1424": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1425": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "restore_why": "the plane where a frame would stand (z 4118, x 1421..1425, y 126..129): air, all of it above the ground (round(ground) 125 there, tools/ground.py); no frame ever stood here",
-      "scorch_why": "as the other test rips' (the owner, 2026-10-10): a small scorched patch under the free-standing oval; neither block is a spawn block (data/spawn_blocks.json) nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
-    },
-    {
-      "id": "rip_trail_sf",
-      "name": "The old mine's trail, rip 11",
-      "kind": "test_trail",
-      "region": "shrew_lakes",
-      "legacy_dungeon": "starfall",
-      "scorch_theme": "night_crater",
-      "test": true,
-      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site (the roster proposes none: 'a night sky crater'). On the test trail's z (about 4118) at the x slot x1675 the orchestrator gave unit NEW-STARFALL, east of the three test rips (x1350-1404), in the flat floor of a shallow north-south valley",
-      "frame": {
-        "x0": 1673,
-        "x1": 1677,
-        "z": 4118,
         "y": 119,
-        "height": 4
-      },
-      "frame_why": "the rip's PLANE (frameless since 2026-10-10, as the other rips: the oval, the click and the particles are measured from it). x 1673..1677 at z 4118, the opening facing south (the engine's oval and click are on the frame's south side, z + 1); centre (1675, 4118)",
-      "ground": {
-        "x": 1675,
-        "z": 4119,
-        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
-        "measured": "round(ground(x, z)) = 118 for every column x 1665..1684, z 4108..4122 (the frame, its click, the stand in front and 8 blocks round), so the feet are y119 (tools/ground.py, 2026-10-11). Dry: sea level 62 (data/world.json); the nearest authored water point (data/rivers.json, data/landmarks.json) is over 450 blocks away; the nearest route path point (route_01, data/route_paths.json) 80 blocks west"
+        "window": [
+          1288,
+          5168,
+          1296,
+          5174
+        ],
+        "heights": [
+          119,
+          119
+        ],
+        "heightmap_value": 119.3,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 119 over all 63 columns of x1288..1296 z5168..5174 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
       },
       "outside": [
-        1675.5,
-        119,
-        4122.5,
+        1292.5,
+        120,
+        5172.5,
         0
       ],
-      "outside_why": "where a player leaving the run stands: three blocks south of the click interaction (z 4118..4120), on the ground (feet y119), facing south away from the rip",
       "click": [
-        1675,
-        119,
-        4119
+        1292,
+        120,
+        5170
       ],
-      "click_why": "the interaction's centre column, just south of the opening (z 4119), 3 wide and 3 high",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
       "restore": {
-        "1673": [
+        "1290": [
           "minecraft:air",
           "minecraft:air",
           "minecraft:air",
           "minecraft:air"
         ],
-        "1674": [
+        "1291": [
           "minecraft:air",
           "minecraft:air",
           "minecraft:air",
           "minecraft:air"
         ],
-        "1675": [
+        "1292": [
           "minecraft:air",
           "minecraft:air",
           "minecraft:air",
           "minecraft:air"
         ],
-        "1676": [
+        "1293": [
           "minecraft:air",
           "minecraft:air",
           "minecraft:air",
           "minecraft:air"
         ],
-        "1677": [
+        "1294": [
           "minecraft:air",
           "minecraft:air",
           "minecraft:air",
           "minecraft:air"
         ]
       },
-      "restore_why": "the plane where the frame would stand (z 4118, x 1673..1677, y 119..122): air, all of it above the ground (round(ground) 118 there, tools/ground.py). Measured by python tools/dungeon.py --rip-restore",
-      "scorch_why": "as the other rips' (the owner, 2026-10-10): a small scorched patch under the free-standing oval; neither block is a spawn block nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
+      "siting": {
+        "nearest_authored": {
+          "distance": 150,
+          "x": 1432,
+          "z": 5238,
+          "file": "data/placements.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 157,
+          "x": 1453,
+          "z": 5174
+        }
+      }
     },
     {
-      "id": "rip_trail_st",
-      "name": "The old mine's trail, rip 12",
-      "kind": "test_trail",
+      "id": "rip_shrew_lakes",
+      "name": "A rift in Shrew Lakes",
+      "kind": "region",
       "region": "shrew_lakes",
-      "legacy_dungeon": "street",
-      "scorch_theme": "city",
-      "test": true,
-      "test_why": "a test rip for the owner's walk-through, not the Street's campaign site (the Scar's road end, DUNGEON_2_STREET.md 3). Its x slot on the old mine's test trail is x1550 (the orchestrator's), east of the three test rips (x1350-1354 z4117, x1380-1384 z4118, x1400-1404 z4120) and far from the old mine (data/placements.json route1_old_mine plan.footprint.rect x1229..1374 z4071..4142)",
+      "scorch_theme": "flooded_ruin",
       "frame": {
-        "x0": 1552,
-        "x1": 1556,
-        "z": 4118,
-        "y": 125,
+        "x0": 2738,
+        "x1": 2742,
+        "z": 4305,
+        "y": 118,
         "height": 4
       },
-      "frame_why": "the rip's PLANE (no frame stands in it: the oval and the click are measured from it, as the other rips since 2026-10-10): x 1552..1556, y 125..128, z 4118; its opening faces south (the oval and the click on the plane's south side, z + 1)",
       "ground": {
-        "x": 1554,
-        "z": 4119,
-        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
-        "measured": "round(ground(x, z)) = 124 for every column x 1550..1561, z 4114..4119 and x 1552..1561, z 4114..4127 (the plane, its click and the stand in front), so the feet are y125; the ground west of x 1550 reads 125 (tools/ground.py, 2026-10-11). Dry land 62 above the sea"
+        "y": 117,
+        "window": [
+          2736,
+          4304,
+          2744,
+          4310
+        ],
+        "heights": [
+          117,
+          117
+        ],
+        "heightmap_value": 117.09,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 117 over all 63 columns of x2736..2744 z4304..4310 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
       },
       "outside": [
-        1554.5,
-        125,
-        4122.5,
+        2740.5,
+        118,
+        4308.5,
         0
       ],
-      "outside_why": "where a player leaving the run stands: two blocks south of the click interaction (z 4119..4121), on the ground (feet y125), facing south away from the rip",
       "click": [
-        1554,
-        125,
-        4119
+        2740,
+        118,
+        4306
       ],
-      "click_why": "the interaction's centre column, just south of the opening (z 4119), 3 wide and 3 high",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
       "restore": {
-        "1552": [
+        "2738": [
           "minecraft:air",
           "minecraft:air",
           "minecraft:air",
           "minecraft:air"
         ],
-        "1553": [
+        "2739": [
           "minecraft:air",
           "minecraft:air",
           "minecraft:air",
           "minecraft:air"
         ],
-        "1554": [
+        "2740": [
           "minecraft:air",
           "minecraft:air",
           "minecraft:air",
           "minecraft:air"
         ],
-        "1555": [
+        "2741": [
           "minecraft:air",
           "minecraft:air",
           "minecraft:air",
           "minecraft:air"
         ],
-        "1556": [
+        "2742": [
           "minecraft:air",
           "minecraft:air",
           "minecraft:air",
           "minecraft:air"
         ]
       },
-      "restore_why": "the plane (z 4118, x 1552..1556, y 125..128): air, all of it above the ground (round(ground) 124 there, tools/ground.py). Measured by python tools/dungeon.py --rip-restore (2026-10-11)",
-      "scorch_why": "as the other test rips': the oval stands free over a small scorched patch (tools/dungeon.py rip_scorch_cells); neither block is a spawn block nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
-    },
-    {
-      "id": "rip_trail_pt",
-      "name": "The old mine's trail, rip 13",
-      "kind": "test_trail",
-      "region": "shrew_lakes",
-      "legacy_dungeon": "patriarch",
-      "scorch_theme": "great_tree",
-      "test": true,
-      "test_why": "a test dungeon's rip on the carts' trail east of the old mine (the launch brief's x slot 1575), so the owner walks to it from the other test rips; its real place, the Patriarch's foot at (4272, 3600) (DUNGEON_3_PATRIARCH.md 3), is world-content-dev's once the owner keeps it",
-      "frame": {
-        "x0": 1575,
-        "x1": 1579,
-        "z": 4118,
-        "y": 124,
-        "height": 4
-      },
-      "frame_why": "the rip's PLANE (no frame has ever stood here: the oval stands free, as every rip since 2026-10-10): x 1575..1579 at z 4118, feet y 124. 175 east of the flooded ruin's plane (x 1400..1404) and 200 east of the old mine's footprint (its trail ends at x 1374); 16 west of Route 1's path (x 1594-1595 at z 4095-4145, data/route_paths.json)",
-      "ground": {
-        "x": 1577,
-        "z": 4119,
-        "rule": "tools/ground.py, the canonical heightmap rounded: the feet are ground + 1",
-        "measured": "round(ground(x, z)) = 123 for every column x 1572..1589, z 4112..4125 (the plane, the click, the scorch and the outside point), so the feet are y 124; sea level 62, so dry; route1_old_mine.rise() is 0 at x 1575..1579, z 4118..4119 (tools/ground.py, 2026-10-11)"
-      },
-      "outside": [
-        1577.5,
-        124,
-        4121.5,
-        0
-      ],
-      "outside_why": "where a player leaving the run stands: two blocks south of the opening, on the ground (123) facing south, toward the trail",
-      "click": [
-        1577,
-        124,
-        4119
-      ],
-      "click_why": "the interaction box in front of the opening's middle column, at the feet's level (as the other rips)",
-      "restore": {
-        "1575": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1576": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1577": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1578": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "1579": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "restore_why": "the plane (z 4118, x 1575..1579, y 124..127): air, all of it above the ground (123); measured by python tools/dungeon.py --rip-restore (2026-10-11): matches",
-      "scorch_why": "as every rip: soul soil under the oval's three columns and one in front, a coarse dirt rim, on the ground at y 123; neither is a spawn block nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "oval_why": "as every rip: the animated oval (engine.rip_art), 3 x 4, a hair in front of the plane",
-      "plume": false,
-      "plume_gated_on": "V1 (EXP-080), as the Night Shift's"
+      "siting": {
+        "nearest_authored": {
+          "distance": 150,
+          "x": 2624,
+          "z": 4204,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1142,
+          "x": 1595,
+          "z": 4256
+        }
+      }
     },
     {
       "id": "rip_northgate_isle",
@@ -1764,7 +919,24 @@
           "z": 3575
         }
       },
-      "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
+      "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule",
+      "reachable_after": {
+        "zone": "z2",
+        "zone_name": "Victory Road and the Rift's floor",
+        "kind": "badges",
+        "threshold": 8,
+        "advancements": [
+          "cobblers:flag/gym1_cleared",
+          "cobblers:flag/gym2_cleared",
+          "cobblers:flag/gym3_cleared",
+          "cobblers:flag/gym4_cleared",
+          "cobblers:flag/gym5_cleared",
+          "cobblers:flag/gym6_cleared",
+          "cobblers:flag/gym7_cleared",
+          "cobblers:flag/gym8_cleared"
+        ],
+        "from": "data/rift_zones.json zones.z2 (boxes and pass)"
+      }
     },
     {
       "id": "rip_the_craters",
@@ -2685,6 +1857,1269 @@
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
+    }
+  ],
+  "retired_rips": [
+    {
+      "id": "rip_trail_ns",
+      "name": "The old mine's trail, rip 1",
+      "kind": "test_trail",
+      "region": "pallet_fields",
+      "legacy_dungeon": "night_shift",
+      "scorch_theme": "mine",
+      "placeholder": true,
+      "placeholder_why": "the owner places the rip 'in the notch before the old mine's adit, x1347 z4120, on the carts' trail' (DUNGEONS.md 896; tools/route1_old_mine.py:49-61 PORTAL_X 1347, Z_AXIS 4120, TRAIL (1357,4120),(1366,4121),(1374,4123)). The rip cell proper is step 4's (world-content-dev, with its data/placements.json record). This working placeholder stands against the notch's NORTH side, east of the portal face, its opening facing south onto the trail, so the 5-wide notch (z 4118..4122) and the adit stay clear",
+      "frame": {
+        "x0": 1350,
+        "x1": 1354,
+        "z": 4117,
+        "y": 130,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE: where the frame stood until 2026-10-10, when it came down at the owner's word (rip.scorch_why). No block stands in it now (rip.restore puts back what was there); the oval, the click and the particles are still measured from it, so they stand where the player knows them. Was: posts at x 1350 and 1354, the opening x 1351..1353 at y 130..132, the lintel at y 133, in the plane z 4117 (the hill, one block north of the notch's north edge z 4118)",
+      "ground": {
+        "x": 1348,
+        "z": 4120,
+        "rule": "tools/route1_old_mine.py build: the notch's feet = g(PORTAL_X + 1, Z_AXIS) + 1 with g = tools/ground.py (the canonical heightmap, rounded); its floor is levelled to feet - 1 across the notch",
+        "measured": "round(ground(1348, 4120)) = 129, so the feet are y130 (tools/ground.py, 2026-10-08); ground over x 1341..1353, z 4114..4126 reads 129 throughout"
+      },
+      "outside": [
+        1352.5,
+        130,
+        4120.5,
+        -90
+      ],
+      "outside_why": "where a player leaving the run stands: on the trail in the notch, facing east down the carts' way out (yaw -90). On the notch floor (y129 coarse dirt, tools/route1_old_mine.py), so clear and walkable",
+      "click": [
+        1352,
+        130,
+        4118
+      ],
+      "click_why": "the interaction's centre column, in the notch just south of the opening (z 4118), 3 wide and 3 high, so it is clicked from the trail",
+      "restore": {
+        "1350": [
+          "minecraft:dirt",
+          "minecraft:dirt",
+          "minecraft:grass_block[snowy=false]",
+          "minecraft:air"
+        ],
+        "1351": [
+          "minecraft:dirt",
+          "minecraft:grass_block[snowy=false]",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1352": [
+          "minecraft:dirt",
+          "minecraft:grass_block[snowy=false]",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1353": [
+          "minecraft:grass_block[snowy=false]",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1354": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane where the frame stood (z 4117, x 1350..1354, y 130..133), bottom up per x, as it was before the frame: the old mine's hill reaches it (tools/route1_old_mine.py build(g), g = tools/ground.py rounded, replayed: dirt and its grass skin up to y 132 at x 1350), the rest air above the ground (y 129). Measured by python tools/dungeon.py --rip-restore (2026-10-10, DG3-INTEGRATE), which exits 1 when the record and the measurement differ",
+      "scorch_why": "the owner (2026-10-10), seeing the oval in game: \"do we have to have the old portal blocks around and behind it?\" No: the frame came down and the oval stands free, with a small scorched patch of ground under it (tools/dungeon.py rip_scorch_cells: soul soil under the oval's three columns and one in front of its middle, a coarse dirt rim, on the ground at the frame's y - 1). Neither block is a spawn block (data/spawn_blocks.json) nor slows a player (soul soil, not soul sand) SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "the owner (2026-10-09): the rip is an upright OVAL, 3 wide by 4 tall (engine.rip_art). It stands on the frame's own column (centre x = (x0 + x1) / 2 + 0.5), its foot at the frame's y, and 0.06 of a block SOUTH of the opening's face (frame z + 1), so the black terracotta is its dark backdrop and the click interaction (centre z 4118.5, 3 wide) is unchanged. A display entity has no hitbox: a click goes through it to the interaction",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080): whether the particles are seen from the approach path; the owner looks",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_ns puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_ns)",
+        "ground": {
+          "1351,4118": "minecraft:coarse_dirt",
+          "1352,4118": "minecraft:coarse_dirt",
+          "1353,4118": "minecraft:coarse_dirt",
+          "1352,4119": "minecraft:coarse_dirt",
+          "1350,4118": "minecraft:coarse_dirt",
+          "1354,4118": "minecraft:coarse_dirt",
+          "1351,4119": "minecraft:coarse_dirt",
+          "1353,4119": "minecraft:coarse_dirt"
+        },
+        "ground_basis": "MEASURED from tools/route1_old_mine.py build(g), replayed over the patch's 8 cells (x1350..1354 z4118..4119, y129): the notch floor is minecraft:coarse_dirt at each (python tools/dungeon_rips.py check re-measures it with the heightmap)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_jg",
+      "name": "The old mine's trail, rip 2",
+      "kind": "test_trail",
+      "region": "pallet_fields",
+      "legacy_dungeon": "jungle",
+      "scorch_theme": "jungle",
+      "test": true,
+      "test_why": "a test dungeon's rip (the owner, 2026-10-09): within 60 blocks of the Night Shift's on the carts' trail, so the three test rips are walked to together; its real place is decided with the dungeon",
+      "frame": {
+        "x0": 1380,
+        "x1": 1384,
+        "z": 4118,
+        "y": 127,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE: where the frame stood until 2026-10-10, when it came down at the owner's word (rip.scorch_why). No block stands in it now (rip.restore puts back what was there); the oval, the click and the particles are still measured from it, so they stand where the player knows them. Was: posts at x 1380 and 1384, the opening x 1381..1383 at y 127..129, the lintel at y 130, in the plane z 4118, its face south onto the trail's end. East of the old mine's footprint (its rect ends at x 1374, the trail's last point, tools/route1_old_mine.py footprint) and of its clear margin; 26 blocks east of the Night Shift's frame (x 1350..1354, z 4117)",
+      "ground": {
+        "x": 1382,
+        "z": 4119,
+        "rule": "tools/ground.py, the canonical heightmap rounded: the frame stands on the ground, its feet at ground + 1",
+        "measured": "round(ground(x, z)) = 126 for x 1378..1389 at z 4118, x 1379..1390 at z 4119 and x 1380..1391 at z 4121 (tools/ground.py, 2026-10-09; sea level 62, so dry; route1_old_mine.rise() is 0 there, off the hill)"
+      },
+      "outside": [
+        1382.5,
+        127,
+        4121.5,
+        0
+      ],
+      "outside_why": "where a player leaving the run stands: two blocks south of the opening, on the ground (126) facing south away from the rip, toward the trail",
+      "click": [
+        1382,
+        127,
+        4119
+      ],
+      "click_why": "the interaction box in front of the opening's middle column, at the feet's level (as the Night Shift's)",
+      "restore": {
+        "1380": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1381": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1382": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1383": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1384": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane where the frame stood (z 4118, x 1380..1384, y 127..130): air, all of it above the ground (round(ground) 126 there, tools/ground.py; off the old mine's hill). Measured by python tools/dungeon.py --rip-restore (2026-10-10, DG3-INTEGRATE)",
+      "scorch_why": "the owner (2026-10-10), seeing the oval in game: \"do we have to have the old portal blocks around and behind it?\" No: the frame came down and the oval stands free, with a small scorched patch of ground under it (tools/dungeon.py rip_scorch_cells: soul soil under the oval's three columns and one in front of its middle, a coarse dirt rim, on the ground at the frame's y - 1). Neither block is a spawn block (data/spawn_blocks.json) nor slows a player (soul soil, not soul sand) SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "the Night Shift's oval: the texture frame's 3:4 (engine.rip_art)",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_jg puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_jg)",
+        "ground": {
+          "1381,4119": "minecraft:grass_block[snowy=false]",
+          "1382,4119": "minecraft:grass_block[snowy=false]",
+          "1383,4119": "minecraft:grass_block[snowy=false]",
+          "1382,4120": "minecraft:grass_block[snowy=false]",
+          "1380,4119": "minecraft:grass_block[snowy=false]",
+          "1384,4119": "minecraft:grass_block[snowy=false]",
+          "1381,4120": "minecraft:grass_block[snowy=false]",
+          "1383,4120": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_fr",
+      "name": "The old mine's trail, rip 3",
+      "kind": "test_trail",
+      "region": "pallet_fields",
+      "legacy_dungeon": "flooded_ruin",
+      "scorch_theme": "flooded_ruin",
+      "test": true,
+      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site. Within 60 blocks of the Night Shift's frame (x1350-1354 z4117), east along the carts' trail (tools/route1_old_mine.py TRAIL ends (1374, 4123)), outside the old mine's footprint (data/placements.json route1_old_mine plan.footprint.rect x1229..1374 z4071..4142)",
+      "frame": {
+        "x0": 1400,
+        "x1": 1404,
+        "z": 4120,
+        "y": 126,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE: where the frame stood until 2026-10-10, when it came down at the owner's word (rip.scorch_why). No block stands in it now (rip.restore puts back what was there); the oval, the click and the particles are still measured from it, so they stand where the player knows them. Was: posts at x 1400 and 1404, the opening x 1401..1403 at y 126..128, the lintel at y 129, in the plane z 4120, standing free on the slope east of the old mine; its opening faces south (the engine's oval and click are on the frame's south side, z + 1). Centre (1402, 4120) is 50 blocks from the Night Shift frame's centre (1352, 4117)",
+      "ground": {
+        "x": 1402,
+        "z": 4121,
+        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
+        "measured": "round(ground(x, z)) = 125 for every column x 1396..1406, z 4118..4122 (the frame, its click and the stand in front), so the feet are y126; ground over x 1386..1406, z 4118..4134 reads 125-127, dry land on a gentle slope falling east (tools/ground.py, 2026-10-09). No authored water near: Peak Pond's basin is at x 3870-4200, z 1260-1700 (data/landmarks.json peak_pond), and the ground here is 125, 63 above the sea"
+      },
+      "outside": [
+        1402.5,
+        126,
+        4124.5,
+        0
+      ],
+      "outside_why": "where a player leaving the run stands: two blocks south of the click interaction (z 4120..4123), on the ground (feet y126), facing south away from the rip toward the trail",
+      "click": [
+        1402,
+        126,
+        4121
+      ],
+      "click_why": "the interaction's centre column, just south of the opening (z 4121), 3 wide and 3 high",
+      "restore": {
+        "1400": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1401": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1402": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1403": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1404": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane where the frame stood (z 4120, x 1400..1404, y 126..129): air, all of it above the ground (round(ground) 125 there, tools/ground.py). Measured by python tools/dungeon.py --rip-restore (2026-10-10, DG3-INTEGRATE)",
+      "scorch_why": "the owner (2026-10-10), seeing the oval in game: \"do we have to have the old portal blocks around and behind it?\" No: the frame came down and the oval stands free, with a small scorched patch of ground under it (tools/dungeon.py rip_scorch_cells: soul soil under the oval's three columns and one in front of its middle, a coarse dirt rim, on the ground at the frame's y - 1). Neither block is a spawn block (data/spawn_blocks.json) nor slows a player (soul soil, not soul sand) SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_fr puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_fr)",
+        "ground": {
+          "1401,4121": "minecraft:grass_block[snowy=false]",
+          "1402,4121": "minecraft:grass_block[snowy=false]",
+          "1403,4121": "minecraft:grass_block[snowy=false]",
+          "1402,4122": "minecraft:grass_block[snowy=false]",
+          "1400,4121": "minecraft:grass_block[snowy=false]",
+          "1404,4121": "minecraft:grass_block[snowy=false]",
+          "1401,4122": "minecraft:grass_block[snowy=false]",
+          "1403,4122": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_ab",
+      "name": "The old mine's trail, rip 4",
+      "kind": "test_trail",
+      "region": null,
+      "legacy_dungeon": "ash_bell",
+      "scorch_theme": "nether_wastes",
+      "test": true,
+      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site (a Nether dungeon's rip belongs in the Nether, which the engine cannot place yet). On the old mine's carts' trail east of the three test rips (the Drowned Reliquary's plane x1400-1404 z4120, 46 blocks west of this one), outside the old mine's footprint (data/placements.json route1_old_mine plan.footprint.rect x1229..1374 z4071..4142)",
+      "frame": {
+        "x0": 1448,
+        "x1": 1452,
+        "z": 4118,
+        "y": 125,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE (no frame stands: the oval is free, as the three test rips' since 2026-10-10): x 1448..1452, y 125..128, in the plane z 4118; its oval and click face south (z + 1). Centre (1450, 4118) is 48 blocks from the Drowned Reliquary's (1402, 4120)",
+      "ground": {
+        "x": 1450,
+        "z": 4119,
+        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
+        "measured": "round(ground(x, z)) = 124 for every column x 1444..1456, z 4114..4119 except (1455, 4119) at 125, so the plane and the click stand on 124 and the feet are y125; z 4120 reads 124-125 and z 4121..4125 reads 125 across x 1444..1456 (tools/ground.py, 2026-10-11). Dry land 62 above the sea"
+      },
+      "outside": [
+        1450.5,
+        126,
+        4122.5,
+        0
+      ],
+      "outside_why": "where a player leaving the run stands: four blocks south of the plane (z 4122, ground 125, feet y126), clear of the click interaction, facing south toward the trail",
+      "click": [
+        1450,
+        125,
+        4119
+      ],
+      "click_why": "the interaction's centre column, just south of the opening (z 4119), 3 wide and 3 high",
+      "restore": {
+        "1448": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1449": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1450": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1451": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1452": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane (z 4118, x 1448..1452, y 125..128): air, all of it above the ground (round(ground) 124 there, tools/ground.py); the old mine's build writes nothing this far east. Measured by python tools/dungeon.py --rip-restore (2026-10-11)",
+      "scorch_why": "as the three test rips': soul soil under the oval, a coarse dirt rim (neither a spawn block nor slowing a player) SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_ab puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_ab)",
+        "ground": {
+          "1449,4119": "minecraft:grass_block[snowy=false]",
+          "1450,4119": "minecraft:grass_block[snowy=false]",
+          "1451,4119": "minecraft:grass_block[snowy=false]",
+          "1450,4120": "minecraft:grass_block[snowy=false]",
+          "1448,4119": "minecraft:grass_block[snowy=false]",
+          "1452,4119": "minecraft:grass_block[snowy=false]",
+          "1449,4120": "minecraft:grass_block[snowy=false]",
+          "1451,4120": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_so",
+      "name": "The old mine's trail, rip 5",
+      "kind": "test_trail",
+      "region": "shrew_lakes",
+      "legacy_dungeon": "soul_ossuary",
+      "scorch_theme": "soul_sand_valley",
+      "test": true,
+      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site: on the test trail east of the three test rips (frames x1350-1354 z4117, x1380-1384 z4118, x1400-1404 z4120), at the x slot the brief gave (x1525), outside the old mine's footprint (data/placements.json route1_old_mine plan.footprint.rect x1229..1374 z4071..4142)",
+      "frame": {
+        "x0": 1523,
+        "x1": 1527,
+        "z": 4118,
+        "y": 126,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE (the frame itself came down on 2026-10-10 for every rip, rip.scorch_why): x 1523..1527 at y 126..129 in the plane z 4118, its face south onto the trail; the oval, the click and the particles are measured from it. Centre (1525, 4118) is 123 blocks east of the flooded ruin's (1402, 4120)",
+      "ground": {
+        "x": 1525,
+        "z": 4119,
+        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
+        "measured": "round(ground(x, z)) = 125 for every column x 1520..1537, z 4112..4128 (the plane, its click, the stand in front and a margin), so the feet are y126; sea level 62, so dry (tools/ground.py, 2026-10-11)"
+      },
+      "outside": [
+        1525.5,
+        126,
+        4121.5,
+        0
+      ],
+      "outside_why": "where a player leaving the run stands: two blocks south of the click interaction, on the ground (feet y126), facing south away from the rip toward the trail",
+      "click": [
+        1525,
+        126,
+        4119
+      ],
+      "click_why": "the interaction's centre column, just south of the opening (z 4119), 3 wide and 3 high",
+      "restore": {
+        "1523": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1524": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1525": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1526": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1527": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane (z 4118, x 1523..1527, y 126..129): air, all of it above the ground (round(ground) 125 there, tools/ground.py). Checked by python tools/dungeon.py --rip-restore",
+      "scorch_why": "as every rip since 2026-10-10 (the owner: no portal blocks round the oval): soul soil under the oval's three columns and one in front of its middle, a coarse dirt rim (tools/dungeon.py rip_scorch_cells); neither is a spawn block nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_so puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_so)",
+        "ground": {
+          "1524,4119": "minecraft:grass_block[snowy=false]",
+          "1525,4119": "minecraft:grass_block[snowy=false]",
+          "1526,4119": "minecraft:grass_block[snowy=false]",
+          "1525,4120": "minecraft:grass_block[snowy=false]",
+          "1523,4119": "minecraft:grass_block[snowy=false]",
+          "1527,4119": "minecraft:grass_block[snowy=false]",
+          "1524,4120": "minecraft:grass_block[snowy=false]",
+          "1526,4120": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_mc",
+      "name": "The old mine's trail, rip 6",
+      "kind": "test_trail",
+      "region": null,
+      "legacy_dungeon": "moth_cathedral",
+      "scorch_theme": "crimson_forest",
+      "test": true,
+      "test_why": "a test dungeon's rip (the owner, 2026-10-09: the test rips stand together on the carts' trail): the x slot x1475 the orchestrator gave this unit, 71 east of the flooded ruin's frame (x1400..1404); its real place is a nether rip",
+      "frame": {
+        "x0": 1473,
+        "x1": 1477,
+        "z": 4118,
+        "y": 125,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE (frameless since 2026-10-10: the oval, the click and the particles are measured from it, no block stands in it): x 1473..1477, y 125..128, z 4118, its face south onto the trail",
+      "ground": {
+        "x": 1475,
+        "z": 4119,
+        "rule": "tools/ground.py, the canonical heightmap rounded: the feet are ground + 1",
+        "measured": "round(ground(x, z)) = 124 for every column x 1465..1487, z 4114..4120 and x 1466..1487 at z 4121 (tools/ground.py, 2026-10-11, unit NEW-MOTH); sea level 62, so dry land 62 above the sea"
+      },
+      "outside": [
+        1475.5,
+        125,
+        4121.5,
+        0
+      ],
+      "outside_why": "where a player leaving the run stands: three blocks south of the plane, on the ground (124) facing south away from the rip, toward the trail",
+      "click": [
+        1475,
+        125,
+        4119
+      ],
+      "click_why": "the interaction box in front of the opening's middle column, at the feet's level (as the Night Shift's)",
+      "restore": {
+        "1473": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1474": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1475": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1476": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1477": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane (z 4118, x 1473..1477, y 125..128): air, all of it above the ground (round(ground) 124 there, tools/ground.py); no frame ever stood here",
+      "scorch_why": "as the other rips' (the owner, 2026-10-10): a small scorched patch under the free-standing oval SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "the Night Shift's oval: the texture frame's 3:4 (engine.rip_art)",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_mc puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_mc)",
+        "ground": {
+          "1474,4119": "minecraft:grass_block[snowy=false]",
+          "1475,4119": "minecraft:grass_block[snowy=false]",
+          "1476,4119": "minecraft:grass_block[snowy=false]",
+          "1475,4120": "minecraft:grass_block[snowy=false]",
+          "1473,4119": "minecraft:grass_block[snowy=false]",
+          "1477,4119": "minecraft:grass_block[snowy=false]",
+          "1474,4120": "minecraft:grass_block[snowy=false]",
+          "1476,4120": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_dsp",
+      "name": "The old mine's trail, rip 7",
+      "kind": "test_trail",
+      "region": "shrew_lakes",
+      "legacy_dungeon": "dragonspiral",
+      "scorch_theme": "ice_spire",
+      "test": true,
+      "test_why": "a test rip (the brief's x slot 1600 on the test trail, z about 4118), walked to along the carts' trail from the three test rips (x1350-1404); its campaign site is decided with the dungeon. Not a nether dungeon",
+      "frame": {
+        "x0": 1604,
+        "x1": 1608,
+        "z": 4117,
+        "y": 123,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE (frameless, as the three: rip.scorch_why): x 1604..1608, y 123..126, in the plane z 4117, the opening's face south (z 4118). Six east of x1600, the nearest columns where the plane and the click row read one ground",
+      "ground": {
+        "x": 1606,
+        "z": 4118,
+        "rule": "tools/ground.py, the canonical heightmap rounded: the feet are ground + 1",
+        "measured": "round(ground(x, z)) = 122 for x 1604..1608 at z 4117 and 4118 (the plane and the click row) and at (1606, 4121) where the leaving player stands, so the feet are y123 (tools/ground.py, 2026-10-11); sea level 62, so dry. The ground over x 1588..1612, z 4113..4126 reads 122-123: a gentle rise to the west and south"
+      },
+      "outside": [
+        1606.5,
+        123,
+        4121.5,
+        0
+      ],
+      "outside_why": "where a player leaving the run stands: three blocks south of the click row, on the ground (122, feet y123), facing south away from the rip",
+      "click": [
+        1606,
+        123,
+        4118
+      ],
+      "click_why": "the interaction box in front of the opening's middle column, at the feet's level (as the others')",
+      "restore": {
+        "1604": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1605": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1606": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1607": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1608": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane (z 4117, x 1604..1608, y 123..126): air, all of it above the ground (round(ground) 122 there, tools/ground.py). python tools/dungeon.py --rip-restore",
+      "scorch_why": "the three test rips' scorch (rip_scorch_cells): soul soil under the oval, a coarse dirt rim; neither a spawn block (data/spawn_blocks.json) nor slow SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_dsp puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_dsp)",
+        "ground": {
+          "1605,4118": "minecraft:grass_block[snowy=false]",
+          "1606,4118": "minecraft:grass_block[snowy=false]",
+          "1607,4118": "minecraft:grass_block[snowy=false]",
+          "1606,4119": "minecraft:grass_block[snowy=false]",
+          "1604,4118": "minecraft:grass_block[snowy=false]",
+          "1608,4118": "minecraft:grass_block[snowy=false]",
+          "1605,4119": "minecraft:grass_block[snowy=false]",
+          "1607,4119": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_fs",
+      "name": "The old mine's trail, rip 8",
+      "kind": "test_trail",
+      "region": "shrew_lakes",
+      "legacy_dungeon": "field_of_swords",
+      "scorch_theme": "hill_keep",
+      "test": true,
+      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site: on the test trail at the x slot the orchestrator gave this unit (x1625; the plane at x 1625..1629 since MEGA-INTEGRATE, centre 1627, so it stands more than 20 from the Dragonspiral's at 1606), east of the three existing rips (x1350-1404) and 31 blocks east of Route 1's walked line (x1594-1595 at z4100-4128, data/route_paths.json), well outside the old mine's footprint (x1229..1374)",
+      "frame": {
+        "x0": 1625,
+        "x1": 1629,
+        "z": 4118,
+        "y": 122,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE (no frame stands since 2026-10-10: rip.scorch_why); the oval, the click and the particles are measured from it. The plane x 1625..1629, y 122..125, z 4118, its oval facing south",
+      "ground": {
+        "x": 1627,
+        "z": 4119,
+        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
+        "measured": "round(ground(x, z)) = 121 for the plane x 1625..1629 at z 4118, the click x 1626..1628 at z 4119 and the stand x 1627 at z 4121 (tools/ground.py, re-measured at MEGA-INTEGRATE 2026-10-11 when the rip moved 2 east, 19 blocks from the Dragonspiral's), so the feet are y122. round(ground(x, z)) = 121 for every column x 1621..1629 at z 4117..4119 and x 1622..1630 at z 4120..4121 (the plane, the click and the stand in front), so the feet are y122; the ground over x 1613..1637, z 4112..4127 reads 120-122, dry land 59 above the sea (tools/ground.py, 2026-10-11)"
+      },
+      "outside": [
+        1627.5,
+        122,
+        4121.5,
+        0
+      ],
+      "outside_why": "where a player leaving the run stands: two blocks south of the click interaction, on the ground (feet y122), facing south away from the rip toward the trail",
+      "click": [
+        1627,
+        122,
+        4119
+      ],
+      "click_why": "the interaction's centre column, just south of the plane (z 4119), 3 wide and 3 high",
+      "restore": {
+        "1625": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1626": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1627": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1628": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1629": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane (z 4118, x 1625..1629, y 122..125): air, all of it above the ground (round(ground) 121 there, tools/ground.py). Measured by python tools/dungeon.py --rip-restore (2026-10-11) Moved 2 east at MEGA-INTEGRATE (2026-10-11): the plane's columns re-measured, ground 121, so still air.",
+      "scorch_why": "as the other rips: soul soil under the oval and a coarse dirt rim (tools/dungeon.py rip_scorch_cells); neither is a spawn block (data/spawn_blocks.json) nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_fs puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_fs)",
+        "ground": {
+          "1626,4119": "minecraft:grass_block[snowy=false]",
+          "1627,4119": "minecraft:grass_block[snowy=false]",
+          "1628,4119": "minecraft:grass_block[snowy=false]",
+          "1627,4120": "minecraft:grass_block[snowy=false]",
+          "1625,4119": "minecraft:grass_block[snowy=false]",
+          "1629,4119": "minecraft:grass_block[snowy=false]",
+          "1626,4120": "minecraft:grass_block[snowy=false]",
+          "1628,4120": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_wl",
+      "name": "The old mine's trail, rip 9",
+      "kind": "test_trail",
+      "region": "shrew_lakes",
+      "legacy_dungeon": "warped_lab",
+      "scorch_theme": "warped_forest",
+      "test": true,
+      "test_why": "a test rip on the test trail (x slot 1500, the launch brief), east of the three test rips (x1350-1404), so the owner reaches all four from one walk; its campaign site is the Nether's",
+      "frame": {
+        "x0": 1500,
+        "x1": 1504,
+        "z": 4118,
+        "y": 125,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE (no frame stands in it: the oval stands free, as the other three since 2026-10-10): x 1500..1504 in the plane z 4118, the oval's face south (the click and the stand at z + 1). 96 blocks east of the Drowned Reliquary's plane (x 1400..1404, z 4120), far outside the old mine's footprint (x1229..1374)",
+      "ground": {
+        "x": 1502,
+        "z": 4119,
+        "rule": "tools/ground.py, the canonical heightmap rounded: the feet are ground + 1",
+        "measured": "round(ground(x, z)) = 124 for every column x 1488..1512, z 4112..4124 (tools/ground.py, 2026-10-11), 125 from z 4126 south; sea level 62, and no lake or river of data/rivers.json within 400 blocks (shrew_lake's basin starts at x 2508): dry land"
+      },
+      "outside": [
+        1502.5,
+        125,
+        4121.5,
+        0
+      ],
+      "outside_why": "two blocks south of the click, on the ground (feet y125), facing south away from the rip",
+      "click": [
+        1502,
+        125,
+        4119
+      ],
+      "click_why": "the interaction's centre column just south of the plane (z 4119), at the feet's level",
+      "restore": {
+        "1500": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1501": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1502": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1503": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1504": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane (z 4118, x 1500..1504, y 125..128): air, all above the ground (round(ground) 124). Measured by python tools/dungeon.py --rip-restore (2026-10-11)",
+      "scorch_why": "the other rips' scorched patch (soul soil under the oval, a coarse dirt rim): neither a spawn block (data/spawn_blocks.json) nor slow SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_wl puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_wl)",
+        "ground": {
+          "1501,4119": "minecraft:grass_block[snowy=false]",
+          "1502,4119": "minecraft:grass_block[snowy=false]",
+          "1503,4119": "minecraft:grass_block[snowy=false]",
+          "1502,4120": "minecraft:grass_block[snowy=false]",
+          "1500,4119": "minecraft:grass_block[snowy=false]",
+          "1504,4119": "minecraft:grass_block[snowy=false]",
+          "1501,4120": "minecraft:grass_block[snowy=false]",
+          "1503,4120": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_cr",
+      "name": "The old mine's trail, rip 10",
+      "kind": "test_trail",
+      "region": "pallet_fields",
+      "legacy_dungeon": "crucible",
+      "scorch_theme": "basalt_deltas",
+      "test": true,
+      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site (the Crucible's is in the Nether: DUNGEONS.md 10, data/dungeon_prize_roster.json). On the old mine's carts' trail east of the Drowned Reliquary's (x1400-1404 z4120), outside the old mine's footprint (data/placements.json route1_old_mine plan.footprint.rect x1229..1374 z4071..4142)",
+      "frame": {
+        "x0": 1421,
+        "x1": 1425,
+        "z": 4118,
+        "y": 126,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE (no frame stands; the oval, the click and the particles are measured from it, as the other test rips' since 2026-10-10): x 1421..1425 at y 126..129 in the plane z 4118, its opening facing south. Centre (1423, 4118) is 21 blocks from the Drowned Reliquary's (1402, 4120) and 71 from the Night Shift's (1352, 4117): the launch brief's x slot 1425, moved 2 west onto level ground",
+      "ground": {
+        "x": 1423,
+        "z": 4119,
+        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
+        "measured": "round(ground(x, z)) = 125 for every column x 1413..1426, z 4118..4122 and x 1413..1437, z 4123..4128 (the plane, its click and the stand in front), so the feet are y126; east of x 1426 the ground falls to 124 (tools/ground.py, 2026-10-11). No authored water near: data/rivers.json and data/landmarks.json name no point within 80 blocks, and the ground is 125, 63 above the sea"
+      },
+      "outside": [
+        1423.5,
+        126,
+        4122.5,
+        0
+      ],
+      "outside_why": "where a player leaving the run stands: three blocks south of the click interaction (z 4119), on the ground (feet y126), facing south toward the trail",
+      "click": [
+        1423,
+        126,
+        4119
+      ],
+      "click_why": "the interaction's centre column, just south of the opening (z 4119), 3 wide and 3 high",
+      "restore": {
+        "1421": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1422": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1423": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1424": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1425": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane where a frame would stand (z 4118, x 1421..1425, y 126..129): air, all of it above the ground (round(ground) 125 there, tools/ground.py); no frame ever stood here",
+      "scorch_why": "as the other test rips' (the owner, 2026-10-10): a small scorched patch under the free-standing oval; neither block is a spawn block (data/spawn_blocks.json) nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_cr puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_cr)",
+        "ground": {
+          "1422,4119": "minecraft:grass_block[snowy=false]",
+          "1423,4119": "minecraft:grass_block[snowy=false]",
+          "1424,4119": "minecraft:grass_block[snowy=false]",
+          "1423,4120": "minecraft:grass_block[snowy=false]",
+          "1421,4119": "minecraft:grass_block[snowy=false]",
+          "1425,4119": "minecraft:grass_block[snowy=false]",
+          "1422,4120": "minecraft:grass_block[snowy=false]",
+          "1424,4120": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_sf",
+      "name": "The old mine's trail, rip 11",
+      "kind": "test_trail",
+      "region": "shrew_lakes",
+      "legacy_dungeon": "starfall",
+      "scorch_theme": "night_crater",
+      "test": true,
+      "test_why": "a test rip for the owner's walk-through, not the dungeon's campaign site (the roster proposes none: 'a night sky crater'). On the test trail's z (about 4118) at the x slot x1675 the orchestrator gave unit NEW-STARFALL, east of the three test rips (x1350-1404), in the flat floor of a shallow north-south valley",
+      "frame": {
+        "x0": 1673,
+        "x1": 1677,
+        "z": 4118,
+        "y": 119,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE (frameless since 2026-10-10, as the other rips: the oval, the click and the particles are measured from it). x 1673..1677 at z 4118, the opening facing south (the engine's oval and click are on the frame's south side, z + 1); centre (1675, 4118)",
+      "ground": {
+        "x": 1675,
+        "z": 4119,
+        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
+        "measured": "round(ground(x, z)) = 118 for every column x 1665..1684, z 4108..4122 (the frame, its click, the stand in front and 8 blocks round), so the feet are y119 (tools/ground.py, 2026-10-11). Dry: sea level 62 (data/world.json); the nearest authored water point (data/rivers.json, data/landmarks.json) is over 450 blocks away; the nearest route path point (route_01, data/route_paths.json) 80 blocks west"
+      },
+      "outside": [
+        1675.5,
+        119,
+        4122.5,
+        0
+      ],
+      "outside_why": "where a player leaving the run stands: three blocks south of the click interaction (z 4118..4120), on the ground (feet y119), facing south away from the rip",
+      "click": [
+        1675,
+        119,
+        4119
+      ],
+      "click_why": "the interaction's centre column, just south of the opening (z 4119), 3 wide and 3 high",
+      "restore": {
+        "1673": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1674": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1675": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1676": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1677": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane where the frame would stand (z 4118, x 1673..1677, y 119..122): air, all of it above the ground (round(ground) 118 there, tools/ground.py). Measured by python tools/dungeon.py --rip-restore",
+      "scorch_why": "as the other rips' (the owner, 2026-10-10): a small scorched patch under the free-standing oval; neither block is a spawn block nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_sf puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_sf)",
+        "ground": {
+          "1674,4119": "minecraft:grass_block[snowy=false]",
+          "1675,4119": "minecraft:grass_block[snowy=false]",
+          "1676,4119": "minecraft:grass_block[snowy=false]",
+          "1675,4120": "minecraft:grass_block[snowy=false]",
+          "1673,4119": "minecraft:grass_block[snowy=false]",
+          "1677,4119": "minecraft:grass_block[snowy=false]",
+          "1674,4120": "minecraft:grass_block[snowy=false]",
+          "1676,4120": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_st",
+      "name": "The old mine's trail, rip 12",
+      "kind": "test_trail",
+      "region": "shrew_lakes",
+      "legacy_dungeon": "street",
+      "scorch_theme": "city",
+      "test": true,
+      "test_why": "a test rip for the owner's walk-through, not the Street's campaign site (the Scar's road end, DUNGEON_2_STREET.md 3). Its x slot on the old mine's test trail is x1550 (the orchestrator's), east of the three test rips (x1350-1354 z4117, x1380-1384 z4118, x1400-1404 z4120) and far from the old mine (data/placements.json route1_old_mine plan.footprint.rect x1229..1374 z4071..4142)",
+      "frame": {
+        "x0": 1552,
+        "x1": 1556,
+        "z": 4118,
+        "y": 125,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE (no frame stands in it: the oval and the click are measured from it, as the other rips since 2026-10-10): x 1552..1556, y 125..128, z 4118; its opening faces south (the oval and the click on the plane's south side, z + 1)",
+      "ground": {
+        "x": 1554,
+        "z": 4119,
+        "rule": "tools/ground.py (the canonical heightmap, rounded): the feet are ground + 1",
+        "measured": "round(ground(x, z)) = 124 for every column x 1550..1561, z 4114..4119 and x 1552..1561, z 4114..4127 (the plane, its click and the stand in front), so the feet are y125; the ground west of x 1550 reads 125 (tools/ground.py, 2026-10-11). Dry land 62 above the sea"
+      },
+      "outside": [
+        1554.5,
+        125,
+        4122.5,
+        0
+      ],
+      "outside_why": "where a player leaving the run stands: two blocks south of the click interaction (z 4119..4121), on the ground (feet y125), facing south away from the rip",
+      "click": [
+        1554,
+        125,
+        4119
+      ],
+      "click_why": "the interaction's centre column, just south of the opening (z 4119), 3 wide and 3 high",
+      "restore": {
+        "1552": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1553": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1554": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1555": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1556": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane (z 4118, x 1552..1556, y 125..128): air, all of it above the ground (round(ground) 124 there, tools/ground.py). Measured by python tools/dungeon.py --rip-restore (2026-10-11)",
+      "scorch_why": "as the other test rips': the oval stands free over a small scorched patch (tools/dungeon.py rip_scorch_cells); neither block is a spawn block nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "engine.rip_art's 3 x 4 oval, as the Night Shift's",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_st puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_st)",
+        "ground": {
+          "1553,4119": "minecraft:grass_block[snowy=false]",
+          "1554,4119": "minecraft:grass_block[snowy=false]",
+          "1555,4119": "minecraft:grass_block[snowy=false]",
+          "1554,4120": "minecraft:grass_block[snowy=false]",
+          "1552,4119": "minecraft:grass_block[snowy=false]",
+          "1556,4119": "minecraft:grass_block[snowy=false]",
+          "1553,4120": "minecraft:grass_block[snowy=false]",
+          "1555,4120": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
+    },
+    {
+      "id": "rip_trail_pt",
+      "name": "The old mine's trail, rip 13",
+      "kind": "test_trail",
+      "region": "shrew_lakes",
+      "legacy_dungeon": "patriarch",
+      "scorch_theme": "great_tree",
+      "test": true,
+      "test_why": "a test dungeon's rip on the carts' trail east of the old mine (the launch brief's x slot 1575), so the owner walks to it from the other test rips; its real place, the Patriarch's foot at (4272, 3600) (DUNGEON_3_PATRIARCH.md 3), is world-content-dev's once the owner keeps it",
+      "frame": {
+        "x0": 1575,
+        "x1": 1579,
+        "z": 4118,
+        "y": 124,
+        "height": 4
+      },
+      "frame_why": "the rip's PLANE (no frame has ever stood here: the oval stands free, as every rip since 2026-10-10): x 1575..1579 at z 4118, feet y 124. 175 east of the flooded ruin's plane (x 1400..1404) and 200 east of the old mine's footprint (its trail ends at x 1374); 16 west of Route 1's path (x 1594-1595 at z 4095-4145, data/route_paths.json)",
+      "ground": {
+        "x": 1577,
+        "z": 4119,
+        "rule": "tools/ground.py, the canonical heightmap rounded: the feet are ground + 1",
+        "measured": "round(ground(x, z)) = 123 for every column x 1572..1589, z 4112..4125 (the plane, the click, the scorch and the outside point), so the feet are y 124; sea level 62, so dry; route1_old_mine.rise() is 0 at x 1575..1579, z 4118..4119 (tools/ground.py, 2026-10-11)"
+      },
+      "outside": [
+        1577.5,
+        124,
+        4121.5,
+        0
+      ],
+      "outside_why": "where a player leaving the run stands: two blocks south of the opening, on the ground (123) facing south, toward the trail",
+      "click": [
+        1577,
+        124,
+        4119
+      ],
+      "click_why": "the interaction box in front of the opening's middle column, at the feet's level (as the other rips)",
+      "restore": {
+        "1575": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1576": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1577": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1578": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1579": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "restore_why": "the plane (z 4118, x 1575..1579, y 124..127): air, all of it above the ground (123); measured by python tools/dungeon.py --rip-restore (2026-10-11): matches",
+      "scorch_why": "as every rip: soul soil under the oval's three columns and one in front, a coarse dirt rim, on the ground at y 123; neither is a spawn block nor slows a player SUPERSEDED 2026-10-12 (the owner: the ground under a rift should show the biome inside it): the blocks are no longer this record's; tools/dungeon.py rip_scorch takes the dungeon's theme hull.floor for the core and hull.wall for the rim (data/dungeon_themes.json). An explicit rip.scorch on a record would override them.",
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "oval_why": "as every rip: the animated oval (engine.rip_art), 3 x 4, a hair in front of the plane",
+      "plume": false,
+      "plume_gated_on": "V1 (EXP-080), as the Night Shift's",
+      "retired": {
+        "on": "2026-10-13",
+        "by": "the owner, 2026-10-13, verbatim: \"the rips near old mine have to go\"",
+        "why": "the 13 test rips stood on the old mine's carts' trail so the owner could walk every dungeon; since the draw a rip is a place in a region and draws by progression (docs/mechanics/DUNGEON_DRAW.md), and the trail's cluster was kept only until the regions held rips of their own. Pallet Fields and Shrew Lakes now do",
+        "taken_out_by": "R16DR: rips/retire_pt puts the plane back to rip.restore and the patch back to retired.ground (only where a cell still holds the themed block); rips/entities_retired kills the interaction and the oval (tag dg.rip_pt)",
+        "ground": {
+          "1576,4119": "minecraft:grass_block[snowy=false]",
+          "1577,4119": "minecraft:grass_block[snowy=false]",
+          "1578,4119": "minecraft:grass_block[snowy=false]",
+          "1577,4120": "minecraft:grass_block[snowy=false]",
+          "1575,4119": "minecraft:grass_block[snowy=false]",
+          "1579,4119": "minecraft:grass_block[snowy=false]",
+          "1576,4120": "minecraft:grass_block[snowy=false]",
+          "1578,4120": "minecraft:grass_block[snowy=false]"
+        },
+        "ground_basis": "ASSUMED, NOT MEASURED: no file records the surface block of this ground (the heightmap holds heights, not blocks; the old mine's build reaches no patch but the Night Shift's; rip.under was never recorded). The grass the Pallet Fields and Shrew Lakes wear is the best guess. Each cell is put back only where it still holds the themed block, so a wrong guess touches nothing else. To replace the guess with a measurement, read these cells from an OFFLINE SNAPSHOT of a world that never held the patch and write them here (rip.under's own rule, tools/dungeon.py rip_close_lines)",
+        "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
+      }
     }
   ]
 }

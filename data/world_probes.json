@@ -2990,96 +2990,6 @@
           96,
           1440
         ]
-      },
-      {
-        "what": "the Night Shift rip (PLACEHOLDER, R16DR): no frame since 2026-10-10; where its west post stood, the old mine's hill again (data/dungeons.json rip.restore)",
-        "block": [
-          1350,
-          130,
-          4117,
-          "minecraft:dirt"
-        ],
-        "expect": true
-      },
-      {
-        "what": "... where its dark opening stood, the hill's grass skin again (rip.restore)",
-        "block": [
-          1352,
-          131,
-          4117,
-          "minecraft:grass_block"
-        ],
-        "expect": true
-      },
-      {
-        "what": "... where its lintel stood, air (rip.restore)",
-        "block": [
-          1352,
-          133,
-          4117,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "... the scorched ground under the oval (rip.scorch)",
-        "block": [
-          1352,
-          129,
-          4118,
-          "minecraft:soul_soil"
-        ],
-        "expect": true
-      },
-      {
-        "what": "... the notch in front of it is open (tools/route1_old_mine.py's notch, not ours)",
-        "block": [
-          1352,
-          130,
-          4118,
-          "minecraft:air"
-        ],
-        "expect": true
-      },
-      {
-        "what": "... its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_ns]",
-        "count": 1,
-        "hold": [
-          1352,
-          130,
-          4118
-        ]
-      },
-      {
-        "what": "... its oval: one item_display of the carrier item, in front of the opening (after R16DR's entity chain; a client with tools/rip_pack.py's pack sees it animated, one without sees a big amethyst shard)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_ns,tag=dg.rip_oval]",
-        "count": 1,
-        "hold": [
-          1352,
-          130,
-          4118
-        ]
-      },
-      {
-        "what": "... and it is the right item and model value (the display carries minecraft:amethyst_shard with custom_model_data 4180)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_ns,tag=dg.rip_oval,nbt={item:{id:\"minecraft:amethyst_shard\",components:{\"minecraft:custom_model_data\":4180}}}]",
-        "count": 1,
-        "hold": [
-          1352,
-          130,
-          4118
-        ]
-      },
-      {
-        "what": "... the oval's top cell (y133, in front of the lintel) is open air, so nothing hides it",
-        "block": [
-          1352,
-          133,
-          4118,
-          "minecraft:air"
-        ],
-        "expect": true
       }
     ],
     "gym2_arena": [
@@ -9477,362 +9387,72 @@
     ],
     "dungeon_rips": [
       {
-        "what": "The old mine's trail, rip 2: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_jg]",
+        "what": "A rift in Pallet Fields: its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_pallet_fields]",
         "count": 1,
         "hold": [
-          1382,
-          127,
-          4119
+          1292,
+          120,
+          5170
         ]
       },
       {
-        "what": "The old mine's trail, rip 2: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_jg,tag=dg.rip_oval]",
+        "what": "A rift in Pallet Fields: its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_pallet_fields,tag=dg.rip_oval]",
         "count": 1,
         "hold": [
-          1382,
-          127,
-          4119
+          1292,
+          120,
+          5170
         ]
       },
       {
-        "what": "The old mine's trail, rip 2: the themed ground under the oval (minecraft:grass_block)",
+        "what": "A rift in Pallet Fields: the themed ground under the oval (minecraft:grass_block)",
         "block": [
-          1381,
-          126,
-          4119,
+          1291,
+          119,
+          5170,
           "minecraft:grass_block"
         ],
         "expect": true
       },
       {
-        "what": "The old mine's trail, rip 3: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_fr]",
+        "what": "A rift in Pallet Fields: its oval is the right item and model value (minecraft:amethyst_shard with custom_model_data 4180)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_pallet_fields,tag=dg.rip_oval,nbt={item:{id:\"minecraft:amethyst_shard\",components:{\"minecraft:custom_model_data\":4180}}}]",
         "count": 1,
         "hold": [
-          1402,
-          126,
-          4121
+          1292,
+          120,
+          5170
         ]
       },
       {
-        "what": "The old mine's trail, rip 3: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_fr,tag=dg.rip_oval]",
+        "what": "A rift in Shrew Lakes: its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_shrew_lakes]",
         "count": 1,
         "hold": [
-          1402,
-          126,
-          4121
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 3: the themed ground under the oval (minecraft:prismarine_bricks)",
-        "block": [
-          1401,
-          125,
-          4121,
-          "minecraft:prismarine_bricks"
-        ],
-        "expect": true
-      },
-      {
-        "what": "The old mine's trail, rip 4: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_ab]",
-        "count": 1,
-        "hold": [
-          1450,
-          125,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 4: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_ab,tag=dg.rip_oval]",
-        "count": 1,
-        "hold": [
-          1450,
-          125,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 4: the themed ground under the oval (minecraft:netherrack)",
-        "block": [
-          1449,
-          124,
-          4119,
-          "minecraft:netherrack"
-        ],
-        "expect": true
-      },
-      {
-        "what": "The old mine's trail, rip 5: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_so]",
-        "count": 1,
-        "hold": [
-          1525,
-          126,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 5: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_so,tag=dg.rip_oval]",
-        "count": 1,
-        "hold": [
-          1525,
-          126,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 5: the themed ground under the oval (minecraft:soul_soil)",
-        "block": [
-          1524,
-          125,
-          4119,
-          "minecraft:soul_soil"
-        ],
-        "expect": true
-      },
-      {
-        "what": "The old mine's trail, rip 6: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_mc]",
-        "count": 1,
-        "hold": [
-          1475,
-          125,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 6: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_mc,tag=dg.rip_oval]",
-        "count": 1,
-        "hold": [
-          1475,
-          125,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 6: the themed ground under the oval (minecraft:crimson_nylium)",
-        "block": [
-          1474,
-          124,
-          4119,
-          "minecraft:crimson_nylium"
-        ],
-        "expect": true
-      },
-      {
-        "what": "The old mine's trail, rip 7: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_dsp]",
-        "count": 1,
-        "hold": [
-          1606,
-          123,
-          4118
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 7: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_dsp,tag=dg.rip_oval]",
-        "count": 1,
-        "hold": [
-          1606,
-          123,
-          4118
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 7: the themed ground under the oval (minecraft:polished_diorite)",
-        "block": [
-          1605,
-          122,
-          4118,
-          "minecraft:polished_diorite"
-        ],
-        "expect": true
-      },
-      {
-        "what": "The old mine's trail, rip 8: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_fs]",
-        "count": 1,
-        "hold": [
-          1627,
-          122,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 8: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_fs,tag=dg.rip_oval]",
-        "count": 1,
-        "hold": [
-          1627,
-          122,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 8: the themed ground under the oval (minecraft:stone)",
-        "block": [
-          1626,
-          121,
-          4119,
-          "minecraft:stone"
-        ],
-        "expect": true
-      },
-      {
-        "what": "The old mine's trail, rip 9: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_wl]",
-        "count": 1,
-        "hold": [
-          1502,
-          125,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 9: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_wl,tag=dg.rip_oval]",
-        "count": 1,
-        "hold": [
-          1502,
-          125,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 9: the themed ground under the oval (minecraft:warped_nylium)",
-        "block": [
-          1501,
-          124,
-          4119,
-          "minecraft:warped_nylium"
-        ],
-        "expect": true
-      },
-      {
-        "what": "The old mine's trail, rip 10: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_cr]",
-        "count": 1,
-        "hold": [
-          1423,
-          126,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 10: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_cr,tag=dg.rip_oval]",
-        "count": 1,
-        "hold": [
-          1423,
-          126,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 10: the themed ground under the oval (minecraft:basalt)",
-        "block": [
-          1422,
-          125,
-          4119,
-          "minecraft:basalt"
-        ],
-        "expect": true
-      },
-      {
-        "what": "The old mine's trail, rip 11: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_sf]",
-        "count": 1,
-        "hold": [
-          1675,
-          119,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 11: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_sf,tag=dg.rip_oval]",
-        "count": 1,
-        "hold": [
-          1675,
-          119,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 11: the themed ground under the oval (minecraft:tuff)",
-        "block": [
-          1674,
+          2740,
           118,
-          4119,
-          "minecraft:tuff"
-        ],
-        "expect": true
-      },
-      {
-        "what": "The old mine's trail, rip 12: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_st]",
-        "count": 1,
-        "hold": [
-          1554,
-          125,
-          4119
+          4306
         ]
       },
       {
-        "what": "The old mine's trail, rip 12: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_st,tag=dg.rip_oval]",
+        "what": "A rift in Shrew Lakes: its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_shrew_lakes,tag=dg.rip_oval]",
         "count": 1,
         "hold": [
-          1554,
-          125,
-          4119
+          2740,
+          118,
+          4306
         ]
       },
       {
-        "what": "The old mine's trail, rip 12: the themed ground under the oval (minecraft:polished_andesite)",
+        "what": "A rift in Shrew Lakes: the themed ground under the oval (minecraft:prismarine_bricks)",
         "block": [
-          1553,
-          124,
-          4119,
-          "minecraft:polished_andesite"
-        ],
-        "expect": true
-      },
-      {
-        "what": "The old mine's trail, rip 13: its interaction (after R16DR's entity chain)",
-        "entity": "@e[type=minecraft:interaction,tag=dg.rip_pt]",
-        "count": 1,
-        "hold": [
-          1577,
-          124,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 13: its oval (one item_display, in front of the opening)",
-        "entity": "@e[type=minecraft:item_display,tag=dg.rip_pt,tag=dg.rip_oval]",
-        "count": 1,
-        "hold": [
-          1577,
-          124,
-          4119
-        ]
-      },
-      {
-        "what": "The old mine's trail, rip 13: the themed ground under the oval (minecraft:rooted_dirt)",
-        "block": [
-          1576,
-          123,
-          4119,
-          "minecraft:rooted_dirt"
+          2739,
+          117,
+          4306,
+          "minecraft:prismarine_bricks"
         ],
         "expect": true
       },
@@ -10373,6 +9993,526 @@
           142,
           6122,
           "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 1 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_ns]",
+        "count": 0,
+        "hold": [
+          1352,
+          130,
+          4118
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 1 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_ns,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1352,
+          130,
+          4118
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 1 (RETIRED): the ground under where the oval stood is back (minecraft:coarse_dirt)",
+        "block": [
+          1351,
+          129,
+          4118,
+          "minecraft:coarse_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 1 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:dirt, rip.restore)",
+        "block": [
+          1352,
+          130,
+          4117,
+          "minecraft:dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 2 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_jg]",
+        "count": 0,
+        "hold": [
+          1382,
+          127,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 2 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_jg,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1382,
+          127,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 2 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1381,
+          126,
+          4119,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 2 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1382,
+          127,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 3 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_fr]",
+        "count": 0,
+        "hold": [
+          1402,
+          126,
+          4121
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 3 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_fr,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1402,
+          126,
+          4121
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 3 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1401,
+          125,
+          4121,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 3 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1402,
+          126,
+          4120,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 4 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_ab]",
+        "count": 0,
+        "hold": [
+          1450,
+          125,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 4 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_ab,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1450,
+          125,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 4 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1449,
+          124,
+          4119,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 4 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1450,
+          125,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 5 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_so]",
+        "count": 0,
+        "hold": [
+          1525,
+          126,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 5 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_so,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1525,
+          126,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 5 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1524,
+          125,
+          4119,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 5 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1525,
+          126,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 6 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_mc]",
+        "count": 0,
+        "hold": [
+          1475,
+          125,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 6 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_mc,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1475,
+          125,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 6 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1474,
+          124,
+          4119,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 6 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1475,
+          125,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 7 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_dsp]",
+        "count": 0,
+        "hold": [
+          1606,
+          123,
+          4118
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 7 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_dsp,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1606,
+          123,
+          4118
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 7 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1605,
+          122,
+          4118,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 7 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1606,
+          123,
+          4117,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 8 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_fs]",
+        "count": 0,
+        "hold": [
+          1627,
+          122,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 8 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_fs,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1627,
+          122,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 8 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1626,
+          121,
+          4119,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 8 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1627,
+          122,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 9 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_wl]",
+        "count": 0,
+        "hold": [
+          1502,
+          125,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 9 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_wl,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1502,
+          125,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 9 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1501,
+          124,
+          4119,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 9 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1502,
+          125,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 10 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_cr]",
+        "count": 0,
+        "hold": [
+          1423,
+          126,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 10 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_cr,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1423,
+          126,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 10 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1422,
+          125,
+          4119,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 10 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1423,
+          126,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 11 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_sf]",
+        "count": 0,
+        "hold": [
+          1675,
+          119,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 11 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_sf,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1675,
+          119,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 11 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1674,
+          118,
+          4119,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 11 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1675,
+          119,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 12 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_st]",
+        "count": 0,
+        "hold": [
+          1554,
+          125,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 12 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_st,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1554,
+          125,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 12 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1553,
+          124,
+          4119,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 12 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1554,
+          125,
+          4118,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 13 (RETIRED): no interaction (after R16DR's retire sweep)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_pt]",
+        "count": 0,
+        "hold": [
+          1577,
+          124,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 13 (RETIRED): no oval",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_pt,tag=dg.rip_oval]",
+        "count": 0,
+        "hold": [
+          1577,
+          124,
+          4119
+        ]
+      },
+      {
+        "what": "The old mine's trail, rip 13 (RETIRED): the ground under where the oval stood is back (minecraft:grass_block)",
+        "block": [
+          1576,
+          123,
+          4119,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "The old mine's trail, rip 13 (RETIRED): the plane's bottom middle cell is what the plane held before (minecraft:air, rip.restore)",
+        "block": [
+          1577,
+          124,
+          4118,
+          "minecraft:air"
         ],
         "expect": true
       }
