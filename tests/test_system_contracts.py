@@ -525,6 +525,9 @@ def _source_blocks():
     # the glade shrines in the Route 1 maze forest (tools/maze_shrines.py, 2026-10-12): the generator refuses a block outside
     # its record's blocks.ids and the audit checks the written functions; a policy entry must name maze_shrines to cover one
     out["maze_shrines"] = (set(_load("maze_shrines.json")["blocks"]["ids"]), ["maze_shrines"])
+    # the Pallet crushed house (tools/crushed_house.py, 2026-10-13): the builder refuses a block outside structure.blocks.ids and any id
+    # in data/spawn_blocks.json; a policy entry must name crushed_house to cover one (none does, and none is needed)
+    out["crushed_house"] = (set(_load("crushed_house.json")["structure"]["blocks"]["ids"]), ["crushed_house"])
     for place in ("challengers_cairn", "dry_cistern", "survey_benchmark", "fossil_dig", "ice_lodge", "scar_tarn"):
         out[place] = (set(_load("%s.json" % place)["blocks"]["ids"]), [place])
     # the refillable mining caves (tools/mining_caves.py, 2026-10-10): every block the record names that a cave
