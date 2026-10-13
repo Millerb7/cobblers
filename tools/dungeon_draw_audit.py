@@ -9,6 +9,11 @@ data/dungeon_prize_roster.json (first_band and gate per dungeon), never from the
     is read from dungeon.py's `draw`, `candidates` or `eligible` code.
   * Rip siting is re-measured from tools/ground.py (the canonical heightmap, ROUNDED) and from data/*.json read here.
     tools/dungeon_rips.py is not imported for a single number: its siting rules are the thing being audited.
+  * The owner's decisions of 2026-10-13 are read as: the 13 trail rips are RETIRED (data/dungeon_rips.json retired_rips; R16DR's
+    rips/retire puts back each one's recorded plane and patch, an entity sweep kills their entities, nothing draws from their
+    click); EVERY region with dry ground has a standing rip; a rip inside a badge-gated rift zone is ALLOWED and declares
+    `reachable_after` as data/rift_zones.json has the zone. The expectations are the records, data/rift_zones.json,
+    data/regions.json, data/dungeon_themes.json and the heightmap, read here.
   * Independence is proved by MUTATING THE GENERATOR (tools/dungeon.py source, with data/ untouched): `--mutate` rebuilds
     the pack from a mutated copy of the source and requires the audit to FAIL. A mutation that only edited data would
     move the expectation and the output together and prove nothing.
@@ -43,8 +48,11 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 DATA = ROOT / "data"
 OW = "minecraft:overworld"
-OLD_TEST_RIPS_COMMIT = "6249332e"   # the 13 test rips' positions, as the owner played them (git show 6249332e:data/dungeons.json)
+OLD_TEST_RIPS_COMMIT = "6249332e"   # the 13 trail rips' positions, as the owner played them (git show 6249332e:data/dungeons.json)
 MAP = 8192
+RIPS_DIR = "data/cobblers/function/dungeons/rips/"     # where the pack's rip functions live (the path sc_rips_are_placed already reads)
+FN = "cobblers:dungeons/"                              # the pack's function namespace and folder, as the reapply steps name them
+DRY_SAMPLE_STEP = 8                                    # blocks between the columns sampled to decide whether a region has dry ground
 
 # the spec's numbers (DUNGEON_DRAW.md 2.6), written here and not read from the tool under audit
 CLEARANCE = 30          # blocks from every authored data/ coordinate
@@ -200,16 +208,17 @@ def region_polygons(data_dir=DATA):
     return {r["id"]: r["polygons"] for r in json.loads((Path(data_dir) / "regions.json").read_text(encoding="utf-8"))["regions"]}
 
 
-def siting_problems(rips, ground, sea, lakes, points, boxes, regions, clearance=CLEARANCE, notes=None):
-    """[problem] for a list of rips: dry, `clearance` blocks from every point, outside every precinct, inside its own
-    region. All inputs are values, so a fixture can hand it a synthetic world with hand-computable answers. The test-trail
-    rips are exempt from the clearance only (they were sited by the owner's play on the old mine's trail, not by the rule);
-    they are held to dry, precinct and region."""
+def siting_problems(rips, ground, sea, lakes, points, boxes, regions, clearance=CLEARANCE):
+    """[problem] for a list of STANDING rips: dry, `clearance` blocks from every point, outside every precinct, inside its own
+    region. All inputs are values, so a fixture can hand it a synthetic world with hand-computable answers. Since the owner's
+    2026-10-13 decision ("the rips near old mine have to go") no standing rip is exempt from anything: a rip of kind
+    test_trail that is still in the standing list is itself a problem (the 13 live under retired_rips)."""
     bad = []
     for r in rips:
         rid = r["id"]
         fp = footprint(r)
-        test = r.get("kind") == "test_trail"
+        if r.get("kind") == "test_trail":
+            bad.append("%s: a test_trail rip is standing; the owner retired them all on 2026-10-13" % rid)
         wet = None
         for x in range(fp[0], fp[2] + 1):
             for z in range(fp[1], fp[3] + 1):
@@ -225,101 +234,381 @@ def siting_problems(rips, ground, sea, lakes, points, boxes, regions, clearance=
                 break
         if wet:
             bad.append("%s: (%d, %d) is under %s: ground y%d, water y%d" % (rid, wet[0], wet[1], wet[2], wet[3], wet[4]))
-        if not test:
-            g = ground(r["click"][0], r["click"][2])
-            if r["frame"]["y"] != g + 1:
-                bad.append("%s: frame.y %d is not round(ground) + 1 = %d" % (rid, r["frame"]["y"], g + 1))
-            near = min(((point_gap(fp, p[0], p[1]), p) for p in points), key=lambda t: t[0], default=(float("inf"), None))
-            if near[0] < clearance:
-                bad.append("%s: authored (%d, %d) in %s is %.1f blocks from the footprint; the rule is %d"
-                           % (rid, near[1][0], near[1][1], near[1][2], near[0], clearance))
+        g = ground(r["click"][0], r["click"][2])
+        if r["frame"]["y"] != g + 1:
+            bad.append("%s: frame.y %d is not round(ground) + 1 = %d" % (rid, r["frame"]["y"], g + 1))
+        near = min(((point_gap(fp, p[0], p[1]), p) for p in points), key=lambda t: t[0], default=(float("inf"), None))
+        if near[0] < clearance:
+            bad.append("%s: authored (%d, %d) in %s is %.1f blocks from the footprint; the rule is %d"
+                       % (rid, near[1][0], near[1][1], near[1][2], near[0], clearance))
         for b in boxes:
             if box_gap(fp, b) <= SPAWN_FREE_MARGIN:
                 bad.append("%s: the footprint touches %s" % (rid, b[4]))
-        # the test rips stand where the owner played them (DUNGEON_DRAW.md 2.6: they stay until the owner has played): a region
-        # defect of theirs is a NOTE for the owner, not a failure of the siting rule they were never sited by
-        sink = notes if (test and notes is not None) else bad
         polys = regions.get(r.get("region"))
         if polys is None:
-            sink.append("%s: region %r is not in data/regions.json" % (rid, r.get("region")))
+            bad.append("%s: region %r is not in data/regions.json" % (rid, r.get("region")))
         else:
             for x, z in ((fp[0], fp[1]), (fp[2], fp[1]), (fp[0], fp[3]), (fp[2], fp[3])):
                 if not polys_contain(polys, x, z):
-                    sink.append("%s: footprint corner (%d, %d) is outside region %s" % (rid, x, z, r["region"]))
+                    bad.append("%s: footprint corner (%d, %d) is outside region %s" % (rid, x, z, r["region"]))
                     break
     return bad
 
 
-def old_test_rip_positions(old_doc, rips):
-    """[problem]: the 13 test rips' frame, click and outside against the dungeon records of 6249332e (`old_doc`), matched by
-    legacy_dungeon, not by order."""
+# ------------------------------------------------------------------------------------------------- a rip in every dry region
+
+
+def _inside_any(rings, X, Z):
+    """Boolean array: (X, Z) inside any ring (even-odd per ring, as ring_contains does for one point), vectorised."""
+    import numpy as np
+    inside = np.zeros(X.shape, bool)
+    for ring in rings:
+        c = np.zeros(X.shape, bool)
+        j = len(ring) - 1
+        for i in range(len(ring)):
+            xi, zi, xj, zj = float(ring[i][0]), float(ring[i][1]), float(ring[j][0]), float(ring[j][1])
+            if zi != zj:
+                c ^= ((zi > Z) != (zj > Z)) & (X < (xj - xi) * (Z - zi) / (zj - zi) + xi)
+            j = i
+        inside |= c
+    return inside
+
+
+def regions_dry_columns(box, sea, regions, step=DRY_SAMPLE_STEP, size=MAP):
+    """{region id: how many sampled columns of the region stand at or above the sea}. `box(x0, z0, x1, z1)` is a (z, x) array of
+    ROUNDED ground (tools/ground.py Ground.box), sampled on the global grid of multiples of `step`. A region is dry when it has a
+    sampled column. NOT covered: a lake basin counts as dry here (only the sea is subtracted), and a dry patch narrower than
+    `step` can be missed; the margin is wide (the smallest real count is thousands), but it is a sample, not a proof."""
+    import numpy as np
+    out = {}
+    for rid, polys in regions.items():
+        xs = [p[0] for ring in polys for p in ring]
+        zs = [p[1] for ring in polys for p in ring]
+        x0, x1 = max(int(min(xs)), 0), min(int(max(xs)), size - 1)
+        z0, z1 = max(int(min(zs)), 0), min(int(max(zs)), size - 1)
+        fx, fz = -(-x0 // step) * step, -(-z0 // step) * step      # first multiple of step at or after the box's corner
+        if fx > x1 or fz > z1:
+            out[rid] = 0
+            continue
+        h = np.asarray(box(x0, z0, x1, z1))[fz - z0::step, fx - x0::step]
+        X, Z = np.meshgrid(fx + step * np.arange(h.shape[1]), fz + step * np.arange(h.shape[0]))
+        out[rid] = int((_inside_any(polys, X, Z) & (h >= sea)).sum())
+    return out
+
+
+def region_rip_problems(rips, dry_columns):
+    """[problem]: the owner's 2026-10-13 decision, 'every area in game should be capable of spawning a rift': a region with dry
+    ground has a standing rip (a region with none is the drowned Jungle Isle, a note and not a fault)."""
+    have = {r.get("region") for r in rips}
+    return ["region %s has %d dry sampled columns and no rip" % (rid, n) for rid, n in sorted(dry_columns.items()) if n > 0 and rid not in have]
+
+
+# ------------------------------------------------------------------------------------------------- the retired trail rips
+
+
+def old_test_rip_positions(old_doc, retired):
+    """[problem]: the retired trail rips' frame, click and outside against the dungeon records of 6249332e (`old_doc`), matched by
+    legacy_dungeon, not by order. The retire function puts back the plane the RECORD says; this is what says the record is the
+    plane the owner played."""
     bad = []
-    by_dungeon = {r.get("legacy_dungeon"): r for r in rips if r.get("kind") == "test_trail"}
+    by_dungeon = {r.get("legacy_dungeon"): r for r in retired}
     for d in old_doc["dungeons"]:
         old = d["rip"]
         new = by_dungeon.get(d["id"])
         if new is None:
-            bad.append("test rip for %s: gone" % d["id"])
+            bad.append("retired rip for %s: gone" % d["id"])
             continue
         for k in ("frame", "click", "outside"):
             if new[k] != old[k]:
-                bad.append("test rip for %s: %s was %r, is %r" % (d["id"], k, old[k], new[k]))
+                bad.append("retired rip for %s: %s was %r, is %r" % (d["id"], k, old[k], new[k]))
     if len(by_dungeon) != len(old_doc["dungeons"]):
-        bad.append("%d test rips, 6249332e had %d" % (len(by_dungeon), len(old_doc["dungeons"])))
+        bad.append("%d retired rips, 6249332e had %d" % (len(by_dungeon), len(old_doc["dungeons"])))
+    return bad
+
+
+def retired_record_problems(rips, retired, dungeon_ids):
+    """[problem]: the retired rips against the decision 'the rips near old mine have to go', read from the records alone:
+    none of them stands (not in `rips`, no standing rip is test_trail or shares a click), they are exactly the rips the dungeons
+    had (`dungeon_ids`, data/dungeons.json), and none sits where a standing rip's footprint is (retiring one must not take
+    blocks out from under another)."""
+    bad = []
+    standing_ids = {r["id"] for r in rips}
+    for r in retired:
+        if r["id"] in standing_ids:
+            bad.append("%s: retired and standing at once" % r["id"])
+    for r in rips:
+        if r.get("kind") == "test_trail" or r.get("legacy_dungeon"):
+            bad.append("%s: a standing rip is a trail rip (kind %s, legacy_dungeon %s)" % (r["id"], r.get("kind"), r.get("legacy_dungeon")))
+    stood = {tuple(r["click"]): r["id"] for r in rips}
+    for r in retired:
+        if tuple(r["click"]) in stood:
+            bad.append("%s: its click %s is rip %s's click" % (r["id"], r["click"], stood[tuple(r["click"])]))
+        for s in rips:
+            if box_gap(footprint(r), footprint(s)) <= 0:
+                bad.append("%s: its footprint touches standing %s: retiring it would take blocks out from under that rip" % (r["id"], s["id"]))
+    legacy = sorted(r.get("legacy_dungeon") for r in retired)
+    if legacy != sorted(dungeon_ids):
+        bad.append("the retired rips stand for %s, the dungeons are %s" % (legacy, sorted(dungeon_ids)))
+    return bad
+
+
+def parse_block_writes(lines):
+    """(unconditional {(x, y, z): block}, conditional [((x, y, z), if_block, new_block)], other [line]) from the setblock, fill and
+    `execute if block .. run setblock ..` lines of a function. Comments, blanks and forceload lines are ignored; anything else is
+    returned in `other` so the caller can refuse it."""
+    unc, cond, other = {}, [], []
+    n = r"(-?\d+)"
+    for raw in lines:
+        s = raw.strip()
+        if not s or s.startswith("#") or re.match(r"forceload (add|remove)\b", s):
+            continue
+        m = re.fullmatch(r"setblock %s %s %s (\S+)" % (n, n, n), s)
+        if m:
+            unc[tuple(int(v) for v in m.groups()[:3])] = m.group(4)
+            continue
+        m = re.fullmatch(r"fill %s %s %s %s %s %s (\S+)" % ((n,) * 6), s)
+        if m:
+            x1, y1, z1, x2, y2, z2 = (int(v) for v in m.groups()[:6])
+            for x in range(min(x1, x2), max(x1, x2) + 1):
+                for y in range(min(y1, y2), max(y1, y2) + 1):
+                    for z in range(min(z1, z2), max(z1, z2) + 1):
+                        unc[(x, y, z)] = m.group(7)
+            continue
+        m = re.fullmatch(r"execute if block %s %s %s (\S+) run setblock %s %s %s (\S+)" % ((n,) * 6), s)
+        if m and m.groups()[:3] == m.groups()[4:7]:
+            cond.append((tuple(int(v) for v in m.groups()[:3]), m.group(4), m.group(8)))
+            continue
+        other.append(s)
+    return unc, cond, other
+
+
+def _base(block):
+    return block.split("[")[0]
+
+
+def retire_pack_problems(files, retired, themes):
+    """[problem]: what R16DR's rips/retire does to the world, found by READING the emitted functions and expected from the
+    retired RECORDS (frame, restore, retired.ground) and data/dungeon_themes.json, never from tools/dungeon.py's helpers.
+
+    For each retired rip, exactly one function called by rips/retire writes its plane, and
+      * the plane (x0..x1, y..y+height-1, at frame.z) ends as rip.restore says, cell by cell, and nothing else is written
+        unconditionally (a stray setblock would overwrite what is there);
+      * each cell of its themed patch (the keys of retired.ground, one block under the frame's y) is put back to the recorded
+        block ONLY `if block` it still holds one of the theme's own blocks (hull.floor, hull.wall, rip.scorch), so a re-apply
+        never overwrites what something else has put there since; a cell with no line is allowed only where the recorded block
+        is already one of the theme's blocks (a patch of the block that was there has nothing to put back);
+      * nothing it writes is a cell a STANDING rip's rips/blocks_* function writes.
+    `themes` is data/dungeon_themes.json's 'themes' object."""
+    bad = []
+    top = files.get(RIPS_DIR + "retire.mcfunction")
+    if top is None:
+        return ["rips/retire is not in the pack: R16DR has nothing to run, so the retired rips stay in the world"]
+    called = re.findall(r"function " + re.escape(FN) + r"(rips/retire_[a-z0-9_]+)", top)
+    if len(called) != len(retired) or len(set(called)) != len(called):
+        bad.append("rips/retire calls %d distinct functions (%d calls) for %d retired rips" % (len(set(called)), len(called), len(retired)))
+    parsed = {}
+    for c in called:
+        text = files.get("data/cobblers/function/dungeons/%s.mcfunction" % c)
+        if text is None:
+            bad.append("%s is called by rips/retire and is not in the pack" % c)
+            continue
+        parsed[c] = parse_block_writes(text.splitlines())
+        if parsed[c][2]:
+            bad.append("%s holds a command this audit does not read: %r" % (c, parsed[c][2][0]))
+    standing_cells = set()
+    for path, text in files.items():
+        if path.startswith(RIPS_DIR + "blocks_") and path.endswith(".mcfunction"):
+            unc, cond, _ = parse_block_writes(text.splitlines())
+            standing_cells |= set(unc) | {c for c, _t, _n in cond}
+    used = set()
+    for r in retired:
+        f, rid = r["frame"], r["id"]
+        owners = [c for c, (unc, _c, _o) in parsed.items() if (f["x0"], f["y"], f["z"]) in unc]
+        if len(owners) != 1:
+            bad.append("%s: its plane's first cell is written by %d of rips/retire's functions (want 1)" % (rid, len(owners)))
+            continue
+        used.add(owners[0])
+        unc, cond, _ = parsed[owners[0]]
+        plane = {(x, f["y"] + i, f["z"]): r["restore"][str(x)][i] for x in range(f["x0"], f["x1"] + 1) for i in range(f["height"])}
+        for cell, want in sorted(plane.items()):
+            if unc.get(cell) != want:
+                bad.append("%s: plane cell %s ends as %s, rip.restore says %s" % (rid, cell, unc.get(cell), want))
+        stray = sorted(set(unc) - set(plane))
+        if stray:
+            bad.append("%s: %d unconditional writes outside its plane, first %s" % (rid, len(stray), stray[0]))
+        y = f["y"] - 1
+        theme = (themes.get(r.get("scorch_theme")) or {}).get("hull") or {}
+        theme_blocks = {_base(b) for b in (theme.get("floor"), theme.get("wall"), *(r.get("scorch") or {}).values()) if b}
+        patch = {}
+        for key, back in r["retired"]["ground"].items():
+            x, z = (int(v) for v in key.split(","))
+            patch[(x, y, z)] = back
+        by_cell = {}
+        for cell, test, new in cond:
+            by_cell.setdefault(cell, []).append((test, new))
+        for cell, back in sorted(patch.items()):
+            got = by_cell.get(cell, [])
+            if not got:
+                if _base(back) not in theme_blocks:
+                    bad.append("%s: patch cell %s is never put back to %s" % (rid, cell, back))
+            elif len(got) != 1 or got[0][1] != back:
+                bad.append("%s: patch cell %s is put back to %s, retired.ground says %s" % (rid, cell, got, back))
+            elif _base(got[0][0]) not in theme_blocks:
+                bad.append("%s: patch cell %s is replaced where it holds %s, which is none of the theme's blocks %s" % (rid, cell, got[0][0], sorted(theme_blocks)))
+        for cell in sorted(set(by_cell) - set(patch)):
+            bad.append("%s: a conditional write at %s is outside the patch" % (rid, cell))
+        touched = (set(unc) | set(by_cell)) & standing_cells
+        if touched:
+            bad.append("%s: its retire writes %d cells a standing rip's blocks function writes, first %s" % (rid, len(touched), sorted(touched)[0]))
+    if len(used) != len(called):
+        bad.append("rips/retire calls %d functions that write no retired rip's plane" % (len(called) - len(used)))
+    return bad
+
+
+def retire_sweep_problems(files, retired):
+    """[problem]: the sweep that kills the retired rips' entities (rips/entities_retired*): a force-load box over each retired
+    click, a kill of an interaction and of an item_display per retired rip, and none of those tags is one a standing rip's
+    entity is summoned with (the sweep would kill a rip that stands)."""
+    bad = []
+    texts = [t for p, t in files.items() if p.startswith(RIPS_DIR + "entities_retired")]
+    if not texts:
+        return ["rips/entities_retired is not in the pack: a retired rip's interaction and oval would stay standing"]
+    blob = "\n".join(texts)
+    boxes = [tuple(int(v) for v in m) for m in re.findall(r"forceload add (-?\d+) (-?\d+) (-?\d+) (-?\d+)", blob)]
+    for r in retired:
+        x, _y, z = r["click"]
+        if not any(b[0] <= x <= b[2] and b[1] <= z <= b[3] for b in boxes):
+            bad.append("%s: no force-loaded box of the sweep covers its click (%d, %d)" % (r["id"], x, z))
+    kills = {"interaction": set(), "item_display": set()}
+    for kind, tag in re.findall(r"kill @e\[type=minecraft:(interaction|item_display),tag=([A-Za-z0-9_.]+)\]", blob):
+        kills[kind].add(tag)
+    if len(kills["interaction"]) != len(retired) or kills["interaction"] != kills["item_display"]:
+        bad.append("the sweep kills %d interaction tags and %d oval tags for %d retired rips" % (len(kills["interaction"]), len(kills["item_display"]), len(retired)))
+    standing = set()
+    for p, t in files.items():
+        if p.startswith(RIPS_DIR) and p.endswith(".mcfunction") and not p.startswith(RIPS_DIR + "entities_retired"):
+            for tags in re.findall(r"summon minecraft:(?:interaction|item_display) [^\n]*?Tags:\[([^\]]*)\]", t):
+                standing |= set(re.findall(r'"([^"]+)"', tags))
+    hit = (kills["interaction"] | kills["item_display"]) & standing
+    if hit:
+        bad.append("the sweep kills tags a standing rip's entity is summoned with: %s" % sorted(hit))
+    return bad
+
+
+def retired_click_problems(files, retired, click_fn):
+    """[problem]: a retired rip has no click that draws. `click_fn` is rip_click_functions(files, retired): the function an
+    interaction at the retired click reaches through an advancement. It must be empty, and no function of the pack may summon an
+    interaction at a retired click at all."""
+    bad = ["%s: a click still reaches %s" % (rid, fn) for rid, fn in sorted(click_fn.items())]
+    spots = {(r["id"], r["click"][0] + 0.5, r["click"][1], r["click"][2] + 0.5) for r in retired}
+    for path, text in files.items():
+        if not path.endswith(".mcfunction"):
+            continue
+        for m in re.finditer(r"summon minecraft:interaction (-?[\d.]+) (-?[\d.]+) (-?[\d.]+)", text):
+            sx, sy, sz = (float(v) for v in m.groups())
+            for rid, x, y, z in spots:
+                if abs(sx - x) < 0.01 and abs(sy - y) < 0.01 and abs(sz - z) < 0.01:
+                    bad.append("%s: %s summons an interaction at its click" % (rid, path))
+    return bad
+
+
+def retire_step_problems(steps, retired):
+    """[problem]: tools/reapply.py's R16DR runs the retire. `steps` is dungeon.reapply_steps(): (id, text, actions). With retired
+    rips, R16DR runs rips/retire and the entity sweep, and R16DG (the shells) runs neither."""
+    if not retired:
+        return []
+    bad = []
+    by_id = {s[0]: s[2] for s in steps}
+    for want in ("rips/retire", "rips/entities_retired"):
+        if ("fn", FN + want) not in by_id.get("R16DR", []):
+            bad.append("R16DR does not run %s: the retired rips stay in the world" % want)
+        if ("fn", FN + want) in by_id.get("R16DG", []):
+            bad.append("R16DG runs %s; the retire belongs to R16DR" % want)
     return bad
 
 
 def run_siting(out):
     import ground as G
     g = G.load()
-    rips = json.loads((DATA / "dungeon_rips.json").read_text(encoding="utf-8"))["rips"]
+    doc = json.loads((DATA / "dungeon_rips.json").read_text(encoding="utf-8"))
+    rips, retired = doc["rips"], doc.get("retired_rips") or []
     sea, lakes = water_world()
     pts = authored_points(skip_files=("data/dungeon_rips.json",), drop=_drop_rip_probes)
-    notes = []
     if not pts:
         raise RuntimeError("the walk over data/ found no authored coordinate: every clearance would pass vacuously")
-    bad = siting_problems(rips, g, sea, lakes, pts, precinct_boxes(), region_polygons(), notes=notes)
-    out["siting_notes"] = notes
-    out["siting"] = {"rips": len(rips), "region_rips": sum(r["kind"] == "region" for r in rips), "points_read": len(pts)}
+    regs = region_polygons()
+    bad = siting_problems(rips, g, sea, lakes, pts, precinct_boxes(), regs)
+    out["siting"] = {"rips": len(rips), "region_rips": sum(r["kind"] == "region" for r in rips), "retired_rips": len(retired),
+                     "points_read": len(pts), "regions": len(regs)}
+    dry = regions_dry_columns(g.box, sea, regs)
+    out["siting"]["regions_with_dry_ground"] = sum(n > 0 for n in dry.values())
+    bad += region_rip_problems(rips, dry)
+    zones = json.loads((DATA / "rift_zones.json").read_text(encoding="utf-8"))
+    bad += gated_zone_problems(rips, zones)
+    dungeons = json.loads((DATA / "dungeons.json").read_text(encoding="utf-8"))["dungeons"]
+    bad += retired_record_problems(rips, retired, [d["id"] for d in dungeons])
     import subprocess
     old = subprocess.run(["git", "show", "%s:data/dungeons.json" % OLD_TEST_RIPS_COMMIT], cwd=str(ROOT), capture_output=True, text=True)
     if old.returncode != 0:
         out["siting"]["old_positions"] = "NOT_EXECUTED: git show %s failed: %s" % (OLD_TEST_RIPS_COMMIT, old.stderr.strip()[:200])
     else:
-        bad += old_test_rip_positions(json.loads(old.stdout), rips)
+        bad += old_test_rip_positions(json.loads(old.stdout), retired)
         out["siting"]["old_positions"] = "checked"
-    zones = json.loads((DATA / "rift_zones.json").read_text(encoding="utf-8"))
-    bad += gated_zone_problems(rips, zones)
     bad += ["siting tool: " + p for p in sc_siting_tool_rejects_sites_that_break_a_rule(load_rips_module(None), g)]
-    # a keep-out the owner drew for the far south's own places: a note for the owner, not a rule of the spec (the box says it
-    # binds "the far south's own places"; a rip is not one)
-    regs = region_polygons()
-    notes += ["D5 (about one rip per region): region %s has no rip" % rid for rid in sorted(regs) if rid not in {r.get("region") for r in rips}]
-    out["siting"]["regions"] = len(regs)
+    # notes for the owner, not rules of the spec. The keep-out box says it binds "the far south's own places"; a rip is not one
+    notes = ["region %s has no dry ground (%d sampled columns) and no rip: nothing can stand there" % (rid, n)
+             for rid, n in sorted(dry.items()) if n == 0 and rid not in {r.get("region") for r in rips}]
     fs = json.loads((DATA / "far_south.json").read_text(encoding="utf-8"))["rules"]["keep_out_box"]["box"]
     notes += ["%s: stands inside data/far_south.json rules.keep_out_box %s" % (r["id"], fs) for r in rips if box_gap(footprint(r), tuple(fs)) == 0]
+    notes += ["%s: reachable only after %s %s (zone %s), as its record says" % (r["id"], r["reachable_after"].get("kind"), r["reachable_after"].get("threshold", ""),
+                                                                           r["reachable_after"].get("zone")) for r in rips if r.get("reachable_after")]
+    out["siting_notes"] = notes
     return bad
 
 
 # ------------------------------------------------------------------------------------------------- gated zones (data/rift_zones.json)
 
 
-def gated_zone_problems(rips, rift_zones):
-    """[problem]: a rip whose footprint stands inside a box of a rift zone whose `pass` needs badges or a flag. Those zones span
-    the whole height (rift_zones.json `y` -64..575), so a player short of the pass is turned back from every column of
-    them: a rip there is not a find for the early bands (DUNGEON_DRAW.md 2.6 'a rip is a find, not a queue')."""
-    bad = []
+def gated_zones_of(rip, rift_zones):
+    """[zone id]: the rift zones with a pass (badges, a flag, a catch count) whose boxes the rip's footprint touches. Those zones span
+    the whole height (rift_zones.json `y` -64..575), so a player short of the pass is turned back from every column of them."""
+    out = []
+    fp = footprint(rip)
     for zid, z in sorted((rift_zones.get("zones") or {}).items()):
         if not isinstance(z, dict) or not z.get("pass") or not z.get("boxes"):
             continue
-        for r in rips:
-            fp = footprint(r)
-            for b in z["boxes"]:
-                if box_gap(fp, tuple(b[:4])) == 0:
-                    p = z["pass"]
-                    bad.append("%s: the footprint stands inside rift zone %s (%s), whose pass is %s %s; a player without it is turned back"
-                               % (r["id"], zid, z.get("name"), p.get("kind"), p.get("threshold", "")))
-                    break
+        if any(box_gap(fp, tuple(b[:4])) == 0 for b in z["boxes"]):
+            out.append(zid)
+    return out
+
+
+def gated_zone_problems(rips, rift_zones):
+    """[problem]: the owner's 2026-10-13 decision, 'every area in game should be capable of spawning a rift, so leave it even if
+    its gated'. A rip inside a gated rift zone is ALLOWED, and must say so: `reachable_after` names the zone and repeats its pass
+    (kind, threshold, advancements, name) exactly as data/rift_zones.json has it. A rip outside every gated zone must not claim
+    one (a stale claim is a wrong promise to the player). Read from the zones file here, not from tools/dungeon_rips.py."""
+    bad = []
+    zones = rift_zones.get("zones") or {}
+    for r in rips:
+        inside = gated_zones_of(r, rift_zones)
+        ra = r.get("reachable_after")
+        if not inside:
+            if ra:
+                bad.append("%s: declares reachable_after zone %s but its footprint is in no gated rift zone" % (r["id"], ra.get("zone")))
+            continue
+        if not ra:
+            bad.append("%s: the footprint stands inside gated rift zone(s) %s and declares no reachable_after" % (r["id"], inside))
+            continue
+        if ra.get("zone") not in inside:
+            bad.append("%s: reachable_after names zone %s, the footprint is in %s" % (r["id"], ra.get("zone"), inside))
+            continue
+        z = zones[ra["zone"]]
+        want = dict(z["pass"])
+        if ra.get("zone_name") != z.get("name"):
+            bad.append("%s: reachable_after.zone_name %r, data/rift_zones.json names it %r" % (r["id"], ra.get("zone_name"), z.get("name")))
+        for k in ("kind", "threshold", "advancements"):
+            if k in want and ra.get(k) != want[k]:
+                bad.append("%s: reachable_after.%s is %r, zone %s's pass has %r" % (r["id"], k, ra.get(k), ra["zone"], want[k]))
     return bad
 
 
@@ -868,6 +1157,20 @@ def sc_rips_are_placed(env, expect):
     return bad
 
 
+def sc_retired_rips_are_taken_out(env, expect):
+    """The 13 trail rips retired by the owner (2026-10-13): R16DR's rips/retire puts back each one's recorded plane and patch,
+    the entity sweep kills its interaction and oval, and nothing in the pack still draws from its click. The records are read from
+    data/dungeon_rips.json and the theme blocks from data/dungeon_themes.json HERE, not from the generator's doc."""
+    retired = json.loads((DATA / "dungeon_rips.json").read_text(encoding="utf-8")).get("retired_rips") or []
+    themes = json.loads((DATA / "dungeon_themes.json").read_text(encoding="utf-8"))["themes"]
+    if not retired:
+        return ["data/dungeon_rips.json has no retired_rips: the owner's decision of 2026-10-13 is not in the record"]
+    bad = retire_pack_problems(env.files, retired, themes)
+    bad += retire_sweep_problems(env.files, retired)
+    bad += retired_click_problems(env.files, retired, rip_click_functions(env.files, retired))
+    return bad
+
+
 def sc_reapply_wires_r16dr(env, expect, mod):
     bad = []
     src = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
@@ -883,6 +1186,8 @@ def sc_reapply_wires_r16dr(env, expect, mod):
             bad.append("R16DR says %s rips, data/dungeon_rips.json has %d" % (m and m.group(1), len(env.rips)))
         if ("fn", "cobblers:dungeons/rips/place") not in r16dr[0][2]:
             bad.append("R16DR does not run cobblers:dungeons/rips/place")
+    retired = json.loads((DATA / "dungeon_rips.json").read_text(encoding="utf-8")).get("retired_rips") or []
+    bad += retire_step_problems(steps, retired)
     return bad
 
 
@@ -914,6 +1219,7 @@ SCENARIOS = (
     ("playtest_path", sc_playtest_path),
     ("every_rip_draws_and_leaves_by_itself", sc_every_rip_draws_and_leaves_by_itself),
     ("rips_are_placed", sc_rips_are_placed),
+    ("retired_rips_are_taken_out", sc_retired_rips_are_taken_out),
 )
 
 
@@ -958,7 +1264,23 @@ MUTATIONS = {
     "tie_is_not_random": {
         "why": "the tie-break roll is always 0, so the first tied dungeon always wins",
         "edit": ('random value 0..1073741823', 'random value 0..0')},
+    "retire_skips_the_plane": {
+        "why": "a retire function that does not put the rip's plane back (rips/retire_<name> holds the patch only)",
+        "edit": ('    out = rip_plane_lines(r)\n    for x, y, z, blk in rip_scorch_cells(r):\n        back = ret["ground"]',
+                 '    out = []\n    for x, y, z, blk in rip_scorch_cells(r):\n        back = ret["ground"]')},
+    "retire_skips_the_patch": {
+        "why": "a retire function that does not put the themed ground under the oval back (rips/retire_<name> holds the plane only)",
+        "edit": ('    for x, y, z, blk in rip_scorch_cells(r):\n        back = ret["ground"]',
+                 '    for x, y, z, blk in []:\n        back = ret["ground"]')},
+    "retire_overwrites_the_patch": {
+        "why": "a retire function that sets the patch back unconditionally, over whatever stands there now",
+        "edit": ('out.append("execute if block %d %d %d %s run setblock %d %d %d %s" % (x, y, z, blk, x, y, z, back))',
+                 'out.append("setblock %d %d %d %s" % (x, y, z, back))')},
 }
+
+# the mutations of the retire (rip_retire_lines): each is also run against the retire checker alone, on the functions the mutated
+# module's own rip_retire_lines emits (tests/test_dungeon_draw_audit.py), because the full draw run that catches them takes minutes
+RETIRE_MUTATIONS = ("retire_skips_the_plane", "retire_skips_the_patch", "retire_overwrites_the_patch")
 
 
 # ------------------------------------------------------------------------------------------------- the siting TOOL, on sites of my own
