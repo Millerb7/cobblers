@@ -103,8 +103,8 @@ def rip(x0, z, y=71, region="sq", kind="region", rid="rip_t"):
 SQUARE = {"sq": [[(0, 0), (1000, 0), (1000, 1000), (0, 1000)]]}
 
 
-def check(rips, points=(), boxes=(), regions=SQUARE, ground=flat, notes=None):
-    return A.siting_problems(rips, ground, SEA, WORLD_LAKES, list(points), list(boxes), regions, notes=notes)
+def check(rips, points=(), boxes=(), regions=SQUARE, ground=flat):
+    return A.siting_problems(rips, ground, SEA, WORLD_LAKES, list(points), list(boxes), regions)
 
 
 def test_the_footprint_is_the_plane_the_click_and_the_exit_point():
@@ -137,10 +137,15 @@ def test_clearance_is_measured_from_the_footprints_edge_and_thirty_passes():
     assert len(check([rip(500, 500)], points=[(502.0, 501.0, "f")])) == 1       # on the rip itself: distance 0
 
 
-def test_a_test_trail_rip_is_exempt_from_clearance_only():
+def test_a_trail_rip_still_in_the_standing_list_is_a_problem_and_exempt_from_nothing():
+    # the owner retired the 13 trail rips on 2026-10-13: a test_trail record in `rips` means the retirement did not happen, and it
+    # gets no clearance exemption any more. Without this the old exemption could quietly outlive the decision.
     t = rip(500, 500, kind="test_trail", y=71)
-    assert check([t], points=[(505.0, 500.0, "f")]) == []
-    assert check([rip(100, 500, y=51, kind="test_trail")]) != [], "a test rip is still held to dry ground"
+    got = check([t])
+    assert len(got) == 1 and "test_trail" in got[0], got
+    near = check([t], points=[(505.0, 500.0, "f")])
+    assert any("blocks from the footprint" in p for p in near), "no clearance exemption: " + str(near)
+    assert any("under sea" in p for p in check([rip(100, 500, y=51, kind="test_trail")]))
 
 
 def test_a_precinct_that_the_footprint_touches_is_named_and_a_block_of_air_is_not():
@@ -153,22 +158,46 @@ def test_a_footprint_corner_outside_its_region_is_named_and_a_missing_region_too
     tight = {"sq": [[(0, 0), (503, 0), (503, 1000), (0, 1000)]]}      # x 500..504 sticks out past x503
     assert any("outside region" in p for p in check([rip(500, 500)], regions=tight))
     assert any("not in data/regions.json" in p for p in check([rip(500, 500, region=None)]))
-    # a test rip's region defect is a note for the owner and not a failure
-    notes = []
-    assert check([rip(500, 500, kind="test_trail", region=None)], notes=notes) == [] and len(notes) == 1
 
 
-def test_a_rip_inside_a_badge_gated_zone_is_named_and_one_beside_it_is_not():
-    zones = {"zones": {"z2": {"name": "the deep", "pass": {"kind": "badges", "threshold": 8}, "boxes": [[490, 498, 510, 505]]},
-                       "z3": {"name": "free", "pass": None, "boxes": [[0, 0, 1000, 1000]]}}}
-    inside = A.gated_zone_problems([rip(500, 500, rid="rip_in")], zones)
-    assert len(inside) == 1 and "rip_in" in inside[0] and "badges 8" in inside[0], inside
-    assert A.gated_zone_problems([rip(511, 500)], zones) == []                     # footprint x511..515: one block clear
-    assert len(A.gated_zone_problems([rip(510, 500)], zones)) == 1                 # x510 touches the box edge
-    assert A.gated_zone_problems([rip(500, 520)], zones) == []                     # south of the box
+ZONES = {"zones": {"z2": {"name": "the deep", "pass": {"kind": "badges", "threshold": 8, "advancements": ["f/g1", "f/g8"]}, "boxes": [[490, 498, 510, 505]]},
+                   "z3": {"name": "free", "pass": None, "boxes": [[0, 0, 1000, 1000]]}}}
+REACH = {"zone": "z2", "zone_name": "the deep", "kind": "badges", "threshold": 8, "advancements": ["f/g1", "f/g8"]}
 
 
-def test_the_test_rips_positions_are_compared_by_dungeon_not_by_order():
+def test_which_gated_zone_a_footprint_stands_in_is_decided_by_the_box_edge():
+    # footprint of rip(x0, z) is x0..x0+4, z..z+3; the box is x490..510 z498..505. An ungated zone (pass None) never counts
+    assert A.gated_zones_of(rip(500, 500), ZONES) == ["z2"]
+    assert A.gated_zones_of(rip(511, 500), ZONES) == [], "x511 is one block clear of the box"
+    assert A.gated_zones_of(rip(510, 500), ZONES) == ["z2"], "x510 touches the box edge"
+    assert A.gated_zones_of(rip(500, 520), ZONES) == [], "south of the box"
+    assert A.gated_zones_of(rip(500, 500), {"zones": {"z3": ZONES["zones"]["z3"]}}) == []
+
+
+def test_a_gated_rip_that_declares_its_zone_as_the_zones_file_has_it_is_allowed():
+    # the owner, 2026-10-13: 'every area in game should be capable of spawning a rift, so leave it even if its gated'.
+    # Without this the audit would go on failing a rip the owner decided to keep.
+    inside = dict(rip(500, 500, rid="rip_in"), reachable_after=dict(REACH))
+    assert A.gated_zone_problems([inside], ZONES) == []
+    assert A.gated_zone_problems([rip(511, 500, rid="rip_out")], ZONES) == [], "outside every gated zone and claiming nothing"
+
+
+def test_a_gated_rip_with_no_declaration_or_a_wrong_one_is_named():
+    undeclared = A.gated_zone_problems([rip(500, 500, rid="rip_in")], ZONES)
+    assert len(undeclared) == 1 and "rip_in" in undeclared[0] and "no reachable_after" in undeclared[0], undeclared
+    for field, wrong in (("zone", "z3"), ("zone_name", "elsewhere"), ("kind", "caught"), ("threshold", 7), ("advancements", ["f/g1"])):
+        bad = dict(rip(500, 500, rid="rip_in"), reachable_after=dict(REACH, **{field: wrong}))
+        assert A.gated_zone_problems([bad], ZONES), "a wrong %s was accepted" % field
+
+
+def test_a_rip_outside_every_gated_zone_that_claims_one_is_named():
+    # a stale claim promises the player a wait that does not exist
+    stale = dict(rip(511, 500, rid="rip_out"), reachable_after=dict(REACH))
+    got = A.gated_zone_problems([stale], ZONES)
+    assert len(got) == 1 and "rip_out" in got[0] and "no gated rift zone" in got[0], got
+
+
+def test_the_retired_rips_positions_are_compared_by_dungeon_not_by_order():
     old = {"dungeons": [{"id": "a", "rip": {"frame": {"x0": 1}, "click": [1, 2, 3], "outside": [1.5, 2, 3.5, 0]}},
                         {"id": "b", "rip": {"frame": {"x0": 9}, "click": [9, 2, 3], "outside": [9.5, 2, 3.5, 0]}}]}
 
@@ -177,8 +206,194 @@ def test_the_test_rips_positions_are_compared_by_dungeon_not_by_order():
                 {"id": "rip_a", "kind": "test_trail", "legacy_dungeon": "a", "frame": {"x0": a_x}, "click": [a_x, 2, 3], "outside": [a_x + .5, 2, 3.5, 0]}]
     assert A.old_test_rip_positions(old, new(1, 9)) == []
     moved = A.old_test_rip_positions(old, new(2, 9))
-    assert moved and all("test rip for a" in p for p in moved), moved
+    assert moved and all("retired rip for a" in p for p in moved), moved
     assert any("gone" in p for p in A.old_test_rip_positions(old, new(1, 9)[:1]))
+
+
+# ------------------------------------------------------------------------------------------------- a rip in every dry region
+
+
+def heights(x0, z0, x1, z1):
+    """flat() as the (z, x) array Ground.box returns."""
+    import numpy as np
+    return np.array([[flat(x, z) for x in range(x0, x1 + 1)] for z in range(z0, z1 + 1)])
+
+
+def test_dry_columns_are_counted_on_the_global_grid_inside_the_polygon_and_above_the_sea():
+    # step 10 samples x,z in multiples of 10. a: square (4,4)-(46,46) holds x,z in {10,20,30,40} = 16 columns, all y70 (dry).
+    # b: (95,5)-(125,45) holds x in {100,110,120} (ground 50, 50, 70) and z in {10..40} = 4: only x120 is above the sea.
+    # c: x95..115 holds x 100 and 110, both y50: under the sea, so a region with none (the Jungle Isle's shape).
+    regions = {"a": [[(4, 4), (46, 4), (46, 46), (4, 46)]], "b": [[(95, 5), (125, 5), (125, 45), (95, 45)]],
+               "c": [[(95, 5), (115, 5), (115, 45), (95, 45)]]}
+    got = A.regions_dry_columns(heights, SEA, regions, step=10, size=1000)
+    assert got == {"a": 16, "b": 4, "c": 0}, got
+
+
+def test_a_region_of_two_rings_counts_the_columns_of_both():
+    # two rings are a union (regions.json lists islands as polygons): the second ring's columns count
+    regions = {"two": [[(4, 4), (26, 4), (26, 26), (4, 26)], [(34, 4), (56, 4), (56, 26), (34, 26)]]}
+    assert A.regions_dry_columns(heights, SEA, regions, step=10, size=1000) == {"two": 4 + 4}     # x,z in {10,20} and {40,50}
+
+
+def test_a_dry_region_without_a_rip_is_named_and_a_drowned_one_without_is_not():
+    # the decision: every region with dry ground has a rip. Jungle Isle (no dry column) has none and is not a fault
+    dry = {"north": 5, "south": 3, "drowned": 0}
+    rips = [{"id": "r1", "region": "north"}]
+    got = A.region_rip_problems(rips, dry)
+    assert len(got) == 1 and "south" in got[0], got
+    assert A.region_rip_problems(rips + [{"id": "r2", "region": "south"}], dry) == []
+
+
+# ------------------------------------------------------------------------------------------------- the retired rips, on a synthetic pack
+
+
+THEMES = {"t": {"hull": {"floor": "minecraft:stone", "wall": "minecraft:cobblestone"}}}
+
+
+def retired_rip():
+    """A 3-wide, 2-high plane at x10..12 z20 from y70, a click at (11, 70, 21); its patch is the two cells (11,21) and (10,21) at y69.
+    Theme t: floor stone, wall cobblestone. (11,21) was coarse dirt (stone is put back to it); (10,21) was cobblestone, which is the
+    theme's own wall, so that cell needs no line."""
+    return {"id": "rip_old", "kind": "test_trail", "legacy_dungeon": "d", "scorch_theme": "t", "region": "sq",
+            "frame": {"x0": 10, "x1": 12, "z": 20, "y": 70, "height": 2}, "click": [11, 70, 21], "outside": [11.5, 70, 23.5, 0],
+            "restore": {"10": ["minecraft:dirt", "minecraft:air"], "11": ["minecraft:air", "minecraft:air"], "12": ["minecraft:air", "minecraft:air"]},
+            "retired": {"ground": {"11,21": "minecraft:coarse_dirt", "10,21": "minecraft:cobblestone"}}}
+
+
+GOOD_RETIRE = ["# retire", "setblock 10 70 20 minecraft:dirt", "setblock 10 71 20 minecraft:air", "fill 11 70 20 12 71 20 minecraft:air",
+               "execute if block 11 69 21 minecraft:stone run setblock 11 69 21 minecraft:coarse_dirt"]
+
+
+def retire_pack(lines=GOOD_RETIRE, extra=None):
+    files = {A.RIPS_DIR + "retire.mcfunction": "# top\nexecute in minecraft:overworld run function cobblers:dungeons/rips/retire_old\n",
+             "data/cobblers/function/dungeons/rips/retire_old.mcfunction": "\n".join(lines)}
+    files.update(extra or {})
+    return files
+
+
+def test_a_retire_function_that_restores_the_plane_and_the_patch_passes():
+    assert A.retire_pack_problems(retire_pack(), [retired_rip()], THEMES) == []
+
+
+def test_a_retire_function_with_a_wrong_plane_cell_is_named():
+    lines = [l.replace("setblock 10 70 20 minecraft:dirt", "setblock 10 70 20 minecraft:stone") for l in GOOD_RETIRE]
+    got = A.retire_pack_problems(retire_pack(lines), [retired_rip()], THEMES)
+    assert len(got) == 1 and "(10, 70, 20)" in got[0], got
+
+
+def test_a_retire_function_that_leaves_a_plane_cell_untouched_is_named():
+    got = A.retire_pack_problems(retire_pack([l for l in GOOD_RETIRE if "fill" not in l]), [retired_rip()], THEMES)
+    assert len(got) == 4 and all("rip.restore says minecraft:air" in p for p in got), got       # x11..12 at y70 and y71
+
+
+def test_a_retire_function_that_skips_the_patch_is_named():
+    got = A.retire_pack_problems(retire_pack([l for l in GOOD_RETIRE if "execute" not in l]), [retired_rip()], THEMES)
+    assert len(got) == 1 and "(11, 69, 21)" in got[0] and "never put back" in got[0], got
+
+
+def test_a_patch_cell_already_holding_the_themes_own_block_needs_no_line():
+    # (10,21) is cobblestone, the theme's wall: a line for it is not required (but an unrequired one is not an error either)
+    assert A.retire_pack_problems(retire_pack(), [retired_rip()], THEMES) == []
+    extra = GOOD_RETIRE + ["execute if block 10 69 21 minecraft:stone run setblock 10 69 21 minecraft:cobblestone"]
+    assert A.retire_pack_problems(retire_pack(extra), [retired_rip()], THEMES) == []
+
+
+def test_a_patch_put_back_unconditionally_is_named_so_a_reapply_cannot_overwrite_new_ground():
+    lines = GOOD_RETIRE[:-1] + ["setblock 11 69 21 minecraft:coarse_dirt"]
+    got = A.retire_pack_problems(retire_pack(lines), [retired_rip()], THEMES)
+    assert any("outside its plane" in p for p in got) and any("never put back" in p for p in got), got
+
+
+def test_a_patch_put_back_only_where_a_foreign_block_stands_is_named():
+    lines = GOOD_RETIRE[:-1] + ["execute if block 11 69 21 minecraft:dirt run setblock 11 69 21 minecraft:coarse_dirt"]
+    got = A.retire_pack_problems(retire_pack(lines), [retired_rip()], THEMES)
+    assert len(got) == 1 and "none of the theme's blocks" in got[0], got
+
+
+def test_a_patch_put_back_to_the_wrong_block_is_named():
+    lines = GOOD_RETIRE[:-1] + ["execute if block 11 69 21 minecraft:stone run setblock 11 69 21 minecraft:dirt"]
+    got = A.retire_pack_problems(retire_pack(lines), [retired_rip()], THEMES)
+    assert len(got) == 1 and "retired.ground says minecraft:coarse_dirt" in got[0], got
+
+
+def test_a_retire_that_writes_a_cell_a_standing_rips_blocks_function_writes_is_named():
+    got = A.retire_pack_problems(retire_pack(extra={A.RIPS_DIR + "blocks_new.mcfunction": "setblock 11 69 21 minecraft:grass_block"}),
+                                 [retired_rip()], THEMES)
+    assert len(got) == 1 and "standing rip" in got[0], got
+
+
+def test_a_missing_retire_entry_or_a_missing_called_function_is_named():
+    assert "nothing to run" in A.retire_pack_problems({}, [retired_rip()], THEMES)[0]
+    files = retire_pack()
+    del files["data/cobblers/function/dungeons/rips/retire_old.mcfunction"]
+    got = A.retire_pack_problems(files, [retired_rip()], THEMES)
+    assert any("not in the pack" in p for p in got), got
+
+
+def test_a_retire_function_may_not_hold_a_command_the_audit_cannot_read():
+    got = A.retire_pack_problems(retire_pack(GOOD_RETIRE + ["kill @e[type=minecraft:cow]"]), [retired_rip()], THEMES)
+    assert len(got) == 1 and "does not read" in got[0], got
+
+
+SWEEP = ("forceload add 8 18 16 26\n"
+         "execute store result score #n s run kill @e[type=minecraft:interaction,tag=dg.rip_old]\n"
+         "execute store result score #n s run kill @e[type=minecraft:item_display,tag=dg.rip_old]\n")
+STANDING = 'summon minecraft:interaction 99.5 64 99.5 {width:3.0f,Tags:["dg.rip","dg.rip_new","dg.rip_other"]}\n'
+
+
+def sweep_pack(sweep=SWEEP, standing=STANDING):
+    return {A.RIPS_DIR + "entities_retired_look.mcfunction": sweep, A.RIPS_DIR + "entities.mcfunction": standing}
+
+
+def test_the_entity_sweep_covers_the_click_and_kills_both_entities_of_each_retired_rip():
+    assert A.retire_sweep_problems(sweep_pack(), [retired_rip()]) == []
+    assert "not in the pack" in A.retire_sweep_problems({}, [retired_rip()])[0]
+    far = A.retire_sweep_problems(sweep_pack(SWEEP.replace("8 18 16 26", "80 18 90 26")), [retired_rip()])
+    assert len(far) == 1 and "click (11, 21)" in far[0], far
+    half = A.retire_sweep_problems(sweep_pack(SWEEP.replace("item_display", "marker")), [retired_rip()])
+    assert any("oval tags" in p for p in half), half
+
+
+def test_the_entity_sweep_may_not_kill_a_tag_a_standing_rip_is_summoned_with():
+    standing = STANDING.replace("dg.rip_other", "dg.rip_old")
+    got = A.retire_sweep_problems(sweep_pack(standing=standing), [retired_rip()])
+    assert len(got) == 1 and "standing rip" in got[0] and "dg.rip_old" in got[0], got
+
+
+def test_a_retired_rip_with_a_click_that_reaches_a_function_or_a_summon_at_its_click_is_named():
+    r = retired_rip()
+    assert A.retired_click_problems({}, [r], {}) == []
+    assert "still reaches" in A.retired_click_problems({}, [r], {"rip_old": "cobblers:dungeons/door/x"})[0]
+    files = {A.RIPS_DIR + "entities.mcfunction": 'summon minecraft:interaction 11.5 70 21.5 {Tags:["a"]}'}
+    got = A.retired_click_problems(files, [r], {})
+    assert len(got) == 1 and "summons an interaction at its click" in got[0], got
+    far = {A.RIPS_DIR + "entities.mcfunction": 'summon minecraft:interaction 12.5 70 21.5 {Tags:["a"]}'}
+    assert A.retired_click_problems(far, [r], {}) == []
+
+
+def test_r16dr_runs_the_retire_and_the_sweep_and_r16dg_does_not():
+    fn = lambda n: ("fn", "cobblers:dungeons/" + n)
+    good = [("R16DG", "shells", [fn("place")]), ("R16DR", "rips", [fn("rips/place"), fn("rips/retire"), fn("rips/entities_retired")])]
+    assert A.retire_step_problems(good, [retired_rip()]) == []
+    assert A.retire_step_problems(good, []) == [], "nothing retired, nothing to run"
+    no_retire = [good[0], ("R16DR", "rips", [fn("rips/place"), fn("rips/entities_retired")])]
+    assert any("rips/retire" in p for p in A.retire_step_problems(no_retire, [retired_rip()]))
+    no_sweep = [good[0], ("R16DR", "rips", [fn("rips/place"), fn("rips/retire")])]
+    assert any("entities_retired" in p for p in A.retire_step_problems(no_sweep, [retired_rip()]))
+    wrong_step = [("R16DG", "shells", [fn("rips/retire")]), good[1]]
+    assert any("R16DG runs" in p for p in A.retire_step_problems(wrong_step, [retired_rip()]))
+
+
+def test_the_retired_record_check_names_a_standing_trail_rip_a_shared_click_and_an_overlap():
+    standing = rip(500, 500, rid="rip_s")
+    old = dict(retired_rip(), id="rip_old")
+    assert A.retired_record_problems([standing], [old], ["d"]) == []
+    assert any("retired and standing" in p for p in A.retired_record_problems([dict(standing, id="rip_old")], [old], ["d"]))
+    assert any("trail rip" in p for p in A.retired_record_problems([dict(standing, kind="test_trail")], [old], ["d"]))
+    assert any("click" in p for p in A.retired_record_problems([dict(standing, click=old["click"])], [old], ["d"]))
+    near = rip(8, 18, rid="rip_near")      # footprint x8..12 z18..21 touches the retired plane
+    assert any("touches standing rip_near" in p for p in A.retired_record_problems([near], [old], ["d"]))
+    assert any("dungeons are" in p for p in A.retired_record_problems([standing], [old], ["d", "e"])), "a dungeon whose rip was never retired"
 
 
 def test_authored_points_reads_xz_dicts_pairs_and_triples_but_not_boxes(tmp_path):
@@ -255,25 +470,56 @@ def siting():
     return A.run_siting(out), out
 
 
-def _without_gated(problems):
-    return [p for p in problems if "rift zone" not in p]
+def _real_rips():
+    doc = json.loads((ROOT / "data" / "dungeon_rips.json").read_text(encoding="utf-8"))
+    return doc["rips"], doc.get("retired_rips") or []
 
 
 @needs_heightmap
 def test_the_real_rips_are_dry_clear_of_authored_coordinates_outside_precincts_and_inside_their_region(siting):
-    # DUNGEON_DRAW.md 2.6, measured from tools/ground.py round(h) and data/*.json read by the audit, not by tools/dungeon_rips.py
+    # DUNGEON_DRAW.md 2.6, measured from tools/ground.py round(h) and data/*.json read by the audit, not by tools/dungeon_rips.py.
+    # 20 = the dry regions (21 in data/regions.json less the drowned Jungle Isle), all of kind region; the 13 trail rips are retired.
+    # The whole verdict is asserted, not a subset: the gated, dry-region and retired checks are inside `problems` too.
     problems, out = siting
-    assert out["siting"]["rips"] == 31 and out["siting"]["region_rips"] == 18
-    assert _without_gated(problems) == []
+    assert out["siting"]["rips"] == 20 and out["siting"]["region_rips"] == 20 and out["siting"]["retired_rips"] == 13, out["siting"]
+    assert problems == []
 
 
 @needs_heightmap
-@pytest.mark.xfail(strict=True, reason="FINDING 2026-10-13: rip_the_rift stands inside data/rift_zones.json zone z2 (a badge-8 pass, full height): "
-                                       "a player short of 8 badges is turned back from its every column, so it is no find for bands 1-4 "
-                                       "and DUNGEON_DRAW.md 5's staging step 2 (a band-1 click at rip_the_rift) cannot work. Remove this mark when the rip moves.")
-def test_no_rip_stands_inside_a_badge_gated_rift_zone(siting):
-    problems, _ = siting
-    assert [p for p in problems if "rift zone" in p] == []
+@needs_heightmap
+def test_every_region_with_dry_ground_has_a_rip_and_only_the_drowned_jungle_isle_has_none(siting):
+    # the owner, 2026-10-13: 'every area in game should be capable of spawning a rift'. The dry set is measured from the heightmap
+    # here, not read from the rips: a region that lost its rip, or a heightmap that stopped finding land, both fail this.
+    _, out = siting
+    rips, _retired = _real_rips()
+    regs = A.region_polygons()
+    import ground as G
+    dry = A.regions_dry_columns(G.load().box, A.water_world()[0], regs)
+    assert [rid for rid, n in dry.items() if n == 0] == ["jungle_isle"], dry
+    assert out["siting"]["regions"] == 21 and out["siting"]["regions_with_dry_ground"] == 20
+    assert {r["region"] for r in rips} == set(regs) - {"jungle_isle"}
+    assert any("jungle_isle has no dry ground" in n for n in out["siting_notes"])
+
+
+def test_the_gated_rip_check_is_not_vacuous_on_the_real_zones():
+    # rip_the_rift stands in zone z2 (badges 8), read from data/rift_zones.json here. A reader that found no zone boxes would pass
+    # every rip and the check would prove nothing; and a rip that moved out of the zone must drop its claim.
+    rips, _ = _real_rips()
+    zones = json.loads((ROOT / "data" / "rift_zones.json").read_text(encoding="utf-8"))
+    gated = {r["id"]: A.gated_zones_of(r, zones) for r in rips if A.gated_zones_of(r, zones)}
+    assert gated == {"rip_the_rift": ["z2"]}, gated
+    z2 = zones["zones"]["z2"]["pass"]
+    assert (z2["kind"], z2["threshold"]) == ("badges", 8)
+    declared = {r["id"]: r["reachable_after"] for r in rips if r.get("reachable_after")}
+    assert list(declared) == ["rip_the_rift"] and declared["rip_the_rift"]["zone"] == "z2"
+    assert A.gated_zone_problems(rips, zones) == []
+
+
+def test_the_retired_records_are_exactly_the_13_dungeons_rips_and_none_stands():
+    rips, retired = _real_rips()
+    dungeons = [d["id"] for d in json.loads((ROOT / "data" / "dungeons.json").read_text(encoding="utf-8"))["dungeons"]]
+    assert len(retired) == 13 and len(dungeons) == 13
+    assert A.retired_record_problems(rips, retired, dungeons) == []
 
 
 @needs_heightmap
@@ -316,13 +562,57 @@ def test_every_siting_mutation_targets_exactly_one_spot_of_the_tool_source():
         assert src.count(m["edit"][0]) == 1, name
 
 
-def test_the_13_test_rips_have_not_moved_since_the_owner_played_them():
-    # git show 6249332e: data/dungeons.json carried each dungeon's rip; the 13 test rips must stand where those records put them
+def test_the_retired_records_still_hold_the_plane_the_owner_played():
+    # git show 6249332e: data/dungeons.json carried each dungeon's rip. The retire function restores the RECORD's plane, so the
+    # record must still be where the owner saw the rip; otherwise the retire would clean the wrong blocks.
     r = subprocess.run(["git", "show", "%s:data/dungeons.json" % A.OLD_TEST_RIPS_COMMIT], cwd=str(ROOT), capture_output=True, text=True)
     if r.returncode != 0:
         pytest.skip("commit %s is not in this checkout: %s" % (A.OLD_TEST_RIPS_COMMIT, r.stderr.strip()[:120]))
-    rips = json.loads((ROOT / "data" / "dungeon_rips.json").read_text(encoding="utf-8"))["rips"]
-    assert A.old_test_rip_positions(json.loads(r.stdout), rips) == []
+    _, retired = _real_rips()
+    assert A.old_test_rip_positions(json.loads(r.stdout), retired) == []
+
+
+# ------------------------------------------------------------------------------------------------- the generator's retire, no full build
+
+
+def _retire_files(mod, retired):
+    """The retire functions as `mod` emits them, without the five-minute build: rips/retire's calls and rip_retire_lines per rip.
+    The wiring text mirrors tools/dungeon.py's build() (rips/retire_<rip_name>); the slow scenario retired_rips_are_taken_out reads
+    the real build. What this reads is the line generator, which is where a skipped plane or patch would be."""
+    files = {A.RIPS_DIR + "retire.mcfunction": "\n".join(
+        ["# top"] + ["execute in minecraft:overworld run function cobblers:dungeons/rips/retire_%s" % mod.rip_name(r) for r in retired])}
+    for r in retired:
+        files["data/cobblers/function/dungeons/rips/retire_%s.mcfunction" % mod.rip_name(r)] = "\n".join(mod.rip_retire_lines(r))
+    return files
+
+
+def _themes():
+    return json.loads((ROOT / "data" / "dungeon_themes.json").read_text(encoding="utf-8"))["themes"]
+
+
+def test_the_generators_retire_lines_restore_every_recorded_plane_and_patch():
+    # the 13 real retired records, the real tools/dungeon.py line generator, expectations from the records and the theme file
+    _, retired = _real_rips()
+    got = A.retire_pack_problems(_retire_files(A.load_module(None), retired), retired, _themes())
+    assert got == [], got[:3]
+
+
+@pytest.mark.parametrize("mutation", A.RETIRE_MUTATIONS)
+def test_the_retire_check_fails_when_the_generators_retire_lines_are_mutated(mutation):
+    # independence: tools/dungeon.py edited at one spot (data/ untouched) and the retire check must object. These three are also in
+    # A.MUTATIONS for the slow full-build run; here the same edit meets the checker without the build.
+    _, retired = _real_rips()
+    got = A.retire_pack_problems(_retire_files(A.load_module(mutation), retired), retired, _themes())
+    assert got, "MISSED: %s (%s)" % (mutation, A.MUTATIONS[mutation]["why"])
+
+
+def test_the_generators_entity_sweep_covers_every_retired_click_and_kills_both_entities():
+    import dungeon as D
+    _, retired = _real_rips()
+    doc = D.load()
+    files = {"data/" + fid.replace(":dungeons/", "/function/dungeons/") + ".mcfunction": "\n".join(lines) for fid, lines in D.retire_sweep(doc).items()}
+    assert files and all(p.startswith(A.RIPS_DIR + "entities_retired") for p in files), sorted(files)
+    assert A.retire_sweep_problems(files, retired) == []
 
 
 # ------------------------------------------------------------------------------------------------- the simulator (slow)
