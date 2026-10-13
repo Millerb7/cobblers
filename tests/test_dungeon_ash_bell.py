@@ -49,6 +49,7 @@ import dungeon_fights as DF  # noqa: E402
 import dungeon_rooms as R  # noqa: E402
 
 DOC = D.load()
+RIP = {r["legacy_dungeon"]: r for r in DOC["rips"] if r.get("legacy_dungeon")}   # the test rips (data/dungeon_rips.json)
 AB = next(d for d in DOC["dungeons"] if d["id"] == "ash_bell")
 OWNER_KINDS = {"maze", "puzzle", "parkour", "resources", "nest", "habitat", "stand", "miniboss"}
 OURS = {"gauntlet", "ambush", "vault", "dark_room", "collapse_bridge", "safe_room"}
@@ -111,8 +112,9 @@ def test_every_room_type_the_owner_named_three_of_ours_and_three_optional_rooms(
     assert len(EXTRA_KINDS & k) >= 3, EXTRA_KINDS & k
     top = [r["kind"] for r in AB["rooms"]]
     assert top[0] == "entry_room" and top[-2:] == ["boss_arena", "exit_room"]
-    assert AB["theme"] == "nether_wastes" and AB["test"] is True and AB["gate_flag"] is None
-    assert AB["rip"]["test"] is True and "nether-rip-siting.md" in AB["rip"]["siting_pending"]
+    assert AB["theme"] == "nether_wastes" and AB["test"] is True
+    assert AB["gate_flag"] == "cobblers:flag/gym8_cleared" and AB["first_band"] == 5, "the roster's gate and floor (the draw, 2026-10-13)"
+    assert RIP[AB["id"]]["test"] is True
 
 
 def test_the_optional_rooms_stand_off_the_route_open_and_never_paid():
@@ -481,7 +483,7 @@ def test_the_fight_params_follow_the_contract():
 
 
 def test_the_rip_is_on_the_test_trail_clear_of_the_mine_and_the_other_rips():
-    f = AB["rip"]["frame"]
+    f = RIP[AB["id"]]["frame"]
     assert abs((f["x0"] + f["x1"]) / 2 - 1450) <= 10 and abs(f["z"] - 4118) <= 4
     mine = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["settlements"]["route1_old_mine"]
     x0, z0, x1, z1 = mine["plan"]["footprint"]["rect"]
@@ -491,11 +493,11 @@ def test_the_rip_is_on_the_test_trail_clear_of_the_mine_and_the_other_rips():
     for d in DOC["dungeons"]:
         if d["id"] == "ash_bell":
             continue
-        o = d["rip"]["frame"]
+        o = RIP[d["id"]]["frame"]
         assert f["x0"] > o["x1"] + 4 or f["x1"] < o["x0"] - 4 or abs(f["z"] - o["z"]) > 6, d["id"]
-    cx, cy, cz = AB["rip"]["click"]
+    cx, cy, cz = RIP[AB["id"]]["click"]
     assert cz == f["z"] + 1 and cy == f["y"] and cx == (f["x0"] + f["x1"]) // 2
-    assert AB["rip"]["outside"][2] - 0.5 > cz + 1.5
+    assert RIP[AB["id"]]["outside"][2] - 0.5 > cz + 1.5
 
 
 def test_the_rip_is_on_the_heightmaps_ground_and_not_in_water():
@@ -504,11 +506,11 @@ def test_the_rip_is_on_the_heightmaps_ground_and_not_in_water():
         g = GR.load()
     except Exception as e:  # noqa: BLE001  (no heightmap in this checkout)
         pytest.skip("no heightmap: %s" % e)
-    f = AB["rip"]["frame"]
+    f = RIP[AB["id"]]["frame"]
     assert {g(x, z) + 1 for x in range(f["x0"], f["x1"] + 1) for z in (f["z"], f["z"] + 1)} == {f["y"]}
-    ox, oy, oz, _ = AB["rip"]["outside"]
+    ox, oy, oz, _ = RIP[AB["id"]]["outside"]
     assert g(int(ox), int(oz)) + 1 == oy
     sea = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))["vertical"]["sea_level"]
     assert f["y"] - 1 > sea
     import route1_old_mine as MINE
-    assert D.rip_restore_measured(AB, g, MINE.build(g)) == AB["rip"]["restore"]
+    assert D.rip_restore_measured(RIP[AB["id"]], g, MINE.build(g)) == RIP[AB["id"]]["restore"]

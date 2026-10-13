@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 """Generate the dungeon engine pack from data/dungeons.json: timed rift runs in cobblers:pocket (DUNGEONS.md, ADR-008).
 
+THE DRAW (docs/mechanics/DUNGEON_DRAW.md, built 2026-10-13). A rip is a place (data/dungeon_rips.json), not a dungeon: its click
+(door/rip_<name>) runs `draw`, which picks the dungeon from the player's band, each dungeon's first_band and gate_flag
+(data/dungeons.json), their lockouts and free slots, the least recently drawn first and a random tie-break, then calls that
+dungeon's own door. The way out is the rip's (dg.rip). Sigil as price, band by progression; no re-roll on a back-out.
+
 THE RUN (docs/mechanics/DUNGEONS.md sections 1-2). A player clicks a rip in the overworld (door_click). If the checks
 pass (the gate flag, the lockout, not already in a run, no elytra, a party within the cap, a free slot, and LAST the
 sigil, so a refusal never touches one) the slot is reserved, the band frozen from the RCT cap, the sigil taken, the
@@ -59,6 +64,7 @@ import levelcap_pack as LC  # noqa: E402  (the NPC-battle cap check and its tag,
 import portals  # noqa: E402  (the click advancement, EXP-034)
 
 DATA = ROOT / "data" / "dungeons.json"
+RIPS = ROOT / "data" / "dungeon_rips.json"    # the rips: places, not dungeons (docs/mechanics/DUNGEON_DRAW.md 2.6)
 PORTALS = ROOT / "data" / "portals.json"
 ENTEI = ROOT / "data" / "entei_boss.json"
 PROBES = ROOT / "data" / "dungeon_probes.json"
@@ -85,7 +91,9 @@ OBJ = {
     "st": "dg.st",        # 0 none, 1 paid and arriving, 2 in the entry room, 3 clock running, 4 sudden death
     "slot": "dg.slot",    # the global slot number (1..), 0 none
     "run": "dg.run",      # the run's number; #s<g> dg.run is the slot's, #runs dg.run the last given
-    "dun": "dg.dun",      # the dungeon's index (1..); kept after a run, for the tail's way out
+    "dun": "dg.dun",      # the dungeon's index (1..); kept after a run, for the tail's legacy way out
+    "rip": "dg.rip",      # the rip's index (1..) the run was entered by, set at the go; kept after a run: the way out is that rip's
+    "ptdun": "dg.ptdun",  # STAGING PLAYTEST: the dungeon (1..) a player tagged PLAYTEST_TAG is always drawn; 0/unset draws as a player
     "band": "dg.band",    # frozen at door_click
     "ptband": "dg.ptband",  # STAGING PLAYTEST: the band a player tagged PLAYTEST_TAG is given (the owner, 2026-10-09)
     "rb": "dg.rb",        # the recipe sync's band (never the run's)
@@ -134,10 +142,15 @@ class DungeonError(ValueError):
     pass
 
 
-def load(path=DATA):
+def load(path=DATA, rips_path=None):
+    """data/dungeons.json, with the rips of data/dungeon_rips.json attached as doc["rips"] (a sibling file of the same
+    folder when `path` is another copy, so a test that edits a copy edits both). The rips are not part of any dungeon's
+    record since 2026-10-13: a rip draws its dungeon (rip_index, draw)."""
     doc = json.loads(Path(path).read_text(encoding="utf-8"))
     if doc.get("schema") != SCHEMA:
         raise DungeonError("%s: schema must be %s" % (path, SCHEMA))
+    rp = Path(rips_path) if rips_path else (Path(path).parent / RIPS.name if (Path(path).parent / RIPS.name).is_file() else RIPS)
+    doc["rips"] = json.loads(rp.read_text(encoding="utf-8"))["rips"]
     return doc
 
 
@@ -312,6 +325,12 @@ def lk_obj(d):
     return "dg.lk_%s" % d["short"]
 
 
+def dr_obj(d):
+    """The uptime at which this dungeon was last DRAWN for the player (the go, not the threshold): the draw's recency
+    (docs/mechanics/DUNGEON_DRAW.md 2.3). A backed-out run counts as drawn; the lockout's stamp (lk_obj) is the threshold's."""
+    return "dg.dr_%s" % d["short"]
+
+
 def lv_obj(d):
     """The variant (1-based) of this dungeon the player last entered (DUNGEON_ROOMS.md 1a): entry prefers another."""
     return "dg.lv_%s" % d["short"]
@@ -472,7 +491,7 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
     for key in ("tag", "tail", "tail_end", "backstop", "exempt"):
         if not bt[key]:
             bad.append("data/blackout.json has no %s for the run tag (dungeon_exempt / claims.exempt_tag)" % key)
-    for name in list(OBJ.values()) + [lk_obj(d) for d in dungeons(doc)]:
+    for name in list(OBJ.values()) + [lk_obj(d) for d in dungeons(doc)] + [dr_obj(d) for d in dungeons(doc)]:
         if not OBJ_RE.match(name):
             bad.append("objective %r" % name)
     # the boss
@@ -503,47 +522,6 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
                 bad.append("%s band %d: boss.teams_alt_by_band repeats a crew list" % (d["id"], b["band"]))
             if bo["member_level_offset"] > 0:
                 bad.append("%s: a crew member above its stage's level" % d["id"])
-        rip = d["rip"]
-        fr = rip["frame"]
-        # the rip's plane (where the frame stood until 2026-10-10): the oval's three columns and one either side, so the
-        # scorched patch's rim and the restored plane cover the oval's whole footprint
-        if fr["x1"] - fr["x0"] != 4:
-            bad.append("%s: the rip's plane is 5 wide (the oval's 3 and one either side)" % d["id"])
-        if "palette" in rip:
-            bad.append("%s: rip.palette is the frame's, which came down on 2026-10-10 (the oval stands free)" % d["id"])
-        rest = rip.get("restore") or {}
-        if sorted(rest) != sorted(str(x) for x in range(fr["x0"], fr["x1"] + 1)) or \
-                any(len(col) != fr["height"] for col in rest.values()):
-            bad.append("%s: rip.restore is not one column of %d blocks per x of the plane (python tools/dungeon.py --rip-restore)"
-                       % (d["id"], fr["height"]))
-        try:
-            sc = rip_scorch(d)
-        except (KeyError, DR.RoomError) as ex:
-            sc = {}
-            bad.append("%s: the rip's ground has no theme to take its blocks from (%s); give rip.scorch core and rim" % (d["id"], ex))
-        for blk in [b for col in rest.values() for b in col] + [sc.get("core") or "", sc.get("rim") or ""]:
-            if "portal" in blk:
-                bad.append("%s: a portal block in the rip (7.1: they teleport on their own)" % d["id"])
-        under = rip.get("under")
-        if under is not None and sc:
-            cells = {"%d,%d" % (x, z) for x, _y, z, _b in rip_scorch_cells(d)}
-            if set(under) != cells:
-                bad.append("%s: rip.under must record exactly the scorch's %d cells (x,z), not %d" % (d["id"], len(cells), len(under)))
-            # (a recorded block may equal the patch's: a jungle's grass was already grass)
-            if any("portal" in b or not re.match(r"^[a-z0-9_]+:[a-z0-9_/.]+(\[[^\]]*\])?$", b) for b in under.values()):
-                bad.append("%s: rip.under holds a portal block or a string that is not a block state" % d["id"])
-        ov = rip.get("oval")
-        art = e.get("rip_art")
-        if not ov or not art:
-            bad.append("%s: no rip.oval / engine.rip_art (the rip's animated oval)" % d["id"])
-        else:
-            if not (0 < ov["in_front"] <= 0.5):
-                bad.append("%s: the oval must stand in front of the opening's face (0 < in_front <= 0.5), not in the block" % d["id"])
-            if ov["width"] <= 0 or ov["height"] <= 0:
-                bad.append("%s: the oval has no size" % d["id"])
-            fw, fh = art["frame"]["width"], art["frame"]["height"]
-            if abs(fw * ov["height"] - fh * ov["width"]) > 1e-6:
-                bad.append("%s: the oval is %sx%s but the texture frame is %dx%d (a stretched art)" % (d["id"], ov["width"], ov["height"], fw, fh))
     art = e.get("rip_art")
     if art:
         if not isinstance(art["custom_model_data"], int) or isinstance(art["custom_model_data"], bool):
@@ -556,6 +534,7 @@ def problems(doc, portals_doc=None, entei_doc=None, probes_doc=None, blackout=No
     shorts = [d["short"] for d in dungeons(doc)]
     if len(set(ids)) != len(ids) or len(set(shorts)) != len(shorts):
         bad.append("two dungeons share an id or a short name")
+    bad += rip_problems(doc) + draw_problems(doc)
     return bad
 
 
@@ -793,24 +772,34 @@ def shell_entities(doc, slot):
     return out
 
 
-def rip_scorch(d, themes=None):
-    """{"core": block, "rim": block}: the ground laid under a rip's oval. The dungeon's THEME decides (the owner,
-    2026-10-12: "the blocks under a rift ... should represent the biome inside the rift"): the core is the theme's
-    hull.floor and the rim its hull.wall (data/dungeon_themes.json), so a jungle rip stands on grass ringed with moss and a
-    soul sand valley's on soul soil. The floor is what the player walks on inside; the wall is the second block that
-    dresses every room, so the pair reads as the biome without a new palette to keep. Where a theme's floor and wall are
-    the same block (the nether wastes, the soul sand valley) the patch is one block. An explicit `rip.scorch`
-    (core and/or rim) on the record still overrides the theme's block."""
-    hull = DR.theme_for(d, themes)["hull"]
+def rips(doc):
+    """The rips (data/dungeon_rips.json), in file order. Their position in it is their index (dg.rip), 1-based and
+    append-only: a rip that leaves the list renumbers the ones after it, so a removal is a re-apply of the whole pack."""
+    return doc["rips"]
+
+
+def rip_index(doc, r):
+    return rips(doc).index(r) + 1
+
+
+def rip_scorch(r, themes=None):
+    """{"core": block, "rim": block}: the ground laid under a rip's oval. A THEME decides (the owner, 2026-10-12: "the
+    blocks under a rift ... should represent the biome inside the rift"): rip.scorch_theme names a theme of
+    data/dungeon_themes.json, the core is that theme's hull.floor and the rim its hull.wall, so a jungle rip stands on
+    grass ringed with moss. Since 2026-10-13 a rip draws ANY dungeon, so the theme is the rip's own: the 13 test rips on
+    the old mine's trail keep the theme of the dungeon each stood for, a region rip takes the look of its region. Where a
+    theme's floor and wall are the same block the patch is one block. An explicit `rip.scorch` (core and/or rim) on the
+    record still overrides the theme's block."""
+    hull = DR.theme_for({"id": r["id"], "theme": r.get("scorch_theme")}, themes)["hull"]
     out = {"core": hull["floor"], "rim": hull["wall"]}
-    out.update(d["rip"].get("scorch") or {})
+    out.update(r.get("scorch") or {})
     return out
 
 
-def rip_scorch_cells(d, themes=None):
+def rip_scorch_cells(r, themes=None):
     """[(x, y, z, block)]: the small patch of themed ground under the oval (rip_scorch): the core under the oval's
     three columns and one in front of its middle, a rim round them. y is the ground under the feet (frame y - 1)."""
-    f, sc = d["rip"]["frame"], rip_scorch(d, themes)
+    f, sc = r["frame"], rip_scorch(r, themes)
     y, z, x0, x1 = f["y"] - 1, f["z"], f["x0"], f["x1"]
     mid = (x0 + x1) // 2
     core = [(x, z + 1) for x in range(x0 + 1, x1)] + [(mid, z + 2)]
@@ -818,25 +807,24 @@ def rip_scorch_cells(d, themes=None):
     return [(x, y, zz, sc["core"]) for x, zz in core] + [(x, y, zz, sc["rim"]) for x, zz in rim]
 
 
-def rip_lines(d):
+def rip_lines(r):
     """The overworld rip's blocks (DUNGEONS.md 7.1). Since 2026-10-10 the oval stands free (the owner, seeing the oval:
     "do we have to have the old portal blocks around and behind it?"): no posts, lintel or dark opening. The plane where
     the frame stood is put back to what was there (rip.restore, measured by rip_restore_measured from tools/ground.py and
-    the old mine's own plan, never a world), so a world that held the frame loses it, and a small patch of the dungeon's
+    the old mine's own plan, never a world), so a world that held the frame loses it, and a small patch of the rip's
     own ground lies under the oval (rip_scorch: the theme's floor and wall; rip_close_lines gives the ground back)."""
-    return rip_plane_lines(d) + ["setblock %d %d %d %s" % c for c in rip_scorch_cells(d)]
+    return rip_plane_lines(r) + ["setblock %d %d %d %s" % c for c in rip_scorch_cells(r)]
 
 
-def rip_plane_lines(d):
+def rip_plane_lines(r):
     """The commands that put the rip's plane back to rip.restore: rip_lines lays them, rip_close_lines lays them again."""
-    r = d["rip"]
     f = r["frame"]
     z = f["z"]
     out = []
     for x in range(f["x0"], f["x1"] + 1):
         col = r["restore"][str(x)]
         if len(col) != f["height"]:
-            raise ValueError("%s: rip.restore[%d] has %d blocks, the plane is %d high" % (d["id"], x, len(col), f["height"]))
+            raise ValueError("%s: restore[%d] has %d blocks, the plane is %d high" % (r["id"], x, len(col), f["height"]))
         y = f["y"]
         while y < f["y"] + f["height"]:          # runs of one block, bottom up
             blk = col[y - f["y"]]
@@ -848,44 +836,43 @@ def rip_plane_lines(d):
     return out
 
 
-def rip_close_lines(d):
+def rip_close_lines(r):
     """The commands that take one rip away and give the ground back (the owner, 2026-10-12: "once the rift closes the
     ground would go back"): the oval and the click removed (the rip's tag), the plane put back to rip.restore, and every
     cell of the themed patch set to the block recorded in rip.under, the ground that was there before the patch.
 
-    NOTHING CALLS THIS YET. No event closes a rip today: the thirteen rips are permanent test rips, and the draw design
-    (docs/mechanics/DUNGEON_DRAW.md 2.6, 3) is what will remove them ("the test rips' `restore` data carries over for the
-    removal"). It is deliberately not emitted into the pack: a function nothing runs is an orphan that prepare refuses.
-    Whoever builds the close emits these lines as a function of the pack and calls it from the close.
+    NOTHING CALLS THIS YET. No event closes a rip today: the rips are permanent. It is deliberately not emitted into the
+    pack: a function nothing runs is an orphan that prepare refuses. Whoever builds the close emits these lines as a
+    function of the pack and calls it from the close.
 
     It fails closed: a rip with no rip.under cannot be given its ground back, and a patch that put back a guess would
     leave a wrong block where the world had another. rip.under is {"x,z": block}, keyed by the patch's cells (y is the
     patch's), recorded once from a world that does not yet hold the patch: a read to RECORD, never to place anything
     (CLAUDE.md, ground comes from the heightmap). The heightmap cannot supply it: it holds heights, not the surface block."""
-    under = d["rip"].get("under")
+    under = r.get("under")
     if not under:
         raise DungeonError("%s: rip.under is not recorded, so the ground under the oval cannot be given back (read the "
                            "original surface blocks of the patch's %d cells from a world without the patch)"
-                           % (d["id"], len(rip_scorch_cells(d))))
-    cells = rip_scorch_cells(d)
+                           % (r["id"], len(rip_scorch_cells(r))))
+    cells = rip_scorch_cells(r)
     missing = [(x, z) for x, _y, z, _b in cells if "%d,%d" % (x, z) not in under]
     if missing:
-        raise DungeonError("%s: rip.under has no block for %s" % (d["id"], missing))
-    tag = rip_tag(d)
+        raise DungeonError("%s: rip.under has no block for %s" % (r["id"], missing))
+    tag = rip_tag(r)
     out = ["kill @e[type=minecraft:interaction,tag=%s]" % tag,
            "kill @e[type=minecraft:item_display,tag=%s]" % tag]
-    out += rip_plane_lines(d)
+    out += rip_plane_lines(r)
     out += ["setblock %d %d %d %s" % (x, y, z, under["%d,%d" % (x, z)]) for x, y, z, _b in cells]
     return out
 
 
-def rip_restore_measured(d, g, mine_lines=()):
+def rip_restore_measured(r, g, mine_lines=()):
     """{str(x): [block, ...]}: the rip's plane (frame x0..x1, y..y + height - 1, z) as it was before a frame stood in it,
     bottom up. A cell the old mine's build writes (tools/route1_old_mine.py build(g): its hill reaches the Night Shift's
     plane) is what that build left there, replayed in order; any other cell is air, and must be above the ground
-    (round(g(x, z)), tools/ground.py): a frame never stood below it. Writes data/dungeons.json rip.restore through
+    (round(g(x, z)), tools/ground.py): a frame never stood below it. Writes data/dungeon_rips.json rip.restore through
     `python tools/dungeon.py --rip-restore`; tests re-measure it where the heightmap is present."""
-    f = d["rip"]["frame"]
+    f = r["frame"]
     z = f["z"]
     want = {(x, y) for x in range(f["x0"], f["x1"] + 1) for y in range(f["y"], f["y"] + f["height"])}
     state = {}
@@ -915,19 +902,31 @@ def rip_restore_measured(d, g, mine_lines=()):
             elif y > g(x, z):
                 col.append("minecraft:air")
             else:
-                raise ValueError("%s: the rip's plane cell (%d, %d, %d) is at or under the ground (%d)" % (d["id"], x, y, z, g(x, z)))
+                raise ValueError("%s: the rip's plane cell (%d, %d, %d) is at or under the ground (%d)" % (r["id"], x, y, z, g(x, z)))
         out[str(x)] = col
     return out
 
 
-def rip_tag(d):
-    return "%s_%s" % (TAGS["rip"], d["short"])
+def rip_name(r):
+    """The rip's id without its rip_ prefix, and without trail_ for a test rip: the stem of its tag, its blocks function
+    and its click. A test rip keeps the name the dungeon's short gave it (rip_trail_ns -> ns), so the tags the world already
+    holds (dg.rip_ns), the presence probes (data/world_probes.json) and rips/blocks_ns are the same after the move."""
+    n = r["id"][len("rip_"):] if r["id"].startswith("rip_") else r["id"]
+    return n[len("trail_"):] if r.get("kind") == "test_trail" and n.startswith("trail_") else n
 
 
-def oval_pos(d):
+def rip_door(r):
+    """The rip's click function (door/rip_<name>) and its advancement (dungeons/rip_<name>): one per rip."""
+    return "door/rip_%s" % rip_name(r)
+
+
+def rip_tag(r):
+    return "%s_%s" % (TAGS["rip"], rip_name(r))
+
+
+def oval_pos(r):
     """(x, y, z) of the rip's oval display, its CENTRE: on the frame's column, its foot at the frame's y, in front of
-    the opening's face (data/dungeons.json rip.oval). All three are derived from the frame, never typed twice."""
-    r = d["rip"]
+    the opening's face (data/dungeon_rips.json rip.oval). All three are derived from the frame, never typed twice."""
     f, o = r["frame"], r["oval"]
     return ((f["x0"] + f["x1"]) / 2.0 + 0.5, f["y"] + o["height"] / 2.0, f["z"] + 1 + o["in_front"])
 
@@ -936,20 +935,105 @@ def oval_tag(doc):
     return doc["engine"]["rip_art"]["tag"]
 
 
-def oval_summon(doc, d):
+def oval_summon(doc, r):
     """The R16DR summon of one rip's oval: an item_display of the carrier item (engine.rip_art; tools/rip_pack.py
     gives that item+custom_model_data its model in the client pack). Fixed in the frame's plane, facing south onto the
     trail, full-bright. `scale` is the oval's width x height x 1 over the model's one-block quad."""
-    art, o = doc["engine"]["rip_art"], d["rip"]["oval"]
-    x, y, z = oval_pos(d)
+    art, o = doc["engine"]["rip_art"], r["oval"]
+    x, y, z = oval_pos(r)
     br = art["brightness"]
     return ("summon minecraft:item_display %.2f %.2f %.2f {Tags:[\"%s\",\"%s\",\"%s\"],"
             "item:{id:\"%s\",count:1,components:{\"minecraft:custom_model_data\":%d}},item_display:\"none\","
             "brightness:{sky:%d,block:%d},view_range:%.1ff,"
             "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],"
             "scale:[%.2ff,%.2ff,1f]}}"
-            % (x, y, z, rip_tag(d), oval_tag(doc), TAGS["rip_new"], art["item"], art["custom_model_data"],
+            % (x, y, z, rip_tag(r), oval_tag(doc), TAGS["rip_new"], art["item"], art["custom_model_data"],
                br["sky"], br["block"], art["view_range"], o["width"], o["height"]))
+
+
+def rip_problems(doc):
+    """[problem] in the rips: each one's plane, restore, ground and oval (the checks that were a dungeon's own until the rip
+    left its record, 2026-10-13), and the list's shape. WHERE a rip stands is tools/dungeon_rips.py's check."""
+    e = doc["engine"]
+    bad = []
+    rs = rips(doc)
+    if not rs:
+        return ["no rips: nothing opens a dungeon"]
+    ids = [r["id"] for r in rs]
+    if len(set(ids)) != len(ids) or len({rip_tag(r) for r in rs}) != len(rs):
+        bad.append("two rips share an id or a tag")
+    for r in rs:
+        rid = r["id"]
+        if not re.match(r"^rip_[a-z0-9_]+$", rid) or rip_name(r) in ("back", "far"):
+            bad.append("%s: a rip id is rip_<name> (name not back or far: those are the exits' tags)" % rid)
+        fr = r["frame"]
+        # the rip's plane (where the frame stood until 2026-10-10): the oval's three columns and one either side, so the
+        # scorched patch's rim and the restored plane cover the oval's whole footprint
+        if fr["x1"] - fr["x0"] != 4:
+            bad.append("%s: the rip's plane is 5 wide (the oval's 3 and one either side)" % rid)
+        if "palette" in r:
+            bad.append("%s: rip.palette is the frame's, which came down on 2026-10-10 (the oval stands free)" % rid)
+        rest = r.get("restore") or {}
+        if sorted(rest) != sorted(str(x) for x in range(fr["x0"], fr["x1"] + 1)) or \
+                any(len(col) != fr["height"] for col in rest.values()):
+            bad.append("%s: rip.restore is not one column of %d blocks per x of the plane (python tools/dungeon.py --rip-restore)"
+                       % (rid, fr["height"]))
+        try:
+            sc = rip_scorch(r)
+        except (KeyError, DR.RoomError) as ex:
+            sc = {}
+            bad.append("%s: the rip's ground has no theme to take its blocks from (%s); give rip.scorch_theme" % (rid, ex))
+        for blk in [b for col in rest.values() for b in col] + [sc.get("core") or "", sc.get("rim") or ""]:
+            if "portal" in blk:
+                bad.append("%s: a portal block in the rip (7.1: they teleport on their own)" % rid)
+        under = r.get("under")
+        if under is not None and sc:
+            cells = {"%d,%d" % (x, z) for x, _y, z, _b in rip_scorch_cells(r)}
+            if set(under) != cells:
+                bad.append("%s: rip.under must record exactly the scorch's %d cells (x,z), not %d" % (rid, len(cells), len(under)))
+            # (a recorded block may equal the patch's: a jungle's grass was already grass)
+            if any("portal" in b or not re.match(r"^[a-z0-9_]+:[a-z0-9_/.]+(\[[^\]]*\])?$", b) for b in under.values()):
+                bad.append("%s: rip.under holds a portal block or a string that is not a block state" % rid)
+        ov = r.get("oval")
+        art = e.get("rip_art")
+        if not ov or not art:
+            bad.append("%s: no rip.oval / engine.rip_art (the rip's animated oval)" % rid)
+        else:
+            if not (0 < ov["in_front"] <= 0.5):
+                bad.append("%s: the oval must stand in front of the opening's face (0 < in_front <= 0.5), not in the block" % rid)
+            if ov["width"] <= 0 or ov["height"] <= 0:
+                bad.append("%s: the oval has no size" % rid)
+            fw, fh = art["frame"]["width"], art["frame"]["height"]
+            if abs(fw * ov["height"] - fh * ov["width"]) > 1e-6:
+                bad.append("%s: the oval is %sx%s but the texture frame is %dx%d (a stretched art)" % (rid, ov["width"], ov["height"], fw, fh))
+        ox, oy, oz, _yaw = r["outside"]
+        if not (isinstance(ox, (int, float)) and abs(ox - (fr["x0"] + fr["x1"]) / 2.0) <= 3 and abs(oz - fr["z"]) <= 8):
+            bad.append("%s: the exit point is not within 3 blocks of the plane's middle column and 8 of its row" % rid)
+        if r.get("legacy_dungeon") is not None and r["legacy_dungeon"] not in {d["id"] for d in dungeons(doc)}:
+            bad.append("%s: legacy_dungeon %r is not a dungeon" % (rid, r["legacy_dungeon"]))
+    return bad
+
+
+def draw_problems(doc):
+    """[problem] in the draw's inputs (docs/mechanics/DUNGEON_DRAW.md 2.2, 2.3): every dungeon has a first_band that is a
+    band, a gate_flag that is null or an advancement id, and every band has a candidate that no gate or lockout can empty
+    (the ungated dungeons whose first_band is 1 are those: at least two, so the draw rotates even at band 1)."""
+    bad = []
+    nb = [b["band"] for b in bands(doc)]
+    for d in dungeons(doc):
+        fb = d.get("first_band")
+        if not isinstance(fb, int) or isinstance(fb, bool) or fb not in nb:
+            bad.append("%s: first_band %r is not a band (%s)" % (d["id"], fb, nb))
+        gf = d.get("gate_flag")
+        if gf is not None and not re.match(r"^[a-z0-9_.-]+:[a-z0-9_./-]+$", str(gf)):
+            bad.append("%s: gate_flag %r is not an advancement id" % (d["id"], gf))
+    if not bad:
+        for b in nb:
+            open_ = [d["id"] for d in dungeons(doc) if d["first_band"] <= b and not d.get("gate_flag")]
+            if len(open_) < 2:
+                bad.append("band %d has %d ungated dungeon(s) to draw (%s): the draw needs two so it can rotate and never strands a "
+                           "player whose one dungeon is locked out or full" % (b, len(open_), open_))
+    return bad
 
 
 # ------------------------------------------------------------------------------------------------- functions
@@ -986,6 +1070,7 @@ def functions(doc, blackout=None):
     objs += ["scoreboard objectives add %s deathCount" % O["dc"]]
     objs += DG.objective_lines(doc, gtab)
     objs += ["scoreboard objectives add %s dummy" % lk_obj(d) for d in ds]
+    objs += ["scoreboard objectives add %s dummy" % dr_obj(d) for d in ds]
     objs += ["scoreboard objectives add %s dummy" % lv_obj(d) for d in ds if d.get("variants")]
     if any(DR.has_rooms(d) for d in ds):
         objs += DR.objective_lines()
@@ -1131,7 +1216,7 @@ def functions(doc, blackout=None):
             "execute if score @s %s matches 3..4 run return run function %s" % (O["st"], F("m/deadkill")),
             "function %s" % F("m/refund"),
             "function %s" % SF(s, "end"),
-            "execute if entity @s[tag=%s] run function %s" % (T["pk"], F("m/out_%s" % s["dungeon"]["short"]))]
+            "execute if entity @s[tag=%s] run function %s" % (T["pk"], F("m/out"))]
     out["m/deadkill"] = [
         HEAD, "# 2.6: the dead-run kill on return, before anything else of the pass; the death handling runs on respawn",
         "scoreboard players set @s %s 4" % O["cause"],
@@ -1350,7 +1435,7 @@ def functions(doc, blackout=None):
             for c, tt in sorted(titles.items()) if c in ("2", "3")] + [
             "function %s" % F("m/lines_%s" % s["dungeon"]["short"]),
             "function %s" % SF(s, "end"),
-            "execute if entity @s[tag=%s] run function %s" % (T["pk"], F("m/out_%s" % s["dungeon"]["short"]))]
+            "execute if entity @s[tag=%s] run function %s" % (T["pk"], F("m/out"))]
 
     def end_lines(which, note):
         end = [HEAD, "# EVERY way out of a run ends here or in a slot's own copy (V13, E1): escrow cleared (a clean exit has paid",
@@ -1387,7 +1472,7 @@ def functions(doc, blackout=None):
             "execute if entity @s[tag=%s] run scoreboard players set @s %s 1" % (T["pk"], O["tail"])]
     for di, d in enumerate(ds, 1):
         tail.append("execute if entity @s[tag=%s] in %s if entity @s[%s] run function %s"
-                    % (T["pk"], dim, sel_box(band_box(doc, di)), F("m/out_%s" % d["short"])))
+                    % (T["pk"], dim, sel_box(band_box(doc, di)), F("m/out")))
     tail += ["execute if entity @s[tag=%s] run return 0" % T["pk"],
              "scoreboard players set @s %s 0" % O["tail"],
              "execute at @s run function %s" % TAIL_END]
@@ -1396,13 +1481,23 @@ def functions(doc, blackout=None):
     out["m/restore"] = [HEAD, "# the backstop: a player we put in adventure, outside the pocket with no live run (V13)",
                         "gamemode survival @s", "tag @s remove %s" % T["adv"], "clear @s %s" % pick_match(doc)]
 
-    outl = [HEAD, "# out to the overworld rip's outside point of the player's dungeon (a fixed point: nothing stored)"]
-    for di, d in enumerate(ds, 1):
-        x, y, z, yaw = d["rip"]["outside"]
+    outl = [HEAD, "# out to the outside point of the rip the run was entered by: dg.rip, set at the go (door/go_<dungeon>) and kept",
+            "# after the run for the tail's way out. Since 2026-10-13 a rip draws any dungeon, so the way out is the RIP's"]
+    for ri, r in enumerate(rips(doc), 1):
+        x, y, z, yaw = r["outside"]
         outl.append("execute if score @s %s matches %d in minecraft:overworld run tp @s %s %s %s %s 0"
-                    % (O["dun"], di, fmt(float(x)), y, fmt(float(z)), yaw))
-        out["m/out_%s" % d["short"]] = [HEAD, "execute in minecraft:overworld run tp @s %s %s %s %s 0"
-                                        % (fmt(float(x)), y, fmt(float(z)), yaw)]
+                    % (O["rip"], ri, fmt(float(x)), y, fmt(float(z)), yaw))
+    outl.append("# a run begun before the rips were separate has no dg.rip: the outside point of the rip that stood for its dungeon")
+    for di, d in enumerate(ds, 1):
+        for r in rips(doc):
+            if r.get("legacy_dungeon") == d["id"]:
+                x, y, z, yaw = r["outside"]
+                outl.append("execute unless score @s %s matches 1.. if score @s %s matches %d in minecraft:overworld run tp @s %s %s %s %s 0"
+                            % (O["rip"], O["dun"], di, fmt(float(x)), y, fmt(float(z)), yaw))
+    x, y, z, yaw = rips(doc)[0]["outside"]
+    outl.append("# and a player with neither (a score never set): the first rip's, so nobody is left in the pocket")
+    outl.append("execute unless score @s %s matches 1.. unless score @s %s matches 1.. in minecraft:overworld run tp @s %s %s %s %s 0"
+                % (O["rip"], O["dun"], fmt(float(x)), y, fmt(float(z)), yaw))
     out["m/out"] = outl
 
     refund = [HEAD, "# The threshold refund (7.4): the sigil taken at door_click comes back, rebuilt with its components"]
@@ -1441,13 +1536,13 @@ def functions(doc, blackout=None):
               "# The %s rip, clicked: DUNGEONS.md 7.2's checks in order, the sigil LAST so a refusal never touches one." % d["name"],
               "# #why: 0 go, 1 gate, 2 lockout, 3 in a run, 4 elytra, 5 cap unread, 6 party over cap, 7 no free slot,",
               "# 8 no sigil of their band or higher, 9 only a lower band's",
-              "advancement revoke @s only %s:dungeons/rip_%s" % (NS, sh),
-              "execute as @e[type=minecraft:interaction,tag=%s,distance=..8] run data remove entity @s interaction" % rip_tag(d),
+              "# (the click itself, its advancement and its interaction, belong to the RIP: door/rip_<name> draws this dungeon and calls here)",
               "execute unless score @s %s matches 1.. run scoreboard players add #next %s 1" % (O["id"], O["id"]),
               "execute unless score @s %s matches 1.. run scoreboard players operation @s %s = #next %s" % (O["id"], O["id"], O["id"]),
               "scoreboard players set #why %s 0" % O["t"]]
         if d["gate_flag"]:
-            dc.append("execute unless entity @s[advancements={%s=true}] run scoreboard players set #why %s 1" % (d["gate_flag"], O["t"]))
+            dc.append("execute unless entity @s[advancements={%s=true}] unless entity @s[tag=%s] run scoreboard players set #why %s 1"
+                      % (d["gate_flag"], PLAYTEST_TAG, O["t"]))
         dc += [
             "# 2: the lockout, on the uptime counter, from the threshold (2.5); a never-entrant is outside it",
             "scoreboard players set #d %s %d" % (O["t"], lockout_of(doc, d)),
@@ -1517,7 +1612,13 @@ def functions(doc, blackout=None):
         if d.get("variants"):
             go += ["execute if score #pick %s matches %d run scoreboard players set @s %s %d"
                    % (O["t"], s["g"], lv_obj(d), DR.variant_of(doc, d, s)["index"] + 1) for s in dsel(di)]
-        go += ["scoreboard players set @s %s %d" % (O["dun"], di),
+        go += ["# the draw (docs/mechanics/DUNGEON_DRAW.md 2.3): this dungeon is drawn now, so the next draw counts it as the latest;",
+               "# the rip it was drawn at is where the way out leads (set only here, so a refused click never moves it)",
+               "scoreboard players operation @s %s = #up %s" % (dr_obj(d), O["up"]),
+               "execute if score #rip %s matches 1.. run scoreboard players operation @s %s = #rip %s" % (O["t"], O["rip"], O["t"]),
+               "scoreboard players set #rip %s 0" % O["t"],
+               say("The rift opens onto %s." % d["name"], "light_purple"),
+               "scoreboard players set @s %s %d" % (O["dun"], di),
                "scoreboard players set @s %s 1" % O["st"],
                "scoreboard players set @s %s %d" % (O["wait"], k["arrive_delay_ticks"] + P),
                "scoreboard players operation @s %s = #up %s" % (O["seen"], O["up"]),
@@ -1550,6 +1651,83 @@ def functions(doc, blackout=None):
             go.append("execute if score #sig %s matches -1 run %s" % (O["t"], say("The rift lets you in this once.", "dark_purple")))
         go.append("playsound minecraft:block.respawn_anchor.charge master @s ~ ~ ~ 1 0.8")
         out["door/go_%s" % sh] = go
+
+    # ---- the rips' clicks and the draw (docs/mechanics/DUNGEON_DRAW.md 2.3, 3) ------------------------------------
+    # One click function per RIP. It consumes the click, names the rip in #rip, and the draw picks the dungeon: by the
+    # player's band (progression decides, the sigil is only the price), the dungeon's first band and gate, the lockout and a
+    # free slot; the dungeon the player drew least recently wins and a random number breaks a tie. The drawn dungeon's own
+    # door/<short> then runs UNCHANGED: its checks and its sigil, so a refusal there never touches a sigil and never stamps
+    # the draw. Scoreboard arithmetic only: a score per dungeon in dg.t holders (#c<i> candidate 0/2/1, #l<i> the lockout
+    # clock, #f<i> a free slot, #a<i> the age), one `random value`, no macro, no storage, nothing in the keeper.
+    for ri, r in enumerate(rips(doc), 1):
+        out[rip_door(r)] = [
+            HEAD, "# The rip %s (%s), clicked: the click consumed, then the draw. #rip is read by the go (dg.rip: the way out)" % (r["id"], r["name"]),
+            "advancement revoke @s only %s:dungeons/rip_%s" % (NS, rip_name(r)),
+            "execute as @e[type=minecraft:interaction,tag=%s,distance=..8] run data remove entity @s interaction" % rip_tag(r),
+            "scoreboard players set #rip %s %d" % (O["t"], ri),
+            "function %s" % F("draw")]
+    nb = bands(doc)
+    dr = [HEAD, "# THE DRAW, as the player who clicked a rip (#rip = which). Candidates: band >= first_band and the gate held (the",
+          "# playtest tag bypasses a gate), not locked out, a free slot. Tier 1 is all of those; tier 2 (nothing in tier 1) is the",
+          "# first two only, so the dungeon's own door refuses with the right reason (locked out, busy). The least recently drawn",
+          "# wins (never drawn is the oldest); a random number breaks a tie. A player already in a run is not drawn for: door/%s" % ds[0]["short"],
+          "# refuses them (3, in a run). #dun is the drawn dungeon's index",
+          "scoreboard players set #dun %s 1" % O["t"],
+          "execute if score @s %s matches 1.. run return run function %s" % (O["st"], F("draw/open")),
+          "# the band, from the cap battle_check reads (as the door reads it, tools/levelcap_pack.py)",
+          "function %s {x:\"\"}" % LC.BATTLE_CHECK,
+          "function %s" % F("m/band")]
+    for di, d in enumerate(ds, 1):
+        i = di
+        L = lockout_of(doc, d)
+        dr += ["# %s: first band %d, gate %s" % (d["id"], d["first_band"], d["gate_flag"] or "none"),
+               "scoreboard players set #c%d %s 0" % (i, O["t"]),
+               "scoreboard players set #f%d %s 0" % (i, O["t"])]
+        if d["gate_flag"]:
+            dr += ["execute if score @s %s matches %d.. if entity @s[advancements={%s=true}] run scoreboard players set #c%d %s 2"
+                   % (O["band"], d["first_band"], d["gate_flag"], i, O["t"]),
+                   "execute if score @s %s matches %d.. if entity @s[tag=%s] run scoreboard players set #c%d %s 2"
+                   % (O["band"], d["first_band"], PLAYTEST_TAG, i, O["t"])]
+        else:
+            dr.append("execute if score @s %s matches %d.. run scoreboard players set #c%d %s 2" % (O["band"], d["first_band"], i, O["t"]))
+        dr += ["scoreboard players set #l%d %s %d" % (i, O["t"], L),
+               "execute if score @s %s matches -2147483648.. run scoreboard players operation #l%d %s = #up %s" % (lk_obj(d), i, O["t"], O["up"]),
+               "execute if score @s %s matches -2147483648.. run scoreboard players operation #l%d %s -= @s %s" % (lk_obj(d), i, O["t"], lk_obj(d))]
+        dr += ["execute if score %s %s matches 0 run scoreboard players set #f%d %s 1" % (H(s), O["own"], i, O["t"]) for s in dsel(di)]
+        dr += ["execute if score #c%d %s matches 2 if score #f%d %s matches 1 unless score #l%d %s matches 0..%d run "
+               "scoreboard players set #c%d %s 1" % (i, O["t"], i, O["t"], i, O["t"], L - 1, i, O["t"]),
+               "# the age: uptime ticks since this player was last drawn this dungeon; never drawn (or a stamp from a lost clock) is the oldest",
+               "scoreboard players set #a%d %s 2147483000" % (i, O["t"]),
+               "execute if score @s %s matches -2147483648.. run scoreboard players operation #a%d %s = #up %s" % (dr_obj(d), i, O["t"], O["up"]),
+               "execute if score @s %s matches -2147483648.. run scoreboard players operation #a%d %s -= @s %s" % (dr_obj(d), i, O["t"], dr_obj(d)),
+               "execute if score #a%d %s matches ..-1 run scoreboard players set #a%d %s 2147483000" % (i, O["t"], i, O["t"])]
+    dr += ["# the tier: 1 if anything is fully open, else 2",
+           "scoreboard players set #tier %s 2" % O["t"]]
+    dr += ["execute if score #c%d %s matches 1 run scoreboard players set #tier %s 1" % (i, O["t"], O["t"]) for i in range(1, len(ds) + 1)]
+    dr += ["# the oldest age among the tier's candidates",
+           "scoreboard players set #best %s -1" % O["t"]]
+    dr += ["execute if score #c%d %s = #tier %s if score #a%d %s > #best %s run scoreboard players operation #best %s = #a%d %s"
+           % (i, O["t"], O["t"], i, O["t"], O["t"], O["t"], i, O["t"]) for i in range(1, len(ds) + 1)]
+    dr += ["# the ties for it, and one of them by chance: a number 0..2^30-1, taken mod the count (the bias is 1 in 2^30 per tie)",
+           "scoreboard players set #n %s 0" % O["t"]]
+    dr += ["execute if score #c%d %s = #tier %s if score #a%d %s = #best %s run scoreboard players add #n %s 1"
+           % (i, O["t"], O["t"], i, O["t"], O["t"], O["t"]) for i in range(1, len(ds) + 1)]
+    dr += ["execute if score #n %s matches 1.. store result score #r %s run random value 0..1073741823" % (O["t"], O["t"]),
+           "execute if score #n %s matches 1.. run scoreboard players operation #r %s %%= #n %s" % (O["t"], O["t"], O["t"]),
+           "scoreboard players set #k %s 0" % O["t"]]
+    for i in range(1, len(ds) + 1):
+        dr += ["execute if score #c%d %s = #tier %s if score #a%d %s = #best %s if score #r %s = #k %s run scoreboard players set #dun %s %d"
+               % (i, O["t"], O["t"], i, O["t"], O["t"], O["t"], O["t"], O["t"], i),
+               "execute if score #c%d %s = #tier %s if score #a%d %s = #best %s run scoreboard players add #k %s 1"
+               % (i, O["t"], O["t"], i, O["t"], O["t"], O["t"])]
+    dr += ["# STAGING PLAYTEST (%s, %s 1..%d): the dungeon the tester names, whatever the draw says. Set by hand over RCON, never for a player"
+           % (PLAYTEST_TAG, O["ptdun"], len(ds))]
+    dr += ["execute if entity @s[tag=%s] if score @s %s matches %d run scoreboard players set #dun %s %d" % (PLAYTEST_TAG, O["ptdun"], i, O["t"], i)
+           for i in range(1, len(ds) + 1)]
+    dr.append("function %s" % F("draw/open"))
+    out["draw"] = dr
+    out["draw/open"] = [HEAD, "# the drawn dungeon's own door runs as the player: its checks, its sigil, its go"] + [
+        "execute if score #dun %s matches %d run function %s" % (O["t"], di, F("door/%s" % d["short"])) for di, d in enumerate(ds, 1)]
 
     band = [HEAD, "# 5.1: the band from the RCT cap battle_check just read (%s), frozen for the run" % LC.CAP,
             "scoreboard players set @s %s 0" % O["band"]]
@@ -1806,7 +1984,7 @@ def functions(doc, blackout=None):
                 "execute if entity @s[tag=%s] run gamemode survival @s" % T["adv"],
                 "tag @s remove %s" % T["adv"],
                 "clear @s %s" % pick_match(doc),
-                "function %s" % F("m/out_%s" % d["short"])]
+                "function %s" % F("m/out")]
         out["check_%s" % d["short"]] = chk
 
     out["npc_at"] = ["# the macro spawn (C1, EXP-078): parsed when it runs, not at load; run `in` the pocket",
@@ -1815,10 +1993,10 @@ def functions(doc, blackout=None):
     # ---- the rips' particles (7.1) ---------------------------------------------------------------------------
     emit = [HEAD, "# every %d ticks: each overworld rip's particles while a player is within %d blocks (7.1)"
             % (k["rip_particle_period_ticks"], k["rip_particle_range"])]
-    for d in ds:
+    for r in rips(doc):
         # a few purple motes drifting off the oval (the owner, 2026-10-10: the frame came down, the oval stands free):
         # centred on the oval itself, a little in front of it, never in the plane where the frame stood
-        ox, oy, oz = oval_pos(d)
+        ox, oy, oz = oval_pos(r)
         emit += ["execute in minecraft:overworld positioned %.1f %.1f %.2f if entity @a[distance=..%d] run particle "
                  "minecraft:reverse_portal ~ ~ ~ 0.7 1.1 0.2 0.01 5" % (ox, oy, oz + 0.2, k["rip_particle_range"]),
                  "execute in minecraft:overworld positioned %.1f %.1f %.2f if entity @a[distance=..%d] run particle "
@@ -1875,11 +2053,11 @@ def functions(doc, blackout=None):
         if DR.has_rooms(d):
             out.update(DR.runtime_functions(doc, d, dsel(di)))
     out["rips/place"] = [HEAD, "# tools/reapply.py step R16DR: every overworld rip's blocks (its entity follows: rips/entities)"] + [
-        "execute in minecraft:overworld run function %s" % F("rips/blocks_%s" % d["short"]) for d in ds]
-    for d in ds:
-        out["rips/blocks_%s" % d["short"]] = function_limits.ensure_loaded(
-            ["# %s's rip (data/dungeons.json rip): no frame since 2026-10-10. Its plane put back to what was there, and the "
-             "scorched ground under the oval" % d["name"]] + rip_lines(d))
+        "execute in minecraft:overworld run function %s" % F("rips/blocks_%s" % rip_name(r)) for r in rips(doc)]
+    for r in rips(doc):
+        out["rips/blocks_%s" % rip_name(r)] = function_limits.ensure_loaded(
+            ["# %s (data/dungeon_rips.json): no frame since 2026-10-10. Its plane put back to what was there, and the "
+             "scorched ground under the oval" % r["name"]] + rip_lines(r))
     return out
 
 
@@ -1907,16 +2085,16 @@ def chains(doc):
     out = chunk_look.chain(F("shells/entities"), boxes, shown, acts, scopes, TAGS["shell_new"], "tag=%s" % TAGS["shell"],
                            SHELL_HOLDER, note="tools/dungeon.py", all_shown=True, dim=dim)
     racts, rshown, rscopes, rboxes = [], [], [], []
-    for d in dungeons(doc):
-        tag = rip_tag(d)
-        x, y, z = d["rip"]["click"]
+    for r in rips(doc):
+        tag = rip_tag(r)
+        x, y, z = r["click"]
         racts += ["kill @e[type=minecraft:interaction,tag=%s]" % tag,
                   "summon minecraft:interaction %.1f %d %.1f {width:3.0f,height:3.0f,response:1b,Tags:[\"%s\",\"%s\",\"%s\"]}"
                   % (x + 0.5, y, z + 0.5, TAGS["rip"], tag, TAGS["rip_new"]),
                   # the oval (engine.rip_art): killed and summoned with the interaction, in the same chain and de-duplicated
                   # by its own scope; the chain's count (interactions) and `shown` (an interaction) are unchanged
                   "kill @e[type=minecraft:item_display,tag=%s,tag=%s]" % (tag, oval_tag(doc)),
-                  oval_summon(doc, d)]
+                  oval_summon(doc, r)]
         rshown.append("@e[type=minecraft:interaction,tag=%s]" % tag)
         rscopes.append("type=minecraft:interaction,tag=%s" % tag)
         rscopes.append("type=minecraft:item_display,tag=%s,tag=%s" % (tag, oval_tag(doc)))
@@ -1924,7 +2102,7 @@ def chains(doc):
     out.update(chunk_look.chain(F("rips/entities"), rboxes, rshown, racts, rscopes, TAGS["rip_new"],
                                 "type=minecraft:interaction,tag=%s" % TAGS["rip"], RIP_HOLDER, note="tools/dungeon.py",
                                 all_shown=True))
-    return out, want_shell, len(dungeons(doc))
+    return out, want_shell, len(rips(doc))
 
 
 # The one-shot placement R16DG and R16DR run once over RCON: every slot's shell (place, place/s<g>, shells/build,
@@ -1955,7 +2133,7 @@ def reapply_steps(doc=None):
         place = [("fn", F("place"))]
     return [("R16DG", "the dungeon slots' shells in cobblers:pocket (data/dungeons.json)",
              place + chunk_look.steps(F("shells/entities"), SHELL_HOLDER, want_shell, "dungeon shell entities")),
-            ("R16DR", "the dungeon rips in the overworld (data/dungeons.json; the Night Shift's is a placeholder)",
+            ("R16DR", "the dungeon rips in the overworld (data/dungeon_rips.json: %d rips, each draws a dungeon)" % want_rips,
              [("fn", F("rips/place"))] + chunk_look.steps(F("rips/entities"), RIP_HOLDER, want_rips, "dungeon rips"))]
 
 
@@ -1992,9 +2170,10 @@ def build(doc, **kw):
     for kind in ("back", "far"):
         files["data/%s/advancement/dungeons/%s.json" % (NS, kind)] = json.dumps(
             portals.click_advancement(TAGS[kind], F(kind)), indent=2) + "\n"
+    for r in rips(doc):
+        files["data/%s/advancement/dungeons/rip_%s.json" % (NS, rip_name(r))] = json.dumps(
+            portals.click_advancement(rip_tag(r), F(rip_door(r))), indent=2) + "\n"
     for d in dungeons(doc):
-        files["data/%s/advancement/dungeons/rip_%s.json" % (NS, d["short"])] = json.dumps(
-            portals.click_advancement(rip_tag(d), F("door/%s" % d["short"])), indent=2) + "\n"
         if d["id"] in doc["engine"]["sigils"]["free_first_entry"]["dungeons"]:
             files["data/%s/advancement/dungeons/free/%s.json" % (NS, d["short"])] = json.dumps(impossible(), indent=2) + "\n"
         for name, (cls, _lvl) in boss_classes(doc, d).items():
@@ -2106,11 +2285,11 @@ def main(argv=None):
         g = GR.load()
         mine = MINE.build(g)
         bad = 0
-        for d in dungeons(doc):
-            got = rip_restore_measured(d, g, mine)
-            same = got == d["rip"].get("restore")
+        for r in rips(doc):
+            got = rip_restore_measured(r, g, mine)
+            same = got == r.get("restore")
             bad += not same
-            print("%s: %s %s" % (d["id"], "matches rip.restore" if same else "DIFFERS from rip.restore:", "" if same else json.dumps(got)))
+            print("%s: %s %s" % (r["id"], "matches rip.restore" if same else "DIFFERS from rip.restore:", "" if same else json.dumps(got)))
         return 1 if bad else 0
     if a.report:
         print("\n".join(report(doc) + ["WARNING: " + w for w in warnings(doc)]))

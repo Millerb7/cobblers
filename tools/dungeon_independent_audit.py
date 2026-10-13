@@ -3160,8 +3160,12 @@ def static_audit(pack, doc, slots, F):
     # x, from the plane's y) and a scorched patch on the ground in front of it (y - 1, z + 1..z + 2, `rip.scorch`'s two
     # blocks). Read cell by cell from the pack's fills and setblocks and compared with the record, never the generator
     rips = []
-    for d in doc["dungeons"]:
-        rp = d["rip"]
+    # Since 2026-10-13 the rips are data/dungeon_rips.json's, not a dungeon's: this block reads that file itself, and a rip's
+    # ground takes its theme from `scorch_theme`. (The draw that picks a dungeon at a rip is audited by its own unit.)
+    for rp in json.loads((ROOT / "data" / "dungeon_rips.json").read_text(encoding="utf-8"))["rips"]:
+        # the stem of its tag and blocks function: the id less rip_, and less trail_ for a test rip (kept from the dungeon's short)
+        d = {"id": rp["id"], "short": rp["id"][len("rip_"):].removeprefix("trail_") if rp["kind"] == "test_trail" else rp["id"][len("rip_"):],
+             "theme": rp["scorch_theme"]}
         fr = rp["frame"]
         want = (fr["x0"], fr["y"] - 1, fr["z"], fr["x1"], fr["y"] + fr["height"] - 1, fr["z"] + 2)
         cells = {}

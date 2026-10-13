@@ -592,7 +592,7 @@ def test_a_player_who_is_not_a_member_is_put_out_of_the_slots(pack):
     pt = D.points(DOC, s)
     q = w.player("Stray", POCKET, (pt["arrive"][0], 96, pt["arrive"][2]))
     w.passes(1)
-    x, y, z, _yaw = DOC["dungeons"][0]["rip"]["outside"]
+    x, y, z, _yaw = DOC["rips"][0]["outside"]        # a stranger has neither dg.rip nor dg.dun: the first rip's point
     assert q.dim == OW and q.pos == [x, y, z]
 
 
