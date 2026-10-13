@@ -17,15 +17,19 @@ Merged on the branch tonight, none of it installed or seen in game:
 - The dungeon draw (31 rips, `data/dungeon_rips.json`, `tools/dungeon_rips.py`; R16DR must be re-applied).
 - R9F no longer places Oak, the Route 4 packer or Maren a second time (`npc_placed_by`).
 - Independent audits: `tools/kyogre_rayquaza_audit.py` (47 pass, 1 strict xfail: the cage, section 3);
-  the draw's audit (`tools/dungeon_draw_audit.py`) was RUNNING when this was written: merge it if it reported.
+  the draw's audit (`tools/dungeon_draw_audit.py`, merged): every draw check passes, 13 of 13 generator mutations caught;
+  ONE siting defect (strict xfail): `rip_the_rift` stands inside Rift zone z2 (badge 8), so it is no find below band 5
+  and `tools/dungeon_rips.py check` never reads zones. Owner's call: move it out of z2, or accept badge-gated rips
+  (like the Nether's) and teach the check and the audit that rule. Notes: two trail rips lack `region`; rip_the_wedge
+  and rip_southern_coast sit in far_south's keep_out_box.
 - Economy v2 DESIGN only: `docs/mechanics/ECONOMY_V2.md` (E1-E12 await the owner).
 - Mod update audit: `docs/research/COBBLEVERSE_COMPATIBILITY.md` "Update audit, 2026-10-13" (22 UPDATE, 14
   UPDATE-CAREFUL, 10 HOLD); nothing downloaded: each file needs the owner's yes.
 
 Known red tests: `test_coldwater_station_audit::test_built_pack_passes_every_check` (built-pack stub rule owed a
 rewrite, recorded by the Kyogre builder); four ash_bell `lure` cases in `test_dungeon_audit` and one vault-budget text
-case in `test_dungeon_kit3` (both red at 6249332e, before the draw). The dungeon suites' full run was in progress
-(`.scratch/dg.txt`). Contracts: 76 pass, C3 and C14 xfail.
+case in `test_dungeon_kit3` (both red at 6249332e, before the draw). The dungeon suites' full run did NOT complete: `test_dungeon_audit.py` (2,135 per-site cases) ran past 50 minutes at 3%
+with 16 early failures unidentified; the other dungeon and rip suites were re-run in the background (`.scratch/d2.txt`). Contracts: 76 pass, C3 and C14 xfail.
 
 Staging: last installed from prepare 238/238 at bff8baf (2026-10-12), build packs stripped, 12G. Next cycle: snapshot
 to D:, prepare, stop, hold the bank file, install, boot 24G watchdog off, `reapply.py run` (new steps include R14R,
@@ -38,6 +42,7 @@ R18KC, R16CH, R18CH, R16DR re-apply, R9F), stop, watchdog 60000, `strip`, boot 1
   1.8.2 build, CobbleDollars Beta-6.1 renames the bank file, tm_megadrain is gone).
 - Kyogre's cage: a player who logs out on the dais can be sealed in barrier. The audit's two properties contradict at
   Kyogre's own spot. Recommended: a rejoin eject (leave_game stat) plus the audit excluding the sleeper's own cells.
+- `rip_the_rift` inside Rift zone z2: move it, or accept badge-gated rips (section 2).
 - Dungeon gates built as the roster's "proposed": gym6 (Field of Swords), champion (Crucible, Dragonspiral).
 - Bands 5-6 are too hard (typical win 0-54% / 0-35%; band 4 is 52-77%): a per-dungeon retune by
   trainer-balance-designer, on the owner's go.

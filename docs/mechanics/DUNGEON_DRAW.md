@@ -187,7 +187,7 @@ work (a vault budget figure in DUNGEON_ROOMS.md); `tests/test_system_contracts.p
 
 **To prove on staging (not run; an experiment for whoever grades it).** After `prepare`, `install` and R16DR/R16DG: (1)
 `python tools/presence_audit.py --only extra` reads the `dungeon_rips` place (90 probes) and `dungeon_night_shift` present, so
-all 31 rips stand; (2) a player with a sigil clicks `rip_the_rift` at band 1: a dungeon of the five opens, the chat names it,
+all 31 rips stand; (2) a player with a sigil clicks `rip_viltri_woods` at band 1 (not `rip_the_rift`: it stands inside Rift zone z2, badge 8, so a band-1 player is turned back before reaching it; the independent audit's finding): a dungeon of the five opens, the chat names it,
 `scoreboard players get <player> dg.rip` is 21 and the back rip leaves at the Rift's point, not the old mine's; (3) five
 back-outs in a row at band 1 show five different dungeons; (4) a player holding `cobblers:flag/gym8_cleared` at a band-5
 cap sees the Nether dungeons enter the draw and one without it does not; (5) `tag <player> add cobblers.dg_playtest`,
