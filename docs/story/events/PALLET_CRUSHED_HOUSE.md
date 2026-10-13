@@ -269,12 +269,58 @@ interior marker while it is 0 and at the exterior marker while it is 1, and a Le
 the score says 1 is teleported, never doubled (no `spawnnpcat` is issued). It is idempotent. `tools/npc_seats.py check`
 holds the markers to a seat's rules and `verify` probes her at the stand the score selects.
 
+**The house (2026-10-13, unit PALLET-CRUSHED-HOUSE-BUILD): written, applied by a step, never seen in a running Minecraft.**
+Rung of the mechanism ladder: datapack functions plus a re-apply step (principle 6, "functions/commands"); the cheaper
+rungs cannot place blocks, and the repository's own pattern (`tools/lopunny_house.py`, `tools/sanctuaries.py`) already
+does. Nothing is a mod or a script.
+- **Generator** `tools/crushed_house.py` from `data/crushed_house.json` `structure` -> pack `cobblers_crushed_house`
+  (`build/datapacks/`), two functions: `cobblers:crushed_house/build` (270 commands, 412 non-air blocks) and
+  `cobblers:crushed_house/restore` (34 commands). Ground from `tools/ground.py` (rounded); the floor is `F` = the highest
+  ground under the lot (117), so the walls start at y118. No world is read. The pack has no runtime data, so
+  `tools/pack_roles.py` classes it `build` (measured on the built pack) and `reapply.py strip` takes it out of the heap.
+- **Step R16CH**, in `tools/reapply.py` immediately after R16D (the shrines) and before R16E, so it is after R7 (hometown),
+  R13, R16 (lights), R16B (dressing) and before R17N (Hank) and R18CH (Lena): `forceload add 1507 5249 1523 5266`, wait 3,
+  `function cobblers:crushed_house/build`, `forceload remove`. The prepare job is `crushed_house:build`; the pack is in
+  `SERVER_PACKS`, not `WORLD_LOCAL`.
+- **Look.** A 9 by 9 cottage in the town's own vocabulary (white plaster over red brick, oak, a brick gable): the west half
+  keeps its roof and gable, the north slope stops at x1516, the east half is open to the sky and its rubble mounds to 5
+  high; the east wall is broken to 1-3 blocks; a fallen oak (trunk along z at x1518, root plate at z5250, tip at z5261,
+  no crown: `oak_leaves` is a spawn condition) lies across the broken north wall and the rubble; the front (west) door is
+  a dropped lintel, a jammed beam and a pile at x1510-1511 (Hank stands at x1509, clear); a wall panel leans off the
+  south wall west of the opening.
+- **The pocket and the opening.** Lena's 3 by 3 room (x1515..1517, z5257..5259, y118-119, a lantern on a barrel in its
+  corner) sits in a sealed block of rubble under a plank ceiling at y120 and an oak beam; a one-wide crawl (x1516,
+  z5260..5262, y118-119) joins it to the south wall's cell **(1516, 118..119, 5262)**, the safe opening, lintel y120. The
+  approach is from the south (1516, 5263-5264); the leaning panel is the only mark. Nothing needs breaking.
+- **Conflict with the lot, said plainly.** None with the event doc's intent. One thing it did not say: the roof is open to
+  the sky on the east, so a player can climb the rubble onto the shell and walk the attic under the west roof. The pocket
+  stays sealed (below), but "no way in except the opening" means "no way to Lena", not "no way onto the ruin".
+- **Probes** `data/world_probes.json` place `crushed_house`, 21: the planks under the pocket, the NW post, the west gable's
+  ridge course and ridge brick, the opening (feet, head, lintel), the crawl (feet, head), Lena's cell (feet, head), the
+  pocket's beam and lantern, the front doorway (feet, head: NOT air), the dropped lintel, the fallen oak, and Hank's and
+  Lena's after stands (air, feet and head). `python tools/crushed_house.py probes --write` regenerates them; `build` refuses a
+  drifted set. Run by `tools/presence_audit.py` (extra); not run against any world.
+- **Proved offline** (`tests/test_crushed_house_build.py`, 24 tests): the BUILT function is parsed back over heightmap ground
+  and a 0.6 by 1.8 player is walked through it: Lena's cell is reachable from (1516, 5264) through the opening; with the
+  opening shut it is not reachable by any route (roof, window, shell); the doorway is not enterable; the three stands are
+  clear, standable and connected; nothing is written under the ground but the floor; every block is declared and none is in
+  `data/spawn_blocks.json`; the restore returns the box to heightmap ground; each tamper case changes the generator's code
+  (opening walled up, door carved open, a hole over the pocket, Hank buried) and is caught.
+- **Restore** `cobblers:crushed_house/restore`: air above each column's ground over the build's clear box (x1507..1523,
+  z5249..5266, up to y140), the floor columns back to `grass_block`, guarded (a player in the box stops it). By hand over
+  RCON only; **no step runs it**, so its id is named in the build function's header comment to satisfy `unreferenced()`.
+  The surface block `grass_block` is an ASSUMPTION (the ground rule forbids reading the world). To change the design:
+  restore, then build: the build rewrites the house volume completely but leaves a stale apron cell of an older design.
+
 **Not done, and why.**
-- **The house is not built.** No template, placement or generator exists (`data/crushed_house.json` `status: unbuilt`;
-  `data/quests.json` `pallet_edge_damage_cluster` says the same). Until a world-content unit builds it, Hank stands in an
-  empty field and Lena is not behind anything. This is a plan and nothing more. The ARC says there are three damaged
-  homes; the plan covers the one the event uses.
-- **Not run in game:** that Minecraft accepts each emitted command; that Cobblemon keeps Lena's dialogue open when its
+- **Not seen in a running Minecraft, nor applied to any world.** That each command lands, the house reads as a crushed
+  repairable house from the street, the clear step leaves the town's own trees alone, stairs, panes and fences take the
+  intended shapes, and the lantern lights the crawl (block light above 0 keeps monsters out; not measured) are unproven.
+  The ARC's other two damaged homes are not built; `data/quests.json` `pallet_edge_damage_cluster` still reads
+  `required_but_unbuilt` for the cluster and was left as it is.
+- **Not swept** against placement footprints of other layers (only point records in `data/*.json` were swept); the
+  clear step removes logs, leaves and plants in the box (x1507..1523, z5249..5266) and nothing else.
+- **Not run in game (the dialogue side):** that Minecraft accepts each emitted command; that Cobblemon keeps Lena's dialogue open when its
   NPC is teleported out from under it on the last line (if it closes, the player has still been paid and the cursor is
   on `post_lena_1`); that the `@e` selector finds her in the loaded chunk.
 - Not swept against other layers' claims on the lot's columns (ambient sites, signposts, habitat blocks, the light plan).

@@ -157,6 +157,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_frostpeak_summit",
                 # 2026-10-02: the Lopunny superfan's house and its Buneary cellar (tools/lopunny_house.py), run by R9LH
                 "cobblers_lopunny_house",
+                # 2026-10-13: the Pallet crushed house (tools/crushed_house.py, data/crushed_house.json): one build function and an
+                # operator's restore, no runtime data, so a build-class pack `strip` takes out after the run; run by R16CH, before
+                # R17N seats Hank and R18CH seats Lena inside it
+                "cobblers_crushed_house",
                 # 2026-10-02: the Old Orchard on Sunset Isle round the Orchard Sleeper (tools/old_orchard.py), run by R9SO
                 "cobblers_old_orchard",
                 # 2026-10-09: the Sundown Watch on Sunset Isle's western shoulder (tools/sunset_watch.py): terrace, dial, Sun Gate,
@@ -1001,6 +1005,9 @@ def prepare_jobs(a):
     add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
     add("lopunny_house:build", "lopunny_house.py", "build", *src)
     add("lopunny_house_audit", "lopunny_house_audit.py", *src)
+    # the Pallet crushed house (data/crushed_house.json): its builder refuses a stand it would fill, an undeclared or spawn-condition
+    # block, and data/world_probes.json drifting from its plan
+    add("crushed_house:build", "crushed_house.py", "build", *src)
     add("old_orchard:build", "old_orchard.py", "build", *src)
     add("old_orchard_audit", "old_orchard_audit.py", *src)
     add("sunset_watch:build", "sunset_watch.py", "build", *src)
@@ -2536,6 +2543,13 @@ def steps(with_spawns=False):
     shrine_ids = [q["id"] for q in json.loads((ROOT / "data" / "shrines.json").read_text(encoding="utf-8")).get("shrines") or []]
     out.append(("R16D", "wayside shrines on the town approaches (%d, data/shrines.json)" % len(shrine_ids),
                 [("fn", "cobblers:shrines/%s" % s) for s in shrine_ids]))
+    # the Pallet crushed house (2026-10-13, tools/crushed_house.py, data/crushed_house.json): a pure block pass in a forceload of
+    # its box, AFTER the hometown (R7), the lights (R16), the dressing (R16B) and the shrines it keeps clear of, so nothing re-levels
+    # or paves under it, and BEFORE R17N (Hank outside its blocked door) and R18CH (Lena inside its pocket): both are seated into
+    # the finished lot. Listed from the committed data and the heightmap, so the step exists without a built pack
+    import crushed_house
+    out.append(("R16CH", "the Pallet crushed house: caved roof, fallen oak, blocked door and the safe opening (data/crushed_house.json)",
+                crushed_house.placement_steps()))
     # the gym interiors (tools/gym_interiors.py): the healers out of all eight placed gyms, then each built gym's
     # carved works. After the donors (R9), which are placed whole: a healer removed before the donor runs would be
     # stamped back, and a shaft cut before it would be filled in. Listed from the committed data, not the built pack,
