@@ -54,7 +54,9 @@ PROPERTIES = {
     # KYOGRE_CAVE.md 3: the barrier must never enclose a cell a player can occupy (a logged-out player is filled in)
     "kyogre.cage_never_encloses_a_walkable_cell": "DEFECT: the cage (data/kyogre_cave.json kyogre.cage) is the whole "
         "11 x 4 x 11 volume over the dais, which the causeway reaches once Kyogre is awake; ky/close's guard sees online "
-        "players only, so a player who logs out on the dais is filled in with barrier",
+        "players only, so a player who logs out on the dais is filled in with barrier. KNOWN LIMITATION since 2026-10-13 "
+        "(the owner: 'move rejoiners for kyogre back out'): this static property still fails by design (Kyogre's own spot "
+        "is reachable AND caged); the runtime answer is the tick-first rejoin eject, proved by tests/test_kyogre_rejoin.py",
     # the crossing letting in a player without the dive tag, gym8_cleared or the station's attunement
     "kyogre.gate": None,
     # the owner said no overworld rain (KYOGRE_CAVE.md 9 answer 4)
