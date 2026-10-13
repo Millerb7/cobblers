@@ -77,7 +77,7 @@
      "basis": "the shelf within 128 blocks of the north coast: seals (Spheal, Seel), Shellder in the kelp, Arrokuda and its first Barraskewda, Eiscue on the surface, the cold sea's spined Qwilfish; a Finizen glimpsed from the open water.",
      "families": [
       ["spheal", "anchor"], ["seel", "common"], ["shellder", "common"], ["arrokuda", "uncommon"], ["eiscue", "uncommon"],
-      ["qwilfish hisuian", "rare"], ["finizen", "ultra"]
+      ["wailmer", "rare"], ["qwilfish hisuian", "rare"], ["finizen", "ultra"]
      ],
      "heart": {"families": [["sealeo", "presence"], ["dewgong", "presence"], ["barraskewda", "presence"]]}
     },
@@ -87,7 +87,7 @@
      "basis": "the open cold water beyond the shelf: the seals grown (Sealeo, Dewgong), the dolphins (Finizen), Shellder and Eiscue; the first whale glimpsed.",
      "families": [
       ["spheal", "anchor"], ["seel", "common"], ["finizen", "common"], ["shellder", "uncommon"], ["eiscue", "uncommon"],
-      ["qwilfish hisuian", "rare"], ["wailmer", "ultra"]
+      ["arrokuda", "rare"], ["qwilfish hisuian", "rare"], ["wailmer", "ultra"]
      ],
      "heart": {"families": [["sealeo", "presence"], ["dewgong", "presence"], ["palafin", "presence"]]}
     },
@@ -97,7 +97,7 @@
      "basis": "the dark cold water past the shelf break: the herd seals at their biggest short of Walrein, the whales feeding, Palafin, and Lapras crossing.",
      "families": [
       ["spheal", "anchor"], ["seel", "common"], ["wailmer", "common"], ["finizen", "uncommon"], ["shellder", "uncommon"],
-      ["qwilfish hisuian", "rare"], ["lapras", "ultra"]
+      ["eiscue", "rare"], ["qwilfish hisuian", "rare"], ["lapras", "ultra"]
      ],
      "heart": {"families": [["walrein", "presence"], ["wailord", "presence"], ["dewgong", "presence"]]}
     }
@@ -123,7 +123,7 @@
      "basis": "the rocky shore of the strait: Kingler and Barbaracle on the rocks, Golisopod under them, Gastrodon on the weed, Pelipper and Cramorant fishing; Clamperl beds, and Tirtouga, the old sea turtle, very rarely.",
      "families": [
       ["krabby", "anchor"], ["binacle", "common"], ["wingull", "common"], ["shellos", "common"], ["wimpod", "uncommon"],
-      ["cramorant", "uncommon"], ["clamperl", "rare"], ["tirtouga", "ultra"]
+      ["cramorant", "uncommon"], ["clauncher", "rare"], ["clamperl", "rare"], ["tirtouga", "ultra"]
      ],
      "heart": {"families": [["kingler", "presence"], ["golisopod", "presence"], ["barbaracle", "presence"]]}
     },
@@ -133,7 +133,7 @@
      "basis": "the channel: the cormorants that fish it, the claw-fish (Clauncher, Clawitzer), the crabs and barnacles off the rocks, Carracosta.",
      "families": [
       ["cramorant", "anchor"], ["krabby", "common"], ["binacle", "common"], ["clauncher", "common"], ["wimpod", "uncommon"],
-      ["wingull", "uncommon"], ["clamperl", "rare"], ["tirtouga", "ultra"]
+      ["wingull", "uncommon"], ["dhelmise", "rare", {"maxY": 40}], ["clamperl", "rare"], ["tirtouga", "ultra"]
      ],
      "heart": {"families": [["clawitzer", "presence"], ["barbaracle", "presence"], ["carracosta", "presence"]]}
     },
@@ -143,7 +143,7 @@
      "basis": "the deep water north of the isles: Golisopod's sea floor, the deep-sea pair grown from the Clamperl beds (Huntail, Gorebyss), Clawitzer, and the wrecks' Dhelmise.",
      "families": [
       ["wimpod", "anchor"], ["clamperl", "common", {"maxY": 40}], ["clauncher", "common"], ["binacle", "uncommon"], ["krabby", "uncommon"],
-      ["dhelmise", "rare", {"maxY": 40}], ["tirtouga", "ultra"]
+      ["cramorant", "rare"], ["dhelmise", "rare", {"maxY": 40}], ["tirtouga", "ultra"]
      ],
      "heart": {"families": [["golisopod", "presence"], ["huntail", "presence", {"maxY": 40}], ["gorebyss", "presence", {"maxY": 40}]]}
     }
@@ -179,7 +179,7 @@
      "basis": "the open reach: Sharpedo hunting the schools, Palafin, the spined Qwilfish, Octillery; Pincurchin rare, Veluza very rare.",
      "families": [
       ["carvanha", "anchor"], ["wishiwashi", "common"], ["finizen", "common"], ["qwilfish", "uncommon"], ["remoraid", "uncommon"],
-      ["pincurchin", "rare"], ["veluza", "ultra"]
+      ["mantyke", "rare"], ["pincurchin", "rare"], ["veluza", "ultra"]
      ],
      "heart": {"families": [["sharpedo", "presence"], ["palafin", "presence"], ["octillery", "presence"]]}
     },
@@ -189,7 +189,7 @@
      "basis": "the deep east: Sharpedo and Palafin at their biggest, Veluza, Mantine; Carracosta, the old turtle that swims out from the strait, very rarely.",
      "families": [
       ["carvanha", "anchor"], ["finizen", "common"], ["veluza", "uncommon"], ["mantyke", "uncommon"], ["qwilfish", "uncommon"],
-      ["pincurchin", "rare"], ["tirtouga", "ultra"]
+      ["remoraid", "rare"], ["pincurchin", "rare"], ["tirtouga", "ultra"]
      ],
      "heart": {"families": [["sharpedo", "presence"], ["veluza", "presence"], ["mantine", "presence"]]}
     }
@@ -235,7 +235,7 @@
      "basis": "the warm deep: the rays (Mantine), Kingdra and Dragalge grown, Tentacruel, Lumineon below the light; Toxapex rare, a Wishiwashi school very rarely.",
      "families": [
       ["mantyke", "anchor"], ["horsea", "common"], ["skrelp", "common"], ["tentacool", "uncommon"], ["finneon", "uncommon", {"maxY": 40}],
-      ["mareanie", "rare"], ["wishiwashi", "ultra"]
+      ["bruxish", "rare"], ["mareanie", "rare"], ["wishiwashi", "ultra"]
      ],
      "heart": {"families": [["mantine", "presence"], ["kingdra", "presence"], ["lumineon", "presence", {"maxY": 40}]]}
     }
@@ -262,7 +262,7 @@
      "basis": "the shelf round Fungal Isle and Pallet's south coast: the first lantern fish (Finneon), the ink-fish (Inkay), Chinchou, Shellos and Luvdisc; Frillish rare, Bruxish very rare.",
      "families": [
       ["finneon", "anchor"], ["inkay", "common"], ["chinchou", "common"], ["shellos", "uncommon"], ["luvdisc", "uncommon"],
-      ["frillish", "rare"], ["bruxish", "ultra"]
+      ["clamperl", "rare"], ["frillish", "rare"], ["bruxish", "ultra"]
      ],
      "heart": {"families": [["lanturn", "presence"], ["malamar", "presence"], ["finneon", "presence"]]}
     },
@@ -272,7 +272,7 @@
      "basis": "the dusk water: Chinchou rising to the lights and the first Lanturn, Finneon, Inkay, the drifting Frillish; Clamperl beds rare, Alomomola very rare.",
      "families": [
       ["chinchou", "anchor", {"maxY": 40}], ["finneon", "common", {"maxY": 40}], ["inkay", "common"], ["frillish", "uncommon", {"maxY": 40}],
-      ["luvdisc", "uncommon"], ["clamperl", "rare", {"maxY": 40}], ["alomomola", "ultra"]
+      ["luvdisc", "uncommon"], ["bruxish", "rare"], ["clamperl", "rare", {"maxY": 40}], ["alomomola", "ultra"]
      ],
      "heart": {"families": [["lanturn", "presence", {"maxY": 40}], ["lumineon", "presence", {"maxY": 40}], ["malamar", "presence"]]}
     },
@@ -282,7 +282,7 @@
      "basis": "the dark water past Sunset Isle, lit from below: Lanturn and Lumineon grown, Frillish, Malamar; Alomomola rare, and Omanyte, a spiral shell of an older sea, very rare.",
      "families": [
       ["chinchou", "anchor", {"maxY": 40}], ["finneon", "common", {"maxY": 40}], ["frillish", "common", {"maxY": 40}], ["inkay", "uncommon"],
-      ["clamperl", "uncommon", {"maxY": 40}], ["alomomola", "rare"], ["omanyte", "ultra", {"maxY": 40}]
+      ["clamperl", "uncommon", {"maxY": 40}], ["luvdisc", "rare"], ["alomomola", "rare"], ["omanyte", "ultra", {"maxY": 40}]
      ],
      "heart": {"families": [["lumineon", "presence", {"maxY": 40}], ["jellicent", "presence", {"maxY": 40}], ["malamar", "presence"]]}
     }
