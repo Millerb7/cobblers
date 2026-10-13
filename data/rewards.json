@@ -518,7 +518,8 @@
       }
     },
     {
-      "id": "r4_packer", "npc_placed_by": "R17",
+      "id": "r4_packer",
+      "npc_placed_by": "R17",
       "kind": "npc_grant",
       "place": "Headwall camp: the string that bolted",
       "npc_at": [
@@ -538,7 +539,8 @@
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R17); its position written by `route4_events.py --write`"
     },
     {
-      "id": "r4_gate", "npc_placed_by": "R17",
+      "id": "r4_gate",
+      "npc_placed_by": "R17",
       "kind": "npc_grant",
       "place": "The thaw gate: the summit is below",
       "npc_at": [

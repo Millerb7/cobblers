@@ -751,7 +751,8 @@ class Builder:
 
 def npc_grant_record(b, rid, r, site, title):
     npc = site.npcs[0]
-    return {"id": "r4_" + rid.replace("reward_", ""), "kind": "npc_grant", "place": title,
+    # npc_placed_by: R17 stands the packer up (scenes), so reapply's R9F must not place a second one
+    return {"id": "r4_" + rid.replace("reward_", ""), "npc_placed_by": "R17", "kind": "npc_grant", "place": title,
             "npc_at": npc["at"], "quest": b.q, "contents": [b.item(i, n) for i, n in r["contents"]], "why": r["why"],
             "built_by": "the NPC by spawnnpcat after a restart (reapply step R17); its position written by `route4_events.py --write`"}
 
