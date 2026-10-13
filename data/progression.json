@@ -3535,6 +3535,16 @@
       "why": "the dialogue cursor of Wren Moss at Coldwater Station (data/coldwater_station.json, tools/coldwater_station.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
     },
     {
+      "id": "quest.coldwater_station.two_sleepers",
+      "quest_id": "coldwater_station",
+      "field": "two_sleepers",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition t_calder_two_sleepers (data/coldwater_station.json Calder's topic two_sleepers, compiled by tools/coldwater_station.py)",
+      "why": "the Kyogre quest's stage 2 (docs/world-building/KYOGRE_CAVE.md section 1; data/kyogre_cave.json quest): Calder has named the second sleeper. Calder's topic the_key (stage 3, which attunes the arch) is shown only with it and gym8_cleared."
+    },
+    {
       "id": "quest.ice_lodge.keeper_cursor",
       "quest_id": "ice_lodge",
       "field": "keeper_cursor",

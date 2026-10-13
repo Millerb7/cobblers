@@ -73,7 +73,9 @@
       "touch_function": "cobblers:coldwater_station/portal/touch",
       "destination_function": "cobblers:coldwater_station/portal/destination",
       "sealed_message": "The arch is cold and dark, and the sheet will not give. Something beyond it is very large, and asleep.",
-      "flag": "NONE YET. The cave's opening condition (a badge, a story flag, the champion) is the owner's to choose; it is checked in the destination function when the cave exists.",
+      "flag": "the owner, 2026-10-06 (docs/world-building/KYOGRE_CAVE.md section 9): gym8_cleared plus the dive tag plus the station's attunement (cobblers:kyogre_cave/attuned, from Calder's topic the_key). Checked by cave_function, which owns the crossing (data/kyogre_cave.json gate).",
+      "cave_function": "cobblers:kyogre_cave/enter",
+      "cave_function_why": "2026-10-13: the cave exists (data/kyogre_cave.json, tools/kyogre_cave.py). portal/destination now only calls it, so the crossing, its gate and its sealed line live in the cave's pack; tools/coldwater_station_audit.py's 'destination is a stub' rule is the design's step 6 rewrite, owed by the auditor (KYOGRE_CAVE.md section 7 step 6).",
       "what_remains": [
         "1. Build the Kyogre cave: a room or a chamber, either in cobblers:pocket (data/portals.json pocket: a new band or index past the twelve) or carved in the world, and Kyogre's encounter in data/legendaries.json (trigger, level within data/level_cap.json, spawn-free zone, its own audit).",
         "2. Make the crossing: the destination function's body becomes tools/portals.py's enter/* shape (set a return score, `execute in <dim> run tp`), with the cave's gate, and a way back (portals.py leave/* and the rescue sweep cover the pocket dimension only for data/portals.json's portals).",
@@ -301,6 +303,29 @@
           "id": "boat",
           "ask": "Is there a boat?",
           "says": "Our boatman runs the launch to Northlight, on the Pine Isles, from the jetty below. It's the packet company's crossing, so it's their price and their rule: ${fare}, and only with {gate}. It doesn't go near the arch. Nothing does."
+        },
+        {
+          "id": "two_sleepers",
+          "ask": "The arch turned over when I touched it.",
+          "says": "Then it is a sleeper, and it is not the only one. The ring froze twice this year, and both times the Craters shook the same day. Something under that mountain turned over, and the sea answered it. Groudon, if the old stories have the right name. Two sleepers, and the region between them.",
+          "visible_when": {"kind": "all", "conditions": [{"kind": "player_tag", "tag": "cobblers.kyogre.sounded"}, {"kind": "flag", "flag": "crater_operation_stopped"}]},
+          "effects": [{"kind": "set_progression", "field": "quest.coldwater_station.two_sleepers", "value": true}],
+          "stage": "KYOGRE_CAVE.md section 1, stage 2 (Calder): the sounded tag and crater_operation_stopped; sets two_sleepers"
+        },
+        {
+          "id": "the_key",
+          "ask": "How does the arch open?",
+          "says": "The lamps on the arch were lit once. I think it opens for someone who has shown the sea they can keep up with it, and you have. Put your hand on the sheet again. And if it lets you through: it brings the rain with it. Bring something that doesn't mind getting wet.",
+          "visible_when": {"kind": "all", "conditions": [{"kind": "progression_equals", "field": "quest.coldwater_station.two_sleepers", "value": true}, {"kind": "flag", "flag": "gym8_cleared"}]},
+          "effects": [{"kind": "function", "function": "cobblers:kyogre_cave/attune"}],
+          "stage": "KYOGRE_CAVE.md section 1, stage 3 (Calder): two_sleepers and gym8_cleared; runs cobblers:kyogre_cave/attune as the player, which grants cobblers:kyogre_cave/attuned (the arch's third predicate)"
+        },
+        {
+          "id": "after",
+          "ask": "I met what was sleeping.",
+          "says": "Then the ring will not freeze this winter. I find I don't mind being the second to know.",
+          "visible_when": {"kind": "player_tag", "tag": "cobblers.kyogre.caught"},
+          "stage": "KYOGRE_CAVE.md section 1, stage 4 (Calder): after the catch"
         }
       ],
       "leave": "Goodbye."
@@ -330,6 +355,20 @@
           "id": "danger",
           "ask": "Is it dangerous out there?",
           "says": "The water's deep and cold off the shelf, and a swimmer tires fast. Don't go out to the buoy without a partner that can dive."
+        },
+        {
+          "id": "reading",
+          "ask": "Can I help with the readings?",
+          "says": "You dive? Then take a reading for me. Swim down to the arch, put your hand on the sheet and tell me what it does. Nobody who could dive has ever touched it.",
+          "visible_when": {"kind": "player_tag", "tag": "cobblers.dive"},
+          "stage": "KYOGRE_CAVE.md section 1, stage 1 (Rask): the dive tag (data/portals.json gates.dive.tag). The touch itself grants cobblers:kyogre_cave/sounded (tools/kyogre_cave.py enter)"
+        },
+        {
+          "id": "ring",
+          "ask": "Has the ring frozen this winter?",
+          "says": "Not once. The water over the arch is just water now. I keep measuring it anyway.",
+          "visible_when": {"kind": "player_tag", "tag": "cobblers.kyogre.caught"},
+          "stage": "KYOGRE_CAVE.md section 1, stage 4 (Rask)"
         }
       ],
       "leave": "Goodbye."
@@ -354,6 +393,20 @@
           "id": "station",
           "ask": "Why build out here?",
           "says": "Because of the arch. The jetty was the excuse, the boat pays for the coffee. Nobody comes out this way except the boat."
+        },
+        {
+          "id": "third_bearing",
+          "ask": "There's a third line on the board.",
+          "says": "The Craters. I laid it the day the ring froze and the mountain shook. Draw it out and it runs straight from the arch to the cones. Ask Calder what she thinks it means; she has a theory.",
+          "visible_when": {"kind": "all", "conditions": [{"kind": "player_tag", "tag": "cobblers.kyogre.sounded"}, {"kind": "flag", "flag": "crater_operation_stopped"}]},
+          "stage": "KYOGRE_CAVE.md section 1, stage 2 (Moss)"
+        },
+        {
+          "id": "up",
+          "ask": "Anything new on the theodolite?",
+          "says": "It keeps wanting to point up. I've checked the level three times.",
+          "visible_when": {"kind": "player_tag", "tag": "cobblers.kyogre.caught"},
+          "stage": "KYOGRE_CAVE.md section 1, stage 4 (Moss): the Rayquaza lead"
         }
       ],
       "leave": "Goodbye."

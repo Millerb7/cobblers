@@ -1563,6 +1563,19 @@ def _c26_owner_files():
     return prog, leg
 
 
+@functools.lru_cache(maxsize=None)
+def _c26_kyogre_files():
+    """Kyogre's met is cobblers_kyogre_cave's (tools/kyogre_cave.py runtime_files), not the chambers': the cave landed
+    2026-10-13 and its static check refuses a kyogre record in data/legendaries.json."""
+    import kyogre_cave as KC
+    doc = KC.load()
+    p = KC.plan(doc)
+    fns, adv, _ = KC.runtime_files(doc, p["M"], p["arch"], len(p["reef"]))
+    out = {"data/%s/advancement/%s.json" % tuple(a.split(":", 1)): "{}" for a in adv}
+    out.update({"data/cobblers/function/%s.mcfunction" % k: "\n".join(v) for k, v in fns.items()})
+    return out
+
+
 @pytest.mark.parametrize("adv", _c26_cases())
 def test_contract_c26_rayquazas_gate_opens_only_on_advancements_their_owners_define_and_grant(adv):
     import rayquaza_sky as RQ
@@ -1572,7 +1585,7 @@ def test_contract_c26_rayquazas_gate_opens_only_on_advancements_their_owners_def
     prog, leg = _c26_owner_files()
     ns, path = adv.split(":", 1)
     key = "data/%s/advancement/%s.json" % (ns, path)
-    owner = prog if path.startswith("flag/") else leg
+    owner = prog if path.startswith("flag/") else _c26_kyogre_files() if path.startswith("legendary/kyogre/") else leg
     assert key in owner, "%s: no owner pack defines it" % adv
     if not path.startswith("flag/"):
         rid = path.split("/")[1]

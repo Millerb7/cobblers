@@ -644,8 +644,9 @@ def test_r17_placements_are_the_route_seats_then_the_guardians():
     # the tower, so their file carries teams and no seat
     assert len(HQ_SEATS) == 7
     assert not any("seat" in f for f in FINALE)
-    # and the gym juniors (data/gym_junior_trainers.json, 2026-10-06), appended after the tower: 2,2,2,2,3,3,3,4
-    assert len(GYM_JUNIOR_SEATS) == 21
+    # and the gym juniors (data/gym_junior_trainers.json, 2026-10-06), appended after the tower: 2,2,2,2,3,3,3,4, and
+    # five more since Misty's hall (52c4743e)
+    assert len(GYM_JUNIOR_SEATS) == 26
     assert len(COMPACT_SEATS) == 7        # CP-03's two, CP-07's two and CP-08's three (data/compact_routes.json)
     assert len(want) == 56 + len(HQ_SEATS) + len(COMPACT_SEATS) + len(GYM_JUNIOR_SEATS)
     assert RT.placements() == want

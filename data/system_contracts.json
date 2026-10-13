@@ -302,6 +302,21 @@
         "tools/rayquaza_sky.py",
         "tests/test_rayquaza_sky.py"
       ]
+    },
+    "kyogre_cave": {
+      "what": "the Kyogre cave behind Coldwater's sealed arch, in cobblers:pocket: the crossing, the puzzles, the keeper, Kyogre and the set pieces",
+      "paths": [
+        "data/kyogre_cave.json",
+        "tools/kyogre_cave.py",
+        "docs/world-building/KYOGRE_CAVE.md"
+      ]
+    },
+    "coldwater_station": {
+      "what": "Coldwater Station and its sealed dive arch: the arch's touch (the dive gate) and its destination hook",
+      "paths": [
+        "data/coldwater_station.json",
+        "tools/coldwater_station.py"
+      ]
     }
   },
   "contracts": [
@@ -607,7 +622,8 @@
         "caves_audit.py": "checker: the built cobblers_caves pack (source caves): every block it writes against data/spawn_blocks.json and the policy entries scoped to caves",
         "sanctuaries.py": "source: sanctuaries",
         "rayquaza_sky.py": "checker: its own cells (tools/rayquaza_sky.py spawn_block_problems refuses, at build, every block data/spawn_blocks.json lists unless a data/spawn_block_policy.json entry scoped to rayquaza_sky allows it; none does); its built packs cobblers_rayquaza and cobblers_rayquaza_build are also judged by the built-pack check like every other pack",
-        "sanctuaries_audit.py": "checker: the built cobblers_sanctuaries pack (source sanctuaries): every block it writes against data/spawn_blocks.json and the policy entries scoped to sanctuaries"
+        "sanctuaries_audit.py": "checker: the built cobblers_sanctuaries pack (source sanctuaries): every block it writes against data/spawn_blocks.json and the policy entries scoped to sanctuaries",
+        "kyogre_cave.py": "checker: tools/kyogre_cave.py static_problems refuses any block of the Kyogre cave's geometry and reef (data/kyogre_cave.json) that data/spawn_blocks.json names a spawn condition, so the cave writes none"
       }
     },
     {
@@ -1271,14 +1287,7 @@
         "tests/test_system_contracts.py::test_contract_c26_rayquazas_gate_opens_only_on_advancements_their_owners_define_and_grant",
         "tests/test_rayquaza_sky.py::test_rayquaza_is_not_also_a_legendaries_encounter",
         "tests/test_rayquaza_sky.py::test_nothing_spawns_for_a_player_who_does_not_hold_the_gate_or_has_caught_it"
-      ],
-      "fails_today": {
-        "recorded": "2026-10-13",
-        "commit": "d685aed",
-        "cases": {
-          "kyogre_met": "No pack defines or grants cobblers:legendary/kyogre/met on this commit: data/legendaries.json has no kyogre encounter and Kyogre's cave (docs/world-building/KYOGRE_CAVE.md sections 3-5, built in parallel on 2026-10-13) has not landed. Until it does nobody qualifies for Rayquaza's arch, which is the safe failure. The fix is Kyogre's build granting that advancement (or a record in data/legendaries.json, whose pack defines and grants every encounter's met); either removes this entry."
-        }
-      }
+      ]
     },
     {
       "id": "C27",
@@ -1308,6 +1317,134 @@
       "tests": [
         "tests/test_system_contracts.py::test_contract_c27_a_rayquaza_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it",
         "tests/test_rayquaza_sky.py::test_a_guardian_is_never_held_withdrawn_or_discarded"
+      ]
+    },
+    {
+      "id": "KC1",
+      "title": "Kyogre carries the blackout's exempt tag: a loss to it makes no item claim and no guardian",
+      "owner": "recovery_claims",
+      "consumers": [
+        "kyogre_cave"
+      ],
+      "constrained_by": [],
+      "statement": "Every Kyogre the cave's keeper binds carries data/blackout.json claims.exempt_tag (read from that file, never written in), so a player it blacks out loses money and returns to the checkpoint but makes no item claim and leaves no guardian in the Basin; the keeper's re-sleep and duplicate kill therefore never meet a guardian, and every kill line in the cave's pack also carries tag=!cobblers.guardian. The set pieces never carry the exempt tag and the pack never kills one.",
+      "stated_in": [
+        {
+          "at": "data/blackout.json:71",
+          "quote": "\"exempt_tag\": \"cobblers.gm\""
+        },
+        {
+          "at": "tools/blackout_pack.py:232",
+          "quote": "run scoreboard players set #exempt bo.tmp 1"
+        },
+        {
+          "at": "docs/world-building/KYOGRE_CAVE.md:299",
+          "quote": "The Kyogre is exempt from item claims."
+        }
+      ],
+      "tests": [
+        "tests/test_kyogre_cave.py::test_kyogre_is_bound_with_the_blackouts_exempt_tag",
+        "tests/test_kyogre_cave.py::test_no_kill_in_the_pack_can_reach_a_guardian_or_a_set_piece"
+      ]
+    },
+    {
+      "id": "KC2",
+      "title": "Every flooded passage of the Kyogre cave is deep enough for the water ladder to count depth",
+      "owner": "water_ladder",
+      "consumers": [
+        "kyogre_cave"
+      ],
+      "constrained_by": [],
+      "statement": "The ladder counts a player as deep only with data/blackout.json water.deep_blocks water blocks above the eyes (tools/blackout_pack.py water/tick). A swimmer at a flooded passage's floor has eyes one cell up, so every passage of the cave flooded to its roof (the galleries and the U-bend) holds at least deep_blocks + 2 cells of water; under a lower roof Dive would give nothing and the passage would be vanilla air for everyone.",
+      "stated_in": [
+        {
+          "at": "data/blackout.json:131",
+          "quote": "\"deep_blocks\": 5,"
+        },
+        {
+          "at": "tools/blackout_pack.py:775",
+          "quote": "deep_chain = \" \".join(\"if block ~ ~%d ~ #%s:water\""
+        }
+      ],
+      "tests": [
+        "tests/test_kyogre_cave.py::test_every_flooded_passage_holds_the_ladders_depth"
+      ]
+    },
+    {
+      "id": "KC3",
+      "title": "Every surface swim in the Kyogre cave ends before swim fatigue warns",
+      "owner": "swim_fatigue",
+      "consumers": [
+        "kyogre_cave"
+      ],
+      "constrained_by": [],
+      "statement": "Swim fatigue builds on every surface swim (a trained player under water neither tires nor recovers). Every water surface cell a player can reach in the cave is within the distance an unaided swimmer covers before the warning in deep water (warn_ticks / gain_deep_per_tick ticks at 5 blocks a second, data/blackout.json surface) of a cell they can climb out onto.",
+      "stated_in": [
+        {
+          "at": "data/blackout.json:167",
+          "quote": "\"warn_ticks\": 400,"
+        },
+        {
+          "at": "data/blackout.json:165",
+          "quote": "\"gain_deep_per_tick\": 4,"
+        },
+        {
+          "at": "tools/blackout_pack.py:975",
+          "quote": "under water neither tires nor recovers"
+        }
+      ],
+      "tests": [
+        "tests/test_kyogre_cave.py::test_every_surface_swim_ends_before_fatigue_warns"
+      ]
+    },
+    {
+      "id": "KC4",
+      "title": "Coldwater's sealed arch hands a diver to the Kyogre cave's crossing",
+      "owner": "coldwater_station",
+      "consumers": [
+        "kyogre_cave"
+      ],
+      "constrained_by": [],
+      "statement": "The arch's touch (cobblers:coldwater_station/portal/touch) refuses a player without data/portals.json gates.dive.tag before it calls portal/destination, and the destination's only command is `function` data/coldwater_station.json portal.hook.cave_function, which the cave's pack ships; the cave's tp line carries the same dive tag again with gym8_cleared and the attunement.",
+      "stated_in": [
+        {
+          "at": "tools/coldwater_station.py:205",
+          "quote": "\"function %s\" % hook[\"cave_function\"]"
+        },
+        {
+          "at": "data/coldwater_station.json:77",
+          "quote": "\"cave_function\": \"cobblers:kyogre_cave/enter\""
+        }
+      ],
+      "tests": [
+        "tests/test_kyogre_cave.py::test_the_arch_hands_a_diver_to_the_cave_and_the_crossing_carries_the_gate"
+      ]
+    },
+    {
+      "id": "KC5",
+      "title": "The Kyogre cave's pocket box meets no other pocket user",
+      "owner": "kyogre_cave",
+      "consumers": [
+        "dungeons",
+        "entei_boss"
+      ],
+      "constrained_by": [
+        "dungeons",
+        "entei_boss"
+      ],
+      "statement": "data/kyogre_cave.json pocket.reserve (every cell the cave builds, its rescue box and the keeper's sweep box) lies inside the shared border less its margin and meets neither the portals' rescue box, Entei's band with its sweep margin, the probe pack's row, nor any dungeon slot strip, each recomputed from its own file: no other keeper's sweep ejects a player from the cave and the cave's sweep ejects nobody from theirs.",
+      "stated_in": [
+        {
+          "at": "data/kyogre_cave.json:19",
+          "quote": "\"reserve\": [8160, 2096, 8640, 2400],"
+        },
+        {
+          "at": "tools/dungeon.py:323",
+          "quote": "def foreign_boxes("
+        }
+      ],
+      "tests": [
+        "tests/test_kyogre_cave.py::test_the_cave_reserve_meets_no_other_pocket_user"
       ]
     }
   ]

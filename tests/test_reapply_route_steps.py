@@ -111,7 +111,8 @@ def test_r17_places_every_trainer_at_its_seat(steps):
     # 2026-10-03: the arena's seven are unseated (the owner: the spire's middle is "just hubs"; `seated: false`, the
     # old stand under `superseded_seat`), so R17 stands up only the seated ones -- none today. Was 63.
     SEATED_ARENA = [t for t in ARENA if "seat" in t and t.get("seated", True)]
-    # 2026-10-06: the gym juniors (data/gym_junior_trainers.json, tools/gym_trainers.py), 21 in the eight gyms.
+    # 2026-10-06: the gym juniors (data/gym_junior_trainers.json, tools/gym_trainers.py), 21 in the eight gyms; 26 since
+    # Misty's Lifeboat House became a walk-through hall (52c4743e, gym_hall/1).
     JUNIORS = json.loads((ROOT / "data" / "gym_junior_trainers.json").read_text(encoding="utf-8"))["trainers"]
     # and the HQ tower's seven (data/hq_trainers.json), which this test had never been told about
     HQ = json.loads((ROOT / "data" / "hq_trainers.json").read_text(encoding="utf-8"))["trainers"]
@@ -120,8 +121,8 @@ def test_r17_places_every_trainer_at_its_seat(steps):
     want = [(t["id"], tuple(t["seat"]), t["yaw"])
             for t in SEATS + LATE + GUARDIANS + VR_SEATS + SEATED_ARENA + JUNIORS + HQ + COMPACT]
     assert (len(SEATS), len(LATE), len(GUARDIANS), len(VR_SEATS), len(ARENA), len(JUNIORS), len(HQ), len(COMPACT)) == \
-        (13, 28, 5, 10, 7, 21, 7, 7)
-    assert len(want) == len(set(want)) == 91
+        (13, 28, 5, 10, 7, 26, 7, 7)
+    assert len(want) == len(set(want)) == 96
     assert sorted(_acts(steps, "R17", "trainer")) == sorted(want)
 
 
