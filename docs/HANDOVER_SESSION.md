@@ -38,11 +38,17 @@ R18KC, R16CH, R18CH, R16DR re-apply, R9F), stop, watchdog 60000, `strip`, boot 1
 
 ## 3. Waiting on the owner
 - Economy E1-E12 (`ECONOMY_V2.md` section 6). The owner's 64 cobble = $100 is ~8x the spine (estimate).
-- Which mod updates to download (per file; Cobblemon 1.8.2 moves in lockstep with rctapi 0.16.2, capturexp has no
+- Mod updates: DOWNLOADED (the owner: "download any updates that we can") 40 files to
+  `C:/Users/wnd/Documents/cobblers-local/mod-updates-2026-10-13/` (MANIFEST.json; each size and SHA-512 matched
+  Modrinth's record). Not installed, not boot-tested. Excluded: the Cobblemon 1.8.2 lockstep set (capturexp has no
+  1.8.2 build: owner's call to drop capturexp or wait), HOLD rows, alphas. Next: snapshot, staging boot test.
+- (was) Which mod updates to download (per file; Cobblemon 1.8.2 moves in lockstep with rctapi 0.16.2, capturexp has no
   1.8.2 build, CobbleDollars Beta-6.1 renames the bank file, tm_megadrain is gone).
 - Kyogre's cage: a player who logs out on the dais can be sealed in barrier. The audit's two properties contradict at
   Kyogre's own spot. Recommended: a rejoin eject (leave_game stat) plus the audit excluding the sleeper's own cells.
-- `rip_the_rift` inside Rift zone z2: move it, or accept badge-gated rips (section 2).
+- DECIDED 2026-10-13: the 13 trail rips go; every region gets a rip; badge-gated rips stay (rip_the_rift); Nether
+  dungeons draw from overworld rips (no Nether rips); Kyogre's rejoiners are moved out. Agents building these and
+  economy B1/B3/B5 were running at hand-over. Economy E3 (allowance) and E7 (13 held TMs + 17 memories) still open.
 - Dungeon gates built as the roster's "proposed": gym6 (Field of Swords), champion (Crucible, Dragonspiral).
 - Bands 5-6 are too hard (typical win 0-54% / 0-35%; band 4 is 52-77%): a per-dungeon retune by
   trainer-balance-designer, on the owner's go.
