@@ -14,7 +14,10 @@ Merged on the branch tonight, none of it installed or seen in game:
 - Rayquaza's sky (R14R), Kyogre's cave (R18KC), the six seas' and the Nether's balance pass, the seas' second rares.
 - Hank and Lena: world-scoped quest fields in `tools/compile_dialogue.py` (175 of 175 compile), seats (R17N, R18CH),
   the crushed house (R16CH, `tools/crushed_house.py`).
-- The dungeon draw (31 rips, `data/dungeon_rips.json`, `tools/dungeon_rips.py`; R16DR must be re-applied).
+- The dungeon draw: 20 region rips, the 13 trail rips retired by R16DR (`rips/retire`; 12 patches' ground assumed grass:
+  check in game or from an OFFLINE snapshot), rip_the_rift kept though gated. Re-apply R16DR with nobody in a run.
+- Economy v2 B1/B3/B4/B5 (bank 15 kinds, Master Ball barter 1 ingot + 5 scrap, five held items barter, Oak's card,
+  economy_audit 0 problems, contract C28). Contracts + economy suites: 185 passed, 2 xfail (C3, C14).
 - R9F no longer places Oak, the Route 4 packer or Maren a second time (`npc_placed_by`).
 - Independent audits: `tools/kyogre_rayquaza_audit.py` (47 pass, 1 strict xfail: the cage, section 3);
   the draw's audit (`tools/dungeon_draw_audit.py`, merged): every draw check passes, 13 of 13 generator mutations caught;

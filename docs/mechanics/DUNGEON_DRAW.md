@@ -210,3 +210,8 @@ levels (cap-6 to cap-3 instead of cap-2 to cap-1; the sim run with `engine.stand
 memory, no file edited) the typical win at the lower cap goes from a mean of 16 per cent over the thirteen dungeons to 27,
 and nine of the thirteen are still under 35. A global level drop does not reach the target; the fix is per dungeon (the
 named fights in `derived/dungeon_sim/report.md`, which `python tools/dungeon_sim.py --advise` lists).
+
+
+### 5.x After the owner's rip decisions (2026-10-13)
+
+The 13 trail rips are retired (`retired_rips`, removed by R16DR's `rips/retire`), Pallet Fields and Shrew Lakes have their own rips, so 20 rips stand (113 generated probes). rip_the_rift stays inside Rift zone z2 (`reachable_after`: badge 8). The Nether's dungeons are drawn from overworld rips; there are no Nether rips.
