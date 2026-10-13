@@ -1,9 +1,9 @@
 {
   "schema": "cobblers.crushed_house/1",
-  "generated_by": "hand, 2026-10-13 (unit PALLET-HANK-LENA). Every ground y read through tools/ground.py (round of the canonical heightmap); no world was read.",
+  "generated_by": "hand, 2026-10-13 (unit PALLET-HANK-LENA; the structure block 2026-10-13, unit PALLET-CRUSHED-HOUSE-BUILD). Every ground y read through tools/ground.py (round of the canonical heightmap); no world was read.",
   "event": "EVT-PALLET-CRUSHED-HOUSE (docs/story/events/PALLET_CRUSHED_HOUSE.md)",
-  "status": "unbuilt",
-  "status_note": "A PLAN, not a structure. Nothing in data/placements.json, kits/ or tools/ builds this house, and docs/world-building/TOWN_CHARACTER.md and data/quests.json (pallet_edge_damage_cluster, 'required_but_unbuilt') both say so. Hank and Lena are seated at the markers below regardless (data/npc_seats.json), so until the house is built they stand in an empty field and Lena is not behind anything. The build belongs to world-content-dev: a template with provenance, a placement, a verify pass.",
+  "status": "authored; built by tools/crushed_house.py into build/datapacks/cobblers_crushed_house, applied by step R16CH; NOT yet seen in a running Minecraft",
+  "status_note": "The lot plan below is the owner-visible design; `structure` is the generator's input. The pack holds two functions: cobblers:crushed_house/build (run by R16CH, after the town and its dressing, BEFORE R17N seats Hank and R18CH seats Lena) and cobblers:crushed_house/restore (an operator's undo, run by hand over RCON with nobody in the box; no step runs it). Hank and Lena are seated at the markers below regardless (data/npc_seats.json). The ARC's 'three damaged homes' (data/quests.json pallet_edge_damage_cluster) is still only this one.",
   "settlement": "hometown",
   "site": {
     "lot": {
@@ -18,7 +18,7 @@
       "levelling": "none needed beyond the house's own floor"
     },
     "why_here": "The exchanged edge of docs/story/ARC.md ('a small cluster of homes at the exchanged edge was crushed'): the east edge of the town, 46 or more blocks from every walked route line (the critical path runs up the main street at x 1462), 52 or more blocks from the centre of every placement of the intact town (the Poke Mart, at 52.6, is nearest). It is a place to go to on purpose, off the road, and the first thing a player sees there is not a crushed house but a man talking.",
-    "not_checked": "Other layers' claims on these columns (ambient sites, signposts, habitat blocks, the light plan, spawn tables) were not swept; tools/town_audit.py after the build will."
+    "not_checked": "Other layers' claims on these columns (ambient sites, signposts, habitat blocks, the light plan, spawn tables) were swept for point records in data/*.json on 2026-10-13 (x 1503..1527, z 5243..5270: only this file and data/npc_seats.json name a point there); a placement's footprint is not a point, and tools/town_audit.py after the build will say more."
   },
   "front": {
     "face": "west",
@@ -47,11 +47,51 @@
     "The pocket (1515..1517, 5257..5259) is air at y118 and y119 and has a solid floor at y117; the opening (1516, 5262) is air at y118 and y119 and joins the pocket by air blocks only, and a player of width 0.6 can walk from (1516, 5264) to (1516, 5258).",
     "The front door (1512, 5258) is blocked by a collapse so it cannot be walked through, but nothing needs breaking to complete the event.",
     "Nothing in the lot is replaced by an NPC stand: the stands are clear of blocks at feet and head (python tools/npc_seats.py verify).",
-    "Build BEFORE R17N/R18CH in the apply, so the NPCs are seated into the finished lot (tools/reapply.py: the house step runs before R17N, as every town and gym pass does)."
+    "Build BEFORE R17N/R18CH in the apply, so the NPCs are seated into the finished lot (tools/reapply.py: the house step R16CH runs after the town passes and before R17N)."
   ],
   "markers": {
     "hank": "data/npc_seats.json seats npc_pallet_crushed_house_hank",
     "interior_safe": "data/npc_seats.json markers marker_pallet_crushed_house_interior_safe",
     "exterior_safe": "data/npc_seats.json markers marker_pallet_crushed_house_exterior_safe"
+  },
+  "structure": {
+    "about": "Input of tools/crushed_house.py. Local frame: lx = x - lot.x[0] (0 west, 8 east), lz = z - lot.z[0] (0 north, 8 south); dy = y - (F + 1) with F the highest ground y under the lot (117, so dy 0 is y118 and the floor is dy -1). The gable runs east-west, the front is the west wall (lx 0), the safe opening is in the south wall (lz 8) at lx 4.",
+    "seed": 1513,
+    "shell": "the pocket and its crawl are one sealed 5 by 6 block of rubble (lx 2..6, lz 2..7, dy 0..2) with a 3 by 3 room (lx 3..5, lz 3..5) and a one-wide crawl (lx 4, lz 6..8) carved in it, two blocks high, under a plank ceiling at dy 2 and a beam; the only air that meets outside air is the crawl's mouth in the south wall",
+    "collapse": "roof and gable stand for lx 0..3 and on the north slope at lx 4; gone east of that. The east wall is broken to 1..3 blocks, the east strip and the north strip inside are rubble to dy 2..4, and a fallen oak (trunk along z at lx 6, root plate at lz -4, tip at lz 7) lies across the broken north wall and the shell's top.",
+    "blocks": {
+      "rule": "vanilla 1.21.1 only, none a spawn condition in data/spawn_blocks.json (tools/crushed_house.py checks every id against that file at load and refuses one that is); no chests, no beds, no leaves (oak_leaves is a spawn condition, so the fallen tree has no crown), no carpets (a 1/16 collision the walk checks would have to model). The Pallet look is oak, plaster and red brick (docs/world-building/TOWN_CHARACTER.md: 'oak, white fence, red roofs').",
+      "ids": [
+        "minecraft:air",
+        "minecraft:cobblestone",
+        "minecraft:mossy_cobblestone",
+        "minecraft:oak_planks",
+        "minecraft:oak_log",
+        "minecraft:white_terracotta",
+        "minecraft:bricks",
+        "minecraft:brick_stairs",
+        "minecraft:glass_pane",
+        "minecraft:oak_stairs",
+        "minecraft:oak_fence",
+        "minecraft:bookshelf",
+        "minecraft:barrel",
+        "minecraft:lantern",
+        "minecraft:gravel",
+        "minecraft:coarse_dirt",
+        "minecraft:dirt",
+        "minecraft:rooted_dirt",
+        "minecraft:grass_block"
+      ]
+    },
+    "clear": {
+      "x": [-5, 11],
+      "z": [-5, 12],
+      "up": 22,
+      "why": "logs, leaves and replaceable plants only (the lopunny house's step 1) over the lot, the root plate, the apron, the spill and the three NPC stands; nothing else is touched"
+    },
+    "terrain": {
+      "surface": "minecraft:grass_block",
+      "assumption": "the restore puts the lot's floor columns back to this. The surface block of the lot was NOT read from a world (the ground rule), so it is an assumption; Pallet's meadow is grass."
+    }
   }
 }
