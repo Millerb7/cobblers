@@ -692,9 +692,10 @@ def sc_refused_click_is_not_a_draw(env, expect):
             bad.append("%s: a refused click changed the sigils from %d to %d" % (label, before, env.sigil_count(p)))
         if env.w.get(p.name, "dg.rip"):
             bad.append("%s: a refused click recorded a way out" % label)
-        for _ in range(4):                                  # refusing again and again must not change what is next
-            env.w.random_values[:] = [123456789]
-            env.click(p)
+        # one more refusal. Not more: with n candidates, n refusals that each stamped would stamp every one of them in turn and
+        # bring the oldest stamp round to the first again, hiding the fault (the first draft of this check did exactly that)
+        env.w.random_values[:] = [123456789]
+        env.click(p)
         p.inventory[:] = [[env.sig[1]["item"], {"cobblers_dg_sigil": 2}, 5]]
         env.w.random_values[:] = [123456789]
         env.click(p)
@@ -704,6 +705,84 @@ def sc_refused_click_is_not_a_draw(env, expect):
         elif opened != refused_to:
             bad.append("%s: the refused click had drawn %s, the next click with the same roll opened %s: the refusal counted as a draw"
                        % (label, refused_to, opened))
+    return bad
+
+
+def sc_random_walk_matches_the_spec_model(env, expect, seeds=6, steps=160):
+    """A reference model written from DUNGEON_DRAW.md 2.2-2.3 alone (eligible by band and gate; open = not locked out, a free
+    slot; the oldest stamp among the open wins, never drawn oldest; nothing open falls back to the eligible ones, whose door
+    refuses) is driven by random sequences of clicks, back-outs, lockouts, time and other players taking slots, beside the
+    generated functions. At every click the dungeon the draw reached must be one the model allows, and the click must open
+    exactly when the model says something is open. This reaches combinations no hand-written scenario names."""
+    import random
+    bad = []
+    per = env.doc["engine"]["slots"]["per_dungeon"]
+    for seed in range(seeds):
+        rng = random.Random(seed)
+        env.fresh()
+        cap = rng.choice([20, 30, 40, 50, 60, 100])
+        band = SPEC_CAPS[cap]
+        flags = tuple(f for f in ALL_FLAGS if rng.random() < 0.6)
+        elig = eligible(band, set(flags), expect)
+        p = env.player(cap, flags)
+        up = lambda: env.w.get("#up", "dg.up")                    # noqa: E731
+        stamp, lock, occ, occupants, inrun = {}, {}, {d: 0 for d in env.ds}, [], None
+        for step in range(steps):
+            op = rng.choice(["click", "click", "click", "back", "time", "lock", "occupy", "release"])
+            tag = "seed %d step %d (%s, band %d, flags %s)" % (seed, step, op, band, list(flags))
+            if op == "time":
+                env.w.set("#up", "dg.up", up() + rng.choice([20, 500, 40000, 80000]))
+            elif op == "lock":
+                d = rng.choice(sorted(elig))
+                s = up() - rng.choice([0, 1000, 71000, 72000, 73000, 200000])
+                env.w.set(p.name, env.lk(d), s)
+                lock[d] = s
+            elif op == "occupy":
+                d = rng.choice(sorted(elig))
+                if occ[d] + (1 if inrun == d else 0) < per:
+                    t = env.player(20, tags=(PLAYTEST_TAG,))
+                    env.w.set(t.name, "dg.ptdun", env.ds.index(d) + 1)
+                    env.click(t)
+                    if env.entered(t) != d:
+                        bad.append("%s: the playtest occupant could not take a free slot of %s: %s" % (tag, d, env.entered(t)))
+                        return bad
+                    occ[d] += 1
+                    occupants.append((d, t))
+            elif op == "release" and occupants:
+                d, t = occupants.pop(rng.randrange(len(occupants)))
+                env.backout(t)
+                occ[d] -= 1
+            elif op == "back" and inrun:
+                env.backout(p)
+                inrun = None
+            elif op == "click":
+                before = [env.w.get(p.name, o) for o in ("dg.run", "dg.slot", "dg.dun", "dg.rip")] + [env.sigil_count(p)]
+                env.click(p)
+                got, door = env.entered(p), _door_dungeon(env, env.last_door())
+                if inrun:
+                    after = [env.w.get(p.name, o) for o in ("dg.run", "dg.slot", "dg.dun", "dg.rip")] + [env.sigil_count(p)]
+                    if after != before:
+                        bad.append("%s: a click by a player already in a run changed their run, slot, dungeon, rip or sigils: %s -> %s"
+                                   % (tag, before, after))
+                        return bad
+                    continue
+                locked = {d for d in elig if d in lock and 0 <= up() - lock[d] < env.lockout}
+                free = {d for d in elig if occ[d] < per}
+                openset = (elig - locked) & free
+                pool = openset or elig
+                oldest = min((stamp.get(d, -1) for d in pool))
+                allowed = {d for d in pool if stamp.get(d, -1) == oldest}
+                if door not in allowed:
+                    bad.append("%s: the draw reached %s; the model allows %s (open %s, locked %s, full %s, stamps %s)"
+                               % (tag, door, sorted(allowed), sorted(openset), sorted(locked), sorted(d for d in elig if occ[d] >= per),
+                                  {d: stamp[d] for d in sorted(stamp)}))
+                    return bad
+                if bool(openset) != (got is not None):
+                    bad.append("%s: the model has %d open dungeons, the click %s" % (tag, len(openset), "opened %s" % got if got else "was refused"))
+                    return bad
+                if got is not None:
+                    stamp[got] = up()
+                    inrun = got
     return bad
 
 
@@ -831,6 +910,7 @@ SCENARIOS = (
     ("full_falls_through", sc_full_falls_through),
     ("ties_are_random", sc_ties_are_random),
     ("refused_click_is_not_a_draw", sc_refused_click_is_not_a_draw),
+    ("random_walk_matches_the_spec_model", sc_random_walk_matches_the_spec_model),
     ("playtest_path", sc_playtest_path),
     ("every_rip_draws_and_leaves_by_itself", sc_every_rip_draws_and_leaves_by_itself),
     ("rips_are_placed", sc_rips_are_placed),
@@ -965,7 +1045,15 @@ def run_draw(mod, tmp):
     """(problems by scenario, facts): build the pack with `mod`, run every scenario on the simulator."""
     t0 = time.time()
     doc = mod.load()
-    files = mod.build(doc)
+    # build() opens with problems(doc), the whole record's validator (about 130 s of the warm build: the rooms' walk checks).
+    # It validates data, not the draw, and the builder's own tests run it; it is skipped here and the two validators that
+    # concern the draw's and the rips' inputs are run instead (below). Restored in `finally`: the module is shared.
+    real_problems = mod.problems
+    mod.problems = lambda doc, **kw: []
+    try:
+        files = mod.build(doc)
+    finally:
+        mod.problems = real_problems
     built = time.time() - t0
     expect = roster_expectations(built_ids={d["id"] for d in doc["dungeons"]})
     env = Env(files, doc, tmp)
@@ -979,6 +1067,7 @@ def run_draw(mod, tmp):
         except Exception as e:                      # a function the pack lacks, an unsupported command: a finding, not a pass
             out[name] = ["the scenario raised %s: %s" % (type(e).__name__, str(e)[:300])]
         out[name + "__seconds"] = round(time.time() - t, 1)
+    out["input_validators"] = list(mod.draw_problems(doc)) + list(mod.rip_problems(doc))      # the builder's, cheap: not independent
     try:
         out["reapply_wires_r16dr"] = sc_reapply_wires_r16dr(env, expect, mod)
     except Exception as e:

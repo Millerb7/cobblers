@@ -334,7 +334,7 @@ def baseline(tmp_path_factory):
     return got, facts
 
 
-SCENARIO_NAMES = [n for n, _ in A.SCENARIOS] + ["reapply_wires_r16dr"]
+SCENARIO_NAMES = [n for n, _ in A.SCENARIOS] + ["reapply_wires_r16dr", "input_validators"]
 
 
 @pytest.mark.slow
