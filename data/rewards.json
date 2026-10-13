@@ -2572,6 +2572,26 @@
       "built_by": "no build: Oak is placed by reapply step R17 (data/npc_seats.json npc_main_pallet_oak) and his conversation is compiled by tools/compile_dialogue.py; the recipes are closed by cobblers_player_waystone"
     },
     {
+      "id": "oak_trainer_card", "npc_placed_by": "R17N",
+      "kind": "npc_grant",
+      "place": "Oak's lab, Pallet Town: Professor Oak, in his own conversation after the waystone",
+      "npc_at": [
+        1493,
+        118,
+        5317
+      ],
+      "quest": "main_worldshift_reveal",
+      "contents": [
+        {
+          "item": "rctmod:trainer_card",
+          "count": 1,
+          "verification": "assets/rctmod/models/item/trainer_card.json in rctmod-fabric-1.21.1-0.19.0-beta.jar"
+        }
+      ],
+      "why": "The owner's E9, 2026-10-13 (docs/mechanics/ECONOMY_V2.md): Oak gives the trainer card once. Pallet has no income before Route 1's first win, so the $500 Mart line was the dearest thing in town; without the card no naturally spawned RCT trainer finds the player (modpack/config/rctmod-server.toml spawningRequiresTrainerCard). A given item, because the claim has to be a field Oak's dialogue can read and a lost card must not be regranted: a replacement is the Mart's $500 line (data/traders.json stock_policy.trainer_card).",
+      "built_by": "no build: Oak is placed by reapply step R17 (data/npc_seats.json npc_main_pallet_oak) and his conversation is compiled by tools/compile_dialogue.py"
+    },
+    {
       "id": "wardenhold_giratina", "npc_placed_by": "R18FK",
       "kind": "npc_grant",
       "place": "the Wardenhold folk's burrow in Mt Vessu's face: Maren Holt, after the player tells her they beat Giratina",

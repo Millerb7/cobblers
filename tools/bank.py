@@ -39,6 +39,10 @@ so an exchange is the bank buying the material and a counter selling the reward 
   effort_model each tier's assumed gathering hour against the battle income of the leg it opens (R5: parity, upper_wage)
   exchanges    every exchange_for line: material bought, price exact, off-path sited counter in exchanges.towns, kind
                declared, at or above its kind's floor (read from the shelves, never a constant), never bought back
+ECONOMY_V2 (docs/mechanics/ECONOMY_V2.md, the owner's answers of 2026-10-13) adds three: R-V2-3 (no cobblemon: id in the
+written bank), R-V2-1 (the $1 unit floor: rate x $1 within upper_factor x the opening leg's fight hour) and
+exchanges.barter_only (no counter or stall sells a top-tier item for money). The ball floor is retired with the Master
+Ball's money line.
 What the exchange checks do NOT cover: the rates (ASSUMED until timed), anything sold outside data/markets.json at
 or under an exchange price (a donor template's merchant), and whether a merchant purchase completes in game (P-7).
 
@@ -74,7 +78,14 @@ SMELT_MAX = 2
 CRAFT_MAX = lambda total: max(2, total // 100)   # noqa: E731
 # the material exchange (data/bank.json exchanges, docs/mechanics/MATERIAL_EXCHANGE.md): a counter line carrying
 # exchange_for costs exactly count x the bank's price for that material
-EXCHANGE_KINDS = ("evolution_item", "held_item", "ball")
+#
+# ECONOMY_V2 (the owner's E4 and E5, 2026-10-13): a top-tier item has no dollar line. The Master Ball ("ball") and the
+# held items the Station Exchange used to sell leave the money exchange for a barter (data/direct_trades.json), so the
+# "ball" kind and its floor are retired: a counter line of that kind is refused, and data/bank.json
+# exchanges.barter_only names the items no counter or stall may sell for money at all (barter_only_problems).
+EXCHANGE_KINDS = ("evolution_item", "held_item")
+# docs/mechanics/ECONOMY_V2.md R-V2-3: the bank prices nothing from the cobblemon namespace
+BANK_BANNED_NAMESPACE = "cobblemon:"
 WORLD_READS: set = set()   # nothing here reads a world
 
 
@@ -243,6 +254,9 @@ def problems(doc, server_dir=None):
                        % (where, iid, ("%g" % unit), bank[iid]))
     m = json.loads(MARKETS.read_text(encoding="utf-8"))
     out += [p for p, _ in effort_rows(doc, m) if p]
+    out += namespace_problems(bank)
+    out += unit_floor_problems(doc, m)
+    out += barter_only_problems(doc, m)
     out += exchange_problems(doc, m, bank)
     if (m.get("stall_merchant") or {}).get("kind") != "cobbledollars:cobble_merchant":
         out.append("data/markets.json stall_merchant.kind is not cobbledollars:cobble_merchant: stalls no longer open "
@@ -475,6 +489,56 @@ def effort_rows(doc, markets_doc):
     return rows
 
 
+def namespace_problems(bank):
+    """R-V2-3 (docs/mechanics/ECONOMY_V2.md 2.1): no cobblemon: item in the bank the player reaches. The check reads the
+    written prices (base less base_removed, then ours), so a base entry nobody removed is caught as well as ours."""
+    return ["%s is bought at $%d: R-V2-3, the bank prices no cobblemon: item (its goods are crate-priced on the Trading "
+            "Post or not sold); remove it by base_removed" % (i, p)
+            for i, p in sorted(bank.items()) if i.startswith(BANK_BANNED_NAMESPACE)]
+
+
+def unit_floor_problems(doc, markets_doc):
+    """R-V2-1 (docs/mechanics/ECONOMY_V2.md 2.2): the bank pays a whole dollar at least per unit, so an item gathered
+    faster than the opening leg's fight hour (x effort_model.upper_factor) at that $1 floor is not bankable: it belongs
+    on the capped Trading Post. Per bought item with a declared rate: rate_per_hour_upper (else rate_per_hour) x $1 must be
+    at most upper_factor x the fight hour of the leg its tier opens (income_basis.leg_by_badge / max_leg_hours). The
+    item's own price is NOT read, only the floor, which is what a bulk block would sit at."""
+    em = doc.get("effort_model") or {}
+    legs = {int(k): int(v) for k, v in ((markets_doc.get("income_basis") or {}).get("leg_by_badge") or {}).items()}
+    H, U = em.get("max_leg_hours"), em.get("upper_factor")
+    if not (isinstance(H, (int, float)) and H > 0 and isinstance(U, (int, float)) and U >= 1):
+        return []          # effort_rows names a bad max_leg_hours / upper_factor; this rule has nothing to read
+    out = []
+    for b in doc.get("buys") or []:
+        leg = ((em.get("tiers") or {}).get(b.get("tier")) or {}).get("opens_leg")
+        rate = b.get("rate_per_hour_upper", b.get("rate_per_hour")) or 0
+        if leg not in legs or not rate:
+            continue
+        cap = U * legs[leg] / H
+        if rate * 1 > cap:
+            out.append("buys %s: %d a hour at the $1 unit floor is $%d an hour, over %g x the leg-%d fight hour ($%d): "
+                       "R-V2-1, not bankable (the Trading Post's crates carry it)" % (b["item"], rate, rate, U, leg, cap))
+    return out
+
+
+def barter_only_problems(doc, markets_doc):
+    """data/bank.json exchanges.barter_only (the owner's E4 and E5, 2026-10-13): no counter or stall stock line sells a
+    named top-tier item for money. A held_stock or superseded_stock line is not stock and is not read. What this does
+    NOT cover: a shopkeeper's template shop (data/traders.json) and any merchant a donor template places."""
+    bo = (doc.get("exchanges") or {}).get("barter_only") or {}
+    items = set(bo.get("items") or [])
+    out = []
+    if items and not (bo.get("why") and bo.get("decision")):
+        out.append("exchanges.barter_only: items with no why or no decision")
+    for grp in ("counters", "stalls"):
+        for rec in markets_doc.get(grp) or []:
+            for it in rec.get("stock") or []:
+                if it.get("item") in items:
+                    out.append("%s %s line %s sells %s for $%s: it is barter-only (exchanges.barter_only)"
+                               % (grp[:-1], rec.get("id"), it.get("id"), it["item"], it.get("price")))
+    return out
+
+
 def exchange_lines(markets_doc):
     """[(record kind, record, line)] for every markets stock line carrying exchange_for."""
     out = []
@@ -490,14 +554,13 @@ def exchange_floors(doc, markets_doc):
     """{kind: (floor, where it came from)}, each read from data, never a constant (data/bank.json exchanges.floors)."""
     stones = (json.loads(TRADERS.read_text(encoding="utf-8")).get("stock_policy") or {}).get("stones") or {}
     held = set((((doc.get("exchanges") or {}).get("floors") or {}).get("held_item") or {}).get("from_items") or [])
-    units, held_units, held_sold = [], [], set()
+    held_units, held_sold = [], set()
     for grp in ("counters", "stalls"):
         for rec in markets_doc.get(grp) or []:
             for it in rec.get("stock") or []:
                 if "exchange_for" in it:
                     continue
                 u = it["price"] / (it.get("count") or 1)
-                units.append(u)      # R4 (the owner's, open): the ball floor still reads income-gated lines too
                 if it["item"] in held:
                     held_sold.add(it["item"])
                     # ECONOMY_OVERHAUL.md section 7 R8: the held-item floor reads only lines that are not income-gated,
@@ -507,9 +570,8 @@ def exchange_floors(doc, markets_doc):
     return {"evolution_item": (stones.get("price"), "data/traders.json stock_policy.stones.price"),
             "held_item": (max(held_units)[0] if held_units else None,
                           "the dearest held item on a shelf that is not income-gated (%s)"
-                          % (max(held_units)[1] if held_units else "none sold ungated")),
-            "ball": (max(units) if units else None, "the dearest non-exchange line on any shelf")}, \
-        sorted(held - held_sold)
+                          % (max(held_units)[1] if held_units else "none sold ungated"))}, \
+        sorted(held - held_sold)      # no "ball" floor: the Master Ball has no money line (ECONOMY_V2 E4)
 
 
 def exchange_problems(doc, markets_doc, bank):

@@ -893,6 +893,15 @@
       "why": "Oak's gift of one waystone (data/player_waystone.json, data/rewards.json oak_waystone): the claim of grant_reward_once in data/quests.json grant_oak_waystone, written only when the item was given. Permanent and per player: a player who loses the item has no second grant, by the owner's 'one per player' (2026-10-09)."
     },
     {
+      "id": "quest.main_worldshift_reveal.trainer_card_claimed",
+      "quest_id": "main_worldshift_reveal",
+      "field": "trainer_card_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Oak's gift of one rctmod:trainer_card (the owner's E9, 2026-10-13; data/rewards.json oak_trainer_card): the claim of grant_reward_once in data/quests.json grant_oak_trainer_card, written only when the item was given. Permanent and per player: a player who loses the card has no second grant and buys a replacement at the Pallet Mart (data/traders.json stock_policy.trainer_card)."
+    },
+    {
       "id": "quest.main_worldshift_reveal.lab_starter_cursor",
       "quest_id": "main_worldshift_reveal",
       "field": "lab_starter_cursor",

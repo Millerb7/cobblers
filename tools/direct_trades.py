@@ -229,9 +229,13 @@ def _read(path):
 
 
 def counter_prices(markets=None):
-    """{(counter id, line id): price} of every counter line in data/markets.json."""
+    """{(counter id, line id): price} of every counter line in data/markets.json: its stock, and its superseded_stock
+    (a money line as it stood, which is what a line moved off the counter to barter is priced against: ECONOMY_V2 E4,
+    E5). A line in both is the stock's."""
     m = markets if markets is not None else _read(MARKETS)
-    return {(c["id"], s["id"]): int(s["price"]) for c in m.get("counters") or [] for s in c.get("stock") or []}
+    out = {(c["id"], s["id"]): int(s["price"]) for c in m.get("counters") or [] for s in c.get("superseded_stock") or []}
+    out.update({(c["id"], s["id"]): int(s["price"]) for c in m.get("counters") or [] for s in c.get("stock") or []})
+    return out
 
 
 def bank_prices(bank=None):
@@ -259,8 +263,17 @@ def line_value(doc, ln):
     return total
 
 
-def reference_price(ln, prices):
+def reference_price(ln, prices, bank_p=None):
+    """A line's reference price: the counter lines it names (`counter` + `lines`, summed), or a bank-valued bundle
+    (`bank`: [{item, count}], each at the bank's price from `bank_p`, {item: price}: the Master Ball's 2 ingots,
+    ECONOMY_V2 E4). None if a name has no price."""
     ref = ln.get("reference") or {}
+    if "bank" in ref:
+        bp = bank_p if bank_p is not None else bank_prices()
+        try:
+            return sum(bp[b["item"]] * int(b["count"]) for b in ref["bank"])
+        except (KeyError, TypeError, ValueError):
+            return None
     try:
         return sum(prices[(ref["counter"], lid)] for lid in ref["lines"])
     except KeyError:
@@ -295,7 +308,7 @@ def pricing_problems(doc, markets=None, bank=None):
     for ln in doc.get("lines") or []:
         if ln.get("approved") is not True:
             continue
-        ref = reference_price(ln, prices)
+        ref = reference_price(ln, prices, bp)
         val = line_value(doc, ln)
         if ref is None:
             p.append("line %s: its reference %r names no counter price" % (ln["id"], ln.get("reference")))
@@ -623,7 +636,7 @@ def main(argv=None):
              c["roof_min"], len(counter_recipes(doc)), len(held_lines(doc)), res["commands"], STEP,
              json.dumps([list(s) for s in steps(doc)])))
     for ln in placed_lines(doc):
-        v, r = line_value(doc, ln), reference_price(ln, prices)
+        v, r = line_value(doc, ln), reference_price(ln, prices, bank_prices())
         print("  %s: inputs $%d, reference $%d (%.2f)" % (ln["id"], v, r, v / r))
     if a.cmd == "build":
         print("wrote %d files to %s" % (len(out), a.out))

@@ -35,8 +35,8 @@
     "cobblemon:ability_capsule": {
       "cp": 10000,
       "source": "market",
-      "ref": "data/markets.json counters northlight_station (no bank price ever: its replacement cost, price / count)",
-      "why": "nothing ever bought it; a counter sells it at $10000 each"
+      "ref": "data/markets.json counters northlight_station superseded_stock (no bank price ever: its replacement cost, price / count; the money line moved to a barter on 2026-10-13, ECONOMY_V2 E5, and the barter is priced at 1.008 of it)",
+      "why": "nothing ever bought it; its replacement cost is the $10000 the station's counter charged, which the barter (1 diamond block + 10 netherite ingots, $10,080) keeps"
     },
     "cobblemon:cherish_ball": {
       "cp": 500,
