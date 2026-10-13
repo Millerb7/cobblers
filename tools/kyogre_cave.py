@@ -43,6 +43,9 @@ is another agent's and must not import this file).
 What it does NOT cover (CLAUDE.md "Our list is not the world"): the keeper acts only on the cave's own box and its own
 tags; a Kyogre or a set piece caught and released elsewhere is not tracked; a player who logs out inside the cave and
 back in after the reset finds the puzzles reset around them (every region keeps a return click, so nobody is shut in).
+Kyogre's cage closes while its guard sees only ONLINE players; a player who logged out in its box and rejoins is sent out
+at the next keeper pass (the leave_game statistic `kc.left`, tick's first lines), before the cage can matter to them. A
+player already offline in the box when the pack first loads has no score and is not caught.
 """
 from __future__ import annotations
 
@@ -1055,6 +1058,8 @@ def runtime_files(doc, M, a, reef_count):
                 "execute as @e[type=minecraft:interaction,tag=cobblers.kc.click.%s,distance=..8] run data remove entity @s interaction" % cid]
 
     # ---- load and the keeper's tick ------------------------------------------------------------------------------
+    LO = k["left_objective"]
+    cage = ky["cage"]
     holders = ["built", "lamps", "drained", "draining", "dirty", "awake", "cage", "resleep", "kabs", "kempty", "slice"]
     holders += ["lamp_%s" % l["id"] for l in doc["lamps"]["list"]]
     holders += ["abs_%s" % s["id"] for s in doc["set_pieces"]["slots"]]
@@ -1062,10 +1067,15 @@ def runtime_files(doc, M, a, reef_count):
         "execute unless score #%s %s matches -2147483648.. run scoreboard players set #%s %s 0" % (h, O, h, O) for h in holders] + [
         "execute unless score #need_%s %s matches -2147483648.. run scoreboard players set #need_%s %s 1" % (s["id"], O, s["id"], O)
         for s in doc["set_pieces"]["slots"]] + [
+        "scoreboard objectives add %s minecraft.custom:minecraft.leave_game" % LO,
         "schedule function %s/tick %dt replace" % (F, k["period_ticks"])]
     fn["tick"] = [
         HEAD, "# every %d ticks; scheduled, so it runs in the overworld: every cave test is a positional @a run `in %s`" % (k["period_ticks"], dim),
         "schedule function %s/tick %dt replace" % (F, k["period_ticks"]),
+        "# FIRST, before the cage's guard or anything else here sees them: a player who logged out and is back, standing where the",
+        "# cage closes (its guard sees only online players), is sent out; every rejoiner's count is then cleared",
+        "execute in %s as @a[scores={%s=1..},%s] run function %s/rejoin_out" % (dim, LO, box_sel(cage), F),
+        "scoreboard players reset @a[scores={%s=1..}] %s" % (LO, LO),
         "tag @a remove cobblers.kc.here",
         "execute in %s run tag @a[%s] add cobblers.kc.here" % (dim, box_sel(cave_box)),
         "# the adventure backstop: a player this pack put in adventure is back in survival anywhere outside the cave",
@@ -1094,6 +1104,10 @@ def runtime_files(doc, M, a, reef_count):
         "# from the heightmap), facing away from the sheet",
         "execute if entity @s[tag=cobblers.kc.adv] run function %s/adv_off" % F,
         "execute in minecraft:overworld run tp @s %.1f %d %.1f %.1f 0" % (stand[0] + 0.5, stand[1], stand[2] + 0.5, syaw)]
+    fn["rejoin_out"] = [
+        HEAD, "# as a player who logged out and is back, standing in Kyogre's cage box (tick, first): the cage closes while its",
+        "# guard sees only online players, so this cell may now be barrier. Out by the arch's own way back, and told why",
+        "tellraw @s %s" % text(msg["rejoined"], "dark_aqua", True), "function %s/out" % F]
     fn["eject"] = [HEAD, "tellraw @s %s" % text(msg["unqualified"], "dark_aqua", True), "function %s/out" % F]
     fn["rescue"] = [HEAD, "tp @s %.1f %d %.1f %.1f 0" % (ax + 0.5, ay, az + 0.5, ayaw),
                     "tellraw @s %s" % text(msg["rescued"], "dark_aqua", True)]

@@ -267,6 +267,8 @@
   "keeper": {
     "period_ticks": 40,
     "objective": "kc.s",
+    "left_objective": "kc.left",
+    "left_why": "minecraft.custom:minecraft.leave_game, the convention of tools/arena_runtime.py (ar.left), tools/progression_pack.py and tools/location_titles.py: it counts a logout, so a player who comes back finds it above 0 at the next pass. Kyogre's cage closes over the dais while its guard sees only ONLINE players, so a player who logged out on the dais would return sealed in barrier (KYOGRE_CAVE.md: nobody is ever shut in). Anyone who rejoins standing in the cage's box is sent out by the arch's own way back before anything else in the keeper runs for them. Limit: a player already offline in the box when this pack first loads has no score and is not caught",
     "rescue_margin": 64,
     "rescue_why": "a player anywhere in the reserve box below the cave's lowest carved cell (a dig through the shell: survival players are put in adventure mode inside, but an op can do anything) is put back in the antechamber, as cobblers:portals/tick rescues its rooms",
     "adventure": true,
@@ -321,6 +323,7 @@
     "caught": "The sea remembers its shape.",
     "unqualified": "The cold pushes you back towards the arch. This place is not open to you.",
     "rescued": "The cave closes around you again.",
+    "rejoined": "You were away while the Basin slept. The cold carries you back to the arch.",
     "claimed": "You have taken what was here.",
     "claim_locked": "It will not come loose. Not yet.",
     "claim_failed": "Your pack is full; it stays where it is."
