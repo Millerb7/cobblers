@@ -562,9 +562,16 @@
       "cofagrigus": "1.8 model mis-assembled (as tyranitar)",
       "turtonator": "1.8 model mis-assembled (as tyranitar)",
       "talonflame": "1.8 model mis-assembled (as tyranitar)",
-      "capsakid": "UNCONFIRMED in the design (NETHER_ENCOUNTERS.md Q9). Implemented in the 1.8.0 jar (read 2026-10-08); Q9 was not among the approved recommendations, so it stays out until the owner adds it",
-      "scovillain": "as capsakid",
-      "stonjourner": "as capsakid (Q9, for the basalt deltas)"
+      "capsakid": "the design's Q9, not approved by the owner. Its species file is in the 1.8.0 jar (docs/research/notes/drops-1.8.0.json source generation9/capsakid.json, and cobblemon:fire_stone lists capsakid in evolution_use), so the jar read N7 asked for is done; it stays out until the owner answers Q9 (balance pass 2026-10-13, NETHER_ENCOUNTERS.md section 8)",
+      "scovillain": "as capsakid (species file generation9/scovillain.json in the 1.8.0 jar)",
+      "stonjourner": "as capsakid (Q9, for the basalt deltas; species file generation8/stonjourner.json in the 1.8.0 jar)",
+      "larvesta": "balance pass 2026-10-13: a line of the eight starters (docs/STATE.md 'Starters: eight') and a dungeon prize (data/dungeon_prize_roster.json, the Overgrown Temple's and the Patriarch's rare pools); it was the crimson forest's rare, Skorupi replaces it",
+      "volcarona": "as larvesta: it was the crimson forest heart's presence",
+      "beldum": "balance pass 2026-10-13: a dungeon prize (the Night Shift's and the Street's rare pools) and Metagross is a Victory Road prize (ENCOUNTER_DESIGN.md 7a), met at the same badge; it was the warped forest's rare, Clefairy replaces it",
+      "metagross": "as beldum: it was the warped forest heart's presence",
+      "dreepy": "balance pass 2026-10-13: a dungeon prize (three dungeons' rare pools) and Dragapult is a Victory Road prize (ENCOUNTER_DESIGN.md 7a); it was the soul sand valley's rare, Mimikyu replaces it as the valley's ultra-rare",
+      "dragapult": "as dreepy: it was the soul sand valley heart's presence",
+      "honedge": "balance pass 2026-10-13: a dungeon prize (the Street's rare pools: 'Honedge has no wild home below 48'); it was a fortress common, Falinks replaces it"
     },
     "tables": {
       "nether_wastes": {
@@ -572,51 +579,57 @@
         "themes": ["the furnace floor"],
         "why": "the Nether as the overworld imagines it: open heat, lava shores, quartz and slag (NETHER_ENCOUNTERS.md 2.1)",
         "land": [["magby", "anchor"], ["numel", "anchor"], ["slugma", "common"], ["sizzlipede", "common"], ["rolycoly", "common"], ["nacli", "common"],
-                 ["torkoal", "uncommon"], ["heatmor", "uncommon"], ["salandit", "uncommon"], ["charcadet", "rare"]],
-        "heart": {"kind": "nearby", "blocks": ["minecraft:lava"], "maxY": 40, "why": "the lava shore: grounded beside lava, below y40, where the wastes' lava sea sits (ASSUMED until a pregen)",
-                  "land": [["camerupt", "common"], ["coalossal", "common"], ["magmortar", "presence"], ["centiskorch", "presence"]]}
+                 ["torkoal", "uncommon"], ["heatmor", "uncommon"], ["salandit", "uncommon"], ["charcadet", "rare"], ["durant", "ultra"]],
+        "balance_2026_10_13": "the heart is presences only (it held Camerupt and Coalossal as common-bucket alphas beside every lava block); Durant, the iron ants Heatmor hunts, added as the ultra-rare every table carries (NETHER_ENCOUNTERS.md section 8)",
+        "heart": {"kind": "nearby", "blocks": ["minecraft:lava"], "maxY": 40, "why": "the lava shore: grounded beside lava, below y40, where the wastes' lava sea sits (ASSUMED until a pregen). Presences only: lava is everywhere in the wastes, so the heart is not a focal point and its alphas are held rare by bucket (uncommon, weight 3)",
+                  "land": [["magmortar", "presence"], ["centiskorch", "presence"]]}
       },
       "crimson_forest": {
         "key": {"biomes": ["minecraft:crimson_forest"]},
         "themes": ["the hunting wood"],
         "why": "a hot red forest where things hunt, and the prey that hides under the weeping vines (NETHER_ENCOUNTERS.md 2.2)",
-        "land": [["houndour", "anchor"], ["litleo", "common"], ["spinarak", "common"], ["paras", "common"], ["mankey", "uncommon"], ["larvesta", "rare"]],
-        "heart": {"kind": "nearby", "blocks": ["minecraft:weeping_vines", "minecraft:weeping_vines_plant"], "why": "the hanging canopy: beside weeping vines (the tip block and the vine body)",
-                  "land": [["houndoom", "common"], ["ariados", "common"], ["volcarona", "presence"], ["pyroar", "presence"]]}
+        "land": [["houndour", "anchor"], ["litleo", "common"], ["spinarak", "common"], ["paras", "common"], ["mankey", "uncommon"], ["skorupi", "rare"], ["zorua", "ultra"]],
+        "balance_2026_10_13": "Larvesta (a starter line and a dungeon prize) out, Skorupi in: Drapion, the ambusher under the vines; Zorua added as the ultra-rare, Zoroark, the hunter that is not where it seems. The heart is presences only, Volcarona replaced by Annihilape, the rage of the hunting wood and a local (NETHER_ENCOUNTERS.md section 8)",
+        "heart": {"kind": "nearby", "blocks": ["minecraft:weeping_vines", "minecraft:weeping_vines_plant"], "why": "the hanging canopy: beside weeping vines (the tip block and the vine body). Presences only: weeping vines hang through the whole forest, so the heart is held rare by bucket, not by area",
+                  "land": [["pyroar", "presence"], ["annihilape", "presence"]]}
       },
       "warped_forest": {
         "key": {"biomes": ["minecraft:warped_forest"]},
         "themes": ["the alien wood"],
         "why": "the one place in the Nether that is not hot and not dead: wrong-coloured, lit by fungus, full of things that did not evolve on this world (NETHER_ENCOUNTERS.md 2.3). No Fire",
         "land": [["elgyem", "anchor"], ["morelull", "anchor"], ["toedscool", "common"], ["foongus", "common"], ["inkay", "common"],
-                 ["hatenna", "uncommon"], ["solosis", "uncommon"], ["blipbug", "uncommon"], ["beldum", "rare"], ["minior", "rare"]],
-        "heart": {"kind": "nearby", "blocks": ["minecraft:shroomlight"], "why": "under the lamps: beside the shroomlights of the huge fungi",
-                  "land": [["beheeyem", "common"], ["shiinotic", "common"], ["metagross", "presence"], ["malamar", "presence"]]}
+                 ["hatenna", "uncommon"], ["solosis", "uncommon"], ["blipbug", "uncommon"], ["clefairy", "rare"], ["minior", "rare"], ["porygon2", "ultra"]],
+        "balance_2026_10_13": "Beldum (a dungeon prize; Metagross a Victory Road prize at the same badge) out, Clefairy in: Clefable, fallen from the moon beside Minior fallen from the sky (Moon Stone, an evolution the stone-poor world rarely gives); Porygon2 added as the ultra-rare, a thing that was written rather than evolved (Porygon-Z by its item in the upper band). The heart is presences only, Metagross replaced by Reuniclus, a local (NETHER_ENCOUNTERS.md section 8)",
+        "heart": {"kind": "nearby", "blocks": ["minecraft:shroomlight"], "why": "under the lamps: beside the shroomlights of the huge fungi. Presences only: every huge fungus carries shroomlights, so the heart is held rare by bucket, not by area",
+                  "land": [["malamar", "presence"], ["reuniclus", "presence"]]}
       },
       "soul_sand_valley": {
         "key": {"biomes": ["minecraft:soul_sand_valley"]},
         "themes": ["the boneyard"],
         "why": "where the Nether keeps its dead: blue soul fire that gives no warmth, fossil ribs, the sand made of souls (NETHER_ENCOUNTERS.md 2.4). No Fire: Litwick and Chandelure are left out on purpose",
         "land": [["gastly", "anchor"], ["sandygast", "anchor"], ["duskull", "common"], ["shuppet", "common"], ["cubone", "common"],
-                 ["drifloon", "uncommon"], ["spiritomb", "rare"], ["dreepy", "rare"]],
-        "heart": {"kind": "nearby", "blocks": ["minecraft:bone_block"], "why": "the fossil ribs: beside the bone blocks the valley's fossils are made of (ASSUMED until a pregen)",
-                  "land": [["gengar", "common"], ["palossand", "common"], ["dusknoir", "presence"], ["dragapult", "presence"]]}
+                 ["drifloon", "uncommon"], ["spiritomb", "rare"], ["mimikyu", "ultra"]],
+        "balance_2026_10_13": "Dreepy (a dungeon prize; Dragapult a Victory Road prize at the same badge) out; Mimikyu, the thing under the rag among the bones, is the ultra-rare. The heart is presences only, Dragapult replaced by Palossand, the soul-sand castle and a local (NETHER_ENCOUNTERS.md section 8)",
+        "heart": {"kind": "nearby", "blocks": ["minecraft:bone_block"], "why": "the fossil ribs: beside the bone blocks the valley's fossils are made of (ASSUMED until a pregen). Presences only, uncommon bucket",
+                  "land": [["dusknoir", "presence"], ["palossand", "presence"]]}
       },
       "basalt_deltas": {
         "key": {"biomes": ["minecraft:basalt_deltas"]},
         "themes": ["rock and ash"],
         "why": "grey columns, black stone and falling ash: things that are stone, eat stone or breathe the ash (NETHER_ENCOUNTERS.md 2.5). No Fire",
         "land": [["roggenrola", "anchor"], ["rhyhorn", "anchor"], ["onix", "common"], ["gligar", "common"], ["klawf", "common"],
-                 ["koffing", "uncommon"], ["glimmet", "uncommon"], ["carbink", "rare"]],
+                 ["koffing", "uncommon"], ["glimmet", "uncommon"], ["carbink", "rare"], ["druddigon", "ultra"]],
         "stop_evolving": {"onix": "the design spawns Onix as Onix, the basalt serpent (NETHER_ENCOUNTERS.md 2.5); its trade evolution, Steelix, is not in the table"},
-        "heart": {"kind": "nearby", "blocks": ["minecraft:magma_block"], "why": "the vents: beside the deltas' magma blocks",
-                  "land": [["rhyperior", "common"], ["gigalith", "common"], ["gliscor", "presence"], ["glimmora", "presence"]]}
+        "balance_2026_10_13": "the heart is presences only (it held Rhyperior and Gigalith as common-bucket alphas beside every magma block); Druddigon, the dragon in the column crevices, added as the ultra-rare (NETHER_ENCOUNTERS.md section 8)",
+        "heart": {"kind": "nearby", "blocks": ["minecraft:magma_block"], "why": "the vents: beside the deltas' magma blocks. Presences only: magma blocks lie all through the deltas, so the heart is held rare by bucket, not by area",
+                  "land": [["gliscor", "presence"], ["glimmora", "presence"]]}
       },
       "fortress_garrison": {
         "key": {"structures": ["minecraft:fortress"]},
         "themes": ["the garrison"],
-        "why": "inside a Nether fortress, over whatever biome it stands in: the soldiers who held the halls, steel and ghost, no Fire though the halls are full of blazes (NETHER_ENCOUNTERS.md 2.6). The roles are this builder's, the design names none: all three common",
-        "land": [["honedge", "common"], ["pawniard", "common"], ["golett", "common"]],
+        "why": "inside a Nether fortress, over whatever biome it stands in: the soldiers who held the halls, steel, fighting and ghost, no Fire though the halls are full of blazes (NETHER_ENCOUNTERS.md 2.6). The roles are this builder's, the design names none: all three common",
+        "balance_2026_10_13": "Honedge (a dungeon prize: the Street's rare pools) out, Falinks in: the troop that still drills in the halls (NETHER_ENCOUNTERS.md section 8)",
+        "land": [["falinks", "common"], ["pawniard", "common"], ["golett", "common"]],
         "stop_evolving": {"bisharp": "the design spawns Pawniard as Bisharp (NETHER_ENCOUNTERS.md 2.6); Kingambit's evolution is not in the table"}
       },
       "bastion_hoard": {
