@@ -8975,6 +8975,161 @@
         ],
         "expect": true
       }
+    ],
+    "kyogre_cave": [
+      {
+        "what": "the antechamber's floor under the arrival",
+        "dim": "cobblers:pocket",
+        "block": [
+          8463,
+          199,
+          2213,
+          "minecraft:dark_prismarine"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the antechamber's arch back: its sheet",
+        "dim": "cobblers:pocket",
+        "block": [
+          8460,
+          201,
+          2213,
+          "minecraft:tinted_glass"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Sounding: water at its foot",
+        "dim": "cobblers:pocket",
+        "block": [
+          8469,
+          100,
+          2213,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the hub's glass panel over the Tide Gate (shut)",
+        "dim": "cobblers:pocket",
+        "block": [
+          8430,
+          111,
+          2237,
+          "minecraft:glass"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Tide Gate's window (shut)",
+        "dim": "cobblers:pocket",
+        "block": [
+          8413,
+          97,
+          2238,
+          "minecraft:glass"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Tide Gate flooded",
+        "dim": "cobblers:pocket",
+        "block": [
+          8416,
+          99,
+          2236,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the north lamp (unlit)",
+        "dim": "cobblers:pocket",
+        "block": [
+          8447,
+          111,
+          2165,
+          "minecraft:tinted_glass"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the east lamp (unlit)",
+        "dim": "cobblers:pocket",
+        "block": [
+          8538,
+          122,
+          2240,
+          "minecraft:tinted_glass"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the south lamp (unlit)",
+        "dim": "cobblers:pocket",
+        "block": [
+          8447,
+          111,
+          2299,
+          "minecraft:tinted_glass"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the Basin's dais top",
+        "dim": "cobblers:pocket",
+        "block": [
+          8242,
+          29,
+          2240,
+          "minecraft:dark_prismarine"
+        ],
+        "expect": true
+      },
+      {
+        "what": "Kyogre's cage (closed)",
+        "dim": "cobblers:pocket",
+        "block": [
+          8237,
+          30,
+          2235,
+          "minecraft:barrier"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the cave's click entities (11)",
+        "dim": "cobblers:pocket",
+        "hold": [
+          8463,
+          200,
+          2213
+        ],
+        "entity": "@e[type=minecraft:interaction,tag=cobblers.kc.click]",
+        "count": 11
+      },
+      {
+        "what": "the arch's reef (overworld): its highest block",
+        "block": [
+          6195,
+          56,
+          1847,
+          "minecraft:gravel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "Kyogre (one tagged cobblers.kc.kyogre once a player has stood in the Basin; absent until then)",
+        "dim": "cobblers:pocket",
+        "hold": [
+          8242,
+          30,
+          2240
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.kc.kyogre]",
+        "count_max": 1
+      }
     ]
   }
 }

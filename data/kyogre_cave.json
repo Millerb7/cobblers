@@ -1,0 +1,337 @@
+{
+  "schema": "cobblers.kyogre_cave/1",
+  "generated_by": "hand",
+  "status": "BUILT AS DATA AND A GENERATOR (2026-10-13), NOT RUN in any world. tools/kyogre_cave.py writes build/datapacks/cobblers_kyogre_cave (runtime) and cobblers_kyogre_cave_build (the one-shot geometry, stripped after the apply); tools/reapply.py step R18KC builds it. Nothing here has been seen in game; docs/world-building/KYOGRE_CAVE.md section 8 (E1-E8) lists what must be proved first.",
+  "design": "docs/world-building/KYOGRE_CAVE.md sections 0-5 and 7 (the owner approved it 2026-10-05/06; answers in its section 9). Changes against its numbers, each forced by the repository or by vanilla fluid behaviour, are listed in `deviations`.",
+  "rung": "datapack plus functions/commands (CLAUDE.md principle 6): the pocket dimension is cobblers_portals' (ADR-004, EXP-047); clicks are the portals' interaction-plus-advancement trigger (EXP-034); the Pokemon are Cobblemon's own spawnpokemonat by macro (EXP-046) and its pokemon_captured callback (the sanctuaries' and Entei's shape); the blackout's existing exempt tag keeps Kyogre out of item claims. No scripting layer, companion or mod.",
+  "conventions": {
+    "standing": "a room's `standing` y is the first air layer a player stands in (data/portals.json pocket.floor_y's sense); its floor blocks are at standing - 1",
+    "boxes": "[x0, y0, z0, x1, y1, z1], inclusive, in cobblers:pocket block coordinates",
+    "water": "every water cell the build writes is a SOURCE. tools/kyogre_cave.py refuses a model in which a water cell has air beside or below it, except the Race's declared stream, whose current is fluid physics by design",
+    "ground": "nothing in the pocket reads a heightmap; the overworld side (the return point and the arch's reef) takes its ground from tools/ground.py through tools/coldwater_station.arch(), never from a world"
+  },
+  "pocket": {
+    "dimension": "cobblers:pocket",
+    "dimension_from": "data/portals.json pocket.dimension; this pack never defines the dimension (cobblers_portals does, at a boot). tools/kyogre_cave.py fails closed if they differ",
+    "border": [-1024, 9215],
+    "border_margin": 32,
+    "border_from": "data/entei_boss.json pocket.border and border_margin (the shared world border, docs/STATE.md); checked equal",
+    "reserve": [8160, 2096, 8640, 2400],
+    "reserve_why": "[x0, z0, x1, z1]: the cave's own box with its rescue margin. Every cell the cave builds and every point a player is put down at is outside the overworld map (data/world.json bounds 0..8191 in x), so no overworld waystone or checkpoint coordinate can coincide with one (the blackout's waystone arrival test compares coordinates, not dimensions: data/blackout.json checkpoints). Disjoint from the portals' rescue box, Entei's band with its sweep margin, the probe pack's row and every dungeon slot strip: tools/kyogre_cave.py recomputes each from its own file (tools/dungeon.py foreign_boxes, CALLED, and the slot strips from data/dungeons.json) and refuses a meeting. The design's (0, 2048) is inside dungeon slot rows (data/dungeons.json engine.slots: 13 dungeons x 4 rows from z 1024 at 128), so it moved",
+    "min_y": 0,
+    "height": 256
+  },
+  "shell": {
+    "margin": 4,
+    "margin_why": "KYOGRE_CAVE.md section 3: at least 4 blocks of shell round every carved cell, the legendary chambers' fill-then-carve rule (data/legendaries.json defaults.shell_margin). In the pocket the outside is void, so the shell is what makes the cave a cave",
+    "fill": "minecraft:deepslate",
+    "skin": {
+      "built": ["minecraft:prismarine_bricks"],
+      "upper": ["minecraft:prismarine", "minecraft:prismarine", "minecraft:prismarine", "minecraft:dark_prismarine", "minecraft:tuff"],
+      "deep": ["minecraft:deepslate", "minecraft:deepslate", "minecraft:tuff", "minecraft:smooth_basalt", "minecraft:cobbled_deepslate"]
+    },
+    "skin_split_y": 98,
+    "skin_why": "the dive set of data/portals.json blocks.dive (prismarine, dark prismarine) for the upper caves and deepslate for the trench and the Basin (KYOGRE_CAVE.md section 3 'Palette'), chosen per cell by a hash so the walls read as rock, not masonry; the built rooms (the antechamber, the shrines, the Tide Gate) keep prismarine bricks. No block here is in data/spawn_blocks.json (checked by the tool)",
+    "seed": 382
+  },
+  "rooms": {
+    "antechamber": {
+      "what": "A, the arrival. A sealed prismarine hall; the Sounding opens in its east floor as a pool flush with the floor",
+      "box": [8460, 200, 2209, 8472, 206, 2217],
+      "skin": "built",
+      "floor_block": "minecraft:dark_prismarine",
+      "arrive": [8463, 200, 2213, -90.0],
+      "lights": [[8462, 207, 2210], [8462, 207, 2216], [8464, 207, 2213], [8462, 207, 2213]]
+    },
+    "sounding": {
+      "what": "B, the flooded shaft (the air and fatigue lesson). Its top water layer is flush with the antechamber's floor; three dry alcoves on its west wall are entered from below (an air bell over a two-cell water sill), so water never stands beside their air",
+      "box": [8466, 100, 2210, 8472, 199, 2216],
+      "alcoves": [175, 150, 125],
+      "alcove_side": "west",
+      "alcove_size": 3,
+      "lights": [[8465, 187, 2213], [8473, 162, 2213], [8465, 137, 2213], [8473, 112, 2213]]
+    },
+    "ubend": {
+      "what": "the trap under the Sounding: a flooded tunnel 8 high from the shaft's foot that rises through a pool flush with the hub's floor. The hub is dry air, so the shaft's water cannot open into its ceiling",
+      "boxes": [[8466, 100, 2217, 8472, 107, 2235], [8455, 100, 2229, 8465, 107, 2235]],
+      "riser": [8455, 108, 2231, 8457, 111, 2233]
+    },
+    "hub": {
+      "what": "C, the Gallery hub: a domed cavern. Three ways leave it (two pools in its floor to the flooded galleries, the Race up its east side); over the Tide Gate a glass panel in the west balcony's floor shows the flooded hall below, visible and shut",
+      "centre": [8448, 112, 2240],
+      "radii": [12.5, 13.0, 12.5],
+      "roughness": 1.0,
+      "balcony": [8426, 112, 2236, 8435, 117, 2244],
+      "panel": [8430, 111, 2237, 8434, 111, 2243],
+      "panel_block": "minecraft:glass",
+      "lights_xz": [[8448, 2240], [8441, 2233], [8455, 2247], [8441, 2247], [8455, 2233]]
+    },
+    "galleries": [
+      {
+        "id": "north",
+        "what": "C1, flooded and winding; dark but for its wild Pokemon; ends in the north lamp shrine",
+        "riser": [8446, 108, 2229, 8448, 111, 2231],
+        "path": [[8447, 2230], [8447, 2212], [8440, 2197], [8446, 2182], [8447, 2170]],
+        "half_width": 2.5,
+        "water_y": [100, 107],
+        "bells": [[8442, 2201]],
+        "bell_half": 3,
+        "shrine": {"box": [8444, 110, 2164, 8450, 115, 2170], "riser": [8446, 108, 2168, 8448, 109, 2170]}
+      },
+      {
+        "id": "south",
+        "what": "C3, flooded; a dead end with the Diver's Cache and the south lamp shrine",
+        "riser": [8446, 108, 2249, 8448, 111, 2251],
+        "path": [[8447, 2250], [8447, 2262], [8453, 2276], [8447, 2290], [8447, 2296]],
+        "half_width": 2.5,
+        "water_y": [100, 107],
+        "bells": [[8451, 2272]],
+        "bell_half": 3,
+        "shrine": {"box": [8444, 110, 2293, 8450, 115, 2299], "riser": [8446, 108, 2294, 8448, 109, 2296]}
+      }
+    ],
+    "race": {
+      "what": "C2, the Race: a dry gallery rising one block every 8 from the hub's floor to the east lamp shrine, with a stream poured from a basin at its top. A diver going up swims against it; coming back it carries them (KYOGRE_CAVE.md had it falling away from the hub; it rises here so the hard way is the way to the lamp, and so its water drains into a sump instead of the hub)",
+      "x_start": 8461,
+      "z": [2238, 2242],
+      "standing0": 112,
+      "step_length": 8,
+      "steps": 9,
+      "air_height": 5,
+      "sump": [8461, 110, 2238, 8462, 111, 2242],
+      "sources": [8531, 120, 2238, 8532, 120, 2242],
+      "shrine": [8533, 121, 2237, 8539, 126, 2243],
+      "stream_why": "vanilla water: the basin's sources flow 7 blocks along each step and fall to the next, so every step carries a current toward the hub, and the last fall lands in the sump (2 deep, below the walking level), never on the hub's floor. The current is the only fluid physics in the cave; its strength against a Dive swimmer is experiment E3"
+    },
+    "tide_gate": {
+      "what": "D, the Tide Gate: a hall flooded to its roof, under the hub's west balcony. A ramp under the panel rises to the glass; its west wall is a window of glass onto the Trench. The wheel drains it and opens both",
+      "box": [8414, 97, 2230, 8434, 110, 2250],
+      "skin": "built",
+      "floor_block": "minecraft:dark_prismarine",
+      "stair": {"x_top": 8434, "z": [2238, 2239], "top": 110, "steps": 14, "block": "minecraft:polished_deepslate", "why": "a ramp of 14 one-block steps from under the panel (its top step stands at 111, one below the balcony) west down to the floor, on the axis panel - ramp - window - trench"},
+      "window": [8413, 97, 2238, 8413, 101, 2242],
+      "window_block": "minecraft:glass",
+      "passage": [8406, 97, 2238, 8412, 101, 2242],
+      "lights": [[8414, 96, 2230], [8434, 96, 2230], [8414, 96, 2250], [8434, 96, 2250]]
+    },
+    "trench": {
+      "what": "E, the Trench: the scale reveal. From the balcony at the Tide Gate's window a player looks 60 blocks down to faint sea lanterns in the water. A ledge descends the north wall at no steeper than 1 in 3, a natural bridge crosses at the west end, a second ledge descends the south wall east, a low causeway crosses back at the water, and a beach runs west under the north wall to the Basin's tunnel",
+      "x": [8278, 8405],
+      "centre_z": 2240,
+      "half_width": [7.5, 1.5, 53],
+      "half_width_why": "[mean, swing, wavelength]: 13 to 19 wide (the design's 13 to 19), plus a hashed half block",
+      "floor": 36,
+      "water_top": 41,
+      "roof": 116,
+      "balcony": {"x": [8398, 8405], "standing": 97},
+      "ledge_north": {"x": [8282, 8397], "top_standing": 97, "rise_run": 3},
+      "bridge": {"x": [8279, 8281], "standing": 61},
+      "ledge_south": {"from_x": 8282, "top_standing": 61, "bottom_standing": 42, "rise_run": 3},
+      "causeway": {"x": [8339, 8341], "standing": 42},
+      "beach": {"x": [8278, 8405], "standing": 42, "why": "the whole north wall at the water, so a player who falls from any ledge lands within a short swim of dry rock (swim fatigue: data/blackout.json surface)"},
+      "path_width": 3,
+      "shelf_thickness": 2,
+      "light_spacing": 16
+    },
+    "tunnel": {
+      "what": "from the beach's west end down into the Basin's east lip, a stair passage 3 wide inside the rock",
+      "z_centre": 2234,
+      "x_top": 8277,
+      "x_bottom": 8263,
+      "standing_top": 42,
+      "standing_bottom": 30,
+      "air_height": 4
+    },
+    "basin": {
+      "what": "F, the Basin: a dome over a glowing pool. Kyogre sleeps on the dais at the pool's heart, behind an invisible barrier cage; a causeway reaches the dais from the west lip, where the shrine, the second return and the catcher's pedestal stand",
+      "centre": [8242, 30, 2240],
+      "radii": [22.5, 36.0, 22.5],
+      "roughness": 1.5,
+      "pool": [8232, 20, 2230, 8252, 29, 2250],
+      "dais": [8237, 20, 2235, 8247, 29, 2245],
+      "dais_block": "minecraft:dark_prismarine",
+      "causeway": [8227, 20, 2239, 8236, 29, 2241],
+      "causeway_block": "minecraft:dark_prismarine",
+      "pool_lights_every": 3,
+      "skin": "deep"
+    }
+  },
+  "arches": {
+    "frame": "minecraft:dark_prismarine",
+    "sheet": "minecraft:tinted_glass",
+    "why": "every way out is the portals' arch back (tools/portals.py room_blocks: two jambs, a sheet three high, a lintel) so a player knows it on sight. Never gated (tools/portals.py:524)",
+    "list": [
+      {"id": "a", "room": "antechamber", "at": [8460, 200, 2213], "axis": "z", "click": [8461, 200, 2213]},
+      {"id": "d", "room": "tide_gate", "at": [8419, 97, 2250], "axis": "x", "click": [8419, 97, 2249]},
+      {"id": "f", "room": "basin", "at": [8226, 30, 2230], "axis": "z", "click": [8227, 30, 2230]}
+    ]
+  },
+  "lamps": {
+    "unlit": "minecraft:tinted_glass",
+    "lit": "minecraft:sea_lantern",
+    "plinth": "minecraft:dark_prismarine",
+    "why": "Calder's 'lamps that were lit before any of us were born' (data/coldwater_station.json): dark glass that becomes a sea lantern. The light IS the puzzle's state, so the galleries brighten as it is solved",
+    "list": [
+      {"id": "north", "lamp": [8447, 111, 2165], "plinth": [8447, 110, 2165], "click": [8447, 110, 2166]},
+      {"id": "east", "lamp": [8538, 122, 2240], "plinth": [8538, 121, 2240], "click": [8537, 121, 2240]},
+      {"id": "south", "lamp": [8447, 111, 2299], "plinth": [8447, 110, 2299], "click": [8447, 110, 2298]}
+    ]
+  },
+  "wheel": {
+    "click": [8440, 112, 2246],
+    "decor": [[8439, 112, 2246, "minecraft:chiseled_stone_bricks"], [8439, 113, 2246, "minecraft:dark_prismarine"]],
+    "slice_ticks": 10,
+    "why": "the Tide Wheel: one click drains the hall in slices (a fill per layer, top first), then opens the panel and the window. Commands, not fluid physics, so it is exact and auditable (data/gym_interiors.json Erika's drain)"
+  },
+  "pedestals": {
+    "plinth": "minecraft:chiseled_stone_bricks",
+    "list": [
+      {
+        "id": "divers_cache",
+        "name": "The Diver's Cache",
+        "container": "pedestal",
+        "click": [8449, 110, 2298],
+        "plinth": [8449, 110, 2299],
+        "requires": [],
+        "contents": [
+          {"item": "cobblemon:dive_ball", "count": 5, "verification": "assets/cobblemon/models/item/dive_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"},
+          {"item": "cobblemon:water_stone", "count": 1, "verification": "assets/cobblemon/models/item/water_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"}
+        ],
+        "message": "Wedged behind the lamp, wrapped in oilcloth: a diver's spare kit."
+      },
+      {
+        "id": "lamps_gift",
+        "name": "The Lamps' gift",
+        "container": "pedestal",
+        "click": [8431, 97, 2247],
+        "plinth": [8431, 97, 2248],
+        "requires": [],
+        "contents": [
+          {"item": "cobblemon:damp_rock", "count": 1, "verification": "assets/cobblemon/models/item/damp_rock.json in Cobblemon-fabric-1.8.0+1.21.1.jar"}
+        ],
+        "message": "Where the water stood longest, a stone that never quite dries."
+      },
+      {
+        "id": "catchers",
+        "name": "The catcher's pedestal",
+        "container": "pedestal",
+        "click": [8229, 30, 2250],
+        "plinth": [8228, 30, 2250],
+        "requires": ["cobblers:legendary/kyogre/caught", "cobblers:flag/champion_cleared"],
+        "contents": [
+          {"item": "mega_showdown:blue_orb", "count": 1, "verification": "assets/mega_showdown/models/item/blue_orb.json, data/mega_showdown/mega_showdown/effect/blue_orb.json and battle_form/kyogre_primal.json (its effect is mega_showdown:blue_orb) in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"}
+        ],
+        "message": "In the dais's seam, cold as the deep: a Blue Orb.",
+        "requires_why": "the design: the catcher's pedestal requires the catch. champion_cleared is added on the Red Orb's precedent (data/rewards.json groudon_red_orb: Primal before the League would be the answer to it, not an answer); a catcher with eight badges is told to come back as Champion. That holding the orb triggers Primal Reversion is ASSUMED (E6)"
+      }
+    ],
+    "contents_owner": "trainer-balance-designer: the builder's placeholders from the design's section 5 list (Dive Balls and a Water Stone; a held item for a rain team; the Blue Orb). Every id is checked against the jar named in its verification",
+    "why": "KYOGRE_CAVE.md section 5: a claim pedestal per player (the portals' vault pattern: a click and a per-player advancement, no container) until an instanced-chest mod exists; `container` is the switch"
+  },
+  "gate": {
+    "dive_tag_from": "data/portals.json gates.dive.tag (the arch's touch already refuses a player without it)",
+    "flags": ["gym8_cleared"],
+    "advancement": "cobblers:kyogre_cave/attuned",
+    "sounded_advancement": "cobblers:kyogre_cave/sounded",
+    "tags": {"sounded": "cobblers.kyogre.sounded", "open": "cobblers.kyogre.open", "caught": "cobblers.kyogre.caught"},
+    "tags_why": "the station's dialogue reads these (tools/compile_dialogue.py player_tag); the advancements are the record and the gate. Each tag is added in the same function that grants its advancement",
+    "why": "the owner, 2026-10-06 (KYOGRE_CAVE.md section 9 answers 2 and 3): gym8_cleared plus Dive plus the station's quest; an unqualified friend cannot come in. The crossing checks all three on every click, and the keeper sends out anyone in the cave who lacks the flag or the attunement"
+  },
+  "quest": {
+    "quest_id": "coldwater_station",
+    "field": "quest.coldwater_station.two_sleepers",
+    "why": "the design names a quest `coldwater_kyogre`; the station's three conversations already compile under the quest `coldwater_station` (tools/coldwater_station.py QUEST), so its one new field lives there. Its stages are topics in data/coldwater_station.json researchers (visible_when, effects)"
+  },
+  "kyogre": {
+    "species": "kyogre",
+    "level": 60,
+    "level_why": "the 8-badge band's bound (data/legendaries.json caps: 60 at eight badges; strictly over the thrower's cap breaks free): the highest catchable level at this gate (the owner: 'do gym 8 yeah')",
+    "properties": ["no_ai"],
+    "tag": "cobblers.kc.kyogre",
+    "spot": [8242, 30, 2240],
+    "yaw": 90.0,
+    "cage": [8237, 30, 2235, 8247, 33, 2245],
+    "cage_why": "Mega Showdown 1.0.2's data/cobblemon/species_additions/kyogre.json gives a hitbox 5.8 wide and 2.1 high (read 2026-10-13 in the snapshot jar); at the widened size roll's 1.4 that is 8.1 by 2.9, inside an 11 by 4 cage. Whether spawnpokemonat applies the roll is E5. The cage is barrier in AIR over the dais (barrier in water would show as a hole), so it is invisible",
+    "met_advancement": "cobblers:legendary/kyogre/met",
+    "caught_advancement": "cobblers:legendary/kyogre/caught",
+    "caught_advancement_why": "the design's names. tools/kyogre_cave.py refuses to emit them if data/legendaries.json ever carries a kyogre record, whose pack would ship the same advancement",
+    "basin_box": [8218, 20, 2216, 8266, 67, 2264],
+    "catch_radius": 30,
+    "awake_without_player_passes": 2,
+    "respawn_absent_passes": 15,
+    "respawn_why": "a new sleeper is laid down once the old one has been gone for 15 passes of 40 ticks (30 s: the design's 'after the Basin has had no battle for 30 s', measured from the catch instead of from a battle, which no command can see)"
+  },
+  "keeper": {
+    "period_ticks": 40,
+    "objective": "kc.s",
+    "rescue_margin": 64,
+    "rescue_why": "a player anywhere in the reserve box below the cave's lowest carved cell (a dig through the shell: survival players are put in adventure mode inside, but an op can do anything) is put back in the antechamber, as cobblers:portals/tick rescues its rooms",
+    "adventure": true,
+    "adventure_why": "the puzzles are blocks (the glass door, the barrier cage, the lamps) and the water is held by walls: a pickaxe solves the Tide Gate and floods the hub. The dungeon engine's rule (data/dungeons.json engine.adventure) for the same reason; a survival player is switched to adventure inside the cave and back to survival anywhere else, by a tag only this pack adds"
+  },
+  "set_pieces": {
+    "why": "KYOGRE_CAVE.md section 3 'Dangers': no natural spawning is relied on (the void biome, E1); each is a claimed wild Pokemon summoned by macro, re-armed when a player comes near after the cave has stood empty. Species, levels and counts are trainer-balance-designer's; these are the design's proposed roster. The alphas carry no_ai: an alpha without it is re-levelled by Cobblemon's AlphaLevelMatchingSensor to the nearest player's highest +4..+20 (data/entei_boss.json level_why), which would push a ledge alpha past every cap",
+    "near_radius": 48,
+    "clear_radius": 6,
+    "absent_passes": 2,
+    "slots": [
+      {"id": "sounding_tentacruel", "species": "tentacruel", "level": 52, "properties": [], "at": [8469, 165, 2213], "room": "sounding"},
+      {"id": "sounding_lanturn", "species": "lanturn", "level": 54, "properties": [], "at": [8469, 135, 2213], "room": "sounding"},
+      {"id": "north_lumineon", "species": "lumineon", "level": 54, "properties": [], "at": [8447, 102, 2214], "room": "galleries"},
+      {"id": "north_relicanth", "species": "relicanth", "level": 56, "properties": [], "at": [8445, 102, 2184], "room": "galleries"},
+      {"id": "south_huntail", "species": "huntail", "level": 55, "properties": [], "at": [8447, 102, 2262], "room": "galleries"},
+      {"id": "south_gorebyss", "species": "gorebyss", "level": 55, "properties": [], "at": [8449, 102, 2286], "room": "galleries"},
+      {"id": "trench_sharpedo", "species": "sharpedo", "level": 56, "properties": [], "at": [8370, 38, 2240], "room": "trench"},
+      {"id": "trench_wailord", "species": "wailord", "level": 58, "properties": [], "at": [8320, 38, 2240], "room": "trench"},
+      {"id": "alpha_gyarados", "species": "gyarados", "level": 58, "properties": ["alpha=true", "no_ai"], "at": "ledge_north:8352", "room": "trench"},
+      {"id": "alpha_kingdra", "species": "kingdra", "level": 60, "properties": ["alpha=true", "no_ai"], "at": "ledge_south:8320", "room": "trench"},
+      {"id": "alpha_dhelmise", "species": "dhelmise", "level": 62, "properties": ["alpha=true", "no_ai"], "at": [8259, 30, 2244], "room": "basin"}
+    ]
+  },
+  "arch_reef": {
+    "what": "the overworld side: a weathered reef of sea-floor rock the sealed arch (data/coldwater_station.json portal, built by R18CW) stands in, so it reads as a relic half-swallowed by the sea floor and not as a built portal. Written AROUND the arch only: never an apron, jamb, sheet, lintel, click or stand cell, never the two columns in front of the sheet",
+    "radius": 7,
+    "back_rise": 4,
+    "side_rise": 2,
+    "blocks": ["minecraft:prismarine", "minecraft:tuff", "minecraft:gravel", "minecraft:mossy_cobblestone", "minecraft:dark_prismarine", "minecraft:cobbled_deepslate"],
+    "seed": 1844,
+    "why": "the owner, 2026-10-12: a mouth that reads as engineering (a cut trench, a timber frame) is rejected; a relic must be weathered and part of the rock. The arch's own blocks are Coldwater's and unchanged; the reef is this pack's. Its top never reaches the lintel's course, so the water over the lintel stays at least data/portals.json rules.min_water_above, and every column stays inside the coldwater_crossing ferry lane sea_life excludes (tools/coldwater_station.lane_problems, CALLED)"
+  },
+  "messages": {
+    "sounded": "The sheet is cold enough to burn. Under your hand, something turns over in its sleep.",
+    "not_yet": "The arch is cold and dark, and the sheet will not give. Something beyond it is very large, and asleep.",
+    "not_attuned": "The sheet stirs under your hand, then stills. It is waiting for something. Calder might know what.",
+    "enter": "The sheet gives like water, and the cold closes over you.",
+    "leave": "The sheet lets you through, and the open sea takes you back.",
+    "lamp_lit": "The lamp catches. Its light runs along the water.",
+    "lamp_already": "This lamp is already burning.",
+    "lamps_all": "Three lamps burn. Somewhere above, a wheel creaks against its pin.",
+    "wheel_dark": "The wheel will not turn in the dark.",
+    "wheel_done": "The hall is already empty.",
+    "wheel_turn": "The wheel turns. Below the glass, the water begins to fall.",
+    "drained": "The Tide Gate stands empty. The way down is open.",
+    "wake_caught": "It does not stir for you again.",
+    "wake_live": "The water is already moving.",
+    "wake_absent": "The pool is still. Whatever slept here has not come back yet.",
+    "wake": "The pool heaves. Kyogre opens its eyes.",
+    "sleep": "The pool settles. Kyogre sinks back into sleep.",
+    "caught": "The sea remembers its shape.",
+    "unqualified": "The cold pushes you back towards the arch. This place is not open to you.",
+    "rescued": "The cave closes around you again.",
+    "claimed": "You have taken what was here.",
+    "claim_locked": "It will not come loose. Not yet.",
+    "claim_failed": "Your pack is full; it stays where it is."
+  },
+  "deviations": [
+    "The cave's place: (0, 2048) is inside the dungeon engine's slot rows (data/dungeons.json engine.slots, added after the design); the cave is at x 8218..8539, z 2164..2302, outside the overworld map like Entei's rooms.",
+    "The hub is dry air, not flooded, and the Sounding reaches it through a flooded U-bend 8 high that rises through a pool in the hub's floor. A water column cannot stand over an air room, and the drained Tide Gate must not sit beside open water.",
+    "Every flooded passage is 8 high (the design's galleries were 6). The water ladder (tools/blackout_pack.py water/tick) counts a player as deep only with 5 water blocks above the eyes; under a lower roof it sees no depth and gives Dive nothing, so a 6-high flooded gallery is vanilla air for everyone. Each flooded gallery also has an air bell in its roof midway.",
+    "The Sounding is 100 deep (y100-199), not 77, because the hub sits above its foot; its top is flush with the antechamber's floor so a swimmer can climb out.",
+    "The Race rises from the hub to its shrine (the design had it falling away), so its stream drains into a sump instead of onto the hub's floor; the hard way up is the way to the lamp.",
+    "The Tide Gate's door is a glass panel in the hub's floor over the flooded hall, with a stair inside; its west wall is a glass window onto the Trench. The wheel drains the hall, then opens both. The design's floor stair to the Trench is the window's passage.",
+    "Rask's Dive Ball gift at stage 1 is not built: a dialogue gift needs an npc_grant record in data/rewards.json and a quest in data/quests.json; the Diver's Cache gives Dive Balls instead.",
+    "Kyogre is not yet a record in data/legendaries.json: tools/legendaries.py refuses an unknown kind (KINDS), and the kind `pocket_basin` is step 7 of the design. Its level and gate live here; this tool refuses to run if a kyogre record appears there.",
+    "The 5-minute 'no battle' re-sleep is not built: no command can see whether a Pokemon is in battle. Kyogre sleeps again when no player has been in the Basin for two passes, which never interrupts a fight.",
+    "The catcher's pedestal also requires champion_cleared, on the Red Orb's precedent."
+  ]
+}

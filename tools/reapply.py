@@ -139,6 +139,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # (tools/coldwater_station.py, data/coldwater_station.json): block functions, two instrument displays
                 # and three researchers, run by R18CW. Its jetty and boatman are the ferry's (R16H, R17F)
                 "cobblers_coldwater_station",
+                # 2026-10-13: the Kyogre cave behind Coldwater's sealed arch (tools/kyogre_cave.py, data/kyogre_cave.json):
+                # the runtime (the crossing, the keeper, the puzzles, the wake, a capture callback) and, split off by
+                # tools/pack_split.py, its one-shot geometry in cobblers:pocket and the arch's reef, run by R18KC
+                # after R16P (the dimension) and R18CW (the arch); world-local below
+                "cobblers_kyogre_cave",
+                "cobblers_kyogre_cave_build",
                 # 2026-10-09: the Merian Ice Lodge (tools/ice_lodge.py, data/ice_lodge.json): the Merian cirque's frozen tarn,
                 # its shelters, lodge, racks and gear, and the holekeeper's class and dialogue; one block function and one
                 # NPC, run by R18IL
@@ -511,6 +517,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_dungeons",
                # 2026-10-12: the dungeons' one-shot shells and rips, beside the pack they were split from
                "cobblers_dungeons_build",
+               # 2026-10-13: the Kyogre cave's keeper SPAWNS a legendary and set pieces, sets game modes and teleports
+               # players on its own: never global; its geometry beside it
+               "cobblers_kyogre_cave", "cobblers_kyogre_cave_build",
                # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
                "cobblers_key_ball",
                # 2026-10-09: closes the Waystones recipes; global would close them in the live world too
@@ -967,6 +976,10 @@ def prepare_jobs(a):
     # Coldwater Station (2026-10-05): its builder's siting guards fail the job; its independent audit
     # (tools/coldwater_station_audit.py) runs after sea_floor:build below, so it replays the sea packs it must keep clear
     add("coldwater_station:build", "coldwater_station.py", "build", *src)
+    # the Kyogre cave behind the station's arch (data/kyogre_cave.json): its builder fails closed on water beside air, a
+    # flooded passage the ladder cannot call deep, the Trench reachable before the Tide Gate is solved, a cell with no
+    # way back to a return click, its pocket box meeting another pocket user, or data/world_probes.json drifting
+    add("kyogre_cave:build", "kyogre_cave.py", "build", *src)
     add("sea_drift:build", "sea_drift.py", "build", *src)
     add("frostpeak_summit:build", "frostpeak_summit.py", "build", *src)
     add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
@@ -2818,6 +2831,14 @@ def steps(with_spawns=False):
     import coldwater_station
     out.append(("R18CW", "Coldwater Station, the Kyogre research station (data/coldwater_station.json)",
                 coldwater_station.placement_steps()))
+    # the Kyogre cave (2026-10-13, tools/kyogre_cave.py): after R16P, whose pack registers cobblers:pocket, and R18CW,
+    # whose arch's touch calls the crossing. Every block part (solids, then air, then water: each holds its own chunks in
+    # the pocket), the arch's reef in the overworld, the click entities' look-then-act chain with its count read back,
+    # then the build state (#built opens the keeper's writes). Kyogre and the set pieces need no step: the keeper lays
+    # them down when a player comes near
+    import kyogre_cave
+    out.append(("R18KC", "the Kyogre cave behind Coldwater's sealed arch, in cobblers:pocket (data/kyogre_cave.json)",
+                kyogre_cave.placement_steps()))
     # the Merian Ice Lodge (2026-10-09, tools/ice_lodge.py): the tarn, shelters, lodge, racks and gear held in a forceload,
     # then the holekeeper (her class loads at boot from cobblers_ice_lodge). On the cirque floor south of the hut's yard
     import ice_lodge
