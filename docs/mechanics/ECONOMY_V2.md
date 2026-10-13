@@ -521,3 +521,20 @@ Each step is one experiment or one content task.
 - **U10:** Pasture Loot's real drop rates (EXP-061 step 9).
 
 None of section 2.2 or 3.2's hours is a fact until U1 and U3 have run.
+
+## 7. The owner's answers (2026-10-13)
+
+| Q | Answer |
+|---|---|
+| E1 | Yes: cobble at its spine worth, not 1 P a stack. |
+| E2 | Yes: two ways to sell. |
+| E3 | Open. The owner: no allowance if it is what limits players. Explained back: it caps only the Trading Post (non-ore sales); the bank's ores and Nether materials stay uncapped. Awaiting the answer. |
+| E4 | Remove the Master Ball money line; the barter is far cheaper than 30: **about 2 netherite ingots** ("30 is too steep, it should be more accessible"). |
+| E5 | Yes: Focus Sash, Expert Belt, Eviolite, Assault Vest and the Ability Capsule to barter. |
+| E6 | Arena trophies are not sellable. |
+| E7 | Open: the owner asked which lines. They are 13 TMs (Mega Drain, Giga Drain at badge 4; Toxic, Poison Jab, Poison Fang, Poison Gas at 5; Psywave, Calm Mind, Skill Swap at 6; Overheat, Fire Blast at 7; Fissure, Earthquake at 8) and 17 Silvally memories (badge 5), held because their income-gate price ($35,000 to $134,400+) is above the Master Ball's $27,000 floor. |
+| E8 | Trading Posts at the town squares that already have markets, and at ports such as Pacifidlog. |
+| E9 | Oak gives the trainer card. |
+| E10 | No co-op pooling of sales. |
+| E11 | `worth_p` is fine. |
+| E12 | Yes: measure the ambient trainers' pay first. |
