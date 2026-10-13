@@ -58,12 +58,16 @@ def test_bank_check_is_clean_on_the_committed_data():
     assert n > 0
 
 
-def test_there_is_an_exchange_and_the_master_ball_is_netherite():
+def test_there_is_an_exchange_and_no_top_tier_item_is_on_it_for_money():
+    # ECONOMY_V2 E4 and E5 (2026-10-13): the Master Ball, the Capsule and four held items left the money exchange for
+    # a barter (data/direct_trades.json). Without this the exchange could regain a dollar line for one of them
     lines = {(rec["id"], it["item"]): it for _k, rec, it in _lines()}
-    assert len(lines) >= 10, "the exchange shrank to %d lines" % len(lines)
-    mb = lines[("northlight_station", "cobblemon:master_ball")]
-    assert mb["exchange_for"] == {"item": "minecraft:netherite_ingot", "count": 30}
-    assert mb["price"] == 30 * bank.prices(DOC)["minecraft:netherite_ingot"]
+    assert len(lines) >= 5, "the exchange shrank to %d lines" % len(lines)
+    barter_only = set(DOC["exchanges"]["barter_only"]["items"])
+    assert barter_only == {"cobblemon:master_ball", "cobblemon:ability_capsule", "cobblemon:focus_sash",
+                           "cobblemon:expert_belt", "cobblemon:eviolite", "cobblemon:assault_vest"}
+    assert not [i for (_c, i) in lines if i in barter_only]
+    assert bank.barter_only_problems(DOC, MDOC) == []
 
 
 def test_every_tier_holds_both_wage_rules():
@@ -95,7 +99,7 @@ def test_a_price_off_by_one_dollar_is_named():
 
 def test_an_exchange_on_the_critical_path_is_named():
     m = copy.deepcopy(MDOC)
-    c, _it = _line(m, "northlight_station", "cobblemon:master_ball")
+    c, _it = _line(m, "fossick", "cobblemon:razor_claw")
     c["path"] = "critical"
     assert any("on the price curve" in p for p in _ex(DOC, m))
 
@@ -107,12 +111,21 @@ def test_a_reward_the_bank_buys_back_is_named():
     assert any("oval_stone" in p and "round trip" in p for p in _ex(d, MDOC))
 
 
-def test_a_master_ball_cheaper_than_the_capsule_is_under_the_ball_floor():
+def test_a_master_ball_money_line_is_refused_whatever_its_price():
+    # E4: the ball kind and its floor are retired; a Master Ball on a counter's stock is refused as barter-only, and a
+    # "ball" exchange line as an unknown kind. Without this the removed $27,000 line could come back unnoticed
     m = copy.deepcopy(MDOC)
-    _c, it = _line(m, "northlight_station", "cobblemon:master_ball")
-    it["exchange_for"]["count"] = 5
-    it["price"] = 5 * bank.prices(DOC)["minecraft:netherite_ingot"]
-    assert any("master_ball" in p and "ball floor" in p for p in _ex(DOC, m))
+    c, _it = _line(m, "fossick", "cobblemon:razor_claw")
+    c["stock"].append({"id": "master_ball", "item": "cobblemon:master_ball", "name": "Master Ball", "count": 1,
+                       "price": 27000, "kind": "ball", "exchange_for": {"item": "minecraft:netherite_ingot", "count": 30}})
+    out = _ex(DOC, m) + bank.barter_only_problems(DOC, m)
+    assert any("master_ball" in p and "barter-only" in p for p in out)
+    assert any("master_ball" in p and "kind 'ball'" in p for p in out)
+
+
+def test_the_ball_floor_is_retired():
+    assert "ball" not in bank.exchange_floors(DOC, MDOC)[0]
+    assert "ball" not in DOC["exchanges"]["kinds"] and "ball" not in DOC["exchanges"]["floors"]
 
 
 def _held_lines(m):
@@ -146,16 +159,14 @@ def test_a_held_item_floor_with_every_line_income_gated_fails_closed_and_is_not_
     assert any("floor for held_item cannot be read" in p for p in _ex(DOC, m))
 
 
-def test_the_ball_floor_still_counts_income_gated_lines_until_the_owner_decides_r4():
-    # R4 (exclude income-gate lines from the Master Ball floor) is the OWNER's decision and is not taken: the ball
-    # floor still reads every non-exchange line, gated or not. An income-gated $35,000 line therefore lifts the ball
-    # floor above the $27,000 Master Ball and is named -- which is why Fossick's dearer TMs stay held. When the owner
-    # takes R4 this test must change with the rule, not be deleted.
+def test_an_income_gated_line_no_longer_lifts_a_ball_floor():
+    # was: the ball floor read income-gated lines too (R4, open) and named the $27,000 Master Ball under a $35,000 line.
+    # The Master Ball has no money line since E4 (2026-10-13), so nothing anchors that floor and nothing is named; the
+    # held TM and memory lines (E7, open) stay held in data/markets.json held_stock until the owner answers
     m = copy.deepcopy(MDOC)
     _c, it = _line(m, "viltri_quay", "cobblemon:mystic_water")
     it.update(price=35000, price_rule="income_gate")
-    assert bank.exchange_floors(DOC, m)[0]["ball"][0] == 35000
-    assert any("master_ball" in p and "ball floor" in p for p in _ex(DOC, m))
+    assert _ex(DOC, m) == []
 
 
 def test_an_evolution_item_under_the_stone_price_is_named():
@@ -352,3 +363,33 @@ def test_the_barter_answer_a_merchant_offer_holds_only_item_price_and_stock():
     fields = re.findall(r"^\s+private (?:final )?([\w.$]+) (\w+);$", out, re.M)
     assert sorted(fields, key=lambda f: f[1]) == [("net.minecraft.class_1799", "item"),
                                                   ("java.math.BigInteger", "price"), ("int", "stock")]
+
+
+# ================================================================================================ ECONOMY_V2 (2026-10-13)
+def test_the_written_bank_holds_no_cobblemon_item_and_one_is_named():
+    # R-V2-3 (docs/mechanics/ECONOMY_V2.md 2.1): without it a dish or PP Max the base bought comes back through the file
+    prices = bank.prices(DOC)
+    assert [i for i in prices if i.startswith("cobblemon:")] == []
+    assert bank.namespace_problems(prices) == []
+    bad = dict(prices, **{"cobblemon:poke_cake": 120})
+    assert any("cobblemon:poke_cake" in p and "R-V2-3" in p for p in bank.namespace_problems(bad))
+
+
+def test_a_bulk_item_over_the_unit_floor_is_not_bankable():
+    # R-V2-1: 20,000 an hour at the $1 floor is $20,000 an hour against 1.5 x leg 1's fight hour (about $1,512 at the
+    # committed income and 4 hours); the committed buys are all under it
+    assert bank.unit_floor_problems(DOC, MDOC) == []
+    d = copy.deepcopy(DOC)
+    row = next(b for b in d["buys"] if b["item"] == "minecraft:coal")
+    row["rate_per_hour"] = 20000
+    assert any("minecraft:coal" in p and "R-V2-1" in p for p in bank.unit_floor_problems(d, MDOC))
+    d = copy.deepcopy(DOC)
+    next(b for b in d["buys"] if b["item"] == "minecraft:ancient_debris")["rate_per_hour_upper"] = 10 ** 6
+    assert any("ancient_debris" in p for p in bank.unit_floor_problems(d, MDOC))
+
+
+def test_the_four_feathers_are_never_bought():
+    # the four LumyMon feathers are quest keys (ECONOMY_V2 2.1): never_buy names them, the written file lacks them
+    never = {n["item"] for n in DOC["never_buy"]}
+    assert {"lumymon:glacier_feather", "lumymon:thunder_feather", "lumymon:ember_feather", "lumymon:soul_feather"} <= never
+    assert not [i for i in bank.prices(DOC) if i.startswith("lumymon:")]
