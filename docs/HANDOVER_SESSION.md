@@ -1,33 +1,60 @@
-# Handover: session 74260a, 2026-10-12 evening (far past the context line)
+# Handover: session 44e927, 2026-10-13 morning (far past the context line, at the owner's request)
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
 ## 1. Branch
-`build/2026-10-12-sanctuaries` (draft PR, stacked on #135 `build/2026-10-12-overnight` head fca0a76, which is OPEN)
-in worktree `.claude/worktrees/night-shift-engine-gym-9b76f2`. #133 and #134 are merged to main. Merge #135 first,
-then this one (retarget it to main if GitHub deletes #135's branch on merge).
+`build/2026-10-13-weather-trio` in worktree `.claude/worktrees/night-shift-engine-gym-9b76f2`, local only, NO PR yet.
+It stacks on #136 (`build/2026-10-12-sanctuaries`, head d685aedfda153fea6eb69dd606ac6c3a12e629db), which stacks on
+#135 (`build/2026-10-12-overnight`, head fca0a767d97be3c642c3eeca4aa4858959dac028). `git fetch --prune` and re-read
+both heads before quoting them (the owner merges mid-session). Per the owner's rule (memory: one-big-pr-per-batch),
+hand this over as ONE integration branch onto main, one draft PR.
 
 ## 2. Where it stopped
-- **Staging is UP at 12G** (terminal tab "staging server 12G"), installed from prepare 238/238 at bff8baf, applied,
-  build packs STRIPPED (held in `cobblers-server-retired/stripped_20261012_193652`). Idle live heap 5.66 GB.
-- The cycle for any next install: snapshot to D:, prepare, stop, install (puts build packs back), boot 24G with the
-  watchdog off, run, stop, watchdog 60000, `reapply.py strip`, boot 12G, check twice, read back.
-- Open small items: the block outside Hoarfrost Hollow's mouth (6722, 100, 1348) is not air (probably snow); the
-  Scar Tarn's water wards are unverified (look in the water with a player there); TM_POWER_GATE.md section 9's
-  table is off by one at badges 5 and 6.
+Merged on the branch tonight, none of it installed or seen in game:
+- Rayquaza's sky (R14R), Kyogre's cave (R18KC), the six seas' and the Nether's balance pass, the seas' second rares.
+- Hank and Lena: world-scoped quest fields in `tools/compile_dialogue.py` (175 of 175 compile), seats (R17N, R18CH),
+  the crushed house (R16CH, `tools/crushed_house.py`).
+- The dungeon draw (31 rips, `data/dungeon_rips.json`, `tools/dungeon_rips.py`; R16DR must be re-applied).
+- R9F no longer places Oak, the Route 4 packer or Maren a second time (`npc_placed_by`).
+- Independent audits: `tools/kyogre_rayquaza_audit.py` (47 pass, 1 strict xfail: the cage, section 3);
+  the draw's audit (`tools/dungeon_draw_audit.py`) was RUNNING when this was written: merge it if it reported.
+- Economy v2 DESIGN only: `docs/mechanics/ECONOMY_V2.md` (E1-E12 await the owner).
+- Mod update audit: `docs/research/COBBLEVERSE_COMPATIBILITY.md` "Update audit, 2026-10-13" (22 UPDATE, 14
+  UPDATE-CAREFUL, 10 HOLD); nothing downloaded: each file needs the owner's yes.
+
+Known red tests: `test_coldwater_station_audit::test_built_pack_passes_every_check` (built-pack stub rule owed a
+rewrite, recorded by the Kyogre builder); four ash_bell `lure` cases in `test_dungeon_audit` and one vault-budget text
+case in `test_dungeon_kit3` (both red at 6249332e, before the draw). The dungeon suites' full run was in progress
+(`.scratch/dg.txt`). Contracts: 76 pass, C3 and C14 xfail.
+
+Staging: last installed from prepare 238/238 at bff8baf (2026-10-12), build packs stripped, 12G. Next cycle: snapshot
+to D:, prepare, stop, hold the bank file, install, boot 24G watchdog off, `reapply.py run` (new steps include R14R,
+R18KC, R16CH, R18CH, R16DR re-apply, R9F), stop, watchdog 60000, `strip`, boot 12G, read back
+(`npc_seats.py verify`, `presence_audit --only extra`, the per-place verify commands). A fresh session should do it.
 
 ## 3. Waiting on the owner
-- Sealed-chamber markers (a visible cairn/sealed door + sign on every plug): proposed, not built.
-- Which places feel crowded (the owner wants more empty space, not a bigger map).
-- The world tree (B then C, WORLD_TREE_PLAN.md), Kyogre/Rayquaza: later.
-- Gible has no wild home again (K1 removed); confirm the antechamber species' removal.
+- Economy E1-E12 (`ECONOMY_V2.md` section 6). The owner's 64 cobble = $100 is ~8x the spine (estimate).
+- Which mod updates to download (per file; Cobblemon 1.8.2 moves in lockstep with rctapi 0.16.2, capturexp has no
+  1.8.2 build, CobbleDollars Beta-6.1 renames the bank file, tm_megadrain is gone).
+- Kyogre's cage: a player who logs out on the dais can be sealed in barrier. The audit's two properties contradict at
+  Kyogre's own spot. Recommended: a rejoin eject (leave_game stat) plus the audit excluding the sleeper's own cells.
+- Dungeon gates built as the roster's "proposed": gym6 (Field of Swords), champion (Crucible, Dragonspiral).
+- Bands 5-6 are too hard (typical win 0-54% / 0-35%; band 4 is 52-77%): a per-dungeon retune by
+  trainer-balance-designer, on the owner's go.
+- Nether rips: unsited (no heightmap; needs the NS1 oracle world). Whether the Nether is a Nuzlocke zone (declared
+  not-zones pending).
+- The crushed house lot (x1512-1520 z5254-5262) is the builder's choice; the two other damaged homes are not built.
+- Older: sealed-chamber markers; Hoarfrost Hollow's mouth block (6722, 100, 1348); Scar Tarn water wards.
 
 ## 4. Do not rediscover
-- Datapack functions stay parsed in heap; strip build packs after every apply (memory: apply-heap-24g).
-- Snapshots go to D:\cobblers-snapshots, sha256-verified (memory: snapshots-on-d-drive).
-- presence_audit's per-place probes run under `--only extra`; in its --out file a pass is "ok" in column 4.
-- Agent branches started before another agent's merge conflict in data/caves.json, data/world_probes.json and the
-  roster: resolve structurally (load each side, take each side's own records), never by hand.
+- A record a generator splices (route4_events.py -> rewards.json) is edited in the generator, never by hand: the
+  splice test compares bytes.
+- `tests/test_system_contracts.py` takes 8-10 minutes alone; run it in the background, never inside a 10-minute
+  foreground call together with other suites.
+- `python tools/spawn_tiers_audit.py --pack <scratch>` after `compile_spawns.py --out <scratch>` tests the real tiers
+  without touching build/.
+- Structural merges of data/world_probes.json and data/system_contracts.json (load the three stages, take each
+  side's own records, keep indent 2) worked four times tonight.
 
 ## 5. Cost
 `python tools/session_cost.py`: this session ran far past the hand-over line at the owner's request.
