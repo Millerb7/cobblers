@@ -47,7 +47,7 @@ R18KC, R16CH, R18CH, R16DR re-apply, R9F), stop, watchdog 60000, `strip`, boot 1
 - Kyogre's cage: a player who logs out on the dais can be sealed in barrier. The audit's two properties contradict at
   Kyogre's own spot. Recommended: a rejoin eject (leave_game stat) plus the audit excluding the sleeper's own cells.
 - DECIDED 2026-10-13: the 13 trail rips go; every region gets a rip; badge-gated rips stay (rip_the_rift); Nether
-  dungeons draw from overworld rips (no Nether rips); Kyogre's rejoiners are moved out. Agents building these and
+  dungeons draw from overworld rips (no Nether rips); Kyogre's rejoiners are moved out (BUILT, merged 7bbd4d48). Agents building the rest and
   economy B1/B3/B5 were running at hand-over. Economy E3 (allowance) and E7 (13 held TMs + 17 memories) still open.
 - Dungeon gates built as the roster's "proposed": gym6 (Field of Swords), champion (Crucible, Dragonspiral).
 - Bands 5-6 are too hard (typical win 0-54% / 0-35%; band 4 is 52-77%): a per-dungeon retune by
