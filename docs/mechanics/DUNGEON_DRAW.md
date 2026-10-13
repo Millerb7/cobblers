@@ -173,6 +173,18 @@ from every coordinate in `data/` (the nearest is 150 or more away), 60 or more f
 and town footprint, inside its region, 300 or more from the other region rips. Checked by `python tools/dungeon_rips.py check`
 and `tests/test_dungeon_rips.py`; the numbers are in each record's `ground` and `siting`.
 
+**Tests run on the build (simulator and static only; the builder's, not the independent audit of the draw).**
+`tests/test_dungeon_draw.py` 16 passed and `tests/test_dungeon_rips.py` 13 passed (new); `tests/test_dungeon.py` 26 of 26 (in three runs, the last two re-running what each fix touched)
+(the `reapply_steps` count now reads the rips); the per-dungeon files `test_dungeon_{ash_bell,crucible,dragonspiral,
+field_of_swords,flooded_ruin,jungle,moth_cathedral,patriarch,soul_ossuary,starfall,street,warped_lab}.py` plus
+`test_dungeon_guide.py`, `test_rip_pack.py`, `test_player_guide_dungeons.py`, `test_id_authorship.py` all pass (the per-dungeon
+rip tests now read the dungeon's test rip from `data/dungeon_rips.json`; their gate assertions are the roster's);
+`tests/test_dungeon_independent_audit.py` 42 passed; `tests/test_dungeon_audit.py` 56 passed with the 2,135 per-spawn-site
+parametrisations deselected, of which four ash_bell `lure` cases fail on the commit before this work too (6249332e: the bait
+rework's tier lines no longer match the test's regex); `tests/test_dungeon_kit3.py` 41 passed and one failing, also before this
+work (a vault budget figure in DUNGEON_ROOMS.md); `tests/test_system_contracts.py -k dungeon` 7 passed; `tests/test_pack_split.py` (the R16DR placement stays build-only) passed, and the first 920 of the other 17 dungeon test files' 995 cases passed bar the kit3 one above (that run was stopped in `test_dungeon_resources.py`; `vault_one_of` and `setpieces` were partly run). Not run: the rest of
+`tests/test_dungeon_audit.py`, `test_dungeon_rooms.py`, `test_dungeon_sim.py` (thousands of cases, hours).
+
 **To prove on staging (not run; an experiment for whoever grades it).** After `prepare`, `install` and R16DR/R16DG: (1)
 `python tools/presence_audit.py --only extra` reads the `dungeon_rips` place (90 probes) and `dungeon_night_shift` present, so
 all 31 rips stand; (2) a player with a sigil clicks `rip_the_rift` at band 1: a dungeon of the five opens, the chat names it,
