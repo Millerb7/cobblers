@@ -71,7 +71,9 @@ BUCKETS = ("common", "uncommon", "rare", "ultra-rare")
 POSITIONS = {"grounded": "On land", "surface": "On the water's surface", "submerged": "Swimming underwater",
              "seafloor": "On the lake or sea floor"}
 BOX_KEYS = ("minX", "maxX", "minZ", "maxZ")
-KNOWN_CONDITIONS = set(BOX_KEYS) | {"canSeeSky", "timeRange", "isRaining", "minY", "maxY", "neededNearbyBlocks", "biomes"}
+KNOWN_CONDITIONS = set(BOX_KEYS) | {"canSeeSky", "timeRange", "isRaining", "minY", "maxY", "neededNearbyBlocks", "biomes",
+                                    "dimensions"}
+OVERWORLD = "minecraft:overworld"
 TIMES = ("day", "night")
 
 # Settlements whose label would give a discovery away. Every other data/towns.json town is labelled, and a town that
@@ -137,6 +139,11 @@ def condition_text(cond):
         if k not in KNOWN_CONDITIONS:
             raise SystemExit("compiled condition key %r is not one this page knows how to describe; add it to "
                              "tools/player_guide_map.py rather than letting the page misreport it" % k)
+    # tools/compile_spawns.py bind_dimension writes the overworld into every entry that names none (commit 3dc7c009); the
+    # map is the overworld, so that says nothing a player needs. Any other dimension would put an entry on the wrong map.
+    if "dimensions" in cond and cond["dimensions"] != [OVERWORLD]:
+        raise SystemExit("compiled dimensions %r is not the overworld; the map would place the entry wrongly"
+                         % (cond["dimensions"],))
     if cond.get("timeRange"):
         if cond["timeRange"] not in TIMES:
             raise SystemExit("timeRange %r is not day or night; the day/night rates would be wrong" % cond["timeRange"])

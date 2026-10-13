@@ -79,6 +79,22 @@
       q.addEventListener('input', run);
       run();
     });
+    // quick filters: <button data-fill="ground" data-fill-for="find"> types its value into that search box (a second
+    // press clears it), so a page can offer "Ground" and "Status" without a second filtering mechanism
+    var chips = all('button[data-fill]');
+    chips.forEach(function (b) {
+      var q = document.getElementById(b.getAttribute('data-fill-for'));
+      if (!q) return;
+      function sync() {
+        b.setAttribute('aria-pressed', String(q.value.trim().toLowerCase() === b.getAttribute('data-fill')));
+      }
+      q.addEventListener('input', sync);
+      b.addEventListener('click', function () {
+        var on = q.value.trim().toLowerCase() === b.getAttribute('data-fill');
+        q.value = on ? '' : b.getAttribute('data-fill');
+        q.dispatchEvent(new Event('input'));
+      });
+    });
   }
 
   document.addEventListener('DOMContentLoaded', function () { theme(); filter(); search(); });
