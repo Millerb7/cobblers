@@ -638,11 +638,19 @@
       "rewards": [
         {
           "id": "reward_pallet_locket",
-          "status": "item_component_syntax_pending_verification",
+          "status": "item_id_verified_name_and_lore_pending_verification",
           "intended_item": "Miracle Seed",
           "display_name": "Pallet Locket",
           "lore": "A green seed Lena wore for luck. It survived the Worldshift.",
-          "implementation_rule": "Do not emit the reward until the Cobblemon item id and Minecraft 1.21.1 custom-name and lore component syntax are verified."
+          "implementation_rule": "Do not emit the reward until the Cobblemon item id and Minecraft 1.21.1 custom-name and lore component syntax are verified.",
+          "contents": [
+            {
+              "item": "cobblemon:miracle_seed",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/miracle_seed.json in Cobblemon-fabric-1.8.0+1.21.1.jar (the same record data/rewards.json cites, opened 2026-10-04)"
+            }
+          ],
+          "contents_note": "The ITEM is emitted, plain. The display name and lore are NOT: the give command would carry them as item components (custom_name, lore) whose quoting has to survive a Molang single-quoted string, and no precedent in this repository has run one in game (2026-10-13). Until an in-game check, the Miracle Seed is unnamed; the Pallet Locket name is the design's, not yet delivered."
         }
       ],
       "actor_relocation": {
@@ -663,10 +671,19 @@
         "late_player": "Receives a short recap and may claim the reward without replaying the hundred-line monologue."
       },
       "generation_blockers": [
-        "Choose exact house, interior-safe, exterior-safe, Hank, and Lena markers.",
-        "Verify the Miracle Seed item id and Minecraft 1.21.1 item component syntax.",
-        "Implement a serialized world compare-and-set and idempotent actor relocation action.",
-        "Decide whether to implement the optional Patient Listener cosmetic; abrupt-close counting is not represented."
+        "Verify Minecraft 1.21.1 item component syntax for the Pallet Locket's custom name and lore (the Miracle Seed item id is verified and is delivered plain).",
+        "Decide whether to implement the optional Patient Listener cosmetic; abrupt-close counting is not represented.",
+        "Build the crushed house (data/crushed_house.json is the plan; nothing is built) and run the apply and the dialogue in a server."
+      ],
+      "resolved_blockers": [
+        {
+          "blocker": "Choose exact house, interior-safe, exterior-safe, Hank, and Lena markers.",
+          "resolved": "2026-10-13: data/npc_seats.json markers and relocating_seats, Hank's seat; the site is data/crushed_house.json"
+        },
+        {
+          "blocker": "Implement a serialized world compare-and-set and idempotent actor relocation action.",
+          "resolved": "2026-10-13: tools/compile_dialogue.py, the 'world' construct: a score on a fake player (compare_and_set_progression), a tag-then-teleport (relocate_actor); tools/reapply.py R18CH seats Lena by that score. Compiled, not run in game."
+        }
       ],
       "progression_field_refs": [
         "quest.evt_pallet_crushed_house.stage",

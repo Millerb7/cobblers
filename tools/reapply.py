@@ -2698,6 +2698,12 @@ def steps(with_spawns=False):
     import reveal_evidence
     out.append(("R17NE", "the mainline beats' evidence displays beside the tellers (data/reveal_evidence.json)",
                 reveal_evidence.placement_steps()))
+    # Lena of the Pallet crushed house (2026-10-13, data/npc_seats.json relocating_seats): an NPC like the settlement
+    # ones whose stand is the WORLD field's value, not a fixed seat -- the dialogue moves her once, for everyone, when
+    # the first player finishes her conversation. So the npc action carries a fifth element, the score selecting her
+    # later stand, and a re-run puts a Lena left at the other marker on the one the score names. After R17N (Hank)
+    out.append(("R18CH", "Lena at the crushed house marker the world field selects (data/npc_seats.json relocating_seats)",
+                [("npc", n) for n in npc_seats.relocating_placements()]))
     # the Old Orchard's keeper (2026-10-02, tools/old_orchard.py): an NPC like the settlement ones, placed over RCON
     # after the restart that loaded cobblers_dialogue's classes, on the ground R9SO's orchard stands on
     out.append(("R18SO", "the Old Orchard's keeper, Wenna Marlow (data/old_orchard.json npc)",
@@ -3150,11 +3156,24 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 # element: its yaw, applied below whether the NPC was just spawned or already stood there
                 conv, (x, y, z), cls = v[:3]
                 yaw = v[3] if len(v) > 3 else None
+                # a fifth element (npc_seats.relocating_placements): this NPC's stand follows a world scoreboard value.
+                # While the score holds the selector's value she stands at the selector's place; the first stand
+                # (x, y, z) is then where a Lena left behind by an earlier run would still be, and she is moved
+                first = None
+                if len(v) > 4:
+                    import npc_seats
+                    sel = v[4]
+                    if npc_seats.world_value(rc, sel["holder"], sel["objective"]) == sel["value"]:
+                        first = (x, y, z)
+                        (x, y, z), yaw = tuple(sel["at"]), sel["yaw"]
+                        print("   %s: %s is %d, so she stands at %s" % (cls, sel["holder"], sel["value"], (x, y, z)), flush=True)
                 rc("forceload add %d %d" % (x, z))
                 for _ in range(30):
                     if "passed" in rc("execute if loaded %d %d %d" % (x, y, z)):
                         break
                     time.sleep(1)
+                if first is not None:
+                    rc("forceload add %d %d" % (first[0], first[2]))
                 for c in stand_clear_commands(x, y, z):
                     rc(c)
                 # once: an NPC already standing there (a re-run) is left alone rather than doubled. A chunk's
@@ -3167,6 +3186,16 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                         there = True
                         break
                     time.sleep(0.5)
+                if not there and first is not None:
+                    # she is not at the stand the score names: is she still at her first one? Move her, never double her
+                    old = "@e[type=cobblemon:npc,x=%d,y=%d,z=%d,distance=..2,limit=1]" % first
+                    for _ in range(12):
+                        if "passed" in rc("execute if entity %s" % old):
+                            rc("tp %s %d.5 %d %d.5 %d 0" % (old, x, y, z, yaw))
+                            print("   %s: moved from %s" % (cls, first), flush=True)
+                            there = True
+                            break
+                        time.sleep(0.5)
                 if not there:
                     r = rc("spawnnpcat %d %d %d %s" % (x, y, z, cls))
                     print("   %s -> %s" % (cls, r[:120] or "(no reply)"), flush=True)
@@ -3180,6 +3209,8 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                     bad.append("%s: %s NPCs at %s, not 1 (is cobblers_dialogue installed, and was the server "
                                "restarted since?)" % (conv, n, (x, y, z)))
                 rc("forceload remove %d %d" % (x, z))
+                if first is not None and (first[0] >> 4, first[2] >> 4) != (x >> 4, z >> 4):
+                    rc("forceload remove %d %d" % (first[0], first[2]))
             elif kind == "props":
                 # a scene's interaction boxes: load the chunks, give their entities time to load (they load after the
                 # blocks), run the place function (it kills the old boxes, then summons), then count them. The place

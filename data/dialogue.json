@@ -559,6 +559,16 @@
           "node": "$cursor"
         },
         {
+          "priority": 35,
+          "why": "A player mid-way through Lena's lines who goes back to Hank (stage lena_dialogue, house still blocked) was shown nothing: no rule matched, so the dialogue closed. He repeats the objective; that line does not write the cursor (persist_cursor false), which is Lena's.",
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_pallet_crushed_house.stage",
+            "value": "lena_dialogue"
+          },
+          "node": "check_house_objective"
+        },
+        {
           "priority": 40,
           "when": {
             "kind": "progression_equals",
@@ -1291,6 +1301,7 @@
               "kind": "close_dialogue"
             }
           ],
+          "persist_cursor": false,
           "next": "check_house_objective"
         },
         {
@@ -1546,6 +1557,7 @@
               "kind": "close_dialogue"
             }
           ],
+          "persist_cursor": false,
           "next": "lena_unavailable"
         }
       ]
