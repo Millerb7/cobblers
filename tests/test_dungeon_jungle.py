@@ -517,7 +517,7 @@ def test_the_prize_is_a_mythical_no_other_data_file_uses_and_before_it_a_rare_th
 def test_the_rip_stands_by_the_night_shifts_on_the_trail_clear_of_the_old_mine_and_the_other_rips():
     import route1_old_mine as M
     f = RIP[JG["id"]]["frame"]
-    ns = DOC["dungeons"][0]["rip"]["frame"]
+    ns = DOC["rips"][0]["frame"]
     cx, cz = (f["x0"] + f["x1"]) / 2, f["z"]
     assert ((cx - (ns["x0"] + ns["x1"]) / 2) ** 2 + (cz - ns["z"]) ** 2) ** 0.5 <= 60
     assert f["x0"] > max(M.TRAIL[-1][0], max(x for x, _z in M.TRAIL)) + 4, "east of the old mine's footprint"
