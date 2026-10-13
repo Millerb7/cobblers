@@ -29,6 +29,9 @@ Merged on the branch tonight, none of it installed or seen in game:
 - Mod update audit: `docs/research/COBBLEVERSE_COMPATIBILITY.md` "Update audit, 2026-10-13" (22 UPDATE, 14
   UPDATE-CAREFUL, 10 HOLD); nothing downloaded: each file needs the owner's yes.
 
+Dungeon suites: a 3.5-hour run started before the economy sim fix (B4) failed 111 (100 the old `no counter sells
+cobblemon:master_ball`, which the vault budget reads). A re-run of the 18 affected files on the current head was in
+progress at hand-over (`.scratch/d4.txt`); if it did not finish, re-run them first. The draw audit: PASS, 87 of 87.
 Known red tests: `test_coldwater_station_audit::test_built_pack_passes_every_check` (built-pack stub rule owed a
 rewrite, recorded by the Kyogre builder); four ash_bell `lure` cases in `test_dungeon_audit` and one vault-budget text
 case in `test_dungeon_kit3` (both red at 6249332e, before the draw). The dungeon suites' full run did NOT complete: `test_dungeon_audit.py` (2,135 per-site cases) ran past 50 minutes at 3%
