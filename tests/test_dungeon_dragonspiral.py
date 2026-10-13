@@ -43,6 +43,7 @@ import dungeon_fights as DF  # noqa: E402
 import dungeon_rooms as R  # noqa: E402
 
 DOC = D.load()
+RIP = {r["legacy_dungeon"]: r for r in DOC["rips"] if r.get("legacy_dungeon")}   # the test rips (data/dungeon_rips.json)
 DS = next(d for d in DOC["dungeons"] if d["id"] == "dragonspiral")
 OWNER_KINDS = {"maze", "puzzle", "parkour", "resources", "nest", "habitat", "stand", "miniboss"}
 OURS = {"gauntlet", "ambush", "vault", "dark_room", "collapse_bridge", "safe_room"}
@@ -108,8 +109,8 @@ def test_every_room_type_the_owner_named_is_there_and_three_of_ours():
     assert len((OURS & k) - {"ambush"}) >= 3, OURS & k
     top = [r["kind"] for r in DS["rooms"]]
     assert top[0] == "entry_room" and top[-2:] == ["boss_arena", "exit_room"]
-    assert DS["theme"] == "ice_spire" and DS["test"] is True and DS["rip"]["test"] is True
-    assert DS["gate_flag"] is None and "siting_pending" not in DS["rip"], "an overworld test dungeon, open to every band"
+    assert DS["theme"] == "ice_spire" and DS["test"] is True and RIP[DS["id"]]["test"] is True
+    assert DS["gate_flag"] == "cobblers:flag/champion_cleared" and DS["first_band"] == 6, "the roster's gate and floor (the draw, 2026-10-13)"
 
 
 def test_short_wide_connectors_and_mostly_not_boxes():
@@ -420,20 +421,20 @@ def test_it_builds_its_functions_and_its_shell_fits_the_chain():
 
 
 def test_the_rip_is_in_its_slot_on_the_trail_clear_of_the_other_rips():
-    f = DS["rip"]["frame"]
+    f = RIP[DS["id"]]["frame"]
     cx = (f["x0"] + f["x1"]) / 2
     assert abs(cx - 1600) <= 10 and abs(f["z"] - 4118) <= 4
     for o in DOC["dungeons"]:
-        if o["id"] == "dragonspiral" or "frame" not in o.get("rip", {}):
+        if o["id"] == "dragonspiral" or "frame" not in RIP.get(o["id"], {}):
             continue
-        of = o["rip"]["frame"]
+        of = RIP[o["id"]]["frame"]
         assert f["x0"] > of["x1"] + 4 or f["x1"] < of["x0"] - 4 or abs(f["z"] - of["z"]) > 6, o["id"]
     mine = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["settlements"]["route1_old_mine"]
     x0, z0, x1, z1 = mine["plan"]["footprint"]["rect"]
     assert f["x0"] > x1 + 10
-    cx_, cy, cz = DS["rip"]["click"]
+    cx_, cy, cz = RIP[DS["id"]]["click"]
     assert cz == f["z"] + 1 and cy == f["y"] and cx_ == (f["x0"] + f["x1"]) // 2
-    _ox, _oy, oz, _ = DS["rip"]["outside"]
+    _ox, _oy, oz, _ = RIP[DS["id"]]["outside"]
     assert oz - 0.5 > cz + 1.5
 
 
@@ -443,9 +444,9 @@ def test_the_rip_is_on_the_heightmaps_ground_and_not_in_water():
         g = GR.load()
     except Exception as e:  # noqa: BLE001
         pytest.skip("no heightmap: %s" % e)
-    f = DS["rip"]["frame"]
+    f = RIP[DS["id"]]["frame"]
     assert {g(x, z) + 1 for x in range(f["x0"], f["x1"] + 1) for z in (f["z"], f["z"] + 1)} == {f["y"]}
-    ox, oy, oz, _ = DS["rip"]["outside"]
+    ox, oy, oz, _ = RIP[DS["id"]]["outside"]
     assert g(int(ox), int(oz)) + 1 == oy
     sea = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))["vertical"]["sea_level"]
     assert f["y"] - 1 > sea

@@ -148,9 +148,9 @@ def test_loop_is_seamless_and_it_moves(strip):
 
 # ------------------------------------------------------------------------------------------------ the world side
 def test_summon_line_carries_the_asset_and_stands_in_front_of_the_frame():
-    d = DOC["dungeons"][0]
+    d = DOC["rips"][0]          # the Night Shift's test rip (data/dungeon_rips.json)
     line = D.oval_summon(DOC, d)
-    f, o = d["rip"]["frame"], d["rip"]["oval"]
+    f, o = d["frame"], d["oval"]
     assert line.startswith("summon minecraft:item_display ")
     assert 'id:"minecraft:amethyst_shard"' in line and '"minecraft:custom_model_data":4180' in line
     assert "brightness:{sky:15,block:15}" in line
@@ -166,9 +166,9 @@ def test_summon_line_carries_the_asset_and_stands_in_front_of_the_frame():
 
 
 def test_oval_lies_over_the_click_interaction():
-    d = DOC["dungeons"][0]
+    d = DOC["rips"][0]
     x, y, z = D.oval_pos(d)
-    cx, cy, cz = d["rip"]["click"]
+    cx, cy, cz = d["click"]
     assert abs(x - (cx + 0.5)) <= 1.5 and cz - 0.5 <= z <= cz + 3.5   # a click on it hits the 3-wide interaction behind
 
 
@@ -179,15 +179,15 @@ def test_chain_kills_and_summons_the_oval_with_the_interaction_and_counts_unchan
     assert "kill @e[type=minecraft:item_display,tag=dg.rip_ns,tag=dg.rip_oval]" in act
     done = "\n".join(out["cobblers:dungeons/rips/entities_done"])
     assert "type=minecraft:item_display,tag=dg.rip_ns,tag=dg.rip_oval" in done     # de-duplicated like the interaction
-    assert want_rips == len(DOC["dungeons"])                                       # the count is still the interactions, one a rip
+    assert want_rips == len(DOC["rips"])                                           # the count is still the interactions, one a rip
 
 
 def test_problems_refuse_a_stretched_or_buried_oval():
     bad = json.loads(json.dumps(DOC))
-    bad["dungeons"][0]["rip"]["oval"]["in_front"] = 0.0                             # in the opening's own face
+    bad["rips"][0]["oval"]["in_front"] = 0.0                             # in the opening's own face
     assert any("in front of the opening" in p for p in D.problems(bad))
     bad = json.loads(json.dumps(DOC))
-    bad["dungeons"][0]["rip"]["oval"]["width"] = 4.0                                # a 4:4 oval over 3:4 art
+    bad["rips"][0]["oval"]["width"] = 4.0                                # a 4:4 oval over 3:4 art
     assert any("stretched" in p for p in D.problems(bad))
     bad = json.loads(json.dumps(DOC))
     bad["engine"]["rip_art"]["custom_model_data"] = "4180"

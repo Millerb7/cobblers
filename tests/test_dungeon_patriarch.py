@@ -34,6 +34,7 @@ import dungeon_rooms as R  # noqa: E402
 import dungeon_setpieces as SP  # noqa: E402
 
 DOC = D.load()
+RIP = {r["legacy_dungeon"]: r for r in DOC["rips"] if r.get("legacy_dungeon")}   # the test rips (data/dungeon_rips.json)
 PT = next(d for d in DOC["dungeons"] if d["id"] == "patriarch")
 SLOTS = [s for s in D.slots(DOC) if s["dungeon"]["id"] == "patriarch"]
 SLOT = SLOTS[0]
@@ -445,16 +446,15 @@ def test_the_roster_pools_carry_the_jars_labels(jar_species):
 
 def test_the_rip_stands_on_the_test_trail_clear_of_the_old_mine_and_the_other_rips():
     import route1_old_mine as M
-    f = PT["rip"]["frame"]
+    f = RIP[PT["id"]]["frame"]
     assert f["x0"] > max(x for x, _z in M.TRAIL) + 4
     for x in range(f["x0"], f["x1"] + 1):
         assert M.rise(x, f["z"]) == 0 and M.rise(x, f["z"] + 1) == 0
     for d in DOC["dungeons"]:
         if d is not PT:
-            o = d["rip"]["frame"]
+            o = RIP[d["id"]]["frame"]
             assert f["x1"] + 3 < o["x0"] or o["x1"] + 3 < f["x0"] or abs(f["z"] - o["z"]) > 3, d["id"]
-    assert PT["rip"]["click"] == [(f["x0"] + f["x1"]) // 2, f["y"], f["z"] + 1]
-    assert "siting_pending" not in PT["rip"], "an overworld dungeon"
+    assert RIP[PT["id"]]["click"] == [(f["x0"] + f["x1"]) // 2, f["y"], f["z"] + 1]
 
 
 def test_the_rip_stands_on_the_heightmaps_ground_and_above_the_sea():
@@ -464,12 +464,12 @@ def test_the_rip_stands_on_the_heightmaps_ground_and_above_the_sea():
         g = GR.load()
     except Exception as e:                                   # no heightmap on this machine
         pytest.skip("no canonical heightmap: %s" % e)
-    f = PT["rip"]["frame"]
+    f = RIP[PT["id"]]["frame"]
     sea = T.sea_level(g.world)
     for x in range(f["x0"], f["x1"] + 1):
         for z in (f["z"], f["z"] + 1, f["z"] + 2):
             assert round(g(x, z)) + 1 == f["y"] and g(x, z) > sea, (x, z, g(x, z))
-    ox, oy, oz, _yaw = PT["rip"]["outside"]
+    ox, oy, oz, _yaw = RIP[PT["id"]]["outside"]
     assert round(g(int(ox), int(oz))) + 1 == oy
 
 

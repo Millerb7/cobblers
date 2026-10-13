@@ -32,6 +32,7 @@ import dungeon_rooms as R  # noqa: E402
 import dungeon_setpieces as SP  # noqa: E402
 
 DOC = D.load()
+RIP = {r["legacy_dungeon"]: r for r in DOC["rips"] if r.get("legacy_dungeon")}   # the test rips (data/dungeon_rips.json)
 MC = next(d for d in DOC["dungeons"] if d["id"] == "moth_cathedral")
 SLOTS = [s for s in D.slots(DOC) if s["dungeon"]["id"] == "moth_cathedral"]
 SLOT = SLOTS[0]
@@ -61,14 +62,13 @@ def trainers():
 
 
 def test_a_test_dungeon_on_the_crimson_forest_theme_with_its_own_clock_and_no_lockout_of_its_own():
-    assert MC["test"] is True and MC["rip"]["test"] is True and MC["theme"] == "crimson_forest"
-    assert "nether-rip-siting" in MC["rip"]["siting_pending"]
+    assert MC["test"] is True and RIP[MC["id"]]["test"] is True and MC["theme"] == "crimson_forest"
     assert MC["short"] not in {d["short"] for d in DOC["dungeons"] if d is not MC}
     assert set(MC["clock_s_by_band"]) == {str(b["band"]) for b in DOC["engine"]["bands"]}
     assert max(MC["clock_s_by_band"].values()) <= 3600
     assert "lockout_ticks" not in MC and D.lockout_of(DOC, MC) == DOC["engine"]["lockout_ticks"]
     # the roster's gate is recorded, not set, while the owner walks it as a playtester (gate_flag_why)
-    assert MC["gate_flag"] is None and "gym8_cleared" in MC["gate_flag_why"]
+    assert MC["gate_flag"] == "cobblers:flag/gym8_cleared" and MC["first_band"] == 5
 
 
 def test_the_engine_and_the_room_kit_find_no_problem_with_it_in_any_variant():
@@ -313,16 +313,16 @@ def test_no_species_renders_as_a_doll_or_a_mis_assembled_model():
 
 def test_the_rip_stands_on_the_test_trail_clear_of_the_old_mine_and_the_other_rips():
     import route1_old_mine as M
-    f = MC["rip"]["frame"]
+    f = RIP[MC["id"]]["frame"]
     cx = (f["x0"] + f["x1"]) / 2
     assert 1465 <= cx <= 1485 and abs(f["z"] - 4118) <= 3, "the x slot the orchestrator gave (x1475 +- 10)"
     assert f["x0"] > max(x for x, _z in M.TRAIL) + 4
     for d in DOC["dungeons"]:
         if d is not MC:
-            o = d["rip"]["frame"]
+            o = RIP[d["id"]]["frame"]
             assert f["x1"] + 3 < o["x0"] or o["x1"] + 3 < f["x0"] or abs(f["z"] - o["z"]) > 3, d["id"]
-    assert MC["rip"]["click"] == [cx, f["y"], f["z"] + 1]
-    assert all(col == ["minecraft:air"] * f["height"] for col in MC["rip"]["restore"].values())
+    assert RIP[MC["id"]]["click"] == [cx, f["y"], f["z"] + 1]
+    assert all(col == ["minecraft:air"] * f["height"] for col in RIP[MC["id"]]["restore"].values())
 
 
 def test_the_rip_stands_on_the_heightmaps_dry_ground():
@@ -332,10 +332,10 @@ def test_the_rip_stands_on_the_heightmaps_dry_ground():
         g = GR.load()
     except Exception as e:                                   # no heightmap on this machine
         pytest.skip("no canonical heightmap: %s" % e)
-    f = MC["rip"]["frame"]
+    f = RIP[MC["id"]]["frame"]
     sea = T.sea_level(g.world)
     for x in range(f["x0"], f["x1"] + 1):
         for z in (f["z"], f["z"] + 1):
             assert round(g(x, z)) + 1 == f["y"] and g(x, z) > sea, (x, z, g(x, z))
-    ox, oy, oz, _yaw = MC["rip"]["outside"]
+    ox, oy, oz, _yaw = RIP[MC["id"]]["outside"]
     assert round(g(int(ox), int(oz))) + 1 == oy
