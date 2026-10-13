@@ -1,0 +1,57 @@
+{
+  "schema": "cobblers.crushed_house/1",
+  "generated_by": "hand, 2026-10-13 (unit PALLET-HANK-LENA). Every ground y read through tools/ground.py (round of the canonical heightmap); no world was read.",
+  "event": "EVT-PALLET-CRUSHED-HOUSE (docs/story/events/PALLET_CRUSHED_HOUSE.md)",
+  "status": "unbuilt",
+  "status_note": "A PLAN, not a structure. Nothing in data/placements.json, kits/ or tools/ builds this house, and docs/world-building/TOWN_CHARACTER.md and data/quests.json (pallet_edge_damage_cluster, 'required_but_unbuilt') both say so. Hank and Lena are seated at the markers below regardless (data/npc_seats.json), so until the house is built they stand in an empty field and Lena is not behind anything. The build belongs to world-content-dev: a template with provenance, a placement, a verify pass.",
+  "settlement": "hometown",
+  "site": {
+    "lot": {
+      "x": [1512, 1520],
+      "z": [5254, 5262],
+      "size": "9 by 9, the whole of it inside the measured Pallet footprint (x 1397-1528, z 5228-5359, data/towns.json hometown)"
+    },
+    "ground": {
+      "y_min": 117,
+      "y_max": 118,
+      "measured": "tools/ground.py, rounded: the lot's 81 columns are all y117, and so are the three NPC stands (floor y117, feet y118); over the wider x 1505..1524, z 5250..5266, 328 of 340 columns are y117 and the other 12 are y118, all along z 5265-5266 on the south edge",
+      "levelling": "none needed beyond the house's own floor"
+    },
+    "why_here": "The exchanged edge of docs/story/ARC.md ('a small cluster of homes at the exchanged edge was crushed'): the east edge of the town, 46 or more blocks from every walked route line (the critical path runs up the main street at x 1462), 52 or more blocks from the centre of every placement of the intact town (the Poke Mart, at 52.6, is nearest). It is a place to go to on purpose, off the road, and the first thing a player sees there is not a crushed house but a man talking.",
+    "not_checked": "Other layers' claims on these columns (ambient sites, signposts, habitat blocks, the light plan, spawn tables) were not swept; tools/town_audit.py after the build will."
+  },
+  "front": {
+    "face": "west",
+    "door": [1512, 5258],
+    "blocked": "the frame is held by debris the player is told not to break; the doorway is a collapsed lintel and a pile, visibly unsafe (Hank: 'The frame shifted when I touched it')",
+    "hank": "npc_pallet_crushed_house_hank, data/npc_seats.json, stands at (1509, 118, 5258), 3 blocks from the door, facing it"
+  },
+  "side_opening": {
+    "face": "south",
+    "at": [1516, 5262],
+    "kind": "a gap at the foot of the south wall, one block wide and two high, a crawl a player WALKS through; no block is broken to use it (the event doc: 'The event must not require block breaking unless the exact protected-block and reset behavior is proven')",
+    "approach": "from the town, round the south-west corner; nothing marks it but the collapsed wall leaning off it"
+  },
+  "pocket": {
+    "marker": "marker_pallet_crushed_house_interior_safe",
+    "at": [1516, 118, 5258],
+    "why": "the centre of the lot, behind the stable pocket of debris (the event doc: 'trapped behind a stable pocket of debris'): a 3 by 3 room with its own roof beam, reached only by the opening"
+  },
+  "after_rescue": {
+    "marker": "marker_pallet_crushed_house_exterior_safe",
+    "at": [1508, 118, 5262],
+    "why": "the dialogue moves Lena here for everyone the moment the first player finishes her lines (data/quests.json finish_rescue_and_reward); the house keeps its opening and does not reset"
+  },
+  "build_requirements": [
+    "A repairable ruin, not rubble: the roof is down on the east half and the walls stand on the west (the event doc: 'The house must look repairable enough that finding Lena alive is credible').",
+    "The pocket (1515..1517, 5257..5259) is air at y118 and y119 and has a solid floor at y117; the opening (1516, 5262) is air at y118 and y119 and joins the pocket by air blocks only, and a player of width 0.6 can walk from (1516, 5264) to (1516, 5258).",
+    "The front door (1512, 5258) is blocked by a collapse so it cannot be walked through, but nothing needs breaking to complete the event.",
+    "Nothing in the lot is replaced by an NPC stand: the stands are clear of blocks at feet and head (python tools/npc_seats.py verify).",
+    "Build BEFORE R17N/R18CH in the apply, so the NPCs are seated into the finished lot (tools/reapply.py: the house step runs before R17N, as every town and gym pass does)."
+  ],
+  "markers": {
+    "hank": "data/npc_seats.json seats npc_pallet_crushed_house_hank",
+    "interior_safe": "data/npc_seats.json markers marker_pallet_crushed_house_interior_safe",
+    "exterior_safe": "data/npc_seats.json markers marker_pallet_crushed_house_exterior_safe"
+  }
+}

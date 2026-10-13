@@ -70,9 +70,10 @@ def test_the_library_hint_reaches_the_compiled_dialogue(all_pack):
 
 
 # Without it a new refusal (a conversation that silently stops shipping, this one included) passes unnoticed.
-def test_compile_all_refuses_only_the_two_crushed_house_conversations():
+def test_compile_all_refuses_nothing():
+    # (until 2026-10-13 it refused the two crushed-house conversations for their world-scoped field)
     _files, done, refused = CD.build_all(ROOT / "data")
-    assert set(refused) == {"dlg_pallet_crushed_house_hank", "dlg_pallet_crushed_house_lena"}
+    assert refused == {}
     assert _library()[0]["id"] in done
 
 

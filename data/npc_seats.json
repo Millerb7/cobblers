@@ -847,16 +847,70 @@
       },
       "faces": "the water at (2604, 6539), 3.6 blocks off",
       "why": "Corin Vale (data/fishermen.json): Sunset West's harbour flats, south of the west pier where the strand runs out into the water; late (after the seventh badge)"
-    }
-  ],
-  "not_seated": [
-    {
-      "id": "npc_pallet_crushed_house_hank",
-      "why": "tools/compile_dialogue.py refuses dlg_pallet_crushed_house_hank: world-scoped field quest.evt_pallet_crushed_house.house_state. No NPC class exists to spawn."
     },
     {
-      "id": "npc_pallet_crushed_house_lena",
-      "why": "tools/compile_dialogue.py refuses dlg_pallet_crushed_house_lena for the same world-scoped field, and she relocates after the rescue (data/quests.json actor_relocation), so her stand must come from that world field on load, not a fixed seat."
+      "id": "npc_pallet_crushed_house_hank",
+      "conversation": "dlg_pallet_crushed_house_hank",
+      "settlement": "hometown",
+      "at": [
+        1509,
+        118,
+        5258
+      ],
+      "yaw": -90,
+      "ground": {
+        "kind": "heightmap",
+        "y": 117,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the blocked front door of the crushed house at (1512, 5258), 3.0 blocks off",
+      "why": "Hank (docs/story/events/PALLET_CRUSHED_HOUSE.md: 'Hank stands outside a visibly blocked entrance'). The house is data/crushed_house.json: 9 by 9 on x 1512..1520, z 5254..5262, its front on the west face toward the town, 3 blocks east of him. 46 or more blocks from every walked route line, flat to within one block over the whole lot. The house is NOT built (data/crushed_house.json status): until it is he stands in an empty field."
     }
-  ]
+  ],
+  "markers": {
+    "marker_pallet_crushed_house_interior_safe": {
+      "at": [
+        1516,
+        118,
+        5258
+      ],
+      "yaw": 0,
+      "ground": {
+        "kind": "heightmap",
+        "y": 117,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the side opening at (1516, 5262), 4.0 blocks off",
+      "why": "data/quests.json actor_relocation.initial_marker: Lena's protected pocket, the centre of the crushed house's 9 by 9 lot, where she waits until the house is checked"
+    },
+    "marker_pallet_crushed_house_exterior_safe": {
+      "at": [
+        1508,
+        118,
+        5262
+      ],
+      "yaw": -166,
+      "ground": {
+        "kind": "heightmap",
+        "y": 117,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "Hank at (1509, 5258), 4.1 blocks off",
+      "why": "data/quests.json actor_relocation.relocated_marker: where Lena stands once found, west of the house on the town side, four blocks from Hank so the two can banter"
+    }
+  },
+  "relocating_seats": [
+    {
+      "id": "npc_pallet_crushed_house_lena",
+      "conversation": "dlg_pallet_crushed_house_lena",
+      "settlement": "hometown",
+      "state_field": "quest.evt_pallet_crushed_house.house_state",
+      "states": {
+        "blocked": "marker_pallet_crushed_house_interior_safe",
+        "lena_relocated": "marker_pallet_crushed_house_exterior_safe"
+      },
+      "why": "Lena moves once, for everyone, when the first player finishes her conversation (the dialogue's relocate_actor effect). Which marker she stands at is therefore the WORLD field's value, so tools/reapply.py R18CH reads the score and seats her there (the 'npc' action's fifth element), and a re-run moves a Lena left at the other marker. She is not in `seats`: R17N seats unconditionally, and would put a second Lena at the interior marker after the rescue."
+    }
+  ],
+  "not_seated": []
 }

@@ -4,8 +4,8 @@ values, and the two effects that reach the scene runtime (sync_scene, scene_func
 Written by the test author, not by the session that extended the compiler.
 
 What is asserted, on the real data (data/dialogue.json, data/quests.json, data/progression.json, data/scenes.json):
-build_all compiles every conversation except the ones it lists with a reason, and today that is exactly the two
-crushed-house conversations for their world-scoped field; a conversation with npc_id null has no NPC class, one with
+build_all compiles every conversation except the ones it lists with a reason, and today that is none (the crushed
+house's world-scoped field is supported since 2026-10-13); a conversation with npc_id null has no NPC class, one with
 an npc_id has exactly one, naming its own dialogue; every conversation a scene opens (prop, actor or NPC) is in the
 pack; a speaker mapped to null is narration (its page has no speaker); an enum's declared initial value also matches
 the unset key 0 and no other value does; sync_scene and scene_function compile to server-sourced commands whose
@@ -54,12 +54,13 @@ def test_every_conversation_is_compiled_or_refused_with_a_reason(built):
         assert dlg_path(cid) in files
 
 
-# Without it a new refusal (a conversation that silently stops shipping) passes unnoticed; today only the crushed
-# house is refused, for its shared world-scoped house state.
-def test_only_the_crushed_house_conversations_are_refused_and_for_world_scope(built):
-    _files, _done, refused = built
-    assert set(refused) == {"dlg_pallet_crushed_house_hank", "dlg_pallet_crushed_house_lena"}
-    assert all("world-scoped" in why for why in refused.values())
+# Without it a new refusal (a conversation that silently stops shipping) passes unnoticed. Until 2026-10-13 the two
+# crushed-house conversations were refused for their shared world-scoped house state; the compiler now supports it
+# (tools/compile_dialogue.py "world"), so nothing is refused and the crushed-house pair is in the pack.
+def test_nothing_is_refused_and_the_crushed_house_pair_compiles(built):
+    _files, done, refused = built
+    assert refused == {}
+    assert {"dlg_pallet_crushed_house_hank", "dlg_pallet_crushed_house_lena"} <= set(done)
 
 
 # Without it a prop's or actor's conversation gets an NPC class, and a stray NPC could be spawned for it; or an NPC's

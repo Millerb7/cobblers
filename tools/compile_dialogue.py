@@ -76,6 +76,27 @@ The runtime pieces, each proven on the disposable world before this compiler rel
              cobblemon:standard is Cobblemon's own variation (bedrock/npcs/variations/standard/0_standard_base.json):
              trainer.geo, textures/npcs/standard/trainer.png, poser standard. Checked by tools/npc_model_audit.py.
 
+  world      a quest field whose progression.json scope is "world" is ONE value for the whole server (the crushed house's
+             house_state), so it is not a key in q.player.data(): it is a score on the fake player "#<quest>.<field>" in
+             the objective WORLD_OBJECTIVE, which the world saves (scoreboard.dat) and every player's dialogue sees alike.
+             Chosen over command storage because a score is read by `execute if score` exactly as the flag and item
+             probes are read (a tag, then q.player.has_tag), and a command is one tick of the main thread, so a
+             compare-and-set needs no lock of its own. Only an ENUM whose first allowed value is its initial one is
+             allowed: the value is its index, and a holder nobody has written reads as that initial value (index 0 is
+             tested as `unless score ... matches 1..`, never `matches 0`, because an unset score matches nothing).
+             Per-player fields (the dialogue cursor, the reward claim, the stage) stay in q.player.data() as before.
+             Effects: set_progression on a world field writes the score; {"kind": "compare_and_set_progression",
+             "field", "scope": "world", "from", "to", "already_at_target": "success"} sets `to` only while the field is
+             at `from` and leaves it alone at `to`; {"kind": "relocate_actor", "actor", "from_marker", "to_marker",
+             "scope": "world", "idempotent": true} tags the NPC standing at from_marker and teleports the tagged NPC to
+             to_marker (the markers are data/npc_seats.json "markers"; run again it teleports the same NPC to the same
+             place). The NPC must be in a loaded chunk, which it is: the player talking to her is beside her. A world
+             field is read by `progression_equals` / `progression_in` conditions only; anywhere else it is refused.
+  keep       a terminal line (next is its own id) with "persist_cursor": false closes WITHOUT writing its id to the
+             cursor. Two conversations of one quest share the cursor field, so a terminal line of one that is shown to a
+             player whose cursor belongs to the other would overwrite it (Lena's "not yet" line, shown to a player still
+             in Hank's monologue, sent Hank's next page to a node he does not have).
+
 Only the constructs listed here are supported; anything else stops compilation rather than guessing.
 
   python tools/compile_dialogue.py dlg_route1_thirsty_stranger [--out DIR] [--place X Y Z]
@@ -146,11 +167,36 @@ GIVE_FAILED = "cobblers_give_failed"
 STARTER_TAG = "cobblers_starter_chosen"
 STARTER_SCORE = "cobblers_starter"
 STARTER_CALLBACK = "data/cobblemon/callbacks/starter_chosen/cobblers_starter_chosen.molang"
+# world-scoped quest fields (see "world" above): the objective every one lives in, and the longest holder name used
+WORLD_OBJECTIVE = "cobblers_world"
+WORLD_HOLDER_MAX = 40
+
+
+def world_holder(fid):
+    """The fake player a world field's score is kept on: quest.<quest>.<field> -> #<quest>.<field>."""
+    m = re.fullmatch(r"quest\.([a-z0-9_]+)\.([a-z0-9_]+)", fid)
+    if not m or len("#%s.%s" % m.groups()) > WORLD_HOLDER_MAX:
+        raise Unsupported("world field %s: not quest.<quest>.<field> of [a-z0-9_], or its holder is over %d characters"
+                          % (fid, WORLD_HOLDER_MAX))
+    return "#%s.%s" % m.groups()
+
+
+def world_values(fid, fdef):
+    """The allowed values of a world field, in order: a value's index is its score, and index 0 is the initial value."""
+    vals = fdef.get("allowed_values")
+    if fdef.get("type") != "enum" or not isinstance(vals, list) or not vals:
+        raise Unsupported("world field %s: only an enum with a list of allowed_values is supported" % fid)
+    if fdef.get("initial") != vals[0]:
+        raise Unsupported("world field %s: its initial value %r must be the first allowed value (an unset score reads 0)"
+                          % (fid, fdef.get("initial")))
+    world_holder(fid)
+    return vals
 
 
 class Compiler:
-    def __init__(self, conv, quest, fields):
+    def __init__(self, conv, quest, fields, markers=None):
         self.conv, self.quest, self.fields = conv, quest, fields
+        self.markers = markers or {}
         self.nodes = {n["id"]: n for n in conv["nodes"]}
         self.transitions = {t["id"]: t for t in quest["transitions"]}
         self.rewards = {r["id"]: r for r in quest.get("rewards") or []}
@@ -161,7 +207,41 @@ class Compiler:
     def field(self, fid):
         if fid not in self.fields:
             raise Unsupported("undeclared field %s" % fid)
+        if self.is_world(fid):
+            raise Unsupported("world field %s is a score, not player data: only progression_equals / progression_in, "
+                              "set_progression and compare_and_set_progression may name it" % fid)
         return "t.d.%s" % key(fid)
+
+    def is_world(self, fid):
+        if fid not in self.fields:
+            raise Unsupported("undeclared field %s" % fid)
+        return self.fields[fid].get("scope") == "world"
+
+    def world_index(self, fid, value):
+        vals = world_values(fid, self.fields[fid])
+        if value not in vals:
+            raise Unsupported("world field %s has no value %r (allowed: %s)" % (fid, value, ", ".join(map(str, vals))))
+        return vals.index(value)
+
+    def world_objective(self):
+        # `objectives add` on an objective that exists is refused and changes nothing, as the reward's does
+        return run(["scoreboard objectives add %s dummy" % WORLD_OBJECTIVE])
+
+    def world_test(self, fid, value):
+        """The `execute` condition that holds while a world field is at value. Index 0 is `unless ... matches 1..`, so a
+        holder nobody has written (the world before the first change) reads as the field's initial value."""
+        idx = self.world_index(fid, value)
+        score = "score %s %s matches " % (world_holder(fid), WORLD_OBJECTIVE)
+        return ("unless " + score + "1..") if idx == 0 else ("if " + score + str(idx))
+
+    def world_probe(self, fid, value):
+        sel = "%s=%s" % (fid, value)
+        tag = self.tag_for("world", sel)
+        # the objective first: `execute ... score` on an objective that does not exist is an error that fails the whole
+        # command (it is not a condition that is false), so in a world nobody has written to yet the probe would read
+        # nothing and "blocked" would hold for no one
+        return tag, (self.world_objective() + run(["tag ", UUID, " remove %s" % tag]) +
+                     run(["execute as ", UUID, " %s run tag @s add %s" % (self.world_test(fid, value), tag)]))
 
     def tag_for(self, slot, pred):
         return "cobblers_h_%s" % hashlib.sha256(("%s|%s" % (slot, pred)).encode()).hexdigest()[:10]
@@ -180,6 +260,11 @@ class Compiler:
             return "(%s)" % (" && " if k == "all" else " || ").join(parts)
         if k == "not":
             return "!(%s)" % self.cond(c["condition"], probes)
+        if k == "progression_equals" and self.is_world(c["field"]):
+            # a score, not player data: probed into a tag like the flags and the held items (see "world" above)
+            tag, probe = self.world_probe(c["field"], c["value"])
+            probes.setdefault(("world", "%s=%s" % (c["field"], c["value"])), probe)
+            return "q.player.has_tag('%s')" % tag
         if k == "progression_equals":
             f, v = self.field(c["field"]), c["value"]
             if v is False:
@@ -221,6 +306,20 @@ class Compiler:
     # ---------------------------------------------------------------- effects
     def effect(self, e):
         k = e["kind"]
+        if k == "set_progression" and self.is_world(e["field"]):
+            idx = self.world_index(e["field"], e["value"])
+            return self.world_objective() + run(["scoreboard players set %s %s %d" % (world_holder(e["field"]), WORLD_OBJECTIVE, idx)])
+        if k == "compare_and_set_progression":
+            fid = e["field"]
+            if not self.is_world(fid) or e.get("scope") != "world":
+                raise Unsupported("compare_and_set_progression is for a world field with scope 'world' (%s)" % fid)
+            if e.get("already_at_target") != "success":
+                raise Unsupported("compare_and_set_progression %s: only already_at_target 'success' is supported" % fid)
+            to = self.world_index(fid, e["to"])
+            return (self.world_objective() +
+                    run(["execute %s run scoreboard players set %s %s %d" % (self.world_test(fid, e["from"]), world_holder(fid), WORLD_OBJECTIVE, to)]))
+        if k == "relocate_actor":
+            return self.relocate(e)
         if k == "set_progression":
             return "%s = %s;" % (self.field(e["field"]), lit(e["value"]))
         if k == "consume_held_item":
@@ -265,6 +364,25 @@ class Compiler:
                 raise Unsupported("tag_player %r is not [a-z0-9_.]+" % (tag,))
             return run(["execute as ", UUID, " run tag @s add %s" % tag])
         raise Unsupported("effect kind %s" % k)
+
+    def marker(self, mid):
+        m = self.markers.get(mid)
+        if not m or not isinstance(m.get("at"), list) or len(m["at"]) != 3 or not isinstance(m.get("yaw"), (int, float)):
+            raise Unsupported("marker %r is not in data/npc_seats.json markers with an at [x, y, z] and a yaw" % (mid,))
+        return m
+
+    def relocate(self, e):
+        """Move an NPC from one marker to another, once or many times with the same result (see "world" above): tag
+        whoever stands at the from marker, then teleport whoever carries the tag. Run again, the first command finds
+        nobody (she has gone) and the second puts the tagged NPC back on the same block. The tag is the NPC's id, so
+        two actors never share one."""
+        if e.get("scope") != "world" or e.get("idempotent") is not True:
+            raise Unsupported("relocate_actor needs scope 'world' and idempotent true")
+        tag = "cobblers_actor_" + ident(e["actor"])
+        (fx, fy, fz), (tx, ty, tz) = self.marker(e["from_marker"])["at"], self.marker(e["to_marker"])["at"]
+        yaw = self.marker(e["to_marker"])["yaw"]
+        return (run(["execute as @e[type=cobblemon:npc,x=%d,y=%d,z=%d,distance=..2,limit=1] run tag @s add %s" % (fx, fy, fz, tag)]) +
+                run(["tp @e[type=cobblemon:npc,tag=%s,limit=1] %d.5 %d %d.5 %d 0" % (tag, tx, ty, tz, yaw)]))
 
     def battle_action(self, a):
         """The response that starts this conversation's NPC's battle against the talking player. Cobblemon's own
@@ -383,9 +501,14 @@ class Compiler:
         pre = "t.d = q.player.data(); "
         if n["kind"] == "line":
             acks = "".join(self.transition(a["transition"]) for a in n.get("actions_after_acknowledge") or [] if a["kind"] == "quest_transition")
-            if any(a["kind"] != "quest_transition" for a in n.get("actions_after_acknowledge") or []):
+            # close_dialogue is what a terminal line (next is its own id) already does, so it is accepted there as the
+            # author's statement of it; on any other line it would need a meaning the compiler does not give it
+            if any(a["kind"] != "quest_transition" and not (a["kind"] == "close_dialogue" and n["next"] == n["id"])
+                   for a in n.get("actions_after_acknowledge") or []):
                 raise Unsupported("line %s: only quest_transition after acknowledge" % n["id"])
-            if n["next"] == n["id"]:
+            if n["next"] == n["id"] and n.get("persist_cursor") is False:
+                page["input"] = pre + acks + "q.player.save_data(); q.dialogue.close();"
+            elif n["next"] == n["id"]:
                 page["input"] = pre + acks + "%s = %s; q.player.save_data(); q.dialogue.close();" % (self.field(self.cursor), lit(n["id"]))
             else:
                 if n["next"] not in self.nodes:
@@ -480,12 +603,23 @@ def load(data_dir):
     return dialogue, {q["id"]: q for q in quests["quests"]}, {f["id"]: f for f in prog["quest_fields"]}
 
 
+def load_markers(data_dir=None):
+    """{marker id: {at, yaw, ...}}: the named places a relocate_actor effect moves an NPC between, kept with the NPCs'
+    stands in data/npc_seats.json "markers". {} when the file is absent or carries none (a fixture's data dir)."""
+    f = (Path(data_dir) if data_dir else ROOT / "data") / "npc_seats.json"
+    if not f.is_file():
+        return {}
+    return json.loads(f.read_text(encoding="utf-8")).get("markers") or {}
+
+
 def check_fields(quest, fields):
     for fid in quest["progression_field_refs"]:
         if fid not in fields:
             raise Unsupported("undeclared field %s" % fid)
-        if fields[fid]["scope"] != "player":
-            raise Unsupported("world-scoped field %s" % fid)
+        if fields[fid]["scope"] == "world":
+            world_values(fid, fields[fid])      # refuses a world field the score encoding cannot hold
+        elif fields[fid]["scope"] != "player":
+            raise Unsupported("field %s has scope %r: only 'player' and 'world' are supported" % (fid, fields[fid]["scope"]))
         if fields[fid]["type"] == "integer":
             raise Unsupported("integer field %s (0 would be ambiguous with unset)" % fid)
 
@@ -496,7 +630,7 @@ def compile_conversation(conv, quests, fields, data_dir=None):
     if quest is None:
         raise Unsupported("unknown quest %s" % conv["quest_id"])
     check_fields(quest, fields)
-    c = Compiler(conv, quest, fields)
+    c = Compiler(conv, quest, fields, load_markers(data_dir))
     files = {"data/%s/dialogues/%s.json" % (NS, conv["id"]): c.dialogue()}
     npc = conv.get("npc_id")
     if npc:
