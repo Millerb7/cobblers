@@ -189,6 +189,24 @@
         "docs/mechanics/MARKET_GATING.md"
       ]
     },
+    "economy": {
+      "what": "the value spine and the money edges: what dollars can buy (every counter, stall, Mart and default shop, through the recipes) and what the Bank pays; docs/mechanics/ECONOMY_V2.md",
+      "paths": [
+        "data/bank.json",
+        "data/markets.json",
+        "tools/bank.py",
+        "tools/markets.py",
+        "tools/economy_audit.py",
+        "docs/mechanics/ECONOMY_V2.md"
+      ]
+    },
+    "station_exchange": {
+      "what": "the Station Exchange's barter at Northlight: the top tier (the Master Ball, the Ability Capsule and six held items) bought with materials, not money",
+      "paths": [
+        "data/direct_trades.json",
+        "tools/direct_trades.py"
+      ]
+    },
     "settlement_npcs": {
       "what": "the dialogue NPCs seated by data/npc_seats.json and placed by reapply R17N",
       "paths": [
@@ -1447,6 +1465,38 @@
       ],
       "tests": [
         "tests/test_kyogre_cave.py::test_the_cave_reserve_meets_no_other_pocket_user"
+      ]
+    },
+    {
+      "id": "C28",
+      "title": "No dollar path reaches a top-tier item or any of its inputs",
+      "owner": "economy",
+      "consumers": [
+        "station_exchange"
+      ],
+      "constrained_by": [
+        "markets"
+      ],
+      "statement": "No seller (a counter, a stall, a Mart's template shop, the default shop; sited or not), no recipe in the server's jars, no barter edge and no vanilla wandering-trader offer lets dollars obtain the top tier (the Master Ball, Ability Capsule, Focus Sash, Expert Belt, Eviolite, Assault Vest, Choice Specs, Destiny Knot) or any of its inputs (ancient debris, netherite scrap, ingot and block, diamond and diamond block, and every input of a barter line selling a top-tier item). The Station Exchange's barter is the top tier's only route, so its price in materials is the price; a dollar path would make it a money line again. The Bank only buys, and the Produce Buyer only pays.",
+      "stated_in": [
+        {
+          "at": "docs/mechanics/ECONOMY_V2.md:260",
+          "quote": "a top-tier item has no dollar line."
+        },
+        {
+          "at": "docs/mechanics/ECONOMY_V2.md:322",
+          "quote": "**Dollars buy no top-tier input.**"
+        },
+        {
+          "at": "docs/mechanics/ECONOMY_V2.md:532",
+          "quote": "| E4 | Remove the Master Ball money line;"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c28_no_dollar_path_reaches_a_top_tier_item_or_its_inputs",
+        "tests/test_economy_audit.py::test_no_dollar_path_reaches_the_top_tier_on_the_real_data",
+        "tests/test_economy_audit.py::test_a_generator_that_shelves_the_superseded_top_tier_lines_is_a_dollar_path",
+        "tests/test_economy_audit.py::test_a_generator_that_shelves_a_diamond_block_is_a_dollar_path_to_a_top_tier_input"
       ]
     }
   ]

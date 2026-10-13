@@ -309,6 +309,59 @@ def test_the_beast_ball_price_moves_the_bill(docs):
     assert (b0[1], b0[2]) == (20000, 95000) and (b1[1], b1[2]) == (40000, 190000)
 
 
+def _ball_line(d, buy, buy_b, rates=(10, 30, 10), ingot=900):
+    """The approved Master Ball line set to buy + buyB, and the three rates the hours rest on pinned (debris typical,
+    debris upper, raw gold), so the expected hours are hand arithmetic whatever data/bank.json declares."""
+    ln = next(x for x in d["trades"]["lines"] if x["sell"]["id"] == "cobblemon:master_ball")
+    ln["buy"], ln["buyB"] = {"id": buy[0], "count": buy[1]}, {"id": buy_b[0], "count": buy_b[1]}
+    for b in d["bank"]["buys"]:
+        if b["item"] == "minecraft:ancient_debris":
+            b["rate_per_hour"], b["rate_per_hour_upper"] = str(rates[0]), str(rates[1])
+        if b["item"] == "minecraft:raw_gold":
+            b["rate_per_hour"] = str(rates[2])
+        if b["item"] == "minecraft:netherite_ingot":
+            b["price"] = str(ingot)
+
+
+# Without it the sim would price the Master Ball from a counter that no longer sells it (ECONOMY_V2 E4) and crash, or
+# from a stale number. ECONOMY_V2.md 3.2's own row, by hand: 1 netherite block + 21 ingots = 30 ingots = 120 debris and
+# 120 gold; 120 / 10 = 12.0 h by pickaxe, 120 / 30 = 4.0 h by bed or TNT, +120 / 10 = 12.0 h if the gold is mined; at
+# the bank 9 x $900 + 21 x $900 = $27,000. Then the owner's E4 shape, 1 ingot + 5 scrap: 4 + 5 = 9 debris and 4 gold,
+# 0.9 h, 0.3 h, +0.4 h, $900 + 5 x $202.
+def test_the_master_ball_is_priced_by_its_barter_in_hours_of_digging(docs):
+    w = world_with(docs, lambda d: _ball_line(d, ("minecraft:netherite_block", 1), ("minecraft:netherite_ingot", 21)))
+    t = w.master_ball
+    assert t["raw"] == {"minecraft:ancient_debris": 120, "minecraft:raw_gold": 120}, t["raw"]
+    assert (round(t["hours"], 6), round(t["hours_upper"], 6), round(t["gold_h"], 6)) == (12.0, 4.0, 12.0)
+    assert t["bank_value"] == 27000
+    w = world_with(docs, lambda d: _ball_line(d, ("minecraft:netherite_ingot", 1), ("minecraft:netherite_scrap", 5)))
+    t = w.master_ball
+    assert (round(t["hours"], 6), round(t["hours_upper"], 6), round(t["gold_h"], 6)) == (0.9, 0.3, 0.4)
+    assert t["bank_value"] == 900 + 5 * int(next(b["price"] for b in docs["bank"]["buys"]
+                                                if b["item"] == "minecraft:netherite_scrap"))
+
+
+# Without it a diamond input would cost no hours: 1 diamond block + 3 ingots = 9 diamonds at the bank's declared rate
+# plus 12 debris at 10 an hour. With the diamond rate pinned at 4: 9 / 4 + 12 / 10 = 3.45 h (ECONOMY_V2.md 3.2: 3.5).
+def test_a_diamond_block_input_costs_its_nine_diamonds_in_hours(docs):
+    def m(d):
+        _ball_line(d, ("minecraft:diamond_block", 1), ("minecraft:netherite_ingot", 3))
+        next(b for b in d["bank"]["buys"] if b["item"] == "minecraft:diamond")["rate_per_hour"] = "4"
+    t = world_with(docs, m).master_ball
+    assert t["raw"]["minecraft:diamond"] == 9 and round(t["hours"], 6) == 3.45 and round(t["hours_upper"], 6) == 2.65
+
+
+# Without it a Master Ball line withdrawn from the Station Exchange would leave the sim quoting hours for a trade that
+# does not exist: no approved line selling it is refused by name.
+def test_a_master_ball_with_no_approved_barter_line_is_refused(docs):
+    def withdraw(d):
+        for ln in d["trades"]["lines"]:
+            if ln["sell"]["id"] == "cobblemon:master_ball":
+                ln["approved"], ln["status"] = False, "proposal"
+    with pytest.raises(E.SimError, match="no approved barter line sells cobblemon:master_ball"):
+        world_with(docs, withdraw)
+
+
 def test_the_income_multiplier_moves_the_income(docs):
     w1 = world_with(docs, lambda d: d["cd"].update(cobbleDollarsIncomeMultiplier=2.5))
     a = run(E.World(docs), ["fighter"], ["design"], runs=50)
@@ -344,8 +397,9 @@ def test_no_counter_sells_and_no_bank_line_buys_a_dungeon_reward(world):
 def test_the_report_builds_every_table_and_writes_between_markers(world, tmp_path):
     data, lines = E.build_report(world, runs=12, seed=2, dungeon_runs=150)
     text = "\n".join(lines)
-    for n in range(1, 12):
+    for n in range(1, 13):
         assert "### T%d." % n in text, n
+    assert set(data["top_tier"]) == set(E.TOP_TIER), sorted(set(E.TOP_TIER) ^ set(data["top_tier"]))
     assert data["verdicts"] and data["defects"]["design"]["steady"] > 0
     doc = tmp_path / "d.md"
     doc.write_text("head\n<!-- economy_sim:tables:begin -->\nOLD\n<!-- economy_sim:tables:end -->\ntail\n", encoding="utf-8")
