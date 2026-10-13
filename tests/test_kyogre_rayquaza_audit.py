@@ -68,9 +68,7 @@ PROPERTIES = {
     # a set piece spawned into rock or somewhere unreachable
     "kyogre.set_pieces_are_reachable": None,
     # contract KC2: under a roof lower than the ladder's depth Dive's air gives nothing
-    "kyogre.flooded_passages_hold_the_ladder": "DEFECT (minor): 21 water columns roofed by rock are under the ladder's "
-        "deep_blocks + 2 = 7: the Trench's water under the south ledge's shelf (x 8333..8336, z 2246..2249, 5-6 high) and "
-        "the Sounding's alcove sills through the wall (x 8465, 2 high); contract KC2 says every passage flooded to its roof",
+    "kyogre.flooded_passages_hold_the_ladder": None,
     # a player without Dive has no dry place to breathe on the way down the Sounding
     "kyogre.sounding_alcoves_are_dry": None,
     # a spawn-condition block in the cave beyond the design's water
@@ -92,15 +90,11 @@ PROPERTIES = {
     # the climb from the arch's landing must reach the crown at all
     "rayquaza.crown_reachable": None,
     # a player who does not think to sneak must still reach the crown
-    "rayquaza.crown_reachable_upright": "DEFECT: the helix's last step, from (6412, 401.0, 5111) onto the half slab at "
-        "(6412, 401.5, 5112), has 2.0 of headroom under the top floor (y403) and a half-block step needs 2.3 (vanilla "
-        "lifts the box in place before it moves); tools/rayquaza_sky.py _pillar opens the floor only where a STANDING "
-        "player needs 1.8, so only a sneaking player passes",
+    "rayquaza.crown_reachable_upright": None,
     # someone on the island with no way off but a lethal fall
     "rayquaza.nobody_is_stranded": None,
     # a reachable walk-off that kills
-    "rayquaza.no_lethal_fall": "DEFECT: 27 walk-offs from the crown's broken wall tops (y405..y410) fall 35-41 blocks "
-        "onto the island; the Slow Falling box (rescue) stops at y367, under the island's top, so nothing catches them",
+    "rayquaza.no_lethal_fall": None,
     # the arch's doorway unreachable on foot from the summit, or the way down landing in the doorway (a tp loop)
     "rayquaza.doorway_walkable_from_the_summit": None,
     # contract C26: if no pack grants Kyogre's met, Rayquaza's gate never opens for anyone

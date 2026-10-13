@@ -383,10 +383,15 @@ def build_model(doc):
     if b["alcove_side"] != "west":
         raise CaveError("sounding.alcove_side: only west is built")
     xw = x0 - 1
+    sd = b["sill_depth"]
+    if sd < _j(BLACKOUT)["water"]["deep_blocks"] + 2:
+        raise CaveError("sounding.sill_depth %d: the sill is flooded to the wall's rock, so contract KC2 asks data/blackout.json "
+                        "water.deep_blocks + 2" % sd)
     for L in b["alcoves"]:
         M.carve((xw - n, L, zc - n // 2, xw - 1, L + n - 1, zc + n // 2), AIR)
-        # the sill: two cells of water under the bell's front row and through the wall, so a swimmer fits under the lip
-        M.carve((xw - 1, L - 2, zc - n // 2, xw, L - 1, zc + n // 2), WATER)
+        # the sill: water under the bell's front row and through the wall, so a swimmer fits under the lip; flooded to
+        # the wall's rock on its shaft side, so it holds the ladder's depth (contract KC2)
+        M.carve((xw - 1, L - sd, zc - n // 2, xw, L - 1, zc + n // 2), WATER)
 
     # the U-bend under the Sounding, and its riser into the hub's floor
     u = r["ubend"]
@@ -509,7 +514,10 @@ def build_model(doc):
     for x in range(t["ledge_south"]["from_x"], ledge_south_end(t) + 1):
         s = ledge_south_standing(t, x)
         _za, zb = cols[x]
-        M.solid((x, s - th, zb - pw + 1, x, s - 1, zb), _deep(sh, seed, x, s, zb))
+        # data ledge_south.foot_why: a shelf whose underside meets the water's top would roof a pocket of water under
+        # the ladder's depth (contract KC2), so there the ledge is solid down to the floor
+        low = t["floor"] if s - th <= t["water_top"] + 1 else s - th
+        M.solid((x, low, zb - pw + 1, x, s - 1, zb), _deep(sh, seed, x, s, zb))
     for x in range(t["causeway"]["x"][0], t["causeway"]["x"][1] + 1):
         za, zb = cols[x]
         M.solid((x, t["floor"], za, x, t["causeway"]["standing"] - 1, zb), _deep(sh, seed, x, 1, za))

@@ -44,11 +44,13 @@
       "lights": [[8462, 207, 2210], [8462, 207, 2216], [8464, 207, 2213], [8462, 207, 2213]]
     },
     "sounding": {
-      "what": "B, the flooded shaft (the air and fatigue lesson). Its top water layer is flush with the antechamber's floor; three dry alcoves on its west wall are entered from below (an air bell over a two-cell water sill), so water never stands beside their air",
+      "what": "B, the flooded shaft (the air and fatigue lesson). Its top water layer is flush with the antechamber's floor; three dry alcoves on its west wall are entered from below (an air bell over a water sill sill_depth deep), so water never stands beside their air",
       "box": [8466, 100, 2210, 8472, 199, 2216],
       "alcoves": [175, 150, 125],
       "alcove_side": "west",
       "alcove_size": 3,
+      "sill_depth": 7,
+      "sill_why": "the sill is a water slot through the west wall under each bell, rock above it on the wall's side: a passage flooded to its roof, so contract KC2 asks data/blackout.json water.deep_blocks + 2 = 7 cells of it (the independent audit, 2026-10-13, found the first build's two-cell sill under the ladder's depth). tools/kyogre_cave.py refuses a sill shallower than the ladder's depth",
       "lights": [[8465, 187, 2213], [8473, 162, 2213], [8465, 137, 2213], [8473, 112, 2213]]
     },
     "ubend": {
@@ -126,7 +128,8 @@
       "balcony": {"x": [8398, 8405], "standing": 97},
       "ledge_north": {"x": [8282, 8397], "top_standing": 97, "rise_run": 3},
       "bridge": {"x": [8279, 8281], "standing": 61},
-      "ledge_south": {"from_x": 8282, "top_standing": 61, "bottom_standing": 42, "rise_run": 3},
+      "ledge_south": {"from_x": 8282, "top_standing": 61, "bottom_standing": 42, "rise_run": 3,
+                      "foot_why": "where the shelf's underside comes down to the water's top (no air between them), the water under it would be a pocket flooded to a rock roof only 4-6 high, under contract KC2's 7 (the independent audit, 2026-10-13); there the ledge is built solid down to the trench floor, a bank like the beach, so no roofed water is left under it"},
       "causeway": {"x": [8339, 8341], "standing": 42},
       "beach": {"x": [8278, 8405], "standing": 42, "why": "the whole north wall at the water, so a player who falls from any ledge lands within a short swim of dry rock (swim fatigue: data/blackout.json surface)"},
       "path_width": 3,

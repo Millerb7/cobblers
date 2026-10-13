@@ -82,6 +82,7 @@ TOLD = "cobblers.ray_told"      # told at the sealed arch on this visit
 PROBE_KEY = "rayquaza_sky"
 POLICY_SCOPE = "rayquaza_sky"
 CEILING = 575                   # data/world.json built_ceiling.runtime_limit (cobblers_height)
+STEP_LIFT = 0.5                 # the helix's rise per step: vanilla lifts a walker's box this much in place to climb it
 BUILD_DESCRIPTION = "Cobblers: Rayquaza's arch, island and pillar, one-shot blocks (tools/rayquaza_sky.py, split by tools/pack_split.py)"
 
 
@@ -369,6 +370,26 @@ def _ramp(rel, k, Yt, L):
     return hs
 
 
+def _connect_walls(m, cells):
+    """Give each wall block in `cells` the side states vanilla would: a side connects (low) to another wall or a full block
+    beside it at the same height, and the post shows unless the wall runs straight through. /fill and /setblock never
+    recompute a placed block's own shape, so the state is written whole."""
+    sides = (("north", 0, -1), ("east", 1, 0), ("south", 0, 1), ("west", -1, 0))
+    states = {}
+    for x, y, z in cells:
+        con = {}
+        for name, dx, dz in sides:
+            nb = m.cells.get((x + dx, y, z + dz))
+            solid = nb is not None and nb != AIR and "_slab" not in nb and "lantern" not in nb and "_sign" not in nb
+            con[name] = "low" if solid else "none"
+        straight = ((con["north"] == con["south"] == "low" and con["east"] == con["west"] == "none")
+                    or (con["east"] == con["west"] == "low" and con["north"] == con["south"] == "none"))
+        states[(x, y, z)] = "[east=%s,north=%s,south=%s,up=%s,waterlogged=false,west=%s]" % (
+            con["east"], con["north"], con["south"], "false" if straight else "true", con["west"])
+    for (x, y, z), st in states.items():
+        m.put(x, y, z, base(m.cells[(x, y, z)]) + st)
+
+
 def _pillar(spec, m, pcx, pcz, Yt):
     pil, pal = spec["pillar"], spec["palette"]
     seed = spec["seed"]
@@ -381,6 +402,7 @@ def _pillar(spec, m, pcx, pcz, Yt):
     cmin, cmax = pil["crown"]["min"], pil["crown"]["max"]
     holes = []
     ramp_cells = []
+    copings = []
     r = int(math.ceil(Ro))
     for x in range(pcx - r, pcx + r + 1):
         for z in range(pcz - r, pcz + r + 1):
@@ -403,13 +425,18 @@ def _pillar(spec, m, pcx, pcz, Yt):
                     if hs > total:
                         break
                     ry, slab = (Yt + hs // 2, False) if hs % 2 == 0 else (Yt + (hs + 1) // 2, True)
-                    stand = Yt + 1 + hs / 2.0
-                    if k == 0 and stand < Yt + 4:
+                    feet = Yt + 1 + hs / 2.0
+                    if k == 0 and feet < Yt + 4:
                         for y in range(Yt + 1, ry):
                             m.put(x, y, z, pal["ramp_full"])
                     m.put(x, ry, z, pal["ramp_slab"] if slab else pal["ramp_full"])
-                    ramp_cells.append((x, ry, z, slab, stand, k, rel))
+                    ramp_cells.append((x, ry, z, slab, feet, k, rel))
                     at_floor = at_floor or ry == yF
+                    # the height a walker's box reaches up from on this step: its feet, plus the half block vanilla lifts
+                    # the box IN PLACE before it moves onto the next step (Entity.collide's step-up), so a climber needs
+                    # 1.8 + STEP_LIFT = 2.3 of air over the step it leaves, not 1.8 (the independent audit, 2026-10-13:
+                    # with 1.8 the last step under the top floor had 2.0 and only a sneaking player passed)
+                    stand = feet + STEP_LIFT
                     # a walker on this step needs 1.8 of air over it: the top floor above it is opened
                     floor_open = floor_open or (stand > yF - 1.8 and ry < yF)
                 if not at_floor:
@@ -426,6 +453,14 @@ def _pillar(spec, m, pcx, pcz, Yt):
                 if d > Ro - 1 and (y - Yt) in (9, 18, 27):
                     b = pal["band"]
                 m.put(x, y, z, b)
+            # the broken crown's coping: a 1.5-high wall block on every wall column, so no wall top is a floor. From the
+            # crown's floor the lowest coping (a crown of 0) stands 1.5 over the feet, which a jump (1.25) never clears
+            # and an eye (1.62) still sees over; each higher column only adds to it. Without it the tops stepped up from
+            # the floor and walked off outward, 35-41 blocks down onto the island, above the Slow Falling box (the
+            # independent audit, 2026-10-13). Connections are set after the loop, from the neighbours.
+            copings.append((x, yF + crown + 1, z))
+            m.put(x, yF + crown + 1, z, weighted(seed, pal["coping"], 23, x, z))
+    _connect_walls(m, copings)
     # cut-outs: the door, the return alcove, the windows
     door, recess, sigil = [], [], []
     for x in range(pcx - r, pcx + r + 1):
