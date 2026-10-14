@@ -373,11 +373,29 @@ def test_the_income_multiplier_moves_the_income(docs):
 # ---------------------------------------------------------------------------------------------------- the loops
 
 
-def test_the_afk_farmer_cannot_exceed_the_produce_cap(world, docs):
-    cap = docs["produce"]["schedule"]["campaign_cap"]
-    sim = run(world, ["afk"], ["as_built"], runs=40)
-    total = sum(x["ledger"]["produce"] for x in sim["as_built"]["afk"])
-    assert total == cap
+# Without it the sim could keep modelling the removed allowance: since the owner's E3 (no cap) the Trading Post income a
+# leg is the curve's declared figure (data/markets.json curve_rule.produce_allowance), which moves when that figure
+# moves; the produce buyer's v1 rows are read by nothing (deleting every allowance key from the document changes no
+# figure), and the AFK farmer's idle hours are still unpaid (no unattended rate is declared), not capped.
+def test_the_trading_post_income_is_the_curves_figure_and_no_allowance_is_read(world, docs):
+    held = docs["markets"]["curve_rule"]["produce_allowance"]["by_badges_held"]
+    assert [world.produce_allowance(b) for b in range(9)] == [int(held.get(str(b), 0)) for b in range(9)]
+
+    def drop_v1(d):
+        for k in ("schedule", "superseded_schedule"):
+            d["produce"].pop(k, None)
+    bare = world_with(docs, drop_v1)
+    assert [bare.produce_allowance(b) for b in range(9)] == [world.produce_allowance(b) for b in range(9)]
+
+    def double(d):
+        pa = d["markets"]["curve_rule"]["produce_allowance"]["by_badges_held"]
+        for k in pa:
+            pa[k] = 2 * int(pa[k])
+    assert world_with(docs, double).produce_allowance(0) == 2 * world.produce_allowance(0)
+    sim = run(world, ["afk", "baseline"], ["as_built"], runs=10)
+    for k in ("1", "4"):
+        assert stage(sim, "as_built", "afk", k)["ledger"]["produce"] == \
+            stage(sim, "as_built", "baseline", k)["ledger"]["produce"] == world.produce_allowance(int(k) - 1)
     assert all(x["idle_hours"] == 6 for x in sim["as_built"]["afk"] if x["stage"].isdigit())
 
 

@@ -1805,6 +1805,43 @@ def test_contract_c28_no_dollar_path_reaches_a_top_tier_item_or_its_inputs():
     assert [c.split(" has")[0] for c in control] == ["TOP TIER OUTPUT cobblemon:master_ball"], control
 
 
+# =================================================================================================================
+# C29. No dollar path undercuts the Trading Post (ECONOMY_V2 2.2 "No round trip", 5.2 A4, the owner's E3: no cap)
+# =================================================================================================================
+#
+# The Trading Post's pack as tools/produce_buyer.py emits it, read by tools/economy_audit.py's buyer_checks, against
+# every sited seller as generated (with the offline snapshot, every Mart's template shop), the server's jar recipes
+# (the 1.8.2 mods when present) and the Station Exchange's emitted offers, run to a fixed point. Control: one seller
+# offering the feather a cent under the post's ranch unit is caught, so the search can fail. NOT covered: conversions
+# that are not recipes (a block broken, a mob bred), villager trades, loot, and whether `clear` and the macro take
+# behave as read (EXP-061).
+def test_contract_c29_no_dollar_path_undercuts_the_trading_post():
+    import economy_audit as EA
+    snap, vanilla = EA.default_server_dir(), EA.default_vanilla_jar()
+    sales = EA.market_sales() + EA.apricorn_sales() + EA.default_shop_sales()
+    conversions, jars = [], None
+    if snap and Path(snap).is_dir():
+        sales += EA.trader_sales(snap)[0]
+        if vanilla and Path(vanilla).is_file():
+            jars = EA.load_jars(str(snap), str(vanilla), EA.default_mods_dir())
+            conversions = jars.conversions()
+    doc = _load("direct_trades.json")
+    data_edges = EA.barter_data(doc)
+    _f, placed = EA.emitted_checks(data_edges, EA.barter_emitted(doc=doc), doc)
+    best, converged = EA.cheapest_fixed_point(sales, conversions + [b.conversion() for b in placed])
+    assert converged
+    files = EA.buyer_emitted()
+    units = {}
+    fails, _r = EA.buyer_checks(files, best, jars, units_out=units)
+    assert not [f for f in fails if "ARBITRAGE" in f], fails
+    assert units.get("minecraft:feather"), "the post buys no feather: the control below proves nothing"
+    cheap = EA.Sale("control seller", None, "minecraft:feather", float(units["minecraft:feather"]) - 0.01, True)
+    best2, _c = EA.cheapest_fixed_point(sales + [cheap], conversions + [b.conversion() for b in placed])
+    control, _r = EA.buyer_checks(files, best2, jars)
+    assert [c.split(":")[0] + ":" + c.split(":")[1] for c in control if "ARBITRAGE" in c] == \
+        ["BUYER ARBITRAGE minecraft:feather"], control
+
+
 def test_every_contract_names_existing_tests():
     for c in REGISTRY["contracts"]:
         assert c["tests"], c["id"]
