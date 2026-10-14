@@ -70,6 +70,17 @@ these changes and to use them. also update any other pack or mod").
 roster (`data/challenge_mode.json`, the trainers it overrides) and make tweaks: trainer-balance-designer (Opus, no
 shell: data only) for the design, then a shell builder for any generator change, then an independent check.
 
+**D. Rips must SPAWN, not stand** (the owner, 2026-10-14: "i thought we were placing possible spawn locations and then
+randomly having them appear all over?"). What was built is 20 permanent rips (`data/dungeon_rips.json`): a misreading of
+"find spawn locations". Not installed, so nothing to undo in the world. Build: a pool of candidate sites (several per
+region, `tools/dungeon_rips.py` siting rules; the 20 join the pool); a runtime scheduler (scoreboard timer) that opens a
+few rips at random candidates, keeps each open for a while, then closes it and restores the ground (the open = frame +
+themed patch and close = `restore` logic exist; today they run once from R16DR, and `rip_close_lines` still fails
+closed because `rip.under` is not recorded); forceload while writing; the rip functions become RUNTIME pack content
+(not stripped: a heap cost, measure it). Proposed defaults, NOT yet confirmed by the owner: 3-5 open at once, about an
+hour of play each or closed once entered, anywhere (gated regions included), a chat line naming the region. The draw
+itself (band, least-recent, sigil) is unchanged; its audit must follow.
+
 Also decided tonight, already recorded: the Master Ball's cheap barter is fine; dungeon bands 5-6 difficulty is
 accepted (no retune); the 12 retired rip patches' ground is grass; Kyogre's rejoin eject built; the 13 trail rips
 retired; gated rips allowed; no Nether rips.
