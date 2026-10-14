@@ -56,10 +56,12 @@ def test_every_crate_is_its_count_times_the_tier_hour_over_its_rate():
     doc = _doc()
     got = {}
     for c in doc["crates"]:
+        if c.get("kp"):
+            continue    # the kitchen/pharmacy goods: their price is the crafts rule's, pinned in the kp tests below
         raw = c["count"] * WAGE[c["tier"]] / c["rate_per_hour"]
         got[c["id"]] = int(math.floor(raw + 0.5))
     assert got == SPINE
-    assert P.prices(doc) == SPINE
+    assert {k: v for k, v in P.prices(doc).items() if not k.startswith("kp_")} == SPINE
 
 
 def test_the_emitted_functions_pay_the_spine_price_not_the_generators_say_so():
@@ -345,6 +347,11 @@ def test_the_pack_ships_its_tags_and_one_option_per_crate_with_its_price():
     dlg = json.dumps(files["data/cobblers/dialogues/dlg_produce_buyer_hollin_farm.json"])
     assert "function cobblers:produce_buyer/sell/all" in dlg
     for c in doc["crates"]:
+        if c.get("menu") is False:
+            # a kitchen/pharmacy good has a sale function but no button: it sells through "sell everything I can"
+            assert "function cobblers:produce_buyer/sell/%s" % c["id"] not in dlg
+            assert P.fn_path("sell/%s" % c["id"]) in files
+            continue
         assert "function cobblers:produce_buyer/sell/%s" % c["id"] in dlg
         assert "A crate of %d %s ($%d)" % (c["count"], c["label"], cp[c["id"]]) in dlg
     assert "cobblers:produce_buyer/pay" in "\n".join(files[P.fn_path("sell/fish")])
@@ -374,7 +381,13 @@ def test_an_unsited_site_has_a_reason_and_is_not_built_or_placed():
     # what breaks without it: an NPC class and a dialogue for a seat nobody verified, placed by R18PB over RCON
     doc, files = _files()
     unsited = [s for s in doc["sites"] if s.get("status") == "unsited"]
-    assert {s["id"] for s in unsited} == {"tp_fossick", "tp_northlight_station"}  # Sunset Harbour sited 2026-10-13 in a full checkout
+    # Fossick and Northlight were the last two (squares authored and posts seated 2026-10-14); none is unsited now, so the
+    # property is exercised on a synthetic one: any site marked unsited, with its reason, is not built or placed
+    assert {s["id"] for s in unsited} == set()
+    synthetic = next(s for s in doc["sites"] if s["id"] == "tp_pallet")
+    synthetic.update(status="unsited", unsited_why="a synthetic reason")
+    files = P.build(doc)
+    unsited = [synthetic]
     for s in unsited:
         assert s["unsited_why"]
         assert "data/cobblers/dialogues/dlg_produce_buyer_%s.json" % s["id"] not in files

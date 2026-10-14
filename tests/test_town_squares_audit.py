@@ -705,7 +705,10 @@ def test_every_town_reaches_its_square_from_both_doors(real):
     for t, r in real["towns"].items():
         missing = {k.split(":", 1)[1] for c, k in A.KNOWN if c == "reach" and k.startswith(t + ":")}
         assert set(r["reach"]) == {"pokecenter", "pokemart"} - missing, t
-        assert r["stalls"] >= 1 and r["blocks"] > 0, t
+        # a square the record says has no stalls of its own (`no_stalls_why`: Fossick and Northlight, whose shops the
+        # market builder already staffs, 2026-10-14) still has to build something and be reachable
+        prebuilt = bool(A.load(ROOT / "data" / "plaza_centres.json")["towns"][t].get("no_stalls_why"))
+        assert (r["stalls"] >= 1 or prebuilt) and r["blocks"] > 0, t
 
 
 # --------------------------------------------------------------------------------------- mutating the generators
