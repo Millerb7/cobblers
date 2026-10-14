@@ -387,7 +387,11 @@ def test_pool_ids_continue_after_the_used_ones():
     assert DRP.pool_ids(rs, "x", 3) == ["rip_x_3", "rip_x_5", "rip_x_6"]
 
 
-def test_the_pool_presence_probes_cover_every_candidate():
+def test_no_candidate_has_a_standing_presence_probe():
+    # The scheduler (tools/rip_scheduler.py, job D) opens and closes rips at random candidates: a closed rip is the
+    # normal state, so a presence probe that expects a candidate's interaction to stand would fail whenever that rip
+    # is closed. Only the retired trail rips keep probes (their removal). Without it the world read-back would report
+    # every closed candidate as missing.
     places = json.loads((ROOT / "data" / "world_probes.json").read_text(encoding="utf-8"))["places"]["dungeon_rips"]
     for r in RIPS:
-        assert any(r["name"] in p["what"] and "interaction" in p["what"] for p in places), r["id"]
+        assert not any(r["name"] in p["what"] and "interaction" in p["what"] for p in places), r["id"]
