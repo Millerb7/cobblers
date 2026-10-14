@@ -23,8 +23,7 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
   is unread; `tools/bank.py` and `install_check` still use `bank.json`), then the full cycle on staging: prepare, hold
   the bank, install, boot 24G watchdog off, `reapply.py run` (new: R14R, R18KC, R16CH, R18CH, R16DR re-apply, R9F,
   R18PB), stop, watchdog 60000, strip, boot 12G, read back. Then the client pack and the friends' zip.
-- **Lock: HELD** by `owner: claude-mods182-2026-10-13` at `C:\Users\wnd\Documents\github\.cobblers-server-agent.lock`
-  for job A. The server is DOWN. The next session either takes it over (it is this job's) or removes it after asking.
+- **Lock: released** at the session's end. The server is DOWN. Take the lock afresh (process/port check first) before the swap's boot.
 - Snapshot anchor: `D:\cobblers-snapshots\staging-2026-10-14-before-1.8.2` (world, mods, config; verified).
 - Verified on the integration branch: economy_audit 0 problems; economy + sim + Trading Post tests 159 passed;
   contracts C4/C24/C28/C29 11 passed; trainer tests 116; gym_arenas_audit clean; voucher current. The full contracts
