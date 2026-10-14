@@ -280,15 +280,17 @@ badge (9.2). Measured: `python tools/tm_gate.py --server-dir <snapshot>`, 2026-1
 | 2 | 122 | 120 | 120 | -2 |
 | 3 | 107 | 99 | 99 | -8 |
 | 4 | 103 | 85 | 85 | -18 |
-| 5 | 109 | 123 | 123 | +14 |
-| 6 | 96 | 99 | 100 | +4 |
+| 5 | 109 | 124 | 124 | +15 |
+| 6 | 96 | 98 | 99 | +3 |
 | 7 | 66 | 77 | 77 | +11 |
 | 8 | 33 | 34 | 34 | +1 |
 
 The owner's calls of 2026-10-08 moved eight TMs and raised three: Inferno 3 -> 5 and Zap Cannon 4 -> 5 (group 3);
 Meteor Assault 4 -> 7, Prismatic Laser 5 -> 7, Roar of Time 4 -> 7 (group 9); Return and Frustration 6 -> 7 (group
 16, measured in 9.1); Spore 8 -> 5 (group 18, 9.2); the chain raises of 9.2. Spore's move changed the plan's
-distribution by two TMs: 5 from 121 to 123 and 8 from 36 to 34 (Spore and Stun Spore, both now at 5).
+distribution by two TMs: 5 from 121 to 123 and 8 from 36 to 34 (Spore and Stun Spore, both now at 5). Glare 6 -> 5
+(group 17, the same day) moved one more: 5 to 124, 6 to 99 (re-measured 2026-10-13, `tm_gate.py build` against the
+2026-10-05 snapshot: `{1: 164, 2: 120, 3: 99, 4: 85, 5: 124, 6: 99, 7: 77, 8: 34}`).
 
 The strongest TM at each badge as applied, by score (a placed outlier keeps its score, so Hyper Beam at 7 reads 64.1):
 
