@@ -57,6 +57,7 @@ SECRET_FILES = (
     ("adopted_legendary_sites.json", "legendary"),
     ("entei_boss.json", "legendary"),
     ("hoopa_cradle.json", "legendary"),
+    ("frostpeak_keep_quest.json", "legendary"),
     ("sapling_celebi.json", "legendary"),
     ("spectrier_cap.json", "legendary"),
     ("mythical_starters.json", "legendary"),
