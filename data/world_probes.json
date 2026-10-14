@@ -9997,6 +9997,1806 @@
         "expect": true
       },
       {
+        "what": "A rift in Northgate Isle (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_northgate_isle_2]",
+        "count": 1,
+        "hold": [
+          4948,
+          105,
+          298
+        ]
+      },
+      {
+        "what": "A rift in Northgate Isle (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_northgate_isle_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4948,
+          105,
+          298
+        ]
+      },
+      {
+        "what": "A rift in Northgate Isle (2): the themed ground under the oval (minecraft:rooted_dirt)",
+        "block": [
+          4947,
+          104,
+          298,
+          "minecraft:rooted_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Northgate Isle (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_northgate_isle_3]",
+        "count": 1,
+        "hold": [
+          6028,
+          70,
+          714
+        ]
+      },
+      {
+        "what": "A rift in Northgate Isle (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_northgate_isle_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          6028,
+          70,
+          714
+        ]
+      },
+      {
+        "what": "A rift in Northgate Isle (3): the themed ground under the oval (minecraft:rooted_dirt)",
+        "block": [
+          6027,
+          69,
+          714,
+          "minecraft:rooted_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Northgate Isle (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_northgate_isle_4]",
+        "count": 1,
+        "hold": [
+          5468,
+          70,
+          98
+        ]
+      },
+      {
+        "what": "A rift in Northgate Isle (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_northgate_isle_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          5468,
+          70,
+          98
+        ]
+      },
+      {
+        "what": "A rift in Northgate Isle (4): the themed ground under the oval (minecraft:rooted_dirt)",
+        "block": [
+          5467,
+          69,
+          98,
+          "minecraft:rooted_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Pine Isles (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_pine_isles_2]",
+        "count": 1,
+        "hold": [
+          6772,
+          115,
+          1050
+        ]
+      },
+      {
+        "what": "A rift in the Pine Isles (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_pine_isles_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          6772,
+          115,
+          1050
+        ]
+      },
+      {
+        "what": "A rift in the Pine Isles (2): the themed ground under the oval (minecraft:rooted_dirt)",
+        "block": [
+          6771,
+          114,
+          1050,
+          "minecraft:rooted_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Pine Isles (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_pine_isles_3]",
+        "count": 1,
+        "hold": [
+          7532,
+          112,
+          1658
+        ]
+      },
+      {
+        "what": "A rift in the Pine Isles (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_pine_isles_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          7532,
+          112,
+          1658
+        ]
+      },
+      {
+        "what": "A rift in the Pine Isles (3): the themed ground under the oval (minecraft:rooted_dirt)",
+        "block": [
+          7531,
+          111,
+          1658,
+          "minecraft:rooted_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Pine Isles (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_pine_isles_4]",
+        "count": 1,
+        "hold": [
+          7652,
+          69,
+          914
+        ]
+      },
+      {
+        "what": "A rift in the Pine Isles (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_pine_isles_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          7652,
+          69,
+          914
+        ]
+      },
+      {
+        "what": "A rift in the Pine Isles (4): the themed ground under the oval (minecraft:rooted_dirt)",
+        "block": [
+          7651,
+          68,
+          914,
+          "minecraft:rooted_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Fungal Isle (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_fungal_isle_2]",
+        "count": 1,
+        "hold": [
+          596,
+          112,
+          6114
+        ]
+      },
+      {
+        "what": "A rift in the Fungal Isle (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_fungal_isle_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          596,
+          112,
+          6114
+        ]
+      },
+      {
+        "what": "A rift in the Fungal Isle (2): the themed ground under the oval (minecraft:grass_block)",
+        "block": [
+          595,
+          111,
+          6114,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Fungal Isle (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_fungal_isle_3]",
+        "count": 1,
+        "hold": [
+          4,
+          75,
+          5634
+        ]
+      },
+      {
+        "what": "A rift in the Fungal Isle (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_fungal_isle_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4,
+          75,
+          5634
+        ]
+      },
+      {
+        "what": "A rift in the Fungal Isle (3): the themed ground under the oval (minecraft:grass_block)",
+        "block": [
+          3,
+          74,
+          5634,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Fungal Isle (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_fungal_isle_4]",
+        "count": 1,
+        "hold": [
+          964,
+          66,
+          5810
+        ]
+      },
+      {
+        "what": "A rift in the Fungal Isle (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_fungal_isle_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          964,
+          66,
+          5810
+        ]
+      },
+      {
+        "what": "A rift in the Fungal Isle (4): the themed ground under the oval (minecraft:grass_block)",
+        "block": [
+          963,
+          65,
+          5810,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Sunset Isle (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_sunset_isle_2]",
+        "count": 1,
+        "hold": [
+          1644,
+          113,
+          7498
+        ]
+      },
+      {
+        "what": "A rift in Sunset Isle (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_sunset_isle_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          1644,
+          113,
+          7498
+        ]
+      },
+      {
+        "what": "A rift in Sunset Isle (2): the themed ground under the oval (minecraft:smooth_sandstone)",
+        "block": [
+          1643,
+          112,
+          7498,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Sunset Isle (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_sunset_isle_3]",
+        "count": 1,
+        "hold": [
+          1892,
+          95,
+          6994
+        ]
+      },
+      {
+        "what": "A rift in Sunset Isle (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_sunset_isle_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          1892,
+          95,
+          6994
+        ]
+      },
+      {
+        "what": "A rift in Sunset Isle (3): the themed ground under the oval (minecraft:smooth_sandstone)",
+        "block": [
+          1891,
+          94,
+          6994,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Sunset Isle (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_sunset_isle_4]",
+        "count": 1,
+        "hold": [
+          2516,
+          89,
+          7098
+        ]
+      },
+      {
+        "what": "A rift in Sunset Isle (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_sunset_isle_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          2516,
+          89,
+          7098
+        ]
+      },
+      {
+        "what": "A rift in Sunset Isle (4): the themed ground under the oval (minecraft:smooth_sandstone)",
+        "block": [
+          2515,
+          88,
+          7098,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Long Isle (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_long_isle_2]",
+        "count": 1,
+        "hold": [
+          7708,
+          124,
+          5970
+        ]
+      },
+      {
+        "what": "A rift in Long Isle (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_long_isle_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          7708,
+          124,
+          5970
+        ]
+      },
+      {
+        "what": "A rift in Long Isle (2): the themed ground under the oval (minecraft:prismarine_bricks)",
+        "block": [
+          7707,
+          123,
+          5970,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Long Isle (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_long_isle_3]",
+        "count": 1,
+        "hold": [
+          7692,
+          142,
+          7210
+        ]
+      },
+      {
+        "what": "A rift in Long Isle (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_long_isle_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          7692,
+          142,
+          7210
+        ]
+      },
+      {
+        "what": "A rift in Long Isle (3): the themed ground under the oval (minecraft:prismarine_bricks)",
+        "block": [
+          7691,
+          141,
+          7210,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Long Isle (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_long_isle_4]",
+        "count": 1,
+        "hold": [
+          7876,
+          114,
+          5498
+        ]
+      },
+      {
+        "what": "A rift in Long Isle (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_long_isle_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          7876,
+          114,
+          5498
+        ]
+      },
+      {
+        "what": "A rift in Long Isle (4): the themed ground under the oval (minecraft:prismarine_bricks)",
+        "block": [
+          7875,
+          113,
+          5498,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Glacial Tear (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_glacial_tear_2]",
+        "count": 1,
+        "hold": [
+          3772,
+          97,
+          2082
+        ]
+      },
+      {
+        "what": "A rift in the Glacial Tear (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_glacial_tear_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          3772,
+          97,
+          2082
+        ]
+      },
+      {
+        "what": "A rift in the Glacial Tear (2): the themed ground under the oval (minecraft:polished_diorite)",
+        "block": [
+          3771,
+          96,
+          2082,
+          "minecraft:polished_diorite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Glacial Tear (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_glacial_tear_3]",
+        "count": 1,
+        "hold": [
+          4636,
+          79,
+          3042
+        ]
+      },
+      {
+        "what": "A rift in the Glacial Tear (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_glacial_tear_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4636,
+          79,
+          3042
+        ]
+      },
+      {
+        "what": "A rift in the Glacial Tear (3): the themed ground under the oval (minecraft:polished_diorite)",
+        "block": [
+          4635,
+          78,
+          3042,
+          "minecraft:polished_diorite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Glacial Tear (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_glacial_tear_4]",
+        "count": 1,
+        "hold": [
+          3892,
+          127,
+          2746
+        ]
+      },
+      {
+        "what": "A rift in the Glacial Tear (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_glacial_tear_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          3892,
+          127,
+          2746
+        ]
+      },
+      {
+        "what": "A rift in the Glacial Tear (4): the themed ground under the oval (minecraft:polished_diorite)",
+        "block": [
+          3891,
+          126,
+          2746,
+          "minecraft:polished_diorite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Tri Peaks (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_tri_peaks_2]",
+        "count": 1,
+        "hold": [
+          1196,
+          119,
+          818
+        ]
+      },
+      {
+        "what": "A rift in the Tri Peaks (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_tri_peaks_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          1196,
+          119,
+          818
+        ]
+      },
+      {
+        "what": "A rift in the Tri Peaks (2): the themed ground under the oval (minecraft:stone)",
+        "block": [
+          1195,
+          118,
+          818,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Tri Peaks (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_tri_peaks_3]",
+        "count": 1,
+        "hold": [
+          2460,
+          132,
+          1850
+        ]
+      },
+      {
+        "what": "A rift in the Tri Peaks (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_tri_peaks_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          2460,
+          132,
+          1850
+        ]
+      },
+      {
+        "what": "A rift in the Tri Peaks (3): the themed ground under the oval (minecraft:stone)",
+        "block": [
+          2459,
+          131,
+          1850,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Tri Peaks (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_tri_peaks_4]",
+        "count": 1,
+        "hold": [
+          1692,
+          146,
+          698
+        ]
+      },
+      {
+        "what": "A rift in the Tri Peaks (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_tri_peaks_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          1692,
+          146,
+          698
+        ]
+      },
+      {
+        "what": "A rift in the Tri Peaks (4): the themed ground under the oval (minecraft:stone)",
+        "block": [
+          1691,
+          145,
+          698,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Rift (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_the_rift_2]",
+        "count": 1,
+        "hold": [
+          4380,
+          125,
+          4426
+        ]
+      },
+      {
+        "what": "A rift in the Rift (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_the_rift_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4380,
+          125,
+          4426
+        ]
+      },
+      {
+        "what": "A rift in the Rift (2): the themed ground under the oval (minecraft:tuff)",
+        "block": [
+          4379,
+          124,
+          4426,
+          "minecraft:tuff"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Rift (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_the_rift_3]",
+        "count": 1,
+        "hold": [
+          3308,
+          117,
+          2962
+        ]
+      },
+      {
+        "what": "A rift in the Rift (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_the_rift_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          3308,
+          117,
+          2962
+        ]
+      },
+      {
+        "what": "A rift in the Rift (3): the themed ground under the oval (minecraft:tuff)",
+        "block": [
+          3307,
+          116,
+          2962,
+          "minecraft:tuff"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Rift (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_the_rift_4]",
+        "count": 1,
+        "hold": [
+          3276,
+          118,
+          3530
+        ]
+      },
+      {
+        "what": "A rift in the Rift (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_the_rift_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          3276,
+          118,
+          3530
+        ]
+      },
+      {
+        "what": "A rift in the Rift (4): the themed ground under the oval (minecraft:tuff)",
+        "block": [
+          3275,
+          117,
+          3530,
+          "minecraft:tuff"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Craters (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_the_craters_2]",
+        "count": 1,
+        "hold": [
+          5756,
+          130,
+          5378
+        ]
+      },
+      {
+        "what": "A rift in the Craters (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_the_craters_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          5756,
+          130,
+          5378
+        ]
+      },
+      {
+        "what": "A rift in the Craters (2): the themed ground under the oval (minecraft:stone)",
+        "block": [
+          5755,
+          129,
+          5378,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Craters (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_the_craters_3]",
+        "count": 1,
+        "hold": [
+          6676,
+          151,
+          5098
+        ]
+      },
+      {
+        "what": "A rift in the Craters (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_the_craters_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          6676,
+          151,
+          5098
+        ]
+      },
+      {
+        "what": "A rift in the Craters (3): the themed ground under the oval (minecraft:stone)",
+        "block": [
+          6675,
+          150,
+          5098,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Craters (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_the_craters_4]",
+        "count": 1,
+        "hold": [
+          5796,
+          142,
+          5930
+        ]
+      },
+      {
+        "what": "A rift in the Craters (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_the_craters_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          5796,
+          142,
+          5930
+        ]
+      },
+      {
+        "what": "A rift in the Craters (4): the themed ground under the oval (minecraft:stone)",
+        "block": [
+          5795,
+          141,
+          5930,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Scorched Plateau (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_scorched_plateau_2]",
+        "count": 1,
+        "hold": [
+          4708,
+          166,
+          6034
+        ]
+      },
+      {
+        "what": "A rift in the Scorched Plateau (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_scorched_plateau_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4708,
+          166,
+          6034
+        ]
+      },
+      {
+        "what": "A rift in the Scorched Plateau (2): the themed ground under the oval (minecraft:smooth_sandstone)",
+        "block": [
+          4707,
+          165,
+          6034,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Scorched Plateau (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_scorched_plateau_3]",
+        "count": 1,
+        "hold": [
+          4572,
+          159,
+          5418
+        ]
+      },
+      {
+        "what": "A rift in the Scorched Plateau (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_scorched_plateau_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4572,
+          159,
+          5418
+        ]
+      },
+      {
+        "what": "A rift in the Scorched Plateau (3): the themed ground under the oval (minecraft:smooth_sandstone)",
+        "block": [
+          4571,
+          158,
+          5418,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Scorched Plateau (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_scorched_plateau_4]",
+        "count": 1,
+        "hold": [
+          5436,
+          159,
+          5922
+        ]
+      },
+      {
+        "what": "A rift in the Scorched Plateau (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_scorched_plateau_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          5436,
+          159,
+          5922
+        ]
+      },
+      {
+        "what": "A rift in the Scorched Plateau (4): the themed ground under the oval (minecraft:smooth_sandstone)",
+        "block": [
+          5435,
+          158,
+          5922,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Frostpeak Point (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_frostpeak_point_2]",
+        "count": 1,
+        "hold": [
+          516,
+          138,
+          562
+        ]
+      },
+      {
+        "what": "A rift in Frostpeak Point (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_frostpeak_point_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          516,
+          138,
+          562
+        ]
+      },
+      {
+        "what": "A rift in Frostpeak Point (2): the themed ground under the oval (minecraft:polished_diorite)",
+        "block": [
+          515,
+          137,
+          562,
+          "minecraft:polished_diorite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Frostpeak Point (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_frostpeak_point_3]",
+        "count": 1,
+        "hold": [
+          2612,
+          87,
+          490
+        ]
+      },
+      {
+        "what": "A rift in Frostpeak Point (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_frostpeak_point_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          2612,
+          87,
+          490
+        ]
+      },
+      {
+        "what": "A rift in Frostpeak Point (3): the themed ground under the oval (minecraft:polished_diorite)",
+        "block": [
+          2611,
+          86,
+          490,
+          "minecraft:polished_diorite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Frostpeak Point (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_frostpeak_point_4]",
+        "count": 1,
+        "hold": [
+          396,
+          88,
+          74
+        ]
+      },
+      {
+        "what": "A rift in Frostpeak Point (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_frostpeak_point_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          396,
+          88,
+          74
+        ]
+      },
+      {
+        "what": "A rift in Frostpeak Point (4): the themed ground under the oval (minecraft:polished_diorite)",
+        "block": [
+          395,
+          87,
+          74,
+          "minecraft:polished_diorite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Tilpey Lakeland (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_tilpey_lakeland_2]",
+        "count": 1,
+        "hold": [
+          4956,
+          101,
+          3898
+        ]
+      },
+      {
+        "what": "A rift in Tilpey Lakeland (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_tilpey_lakeland_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4956,
+          101,
+          3898
+        ]
+      },
+      {
+        "what": "A rift in Tilpey Lakeland (2): the themed ground under the oval (minecraft:prismarine_bricks)",
+        "block": [
+          4955,
+          100,
+          3898,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Tilpey Lakeland (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_tilpey_lakeland_3]",
+        "count": 1,
+        "hold": [
+          5276,
+          112,
+          4802
+        ]
+      },
+      {
+        "what": "A rift in Tilpey Lakeland (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_tilpey_lakeland_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          5276,
+          112,
+          4802
+        ]
+      },
+      {
+        "what": "A rift in Tilpey Lakeland (3): the themed ground under the oval (minecraft:prismarine_bricks)",
+        "block": [
+          5275,
+          111,
+          4802,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Tilpey Lakeland (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_tilpey_lakeland_4]",
+        "count": 1,
+        "hold": [
+          4828,
+          111,
+          4578
+        ]
+      },
+      {
+        "what": "A rift in Tilpey Lakeland (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_tilpey_lakeland_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4828,
+          111,
+          4578
+        ]
+      },
+      {
+        "what": "A rift in Tilpey Lakeland (4): the themed ground under the oval (minecraft:prismarine_bricks)",
+        "block": [
+          4827,
+          110,
+          4578,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Wedge (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_the_wedge_2]",
+        "count": 1,
+        "hold": [
+          4676,
+          116,
+          4290
+        ]
+      },
+      {
+        "what": "A rift in the Wedge (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_the_wedge_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4676,
+          116,
+          4290
+        ]
+      },
+      {
+        "what": "A rift in the Wedge (2): the themed ground under the oval (minecraft:polished_andesite)",
+        "block": [
+          4675,
+          115,
+          4290,
+          "minecraft:polished_andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Wedge (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_the_wedge_3]",
+        "count": 1,
+        "hold": [
+          3932,
+          142,
+          3050
+        ]
+      },
+      {
+        "what": "A rift in the Wedge (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_the_wedge_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          3932,
+          142,
+          3050
+        ]
+      },
+      {
+        "what": "A rift in the Wedge (3): the themed ground under the oval (minecraft:polished_andesite)",
+        "block": [
+          3931,
+          141,
+          3050,
+          "minecraft:polished_andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Wedge (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_the_wedge_4]",
+        "count": 1,
+        "hold": [
+          4436,
+          120,
+          3978
+        ]
+      },
+      {
+        "what": "A rift in the Wedge (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_the_wedge_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4436,
+          120,
+          3978
+        ]
+      },
+      {
+        "what": "A rift in the Wedge (4): the themed ground under the oval (minecraft:polished_andesite)",
+        "block": [
+          4435,
+          119,
+          3978,
+          "minecraft:polished_andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Northern Downs (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_northern_downs_2]",
+        "count": 1,
+        "hold": [
+          4532,
+          108,
+          1314
+        ]
+      },
+      {
+        "what": "A rift in the Northern Downs (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_northern_downs_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4532,
+          108,
+          1314
+        ]
+      },
+      {
+        "what": "A rift in the Northern Downs (2): the themed ground under the oval (minecraft:stone)",
+        "block": [
+          4531,
+          107,
+          1314,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Northern Downs (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_northern_downs_3]",
+        "count": 1,
+        "hold": [
+          3220,
+          119,
+          658
+        ]
+      },
+      {
+        "what": "A rift in the Northern Downs (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_northern_downs_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          3220,
+          119,
+          658
+        ]
+      },
+      {
+        "what": "A rift in the Northern Downs (3): the themed ground under the oval (minecraft:stone)",
+        "block": [
+          3219,
+          118,
+          658,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Northern Downs (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_northern_downs_4]",
+        "count": 1,
+        "hold": [
+          4220,
+          111,
+          1842
+        ]
+      },
+      {
+        "what": "A rift in the Northern Downs (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_northern_downs_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          4220,
+          111,
+          1842
+        ]
+      },
+      {
+        "what": "A rift in the Northern Downs (4): the themed ground under the oval (minecraft:stone)",
+        "block": [
+          4219,
+          110,
+          1842,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Marsh Country (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_marsh_country_2]",
+        "count": 1,
+        "hold": [
+          6452,
+          119,
+          2522
+        ]
+      },
+      {
+        "what": "A rift in the Marsh Country (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_marsh_country_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          6452,
+          119,
+          2522
+        ]
+      },
+      {
+        "what": "A rift in the Marsh Country (2): the themed ground under the oval (minecraft:grass_block)",
+        "block": [
+          6451,
+          118,
+          2522,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Marsh Country (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_marsh_country_3]",
+        "count": 1,
+        "hold": [
+          5908,
+          126,
+          2194
+        ]
+      },
+      {
+        "what": "A rift in the Marsh Country (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_marsh_country_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          5908,
+          126,
+          2194
+        ]
+      },
+      {
+        "what": "A rift in the Marsh Country (3): the themed ground under the oval (minecraft:grass_block)",
+        "block": [
+          5907,
+          125,
+          2194,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Marsh Country (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_marsh_country_4]",
+        "count": 1,
+        "hold": [
+          6500,
+          100,
+          3026
+        ]
+      },
+      {
+        "what": "A rift in the Marsh Country (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_marsh_country_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          6500,
+          100,
+          3026
+        ]
+      },
+      {
+        "what": "A rift in the Marsh Country (4): the themed ground under the oval (minecraft:grass_block)",
+        "block": [
+          6499,
+          99,
+          3026,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Viltri Woods (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_viltri_woods_2]",
+        "count": 1,
+        "hold": [
+          2020,
+          118,
+          2810
+        ]
+      },
+      {
+        "what": "A rift in Viltri Woods (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_viltri_woods_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          2020,
+          118,
+          2810
+        ]
+      },
+      {
+        "what": "A rift in Viltri Woods (2): the themed ground under the oval (minecraft:rooted_dirt)",
+        "block": [
+          2019,
+          117,
+          2810,
+          "minecraft:rooted_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Viltri Woods (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_viltri_woods_3]",
+        "count": 1,
+        "hold": [
+          1772,
+          105,
+          2082
+        ]
+      },
+      {
+        "what": "A rift in Viltri Woods (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_viltri_woods_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          1772,
+          105,
+          2082
+        ]
+      },
+      {
+        "what": "A rift in Viltri Woods (3): the themed ground under the oval (minecraft:rooted_dirt)",
+        "block": [
+          1771,
+          104,
+          2082,
+          "minecraft:rooted_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Viltri Woods (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_viltri_woods_4]",
+        "count": 1,
+        "hold": [
+          1196,
+          88,
+          2242
+        ]
+      },
+      {
+        "what": "A rift in Viltri Woods (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_viltri_woods_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          1196,
+          88,
+          2242
+        ]
+      },
+      {
+        "what": "A rift in Viltri Woods (4): the themed ground under the oval (minecraft:rooted_dirt)",
+        "block": [
+          1195,
+          87,
+          2242,
+          "minecraft:rooted_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Shrew Lakes (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_shrew_lakes_2]",
+        "count": 1,
+        "hold": [
+          3252,
+          145,
+          4130
+        ]
+      },
+      {
+        "what": "A rift in Shrew Lakes (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_shrew_lakes_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          3252,
+          145,
+          4130
+        ]
+      },
+      {
+        "what": "A rift in Shrew Lakes (2): the themed ground under the oval (minecraft:prismarine_bricks)",
+        "block": [
+          3251,
+          144,
+          4130,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Shrew Lakes (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_shrew_lakes_3]",
+        "count": 1,
+        "hold": [
+          2852,
+          107,
+          3634
+        ]
+      },
+      {
+        "what": "A rift in Shrew Lakes (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_shrew_lakes_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          2852,
+          107,
+          3634
+        ]
+      },
+      {
+        "what": "A rift in Shrew Lakes (3): the themed ground under the oval (minecraft:prismarine_bricks)",
+        "block": [
+          2851,
+          106,
+          3634,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Shrew Lakes (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_shrew_lakes_4]",
+        "count": 1,
+        "hold": [
+          2356,
+          120,
+          3978
+        ]
+      },
+      {
+        "what": "A rift in Shrew Lakes (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_shrew_lakes_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          2356,
+          120,
+          3978
+        ]
+      },
+      {
+        "what": "A rift in Shrew Lakes (4): the themed ground under the oval (minecraft:prismarine_bricks)",
+        "block": [
+          2355,
+          119,
+          3978,
+          "minecraft:prismarine_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Pallet Fields (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_pallet_fields_2]",
+        "count": 1,
+        "hold": [
+          1196,
+          129,
+          4650
+        ]
+      },
+      {
+        "what": "A rift in Pallet Fields (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_pallet_fields_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          1196,
+          129,
+          4650
+        ]
+      },
+      {
+        "what": "A rift in Pallet Fields (2): the themed ground under the oval (minecraft:grass_block)",
+        "block": [
+          1195,
+          128,
+          4650,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Pallet Fields (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_pallet_fields_3]",
+        "count": 1,
+        "hold": [
+          1748,
+          112,
+          5386
+        ]
+      },
+      {
+        "what": "A rift in Pallet Fields (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_pallet_fields_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          1748,
+          112,
+          5386
+        ]
+      },
+      {
+        "what": "A rift in Pallet Fields (3): the themed ground under the oval (minecraft:grass_block)",
+        "block": [
+          1747,
+          111,
+          5386,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in Pallet Fields (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_pallet_fields_4]",
+        "count": 1,
+        "hold": [
+          916,
+          120,
+          4234
+        ]
+      },
+      {
+        "what": "A rift in Pallet Fields (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_pallet_fields_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          916,
+          120,
+          4234
+        ]
+      },
+      {
+        "what": "A rift in Pallet Fields (4): the themed ground under the oval (minecraft:grass_block)",
+        "block": [
+          915,
+          119,
+          4234,
+          "minecraft:grass_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Southern Coast (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_southern_coast_2]",
+        "count": 1,
+        "hold": [
+          3388,
+          102,
+          6138
+        ]
+      },
+      {
+        "what": "A rift in the Southern Coast (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_southern_coast_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          3388,
+          102,
+          6138
+        ]
+      },
+      {
+        "what": "A rift in the Southern Coast (2): the themed ground under the oval (minecraft:polished_andesite)",
+        "block": [
+          3387,
+          101,
+          6138,
+          "minecraft:polished_andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Southern Coast (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_southern_coast_3]",
+        "count": 1,
+        "hold": [
+          2988,
+          95,
+          5834
+        ]
+      },
+      {
+        "what": "A rift in the Southern Coast (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_southern_coast_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          2988,
+          95,
+          5834
+        ]
+      },
+      {
+        "what": "A rift in the Southern Coast (3): the themed ground under the oval (minecraft:polished_andesite)",
+        "block": [
+          2987,
+          94,
+          5834,
+          "minecraft:polished_andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Southern Coast (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_southern_coast_4]",
+        "count": 1,
+        "hold": [
+          3940,
+          122,
+          5762
+        ]
+      },
+      {
+        "what": "A rift in the Southern Coast (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_southern_coast_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          3940,
+          122,
+          5762
+        ]
+      },
+      {
+        "what": "A rift in the Southern Coast (4): the themed ground under the oval (minecraft:polished_andesite)",
+        "block": [
+          3939,
+          121,
+          5762,
+          "minecraft:polished_andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Eastern Dunes (2): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_eastern_dunes_2]",
+        "count": 1,
+        "hold": [
+          6972,
+          143,
+          5522
+        ]
+      },
+      {
+        "what": "A rift in the Eastern Dunes (2): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_eastern_dunes_2,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          6972,
+          143,
+          5522
+        ]
+      },
+      {
+        "what": "A rift in the Eastern Dunes (2): the themed ground under the oval (minecraft:smooth_sandstone)",
+        "block": [
+          6971,
+          142,
+          5522,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Eastern Dunes (3): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_eastern_dunes_3]",
+        "count": 1,
+        "hold": [
+          7052,
+          151,
+          6042
+        ]
+      },
+      {
+        "what": "A rift in the Eastern Dunes (3): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_eastern_dunes_3,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          7052,
+          151,
+          6042
+        ]
+      },
+      {
+        "what": "A rift in the Eastern Dunes (3): the themed ground under the oval (minecraft:smooth_sandstone)",
+        "block": [
+          7051,
+          150,
+          6042,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "A rift in the Eastern Dunes (4): its interaction (after R16DR's entity chain)",
+        "entity": "@e[type=minecraft:interaction,tag=dg.rip_eastern_dunes_4]",
+        "count": 1,
+        "hold": [
+          6060,
+          138,
+          6274
+        ]
+      },
+      {
+        "what": "A rift in the Eastern Dunes (4): its oval (one item_display, in front of the opening)",
+        "entity": "@e[type=minecraft:item_display,tag=dg.rip_eastern_dunes_4,tag=dg.rip_oval]",
+        "count": 1,
+        "hold": [
+          6060,
+          138,
+          6274
+        ]
+      },
+      {
+        "what": "A rift in the Eastern Dunes (4): the themed ground under the oval (minecraft:smooth_sandstone)",
+        "block": [
+          6059,
+          137,
+          6274,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
         "what": "The old mine's trail, rip 1 (RETIRED): no interaction (after R16DR's retire sweep)",
         "entity": "@e[type=minecraft:interaction,tag=dg.rip_ns]",
         "count": 0,

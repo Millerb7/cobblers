@@ -8,8 +8,17 @@ emits the rip's plane, ground, oval, click, particles and advancement; this tool
   python tools/dungeon_rips.py check                  every rip against every rule below; exit 1 on a problem
   python tools/dungeon_rips.py find <region id> [--top N] [--stride N]
                                                        candidate sites in a region, best first (nothing written)
+  python tools/dungeon_rips.py find <region id> --top N --spaced    N sites a pool apart (farthest-point), not the N top scores
+  python tools/dungeon_rips.py find-all --pool N      per region, the sites that would bring its pool to N
+  python tools/dungeon_rips.py pool [--per-region N] [--regions R ...] [--write]
+                                                       the records that bring each region's POOL of rips to N (default 4, the
+                                                       standing rips counted); --write appends them to data/dungeon_rips.json
   python tools/dungeon_rips.py record <region id> <mid_x> <z> --id ID --name NAME --theme THEME
                                                        print the complete record for one chosen site (nothing written)
+
+THE POOL (the owner, 2026-10-14): `rips` is no longer one place per region but the CANDIDATE POOL a scheduler opens a few of at
+random and closes again. Every record is the same shape and held to every rule below; ids are rip_<region> (the region's first)
+and rip_<region>_<k>. New records are only ever appended, so a standing rip's position in the file (dg.rip) never moves.
 
 THE RULES a region rip (kind "region") is held to, each with where its number comes from:
 
@@ -28,7 +37,9 @@ THE RULES a region rip (kind "region") is held to, each with where its number co
               round it: a rip is a wild place and a wild place is not inside a spawn-free precinct.
   region      the window's four corners inside the region's polygon (data/regions.json), so a rip stands in the region it
               names.
-  spread      at least SPREAD (300) blocks from every other standing rip. (The 13 test rips on the old mine's trail, kind
+  spread      at least SPREAD (300) blocks from every other standing rip, in its own region or another: so a pool's sites are
+              spread over its region and two open rips can never overlap (the window is 9 x 7; the 30 blocks of CLEARANCE is the
+              floor this subsumes). (The 13 test rips on the old mine's trail, kind
               "test_trail", were RETIRED 2026-10-13 and live under retired_rips: they are not standing, so they are not held to
               it and nothing is held to a distance from them.)
   gate        NOT a rule. A rip may stand in a place the player cannot yet reach (the owner, 2026-10-13: "every area in game
@@ -331,6 +342,76 @@ def find(g, region_id, top=8, stride=8, others=(), rip_ids=(), shared=None):
     return out[:top]
 
 
+def pool_ids(rips, region_id, n):
+    """The next `n` ids for region `region_id`: rip_<region>_<k>, k from 2 (the region's first rip, rip_<region>, is number 1)
+    and past any k already in use."""
+    used = {r["id"] for r in rips}
+    out, k = [], 2
+    while len(out) < n:
+        if "rip_%s_%d" % (region_id, k) not in used:
+            out.append("rip_%s_%d" % (region_id, k))
+        k += 1
+    return out
+
+
+def pick_pool(cands, standing, want, spacing=SPREAD, cap=500.0):
+    """Choose up to `want` new sites from `cands` (find()'s tuples, already clear of every rip in other regions), each at least
+    `spacing` blocks from every `standing` site of the region [(x, z)] and from each other. Farthest-point first: the next
+    pick is the candidate furthest (capped at `cap`) from the sites already chosen, ties to find()'s score, so a region's pool
+    is spread over the region and not clustered on its best patch. The spacing is SPREAD (300): the one rule the tool already
+    holds between any two rips, so two open rips never overlap (the window is 9 x 7) and the tool's check needs no second
+    rule. Deterministic: no random choice."""
+    have = list(standing)
+    out = []
+    for _ in range(want):
+        best = None
+        for c in cands:
+            m, z = c[1], c[2]
+            d = min((math.hypot(m - x, z - y) for x, y in have), default=cap)
+            if d < spacing:
+                continue
+            key = (min(d, cap), c[0])
+            if best is None or key > best[0]:
+                best = (key, c)
+        if best is None:
+            break
+        out.append(best[1])
+        have.append((best[1][1], best[1][2]))
+    return out
+
+
+def pool_records(g, doc, want, shared=None, regions=None, stride=8):
+    """New records for a pool of `want` sites per region (the region's standing rips count toward it): [record], appended in
+    region order. Each is a complete `record()` of the same shape as the rips already in the file, with the region's first rip's
+    scorch_theme, the id rip_<region>_<k> and the name '<first rip's name> (<k>)'. A region that cannot hold `want` gets fewer,
+    never a site that breaks a rule; the cross-region spread (SPREAD from every rip of ANOTHER region, the new picks included)
+    is held by find()'s `others`, in region order."""
+    shared = shared if shared is not None else {}
+    rips = list(doc["rips"])
+    every_id = [o["id"] for o in rips] + [o["id"] for o in doc.get("retired_rips") or []]
+    new = []
+    for rid in (regions or list(region_polys())):
+        mine = [o for o in rips if o["kind"] == "region" and o["region"] == rid]
+        if not mine:
+            continue        # no first rip to take a theme and a name from: choose the first site by hand (record)
+        need = want - len(mine)
+        if need <= 0:
+            continue
+        others = [(o["id"], mid_x(o["frame"]), o["frame"]["z"]) for o in rips if o["kind"] != "test_trail" and o["region"] != rid]
+        # the 13 retired rips (R16DR takes them out of the world): a pool site is SPREAD from where each stood, so none is ever
+        # picked on a retired patch, and the owner's "the rips near the old mine have to go" holds for the pool as for the 20
+        others += [(o["id"], o["click"][0], o["click"][2]) for o in doc.get("retired_rips") or []]
+        cands = find(g, rid, 10 ** 9, stride, others, every_id + [r["id"] for r in new], shared)
+        picks = pick_pool(cands, [(mid_x(o["frame"]), o["frame"]["z"]) for o in mine], need)
+        for rip_id, (_sc, m, z, _gy, _d, _dr) in zip(pool_ids(rips + new, rid, len(picks)), picks):
+            k = int(rip_id.rsplit("_", 1)[1])
+            rec = record(g, rip_id, "%s (%d)" % (mine[0]["name"], k), rid, m, z, mine[0]["scorch_theme"], shared["pts"])
+            rec["measured"] = "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, %d or more from every other rip); tools/dungeon_rips.py check re-measures every rule" % SPREAD
+            new.append(rec)
+            rips.append(rec)
+    return new
+
+
 def record(g, rip_id, name, region_id, m, z, theme, pts=None):
     """The complete record for a region rip at plane middle column `m`, plane row `z` (frame.y = round(ground) + 1)."""
     import dungeon as D
@@ -401,6 +482,10 @@ def problems(doc=None, g=None):
         bad += site_problems(g, r["id"], r["region"], r["frame"], pts, polys, boxes, others)
         if r["outside"] != [mid_x(r["frame"]) + 0.5, r["frame"]["y"], r["frame"]["z"] + 3.5, 0]:
             bad.append("%s: outside is the point three blocks south of the click, facing south" % r["id"])
+        for t in retired:       # nothing stands on, or beside, where a retired rip's patch was: the same SPREAD as between rips
+            d = math.hypot(r["click"][0] - t["click"][0], r["click"][2] - t["click"][2])
+            if d < SPREAD:
+                bad.append("%s: %.0f blocks from the retired rip %s; the spread is %d" % (r["id"], d, t["id"], SPREAD))
     return bad
 
 
@@ -458,9 +543,18 @@ def main(argv=None):
     f.add_argument("region")
     f.add_argument("--top", type=int, default=6)
     f.add_argument("--stride", type=int, default=8)
+    f.add_argument("--spaced", action="store_true",
+                   help="the --top sites chosen farthest-point, each SPREAD from the region's standing rips and from each other (a pool), not the top scores")
     fa = sub.add_parser("find-all", help="the best candidates in every region that has no region rip yet")
     fa.add_argument("--top", type=int, default=3)
     fa.add_argument("--stride", type=int, default=8)
+    fa.add_argument("--pool", type=int, default=0, metavar="N",
+                    help="every region (not only those with no rip): the sites that would bring its pool to N, spaced as 'find --spaced'")
+    po = sub.add_parser("pool", help="the records that bring every region's pool of rips to N (printed; --write appends them to data/dungeon_rips.json)")
+    po.add_argument("--per-region", type=int, default=4, metavar="N", help="sites per region, its standing rips included (default 4)")
+    po.add_argument("--regions", nargs="*", default=None)
+    po.add_argument("--stride", type=int, default=8)
+    po.add_argument("--write", action="store_true")
     pr = sub.add_parser("probes", help="the presence probes for data/world_probes.json (--write puts them there)")
     pr.add_argument("--write", action="store_true")
     r = sub.add_parser("record")
@@ -497,14 +591,36 @@ def main(argv=None):
         return 0
     others = [(o["id"], mid_x(o["frame"]), o["frame"]["z"]) for o in doc["rips"] if o["kind"] != "test_trail"]
     every_id = [o["id"] for o in doc["rips"]] + [o["id"] for o in doc.get("retired_rips") or []]
+    if a.cmd == "pool":
+        new = pool_records(g, doc, a.per_region, regions=a.regions, stride=a.stride)
+        for r in new:
+            print("%-26s %-18s mid_x %d z %d ground y%d%s" % (r["id"], r["region"], mid_x(r["frame"]), r["frame"]["z"], r["ground"]["y"],
+                                                          "  GATED " + r["reachable_after"]["zone"] if r.get("reachable_after") else ""))
+        if a.write:
+            doc["rips"] = doc["rips"] + new
+            DATA.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        print("%d record(s) %s" % (len(new), "appended to data/dungeon_rips.json" if a.write else "(nothing written)"))
+        return 0
     if a.cmd == "find":
-        for sc, m, z, gy, d, dr in find(g, a.region, a.top, a.stride, others, every_id):
+        res = find(g, a.region, 10 ** 9 if a.spaced else a.top, a.stride, others, every_id)
+        if a.spaced:
+            own = [(mid_x(o["frame"]), o["frame"]["z"]) for o in doc["rips"] if o["region"] == a.region]
+            res = pick_pool(res, own, a.top)
+        for sc, m, z, gy, d, dr in res:
             print("score %.1f  mid_x %d  z %d  ground y%d  nearest authored %d  nearest route vertex %d" % (sc, m, z, gy, d, dr))
         return 0
     if a.cmd == "find-all":
         shared = {}
         have = {o["region"] for o in doc["rips"] if o["kind"] == "region"}
         for rid in region_polys():
+            if a.pool:
+                mine = [(mid_x(o["frame"]), o["frame"]["z"]) for o in doc["rips"] if o["region"] == rid]
+                oth = [o for o in others if o[0] not in {x["id"] for x in doc["rips"] if x["region"] == rid}]
+                res = pick_pool(find(g, rid, 10 ** 9, a.stride, oth, every_id, shared), mine, max(0, a.pool - len(mine)))
+                print(rid, "(%d standing, %d more)" % (len(mine), len(res)))
+                for sc, m, z, gy, d, dr in res:
+                    print("   score %.1f  mid_x %d  z %d  ground y%d  nearest authored %d  nearest route vertex %d" % (sc, m, z, gy, d, dr))
+                continue
             if rid in have:
                 continue
             res = find(g, rid, a.top, a.stride, others, every_id, shared)
