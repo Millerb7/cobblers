@@ -280,7 +280,9 @@ def derive(tb, seats):
             "dialogue_ids": [conv_id(f)],
             "objectives": [{"id": "rod", "active_when": {"field": claimed, "equals": False},
                             "complete_when": {"field": claimed, "equals": True},
-                            "text": "%s, %s, has a %s for anyone with %s." % (f["name"], f["where"], rod_name(f), f["gate"]["says"])}],
+                            "text": "%s, %s, has %s %s for anyone with %s." % (
+                                f["name"], f["where"], "an" if rod_name(f)[:1] in "AEIOU" else "a", rod_name(f),
+                                f["gate"]["says"])}],
             "transitions": [
                 {"id": "give_rod",
                  "conditions": [eq(claimed, False), {"kind": "flag", "flag": flag}],
