@@ -2737,8 +2737,11 @@ def steps(with_spawns=False):
     # the Produce Buyer (2026-10-10, tools/produce_buyer.py): its load function (the sale's scores), then the buyer, an
     # NPC whose class loads at boot from cobblers_produce_buyer, placed over RCON like the ferrymen, on the cell of the
     # farm's plan beside Hollin's stall, after R18AF so the stall keeper it stands apart from is already there
+    # Economy v2 B2 (2026-10-13): the same step now stands a Trading Post at Hollin's farm AND at every sited town square
+    # (data/produce_buyer.json sites; the unsited ones are skipped). Each post is one npc action on a cell
+    # `produce_buyer check` held to the squares builder's model. Squares are built by R13, long before this step
     import produce_buyer
-    out.append(("R18PB", "the Produce Buyer at Hollin's farm (data/produce_buyer.json)",
+    out.append(("R18PB", "the Trading Posts: Hollin's farm and the town squares (data/produce_buyer.json)",
                 [("fn", "cobblers:produce_buyer/load")] + [("npc", n) for n in produce_buyer.npc_placements()]))
     # direct trades (2026-10-07, EXP-055): the barterer, a vanilla villager whose fixed item-for-item offers are written
     # into its summon, in a booth carved 9 under the Holdfast counter (no sky, so no lightning, which would discard it).
