@@ -168,8 +168,9 @@ def test_an_approved_line_is_placed_and_only_it(doc):
     text = _counter(d)
     rs = _recipes(_summon(text))
     assert len(rs) == 1
-    assert rs[0].startswith('{buy:{id:"minecraft:netherite_block",count:1},buyB:{id:"minecraft:netherite_ingot",'
-                            'count:21},sell:{id:"cobblemon:master_ball",count:1},' + FIXED_TAIL)
+    # ECONOMY_V2 E4 (2026-10-13): 1 netherite ingot + 5 netherite scrap, no longer a block and 21 ingots
+    assert rs[0].startswith('{buy:{id:"minecraft:netherite_ingot",count:1},buyB:{id:"minecraft:netherite_scrap",'
+                            'count:5},sell:{id:"cobblemon:master_ball",count:1},' + FIXED_TAIL)
     for ln in d["lines"]:
         if ln["id"] != "master_ball":
             assert ln["sell"]["id"] not in text, ln["id"]
@@ -179,8 +180,8 @@ def test_edges_list_every_line_held_or_placed(doc):
     e = {x["id"]: x for x in D.edges(doc)}
     assert set(e) == {o["id"] for o in doc["experiment_offers"]} | {ln["id"] for ln in doc["lines"]}
     assert e["master_ball"]["placed"] is True
-    assert e["master_ball"]["inputs"] == [{"id": "minecraft:netherite_block", "count": 1},
-                                          {"id": "minecraft:netherite_ingot", "count": 21}]
+    assert e["master_ball"]["inputs"] == [{"id": "minecraft:netherite_ingot", "count": 1},
+                                          {"id": "minecraft:netherite_scrap", "count": 5}]
     assert e["exp_two_inputs"]["placed"] is True
     assert {x["id"] for x in D.edges(_held(doc)) if not x["placed"]} == {ln["id"] for ln in doc["lines"]}
 
@@ -188,18 +189,33 @@ def test_edges_list_every_line_held_or_placed(doc):
 # ------------------------------------------------------------------ the price rule (the owner, 2026-10-08)
 def test_every_approved_line_is_priced_within_the_band_of_the_counter(doc):
     assert D.pricing_problems(doc) == []
-    # the Master Ball, worked by hand: a netherite block (9 x $900) and 21 ingots (x $900) = $27,000, the counter's
+    # the Master Ball (ECONOMY_V2 E4), worked by hand: an ingot ($900) and five scrap ($202 each) = $1,910 against the
+    # recipe's netherite, two ingots at $900 = $1,800 (1.061). Four scrap would be $1,708 (0.949): under the floor
     mb = next(ln for ln in doc["lines"] if ln["id"] == "master_ball")
-    assert D.line_value(doc, mb) == 9 * 900 + 21 * 900 == 27000
-    assert D.reference_price(mb, D.counter_prices()) == 27000
+    assert D.line_value(doc, mb) == 900 + 5 * 202 == 1910
+    assert D.reference_price(mb, D.counter_prices(), D.bank_prices()) == 2 * 900 == 1800
+    assert 1.0 <= 1910 / 1800 <= 1.1 and 900 + 4 * 202 < 1800
 
 
-def test_the_old_cheap_master_ball_is_refused(doc):
+def test_the_old_30_ingot_master_ball_and_a_four_scrap_one_are_refused(doc):
+    # the old bundle (a block and 21 ingots, $27,000) is far over the 2-ingot reference; four scrap is under its floor
     d = copy.deepcopy(doc)
     mb = next(ln for ln in d["lines"] if ln["id"] == "master_ball")
-    mb["buy"], mb["buyB"] = {"id": "minecraft:diamond_block", "count": 1}, {"id": "minecraft:netherite_ingot", "count": 4}
+    mb["buy"], mb["buyB"] = {"id": "minecraft:netherite_block", "count": 1}, {"id": "minecraft:netherite_ingot", "count": 21}
     probs = D.pricing_problems(d)
-    assert any(p.startswith("line master_ball: inputs worth $4680 against a reference of $27000") for p in probs), probs
+    assert any(p.startswith("line master_ball: inputs worth $27000 against a reference of $1800") for p in probs), probs
+    d = copy.deepcopy(doc)
+    mb = next(ln for ln in d["lines"] if ln["id"] == "master_ball")
+    mb["buyB"]["count"] = 4
+    probs = D.pricing_problems(d)
+    assert any(p.startswith("line master_ball: inputs worth $1708 against a reference of $1800") for p in probs), probs
+
+
+def test_a_line_moved_off_the_counter_is_priced_against_its_superseded_money_line(doc):
+    # E5: the Focus Sash left the counter's stock for superseded_stock; its reference is still the $3,600 it was
+    assert D.counter_prices()[("northlight_station", "focus_sash")] == 3600
+    ln = next(x for x in doc["lines"] if x["id"] == "focus_sash")
+    assert D.reference_price(ln, D.counter_prices()) == 3600 and D.line_value(doc, ln) == 3780
 
 
 def test_a_stale_input_value_is_refused(doc):
@@ -235,7 +251,8 @@ def test_a_discountable_cost_a_is_refused(doc):
 
 def test_the_same_item_in_both_slots_is_refused(doc):
     d = copy.deepcopy(doc)
-    d["lines"][0]["buy"] = {"id": "minecraft:netherite_ingot", "count": 1}
+    ln = next(x for x in d["lines"] if x["id"] == "choice_specs")      # its cost B is the netherite ingot
+    ln["buy"] = {"id": "minecraft:netherite_ingot", "count": 1}
     _refused(d, "both slots")
 
 

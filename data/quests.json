@@ -638,11 +638,19 @@
       "rewards": [
         {
           "id": "reward_pallet_locket",
-          "status": "item_component_syntax_pending_verification",
+          "status": "item_id_verified_name_and_lore_pending_verification",
           "intended_item": "Miracle Seed",
           "display_name": "Pallet Locket",
           "lore": "A green seed Lena wore for luck. It survived the Worldshift.",
-          "implementation_rule": "Do not emit the reward until the Cobblemon item id and Minecraft 1.21.1 custom-name and lore component syntax are verified."
+          "implementation_rule": "Do not emit the reward until the Cobblemon item id and Minecraft 1.21.1 custom-name and lore component syntax are verified.",
+          "contents": [
+            {
+              "item": "cobblemon:miracle_seed",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/miracle_seed.json in Cobblemon-fabric-1.8.0+1.21.1.jar (the same record data/rewards.json cites, opened 2026-10-04)"
+            }
+          ],
+          "contents_note": "The ITEM is emitted, plain. The display name and lore are NOT: the give command would carry them as item components (custom_name, lore) whose quoting has to survive a Molang single-quoted string, and no precedent in this repository has run one in game (2026-10-13). Until an in-game check, the Miracle Seed is unnamed; the Pallet Locket name is the design's, not yet delivered."
         }
       ],
       "actor_relocation": {
@@ -663,10 +671,19 @@
         "late_player": "Receives a short recap and may claim the reward without replaying the hundred-line monologue."
       },
       "generation_blockers": [
-        "Choose exact house, interior-safe, exterior-safe, Hank, and Lena markers.",
-        "Verify the Miracle Seed item id and Minecraft 1.21.1 item component syntax.",
-        "Implement a serialized world compare-and-set and idempotent actor relocation action.",
-        "Decide whether to implement the optional Patient Listener cosmetic; abrupt-close counting is not represented."
+        "Verify Minecraft 1.21.1 item component syntax for the Pallet Locket's custom name and lore (the Miracle Seed item id is verified and is delivered plain).",
+        "Decide whether to implement the optional Patient Listener cosmetic; abrupt-close counting is not represented.",
+        "Build the crushed house (data/crushed_house.json is the plan; nothing is built) and run the apply and the dialogue in a server."
+      ],
+      "resolved_blockers": [
+        {
+          "blocker": "Choose exact house, interior-safe, exterior-safe, Hank, and Lena markers.",
+          "resolved": "2026-10-13: data/npc_seats.json markers and relocating_seats, Hank's seat; the site is data/crushed_house.json"
+        },
+        {
+          "blocker": "Implement a serialized world compare-and-set and idempotent actor relocation action.",
+          "resolved": "2026-10-13: tools/compile_dialogue.py, the 'world' construct: a score on a fake player (compare_and_set_progression), a tag-then-teleport (relocate_actor); tools/reapply.py R18CH seats Lena by that score. Compiled, not run in game."
+        }
       ],
       "progression_field_refs": [
         "quest.evt_pallet_crushed_house.stage",
@@ -1594,6 +1611,35 @@
               "target": "triggering_player",
               "claim_field": "quest.main_worldshift_reveal.waystone_claimed",
               "idempotency_key": "main_worldshift_reveal:oak_waystone:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            }
+          ]
+        },
+        {
+          "id": "grant_oak_trainer_card",
+          "why": "the owner's E9, 2026-10-13 (docs/mechanics/ECONOMY_V2.md): Oak gives each player ONE rctmod:trainer_card, once, after the starter, so the ambient trainers (spawningRequiresTrainerCard, modpack/config/rctmod-server.toml) find a player from the first road and not only after a $500 purchase. Run by Oak's oak_card_002 (the new player, after the waystone) or oak_card_late (a player he sent off before this shipped); guarded by a permanent per-player claim, so a second talk gives nothing. The Pallet Mart's $500 line stays as the replacement for a lost card",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.trainer_card_claimed",
+              "value": false
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "not_started"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_oak_trainer_card",
+              "target": "triggering_player",
+              "claim_field": "quest.main_worldshift_reveal.trainer_card_claimed",
+              "idempotency_key": "main_worldshift_reveal:oak_trainer_card:{player_uuid}",
               "receipt_commit": "atomic_with_item_delivery"
             }
           ]
@@ -2571,6 +2617,18 @@
               "verification": "assets/waystones/models/item/waystone.json in waystones-fabric-1.21.1-21.1.37.jar"
             }
           ]
+        },
+        {
+          "id": "reward_oak_trainer_card",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json oak_trainer_card (kind npc_grant); contents and verification string copied from it",
+          "contents": [
+            {
+              "item": "rctmod:trainer_card",
+              "count": 1,
+              "verification": "assets/rctmod/models/item/trainer_card.json in rctmod-fabric-1.21.1-0.19.0-beta.jar"
+            }
+          ]
         }
       ],
       "progression_field_refs": [
@@ -2579,6 +2637,7 @@
         "quest.main_worldshift_reveal.trainer_mode",
         "quest.main_worldshift_reveal.oak_greeted",
         "quest.main_worldshift_reveal.waystone_claimed",
+        "quest.main_worldshift_reveal.trainer_card_claimed",
         "quest.main_worldshift_reveal.lab_starter_cursor",
         "quest.main_worldshift_reveal.pallet_mina_cursor",
         "quest.main_worldshift_reveal.pallet_maren_cursor",

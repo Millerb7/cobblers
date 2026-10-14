@@ -42,6 +42,7 @@ import dungeon_fights as DF  # noqa: E402
 import dungeon_rooms as R  # noqa: E402
 
 DOC = D.load()
+RIP = {r["legacy_dungeon"]: r for r in DOC["retired_rips"]}   # the 13 test rips, RETIRED 2026-10-13 (retired_rips in data/dungeon_rips.json): the records are kept
 ST = next(d for d in DOC["dungeons"] if d["id"] == "street")
 OWNER_KINDS = {"maze", "puzzle", "parkour", "resources", "nest", "habitat", "stand", "miniboss"}
 OURS = {"gauntlet", "ambush", "vault", "dark_room", "collapse_bridge", "safe_room"}
@@ -100,8 +101,7 @@ def test_every_room_type_the_owner_named_is_there_and_three_of_ours():
     assert len((OURS & k) - {"ambush"}) >= 3, OURS & k
     top = [r["kind"] for r in ST["rooms"]]
     assert top[0] == "entry_room" and top[-2:] == ["boss_arena", "exit_room"]
-    assert ST["theme"] == "city" and ST["test"] is True and ST["rip"]["test"] is True and ST["gate_flag"] is None
-    assert "siting_pending" not in ST["rip"], "an overworld rip"
+    assert ST["theme"] == "city" and ST["test"] is True and RIP[ST["id"]]["test"] is True and ST["gate_flag"] is None
 
 
 def test_short_wide_connectors_and_mostly_not_boxes():
@@ -436,19 +436,19 @@ def test_the_boss_has_a_crew_per_stage_per_band_the_ace_last():
 
 def test_the_rip_stands_at_its_x_slot_clear_of_the_other_rips_and_the_old_mine():
     import json
-    f = ST["rip"]["frame"]
+    f = RIP[ST["id"]]["frame"]
     assert 1540 <= f["x0"] and f["x1"] <= 1560 and abs(f["z"] - 4118) <= 4
     for o in DOC["dungeons"]:
         if o["id"] == "street":
             continue
-        of = o["rip"]["frame"]
+        of = RIP[o["id"]]["frame"]
         assert f["x0"] > of["x1"] + 6 or f["x1"] < of["x0"] - 6 or abs(f["z"] - of["z"]) > 8, o["id"]
     mine = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["settlements"]["route1_old_mine"]
     x0, z0, x1, z1 = mine["plan"]["footprint"]["rect"]
     assert f["x0"] - 1 > x1 or f["x1"] + 1 < x0 or f["z"] + 5 < z0 or f["z"] - 1 > z1
-    cx, cy, cz = ST["rip"]["click"]
+    cx, cy, cz = RIP[ST["id"]]["click"]
     assert cz == f["z"] + 1 and cy == f["y"] and cx == (f["x0"] + f["x1"]) // 2
-    assert ST["rip"]["outside"][2] - 0.5 > cz + 1.5
+    assert RIP[ST["id"]]["outside"][2] - 0.5 > cz + 1.5
 
 
 def test_the_rip_is_on_the_heightmaps_ground_and_not_in_water():
@@ -458,9 +458,9 @@ def test_the_rip_is_on_the_heightmaps_ground_and_not_in_water():
     except Exception as e:  # noqa: BLE001  (no heightmap in this checkout)
         pytest.skip("no heightmap: %s" % e)
     import json
-    f = ST["rip"]["frame"]
+    f = RIP[ST["id"]]["frame"]
     assert {g(x, z) + 1 for x in range(f["x0"], f["x1"] + 1) for z in (f["z"], f["z"] + 1)} == {f["y"]}
-    ox, oy, oz, _ = ST["rip"]["outside"]
+    ox, oy, oz, _ = RIP[ST["id"]]["outside"]
     assert g(int(ox), int(oz)) + 1 == oy
     sea = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))["vertical"]["sea_level"]
     assert f["y"] - 1 > sea

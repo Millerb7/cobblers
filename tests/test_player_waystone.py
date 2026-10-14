@@ -31,6 +31,8 @@ import test_oak_lab_scene as T  # noqa: E402
 DOC = PW.load()
 GIFT = DOC["gift"]
 CLAIM = GIFT["claim_field"]
+CARD = ("rctmod:trainer_card", 1)                       # Oak's second gift (ECONOMY_V2 E9, 2026-10-13)
+CARD_CLAIM = "quest.main_worldshift_reveal.trainer_card_claimed"
 JAR = PW.find_jar()
 NEED_JAR = pytest.mark.skipif(JAR is None, reason="the server snapshot's Waystones jar is not on this machine")
 CFG = ROOT / "base-pack" / "cobbleverse" / "config" / "waystones-common.toml"
@@ -128,12 +130,14 @@ def test_a_new_player_is_given_exactly_one_waystone_in_the_send_off_talk():
     w, answers = sent_off()
     shown, _ = T.talk(w, answers)
     assert shown.index("oak_waystone_002") == shown.index("oak_birds") + 2
-    assert w["gave"] == [(GIFT["item"], GIFT["count"])]
-    assert T.field(w, CLAIM) == 1
+    # ECONOMY_V2 E9 (2026-10-13): Oak then gives the trainer card in the same talk, straight after the waystone
+    assert shown[shown.index("oak_waystone_002") + 1:shown.index("oak_waystone_002") + 3] == ["oak_card_001", "oak_card_002"]
+    assert w["gave"] == [(GIFT["item"], GIFT["count"]), CARD]
+    assert T.field(w, CLAIM) == 1 and T.field(w, CARD_CLAIM) == 1
     assert T.field(w, T.STAGE) == "oak_sendoff"
     for _ in range(4):
         T.talk(w)
-    assert w["gave"] == [(GIFT["item"], GIFT["count"])], "a later talk gave another"
+    assert w["gave"] == [(GIFT["item"], GIFT["count"]), CARD], "a later talk gave another"
 
 
 def test_a_player_who_has_not_chosen_a_starter_is_given_nothing():
@@ -155,7 +159,7 @@ def test_a_failed_give_writes_no_claim_so_the_next_talk_retries():
     T.talk(w, answers, cmds=Refusing())
     assert w["gave"] == [] and T.field(w, CLAIM) == 0
     T.talk(w)                                  # the same player, a working give: the next talk finishes the grant
-    assert w["gave"] == [(GIFT["item"], GIFT["count"])] and T.field(w, CLAIM) == 1
+    assert (GIFT["item"], GIFT["count"]) in w["gave"] and T.field(w, CLAIM) == 1
 
 
 def _old_player(cursor, stage):
@@ -185,6 +189,39 @@ def test_a_player_past_the_boundary_is_offered_it_in_one_line_and_goes_back_to_t
     assert w["gave"] == [(GIFT["item"], GIFT["count"])]
     shown, _ = T.talk(w)
     assert shown == ["oak_repeat_after_mismatch"] and len(w["gave"]) == 1
+
+
+def _no_card_player(cursor, stage):
+    """A player Oak sent off before the card shipped: the waystone claimed, the card not."""
+    w = _old_player(cursor, stage)
+    w["data"][T.CD.key(CLAIM)] = 1.0
+    w["data"][T.CD.key(CARD_CLAIM)] = 0.0
+    return w
+
+
+def test_a_player_without_the_card_is_given_it_once_before_and_after_the_boundary():
+    # ECONOMY_V2 E9: without the two entry rules (priorities 8 and 9) a player Oak already sent off never gets the card
+    for cursor, stage, node in (("oak_repeat_before_mismatch", "oak_sendoff", "oak_card_late_before"),
+                                ("oak_repeat_after_mismatch", "oak_admitted", "oak_card_late")):
+        w = _no_card_player(cursor, stage)
+        shown, _ = T.talk(w)
+        assert shown[0] == node and w["gave"] == [CARD] and T.field(w, CARD_CLAIM) == 1, (node, shown, w["gave"])
+        T.talk(w)
+        assert w["gave"] == [CARD], "a second talk gave another card"
+
+
+def test_a_failed_card_give_writes_no_claim_so_the_next_talk_retries():
+    class Refusing(T.Cmds):
+        def leaf(self, w, cmd):
+            if cmd.startswith("give @s "):
+                return None
+            return super().leaf(w, cmd)
+
+    w = _no_card_player("oak_repeat_before_mismatch", "oak_sendoff")
+    T.talk(w, cmds=Refusing())
+    assert w["gave"] == [] and T.field(w, CARD_CLAIM) == 0
+    T.talk(w)
+    assert w["gave"] == [CARD] and T.field(w, CARD_CLAIM) == 1
 
 
 # ------------------------------------------------------------------------------------ the config this rests on

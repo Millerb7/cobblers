@@ -240,37 +240,38 @@ def test_the_players_page_prints_the_books_paragraphs(cmd):
 def test_a_rips_patch_is_its_themes_floor_and_wall():
     themes = j("dungeon_themes.json")["themes"]
     seen = set()
-    for d in j("dungeons.json")["dungeons"]:
-        hull = themes[d["theme"]]["hull"]
-        rec = next(x for x in DOC["dungeons"] if x["id"] == d["id"])
-        assert "scorch" not in rec["rip"], "%s still carries an explicit scorch" % d["id"]
+    # since 2026-10-13 the rips are data/dungeon_rips.json's, each with its theme. The 20 standing rips wear 8 patches; the 13
+    # retired trail rips' records are kept and carry the other themes, so the table of themes is still what is checked
+    for rec in DOC["rips"] + DOC["retired_rips"]:
+        hull = themes[rec["scorch_theme"]]["hull"]
+        assert "scorch" not in rec, "%s still carries an explicit scorch" % rec["id"]
         cells = D.rip_scorch_cells(rec)
-        assert {b for _x, _y, _z, b in cells} == {hull["floor"], hull["wall"]}, d["id"]
-        f = rec["rip"]["frame"]
+        assert {b for _x, _y, _z, b in cells} == {hull["floor"], hull["wall"]}, rec["id"]
+        f = rec["frame"]
         assert len(cells) == 3 + 1 + 2 + 2 and {y for _x, y, _z, _b in cells} == {f["y"] - 1}
         seen.add((hull["floor"], hull["wall"]))
     assert len(seen) >= 10, "the patches barely differ between themes: %s" % sorted(seen)
 
 
 def test_an_explicit_scorch_still_overrides_the_theme():
-    rec = copy.deepcopy(DOC["dungeons"][1])
-    rec["rip"]["scorch"] = {"rim": "minecraft:gravel"}
+    rec = copy.deepcopy(DOC["rips"][1])
+    rec["scorch"] = {"rim": "minecraft:gravel"}
     sc = D.rip_scorch(rec)
     assert sc["rim"] == "minecraft:gravel"
-    assert sc["core"] == j("dungeon_themes.json")["themes"][rec["theme"]]["hull"]["floor"]
+    assert sc["core"] == j("dungeon_themes.json")["themes"][rec["scorch_theme"]]["hull"]["floor"]
 
 
 def test_the_patch_follows_the_themes_data(monkeypatch):
     # Mutates the DATA the generator reads (a theme's floor) and shows the patch follows it: not a literal in the tool.
     themes = copy.deepcopy(j("dungeon_themes.json"))
-    rec = DOC["dungeons"][1]
-    themes["themes"][rec["theme"]]["hull"]["floor"] = "minecraft:calcite"
+    rec = DOC["rips"][1]
+    themes["themes"][rec["scorch_theme"]]["hull"]["floor"] = "minecraft:calcite"
     assert "minecraft:calcite" in {b for _x, _y, _z, b in D.rip_scorch_cells(rec, themes)}
 
 
 def test_the_patch_blocks_are_safe_ground():
     spawn = set(j("spawn_blocks.json")["blocks"])
-    for d in DOC["dungeons"]:
+    for d in DOC["rips"]:
         for b in D.rip_scorch(d).values():
             assert b not in spawn, "%s: %s is a block a spawn condition names" % (d["id"], b)
             # neither a portal, nor a block that hurts or slows a player who stands on it
@@ -282,24 +283,24 @@ def test_the_patch_blocks_are_safe_ground():
 
 def test_closing_a_rip_fails_closed_without_the_ground_it_replaced():
     with pytest.raises(D.DungeonError, match="rip.under is not recorded"):
-        D.rip_close_lines(DOC["dungeons"][0])
+        D.rip_close_lines(DOC["rips"][0])
 
 
 def test_closing_a_rip_puts_back_the_plane_and_every_patch_cell():
-    rec = copy.deepcopy(DOC["dungeons"][1])
+    rec = copy.deepcopy(DOC["rips"][1])
     cells = D.rip_scorch_cells(rec)
-    rec["rip"]["under"] = {"%d,%d" % (x, z): "minecraft:dirt" for x, _y, z, _b in cells}
+    rec["under"] = {"%d,%d" % (x, z): "minecraft:dirt" for x, _y, z, _b in cells}
     lines = D.rip_close_lines(rec)
     assert lines[0].startswith("kill @e[type=minecraft:interaction,tag=") and lines[1].startswith("kill @e[type=minecraft:item_display")
     back = [l for l in lines if l.startswith("setblock") and l.endswith("minecraft:dirt")]
     assert len(back) == len(cells)
-    f = rec["rip"]["frame"]
+    f = rec["frame"]
     assert [l for l in lines[2:] if l not in back] == D.rip_plane_lines(rec) and len(D.rip_plane_lines(rec)) >= f["x1"] - f["x0"] + 1
 
 
 def test_a_partial_under_is_refused():
-    rec = copy.deepcopy(DOC["dungeons"][1])
+    rec = copy.deepcopy(DOC["rips"][1])
     cells = D.rip_scorch_cells(rec)
-    rec["rip"]["under"] = {"%d,%d" % (x, z): "minecraft:dirt" for x, _y, z, _b in cells[:-1]}
+    rec["under"] = {"%d,%d" % (x, z): "minecraft:dirt" for x, _y, z, _b in cells[:-1]}
     with pytest.raises(D.DungeonError, match="no block for"):
         D.rip_close_lines(rec)

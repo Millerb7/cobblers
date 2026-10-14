@@ -139,6 +139,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # (tools/coldwater_station.py, data/coldwater_station.json): block functions, two instrument displays
                 # and three researchers, run by R18CW. Its jetty and boatman are the ferry's (R16H, R17F)
                 "cobblers_coldwater_station",
+                # 2026-10-13: the Kyogre cave behind Coldwater's sealed arch (tools/kyogre_cave.py, data/kyogre_cave.json):
+                # the runtime (the crossing, the keeper, the puzzles, the wake, a capture callback) and, split off by
+                # tools/pack_split.py, its one-shot geometry in cobblers:pocket and the arch's reef, run by R18KC
+                # after R16P (the dimension) and R18CW (the arch); world-local below
+                "cobblers_kyogre_cave",
+                "cobblers_kyogre_cave_build",
                 # 2026-10-09: the Merian Ice Lodge (tools/ice_lodge.py, data/ice_lodge.json): the Merian cirque's frozen tarn,
                 # its shelters, lodge, racks and gear, and the holekeeper's class and dialogue; one block function and one
                 # NPC, run by R18IL
@@ -151,6 +157,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_frostpeak_summit",
                 # 2026-10-02: the Lopunny superfan's house and its Buneary cellar (tools/lopunny_house.py), run by R9LH
                 "cobblers_lopunny_house",
+                # 2026-10-13: the Pallet crushed house (tools/crushed_house.py, data/crushed_house.json): one build function and an
+                # operator's restore, no runtime data, so a build-class pack `strip` takes out after the run; run by R16CH, before
+                # R17N seats Hank and R18CH seats Lena inside it
+                "cobblers_crushed_house",
                 # 2026-10-02: the Old Orchard on Sunset Isle round the Orchard Sleeper (tools/old_orchard.py), run by R9SO
                 "cobblers_old_orchard",
                 # 2026-10-09: the Sundown Watch on Sunset Isle's western shoulder (tools/sunset_watch.py): terrace, dial, Sun Gate,
@@ -404,6 +414,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # gates' barrier doors and the area bosses' keeper act on their own (tick drivers, a capture callback), so
                 # world-local below
                 "cobblers_sanctuaries",
+                # 2026-10-13: Rayquaza's home (tools/rayquaza_sky.py, data/rayquaza_sky.json): the arch on the great cone, the
+                # island and its pillar are one-shot blocks in the _build pack, run by R14R and stripped after the run; the
+                # runtime pack's arch crossing, rescue and keeper act on their own (tick drivers, a capture callback), and it
+                # overrides cobbleverse:spawn_rayquaza empty, so world-local below (above the global COBBLEVERSE datapack)
+                "cobblers_rayquaza",
+                "cobblers_rayquaza_build",
                 # 2026-09-29: the dive and sky portals and the pocket dimension (tools/portals.py, data/portals.json,
                 # ADR-004, EXP-047). It ships a `dimension` and a `dimension_type`, which register only at a server
                 # BOOT, not at a /reload: installing this pack needs a restart before R16P will run. The arches are
@@ -503,6 +519,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_caves",
                # 2026-10-12: the sanctuaries took the caves' gates and keepers over: the same reasons
                "cobblers_sanctuaries",
+               # 2026-10-13: Rayquaza's keeper SPAWNS a legendary and teleports players on its own, and its override of
+               # cobbleverse:spawn_rayquaza must sit above the global COBBLEVERSE datapack; its _build pack beside it
+               "cobblers_rayquaza", "cobblers_rayquaza_build",
                "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
                # 2026-10-08: the Entei keeper SPAWNS a legendary per player on its own and gives items: never global
                "cobblers_entei_boss",
@@ -511,6 +530,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_dungeons",
                # 2026-10-12: the dungeons' one-shot shells and rips, beside the pack they were split from
                "cobblers_dungeons_build",
+               # 2026-10-13: the Kyogre cave's keeper SPAWNS a legendary and set pieces, sets game modes and teleports
+               # players on its own: never global; its geometry beside it
+               "cobblers_kyogre_cave", "cobblers_kyogre_cave_build",
                # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
                "cobblers_key_ball",
                # 2026-10-09: closes the Waystones recipes; global would close them in the live world too
@@ -638,6 +660,10 @@ def npcs():
     out = []
     for r in rw.get("rewards") or []:
         if r.get("kind") != "npc_grant":
+            continue
+        # the NPC another step already stands up (its own `built_by` says which): placing it here as well put a
+        # second copy beside it (Oak, the Route 4 packer and Maren, caught by tests/test_npc_seats.py's sweep)
+        if r.get("npc_placed_by"):
             continue
         conv = next((c for c in dl["conversations"] if c.get("quest_id") == r["quest"]), None)
         if conv is None:
@@ -920,6 +946,9 @@ def prepare_jobs(a):
     # export's keep zone stops prepare here, before anything is installed
     add("legendaries", "legendaries.py")
     add("legendaries:audit", "legendaries_audit.py")
+    # Rayquaza's arch, island and pillar (data/rayquaza_sky.json): the runtime pack and its _build pack; it refuses a spawn
+    # condition, a light block, a plinth past its cut and fill limits, an island within 8 of the cone, and probes that drifted
+    add("rayquaza_sky:build", "rayquaza_sky.py", "build", *src)
     add("rift_storm", "rift_storm.py")
     add("signposts:function", "signposts.py", "function", *src)
     # the bridges, then their offline audit against the heightmap and the water: a bridge that would stand in the
@@ -967,11 +996,18 @@ def prepare_jobs(a):
     # Coldwater Station (2026-10-05): its builder's siting guards fail the job; its independent audit
     # (tools/coldwater_station_audit.py) runs after sea_floor:build below, so it replays the sea packs it must keep clear
     add("coldwater_station:build", "coldwater_station.py", "build", *src)
+    # the Kyogre cave behind the station's arch (data/kyogre_cave.json): its builder fails closed on water beside air, a
+    # flooded passage the ladder cannot call deep, the Trench reachable before the Tide Gate is solved, a cell with no
+    # way back to a return click, its pocket box meeting another pocket user, or data/world_probes.json drifting
+    add("kyogre_cave:build", "kyogre_cave.py", "build", *src)
     add("sea_drift:build", "sea_drift.py", "build", *src)
     add("frostpeak_summit:build", "frostpeak_summit.py", "build", *src)
     add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
     add("lopunny_house:build", "lopunny_house.py", "build", *src)
     add("lopunny_house_audit", "lopunny_house_audit.py", *src)
+    # the Pallet crushed house (data/crushed_house.json): its builder refuses a stand it would fill, an undeclared or spawn-condition
+    # block, and data/world_probes.json drifting from its plan
+    add("crushed_house:build", "crushed_house.py", "build", *src)
     add("old_orchard:build", "old_orchard.py", "build", *src)
     add("old_orchard_audit", "old_orchard_audit.py", *src)
     add("sunset_watch:build", "sunset_watch.py", "build", *src)
@@ -2507,6 +2543,13 @@ def steps(with_spawns=False):
     shrine_ids = [q["id"] for q in json.loads((ROOT / "data" / "shrines.json").read_text(encoding="utf-8")).get("shrines") or []]
     out.append(("R16D", "wayside shrines on the town approaches (%d, data/shrines.json)" % len(shrine_ids),
                 [("fn", "cobblers:shrines/%s" % s) for s in shrine_ids]))
+    # the Pallet crushed house (2026-10-13, tools/crushed_house.py, data/crushed_house.json): a pure block pass in a forceload of
+    # its box, AFTER the hometown (R7), the lights (R16), the dressing (R16B) and the shrines it keeps clear of, so nothing re-levels
+    # or paves under it, and BEFORE R17N (Hank outside its blocked door) and R18CH (Lena inside its pocket): both are seated into
+    # the finished lot. Listed from the committed data and the heightmap, so the step exists without a built pack
+    import crushed_house
+    out.append(("R16CH", "the Pallet crushed house: caved roof, fallen oak, blocked door and the safe opening (data/crushed_house.json)",
+                crushed_house.placement_steps()))
     # the gym interiors (tools/gym_interiors.py): the healers out of all eight placed gyms, then each built gym's
     # carved works. After the donors (R9), which are placed whole: a healer removed before the donor runs would be
     # stamped back, and a shaft cut before it would be filled in. Listed from the committed data, not the built pack,
@@ -2673,6 +2716,12 @@ def steps(with_spawns=False):
     import reveal_evidence
     out.append(("R17NE", "the mainline beats' evidence displays beside the tellers (data/reveal_evidence.json)",
                 reveal_evidence.placement_steps()))
+    # Lena of the Pallet crushed house (2026-10-13, data/npc_seats.json relocating_seats): an NPC like the settlement
+    # ones whose stand is the WORLD field's value, not a fixed seat -- the dialogue moves her once, for everyone, when
+    # the first player finishes her conversation. So the npc action carries a fifth element, the score selecting her
+    # later stand, and a re-run puts a Lena left at the other marker on the one the score names. After R17N (Hank)
+    out.append(("R18CH", "Lena at the crushed house marker the world field selects (data/npc_seats.json relocating_seats)",
+                [("npc", n) for n in npc_seats.relocating_placements()]))
     # the Old Orchard's keeper (2026-10-02, tools/old_orchard.py): an NPC like the settlement ones, placed over RCON
     # after the restart that loaded cobblers_dialogue's classes, on the ground R9SO's orchard stands on
     out.append(("R18SO", "the Old Orchard's keeper, Wenna Marlow (data/old_orchard.json npc)",
@@ -2818,6 +2867,14 @@ def steps(with_spawns=False):
     import coldwater_station
     out.append(("R18CW", "Coldwater Station, the Kyogre research station (data/coldwater_station.json)",
                 coldwater_station.placement_steps()))
+    # the Kyogre cave (2026-10-13, tools/kyogre_cave.py): after R16P, whose pack registers cobblers:pocket, and R18CW,
+    # whose arch's touch calls the crossing. Every block part (solids, then air, then water: each holds its own chunks in
+    # the pocket), the arch's reef in the overworld, the click entities' look-then-act chain with its count read back,
+    # then the build state (#built opens the keeper's writes). Kyogre and the set pieces need no step: the keeper lays
+    # them down when a player comes near
+    import kyogre_cave
+    out.append(("R18KC", "the Kyogre cave behind Coldwater's sealed arch, in cobblers:pocket (data/kyogre_cave.json)",
+                kyogre_cave.placement_steps()))
     # the Merian Ice Lodge (2026-10-09, tools/ice_lodge.py): the tarn, shelters, lodge, racks and gear held in a forceload,
     # then the holekeeper (her class loads at boot from cobblers_ice_lodge). On the cirque floor south of the hut's yard
     import ice_lodge
@@ -2846,6 +2903,13 @@ def steps(with_spawns=False):
     import legendaries
     out.append(("R14L", "the authored legendary chambers and their legendaries (data/legendaries.json)",
                 legendaries.placement_steps(legendaries.load())))
+    # Rayquaza's home (tools/rayquaza_sky.py, data/rayquaza_sky.json; 2026-10-13): the arch on the great cone's summit, the
+    # floating island and its pillar, one build function that force-loads what it writes for its own run. Its keeper brings
+    # Rayquaza itself, only for a qualified player who has not caught it, so the step summons nothing; safe to re-run (it
+    # writes the same cells)
+    import rayquaza_sky
+    out.append(("R14R", "Rayquaza's sealed arch, sky island and pillar on the great cone (data/rayquaza_sky.json)",
+                rayquaza_sky.placement_steps()))
     out.append(("V", "floor verify and trader verify", [("check", "verify")]))
     return out
 
@@ -3110,11 +3174,24 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 # element: its yaw, applied below whether the NPC was just spawned or already stood there
                 conv, (x, y, z), cls = v[:3]
                 yaw = v[3] if len(v) > 3 else None
+                # a fifth element (npc_seats.relocating_placements): this NPC's stand follows a world scoreboard value.
+                # While the score holds the selector's value she stands at the selector's place; the first stand
+                # (x, y, z) is then where a Lena left behind by an earlier run would still be, and she is moved
+                first = None
+                if len(v) > 4:
+                    import npc_seats
+                    sel = v[4]
+                    if npc_seats.world_value(rc, sel["holder"], sel["objective"]) == sel["value"]:
+                        first = (x, y, z)
+                        (x, y, z), yaw = tuple(sel["at"]), sel["yaw"]
+                        print("   %s: %s is %d, so she stands at %s" % (cls, sel["holder"], sel["value"], (x, y, z)), flush=True)
                 rc("forceload add %d %d" % (x, z))
                 for _ in range(30):
                     if "passed" in rc("execute if loaded %d %d %d" % (x, y, z)):
                         break
                     time.sleep(1)
+                if first is not None:
+                    rc("forceload add %d %d" % (first[0], first[2]))
                 for c in stand_clear_commands(x, y, z):
                     rc(c)
                 # once: an NPC already standing there (a re-run) is left alone rather than doubled. A chunk's
@@ -3127,6 +3204,16 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                         there = True
                         break
                     time.sleep(0.5)
+                if not there and first is not None:
+                    # she is not at the stand the score names: is she still at her first one? Move her, never double her
+                    old = "@e[type=cobblemon:npc,x=%d,y=%d,z=%d,distance=..2,limit=1]" % first
+                    for _ in range(12):
+                        if "passed" in rc("execute if entity %s" % old):
+                            rc("tp %s %d.5 %d %d.5 %d 0" % (old, x, y, z, yaw))
+                            print("   %s: moved from %s" % (cls, first), flush=True)
+                            there = True
+                            break
+                        time.sleep(0.5)
                 if not there:
                     r = rc("spawnnpcat %d %d %d %s" % (x, y, z, cls))
                     print("   %s -> %s" % (cls, r[:120] or "(no reply)"), flush=True)
@@ -3140,6 +3227,8 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                     bad.append("%s: %s NPCs at %s, not 1 (is cobblers_dialogue installed, and was the server "
                                "restarted since?)" % (conv, n, (x, y, z)))
                 rc("forceload remove %d %d" % (x, z))
+                if first is not None and (first[0] >> 4, first[2] >> 4) != (x >> 4, z >> 4):
+                    rc("forceload remove %d %d" % (first[0], first[2]))
             elif kind == "props":
                 # a scene's interaction boxes: load the chunks, give their entities time to load (they load after the
                 # blocks), run the place function (it kills the old boxes, then summons), then count them. The place

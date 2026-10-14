@@ -49,6 +49,7 @@ import dungeon_fights as DF  # noqa: E402
 import dungeon_rooms as R  # noqa: E402
 
 DOC = D.load()
+RIP = {r["legacy_dungeon"]: r for r in DOC["retired_rips"]}   # the 13 test rips, RETIRED 2026-10-13 (retired_rips in data/dungeon_rips.json): the records are kept
 RUIN = next(d for d in DOC["dungeons"] if d["id"] == "flooded_ruin")
 NS = next(d for d in DOC["dungeons"] if d["id"] == "night_shift")
 OWNER_KINDS = {"maze", "puzzle", "parkour", "resources", "nest", "habitat", "stand", "miniboss"}
@@ -112,7 +113,7 @@ def test_every_room_type_the_owner_named_is_there_and_three_of_ours():
     assert len((OURS & k) - {"ambush"}) >= 3, OURS & k
     top = [r["kind"] for r in RUIN["rooms"]]
     assert top[0] == "entry_room" and top[-2:] == ["boss_arena", "exit_room"]
-    assert RUIN["theme"] == "flooded_ruin" and RUIN["test"] is True and RUIN["rip"]["test"] is True
+    assert RUIN["theme"] == "flooded_ruin" and RUIN["test"] is True and RIP[RUIN["id"]]["test"] is True
     assert RUIN["gate_flag"] is None
 
 
@@ -653,7 +654,7 @@ def test_the_boss_has_a_crew_per_stage_per_band_the_ace_last():
 
 
 def test_the_rip_stands_near_the_night_shifts_and_clear_of_the_old_mine():
-    f, nf = RUIN["rip"]["frame"], NS["rip"]["frame"]
+    f, nf = RIP[RUIN["id"]]["frame"], RIP[NS["id"]]["frame"]
     c = ((f["x0"] + f["x1"]) / 2, f["z"])
     nc = ((nf["x0"] + nf["x1"]) / 2, nf["z"])
     assert math.dist(c, nc) <= 60
@@ -664,9 +665,9 @@ def test_the_rip_stands_near_the_night_shifts_and_clear_of_the_old_mine():
     for x in range(f["x0"] - 1, f["x1"] + 2):
         for z in range(f["z"] - 1, f["z"] + 5):
             assert not (x0 <= x <= x1 and z0 <= z <= z1), (x, z)
-    cx, cy, cz = RUIN["rip"]["click"]
+    cx, cy, cz = RIP[RUIN["id"]]["click"]
     assert cz == f["z"] + 1 and cy == f["y"] and cx == (f["x0"] + f["x1"]) // 2
-    ox, oy, oz, _yaw = RUIN["rip"]["outside"]
+    ox, oy, oz, _yaw = RIP[RUIN["id"]]["outside"]
     assert oz - 0.5 > cz + 1.5, "the leaving player stands outside the click interaction"
 
 
@@ -676,10 +677,10 @@ def test_the_rip_is_on_the_heightmaps_ground_and_not_in_water():
         g = GR.load()
     except Exception as e:  # noqa: BLE001  (no heightmap in this checkout)
         pytest.skip("no heightmap: %s" % e)
-    f = RUIN["rip"]["frame"]
+    f = RIP[RUIN["id"]]["frame"]
     feet = {g(x, z) + 1 for x in range(f["x0"], f["x1"] + 1) for z in (f["z"], f["z"] + 1)}
     assert feet == {f["y"]}, feet
-    ox, oy, oz, _ = RUIN["rip"]["outside"]
+    ox, oy, oz, _ = RIP[RUIN["id"]]["outside"]
     assert g(int(ox), int(oz)) + 1 == oy
     import json
     sea = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))["vertical"]["sea_level"]

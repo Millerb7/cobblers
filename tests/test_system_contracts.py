@@ -40,6 +40,7 @@ from __future__ import annotations
 import ast
 import copy
 import fnmatch
+import functools
 import inspect
 import json
 import math
@@ -524,6 +525,9 @@ def _source_blocks():
     # the glade shrines in the Route 1 maze forest (tools/maze_shrines.py, 2026-10-12): the generator refuses a block outside
     # its record's blocks.ids and the audit checks the written functions; a policy entry must name maze_shrines to cover one
     out["maze_shrines"] = (set(_load("maze_shrines.json")["blocks"]["ids"]), ["maze_shrines"])
+    # the Pallet crushed house (tools/crushed_house.py, 2026-10-13): the builder refuses a block outside structure.blocks.ids and any id
+    # in data/spawn_blocks.json; a policy entry must name crushed_house to cover one (none does, and none is needed)
+    out["crushed_house"] = (set(_load("crushed_house.json")["structure"]["blocks"]["ids"]), ["crushed_house"])
     for place in ("challengers_cairn", "dry_cistern", "survey_benchmark", "fossil_dig", "ice_lodge", "scar_tarn"):
         out[place] = (set(_load("%s.json" % place)["blocks"]["ids"]), [place])
     # the refillable mining caves (tools/mining_caves.py, 2026-10-10): every block the record names that a cave
@@ -1533,6 +1537,102 @@ def _c25_one_boss(RP, TC, fns):
     assert TC.DORM not in b["tags"], "the control did not wake the guardian: the guardian test above cannot fail (%s)" % TC.BID
 
 
+# =================================================================================================================
+# C26. Rayquaza's arch and keeper open only on advancements their owners define and grant
+# =================================================================================================================
+#
+# cobblers:rayquaza/qualify reads three advancements in one selector. Each is someone else's: the champion flag the
+# progression pack's, Groudon's and Kyogre's met the chambers'. One that no pack defines or grants means nobody ever
+# qualifies (the arch stays shut for good and the keeper never spawns), so each is checked against the pack its owner
+# generates: the advancement file exists, and a function of that pack grants it. Kyogre's fails today (fails_today).
+
+def _c26_cases():
+    import rayquaza_sky as RQ
+    spec = RQ.load()
+    out = []
+    for adv in RQ.gate_advancements(spec):
+        pid = adv.split(":", 1)[1].replace("flag/", "").replace("legendary/", "").replace("/", "_")
+        out.append((pid, (adv,)))
+    return _params("C26", out)
+
+
+@functools.lru_cache(maxsize=None)
+def _c26_owner_files():
+    import ground as G
+    import legendaries as LG
+    import progression_pack as PP
+    prog = PP.files(PP.plan(PP.load(ROOT / "data" / "progression.json"), None, PLACEMENTS))
+    leg = LG.files(LG.load(), G.Ground())
+    return prog, leg
+
+
+@functools.lru_cache(maxsize=None)
+def _c26_kyogre_files():
+    """Kyogre's met is cobblers_kyogre_cave's (tools/kyogre_cave.py runtime_files), not the chambers': the cave landed
+    2026-10-13 and its static check refuses a kyogre record in data/legendaries.json."""
+    import kyogre_cave as KC
+    doc = KC.load()
+    p = KC.plan(doc)
+    fns, adv, _ = KC.runtime_files(doc, p["M"], p["arch"], len(p["reef"]))
+    out = {"data/%s/advancement/%s.json" % tuple(a.split(":", 1)): "{}" for a in adv}
+    out.update({"data/cobblers/function/%s.mcfunction" % k: "\n".join(v) for k, v in fns.items()})
+    return out
+
+
+@pytest.mark.parametrize("adv", _c26_cases())
+def test_contract_c26_rayquazas_gate_opens_only_on_advancements_their_owners_define_and_grant(adv):
+    import rayquaza_sky as RQ
+    spec = RQ.load()
+    qualify = RQ.runtime_files(spec, RQ.geometry(spec))["qualify"]
+    assert any(adv + "=true" in line and "add %s" % RQ.OK in line for line in qualify), "qualify does not read %s" % adv
+    prog, leg = _c26_owner_files()
+    ns, path = adv.split(":", 1)
+    key = "data/%s/advancement/%s.json" % (ns, path)
+    owner = prog if path.startswith("flag/") else _c26_kyogre_files() if path.startswith("legendary/kyogre/") else leg
+    assert key in owner, "%s: no owner pack defines it" % adv
+    if not path.startswith("flag/"):
+        rid = path.split("/")[1]
+        # legendaries.py writes its grant as a pattern; the generated function names the id itself
+        granted = any("advancement grant @s only %s" % adv in text for f, text in owner.items() if f.endswith(".mcfunction"))
+        assert granted, "%s is defined but no function of its pack grants it (%s)" % (adv, rid)
+    # Rayquaza's own advancements are cobblers_rayquaza's alone
+    assert not [k for k in leg if "/legendary/rayquaza/" in k]
+
+
+# =================================================================================================================
+# C27. A Rayquaza that blacks a player out becomes the guardian; Rayquaza's keeper never touches a guardian
+# =================================================================================================================
+#
+# C25's three legs for tools/rayquaza_sky.py's keeper: (1) the blackout makes a claim on a loss to a victor carrying the
+# tags Rayquaza's bind gives it; (2) the keeper, RUN on tests/gulch_sim.py's world, never holds, withdraws or discards a
+# guardian (tests/test_rayquaza_sky.py); (3) the control: the same keeper with its guardian clause stripped DOES withdraw
+# the guardian, so leg 2 can fail.
+def test_contract_c27_a_rayquaza_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it():
+    import test_blackout_recovery_pid as RP
+    import test_rayquaza_sky as TR
+    bind = TR.fns()["rayquaza/bind"]
+    tags = tuple(m.group(1) for line in bind for m in [re.match(r"^tag @s add (\S+)$", line)] if m)
+    assert TR.TAG in tags and "cobblers.guardian" not in tags, tags
+    s = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=tags)
+    assert RP.fn_calls(s, "recovery/make") and len(RP.ledger(s)["claims"]) == 1, "a loss to Rayquaza made no claim"
+    model = TR._model()
+    TR.test_a_guardian_is_never_held_withdrawn_or_discarded(model)
+    # the control: strip the guardian clause and the guardian, left alone with nobody near, is withdrawn
+    from test_sanctuaries import Lake
+    loose = {k: [line.replace(",tag=!cobblers.guardian", "").replace("tag=!cobblers.guardian,", "") for line in v]
+             for k, v in TR.fns().items()}
+    w = Lake(loose)
+    w.gt = 5_000_000
+    w.call("rayquaza/load")
+    p = TR.near(model, w, TR.KEEP["spawn_clear"] + 4, 0, -30)
+    TR.passes(w, 2)
+    (r,) = TR.rays(w)
+    r["tags"].add(TR.GUARD)
+    w.entities.remove(p)
+    TR.passes(w, 2)
+    assert not w.alive(r), "the control did not touch the guardian: the guardian test above cannot fail"
+
+
 def _defs(path):
     tree = ast.parse((ROOT / path).read_text(encoding="utf-8"))
     return {n.name: n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)}
@@ -1671,6 +1771,38 @@ def _c24(case):
 @pytest.mark.parametrize("case", _params("C24", [(c, (c,)) for c in C24_CASES]))
 def test_contract_c24_a_dungeon_death_makes_no_claim_and_nothing_is_delivered_into_a_slot(case):
     _c24(case)
+
+
+# =================================================================================================================
+# C28. No dollar path reaches a top-tier item or any of its inputs (ECONOMY_V2 5.2 A3, the owner's E4 and E5)
+# =================================================================================================================
+#
+# The economy's sellers as GENERATED (tools/markets.py's merchants, Hollin's stall, the default shop, and with the
+# offline snapshot every Mart's template shop), the server's jar recipes (with the snapshot and the vanilla jar), and
+# the Station Exchange's offers as tools/direct_trades.py emits them plus every proposal line, searched together by
+# tools/economy_audit.py's top_tier_checks. Control: the same search with the superseded $27,000 Master Ball line
+# offered again finds it, so the search can fail. NOT covered: villager trades other than the wandering trader's stated
+# table, loot, quests, co-op pooling (E10), and whether a merchant really sells what its NBT lists (a running game).
+def test_contract_c28_no_dollar_path_reaches_a_top_tier_item_or_its_inputs():
+    import economy_audit as EA
+    snap, vanilla = EA.default_server_dir(), EA.default_vanilla_jar()
+    sales = EA.market_sales() + EA.apricorn_sales() + EA.default_shop_sales()
+    conversions = []
+    if snap and Path(snap).is_dir():
+        sales += EA.trader_sales(snap)[0]
+        if vanilla and Path(vanilla).is_file():
+            conversions = EA.load_jars(str(snap), str(vanilla)).conversions()
+    doc = _load("direct_trades.json")
+    data_edges = EA.barter_data(doc)
+    _f, placed = EA.emitted_checks(data_edges, EA.barter_emitted(doc=doc), doc)
+    edges = placed + [b for b in data_edges if b.group == "proposal"]
+    assert any(b.gets[0] == "cobblemon:master_ball" for b in placed), "the emitted Station Exchange sells no Master Ball"
+    fails, reps = EA.top_tier_checks(sales, conversions, edges)
+    assert fails == [], fails
+    assert not [r for r in reps if r.startswith("top tier cobblemon:")], "a top-tier item has no barter route"
+    old = EA.Sale("markets northlight_station (superseded master_ball)", None, "cobblemon:master_ball", 27000.0, True)
+    control, _r = EA.top_tier_checks(sales + [old], conversions, edges)
+    assert [c.split(" has")[0] for c in control] == ["TOP TIER OUTPUT cobblemon:master_ball"], control
 
 
 def test_every_contract_names_existing_tests():

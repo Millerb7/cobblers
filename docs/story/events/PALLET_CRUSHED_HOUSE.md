@@ -216,3 +216,112 @@ the bonus.
 3. NPC dialogue and state mechanism capable of preserving 100 per-player lines.
 4. Verified Miracle Seed item ID and custom-name/item-lore syntax for 1.21.1.
 5. Once-per-player reward behavior on a shared server.
+
+## Built (2026-10-13, unit PALLET-HANK-LENA)
+
+What exists, what it rests on, and what has not run. Nothing here has been seen in a running Minecraft.
+
+**Scoping.** The house's state is a score, not player data: `quest.evt_pallet_crushed_house.house_state` is the fake
+player `#evt_pallet_crushed_house.house_state` in the objective `cobblers_world`, `0` = `blocked`, `1` =
+`lena_relocated` (an unset score reads as `blocked`). A score was chosen over command storage because the dialogue
+already reads world facts as a tag set by `execute ... run tag` and read with `q.player.has_tag` (flags, held items),
+and one command is one main-thread step, so the compare-and-set needs no lock. The stage, the dialogue cursor and the
+reward claim stay in each player's `q.player.data()`. The mechanism is `tools/compile_dialogue.py`, the "world" paragraph
+of its docstring: `progression_equals` on a world field, `set_progression`, `compare_and_set_progression` and
+`relocate_actor`. A world field named anywhere else is refused, so it can never be read from a key nobody writes.
+
+**Flows (played in a simulator of the compiled Molang, `tests/molang_dialogue_sim.py`, 30 tests in
+`tests/test_crushed_house.py`, one of which needs a prepared build/ and skipped here).**
+- Player 1: the hundred lines in order, the objective, Lena's twelve, then at `l012`'s acknowledge: the score goes to 1,
+  Lena is tagged at the interior marker and teleported to the exterior one, the Miracle Seed is given, the claim and the
+  stage are written. Leaving mid-way keeps the line; each player's cursor is their own.
+- Player 2 after: Hank says the one recap line (the monologue is skipped, stage `shared_rescue_recap`), Lena's recap
+  line pays the seed once and sets stage `complete`; both then give the short banter. A player who walks straight to
+  Lena after the rescue is paid too. A player mid-monologue when another finishes gets the recap on the next click.
+- Two players finishing at once: both are paid once, she moves once, one NPC stands at the exterior marker.
+- Design choice where this document was silent: **every player is paid once, whether or not they found her**. The
+  event doc allows it ("can still claim the reward once per player if desired") and the quest record already encoded it.
+- Two small repairs to the authored dialogue, both in `data/dialogue.json`: Lena's "not yet" line and Hank's objective
+  line no longer write their own id into the cursor the two conversations share (a player who tried Lena mid-monologue
+  would otherwise have had Hank answer with a page he does not have), and Hank now repeats the objective to a player
+  who is mid-way through Lena's lines (he used to close in silence).
+
+**Reward.** `cobblemon:miracle_seed` x1, delivered **plain**. The item id is verified (`data/rewards.json` cites the
+jar). The "Pallet Locket" name and the lore are NOT delivered: the `give` would carry them as `custom_name` and `lore`
+item components, whose quotes must survive a Molang single-quoted string, and nothing in the repository has run one in
+game. `data/quests.json` `reward_pallet_locket.contents_note` records it; implementation gap 4 stays open for the name.
+
+**Where they stand** (all `round(heightmap)` from `tools/ground.py`, feet = ground + 1, all 117 / 118):
+
+| | x, y, z | yaw | note |
+|---|---|---|---|
+| Hank | 1509, 118, 5258 | -90 (east) | 3 blocks west of the blocked front door (1512, 5258) |
+| Lena, in the house | 1516, 118, 5258 | 0 (south) | the 9 by 9 lot's centre, facing the side opening (1516, 5262) |
+| Lena, after | 1508, 118, 5262 | -166 | 4.1 blocks from Hank, facing him |
+
+The lot is x 1512..1520, z 5254..5262: all 81 columns y117. It sits on the east edge of the town, 46 or more blocks
+from every walked route line. `data/crushed_house.json` is the plan; `data/npc_seats.json` holds the stands (Hank a
+seat, the two Lena stands `markers`, Lena a `relocating_seats` record).
+
+**The apply.** Hank is an ordinary seat: step **R17N** seats him. Lena is step **R18CH** (after R17N): the `npc` action
+gets a fifth element, a selector `{objective, holder, value, at, yaw}`; it reads the score over RCON and seats her at the
+interior marker while it is 0 and at the exterior marker while it is 1, and a Lena found at the interior marker when
+the score says 1 is teleported, never doubled (no `spawnnpcat` is issued). It is idempotent. `tools/npc_seats.py check`
+holds the markers to a seat's rules and `verify` probes her at the stand the score selects.
+
+**The house (2026-10-13, unit PALLET-CRUSHED-HOUSE-BUILD): written, applied by a step, never seen in a running Minecraft.**
+Rung of the mechanism ladder: datapack functions plus a re-apply step (principle 6, "functions/commands"); the cheaper
+rungs cannot place blocks, and the repository's own pattern (`tools/lopunny_house.py`, `tools/sanctuaries.py`) already
+does. Nothing is a mod or a script.
+- **Generator** `tools/crushed_house.py` from `data/crushed_house.json` `structure` -> pack `cobblers_crushed_house`
+  (`build/datapacks/`), two functions: `cobblers:crushed_house/build` (270 commands, 412 non-air blocks) and
+  `cobblers:crushed_house/restore` (34 commands). Ground from `tools/ground.py` (rounded); the floor is `F` = the highest
+  ground under the lot (117), so the walls start at y118. No world is read. The pack has no runtime data, so
+  `tools/pack_roles.py` classes it `build` (measured on the built pack) and `reapply.py strip` takes it out of the heap.
+- **Step R16CH**, in `tools/reapply.py` immediately after R16D (the shrines) and before R16E, so it is after R7 (hometown),
+  R13, R16 (lights), R16B (dressing) and before R17N (Hank) and R18CH (Lena): `forceload add 1507 5249 1523 5266`, wait 3,
+  `function cobblers:crushed_house/build`, `forceload remove`. The prepare job is `crushed_house:build`; the pack is in
+  `SERVER_PACKS`, not `WORLD_LOCAL`.
+- **Look.** A 9 by 9 cottage in the town's own vocabulary (white plaster over red brick, oak, a brick gable): the west half
+  keeps its roof and gable, the north slope stops at x1516, the east half is open to the sky and its rubble mounds to 5
+  high; the east wall is broken to 1-3 blocks; a fallen oak (trunk along z at x1518, root plate at z5250, tip at z5261,
+  no crown: `oak_leaves` is a spawn condition) lies across the broken north wall and the rubble; the front (west) door is
+  a dropped lintel, a jammed beam and a pile at x1510-1511 (Hank stands at x1509, clear); a wall panel leans off the
+  south wall west of the opening.
+- **The pocket and the opening.** Lena's 3 by 3 room (x1515..1517, z5257..5259, y118-119, a lantern on a barrel in its
+  corner) sits in a sealed block of rubble under a plank ceiling at y120 and an oak beam; a one-wide crawl (x1516,
+  z5260..5262, y118-119) joins it to the south wall's cell **(1516, 118..119, 5262)**, the safe opening, lintel y120. The
+  approach is from the south (1516, 5263-5264); the leaning panel is the only mark. Nothing needs breaking.
+- **Conflict with the lot, said plainly.** None with the event doc's intent. One thing it did not say: the roof is open to
+  the sky on the east, so a player can climb the rubble onto the shell and walk the attic under the west roof. The pocket
+  stays sealed (below), but "no way in except the opening" means "no way to Lena", not "no way onto the ruin".
+- **Probes** `data/world_probes.json` place `crushed_house`, 21: the planks under the pocket, the NW post, the west gable's
+  ridge course and ridge brick, the opening (feet, head, lintel), the crawl (feet, head), Lena's cell (feet, head), the
+  pocket's beam and lantern, the front doorway (feet, head: NOT air), the dropped lintel, the fallen oak, and Hank's and
+  Lena's after stands (air, feet and head). `python tools/crushed_house.py probes --write` regenerates them; `build` refuses a
+  drifted set. Run by `tools/presence_audit.py` (extra); not run against any world.
+- **Proved offline** (`tests/test_crushed_house_build.py`, 24 tests): the BUILT function is parsed back over heightmap ground
+  and a 0.6 by 1.8 player is walked through it: Lena's cell is reachable from (1516, 5264) through the opening; with the
+  opening shut it is not reachable by any route (roof, window, shell); the doorway is not enterable; the three stands are
+  clear, standable and connected; nothing is written under the ground but the floor; every block is declared and none is in
+  `data/spawn_blocks.json`; the restore returns the box to heightmap ground; each tamper case changes the generator's code
+  (opening walled up, door carved open, a hole over the pocket, Hank buried) and is caught.
+- **Restore** `cobblers:crushed_house/restore`: air above each column's ground over the build's clear box (x1507..1523,
+  z5249..5266, up to y140), the floor columns back to `grass_block`, guarded (a player in the box stops it). By hand over
+  RCON only; **no step runs it**, so its id is named in the build function's header comment to satisfy `unreferenced()`.
+  The surface block `grass_block` is an ASSUMPTION (the ground rule forbids reading the world). To change the design:
+  restore, then build: the build rewrites the house volume completely but leaves a stale apron cell of an older design.
+
+**Not done, and why.**
+- **Not seen in a running Minecraft, nor applied to any world.** That each command lands, the house reads as a crushed
+  repairable house from the street, the clear step leaves the town's own trees alone, stairs, panes and fences take the
+  intended shapes, and the lantern lights the crawl (block light above 0 keeps monsters out; not measured) are unproven.
+  The ARC's other two damaged homes are not built; `data/quests.json` `pallet_edge_damage_cluster` still reads
+  `required_but_unbuilt` for the cluster and was left as it is.
+- **Not swept** against placement footprints of other layers (only point records in `data/*.json` were swept); the
+  clear step removes logs, leaves and plants in the box (x1507..1523, z5249..5266) and nothing else.
+- **Not run in game (the dialogue side):** that Minecraft accepts each emitted command; that Cobblemon keeps Lena's dialogue open when its
+  NPC is teleported out from under it on the last line (if it closes, the player has still been paid and the cursor is
+  on `post_lena_1`); that the `@e` selector finds her in the loaded chunk.
+- Not swept against other layers' claims on the lot's columns (ambient sites, signposts, habitat blocks, the light plan).
+- The optional Patient Listener cosmetic is not implemented.

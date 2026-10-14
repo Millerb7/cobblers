@@ -35,6 +35,7 @@ import dungeon_setpieces as SP  # noqa: E402
 
 DID = "soul_ossuary"
 DOC = D.load()
+RIP = {r["legacy_dungeon"]: r for r in DOC["retired_rips"]}   # the 13 test rips, RETIRED 2026-10-13 (retired_rips in data/dungeon_rips.json): the records are kept
 SO = next(d for d in DOC["dungeons"] if d["id"] == DID)
 SLOTS = [s for s in D.slots(DOC) if s["dungeon"]["id"] == DID]
 SLOT = SLOTS[0]
@@ -78,7 +79,7 @@ def pack():
 
 def test_a_test_dungeon_open_to_every_band_with_its_own_clock_and_no_lockout_of_its_own():
     assert SO["theme"] == "soul_sand_valley" and SO["test"] is True and SO["test_why"]
-    assert SO["gate_flag"] is None and "gym8_cleared" in SO["gate_flag_why"], "the roster's campaign gate is recorded"
+    assert SO["gate_flag"] == "cobblers:flag/gym8_cleared" and SO["first_band"] == 5, "the roster's campaign gate and floor"
     assert SO["short"] not in [d["short"] for d in DOC["dungeons"] if d is not SO]
     assert set(SO["clock_s_by_band"]) == {str(b["band"]) for b in DOC["engine"]["bands"]}
     assert max(SO["clock_s_by_band"].values()) <= 3600
@@ -403,15 +404,15 @@ def test_species_are_in_the_jar_themed_no_fire_but_the_ace_and_no_doll_but_the_r
 
 def test_the_rip_is_a_test_rip_on_the_trail_clear_of_the_old_mine_and_the_other_rips():
     import route1_old_mine as M
-    rip = SO["rip"]
+    rip = RIP[SO["id"]]
     f = rip["frame"]
-    assert rip["test"] is True and "nether-rip-siting" in rip["siting_pending"]
+    assert rip["test"] is True
     cx = (f["x0"] + f["x1"]) / 2
     assert abs(cx - 1525) <= 10 and f["x1"] - f["x0"] == 4
     assert f["x0"] > max(x for x, _z in M.TRAIL) + 4
     for d in DOC["dungeons"]:
         if d is not SO:
-            o = d["rip"]["frame"]
+            o = RIP[d["id"]]["frame"]
             assert f["x1"] + 3 < o["x0"] or o["x1"] + 3 < f["x0"] or abs(f["z"] - o["z"]) > 3, d["id"]
     assert rip["click"] == [cx, f["y"], f["z"] + 1]
 
@@ -423,12 +424,12 @@ def test_the_rip_stands_on_the_heightmaps_ground_and_above_the_sea():
         g = GR.load()
     except Exception as e:
         pytest.skip("no canonical heightmap: %s" % e)
-    f = SO["rip"]["frame"]
+    f = RIP[SO["id"]]["frame"]
     sea = T.sea_level(g.world)
     for x in range(f["x0"] - 2, f["x1"] + 3):
         for z in range(f["z"], f["z"] + 5):
             assert g(x, z) + 1 == f["y"] and g(x, z) > sea, (x, z, g(x, z))
-    ox, oy, oz, _yaw = SO["rip"]["outside"]
+    ox, oy, oz, _yaw = RIP[SO["id"]]["outside"]
     assert g(int(ox), int(oz)) + 1 == oy
 
 

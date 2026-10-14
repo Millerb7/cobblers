@@ -261,6 +261,9 @@ def build(ground=None):
     not_zones.append({"zone": "hearts", "what": "every <area>_h<n> heart entry",
                       "why": "docs/mechanics/ENCOUNTER_DESIGN.md section 10: a rarer spot inside an area, never a "
                              "first-encounter area"})
+    not_zones.append({"zone": "nether/*", "what": "every Nether biome table (data/spawns.json nether)",
+                      "why": "the Nether's tables are the 2026-10-13 balance pass's draft; whether the Nether counts "
+                             "as nuzlocke first-encounter areas is the owner's call, not yet made"})
 
     kinds = {}
     for z in zones:
@@ -310,8 +313,10 @@ def audit(pack):
         if key:
             want[key % z["zone"]] = z
     sunk = {"sub/" + n["zone"] for n in doc["not_zones"] if n["what"] == "sub-region table"}
+    prefixes = tuple(n["zone"][:-1] for n in doc["not_zones"] if n["zone"].endswith("/*"))
+    declared = {a for a in areas if prefixes and a.startswith(prefixes)}
     problems = []
-    for aid in sorted(set(areas) - set(want) - sunk):
+    for aid in sorted(set(areas) - set(want) - sunk - declared):
         problems.append("compiled area %s is no zone and not listed under not_zones" % aid)
     for aid in sorted(set(want) - set(areas)):
         problems.append("zone %s has no compiled spawn file" % aid)

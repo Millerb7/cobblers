@@ -36,6 +36,7 @@ import dungeon_rooms as R  # noqa: E402
 import dungeon_setpieces as SP  # noqa: E402
 
 DOC = D.load()
+RIP = {r["legacy_dungeon"]: r for r in DOC["retired_rips"]}   # the 13 test rips, RETIRED 2026-10-13 (retired_rips in data/dungeon_rips.json): the records are kept
 JG = next(d for d in DOC["dungeons"] if d["id"] == "jungle")
 SLOTS = [s for s in D.slots(DOC) if s["dungeon"]["id"] == "jungle"]
 SLOT = SLOTS[0]
@@ -515,8 +516,8 @@ def test_the_prize_is_a_mythical_no_other_data_file_uses_and_before_it_a_rare_th
 
 def test_the_rip_stands_by_the_night_shifts_on_the_trail_clear_of_the_old_mine_and_the_other_rips():
     import route1_old_mine as M
-    f = JG["rip"]["frame"]
-    ns = DOC["dungeons"][0]["rip"]["frame"]
+    f = RIP[JG["id"]]["frame"]
+    ns = DOC["retired_rips"][0]["frame"]
     cx, cz = (f["x0"] + f["x1"]) / 2, f["z"]
     assert ((cx - (ns["x0"] + ns["x1"]) / 2) ** 2 + (cz - ns["z"]) ** 2) ** 0.5 <= 60
     assert f["x0"] > max(M.TRAIL[-1][0], max(x for x, _z in M.TRAIL)) + 4, "east of the old mine's footprint"
@@ -525,9 +526,9 @@ def test_the_rip_stands_by_the_night_shifts_on_the_trail_clear_of_the_old_mine_a
     for d in DOC["dungeons"]:
         if d is JG:
             continue
-        o = d["rip"]["frame"]
+        o = RIP[d["id"]]["frame"]
         assert f["x1"] + 3 < o["x0"] or o["x1"] + 3 < f["x0"] or abs(f["z"] - o["z"]) > 3, d["id"]
-    assert JG["rip"]["click"] == [cx, f["y"], f["z"] + 1]
+    assert RIP[JG["id"]]["click"] == [cx, f["y"], f["z"] + 1]
 
 
 def test_the_rip_stands_on_the_heightmaps_ground_and_above_the_sea():
@@ -537,12 +538,12 @@ def test_the_rip_stands_on_the_heightmaps_ground_and_above_the_sea():
         g = GR.load()
     except Exception as e:                                   # no heightmap on this machine
         pytest.skip("no canonical heightmap: %s" % e)
-    f = JG["rip"]["frame"]
+    f = RIP[JG["id"]]["frame"]
     sea = T.sea_level(g.world)
     for x in range(f["x0"], f["x1"] + 1):
         for z in (f["z"], f["z"] + 1):
             assert g(x, z) + 1 == f["y"] and g(x, z) > sea, (x, z, g(x, z))
-    ox, oy, oz, _yaw = JG["rip"]["outside"]
+    ox, oy, oz, _yaw = RIP[JG["id"]]["outside"]
     assert g(int(ox), int(oz)) + 1 == oy
 
 

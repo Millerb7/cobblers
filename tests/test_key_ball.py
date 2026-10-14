@@ -265,7 +265,9 @@ def test_the_blackout_never_takes_a_beast_ball():
 
 
 # Without it the key is not sold where the owner put it, or at another price: one line, at Cinderlee, $5,000 for one.
-def test_cinderlee_sells_one_beast_ball_for_5000_and_the_ball_floor_holds():
+def test_cinderlee_sells_one_beast_ball_for_5000_and_no_counter_sells_a_master_ball():
+    # was "...and the ball floor holds": the ball floor was anchored on the Master Ball's $27,000 money line, which
+    # ECONOMY_V2 E4 (2026-10-13) removed, so the floor is retired; the Master Ball is a barter and no shelf sells it
     import bank
     markets = json.loads((ROOT / "data" / "markets.json").read_text(encoding="utf-8"))
     lines = [(c["id"], it) for c in markets["counters"] + list(markets.get("stalls") or []) for it in c["stock"]
@@ -273,9 +275,9 @@ def test_cinderlee_sells_one_beast_ball_for_5000_and_the_ball_floor_holds():
     assert [(cid, it["count"], it["price"]) for cid, it in lines] == [("cinderlee", 1, 5000)]
     floors, _missing = bank.exchange_floors(json.loads((ROOT / "data" / "bank.json").read_text(encoding="utf-8")),
                                             markets)
-    master = [it["price"] / it["count"] for c in markets["counters"] for it in c["stock"]
-              if it["item"] == "cobblemon:master_ball"]
-    assert master and floors["ball"][0] < min(master), (floors["ball"], master)
+    assert "ball" not in floors
+    assert not [it for c in markets["counters"] + list(markets.get("stalls") or []) for it in c["stock"]
+                if it["item"] == "cobblemon:master_ball"]
 
 
 # Without it a dungeon boss spawns untagged and any ball catches it: the Entei bind adds the shared tag, beside its

@@ -705,6 +705,36 @@
       "why": "data/legendaries.json. The gate function exists; the trigger that calls it is an open question."
     },
     {
+      "id": "quest.legendary_kyogre.met",
+      "quest_id": "legendary_kyogre",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/kyogre/met, the chambers' convention (tools/legendaries.py). NO PACK GRANTS IT on 2026-10-13: Kyogre's cave (docs/world-building/KYOGRE_CAVE.md sections 3-5) is being built in parallel and owns the grant",
+      "why": "added 2026-10-13 by the Rayquaza unit, because Rayquaza's gate reads it (data/rayquaza_sky.json gate.requires_met; contract C26). The Kyogre builder owns the record and the grant; until a pack grants it nobody opens Rayquaza's arch"
+    },
+    {
+      "id": "quest.legendary_rayquaza.met",
+      "quest_id": "legendary_rayquaza",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/rayquaza/met in cobblers_rayquaza (tools/rayquaza_sky.py), granted to a qualified player on the pillar's crown while Rayquaza is there, and to its catcher",
+      "why": "data/rayquaza_sky.json. Rayquaza is not a data/legendaries.json encounter: its keeper and island are tools/rayquaza_sky.py's"
+    },
+    {
+      "id": "quest.legendary_rayquaza.caught",
+      "quest_id": "legendary_rayquaza",
+      "field": "caught",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/rayquaza/caught in cobblers_rayquaza, granted by its pokemon_captured callback to the catcher of a Rayquaza within 24 of the crown",
+      "why": "data/rayquaza_sky.json occupant.availability: once per player, keyed on the catch. A player holding it never makes Rayquaza spawn or wake again"
+    },
+    {
       "id": "quest.evt_route1_thirsty_stranger.started",
       "quest_id": "evt_route1_thirsty_stranger",
       "field": "started",
@@ -861,6 +891,15 @@
       "scope": "player",
       "initial": false,
       "why": "Oak's gift of one waystone (data/player_waystone.json, data/rewards.json oak_waystone): the claim of grant_reward_once in data/quests.json grant_oak_waystone, written only when the item was given. Permanent and per player: a player who loses the item has no second grant, by the owner's 'one per player' (2026-10-09)."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.trainer_card_claimed",
+      "quest_id": "main_worldshift_reveal",
+      "field": "trainer_card_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Oak's gift of one rctmod:trainer_card (the owner's E9, 2026-10-13; data/rewards.json oak_trainer_card): the claim of grant_reward_once in data/quests.json grant_oak_trainer_card, written only when the item was given. Permanent and per player: a player who loses the card has no second grant and buys a replacement at the Pallet Mart (data/traders.json stock_policy.trainer_card)."
     },
     {
       "id": "quest.main_worldshift_reveal.lab_starter_cursor",
@@ -3503,6 +3542,16 @@
       "initial": "hub",
       "allowed_values": "node ids from dlg_coldwater_station_moss",
       "why": "the dialogue cursor of Wren Moss at Coldwater Station (data/coldwater_station.json, tools/coldwater_station.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
+    },
+    {
+      "id": "quest.coldwater_station.two_sleepers",
+      "quest_id": "coldwater_station",
+      "field": "two_sleepers",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "set_by": "transition t_calder_two_sleepers (data/coldwater_station.json Calder's topic two_sleepers, compiled by tools/coldwater_station.py)",
+      "why": "the Kyogre quest's stage 2 (docs/world-building/KYOGRE_CAVE.md section 1; data/kyogre_cave.json quest): Calder has named the second sleeper. Calder's topic the_key (stage 3, which attunes the arch) is shown only with it and gym8_cleared."
     },
     {
       "id": "quest.ice_lodge.keeper_cursor",

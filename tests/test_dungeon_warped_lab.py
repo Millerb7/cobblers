@@ -33,6 +33,7 @@ import dungeon_rooms as R  # noqa: E402
 import dungeon_setpieces as SP  # noqa: E402
 
 DOC = D.load()
+RIP = {r["legacy_dungeon"]: r for r in DOC["retired_rips"]}   # the 13 test rips, RETIRED 2026-10-13 (retired_rips in data/dungeon_rips.json): the records are kept
 WL = next(d for d in DOC["dungeons"] if d["id"] == "warped_lab")
 SLOTS = [s for s in D.slots(DOC) if s["dungeon"]["id"] == "warped_lab"]
 SLOT = SLOTS[0]
@@ -85,12 +86,11 @@ def jar():
 
 def test_a_test_dungeon_on_the_warped_theme_open_to_every_band_with_no_lockout_of_its_own():
     assert WL["theme"] == "warped_forest" and WL["test"] is True and WL["test_why"]
-    assert WL["gate_flag"] is None and "spine" not in WL
+    assert WL["gate_flag"] == "cobblers:flag/gym8_cleared" and WL["first_band"] == 5 and "spine" not in WL
     assert WL["short"] not in [d["short"] for d in DOC["dungeons"] if d is not WL]
     assert set(WL["clock_s_by_band"]) == {str(b["band"]) for b in DOC["engine"]["bands"]}
     assert max(WL["clock_s_by_band"].values()) <= 3600
     assert "lockout_ticks" not in WL and D.lockout_of(DOC, WL) == DOC["engine"]["lockout_ticks"]
-    assert WL["rip"]["siting_pending"].startswith("the owner has not chosen how nether rips are sited")
 
 
 def test_the_engine_and_the_room_kit_find_no_problem_in_any_variant():
@@ -370,15 +370,15 @@ def test_the_extras_data_carry_a_warped_row_and_its_checks_pass(jar):
 
 def test_the_rip_stands_on_the_test_trail_clear_of_the_old_mine_and_the_other_rips():
     import route1_old_mine as M
-    f = WL["rip"]["frame"]
+    f = RIP[WL["id"]]["frame"]
     assert f["x0"] > max(x for x, _z in M.TRAIL) + 4
     for x in range(f["x0"], f["x1"] + 1):
         assert M.rise(x, f["z"]) == 0
     for d in DOC["dungeons"]:
         if d is not WL:
-            o = d["rip"]["frame"]
+            o = RIP[d["id"]]["frame"]
             assert f["x1"] + 3 < o["x0"] or o["x1"] + 3 < f["x0"] or abs(f["z"] - o["z"]) > 3, d["id"]
-    assert WL["rip"]["click"] == [(f["x0"] + f["x1"]) // 2, f["y"], f["z"] + 1]
+    assert RIP[WL["id"]]["click"] == [(f["x0"] + f["x1"]) // 2, f["y"], f["z"] + 1]
 
 
 def test_the_rip_stands_on_the_heightmaps_ground_above_the_sea():
@@ -388,14 +388,14 @@ def test_the_rip_stands_on_the_heightmaps_ground_above_the_sea():
         g = GR.load()
     except Exception as e:
         pytest.skip("no canonical heightmap: %s" % e)
-    f = WL["rip"]["frame"]
+    f = RIP[WL["id"]]["frame"]
     sea = T.sea_level(g.world)
     for x in range(f["x0"], f["x1"] + 1):
         for z in (f["z"], f["z"] + 1, f["z"] + 2):
             assert g(x, z) + 1 == f["y"] and g(x, z) > sea, (x, z, g(x, z))
-    ox, oy, oz, _yaw = WL["rip"]["outside"]
+    ox, oy, oz, _yaw = RIP[WL["id"]]["outside"]
     assert g(int(ox), int(oz)) + 1 == oy
-    assert D.rip_restore_measured(WL, g) == WL["rip"]["restore"]
+    assert D.rip_restore_measured(RIP[WL["id"]], g) == RIP[WL["id"]]["restore"]
 
 
 # ------------------------------------------------------------------------------------------------- generator mutation

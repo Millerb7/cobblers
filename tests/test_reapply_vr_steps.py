@@ -112,11 +112,14 @@ DIALOGUE = json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-
 def test_npcs_derives_conversation_position_and_class_for_every_npc_grant():
     want = []
     for r in REWARDS["rewards"]:
-        if r.get("kind") != "npc_grant":
+        if r.get("kind") != "npc_grant" or r.get("npc_placed_by"):   # another step stands that NPC up
             continue
         (conv,) = [c for c in DIALOGUE["conversations"] if c.get("quest_id") == r["quest"]][:1]
         want.append((conv["id"], tuple(r["npc_at"]), "cobblers:%s" % conv["npc_id"]))
     assert want, "no npc_grant in data/rewards.json: the test would pass on nothing"
+    # and one placed elsewhere is never placed here (Oak, the Route 4 packer and Maren were stood up twice)
+    placed_elsewhere = [r for r in REWARDS["rewards"] if r.get("kind") == "npc_grant" and r.get("npc_placed_by")]
+    assert placed_elsewhere and not {tuple(r["npc_at"]) for r in placed_elsewhere} & {w[1] for w in reapply.npcs()}
     assert reapply.npcs() == want
 
 

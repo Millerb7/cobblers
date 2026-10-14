@@ -1,6 +1,10 @@
 # The Nether's encounters: five biomes, three dungeons, and Poipole's home
 
-**Status: DESIGN DRAFT (trainer-balance-designer).** Nothing here is built, compiled, installed or seen in game.
+**Status: approved in part and BUILT (2026-10-08); balance pass 2026-10-13 (section 8).** The owner approved Q1-Q5 and
+Q7. The tables are `data/encounter_design.json` `nether` (review N161). `tools/build_encounters.py` expands them into
+`data/spawns.json` (near ring 54-60, deep ring 65-75), and the inherited Nether spawns are stripped. The gate is
+`data/nether_gate.json` (gym 8). None of it is seen in game: experiments N1-N5 are open. **Section 8 supersedes the
+tables of section 2 where they differ.** The text below this line is the 2026-10-10 design draft as it was approved.
 It answers the owner's decision of 2026-10-10 (`docs/STATE.md:149` items 6 and 7): "the Nether gets its own
 encounter design by biome, NOT all fire, dungeons themed rather than typed, late-game levels and gating, designed
 before it is built", and "Poipole gets a natural home (it is a starter)". The environment clock reads 2026-10-08,
@@ -132,6 +136,10 @@ nearby blocks and coordinates. Coordinates give it a shape: **the part under the
 ---
 
 ## 2. The five biomes
+
+> **Changed by the balance pass (section 8).** Every heart is now presences only. Five species are out: Larvesta and
+> Volcarona, Beldum and Metagross, Dreepy and Dragapult, Honedge. In their place: Skorupi, Clefairy and Falinks. Each
+> biome gains an ultra-rare: Durant, Zorua, Porygon2, Mimikyu and Druddigon. The tables below are the approved draft.
 
 Shape, as the overworld's (`ENCOUNTER_DESIGN.md:75-86`): roles anchor 24, common 12, uncommon 6, rare 2 (family
 weight), buckets by role. Families are named by the species first met, and the generator walks the stages. "Spawns
@@ -544,7 +552,8 @@ Levels unread, so this is an answer by type only.
 8. **Poipole at both towers or one?** *Recommend both.* Two isles and two tiers, so a Poipole player on either side
    of the map has one within reach.
 9. **Capsakid and Stonjourner**, if a jar read confirms them: *recommend adding them* (to the crimson forest and the
-   basalt deltas). Until then they stay out.
+   basalt deltas). Until then they stay out. **The jar read is done (section 8): all three species files are in the
+   1.8.0 jar. Still open: the owner has not answered Q9, so they stay out.**
 
 ---
 
@@ -558,7 +567,7 @@ Levels unread, so this is an answer by type only.
 | **N4** | Does the `structures` condition match inside `minecraft:fortress` and `minecraft:bastion_remnant` (and a LegendaryMonuments shrine)? | disposable world |
 | **N5** | Does `minecraft:changed_dimension` fire on a portal arrival, and can its function return a player without the flag to their checkpoint and revoke itself, for two players at once? | staging, two accounts for the second half (`STATE.md:177`) |
 | **N6** | What level do the four Ruinous shrines spawn at, and how many stakes does each need? | disposable world, one shrine |
-| **N7** | Species reads in the jar: Capsakid, Scovillain, Stonjourner; Heatran's learnset; Inkay's and Magnemite's evolution methods; the drop candidates' item ids | `cobblemon-researcher`, jar read |
+| **N7** | Species reads in the jar: Capsakid, Scovillain, Stonjourner; Heatran's learnset; Inkay's and Magnemite's evolution methods; the drop candidates' item ids | `cobblemon-researcher`, jar read. **Partly answered 2026-10-13 (section 8):** the three species are in the jar, and Inkay to Malamar is a level-30 evolution to the generator. Heatran's learnset, Magnemite's method and the item ids are still open |
 
 ---
 
@@ -613,3 +622,82 @@ Levels unread, so this is an answer by type only.
 
 **Not touched:** `data/dimension_overrides.json` keeps its seven suppressions, Stark Mountain included, and its
 kept shrines.
+
+---
+
+## 8. Balance pass (trainer-balance-designer, 2026-10-13)
+
+The built tables (`data/encounter_design.json` `nether`) were reviewed against four things:
+
+- the owner's decision 7 (`docs/STATE.md`): by biome, not all fire, themed, late-game, gated;
+- the gate (`data/nether_gate.json` `gate_flag` `cobblers:flag/gym8_cleared`, read);
+- the caps (`data/trainers.json` `gym_ace_levels` 20-55, read; then 60 after gym 8, 62 after Lance and none after the
+  Champion, from section 1);
+- the exclusions the seas pass uses: no legendary, mythical, Ultra Beast or paradox; no dungeon prize; no line of the
+  eight starters.
+
+### What already holds
+
+- **Identity.** No biome is a fire biome by the back door. Fire stays in the wastes and the crimson forest; the
+  generator enforces it (`tools/build_encounters.py`, the fire rule).
+- **Levels.** The near ring's 54-60 is catchable at the cap of 60 that every player the gate admits carries. Heart
+  presences at 60-62 are caught after Lance. The deep ring's 65-75 is postgame by the owner's Q2.
+- **Gating** is unchanged.
+
+### What changed, and why
+
+| Table | Change | Why |
+|---|---|---|
+| every biome heart | **Presences only** (two each, uncommon bucket, weight 3, alpha). Dropped from the hearts: Camerupt and Coalossal (wastes), Houndoom and Ariados (crimson), Beheeyem and Shiinotic (warped), Gengar and Palossand (valley), Rhyperior and Gigalith (deltas). Each was a common-bucket family. | Every heart entry is an alpha, and a Nether heart is a block (lava, weeping vines, shroomlight, bone, magma), not a focal point; four of the five blocks lie all through their biomes. So about a fifth of everything that spawned beside them was an alpha. Computed here from the table weights and the v2 bucket weights `ENCOUNTER_DESIGN.md` section 4 relays: in the deltas 24/108 of common draws x 94/99.7 = 21%, plus 1.7% presences; in the wastes 19% plus 1.3%. The jar re-levels each alpha to the party's highest +16 (section 1), so a cap-60 party would have walked through level-76 fights. Now 1.3-2.5% beside the block. Those families were already in the base table at the same stage, so no species is lost. |
+| crimson forest | Larvesta (rare) out, **Skorupi** in (spawns as Drapion). Volcarona presence out, **Annihilape** in (a local: Mankey's line). **Zorua** added as the ultra-rare (Zoroark). | Larvesta is a line of the eight starters and a dungeon prize (the Overgrown Temple's and the Patriarch's rare pools). Drapion is the ambusher under the vines. Zoroark is the hunter that is not where it seems. |
+| warped forest | Beldum (rare) out, **Clefairy** in (Clefable by Moon Stone in the upper band). Metagross presence out, **Reuniclus** in (a local). **Porygon2** added as the ultra-rare (Porygon-Z in the upper band). | Beldum is a dungeon prize (the Night Shift's and the Street's pools), and Metagross is a Victory Road prize met at the same badge (`ENCOUNTER_DESIGN.md` 7a). Clefairy has fallen from the moon, beside Minior fallen from the sky, in a world with almost no stones. Porygon2 was written rather than evolved. |
+| soul sand valley | Dreepy (rare) out. Dragapult presence out, **Palossand** in (a local). **Mimikyu** added as the ultra-rare. | Dreepy is in three dungeons' rare pools, and Dragapult is a Victory Road prize. Mimikyu is the thing under the rag among the bones. Spiritomb stays the rare. |
+| basalt deltas | **Druddigon** added as the ultra-rare. Heart: Gliscor and Glimmora only. | Druddigon is the dragon in the column crevices; it is not Fire. |
+| nether wastes | **Durant** added as the ultra-rare. Heart: Magmortar and Centiskorch only. | Durant is the iron ant Heatmor hunts. |
+| fortress garrison | Honedge out, **Falinks** in. | Honedge is a dungeon prize (the Street's pools: "Honedge has no wild home below 48"). Falinks is the troop that still drills in the halls. |
+| `excluded_species` | Gains Larvesta, Volcarona, Beldum, Metagross, Dreepy, Dragapult and Honedge, each with its reason. | The generator fails closed if any of them spawns again (`build_encounters.py`, the excluded check). |
+
+Every biome now carries an ultra-rare, as the overworld's tables do (`ENCOUNTER_DESIGN.md` section 6). Every added id
+is a key of `docs/research/notes/drops-1.8.0.json`, where each one's source is a 1.8.0 jar species file, and none is in
+the client doll list (`modpack/manifest/client-pack-atm-subset.json`, read). **Not run:** the orchestrator
+regenerates the tables and runs the generator's checks. The stage ranges above are this author's reading of the
+generator's rule (`expand_family`), not its output.
+
+### The open items, resolved where the notes allow
+
+- **Capsakid, Scovillain and Stonjourner exist** in the 1.8.0 jar. `drops-1.8.0.json` gives their sources as
+  `generation9/capsakid.json`, `generation9/scovillain.json` and `generation8/stonjourner.json`, and its
+  `cobblemon:fire_stone` entry lists capsakid in `evolution_use`. So at tier 10 Scovillain would spawn in the crimson
+  forest's upper band.
+- **They stay out**, because Q9 is the owner's and is unanswered. The reason in `excluded_species` now says so.
+- **Inkay to Malamar** is a level evolution at 30 as the generator reads it: the compiled seas carry a Malamar presence
+  at "30-30" (`data/spawns.json`, `marine.sunset_shallows.heart.malamar`). The "held upside down" condition is
+  therefore not modelled, and the warped forest's Malamar spawns as designed.
+- **Still open (N7):** Heatran's learnset, Magnemite's method and the drop-item ids.
+
+### Answer check: the heart alphas a cap-60 party meets, at about 76 after re-levelling
+
+All answers come from overworld tables a gym-8 player has walked (section 3's sources).
+
+| Alpha | Answers |
+|---|---|
+| Magmortar, Centiskorch | Water and Rock: Swampert (Marshy Marsh), Gyarados; Rhyperior from the deltas themselves. Centiskorch takes 4x from Rock. |
+| Pyroar | Water, Rock, Ground or Fighting. |
+| Annihilape | Psychic, Flying or Fairy; Ghost hits it hard. |
+| Malamar | Bug (4x) or Fairy. |
+| Reuniclus | Bug, Ghost or Dark. |
+| Dusknoir, Palossand | Ghost and Dark; Palossand also falls to Water and Grass. |
+| Gliscor | Ice (4x) or Water. |
+| Glimmora | Ground (4x), Water or Steel. |
+
+Fleeing is always open: a wild alpha is not a wall.
+
+### For other owners (not edited here)
+
+- `data/dungeon_prize_roster.json`: the Moth Cathedral's `why` says "Volcarona already lives in our crimson forest
+  tables". It no longer does.
+- **The overworld still spawns Larvesta**: the rare in three tables (`encounter_design.json` lines 413, 440 and 479).
+  It also spawns Volcarona: a presence at the Great Crater and an uncommon in Victory Road's Slagworks.
+- **The rule "no line of the eight starters" is the brief's**, applied here; the owner's own decision 6 gives Poipole a
+  natural home. Whether a starter line may be wild at all is the owner's call. The Nether follows the brief and so
+  disagrees with the overworld.

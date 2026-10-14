@@ -189,6 +189,24 @@
         "docs/mechanics/MARKET_GATING.md"
       ]
     },
+    "economy": {
+      "what": "the value spine and the money edges: what dollars can buy (every counter, stall, Mart and default shop, through the recipes) and what the Bank pays; docs/mechanics/ECONOMY_V2.md",
+      "paths": [
+        "data/bank.json",
+        "data/markets.json",
+        "tools/bank.py",
+        "tools/markets.py",
+        "tools/economy_audit.py",
+        "docs/mechanics/ECONOMY_V2.md"
+      ]
+    },
+    "station_exchange": {
+      "what": "the Station Exchange's barter at Northlight: the top tier (the Master Ball, the Ability Capsule and six held items) bought with materials, not money",
+      "paths": [
+        "data/direct_trades.json",
+        "tools/direct_trades.py"
+      ]
+    },
     "settlement_npcs": {
       "what": "the dialogue NPCs seated by data/npc_seats.json and placed by reapply R17N",
       "paths": [
@@ -286,6 +304,36 @@
         "tools/sanctuaries.py",
         "tools/sanctuaries_audit.py",
         "tests/test_sanctuaries.py"
+      ]
+    },
+    "legendaries": {
+      "what": "the authored legendary chambers and their per-player met advancements (cobblers:legendary/<id>/met, cobblers_legendaries)",
+      "paths": [
+        "data/legendaries.json",
+        "tools/legendaries.py"
+      ]
+    },
+    "rayquaza_sky": {
+      "what": "Rayquaza's sealed arch on the great cone, the floating island and pillar, the arch crossing, the fall rescue and Rayquaza's keeper (cobblers_rayquaza, cobblers_rayquaza_build), and the empty override of cobbleverse:spawn_rayquaza",
+      "paths": [
+        "data/rayquaza_sky.json",
+        "tools/rayquaza_sky.py",
+        "tests/test_rayquaza_sky.py"
+      ]
+    },
+    "kyogre_cave": {
+      "what": "the Kyogre cave behind Coldwater's sealed arch, in cobblers:pocket: the crossing, the puzzles, the keeper, Kyogre and the set pieces",
+      "paths": [
+        "data/kyogre_cave.json",
+        "tools/kyogre_cave.py",
+        "docs/world-building/KYOGRE_CAVE.md"
+      ]
+    },
+    "coldwater_station": {
+      "what": "Coldwater Station and its sealed dive arch: the arch's touch (the dive gate) and its destination hook",
+      "paths": [
+        "data/coldwater_station.json",
+        "tools/coldwater_station.py"
       ]
     }
   },
@@ -522,6 +570,7 @@
         "sea_drift_audit.py": "checker: the built sea_drift pack (the Seaward Drift, its strips, Driftmouth Isle and its lighthouse), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to sea_drift whitelists it (none since 2026-10-02: the line is straight and writes no minecraft:rail, and the audit fails any rail that turns). tools/sea_drift.py does not read the file and is not yet one of this contract's sources (the test author's to add)",
         "portals_audit.py": "checker: the built portals pack, against data/portals.json blocks and the spawn conditions. It checks the WORLD side only: the pocket dimension's rooms carry a chest, which is a spawn condition (Gimmighoul), and the dimension's biome is minecraft:the_void, whose mob spawn list is empty. Whether a Cobblemon pool can match that biome is UNTESTED (EXP-047 left spawning in the pocket unrun)",
         "vr_caves.py": "source: vr_caves",
+        "crushed_house.py": "source: crushed_house (the Pallet crushed house, 2026-10-13: tools/crushed_house.py load() refuses a structure.blocks.ids holding a spawn condition and the plan refuses any block outside structure.blocks.ids; no policy entry is scoped to it because none is needed)",
         "fossil_dig.py": "source: fossil_dig (the Scorchbone Dig, 2026-10-05: tools/wayside_kit.py load_record reads the conditions when data/fossil_dig.json loads and refuses a blocks.ids holding one no policy entry scoped to fossil_dig allows; the plan refuses any block outside blocks.ids)",
         "route1_old_mine.py": "source: earthworks (its record is the route1_old_mine earthwork in data/placements.json)",
         "town_audit.py": "checker: the built towns, templates and earthworks, against the policy",
@@ -591,7 +640,10 @@
         "caves.py": "source: caves",
         "caves_audit.py": "checker: the built cobblers_caves pack (source caves): every block it writes against data/spawn_blocks.json and the policy entries scoped to caves",
         "sanctuaries.py": "source: sanctuaries",
-        "sanctuaries_audit.py": "checker: the built cobblers_sanctuaries pack (source sanctuaries): every block it writes against data/spawn_blocks.json and the policy entries scoped to sanctuaries"
+        "rayquaza_sky.py": "checker: its own cells (tools/rayquaza_sky.py spawn_block_problems refuses, at build, every block data/spawn_blocks.json lists unless a data/spawn_block_policy.json entry scoped to rayquaza_sky allows it; none does); its built packs cobblers_rayquaza and cobblers_rayquaza_build are also judged by the built-pack check like every other pack",
+        "sanctuaries_audit.py": "checker: the built cobblers_sanctuaries pack (source sanctuaries): every block it writes against data/spawn_blocks.json and the policy entries scoped to sanctuaries",
+        "kyogre_cave.py": "checker: tools/kyogre_cave.py static_problems refuses any block of the Kyogre cave's geometry and reef (data/kyogre_cave.json) that data/spawn_blocks.json names a spawn condition, so the cave writes none",
+        "kyogre_rayquaza_audit.py": "checker: the independent audit of the Kyogre cave and Rayquaza's sky reads data/spawn_blocks.json to measure (not fail) the spawn-condition blocks the built packs write; water is the cave's design (2026-10-13)"
       }
     },
     {
@@ -1224,6 +1276,227 @@
         "tests/test_sanctuaries.py::test_a_guardian_the_blackout_rebuilt_counts_as_present_and_no_second_boss_spawns",
         "tests/test_sanctuaries.py::test_a_duplicate_is_removed_and_never_a_guardian",
         "tests/test_sanctuaries.py::test_a_keeper_that_can_reach_a_guardian_is_refused"
+      ]
+    },
+    {
+      "id": "C26",
+      "title": "Rayquaza's arch and keeper open only on advancements their owners define and grant",
+      "owner": "legendaries",
+      "consumers": [
+        "rayquaza_sky"
+      ],
+      "constrained_by": [
+        "progression"
+      ],
+      "statement": "Rayquaza's gate (data/rayquaza_sky.json gate: champion_cleared plus met Kyogre and met Groudon, the owner's answer of 2026-10-06) is three advancements read in one selector by cobblers:rayquaza/qualify: cobblers:flag/champion_cleared, which tools/progression_pack.py writes; cobblers:legendary/groudon/met, which tools/legendaries.py defines and grants in Groudon's chamber; and cobblers:legendary/kyogre/met, the chambers' convention for Kyogre (data/progression.json quest.legendary_kyogre.met). Each must be defined by a pack that also grants it, or the arch never opens and the keeper never spawns for anyone. Rayquaza's own met and caught advancements are cobblers_rayquaza's, so data/legendaries.json must not also carry a rayquaza encounter. Kyogre's met is cobblers_kyogre_cave's (tools/kyogre_cave.py ky/met, ky/wake and ky/caught grant it; landed 2026-10-13), so the test reads it from that pack.",
+      "stated_in": [
+        {
+          "at": "data/rayquaza_sky.json:85",
+          "quote": "\"requires_met\": [\"kyogre\", \"groudon\"],"
+        },
+        {
+          "at": "tools/legendaries.py:638",
+          "quote": "\"advancement grant @s only %s:legendary/%s/met\" % (ns, rid),"
+        },
+        {
+          "at": "data/progression.json:708",
+          "quote": "\"id\": \"quest.legendary_kyogre.met\","
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c26_rayquazas_gate_opens_only_on_advancements_their_owners_define_and_grant",
+        "tests/test_rayquaza_sky.py::test_rayquaza_is_not_also_a_legendaries_encounter",
+        "tests/test_rayquaza_sky.py::test_nothing_spawns_for_a_player_who_does_not_hold_the_gate_or_has_caught_it"
+      ]
+    },
+    {
+      "id": "C27",
+      "title": "A Rayquaza that blacks a player out becomes the claim's guardian, and Rayquaza's keeper never touches a guardian",
+      "owner": "recovery_claims",
+      "consumers": [
+        "rayquaza_sky"
+      ],
+      "constrained_by": [
+        "rayquaza_sky"
+      ],
+      "statement": "C25's guarantee, for Rayquaza's keeper (tools/rayquaza_sky.py, cobblers:rayquaza/*): Rayquaza's bind gives it tags that are never the blackout's exempt tag, so a Rayquaza that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the keeper only counts it (found as present by its tag and species near the crown), and no hold, wake, hush, settle, withdraw, discard or duplicate selector of the pack reaches an entity tagged cobblers.guardian. The withdrawal, which this keeper adds to the sanctuaries' shape, is reached only through hold, which is only ever run as tag=!cobblers.guardian.",
+      "stated_in": [
+        {
+          "at": "tools/blackout_pack.py:510",
+          "quote": "\"tag @s add cobblers.guardian\","
+        },
+        {
+          "at": "tools/rayquaza_sky.py:738",
+          "quote": "woken, settled or withdrawn."
+        },
+        {
+          "at": "data/rayquaza_sky.json:100",
+          "quote": "\"guardian_tag\": \"cobblers.guardian\","
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c27_a_rayquaza_that_blacks_a_player_out_becomes_the_guardian_and_its_keeper_never_touches_it",
+        "tests/test_rayquaza_sky.py::test_a_guardian_is_never_held_withdrawn_or_discarded"
+      ]
+    },
+    {
+      "id": "KC1",
+      "title": "Kyogre carries the blackout's exempt tag: a loss to it makes no item claim and no guardian",
+      "owner": "recovery_claims",
+      "consumers": [
+        "kyogre_cave"
+      ],
+      "constrained_by": [],
+      "statement": "Every Kyogre the cave's keeper binds carries data/blackout.json claims.exempt_tag (read from that file, never written in), so a player it blacks out loses money and returns to the checkpoint but makes no item claim and leaves no guardian in the Basin; the keeper's re-sleep and duplicate kill therefore never meet a guardian, and every kill line in the cave's pack also carries tag=!cobblers.guardian. The set pieces never carry the exempt tag and the pack never kills one.",
+      "stated_in": [
+        {
+          "at": "data/blackout.json:71",
+          "quote": "\"exempt_tag\": \"cobblers.gm\""
+        },
+        {
+          "at": "tools/blackout_pack.py:232",
+          "quote": "run scoreboard players set #exempt bo.tmp 1"
+        },
+        {
+          "at": "docs/world-building/KYOGRE_CAVE.md:299",
+          "quote": "The Kyogre is exempt from item claims."
+        }
+      ],
+      "tests": [
+        "tests/test_kyogre_cave.py::test_kyogre_is_bound_with_the_blackouts_exempt_tag",
+        "tests/test_kyogre_cave.py::test_no_kill_in_the_pack_can_reach_a_guardian_or_a_set_piece"
+      ]
+    },
+    {
+      "id": "KC2",
+      "title": "Every flooded passage of the Kyogre cave is deep enough for the water ladder to count depth",
+      "owner": "water_ladder",
+      "consumers": [
+        "kyogre_cave"
+      ],
+      "constrained_by": [],
+      "statement": "The ladder counts a player as deep only with data/blackout.json water.deep_blocks water blocks above the eyes (tools/blackout_pack.py water/tick). A swimmer at a flooded passage's floor has eyes one cell up, so every passage of the cave flooded to its roof (the galleries and the U-bend) holds at least deep_blocks + 2 cells of water; under a lower roof Dive would give nothing and the passage would be vanilla air for everyone.",
+      "stated_in": [
+        {
+          "at": "data/blackout.json:131",
+          "quote": "\"deep_blocks\": 5,"
+        },
+        {
+          "at": "tools/blackout_pack.py:775",
+          "quote": "deep_chain = \" \".join(\"if block ~ ~%d ~ #%s:water\""
+        }
+      ],
+      "tests": [
+        "tests/test_kyogre_cave.py::test_every_flooded_passage_holds_the_ladders_depth"
+      ]
+    },
+    {
+      "id": "KC3",
+      "title": "Every surface swim in the Kyogre cave ends before swim fatigue warns",
+      "owner": "swim_fatigue",
+      "consumers": [
+        "kyogre_cave"
+      ],
+      "constrained_by": [],
+      "statement": "Swim fatigue builds on every surface swim (a trained player under water neither tires nor recovers). Every water surface cell a player can reach in the cave is within the distance an unaided swimmer covers before the warning in deep water (warn_ticks / gain_deep_per_tick ticks at 5 blocks a second, data/blackout.json surface) of a cell they can climb out onto.",
+      "stated_in": [
+        {
+          "at": "data/blackout.json:167",
+          "quote": "\"warn_ticks\": 400,"
+        },
+        {
+          "at": "data/blackout.json:165",
+          "quote": "\"gain_deep_per_tick\": 4,"
+        },
+        {
+          "at": "tools/blackout_pack.py:975",
+          "quote": "under water neither tires nor recovers"
+        }
+      ],
+      "tests": [
+        "tests/test_kyogre_cave.py::test_every_surface_swim_ends_before_fatigue_warns"
+      ]
+    },
+    {
+      "id": "KC4",
+      "title": "Coldwater's sealed arch hands a diver to the Kyogre cave's crossing",
+      "owner": "coldwater_station",
+      "consumers": [
+        "kyogre_cave"
+      ],
+      "constrained_by": [],
+      "statement": "The arch's touch (cobblers:coldwater_station/portal/touch) refuses a player without data/portals.json gates.dive.tag before it calls portal/destination, and the destination's only command is `function` data/coldwater_station.json portal.hook.cave_function, which the cave's pack ships; the cave's tp line carries the same dive tag again with gym8_cleared and the attunement.",
+      "stated_in": [
+        {
+          "at": "tools/coldwater_station.py:205",
+          "quote": "\"function %s\" % hook[\"cave_function\"]"
+        },
+        {
+          "at": "data/coldwater_station.json:77",
+          "quote": "\"cave_function\": \"cobblers:kyogre_cave/enter\""
+        }
+      ],
+      "tests": [
+        "tests/test_kyogre_cave.py::test_the_arch_hands_a_diver_to_the_cave_and_the_crossing_carries_the_gate"
+      ]
+    },
+    {
+      "id": "KC5",
+      "title": "The Kyogre cave's pocket box meets no other pocket user",
+      "owner": "kyogre_cave",
+      "consumers": [
+        "dungeons",
+        "entei_boss"
+      ],
+      "constrained_by": [
+        "dungeons",
+        "entei_boss"
+      ],
+      "statement": "data/kyogre_cave.json pocket.reserve (every cell the cave builds, its rescue box and the keeper's sweep box) lies inside the shared border less its margin and meets neither the portals' rescue box, Entei's band with its sweep margin, the probe pack's row, nor any dungeon slot strip, each recomputed from its own file: no other keeper's sweep ejects a player from the cave and the cave's sweep ejects nobody from theirs.",
+      "stated_in": [
+        {
+          "at": "data/kyogre_cave.json:19",
+          "quote": "\"reserve\": [8160, 2096, 8640, 2400],"
+        },
+        {
+          "at": "tools/dungeon.py:323",
+          "quote": "def foreign_boxes("
+        }
+      ],
+      "tests": [
+        "tests/test_kyogre_cave.py::test_the_cave_reserve_meets_no_other_pocket_user"
+      ]
+    },
+    {
+      "id": "C28",
+      "title": "No dollar path reaches a top-tier item or any of its inputs",
+      "owner": "economy",
+      "consumers": [
+        "station_exchange"
+      ],
+      "constrained_by": [
+        "markets"
+      ],
+      "statement": "No seller (a counter, a stall, a Mart's template shop, the default shop; sited or not), no recipe in the server's jars, no barter edge and no vanilla wandering-trader offer lets dollars obtain the top tier (the Master Ball, Ability Capsule, Focus Sash, Expert Belt, Eviolite, Assault Vest, Choice Specs, Destiny Knot) or any of its inputs (ancient debris, netherite scrap, ingot and block, diamond and diamond block, and every input of a barter line selling a top-tier item). The Station Exchange's barter is the top tier's only route, so its price in materials is the price; a dollar path would make it a money line again. The Bank only buys, and the Produce Buyer only pays.",
+      "stated_in": [
+        {
+          "at": "docs/mechanics/ECONOMY_V2.md:260",
+          "quote": "a top-tier item has no dollar line."
+        },
+        {
+          "at": "docs/mechanics/ECONOMY_V2.md:322",
+          "quote": "**Dollars buy no top-tier input.**"
+        },
+        {
+          "at": "docs/mechanics/ECONOMY_V2.md:532",
+          "quote": "| E4 | Remove the Master Ball money line;"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c28_no_dollar_path_reaches_a_top_tier_item_or_its_inputs",
+        "tests/test_economy_audit.py::test_no_dollar_path_reaches_the_top_tier_on_the_real_data",
+        "tests/test_economy_audit.py::test_a_generator_that_shelves_the_superseded_top_tier_lines_is_a_dollar_path",
+        "tests/test_economy_audit.py::test_a_generator_that_shelves_a_diamond_block_is_a_dollar_path_to_a_top_tier_input"
       ]
     }
   ]

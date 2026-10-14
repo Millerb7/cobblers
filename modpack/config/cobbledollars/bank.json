@@ -5,64 +5,8 @@
       "price": 25000
     },
     {
-      "item": "cobblemon:pp_max",
-      "price": 3500
-    },
-    {
-      "item": "lumymon:glacier_feather",
-      "price": 5000
-    },
-    {
-      "item": "lumymon:thunder_feather",
-      "price": 5000
-    },
-    {
-      "item": "lumymon:ember_feather",
-      "price": 5000
-    },
-    {
-      "item": "lumymon:soul_feather",
-      "price": 30000
-    },
-    {
       "item": "minecraft:chorus_fruit",
       "price": 5
-    },
-    {
-      "item": "cobblemon:poke_cake",
-      "price": 120
-    },
-    {
-      "item": "cobblemon:smoked_tail_curry",
-      "price": 70
-    },
-    {
-      "item": "cobblemon:rage_candy_bar",
-      "price": 40
-    },
-    {
-      "item": "cobblemon:lumiose_galette",
-      "price": 30
-    },
-    {
-      "item": "cobblemon:casteliacone",
-      "price": 30
-    },
-    {
-      "item": "cobblemon:vivichoke_dip",
-      "price": 75
-    },
-    {
-      "item": "cobblemon:big_malasada",
-      "price": 35
-    },
-    {
-      "item": "cobblemon:open_faced_sandwich",
-      "price": 70
-    },
-    {
-      "item": "cobblemon:tasty_tail",
-      "price": 49
     },
     {
       "item": "minecraft:coal",

@@ -1,0 +1,1551 @@
+#!/usr/bin/env python
+"""The Kyogre cave behind Coldwater's sealed arch, from data/kyogre_cave.json (docs/world-building/KYOGRE_CAVE.md).
+
+A diver who has done the station's beats clicks the sealed arch on the sea floor (data/coldwater_station.json portal; its
+touch already refuses a non-diver) and crosses into cobblers:pocket, the portals' dimension (ADR-004). Inside: the
+antechamber (A), the Sounding (B, a flooded shaft 100 deep) and the flooded U-bend under it, the domed hub (C) with two
+pools to the flooded galleries (C1 north, C3 south) and the Race (C2) up its east side, three lamp shrines, the Tide Gate
+(D, a hall flooded to its roof under a glass panel in the hub's balcony, with a glass window onto the Trench), the
+Trench (E, 128 long, 60 down from the rim to the water), and the Basin (F), where Kyogre sleeps on a dais in a glowing
+pool behind an invisible barrier cage.
+
+TWO PACKS (the owner's memory rule, 2026-10-12: every function line of a loaded pack stays parsed in the heap):
+  cobblers_kyogre_cave_build   the one-shot geometry: the cave's blocks (one function per part, each holding its own
+                               chunks), the arch's reef in the overworld, the click entities (tools/chunk_look.py's
+                               look-then-act chain, in the pocket) and the build state. `cobblers:kyogre_cave/build/*`,
+                               split off by tools/pack_split.py; tools/reapply.py strip removes it after R18KC
+  cobblers_kyogre_cave         the runtime: the crossing (enter, leave), the keeper (the gate sweep, adventure mode,
+                               the rescue, the puzzles' reset when the cave stands empty, the set pieces, Kyogre), the
+                               clicks, the lamps, the wheel and its drain, the wake, the pedestals, the advancements and
+                               one pokemon_captured callback
+
+WHAT IT REUSES, CALLED (KYOGRE_CAVE.md section 7 step 5):
+  tools/portals.py           the click advancement (EXP-034), the interaction summon, the text helper
+  tools/legendaries.py       DORMANT and AWAKE, the sleeping legendary's NBT (EXP-023)
+  tools/coldwater_station.py the arch's geometry (its stand is the way back) and the ferry-lane guard
+  tools/dungeon.py           foreign_boxes(): the portals' rescue box, Entei's band, the probes' row
+  tools/function_limits.py   ensure_loaded, check_lines
+  tools/chunk_look.py        the interactions' look-then-act chain, in the pocket
+  tools/pack_split.py        the build pack
+It defines no dimension (cobblers_portals owns cobblers:pocket) and never reads a world.
+
+THE MODEL. The cave is a voxel model built from the data's rooms: every carved cell is AIR or WATER (sources only), a
+shell `shell.margin` thick of solid surrounds every carved cell, and decor solids stand inside. The builder REFUSES a
+model in which water stands beside or above air (it would flow), except the Race's declared sources; one in which a
+flooded room is too low for the water ladder to count depth; one in which a player could not get from the arrival to
+the Basin with the puzzles solved, could reach the Trench with them unsolved, or could reach a cell from which no return
+click is reachable. These are the builder's guards, not the audit (KYOGRE_CAVE.md section 7: tools/kyogre_cave_audit.py
+is another agent's and must not import this file).
+
+  python tools/kyogre_cave.py build [--source-root R] [--out DIR]   write both packs and derived/kyogre_cave/plan.json
+  python tools/kyogre_cave.py report [--source-root R]              the checks and the numbers; nothing written
+
+What it does NOT cover (CLAUDE.md "Our list is not the world"): the keeper acts only on the cave's own box and its own
+tags; a Kyogre or a set piece caught and released elsewhere is not tracked; a player who logs out inside the cave and
+back in after the reset finds the puzzles reset around them (every region keeps a return click, so nobody is shut in).
+Kyogre's cage closes while its guard sees only ONLINE players; a player who logged out in its box and rejoins is sent out
+at the next keeper pass (the leave_game statistic `kc.left`, tick's first lines), before the cage can matter to them. A
+player already offline in the box when the pack first loads has no score and is not caught.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import shutil
+import sys
+from pathlib import Path
+
+import numpy as np
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import function_limits as FL  # noqa: E402
+
+DATA = ROOT / "data" / "kyogre_cave.json"
+PORTALS = ROOT / "data" / "portals.json"
+ENTEI = ROOT / "data" / "entei_boss.json"
+DUNGEONS = ROOT / "data" / "dungeons.json"
+LEGENDARIES = ROOT / "data" / "legendaries.json"
+BLACKOUT = ROOT / "data" / "blackout.json"
+SPAWN_BLOCKS = ROOT / "data" / "spawn_blocks.json"
+WORLD = ROOT / "data" / "world.json"
+PROBES = ROOT / "data" / "world_probes.json"
+PACK = "cobblers_kyogre_cave"
+OUT = ROOT / "build" / "datapacks" / PACK
+PLAN = ROOT / "derived" / "kyogre_cave" / "plan.json"
+SCHEMA = "cobblers.kyogre_cave/1"
+NS = "cobblers"
+FOLDER = "kyogre_cave"
+F = "%s:%s" % (NS, FOLDER)
+BUILD_PREFIX = F + "/build/"
+PACK_FORMAT = 48
+PART_COMMANDS = 6000
+HEAD = "# Generated by tools/kyogre_cave.py from data/kyogre_cave.json; never edit (build/ is regenerated)."
+
+VOID, AIR, WATER, SOLID = 0, 1, 2, 3
+BARRIER = "minecraft:barrier"
+WATER_BLOCK = "minecraft:water"
+AIR_BLOCK = "minecraft:air"
+LANTERN = "minecraft:sea_lantern"
+
+
+class CaveError(SystemExit):
+    pass
+
+
+def _j(path):
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def load(path=DATA):
+    doc = _j(path)
+    if doc.get("schema") != SCHEMA:
+        raise CaveError("%s: schema must be %s" % (path, SCHEMA))
+    return doc
+
+
+def _mix(v):
+    """A 32-bit integer mixer (lowbias32), on Python ints or numpy uint32 arrays alike."""
+    m = 0xFFFFFFFF
+    v = (v ^ (v >> 16)) & m
+    v = (v * 0x7FEB352D) & m
+    v = (v ^ (v >> 15)) & m
+    v = (v * 0x846CA68B) & m
+    return (v ^ (v >> 16)) & m
+
+
+def h01(*k):
+    """A stable hash in [0, 1) of integers: the cave's only randomness, seeded from the data. Works elementwise when any
+    argument is a numpy array."""
+    if any(isinstance(v, np.ndarray) for v in k):
+        acc = np.full(np.broadcast(*[np.asarray(v) for v in k]).shape, 0x9E3779B9, dtype=np.int64)
+        for v in k:
+            acc = _mix((acc ^ (np.asarray(v, dtype=np.int64) & 0xFFFFFFFF)) & 0xFFFFFFFF)
+        return acc.astype(np.float64) / 2.0 ** 32
+    acc = 0x9E3779B9
+    for v in k:
+        acc = _mix((acc ^ (int(v) & 0xFFFFFFFF)) & 0xFFFFFFFF)
+    return acc / 2.0 ** 32
+
+
+# ------------------------------------------------------------------------------------------------ the static checks
+
+def dungeon_strips(dg=None):
+    """[(label, (x0, z0, x1, z1))] of every dungeon slot strip, from data/dungeons.json engine.slots."""
+    dg = dg if dg is not None else _j(DUNGEONS)
+    s = dg["engine"]["slots"]
+    out = []
+    for d_i, d in enumerate(dg["dungeons"], 1):
+        for k in range(1, s["per_dungeon"] + 1):
+            row = (d_i - 1) * s["per_dungeon"] + (k - 1)
+            z0 = s["rows_from_z"] + row * s["row_spacing"]
+            out.append(("dungeon %s slot %d" % (d["id"], k),
+                        (s["origin_x"], z0, s["origin_x"] + s["strip_length"] - 1, z0 + s["strip_width_max"] - 1)))
+    return out
+
+
+def _meets(a, b):
+    return not (a[2] < b[0] or b[2] < a[0] or a[3] < b[1] or b[3] < a[1])
+
+
+def static_problems(doc, portals_doc=None, entei_doc=None, dungeons_doc=None, legendaries_doc=None, spawn=None):
+    """[problem] in the record against the other pocket users, the border, the portals pack and data/legendaries.json."""
+    import dungeon as DG
+    portals_doc = portals_doc if portals_doc is not None else _j(PORTALS)
+    entei_doc = entei_doc if entei_doc is not None else _j(ENTEI)
+    legendaries_doc = legendaries_doc if legendaries_doc is not None else _j(LEGENDARIES)
+    bad = []
+    p = doc["pocket"]
+    if p["dimension"] != portals_doc["pocket"]["dimension"]:
+        bad.append("pocket.dimension %s is not data/portals.json's %s" % (p["dimension"], portals_doc["pocket"]["dimension"]))
+    if list(p["border"]) != list(entei_doc["pocket"]["border"]) or p["border_margin"] != entei_doc["pocket"]["border_margin"]:
+        bad.append("pocket.border differs from data/entei_boss.json's")
+    gen = portals_doc["pocket"]["generator"]
+    if p["min_y"] != gen["min_y"] or p["height"] != gen["height"]:
+        bad.append("pocket min_y/height differ from data/portals.json pocket.generator")
+    rv = tuple(p["reserve"])
+    lo, hi = p["border"]
+    m = p["border_margin"]
+    if rv[0] < lo + m or rv[1] < lo + m or rv[2] > hi - m or rv[3] > hi - m:
+        bad.append("the reserve %s leaves the world border %d..%d less %d" % (rv, lo, hi, m))
+    for name, fb in DG.foreign_boxes(portals_doc, entei_doc).items():
+        if _meets(rv, fb):
+            bad.append("the reserve %s meets %s %s" % (rv, name, fb))
+    for name, sb in dungeon_strips(dungeons_doc):
+        if _meets(rv, sb):
+            bad.append("the reserve %s meets %s %s" % (rv, name, sb))
+    if any(r.get("id") == "kyogre" for r in legendaries_doc.get("encounters") or []):
+        bad.append("data/legendaries.json has a kyogre record: its pack would ship cobblers:legendary/kyogre/met too; "
+                   "give the advancements one owner first")
+    spawn = spawn if spawn is not None else set(_j(SPAWN_BLOCKS)["blocks"])
+    for b in sorted(block_ids(doc)):
+        if b.split("[")[0] in spawn:
+            bad.append("%s is a spawn condition (data/spawn_blocks.json)" % b)
+    return bad
+
+
+def block_ids(doc):
+    """Every block id the data names for the cave and the reef."""
+    out = set()
+    sh = doc["shell"]
+    out.add(sh["fill"])
+    for v in sh["skin"].values():
+        out |= set(v)
+    r = doc["rooms"]
+    for k in ("floor_block",):
+        out.add(r["antechamber"][k])
+        out.add(r["tide_gate"][k])
+    out |= {r["hub"]["panel_block"], r["tide_gate"]["window_block"], r["tide_gate"]["stair"]["block"],
+            r["basin"]["dais_block"], r["basin"]["causeway_block"], doc["arches"]["frame"], doc["arches"]["sheet"],
+            doc["lamps"]["unlit"], doc["lamps"]["lit"], doc["lamps"]["plinth"], doc["pedestals"]["plinth"], LANTERN}
+    out |= {d[3] for d in doc["wheel"]["decor"]}
+    out |= set(doc["arch_reef"]["blocks"])
+    return out
+
+
+# ------------------------------------------------------------------------------------------------ the voxel model
+
+class Model:
+    """The cave as arrays over its bounding box: st (VOID/AIR/WATER/SOLID), bk (a palette index for SOLID cells),
+    inside (the carved volume before decor: what the shell surrounds)."""
+
+    def __init__(self, x0, y0, z0, x1, y1, z1):
+        self.o = (x0, y0, z0)
+        self.shape = (x1 - x0 + 1, y1 - y0 + 1, z1 - z0 + 1)
+        self.st = np.zeros(self.shape, np.uint8)
+        self.bk = np.zeros(self.shape, np.uint16)
+        self.inside = np.zeros(self.shape, bool)
+        self.palette = [None]
+        self.pidx = {}
+        self.marks = {}
+
+    def idx(self, block):
+        if block not in self.pidx:
+            self.pidx[block] = len(self.palette)
+            self.palette.append(block)
+        return self.pidx[block]
+
+    def sl(self, box):
+        x0, y0, z0, x1, y1, z1 = box
+        ox, oy, oz = self.o
+        return (slice(x0 - ox, x1 - ox + 1), slice(y0 - oy, y1 - oy + 1), slice(z0 - oz, z1 - oz + 1))
+
+    def carve(self, box, state):
+        s = self.sl(box)
+        self.st[s] = state
+        self.bk[s] = 0
+        self.inside[s] = True
+
+    def carve_mask(self, mask, state):
+        self.st[mask] = state
+        self.bk[mask] = 0
+        self.inside |= mask
+
+    def solid(self, box, block):
+        s = self.sl(box)
+        self.st[s] = SOLID
+        self.bk[s] = self.idx(block)
+
+    def set(self, x, y, z, block):
+        self.solid((x, y, z, x, y, z), block)
+
+    def at(self, x, y, z):
+        ox, oy, oz = self.o
+        i, j, k = x - ox, y - oy, z - oz
+        if not (0 <= i < self.shape[0] and 0 <= j < self.shape[1] and 0 <= k < self.shape[2]):
+            return VOID, None
+        s = int(self.st[i, j, k])
+        return s, (self.palette[int(self.bk[i, j, k])] if s == SOLID else None)
+
+    def sub_coords(self, box):
+        """Coordinate grids (int64) over a sub-box, clipped to the model."""
+        x0, y0, z0, x1, y1, z1 = box
+        ox, oy, oz = self.o
+        x0, y0, z0 = max(x0, ox), max(y0, oy), max(z0, oz)
+        x1, y1, z1 = (min(x1, ox + self.shape[0] - 1), min(y1, oy + self.shape[1] - 1), min(z1, oz + self.shape[2] - 1))
+        return np.meshgrid(np.arange(x0, x1 + 1), np.arange(y0, y1 + 1), np.arange(z0, z1 + 1), indexing="ij")
+
+    def copy(self):
+        m = Model.__new__(Model)
+        m.o, m.shape = self.o, self.shape
+        m.st, m.bk, m.inside = self.st.copy(), self.bk.copy(), self.inside.copy()
+        m.palette, m.pidx, m.marks = list(self.palette), dict(self.pidx), dict(self.marks)
+        return m
+
+
+def dilate(mask, n):
+    """Chebyshev dilation by n, separable along each axis."""
+    out = mask.copy()
+    for ax in range(3):
+        cur = out.copy()
+        for d in range(1, n + 1):
+            sh = [slice(None)] * 3
+            src = [slice(None)] * 3
+            sh[ax], src[ax] = slice(d, None), slice(None, -d)
+            cur[tuple(sh)] |= out[tuple(src)]
+            sh[ax], src[ax] = slice(None, -d), slice(d, None)
+            cur[tuple(sh)] |= out[tuple(src)]
+        out = cur
+    return out
+
+
+def seg_dist(px, pz, a, b):
+    (ax, az), (bx, bz) = a, b
+    dx, dz = bx - ax, bz - az
+    L2 = dx * dx + dz * dz
+    t = np.clip(((px - ax) * dx + (pz - az) * dz) / L2, 0.0, 1.0) if L2 else 0.0
+    return np.hypot(px - (ax + t * dx), pz - (az + t * dz))
+
+
+def trench_half_width(t, x):
+    mean, swing, wl = t["half_width"]
+    return mean + swing * math.sin(2 * math.pi * x / wl) + (h01(x, 53) - 0.5)
+
+
+def trench_columns(t):
+    """{x: (z_min, z_max)} of the chasm's columns."""
+    cz = t["centre_z"]
+    out = {}
+    for x in range(t["x"][0], t["x"][1] + 1):
+        hw = trench_half_width(t, x)
+        out[x] = (int(math.ceil(cz - hw)), int(math.floor(cz + hw)))
+    return out
+
+
+def ledge_north_standing(t, x):
+    ln = t["ledge_north"]
+    return max(t["bridge"]["standing"], ln["top_standing"] - int(math.ceil((ln["x"][1] - x) / ln["rise_run"])))
+
+
+def ledge_south_standing(t, x):
+    ls = t["ledge_south"]
+    return max(ls["bottom_standing"], ls["top_standing"] - (x - ls["from_x"]) // ls["rise_run"])
+
+
+def ledge_south_end(t):
+    ls = t["ledge_south"]
+    return ls["from_x"] + (ls["top_standing"] - ls["bottom_standing"]) * ls["rise_run"] + ls["rise_run"] - 1
+
+
+def bounds(doc):
+    """(x0, y0, z0, x1, y1, z1): the model's box, the rooms' extent grown by the shell and a cell more."""
+    r = doc["rooms"]
+    boxes = [r["antechamber"]["box"], r["sounding"]["box"], r["tide_gate"]["box"], r["race"]["shrine"]]
+    hc, hr = r["hub"]["centre"], r["hub"]["radii"]
+    boxes.append([hc[0] - hr[0] - 2, hc[1], hc[2] - hr[2] - 2, hc[0] + hr[0] + 2, hc[1] + hr[1] + 2, hc[2] + hr[2] + 2])
+    bc, br = r["basin"]["centre"], r["basin"]["radii"]
+    boxes.append([bc[0] - br[0] - 2, r["basin"]["pool"][1] - 1, bc[2] - br[2] - 2, bc[0] + br[0] + 2, bc[1] + br[1] + 2,
+                  bc[2] + br[2] + 2])
+    t = r["trench"]
+    hw = t["half_width"][0] + t["half_width"][1] + 1
+    boxes.append([t["x"][0], t["floor"] - 1, t["centre_z"] - hw - 1, t["x"][1], t["roof"] + 3, t["centre_z"] + hw + 1])
+    for g in r["galleries"]:
+        xs = [p[0] for p in g["path"]] + [g["shrine"]["box"][0], g["shrine"]["box"][3]]
+        zs = [p[1] for p in g["path"]] + [g["shrine"]["box"][2], g["shrine"]["box"][5]]
+        boxes.append([min(xs) - 4, g["water_y"][0], min(zs) - 4, max(xs) + 4, g["shrine"]["box"][4], max(zs) + 4])
+    for b in r["ubend"]["boxes"]:
+        boxes.append(b)
+    m = doc["shell"]["margin"] + 2
+    return (int(min(b[0] for b in boxes)) - m, int(min(b[1] for b in boxes)) - m, int(min(b[2] for b in boxes)) - m,
+            int(max(b[3] for b in boxes)) + m, int(max(b[4] for b in boxes)) + m, int(max(b[5] for b in boxes)) + m)
+
+
+def _ellipsoid(M, centre, radii, rough, seed, floor_y):
+    """A dome over a flat floor at floor_y, its surface moved by up to `rough` blocks by a coarse hash."""
+    cx, cy, cz = centre
+    rx, ry, rz = radii
+    box = (int(cx - rx - rough - 2), floor_y, int(cz - rz - rough - 2), int(cx + rx + rough + 2),
+           int(floor_y + ry + rough + 2), int(cz + rz + rough + 2))
+    X, Y, Z = M.sub_coords(box)
+    r = ((X - cx) / rx) ** 2 + ((Y - floor_y) / ry) ** 2 + ((Z - cz) / rz) ** 2
+    lim = 1.0 + (rough / max(rx, ry, rz)) * 2.0 * (h01(seed, X // 3, Y // 3, Z // 3) - 0.5) if rough else 1.0
+    out = np.zeros(M.shape, bool)
+    out[M.sl(box)] = (r <= lim) & (Y >= floor_y)
+    return out
+
+
+def build_model(doc):
+    """The cave in its built state: lamps unlit, the Tide Gate flooded and shut, the cage closed."""
+    r = doc["rooms"]
+    M = Model(*bounds(doc))
+    seed = doc["shell"]["seed"]
+    built_boxes = []
+
+    # A, the antechamber
+    a = r["antechamber"]
+    M.carve(a["box"], AIR)
+    built_boxes.append(a["box"])
+
+    # B, the Sounding, its alcoves (air bells over a one-cell sill) and lights
+    b = r["sounding"]
+    M.carve(b["box"], WATER)
+    x0, y0, z0, x1, y1, z1 = b["box"]
+    zc = (z0 + z1) // 2
+    n = b["alcove_size"]
+    if b["alcove_side"] != "west":
+        raise CaveError("sounding.alcove_side: only west is built")
+    xw = x0 - 1
+    sd = b["sill_depth"]
+    if sd < _j(BLACKOUT)["water"]["deep_blocks"] + 2:
+        raise CaveError("sounding.sill_depth %d: the sill is flooded to the wall's rock, so contract KC2 asks data/blackout.json "
+                        "water.deep_blocks + 2" % sd)
+    for L in b["alcoves"]:
+        M.carve((xw - n, L, zc - n // 2, xw - 1, L + n - 1, zc + n // 2), AIR)
+        # the sill: water under the bell's front row and through the wall, so a swimmer fits under the lip; flooded to
+        # the wall's rock on its shaft side, so it holds the ladder's depth (contract KC2)
+        M.carve((xw - 1, L - sd, zc - n // 2, xw, L - 1, zc + n // 2), WATER)
+
+    # the U-bend under the Sounding, and its riser into the hub's floor
+    u = r["ubend"]
+    for bx in u["boxes"]:
+        M.carve(bx, WATER)
+    M.carve(u["riser"], WATER)
+
+    # C, the hub's dome, its balcony over the Tide Gate
+    hb = r["hub"]
+    M.carve_mask(_ellipsoid(M, hb["centre"], hb["radii"], hb["roughness"], seed, hb["centre"][1]), AIR)
+    M.carve(hb["balcony"], AIR)
+
+    # the galleries: a pool in the hub floor down to a flooded passage 8 high, a bell midway, a shrine at the end
+    for g in r["galleries"]:
+        wy0, wy1 = g["water_y"]
+        xs, zs = [p_[0] for p_ in g["path"]], [p_[1] for p_ in g["path"]]
+        gb = (min(xs) - 4, wy0, min(zs) - 4, max(xs) + 4, wy1, max(zs) + 4)
+        X, _Y, Z = M.sub_coords(gb)
+        d = np.full(X.shape, 1e9)
+        for a_, b_ in zip(g["path"], g["path"][1:]):
+            d = np.minimum(d, seg_dist(X, Z, a_, b_))
+        mask = np.zeros(M.shape, bool)
+        mask[M.sl(gb)] = d <= g["half_width"]
+        M.carve_mask(mask, WATER)
+        M.carve(g["riser"], WATER)
+        bh = g["bell_half"]
+        for bx, bz in g["bells"]:
+            # wider than the passage, so its rim stands on the passage's walls: a swimmer can climb out and rest
+            M.carve((bx - bh, wy1 + 1, bz - bh, bx + bh, wy1 + 3, bz + bh), AIR)
+        sh = g["shrine"]
+        M.carve(sh["box"], AIR)
+        M.carve(sh["riser"], WATER)
+        built_boxes.append(sh["box"])
+
+    # C2, the Race: steps of air, its sump, its shrine, its sources
+    rc = r["race"]
+    zr0, zr1 = rc["z"]
+    for k in range(rc["steps"]):
+        s = rc["standing0"] + k
+        xa = rc["x_start"] + k * rc["step_length"]
+        M.carve((xa, s, zr0, xa + rc["step_length"] - 1, s + rc["air_height"] - 1, zr1), AIR)
+    M.carve(rc["sump"], WATER)
+    M.carve(rc["shrine"], AIR)
+    built_boxes.append(rc["shrine"])
+    M.carve(rc["sources"], WATER)
+
+    # D, the Tide Gate: flooded to its roof; the window's passage to the Trench
+    tg = r["tide_gate"]
+    M.carve(tg["box"], WATER)
+    M.carve(tg["passage"], AIR)
+    built_boxes += [tg["box"], tg["passage"]]
+
+    # E, the Trench: the chasm (water up to water_top), then the balcony, ledges, bridge, causeway and beach as solids
+    t = r["trench"]
+    cols = trench_columns(t)
+    for x, (za, zb) in cols.items():
+        for z in range(za, zb + 1):
+            roof = t["roof"] + int(3 * h01(seed, x // 3, z // 3)) - 1
+            M.carve((x, t["floor"], z, x, t["water_top"], z), WATER)
+            M.carve((x, t["water_top"] + 1, z, x, roof, z), AIR)
+
+    # the tunnel down to the Basin
+    tu = r["tunnel"]
+    for x in range(tu["x_bottom"], tu["x_top"] + 1):
+        s = tunnel_standing(tu, x)
+        M.carve((x, s, tu["z_centre"] - 1, x, s + tu["air_height"] - 1, tu["z_centre"] + 1), AIR)
+
+    # F, the Basin: the dome and its pool
+    bs = r["basin"]
+    M.carve_mask(_ellipsoid(M, bs["centre"], bs["radii"], bs["roughness"], seed + 1, bs["centre"][1]), AIR)
+    M.carve(bs["pool"], WATER)
+
+    # ---- the shell: every cell within margin of the carved volume, skin on the faces
+    sh = doc["shell"]
+    shell = dilate(M.inside, sh["margin"]) & ~M.inside
+    M.st[shell] = SOLID
+    M.bk[shell] = M.idx(sh["fill"])
+    face = dilate(M.inside, 1) & ~M.inside
+    built = np.zeros(M.shape, bool)
+    for bx in built_boxes:
+        built[M.sl(bx)] = True
+    built = dilate(built & M.inside, 1)
+    I, J, K = np.nonzero(face)
+    hx = h01(seed, I + M.o[0], J + M.o[1], K + M.o[2])
+    for name, sel in (("built", built[I, J, K]),
+                      ("upper", ~built[I, J, K] & (J + M.o[1] >= sh["skin_split_y"])),
+                      ("deep", ~built[I, J, K] & (J + M.o[1] < sh["skin_split_y"]))):
+        pal = sh["skin"][name]
+        ids = np.array([M.idx(b_) for b_ in pal], dtype=np.uint16)
+        pick = np.minimum((hx[sel] * len(pal)).astype(int), len(pal) - 1)
+        M.bk[I[sel], J[sel], K[sel]] = ids[pick]
+    # the floors of the built rooms
+    for room in (a, tg):
+        x0, y0, z0, x1, y1, z1 = room["box"]
+        fl = (x0, y0 - 1, z0, x1, y0 - 1, z1)
+        s = M.sl(fl)
+        M.bk[s] = np.where(M.st[s] == SOLID, M.idx(room["floor_block"]), M.bk[s])
+
+    # ---- decor inside the carved volume
+    M.solid(hb["panel"], hb["panel_block"])
+    st_ = tg["stair"]
+    for i in range(st_["steps"]):
+        x = st_["x_top"] - i
+        M.solid((x, tg["box"][1], st_["z"][0], x, st_["top"] - i, st_["z"][1]), st_["block"])
+    M.solid(tg["window"], tg["window_block"])
+    # the trench's balcony, ledges, bridge, causeway, beach
+    bal = t["balcony"]
+    for x in range(bal["x"][0], bal["x"][1] + 1):
+        za, zb = cols[x]
+        M.solid((x, bal["standing"] - 2, za, x, bal["standing"] - 1, zb), _deep(sh, seed, x, 0, za))
+    pw, th = t["path_width"], t["shelf_thickness"]
+    for x in range(t["ledge_north"]["x"][0], t["ledge_north"]["x"][1] + 1):
+        s = ledge_north_standing(t, x)
+        za, _zb = cols[x]
+        M.solid((x, s - th, za, x, s - 1, za + pw - 1), _deep(sh, seed, x, s, za))
+    for x in range(t["bridge"]["x"][0], t["bridge"]["x"][1] + 1):
+        za, zb = cols[x]
+        s = t["bridge"]["standing"]
+        M.solid((x, s - th, za, x, s - 1, zb), _deep(sh, seed, x, s, za))
+    for x in range(t["ledge_south"]["from_x"], ledge_south_end(t) + 1):
+        s = ledge_south_standing(t, x)
+        _za, zb = cols[x]
+        # data ledge_south.foot_why: a shelf whose underside meets the water's top would roof a pocket of water under
+        # the ladder's depth (contract KC2), so there the ledge is solid down to the floor
+        low = t["floor"] if s - th <= t["water_top"] + 1 else s - th
+        M.solid((x, low, zb - pw + 1, x, s - 1, zb), _deep(sh, seed, x, s, zb))
+    for x in range(t["causeway"]["x"][0], t["causeway"]["x"][1] + 1):
+        za, zb = cols[x]
+        M.solid((x, t["floor"], za, x, t["causeway"]["standing"] - 1, zb), _deep(sh, seed, x, 1, za))
+    for x in range(t["beach"]["x"][0], t["beach"]["x"][1] + 1):
+        za, _zb = cols[x]
+        M.solid((x, t["floor"], za, x, t["beach"]["standing"] - 1, za + pw - 1), _deep(sh, seed, x, 2, za))
+    # the Basin's dais and causeway
+    M.solid(bs["dais"], bs["dais_block"])
+    M.solid(bs["causeway"], bs["causeway_block"])
+    # the arches back
+    ar = doc["arches"]
+    for arch in ar["list"]:
+        for x, y, z, blk in arch_cells(arch, ar):
+            M.set(x, y, z, blk)
+    # the lamps (unlit), their plinths; the pedestals' plinths; the wheel
+    lp = doc["lamps"]
+    for l in lp["list"]:
+        M.set(*l["plinth"], lp["plinth"])
+        M.set(*l["lamp"], lp["unlit"])
+    for p in doc["pedestals"]["list"]:
+        M.set(*p["plinth"], doc["pedestals"]["plinth"])
+    for x, y, z, blk in doc["wheel"]["decor"]:
+        M.set(x, y, z, blk)
+
+    # ---- lights: in the walls, never in a carved cell
+    lights = [tuple(v) for v in a["lights"] + b["lights"] + tg["lights"]]
+    for lx, lz in hb["lights_xz"]:
+        lights.append(_ceiling(M, lx, hb["centre"][1], lz))
+    for x in range(t["x"][0] + t["light_spacing"] // 2, t["x"][1], t["light_spacing"]):
+        lights.append((x, t["floor"] - 1, t["centre_z"]))
+    px0, py0, pz0, px1, py1, pz1 = bs["pool"]
+    dx0, _dy0, dz0, dx1, _dy1, dz1 = bs["dais"]
+    for x in range(px0, px1 + 1):
+        for z in range(pz0, pz1 + 1):
+            if (x + z) % bs["pool_lights_every"] == 0 and not (dx0 <= x <= dx1 and dz0 <= z <= dz1):
+                lights.append((x, py0 - 1, z))
+    for x, y, z in lights:
+        s, _blk = M.at(x, y, z)
+        if s != SOLID or M.inside[M.sl((x, y, z, x, y, z))].any():
+            raise CaveError("a light at (%d, %d, %d) is not in a wall" % (x, y, z))
+        M.set(x, y, z, LANTERN)
+
+    # ---- the cage: barrier over the dais, in air only
+    cg = doc["kyogre"]["cage"]
+    s = M.sl(cg)
+    if (M.st[s] != AIR).any():
+        raise CaveError("kyogre.cage is not all air over the dais: barrier in water would show as a hole")
+    M.solid(cg, BARRIER)
+
+    M.marks = {"cols": cols}
+    return M
+
+
+def _deep(sh, seed, x, y, z):
+    pal = sh["skin"]["deep"]
+    return pal[int(h01(seed, x, y, z, 7) * len(pal))]
+
+
+def _ceiling(M, x, y, z):
+    """The first solid cell above the carved air of column (x, z) starting at y."""
+    while True:
+        s, _b = M.at(x, y, z)
+        if s == SOLID:
+            return (x, y, z)
+        if s == VOID:
+            raise CaveError("no ceiling over (%d, %d)" % (x, z))
+        y += 1
+
+
+def tunnel_standing(tu, x):
+    drop = tu["standing_top"] - tu["standing_bottom"]
+    start = tu["x_bottom"] + drop          # the last x at the top standing, counted from the bottom
+    return max(tu["standing_bottom"], min(tu["standing_top"], tu["standing_bottom"] + (x - tu["x_bottom"])
+                                          if x <= start else tu["standing_top"]))
+
+
+def arch_cells(arch, ar):
+    """[(x, y, z, block)]: the portals' arch back (tools/portals.py room_blocks), standing on `at`'s y, spanning
+    `axis` about `at`."""
+    x, y, z = arch["at"]
+    out = []
+    def p(r, dy):
+        return (x, y + dy, z + r) if arch["axis"] == "z" else (x + r, y + dy, z)
+    for r in (-2, 2):
+        for dy in (0, 1, 2):
+            out.append(p(r, dy) + (ar["frame"],))
+    for r in (-1, 0, 1):
+        for dy in (0, 1, 2):
+            out.append(p(r, dy) + (ar["sheet"],))
+    for r in (-2, -1, 0, 1, 2):
+        out.append(p(r, 3) + (ar["frame"],))
+    return out
+
+
+# ------------------------------------------------------------------------------------------------ the states
+
+def open_model(doc, M):
+    """The model with the three lamps lit, the Tide Gate drained and open, and the cage open."""
+    O = M.copy()
+    tg, hb = doc["rooms"]["tide_gate"], doc["rooms"]["hub"]
+    s = O.sl(tg["box"])
+    O.st[s] = np.where(O.st[s] == WATER, AIR, O.st[s])
+    for bx in (tg["window"], hb["panel"], doc["kyogre"]["cage"]):
+        s = O.sl(bx)
+        O.st[s] = AIR
+        O.bk[s] = 0
+    for l in doc["lamps"]["list"]:
+        O.set(*l["lamp"], doc["lamps"]["lit"])
+    return O
+
+
+def stability_problems(doc, M, label):
+    """[problem]: a water cell with air (or void) beside or below it. Only the Race's sources may (that is its current)."""
+    rc = doc["rooms"]["race"]
+    x0, y0, z0, x1, y1, z1 = rc["sources"]
+    src = np.zeros(M.shape, bool)
+    src[M.sl(rc["sources"])] = True
+    w = M.st == WATER
+    open_ = (M.st == AIR) | (M.st == VOID)
+    bad = []
+    for ax, d in ((0, 1), (0, -1), (2, 1), (2, -1), (1, -1)):
+        nb = np.zeros(M.shape, bool)
+        sh, sr = [slice(None)] * 3, [slice(None)] * 3
+        if d > 0:
+            sh[ax], sr[ax] = slice(None, -1), slice(1, None)
+        else:
+            sh[ax], sr[ax] = slice(1, None), slice(None, -1)
+        nb[tuple(sh)] = open_[tuple(sr)]
+        hit = w & nb & ~src
+        for i, j, k in list(zip(*np.nonzero(hit)))[:3]:
+            bad.append("%s: water at (%d, %d, %d) has air or void at its %s" % (
+                label, i + M.o[0], j + M.o[1], k + M.o[2], {(0, 1): "+x", (0, -1): "-x", (2, 1): "+z", (2, -1): "-z",
+                                                             (1, -1): "underside"}[(ax, d)]))
+    return bad
+
+
+def seal_problems(doc, M):
+    """[problem]: a carved cell within the shell margin of the void (the dilation makes it true; checked anyway)."""
+    m = doc["shell"]["margin"]
+    near = dilate(M.st == VOID, m)
+    hit = M.inside & near
+    return ["the carved cell (%d, %d, %d) is within %d of the void" % (i + M.o[0], j + M.o[1], k + M.o[2], m)
+            for i, j, k in list(zip(*np.nonzero(hit)))[:3]]
+
+
+def depth_problems(doc, M):
+    """[problem]: a flooded room the ladder could never call deep. The ladder (tools/blackout_pack.py water/tick) counts
+    depth only with data/blackout.json water.deep_blocks of water above the eyes; a swimmer at a flooded passage's floor
+    has eyes in the cell above it, so the passage must hold deep_blocks + 2 cells of water."""
+    need = _j(BLACKOUT)["water"]["deep_blocks"] + 2
+    out = []
+    for g in doc["rooms"]["galleries"]:
+        h = g["water_y"][1] - g["water_y"][0] + 1
+        if h < need:
+            out.append("gallery %s is %d of water high, under the ladder's %d" % (g["id"], h, need))
+    for bx in doc["rooms"]["ubend"]["boxes"]:
+        if bx[4] - bx[1] + 1 < need:
+            out.append("the U-bend %s is under the ladder's %d" % (bx, need))
+    return out
+
+
+# ------------------------------------------------------------------------------------------------ reachability
+
+def positions(M):
+    """Boolean array: a cell a player can occupy (it and the one above are air or water)."""
+    p = (M.st == AIR) | (M.st == WATER)
+    up = np.zeros_like(p)
+    up[:, :-1, :] = p[:, 1:, :]
+    return p & up
+
+
+class Graph:
+    """The model's player positions as flat bytearrays (fast to index in pure Python)."""
+
+    def __init__(self, M):
+        P = positions(M)
+        self.M = M
+        self.P = bytearray(P.ravel().astype(np.uint8).tobytes())
+        self.S = bytearray(M.st.ravel().tobytes())
+        nx, ny, nz = M.shape
+        self.DX, self.DY = ny * nz, nz
+
+    def flat(self, c):
+        nx, ny, nz = self.M.shape
+        return ((c[0] - self.M.o[0]) * ny + (c[1] - self.M.o[1])) * nz + (c[2] - self.M.o[2])
+
+    def moves(self, f):
+        P, S, DX, DY = self.P, self.S, self.DX, self.DY
+        wet = S[f] == WATER
+        b = S[f - DY]
+        if not (wet or b == SOLID or b == WATER):
+            return [f - DY] if P[f - DY] else []                   # falling
+        out = []
+        head = S[f + 2 * DY] in (AIR, WATER)
+        for d in (DX, -DX, 1, -1):
+            n = f + d
+            if P[n]:
+                out.append(n)
+            elif head and P[n + DY]:
+                out.append(n + DY)                                 # a one-block step up
+        if wet and P[f + DY]:
+            out.append(f + DY)                                     # swim up
+        if P[f - DY] and (wet or b == WATER):
+            out.append(f - DY)                                     # swim down
+        return out
+
+    def reach(self, starts, flat=False):
+        seen = bytearray(len(self.P))
+        stack = []
+        for c in starts:
+            f = c if flat else self.flat(c)
+            if self.P[f]:
+                seen[f] = 1
+                stack.append(f)
+        while stack:
+            for n in self.moves(stack.pop()):
+                if not seen[n]:
+                    seen[n] = 1
+                    stack.append(n)
+        return seen
+
+    def returnable(self, R, targets):
+        """Of the reachable cells R, those from which a target can be reached (a reverse search over R's moves)."""
+        rev = {}
+        for f in (i for i, v in enumerate(R) if v):
+            for n in self.moves(f):
+                rev.setdefault(n, []).append(f)
+        ok = bytearray(len(R))
+        stack = [f for f in targets if R[f]]
+        for f in stack:
+            ok[f] = 1
+        while stack:
+            for q in rev.get(stack.pop(), ()):
+                if not ok[q]:
+                    ok[q] = 1
+                    stack.append(q)
+        return ok
+
+    def array(self, flat):
+        return np.frombuffer(bytes(flat), dtype=np.uint8).reshape(self.M.shape).astype(bool)
+
+
+def reach_problems(doc, M, O):
+    """The builder's three reachability guards over the two states (the audit's own flood fill is another agent's)."""
+    bad = []
+    arrive = tuple(doc["rooms"]["antechamber"]["arrive"][:3])
+    t = doc["rooms"]["trench"]
+    tb = M.sl((t["x"][0], t["floor"], t["centre_z"] - 12, t["x"][1], t["roof"], t["centre_z"] + 12))
+    states = []
+    for label, S in (("built", M), ("solved", O)):
+        G = Graph(S)
+        R = G.reach([arrive])
+        states.append((label, G, R))
+    Rc = states[0][1].array(states[0][2])
+    if Rc[tb].any():
+        bad.append("with the lamps unlit and the Tide Gate shut, the Trench is reachable from the arrival")
+    Go, Ro = states[1][1], states[1][2]
+    lip = [tuple(p["click"]) for p in doc["pedestals"]["list"] if p["id"] == "catchers"]
+    for c in lip + [tuple(doc["arches"]["list"][-1]["click"])]:
+        if not Ro[Go.flat(c)]:
+            bad.append("with the puzzles solved, %s on the Basin's lip is not reachable from the arrival" % (c,))
+    # REVIEW 87 as a proof: the puzzles reset while a player who logged out below the Tide Gate is away. From anywhere
+    # the solved cave reaches, the RESET cave must still lead to a return click (the Basin's arch, the Tide Gate's own)
+    Gb = states[0][1]
+    states.append(("reset around a solver", Gb, Gb.reach([i for i, v in enumerate(Ro) if v], flat=True)))
+    for label, G, R in states:
+        targets = []
+        for arch in doc["arches"]["list"]:
+            cx, cy, cz = arch["click"]
+            targets += [G.flat((cx + dx, cy + dy, cz + dz)) for dx in (-1, 0, 1) for dy in (-1, 0, 1) for dz in (-1, 0, 1)]
+        back = G.returnable(R, targets)
+        lost = G.array(R) & ~G.array(back)
+        if lost.any():
+            i, j, k = [int(v[0]) for v in np.nonzero(lost)]
+            bad.append("%s state: %d reachable cells reach no return click, e.g. (%d, %d, %d)" % (
+                label, int(lost.sum()), i + M.o[0], j + M.o[1], k + M.o[2]))
+    return bad
+
+
+# ------------------------------------------------------------------------------------------------ commands
+
+def rect_commands(M, phase):
+    """[(y, command)]: the model's cells of one phase ('solid', 'air', 'water') as fills of rectangles merged along x,
+    then z, then y. Air is written only inside the carved volume (the void outside is already air)."""
+    if phase == "solid":
+        mask = M.st == SOLID
+    elif phase == "air":
+        mask = (M.st == AIR) & M.inside
+    else:
+        mask = M.st == WATER
+    ox, oy, oz = M.o
+    rects = {}
+    for j in range(M.shape[1]):
+        layer = mask[:, j, :]
+        if not layer.any():
+            continue
+        runs = {}
+        for k in range(M.shape[2]):
+            col = layer[:, k]
+            if not col.any():
+                continue
+            ids = M.bk[:, j, k] if phase == "solid" else None
+            i = 0
+            n = M.shape[0]
+            while i < n:
+                if not col[i]:
+                    i += 1
+                    continue
+                b = int(ids[i]) if ids is not None else 0
+                e = i
+                while e + 1 < n and col[e + 1] and (ids is None or int(ids[e + 1]) == b):
+                    e += 1
+                runs.setdefault((b, i, e), []).append(k)
+                i = e + 1
+        for (b, i, e), ks in runs.items():
+            start = prev = ks[0]
+            for k in ks[1:] + [None]:
+                if k is not None and k == prev + 1:
+                    prev = k
+                    continue
+                rects.setdefault((b, i, e, start, prev), []).append(j)
+                if k is not None:
+                    start = prev = k
+    out = []
+    for (b, i, e, k0, k1), js in rects.items():
+        start = prev = js[0]
+        for j in js[1:] + [None]:
+            if j is not None and j == prev + 1:
+                prev = j
+                continue
+            block = M.palette[b] if phase == "solid" else (AIR_BLOCK if phase == "air" else WATER_BLOCK)
+            x0, x1, y0, y1, z0, z1 = i + ox, e + ox, start + oy, prev + oy, k0 + oz, k1 + oz
+            if (x0, y0, z0) == (x1, y1, z1):
+                out.append((y0, "setblock %d %d %d %s" % (x0, y0, z0, block)))
+            else:
+                out.append((y0, "fill %d %d %d %d %d %d %s" % (x0, y0, z0, x1, y1, z1, block)))
+            if j is not None:
+                start = prev = j
+    out.sort(key=lambda c: (c[0], c[1]))
+    return out
+
+
+def block_parts(M):
+    """[[command]]: the build's block commands in phases (every solid, then the carved air, then the water), split
+    into parts of at most PART_COMMANDS. Water goes last so that, when a part runs, every cell beside or under a new
+    source already holds its final block (see stability_problems): a transient flow can only fill a cell that a later
+    part makes a source."""
+    parts = []
+    for phase in ("solid", "air", "water"):
+        cmds = [c for _y, c in rect_commands(M, phase)]
+        for i in range(0, len(cmds), PART_COMMANDS):
+            parts.append((phase, cmds[i:i + PART_COMMANDS]))
+    return parts
+
+
+def box_sel(b, extra=""):
+    x0, y0, z0, x1, y1, z1 = b
+    return "x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d%s" % (x0, y0, z0, x1 - x0, y1 - y0, z1 - z0, ("," + extra) if extra else "")
+
+
+def text(msg, colour, italic=False):
+    d = {"text": msg, "color": colour}
+    if italic:
+        d["italic"] = True
+    return json.dumps(d, ensure_ascii=False)
+
+
+def nbt(d):
+    return "{%s}" % ",".join("%s:%s" % kv for kv in d.items())
+
+
+def chunk_box(points, pad=1):
+    """[(x0, z0, x1, z1)] one box per point (its own chunk), for a forceload."""
+    return [(x - pad, z - pad, x + pad, z + pad) for x, _y, z in points]
+
+
+def forceloads(boxes, verb):
+    seen, out = set(), []
+    for x0, z0, x1, z1 in boxes:
+        k = (x0 // 16, z0 // 16, x1 // 16, z1 // 16)
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append("forceload %s %d %d %d %d" % (verb, x0, z0, x1, z1))
+    return out
+
+
+# ------------------------------------------------------------------------------------------------ the arch's reef
+
+def reef_blocks(doc, a, g):
+    """[(x, y, z, block)] of the weathered reef round the sealed arch, from the heightmap (tools/ground.py) only. Never an
+    apron, the click or stand column, nor the two columns in front of the sheet; never above the lintel's course."""
+    import coldwater_station as C
+    import portals as P
+    rf = doc["arch_reef"]
+    x, z = a["spec"]["at"]
+    (fx, fz), (rx, rz), _yaw = P.unit(a["spec"]["facing"])
+    apron = set(map(tuple, a["columns"]))
+    keep = {(a["click"][0], a["click"][2]), (a["stand"][0], a["stand"][2])}
+    for r in range(-2, 3):
+        keep.add((x + fx + rx * r, z + fz + rz * r))
+        keep.add((x + 2 * fx + rx * r, z + 2 * fz + rz * r))
+    ay = a["apron_y"]
+    top_max = ay + P.ARCH_HEIGHT - 1
+    out = []
+    R = rf["radius"]
+    for dx in range(-R, R + 1):
+        for dz in range(-R, R + 1):
+            c = (x + dx, z + dz)
+            if c in apron or c in keep:
+                continue
+            d = math.hypot(dx, dz)
+            if d > R or d < 2.5:
+                continue
+            behind = -(dx * fx + dz * fz)               # > 0 behind the sheet, away from where a diver comes
+            if behind < -1:
+                continue                                 # nothing in front: the approach stays open sea floor
+            rise = rf["back_rise"] if behind > 1 else rf["side_rise"]
+            rise = int(round(rise * (1.0 - d / (R + 1)) + 1.2 * h01(rf["seed"], c[0], c[1])))
+            if rise <= 0:
+                continue
+            gy = int(g(*c))
+            top = min(gy + rise, top_max)
+            for y in range(gy + 1, top + 1):
+                pal = rf["blocks"]
+                lower = y <= gy + 1
+                pick = pal[int(h01(rf["seed"], c[0], y, c[1]) * (3 if lower else len(pal)))] if lower else \
+                    pal[int(h01(rf["seed"], c[0], y, c[1], 1) * len(pal))]
+                out.append((c[0], y, c[1], pick))
+    probs = C.lane_problems(C.load(), sorted({(b[0], b[2]) for b in out}))
+    if probs:
+        raise CaveError("the reef leaves the ferry lane: %s" % probs[:3])
+    return out
+
+
+# ------------------------------------------------------------------------------------------------ the packs
+
+def build_files(doc, M, a, reef):
+    """{function id: lines} of the one-shot build (cobblers:kyogre_cave/build/*), plus the step's actions."""
+    import chunk_look as CL
+    import portals as P
+    dim = doc["pocket"]["dimension"]
+    fns = {}
+    parts = block_parts(M)
+    names = []
+    for n, (phase, cmds) in enumerate(parts):
+        body = [HEAD, "# part %d of %d (%s), run in %s by build/p_%02d; holds its own chunks" % (n + 1, len(parts), phase, dim, n)]
+        fns[BUILD_PREFIX + "b_%02d" % n] = FL.ensure_loaded(body + cmds)
+        fns[BUILD_PREFIX + "p_%02d" % n] = [HEAD, "execute in %s run function %sb_%02d" % (dim, BUILD_PREFIX, n)]
+        names.append(BUILD_PREFIX + "p_%02d" % n)
+    # the reef, in the overworld
+    from portals import commands as pcmd
+    fns[BUILD_PREFIX + "reef"] = FL.ensure_loaded(
+        [HEAD, "# the weathered reef round Coldwater's sealed arch, in the overworld (data/kyogre_cave.json arch_reef)"]
+        + pcmd(reef))
+    # the clicks: a look-then-act chain in the pocket (tools/chunk_look.py, dim)
+    clicks = all_clicks(doc)
+    new_tag = "cobblers.kc.click_new"
+    act = ["execute in %s run kill @e[type=minecraft:interaction,tag=cobblers.kc.click]" % dim]
+    for cid, pos in clicks:
+        s = P.summon(pos, "cobblers.kc.click", "cobblers.kc.click.%s" % cid, 1.2, 2.0)
+        act.append("execute in %s run %s" % (dim, s.replace('Tags:["', 'Tags:["%s","' % new_tag)))
+    base = BUILD_PREFIX + "clicks"
+    chain = CL.chain(base, chunk_box([p for _c, p in clicks]),
+                     ["@e[type=minecraft:interaction,tag=cobblers.kc.click.%s]" % cid for cid, _p in clicks], act,
+                     ["type=minecraft:interaction,tag=cobblers.kc.click.%s" % cid for cid, _p in clicks], new_tag,
+                     "type=minecraft:interaction,tag=cobblers.kc.click", "kyogre_cave_clicks",
+                     note="tools/kyogre_cave.py", all_shown=True, dim=dim)
+    fns.update(chain)
+    k = doc["keeper"]
+    O = k["objective"]
+    fns[BUILD_PREFIX + "state"] = [
+        HEAD, "# the build state, after the blocks: lamps unlit, the Tide Gate full and shut, the cage closed, Kyogre asleep,",
+        "# every set piece to be re-armed. #built opens the keeper's writes (nothing is written into an unbuilt pocket)",
+        "scoreboard objectives add %s dummy" % O] + [
+        "scoreboard players set #%s %s %d" % (h, O, v) for h, v in (
+            ("built", 1), ("lamps", 0), ("drained", 0), ("draining", 0), ("dirty", 0), ("awake", 0), ("cage", 1),
+            ("resleep", 0), ("kabs", 0), ("kempty", 0))] + [
+        "scoreboard players set #lamp_%s %s 0" % (l["id"], O) for l in doc["lamps"]["list"]] + [
+        "scoreboard players set #need_%s %s 1" % (s["id"], O) for s in doc["set_pieces"]["slots"]] + [
+        "scoreboard players set #abs_%s %s 0" % (s["id"], O) for s in doc["set_pieces"]["slots"]]
+    steps = ([("fn", n) for n in names] + [("fn", BUILD_PREFIX + "reef")]
+             + CL.steps(base, "kyogre_cave_clicks", len(clicks), "the Kyogre cave's click entities")
+             + [("fn", BUILD_PREFIX + "state")])
+    return fns, steps
+
+
+def all_clicks(doc):
+    out = [("arch_%s" % a["id"], tuple(a["click"])) for a in doc["arches"]["list"]]
+    out += [("lamp_%s" % l["id"], tuple(l["click"])) for l in doc["lamps"]["list"]]
+    out.append(("wheel", tuple(doc["wheel"]["click"])))
+    out.append(("shrine", tuple(shrine_click(doc))))
+    out += [("pedestal_%s" % p["id"], tuple(p["click"])) for p in doc["pedestals"]["list"]]
+    return out
+
+
+def shrine_click(doc):
+    """The wake's click: on the Basin's west lip, at the causeway's foot (the cell west of it)."""
+    cw = doc["rooms"]["basin"]["causeway"]
+    return (cw[0] - 1, doc["kyogre"]["spot"][1], (cw[2] + cw[5]) // 2)
+
+
+def gate_pred(doc, dive_tag):
+    g = doc["gate"]
+    adv = ["%s:flag/%s=true" % (NS, f) for f in g["flags"]] + ["%s=true" % g["advancement"]]
+    return "tag=%s,advancements={%s}" % (dive_tag, ",".join(adv))
+
+
+def runtime_files(doc, M, a, reef_count):
+    """{function id: lines}, {advancement path: json}, {other path: text} of the runtime pack."""
+    import portals as P
+    from legendaries import AWAKE, DORMANT
+    pd = _j(PORTALS)
+    dive_tag = pd["gates"]["dive"]["tag"]
+    exempt = _j(BLACKOUT)["claims"]["exempt_tag"]
+    dim = doc["pocket"]["dimension"]
+    k = doc["keeper"]
+    O = k["objective"]
+    msg = doc["messages"]
+    ky = doc["kyogre"]
+    g = doc["gate"]
+    r = doc["rooms"]
+    rv = doc["pocket"]["reserve"]
+    cave_box = (rv[0], doc["pocket"]["min_y"], rv[1], rv[2], doc["pocket"]["min_y"] + doc["pocket"]["height"] - 1, rv[3])
+    low = int(np.nonzero(M.inside.any(axis=(0, 2)))[0][0]) + M.o[1]
+    rescue_box = (rv[0], doc["pocket"]["min_y"], rv[1], rv[2], low - 2, rv[3])
+    ax, ay, az, ayaw = r["antechamber"]["arrive"]
+    stand, syaw = a["stand"], a["yaw"]
+    fn, adv, other = {}, {}, {}
+    pred = gate_pred(doc, dive_tag)
+
+    def click_head(cid):
+        return [HEAD, "# as the player who clicked %s (the portals' trigger, EXP-034): re-armed first, so it fires again" % cid,
+                "advancement revoke @s only %s/click/%s" % (F, cid),
+                "execute as @e[type=minecraft:interaction,tag=cobblers.kc.click.%s,distance=..8] run data remove entity @s interaction" % cid]
+
+    # ---- load and the keeper's tick ------------------------------------------------------------------------------
+    LO = k["left_objective"]
+    cage = ky["cage"]
+    holders = ["built", "lamps", "drained", "draining", "dirty", "awake", "cage", "resleep", "kabs", "kempty", "slice"]
+    holders += ["lamp_%s" % l["id"] for l in doc["lamps"]["list"]]
+    holders += ["abs_%s" % s["id"] for s in doc["set_pieces"]["slots"]]
+    fn["load"] = [HEAD, "scoreboard objectives add %s dummy" % O] + [
+        "execute unless score #%s %s matches -2147483648.. run scoreboard players set #%s %s 0" % (h, O, h, O) for h in holders] + [
+        "execute unless score #need_%s %s matches -2147483648.. run scoreboard players set #need_%s %s 1" % (s["id"], O, s["id"], O)
+        for s in doc["set_pieces"]["slots"]] + [
+        "scoreboard objectives add %s minecraft.custom:minecraft.leave_game" % LO,
+        "schedule function %s/tick %dt replace" % (F, k["period_ticks"])]
+    fn["tick"] = [
+        HEAD, "# every %d ticks; scheduled, so it runs in the overworld: every cave test is a positional @a run `in %s`" % (k["period_ticks"], dim),
+        "schedule function %s/tick %dt replace" % (F, k["period_ticks"]),
+        "# FIRST, before the cage's guard or anything else here sees them: a player who logged out and is back, standing where the",
+        "# cage closes (its guard sees only online players), is sent out; every rejoiner's count is then cleared",
+        "execute in %s as @a[scores={%s=1..},%s] run function %s/rejoin_out" % (dim, LO, box_sel(cage), F),
+        "scoreboard players reset @a[scores={%s=1..}] %s" % (LO, LO),
+        "tag @a remove cobblers.kc.here",
+        "execute in %s run tag @a[%s] add cobblers.kc.here" % (dim, box_sel(cave_box)),
+        "# the adventure backstop: a player this pack put in adventure is back in survival anywhere outside the cave",
+        "execute as @a[tag=cobblers.kc.adv,tag=!cobblers.kc.here] run function %s/adv_off" % F,
+        "execute unless entity @a[tag=cobblers.kc.here] run return run function %s/empty" % F,
+        "function %s/occupied" % F]
+    fn["empty"] = [
+        HEAD, "# nobody in the cave (online). The puzzles reset only now, never around a player (REVIEW 87); every set piece",
+        "# is to be re-armed; an awake Kyogre is put back to sleep the next time it is seen",
+        "execute if score #built %s matches 1 if score #dirty %s matches 1 run function %s/reset" % (O, O, F)] + [
+        "scoreboard players set #need_%s %s 1" % (s["id"], O) for s in doc["set_pieces"]["slots"]] + [
+        "execute if score #awake %s matches 1 run scoreboard players set #resleep %s 1" % (O, O)]
+    fn["occupied"] = [
+        HEAD, "# somebody is in the cave. The gate first: anyone here without the dive tag, gym8_cleared and the attunement goes",
+        "# back to the arch (the owner: no unqualified friend inside). Creative and spectator are left alone (an operator)",
+        "execute in %s as @a[%s] unless entity @s[%s] run function %s/eject" % (dim, box_sel(cave_box, "gamemode=!creative,gamemode=!spectator"), pred, F),
+        "execute in %s as @a[%s] run function %s/adv_on" % (dim, box_sel(cave_box, "gamemode=survival"), F),
+        "# the rescue: anyone below the cave's lowest carved cell (a dig through the shell) is put back in the antechamber",
+        "execute in %s as @a[%s] run function %s/rescue" % (dim, box_sel(rescue_box, "gamemode=!spectator"), F),
+        "execute if score #built %s matches 1 run function %s/sp/pass" % (O, F),
+        "execute if score #built %s matches 1 run function %s/ky/pass" % (O, F)]
+    fn["adv_on"] = [HEAD, "gamemode adventure @s", "tag @s add cobblers.kc.adv"]
+    fn["adv_off"] = [HEAD, "execute if entity @s[gamemode=adventure] run gamemode survival @s", "tag @s remove cobblers.kc.adv"]
+    fn["out"] = [
+        HEAD, "# as a player leaving the cave: back to the sealed arch's stand on the sea floor (tools/coldwater_station.py arch(),",
+        "# from the heightmap), facing away from the sheet",
+        "execute if entity @s[tag=cobblers.kc.adv] run function %s/adv_off" % F,
+        "execute in minecraft:overworld run tp @s %.1f %d %.1f %.1f 0" % (stand[0] + 0.5, stand[1], stand[2] + 0.5, syaw)]
+    fn["rejoin_out"] = [
+        HEAD, "# as a player who logged out and is back, standing in Kyogre's cage box (tick, first): the cage closes while its",
+        "# guard sees only online players, so this cell may now be barrier. Out by the arch's own way back, and told why",
+        "tellraw @s %s" % text(msg["rejoined"], "dark_aqua", True), "function %s/out" % F]
+    fn["eject"] = [HEAD, "tellraw @s %s" % text(msg["unqualified"], "dark_aqua", True), "function %s/out" % F]
+    fn["rescue"] = [HEAD, "tp @s %.1f %d %.1f %.1f 0" % (ax + 0.5, ay, az + 0.5, ayaw),
+                    "tellraw @s %s" % text(msg["rescued"], "dark_aqua", True)]
+
+    # ---- the crossing ---------------------------------------------------------------------------------------------
+    fn["enter"] = [
+        HEAD, "# as the player who clicked Coldwater's sealed arch, in the overworld: called by cobblers:coldwater_station/portal/",
+        "# destination after the touch refused a non-diver. A diver's first touch is the station's reading (stage 1)",
+        "execute unless entity @s[advancements={%s=true}] run return run function %s/sound" % (g["sounded_advancement"], F),
+        "execute unless entity @s[advancements={%s:flag/%s=true}] run return run tellraw @s %s" % (NS, g["flags"][0], text(msg["not_yet"], "dark_aqua")),
+        "execute unless entity @s[advancements={%s=true}] run return run tellraw @s %s" % (g["advancement"], text(msg["not_attuned"], "dark_aqua")),
+        "# the crossing carries all three predicates on its own line",
+        "execute if entity @s[%s] run tellraw @s %s" % (pred, text(msg["enter"], "aqua", True)),
+        "execute if entity @s[%s] in %s run tp @s %.1f %d %.1f %.1f 0" % (pred, dim, ax + 0.5, ay, az + 0.5, ayaw),
+        "execute if entity @s[gamemode=survival,%s] run function %s/adv_on" % (pred, F)]
+    tg_ = g["tags"]
+    fn["sound"] = [HEAD, "advancement grant @s only %s" % g["sounded_advancement"], "tag @s add %s" % tg_["sounded"],
+                   "tellraw @s %s" % text(msg["sounded"], "aqua", True)]
+    fn["attune"] = [HEAD, "# run as the player by Calder's topic the_key (data/coldwater_station.json), which checks the stage's",
+                    "# conditions; the arch's crossing checks gym8_cleared and the dive tag itself",
+                    "advancement grant @s only %s" % g["advancement"], "tag @s add %s" % tg_["open"]]
+    adv[g["sounded_advancement"]] = impossible()
+    adv[g["advancement"]] = impossible()
+    adv[ky["met_advancement"]] = impossible()
+    adv[ky["caught_advancement"]] = impossible()
+
+    # ---- the clicks -----------------------------------------------------------------------------------------------
+    for arch in doc["arches"]["list"]:
+        cid = "arch_%s" % arch["id"]
+        fn["click/%s" % cid] = click_head(cid) + [
+            "# a way out is never gated (tools/portals.py:524)",
+            "tellraw @s %s" % text(msg["leave"], "aqua", True), "function %s/out" % F]
+    lamps = doc["lamps"]
+    for l in lamps["list"]:
+        cid = "lamp_%s" % l["id"]
+        lx, lyy, lz = l["lamp"]
+        fn["click/%s" % cid] = click_head(cid) + [
+            "# chunks-loaded-by: the clicking player, who stands beside the lamp",
+            "execute if score #lamp_%s %s matches 1 run return run tellraw @s %s" % (l["id"], O, text(msg["lamp_already"], "gray")),
+            "scoreboard players set #lamp_%s %s 1" % (l["id"], O),
+            "scoreboard players set #dirty %s 1" % O,
+            "setblock %d %d %d %s" % (lx, lyy, lz, lamps["lit"]),
+            "scoreboard players set #lamps %s 0" % O] + [
+            "scoreboard players operation #lamps %s += #lamp_%s %s" % (O, m["id"], O) for m in lamps["list"]] + [
+            "tellraw @a[distance=..24] %s" % text(msg["lamp_lit"], "aqua", True),
+            "playsound minecraft:block.beacon.activate block @a[distance=..24] %d %d %d 1 1.4" % (lx, lyy, lz),
+            "execute if score #lamps %s matches %d in %s run tellraw @a[%s] %s" % (
+                O, len(lamps["list"]), dim, box_sel(cave_box), text(msg["lamps_all"], "gold", True))]
+    wh = doc["wheel"]
+    tg = r["tide_gate"]
+    gx0, gy0, gz0, gx1, gy1, gz1 = tg["box"]
+    nslices = gy1 - gy0 + 1
+    fn["click/wheel"] = click_head("wheel") + [
+        "execute unless score #lamps %s matches %d run return run tellraw @s %s" % (O, len(lamps["list"]), text(msg["wheel_dark"], "gray", True)),
+        "execute if score #drained %s matches 1 run return run tellraw @s %s" % (O, text(msg["wheel_done"], "gray", True)),
+        "execute if score #draining %s matches 1 run return 0" % O,
+        "scoreboard players set #draining %s 1" % O,
+        "scoreboard players set #dirty %s 1" % O,
+        "scoreboard players set #slice %s 0" % O,
+        "tellraw @a[distance=..32] %s" % text(msg["wheel_turn"], "aqua", True),
+        "playsound minecraft:block.grindstone.use block @a[distance=..32] ~ ~ ~ 1 0.5",
+        "schedule function %s/drain/step %dt replace" % (F, wh["slice_ticks"])]
+    dl = forceloads([(gx0 - 1, gz0 - 1, gx1 + 1, gz1 + 1), tuple(r["hub"]["panel"][i] for i in (0, 2, 3, 5))], "add")
+    dr = [l.replace("forceload add", "forceload remove") for l in dl]
+    fn["drain/step"] = [HEAD, "# scheduled (the overworld): one slice of the Tide Gate's water, top first, in %s" % dim,
+                        "execute unless score #draining %s matches 1 run return 0" % O] + [
+        "execute if score #slice %s matches %d in %s run function %s/drain/s_%02d" % (O, i, dim, F, i) for i in range(nslices)] + [
+        "scoreboard players add #slice %s 1" % O,
+        "execute if score #slice %s matches ..%d run schedule function %s/drain/step %dt replace" % (O, nslices - 1, F, wh["slice_ticks"]),
+        "execute if score #slice %s matches %d in %s run function %s/drain/done" % (O, nslices, dim, F)]
+    for i in range(nslices):
+        y = gy1 - i
+        fn["drain/s_%02d" % i] = [HEAD] + dl + ["fill %d %d %d %d %d %d minecraft:air replace minecraft:water" % (gx0, y, gz0, gx1, y, gz1)] + dr
+    win, pan = tg["window"], r["hub"]["panel"]
+    fn["drain/done"] = [HEAD, "# the hall is empty: the panel in the balcony's floor and the window onto the Trench open"] + dl + [
+        "fill %d %d %d %d %d %d minecraft:air replace %s" % (tuple(pan) + (r["hub"]["panel_block"],)),
+        "fill %d %d %d %d %d %d minecraft:air replace %s" % (tuple(win) + (tg["window_block"],))] + dr + [
+        "scoreboard players set #drained %s 1" % O, "scoreboard players set #draining %s 0" % O,
+        "tellraw @a[%s] %s" % (box_sel(cave_box), text(msg["drained"], "gold", True))]
+    # the reset, only from `empty` (nobody online in the cave), and only over a built cave (its probe block stands)
+    lamp_pts = [tuple(l["lamp"]) for l in lamps["list"]]
+    rl = forceloads([(gx0 - 1, gz0 - 1, gx1 + 1, gz1 + 1), tuple(pan[i] for i in (0, 2, 3, 5))]
+                    + chunk_box(lamp_pts, 0), "add")
+    rr = [l.replace("forceload add", "forceload remove") for l in rl]
+    probe = (gx0, gy0 - 1, gz0 + 1)
+    pstate, pblock = M.at(*probe)
+    fn["reset"] = [HEAD, "# the puzzles back to the build state: called by `empty`. Writes in %s" % dim,
+                   "scoreboard players set #draining %s 0" % O,
+                   "execute in %s run function %s/reset_blocks" % (dim, F),
+                   "scoreboard players set #drained %s 0" % O, "scoreboard players set #lamps %s 0" % O] + [
+        "scoreboard players set #lamp_%s %s 0" % (l["id"], O) for l in lamps["list"]] + [
+        "scoreboard players set #dirty %s 0" % O]
+    fn["reset_blocks"] = [HEAD, "# in %s. The writes run only over the built cave: its Tide Gate floor block stands" % dim] + rl + [
+        "execute if block %d %d %d %s run function %s/reset_writes" % (probe + (pblock, F))] + rr
+    fn["reset_writes"] = [
+        HEAD, "# chunks-loaded-by: %s/reset_blocks. The panel and the window shut BEFORE the hall refills" % F,
+        "fill %d %d %d %d %d %d %s replace minecraft:air" % (tuple(pan) + (r["hub"]["panel_block"],)),
+        "fill %d %d %d %d %d %d %s replace minecraft:air" % (tuple(win) + (tg["window_block"],)),
+        "fill %d %d %d %d %d %d minecraft:water replace minecraft:air" % tuple(tg["box"])] + [
+        "setblock %d %d %d %s" % (x, y, z, lamps["unlit"]) for x, y, z in lamp_pts]
+
+    # ---- the pedestals --------------------------------------------------------------------------------------------
+    for p in doc["pedestals"]["list"]:
+        cid = "pedestal_%s" % p["id"]
+        claim = "%s/claim/%s" % (F, p["id"])
+        adv[claim] = impossible()
+        lines = click_head(cid) + [
+            "execute if entity @s[advancements={%s=true}] run return run tellraw @s %s" % (claim, text(msg["claimed"], "gray"))]
+        for req in p["requires"]:
+            lines.append("execute unless entity @s[advancements={%s=true}] run return run tellraw @s %s" % (req, text(msg["claim_locked"], "gray", True)))
+        lines.append("scoreboard players set #ok %s 1" % O)
+        for c in p["contents"]:
+            lines.append("execute store success score #g %s run give @s %s %d" % (O, c["item"], c["count"]))
+            lines.append("execute if score #g %s matches 0 run scoreboard players set #ok %s 0" % (O, O))
+        lines += ["execute if score #ok %s matches 1 run advancement grant @s only %s" % (O, claim),
+                  "execute if score #ok %s matches 1 run tellraw @s %s" % (O, text(p["message"], "gold", True)),
+                  "execute if score #ok %s matches 0 run tellraw @s %s" % (O, text(msg["claim_failed"], "gray"))]
+        fn["click/%s" % cid] = lines
+
+    # ---- Kyogre -----------------------------------------------------------------------------------------------------
+    sx, sy, sz = ky["spot"]
+    spot = "%.1f %d %.1f" % (sx + 0.5, sy, sz + 0.5)
+    T = ky["tag"]
+    sp_sel = 'type=cobblemon:pokemon,tag=%s' % T
+    cage = ky["cage"]
+    cage_near = (cage[0] - 1, cage[1] - 1, cage[2] - 1, cage[3] + 1, cage[4] + 1, cage[5] + 1)
+    bb = ky["basin_box"]
+    fn["click/shrine"] = click_head("shrine") + [
+        "execute if entity @s[advancements={%s=true}] run return run tellraw @s %s" % (ky["caught_advancement"], text(msg["wake_caught"], "dark_aqua", True)),
+        "execute if score #awake %s matches 1 run return run tellraw @s %s" % (O, text(msg["wake_live"], "dark_aqua", True)),
+        "execute positioned %s unless entity @e[%s,distance=..3] run return run tellraw @s %s" % (spot, sp_sel, text(msg["wake_absent"], "dark_aqua", True)),
+        "execute if entity @s[advancements={%s=false}] if score #awake %s matches 0 positioned %s if entity @e[%s,distance=..3] run function %s/ky/wake"
+        % (ky["caught_advancement"], O, spot, sp_sel, F)]
+    fn["ky/wake"] = [
+        HEAD, "# chunks-loaded-by: the waking player, on the Basin's lip at the spot",
+        "execute if entity @s[advancements={%s=true}] run return 0" % ky["caught_advancement"],
+        "scoreboard players set #awake %s 1" % O, "scoreboard players set #kempty %s 0" % O,
+        "scoreboard players set #resleep %s 0" % O, "scoreboard players set #cage %s 0" % O,
+        "fill %d %d %d %d %d %d minecraft:air replace minecraft:barrier" % tuple(cage),
+        "execute as @e[%s,distance=..3,limit=1,sort=nearest] run data merge entity @s %s" % (sp_sel, nbt(AWAKE)),
+        "advancement grant @s only %s" % ky["met_advancement"],
+        "tellraw @a[distance=..48] %s" % text(msg["wake"], "aqua", True),
+        "playsound minecraft:entity.elder_guardian.ambient hostile @a[distance=..48] ~ ~ ~ 2 0.5"]
+    fn["ky/pass"] = [
+        HEAD, "# Kyogre's keeper (the sanctuaries' shape, tools/sanctuaries.py boss_files): present by its tag; never a guardian (it",
+        "# carries the blackout's exempt tag %s, so it never becomes one; tag=!cobblers.guardian on every kill anyway)" % exempt,
+        "execute store result score #kn %s if entity @e[%s]" % (O, sp_sel),
+        "execute in %s store result score #kp %s if entity @a[%s]" % (dim, O, box_sel(bb, "gamemode=!spectator")),
+        "execute if score #kp %s matches 0 if score #awake %s matches 1 run scoreboard players add #kempty %s 1" % (O, O, O),
+        "execute if score #kempty %s matches %d.. run scoreboard players set #resleep %s 1" % (O, ky["awake_without_player_passes"], O),
+        "execute if score #kn %s matches 1.. if score #resleep %s matches 1 as @e[%s,limit=1] at @s run function %s/ky/sleep" % (O, O, sp_sel, F),
+        "execute if score #kp %s matches 0 run return 0" % O,
+        "scoreboard players set #kempty %s 0" % O,
+        "# met: a qualified player in the Basin while Kyogre is there (tools/legendaries.py near/met's shape: the per-player",
+        "# advancement %s, granted once; Rayquaza's gate reads it)" % ky["met_advancement"],
+        "execute if score #kn %s matches 1.. in %s as @a[%s] if entity @s[%s] run function %s/ky/met"
+        % (O, dim, box_sel(bb, "gamemode=!spectator,advancements={%s=false}" % ky["met_advancement"]), pred, F),
+        "# a duplicate (a spawn that raced a slow entity load): the furthest from the spot goes",
+        "execute if score #kn %s matches 2.. in %s positioned %s run kill @e[%s,tag=!cobblers.guardian,limit=1,sort=furthest]" % (O, dim, spot, sp_sel),
+        "execute if score #kn %s matches 1.. run scoreboard players set #kabs %s 0" % (O, O),
+        "execute if score #kn %s matches 1.. if score #awake %s matches 0 as @e[%s] at @s run function %s/ky/hold" % (O, O, sp_sel, F),
+        "# the cage closes only with nobody in or beside it, and only while it sleeps",
+        "execute if score #awake %s matches 0 if score #cage %s matches 0 in %s unless entity @a[%s] run function %s/ky/close" % (O, O, dim, box_sel(cage_near), F),
+        "execute if score #kn %s matches 1.. run return 0" % O,
+        "# absent: a new sleeper only after %d passes (the old one caught, killed or never laid)" % ky["respawn_absent_passes"],
+        "scoreboard players add #kabs %s 1" % O,
+        "execute if score #kabs %s matches %d.. in %s positioned %s run function %s/ky/spawn" % (O, ky["respawn_absent_passes"], dim, spot, F)]
+    fn["ky/hold"] = [HEAD, "# as the sleeping Kyogre: on its spot, dormant",
+                     "execute unless entity @s[x=%.1f,y=%d,z=%.1f,distance=..1] run tp @s %s %.1f 0" % (sx + 0.5, sy, sz + 0.5, spot, ky["yaw"]),
+                     "data merge entity @s %s" % nbt(DORMANT)]
+    fn["ky/sleep"] = [HEAD, "# as the Kyogre: nobody has stayed, so it goes back to sleep on its spot (the cage closes on a later pass)",
+                      "tp @s %s %.1f 0" % (spot, ky["yaw"]), "data merge entity @s %s" % nbt(DORMANT),
+                      "scoreboard players set #awake %s 0" % O, "scoreboard players set #resleep %s 0" % O,
+                      "scoreboard players set #kempty %s 0" % O,
+                      "tellraw @a[distance=..48] %s" % text(msg["sleep"], "dark_aqua", True)]
+    fn["ky/close"] = [HEAD, "# chunks-loaded-by: the player in the Basin (ky/pass returns before this when there is none); runs in %s" % dim,
+                      "fill %d %d %d %d %d %d minecraft:barrier replace minecraft:air" % tuple(cage),
+                      "scoreboard players set #cage %s 1" % O]
+    props = " ".join(["%s" % ky["species"], "level=%d" % ky["level"]] + list(ky["properties"]))
+    fn["ky/spawn"] = [HEAD, "# at the spot in %s: a wild one through the macro (EXP-046), bound at once" % dim,
+                      "function %s/spawn_at {x:\"%.1f\",y:%d,z:\"%.1f\",p:\"%s\"}" % (F, sx + 0.5, sy, sz + 0.5, props),
+                      'execute as @e[type=cobblemon:pokemon,tag=!%s,distance=..3,nbt={Pokemon:{Species:"cobblemon:%s"}},limit=1,sort=nearest] run function %s/ky/bind'
+                      % (T, ky["species"], F)]
+    fn["ky/bind"] = [HEAD, "# as the new Kyogre: tagged, never despawned (PersistenceRequired, EXP-041), exempt from item claims, asleep",
+                     "tag @s add %s" % T, "tag @s add %s" % exempt, "data merge entity @s %s" % nbt(DORMANT),
+                     "tp @s %s %.1f 0" % (spot, ky["yaw"]),
+                     "scoreboard players set #kabs %s 0" % O, "scoreboard players set #awake %s 0" % O]
+    fn["spawn_at"] = ["$spawnpokemonat $(x) $(y) $(z) $(p)"]
+    fn["ky/met"] = [HEAD, "# runs as the qualifying player, once: the advancement is the per-player record (tools/legendaries.py met)",
+                    "advancement grant @s only %s" % ky["met_advancement"],
+                    "tellraw @s %s" % text("You have found Kyogre.", "gold")]
+    fn["ky/caught"] = [HEAD, "# as the player who caught a Kyogre in the Basin (the pokemon_captured callback, in %s)" % dim,
+                       "advancement grant @s only %s" % ky["met_advancement"],
+                       "advancement grant @s only %s" % ky["caught_advancement"], "tag @s add %s" % tg_["caught"],
+                       "tellraw @s %s" % text(msg["caught"], "gold", True),
+                       "scoreboard players set #awake %s 0" % O, "scoreboard players set #kabs %s 0" % O]
+    cmd_tag = "execute as ' + q.player.uuid + ' run tag @s add cobblers.kc.catcher"
+    cmd_run = "execute in %s positioned %d %d %d as @a[tag=cobblers.kc.catcher,distance=..%d] run function %s/ky/caught" % (
+        dim, sx, sy, sz, ky["catch_radius"], F)
+    other["data/cobblemon/callbacks/pokemon_captured/cobblers_kyogre_cave.molang"] = "\n".join([
+        "'Generated by tools/kyogre_cave.py from data/kyogre_cave.json. A Kyogre caught by a player standing in the Basin';",
+        "'(cobblers:pocket, within %d of the spot) records the catch for that player; anywhere else it does nothing.';" % ky["catch_radius"],
+        "t.id = q.pokemon.species.identifier;",
+        "t.id == 'cobblemon:%s' ? {" % ky["species"],
+        "  q.run_command('%s');" % cmd_tag,
+        "  q.run_command('%s');" % cmd_run,
+        "  q.run_command('tag @a remove cobblers.kc.catcher');",
+        "};"]) + "\n"
+
+    # ---- the set pieces -------------------------------------------------------------------------------------------
+    spd = doc["set_pieces"]
+    pass_ = [HEAD, "# each slot: only with a player near (its chunk and entities are loaded) and nobody on top of the spot"]
+    for s in spd["slots"]:
+        x, y, z = set_piece_at(doc, s)
+        sid = s["id"]
+        tag = "cobblers.kc.sp.%s" % sid
+        at = "%.1f %d %.1f" % (x + 0.5, y, z + 0.5)
+        pass_.append("execute if score #need_%s %s matches 1 in %s positioned %s if entity @a[distance=..%d] unless entity @a[distance=..%d] run function %s/sp/%s"
+                     % (sid, O, dim, at, spd["near_radius"], spd["clear_radius"], F, sid))
+        props = " ".join([s["species"], "level=%d" % s["level"]] + list(s["properties"]))
+        fn["sp/%s" % sid] = [
+            HEAD, "# %s, %s at (%d, %d, %d): present (a guardian keeps our tag) means nothing to do; never a kill" % (sid, s["species"], x, y, z),
+            "execute if entity @e[type=cobblemon:pokemon,tag=%s] run scoreboard players set #need_%s %s 0" % (tag, sid, O),
+            "execute if entity @e[type=cobblemon:pokemon,tag=%s] run return run scoreboard players set #abs_%s %s 0" % (tag, sid, O),
+            "scoreboard players add #abs_%s %s 1" % (sid, O),
+            "execute if score #abs_%s %s matches ..%d run return 0" % (sid, O, spd["absent_passes"] - 1),
+            "function %s/spawn_at {x:\"%.1f\",y:%d,z:\"%.1f\",p:\"%s\"}" % (F, x + 0.5, y, z + 0.5, props),
+            'execute as @e[type=cobblemon:pokemon,tag=!cobblers.kc.sp,distance=..3,nbt={Pokemon:{Species:"cobblemon:%s"}},limit=1,sort=nearest] run function %s/sp_bind/%s'
+            % (s["species"], F, sid),
+            "scoreboard players set #need_%s %s 0" % (sid, O), "scoreboard players set #abs_%s %s 0" % (sid, O)]
+        fn["sp_bind/%s" % sid] = [HEAD, "tag @s add cobblers.kc.sp", "tag @s add %s" % tag,
+                                  "data merge entity @s {PersistenceRequired:1b}"]
+    fn["sp/pass"] = pass_
+
+    for cid, _pos in all_clicks(doc):
+        adv["%s/click/%s" % (F, cid)] = P.click_advancement("cobblers.kc.click.%s" % cid, "%s/click/%s" % (F, cid))
+    return fn, adv, other
+
+
+def set_piece_at(doc, s):
+    """(x, y, z) of a set piece: a point, or `ledge_north:<x>` / `ledge_south:<x>` on a trench ledge's middle cell."""
+    at = s["at"]
+    if isinstance(at, list):
+        return tuple(at)
+    side, xs = at.split(":")
+    x = int(xs)
+    t = doc["rooms"]["trench"]
+    za, zb = trench_columns(t)[x]
+    if side == "ledge_north":
+        return (x, ledge_north_standing(t, x), za + 1)
+    if side == "ledge_south":
+        return (x, ledge_south_standing(t, x), zb - 1)
+    raise CaveError("set piece %s: unknown position %r" % (s["id"], at))
+
+
+def impossible():
+    return {"criteria": {"granted": {"trigger": "minecraft:impossible"}}, "requirements": [["granted"]]}
+
+
+def placement_cells(doc, M):
+    """Problems with where the set pieces, clicks and the spot stand in the built model."""
+    bad = []
+    for s in doc["set_pieces"]["slots"]:
+        x, y, z = set_piece_at(doc, s)
+        st, _b = M.at(x, y, z)
+        st2, _b2 = M.at(x, y + 1, z)
+        if st not in (AIR, WATER) or st2 not in (AIR, WATER):
+            bad.append("set piece %s at (%d, %d, %d) is not in open air or water" % (s["id"], x, y, z))
+        below, _bb = M.at(x, y - 1, z)
+        if st == AIR and below not in (SOLID, WATER):
+            bad.append("set piece %s at (%d, %d, %d) stands on nothing" % (s["id"], x, y, z))
+    for cid, (x, y, z) in all_clicks(doc):
+        st, _b = M.at(x, y, z)
+        if st not in (AIR, WATER):
+            bad.append("click %s at (%d, %d, %d) is inside a block" % (cid, x, y, z))
+    return bad
+
+
+# ------------------------------------------------------------------------------------------------ probes and plan
+
+def probe_records(doc, M, a, reef):
+    dim = doc["pocket"]["dimension"]
+    r = doc["rooms"]
+    out = []
+    def blk(what, x, y, z):
+        s, b = M.at(x, y, z)
+        out.append({"what": what, "dim": dim, "block": [x, y, z, b if s == SOLID else (WATER_BLOCK if s == WATER else AIR_BLOCK)],
+                    "expect": True})
+    ax, ay, az, _yaw = r["antechamber"]["arrive"]
+    blk("the antechamber's floor under the arrival", ax, ay - 1, az)
+    arch = doc["arches"]["list"][0]
+    blk("the antechamber's arch back: its sheet", arch["at"][0], arch["at"][1] + 1, arch["at"][2])
+    sb = r["sounding"]["box"]
+    blk("the Sounding: water at its foot", (sb[0] + sb[3]) // 2, sb[1], (sb[2] + sb[5]) // 2)
+    p = r["hub"]["panel"]
+    blk("the hub's glass panel over the Tide Gate (shut)", p[0], p[1], p[2])
+    tg = r["tide_gate"]
+    blk("the Tide Gate's window (shut)", tg["window"][0], tg["window"][1], tg["window"][2])
+    blk("the Tide Gate flooded", tg["box"][0] + 2, tg["box"][1] + 2, tg["box"][2] + 6)
+    for l in doc["lamps"]["list"]:
+        blk("the %s lamp (unlit)" % l["id"], *l["lamp"])
+    bs = r["basin"]
+    d = bs["dais"]
+    blk("the Basin's dais top", (d[0] + d[3]) // 2, d[4], (d[2] + d[5]) // 2)
+    c = doc["kyogre"]["cage"]
+    blk("Kyogre's cage (closed)", c[0], c[1], c[2])
+    out.append({"what": "the cave's click entities (%d)" % len(all_clicks(doc)), "dim": dim,
+                "hold": list(doc["rooms"]["antechamber"]["arrive"][:3]),
+                "entity": "@e[type=minecraft:interaction,tag=cobblers.kc.click]", "count": len(all_clicks(doc))})
+    top = max(reef, key=lambda b: (b[1], b[0], b[2]))
+    out.append({"what": "the arch's reef (overworld): its highest block", "block": [top[0], top[1], top[2], top[3]], "expect": True})
+    out.append({"what": "Kyogre (one tagged %s once a player has stood in the Basin; absent until then)" % doc["kyogre"]["tag"],
+                "dim": dim, "hold": list(doc["kyogre"]["spot"]),
+                "entity": "@e[type=cobblemon:pokemon,tag=%s]" % doc["kyogre"]["tag"], "count_max": 1})
+    return out
+
+
+def model_counts(M):
+    return {"air": int(((M.st == AIR) & M.inside).sum()), "water": int((M.st == WATER).sum()),
+            "solid": int((M.st == SOLID).sum()), "carved": int(M.inside.sum())}
+
+
+def plan(doc, g=None):
+    """Everything the build writes, checked. Fail-closed on any static, stability, seal, depth, reach or placement
+    problem."""
+    import coldwater_station as C
+    import ground as G
+    bad = static_problems(doc)
+    if bad:
+        raise CaveError("data/kyogre_cave.json is refused:\n  " + "\n  ".join(bad))
+    g = g or G.Ground()
+    a = C.arch(C.load(), g)
+    M = build_model(doc)
+    O = open_model(doc, M)
+    bad = (stability_problems(doc, M, "built") + stability_problems(doc, O, "solved") + seal_problems(doc, M)
+           + depth_problems(doc, M) + placement_cells(doc, M))
+    if bad:
+        raise CaveError("the cave model is refused:\n  " + "\n  ".join(bad))
+    bad = reach_problems(doc, M, O)
+    if bad:
+        raise CaveError("the cave model is refused:\n  " + "\n  ".join(bad))
+    reef = reef_blocks(doc, a, g)
+    return {"M": M, "O": O, "arch": a, "reef": reef}
+
+
+def build(doc, p, out=None):
+    import pack_split
+    out = Path(out or OUT)
+    fns, steps = build_files(doc, p["M"], p["arch"], p["reef"])
+    rfns, adv, other = runtime_files(doc, p["M"], p["arch"], len(p["reef"]))
+    for name, body in rfns.items():
+        fns["%s/%s" % (F, name)] = body
+    for fid, body in fns.items():
+        bad = FL.check_lines(body, fid)
+        if bad:
+            raise CaveError("%s would be refused: %s" % (fid, bad[:2]))
+    if out.exists():
+        shutil.rmtree(out)
+    files = {"pack.mcmeta": json.dumps({"pack": {"pack_format": PACK_FORMAT, "description":
+                                                 "Cobblers: the Kyogre cave (tools/kyogre_cave.py, data/kyogre_cave.json)"}}, indent=2) + "\n",
+             "data/minecraft/tags/function/load.json": json.dumps({"values": ["%s/load" % F]}, indent=2) + "\n"}
+    for fid, body in fns.items():
+        ns, path = fid.split(":", 1)
+        files["data/%s/function/%s.mcfunction" % (ns, path)] = "\n".join(body) + "\n"
+    for aid, body in adv.items():
+        ns, path = aid.split(":", 1)
+        files["data/%s/advancement/%s.json" % (ns, path)] = json.dumps(body, indent=2) + "\n"
+    files.update(other)
+    for rel, text_ in files.items():
+        f = out / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(text_, encoding="utf-8", newline="\n")
+    moved, bout = pack_split.split(out, lambda fid: fid.startswith(BUILD_PREFIX),
+                                   "Cobblers: the Kyogre cave's one-shot geometry (tools/kyogre_cave.py; stripped after R18KC)")
+    return {"files": len(files), "moved": moved, "build_pack": str(bout), "steps": steps}
+
+
+def line_counts(pack_dir):
+    n = 0
+    for f in Path(pack_dir).rglob("*.mcfunction"):
+        n += sum(1 for ln in f.read_text(encoding="utf-8").splitlines() if ln.strip() and not ln.startswith("#"))
+    return n
+
+
+def placement_steps(doc=None, g=None):
+    """R18KC's actions: every block part in order (solids, then air, then water), the reef, the clicks' chain with its
+    count read back, then the build state. Needs the heightmap (the reef's ground), never derived/ or build/."""
+    doc = doc or load()
+    p = plan(doc, g)
+    _fns, steps = build_files(doc, p["M"], p["arch"], p["reef"])
+    return steps
+
+
+def step_functions(doc=None, g=None):
+    return [v for k, v in placement_steps(doc, g) if k == "fn"]
+
+
+def plan_json(doc, p):
+    M = p["M"]
+    return {"generated_by": "tools/kyogre_cave.py", "model_box": [M.o[0], M.o[1], M.o[2], M.o[0] + M.shape[0] - 1,
+                                                               M.o[1] + M.shape[1] - 1, M.o[2] + M.shape[2] - 1],
+            "counts": model_counts(M), "return_point": list(p["arch"]["stand"]), "return_yaw": p["arch"]["yaw"],
+            "arrive": doc["rooms"]["antechamber"]["arrive"], "clicks": {c: list(v) for c, v in all_clicks(doc)},
+            "set_pieces": {s["id"]: list(set_piece_at(doc, s)) for s in doc["set_pieces"]["slots"]},
+            "reef_blocks": len(p["reef"]), "shrine_click": list(shrine_click(doc))}
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("action", choices=("build", "report", "probes"))
+    ap.add_argument("--source-root")
+    ap.add_argument("--out", default=str(OUT))
+    a = ap.parse_args(argv)
+    import ground as G
+    doc = load()
+    p = plan(doc, G.Ground(a.source_root))
+    info = plan_json(doc, p)
+    if a.action == "report":
+        print(json.dumps(info, indent=1))
+        return 0
+    if a.action == "probes":
+        wp = _j(PROBES)
+        wp["places"]["kyogre_cave"] = probe_records(doc, p["M"], p["arch"], p["reef"])
+        PROBES.write_text(json.dumps(wp, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        print("wrote %d probes to %s" % (len(wp["places"]["kyogre_cave"]), PROBES))
+        return 0
+    want = probe_records(doc, p["M"], p["arch"], p["reef"])
+    have = _j(PROBES)["places"].get("kyogre_cave")
+    if have != want:
+        raise CaveError("data/world_probes.json places.kyogre_cave differs from the model: run python tools/kyogre_cave.py probes")
+    res = build(doc, p, a.out)
+    PLAN.parent.mkdir(parents=True, exist_ok=True)
+    PLAN.write_text(json.dumps(info, indent=1) + "\n", encoding="utf-8")
+    print("wrote %s (%d runtime lines) and %s (%d build lines, %d functions moved); %d blocks carved, %d reef blocks"
+          % (a.out, line_counts(a.out), res["build_pack"], line_counts(res["build_pack"]), res["moved"],
+             info["counts"]["carved"], info["reef_blocks"]))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

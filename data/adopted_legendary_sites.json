@@ -988,7 +988,7 @@
    {"template": "cobbleverse:flower_paradise", "legendary": "Shaymin", "loaded": false, "status": "not_loaded", "where": "Sinnoh pack (47x16x44; prof_oak_letter, a Sinnoh recipe)"},
    {"template": "cobbleverse:fullmoon_island", "legendary": "Cresselia", "loaded": false, "status": "not_loaded", "where": "Sinnoh pack (97x57x97; dream_catcher, a Sinnoh recipe)"}
   ],
-  "not_a_template": "cobbleverse:spawn_rayquaza is a function (a shiny level-100 Rayquaza at 0,70,0 in the End), not a structure; the End has no door in our world. Hoopa is ours (data/hoopa_cradle.json, the cradle), Kubfu the starter build's."
+  "not_a_template": "cobbleverse:spawn_rayquaza is a function (a shiny level-100 Rayquaza at 0,70,0 in the End), not a structure; the End has no door in our world. Since 2026-10-13 cobblers_rayquaza overrides it empty (data/rayquaza_sky.json upstream_neutralised; the owner's answer 5 of 2026-10-06): Rayquaza's home is the sky island over the great cone. Hoopa is ours (data/hoopa_cradle.json, the cradle), Kubfu the starter build's."
  },
  "superseded_sweep_sites": {
   "note": "sweep sites the owner retired after they were placed; kept as they were. No tool builds, checks or keeps clear of them (tools/adopted_sites.py sites() reads sweep_sites only).",

@@ -80,10 +80,11 @@
     "values": {
       "minecraft:netherite_ingot": {"value": 900, "from": "bank", "item": "minecraft:netherite_ingot"},
       "minecraft:netherite_block": {"value": 8100, "from": "bank_block", "item": "minecraft:netherite_ingot"},
+      "minecraft:netherite_scrap": {"value": 202, "from": "bank", "item": "minecraft:netherite_scrap"},
       "minecraft:diamond_block": {"value": 1080, "from": "bank_block", "item": "minecraft:diamond"},
       "cobblemon:ability_capsule": {"value": 10000, "from": "counter", "counter": "northlight_station", "line": "ability_capsule"}
     },
-    "reference": "per line: `reference.lines`, line ids on `reference.counter`'s stock, summed. The output's own counter line where the counter sells it (the Master Ball); where it does not, the counter's line of the same kind and weight, named per line with why. The six held items keep NO money line (the owner's 2026-10-07 'no money where possible'); whether the counter should also sell them for money is decisions_pending held_items_money_line"
+    "reference": "per line: `reference.lines`, line ids on `reference.counter`'s stock or superseded_stock (a money line as it stood), summed; or `reference.bank`, [{item, count}] valued at the bank's price (the Master Ball: 2 ingots, E4). Where the counter no longer sells the output (the held items, the Capsule, E5) the superseded line is the rung; where it never did, the counter's line of the same kind and weight, named per line with why. No top-tier output has a money line (the owner's 2026-10-07 'no money where possible'; E4 and E5 2026-10-13); whether the counter should also sell Specs and the Knot for money is decisions_pending held_items_money_line"
   },
   "experiment_offers": [
     {
@@ -106,12 +107,13 @@
       "id": "master_ball",
       "status": "approved",
       "approved": true,
-      "buy": {"id": "minecraft:netherite_block", "count": 1},
-      "buyB": {"id": "minecraft:netherite_ingot", "count": 21},
+      "buy": {"id": "minecraft:netherite_ingot", "count": 1},
+      "buyB": {"id": "minecraft:netherite_scrap", "count": 5},
       "sell": {"id": "cobblemon:master_ball", "count": 1},
-      "reference": {"counter": "northlight_station", "lines": ["master_ball"], "why": "the counter sells the Master Ball itself for $27,000, priced as 30 netherite ingots at the bank's $900 (its exchange_for)"},
-      "late_game_why": "the owner's own example; a Master Ball removes the catch check. Other routes (N104, the A4 audit): the counter's $27,000 line beside this one, and Cobblemon's own recipe (data/cobblemon/recipe/master_ball.json in Cobblemon-fabric-1.8.0: 2 netherite ingots, a nether star, 2 shulker shells), which needs a Wither and the End",
-      "inputs_why": "a block of netherite (9 ingots, $8,100) and 21 ingots ($18,900): $27,000, exactly the counter's 30 ingots, so the barter is the counter's price paid in metal rather than money (1.00 of the reference). Cost A is the block so the whole cost stays netherite while cost A keeps count 1"
+      "reference": {"bank": [{"item": "minecraft:netherite_ingot", "count": 2}], "why": "the owner's E4 (2026-10-13): 'about 2 netherite ingots, 30 is too steep'. Two ingots is also the netherite in Cobblemon's own recipe (data/cobblemon/recipe/master_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar, read 2026-10-13: a nether star and two shulker shells between two c:ingots/netherite). The star and shells are unreachable here (data/bank.json unreachable), so the barter keeps the recipe's metal and drops what the world cannot supply. The counter's money line is gone, so the reference is the recipe's netherite at the bank's price: 2 x $900 = $1,800"},
+      "late_game_why": "the owner's own example; a Master Ball removes the catch check. It has no money line any more (E4). Other routes: Giovanni's first win gives one (data/progression.json), and Cobblemon's own recipe, which needs a Wither and the End",
+      "inputs_why": "an ingot ($900) and five scrap ($202 each, $1,010): $1,910, 1.06 of the reference. The smallest scrap count in the band: four scrap is $1,708, 0.95, under the 1.00 floor. Cost A is the ingot at count 1 and cost B is a different item (rules.distinct_inputs), so '2 ingots' becomes an ingot plus scrap (two ingots are 8 scrap and 8 gold ingots; this is 9 scrap and 4 gold ingots). Raw cost: 9 ancient debris and 4 gold ingots; ASSUMED rates (data/bank.json: 10 debris an hour with a pickaxe, 30 by bed or TNT, 10 raw gold an hour mined) make that 0.9 h (0.3 h by TNT), +0.4 h if the gold is mined and not ranched. The line it replaces was 1 netherite block and 21 ingots (30 ingots, 120 debris: 12.0 h, 4.0 h by TNT, +12.0 h for gold)",
+      "superseded_form": {"buy": {"id": "minecraft:netherite_block", "count": 1}, "buyB": {"id": "minecraft:netherite_ingot", "count": 21}, "was": "approved 2026-10-08 at 30 ingots, $27,000, 1.00 of the counter's money line", "why": "replaced by E4 (2026-10-13); the money line it was priced against left the counter the same day (data/markets.json northlight_station superseded_stock)"}
     },
     {
       "id": "choice_specs",
@@ -134,6 +136,61 @@
       "reference": {"counter": "northlight_station", "lines": ["focus_sash"], "why": "no counter sells it; the Focus Sash ($3,600, 4 ingots) is the counter's standard held-item rung, and the Destiny Knot is a breeding held item of that weight"},
       "late_game_why": "the breeding item that passes down IVs, and not an arena prize (data/arena_fights.json prizes.items, read 2026-10-09), so it stays. Other route (N104): Cobblemon's recipe (data/cobblemon/recipe/destiny_knot.json: wool, string, a ghast tear)",
       "inputs_why": "a diamond block ($1,080) and 3 netherite ingots ($2,700): $3,780, 1.05 of the reference"
+    },
+    {
+      "id": "focus_sash",
+      "status": "approved",
+      "approved": true,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 3},
+      "sell": {"id": "cobblemon:focus_sash", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["focus_sash"], "why": "the counter's money line as it stood, $3,600 for 4 ingots (data/markets.json northlight_station superseded_stock); the owner's E5 (2026-10-13) moved it to barter, so the old price is the rung this line is priced against"},
+      "late_game_why": "a held item with no reachable recipe beyond a Charmander-line drop (the old counter line's note). Not an arena prize. Moved from the counter's money line by E5",
+      "inputs_why": "a diamond block ($1,080) and 3 netherite ingots ($2,700): $3,780, 1.05 of the reference. A plain 4 ingots (the old line) cannot be a barter: cost A count 1 and cost B must be different items"
+    },
+    {
+      "id": "expert_belt",
+      "status": "approved",
+      "approved": true,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 3},
+      "sell": {"id": "cobblemon:expert_belt", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["expert_belt"], "why": "as focus_sash: the counter's money line as it stood, $3,600"},
+      "late_game_why": "a held item; otherwise a random drop (Riolu, Mienfoo and eight more) or a Black Belt and blaze powder (the old counter line's note). Moved from the counter's money line by E5",
+      "inputs_why": "as focus_sash: $3,780, 1.05 of the reference"
+    },
+    {
+      "id": "eviolite",
+      "status": "approved",
+      "approved": true,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 3},
+      "sell": {"id": "cobblemon:eviolite", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["eviolite"], "why": "as focus_sash: the counter's money line as it stood, $3,600"},
+      "late_game_why": "a held item; otherwise a random drop of Eevee, or an Everstone and amethyst (the old counter line's note). Moved from the counter's money line by E5",
+      "inputs_why": "as focus_sash: $3,780, 1.05 of the reference"
+    },
+    {
+      "id": "assault_vest",
+      "status": "approved",
+      "approved": true,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
+      "sell": {"id": "cobblemon:assault_vest", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["assault_vest"], "why": "the counter's money line as it stood, $4,500 for 5 ingots (data/markets.json northlight_station superseded_stock)"},
+      "late_game_why": "a held item; nothing drops it, and it is crafted from a Protector, an armadillo scute and a leather chestplate (the old counter line's note). Moved from the counter's money line by E5. Choice Specs is priced against this line's old $4,500 and stays",
+      "inputs_why": "a diamond block ($1,080) and 4 netherite ingots ($3,600): $4,680, 1.04 of the reference"
+    },
+    {
+      "id": "ability_capsule",
+      "status": "approved",
+      "approved": true,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 10},
+      "sell": {"id": "cobblemon:ability_capsule", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["ability_capsule"], "why": "the counter's money line as it stood, $10,000 (data/markets.json northlight_station superseded_stock)"},
+      "late_game_why": "the owner's 2026-10-05 ask to sell Ability Capsules, now by barter (E5). Its only recipe brews it from dragon breath, an End item (the old counter line's note); the other route is finite Nether bastion and ruin chest loot",
+      "inputs_why": "a diamond block ($1,080) and 10 netherite ingots ($9,000): $10,080, 1.008 of the reference"
     }
   ],
   "superseded_lines_why": "the owner, 2026-10-09 (decision arena_trophies_not_sold): 'keep them once-per-player prizes. Do not also sell them at a counter. A prize you can buy is not a prize.' Each record below is the line as it stood (approved 2026-10-08), kept so its pricing and reasoning are not lost; nothing reads this list, so none is placed. Its sell item is one of data/arena_fights.json prizes.items (read 2026-10-09: Choice Band rank 1, Leftovers rank 2, Choice Scarf rank 4, Life Orb rank 6, Ability Patch rank 7, each 'once per player'). Restoring one is the owner's decision, not a merge's",
@@ -203,7 +260,9 @@
     {"id": "arena_trophies_not_sold", "decided": "the owner, 2026-10-09 (docs/STATE.md 'The owner's decisions of 2026-10-09' (3)): 'ARENA TROPHIES: keep them once-per-player prizes. Do not also sell them at a counter. A prize you can buy is not a prize.' Applied: the five barter lines whose output is an arena prize (data/arena_fights.json prizes.items) moved to superseded_lines. No counter (data/markets.json counters and stalls) or Mart (data/traders.json) sold any of the five (grep, 2026-10-09). The Master Ball, Choice Specs and Destiny Knot are not prizes and stay. The arena's sixth prize item, obc:bottle_cap_gold, was then still sold on Giovanni's counter (data/markets.json counter holdfast, line bottle_cap_gold) and left for the owner; the owner's decision names every prize, so design unit U5 (2026-10-09) moved that line to the counter's superseded_stock (data/markets.json decisions arena_trophies_not_sold)"},
     {"id": "approve_lines", "decided": "the owner, 2026-10-08: re-price the lines so the exchange is an alternative path, not a bypass; re-priced lines go at the counter. Applied by pricing.rule: every line approved at 1.00-1.05 of its reference"},
     {"id": "barterer_site", "decided": "the owner, 2026-10-08: 'Players trade at Northlight's counter. One place.' The barterer stands at counter_site, inside the Northlight Mart beside the counter; the Holdfast booth stays as EXP-055's"},
-    {"id": "master_ball_counter", "decided": "kept: the owner's 2026-10-08 answer makes the barter an alternative to the counter's $27,000 Master Ball, not its replacement; both price 30 netherite ingots"}
+    {"id": "master_ball_counter", "superseded": true, "decided": "was: kept, the barter an alternative to the counter's $27,000 Master Ball, both 30 netherite ingots (the owner, 2026-10-08). Superseded by economy_v2_e4"},
+    {"id": "economy_v2_e4", "decided": "the owner, 2026-10-13 (docs/mechanics/ECONOMY_V2.md section 7, E4): the Master Ball's money line is removed and the barter is 'about 2 netherite ingots' ('30 is too steep, it should be more accessible'). Applied: the counter's line moved to northlight_station superseded_stock, and the barter is 1 netherite ingot + 5 netherite scrap, priced against 2 ingots at the bank (the netherite in Cobblemon's own recipe)"},
+    {"id": "economy_v2_e5", "decided": "the owner, 2026-10-13 (E5): Focus Sash, Expert Belt, Eviolite, Assault Vest and the Ability Capsule to barter. Applied: five lines added (8 in all, the short list's maximum), each a diamond block plus netherite ingots, priced against the counter's old money line, which moved to superseded_stock"}
   ],
   "decisions_pending": [
     {"id": "held_items_money_line", "question": "Choice Specs and the Destiny Knot are barter-only at the counter (no money where possible, 2026-10-07): keep them so, or also list them on Station Supply for money at the reference price. (Narrowed 2026-10-09: the Life Orb, Choice Band, Choice Scarf, Leftovers and Ability Patch are arena prizes and are sold nowhere, decision arena_trophies_not_sold)"}

@@ -34,6 +34,7 @@ import dungeon_rooms as R  # noqa: E402
 import dungeon_setpieces as SP  # noqa: E402
 
 DOC = D.load()
+RIP = {r["legacy_dungeon"]: r for r in DOC["retired_rips"]}   # the 13 test rips, RETIRED 2026-10-13 (retired_rips in data/dungeon_rips.json): the records are kept
 SF = next(d for d in DOC["dungeons"] if d["id"] == "starfall")
 SLOTS = [s for s in D.slots(DOC) if s["dungeon"]["id"] == "starfall"]
 SLOT = SLOTS[0]
@@ -72,7 +73,7 @@ def rec(rid):
 
 def test_a_test_dungeon_on_the_crater_theme_with_its_own_clock_and_no_lockout_of_its_own():
     assert SF["theme"] == "night_crater" and SF["test"] is True and SF["test_why"]
-    assert SF["gate_flag"] is None and "gym8_cleared" in SF["gate_flag_why"], "the roster's proposed gate is named, not set"
+    assert SF["gate_flag"] == "cobblers:flag/gym8_cleared" and SF["first_band"] == 5, "the roster's gate and floor (the draw, 2026-10-13)"
     assert SF["short"] not in [d["short"] for d in DOC["dungeons"] if d is not SF]
     assert set(SF["clock_s_by_band"]) == {str(b["band"]) for b in DOC["engine"]["bands"]}
     assert max(SF["clock_s_by_band"].values()) < 3600
@@ -354,15 +355,15 @@ def test_every_species_is_in_the_cobblemon_jar():
 
 
 def test_the_rip_stands_at_its_slot_on_the_trail_clear_of_the_other_rips():
-    f = SF["rip"]["frame"]
+    f = RIP[SF["id"]]["frame"]
     cx = (f["x0"] + f["x1"]) / 2
-    assert abs(cx - 1675) <= 10 and abs(f["z"] - 4118) <= 3 and SF["rip"]["test"] is True
+    assert abs(cx - 1675) <= 10 and abs(f["z"] - 4118) <= 3 and RIP[SF["id"]]["test"] is True
     for d in DOC["dungeons"]:
         if d is SF:
             continue
-        o = d["rip"]["frame"]
+        o = RIP[d["id"]]["frame"]
         assert f["x1"] + 3 < o["x0"] or o["x1"] + 3 < f["x0"] or abs(f["z"] - o["z"]) > 3, d["id"]
-    assert SF["rip"]["click"] == [cx, f["y"], f["z"] + 1]
+    assert RIP[SF["id"]]["click"] == [cx, f["y"], f["z"] + 1]
 
 
 def test_the_rip_stands_on_the_heightmaps_ground_and_above_the_sea():
@@ -372,12 +373,12 @@ def test_the_rip_stands_on_the_heightmaps_ground_and_above_the_sea():
         g = GR.load()
     except Exception as e:
         pytest.skip("no canonical heightmap: %s" % e)
-    f = SF["rip"]["frame"]
+    f = RIP[SF["id"]]["frame"]
     sea = T.sea_level(g.world)
     for x in range(f["x0"], f["x1"] + 1):
         for z in (f["z"], f["z"] + 1):
             assert g(x, z) + 1 == f["y"] and g(x, z) > sea, (x, z, g(x, z))
-    ox, oy, oz, _yaw = SF["rip"]["outside"]
+    ox, oy, oz, _yaw = RIP[SF["id"]]["outside"]
     assert g(int(ox), int(oz)) + 1 == oy
 
 

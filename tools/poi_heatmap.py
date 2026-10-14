@@ -205,10 +205,10 @@ for t in towns:
     placed_labels += 1
 print("settlements labelled:", placed_labels)
 
-# the dungeon rips (data/dungeons.json rip.click), drawn on their own: they hold no x/z key the density pass reads,
+# the dungeon rips (data/dungeon_rips.json click), drawn on their own: they hold no x/z key the density pass reads,
 # and a player looks for them by name. Rips within 400 blocks share one label (the test rips stand on one trail).
-rips = [(d_["name"], d_["rip"]["click"]) for d_ in json.load(open(ROOT + "/data/dungeons.json", encoding="utf-8"))["dungeons"]
-        if isinstance(d_.get("rip", {}).get("click"), list)]
+rips = [(d_["name"], d_["click"]) for d_ in json.load(open(ROOT + "/data/dungeon_rips.json", encoding="utf-8"))["rips"]
+        if isinstance(d_.get("click"), list)]
 groups = []
 for name, c in rips:
     for g in groups:

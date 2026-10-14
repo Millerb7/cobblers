@@ -198,7 +198,7 @@ def test_the_reapply_steps_count_the_entities_they_summon():
     check = [v for k, v in steps[0][2] if k == "check"][0]
     assert check[2] == 3 * len(D.slots(DOC))
     check = [v for k, v in steps[1][2] if k == "check"][0]
-    assert check[2] == len(DOC["dungeons"])
+    assert check[2] == len(DOC["rips"])             # one interaction a rip (data/dungeon_rips.json), not a dungeon
 
 
 def test_reapply_installs_the_pack_world_local_prepares_it_and_runs_its_steps_after_r16q():
@@ -592,7 +592,7 @@ def test_a_player_who_is_not_a_member_is_put_out_of_the_slots(pack):
     pt = D.points(DOC, s)
     q = w.player("Stray", POCKET, (pt["arrive"][0], 96, pt["arrive"][2]))
     w.passes(1)
-    x, y, z, _yaw = DOC["dungeons"][0]["rip"]["outside"]
+    x, y, z, _yaw = DOC["rips"][0]["outside"]        # a stranger has neither dg.rip nor dg.dun: the first rip's point
     assert q.dim == OW and q.pos == [x, y, z]
 
 

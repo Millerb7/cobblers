@@ -1,0 +1,1474 @@
+#!/usr/bin/env python
+"""INDEPENDENT audit of the dungeon draw (docs/mechanics/DUNGEON_DRAW.md sections 2-4) and of where the rips stand.
+
+Independent means: the EXPECTATIONS here come from the spec (the design, the owner's answers D1-D5) and from
+data/dungeon_prize_roster.json (first_band and gate per dungeon), never from the generator's own helpers.
+
+  * The draw is checked by RUNNING the functions tools/dungeon.py emits, on the existing function simulator
+    (tests/pocket_sim.py through tests/test_dungeon.py's DW), against scenarios built from the roster. No expectation
+    is read from dungeon.py's `draw`, `candidates` or `eligible` code.
+  * Rip siting is re-measured from tools/ground.py (the canonical heightmap, ROUNDED) and from data/*.json read here.
+    tools/dungeon_rips.py is not imported for a single number: its siting rules are the thing being audited.
+  * The owner's decisions of 2026-10-13 are read as: the 13 trail rips are RETIRED (data/dungeon_rips.json retired_rips; R16DR's
+    rips/retire puts back each one's recorded plane and patch, an entity sweep kills their entities, nothing draws from their
+    click); EVERY region with dry ground has a standing rip; a rip inside a badge-gated rift zone is ALLOWED and declares
+    `reachable_after` as data/rift_zones.json has the zone. The expectations are the records, data/rift_zones.json,
+    data/regions.json, data/dungeon_themes.json and the heightmap, read here.
+  * Independence is proved by MUTATING THE GENERATOR (tools/dungeon.py source, with data/ untouched): `--mutate` rebuilds
+    the pack from a mutated copy of the source and requires the audit to FAIL. A mutation that only edited data would
+    move the expectation and the output together and prove nothing.
+
+  python tools/dungeon_draw_audit.py --out <file>                 the whole audit; one verdict line on stdout
+  python tools/dungeon_draw_audit.py --out <file> --only siting   the heightmap part only (seconds)
+  python tools/dungeon_draw_audit.py --out <file> --only draw     the simulator part only (minutes)
+  python tools/dungeon_draw_audit.py --mutate NAME --out <file>   rebuild from the mutation NAME and run the draw part
+
+What this does NOT cover (CLAUDE.md "Our list is not the world"; testing.md): any of it in a running Minecraft. That
+`random value 0..2^30-1` and `scoreboard players operation %=` behave in a function on a server as the simulator models
+them, that a rip's click reaches its door through the advancement reward, that the oval stands where the siting says,
+and that a tree or a mod structure is not in a plane. Nether rips are not sited (DUNGEON_DRAW.md section 5). The co-op
+party draw (2.5) is deferred and unbuilt. The siting is checked against data/ and the heightmap, never against a world.
+"""
+from __future__ import annotations
+
+import argparse
+import glob
+import importlib.util
+import json
+import math
+import os
+import re
+import sys
+import tempfile
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+
+DATA = ROOT / "data"
+OW = "minecraft:overworld"
+OLD_TEST_RIPS_COMMIT = "6249332e"   # the 13 trail rips' positions, as the owner played them (git show 6249332e:data/dungeons.json)
+MAP = 8192
+RIPS_DIR = "data/cobblers/function/dungeons/rips/"     # where the pack's rip functions live (the path sc_rips_are_placed already reads)
+FN = "cobblers:dungeons/"                              # the pack's function namespace and folder, as the reapply steps name them
+DRY_SAMPLE_STEP = 8                                    # blocks between the columns sampled to decide whether a region has dry ground
+
+# the spec's numbers (DUNGEON_DRAW.md 2.6), written here and not read from the tool under audit
+CLEARANCE = 30          # blocks from every authored data/ coordinate
+SPAWN_FREE_MARGIN = 0   # "No rip inside a spawn-free town precinct": the footprint must not touch one
+
+BAND_CAPS = {1: (1, 25), 2: (26, 35), 3: (36, 45), 4: (46, 55), 5: (56, 62), 6: (63, 100)}   # DUNGEON_DRAW.md 1 / 2.2: the cap that makes each band
+CAP_FOR_BAND = {1: 20, 2: 30, 3: 40, 4: 50, 5: 60, 6: 100}
+
+# the dungeons the draw draws from, by roster id; the roster also lists three that are not built (cistern, temple_calendar,
+# zero_dig): the audit only judges the ones in data/dungeons.json
+ROSTER = DATA / "dungeon_prize_roster.json"
+
+
+# ------------------------------------------------------------------------------------------------- the spec's expectations
+
+
+def roster_expectations(roster=None, built_ids=None):
+    """{dungeon id: (first_band, gate flag id or None)} from the roster's own fields. The roster's gate is prose such as
+    'gym8_cleared (proposed, ...)': the flag is the leading token."""
+    roster = roster if roster is not None else json.loads(ROSTER.read_text(encoding="utf-8"))
+    out = {}
+    for d in roster["dungeons"]:
+        if built_ids is not None and d["id"] not in built_ids:
+            continue
+        g = d.get("gate")
+        flag = None
+        if g:
+            m = re.match(r"([a-z0-9_]+_cleared)\b", g)
+            if not m:
+                raise ValueError("roster gate %r of %s does not start with a flag" % (g, d["id"]))
+            flag = m.group(1)
+        out[d["id"]] = (int(d["first_band"]), flag)
+    return out
+
+
+def eligible(band, held, expect):
+    """The spec's rule (2.2): in the draw at band B when first_band <= B and the gate flag, if any, is held."""
+    return {i for i, (fb, flag) in expect.items() if fb <= band and (flag is None or flag in held)}
+
+
+# ------------------------------------------------------------------------------------------------- siting (heightmap, data)
+
+
+def _num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def _walk(obj, out, src):
+    """Every authored coordinate: a dict with numeric x and z (or cx, cz); a list of two numbers read as (x, z); a list of three
+    read as (x, y, z). A list of four is a BOX, an area and not a coordinate: boxes are held by the precinct and the gated-zone
+    checks, where 'inside' is what matters. Over-inclusive otherwise on purpose: a stray list of small numbers is a false point
+    near the map's corner, not a missed one."""
+    if isinstance(obj, dict):
+        for kx, kz in (("x", "z"), ("cx", "cz")):
+            if _num(obj.get(kx)) and _num(obj.get(kz)):
+                out.append((float(obj[kx]), float(obj[kz]), src))
+        for v in obj.values():
+            _walk(v, out, src)
+    elif isinstance(obj, list):
+        if obj and all(_num(v) for v in obj):
+            if len(obj) == 2:
+                out.append((float(obj[0]), float(obj[1]), src))
+            elif len(obj) == 3:
+                out.append((float(obj[0]), float(obj[2]), src))
+            return
+        for v in obj:
+            _walk(v, out, src)
+
+
+def authored_points(data_dir=DATA, skip_files=(), drop=None):
+    """[(x, z, file)] for every coordinate in data/*.json and data/*/*.json. `drop(rel, doc)` may edit a document first (the
+    rips' own probes are the rips' coordinates over again)."""
+    out = []
+    files = sorted(glob.glob(str(Path(data_dir) / "*.json"))) + sorted(glob.glob(str(Path(data_dir) / "*" / "*.json")))
+    for f in files:
+        rel = Path(f).relative_to(Path(data_dir).parent).as_posix()
+        if rel in skip_files:
+            continue
+        doc = json.loads(Path(f).read_text(encoding="utf-8"))
+        if drop:
+            drop(rel, doc)
+        pts = []
+        _walk(doc, pts, rel)
+        out += [p for p in pts if 0 <= p[0] < MAP and 0 <= p[1] < MAP]
+    return out
+
+
+def _drop_rip_probes(rel, doc):
+    if rel == "data/world_probes.json":
+        doc.get("places", {}).pop("dungeon_rips", None)
+
+
+def ring_contains(ring, x, z):
+    c, j = False, len(ring) - 1
+    for i in range(len(ring)):
+        xi, zi = ring[i][0], ring[i][1]
+        xj, zj = ring[j][0], ring[j][1]
+        if (zi > z) != (zj > z) and x < (xj - xi) * (z - zi) / float(zj - zi) + xi:
+            c = not c
+        j = i
+    return c
+
+
+def polys_contain(polys, x, z):
+    return any(ring_contains(r, x, z) for r in polys)
+
+
+def footprint(r):
+    """(x0, z0, x1, z1) of what a rip occupies: its plane (x0..x1 at z), the click one in front and the exit point three in
+    front. Read from the record's own frame/click/outside, not from the tool's window."""
+    f = r["frame"]
+    xs = [f["x0"], f["x1"], r["click"][0], math.floor(r["outside"][0])]
+    zs = [f["z"], r["click"][2], math.floor(r["outside"][2])]
+    return (min(xs), min(zs), max(xs), max(zs))
+
+
+def box_gap(a, b):
+    """Edge-to-edge distance between two boxes (x0, z0, x1, z1), 0 when they touch or overlap."""
+    return math.hypot(max(a[0] - b[2], 0, b[0] - a[2]), max(a[1] - b[3], 0, b[1] - a[3]))
+
+
+def point_gap(box, x, z):
+    return math.hypot(max(box[0] - x, 0, x - box[2]), max(box[1] - z, 0, z - box[3]))
+
+
+def water_world(data_dir=DATA):
+    """(sea level, [(level_y, basin rings)]) read from data/world.json and data/landmarks.json."""
+    w = json.loads((Path(data_dir) / "world.json").read_text(encoding="utf-8"))
+    sea = int(w["vertical"]["sea_level"])
+    lakes = []
+    for l in json.loads((Path(data_dir) / "landmarks.json").read_text(encoding="utf-8"))["landmarks"]:
+        wb = l.get("water_body") or {}
+        if wb.get("level_y") is not None and wb.get("basin_polygons"):
+            lakes.append((int(wb["level_y"]), [[tuple(q) for q in ring] for ring in wb["basin_polygons"]]))
+    return sea, lakes
+
+
+def precinct_boxes(data_dir=DATA):
+    """[(x0, z0, x1, z1, label)]: the spawn-free zones and every town footprint, as data/ authors them."""
+    out = []
+    sup = json.loads((Path(data_dir) / "spawn_suppression.json").read_text(encoding="utf-8"))
+    for z in sup.get("spawn_free_zones") or []:
+        b = z["box"]
+        out.append((b[0], b[1], b[2], b[3], "spawn_free_zone " + z["id"]))
+    for t in json.loads((Path(data_dir) / "towns.json").read_text(encoding="utf-8"))["towns"]:
+        f = t.get("footprint") or {}
+        if all(k in f for k in ("min_x", "min_z", "max_x", "max_z")):
+            out.append((f["min_x"], f["min_z"], f["max_x"], f["max_z"], "town " + t["id"]))
+    return out
+
+
+def region_polygons(data_dir=DATA):
+    return {r["id"]: r["polygons"] for r in json.loads((Path(data_dir) / "regions.json").read_text(encoding="utf-8"))["regions"]}
+
+
+def siting_problems(rips, ground, sea, lakes, points, boxes, regions, clearance=CLEARANCE):
+    """[problem] for a list of STANDING rips: dry, `clearance` blocks from every point, outside every precinct, inside its own
+    region. All inputs are values, so a fixture can hand it a synthetic world with hand-computable answers. Since the owner's
+    2026-10-13 decision ("the rips near old mine have to go") no standing rip is exempt from anything: a rip of kind
+    test_trail that is still in the standing list is itself a problem (the 13 live under retired_rips)."""
+    bad = []
+    for r in rips:
+        rid = r["id"]
+        fp = footprint(r)
+        if r.get("kind") == "test_trail":
+            bad.append("%s: a test_trail rip is standing; the owner retired them all on 2026-10-13" % rid)
+        wet = None
+        for x in range(fp[0], fp[2] + 1):
+            for z in range(fp[1], fp[3] + 1):
+                gy = ground(x, z)
+                if gy < sea:
+                    wet = (x, z, "sea", gy, sea)
+                for level, basin in lakes:
+                    if gy < level and polys_contain(basin, x, z):
+                        wet = (x, z, "a lake", gy, level)
+                if wet:
+                    break
+            if wet:
+                break
+        if wet:
+            bad.append("%s: (%d, %d) is under %s: ground y%d, water y%d" % (rid, wet[0], wet[1], wet[2], wet[3], wet[4]))
+        g = ground(r["click"][0], r["click"][2])
+        if r["frame"]["y"] != g + 1:
+            bad.append("%s: frame.y %d is not round(ground) + 1 = %d" % (rid, r["frame"]["y"], g + 1))
+        near = min(((point_gap(fp, p[0], p[1]), p) for p in points), key=lambda t: t[0], default=(float("inf"), None))
+        if near[0] < clearance:
+            bad.append("%s: authored (%d, %d) in %s is %.1f blocks from the footprint; the rule is %d"
+                       % (rid, near[1][0], near[1][1], near[1][2], near[0], clearance))
+        for b in boxes:
+            if box_gap(fp, b) <= SPAWN_FREE_MARGIN:
+                bad.append("%s: the footprint touches %s" % (rid, b[4]))
+        polys = regions.get(r.get("region"))
+        if polys is None:
+            bad.append("%s: region %r is not in data/regions.json" % (rid, r.get("region")))
+        else:
+            for x, z in ((fp[0], fp[1]), (fp[2], fp[1]), (fp[0], fp[3]), (fp[2], fp[3])):
+                if not polys_contain(polys, x, z):
+                    bad.append("%s: footprint corner (%d, %d) is outside region %s" % (rid, x, z, r["region"]))
+                    break
+    return bad
+
+
+# ------------------------------------------------------------------------------------------------- a rip in every dry region
+
+
+def _inside_any(rings, X, Z):
+    """Boolean array: (X, Z) inside any ring (even-odd per ring, as ring_contains does for one point), vectorised."""
+    import numpy as np
+    inside = np.zeros(X.shape, bool)
+    for ring in rings:
+        c = np.zeros(X.shape, bool)
+        j = len(ring) - 1
+        for i in range(len(ring)):
+            xi, zi, xj, zj = float(ring[i][0]), float(ring[i][1]), float(ring[j][0]), float(ring[j][1])
+            if zi != zj:
+                c ^= ((zi > Z) != (zj > Z)) & (X < (xj - xi) * (Z - zi) / (zj - zi) + xi)
+            j = i
+        inside |= c
+    return inside
+
+
+def regions_dry_columns(box, sea, regions, step=DRY_SAMPLE_STEP, size=MAP):
+    """{region id: how many sampled columns of the region stand at or above the sea}. `box(x0, z0, x1, z1)` is a (z, x) array of
+    ROUNDED ground (tools/ground.py Ground.box), sampled on the global grid of multiples of `step`. A region is dry when it has a
+    sampled column. NOT covered: a lake basin counts as dry here (only the sea is subtracted), and a dry patch narrower than
+    `step` can be missed; the margin is wide (the smallest real count is thousands), but it is a sample, not a proof."""
+    import numpy as np
+    out = {}
+    for rid, polys in regions.items():
+        xs = [p[0] for ring in polys for p in ring]
+        zs = [p[1] for ring in polys for p in ring]
+        x0, x1 = max(int(min(xs)), 0), min(int(max(xs)), size - 1)
+        z0, z1 = max(int(min(zs)), 0), min(int(max(zs)), size - 1)
+        fx, fz = -(-x0 // step) * step, -(-z0 // step) * step      # first multiple of step at or after the box's corner
+        if fx > x1 or fz > z1:
+            out[rid] = 0
+            continue
+        h = np.asarray(box(x0, z0, x1, z1))[fz - z0::step, fx - x0::step]
+        X, Z = np.meshgrid(fx + step * np.arange(h.shape[1]), fz + step * np.arange(h.shape[0]))
+        out[rid] = int((_inside_any(polys, X, Z) & (h >= sea)).sum())
+    return out
+
+
+def region_rip_problems(rips, dry_columns):
+    """[problem]: the owner's 2026-10-13 decision, 'every area in game should be capable of spawning a rift': a region with dry
+    ground has a standing rip (a region with none is the drowned Jungle Isle, a note and not a fault)."""
+    have = {r.get("region") for r in rips}
+    return ["region %s has %d dry sampled columns and no rip" % (rid, n) for rid, n in sorted(dry_columns.items()) if n > 0 and rid not in have]
+
+
+# ------------------------------------------------------------------------------------------------- the retired trail rips
+
+
+def old_test_rip_positions(old_doc, retired):
+    """[problem]: the retired trail rips' frame, click and outside against the dungeon records of 6249332e (`old_doc`), matched by
+    legacy_dungeon, not by order. The retire function puts back the plane the RECORD says; this is what says the record is the
+    plane the owner played."""
+    bad = []
+    by_dungeon = {r.get("legacy_dungeon"): r for r in retired}
+    for d in old_doc["dungeons"]:
+        old = d["rip"]
+        new = by_dungeon.get(d["id"])
+        if new is None:
+            bad.append("retired rip for %s: gone" % d["id"])
+            continue
+        for k in ("frame", "click", "outside"):
+            if new[k] != old[k]:
+                bad.append("retired rip for %s: %s was %r, is %r" % (d["id"], k, old[k], new[k]))
+    if len(by_dungeon) != len(old_doc["dungeons"]):
+        bad.append("%d retired rips, 6249332e had %d" % (len(by_dungeon), len(old_doc["dungeons"])))
+    return bad
+
+
+def retired_record_problems(rips, retired, dungeon_ids):
+    """[problem]: the retired rips against the decision 'the rips near old mine have to go', read from the records alone:
+    none of them stands (not in `rips`, no standing rip is test_trail or shares a click), they are exactly the rips the dungeons
+    had (`dungeon_ids`, data/dungeons.json), and none sits where a standing rip's footprint is (retiring one must not take
+    blocks out from under another)."""
+    bad = []
+    standing_ids = {r["id"] for r in rips}
+    for r in retired:
+        if r["id"] in standing_ids:
+            bad.append("%s: retired and standing at once" % r["id"])
+    for r in rips:
+        if r.get("kind") == "test_trail" or r.get("legacy_dungeon"):
+            bad.append("%s: a standing rip is a trail rip (kind %s, legacy_dungeon %s)" % (r["id"], r.get("kind"), r.get("legacy_dungeon")))
+    stood = {tuple(r["click"]): r["id"] for r in rips}
+    for r in retired:
+        if tuple(r["click"]) in stood:
+            bad.append("%s: its click %s is rip %s's click" % (r["id"], r["click"], stood[tuple(r["click"])]))
+        for s in rips:
+            if box_gap(footprint(r), footprint(s)) <= 0:
+                bad.append("%s: its footprint touches standing %s: retiring it would take blocks out from under that rip" % (r["id"], s["id"]))
+    legacy = sorted(r.get("legacy_dungeon") for r in retired)
+    if legacy != sorted(dungeon_ids):
+        bad.append("the retired rips stand for %s, the dungeons are %s" % (legacy, sorted(dungeon_ids)))
+    return bad
+
+
+def parse_block_writes(lines):
+    """(unconditional {(x, y, z): block}, conditional [((x, y, z), if_block, new_block)], other [line]) from the setblock, fill and
+    `execute if block .. run setblock ..` lines of a function. Comments, blanks and forceload lines are ignored; anything else is
+    returned in `other` so the caller can refuse it."""
+    unc, cond, other = {}, [], []
+    n = r"(-?\d+)"
+    for raw in lines:
+        s = raw.strip()
+        if not s or s.startswith("#") or re.match(r"forceload (add|remove)\b", s):
+            continue
+        m = re.fullmatch(r"setblock %s %s %s (\S+)" % (n, n, n), s)
+        if m:
+            unc[tuple(int(v) for v in m.groups()[:3])] = m.group(4)
+            continue
+        m = re.fullmatch(r"fill %s %s %s %s %s %s (\S+)" % ((n,) * 6), s)
+        if m:
+            x1, y1, z1, x2, y2, z2 = (int(v) for v in m.groups()[:6])
+            for x in range(min(x1, x2), max(x1, x2) + 1):
+                for y in range(min(y1, y2), max(y1, y2) + 1):
+                    for z in range(min(z1, z2), max(z1, z2) + 1):
+                        unc[(x, y, z)] = m.group(7)
+            continue
+        m = re.fullmatch(r"execute if block %s %s %s (\S+) run setblock %s %s %s (\S+)" % ((n,) * 6), s)
+        if m and m.groups()[:3] == m.groups()[4:7]:
+            cond.append((tuple(int(v) for v in m.groups()[:3]), m.group(4), m.group(8)))
+            continue
+        other.append(s)
+    return unc, cond, other
+
+
+def _base(block):
+    return block.split("[")[0]
+
+
+def retire_pack_problems(files, retired, themes):
+    """[problem]: what R16DR's rips/retire does to the world, found by READING the emitted functions and expected from the
+    retired RECORDS (frame, restore, retired.ground) and data/dungeon_themes.json, never from tools/dungeon.py's helpers.
+
+    For each retired rip, exactly one function called by rips/retire writes its plane, and
+      * the plane (x0..x1, y..y+height-1, at frame.z) ends as rip.restore says, cell by cell, and nothing else is written
+        unconditionally (a stray setblock would overwrite what is there);
+      * each cell of its themed patch (the keys of retired.ground, one block under the frame's y) is put back to the recorded
+        block ONLY `if block` it still holds one of the theme's own blocks (hull.floor, hull.wall, rip.scorch), so a re-apply
+        never overwrites what something else has put there since; a cell with no line is allowed only where the recorded block
+        is already one of the theme's blocks (a patch of the block that was there has nothing to put back);
+      * nothing it writes is a cell a STANDING rip's rips/blocks_* function writes.
+    `themes` is data/dungeon_themes.json's 'themes' object."""
+    bad = []
+    top = files.get(RIPS_DIR + "retire.mcfunction")
+    if top is None:
+        return ["rips/retire is not in the pack: R16DR has nothing to run, so the retired rips stay in the world"]
+    called = re.findall(r"function " + re.escape(FN) + r"(rips/retire_[a-z0-9_]+)", top)
+    if len(called) != len(retired) or len(set(called)) != len(called):
+        bad.append("rips/retire calls %d distinct functions (%d calls) for %d retired rips" % (len(set(called)), len(called), len(retired)))
+    parsed = {}
+    for c in called:
+        text = files.get("data/cobblers/function/dungeons/%s.mcfunction" % c)
+        if text is None:
+            bad.append("%s is called by rips/retire and is not in the pack" % c)
+            continue
+        parsed[c] = parse_block_writes(text.splitlines())
+        if parsed[c][2]:
+            bad.append("%s holds a command this audit does not read: %r" % (c, parsed[c][2][0]))
+    standing_cells = set()
+    for path, text in files.items():
+        if path.startswith(RIPS_DIR + "blocks_") and path.endswith(".mcfunction"):
+            unc, cond, _ = parse_block_writes(text.splitlines())
+            standing_cells |= set(unc) | {c for c, _t, _n in cond}
+    used = set()
+    for r in retired:
+        f, rid = r["frame"], r["id"]
+        owners = [c for c, (unc, _c, _o) in parsed.items() if (f["x0"], f["y"], f["z"]) in unc]
+        if len(owners) != 1:
+            bad.append("%s: its plane's first cell is written by %d of rips/retire's functions (want 1)" % (rid, len(owners)))
+            continue
+        used.add(owners[0])
+        unc, cond, _ = parsed[owners[0]]
+        plane = {(x, f["y"] + i, f["z"]): r["restore"][str(x)][i] for x in range(f["x0"], f["x1"] + 1) for i in range(f["height"])}
+        for cell, want in sorted(plane.items()):
+            if unc.get(cell) != want:
+                bad.append("%s: plane cell %s ends as %s, rip.restore says %s" % (rid, cell, unc.get(cell), want))
+        stray = sorted(set(unc) - set(plane))
+        if stray:
+            bad.append("%s: %d unconditional writes outside its plane, first %s" % (rid, len(stray), stray[0]))
+        y = f["y"] - 1
+        theme = (themes.get(r.get("scorch_theme")) or {}).get("hull") or {}
+        theme_blocks = {_base(b) for b in (theme.get("floor"), theme.get("wall"), *(r.get("scorch") or {}).values()) if b}
+        patch = {}
+        for key, back in r["retired"]["ground"].items():
+            x, z = (int(v) for v in key.split(","))
+            patch[(x, y, z)] = back
+        by_cell = {}
+        for cell, test, new in cond:
+            by_cell.setdefault(cell, []).append((test, new))
+        for cell, back in sorted(patch.items()):
+            got = by_cell.get(cell, [])
+            if not got:
+                if _base(back) not in theme_blocks:
+                    bad.append("%s: patch cell %s is never put back to %s" % (rid, cell, back))
+            elif len(got) != 1 or got[0][1] != back:
+                bad.append("%s: patch cell %s is put back to %s, retired.ground says %s" % (rid, cell, got, back))
+            elif _base(got[0][0]) not in theme_blocks:
+                bad.append("%s: patch cell %s is replaced where it holds %s, which is none of the theme's blocks %s" % (rid, cell, got[0][0], sorted(theme_blocks)))
+        for cell in sorted(set(by_cell) - set(patch)):
+            bad.append("%s: a conditional write at %s is outside the patch" % (rid, cell))
+        touched = (set(unc) | set(by_cell)) & standing_cells
+        if touched:
+            bad.append("%s: its retire writes %d cells a standing rip's blocks function writes, first %s" % (rid, len(touched), sorted(touched)[0]))
+    if len(used) != len(called):
+        bad.append("rips/retire calls %d functions that write no retired rip's plane" % (len(called) - len(used)))
+    return bad
+
+
+def retire_sweep_problems(files, retired):
+    """[problem]: the sweep that kills the retired rips' entities (rips/entities_retired*): a force-load box over each retired
+    click, a kill of an interaction and of an item_display per retired rip, and none of those tags is one a standing rip's
+    entity is summoned with (the sweep would kill a rip that stands)."""
+    bad = []
+    texts = [t for p, t in files.items() if p.startswith(RIPS_DIR + "entities_retired")]
+    if not texts:
+        return ["rips/entities_retired is not in the pack: a retired rip's interaction and oval would stay standing"]
+    blob = "\n".join(texts)
+    boxes = [tuple(int(v) for v in m) for m in re.findall(r"forceload add (-?\d+) (-?\d+) (-?\d+) (-?\d+)", blob)]
+    for r in retired:
+        x, _y, z = r["click"]
+        if not any(b[0] <= x <= b[2] and b[1] <= z <= b[3] for b in boxes):
+            bad.append("%s: no force-loaded box of the sweep covers its click (%d, %d)" % (r["id"], x, z))
+    kills = {"interaction": set(), "item_display": set()}
+    for kind, tag in re.findall(r"kill @e\[type=minecraft:(interaction|item_display),tag=([A-Za-z0-9_.]+)\]", blob):
+        kills[kind].add(tag)
+    if len(kills["interaction"]) != len(retired) or kills["interaction"] != kills["item_display"]:
+        bad.append("the sweep kills %d interaction tags and %d oval tags for %d retired rips" % (len(kills["interaction"]), len(kills["item_display"]), len(retired)))
+    standing = set()
+    for p, t in files.items():
+        if p.startswith(RIPS_DIR) and p.endswith(".mcfunction") and not p.startswith(RIPS_DIR + "entities_retired"):
+            for tags in re.findall(r"summon minecraft:(?:interaction|item_display) [^\n]*?Tags:\[([^\]]*)\]", t):
+                standing |= set(re.findall(r'"([^"]+)"', tags))
+    hit = (kills["interaction"] | kills["item_display"]) & standing
+    if hit:
+        bad.append("the sweep kills tags a standing rip's entity is summoned with: %s" % sorted(hit))
+    return bad
+
+
+def retired_click_problems(files, retired, click_fn):
+    """[problem]: a retired rip has no click that draws. `click_fn` is rip_click_functions(files, retired): the function an
+    interaction at the retired click reaches through an advancement. It must be empty, and no function of the pack may summon an
+    interaction at a retired click at all."""
+    bad = ["%s: a click still reaches %s" % (rid, fn) for rid, fn in sorted(click_fn.items())]
+    spots = {(r["id"], r["click"][0] + 0.5, r["click"][1], r["click"][2] + 0.5) for r in retired}
+    for path, text in files.items():
+        if not path.endswith(".mcfunction"):
+            continue
+        for m in re.finditer(r"summon minecraft:interaction (-?[\d.]+) (-?[\d.]+) (-?[\d.]+)", text):
+            sx, sy, sz = (float(v) for v in m.groups())
+            for rid, x, y, z in spots:
+                if abs(sx - x) < 0.01 and abs(sy - y) < 0.01 and abs(sz - z) < 0.01:
+                    bad.append("%s: %s summons an interaction at its click" % (rid, path))
+    return bad
+
+
+def retire_step_problems(steps, retired):
+    """[problem]: tools/reapply.py's R16DR runs the retire. `steps` is dungeon.reapply_steps(): (id, text, actions). With retired
+    rips, R16DR runs rips/retire and the entity sweep, and R16DG (the shells) runs neither."""
+    if not retired:
+        return []
+    bad = []
+    by_id = {s[0]: s[2] for s in steps}
+    for want in ("rips/retire", "rips/entities_retired"):
+        if ("fn", FN + want) not in by_id.get("R16DR", []):
+            bad.append("R16DR does not run %s: the retired rips stay in the world" % want)
+        if ("fn", FN + want) in by_id.get("R16DG", []):
+            bad.append("R16DG runs %s; the retire belongs to R16DR" % want)
+    return bad
+
+
+def run_siting(out):
+    import ground as G
+    g = G.load()
+    doc = json.loads((DATA / "dungeon_rips.json").read_text(encoding="utf-8"))
+    rips, retired = doc["rips"], doc.get("retired_rips") or []
+    sea, lakes = water_world()
+    pts = authored_points(skip_files=("data/dungeon_rips.json",), drop=_drop_rip_probes)
+    if not pts:
+        raise RuntimeError("the walk over data/ found no authored coordinate: every clearance would pass vacuously")
+    regs = region_polygons()
+    bad = siting_problems(rips, g, sea, lakes, pts, precinct_boxes(), regs)
+    out["siting"] = {"rips": len(rips), "region_rips": sum(r["kind"] == "region" for r in rips), "retired_rips": len(retired),
+                     "points_read": len(pts), "regions": len(regs)}
+    dry = regions_dry_columns(g.box, sea, regs)
+    out["siting"]["regions_with_dry_ground"] = sum(n > 0 for n in dry.values())
+    bad += region_rip_problems(rips, dry)
+    zones = json.loads((DATA / "rift_zones.json").read_text(encoding="utf-8"))
+    bad += gated_zone_problems(rips, zones)
+    dungeons = json.loads((DATA / "dungeons.json").read_text(encoding="utf-8"))["dungeons"]
+    bad += retired_record_problems(rips, retired, [d["id"] for d in dungeons])
+    import subprocess
+    old = subprocess.run(["git", "show", "%s:data/dungeons.json" % OLD_TEST_RIPS_COMMIT], cwd=str(ROOT), capture_output=True, text=True)
+    if old.returncode != 0:
+        out["siting"]["old_positions"] = "NOT_EXECUTED: git show %s failed: %s" % (OLD_TEST_RIPS_COMMIT, old.stderr.strip()[:200])
+    else:
+        bad += old_test_rip_positions(json.loads(old.stdout), retired)
+        out["siting"]["old_positions"] = "checked"
+    bad += ["siting tool: " + p for p in sc_siting_tool_rejects_sites_that_break_a_rule(load_rips_module(None), g)]
+    # notes for the owner, not rules of the spec. The keep-out box says it binds "the far south's own places"; a rip is not one
+    notes = ["region %s has no dry ground (%d sampled columns) and no rip: nothing can stand there" % (rid, n)
+             for rid, n in sorted(dry.items()) if n == 0 and rid not in {r.get("region") for r in rips}]
+    fs = json.loads((DATA / "far_south.json").read_text(encoding="utf-8"))["rules"]["keep_out_box"]["box"]
+    notes += ["%s: stands inside data/far_south.json rules.keep_out_box %s" % (r["id"], fs) for r in rips if box_gap(footprint(r), tuple(fs)) == 0]
+    notes += ["%s: reachable only after %s %s (zone %s), as its record says" % (r["id"], r["reachable_after"].get("kind"), r["reachable_after"].get("threshold", ""),
+                                                                           r["reachable_after"].get("zone")) for r in rips if r.get("reachable_after")]
+    out["siting_notes"] = notes
+    return bad
+
+
+# ------------------------------------------------------------------------------------------------- gated zones (data/rift_zones.json)
+
+
+def gated_zones_of(rip, rift_zones):
+    """[zone id]: the rift zones with a pass (badges, a flag, a catch count) whose boxes the rip's footprint touches. Those zones span
+    the whole height (rift_zones.json `y` -64..575), so a player short of the pass is turned back from every column of them."""
+    out = []
+    fp = footprint(rip)
+    for zid, z in sorted((rift_zones.get("zones") or {}).items()):
+        if not isinstance(z, dict) or not z.get("pass") or not z.get("boxes"):
+            continue
+        if any(box_gap(fp, tuple(b[:4])) == 0 for b in z["boxes"]):
+            out.append(zid)
+    return out
+
+
+def gated_zone_problems(rips, rift_zones):
+    """[problem]: the owner's 2026-10-13 decision, 'every area in game should be capable of spawning a rift, so leave it even if
+    its gated'. A rip inside a gated rift zone is ALLOWED, and must say so: `reachable_after` names the zone and repeats its pass
+    (kind, threshold, advancements, name) exactly as data/rift_zones.json has it. A rip outside every gated zone must not claim
+    one (a stale claim is a wrong promise to the player). Read from the zones file here, not from tools/dungeon_rips.py."""
+    bad = []
+    zones = rift_zones.get("zones") or {}
+    for r in rips:
+        inside = gated_zones_of(r, rift_zones)
+        ra = r.get("reachable_after")
+        if not inside:
+            if ra:
+                bad.append("%s: declares reachable_after zone %s but its footprint is in no gated rift zone" % (r["id"], ra.get("zone")))
+            continue
+        if not ra:
+            bad.append("%s: the footprint stands inside gated rift zone(s) %s and declares no reachable_after" % (r["id"], inside))
+            continue
+        if ra.get("zone") not in inside:
+            bad.append("%s: reachable_after names zone %s, the footprint is in %s" % (r["id"], ra.get("zone"), inside))
+            continue
+        z = zones[ra["zone"]]
+        want = dict(z["pass"])
+        if ra.get("zone_name") != z.get("name"):
+            bad.append("%s: reachable_after.zone_name %r, data/rift_zones.json names it %r" % (r["id"], ra.get("zone_name"), z.get("name")))
+        for k in ("kind", "threshold", "advancements"):
+            if k in want and ra.get(k) != want[k]:
+                bad.append("%s: reachable_after.%s is %r, zone %s's pass has %r" % (r["id"], k, ra.get(k), ra["zone"], want[k]))
+    return bad
+
+
+# ------------------------------------------------------------------------------------------------- the simulator part
+
+
+SPEC_CAPS = {20: 1, 25: 1, 30: 2, 35: 2, 40: 3, 45: 3, 50: 4, 55: 4, 60: 5, 62: 5, 100: 6}   # DUNGEON_DRAW.md 1: band by RCT cap
+ALL_FLAGS = ("gym6_cleared", "gym8_cleared", "champion_cleared")
+PLAYTEST_TAG = "cobblers.dg_playtest"       # DUNGEON_DRAW.md 5 and STATE: staging only
+# the names the scenarios read; each is checked to exist in the pack before a scenario runs, so a rename fails closed
+CONTRACT = ("dg.st", "dg.dun", "dg.rip", "dg.band", "dg.ptdun", "dg.up", "dg.own")
+# functions the draw path never calls: a room, a shell, a block placement. They are 99 per cent of the pack's bytes.
+SKIP_FILES = re.compile(r"/(room|shells|place)(/|\.)|/place/|/lure|/reset\.")
+
+
+def load_sim():
+    """(DW, FAKES, PS): tests/test_dungeon.py's simulator subclass, without building a pack. That module builds the whole
+    dungeon pack when imported (minutes), so it is imported with the build stubbed and removed from sys.modules again, which
+    leaves a later real import (pytest's own) to build as it always did."""
+    sys.path.insert(0, str(ROOT / "tests"))
+    import dungeon as D
+    import pocket_sim as PS
+    if "test_dungeon" in sys.modules:
+        TD = sys.modules["test_dungeon"]
+    else:
+        real = D.build
+        D.build = lambda doc, **kw: {}
+        try:
+            import test_dungeon as TD
+        finally:
+            D.build = real
+            sys.modules.pop("test_dungeon", None)
+    return TD.DW, TD.FAKES, PS
+
+
+def load_module(mutation=None):
+    """The dungeon generator: the real tools/dungeon.py, or a MUTATED COPY of its source compiled as module `dungeon_mut`.
+    data/ is untouched in both: a mutation of the generator is the only kind that tests independence."""
+    import dungeon as D
+    if not mutation:
+        return D
+    old, new = MUTATIONS[mutation]["edit"]
+    src = (ROOT / "tools" / "dungeon.py").read_text(encoding="utf-8")
+    if src.count(old) != 1:
+        raise RuntimeError("mutation %s: its target text occurs %d times in tools/dungeon.py (want 1); the generator changed, "
+                           "update the mutation, do not loosen it" % (mutation, src.count(old)))
+    mod = type(sys)("dungeon_mut")
+    mod.__file__ = str(ROOT / "tools" / "dungeon.py")
+    exec(compile(src.replace(old, new), mod.__file__, "exec"), mod.__dict__)
+    return mod
+
+
+class Env:
+    """One simulated world over one built pack, shared by the scenarios (a fresh player and fresh slots for each)."""
+
+    def __init__(self, files, doc, tmp):
+        DW, FAKES, PS = load_sim()
+        self.PS, self.doc = PS, doc
+        self.ds = [d["id"] for d in doc["dungeons"]]
+        self.shorts = {d["id"]: d["short"] for d in doc["dungeons"]}
+        self.rips = doc["rips"]
+        self.sig = doc["engine"]["sigils"]["ladder"]
+        self.lockout = doc["engine"]["lockout_ticks"]
+        self.keeper = doc["engine"]["keeper"]["period_ticks"]
+        self.files = files
+        out = Path(tmp)
+        n = 0
+        for path, text in files.items():
+            if SKIP_FILES.search("/" + path):
+                continue
+            f = out / path
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_text(text, encoding="utf-8")
+            n += 1
+        self.written = n
+        fakes = dict(FAKES)
+        fakes["cobblers:levelcap/battle_check"] = ["$scoreboard players operation @s cobblers.lc_cap = @s capwant$(x)"]
+        for s in doc_slots(doc):
+            fakes["cobblers:dungeons/slot/s%d/reset" % s] = ["# the slot's block reset, not under test here"]
+        w = DW(out, fakes)
+        w.objectives |= {"cobblers.lc_cap", "tailend", "stale", "capwant"}
+        w.boot()
+        self.w = w
+        blob = "\n".join(t for p, t in files.items() if p.endswith(".mcfunction"))
+        self.missing = [o for o in CONTRACT if o not in blob]
+        self.rip_fn = rip_click_functions(files, self.rips)
+        self.n_players = 0
+
+    def lk(self, did):
+        return "dg.lk_%s" % self.shorts[did]
+
+    def fresh(self):
+        """Free every slot, restart the uptime well above any lockout, drop every player."""
+        w = self.w
+        for (h, o) in list(w.scores):
+            if o == "dg.own":
+                w.scores[(h, o)] = 0
+        w.set("#up", "dg.up", 1_000_000)
+        for p in list(w.players()):
+            w.ents.remove(p)
+        w.random_values.clear()
+
+    def player(self, band_cap=20, flags=(), tags=(), sigils=200, sigil_band=None, at=None):
+        self.n_players += 1
+        r = at or self.rips[0]
+        sb = sigil_band or SPEC_CAPS[band_cap]
+        p = self.w.player("A%d" % self.n_players, "minecraft:overworld", tuple(r["outside"][:3]),
+                          advancements=["cobblers:flag/%s" % f for f in flags])
+        p.tags.update(tags)
+        if sigils:
+            p.inventory.append([self.sig[sb - 1]["item"], {"cobblers_dg_sigil": sb}, sigils])
+        self.w.set(p.name, "capwant", band_cap)
+        return p
+
+    def sigil_count(self, p):
+        return sum(i[2] for i in p.inventory if i[0] in {s["item"] for s in self.sig})
+
+    def click(self, p, rip=None):
+        r = rip or self.rips[0]
+        self.w.call(self.rip_fn[r["id"]], self.PS.Ctx(p, p.dim, p.pos))
+
+    def entered(self, p):
+        """The dungeon id the last click opened for p, else None (refused)."""
+        if self.w.get(p.name, "dg.st") != 1:
+            return None
+        n = self.w.get(p.name, "dg.dun")
+        return self.ds[n - 1] if n else None
+
+    def backout(self, p):
+        """What the player does after the draw, in the way the game offers: the back rip, once the arrival has put them in the
+        entry room (dg.st 2). The slot is freed by the run's own end (m/end), the sigil refunded. Time passes a keeper pass."""
+        w = self.w
+        w.set(p.name, "dg.st", 2)
+        w.call("cobblers:dungeons/back", self.PS.Ctx(p, p.dim, p.pos))
+        w.set("#up", "dg.up", w.get("#up", "dg.up") + self.keeper)
+
+    def draws(self, p, n, rip=None):
+        out = []
+        for _ in range(n):
+            self.click(p, rip)
+            d = self.entered(p)
+            out.append(d)
+            if d is None:
+                break
+            self.backout(p)
+        return out
+
+    def last_door(self):
+        """The short whose own door the last click called, from the simulator's call log (a refusal is logged too)."""
+        for name, _who in reversed(self.w.calls):
+            m = re.fullmatch(r"cobblers:dungeons/door/([a-z0-9]+)", name)
+            if m and not m.group(1).startswith(("rip_", "refuse_", "go_")):
+                return m.group(1)
+        return None
+
+
+def doc_slots(doc):
+    """Global slot numbers 1..N: engine.slots.per_dungeon for each dungeon, in file order (data/dungeons.json engine.slots.why)."""
+    return list(range(1, doc["engine"]["slots"]["per_dungeon"] * len(doc["dungeons"]) + 1))
+
+
+def rip_click_functions(files, rips):
+    """{rip id: reward function id}: the function a right-click on the rip's interaction runs, found the way
+    the game finds it and without the generator's naming: the interaction summoned at the rip's click (in a rips/ function),
+    the tag it carries that an advancement's click criterion listens for, and that advancement's reward."""
+    listens = {}
+    for path, text in files.items():
+        if path.startswith("data/cobblers/advancement/dungeons/") and path.endswith(".json"):
+            j = json.loads(text)
+            crit = (j.get("criteria") or {}).get("click")
+            if crit:
+                nbt = crit["conditions"]["entity"][0]["predicate"].get("nbt", "")
+                for t in re.findall(r'"([^"]+)"', nbt):
+                    listens[t] = j["rewards"]["function"]
+    summons = []
+    for path, text in files.items():
+        if "/rips/" in path and path.endswith(".mcfunction"):
+            for m in re.finditer(r"summon minecraft:interaction (-?[\d.]+) (-?[\d.]+) (-?[\d.]+) \{[^\n]*?Tags:\[([^\]]*)\]", text):
+                summons.append((float(m.group(1)), float(m.group(2)), float(m.group(3)), re.findall(r'"([^"]+)"', m.group(4))))
+    out = {}
+    for r in rips:
+        x, y, z = r["click"]
+        for sx, sy, sz, tags in summons:
+            if abs(sx - (x + 0.5)) < 0.01 and abs(sy - y) < 0.01 and abs(sz - (z + 0.5)) < 0.01:
+                fns = {listens[t] for t in tags if t in listens}
+                if len(fns) == 1:
+                    out[r["id"]] = fns.pop()
+    return out
+
+
+# ------------------------------------------------------------------------------------------------- the scenarios
+# Each returns [problem]. The expectation is derived from the spec and the roster in the scenario, never from the generator.
+
+
+def _permutation_windows(seq, want):
+    """[problem]: every run of len(want) consecutive draws must be each wanted dungeon exactly once (least recently entered
+    wins: with n candidates and nothing else changing, the draw is a rotation through all n before any repeat)."""
+    n = len(want)
+    bad = []
+    for i in range(0, len(seq) - n + 1):
+        if sorted(seq[i:i + n]) != sorted(want):
+            bad.append("draws %d..%d are %s, not each of %s once" % (i + 1, i + n, seq[i:i + n], sorted(want)))
+            break
+    return bad
+
+
+def sc_band_from_cap(env, expect):
+    bad = []
+    for cap, band in SPEC_CAPS.items():
+        env.fresh()
+        p = env.player(cap, ALL_FLAGS)
+        env.click(p)
+        if env.entered(p) is None:
+            bad.append("cap %d: a click with the right sigil and every flag was refused" % cap)
+            continue
+        got = env.w.get(p.name, "dg.band")
+        if got != band:
+            bad.append("cap %d: the band is %s, the spec's is %d" % (cap, got, band))
+    return bad
+
+
+def sc_reachable_sets(env, expect):
+    """For every flag set and every band: the dungeons the draw can open are EXACTLY those the spec makes eligible (first_band
+    at or under the band, the gate held), and each is reached within three rotations."""
+    bad = []
+    caps = (20, 30, 40, 50, 60, 100)
+    flagsets = [()] + [(f,) for f in ALL_FLAGS] + [("gym6_cleared", "gym8_cleared"), ALL_FLAGS]
+    for fl in flagsets:
+        for cap in caps:
+            band = SPEC_CAPS[cap]
+            want = eligible(band, set(fl), expect)
+            env.fresh()
+            p = env.player(cap, fl)
+            got = env.draws(p, 3 * len(want) + 2)
+            if None in got:
+                bad.append("band %d flags %s: a click was refused with a sigil and %d eligible dungeons" % (band, list(fl), len(want)))
+                continue
+            if set(got) != want:
+                bad.append("band %d flags %s: drew %s; extra %s, never drawn %s"
+                           % (band, list(fl), sorted(set(got)), sorted(set(got) - want), sorted(want - set(got))))
+            bad += ["band %d flags %s: %s" % (band, list(fl), m) for m in _permutation_windows(got, want)]
+    return bad
+
+
+def sc_every_band_has_a_candidate(env, expect):
+    bad = []
+    for band in range(1, 7):
+        if not eligible(band, set(ALL_FLAGS), expect):
+            bad.append("band %d has no candidate in the roster" % band)
+    return bad
+
+
+def sc_lockout_skips(env, expect):
+    bad = []
+    band1 = sorted(eligible(1, set(), expect))
+    for locked in band1:
+        env.fresh()
+        p = env.player(20)
+        up = env.w.get("#up", "dg.up")
+        env.w.set(p.name, env.lk(locked), up - 1000)          # entered 1000 ticks ago, the lockout is an hour
+        got = env.draws(p, 2 * len(band1))
+        if None in got:
+            bad.append("%s locked out: a click was refused although four others are open" % locked)
+        elif locked in got:
+            bad.append("%s locked out an hour and drawn anyway: %s" % (locked, got))
+        elif set(got) != set(band1) - {locked}:
+            bad.append("%s locked out: the others drawn were %s" % (locked, sorted(set(got))))
+        env.w.set(p.name, env.lk(locked), env.w.get("#up", "dg.up") - 10 * env.lockout)   # long past
+        if locked not in env.draws(p, 2 * len(band1)):
+            bad.append("%s was never drawn again after its lockout ran out" % locked)
+    # every open dungeon locked out: the click is refused, nothing is taken and it is not a draw
+    env.fresh()
+    p = env.player(20)
+    up = env.w.get("#up", "dg.up")
+    for d in band1:
+        env.w.set(p.name, env.lk(d), up - 1000)
+    before = env.sigil_count(p)
+    env.click(p)
+    if env.entered(p) is not None:
+        bad.append("every band-1 dungeon locked out and a click still opened %s" % env.entered(p))
+    if env.sigil_count(p) != before:
+        bad.append("a click refused for the lockout took a sigil")
+    return bad
+
+
+def sc_full_falls_through(env, expect):
+    bad = []
+    band1 = sorted(eligible(1, set(), expect))
+    per = env.doc["engine"]["slots"]["per_dungeon"]
+    for full in band1:
+        env.fresh()
+        idx = env.ds.index(full) + 1
+        for k in range(per):                                    # the playtest path names the dungeon: it fills the slots
+            t = env.player(20, tags=(PLAYTEST_TAG,))
+            env.w.set(t.name, "dg.ptdun", idx)
+            env.click(t)
+            if env.entered(t) != full:
+                bad.append("could not seat occupant %d in %s through the playtest path: %s" % (k + 1, full, env.entered(t)))
+                break
+        p = env.player(20)
+        got = env.draws(p, 2 * len(band1))
+        if None in got or full in got or set(got) != set(band1) - {full}:
+            bad.append("%s full: a regular player drew %s" % (full, got))
+    env.fresh()
+    idxs = [env.ds.index(d) + 1 for d in band1]
+    for idx in idxs:
+        for _ in range(per):
+            t = env.player(20, tags=(PLAYTEST_TAG,))
+            env.w.set(t.name, "dg.ptdun", idx)
+            env.click(t)
+    p = env.player(20)
+    before = env.sigil_count(p)
+    env.click(p)
+    if env.entered(p) is not None:
+        bad.append("every band-1 dungeon full and a click still opened %s" % env.entered(p))
+    if env.sigil_count(p) != before:
+        bad.append("a click refused for busy slots took a sigil")
+    return bad
+
+
+def sc_ties_are_random(env, expect, trials=400):
+    """Five never-drawn band-1 dungeons tie. Over `trials` independent first clicks each must come up about trials/5 times.
+    The bound is 5 standard deviations of a fair draw (sd = sqrt(400 * .2 * .8) = 8 around 80), not a number fitted to the data."""
+    band1 = sorted(eligible(1, set(), expect))
+    n = len(band1)
+    env.fresh()
+    counts = {d: 0 for d in band1}
+    rolls0 = len(env.w.random_log)
+    for _ in range(trials):
+        p = env.player(20)
+        env.click(p)
+        d = env.entered(p)
+        if d is not None:
+            counts[d] += 1
+            env.backout(p)
+        env.w.ents.remove(p)
+    bad = []
+    mean = trials / float(n)
+    sd = (trials * (1.0 / n) * (1 - 1.0 / n)) ** 0.5
+    for d, c in counts.items():
+        if abs(c - mean) > 5 * sd:
+            bad.append("tie-break: %s was drawn %d of %d first clicks; a fair draw gives %.0f +- %.0f" % (d, c, trials, mean, 5 * sd))
+    if len(env.w.random_log) - rolls0 < trials // 2:
+        bad.append("tie-break: %d random rolls for %d tied draws" % (len(env.w.random_log) - rolls0, trials))
+    return bad
+
+
+def _door_dungeon(env, short):
+    return next((d for d, s in env.shorts.items() if s == short), None)
+
+
+def sc_refused_click_is_not_a_draw(env, expect):
+    """A click that is refused takes nothing and does not count as a draw: with the same roll the next click that is let
+    through opens the SAME dungeon the refused click would have, whatever the refusal was."""
+    bad = []
+    for label, weak in (("no sigil", False), ("a lower band's sigil", True)):
+        env.fresh()
+        cap = 30                                            # band 2
+        p = env.player(cap, sigils=0)
+        if weak:
+            p.inventory.append([env.sig[0]["item"], {"cobblers_dg_sigil": 1}, 3])
+        before = env.sigil_count(p)
+        env.w.random_values[:] = [123456789]
+        env.click(p)
+        refused_to = _door_dungeon(env, env.last_door())
+        if env.entered(p) is not None:
+            bad.append("%s: the click was not refused" % label)
+            continue
+        if env.sigil_count(p) != before:
+            bad.append("%s: a refused click changed the sigils from %d to %d" % (label, before, env.sigil_count(p)))
+        if env.w.get(p.name, "dg.rip"):
+            bad.append("%s: a refused click recorded a way out" % label)
+        # one more refusal. Not more: with n candidates, n refusals that each stamped would stamp every one of them in turn and
+        # bring the oldest stamp round to the first again, hiding the fault (the first draft of this check did exactly that)
+        env.w.random_values[:] = [123456789]
+        env.click(p)
+        p.inventory[:] = [[env.sig[1]["item"], {"cobblers_dg_sigil": 2}, 5]]
+        env.w.random_values[:] = [123456789]
+        env.click(p)
+        opened = env.entered(p)
+        if opened is None:
+            bad.append("%s: with the right sigil the click was still refused" % label)
+        elif opened != refused_to:
+            bad.append("%s: the refused click had drawn %s, the next click with the same roll opened %s: the refusal counted as a draw"
+                       % (label, refused_to, opened))
+    return bad
+
+
+def sc_random_walk_matches_the_spec_model(env, expect, seeds=6, steps=160):
+    """A reference model written from DUNGEON_DRAW.md 2.2-2.3 alone (eligible by band and gate; open = not locked out, a free
+    slot; the oldest stamp among the open wins, never drawn oldest; nothing open falls back to the eligible ones, whose door
+    refuses) is driven by random sequences of clicks, back-outs, lockouts, time and other players taking slots, beside the
+    generated functions. At every click the dungeon the draw reached must be one the model allows, and the click must open
+    exactly when the model says something is open. This reaches combinations no hand-written scenario names."""
+    import random
+    bad = []
+    per = env.doc["engine"]["slots"]["per_dungeon"]
+    for seed in range(seeds):
+        rng = random.Random(seed)
+        env.fresh()
+        cap = rng.choice([20, 30, 40, 50, 60, 100])
+        band = SPEC_CAPS[cap]
+        flags = tuple(f for f in ALL_FLAGS if rng.random() < 0.6)
+        elig = eligible(band, set(flags), expect)
+        p = env.player(cap, flags)
+        up = lambda: env.w.get("#up", "dg.up")                    # noqa: E731
+        stamp, lock, occ, occupants, inrun = {}, {}, {d: 0 for d in env.ds}, [], None
+        for step in range(steps):
+            op = rng.choice(["click", "click", "click", "back", "time", "lock", "occupy", "release"])
+            tag = "seed %d step %d (%s, band %d, flags %s)" % (seed, step, op, band, list(flags))
+            if op == "time":
+                env.w.set("#up", "dg.up", up() + rng.choice([20, 500, 40000, 80000]))
+            elif op == "lock":
+                d = rng.choice(sorted(elig))
+                s = up() - rng.choice([0, 1000, 71000, 72000, 73000, 200000])
+                env.w.set(p.name, env.lk(d), s)
+                lock[d] = s
+            elif op == "occupy":
+                d = rng.choice(sorted(elig))
+                if occ[d] + (1 if inrun == d else 0) < per:
+                    t = env.player(20, tags=(PLAYTEST_TAG,))
+                    env.w.set(t.name, "dg.ptdun", env.ds.index(d) + 1)
+                    env.click(t)
+                    if env.entered(t) != d:
+                        bad.append("%s: the playtest occupant could not take a free slot of %s: %s" % (tag, d, env.entered(t)))
+                        return bad
+                    occ[d] += 1
+                    occupants.append((d, t))
+            elif op == "release" and occupants:
+                d, t = occupants.pop(rng.randrange(len(occupants)))
+                env.backout(t)
+                occ[d] -= 1
+            elif op == "back" and inrun:
+                env.backout(p)
+                inrun = None
+            elif op == "click":
+                before = [env.w.get(p.name, o) for o in ("dg.run", "dg.slot", "dg.dun", "dg.rip")] + [env.sigil_count(p)]
+                env.click(p)
+                got, door = env.entered(p), _door_dungeon(env, env.last_door())
+                if inrun:
+                    after = [env.w.get(p.name, o) for o in ("dg.run", "dg.slot", "dg.dun", "dg.rip")] + [env.sigil_count(p)]
+                    if after != before:
+                        bad.append("%s: a click by a player already in a run changed their run, slot, dungeon, rip or sigils: %s -> %s"
+                                   % (tag, before, after))
+                        return bad
+                    continue
+                locked = {d for d in elig if d in lock and 0 <= up() - lock[d] < env.lockout}
+                free = {d for d in elig if occ[d] < per}
+                openset = (elig - locked) & free
+                pool = openset or elig
+                oldest = min((stamp.get(d, -1) for d in pool))
+                allowed = {d for d in pool if stamp.get(d, -1) == oldest}
+                if door not in allowed:
+                    bad.append("%s: the draw reached %s; the model allows %s (open %s, locked %s, full %s, stamps %s)"
+                               % (tag, door, sorted(allowed), sorted(openset), sorted(locked), sorted(d for d in elig if occ[d] >= per),
+                                  {d: stamp[d] for d in sorted(stamp)}))
+                    return bad
+                if bool(openset) != (got is not None):
+                    bad.append("%s: the model has %d open dungeons, the click %s" % (tag, len(openset), "opened %s" % got if got else "was refused"))
+                    return bad
+                if got is not None:
+                    stamp[got] = up()
+                    inrun = got
+    return bad
+
+
+def sc_playtest_path(env, expect):
+    bad = []
+    ab = env.ds.index("ash_bell") + 1
+    env.fresh()
+    p = env.player(60, tags=(PLAYTEST_TAG,))
+    env.w.set(p.name, "dg.ptdun", ab)
+    env.click(p)
+    if env.entered(p) != "ash_bell":
+        bad.append("the playtest tag with dg.ptdun = ash_bell opened %s (gate bypass is the playtest path)" % env.entered(p))
+    env.fresh()
+    q = env.player(60)
+    env.w.set(q.name, "dg.ptdun", ab)
+    got = env.draws(q, 12)
+    if "ash_bell" in got:
+        bad.append("without the playtest tag, dg.ptdun forced or opened a gated dungeon: %s" % got)
+    return bad
+
+
+def sc_every_rip_draws_and_leaves_by_itself(env, expect):
+    bad = []
+    if len(env.rip_fn) != len(env.rips):
+        bad.append("%d of %d rips have a click that reaches a function (an interaction at the click carrying a tag an advancement "
+                   "listens for)" % (len(env.rip_fn), len(env.rips)))
+    if len(set(env.rip_fn.values())) != len(env.rip_fn):
+        bad.append("two rips share a click function")
+    for k, r in enumerate(env.rips, 1):
+        if r["id"] not in env.rip_fn:
+            continue
+        env.fresh()
+        p = env.player(20)
+        p.pos = [0.5, 200.0, 0.5]
+        have = env.sigil_count(p)
+        env.click(p, r)
+        d = env.entered(p)
+        if d is None:
+            bad.append("%s: a click with a sigil at band 1 opened nothing" % r["id"])
+            continue
+        if env.w.get(p.name, "dg.rip") != k:
+            bad.append("%s: dg.rip is %s, its place in data/dungeon_rips.json is %d" % (r["id"], env.w.get(p.name, "dg.rip"), k))
+        if env.sigil_count(p) != have - 1:
+            bad.append("%s: one entry took %d sigils" % (r["id"], have - env.sigil_count(p)))
+        env.backout(p)
+        want = [float(v) for v in r["outside"][:3]]
+        if p.dim != OW or any(abs(a - b) > 0.01 for a, b in zip(p.pos, want)):
+            bad.append("%s: the way out left the player at %s in %s, not at the rip's outside %s" % (r["id"], [round(v, 2) for v in p.pos], p.dim, want))
+        if env.sigil_count(p) != have:
+            bad.append("%s: the back rip did not refund the sigil (%d of %d)" % (r["id"], env.sigil_count(p), have))
+    return bad
+
+
+def sc_rips_are_placed(env, expect):
+    """R16DR places every rip in data/dungeon_rips.json: its blocks (the themed patch under the oval, at the oval's middle
+    column), its interaction at the click, and its oval; and the reapply step list carries the step with the right count."""
+    files, bad = env.files, []
+    blocks = {}
+    for path, text in files.items():
+        if path.startswith("data/cobblers/function/dungeons/rips/blocks_"):
+            for m in re.finditer(r"^setblock (-?\d+) (-?\d+) (-?\d+) ", text, re.M):
+                blocks.setdefault(path, set()).add(tuple(int(v) for v in m.groups()))
+    place = files.get("data/cobblers/function/dungeons/rips/place.mcfunction", "")
+    called = set(re.findall(r"function cobblers:dungeons/(rips/blocks_[a-z0-9_]+)", place))
+    ovals = []
+    for path, text in files.items():
+        if "/rips/" in path and path.endswith(".mcfunction"):
+            for m in re.finditer(r"summon minecraft:item_display (-?[\d.]+) (-?[\d.]+) (-?[\d.]+)", text):
+                ovals.append(tuple(float(v) for v in m.groups()))
+    for r in env.rips:
+        f = r["frame"]
+        mid = (f["x0"] + f["x1"]) // 2
+        cell = (mid, f["y"] - 1, f["z"] + 1)
+        homes = [p for p, cells in blocks.items() if cell in cells]
+        if len(homes) != 1:
+            bad.append("%s: the patch under the oval (%s) is set by %d rips/blocks_* functions" % (r["id"], cell, len(homes)))
+        elif homes[0][len("data/cobblers/function/dungeons/"):-len(".mcfunction")] not in called:
+            bad.append("%s: its blocks function is not called by rips/place, so R16DR never lays it" % r["id"])
+        if not any(abs(ox - (mid + 0.5)) < 0.01 and f["z"] + 1 <= oz <= f["z"] + 2 and f["y"] <= oy <= f["y"] + 4 for ox, oy, oz in ovals):
+            bad.append("%s: no oval is summoned in front of its opening" % r["id"])
+    if len(called) != len(env.rips):
+        bad.append("rips/place calls %d blocks functions for %d rips" % (len(called), len(env.rips)))
+    return bad
+
+
+def sc_retired_rips_are_taken_out(env, expect):
+    """The 13 trail rips retired by the owner (2026-10-13): R16DR's rips/retire puts back each one's recorded plane and patch,
+    the entity sweep kills its interaction and oval, and nothing in the pack still draws from its click. The records are read from
+    data/dungeon_rips.json and the theme blocks from data/dungeon_themes.json HERE, not from the generator's doc."""
+    retired = json.loads((DATA / "dungeon_rips.json").read_text(encoding="utf-8")).get("retired_rips") or []
+    themes = json.loads((DATA / "dungeon_themes.json").read_text(encoding="utf-8"))["themes"]
+    if not retired:
+        return ["data/dungeon_rips.json has no retired_rips: the owner's decision of 2026-10-13 is not in the record"]
+    bad = retire_pack_problems(env.files, retired, themes)
+    bad += retire_sweep_problems(env.files, retired)
+    bad += retired_click_problems(env.files, retired, rip_click_functions(env.files, retired))
+    return bad
+
+
+def sc_reapply_wires_r16dr(env, expect, mod):
+    bad = []
+    src = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
+    if "DG.reapply_steps()" not in src:
+        bad.append("tools/reapply.py does not extend its step list with dungeon.reapply_steps()")
+    steps = mod.reapply_steps(env.doc)
+    r16dr = [s for s in steps if s[0] == "R16DR"]
+    if len(r16dr) != 1:
+        bad.append("%d R16DR steps" % len(r16dr))
+    else:
+        m = re.search(r"(\d+) rips", r16dr[0][1])
+        if not m or int(m.group(1)) != len(env.rips):
+            bad.append("R16DR says %s rips, data/dungeon_rips.json has %d" % (m and m.group(1), len(env.rips)))
+        if ("fn", "cobblers:dungeons/rips/place") not in r16dr[0][2]:
+            bad.append("R16DR does not run cobblers:dungeons/rips/place")
+    retired = json.loads((DATA / "dungeon_rips.json").read_text(encoding="utf-8")).get("retired_rips") or []
+    bad += retire_step_problems(steps, retired)
+    return bad
+
+
+def sc_record_matches_roster(env, expect):
+    """data/dungeons.json carries, for each dungeon, the first_band and gate the roster proposes (the owner took them as written)."""
+    bad = []
+    for d in env.doc["dungeons"]:
+        fb, flag = expect[d["id"]]
+        if d.get("first_band") != fb:
+            bad.append("%s: first_band %s, the roster's is %d" % (d["id"], d.get("first_band"), fb))
+        want = "cobblers:flag/%s" % flag if flag else None
+        if d.get("gate_flag") != want:
+            bad.append("%s: gate_flag %s, the roster's is %s" % (d["id"], d.get("gate_flag"), want))
+    if env.lockout != 72000:
+        bad.append("engine.lockout_ticks is %d, the spec's one hour of uptime is 72000" % env.lockout)
+    return bad
+
+
+SCENARIOS = (
+    ("record_matches_roster", sc_record_matches_roster),
+    ("every_band_has_a_candidate", sc_every_band_has_a_candidate),
+    ("band_from_cap", sc_band_from_cap),
+    ("reachable_sets", sc_reachable_sets),
+    ("lockout_skips", sc_lockout_skips),
+    ("full_falls_through", sc_full_falls_through),
+    ("ties_are_random", sc_ties_are_random),
+    ("refused_click_is_not_a_draw", sc_refused_click_is_not_a_draw),
+    ("random_walk_matches_the_spec_model", sc_random_walk_matches_the_spec_model),
+    ("playtest_path", sc_playtest_path),
+    ("every_rip_draws_and_leaves_by_itself", sc_every_rip_draws_and_leaves_by_itself),
+    ("rips_are_placed", sc_rips_are_placed),
+    ("retired_rips_are_taken_out", sc_retired_rips_are_taken_out),
+)
+
+
+# ------------------------------------------------------------------------------------------------- mutations of the GENERATOR
+# Each edits ONE spot of tools/dungeon.py's source (data/ untouched) and must make run_draw return problems.
+
+_STAMP = '"scoreboard players operation @s %s = #up %s" % (dr_obj(d), O["up"]),'
+
+MUTATIONS = {
+    "floor_one_band_low": {
+        "why": "a dungeon is drawn one band below its first_band (the < for <= slip)",
+        "edit": ('fb, gf = d.get("first_band", 1), d.get("gate_flag")', 'fb, gf = d.get("first_band", 1) - 1, d.get("gate_flag")')},
+    "floor_one_band_high": {
+        "why": "a dungeon is not drawn at its own first_band (the <= for < slip)",
+        "edit": ('fb, gf = d.get("first_band", 1), d.get("gate_flag")', 'fb, gf = d.get("first_band", 1) + 1, d.get("gate_flag")')},
+    "lockout_dropped": {
+        "why": "the draw no longer skips a dungeon the player is locked out of",
+        "edit": ('matches 0..%d run "', 'matches -2147483648..-%d run "')},
+    "full_dropped": {
+        "why": "the draw no longer skips a dungeon with no free slot",
+        "edit": ('if score #f%d %s matches 1 unless', 'if score #f%d %s matches 0..1 unless')},
+    "gate_inverted": {
+        "why": "a gated dungeon is drawn only WITHOUT its flag",
+        "edit": ('if entity @s[advancements={%s=true}] run scoreboard players set #c', 'unless entity @s[advancements={%s=true}] run scoreboard players set #c')},
+    "gate_open_to_all": {
+        "why": "the playtest bypass opens every gate to everyone who is not a playtester",
+        "edit": ('if entity @s[tag=%s] run scoreboard players set #c%d', 'if entity @s[tag=!%s] run scoreboard players set #c%d')},
+    "never_drawn_is_youngest": {
+        "why": "a dungeon never drawn counts as the most recent, so the one just drawn wins again",
+        "edit": ('"scoreboard players set #a%d %s 2147483000" % (i, O["t"]),', '"scoreboard players set #a%d %s 0" % (i, O["t"]),')},
+    "refusal_stamps": {
+        "why": "a refused click stamps the dungeon it drew, so the refusal counts as a draw",
+        "edit": ('"execute unless score #why %s matches 0 run return run function %s" % (O["t"], F("door/refuse_%s" % sh)),',
+                 _STAMP + '\n               "execute unless score #why %s matches 0 run return run function %s" % (O["t"], F("door/refuse_%s" % sh)),')},
+    "backout_not_counted": {
+        "why": "the draw is not stamped at the go, so a backed-out dungeon can be drawn again at once (a free re-roll)",
+        "edit": (_STAMP, '"# mutated: no stamp",')},
+    "way_out_is_the_dungeons": {
+        "why": "the run does not remember which rip it was entered by, so m/out falls back to one fixed rip per dungeon",
+        "edit": ('"execute if score #rip %s matches 1.. run scoreboard players operation @s %s = #rip %s" % (O["t"], O["rip"], O["t"]),',
+                 '"# mutated: dg.rip not recorded",')},
+    "tie_is_not_random": {
+        "why": "the tie-break roll is always 0, so the first tied dungeon always wins",
+        "edit": ('random value 0..1073741823', 'random value 0..0')},
+    "retire_skips_the_plane": {
+        "why": "a retire function that does not put the rip's plane back (rips/retire_<name> holds the patch only)",
+        "edit": ('    out = rip_plane_lines(r)\n    for x, y, z, blk in rip_scorch_cells(r):\n        back = ret["ground"]',
+                 '    out = []\n    for x, y, z, blk in rip_scorch_cells(r):\n        back = ret["ground"]')},
+    "retire_skips_the_patch": {
+        "why": "a retire function that does not put the themed ground under the oval back (rips/retire_<name> holds the plane only)",
+        "edit": ('    for x, y, z, blk in rip_scorch_cells(r):\n        back = ret["ground"]',
+                 '    for x, y, z, blk in []:\n        back = ret["ground"]')},
+    "retire_overwrites_the_patch": {
+        "why": "a retire function that sets the patch back unconditionally, over whatever stands there now",
+        "edit": ('out.append("execute if block %d %d %d %s run setblock %d %d %d %s" % (x, y, z, blk, x, y, z, back))',
+                 'out.append("setblock %d %d %d %s" % (x, y, z, back))')},
+}
+
+# the mutations of the retire (rip_retire_lines): each is also run against the retire checker alone, on the functions the mutated
+# module's own rip_retire_lines emits (tests/test_dungeon_draw_audit.py), because the full draw run that catches them takes minutes
+RETIRE_MUTATIONS = ("retire_skips_the_plane", "retire_skips_the_patch", "retire_overwrites_the_patch")
+
+
+# ------------------------------------------------------------------------------------------------- the siting TOOL, on sites of my own
+
+
+RIPS_MUTATIONS = {
+    "clearance_shrunk": {
+        "why": "tools/dungeon_rips.py holds a site to 3 blocks from an authored coordinate instead of 30",
+        "edit": ("CLEARANCE = 30\n", "CLEARANCE = 3\n")},
+    "precinct_ignored": {
+        "why": "tools/dungeon_rips.py no longer refuses a site beside a spawn-free zone or a town",
+        "edit": ("        if box_distance(win, b) < CLEARANCE:", "        if False and box_distance(win, b) < CLEARANCE:")},
+}
+
+
+def load_rips_module(mutation=None):
+    import dungeon_rips as R
+    if not mutation:
+        return R
+    old, new = RIPS_MUTATIONS[mutation]["edit"]
+    src = (ROOT / "tools" / "dungeon_rips.py").read_text(encoding="utf-8")
+    if src.count(old) != 1:
+        raise RuntimeError("mutation %s: its target text occurs %d times in tools/dungeon_rips.py (want 1)" % (mutation, src.count(old)))
+    mod = type(sys)("dungeon_rips_mut")
+    mod.__file__ = str(ROOT / "tools" / "dungeon_rips.py")
+    exec(compile(src.replace(old, new), mod.__file__, "exec"), mod.__dict__)
+    return mod
+
+
+def sc_siting_tool_rejects_sites_that_break_a_rule(R, g=None):
+    """tools/dungeon_rips.py is the tool that SITES the rips. Here it is handed sites made to break one rule each, with the
+    ground from tools/ground.py, and must name each. The control is a real region rip with nothing near it. The distances are
+    chosen from the spec's 30 and 300 (DUNGEON_DRAW.md 2.6), never from the tool's own constants."""
+    import ground as G
+    g = g or G.load()
+    rips = json.loads((DATA / "dungeon_rips.json").read_text(encoding="utf-8"))["rips"]
+    base = next(r for r in rips if r["id"] == "rip_pine_isles")
+    f, rid, region = base["frame"], base["id"], base["region"]
+    mx, z = (f["x0"] + f["x1"]) // 2, f["z"]
+    polys = region_polygons()
+    bad = []
+
+    def run(frame=None, pts=(), boxes=(), polys_=None, others=(), reg=region):
+        return R.site_problems(g, rid, reg, frame or f, list(pts), polys_ or polys, list(boxes), list(others))
+
+    if run():
+        bad.append("control: the real rip with no neighbours is refused: %s" % run()[:2])
+    edge = mx + 4      # the footprint's east edge is x1 = mx + 2; the tool's own window runs to mx + 4: points beyond it are further from both
+    if not any("authored" in p for p in run(pts=[(edge + 15.0, z + 2.0, "f")])):
+        bad.append("an authored coordinate 15 blocks from the window is not refused (the spec's clearance is 30)")
+    if run(pts=[(edge + 45.0, z + 2.0, "f")]):
+        bad.append("an authored coordinate 45 blocks away is refused")
+    if not run(boxes=[(edge + 1, z - 10, edge + 40, z + 10, "town x")]):
+        bad.append("a town footprint one block from the window is not refused")
+    if run(boxes=[(edge + 60, z - 10, edge + 90, z + 10, "town x")]):
+        bad.append("a town footprint 60 blocks away is refused")
+    if not run(polys_=polys, reg="the_rift"):
+        bad.append("a rip outside the region it names is not refused")
+    if not any("spread" in p for p in run(others=[("rip_other", mx + 100, z)])):
+        bad.append("a region rip 100 blocks from another is not refused (the spread is 300)")
+    if run(others=[("rip_other", mx + 400, z)]):
+        bad.append("a region rip 400 blocks from another is refused")
+    # wet ground: the first 9 x 7 window of flat sea floor found on a coarse walk of the heightmap, a column under the sea
+    sea = water_world()[0]
+    wet = None
+    for zz in range(200, 8000, 64):
+        for xx in range(200, 8000, 64):
+            h = g.box(xx - 4, zz - 1, xx + 4, zz + 5)
+            if int(h.max()) == int(h.min()) and int(h.min()) < sea - 10:
+                wet = (xx, zz, int(h.min()))
+                break
+        if wet:
+            break
+    if wet is None:
+        bad.append("NOT_EXECUTED: no flat sea-floor window found to test the dry rule")
+    else:
+        wf = {"x0": wet[0] - 2, "x1": wet[0] + 2, "z": wet[1], "y": wet[2] + 1, "height": 4}
+        if not run(frame=wf):
+            bad.append("a rip on the sea floor at (%d, %d), y%d, is not refused" % (wet[0], wet[1], wet[2]))
+    return bad
+
+
+def run_draw(mod, tmp):
+    """(problems by scenario, facts): build the pack with `mod`, run every scenario on the simulator."""
+    t0 = time.time()
+    doc = mod.load()
+    # build() opens with problems(doc), the whole record's validator (about 130 s of the warm build: the rooms' walk checks).
+    # It validates data, not the draw, and the builder's own tests run it; it is skipped here and the two validators that
+    # concern the draw's and the rips' inputs are run instead (below). Restored in `finally`: the module is shared.
+    real_problems = mod.problems
+    mod.problems = lambda doc, **kw: []
+    try:
+        files = mod.build(doc)
+    finally:
+        mod.problems = real_problems
+    built = time.time() - t0
+    expect = roster_expectations(built_ids={d["id"] for d in doc["dungeons"]})
+    env = Env(files, doc, tmp)
+    out = {}
+    if env.missing:
+        out["contract_names"] = ["the pack never mentions %s: a name the scenarios read was renamed" % ", ".join(env.missing)]
+    for name, fn in SCENARIOS:
+        t = time.time()
+        try:
+            out[name] = fn(env, expect)
+        except Exception as e:                      # a function the pack lacks, an unsupported command: a finding, not a pass
+            out[name] = ["the scenario raised %s: %s" % (type(e).__name__, str(e)[:300])]
+        out[name + "__seconds"] = round(time.time() - t, 1)
+    out["input_validators"] = list(mod.draw_problems(doc)) + list(mod.rip_problems(doc))      # the builder's, cheap: not independent
+    try:
+        out["reapply_wires_r16dr"] = sc_reapply_wires_r16dr(env, expect, mod)
+    except Exception as e:
+        out["reapply_wires_r16dr"] = ["the scenario raised %s: %s" % (type(e).__name__, str(e)[:300])]
+    facts = {"build_seconds": round(built, 1), "functions_written": env.written, "dungeons": len(env.ds), "rips": len(env.rips)}
+    return out, facts
+
+
+# ------------------------------------------------------------------------------------------------- the CLI
+
+
+def failures(result):
+    return {k: v for k, v in result.items() if isinstance(v, list) and v and not k.endswith("__seconds")}
+
+
+def novel(base, mutated):
+    """{scenario: [problem]}: the problems a MUTATED generator's run has that the unmutated run did not. A mutation is caught
+    only by a problem that is new, so a defect the real generator already has cannot make a mutation look caught."""
+    seen = {(k, p) for k, v in failures(base).items() for p in v}
+    out = {}
+    for k, v in failures(mutated).items():
+        fresh = [p for p in v if (k, p) not in seen]
+        if fresh:
+            out[k] = fresh
+    return out
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
+    ap.add_argument("--out", required=True, help="where the full result is written (JSON)")
+    ap.add_argument("--only", choices=("siting", "draw"), help="run one part")
+    ap.add_argument("--mutate", help="comma list of mutation names, or 'all': rebuild from a mutated generator; the audit must FAIL")
+    a = ap.parse_args(argv)
+    result = {"audit": "dungeon draw", "spec": "docs/mechanics/DUNGEON_DRAW.md 2-4, data/dungeon_prize_roster.json"}
+    verdict = []
+    if a.mutate:
+        names = list(MUTATIONS) + list(RIPS_MUTATIONS) if a.mutate == "all" else a.mutate.split(",")
+        # the control first: the unmutated generator must pass, or a mutated failure proves nothing
+        res = {}
+        base = {}
+        if any(n in MUTATIONS for n in names):
+            with tempfile.TemporaryDirectory() as tmp:
+                base, facts = run_draw(load_module(None), tmp)
+        base["siting_tool"] = sc_siting_tool_rejects_sites_that_break_a_rule(load_rips_module(None))
+        res["control"] = {"problems": sum(len(v) for v in failures(base).values()), "scenarios_failing": sorted(failures(base))}
+        for n in names:
+            if n in RIPS_MUTATIONS:
+                got = {"siting_tool": sc_siting_tool_rejects_sites_that_break_a_rule(load_rips_module(n))}
+                why = RIPS_MUTATIONS[n]["why"]
+            else:
+                with tempfile.TemporaryDirectory() as tmp:
+                    got, _ = run_draw(load_module(n), tmp)
+                why = MUTATIONS[n]["why"]
+            f = novel(base, got)
+            res[n] = {"caught": bool(f), "why": why, "caught_by": sorted(f), "first_problem": next(iter(sum(f.values(), [])), None)}
+        result["mutations"] = res
+        missed = [n for n in names if not res[n]["caught"]]
+        Path(a.out).write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
+        print("MUTATIONS: %d of %d caught%s; control %s" % (len(names) - len(missed), len(names), (" (MISSED: %s)" % ", ".join(missed)) if missed else "",
+                                                         "clean" if not res["control"]["problems"] else "FAILS %s" % res["control"]["scenarios_failing"]))
+        return 1 if missed or res["control"]["problems"] else 0
+    if a.only in (None, "siting"):
+        t = time.time()
+        bad = run_siting(result)
+        result["siting_problems"] = bad
+        result["siting_seconds"] = round(time.time() - t, 1)
+        verdict.append("siting %d problem(s)%s" % (len(bad), "" if result["siting"]["old_positions"] == "checked" else " [test-rip positions NOT_EXECUTED]"))
+    if a.only in (None, "draw"):
+        with tempfile.TemporaryDirectory() as tmp:
+            got, facts = run_draw(load_module(None), tmp)
+        result["draw"] = got
+        result["draw_facts"] = facts
+        f = failures(got)
+        verdict.append("draw %d problem(s) in %d of %d scenarios" % (sum(len(v) for v in f.values()), len(f), len(SCENARIOS) + 1))
+    n = len(result.get("siting_problems", [])) + sum(len(v) for v in failures(result.get("draw", {})).values())
+    Path(a.out).write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
+    print("%s: %s -> %s" % ("PASS" if n == 0 else "FAIL", "; ".join(verdict), a.out))
+    return 1 if n else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

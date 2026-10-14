@@ -196,10 +196,18 @@ def arch_functions(doc, a):
              "execute unless entity @s[tag=%s] run tellraw @s %s" % (dive["tag"], P.text(dive["locked_message"], "gray")),
              "execute unless entity @s[tag=%s] run return 0" % dive["tag"],
              "function %s" % hook["destination_function"]]
-    stub = ["# THE HOOK (data/coldwater_station.json portal.hook). The Kyogre cave does not exist. When it does, this",
-            "# function's body becomes the crossing (tools/portals.py enter/* is the pattern: set the return score, tp in",
-            "# the destination dimension) and its own gate. Today it only says the way is shut. It changes no state.",
-            "tellraw @s %s" % P.text(hook["sealed_message"], "dark_aqua")]
+    if hook.get("cave_function"):
+        # 2026-10-13: the Kyogre cave exists (data/kyogre_cave.json, tools/kyogre_cave.py). The crossing and its whole
+        # gate live in the cave's own pack, so this pack stays the arch and nothing else; the touch above has already
+        # refused a non-diver, and the cave's function checks the dive tag again on its tp line
+        stub = ["# THE HOOK (data/coldwater_station.json portal.hook): the Kyogre cave's crossing, which carries its own",
+                "# gate (the dive tag, gym8_cleared and the station's attunement) and says the sealed line on a refusal.",
+                "function %s" % hook["cave_function"]]
+    else:
+        stub = ["# THE HOOK (data/coldwater_station.json portal.hook). The Kyogre cave does not exist. When it does, this",
+                "# function's body becomes the crossing (tools/portals.py enter/* is the pattern: set the return score, tp in",
+                "# the destination dimension) and its own gate. Today it only says the way is shut. It changes no state.",
+                "tellraw @s %s" % P.text(hook["sealed_message"], "dark_aqua")]
     adv = P.click_advancement(tag, "%s:coldwater_station/portal/touch" % NS)
     return ({"portal/build": function_limits.ensure_loaded(world), "portal/touch": touch, "portal/destination": stub},
             {"data/%s/advancement/coldwater_station/portal_touch.json" % NS: adv})
@@ -484,7 +492,26 @@ def conversation(r, numbers):
     """(conversation, quest) for one researcher, in data/dialogue.json's and data/quests.json's shape (the camp's)."""
     field = "quest.%s.%s_cursor" % (QUEST, r["id"].split("_")[-1])
     sp = r["id"]
-    responses = [{"id": "r_%s" % t["id"], "text": t["ask"], "next": t["id"]} for t in r["topics"]]
+    refs = [field]
+    transitions = []
+    responses = []
+    for t in r["topics"]:
+        # A topic may be shown only when a condition holds (`visible_when`, the compiler's own construct) and may change
+        # state when asked (`effects`: set_progression or function, run as one quest transition guarded by the same
+        # condition). The Kyogre quest's stages are topics of this shape (data/kyogre_cave.json quest, 2026-10-13)
+        resp = {"id": "r_%s" % t["id"], "text": t["ask"], "next": t["id"]}
+        if t.get("visible_when"):
+            resp["visible_when"] = t["visible_when"]
+        if t.get("effects"):
+            tid = "t_%s_%s" % (r["id"].split("_")[-1], t["id"])
+            transitions.append({"id": tid, "conditions": [t["visible_when"]] if t.get("visible_when") else [],
+                                "effects": list(t["effects"]) + [{"kind": "set_progression", "field": field,
+                                                                  "value": t["id"]}]})
+            resp["actions"] = [{"kind": "quest_transition", "transition": tid}]
+        for e in t.get("effects") or []:
+            if e.get("kind") == "set_progression" and e["field"] not in refs:
+                refs.append(e["field"])
+        responses.append(resp)
     responses.append({"id": "r_leave", "text": r["leave"], "actions": [{"kind": "close_dialogue"}]})
     nodes = [{"id": "hub", "kind": "choice", "speaker": sp, "text": fill(r["greeting"], numbers), "responses": responses}]
     nodes += [{"id": t["id"], "kind": "line", "speaker": sp, "text": fill(t["says"], numbers), "next": "hub"}
@@ -494,8 +521,21 @@ def conversation(r, numbers):
             "cursor": {"progression_field": field, "initial_node": "hub"},
             "entry_rules": [{"priority": 10, "when": {"kind": "always"}, "node": "hub"}],
             "nodes": nodes}
-    quest = {"id": QUEST, "progression_field_refs": [field], "transitions": [], "rewards": []}
+    for t in r["topics"]:
+        _cond_fields(t.get("visible_when"), refs)
+    quest = {"id": QUEST, "progression_field_refs": refs, "transitions": transitions, "rewards": []}
     return conv, quest
+
+
+def _cond_fields(c, refs):
+    """Every quest field a topic's condition reads, so the compiler's field check covers it."""
+    if not isinstance(c, dict):
+        return
+    if c.get("field") and c["field"] not in refs:
+        refs.append(c["field"])
+    for x in c.get("conditions") or []:
+        _cond_fields(x, refs)
+    _cond_fields(c.get("condition"), refs)
 
 
 # ------------------------------------------------------------------------------------------------------ the pack

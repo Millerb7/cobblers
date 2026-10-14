@@ -12,6 +12,10 @@ by tools/compile_dialogue.py into cobblers_dialogue; this file only says where e
                                            each seat, standing on a solid block with air at its feet and head,
                                            facing its yaw, named as its class names it
 
+An NPC whose stand follows a WORLD quest field (Lena, who moves once for everyone when the crushed house is checked) is a
+"relocating_seats" record, not a seat: its stands are "markers", placed by reapply R18CH from the score the dialogue
+writes (relocating_placements), and checked here like a seat (relocating_problems).
+
 What it does NOT cover: route NPCs (data/scenes.json, R17), reward NPCs (data/rewards.json, R9F), ferrymen (R17F),
 trader clerks (R14), trainers (tools/route_trainers.py), and whatever a template or a mod placed. A world sweep for
 those is a different question from "are OUR seats right" (CLAUDE.md "Our list is not the world").
@@ -41,6 +45,81 @@ def placements(doc=None):
     """[(conversation id, (x, y, z), npc class, yaw)] for tools/reapply.py's npc action."""
     doc = doc or load()
     return [(s["conversation"], tuple(s["at"]), "cobblers:%s" % s["id"], s["yaw"]) for s in doc["seats"]]
+
+
+def world_value(rc, holder, objective):
+    """A world scoreboard value over RCON (0 when nobody has written it: no score, or no objective yet), the value a
+    dialogue's world field holds (tools/compile_dialogue.py "world"). rc(cmd) -> reply text."""
+    import re
+    m = re.search(r"has (-?\d+) \[", rc("scoreboard players get %s %s" % (holder, objective)))
+    return int(m.group(1)) if m else 0
+
+
+def relocating_placements(doc=None):
+    """[(conversation, (x, y, z), npc class, yaw, selector)] for tools/reapply.py's npc action: an NPC whose stand is
+    decided by a WORLD field (data/npc_seats.json "relocating_seats", Lena in the crushed house). The stand is the
+    marker of the field's first value; `selector` is {objective, holder, value, at, yaw} for each LATER value, and the
+    action stands her there instead while the score holds that value. One later value is supported (check() says so)."""
+    import compile_dialogue as CD
+    doc = doc or load()
+    mk = doc.get("markers") or {}
+    out = []
+    for s in doc.get("relocating_seats") or []:
+        first, *later = list(s["states"].values())
+        sel = [{"objective": CD.WORLD_OBJECTIVE, "holder": CD.world_holder(s["state_field"]), "value": i + 1,
+                "at": tuple(mk[m]["at"]), "yaw": mk[m]["yaw"]} for i, m in enumerate(later)]
+        out.append((s["conversation"], tuple(mk[first]["at"]), "cobblers:%s" % s["id"], mk[first]["yaw"], *sel[:1]))
+    return out
+
+
+def relocating_problems(doc=None, ground=None, classes=None, progression=None):
+    """Problems with the markers and the relocating seats: a marker is a place an NPC stands, so it is held to a seat's
+    rules (ground + 1, off the road, facing what it says); a relocating seat must name a compiled class, a world field
+    of progression.json whose allowed values are its states in order, and markers that exist."""
+    import math
+    import re
+    import numpy as np
+    doc = doc or load()
+    classes = compiled_classes() if classes is None else classes
+    progression = progression or json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
+    fields = {f["id"]: f for f in progression["quest_fields"]}
+    mk = doc.get("markers") or {}
+    probs = []
+    pts = _route_points()
+    for mid, m in mk.items():
+        x, y, z = m["at"]
+        if y != m["ground"]["y"] + 1:
+            probs.append("%s: stands at y%d, but its ground is y%d (a marker is ground + 1)" % (mid, y, m["ground"]["y"]))
+        if ground is not None and ground(x, z) != m["ground"]["y"]:
+            probs.append("%s: heightmap ground at (%d, %d) is y%d, the marker says y%d" % (mid, x, z, ground(x, z), m["ground"]["y"]))
+        if not isinstance(m.get("yaw"), (int, float)) or not -180 <= m["yaw"] <= 180:
+            probs.append("%s: yaw %r is not a Minecraft yaw in -180..180" % (mid, m.get("yaw")))
+        elif len(re.findall(r"\((-?\d+), (-?\d+)\)", m.get("faces", ""))) == 1:
+            tx, tz = map(int, re.findall(r"\((-?\d+), (-?\d+)\)", m["faces"])[0])
+            want = math.degrees(math.atan2(-(tx - x), tz - z))
+            if abs((m["yaw"] - want + 180.0) % 360.0 - 180.0) > 0.5:
+                probs.append("%s: yaw %s, but %r is at bearing %.1f" % (mid, m["yaw"], m["faces"], want))
+        d = float(np.min(np.hypot(pts[:, 0] - x, pts[:, 1] - z)))
+        if d < MIN_ROUTE:
+            probs.append("%s: %.1f blocks from a walked route line" % (mid, d))
+    seated = {s["id"] for s in doc["seats"]}
+    for s in doc.get("relocating_seats") or []:
+        sid = s["id"]
+        if sid in seated:
+            probs.append("%s: in both seats and relocating_seats (R17N would seat a second one)" % sid)
+        if sid not in classes:
+            probs.append("%s: no compiled NPC class" % sid)
+        f = fields.get(s["state_field"])
+        if not f or f.get("scope") != "world":
+            probs.append("%s: state_field %s is not a world field of data/progression.json" % (sid, s["state_field"]))
+        elif list(s["states"]) != f.get("allowed_values"):
+            probs.append("%s: states %s are not the field's allowed_values %s in order" % (sid, list(s["states"]), f.get("allowed_values")))
+        if len(s["states"]) != 2:
+            probs.append("%s: %d states; R18CH's npc action takes exactly two (a first stand and one later)" % (sid, len(s["states"])))
+        for st, mid in s["states"].items():
+            if mid not in mk:
+                probs.append("%s: state %s names marker %s, which is not in markers" % (sid, st, mid))
+    return probs
 
 
 def compiled_classes():
@@ -110,6 +189,7 @@ def check(doc=None, ground=None, classes=None):
             probs.append("%s: both seated and not_seated" % n["id"])
         if not n.get("why"):
             probs.append("%s: not seated, and no why" % n["id"])
+    probs += relocating_problems(doc, ground, classes)
     return probs
 
 
@@ -123,7 +203,14 @@ def verify(rc, doc=None, classes=None):
     doc = doc or load()
     classes = compiled_classes() if classes is None else classes
     out = []
-    for s in doc["seats"]:
+    # a relocating NPC is probed at the stand its world field selects now (the same read R18CH seats her by)
+    stands = list(doc["seats"])
+    for p, rs in zip(relocating_placements(doc), doc.get("relocating_seats") or []):
+        at, yaw = p[1], p[3]
+        if len(p) > 4 and world_value(rc, p[4]["holder"], p[4]["objective"]) == p[4]["value"]:
+            at, yaw = p[4]["at"], p[4]["yaw"]
+        stands.append({"id": rs["id"], "at": list(at), "yaw": yaw})
+    for s in stands:
         sid, (x, y, z) = s["id"], s["at"]
         rc("forceload add %d %d" % (x, z))
         for _ in range(30):
@@ -171,8 +258,9 @@ def main(argv=None):
             g = None
         probs = check(ground=g)
         doc = load()
-        print("%d seats, %d not seated: %s" % (len(doc["seats"]), len(doc.get("not_seated") or []),
-                                               "clean" if not probs else "%d problem(s)" % len(probs)))
+        print("%d seats, %d relocating (%d markers), %d not seated: %s"
+              % (len(doc["seats"]), len(doc.get("relocating_seats") or []), len(doc.get("markers") or {}),
+                 len(doc.get("not_seated") or []), "clean" if not probs else "%d problem(s)" % len(probs)))
         for m in probs:
             print("  PROBLEM " + m)
         return 1 if probs else 0

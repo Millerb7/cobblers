@@ -559,6 +559,16 @@
           "node": "$cursor"
         },
         {
+          "priority": 35,
+          "why": "A player mid-way through Lena's lines who goes back to Hank (stage lena_dialogue, house still blocked) was shown nothing: no rule matched, so the dialogue closed. He repeats the objective; that line does not write the cursor (persist_cursor false), which is Lena's.",
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_pallet_crushed_house.stage",
+            "value": "lena_dialogue"
+          },
+          "node": "check_house_objective"
+        },
+        {
           "priority": 40,
           "when": {
             "kind": "progression_equals",
@@ -1291,6 +1301,7 @@
               "kind": "close_dialogue"
             }
           ],
+          "persist_cursor": false,
           "next": "check_house_objective"
         },
         {
@@ -1546,6 +1557,7 @@
               "kind": "close_dialogue"
             }
           ],
+          "persist_cursor": false,
           "next": "lena_unavailable"
         }
       ]
@@ -1668,6 +1680,64 @@
             ]
           },
           "node": "oak_waystone_late"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.waystone_claimed",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.trainer_card_claimed",
+                "value": false
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+                "values": [
+                  "oak_repeat_before_mismatch"
+                ]
+              }
+            ]
+          },
+          "node": "oak_card_late_before"
+        },
+        {
+          "priority": 9,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.waystone_claimed",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.trainer_card_claimed",
+                "value": false
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+                "values": [
+                  "oak_repeat_after_mismatch"
+                ]
+              }
+            ]
+          },
+          "node": "oak_card_late"
         },
         {
           "priority": 10,
@@ -1911,6 +1981,56 @@
             }
           ],
           "placeholder": "Claude, 2026-10-09 (the owner: 'a player's own waystone, given by Oak once after the starter'): a functional line for Codex to replace. data/player_waystone.json holds the decision and the reading of what the item does.",
+          "next": "oak_card_001"
+        },
+        {
+          "id": "oak_card_001",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "And this is your trainer card. Out on the roads, trainers only come looking for someone who carries one.",
+          "placeholder": "Claude, 2026-10-13 (the owner's E9, 'Oak gives the trainer card'): a functional line for Codex to replace. docs/mechanics/ECONOMY_V2.md section 4 and data/rewards.json oak_trainer_card hold the reason: Pallet has no income before Route 1, and without the card no ambient trainer finds the player.",
+          "next": "oak_card_002"
+        },
+        {
+          "id": "oak_card_002",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Keep it in your pack. If you lose it, the Pallet Mart will sell you another, but I have only the one to give.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_oak_trainer_card"
+            }
+          ],
+          "placeholder": "Claude, 2026-10-13 (the owner's E9): a functional line for Codex to replace. The Mart's $500 line stays as the replacement (data/traders.json stock_policy.trainer_card).",
+          "next": "oak_repeat_before_mismatch"
+        },
+        {
+          "id": "oak_card_late",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "I nearly forgot. Here is your trainer card. Out on the roads, trainers only come looking for someone who carries one. If you lose it, the Pallet Mart will sell you another.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_oak_trainer_card"
+            }
+          ],
+          "placeholder": "Claude, 2026-10-13 (the owner's E9): a functional line for Codex to replace. Said once to a player Oak had already sent off, and past the boundary, before the card shipped.",
+          "next": "oak_repeat_after_mismatch"
+        },
+        {
+          "id": "oak_card_late_before",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "I nearly forgot. Here is your trainer card. Out on the roads, trainers only come looking for someone who carries one. If you lose it, the Pallet Mart will sell you another.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_oak_trainer_card"
+            }
+          ],
+          "placeholder": "Claude, 2026-10-13 (the owner's E9): a functional line for Codex to replace. Said once to a player Oak sent off and who already holds the waystone but not the card, before the boundary.",
           "next": "oak_repeat_before_mismatch"
         },
         {

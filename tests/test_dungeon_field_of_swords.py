@@ -41,6 +41,7 @@ import dungeon_fights as DF  # noqa: E402
 import dungeon_rooms as R  # noqa: E402
 
 DOC = D.load()
+RIP = {r["legacy_dungeon"]: r for r in DOC["retired_rips"]}   # the 13 test rips, RETIRED 2026-10-13 (retired_rips in data/dungeon_rips.json): the records are kept
 FS = next(d for d in DOC["dungeons"] if d["id"] == "field_of_swords")
 OWNER_KINDS = {"maze", "puzzle", "parkour", "resources", "nest", "habitat", "stand", "miniboss"}
 OURS = {"gauntlet", "ambush", "vault", "dark_room", "collapse_bridge", "safe_room"}
@@ -99,8 +100,8 @@ def test_every_room_type_the_owner_named_is_there_and_three_of_ours():
     assert len((OURS & k) - {"ambush"}) >= 3, OURS & k
     top = [r["kind"] for r in FS["rooms"]]
     assert top[0] == "entry_room" and top[-2:] == ["boss_arena", "exit_room"]
-    assert FS["theme"] == "hill_keep" and FS["test"] is True and FS["rip"]["test"] is True
-    assert FS["gate_flag"] is None and FS["short"] == "fs"
+    assert FS["theme"] == "hill_keep" and FS["test"] is True and RIP[FS["id"]]["test"] is True
+    assert FS["gate_flag"] == "cobblers:flag/gym6_cleared" and FS["first_band"] == 4 and FS["short"] == "fs"
 
 
 def test_fewer_richer_rooms_short_wide_connectors_and_mostly_not_boxes():
@@ -430,20 +431,20 @@ def test_the_keep_builds_and_walks_with_no_problem_in_every_variant_and_branch()
 
 
 def test_the_rip_is_at_its_slot_clear_of_the_other_rips():
-    f = FS["rip"]["frame"]
+    f = RIP[FS["id"]]["frame"]
     cx = (f["x0"] + f["x1"]) / 2
     assert abs(cx - 1625) <= 10 and f["x1"] - f["x0"] == 4
     for d in DOC["dungeons"]:
         if d["id"] == FS["id"]:
             continue
-        o = d["rip"]["frame"]
+        o = RIP[d["id"]]["frame"]
         assert math.dist((cx, f["z"]), ((o["x0"] + o["x1"]) / 2, o["z"])) > 20, d["id"]
     mine = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["settlements"]["route1_old_mine"]
     x0, _z0, x1, _z1 = mine["plan"]["footprint"]["rect"]
     assert f["x0"] > x1 + 50
-    cxk, cy, cz = FS["rip"]["click"]
+    cxk, cy, cz = RIP[FS["id"]]["click"]
     assert cz == f["z"] + 1 and cy == f["y"] and cxk == (f["x0"] + f["x1"]) // 2
-    assert FS["rip"]["outside"][2] - 0.5 > cz + 1.5
+    assert RIP[FS["id"]]["outside"][2] - 0.5 > cz + 1.5
 
 
 def test_the_rip_is_on_the_heightmaps_dry_ground():
@@ -452,10 +453,10 @@ def test_the_rip_is_on_the_heightmaps_dry_ground():
         g = GR.load()
     except Exception as e:  # noqa: BLE001  (no heightmap in this checkout)
         pytest.skip("no heightmap: %s" % e)
-    f = FS["rip"]["frame"]
+    f = RIP[FS["id"]]["frame"]
     feet = {round(g(x, z)) + 1 for x in range(f["x0"], f["x1"] + 1) for z in (f["z"], f["z"] + 1)}
     assert feet == {f["y"]}, feet
-    ox, oy, oz, _ = FS["rip"]["outside"]
+    ox, oy, oz, _ = RIP[FS["id"]]["outside"]
     assert round(g(int(ox), int(oz))) + 1 == oy
     sea = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))["vertical"]["sea_level"]
     assert f["y"] - 1 > sea

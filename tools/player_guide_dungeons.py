@@ -62,6 +62,7 @@ GUIDE = {"file": "dungeons.html", "title": "Dungeons", "label": "Dungeons", "ord
 DATA = ROOT / "data"
 LEGEND_LABELS = {"legendary", "mythical", "ultra_beast", "paradox"}      # the jar's labels the page never names
 OPTIONAL_KINDS = ("bank_vault", "wishing_well", "bait_room", "fishing_room", "egg_room", "fossil_chamber")
+GATE_WORDS = {"gym6_cleared": "the sixth badge", "gym8_cleared": "all eight badges", "champion_cleared": "the Champion's title"}
 OPTIONAL_NAMES = {"bank_vault": "Bank vault", "wishing_well": "Wishing well", "bait_room": "Bait room",
                   "fishing_room": "Fishing pool", "egg_room": "Egg seller", "fossil_chamber": "Fossil dig"}
 # the author's plain words for each set piece (the piece ids are data/dungeon_setpieces.json's keys)
@@ -308,7 +309,7 @@ def collect(jar=None):
         byid = all_by_id(d)
         kinds = [r["kind"] for r in recs]
         x = {"id": d["id"], "name": d["name"], "theme_name": themes[d["theme"]]["name"], "theme": d["theme"],
-             "forks": fork_summary(d), "wing": has_wing(d), "gate": d.get("gate_flag"),
+             "forks": fork_summary(d), "wing": has_wing(d), "gate": d.get("gate_flag"), "first_band": d.get("first_band", 1),
              "clock": {b["band"]: D.clock_s(d, b) for b in bands},
              "piece": [(r.get("params") or {}).get("piece") for r in recs if r["kind"] == "setpiece"],
              "relics": sum(1 for r in recs if (r.get("params") or {}).get("relic")),
@@ -414,14 +415,16 @@ def render_basics(m):
              'step through with a <b>sigil</b>, cross the dungeon\'s threshold, and have until the clock runs out to '
              'fight, climb, dig, catch and find your way to the far rip. Everything you pick up is yours to keep '
              'except what the rift lends you.</p>' % ("solo" if m["doc"]["engine"]["members_max"] == 1 else "in a party"))
-    g.append('<div class="box warn"><p><b>Which dungeon a rip opens onto may change.</b> Today every rip is a test rip '
-             'and each one leads to one fixed dungeon. How a rip will pick its dungeon is still a design '
-             '(docs/mechanics/DUNGEON_DRAW.md): it is meant to follow your progress, not the biome. The figures on '
-             'this page are working values, tuned as the dungeons are played; nothing here has been run on the live '
-             'server yet.</p></div>')
+    g.append('<div class="box warn"><p><b>A rip draws its dungeon from your progress, not from where it stands.</b> Any rip '
+             'may open onto any dungeon. Your band (below) decides which are possible: a dungeon is never drawn below its '
+             'first band, and some also ask for a badge (listed under each). Of the dungeons you may enter, the rift opens '
+             'the one you drew least recently, and chance breaks a tie; backing out still counts as a draw. The thirteen '
+             'rips on the old mine\'s trail are test rips and stay where they are, with more rips out in the regions '
+             '(docs/mechanics/DUNGEON_DRAW.md). The figures on this page are working values, tuned as the dungeons are '
+             'played; nothing here has been run on the live server yet.</p></div>')
     g.append('<h3>Bands and sigils</h3><p>Your <b>band</b> is set by your level cap when you enter and held for the whole '
-             'run: it is the first band whose highest cap is at or above yours. Every dungeon serves all %d bands, with '
-             'its own clock and its own prizes at each (below). There is no badge gate on any dungeon today.</p>' % len(nb))
+             'run: it is the first band whose highest cap is at or above yours. Every dungeon has its own clock and its own '
+             'prizes at each of the %d bands (below); a late dungeon is not drawn early, an early one scales up with you.</p>' % len(nb))
     g.append(table(["Band", "Level caps", "Sigil", "Crafted from"], sig_rows))
     g.append('<ul><li>One sigil is spent per run, when you cross the threshold (the far door of the entry room). It '
              'accepts <b>your own band\'s sigil, or else the lowest higher band\'s you hold</b>. A lower band\'s sigil is '
@@ -593,7 +596,11 @@ def render_dungeon(m, x):
                          "; a vault" if any(v["kind"] == "vault" for v in x["vaults"]) else "",
                          "; a bank vault" if any(v["kind"] == "bank_vault" for v in x["vaults"]) else "")]
     g.append('<p><b>The road:</b> %s.</p>' % esc("; ".join(route)))
-    gate = "all %d bands, no badge gate today" % len(nb) if not x["gate"] else "gated by %s" % x["gate"]
+    # the draw (docs/mechanics/DUNGEON_DRAW.md 2.2): the dungeon's first band and the badge it asks for, in a player's words
+    fb = x["first_band"]
+    gate = ("all %d bands" % len(nb)) if fb <= nb[0] else ("band %d and up" % fb if fb < nb[-1] else "band %d only" % fb)
+    if x["gate"]:
+        gate += ", once you hold %s" % GATE_WORDS.get(x["gate"].rsplit("/", 1)[-1], x["gate"])
     g.append('<p><b>Bands served:</b> %s. <b>Relics:</b> %d.%s</p>'
              % (esc(gate), x["relics"],
                 (" <b>Optional rooms:</b> %s." % esc(", ".join(OPTIONAL_NAMES[k] for k in x["optional"]))) if x["optional"] else ""))
