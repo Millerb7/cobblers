@@ -15654,7 +15654,7 @@
           "id": "repeat",
           "kind": "line",
           "speaker": "hollis",
-          "text": "She sleeps, I watch, Highwire gets its quiet. Wake her and you'd best be ready.",
+          "text": "She sleeps and I watch. Wake her and you'd best be ready.",
           "next": "repeat"
         }
       ],
@@ -15882,7 +15882,7 @@
           "id": "s003",
           "kind": "line",
           "speaker": "hopgood",
-          "text": "You did that. You loved something until it turned into itself. Here. I bought this for them years ago: a Soothe Bell. The shop swore it would make them fond of me.",
+          "text": "You did that. Here. I bought this for them years ago: a Soothe Bell. The shop swore it would make them fond of me.",
           "next": "s004",
           "actions_after_acknowledge": [
             {
@@ -16049,7 +16049,7 @@
           "id": "hours",
           "kind": "line",
           "speaker": "isaura",
-          "text": "They come when the light goes and only then. The sky turns the colour of the inside of a shell, and you have about a minute and a half before the dark takes them home. Not before. Not after. Sit on the benches. Don't walk at them.",
+          "text": "They come when the light goes and only then. The sky turns the colour of the inside of a shell, and you have about a minute and a half before the dark takes them home. Sit on the benches. Don't walk at them.",
           "next": "nest"
         },
         {
@@ -16765,7 +16765,7 @@
           "id": "oren_002",
           "kind": "line",
           "speaker": "oren",
-          "text": "I kept telling myself control made the exchanges moral. Better measurements. Smaller losses. One more family carried out.",
+          "text": "I kept telling myself careful work made the exchanges right. Smaller losses, one more family carried out.",
           "next": "oren_003"
         },
         {
@@ -16821,7 +16821,7 @@
           "id": "oren_after_2",
           "kind": "line",
           "speaker": "oren",
-          "text": "Elara has the shaft interlock. Make her look at what remains when the miracle is removed.",
+          "text": "Elara has the shaft interlock. Go down and show her the board is dark.",
           "next": "oren_repeat"
         },
         {
@@ -17151,7 +17151,7 @@
           "id": "elara_004",
           "kind": "line",
           "speaker": "elara",
-          "text": "That certainty became an excuse to leave the other names blank.",
+          "text": "I never once asked for the other names.",
           "next": "elara_choice"
         },
         {
@@ -17214,7 +17214,7 @@
           "id": "elara_007",
           "kind": "line",
           "speaker": "elara",
-          "text": "Release it. Then we begin the work that cannot be solved by exchanging somebody else's home.",
+          "text": "Release it. Then we find people homes the slow way, without taking anyone else's.",
           "next": "elara_repeat"
         },
         {
@@ -17263,7 +17263,7 @@
           "id": "elara_after",
           "kind": "choice",
           "speaker": "elara",
-          "text": "The cradle is empty. Now the work starts that nobody can exchange their way out of.",
+          "text": "The cradle is empty. Now the slow work starts.",
           "responses": [
             {
               "id": "r_through",
@@ -17613,14 +17613,14 @@
           "id": "bound_002",
           "kind": "line",
           "speaker": "binder",
-          "text": "Release it. Then we begin the work that cannot be solved by exchanging somebody else's home.",
+          "text": "Release it. Then we find people homes the slow way, without taking anyone else's.",
           "next": "bound_003"
         },
         {
           "id": "bound_003",
           "kind": "line",
           "speaker": "narration",
-          "text": "The rings pull inward each time Hoopa moves. The machine is quiet; the binding is not.",
+          "text": "The rings pull inward each time Hoopa moves. The machine is quiet. The binding is not.",
           "next": "bound_004"
         },
         {
@@ -18010,7 +18010,7 @@
           "id": "k002",
           "kind": "line",
           "speaker": "vale",
-          "text": "Darkness makes a single, crushing strike. Waters makes a flowing run of blows. The station gives one, once, to whoever raised the Kubfu. Not both: the choice is the point.",
+          "text": "Darkness makes a single, crushing strike. Waters makes a flowing run of blows. The station gives one, once, to whoever raised the Kubfu. Not both. You choose.",
           "next": "k003"
         },
         {
@@ -18327,7 +18327,7 @@
           "id": "f001",
           "kind": "line",
           "speaker": "brandt",
-          "text": "Brandt, field officer. I count clouds, time storms, and lose arguments with the weather mast.",
+          "text": "Brandt, field officer. I count clouds and time storms.",
           "next": "f002"
         },
         {
@@ -18447,7 +18447,7 @@
           "id": "h001",
           "kind": "line",
           "speaker": "brandt",
-          "text": "Not today. The Director has frozen every errand that ends in a feather until we have seen an altar answer. She calls it caution. I call it paperwork.",
+          "text": "Not today. The Director has frozen every errand that ends in a feather until we have seen an altar answer. Caution, she calls it.",
           "next": "hub"
         },
         {
@@ -18646,7 +18646,7 @@
           "id": "x002",
           "kind": "line",
           "speaker": "quill",
-          "text": "The cases are empty because the honest exhibit is the label. And the dews, for the Eon shrine: Mireille has opinions about the dews.",
+          "text": "The labels are all we have, so the cases stay empty. And the dews, for the Eon shrine: Mireille has opinions about the dews.",
           "next": "hub"
         },
         {
@@ -18660,7 +18660,7 @@
           "id": "h001",
           "kind": "line",
           "speaker": "quill",
-          "text": "Not yet. The crown stays in its case until two things are true: an altar has been seen to answer, and the Director is satisfied that whoever wears it could hold what comes. Neither is true yet.",
+          "text": "Not yet. The crown stays in its case until two things are true: an altar has been seen to answer, and the Director is satisfied that whoever wears it could hold what comes.",
           "next": "hub"
         },
         {
@@ -19048,7 +19048,7 @@
           "id": "s002",
           "kind": "line",
           "speaker": "tobiah",
-          "text": "I set her place every night. Cup on the table, chair pulled out. It's a small thing. It's the thing I can do.",
+          "text": "I set her place every night. Cup on the table, chair pulled out.",
           "next": "ask"
         },
         {
@@ -19292,7 +19292,7 @@
           "id": "g004",
           "kind": "line",
           "speaker": "corran",
-          "text": "It never moved an inch. Everything round it did. I'll start a new line from here, with a stone that knows less and a compass that knows more.",
+          "text": "It never moved an inch. Everything round it did. I'll start a new line from here, off the new compass.",
           "next": "done01"
         },
         {
@@ -20964,7 +20964,7 @@
           "id": "s002",
           "kind": "line",
           "speaker": "agnes",
-          "text": "'She said yes. I still can't believe it.' Sixty-one years and he never told me that. The daft, soft, lovely man.",
+          "text": "'She said yes. I still can't believe it.' Sixty-one years and he never told me that. The daft old thing.",
           "next": "s003"
         },
         {
@@ -20984,7 +20984,7 @@
           "id": "s004",
           "kind": "line",
           "speaker": "agnes",
-          "text": "A Sun Stone, the woman at the market called it, years after. You have it. I know what the tree says now, and that's enough to keep.",
+          "text": "A Sun Stone, the woman at the market called it, years after. You have it. I've got what the tree says now. That'll do me.",
           "next": "done01"
         },
         {
@@ -21838,7 +21838,7 @@
           "id": "c002",
           "kind": "line",
           "speaker": "perrin",
-          "text": "Perrin Hale. I count. Don't smile; somebody has to, and everyone who would rather do something else is busy.",
+          "text": "Perrin Hale. I count. Don't smile. Somebody has to, and everyone who would rather do something else is busy.",
           "next": "hub"
         },
         {
@@ -22170,7 +22170,7 @@
           "id": "greeting",
           "kind": "line",
           "speaker": "farmer",
-          "text": "Arrow Creeks Farm. Shut the gates behind you; the Wooloo think every open one was opened for them.",
+          "text": "Arrow Creeks Farm. Shut the gates behind you. The Wooloo think every open one was opened for them.",
           "next": "dairy"
         },
         {
@@ -22392,7 +22392,7 @@
           "id": "f001",
           "kind": "line",
           "speaker": "maren",
-          "text": "You beat it? ...It'll be back. Things like that come back. But now it knows we have friends.",
+          "text": "You beat it? ...It'll be back. Things like that come back.",
           "next": "f002"
         },
         {
@@ -22462,7 +22462,7 @@
           "id": "s001",
           "kind": "line",
           "speaker": "sef",
-          "text": "Sit. The fire's the only honest thing down here.",
+          "text": "Sit. The fire's the only warm thing down here.",
           "next": "s002"
         },
         {
