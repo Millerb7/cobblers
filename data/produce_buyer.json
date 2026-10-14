@@ -136,7 +136,7 @@
     "scores_retired_why": "the v1 allowance. A world that ran R18PB before B2 still holds these objectives; nothing reads them and they cost nothing, so no step removes them",
     "storage": "cobblers:produce_buyer"
   },
-  "greeting": "Trading Post. I pay the posted price for what you dig, cut, grow and catch, as much as you bring: no limit. Sell one crate at a time, or have me take everything I buy. Found items (held items and evolution items) I buy by the piece, but only when you sell everything.",
+  "greeting": "Trading Post. Posted price for anything you dig, cut, grow or catch, and no limit on how much. Sell a crate at a time, or I take everything I buy. Found items (held items and evolution items) go by the piece, but only when you sell everything.",
   "messages": {
     "leave": "Not today.",
     "all": "Sell everything I can",
@@ -145,7 +145,7 @@
     "paid": "Sold: a crate of {label}. ",
     "paid_all": "Sold everything I buy. ",
     "nothing": "Nothing here that I buy, or not enough of any one thing for a crate.",
-    "short_note": "One take came up short of what was counted; you were paid for what was taken.",
+    "short_note": "One take came up short of the count. You were paid for what was actually taken.",
     "take_failed": "Something went wrong taking the crate. Nothing was paid; what was taken is recorded as owed to you (cob_pb_owed). Tell an operator.",
     "pay_failed": "The money didn't arrive. It is recorded as owed to you (cob_pb_owed): tell an operator."
   },

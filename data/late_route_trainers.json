@@ -44,7 +44,7 @@
       "eye_contact": false,
       "lesson": "One Ice attacker previews Grass pressure.",
       "dialogue_text": {
-        "pre": "Snowline starts here. One Pokemon, one lesson: Ice chips through what Erika grows.",
+        "pre": "Snowline starts here. Just the one Pokemon, and its Ice chews through anything Erika grows.",
         "player_win": "Chipped straight through. Keep that thought for the greenhouse.",
         "player_loss": "Cold beats green. Come back when you have something that can land it."
       },
@@ -87,7 +87,7 @@
       "dialogue_text": {
         "pre": "Ranger's count: two on the ridge. Ice above, wings over. Both at once, or neither.",
         "player_win": "You covered both. The ridge is yours.",
-        "player_loss": "One answer for two angles is no answer. Try again."
+        "player_loss": "One answer, two problems. Try again."
       },
       "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
       "gap_from_previous_blocks": 590.7
@@ -127,7 +127,7 @@
       "lesson": "Fire attacks preview Erika's weaknesses.",
       "dialogue_text": {
         "pre": "Fire is the only warm thing up here. Erika hates it. Want to see why?",
-        "player_win": "That is the lesson, and you had it already. Mind the embers.",
+        "player_win": "You knew that already. Mind the embers.",
         "player_loss": "Keep the fire. You will want it in her greenhouse."
       },
       "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
@@ -332,7 +332,7 @@
       "lesson": "Recovery and status management become explicit.",
       "dialogue_text": {
         "pre": "Field medic. I keep mine standing, and you will hate how long that takes.",
-        "player_win": "You closed it before I could heal through. That is the trick.",
+        "player_win": "You finished it before I could heal. Annoying.",
         "player_loss": "Status and recovery. That is the whole fight on this road."
       },
       "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
@@ -497,7 +497,7 @@
       "dialogue_text": {
         "pre": "Two of mine: one shrugs off Psychic, one swallows it. Find the angle.",
         "player_win": "Found it. Most swing and hope.",
-        "player_loss": "A resistance is a wall, not a bluff. Bring a key."
+        "player_loss": "Resisted is resisted. Bring something else."
       },
       "why": "the authored point is on the walked line; 3 blocks onto the left shoulder, at the authored cell",
       "gap_from_previous_blocks": 292.0
@@ -1071,7 +1071,7 @@
       "dialogue_text": {
         "pre": "Plateau ranger. Fighting and Dark, both, because he carries both answers to you.",
         "player_win": "Broad enough. Go on up.",
-        "player_loss": "Narrow beats nothing. Widen it."
+        "player_loss": "Too narrow. Widen your team."
       },
       "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
       "gap_from_previous_blocks": 494.1
@@ -1153,7 +1153,7 @@
       "dialogue_text": {
         "pre": "Final warden. Three, balanced, no gimmick. If this stops you, he will.",
         "player_win": "Nothing stops you here. The last gym is yours to lose.",
-        "player_loss": "A balanced three stopped you. Prepare; do not hurry."
+        "player_loss": "Three, no gimmick, and you still lost. Don't rush him."
       },
       "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
       "gap_from_previous_blocks": 348.5

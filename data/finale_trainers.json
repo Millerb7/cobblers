@@ -115,7 +115,7 @@
         "cooldown": "finale",
         "dialogue_text": {
           "pre": "Listen to the city before you call this simple. I knew the destination was occupied. I ordered the cycle because I could name the people who would die if I stopped.",
-          "player_win": "That certainty became an excuse to leave the other names blank. There is no operation left to finish. Release it, and we begin the work that cannot be solved by exchanging somebody else's home.",
+          "player_win": "I never once asked for the other names. There is no operation left to finish. Release it. Then we find people homes the slow way, without taking anyone else's.",
           "player_loss": "Every light below us belongs to someone the Compact carried out. Do not come back to put them out."
         },
         "after_win": "Elara steps back from her console. The binder at the restraint is waiting for you.",

@@ -217,7 +217,7 @@
       "stall": "gym4_town_stall_1",
       "near_trader": "gym4_mart",
       "sited_by": "as stoneford",
-      "keeper": {"name": "Green Grocer", "greeting": "From the green. Rainbow Badge holders can buy the feeding fittings, malasadas and puffs your partners will love you for, and a Miracle Seed."},
+      "keeper": {"name": "Green Grocer", "greeting": "From the green. Rainbow Badge holders can buy the feeding fittings, malasadas, puffs and a Miracle Seed."},
       "category": "From the Green",
       "theme": "the garden town built round a green: food, and the feeding upgrade is food that follows you",
       "stock": [
@@ -380,7 +380,7 @@
       "stall": "northlight_stall_1",
       "near_trader": "northlight_mart",
       "sited_by": "as stoneford",
-      "keeper": {"name": "Station Supply", "greeting": "Station supply. Hammocks for anyone; supplements for trainers; and the station's specimen exchange: netherite from the deep Nether pays for what our research turns up. A Master Ball, the held items and the capsule are bartered for metal, never money: ask the Exchange in the Mart."},
+      "keeper": {"name": "Station Supply", "greeting": "Station supply. Hammocks for anyone, supplements for trainers. What our research turns up goes for netherite from the deep Nether, never money: a Master Ball, the held items and the capsule. Ask the Exchange in the Mart."},
       "category": "Station Supply and Exchange",
       "theme": "the research station and aurora observatory: a research station sells supplements. Since 2026-10-06 also the Nether half of the material exchange (data/bank.json exchanges): the specimens a station studies, each priced at exactly N netherite ingots at the bank's price",
       "stock": [
@@ -705,7 +705,7 @@
     {
       "id": "tilpey_market_kitchen", "town": "gym6_town", "stall": "gym6_town_stall_2", "path": "critical", "badge": 6, "status": "sited",
       "at": [6182, 95, 3412], "yaw": -135, "site_why": "fallback (stalls_basis.sites): the square's south-west corner",
-      "keeper": {"name": "Market Cook", "greeting": "Hot food at the crossroads. Everyone passes through Tilpey; everyone eats."},
+      "keeper": {"name": "Market Cook", "greeting": "Hot food at the crossroads. Everyone passes through Tilpey, and everyone eats."},
       "theme": "the region's market square, where every road meets: the crossroads' kitchen", "sells": "produce", "category": "Market Kitchen", "stall_why": "stall 2 is the contract's `produce`, 'the farmers' market' (a melon over hay): the crossroads' kitchen cooks what the farmers bring",
       "stock": [
         {"id": "bread", "item": "minecraft:bread", "name": "Bread", "count": 6, "price": 240, "gate": null, "strand": "provision", "why": "as Stoneford's bakehouse", "verified": "minecraft 1.21.1 jar"},
@@ -1076,7 +1076,7 @@
       "id": "rimwatch_rangers_kit", "town": "rift_rim_stop", "stall": "rift_rim_stop_stall_1", "path": "off_path", "badge": null, "status": "sited",
       "at": [3762, 140, 3954], "yaw": 180,
       "site_why": "the contract seat (data/plaza_centres.json rift_rim_stop_stall_1, keeper_at), copied: the tent on the boardwalk's south side, east of the rangers' board, facing north",
-      "keeper": {"name": "Rim Ranger", "greeting": "Glass for the far wall, a compass for when the fog comes up, a lamp for the night watch."},
+      "keeper": {"name": "Rim Ranger", "greeting": "Rangers' kit. Glass, compass, lamp. The fog comes up off the far wall fast."},
       "theme": "the rangers' post on the Rift rim: the kit a ranger carries to the edge",
       "sells": "storm_gear", "category": "Rim Kit",
       "stall_why": "2026-10-05, the owner: 'Every town should have somewhere a player goes to spend money'. no_counter keeps Rimwatch without a counter (Holdfast is the last stores before the Road, and nothing here is a rung); this is a stall of ungated vanilla instruments, off the budget curve (stalls_basis.budget), at Highwire's and Northlight's prices",
