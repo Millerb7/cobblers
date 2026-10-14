@@ -7317,9 +7317,9 @@
         "loss": "dlg_route_01_trainer_01_loss"
       },
       "dialogue_text": {
-        "pre": "First battle? Mine too. If our eyes meet on the road, we battle—ready?",
-        "player_win": "Sand Attack bought me a turn, but it could not fix a bad matchup.",
-        "player_loss": "Quick Attack closes a fight before nerves can."
+        "pre": "First battle? Mine too. Our eyes met, so that's the rule. Ready?",
+        "player_win": "I threw sand in your eyes and you still won?",
+        "player_loss": "Quick Attack! Over before you could even get nervous."
       },
       "rct": {
         "identity": "route_01_trainer_01",
@@ -7509,9 +7509,9 @@
         "loss": "dlg_route_01_trainer_02_loss"
       },
       "dialogue_text": {
-        "pre": "The Combee followed the flowers; Surskit followed the water. I learned to pack answers for both.",
-        "player_win": "You switched instead of forcing one partner through everything. That is the lesson.",
-        "player_loss": "Bug teams look gentle until you let them control the field."
+        "pre": "Combee came with the flowers. Surskit came with the puddles. Bugs are everywhere round here.",
+        "player_win": "You kept switching. Annoying. Smart, but annoying.",
+        "player_loss": "Not so gentle now, are they?"
       },
       "rct": {
         "identity": "route_01_trainer_02",
@@ -7743,8 +7743,8 @@
       },
       "dialogue_text": {
         "pre": "This vale holds water after every storm, even if the old river never did.",
-        "player_win": "You changed targets before Quick Attack could pin you down. Brock will not wait either.",
-        "player_loss": "Fast Water types turn a dry path into their own ground."
+        "player_win": "Quick Attack didn't rattle you. Good. Brock won't wait for you either.",
+        "player_loss": "Lost to Water types in a dry valley. Think about that one."
       },
       "rct": {
         "identity": "route_01_trainer_03",
@@ -7990,9 +7990,9 @@
         "loss": "dlg_route_01_trainer_04_loss"
       },
       "dialogue_text": {
-        "pre": "Brock survives the obvious first hit. Bring a second answer for what comes after.",
-        "player_win": "That is a team ready for stone: pressure from more than one direction.",
-        "player_loss": "One counter is a plan. Two counters are a team."
+        "pre": "Brock's rocks take the first hit and keep coming. What have you got after that?",
+        "player_win": "Yeah, you're ready for Brock.",
+        "player_loss": "One counter won't get you past Brock. Bring two."
       },
       "rct": {
         "identity": "route_01_trainer_04",
@@ -8288,8 +8288,8 @@
         "loss": "dlg_route_02_trainer_01_loss"
       },
       "dialogue_text": {
-        "pre": "Corphish does not need a long plan. It denies yours and takes the opening.",
-        "player_win": "You attacked before Taunt stole your setup. Good.",
+        "pre": "Got a plan? My Corphish doesn't care.",
+        "player_win": "You hit me before Taunt landed. Fair enough.",
         "player_loss": "You gave Corphish time, and it took all of it."
       },
       "rct": {
@@ -8488,8 +8488,8 @@
       },
       "dialogue_text": {
         "pre": "The lake's glowbugs do not hit hard. They make sure you never hit cleanly.",
-        "player_win": "You broke the cycle before Charm, confusion, and Moonlight piled up.",
-        "player_loss": "A weak attack matters when the other side controls every turn."
+        "player_win": "Charm, confusion, Moonlight, and you still got through. Rude.",
+        "player_loss": "Told you they don't hit hard. They didn't need to."
       },
       "rct": {
         "identity": "route_02_trainer_02",
@@ -8743,8 +8743,8 @@
       },
       "dialogue_text": {
         "pre": "Most people see Viltri from the south road and think they have seen the lake. The north bank disagrees.",
-        "player_win": "Krabby pushes hard and Shellder closes up. You changed the kind of pressure instead of repeating it.",
-        "player_loss": "The bank rewards a long walk, but it still expects the right answer."
+        "player_win": "Krabby hits hard, Shellder shuts tight, and you got round both. Huh.",
+        "player_loss": "Long walk out here to lose. Bad luck."
       },
       "rct": {
         "identity": "route_02_shore_trainer_01",
@@ -9001,8 +9001,8 @@
       },
       "dialogue_text": {
         "pre": "Rain changes this whole shore. Did you bring one answer, or two?",
-        "player_win": "Electric pressure handles open water. Flying or Bug pressure handles what grows in it.",
-        "player_loss": "Misty's lake will not give you one clean weakness to chase."
+        "player_win": "Electric for the water, Flying or Bug for what grows in it. You'll do fine against Misty.",
+        "player_loss": "Misty won't give you one weakness to hit. Neither did I."
       },
       "rct": {
         "identity": "route_02_trainer_03",
@@ -9297,9 +9297,9 @@
         "loss": "dlg_route_03_trainer_01_loss"
       },
       "dialogue_text": {
-        "pre": "On a climb, controlling the footing matters more than moving first.",
-        "player_win": "You punished Howl before Rock Tomb could keep you slow.",
-        "player_loss": "One speed drop was enough to decide the slope."
+        "pre": "On a climb, footing beats speed. You'll see.",
+        "player_win": "You hit me while I was Howling. Should've thrown Rock Tomb first.",
+        "player_loss": "One Rock Tomb and you were stuck on the slope."
       },
       "rct": {
         "identity": "route_03_trainer_01",
@@ -9490,9 +9490,9 @@
         "loss": "dlg_route_03_trainer_02_loss"
       },
       "dialogue_text": {
-        "pre": "The grove punishes teams built around one resistance. Show me your second switch.",
-        "player_win": "You saw the partner behind the first matchup.",
-        "player_loss": "One safe switch led straight into the other threat."
+        "pre": "Built your whole team around one resistance? The grove eats teams like that.",
+        "player_win": "You saw my second one coming. Most don't.",
+        "player_loss": "Safe switch, straight into my other one."
       },
       "rct": {
         "identity": "route_03_trainer_02",
@@ -9728,9 +9728,9 @@
         "loss": "dlg_route_03_trainer_03_loss"
       },
       "dialogue_text": {
-        "pre": "Burrows and roots both carry current into the earth. That is how you face Surge.",
-        "player_win": "You found the opening before Ground and Grass could settle in.",
-        "player_loss": "Bunnelby can grow into your clean Ground answer. Skiddo is the fallback when Ground gets disrupted."
+        "pre": "Burrows and roots. Current goes into the earth and stops there. That's how you beat Surge.",
+        "player_win": "You got in before my Ground and Grass could dig in.",
+        "player_loss": "Catch a Bunnelby, it grows into a real Ground answer. Skiddo too, if Ground gets shut down."
       },
       "rct": {
         "identity": "route_03_trainer_03",
@@ -9968,9 +9968,9 @@
         "loss": "dlg_route_03_trainer_04_loss"
       },
       "dialogue_text": {
-        "pre": "That mast keeps changing the way everything moves. Let us see how your team handles lost tempo.",
-        "player_win": "Good. Do not race Surge—use Ground, Grass, or priority to take the turn back.",
-        "player_loss": "Paralysis makes speed unreliable. Bring an immunity or a way to act first anyway."
+        "pre": "That mast messes with everyone's speed. Let's see how you cope.",
+        "player_win": "Good. Don't race Surge. Ground, Grass or priority gets you the turn back.",
+        "player_loss": "Paralysed, so speed means nothing. Bring something immune, or something that moves first."
       },
       "rct": {
         "identity": "route_03_trainer_04",
@@ -10244,9 +10244,9 @@
         "loss": "dlg_route_03_trainer_05_loss"
       },
       "dialogue_text": {
-        "pre": "The mountain's safest teams redirect electricity instead of trying to endure it.",
-        "player_win": "You brought immunity, resistance, and pressure. That is enough to challenge the shelf.",
-        "player_loss": "The pond behind you offers Wooper. Bunnelby stays on the critical path. Use one of them."
+        "pre": "Up here you don't tank Electric. You send it somewhere it can't hurt.",
+        "player_win": "Something immune, something that resists, and you hit back. Go take the shelf.",
+        "player_loss": "There's Wooper in the pond behind you and Bunnelby on the path. Catch one."
       },
       "rct": {
         "identity": "route_03_trainer_05",
@@ -17687,9 +17687,9 @@
         "loss": "dlg_route_09_trainer_01_loss"
       },
       "dialogue_text": {
-        "pre": "The cave takes speed before it takes strength. Keep something quick in reserve.",
-        "player_win": "You kept a second pace. That is the lesson.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "This cave slows you down before it beats you up. Hope you kept something quick.",
+        "player_win": "You had something fast left over. Fine.",
+        "player_loss": "Too slow. Go back up and get faster."
       },
       "rct": {
         "identity": "route_09_trainer_01",
@@ -17938,9 +17938,9 @@
         "loss": "dlg_route_09_trainer_02_loss"
       },
       "dialogue_text": {
-        "pre": "A bad condition becomes a worse hit down here. Do not let the clock start.",
-        "player_win": "You broke the clock before it owned the fight.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "Get poisoned down here and every hit after it gets worse. Don't let me start.",
+        "player_win": "You ended it before the poison could add up.",
+        "player_loss": "Every turn you sat there poisoned was mine."
       },
       "rct": {
         "identity": "route_09_trainer_02",
@@ -18192,7 +18192,7 @@
       "dialogue_text": {
         "pre": "The old works still hold heat. My lead makes sure you feel all of it.",
         "player_win": "You found an answer that did not care about the sun.",
-        "player_loss": "Return when your plan has a second line."
+        "player_loss": "Too hot for you. Go and cool off."
       },
       "rct": {
         "identity": "route_09_trainer_03",
@@ -18446,9 +18446,9 @@
         "loss": "dlg_route_09_trainer_04_loss"
       },
       "dialogue_text": {
-        "pre": "One mark ruins muscle. The next target asks whether you brought another kind of force.",
-        "player_win": "Good. You changed tools when the map changed.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "One burn and your big hitters are done. Then Mudsdale. Got anything that isn't muscle?",
+        "player_win": "Good. You switched tools when the map changed.",
+        "player_loss": "All muscle, and I burned it."
       },
       "rct": {
         "identity": "route_09_trainer_04",
@@ -18698,9 +18698,9 @@
         "loss": "dlg_route_09_trainer_05_loss"
       },
       "dialogue_text": {
-        "pre": "Rest is over. Sand changes what survives the next hit.",
+        "pre": "Break's over. Once the sand's up, my side takes hits yours can't.",
         "player_win": "You did not trust yesterday's damage numbers.",
-        "player_loss": "Return when your plan has a second line."
+        "player_loss": "The sand was chipping you from the first turn."
       },
       "rct": {
         "identity": "route_09_trainer_05",
@@ -18954,9 +18954,9 @@
         "loss": "dlg_route_09_trainer_06_loss"
       },
       "dialogue_text": {
-        "pre": "Speed means something different for the next few turns. Survive the room, then move.",
+        "pre": "For the next few turns, slow goes first. Live through the room, then move.",
         "player_win": "You knew when not to race.",
-        "player_loss": "Return when your plan has a second line."
+        "player_loss": "All that speed, and my room made it worthless."
       },
       "rct": {
         "identity": "route_09_trainer_06",
@@ -19206,9 +19206,9 @@
         "loss": "dlg_route_09_trainer_07_loss"
       },
       "dialogue_text": {
-        "pre": "Rain makes both halves of my team faster at their jobs. Split them apart.",
-        "player_win": "You found the seam between weather and coverage.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "In the rain both of mine do their jobs faster. Try and split them up.",
+        "player_win": "You got between the rain and the coverage. Nice.",
+        "player_loss": "Still raining. Go and dry off."
       },
       "rct": {
         "identity": "route_09_trainer_07",
@@ -19462,9 +19462,9 @@
         "loss": "dlg_route_09_trainer_08_loss"
       },
       "dialogue_text": {
-        "pre": "The cut punishes every careless change. Choose what stays in before you move.",
-        "player_win": "You paid for no change you did not need.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "Switch carelessly in this cut and the rocks bill you. Pick who stays in.",
+        "player_win": "Not one switch you didn't need. Good.",
+        "player_loss": "Every switch cost you. Should have counted."
       },
       "rct": {
         "identity": "route_09_trainer_08",
@@ -19713,9 +19713,9 @@
         "loss": "dlg_route_09_trainer_09_loss"
       },
       "dialogue_text": {
-        "pre": "I stop your plan, then begin mine. Show me you brought a second plan.",
-        "player_win": "That answer was ready before mine started.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "I stop your plan, then I run mine. Got a backup?",
+        "player_win": "You had that ready before I'd even started. Annoying.",
+        "player_loss": "First plan stopped, no second one. Done."
       },
       "rct": {
         "identity": "route_09_trainer_09",
@@ -19986,7 +19986,7 @@
       "dialogue_text": {
         "pre": "My Crobat carries a Focus Sash. It will get the wind up. The exam is what you do after that.",
         "player_win": "You did not need the first turn. You needed the right six.",
-        "player_loss": "Return when your plan has a second line."
+        "player_loss": "Fail. Come back with a better six."
       },
       "rct": {
         "identity": "route_09_trainer_10",
