@@ -44,7 +44,11 @@ The checks (offline, fail closed; the independent audit is unit B4's, not this f
 
 What it does NOT cover: whether the dialogue opens and the functions run in game (EXP-061); a seller a donor template
 places that no data file names, and the trader templates' shops unless tools/bank.py is given a server dir; a recipe the
-jars do not carry; the kitchen and pharmacy category (data/produce_buyer.json not_built).
+jars do not carry; whether a kitchen/pharmacy input's rate is true (milk, hearty grains, vivichoke and the rest of the
+`harvest` class are ESTIMATES, data/produce_buyer.json kitchen_pharmacy.classes): the independent audit cannot price an
+input nothing sells, so those goods' margins rest on the estimate and the audit reports "no member is obtainable with
+money" for them. Kitchen and pharmacy goods are `crates` entries marked "kp" and derived by `goods`; `check` re-derives
+them (kp_problems) and, with --jars-dir, reads every recipe they cite back from the jars.
 """
 from __future__ import annotations
 
@@ -165,6 +169,269 @@ def specimen_prices(doc, wage=None, notes=None):
         raw = wage[sp["wage_tier"]] / (sp["ko_per_hour"] * best)
         out[item] = max(1, min(int(sp["cap_p"]) * 100, round_half_up(raw)))
     return out
+
+
+# ---------------------------------------------------------------------------------------------------------- kitchen and pharmacy
+# ECONOMY_V2 2.2's "crafts rule": a crafted good is worth its inputs' worth plus a step cost, max($2, 1%) a craft, shared
+# over the craft's yield. Every INPUT has a worth on the spine (a crate unit; a rate an hour of one kind of gathering, from
+# the record's `classes`; or a derivation through another recipe). A good is sold as a crate of `n` (a whole-dollar price
+# rounded DOWN, never up) and its crate is an ordinary entry of `crates` carrying `"kp": true` and `"menu": false`, so the
+# independent audit (tools/economy_audit.py tp_expected / buyer_checks) reads it with no special case: count x W(tier) /
+# rate is the price, and rate_per_hour here is back-solved from the derived price. `check` re-derives the price from the
+# record's inputs and fails when a crate drifts from it.
+KP_COUNTS = (1, 2, 4, 8, 16, 32, 64)
+
+
+def kp(doc):
+    return doc.get("kitchen_pharmacy") or {}
+
+
+def _frac(x):
+    from fractions import Fraction
+    return Fraction(str(x))
+
+
+def kp_base(doc, wage, notes, bank_prices):
+    """({item: unit worth as a Fraction}, [problems]) for every input that is not made by a recipe: a unit of every
+    crate that is not itself a kitchen/pharmacy good, then the record's `raw` inputs by class."""
+    from fractions import Fraction
+    k = kp(doc)
+    W = {t: _frac(v) for t, v in wage.items()}
+    base, problems = {}, []
+    cunit = {}
+    for c in doc["crates"]:
+        if c.get("kp"):
+            continue
+        cunit[c["id"]] = Fraction(crate_price(c, wage), c["count"])
+        for i in c["items"]:
+            base[i] = cunit[c["id"]]
+    classes = k.get("classes") or {}
+    for item in k.get("sold") or []:
+        # a good a live wild Pokemon also drops is worth no more than its drop: W(early) / (ko_per_hour x chance)
+        best = best_drop(notes, item)
+        if best and (classes.get("drop") or {}).get("ko_per_hour"):
+            base[item] = W[classes["drop"]["tier"]] / (_frac(classes["drop"]["ko_per_hour"]) * _frac(best))
+    for item, r in sorted((k.get("raw") or {}).items()):
+        cls, spec = r.get("class"), classes.get(r.get("class")) or {}
+        if item in base:
+            problems.append("kitchen_pharmacy raw %s is already a unit of a crate: one price" % item)
+            continue
+        if cls in ("harvest", "dig"):
+            if spec.get("tier") not in W or not (isinstance(spec.get("rate_per_hour"), (int, float))
+                                                 and spec["rate_per_hour"] > 0) or not spec.get("why"):
+                problems.append("kitchen_pharmacy class %s needs a tier, a positive rate_per_hour and a why" % cls)
+                continue
+            base[item] = W[spec["tier"]] / _frac(spec["rate_per_hour"])
+        elif cls == "drop":
+            best = best_drop(notes, item)
+            if not best:
+                problems.append("kitchen_pharmacy raw %s: class drop but no live dropper in the notes" % item)
+                continue
+            base[item] = W[spec["tier"]] / (_frac(spec["ko_per_hour"]) * _frac(best))
+        elif cls == "mineral":
+            if r.get("of") not in bank_prices:
+                problems.append("kitchen_pharmacy raw %s: the bank does not buy %s" % (item, r.get("of")))
+                continue
+            base[item] = _frac(bank_prices[r["of"]]) / _frac(r.get("per", 1))
+        elif cls == "crate":
+            if r.get("crate") not in cunit:
+                problems.append("kitchen_pharmacy raw %s: no crate %s" % (item, r.get("crate")))
+                continue
+            base[item] = cunit[r["crate"]]
+        else:
+            problems.append("kitchen_pharmacy raw %s: class %r is not one of %s" % (item, cls, sorted(classes) + ["mineral", "crate"]))
+    return base, problems
+
+
+def kp_derive(doc, base, recipes_of):
+    """({sold item: dict(n, price, unit, recipe, rc, tot, step, picks)}, {item: dict(recipe, rc, picks, unit)}, [problems]).
+    `recipes_of(item)` -> [(name, yield, [([accepted ids], count)])]. The unit worth of an item is the least of its base
+    worth and of every recipe's (inputs + step) / yield, each input at its cheapest accepted member; a SOLD item's step is
+    max(flat, pct of the inputs) and it carries a sale price floor(n x unit) for the smallest n (of KP_COUNTS) that makes
+    the crate worth `crate_floor_dollars`; a sold item used as an input is worth what the post pays for it. An item
+    reached through a cycle is never cached (a route cut short would overstate its worth)."""
+    import math
+    k = kp(doc)
+    sold = list(k.get("sold") or [])
+    flat, pct = _frac(k["step_cost"]["flat"]), _frac(k["step_cost"]["percent"]) / 100
+    floor_d = int(k.get("crate_floor_dollars", 10))
+    memo, out, chosen, problems = {}, {}, {}, []
+
+    def u(item, stack):
+        """-> (unit worth or None, cut: a route was skipped because it ran through `stack`)"""
+        if item in out:
+            return out[item]["unit"], False
+        if item in memo:
+            return memo[item], False
+        best, cut = None, False
+        for name, rc, slots in recipes_of(item):
+            tot, ok, picks = _frac(0), True, []
+            for cands, n in slots:
+                vals = []
+                for a in sorted(cands):
+                    if a == item or a in stack:
+                        cut = True
+                        continue
+                    x, c2 = u(a, stack + (item,))
+                    cut = cut or c2
+                    if x is not None:
+                        vals.append((x, a))
+                if not vals:
+                    ok = False
+                    break
+                x, a = min(vals)
+                tot += x * n
+                picks.append((a, n))
+            if not ok:
+                continue
+            step = max(flat, tot * pct) if item in sold else _frac(0)
+            val = (tot + step) / rc
+            if best is None or val < best[0]:
+                best = (val, name, rc, tot, step, picks)
+        have = base.get(item)
+        if best is not None and (have is None or best[0] < have):
+            val = best[0]
+            chosen[item] = dict(recipe=best[1], rc=best[2], picks=best[5], unit=val, tot=best[3], step=best[4])
+        else:
+            val = have
+        if item in sold and (best is not None or have is not None):
+            # the cheaper of the two routes is the price: a good a wild Pokemon also drops sells at no more than its drop
+            # (W / (60 x its chance)), nor than crafting it
+            via = best if best is not None and (have is None or best[0] <= have) else (have, "drop", 1, have, _frac(0), [])
+            n = next((c for c in KP_COUNTS if math.floor(c * via[0]) >= floor_d), KP_COUNTS[-1])
+            price = math.floor(n * via[0])
+            if price < 1:
+                problems.append("kitchen_pharmacy %s: derives to %s a unit: under $1 a crate even at %d" % (item, float(via[0]), n))
+                return None, cut
+            out[item] = dict(n=n, price=price, unit=_frac(price) / n, recipe=via[1], rc=via[2], tot=via[3],
+                             step=via[4], picks=via[5], derived=via[0])
+            return out[item]["unit"], False
+        if not cut and val is not None:
+            memo[item] = val
+        return val, cut
+
+    for item in sold:
+        if item not in out:
+            x, _ = u(item, ())
+            if item not in out:
+                problems.append("kitchen_pharmacy sold %s: no recipe whose every input has a worth" % item)
+    return out, chosen, problems
+
+
+def kp_data_recipes(doc):
+    rec = kp(doc).get("recipes") or {}
+    return lambda item: [(r["name"], int(r["yield"]), [([p], int(n)) for p, n in r["in"]]) for r in rec.get(item) or []]
+
+
+def kp_jar_recipes(doc, jars):
+    """Every jar recipe by result id, with every accepted id of each slot, plus the record's own `world_recipes`."""
+    by = {}
+    for name, _kind, ings, rid, rc in jars.conversions():
+        by.setdefault(rid, []).append((name, rc, [(sorted(a), n) for a, n in ings]))
+    for item, r in (kp(doc).get("world_recipes") or {}).items():
+        by.setdefault(item, []).append((r["name"], int(r["yield"]), [([p], int(n)) for p, n in r["in"]]))
+    return lambda item: by.get(item, [])
+
+
+def kp_crate_id(item):
+    return "kp_" + item.split(":", 1)[1].replace("/", "_")
+
+
+def kp_crates(doc, derived, wage):
+    """The `crates` entries the record must carry for the derivation (what `goods` prints)."""
+    out = []
+    for item in kp(doc)["sold"]:
+        d = derived[item]
+        rate = float("%.6g" % (d["n"] * float(wage["early"]) / d["price"]))
+        out.append({"id": kp_crate_id(item), "kp": True, "menu": False, "label": item.split(":", 1)[1].replace("_", " "),
+                    "count": d["n"], "tier": "early", "rate_per_hour": rate, "items": [item],
+                    "rate_why": "back-solved from the crafts-rule price in kitchen_pharmacy (see its rule)"})
+    return out
+
+
+def kp_problems(doc, wage, notes, bank_prices, jars=None):
+    """(problems, reports): the record's derivation re-run from its own inputs, the crates it must carry, and (with jars)
+    every recipe it cites against the jar and the cheapest jar route against the record's."""
+    k = kp(doc)
+    if not k:
+        return [], []
+    out, rep = [], []
+    base, p = kp_base(doc, wage, notes, bank_prices)
+    out += p
+    derived, _chosen, p = kp_derive(doc, base, kp_data_recipes_with_world(doc))
+    out += p
+    have = {c["items"][0]: c for c in doc["crates"] if c.get("kp")}
+    for item in k["sold"]:
+        c, d = have.get(item), derived.get(item)
+        if d is None:
+            continue
+        if c is None:
+            out.append("kitchen_pharmacy %s is sold but has no kp crate (python tools/produce_buyer.py goods prints it)" % item)
+            continue
+        got = crate_price(c, wage)
+        if c.get("id") != kp_crate_id(item) or c["count"] != d["n"] or got != d["price"] or c.get("menu") is not False \
+                or c.get("tier") != "early" or c["items"] != [item]:
+            out.append("kitchen_pharmacy %s: the crate (%s, %d for $%d) is not the derivation's (%d for $%d): run "
+                       "`python tools/produce_buyer.py goods` and copy" % (item, c.get("id"), c["count"], got, d["n"], d["price"]))
+    for item, c in have.items():
+        if item not in k["sold"]:
+            out.append("crate %s is a kitchen_pharmacy good but %s is not in kitchen_pharmacy.sold" % (c["id"], item))
+    for item in k["sold"]:
+        if item in (k.get("not_sold") or {}):
+            out.append("kitchen_pharmacy %s is both sold and in not_sold" % item)
+    for item in sorted(k.get("recipes") or {}):
+        for r in k["recipes"][item]:
+            if not r.get("in") or int(r.get("yield", 0)) < 1 or not r.get("name"):
+                out.append("kitchen_pharmacy recipe for %s: needs a name, a yield and inputs" % item)
+    rep.append("kitchen_pharmacy: %d goods derived from %d recipes and %d raw inputs" % (len(derived), sum(len(v) for v in (k.get("recipes") or {}).values()), len(k.get("raw") or {})))
+    if jars is not None:
+        jr = kp_jar_recipes(doc, jars)
+        jd, _jc, p = kp_derive(doc, base, jr)
+        out += ["jars: " + x for x in p]
+        for item in k["sold"]:
+            a, b = derived.get(item), jd.get(item)
+            if a and b and (a["price"], a["n"]) != (b["price"], b["n"]):
+                out.append("kitchen_pharmacy %s: the record derives %d for $%d; the jars' cheapest recipe chain derives "
+                           "%d for $%d (a cheaper route exists, or the record cites a recipe the jars do not have)"
+                           % (item, a["n"], a["price"], b["n"], b["price"]))
+            elif a and not b:
+                out.append("kitchen_pharmacy %s: derives from the record but not from the jars" % item)
+        by = {}
+        for name, _kind, ings, rid, rc in jars.conversions():
+            by[name] = (rid, rc, [(sorted(x), n) for x, n in ings])
+        for item, rs in sorted((k.get("recipes") or {}).items()):
+            for r in rs:
+                if r["name"] not in by:
+                    if r["name"] not in {w["name"] for w in (k.get("world_recipes") or {}).values()}:
+                        out.append("kitchen_pharmacy recipe %s is not in the jars" % r["name"])
+                    continue
+                rid, rc, slots = by[r["name"]]
+                if rid != item or rc != int(r["yield"]) or len(slots) != len(r["in"]):
+                    out.append("kitchen_pharmacy recipe %s: the jar makes %d x %s from %d slots; the record says %d x %s from %d"
+                               % (r["name"], rc, rid, len(slots), r["yield"], item, len(r["in"])))
+                    continue
+                for (acc, n), (pick, rn) in zip(slots, r["in"]):
+                    if pick not in acc or n != rn:
+                        out.append("kitchen_pharmacy recipe %s: %d x %s is not an accepted slot of the jar's (%s)"
+                                   % (r["name"], rn, pick, ", ".join(acc[:4])))
+        rep.append("kitchen_pharmacy: %d recipes read back from the jars; the cheapest jar chain matches the record for %d of %d goods"
+                   % (sum(len(v) for v in (k.get("recipes") or {}).values()),
+                      sum(1 for i in k["sold"] if derived.get(i) and jd.get(i) and (derived[i]["price"], derived[i]["n"]) == (jd[i]["price"], jd[i]["n"])),
+                      len(k["sold"])))
+    return out, rep
+
+
+def kp_data_recipes_with_world(doc):
+    own = kp_data_recipes(doc)
+    wr = kp(doc).get("world_recipes") or {}
+
+    def f(item):
+        out = list(own(item))
+        if item in wr:
+            r = wr[item]
+            out.append((r["name"], int(r["yield"]), [([p], int(n)) for p, n in r["in"]]))
+        return out
+    return f
 
 
 # ---------------------------------------------------------------------------------------------------------- the pack
@@ -333,6 +600,8 @@ def conversation(doc, site, crate_prices):
     transitions = [{"id": "sell_all", "conditions": [],
                     "effects": [{"kind": "function", "function": fn_id("sell/all")}]}]
     for c in doc["crates"]:
+        if c.get("menu") is False:
+            continue    # a kitchen/pharmacy good: sold only by "sell everything I can" (too many to list as buttons)
         tid = "sell_%s" % c["id"]
         transitions.append({"id": tid, "conditions": [],
                             "effects": [{"kind": "function", "function": fn_id("sell/%s" % c["id"])}]})
@@ -900,6 +1169,16 @@ def output_problems(doc, files):
     return out
 
 
+def load_jars(jars_dir, vanilla_jar):
+    """tools/economy_audit.py's reader over `jars_dir`: a server-shaped directory (mods/ and datapacks/ inside it) or a
+    folder of mod jars (the local store's server-mods-1.8.2, which has no mods/ inside: read as the mods directory)."""
+    import economy_audit as EA
+    d = Path(jars_dir)
+    if (d / "mods").is_dir():
+        return EA.load_jars(str(d), str(vanilla_jar))
+    return EA.load_jars(str(d), str(vanilla_jar), str(d))
+
+
 def closure_problems(doc, jars_dir, vanilla_jar, server_dir=None, wage=None, notes=None):
     """(problems, reports) over the jars' recipes, using tools/economy_audit.py's own reader (read, never edited).
     1. BUY: the cheapest way to obtain each crate item or specimen with money, by any seller or any recipe of
@@ -909,7 +1188,7 @@ def closure_problems(doc, jars_dir, vanilla_jar, server_dir=None, wage=None, not
     An input that is neither sold here nor purchasable (milk, a farmed mob drop with no seller) is not priced, so a
     recipe through one is counted in the report and not judged."""
     import economy_audit as EA
-    jars = EA.load_jars(str(jars_dir), str(vanilla_jar))
+    jars = load_jars(jars_dir, vanilla_jar)
     conv = jars.conversions()
     sales = EA.market_sales() + EA.apricorn_sales() + EA.default_shop_sales()
     if server_dir:
@@ -956,7 +1235,8 @@ def closure_problems(doc, jars_dir, vanilla_jar, server_dir=None, wage=None, not
         if not ok:
             unpriced += 1
             continue
-        if worth[rid] * rcount > total + 1e-9:
+        allow = max(2.0, total / 100.0) if label[rid].startswith("crate kp_") else 0.0
+        if worth[rid] * rcount > total + allow + 1e-9:
             problems.append("recipe %s (%s): %d x %s is worth $%g here, its inputs only $%g" % (name, kind, rcount, rid,
                                                                                                worth[rid] * rcount, total))
     reports.append("closure: %d crate/specimen items judged against %d priceable recipes; %d recipes into a sold item "
@@ -972,19 +1252,25 @@ def check(doc=None, source_root=None, server_dir=None, jars_dir=None, vanilla_ja
     bdoc = bank.load()
     pts, skipped = bank.sell_points(server_dir)
     wage = wages()
+    reports = []
     out = static_problems(doc, bank.prices(bdoc), pts, wage=wage)
     out += counter_problems(doc)
     if out:
-        return out, skipped
+        return out, skipped, reports
     out += output_problems(doc, build(doc, wage))
     out += seat_problems(doc, G.load(source_root), source_root)
+    jars = load_jars(jars_dir, vanilla_jar) if jars_dir else None
+    notes = notes_of(doc)
+    p, r = kp_problems(doc, wage, notes, bank.prices(bdoc), jars)
+    out += p
+    reports += r
     if jars_dir:
         p, r = closure_problems(doc, jars_dir, vanilla_jar, server_dir, wage)
         out += p
-        skipped = skipped + r
+        reports += r
     else:
-        skipped = skipped + ["closure: no --jars-dir: recipes were not judged"]
-    return out, skipped
+        skipped = skipped + ["closure: no --jars-dir: recipes were not judged (kitchen_pharmacy: the record's own arithmetic only)"]
+    return out, skipped, reports
 
 
 def price_table(doc):
@@ -1000,6 +1286,50 @@ def price_table(doc):
     return rows
 
 
+def goods_cmd(doc, a):
+    """Print the derivation of every kitchen/pharmacy good. With --jars-dir the recipes come from the jars (the authoring
+    path); without it, from the record. --json prints the `crates` entries and the `recipes` table the record must carry."""
+    import bank
+    wage = wages()
+    base, probs = kp_base(doc, wage, notes_of(doc), bank.prices(bank.load()))
+    if a.jars_dir:
+        vj = a.vanilla_jar
+        if not vj:
+            import economy_audit
+            vj = economy_audit.DEFAULT_VANILLA
+        recipes_of = kp_jar_recipes(doc, load_jars(a.jars_dir, vj))
+    else:
+        recipes_of = kp_data_recipes_with_world(doc)
+    derived, chosen, p2 = kp_derive(doc, base, recipes_of)
+    for x in probs + p2:
+        print("PROBLEM " + x)
+    if a.json:
+        crates = kp_crates(doc, derived, wage)
+        # the recipe table: the chosen route of every sold good and, below it, of every intermediate it used
+        table, todo, seen = {}, [i for i in kp(doc)["sold"] if i in derived], set()
+        world = kp(doc).get("world_recipes") or {}
+        while todo:
+            i = todo.pop()
+            if i in seen:
+                continue
+            seen.add(i)
+            c = derived.get(i) or chosen.get(i)
+            if not c or c["recipe"] in {w["name"] for w in world.values()}:
+                for pk, _n in (c or {}).get("picks", []):
+                    todo.append(pk)
+                continue
+            table[i] = [{"name": c["recipe"], "yield": c["rc"], "in": [[pk, n] for pk, n in c["picks"]]}]
+            todo += [pk for pk, _n in c["picks"]]
+        print(json.dumps({"crates": crates, "recipes": dict(sorted(table.items()))}, indent=1, ensure_ascii=False))
+        return 1 if probs + p2 else 0
+    for item in kp(doc)["sold"]:
+        d = derived.get(item)
+        if d:
+            print("%-34s %2d for $%-3d (unit %.4f)  %s  inputs %s  step $%.2f" % (
+                item, d["n"], d["price"], float(d["unit"]), d["recipe"].split("/")[-1], ", ".join("%dx%s" % (n, p.split(":")[1]) for p, n in d["picks"]), float(d["step"])))
+    return 1 if probs + p2 else 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -1011,6 +1341,10 @@ def main(argv=None):
     c.add_argument("--jars-dir", help="a directory with mods/*.jar (and optionally datapacks/): judge the recipes")
     c.add_argument("--vanilla-jar", help="the vanilla 1.21.1 jar for --jars-dir (default: tools/economy_audit.py's)")
     sub.add_parser("prices")
+    g = sub.add_parser("goods", help="derive the kitchen/pharmacy goods from the record; --jars-dir also resolves the recipes")
+    g.add_argument("--jars-dir")
+    g.add_argument("--vanilla-jar")
+    g.add_argument("--json", action="store_true", help="print the crates and recipes to paste into the record")
     s = sub.add_parser("seats")
     s.add_argument("--source-root")
     a = ap.parse_args(argv)
@@ -1024,6 +1358,8 @@ def main(argv=None):
     if a.cmd == "prices":
         print("\n".join(price_table(doc)))
         return 0
+    if a.cmd == "goods":
+        return goods_cmd(doc, a)
     if a.cmd == "seats":
         got = propose_seats(doc, a.source_root)
         for sid, rec in got.items():

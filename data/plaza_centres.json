@@ -3474,6 +3474,230 @@
      "why": "lights a part of the square no other light reaches"
     }
    ]
+  },
+  "mining_town": {
+   "name": "Fossick",
+   "class": "medium",
+   "coverage_max": 0.15,
+   "why": "The pithead yard, 41 by 24 of cobblestone at y137, which docs/world-building/TOWN_SQUARES_SURVEY.md calls a real middle already: the headframe over a capped shaft in its middle, an ore pile in each corner and the ore track, all written by tools/mining_works.py into the earthwork placement mining_town_works. This record does NOT add a centrepiece: the headframe IS the centrepiece (kind existing, so this build writes nothing for it), and the squares builder's model now knows the yard's columns through that placement. It exists so the town's Trading Post (data/produce_buyer.json tp_fossick) is seated in the builder's own occupancy model like every other town's, and so a lamp is added only if a cell of the yard is dark.",
+   "palette": {
+    "wood": "spruce",
+    "awning": "minecraft:brown_carpet",
+    "post": "minecraft:spruce_fence",
+    "foundation": "minecraft:cobblestone"
+   },
+   "square": {
+    "rect": [
+     6600,
+     5688,
+     6640,
+     5711
+    ],
+    "y": 137,
+    "centrepiece": [
+     6620,
+     138,
+     5699
+    ]
+   },
+   "centrepiece": {
+    "id": "mining_town_headframe",
+    "kind": "existing",
+    "placement": "mining_town_works",
+    "at": [
+     6620,
+     5699
+    ],
+    "why": "the headframe over the capped shaft, built by tools/mining_works.py (placement mining_town_works)"
+   },
+   "stalls": [],
+   "no_stalls_why": "none: the yard is Fossick's pre-built middle and its shops are already staffed (the Mine Stores keeper and the Exchange at the Mart, data/markets.json counter fossick, mining_town_stall_1); this record adds no merchant, so no shelf, price or arbitrage line changes. A new stall here would be a new shop, which is the owner's call",
+   "pieces": [
+    {
+     "id": "mining_town_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      6610,
+      5704
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "mining_town_lamp_2",
+     "kind": "lamp_post",
+     "at": [
+      6634,
+      5703
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "mining_town_lamp_3",
+     "kind": "lamp_post",
+     "at": [
+      6618,
+      5705
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "mining_town_lamp_4",
+     "kind": "lamp_post",
+     "at": [
+      6632,
+      5692
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "mining_town_lamp_5",
+     "kind": "lamp_post",
+     "at": [
+      6600,
+      5700
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "mining_town_lamp_6",
+     "kind": "lamp_post",
+     "at": [
+      6602,
+      5695
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "northlight": {
+   "name": "Northlight",
+   "class": "medium",
+   "coverage_max": 0.15,
+   "why": "The square at the head of the hollow, 41 by 31 of polished deepslate at y116, which docs/world-building/TOWN_SQUARES_SURVEY.md calls a real middle already: the waystone, the Station Supply keeper, the field hand's seat, the weather instruments on the edge (data/town_dressing.json) and the bonfire seven blocks off the south edge, which the Timburr feeds. What it lacked, in the survey's own words, was benches facing the fire. This record adds a datum stone for the station's readings in the middle and two benches on the south side looking at the fire; the Trading Post (data/produce_buyer.json tp_northlight_station) is seated in the builder's occupancy model like every other town's.",
+   "palette": {
+    "wood": "spruce",
+    "awning": "minecraft:cyan_carpet",
+    "post": "minecraft:spruce_fence",
+    "foundation": "minecraft:polished_deepslate"
+   },
+   "square": {
+    "rect": [
+     7245,
+     1540,
+     7285,
+     1570
+    ],
+    "y": 116,
+    "centrepiece": [
+     7265,
+     117,
+     1557
+    ]
+   },
+   "centrepiece": {
+    "id": "northlight_datum_stone",
+    "kind": "plinth",
+    "near": [
+     7265,
+     1555
+    ],
+    "facing": "south",
+    "why": "the station's datum stone: the mark its weather and aurora readings are taken from, a quartz plinth with an end rod (no lightning rod: a spawn condition)",
+    "at": [
+     7265,
+     1557
+    ]
+   },
+   "stalls": [],
+   "no_stalls_why": "none: the square already has its Station Supply keeper on its north edge (data/markets.json counter northlight_station, northlight_stall_1, the market builder's own stall); this record adds no merchant, so no shelf, price or arbitrage line changes. A new stall here would be a new shop, which is the owner's call",
+   "pieces": [
+    {
+     "id": "northlight_bench_1",
+     "kind": "bench",
+     "near": [
+      7272,
+      1568
+     ],
+     "facing": "south",
+     "why": "on the south side, looking across the edge at the bonfire (7280, 1577)",
+     "at": [
+      7272,
+      1569
+     ]
+    },
+    {
+     "id": "northlight_bench_2",
+     "kind": "bench",
+     "near": [
+      7258,
+      1568
+     ],
+     "facing": "south",
+     "why": "the second bench, looking at the fire",
+     "at": [
+      7258,
+      1569
+     ]
+    },
+    {
+     "id": "northlight_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      7258,
+      1553
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "northlight_lamp_2",
+     "kind": "lamp_post",
+     "at": [
+      7277,
+      1545
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "northlight_lamp_3",
+     "kind": "lamp_post",
+     "at": [
+      7252,
+      1569
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "northlight_lamp_4",
+     "kind": "lamp_post",
+     "at": [
+      7275,
+      1569
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "northlight_lamp_5",
+     "kind": "lamp_post",
+     "at": [
+      7256,
+      1542
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "northlight_lamp_6",
+     "kind": "lamp_post",
+     "why": "lights the south-west of the square: the independent light audit (tools/town_squares_audit.py) found the cell (7260, 1564) at block light 0 that the builder's simple Manhattan model counts lit",
+     "near": [
+      7260,
+      1563
+     ],
+     "at": [
+      7260,
+      1561
+     ]
+    }
+   ]
   }
  }
 }
