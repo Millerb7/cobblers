@@ -374,7 +374,7 @@ def test_an_unsited_site_has_a_reason_and_is_not_built_or_placed():
     # what breaks without it: an NPC class and a dialogue for a seat nobody verified, placed by R18PB over RCON
     doc, files = _files()
     unsited = [s for s in doc["sites"] if s.get("status") == "unsited"]
-    assert {s["id"] for s in unsited} == {"tp_fossick", "tp_northlight_station", "tp_sunset_harbour"}
+    assert {s["id"] for s in unsited} == {"tp_fossick", "tp_northlight_station"}  # Sunset Harbour sited 2026-10-13 in a full checkout
     for s in unsited:
         assert s["unsited_why"]
         assert "data/cobblers/dialogues/dlg_produce_buyer_%s.json" % s["id"] not in files
