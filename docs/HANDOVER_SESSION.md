@@ -31,6 +31,7 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
   the last merge: the full suite, prepare.
 
 ## 3. Waiting on the owner
+- Dialogue review (merged, STATE "Dialogue de-slopped"): a voice pass for the main-story speakers and the Compact; Oak's rules pages (pinned by challenge_mode_audit); the battle guide's raw balance notes; two new beats to confirm (Dev Aster, the Giovanni watch).
 - The mods swap (above).
 - Challenge: eight leaders changed ace; acceptable? Redesign the 77 route/junior Challenge fights (needs the route
   generator field in CHALLENGE_MODE_TEAMS.md section 6)?
