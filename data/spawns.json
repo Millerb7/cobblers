@@ -8228,20 +8228,6 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.great_crater.larvesta",
-      "species": "larvesta",
-      "bucket": "rare",
-      "level": "43-53",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "great_crater",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named rare family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "surface.great_crater.turtonator",
       "species": "turtonator",
       "bucket": "rare",
@@ -8606,20 +8592,6 @@
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
       "eligibility_reason": "evolves from Tyrunt at level 39: spawns 39-48, inside the tier 7 band 38-48",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.east_cones.larvesta",
-      "species": "larvesta",
-      "bucket": "rare",
-      "level": "38-48",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "east_cones",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named rare family, tier 7: the family starts here",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -20922,16 +20894,30 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.south_east_dunes.larvesta",
-      "species": "larvesta",
+      "id": "surface.south_east_dunes.gabite",
+      "species": "gabite",
       "bucket": "rare",
-      "level": "43-53",
-      "weight": 2.0,
+      "level": "43-52",
+      "weight": 0.2,
       "ambient": true,
       "scope": "south_east_dunes",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "named rare family, tier 8: the family starts here",
+      "eligibility_reason": "evolves from Gible at level 24: spawns 43-52, inside the tier 8 band 43-53",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.south_east_dunes.garchomp",
+      "species": "garchomp",
+      "bucket": "rare",
+      "level": "48-53",
+      "weight": 1.8,
+      "ambient": true,
+      "scope": "south_east_dunes",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "evolves from Gabite at level 48: spawns 48-53, inside the tier 8 band 43-53",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -26686,7 +26672,13 @@
       "conditions_basis": "The Outer Deep: open ocean past every shore, where everything is full-grown: the great whales, the ghost-jellies and lanterns of the dark water, the wrecks and the living fossil. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Tentacool at level 30: spawns 45-55, inside the tier 8 band 45-55",
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "held_items": [
+        {
+          "item": "cobblemon:poison_barb",
+          "percentage": 5
+        }
+      ]
     },
     {
       "id": "marine.outer_deep.jellicent",
@@ -29148,7 +29140,13 @@
       "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Tentacool at level 30: spawns 50-55, inside the tier 8 band 50-55",
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "held_items": [
+        {
+          "item": "cobblemon:poison_barb",
+          "percentage": 5
+        }
+      ]
     },
     {
       "id": "marine.southern_open.seadra",
@@ -29372,7 +29370,13 @@
       },
       "biomes": [],
       "spawnable_position": "submerged",
-      "alpha": true
+      "alpha": true,
+      "held_items": [
+        {
+          "item": "cobblemon:poison_barb",
+          "percentage": 5
+        }
+      ]
     },
     {
       "id": "marine.southern_depths.mantyke",
@@ -29462,7 +29466,13 @@
       "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Tentacool at level 30: spawns 55-60, inside the tier 9 band 55-60",
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "held_items": [
+        {
+          "item": "cobblemon:poison_barb",
+          "percentage": 5
+        }
+      ]
     },
     {
       "id": "marine.southern_depths.lumineon",
@@ -44059,22 +44069,6 @@
           "conditions": {}
         },
         {
-          "species": "Larvesta",
-          "pokemon": "larvesta",
-          "types": [
-            "bug",
-            "fire"
-          ],
-          "family": "larvesta",
-          "family_priority": "rare",
-          "ambient": true,
-          "eligibility_reason": "named rare family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "rare",
-          "weight": 2.0,
-          "conditions": {}
-        },
-        {
           "species": "Turtonator",
           "pokemon": "turtonator",
           "types": [
@@ -44469,22 +44463,6 @@
           "level": "39-48",
           "bucket": "rare",
           "weight": 1.2,
-          "conditions": {}
-        },
-        {
-          "species": "Larvesta",
-          "pokemon": "larvesta",
-          "types": [
-            "bug",
-            "fire"
-          ],
-          "family": "larvesta",
-          "family_priority": "rare",
-          "ambient": true,
-          "eligibility_reason": "named rare family, tier 7: the family starts here",
-          "level": "38-48",
-          "bucket": "rare",
-          "weight": 2.0,
           "conditions": {}
         },
         {
@@ -57715,19 +57693,35 @@
           "conditions": {}
         },
         {
-          "species": "Larvesta",
-          "pokemon": "larvesta",
+          "species": "Gabite",
+          "pokemon": "gabite",
           "types": [
-            "bug",
-            "fire"
+            "dragon",
+            "ground"
           ],
-          "family": "larvesta",
+          "family": "gible",
           "family_priority": "rare",
           "ambient": true,
-          "eligibility_reason": "named rare family, tier 8: the family starts here",
-          "level": "43-53",
+          "eligibility_reason": "evolves from Gible at level 24: spawns 43-52, inside the tier 8 band 43-53",
+          "level": "43-52",
           "bucket": "rare",
-          "weight": 2.0,
+          "weight": 0.2,
+          "conditions": {}
+        },
+        {
+          "species": "Garchomp",
+          "pokemon": "garchomp",
+          "types": [
+            "dragon",
+            "ground"
+          ],
+          "family": "gible",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "evolves from Gabite at level 48: spawns 48-53, inside the tier 8 band 43-53",
+          "level": "48-53",
+          "bucket": "rare",
+          "weight": 1.8,
           "conditions": {}
         },
         {

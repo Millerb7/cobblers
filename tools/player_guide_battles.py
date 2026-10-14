@@ -63,6 +63,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import player_site  # noqa: E402  the shared header, footer, stylesheet and manifest of docs/player/
+import battle_sim  # noqa: E402  showdown_read: both jar layouts
 
 OUT = ROOT / "docs" / "player" / "battles.html"
 MODS = Path(os.environ.get("COBBLERS_SNAPSHOT_MODS")
@@ -116,7 +117,7 @@ class Dex:
                 t = [s.get("primaryType"), s.get("secondaryType")]
                 self.types[n.rsplit("/", 1)[1][:-5]] = [x.lower() for x in t if x]
         self.moves = {}
-        for m in ENTRY.finditer(z.read(SHOWDOWN_MOVES).decode("utf-8", "replace")):
+        for m in ENTRY.finditer(battle_sim.showdown_read(z, "moves.js").decode("utf-8", "replace")):
             typ = re.search(r'^    type: "([^"]*)"', m.group(2), re.M)
             cat = re.search(r'^    category: "([^"]*)"', m.group(2), re.M)
             if typ:
