@@ -82,7 +82,7 @@
           "decline": "Another time.",
           "over_cap": "That one is too strong for a practice match. Leave it in the box and I will take you on.",
           "after": [
-            "Good. That is what I wanted to see: a world that fights fair. The lake office will hear the cart is a day late.",
+            "Good. So this world fights fair. The lake office can live with the cart being a day late.",
             "Go on to the lake. Nia is working the landing, and she will not turn anyone away."
           ],
           "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. Each does its beat: the first sight of the Compact as people, nothing said about method (docs/story/HAVEN_COMPACT_PASS.md CP-01)"
@@ -95,7 +95,7 @@
             "Do not mind Ansel. He has been waiting a week to meet someone who is not a clerk.",
             "My husband Dev and our son Jo are by the wheel. Jo has decided your Pokemon are his now.",
             "We were evacuated once already, before this. Nia carried us out herself. The Compact kept that promise, so we are keeping ours: we go where the next boat goes.",
-            "Whatever you hear about the Compact on this road, I hope you remember the cart."
+            "You will hear things about the Compact on this road. Remember the cart."
           ],
           "repeat": "Lake Viltri is a day's walk. Nia is on the landing. Tell her the Asters are well.",
           "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex; the Asters are FACTION's family (they must not be written as soldiers, rule 4)"
@@ -292,7 +292,7 @@
           "lines": [
             "Let me say this once in front of everyone. Pause the transfers until a destination can be proved empty.",
             "I have held the hand of a woman from the source world, and a woman from this one, and I could not tell you which of them was more afraid.",
-            "A pause is not abandonment. It is the first time we would ask who is on the other side before we carry someone through."
+            "Pausing abandons nobody. For once we would ask who is on the other side before we carry someone through."
           ],
           "repeat": "The sergeant thinks waiting kills. He is not wrong that it can. I am asking for the cost to be visible.",
           "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex"
@@ -303,8 +303,8 @@
           "before": "Please, the council is sitting.",
           "lines": [
             "We are the families housed here, on the green. Our home community is still waiting for the next boat.",
-            "Mila says Nia is right. I say the sergeant is right. The honest answer is both, and we have a boy who needs a roof either way.",
-            "Whatever you decide you are for, remember that there is a child asking when we are going home."
+            "Mila says Nia is right. I say the sergeant is. Either way, we have a boy who needs a roof.",
+            "Our boy keeps asking when we are going home. I do not have an answer for him."
           ],
           "repeat": "Jo is asleep on the grass. Please keep your voice down.",
           "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex"
@@ -491,8 +491,8 @@
           "before": "The camp is closed to visitors. Please move on.",
           "lines": [
             "You have walked into the largest camp of families the Compact has left. Four hundred and nine names, and the boats have stopped coming for them.",
-            "They are waiting for a transfer that has not been scheduled. Nobody here will tell you it is wrong, because they have nowhere else to put the hope.",
-            "At dusk the marsh pushes its own creatures against our edge. Something in the air has frightened them since the last exchange. My guards hold the line; there are not enough of them."
+            "They are waiting for a transfer nobody has scheduled. Nobody here says so out loud. It is all they have.",
+            "At dusk the marsh pushes its own creatures against our edge. Something in the air has frightened them since the last exchange. My guards hold the line. There are not enough of them."
           ],
           "repeat": "If you are going through, go quietly. The children sleep early.",
           "placeholder": "Claude, 2026-10-11 (unit CP-ROUTES): stand-in lines for Codex. Rule 4: the families stay visible. The defence fight these lines set up is NOT built (see this point's mechanism)"

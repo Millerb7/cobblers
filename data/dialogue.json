@@ -2092,7 +2092,7 @@
           "id": "oak_repeat_after_mismatch",
           "kind": "line",
           "speaker": "professor_oak",
-          "text": "Trust the ground before the map. Bring back an account from someone who was outside Pallet.",
+          "text": "Find someone who was outside Pallet when it happened, and bring me what they saw.",
           "next": "oak_repeat_after_mismatch"
         }
       ]
@@ -2268,7 +2268,7 @@
           "id": "maren_004",
           "kind": "line",
           "speaker": "maren",
-          "text": "Find someone who watched Pallet arrive. We need a witness who did not wake up inside the mystery.",
+          "text": "Find someone who watched Pallet arrive. Someone who was outside it, not asleep in it like us.",
           "actions_after_acknowledge": [
             {
               "kind": "quest_transition",
@@ -2378,7 +2378,7 @@
           "id": "brock_locked",
           "kind": "line",
           "speaker": "brock",
-          "text": "Compare Pallet's maps with the ground before we speak. Professor Oak and Maren in Pallet hold the first half of this account. Or earn the Boulder Badge from me, and I will tell you anyway.",
+          "text": "Talk to Professor Oak and Maren in Pallet first. They have the first half of this. Or earn the Boulder Badge from me, and I will tell you anyway.",
           "next": "brock_locked"
         },
         {
@@ -2434,7 +2434,7 @@
           "id": "brock_008",
           "kind": "line",
           "speaker": "brock",
-          "text": "That makes Pallet one event in a larger pattern. It does not tell me who caused it.",
+          "text": "So Pallet is not the only one. The rock does not say who did it.",
           "next": "brock_009"
         },
         {
@@ -2461,7 +2461,7 @@
           "id": "brock_repeat",
           "kind": "line",
           "speaker": "brock",
-          "text": "The sample proves two grounds were joined. The missing settlement proves what the join cost.",
+          "text": "Two grounds joined with nothing between them. And a settlement gone to make room.",
           "next": "brock_repeat"
         }
       ]
@@ -2578,7 +2578,7 @@
           "id": "misty_003",
           "kind": "line",
           "speaker": "relief clerk",
-          "text": "The Haven Compact brought them out of worlds that were already collapsing. Whatever else is true, those rescues saved lives.",
+          "text": "The Haven Compact pulled them out of worlds that were already falling apart. Say what you like about the Compact, these people are alive.",
           "next": "misty_004"
         },
         {
@@ -2592,7 +2592,7 @@
           "id": "misty_005",
           "kind": "line",
           "speaker": "relief clerk",
-          "text": "That resemblance does not prove the Compact moved Pallet, and it does not tell us what vanished from either destination.",
+          "text": "That does not mean the Compact moved Pallet. And it says nothing about what disappeared at either end.",
           "next": "misty_006"
         },
         {
@@ -2619,7 +2619,7 @@
           "id": "misty_repeat",
           "kind": "line",
           "speaker": "relief clerk",
-          "text": "The rescues were real. So is the unanswered question of what each rescue displaced.",
+          "text": "The rescues were real. What each one pushed out, nobody has asked yet.",
           "next": "misty_repeat"
         }
       ]
@@ -2756,14 +2756,14 @@
           "id": "surge_006",
           "kind": "line",
           "speaker": "signal technician",
-          "text": "The record cannot tell us whether that system was used as a weapon, a rescue beacon, or both.",
+          "text": "Weapon or rescue line? Could be both. The record does not say.",
           "next": "surge_007"
         },
         {
           "id": "surge_007",
           "kind": "line",
           "speaker": "signal technician",
-          "text": "The next source lies east of the massif, toward Peak Pond Hollow. Its signal is older and buried under altered ground.",
+          "text": "Next source is east of the massif, toward Peak Pond Hollow. Older signal, buried under altered ground.",
           "next": "surge_repeat",
           "actions_after_acknowledge": [
             {
@@ -2926,7 +2926,7 @@
           "id": "erika_008",
           "kind": "line",
           "speaker": "survey archivist",
-          "text": "The ledger proves the cost exists. It does not prove that anyone can measure every life at a destination.",
+          "text": "The ledger shows the cost is real. Whether anyone can count every life at a destination, it cannot say.",
           "next": "erika_009"
         },
         {
@@ -3060,7 +3060,7 @@
           "id": "koga_003",
           "kind": "line",
           "speaker": "marsh tracker",
-          "text": "These marks are not random failures. Every forced exchange makes the next boundary wider and less exact.",
+          "text": "These are not accidents. Every forced exchange leaves the next edge wider and sloppier.",
           "next": "koga_004"
         },
         {
@@ -3081,14 +3081,14 @@
           "id": "koga_006",
           "kind": "line",
           "speaker": "marsh tracker",
-          "text": "The Rift may not be a natural scar. It may be damage accumulated from every forced use.",
+          "text": "I do not think the Rift is natural. I think it is every forced use, piled up.",
           "next": "koga_007"
         },
         {
           "id": "koga_007",
           "kind": "line",
           "speaker": "marsh tracker",
-          "text": "Sabrina's town has the glacier, lake, signal, and memory reports. She can compare what no single tracker can see.",
+          "text": "Sabrina's town has the glacier, lake, signal, and memory reports. She can lay them side by side. I see one marsh.",
           "next": "koga_repeat",
           "actions_after_acknowledge": [
             {
@@ -3250,7 +3250,7 @@
           "id": "sabrina_007",
           "kind": "line",
           "speaker": "Sabrina",
-          "text": "That is why their argument cannot be dismissed as simple cruelty, and why their method cannot be accepted as harmless.",
+          "text": "So I cannot call them cruel. And I cannot call what they do harmless.",
           "next": "sabrina_008"
         },
         {
@@ -3384,7 +3384,7 @@
           "id": "blaine_001",
           "kind": "line",
           "speaker": "crater analyst",
-          "text": "The Craters can power the Compact's next mass exchange. The energy source is not the discovery that stopped us.",
+          "text": "The Craters can power the Compact's next mass exchange. That is not what stopped us cold.",
           "next": "blaine_002"
         },
         {
@@ -3419,7 +3419,7 @@
           "id": "blaine_006",
           "kind": "line",
           "speaker": "crater analyst",
-          "text": "Stopping the crater operation prevents this activation. It does not make the waiting refugees safe.",
+          "text": "Shutting down the crater stops this activation. The refugees are still waiting, and still not safe.",
           "next": "blaine_007"
         },
         {
@@ -3602,7 +3602,7 @@
           "id": "giovanni_006",
           "kind": "line",
           "speaker": "southern watch officer",
-          "text": "His challenge is the region's last test before the Rift road: whether you can carry a decision whose cost cannot be hidden.",
+          "text": "His gym is the last test before the Rift road. He will not make it easy.",
           "next": "giovanni_007"
         },
         {
@@ -3811,7 +3811,7 @@
           "id": "rift_005",
           "kind": "line",
           "speaker": "Rift surveyor",
-          "text": "If it stops, the refugees do not receive a miracle. That cost remains even if the method is indefensible.",
+          "text": "Stop it, and the refugees are still stranded. That does not make the method right.",
           "next": "rift_006"
         },
         {
@@ -3825,7 +3825,7 @@
           "id": "rift_007",
           "kind": "line",
           "speaker": "Rift surveyor",
-          "text": "The world will not reset when this ends. Pallet, the missing settlement, and every stranded refugee will still be here.",
+          "text": "Nothing resets when this ends. Pallet, the missing settlement and the refugees will all still be here.",
           "next": "rift_way_1",
           "actions_after_acknowledge": [
             {
@@ -3923,28 +3923,28 @@
           "id": "league_003",
           "kind": "line",
           "speaker": "League steward",
-          "text": "The rescued families remain people who need homes. The dissenters remain responsible for the rescues and the displacements they enabled.",
+          "text": "The rescued families still need homes. The dissenters still answer for the rescues, and for what the rescues displaced.",
           "next": "league_004"
         },
         {
           "id": "league_004",
           "kind": "line",
           "speaker": "League steward",
-          "text": "No one here will promise a safe reversal before one exists. Repair begins with consent, evidence, and care for everyone stranded by the exchanges.",
+          "text": "Nobody here will promise to undo it until someone knows how. Until then, we look after the people it stranded.",
           "next": "league_005"
         },
         {
           "id": "league_005",
           "kind": "line",
           "speaker": "League steward",
-          "text": "Opening the League is not another crisis. It is the region recognizing what you carried across it.",
+          "text": "The League opening is not another emergency. This one is for you.",
           "next": "league_006"
         },
         {
           "id": "league_006",
           "kind": "line",
           "speaker": "League steward",
-          "text": "The trainers ahead will test the team that crossed the continent. The champion's record will mark the end of this campaign and the start of the repair.",
+          "text": "The trainers ahead will test the team that crossed the continent with you. Beat the Champion and this part is over. The repair goes on after.",
           "next": "league_repeat",
           "actions_after_acknowledge": [
             {
@@ -3957,7 +3957,7 @@
           "id": "league_repeat",
           "kind": "line",
           "speaker": "League steward",
-          "text": "The crisis is over. The League is open, and the work after victory will still be waiting.",
+          "text": "The crisis is over and the League is open. The rest of the work will keep.",
           "next": "league_repeat"
         }
       ]
@@ -4620,7 +4620,7 @@
           "id": "p_end7",
           "kind": "line",
           "speaker": "narration",
-          "text": "Then it curls up against Haunter and does not look back at you once. That is how you know it's fine.",
+          "text": "Then it curls up against Haunter and does not look back at you once.",
           "next": "p_done",
           "actions_after_acknowledge": [
             {
@@ -7277,7 +7277,7 @@
           "id": "f_done",
           "kind": "line",
           "speaker": "fisher",
-          "text": "Patience is a route skill. Nobody believes that until they try it.",
+          "text": "Waiting is a skill. Nobody believes that until they try it.",
           "next": "f_done"
         }
       ],
@@ -7515,7 +7515,7 @@
           "id": "fd_2",
           "kind": "line",
           "speaker": "fisher",
-          "text": "The current doesn't care what you're after. You learn to cast across it, not into it.",
+          "text": "You cast across the current here, not into it.",
           "next": "fd_3"
         },
         {
@@ -7662,7 +7662,7 @@
           "id": "fd_done",
           "kind": "line",
           "speaker": "fisher",
-          "text": "Still the same pond. Still the same me.",
+          "text": "Same pond as yesterday.",
           "next": "fd_done"
         },
         {
@@ -7743,7 +7743,7 @@
           "id": "fd_2",
           "kind": "line",
           "speaker": "fisher",
-          "text": "The sea keeps no timetable, but it keeps a mood. I fish between the boats.",
+          "text": "The sea has no timetable. I fish between the boats.",
           "next": "fd_3"
         },
         {
@@ -8515,7 +8515,7 @@
           "id": "k_gauge",
           "kind": "line",
           "speaker": "keeper",
-          "text": "Same lake, three depths. That is why one path never tells you the whole shore.",
+          "text": "Same lake, three different answers. Now you know why I look at the banks.",
           "next": "k_gauge2"
         },
         {
@@ -9329,7 +9329,7 @@
           "id": "courier_ansel_after_001",
           "kind": "line",
           "speaker": "ansel",
-          "text": "Good. That is what I wanted to see: a world that fights fair. The lake office will hear the cart is a day late.",
+          "text": "Good. So this world fights fair. The lake office can live with the cart being a day late.",
           "next": "courier_ansel_after_002"
         },
         {
@@ -9500,7 +9500,7 @@
           "id": "mila_aster_004",
           "kind": "line",
           "speaker": "mila",
-          "text": "Whatever you hear about the Compact on this road, I hope you remember the cart.",
+          "text": "You will hear things about the Compact on this road. Remember the cart.",
           "next": "mila_aster_repeat"
         },
         {
@@ -10687,7 +10687,7 @@
           "id": "nia_pause_003",
           "kind": "line",
           "speaker": "nia",
-          "text": "A pause is not abandonment. It is the first time we would ask who is on the other side before we carry someone through.",
+          "text": "Pausing abandons nobody. For once we would ask who is on the other side before we carry someone through.",
           "next": "nia_pause_repeat"
         },
         {
@@ -10779,14 +10779,14 @@
           "id": "dev_aster_002",
           "kind": "line",
           "speaker": "dev",
-          "text": "Mila says Nia is right. I say the sergeant is right. The honest answer is both, and we have a boy who needs a roof either way.",
+          "text": "Mila says Nia is right. I say the sergeant is. Either way, we have a boy who needs a roof.",
           "next": "dev_aster_003"
         },
         {
           "id": "dev_aster_003",
           "kind": "line",
           "speaker": "dev",
-          "text": "Whatever you decide you are for, remember that there is a child asking when we are going home.",
+          "text": "Our boy keeps asking when we are going home. I do not have an answer for him.",
           "next": "dev_aster_repeat"
         },
         {
@@ -11435,14 +11435,14 @@
           "id": "camp_warden_002",
           "kind": "line",
           "speaker": "ysolde",
-          "text": "They are waiting for a transfer that has not been scheduled. Nobody here will tell you it is wrong, because they have nowhere else to put the hope.",
+          "text": "They are waiting for a transfer nobody has scheduled. Nobody here says so out loud. It is all they have.",
           "next": "camp_warden_003"
         },
         {
           "id": "camp_warden_003",
           "kind": "line",
           "speaker": "ysolde",
-          "text": "At dusk the marsh pushes its own creatures against our edge. Something in the air has frightened them since the last exchange. My guards hold the line; there are not enough of them.",
+          "text": "At dusk the marsh pushes its own creatures against our edge. Something in the air has frightened them since the last exchange. My guards hold the line. There are not enough of them.",
           "next": "camp_warden_repeat"
         },
         {
