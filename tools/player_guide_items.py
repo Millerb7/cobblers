@@ -370,7 +370,7 @@ def render_money(m):
     ev_gate, iv_gate = badge(sv["ev"].get("gate")), badge(sv["iv"].get("gate"))
     return (
         '<section %s><h2>How money works</h2>'
-        '<h3>Beating trainers</h3><p>Money comes from beating trainers. <b>Wild battles pay nothing.</b>%s A win pays '
+        '<h3>Beating trainers</h3><p>Money comes from beating trainers, wherever you meet them. <b>Battles against wild Pokemon pay nothing.</b>%s A win pays '
         'by the beaten team\'s levels added up: on average about %s times the square of that total, and anywhere '
         'from two thirds to four thirds of the average.</p>'
         '<div class="wide"><table><thead><tr><th class="n">Team\'s levels added up</th><th class="n">Pays about</th>'
@@ -393,7 +393,7 @@ def render_money(m):
         '<li><b>Effort training</b>: %s a Pokemon, a two-stat training plan%s.</li>'
         '<li><b>Perfect a stat</b>: %s a stat, or %s for all six%s.</li></ul></section>'
         % (player_site.section_attr("money"),
-           "" if not m["wild_pays"] else " (This server's settings say wild battles pay: tell an operator.)",
+           "" if not m["wild_pays"] else " (This server's settings say wild Pokemon pay: tell an operator.)",
            "%.2f" % (mult * 2.25 / 10), "".join(ex), "".join(legs), crates, "".join(sched),
            dollars(sv["raise"]["price"]), sv["raise"]["max_cap"],
            dollars(sv["ev"]["price"]), ", once you hold %s" % ev_gate if ev_gate else "",

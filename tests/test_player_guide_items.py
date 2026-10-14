@@ -135,7 +135,7 @@ def test_the_bank_list_is_the_banks(raw):
 def test_wild_battles_pay_nothing_is_said(raw):
     common = _json("modpack/config/cobbledollars/common.json")
     money = _text(_section(raw, "money"))
-    assert common["earnCobbleDollarsFromWildPokemon"] is False and "Wild battles pay nothing" in money
+    assert common["earnCobbleDollarsFromWildPokemon"] is False and "Battles against wild Pokemon pay nothing" in money
     ib = _json("data/markets.json")["income_basis"]
     for k, v in ib["leg_by_badge"].items():
         assert "Gym %s $%s" % (k, format(v, ",")) in money, k
