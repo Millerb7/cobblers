@@ -1,0 +1,78 @@
+{
+  "schema": "cobblers.rip_scheduler/1",
+  "generated_by": "hand",
+  "status": "PROPOSED DEFAULTS. Not one of these is confirmed by the owner (docs/HANDOVER_SESSION.md section 3 job D, 2026-10-14: 'Proposed defaults, NOT yet confirmed by the owner'). Each setting says so in its own owner_confirmed field; flip it only when the owner has answered. tools/rip_scheduler.py reads the values from here and nowhere else, so changing a number is an edit to this file and a rebuild, never to code.",
+  "what_this_is": "The settings of the rip scheduler (tools/rip_scheduler.py, pack cobblers_rips). A rip is a candidate PLACE (data/dungeon_rips.json 'rips' is the pool: every record of that shape is a candidate, however many there are). The scheduler keeps a few of them open at random, closes each after its time or once someone has gone through, and gives the ground back exactly. The draw (band from the RCON cap, least recently entered, sigil last, no re-roll: docs/mechanics/DUNGEON_DRAW.md) is not touched.",
+  "settings": {
+    "enabled": {
+      "value": true,
+      "owner_confirmed": false,
+      "origin": "builder: a switch for the scheduler as a whole. Set false and the pass does nothing (no rip opens; open ones close at their timers). At runtime: scoreboard players set #on rp.v 0|1."
+    },
+    "open_min": {
+      "value": 3,
+      "owner_confirmed": false,
+      "origin": "owner's proposal (job D): '3-5 open at once'. Below this many open, the scheduler opens one every pass (5 s) until it is reached."
+    },
+    "open_max": {
+      "value": 5,
+      "owner_confirmed": false,
+      "origin": "owner's proposal (job D): '3-5 open at once'. The cap: nothing opens while this many are open. Between open_min and open_max a further one opens at random (extra_open_every_minutes)."
+    },
+    "lifetime_minutes": {
+      "value": 60,
+      "owner_confirmed": false,
+      "origin": "owner's proposal (job D): 'about an hour of play each'. PLAY time: the timer runs down only while at least one player is online (a rip opened on an empty server does not age)."
+    },
+    "lifetime_jitter_minutes": {
+      "value": 15,
+      "owner_confirmed": false,
+      "origin": "builder: 'about an hour' read as 60 minutes plus or minus this, drawn at random when the rip opens (45 to 75), so the open ones do not all close together."
+    },
+    "close_when_entered": {
+      "value": true,
+      "owner_confirmed": false,
+      "origin": "owner's proposal (job D): 'or closed once entered'. A rip closes when a player has gone through it (a run begun by it, dg.rip = its number with dg.st >= 1)."
+    },
+    "close_after_entry_seconds": {
+      "value": 0,
+      "owner_confirmed": false,
+      "origin": "builder: how long the rip stays open after someone has gone through. 0 is the literal reading of 'closed once entered' (it closes at the next pass, within 5 s). A friend who wants the same rip has no time to follow at 0: a few tens of seconds would let a party go in together. The owner has not been asked."
+    },
+    "sites": {
+      "value": "anywhere",
+      "owner_confirmed": false,
+      "origin": "owner's proposal (job D): 'anywhere (gated regions included)'; the owner, 2026-10-13: 'every area in game should be capable of spawning a rift, so leave it even if its gated'. Every record of data/dungeon_rips.json 'rips' is a candidate."
+    },
+    "gated_sites": {
+      "value": "allow",
+      "owner_confirmed": false,
+      "origin": "owner's decision of 2026-10-13, carried here as a switch. A site with reachable_after (data/dungeon_rips.json, from data/rift_zones.json) is an ordinary candidate: it can open before any player can reach it, and its chat line names its region like any other. 'exclude' drops those sites from the pool at build time (they keep their number; they are simply never picked)."
+    },
+    "announce": {
+      "value": "A rift has opened in {region}.",
+      "owner_confirmed": false,
+      "origin": "owner's proposal (job D): 'a chat line naming the region when one opens'. Plain wording, no flourish. {region} is the region's display_name in data/regions.json; a name starting 'The ' is written 'the ' mid-sentence. Sent to every player at the moment it opens."
+    },
+    "one_open_per_region": {
+      "value": true,
+      "owner_confirmed": false,
+      "origin": "builder: no second rip opens in a region that has one open, so the open ones are spread over the map. The pool has several candidates per region (the siting rules keep them 300 blocks apart), and without this two could open in sight of each other."
+    },
+    "extra_open_every_minutes": {
+      "value": 15,
+      "owner_confirmed": false,
+      "origin": "builder: between open_min and open_max, one further rip opens on average this often (a one-in-K chance each pass). At 60 minutes each and 3 to 5 open, about one in fifteen minutes keeps the count near the middle."
+    },
+    "pass_seconds": {
+      "value": 5,
+      "owner_confirmed": false,
+      "origin": "builder: how often the scheduler looks (it schedules its own next pass). Timers run down by this much per pass."
+    },
+    "hold_y": {
+      "value": 560,
+      "owner_confirmed": false,
+      "origin": "builder: the height of the SKY HOLD where a rip's original blocks wait while it is open (tools/dungeon.py rip_save_lines). The overworld here is min_y -64, height 640 (modpack/datapacks/cobblers_height), so y 575 is the top; the canopy of the world tree peaks at y535 (tools/reapply.py CROWN). The hold is in the rip's own chunks, 560 to 564."
+    }
+  }
+}

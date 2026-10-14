@@ -136,13 +136,16 @@ def test_the_retire_functions_touch_only_the_retired_rips_and_the_sweep_kills_on
     assert not D.build_only("cobblers:dungeons/rips/entities_retired_look")      # the sweep is scheduled: it must stay in the runtime pack
 
 
-def test_r16dr_runs_the_retire_blocks_and_the_sweep_before_it_summons_the_standing_rips():
+def test_r16dr_runs_the_retire_blocks_and_the_sweep_then_arms_the_scheduler_and_lays_no_rip():
     # a re-apply that never ran the retire functions would leave the trail rips in the world (the owner, 2026-10-13: "have to
-    # go"); and the count the chain reads back must stay the standing rips only
+    # go"). Since 2026-10-14 it lays no rip at all (they open and close at random: tools/rip_scheduler.py), so nothing is counted
     steps = dict((s[0], s[2]) for s in D.reapply_steps(D.load()))["R16DR"]
     fn = [a[1] for a in steps if a[0] == "fn"]
-    assert fn[:3] == ["cobblers:dungeons/rips/place", "cobblers:dungeons/rips/retire", "cobblers:dungeons/rips/entities_retired"]
-    assert ("check", ("chunk_look", D.RIP_HOLDER, len(RIPS), "dungeon rips")) in steps
+    assert fn == ["cobblers:dungeons/rips/retire", "cobblers:dungeons/rips/entities_retired", "cobblers:rips/init"]
+    assert not [a for a in steps if a[0] == "check"]
+    fns = D.functions(D.load())
+    assert "rips/place" not in fns and not [k for k in fns if k.startswith("rips/blocks_")]
+    assert "cobblers:dungeons/rips/entities" not in D.chains(D.load())[0]
 
 
 def test_the_way_out_of_a_player_with_no_rip_score_is_the_first_standing_rip():
@@ -226,7 +229,8 @@ def test_the_presence_probes_in_world_probes_are_the_ones_the_tool_writes():
     # value; four a retired one (no interaction, no oval, the ground back, the plane back)
     places = json.loads((ROOT / "data" / "world_probes.json").read_text(encoding="utf-8"))["places"]
     assert places["dungeon_rips"] == DRP.probes(RIPS_DOC)["dungeon_rips"]
-    assert len(places["dungeon_rips"]) == 3 * len(RIPS) + 1 + 4 * len(RETIRED)
+    # 2026-10-14: no rip stands, so no probe expects one at a candidate (it is open or closed by the clock); the retired ones stay
+    assert len(places["dungeon_rips"]) == 4 * len(RETIRED)
     gone = [p for p in places["dungeon_rips"] if "RETIRED" in p["what"] and "entity" in p]
     assert len(gone) == 2 * len(RETIRED) and all(p["count"] == 0 for p in gone)
     # nothing expects a rip where one was retired: the Night Shift place carries no probe of its old rip

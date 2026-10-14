@@ -194,11 +194,13 @@ def test_the_reapply_steps_count_the_entities_they_summon():
         assert places == ["cobblers:dungeons/place/s%d" % s["g"] for s in D.slots(DOC)]
     else:
         assert places == ["cobblers:dungeons/place"]
-    assert [v for k, v in steps[1][2] if k == "fn"][0] == "cobblers:dungeons/rips/place"
+    # 2026-10-14: R16DR no longer lays the rips (they open and close at random: tools/rip_scheduler.py). It runs the retire of the
+    # 13 trail rips and then arms the scheduler; it reads no entity count back (no rip stands to be counted)
+    r16dr = [v for k, v in steps[1][2] if k == "fn"]
+    assert r16dr[-1] == "cobblers:rips/init" and not [v for v in r16dr if v.endswith("rips/place")]
     check = [v for k, v in steps[0][2] if k == "check"][0]
     assert check[2] == 3 * len(D.slots(DOC))
-    check = [v for k, v in steps[1][2] if k == "check"][0]
-    assert check[2] == len(DOC["rips"])             # one interaction a rip (data/dungeon_rips.json), not a dungeon
+    assert not [v for k, v in steps[1][2] if k == "check"]
 
 
 def test_reapply_installs_the_pack_world_local_prepares_it_and_runs_its_steps_after_r16q():

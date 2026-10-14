@@ -66,6 +66,7 @@ PLANE_H = 4
 # the window round a rip, relative to the plane's middle column and its z: x -4..+4, z -1..+5
 WIN = (-4, -1, 4, 5)
 ROUTE_FILES = ("data/route_paths.json",)
+STANDING_RIPS = False   # the rips open and close (tools/rip_scheduler.py); see probes()
 ZONES = ROOT / "data" / "rift_zones.json"
 
 
@@ -415,7 +416,11 @@ def probes(doc=None, skip=()):
     ddoc = D.load()
     doc = doc if doc is not None else load()
     out = []
-    for r in doc["rips"]:
+    # 2026-10-14: the rips no longer stand (tools/rip_scheduler.py opens a few at random and closes them), so there is nothing a
+    # presence probe may expect at a candidate: it holds the click and the oval while open and the original ground while closed,
+    # and which it is depends on the clock. The probes of a standing rip are kept behind STANDING_RIPS (False) for the day a rip
+    # stands again; the retired rips' probes below are unchanged
+    for r in (doc["rips"] if STANDING_RIPS else []):
         if r["id"] in skip:
             continue
         tag, oval = D.rip_tag(r), ddoc["engine"]["rip_art"]["tag"]
