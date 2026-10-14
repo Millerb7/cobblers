@@ -41,26 +41,42 @@ to D:, prepare, stop, hold the bank file, install, boot 24G watchdog off, `reapp
 R18KC, R16CH, R18CH, R16DR re-apply, R9F), stop, watchdog 60000, `strip`, boot 12G, read back
 (`npc_seats.py verify`, `presence_audit --only extra`, the per-place verify commands). A fresh session should do it.
 
-## 3. Waiting on the owner
-- Economy E1-E12 (`ECONOMY_V2.md` section 6). The owner's 64 cobble = $100 is ~8x the spine (estimate).
-- Mod updates: DOWNLOADED (the owner: "download any updates that we can") 40 files to
-  `C:/Users/wnd/Documents/cobblers-local/mod-updates-2026-10-13/` (MANIFEST.json; each size and SHA-512 matched
-  Modrinth's record). Not installed, not boot-tested. Excluded: the Cobblemon 1.8.2 lockstep set (capturexp has no
-  1.8.2 build: owner's call to drop capturexp or wait), HOLD rows, alphas. Next: snapshot, staging boot test.
-- (was) Which mod updates to download (per file; Cobblemon 1.8.2 moves in lockstep with rctapi 0.16.2, capturexp has no
-  1.8.2 build, CobbleDollars Beta-6.1 renames the bank file, tm_megadrain is gone).
-- Kyogre's cage: a player who logs out on the dais can be sealed in barrier. The audit's two properties contradict at
-  Kyogre's own spot. Recommended: a rejoin eject (leave_game stat) plus the audit excluding the sleeper's own cells.
-- DECIDED 2026-10-13: the 13 trail rips go; every region gets a rip; badge-gated rips stay (rip_the_rift); Nether
-  dungeons draw from overworld rips (no Nether rips); Kyogre's rejoiners are moved out (BUILT, merged 7bbd4d48). Agents building the rest and
-  economy B1/B3/B5 were running at hand-over. Economy E3 (allowance) and E7 (13 held TMs + 17 memories) still open.
-- Dungeon gates built as the roster's "proposed": gym6 (Field of Swords), champion (Crucible, Dragonspiral).
-- Bands 5-6 are too hard (typical win 0-54% / 0-35%; band 4 is 52-77%): a per-dungeon retune by
-  trainer-balance-designer, on the owner's go.
-- Nether rips: unsited (no heightmap; needs the NS1 oracle world). Whether the Nether is a Nuzlocke zone (declared
-  not-zones pending).
-- The crushed house lot (x1512-1520 z5254-5262) is the builder's choice; the two other damaged homes are not built.
-- Older: sealed-chamber markers; Hoarfrost Hollow's mouth block (6722, 100, 1348); Scar Tarn water wards.
+## 3. The owner's instructions for the next sessions (2026-10-13, all DECIDED; do them, do not re-ask)
+Run them as separate sessions (CLAUDE.md "one session per job"); job A touches the server, B and C fan out.
+
+**A. Mods: move to Cobblemon 1.8.2 and update every other pack and mod** ("update to 1.8.2 and see if we need
+these changes and to use them. also update any other pack or mod").
+- 40 non-lockstep updates are already downloaded and verified: `C:/Users/wnd/Documents/cobblers-local/mod-updates-2026-10-13/`
+  (MANIFEST.json). The lockstep set is NOT downloaded: Cobblemon 1.8.2, tim_core 1.8.2-1.34.0, tmcraft 1.4.19+1.8.2,
+  rctapi 0.16.2-beta, Cobbreeding 2.4.1, Mega Showdown 1.3.0 hotfix, Zamega 1.8.2+1.8.2 (URLs and sizes in
+  `docs/research/COBBLEVERSE_COMPATIBILITY.md` "Update audit, 2026-10-13"; re-query Modrinth first: capturexp may have
+  a 1.8.2 build by now; if not, it must come out, since it pins 1.8.1 exactly). "Any other pack or mod" includes the HOLD
+  rows: CobbleDollars Beta-6.1 renames `bank.json` to `default_bank.json` (tools/bank.py writes the old path), rctmod
+  0.19.2 changes trainer messages to speech bubbles, fabric-language-kotlin, LegendaryMonuments, biomereplacer and
+  cobblemon-additions are world-critical (CLAUDE.md principle 10/11: read each changelog against our use before taking
+  it), owo-lib and ScalableLux are alpha. Cobblemon 1.8.2 removes TM Mega Drain: `data/tm_gate.json:124`,
+  `data/markets.json`, `data/progression.json`, `data/challenge_mode.json`, `data/trainers.json` reference it.
+- Then the client pack (modpack/manifest) and the friends' zip follow the server. Snapshot, staging boot test
+  (boot-test skill), read the log, then the full install cycle with tonight's build.
+
+**B. Economy v2 finish** (ECONOMY_V2.md section 7):
+- B2 Trading Post with NO cap (farming allowed), at the market town squares and ports such as Pacifidlog.
+- The 13 held TMs made available; crafting is acceptable (a recipe per TM, or a barter).
+- The 17 Silvally memories from the Station Director (`npc_station_director`, `dlg_station_director`, Urshifu's NPC).
+- Recompute the Challenge voucher (`tools/challenge_voucher.py --write`) and report its old and new figures
+  (oak_cash $4,000, total $23,748 before). Then B4's audit extended to the Trading Post (A4), by a different agent.
+
+**C. Challenge mode: every challenge fight should be "a good bit different" from Normal.** Go through the Challenge
+roster (`data/challenge_mode.json`, the trainers it overrides) and make tweaks: trainer-balance-designer (Opus, no
+shell: data only) for the design, then a shell builder for any generator change, then an independent check.
+
+Also decided tonight, already recorded: the Master Ball's cheap barter is fine; dungeon bands 5-6 difficulty is
+accepted (no retune); the 12 retired rip patches' ground is grass; Kyogre's rejoin eject built; the 13 trail rips
+retired; gated rips allowed; no Nether rips.
+
+Still open (older, the owner has not answered): the proposed dungeon gates (gym6 Field of Swords; champion Crucible,
+Dragonspiral); whether the Nether is a Nuzlocke zone; the crushed-house lot and the two other damaged homes;
+sealed-chamber markers; Hoarfrost Hollow's mouth block (6722, 100, 1348); Scar Tarn water wards.
 
 ## 4. Do not rediscover
 - A record a generator splices (route4_events.py -> rewards.json) is edited in the generator, never by hand: the

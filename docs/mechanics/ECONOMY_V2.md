@@ -528,13 +528,15 @@ None of section 2.2 or 3.2's hours is a fact until U1 and U3 have run.
 |---|---|
 | E1 | Yes: cobble at its spine worth, not 1 P a stack. |
 | E2 | Yes: two ways to sell. |
-| E3 | Open. The owner: no allowance if it is what limits players. Explained back: it caps only the Trading Post (non-ore sales); the bank's ores and Nether materials stay uncapped. Awaiting the answer. |
+| E3 | **No cap: farming is allowed** (the owner, 2026-10-13, after the explanation). The Trading Post buys at fixed spine prices with no allowance. |
 | E4 | Remove the Master Ball money line; the barter is far cheaper than 30: **about 2 netherite ingots** ("30 is too steep, it should be more accessible"). |
 | E5 | Yes: Focus Sash, Expert Belt, Eviolite, Assault Vest and the Ability Capsule to barter. |
 | E6 | Arena trophies are not sellable. |
-| E7 | Open: the owner asked which lines. They are 13 TMs (Mega Drain, Giga Drain at badge 4; Toxic, Poison Jab, Poison Fang, Poison Gas at 5; Psywave, Calm Mind, Skill Swap at 6; Overheat, Fire Blast at 7; Fissure, Earthquake at 8) and 17 Silvally memories (badge 5), held because their income-gate price ($35,000 to $134,400+) is above the Master Ball's $27,000 floor. |
+| E7 | **Make the 13 TMs available somehow; crafting is acceptable. The 17 Type: Null (Silvally) memories come from the same NPC as Urshifu** (the Station Director, `npc_station_director`, `dlg_station_director`, the Kubfu scrolls line). The lines: They are 13 TMs (Mega Drain, Giga Drain at badge 4; Toxic, Poison Jab, Poison Fang, Poison Gas at 5; Psywave, Calm Mind, Skill Swap at 6; Overheat, Fire Blast at 7; Fissure, Earthquake at 8) and 17 Silvally memories (badge 5), held because their income-gate price ($35,000 to $134,400+) is above the Master Ball's $27,000 floor. |
 | E8 | Trading Posts at the town squares that already have markets, and at ports such as Pacifidlog. |
 | E9 | Oak gives the trainer card. |
 | E10 | No co-op pooling of sales. |
 | E11 | `worth_p` is fine. |
 | E12 | Yes: measure the ambient trainers' pay first. |
+
+Also decided 2026-10-13: the Master Ball as the cheapest top-tier line (1 netherite ingot + 5 scrap) is fine; the Challenge voucher is recomputed for the new prices (`tools/challenge_voucher.py --write`, report old and new).
