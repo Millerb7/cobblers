@@ -386,7 +386,7 @@ def _base(block):
     return block.split("[")[0]
 
 
-def retire_pack_problems(files, retired, themes):
+def retire_pack_problems(files, retired, themes, standing=None):
     """[problem]: what R16DR's rips/retire does to the world, found by READING the emitted functions and expected from the
     retired RECORDS (frame, restore, retired.ground) and data/dungeon_themes.json, never from tools/dungeon.py's helpers.
 
@@ -397,7 +397,8 @@ def retire_pack_problems(files, retired, themes):
         block ONLY `if block` it still holds one of the theme's own blocks (hull.floor, hull.wall, rip.scorch), so a re-apply
         never overwrites what something else has put there since; a cell with no line is allowed only where the recorded block
         is already one of the theme's blocks (a patch of the block that was there has nothing to put back);
-      * nothing it writes is a cell a STANDING rip's rips/blocks_* function writes.
+      * nothing it writes is a cell a STANDING rip's rips/blocks_* function writes, nor a cell of `standing` (since 2026-10-14
+        no rip stands; the caller passes every candidate's plane, ground and exit point, read from the records).
     `themes` is data/dungeon_themes.json's 'themes' object."""
     bad = []
     top = files.get(RIPS_DIR + "retire.mcfunction")
@@ -415,7 +416,7 @@ def retire_pack_problems(files, retired, themes):
         parsed[c] = parse_block_writes(text.splitlines())
         if parsed[c][2]:
             bad.append("%s holds a command this audit does not read: %r" % (c, parsed[c][2][0]))
-    standing_cells = set()
+    standing_cells = set(standing or ())
     for path, text in files.items():
         if path.startswith(RIPS_DIR + "blocks_") and path.endswith(".mcfunction"):
             unc, cond, _ = parse_block_writes(text.splitlines())
@@ -1125,36 +1126,87 @@ def sc_every_rip_draws_and_leaves_by_itself(env, expect):
     return bad
 
 
-def sc_rips_are_placed(env, expect):
-    """R16DR places every rip in data/dungeon_rips.json: its blocks (the themed patch under the oval, at the oval's middle
-    column), its interaction at the click, and its oval; and the reapply step list carries the step with the right count."""
+SCHED_DIR = "data/cobblers/function/rips/"      # the scheduler's pack (cobblers_rips), merged into env.files by run_draw
+
+
+def window_box(r):
+    """(x0, y0, z0, x1, y1, z1) round a rip, from its record: the plane's middle column +-4, one block behind the plane to five
+    in front, the ground under it to six over it (DUNGEON_DRAW.md 2.6's 9 x 7 window, with the height a player stands in)."""
+    f = r["frame"]
+    mid = (f["x0"] + f["x1"]) // 2
+    return (mid - 4, f["y"] - 2, f["z"] - 1, mid + 4, f["y"] + 6, f["z"] + 5)
+
+
+def _in_box(b, x, y, z):
+    return b[0] <= x < b[3] + 1 and b[1] <= y < b[4] + 1 and b[2] <= z < b[5] + 1
+
+
+def sc_no_rip_stands(env, expect):
+    """Since 2026-10-14 no rip STANDS (the owner: "placing possible spawn locations and then randomly having them appear"): the
+    dungeon pack holds no one-shot placement (rips/place, rips/blocks_*), and no function outside the scheduler's pack summons a
+    click or an oval in any candidate's window, so a rip is there only while the scheduler holds it open. The candidates and
+    their windows are read from data/dungeon_rips.json here."""
     files, bad = env.files, []
-    blocks = {}
+    for path in sorted(files):
+        if re.search(r"/function/dungeons/rips/(place|blocks_[a-z0-9_]+)\.mcfunction$", path):
+            bad.append("the dungeon pack still holds %s: a one-shot placement of a rip" % path)
+    _rips, cands, _s, _h = scheduler_inputs()
+    boxes = [(r["id"], window_box(r)) for _i, r in cands]
     for path, text in files.items():
-        if path.startswith("data/cobblers/function/dungeons/rips/blocks_"):
-            for m in re.finditer(r"^setblock (-?\d+) (-?\d+) (-?\d+) ", text, re.M):
-                blocks.setdefault(path, set()).add(tuple(int(v) for v in m.groups()))
-    place = files.get("data/cobblers/function/dungeons/rips/place.mcfunction", "")
-    called = set(re.findall(r"function cobblers:dungeons/(rips/blocks_[a-z0-9_]+)", place))
-    ovals = []
-    for path, text in files.items():
-        if "/rips/" in path and path.endswith(".mcfunction"):
-            for m in re.finditer(r"summon minecraft:item_display (-?[\d.]+) (-?[\d.]+) (-?[\d.]+)", text):
-                ovals.append(tuple(float(v) for v in m.groups()))
-    for r in env.rips:
-        f = r["frame"]
-        mid = (f["x0"] + f["x1"]) // 2
-        cell = (mid, f["y"] - 1, f["z"] + 1)
-        homes = [p for p, cells in blocks.items() if cell in cells]
-        if len(homes) != 1:
-            bad.append("%s: the patch under the oval (%s) is set by %d rips/blocks_* functions" % (r["id"], cell, len(homes)))
-        elif homes[0][len("data/cobblers/function/dungeons/"):-len(".mcfunction")] not in called:
-            bad.append("%s: its blocks function is not called by rips/place, so R16DR never lays it" % r["id"])
-        if not any(abs(ox - (mid + 0.5)) < 0.01 and f["z"] + 1 <= oz <= f["z"] + 2 and f["y"] <= oy <= f["y"] + 4 for ox, oy, oz in ovals):
-            bad.append("%s: no oval is summoned in front of its opening" % r["id"])
-    if len(called) != len(env.rips):
-        bad.append("rips/place calls %d blocks functions for %d rips" % (len(called), len(env.rips)))
+        if path.startswith(SCHED_DIR) or not path.endswith(".mcfunction"):
+            continue
+        for m in re.finditer(r"summon minecraft:(interaction|item_display) (-?[\d.]+) (-?[\d.]+) (-?[\d.]+)", text):
+            x, y, z = (float(v) for v in m.groups()[1:])
+            for rid, b in boxes:
+                if _in_box(b, x, y, z):
+                    bad.append("%s: %s summons a %s in its window, so it stands whether or not it is open" % (rid, path, m.group(1)))
+    if not any(p.startswith(SCHED_DIR) for p in files):
+        bad.append("the scheduler's pack is not in the files under audit: no rip can ever open")
     return bad
+
+
+def sc_closed_rips_show_nothing(env, expect):
+    """A closed candidate shows nothing: every function outside the scheduler's pack that makes particles inside a candidate's
+    window is run, on a world where the scheduler is armed and every rip closed and a player stands at every candidate's exit
+    point, and no particle may appear in any candidate's window. (The motes belong to an OPEN rip; at a closed one they are a
+    rip that is not there, and they give the whole pool away.)"""
+    sys.path.insert(0, str(ROOT / "tests"))
+    import mcfunction_sim as SIM
+    _rips, cands, _s, _h = scheduler_inputs()
+    boxes = [(r["id"], window_box(r)) for _i, r in cands]
+    fns = {}
+    for path, text in env.files.items():
+        m = re.fullmatch(r"data/([^/]+)/function/(.+)\.mcfunction", path)
+        if m:
+            fns["%s:%s" % m.groups()] = text.splitlines()
+    emitters = []
+    for fid, lines in fns.items():
+        if fid.startswith(SCHED_FN):
+            continue
+        for ln in lines:
+            m = re.search(r"positioned (-?[\d.]+) (-?[\d.]+) (-?[\d.]+) .*\bparticle ", ln)
+            if m and any(_in_box(b, *(float(v) for v in m.groups())) for _rid, b in boxes):
+                emitters.append(fid)
+                break
+    if not emitters:
+        return []
+    w = SIM.CellWorld(fns, terrain=terrain_block, loaded=lambda x, z: True)
+    w.objectives |= {"dg.rip", "dg.st"}
+    S = load_scheduler(None)
+    _f, stags = scheduler_pack(S)
+    for f in stags.get("load", []):
+        w.function(f, w.server())
+    for _i, r in cands:
+        w.add_player([float(v) for v in r["outside"][:3]])
+    for fid in emitters:
+        w.function(fid, w.server())
+    shown = {}
+    for _t, (name, pos) in w.logged("particle"):
+        for rid, b in boxes:
+            if _in_box(b, *pos):
+                shown.setdefault(rid, set()).add(name)
+    return ["%d of %d candidates are closed and show particles (%s) from %s, first %s"
+            % (len(shown), len(cands), sorted(set().union(*shown.values())), sorted(emitters), sorted(shown)[:3])] if shown else []
 
 
 def sc_retired_rips_are_taken_out(env, expect):
@@ -1165,7 +1217,9 @@ def sc_retired_rips_are_taken_out(env, expect):
     themes = json.loads((DATA / "dungeon_themes.json").read_text(encoding="utf-8"))["themes"]
     if not retired:
         return ["data/dungeon_rips.json has no retired_rips: the owner's decision of 2026-10-13 is not in the record"]
-    bad = retire_pack_problems(env.files, retired, themes)
+    _rips, cands, _s, _h = scheduler_inputs()
+    standing = set().union(*({exit_cell(r)} | allowed_cells(r) for _i, r in cands))
+    bad = retire_pack_problems(env.files, retired, themes, standing)
     bad += retire_sweep_problems(env.files, retired)
     bad += retired_click_problems(env.files, retired, rip_click_functions(env.files, retired))
     return bad
@@ -1181,11 +1235,22 @@ def sc_reapply_wires_r16dr(env, expect, mod):
     if len(r16dr) != 1:
         bad.append("%d R16DR steps" % len(r16dr))
     else:
-        m = re.search(r"(\d+) rips", r16dr[0][1])
+        # since 2026-10-14 R16DR places no rip: it takes the retired ones out and ARMS the scheduler, i.e. runs the function the
+        # scheduler's pack itself runs at load (its minecraft:load entry, or a function that entry calls)
+        m = re.search(r"(\d+) (?:candidate )?rips", r16dr[0][1])
         if not m or int(m.group(1)) != len(env.rips):
             bad.append("R16DR says %s rips, data/dungeon_rips.json has %d" % (m and m.group(1), len(env.rips)))
-        if ("fn", "cobblers:dungeons/rips/place") not in r16dr[0][2]:
-            bad.append("R16DR does not run cobblers:dungeons/rips/place")
+        acts = r16dr[0][2]
+        placing = [a for a in acts if a[0] == "fn" and re.search(r"rips/(place|blocks_)", a[1])]
+        if placing:
+            bad.append("R16DR still runs %s: a rip placed for good" % placing)
+        _f, stags = scheduler_pack(load_scheduler(None))
+        arming = set(stags.get("load", []))
+        for f in list(arming):
+            arming |= set(re.findall(r"^function (\S+)$", "\n".join(_f.get(f, [])), re.M))
+        if not any(a[0] == "fn" and a[1] in arming for a in acts):
+            bad.append("R16DR runs none of the functions the scheduler's own load entry runs %s: the scheduler is not armed by the "
+                       "re-apply" % sorted(arming))
     retired = json.loads((DATA / "dungeon_rips.json").read_text(encoding="utf-8")).get("retired_rips") or []
     bad += retire_step_problems(steps, retired)
     return bad
@@ -1218,7 +1283,8 @@ SCENARIOS = (
     ("random_walk_matches_the_spec_model", sc_random_walk_matches_the_spec_model),
     ("playtest_path", sc_playtest_path),
     ("every_rip_draws_and_leaves_by_itself", sc_every_rip_draws_and_leaves_by_itself),
-    ("rips_are_placed", sc_rips_are_placed),
+    ("no_rip_stands", sc_no_rip_stands),
+    ("closed_rips_show_nothing", sc_closed_rips_show_nothing),
     ("retired_rips_are_taken_out", sc_retired_rips_are_taken_out),
 )
 
@@ -1376,6 +1442,19 @@ def run_draw(mod, tmp):
         files = mod.build(doc)
     finally:
         mod.problems = real_problems
+    # since 2026-10-14 a rip's click and oval are summoned by the scheduler's RUNTIME pack (cobblers_rips), which the server loads
+    # beside the dungeon pack: its functions join the files under audit (not its load tag, which would replace the dungeon's), so
+    # the click a draw starts from is the one the game will have. Built with the same dungeon module (a mutated one included).
+    import dungeon as D0
+    S = load_scheduler(None)
+    if mod is not D0:
+        S = _compiled("tools/rip_scheduler.py", "rip_scheduler_for_mut")
+        S.D = mod
+    for rel, text in S.pack_files(mod.load(), S.load()).items():
+        if rel.endswith(".mcfunction"):
+            if rel in files:
+                raise RuntimeError("%s is in both the dungeon pack and the scheduler's" % rel)
+            files[rel] = text
     built = time.time() - t0
     expect = roster_expectations(built_ids={d["id"] for d in doc["dungeons"]})
     env = Env(files, doc, tmp)
@@ -1396,6 +1475,693 @@ def run_draw(mod, tmp):
         out["reapply_wires_r16dr"] = ["the scenario raised %s: %s" % (type(e).__name__, str(e)[:300])]
     facts = {"build_seconds": round(built, 1), "functions_written": env.written, "dungeons": len(env.ds), "rips": len(env.rips)}
     return out, facts
+
+
+# ------------------------------------------------------------------------------------------------- the rip scheduler (cobblers_rips)
+# Since 2026-10-14 no rip stands: tools/rip_scheduler.py emits a RUNTIME pack that keeps a few of data/dungeon_rips.json's
+# candidates open at random and closes them again (the owner: "placing possible spawn locations and then randomly having them
+# appear all over"). Audited here by RUNNING its emitted functions on tests/mcfunction_sim.py CellWorld (a world of real cells,
+# clone/fill/setblock/schedule/random as vanilla runs them), against expectations read HERE from the records and the settings:
+#
+#   cap        a world-defined count (a candidate is open when a cell of its plane or ground differs from the world before)
+#              never exceeds open_max, over a long walk in which EVERY 1-in-K roll succeeds, through a /reload and a restart
+#              that lost the schedule; open_min and open_max are both reached (so the cap was tested, not vacuous)
+#   exact      open then close gives back EVERY cell exactly (a world whose every cell is a distinct block with a state and a
+#              block entity, so a lost state, a short box or a skipped clone shows), and the sky hold is air again
+#   player     an open and a close both do nothing while a player stands in or on any cell the open writes, or at the exit point
+#   way out    the exit point and the cell over it are written by nothing, and the ground under it is the world's after a close
+#   return     an open does nothing while a player in a run has this rip's number in dg.rip; it opens for another rip's number
+#   forceload  no chunk stays force-loaded longer than tools/chunk_look.py's own look window after a write
+#   R16DR      (slow part, on the built dungeon pack) runs the retire and the scheduler's init, and no dungeon function places a rip
+#
+# The functions under test are found by what they DO (the open of rip i summons an interaction at rip i's click; its close
+# clones back into rip i's footprint), never by tools/rip_scheduler.py's names or helpers. Independence is proved by
+# SCHED_MUTATIONS: one edit to tools/rip_scheduler.py, tools/dungeon.py or tools/dungeon_rips.py, data/ untouched.
+#
+# NOT covered here (validity is not runtime behaviour): vanilla's block updates during a clone (a plant cloned to the hold with
+# no block under it, a plant on a patch cell the open overwrites, sand in the hold: see the audit's report), a mob standing in
+# the footprint, an entity that takes longer than the look window to load, a chunk another system force-loads (a `forceload
+# remove` here would release it), dimensions (the sim has one), and anything a world holds that no record says.
+
+SCHED_FN = "cobblers:rips/"
+HEIGHT_TYPE = ROOT / "modpack" / "datapacks" / "cobblers_height" / "data" / "minecraft" / "dimension_type" / "overworld.json"
+SKY = 400              # the synthetic world: every cell under this y is a distinct block, every cell at or over it air
+FAR = (-3000.5, 300.0, -3000.5)     # a player who is online and nowhere near any candidate
+
+
+def scheduler_inputs(data_dir=DATA):
+    """(rips, candidates [(index, record)], settings {name: value}, (min_y, top_y)), read here from data/dungeon_rips.json,
+    data/rip_scheduler.json and the dimension type the world runs; index is the record's 1-based place in 'rips' (dg.rip)."""
+    rips = json.loads((Path(data_dir) / "dungeon_rips.json").read_text(encoding="utf-8"))["rips"]
+    s = {k: v["value"] for k, v in json.loads((Path(data_dir) / "rip_scheduler.json").read_text(encoding="utf-8"))["settings"].items()}
+    cands = [(i, r) for i, r in enumerate(rips, 1) if not (s["gated_sites"] == "exclude" and r.get("reachable_after"))]
+    dim = json.loads(HEIGHT_TYPE.read_text(encoding="utf-8"))
+    return rips, cands, s, (dim["min_y"], dim["min_y"] + dim["height"] - 1)
+
+
+def plane_cells(r):
+    f = r["frame"]
+    return {(x, y, f["z"]) for x in range(f["x0"], f["x1"] + 1) for y in range(f["y"], f["y"] + f["height"])}
+
+
+def allowed_cells(r):
+    """The cells an open may write, from the record: the plane where the frame stood (x0..x1, y..y+height-1, at z) and the ground
+    under the oval and in front of it (x0..x1, y-1, z+1..z+2: DUNGEON_DRAW.md's themed patch)."""
+    f = r["frame"]
+    return plane_cells(r) | {(x, f["y"] - 1, z) for x in range(f["x0"], f["x1"] + 1) for z in (f["z"] + 1, f["z"] + 2)}
+
+
+def exit_cell(r):
+    ox, oy, oz = r["outside"][:3]
+    return (math.floor(ox), math.floor(oy), math.floor(oz))
+
+
+def terrain_block(x, y, z):
+    """The synthetic world: a distinct block in every cell, with a block state and block-entity data, so only an exact copy
+    gives it back. Air from SKY up (where a sky hold may go)."""
+    if y >= SKY:
+        return "minecraft:air"
+    return "test:b_%d_%d_%d[s=%d]{d:%d}" % (x, y, z, (x * 7 + y * 3 + z) % 5, x ^ z)
+
+
+SCHED_MUTATIONS = {
+    "cap_off_by_one": {
+        "file": "tools/rip_scheduler.py", "why": "the pass stops opening only ABOVE open_max (>= for >)",
+        "edit": ('"execute if score #open %s >= #max %s run return 0" % (V, V),', '"execute if score #open %s > #max %s run return 0" % (V, V),')},
+    "cap_constant_one_high": {
+        "file": "tools/rip_scheduler.py", "why": "init sets the cap one above data/rip_scheduler.json open_max",
+        "edit": ('"scoreboard players set #max %s %d" % (V, v["open_max"])]', '"scoreboard players set #max %s %d" % (V, v["open_max"] + 1)]')},
+    "open_skips_player_check": {
+        "file": "tools/rip_scheduler.py", "why": "an open writes while a player stands on the rip",
+        "edit": ('o += ["execute if entity @a[scores={%s=%d,%s=1..}] run return 0" % (D.OBJ["rip"], i, D.OBJ["st"]), guard,',
+                 'o += ["execute if entity @a[scores={%s=%d,%s=1..}] run return 0" % (D.OBJ["rip"], i, D.OBJ["st"]),')},
+    "return_point_skipped": {
+        "file": "tools/rip_scheduler.py", "why": "a rip opens while a player in a run would come out at it",
+        "edit": ('o += ["execute if entity @a[scores={%s=%d,%s=1..}] run return 0" % (D.OBJ["rip"], i, D.OBJ["st"]), guard,',
+                 'o += [guard,')},
+    "close_skips_player_check": {
+        "file": "tools/rip_scheduler.py", "why": "a close gives the ground back under a player standing on the rip",
+        "edit": ('"# a player on the rip: leave it open (the timer stays at 0, so the next pass asks again)",\n             guard,',
+                 '"# a player on the rip: leave it open (the timer stays at 0, so the next pass asks again)",')},
+    "guard_box_short_in_front": {
+        "file": "tools/rip_scheduler.py", "why": "the player check stops short of the patch's front row and the exit point",
+        "edit": ('"@a[dx=%d,dy=%d,dz=%d]" % (wx1 - wx0, CHECK_BELOW + CHECK_ABOVE, wz1 - wz0)',
+                 '"@a[dx=%d,dy=%d,dz=%d]" % (wx1 - wx0, CHECK_BELOW + CHECK_ABOVE, wz1 - wz0 - 4)')},
+    "open_never_releases_chunks": {
+        "file": "tools/rip_scheduler.py", "why": "an open leaves its chunks force-loaded for good",
+        "edit": ('"forceload remove %s" % fls]\n        out["o%d" % i] = o', '"# mutated: no release"]\n        out["o%d" % i] = o')},
+    "close_never_releases_chunks": {
+        "file": "tools/rip_scheduler.py", "why": "a close's last poll never releases the chunks",
+        "edit": ('"execute if score %s %s matches ..0 run forceload remove %s" % (h, L, fls)]', '"# mutated: no release"]')},
+    "close_polls_dropped": {
+        "file": "tools/rip_scheduler.py", "why": "a close kills only in its own tick, before the chunk's saved entities arrive",
+        "edit": ('"schedule function %s %dt replace" % (F("x%d" % i), chunk_look.LOAD_WAIT)]',
+                 '"scoreboard players set %s %s 0" % (h, S), "forceload remove %s" % fls]')},
+    "one_per_region_dropped": {
+        "file": "tools/rip_scheduler.py", "why": "a second rip opens in a region that has one open",
+        "edit": ('if j != i and q["region"] == r["region"]:', 'if False:')},
+    "save_box_one_short": {
+        "file": "tools/dungeon.py", "why": "the save (and the close) stop one block under the top of the plane the open clears",
+        "edit": ('out = [(f["x0"], f["y"], f["z"], f["x1"], f["y"] + f["height"] - 1, f["z"])]',
+                 'out = [(f["x0"], f["y"], f["z"], f["x1"], f["y"] + f["height"] - 2, f["z"])]')},
+    "close_skips_hold_clear": {
+        "file": "tools/dungeon.py", "why": "the close leaves the saved blocks standing in the sky",
+        "edit": ('        out += ["fill %d %d %d %d %d %d minecraft:air" % h for h in holds]\n', '')},
+    "close_skips_the_plane": {
+        "file": "tools/dungeon.py", "why": "the close gives the ground back but not the plane",
+        "edit": ('order = list(range(1, len(boxes))) + [0]', 'order = list(range(1, len(boxes)))')},
+    "save_after_write": {
+        "file": "tools/dungeon.py", "why": "the open writes the rip before it saves the ground, so the save holds the rip",
+        "edit": ('return rip_save_lines(r, hold_y) + rip_lines(r)', 'return rip_lines(r) + rip_save_lines(r, hold_y)')},
+    "window_short_in_front": {
+        "file": "tools/dungeon_rips.py", "why": "the siting window (the scheduler's player box) ends one block in front of the plane",
+        "edit": ('WIN = (-4, -1, 4, 5)\n', 'WIN = (-4, -1, 4, 1)\n')},
+}
+
+
+def _compiled(rel, name, edit=None):
+    src = (ROOT / rel).read_text(encoding="utf-8")
+    if edit:
+        old, new = edit
+        if src.count(old) != 1:
+            raise RuntimeError("mutation of %s: its target text occurs %d times (want 1); the generator changed, update the "
+                               "mutation, do not loosen it" % (rel, src.count(old)))
+        src = src.replace(old, new)
+    mod = type(sys)(name)
+    mod.__file__ = str(ROOT / rel)
+    exec(compile(src, mod.__file__, "exec"), mod.__dict__)
+    return mod
+
+
+def load_scheduler(mutation=None):
+    """tools/rip_scheduler.py as a module: the real one, or a fresh copy whose D (tools/dungeon.py) or DRP (tools/dungeon_rips.py)
+    or own source carries ONE mutation from SCHED_MUTATIONS. data/ is untouched in every case."""
+    import rip_scheduler as S0
+    if not mutation:
+        return S0
+    m = SCHED_MUTATIONS[mutation]
+    S = _compiled("tools/rip_scheduler.py", "rip_scheduler_mut", m["edit"] if m["file"] == "tools/rip_scheduler.py" else None)
+    if m["file"] == "tools/dungeon.py":
+        S.D = _compiled("tools/dungeon.py", "dungeon_mut", m["edit"])
+    if m["file"] == "tools/dungeon_rips.py":
+        S.DRP = _compiled("tools/dungeon_rips.py", "dungeon_rips_mut", m["edit"])
+    return S
+
+
+def scheduler_pack(S):
+    """({function id: [lines]}, {tag: [function id]}): the pack module S emits (its pack_files: the OUTPUT under audit)."""
+    files = S.pack_files(S.D.load(), S.load())
+    fns, tags = {}, {}
+    for rel, text in files.items():
+        m = re.fullmatch(r"data/([^/]+)/function/(.+)\.mcfunction", rel)
+        if m:
+            fns["%s:%s" % m.groups()] = text.splitlines()
+        m = re.fullmatch(r"data/minecraft/tags/function/([a-z_]+)\.json", rel)
+        if m:
+            tags[m.group(1)] = json.loads(text)["values"]
+    return fns, tags
+
+
+_N = r"(-?\d+)"
+
+
+def command_boxes(line):
+    """(kind, lo, hi, src_lo, src_hi) of a block-writing line (setblock, fill, clone; after any `execute ... run`), else None.
+    For a clone, lo/hi is the DESTINATION box and src_* its source."""
+    s = line.strip()
+    if " run " in s and s.startswith("execute "):
+        s = s[s.rindex(" run ") + 5:]
+    m = re.match(r"setblock %s %s %s \S+" % ((_N,) * 3), s)
+    if m:
+        c = tuple(int(v) for v in m.groups())
+        return ("setblock", c, c, None, None)
+    m = re.match(r"fill %s %s %s %s %s %s \S+" % ((_N,) * 6), s)
+    if m:
+        v = [int(x) for x in m.groups()]
+        lo, hi = tuple(min(v[i], v[i + 3]) for i in range(3)), tuple(max(v[i], v[i + 3]) for i in range(3))
+        return ("fill", lo, hi, None, None)
+    m = re.match(r"clone %s %s %s %s %s %s %s %s %s" % ((_N,) * 9), s)
+    if m:
+        v = [int(x) for x in m.groups()]
+        slo, shi = tuple(min(v[i], v[i + 3]) for i in range(3)), tuple(max(v[i], v[i + 3]) for i in range(3))
+        d = tuple(v[6:9])
+        return ("clone", d, tuple(d[i] + shi[i] - slo[i] for i in range(3)), slo, shi)
+    return None
+
+
+def _box_cells(lo, hi):
+    return {(x, y, z) for x in range(lo[0], hi[0] + 1) for y in range(lo[1], hi[1] + 1) for z in range(lo[2], hi[2] + 1)}
+
+
+def scheduler_roles(fns, cands):
+    """({index: (open id, close id)}, [problem]): found by what each function does. The open of rip i summons an interaction at
+    rip i's click (x + 0.5, y, z + 0.5); its close is the one other function that clones INTO rip i's plane or ground."""
+    bad, roles = [], {}
+    summons = {}
+    for fid, lines in fns.items():
+        for ln in lines:
+            m = re.search(r"summon minecraft:interaction (-?[\d.]+) (-?[\d.]+) (-?[\d.]+)", ln)
+            if m:
+                summons.setdefault(tuple(round(float(v), 2) for v in m.groups()), set()).add(fid)
+    clones_into = {}
+    for fid, lines in fns.items():
+        for ln in lines:
+            b = command_boxes(ln)
+            if b and b[0] == "clone":
+                clones_into.setdefault(fid, set()).update(_box_cells(b[1], b[2]))
+    for i, r in cands:
+        x, y, z = r["click"]
+        op = summons.get((round(x + 0.5, 2), round(float(y), 2), round(z + 0.5, 2)), set())
+        if len(op) != 1:
+            bad.append("%s (rip %d): %d functions summon an interaction at its click (want exactly one, its open)" % (r["id"], i, len(op)))
+            continue
+        op = op.pop()
+        cl = [fid for fid, cells in clones_into.items() if fid != op and cells & allowed_cells(r)]
+        if len(cl) != 1:
+            bad.append("%s (rip %d): %d functions clone the ground back into its footprint (want exactly one, its close): %s" % (r["id"], i, len(cl), sorted(cl)[:3]))
+            continue
+        roles[i] = (op, cl[0])
+    return roles, bad
+
+
+def scheduler_static_problems(fns, tags, rips, cands, settings, height, roles, ground=None):
+    """[problem] read from the emitted text: what each open writes stays in its record's plane and ground (plus a hold), it is
+    saved before the first write, every hold is inside the world and clear of every footprint and exit point, no exit point or
+    the cell over it is written by anything, no rip that is not a candidate (a retired one, a gated one under 'exclude') can open,
+    the load tag arms the pack, and (with the heightmap) every exit point stands one block over round(ground)."""
+    bad = []
+    lo_y, top_y = height
+    allowed = {i: allowed_cells(r) for i, r in cands}
+    holds, writes_all = {}, set()
+    for i, r in cands:
+        if i not in roles:
+            continue
+        op, cl = roles[i]
+        # a cell is SAVED when a clone copies it before anything has written it (a clone after a write saves the rip, not the world)
+        saved, written, hold = set(), set(), set()
+        for ln in fns[op]:
+            b = command_boxes(ln)
+            if not b:
+                continue
+            if b[0] == "clone":
+                saved |= _box_cells(b[3], b[4]) - written
+                hold |= _box_cells(b[1], b[2])
+                continue
+            cells = _box_cells(b[1], b[2])
+            written |= cells
+            outside = cells - allowed[i] - hold
+            if outside:
+                bad.append("%s: its open writes %d cell(s) outside its plane and ground, first %s" % (r["id"], len(outside), sorted(outside)[0]))
+            unsaved = (cells & allowed[i]) - saved
+            if unsaved:
+                bad.append("%s: its open writes %d cell(s) it did not save first, first %s" % (r["id"], len(unsaved), sorted(unsaved)[0]))
+            writes_all |= cells & allowed[i]
+        if not hold:
+            bad.append("%s: its open saves nothing (no clone)" % r["id"])
+        holds[i] = hold
+        for ln in fns[cl]:
+            b = command_boxes(ln)
+            if b:
+                cells = _box_cells(b[1], b[2])
+                writes_all |= cells & allowed[i]
+                stray = cells - allowed[i] - hold
+                if stray:
+                    bad.append("%s: its close writes %d cell(s) outside its footprint and its hold, first %s" % (r["id"], len(stray), sorted(stray)[0]))
+        ys = [c[1] for c in hold]
+        if hold and (min(ys) < lo_y or max(ys) > top_y):
+            bad.append("%s: its hold spans y%d..y%d, outside the world's y%d..y%d" % (r["id"], min(ys), max(ys), lo_y, top_y))
+    every_fp = set().union(*allowed.values()) if allowed else set()
+    exits = {}
+    for i, r in cands:
+        ex = exit_cell(r)
+        exits[i] = {ex, (ex[0], ex[1] + 1, ex[2])}
+    all_exit = set().union(*exits.values()) if exits else set()
+    keys = sorted(holds)
+    for a in keys:
+        if holds[a] & (every_fp | all_exit):
+            bad.append("rip %d: its hold overlaps a candidate's footprint or exit point" % a)
+        for b in keys:
+            if b > a and holds[a] & holds[b]:
+                bad.append("rips %d and %d share hold cells" % (a, b))
+    every_hold = set().union(*holds.values()) if holds else set()
+    for i, r in cands:
+        hit = exits[i] & (writes_all | every_hold)
+        if hit:
+            bad.append("%s: its exit point %s or the cell over it is written by a scheduler function" % (r["id"], sorted(hit)[0]))
+        if ground is not None:
+            ex = exit_cell(r)
+            g = int(round(ground(ex[0], ex[2])))
+            if ex[1] != g + 1:
+                bad.append("%s: its exit point stands at y%d, round(ground) + 1 there is y%d: the way out is not on the ground" % (r["id"], ex[1], g + 1))
+    cand_ids = {i for i, _r in cands}
+    for i, r in enumerate(rips, 1):
+        if i in cand_ids:
+            continue
+        x, y, z = r["click"]
+        for fid, lines in fns.items():
+            if any(re.search(r"summon minecraft:interaction %s %s %s" % (re.escape("%.1f" % (x + 0.5)), y, re.escape("%.1f" % (z + 0.5))), ln) for ln in lines):
+                bad.append("%s: not a candidate (gated_sites %s) and %s still opens it" % (r["id"], settings["gated_sites"], fid))
+    if not tags.get("load"):
+        bad.append("the pack has no minecraft:load entry: nothing arms the scheduler after a boot or a /reload")
+    return bad
+
+
+def sched_world(fns, tags, seed=1, entity_delay=20):
+    """A CellWorld over the scheduler pack: no chunk loaded but by `forceload` (so a write outside one fails), the dungeon pack's
+    run objectives present (the contract names dg.rip and dg.st), entities in a newly force-loaded chunk arriving `entity_delay`
+    ticks later."""
+    sys.path.insert(0, str(ROOT / "tests"))
+    import mcfunction_sim as SIM
+    w = SIM.CellWorld(dict(fns), terrain=terrain_block, seed=seed, entity_delay=entity_delay, loaded=lambda x, z: False)
+    w.tags = {"load": list(tags.get("load", [])), "tick": list(tags.get("tick", []))}
+    w.objectives |= {"dg.rip", "dg.st"}
+    return w
+
+
+def changed_cells(w):
+    return {c for c, b in w.cells.items() if b != terrain_block(*c)}
+
+
+def rip_entities(w, r):
+    """Live entities standing on rip r: the click (an interaction within a block of it) or anything in its plane's 3-block reach."""
+    x, y, z = r["click"]
+    return [e for e in w.entities if e.alive and e.type != "minecraft:player"
+            and abs(e.pos[0] - (x + 0.5)) <= 3 and abs(e.pos[2] - (z + 0.5)) <= 3 and y - 1 <= e.pos[1] <= y + r["frame"]["height"] + 1]
+
+
+def _run(w, fid):
+    return w.function(fid, w.server())
+
+
+def sc_sched_open_close_exact(fns, tags, cands, roles, cycles=2):
+    """Open then close every candidate, twice, on a fresh world: after the close and its look window every cell any command
+    wrote holds the world's block again (the hold air again), no chunk is force-loaded, nothing stands on the rip, and no write
+    landed in an unloaded chunk. After the open the writes are inside the plane, the ground and a hold over them only."""
+    import chunk_look
+    window = chunk_look.LOAD_WAIT + chunk_look.POLLS * chunk_look.POLL_EVERY
+    bad = []
+    for i, r in cands:
+        if i not in roles:
+            continue
+        op, cl = roles[i]
+        w = sched_world(fns, tags)
+        w.run_load()
+        for k in range(cycles):
+            _run(w, op)
+            ch = changed_cells(w)
+            fp = ch & allowed_cells(r)
+            if not fp:
+                bad.append("%s: its open changed none of its plane or ground (cycle %d)" % (r["id"], k + 1))
+                break
+            stray = {c for c in ch - allowed_cells(r) if c[1] < SKY}
+            if stray:
+                bad.append("%s: its open changed %d cell(s) outside its plane and ground, first %s" % (r["id"], len(stray), sorted(stray)[0]))
+            if w.forced:
+                bad.append("%s: %d chunk(s) still force-loaded after its open" % (r["id"], len(w.forced)))
+            if not any(e.type == "minecraft:interaction" for e in rip_entities(w, r)):
+                bad.append("%s: no click stands after its open" % r["id"])
+            _run(w, cl)
+            w.advance(window + 100)
+            left = changed_cells(w)
+            if left:
+                hold = sorted(c for c in left if c[1] >= SKY)
+                ground = sorted(c for c in left if c[1] < SKY)
+                bad.append("%s: after open and close %d cell(s) differ from the world before (%d on the ground, first %s; %d in the sky hold, first %s)"
+                           % (r["id"], len(left), len(ground), ground[0] if ground else None, len(hold), hold[0] if hold else None))
+            if w.forced:
+                bad.append("%s: %d chunk(s) still force-loaded after its close's look window" % (r["id"], len(w.forced)))
+            if rip_entities(w, r):
+                bad.append("%s: %d entit(ies) still stand on it after its close (a closed rip that can still be clicked)" % (r["id"], len(rip_entities(w, r))))
+            if left or w.forced or rip_entities(w, r):
+                break
+        if w.errors:
+            bad.append("%s: %d command(s) failed against an unloaded chunk or an overlap, first %s" % (r["id"], len(w.errors), w.errors[0][:160]))
+    return bad
+
+
+def probe_points(r):
+    """Where a player can be that the open or close must not write over: feet in every cell the open may write, feet on top
+    of every such cell, and the exit point."""
+    pts = []
+    for (x, y, z) in sorted(allowed_cells(r)):
+        pts.append((x + 0.5, float(y), z + 0.5))
+        pts.append((x + 0.5, float(y + 1), z + 0.5))
+    ox, oy, oz = r["outside"][:3]
+    pts.append((float(ox), float(oy), float(oz)))
+    return pts
+
+
+def sc_sched_player_guard(fns, tags, cands, roles):
+    """An open with a player at any probe point writes nothing, summons nothing and holds no chunk; so does a close of an open
+    rip. Without the player both go ahead (the control, so a function that never writes cannot pass)."""
+    bad = []
+    for i, r in cands:
+        if i not in roles:
+            continue
+        op, cl = roles[i]
+        w = sched_world(fns, tags)
+        w.run_load()
+        failed = False
+        for pos in probe_points(r):
+            p = w.add_player(pos)
+            n_ents = len(w.entities)
+            _run(w, op)
+            p.alive = False
+            if changed_cells(w) or len(w.entities) != n_ents or w.forced:
+                bad.append("%s: its open went ahead with a player at %s" % (r["id"], tuple(round(v, 1) for v in pos)))
+                failed = True
+                break
+        if failed:
+            continue
+        _run(w, op)
+        if not changed_cells(w) & allowed_cells(r):
+            bad.append("%s: control: with nobody on it, its open wrote nothing" % r["id"])
+            continue
+        before = dict(w.cells)
+        for pos in probe_points(r):
+            p = w.add_player(pos)
+            _run(w, cl)
+            p.alive = False
+            if w.cells != before or w.forced:
+                bad.append("%s: its close went ahead with a player at %s" % (r["id"], tuple(round(v, 1) for v in pos)))
+                break
+        else:
+            _run(w, cl)
+            if w.cells == before:
+                bad.append("%s: control: with nobody on it, its close gave nothing back" % r["id"])
+    return bad
+
+
+def sc_sched_return_point(fns, tags, cands, roles):
+    """An open does nothing while an online player in a run (dg.st >= 1) has the rip's number in dg.rip, the engine's way out
+    to this rip's exit point; it opens for a player whose run is over, and for a run entered by another rip."""
+    bad = []
+    nums = [i for i, _r in cands]
+    for i, r in cands:
+        if i not in roles:
+            continue
+        op, cl = roles[i]
+        w = sched_world(fns, tags)
+        w.run_load()
+        p = w.add_player(FAR)
+        w.objectives |= {"dg.rip", "dg.st"}
+        other = next((j for j in nums if j != i), i + 1)
+        for rip_no, st, want_open in ((i, 1, False), (i, 2, False), (i, 0, True), (other, 1, True)):
+            w.scores[("e%d" % p.uid, "dg.rip")] = rip_no
+            w.scores[("e%d" % p.uid, "dg.st")] = st
+            _run(w, op)
+            opened = bool(changed_cells(w) & allowed_cells(r))
+            if opened != want_open:
+                bad.append("%s: with a player in a run (dg.rip %d, dg.st %d) its open %s" % (r["id"], rip_no, st, "went ahead" if opened else "did nothing"))
+                break
+            if opened:
+                p.alive = False
+                _run(w, cl)
+                import chunk_look
+                w.advance(chunk_look.LOAD_WAIT + chunk_look.POLLS * chunk_look.POLL_EVERY + 100)
+                p.alive = True
+    return bad
+
+
+def sc_sched_walk(fns, tags, cands, settings, passes=1500, seed=7):
+    """A long walk of passes with players online, in which every 1-in-K roll succeeds (the adversary for the cap): each pass the
+    world-defined open count is at most open_max, at most one per region (one_open_per_region), no write lands in an unloaded
+    chunk, no chunk stays force-loaded past tools/chunk_look.py's look window; open_min and open_max are both reached. Through a
+    /reload (pass 300) and a restart that lost the schedule (pass 600). Every 40 passes a player enters an open rip; when that rip
+    has closed he comes out at its exit point, which must be on the world's own ground, and he stands there for three passes,
+    in which that rip must not open. Every 25 passes a player stands on an open rip's ground for three passes, in which it must
+    not close."""
+    import chunk_look
+    look = chunk_look.LOAD_WAIT + (chunk_look.POLLS - 1) * chunk_look.POLL_EVERY
+    w = sched_world(fns, tags, seed=seed)
+    M = len(cands)
+
+    def adversary(lo, hi, fn):
+        if hi - lo + 1 == M:
+            return w.rng.randint(lo, hi)        # the pick: uniform, as the game draws it
+        if lo == 1:
+            return 1                            # a 1-in-K roll: always the opening value
+        return w.rng.randint(lo, hi)
+    w.random_hook = adversary
+    by_i = dict(cands)
+    region = {i: r["region"] for i, r in cands}
+    w.run_load()
+    online = [w.add_player(FAR, "a"), w.add_player((FAR[0] + 50, FAR[1], FAR[2]), "b")]
+    walker, stander = online
+    step = settings["pass_seconds"] * 20
+    bad, peak, low_seen, entry, stand = [], 0, False, None, None
+
+    def open_now():
+        ch = changed_cells(w)
+        return {i for i, r in cands if ch & allowed_cells(r)}
+    for n in range(1, passes + 1):
+        if n == 300:
+            w.run_load()
+        if n == 600:
+            w.scheduled.clear()
+            w.run_load()
+        before = open_now()
+        w.advance(step)
+        now = open_now()
+        if len(now) > settings["open_max"]:
+            bad.append("pass %d: %d rips open, open_max is %d: %s" % (n, len(now), settings["open_max"], sorted(now)))
+            break
+        if settings["one_open_per_region"]:
+            regs = [region[i] for i in now]
+            dup = sorted({g for g in regs if regs.count(g) > 1})
+            if dup:
+                bad.append("pass %d: two rips open in region(s) %s" % (n, dup))
+                break
+        peak = max(peak, len(now))
+        low_seen = low_seen or len(now) >= settings["open_min"]
+        stale = [ch for ch, t in w.forced_since.items() if ch in w.forced and w.tick_no - t > look]
+        if stale:
+            bad.append("pass %d: chunk(s) %s force-loaded for more than %d ticks" % (n, stale[:2], look))
+            break
+        if w.errors:
+            bad.append("pass %d: %s" % (n, w.errors[0][:200]))
+            break
+        # a player standing on an open rip: it must not close under him
+        if stand is not None:
+            i, until, snap = stand
+            if {c: w.block_at(*c) for c in allowed_cells(by_i[i])} != snap:
+                bad.append("pass %d: %s changed with a player standing on its ground" % (n, by_i[i]["id"]))
+                break
+            if n >= until:
+                stander.pos = list(FAR)
+                stand = None
+        elif n % 25 == 0 and now:
+            i = sorted(now)[n % len(now)]
+            f = by_i[i]["frame"]
+            stander.pos = [f["x0"] + 0.5, float(f["y"]), f["z"] + 1.5]
+            stand = (i, n + 3, {c: w.block_at(*c) for c in allowed_cells(by_i[i])})
+        # a run entered by an open rip; out at its exit point once it has closed
+        if entry is None and n % 40 == 0 and now - ({stand[0]} if stand else set()):
+            i = sorted(now - ({stand[0]} if stand else set()))[0]
+            w.scores[("e%d" % walker.uid, "dg.rip")] = i
+            w.scores[("e%d" % walker.uid, "dg.st")] = 1
+            entry = [i, "in", n]
+        elif entry is not None:
+            i, state, since = entry
+            r = by_i[i]
+            if state == "in" and i not in now:
+                ex = exit_cell(r)
+                wrong = sorted(c for c in {ex, (ex[0], ex[1] + 1, ex[2]), (ex[0], ex[1] - 1, ex[2])} | allowed_cells(r)
+                               if w.block_at(*c) != terrain_block(*c))
+                if wrong:
+                    bad.append("pass %d: %s closed, but %d cell(s) at its exit point or its ground are not the world's, first %s" % (n, r["id"], len(wrong), wrong[0]))
+                    break
+                walker.pos = [float(v) for v in r["outside"][:3]]
+                w.scores[("e%d" % walker.uid, "dg.st")] = 0
+                entry = [i, "out", n]
+            elif state == "out":
+                if i in now:
+                    bad.append("pass %d: %s opened with a player standing at its exit point" % (n, r["id"]))
+                    break
+                if n - since >= 3:
+                    walker.pos = list(FAR)
+                    entry = None
+    if not bad:
+        if peak < settings["open_max"]:
+            bad.append("vacuous: the walk never had open_max (%d) rips open (peak %d)" % (settings["open_max"], peak))
+        if not low_seen:
+            bad.append("the walk never reached open_min (%d)" % settings["open_min"])
+    return bad, {"peak": peak, "passes": n}
+
+
+def sc_sched_init_writes_nothing(fns, tags, cands):
+    """The load entry (a boot, a /reload, R16DR's arming) opens and closes nothing: on a world with players and one rip open, it
+    writes no block, summons nothing and tells no one anything."""
+    bad = []
+    w = sched_world(fns, tags)
+    w.add_player(FAR)
+    n_ents = len(w.entities)
+    w.run_load()
+    if w.writes or len(w.entities) != n_ents or any(p.messages for p in w.living("minecraft:player")):
+        bad.append("the load entry wrote %d block command(s), summoned %d and told a player something" % (len(w.writes), len(w.entities) - n_ents))
+    return bad
+
+
+def sc_sched_pause_survives_reload(fns, tags, settings):
+    """data/rip_scheduler.json enabled.origin documents the runtime pause, `scoreboard players set #on rp.v 0`. A pause must
+    still hold after a /reload or a boot (and R16DR's arming): with it set, no rip opens over many passes with players online."""
+    w = sched_world(fns, tags)
+    w.run_load()
+    w.add_player(FAR)
+    w.command("scoreboard players set #on rp.v 0", w.server())
+    w.run_load()                        # a /reload, a boot, or tools/reapply.py R16DR running the arming function
+    w.advance(settings["pass_seconds"] * 20 * 60)
+    if changed_cells(w):
+        return ["a paused scheduler (#on rp.v 0, as data/rip_scheduler.json enabled says) opened a rip after a /reload: the load "
+                "entry sets #on back to %s" % settings["enabled"]]
+    return []
+
+
+def run_scheduler(S=None, ground=None, quick=False):
+    """({check: [problem]}, facts): the whole scheduler audit on the pack module S emits (the real tools/rip_scheduler.py by
+    default). `quick` runs the per-rip checks on every fourth candidate (each region still met) and a shorter walk."""
+    S = S or load_scheduler(None)
+    rips, cands, settings, height = scheduler_inputs()
+    t0 = time.time()
+    try:
+        fns, tags = scheduler_pack(S)
+    except SystemExit as e:
+        return {"build": ["the scheduler refused to build: %s" % str(e)[:300]]}, {}
+    roles, bad_roles = scheduler_roles(fns, cands)
+    sample = cands[::4] if quick else cands
+    out = {"roles": bad_roles}
+    checks = (
+        ("static", lambda: scheduler_static_problems(fns, tags, rips, cands, settings, height, roles, ground)),
+        ("init_writes_nothing", lambda: sc_sched_init_writes_nothing(fns, tags, cands)),
+        ("open_close_exact", lambda: sc_sched_open_close_exact(fns, tags, sample, roles)),
+        ("player_guard", lambda: sc_sched_player_guard(fns, tags, sample, roles)),
+        ("return_point", lambda: sc_sched_return_point(fns, tags, sample, roles)),
+        ("walk", lambda: sc_sched_walk(fns, tags, cands, settings, passes=700 if quick else 1500)[0]),
+    )
+    for name, fn in checks:
+        t = time.time()
+        try:
+            out[name] = fn()
+        except Exception as e:          # an unsupported command, a function the pack lacks: a finding, not a pass
+            out[name] = ["the check raised %s: %s" % (type(e).__name__, str(e)[:300])]
+        out[name + "__seconds"] = round(time.time() - t, 1)
+    facts = {"candidates": len(cands), "functions": len(fns), "per_rip_checked": len(sample), "seconds": round(time.time() - t0, 1)}
+    return out, facts
+
+
+def sc_sched_pool_change_while_open(S, drop=0):
+    """A pool rebuilt while rips are open (a record removed from data/dungeon_rips.json 'rips', as the 13 trail rips left it on
+    2026-10-13; or gated_sites switched to 'exclude') must not damage the world: the state lives in holders numbered by the
+    record's PLACE in the file, so after the rebuild the open rip's number names another place. Demonstration: the real pack
+    opens every candidate it can; the pack is rebuilt in memory with record `drop` removed (data/ on disk untouched); the rebuilt
+    pack's own timers run out. Every cell must end as the world before, and no click may stand at a closed place."""
+    import chunk_look
+    rips, cands, settings, _h = scheduler_inputs()
+    fns, tags = scheduler_pack(S)
+    roles, _ = scheduler_roles(fns, cands)
+    w = sched_world(fns, tags)
+    w.run_load()
+    for i, _r in cands:
+        if i in roles:
+            _run(w, roles[i][0])
+    ddoc = S.D.load()
+    ddoc["rips"] = [r for k, r in enumerate(S.D.rips(ddoc)) if k != drop]
+    files = S.pack_files(ddoc, S.load())
+    w.functions = {}
+    for rel, text in files.items():
+        m = re.fullmatch(r"data/([^/]+)/function/(.+)\.mcfunction", rel)
+        if m:
+            w.functions["%s:%s" % m.groups()] = text.splitlines()
+    w.scheduled.clear()
+    w.run_load()
+    for key in [k for k in w.scores if k[1] == "rp.t"]:
+        w.scores[key] = 0
+    w.add_player(FAR)
+    w.advance(settings["pass_seconds"] * 20 * 3 + chunk_look.LOAD_WAIT + chunk_look.POLLS * chunk_look.POLL_EVERY)
+    w.entities = [e for e in w.entities if e.type != "minecraft:player"]
+    by_place = {}
+    for c in changed_cells(w):
+        if c[1] < SKY:
+            hit = [r["id"] for r in rips if c in allowed_cells(r)]
+            by_place.setdefault(hit[0] if hit else "elsewhere", []).append(c)
+    gone = [r for r in rips if not (allowed_cells(r) & changed_cells(w))]
+    standing = [r["id"] for r in gone if rip_entities(w, r)]
+    bad = []
+    if by_place:
+        ground_y = {r["id"]: r["frame"]["y"] - 1 for r in rips}
+        air = sorted({rid for rid, cs in by_place.items()
+                      if any(c[1] == ground_y.get(rid) and w.block_at(*c) == "minecraft:air" for c in cs)})
+        bad.append("after a rebuild that removed %s from the pool, %d place(s) are not the world's: %s; %d of them with ground "
+                   "turned to air (an empty hold cloned back): %s" % (rips[drop]["id"], len(by_place), sorted(by_place)[:4], len(air), air[:4]))
+    if standing:
+        bad.append("clicks still stand at %d closed place(s): %s" % (len(standing), standing[:4]))
+    return bad
+
+
+# known defects of the scheduler, run apart so they report without failing every mutation's control (tests xfail them strictly)
+SCHED_DEFECTS = (
+    ("pause_survives_reload", lambda fns, tags, settings: sc_sched_pause_survives_reload(fns, tags, settings)),
+)
 
 
 # ------------------------------------------------------------------------------------------------- the CLI
@@ -1420,13 +2186,13 @@ def novel(base, mutated):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
     ap.add_argument("--out", required=True, help="where the full result is written (JSON)")
-    ap.add_argument("--only", choices=("siting", "draw"), help="run one part")
+    ap.add_argument("--only", choices=("siting", "draw", "scheduler"), help="run one part")
     ap.add_argument("--mutate", help="comma list of mutation names, or 'all': rebuild from a mutated generator; the audit must FAIL")
     a = ap.parse_args(argv)
     result = {"audit": "dungeon draw", "spec": "docs/mechanics/DUNGEON_DRAW.md 2-4, data/dungeon_prize_roster.json"}
     verdict = []
     if a.mutate:
-        names = list(MUTATIONS) + list(RIPS_MUTATIONS) if a.mutate == "all" else a.mutate.split(",")
+        names = list(MUTATIONS) + list(RIPS_MUTATIONS) + list(SCHED_MUTATIONS) if a.mutate == "all" else a.mutate.split(",")
         # the control first: the unmutated generator must pass, or a mutated failure proves nothing
         res = {}
         base = {}
@@ -1434,9 +2200,14 @@ def main(argv=None):
             with tempfile.TemporaryDirectory() as tmp:
                 base, facts = run_draw(load_module(None), tmp)
         base["siting_tool"] = sc_siting_tool_rejects_sites_that_break_a_rule(load_rips_module(None))
+        if any(n in SCHED_MUTATIONS for n in names):
+            base.update({"scheduler_" + k: v for k, v in run_scheduler()[0].items()})
         res["control"] = {"problems": sum(len(v) for v in failures(base).values()), "scenarios_failing": sorted(failures(base))}
         for n in names:
-            if n in RIPS_MUTATIONS:
+            if n in SCHED_MUTATIONS:
+                got = {"scheduler_" + k: v for k, v in run_scheduler(load_scheduler(n))[0].items()}
+                why = SCHED_MUTATIONS[n]["why"]
+            elif n in RIPS_MUTATIONS:
                 got = {"siting_tool": sc_siting_tool_rejects_sites_that_break_a_rule(load_rips_module(n))}
                 why = RIPS_MUTATIONS[n]["why"]
             else:
@@ -1457,6 +2228,24 @@ def main(argv=None):
         result["siting_problems"] = bad
         result["siting_seconds"] = round(time.time() - t, 1)
         verdict.append("siting %d problem(s)%s" % (len(bad), "" if result["siting"]["old_positions"] == "checked" else " [test-rip positions NOT_EXECUTED]"))
+    if a.only in (None, "scheduler"):
+        try:
+            import ground as G
+            g = G.load()
+        except Exception as e:                  # the exit points' ground check needs the heightmap; the rest does not
+            g, result["scheduler_ground"] = None, "NOT_EXECUTED: %s" % str(e)[:200]
+        got, facts = run_scheduler(ground=g)
+        S = load_scheduler(None)
+        fns, tags = scheduler_pack(S)
+        settings = scheduler_inputs()[2]
+        result["scheduler"] = got
+        result["scheduler_facts"] = facts
+        result["scheduler_known_defects"] = {name: fn(fns, tags, settings) for name, fn in SCHED_DEFECTS}
+        result["scheduler_known_defects"]["pool_change_while_open"] = sc_sched_pool_change_while_open(S)
+        f = failures(got)
+        verdict.append("scheduler %d problem(s) in %d checks%s; known defects %d" % (
+            sum(len(v) for v in f.values()), len([k for k in got if not k.endswith("__seconds")]),
+            "" if g is not None else " [exit ground NOT_EXECUTED]", sum(bool(v) for v in result["scheduler_known_defects"].values())))
     if a.only in (None, "draw"):
         with tempfile.TemporaryDirectory() as tmp:
             got, facts = run_draw(load_module(None), tmp)
@@ -1464,7 +2253,9 @@ def main(argv=None):
         result["draw_facts"] = facts
         f = failures(got)
         verdict.append("draw %d problem(s) in %d of %d scenarios" % (sum(len(v) for v in f.values()), len(f), len(SCENARIOS) + 1))
-    n = len(result.get("siting_problems", [])) + sum(len(v) for v in failures(result.get("draw", {})).values())
+    n = len(result.get("siting_problems", [])) + sum(len(v) for v in failures(result.get("draw", {})).values()) \
+        + sum(len(v) for v in failures(result.get("scheduler", {})).values()) \
+        + sum(len(v) for v in (result.get("scheduler_known_defects") or {}).values())
     Path(a.out).write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
     print("%s: %s -> %s" % ("PASS" if n == 0 else "FAIL", "; ".join(verdict), a.out))
     return 1 if n else 0
