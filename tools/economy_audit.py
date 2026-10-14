@@ -52,11 +52,23 @@ Where each expectation comes from:
               unless data/bank.json afk_rule.exceptions names it with a why and a decision (then REPORTED). For each
               excepted ranch drop the money per hour of a pastured Pokemon is REPORTED (expected_picks: Cobblemon's
               own drop roll, read from the jar).
-  buyer       the Produce Buyer (tools/produce_buyer.py build(), the emitted pack, read line by line): the schedule from
-              the leg function, the allowance reset guarded by a changed badge count, and in each sell function count
-              (clear ... 0) -> short gate -> take exactly N -> exact gate -> one pay macro -> balance check. FAILURE on
-              any break of that order; ARBITRAGE when a crate costs less with money (every seller and recipe) than the
-              buyer's top price.
+  buyer       ECONOMY_V2 5.2 A4 under the owner's E3 (no cap, no allowance): the Trading Post (tools/produce_buyer.py
+              build(), the emitted pack, read line by line by tp_read). ORDER: each crate's sale counts (clear ... 0),
+              gates short, reads the balance, takes exactly N with an exact gate at once, pays ONCE through the
+              `$cobbledollars give` macro an amount equal to a literal #price never rewritten after the take, and
+              re-reads the balance; sell-all calls every category once and the specimens, credits each from what its
+              bounded take REMOVED (#took, reset before it), never returns between its first take and its ONE pay of
+              #total except the nothing-taken gate, and re-reads. NO ALLOWANCE: no line reads a badge count, a cap, a
+              leg or the v1 scores. SPINE (A1 for the post): every crate's emitted count and price must equal count x
+              W(tier) / rate_per_hour from data/produce_buyer.json, a whole dollar, with W(tier) summed HERE from
+              data/bank.json buys (rate_per_hour x price over effort_model.tiers[t].from_tiers, ECONOMY_V2 1.1), and
+              every specimen's W(early) / (ko_per_hour x the best live per_defeat in the notes file the record names),
+              $1 to cap_p x $100; exact, no slack. ARBITRAGE: every item a sale accepts -- every member of its tag as the
+              jars define it, mod members included -- must not be obtainable with money (every sited seller including
+              each Mart's template shop, every jar recipe, every placed barter edge, run to a fixed point) for LESS than
+              the unit the post pays; the proposal lines are judged separately; a post good the wandering trader's
+              offers reach (taken as free) FAILS once emerald has a dollar path. Break-even, unsited sellers under a
+              unit, Bank double channels and the ranch's unattended income (tp_ranch_report) are REPORTED.
   barter      the item-for-item edges of data/direct_trades.json (the barterer, EXP-055), read by THIS file -- never
               through tools/direct_trades.py's edges() -- and the Offers.Recipes of the villager its place function
               emits, read by this file's SNBT reader (tools/direct_trades.py files() is CALLED only for its output, on
@@ -94,8 +106,8 @@ Where each expectation comes from:
               leg its tier opens (income_basis.leg_by_badge / max_leg_hours; the nether leg from data/nether_gate.json,
               not the bank's claim). An entry with no declared rate is judged at the design's 2.2 estimate (BULK_RATES)
               or REPORTED. NOT here: A1 (re-deriving every price from the spine: the per-item split of a tier's wage
-              is not determined by the data), A4 (the Trading Post: unit B2 is not built, E3 open) and A6 (villager
-              trades beyond the wandering trader's table).
+              is not determined by the data; the Trading Post's crates ARE recomputed, under `buyer`) and A6
+              (villager trades beyond the wandering trader's table). A4 is `buyer` above.
   forceload   every block the R18DT functions read or write and every summon they place, read from the EMITTED
               functions, must lie in a chunk a forceload holds when the step runs them, and no hold may be released
               before a function they schedule has had its ticks (tools/direct_trades.py steps(), the reapply step).
@@ -123,9 +135,13 @@ What this does NOT cover:
     `crafts` rule counts it: one craft from farmed goods is farmed), that Pasture Loot rolls the species table with
     its amount (ASSUMED), a species' forms' own drop tables, whether a seed is ever found (one is enough), and a
     harvester's real rate;
-  - for the buyer: that the dialogue opens and runs the function as the player, that `cobbledollars query` returns the
-    balance as its result (relayed), the cooldown's tick arithmetic, and a player's scoreboard name changing (a new
-    holder, a fresh allowance) -- EXP-061;
+  - for the Trading Post: that the dialogue opens and runs the function as the player, that `clear ... 0` removes
+    nothing, that the bounded macro take removes at most $(n) and reports it, that `cobbledollars query` returns the
+    balance (relayed) -- EXP-061; conversions that are not recipes (a block broken for its drops, a tool used on a
+    block, a mob bred or hatched: an egg, wheat fed to cows), checked by hand on 2026-10-13 against every sited offer
+    and none undercuts a unit, but not by code; recipes in our own generated datapacks after the snapshot date; the
+    rates behind every crate (ESTIMATES until timed, U3) -- the audit proves the post pays no more than money costs,
+    not that its prices are right;
   - whether vanilla mob spawning is on (the AFK table lists what a farm WOULD make);
   - the gathering rates, the leg incomes and max_leg_hours, which are assumed or relayed until timed in staging;
   - the stability of the off-path tier: it is the nearest critical route, and the margin to the next route is printed
@@ -150,6 +166,7 @@ import os
 import re
 import sys
 import zipfile
+from fractions import Fraction
 from functools import lru_cache
 from io import BytesIO
 from pathlib import Path
@@ -168,6 +185,9 @@ DIRECT_TRADES = DATA / "direct_trades.json"
 
 DEFAULT_SNAPSHOT = "C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05"
 DEFAULT_VANILLA = "C:/Users/wnd/AppData/Roaming/ModrinthApp/meta/versions/1.21.1-0.19.5/1.21.1-0.19.5.jar"
+# the server's mod set after the Cobblemon 1.8.2 lockstep update (101 jars, Cobblemon-fabric-1.8.2+1.21.1.jar among
+# them); the 2026-10-05 snapshot's mods/ is Cobblemon 1.8.0. Its datapacks/ and config/ are still the snapshot's.
+DEFAULT_MODS = "C:/Users/wnd/Documents/cobblers-local/server-mods-1.8.2"
 
 # Vanilla 1.21.1 items an unattended farm makes once built (the chunk loaded, nobody acting). The mechanism is the
 # audit's statement of vanilla behaviour, not read from the repository.
@@ -672,12 +692,13 @@ class Jars:
 
 
 @lru_cache(maxsize=4)
-def load_jars(server_dir, vanilla_jar):
+def load_jars(server_dir, vanilla_jar, mods_dir=None):
+    """The vanilla jar, the mods (`mods_dir` when given, else the server's mods/) and the server's datapacks/."""
     j = Jars()
     with zipfile.ZipFile(vanilla_jar) as z:
         j.scan_zip(z, Path(vanilla_jar).name)
     sd = Path(server_dir)
-    for p in sorted((sd / "mods").glob("*.jar")):
+    for p in sorted((Path(mods_dir) if mods_dir else sd / "mods").glob("*.jar")):
         with zipfile.ZipFile(p) as z:
             j.scan_zip(z, p.name)
     for p in sorted((sd / "datapacks").glob("*")):
@@ -701,23 +722,28 @@ def cheapest(sales, conversions, rounds=6):
         if s.sited and (s.item not in best or s.unit < best[s.item][0]):
             best[s.item] = (s.unit, "buy at %s for $%g" % (s.where, s.unit))
     for _ in range(rounds):
-        changed = False
-        for name, kind, ings, rid, rcount in conversions:
-            total, parts = 0.0, []
-            for acc, n in ings:
-                c = min(((best[i][0], i) for i in acc if i in best), default=None)
-                if c is None:
-                    break
-                total += c[0] * n
-                parts.append("%d x %s" % (n, c[1]))
-            else:
-                unit = total / rcount
-                if rid not in best or unit < best[rid][0] - 1e-9:
-                    best[rid] = (unit, "%s %s (%s -> %d)" % (kind, name, " + ".join(parts), rcount))
-                    changed = True
-        if not changed:
+        if not cheapest_round(best, conversions):
             break
     return best
+
+
+def cheapest_round(best, conversions):
+    """One pass of every conversion over `best`, in place; True when any cost fell."""
+    changed = False
+    for name, kind, ings, rid, rcount in conversions:
+        total, parts = 0.0, []
+        for acc, n in ings:
+            c = min(((best[i][0], i) for i in acc if i in best), default=None)
+            if c is None:
+                break
+            total += c[0] * n
+            parts.append("%d x %s" % (n, c[1]))
+        else:
+            unit = total / rcount
+            if rid not in best or unit < best[rid][0] - 1e-9:
+                best[rid] = (unit, "%s %s (%s -> %d)" % (kind, name, " + ".join(parts), rcount))
+                changed = True
+    return changed
 
 
 def chain(best, item, depth=0):
@@ -1434,9 +1460,14 @@ def ranch_money_report(jars, bank_prices, bank_doc, server_dir=None):
     return reps
 
 
-# ------------------------------------------------------------------------------------------------ the Produce Buyer
-_PB_ROW = re.compile(r"^execute if score #badges (\S+) matches (\d+)(?:\.\.(\d+))? run scoreboard players set "
-                     r"#(price|cap) \1 (-?\d+)$")
+# ------------------------------------------------------------------------------------------------ the Trading Post (A4)
+# ECONOMY_V2 5.2 A4 under the owner's E3 (section 7, 2026-10-13: "No cap: farming is allowed. The Trading Post buys at
+# fixed spine prices with no allowance"). With no allowance the ONLY guard against printing money is that nothing a
+# player can buy, craft from bought inputs, or barter for costs less than the Trading Post pays for it: one unit of
+# slack is a printer, so there is no tolerance anywhere below.
+TP_ROUNDS = 200     # a cap on cheapest_fixed_point's rounds; reaching it is a FAILURE (not converged), never a tuned depth
+_STORE = re.compile(r"^execute store result score (#\w+) (\S+) run clear @s (\S+)(?: (\d+))?$")
+_ALLOWANCE = re.compile(r"#badges\b|#cap\b|advancements=|/leg\b|\bcob_pb_(?:leg|sold)\b")
 
 
 def _cmds(lines):
@@ -1448,149 +1479,514 @@ def buyer_emitted(pb_mod=None):
     return pb.build(pb.load())
 
 
-def buyer_checks(files, best, jars=None):
-    """(failures, reports) over tools/produce_buyer.py build()'s OUTPUT, read here line by line.
+def bank_tier_wages(bank_doc):
+    """{tier: W(tier) in dollars}: ECONOMY_V2 1.1's "the tier's typical hour", which data/bank.json effort_model.derivation
+    defines as "the sum over its items of rate_per_hour x price" over the buys whose tier is one of the tier's
+    from_tiers. Summed HERE from the record; tools/bank.py tier_hours (the builder's) is never called. Exact (Fraction)."""
+    out = {}
+    for name, t in ((bank_doc.get("effort_model") or {}).get("tiers") or {}).items():
+        src = set((t or {}).get("from_tiers") or [])
+        out[name] = sum((Fraction(str(b["rate_per_hour"])) * Fraction(str(b["price"]))
+                         for b in bank_doc.get("buys") or [] if b.get("tier") in src and b.get("rate_per_hour")),
+                        Fraction(0))
+    return out
 
-    The leg function: the price and crate cap for each badge count 0-8, and the allowance reset, which must be guarded
-    by a changed badge count (an unguarded reset is an allowance per sale). Each sell function, in order: the cooldown,
-    the leg, the closed and spent gates, a COUNT with `clear @s <p> 0` (vanilla 1.21.1: a maxCount of 0 is a dry run, read
-    from the client jar 2026-10-10) and its short gate, the TAKE of exactly N with an exact gate, then ONE pay through a
-    macro function carrying `cobbledollars give`, and a balance check after it. FAILURE when the take is not before the
-    pay, a gate follows the take, a return sits between take and pay, count and take differ in item or number, the count
-    takes (a non-zero count), the pay is not once, `cobbledollars remove` appears, or the reset is unguarded. ARBITRAGE:
-    a crate a player can buy with money (best: every seller and recipe) for less than the buyer's top price."""
-    fails, reps = [], []
-    leg = next((v for k, v in files.items() if k.endswith("/produce_buyer/leg.mcfunction")), None)
-    if leg is None:
-        return ["BUYER: the pack has no leg function"], reps
-    L = _cmds(leg)
-    price, cap = {}, {}
-    for ln in L:
-        m = _PB_ROW.match(ln)
-        if m:
-            lo, hi = int(m.group(2)), int(m.group(3) or m.group(2))
-            for b in range(lo, hi + 1):
-                (price if m.group(4) == "price" else cap)[b] = int(m.group(5))
-    flags = [ln for ln in L if re.match(r"^execute if entity @s\[advancements=\{\S+=true\}\] run scoreboard players add "
-                                         r"#badges \S+ 1$", ln)]
-    if len(set(flags)) != len(flags):
-        fails.append("BUYER leg: a badge flag is counted twice")
-    resets = [ln for ln in L if re.search(r"(?:^|run )scoreboard players set @s \S+ 0$", ln)]
-    guarded = [ln for ln in resets if re.match(r"^execute unless score @s (\S+) = #badges \S+ run ", ln)]
-    if len(resets) != 1 or len(guarded) != 1:
-        fails.append("BUYER leg: the allowance reset is not exactly one reset guarded by a changed badge count (%d "
-                     "resets, %d guarded): an unguarded reset is a fresh allowance on every sale" % (len(resets), len(guarded)))
-    else:
-        legobj = re.match(r"^execute unless score @s (\S+) = ", guarded[0]).group(1)
-        copy = [i for i, ln in enumerate(L) if re.match(r"^scoreboard players operation @s %s = #badges " % re.escape(legobj), ln)]
-        if not copy or copy[0] < L.index(guarded[0]):
-            fails.append("BUYER leg: the player's badge count is recorded before the reset compares it (the reset never "
-                         "fires)" if copy else "BUYER leg: the badge count is never recorded (the reset fires every sale)")
-    sched = [(b, price.get(b, 0), cap.get(b, 0)) for b in range(len(flags) + 1)]
-    total = sum(p * c for _b, p, c in sched)
-    reps.append("buyer schedule (emitted): %s; $%d a player over the campaign" % (
-        ", ".join("%d badges $%d x %d" % row for row in sched), total))
-    if any(sched[i][1] < sched[i + 1][1] for i in range(len(sched) - 1)):
-        fails.append("BUYER leg: the emitted price rises with a badge")
-    top = max((p for _b, p, _c in sched), default=0)
 
-    pay_fns = {k: _cmds(v) for k, v in files.items() if isinstance(v, list) and "/produce_buyer/" in k}
-    for path, lines in sorted(files.items()):
-        m = re.search(r"/produce_buyer/sell/([a-z0-9_]+)\.mcfunction$", path)
-        if not m:
+def _half_up(x):
+    """A whole dollar, halves up, exactly (x is a Fraction)."""
+    return int(math.floor(Fraction(x) + Fraction(1, 2)))
+
+
+def tp_expected(pb_doc, wages, notes):
+    """({crate id: (count, dollars a crate, record items)}, {specimen: dollars a piece or None}) by this file's arithmetic from the
+    record (data/produce_buyer.json: count, tier, rate_per_hour; specimens.ko_per_hour, wage_tier, cap_p) and the wage
+    above: a crate is count x W(tier) / rate, a whole dollar (ECONOMY_V2 1.1); a specimen W(wage_tier) / (ko_per_hour x
+    the best per_defeat of a LIVE dropper in the notes file the record names), from $1 to cap_p x P_DOLLARS (2.2
+    "Specimens"). The drop chances are the research note's (RELAYED: a 1.8.0 scan); nothing here is the generator's."""
+    crates = {}
+    for c in pb_doc.get("crates") or []:
+        w = wages.get(c.get("tier"))
+        price = None if w is None else _half_up(Fraction(int(c["count"])) * w / Fraction(str(c["rate_per_hour"])))
+        crates[c["id"]] = (int(c["count"]), price, set(c.get("items") or []))
+    sp = pb_doc.get("specimens") or {}
+    spec = {}
+    for item in sp.get("items") or []:
+        rec = ((notes or {}).get("items") or {}).get(item) or {}
+        live = [Fraction(str(d[2])) for d in rec.get("droppers") or [] if len(d) > 4 and d[4]]
+        w = wages.get(sp.get("wage_tier"))
+        if not live or w is None:
+            spec[item] = None
             continue
-        crate, C = m.group(1), _cmds(lines)
-        w = "BUYER %s:" % crate
-        idx = lambda pat: next((i for i, ln in enumerate(C) if re.search(pat, ln)), None)   # noqa: E731
-        allx = lambda pat: [i for i, ln in enumerate(C) if re.search(pat, ln)]             # noqa: E731
-        clears = [(i, re.match(r"^execute store result score (#\w+) \S+ run clear @s (\S+) (\d+)$", C[i]))
-                  for i in allx(r"\bclear @s ")]
-        if any(mm is None for _i, mm in clears):
+        raw = w / (Fraction(str(sp["ko_per_hour"])) * max(live))
+        spec[item] = max(1, min(int(sp["cap_p"]) * P_DOLLARS, _half_up(raw)))
+    return crates, spec
+
+
+def _fn_path(fid):
+    ns, p = fid.split(":", 1)
+    return "data/%s/function/%s.mcfunction" % (ns, p)
+
+
+def _fid(path):
+    m = re.match(r"^data/([^/]+)/function/(.+)\.mcfunction$", path)
+    return "%s:%s" % m.groups() if m else path
+
+
+def tag_members(files, jars, tag, seen=None):
+    """(item ids, resolved) a `#ns:path` predicate matches at runtime: the pack's own tag file and, unless it says
+    replace, the jars' tag of the same id (tags merge across packs), nested tags followed. Unresolved when the tag is
+    neither the pack's nor known to the jars given (or no jars were given for a tag the pack does not own)."""
+    seen = set() if seen is None else seen
+    if tag in seen:
+        return set(), True
+    seen.add(tag)
+    ns, p = tag.split(":", 1)
+    mine = files.get("data/%s/tags/item/%s.json" % (ns, p))
+    vals, ok = [], True
+    if isinstance(mine, dict):
+        vals += list(mine.get("values") or [])
+    if not (isinstance(mine, dict) and mine.get("replace")):
+        if jars is not None and tag in jars.tags:
+            vals += sorted(jars.tags[tag])
+        elif not isinstance(mine, dict):
+            ok = False
+    out = set()
+    for v in vals:
+        v = v.get("id") if isinstance(v, dict) else v
+        if not isinstance(v, str):
+            continue
+        if v.startswith("#"):
+            got, k = tag_members(files, jars, v[1:], seen)
+            out |= got
+            ok = ok and k
+        else:
+            out.add(v)
+    return out, ok
+
+
+def _pay_tail_problems(w, C, start, amount_obj, pay_fns, store_ok=True):
+    """Failures of one sale's pay: exactly one `function <pay> with storage <s> <path>` after `start`, its amount stored
+    from `amount_obj` after `start` and before it, the pay function exactly the CobbleDollars give macro, then the
+    balance re-read and compared with #before + the amount. Returns (failures, index of the pay or None)."""
+    fails = []
+    pays = [i for i, ln in enumerate(C) if re.match(r"^function \S+ with storage \S+ \S+$", ln)]
+    if len(pays) != 1:
+        return ["%s %d pay calls; exactly one" % (w, len(pays))], None
+    pi = pays[0]
+    fid, store, path = re.match(r"^function (\S+) with storage (\S+) (\S+)$", C[pi]).groups()
+    if pay_fns.get(_fn_path(fid)) != ["$cobbledollars give @s $(amount)"]:
+        fails.append("%s the pay call %s is not exactly one `$cobbledollars give @s $(amount)`" % (w, fid))
+    amt = [i for i, ln in enumerate(C) if ln == "execute store result storage %s %s.amount int 1 run scoreboard players "
+           "get %s %s" % (store, path, amount_obj[0], amount_obj[1])]
+    if not amt or not (start < amt[-1] < pi):
+        fails.append("%s the paid amount is not %s stored after the take and before the pay" % (w, amount_obj[0]))
+    if pi < start:
+        fails.append("%s it pays before it takes" % w)
+    T = amount_obj[1]
+    rr = [i for i, ln in enumerate(C) if ln == "execute store result score #after %s run cobbledollars query @s" % T]
+    want = [i for i, ln in enumerate(C) if ln == "scoreboard players operation #want %s += %s %s" % (T, amount_obj[0], T)]
+    base = [i for i, ln in enumerate(C) if ln == "scoreboard players operation #want %s = #before %s" % (T, T)]
+    cmp_ = [i for i, ln in enumerate(C) if ln.startswith("execute unless score #after %s = #want %s run " % (T, T))]
+    if not (rr and want and base and cmp_ and pi < rr[0] < cmp_[0] and base[0] < want[0] < cmp_[0]):
+        fails.append("%s no balance re-read after the pay compared with #before + %s" % (w, amount_obj[0]))
+    return fails, pi
+
+
+def tp_read(files, jars=None):
+    """(failures, crates, specimens, notes) read from tools/produce_buyer.py build()'s OUTPUT line by line:
+    crates {id: dict(pred, n, price, items, resolved)}, specimens {item: price}. The checks (A4's order properties):
+
+    every `sell/<id>`: the cooldown gate before the count; ONE dry-run count `clear @s <p> 0` (vanilla 1.21.1: a maxCount
+    of 0 counts and removes nothing, read from the client jar 2026-10-10) with a short gate on the crate's N between it
+    and the take; #before read before the take; ONE take `clear @s <p> N` of the same predicate, followed AT ONCE by an
+    exact gate on N whose failure branch pays nothing; #price set once, unconditionally, to a literal, before the take
+    and never written after it; no return between the gate and the ONE pay; the pay amount is #price; the balance is
+    re-read after the pay.
+    `sell/all`: the cooldown gate first; #before and #total = 0 before its first call; every crate's sellall/<id> and
+    the specimens called exactly once and nothing else; no return between the first call and the ONE pay except the
+    nothing-taken gate on #total; the pay amount is #total; the balance re-read.
+    every `sellall/<id>`: the same N, #price and predicate as sell/<id>; a dry-run count, then #took set to 0, then the
+    bounded take (a macro whose ONE line stores `clear @s <p> $(n)` into #took), then the credit #part = #price x #took
+    / #n added to #total: the credit comes from what the take REMOVED, never from what was counted or asked for.
+    `sellall/specimens`: per item a literal #price, #took reset, `clear @s <item>` into #took, #part = #took x #price
+    added to #total; an item taken twice is a FAILURE.
+    The pack as a whole: exactly one function carries `cobbledollars give` (the pay macro), none `cobbledollars remove`;
+    no line reads a badge count, an allowance score or a leg (E3: no allowance, a crate pays the same at every badge)."""
+    fails, notes = [], []
+    fns = {k: _cmds(v) for k, v in files.items() if isinstance(v, list) and k.endswith(".mcfunction")}
+    gives = sorted(k for k, v in fns.items() if any("cobbledollars give" in ln for ln in v))
+    if len(gives) != 1:
+        fails.append("BUYER %d functions carry `cobbledollars give` (%s); exactly one, the pay macro"
+                     % (len(gives), ", ".join(gives[:4])))
+    for k, v in sorted(fns.items()):
+        if any("cobbledollars remove" in ln for ln in v):
+            fails.append("BUYER %s takes money (`cobbledollars remove`)" % k)
+        hit = next((ln for ln in v if _ALLOWANCE.search(ln)), None)
+        if hit and "/produce_buyer/" in k:
+            fails.append("BUYER %s keeps allowance machinery (E3: none): %s" % (k, hit[:100]))
+    sell = {m.group(1): k for k in fns for m in [re.search(r"/produce_buyer/sell/([a-z0-9_]+)\.mcfunction$", k)] if m}
+    crates = {}
+    for crate, path in sorted(sell.items()):
+        if crate == "all":
+            continue
+        C, w = fns[path], "BUYER %s:" % crate
+        stored = [(i, _STORE.match(ln)) for i, ln in enumerate(C) if re.search(r"\bclear @s ", ln)]
+        if any(m is None for _i, m in stored):
             fails.append("%s a clear is not stored into a score (its count is unread)" % w)
             continue
-        counts = [(i, mm) for i, mm in clears if mm.group(3) == "0"]
-        takes = [(i, mm) for i, mm in clears if mm.group(3) != "0"]
-        if len(counts) != 1:
-            fails.append("%s %d dry-run counts (clear ... 0); the sale must count exactly once without taking" % (w, len(counts)))
-            continue
-        if len(takes) != 1:
-            fails.append("%s %d takes; exactly one" % (w, len(takes)))
+        counts = [(i, m) for i, m in stored if m.group(4) == "0"]
+        takes = [(i, m) for i, m in stored if m.group(4) not in (None, "0")]
+        if len(counts) != 1 or len(takes) != 1 or any(m.group(4) is None for _i, m in stored):
+            fails.append("%s %d dry-run counts and %d takes (and %d take-alls); exactly one count and one take"
+                         % (w, len(counts), len(takes), sum(1 for _i, m in stored if m.group(4) is None)))
             continue
         (ci, cm), (ti, tm) = counts[0], takes[0]
-        n = int(tm.group(3))
+        n, pred, T = int(tm.group(4)), tm.group(3), tm.group(2)
         if ti < ci:
             fails.append("%s it takes before it counts" % w)
-        if cm.group(2) != tm.group(2):
-            fails.append("%s it counts %s and takes %s" % (w, cm.group(2), tm.group(2)))
-        short = idx(r"^execute unless score %s \S+ matches (\d+)\.\. run return" % re.escape(cm.group(1)))
-        if short is None or not (ci < short < ti) or int(re.search(r"matches (\d+)\.\.", C[short]).group(1)) != n:
+        if cm.group(3) != pred:
+            fails.append("%s it counts %s and takes %s" % (w, cm.group(3), pred))
+        short = [i for i, ln in enumerate(C) if re.match(r"^execute unless score %s \S+ matches %d\.\. run return"
+                                                         % (re.escape(cm.group(1)), n), ln)]
+        if not short or not (ci < short[0] < ti):
             fails.append("%s no short gate of %d between the count and the take" % (w, n))
-        gate = idx(r"^execute unless score %s \S+ matches %d run return" % (re.escape(tm.group(1)), n))
-        if gate is None or gate != ti + 1:
+        gate = re.match(r"^execute unless score %s \S+ matches %d run return(?: run (.*))?$" % (re.escape(tm.group(1)), n),
+                        C[ti + 1]) if ti + 1 < len(C) else None
+        if gate is None:
             fails.append("%s the take is not followed at once by an exact gate on %d taken" % (w, n))
-        pays = allx(r"^function \S+ with storage ")
-        gives = [k for k, v in pay_fns.items() if any("cobbledollars give" in ln for ln in v)]
-        if len(pays) != 1:
-            fails.append("%s %d pay calls; exactly one" % (w, len(pays)))
-            continue
-        pi = pays[0]
-        fid = re.match(r"^function (\S+) with storage ", C[pi]).group(1)
-        fns, fp = fid.split(":", 1)
-        body = pay_fns.get("data/%s/function/%s.mcfunction" % (fns, fp)) or []
-        if body != ["$cobbledollars give @s $(amount)"]:
-            fails.append("%s the pay call %s is not exactly one `$cobbledollars give @s $(amount)`" % (w, fid))
-        amt = idx(r"^execute store result storage \S+ pay\.amount int 1 run scoreboard players get #price \S+$")
-        if amt is None or not (ti < amt < pi):
-            fails.append("%s the paid amount is not the leg's #price, set after the take" % w)
-        if pi < ti:
-            fails.append("%s it pays before it takes" % w)
-        between = [C[i] for i in range(ti + 2, pi) if re.search(r"\breturn\b", C[i])]
-        if between:
-            fails.append("%s a return between the take and the pay keeps the goods unpaid: %s" % (w, between[0][:80]))
-        for pat, what in ((r"run time query gametime$", "the cooldown"), (r"^function \S*produce_buyer/leg$", "the leg"),
-                          (r"^execute if score #price \S+ matches \.\.0 run return", "the closed gate"),
-                          (r"^execute if score @s \S+ >= #cap \S+ run return", "the spent gate")):
-            at = idx(pat)
-            if at is None or at > ci:
-                fails.append("%s %s is missing or comes after the count" % (w, what))
-        if any("cobbledollars remove" in ln for ln in C) or any("cobbledollars give" in ln for ln in C):
-            fails.append("%s the sell function moves money itself (only the pay macro may)" % w)
-        if len(gives) != 1:
-            fails.append("%s %d pay functions carry `cobbledollars give`" % (w, len(gives)))
-        after = idx(r"^execute unless score #after \S+ = #want \S+ run return")
-        if after is None or after < pi:
-            fails.append("%s no balance check after the pay" % w)
-        spent = idx(r"^execute if score @s \S+ >= #cap \S+ run return")
-        sold_obj = re.match(r"^execute if score @s (\S+) >= ", C[spent]).group(1) if spent is not None else None
-        inc = idx(r"^scoreboard players add @s %s 1$" % re.escape(sold_obj or "\0"))
-        first_ret = next((i for i in range(ti + 2, len(C)) if re.search(r"\breturn\b", C[i])), None)
-        if inc is None or (first_ret is not None and inc > first_ret):
-            fails.append("%s a sale that took the crate can return before counting it against the allowance (command %s "
-                         "returns, the count is command %s): if the balance check misfires after a real pay, every sale pays "
-                         "and none is counted -- the cap fails open" % (w, first_ret, inc))
-        # the crate's items, from the emitted predicate
-        pred = tm.group(2)
+        elif gate.group(1) and gate.group(1).startswith("function "):
+            body = fns.get(_fn_path(gate.group(1).split()[1])) or []
+            if any(re.match(r"^function \S+ with storage ", ln) or "cobbledollars" in ln for ln in body):
+                fails.append("%s the short-take branch %s pays" % (w, gate.group(1).split()[1]))
+        cd = [i for i, ln in enumerate(C) if re.match(r"^execute if score @s \S+ > #now \S+ run return", ln)]
+        if not cd or cd[0] > ci:
+            fails.append("%s the cooldown gate is missing or comes after the count" % w)
+        before = [i for i, ln in enumerate(C) if ln == "execute store result score #before %s run cobbledollars query @s" % T]
+        if not before or before[0] > ti:
+            fails.append("%s the balance is not read before the take" % w)
+        psets = [(i, ln) for i, ln in enumerate(C)
+                 if re.search(r"\bscoreboard players (?:set|add|remove|reset|operation) #price ", ln)]
+        lit = [(i, re.match(r"^scoreboard players set #price \S+ (\d+)$", ln)) for i, ln in psets]
+        if len(lit) != 1 or lit[0][1] is None or lit[0][0] > ti:
+            fails.append("%s #price is not set exactly once, unconditionally, to a literal before the take (%s)"
+                         % (w, "; ".join(ln[:60] for _i, ln in psets) or "never set"))
+            price = None
+        else:
+            price = int(lit[0][1].group(1))
+        f, pi = _pay_tail_problems(w, C, ti, ("#price", T), fns)
+        fails += f
+        if pi is not None:
+            between = [C[i] for i in range(ti + 2, pi) if re.search(r"\breturn\b", C[i])]
+            if between:
+                fails.append("%s a return between the take and the pay keeps the goods unpaid: %s" % (w, between[0][:80]))
         if pred.startswith("#"):
-            ns, p = pred[1:].split(":", 1)
-            tagf = files.get("data/%s/tags/item/%s.json" % (ns, p))
-            items = set(tagf["values"]) if isinstance(tagf, dict) else (jars.tag_items(pred[1:]) if jars else set())
+            items, ok = tag_members(files, jars, pred[1:])
         else:
-            items = {pred}
-        if not items:
-            reps.append("buyer %s: the predicate %s is not resolved here (no jars): its crate is not priced" % (crate, pred))
+            items, ok = {pred}, True
+        crates[crate] = dict(pred=pred, n=n, price=price, items=items, resolved=ok, obj=T)
+    # ---- sell everything
+    allp = sell.get("all")
+    specimens = {}
+    if allp is None:
+        fails.append("BUYER the pack has no sell/all function (E2: two ways to sell)")
+        return fails, crates, specimens, notes
+    C, w = fns[allp], "BUYER sell/all:"
+    calls = [(i, ln.split()[1]) for i, ln in enumerate(C) if re.match(r"^function \S+$", ln)]
+    T = next((c["obj"] for c in crates.values()), None) or "?"
+    if not calls:
+        fails.append("%s calls nothing" % w)
+        return fails, crates, specimens, notes
+    first = calls[0][0]
+    cd = [i for i, ln in enumerate(C) if re.match(r"^execute if score @s \S+ > #now \S+ run return", ln)]
+    if not cd or cd[0] > first:
+        fails.append("%s the cooldown gate is missing or comes after the first take" % w)
+    zero = [i for i, ln in enumerate(C) if ln == "scoreboard players set #total %s 0" % T]
+    if not zero or zero[0] > first:
+        fails.append("%s #total is not set to 0 before the first take" % w)
+    before = [i for i, ln in enumerate(C) if ln == "execute store result score #before %s run cobbledollars query @s" % T]
+    if not before or before[0] > first:
+        fails.append("%s the balance is not read before the first take" % w)
+    f, pi = _pay_tail_problems(w, C, first, ("#total", T), fns)
+    fails += f
+    if pi is not None:
+        if any(i > pi for i, _f in calls):
+            fails.append("%s a sale function is called after the pay" % w)
+        for i in range(first, pi):
+            if re.search(r"\breturn\b", C[i]) and not re.match(r"^execute if score #total \S+ matches \.\.0 run return",
+                                                                 C[i]):
+                fails.append("%s a return between the first take and the pay keeps goods unpaid: %s" % (w, C[i][:80]))
+    called = {}
+    for _i, fid in calls:
+        called[fid] = called.get(fid, 0) + 1
+    want = {re.sub(r"/sell/([a-z0-9_]+)$", r"/sellall/\1", _fid(sell[c])) for c in crates}
+    spec_fid = next((fid for fid in called if fid.endswith("/sellall/specimens")), None)
+    for fid in sorted(want):
+        if called.get(fid, 0) != 1:
+            fails.append("%s calls %s %d times; every category exactly once" % (w, fid, called.get(fid, 0)))
+    for fid, k in sorted(called.items()):
+        if fid not in want and fid != spec_fid:
+            fails.append("%s calls %s, which is not a category's sell-all" % (w, fid))
+        elif k != 1:
+            fails.append("%s calls %s %d times" % (w, fid, k))
+    for fid in sorted(called):
+        body = fns.get(_fn_path(fid))
+        if body is None:
+            fails.append("%s calls %s, which the pack does not define" % (w, fid))
             continue
-        got = min(((best[i][0], i) for i in items if i in best), default=None)
-        if got is None:
-            reps.append("buyer %s: a crate of %d (%s) cannot be bought with money: no seller or recipe" % (crate, n, pred))
+        if any(re.match(r"^function \S+ with storage \S+ pay$", ln) or "cobbledollars" in ln for ln in body):
+            fails.append("%s %s pays or reads money itself (sell-all pays once, at the end)" % (w, fid))
+        if fid == spec_fid:
             continue
-        cost = got[0] * n
-        if cost < top - 1e-9:
-            fails.append("BUYER ARBITRAGE %s: a crate of %d costs $%.2f (%s) and the buyer pays $%d: $%.2f a crate, "
-                         "inside the allowance -- %s" % (crate, n, cost, got[1], top, top - cost, chain(best, got[1])))
-        else:
-            reps.append("buyer %s: a crate of %d costs at least $%.2f with money (%s); the buyer pays at most $%d"
-                        % (crate, n, cost, got[1], top))
+        crate = fid.rsplit("/", 1)[1]
+        cr = crates.get(crate)
+        wc = "BUYER sellall/%s:" % crate
+        sets = {}
+        for ln in body:
+            m = re.match(r"^scoreboard players set (#n|#price) \S+ (\d+)$", ln)
+            if m:
+                sets.setdefault(m.group(1), []).append(int(m.group(2)))
+        if cr and (sets.get("#n") != [cr["n"]] or sets.get("#price") != [cr["price"]]):
+            fails.append("%s sets #n %s and #price %s; the crate's own sale is %d for $%s"
+                         % (wc, sets.get("#n"), sets.get("#price"), cr["n"], cr["price"]))
+        cnt = [i for i, ln in enumerate(body) if re.match(r"^execute store result score #have \S+ run clear @s (\S+) 0$", ln)]
+        mac = [(i, re.match(r"^function (\S+) with storage (\S+) (\S+)$", ln)) for i, ln in enumerate(body)]
+        mac = [(i, m) for i, m in mac if m]
+        reset = [i for i, ln in enumerate(body) if re.match(r"^scoreboard players set #took \S+ 0$", ln)]
+        if len(cnt) != 1 or len(mac) != 1:
+            fails.append("%s %d dry-run counts and %d take calls; exactly one of each" % (wc, len(cnt), len(mac)))
+            continue
+        ci, (mi, mm) = cnt[0], mac[0]
+        cpred = re.match(r"^execute store result score #have \S+ run clear @s (\S+) 0$", body[ci]).group(1)
+        tbody = fns.get(_fn_path(mm.group(1))) or files.get(_fn_path(mm.group(1))) or []
+        tbody = [ln for ln in tbody if ln.strip() and not ln.strip().startswith("#")]
+        tk = re.match(r"^\$execute store result score #took \S+ run clear @s (\S+) \$\(n\)$", tbody[0]) \
+            if len(tbody) == 1 else None
+        if tk is None:
+            fails.append("%s the take %s is not ONE bounded macro take into #took" % (wc, mm.group(1)))
+        elif cr and (tk.group(1) != cr["pred"] or cpred != cr["pred"]):
+            fails.append("%s counts %s and takes %s; the crate's sale takes %s" % (wc, cpred, tk.group(1), cr["pred"]))
+        if not reset or not (ci < reset[-1] < mi):
+            fails.append("%s #took is not reset to 0 between the count and the take (a failed take would credit the last"
+                         " sale's count)" % wc)
+        nset = [i for i, ln in enumerate(body) if re.match(r"^execute store result storage %s %s\.n int 1 run scoreboard "
+                                                          r"players get #take \S+$" % (re.escape(mm.group(2)),
+                                                                                       re.escape(mm.group(3))), ln)]
+        arith = ["#crates %s = #have", "#crates %s /= #n", "#take %s = #crates", "#take %s *= #n"]
+        pos = [next((i for i, ln in enumerate(body) if ln.startswith("scoreboard players operation " + a % T)), None)
+               for a in arith]
+        if None in pos or pos != sorted(pos) or not nset or not (ci < pos[0] and pos[-1] < nset[0] < mi):
+            fails.append("%s the bounded take is not whole crates of what was counted (#have / #n x #n)" % wc)
+        credit = ["#part %s = #price" % T, "#part %s *= #took" % T, "#part %s /= #n" % T, "#total %s += #part" % T]
+        cpos = [next((i for i, ln in enumerate(body) if ln.startswith("scoreboard players operation " + a)), None)
+                for a in credit]
+        mult = [ln for ln in body if re.match(r"^scoreboard players operation #part \S+ \*= ", ln)]
+        if None in cpos or cpos != sorted(cpos) or cpos[0] < mi or len(mult) != 1:
+            fails.append("%s the credit is not #price x #took / #n after the take, added once to #total (%s)"
+                         % (wc, "; ".join(mult) or "no multiplier"))
+        if any(re.search(r"\breturn\b", body[i]) for i in range(mi, len(body))):
+            fails.append("%s a return after the take can leave what it took uncredited" % wc)
+    if spec_fid:
+        body = fns.get(_fn_path(spec_fid)) or []
+        price, reset = None, False
+        for i, ln in enumerate(body):
+            m = re.match(r"^scoreboard players set #price \S+ (\d+)$", ln)
+            if m:
+                price, reset = int(m.group(1)), False
+                continue
+            if re.match(r"^scoreboard players set #took \S+ 0$", ln):
+                reset = True
+                continue
+            m = _STORE.match(ln)
+            if m:
+                item = m.group(3)
+                ok = (m.group(1) == "#took" and reset and price is not None and i + 3 < len(body)
+                      and body[i + 1] == "scoreboard players operation #part %s = #took %s" % (T, T)
+                      and body[i + 2] == "scoreboard players operation #part %s *= #price %s" % (T, T)
+                      and body[i + 3] == "scoreboard players operation #total %s += #part %s" % (T, T))
+                if not ok:
+                    fails.append("BUYER specimens %s: not a reset #took, a literal #price and a credit of #took x #price "
+                                 "added once to #total" % item)
+                if item in specimens:
+                    fails.append("BUYER specimens %s is taken twice (at $%s and $%s)" % (item, specimens[item], price))
+                specimens[item] = price
+                price, reset = None, False
+    else:
+        notes.append("BUYER sell/all calls no specimen function: no specimen is bought")
+    return fails, crates, specimens, notes
+
+
+def cheapest_fixed_point(sales, conversions, cap=TP_ROUNDS):
+    """(cheapest(), converged): cheapest() run until a round changes nothing. A cap reached is reported, not trusted."""
+    best = cheapest(sales, [], rounds=0)
+    for _ in range(cap):
+        if not cheapest_round(best, conversions):
+            return best, True
+    return best, False
+
+
+def buyer_checks(files, best, jars=None, expected=None, bank_prices=None, best_proposal=None, unsited=(),
+                 converged=True, units_out=None, wandering=None):
+    """(failures, reports) for the Trading Post (A4). `best` is the least money that obtains each item through every
+    sited seller, every jar recipe and every PLACED barter edge (cheapest_fixed_point); `best_proposal` adds the proposal
+    lines. `expected` is tp_expected()'s ({crate: (count, price)}, {specimen: price}) from the record and the bank, or
+    None (a hand-written pack).
+
+    FAILURE: any order property of tp_read; a crate or specimen whose emitted count or price is not the spine's
+    (A1, exact: no rounding slack beyond the whole dollar the rule itself names); a crate or specimen in the record and
+    not in the pack or the reverse; a crate whose predicate cannot be enumerated; ARBITRAGE when any item a sale
+    accepts (every member of its tag, mod members included) is obtainable with money for LESS than the unit the post
+    pays; a top-tier item or input sold; emerald obtainable with money while the wandering trader (WANDERING_TRADER)
+    sells a Trading Post good for emeralds. REPORT: break-even (equal), the margin of every crate, unsited sellers
+    under a unit, an item the Bank also buys."""
+    fails, crates, specimens, notes = tp_read(files, jars)
+    reps = list(notes)
+    if not converged:
+        fails.append("BUYER the money-cost search did not reach a fixed point in %d rounds: the arbitrage below is not "
+                     "proved" % TP_ROUNDS)
+    if expected is not None:
+        ecr, esp = expected
+        for cid in sorted(set(ecr) | set(crates)):
+            if cid not in crates:
+                fails.append("BUYER %s: the record's crate has no readable sell function in the pack" % cid)
+                continue
+            if cid not in ecr:
+                fails.append("BUYER %s: the pack sells a crate the record does not declare" % cid)
+                continue
+            n, price, items = ecr[cid]
+            got = crates[cid]
+            if got["n"] != n or got["price"] != price:
+                fails.append("BUYER SPINE %s: the pack takes %d for $%s; count x W(tier) / rate is %d for $%s"
+                             % (cid, got["n"], got["price"], n, price))
+            if got["resolved"] and items - got["items"]:
+                reps.append("buyer %s: the record lists %d item(s) the pack's predicate does not accept: %s"
+                            % (cid, len(items - got["items"]), ", ".join(sorted(items - got["items"])[:6])))
+            if got["resolved"] and got["items"] - items:
+                reps.append("buyer %s: the predicate %s accepts %d item(s) the record does not list (priced below like "
+                            "the rest): %s" % (cid, got["pred"], len(got["items"] - items),
+                                               ", ".join(sorted(got["items"] - items)[:12])))
+        for item in sorted(set(esp) | set(specimens)):
+            want, got = esp.get(item, "absent"), specimens.get(item, "absent")
+            if want is None:
+                fails.append("BUYER SPINE specimen %s: no live dropper in the notes, so no derivable price" % item)
+            elif want != got:
+                fails.append("BUYER SPINE specimen %s: the pack pays $%s a piece; the spine's is $%s" % (item, got, want))
+    # ---- what each item is worth to the post: the highest unit any channel pays (two crates are the exploit's choice)
+    unit, src = {}, {}
+    for cid, c in sorted(crates.items()):
+        if not c["resolved"]:
+            (fails if jars is not None else reps).append(
+                "BUYER %s: the predicate %s cannot be enumerated%s: its members are not priced"
+                % (cid, c["pred"], "" if jars is not None else " without the jars (a PARTIAL run)"))
+        if c["price"] is None or not c["n"]:
+            continue
+        for i in c["items"]:
+            u = Fraction(c["price"], c["n"])
+            if u > unit.get(i, Fraction(-1)):
+                unit[i], src[i] = u, "crate %s (%d for $%d)" % (cid, c["n"], c["price"])
+    for i, p in specimens.items():
+        if p is not None and Fraction(p) > unit.get(i, Fraction(-1)):
+            unit[i], src[i] = Fraction(p), "specimen at $%d a piece" % p
+    if units_out is not None:
+        units_out.update(unit)
+    tops = set(TOP_TIER) | set(TOP_TIER_INPUTS)
+    for i in sorted(set(unit) & tops):
+        fails.append("BUYER TOP TIER %s is bought by the Trading Post (%s): a top-tier good sold back is a money line"
+                     % (i, src[i]))
+    tight = []
+    for i in sorted(unit):
+        u = unit[i]
+        got = best.get(i)
+        if got is not None and u:
+            tight.append((got[0] / float(u), i))
+        if got is not None and got[0] < float(u) - 1e-9:
+            fails.append("BUYER ARBITRAGE %s: money obtains one for $%.4f and the Trading Post pays $%.4f (%s), $%.4f a "
+                         "unit, no cap -- %s" % (i, got[0], u, src[i], float(u) - got[0], chain(best, i)))
+        elif got is not None and abs(got[0] - float(u)) <= 1e-9:
+            reps.append("buyer break-even %s: money obtains one for exactly the $%.4f the post pays (%s)" % (i, u, src[i]))
+        elif best_proposal is not None and i in best_proposal and best_proposal[i][0] < float(u) - 1e-9:
+            fails.append("BUYER ARBITRAGE (proposal) %s: once the proposed barter lines go live money obtains one for "
+                         "$%.4f against the post's $%.4f (%s) -- %s" % (i, best_proposal[i][0], u, src[i],
+                                                                         chain(best_proposal, i)))
+        for s in unsited:
+            if s.item == i and not s.sited and s.unit < float(u) - 1e-9:
+                reps.append("buyer LATENT %s: %s sells it at $%g, under the post's $%.4f; a loop the day it is sited"
+                            % (i, s.where, s.unit, u))
+        if bank_prices and i in bank_prices:
+            reps.append("buyer two channels %s: the Bank pays $%d and the post $%.4f (%s)" % (i, bank_prices[i], u, src[i]))
+    # the wandering trader: `wandering` is the money cost with every WANDERING_TRADER item FREE (its emerald price and
+    # count are not stated here), so a post good it reaches -- directly or through a recipe -- has no provable margin
+    if wandering is not None:
+        wt = sorted(i for i in unit if i in wandering and wandering[i][0] < float(unit[i]) - 1e-9)
+    else:
+        wt = sorted(set(WANDERING_TRADER) & set(unit))
+    if "minecraft:emerald" in best and wt:
+        fails.append("BUYER emerald has a dollar path ($%.2f: %s) and the wandering trader's offers reach %s; no offer "
+                     "count is stated here, so no margin can be shown" % (best["minecraft:emerald"][0],
+                                                                          best["minecraft:emerald"][1], ", ".join(wt)))
+    elif wt:
+        reps.append("buyer: emerald has no dollar path, so the %d Trading Post goods the wandering trader's offers reach "
+                    "(directly or by a recipe) are outside money: %s" % (len(wt), ", ".join(wt)))
+    for cid, c in sorted(crates.items()):
+        rows = sorted((best[i][0] / float(Fraction(c["price"], c["n"])), i) for i in c["items"] if i in best) \
+            if c["price"] else []
+        reps.append("buyer %s: %d for $%s ($%.4f a unit), %d item(s) accepted; %s" % (
+            cid, c["n"], c["price"], float(Fraction(c["price"] or 0, c["n"] or 1)), len(c["items"]),
+            "cheapest by money %s at %.2fx the unit (%s)" % (rows[0][1], rows[0][0], best[rows[0][1]][1])
+            if rows else "no member is obtainable with money"))
+    if tight:
+        r, i = min(tight)
+        reps.append("buyer tightest margin: %s, money cost %.2fx what the post pays (%s); %d of %d priced items have a "
+                    "money path" % (i, float(r), src[i], len(tight), len(unit)))
     return fails, reps
+
+
+def tp_ranch_report(jars, units, server_dir=None, notes=None, wage=None):
+    """REPORT what a pastured Pokemon earns at the Trading Post unattended (E3 allows it; information for the owner,
+    never a FAILURE): drops an hour = 60 x drop_chance_per_minute x 1200 / tick_per_minute (PastureLoot.json); per drop
+    each entry pays its expected picks (expected_picks: Cobblemon's own roll) x its mean quantity x the post's unit,
+    over every entry the pasture blacklist does not name. `notes` (docs/research/notes/drops-1.8.0.json, RELAYED)
+    marks which species spawn in our world; the jars' tables (the server's Cobblemon) are the drops."""
+    pl, _src = pasture_config(server_dir)
+    per_hour = 60.0 * float(pl.get("drop_chance_per_minute", 0)) * 1200.0 / float(pl.get("tick_per_minute", 1200) or 1200)
+    limit = None
+    if server_dir and (Path(server_dir) / "config" / "cobblemon" / "main.json").is_file():
+        limit = read_json(Path(server_dir) / "config" / "cobblemon" / "main.json").get("defaultPasturedPokemonLimit")
+    black = set(pl.get("item_blacklist") or [])
+    live = set()
+    for _item, rec in ((notes or {}).get("items") or {}).items():
+        for d in rec.get("droppers") or []:
+            if len(d) > 4 and d[4]:
+                live.add(d[0])
+    rows = {}
+    for _w, sid, d in jars.species:
+        ents = [e for e in d.get("entries") or [] if isinstance(e, dict)]
+        picks = expected_picks(d)
+        money, parts = 0.0, []
+        for pk, e in zip(picks, ents):
+            it = e.get("item")
+            if it in units and it not in black and pk > 0:
+                v = pk * _qty(e) * float(units[it])
+                money += v
+                parts.append((v, it))
+        if money > 0:
+            name = sid.rsplit("/", 1)[-1]
+            rows[name] = (money * per_hour, name, ", ".join(i.split(":")[1] for _v, i in sorted(parts, reverse=True)[:3]))
+    reps = []
+    if not rows:
+        return ["buyer ranch: no pastured species drops a Trading Post good"]
+    ranked = sorted(rows.values(), reverse=True)
+    lv = [r for r in ranked if r[1] in live]
+    reps.append("buyer ranch: %.1f drops an hour per pastured Pokemon (PastureLoot.json); %d species drop a Trading Post "
+                "good, %d of them spawn in our world (the drops note, RELAYED)" % (per_hour, len(ranked), len(lv)))
+    for tag, rs in (("any species", ranked[:5]), ("live species", lv[:5])):
+        for money, name, what in rs:
+            reps.append("buyer ranch (%s) %s: $%.0f an hour per pastured Pokemon (%s)%s" % (
+                tag, name, money, what, "; a pasture of %d: $%.0f an hour" % (limit, money * limit) if limit else ""))
+    if wage:
+        reps.append("buyer ranch against the hand wage: W(early) is $%.0f an hour; the best live species pastured %s "
+                    "earns $%.0f an hour unattended" % (float(wage), "%d deep" % limit if limit else "alone",
+                                                        lv[0][0] * (limit or 1) if lv else 0))
+    return reps
 
 
 # ------------------------------------------------------------------------------------------------ barter
@@ -2434,8 +2830,8 @@ def entei_checks(bank_prices, best, files=None):
 
 # ------------------------------------------------------------------------------------------------ the run
 def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, use_jars=True, traders_mod=None,
-          direct_trades_mod=None, direct_trades_doc=None, produce_buyer_mod=None):
-    """(failures, reports, notes)."""
+          direct_trades_mod=None, direct_trades_doc=None, produce_buyer_mod=None, mods_dir=None):
+    """(failures, reports, notes). `mods_dir` replaces the server snapshot's mods/ (default_mods_dir())."""
     fails, reps, notes = [], [], []
     bank_doc = read_json(DATA / "bank.json")
     markets_doc = read_json(DATA / "markets.json")
@@ -2469,8 +2865,9 @@ def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, us
 
     conversions = []
     if use_jars and server_dir and vanilla_jar and Path(vanilla_jar).is_file() and Path(server_dir).is_dir():
-        jars = load_jars(str(server_dir), str(vanilla_jar))
+        jars = load_jars(str(server_dir), str(vanilla_jar), str(mods_dir) if mods_dir else None)
         conversions = jars.conversions()
+        notes.append("mods read from %s" % (mods_dir or Path(server_dir) / "mods"))
         f, r = id_checks(jars.items, emitted, bank_doc, sales, markets_doc)
         fails += f
         reps += r
@@ -2539,14 +2936,44 @@ def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, us
                         sum(1 for i in bank_prices if i in farm), len(bank_prices)))
     else:
         notes.append("NOT READ: the AFK farm set (no jars): the Bank's AFK check did not run; this is a PARTIAL run")
-    f, r = buyer_checks(buyer_emitted(produce_buyer_mod), best, jars if conversions else None)
-    fails += f
-    reps += r
+    # the Trading Post (A4): every sited seller, every jar recipe and every barter edge, run to a fixed point
+    pb_doc = read_json(DATA / "produce_buyer.json")
+    pb_notes = read_json(ROOT / pb_doc["specimens"]["notes_file"]) if (pb_doc.get("specimens") or {}).get("notes_file") \
+        else {}
+    wages = bank_tier_wages(bank_doc)
+    placed = [b.conversion() for b in edges if b.group == "placed"]
+    proposal = [b.conversion() for b in edges if b.group != "placed"]
+    best_tp, ok1 = cheapest_fixed_point(sales, conversions + placed)
+    best_tp_all, ok2 = cheapest_fixed_point(sales, conversions + placed + proposal) if proposal else (None, True)
+    free = [Sale("the wandering trader (its emerald offers taken as free)", None, i, 0.0, False) for i in WANDERING_TRADER]
+    best_wt, ok3 = cheapest_fixed_point(sales + free, conversions + placed)
+    units = {}
+    try:
+        files = buyer_emitted(produce_buyer_mod)
+    except Exception as exc:                       # the generator refusing its data is itself the finding
+        fails.append("BUYER the generator emitted nothing: %s" % str(exc).splitlines()[0][:200])
+        files = None
+    if files is not None:
+        f, r = buyer_checks(files, best_tp, jars if conversions else None, tp_expected(pb_doc, wages, pb_notes),
+                            bank_prices, best_tp_all, [s for s in sales if not s.sited], ok1 and ok2 and ok3, units,
+                            best_wt)
+        fails += f
+        reps += r
+        notes.append("trading post: %d priced items against %d sale offers, %d recipes and %d barter edges, W(tier) %s "
+                     "summed from data/bank.json" % (len(units), sum(1 for s in sales if s.sited), len(conversions),
+                                                     len(placed) + len(proposal),
+                                                     ", ".join("%s $%s" % (k, float(v)) for k, v in sorted(wages.items()))))
+        if conversions:
+            reps += tp_ranch_report(jars, units, sd, pb_notes, wages.get("early"))
     return fails, reps, notes
 
 
 def default_server_dir():
     return os.environ.get("COBBLERS_SNAPSHOT_DIR") or (DEFAULT_SNAPSHOT if Path(DEFAULT_SNAPSHOT).is_dir() else None)
+
+
+def default_mods_dir():
+    return os.environ.get("COBBLERS_MODS_DIR") or (DEFAULT_MODS if Path(DEFAULT_MODS).is_dir() else None)
 
 
 def default_vanilla_jar():
@@ -2558,9 +2985,12 @@ def main(argv=None):
     p.add_argument("--server-dir", default=default_server_dir(),
                    help="an OFFLINE server snapshot (mods/, datapacks/); never the live server")
     p.add_argument("--vanilla-jar", default=default_vanilla_jar())
+    p.add_argument("--mods-dir", default=default_mods_dir(),
+                   help="a folder of the server's mod jars, read instead of the snapshot's mods/ (default: "
+                        "COBBLERS_MODS_DIR, else %s when it exists)" % DEFAULT_MODS)
     p.add_argument("--no-jars", action="store_true")
     a = p.parse_args(argv)
-    fails, reps, notes = audit(a.server_dir, a.vanilla_jar, use_jars=not a.no_jars)
+    fails, reps, notes = audit(a.server_dir, a.vanilla_jar, use_jars=not a.no_jars, mods_dir=a.mods_dir)
     for n in notes:
         print("NOTE %s" % n)
     for r in reps:

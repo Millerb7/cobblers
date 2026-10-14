@@ -7,11 +7,13 @@ number in docs/mechanics/ECONOMY_SIM_2026-10-09.md is this tool's output, not re
 
 WHAT IS READ FROM DATA (change the file and the result moves; tests/test_economy_sim.py mutates these):
   data/markets.json   income_basis.level_sums (every battle of every leg, Normal and Challenge), curve_rule (the fight
-                      allowance and the produce allowance), every counter line (the shelf), the Beast Ball's price
+                      allowance, and produce_allowance: what a gathering player sells at the Trading Post a leg -- an
+                      income, not a cap, since E3), every counter line (the shelf), the Beast Ball's price
   data/bank.json      what the bank pays (buys) and the declared rate_per_hour of each tier (the gathering hour)
   data/dungeons.json  the bands, clocks, sigil recipes, the greed ladder, the boss's aces, escorts and level offsets
   data/blackout.json  the flat death charge (cap x percent)
-  data/produce_buyer.json, data/training_services.json, data/mining_caves.json (the seam's ore mix)
+  data/training_services.json, data/mining_caves.json (the seam's ore mix); data/produce_buyer.json is loaded but its
+                      v1 allowance (superseded_schedule) is read by nothing since E3
   data/direct_trades.json  the Station Exchange's approved lines: the Master Ball and the top tier have no money line
                       since ECONOMY_V2 (the owner, 2026-10-13), so their price is the barter's inputs in hours of digging
                       (T12), at the bank's declared rates
@@ -119,7 +121,8 @@ SCENARIOS = {
 }
 
 PLAYER_TYPES = {
-    # hours: gather hours a leg; produce: sells the allowance; runs: dungeon runs a leg; idle: AFK-farm hours a leg
+    # hours: gather hours a leg; produce: sells the curve's Trading Post figure; runs: dungeon runs a leg; idle: AFK-farm
+    # hours a leg (not paid: an unattended farm's rate is not declared)
     "fighter": dict(mode="normal", gather=0.0, produce=False, runs=0, take="free", idle=0, deaths=1.0, p_stage=0.88),
     "baseline": dict(mode="normal", gather=1.0, produce=True, runs=0, take="free", idle=0, deaths=1.0, p_stage=0.88),
     "steady": dict(mode="normal", gather=1.0, produce=True, runs=1, take="free", idle=0, deaths=1.0, p_stage=0.88),
@@ -165,7 +168,13 @@ class World:
         self.essentials = int(self.fight_parts["mart"]) + int(self.fight_parts["ferries"])
         money = docs["blackout"]["money"]
         self.blackout = -(-int(money["cap"]) * int(money["percent"]) // 100)         # ceil(cap * percent / 100)
-        self.produce_rows = docs["produce"]["schedule"]["rows"]
+        # The Trading Post has no cap since the owner's E3 (data/produce_buyer.json decisions.E3, 2026-10-13); the v1
+        # allowance rows are superseded_schedule, read by nothing. What a player who gathers SELLS there each leg is the
+        # curve's own declared figure (data/markets.json curve_rule.produce_allowance.by_badges_held): an income the
+        # curve was built on, not a ceiling. An unattended farm's sales on top of it are not modelled (no rate is
+        # declared for one): see T11 and tools/economy_audit.py's `buyer ranch` report.
+        self.produce_by_badges = {int(k): int(v) for k, v in
+                                  ((mk["curve_rule"].get("produce_allowance") or {}).get("by_badges_held") or {}).items()}
         # bank prices (what a sale pays) and the declared rates
         self.price = {b["item"]: int(b["price"]) for b in bk["buys"]}
         # a smelted gold ingot pays raw + 2 (bank.json crafts.removed_inputs: 4 ingots = $88 of a $900 netherite ingot)
@@ -357,11 +366,8 @@ class World:
         return int((b + b // 2) * self.mult), int((b + 2 * b) * self.mult)
 
     def produce_allowance(self, badges):
-        for r in self.produce_rows:
-            lo, hi = r["badges"]
-            if lo <= badges <= hi:
-                return int(r["price"]) * int(r["crates"])
-        return 0
+        """What a gathering player sells at the Trading Post in a leg played holding `badges` (the curve's figure)."""
+        return self.produce_by_badges.get(int(badges), 0)
 
     def gather_hour_value(self, badges):
         best = 0.0
@@ -980,8 +986,6 @@ def build_report(w, runs=300, seed=1, dungeon_runs=3000):
     up = sum(float(b.get("rate_per_hour_upper") or b["rate_per_hour"]) * int(b["price"]) for b in w.docs["bank"]["buys"]
              if b.get("tier") == "nether")
     loops.append(("Gathering, Nether upper hour (bed or TNT; 30 debris), vs leg 8", up, w.fight_hour("8")))
-    afk_cap = sum(int(r["price"]) * int(r["crates"]) for r in w.produce_rows)
-    loops.append(("AFK produce farm, the whole campaign's cap spread over its first 10 hours", afk_cap / 10.0, w.fight_hour("1")))
     for b in sorted(w.clock_min):
         a = best_row(rows, b, "as_built")
         loops.append(("Night Shift band %d, as built, best take %d" % (b, a["take"]), a["net_h"], par[b][0]))
@@ -990,6 +994,9 @@ def build_report(w, runs=300, seed=1, dungeon_runs=3000):
         loops.append(("Night Shift band %d, design (clawback works)" % b, a["net_h"], par[b][0]))
     for label, v, y in loops:
         P("| %s | $%s | $%s | %s | %s |" % (label, money(v), money(y), ratio(v, y), verdict_flag(v / y) if v > 0 else "pays nothing / a sink"))
+    P("\nAn unattended Trading Post farm has no row: since the owner's E3 (2026-10-13) the post has no cap, so its money is "
+      "the farm's rate x the post's unit, unbounded in total, and no rate for an unattended farm is declared. The pasture's "
+      "figure (drops a pastured Pokemon earns an hour, from the jars) is tools/economy_audit.py's `buyer ranch` report.")
     P("\nSinks that run on a clock: Entei with a Tower Ash every 20 minutes of uptime is -$%s an hour in ash alone (+ drops that no counter or bank buys)." % money(
         3 * 2 * w.price["minecraft:netherite_ingot"]))
 

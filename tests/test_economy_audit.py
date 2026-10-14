@@ -48,12 +48,13 @@ KNOWN: dict = {
 #    (test_a_generator_that_buys_a_vitamin_again_fails_the_afk_rule, ..._buys_a_berry_again_...).
 #  - the eight "BUYER <crate>: a sale that took the crate can return before counting it" entries: ca1ce73 counts the
 #    crate straight after the exact take gate, and a short take counts it in short_take; the audit's check is unchanged.
-BUYER_FAIL_OPEN = "a sale that took the crate can return before counting it against the allowance"
 
 
 @pytest.fixture(scope="module")
 def real():
-    return E.audit(SNAP if HAVE_SNAP else None, VANILLA if HAVE_JARS else None, use_jars=HAVE_JARS)
+    # the server's mods as the CLI reads them (default_mods_dir: the Cobblemon 1.8.2 set when present, else the snapshot's)
+    return E.audit(SNAP if HAVE_SNAP else None, VANILLA if HAVE_JARS else None, use_jars=HAVE_JARS,
+                   mods_dir=E.default_mods_dir())
 
 
 def mutant(name, old, new=None, *more):
@@ -1017,60 +1018,151 @@ def test_the_drop_roll_expectation_by_hand():
     assert E.expected_picks({"amount": "1", "entries": [{"item": "a", "percentage": 50}]}) == [pytest.approx(0.5)]
 
 
-def _pb_pack(take_first=True, count_n="0", guarded=True, pay_twice=False, sold_late=False):
-    leg = ["scoreboard players set #badges t 0",
-           "execute if entity @s[advancements={x:flag/g1=true}] run scoreboard players add #badges t 1",
-           ("execute unless score @s leg = #badges t run " if guarded else "") + "scoreboard players set @s sold 0",
-           "scoreboard players operation @s leg = #badges t",
-           "execute if score #badges t matches 0 run scoreboard players set #price t 40",
-           "execute if score #badges t matches 0 run scoreboard players set #cap t 40",
-           "execute if score #badges t matches 1 run scoreboard players set #price t 0",
-           "execute if score #badges t matches 1 run scoreboard players set #cap t 0"]
-    take = ["execute store result score #took t run clear @s #x:produce_buyer/crops 32",
-            "execute unless score #took t matches 32 run return run tellraw @s \"no\""] + \
-        ([] if sold_late else ["scoreboard players add @s sold 1"])
-    pay =["execute store result storage x:pb pay.amount int 1 run scoreboard players get #price t",
-           "function x:produce_buyer/pay with storage x:pb pay"] * (2 if pay_twice else 1)
+# ---------------------------------------------------------------------- the Trading Post (A4), a hand-written pack
+# The shape tools/produce_buyer.py emits, written out by hand with one crate (32 crops for $20, $0.625 a unit) whose tag
+# nests a jar tag, and one specimen (t:scale at $7 a piece). Every number below is hand-computable from this text.
+def _tp_pack(pay_first=False, count_n="0", credit="#took", reset=True, early_return=False, allowance=False,
+             second_give=False, crate_price=20, all_price=20):
     sell = ["execute store result score #now t run time query gametime",
+            "execute if score @s cd > #now t run return 0"] + \
+        (["execute if score #badges t matches 8.. run return 0"] if allowance else []) + \
+        ["execute store result score #have t run clear @s #x:produce_buyer/crops %s" % count_n,
+         "execute unless score #have t matches 32.. run return run tellraw @s \"short\"",
+         "scoreboard players operation @s cd = #now t",
+         "execute store result score #before t run cobbledollars query @s",
+         "scoreboard players set #price t %d" % crate_price,
+         "scoreboard players set #n t 32"]
+    take = ["execute store result score #took t run clear @s #x:produce_buyer/crops 32",
+            "execute unless score #took t matches 32 run return run function x:produce_buyer/short_take"]
+    pay = ["execute store result storage x:pb pay.amount int 1 run scoreboard players get #price t",
+           "function x:produce_buyer/pay with storage x:pb pay"]
+    check = ["execute store result score #after t run cobbledollars query @s",
+             "scoreboard players operation #want t = #before t",
+             "scoreboard players operation #want t += #price t",
+             "execute unless score #after t = #want t run scoreboard players operation @s owed += #price t",
+             "execute unless score #after t = #want t run return run tellraw @s \"owed\""]
+    sell += (pay + take if pay_first else take + pay) + check
+    sellall = ["scoreboard players set #n t 32", "scoreboard players set #price t %d" % all_price,
+               "execute store result score #have t run clear @s #x:produce_buyer/crops 0",
+               "scoreboard players operation #crates t = #have t", "scoreboard players operation #crates t /= #n t",
+               "execute if score #crates t matches ..0 run return 0",
+               "scoreboard players operation #take t = #crates t", "scoreboard players operation #take t *= #n t",
+               "execute store result storage x:pb take.n int 1 run scoreboard players get #take t"] + \
+        (["scoreboard players set #took t 0"] if reset else []) + \
+        ["function x:produce_buyer/take/crops with storage x:pb take",
+         "scoreboard players operation #part t = #price t",
+         "scoreboard players operation #part t *= %s t" % credit,
+         "scoreboard players operation #part t /= #n t",
+         "scoreboard players operation #total t += #part t"]
+    alls = ["execute store result score #now t run time query gametime",
             "execute if score @s cd > #now t run return 0",
-            "function x:produce_buyer/leg",
-            "execute if score #price t matches ..0 run return run tellraw @s \"closed\"",
-            "execute if score @s sold >= #cap t run return run tellraw @s \"spent\"",
-            "execute store result score #have t run clear @s #x:produce_buyer/crops %s" % count_n,
-            "execute unless score #have t matches 32.. run return run tellraw @s \"short\"",
-            "execute store result score #before t run cobbledollars query @s"] + \
-        (take + pay if take_first else pay + take) + \
-        ["execute store result score #after t run cobbledollars query @s",
-         "execute unless score #after t = #want t run return run tellraw @s \"owed\""] + \
-        (["scoreboard players add @s sold 1"] if sold_late else [])
-    return {"data/x/function/produce_buyer/leg.mcfunction": leg,
-            "data/x/function/produce_buyer/pay.mcfunction": ["$cobbledollars give @s $(amount)"],
-            "data/x/function/produce_buyer/sell/crops.mcfunction": sell,
-            "data/x/tags/item/produce_buyer/crops.json": {"values": ["t:wheat", "t:carrot"]}}
+            "scoreboard players operation @s cd = #now t",
+            "execute store result score #before t run cobbledollars query @s",
+            "scoreboard players set #total t 0",
+            "function x:produce_buyer/sellall/crops"] + \
+        (["execute if score #short t matches 1 run return 0"] if early_return else []) + \
+        ["function x:produce_buyer/sellall/specimens",
+         "execute if score #total t matches ..0 run return run tellraw @s \"nothing\"",
+         "execute store result storage x:pb pay.amount int 1 run scoreboard players get #total t",
+         "function x:produce_buyer/pay with storage x:pb pay",
+         "execute store result score #after t run cobbledollars query @s",
+         "scoreboard players operation #want t = #before t",
+         "scoreboard players operation #want t += #total t",
+         "execute unless score #after t = #want t run return run tellraw @s \"owed\""]
+    spec = ["scoreboard players set #price t 7", "scoreboard players set #took t 0",
+            "execute store result score #took t run clear @s t:scale",
+            "scoreboard players operation #part t = #took t", "scoreboard players operation #part t *= #price t",
+            "scoreboard players operation #total t += #part t"]
+    files = {"data/x/function/produce_buyer/sell/crops.mcfunction": sell,
+             "data/x/function/produce_buyer/sell/all.mcfunction": alls,
+             "data/x/function/produce_buyer/sellall/crops.mcfunction": sellall,
+             "data/x/function/produce_buyer/sellall/specimens.mcfunction": spec,
+             "data/x/function/produce_buyer/take/crops.mcfunction":
+                 ["$execute store result score #took t run clear @s #x:produce_buyer/crops $(n)"],
+             "data/x/function/produce_buyer/short_take.mcfunction":
+                 ["scoreboard players operation @s owed += #part t", "return 1"],
+             "data/x/function/produce_buyer/pay.mcfunction": ["$cobbledollars give @s $(amount)"],
+             "data/x/tags/item/produce_buyer/crops.json": {"values": ["t:wheat", "#t:roots"]}}
+    if second_give:
+        files["data/x/function/produce_buyer/bonus.mcfunction"] = ["cobbledollars give @s 5"]
+    return files
 
 
-# Without it the buyer reader is unproved: a hand-written correct pack has no failure and its schedule is read back
-# ($40 x 40 at 0 badges, nothing at 1: $1,600 a player); a crate that money buys for less than the price is arbitrage
-# (32 wheat at $0.50 = $16 against $40: $24 a crate).
-def test_the_buyer_reader_on_a_hand_written_pack():
-    fails, reps = E.buyer_checks(_pb_pack(), {"t:carrot": (2.0, "buy at s for $2")})
+class _TagJars:
+    """A stand-in for Jars: only the item tags (t:roots holds t:beet)."""
+    tags = {"t:roots": {"t:beet"}}
+
+
+def _tp(files=None, best=None, **kw):
+    return E.buyer_checks(files or _tp_pack(), best or {}, _TagJars(), **kw)
+
+
+# Without it the Trading Post reader is unproved: the hand-written correct pack has no failure, the crate's members
+# include the jar tag's t:beet through the nest, and a member money buys for $0.50 against the post's $20 / 32 = $0.625
+# is ARBITRAGE by exactly $0.125 a unit; at $0.625 it is break-even (reported), at $0.70 nothing.
+def test_the_trading_post_reader_on_a_hand_written_pack():
+    fails, reps = _tp()
     assert fails == [], fails
-    assert any(r.startswith("buyer schedule (emitted): 0 badges $40 x 40, 1 badges $0 x 0; $1600") for r in reps), reps
-    fails, _r = E.buyer_checks(_pb_pack(), {"t:wheat": (0.5, "buy at s for $0.5")})
-    assert fails == ["BUYER ARBITRAGE crops: a crate of 32 costs $16.00 (t:wheat) and the buyer pays $40: $24.00 a "
-                     "crate, inside the allowance -- t:wheat $0.50: buy at s for $0.5"], fails
+    assert any(r.startswith("buyer crops: 32 for $20 ($0.6250 a unit), 2 item(s) accepted") for r in reps), reps
+    fails, _r = _tp(best={"t:beet": (0.5, "buy at s for $0.5")})
+    assert fails == ["BUYER ARBITRAGE t:beet: money obtains one for $0.5000 and the Trading Post pays $0.6250 (crate crops "
+                     "(32 for $20)), $0.1250 a unit, no cap -- t:beet $0.50: buy at s for $0.5"], fails
+    fails, reps = _tp(best={"t:wheat": (0.625, "buy at s for $0.625")})
+    assert fails == [] and any(r.startswith("buyer break-even t:wheat") for r in reps), (fails, reps)
+    assert _tp(best={"t:wheat": (0.7, "x")})[0] == []
+    # a specimen is priced by the piece: $7 against a seller at $6.99
+    fails, _r = _tp(best={"t:scale": (6.99, "buy at s for $6.99")})
+    assert len(fails) == 1 and fails[0].startswith("BUYER ARBITRAGE t:scale: money obtains one for $6.9900 and the "
+                                                   "Trading Post pays $7.0000 (specimen at $7 a piece)"), fails
 
 
-# Without it a sale that takes and does not pay, counts by taking, pays twice, or resets the allowance on every sale
-# would pass: each defect in the hand-written pack is named.
-def test_each_buyer_defect_on_a_hand_written_pack_is_named():
+# Without it a pack that takes and does not pay, counts by taking, credits sell-all from what it asked for rather than
+# what it took, credits a failed take with a stale count, returns between a take and the pay, keeps an allowance, or
+# gives money outside the pay macro would pass: each defect in the hand-written pack is named.
+def test_each_trading_post_defect_on_a_hand_written_pack_is_named():
     def names(**kw):
-        return E.buyer_checks(_pb_pack(**kw), {})[0]
-    assert any("it pays before it takes" in f for f in names(take_first=False))
-    assert any("dry-run counts" in f for f in names(count_n="32"))
-    assert any("allowance reset" in f for f in names(guarded=False))
-    assert any("2 pay calls" in f for f in names(pay_twice=True))
-    assert any("the cap fails open" in f for f in names(sold_late=True))
+        return _tp(_tp_pack(**kw))[0]
+    assert any("it pays before it takes" in f for f in names(pay_first=True))
+    assert any("exactly one count and one take" in f for f in names(count_n="32"))
+    assert any("the credit is not #price x #took / #n" in f for f in names(credit="#take"))
+    assert any("#took is not reset to 0" in f for f in names(reset=False))
+    assert any("a return between the first take and the pay" in f for f in names(early_return=True))
+    assert any("keeps allowance machinery" in f for f in names(allowance=True))
+    assert any("2 functions carry `cobbledollars give`" in f for f in names(second_give=True))
+    assert any(f.startswith("BUYER sellall/crops: sets #n [32] and #price [25]") for f in names(all_price=25))
+
+
+# Without it the spine expectation is unproved: W(early) is the bank's own typical hour (rate x price summed over the
+# early buys: 100 x $4 + 20 x $11 = $620), a crate of 64 at 3,300 an hour is 64 x 620 / 3300 = 12.02 -> $12, a crate of
+# 16 at 60 is 165.33 -> $165, a specimen at a best LIVE per_defeat of 0.1 is 620 / (60 x 0.1) = 103.3 -> $103 (the
+# better dead dropper is ignored), one at 0.001 is capped at 2 x $100, and an item with no live dropper has no price.
+def test_the_spine_expectation_by_hand():
+    bank = {"effort_model": {"tiers": {"early": {"from_tiers": ["early"]}, "deep": {"from_tiers": ["early", "deep"]}}},
+            "buys": [{"item": "a", "tier": "early", "rate_per_hour": 100, "price": 4},
+                     {"item": "b", "tier": "early", "rate_per_hour": 20, "price": 11},
+                     {"item": "c", "tier": "deep", "rate_per_hour": 10, "price": 50}]}
+    w = E.bank_tier_wages(bank)
+    assert (w["early"], w["deep"]) == (620, 1120)
+    rec = {"crates": [{"id": "s", "count": 64, "tier": "early", "rate_per_hour": 3300, "items": ["x"]},
+                      {"id": "m", "count": 16, "tier": "early", "rate_per_hour": 60, "items": ["y"]}],
+           "specimens": {"ko_per_hour": 60, "wage_tier": "early", "cap_p": 2, "items": ["p", "q", "r"]}}
+    notes = {"items": {"p": {"droppers": [["a", None, 0.1, 0, True], ["b", None, 0.9, 0, False]]},
+                       "q": {"droppers": [["a", None, 0.001, 0, True]]},
+                       "r": {"droppers": [["a", None, 0.5, 0, False]]}}}
+    crates, spec = E.tp_expected(rec, w, notes)
+    assert (crates["s"][:2], crates["m"][:2]) == ((64, 12), (16, 165))
+    assert spec == {"p": 103, "q": 200, "r": None}
+
+
+# Without it the pack's prices could drift from the spine unseen: the hand pack's crate at $20 passes against an
+# expectation of $20, and fails by name against $21 and against a different count.
+def test_a_crate_off_the_spine_fails_by_name():
+    exp = ({"crops": (32, 20, {"t:wheat"})}, {"t:scale": 7})
+    assert _tp(expected=exp)[0] == []
+    fails = _tp(expected=({"crops": (32, 21, {"t:wheat"})}, {"t:scale": 7}))[0]
+    assert fails == ["BUYER SPINE crops: the pack takes 32 for $20; count x W(tier) / rate is 32 for $21"], fails
+    fails = _tp(expected=({"crops": (32, 20, {"t:wheat"})}, {"t:scale": 8}))[0]
+    assert fails == ["BUYER SPINE specimen t:scale: the pack pays $7 a piece; the spine's is $8"], fails
 
 
 # ------------------------------------------------------------------------------------- AFK and the buyer, real data
@@ -1114,17 +1206,6 @@ def test_the_real_emerald_ranch_was_priced_and_the_overlay_stops_it(real_jars, m
     assert any(r.startswith("ranch money minecraft:emerald at $400: best thievul, 0.226 a drop") for r in reps), reps
 
 
-# Without it the emitted buyer could regress unseen: the real pack has no BUYER failure at all (the fail-open count
-# was fixed in ca1ce73), and its schedule sums to the $3,600 a player the design states
-# (docs/mechanics/ECONOMY_OVERHAUL.md 2.2), read from the emitted leg function.
-def test_the_real_buyer_pack_is_safe_by_its_emitted_lines(real):
-    fails, reps, _n = real
-    buyer = [f for f in fails if f.startswith("BUYER")]
-    assert not buyer, buyer
-    assert any(r.startswith("buyer schedule (emitted): ") and r.endswith("$3600 a player over the campaign")
-               for r in reps)
-
-
 # --------------------------------------------------------------------------- AFK and the buyer, generator mutations
 # Without it the AFK check might read the record and not bank.py's output: bank.py emitting an oran berry after the
 # buys (data/bank.json untouched: the berry stays in buys_removed) must fail as an AFK item.
@@ -1144,50 +1225,169 @@ def test_a_generator_that_ignores_base_removed_fails_the_afk_rule():
         assert any(f.startswith("AFK BANK %s:" % item) for f in fails), item
 
 
-# tools/produce_buyer.py sell_lines since ca1ce73: 7. take + exact gate (a short take runs short_take), 8. count the
-# crate against the allowance, 9. pay. The anchors are the generator's own source lines, so a moved line fails loudly.
-_PB_TAKE = ('        "execute store result score #took %s run clear @s %s %d" % (T, item, n),\n'
-            '        "execute unless score #took %s matches %d run return run function %s" % (T, n, fn_id("short_take")),\n')
-_PB_COUNT = ('        "# 8. COUNT the crate against the leg\'s allowance before anything below can return: the cap fails closed",\n'
-             '        "scoreboard players add @s %s 1" % S["sold"],\n')
-_PB_PAY = ('        "# 9. PAY the schedule\'s price, then the balance must have risen by exactly that",\n'
-           '        "execute store result storage %s pay.amount int 1 run scoreboard players get #price %s" % (store, T),\n'
-           '        "function %s with storage %s pay" % (fn_id("pay"), store),\n')
-_PB_CHECK = ('        "execute unless score #after %s = #want %s run return run tellraw @s %s" % (T, T, text(m["pay_failed"], '
-             '"red")),\n')
+# Without it the emitted Trading Post could regress unseen: on the real data (the 2026-10-05 snapshot's datapacks and
+# template shops, the 1.8.2 server mods) the audit raises no BUYER failure, prices all twelve crates and every
+# specimen, finds a money path for some members (so the arbitrage is not vacuous), and names the tightest margin.
+def test_the_real_trading_post_is_safe_by_its_emitted_lines(real):
+    fails, reps, notes = real
+    buyer = [f for f in fails if f.startswith("BUYER")]
+    assert not buyer, buyer
+    crates = {c["id"] for c in E.read_json(E.DATA / "produce_buyer.json")["crates"]}
+    priced = {m.group(1) for r in reps for m in [re.match(r"buyer (\w+): \d+ for \$\d+ \(", r)] if m}
+    assert priced == crates, crates ^ priced
+    if HAVE_JARS:
+        tight = [r for r in reps if r.startswith("buyer tightest margin: ")]
+        assert tight and re.search(r"; [1-9]\d* of \d+ priced items have a money path", tight[0]), tight
+        assert any(n.startswith("trading post: ") for n in notes)
 
 
-def _crates():
-    return {c["id"] for c in E.read_json(E.DATA / "produce_buyer.json")["crates"]}
+# --------------------------------------------------------------------- the Trading Post, generator mutations (A4)
+# tools/produce_buyer.py with one line of its CODE changed, data/produce_buyer.json untouched: the expectation (the
+# record and data/bank.json, read by economy_audit) stays put while the output moves, so each must go red.
+def _tp_fails(files):
+    pb = E.read_json(E.DATA / "produce_buyer.json")
+    exp = E.tp_expected(pb, E.bank_tier_wages(E.read_json(E.DATA / "bank.json")),
+                        E.read_json(E.ROOT / pb["specimens"]["notes_file"]))
+    return E.buyer_checks(files, _tp_best(), None, exp)[0]
 
 
-# Without it the take-before-pay order is unguarded: produce_buyer.py with its pay moved above its take (the count
-# kept straight after the take; data untouched) must fail every crate.
+def _tp_mut(*pairs):
+    return _tp_fails(E.buyer_emitted(mutant("produce_buyer", *pairs)))
+
+
+def _tp_best():
+    """Money costs from the sited sellers alone (no jars): enough for the mutations, which move the post's prices."""
+    if "best" not in _TP_BEST:
+        sales = E.market_sales() + E.apricorn_sales() + E.default_shop_sales()
+        if HAVE_SNAP:
+            sales += E.trader_sales(SNAP)[0]
+        _TP_BEST["best"] = E.cheapest(sales, [])
+    return _TP_BEST["best"]
+
+
+_TP_BEST: dict = {}
+_TP_PRICE = ('return round_half_up(crate["count"] * wage[crate["tier"]] / crate["rate_per_hour"])',
+             'return round_half_up(2 * crate["count"] * wage[crate["tier"]] / crate["rate_per_hour"])')
+
+
+# Without it the post's prices are not held to the spine: produce_buyer.py doubling crate_price must fail every crate's
+# SPINE check, and (with the sellers alone) turn the ranch feather into money: a seller's $20 against
+# round(2 x 16 x 620 / 60) / 16 = $331 / 16 = $20.6875. The feather's slack to a loop is under 2x.
+@needs_snap
+def test_a_generator_that_doubles_a_crate_price_fails_the_spine_and_prints_money():
+    fails = _tp_mut(_TP_PRICE)
+    spine = {f.split()[2].rstrip(":") for f in fails if f.startswith("BUYER SPINE ") and "specimen" not in f}
+    assert spine == {c["id"] for c in E.read_json(E.DATA / "produce_buyer.json")["crates"]}, fails[:4]
+    assert any(f.startswith("BUYER ARBITRAGE minecraft:feather: money obtains one for $20.0000 and the Trading Post "
+                            "pays $20.6875") for f in fails), fails
+
+
+# Without it the post's wage could be taken from somewhere else unseen: produce_buyer.py pricing from the bank's UPPER
+# hour instead of its typical hour (ECONOMY_V2 1.1: W is the typical hour) must fail the spine.
+def test_a_generator_that_prices_from_the_upper_hour_fails_the_spine():
+    fails = _tp_mut(('return {k: v[0] for k, v in bank.tier_hours(bank.load()).items()}',
+                     'return {k: v[1] for k, v in bank.tier_hours(bank.load()).items()}'))
+    assert any(f.startswith("BUYER SPINE ") for f in fails), fails[:4]
+
+
+# Without it the audit could share the builder's wage: tools/bank.py's tier_hours (the helper produce_buyer.py prices
+# from) doubled, with produce_buyer.py and every data file untouched, must fail the spine, because this audit sums the
+# wage from data/bank.json itself.
+def test_a_bank_helper_that_doubles_the_wage_fails_the_post_spine(monkeypatch):
+    b = mutant("bank", 'out[name] = (sum(b["rate_per_hour"] * b["price"] for b in rows),',
+               'out[name] = (2 * sum(b["rate_per_hour"] * b["price"] for b in rows),')
+    assert not any(f.startswith("BUYER SPINE") for f in _tp_fails(E.buyer_emitted()))     # control: the real helper
+    monkeypatch.setitem(sys.modules, "bank", b)
+    fails = _tp_fails(E.buyer_emitted())          # the real produce_buyer.py, pricing through the mutated helper
+    assert any(f.startswith("BUYER SPINE stone_earth: the pack takes 64 for $24;") for f in fails), fails[:4]
+
+
+# Without it a crate could take less than it pays for: produce_buyer.py taking half a crate (the price unchanged) must
+# fail the spine, disagree with its own sell-all, and print money on the feather (16 / 2 = 8 for $165: $20.625 a unit).
+@needs_snap
+def test_a_generator_that_takes_half_a_crate_fails():
+    fails = _tp_mut(('    n = int(crate["count"])\n    item = predicate(crate)\n    short = ',
+                     '    n = int(crate["count"]) // 2\n    item = predicate(crate)\n    short = '))
+    assert any(f.startswith("BUYER SPINE ranch: the pack takes 8 for $165") for f in fails), fails[:4]
+    assert any(f.startswith("BUYER sellall/ranch: sets #n [16]") for f in fails), fails[:4]
+    assert any(f.startswith("BUYER ARBITRAGE minecraft:feather:") for f in fails), fails[:4]
+
+
+# Without it the specimen cap is unguarded: produce_buyer.py with the 2 P cap removed and 30x the price must fail the
+# spine, and a specimen a Mart sells (the cheapest at $2,160) becomes money.
+@needs_snap
+def test_a_generator_that_uncaps_the_specimens_fails():
+    fails = _tp_mut(('out[item] = max(1, min(int(sp["cap_p"]) * 100, round_half_up(raw)))',
+                     'out[item] = max(1, round_half_up(30 * raw))'))
+    assert any(f.startswith("BUYER SPINE specimen ") for f in fails), fails[:4]
+    assert any(f.startswith("BUYER ARBITRAGE cobblemon:") for f in fails), fails[:4]
+
+
+# Without it the take-before-pay order is unguarded: produce_buyer.py paying a crate before taking it (data untouched)
+# must fail every crate.
 def test_a_generator_that_pays_before_it_takes_fails():
-    m = mutant("produce_buyer", _PB_TAKE + _PB_COUNT + _PB_PAY, _PB_PAY + _PB_TAKE + _PB_COUNT)
-    fails, _r = E.buyer_checks(E.buyer_emitted(m), {})
-    assert {f.split()[1].rstrip(":") for f in fails if "it pays before it takes" in f} == _crates(), fails[:4]
-
-
-# Without it ca1ce73's fix could be undone unseen: produce_buyer.py counting the crate after the balance check again
-# (the pre-ca1ce73 order: a misfiring query returns before the count, so the allowance fails open) must fail every crate.
-def test_a_generator_that_counts_after_the_pay_check_fails_open():
-    m = mutant("produce_buyer", (_PB_COUNT, ""), (_PB_CHECK, _PB_CHECK + _PB_COUNT))
-    fails, _r = E.buyer_checks(E.buyer_emitted(m), {})
-    assert {f.split()[1].rstrip(":") for f in fails if BUYER_FAIL_OPEN in f} == _crates(), fails[:4]
+    fails = _tp_mut(('+ ["scoreboard players set #price %s %d" % (T, price),',
+                     '+ ["scoreboard players set #price %s %d" % (T, price)] + pay_tail(doc, "#price") + ['),
+                    ('+ pay_tail(doc, "#price") + ["tellraw @s %s" % paid])', '+ ["tellraw @s %s" % paid])'))
+    assert {f.split()[1].rstrip(":") for f in fails if "it pays before it takes" in f} == \
+        {c["id"] for c in E.read_json(E.DATA / "produce_buyer.json")["crates"]}, fails[:4]
 
 
 # Without it a count that takes is unguarded: produce_buyer.py counting with the crate's size instead of 0 removes the
 # goods at the count step, before any gate; every crate must fail.
 def test_a_generator_whose_count_takes_fails():
-    m = mutant("produce_buyer", 'run clear @s %s 0" % (T, item)', 'run clear @s %s %d" % (T, item, n)')
-    fails, _r = E.buyer_checks(E.buyer_emitted(m), {})
-    assert len([f for f in fails if "dry-run counts" in f]) == len(E.read_json(E.DATA / "produce_buyer.json")["crates"])
+    fails = _tp_mut(('run clear @s %s 0" % (T, item),\n               "execute unless score #have',
+                     'run clear @s %s %d" % (T, item, n),\n               "execute unless score #have'))
+    assert len([f for f in fails if "exactly one count and one take" in f]) == \
+        len(E.read_json(E.DATA / "produce_buyer.json")["crates"]), fails[:4]
 
 
-# Without it an unguarded allowance reset (a fresh allowance on every sale, unlimited money) would pass.
-def test_a_generator_whose_allowance_resets_every_sale_fails():
-    m = mutant("produce_buyer", '"execute unless score @s %s = #badges %s run scoreboard players set @s %s 0" % (S["leg"], T, '
-               'S["sold"])', '"scoreboard players set @s %s 0" % S["sold"]')
-    fails, _r = E.buyer_checks(E.buyer_emitted(m), {})
-    assert any(f.startswith("BUYER leg: the allowance reset") for f in fails), fails[:3]
+# Without it sell-all could pay for what it asked for rather than what it took: produce_buyer.py crediting #take (the
+# crates it meant to take) instead of #took (what `clear` removed) must fail every category.
+def test_a_generator_that_credits_the_asked_take_fails():
+    fails = _tp_mut(('"scoreboard players operation #part %s *= #took %s" % (T, T),\n'
+                     '            "scoreboard players operation #part %s /= #n %s" % (T, T),\n'
+                     '            "scoreboard players operation #total',
+                     '"scoreboard players operation #part %s *= #take %s" % (T, T),\n'
+                     '            "scoreboard players operation #part %s /= #n %s" % (T, T),\n'
+                     '            "scoreboard players operation #total'))
+    assert len([f for f in fails if "the credit is not #price x #took / #n" in f]) == \
+        len(E.read_json(E.DATA / "produce_buyer.json")["crates"]), fails[:4]
+
+
+# Without it a failed macro take could credit the previous category's count: produce_buyer.py no longer resetting
+# #took before the bounded take must fail every category.
+def test_a_generator_that_does_not_reset_took_fails():
+    fails = _tp_mut(('"scoreboard players set #took %s 0" % T,\n            "function %s with storage %s take"',
+                     '"function %s with storage %s take"'))
+    assert len([f for f in fails if "#took is not reset to 0" in f]) == \
+        len(E.read_json(E.DATA / "produce_buyer.json")["crates"]), fails[:4]
+
+
+# Without it sell-all could keep goods it took: produce_buyer.py returning between the categories and the specimens
+# (after the first take, before the one pay) must fail.
+def test_a_generator_that_returns_inside_sell_all_fails():
+    fails = _tp_mut(('out += ["function %s" % fn_id("sellall/specimens"),',
+                     'out += ["execute if score #short %s matches 1 run return 0" % T, '
+                     '"function %s" % fn_id("sellall/specimens"),'))
+    assert any("a return between the first take and the pay" in f for f in fails), fails[:4]
+
+
+# Without it E3 could be undone quietly: produce_buyer.py reading the badge count again (a closed gate at 8 badges) must
+# fail as allowance machinery in every sale.
+def test_a_generator_that_reads_badges_again_fails():
+    fails = _tp_mut(('"execute if score @s %s > #now %s run return 0" % (S["cooldown"], T)]',
+                     '"execute if score @s %s > #now %s run return 0" % (S["cooldown"], T), '
+                     '"execute if score #badges %s matches 8.. run return 0" % T]'))
+    assert len([f for f in fails if "keeps allowance machinery" in f]) == \
+        len(E.read_json(E.DATA / "produce_buyer.json")["crates"]) + 1, fails[:4]
+
+
+# Without it the crate's membership could be read from the record and not the pack: produce_buyer.py adding a torch
+# (a seller's $10) to every crate tag it writes must make the torch money against the dearest of them ($165 / 16 =
+# $10.3125), with data/produce_buyer.json untouched.
+@needs_snap
+def test_a_generator_that_widens_a_crate_tag_is_arbitrage():
+    fails = _tp_mut(('{"values": list(c["items"])}', '{"values": list(c["items"]) + ["minecraft:torch"]}'))
+    assert any(f.startswith("BUYER ARBITRAGE minecraft:torch: money obtains one for $10.0000 and the Trading Post pays "
+                            "$10.3125") for f in fails), fails[:4]
