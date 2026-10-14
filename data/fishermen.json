@@ -68,7 +68,7 @@
       "stage": "mid (between gyms 3 and 4)",
       "lines": {
         "hello_1": "This river comes a long way down from the Glacial Tear before it belongs to anybody. Cold the whole length.",
-        "hello_2": "The current doesn't care what you're after. You learn to cast across it, not into it.",
+        "hello_2": "You cast across the current here, not into it.",
         "offer": "Hanne takes a Net Rod from where it leans against her pack and holds it out.",
         "thanks": "Mind the current. It will have the rod if you let it.",
         "done": "Cold water, patient fish. Same as ever.",
@@ -92,7 +92,7 @@
         "hello_2": "They were here before the road. So was I, near enough.",
         "offer": "Pell hands over an Ultra Rod, handle first, without getting up.",
         "thanks": "Not for show. Use it on the far side, where the water goes dark.",
-        "done": "Still the same pond. Still the same me.",
+        "done": "Same pond as yesterday.",
         "wait": "The pond is the town's and so is my best line. Come back with your fourth badge and ask again."
       }
     },
@@ -110,7 +110,7 @@
       "stage": "late-mid (after the fifth badge, the packet's own gate)",
       "lines": {
         "hello_1": "The packet from the south-west lands here and is gone before the wake settles.",
-        "hello_2": "The sea keeps no timetable, but it keeps a mood. I fish between the boats.",
+        "hello_2": "The sea has no timetable. I fish between the boats.",
         "offer": "Ingrid draws a Lure Rod out of the sand where it stood and brushes it off.",
         "thanks": "Keep it out of the surf at night. The packet's lantern is the only light on this shore.",
         "done": "Tide's turning. It always is.",

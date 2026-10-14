@@ -207,6 +207,13 @@
         "tools/direct_trades.py"
       ]
     },
+    "trading_post": {
+      "what": "the Trading Post (the Produce Buyer, generalised): crates and found items bought at fixed spine prices with no cap (the owner's E3, 2026-10-13)",
+      "paths": [
+        "data/produce_buyer.json",
+        "tools/produce_buyer.py"
+      ]
+    },
     "settlement_npcs": {
       "what": "the dialogue NPCs seated by data/npc_seats.json and placed by reapply R17N",
       "paths": [
@@ -643,7 +650,8 @@
         "rayquaza_sky.py": "checker: its own cells (tools/rayquaza_sky.py spawn_block_problems refuses, at build, every block data/spawn_blocks.json lists unless a data/spawn_block_policy.json entry scoped to rayquaza_sky allows it; none does); its built packs cobblers_rayquaza and cobblers_rayquaza_build are also judged by the built-pack check like every other pack",
         "sanctuaries_audit.py": "checker: the built cobblers_sanctuaries pack (source sanctuaries): every block it writes against data/spawn_blocks.json and the policy entries scoped to sanctuaries",
         "kyogre_cave.py": "checker: tools/kyogre_cave.py static_problems refuses any block of the Kyogre cave's geometry and reef (data/kyogre_cave.json) that data/spawn_blocks.json names a spawn condition, so the cave writes none",
-        "kyogre_rayquaza_audit.py": "checker: the independent audit of the Kyogre cave and Rayquaza's sky reads data/spawn_blocks.json to measure (not fail) the spawn-condition blocks the built packs write; water is the cave's design (2026-10-13)"
+        "kyogre_rayquaza_audit.py": "checker: the independent audit of the Kyogre cave and Rayquaza's sky reads data/spawn_blocks.json to measure (not fail) the spawn-condition blocks the built packs write; water is the cave's design (2026-10-13)",
+        "produce_buyer.py": "checker: the Trading Post (data/produce_buyer.json) refuses to buy a spawn-condition block (data/spawn_blocks.json) unless the crate marks it a renewable harvest, so no crate pays for stripping encounters out of the ground (never_problems); it places no blocks"
       }
     },
     {
@@ -1497,6 +1505,35 @@
         "tests/test_economy_audit.py::test_no_dollar_path_reaches_the_top_tier_on_the_real_data",
         "tests/test_economy_audit.py::test_a_generator_that_shelves_the_superseded_top_tier_lines_is_a_dollar_path",
         "tests/test_economy_audit.py::test_a_generator_that_shelves_a_diamond_block_is_a_dollar_path_to_a_top_tier_input"
+      ]
+    },
+    {
+      "id": "C29",
+      "title": "No dollar path obtains a Trading Post good for less than the Trading Post pays for it",
+      "owner": "economy",
+      "consumers": [
+        "trading_post"
+      ],
+      "constrained_by": [
+        "markets",
+        "station_exchange"
+      ],
+      "statement": "No sited seller (a counter, a stall, Hollin's stall, a Mart's template shop, the default shop), no recipe in the server's jars and no barter edge, alone or chained, lets dollars obtain any item the Trading Post's emitted pack accepts (every member of every crate's tag, mod members included, and every specimen) for less than the unit the post pays for it. The post has no cap since the owner's E3, so this is the only guard against printing money: a seller, a recipe or a barter line priced one cent under a crate's unit is an unbounded loop.",
+      "stated_in": [
+        {
+          "at": "docs/mechanics/ECONOMY_V2.md:230",
+          "quote": "**No round trip.** A crate's unit worth is below every seller's unit price for that item."
+        },
+        {
+          "at": "docs/mechanics/ECONOMY_V2.md:531",
+          "quote": "| E3 | **No cap: farming is allowed**"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c29_no_dollar_path_undercuts_the_trading_post",
+        "tests/test_economy_audit.py::test_the_real_trading_post_is_safe_by_its_emitted_lines",
+        "tests/test_economy_audit.py::test_a_generator_that_doubles_a_crate_price_fails_the_spine_and_prints_money",
+        "tests/test_economy_audit.py::test_a_generator_that_widens_a_crate_tag_is_arbitrage"
       ]
     }
   ]

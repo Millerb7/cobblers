@@ -56,6 +56,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import player_site  # noqa: E402  the shared header, footer, filter and manifest of docs/player/
 import player_guide_battles as PB  # noqa: E402  the jar finder
+import produce_buyer  # noqa: E402  the Trading Post's own crate and specimen prices
 import markets as MK  # noqa: E402  which records the merchants carry, and their unit prices
 import traders as TR  # noqa: E402  the Mart clerks' tiers and shelves
 
@@ -358,19 +359,18 @@ def render_money(m):
         legs.append('<tr><td>%s</td><td class="n">%s</td><td class="n">%s</td><td></td></tr>'
                     % (label, dollars(post["normal"][key]), dollars(post["challenge"][key])))
     pb = m["produce"]
-    crates = "".join("<li>%d %s</li>" % (c["count"], esc(c["label"])) for c in pb["crates"])
-    sched = []
-    for r in pb["schedule"]["rows"]:
-        lo, hi = r["badges"]
-        held = "%d" % lo if lo == hi else "%d to %d" % (lo, hi)
-        sched.append('<tr><td>%s</td><td class="n">%s</td><td class="n">%d</td></tr>'
-                     % (held, dollars(r["price"]) if r["price"] else "buys nothing", r["crates"]))
+    paid = produce_buyer.prices(pb)
+    sched = ['<tr><td>%s</td><td class="n">%d</td><td class="n">%s</td></tr>'
+             % (esc(c["label"]), c["count"], dollars(paid[c["id"]])) for c in pb["crates"]]
+    spec = sorted(produce_buyer.specimen_prices(pb).values())
+    crates = ("Found items (held and evolution items wild Pokemon drop) sell one at a time, for %s to %s each."
+              % (dollars(spec[0]), dollars(spec[-1]))) if spec else ""
     sv = m["services"]
     badge = lambda g: m["badges"].get(g, g) if g else None
     ev_gate, iv_gate = badge(sv["ev"].get("gate")), badge(sv["iv"].get("gate"))
     return (
         '<section %s><h2>How money works</h2>'
-        '<h3>Beating trainers</h3><p>Money comes from beating trainers. <b>Wild battles pay nothing.</b>%s A win pays '
+        '<h3>Beating trainers</h3><p>Money comes from beating trainers, wherever you meet them. <b>Battles against wild Pokemon pay nothing.</b>%s A win pays '
         'by the beaten team\'s levels added up: on average about %s times the square of that total, and anywhere '
         'from two thirds to four thirds of the average.</p>'
         '<div class="wide"><table><thead><tr><th class="n">Team\'s levels added up</th><th class="n">Pays about</th>'
@@ -382,17 +382,18 @@ def render_money(m):
         '<h3>The bank</h3><p>Every shopkeeper at a counter, a market stall or a Poke Mart opens the bank: shift and '
         'right-click them, or press the Bank button on their shop screen. Put items in and press Sell; each is paid '
         'at the bank\'s price, the same in every town. What it buys is under <a href="#sell">Selling</a>.</p>'
-        '<h3>The Produce Buyer</h3><p>The Produce Buyer at the apricorn farm buys farm goods by the crate, and pays '
-        'less as your badges grow. A crate is one of:</p><ul>%s</ul>'
-        '<div class="wide"><table><thead><tr><th>Badges you hold</th><th class="n">Per crate</th>'
-        '<th class="n">Crates until your next badge</th></tr></thead><tbody>%s</tbody></table></div>'
+        '<h3>The Trading Post</h3><p>A Trading Post at the apricorn farm and in the squares of the market towns '
+        'buys what you gather by the crate, at a fixed price with no limit: sell one kind of crate, or let it take '
+        'everything it buys from your inventory at once. %s</p>'
+        '<div class="wide"><table><thead><tr><th>Crate</th><th class="n">Items in it</th>'
+        '<th class="n">Pays</th></tr></thead><tbody>%s</tbody></table></div>'
         '<h3>Paid training</h3><p>The coach at each training ground sells three shortcuts. Training by battle, or '
         'crafting the items (see <a href="#craft">Crafting</a>), is always cheaper.</p><ul>'
         '<li><b>Train to your cap</b>: %s a Pokemon, raised straight to your level cap (up to a cap of %d).</li>'
         '<li><b>Effort training</b>: %s a Pokemon, a two-stat training plan%s.</li>'
         '<li><b>Perfect a stat</b>: %s a stat, or %s for all six%s.</li></ul></section>'
         % (player_site.section_attr("money"),
-           "" if not m["wild_pays"] else " (This server's settings say wild battles pay: tell an operator.)",
+           "" if not m["wild_pays"] else " (This server's settings say wild Pokemon pay: tell an operator.)",
            "%.2f" % (mult * 2.25 / 10), "".join(ex), "".join(legs), crates, "".join(sched),
            dollars(sv["raise"]["price"]), sv["raise"]["max_cap"],
            dollars(sv["ev"]["price"]), ", once you hold %s" % ev_gate if ev_gate else "",
@@ -435,7 +436,7 @@ def render_sell(m):
                    % (row_attrs(s["item"], nm[s["item"]]), esc(nm[s["item"]]), esc(s["item"]), dollars(s["price"]))
                    for s in sorted(m["sell"], key=lambda s: (nm[s["item"]].lower(), s["item"])))
     return ('<section %s><h2>Selling</h2><p>What the bank buys, at the same price everywhere. Anything not listed, it '
-            'does not buy. Farm goods go to the Produce Buyer instead (<a href="#money">How money works</a>).</p>'
+            'does not buy. Farm goods go to the Trading Post instead (<a href="#money">How money works</a>).</p>'
             '<div class="wide"><table><thead><tr><th>Item</th><th class="n">Pays each</th></tr></thead><tbody>%s'
             '</tbody></table></div></section>' % (player_site.section_attr("sell"), rows))
 

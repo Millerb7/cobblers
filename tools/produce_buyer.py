@@ -1,46 +1,50 @@
 #!/usr/bin/env python
-"""The Produce Buyer: farm goods sold by the crate to a dialogue NPC, on a price that falls with every badge and a
-per-player allowance that resets each leg. Generated from data/produce_buyer.json into the world-local datapack
-build/datapacks/cobblers_produce_buyer; the buyer is placed by tools/reapply.py R18PB.
+"""The Trading Post (the Produce Buyer, generalised): goods sold to a dialogue NPC at a FIXED spine price, with no cap,
+no allowance and no price that falls with badges. Generated from data/produce_buyer.json into the world-local datapack
+build/datapacks/cobblers_produce_buyer; the NPCs are placed by tools/reapply.py R18PB.
 
-The owner, 2026-10-10: "farm products pay the early game on a declining price. AFK-farmable food must not pay for
-everything -- cap it or exclude it." docs/mechanics/ECONOMY_OVERHAUL.md 2.2 and BUILD LIST U2. The bank (tools/bank.py)
-no longer buys anything an unattended farm makes (data/bank.json afk_rule); this is where those goods sell instead.
+docs/mechanics/ECONOMY_V2.md 2.2 and the owner's answers (section 7, 2026-10-13): E3 "no cap: farming is allowed",
+E1 cobble at its spine worth, E2 two ways to sell, E6 arena trophies never sellable, E8 a Trading Post at every town
+square that has a market and at the ports, E10 no co-op pooling. The bank (tools/bank.py) buys the minerals; this is
+where everything else a player can dig, cut, grow, catch or find sells.
 
 Every piece is one already in use (tools/ferries.py is the pattern, read for it):
   the buyer      a Cobblemon NPC whose class opens a dialogue compiled in memory by tools/compile_dialogue.py's
-                 compile_conversation (the ferryman's shape): one page, one option per crate kind, and "Not today."
-  the sale       a function run as and at the player by the option (compile_dialogue "function"):
+                 compile_conversation (the ferryman's shape): one page, "sell everything I can", one option per crate
+                 kind, and "Not today."
+  a crate        a function run as and at the player by the option (compile_dialogue "function"):
                    1. a second submit inside the cooldown does nothing
-                   2. the badge count is the number of cobblers:flag/gymN_cleared advancements the player holds; when it
-                      differs from the count of the player's last sale the allowance (cob_pb_sold) resets: per leg
-                   3. the price and the leg's crates come from the schedule's row for that count; a price of 0 refuses
-                   4. a spent allowance refuses
-                   5. count the crate's items (`clear @s <item> 0`, ASSUMED to count without removing: EXP-061)
-                      and refuse when short, nothing taken
-                   6. the click is spent (the cooldown starts); read the balance (`cobbledollars query @s`)
-                   7. TAKE the crate (`clear @s <item> <count>`); unless exactly <count> went, short_take counts the
-                      crate, records the taken share of the price as owed (cob_pb_owed) and stops, nothing paid
-                   8. COUNT the crate as sold (cob_pb_sold) before anything can return: the cap fails closed
-                   9. PAY through `$cobbledollars give @s $(amount)` and re-read the balance: unless it rose by exactly
-                      the price, record the price as owed (cob_pb_owed) and say so
-The checks (offline, fail closed; the independent audit is test-author's tools/produce_buyer_audit.py):
-  static   the schedule covers badges 0..8 once each, never rises, ends at 0, and sums to campaign_cap; the badge flags
-           are flags tools/progression_pack.py plans; every crate has a positive count and valid ids; no crate item
-           is still bought by the bank (data/bank.json afk_rule moved them here); no authored seller sells a crate item
-           at or under the crate's top price / count per unit (tools/bank.py sell_points)
-  output   every sale counts before it takes, takes before it pays, counts the crate against the allowance before any
-           return after the take, pays once and verifies after it, charges nothing
-           (`cobbledollars remove` never appears) and passes tools/function_limits.py
-  seat     each site's spot recomputed from its anchor's plan (tools/apricorn_farm.py plan() and spot(), the canonical
-           heightmap, never a world) equals the site's expected_at, off the farm's paths and 3.5 blocks from its other
-           NPCs and from every walked route line by 3
+                   2. count the crate's items (`clear @s <item> 0`, ASSUMED to count without removing: EXP-061) and
+                      refuse when short, nothing taken
+                   3. the click is spent (the cooldown starts); read the balance (`cobbledollars query @s`)
+                   4. TAKE the crate (`clear @s <item> <count>`); unless exactly <count> went, short_take records the
+                      taken share of the price as owed and stops, nothing paid
+                   5. PAY through `$cobbledollars give @s $(amount)` and re-read the balance: unless it rose by exactly
+                      the price, record the price as owed and say so
+  everything     sell/all: the cooldown, the balance, then per category (sellall/<id>) a dry-run count, the whole
+                 crates' worth of items divided out, a BOUNDED take through the macro take/<id> (`clear @s <item> $(n)`),
+                 the taken share credited to #total; then every specimen (sellall/specimens: `clear @s <item>`, pieces
+                 x price); then ONE pay of #total and the same balance re-read. Nothing returns between the first take
+                 and the pay except the "nothing taken" gate.
+The checks (offline, fail closed; the independent audit is unit B4's, not this file's):
+  static   every crate priced from its declared rate and the bank's own tier wage (the spine), no item in two crates,
+           none in never_sold, none bought by the bank, no authored seller at or under its unit worth (tools/bank.py
+           sell_points), the specimens re-derived from docs/research/notes/drops-1.8.0.json
+  output   no allowance anywhere, every sale counts before it takes, takes before it pays, pays once and verifies after
+           it, charges nothing (`cobbledollars remove` never appears) and passes tools/function_limits.py
+  seats    Hollin's: recomputed from tools/apricorn_farm.py's plan. A town square's: held to the squares builder's own
+           model (tools/plaza_centre.py Town and plan_town) plus the floors in the data
+  closure  (optional, needs jars) every crate item and specimen against the cheapest way to BUY it by any recipe
+           (tools/economy_audit.py cheapest), and against recipes whose inputs are all priced
 
-  python tools/produce_buyer.py build  [--out DIR]          write the pack (no heightmap needed)
-  python tools/produce_buyer.py check  [--source-root R]    static, output and seat checks; exit 1 on a problem
+  python tools/produce_buyer.py build   [--out DIR]                     write the pack (no heightmap needed)
+  python tools/produce_buyer.py check   [--source-root R] [--server-dir S] [--jars-dir J] [--vanilla-jar V]
+  python tools/produce_buyer.py prices                                   the table: unit worth, crate worth, P
+  python tools/produce_buyer.py seats   [--source-root R]                propose a seat per unseated square site
 
-What it does NOT cover: whether the dialogue opens and the function runs in game (EXP-061), a seller a donor template
-places that no data file names, and the trader templates' shops unless tools/bank.py is given a server dir.
+What it does NOT cover: whether the dialogue opens and the functions run in game (EXP-061); a seller a donor template
+places that no data file names, and the trader templates' shops unless tools/bank.py is given a server dir; a recipe the
+jars do not carry; the kitchen and pharmacy category (data/produce_buyer.json not_built).
 """
 from __future__ import annotations
 
@@ -57,13 +61,15 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 DATA = ROOT / "data" / "produce_buyer.json"
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_produce_buyer"
-NS = "cobblers"
-FOLDER = "produce_buyer"
 ITEM = re.compile(r"[a-z0-9_.\-]+:[a-z0-9_/.\-]+")
 ID = re.compile(r"[a-z0-9_]+")
+NS = "cobblers"
+FOLDER = "produce_buyer"
+RESERVED_IDS = ("all", "specimens")
 NPC_CLEAR = 3.5     # tools/markets.py NPC_CLEAR: reapply's npc action counts cobblemon:npc within 2 blocks
 MIN_ROUTE = 3.0     # tools/npc_seats.py MIN_ROUTE
 WORLD_READS: set = set()   # the ground rule: every seat comes from a plan over the canonical heightmap
+TANK_MARGIN = 1     # cells kept clear round a piece of the square (a stall's posts, the centrepiece)
 
 
 class BuyerError(SystemExit):
@@ -107,107 +113,68 @@ def fill(template, **kw):
     return template
 
 
-def rows(doc):
-    """[(lo, hi, price, crates)] from schedule.rows."""
-    return [(int(r["badges"][0]), int(r["badges"][1]), int(r["price"]), int(r["crates"])) for r in doc["schedule"]["rows"]]
+# ------------------------------------------------------------------------------------------------------- the spine
+def wages():
+    """{tier: the tier's typical hour in dollars}, from data/bank.json's own rates (tools/bank.py tier_hours), never a
+    copy: the spine is 'consistent by construction' only while one place says what an hour of a tier is worth."""
+    import bank
+    return {k: v[0] for k, v in bank.tier_hours(bank.load()).items()}
 
 
-def schedule_at(doc, badges):
-    for lo, hi, price, crates in rows(doc):
-        if lo <= badges <= hi:
-            return price, crates
-    return None
+def round_half_up(x):
+    return int(math.floor(x + 0.5))
 
 
-def campaign_total(doc):
-    return sum((hi - lo + 1) * price * crates for lo, hi, price, crates in rows(doc))
+def crate_price(crate, wage):
+    """worth($) = count x W(tier) / rate_per_hour, a whole dollar per crate (ECONOMY_V2 1.1)."""
+    return round_half_up(crate["count"] * wage[crate["tier"]] / crate["rate_per_hour"])
 
 
-# ---------------------------------------------------------------------------------------------------------- the pack
-def leg_lines(doc):
-    """cobblers:produce_buyer/leg, as the player: #badges, the allowance reset on a changed count, #price and #cap."""
-    S = doc["runtime"]["scores"]
-    T = S["temp"]
-    out = ["# Generated by tools/produce_buyer.py from data/produce_buyer.json: the player's leg, as the player",
-           "# the badge count: one per progression flag the player holds (tools/progression_pack.py's advancements)",
-           "scoreboard players set #badges %s 0" % T]
-    for f in doc["badge_flags"]:
-        out.append("execute if entity @s[advancements={%s:flag/%s=true}] run scoreboard players add #badges %s 1"
-                   % (NS, f, T))
-    out += ["# a new leg (the count changed since this player's last sale, or no sale yet): the allowance resets",
-            "execute unless score @s %s = #badges %s run scoreboard players set @s %s 0" % (S["leg"], T, S["sold"]),
-            "scoreboard players operation @s %s = #badges %s" % (S["leg"], T),
-            "scoreboard players add @s %s 0" % S["sold"],
-            "# the schedule's row for this count: the price per crate and the crates the leg allows",
-            "scoreboard players set #price %s 0" % T,
-            "scoreboard players set #cap %s 0" % T]
-    for lo, hi, price, crates in rows(doc):
-        rng = "%d" % lo if lo == hi else "%d..%d" % (lo, hi)
-        out.append("execute if score #badges %s matches %s run scoreboard players set #price %s %d" % (T, rng, T, price))
-        out.append("execute if score #badges %s matches %s run scoreboard players set #cap %s %d" % (T, rng, T, crates))
+def prices(doc, wage=None):
+    """{crate id: dollars a crate pays}."""
+    wage = wage or wages()
+    return {c["id"]: crate_price(c, wage) for c in doc["crates"]}
+
+
+def unit_worth(crate, price):
+    return price / crate["count"]
+
+
+def notes_of(doc):
+    return json.loads((ROOT / doc["specimens"]["notes_file"]).read_text(encoding="utf-8"))
+
+
+def best_drop(notes, item):
+    """The best per-defeat drop chance of an item among the species our world spawns (docs/research/notes/
+    drops-1.8.0.json: a dropper is [species, form, per_defeat, ranch_per_hour, live]); None with no live dropper."""
+    rec = notes["items"].get(item)
+    live = [d[2] for d in (rec or {}).get("droppers") or [] if d[4]]
+    return max(live) if live else None
+
+
+def specimen_prices(doc, wage=None, notes=None):
+    """{item: dollars a piece pays}: W(early) / (ko_per_hour x best chance), rounded, from $1 to cap_p x $100."""
+    sp = doc["specimens"]
+    wage = wage or wages()
+    notes = notes or notes_of(doc)
+    out = {}
+    for item in sp["items"]:
+        best = best_drop(notes, item)
+        if not best:
+            raise BuyerError("specimen %s has no live dropper in %s" % (item, sp["notes_file"]))
+        raw = wage[sp["wage_tier"]] / (sp["ko_per_hour"] * best)
+        out[item] = max(1, min(int(sp["cap_p"]) * 100, round_half_up(raw)))
     return out
 
 
-def sell_lines(doc, crate):
-    S, rt, m = doc["runtime"]["scores"], doc["runtime"], doc["messages"]
-    T = S["temp"]
-    n = int(crate["count"])
-    item = predicate(crate)
-    store = doc["runtime"]["storage"]
-    short = json.dumps([{"text": "", "color": "gold"}, {"text": fill(m["short"], count=n, label=crate["label"])},
-                        {"score": {"name": "#have", "objective": T}}, {"text": m["short_after"]}], ensure_ascii=False)
-    paid = json.dumps([{"text": "", "color": "green"}, {"text": fill(m["paid"], label=crate["label"])},
-                       {"text": "+$"}, {"score": {"name": "#price", "objective": T}},
-                       {"text": ". Crates left before your next badge: "}, {"score": {"name": "#left", "objective": T}}],
-                      ensure_ascii=False)
-    return [
-        "# Generated by tools/produce_buyer.py from data/produce_buyer.json: sell a crate of %d %s (as and at the "
-        "player, from the Produce Buyer's dialogue)" % (n, crate["label"]),
-        "# 1. a second submit of the same click, or a sale straight after one, does nothing",
-        "execute store result score #now %s run time query gametime" % T,
-        "execute if score @s %s > #now %s run return 0" % (S["cooldown"], T),
-        "# 2-3. the leg: badges, the allowance reset, the price and the cap",
-        "function %s" % fn_id("leg"),
-        "execute if score #price %s matches ..0 run return run tellraw @s %s" % (T, text(m["closed"], "gold")),
-        "# 4. the leg's allowance",
-        "execute if score @s %s >= #cap %s run return run tellraw @s %s" % (S["sold"], T, text(m["spent"], "gold")),
-        "# 5. count the crate's items without taking any (clear with a count of 0), refuse when short",
-        "execute store result score #have %s run clear @s %s 0" % (T, item),
-        "execute unless score #have %s matches %d.. run return run tellraw @s %s" % (T, n, short),
-        "# 6. from here the click is spent; the balance before",
-        "scoreboard players operation @s %s = #now %s" % (S["cooldown"], T),
-        "scoreboard players add @s %s %d" % (S["cooldown"], int(rt["cooldown_ticks"])),
-        "execute store result score #before %s run cobbledollars query @s" % T,
-        "scoreboard players set #n %s %d" % (T, n),
-        "# 7. TAKE the crate first: exactly %d, or nothing is paid (a short take counts the crate and records the "
-        "taken share as owed: %s)" % (n, fn_id("short_take")),
-        "execute store result score #took %s run clear @s %s %d" % (T, item, n),
-        "execute unless score #took %s matches %d run return run function %s" % (T, n, fn_id("short_take")),
-        "# 8. COUNT the crate against the leg's allowance before anything below can return: the cap fails closed",
-        "scoreboard players add @s %s 1" % S["sold"],
-        "# 9. PAY the schedule's price, then the balance must have risen by exactly that",
-        "execute store result storage %s pay.amount int 1 run scoreboard players get #price %s" % (store, T),
-        "function %s with storage %s pay" % (fn_id("pay"), store),
-        "execute store result score #after %s run cobbledollars query @s" % T,
-        "scoreboard players operation #want %s = #before %s" % (T, T),
-        "scoreboard players operation #want %s += #price %s" % (T, T),
-        "execute unless score #after %s = #want %s run scoreboard players operation @s %s += #price %s"
-        % (T, T, S["owed"], T),
-        "execute unless score #after %s = #want %s run return run tellraw @s %s" % (T, T, text(m["pay_failed"], "red")),
-        "scoreboard players operation #left %s = #cap %s" % (T, T),
-        "scoreboard players operation #left %s -= @s %s" % (T, S["sold"]),
-        "tellraw @s %s" % paid]
-
-
+# ---------------------------------------------------------------------------------------------------------- the pack
 def short_take_lines(doc):
-    """cobblers:produce_buyer/short_take, as the player, when the take removed fewer than the crate's count (#took of
-    #n). Unreachable after the dry-run count gate, kept fail closed: the crate counts against the allowance and the
-    taken share of the price, #price x #took / #n rounded down, is recorded as owed. Nothing is paid here."""
+    """cobblers:produce_buyer/short_take, as the player, when a crate's take removed fewer than the crate's count
+    (#took of #n). Unreachable after the dry-run count gate, kept fail closed: the taken share of the price,
+    #price x #took / #n rounded down, is recorded as owed. Nothing is paid here."""
     S, m = doc["runtime"]["scores"], doc["messages"]
     T = S["temp"]
     return ["# Generated by tools/produce_buyer.py from data/produce_buyer.json: a short take (as the player)",
-            "# the crate counts against the leg's allowance whatever happened: the cap fails closed",
-            "scoreboard players add @s %s 1" % S["sold"],
             "# the taken share of the price is owed: #price x #took / #n",
             "scoreboard players operation #part %s = #price %s" % (T, T),
             "scoreboard players operation #part %s *= #took %s" % (T, T),
@@ -219,46 +186,196 @@ def short_take_lines(doc):
             "return 1"]
 
 
-def conversation(doc, site):
+def pay_tail(doc, amount_obj):
+    """The pay and its verification, shared by a crate and by sell-all: pay `amount_obj` once, re-read the balance,
+    record the amount as owed unless the balance rose by exactly it."""
+    S, store = doc["runtime"]["scores"], doc["runtime"]["storage"]
+    T = S["temp"]
+    return ["execute store result storage %s pay.amount int 1 run scoreboard players get %s %s" % (store, amount_obj, T),
+            "function %s with storage %s pay" % (fn_id("pay"), store),
+            "execute store result score #after %s run cobbledollars query @s" % T,
+            "scoreboard players operation #want %s = #before %s" % (T, T),
+            "scoreboard players operation #want %s += %s %s" % (T, amount_obj, T),
+            "execute unless score #after %s = #want %s run scoreboard players operation @s %s += %s %s"
+            % (T, T, S["owed"], amount_obj, T),
+            "execute unless score #after %s = #want %s run return run tellraw @s %s"
+            % (T, T, text(doc["messages"]["pay_failed"], "red"))]
+
+
+def cooldown_head(doc):
+    S = doc["runtime"]["scores"]
+    T = S["temp"]
+    return ["# 1. a second submit of the same click, or a sale straight after one, does nothing",
+            "execute store result score #now %s run time query gametime" % T,
+            "execute if score @s %s > #now %s run return 0" % (S["cooldown"], T)]
+
+
+def spend_click(doc):
+    S, rt = doc["runtime"]["scores"], doc["runtime"]
+    T = S["temp"]
+    return ["scoreboard players operation @s %s = #now %s" % (S["cooldown"], T),
+            "scoreboard players add @s %s %d" % (S["cooldown"], int(rt["cooldown_ticks"])),
+            "execute store result score #before %s run cobbledollars query @s" % T]
+
+
+def sell_lines(doc, crate, price):
+    """cobblers:produce_buyer/sell/<id>: one exact crate."""
+    S, m = doc["runtime"]["scores"], doc["messages"]
+    T = S["temp"]
+    n = int(crate["count"])
+    item = predicate(crate)
+    short = json.dumps([{"text": "", "color": "gold"}, {"text": fill(m["short"], count=n, label=crate["label"])},
+                        {"score": {"name": "#have", "objective": T}}, {"text": m["short_after"]}], ensure_ascii=False)
+    paid = json.dumps([{"text": "", "color": "green"}, {"text": fill(m["paid"], label=crate["label"])},
+                       {"text": "+$"}, {"score": {"name": "#price", "objective": T}}, {"text": "."}],
+                      ensure_ascii=False)
+    return (["# Generated by tools/produce_buyer.py from data/produce_buyer.json: sell a crate of %d %s for $%d (as and "
+             "at the player, from the Trading Post's dialogue)" % (n, crate["label"], price)]
+            + cooldown_head(doc)
+            + ["# 2. count the crate's items without taking any (clear with a count of 0), refuse when short",
+               "execute store result score #have %s run clear @s %s 0" % (T, item),
+               "execute unless score #have %s matches %d.. run return run tellraw @s %s" % (T, n, short),
+               "# 3. from here the click is spent; the balance before",
+               ] + spend_click(doc)
+            + ["scoreboard players set #price %s %d" % (T, price),
+               "scoreboard players set #n %s %d" % (T, n),
+               "# 4. TAKE the crate first: exactly %d, or nothing is paid (a short take records the taken share as "
+               "owed: %s)" % (n, fn_id("short_take")),
+               "execute store result score #took %s run clear @s %s %d" % (T, item, n),
+               "execute unless score #took %s matches %d run return run function %s" % (T, n, fn_id("short_take")),
+               "# 5. PAY the crate's price, then the balance must have risen by exactly that"]
+            + pay_tail(doc, "#price") + ["tellraw @s %s" % paid])
+
+
+def sellall_lines(doc, crate, price):
+    """cobblers:produce_buyer/sellall/<id>: count, take every whole crate with a bounded take, credit #total."""
+    S, store = doc["runtime"]["scores"], doc["runtime"]["storage"]
+    T = S["temp"]
+    n = int(crate["count"])
+    item = predicate(crate)
+    return ["# Generated by tools/produce_buyer.py from data/produce_buyer.json: every whole crate of %s the player "
+            "holds, taken and credited to #total (the caller pays once)" % crate["label"],
+            "scoreboard players set #n %s %d" % (T, n),
+            "scoreboard players set #price %s %d" % (T, price),
+            "execute store result score #have %s run clear @s %s 0" % (T, item),
+            "scoreboard players operation #crates %s = #have %s" % (T, T),
+            "scoreboard players operation #crates %s /= #n %s" % (T, T),
+            "execute if score #crates %s matches ..0 run return 0" % T,
+            "scoreboard players operation #take %s = #crates %s" % (T, T),
+            "scoreboard players operation #take %s *= #n %s" % (T, T),
+            "execute store result storage %s take.n int 1 run scoreboard players get #take %s" % (store, T),
+            "# a take that cannot run leaves #took 0, so nothing is credited for it",
+            "scoreboard players set #took %s 0" % T,
+            "function %s with storage %s take" % (fn_id("take/%s" % crate["id"]), store),
+            "execute unless score #took %s = #take %s run scoreboard players set #short %s 1" % (T, T, T),
+            "scoreboard players operation #part %s = #price %s" % (T, T),
+            "scoreboard players operation #part %s *= #took %s" % (T, T),
+            "scoreboard players operation #part %s /= #n %s" % (T, T),
+            "scoreboard players operation #total %s += #part %s" % (T, T)]
+
+
+def take_lines(doc, crate):
+    """cobblers:produce_buyer/take/<id>: the bounded take, a macro function (`function ... with storage`)."""
+    T = doc["runtime"]["scores"]["temp"]
+    return ["# Generated by tools/produce_buyer.py: the bounded take of %s. A macro: $(n) is read from storage "
+            "%s take.n. `clear` reports how many it removed (ASSUMED, ECONOMY_V2 U2)" % (crate["label"],
+                                                                                         doc["runtime"]["storage"]),
+            "$execute store result score #took %s run clear @s %s $(n)" % (T, predicate(crate))]
+
+
+def specimen_lines(doc, sprices):
+    """cobblers:produce_buyer/sellall/specimens: every piece of every specimen, by the piece."""
+    T = doc["runtime"]["scores"]["temp"]
+    out = ["# Generated by tools/produce_buyer.py from data/produce_buyer.json: every found item the Trading Post buys "
+           "by the piece, taken whole (`clear @s <item>` removes every match and reports the number) and credited to "
+           "#total"]
+    for item in sorted(sprices):
+        out += ["# %s at $%d a piece" % (item, sprices[item]),
+                "scoreboard players set #price %s %d" % (T, sprices[item]),
+                "scoreboard players set #took %s 0" % T,
+                "execute store result score #took %s run clear @s %s" % (T, item),
+                "scoreboard players operation #part %s = #took %s" % (T, T),
+                "scoreboard players operation #part %s *= #price %s" % (T, T),
+                "scoreboard players operation #total %s += #part %s" % (T, T)]
+    return out
+
+
+def sell_all_lines(doc):
+    S, m = doc["runtime"]["scores"], doc["messages"]
+    T = S["temp"]
+    paid = json.dumps([{"text": "", "color": "green"}, {"text": m["paid_all"]}, {"text": "+$"},
+                       {"score": {"name": "#total", "objective": T}}, {"text": "."}], ensure_ascii=False)
+    out = ["# Generated by tools/produce_buyer.py from data/produce_buyer.json: sell everything the Trading Post buys "
+           "(as and at the player). Each category and the specimens take what they count and add its pay to #total; "
+           "the one pay is at the end"]
+    out += cooldown_head(doc)
+    out += ["# 2. from here the click is spent; the balance before; nothing earned yet"] + spend_click(doc)
+    out += ["scoreboard players set #total %s 0" % T, "scoreboard players set #short %s 0" % T,
+            "# 3. every category, then the specimens: each COUNTS, then TAKES, then adds to #total. None returns out of "
+            "this function, so nothing taken is left unpaid"]
+    out += ["function %s" % fn_id("sellall/%s" % c["id"]) for c in doc["crates"]]
+    out += ["function %s" % fn_id("sellall/specimens"),
+            "# 4. nothing taken: #total is 0 only when no take ran (a whole-crate or whole-piece take credits at least $1)",
+            "execute if score #total %s matches ..0 run return run tellraw @s %s" % (T, text(m["nothing"], "gold")),
+            "# 5. PAY the total once, then the balance must have risen by exactly that"]
+    out += pay_tail(doc, "#total")
+    out += ["execute if score #short %s matches 1 run tellraw @s %s" % (T, text(m["short_note"], "gold")),
+            "tellraw @s %s" % paid]
+    return out
+
+
+def conversation(doc, site, crate_prices):
     """(conversation, quest) for one site's buyer, in data/dialogue.json's and data/quests.json's shape (the ferry's)."""
     qid = "produce_buyer_%s" % site["id"]
-    responses, transitions = [], []
+    m = doc["messages"]
+    responses = [{"id": "r_all", "text": m["all"],
+                  "actions": [{"kind": "quest_transition", "transition": "sell_all"}, {"kind": "close_dialogue"}]}]
+    transitions = [{"id": "sell_all", "conditions": [],
+                    "effects": [{"kind": "function", "function": fn_id("sell/all")}]}]
     for c in doc["crates"]:
         tid = "sell_%s" % c["id"]
         transitions.append({"id": tid, "conditions": [],
                             "effects": [{"kind": "function", "function": fn_id("sell/%s" % c["id"])}]})
-        responses.append({"id": "r_%s" % c["id"], "text": c["option"],
+        responses.append({"id": "r_%s" % c["id"], "text": "A crate of %d %s ($%d)" % (c["count"], c["label"],
+                                                                                   crate_prices[c["id"]]),
                           "actions": [{"kind": "quest_transition", "transition": tid}, {"kind": "close_dialogue"}]})
-    responses.append({"id": "r_leave", "text": doc["messages"]["leave"], "actions": [{"kind": "close_dialogue"}]})
+    responses.append({"id": "r_leave", "text": m["leave"], "actions": [{"kind": "close_dialogue"}]})
     conv = {"id": "dlg_produce_buyer_%s" % site["id"], "quest_id": qid, "npc_id": "npc_produce_buyer_%s" % site["id"],
             "npc_name": site["name"], "scope": "player", "speakers": {"buyer": site["name"]},
             "cursor": {"progression_field": None, "initial_node": "menu"},
             "entry_rules": [{"priority": 10, "when": {"kind": "always"}, "node": "menu"}],
-            "nodes": [{"id": "menu", "kind": "choice", "speaker": "buyer", "text": site["greeting"],
+            "nodes": [{"id": "menu", "kind": "choice", "speaker": "buyer", "text": doc["greeting"],
                        "responses": responses}]}
     return conv, {"id": qid, "progression_field_refs": [], "transitions": transitions, "rewards": []}
 
 
-def build(doc):
+def build(doc, wage=None, notes=None):
     """{relative path in the pack: content (list of lines, or a JSON object)}."""
     import compile_dialogue as CD
     S = doc["runtime"]["scores"]
+    cp = prices(doc, wage)
+    sp = specimen_prices(doc, wage, notes)
     files = {"pack.mcmeta": {"pack": {"pack_format": 48,
-                                      "description": "Cobblers Produce Buyer (generated by tools/produce_buyer.py)"}},
+                                      "description": "Cobblers Trading Post (generated by tools/produce_buyer.py)"}},
              "data/minecraft/tags/function/load.json": {"values": [fn_id("load")]}}
-    files[fn_path("load")] = ["# the Produce Buyer's scores: the sale's arithmetic, each player's cooldown, leg, crates "
-                              "sold this leg and anything owed after a failed payment"] + \
-        ["scoreboard objectives add %s dummy" % S[k] for k in ("temp", "cooldown", "leg", "sold", "owed")]
-    files[fn_path("leg")] = leg_lines(doc)
+    files[fn_path("load")] = ["# the Trading Post's scores: the sale's arithmetic, each player's cooldown and anything "
+                              "owed after a failed payment"] + \
+        ["scoreboard objectives add %s dummy" % S[k] for k in ("temp", "cooldown", "owed")]
     files[fn_path("pay")] = ["# CobbleDollars' own command, the macro tools/arena_runtime.py and tools/blackout_pack.py use",
                              "$cobbledollars give @s $(amount)"]
     files[fn_path("short_take")] = short_take_lines(doc)
+    files[fn_path("sell/all")] = sell_all_lines(doc)
+    files[fn_path("sellall/specimens")] = specimen_lines(doc, sp)
     for c in doc["crates"]:
-        files[fn_path("sell/%s" % c["id"])] = sell_lines(doc, c)
+        files[fn_path("sell/%s" % c["id"])] = sell_lines(doc, c, cp[c["id"]])
+        files[fn_path("sellall/%s" % c["id"])] = sellall_lines(doc, c, cp[c["id"]])
+        files[fn_path("take/%s" % c["id"])] = take_lines(doc, c)
         if not c.get("tag") and len(c["items"]) > 1:
             files["data/%s/tags/item/%s/%s.json" % (NS, FOLDER, c["id"])] = {"values": list(c["items"])}
     for site in doc["sites"]:
-        conv, quest = conversation(doc, site)
+        if site.get("status") == "unsited":
+            continue
+        conv, quest = conversation(doc, site, cp)
         got = CD.compile_conversation(conv, {quest["id"]: quest}, {})
         clash = [k for k in got if k in files]
         if clash:
@@ -280,13 +397,15 @@ def write(files, out):
 
 
 # ---------------------------------------------------------------------------------------------------------- the seats
-ANCHORS = ("apricorn_farm",)
+ANCHORS = ("apricorn_farm", "town_square")
 
 
-def seat(site, plan_cache, g=None):
-    """(x, y, z), the plan, and the anchor's other NPCs [(who, (x, y, z))] for one site, from its anchor's plan."""
-    if site.get("anchor") not in ANCHORS:
-        raise BuyerError("site %s: anchor %r is not one of %s" % (site.get("id"), site.get("anchor"), ANCHORS))
+def sited(doc):
+    return [s for s in doc["sites"] if s.get("status") != "unsited"]
+
+
+def apricorn_seat(site, plan_cache, g=None):
+    """(x, y, z), the plan, and the farm's other NPCs [(who, (x, y, z))] for the farm site, from its anchor's plan."""
     import apricorn_farm as AF
     if "apricorn_farm" not in plan_cache:
         import ground as G
@@ -295,124 +414,397 @@ def seat(site, plan_cache, g=None):
     p, farmer, merchant = plan_cache["apricorn_farm"]
     lx, lz = site["at_local"]
     try:
-        xyz = AF.spot(p, lx, lz, "the produce buyer %s" % site["id"])
+        xyz = AF.spot(p, lx, lz, "the trading post %s" % site["id"])
     except AF.FarmError as e:
         raise BuyerError(str(e))
     return xyz, p, [("the farmer", farmer), ("the stall merchant", merchant)]
 
 
 def npc_placements(doc=None, g=None):
-    """[(conversation id, (x, y, z), npc class, yaw)] for tools/reapply.py's "npc" action (R18PB). The position is the
-    site's spot recomputed from its anchor's plan, so a moved farm moves the buyer with it (and check fails until
-    expected_at is updated)."""
+    """[(conversation id, (x, y, z), npc class, yaw)] for tools/reapply.py's "npc" action (R18PB). Hollin's position is
+    recomputed from its anchor's plan, so a moved farm moves the post with it (and check fails until expected_at is
+    updated); a town square's is the site's authored `at`, held by check to the squares builder's model."""
     doc = doc or load()
     cache = {}
     out = []
-    for site in doc["sites"]:
-        xyz, _p, _o = seat(site, cache, g)
+    for site in sited(doc):
+        if site["anchor"] == "apricorn_farm":
+            xyz, _p, _o = apricorn_seat(site, cache, g)
+        else:
+            xyz = site["at"]
         out.append(("dlg_produce_buyer_%s" % site["id"], tuple(xyz), "%s:npc_produce_buyer_%s" % (NS, site["id"]),
                     site["yaw"]))
     return out
 
 
-def seat_problems(doc, g=None):
+_ROUTE = []
+
+
+def route_points():
+    if not _ROUTE:
+        paths = json.loads((ROOT / "data" / "route_paths.json").read_text(encoding="utf-8"))["paths"]
+        _ROUTE.extend((x, z) for v in paths.values() for x, z in v)
+    return _ROUTE
+
+
+def plaza_refs():
+    """plaza_centre.refs_of(), except that derived/signposts.json is optional here: a checkout without it reads no
+    signposts (the square is held to every other rule) and says so through square_model()['signposts']."""
+    import plaza_centre as PC
+    sp = ROOT / "derived" / "signposts.json"
+    if sp.is_file():
+        return PC.refs_of(), True
+    return {
+        "traders": PC.load_json(ROOT / "data" / "traders.json").get("traders") or [],
+        "markets": [c for c in PC.load_json(ROOT / "data" / "markets.json").get("counters") or []
+                    if c.get("status") == "sited"],
+        "seats": PC.load_json(ROOT / "data" / "npc_seats.json").get("seats") or [],
+        "ambient": PC.load_json(ROOT / "data" / "ambient.json").get("workers") or [],
+        "walked": PC.load_json(ROOT / "data" / "route_paths.json")["paths"],
+        "signposts": [],
+        "scenes": PC.load_json(ROOT / "data" / "scenes.json")["scenes"],
+        "dressing": PC.load_json(ROOT / "data" / "town_dressing.json"),
+    }, False
+
+
+def square_model(settlement, source_root=None, cache=None):
+    """The squares builder's own view of one settlement (tools/plaza_centre.py): {town, occupied, points, signposts}.
+    `occupied` is every column a piece of the square stands on or reaches, `points` every NPC cell (the town's
+    traders, market keepers, seats, working Pokemon, and each stall's keeper and customer cells). Needs
+    derived/towns/<settlement>_plan.json (python tools/town_plan.py <settlement>) for a settlement with a plan."""
+    if cache is not None and settlement in cache:
+        return cache[settlement]
+    import ground as G
+    import plaza_centre as PC
+    data = PC.load_json(PC.DATA)
+    doc = PC.load_json(ROOT / "data" / "placements.json")
+    if settlement not in data["towns"]:
+        raise BuyerError("data/plaza_centres.json has no square for %r" % settlement)
+    g = PC.ground_for(settlement, G.Ground(source_root), doc, source_root)
+    refs, has_signposts = plaza_refs()
+    rec = dict(data["towns"][settlement], _town=settlement)
+    town = PC.Town(settlement, rec, doc, g, refs)
+    _cmds, report = PC.plan_town(settlement, data["towns"][settlement], doc, g, refs, data)
+    occupied, points = set(), [(c[0], c[1]) for c, _why in town.npcs]
+    for p in report["pieces"]:
+        occupied |= {tuple(c) for c in p["columns"]}
+        if p.get("keeper_at"):
+            points.append((p["keeper_at"][0], p["keeper_at"][2]))
+            occupied.add((p["keeper_at"][0], p["keeper_at"][2]))
+            occupied.add(tuple(p["customer"]))
+    model = {"town": town, "occupied": occupied, "points": points, "signposts": has_signposts}
+    if cache is not None:
+        cache[settlement] = model
+    return model
+
+
+def cell_problems(model, x, z, others=()):
+    """Why a standing NPC cannot be at (x, z) on this square, from the squares builder's model and the existing floors."""
+    town = model["town"]
     out = []
-    cache = {}
-    paths = json.loads((ROOT / "data" / "route_paths.json").read_text(encoding="utf-8"))["paths"]
-    pts = [(x, z) for v in paths.values() for x, z in v]
-    for site in doc["sites"]:
-        w = "site %s" % site.get("id")
-        try:
-            xyz, p, others = seat(site, cache, g)
-        except BuyerError as e:
-            out.append("%s: %s" % (w, e.code))
+    why = town.blocked(x, z)
+    if why:
+        out.append("(%d, %d) is blocked on the square: %s" % (x, z, why))
+    near = [(x + i, z + j) for i in range(-TANK_MARGIN, TANK_MARGIN + 1) for j in range(-TANK_MARGIN, TANK_MARGIN + 1)
+            if (x + i, z + j) in model["occupied"]]
+    if near:
+        out.append("(%d, %d) is within %d of a piece of the square at %s" % (x, z, TANK_MARGIN, sorted(near)[0]))
+    for (px, pz) in list(model["points"]) + list(others):
+        d = math.hypot(x - px, z - pz)
+        if d < NPC_CLEAR:
+            out.append("(%d, %d) is %.1f blocks from an NPC at (%d, %d) (under %.1f)" % (x, z, d, px, pz, NPC_CLEAR))
+    pts = [p for p in route_points() if abs(p[0] - x) <= 60 and abs(p[1] - z) <= 60]
+    d = min(math.hypot(x - a, z - b) for a, b in pts) if pts else float("inf")
+    if d < MIN_ROUTE:
+        out.append("(%d, %d) is %.1f blocks from a walked route line (under %.1f): an immovable NPC there blocks the "
+                   "road" % (x, z, d, MIN_ROUTE))
+    return out
+
+
+def yaw_toward(x, z, tx, tz):
+    """Minecraft yaw (0 south, 90 west, 180 north, -90 east) for standing at (x, z) and facing (tx, tz)."""
+    deg = round(math.degrees(math.atan2(-(tx - x), tz - z)))
+    return deg - 360 if deg > 180 else deg + 360 if deg < -180 else deg
+
+
+def propose_seats(doc, source_root=None):
+    """{site id: {at, yaw, why}} for every town-square site with no `at` yet: the free cell nearest its counter."""
+    markets = {c["id"]: c for c in json.loads((ROOT / "data" / "markets.json").read_text(encoding="utf-8"))["counters"]}
+    cache, out = {}, {}
+    for site in sited(doc):
+        if site["anchor"] != "town_square" or site.get("at"):
             continue
-        if list(xyz) != list(site.get("expected_at") or []):
-            out.append("%s: its spot is %s from the plan, the data says expected_at %s" % (w, list(xyz),
-                                                                                      site.get("expected_at")))
-        if (xyz[0], xyz[2]) in p.path_cols:
-            out.append("%s: stands on a path at %s" % (w, xyz))
-        if (xyz[0], xyz[2]) in p.reserved:
-            out.append("%s: stands on a column %s claims" % (w, p.reserved[(xyz[0], xyz[2])]))
-        for who, o in others:
-            d = math.hypot(xyz[0] - o[0], xyz[2] - o[2])
-            if d < NPC_CLEAR:
-                out.append("%s: %.1f blocks from %s at %s (under %.1f)" % (w, d, who, o, NPC_CLEAR))
-        d = min(math.hypot(xyz[0] - x, xyz[2] - z) for x, z in pts) if pts else float("inf")
-        if d < MIN_ROUTE:
-            out.append("%s: %.1f blocks from a walked route line; an immovable NPC there blocks the road" % (w, d))
+        model = square_model(site["settlement"], source_root, cache)
+        counter = markets[site["counter"]]
+        cx, cz = counter["at"][0], counter["at"][2]
+        town = model["town"]
+        x0, z0, x1, z1 = town.rect
+        mid = ((x0 + x1) / 2.0, (z0 + z1) / 2.0)
+        taken = [(s["at"][0], s["at"][2]) for s in sited(doc) if s.get("at") and s["id"] != site["id"]]
+        # the market's own side of the square: the counter's nearest point on the square (the counter itself when it
+        # stands on it), so a Mart across the town from the plaza does not drag the post across the plaza
+        tx, tz = min(max(cx, x0), x1), min(max(cz, z0), z1)
+        best = None
+        for x in range(x0, x1 + 1):
+            for z in range(z0, z1 + 1):
+                if cell_problems(model, x, z, taken):
+                    continue
+                key = (math.hypot(x - tx, z - tz), math.hypot(x - cx, z - cz), x, z)
+                if best is None or key < best:
+                    best = key
+        if best is None:
+            out[site["id"]] = None
+            continue
+        _d, _dc, x, z = best
+        out[site["id"]] = {"at": [x, town.floor_at(x, z) + 1, z], "yaw": yaw_toward(x, z, *mid),
+                           "from_square_edge_target": round(_d, 1), "from_counter": round(_dc, 1),
+                           "signposts_read": model["signposts"]}
+    return out
+
+
+def seat_problems(doc, g=None, source_root=None, cache=None):
+    out = []
+    cache = {} if cache is None else cache
+    plan_cache = {}
+    pts = route_points()
+    mine = [(s["id"], s["at"]) for s in sited(doc) if s["anchor"] == "town_square" and s.get("at")]
+    for site in sited(doc):
+        w = "site %s" % site.get("id")
         if not (isinstance(site.get("yaw"), (int, float)) and -180 <= site["yaw"] <= 180):
             out.append("%s: yaw %r is not a Minecraft yaw" % (w, site.get("yaw")))
+        if site.get("anchor") == "apricorn_farm":
+            try:
+                xyz, p, others = apricorn_seat(site, plan_cache, g)
+            except BuyerError as e:
+                out.append("%s: %s" % (w, e.code))
+                continue
+            if list(xyz) != list(site.get("expected_at") or []):
+                out.append("%s: its spot is %s from the plan, the data says expected_at %s" % (w, list(xyz),
+                                                                                          site.get("expected_at")))
+            if (xyz[0], xyz[2]) in p.path_cols:
+                out.append("%s: stands on a path at %s" % (w, xyz))
+            if (xyz[0], xyz[2]) in p.reserved:
+                out.append("%s: stands on a column %s claims" % (w, p.reserved[(xyz[0], xyz[2])]))
+            for who, o in others:
+                d = math.hypot(xyz[0] - o[0], xyz[2] - o[2])
+                if d < NPC_CLEAR:
+                    out.append("%s: %.1f blocks from %s at %s (under %.1f)" % (w, d, who, o, NPC_CLEAR))
+            d = min(math.hypot(xyz[0] - x, xyz[2] - z) for x, z in pts) if pts else float("inf")
+            if d < MIN_ROUTE:
+                out.append("%s: %.1f blocks from a walked route line; an immovable NPC there blocks the road" % (w, d))
+        elif site.get("anchor") == "town_square":
+            at = site.get("at")
+            if not at or len(at) != 3:
+                out.append("%s: a town-square site with no `at` (python tools/produce_buyer.py seats proposes one)" % w)
+                continue
+            try:
+                model = square_model(site["settlement"], source_root, cache)
+            except (BuyerError, SystemExit) as e:
+                out.append("%s: no model of the square: %s" % (w, getattr(e, "code", e)))
+                continue
+            x, y, z = at
+            if model["town"].floor_at(x, z) + 1 != y:
+                out.append("%s: stands at y%d, but the square's floor there is y%d (a seat is floor + 1)"
+                           % (w, y, model["town"].floor_at(x, z)))
+            others = [(a[0], a[2]) for i, a in mine if i != site["id"]]
+            for p in cell_problems(model, x, z, others):
+                out.append("%s: %s" % (w, p))
     return out
 
 
 # ---------------------------------------------------------------------------------------------------------- checks
-def static_problems(doc, planned_flags, bank_prices, sell_points):
+def all_crate_items(doc):
+    return {i for c in doc["crates"] for i in c["items"]}
+
+
+def grant_text(doc):
+    out = {}
+    for rel in doc["specimens"]["grant_files"]:
+        p = ROOT / rel
+        if p.is_file():
+            out[rel] = p.read_text(encoding="utf-8")
+    return out
+
+
+def never_problems(doc, item, spawn_blocks, unreachable, w, spawn_ok=None):
+    """Why an item may not be sold at all. `spawn_ok` is a crate's `spawn_block_ok` reason: a renewable harvest (a crop
+    whose plant stays or regrows) may share its id with a spawn-condition block; nothing else may."""
+    ns = doc["never_sold"]
     out = []
-    rs = rows(doc)
-    covered = []
-    for lo, hi, price, crates in rs:
-        if lo > hi or price < 0 or crates < 0:
-            out.append("schedule row %d..%d: badges out of order or a negative price or crate count" % (lo, hi))
-        covered += list(range(lo, hi + 1))
-        if (price == 0) != (crates == 0):
-            out.append("schedule row %d..%d: a zero price must have zero crates, and the other way round" % (lo, hi))
-    if sorted(covered) != list(range(0, len(doc["badge_flags"]) + 1)):
-        out.append("schedule: badges %s, not 0..%d once each" % (sorted(covered), len(doc["badge_flags"])))
-    seq = [schedule_at(doc, b) for b in sorted(set(covered))]
-    for (p0, _c0), (p1, _c1) in zip(seq, seq[1:]):
-        if p1 > p0:
-            out.append("schedule: the price rises (%d to %d): it may only fall with badges" % (p0, p1))
-    if seq and seq[-1] != (0, 0):
-        out.append("schedule: the last row pays %r; after the last badge the buyer pays nothing" % (seq[-1],))
-    if campaign_total(doc) != doc["schedule"].get("campaign_cap"):
-        out.append("schedule: price x crates sums to %d per player, campaign_cap says %r"
-                   % (campaign_total(doc), doc["schedule"].get("campaign_cap")))
-    for f in doc["badge_flags"]:
-        if f not in planned_flags:
-            out.append("badge flag %s is not a flag tools/progression_pack.py plans" % f)
-    seen = set()
+    if item in set(ns["ids"]):
+        out.append("%s: %s is in never_sold" % (w, item))
+    for pat in ns["patterns"]:
+        if re.search(pat["regex"], item):
+            out.append("%s: %s matches never_sold %r (%s)" % (w, item, pat["regex"], pat["why"]))
+    if item in spawn_blocks and not spawn_ok:
+        out.append("%s: %s is a spawn-condition block (data/spawn_blocks.json): paying for it strips encounters out of "
+                   "the world" % (w, item))
+    if item in unreachable:
+        out.append("%s: %s is in data/bank.json `unreachable`" % (w, item))
+    return out
+
+
+def static_problems(doc, bank_prices, sell_points, wage=None, notes=None, spawn_blocks=None, unreachable=None,
+                    grants=None):
+    out = []
+    wage = wage or wages()
+    notes = notes if notes is not None else notes_of(doc)
+    spawn_blocks = set(spawn_blocks if spawn_blocks is not None
+                       else json.loads((ROOT / "data" / "spawn_blocks.json").read_text(encoding="utf-8"))["blocks"])
+    if unreachable is None:
+        unreachable = {u["item"] for u in json.loads((ROOT / "data" / "bank.json").read_text(encoding="utf-8"))
+                       .get("unreachable") or []}
+    grants = grants if grants is not None else grant_text(doc)
+    seen, owner = set(), {}
+    cprice = {}
     for c in doc["crates"]:
         w = "crate %s" % c.get("id")
-        if not ID.fullmatch(c.get("id") or "") or c["id"] in seen:
-            out.append("%s: id not [a-z0-9_] or listed twice" % w)
+        if not ID.fullmatch(c.get("id") or "") or c["id"] in seen or c["id"] in RESERVED_IDS:
+            out.append("%s: id not [a-z0-9_], listed twice or reserved (%s)" % (w, ", ".join(RESERVED_IDS)))
         seen.add(c.get("id"))
         if not (isinstance(c.get("count"), int) and 0 < c["count"] <= 64 * 36):
             out.append("%s: count %r is not a positive whole number an inventory can hold" % (w, c.get("count")))
+            continue
+        if c.get("tier") not in wage:
+            out.append("%s: tier %r is not one of the bank's tiers %s" % (w, c.get("tier"), sorted(wage)))
+            continue
+        if not (isinstance(c.get("rate_per_hour"), (int, float)) and c["rate_per_hour"] > 0):
+            out.append("%s: rate_per_hour %r is not a positive number" % (w, c.get("rate_per_hour")))
+            continue
+        price = crate_price(c, wage)
+        cprice[c["id"]] = price
+        if price < 1:
+            out.append("%s: count %d x W(%s) $%g / %g an hour rounds to $%d: a crate must pay at least $1"
+                       % (w, c["count"], c["tier"], wage[c["tier"]], c["rate_per_hour"], price))
         if not c.get("items") or not all(ITEM.fullmatch(i) for i in c["items"]):
             out.append("%s: items must be ns:path ids" % w)
         if c.get("tag") and not (c["tag"].startswith("#") and ITEM.fullmatch(c["tag"][1:])):
             out.append("%s: tag %r is not #ns:path" % (w, c["tag"]))
         if c.get("tag") and not c.get("tag_verified"):
             out.append("%s: a jar tag with no tag_verified source" % w)
-        for k in ("label", "option"):
+        for k in ("label", "rate_why"):
             if not c.get(k):
                 out.append("%s: no %s" % (w, k))
-        top = max((price for _lo, _hi, price, _c in rs), default=0)
-        unit = top / c["count"] if c.get("count") else 0
+        unit = price / c["count"]
         for i in c.get("items") or []:
+            if i in owner:
+                out.append("%s: %s is also in crate %s: one item, one price" % (w, i, owner[i]))
+            owner[i] = c["id"]
+            out += never_problems(doc, i, spawn_blocks, unreachable, w, c.get("spawn_block_ok"))
             if i in bank_prices:
-                out.append("%s: the bank still buys %s at $%d: data/bank.json afk_rule moved farm goods here"
-                           % (w, i, bank_prices[i]))
+                out.append("%s: the bank buys %s at $%d: one channel per item (ECONOMY_V2 2)" % (w, i, bank_prices[i]))
         for where, i, u in sell_points:
             if i in set(c.get("items") or []) and u <= unit:
-                out.append("%s: %s sells %s at $%g each, at or under the crate's top $%g a unit: buying a crate to "
-                           "sell it pays" % (w, where, i, u, unit))
-    for k in ("leave", "closed", "spent", "short", "short_after", "paid", "take_failed", "pay_failed"):
+                out.append("%s: %s sells %s at $%g each, at or under the crate's $%g a unit: buying a crate to sell "
+                           "it pays, and there is no cap" % (w, where, i, u, unit))
+    # the specimens
+    sp = doc["specimens"]
+    items, excluded = list(sp["items"]), sp["excluded"]
+    if len(set(items)) != len(items):
+        out.append("specimens: an id is listed twice")
+    sprice = {}
+    for i in items:
+        w = "specimen %s" % i
+        if not ITEM.fullmatch(i) or not i.startswith("cobblemon:"):
+            out.append("%s: a specimen is a cobblemon: id" % w)
+        if i in owner:
+            out.append("%s: also in crate %s" % (w, owner[i]))
+        rec = notes["items"].get(i)
+        if rec is None:
+            out.append("%s: not in %s" % (w, sp["notes_file"]))
+            continue
+        if not rec.get("registered"):
+            out.append("%s: not a registered item (a broken drop id)" % w)
+        best = best_drop(notes, i)
+        if not best:
+            out.append("%s: no live dropper: nothing in our world drops it" % w)
+            continue
+        if rec.get("recipe_result_count"):
+            out.append("%s: %d recipe(s) make it: a specimen is drop-only, so no craft can undercut a drop"
+                       % (w, rec["recipe_result_count"]))
+        if i in bank_prices or rec.get("bank_price") is not None:
+            out.append("%s: the bank buys it" % w)
+        if i in excluded:
+            out.append("%s: listed in items and in excluded" % w)
+        out += never_problems(doc, i, spawn_blocks, unreachable, w)
+        for rel, body in grants.items():
+            if i in body:
+                out.append("%s: appears in %s (a prize or a dungeon reward is never sold)" % (w, rel))
+        raw = wage[sp["wage_tier"]] / (sp["ko_per_hour"] * best)
+        price = max(1, min(int(sp["cap_p"]) * 100, round_half_up(raw)))
+        sprice[i] = price
+        for where, si, u in sell_points:
+            if si == i and u <= price:
+                out.append("%s: %s sells it at $%g, at or under its $%d a piece: buying one to sell it pays"
+                           % (w, where, u, price))
+    pats = [re.compile(p["regex"]) for p in sp["excluded_patterns"]]
+    for i, rec in sorted(notes["items"].items()):
+        if not i.startswith("cobblemon:") or not rec.get("registered") or rec.get("recipe_result_count") \
+                or rec.get("bank_price") is not None or not best_drop(notes, i):
+            continue
+        if i in items or i in excluded or any(p.search(i) for p in pats):
+            continue
+        out.append("specimen candidate %s (drop-only, live dropper, not banked) is neither in specimens.items nor in "
+                   "specimens.excluded: decide it" % i)
+    for i, e in excluded.items():
+        if e.get("kind") == "granted" and not any(i in body for body in grants.values()):
+            out.append("excluded %s is kind 'granted' but no grant file names it any more: a stale exclusion" % i)
+        if not e.get("why"):
+            out.append("excluded %s has no why" % i)
+    for k in ("leave", "all", "short", "short_after", "paid", "paid_all", "nothing", "short_note", "take_failed",
+              "pay_failed"):
         if not doc["messages"].get(k):
             out.append("messages.%s is missing" % k)
     sids = [s.get("id") for s in doc["sites"]]
     if not sids or len(set(sids)) != len(sids) or not all(ID.fullmatch(s or "") for s in sids):
         out.append("sites: none, a repeated id or an id not [a-z0-9_]")
+    for s in doc["sites"]:
+        if s.get("anchor") not in ANCHORS:
+            out.append("site %s: anchor %r is not one of %s" % (s.get("id"), s.get("anchor"), ANCHORS))
+        if s.get("status") == "unsited" and not s.get("unsited_why"):
+            out.append("site %s: unsited with no unsited_why" % s.get("id"))
+    for k in ("schedule",):
+        if k in doc:
+            out.append("the data still has %r: E3 removed the allowance" % k)
+    return out
+
+
+def counter_problems(doc):
+    """E8: every sited data/markets.json counter has a Trading Post site (or a recorded reason it has none)."""
+    markets = json.loads((ROOT / "data" / "markets.json").read_text(encoding="utf-8"))
+    have = {s.get("counter") for s in doc["sites"] if s.get("counter")}
+    out = []
+    for c in markets["counters"]:
+        if c.get("status") == "sited" and c["id"] not in have:
+            out.append("counter %s (%s) has no Trading Post site: E8 puts one at every town square with a market"
+                       % (c["id"], c["town"]))
+    for s in doc["sites"]:
+        if s.get("anchor") == "town_square" and s.get("counter") not in {c["id"] for c in markets["counters"]}:
+            out.append("site %s names counter %r, which data/markets.json does not have" % (s["id"], s.get("counter")))
     return out
 
 
 def output_problems(doc, files):
-    """Every sale counts, then takes, then pays once and verifies; nothing charges; every function within limits."""
+    """No allowance; every sale counts, takes, pays once and verifies; nothing charges; every function within limits."""
     import function_limits
     out = []
-    store = doc["runtime"]["storage"]
+    S = doc["runtime"]["scores"]
+    store = S and doc["runtime"]["storage"]
     pay_call = "function %s with storage %s pay" % (fn_id("pay"), store)
+    retired = doc["runtime"].get("scores_retired") or []
+    for rel, body in sorted(files.items()):
+        if not rel.endswith(".mcfunction"):
+            continue
+        cmds = [ln for ln in body if not ln.startswith("#")]
+        for ln in cmds:
+            if any(name in ln for name in retired) or re.search(r"#cap\b|\bcob_pb_(leg|sold)\b", ln):
+                out.append("%s: names the retired allowance (%s): E3 has no allowance" % (rel, ln[:80]))
+                break
+        if any("cobbledollars remove" in ln for ln in cmds):
+            out.append("%s charges: the buyer never takes money" % rel)
+        refused = function_limits.check_lines(body, rel)
+        if refused:
+            out.append("%s: %s" % (rel, refused))
     for c in doc["crates"]:
         rel = fn_path("sell/%s" % c["id"])
         body = files.get(rel)
@@ -422,68 +814,190 @@ def output_problems(doc, files):
         cmds = [ln for ln in body if not ln.startswith("#")]
         item = predicate(c)
         idx = lambda pred: next((i for i, ln in enumerate(cmds) if pred(ln)), None)   # noqa: E731
+        cool = idx(lambda ln: ln.endswith("run time query gametime"))
         count = idx(lambda ln: ln.endswith("run clear @s %s 0" % item))
+        short = idx(lambda ln: ln.startswith("execute unless score #have") and "matches %d.. run return" % c["count"] in ln)
+        before = idx(lambda ln: "#before" in ln and "cobbledollars query" in ln)
         take = idx(lambda ln: ln.endswith("run clear @s %s %d" % (item, c["count"])))
         took_ok = idx(lambda ln: ln.startswith("execute unless score #took") and "matches %d run return" % c["count"] in ln)
         pay = idx(lambda ln: ln == pay_call)
         after = idx(lambda ln: "#after" in ln and "cobbledollars query" in ln)
         verify = idx(lambda ln: ln.startswith("execute unless score #after") and "run return" in ln)
-        sold = idx(lambda ln: ln.startswith("scoreboard players add @s %s 1" % doc["runtime"]["scores"]["sold"]))
-        order = [count, take, took_ok, sold, pay, after, verify]
+        order = [cool, count, short, before, take, took_ok, pay, after, verify]
         if None in order or order != sorted(order):
-            out.append("crate %s: the sale is not count < take < take-check < count-sold < pay < re-read < verify "
-                       "(%s)" % (c["id"], order))
-        # fail closed: after the take, nothing returns before the crate is counted against the allowance, and the
-        # short-take return runs the function that counts it and records the owed share
-        if None not in (take, sold):
-            early = [ln for ln in cmds[take + 1:sold] if "return" in ln]
+            out.append("crate %s: the sale is not cooldown < count < short-gate < balance < take < take-check < pay < "
+                       "re-read < verify (%s)" % (c["id"], order))
+        if None not in (take, pay):
+            early = [ln for ln in cmds[take + 1:pay] if "return" in ln]
             if early != [cmds[took_ok]] or not cmds[took_ok].endswith("run return run function %s" % fn_id("short_take")):
-                out.append("crate %s: a return between the take and the count other than the short-take function: "
-                           "the cap could fail open (%s)" % (c["id"], early))
+                out.append("crate %s: a return between the take and the pay other than the short-take function "
+                           "(%s)" % (c["id"], early))
         if sum(1 for ln in cmds if ln == pay_call) != 1:
             out.append("crate %s: pays %d times" % (c["id"], sum(1 for ln in cmds if ln == pay_call)))
-        if any("cobbledollars remove" in ln or "cobbledollars give" in ln for ln in cmds):
+        if any("cobbledollars give" in ln for ln in cmds):
             out.append("crate %s: a CobbleDollars change outside the pay macro" % c["id"])
+        sa = [ln for ln in (files.get(fn_path("sellall/%s" % c["id"])) or []) if not ln.startswith("#")]
+        macro = [ln for ln in (files.get(fn_path("take/%s" % c["id"])) or []) if not ln.startswith("#")]
+        if macro != ["$execute store result score #took %s run clear @s %s $(n)" % (S["temp"], item)]:
+            out.append("crate %s: take/%s is not exactly the one bounded-take macro line" % (c["id"], c["id"]))
+        i_count = next((i for i, ln in enumerate(sa) if ln.endswith("run clear @s %s 0" % item)), None)
+        i_div = next((i for i, ln in enumerate(sa) if ln.startswith("scoreboard players operation #crates") and "/=" in ln), None)
+        i_gate = next((i for i, ln in enumerate(sa) if ln.startswith("execute if score #crates") and "run return 0" in ln), None)
+        i_take = next((i for i, ln in enumerate(sa) if ln.startswith("function %s with storage" % fn_id("take/%s" % c["id"]))), None)
+        i_credit = next((i for i, ln in enumerate(sa) if ln.startswith("scoreboard players operation #total") and "+=" in ln), None)
+        order = [i_count, i_div, i_gate, i_take, i_credit]
+        if None in order or order != sorted(order):
+            out.append("crate %s: sellall is not count < divide < nothing-gate < bounded take < credit (%s)" % (c["id"], order))
+        if any("cobbledollars" in ln for ln in sa):
+            out.append("crate %s: sellall moves money itself: only sell/all pays, once" % c["id"])
+    all_body = files.get(fn_path("sell/all")) or []
+    ac = [ln for ln in all_body if not ln.startswith("#")]
+    idx = lambda pred: next((i for i, ln in enumerate(ac) if pred(ln)), None)   # noqa: E731
+    cool = idx(lambda ln: ln.endswith("run time query gametime"))
+    before = idx(lambda ln: "#before" in ln and "cobbledollars query" in ln)
+    first_take = idx(lambda ln: ln.startswith("function %s" % fn_id("sellall/")))
+    last_take = max((i for i, ln in enumerate(ac) if ln.startswith("function %s" % fn_id("sellall/"))), default=None)
+    nothing = idx(lambda ln: ln.startswith("execute if score #total") and "matches ..0 run return run tellraw" in ln)
+    pay = idx(lambda ln: ln == pay_call)
+    after = idx(lambda ln: "#after" in ln and "cobbledollars query" in ln)
+    verify = idx(lambda ln: ln.startswith("execute unless score #after") and "run return" in ln)
+    order = [cool, before, first_take, last_take, nothing, pay, after, verify]
+    if None in order or order != sorted(order):
+        out.append("sell/all: not cooldown < balance < takes < nothing-gate < pay < re-read < verify (%s)" % order)
+    if None not in (first_take, pay):
+        between = [ln for ln in ac[first_take:pay] if "return" in ln]
+        if between != [ac[nothing]]:
+            out.append("sell/all: a return between the first take and the pay other than the nothing-taken gate: "
+                       "%s" % between)
+    called = [ln.split()[1] for ln in ac if ln.startswith("function %s" % fn_id("sellall/"))]
+    want = [fn_id("sellall/%s" % c["id"]) for c in doc["crates"]] + [fn_id("sellall/specimens")]
+    if called != want:
+        out.append("sell/all calls %s, not every category and then the specimens %s" % (called, want))
+    if sum(1 for ln in ac if ln == pay_call) != 1:
+        out.append("sell/all: pays %d times, not once" % sum(1 for ln in ac if ln == pay_call))
+    if any("cobbledollars give" in ln for ln in ac):
+        out.append("sell/all: a CobbleDollars change outside the pay macro")
+    spec = [ln for ln in (files.get(fn_path("sellall/specimens")) or []) if not ln.startswith("#")]
+    if any("cobbledollars" in ln or "return" in ln for ln in spec):
+        out.append("sellall/specimens moves money or returns: only sell/all pays, and a return would strand a take")
+    clears = [ln for ln in spec if " run clear @s " in ln]
+    sp = doc["specimens"]["items"]
+    if sorted(ln.rsplit(" ", 1)[-1] for ln in clears) != sorted(sp):
+        out.append("sellall/specimens clears %d items, not the %d specimens" % (len(clears), len(sp)))
     st = [ln for ln in (files.get(fn_path("short_take")) or []) if not ln.startswith("#")]
-    sold_obj, owed_obj = doc["runtime"]["scores"]["sold"], doc["runtime"]["scores"]["owed"]
-    if not st or st[0] != "scoreboard players add @s %s 1" % sold_obj \
-            or not any(ln.startswith("scoreboard players operation @s %s += " % owed_obj) for ln in st) \
+    owed_obj = S["owed"]
+    if not st or not any(ln.startswith("scoreboard players operation @s %s += " % owed_obj) for ln in st) \
             or any("cobbledollars" in ln for ln in st) \
             or [ln for ln in st if "return" in ln] != ["return 1"] or st[-1] != "return 1":
-        out.append("short_take: must first count the crate (%s), record the owed share (%s), move no money and end "
-                   "with `return 1` (its only return)" % (sold_obj, owed_obj))
+        out.append("short_take: must record the owed share (%s), move no money and end with `return 1` (its only "
+                   "return)" % owed_obj)
     pay = files.get(fn_path("pay")) or []
     if [ln for ln in pay if not ln.startswith("#")] != ["$cobbledollars give @s $(amount)"]:
         out.append("the pay function is not exactly the proven macro `$cobbledollars give @s $(amount)`")
-    for rel, body in sorted(files.items()):
-        if rel.endswith(".mcfunction") and any("cobbledollars remove" in ln for ln in body):
-            out.append("%s charges: the buyer never takes money" % rel)
-        if rel.endswith(".mcfunction"):
-            refused = function_limits.check_lines(body, rel)
-            if refused:
-                out.append("%s: %s" % (rel, refused))
-    for site in doc["sites"]:
+    for site in sited(doc):
         if "data/%s/dialogues/dlg_produce_buyer_%s.json" % (NS, site["id"]) not in files:
             out.append("site %s: no compiled dialogue" % site["id"])
     return out
 
 
-def check(doc=None, source_root=None, server_dir=None):
+def closure_problems(doc, jars_dir, vanilla_jar, server_dir=None, wage=None, notes=None):
+    """(problems, reports) over the jars' recipes, using tools/economy_audit.py's own reader (read, never edited).
+    1. BUY: the cheapest way to obtain each crate item or specimen with money, by any seller or any recipe of
+       purchasable inputs (EA.cheapest), against its unit worth here: at or under it is a printer with no cap.
+    2. VALUE-ADDED: a recipe whose result is sold here and whose every input is either sold here (valued at its sale
+       unit) or purchasable (valued at its cheapest price) and whose result is worth MORE than its inputs.
+    An input that is neither sold here nor purchasable (milk, a farmed mob drop with no seller) is not priced, so a
+    recipe through one is counted in the report and not judged."""
+    import economy_audit as EA
+    jars = EA.load_jars(str(jars_dir), str(vanilla_jar))
+    conv = jars.conversions()
+    sales = EA.market_sales() + EA.apricorn_sales() + EA.default_shop_sales()
+    if server_dir:
+        sales += EA.trader_sales(server_dir)[0]
+    best = EA.cheapest(sales, conv)
+    wage = wage or wages()
+    cp = prices(doc, wage)
+    sp = specimen_prices(doc, wage, notes)
+    worth, label = {}, {}
+    for c in doc["crates"]:
+        members = set(c["items"])
+        if c.get("tag"):
+            members |= set(jars.tag_items(c["tag"][1:]))
+        for i in members:
+            worth[i] = cp[c["id"]] / c["count"]
+            label[i] = "crate %s" % c["id"]
+    for i, p in sp.items():
+        worth[i] = float(p)
+        label[i] = "specimen"
+    problems, reports = [], []
+    tight = {}
+    for i, u in worth.items():
+        if i in best:
+            r = best[i][0] / u
+            if label[i] not in tight or r < tight[label[i]][0]:
+                tight[label[i]] = (r, i, best[i][0], u)
+    for lab, (r, i, cost, u) in sorted(tight.items(), key=lambda kv: kv[1][0]):
+        reports.append("closure margin %s: cheapest purchase %s at $%g against a sale worth $%g (%.1fx)" % (lab, i, cost, u, r))
+    for i, u in sorted(worth.items()):
+        if i in best and best[i][0] <= u + 1e-9:
+            problems.append("%s %s is worth $%g here and costs $%g to obtain: %s" % (label[i], i, u, best[i][0],
+                                                                                    EA.chain(best, i)))
+    unpriced = 0
+    for name, kind, ings, rid, rcount in conv:
+        if rid not in worth:
+            continue
+        total, ok = 0.0, True
+        for acc, n in ings:
+            vals = [worth[i] for i in acc if i in worth] + [best[i][0] for i in acc if i in best]
+            if not vals:
+                ok = False
+                break
+            total += min(vals) * n
+        if not ok:
+            unpriced += 1
+            continue
+        if worth[rid] * rcount > total + 1e-9:
+            problems.append("recipe %s (%s): %d x %s is worth $%g here, its inputs only $%g" % (name, kind, rcount, rid,
+                                                                                               worth[rid] * rcount, total))
+    reports.append("closure: %d crate/specimen items judged against %d priceable recipes; %d recipes into a sold item "
+                   "have an input that is neither sold here nor purchasable (not judged)" % (len(worth), len(conv), unpriced))
+    return problems, reports
+
+
+def check(doc=None, source_root=None, server_dir=None, jars_dir=None, vanilla_jar=None):
+    """(problems, not-checked notes, reports)."""
     import bank
     import ground as G
-    import progression_pack as PP
     doc = doc or load()
-    prog = json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
-    placements = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
-    planned = {f["id"] for f in PP.plan(prog, placements=placements)["flags"]}
     bdoc = bank.load()
     pts, skipped = bank.sell_points(server_dir)
-    out = static_problems(doc, planned, bank.prices(bdoc), pts)
+    wage = wages()
+    out = static_problems(doc, bank.prices(bdoc), pts, wage=wage)
+    out += counter_problems(doc)
     if out:
         return out, skipped
-    out += output_problems(doc, build(doc))
-    out += seat_problems(doc, G.load(source_root))
+    out += output_problems(doc, build(doc, wage))
+    out += seat_problems(doc, G.load(source_root), source_root)
+    if jars_dir:
+        p, r = closure_problems(doc, jars_dir, vanilla_jar, server_dir, wage)
+        out += p
+        skipped = skipped + r
+    else:
+        skipped = skipped + ["closure: no --jars-dir: recipes were not judged"]
     return out, skipped
+
+
+def price_table(doc):
+    wage = wages()
+    cp = prices(doc, wage)
+    rows = ["%-12s %-11s %5s %7s %9s %8s %6s" % ("crate", "tier", "count", "rate/h", "crate $", "unit $", "P")]
+    for c in doc["crates"]:
+        rows.append("%-12s %-11s %5d %7d %9d %8.4f %6.2f" % (c["id"], c["tier"], c["count"], c["rate_per_hour"],
+                                                              cp[c["id"]], cp[c["id"]] / c["count"], cp[c["id"]] / 100))
+    sp = specimen_prices(doc, wage)
+    rows.append("specimens (a piece): " + ", ".join("%s $%d" % (i.split(":")[1], p) for i, p in sorted(sp.items())))
+    rows.append("wages: " + ", ".join("%s $%g" % kv for kv in sorted(wage.items())))
+    return rows
 
 
 def main(argv=None):
@@ -494,22 +1008,41 @@ def main(argv=None):
     c = sub.add_parser("check")
     c.add_argument("--source-root")
     c.add_argument("--server-dir", help="an OFFLINE snapshot: also read the traders' template shops (tools/bank.py)")
+    c.add_argument("--jars-dir", help="a directory with mods/*.jar (and optionally datapacks/): judge the recipes")
+    c.add_argument("--vanilla-jar", help="the vanilla 1.21.1 jar for --jars-dir (default: tools/economy_audit.py's)")
+    sub.add_parser("prices")
+    s = sub.add_parser("seats")
+    s.add_argument("--source-root")
     a = ap.parse_args(argv)
     doc = load()
     if a.cmd == "build":
         files = build(doc)
         write(files, a.out)
-        print("wrote %s (%d files, %d crate kinds, %d site(s))" % (a.out, len(files), len(doc["crates"]),
-                                                                 len(doc["sites"])))
+        print("wrote %s (%d files, %d crate kinds, %d specimens, %d site(s))"
+              % (a.out, len(files), len(doc["crates"]), len(doc["specimens"]["items"]), len(sited(doc))))
         return 0
-    out, skipped = check(doc, a.source_root, a.server_dir)
+    if a.cmd == "prices":
+        print("\n".join(price_table(doc)))
+        return 0
+    if a.cmd == "seats":
+        got = propose_seats(doc, a.source_root)
+        for sid, rec in got.items():
+            print(sid, json.dumps(rec) if rec else "NO FREE CELL")
+        return 0
+    vj = a.vanilla_jar
+    if a.jars_dir and not vj:
+        import economy_audit
+        vj = economy_audit.DEFAULT_VANILLA
+    out, skipped, reports = check(doc, a.source_root, a.server_dir, a.jars_dir, vj)
     for p in out:
         print("PROBLEM " + p)
-    for s in skipped:
-        print("NOT CHECKED " + s)
-    print("produce_buyer: %d problems; %d crate kinds, %d site(s), campaign cap $%d per player%s"
-          % (len(out), len(doc["crates"]), len(doc["sites"]), campaign_total(doc),
-             "" if not skipped else " (partial: %d source(s) not read)" % len(skipped)))
+    for r in reports:
+        print("REPORT " + r)
+    for s_ in skipped:
+        print("NOT CHECKED " + s_)
+    print("produce_buyer: %d problems; %d crate kinds, %d specimens, %d site(s)%s"
+          % (len(out), len(doc["crates"]), len(doc["specimens"]["items"]), len(sited(doc)),
+             "" if not skipped else " (partial: %d note(s) above)" % len(skipped)))
     return 1 if out else 0
 
 

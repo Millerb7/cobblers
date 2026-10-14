@@ -19,17 +19,17 @@
   {
    "mod_id": "cobblemon",
    "from_version": "1.7.3+1.21.1",
-   "to_version": "1.8.0",
-   "to_file": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+   "to_version": "1.8.2",
+   "to_file": "Cobblemon-fabric-1.8.2+1.21.1.jar",
    "modrinth": {
     "slug": "cobblemon",
     "project_id": "MdwFAVRL",
-    "version_id": "YgmyyFcs",
-    "version_number": "1.8.0",
-    "date_published": "2026-09-06T01:30:57.678267Z",
-    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/YgmyyFcs/Cobblemon-fabric-1.8.0%2B1.21.1.jar",
-    "filename": "Cobblemon-fabric-1.8.0+1.21.1.jar",
-    "size": 162358118,
+    "version_id": "GJ2a1b8O",
+    "version_number": "1.8.2",
+    "date_published": "2026-10-11T01:37:22.732220Z",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/GJ2a1b8O/Cobblemon-fabric-1.8.2%2B1.21.1.jar",
+    "filename": "Cobblemon-fabric-1.8.2+1.21.1.jar",
+    "size": 139317851,
     "dependencies": [
      {
       "version_id": null,
@@ -39,87 +39,53 @@
      }
     ]
    },
-   "sha512": "6537ff48feb8888d5c9f124eeecd721162bf05ca8e30270753d8f58f08af4e5fbb8d06d2bfb6c9e6514524152709e46c8e7ed9ff38fa2cf759d0b43898d25883",
-   "sha1": "ed0bbc67467189161b3bb9e1b8451afd8d073fa8",
-   "verification": "verified via Modrinth API 2026-09-08",
-   "reason": "Target Cobblemon version for the campaign (1.8.0 Fabric, published 2026-09-06). Requires Fabric API (P7dR8mSH)."
+   "sha512": "fe0090aa00a010a2353b4da43693ef70b675d5255756541cd679d2cf1df077ffedb790e9de66b1bd69cc9f6336d58763aeb15f146d07420d466daaeb3d992386",
+   "sha1": "1a8ec812b2e7b392ac60801c910d3128d0bbb432",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.8.0 -> 1.8.2 (2026-10-13 update audit, owner's decision). Target Cobblemon version for the campaign (1.8.0 Fabric, published 2026-09-06). Requires Fabric API (P7dR8mSH)."
   },
   {
    "mod_id": "tmcraft",
    "from_version": "1.4.18+1.7.3",
-   "to_version": "1.4.19+1.8.0",
-   "to_file": "tmcraft-1.4.19+1.8.0.jar",
+   "to_version": "1.4.19+1.8.2",
+   "to_file": "tmcraft-1.4.19+1.8.2.jar",
    "modrinth": {
     "slug": "tmcraft",
     "project_id": "HU6mkUZs",
-    "version_id": "ixxKJV1J",
-    "version_number": "1.4.19+1.8.0",
-    "date_published": "2026-09-06T10:32:28.486554Z",
-    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/ixxKJV1J/tmcraft-1.4.19%2B1.8.0.jar",
-    "filename": "tmcraft-1.4.19+1.8.0.jar",
-    "size": 6505564,
+    "version_id": "cIXTptDr",
+    "version_number": "1.4.19+1.8.2",
+    "date_published": "2026-10-11T12:54:59.286658Z",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/cIXTptDr/tmcraft-1.4.19%2B1.8.2.jar",
+    "filename": "tmcraft-1.4.19+1.8.2.jar",
+    "size": 6505639,
     "dependencies": [
      {
-      "version_id": "YgmyyFcs",
+      "version_id": "GJ2a1b8O",
       "project_id": "MdwFAVRL",
       "file_name": null,
       "dependency_type": "required"
      }
     ]
    },
-   "sha512": "e279cb5233fcc7d617e15ac2a520615b10014eb0c5f1e99f24bc74a27178b6d136c7aa5938a7923362cee60b6530ac6f619c3848328642db0c2edc1cf2db95ff",
-   "sha1": "6938cbe1ba999358146f7935c9b0678cd2829ec3",
-   "verification": "verified via Modrinth API 2026-09-08",
-   "reason": "fabric.mod.json hard-pins cobblemon 1.7.3+1.21.1; 1.4.19+1.8.0 build exists (2026-09-06)."
-  },
-  {
-   "mod_id": "capture_xp",
-   "from_version": "1.7.3-fabric-1.3.0",
-   "to_version": "1.8.0-fabric-1.3.0",
-   "to_file": "capturexp-fabric-1.8.0-1.3.0.jar",
-   "modrinth": {
-    "slug": "cobblemon-capture-xp",
-    "project_id": "LBl4Qguc",
-    "version_id": "6INfd9ls",
-    "version_number": "1.8.0-fabric-1.3.0",
-    "date_published": "2026-09-08T14:54:10.356664Z",
-    "url": "https://cdn.modrinth.com/data/LBl4Qguc/versions/6INfd9ls/capturexp-fabric-1.8.0-1.3.0.jar",
-    "filename": "capturexp-fabric-1.8.0-1.3.0.jar",
-    "size": 23380,
-    "dependencies": [
-     {
-      "version_id": null,
-      "project_id": "MdwFAVRL",
-      "file_name": null,
-      "dependency_type": "required"
-     },
-     {
-      "version_id": null,
-      "project_id": "lVP9aUaY",
-      "file_name": null,
-      "dependency_type": "required"
-     }
-    ]
-   },
-   "sha512": "3b3b2d43f9b6b8949fd7cfb19354aae5face1451e976ccb308b8028e88638a0a17822d9028d5e4acccbf5dc6019910dafe375d3b93ebf6376f32749dafeb59eb",
-   "sha1": "2c2cc3e3839b47494fe550af9856b2b5859ff848",
-   "verification": "verified via Modrinth API 2026-09-08",
-   "reason": "fabric.mod.json hard-pins cobblemon 1.7.3+1.21.1; 1.8.0 build exists (2026-09-08). Also requires Tim Core (lVP9aUaY)."
+   "sha512": "edaa3162d2061d2bd3ee200d494b35f3bc91c815070d95c8bebe11852bce5aa0373a2b088da26249536bc52ad5b9f2a6c8eb591568659302a4ad548acb12c4f0",
+   "sha1": "9883919ed031ce0c2ffed62095825f174f23befd",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.4.19+1.8.0 -> 1.4.19+1.8.2 (2026-10-13 update audit, owner's decision). fabric.mod.json hard-pins cobblemon 1.7.3+1.21.1; 1.4.19+1.8.0 build exists (2026-09-06)."
   },
   {
    "mod_id": "tim_core",
    "from_version": "1.7.3-fabric-1.32.0",
-   "to_version": "1.8.0-fabric-1.32.0",
-   "to_file": "timcore-fabric-1.8.0-1.32.0.jar",
+   "to_version": "1.8.2-fabric-1.34.0",
+   "to_file": "timcore-fabric-1.8.2-1.34.0.jar",
    "modrinth": {
     "slug": "cobblemon-tim-core",
     "project_id": "lVP9aUaY",
-    "version_id": "5BfmZHcz",
-    "version_number": "1.8.0-fabric-1.32.0",
-    "date_published": "2026-09-08T00:38:52.984716Z",
-    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/5BfmZHcz/timcore-fabric-1.8.0-1.32.0.jar",
-    "filename": "timcore-fabric-1.8.0-1.32.0.jar",
-    "size": 300493,
+    "version_id": "dtgPWpFE",
+    "version_number": "1.8.2-fabric-1.34.0",
+    "date_published": "2026-10-11T22:33:52.270558Z",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/dtgPWpFE/timcore-fabric-1.8.2-1.34.0.jar",
+    "filename": "timcore-fabric-1.8.2-1.34.0.jar",
+    "size": 307475,
     "dependencies": [
      {
       "version_id": null,
@@ -129,32 +95,26 @@
      }
     ]
    },
-   "sha512": "5d9da889fec83fbca74d009e00342fd45589604eee53cf0ba8d3a6c3011d93effef1feb97b801d4008588590057412bf69256297e9357ff42fc9097ad0ec1cb5",
-   "sha1": "83d245f77508313f404ba0745cfb22d6ca80d158",
-   "verification": "verified via Modrinth API 2026-09-08",
-   "reason": "fabric.mod.json hard-pins cobblemon 1.7.3+1.21.1; 1.8.0 build exists (2026-09-08). Library for Capture XP."
+   "sha512": "898b1ddc9d1300596a9a27f9c3a9c098103c5e39543fd365f45efca8e5f569381f9c8333ef7671aaac94c847b20f4c25bce477f7d9442a94738d64ca5052e2d9",
+   "sha1": "d03183ab640284e6c837d581c15e19a2a276a6eb",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.8.0-fabric-1.32.0 -> 1.8.2-fabric-1.34.0 (2026-10-13 update audit, owner's decision). fabric.mod.json hard-pins cobblemon 1.7.3+1.21.1; 1.8.0 build exists (2026-09-08). Library for Capture XP."
   },
   {
    "mod_id": "rctmod",
    "from_version": "0.18.1-beta",
-   "to_version": "0.19.0-beta",
-   "to_file": "rctmod-fabric-1.21.1-0.19.0-beta.jar",
+   "to_version": "0.19.2-beta",
+   "to_file": "rctmod-fabric-1.21.1-0.19.2-beta.jar",
    "modrinth": {
     "slug": "rctmod",
     "project_id": "lRwTUnD7",
-    "version_id": "jdUENp3C",
-    "version_number": "0.19.0-beta",
-    "date_published": "2026-09-07T02:22:12.569863Z",
-    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/jdUENp3C/rctmod-fabric-1.21.1-0.19.0-beta.jar",
-    "filename": "rctmod-fabric-1.21.1-0.19.0-beta.jar",
-    "size": 6783347,
+    "version_id": "rgfBfnW9",
+    "version_number": "0.19.2-beta",
+    "date_published": "2026-09-22T23:35:46.532763Z",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/rgfBfnW9/rctmod-fabric-1.21.1-0.19.2-beta.jar",
+    "filename": "rctmod-fabric-1.21.1-0.19.2-beta.jar",
+    "size": 6807725,
     "dependencies": [
-     {
-      "version_id": null,
-      "project_id": "CBfM2yw7",
-      "file_name": null,
-      "dependency_type": "required"
-     },
      {
       "version_id": null,
       "project_id": "MdwFAVRL",
@@ -166,28 +126,34 @@
       "project_id": "ohNO6lps",
       "file_name": null,
       "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "CBfM2yw7",
+      "file_name": null,
+      "dependency_type": "required"
      }
     ]
    },
-   "sha512": "036153b8c9c01960b07dca5718d7e9ea91c60ff09293b70b43f177a7a98af8d3df283397e0212f4a6fb9dcde70ecbc75206397bfcf5e7363cb3f8545f85f7ae5",
-   "sha1": "120887e0ed4e7a9a4db92a3e2029b3a122e6bfd2",
-   "verification": "verified via Modrinth API 2026-09-08",
-   "reason": "Radical Cobblemon Trainers 0.19.0-beta (2026-09-07) raises the minimum Cobblemon to 1.8. Loads on 1.8 only with this update."
+   "sha512": "8cc03101d02752b0091a16b687e0cca3b516935b4e440b9767808a04fcc4c9c2e614aa88ddf900895a47c48e31427664361c26da8a5f4d17d7d1015308b2fa12",
+   "sha1": "dba27885e477a583dffe1a46c83b4df6af96fc4c",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 0.19.0-beta -> 0.19.2-beta (2026-10-13 update audit, owner's decision). Radical Cobblemon Trainers 0.19.0-beta (2026-09-07) raises the minimum Cobblemon to 1.8. Loads on 1.8 only with this update."
   },
   {
    "mod_id": "rctapi",
    "from_version": "0.15.2-beta",
-   "to_version": "0.16.1-beta",
-   "to_file": "rctapi-fabric-1.21.1-0.16.1-beta.jar",
+   "to_version": "0.16.2-beta",
+   "to_file": "rctapi-fabric-1.21.1-0.16.2-beta.jar",
    "modrinth": {
     "slug": "rctapi",
     "project_id": "CBfM2yw7",
-    "version_id": "bgmxNN26",
-    "version_number": "0.16.1-beta",
-    "date_published": "2026-09-14T03:37:31.074093Z",
-    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/bgmxNN26/rctapi-fabric-1.21.1-0.16.1-beta.jar",
-    "filename": "rctapi-fabric-1.21.1-0.16.1-beta.jar",
-    "size": 267961,
+    "version_id": "DoQNDXAU",
+    "version_number": "0.16.2-beta",
+    "date_published": "2026-10-12T19:03:01.630257Z",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/DoQNDXAU/rctapi-fabric-1.21.1-0.16.2-beta.jar",
+    "filename": "rctapi-fabric-1.21.1-0.16.2-beta.jar",
+    "size": 267864,
     "dependencies": [
      {
       "version_id": null,
@@ -203,35 +169,35 @@
      }
     ]
    },
-   "sha512": "a74e6b070b310e377e3775f2a484fdebe2b3bddee63146f1e2f8d47f3a2261fd698a4fdcb5ac8f1f95e9859b8a4bd4eea7d35a48fe5ea4496543d0a16a113b50",
-   "sha1": "194ffc5f183b3a1c4f21d02edbbcf67524492ee2",
-   "verification": "verified via Modrinth API 2026-09-25; the downloaded jar's sha512 and sha1 match",
-   "reason": "0.16.1-beta fixes 'Battle softlocks caused by pokemon fainting on both sides' (#132; commit 5fb66791 drops BattleActorMixin's postUpdate hook). A trainer battle froze on staging on a double knockout (2026-09-24; docs/research/notes/battle-freeze-double-ko.md). rctmod 0.19.0-beta requires rctapi >=0.16.0-beta."
+   "sha512": "e53f223229454f101a5cdc25c0a85a964b680535b4f85b490f7bca0e9481309e4db40c029be0fd2ed6473c9f1b58657c5dc84e01d16f66e85ddce232abbb02b9",
+   "sha1": "3514532fea28e2e1160894428302eb1000af8459",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 0.16.1-beta -> 0.16.2-beta (2026-10-13 update audit, owner's decision). 0.16.1-beta fixes 'Battle softlocks caused by pokemon fainting on both sides' (#132; commit 5fb66791 drops BattleActorMixin's postUpdate hook). A trainer battle froze on staging on a double knockout (2026-09-24; docs/research/notes/battle-freeze-double-ko.md). rctmod 0.19.0-beta requires rctapi >=0.16.0-beta."
   },
   {
    "mod_id": "mega_showdown",
    "from_version": "1.8.4+1.7.3+1.21.1",
-   "to_version": "1.0.2+1.8+1.21.1-release",
-   "to_file": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
+   "to_version": "1.3.0+1.8.2+1.21.1-hotfix",
+   "to_file": "mega_showdown-fabric-1.3.0+1.8.2+1.21.1-hotfix.jar",
    "modrinth": {
     "slug": "cobblemon-mega-showdown",
     "project_id": "SszvX85I",
-    "version_id": "TACsHsKC",
-    "version_number": "1.0.2+1.8+1.21.1-release",
-    "date_published": "2026-09-08T17:35:00.849229Z",
-    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/TACsHsKC/mega_showdown-fabric-1.0.2%2B1.8%2B1.21.1-release.jar",
-    "filename": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
-    "size": 19970594,
+    "version_id": "EAunp9Kz",
+    "version_number": "1.3.0+1.8.2+1.21.1-hotfix",
+    "date_published": "2026-10-12T14:23:48.721089Z",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/EAunp9Kz/mega_showdown-fabric-1.3.0%2B1.8.2%2B1.21.1-hotfix.jar",
+    "filename": "mega_showdown-fabric-1.3.0+1.8.2+1.21.1-hotfix.jar",
+    "size": 20041092,
     "dependencies": [
      {
       "version_id": null,
-      "project_id": "jtmvUHXj",
+      "project_id": "lhGA9TYQ",
       "file_name": null,
       "dependency_type": "required"
      },
      {
       "version_id": null,
-      "project_id": "lhGA9TYQ",
+      "project_id": "P7dR8mSH",
       "file_name": null,
       "dependency_type": "required"
      },
@@ -243,48 +209,49 @@
      },
      {
       "version_id": null,
+      "project_id": "jtmvUHXj",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "4f19ebb5d1782beb43a7b1081a6e1a7656ae43f1ae37d30a318423a40cd76b0880d8eccf455ccf09407c8bb1d4fae7e0af2d7ca5fc56d2cfce09499a90ec31d0",
+   "sha1": "4c00145aa75c6bda35d285d01cd2c5b70ad765ef",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.0.2+1.8+1.21.1-release -> 1.3.0+1.8.2+1.21.1-hotfix (2026-10-13 update audit, owner's decision). Mega Showdown 1.0.2 for Cobblemon 1.8 (2026-09-08). Note the version scheme reset (1.8.4 -> 1.0.2); its required dependencies are present in the base pack."
+  },
+  {
+   "mod_id": "cobbreeding",
+   "from_version": "2.2.2",
+   "to_version": "2.4.1",
+   "to_file": "Cobbreeding-fabric-2.4.1.jar",
+   "modrinth": {
+    "slug": "cobbreeding",
+    "project_id": "ItmVb4zY",
+    "version_id": "QEX1BKMf",
+    "version_number": "2.4.1",
+    "date_published": "2026-10-12T16:09:23.490245Z",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/QEX1BKMf/Cobbreeding-fabric-2.4.1.jar",
+    "filename": "Cobbreeding-fabric-2.4.1.jar",
+    "size": 477771,
+    "dependencies": [
+     {
+      "version_id": null,
       "project_id": "MdwFAVRL",
       "file_name": null,
       "dependency_type": "required"
      },
      {
       "version_id": null,
-      "project_id": "P7dR8mSH",
-      "file_name": null,
-      "dependency_type": "required"
-     }
-    ]
-   },
-   "sha512": "7e3161f49da37a3763de9c9671f5a04fb1a45b83898cde498361edaa5d7637a2d7024c98b859d1582b11dfe213da48e30d2b5e4775a191405d2492908992bc79",
-   "sha1": "50b2012b5207706fd93d42dfad73f94aa294c7a2",
-   "verification": "verified via Modrinth API 2026-09-08",
-   "reason": "Mega Showdown 1.0.2 for Cobblemon 1.8 (2026-09-08). Note the version scheme reset (1.8.4 -> 1.0.2); its required dependencies are present in the base pack."
-  },
-  {
-   "mod_id": "cobbreeding",
-   "from_version": "2.2.2",
-   "to_version": "2.3.0",
-   "modrinth": {
-    "slug": "cobbreeding",
-    "project_id": "ItmVb4zY",
-    "version_id": "dED6lApR",
-    "version_number": "2.3.0",
-    "date_published": "2026-09-07T12:11:10.995717Z",
-    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/dED6lApR/Cobbreeding-fabric-2.3.0.jar",
-    "filename": "Cobbreeding-fabric-2.3.0.jar",
-    "size": 475711,
-    "dependencies": [
-     {
-      "version_id": null,
       "project_id": "lhGA9TYQ",
       "file_name": null,
       "dependency_type": "required"
-     },
-     {
-      "version_id": null,
-      "project_id": "mOgUt4GM",
-      "file_name": null,
-      "dependency_type": "optional"
      },
      {
       "version_id": null,
@@ -300,17 +267,16 @@
      },
      {
       "version_id": null,
-      "project_id": "MdwFAVRL",
+      "project_id": "mOgUt4GM",
       "file_name": null,
-      "dependency_type": "required"
+      "dependency_type": "optional"
      }
     ]
    },
-   "reason": "Release 2.3.0 explicitly updates Cobbreeding for Cobblemon 1.8.",
-   "to_file": "Cobbreeding-fabric-2.3.0.jar",
-   "sha512": "07d4fda28ed71a1b8249d4a01328dc7765c74d0450b28defbac64bc73a76eb269281421fcb4c0b9d62b30969a4a5cf60b4a990e15ebd5fe7d8b7670b4e67998f",
-   "sha1": "8bf8f20f8c5939395a9fbfda4f8e368b2889ea30",
-   "verification": "verified via Modrinth API 2026-09-08"
+   "sha512": "5c1d192d82d61b47233625a4780600c81eb7d807103bf40954ea2d55fca4e1e71d9d45168d2cb1e55fe96d0cb92b6f5d702bfc7090702907bc51412dc1e4e468",
+   "sha1": "4de6e86541ab2d94b1327ce68a26771e8f33f030",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 2.3.0 -> 2.4.1 (2026-10-13 update audit, owner's decision). Release 2.3.0 explicitly updates Cobbreeding for Cobblemon 1.8."
   },
   {
    "mod_id": "obc",
@@ -423,23 +389,18 @@
   {
    "mod_id": "zamega",
    "from_version": "1.7.3",
-   "to_version": "1.7.7+1.8",
+   "to_version": "1.8.2+1.8.2",
+   "to_file": "zamega-fabric-1.8.2+1.8.2.jar",
    "modrinth": {
     "slug": "navas-zamega",
     "project_id": "2V1Y86sc",
-    "version_id": "jlpvkxRM",
-    "version_number": "1.7.7+1.8",
-    "date_published": "2026-09-06T08:33:49.408358Z",
-    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/jlpvkxRM/zamega-fabric-1.7.7%2B1.8.jar",
-    "filename": "zamega-fabric-1.7.7+1.8.jar",
-    "size": 1082897,
+    "version_id": "CBalGwUD",
+    "version_number": "1.8.2+1.8.2",
+    "date_published": "2026-10-13T04:28:10.895294Z",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/CBalGwUD/zamega-fabric-1.8.2%2B1.8.2.jar",
+    "filename": "zamega-fabric-1.8.2+1.8.2.jar",
+    "size": 896936,
     "dependencies": [
-     {
-      "version_id": null,
-      "project_id": "MdwFAVRL",
-      "file_name": null,
-      "dependency_type": "required"
-     },
      {
       "version_id": null,
       "project_id": "lhGA9TYQ",
@@ -448,13 +409,7 @@
      },
      {
       "version_id": null,
-      "project_id": "ccKDOlHs",
-      "file_name": null,
-      "dependency_type": "required"
-     },
-     {
-      "version_id": null,
-      "project_id": "jtmvUHXj",
+      "project_id": "MdwFAVRL",
       "file_name": null,
       "dependency_type": "required"
      },
@@ -469,14 +424,25 @@
       "project_id": "P7dR8mSH",
       "file_name": null,
       "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "ccKDOlHs",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "jtmvUHXj",
+      "file_name": null,
+      "dependency_type": "required"
      }
     ]
    },
-   "reason": "The base jar requires Mega Showdown's 1.7-era version range; release 1.7.7+1.8 targets the reset Mega Showdown 1.0.x line.",
-   "to_file": "zamega-fabric-1.7.7+1.8.jar",
-   "sha512": "720d792d4b7224c956b72e3f480b225cc002126d593b28c49263f8c94cce593a77230e81854d9b695387d4bcba5ccf6b38aa055638ae174c2715abe0ab3e35c2",
-   "sha1": "01ee9cf94c7af2c6a772f08d5db6f1a8efa4ff18",
-   "verification": "verified via Modrinth API 2026-09-08"
+   "sha512": "1eadaf41f31cfebcb7f3347673eaa0463d9808a7854278be895f6712156ba9bfeda8697840aa67209c37611a54c6d4ea46204835c271bc24c7af433c2d74f725",
+   "sha1": "5f359593982f1f393169fdc7bb35d9a34f41756a",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.7.7+1.8 -> 1.8.2+1.8.2 (2026-10-13 update audit, owner's decision). The base jar requires Mega Showdown's 1.7-era version range; release 1.7.7+1.8 targets the reset Mega Showdown 1.0.x line."
   },
   {
    "mod_id": "fightorflight",
@@ -511,6 +477,1368 @@
    "sha512": "e4963bfc2b805ff3dff389f673ce719e89835c6b290cc081d2a56befafcafa17b67e42088754ce223094d01731191fcabfcb2c4bd74800646ddf3dfbd7e51b2a",
    "sha1": "d3031a632dc5e4300ce273051ddfe0c2ad64859c",
    "verification": "verified via Modrinth API 2026-09-08"
+  },
+  {
+   "mod_id": "architectury",
+   "from_version": "13.0.8",
+   "to_version": "13.0.11+fabric",
+   "to_file": "architectury-13.0.11-fabric.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "lhGA9TYQ",
+    "version_id": "Pzc2FP5K",
+    "version_number": "13.0.11+fabric",
+    "date_published": "2026-07-23T09:57:30.288849Z",
+    "url": "https://cdn.modrinth.com/data/lhGA9TYQ/versions/Pzc2FP5K/architectury-13.0.11-fabric.jar",
+    "filename": "architectury-13.0.11-fabric.jar",
+    "size": 600921,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "53314eb34890b11ad3c06c6f3ba2d01ae1ca756235ce4f0574e4b0544952a2ab3c628c81b521653d6487d62c5dc3055e06fed6367a3a499bafad909512f0c716",
+   "sha1": "18200609d4c3571c4237b50884966f6fd82431ea",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 13.0.8 -> 13.0.11+fabric (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "balm",
+   "from_version": "21.0.63",
+   "to_version": "21.0.66+fabric-1.21.1",
+   "to_file": "balm-fabric-1.21.1-21.0.66.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "MBAkmtvl",
+    "version_id": "EghJxg4h",
+    "version_number": "21.0.66+fabric-1.21.1",
+    "date_published": "2026-09-25T05:57:55.797553Z",
+    "url": "https://cdn.modrinth.com/data/MBAkmtvl/versions/EghJxg4h/balm-fabric-1.21.1-21.0.66.jar",
+    "filename": "balm-fabric-1.21.1-21.0.66.jar",
+    "size": 805265,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "cf0df4ff300fdd1c7b1cfdb952fbbe0f6af06b87175d8d87bbbb63073d62abe2e4085aea4bd590149fd5906a32f3eb424cb5526cc332937ab449c8f6a9bd41e4",
+   "sha1": "37266aadaed39205f4a3844930e76d2eebb866a4",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 21.0.63 -> 21.0.66+fabric-1.21.1 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "beautify",
+   "from_version": "2.0.0+1.21.1",
+   "to_version": "3.0.0+1.21.1",
+   "to_file": "beautify-3.0.0+1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "DhSSvaxs",
+    "version_id": "tY6FTt9y",
+    "version_number": "3.0.0+1.21.1",
+    "date_published": "2026-10-06T10:20:31.118109Z",
+    "url": "https://cdn.modrinth.com/data/DhSSvaxs/versions/tY6FTt9y/beautify-3.0.0%2B1.21.1.jar",
+    "filename": "beautify-3.0.0+1.21.1.jar",
+    "size": 905029,
+    "dependencies": []
+   },
+   "sha512": "ca1eaea848841c9ab2c366f16f8900e59b427568394ea4d7750f022544e32fe6bc3ec18528321a42ecb90546a5155cce96d7e7a5cc1bc7c5b6638ffaa3fb10df",
+   "sha1": "ac9abcbb38bedf42aba6984e0deefd70e712a42f",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 2.0.0+1.21.1 -> 3.0.0+1.21.1 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "carved_wood",
+   "from_version": "1.9.7-B",
+   "to_version": "1.9.8-B-Fabric-1.21.1",
+   "to_file": "Carved Wood-fabric-1.21.1-1.9.8-B.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "WuwijfrW",
+    "version_id": "LdlaVUmN",
+    "version_number": "1.9.8-B-Fabric-1.21.1",
+    "date_published": "2026-09-09T18:56:43.109083Z",
+    "url": "https://cdn.modrinth.com/data/WuwijfrW/versions/LdlaVUmN/Carved%20Wood-fabric-1.21.1-1.9.8-B.jar",
+    "filename": "Carved Wood-fabric-1.21.1-1.9.8-B.jar",
+    "size": 2897856,
+    "dependencies": []
+   },
+   "sha512": "995772193bb10b5fbfafdd9d7e49687d297a76d2d0d1cdf197c672e0dcabe1a7e6e4bbab2558a3a913aadfa4d197fafbf1ddbcc5cd256fb8ef6e12f8ef48cfda",
+   "sha1": "075cba0f21a12bf62b13ef6c58170dbfc4228244",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.9.7-B -> 1.9.8-B-Fabric-1.21.1 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "catchindicator",
+   "from_version": "1.7.0",
+   "to_version": "3.0",
+   "to_file": "catchindicator-fabric-3.0.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "tpTcu2PM",
+    "version_id": "qPETaVwo",
+    "version_number": "3.0",
+    "date_published": "2026-09-07T23:51:45.843091Z",
+    "url": "https://cdn.modrinth.com/data/tpTcu2PM/versions/qPETaVwo/catchindicator-fabric-3.0.jar",
+    "filename": "catchindicator-fabric-3.0.jar",
+    "size": 335369,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "b43184731b0bccf53fcaf908fa7db30acf31e488dae92a5a9ddc67b8ab915551f6a9ddfa40076926b727854b9416d77edae2195590858aff89eb9eb10d84fe89",
+   "sha1": "440dcbb949962185e64e1573ab98f97335ff9236",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.7.0 -> 3.0 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "catchrate-display",
+   "from_version": "2.8.22",
+   "to_version": "2.12.3+fabric",
+   "to_file": "catchrate-display-fabric-2.12.3.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "vADO40xp",
+    "version_id": "rh5xmGEe",
+    "version_number": "2.12.3+fabric",
+    "date_published": "2026-09-20T15:18:03.349089Z",
+    "url": "https://cdn.modrinth.com/data/vADO40xp/versions/rh5xmGEe/catchrate-display-fabric-2.12.3.jar",
+    "filename": "catchrate-display-fabric-2.12.3.jar",
+    "size": 293930,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "Ha28R6CL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "b933b0914a17695542560885b85d7dd1d5c315f86793ae4bc155394d2d100386c6bd8be67c97321a3a657684feb3a05db8ad38fbe8bd281ba2892e77ef890f94",
+   "sha1": "03b4ac960b70b0ad33ef9cf942fe7ff504f0a00a",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 2.8.22 -> 2.12.3+fabric (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "cobbledollars",
+   "from_version": "2.0.0+Beta-5.1+1.21.1",
+   "to_version": "2.0.0+Beta-6.1",
+   "to_file": "CobbleDollars-fabric-2.0.0+Beta-6.1+1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "s7N7AsqL",
+    "version_id": "NQdxKsW7",
+    "version_number": "2.0.0+Beta-6.1",
+    "date_published": "2026-07-22T07:49:02.341110Z",
+    "url": "https://cdn.modrinth.com/data/s7N7AsqL/versions/NQdxKsW7/CobbleDollars-fabric-2.0.0%2BBeta-6.1%2B1.21.1.jar",
+    "filename": "CobbleDollars-fabric-2.0.0+Beta-6.1+1.21.1.jar",
+    "size": 500815,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "082078d40948bcfd73b7eeaf334d21bee05a6d839c0981d5dd12f592bcd45d1d7bc6b69f74ee28b6aa4c9840f7c189c692695336f6434c03400fcabeeb67e0fc",
+   "sha1": "a3f33a9d51be927c47fe72e12de6789e8bab98f2",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 2.0.0+Beta-5.1+1.21.1 -> 2.0.0+Beta-6.1 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "cobblemon-additions",
+   "from_version": "4.1.6",
+   "to_version": "4.3.0",
+   "to_file": "cobblemon-additions-4.3.0.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "W2pr9jyL",
+    "version_id": "NVitD9gY",
+    "version_number": "4.3.0",
+    "date_published": "2026-03-19T03:49:35.201472Z",
+    "url": "https://cdn.modrinth.com/data/W2pr9jyL/versions/NVitD9gY/cobblemon-additions-4.3.0.jar",
+    "filename": "cobblemon-additions-4.3.0.jar",
+    "size": 3198962,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "8oi3bsk5",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "u6dRKJwZ",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "rOrXjyPb",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "LOpKHB2A",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "TyCTlI4b",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "rlloIFEV",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "s7N7AsqL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "bI8Nt3uA",
+      "file_name": null,
+      "dependency_type": "optional"
+     }
+    ]
+   },
+   "sha512": "a9c7983726f5b0fdb7a22f0fe076acd63333acecebc6d2444a40f233671a5464fe5e1a50af948cd666a1337124511a37cb7835f44990f06ab26773f62e322147",
+   "sha1": "bede157e2378d44434d39514fbcbabfcba72a0f7",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 4.1.6 -> 4.3.0 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "debugify",
+   "from_version": "1.21.1+1.0",
+   "to_version": "1.21.1+1.1",
+   "to_file": "Debugify-1.21.1+1.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "QwxR6Gcd",
+    "version_id": "pyIdu3f1",
+    "version_number": "1.21.1+1.1",
+    "date_published": "2026-09-28T13:15:33.181331Z",
+    "url": "https://cdn.modrinth.com/data/QwxR6Gcd/versions/pyIdu3f1/Debugify-1.21.1%2B1.1.jar",
+    "filename": "Debugify-1.21.1+1.1.jar",
+    "size": 289699,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "1eAoo2KR",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "mOgUt4GM",
+      "file_name": null,
+      "dependency_type": "optional"
+     }
+    ]
+   },
+   "sha512": "40ab23b41579e1d8e220d9852fe46ee05af136b7932f9095b7b1e98f1716b7599fccb7e094e183668c6c30deb79488d118578d6843022e3a3850971db01524b5",
+   "sha1": "3388ba4c0f973f0a73a68a42048fe902bb2b14ea",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.21.1+1.0 -> 1.21.1+1.1 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "defaultoptions",
+   "from_version": "21.1.7",
+   "to_version": "21.1.8+fabric-1.21.1",
+   "to_file": "defaultoptions-fabric-1.21.1-21.1.8.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "WEg59z5b",
+    "version_id": "54JaBQkk",
+    "version_number": "21.1.8+fabric-1.21.1",
+    "date_published": "2026-07-24T06:56:07.498833Z",
+    "url": "https://cdn.modrinth.com/data/WEg59z5b/versions/54JaBQkk/defaultoptions-fabric-1.21.1-21.1.8.jar",
+    "filename": "defaultoptions-fabric-1.21.1-21.1.8.jar",
+    "size": 107949,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "MBAkmtvl",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "bb9364233d0d2ce83ed28d2dc27c2d493677094971349b25716bb3d54bb7cf3d99f4d91b550a989ee0a5093b2c3b6e581639855f9f0b14656a0aed837f0ce89b",
+   "sha1": "574138c968a955915cf6ee8def3fa0fdfb74eeca",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 21.1.7 -> 21.1.8+fabric-1.21.1 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "entity_model_features",
+   "from_version": "3.2.4",
+   "to_version": "3.3.11-fabric-1.21",
+   "to_file": "entity_model_features-3.3.11-1.21-fabric.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "4I1XuqiY",
+    "version_id": "VeoAKvQ0",
+    "version_number": "3.3.11-fabric-1.21",
+    "date_published": "2026-10-05T00:51:06.484580Z",
+    "url": "https://cdn.modrinth.com/data/4I1XuqiY/versions/VeoAKvQ0/entity_model_features-3.3.11-1.21-fabric.jar",
+    "filename": "entity_model_features-3.3.11-1.21-fabric.jar",
+    "size": 652846,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "BVzZfTc1",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "03e6fcc63905f4e8054b26c972a7fb742dd5ec5084a396c23521aa2760915cac33cb38c66ca3b6520e492eedd542e2897956eab6ddd178d34eeeacc63e211c8c",
+   "sha1": "484d51ba5c1efcfb511e2f8db7c0974e66d594fb",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 3.2.4 -> 3.3.11-fabric-1.21 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "entity_texture_features",
+   "from_version": "7.1",
+   "to_version": "7.2.5-fabric-1.21",
+   "to_file": "entity_texture_features-7.2.5-1.21-fabric.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "BVzZfTc1",
+    "version_id": "OVZ7HJXt",
+    "version_number": "7.2.5-fabric-1.21",
+    "date_published": "2026-10-04T06:44:16.945458Z",
+    "url": "https://cdn.modrinth.com/data/BVzZfTc1/versions/OVZ7HJXt/entity_texture_features-7.2.5-1.21-fabric.jar",
+    "filename": "entity_texture_features-7.2.5-1.21-fabric.jar",
+    "size": 799948,
+    "dependencies": []
+   },
+   "sha512": "dfa14a17b79d7318ef1734b8eae4a094d9e9350a7fab41828e9bef10389afcffdd477d0c73be804112d44fbccce1cc391f308514e801ee9e5968df011fff37af",
+   "sha1": "726958e34edf7b424d7254d73d214caeedd15737",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 7.1 -> 7.2.5-fabric-1.21 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "entityculling",
+   "from_version": "1.10.5",
+   "to_version": "1.11.3",
+   "to_file": "entityculling-fabric-1.11.3-mc1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "NNAgCjsB",
+    "version_id": "yllJFBpU",
+    "version_number": "1.11.3",
+    "date_published": "2026-10-08T16:52:00.591341Z",
+    "url": "https://cdn.modrinth.com/data/NNAgCjsB/versions/yllJFBpU/entityculling-fabric-1.11.3-mc1.21.1.jar",
+    "filename": "entityculling-fabric-1.11.3-mc1.21.1.jar",
+    "size": 1519243,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "51cc760b886f53a8469f5f87098688c8e00a70e9499f4146908f676dc95c78bbfd6de6ddab124e5ba8c1057335c3727c24243af2807497c6e4b05cb2da811364",
+   "sha1": "5a65a3944e32cc57b73b0f208d15d16fe9df4ed1",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.10.5 -> 1.11.3 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "fabric-api",
+   "from_version": "0.116.14+1.21.1",
+   "to_version": "0.116.17+1.21.1",
+   "to_file": "fabric-api-0.116.17+1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "P7dR8mSH",
+    "version_id": "Mys3P7lK",
+    "version_number": "0.116.17+1.21.1",
+    "date_published": "2026-09-01T16:40:04.373428Z",
+    "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/Mys3P7lK/fabric-api-0.116.17%2B1.21.1.jar",
+    "filename": "fabric-api-0.116.17+1.21.1.jar",
+    "size": 2452735,
+    "dependencies": []
+   },
+   "sha512": "98c478217da19181f0e4df3ea6c2da6bdbda271c7544a4aea048513a49b444f1ff5b71dc0df6303017c48e8ff69b7bb6af6179bdf0d0e09ab3c1ee08411857a8",
+   "sha1": "810b2b0195371a012906241d8b85a32a1d6de53c",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 0.116.14+1.21.1 -> 0.116.17+1.21.1 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "fabric-language-kotlin",
+   "from_version": "1.13.13+kotlin.2.4.10",
+   "to_version": "1.14.2+kotlin.2.4.21",
+   "to_file": "fabric-language-kotlin-1.14.2+kotlin.2.4.21.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "Ha28R6CL",
+    "version_id": "SKW1BTL3",
+    "version_number": "1.14.2+kotlin.2.4.21",
+    "date_published": "2026-10-09T08:17:15.786208Z",
+    "url": "https://cdn.modrinth.com/data/Ha28R6CL/versions/SKW1BTL3/fabric-language-kotlin-1.14.2%2Bkotlin.2.4.21.jar",
+    "filename": "fabric-language-kotlin-1.14.2+kotlin.2.4.21.jar",
+    "size": 8142878,
+    "dependencies": []
+   },
+   "sha512": "7fb475c4a7e7bdf8d0aca4b5798a58a354c51443d5b1fbde3e8cf34dfbf7191ef4238b5f07d08ec9490ec180b371624523326c3ad45d4ed2b2be541de9407e5d",
+   "sha1": "f1d4ab6ecd54d9782521333a87eb50724ecb03e0",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.13.13+kotlin.2.4.10 -> 1.14.2+kotlin.2.4.21 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "fancymenu",
+   "from_version": "3.9.8",
+   "to_version": "3.9.14-1.21.1-fabric",
+   "to_file": "fancymenu_fabric_3.9.14_MC_1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "Wq5SjeWM",
+    "version_id": "iGLyAyEZ",
+    "version_number": "3.9.14-1.21.1-fabric",
+    "date_published": "2026-09-28T19:47:55.186768Z",
+    "url": "https://cdn.modrinth.com/data/Wq5SjeWM/versions/iGLyAyEZ/fancymenu_fabric_3.9.14_MC_1.21.1.jar",
+    "filename": "fancymenu_fabric_3.9.14_MC_1.21.1.jar",
+    "size": 26277804,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "J81TRJWm",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "CVT4pFB2",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "c730134bb63644e6f8a3dcdfe156215eb1664c436bffab3cc024e8ad44f613829ab774f2709c345af3e138609573bc068254f176630ce69a057d2e172dadb3e9",
+   "sha1": "1d0e6f2195e14e22323e7e237013e5cb8e909f54",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 3.9.8 -> 3.9.14-1.21.1-fabric (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "fusion",
+   "from_version": "1.2.12",
+   "to_version": "1.3.16-fabric-mc1.21",
+   "to_file": "fusion-1.3.16-fabric-mc1.21.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "p19vrgc2",
+    "version_id": "LQSMRNBf",
+    "version_number": "1.3.16-fabric-mc1.21",
+    "date_published": "2026-10-05T15:11:11.314434Z",
+    "url": "https://cdn.modrinth.com/data/p19vrgc2/versions/LQSMRNBf/fusion-1.3.16-fabric-mc1.21.jar",
+    "filename": "fusion-1.3.16-fabric-mc1.21.jar",
+    "size": 913396,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "0a4d2a195153cc41cd070908000283d1e6b3df2b5607605c965a7e80f3329270ad13593c2b1210fca0a6675ca9c0ef7adeb22535dfc2cfe16ffe48161b0358e9",
+   "sha1": "ce69d9c427e17d15ce99b43a2c5cffc4cd5dfa30",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.2.12 -> 1.3.16-fabric-mc1.21 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "fzzy_config",
+   "from_version": "0.7.6+1.21",
+   "to_version": "0.7.7+1.21",
+   "to_file": "fzzy_config-0.7.7+1.21.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "hYykXjDp",
+    "version_id": "zFccjYag",
+    "version_number": "0.7.7+1.21",
+    "date_published": "2026-09-15T01:44:25.839197Z",
+    "url": "https://cdn.modrinth.com/data/hYykXjDp/versions/zFccjYag/fzzy_config-0.7.7%2B1.21.jar",
+    "filename": "fzzy_config-0.7.7+1.21.jar",
+    "size": 2387721,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "Ha28R6CL",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "a194badb7c3ab2f3d3ddbf2b2b101ea086b9d3a494f686ad19ed55622acface8de6568d4077021d4fa3314acf2c9d11df0693e64f2a316307b5c6ae883234e50",
+   "sha1": "5e96a2f5b0a26417c7f10f5bdbeaa62ec4ec4cd9",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 0.7.6+1.21 -> 0.7.7+1.21 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "geckolib",
+   "from_version": "4.9.2",
+   "to_version": "4.9.3",
+   "to_file": "geckolib-fabric-1.21.1-4.9.3.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "8BmcQJ2H",
+    "version_id": "tmxM7U4W",
+    "version_number": "4.9.3",
+    "date_published": "2026-09-16T07:32:34.701811Z",
+    "url": "https://cdn.modrinth.com/data/8BmcQJ2H/versions/tmxM7U4W/geckolib-fabric-1.21.1-4.9.3.jar",
+    "filename": "geckolib-fabric-1.21.1-4.9.3.jar",
+    "size": 664463,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "e26a1c15d10cf5c1234309dbb82fb23d4783b2594b2454b16a9c964fab9e9912be66904b03eb01ebb94dada298d98de18d66f5e3f4173f771579b56e13f7da16",
+   "sha1": "b3a6aff6ffff34d20ffde1faa640bcf17ff4b646",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 4.9.2 -> 4.9.3 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "immediatelyfast",
+   "from_version": "1.6.11+1.21.1",
+   "to_version": "1.6.14+1.21.1-fabric",
+   "to_file": "ImmediatelyFast-Fabric-1.6.14+1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "5ZwdcRci",
+    "version_id": "7XKnsIC8",
+    "version_number": "1.6.14+1.21.1-fabric",
+    "date_published": "2026-09-13T22:28:12.876Z",
+    "url": "https://cdn.modrinth.com/data/5ZwdcRci/versions/7XKnsIC8/ImmediatelyFast-Fabric-1.6.14%2B1.21.1.jar",
+    "filename": "ImmediatelyFast-Fabric-1.6.14+1.21.1.jar",
+    "size": 340166,
+    "dependencies": []
+   },
+   "sha512": "d3f2748ac2b51548157d0acf9d44e99ab786beab5322cbc452ad7999b187ead2a4ee6bb2aee1a179dc72dbb7bb2b3945b38c529acee454fe4b526648eefab0b4",
+   "sha1": "023805be7d701b9769e987449d217c557de5f848",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.6.11+1.21.1 -> 1.6.14+1.21.1-fabric (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "midnightlib",
+   "from_version": "1.7.5",
+   "to_version": "1.9.3+1.21.1-fabric",
+   "to_file": "midnightlib-fabric-1.9.3+1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "codAaoxh",
+    "version_id": "as2ZKoB1",
+    "version_number": "1.9.3+1.21.1-fabric",
+    "date_published": "2026-05-02T20:14:16.481459Z",
+    "url": "https://cdn.modrinth.com/data/codAaoxh/versions/as2ZKoB1/midnightlib-fabric-1.9.3%2B1.21.1.jar",
+    "filename": "midnightlib-fabric-1.9.3+1.21.1.jar",
+    "size": 58781,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "bfab6bec9dfe4800237861df4d1749cc42770a81599d7a4f2c3dd83efca91347faa113240c63e20c1135593cce6dbcde517512083c4dfd5efab12df0f4f95e69",
+   "sha1": "6595a90351e827b99b36fa2c6ef1dde1a4c8fdf1",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.7.5 -> 1.9.3+1.21.1-fabric (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "mobsbegone",
+   "from_version": "0.0.7",
+   "to_version": "0.0.9",
+   "to_file": "MobsBeGone-0.0.9.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "hXvXSxxg",
+    "version_id": "ZGbHcluC",
+    "version_number": "0.0.9",
+    "date_published": "2026-08-03T15:59:09.546087Z",
+    "url": "https://cdn.modrinth.com/data/hXvXSxxg/versions/ZGbHcluC/MobsBeGone-0.0.9.jar",
+    "filename": "MobsBeGone-0.0.9.jar",
+    "size": 10563,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "79152cb0ae938ff339145aa5b16e4d72415c26ac8691f35504c5aeb4f17237a1c1df1ea5a9095952a852e4e1e8896aa24aeb9ef67eae71acd89d5be9b28cc605",
+   "sha1": "5fd48e10f329c8a526565a9073e395f36c23b5b5",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 0.0.7 -> 0.0.9 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "modmenu",
+   "from_version": "11.0.4",
+   "to_version": "11.0.5",
+   "to_file": "modmenu-11.0.5.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "mOgUt4GM",
+    "version_id": "6lgOkclV",
+    "version_number": "11.0.5",
+    "date_published": "2026-09-24T19:00:03.395718Z",
+    "url": "https://cdn.modrinth.com/data/mOgUt4GM/versions/6lgOkclV/modmenu-11.0.5.jar",
+    "filename": "modmenu-11.0.5.jar",
+    "size": 975846,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "eXts2L7r",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "92e8e96267ff18d320903090f2ad9b32408a218919f5a0d578e232ad774c89d49a34a8271806652be7d6283f24e98432bc4af7f95855e78b843f9100d68696c7",
+   "sha1": "2321d890a25b5985eba576d7cd8fe9a9c136e33d",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 11.0.4 -> 11.0.5 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "more_cobblemon_tweaks",
+   "from_version": "1.3.3",
+   "to_version": "1.3.5-fabric",
+   "to_file": "MoreCobblemonTweaks-fabric-1.3.5.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "5KWlJ2HC",
+    "version_id": "j4HsonDT",
+    "version_number": "1.3.5-fabric",
+    "date_published": "2026-09-15T04:15:11.343679Z",
+    "url": "https://cdn.modrinth.com/data/5KWlJ2HC/versions/j4HsonDT/MoreCobblemonTweaks-fabric-1.3.5.jar",
+    "filename": "MoreCobblemonTweaks-fabric-1.3.5.jar",
+    "size": 138045,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "lhGA9TYQ",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "mOgUt4GM",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "ItmVb4zY",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "9s6osm5g",
+      "file_name": null,
+      "dependency_type": "optional"
+     }
+    ]
+   },
+   "sha512": "2dfe3946f295d3468140c32bbdaf3293a33c8b84901cd7b86d66cd73875b2282765bd1d1e788ac9c8d29e3ab7dcf96f4cbd2c5f75283896289e52ded51c925f0",
+   "sha1": "b20410ff6359905e5ef4a5cdb536b089602ba072",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.3.3 -> 1.3.5-fabric (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "moreculling",
+   "from_version": "1.0.8",
+   "to_version": "1.0.10",
+   "to_file": "moreculling-fabric-1.21.1-1.0.10.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "51shyZVL",
+    "version_id": "wUYbHzXF",
+    "version_number": "1.0.10",
+    "date_published": "2026-09-07T21:20:46.398247Z",
+    "url": "https://cdn.modrinth.com/data/51shyZVL/versions/wUYbHzXF/moreculling-fabric-1.21.1-1.0.10.jar",
+    "filename": "moreculling-fabric-1.21.1-1.0.10.jar",
+    "size": 332266,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "9s6osm5g",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "7f8f33e09a7b1952c4ae77843a28a5220fe9dd6436fda4b14edeb261a5ceb5468630c54ab3b8ec2c64a5c91f5b02f0246d17db57fa7fe11eb16ec9c745b9ae40",
+   "sha1": "d425f77706d8f6499aae64eb804b3802dad111d4",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.0.8 -> 1.0.10 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "nochatrestrictions",
+   "from_version": "Fabric-MC1.21.11-v1.0.0",
+   "to_version": "Fabric-MC1.21.11-v1.0.3",
+   "to_file": "NoChatRestrictions-Fabric-MC1.21.11-v1.0.3.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "z440MEwJ",
+    "version_id": "J95EIHAC",
+    "version_number": "Fabric-MC1.21.11-v1.0.3",
+    "date_published": "2026-09-30T10:10:26.632042Z",
+    "url": "https://cdn.modrinth.com/data/z440MEwJ/versions/J95EIHAC/NoChatRestrictions-Fabric-MC1.21.11-v1.0.3.jar",
+    "filename": "NoChatRestrictions-Fabric-MC1.21.11-v1.0.3.jar",
+    "size": 10182,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "c2a38fd91dd7d3405201599045152235daab161edc0045f80027c86480974ad1b2646d7a4380f56e3e5eaa4d5c929b73d9398c2b0880272b8266d6821e543006",
+   "sha1": "1293a088de32bad461bf034dae45d57c1fca0357",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated Fabric-MC1.21.11-v1.0.0 -> Fabric-MC1.21.11-v1.0.3 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "notenoughanimations",
+   "from_version": "1.12.4",
+   "to_version": "1.12.6",
+   "to_file": "notenoughanimations-fabric-1.12.6-mc1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "MPCX6s5C",
+    "version_id": "P5COwDnM",
+    "version_number": "1.12.6",
+    "date_published": "2026-09-19T21:01:14.512302Z",
+    "url": "https://cdn.modrinth.com/data/MPCX6s5C/versions/P5COwDnM/notenoughanimations-fabric-1.12.6-mc1.21.1.jar",
+    "filename": "notenoughanimations-fabric-1.12.6-mc1.21.1.jar",
+    "size": 1873853,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "0e7da5238701c159f9a8e4f55ad48533a2228ff1b9f598ab420be737dfd25b840f950ad56cdf6be54177b92466063fdc6a9c86e4ab3bbcae5f22299e008dea85",
+   "sha1": "ecef905897a8837ac1ca6a073e2533a94bf7590a",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.12.4 -> 1.12.6 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "particlerain",
+   "from_version": "4.0.0-beta.10",
+   "to_version": "v4.0.2+1.21.1-fabric",
+   "to_file": "particlerain-4.0.2+1.21.1-fabric.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "nrikgvxm",
+    "version_id": "jquizTC2",
+    "version_number": "v4.0.2+1.21.1-fabric",
+    "date_published": "2026-10-10T01:07:31.226610Z",
+    "url": "https://cdn.modrinth.com/data/nrikgvxm/versions/jquizTC2/particlerain-4.0.2%2B1.21.1-fabric.jar",
+    "filename": "particlerain-4.0.2+1.21.1-fabric.jar",
+    "size": 626772,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "mOgUt4GM",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "9ZhzxPJ0",
+      "file_name": null,
+      "dependency_type": "optional"
+     }
+    ]
+   },
+   "sha512": "b80fbfc16e3ed3726e5ff9981daf0ebf7ced477ad74a8bb34864306a828e38582ca0bc982a0d2343470d968258801d9c51cc0a801558f671c4379f44a60dbed5",
+   "sha1": "b83113c0fec92573c5b676ea0b594f6cd9f8d2d0",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 4.0.0-beta.10 -> v4.0.2+1.21.1-fabric (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "particular",
+   "from_version": "1.1.2+1.21",
+   "to_version": "1.5.7",
+   "to_file": "particular-1.21.1-Fabric-1.5.7.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "pYFUU6cq",
+    "version_id": "7HcxmnFS",
+    "version_number": "1.5.7",
+    "date_published": "2026-08-16T14:05:40.483337Z",
+    "url": "https://cdn.modrinth.com/data/pYFUU6cq/versions/7HcxmnFS/particular-1.21.1-Fabric-1.5.7.jar",
+    "filename": "particular-1.21.1-Fabric-1.5.7.jar",
+    "size": 285956,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "T9PomCSv",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "ohNO6lps",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "YL57xq9U",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "mOgUt4GM",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "8d4eac48304ffac56fec9a1c6ae5c68272a6860c16feca67aaf975b60571ced494ae5bd517a78b34adca39404b4c61d17ca54dcfa15d0caa5bf98ec8842477cd",
+   "sha1": "e2bb1ab8c973303fa0a40a636b33a645dcc87b24",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.1.2+1.21 -> 1.5.7 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "pokeblocks",
+   "from_version": "1.4.0-1.21.1",
+   "to_version": "1.5.0-1.21.1",
+   "to_file": "pokeblocks-1.5.0-1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "hnOfcjSq",
+    "version_id": "qlp66lU8",
+    "version_number": "1.5.0-1.21.1",
+    "date_published": "2026-04-03T09:03:15.379657Z",
+    "url": "https://cdn.modrinth.com/data/hnOfcjSq/versions/qlp66lU8/pokeblocks-1.5.0-1.21.1.jar",
+    "filename": "pokeblocks-1.5.0-1.21.1.jar",
+    "size": 1775159,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "8BmcQJ2H",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "470e811c40f1e37ec6b405139a212a053598b554f2845108a75df575ec5d6c29e89afb309222b54a6724aab4e7fb25df41a1357d0068fb16ba591cbe6077cdfa",
+   "sha1": "a767426171b3085775b57bfd53b66fe7fa6edd88",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.4.0-1.21.1 -> 1.5.0-1.21.1 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "rechiseled",
+   "from_version": "1.2.4",
+   "to_version": "1.2.6-fabric-mc1.21",
+   "to_file": "rechiseled-1.2.6-fabric-mc1.21.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "B0g2vT6l",
+    "version_id": "7411ZFAs",
+    "version_number": "1.2.6-fabric-mc1.21",
+    "date_published": "2026-09-13T23:14:32.252097Z",
+    "url": "https://cdn.modrinth.com/data/B0g2vT6l/versions/7411ZFAs/rechiseled-1.2.6-fabric-mc1.21.jar",
+    "filename": "rechiseled-1.2.6-fabric-mc1.21.jar",
+    "size": 11951835,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "LN9BxssP",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "rOUBggPv",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "p19vrgc2",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "5541c06a62364ecf30118d0e3246d0a4ce3beb5bf835fec86ac4749a6ac3e432ea0a601a88b3a7194ab3bf2d5ba9529a3714898b960cb86c532561f228b2f70a",
+   "sha1": "627ce63b5f25a60707d7f8d9a9c336217a2f3c9a",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.2.4 -> 1.2.6-fabric-mc1.21 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "reeses-sodium-options",
+   "from_version": "2.2.3+mc1.21.1",
+   "to_version": "mc1.21.1-2.2.4+fabric",
+   "to_file": "reeses-sodium-options-fabric-2.2.4+mc1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "Bh37bMuy",
+    "version_id": "XtuPOKUN",
+    "version_number": "mc1.21.1-2.2.4+fabric",
+    "date_published": "2026-09-16T00:49:27.416775Z",
+    "url": "https://cdn.modrinth.com/data/Bh37bMuy/versions/XtuPOKUN/reeses-sodium-options-fabric-2.2.4%2Bmc1.21.1.jar",
+    "filename": "reeses-sodium-options-fabric-2.2.4+mc1.21.1.jar",
+    "size": 257229,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "PtjYWJkn",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "YL57xq9U",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "AANobbMI",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "7784880c4dedae15e3e03c6de4cfa67a9ed242006f90b764c0fa6fda8679e219ca6c9987aae76ec9b0fff6f8cc38fff86b16e2836aaa0200998c9de938617d3e",
+   "sha1": "552c80c3113ad346c3abcdf7c5c6cc3a02a5fb62",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 2.2.3+mc1.21.1 -> mc1.21.1-2.2.4+fabric (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "repurposed_structures",
+   "from_version": "7.5.21+1.21.1-fabric",
+   "to_version": "7.5.22+1.21.1-fabric",
+   "to_file": "repurposed_structures-7.5.22+1.21.1-fabric.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "muf0XoRe",
+    "version_id": "JRMMCb1O",
+    "version_number": "7.5.22+1.21.1-fabric",
+    "date_published": "2026-08-20T01:28:29.052367Z",
+    "url": "https://cdn.modrinth.com/data/muf0XoRe/versions/JRMMCb1O/repurposed_structures-7.5.22%2B1.21.1-fabric.jar",
+    "filename": "repurposed_structures-7.5.22+1.21.1-fabric.jar",
+    "size": 8203618,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "codAaoxh",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "22378fa8b8ccd2640f303e6dee9d8656c15d90281346d6da67ac7aad6b013a252aea599ec6a58cd5e5a9b598518e343fb442eb0c3e2623cc9d0858c794ada55b",
+   "sha1": "5cd080074996fbb0abdf1549bab5669094e73f69",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 7.5.21+1.21.1-fabric -> 7.5.22+1.21.1-fabric (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "safepastures",
+   "from_version": "1.1.1+1.21.1",
+   "to_version": "1.1.2+1.21.1",
+   "to_file": "SafePastures(Fabric)-1.1.2+1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "qpe01spE",
+    "version_id": "gHHJ8bPf",
+    "version_number": "1.1.2+1.21.1",
+    "date_published": "2026-09-13T22:27:55.254535Z",
+    "url": "https://cdn.modrinth.com/data/qpe01spE/versions/gHHJ8bPf/SafePastures%28Fabric%29-1.1.2%2B1.21.1.jar",
+    "filename": "SafePastures(Fabric)-1.1.2+1.21.1.jar",
+    "size": 16517,
+    "dependencies": []
+   },
+   "sha512": "98cb6f77b8aeb8f5754ebec229f6fe4b92482124d94825deafb0bac093c1fc5860a8d0545b582bfeeb683dbf41e0748470e87df4fbab45df4173a45ffb2eeb92",
+   "sha1": "1db0a38759addd86260b23d6beff0fa61dfae43b",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.1.1+1.21.1 -> 1.1.2+1.21.1 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "sodium",
+   "from_version": "0.8.12+mc1.21.1",
+   "to_version": "mc1.21.1-0.8.13-fabric",
+   "to_file": "sodium-fabric-0.8.13+mc1.21.1.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "AANobbMI",
+    "version_id": "SMxNOGZ6",
+    "version_number": "mc1.21.1-0.8.13-fabric",
+    "date_published": "2026-08-28T20:55:02.424329Z",
+    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/SMxNOGZ6/sodium-fabric-0.8.13%2Bmc1.21.1.jar",
+    "filename": "sodium-fabric-0.8.13+mc1.21.1.jar",
+    "size": 1574609,
+    "dependencies": []
+   },
+   "sha512": "8614a374593698069a80ac74de8cd9c28f3928d16819a0e0d6320b538e823f7e54e8be06d5ea5a9c268beb0e02073209d1f831a02dede851588b972367680853",
+   "sha1": "003c114c85ca88ef3362e018deb6aca0c682d6a1",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 0.8.12+mc1.21.1 -> mc1.21.1-0.8.13-fabric (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "soundsbegone",
+   "from_version": "1.5.2",
+   "to_version": "1.6.0+fabric-1.21",
+   "to_file": "soundsbegone-fabric-1.6.0+mc1.21.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "FOIvwGKz",
+    "version_id": "HJwHCWgs",
+    "version_number": "1.6.0+fabric-1.21",
+    "date_published": "2026-09-19T14:51:28.879637Z",
+    "url": "https://cdn.modrinth.com/data/FOIvwGKz/versions/HJwHCWgs/soundsbegone-fabric-1.6.0%2Bmc1.21.jar",
+    "filename": "soundsbegone-fabric-1.6.0+mc1.21.jar",
+    "size": 6151886,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "mOgUt4GM",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "9s6osm5g",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "63014d860842b561d34a7ff52a103157aa84df7edcbf6198ad1c8a7b4e0bfae91b0f00193b2ce23ecb6c62d1192b9d0ac8a8f3d6339de8fd711a94df4f41f17d",
+   "sha1": "9542a50b8de9d87d9f4be65d7c0cbddbdb0e3f0d",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.5.2 -> 1.6.0+fabric-1.21 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "supermartijn642corelib",
+   "from_version": "1.1.21",
+   "to_version": "1.1.25-fabric-mc1.21",
+   "to_file": "supermartijn642corelib-1.1.25-fabric-mc1.21.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "rOUBggPv",
+    "version_id": "ImY2F2fz",
+    "version_number": "1.1.25-fabric-mc1.21",
+    "date_published": "2026-10-06T19:59:24.680514Z",
+    "url": "https://cdn.modrinth.com/data/rOUBggPv/versions/ImY2F2fz/supermartijn642corelib-1.1.25-fabric-mc1.21.jar",
+    "filename": "supermartijn642corelib-1.1.25-fabric-mc1.21.jar",
+    "size": 622551,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "04da165777d7e85fe47456a7c8c779118a65471293f8ec797c6c3156583d24c0cbe5babddf5e1d1bf9057b11aee6b7d581606821977f854bcefef74eb077ff74",
+   "sha1": "3339afb26de57eb3b83aed326e6cab5c1af1e490",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.1.21 -> 1.1.25-fabric-mc1.21 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "toms_storage",
+   "from_version": "2.3.0",
+   "to_version": "1.21-2.4.2-fabric",
+   "to_file": "toms_storage_fabric-1.21-2.4.2.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "XZNI4Cpy",
+    "version_id": "nhRuPk5W",
+    "version_number": "1.21-2.4.2-fabric",
+    "date_published": "2026-08-30T14:31:39.688679Z",
+    "url": "https://cdn.modrinth.com/data/XZNI4Cpy/versions/nhRuPk5W/toms_storage_fabric-1.21-2.4.2.jar",
+    "filename": "toms_storage_fabric-1.21-2.4.2.jar",
+    "size": 1971384,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "fRiHVvU7",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "tagwiZkJ",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "9s6osm5g",
+      "file_name": null,
+      "dependency_type": "embedded"
+     },
+     {
+      "version_id": null,
+      "project_id": "u6dRKJwZ",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "nfn13YXA",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "5aaWibi9",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "Orvt0mRa",
+      "file_name": null,
+      "dependency_type": "optional"
+     }
+    ]
+   },
+   "sha512": "e38b9b2a2568404da98ce468f93ccca8bc1a5a3c4e57d11c7ebfcf42b1ee9883318a9c7cfc728688ff49383d61149852b4220613a7e8c408309de68a45adccde",
+   "sha1": "a0859e6f04aebb4afdc1923eac689f7d3309261c",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 2.3.0 -> 1.21-2.4.2-fabric (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "waystones",
+   "from_version": "21.1.37",
+   "to_version": "21.1.46+fabric-1.21.1",
+   "to_file": "waystones-fabric-1.21.1-21.1.46.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "LOpKHB2A",
+    "version_id": "nSAwjAk4",
+    "version_number": "21.1.46+fabric-1.21.1",
+    "date_published": "2026-09-25T06:00:07.869983Z",
+    "url": "https://cdn.modrinth.com/data/LOpKHB2A/versions/nSAwjAk4/waystones-fabric-1.21.1-21.1.46.jar",
+    "filename": "waystones-fabric-1.21.1-21.1.46.jar",
+    "size": 1248666,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "MBAkmtvl",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "b301a1afb7e13fe8a4a28330b0bd8c0da3eb829d85e50fc04fc86868388ecf3222d24ce49a361bbac2153ce3abf792d7c0dc91fc94022f5b4f5f214a0ef0e183",
+   "sha1": "2ef078e0e3409e3a97ec3fdc0cfd7db7ca34bc40",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 21.1.37 -> 21.1.46+fabric-1.21.1 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "xaerominimap",
+   "from_version": "26.4.2",
+   "to_version": "fabric-1.21.1-26.6.0",
+   "to_file": "xaerominimap-fabric-1.21.1-26.6.0.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "1bokaNcj",
+    "version_id": "W4dcLcUs",
+    "version_number": "fabric-1.21.1-26.6.0",
+    "date_published": "2026-10-05T07:42:26.768740Z",
+    "url": "https://cdn.modrinth.com/data/1bokaNcj/versions/W4dcLcUs/xaerominimap-fabric-1.21.1-26.6.0.jar",
+    "filename": "xaerominimap-fabric-1.21.1-26.6.0.jar",
+    "size": 2234556,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "gF3BGWvG",
+      "file_name": null,
+      "dependency_type": "optional"
+     }
+    ]
+   },
+   "sha512": "bad6dfbdfa4fa83c10155380e44e7c7a181c86144cbb377548a3df94e1fdadb88a27dbf18dca89bf8748a49a1c485a03b458e1f74a7881029763297106ed26b7",
+   "sha1": "5fbb03dd3f22c0c3d5466d1366222d7d277a8df3",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 26.4.2 -> fabric-1.21.1-26.6.0 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
+  },
+  {
+   "mod_id": "xaeroworldmap",
+   "from_version": "1.44.2",
+   "to_version": "fabric-1.21.1-1.47.0",
+   "to_file": "xaeroworldmap-fabric-1.21.1-1.47.0.jar",
+   "modrinth": {
+    "slug": null,
+    "project_id": "NcUtCpym",
+    "version_id": "XIR7GzC3",
+    "version_number": "fabric-1.21.1-1.47.0",
+    "date_published": "2026-10-05T07:28:21.152488Z",
+    "url": "https://cdn.modrinth.com/data/NcUtCpym/versions/XIR7GzC3/xaeroworldmap-fabric-1.21.1-1.47.0.jar",
+    "filename": "xaeroworldmap-fabric-1.21.1-1.47.0.jar",
+    "size": 1456162,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "gF3BGWvG",
+      "file_name": null,
+      "dependency_type": "optional"
+     }
+    ]
+   },
+   "sha512": "7bdf96a45ab729ad5b8c56b1de421ab8c94006a65e62f21e45a4733a38a7a1655b8be03ef3bdfcdc52401c66894b9f4f80fc28b41d47a787a9fa45094629f5c7",
+   "sha1": "db7ad23fe512dbc13a8286844fd9277c08a7ef5a",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
+   "reason": "Updated 1.44.2 -> fabric-1.21.1-1.47.0 (docs/research/COBBLEVERSE_COMPATIBILITY.md 'Update audit, 2026-10-13'; the owner, 2026-10-13: update every pack and mod)."
   }
  ],
  "remove": [
@@ -541,31 +1869,33 @@
    "impact": "Loses parallel chunk-generation acceleration. The campaign world is pre-built and exported from WorldPainter, so almost no new chunk generation happens at runtime.",
    "replacement": "None. Removed outright rather than server_excluded, so client and server mod sets stay identical.",
    "world_save_risk": "NONE: C2ME registers no blocks, biomes or structures. It only changes how chunks are generated, not what they contain."
+  },
+  {
+   "mod_id": "capture_xp",
+   "reason": "Pins cobblemon exactly (1.8.0+1.21.1; its newest build, 1.8.1-fabric-1.3.0, pins 1.8.1) and has no Cobblemon 1.8.2 build (Modrinth queried 2026-10-13). Removed for the 1.8.2 move (the owner, 2026-10-13). Only effect: no EXP on an out-of-battle capture; docs/mechanics/LEVEL_CATCHUP.md lists it as one clamped EXP source, nothing depends on it."
   }
  ],
  "add": [
   {
    "mod_id": "distanthorizons",
-   "version": "3.2.0-b-1.21.1",
-   "file": "DistantHorizons-3.2.0-b-1.21.1-fabric-neoforge.jar",
+   "version": "3.3.3-1.21.1",
+   "file": "DistantHorizons-3.3.3-1.21.1-fabric-neoforge.jar",
    "side": "both",
    "pin": "exact",
    "modrinth": {
     "slug": "distanthorizons",
     "project_id": "uCdwusMi",
-    "version_id": "ZpKb4kZp",
-    "version_number": "3.2.0-b-1.21.1",
-    "version_type": "beta",
-    "date_published": "2026-07-07T20:30:38.837577Z",
-    "url": "https://cdn.modrinth.com/data/uCdwusMi/versions/ZpKb4kZp/DistantHorizons-3.2.0-b-1.21.1-fabric-neoforge.jar",
-    "filename": "DistantHorizons-3.2.0-b-1.21.1-fabric-neoforge.jar",
-    "size": 30207268,
-    "license": "LGPL-3.0-only",
+    "version_id": "9w34y8ai",
+    "version_number": "3.3.3-1.21.1",
+    "date_published": "2026-09-29T00:04:31.528515Z",
+    "url": "https://cdn.modrinth.com/data/uCdwusMi/versions/9w34y8ai/DistantHorizons-3.3.3-1.21.1-fabric-neoforge.jar",
+    "filename": "DistantHorizons-3.3.3-1.21.1-fabric-neoforge.jar",
+    "size": 28289212,
     "dependencies": []
    },
-   "sha512": "d4199f92f992fbd2c75a3b0e4e81c8a98bee889013f7347f2149ffa62c86748bde22135e9b2c82a10875db94fa576571c661c5ee16d2f567bd8a93d6f255fd22",
-   "sha1": "df25e8cfe06917963778723a1d9a60610dd21bec",
-   "verification": "verified via Modrinth API 2026-09-12",
+   "sha512": "d14b32d3fd143a06514d6ad388eee11e9d657c84e1a937aaf8d033b1137fb43ef8b05cff1011a994cc42f3106823c51234f8bc18d72bb05bc317a20ea83c50ed",
+   "sha1": "4357b4d19fab818780c94f0e43dad1cc931634b2",
+   "verification": "verified via Modrinth API 2026-10-13 (sha512 lookup)",
    "reason": "Level-of-detail rendering so the authored landmarks (the central rift, the northwest range, the southeast volcano) are visible across an 8192-block map without raising server view distance.",
    "pin_note": "Exact pin, no floating version. DH requires the same major version on client and server; a drifted client is rejected by the server, so version drift is a hard failure rather than a degradation.",
    "beta_note": "Every 1.21.1 build of DH is on the beta channel. There is no stable release for this Minecraft version.",

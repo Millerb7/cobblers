@@ -842,6 +842,102 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
+          "strategy": "Sandstone Bastion: Hippopotas raises eight turns of sand, so every Rock member's Special Defense rises by half and the special Water Gun / Mega Drain plan of Normal stops one-shotting. Storm Drain Lileep eats Water, Flame Body Carkol burns contact Grass and Fighting and hits Grass with Fire, and Sturdy plus Weakness Policy turns one big super-effective hit on Onix into a +2 sweep. The answer is physical, multi-hit and status pressure, not one type.",
+          "ace_math_change": "Sturdy guarantees Onix survives the first hit and Weakness Policy rewards a single super-effective blow; multi-hit moves (Arm Thrust, Fury Cutter), chip and paralysis break it cleanly.",
+          "members": [
+            {
+              "species": "hippopotas",
+              "level_offset": -1,
+              "moveset": [
+                "yawn",
+                "sandtomb",
+                "bite",
+                "dig"
+              ],
+              "ability": "sandstream",
+              "heldItem": "smooth_rock",
+              "nature": "impish"
+            },
+            {
+              "species": "lileep",
+              "level_offset": -1,
+              "moveset": [
+                "megadrain",
+                "ancientpower",
+                "confuseray",
+                "ingrain"
+              ],
+              "ability": "stormdrain",
+              "heldItem": "eviolite",
+              "nature": "calm"
+            },
+            {
+              "species": "carkol",
+              "level_offset": -1,
+              "moveset": [
+                "flamecharge",
+                "smackdown",
+                "rapidspin",
+                "smokescreen"
+              ],
+              "ability": "flamebody",
+              "heldItem": "eviolite",
+              "nature": "impish"
+            },
+            {
+              "species": "dwebble",
+              "level_offset": -1,
+              "moveset": [
+                "shellsmash",
+                "rocktomb",
+                "bugbite",
+                "bulldoze"
+              ],
+              "ability": "sturdy",
+              "heldItem": "white_herb",
+              "nature": "adamant"
+            },
+            {
+              "species": "nosepass",
+              "level_offset": 0,
+              "moveset": [
+                "thunderwave",
+                "rockthrow",
+                "shockwave",
+                "protect"
+              ],
+              "ability": "sturdy",
+              "heldItem": "sitrus_berry",
+              "nature": "bold"
+            },
+            {
+              "species": "onix",
+              "level_offset": 0,
+              "moveset": [
+                "rockpolish",
+                "rockslide",
+                "bulldoze",
+                "dragonbreath"
+              ],
+              "ability": "sturdy",
+              "heldItem": "weakness_policy",
+              "nature": "jolly",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "pawmo",
+            "machop",
+            "diggersby",
+            "azumarill",
+            "krabby",
+            "mareep"
+          ],
+          "line_obviousness": "moderate: Hippopotas's sand is announced on turn one and Lileep's Storm Drain on the first Water move; Route 1's Machop, Pawmi, Marill, Krabby (Metal Claw) and Mareep (Thunder Wave) are the physical, multi-hit and status tools, and Normal's lesson (two types) still helps."
+        },
+        "superseded_challenge": {
+          "superseded_why": "the Challenge team before the owner's 2026-10-13 instruction ('Every challenge fight should be a good bit different from Normal'): Normal's three species with three extras and items, so Normal's Water/Grass answer still won. Kept as authored work; nothing reads it (docs/story/generate_trainers.py reads modes.challenge only). The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
+          "ai_profile": "gym_challenge",
           "strategy": "Six Rock roles convert Rock Tomb's speed tax into setup and breaking pressure; Lileep interrupts Water once without closing Grass.",
           "ace_math_change": "Sturdy plus Weakness Policy gives Onix one dangerous turn, so the player must preserve a fresh finisher.",
           "members": [
@@ -1055,6 +1151,102 @@
           ]
         },
         "challenge": {
+          "ai_profile": "gym_challenge",
+          "strategy": "Undertow: no rain and no speed race. A slow attrition team where each obvious answer is absorbed or punished: Yawn forces switches, Toxic Spikes poisons every switch-in, Liquid Ooze Tentacool hurts the Mega Drain users, Lightning Rod Goldeen eats Electric and Drill Runs the Electric types, Skill Link Shellder shreds Grass, and Huge Power Azumarill revenges with Aqua Jet. Scald burns the physical answers.",
+          "ace_math_change": "Starmie trades Normal's Icy Wind speed control for Scald burns, Thunder Wave and Recover: the player wins by pressure from two sides, not by outspeeding it.",
+          "members": [
+            {
+              "species": "slowpoke",
+              "level_offset": -2,
+              "moveset": [
+                "yawn",
+                "waterpulse",
+                "confusion",
+                "disable"
+              ],
+              "ability": "regenerator",
+              "heldItem": "eviolite",
+              "nature": "bold"
+            },
+            {
+              "species": "tentacool",
+              "level_offset": -1,
+              "moveset": [
+                "toxicspikes",
+                "bubblebeam",
+                "acidspray",
+                "supersonic"
+              ],
+              "ability": "liquidooze",
+              "heldItem": "black_sludge",
+              "nature": "calm"
+            },
+            {
+              "species": "goldeen",
+              "level_offset": -1,
+              "moveset": [
+                "waterfall",
+                "drillrun",
+                "hornattack",
+                "agility"
+              ],
+              "ability": "lightningrod",
+              "heldItem": "eviolite",
+              "nature": "jolly"
+            },
+            {
+              "species": "shellder",
+              "level_offset": -1,
+              "moveset": [
+                "iciclespear",
+                "iceshard",
+                "rockblast",
+                "withdraw"
+              ],
+              "ability": "skilllink",
+              "heldItem": "eviolite",
+              "nature": "adamant"
+            },
+            {
+              "species": "azumarill",
+              "level_offset": 0,
+              "moveset": [
+                "aquajet",
+                "aquatail",
+                "playrough",
+                "charm"
+              ],
+              "ability": "hugepower",
+              "heldItem": "sitrus_berry",
+              "nature": "adamant"
+            },
+            {
+              "species": "starmie",
+              "level_offset": 0,
+              "moveset": [
+                "scald",
+                "psybeam",
+                "thunderwave",
+                "recover"
+              ],
+              "ability": "naturalcure",
+              "heldItem": "leftovers",
+              "nature": "timid",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "luxio",
+            "kilowattrel",
+            "nuzleaf",
+            "bayleef",
+            "diggersby",
+            "pawmo"
+          ],
+          "line_obviousness": "clear after scouting: Goldeen's Lightning Rod and Tentacool's Liquid Ooze show on the first hit; the plan is split Electric, non-draining Grass (Razor Leaf), Dark for the two Psychic types (Nuzleaf) and Ground for Tentacool."
+        },
+        "superseded_challenge": {
+          "superseded_why": "the Challenge team before the owner's 2026-10-13 instruction: Normal's rain plan (Drizzle Pelipper instead of Horsea) with Lombre, Starmie and three extras, so Normal's Electric/Grass answer still won. Kept as authored work; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
           "ai_profile": "gym_challenge",
           "strategy": "Rain, speed control, and two different Electric interruptions force a split Grass/Electric/Bug plan rather than one-type sweeping.",
           "ace_math_change": "Drizzle accelerates the middle of the roster while Starmie's sustain asks the player to retain one fast attacker.",
@@ -1298,6 +1490,101 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
+          "strategy": "Live Wire: three of six cannot be touched by Ground (Kilowattrel's Flying, Emolga's Flying, Vikavolt's Levitate), and the three grounded ones punish a Ground switch-in with Scald, Energy Ball, Grass Knot, Surf and Ice Punch. Volt Switch pivots the floaters in front of the Ground answer. The answer is Rock for the fliers, Ground only for the grounded, and Volt Absorb or bulk for the rest.",
+          "ace_math_change": "Pawmot replaces Normal's Raichu as the closer: Mach Punch priority and Ice Punch mean a lone Ground answer loses the last exchange; Thick Fat Hariyama and the Rock line win it.",
+          "members": [
+            {
+              "species": "kilowattrel",
+              "level_offset": -2,
+              "moveset": [
+                "voltswitch",
+                "airslash",
+                "roost",
+                "quickattack"
+              ],
+              "ability": "voltabsorb",
+              "heldItem": "sitrus_berry",
+              "nature": "timid"
+            },
+            {
+              "species": "lanturn",
+              "level_offset": -2,
+              "moveset": [
+                "scald",
+                "spark",
+                "thunderwave",
+                "confuseray"
+              ],
+              "ability": "voltabsorb",
+              "heldItem": "leftovers",
+              "nature": "calm"
+            },
+            {
+              "species": "emolga",
+              "level_offset": -1,
+              "moveset": [
+                "acrobatics",
+                "voltswitch",
+                "nuzzle",
+                "encore"
+              ],
+              "ability": "motordrive",
+              "nature": "jolly"
+            },
+            {
+              "species": "vikavolt",
+              "level_offset": -1,
+              "moveset": [
+                "bugbuzz",
+                "energyball",
+                "thunderbolt",
+                "agility"
+              ],
+              "ability": "levitate",
+              "heldItem": "wise_glasses",
+              "nature": "modest"
+            },
+            {
+              "species": "raichu",
+              "level_offset": 0,
+              "moveset": [
+                "nastyplot",
+                "thunderbolt",
+                "grassknot",
+                "surf"
+              ],
+              "ability": "lightningrod",
+              "heldItem": "focus_sash",
+              "nature": "timid"
+            },
+            {
+              "species": "pawmot",
+              "level_offset": 0,
+              "moveset": [
+                "thunderpunch",
+                "icepunch",
+                "machpunch",
+                "drainpunch"
+              ],
+              "ability": "ironfist",
+              "heldItem": "expert_belt",
+              "nature": "jolly",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "rhyhorn",
+            "lycanroc",
+            "hariyama",
+            "quagsire",
+            "dugtrio",
+            "pachirisu"
+          ],
+          "line_obviousness": "moderate: the lead is a Ground-immune flier, which says 'not Ground' on turn one; Mt Clay's Rhyhorn, Rockruff and Makuhita and the badge-1 Rock Slide TM are the tools, and Quagsire's Water Absorb walls Lanturn."
+        },
+        "superseded_challenge": {
+          "superseded_why": "the Challenge team before the owner's 2026-10-13 instruction: Normal's four with Vikavolt and Pawmot added, so Normal's Ground answer still won. Kept as authored work; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
+          "ai_profile": "gym_challenge",
           "strategy": "Paralysis and mixed pressure set the clock; Vikavolt is the single Ground-immunity interruption before Ground can close.",
           "ace_math_change": "Raichu can set up but deliberately has no Ground coverage, leaving the prepared Ground endgame intact.",
           "members": [
@@ -1538,6 +1825,102 @@
           ]
         },
         "challenge": {
+          "ai_profile": "gym_challenge",
+          "strategy": "Rain Garden: the opposite weather to Normal's sun. Prankster Whimsicott sets eight turns of rain and Tailwind before anything moves, rain halves the Fire answer Normal teaches, and Swift Swim Ludicolo hits Fire with Hydro Pump and Flying with Ice Beam. Ferroseed's Gyro Ball and Breloom's Mach Punch punish Ice, Cradily's Rock Slide punishes Flying and Fire, Contrary Lurantis gets stronger from its own Superpower.",
+          "ace_math_change": "Ludicolo, not Vileplume, closes: Grass/Water takes Fire neutral (halved again in rain) and Ice neutral, so the answer is Poison, Flying that survives Ice Beam, or a Dark type that ignores Prankster.",
+          "members": [
+            {
+              "species": "whimsicott",
+              "level_offset": -2,
+              "moveset": [
+                "raindance",
+                "tailwind",
+                "encore",
+                "moonblast"
+              ],
+              "ability": "prankster",
+              "heldItem": "damp_rock",
+              "nature": "timid"
+            },
+            {
+              "species": "ferroseed",
+              "level_offset": -1,
+              "moveset": [
+                "leechseed",
+                "gyroball",
+                "bulletseed",
+                "protect"
+              ],
+              "ability": "ironbarbs",
+              "heldItem": "eviolite",
+              "nature": "relaxed"
+            },
+            {
+              "species": "breloom",
+              "level_offset": -1,
+              "moveset": [
+                "machpunch",
+                "bulletseed",
+                "rocktomb",
+                "stunspore"
+              ],
+              "ability": "technician",
+              "heldItem": "focus_sash",
+              "nature": "jolly"
+            },
+            {
+              "species": "cradily",
+              "level_offset": -1,
+              "moveset": [
+                "rockslide",
+                "gigadrain",
+                "recover",
+                "toxic"
+              ],
+              "ability": "suctioncups",
+              "heldItem": "leftovers",
+              "nature": "calm"
+            },
+            {
+              "species": "lurantis",
+              "level_offset": 0,
+              "moveset": [
+                "leafblade",
+                "xscissor",
+                "superpower",
+                "synthesis"
+              ],
+              "ability": "contrary",
+              "heldItem": "sitrus_berry",
+              "nature": "adamant"
+            },
+            {
+              "species": "ludicolo",
+              "level_offset": 0,
+              "moveset": [
+                "hydropump",
+                "gigadrain",
+                "icebeam",
+                "raindance"
+              ],
+              "ability": "swiftswim",
+              "heldItem": "life_orb",
+              "nature": "modest",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "tentacruel",
+            "skuntank",
+            "staraptor",
+            "scyther",
+            "noctowl",
+            "houndoom"
+          ],
+          "line_obviousness": "moderate: rain falls on turn one and says 'Fire is weaker here'; the Dark types (Houndour, Stunky) north-east of Route 4 ignore Prankster, and Poison (Tentacruel, Skuntank) hits Whimsicott four times over and Ludicolo twice."
+        },
+        "superseded_challenge": {
+          "superseded_why": "the Challenge team before the owner's 2026-10-13 instruction: Normal's sun plan and four of its species with Cradily and Tangrowth added, so Normal's Fire/Flying/Ice answer still won. Kept as authored work; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
           "ai_profile": "gym_challenge",
           "strategy": "Sun is the engine; Cradily and Tangrowth interrupt Flying long enough for the Chlorophyll breakers to demand mixed answers.",
           "ace_math_change": "Coba Berry buys Vileplume one turn against Flying while Ice and Fire remain unblocked.",
@@ -1806,6 +2189,102 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
+          "strategy": "Ambush: Ariados lays Toxic Spikes behind a Focus Sash, so every switch costs poison, and the rest punish Normal's Ground and Psychic answers with coverage: Skuntank is immune to Psychic and Sucker Punches it, Roserade's Giga Drain and Tentacruel's Scald hit the Ground types, Dry Skin Toxicroak drinks the Water answer. Glimmora closes, and Toxic Debris lays more Toxic Spikes whenever it is struck physically.",
+          "ace_math_change": "Glimmora replaces Venomoth: a Focus Sash ace that takes Ground four times over but answers the slow Ground switch-in with Energy Ball. Speed, a Steel type (immune to the poison) or special Water wins.",
+          "members": [
+            {
+              "species": "ariados",
+              "level_offset": 0,
+              "moveset": [
+                "toxicspikes",
+                "megahorn",
+                "poisonjab",
+                "shadowsneak"
+              ],
+              "ability": "insomnia",
+              "heldItem": "focus_sash",
+              "nature": "jolly"
+            },
+            {
+              "species": "skuntank",
+              "level_offset": 0,
+              "moveset": [
+                "suckerpunch",
+                "crunch",
+                "poisonjab",
+                "flamethrower"
+              ],
+              "ability": "aftermath",
+              "heldItem": "black_glasses",
+              "nature": "adamant"
+            },
+            {
+              "species": "tentacruel",
+              "level_offset": 0,
+              "moveset": [
+                "scald",
+                "sludgebomb",
+                "knockoff",
+                "rapidspin"
+              ],
+              "ability": "liquidooze",
+              "heldItem": "black_sludge",
+              "nature": "calm"
+            },
+            {
+              "species": "roserade",
+              "level_offset": 0,
+              "moveset": [
+                "gigadrain",
+                "sludgebomb",
+                "shadowball",
+                "synthesis"
+              ],
+              "ability": "naturalcure",
+              "heldItem": "wise_glasses",
+              "nature": "timid"
+            },
+            {
+              "species": "toxicroak",
+              "level_offset": 0,
+              "moveset": [
+                "suckerpunch",
+                "drainpunch",
+                "gunkshot",
+                "swordsdance"
+              ],
+              "ability": "dryskin",
+              "heldItem": "life_orb",
+              "nature": "jolly"
+            },
+            {
+              "species": "glimmora",
+              "level_offset": 0,
+              "moveset": [
+                "sludgewave",
+                "earthpower",
+                "energyball",
+                "powergem"
+              ],
+              "ability": "toxicdebris",
+              "heldItem": "focus_sash",
+              "nature": "modest",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "bronzong",
+            "excadrill",
+            "xatu",
+            "medicham",
+            "delphox",
+            "empoleon"
+          ],
+          "line_obviousness": "moderate: Toxic Spikes on turn one says 'bring Steel or keep switches few'; Bronzong (Mt Vessu) and Excadrill (Route 5) shrug off the poison, Xatu and Medicham take the Psychic line, and Empoleon's Water beats Glimmora."
+        },
+        "superseded_challenge": {
+          "superseded_why": "the Challenge team before the owner's 2026-10-13 instruction: Normal's five at the cap with Dragalge added, so Normal's Ground/Psychic answer still won. Kept as authored work; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
+          "ai_profile": "gym_challenge",
           "strategy": "Poison establishes a clock, Levitate and Drapion split Ground/Psychic answers, and Venomoth converts the final turn into a priority check.",
           "ace_math_change": "Focus Sash guarantees Venomoth's setup turn, so the player must keep Rock pressure or priority for the finish.",
           "members": [
@@ -2073,6 +2552,102 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
+          "strategy": "Mind Field: no Trick Room. Indeedee's Psychic Surge lays eight turns of Psychic Terrain, which powers Expanding Force and stops every priority move against Sabrina's grounded team, so Normal's Sucker Punch answer fails. Gallade's Close Combat and Gardevoir's Moonblast punish the Dark answer; Reuniclus's Focus Blast and Espeon's Magic Bounce (Taunt, Toxic and Thunder Wave reflected) punish the rest.",
+          "ace_math_change": "Alakazam keeps Magic Guard but carries Focus Sash, Nasty Plot, Focus Blast and Dazzling Gleam: Dark types are no longer safe against it, and priority cannot touch it while the terrain lasts.",
+          "members": [
+            {
+              "species": "indeedee",
+              "level_offset": 0,
+              "moveset": [
+                "expandingforce",
+                "shadowball",
+                "calmmind",
+                "mysticalfire"
+              ],
+              "ability": "psychicsurge",
+              "heldItem": "terrain_extender",
+              "nature": "modest"
+            },
+            {
+              "species": "gallade",
+              "level_offset": 0,
+              "moveset": [
+                "closecombat",
+                "psychocut",
+                "leafblade",
+                "nightslash"
+              ],
+              "ability": "sharpness",
+              "heldItem": "life_orb",
+              "nature": "jolly"
+            },
+            {
+              "species": "gardevoir",
+              "level_offset": 0,
+              "moveset": [
+                "moonblast",
+                "psychic",
+                "mysticalfire",
+                "calmmind"
+              ],
+              "ability": "trace",
+              "heldItem": "leftovers",
+              "nature": "timid"
+            },
+            {
+              "species": "reuniclus",
+              "level_offset": 0,
+              "moveset": [
+                "psychic",
+                "focusblast",
+                "shadowball",
+                "recover"
+              ],
+              "ability": "magicguard",
+              "heldItem": "sitrus_berry",
+              "nature": "quiet"
+            },
+            {
+              "species": "espeon",
+              "level_offset": 0,
+              "moveset": [
+                "psychic",
+                "dazzlinggleam",
+                "shadowball",
+                "calmmind"
+              ],
+              "ability": "magicbounce",
+              "heldItem": "wise_glasses",
+              "nature": "timid"
+            },
+            {
+              "species": "alakazam",
+              "level_offset": 0,
+              "moveset": [
+                "expandingforce",
+                "focusblast",
+                "dazzlinggleam",
+                "nastyplot"
+              ],
+              "ability": "magicguard",
+              "heldItem": "focus_sash",
+              "nature": "timid",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "banette",
+            "scolipede",
+            "skuntank",
+            "houndoom",
+            "pinsir",
+            "absol"
+          ],
+          "line_obviousness": "moderate: the terrain announces itself on Indeedee's entry; Ghost (Banette) and Poison (Scolipede, Skuntank) handle the Fairy and Fighting halves that wall Dark, and the Dark attackers win once the eight turns run out."
+        },
+        "superseded_challenge": {
+          "superseded_why": "the Challenge team before the owner's 2026-10-13 instruction: Normal's Trick Room team at the cap with Reuniclus added, so Normal's Dark/priority answer still won. Kept as authored work; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
+          "ai_profile": "gym_challenge",
           "strategy": "Two Trick Room setters support a slow phase; Alakazam then closes after the clock returns to normal.",
           "ace_math_change": "Focus Sash gives Alakazam one setup turn, preserving Sucker Punch and retained priority as the intended fast-phase answer.",
           "members": [
@@ -2338,6 +2913,102 @@
           ]
         },
         "challenge": {
+          "ai_profile": "gym_challenge",
+          "strategy": "Wildfire: no sun, so Normal's lesson about weather does not apply. Gale Wings Talonflame sets Tailwind and burns the physical answer, then the team punishes Water directly: Chandelure's Energy Ball, Scovillain (Grass/Fire, neutral to Water and Ground) and Infernape's Grass Knot. Charizard Dragon Dances, and Volcarona Quiver Dances behind Giga Drain. Water alone is not enough; Rock (Stealth Rock, Rock Slide, Stone Edge) is the type the team cannot cover.",
+          "ace_math_change": "Volcarona replaces Charizard as the closer: Quiver Dance plus Giga Drain beats Water and Ground, but Rock hits it four times over and Stealth Rock takes half its health.",
+          "members": [
+            {
+              "species": "talonflame",
+              "level_offset": 0,
+              "moveset": [
+                "tailwind",
+                "willowisp",
+                "bravebird",
+                "flareblitz"
+              ],
+              "ability": "galewings",
+              "heldItem": "heavy_duty_boots",
+              "nature": "jolly"
+            },
+            {
+              "species": "chandelure",
+              "level_offset": 0,
+              "moveset": [
+                "shadowball",
+                "flamethrower",
+                "energyball",
+                "calmmind"
+              ],
+              "ability": "flashfire",
+              "heldItem": "life_orb",
+              "nature": "modest"
+            },
+            {
+              "species": "scovillain",
+              "level_offset": 0,
+              "moveset": [
+                "flamethrower",
+                "gigadrain",
+                "stompingtantrum",
+                "leechseed"
+              ],
+              "ability": "insomnia",
+              "heldItem": "sitrus_berry",
+              "nature": "modest"
+            },
+            {
+              "species": "infernape",
+              "level_offset": 0,
+              "moveset": [
+                "closecombat",
+                "flareblitz",
+                "grassknot",
+                "machpunch"
+              ],
+              "ability": "blaze",
+              "heldItem": "focus_sash",
+              "nature": "naive"
+            },
+            {
+              "species": "charizard",
+              "level_offset": 0,
+              "moveset": [
+                "dragondance",
+                "flareblitz",
+                "earthquake",
+                "roost"
+              ],
+              "ability": "blaze",
+              "heldItem": "lum_berry",
+              "nature": "jolly"
+            },
+            {
+              "species": "volcarona",
+              "level_offset": 0,
+              "moveset": [
+                "quiverdance",
+                "flamethrower",
+                "gigadrain",
+                "bugbuzz"
+              ],
+              "ability": "flamebody",
+              "heldItem": "leftovers",
+              "nature": "timid",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "rhydon",
+            "lycanroc",
+            "flygon",
+            "gyarados",
+            "crawdaunt",
+            "coalossal"
+          ],
+          "line_obviousness": "moderate: Tailwind and a burn on turn one say 'not a slow Water team'; the Rock line (Rhyhorn to Rhydon, Lycanroc, Coalossal with Stealth Rock) and Gyarados (Grass is only neutral on it) are on Routes 3, 4 and 7."
+        },
+        "superseded_challenge": {
+          "superseded_why": "the Challenge team before the owner's 2026-10-13 instruction: Normal's five at the cap with Magmortar added, so Normal's Water/Ground/Rock answer still won. Kept as authored work; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
           "ai_profile": "gym_challenge",
           "strategy": "Drought creates a six-member damage race; Magmortar is the sole direct Water check while Ground, Rock, and weather replacement stay open.",
           "ace_math_change": "Solar Power plus Life Orb makes Charizard the closing race, but the ace deliberately lacks Solar Beam.",
@@ -2636,6 +3307,102 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
+          "strategy": "Grand Strategy: no sand. Every member is chosen against Normal's Water/Grass answer. Claydol (Levitate) sets Stealth Rock and Ice Beams Grass; Storm Drain Gastrodon absorbs Water; Gliscor (Poison Heal) takes Grass neutrally and resists Fighting; Donphan's Ice Shard and Gunk Shot hit Grass and Fairy; Mold Breaker Excadrill's Earthquake goes through Levitate. Garchomp closes: neutral to both Water and Grass.",
+          "ace_math_change": "Garchomp replaces Rhyperior: Water and Grass are only neutral, Focus Sash guarantees a Swords Dance, and the clean answer becomes Ice (four times over), Fairy or Dragon, with the player's own Stealth Rock breaking the sash.",
+          "members": [
+            {
+              "species": "claydol",
+              "level_offset": 0,
+              "moveset": [
+                "stealthrock",
+                "earthpower",
+                "icebeam",
+                "psychic"
+              ],
+              "ability": "levitate",
+              "heldItem": "mental_herb",
+              "nature": "bold"
+            },
+            {
+              "species": "gastrodon",
+              "level_offset": 0,
+              "moveset": [
+                "scald",
+                "earthpower",
+                "recover",
+                "icebeam"
+              ],
+              "ability": "stormdrain",
+              "heldItem": "leftovers",
+              "nature": "calm"
+            },
+            {
+              "species": "gliscor",
+              "level_offset": 0,
+              "moveset": [
+                "earthquake",
+                "dualwingbeat",
+                "knockoff",
+                "swordsdance"
+              ],
+              "ability": "poisonheal",
+              "heldItem": "toxic_orb",
+              "nature": "jolly"
+            },
+            {
+              "species": "donphan",
+              "level_offset": 0,
+              "moveset": [
+                "earthquake",
+                "iceshard",
+                "knockoff",
+                "gunkshot"
+              ],
+              "ability": "sturdy",
+              "heldItem": "expert_belt",
+              "nature": "adamant"
+            },
+            {
+              "species": "excadrill",
+              "level_offset": 0,
+              "moveset": [
+                "earthquake",
+                "ironhead",
+                "rapidspin",
+                "swordsdance"
+              ],
+              "ability": "moldbreaker",
+              "heldItem": "life_orb",
+              "nature": "jolly"
+            },
+            {
+              "species": "garchomp",
+              "level_offset": 0,
+              "moveset": [
+                "swordsdance",
+                "earthquake",
+                "dragonclaw",
+                "stoneedge"
+              ],
+              "ability": "roughskin",
+              "heldItem": "focus_sash",
+              "nature": "jolly",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "abomasnow",
+            "avalugg",
+            "tinkaton",
+            "gardevoir",
+            "gyarados",
+            "swampert"
+          ],
+          "line_obviousness": "moderate: Claydol's Stealth Rock and Gastrodon's Storm Drain show early that Water is not the plan; Ice (Snover, Bergmite from Route 4), Fairy (Tinkatink on Long Isle and the southern plateau, Ralts from Pallet) and Gyarados's Intimidate carry it."
+        },
+        "superseded_challenge": {
+          "superseded_why": "the Challenge team before the owner's 2026-10-13 instruction: Normal's six species at the cap with upgraded items, so Normal's Water/Grass answer still won. Kept as authored work; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
+          "ai_profile": "gym_challenge",
           "strategy": "Sand changes thresholds while Persian disrupts setup, Nidoqueen breaks one-answer cores, and Krookodile threatens a late snowball.",
           "ace_math_change": "Rindo Berry delays Grass once on Rhyperior while Water remains open and the Rock Polish turn remains visible.",
           "members": [
@@ -2928,6 +3695,102 @@
         },
         "challenge": {
           "ai_profile": "league_standard",
+          "strategy": "Snow Fortress: Snow Warning Abomasnow sets snow (Ice types' Defense up by half) and an eight-turn Aurora Veil, which halves the damage of every hit. Behind it come physical setup threats that punish Normal's Fire/Fighting/Rock/Steel answers: Shell Smash Cloyster with Rock Blast for Fire, Crabominable's Drain Punch and Earthquake for Steel and Rock, Ice Scales Frosmoth halving special Fire, and a Slush Rush Belly Drum Cetitan.",
+          "ace_math_change": "Lapras keeps its Freeze-Dry but trades Assault Vest for Weakness Policy and Heal Bell: under Veil one super-effective hit does not KO it and powers it up, and Heal Bell undoes the burns and paralysis a status plan relies on.",
+          "members": [
+            {
+              "species": "abomasnow",
+              "level_offset": -3,
+              "moveset": [
+                "auroraveil",
+                "blizzard",
+                "gigadrain",
+                "iceshard"
+              ],
+              "ability": "snowwarning",
+              "heldItem": "light_clay",
+              "nature": "quiet"
+            },
+            {
+              "species": "cloyster",
+              "level_offset": -2,
+              "moveset": [
+                "shellsmash",
+                "iciclespear",
+                "rockblast",
+                "iceshard"
+              ],
+              "ability": "skilllink",
+              "heldItem": "white_herb",
+              "nature": "adamant"
+            },
+            {
+              "species": "crabominable",
+              "level_offset": -2,
+              "moveset": [
+                "icehammer",
+                "drainpunch",
+                "earthquake",
+                "stoneedge"
+              ],
+              "ability": "ironfist",
+              "heldItem": "assault_vest",
+              "nature": "adamant"
+            },
+            {
+              "species": "frosmoth",
+              "level_offset": -1,
+              "moveset": [
+                "quiverdance",
+                "icebeam",
+                "bugbuzz",
+                "gigadrain"
+              ],
+              "ability": "icescales",
+              "heldItem": "heavy_duty_boots",
+              "nature": "timid"
+            },
+            {
+              "species": "cetitan",
+              "level_offset": -1,
+              "moveset": [
+                "bellydrum",
+                "iciclecrash",
+                "earthquake",
+                "iceshard"
+              ],
+              "ability": "slushrush",
+              "heldItem": "sitrus_berry",
+              "nature": "adamant"
+            },
+            {
+              "species": "lapras",
+              "level_offset": 0,
+              "moveset": [
+                "freezedry",
+                "hydropump",
+                "thunderbolt",
+                "healbell"
+              ],
+              "ability": "waterabsorb",
+              "heldItem": "weakness_policy",
+              "nature": "modest",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "chandelure",
+            "excadrill",
+            "hariyama",
+            "coalossal",
+            "empoleon",
+            "toxicroak"
+          ],
+          "line_obviousness": "moderate: snow and the Veil go up on turn one; the answers are a Taunt or a fast KO on Abomasnow, a screen-breaker (Brick Break) or Infiltrator Chandelure, Thick Fat Hariyama, and priority for Cetitan."
+        },
+        "superseded_challenge": {
+          "superseded_why": "a copy of the Normal team under its own identity until the owner's 2026-10-13 instruction; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
+          "ai_profile": "league_standard",
           "strategy": "Snow, hazards and speed denial make resource preservation matter across the whole fight.",
           "ace_math_change": "Assault Vest turns Lapras into a special sponge while Freeze-Dry reverses the usual Water counter.",
           "members": [
@@ -3210,6 +4073,102 @@
           ]
         },
         "challenge": {
+          "ai_profile": "league_aggressive",
+          "strategy": "Iron Discipline: every member covers the types that beat Fighting. Scrafty is immune to Psychic and Ice Punches Flying; Hitmonchan's elemental punches hit Flying and Water; Pure Power Medicham's Bullet Punch and Poison Jab hit Fairy; Quaquaval speeds up with every Aqua Step; Conkeldurr's Stone Edge and Knock Off hit Flying and Psychic. Annihilape's Defiant turns Intimidate into +2 Attack.",
+          "ace_math_change": "Annihilape replaces Hitmonlee: a Ghost/Fighting ace immune to Normal and Fighting moves and to Fake Out, whose Rage Fist grows each time it is hit. Ghost, Psychic, Flying or Fairy that hits it once and hard wins, and Intimidate backfires.",
+          "members": [
+            {
+              "species": "scrafty",
+              "level_offset": -3,
+              "moveset": [
+                "fakeout",
+                "knockoff",
+                "drainpunch",
+                "icepunch"
+              ],
+              "ability": "intimidate",
+              "heldItem": "leftovers",
+              "nature": "careful"
+            },
+            {
+              "species": "hitmonchan",
+              "level_offset": -2,
+              "moveset": [
+                "machpunch",
+                "drainpunch",
+                "icepunch",
+                "thunderpunch"
+              ],
+              "ability": "ironfist",
+              "heldItem": "punching_glove",
+              "nature": "adamant"
+            },
+            {
+              "species": "medicham",
+              "level_offset": -2,
+              "moveset": [
+                "highjumpkick",
+                "zenheadbutt",
+                "bulletpunch",
+                "poisonjab"
+              ],
+              "ability": "purepower",
+              "heldItem": "life_orb",
+              "nature": "jolly"
+            },
+            {
+              "species": "quaquaval",
+              "level_offset": -1,
+              "moveset": [
+                "aquastep",
+                "closecombat",
+                "bulkup",
+                "roost"
+              ],
+              "ability": "moxie",
+              "heldItem": "lum_berry",
+              "nature": "jolly"
+            },
+            {
+              "species": "conkeldurr",
+              "level_offset": -1,
+              "moveset": [
+                "machpunch",
+                "drainpunch",
+                "knockoff",
+                "stoneedge"
+              ],
+              "ability": "ironfist",
+              "heldItem": "assault_vest",
+              "nature": "adamant"
+            },
+            {
+              "species": "annihilape",
+              "level_offset": 0,
+              "moveset": [
+                "bulkup",
+                "ragefist",
+                "drainpunch",
+                "taunt"
+              ],
+              "ability": "defiant",
+              "heldItem": "leftovers",
+              "nature": "adamant",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "tinkaton",
+            "gardevoir",
+            "talonflame",
+            "banette",
+            "bronzong",
+            "staraptor"
+          ],
+          "line_obviousness": "moderate: Scrafty's Intimidate and Fake Out lead read like Normal's, but the first Psychic switch-in meets a Dark type; Tinkaton (Steel/Fairy) resists Bullet Punch and is immune to Poison Jab, and Banette is immune to every Fighting move."
+        },
+        "superseded_challenge": {
+          "superseded_why": "a copy of the Normal team under its own identity until the owner's 2026-10-13 instruction; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
           "ai_profile": "league_aggressive",
           "strategy": "Fake Out, removal, priority and mixed physical pressure punish a team that reaches the League without tempo tools.",
           "ace_math_change": "White Herb restores the defense drops from Close Combat and consumes itself to activate Unburden.",
@@ -3494,6 +4453,102 @@
         },
         "challenge": {
           "ai_profile": "league_control",
+          "strategy": "The Slow Haunting: Trick Room Ghosts. Cofagrigus sets Trick Room behind a Mental Herb, so the first Taunt does not stop it, and Trevenant can set it again. Under it the slow hitters move first: No Guard Golurk's Dynamic Punch always lands on the Dark answer, Mimikyu's Disguise and Play Rough punish Dark too, Prankster Sableye burns and Encores, and Cursed Body Jellicent walls special attackers.",
+          "ace_math_change": "Golurk replaces Gengar: slow on purpose, an Assault Vest for special Dark Pulses, and Dynamic Punch that never misses. The answer is to run out or reverse the five turns (Protect, a pivot, a Trick Room of the player's own) and then hit its Water, Grass, Ice, Ghost or Dark weakness.",
+          "members": [
+            {
+              "species": "cofagrigus",
+              "level_offset": -3,
+              "moveset": [
+                "trickroom",
+                "shadowball",
+                "bodypress",
+                "painsplit"
+              ],
+              "ability": "mummy",
+              "heldItem": "mental_herb",
+              "nature": "relaxed"
+            },
+            {
+              "species": "sableye",
+              "level_offset": -2,
+              "moveset": [
+                "willowisp",
+                "knockoff",
+                "recover",
+                "encore"
+              ],
+              "ability": "prankster",
+              "heldItem": "leftovers",
+              "nature": "careful"
+            },
+            {
+              "species": "mimikyu",
+              "level_offset": -2,
+              "moveset": [
+                "swordsdance",
+                "playrough",
+                "shadowclaw",
+                "shadowsneak"
+              ],
+              "ability": "disguise",
+              "heldItem": "life_orb",
+              "nature": "jolly"
+            },
+            {
+              "species": "trevenant",
+              "level_offset": -1,
+              "moveset": [
+                "trickroom",
+                "hornleech",
+                "shadowclaw",
+                "rockslide"
+              ],
+              "ability": "harvest",
+              "heldItem": "sitrus_berry",
+              "nature": "brave"
+            },
+            {
+              "species": "jellicent",
+              "level_offset": -1,
+              "moveset": [
+                "scald",
+                "shadowball",
+                "icebeam",
+                "recover"
+              ],
+              "ability": "cursedbody",
+              "heldItem": "rocky_helmet",
+              "nature": "bold"
+            },
+            {
+              "species": "golurk",
+              "level_offset": 0,
+              "moveset": [
+                "dynamicpunch",
+                "earthquake",
+                "shadowpunch",
+                "icepunch"
+              ],
+              "ability": "noguard",
+              "heldItem": "assault_vest",
+              "nature": "brave",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "kingambit",
+            "houndoom",
+            "chandelure",
+            "rhydon",
+            "bronzong",
+            "tinkaton"
+          ],
+          "line_obviousness": "moderate: Trick Room on turn one says 'your fast Dark sweeper moves last'; slow answers (Kingambit, Rhydon, Bronzong) thrive under it, Steel (Kingambit, Tinkaton) beats Mimikyu, and Sableye's Prankster fails against a Dark type."
+        },
+        "superseded_challenge": {
+          "superseded_why": "a copy of the Normal team under its own identity until the owner's 2026-10-13 instruction; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
+          "ai_profile": "league_control",
           "strategy": "Burns, Taunt, Trick and priority deny clean setup and force the player to manage status across six different Ghost patterns.",
           "ace_math_change": "Focus Sash guarantees Gengar a response and makes priority or prior hazard control part of the answer.",
           "members": [
@@ -3776,6 +4831,102 @@
           ]
         },
         "challenge": {
+          "ai_profile": "league_aggressive",
+          "strategy": "Dragon's Armour: Dragons that Ice and Fairy do not simply delete. Duraludon (Steel/Dragon) takes both neutrally, sets Stealth Rock and paralyses; Tyrantrum (Rock/Dragon) Dragon Dances and Head Smashes Ice; Sniper Kingdra and Hydreigon carry Flash Cannon for Fairy; Assault Vest Goodra answers Fairy with Sludge Bomb and Steel with Fire Blast, and Gooey slows the physical Ice Shard user. Fighting and Ground hit four of the six.",
+          "ace_math_change": "Dragonite keeps Multiscale but swaps Weakness Policy and Extreme Speed for Heavy-Duty Boots and Roost: the player's Stealth Rock no longer breaks Multiscale, and Roost restores it. Phazing, Haze, Encore, Taunt or two Ice hits in a row win.",
+          "members": [
+            {
+              "species": "duraludon",
+              "level_offset": -3,
+              "moveset": [
+                "stealthrock",
+                "flashcannon",
+                "dragonpulse",
+                "thunderwave"
+              ],
+              "ability": "stalwart",
+              "heldItem": "focus_sash",
+              "nature": "modest"
+            },
+            {
+              "species": "tyrantrum",
+              "level_offset": -2,
+              "moveset": [
+                "dragondance",
+                "headsmash",
+                "earthquake",
+                "dragonclaw"
+              ],
+              "ability": "rockhead",
+              "heldItem": "life_orb",
+              "nature": "adamant"
+            },
+            {
+              "species": "kingdra",
+              "level_offset": -2,
+              "moveset": [
+                "hydropump",
+                "dracometeor",
+                "icebeam",
+                "flashcannon"
+              ],
+              "ability": "sniper",
+              "heldItem": "scope_lens",
+              "nature": "modest"
+            },
+            {
+              "species": "hydreigon",
+              "level_offset": -1,
+              "moveset": [
+                "darkpulse",
+                "dracometeor",
+                "flashcannon",
+                "flamethrower"
+              ],
+              "ability": "levitate",
+              "heldItem": "choice_scarf",
+              "nature": "timid"
+            },
+            {
+              "species": "goodra",
+              "level_offset": -1,
+              "moveset": [
+                "dragonpulse",
+                "fireblast",
+                "sludgebomb",
+                "thunderbolt"
+              ],
+              "ability": "gooey",
+              "heldItem": "assault_vest",
+              "nature": "modest"
+            },
+            {
+              "species": "dragonite",
+              "level_offset": 0,
+              "moveset": [
+                "dragondance",
+                "dragonclaw",
+                "earthquake",
+                "roost"
+              ],
+              "ability": "multiscale",
+              "heldItem": "heavy_duty_boots",
+              "nature": "jolly",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "excadrill",
+            "machamp",
+            "tinkaton",
+            "gardevoir",
+            "abomasnow",
+            "flygon"
+          ],
+          "line_obviousness": "moderate: a Steel/Dragon lead that takes Ice and Fairy only neutrally says 'not Ice alone'; Excadrill and Victory Road's Machamp take Duraludon and Tyrantrum, Fairy and Ice still take the back four, and the ace needs a plan for its boosts."
+        },
+        "superseded_challenge": {
+          "superseded_why": "a copy of the Normal team under its own identity until the owner's 2026-10-13 instruction; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
           "ai_profile": "league_aggressive",
           "strategy": "Aerodactyl sets the pace, each midgame member attacks a different Dragon answer, and Dragonite is the only dedicated setup closer.",
           "ace_math_change": "Multiscale plus Weakness Policy punishes an undisciplined super-effective first hit and changes priority damage thresholds.",
@@ -4060,6 +5211,102 @@
         },
         "challenge": {
           "ai_profile": "champion",
+          "strategy": "The Champion's counter-team: no member of Normal's six. Aerodactyl leads with Stealth Rock and Taunt; No Guard Machamp's Dynamic Punch always confuses; Technician Scizor pivots and Bullet Punches Fairy and Ice; Air Balloon Magnezone floats over Ground until the first hit; Choice Specs Gengar is immune to the Fighting that kills Tyranitar. Normal's lesson (speed control, hazard control, a balanced six) still applies; the answers change.",
+          "ace_math_change": "Tyranitar replaces Blastoise: a Dragon Dance ace whose Sand Stream raises its Special Defense by half. Fighting (four times over) wins only once Gengar is gone; Water, Grass, Ground, Steel, Bug and Fairy each hit it twice over.",
+          "members": [
+            {
+              "species": "aerodactyl",
+              "level_offset": -4,
+              "moveset": [
+                "stealthrock",
+                "taunt",
+                "stoneedge",
+                "icefang"
+              ],
+              "ability": "unnerve",
+              "heldItem": "focus_sash",
+              "nature": "jolly"
+            },
+            {
+              "species": "machamp",
+              "level_offset": -3,
+              "moveset": [
+                "dynamicpunch",
+                "stoneedge",
+                "knockoff",
+                "bulletpunch"
+              ],
+              "ability": "noguard",
+              "heldItem": "assault_vest",
+              "nature": "adamant"
+            },
+            {
+              "species": "scizor",
+              "level_offset": -2,
+              "moveset": [
+                "bulletpunch",
+                "uturn",
+                "swordsdance",
+                "roost"
+              ],
+              "ability": "technician",
+              "heldItem": "life_orb",
+              "nature": "adamant"
+            },
+            {
+              "species": "magnezone",
+              "level_offset": -2,
+              "moveset": [
+                "thunderbolt",
+                "flashcannon",
+                "voltswitch",
+                "bodypress"
+              ],
+              "ability": "sturdy",
+              "heldItem": "air_balloon",
+              "nature": "modest"
+            },
+            {
+              "species": "gengar",
+              "level_offset": -1,
+              "moveset": [
+                "shadowball",
+                "sludgewave",
+                "thunderbolt",
+                "focusblast"
+              ],
+              "ability": "cursedbody",
+              "heldItem": "choice_specs",
+              "nature": "timid"
+            },
+            {
+              "species": "tyranitar",
+              "level_offset": 0,
+              "moveset": [
+                "dragondance",
+                "stoneedge",
+                "crunch",
+                "earthquake"
+              ],
+              "ability": "sandstream",
+              "heldItem": "lum_berry",
+              "nature": "adamant",
+              "ace": true
+            }
+          ],
+          "open_line": [
+            "lucario",
+            "excadrill",
+            "chandelure",
+            "gyarados",
+            "gardevoir",
+            "kingambit"
+          ],
+          "line_obviousness": "low: nothing on the field repeats Normal's Blue, so the player scouts as they go; the balanced six Normal teaches still wins, but which member answers which slot changes (Fire for Scizor, Ground after the Balloon pops, Dark for Gengar, Fighting or Water for Tyranitar)."
+        },
+        "superseded_challenge": {
+          "superseded_why": "a copy of the Normal team under its own identity until the owner's 2026-10-13 instruction; nothing reads it. The redesign: docs/mechanics/CHALLENGE_MODE_TEAMS.md.",
+          "ai_profile": "champion",
           "strategy": "Blue recombines the campaign's lessons: tempo lead, sleep, hazards, Intimidate, speed, and a setup ace with no single type shortcut.",
           "ace_math_change": "White Herb erases Shell Smash's defensive cost, forcing the player to stop the setup or answer a full-speed mixed-coverage closer.",
           "members": [
@@ -4186,9 +5433,9 @@
             ]
           ],
           "dialogue_text": {
-            "pre": "First battle? Mine too. If our eyes meet on the road, we battle—ready?",
-            "player_win": "Sand Attack bought me a turn, but it could not fix a bad matchup.",
-            "player_loss": "Quick Attack closes a fight before nerves can."
+            "pre": "First battle? Mine too. Our eyes met, so that's the rule. Ready?",
+            "player_win": "I threw sand in your eyes and you still won?",
+            "player_loss": "Quick Attack! Over before you could even get nervous."
           }
         },
         {
@@ -4216,9 +5463,9 @@
             ]
           ],
           "dialogue_text": {
-            "pre": "The Combee followed the flowers; Surskit followed the water. I learned to pack answers for both.",
-            "player_win": "You switched instead of forcing one partner through everything. That is the lesson.",
-            "player_loss": "Bug teams look gentle until you let them control the field."
+            "pre": "Combee came with the flowers. Surskit came with the puddles. Bugs are everywhere round here.",
+            "player_win": "You kept switching. Annoying. Smart, but annoying.",
+            "player_loss": "Not so gentle now, are they?"
           }
         },
         {
@@ -4248,8 +5495,8 @@
           ],
           "dialogue_text": {
             "pre": "This vale holds water after every storm, even if the old river never did.",
-            "player_win": "You changed targets before Quick Attack could pin you down. Brock will not wait either.",
-            "player_loss": "Fast Water types turn a dry path into their own ground."
+            "player_win": "Quick Attack didn't rattle you. Good. Brock won't wait for you either.",
+            "player_loss": "Lost to Water types in a dry valley. Think about that one."
           }
         },
         {
@@ -4285,9 +5532,9 @@
             ]
           ],
           "dialogue_text": {
-            "pre": "Brock survives the obvious first hit. Bring a second answer for what comes after.",
-            "player_win": "That is a team ready for stone: pressure from more than one direction.",
-            "player_loss": "One counter is a plan. Two counters are a team."
+            "pre": "Brock's rocks take the first hit and keep coming. What have you got after that?",
+            "player_win": "Yeah, you're ready for Brock.",
+            "player_loss": "One counter won't get you past Brock. Bring two."
           }
         }
       ],
@@ -4345,8 +5592,8 @@
             ]
           ],
           "dialogue_text": {
-            "pre": "Corphish does not need a long plan. It denies yours and takes the opening.",
-            "player_win": "You attacked before Taunt stole your setup. Good.",
+            "pre": "Got a plan? My Corphish doesn't care.",
+            "player_win": "You hit me before Taunt landed. Fair enough.",
             "player_loss": "You gave Corphish time, and it took all of it."
           },
           "id": "route_02_trainer_01"
@@ -4379,8 +5626,8 @@
           ],
           "dialogue_text": {
             "pre": "The lake's glowbugs do not hit hard. They make sure you never hit cleanly.",
-            "player_win": "You broke the cycle before Charm, confusion, and Moonlight piled up.",
-            "player_loss": "A weak attack matters when the other side controls every turn."
+            "player_win": "Charm, confusion, Moonlight, and you still got through. Rude.",
+            "player_loss": "Told you they don't hit hard. They didn't need to."
           },
           "id": "route_02_trainer_02"
         },
@@ -4425,8 +5672,8 @@
           ],
           "dialogue_text": {
             "pre": "Most people see Viltri from the south road and think they have seen the lake. The north bank disagrees.",
-            "player_win": "Krabby pushes hard and Shellder closes up. You changed the kind of pressure instead of repeating it.",
-            "player_loss": "The bank rewards a long walk, but it still expects the right answer."
+            "player_win": "Krabby hits hard, Shellder shuts tight, and you got round both. Huh.",
+            "player_loss": "Long walk out here to lose. Bad luck."
           }
         },
         {
@@ -4463,8 +5710,8 @@
           ],
           "dialogue_text": {
             "pre": "Rain changes this whole shore. Did you bring one answer, or two?",
-            "player_win": "Electric pressure handles open water. Flying or Bug pressure handles what grows in it.",
-            "player_loss": "Misty's lake will not give you one clean weakness to chase."
+            "player_win": "Electric for the water, Flying or Bug for what grows in it. You'll do fine against Misty.",
+            "player_loss": "Misty won't give you one weakness to hit. Neither did I."
           },
           "id": "route_02_trainer_03"
         }
@@ -4522,9 +5769,9 @@
             ]
           ],
           "dialogue_text": {
-            "pre": "On a climb, controlling the footing matters more than moving first.",
-            "player_win": "You punished Howl before Rock Tomb could keep you slow.",
-            "player_loss": "One speed drop was enough to decide the slope."
+            "pre": "On a climb, footing beats speed. You'll see.",
+            "player_win": "You hit me while I was Howling. Should've thrown Rock Tomb first.",
+            "player_loss": "One Rock Tomb and you were stuck on the slope."
           }
         },
         {
@@ -4553,9 +5800,9 @@
             ]
           ],
           "dialogue_text": {
-            "pre": "The grove punishes teams built around one resistance. Show me your second switch.",
-            "player_win": "You saw the partner behind the first matchup.",
-            "player_loss": "One safe switch led straight into the other threat."
+            "pre": "Built your whole team around one resistance? The grove eats teams like that.",
+            "player_win": "You saw my second one coming. Most don't.",
+            "player_loss": "Safe switch, straight into my other one."
           }
         },
         {
@@ -4584,9 +5831,9 @@
             ]
           ],
           "dialogue_text": {
-            "pre": "Burrows and roots both carry current into the earth. That is how you face Surge.",
-            "player_win": "You found the opening before Ground and Grass could settle in.",
-            "player_loss": "Bunnelby can grow into your clean Ground answer. Skiddo is the fallback when Ground gets disrupted."
+            "pre": "Burrows and roots. Current goes into the earth and stops there. That's how you beat Surge.",
+            "player_win": "You got in before my Ground and Grass could dig in.",
+            "player_loss": "Catch a Bunnelby, it grows into a real Ground answer. Skiddo too, if Ground gets shut down."
           }
         },
         {
@@ -4617,9 +5864,9 @@
             ]
           ],
           "dialogue_text": {
-            "pre": "That mast keeps changing the way everything moves. Let us see how your team handles lost tempo.",
-            "player_win": "Good. Do not race Surge—use Ground, Grass, or priority to take the turn back.",
-            "player_loss": "Paralysis makes speed unreliable. Bring an immunity or a way to act first anyway."
+            "pre": "That mast messes with everyone's speed. Let's see how you cope.",
+            "player_win": "Good. Don't race Surge. Ground, Grass or priority gets you the turn back.",
+            "player_loss": "Paralysed, so speed means nothing. Bring something immune, or something that moves first."
           }
         },
         {
@@ -4655,9 +5902,9 @@
             ]
           ],
           "dialogue_text": {
-            "pre": "The mountain's safest teams redirect electricity instead of trying to endure it.",
-            "player_win": "You brought immunity, resistance, and pressure. That is enough to challenge the shelf.",
-            "player_loss": "The pond behind you offers Wooper. Bunnelby stays on the critical path. Use one of them."
+            "pre": "Up here you don't tank Electric. You send it somewhere it can't hurt.",
+            "player_win": "Something immune, something that resists, and you hit back. Go take the shelf.",
+            "player_loss": "There's Wooper in the pond behind you and Bunnelby on the path. Catch one."
           }
         }
       ],
@@ -5346,9 +6593,9 @@
             ]
           },
           "dialogue_text": {
-            "pre": "The cave takes speed before it takes strength. Keep something quick in reserve.",
-            "player_win": "You kept a second pace. That is the lesson.",
-            "player_loss": "Return when your plan has a second line."
+            "pre": "This cave slows you down before it beats you up. Hope you kept something quick.",
+            "player_win": "You had something fast left over. Fine.",
+            "player_loss": "Too slow. Go back up and get faster."
           }
         },
         {
@@ -5418,9 +6665,9 @@
             ]
           },
           "dialogue_text": {
-            "pre": "A bad condition becomes a worse hit down here. Do not let the clock start.",
-            "player_win": "You broke the clock before it owned the fight.",
-            "player_loss": "Return when your plan has a second line."
+            "pre": "Get poisoned down here and every hit after it gets worse. Don't let me start.",
+            "player_win": "You ended it before the poison could add up.",
+            "player_loss": "Every turn you sat there poisoned was mine."
           }
         },
         {
@@ -5494,7 +6741,7 @@
           "dialogue_text": {
             "pre": "The old works still hold heat. My lead makes sure you feel all of it.",
             "player_win": "You found an answer that did not care about the sun.",
-            "player_loss": "Return when your plan has a second line."
+            "player_loss": "Too hot for you. Go and cool off."
           }
         },
         {
@@ -5564,9 +6811,9 @@
             ]
           },
           "dialogue_text": {
-            "pre": "One mark ruins muscle. The next target asks whether you brought another kind of force.",
-            "player_win": "Good. You changed tools when the map changed.",
-            "player_loss": "Return when your plan has a second line."
+            "pre": "One burn and your big hitters are done. Then Mudsdale. Got anything that isn't muscle?",
+            "player_win": "Good. You switched tools when the map changed.",
+            "player_loss": "All muscle, and I burned it."
           }
         },
         {
@@ -5638,9 +6885,9 @@
             ]
           },
           "dialogue_text": {
-            "pre": "Rest is over. Sand changes what survives the next hit.",
+            "pre": "Break's over. Once the sand's up, my side takes hits yours can't.",
             "player_win": "You did not trust yesterday's damage numbers.",
-            "player_loss": "Return when your plan has a second line."
+            "player_loss": "The sand was chipping you from the first turn."
           }
         },
         {
@@ -5710,9 +6957,9 @@
             ]
           },
           "dialogue_text": {
-            "pre": "Speed means something different for the next few turns. Survive the room, then move.",
+            "pre": "For the next few turns, slow goes first. Live through the room, then move.",
             "player_win": "You knew when not to race.",
-            "player_loss": "Return when your plan has a second line."
+            "player_loss": "All that speed, and my room made it worthless."
           }
         },
         {
@@ -5784,9 +7031,9 @@
             ]
           },
           "dialogue_text": {
-            "pre": "Rain makes both halves of my team faster at their jobs. Split them apart.",
-            "player_win": "You found the seam between weather and coverage.",
-            "player_loss": "Return when your plan has a second line."
+            "pre": "In the rain both of mine do their jobs faster. Try and split them up.",
+            "player_win": "You got between the rain and the coverage. Nice.",
+            "player_loss": "Still raining. Go and dry off."
           }
         },
         {
@@ -5856,9 +7103,9 @@
             ]
           },
           "dialogue_text": {
-            "pre": "The cut punishes every careless change. Choose what stays in before you move.",
-            "player_win": "You paid for no change you did not need.",
-            "player_loss": "Return when your plan has a second line."
+            "pre": "Switch carelessly in this cut and the rocks bill you. Pick who stays in.",
+            "player_win": "Not one switch you didn't need. Good.",
+            "player_loss": "Every switch cost you. Should have counted."
           }
         },
         {
@@ -5928,9 +7175,9 @@
             ]
           },
           "dialogue_text": {
-            "pre": "I stop your plan, then begin mine. Show me you brought a second plan.",
-            "player_win": "That answer was ready before mine started.",
-            "player_loss": "Return when your plan has a second line."
+            "pre": "I stop your plan, then I run mine. Got a backup?",
+            "player_win": "You had that ready before I'd even started. Annoying.",
+            "player_loss": "First plan stopped, no second one. Done."
           }
         },
         {
@@ -6052,7 +7299,7 @@
           "dialogue_text": {
             "pre": "My Crobat carries a Focus Sash. It will get the wind up. The exam is what you do after that.",
             "player_win": "You did not need the first turn. You needed the right six.",
-            "player_loss": "Return when your plan has a second line."
+            "player_loss": "Fail. Come back with a better six."
           }
         }
       ]

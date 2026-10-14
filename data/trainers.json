@@ -289,22 +289,22 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Six Rock roles convert Rock Tomb's speed tax into setup and breaking pressure; Lileep interrupts Water once without closing Grass.",
+          "strategy": "Sandstone Bastion: Hippopotas raises eight turns of sand, so every Rock member's Special Defense rises by half and the special Water Gun / Mega Drain plan of Normal stops one-shotting. Storm Drain Lileep eats Water, Flame Body Carkol burns contact Grass and Fighting and hits Grass with Fire, and Sturdy plus Weakness Policy turns one big super-effective hit on Onix into a +2 sweep. The answer is physical, multi-hit and status pressure, not one type.",
           "ace_species": "onix",
-          "ace_math_change": "Sturdy plus Weakness Policy gives Onix one dangerous turn, so the player must preserve a fresh finisher.",
+          "ace_math_change": "Sturdy guarantees Onix survives the first hit and Weakness Policy rewards a single super-effective blow; multi-hit moves (Arm Thrust, Fury Cutter), chip and paralysis break it cleanly.",
           "member_count": 6,
           "ai_profile": "gym_challenge",
           "team": [
             {
-              "species": "geodude",
+              "species": "hippopotas",
               "moveset": [
-                "rocktomb",
-                "bulldoze",
-                "rockthrow",
-                "thunderpunch"
+                "yawn",
+                "sandtomb",
+                "bite",
+                "dig"
               ],
-              "ability": "sturdy",
-              "heldItem": "berry_juice",
+              "ability": "sandstream",
+              "heldItem": "smooth_rock",
               "nature": "impish",
               "level": 19
             },
@@ -313,19 +313,32 @@
               "moveset": [
                 "megadrain",
                 "ancientpower",
-                "recover",
-                "rocktomb"
+                "confuseray",
+                "ingrain"
               ],
-              "ability": "suctioncups",
+              "ability": "stormdrain",
               "heldItem": "eviolite",
               "nature": "calm",
+              "level": 19
+            },
+            {
+              "species": "carkol",
+              "moveset": [
+                "flamecharge",
+                "smackdown",
+                "rapidspin",
+                "smokescreen"
+              ],
+              "ability": "flamebody",
+              "heldItem": "eviolite",
+              "nature": "impish",
               "level": 19
             },
             {
               "species": "dwebble",
               "moveset": [
                 "shellsmash",
-                "smackdown",
+                "rocktomb",
                 "bugbite",
                 "bulldoze"
               ],
@@ -335,42 +348,29 @@
               "level": 19
             },
             {
-              "species": "cranidos",
+              "species": "nosepass",
               "moveset": [
-                "headbutt",
-                "rocktomb",
-                "bulldoze",
-                "scaryface"
+                "thunderwave",
+                "rockthrow",
+                "shockwave",
+                "protect"
               ],
-              "ability": "moldbreaker",
-              "heldItem": "muscle_band",
-              "nature": "adamant",
-              "level": 19
-            },
-            {
-              "species": "bonsly",
-              "moveset": [
-                "rocktomb",
-                "bulldoze",
-                "lowkick",
-                "tearfullook"
-              ],
-              "ability": "rockhead",
-              "heldItem": "oran_berry",
-              "nature": "careful",
+              "ability": "sturdy",
+              "heldItem": "sitrus_berry",
+              "nature": "bold",
               "level": 20
             },
             {
               "species": "onix",
               "moveset": [
+                "rockpolish",
                 "rockslide",
                 "bulldoze",
-                "bodypress",
                 "dragonbreath"
               ],
               "ability": "sturdy",
               "heldItem": "weakness_policy",
-              "nature": "impish",
+              "nature": "jolly",
               "level": 20
             }
           ],
@@ -399,15 +399,15 @@
             "bag": [],
             "team": [
               {
-                "species": "geodude",
+                "species": "hippopotas",
                 "moveset": [
-                  "rocktomb",
-                  "bulldoze",
-                  "rockthrow",
-                  "thunderpunch"
+                  "yawn",
+                  "sandtomb",
+                  "bite",
+                  "dig"
                 ],
-                "ability": "sturdy",
-                "heldItem": "berry_juice",
+                "ability": "sandstream",
+                "heldItem": "smooth_rock",
                 "nature": "impish",
                 "level": 19
               },
@@ -416,19 +416,32 @@
                 "moveset": [
                   "megadrain",
                   "ancientpower",
-                  "recover",
-                  "rocktomb"
+                  "confuseray",
+                  "ingrain"
                 ],
-                "ability": "suctioncups",
+                "ability": "stormdrain",
                 "heldItem": "eviolite",
                 "nature": "calm",
+                "level": 19
+              },
+              {
+                "species": "carkol",
+                "moveset": [
+                  "flamecharge",
+                  "smackdown",
+                  "rapidspin",
+                  "smokescreen"
+                ],
+                "ability": "flamebody",
+                "heldItem": "eviolite",
+                "nature": "impish",
                 "level": 19
               },
               {
                 "species": "dwebble",
                 "moveset": [
                   "shellsmash",
-                  "smackdown",
+                  "rocktomb",
                   "bugbite",
                   "bulldoze"
                 ],
@@ -438,55 +451,42 @@
                 "level": 19
               },
               {
-                "species": "cranidos",
+                "species": "nosepass",
                 "moveset": [
-                  "headbutt",
-                  "rocktomb",
-                  "bulldoze",
-                  "scaryface"
+                  "thunderwave",
+                  "rockthrow",
+                  "shockwave",
+                  "protect"
                 ],
-                "ability": "moldbreaker",
-                "heldItem": "muscle_band",
-                "nature": "adamant",
-                "level": 19
-              },
-              {
-                "species": "bonsly",
-                "moveset": [
-                  "rocktomb",
-                  "bulldoze",
-                  "lowkick",
-                  "tearfullook"
-                ],
-                "ability": "rockhead",
-                "heldItem": "oran_berry",
-                "nature": "careful",
+                "ability": "sturdy",
+                "heldItem": "sitrus_berry",
+                "nature": "bold",
                 "level": 20
               },
               {
                 "species": "onix",
                 "moveset": [
+                  "rockpolish",
                   "rockslide",
                   "bulldoze",
-                  "bodypress",
                   "dragonbreath"
                 ],
                 "ability": "sturdy",
                 "heldItem": "weakness_policy",
-                "nature": "impish",
+                "nature": "jolly",
                 "level": 20
               }
             ]
           },
           "open_line": [
-            "eldegoss",
+            "pawmo",
+            "machop",
+            "diggersby",
+            "azumarill",
             "krabby",
-            "staryu",
-            "wingull",
-            "surskit",
-            "buizel"
+            "mareep"
           ],
-          "line_obviousness": "moderate: Route 1 teaches Rock Tomb and supplies both Grass and Water; Lileep visibly signals that Water alone is insufficient."
+          "line_obviousness": "moderate: Hippopotas's sand is announced on turn one and Lileep's Storm Drain on the first Water move; Route 1's Machop, Pawmi, Marill, Krabby (Metal Claw) and Mareep (Thunder Wave) are the physical, multi-hit and status tools, and Normal's lesson (two types) still helps."
         }
       }
     },
@@ -741,44 +741,44 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Rain, speed control, and two different Electric interruptions force a split Grass/Electric/Bug plan rather than one-type sweeping.",
+          "strategy": "Undertow: no rain and no speed race. A slow attrition team where each obvious answer is absorbed or punished: Yawn forces switches, Toxic Spikes poisons every switch-in, Liquid Ooze Tentacool hurts the Mega Drain users, Lightning Rod Goldeen eats Electric and Drill Runs the Electric types, Skill Link Shellder shreds Grass, and Huge Power Azumarill revenges with Aqua Jet. Scald burns the physical answers.",
           "ace_species": "starmie",
-          "ace_math_change": "Drizzle accelerates the middle of the roster while Starmie's sustain asks the player to retain one fast attacker.",
+          "ace_math_change": "Starmie trades Normal's Icy Wind speed control for Scald burns, Thunder Wave and Recover: the player wins by pressure from two sides, not by outspeeding it.",
           "member_count": 6,
           "ai_profile": "gym_challenge",
           "team": [
             {
-              "species": "pelipper",
+              "species": "slowpoke",
               "moveset": [
+                "yawn",
                 "waterpulse",
-                "airslash",
-                "icywind",
-                "roost"
+                "confusion",
+                "disable"
               ],
-              "ability": "drizzle",
-              "heldItem": "damp_rock",
+              "ability": "regenerator",
+              "heldItem": "eviolite",
               "nature": "bold",
               "level": 23
             },
             {
-              "species": "lombre",
+              "species": "tentacool",
               "moveset": [
-                "fakeout",
-                "megadrain",
+                "toxicspikes",
                 "bubblebeam",
-                "protect"
+                "acidspray",
+                "supersonic"
               ],
-              "ability": "swiftswim",
-              "heldItem": "mystic_water",
-              "nature": "modest",
+              "ability": "liquidooze",
+              "heldItem": "black_sludge",
+              "nature": "calm",
               "level": 24
             },
             {
               "species": "goldeen",
               "moveset": [
                 "waterfall",
-                "peck",
-                "knockoff",
+                "drillrun",
+                "hornattack",
                 "agility"
               ],
               "ability": "lightningrod",
@@ -787,41 +787,41 @@
               "level": 24
             },
             {
-              "species": "barboach",
+              "species": "shellder",
               "moveset": [
-                "mudshot",
-                "waterpulse",
-                "icywind",
-                "rest"
+                "iciclespear",
+                "iceshard",
+                "rockblast",
+                "withdraw"
               ],
-              "ability": "hydration",
+              "ability": "skilllink",
               "heldItem": "eviolite",
-              "nature": "calm",
+              "nature": "adamant",
               "level": 24
             },
             {
-              "species": "floatzel",
+              "species": "azumarill",
               "moveset": [
-                "waterfall",
-                "icywind",
-                "brickbreak",
-                "quickattack"
+                "aquajet",
+                "aquatail",
+                "playrough",
+                "charm"
               ],
-              "ability": "swiftswim",
-              "heldItem": "muscle_band",
-              "nature": "jolly",
+              "ability": "hugepower",
+              "heldItem": "sitrus_berry",
+              "nature": "adamant",
               "level": 25
             },
             {
               "species": "starmie",
               "moveset": [
-                "waterpulse",
-                "thunderbolt",
-                "icywind",
+                "scald",
+                "psybeam",
+                "thunderwave",
                 "recover"
               ],
-              "ability": "analytic",
-              "heldItem": "sitrus_berry",
+              "ability": "naturalcure",
+              "heldItem": "leftovers",
               "nature": "timid",
               "level": 25
             }
@@ -851,37 +851,37 @@
             "bag": [],
             "team": [
               {
-                "species": "pelipper",
+                "species": "slowpoke",
                 "moveset": [
+                  "yawn",
                   "waterpulse",
-                  "airslash",
-                  "icywind",
-                  "roost"
+                  "confusion",
+                  "disable"
                 ],
-                "ability": "drizzle",
-                "heldItem": "damp_rock",
+                "ability": "regenerator",
+                "heldItem": "eviolite",
                 "nature": "bold",
                 "level": 23
               },
               {
-                "species": "lombre",
+                "species": "tentacool",
                 "moveset": [
-                  "fakeout",
-                  "megadrain",
+                  "toxicspikes",
                   "bubblebeam",
-                  "protect"
+                  "acidspray",
+                  "supersonic"
                 ],
-                "ability": "swiftswim",
-                "heldItem": "mystic_water",
-                "nature": "modest",
+                "ability": "liquidooze",
+                "heldItem": "black_sludge",
+                "nature": "calm",
                 "level": 24
               },
               {
                 "species": "goldeen",
                 "moveset": [
                   "waterfall",
-                  "peck",
-                  "knockoff",
+                  "drillrun",
+                  "hornattack",
                   "agility"
                 ],
                 "ability": "lightningrod",
@@ -890,55 +890,55 @@
                 "level": 24
               },
               {
-                "species": "barboach",
+                "species": "shellder",
                 "moveset": [
-                  "mudshot",
-                  "waterpulse",
-                  "icywind",
-                  "rest"
+                  "iciclespear",
+                  "iceshard",
+                  "rockblast",
+                  "withdraw"
                 ],
-                "ability": "hydration",
+                "ability": "skilllink",
                 "heldItem": "eviolite",
-                "nature": "calm",
+                "nature": "adamant",
                 "level": 24
               },
               {
-                "species": "floatzel",
+                "species": "azumarill",
                 "moveset": [
-                  "waterfall",
-                  "icywind",
-                  "brickbreak",
-                  "quickattack"
+                  "aquajet",
+                  "aquatail",
+                  "playrough",
+                  "charm"
                 ],
-                "ability": "swiftswim",
-                "heldItem": "muscle_band",
-                "nature": "jolly",
+                "ability": "hugepower",
+                "heldItem": "sitrus_berry",
+                "nature": "adamant",
                 "level": 25
               },
               {
                 "species": "starmie",
                 "moveset": [
-                  "waterpulse",
-                  "thunderbolt",
-                  "icywind",
+                  "scald",
+                  "psybeam",
+                  "thunderwave",
                   "recover"
                 ],
-                "ability": "analytic",
-                "heldItem": "sitrus_berry",
+                "ability": "naturalcure",
+                "heldItem": "leftovers",
                 "nature": "timid",
                 "level": 25
               }
             ]
           },
           "open_line": [
+            "luxio",
             "kilowattrel",
-            "deerling",
-            "illumise",
-            "eldegoss",
-            "lombre",
+            "nuzleaf",
+            "bayleef",
+            "diggersby",
             "pawmo"
           ],
-          "line_obviousness": "clear after scouting: Goldeen and Barboach advertise Electric immunity while both remain vulnerable to Grass."
+          "line_obviousness": "clear after scouting: Goldeen's Lightning Rod and Tentacool's Liquid Ooze show on the first hit; the plan is split Electric, non-draining Grass (Razor Leaf), Dark for the two Psychic types (Nuzleaf) and Ground for Tentacool."
         }
       }
     },
@@ -1247,88 +1247,87 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Paralysis and mixed pressure set the clock; Vikavolt is the single Ground-immunity interruption before Ground can close.",
-          "ace_species": "raichu",
-          "ace_math_change": "Raichu can set up but deliberately has no Ground coverage, leaving the prepared Ground endgame intact.",
+          "strategy": "Live Wire: three of six cannot be touched by Ground (Kilowattrel's Flying, Emolga's Flying, Vikavolt's Levitate), and the three grounded ones punish a Ground switch-in with Scald, Energy Ball, Grass Knot, Surf and Ice Punch. Volt Switch pivots the floaters in front of the Ground answer. The answer is Rock for the fliers, Ground only for the grounded, and Volt Absorb or bulk for the rest.",
+          "ace_species": "pawmot",
+          "ace_math_change": "Pawmot replaces Normal's Raichu as the closer: Mach Punch priority and Ice Punch mean a lone Ground answer loses the last exchange; Thick Fat Hariyama and the Rock line win it.",
           "member_count": 6,
           "ai_profile": "gym_challenge",
           "team": [
             {
-              "species": "electabuzz",
+              "species": "kilowattrel",
               "moveset": [
-                "thunderwave",
-                "lightscreen",
-                "shockwave",
-                "lowkick"
+                "voltswitch",
+                "airslash",
+                "roost",
+                "quickattack"
               ],
-              "ability": "static",
-              "heldItem": "eviolite",
+              "ability": "voltabsorb",
+              "heldItem": "sitrus_berry",
               "nature": "timid",
               "level": 28
             },
             {
-              "species": "vikavolt",
+              "species": "lanturn",
               "moveset": [
-                "voltswitch",
-                "energyball",
-                "bugbuzz",
-                "roost"
+                "scald",
+                "spark",
+                "thunderwave",
+                "confuseray"
               ],
-              "ability": "levitate",
-              "heldItem": "occa_berry",
-              "nature": "modest",
+              "ability": "voltabsorb",
+              "heldItem": "leftovers",
+              "nature": "calm",
               "level": 28
             },
             {
-              "species": "magneton",
+              "species": "emolga",
               "moveset": [
-                "flashcannon",
-                "discharge",
-                "screech",
-                "triattack"
+                "acrobatics",
+                "voltswitch",
+                "nuzzle",
+                "encore"
               ],
-              "ability": "sturdy",
-              "heldItem": "eviolite",
+              "ability": "motordrive",
+              "nature": "jolly",
+              "level": 29
+            },
+            {
+              "species": "vikavolt",
+              "moveset": [
+                "bugbuzz",
+                "energyball",
+                "thunderbolt",
+                "agility"
+              ],
+              "ability": "levitate",
+              "heldItem": "wise_glasses",
               "nature": "modest",
               "level": 29
-            },
-            {
-              "species": "boltund",
-              "moveset": [
-                "thunderfang",
-                "firefang",
-                "playrough",
-                "quickattack"
-              ],
-              "ability": "strongjaw",
-              "heldItem": "muscle_band",
-              "nature": "jolly",
-              "level": 29
-            },
-            {
-              "species": "pawmot",
-              "moveset": [
-                "thunderpunch",
-                "drainpunch",
-                "machpunch",
-                "knockoff"
-              ],
-              "ability": "ironfist",
-              "heldItem": "expert_belt",
-              "nature": "jolly",
-              "level": 30
             },
             {
               "species": "raichu",
               "moveset": [
                 "nastyplot",
                 "thunderbolt",
-                "encore",
-                "quickattack"
+                "grassknot",
+                "surf"
               ],
-              "ability": "static",
-              "heldItem": "sitrus_berry",
+              "ability": "lightningrod",
+              "heldItem": "focus_sash",
               "nature": "timid",
+              "level": 30
+            },
+            {
+              "species": "pawmot",
+              "moveset": [
+                "thunderpunch",
+                "icepunch",
+                "machpunch",
+                "drainpunch"
+              ],
+              "ability": "ironfist",
+              "heldItem": "expert_belt",
+              "nature": "jolly",
               "level": 30
             }
           ],
@@ -1357,94 +1356,93 @@
             "bag": [],
             "team": [
               {
-                "species": "electabuzz",
+                "species": "kilowattrel",
                 "moveset": [
-                  "thunderwave",
-                  "lightscreen",
-                  "shockwave",
-                  "lowkick"
+                  "voltswitch",
+                  "airslash",
+                  "roost",
+                  "quickattack"
                 ],
-                "ability": "static",
-                "heldItem": "eviolite",
+                "ability": "voltabsorb",
+                "heldItem": "sitrus_berry",
                 "nature": "timid",
                 "level": 28
               },
               {
-                "species": "vikavolt",
+                "species": "lanturn",
                 "moveset": [
-                  "voltswitch",
-                  "energyball",
-                  "bugbuzz",
-                  "roost"
+                  "scald",
+                  "spark",
+                  "thunderwave",
+                  "confuseray"
                 ],
-                "ability": "levitate",
-                "heldItem": "occa_berry",
-                "nature": "modest",
+                "ability": "voltabsorb",
+                "heldItem": "leftovers",
+                "nature": "calm",
                 "level": 28
               },
               {
-                "species": "magneton",
+                "species": "emolga",
                 "moveset": [
-                  "flashcannon",
-                  "discharge",
-                  "screech",
-                  "triattack"
+                  "acrobatics",
+                  "voltswitch",
+                  "nuzzle",
+                  "encore"
                 ],
-                "ability": "sturdy",
-                "heldItem": "eviolite",
+                "ability": "motordrive",
+                "nature": "jolly",
+                "level": 29
+              },
+              {
+                "species": "vikavolt",
+                "moveset": [
+                  "bugbuzz",
+                  "energyball",
+                  "thunderbolt",
+                  "agility"
+                ],
+                "ability": "levitate",
+                "heldItem": "wise_glasses",
                 "nature": "modest",
                 "level": 29
-              },
-              {
-                "species": "boltund",
-                "moveset": [
-                  "thunderfang",
-                  "firefang",
-                  "playrough",
-                  "quickattack"
-                ],
-                "ability": "strongjaw",
-                "heldItem": "muscle_band",
-                "nature": "jolly",
-                "level": 29
-              },
-              {
-                "species": "pawmot",
-                "moveset": [
-                  "thunderpunch",
-                  "drainpunch",
-                  "machpunch",
-                  "knockoff"
-                ],
-                "ability": "ironfist",
-                "heldItem": "expert_belt",
-                "nature": "jolly",
-                "level": 30
               },
               {
                 "species": "raichu",
                 "moveset": [
                   "nastyplot",
                   "thunderbolt",
-                  "encore",
-                  "quickattack"
+                  "grassknot",
+                  "surf"
                 ],
-                "ability": "static",
-                "heldItem": "sitrus_berry",
+                "ability": "lightningrod",
+                "heldItem": "focus_sash",
                 "nature": "timid",
+                "level": 30
+              },
+              {
+                "species": "pawmot",
+                "moveset": [
+                  "thunderpunch",
+                  "icepunch",
+                  "machpunch",
+                  "drainpunch"
+                ],
+                "ability": "ironfist",
+                "heldItem": "expert_belt",
+                "nature": "jolly",
                 "level": 30
               }
             ]
           },
           "open_line": [
+            "rhyhorn",
             "lycanroc",
             "hariyama",
-            "heracross",
-            "clodsire",
             "quagsire",
-            "diggersby"
+            "dugtrio",
+            "pachirisu"
           ],
-          "line_obviousness": "clear from preview and Route 3: remove the flying Ground immunity, break the Steel core, then use Ground."
+          "line_obviousness": "moderate: the lead is a Ground-immune flier, which says 'not Ground' on turn one; Mt Clay's Rhyhorn, Rockruff and Makuhita and the badge-1 Rock Slide TM are the tools, and Quagsire's Water Absorb walls Lanturn."
         }
       }
     },
@@ -1752,45 +1750,58 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Sun is the engine; Cradily and Tangrowth interrupt Flying long enough for the Chlorophyll breakers to demand mixed answers.",
-          "ace_species": "vileplume",
-          "ace_math_change": "Coba Berry buys Vileplume one turn against Flying while Ice and Fire remain unblocked.",
+          "strategy": "Rain Garden: the opposite weather to Normal's sun. Prankster Whimsicott sets eight turns of rain and Tailwind before anything moves, rain halves the Fire answer Normal teaches, and Swift Swim Ludicolo hits Fire with Hydro Pump and Flying with Ice Beam. Ferroseed's Gyro Ball and Breloom's Mach Punch punish Ice, Cradily's Rock Slide punishes Flying and Fire, Contrary Lurantis gets stronger from its own Superpower.",
+          "ace_species": "ludicolo",
+          "ace_math_change": "Ludicolo, not Vileplume, closes: Grass/Water takes Fire neutral (halved again in rain) and Ice neutral, so the answer is Poison, Flying that survives Ice Beam, or a Dark type that ignores Prankster.",
           "member_count": 6,
           "ai_profile": "gym_challenge",
           "team": [
             {
-              "species": "bellossom",
+              "species": "whimsicott",
               "moveset": [
-                "sunnyday",
-                "gigadrain",
-                "weatherball",
-                "synthesis"
+                "raindance",
+                "tailwind",
+                "encore",
+                "moonblast"
               ],
-              "ability": "chlorophyll",
-              "heldItem": "heat_rock",
-              "nature": "calm",
+              "ability": "prankster",
+              "heldItem": "damp_rock",
+              "nature": "timid",
               "level": 33
             },
             {
-              "species": "roserade",
+              "species": "ferroseed",
               "moveset": [
-                "gigadrain",
-                "sludgebomb",
-                "dazzlinggleam",
+                "leechseed",
+                "gyroball",
+                "bulletseed",
+                "protect"
+              ],
+              "ability": "ironbarbs",
+              "heldItem": "eviolite",
+              "nature": "relaxed",
+              "level": 34
+            },
+            {
+              "species": "breloom",
+              "moveset": [
+                "machpunch",
+                "bulletseed",
+                "rocktomb",
                 "stunspore"
               ],
-              "ability": "naturalcure",
-              "heldItem": "black_sludge",
-              "nature": "timid",
+              "ability": "technician",
+              "heldItem": "focus_sash",
+              "nature": "jolly",
               "level": 34
             },
             {
               "species": "cradily",
               "moveset": [
+                "rockslide",
                 "gigadrain",
-                "powergem",
                 "recover",
-                "rocktomb"
+                "toxic"
               ],
               "ability": "suctioncups",
               "heldItem": "leftovers",
@@ -1798,41 +1809,28 @@
               "level": 34
             },
             {
-              "species": "tangrowth",
-              "moveset": [
-                "gigadrain",
-                "knockoff",
-                "ancientpower",
-                "sludgebomb"
-              ],
-              "ability": "regenerator",
-              "heldItem": "assault_vest",
-              "nature": "relaxed",
-              "level": 34
-            },
-            {
-              "species": "victreebel",
+              "species": "lurantis",
               "moveset": [
                 "leafblade",
-                "poisonjab",
-                "knockoff",
-                "suckerpunch"
+                "xscissor",
+                "superpower",
+                "synthesis"
               ],
-              "ability": "chlorophyll",
-              "heldItem": "life_orb",
+              "ability": "contrary",
+              "heldItem": "sitrus_berry",
               "nature": "adamant",
               "level": 35
             },
             {
-              "species": "vileplume",
+              "species": "ludicolo",
               "moveset": [
-                "growth",
+                "hydropump",
                 "gigadrain",
-                "sludgebomb",
-                "moonblast"
+                "icebeam",
+                "raindance"
               ],
-              "ability": "chlorophyll",
-              "heldItem": "coba_berry",
+              "ability": "swiftswim",
+              "heldItem": "life_orb",
               "nature": "modest",
               "level": 35
             }
@@ -1862,38 +1860,51 @@
             "bag": [],
             "team": [
               {
-                "species": "bellossom",
+                "species": "whimsicott",
                 "moveset": [
-                  "sunnyday",
-                  "gigadrain",
-                  "weatherball",
-                  "synthesis"
+                  "raindance",
+                  "tailwind",
+                  "encore",
+                  "moonblast"
                 ],
-                "ability": "chlorophyll",
-                "heldItem": "heat_rock",
-                "nature": "calm",
+                "ability": "prankster",
+                "heldItem": "damp_rock",
+                "nature": "timid",
                 "level": 33
               },
               {
-                "species": "roserade",
+                "species": "ferroseed",
                 "moveset": [
-                  "gigadrain",
-                  "sludgebomb",
-                  "dazzlinggleam",
+                  "leechseed",
+                  "gyroball",
+                  "bulletseed",
+                  "protect"
+                ],
+                "ability": "ironbarbs",
+                "heldItem": "eviolite",
+                "nature": "relaxed",
+                "level": 34
+              },
+              {
+                "species": "breloom",
+                "moveset": [
+                  "machpunch",
+                  "bulletseed",
+                  "rocktomb",
                   "stunspore"
                 ],
-                "ability": "naturalcure",
-                "heldItem": "black_sludge",
-                "nature": "timid",
+                "ability": "technician",
+                "heldItem": "focus_sash",
+                "nature": "jolly",
                 "level": 34
               },
               {
                 "species": "cradily",
                 "moveset": [
+                  "rockslide",
                   "gigadrain",
-                  "powergem",
                   "recover",
-                  "rocktomb"
+                  "toxic"
                 ],
                 "ability": "suctioncups",
                 "heldItem": "leftovers",
@@ -1901,55 +1912,42 @@
                 "level": 34
               },
               {
-                "species": "tangrowth",
-                "moveset": [
-                  "gigadrain",
-                  "knockoff",
-                  "ancientpower",
-                  "sludgebomb"
-                ],
-                "ability": "regenerator",
-                "heldItem": "assault_vest",
-                "nature": "relaxed",
-                "level": 34
-              },
-              {
-                "species": "victreebel",
+                "species": "lurantis",
                 "moveset": [
                   "leafblade",
-                  "poisonjab",
-                  "knockoff",
-                  "suckerpunch"
+                  "xscissor",
+                  "superpower",
+                  "synthesis"
                 ],
-                "ability": "chlorophyll",
-                "heldItem": "life_orb",
+                "ability": "contrary",
+                "heldItem": "sitrus_berry",
                 "nature": "adamant",
                 "level": 35
               },
               {
-                "species": "vileplume",
+                "species": "ludicolo",
                 "moveset": [
-                  "growth",
+                  "hydropump",
                   "gigadrain",
-                  "sludgebomb",
-                  "moonblast"
+                  "icebeam",
+                  "raindance"
                 ],
-                "ability": "chlorophyll",
-                "heldItem": "coba_berry",
+                "ability": "swiftswim",
+                "heldItem": "life_orb",
                 "nature": "modest",
                 "level": 35
               }
             ]
           },
           "open_line": [
-            "talonflame",
-            "skarmory",
-            "cryogonal",
-            "jynx",
+            "tentacruel",
+            "skuntank",
+            "staraptor",
             "scyther",
-            "noctowl"
+            "noctowl",
+            "houndoom"
           ],
-          "line_obviousness": "moderate: the route teaches sun and exposes Rock coverage; the answer is a mixed Fire/Flying/Ice line, not six copies of one weakness."
+          "line_obviousness": "moderate: rain falls on turn one and says 'Fire is weaker here'; the Dark types (Houndour, Stunky) north-east of Route 4 ignore Prankster, and Poison (Tentacruel, Skuntank) hits Whimsicott four times over and Ludicolo twice."
         }
       }
     },
@@ -2309,88 +2307,88 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Poison establishes a clock, Levitate and Drapion split Ground/Psychic answers, and Venomoth converts the final turn into a priority check.",
-          "ace_species": "venomoth",
-          "ace_math_change": "Focus Sash guarantees Venomoth's setup turn, so the player must keep Rock pressure or priority for the finish.",
+          "strategy": "Ambush: Ariados lays Toxic Spikes behind a Focus Sash, so every switch costs poison, and the rest punish Normal's Ground and Psychic answers with coverage: Skuntank is immune to Psychic and Sucker Punches it, Roserade's Giga Drain and Tentacruel's Scald hit the Ground types, Dry Skin Toxicroak drinks the Water answer. Glimmora closes, and Toxic Debris lays more Toxic Spikes whenever it is struck physically.",
+          "ace_species": "glimmora",
+          "ace_math_change": "Glimmora replaces Venomoth: a Focus Sash ace that takes Ground four times over but answers the slow Ground switch-in with Energy Ball. Speed, a Steel type (immune to the poison) or special Water wins.",
           "member_count": 6,
           "ai_profile": "gym_challenge",
           "team": [
             {
-              "species": "crobat",
+              "species": "ariados",
               "moveset": [
-                "toxic",
-                "venoshock",
-                "airslash",
-                "roost"
-              ],
-              "ability": "infiltrator",
-              "heldItem": "black_sludge",
-              "nature": "timid",
-              "level": 40
-            },
-            {
-              "species": "weezing",
-              "moveset": [
-                "willowisp",
-                "venoshock",
-                "flamethrower",
-                "painsplit"
-              ],
-              "ability": "levitate",
-              "heldItem": "rocky_helmet",
-              "nature": "bold",
-              "level": 40
-            },
-            {
-              "species": "toxtricity",
-              "moveset": [
-                "overdrive",
-                "boomburst",
-                "venoshock",
-                "snarl"
-              ],
-              "ability": "punkrock",
-              "heldItem": "throat_spray",
-              "nature": "modest",
-              "level": 40
-            },
-            {
-              "species": "dragalge",
-              "moveset": [
-                "sludgewave",
-                "dragonpulse",
-                "hydropump",
-                "thunderbolt"
-              ],
-              "ability": "adaptability",
-              "heldItem": "assault_vest",
-              "nature": "modest",
-              "level": 40
-            },
-            {
-              "species": "drapion",
-              "moveset": [
-                "knockoff",
+                "toxicspikes",
+                "megahorn",
                 "poisonjab",
-                "earthquake",
-                "aquatail"
+                "shadowsneak"
               ],
-              "ability": "battlearmor",
-              "heldItem": "shuca_berry",
+              "ability": "insomnia",
+              "heldItem": "focus_sash",
+              "nature": "jolly",
+              "level": 40
+            },
+            {
+              "species": "skuntank",
+              "moveset": [
+                "suckerpunch",
+                "crunch",
+                "poisonjab",
+                "flamethrower"
+              ],
+              "ability": "aftermath",
+              "heldItem": "black_glasses",
               "nature": "adamant",
               "level": 40
             },
             {
-              "species": "venomoth",
+              "species": "tentacruel",
               "moveset": [
-                "quiverdance",
-                "venoshock",
-                "bugbuzz",
-                "psychic"
+                "scald",
+                "sludgebomb",
+                "knockoff",
+                "rapidspin"
               ],
-              "ability": "tintedlens",
-              "heldItem": "focus_sash",
+              "ability": "liquidooze",
+              "heldItem": "black_sludge",
+              "nature": "calm",
+              "level": 40
+            },
+            {
+              "species": "roserade",
+              "moveset": [
+                "gigadrain",
+                "sludgebomb",
+                "shadowball",
+                "synthesis"
+              ],
+              "ability": "naturalcure",
+              "heldItem": "wise_glasses",
               "nature": "timid",
+              "level": 40
+            },
+            {
+              "species": "toxicroak",
+              "moveset": [
+                "suckerpunch",
+                "drainpunch",
+                "gunkshot",
+                "swordsdance"
+              ],
+              "ability": "dryskin",
+              "heldItem": "life_orb",
+              "nature": "jolly",
+              "level": 40
+            },
+            {
+              "species": "glimmora",
+              "moveset": [
+                "sludgewave",
+                "earthpower",
+                "energyball",
+                "powergem"
+              ],
+              "ability": "toxicdebris",
+              "heldItem": "focus_sash",
+              "nature": "modest",
               "level": 40
             }
           ],
@@ -2419,94 +2417,94 @@
             "bag": [],
             "team": [
               {
-                "species": "crobat",
+                "species": "ariados",
                 "moveset": [
-                  "toxic",
-                  "venoshock",
-                  "airslash",
-                  "roost"
-                ],
-                "ability": "infiltrator",
-                "heldItem": "black_sludge",
-                "nature": "timid",
-                "level": 40
-              },
-              {
-                "species": "weezing",
-                "moveset": [
-                  "willowisp",
-                  "venoshock",
-                  "flamethrower",
-                  "painsplit"
-                ],
-                "ability": "levitate",
-                "heldItem": "rocky_helmet",
-                "nature": "bold",
-                "level": 40
-              },
-              {
-                "species": "toxtricity",
-                "moveset": [
-                  "overdrive",
-                  "boomburst",
-                  "venoshock",
-                  "snarl"
-                ],
-                "ability": "punkrock",
-                "heldItem": "throat_spray",
-                "nature": "modest",
-                "level": 40
-              },
-              {
-                "species": "dragalge",
-                "moveset": [
-                  "sludgewave",
-                  "dragonpulse",
-                  "hydropump",
-                  "thunderbolt"
-                ],
-                "ability": "adaptability",
-                "heldItem": "assault_vest",
-                "nature": "modest",
-                "level": 40
-              },
-              {
-                "species": "drapion",
-                "moveset": [
-                  "knockoff",
+                  "toxicspikes",
+                  "megahorn",
                   "poisonjab",
-                  "earthquake",
-                  "aquatail"
+                  "shadowsneak"
                 ],
-                "ability": "battlearmor",
-                "heldItem": "shuca_berry",
+                "ability": "insomnia",
+                "heldItem": "focus_sash",
+                "nature": "jolly",
+                "level": 40
+              },
+              {
+                "species": "skuntank",
+                "moveset": [
+                  "suckerpunch",
+                  "crunch",
+                  "poisonjab",
+                  "flamethrower"
+                ],
+                "ability": "aftermath",
+                "heldItem": "black_glasses",
                 "nature": "adamant",
                 "level": 40
               },
               {
-                "species": "venomoth",
+                "species": "tentacruel",
                 "moveset": [
-                  "quiverdance",
-                  "venoshock",
-                  "bugbuzz",
-                  "psychic"
+                  "scald",
+                  "sludgebomb",
+                  "knockoff",
+                  "rapidspin"
                 ],
-                "ability": "tintedlens",
-                "heldItem": "focus_sash",
+                "ability": "liquidooze",
+                "heldItem": "black_sludge",
+                "nature": "calm",
+                "level": 40
+              },
+              {
+                "species": "roserade",
+                "moveset": [
+                  "gigadrain",
+                  "sludgebomb",
+                  "shadowball",
+                  "synthesis"
+                ],
+                "ability": "naturalcure",
+                "heldItem": "wise_glasses",
                 "nature": "timid",
+                "level": 40
+              },
+              {
+                "species": "toxicroak",
+                "moveset": [
+                  "suckerpunch",
+                  "drainpunch",
+                  "gunkshot",
+                  "swordsdance"
+                ],
+                "ability": "dryskin",
+                "heldItem": "life_orb",
+                "nature": "jolly",
+                "level": 40
+              },
+              {
+                "species": "glimmora",
+                "moveset": [
+                  "sludgewave",
+                  "earthpower",
+                  "energyball",
+                  "powergem"
+                ],
+                "ability": "toxicdebris",
+                "heldItem": "focus_sash",
+                "nature": "modest",
                 "level": 40
               }
             ]
           },
           "open_line": [
-            "ampharos",
-            "jynx",
-            "diggersby",
             "bronzong",
-            "quagsire",
-            "lycanroc"
+            "excadrill",
+            "xatu",
+            "medicham",
+            "delphox",
+            "empoleon"
           ],
-          "line_obviousness": "moderate: Route 5 teaches Levitate and mixed Poison typings, but the player must assign a different answer to each role."
+          "line_obviousness": "moderate: Toxic Spikes on turn one says 'bring Steel or keep switches few'; Bronzong (Mt Vessu) and Excadrill (Route 5) shrug off the poison, Xatu and Medicham take the Psychic line, and Empoleon's Water beats Glimmora."
         }
       }
     },
@@ -2866,84 +2864,84 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Two Trick Room setters support a slow phase; Alakazam then closes after the clock returns to normal.",
+          "strategy": "Mind Field: no Trick Room. Indeedee's Psychic Surge lays eight turns of Psychic Terrain, which powers Expanding Force and stops every priority move against Sabrina's grounded team, so Normal's Sucker Punch answer fails. Gallade's Close Combat and Gardevoir's Moonblast punish the Dark answer; Reuniclus's Focus Blast and Espeon's Magic Bounce (Taunt, Toxic and Thunder Wave reflected) punish the rest.",
           "ace_species": "alakazam",
-          "ace_math_change": "Focus Sash gives Alakazam one setup turn, preserving Sucker Punch and retained priority as the intended fast-phase answer.",
+          "ace_math_change": "Alakazam keeps Magic Guard but carries Focus Sash, Nasty Plot, Focus Blast and Dazzling Gleam: Dark types are no longer safe against it, and priority cannot touch it while the terrain lasts.",
           "member_count": 6,
           "ai_profile": "gym_challenge",
           "team": [
             {
-              "species": "hatterene",
+              "species": "indeedee",
               "moveset": [
-                "trickroom",
+                "expandingforce",
+                "shadowball",
+                "calmmind",
+                "mysticalfire"
+              ],
+              "ability": "psychicsurge",
+              "heldItem": "terrain_extender",
+              "nature": "modest",
+              "level": 45
+            },
+            {
+              "species": "gallade",
+              "moveset": [
+                "closecombat",
+                "psychocut",
+                "leafblade",
+                "nightslash"
+              ],
+              "ability": "sharpness",
+              "heldItem": "life_orb",
+              "nature": "jolly",
+              "level": 45
+            },
+            {
+              "species": "gardevoir",
+              "moveset": [
+                "moonblast",
                 "psychic",
                 "mysticalfire",
-                "drainingkiss"
+                "calmmind"
               ],
-              "ability": "magicbounce",
-              "heldItem": "focus_sash",
-              "nature": "quiet",
-              "level": 45
-            },
-            {
-              "species": "slowbro",
-              "moveset": [
-                "psychic",
-                "surf",
-                "slackoff",
-                "icebeam"
-              ],
-              "ability": "regenerator",
-              "heldItem": "colbur_berry",
-              "nature": "relaxed",
-              "level": 45
-            },
-            {
-              "species": "bronzong",
-              "moveset": [
-                "trickroom",
-                "gyroball",
-                "bodypress",
-                "hypnosis"
-              ],
-              "ability": "levitate",
+              "ability": "trace",
               "heldItem": "leftovers",
-              "nature": "sassy",
-              "level": 45
-            },
-            {
-              "species": "exeggutor",
-              "moveset": [
-                "psychic",
-                "gigadrain",
-                "sleeppowder",
-                "ancientpower"
-              ],
-              "ability": "harvest",
-              "heldItem": "sitrus_berry",
-              "nature": "quiet",
+              "nature": "timid",
               "level": 45
             },
             {
               "species": "reuniclus",
               "moveset": [
                 "psychic",
-                "energyball",
+                "focusblast",
                 "shadowball",
                 "recover"
               ],
               "ability": "magicguard",
-              "heldItem": "life_orb",
+              "heldItem": "sitrus_berry",
               "nature": "quiet",
+              "level": 45
+            },
+            {
+              "species": "espeon",
+              "moveset": [
+                "psychic",
+                "dazzlinggleam",
+                "shadowball",
+                "calmmind"
+              ],
+              "ability": "magicbounce",
+              "heldItem": "wise_glasses",
+              "nature": "timid",
               "level": 45
             },
             {
               "species": "alakazam",
               "moveset": [
-                "nastyplot",
-                "psychic",
-                "shadowball",
-                "recover"
+                "expandingforce",
+                "focusblast",
+                "dazzlinggleam",
+                "nastyplot"
               ],
               "ability": "magicguard",
               "heldItem": "focus_sash",
@@ -2976,77 +2974,77 @@
             "bag": [],
             "team": [
               {
-                "species": "hatterene",
+                "species": "indeedee",
                 "moveset": [
-                  "trickroom",
+                  "expandingforce",
+                  "shadowball",
+                  "calmmind",
+                  "mysticalfire"
+                ],
+                "ability": "psychicsurge",
+                "heldItem": "terrain_extender",
+                "nature": "modest",
+                "level": 45
+              },
+              {
+                "species": "gallade",
+                "moveset": [
+                  "closecombat",
+                  "psychocut",
+                  "leafblade",
+                  "nightslash"
+                ],
+                "ability": "sharpness",
+                "heldItem": "life_orb",
+                "nature": "jolly",
+                "level": 45
+              },
+              {
+                "species": "gardevoir",
+                "moveset": [
+                  "moonblast",
                   "psychic",
                   "mysticalfire",
-                  "drainingkiss"
+                  "calmmind"
                 ],
-                "ability": "magicbounce",
-                "heldItem": "focus_sash",
-                "nature": "quiet",
-                "level": 45
-              },
-              {
-                "species": "slowbro",
-                "moveset": [
-                  "psychic",
-                  "surf",
-                  "slackoff",
-                  "icebeam"
-                ],
-                "ability": "regenerator",
-                "heldItem": "colbur_berry",
-                "nature": "relaxed",
-                "level": 45
-              },
-              {
-                "species": "bronzong",
-                "moveset": [
-                  "trickroom",
-                  "gyroball",
-                  "bodypress",
-                  "hypnosis"
-                ],
-                "ability": "levitate",
+                "ability": "trace",
                 "heldItem": "leftovers",
-                "nature": "sassy",
-                "level": 45
-              },
-              {
-                "species": "exeggutor",
-                "moveset": [
-                  "psychic",
-                  "gigadrain",
-                  "sleeppowder",
-                  "ancientpower"
-                ],
-                "ability": "harvest",
-                "heldItem": "sitrus_berry",
-                "nature": "quiet",
+                "nature": "timid",
                 "level": 45
               },
               {
                 "species": "reuniclus",
                 "moveset": [
                   "psychic",
-                  "energyball",
+                  "focusblast",
                   "shadowball",
                   "recover"
                 ],
                 "ability": "magicguard",
-                "heldItem": "life_orb",
+                "heldItem": "sitrus_berry",
                 "nature": "quiet",
+                "level": 45
+              },
+              {
+                "species": "espeon",
+                "moveset": [
+                  "psychic",
+                  "dazzlinggleam",
+                  "shadowball",
+                  "calmmind"
+                ],
+                "ability": "magicbounce",
+                "heldItem": "wise_glasses",
+                "nature": "timid",
                 "level": 45
               },
               {
                 "species": "alakazam",
                 "moveset": [
-                  "nastyplot",
-                  "psychic",
-                  "shadowball",
-                  "recover"
+                  "expandingforce",
+                  "focusblast",
+                  "dazzlinggleam",
+                  "nastyplot"
                 ],
                 "ability": "magicguard",
                 "heldItem": "focus_sash",
@@ -3056,14 +3054,14 @@
             ]
           },
           "open_line": [
-            "bronzong",
-            "scyther",
-            "heracross",
+            "banette",
+            "scolipede",
             "skuntank",
-            "toxtricity",
-            "quagsire"
+            "houndoom",
+            "pinsir",
+            "absol"
           ],
-          "line_obviousness": "clear after Route 6: Dark offense, priority, and surviving the Trick Room clock are all taught before the leader."
+          "line_obviousness": "moderate: the terrain announces itself on Indeedee's entry; Ghost (Banette) and Poison (Scolipede, Skuntank) handle the Fairy and Fighting halves that wall Dark, and the Dark attackers win once the eight turns run out."
         }
       }
     },
@@ -3422,87 +3420,87 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Drought creates a six-member damage race; Magmortar is the sole direct Water check while Ground, Rock, and weather replacement stay open.",
-          "ace_species": "charizard",
-          "ace_math_change": "Solar Power plus Life Orb makes Charizard the closing race, but the ace deliberately lacks Solar Beam.",
+          "strategy": "Wildfire: no sun, so Normal's lesson about weather does not apply. Gale Wings Talonflame sets Tailwind and burns the physical answer, then the team punishes Water directly: Chandelure's Energy Ball, Scovillain (Grass/Fire, neutral to Water and Ground) and Infernape's Grass Knot. Charizard Dragon Dances, and Volcarona Quiver Dances behind Giga Drain. Water alone is not enough; Rock (Stealth Rock, Rock Slide, Stone Edge) is the type the team cannot cover.",
+          "ace_species": "volcarona",
+          "ace_math_change": "Volcarona replaces Charizard as the closer: Quiver Dance plus Giga Drain beats Water and Ground, but Rock hits it four times over and Stealth Rock takes half its health.",
           "member_count": 6,
           "ai_profile": "gym_challenge",
           "team": [
             {
-              "species": "torkoal",
+              "species": "talonflame",
               "moveset": [
-                "stealthrock",
-                "lavaplume",
-                "bodypress",
-                "yawn"
+                "tailwind",
+                "willowisp",
+                "bravebird",
+                "flareblitz"
               ],
-              "ability": "drought",
-              "heldItem": "heat_rock",
-              "nature": "bold",
-              "level": 50
-            },
-            {
-              "species": "arcanine",
-              "moveset": [
-                "flareblitz",
-                "closecombat",
-                "crunch",
-                "extremespeed"
-              ],
-              "ability": "intimidate",
-              "heldItem": "choice_band",
+              "ability": "galewings",
+              "heldItem": "heavy_duty_boots",
               "nature": "jolly",
               "level": 50
             },
             {
-              "species": "magcargo",
+              "species": "chandelure",
               "moveset": [
-                "shellsmash",
-                "fireblast",
-                "powergem",
-                "earthpower"
-              ],
-              "ability": "weakarmor",
-              "heldItem": "white_herb",
-              "nature": "modest",
-              "level": 50
-            },
-            {
-              "species": "magmortar",
-              "moveset": [
-                "fireblast",
-                "thunderbolt",
-                "psychic",
-                "focusblast"
-              ],
-              "ability": "vitalspirit",
-              "heldItem": "assault_vest",
-              "nature": "modest",
-              "level": 50
-            },
-            {
-              "species": "typhlosion",
-              "moveset": [
-                "eruption",
+                "shadowball",
                 "flamethrower",
-                "focusblast",
-                "extrasensory"
+                "energyball",
+                "calmmind"
+              ],
+              "ability": "flashfire",
+              "heldItem": "life_orb",
+              "nature": "modest",
+              "level": 50
+            },
+            {
+              "species": "scovillain",
+              "moveset": [
+                "flamethrower",
+                "gigadrain",
+                "stompingtantrum",
+                "leechseed"
+              ],
+              "ability": "insomnia",
+              "heldItem": "sitrus_berry",
+              "nature": "modest",
+              "level": 50
+            },
+            {
+              "species": "infernape",
+              "moveset": [
+                "closecombat",
+                "flareblitz",
+                "grassknot",
+                "machpunch"
               ],
               "ability": "blaze",
-              "heldItem": "choice_scarf",
-              "nature": "timid",
+              "heldItem": "focus_sash",
+              "nature": "naive",
               "level": 50
             },
             {
               "species": "charizard",
               "moveset": [
-                "flamethrower",
-                "airslash",
-                "dragonpulse",
+                "dragondance",
+                "flareblitz",
+                "earthquake",
                 "roost"
               ],
-              "ability": "solarpower",
-              "heldItem": "life_orb",
+              "ability": "blaze",
+              "heldItem": "lum_berry",
+              "nature": "jolly",
+              "level": 50
+            },
+            {
+              "species": "volcarona",
+              "moveset": [
+                "quiverdance",
+                "flamethrower",
+                "gigadrain",
+                "bugbuzz"
+              ],
+              "ability": "flamebody",
+              "heldItem": "leftovers",
               "nature": "timid",
               "level": 50
             }
@@ -3532,94 +3530,94 @@
             "bag": [],
             "team": [
               {
-                "species": "torkoal",
+                "species": "talonflame",
                 "moveset": [
-                  "stealthrock",
-                  "lavaplume",
-                  "bodypress",
-                  "yawn"
+                  "tailwind",
+                  "willowisp",
+                  "bravebird",
+                  "flareblitz"
                 ],
-                "ability": "drought",
-                "heldItem": "heat_rock",
-                "nature": "bold",
-                "level": 50
-              },
-              {
-                "species": "arcanine",
-                "moveset": [
-                  "flareblitz",
-                  "closecombat",
-                  "crunch",
-                  "extremespeed"
-                ],
-                "ability": "intimidate",
-                "heldItem": "choice_band",
+                "ability": "galewings",
+                "heldItem": "heavy_duty_boots",
                 "nature": "jolly",
                 "level": 50
               },
               {
-                "species": "magcargo",
+                "species": "chandelure",
                 "moveset": [
-                  "shellsmash",
-                  "fireblast",
-                  "powergem",
-                  "earthpower"
-                ],
-                "ability": "weakarmor",
-                "heldItem": "white_herb",
-                "nature": "modest",
-                "level": 50
-              },
-              {
-                "species": "magmortar",
-                "moveset": [
-                  "fireblast",
-                  "thunderbolt",
-                  "psychic",
-                  "focusblast"
-                ],
-                "ability": "vitalspirit",
-                "heldItem": "assault_vest",
-                "nature": "modest",
-                "level": 50
-              },
-              {
-                "species": "typhlosion",
-                "moveset": [
-                  "eruption",
+                  "shadowball",
                   "flamethrower",
-                  "focusblast",
-                  "extrasensory"
+                  "energyball",
+                  "calmmind"
+                ],
+                "ability": "flashfire",
+                "heldItem": "life_orb",
+                "nature": "modest",
+                "level": 50
+              },
+              {
+                "species": "scovillain",
+                "moveset": [
+                  "flamethrower",
+                  "gigadrain",
+                  "stompingtantrum",
+                  "leechseed"
+                ],
+                "ability": "insomnia",
+                "heldItem": "sitrus_berry",
+                "nature": "modest",
+                "level": 50
+              },
+              {
+                "species": "infernape",
+                "moveset": [
+                  "closecombat",
+                  "flareblitz",
+                  "grassknot",
+                  "machpunch"
                 ],
                 "ability": "blaze",
-                "heldItem": "choice_scarf",
-                "nature": "timid",
+                "heldItem": "focus_sash",
+                "nature": "naive",
                 "level": 50
               },
               {
                 "species": "charizard",
                 "moveset": [
-                  "flamethrower",
-                  "airslash",
-                  "dragonpulse",
+                  "dragondance",
+                  "flareblitz",
+                  "earthquake",
                   "roost"
                 ],
-                "ability": "solarpower",
-                "heldItem": "life_orb",
+                "ability": "blaze",
+                "heldItem": "lum_berry",
+                "nature": "jolly",
+                "level": 50
+              },
+              {
+                "species": "volcarona",
+                "moveset": [
+                  "quiverdance",
+                  "flamethrower",
+                  "gigadrain",
+                  "bugbuzz"
+                ],
+                "ability": "flamebody",
+                "heldItem": "leftovers",
                 "nature": "timid",
                 "level": 50
               }
             ]
           },
           "open_line": [
-            "dondozo",
-            "pelipper",
-            "floatzel",
-            "whiscash",
+            "rhydon",
+            "lycanroc",
+            "flygon",
+            "gyarados",
             "crawdaunt",
-            "lycanroc"
+            "coalossal"
           ],
-          "line_obviousness": "moderate: Route 7 teaches bulky Water, weather replacement, fast Water, Ground and Rock pressure; the winning order still needs scouting."
+          "line_obviousness": "moderate: Tailwind and a burn on turn one say 'not a slow Water team'; the Rock line (Rhyhorn to Rhydon, Lycanroc, Coalossal with Stealth Rock) and Gyarados (Grass is only neutral on it) are on Routes 3, 4 and 7."
         }
       }
     },
@@ -4036,88 +4034,88 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Sand changes thresholds while Persian disrupts setup, Nidoqueen breaks one-answer cores, and Krookodile threatens a late snowball.",
-          "ace_species": "rhyperior",
-          "ace_math_change": "Rindo Berry delays Grass once on Rhyperior while Water remains open and the Rock Polish turn remains visible.",
+          "strategy": "Grand Strategy: no sand. Every member is chosen against Normal's Water/Grass answer. Claydol (Levitate) sets Stealth Rock and Ice Beams Grass; Storm Drain Gastrodon absorbs Water; Gliscor (Poison Heal) takes Grass neutrally and resists Fighting; Donphan's Ice Shard and Gunk Shot hit Grass and Fairy; Mold Breaker Excadrill's Earthquake goes through Levitate. Garchomp closes: neutral to both Water and Grass.",
+          "ace_species": "garchomp",
+          "ace_math_change": "Garchomp replaces Rhyperior: Water and Grass are only neutral, Focus Sash guarantees a Swords Dance, and the clean answer becomes Ice (four times over), Fairy or Dragon, with the player's own Stealth Rock breaking the sash.",
           "member_count": 6,
           "ai_profile": "gym_challenge",
           "team": [
             {
-              "species": "hippowdon",
+              "species": "claydol",
               "moveset": [
-                "earthquake",
-                "rockslide",
-                "yawn",
-                "slackoff"
+                "stealthrock",
+                "earthpower",
+                "icebeam",
+                "psychic"
               ],
-              "ability": "sandstream",
-              "heldItem": "smooth_rock",
-              "nature": "impish",
+              "ability": "levitate",
+              "heldItem": "mental_herb",
+              "nature": "bold",
               "level": 55
             },
             {
-              "species": "persian",
+              "species": "gastrodon",
               "moveset": [
-                "fakeout",
-                "doublehit",
-                "taunt",
-                "uturn"
+                "scald",
+                "earthpower",
+                "recover",
+                "icebeam"
               ],
-              "ability": "technician",
-              "heldItem": "focus_sash",
+              "ability": "stormdrain",
+              "heldItem": "leftovers",
+              "nature": "calm",
+              "level": 55
+            },
+            {
+              "species": "gliscor",
+              "moveset": [
+                "earthquake",
+                "dualwingbeat",
+                "knockoff",
+                "swordsdance"
+              ],
+              "ability": "poisonheal",
+              "heldItem": "toxic_orb",
               "nature": "jolly",
               "level": 55
             },
             {
-              "species": "mudsdale",
-              "moveset": [
-                "highhorsepower",
-                "rockslide",
-                "bodypress",
-                "heavyslam"
-              ],
-              "ability": "stamina",
-              "heldItem": "assault_vest",
-              "nature": "careful",
-              "level": 55
-            },
-            {
-              "species": "nidoqueen",
-              "moveset": [
-                "earthpower",
-                "sludgewave",
-                "icebeam",
-                "flamethrower"
-              ],
-              "ability": "sheerforce",
-              "heldItem": "life_orb",
-              "nature": "modest",
-              "level": 55
-            },
-            {
-              "species": "krookodile",
+              "species": "donphan",
               "moveset": [
                 "earthquake",
-                "crunch",
-                "closecombat",
+                "iceshard",
+                "knockoff",
+                "gunkshot"
+              ],
+              "ability": "sturdy",
+              "heldItem": "expert_belt",
+              "nature": "adamant",
+              "level": 55
+            },
+            {
+              "species": "excadrill",
+              "moveset": [
+                "earthquake",
+                "ironhead",
+                "rapidspin",
+                "swordsdance"
+              ],
+              "ability": "moldbreaker",
+              "heldItem": "life_orb",
+              "nature": "jolly",
+              "level": 55
+            },
+            {
+              "species": "garchomp",
+              "moveset": [
+                "swordsdance",
+                "earthquake",
+                "dragonclaw",
                 "stoneedge"
               ],
-              "ability": "moxie",
-              "heldItem": "choice_scarf",
+              "ability": "roughskin",
+              "heldItem": "focus_sash",
               "nature": "jolly",
-              "level": 55
-            },
-            {
-              "species": "rhyperior",
-              "moveset": [
-                "rockpolish",
-                "earthquake",
-                "rockslide",
-                "megahorn"
-              ],
-              "ability": "solidrock",
-              "heldItem": "rindo_berry",
-              "nature": "adamant",
               "level": 55
             }
           ],
@@ -4146,94 +4144,94 @@
             "bag": [],
             "team": [
               {
-                "species": "hippowdon",
+                "species": "claydol",
                 "moveset": [
-                  "earthquake",
-                  "rockslide",
-                  "yawn",
-                  "slackoff"
+                  "stealthrock",
+                  "earthpower",
+                  "icebeam",
+                  "psychic"
                 ],
-                "ability": "sandstream",
-                "heldItem": "smooth_rock",
-                "nature": "impish",
+                "ability": "levitate",
+                "heldItem": "mental_herb",
+                "nature": "bold",
                 "level": 55
               },
               {
-                "species": "persian",
+                "species": "gastrodon",
                 "moveset": [
-                  "fakeout",
-                  "doublehit",
-                  "taunt",
-                  "uturn"
+                  "scald",
+                  "earthpower",
+                  "recover",
+                  "icebeam"
                 ],
-                "ability": "technician",
-                "heldItem": "focus_sash",
+                "ability": "stormdrain",
+                "heldItem": "leftovers",
+                "nature": "calm",
+                "level": 55
+              },
+              {
+                "species": "gliscor",
+                "moveset": [
+                  "earthquake",
+                  "dualwingbeat",
+                  "knockoff",
+                  "swordsdance"
+                ],
+                "ability": "poisonheal",
+                "heldItem": "toxic_orb",
                 "nature": "jolly",
                 "level": 55
               },
               {
-                "species": "mudsdale",
-                "moveset": [
-                  "highhorsepower",
-                  "rockslide",
-                  "bodypress",
-                  "heavyslam"
-                ],
-                "ability": "stamina",
-                "heldItem": "assault_vest",
-                "nature": "careful",
-                "level": 55
-              },
-              {
-                "species": "nidoqueen",
-                "moveset": [
-                  "earthpower",
-                  "sludgewave",
-                  "icebeam",
-                  "flamethrower"
-                ],
-                "ability": "sheerforce",
-                "heldItem": "life_orb",
-                "nature": "modest",
-                "level": 55
-              },
-              {
-                "species": "krookodile",
+                "species": "donphan",
                 "moveset": [
                   "earthquake",
-                  "crunch",
-                  "closecombat",
+                  "iceshard",
+                  "knockoff",
+                  "gunkshot"
+                ],
+                "ability": "sturdy",
+                "heldItem": "expert_belt",
+                "nature": "adamant",
+                "level": 55
+              },
+              {
+                "species": "excadrill",
+                "moveset": [
+                  "earthquake",
+                  "ironhead",
+                  "rapidspin",
+                  "swordsdance"
+                ],
+                "ability": "moldbreaker",
+                "heldItem": "life_orb",
+                "nature": "jolly",
+                "level": 55
+              },
+              {
+                "species": "garchomp",
+                "moveset": [
+                  "swordsdance",
+                  "earthquake",
+                  "dragonclaw",
                   "stoneedge"
                 ],
-                "ability": "moxie",
-                "heldItem": "choice_scarf",
+                "ability": "roughskin",
+                "heldItem": "focus_sash",
                 "nature": "jolly",
-                "level": 55
-              },
-              {
-                "species": "rhyperior",
-                "moveset": [
-                  "rockpolish",
-                  "earthquake",
-                  "rockslide",
-                  "megahorn"
-                ],
-                "ability": "solidrock",
-                "heldItem": "rindo_berry",
-                "nature": "adamant",
                 "level": 55
               }
             ]
           },
           "open_line": [
-            "swanna",
-            "seismitoad",
-            "gogoat",
-            "hariyama",
-            "heracross",
-            "cacturne"
+            "abomasnow",
+            "avalugg",
+            "tinkaton",
+            "gardevoir",
+            "gyarados",
+            "swampert"
           ],
-          "line_obviousness": "moderate: Route 8 teaches immunity, Fighting, Grass, priority, and Tailwind, but Nidoqueen forces the player to rotate them."
+          "line_obviousness": "moderate: Claydol's Stealth Rock and Gastrodon's Storm Drain show early that Water is not the plan; Ice (Snover, Bergmite from Route 4), Fairy (Tinkatink on Long Isle and the southern plateau, Ralts from Pallet) and Gyarados's Intimidate carry it."
         }
       }
     },
@@ -4644,87 +4642,87 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Snow, hazards and speed denial make resource preservation matter across the whole fight.",
+          "strategy": "Snow Fortress: Snow Warning Abomasnow sets snow (Ice types' Defense up by half) and an eight-turn Aurora Veil, which halves the damage of every hit. Behind it come physical setup threats that punish Normal's Fire/Fighting/Rock/Steel answers: Shell Smash Cloyster with Rock Blast for Fire, Crabominable's Drain Punch and Earthquake for Steel and Rock, Ice Scales Frosmoth halving special Fire, and a Slush Rush Belly Drum Cetitan.",
           "ace_species": "lapras",
-          "ace_math_change": "Assault Vest turns Lapras into a special sponge while Freeze-Dry reverses the usual Water counter.",
+          "ace_math_change": "Lapras keeps its Freeze-Dry but trades Assault Vest for Weakness Policy and Heal Bell: under Veil one super-effective hit does not KO it and powers it up, and Heal Bell undoes the burns and paralysis a status plan relies on.",
           "member_count": 6,
           "ai_profile": "league_standard",
           "team": [
             {
-              "species": "froslass",
+              "species": "abomasnow",
               "moveset": [
-                "snowscape",
-                "spikes",
-                "icywind",
-                "destinybond"
+                "auroraveil",
+                "blizzard",
+                "gigadrain",
+                "iceshard"
               ],
-              "ability": "cursedbody",
-              "heldItem": "focus_sash",
-              "nature": "timid",
+              "ability": "snowwarning",
+              "heldItem": "light_clay",
+              "nature": "quiet",
               "level": 57
             },
             {
-              "species": "mamoswine",
+              "species": "cloyster",
               "moveset": [
-                "iciclecrash",
-                "earthquake",
-                "iceshard",
-                "knockoff"
+                "shellsmash",
+                "iciclespear",
+                "rockblast",
+                "iceshard"
               ],
-              "ability": "thickfat",
-              "heldItem": "life_orb",
+              "ability": "skilllink",
+              "heldItem": "white_herb",
               "nature": "adamant",
               "level": 58
             },
             {
-              "species": "jynx",
+              "species": "crabominable",
               "moveset": [
-                "icebeam",
-                "psychic",
-                "focusblast",
-                "lovelykiss"
+                "icehammer",
+                "drainpunch",
+                "earthquake",
+                "stoneedge"
               ],
-              "ability": "dryskin",
-              "heldItem": "colbur_berry",
-              "nature": "timid",
+              "ability": "ironfist",
+              "heldItem": "assault_vest",
+              "nature": "adamant",
               "level": 58
             },
             {
-              "species": "weavile",
+              "species": "frosmoth",
               "moveset": [
-                "icespinner",
-                "knockoff",
-                "iceshard",
-                "lowkick"
+                "quiverdance",
+                "icebeam",
+                "bugbuzz",
+                "gigadrain"
               ],
-              "ability": "pressure",
-              "heldItem": "choice_band",
-              "nature": "jolly",
+              "ability": "icescales",
+              "heldItem": "heavy_duty_boots",
+              "nature": "timid",
               "level": 59
             },
             {
-              "species": "walrein",
+              "species": "cetitan",
               "moveset": [
-                "surf",
-                "icebeam",
-                "encore",
-                "protect"
+                "bellydrum",
+                "iciclecrash",
+                "earthquake",
+                "iceshard"
               ],
-              "ability": "thickfat",
-              "heldItem": "leftovers",
-              "nature": "bold",
+              "ability": "slushrush",
+              "heldItem": "sitrus_berry",
+              "nature": "adamant",
               "level": 59
             },
             {
               "species": "lapras",
               "moveset": [
                 "freezedry",
-                "surf",
+                "hydropump",
                 "thunderbolt",
-                "iceshard"
+                "healbell"
               ],
               "ability": "waterabsorb",
-              "heldItem": "assault_vest",
+              "heldItem": "weakness_policy",
               "nature": "modest",
               "level": 60
             }
@@ -4754,87 +4752,94 @@
             "bag": [],
             "team": [
               {
-                "species": "froslass",
+                "species": "abomasnow",
                 "moveset": [
-                  "snowscape",
-                  "spikes",
-                  "icywind",
-                  "destinybond"
+                  "auroraveil",
+                  "blizzard",
+                  "gigadrain",
+                  "iceshard"
                 ],
-                "ability": "cursedbody",
-                "heldItem": "focus_sash",
-                "nature": "timid",
+                "ability": "snowwarning",
+                "heldItem": "light_clay",
+                "nature": "quiet",
                 "level": 57
               },
               {
-                "species": "mamoswine",
+                "species": "cloyster",
                 "moveset": [
-                  "iciclecrash",
-                  "earthquake",
-                  "iceshard",
-                  "knockoff"
+                  "shellsmash",
+                  "iciclespear",
+                  "rockblast",
+                  "iceshard"
                 ],
-                "ability": "thickfat",
-                "heldItem": "life_orb",
+                "ability": "skilllink",
+                "heldItem": "white_herb",
                 "nature": "adamant",
                 "level": 58
               },
               {
-                "species": "jynx",
+                "species": "crabominable",
                 "moveset": [
-                  "icebeam",
-                  "psychic",
-                  "focusblast",
-                  "lovelykiss"
+                  "icehammer",
+                  "drainpunch",
+                  "earthquake",
+                  "stoneedge"
                 ],
-                "ability": "dryskin",
-                "heldItem": "colbur_berry",
-                "nature": "timid",
+                "ability": "ironfist",
+                "heldItem": "assault_vest",
+                "nature": "adamant",
                 "level": 58
               },
               {
-                "species": "weavile",
+                "species": "frosmoth",
                 "moveset": [
-                  "icespinner",
-                  "knockoff",
-                  "iceshard",
-                  "lowkick"
+                  "quiverdance",
+                  "icebeam",
+                  "bugbuzz",
+                  "gigadrain"
                 ],
-                "ability": "pressure",
-                "heldItem": "choice_band",
-                "nature": "jolly",
+                "ability": "icescales",
+                "heldItem": "heavy_duty_boots",
+                "nature": "timid",
                 "level": 59
               },
               {
-                "species": "walrein",
+                "species": "cetitan",
                 "moveset": [
-                  "surf",
-                  "icebeam",
-                  "encore",
-                  "protect"
+                  "bellydrum",
+                  "iciclecrash",
+                  "earthquake",
+                  "iceshard"
                 ],
-                "ability": "thickfat",
-                "heldItem": "leftovers",
-                "nature": "bold",
+                "ability": "slushrush",
+                "heldItem": "sitrus_berry",
+                "nature": "adamant",
                 "level": 59
               },
               {
                 "species": "lapras",
                 "moveset": [
                   "freezedry",
-                  "surf",
+                  "hydropump",
                   "thunderbolt",
-                  "iceshard"
+                  "healbell"
                 ],
                 "ability": "waterabsorb",
-                "heldItem": "assault_vest",
+                "heldItem": "weakness_policy",
                 "nature": "modest",
                 "level": 60
               }
             ]
           },
-          "open_line": [],
-          "line_obviousness": null
+          "open_line": [
+            "chandelure",
+            "excadrill",
+            "hariyama",
+            "coalossal",
+            "empoleon",
+            "toxicroak"
+          ],
+          "line_obviousness": "moderate: snow and the Veil go up on turn one; the answers are a Taunt or a fast KO on Abomasnow, a screen-breaker (Brick Break) or Infiltrator Chandelure, Thick Fat Hariyama, and priority for Cetitan."
         }
       }
     },
@@ -5245,88 +5250,88 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Fake Out, removal, priority and mixed physical pressure punish a team that reaches the League without tempo tools.",
-          "ace_species": "hitmonlee",
-          "ace_math_change": "White Herb restores the defense drops from Close Combat and consumes itself to activate Unburden.",
+          "strategy": "Iron Discipline: every member covers the types that beat Fighting. Scrafty is immune to Psychic and Ice Punches Flying; Hitmonchan's elemental punches hit Flying and Water; Pure Power Medicham's Bullet Punch and Poison Jab hit Fairy; Quaquaval speeds up with every Aqua Step; Conkeldurr's Stone Edge and Knock Off hit Flying and Psychic. Annihilape's Defiant turns Intimidate into +2 Attack.",
+          "ace_species": "annihilape",
+          "ace_math_change": "Annihilape replaces Hitmonlee: a Ghost/Fighting ace immune to Normal and Fighting moves and to Fake Out, whose Rage Fist grows each time it is hit. Ghost, Psychic, Flying or Fairy that hits it once and hard wins, and Intimidate backfires.",
           "member_count": 6,
           "ai_profile": "league_aggressive",
           "team": [
             {
-              "species": "hitmontop",
+              "species": "scrafty",
               "moveset": [
                 "fakeout",
-                "rapidspin",
-                "closecombat",
-                "tripleaxel"
+                "knockoff",
+                "drainpunch",
+                "icepunch"
               ],
               "ability": "intimidate",
-              "heldItem": "heavy_duty_boots",
-              "nature": "jolly",
+              "heldItem": "leftovers",
+              "nature": "careful",
               "level": 57
             },
             {
-              "species": "machamp",
+              "species": "hitmonchan",
               "moveset": [
-                "closecombat",
-                "knockoff",
-                "facade",
-                "icepunch"
+                "machpunch",
+                "drainpunch",
+                "icepunch",
+                "thunderpunch"
               ],
-              "ability": "guts",
-              "heldItem": "flame_orb",
+              "ability": "ironfist",
+              "heldItem": "punching_glove",
               "nature": "adamant",
               "level": 58
             },
             {
-              "species": "hariyama",
+              "species": "medicham",
               "moveset": [
-                "fakeout",
-                "closecombat",
-                "knockoff",
-                "heavyslam"
+                "highjumpkick",
+                "zenheadbutt",
+                "bulletpunch",
+                "poisonjab"
               ],
-              "ability": "thickfat",
-              "heldItem": "assault_vest",
-              "nature": "adamant",
-              "level": 58
-            },
-            {
-              "species": "lucario",
-              "moveset": [
-                "nastyplot",
-                "aurasphere",
-                "flashcannon",
-                "vacuumwave"
-              ],
-              "ability": "innerfocus",
+              "ability": "purepower",
               "heldItem": "life_orb",
-              "nature": "timid",
-              "level": 59
+              "nature": "jolly",
+              "level": 58
             },
             {
-              "species": "heracross",
+              "species": "quaquaval",
               "moveset": [
+                "aquastep",
                 "closecombat",
-                "megahorn",
-                "stoneedge",
-                "earthquake"
+                "bulkup",
+                "roost"
               ],
               "ability": "moxie",
-              "heldItem": "choice_scarf",
+              "heldItem": "lum_berry",
               "nature": "jolly",
               "level": 59
             },
             {
-              "species": "hitmonlee",
+              "species": "conkeldurr",
               "moveset": [
-                "closecombat",
-                "stoneedge",
-                "poisonjab",
-                "knockoff"
+                "machpunch",
+                "drainpunch",
+                "knockoff",
+                "stoneedge"
               ],
-              "ability": "unburden",
-              "heldItem": "white_herb",
-              "nature": "jolly",
+              "ability": "ironfist",
+              "heldItem": "assault_vest",
+              "nature": "adamant",
+              "level": 59
+            },
+            {
+              "species": "annihilape",
+              "moveset": [
+                "bulkup",
+                "ragefist",
+                "drainpunch",
+                "taunt"
+              ],
+              "ability": "defiant",
+              "heldItem": "leftovers",
+              "nature": "adamant",
               "level": 60
             }
           ],
@@ -5355,87 +5360,94 @@
             "bag": [],
             "team": [
               {
-                "species": "hitmontop",
+                "species": "scrafty",
                 "moveset": [
                   "fakeout",
-                  "rapidspin",
-                  "closecombat",
-                  "tripleaxel"
+                  "knockoff",
+                  "drainpunch",
+                  "icepunch"
                 ],
                 "ability": "intimidate",
-                "heldItem": "heavy_duty_boots",
-                "nature": "jolly",
+                "heldItem": "leftovers",
+                "nature": "careful",
                 "level": 57
               },
               {
-                "species": "machamp",
+                "species": "hitmonchan",
                 "moveset": [
-                  "closecombat",
-                  "knockoff",
-                  "facade",
-                  "icepunch"
+                  "machpunch",
+                  "drainpunch",
+                  "icepunch",
+                  "thunderpunch"
                 ],
-                "ability": "guts",
-                "heldItem": "flame_orb",
+                "ability": "ironfist",
+                "heldItem": "punching_glove",
                 "nature": "adamant",
                 "level": 58
               },
               {
-                "species": "hariyama",
+                "species": "medicham",
                 "moveset": [
-                  "fakeout",
-                  "closecombat",
-                  "knockoff",
-                  "heavyslam"
+                  "highjumpkick",
+                  "zenheadbutt",
+                  "bulletpunch",
+                  "poisonjab"
                 ],
-                "ability": "thickfat",
-                "heldItem": "assault_vest",
-                "nature": "adamant",
-                "level": 58
-              },
-              {
-                "species": "lucario",
-                "moveset": [
-                  "nastyplot",
-                  "aurasphere",
-                  "flashcannon",
-                  "vacuumwave"
-                ],
-                "ability": "innerfocus",
+                "ability": "purepower",
                 "heldItem": "life_orb",
-                "nature": "timid",
-                "level": 59
+                "nature": "jolly",
+                "level": 58
               },
               {
-                "species": "heracross",
+                "species": "quaquaval",
                 "moveset": [
+                  "aquastep",
                   "closecombat",
-                  "megahorn",
-                  "stoneedge",
-                  "earthquake"
+                  "bulkup",
+                  "roost"
                 ],
                 "ability": "moxie",
-                "heldItem": "choice_scarf",
+                "heldItem": "lum_berry",
                 "nature": "jolly",
                 "level": 59
               },
               {
-                "species": "hitmonlee",
+                "species": "conkeldurr",
                 "moveset": [
-                  "closecombat",
-                  "stoneedge",
-                  "poisonjab",
-                  "knockoff"
+                  "machpunch",
+                  "drainpunch",
+                  "knockoff",
+                  "stoneedge"
                 ],
-                "ability": "unburden",
-                "heldItem": "white_herb",
-                "nature": "jolly",
+                "ability": "ironfist",
+                "heldItem": "assault_vest",
+                "nature": "adamant",
+                "level": 59
+              },
+              {
+                "species": "annihilape",
+                "moveset": [
+                  "bulkup",
+                  "ragefist",
+                  "drainpunch",
+                  "taunt"
+                ],
+                "ability": "defiant",
+                "heldItem": "leftovers",
+                "nature": "adamant",
                 "level": 60
               }
             ]
           },
-          "open_line": [],
-          "line_obviousness": null
+          "open_line": [
+            "tinkaton",
+            "gardevoir",
+            "talonflame",
+            "banette",
+            "bronzong",
+            "staraptor"
+          ],
+          "line_obviousness": "moderate: Scrafty's Intimidate and Fake Out lead read like Normal's, but the first Psychic switch-in meets a Dark type; Tinkaton (Steel/Fairy) resists Bullet Punch and is immune to Poison Jab, and Banette is immune to every Fighting move."
         }
       }
     },
@@ -5846,88 +5858,88 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Burns, Taunt, Trick and priority deny clean setup and force the player to manage status across six different Ghost patterns.",
-          "ace_species": "gengar",
-          "ace_math_change": "Focus Sash guarantees Gengar a response and makes priority or prior hazard control part of the answer.",
+          "strategy": "The Slow Haunting: Trick Room Ghosts. Cofagrigus sets Trick Room behind a Mental Herb, so the first Taunt does not stop it, and Trevenant can set it again. Under it the slow hitters move first: No Guard Golurk's Dynamic Punch always lands on the Dark answer, Mimikyu's Disguise and Play Rough punish Dark too, Prankster Sableye burns and Encores, and Cursed Body Jellicent walls special attackers.",
+          "ace_species": "golurk",
+          "ace_math_change": "Golurk replaces Gengar: slow on purpose, an Assault Vest for special Dark Pulses, and Dynamic Punch that never misses. The answer is to run out or reverse the five turns (Protect, a pivot, a Trick Room of the player's own) and then hit its Water, Grass, Ice, Ghost or Dark weakness.",
           "member_count": 6,
           "ai_profile": "league_control",
           "team": [
             {
-              "species": "mismagius",
+              "species": "cofagrigus",
               "moveset": [
-                "taunt",
-                "willowisp",
-                "hex",
+                "trickroom",
+                "shadowball",
+                "bodypress",
                 "painsplit"
               ],
-              "ability": "levitate",
-              "heldItem": "colbur_berry",
-              "nature": "timid",
+              "ability": "mummy",
+              "heldItem": "mental_herb",
+              "nature": "relaxed",
               "level": 57
             },
             {
-              "species": "spiritomb",
+              "species": "sableye",
               "moveset": [
                 "willowisp",
-                "foulplay",
-                "painsplit",
-                "shadowsneak"
+                "knockoff",
+                "recover",
+                "encore"
               ],
-              "ability": "pressure",
+              "ability": "prankster",
               "heldItem": "leftovers",
               "nature": "careful",
               "level": 58
             },
             {
-              "species": "banette",
+              "species": "mimikyu",
               "moveset": [
+                "swordsdance",
+                "playrough",
                 "shadowclaw",
-                "suckerpunch",
-                "gunkshot",
-                "trick"
+                "shadowsneak"
               ],
-              "ability": "frisk",
-              "heldItem": "choice_band",
-              "nature": "adamant",
+              "ability": "disguise",
+              "heldItem": "life_orb",
+              "nature": "jolly",
               "level": 58
             },
             {
-              "species": "dusknoir",
+              "species": "trevenant",
               "moveset": [
-                "shadowpunch",
-                "earthquake",
-                "icepunch",
-                "shadowsneak"
+                "trickroom",
+                "hornleech",
+                "shadowclaw",
+                "rockslide"
               ],
-              "ability": "pressure",
-              "heldItem": "assault_vest",
-              "nature": "adamant",
+              "ability": "harvest",
+              "heldItem": "sitrus_berry",
+              "nature": "brave",
               "level": 59
             },
             {
-              "species": "chandelure",
+              "species": "jellicent",
               "moveset": [
+                "scald",
                 "shadowball",
-                "flamethrower",
-                "energyball",
-                "trick"
-              ],
-              "ability": "flashfire",
-              "heldItem": "choice_scarf",
-              "nature": "timid",
-              "level": 59
-            },
-            {
-              "species": "gengar",
-              "moveset": [
-                "nastyplot",
-                "shadowball",
-                "sludgebomb",
-                "focusblast"
+                "icebeam",
+                "recover"
               ],
               "ability": "cursedbody",
-              "heldItem": "focus_sash",
-              "nature": "timid",
+              "heldItem": "rocky_helmet",
+              "nature": "bold",
+              "level": 59
+            },
+            {
+              "species": "golurk",
+              "moveset": [
+                "dynamicpunch",
+                "earthquake",
+                "shadowpunch",
+                "icepunch"
+              ],
+              "ability": "noguard",
+              "heldItem": "assault_vest",
+              "nature": "brave",
               "level": 60
             }
           ],
@@ -5956,87 +5968,94 @@
             "bag": [],
             "team": [
               {
-                "species": "mismagius",
+                "species": "cofagrigus",
                 "moveset": [
-                  "taunt",
-                  "willowisp",
-                  "hex",
+                  "trickroom",
+                  "shadowball",
+                  "bodypress",
                   "painsplit"
                 ],
-                "ability": "levitate",
-                "heldItem": "colbur_berry",
-                "nature": "timid",
+                "ability": "mummy",
+                "heldItem": "mental_herb",
+                "nature": "relaxed",
                 "level": 57
               },
               {
-                "species": "spiritomb",
+                "species": "sableye",
                 "moveset": [
                   "willowisp",
-                  "foulplay",
-                  "painsplit",
-                  "shadowsneak"
+                  "knockoff",
+                  "recover",
+                  "encore"
                 ],
-                "ability": "pressure",
+                "ability": "prankster",
                 "heldItem": "leftovers",
                 "nature": "careful",
                 "level": 58
               },
               {
-                "species": "banette",
+                "species": "mimikyu",
                 "moveset": [
+                  "swordsdance",
+                  "playrough",
                   "shadowclaw",
-                  "suckerpunch",
-                  "gunkshot",
-                  "trick"
+                  "shadowsneak"
                 ],
-                "ability": "frisk",
-                "heldItem": "choice_band",
-                "nature": "adamant",
+                "ability": "disguise",
+                "heldItem": "life_orb",
+                "nature": "jolly",
                 "level": 58
               },
               {
-                "species": "dusknoir",
+                "species": "trevenant",
                 "moveset": [
-                  "shadowpunch",
-                  "earthquake",
-                  "icepunch",
-                  "shadowsneak"
+                  "trickroom",
+                  "hornleech",
+                  "shadowclaw",
+                  "rockslide"
                 ],
-                "ability": "pressure",
-                "heldItem": "assault_vest",
-                "nature": "adamant",
+                "ability": "harvest",
+                "heldItem": "sitrus_berry",
+                "nature": "brave",
                 "level": 59
               },
               {
-                "species": "chandelure",
+                "species": "jellicent",
                 "moveset": [
+                  "scald",
                   "shadowball",
-                  "flamethrower",
-                  "energyball",
-                  "trick"
-                ],
-                "ability": "flashfire",
-                "heldItem": "choice_scarf",
-                "nature": "timid",
-                "level": 59
-              },
-              {
-                "species": "gengar",
-                "moveset": [
-                  "nastyplot",
-                  "shadowball",
-                  "sludgebomb",
-                  "focusblast"
+                  "icebeam",
+                  "recover"
                 ],
                 "ability": "cursedbody",
-                "heldItem": "focus_sash",
-                "nature": "timid",
+                "heldItem": "rocky_helmet",
+                "nature": "bold",
+                "level": 59
+              },
+              {
+                "species": "golurk",
+                "moveset": [
+                  "dynamicpunch",
+                  "earthquake",
+                  "shadowpunch",
+                  "icepunch"
+                ],
+                "ability": "noguard",
+                "heldItem": "assault_vest",
+                "nature": "brave",
                 "level": 60
               }
             ]
           },
-          "open_line": [],
-          "line_obviousness": null
+          "open_line": [
+            "kingambit",
+            "houndoom",
+            "chandelure",
+            "rhydon",
+            "bronzong",
+            "tinkaton"
+          ],
+          "line_obviousness": "moderate: Trick Room on turn one says 'your fast Dark sweeper moves last'; slow answers (Kingambit, Rhydon, Bronzong) thrive under it, Steel (Kingambit, Tinkaton) beats Mimikyu, and Sableye's Prankster fails against a Dark type."
         }
       }
     },
@@ -6447,73 +6466,73 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Aerodactyl sets the pace, each midgame member attacks a different Dragon answer, and Dragonite is the only dedicated setup closer.",
+          "strategy": "Dragon's Armour: Dragons that Ice and Fairy do not simply delete. Duraludon (Steel/Dragon) takes both neutrally, sets Stealth Rock and paralyses; Tyrantrum (Rock/Dragon) Dragon Dances and Head Smashes Ice; Sniper Kingdra and Hydreigon carry Flash Cannon for Fairy; Assault Vest Goodra answers Fairy with Sludge Bomb and Steel with Fire Blast, and Gooey slows the physical Ice Shard user. Fighting and Ground hit four of the six.",
           "ace_species": "dragonite",
-          "ace_math_change": "Multiscale plus Weakness Policy punishes an undisciplined super-effective first hit and changes priority damage thresholds.",
+          "ace_math_change": "Dragonite keeps Multiscale but swaps Weakness Policy and Extreme Speed for Heavy-Duty Boots and Roost: the player's Stealth Rock no longer breaks Multiscale, and Roost restores it. Phazing, Haze, Encore, Taunt or two Ice hits in a row win.",
           "member_count": 6,
           "ai_profile": "league_aggressive",
           "team": [
             {
-              "species": "aerodactyl",
+              "species": "duraludon",
               "moveset": [
                 "stealthrock",
-                "taunt",
-                "tailwind",
-                "rockslide"
+                "flashcannon",
+                "dragonpulse",
+                "thunderwave"
               ],
-              "ability": "unnerve",
+              "ability": "stalwart",
               "heldItem": "focus_sash",
-              "nature": "jolly",
+              "nature": "modest",
               "level": 57
             },
             {
-              "species": "gyarados",
+              "species": "tyrantrum",
               "moveset": [
                 "dragondance",
-                "waterfall",
-                "icefang",
-                "earthquake"
+                "headsmash",
+                "earthquake",
+                "dragonclaw"
               ],
-              "ability": "intimidate",
-              "heldItem": "lum_berry",
-              "nature": "jolly",
+              "ability": "rockhead",
+              "heldItem": "life_orb",
+              "nature": "adamant",
               "level": 58
             },
             {
-              "species": "flygon",
+              "species": "kingdra",
               "moveset": [
-                "dragonclaw",
-                "earthquake",
-                "uturn",
-                "stoneedge"
+                "hydropump",
+                "dracometeor",
+                "icebeam",
+                "flashcannon"
+              ],
+              "ability": "sniper",
+              "heldItem": "scope_lens",
+              "nature": "modest",
+              "level": 58
+            },
+            {
+              "species": "hydreigon",
+              "moveset": [
+                "darkpulse",
+                "dracometeor",
+                "flashcannon",
+                "flamethrower"
               ],
               "ability": "levitate",
               "heldItem": "choice_scarf",
-              "nature": "jolly",
-              "level": 58
-            },
-            {
-              "species": "baxcalibur",
-              "moveset": [
-                "swordsdance",
-                "iciclecrash",
-                "glaiverush",
-                "earthquake"
-              ],
-              "ability": "thermalexchange",
-              "heldItem": "loaded_dice",
-              "nature": "adamant",
+              "nature": "timid",
               "level": 59
             },
             {
-              "species": "dragalge",
+              "species": "goodra",
               "moveset": [
-                "dracometeor",
+                "dragonpulse",
+                "fireblast",
                 "sludgebomb",
-                "hydropump",
                 "thunderbolt"
               ],
-              "ability": "adaptability",
+              "ability": "gooey",
               "heldItem": "assault_vest",
               "nature": "modest",
               "level": 59
@@ -6523,12 +6542,12 @@
               "moveset": [
                 "dragondance",
                 "dragonclaw",
-                "firepunch",
-                "extremespeed"
+                "earthquake",
+                "roost"
               ],
               "ability": "multiscale",
-              "heldItem": "weakness_policy",
-              "nature": "adamant",
+              "heldItem": "heavy_duty_boots",
+              "nature": "jolly",
               "level": 60
             }
           ],
@@ -6557,66 +6576,66 @@
             "bag": [],
             "team": [
               {
-                "species": "aerodactyl",
+                "species": "duraludon",
                 "moveset": [
                   "stealthrock",
-                  "taunt",
-                  "tailwind",
-                  "rockslide"
+                  "flashcannon",
+                  "dragonpulse",
+                  "thunderwave"
                 ],
-                "ability": "unnerve",
+                "ability": "stalwart",
                 "heldItem": "focus_sash",
-                "nature": "jolly",
+                "nature": "modest",
                 "level": 57
               },
               {
-                "species": "gyarados",
+                "species": "tyrantrum",
                 "moveset": [
                   "dragondance",
-                  "waterfall",
-                  "icefang",
-                  "earthquake"
+                  "headsmash",
+                  "earthquake",
+                  "dragonclaw"
                 ],
-                "ability": "intimidate",
-                "heldItem": "lum_berry",
-                "nature": "jolly",
+                "ability": "rockhead",
+                "heldItem": "life_orb",
+                "nature": "adamant",
                 "level": 58
               },
               {
-                "species": "flygon",
+                "species": "kingdra",
                 "moveset": [
-                  "dragonclaw",
-                  "earthquake",
-                  "uturn",
-                  "stoneedge"
+                  "hydropump",
+                  "dracometeor",
+                  "icebeam",
+                  "flashcannon"
+                ],
+                "ability": "sniper",
+                "heldItem": "scope_lens",
+                "nature": "modest",
+                "level": 58
+              },
+              {
+                "species": "hydreigon",
+                "moveset": [
+                  "darkpulse",
+                  "dracometeor",
+                  "flashcannon",
+                  "flamethrower"
                 ],
                 "ability": "levitate",
                 "heldItem": "choice_scarf",
-                "nature": "jolly",
-                "level": 58
-              },
-              {
-                "species": "baxcalibur",
-                "moveset": [
-                  "swordsdance",
-                  "iciclecrash",
-                  "glaiverush",
-                  "earthquake"
-                ],
-                "ability": "thermalexchange",
-                "heldItem": "loaded_dice",
-                "nature": "adamant",
+                "nature": "timid",
                 "level": 59
               },
               {
-                "species": "dragalge",
+                "species": "goodra",
                 "moveset": [
-                  "dracometeor",
+                  "dragonpulse",
+                  "fireblast",
                   "sludgebomb",
-                  "hydropump",
                   "thunderbolt"
                 ],
-                "ability": "adaptability",
+                "ability": "gooey",
                 "heldItem": "assault_vest",
                 "nature": "modest",
                 "level": 59
@@ -6626,18 +6645,25 @@
                 "moveset": [
                   "dragondance",
                   "dragonclaw",
-                  "firepunch",
-                  "extremespeed"
+                  "earthquake",
+                  "roost"
                 ],
                 "ability": "multiscale",
-                "heldItem": "weakness_policy",
-                "nature": "adamant",
+                "heldItem": "heavy_duty_boots",
+                "nature": "jolly",
                 "level": 60
               }
             ]
           },
-          "open_line": [],
-          "line_obviousness": null
+          "open_line": [
+            "excadrill",
+            "machamp",
+            "tinkaton",
+            "gardevoir",
+            "abomasnow",
+            "flygon"
+          ],
+          "line_obviousness": "moderate: a Steel/Dragon lead that takes Ice and Fairy only neutrally says 'not Ice alone'; Excadrill and Victory Road's Machamp take Duraludon and Tyrantrum, Fairy and Ice still take the back four, and the ace needs a plan for its boosts."
         }
       }
     },
@@ -7048,88 +7074,88 @@
           "line_obviousness": null
         },
         "challenge": {
-          "strategy": "Blue recombines the campaign's lessons: tempo lead, sleep, hazards, Intimidate, speed, and a setup ace with no single type shortcut.",
-          "ace_species": "blastoise",
-          "ace_math_change": "White Herb erases Shell Smash's defensive cost, forcing the player to stop the setup or answer a full-speed mixed-coverage closer.",
+          "strategy": "The Champion's counter-team: no member of Normal's six. Aerodactyl leads with Stealth Rock and Taunt; No Guard Machamp's Dynamic Punch always confuses; Technician Scizor pivots and Bullet Punches Fairy and Ice; Air Balloon Magnezone floats over Ground until the first hit; Choice Specs Gengar is immune to the Fighting that kills Tyranitar. Normal's lesson (speed control, hazard control, a balanced six) still applies; the answers change.",
+          "ace_species": "tyranitar",
+          "ace_math_change": "Tyranitar replaces Blastoise: a Dragon Dance ace whose Sand Stream raises its Special Defense by half. Fighting (four times over) wins only once Gengar is gone; Water, Grass, Ground, Steel, Bug and Fairy each hit it twice over.",
           "member_count": 6,
           "ai_profile": "champion",
           "team": [
             {
-              "species": "pidgeot",
+              "species": "aerodactyl",
               "moveset": [
-                "tailwind",
-                "uturn",
-                "hurricane",
-                "heatwave"
+                "stealthrock",
+                "taunt",
+                "stoneedge",
+                "icefang"
               ],
-              "ability": "keeneye",
+              "ability": "unnerve",
               "heldItem": "focus_sash",
-              "nature": "timid",
+              "nature": "jolly",
               "level": 58
             },
             {
-              "species": "exeggutor",
+              "species": "machamp",
               "moveset": [
-                "hypnosis",
-                "gigadrain",
-                "psychic",
-                "leechseed"
+                "dynamicpunch",
+                "stoneedge",
+                "knockoff",
+                "bulletpunch"
               ],
-              "ability": "harvest",
-              "heldItem": "sitrus_berry",
-              "nature": "modest",
+              "ability": "noguard",
+              "heldItem": "assault_vest",
+              "nature": "adamant",
               "level": 59
             },
             {
-              "species": "rhydon",
+              "species": "scizor",
               "moveset": [
-                "stealthrock",
-                "earthquake",
-                "rockslide",
-                "megahorn"
+                "bulletpunch",
+                "uturn",
+                "swordsdance",
+                "roost"
               ],
-              "ability": "lightningrod",
-              "heldItem": "eviolite",
+              "ability": "technician",
+              "heldItem": "life_orb",
               "nature": "adamant",
               "level": 60
             },
             {
-              "species": "arcanine",
+              "species": "magnezone",
               "moveset": [
-                "flareblitz",
-                "wildcharge",
-                "closecombat",
-                "extremespeed"
+                "thunderbolt",
+                "flashcannon",
+                "voltswitch",
+                "bodypress"
               ],
-              "ability": "intimidate",
-              "heldItem": "assault_vest",
-              "nature": "jolly",
+              "ability": "sturdy",
+              "heldItem": "air_balloon",
+              "nature": "modest",
               "level": 60
             },
             {
-              "species": "alakazam",
+              "species": "gengar",
               "moveset": [
-                "nastyplot",
-                "psychic",
-                "dazzlinggleam",
-                "shadowball"
+                "shadowball",
+                "sludgewave",
+                "thunderbolt",
+                "focusblast"
               ],
-              "ability": "magicguard",
-              "heldItem": "life_orb",
+              "ability": "cursedbody",
+              "heldItem": "choice_specs",
               "nature": "timid",
               "level": 61
             },
             {
-              "species": "blastoise",
+              "species": "tyranitar",
               "moveset": [
-                "shellsmash",
-                "hydropump",
-                "icebeam",
-                "darkpulse"
+                "dragondance",
+                "stoneedge",
+                "crunch",
+                "earthquake"
               ],
-              "ability": "torrent",
-              "heldItem": "white_herb",
-              "nature": "modest",
+              "ability": "sandstream",
+              "heldItem": "lum_berry",
+              "nature": "adamant",
               "level": 62
             }
           ],
@@ -7158,87 +7184,94 @@
             "bag": [],
             "team": [
               {
-                "species": "pidgeot",
+                "species": "aerodactyl",
                 "moveset": [
-                  "tailwind",
-                  "uturn",
-                  "hurricane",
-                  "heatwave"
+                  "stealthrock",
+                  "taunt",
+                  "stoneedge",
+                  "icefang"
                 ],
-                "ability": "keeneye",
+                "ability": "unnerve",
                 "heldItem": "focus_sash",
-                "nature": "timid",
+                "nature": "jolly",
                 "level": 58
               },
               {
-                "species": "exeggutor",
+                "species": "machamp",
                 "moveset": [
-                  "hypnosis",
-                  "gigadrain",
-                  "psychic",
-                  "leechseed"
+                  "dynamicpunch",
+                  "stoneedge",
+                  "knockoff",
+                  "bulletpunch"
                 ],
-                "ability": "harvest",
-                "heldItem": "sitrus_berry",
-                "nature": "modest",
+                "ability": "noguard",
+                "heldItem": "assault_vest",
+                "nature": "adamant",
                 "level": 59
               },
               {
-                "species": "rhydon",
+                "species": "scizor",
                 "moveset": [
-                  "stealthrock",
-                  "earthquake",
-                  "rockslide",
-                  "megahorn"
+                  "bulletpunch",
+                  "uturn",
+                  "swordsdance",
+                  "roost"
                 ],
-                "ability": "lightningrod",
-                "heldItem": "eviolite",
+                "ability": "technician",
+                "heldItem": "life_orb",
                 "nature": "adamant",
                 "level": 60
               },
               {
-                "species": "arcanine",
+                "species": "magnezone",
                 "moveset": [
-                  "flareblitz",
-                  "wildcharge",
-                  "closecombat",
-                  "extremespeed"
+                  "thunderbolt",
+                  "flashcannon",
+                  "voltswitch",
+                  "bodypress"
                 ],
-                "ability": "intimidate",
-                "heldItem": "assault_vest",
-                "nature": "jolly",
+                "ability": "sturdy",
+                "heldItem": "air_balloon",
+                "nature": "modest",
                 "level": 60
               },
               {
-                "species": "alakazam",
+                "species": "gengar",
                 "moveset": [
-                  "nastyplot",
-                  "psychic",
-                  "dazzlinggleam",
-                  "shadowball"
+                  "shadowball",
+                  "sludgewave",
+                  "thunderbolt",
+                  "focusblast"
                 ],
-                "ability": "magicguard",
-                "heldItem": "life_orb",
+                "ability": "cursedbody",
+                "heldItem": "choice_specs",
                 "nature": "timid",
                 "level": 61
               },
               {
-                "species": "blastoise",
+                "species": "tyranitar",
                 "moveset": [
-                  "shellsmash",
-                  "hydropump",
-                  "icebeam",
-                  "darkpulse"
+                  "dragondance",
+                  "stoneedge",
+                  "crunch",
+                  "earthquake"
                 ],
-                "ability": "torrent",
-                "heldItem": "white_herb",
-                "nature": "modest",
+                "ability": "sandstream",
+                "heldItem": "lum_berry",
+                "nature": "adamant",
                 "level": 62
               }
             ]
           },
-          "open_line": [],
-          "line_obviousness": null
+          "open_line": [
+            "lucario",
+            "excadrill",
+            "chandelure",
+            "gyarados",
+            "gardevoir",
+            "kingambit"
+          ],
+          "line_obviousness": "low: nothing on the field repeats Normal's Blue, so the player scouts as they go; the balanced six Normal teaches still wins, but which member answers which slot changes (Fire for Scizor, Ground after the Balloon pops, Dark for Gengar, Fighting or Water for Tyranitar)."
         }
       }
     },
@@ -7284,9 +7317,9 @@
         "loss": "dlg_route_01_trainer_01_loss"
       },
       "dialogue_text": {
-        "pre": "First battle? Mine too. If our eyes meet on the road, we battle—ready?",
-        "player_win": "Sand Attack bought me a turn, but it could not fix a bad matchup.",
-        "player_loss": "Quick Attack closes a fight before nerves can."
+        "pre": "First battle? Mine too. Our eyes met, so that's the rule. Ready?",
+        "player_win": "I threw sand in your eyes and you still won?",
+        "player_loss": "Quick Attack! Over before you could even get nervous."
       },
       "rct": {
         "identity": "route_01_trainer_01",
@@ -7476,9 +7509,9 @@
         "loss": "dlg_route_01_trainer_02_loss"
       },
       "dialogue_text": {
-        "pre": "The Combee followed the flowers; Surskit followed the water. I learned to pack answers for both.",
-        "player_win": "You switched instead of forcing one partner through everything. That is the lesson.",
-        "player_loss": "Bug teams look gentle until you let them control the field."
+        "pre": "Combee came with the flowers. Surskit came with the puddles. Bugs are everywhere round here.",
+        "player_win": "You kept switching. Annoying. Smart, but annoying.",
+        "player_loss": "Not so gentle now, are they?"
       },
       "rct": {
         "identity": "route_01_trainer_02",
@@ -7710,8 +7743,8 @@
       },
       "dialogue_text": {
         "pre": "This vale holds water after every storm, even if the old river never did.",
-        "player_win": "You changed targets before Quick Attack could pin you down. Brock will not wait either.",
-        "player_loss": "Fast Water types turn a dry path into their own ground."
+        "player_win": "Quick Attack didn't rattle you. Good. Brock won't wait for you either.",
+        "player_loss": "Lost to Water types in a dry valley. Think about that one."
       },
       "rct": {
         "identity": "route_01_trainer_03",
@@ -7957,9 +7990,9 @@
         "loss": "dlg_route_01_trainer_04_loss"
       },
       "dialogue_text": {
-        "pre": "Brock survives the obvious first hit. Bring a second answer for what comes after.",
-        "player_win": "That is a team ready for stone: pressure from more than one direction.",
-        "player_loss": "One counter is a plan. Two counters are a team."
+        "pre": "Brock's rocks take the first hit and keep coming. What have you got after that?",
+        "player_win": "Yeah, you're ready for Brock.",
+        "player_loss": "One counter won't get you past Brock. Bring two."
       },
       "rct": {
         "identity": "route_01_trainer_04",
@@ -8255,8 +8288,8 @@
         "loss": "dlg_route_02_trainer_01_loss"
       },
       "dialogue_text": {
-        "pre": "Corphish does not need a long plan. It denies yours and takes the opening.",
-        "player_win": "You attacked before Taunt stole your setup. Good.",
+        "pre": "Got a plan? My Corphish doesn't care.",
+        "player_win": "You hit me before Taunt landed. Fair enough.",
         "player_loss": "You gave Corphish time, and it took all of it."
       },
       "rct": {
@@ -8455,8 +8488,8 @@
       },
       "dialogue_text": {
         "pre": "The lake's glowbugs do not hit hard. They make sure you never hit cleanly.",
-        "player_win": "You broke the cycle before Charm, confusion, and Moonlight piled up.",
-        "player_loss": "A weak attack matters when the other side controls every turn."
+        "player_win": "Charm, confusion, Moonlight, and you still got through. Rude.",
+        "player_loss": "Told you they don't hit hard. They didn't need to."
       },
       "rct": {
         "identity": "route_02_trainer_02",
@@ -8710,8 +8743,8 @@
       },
       "dialogue_text": {
         "pre": "Most people see Viltri from the south road and think they have seen the lake. The north bank disagrees.",
-        "player_win": "Krabby pushes hard and Shellder closes up. You changed the kind of pressure instead of repeating it.",
-        "player_loss": "The bank rewards a long walk, but it still expects the right answer."
+        "player_win": "Krabby hits hard, Shellder shuts tight, and you got round both. Huh.",
+        "player_loss": "Long walk out here to lose. Bad luck."
       },
       "rct": {
         "identity": "route_02_shore_trainer_01",
@@ -8968,8 +9001,8 @@
       },
       "dialogue_text": {
         "pre": "Rain changes this whole shore. Did you bring one answer, or two?",
-        "player_win": "Electric pressure handles open water. Flying or Bug pressure handles what grows in it.",
-        "player_loss": "Misty's lake will not give you one clean weakness to chase."
+        "player_win": "Electric for the water, Flying or Bug for what grows in it. You'll do fine against Misty.",
+        "player_loss": "Misty won't give you one weakness to hit. Neither did I."
       },
       "rct": {
         "identity": "route_02_trainer_03",
@@ -9264,9 +9297,9 @@
         "loss": "dlg_route_03_trainer_01_loss"
       },
       "dialogue_text": {
-        "pre": "On a climb, controlling the footing matters more than moving first.",
-        "player_win": "You punished Howl before Rock Tomb could keep you slow.",
-        "player_loss": "One speed drop was enough to decide the slope."
+        "pre": "On a climb, footing beats speed. You'll see.",
+        "player_win": "You hit me while I was Howling. Should've thrown Rock Tomb first.",
+        "player_loss": "One Rock Tomb and you were stuck on the slope."
       },
       "rct": {
         "identity": "route_03_trainer_01",
@@ -9457,9 +9490,9 @@
         "loss": "dlg_route_03_trainer_02_loss"
       },
       "dialogue_text": {
-        "pre": "The grove punishes teams built around one resistance. Show me your second switch.",
-        "player_win": "You saw the partner behind the first matchup.",
-        "player_loss": "One safe switch led straight into the other threat."
+        "pre": "Built your whole team around one resistance? The grove eats teams like that.",
+        "player_win": "You saw my second one coming. Most don't.",
+        "player_loss": "Safe switch, straight into my other one."
       },
       "rct": {
         "identity": "route_03_trainer_02",
@@ -9695,9 +9728,9 @@
         "loss": "dlg_route_03_trainer_03_loss"
       },
       "dialogue_text": {
-        "pre": "Burrows and roots both carry current into the earth. That is how you face Surge.",
-        "player_win": "You found the opening before Ground and Grass could settle in.",
-        "player_loss": "Bunnelby can grow into your clean Ground answer. Skiddo is the fallback when Ground gets disrupted."
+        "pre": "Burrows and roots. Current goes into the earth and stops there. That's how you beat Surge.",
+        "player_win": "You got in before my Ground and Grass could dig in.",
+        "player_loss": "Catch a Bunnelby, it grows into a real Ground answer. Skiddo too, if Ground gets shut down."
       },
       "rct": {
         "identity": "route_03_trainer_03",
@@ -9935,9 +9968,9 @@
         "loss": "dlg_route_03_trainer_04_loss"
       },
       "dialogue_text": {
-        "pre": "That mast keeps changing the way everything moves. Let us see how your team handles lost tempo.",
-        "player_win": "Good. Do not race Surge—use Ground, Grass, or priority to take the turn back.",
-        "player_loss": "Paralysis makes speed unreliable. Bring an immunity or a way to act first anyway."
+        "pre": "That mast messes with everyone's speed. Let's see how you cope.",
+        "player_win": "Good. Don't race Surge. Ground, Grass or priority gets you the turn back.",
+        "player_loss": "Paralysed, so speed means nothing. Bring something immune, or something that moves first."
       },
       "rct": {
         "identity": "route_03_trainer_04",
@@ -10211,9 +10244,9 @@
         "loss": "dlg_route_03_trainer_05_loss"
       },
       "dialogue_text": {
-        "pre": "The mountain's safest teams redirect electricity instead of trying to endure it.",
-        "player_win": "You brought immunity, resistance, and pressure. That is enough to challenge the shelf.",
-        "player_loss": "The pond behind you offers Wooper. Bunnelby stays on the critical path. Use one of them."
+        "pre": "Up here you don't tank Electric. You send it somewhere it can't hurt.",
+        "player_win": "Something immune, something that resists, and you hit back. Go take the shelf.",
+        "player_loss": "There's Wooper in the pond behind you and Bunnelby on the path. Catch one."
       },
       "rct": {
         "identity": "route_03_trainer_05",
@@ -17654,9 +17687,9 @@
         "loss": "dlg_route_09_trainer_01_loss"
       },
       "dialogue_text": {
-        "pre": "The cave takes speed before it takes strength. Keep something quick in reserve.",
-        "player_win": "You kept a second pace. That is the lesson.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "This cave slows you down before it beats you up. Hope you kept something quick.",
+        "player_win": "You had something fast left over. Fine.",
+        "player_loss": "Too slow. Go back up and get faster."
       },
       "rct": {
         "identity": "route_09_trainer_01",
@@ -17905,9 +17938,9 @@
         "loss": "dlg_route_09_trainer_02_loss"
       },
       "dialogue_text": {
-        "pre": "A bad condition becomes a worse hit down here. Do not let the clock start.",
-        "player_win": "You broke the clock before it owned the fight.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "Get poisoned down here and every hit after it gets worse. Don't let me start.",
+        "player_win": "You ended it before the poison could add up.",
+        "player_loss": "Every turn you sat there poisoned was mine."
       },
       "rct": {
         "identity": "route_09_trainer_02",
@@ -18159,7 +18192,7 @@
       "dialogue_text": {
         "pre": "The old works still hold heat. My lead makes sure you feel all of it.",
         "player_win": "You found an answer that did not care about the sun.",
-        "player_loss": "Return when your plan has a second line."
+        "player_loss": "Too hot for you. Go and cool off."
       },
       "rct": {
         "identity": "route_09_trainer_03",
@@ -18413,9 +18446,9 @@
         "loss": "dlg_route_09_trainer_04_loss"
       },
       "dialogue_text": {
-        "pre": "One mark ruins muscle. The next target asks whether you brought another kind of force.",
-        "player_win": "Good. You changed tools when the map changed.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "One burn and your big hitters are done. Then Mudsdale. Got anything that isn't muscle?",
+        "player_win": "Good. You switched tools when the map changed.",
+        "player_loss": "All muscle, and I burned it."
       },
       "rct": {
         "identity": "route_09_trainer_04",
@@ -18665,9 +18698,9 @@
         "loss": "dlg_route_09_trainer_05_loss"
       },
       "dialogue_text": {
-        "pre": "Rest is over. Sand changes what survives the next hit.",
+        "pre": "Break's over. Once the sand's up, my side takes hits yours can't.",
         "player_win": "You did not trust yesterday's damage numbers.",
-        "player_loss": "Return when your plan has a second line."
+        "player_loss": "The sand was chipping you from the first turn."
       },
       "rct": {
         "identity": "route_09_trainer_05",
@@ -18921,9 +18954,9 @@
         "loss": "dlg_route_09_trainer_06_loss"
       },
       "dialogue_text": {
-        "pre": "Speed means something different for the next few turns. Survive the room, then move.",
+        "pre": "For the next few turns, slow goes first. Live through the room, then move.",
         "player_win": "You knew when not to race.",
-        "player_loss": "Return when your plan has a second line."
+        "player_loss": "All that speed, and my room made it worthless."
       },
       "rct": {
         "identity": "route_09_trainer_06",
@@ -19173,9 +19206,9 @@
         "loss": "dlg_route_09_trainer_07_loss"
       },
       "dialogue_text": {
-        "pre": "Rain makes both halves of my team faster at their jobs. Split them apart.",
-        "player_win": "You found the seam between weather and coverage.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "In the rain both of mine do their jobs faster. Try and split them up.",
+        "player_win": "You got between the rain and the coverage. Nice.",
+        "player_loss": "Still raining. Go and dry off."
       },
       "rct": {
         "identity": "route_09_trainer_07",
@@ -19429,9 +19462,9 @@
         "loss": "dlg_route_09_trainer_08_loss"
       },
       "dialogue_text": {
-        "pre": "The cut punishes every careless change. Choose what stays in before you move.",
-        "player_win": "You paid for no change you did not need.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "Switch carelessly in this cut and the rocks bill you. Pick who stays in.",
+        "player_win": "Not one switch you didn't need. Good.",
+        "player_loss": "Every switch cost you. Should have counted."
       },
       "rct": {
         "identity": "route_09_trainer_08",
@@ -19680,9 +19713,9 @@
         "loss": "dlg_route_09_trainer_09_loss"
       },
       "dialogue_text": {
-        "pre": "I stop your plan, then begin mine. Show me you brought a second plan.",
-        "player_win": "That answer was ready before mine started.",
-        "player_loss": "Return when your plan has a second line."
+        "pre": "I stop your plan, then I run mine. Got a backup?",
+        "player_win": "You had that ready before I'd even started. Annoying.",
+        "player_loss": "First plan stopped, no second one. Done."
       },
       "rct": {
         "identity": "route_09_trainer_09",
@@ -19953,7 +19986,7 @@
       "dialogue_text": {
         "pre": "My Crobat carries a Focus Sash. It will get the wind up. The exam is what you do after that.",
         "player_win": "You did not need the first turn. You needed the right six.",
-        "player_loss": "Return when your plan has a second line."
+        "player_loss": "Fail. Come back with a better six."
       },
       "rct": {
         "identity": "route_09_trainer_10",
