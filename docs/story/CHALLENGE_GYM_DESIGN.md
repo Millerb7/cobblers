@@ -17,22 +17,22 @@ The mode cannot vary per player with current RCT trainers. A shared trainer enti
 
 Oak therefore records one permanent world choice. The first accepted choice applies to every player; later players inherit it. Switching later is unsupported.
 
-The exact dialogue remains here until the proven dialogue compiler can read and compare world-scoped state:
+The exact dialogue (rewritten 2026-10-14 at the owner's request, in plain speech; the choice is per player, so the lines are quoted as spoken and `DECLARED_REWRITES` no longer changes them):
 
-> Before I send you out, we need to record the League rules this campaign will follow.
+> Before I send you out, I need to write down which League rules you'll battle under.
 
-> Under Standard rules, Gym Leaders use focused teams. Their plans are clear, and their held items support the lesson without filling every slot.
+> Under Standard rules, Gym Leaders bring focused teams with a clear plan. Held items help, but not every Pokémon carries one.
 
-> Under Full-Team rules, every Gym Leader brings six. Their combinations are tighter, their held items matter, and a prepared answer may need help from the rest of your party.
+> Under Full-Team rules, every Gym Leader brings six that cover for each other, and their held items matter. Expect to need more than one counter.
 
-> The level limits are identical. This changes what each battle asks of you, not how far you may train.
+> The level limits are the same either way. Only the battles change.
 
-> This record belongs to the whole campaign. Once I enter it, everyone uses it and it cannot be changed. Which rules should I enter?
+> This is for you alone, and once I write it down it stays. Which rules?
 
 Responses:
 
-- `Use Standard rules.` → `Record Standard rules for this world? This cannot be changed later.`
-- `Use Full-Team rules.` → `Record Full-Team rules for this world? This cannot be changed later.`
+- `Use Standard rules.` → `Standard rules, then? Once it's written, it stays.`
+- `Use Full-Team rules.` → `Full-Team rules, then? Once it's written, it stays.`
 - `Let me think.` → close without writing anything.
 
 Later players hear: `The League rules for this campaign are already recorded: <Standard / Full-Team> rules.`
