@@ -357,7 +357,10 @@ def functions(ddoc, rdoc):
             "# the pass. It never opens or closes a rip. Run by minecraft:load and by tools/reapply.py step R16DR.",
             "# Operator: %s (pause), %s (resume), %s (pause and close every open rip)" % (F("stop"), F("start"), F("close_all"))]
     init += ["scoreboard objectives add %s dummy" % o for o in OBJ.values()]
-    init += ["scoreboard players set #on %s %d" % (V, 1 if v["enabled"] else 0),
+    # #on is set from the data only the first time: a /reload runs init again, and resetting it there un-paused a
+    # scheduler an operator had stopped (the independent audit's pause_survives_reload, 2026-10-14). Later changes go
+    # through stop/start.
+    init += ["execute unless score #on %s matches 0..1 run scoreboard players set #on %s %d" % (V, V, 1 if v["enabled"] else 0),
              "scoreboard players set #min %s %d" % (V, v["open_min"]),
              "scoreboard players set #max %s %d" % (V, v["open_max"])]
     init += ["execute unless score %s %s matches -2147483648..2147483647 run scoreboard players set %s %s 0" % (HOLDER % i, S, HOLDER % i, S) for i, _r in cands]

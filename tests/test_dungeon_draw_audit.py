@@ -821,9 +821,8 @@ def test_every_scheduler_mutation_targets_exactly_one_spot_of_its_file():
         assert (ROOT / m["file"]).read_text(encoding="utf-8").count(m["edit"][0]) == 1, name
 
 
-@pytest.mark.xfail(strict=True, reason="DEFECT tools/rip_scheduler.py init: `scoreboard players set #on rp.v` from data on every "
-                   "load, so a runtime pause (data/rip_scheduler.json enabled.origin) is undone by a /reload, a boot or R16DR")
 def test_a_runtime_pause_survives_a_reload():
+    # Was a strict xfail (init reset #on from data on every load); fixed 2026-10-14: init sets #on only when unset.
     fns, tags = A.scheduler_pack(A.load_scheduler(None))
     assert A.sc_sched_pause_survives_reload(fns, tags, A.scheduler_inputs()[2]) == []
 
