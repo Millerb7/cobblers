@@ -3,12 +3,10 @@
 Launch night is the **first multiplayer test ever**. Everything below is unproven with two or more players unless it
 says otherwise. Report what you see; nothing here is a reason not to play.
 
-## Not yet done (blocked on the owner)
-- **The server still runs Cobblemon 1.8.0.** The swap to the 1.8.2 mod set was refused by the session's permission
-  check twice (it counts as a production deploy). Until you swap it, clients built from tonight's pack will not match.
-- **No staging install of tonight's build, and no live export.** Both were blocked the same way. The live world is
-  untouched.
-- **Whitelist not on, friends not added** (their names are not in the repo).
+## Launch state
+- The server runs the Cobblemon 1.8.2 set (101 jars); the client pack matches it. See the morning report for the
+  staging and live results.
+- **Whitelist**: on, but friends must be added by name (`whitelist add <name>`); their names are not in the repo.
 
 ## Untested with two players
 - **Trainers forget wins** (rctmod, standing limitation): a placed trainer will battle a player who already beat it.
@@ -22,13 +20,14 @@ says otherwise. Report what you see; nothing here is a reason not to play.
 - **Kyogre's cave**: a player who logs out inside the cage is sent out on rejoin (built, not run in game).
 
 ## Known quirks
-- **Rips stand still**: the dungeon rips that open and close at random sites (job D) are being built tonight; until
-  they are installed, rips are the old fixed ones (or none, if not yet applied).
+- **Rips open and close at random** (3-5 at once, about an hour of play each or until entered; your defaults are not
+  confirmed, `data/rip_scheduler.json`). Never run in game. Before installing a pack that changes the rip list, run
+  `function cobblers:rips/close_all` (a rebuilt list closes the wrong ground otherwise).
+- **Cobbreeding 2.4.1**: a bred egg has a 5% chance to hatch an alpha (the mod's new default, accepted).
 - **TM Mega Drain** teaches no Pokemon on Cobblemon 1.8.2 (Venonat and Venomoth lost it).
 - **About 43 species render as a placeholder doll** without the AllTheMons subset resource pack.
 - **rctmod 0.19.2** (in the 1.8.2 set) shows trainer lines as speech bubbles by default.
-- **CobbleDollars Beta-6.1** (in the 1.8.2 set) migrates the bank file on first start (`bank.json` to
-  `default_bank.json`); our tools still write `bank.json`. Read the migrated file before trusting shop prices.
+- **CobbleDollars Beta-6.1** reads `default_bank.json`; `tools/bank.py` now writes it (economy v2's real bank, installed).
 - **The double-KO battle freeze fix** (rctapi 0.16.1+) is installed but has never been reproduced in game.
 - **Neruina**: if a block or entity throws repeatedly, it freezes it and kicks the player; tell the owner which.
 - **Memory**: the server plays at 12G. With the owner's client on the same PC, close other heavy apps.

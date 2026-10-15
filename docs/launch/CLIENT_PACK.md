@@ -12,8 +12,7 @@ Written 2026-10-14. **A client that does not match the server's mods is the most
 Rebuild with `python tools/client_pack.py build` and `python tools/client_model_fix.py build --server-pack`. Check a
 friend's install with `python tools/client_pack.py verify <their instance folder>`.
 
-**The pack is the Cobblemon 1.8.2 set.** It matches the server only after the server's `mods/` folder is swapped to
-the 1.8.2 set (the morning report, step 1). Until then the server runs 1.8.0 and these clients will be refused.
+**The pack is the Cobblemon 1.8.2 set, the same set the server runs** (swapped 2026-10-14; 101 server jars).
 
 **The AllTheMons subset's licence question is open** (`docs/decisions/ADR-006-server-delivered-client-pack.md`); you
 chose to give it to players directly. Without it the game works; about 43 species render as a placeholder doll.
