@@ -79,9 +79,11 @@ PER_PLAYER = (
 # (category, glob, required in the old world)
 WORLD_WIDE = (
     ("rctmod_trainers", "data/rctmod.trainers.*", True),
-    # required: every campaign pack keeps per-player state in scores (the blackout's checkpoints, the Surf timer,
-    # surface fatigue; the progression flags' counters), and a world without them loses it silently
-    ("scoreboard", "data/scoreboard.dat", True),
+    # every campaign pack keeps per-player state in scores (the blackout's checkpoints, the Surf timer, surface
+    # fatigue; the progression flags' counters), so a world that ran them always has this file and it is carried when
+    # present. Not required (2026-10-15, the launch export): the live world cobblers-10240 never ran a campaign pack
+    # (docs/STATE.md "has never been opened by this work") and has no scoreboard.dat at all, so there is nothing to lose
+    ("scoreboard", "data/scoreboard.dat", False),
     # the blackout claim ledger (tools/blackout_pack.py): open item claims are owed to players. Its own namespace, so
     # the shared cobblers storage (the re-apply's progress) is never carried. Absent until the first claim is made
     ("recovery_ledger", "data/command_storage_cobblers_recovery.dat", False),
