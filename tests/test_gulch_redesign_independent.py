@@ -1151,7 +1151,7 @@ def test_the_recipe_raiser_puts_exactly_two_raw_stones_in_every_recipe(tmp_path,
     monkeypatch.setattr(MR, "ROOT", tmp_path)
     assert MR.main(["--jar-dir", str(tmp_path)]) == 0
     written = sorted(out.rglob("*.json"))
-    assert len(written) == len(stones) == 92
+    assert len(written) == len(stones) == 89   # 92 until Mega Showdown 1.3.0: its three Z-A stones (absolite_z, garchompite_z, lucarionite_z) have no recipe (2026-10-14)
 
     def counts(r):
         c = {}

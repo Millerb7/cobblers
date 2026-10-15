@@ -555,6 +555,7 @@ def plan(doc, resolved, markets, progression, scores=None):
                 notes.append("device %s: no loaded grid recipe makes it" % item)
     # every loaded advancement that unlocks a gated recipe is closed; it must unlock nothing else and do nothing else
     closed_adv = []
+    narrowed_adv = {}
     for aid, (_, a) in sorted(resolved["advancements"].items()):
         rew = a.get("rewards") or {}
         names = rew.get("recipes") or []
@@ -563,6 +564,12 @@ def plan(doc, resolved, markets, progression, scores=None):
             continue
         other = [r for r in names if r not in gated]
         extra = sorted(k for k in rew if k != "recipes")
+        if other and not extra:
+            # NARROWED, not closed: it keeps unlocking its ungated recipes and stops unlocking the gated ones. Tom's
+            # Storage 2.4.2's unlock_glowstone gives the gated crafting terminal AND the plain storage terminal
+            # (2026-10-14); closing it would have withheld the storage terminal until the last badge.
+            narrowed_adv[aid] = dict(a, rewards=dict(rew, recipes=other))
+            continue
         if other or extra:
             problems.append("advancement %s unlocks gated %s but also %s: closing it would take those too"
                             % (aid, hit[:3], (other[:3] + extra)))
@@ -599,7 +606,8 @@ def plan(doc, resolved, markets, progression, scores=None):
                 for item, t in sorted(tms.items()) if t["rule"] == "shelf" and t["badge"] != t["power_badge"]]
     by_rule = collections.Counter(t["rule"].split(" ")[0].split(":")[0] for t in tms.values())
     return {"tms": tms, "gated": gated, "chain_raises": raises,
-            "closed_advancements": closed_adv, "closed_recipes": sorted(closed_recipes),
+            "closed_advancements": closed_adv, "narrowed_advancements": narrowed_adv,
+            "closed_recipes": sorted(closed_recipes),
             "top_badge": top, "key": key, "moves_sha256": scores.get("moves_sha256"),
             "distribution": dict(sorted(collections.Counter(t["badge"] for t in tms.values()).items())),
             "by_rule": dict(sorted(by_rule.items())),
@@ -669,6 +677,9 @@ def build(doc, p):
     for rid in p["closed_recipes"]:
         ns, path = rid.split(":", 1)
         out["data/%s/recipe/%s.json" % (ns, path)] = body
+    for aid, adv in sorted((p.get("narrowed_advancements") or {}).items()):   # same path, the gated recipes taken out
+        ns, path = aid.split(":", 1)
+        out["data/%s/advancement/%s.json" % (ns, path)] = json.dumps(adv, indent=2) + "\n"
     refused = []
     for rel, text in out.items():
         if rel.endswith(".mcfunction"):

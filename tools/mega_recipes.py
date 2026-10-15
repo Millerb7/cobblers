@@ -75,6 +75,9 @@ def open_jars(folder):
     return out
 
 
+NO_RECIPE = []   # mega definitions with no recipe in the jar: uncraftable, so outside the recipe gate
+
+
 def stones(jars):
     """{"ns:stone": (recipe path, recipe dict)} for every Mega Stone: a mega definition with a recipe at the same name."""
     out = {}
@@ -87,7 +90,11 @@ def stones(jars):
             stone = n[len(pre):-5]
             rp = "data/%s/recipe/%s.json" % (ns, stone)
             if rp not in names:
-                raise RecipeError("%s:%s has a mega definition and no recipe" % (ns, stone))
+                # Mega Showdown 1.3.0 (with Cobblemon 1.8.2) ships three Z-A stones with no recipe at all
+                # (absolite_z, garchompite_z, lucarionite_z, read from the jar 2026-10-14): nothing crafts them, so
+                # there is no recipe to gate. Listed, not failed; any other source of them is not this tool's.
+                NO_RECIPE.append("%s:%s" % (ns, stone))
+                continue
             out["%s:%s" % (ns, stone)] = (rp, json.loads(z.read(rp), strict=False))
     return out
 
