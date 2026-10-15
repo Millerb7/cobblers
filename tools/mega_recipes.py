@@ -80,6 +80,7 @@ NO_RECIPE = []   # mega definitions with no recipe in the jar: uncraftable, so o
 
 def stones(jars):
     """{"ns:stone": (recipe path, recipe dict)} for every Mega Stone: a mega definition with a recipe at the same name."""
+    NO_RECIPE.clear()
     out = {}
     for ns, z in jars.items():
         names = set(z.namelist())
@@ -151,7 +152,9 @@ def main(argv=None):
         jars = open_jars(folder)
         found = stones(jars)
         out = {sid: (rp, raised(r, sid)) for sid, (rp, r) in found.items()}
-        probs, n_off, n_left = check_cutters(found)
+        # a stone with no recipe is still a Mega Stone the Cutters may trade (a villager offer needs no recipe); it
+        # just has no recipe to raise
+        probs, n_off, n_left = check_cutters(set(found) | set(NO_RECIPE))
     except RecipeError as e:
         raise SystemExit("mega_recipes: %s: nothing written" % e)
     if probs:
