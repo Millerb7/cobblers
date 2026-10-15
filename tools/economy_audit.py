@@ -180,7 +180,7 @@ DATA = ROOT / "data"
 BASE_BANK = ROOT / "base-pack" / "cobbleverse" / "config" / "cobbledollars" / "bank.json"
 BASE_SHOP = ROOT / "base-pack" / "cobbleverse" / "config" / "cobbledollars" / "default_shop.json"
 OUR_SHOP = ROOT / "modpack" / "config" / "cobbledollars" / "default_shop.json"
-COMMITTED_BANK = ROOT / "modpack" / "config" / "cobbledollars" / "bank.json"
+COMMITTED_BANK = ROOT / "modpack" / "config" / "cobbledollars" / "default_bank.json"
 DIRECT_TRADES = DATA / "direct_trades.json"
 
 DEFAULT_SNAPSHOT = "C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05"
@@ -2841,11 +2841,13 @@ def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, us
     towns_doc = read_json(DATA / "towns.json")
 
     emitted = bank_entries_emitted(bank_mod)
-    committed = read_json(COMMITTED_BANK)["bank"]
+    import bank as _bank_tool  # reads either CobbleDollars form (Beta-6 writes a bare list)
+    committed = _bank_tool.committed_entries(COMMITTED_BANK)
+    emitted = [{"item": e["item"], "price": int(e["price"])} for e in emitted]
     if emitted != committed:
         diff = sorted({e["item"] for e in emitted} ^ {e["item"] for e in committed}
                       | {a["item"] for a, b in zip(emitted, committed) if a != b})
-        fails.append("STALE BANK: modpack/config/cobbledollars/bank.json is not tools/bank.py's output (%d entries vs "
+        fails.append("STALE BANK: modpack/config/cobbledollars/default_bank.json is not tools/bank.py's output (%d entries vs "
                      "%d; differing: %s)" % (len(committed), len(emitted), ", ".join(diff[:8])))
     bank_prices = bank_effective(emitted)
     for k, v in bank_effective(committed).items():

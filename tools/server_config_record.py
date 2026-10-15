@@ -33,8 +33,14 @@ ROOT = Path(__file__).resolve().parent.parent
 OVERLAY = ROOT / "modpack" / "config"
 MIRROR = ROOT / "server" / "config" / "mods"
 BASE = ROOT / "base-pack" / "cobbleverse" / "config"
-SKIP = re.compile(r"(\.bak$|\.pre-reexport-|/\.archive-unpack/|\.png$|\.icns$|\.ico$|\.jpg$|\.gif$|/\.data\.json$)")
+SKIP = re.compile(r"(\.bak\d*$|\.pre-reexport-|/\.archive-unpack/|\.png$|\.icns$|\.ico$|\.jpg$|\.gif$|/\.data\.json$)")
 OWN_KEYS = {"DistantHorizons.toml": re.compile(r"^\s*serverId\s*=.*$", re.M)}
+
+
+# Overlay files the repo's tools read but the server must NOT run. CobbleDollars 2.0.0 Beta-6 reads
+# cobbledollars/default_bank.json and migrates a bank.json it finds (2026-10-14, the 1.8.2 test boot); the old-shape
+# bank.json stays committed because a dozen tools parse it, and tools/bank.py writes both from data/bank.json.
+REPO_ONLY = {"cobbledollars/bank.json"}
 
 
 def files(folder):
@@ -77,7 +83,7 @@ def check(server_config):
         elif comparable(rel, e.read_bytes()) != comparable(rel, p.read_bytes()):
             problems.append("%s: the server's copy differs from %s" % (rel, e.relative_to(ROOT).as_posix()))
     for rel in sorted(set(files(OVERLAY)) | set(files(MIRROR))):
-        if rel.endswith(".md"):
+        if rel.endswith(".md") or rel in REPO_ONLY:
             continue
         if rel not in running:
             problems.append("%s: recorded in the repo, absent on the server" % rel)
@@ -89,7 +95,7 @@ def install(server_config):
     Until 2026-09-26 nothing did this: five overlay files, starters.json among them, had never reached the server."""
     n = 0
     for rel, src in sorted(files(OVERLAY).items()):
-        if rel.endswith(".md"):
+        if rel.endswith(".md") or rel in REPO_ONLY:
             continue
         dest = server_config / rel
         data = src.read_bytes()

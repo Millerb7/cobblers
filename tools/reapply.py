@@ -1700,8 +1700,12 @@ def install(a):
     if src is None or not src.is_file():
         raise SystemExit("no upstream COBBLEVERSE-DP-v31.zip at %s: pass --cobbleverse-dp <the pack's own zip>" % src)
     IC.PATCHED_DP.parent.mkdir(parents=True, exist_ok=True)
+    # the Cobblemon jar the server actually runs (named by version: 1.8.0 until 2026-10-14, then 1.8.2)
+    jars = sorted((Path(a.server_dir) / "mods").glob("Cobblemon-fabric-*.jar"))
+    if len(jars) != 1:
+        raise SystemExit("expected one Cobblemon jar in %s/mods, found %d" % (a.server_dir, len(jars)))
     py(TOOLS / "patch_cobbleverse_riding.py", str(src), str(IC.PATCHED_DP), "--cobblemon-jar",
-       str(Path(a.server_dir) / "mods" / "Cobblemon-fabric-1.8.0+1.21.1.jar"), "--expect-patched", "51")
+       str(jars[0]), "--expect-patched", "51")
     shutil.copyfile(IC.PATCHED_DP, dp / IC.PATCHED_DP.name)
     print("installed", dp / IC.PATCHED_DP.name, "(riding-patched)")
     # last, fail-closed: everything the repo builds for this server is installed and current, packs and configs

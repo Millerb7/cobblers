@@ -15,7 +15,7 @@ is kept with its reason (base_removed, buys_removed). With --server-dir the ranc
 drop tables in the snapshot's jars and datapacks less Pasture Loot's blacklist. Farm goods sell to the Produce Buyer
 instead (tools/produce_buyer.py), under a per-player allowance the bank cannot express.
 
-  write    python tools/bank.py write                     modpack/config/cobbledollars/bank.json from the data
+  write    python tools/bank.py write                     modpack/config/cobbledollars/default_bank.json from the data
   check    python tools/bank.py check [--server-dir S]    the data's rules and the committed file; exit 1 on a problem
   report   python tools/bank.py report                    the buy list and the hourly estimate, labelled as one
 
@@ -113,14 +113,31 @@ def text(doc):
     return json.dumps({"bank": entries(doc)}, indent=2) + "\n"
 
 
+def file_text(doc):
+    """The server's config/cobbledollars/default_bank.json in CobbleDollars 2.0.0 Beta-6 form: a bare list, each price a
+    string (what Beta-6.1 wrote when it migrated our old bank.json on the 1.8.2 test boot, 2026-10-14). `text` keeps the
+    old {"bank": [...]} shape for the tools that read entries; only the file on disk changed."""
+    return json.dumps([{"item": e["item"], "price": str(int(e["price"]))} for e in entries(doc)], indent=2) + "\n"
+
+
+def committed_entries(path):
+    """[{item, price:int}] from a bank file of either CobbleDollars form (Beta-5 {"bank": [...]}, Beta-6 bare list)."""
+    raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    rows = raw["bank"] if isinstance(raw, dict) else raw
+    return [{"item": e["item"], "price": int(e["price"])} for e in rows]
+
+
 def prices(doc):
     return {e["item"]: int(e["price"]) for e in entries(doc)}
 
 
 def write(doc):
+    """Both files from the data: `output` (default_bank.json, Beta-6 form, what the server runs) and the old-shape
+    bank.json beside it, which the repo's tools read and tools/server_config_record.py never installs (REPO_ONLY)."""
     out = ROOT / doc["output"]
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(text(doc), encoding="utf-8", newline="\n")
+    out.write_text(file_text(doc), encoding="utf-8", newline="\n")
+    (out.parent / "bank.json").write_text(text(doc), encoding="utf-8", newline="\n")
     return out
 
 
@@ -267,8 +284,12 @@ def problems(doc, server_dir=None):
     f = ROOT / doc["output"]
     if not f.is_file():
         out.append("%s is missing: run tools/bank.py write" % doc["output"])
-    elif json.loads(f.read_text(encoding="utf-8")) != json.loads(text(doc)):
+    elif json.loads(f.read_text(encoding="utf-8")) != json.loads(file_text(doc)):
         out.append("%s differs from what data/bank.json writes: run tools/bank.py write" % doc["output"])
+    legacy = f.with_name("bank.json")
+    if not legacy.is_file() or json.loads(legacy.read_text(encoding="utf-8")) != json.loads(text(doc)):
+        out.append("%s is missing or differs from what data/bank.json writes: run tools/bank.py write"
+                   % legacy.relative_to(ROOT).as_posix())
     return out, skipped, len(pts)
 
 
