@@ -3086,7 +3086,7 @@
       {
         "what": "water in the launch channel",
         "block": [
-          1614,
+          1612,
           105,
           2888,
           "minecraft:water"
@@ -3892,7 +3892,7 @@
       {
         "what": "water in the west vat",
         "block": [
-          4591,
+          4590,
           115,
           2483,
           "minecraft:water"
@@ -3952,7 +3952,7 @@
       {
         "what": "the old watch floor's air, cleared",
         "block": [
-          4594,
+          4590,
           131,
           2487,
           "minecraft:air"
