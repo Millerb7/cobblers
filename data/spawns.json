@@ -8242,6 +8242,20 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.great_crater.coalossal",
+      "species": "coalossal",
+      "bucket": "rare",
+      "level": "43-53",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "great_crater",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "evolves from Carkol at level 34: spawns 43-53, inside the tier 8 band 43-53",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "surface.great_crater.torkoal",
       "species": "torkoal",
       "bucket": "ultra-rare",
@@ -44079,6 +44093,22 @@
           "family_priority": "rare",
           "ambient": true,
           "eligibility_reason": "named rare family, tier 8: the family starts here",
+          "level": "43-53",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        },
+        {
+          "species": "Coalossal",
+          "pokemon": "coalossal",
+          "types": [
+            "rock",
+            "fire"
+          ],
+          "family": "rolycoly",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "evolves from Carkol at level 34: spawns 43-53, inside the tier 8 band 43-53",
           "level": "43-53",
           "bucket": "rare",
           "weight": 2.0,

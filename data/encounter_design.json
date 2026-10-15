@@ -437,7 +437,7 @@
         "land": [["dusclops", "common"], ["aegislash", "presence"], ["trevenant", "presence"], ["banette", "presence"]]}},
 
     "great_crater": {"tier": 8, "themes": ["volcanic"], "placement": "path",
-      "land": [["magby", "anchor"], ["litwick", "common"], ["houndour", "common"], ["ponyta", "common"], ["vulpix", "common"], ["darumaka", "common"], ["charmander", "uncommon"], ["heatmor", "uncommon"], ["skarmory", "uncommon"], ["dwebble", "uncommon"], ["turtonator", "rare"], ["torkoal", "ultra"]],
+      "land": [["magby", "anchor"], ["litwick", "common"], ["houndour", "common"], ["ponyta", "common"], ["vulpix", "common"], ["darumaka", "common"], ["charmander", "uncommon"], ["heatmor", "uncommon"], ["skarmory", "uncommon"], ["dwebble", "uncommon"], ["turtonator", "rare"], ["carkol", "rare"], ["torkoal", "ultra"]],
       "heart": {"kind": "focus", "at": {"x": 6080, "z": 5530, "why": "the Great Crater's bowl: floor about y195-205 (y194 at this point) inside a rim up to y302, breached to the east, read from the canonical heightmap on a 20-block grid; 96 blocks reaches the rim crest"}, "radius": 96,
         "why": "the crater bowl and its rim, 4.8% of the place",
         "land": [["lampent", "common"], ["charizard", "presence"], ["volcarona", "presence"], ["magmortar", "presence"]]}},

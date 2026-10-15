@@ -769,7 +769,7 @@
    "table": "data/encounter_design.json tables.great_crater",
    "tier": 8,
    "levels": null,
-   "species": 17,
+   "species": 18,
    "geometry": "data/regions.json subregions.great_crater polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
