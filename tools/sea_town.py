@@ -854,6 +854,7 @@ def build(plan, g, world):
         # command turns the filled barrel into a lootr:lootr_barrel whose customInventory every player opens a copy of
         # (EXP-056 C1, measured over RCON; from a function, C2, proven on staging before live)
         W.cmds.append("lootr custom-chest %d %d %d" % (x + n, walk, z))
+        W.model[(x + n, walk, z)] = "lootr:lootr_barrel"     # what the verify must find there afterwards
         occupied |= {(cx, z) for cx in range(x, x + n + 1)}
     stations = station_list(plan, by_id)
     for s in stations:
