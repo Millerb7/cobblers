@@ -289,12 +289,12 @@
   {"what": "the arena door", "at": [4588, 118, 2492], "block": "minecraft:air"},
   {"what": "the door past the leader", "at": [4575, 117, 2472], "block": "minecraft:iron_door"},
   {"what": "its button, inside", "at": [4576, 118, 2471], "block": "minecraft:stone_button"},
-  {"what": "water in the west vat", "at": [4591, 115, 2483], "block": "minecraft:water"},
+  {"what": "water in the west vat", "at": [4590, 115, 2483], "block": "minecraft:water"},
   {"what": "soul sand in the west vat's floor", "at": [4591, 112, 2483], "block": "minecraft:soul_sand"},
   {"what": "the mouth under the screen", "at": [4591, 113, 2486], "block": "minecraft:water"},
   {"what": "a decoy vat's solid wall", "at": [4596, 114, 2485], "block": "minecraft:mud_bricks"},
   {"what": "the old range's floor, taken down", "at": [4586, 104, 2475], "block": "minecraft:stone"},
   {"what": "the old stair tower under the pad, taken down", "at": [4600, 108, 2489], "block": "minecraft:stone"},
-  {"what": "the old watch floor's air, cleared", "at": [4594, 131, 2487], "block": "minecraft:air"}
+  {"what": "the old watch floor's air, cleared", "at": [4590, 131, 2487], "block": "minecraft:air"}
  ]
 }

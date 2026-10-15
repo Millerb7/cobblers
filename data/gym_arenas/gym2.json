@@ -129,7 +129,7 @@
  "probes": [
   {"what": "the quay under the leader's Pokemon", "at": [1620, 105, 2883], "block": "minecraft:prismarine_bricks"},
   {"what": "air over the quay in the middle of the boat house", "at": [1616, 108, 2883], "block": "minecraft:air"},
-  {"what": "water in the launch channel", "at": [1614, 105, 2888], "block": "minecraft:water"},
+  {"what": "water in the launch channel", "at": [1612, 105, 2888], "block": "minecraft:water"},
   {"what": "the lookout deck's front edge", "at": [1624, 108, 2883], "block": "minecraft:stripped_dark_oak_log"},
   {"what": "the lifebuoy on the end wall", "at": [1630, 113, 2883], "block": "minecraft:red_terracotta"},
   {"what": "the door from the promenade", "at": [1611, 110, 2860], "block": "minecraft:air"},
