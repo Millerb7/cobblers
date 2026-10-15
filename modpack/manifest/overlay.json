@@ -1900,6 +1900,42 @@
    "pin_note": "Exact pin, no floating version. DH requires the same major version on client and server; a drifted client is rejected by the server, so version drift is a hard failure rather than a degradation.",
    "beta_note": "Every 1.21.1 build of DH is on the beta channel. There is no stable release for this Minecraft version.",
    "side_note": "One jar serves both Fabric and NeoForge and both sides. There is no separate server download. The server component is required: without it a client only sees LOD for terrain it has personally visited."
+  },
+  {
+   "mod_id": "lootr",
+   "version": "1.21.1-1.11.38.127",
+   "file": "lootr-fabric-1.21.1-1.11.38.127.jar",
+   "side": "both",
+   "pin": "exact",
+   "modrinth": {
+    "slug": "lootr",
+    "project_id": "EltpO5cN",
+    "version_id": "nar56EsW",
+    "version_number": "1.21.1-1.11.38.127",
+    "version_type": "release",
+    "date_published": "2026-09-25T01:34:48.959323Z",
+    "url": "https://cdn.modrinth.com/data/EltpO5cN/versions/nar56EsW/lootr-fabric-1.21.1-1.11.38.127.jar",
+    "filename": "lootr-fabric-1.21.1-1.11.38.127.jar",
+    "size": 1111591,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "9s6osm5g",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "6a0d50423c76740b3da18853af743d697127cd38a83b98b363305aae0cf74a18fe9b61a68ffe25498232344fe2d1b325fd960396ae49135f59458ea1ec6efab1",
+   "sha1": "6671786d4c36a33dcefff85d757022c2a8ed535f",
+   "verification": "verified via Modrinth API 2026-10-15 (sha512 lookup of the EXP-056 jar)",
+   "reason": "Per-player chests (ADR-007; the owner, 2026-10-14: 'every chest should be attainable per player'). Loot-table containers convert automatically; the sea town's boat barrels by `lootr custom-chest`. World-critical from the first converted container (lootr:lootr_chest, lootr:lootr_barrel)."
   }
  ],
  "server_exclude": [
