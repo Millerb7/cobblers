@@ -358,7 +358,12 @@ def authored_points(doc, own_file=None):
                 return
             if num(o.get("x")) and num(o.get("z")):
                 pts.append((o["x"], o["z"], f))
-            for v in o.values():
+            for k, v in o.items():
+                # a `nearest_*` record notes ANOTHER place's point (data/dungeon_rips.json siting.nearest_authored
+                # copies a regions.json vertex, 2026-10-14): it places nothing, and counting it made Wardenhold's
+                # clearance fail on a rip 115 blocks away
+                if isinstance(k, str) and k.startswith("nearest_"):
+                    continue
                 walk(v, f)
         elif isinstance(o, list):
             if len(o) == 2 and all(num(v) for v in o):
