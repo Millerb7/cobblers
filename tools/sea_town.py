@@ -850,6 +850,11 @@ def build(plan, g, world):
         W.fill(x + 1, walk + 2, z, x + n - 2, walk + 2, z, "minecraft:spruce_slab[type=bottom,waterlogged=false]")
         items = ",".join('{Slot:%db,id:"minecraft:oak_boat",count:1}' % k for k in range(int(r["boats"])))
         W.set(x + n, walk, z, "minecraft:barrel[facing=up,open=false]{Items:[%s]}" % items)
+        # per player (the owner, 2026-10-14: "every chest should be attainable per player"; ADR-007, Lootr): Lootr's own
+        # command turns the filled barrel into a lootr:lootr_barrel whose customInventory every player opens a copy of
+        # (EXP-056 C1, measured over RCON; from a function, C2, proven on staging before live)
+        W.cmds.append("lootr custom-chest %d %d %d" % (x + n, walk, z))
+        W.model[(x + n, walk, z)] = "lootr:lootr_barrel"     # what the verify must find there afterwards
         occupied |= {(cx, z) for cx in range(x, x + n + 1)}
     stations = station_list(plan, by_id)
     for s in stations:

@@ -184,7 +184,10 @@ def test_the_failure_set_is_exactly_the_known_defects(real):
 
 # Without it a stale committed bank.json (what install copies) could disagree with the data and nothing would say so.
 def test_the_committed_bank_file_is_the_generators_output():
-    assert E.bank_entries_emitted() == E.read_json(E.COMMITTED_BANK)["bank"]
+    # the committed file is CobbleDollars Beta-6's default_bank.json (a bare list, string prices): compared by value
+    import bank as B
+    assert [{"item": e["item"], "price": int(e["price"])} for e in E.bank_entries_emitted()] == \
+        B.committed_entries(E.COMMITTED_BANK)
 
 
 # Without it the arbitrage check could pass vacuously: it must price every id the emitted bank lists and see one offer

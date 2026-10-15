@@ -1,5 +1,5 @@
 {
-  "lastSavedVersion": "1.8.0",
+  "lastSavedVersion": "1.8.2",
   "maxPokemonLevel": 100,
   "maxPokemonFriendship": 255,
   "announceDropItems": true,
@@ -61,6 +61,7 @@
   "displayEntityNameLabel": true,
   "displayNameForUnknownPokemon": false,
   "displayEntityLabelsWhenCrouchingOnly": false,
+  "shoulderMountArmorOffsetBlacklist": [],
   "shinyRate": 2048.0,
   "fossilMachineAlphaChance": 20,
   "fossilMachineShinyChance": 100,
@@ -116,5 +117,10 @@
   "despawnerMinAgeTicks": 600,
   "despawnerMaxAgeTicks": 3600,
   "monitorAlphaRate": 40,
-  "monitorShinyRate": 200
+  "monitorShinyRate": 200,
+  "typeGemMaxConnected": 16,
+  "typeGemMinGrowth": 8,
+  "typeGemGrowthChance": 0.1,
+  "typeGemInitialExpansionCycles": 100,
+  "typeGemTickChance": 1.0
 }

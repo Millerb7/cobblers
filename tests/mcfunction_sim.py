@@ -593,6 +593,20 @@ class World:
                 raise Failed("data merge needs one entity")
             ents[0].nbt.update(snbt(t[3]))
             return 1
+        if t[0] == "modify" and t[1] == "entity":
+            # `data modify entity <sel> <path> set value <snbt>` (tools/traders.py bank_line: a merchant's bank)
+            path, verb, how, val = t[3].split(" ", 3)
+            if (verb, how) != ("set", "value"):
+                raise Unsupported("data modify entity %s %s" % (verb, how))
+            ents = self.select(t[2], ctx)
+            if len(ents) != 1:
+                raise Failed("data modify entity needs one entity")
+            keys = split_path(path)
+            cur = ents[0].nbt
+            for k in keys[:-1]:
+                cur = cur.setdefault(k, {})
+            cur[keys[-1]] = snbt(val)
+            return 1
         if t[0] == "modify" and t[1] == "storage":
             sid, rest2 = t[2], t[3]
             path, verb, how, val = rest2.split(" ", 3)
@@ -872,3 +886,308 @@ class World:
                 if typ != "int":
                     raise Unsupported("store type %s" % typ)
                 self.storage_set(sid, path, int(math.floor(v * scale)))
+
+
+# ------------------------------------------------------------------------------------------------ a world of real cells
+# Added 2026-10-14 by the test author for the rip scheduler's independent audit (tools/dungeon_draw_audit.py, pack
+# cobblers_rips). World above keeps no blocks (it reads its own write log); CellWorld keeps every cell a command writes, so
+# a test can ask whether a world was given back EXACTLY. Written from vanilla 1.21.1 semantics, not from any generator.
+# World is untouched: every existing user keeps its behaviour.
+
+MODIFICATION_LIMIT = 32768        # gamerule commandModificationBlockLimit's default (fill, clone)
+
+
+def _box(a, b):
+    return tuple(int(math.floor(min(a[i], b[i]))) for i in range(3)), tuple(int(math.floor(max(a[i], b[i]))) for i in range(3))
+
+
+def _cells(lo, hi):
+    for x in range(lo[0], hi[0] + 1):
+        for y in range(lo[1], hi[1] + 1):
+            for z in range(lo[2], hi[2] + 1):
+                yield (x, y, z)
+
+
+class CellWorld(World):
+    """World with a block in every cell and the commands that move them, as vanilla runs them:
+
+      setblock x y z <block> [replace|keep|destroy]   fails (nothing written) in an unloaded chunk or when the cell already
+                                                      holds the block (vanilla "Could not set the block")
+      fill <from> <to> <block> [replace [<filter>]|keep|destroy]   every chunk of the box must be loaded; at most
+                                                      MODIFICATION_LIMIT cells; fails when no cell changed
+      clone <from> <to> <dest> [replace|masked] [normal|force|move]   source and destination must be loaded; a source and
+                                                      destination that overlap fail in normal mode; the source is read
+                                                      whole BEFORE anything is written; fails when no cell changed
+      schedule function <f> <n>[t|s|d] [append|replace] / schedule clear <f>   run by advance(), as the server at spawn
+      random value|roll <lo>..<hi>                    random_hook(lo, hi, function) decides (seeded rng by default)
+      return run <command> / return fail
+      execute ... in <dimension> ...                  accepted; this world has ONE dimension (a selector does not filter by
+                                                      dimension), so a player meant to be elsewhere is placed far away
+      @a/@e[scores={obj=range,...}]                   a holder with no score on the objective does not match
+      scoreboard players reset <holder> [<objective>]
+
+    A block is an opaque string, compared whole: a block state or a block entity's data written into it ("minecraft:chest
+    [facing=north]{Items:[..]}") is kept by a clone and lost by anything else. `terrain(x, y, z)` is what a cell holds before
+    any write. `entity_delay`: ticks after a chunk becomes force-loaded before the entities saved in it can be selected
+    (vanilla loads a chunk's entities apart from its blocks; tools/chunk_look.py). 0 = at once. An entity summoned into a
+    loaded chunk is there at once."""
+
+    def __init__(self, functions, terrain=None, seed=1, entity_delay=0, **kw):
+        super().__init__(functions, **kw)
+        import random as _random
+        self.cells = {}
+        if terrain is not None:
+            self.terrain = terrain
+        self.rng = _random.Random(seed)
+        self.random_hook = lambda lo, hi, fn: self.rng.randint(lo, hi)
+        self.scheduled = []              # [due tick, sequence, function]
+        self._seq = 0
+        self.entity_delay = entity_delay
+        self.forced_since = {}
+        self.writes = []                 # (tick, function, kind, lo, hi): every write that landed
+
+    # -- cells
+    def block_at(self, x, y, z):
+        c = (int(math.floor(x)), int(math.floor(y)), int(math.floor(z)))
+        return self.cells[c] if c in self.cells else self.terrain(*c)
+
+    def set_cell(self, c, block):
+        self.cells[c] = block
+
+    def chunks_loaded(self, lo, hi):
+        return all(self.loaded(cx * 16, cz * 16) for cx in range(lo[0] // 16, hi[0] // 16 + 1)
+                   for cz in range(lo[2] // 16, hi[2] // 16 + 1))
+
+    def _landed(self, kind, lo, hi):
+        self.writes.append((self.tick_no, self.stack[-1] if self.stack else None, kind, lo, hi))
+
+    def c_setblock(self, rest, ctx):
+        t = rest.split()
+        c = tuple(int(math.floor(v)) for v in self.coords(t[0:3], ctx))
+        block, mode = t[3], (t[4] if len(t) > 4 else "replace")
+        if not self.chunks_loaded(c, c):
+            self.errors.append("setblock into an unloaded chunk: %s" % rest)
+            raise Failed("unloaded")
+        if mode not in ("replace", "keep", "destroy"):
+            raise Unsupported("setblock mode %s" % mode)
+        if (mode == "keep" and self.block_at(*c) != "minecraft:air") or self.block_at(*c) == block:
+            raise Failed("could not set the block")
+        self.set_cell(c, block)
+        self._log((self.tick_no, "setblock", rest))
+        self._landed("setblock", c, c)
+        return 1
+
+    def c_fill(self, rest, ctx):
+        t = rest.split()
+        lo, hi = _box(self.coords(t[0:3], ctx), self.coords(t[3:6], ctx))
+        block, mode = t[6], (t[7] if len(t) > 7 else "replace")
+        filt = t[8] if mode == "replace" and len(t) > 8 else None
+        if mode not in ("replace", "keep", "destroy"):
+            raise Unsupported("fill mode %s" % mode)
+        n = (hi[0] - lo[0] + 1) * (hi[1] - lo[1] + 1) * (hi[2] - lo[2] + 1)
+        if n > MODIFICATION_LIMIT:
+            self.errors.append("fill of %d cells: %s" % (n, rest))
+            raise Failed("too many blocks")
+        if not self.chunks_loaded(lo, hi):
+            self.errors.append("fill into an unloaded chunk: %s" % rest)
+            raise Failed("unloaded")
+        changed = 0
+        for c in _cells(lo, hi):
+            have = self.block_at(*c)
+            if filt and have.split("[")[0].split("{")[0] != filt.split("[")[0]:
+                continue
+            if mode == "keep" and have != "minecraft:air":
+                continue
+            if have != block:
+                self.set_cell(c, block)
+                changed += 1
+        self._log((self.tick_no, "fill", (lo, hi, t[6:])))
+        if not changed:
+            raise Failed("no blocks were filled")
+        self._landed("fill", lo, hi)
+        return changed
+
+    def c_clone(self, rest, ctx):
+        t = rest.split()
+        if t[0] == "from" or "to" in t[:12]:
+            raise Unsupported("clone across dimensions: %s" % rest)
+        lo, hi = _box(self.coords(t[0:3], ctx), self.coords(t[3:6], ctx))
+        d = tuple(int(math.floor(v)) for v in self.coords(t[6:9], ctx))
+        mask = t[9] if len(t) > 9 else "replace"
+        how = t[10] if len(t) > 10 else "normal"
+        if mask not in ("replace", "masked") or how not in ("normal", "force", "move"):
+            raise Unsupported("clone %s %s" % (mask, how))
+        size = tuple(hi[i] - lo[i] for i in range(3))
+        dhi = tuple(d[i] + size[i] for i in range(3))
+        n = (size[0] + 1) * (size[1] + 1) * (size[2] + 1)
+        if n > MODIFICATION_LIMIT:
+            self.errors.append("clone of %d cells: %s" % (n, rest))
+            raise Failed("too many blocks")
+        if how == "normal" and all(lo[i] <= dhi[i] and d[i] <= hi[i] for i in range(3)):
+            self.errors.append("clone source and destination overlap: %s" % rest)
+            raise Failed("overlap")
+        if not (self.chunks_loaded(lo, hi) and self.chunks_loaded(d, dhi)):
+            self.errors.append("clone with an unloaded chunk: %s" % rest)
+            raise Failed("unloaded")
+        src = {c: self.block_at(*c) for c in _cells(lo, hi)}
+        changed = 0
+        if how == "move":
+            for c in src:
+                if self.block_at(*c) != "minecraft:air":
+                    self.set_cell(c, "minecraft:air")
+        for (x, y, z), b in src.items():
+            if mask == "masked" and b == "minecraft:air":
+                continue
+            c = (x - lo[0] + d[0], y - lo[1] + d[1], z - lo[2] + d[2])
+            if self.block_at(*c) != b:
+                changed += 1
+            self.set_cell(c, b)
+        self._log((self.tick_no, "clone", (lo, hi, d)))
+        if not changed:
+            raise Failed("no blocks were cloned")
+        self._landed("clone", d, dhi)
+        return changed
+
+    # -- chunks and the entities in them
+    def c_forceload(self, rest, ctx):
+        t = rest.split()
+        if t[0] == "query":
+            raise Unsupported("forceload query")
+        x0, z0 = int(float(t[1])), int(float(t[2]))
+        x1, z1 = (int(float(t[3])), int(float(t[4]))) if len(t) > 3 else (x0, z0)
+        chunks = {(cx, cz) for cx in range(min(x0, x1) // 16, max(x0, x1) // 16 + 1)
+                  for cz in range(min(z0, z1) // 16, max(z0, z1) // 16 + 1)}
+        if t[0] == "add":
+            for ch in chunks - self.forced:
+                if not self._loaded(ch[0] * 16, ch[1] * 16):
+                    self.forced_since[ch] = self.tick_no
+                    for e in self.entities:
+                        if e.type != "minecraft:player" and (math.floor(e.pos[0]) // 16, math.floor(e.pos[2]) // 16) == ch:
+                            e.visible_from = self.tick_no + self.entity_delay
+            new = chunks - self.forced
+            self.forced |= chunks
+            if not new:
+                raise Failed("no chunks were marked for force loading")
+            return len(new)
+        gone = chunks & self.forced
+        self.forced -= chunks
+        if not gone:
+            raise Failed("no chunks were removed from force loading")
+        return len(gone)
+
+    def c_summon(self, rest, ctx):
+        r = super().c_summon(rest, ctx)
+        self.entities[-1].visible_from = self.tick_no
+        return r
+
+    def select(self, sel, ctx, single=False):
+        want = None
+        m = re.match(r"@([aepsr])\[(.*)\]$", sel)
+        if m:
+            args = _args(m.group(2))
+            sc = [v for k, v in args if k == "scores"]
+            if sc:
+                want = [tuple(p.split("=", 1)) for p in sc[0].strip("{}").split(",") if p]
+                rest = [("%s=%s" % (k, v)) for k, v in args if k != "scores"]
+                sel = "@%s%s" % (m.group(1), "[%s]" % ",".join(rest) if rest else "")
+        got = [e for e in super().select(sel, ctx, single)
+               if e.type == "minecraft:player" or self.tick_no >= getattr(e, "visible_from", 0)]
+        if want:
+            def ok(e):
+                for obj, rng in want:
+                    v = self.scores.get(("e%d" % e.uid, obj))
+                    lo, hi = _range(rng)
+                    if v is None or not lo <= v <= hi:
+                        return False
+                return True
+            got = [e for e in got if ok(e)]
+        return got
+
+    # -- scores, return, random, schedule, execute in
+    def c_scoreboard(self, rest, ctx):
+        t = rest.split()
+        if t[0] == "players" and t[1] == "reset":
+            h = self.holder(t[2], ctx)
+            for key in [k for k in self.scores if k[0] == h and (len(t) < 4 or k[1] == t[3])]:
+                del self.scores[key]
+            return 1
+        return super().c_scoreboard(rest, ctx)
+
+    def c_return(self, rest, ctx):
+        rest = rest.strip()
+        if rest.startswith("run "):
+            try:
+                v = self.command(rest[4:], ctx)
+            except Failed:
+                v = 0
+            raise Return(int(v or 0))
+        if rest == "fail":
+            raise Return(0)
+        return super().c_return(rest, ctx)
+
+    def c_random(self, rest, ctx):
+        t = rest.split()
+        if t[0] not in ("value", "roll"):
+            raise Unsupported("random %s" % rest)
+        lo, hi = (int(v) for v in t[1].split(".."))
+        return int(self.random_hook(lo, hi, self.stack[-1] if self.stack else None))
+
+    def c_schedule(self, rest, ctx):
+        t = rest.split()
+        if t[0] == "clear":
+            n = len([s for s in self.scheduled if s[2] == t[1]])
+            self.scheduled = [s for s in self.scheduled if s[2] != t[1]]
+            if not n:
+                raise Failed("nothing scheduled")
+            return n
+        if t[0] != "function":
+            raise Unsupported("schedule %s" % rest)
+        name, when = t[1], t[2]
+        mode = t[3] if len(t) > 3 else "replace"
+        n = int(float(when[:-1]) * {"t": 1, "s": 20, "d": 24000}[when[-1]]) if when[-1] in "tsd" else int(when)
+        if n <= 0:
+            raise Failed("schedule time must be positive")
+        if name not in self.functions:
+            raise Failed("unknown function %s" % name)
+        if mode == "replace":
+            self.scheduled = [s for s in self.scheduled if s[2] != name]
+        self._seq += 1
+        self.scheduled.append([self.tick_no + n, self._seq, name])
+        return self.tick_no + n
+
+    def advance(self, ticks):
+        """Run the scheduled functions due in the next `ticks` ticks, in order (due tick, then the order they were
+        scheduled), each as the server; the tick tag runs every tick if the pack has one."""
+        end = self.tick_no + ticks
+        while True:
+            due = [s for s in self.scheduled if s[0] <= end]
+            if self.tags.get("tick"):
+                if self.tick_no >= end:
+                    return
+                self.tick_no += 1
+                for f in self.tags["tick"]:
+                    self.function(f, self.server())
+            elif not due:
+                self.tick_no = end
+                return
+            else:
+                self.tick_no = max(self.tick_no, min(s[0] for s in due))
+            now = sorted((s for s in self.scheduled if s[0] <= self.tick_no), key=lambda s: (s[0], s[1]))
+            for s in now:
+                if s in self.scheduled:
+                    self.scheduled.remove(s)
+                    self.function(s[2], self.server())
+
+    def c_execute(self, rest, ctx):
+        toks = rest.split(" ")
+        out, i = [], 0
+        while i < len(toks):
+            if toks[i] == "run":
+                out += toks[i:]
+                break
+            if toks[i] == "in":
+                i += 2
+                continue
+            out.append(toks[i])
+            i += 1
+        return self._execute(out, 0, ctx, [])

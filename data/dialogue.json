@@ -1786,35 +1786,35 @@
           "id": "oak_mode_001",
           "kind": "line",
           "speaker": "professor_oak",
-          "text": "Before I send you out, we need to record the League rules your journey will follow.",
+          "text": "Before I send you out, I need to write down which League rules you'll battle under.",
           "next": "oak_mode_002"
         },
         {
           "id": "oak_mode_002",
           "kind": "line",
           "speaker": "professor_oak",
-          "text": "Under Standard rules, Gym Leaders use focused teams. Their plans are clear, and their held items support the lesson without filling every slot.",
+          "text": "Under Standard rules, Gym Leaders bring focused teams with a clear plan. Held items help, but not every Pokémon carries one.",
           "next": "oak_mode_003"
         },
         {
           "id": "oak_mode_003",
           "kind": "line",
           "speaker": "professor_oak",
-          "text": "Under Full-Team rules, every Gym Leader brings six. Their combinations are tighter, their held items matter, and a prepared answer may need help from the rest of your party.",
+          "text": "Under Full-Team rules, every Gym Leader brings six that cover for each other, and their held items matter. Expect to need more than one counter.",
           "next": "oak_mode_004"
         },
         {
           "id": "oak_mode_004",
           "kind": "line",
           "speaker": "professor_oak",
-          "text": "The level limits are identical. This changes what each battle asks of you, not how far you may train.",
+          "text": "The level limits are the same either way. Only the battles change.",
           "next": "oak_mode_005"
         },
         {
           "id": "oak_mode_005",
           "kind": "choice",
           "speaker": "professor_oak",
-          "text": "This record is yours alone. Once I enter it, it cannot be changed. Which rules should I enter?",
+          "text": "This is for you alone, and once I write it down it stays. Which rules?",
           "responses": [
             {
               "id": "oak_mode_pick_standard",
@@ -1852,7 +1852,7 @@
           "id": "oak_mode_confirm_standard",
           "kind": "choice",
           "speaker": "professor_oak",
-          "text": "Record Standard rules for your journey? This cannot be changed later.",
+          "text": "Standard rules, then? Once it's written, it stays.",
           "responses": [
             {
               "id": "oak_mode_record_standard",
@@ -1884,7 +1884,7 @@
           "id": "oak_mode_confirm_full",
           "kind": "choice",
           "speaker": "professor_oak",
-          "text": "Record Full-Team rules for your journey? This cannot be changed later.",
+          "text": "Full-Team rules, then? Once it's written, it stays.",
           "responses": [
             {
               "id": "oak_mode_record_full",

@@ -37,11 +37,13 @@ SURVEYED = {"hometown", "gym1_town", "gym2_town", "gym3_town", "gym4_town", "gym
 # cairn square existed, nothing sold) and the Dig. A hamlet gets a well (or its one civic thing) and ONE stall
 HAMLETS = {"gorge_hamlet", "merian_hut", "rift_rim_stop", "rift_dig_camp"}
 SECOND = HAMLETS | {"tableland_stop", "displaced_city"}
+# 2026-10-14: Fossick and Northlight, the survey's two towns with a middle already; their records add no merchant
+PREBUILT = {"mining_town", "northlight"}
 
 
 # ------------------------------------------------------------------------------------------- the contract, data only
 def test_every_surveyed_town_has_a_square():
-    assert set(DATA["towns"]) == SURVEYED | SECOND
+    assert set(DATA["towns"]) == SURVEYED | SECOND | PREBUILT
 
 
 @pytest.mark.parametrize("town", sorted(DATA["towns"]))
@@ -52,7 +54,9 @@ def test_contract_fields(town):
     assert sq["rect"][0] <= sq["rect"][2] and sq["rect"][1] <= sq["rect"][3]
     assert isinstance(sq["y"], int)
     assert len(sq["centrepiece"]) == 3 and all(isinstance(v, int) for v in sq["centrepiece"])
-    assert rec["stalls"], "%s: a square with nowhere to spend money" % town
+    # `no_stalls_why`: Fossick and Northlight's squares were built before this generator (their shops are the market
+    # builder's own stalls), so their records add no merchant (2026-10-14)
+    assert rec["stalls"] or rec.get("no_stalls_why"), "%s: a square with nowhere to spend money" % town
     ids = set()
     for s in rec["stalls"]:
         assert re.fullmatch(r"%s_stall_\d+" % re.escape(town), s["id"]), s["id"]
@@ -100,7 +104,9 @@ def test_stall_counts_follow_the_size_class():
     want = {"small": 2, "medium": 4, "large": 6}
     for town, rec in DATA["towns"].items():
         n = len(rec["stalls"])
-        if town == "hometown" or town in HAMLETS:
+        if rec.get("no_stalls_why"):
+            assert n == 0
+        elif town == "hometown" or town in HAMLETS:
             assert n == 1
         elif town == "tea_town":
             assert n == 2

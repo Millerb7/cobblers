@@ -939,7 +939,7 @@ def merchant_functions(doc, merchant):
     scope = "type=%s,tag=%s" % (MERCHANT_KIND, tag)
     near = "%s,x=%.1f,y=%d,z=%.1f,distance=..4" % (scope, x + 0.5, y, z + 0.5)
     act = ["# the stall's old merchant, then one new one", "kill @e[%s]" % near,
-           TR.summon_line(MERCHANT_KIND, x, y, z, merchant_data(doc))]
+           TR.summon_line(MERCHANT_KIND, x, y, z, merchant_data(doc)), TR.bank_line(scope)]
     base = merchant_fn(doc)
     fns = CL.chain(base, (x, z, x, z), ["@e[%s]" % near], act, [scope], new, scope, MERCHANT_HOLDER,
                    note="tools/apricorn_farm.py (R18AF)")

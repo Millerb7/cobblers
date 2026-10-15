@@ -45,7 +45,7 @@ import chunk_look as CL  # noqa: E402
 import function_limits  # noqa: E402
 
 DATA = ROOT / "data" / "direct_trades.json"
-BANK = ROOT / "modpack" / "config" / "cobbledollars" / "bank.json"   # tools/bank.py's output, what the server reads
+BANK = ROOT / "modpack" / "config" / "cobbledollars" / "default_bank.json"   # tools/bank.py's output, what the server reads
 MARKETS = ROOT / "data" / "markets.json"
 PLACEMENTS = ROOT / "data" / "placements.json"
 TRADERS = ROOT / "data" / "traders.json"
@@ -240,7 +240,11 @@ def counter_prices(markets=None):
 
 def bank_prices(bank=None):
     """{item: the higher price the Bank pays}, from tools/bank.py's committed output."""
-    entries = (bank if bank is not None else _read(BANK))["bank"]
+    if bank is not None:
+        entries = bank["bank"] if isinstance(bank, dict) else bank
+    else:
+        import bank as bank_tool  # either CobbleDollars form (Beta-6 writes a bare list)
+        entries = bank_tool.committed_entries(BANK)
     out = {}
     for e in entries:
         out[e["item"]] = max(out.get(e["item"], 0), int(e["price"]))

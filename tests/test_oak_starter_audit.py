@@ -215,8 +215,8 @@ def test_a_pack_function_giving_a_starter_species_is_caught(tmp_path):
 
 
 # --------------------------------------------------------------------------------------------- P2: the starter FORM
-# Larvesta, the sixth starter (2026-10-08), is also a wild species, so the species sweep cannot name it. The leak is
-# the starter form reaching a Pokemon a player can own; these fix the line between that and a wild Larvesta.
+# Larvesta, the sixth starter (2026-10-08), is a starter only (no wild Larvesta: the owner, 2026-10-14). The leak is
+# the starter form reaching a Pokemon a player can own; these fix the line between that and a plain Larvesta.
 def _pack_fn(tmp_path, text, name="gift.mcfunction"):
     packs = tmp_path / "packs"
     fn = packs / "cobblers_x" / "data" / "cobblers" / "function"
@@ -284,25 +284,44 @@ def _mutant(path, old, new):
 SPAWN_ANCHOR = 'heart_pokemon(e) if e.get("heart") else e["species"]'
 
 
+def test_no_wild_larvesta_is_compiled():
+    # The owner, 2026-10-14: no wild Larvesta is intended; Larvesta is a starter only. Without it a spawn row could
+    # quietly hand out the sixth starter's species in the wild. Checked over the real data/spawns.json and the
+    # Nether build the generator emits from it.
+    cs = _mutant(ROOT / "tools" / "compile_spawns.py", SPAWN_ANCHOR, SPAWN_ANCHOR)
+    files, _ = cs.build_nether(json.loads((DATA / "spawns.json").read_text(encoding="utf-8")))
+    assert not [r for r, t in files.items() if '"pokemon": "larvesta' in t]
+    def species(o):
+        if isinstance(o, dict):
+            yield from ([str(o.get(k)).lower() for k in ("species", "pokemon") if k in o])
+            for v in o.values():
+                yield from species(v)
+        elif isinstance(o, list):
+            for v in o:
+                yield from species(v)
+    # a Volcarona row carries family "larvesta": the rule is the species, not the family
+    assert "larvesta" not in set(species(json.loads((DATA / "spawns.json").read_text(encoding="utf-8"))))
+
+
 @pytest.mark.parametrize("mutate", [False, True])
-def test_the_spawn_generator_emitting_the_starter_aspect_on_larvesta_is_caught(tmp_path, mutate):
+def test_the_spawn_generator_emitting_the_starter_aspect_is_caught(tmp_path, mutate):
     # Independence by MUTATING THE GENERATOR (tools/compile_spawns.py build_nether, over the real, untouched
-    # data/spawns.json, whose Nether ring carries a wild Larvesta row): the real output passes, and the copy that
-    # writes aspect=cobblers_starter_1 on Larvesta fails. Without it the form check could pass anything, or fault the
-    # wild Larvesta it must leave alone.
-    new = (SPAWN_ANCHOR.replace('e["species"]', '(e["species"] + (" aspect=cobblers_starter_1" '
-                                'if e["species"] == "larvesta" else ""))') if mutate else SPAWN_ANCHOR)
+    # data/spawns.json): the real output passes, and the copy that writes aspect=cobblers_starter_1 on every species it
+    # emits fails. There is no wild Larvesta to target since the owner's 2026-10-14 call, so the starter form is put
+    # on whatever the generator spawns. Without it the form check could pass anything.
+    new = (SPAWN_ANCHOR.replace('e["species"]', '(e["species"] + " aspect=cobblers_starter_1")') if mutate
+           else SPAWN_ANCHOR)
     cs = _mutant(ROOT / "tools" / "compile_spawns.py", SPAWN_ANCHOR, new)
     files, _ = cs.build_nether(json.loads((DATA / "spawns.json").read_text(encoding="utf-8")))
-    assert any('"pokemon": "larvesta' in t for t in files.values()), "the fixture no longer exercises a wild Larvesta"
+    assert any('"pokemon": "' in t for t in files.values()), "the fixture no longer exercises a wild spawn"
     packs = tmp_path / "packs"
     for rel, text in files.items():
-        p = packs / "cobblers_spawns" / rel
-        p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(text, encoding="utf-8")
+        q = packs / "cobblers_spawns" / rel
+        q.parent.mkdir(parents=True, exist_ok=True)
+        q.write_text(text, encoding="utf-8")
     a = audit(oak_pack(tmp_path / "dlg"), tmp_path, packs=packs)
     assert ("P2:starter_form_given" in checks(a)) == mutate, a.problems
-    assert not [p for p in a.problems if p[0] == "P2" and not p[1].startswith("starter_form_given")], a.problems
+    assert not [q for q in a.problems if q[0] == "P2" and not q[1].startswith("starter_form_given")], a.problems
 
 
 SCENE_ANCHOR = 'props = "level=%d uncatchable no_ai" % int(a["level"])'

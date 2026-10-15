@@ -103,8 +103,21 @@ JAR_CANDIDATES = [
          r"\experiments\EXP-000-cobblemon-1.8-compat\runtime\server\mods\Cobblemon-fabric-1.8.0+1.21.1.jar"),
     ROOT / "experiments" / "EXP-000-cobblemon-1.8-compat" / "runtime" / "server" / "mods"
     / "Cobblemon-fabric-1.8.0+1.21.1.jar",
+    # the offline server snapshot the data was designed against (stable, outside every worktree)
+    Path(r"C:\Users\wnd\Documents\cobblers-local\server-snapshot-2026-10-05\mods\Cobblemon-fabric-1.8.0+1.21.1.jar"),
 ]
 SHOWDOWN = "assets/cobblemon/showdown/node_modules/pokemon-showdown/data/"
+SHOWDOWN_ZIP = "data/cobblemon/showdown.zip"  # Cobblemon 1.8.2 ships Showdown zipped inside the jar, as data/<file>
+
+
+def showdown_read(z, name):
+    """A Showdown data file (moves.js, typechart.js, ...) from a Cobblemon jar of either layout: 1.8.0 keeps them loose
+    under SHOWDOWN, 1.8.2 inside SHOWDOWN_ZIP (read from both jars, 2026-10-14)."""
+    try:
+        return z.read(SHOWDOWN + name)
+    except KeyError:
+        import io
+        return zipfile.ZipFile(io.BytesIO(z.read(SHOWDOWN_ZIP))).read("data/" + name)
 
 # This tool never decides where anything goes, so the ground rule does not apply to it; it reads no world.
 WORLD_READS = set()
@@ -120,7 +133,10 @@ def find_jar():
     for p in JAR_CANDIDATES:
         if p.is_file():
             return p
-    hits = sorted(Path(r"C:\Users\wnd\Documents\github\cobblers").rglob("Cobblemon-fabric-1.8*.jar"))
+    # never an agent's scratch copy: on 2026-10-14 a builder's build/scratch 1.8.2 jar won this search and silently
+    # changed every tool's species and type chart
+    hits = sorted(p for p in Path(r"C:\Users\wnd\Documents\github\cobblers").rglob("Cobblemon-fabric-1.8*.jar")
+                  if "scratch" not in p.parts)
     if hits:
         return hits[0]
     raise SimError("no Cobblemon 1.8 jar found: species, moves and the type chart all come from it")
@@ -146,8 +162,8 @@ def load_pack(jar):
             if d.get("implemented") is False:
                 continue
             species[key(d["name"])] = d
-    moves = parse_moves(z.read(SHOWDOWN + "moves.js").decode("utf8", "replace"))
-    chart = parse_typechart(z.read(SHOWDOWN + "typechart.js").decode("utf8", "replace"))
+    moves = parse_moves(showdown_read(z, "moves.js").decode("utf8", "replace"))
+    chart = parse_typechart(showdown_read(z, "typechart.js").decode("utf8", "replace"))
     return species, moves, chart
 
 
@@ -178,6 +194,8 @@ def parse_typechart(text):
     out = {}
     for m in ENTRY.finditer(text):
         tid, body = m.group(1), m.group(2)
+        if tid == "stellar":                          # Cobblemon 1.8.2's chart adds the Tera-only Stellar type;
+            continue                                  # no Pokemon has it, so it is no defending type here
         taken = re.search(r"damageTaken: \{(.*?)\n    \}", body, re.S)
         if not taken:
             continue

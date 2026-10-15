@@ -660,17 +660,17 @@
       "conversation": "dlg_stone_tip_northlight",
       "settlement": "northlight",
       "at": [
-        7247,
+        7265,
         117,
         1568
       ],
-      "yaw": -126,
+      "yaw": 180,
       "ground": {
         "kind": "plaza",
         "y": 116,
         "source": "data/placements.json settlements.northlight.plan.plaza.y"
       },
-      "faces": "the plaza centre (7265, 1555)",
+      "faces": "the plaza centre (7265, 1555)", "moved": "2026-10-14: from (7247, 1568), the plaza corner the new square lights; mid-edge between its benches",
       "why": "No position authored (data/quests.json ambient_stone_tips has no actors). On the town's plaza, the one surface whose height the plan records, two blocks in from its edge, facing into it."
     },
     {

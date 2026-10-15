@@ -360,9 +360,23 @@ def test_an_undeclared_give_all_fails_closed(tmp_path):
     assert any("other:grant" in p for p in plan["problems"])
 
 
-def test_an_unlock_that_also_unlocks_ordinary_recipes_fails_closed(tmp_path):
+def test_an_unlock_that_also_unlocks_ordinary_recipes_is_narrowed(tmp_path):
+    # Narrowed, not closed (2026-10-14, Tom's Storage 2.4.2's unlock_glowstone): the override at the same path keeps
+    # the ordinary recipe and drops the gated one. Without it the gated recipe would still unlock, or closing the
+    # advancement would take the ordinary recipe with it.
     adv = {"criteria": {"x": {"trigger": "minecraft:tick"}},
            "rewards": {"recipes": ["tmcraft:tm_tackle", "minecraft:oak_planks"]}}
+    plan, _, files = _make(G, tmp_path, extra_advancements={"data/other/advancement/mixed.json": adv})
+    assert files is not None and not any("other:mixed" in p for p in plan["problems"])
+    assert "other:mixed" not in plan["closed_advancements"]
+    written = json.loads(files["data/other/advancement/mixed.json"])
+    assert written["rewards"]["recipes"] == ["minecraft:oak_planks"]
+
+
+def test_an_unlock_that_also_does_something_else_fails_closed(tmp_path):
+    # a reward other than recipes (a function, loot, experience) cannot be narrowed safely: it fails closed
+    adv = {"criteria": {"x": {"trigger": "minecraft:tick"}},
+           "rewards": {"recipes": ["tmcraft:tm_tackle"], "function": "other:give_everything"}}
     plan, _, files = _make(G, tmp_path, extra_advancements={"data/other/advancement/mixed.json": adv})
     assert files is None
     assert any("other:mixed" in p for p in plan["problems"])

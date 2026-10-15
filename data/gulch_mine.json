@@ -2837,10 +2837,10 @@
           "mega_showdown:hawluchanite",
           "mega_showdown:crabominite",
           "mega_showdown:drampanite",
-          "zamega:golisopite",
+          "mega_showdown:golisopite",
           "mega_showdown:glimmoranite",
-          "zamega:absolitez",
-          "zamega:garchompitez"
+          "mega_showdown:absolite_z",
+          "mega_showdown:garchompite_z"
         ]
       }
     ],
@@ -2870,9 +2870,9 @@
       "mega_showdown:slowbronite",
       "mega_showdown:tyranitarite",
       "mega_showdown:victreebelite",
-      "zamega:baxcalibrite",
+      "mega_showdown:baxcalibrite",
       "zamega:heatranite",
-      "zamega:lucarionitez",
+      "mega_showdown:lucarionite_z",
       "zamega:magearnite",
       "zamega:tatsugirinite",
       "zamega:zeraorite",

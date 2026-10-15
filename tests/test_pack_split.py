@@ -83,17 +83,20 @@ def test_a_longer_id_that_merely_starts_with_a_moved_one_is_not_a_call(tmp_path)
 def test_dungeon_build_only_takes_the_shell_and_rip_placement_and_nothing_a_run_calls():
     import dungeon as D
     steps = dict((sid, acts) for sid, _t, acts in D.reapply_steps())
-    fns = [v for sid in ("R16DG", "R16DR") for k, v in steps[sid] if k == "fn"]
+    # R16DR runs the retire of the 13 trail rips (build: one-shot), the retire's entity sweep (a scheduled chain: runtime) and, since
+    # 2026-10-14, the rip scheduler's init, which is in ANOTHER pack (cobblers_rips: runtime, tools/rip_scheduler.py)
+    fns = [v for sid in ("R16DG", "R16DR") for k, v in steps[sid] if k == "fn" and v.startswith(D.F(""))]
     placement = [f for f in fns if "/entities" not in f]
     chains = [f for f in fns if "/entities" in f]
     assert placement and all(D.build_only(f) for f in placement), placement
     # the look-then-act chains stay with the runtime pack: their scheduled steps must not outlive a stripped pack
     assert chains and not any(D.build_only(f) for f in chains), chains
+    assert D.SCHEDULER_INIT == "cobblers:rips/init" and not D.build_only(D.SCHEDULER_INIT)
     for runtime in ("load", "keeper", "slot/s1/reset", "slot/s1/reserve", "room/ash_bell/ash_bowl/s13/reset",
-                    "rips/emit", "door/ab", "shells/entities", "shells/entities/look", "rips/entities"):
+                    "rips/emit", "door/ab", "shells/entities", "shells/entities/look", "rips/entities_retired"):
         assert not D.build_only(D.F(runtime)), runtime
     for one_shot in ("place", "place/s1", "place/s27", "shells/build", "shells/s1", "shells/s1/clear",
-                     "shells/s13/the_heart", "rips/place", "rips/blocks_ab"):
+                     "shells/s13/the_heart", "rips/retire", "rips/retire_ns"):
         assert D.build_only(D.F(one_shot)), one_shot
 
 

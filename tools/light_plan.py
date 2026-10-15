@@ -496,7 +496,8 @@ def connected_air(m, cols):
 def cmd_check(a):
     """Read the saved world: every spawnable position in scope (from the world's own blocks) at block light 0."""
     import build_audit as BA
-    if "cobblers-10240" in Path(a.world).as_posix():
+    import runtime_guard
+    if runtime_guard.is_live_world(a.world):
         raise SystemExit("refusing to read the live world")
     doc = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
     w = BA.World(a.world)

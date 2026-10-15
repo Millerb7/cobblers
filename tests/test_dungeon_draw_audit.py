@@ -478,10 +478,14 @@ def _real_rips():
 @needs_heightmap
 def test_the_real_rips_are_dry_clear_of_authored_coordinates_outside_precincts_and_inside_their_region(siting):
     # DUNGEON_DRAW.md 2.6, measured from tools/ground.py round(h) and data/*.json read by the audit, not by tools/dungeon_rips.py.
-    # 20 = the dry regions (21 in data/regions.json less the drowned Jungle Isle), all of kind region; the 13 trail rips are retired.
+    # Since 2026-10-14 'rips' is the scheduler's candidate POOL (several per dry region), so the counts come from the file read
+    # here, not a constant: the audit sited every record, every record is of kind region, and the retired ones are the file's.
     # The whole verdict is asserted, not a subset: the gated, dry-region and retired checks are inside `problems` too.
+    # Without it a pool record that broke a siting rule (wet, too near a town, outside its region) would open in the game.
     problems, out = siting
-    assert out["siting"]["rips"] == 20 and out["siting"]["region_rips"] == 20 and out["siting"]["retired_rips"] == 13, out["siting"]
+    rips, retired = _real_rips()
+    assert out["siting"]["rips"] == len(rips) and out["siting"]["region_rips"] == len(rips), out["siting"]
+    assert out["siting"]["retired_rips"] == len(retired) and len(retired) == 13, out["siting"]
     assert problems == []
 
 
@@ -502,16 +506,20 @@ def test_every_region_with_dry_ground_has_a_rip_and_only_the_drowned_jungle_isle
 
 
 def test_the_gated_rip_check_is_not_vacuous_on_the_real_zones():
-    # rip_the_rift stands in zone z2 (badges 8), read from data/rift_zones.json here. A reader that found no zone boxes would pass
-    # every rip and the check would prove nothing; and a rip that moved out of the zone must drop its claim.
+    # Which rips stand in a gated zone is measured HERE from data/rift_zones.json's boxes and each record's footprint, and must be
+    # exactly the set of records that declare reachable_after, each naming a zone it is in. A reader that found no zone boxes would
+    # pass every rip and prove nothing (hence: at least one gated rip); a rip that moved out of its zone must drop its claim.
+    # No constant: the pool grows by appending.
     rips, _ = _real_rips()
     zones = json.loads((ROOT / "data" / "rift_zones.json").read_text(encoding="utf-8"))
     gated = {r["id"]: A.gated_zones_of(r, zones) for r in rips if A.gated_zones_of(r, zones)}
-    assert gated == {"rip_the_rift": ["z2"]}, gated
-    z2 = zones["zones"]["z2"]["pass"]
-    assert (z2["kind"], z2["threshold"]) == ("badges", 8)
+    assert gated, "no rip found in any gated zone: the zone reader is vacuous or the Rift lost its rips"
     declared = {r["id"]: r["reachable_after"] for r in rips if r.get("reachable_after")}
-    assert list(declared) == ["rip_the_rift"] and declared["rip_the_rift"]["zone"] == "z2"
+    assert set(declared) == set(gated), (sorted(declared), sorted(gated))
+    for rid, ra in declared.items():
+        assert ra["zone"] in gated[rid], (rid, ra["zone"], gated[rid])
+        p = zones["zones"][ra["zone"]]["pass"]
+        assert (ra["kind"], ra.get("threshold")) == (p["kind"], p.get("threshold")), rid
     assert A.gated_zone_problems(rips, zones) == []
 
 
@@ -592,9 +600,19 @@ def _themes():
 
 def test_the_generators_retire_lines_restore_every_recorded_plane_and_patch():
     # the 13 real retired records, the real tools/dungeon.py line generator, expectations from the records and the theme file
-    _, retired = _real_rips()
-    got = A.retire_pack_problems(_retire_files(A.load_module(None), retired), retired, _themes())
+    # Since 2026-10-14 no rip stands, so "never a standing rip's cells" is every CANDIDATE's plane, ground and exit point, from the
+    # records: a retire that wrote one would take ground out from under a rip the scheduler may open there.
+    rips, retired = _real_rips()
+    standing = set().union(*({A.exit_cell(r)} | A.allowed_cells(r) for r in rips))
+    got = A.retire_pack_problems(_retire_files(A.load_module(None), retired), retired, _themes(), standing)
     assert got == [], got[:3]
+
+
+def test_a_retire_that_writes_a_candidates_cell_is_named():
+    # the standing set passed in is honoured: the fixture's plane cell (10, 70, 20) declared a candidate's cell must be named.
+    # Without it the retire-vs-candidate check could read nothing and pass.
+    got = A.retire_pack_problems(retire_pack(), [retired_rip()], THEMES, standing={(10, 70, 20)})
+    assert any("standing rip" in p and "(10, 70, 20)" in p for p in got), got
 
 
 @pytest.mark.parametrize("mutation", A.RETIRE_MUTATIONS)
@@ -615,6 +633,206 @@ def test_the_generators_entity_sweep_covers_every_retired_click_and_kills_both_e
     assert A.retire_sweep_problems(files, retired) == []
 
 
+# ------------------------------------------------------------------------------------------------- the rip scheduler (cobblers_rips)
+# The CellWorld semantics first (hand-computed), then the audit's checkers on a hand-written one-rip pack, then the real pack and
+# tools/rip_scheduler.py / tools/dungeon.py / tools/dungeon_rips.py MUTATED (data/ untouched). Not covered (runtime only): vanilla
+# block updates during a clone, a mob in the footprint, entity load times beyond the look window, other systems' forceloads.
+
+import mcfunction_sim as SIM  # noqa: E402
+
+
+def cell_world(fns=None, **kw):
+    return SIM.CellWorld(fns or {}, terrain=A.terrain_block, loaded=kw.pop("loaded", lambda x, z: False), **kw)
+
+
+def test_cellworld_clone_copies_each_cell_whole_and_refuses_overlap_and_unloaded_chunks():
+    # Without it a clone that dropped a block state, or ran into an unloaded chunk or over itself, would look exact to the audit.
+    w = cell_world(loaded=lambda x, z: True)
+    w.command("clone 0 10 0 1 10 0 0 500 0", w.server())
+    assert w.block_at(1, 500, 0) == A.terrain_block(1, 10, 0) == "test:b_1_10_0[s=2]{d:1}"
+    assert w.block_at(2, 500, 0) == "minecraft:air"                     # one past the box: untouched
+    with pytest.raises(SIM.Failed):
+        w.command("clone 0 10 0 3 10 0 1 10 0", w.server())             # overlaps its own source in normal mode
+    assert w.block_at(1, 10, 0) == A.terrain_block(1, 10, 0) and "overlap" in w.errors[-1]
+    u = cell_world()                                                    # nothing loaded, nothing forced
+    with pytest.raises(SIM.Failed):
+        u.command("clone 0 10 0 1 10 0 0 500 0", u.server())
+    assert u.block_at(0, 500, 0) == "minecraft:air" and "unloaded" in u.errors[-1]
+    u.command("forceload add 0 0", u.server())
+    u.command("clone 0 10 0 1 10 0 0 500 0", u.server())
+    assert u.block_at(0, 500, 0) == A.terrain_block(0, 10, 0)
+
+
+def test_cellworld_schedule_runs_due_functions_in_order_and_replace_replaces():
+    # Without it a pass that never re-arms, or a poll scheduled twice, would run as the test expects and not as the server does.
+    w = cell_world({"t:a": ["scoreboard players add #n v 1", "schedule function t:a 5t replace"], "t:b": ["scoreboard players set #b v 7"]})
+    w.objectives.add("v")
+    w.command("schedule function t:a 5t", w.server())
+    w.command("schedule function t:a 3t replace", w.server())         # replaces the 5t: first run at tick 3
+    w.command("schedule function t:b 4t", w.server())
+    w.advance(13)                                                     # t:a at 3, 8, 13; t:b at 4
+    assert w.scores[("#n", "v")] == 3 and w.scores[("#b", "v")] == 7 and w.calls[:2] == [(3, "t:a"), (4, "t:b")]
+
+
+def test_cellworld_scores_selector_matches_only_a_holder_in_range():
+    # Without it the return-point check (@a[scores={dg.rip=i,dg.st=1..}]) would match every player, or none, in the sim.
+    w = cell_world()
+    w.objectives |= {"dg.rip", "dg.st"}
+    p, q = w.add_player((0, 0, 0)), w.add_player((0, 0, 0))
+    w.scores[("e%d" % p.uid, "dg.rip")], w.scores[("e%d" % p.uid, "dg.st")] = 3, 2
+    w.scores[("e%d" % q.uid, "dg.rip")] = 3                            # no dg.st: does not match
+    assert w.select("@a[scores={dg.rip=3,dg.st=1..}]", w.server()) == [p]
+    assert w.select("@a[scores={dg.rip=4,dg.st=1..}]", w.server()) == []
+
+
+def test_cellworld_entities_in_a_newly_forceloaded_chunk_arrive_only_after_the_delay():
+    # Without it a close that kills only in its own tick (no polls) would pass: vanilla loads a chunk's entities some ticks later.
+    w = cell_world(entity_delay=20)
+    w.forced.add((0, 0))
+    w.command("summon minecraft:interaction 1.5 70 1.5 {Tags:[\"x\"]}", w.server())
+    w.forced.clear()
+    w.command("forceload add 1 1", w.server())
+    assert w.select("@e[tag=x]", w.server()) == []
+    w.advance(20)
+    assert len(w.select("@e[tag=x]", w.server())) == 1
+
+
+def test_command_boxes_reads_setblock_fill_and_both_boxes_of_a_clone():
+    # Without it the static check would read the wrong box as the hold, or miss a write behind `execute ... run`.
+    assert A.command_boxes("setblock 1 2 3 minecraft:stone") == ("setblock", (1, 2, 3), (1, 2, 3), None, None)
+    assert A.command_boxes("execute if score a b matches 1 run fill 5 2 3 1 4 3 minecraft:air")[1:3] == ((1, 2, 3), (5, 4, 3))
+    assert A.command_boxes("clone 1 2 3 5 4 3 1 500 3") == ("clone", (1, 500, 3), (5, 502, 3), (1, 2, 3), (5, 4, 3))
+    assert A.command_boxes("kill @e[tag=x]") is None
+
+
+FX = {"id": "rip_fx", "region": "r", "frame": {"x0": 10, "x1": 14, "z": 20, "y": 70, "height": 2},
+      "click": [12, 70, 21], "outside": [12.5, 70, 23.5, 0]}
+FX_GUARD = "execute positioned 8 68 19 if entity @a[dx=8,dy=7,dz=6] run return 0"
+
+
+def fx_pack(open_lines=None, close_lines=None):
+    """A hand-written one-rip pack. FX's plane is x10..14, y70..71, z20 (10 cells), its ground x10..14, y69, z21..22 (10 cells);
+    the open saves both to y500/501 (sky), writes air in the plane and moss on row z21, stands a click; the close kills it, clones
+    both back, clears the hold and polls once 40 ticks later (the kill then, the release)."""
+    o = open_lines if open_lines is not None else [
+        FX_GUARD, "forceload add 10 20 14 22", "clone 10 70 20 14 71 20 10 501 20", "clone 10 69 21 14 69 22 10 500 21",
+        "fill 10 70 20 14 71 20 minecraft:air", "fill 10 69 21 14 69 21 minecraft:moss_block",
+        "summon minecraft:interaction 12.5 70 21.5 {Tags:[\"fx\"]}", "forceload remove 10 20 14 22"]
+    c = close_lines if close_lines is not None else [
+        FX_GUARD, "forceload add 10 20 14 22", "kill @e[tag=fx]", "clone 10 500 21 14 500 22 10 69 21",
+        "clone 10 501 20 14 502 20 10 70 20", "fill 10 500 21 14 500 22 minecraft:air", "fill 10 501 20 14 502 20 minecraft:air",
+        "schedule function t:x1 40t replace"]
+    return {"t:o1": o, "t:c1": c, "t:x1": ["kill @e[tag=fx]", "forceload remove 10 20 14 22"]}
+
+
+def test_the_fixture_pack_opens_and_closes_exactly_and_its_roles_are_found_by_what_they_do():
+    # The checkers on a surface that is not the real pack: the hand-written correct pack passes, and its open and close are found
+    # by the click's position and the clone back, not by name. Without it a checker that only works on cobblers_rips is untested.
+    fns = fx_pack()
+    roles, bad = A.scheduler_roles(fns, [(1, FX)])
+    assert bad == [] and roles == {1: ("t:o1", "t:c1")}
+    assert A.sc_sched_open_close_exact(fns, {}, [(1, FX)], roles) == []
+    assert A.sc_sched_player_guard(fns, {}, [(1, FX)], roles) == []
+
+
+def test_a_close_that_skips_the_planes_clone_is_named_with_its_ten_cells():
+    # 10 = the plane's 5 x 2 cells, left as air (the open's write) instead of the world's blocks.
+    fns = fx_pack(close_lines=[l for l in fx_pack()["t:c1"] if not l.startswith("clone 10 501")])
+    got = A.sc_sched_open_close_exact(fns, {}, [(1, FX)], {1: ("t:o1", "t:c1")}, cycles=1)
+    assert len(got) == 1 and "10 cell(s) differ" in got[0] and "10 on the ground" in got[0], got
+
+
+def test_a_close_that_kills_only_in_its_own_tick_leaves_a_clickable_rip():
+    fns = fx_pack()
+    fns["t:x1"] = ["forceload remove 10 20 14 22"]                     # the poll no longer kills
+    got = A.sc_sched_open_close_exact(fns, {}, [(1, FX)], {1: ("t:o1", "t:c1")}, cycles=1)
+    assert any("still stand on it" in p for p in got), got
+
+
+def test_an_open_without_the_player_check_is_named_at_the_first_probe():
+    fns = fx_pack(open_lines=fx_pack()["t:o1"][1:])
+    got = A.sc_sched_player_guard(fns, {}, [(1, FX)], {1: ("t:o1", "t:c1")})
+    assert got == ["rip_fx: its open went ahead with a player at (10.5, 69.0, 21.5)"], got
+
+
+def _static(fns):
+    return A.scheduler_static_problems(fns, {"load": ["t:o1"]}, [FX], [(1, FX)], {"gated_sites": "allow"}, (-64, 575),
+                                       {1: ("t:o1", "t:c1")})
+
+
+def test_the_static_check_passes_the_fixture_and_names_a_write_outside_the_footprint():
+    # Without it an open that wrote a block beside the rip (never saved, never given back) would pass the text check.
+    assert _static(fx_pack()) == []
+    o = fx_pack()["t:o1"][:]
+    o.insert(5, "setblock 9 70 20 minecraft:stone")                    # x9: west of the plane (x10..14)
+    o.insert(6, "setblock 12 70 23 minecraft:stone")                   # the exit point itself (12.5, 70, 23.5)
+    got = _static(fx_pack(open_lines=o))
+    assert got[:2] == ["rip_fx: its open writes 1 cell(s) outside its plane and ground, first (9, 70, 20)",
+                       "rip_fx: its open writes 1 cell(s) outside its plane and ground, first (12, 70, 23)"], got
+
+
+def test_the_static_check_names_a_write_made_before_the_save():
+    # Without it an open that writes the ground and THEN clones it would save the rip, not the world, and close onto itself.
+    o = fx_pack()["t:o1"][:]
+    o.insert(2, "setblock 10 69 22 minecraft:stone")                   # a ground cell, before both clones
+    got = _static(fx_pack(open_lines=o))
+    assert got == ["rip_fx: its open writes 1 cell(s) it did not save first, first (10, 69, 22)"], got
+
+
+@pytest.fixture(scope="module")
+def sched_real():
+    g = None
+    if _have_heightmap():
+        import ground as G
+        g = G.load()
+    return A.run_scheduler(ground=g), g
+
+
+SCHED_CHECKS = ["roles", "static", "init_writes_nothing", "open_close_exact", "player_guard", "return_point", "walk"]
+
+
+@pytest.mark.parametrize("check", SCHED_CHECKS)
+def test_the_real_rip_scheduler_holds_the_property(sched_real, check):
+    # Each check's docstring in tools/dungeon_draw_audit.py says its property (cap, exact restore, no write over a player, way
+    # out, return point, forceload). Removing it lets the scheduler's pack reach the server unrun.
+    (got, facts), _g = sched_real
+    assert check in got, "check did not run"
+    assert got[check] == [], got[check][:3]
+    assert facts["per_rip_checked"] == facts["candidates"] == len(A.scheduler_inputs()[1])
+
+
+@needs_heightmap
+def test_every_candidates_exit_point_is_on_the_heightmaps_ground(sched_real):
+    # the way out of a run whose rip has closed: the exit point stands one block over round(ground) (tools/ground.py)
+    (got, _f), g = sched_real
+    assert g is not None and got["static"] == []
+
+
+@pytest.mark.parametrize("mutation", sorted(A.SCHED_MUTATIONS))
+def test_the_scheduler_audit_fails_when_a_generator_is_mutated(mutation):
+    # independence: tools/rip_scheduler.py, tools/dungeon.py or tools/dungeon_rips.py edited at one spot (data/ untouched); the
+    # audit must object. A mutation that passes is a property the audit does not hold.
+    got, _facts = A.run_scheduler(A.load_scheduler(mutation), quick=True)
+    assert A.failures(got), "MISSED: %s (%s)" % (mutation, A.SCHED_MUTATIONS[mutation]["why"])
+
+
+def test_every_scheduler_mutation_targets_exactly_one_spot_of_its_file():
+    for name, m in A.SCHED_MUTATIONS.items():
+        assert (ROOT / m["file"]).read_text(encoding="utf-8").count(m["edit"][0]) == 1, name
+
+
+def test_a_runtime_pause_survives_a_reload():
+    # Was a strict xfail (init reset #on from data on every load); fixed 2026-10-14: init sets #on only when unset.
+    fns, tags = A.scheduler_pack(A.load_scheduler(None))
+    assert A.sc_sched_pause_survives_reload(fns, tags, A.scheduler_inputs()[2]) == []
+
+
+@pytest.mark.xfail(strict=True, reason="DEFECT tools/rip_scheduler.py: state is keyed by the record's place in 'rips' (#r<i>); a "
+                   "pool rebuilt while rips are open closes the wrong place (an empty hold cloned onto its ground) and orphans the open one")
+def test_a_pool_rebuilt_while_rips_are_open_leaves_the_world_whole():
+    assert A.sc_sched_pool_change_while_open(A.load_scheduler(None)) == []
+
+
 # ------------------------------------------------------------------------------------------------- the simulator (slow)
 
 
@@ -624,7 +842,12 @@ def baseline(tmp_path_factory):
     return got, facts
 
 
-SCENARIO_NAMES = [n for n, _ in A.SCENARIOS] + ["reapply_wires_r16dr", "input_validators"]
+# Defects the audit found in the real generator, recorded as strict xfails so the fix flips them (testing.md: never deleted or
+# loosened). closed_rips_show_nothing: tools/dungeon.py rips/emit (about line 2107) emits the motes at EVERY candidate in
+# data/dungeon_rips.json whenever a player is near, with no test of the scheduler's state, so 80 places show particles while closed.
+SLOW_DEFECTS = {"closed_rips_show_nothing": "tools/dungeon.py rips/emit shows particles at every candidate, open or closed"}
+SCENARIO_NAMES = [pytest.param(n, marks=pytest.mark.xfail(strict=True, reason=SLOW_DEFECTS[n])) if n in SLOW_DEFECTS else n
+                  for n, _ in A.SCENARIOS] + ["reapply_wires_r16dr", "input_validators"]
 
 
 @pytest.mark.slow

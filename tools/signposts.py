@@ -362,7 +362,8 @@ def function(a):
 
 def verify(a):
     """Every source-required post: the fence at y, the sign at y+1, and both faces' text."""
-    if "cobblers-10240" in Path(a.world).as_posix():
+    import runtime_guard
+    if runtime_guard.is_live_world(a.world):
         raise SystemExit("refusing to read the live world")
     rep = json.loads(REPORT.read_text(encoding="utf-8"))
     set_problems = post_set_problems(rep.get("posts") or [])

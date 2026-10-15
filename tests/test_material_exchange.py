@@ -288,11 +288,13 @@ def _built():
 
 
 def test_the_installed_bank_file_is_the_committed_one():
-    assert json.loads((ROOT / DOC["output"]).read_text(encoding="utf-8")) == json.loads(bank.text(DOC))
+    # the server's default_bank.json (CobbleDollars Beta-6 form) and the repo-only old-shape bank.json beside it
+    assert json.loads((ROOT / DOC["output"]).read_text(encoding="utf-8")) == json.loads(bank.file_text(DOC))
+    assert json.loads((ROOT / DOC["output"]).with_name("bank.json").read_text(encoding="utf-8")) == json.loads(bank.text(DOC))
 
 
 def test_every_installed_exchange_offer_is_count_times_the_installed_bank_price():
-    text = (ROOT / DOC["output"]).read_text(encoding="utf-8")
+    text = (ROOT / DOC["output"]).with_name("bank.json").read_text(encoding="utf-8")
     assert artifact_mismatches(text, _built()) == []
 
 
@@ -307,7 +309,7 @@ def test_mutating_the_merchant_writer_is_caught(monkeypatch):
         return shop
 
     monkeypatch.setattr(markets, "merchant_shop", doubled)
-    bad = artifact_mismatches((ROOT / DOC["output"]).read_text(encoding="utf-8"), _built())
+    bad = artifact_mismatches((ROOT / DOC["output"]).with_name("bank.json").read_text(encoding="utf-8"), _built())
     assert len(bad) == len(_lines()), bad
 
 

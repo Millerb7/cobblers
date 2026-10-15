@@ -63,6 +63,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import player_site  # noqa: E402  the shared header, footer, stylesheet and manifest of docs/player/
+import battle_sim  # noqa: E402  showdown_read: both jar layouts
 
 OUT = ROOT / "docs" / "player" / "battles.html"
 MODS = Path(os.environ.get("COBBLERS_SNAPSHOT_MODS")
@@ -116,7 +117,7 @@ class Dex:
                 t = [s.get("primaryType"), s.get("secondaryType")]
                 self.types[n.rsplit("/", 1)[1][:-5]] = [x.lower() for x in t if x]
         self.moves = {}
-        for m in ENTRY.finditer(z.read(SHOWDOWN_MOVES).decode("utf-8", "replace")):
+        for m in ENTRY.finditer(battle_sim.showdown_read(z, "moves.js").decode("utf-8", "replace")):
             typ = re.search(r'^    type: "([^"]*)"', m.group(2), re.M)
             cat = re.search(r'^    category: "([^"]*)"', m.group(2), re.M)
             if typ:
@@ -509,29 +510,21 @@ def coords(seat):
 
 
 def render_asks(f):
-    out = ['<div class="asks"><b>What the fight asks</b> <span class="f">(the record\'s own fields in '
-           'data/trainers.json, quoted)</span>']
+    """What a player can use before the fight: the ace, the answers in reach and an open line. The records' balance
+    notes (strategy, ace_math_change, line_obviousness) are design notes and are not shown (the owner, 2026-10-14)."""
+    out = ['<div class="asks"><b>What the fight asks</b>']
     for mode, cls in (("normal", "m-n"), ("challenge", "m-c")):
         a = f["asks"][mode]
         rows = []
-        if a["strategy"]:
-            rows.append(("Plan", "strategy", esc(a["strategy"])))
         if a["ace"]:
-            ace = esc(a["ace"]) + (" (Lv %d)" % a["ace_level"] if a["ace_level"] else "")
-            if a["ace_note"]:
-                ace += ": " + esc(a["ace_note"])
-            rows.append(("Ace", "ace_species, ace_math_change", ace))
+            rows.append(("Ace", esc(a["ace"]) + (" (Lv %d)" % a["ace_level"] if a["ace_level"] else "")))
         if f["answers"]:
-            st = " <span class=\"f\">(status: %s)</span>" % esc(f["answers_status"]) if f["answers_status"] else ""
-            rows.append(("Answers in reach", "availability_contract.answers, both modes",
-                         esc(", ".join(f["answers"])) + st))
+            rows.append(("Answers in reach", esc(", ".join(f["answers"]))))
         if a["open_line"]:
-            rows.append(("An open line", "open_line", esc(", ".join(a["open_line"]))))
-        if a["obviousness"]:
-            rows.append(("How visible that line is", "line_obviousness", esc(a["obviousness"])))
+            rows.append(("One team that can win", esc(", ".join(a["open_line"]))))
         out.append('<div class="%s"><div class="ml">%s</div><dl>%s</dl></div>' % (
             cls, "Normal" if mode == "normal" else "Challenge",
-            "".join('<dt>%s <span class="f">%s</span></dt><dd>%s</dd>' % (esc(k), esc(src), v) for k, src, v in rows)))
+            "".join("<dt>%s</dt><dd>%s</dd>" % (esc(k), v) for k, v in rows)))
     out.append("</div>")
     return "".join(out)
 

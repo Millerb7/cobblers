@@ -158,7 +158,7 @@ def check_plan(doc, mp, exempt=None, by_name=None):
     by_name = M.SELF_KO if by_name is None else by_name
     jar = mp["jar"]
     allsp = M.jar_species(jar)
-    sk = sketchable(zipfile.ZipFile(jar).read(SHOWDOWN_MOVES).decode("utf8", "replace"))
+    sk = sketchable(B.showdown_read(zipfile.ZipFile(jar), "moves.js").decode("utf8", "replace"))
     species, moves, chart = mp["species"], mp["moves"], mp["chart"]
     p = []
     for k, why in exempt.items():

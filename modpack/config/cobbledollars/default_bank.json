@@ -1,0 +1,62 @@
+[
+  {
+    "item": "minecraft:elytra",
+    "price": "25000"
+  },
+  {
+    "item": "minecraft:chorus_fruit",
+    "price": "5"
+  },
+  {
+    "item": "minecraft:coal",
+    "price": "4"
+  },
+  {
+    "item": "minecraft:raw_copper",
+    "price": "2"
+  },
+  {
+    "item": "minecraft:copper_ingot",
+    "price": "3"
+  },
+  {
+    "item": "minecraft:raw_iron",
+    "price": "8"
+  },
+  {
+    "item": "minecraft:iron_ingot",
+    "price": "9"
+  },
+  {
+    "item": "minecraft:lapis_lazuli",
+    "price": "4"
+  },
+  {
+    "item": "minecraft:raw_gold",
+    "price": "20"
+  },
+  {
+    "item": "minecraft:redstone",
+    "price": "2"
+  },
+  {
+    "item": "minecraft:diamond",
+    "price": "120"
+  },
+  {
+    "item": "minecraft:ancient_debris",
+    "price": "200"
+  },
+  {
+    "item": "minecraft:netherite_scrap",
+    "price": "202"
+  },
+  {
+    "item": "minecraft:netherite_ingot",
+    "price": "900"
+  },
+  {
+    "item": "minecraft:quartz",
+    "price": "2"
+  }
+]

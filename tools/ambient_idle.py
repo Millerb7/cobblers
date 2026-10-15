@@ -1223,7 +1223,8 @@ def compose_town(s, t, site, bld, rules, comp, sizes):
             if site.refused(c, y, r["species"], kind):
                 continue
             try:
-                check_spot(s, what, c[0], float(y), c[1], r["species"], site, bld, sizes, taken)
+                check_spot(s, what, c[0], float(y), c[1], r["species"], site, bld, sizes, taken,
+                           allow=tuple(r.get("allow") or ()))      # a pet record may allow what a situation may
             except IdleError:
                 continue
             got = (c, y)

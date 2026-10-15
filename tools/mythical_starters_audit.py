@@ -53,6 +53,8 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import battle_sim  # noqa: E402  showdown_read: both jar layouts
 PACK = ROOT / "build" / "datapacks" / "cobblers_mythical_starters"
 STARTERS = ROOT / "modpack" / "config" / "cobblemon" / "starters.json"
 UPSTREAM_STARTERS = ROOT / "base-pack" / "cobbleverse" / "config" / "cobblemon" / "starters.json"
@@ -155,7 +157,7 @@ def load_jar(jar):
     for n in z.namelist():
         if n.startswith("data/cobblemon/species/") and n.endswith(".json"):
             species[n.rsplit("/", 1)[1][:-5]] = json.loads(z.read(n))
-    text = z.read(MOVES_JS).decode("utf8", "replace")
+    text = battle_sim.showdown_read(z, "moves.js").decode("utf8", "replace")
     moves = {}
     for m in re.finditer(r"^  ([a-z0-9]+): \{\n(.*?)^  \},?$", text, re.M | re.S):
         cat = re.search(r'^    category: "(\w+)"', m.group(2), re.M)
