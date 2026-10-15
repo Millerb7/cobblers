@@ -358,13 +358,17 @@ def _int(x):
 
 
 def shop_offers(nbt):
-    """[(category, item id, count, price)] of an entity's CobbleMerchantShop."""
+    """[(category, item id, count, price)] of an entity's shop: the old CobbleMerchantShop, or CobbleDollars Beta-6's
+    CobbleDollars.Shop.shop (name, offers [{item, price}]; one item an offer: the 1.8.2 set's mod, 2026-10-15)."""
     out = []
     for cat in nbt.get("CobbleMerchantShop") or []:
         for off in cat.get("Offers") or []:
             item = off.get("Item") or {}
             out.append((str(cat.get("Category")), str(item.get("id")), _int(item.get("count", 1)),
                         _int(off.get("Price"))))
+    for cat in ((nbt.get("CobbleDollars") or {}).get("Shop") or {}).get("shop") or []:
+        for off in cat.get("offers") or []:
+            out.append((str(cat.get("name")), str(off.get("item")), 1, _int(off.get("price"))))
     return out
 
 

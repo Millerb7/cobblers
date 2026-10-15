@@ -593,6 +593,20 @@ class World:
                 raise Failed("data merge needs one entity")
             ents[0].nbt.update(snbt(t[3]))
             return 1
+        if t[0] == "modify" and t[1] == "entity":
+            # `data modify entity <sel> <path> set value <snbt>` (tools/traders.py bank_line: a merchant's bank)
+            path, verb, how, val = t[3].split(" ", 3)
+            if (verb, how) != ("set", "value"):
+                raise Unsupported("data modify entity %s %s" % (verb, how))
+            ents = self.select(t[2], ctx)
+            if len(ents) != 1:
+                raise Failed("data modify entity needs one entity")
+            keys = split_path(path)
+            cur = ents[0].nbt
+            for k in keys[:-1]:
+                cur = cur.setdefault(k, {})
+            cur[keys[-1]] = snbt(val)
+            return 1
         if t[0] == "modify" and t[1] == "storage":
             sid, rest2 = t[2], t[3]
             path, verb, how, val = rest2.split(" ", 3)

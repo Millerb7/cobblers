@@ -136,6 +136,17 @@ ENGINE_OWNED = ("UUID", "Pos", "Motion", "Rotation", "Brain", "attributes", "Att
 MERCHANT = "cobbledollars:cobble_merchant"
 
 
+DEFAULT_BANK_SNBT = '{type:"registry",bank:"cobbledollars:default"}'
+
+
+def bank_line(selector):
+    """The server's default bank given to the merchants `selector` matches. CobbleDollars 2.0.0 Beta-6 (the 1.8.2 set)
+    migrates a summon's CobbleMerchantShop into CobbleDollars.Shop and gives the merchant its own EMPTY inline bank,
+    so nothing could be sold to it; set after the summon, a registry reference sticks (measured on the live server
+    over RCON, 2026-10-15). The bank itself is data/bank.json's, at cobbledollars:default (tools/markets.py)."""
+    return "execute as @e[%s] run data modify entity @s CobbleDollars.Bank set value %s" % (selector, DEFAULT_BANK_SNBT)
+
+
 def summon_line(kind, x, y, z, data):
     """The summon command for a trader standing on block (x, y, z): centred on the block, feet at y. Shared with
     tools/markets.py, whose stall merchants are authored rather than read from a template."""
@@ -489,7 +500,10 @@ def town_functions(town, recs, entity, policy=None, tiers=None):
         if name != template_name:
             # a copy under the template's own name, left by structure placement or an earlier run, is still a copy
             act.append("kill @e[%s]" % stray_selector(kind, template_name, x, y, z))
-        act += [summon_line(kind, x, y, z, data),
+        act += [summon_line(kind, x, y, z, data)]
+        if kind == MERCHANT:
+            act.append(bank_line("type=%s,tag=%s" % (kind, tag)))
+        act += [
                 # untagged copies of this trader, left by structure placement or by hand: same type and name,
                 # anywhere round the plaza, since the earlier copies could walk; only once the new one stands
                 "execute if entity @e[tag=%s,tag=%s] run kill @e[%s]" % (tag, TAG_NEW, stray_selector(kind, name, x, y, z))]
@@ -748,9 +762,10 @@ def rcon_counts(server_dir, recs, settle=(4, 30), policy=None, leaks=None, tiers
                 for r in trs:
                     if r.get("stock") == "withdrawn" or not out[r["id"]][0]:
                         continue
-                    shop = run("data get entity @e[tag=%s,limit=1] CobbleMerchantShop" % tag_of(r["id"]))
-                    ids = set(re.findall(r'id: "([^"]+)"', shop))
-                    cats = set(re.findall(r'Category: "([^"]+)"', shop))
+                    # CobbleDollars Beta-6 migrates the summon's CobbleMerchantShop into CobbleDollars.Shop (item, name)
+                    shop = run("data get entity @e[tag=%s,limit=1] CobbleDollars.Shop" % tag_of(r["id"]))
+                    ids = set(re.findall(r'(?:\bid|\bitem): "([^"]+)"', shop))
+                    cats = set(re.findall(r'(?:Category|\bname): "([^"]+)"', shop))
                     if r.get("stock") in ("mart", "stones"):
                         # a Mart sells the basic items and nothing else, and all of them; the Exchange the stones
                         want = mart_shop_items(policy, r["id"], (tiers or {}).get(r["id"], 0)) \

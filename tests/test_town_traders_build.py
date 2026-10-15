@@ -473,6 +473,8 @@ def test_the_world_check_reads_every_merchant_back(monkeypatch):
                 return "Test failed" if m["stall"] in off_seat else "Test passed, count: 1"
             if cmd.startswith("execute if entity"):
                 return "Test passed, count: 1"
+            if cmd.startswith("data get entity") and cmd.endswith("CobbleDollars.Bank.type"):
+                return 'Packmaker has the following entity data: "registry"'   # tools/traders.py bank_line's result
             if cmd.startswith("data get entity"):
                 offers = ", ".join('{Item: {id: "%s", count: 1}, Price: "%d"}' % (
                     it["item"], it["price"] // it["count"] - (1 if m["stall"] in cheap else 0))
