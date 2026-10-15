@@ -295,7 +295,8 @@ def main(argv=None):
                    help="leave the inherited Nether spawns alone (the pack as it was before 2026-10-08); for "
                         "measurement and comparison only, never for an install")
     a = p.parse_args(argv)
-    if "cobblers-10240" in Path(a.world).as_posix():
+    import runtime_guard
+    if runtime_guard.is_live_world(a.world):
         raise SystemExit("refusing to read the live world")
     boxes = route_boxes(json.loads(Path(a.routes).read_text(encoding="utf-8")))
     route_box_count = len(boxes)

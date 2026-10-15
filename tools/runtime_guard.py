@@ -30,6 +30,15 @@ class RuntimeAccessRefused(SystemExit):
     pass
 
 
+def is_live_world(path) -> bool:
+    """A world a read-only tool must not open: one inside the running server's folder (cobblers-server/, where the live
+    world is) or the retired copies (cobblers-server-retired/, the rollback). A fresh export built outside the runtime
+    (REEXPORT.md: cobblers-server-next/) is not live yet and may be read. The guards matched the NAME cobblers-10240
+    until 2026-10-15, which also refused the launch export the runbook installs into."""
+    parts = [p.lower() for p in Path(path).resolve().parts]
+    return "cobblers-server" in parts or "cobblers-server-retired" in parts
+
+
 def _runtime_root(path: Path) -> Path | None:
     for parent in (path, *path.parents):
         if parent.name == RUNTIME_DIR_NAME:
