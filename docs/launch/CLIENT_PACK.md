@@ -6,7 +6,7 @@ Written 2026-10-14. **A client that does not match the server's mods is the most
 
 | File | What | sha1 |
 |---|---|---|
-| `cobblers-client-0.1.0.mrpack` (747,272 bytes) | the modpack: Minecraft 1.21.1, Fabric Loader 0.19.5, every mod below (downloaded from Modrinth by the launcher) | `ceef2e3e09ee25123ea11f3aeab3700de25e8555` |
+| `cobblers-client-0.1.0.mrpack` (748,152 bytes; with Lootr, rebuilt 2026-10-15) | the modpack: Minecraft 1.21.1, Fabric Loader 0.19.5, every mod below (downloaded from Modrinth by the launcher) | `72244e00b28402d4a63a93364e2d36a75af1c64f` |
 | `cobblers-client-AllTheMons-subset.zip` (1,468,971 bytes, built 2026-10-13) | a resource pack: Cobblemon model fixes plus the AllTheMons x Mega Showdown models for the species that otherwise show as a placeholder doll | `dfdd4f8118a66ff854d23a1e5c2f7651ff042e97` |
 
 Rebuild with `python tools/client_pack.py build` and `python tools/client_model_fix.py build --server-pack`. Check a
@@ -40,7 +40,7 @@ If the server says your mods do not match: you are on an old pack. Delete the in
 
 ## The mod list (client and both sides), from `python tools/pack_manifest.py plan --side client`
 
-132 jars and 2 other files. Status `replace` is one of our updates over COBBLEVERSE 1.7.42; `base` is COBBLEVERSE's own.
+135 files (Lootr added 2026-10-15). Status `replace` is one of our updates over COBBLEVERSE 1.7.42; `base` is COBBLEVERSE's own.
 
 | File | Side | Status |
 |---|---|---|
@@ -178,3 +178,4 @@ If the server says your mods do not match: you are on an old pack. Delete the in
 | `zfastnoise-1.0.13+1.21.jar zfastnoise` | both | base |
 | `zoomify-2.15.2+1.21.1.jar zoomify` | client | base |
 | `DistantHorizons-3.3.3-1.21.1-fabric-neoforge.jar distanthorizons` | both | add |
+| `lootr-fabric-1.21.1-1.11.38.127.jar lootr` | both | add |
