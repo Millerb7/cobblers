@@ -133,6 +133,12 @@
 	# Default: 16
 	# Range: 0 ~ 2147483646
 	forceBattleMaxLevelDiff = 12
+	#━━━━━━━━━━
+	#If enabled trainer messages are displayed as speech bubbles above their head.
+	showMessagesAsSpeechBubble = true
+	#━━━━━━━━━━
+	#If enabled trainer messages are displayed in the chat.
+	showMessagesInChat = false
 
 [Players]
 	#━━━━━━━━━━
@@ -147,9 +153,6 @@
 	#required trainer in a series. The relativeLevelCap is added to the resulting value. For
 	#instance if the next trainer for a player has a Pikachu at level 50, that players level
 	#cap will be 50 + relativeLevelCap (can be negative).
-	#Cobblers overlay (the owner, 2026-09-24): 0, not Cobbleverse's 5. The authored rosters and leader teams assume
-	#the cap is the next required leader's strongest Pokemon exactly (data/trainers.json generation_contract
-	#relative_level_cap 0); 5 let players arrive five levels over every ace. The only change from the base file.
 	relativeLevelCap = 0
 	#━━━━━━━━━━
 	#The initial series players are placed in when entering a world for the first time. Apart from any series id
