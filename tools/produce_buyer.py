@@ -633,7 +633,13 @@ def build(doc, wage=None, notes=None):
     files[fn_path("pay")] = ["# CobbleDollars' own command, the macro tools/arena_runtime.py and tools/blackout_pack.py use",
                              "$cobbledollars give @s $(amount)"]
     files[fn_path("short_take")] = short_take_lines(doc)
-    files[fn_path("sell/all")] = sell_all_lines(doc)
+    # the kitchen/pharmacy crates have no menu line (menu: false; the 14-option dialogue is the owner's): their
+    # single-good sell functions are named here as the operator's entry points, the way rip_scheduler's init names
+    # stop/start/close_all, so prepare's reachability check sees them and the independent audit still reads them
+    unmenued = [fn_id("sell/%s" % c["id"]) for c in doc["crates"] if c.get("menu") is False]
+    files[fn_path("sell/all")] = sell_all_lines(doc) + (
+        ["# single-good entry points with no menu line (operator, over RCON): %s" % ", ".join(unmenued[i:i + 6])
+         for i in range(0, len(unmenued), 6)] if unmenued else [])
     files[fn_path("sellall/specimens")] = specimen_lines(doc, sp)
     for c in doc["crates"]:
         files[fn_path("sell/%s" % c["id"])] = sell_lines(doc, c, cp[c["id"]])
