@@ -136,13 +136,16 @@ def test_the_retire_functions_touch_only_the_retired_rips_and_the_sweep_kills_on
     assert not D.build_only("cobblers:dungeons/rips/entities_retired_look")      # the sweep is scheduled: it must stay in the runtime pack
 
 
-def test_r16dr_runs_the_retire_blocks_and_the_sweep_before_it_summons_the_standing_rips():
+def test_r16dr_runs_the_retire_blocks_and_the_sweep_then_arms_the_scheduler_and_lays_no_rip():
     # a re-apply that never ran the retire functions would leave the trail rips in the world (the owner, 2026-10-13: "have to
-    # go"); and the count the chain reads back must stay the standing rips only
+    # go"). Since 2026-10-14 it lays no rip at all (they open and close at random: tools/rip_scheduler.py), so nothing is counted
     steps = dict((s[0], s[2]) for s in D.reapply_steps(D.load()))["R16DR"]
     fn = [a[1] for a in steps if a[0] == "fn"]
-    assert fn[:3] == ["cobblers:dungeons/rips/place", "cobblers:dungeons/rips/retire", "cobblers:dungeons/rips/entities_retired"]
-    assert ("check", ("chunk_look", D.RIP_HOLDER, len(RIPS), "dungeon rips")) in steps
+    assert fn == ["cobblers:dungeons/rips/retire", "cobblers:dungeons/rips/entities_retired", "cobblers:rips/init"]
+    assert not [a for a in steps if a[0] == "check"]
+    fns = D.functions(D.load())
+    assert "rips/place" not in fns and not [k for k in fns if k.startswith("rips/blocks_")]
+    assert "cobblers:dungeons/rips/entities" not in D.chains(D.load())[0]
 
 
 def test_the_way_out_of_a_player_with_no_rip_score_is_the_first_standing_rip():
@@ -167,9 +170,10 @@ def test_pallet_fields_and_shrew_lakes_have_rips_of_their_own_now_the_trail_rips
     assert set(REGIONS) - own == NO_DRY_GROUND
 
 
-def test_the_region_rips_are_one_per_region_and_never_back_on_the_old_mines_trail():
+def test_the_region_rips_are_a_pool_per_region_and_never_back_on_the_old_mines_trail():
+    # since 2026-10-14 `rips` is the candidate pool a scheduler draws from: several per region, none a test_trail rip
     reg = [r for r in RIPS if r["kind"] == "region"]
-    assert len(reg) == len({r["region"] for r in reg}) == len(RIPS) and len(reg) >= 15
+    assert len(reg) == len(RIPS) and len({r["region"] for r in reg}) >= 15
     for r in reg:
         assert r["id"].startswith("rip_") and r["scorch_theme"] not in ("nether_wastes", "crimson_forest", "warped_forest",
                                                                        "soul_sand_valley", "basalt_deltas"), r["id"]
@@ -226,7 +230,8 @@ def test_the_presence_probes_in_world_probes_are_the_ones_the_tool_writes():
     # value; four a retired one (no interaction, no oval, the ground back, the plane back)
     places = json.loads((ROOT / "data" / "world_probes.json").read_text(encoding="utf-8"))["places"]
     assert places["dungeon_rips"] == DRP.probes(RIPS_DOC)["dungeon_rips"]
-    assert len(places["dungeon_rips"]) == 3 * len(RIPS) + 1 + 4 * len(RETIRED)
+    # 2026-10-14: no rip stands, so no probe expects one at a candidate (it is open or closed by the clock); the retired ones stay
+    assert len(places["dungeon_rips"]) == 4 * len(RETIRED)
     gone = [p for p in places["dungeon_rips"] if "RETIRED" in p["what"] and "entity" in p]
     assert len(gone) == 2 * len(RETIRED) and all(p["count"] == 0 for p in gone)
     # nothing expects a rip where one was retired: the Night Shift place carries no probe of its old rip
@@ -270,3 +275,123 @@ def test_a_rip_that_floats_or_leaves_its_region_is_found():
     r = next(x for x in bad["rips"] if x["kind"] == "region")
     r["click"][0] += 1
     assert any("click" in p for p in DRP.problems(bad))
+
+
+# ---- the candidate pool (2026-10-14) --------------------------------------------------------------------------------------
+
+POOL_PER_REGION = 4     # what `python tools/dungeon_rips.py pool` was run with; the floor below is the least the owner asked ("3-5")
+
+
+def _by_region():
+    out = {}
+    for r in RIPS:
+        out.setdefault(r["region"], []).append(r)
+    return out
+
+
+def test_every_region_with_dry_ground_holds_three_to_five_candidates_and_the_pool_has_the_tools_size():
+    # the scheduler picks among `rips`; a region with one or two sites would open the same place every time. Breaks if a
+    # region's sites are removed or the pool is regenerated smaller
+    by = _by_region()
+    assert set(by) == set(REGIONS) - NO_DRY_GROUND
+    for rid, rs in by.items():
+        assert 3 <= len(rs) <= 5, (rid, len(rs))
+    assert len(RIPS) == POOL_PER_REGION * len(by)
+
+
+def test_the_original_twenty_stay_first_and_in_order_so_dg_rip_does_not_move():
+    # dg.rip is a rip's 1-based position in the file and players hold it as a score: the pool is appended, never inserted
+    assert [r["id"] for r in RIPS[:20]] == [
+        "rip_pallet_fields", "rip_shrew_lakes", "rip_northgate_isle", "rip_pine_isles", "rip_fungal_isle", "rip_sunset_isle",
+        "rip_long_isle", "rip_glacial_tear", "rip_tri_peaks", "rip_the_rift", "rip_the_craters", "rip_scorched_plateau",
+        "rip_frostpeak_point", "rip_tilpey_lakeland", "rip_the_wedge", "rip_northern_downs", "rip_marsh_country",
+        "rip_viltri_woods", "rip_southern_coast", "rip_eastern_dunes"]
+
+
+def test_pool_ids_are_rip_region_or_rip_region_k_and_unique():
+    ids = [r["id"] for r in RIPS]
+    assert len(set(ids)) == len(ids)
+    for r in RIPS:
+        assert r["id"] == "rip_" + r["region"] or re.fullmatch(r"rip_%s_[2-9]" % r["region"], r["id"]), r["id"]
+
+
+def test_every_pool_record_has_the_shape_of_the_original_records():
+    # the scheduler's pool is simply `rips`: a candidate with a key fewer than today's records would break whatever reads them
+    # (`reachable_after` only where gated; `measured` is a provenance note the first two region rips were written without)
+    optional = {"reachable_after", "measured"}
+    want = set(RIPS[0].keys()) - optional
+    for r in RIPS:
+        assert set(r.keys()) - optional == want, r["id"]
+        assert set(r["frame"]) == set(RIPS[0]["frame"]) and set(r["ground"]) == set(RIPS[0]["ground"]), r["id"]
+        assert r["kind"] == "region" and r["plume"] is False and r["oval"] == RIPS[0]["oval"], r["id"]
+
+
+def test_candidates_of_a_region_share_its_theme_and_every_pair_is_at_least_the_spread_apart():
+    # two open rips must never overlap (the window is 9 x 7; the clearance floor is 30) and a pool should be spread over its
+    # region: every pair of rips, in one region or two, is 300 or more apart. Breaks if a site is added by hand beside another
+    for rs in _by_region().values():
+        assert len({r["scorch_theme"] for r in rs}) == 1
+    for i, a in enumerate(RIPS):
+        for b in RIPS[i + 1:]:
+            d = math.hypot(a["click"][0] - b["click"][0], a["click"][2] - b["click"][2])
+            assert d >= 300 and d >= DRP.CLEARANCE, (a["id"], b["id"], d)
+
+
+def test_every_pool_candidate_passes_the_tools_siting_rules_on_the_heightmap(ground):
+    # site_problems, rip by rip against every OTHER rip (the pool's spread), not only the file-level problems()
+    polys, boxes = DRP.region_polys(), DRP.precinct_boxes()
+    pts = DRP.points([r["id"] for r in RIPS] + [r["id"] for r in RETIRED])
+    for r in RIPS[20:]:
+        others = [(o["id"], DRP.mid_x(o["frame"]), o["frame"]["z"]) for o in RIPS if o is not r]
+        assert DRP.site_problems(ground, r["id"], r["region"], r["frame"], pts, polys, boxes, others) == [], r["id"]
+
+
+def test_no_candidate_is_within_the_spread_of_a_retired_rips_patch():
+    # R16DR removes the 13 retired rips; no pool site may be picked on or beside where one stood
+    for r in RIPS:
+        for t in RETIRED:
+            assert math.hypot(r["click"][0] - t["click"][0], r["click"][2] - t["click"][2]) >= 300, (r["id"], t["id"])
+
+
+def test_the_check_names_a_rip_put_beside_a_retired_one(ground):
+    near = copy.deepcopy(RIPS_DOC)
+    near["rips"][2]["click"][0] = near["retired_rips"][0]["click"][0] + 50
+    near["rips"][2]["click"][2] = near["retired_rips"][0]["click"][2]
+    assert any("retired rip" in p for p in DRP.problems(near, ground))
+
+
+def test_a_gated_candidate_carries_reachable_after_as_the_rift_rip_does():
+    # the owner, 2026-10-13: a rip may stand behind a gate. The Rift's whole pool stands in zone z2 (8 badges), so each of its
+    # candidates carries the declaration (read from data/rift_zones.json by the tool); no other region's candidate does
+    gated = [r for r in RIPS if r.get("reachable_after")]
+    assert len(gated) >= 2 and {r["region"] for r in gated} == {"the_rift"}
+    first = next(r for r in RIPS if r["id"] == "rip_the_rift")["reachable_after"]
+    for r in gated:
+        g = r["reachable_after"]
+        assert (g["zone"], g["kind"], g["threshold"]) == ("z2", "badges", 8) and len(g["advancements"]) == 8, r["id"]
+        assert g == first, r["id"]
+
+
+def test_the_pool_picker_keeps_the_spacing_and_spreads_farthest_first():
+    # pick_pool is the tool's choice of N from find()'s candidates; a mutation here puts two open rips on one patch
+    cands = [(1.0, x, 0, 100, 150, 150) for x in range(0, 2001, 10)]
+    got = DRP.pick_pool(cands, [(0, 0)], 3)
+    xs = sorted(c[1] for c in got)
+    assert len(got) == 3 and all(b - a >= 300 for a, b in zip([0] + xs, xs))
+    assert xs == [500, 1000, 1500]       # farthest-point (capped at 500): each pick is as far from those already chosen as the cap asks
+    assert DRP.pick_pool([(1.0, 100, 0, 100, 150, 150)], [(0, 0)], 3) == []     # nothing 300 away: fewer, never a bad site
+
+
+def test_pool_ids_continue_after_the_used_ones():
+    rs = [{"id": "rip_x"}, {"id": "rip_x_2"}, {"id": "rip_x_4"}]
+    assert DRP.pool_ids(rs, "x", 3) == ["rip_x_3", "rip_x_5", "rip_x_6"]
+
+
+def test_no_candidate_has_a_standing_presence_probe():
+    # The scheduler (tools/rip_scheduler.py, job D) opens and closes rips at random candidates: a closed rip is the
+    # normal state, so a presence probe that expects a candidate's interaction to stand would fail whenever that rip
+    # is closed. Only the retired trail rips keep probes (their removal). Without it the world read-back would report
+    # every closed candidate as missing.
+    places = json.loads((ROOT / "data" / "world_probes.json").read_text(encoding="utf-8"))["places"]["dungeon_rips"]
+    for r in RIPS:
+        assert not any(r["name"] in p["what"] and "interaction" in p["what"] for p in places), r["id"]

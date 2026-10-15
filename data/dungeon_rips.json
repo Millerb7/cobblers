@@ -1,7 +1,7 @@
 {
   "schema": "cobblers.dungeon_rips/1",
-  "generated_by": "tools/dungeon_rips.py record (the region rips; the two added 2026-10-13 are Pallet Fields and Shrew Lakes) and hand (retired_rips: the 13 test_trail rips, carried over from data/dungeons.json dungeons[].rip on 2026-10-13 and retired the same day)",
-  "status": "BUILT 2026-10-13, NOT RUN IN GAME. The rips are places, not dungeons: a click at any rip draws a dungeon by the player's progression (docs/mechanics/DUNGEON_DRAW.md; tools/dungeon.py 'draw'). Every region with dry ground has one (20 rips; Jungle Isle is under water and has none). Region rips are sited and checked by tools/dungeon_rips.py check on the canonical heightmap. A rip may stand behind a gate (the owner, 2026-10-13: \"every area in game should be capable of spawning a rift, so leave it even if its gated\"): reachable_after names it, as information. The 13 test_trail rips on the old mine's trail were RETIRED 2026-10-13 (the owner: \"the rips near old mine have to go\") and are kept under retired_rips; R16DR takes them out of the world (rips/retire, rips/entities_retired).",
+  "generated_by": "tools/dungeon_rips.py record and pool (the region rips; the two added 2026-10-13 are Pallet Fields and Shrew Lakes) and hand (retired_rips: the 13 test_trail rips, carried over from data/dungeons.json dungeons[].rip on 2026-10-13 and retired the same day)",
+  "status": "BUILT 2026-10-13, NOT RUN IN GAME. The rips are places, not dungeons: a click at any rip draws a dungeon by the player's progression (docs/mechanics/DUNGEON_DRAW.md; tools/dungeon.py 'draw'). Every region with dry ground has a POOL of 4 candidate sites (80 rips, 20 regions; Jungle Isle is under water and has none): the owner, 2026-10-14, \"possible spawn locations and then randomly having them appear\"; a scheduler opens a few at random and closes them. The first 20 are the originals (their file order, dg.rip, is unchanged); rip_<region>_<k> were appended by tools/dungeon_rips.py pool, each 300 or more from every other rip. Region rips are sited and checked by tools/dungeon_rips.py check on the canonical heightmap. A rip may stand behind a gate (the owner, 2026-10-13: \"every area in game should be capable of spawning a rift, so leave it even if its gated\"): reachable_after names it, as information. The 13 test_trail rips on the old mine's trail were RETIRED 2026-10-13 (the owner: \"the rips near old mine have to go\") and are kept under retired_rips; R16DR takes them out of the world (rips/retire, rips/entities_retired).",
   "rips": [
     {
       "id": "rip_pallet_fields",
@@ -1857,6 +1857,5577 @@
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_northgate_isle_2",
+      "name": "A rift in Northgate Isle (2)",
+      "kind": "region",
+      "region": "northgate_isle",
+      "scorch_theme": "great_tree",
+      "frame": {
+        "x0": 4946,
+        "x1": 4950,
+        "z": 297,
+        "y": 105,
+        "height": 4
+      },
+      "ground": {
+        "y": 104,
+        "window": [
+          4944,
+          296,
+          4952,
+          302
+        ],
+        "heights": [
+          104,
+          104
+        ],
+        "heightmap_value": 104.15,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 104 over all 63 columns of x4944..4952 z296..302 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4948.5,
+        105,
+        300.5,
+        0
+      ],
+      "click": [
+        4948,
+        105,
+        298
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "4946": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4947": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4948": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4949": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4950": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 152,
+          "x": 5104,
+          "z": 304,
+          "file": "data/encounter_design.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1405,
+          "x": 4309,
+          "z": 1555
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_northgate_isle_3",
+      "name": "A rift in Northgate Isle (3)",
+      "kind": "region",
+      "region": "northgate_isle",
+      "scorch_theme": "great_tree",
+      "frame": {
+        "x0": 6026,
+        "x1": 6030,
+        "z": 713,
+        "y": 70,
+        "height": 4
+      },
+      "ground": {
+        "y": 69,
+        "window": [
+          6024,
+          712,
+          6032,
+          718
+        ],
+        "heights": [
+          69,
+          69
+        ],
+        "heightmap_value": 69.0,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 69 over all 63 columns of x6024..6032 z712..718 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        6028.5,
+        70,
+        716.5,
+        0
+      ],
+      "click": [
+        6028,
+        70,
+        714
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "6026": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6027": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6028": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6029": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6030": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 81,
+          "x": 6064,
+          "z": 792,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1878,
+          "x": 4383,
+          "z": 1631
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_northgate_isle_4",
+      "name": "A rift in Northgate Isle (4)",
+      "kind": "region",
+      "region": "northgate_isle",
+      "scorch_theme": "great_tree",
+      "frame": {
+        "x0": 5466,
+        "x1": 5470,
+        "z": 97,
+        "y": 70,
+        "height": 4
+      },
+      "ground": {
+        "y": 69,
+        "window": [
+          5464,
+          96,
+          5472,
+          102
+        ],
+        "heights": [
+          69,
+          69
+        ],
+        "heightmap_value": 68.9,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 69 over all 63 columns of x5464..5472 z96..102 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        5468.5,
+        70,
+        100.5,
+        0
+      ],
+      "click": [
+        5468,
+        70,
+        98
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "5466": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5467": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5468": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5469": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5470": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 47,
+          "x": 5512,
+          "z": 72,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1856,
+          "x": 4309,
+          "z": 1555
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_pine_isles_2",
+      "name": "A rift in the Pine Isles (2)",
+      "kind": "region",
+      "region": "pine_isles",
+      "scorch_theme": "great_tree",
+      "frame": {
+        "x0": 6770,
+        "x1": 6774,
+        "z": 1049,
+        "y": 115,
+        "height": 4
+      },
+      "ground": {
+        "y": 114,
+        "window": [
+          6768,
+          1048,
+          6776,
+          1054
+        ],
+        "heights": [
+          114,
+          114
+        ],
+        "heightmap_value": 114.45,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 114 over all 63 columns of x6768..6776 z1048..1054 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        6772.5,
+        115,
+        1052.5,
+        0
+      ],
+      "click": [
+        6772,
+        115,
+        1050
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "6770": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6771": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6772": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6773": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6774": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 154,
+          "x": 6768,
+          "z": 1208,
+          "file": "data/elder_trees.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 2228,
+          "x": 5659,
+          "z": 2986
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_pine_isles_3",
+      "name": "A rift in the Pine Isles (3)",
+      "kind": "region",
+      "region": "pine_isles",
+      "scorch_theme": "great_tree",
+      "frame": {
+        "x0": 7530,
+        "x1": 7534,
+        "z": 1657,
+        "y": 112,
+        "height": 4
+      },
+      "ground": {
+        "y": 111,
+        "window": [
+          7528,
+          1656,
+          7536,
+          1662
+        ],
+        "heights": [
+          111,
+          111
+        ],
+        "heightmap_value": 111.15,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 111 over all 63 columns of x7528..7536 z1656..1662 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        7532.5,
+        112,
+        1660.5,
+        0
+      ],
+      "click": [
+        7532,
+        112,
+        1658
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "7530": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7531": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7532": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7533": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7534": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 182,
+          "x": 7372,
+          "z": 1562,
+          "file": "data/placements.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 2188,
+          "x": 6196,
+          "z": 3398
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_pine_isles_4",
+      "name": "A rift in the Pine Isles (4)",
+      "kind": "region",
+      "region": "pine_isles",
+      "scorch_theme": "great_tree",
+      "frame": {
+        "x0": 7650,
+        "x1": 7654,
+        "z": 913,
+        "y": 69,
+        "height": 4
+      },
+      "ground": {
+        "y": 68,
+        "window": [
+          7648,
+          912,
+          7656,
+          918
+        ],
+        "heights": [
+          68,
+          68
+        ],
+        "heightmap_value": 68.2,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 68 over all 63 columns of x7648..7656 z912..918 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        7652.5,
+        69,
+        916.5,
+        0
+      ],
+      "click": [
+        7652,
+        69,
+        914
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "7650": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7651": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7652": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7653": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7654": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 152,
+          "x": 7496,
+          "z": 920,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 2843,
+          "x": 5901,
+          "z": 3161
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_fungal_isle_2",
+      "name": "A rift in the Fungal Isle (2)",
+      "kind": "region",
+      "region": "fungal_isle",
+      "scorch_theme": "jungle",
+      "frame": {
+        "x0": 594,
+        "x1": 598,
+        "z": 6113,
+        "y": 112,
+        "height": 4
+      },
+      "ground": {
+        "y": 111,
+        "window": [
+          592,
+          6112,
+          600,
+          6118
+        ],
+        "heights": [
+          111,
+          111
+        ],
+        "heightmap_value": 110.86,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 111 over all 63 columns of x592..600 z6112..6118 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        596.5,
+        112,
+        6116.5,
+        0
+      ],
+      "click": [
+        596,
+        112,
+        6114
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "594": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "595": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "596": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "597": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "598": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 112,
+          "x": 592,
+          "z": 6000,
+          "file": "data/encounter_design.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1189,
+          "x": 1462,
+          "z": 5293
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_fungal_isle_3",
+      "name": "A rift in the Fungal Isle (3)",
+      "kind": "region",
+      "region": "fungal_isle",
+      "scorch_theme": "jungle",
+      "frame": {
+        "x0": 2,
+        "x1": 6,
+        "z": 5633,
+        "y": 75,
+        "height": 4
+      },
+      "ground": {
+        "y": 74,
+        "window": [
+          0,
+          5632,
+          8,
+          5638
+        ],
+        "heights": [
+          74,
+          74
+        ],
+        "heightmap_value": 73.78,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 74 over all 63 columns of x0..8 z5632..5638 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4.5,
+        75,
+        5636.5,
+        0
+      ],
+      "click": [
+        4,
+        75,
+        5634
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "2": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 52,
+          "x": 24,
+          "z": 5582,
+          "file": "data/placements.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1493,
+          "x": 1462,
+          "z": 5293
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_fungal_isle_4",
+      "name": "A rift in the Fungal Isle (4)",
+      "kind": "region",
+      "region": "fungal_isle",
+      "scorch_theme": "jungle",
+      "frame": {
+        "x0": 962,
+        "x1": 966,
+        "z": 5809,
+        "y": 66,
+        "height": 4
+      },
+      "ground": {
+        "y": 65,
+        "window": [
+          960,
+          5808,
+          968,
+          5814
+        ],
+        "heights": [
+          65,
+          65
+        ],
+        "heightmap_value": 65.09,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 65 over all 63 columns of x960..968 z5808..5814 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        964.5,
+        66,
+        5812.5,
+        0
+      ],
+      "click": [
+        964,
+        66,
+        5810
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "962": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "963": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "964": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "965": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "966": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 35,
+          "x": 976,
+          "z": 5848,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 714,
+          "x": 1462,
+          "z": 5293
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_sunset_isle_2",
+      "name": "A rift in Sunset Isle (2)",
+      "kind": "region",
+      "region": "sunset_isle",
+      "scorch_theme": "desert_excavation",
+      "frame": {
+        "x0": 1642,
+        "x1": 1646,
+        "z": 7497,
+        "y": 113,
+        "height": 4
+      },
+      "ground": {
+        "y": 112,
+        "window": [
+          1640,
+          7496,
+          1648,
+          7502
+        ],
+        "heights": [
+          112,
+          112
+        ],
+        "heightmap_value": 112.24,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 112 over all 63 columns of x1640..1648 z7496..7502 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        1644.5,
+        113,
+        7500.5,
+        0
+      ],
+      "click": [
+        1644,
+        113,
+        7498
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "1642": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1643": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1644": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1645": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1646": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 209,
+          "x": 1716,
+          "z": 7298,
+          "file": "data/towns.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 2210,
+          "x": 1462,
+          "z": 5293
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_sunset_isle_3",
+      "name": "A rift in Sunset Isle (3)",
+      "kind": "region",
+      "region": "sunset_isle",
+      "scorch_theme": "desert_excavation",
+      "frame": {
+        "x0": 1890,
+        "x1": 1894,
+        "z": 6993,
+        "y": 95,
+        "height": 4
+      },
+      "ground": {
+        "y": 94,
+        "window": [
+          1888,
+          6992,
+          1896,
+          6998
+        ],
+        "heights": [
+          94,
+          94
+        ],
+        "heightmap_value": 93.91,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 94 over all 63 columns of x1888..1896 z6992..6998 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        1892.5,
+        95,
+        6996.5,
+        0
+      ],
+      "click": [
+        1892,
+        95,
+        6994
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "1890": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1891": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1892": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1893": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1894": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 155,
+          "x": 1928,
+          "z": 6840,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1752,
+          "x": 1462,
+          "z": 5293
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_sunset_isle_4",
+      "name": "A rift in Sunset Isle (4)",
+      "kind": "region",
+      "region": "sunset_isle",
+      "scorch_theme": "desert_excavation",
+      "frame": {
+        "x0": 2514,
+        "x1": 2518,
+        "z": 7097,
+        "y": 89,
+        "height": 4
+      },
+      "ground": {
+        "y": 88,
+        "window": [
+          2512,
+          7096,
+          2520,
+          7102
+        ],
+        "heights": [
+          88,
+          88
+        ],
+        "heightmap_value": 87.99,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 88 over all 63 columns of x2512..2520 z7096..7102 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        2516.5,
+        89,
+        7100.5,
+        0
+      ],
+      "click": [
+        2516,
+        89,
+        7098
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "2514": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2515": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2516": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2517": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2518": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 186,
+          "x": 2580,
+          "z": 6920,
+          "file": "data/sunset_watch.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1265,
+          "x": 3593,
+          "z": 6426
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_long_isle_2",
+      "name": "A rift in Long Isle (2)",
+      "kind": "region",
+      "region": "long_isle",
+      "scorch_theme": "flooded_ruin",
+      "frame": {
+        "x0": 7706,
+        "x1": 7710,
+        "z": 5969,
+        "y": 124,
+        "height": 4
+      },
+      "ground": {
+        "y": 123,
+        "window": [
+          7704,
+          5968,
+          7712,
+          5974
+        ],
+        "heights": [
+          123,
+          123
+        ],
+        "heightmap_value": 122.84,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 123 over all 63 columns of x7704..7712 z5968..5974 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        7708.5,
+        124,
+        5972.5,
+        0
+      ],
+      "click": [
+        7708,
+        124,
+        5970
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "7706": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7707": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7708": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7709": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7710": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 219,
+          "x": 7491,
+          "z": 6024,
+          "file": "data/ferries.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1862,
+          "x": 6411,
+          "z": 4628
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_long_isle_3",
+      "name": "A rift in Long Isle (3)",
+      "kind": "region",
+      "region": "long_isle",
+      "scorch_theme": "flooded_ruin",
+      "frame": {
+        "x0": 7690,
+        "x1": 7694,
+        "z": 7209,
+        "y": 142,
+        "height": 4
+      },
+      "ground": {
+        "y": 141,
+        "window": [
+          7688,
+          7208,
+          7696,
+          7214
+        ],
+        "heights": [
+          141,
+          141
+        ],
+        "heightmap_value": 141.39,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 141 over all 63 columns of x7688..7696 z7208..7214 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        7692.5,
+        142,
+        7212.5,
+        0
+      ],
+      "click": [
+        7692,
+        142,
+        7210
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "7690": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7691": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7692": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7693": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7694": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 150,
+          "x": 7760,
+          "z": 7072,
+          "file": "data/elder_trees.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 2725,
+          "x": 6002,
+          "z": 5067
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_long_isle_4",
+      "name": "A rift in Long Isle (4)",
+      "kind": "region",
+      "region": "long_isle",
+      "scorch_theme": "flooded_ruin",
+      "frame": {
+        "x0": 7874,
+        "x1": 7878,
+        "z": 5497,
+        "y": 114,
+        "height": 4
+      },
+      "ground": {
+        "y": 113,
+        "window": [
+          7872,
+          5496,
+          7880,
+          5502
+        ],
+        "heights": [
+          113,
+          113
+        ],
+        "heightmap_value": 112.75,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 113 over all 63 columns of x7872..7880 z5496..5502 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        7876.5,
+        114,
+        5500.5,
+        0
+      ],
+      "click": [
+        7876,
+        114,
+        5498
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "7874": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7875": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7876": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7877": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7878": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 181,
+          "x": 7840,
+          "z": 5680,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1692,
+          "x": 6433,
+          "z": 4606
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_glacial_tear_2",
+      "name": "A rift in the Glacial Tear (2)",
+      "kind": "region",
+      "region": "glacial_tear",
+      "scorch_theme": "ice_spire",
+      "frame": {
+        "x0": 3770,
+        "x1": 3774,
+        "z": 2081,
+        "y": 97,
+        "height": 4
+      },
+      "ground": {
+        "y": 96,
+        "window": [
+          3768,
+          2080,
+          3776,
+          2086
+        ],
+        "heights": [
+          96,
+          96
+        ],
+        "heightmap_value": 95.58,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 96 over all 63 columns of x3768..3776 z2080..2086 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        3772.5,
+        97,
+        2084.5,
+        0
+      ],
+      "click": [
+        3772,
+        97,
+        2082
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "3770": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3771": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3772": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3773": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3774": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 127,
+          "x": 3641,
+          "z": 2090,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 198,
+          "x": 3710,
+          "z": 1891
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_glacial_tear_3",
+      "name": "A rift in the Glacial Tear (3)",
+      "kind": "region",
+      "region": "glacial_tear",
+      "scorch_theme": "ice_spire",
+      "frame": {
+        "x0": 4634,
+        "x1": 4638,
+        "z": 3041,
+        "y": 79,
+        "height": 4
+      },
+      "ground": {
+        "y": 78,
+        "window": [
+          4632,
+          3040,
+          4640,
+          3046
+        ],
+        "heights": [
+          78,
+          78
+        ],
+        "heightmap_value": 77.98,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 78 over all 63 columns of x4632..4640 z3040..3046 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4636.5,
+        79,
+        3044.5,
+        0
+      ],
+      "click": [
+        4636,
+        79,
+        3042
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "4634": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4635": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4636": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4637": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4638": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 151,
+          "x": 4748,
+          "z": 3152,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 448,
+          "x": 4957,
+          "z": 2723
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_glacial_tear_4",
+      "name": "A rift in the Glacial Tear (4)",
+      "kind": "region",
+      "region": "glacial_tear",
+      "scorch_theme": "ice_spire",
+      "frame": {
+        "x0": 3890,
+        "x1": 3894,
+        "z": 2745,
+        "y": 127,
+        "height": 4
+      },
+      "ground": {
+        "y": 126,
+        "window": [
+          3888,
+          2744,
+          3896,
+          2750
+        ],
+        "heights": [
+          126,
+          126
+        ],
+        "heightmap_value": 125.89,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 126 over all 63 columns of x3888..3896 z2744..2750 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        3892.5,
+        127,
+        2748.5,
+        0
+      ],
+      "click": [
+        3892,
+        127,
+        2746
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "3890": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3891": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3892": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3893": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3894": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 129,
+          "x": 3768,
+          "z": 2796,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 312,
+          "x": 3576,
+          "z": 2762
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_tri_peaks_2",
+      "name": "A rift in the Tri Peaks (2)",
+      "kind": "region",
+      "region": "tri_peaks",
+      "scorch_theme": "hill_keep",
+      "frame": {
+        "x0": 1194,
+        "x1": 1198,
+        "z": 817,
+        "y": 119,
+        "height": 4
+      },
+      "ground": {
+        "y": 118,
+        "window": [
+          1192,
+          816,
+          1200,
+          822
+        ],
+        "heights": [
+          118,
+          118
+        ],
+        "heightmap_value": 118.01,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 118 over all 63 columns of x1192..1200 z816..822 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        1196.5,
+        119,
+        820.5,
+        0
+      ],
+      "click": [
+        1196,
+        119,
+        818
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "1194": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1195": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1196": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1197": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1198": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 125,
+          "x": 1310,
+          "z": 882,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 764,
+          "x": 1688,
+          "z": 1410
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_tri_peaks_3",
+      "name": "A rift in the Tri Peaks (3)",
+      "kind": "region",
+      "region": "tri_peaks",
+      "scorch_theme": "hill_keep",
+      "frame": {
+        "x0": 2458,
+        "x1": 2462,
+        "z": 1849,
+        "y": 132,
+        "height": 4
+      },
+      "ground": {
+        "y": 131,
+        "window": [
+          2456,
+          1848,
+          2464,
+          1854
+        ],
+        "heights": [
+          131,
+          131
+        ],
+        "heightmap_value": 130.87,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 131 over all 63 columns of x2456..2464 z1848..1854 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        2460.5,
+        132,
+        1852.5,
+        0
+      ],
+      "click": [
+        2460,
+        132,
+        1850
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "2458": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2459": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2460": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2461": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2462": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 116,
+          "x": 2560,
+          "z": 1920,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 247,
+          "x": 2231,
+          "z": 1746
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_tri_peaks_4",
+      "name": "A rift in the Tri Peaks (4)",
+      "kind": "region",
+      "region": "tri_peaks",
+      "scorch_theme": "hill_keep",
+      "frame": {
+        "x0": 1690,
+        "x1": 1694,
+        "z": 697,
+        "y": 146,
+        "height": 4
+      },
+      "ground": {
+        "y": 145,
+        "window": [
+          1688,
+          696,
+          1696,
+          702
+        ],
+        "heights": [
+          145,
+          145
+        ],
+        "heightmap_value": 144.63,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 145 over all 63 columns of x1688..1696 z696..702 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        1692.5,
+        146,
+        700.5,
+        0
+      ],
+      "click": [
+        1692,
+        146,
+        698
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "1690": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1691": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1692": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1693": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1694": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 115,
+          "x": 1576,
+          "z": 672,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 708,
+          "x": 1688,
+          "z": 1410
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_the_rift_2",
+      "name": "A rift in the Rift (2)",
+      "kind": "region",
+      "region": "the_rift",
+      "scorch_theme": "night_crater",
+      "frame": {
+        "x0": 4378,
+        "x1": 4382,
+        "z": 4425,
+        "y": 125,
+        "height": 4
+      },
+      "ground": {
+        "y": 124,
+        "window": [
+          4376,
+          4424,
+          4384,
+          4430
+        ],
+        "heights": [
+          124,
+          124
+        ],
+        "heightmap_value": 123.91,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 124 over all 63 columns of x4376..4384 z4424..4430 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4380.5,
+        125,
+        4428.5,
+        0
+      ],
+      "click": [
+        4380,
+        125,
+        4426
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "4378": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4379": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4380": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4381": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4382": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "reachable_after": {
+        "zone": "z2",
+        "zone_name": "Victory Road and the Rift's floor",
+        "kind": "badges",
+        "threshold": 8,
+        "advancements": [
+          "cobblers:flag/gym1_cleared",
+          "cobblers:flag/gym2_cleared",
+          "cobblers:flag/gym3_cleared",
+          "cobblers:flag/gym4_cleared",
+          "cobblers:flag/gym5_cleared",
+          "cobblers:flag/gym6_cleared",
+          "cobblers:flag/gym7_cleared",
+          "cobblers:flag/gym8_cleared"
+        ],
+        "from": "data/rift_zones.json zones.z2 (boxes and pass)"
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 142,
+          "x": 4270,
+          "z": 4330,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 148,
+          "x": 4242,
+          "z": 4361
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_the_rift_3",
+      "name": "A rift in the Rift (3)",
+      "kind": "region",
+      "region": "the_rift",
+      "scorch_theme": "night_crater",
+      "frame": {
+        "x0": 3306,
+        "x1": 3310,
+        "z": 2961,
+        "y": 117,
+        "height": 4
+      },
+      "ground": {
+        "y": 116,
+        "window": [
+          3304,
+          2960,
+          3312,
+          2966
+        ],
+        "heights": [
+          116,
+          116
+        ],
+        "heightmap_value": 116.07,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 116 over all 63 columns of x3304..3312 z2960..2966 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        3308.5,
+        117,
+        2964.5,
+        0
+      ],
+      "click": [
+        3308,
+        117,
+        2962
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "3306": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3307": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3308": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3309": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3310": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "reachable_after": {
+        "zone": "z2",
+        "zone_name": "Victory Road and the Rift's floor",
+        "kind": "badges",
+        "threshold": 8,
+        "advancements": [
+          "cobblers:flag/gym1_cleared",
+          "cobblers:flag/gym2_cleared",
+          "cobblers:flag/gym3_cleared",
+          "cobblers:flag/gym4_cleared",
+          "cobblers:flag/gym5_cleared",
+          "cobblers:flag/gym6_cleared",
+          "cobblers:flag/gym7_cleared",
+          "cobblers:flag/gym8_cleared"
+        ],
+        "from": "data/rift_zones.json zones.z2 (boxes and pass)"
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 129,
+          "x": 3424,
+          "z": 2896,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 244,
+          "x": 3556,
+          "z": 2966
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_the_rift_4",
+      "name": "A rift in the Rift (4)",
+      "kind": "region",
+      "region": "the_rift",
+      "scorch_theme": "night_crater",
+      "frame": {
+        "x0": 3274,
+        "x1": 3278,
+        "z": 3529,
+        "y": 118,
+        "height": 4
+      },
+      "ground": {
+        "y": 117,
+        "window": [
+          3272,
+          3528,
+          3280,
+          3534
+        ],
+        "heights": [
+          117,
+          117
+        ],
+        "heightmap_value": 117.09,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 117 over all 63 columns of x3272..3280 z3528..3534 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        3276.5,
+        118,
+        3532.5,
+        0
+      ],
+      "click": [
+        3276,
+        118,
+        3530
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "3274": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3275": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3276": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3277": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3278": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "reachable_after": {
+        "zone": "z2",
+        "zone_name": "Victory Road and the Rift's floor",
+        "kind": "badges",
+        "threshold": 8,
+        "advancements": [
+          "cobblers:flag/gym1_cleared",
+          "cobblers:flag/gym2_cleared",
+          "cobblers:flag/gym3_cleared",
+          "cobblers:flag/gym4_cleared",
+          "cobblers:flag/gym5_cleared",
+          "cobblers:flag/gym6_cleared",
+          "cobblers:flag/gym7_cleared",
+          "cobblers:flag/gym8_cleared"
+        ],
+        "from": "data/rift_zones.json zones.z2 (boxes and pass)"
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 104,
+          "x": 3168,
+          "z": 3544,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 429,
+          "x": 3613,
+          "z": 3257
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_the_craters_2",
+      "name": "A rift in the Craters (2)",
+      "kind": "region",
+      "region": "the_craters",
+      "scorch_theme": "hill_keep",
+      "frame": {
+        "x0": 5754,
+        "x1": 5758,
+        "z": 5377,
+        "y": 130,
+        "height": 4
+      },
+      "ground": {
+        "y": 129,
+        "window": [
+          5752,
+          5376,
+          5760,
+          5382
+        ],
+        "heights": [
+          129,
+          129
+        ],
+        "heightmap_value": 129.25,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 129 over all 63 columns of x5752..5760 z5376..5382 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        5756.5,
+        130,
+        5380.5,
+        0
+      ],
+      "click": [
+        5756,
+        130,
+        5378
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "5754": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5755": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5756": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5757": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5758": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 139,
+          "x": 5640,
+          "z": 5464,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 205,
+          "x": 5676,
+          "z": 5186
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_the_craters_3",
+      "name": "A rift in the Craters (3)",
+      "kind": "region",
+      "region": "the_craters",
+      "scorch_theme": "hill_keep",
+      "frame": {
+        "x0": 6674,
+        "x1": 6678,
+        "z": 5097,
+        "y": 151,
+        "height": 4
+      },
+      "ground": {
+        "y": 150,
+        "window": [
+          6672,
+          5096,
+          6680,
+          5102
+        ],
+        "heights": [
+          150,
+          150
+        ],
+        "heightmap_value": 149.69,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 150 over all 63 columns of x6672..6680 z5096..5102 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        6676.5,
+        151,
+        5100.5,
+        0
+      ],
+      "click": [
+        6676,
+        151,
+        5098
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "6674": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6675": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6676": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6677": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6678": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 118,
+          "x": 6712,
+          "z": 5216,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 519,
+          "x": 6305,
+          "z": 4729
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_the_craters_4",
+      "name": "A rift in the Craters (4)",
+      "kind": "region",
+      "region": "the_craters",
+      "scorch_theme": "hill_keep",
+      "frame": {
+        "x0": 5794,
+        "x1": 5798,
+        "z": 5929,
+        "y": 142,
+        "height": 4
+      },
+      "ground": {
+        "y": 141,
+        "window": [
+          5792,
+          5928,
+          5800,
+          5934
+        ],
+        "heights": [
+          141,
+          141
+        ],
+        "heightmap_value": 141.13,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 141 over all 63 columns of x5792..5800 z5928..5934 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        5796.5,
+        142,
+        5932.5,
+        0
+      ],
+      "click": [
+        5796,
+        142,
+        5930
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "5794": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5795": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5796": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5797": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5798": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 79,
+          "x": 5740,
+          "z": 5868,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 744,
+          "x": 5497,
+          "z": 5245
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_scorched_plateau_2",
+      "name": "A rift in the Scorched Plateau (2)",
+      "kind": "region",
+      "region": "scorched_plateau",
+      "scorch_theme": "desert_excavation",
+      "frame": {
+        "x0": 4706,
+        "x1": 4710,
+        "z": 6033,
+        "y": 166,
+        "height": 4
+      },
+      "ground": {
+        "y": 165,
+        "window": [
+          4704,
+          6032,
+          4712,
+          6038
+        ],
+        "heights": [
+          165,
+          165
+        ],
+        "heightmap_value": 164.85,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 165 over all 63 columns of x4704..4712 z6032..6038 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4708.5,
+        166,
+        6036.5,
+        0
+      ],
+      "click": [
+        4708,
+        166,
+        6034
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "4706": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4707": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4708": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4709": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4710": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 212,
+          "x": 4568,
+          "z": 6200,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 377,
+          "x": 4438,
+          "z": 5765
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_scorched_plateau_3",
+      "name": "A rift in the Scorched Plateau (3)",
+      "kind": "region",
+      "region": "scorched_plateau",
+      "scorch_theme": "desert_excavation",
+      "frame": {
+        "x0": 4570,
+        "x1": 4574,
+        "z": 5417,
+        "y": 159,
+        "height": 4
+      },
+      "ground": {
+        "y": 158,
+        "window": [
+          4568,
+          5416,
+          4576,
+          5422
+        ],
+        "heights": [
+          158,
+          158
+        ],
+        "heightmap_value": 158.15,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 158 over all 63 columns of x4568..4576 z5416..5422 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4572.5,
+        159,
+        5420.5,
+        0
+      ],
+      "click": [
+        4572,
+        159,
+        5418
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "4570": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4571": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4572": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4573": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4574": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 186,
+          "x": 4614,
+          "z": 5604,
+          "file": "data/late_route_trainers.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 188,
+          "x": 4640,
+          "z": 5599
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_scorched_plateau_4",
+      "name": "A rift in the Scorched Plateau (4)",
+      "kind": "region",
+      "region": "scorched_plateau",
+      "scorch_theme": "desert_excavation",
+      "frame": {
+        "x0": 5434,
+        "x1": 5438,
+        "z": 5921,
+        "y": 159,
+        "height": 4
+      },
+      "ground": {
+        "y": 158,
+        "window": [
+          5432,
+          5920,
+          5440,
+          5926
+        ],
+        "heights": [
+          158,
+          158
+        ],
+        "heightmap_value": 157.79,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 158 over all 63 columns of x5432..5440 z5920..5926 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        5436.5,
+        159,
+        5924.5,
+        0
+      ],
+      "click": [
+        5436,
+        159,
+        5922
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "5434": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5435": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5436": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5437": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5438": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 158,
+          "x": 5576,
+          "z": 5840,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 608,
+          "x": 5174,
+          "z": 5369
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_frostpeak_point_2",
+      "name": "A rift in Frostpeak Point (2)",
+      "kind": "region",
+      "region": "frostpeak_point",
+      "scorch_theme": "ice_spire",
+      "frame": {
+        "x0": 514,
+        "x1": 518,
+        "z": 561,
+        "y": 138,
+        "height": 4
+      },
+      "ground": {
+        "y": 137,
+        "window": [
+          512,
+          560,
+          520,
+          566
+        ],
+        "heights": [
+          137,
+          137
+        ],
+        "heightmap_value": 137.08,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 137 over all 63 columns of x512..520 z560..566 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        516.5,
+        138,
+        564.5,
+        0
+      ],
+      "click": [
+        516,
+        138,
+        562
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "514": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "515": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "516": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "517": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "518": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 199,
+          "x": 681,
+          "z": 683,
+          "file": "data/frostpeak_summit.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1441,
+          "x": 1688,
+          "z": 1410
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_frostpeak_point_3",
+      "name": "A rift in Frostpeak Point (3)",
+      "kind": "region",
+      "region": "frostpeak_point",
+      "scorch_theme": "ice_spire",
+      "frame": {
+        "x0": 2610,
+        "x1": 2614,
+        "z": 489,
+        "y": 87,
+        "height": 4
+      },
+      "ground": {
+        "y": 86,
+        "window": [
+          2608,
+          488,
+          2616,
+          494
+        ],
+        "heights": [
+          86,
+          86
+        ],
+        "heightmap_value": 85.81,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 86 over all 63 columns of x2608..2616 z488..494 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        2612.5,
+        87,
+        492.5,
+        0
+      ],
+      "click": [
+        2612,
+        87,
+        490
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "2610": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2611": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2612": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2613": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2614": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 120,
+          "x": 2736,
+          "z": 504,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 686,
+          "x": 2640,
+          "z": 1180
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_frostpeak_point_4",
+      "name": "A rift in Frostpeak Point (4)",
+      "kind": "region",
+      "region": "frostpeak_point",
+      "scorch_theme": "ice_spire",
+      "frame": {
+        "x0": 394,
+        "x1": 398,
+        "z": 73,
+        "y": 88,
+        "height": 4
+      },
+      "ground": {
+        "y": 87,
+        "window": [
+          392,
+          72,
+          400,
+          78
+        ],
+        "heights": [
+          87,
+          87
+        ],
+        "heightmap_value": 87.06,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 87 over all 63 columns of x392..400 z72..78 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        396.5,
+        88,
+        76.5,
+        0
+      ],
+      "click": [
+        396,
+        88,
+        74
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "394": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "395": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "396": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "397": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "398": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 87,
+          "x": 448,
+          "z": 0,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1853,
+          "x": 1688,
+          "z": 1410
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_tilpey_lakeland_2",
+      "name": "A rift in Tilpey Lakeland (2)",
+      "kind": "region",
+      "region": "tilpey_lakeland",
+      "scorch_theme": "flooded_ruin",
+      "frame": {
+        "x0": 4954,
+        "x1": 4958,
+        "z": 3897,
+        "y": 101,
+        "height": 4
+      },
+      "ground": {
+        "y": 100,
+        "window": [
+          4952,
+          3896,
+          4960,
+          3902
+        ],
+        "heights": [
+          100,
+          100
+        ],
+        "heightmap_value": 99.83,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 100 over all 63 columns of x4952..4960 z3896..3902 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4956.5,
+        101,
+        3900.5,
+        0
+      ],
+      "click": [
+        4956,
+        101,
+        3898
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "4954": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4955": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4956": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4957": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4958": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 151,
+          "x": 5064,
+          "z": 4012,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 682,
+          "x": 4293,
+          "z": 4076
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_tilpey_lakeland_3",
+      "name": "A rift in Tilpey Lakeland (3)",
+      "kind": "region",
+      "region": "tilpey_lakeland",
+      "scorch_theme": "flooded_ruin",
+      "frame": {
+        "x0": 5274,
+        "x1": 5278,
+        "z": 4801,
+        "y": 112,
+        "height": 4
+      },
+      "ground": {
+        "y": 111,
+        "window": [
+          5272,
+          4800,
+          5280,
+          4806
+        ],
+        "heights": [
+          111,
+          111
+        ],
+        "heightmap_value": 110.99,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 111 over all 63 columns of x5272..5280 z4800..4806 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        5276.5,
+        112,
+        4804.5,
+        0
+      ],
+      "click": [
+        5276,
+        112,
+        4802
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "5274": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5275": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5276": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5277": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5278": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 156,
+          "x": 5328,
+          "z": 4652,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 464,
+          "x": 5390,
+          "z": 5257
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_tilpey_lakeland_4",
+      "name": "A rift in Tilpey Lakeland (4)",
+      "kind": "region",
+      "region": "tilpey_lakeland",
+      "scorch_theme": "flooded_ruin",
+      "frame": {
+        "x0": 4826,
+        "x1": 4830,
+        "z": 4577,
+        "y": 111,
+        "height": 4
+      },
+      "ground": {
+        "y": 110,
+        "window": [
+          4824,
+          4576,
+          4832,
+          4582
+        ],
+        "heights": [
+          110,
+          110
+        ],
+        "heightmap_value": 109.72,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 110 over all 63 columns of x4824..4832 z4576..4582 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4828.5,
+        111,
+        4580.5,
+        0
+      ],
+      "click": [
+        4828,
+        111,
+        4578
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "4826": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4827": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4828": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4829": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4830": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 154,
+          "x": 4856,
+          "z": 4424,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 620,
+          "x": 4250,
+          "z": 4342
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_the_wedge_2",
+      "name": "A rift in the Wedge (2)",
+      "kind": "region",
+      "region": "the_wedge",
+      "scorch_theme": "city",
+      "frame": {
+        "x0": 4674,
+        "x1": 4678,
+        "z": 4289,
+        "y": 116,
+        "height": 4
+      },
+      "ground": {
+        "y": 115,
+        "window": [
+          4672,
+          4288,
+          4680,
+          4294
+        ],
+        "heights": [
+          115,
+          115
+        ],
+        "heightmap_value": 115.14,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 115 over all 63 columns of x4672..4680 z4288..4294 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4676.5,
+        116,
+        4292.5,
+        0
+      ],
+      "click": [
+        4676,
+        116,
+        4290
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "4674": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4675": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4676": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4677": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4678": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 144,
+          "x": 4688,
+          "z": 4144,
+          "file": "data/encounter_design.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 385,
+          "x": 4293,
+          "z": 4219
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_the_wedge_3",
+      "name": "A rift in the Wedge (3)",
+      "kind": "region",
+      "region": "the_wedge",
+      "scorch_theme": "city",
+      "frame": {
+        "x0": 3930,
+        "x1": 3934,
+        "z": 3049,
+        "y": 142,
+        "height": 4
+      },
+      "ground": {
+        "y": 141,
+        "window": [
+          3928,
+          3048,
+          3936,
+          3054
+        ],
+        "heights": [
+          141,
+          141
+        ],
+        "heightmap_value": 140.72,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 141 over all 63 columns of x3928..3936 z3048..3054 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        3932.5,
+        142,
+        3052.5,
+        0
+      ],
+      "click": [
+        3932,
+        142,
+        3050
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "3930": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3931": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3932": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3933": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3934": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 104,
+          "x": 4016,
+          "z": 3120,
+          "file": "data/encounter_design.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 359,
+          "x": 3581,
+          "z": 3146
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_the_wedge_4",
+      "name": "A rift in the Wedge (4)",
+      "kind": "region",
+      "region": "the_wedge",
+      "scorch_theme": "city",
+      "frame": {
+        "x0": 4434,
+        "x1": 4438,
+        "z": 3977,
+        "y": 120,
+        "height": 4
+      },
+      "ground": {
+        "y": 119,
+        "window": [
+          4432,
+          3976,
+          4440,
+          3982
+        ],
+        "heights": [
+          119,
+          119
+        ],
+        "heightmap_value": 119.07,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 119 over all 63 columns of x4432..4440 z3976..3982 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4436.5,
+        120,
+        3980.5,
+        0
+      ],
+      "click": [
+        4436,
+        120,
+        3978
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "4434": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4435": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4436": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4437": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4438": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 66,
+          "x": 4372,
+          "z": 3948,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 163,
+          "x": 4277,
+          "z": 4034
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_northern_downs_2",
+      "name": "A rift in the Northern Downs (2)",
+      "kind": "region",
+      "region": "northern_downs",
+      "scorch_theme": "hill_keep",
+      "frame": {
+        "x0": 4530,
+        "x1": 4534,
+        "z": 1313,
+        "y": 108,
+        "height": 4
+      },
+      "ground": {
+        "y": 107,
+        "window": [
+          4528,
+          1312,
+          4536,
+          1318
+        ],
+        "heights": [
+          107,
+          107
+        ],
+        "heightmap_value": 106.85,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 107 over all 63 columns of x4528..4536 z1312..1318 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4532.5,
+        108,
+        1316.5,
+        0
+      ],
+      "click": [
+        4532,
+        108,
+        1314
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "4530": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4531": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4532": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4533": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4534": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 152,
+          "x": 4680,
+          "z": 1264,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 323,
+          "x": 4309,
+          "z": 1555
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_northern_downs_3",
+      "name": "A rift in the Northern Downs (3)",
+      "kind": "region",
+      "region": "northern_downs",
+      "scorch_theme": "hill_keep",
+      "frame": {
+        "x0": 3218,
+        "x1": 3222,
+        "z": 657,
+        "y": 119,
+        "height": 4
+      },
+      "ground": {
+        "y": 118,
+        "window": [
+          3216,
+          656,
+          3224,
+          662
+        ],
+        "heights": [
+          118,
+          118
+        ],
+        "heightmap_value": 117.99,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 118 over all 63 columns of x3216..3224 z656..662 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        3220.5,
+        119,
+        660.5,
+        0
+      ],
+      "click": [
+        3220,
+        119,
+        658
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "3218": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3219": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3220": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3221": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3222": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 159,
+          "x": 3316,
+          "z": 792,
+          "file": "data/rivers.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 637,
+          "x": 2941,
+          "z": 1237
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_northern_downs_4",
+      "name": "A rift in the Northern Downs (4)",
+      "kind": "region",
+      "region": "northern_downs",
+      "scorch_theme": "hill_keep",
+      "frame": {
+        "x0": 4218,
+        "x1": 4222,
+        "z": 1841,
+        "y": 111,
+        "height": 4
+      },
+      "ground": {
+        "y": 110,
+        "window": [
+          4216,
+          1840,
+          4224,
+          1846
+        ],
+        "heights": [
+          110,
+          110
+        ],
+        "heightmap_value": 110.22,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 110 over all 63 columns of x4216..4224 z1840..1846 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        4220.5,
+        111,
+        1844.5,
+        0
+      ],
+      "click": [
+        4220,
+        111,
+        1842
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "4218": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4219": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4220": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4221": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "4222": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 154,
+          "x": 4160,
+          "z": 1697,
+          "file": "data/route_paths.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 154,
+          "x": 4160,
+          "z": 1697
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_marsh_country_2",
+      "name": "A rift in the Marsh Country (2)",
+      "kind": "region",
+      "region": "marsh_country",
+      "scorch_theme": "jungle",
+      "frame": {
+        "x0": 6450,
+        "x1": 6454,
+        "z": 2521,
+        "y": 119,
+        "height": 4
+      },
+      "ground": {
+        "y": 118,
+        "window": [
+          6448,
+          2520,
+          6456,
+          2526
+        ],
+        "heights": [
+          118,
+          118
+        ],
+        "heightmap_value": 118.01,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 118 over all 63 columns of x6448..6456 z2520..2526 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        6452.5,
+        119,
+        2524.5,
+        0
+      ],
+      "click": [
+        6452,
+        119,
+        2522
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "6450": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6451": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6452": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6453": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6454": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 244,
+          "x": 6640,
+          "z": 2360,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 838,
+          "x": 5901,
+          "z": 3161
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_marsh_country_3",
+      "name": "A rift in the Marsh Country (3)",
+      "kind": "region",
+      "region": "marsh_country",
+      "scorch_theme": "jungle",
+      "frame": {
+        "x0": 5906,
+        "x1": 5910,
+        "z": 2193,
+        "y": 126,
+        "height": 4
+      },
+      "ground": {
+        "y": 125,
+        "window": [
+          5904,
+          2192,
+          5912,
+          2198
+        ],
+        "heights": [
+          125,
+          125
+        ],
+        "heightmap_value": 124.79,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 125 over all 63 columns of x5904..5912 z2192..2198 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        5908.5,
+        126,
+        2196.5,
+        0
+      ],
+      "click": [
+        5908,
+        126,
+        2194
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "5906": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5907": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5908": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5909": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "5910": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 216,
+          "x": 5912,
+          "z": 1976,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 823,
+          "x": 5650,
+          "z": 2981
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_marsh_country_4",
+      "name": "A rift in the Marsh Country (4)",
+      "kind": "region",
+      "region": "marsh_country",
+      "scorch_theme": "jungle",
+      "frame": {
+        "x0": 6498,
+        "x1": 6502,
+        "z": 3025,
+        "y": 100,
+        "height": 4
+      },
+      "ground": {
+        "y": 99,
+        "window": [
+          6496,
+          3024,
+          6504,
+          3030
+        ],
+        "heights": [
+          99,
+          99
+        ],
+        "heightmap_value": 99.11,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 99 over all 63 columns of x6496..6504 z3024..3030 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        6500.5,
+        100,
+        3028.5,
+        0
+      ],
+      "click": [
+        6500,
+        100,
+        3026
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "6498": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6499": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6500": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6501": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6502": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 153,
+          "x": 6344,
+          "z": 3008,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 475,
+          "x": 6196,
+          "z": 3398
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_viltri_woods_2",
+      "name": "A rift in Viltri Woods (2)",
+      "kind": "region",
+      "region": "viltri_woods",
+      "scorch_theme": "great_tree",
+      "frame": {
+        "x0": 2018,
+        "x1": 2022,
+        "z": 2809,
+        "y": 118,
+        "height": 4
+      },
+      "ground": {
+        "y": 117,
+        "window": [
+          2016,
+          2808,
+          2024,
+          2814
+        ],
+        "heights": [
+          117,
+          117
+        ],
+        "heightmap_value": 117.21,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 117 over all 63 columns of x2016..2024 z2808..2814 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        2020.5,
+        118,
+        2812.5,
+        0
+      ],
+      "click": [
+        2020,
+        118,
+        2810
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "2018": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2019": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2020": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2021": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2022": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 152,
+          "x": 2016,
+          "z": 2656,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 267,
+          "x": 1774,
+          "z": 2926
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_viltri_woods_3",
+      "name": "A rift in Viltri Woods (3)",
+      "kind": "region",
+      "region": "viltri_woods",
+      "scorch_theme": "great_tree",
+      "frame": {
+        "x0": 1770,
+        "x1": 1774,
+        "z": 2081,
+        "y": 105,
+        "height": 4
+      },
+      "ground": {
+        "y": 104,
+        "window": [
+          1768,
+          2080,
+          1776,
+          2086
+        ],
+        "heights": [
+          104,
+          104
+        ],
+        "heightmap_value": 103.87,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 104 over all 63 columns of x1768..1776 z2080..2086 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        1772.5,
+        105,
+        2084.5,
+        0
+      ],
+      "click": [
+        1772,
+        105,
+        2082
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "1770": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1771": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1772": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1773": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1774": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 156,
+          "x": 1696,
+          "z": 2224,
+          "file": "data/northern_residents.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 173,
+          "x": 1937,
+          "z": 2148
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_viltri_woods_4",
+      "name": "A rift in Viltri Woods (4)",
+      "kind": "region",
+      "region": "viltri_woods",
+      "scorch_theme": "great_tree",
+      "frame": {
+        "x0": 1194,
+        "x1": 1198,
+        "z": 2241,
+        "y": 88,
+        "height": 4
+      },
+      "ground": {
+        "y": 87,
+        "window": [
+          1192,
+          2240,
+          1200,
+          2246
+        ],
+        "heights": [
+          87,
+          87
+        ],
+        "heightmap_value": 86.63,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 87 over all 63 columns of x1192..1200 z2240..2246 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        1196.5,
+        88,
+        2244.5,
+        0
+      ],
+      "click": [
+        1196,
+        88,
+        2242
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "1194": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1195": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1196": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1197": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1198": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 154,
+          "x": 1320,
+          "z": 2144,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 642,
+          "x": 1825,
+          "z": 2394
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_shrew_lakes_2",
+      "name": "A rift in Shrew Lakes (2)",
+      "kind": "region",
+      "region": "shrew_lakes",
+      "scorch_theme": "flooded_ruin",
+      "frame": {
+        "x0": 3250,
+        "x1": 3254,
+        "z": 4129,
+        "y": 145,
+        "height": 4
+      },
+      "ground": {
+        "y": 144,
+        "window": [
+          3248,
+          4128,
+          3256,
+          4134
+        ],
+        "heights": [
+          144,
+          144
+        ],
+        "heightmap_value": 144.11,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 144 over all 63 columns of x3248..3256 z4128..4134 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        3252.5,
+        145,
+        4132.5,
+        0
+      ],
+      "click": [
+        3252,
+        145,
+        4130
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "3250": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3251": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3252": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3253": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3254": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 150,
+          "x": 3160,
+          "z": 4256,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 842,
+          "x": 3844,
+          "z": 3525
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_shrew_lakes_3",
+      "name": "A rift in Shrew Lakes (3)",
+      "kind": "region",
+      "region": "shrew_lakes",
+      "scorch_theme": "flooded_ruin",
+      "frame": {
+        "x0": 2850,
+        "x1": 2854,
+        "z": 3633,
+        "y": 107,
+        "height": 4
+      },
+      "ground": {
+        "y": 106,
+        "window": [
+          2848,
+          3632,
+          2856,
+          3638
+        ],
+        "heights": [
+          106,
+          106
+        ],
+        "heightmap_value": 105.87,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 106 over all 63 columns of x2848..2856 z3632..3638 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        2852.5,
+        107,
+        3636.5,
+        0
+      ],
+      "click": [
+        2852,
+        107,
+        3634
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "2850": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2851": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2852": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2853": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2854": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 151,
+          "x": 2876,
+          "z": 3788,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 844,
+          "x": 3611,
+          "z": 3254
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_shrew_lakes_4",
+      "name": "A rift in Shrew Lakes (4)",
+      "kind": "region",
+      "region": "shrew_lakes",
+      "scorch_theme": "flooded_ruin",
+      "frame": {
+        "x0": 2354,
+        "x1": 2358,
+        "z": 3977,
+        "y": 120,
+        "height": 4
+      },
+      "ground": {
+        "y": 119,
+        "window": [
+          2352,
+          3976,
+          2360,
+          3982
+        ],
+        "heights": [
+          119,
+          119
+        ],
+        "heightmap_value": 119.38,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 119 over all 63 columns of x2352..2360 z3976..3982 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        2356.5,
+        120,
+        3980.5,
+        0
+      ],
+      "click": [
+        2356,
+        120,
+        3978
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "2354": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2355": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2356": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2357": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2358": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 160,
+          "x": 2508,
+          "z": 3916,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 697,
+          "x": 1743,
+          "z": 3636
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_pallet_fields_2",
+      "name": "A rift in Pallet Fields (2)",
+      "kind": "region",
+      "region": "pallet_fields",
+      "scorch_theme": "jungle",
+      "frame": {
+        "x0": 1194,
+        "x1": 1198,
+        "z": 4649,
+        "y": 129,
+        "height": 4
+      },
+      "ground": {
+        "y": 128,
+        "window": [
+          1192,
+          4648,
+          1200,
+          4654
+        ],
+        "heights": [
+          128,
+          128
+        ],
+        "heightmap_value": 128.07,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 128 over all 63 columns of x1192..1200 z4648..4654 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        1196.5,
+        129,
+        4652.5,
+        0
+      ],
+      "click": [
+        1196,
+        129,
+        4650
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "1194": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1195": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1196": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1197": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1198": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 155,
+          "x": 1256,
+          "z": 4799,
+          "file": "data/rewards.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 180,
+          "x": 1380,
+          "z": 4648
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_pallet_fields_3",
+      "name": "A rift in Pallet Fields (3)",
+      "kind": "region",
+      "region": "pallet_fields",
+      "scorch_theme": "jungle",
+      "frame": {
+        "x0": 1746,
+        "x1": 1750,
+        "z": 5385,
+        "y": 112,
+        "height": 4
+      },
+      "ground": {
+        "y": 111,
+        "window": [
+          1744,
+          5384,
+          1752,
+          5390
+        ],
+        "heights": [
+          111,
+          111
+        ],
+        "heightmap_value": 111.1,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 111 over all 63 columns of x1744..1752 z5384..5390 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        1748.5,
+        112,
+        5388.5,
+        0
+      ],
+      "click": [
+        1748,
+        112,
+        5386
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "1746": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1747": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1748": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1749": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "1750": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 162,
+          "x": 1904,
+          "z": 5328,
+          "file": "data/encounter_design.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 296,
+          "x": 1462,
+          "z": 5293
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_pallet_fields_4",
+      "name": "A rift in Pallet Fields (4)",
+      "kind": "region",
+      "region": "pallet_fields",
+      "scorch_theme": "jungle",
+      "frame": {
+        "x0": 914,
+        "x1": 918,
+        "z": 4233,
+        "y": 120,
+        "height": 4
+      },
+      "ground": {
+        "y": 119,
+        "window": [
+          912,
+          4232,
+          920,
+          4238
+        ],
+        "heights": [
+          119,
+          119
+        ],
+        "heightmap_value": 118.63,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 119 over all 63 columns of x912..920 z4232..4238 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        916.5,
+        120,
+        4236.5,
+        0
+      ],
+      "click": [
+        916,
+        120,
+        4234
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "914": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "915": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "916": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "917": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "918": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 153,
+          "x": 768,
+          "z": 4180,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 607,
+          "x": 1389,
+          "z": 4624
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_southern_coast_2",
+      "name": "A rift in the Southern Coast (2)",
+      "kind": "region",
+      "region": "southern_coast",
+      "scorch_theme": "city",
+      "frame": {
+        "x0": 3386,
+        "x1": 3390,
+        "z": 6137,
+        "y": 102,
+        "height": 4
+      },
+      "ground": {
+        "y": 101,
+        "window": [
+          3384,
+          6136,
+          3392,
+          6142
+        ],
+        "heights": [
+          101,
+          101
+        ],
+        "heightmap_value": 100.82,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 101 over all 63 columns of x3384..3392 z6136..6142 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        3388.5,
+        102,
+        6140.5,
+        0
+      ],
+      "click": [
+        3388,
+        102,
+        6138
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "3386": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3387": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3388": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3389": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3390": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 164,
+          "x": 3554,
+          "z": 6111,
+          "file": "data/rewards.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 242,
+          "x": 3612,
+          "z": 6244
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_southern_coast_3",
+      "name": "A rift in the Southern Coast (3)",
+      "kind": "region",
+      "region": "southern_coast",
+      "scorch_theme": "city",
+      "frame": {
+        "x0": 2986,
+        "x1": 2990,
+        "z": 5833,
+        "y": 95,
+        "height": 4
+      },
+      "ground": {
+        "y": 94,
+        "window": [
+          2984,
+          5832,
+          2992,
+          5838
+        ],
+        "heights": [
+          94,
+          94
+        ],
+        "heightmap_value": 93.67,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 94 over all 63 columns of x2984..2992 z5832..5838 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        2988.5,
+        95,
+        5836.5,
+        0
+      ],
+      "click": [
+        2988,
+        95,
+        5834
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "2986": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2987": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2988": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2989": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "2990": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 175,
+          "x": 3153,
+          "z": 5764,
+          "file": "data/markets.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 617,
+          "x": 3606,
+          "z": 5776
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_southern_coast_4",
+      "name": "A rift in the Southern Coast (4)",
+      "kind": "region",
+      "region": "southern_coast",
+      "scorch_theme": "city",
+      "frame": {
+        "x0": 3938,
+        "x1": 3942,
+        "z": 5761,
+        "y": 122,
+        "height": 4
+      },
+      "ground": {
+        "y": 121,
+        "window": [
+          3936,
+          5760,
+          3944,
+          5766
+        ],
+        "heights": [
+          121,
+          121
+        ],
+        "heightmap_value": 121.12,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 121 over all 63 columns of x3936..3944 z5760..5766 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        3940.5,
+        122,
+        5764.5,
+        0
+      ],
+      "click": [
+        3940,
+        122,
+        5762
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "3938": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3939": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3940": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3941": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "3942": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 150,
+          "x": 4080,
+          "z": 5696,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 313,
+          "x": 3625,
+          "z": 5797
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_eastern_dunes_2",
+      "name": "A rift in the Eastern Dunes (2)",
+      "kind": "region",
+      "region": "eastern_dunes",
+      "scorch_theme": "desert_excavation",
+      "frame": {
+        "x0": 6970,
+        "x1": 6974,
+        "z": 5521,
+        "y": 143,
+        "height": 4
+      },
+      "ground": {
+        "y": 142,
+        "window": [
+          6968,
+          5520,
+          6976,
+          5526
+        ],
+        "heights": [
+          142,
+          142
+        ],
+        "heightmap_value": 141.78,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 142 over all 63 columns of x6968..6976 z5520..5526 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        6972.5,
+        143,
+        5524.5,
+        0
+      ],
+      "click": [
+        6972,
+        143,
+        5522
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "6970": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6971": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6972": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6973": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6974": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 152,
+          "x": 6836,
+          "z": 5444,
+          "file": "data/landmarks.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1008,
+          "x": 6191,
+          "z": 4878
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_eastern_dunes_3",
+      "name": "A rift in the Eastern Dunes (3)",
+      "kind": "region",
+      "region": "eastern_dunes",
+      "scorch_theme": "desert_excavation",
+      "frame": {
+        "x0": 7050,
+        "x1": 7054,
+        "z": 6041,
+        "y": 151,
+        "height": 4
+      },
+      "ground": {
+        "y": 150,
+        "window": [
+          7048,
+          6040,
+          7056,
+          6046
+        ],
+        "heights": [
+          150,
+          150
+        ],
+        "heightmap_value": 150.15,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 150 over all 63 columns of x7048..7056 z6040..6046 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        7052.5,
+        151,
+        6044.5,
+        0
+      ],
+      "click": [
+        7052,
+        151,
+        6042
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "7050": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7051": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7052": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7053": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "7054": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 154,
+          "x": 7152,
+          "z": 5920,
+          "file": "data/regions.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1428,
+          "x": 6039,
+          "z": 5030
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
+    },
+    {
+      "id": "rip_eastern_dunes_4",
+      "name": "A rift in the Eastern Dunes (4)",
+      "kind": "region",
+      "region": "eastern_dunes",
+      "scorch_theme": "desert_excavation",
+      "frame": {
+        "x0": 6058,
+        "x1": 6062,
+        "z": 6273,
+        "y": 138,
+        "height": 4
+      },
+      "ground": {
+        "y": 137,
+        "window": [
+          6056,
+          6272,
+          6064,
+          6278
+        ],
+        "heights": [
+          137,
+          137
+        ],
+        "heightmap_value": 136.57,
+        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 137 over all 63 columns of x6056..6064 z6272..6278 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
+      },
+      "outside": [
+        6060.5,
+        138,
+        6276.5,
+        0
+      ],
+      "click": [
+        6060,
+        138,
+        6274
+      ],
+      "oval": {
+        "width": 3.0,
+        "height": 4.0,
+        "in_front": 0.06
+      },
+      "plume": false,
+      "restore": {
+        "6058": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6059": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6060": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6061": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ],
+        "6062": [
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air",
+          "minecraft:air"
+        ]
+      },
+      "siting": {
+        "nearest_authored": {
+          "distance": 151,
+          "x": 6100,
+          "z": 6125,
+          "file": "data/challengers_cairn.json"
+        },
+        "nearest_route_vertex": {
+          "distance": 1151,
+          "x": 5676,
+          "z": 5186
+        }
+      },
+      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
     }
   ],
   "retired_rips": [

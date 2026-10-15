@@ -172,15 +172,18 @@ def test_oval_lies_over_the_click_interaction():
     assert abs(x - (cx + 0.5)) <= 1.5 and cz - 0.5 <= z <= cz + 3.5   # a click on it hits the 3-wide interaction behind
 
 
-def test_chain_kills_and_summons_the_oval_with_the_interaction_and_counts_unchanged():
+def test_the_scheduler_opens_a_rip_with_the_interaction_and_the_oval_and_no_chain_tag():
+    # 2026-10-14: the rips no longer stand through an R16DR chain; rip_entity_lines is what the scheduler's open summons. It kills
+    # any copy first, stands the click and the oval, and leaves out the chain's de-duplication tag (nothing would remove it)
     out, _want_shell, want_rips = D.chains(DOC)
-    act = "\n".join(out["cobblers:dungeons/rips/entities_act"])
-    assert "summon minecraft:interaction" in act and "summon minecraft:item_display" in act
+    assert "cobblers:dungeons/rips/entities_act" not in out and want_rips == len(DOC["rips"])
+    lines = D.rip_entity_lines(DOC, DOC["rips"][0])
     tag = D.rip_tag(DOC["rips"][0])
-    assert "kill @e[type=minecraft:item_display,tag=%s,tag=dg.rip_oval]" % tag in act
-    done = "\n".join(out["cobblers:dungeons/rips/entities_done"])
-    assert "type=minecraft:item_display,tag=%s,tag=dg.rip_oval" % tag in done      # de-duplicated like the interaction
-    assert want_rips == len(DOC["rips"])                                           # the count is still the interactions, one a rip
+    assert lines[0] == "kill @e[tag=%s]" % tag
+    assert "summon minecraft:interaction" in lines[1] and "summon minecraft:item_display" in lines[2]
+    assert '"%s"' % tag in lines[2] and '"dg.rip_oval"' in lines[2]
+    assert not any("dg.rip_new" in ln for ln in lines)
+    assert "dg.rip_new" in D.oval_summon(DOC, DOC["rips"][0])                      # the default is the old chain's, unchanged
 
 
 def test_problems_refuse_a_stretched_or_buried_oval():
@@ -196,11 +199,14 @@ def test_problems_refuse_a_stretched_or_buried_oval():
 
 
 def test_world_probe_names_the_display_and_its_model_value():
-    # since 2026-10-13 the oval probes are the generated dungeon_rips place's (the Night Shift's hand-written ones went with its
-    # retired trail rip): one standing-rip probe carries the item and the model value
+    # 2026-10-14: no rip stands, so the world has no standing-rip probe to carry the item and the model value (the rips open and
+    # close by the clock: data/world_probes.json dungeon_rips holds the retired rips' only). What an open stands is the scheduler's
+    # o<i> function, which summons the oval with the engine's item and model value; that is what this holds now
     probes = json.loads((ROOT / "data" / "world_probes.json").read_text(encoding="utf-8"))["places"]["dungeon_rips"]
-    nbt = [p for p in probes if "custom_model_data" in p.get("entity", "")]
-    assert len(nbt) == 1 and nbt[0]["count"] == 1 and "4180" in nbt[0]["entity"] and "amethyst_shard" in nbt[0]["entity"]
+    assert not [p for p in probes if "custom_model_data" in p.get("entity", "")]
+    import rip_scheduler as RS
+    opened = "\n".join(RS.functions(DOC, RS.load())["o1"])
+    assert 'id:"minecraft:amethyst_shard"' in opened and '"minecraft:custom_model_data":4180' in opened
 
 
 def test_no_portal_block_or_network_in_the_art_tools():

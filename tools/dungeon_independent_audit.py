@@ -3075,7 +3075,15 @@ def count_commands(pack, fid, memo, stack=()):
     return n
 
 
-def static_audit(pack, doc, slots, F):
+def scheduler_files():
+    """The rip scheduler's pack (tools/rip_scheduler.py, cobblers_rips) as {path: text}: since 2026-10-14 the rips' blocks and
+    clicks are written there, when a rip opens, and no longer by the dungeon pack."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import rip_scheduler as RS
+    return RS.pack_files(RS.D.load(), RS.load())
+
+
+def static_audit(pack, doc, slots, F, rip_files=None):
     eng = doc["engine"]
     sl = eng["slots"]
     border = eng["pocket"]["border"]
@@ -3162,14 +3170,30 @@ def static_audit(pack, doc, slots, F):
     rips = []
     # Since 2026-10-13 the rips are data/dungeon_rips.json's, not a dungeon's: this block reads that file itself, and a rip's
     # ground takes its theme from `scorch_theme`. (The draw that picks a dungeon at a rip is audited by its own unit.)
+    # Since 2026-10-14 no rip stands: tools/rip_scheduler.py's runtime pack writes a rip's blocks and click when it OPENS it.
+    # The function read for a rip is the one that summons an interaction at the record's click (found by what it does, not
+    # by the scheduler's names); its block writes are compared with the record as before. Its save (`clone`, to the sky hold)
+    # and the close that gives the ground back are audited by tools/dungeon_draw_audit.py's scheduler part, which runs them.
+    rpack = Pack(rip_files if rip_files is not None else scheduler_files())
+    openers = {}
+    for f in rpack.fns:
+        for ln in rpack.lines(f):
+            if ln.startswith("summon minecraft:interaction "):
+                t = tokens(ln)
+                openers.setdefault(tuple(round(float(v), 2) for v in t[2:5]), []).append(f)
     for rp in json.loads((ROOT / "data" / "dungeon_rips.json").read_text(encoding="utf-8"))["rips"]:
-        # the stem of its tag and blocks function: the id less rip_, and less trail_ for a test rip (kept from the dungeon's short)
+        # the stem of its tag: the id less rip_, and less trail_ for a test rip (kept from the dungeon's short)
         d = {"id": rp["id"], "short": rp["id"][len("rip_"):].removeprefix("trail_") if rp["kind"] == "test_trail" else rp["id"][len("rip_"):],
              "theme": rp["scorch_theme"]}
         fr = rp["frame"]
         want = (fr["x0"], fr["y"] - 1, fr["z"], fr["x1"], fr["y"] + fr["height"] - 1, fr["z"] + 2)
+        cx, cy, cz = rp["click"]
+        opener = openers.get((round(cx + 0.5, 2), round(float(cy), 2), round(cz + 0.5, 2)), [])
+        if len(opener) != 1:
+            F.add("RIP", None, d["id"], None, "%d functions of the rip scheduler's pack summon its click (want one, its open)" % len(opener))
+            continue
         cells = {}
-        for ln in pack.lines(FN + "rips/blocks_%s" % d["short"]):
+        for ln in rpack.lines(opener[0]):
             t = tokens(ln)
             if t[0] == "fill":
                 a = [int(float(v)) for v in t[1:7]]
@@ -3215,10 +3239,11 @@ def static_audit(pack, doc, slots, F):
         if any(c[1] not in range(fr["y"] - 1, fr["y"] + fr["height"]) for c in cells):
             F.add("RIP", None, d["id"], None, "the rip writes outside its plane's height and the ground under it")
         click = None
-        for ln in pack.lines(FN + "rips/entities_act"):
-            if "minecraft:interaction" in ln and '"dg.rip_%s"' % d["short"] in ln:
-                t = tokens(ln[ln.index("summon"):])
-                click = tuple(float(v) for v in t[2:5])
+        for ln in rpack.lines(opener[0]):
+            if ln.startswith("summon minecraft:interaction ") and '"dg.rip_%s"' % d["short"] in ln:
+                click = tuple(float(v) for v in tokens(ln)[2:5])
+        if click is None:
+            F.add("RIP", None, d["id"], None, "its open summons no interaction tagged dg.rip_%s" % d["short"])
         rips.append((d["id"], have, click))
     for i, (da, ba, ca) in enumerate(rips):
         for db, bb, cb in rips[i + 1:]:
@@ -3291,7 +3316,8 @@ def build_files(doc=None):
 
 
 def audit(files, doc, blackout=None, only=None, bands=None, all_slots=True, modes=("win", "forfeit", "nospawn"),
-          progress=None):
+          progress=None, rip_files=None):
+    """rip_files: the rip scheduler's pack ({path: text}); None builds it from tools/rip_scheduler.py."""
     pack = Pack(files)
     blackout = blackout if blackout is not None else json.loads(BLACKOUT.read_text(encoding="utf-8"))
     exempt = blackout.get("exempt_tag") or next((v for k, v in _walk_json(blackout) if k == "exempt_tag"), "cobblers.gm")
@@ -3299,7 +3325,7 @@ def audit(files, doc, blackout=None, only=None, bands=None, all_slots=True, mode
     bands = bands or [b["band"] for b in doc["engine"]["bands"]]
     F = Findings()
     slots = discover(pack, doc)
-    static_audit(pack, doc, slots, F)
+    static_audit(pack, doc, slots, F, rip_files)
     info = {}
     for d in doc["dungeons"]:
         if only and d["id"] not in only:
