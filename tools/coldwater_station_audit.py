@@ -83,6 +83,16 @@ CLEAR_FILTERS = {"#minecraft:replaceable", "#minecraft:logs", "#minecraft:leaves
 FACING = {"north": (0, -1), "south": (0, 1), "east": (1, 0), "west": (-1, 0)}
 # a stub and the click path may only speak; anything else changes state
 STUB_ALLOWED = {"tellraw", "title", "playsound", "particle"}
+# the dialogue compiler's condition probes (tools/compile_dialogue.py Ctx.probe / world_probe): a throwaway
+# cobblers_h_<hash> tag removed, then added back only if a condition holds, and the objective those probes read
+PROBE = re.compile(r"q\.run_command\('(?:tag ' \+ q\.player\.uuid \+ ' remove cobblers_h_[0-9a-f]+"
+                   r"|execute as ' \+ q\.player\.uuid \+ ' [^']*? run tag @s add cobblers_h_[0-9a-f]+"
+                   r"|scoreboard objectives add [^']*)'\);?")
+# the arch's destination since R18KC (2026-10-13): Kyogre's cave, audited by tools/kyogre_rayquaza_audit.py
+KYOGRE_ENTER = "function cobblers:kyogre_cave/enter"
+# Calder's one deliberate action since R18KC: attuning the player to Kyogre's cave (that audit's, too). Exactly this call.
+KYOGRE_ATTUNE = re.compile(r"q\.run_command\('execute as ' \+ q\.player\.uuid \+ ' at @s run function "
+                           r"cobblers:kyogre_cave/attune'\);?")
 FULL_SUFFIX = ("_planks", "_log", "_wood", "_wool", "_ice", "bookshelf", "barrel", "cobblestone", "smoker",
                "cartography_table", "polished_deepslate", "copper_block", "_bricks", "prismarine", "stone")
 
@@ -500,7 +510,11 @@ class Audit:
                 if re.search(r"\{[a-z_]+\}", t):
                     probs.append("%s: placeholder left in %r" % (r["id"], t[:70]))
             for a in actions:
-                if re.search(r"command|give|teleport|\.tp\b|add_tag|tag\(", a):
+                # tools/compile_dialogue.py's condition probes (2026-10-13, world-scoped fields) read state into a
+                # throwaway tag and change nothing else: strip exactly that shape, so any other command still fails
+                a = KYOGRE_ATTUNE.sub("", PROBE.sub("", a)) if r["id"] == "coldwater_station_calder" else PROBE.sub("", a)
+                # has_tag( reads a tag (Calder's Kyogre-sounded line, R18KC); only setting one is more than talk
+                if re.search(r"command|give|teleport|\.tp\b|add_tag|(?<!has_)tag\(", a):
                     probs.append("%s: an action does more than talk: %r" % (r["id"], a[:90]))
                 for fld, val in re.findall(r"t\.d\.(\w+)\s*=\s*'([^']*)'", a):
                     m = re.match(r"cobblers__(.+)$", fld)
@@ -768,10 +782,14 @@ class Audit:
                 continue
             probs.append("touch does something else: %r" % c[:90])
         stub = [c for _i, c in commands(self.fn("portal/destination"))]
+        if stub == [KYOGRE_ENTER]:
+            # the owner built Kyogre's cave behind the arch (R18KC, 2026-10-13): the destination is no longer a sealed
+            # stub but that cave's entry, whose own independent audit (tools/kyogre_rayquaza_audit.py) owns it
+            stub = []
         for c in stub:
             if c.split()[0] not in STUB_ALLOWED:       # an execute (in/as/run ...), tp, scoreboard, tag, give ...
                 probs.append("destination is not a stub: %r" % c[:90])
-        if not any(c.startswith("tellraw") and hook["sealed_message"] in c for c in stub):
+        if stub and not any(c.startswith("tellraw") and hook["sealed_message"] in c for c in stub):
             probs.append("destination does not say portal.hook.sealed_message")
         # nothing else in the pack reaches the destination
         for f in sorted(self.pack.rglob("*.mcfunction")):
