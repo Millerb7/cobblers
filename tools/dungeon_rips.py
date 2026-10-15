@@ -440,8 +440,10 @@ def record(g, rip_id, name, region_id, m, z, theme, pts=None):
     if pts is not None:
         near = nearest(win, pts)
         rn = nearest(win, pts, ROUTE_FILES)
-        rec["siting"] = {"nearest_authored": {"distance": round(near[0]), "x": int(near[1]), "z": int(near[2]), "file": near[3]},
-                         "nearest_route_vertex": ({"distance": round(rn[0]), "x": int(rn[1]), "z": int(rn[2])} if rn else None)}
+        # the neighbour's point as TEXT, not x/z: every clearance scanner (southern_residents.authored_points, the
+        # northern residents audit) reads an x/z pair as a place, and these note someone else's point (2026-10-14)
+        rec["siting"] = {"nearest_authored": {"distance": round(near[0]), "at": "%d, %d" % (near[1], near[2]), "file": near[3]},
+                         "nearest_route_vertex": ({"distance": round(rn[0]), "at": "%d, %d" % (rn[1], rn[2])} if rn else None)}
     return rec
 
 

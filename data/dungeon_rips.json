@@ -83,14 +83,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 150,
-          "x": 1432,
-          "z": 5238,
+          "at": "1432, 5238",
           "file": "data/placements.json"
         },
         "nearest_route_vertex": {
           "distance": 157,
-          "x": 1453,
-          "z": 5174
+          "at": "1453, 5174"
         }
       }
     },
@@ -174,14 +172,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 150,
-          "x": 2624,
-          "z": 4204,
+          "at": "2624, 4204",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 1142,
-          "x": 1595,
-          "z": 4256
+          "at": "1595, 4256"
         }
       }
     },
@@ -265,14 +261,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 151,
-          "x": 5280,
-          "z": 696,
+          "at": "5280, 696",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 1438,
-          "x": 4383,
-          "z": 1631
+          "at": "4383, 1631"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -357,14 +351,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 150,
-          "x": 6950,
-          "z": 1360,
+          "at": "6950, 1360",
           "file": "data/habitat_blocks.json"
         },
         "nearest_route_vertex": {
           "distance": 2070,
-          "x": 5901,
-          "z": 3161
+          "at": "5901, 3161"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -449,14 +441,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 155,
-          "x": 560,
-          "z": 5712,
+          "at": "560, 5712",
           "file": "data/fungal_isle.json"
         },
         "nearest_route_vertex": {
           "distance": 915,
-          "x": 1462,
-          "z": 5293
+          "at": "1462, 5293"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -541,14 +531,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 152,
-          "x": 2088,
-          "z": 7288,
+          "at": "2088, 7288",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 1764,
-          "x": 3593,
-          "z": 6426
+          "at": "3593, 6426"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -633,14 +621,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 154,
-          "x": 7790,
-          "z": 6632,
+          "at": "7790, 6632",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 2208,
-          "x": 6127,
-          "z": 4942
+          "at": "6127, 4942"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -725,14 +711,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 169,
-          "x": 3558,
-          "z": 1010,
+          "at": "3558, 1010",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 440,
-          "x": 3124,
-          "z": 1435
+          "at": "3124, 1435"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -817,14 +801,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 165,
-          "x": 1454,
-          "z": 1456,
+          "at": "1454, 1456",
           "file": "data/sea_drift.json"
         },
         "nearest_route_vertex": {
           "distance": 365,
-          "x": 1688,
-          "z": 1410
+          "at": "1688, 1410"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -909,14 +891,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 156,
-          "x": 3928,
-          "z": 3324,
+          "at": "3928, 3324",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 182,
-          "x": 3903,
-          "z": 3575
+          "at": "3903, 3575"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule",
@@ -1018,14 +998,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 161,
-          "x": 6100,
-          "z": 5520,
+          "at": "6100, 5520",
           "file": "data/sculpt.json"
         },
         "nearest_route_vertex": {
           "distance": 555,
-          "x": 6002,
-          "z": 5067
+          "at": "6002, 5067"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -1110,14 +1088,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 159,
-          "x": 4862,
-          "z": 5684,
+          "at": "4862, 5684",
           "file": "data/placements.json"
         },
         "nearest_route_vertex": {
           "distance": 220,
-          "x": 4917,
-          "z": 5444
+          "at": "4917, 5444"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -1202,14 +1178,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 162,
-          "x": 1184,
-          "z": 272,
+          "at": "1184, 272",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 1129,
-          "x": 1688,
-          "z": 1410
+          "at": "1688, 1410"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -1294,14 +1268,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 152,
-          "x": 5716,
-          "z": 4620,
+          "at": "5716, 4620",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 328,
-          "x": 5853,
-          "z": 5087
+          "at": "5853, 5087"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -1386,14 +1358,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 154,
-          "x": 4272,
-          "z": 3600,
+          "at": "4272, 3600",
           "file": "data/foliage.json"
         },
         "nearest_route_vertex": {
           "distance": 384,
-          "x": 4100,
-          "z": 3781
+          "at": "4100, 3781"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -1478,14 +1448,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 152,
-          "x": 3720,
-          "z": 1048,
+          "at": "3720, 1048",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 743,
-          "x": 4309,
-          "z": 1555
+          "at": "4309, 1555"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -1570,14 +1538,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 150,
-          "x": 5826,
-          "z": 2678,
+          "at": "5826, 2678",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 431,
-          "x": 5671,
-          "z": 2998
+          "at": "5671, 2998"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -1662,14 +1628,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 152,
-          "x": 1640,
-          "z": 2408,
+          "at": "1640, 2408",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 155,
-          "x": 1701,
-          "z": 2668
+          "at": "1701, 2668"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -1754,14 +1718,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 152,
-          "x": 3390,
-          "z": 5786,
+          "at": "3390, 5786",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 152,
-          "x": 3606,
-          "z": 5673
+          "at": "3606, 5673"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -1846,14 +1808,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 153,
-          "x": 6568,
-          "z": 5968,
+          "at": "6568, 5968",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 1184,
-          "x": 6002,
-          "z": 5067
+          "at": "6002, 5067"
         }
       },
       "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
@@ -1938,14 +1898,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 152,
-          "x": 5104,
-          "z": 304,
+          "at": "5104, 304",
           "file": "data/encounter_design.json"
         },
         "nearest_route_vertex": {
           "distance": 1405,
-          "x": 4309,
-          "z": 1555
+          "at": "4309, 1555"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -2030,14 +1988,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 81,
-          "x": 6064,
-          "z": 792,
+          "at": "6064, 792",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 1878,
-          "x": 4383,
-          "z": 1631
+          "at": "4383, 1631"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -2122,14 +2078,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 47,
-          "x": 5512,
-          "z": 72,
+          "at": "5512, 72",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 1856,
-          "x": 4309,
-          "z": 1555
+          "at": "4309, 1555"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -2214,14 +2168,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 154,
-          "x": 6768,
-          "z": 1208,
+          "at": "6768, 1208",
           "file": "data/elder_trees.json"
         },
         "nearest_route_vertex": {
           "distance": 2228,
-          "x": 5659,
-          "z": 2986
+          "at": "5659, 2986"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -2306,14 +2258,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 182,
-          "x": 7372,
-          "z": 1562,
+          "at": "7372, 1562",
           "file": "data/placements.json"
         },
         "nearest_route_vertex": {
           "distance": 2188,
-          "x": 6196,
-          "z": 3398
+          "at": "6196, 3398"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -2398,14 +2348,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 152,
-          "x": 7496,
-          "z": 920,
+          "at": "7496, 920",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 2843,
-          "x": 5901,
-          "z": 3161
+          "at": "5901, 3161"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -2490,14 +2438,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 112,
-          "x": 592,
-          "z": 6000,
+          "at": "592, 6000",
           "file": "data/encounter_design.json"
         },
         "nearest_route_vertex": {
           "distance": 1189,
-          "x": 1462,
-          "z": 5293
+          "at": "1462, 5293"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -2582,14 +2528,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 52,
-          "x": 24,
-          "z": 5582,
+          "at": "24, 5582",
           "file": "data/placements.json"
         },
         "nearest_route_vertex": {
           "distance": 1493,
-          "x": 1462,
-          "z": 5293
+          "at": "1462, 5293"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -2674,14 +2618,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 35,
-          "x": 976,
-          "z": 5848,
+          "at": "976, 5848",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 714,
-          "x": 1462,
-          "z": 5293
+          "at": "1462, 5293"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -2766,14 +2708,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 209,
-          "x": 1716,
-          "z": 7298,
+          "at": "1716, 7298",
           "file": "data/towns.json"
         },
         "nearest_route_vertex": {
           "distance": 2210,
-          "x": 1462,
-          "z": 5293
+          "at": "1462, 5293"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -2858,14 +2798,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 155,
-          "x": 1928,
-          "z": 6840,
+          "at": "1928, 6840",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 1752,
-          "x": 1462,
-          "z": 5293
+          "at": "1462, 5293"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -2950,14 +2888,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 186,
-          "x": 2580,
-          "z": 6920,
+          "at": "2580, 6920",
           "file": "data/sunset_watch.json"
         },
         "nearest_route_vertex": {
           "distance": 1265,
-          "x": 3593,
-          "z": 6426
+          "at": "3593, 6426"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -3042,14 +2978,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 219,
-          "x": 7491,
-          "z": 6024,
+          "at": "7491, 6024",
           "file": "data/ferries.json"
         },
         "nearest_route_vertex": {
           "distance": 1862,
-          "x": 6411,
-          "z": 4628
+          "at": "6411, 4628"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -3134,14 +3068,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 150,
-          "x": 7760,
-          "z": 7072,
+          "at": "7760, 7072",
           "file": "data/elder_trees.json"
         },
         "nearest_route_vertex": {
           "distance": 2725,
-          "x": 6002,
-          "z": 5067
+          "at": "6002, 5067"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -3226,14 +3158,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 181,
-          "x": 7840,
-          "z": 5680,
+          "at": "7840, 5680",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 1692,
-          "x": 6433,
-          "z": 4606
+          "at": "6433, 4606"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -3318,14 +3248,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 127,
-          "x": 3641,
-          "z": 2090,
+          "at": "3641, 2090",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 198,
-          "x": 3710,
-          "z": 1891
+          "at": "3710, 1891"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -3410,14 +3338,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 151,
-          "x": 4748,
-          "z": 3152,
+          "at": "4748, 3152",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 448,
-          "x": 4957,
-          "z": 2723
+          "at": "4957, 2723"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -3502,14 +3428,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 129,
-          "x": 3768,
-          "z": 2796,
+          "at": "3768, 2796",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 312,
-          "x": 3576,
-          "z": 2762
+          "at": "3576, 2762"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -3594,14 +3518,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 125,
-          "x": 1310,
-          "z": 882,
+          "at": "1310, 882",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 764,
-          "x": 1688,
-          "z": 1410
+          "at": "1688, 1410"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -3686,14 +3608,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 116,
-          "x": 2560,
-          "z": 1920,
+          "at": "2560, 1920",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 247,
-          "x": 2231,
-          "z": 1746
+          "at": "2231, 1746"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -3778,14 +3698,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 115,
-          "x": 1576,
-          "z": 672,
+          "at": "1576, 672",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 708,
-          "x": 1688,
-          "z": 1410
+          "at": "1688, 1410"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -3887,14 +3805,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 142,
-          "x": 4270,
-          "z": 4330,
+          "at": "4270, 4330",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 148,
-          "x": 4242,
-          "z": 4361
+          "at": "4242, 4361"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -3996,14 +3912,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 129,
-          "x": 3424,
-          "z": 2896,
+          "at": "3424, 2896",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 244,
-          "x": 3556,
-          "z": 2966
+          "at": "3556, 2966"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -4105,14 +4019,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 104,
-          "x": 3168,
-          "z": 3544,
+          "at": "3168, 3544",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 429,
-          "x": 3613,
-          "z": 3257
+          "at": "3613, 3257"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -4197,14 +4109,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 139,
-          "x": 5640,
-          "z": 5464,
+          "at": "5640, 5464",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 205,
-          "x": 5676,
-          "z": 5186
+          "at": "5676, 5186"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -4289,14 +4199,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 118,
-          "x": 6712,
-          "z": 5216,
+          "at": "6712, 5216",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 519,
-          "x": 6305,
-          "z": 4729
+          "at": "6305, 4729"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -4381,14 +4289,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 79,
-          "x": 5740,
-          "z": 5868,
+          "at": "5740, 5868",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 744,
-          "x": 5497,
-          "z": 5245
+          "at": "5497, 5245"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -4473,14 +4379,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 212,
-          "x": 4568,
-          "z": 6200,
+          "at": "4568, 6200",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 377,
-          "x": 4438,
-          "z": 5765
+          "at": "4438, 5765"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -4565,14 +4469,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 186,
-          "x": 4614,
-          "z": 5604,
+          "at": "4614, 5604",
           "file": "data/late_route_trainers.json"
         },
         "nearest_route_vertex": {
           "distance": 188,
-          "x": 4640,
-          "z": 5599
+          "at": "4640, 5599"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -4657,14 +4559,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 158,
-          "x": 5576,
-          "z": 5840,
+          "at": "5576, 5840",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 608,
-          "x": 5174,
-          "z": 5369
+          "at": "5174, 5369"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -4749,14 +4649,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 199,
-          "x": 681,
-          "z": 683,
+          "at": "681, 683",
           "file": "data/frostpeak_summit.json"
         },
         "nearest_route_vertex": {
           "distance": 1441,
-          "x": 1688,
-          "z": 1410
+          "at": "1688, 1410"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -4841,14 +4739,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 120,
-          "x": 2736,
-          "z": 504,
+          "at": "2736, 504",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 686,
-          "x": 2640,
-          "z": 1180
+          "at": "2640, 1180"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -4933,14 +4829,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 87,
-          "x": 448,
-          "z": 0,
+          "at": "448, 0",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 1853,
-          "x": 1688,
-          "z": 1410
+          "at": "1688, 1410"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -5025,14 +4919,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 151,
-          "x": 5064,
-          "z": 4012,
+          "at": "5064, 4012",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 682,
-          "x": 4293,
-          "z": 4076
+          "at": "4293, 4076"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -5117,14 +5009,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 156,
-          "x": 5328,
-          "z": 4652,
+          "at": "5328, 4652",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 464,
-          "x": 5390,
-          "z": 5257
+          "at": "5390, 5257"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -5209,14 +5099,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 154,
-          "x": 4856,
-          "z": 4424,
+          "at": "4856, 4424",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 620,
-          "x": 4250,
-          "z": 4342
+          "at": "4250, 4342"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -5301,14 +5189,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 144,
-          "x": 4688,
-          "z": 4144,
+          "at": "4688, 4144",
           "file": "data/encounter_design.json"
         },
         "nearest_route_vertex": {
           "distance": 385,
-          "x": 4293,
-          "z": 4219
+          "at": "4293, 4219"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -5393,14 +5279,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 104,
-          "x": 4016,
-          "z": 3120,
+          "at": "4016, 3120",
           "file": "data/encounter_design.json"
         },
         "nearest_route_vertex": {
           "distance": 359,
-          "x": 3581,
-          "z": 3146
+          "at": "3581, 3146"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -5485,14 +5369,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 66,
-          "x": 4372,
-          "z": 3948,
+          "at": "4372, 3948",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 163,
-          "x": 4277,
-          "z": 4034
+          "at": "4277, 4034"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -5577,14 +5459,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 152,
-          "x": 4680,
-          "z": 1264,
+          "at": "4680, 1264",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 323,
-          "x": 4309,
-          "z": 1555
+          "at": "4309, 1555"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -5669,14 +5549,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 159,
-          "x": 3316,
-          "z": 792,
+          "at": "3316, 792",
           "file": "data/rivers.json"
         },
         "nearest_route_vertex": {
           "distance": 637,
-          "x": 2941,
-          "z": 1237
+          "at": "2941, 1237"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -5761,14 +5639,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 154,
-          "x": 4160,
-          "z": 1697,
+          "at": "4160, 1697",
           "file": "data/route_paths.json"
         },
         "nearest_route_vertex": {
           "distance": 154,
-          "x": 4160,
-          "z": 1697
+          "at": "4160, 1697"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -5853,14 +5729,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 244,
-          "x": 6640,
-          "z": 2360,
+          "at": "6640, 2360",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 838,
-          "x": 5901,
-          "z": 3161
+          "at": "5901, 3161"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -5945,14 +5819,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 216,
-          "x": 5912,
-          "z": 1976,
+          "at": "5912, 1976",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 823,
-          "x": 5650,
-          "z": 2981
+          "at": "5650, 2981"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -6037,14 +5909,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 153,
-          "x": 6344,
-          "z": 3008,
+          "at": "6344, 3008",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 475,
-          "x": 6196,
-          "z": 3398
+          "at": "6196, 3398"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -6129,14 +5999,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 152,
-          "x": 2016,
-          "z": 2656,
+          "at": "2016, 2656",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 267,
-          "x": 1774,
-          "z": 2926
+          "at": "1774, 2926"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -6221,14 +6089,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 156,
-          "x": 1696,
-          "z": 2224,
+          "at": "1696, 2224",
           "file": "data/northern_residents.json"
         },
         "nearest_route_vertex": {
           "distance": 173,
-          "x": 1937,
-          "z": 2148
+          "at": "1937, 2148"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -6313,14 +6179,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 154,
-          "x": 1320,
-          "z": 2144,
+          "at": "1320, 2144",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 642,
-          "x": 1825,
-          "z": 2394
+          "at": "1825, 2394"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -6405,14 +6269,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 150,
-          "x": 3160,
-          "z": 4256,
+          "at": "3160, 4256",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 842,
-          "x": 3844,
-          "z": 3525
+          "at": "3844, 3525"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -6497,14 +6359,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 151,
-          "x": 2876,
-          "z": 3788,
+          "at": "2876, 3788",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 844,
-          "x": 3611,
-          "z": 3254
+          "at": "3611, 3254"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -6589,14 +6449,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 160,
-          "x": 2508,
-          "z": 3916,
+          "at": "2508, 3916",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 697,
-          "x": 1743,
-          "z": 3636
+          "at": "1743, 3636"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -6681,14 +6539,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 155,
-          "x": 1256,
-          "z": 4799,
+          "at": "1256, 4799",
           "file": "data/rewards.json"
         },
         "nearest_route_vertex": {
           "distance": 180,
-          "x": 1380,
-          "z": 4648
+          "at": "1380, 4648"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -6773,14 +6629,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 162,
-          "x": 1904,
-          "z": 5328,
+          "at": "1904, 5328",
           "file": "data/encounter_design.json"
         },
         "nearest_route_vertex": {
           "distance": 296,
-          "x": 1462,
-          "z": 5293
+          "at": "1462, 5293"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -6865,14 +6719,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 153,
-          "x": 768,
-          "z": 4180,
+          "at": "768, 4180",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 607,
-          "x": 1389,
-          "z": 4624
+          "at": "1389, 4624"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -6957,14 +6809,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 164,
-          "x": 3554,
-          "z": 6111,
+          "at": "3554, 6111",
           "file": "data/rewards.json"
         },
         "nearest_route_vertex": {
           "distance": 242,
-          "x": 3612,
-          "z": 6244
+          "at": "3612, 6244"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -7049,14 +6899,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 175,
-          "x": 3153,
-          "z": 5764,
+          "at": "3153, 5764",
           "file": "data/markets.json"
         },
         "nearest_route_vertex": {
           "distance": 617,
-          "x": 3606,
-          "z": 5776
+          "at": "3606, 5776"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -7141,14 +6989,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 150,
-          "x": 4080,
-          "z": 5696,
+          "at": "4080, 5696",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 313,
-          "x": 3625,
-          "z": 5797
+          "at": "3625, 5797"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -7233,14 +7079,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 152,
-          "x": 6836,
-          "z": 5444,
+          "at": "6836, 5444",
           "file": "data/landmarks.json"
         },
         "nearest_route_vertex": {
           "distance": 1008,
-          "x": 6191,
-          "z": 4878
+          "at": "6191, 4878"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -7325,14 +7169,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 154,
-          "x": 7152,
-          "z": 5920,
+          "at": "7152, 5920",
           "file": "data/regions.json"
         },
         "nearest_route_vertex": {
           "distance": 1428,
-          "x": 6039,
-          "z": 5030
+          "at": "6039, 5030"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
@@ -7417,14 +7259,12 @@
       "siting": {
         "nearest_authored": {
           "distance": 151,
-          "x": 6100,
-          "z": 6125,
+          "at": "6100, 6125",
           "file": "data/challengers_cairn.json"
         },
         "nearest_route_vertex": {
           "distance": 1151,
-          "x": 5676,
-          "z": 5186
+          "at": "5676, 5186"
         }
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
