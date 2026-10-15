@@ -296,7 +296,10 @@ def test_every_region_with_dry_ground_holds_three_to_five_candidates_and_the_poo
     assert set(by) == set(REGIONS) - NO_DRY_GROUND
     for rid, rs in by.items():
         assert 3 <= len(rs) <= 5, (rid, len(rs))
-    assert len(RIPS) == POOL_PER_REGION * len(by)
+    # a region the record declares short (data/dungeon_rips.json pool_exceptions, each with why) holds one fewer
+    short = set(json.loads((ROOT / "data" / "dungeon_rips.json").read_text(encoding="utf-8")).get("pool_exceptions") or {})
+    assert len(RIPS) == POOL_PER_REGION * len(by) - len(short)
+    assert all(len(by[r]) == POOL_PER_REGION - 1 for r in short), {r: len(by[r]) for r in short}
 
 
 def test_the_original_twenty_stay_first_and_in_order_so_dg_rip_does_not_move():

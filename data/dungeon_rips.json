@@ -447,10 +447,10 @@
         "nearest_route_vertex": {
           "distance": 915,
           "at": "1462, 5293"
-        }
+        },
+        "moved": "2026-10-14: moved from plane middle (580, 5554) because tools/fungal_isle.py build writes terrain 2 blocks from its ground window (fungal_isle's 10-block clearance); same id and position, so dg.rip does not move"
       },
-      "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule",
-      "moved": "2026-10-14: moved from plane middle (580, 5554) because tools/fungal_isle.py build writes terrain 2 blocks from its ground window (fungal_isle's 10-block clearance); same id and position, so dg.rip does not move"
+      "measured": "2026-10-13, tools/dungeon_rips.py find (candidate) and record (this record); tools/dungeon_rips.py check re-measures every rule"
     },
     {
       "id": "rip_sunset_isle",
@@ -2445,98 +2445,8 @@
         "nearest_route_vertex": {
           "distance": 1189,
           "at": "1462, 5293"
-        }
-      },
-      "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule",
-      "moved": "2026-10-14: moved from (596, 6114): tools/fungal_isle.py build writes terrain 5 blocks from its ground window (10-block clearance); same id and position"
-    },
-    {
-      "id": "rip_fungal_isle_3",
-      "name": "A rift in the Fungal Isle (3)",
-      "kind": "region",
-      "region": "fungal_isle",
-      "scorch_theme": "jungle",
-      "frame": {
-        "x0": 2,
-        "x1": 6,
-        "z": 5633,
-        "y": 75,
-        "height": 4
-      },
-      "ground": {
-        "y": 74,
-        "window": [
-          0,
-          5632,
-          8,
-          5638
-        ],
-        "heights": [
-          74,
-          74
-        ],
-        "heightmap_value": 73.78,
-        "rule": "tools/ground.py, the canonical heightmap ROUNDED: round(ground) is 74 over all 63 columns of x0..8 z5632..5638 (tools/dungeon_rips.py, 2026-10-13); the plane stands at ground + 1 and is air above the heightmap"
-      },
-      "outside": [
-        4.5,
-        75,
-        5636.5,
-        0
-      ],
-      "click": [
-        4,
-        75,
-        5634
-      ],
-      "oval": {
-        "width": 3.0,
-        "height": 4.0,
-        "in_front": 0.06
-      },
-      "plume": false,
-      "restore": {
-        "2": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "3": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "4": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "5": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ],
-        "6": [
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air",
-          "minecraft:air"
-        ]
-      },
-      "siting": {
-        "nearest_authored": {
-          "distance": 52,
-          "at": "24, 5582",
-          "file": "data/placements.json"
         },
-        "nearest_route_vertex": {
-          "distance": 1493,
-          "at": "1462, 5293"
-        }
+        "moved": "2026-10-14: moved from (596, 6114): tools/fungal_isle.py build writes terrain 5 blocks from its ground window (10-block clearance); same id and position"
       },
       "measured": "2026-10-14, tools/dungeon_rips.py pool (candidate pool: farthest-point among find()'s sites, 300 or more from every other rip); tools/dungeon_rips.py check re-measures every rule"
     },
@@ -8534,5 +8444,8 @@
         "is_kept_because": "CLAUDE.md: hand-authored work is kept, not deleted. The record still carries what its tags, probes and restore were measured from"
       }
     }
-  ]
+  ],
+  "pool_exceptions": {
+    "fungal_isle": "3 candidates, not 4 (2026-10-14): rip_fungal_isle_3 at (4, 5634) stood 20 blocks from the Newmoon Island legendary footprint (legendary_sweep_audit rule 96), and no site on the isle is clear of tools/fungal_isle.py's build, that footprint and 300 blocks from the other three rips at once"
+  }
 }
