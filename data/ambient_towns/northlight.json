@@ -142,7 +142,7 @@
     }
   ],
   "pets": [
-    {"id": "northlight_hand_swinub", "species": "swinub", "owner": "npc_stone_tip_northlight_field_hand", "mode": "follow", "why": "the field hand's Swinub, which has its nose in the snow by her feet whenever she stops"},
+    {"id": "northlight_hand_swinub", "allow": ["walkway"], "allow_why": "the 2026-10-14 Northlight square took the ground round its field hand", "species": "swinub", "owner": "npc_stone_tip_northlight_field_hand", "mode": "follow", "why": "the field hand's Swinub, which has its nose in the snow by her feet whenever she stops"},
     {"id": "northlight_hand_eevee", "species": "eevee", "owner": "npc_stone_tip_northlight_field_hand", "mode": "follow", "why": "and an Eevee that follows her; the field station keeps asking whether it will be a Glaceon"},
     {"id": "northlight_station_snorunt", "species": "snorunt", "owner": "northlight_station", "mode": "wait", "why": "the station counter's Snorunt waits by the counter in a little drift of its own making"},
     {"id": "northlight_kit_vulpix", "species": "vulpix", "owner": "northlight_field_kit", "mode": "follow", "why": "the field-kit seller's Vulpix (the snow kind) follows her round the stall"},
@@ -245,6 +245,8 @@
     },
     {
       "id": "northlight_cetoddle_ice_queue",
+      "allow": ["walkway"],
+      "allow_why": "the scene is a queue at the Mart door (its story); the 2026-10-14 Northlight square made that spot the door apron",
       "title": "First in line for the ice",
       "story": "Every morning two Cetoddle queue at the Mart door before it opens. The Mart sells ice for the cool boxes; they buy nothing, they wait for the clerk to drop a block, and they eat it on the step.",
       "unique": false,
