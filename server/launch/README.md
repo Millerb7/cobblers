@@ -66,3 +66,7 @@ later script) can reproduce the server exactly.
 - Re-evaluate loader 0.19.5 only when a boot failure identifies the loader itself or a future pack rebase requires it.
 - Decide the host (this dev machine vs. a VPS) and whether `playit.gg` / port forwarding is used.
 - Backup routine for `world/` (outside git).
+
+## Live start (2026-10-16)
+
+Start the live server with `& .\server\scripts\start-live.ps1` (12G, hidden window, console to `logs/console-*.log`). A console window can pause the server: on 2026-10-15 the server thread blocked ~168 s writing to its console and the watchdog shut it down. Stop it with RCON `stop`.
