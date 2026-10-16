@@ -221,6 +221,12 @@ def load_pack(pack):
     subs = sorted({s["id"] for s in regions["subregions"]} | set(subs), key=len, reverse=True)
     for f in sorted((base / "spawn_pool_world").rglob("*.json")):
         kind = f.parent.name
+        if "fishing" in f.relative_to(base / "spawn_pool_world").parts:
+            # NOT covered: the fishing lists (spawn_pool_world/fishing/<kind>/<area>.json, docs/mechanics/FISHING.md,
+            # 2026-10-16). A cast competes only with fishing details on the rod's own buckets, so they are not part of an
+            # area's world table, and their folder's name (subregions, marine) would otherwise merge them into it. Added
+            # by the implementing session, not the audit's author; an independent grade of fishing is owed.
+            continue
         heart = []
         for s in json.loads(f.read_text(encoding="utf-8"))["spawns"]:
             sub = None

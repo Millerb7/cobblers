@@ -9,6 +9,7 @@ capability. Each document states which experiment it rests on.
 | --- | --- | --- |
 | `SPAWN_PHILOSOPHY.md` | Curated / full-dex / hybrid encounter models, and the evolution-item gap that stops the rosters completing | Measured pack data and `data/spawns.json`; the runtime questions are still open |
 | `EVOLUTION_STONES.md` | Where the ten evolution stones come from: seven sites, a mine face that resets, and the rate | Measured pack data, `data/spawns.json`, `data/spawn_blocks.json` and EXP-017 A1; **every runtime question is unrun** (ADR-003, Proposed) |
+| `FISHING.md` | Every area's own fishing list (46 sub-regions, 19 sea bands, 17 dry), what each catches and why | Cobblemon 1.8.0 bytecode and stock data; generated and compiled, **not cast in game** |
 | `DEATH_AND_WIPE.md` | Blackout, recovery claims and the Surf and Dive air ladder | EXP-038 to EXP-042; built as `cobblers_blackout` |
 | `WATER_MAP.md` | Every body of water and its one role; the trio, Lugia, the depth ladder's reach | EXP-042's measured ladder; a proposal |
 | `WATER_PROPOSAL.md` | Rivers, lakes, dive sites, the ferry, fishing and docks: the whole water picture, with the Relic Island reef and the appearing island | `WATER_MAP.md`; surface exhaustion (EXP-044, built on staging); a proposal, nothing built |
