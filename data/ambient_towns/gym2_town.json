@@ -16,7 +16,7 @@
       "carry_height": 1.2,
       "pickup": {"sound": "minecraft:block.wood.hit"},
       "drop": {"sound": "minecraft:block.wood.place", "block": "minecraft:spruce_planks", "count": 10},
-      "interact": "The Timburr shoulders a plank as long as itself down to the east pier, where the Scyther is cutting the new keel."
+      "interact": "The Timburr shoulders a plank as long as itself down to the east pier, where the Scyther sits waiting for it."
     },
     {
       "id": "viltri_keel_scyther",
@@ -29,7 +29,9 @@
       "every": 28,
       "look_around": [1634, 2861],
       "effect": {"block": "minecraft:spruce_planks", "count": 12, "sound": "minecraft:block.wood.break", "pitch": 1.2},
-      "interact": "The boatwright's Scyther shaves the keel plank in long curls. It stops, sights along it, and shaves again."
+      "relaxed": true,
+      "relaxed_why": "its keel is on the east pier at (1652, 2862); the pier is a lot a human composes in Axiom (data/placements.json gym2_town anchor gym2_pier_east, template null) that no generator builds, so nothing in data stands at the face. Effect kept for when the pier is built",
+      "interact": "The boatwright's Scyther sits back by the east pier with its blades folded, watching the water. The keel can wait."
     },
     {
       "id": "viltri_catch_buizel",
@@ -55,7 +57,9 @@
       "every": 60,
       "look_around": [1563, 2860],
       "effect": {"block": "minecraft:light_blue_wool", "count": 6, "sound": "minecraft:entity.generic.splash", "pitch": 1.3},
-      "interact": "The quay's Floatzel watches the swimmers off the west pier with its float half inflated. It glares at the Golduck in its chair."
+      "relaxed": true,
+      "relaxed_why": "it watches swimmers off the west pier at (1563, 2866); the pier is a lot a human composes in Axiom (data/placements.json gym2_town anchor gym2_pier_west, template null) that no generator builds, so nothing in data stands at the face. Effect kept for when the pier is built",
+      "interact": "The quay's Floatzel lounges at the water's edge with its float half inflated, off duty. It glares at the Golduck in its chair."
     },
     {
       "id": "viltri_mop_wooper",
@@ -66,6 +70,7 @@
       "at": [1585, 2855],
       "face": [1585, 2857],
       "every": 30,
+      "target": "paving",
       "effect": {"block": "minecraft:wet_sponge", "count": 10, "sound": "minecraft:entity.generic.splash", "pitch": 1.4},
       "interact": "The Wooper mops the promenade by lying on it and rolling. The flagstones behind it shine."
     },
@@ -78,8 +83,11 @@
       "at": [1600, 2754],
       "face": [1603, 2754],
       "every": 32,
+      "look_around": [1620, 2754],
       "effect": {"block": "minecraft:cobweb", "count": 8, "sound": "minecraft:entity.sheep.shear", "pitch": 1.1},
-      "interact": "The fisher's Corphish picks the knots out of the nets hung on the cottage's back wall, snipping the ones it cannot pick."
+      "relaxed": true,
+      "relaxed_why": "its nets hang on gym2_house_01's back wall, but from the fisher_cottage_1 template turned 180 onto footprint 1603..1613 x 2750..2759 the face (1603, 2754) holds only the foundation layer's dirt: the nearest blocks above the foundation are a barrel 2 away, the porch slab 3 east (x1606) and the wall's cobblestone 5 east (x1608), and the template has no net. Confirmed on live by the owner's check: open grass, no wall, no nets",
+      "interact": "The fisher's Corphish sits in the grass by the cottage with its claws folded, off duty."
     },
     {
       "id": "viltri_letters_swablu",
@@ -103,8 +111,11 @@
       "at": [1580, 2896],
       "face": [1580, 2900],
       "every": 40,
+      "look_around": [1600, 2896],
       "effect": {"block": "minecraft:mud", "count": 14, "sound": "minecraft:block.mud.break", "pitch": 0.8},
-      "interact": "The Quagsire scoops the silt out of the shallows so the rescue boat can get in. It does not seem to mind which way the silt goes."
+      "relaxed": true,
+      "relaxed_why": "it scoops the shallows at (1580, 2900), but the heightmap ground there is y105 (tools/ground.py, rounded) and the lake edge is stated at z2896 where ground is y103 (data/gym_arenas/gym2.json exit.why); at x1580 the ground only falls to y103 near z2912, so the face is dry land about twelve blocks from the water. No structure is there either",
+      "interact": "The Quagsire stands on the bank with its arms hanging, looking pleased with nothing in particular."
     },
     {
       "id": "viltri_bilge_mudkip",
@@ -115,8 +126,11 @@
       "at": [1557, 2861],
       "face": [1560, 2866],
       "every": 26,
+      "look_around": [1575, 2866],
       "effect": {"block": "minecraft:clay", "count": 8, "sound": "minecraft:entity.generic.splash", "pitch": 1.5},
-      "interact": "The Mudkip keeps the moored rowing boat's bilge empty, spitting each mouthful back over the side."
+      "relaxed": true,
+      "relaxed_why": "the moored rowing boat is at the west pier at (1560, 2866); the pier is a lot a human composes in Axiom (data/placements.json gym2_town anchor gym2_pier_west, template null) that no generator builds, so nothing in data stands at the face, and no data places a boat. Effect kept for when it is built",
+      "interact": "The Mudkip sits near the west pier with its fin up, in no hurry."
     },
     {
       "id": "viltri_winch_poliwhirl",
@@ -127,8 +141,11 @@
       "at": [1664, 2861],
       "face": [1664, 2864],
       "every": 36,
+      "look_around": [1640, 2861],
       "effect": {"block": "minecraft:chain", "count": 6, "sound": "minecraft:block.chain.hit", "pitch": 0.9},
-      "interact": "The Poliwhirl turns the winch that hauls boats up past the east pier, its belly swirl turning with the drum."
+      "relaxed": true,
+      "relaxed_why": "its winch stands past the east pier at (1664, 2864), 9 east of the pier's lot edge; nothing in data places a winch (the town has no dressing, data/town_dressing.json) and the nearest structure or paving is 6 or more blocks away. Effect kept for when it is built",
+      "interact": "The Poliwhirl sits by the east pier with its belly swirl turning slowly, in no hurry."
     },
     {
       "id": "viltri_sweep_lombre",
@@ -137,8 +154,9 @@
       "level": 21,
       "job": "work",
       "at": [1616, 2766],
-      "face": [1616, 2770],
+      "face": [1618, 2766],
       "every": 28,
+      "target": "paving",
       "effect": {"block": "minecraft:lily_pad", "count": 8, "sound": "minecraft:block.grass.hit", "pitch": 1.2},
       "interact": "The Lombre sweeps the avenue by the Mart with the pad on its head, humming."
     }
