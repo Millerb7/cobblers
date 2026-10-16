@@ -9,9 +9,10 @@ kits), merged to main through its PR at the end of this session (re-read: `git f
 merged into the launch branch.
 
 ## 2. Where it stopped
-- **The LIVE server is UP** in the Terminal panel tab "LIVE server 12G" (12G, watchdog 60000, whitelist on with the old
-  server's two names). The new world is applied and stripped. The coordination lock is held by
-  `claude-launch-2026-10-14c`: release it (`C:\Users\wnd\Documents\github\.cobblers-server-agent.lock`) once the owner
+- **The LIVE server is UP** in the Terminal panel tab "LIVE server 12G (voucher)" (12G, watchdog 60000, whitelist on with
+  the old server's two names), restarted 2026-10-15 20:26 with the voucher build (draft PR #140, branch
+  `build/2026-10-15-voucher`). The coordination lock is held by `claude-launch-2026-10-15d` for the owner's in-game
+  smoke test: release it (`C:\Users\wnd\Documents\github\.cobblers-server-agent.lock`) once the owner
   has the server, or keep it while a session works on it.
 - Rollback: `docs/launch/ROLLBACK.md` (the retired world, the D: snapshots).
 - Launch docs: `docs/launch/` (HOSTING, CLIENT_PACK, KNOWN_ISSUES, ROLLBACK); the client pack
@@ -22,8 +23,7 @@ merged into the launch branch.
 
 ## 3. Waiting on the owner
 - Launch: the network route (HOSTING.md), `whitelist add` for each friend, the client pack to friends.
-- The audit verdict above; Challenge's 77 route/junior fights (not redesigned); the voucher grant (not built); job D's
-  scheduler defaults (`data/rip_scheduler.json`, all owner_confirmed false); Cobbreeding's new 5% alpha chance.
+- The audit verdict above; Challenge's 77 route/junior fights (not redesigned); the voucher's eight gym-clear grants (Oak's $4,000 is built, not seen in game); Cobbreeding's new 5% alpha chance.
 - Later: a VPS (24-32 GB RAM) and moving the tooling to Linux.
 
 ## 4. Do not rediscover
