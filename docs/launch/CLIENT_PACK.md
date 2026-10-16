@@ -6,7 +6,7 @@ Written 2026-10-14. **A client that does not match the server's mods is the most
 
 | File | What | sha1 |
 |---|---|---|
-| `cobblers-client-0.1.0.mrpack` (748,152 bytes; with Lootr, rebuilt 2026-10-15) | the modpack: Minecraft 1.21.1, Fabric Loader 0.19.5, every mod below (downloaded from Modrinth by the launcher) | `72244e00b28402d4a63a93364e2d36a75af1c64f` |
+| `cobblers-client-0.1.0.mrpack` (747,998 bytes; with Lootr, without Custom Splash Screen, rebuilt 2026-10-15) | the modpack: Minecraft 1.21.1, Fabric Loader 0.19.5, every mod below (downloaded from Modrinth by the launcher) | `adb0bce6603cbec951a3edb0f80accb7f884af6f` |
 | `cobblers-client-AllTheMons-subset.zip` (1,468,971 bytes, built 2026-10-13) | a resource pack: Cobblemon model fixes plus the AllTheMons x Mega Showdown models for the species that otherwise show as a placeholder doll | `dfdd4f8118a66ff854d23a1e5c2f7651ff042e97` |
 
 Rebuild with `python tools/client_pack.py build` and `python tools/client_model_fix.py build --server-pack`. Check a
@@ -40,7 +40,7 @@ If the server says your mods do not match: you are on an old pack. Delete the in
 
 ## The mod list (client and both sides), from `python tools/pack_manifest.py plan --side client`
 
-135 files (Lootr added 2026-10-15). Status `replace` is one of our updates over COBBLEVERSE 1.7.42; `base` is COBBLEVERSE's own.
+134 files (Lootr added, Custom Splash Screen removed 2026-10-15: it crashed the loading screen with MidnightLib 1.9.3). Status `replace` is one of our updates over COBBLEVERSE 1.7.42; `base` is COBBLEVERSE's own.
 
 | File | Side | Status |
 |---|---|---|
@@ -101,7 +101,6 @@ If the server says your mods do not match: you are on an old pack. Delete the in
 | `comforts-fabric-9.0.5+1.21.1.jar comforts` | both | base |
 | `configurable-3.5.2+1.21.1-fabric.jar configurable` | both | base |
 | `continuity-3.0.0+1.21.jar continuity` | client | base |
-| `customsplashscreen-2.2.0.jar customsplashscreen` | client | base |
 | `defaultoptions-fabric-1.21.1-21.1.8.jar defaultoptions` | both | replace |
 | `entity_model_features-3.3.11-1.21-fabric.jar entity_model_features` | client | replace |
 | `entity_texture_features-7.2.5-1.21-fabric.jar entity_texture_features` | client | replace |

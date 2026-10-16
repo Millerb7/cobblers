@@ -50,6 +50,7 @@
       "progression_in"
     ],
     "effect_kinds": [
+      "challenge_voucher",
       "compare_and_set_progression",
       "consume_held_item",
       "function",
@@ -1552,6 +1553,12 @@
             {
               "kind": "tag_player",
               "tag": "cobblers_mode_challenge"
+            },
+            {
+              "kind": "challenge_voucher",
+              "at": "oak_mode_choice",
+              "cash": 4000,
+              "why": "the owner, 2026-10-15: Oak hands out the voucher's first step at the mode choice; the cash must equal that step of data/challenge_mode.json voucher.computed.schedule (tools/challenge_voucher.py --check), paid once because this transition is written once"
             },
             {
               "kind": "set_progression",

@@ -131,6 +131,10 @@ class Cmds:
         if m:
             w["gave"].append((m.group(1), int(m.group(2))))
             return 1
+        m = re.fullmatch(r"cobbledollars give @s (\d+)", cmd)
+        if m:
+            w["cash"] = w.get("cash", 0) + int(m.group(1))   # the Challenge voucher's first step (Oak's)
+            return 1
         if cmd == "openstarterscreen @s":
             if w["chosen"]:
                 return 0

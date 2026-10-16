@@ -517,6 +517,10 @@ class Model:
         m = re.fullmatch(r"give @s [a-z0-9_]+:[a-z0-9_/]+ \d+", cmd)
         if m:
             return 1
+        # the Challenge voucher's first step (tools/compile_dialogue.py challenge_voucher): money, which moves neither
+        # the starter state nor the main stage; tools/challenge_voucher.py --check owns the amount
+        if re.fullmatch(r"cobbledollars give @s \d+", cmd):
+            return 1
         m = re.fullmatch(r"function cobblers:flag/([a-z0-9_]+)/grant", cmd)
         if m and self._grantable(m.group(1)):
             return 1
