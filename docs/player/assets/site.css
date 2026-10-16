@@ -3,7 +3,7 @@
    through tools/player_site.py) emit classes and never their own <style>, so the guides cannot drift into three
    looks. Sections: tokens and themes; base; the shared header, spoiler note and footer; the section filter and
    search box; the index; the battle guide (body.page-battles); the region map (body.page-map); the starters
-   (body.page-starters); items and money (body.page-items); drops (body.page-drops). */
+   (body.page-starters); items and money (body.page-items); drops (body.page-drops); fishing (body.page-fishing). */
 
 /* ---------------------------------------------------------------- tokens and themes */
 /* light: lavender (the owner, 2026-10-08) */
@@ -250,3 +250,23 @@ vertical-align:top}
 @media (max-width:560px){.page-tms main,.page-held main{padding:8px 10px 20px}.page-tms table,.page-held table{font-size:.8rem}
 .page-tms .id,.page-held .id{display:none}}
 @media print{.site-header{position:static}.seg,#theme,.filter,.search{display:none}}
+
+/* ---------------------------------------------------------------- fishing (body.page-fishing) */
+.page-fishing main{max-width:1180px;margin:0 auto;padding:12px 16px 20px}
+.page-fishing h1{font-size:1.7rem;margin:14px 0 4px}
+.page-fishing h2{font-size:1.35rem;margin:30px 0 10px;padding-bottom:4px;border-bottom:2px solid var(--accent)}
+.page-fishing .areas{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.page-fishing .area{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:10px 12px}
+.page-fishing .area h3{margin:0 0 6px;font-size:1.05rem}
+.page-fishing table{border-collapse:collapse;width:100%;font-size:.88rem}
+.page-fishing th,.page-fishing td{text-align:left;padding:.25rem .4rem;border-bottom:1px solid var(--rule)}
+.page-fishing tr:last-child td{border-bottom:0}
+.page-fishing th{font-weight:600;color:var(--muted);font-size:.78rem}
+.page-fishing td.n,.page-fishing th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.page-fishing .bk{display:inline-block;border-radius:999px;padding:0 8px;font-size:.75rem;font-weight:600;color:var(--btext)}
+.page-fishing .bk.common{background:var(--common)}
+.page-fishing .bk.uncommon{background:var(--uncommon)}
+.page-fishing .bk.rare{background:var(--rare)}
+.page-fishing .bk.ultra-rare{background:var(--ultra-rare)}
+.page-fishing #dungeons p,.page-fishing #not-covered{max-width:860px}
+@media (max-width:560px){.page-fishing main{padding:8px 10px 20px}.page-fishing .areas{grid-template-columns:1fr}}

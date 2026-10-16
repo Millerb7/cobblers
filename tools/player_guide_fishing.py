@@ -79,17 +79,17 @@ def collect():
 
 
 def render_area(a):
-    rows = "".join('<tr data-fish="%s"><td>%s</td><td>%s</td><td>%s</td></tr>'
+    rows = "".join('<tr data-fish="%s"><td>%s</td><td><span class="bk %s">%s</span></td><td class="n">%s</td></tr>'
                    % (esc((mon_name(e["species"]) + " " + a["name"]).lower()), esc(mon_name(e["species"])),
-                      esc(BUCKET_WORDS.get(e["bucket"], e["bucket"])), esc(str(e.get("level", ""))))
+                      esc(e["bucket"]), esc(BUCKET_WORDS.get(e["bucket"], e["bucket"])), esc(str(e.get("level", ""))))
                    for e in a["rows"])
     return ('<article class="area" id="%s"><h3>%s</h3><table><thead><tr><th>Pokemon</th><th>How often</th>'
-            '<th>Levels</th></tr></thead><tbody>%s</tbody></table></article>'
+            '<th class="n">Levels</th></tr></thead><tbody>%s</tbody></table></article>'
             % (esc(a["id"]), esc(a["name"]), rows))
 
 
 def render(m):
-    sections = "".join('<section><h2>%s</h2>%s</section>'
+    sections = "".join('<section><h2>%s</h2><div class="areas">%s</div></section>'
                        % (esc(r["region"]), "".join(render_area(a) for a in r["areas"])) for r in m["regions"])
     body = ('<main><h1>Fishing</h1><p class="lead">Every area with water has its own catch: the Pokemon you see '
             'swimming there, and a few you can only get with a rod. %d areas and seas, %d species. Search by Pokemon '
