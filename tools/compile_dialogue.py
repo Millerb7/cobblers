@@ -113,6 +113,7 @@ from pathlib import Path
 import levelcap_pack as LC  # the NPC-battle level-cap check's function and tag (one source)
 
 ROOT = Path(__file__).resolve().parent.parent
+
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_dialogue"
 NS = "cobblers"
 # The client variation every NPC class renders as (see "model" above). Shipped in the Cobblemon jar itself, so the
@@ -358,6 +359,15 @@ class Compiler:
             # see "series" in the module docstring: put the talking player in an rctmod series. EVERY call clears
             # their rctmod progress, so only a transition guarded by its own lock field may carry this
             return run(["execute as ", UUID, " run rctmod player set series %s @s" % ident(e["series"])])
+        if k == "challenge_voucher":
+            # pay one step of the Challenge voucher in CobbleDollars (the owner, 2026-10-15: Oak hands his part out at
+            # the mode choice). The effect carries the cash; tools/challenge_voucher.py --check fails when it differs
+            # from that step of data/challenge_mode.json voucher.computed.schedule. Paid once because the transition
+            # carrying it is written once
+            cash = e.get("cash")
+            if not isinstance(cash, int) or isinstance(cash, bool) or cash <= 0:
+                raise Unsupported("challenge_voucher cash %r is not a positive integer" % (cash,))
+            return run(["execute as ", UUID, " run cobbledollars give @s %d" % cash])
         if k == "tag_player":
             tag = e.get("tag")
             if not isinstance(tag, str) or not re.fullmatch(r"[a-z0-9_.]+", tag):

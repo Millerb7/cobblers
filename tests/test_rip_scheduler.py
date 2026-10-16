@@ -268,15 +268,15 @@ def set_score(w, p, obj, v):
 
 # ------------------------------------------------------------------------------------------------ the data
 
-def test_every_default_is_a_proposal_the_owner_has_not_confirmed():
-    # job D says the defaults are "NOT yet confirmed by the owner"; breaks if one is marked confirmed without the owner's answer
-    # being recorded here, or if a setting is added without saying where it came from
+def test_every_default_is_confirmed_by_the_owner():
+    # the owner, 2026-10-15: "Take the rip scheduler defaults." Breaks if a setting is added without the owner's answer
+    # (a new one starts owner_confirmed false and this fails until it is answered), or without saying where it came from
     assert RS.settings_problems(RDOC) == []
     assert sorted(RDOC["settings"]) == sorted(RS.KNOWN)
     for k, rec in RDOC["settings"].items():
-        assert rec["owner_confirmed"] is False, k
+        assert rec["owner_confirmed"] is True, k
         assert len(rec["origin"]) > 20, k
-    assert "NOT" in RDOC["status"] or "Not" in RDOC["status"]
+    assert "Take the rip scheduler defaults" in RDOC["status"]
 
 
 def test_the_owners_proposal_is_what_the_file_says():

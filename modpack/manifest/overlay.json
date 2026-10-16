@@ -1843,6 +1843,11 @@
  ],
  "remove": [
   {
+   "mod_id": "customsplashscreen",
+   "file": "customsplashscreen-2.2.0.jar",
+   "reason": "Crashes the client on the loading screen with MidnightLib 1.9.3 (NoClassDefFoundError eu/midnightdust/lib/config/MidnightConfig$MidnightConfigScreen, the owner's first launch of cobblers-client-0.1.0, 2026-10-15). MidnightLib stays at 1.9.3 (Repurposed Structures, world-critical, needs >=1.5.7 and the server runs 1.9.3). Client-only cosmetic (the loading screen); nothing depends on it."
+  },
+  {
    "mod_id": "better_pokedex_scanner",
    "file": "better-pokedex-scanner-1.0.0.jar",
    "reason": "Depends on cobblemon >=1.7.3 <1.8.0 and has no 1.8 build (single release 1.0.0, 2026-04-15). Client-side QoL; safe to drop."
@@ -1950,7 +1955,6 @@
   "catchrate-display",
   "continuity",
   "controlling",
-  "customsplashscreen",
   "entity_model_features",
   "entity_texture_features",
   "euphoria_patcher",

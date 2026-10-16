@@ -224,7 +224,20 @@ def main(argv=None):
         if doc["voucher"].get("computed") != c:
             print("data/challenge_mode.json voucher.computed is not what tools/challenge_voucher.py computes: run --write")
             return 1
-        print("voucher current: total $%d over %d grants" % (c["total"], len(c["schedule"])))
+        # every quest effect that pays a voucher step must pay that step's cash (tools/compile_dialogue.py
+        # challenge_voucher): a moved schedule would otherwise leave Oak paying the old amount
+        steps = {g["at"]: g["cash"] for g in c["schedule"]}
+        quests = json.loads((CHALLENGE.parent / "quests.json").read_text(encoding="utf-8"))
+        paid = [e for q in quests["quests"] for t in q.get("transitions") or [] for e in t.get("effects") or []
+                if e.get("kind") == "challenge_voucher"]
+        bad = [e for e in paid if steps.get(e.get("at")) != e.get("cash")]
+        if bad:
+            for e in bad:
+                print("data/quests.json challenge_voucher at %r pays %r, the schedule says %r"
+                      % (e.get("at"), e.get("cash"), steps.get(e.get("at"))))
+            return 1
+        print("voucher current: total $%d over %d grants; %d paid by quest effects, matching"
+              % (c["total"], len(c["schedule"]), len(paid)))
         return 0
     if a.write:
         v = dict(doc["voucher"])
