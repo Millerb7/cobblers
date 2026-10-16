@@ -8,8 +8,67 @@ Challenge tag, and switch back otherwise. They never switch during a battle. **O
 then widen it to the other twelve.
 
 Built by `tools/challenge_mode.py` (`single_lines`, `retire_lines`, `single_leader_verify`) into
-`build/datapacks/cobblers_trainers`. The switch is `data/challenge_mode.json` `single_leader.rollout`. It is
-`["kanto_brock"]` today.
+`build/datapacks/cobblers_trainers`. The switch is `data/challenge_mode.json` `single_leader.rollout`. Since
+2026-10-16 it names **twelve of the thirteen**: every boss but Lance (section "Rollout, 2026-10-16" below).
+
+## Rollout, 2026-10-16
+
+The owner, 2026-10-16: "challenge mode shouldnt need its own leader, we have gone through this." Brock had stood as
+one leader on staging and live since Wave A (`docs/STATE.md`); every other gym still stood two leaders (gym 2:
+`kanto_misty` at (1626.5, 109, 2883.5) and `kanto_misty_challenge` at (1627.5, 109, 2881.5), read over RCON by the
+orchestrator, relayed). The second matches `bosses.kanto_misty.spawner.at` (1627, 108, 2881), the cell R17L retires.
+
+**Rolled out (12):** the eight leaders, Lorelei, Bruno, Agatha and Blue. The sections below, written for Brock, now
+hold for each. The records that answer what each needs, none read from a world:
+
+| Boss | One spawner (swap anchor) | Retired cell, and what goes back |
+| --- | --- | --- |
+| eight leaders | `data/gym_arenas/gymN.json` `leader.seat` (all eight are walk-through halls, schema `gym_hall/1`) | `bosses.<id>.spawner.at`, inside the hall: the hall's own model at that cell and the one under it (`restore_blocks`, `tools/gym_arenas.py build`) |
+| Lorelei, Bruno, Agatha, Blue | `bosses.<id>.single_leader.normal_at`, the template spawner (unit M1, 2026-10-08) | `bosses.<id>.spawner.at`: `single_leader.restore {floor, under}`, measured by replaying the `kanto_league` template with the donor's substitutions (unit M1) |
+
+The template restores were measured before this rollout and are unchanged; this change adds none. The old
+"strict xfail" on the arena gyms (`restore_blocks` writing a hall floor into a carve-below arena) no longer has a
+subject: every gym is now a hall whose Challenge cell is in the hall's own model.
+
+**Held on two leaders: Lance.** His one spawner MOVES (`single_leader.move`, the owner's 2026-10-09 decision, 30.6
+from the template cell). The move can leave the old template spawner's trainer standing beyond the swap's reach for
+good: `tools/challenge_mode_audit.py` P1:move_orphan finds three cases (a world with no second spawner whose old
+spawner had already raised Lance, two floors; and a first R17L that met Lance in a battle). The fix's shape is known
+and was tried in this unit: kill the idle trainers of either id within 24 of `move.from`, under the move's own
+guards, before the spawner moves (`tests/test_one_leader_retire_independent.py` `ORPHAN_FIX`). With it the audit's
+P1 is clean for Lance, but its R:summon rule then fails twice, because R:summon excuses kills only in a retire
+function, matched exactly. Widening that exemption is the auditor's decision, not the builder's (the N95 rule), so
+the fix was reverted and Lance stays out. Two Lances is not unsafe: the Challenge one is in series
+`cobblers_challenge`, the Normal one in `kanto`, so each refuses the other mode (`wrong_series`).
+
+**Lance held, Agatha one leader.** Lance's two template-floor spawners are 10.8 and 11.7 from Agatha's one spawner,
+inside her 17-block reach. A player on Lance's floor can therefore choose Agatha's id through the floor. Agatha and
+Bruno, and Bruno and Lorelei, already share floor cells this way, an open owner item (2026-10-09). In a mixed group
+the cost is a refusal at Agatha until the player there is nearest. It never gives anyone the other mode's team.
+
+### The two guarantees, and what holds them
+
+- **A Normal player is never put in `cobblers_challenge`.** Only `rctmod player set series` changes a series, and
+  it appears once in all compiled output, in Oak's locked branch (audit check M). The swap, the retire and the
+  hold-off never touch a series. They rewrite `TrainerIds` and `TrainerId` only. This rollout does not touch Oak.
+- **A Challenge player never meets the Normal team.** The swap gives the Challenge id only for the nearest player
+  within 17 who carries the tag. Whatever the swap does, rctmod's `canBattleAgainst` refuses a trainer whose series
+  is not the player's (`RCT_PER_PLAYER_MODE.md` section 2, read from source, not run). Each Normal boss id is in
+  series `kanto` and each Challenge id in `cobblers_challenge` (audit check B). The one leak named in that section
+  is an existing defeat against the other id. The Oak lock prevents it.
+
+### On live, in this order (the integrator's)
+
+1. `prepare`, then `install` of `cobblers_trainers`, then `install_check`.
+2. Restart: `cobblers_trainers` loads its functions at boot. From then on the cycle stops placing the eleven new
+   bosses' second spawners and drives their one spawner. Until step 3, an existing second spawner and its trainer
+   still stand.
+3. `python tools/reapply.py run --only R17L --no-reload`, **with nobody online**. The retire's kills and setblocks
+   wait while any player is within reach of either seat. A player near one gym leaves that gym's retire undone,
+   and `single_leader_verify` names it ("NOT checked" or "still there"). Run it again with nobody near.
+4. Read back: R17L's own `check single_leader` (12 bosses: second spawner gone, one spawner present on the Normal
+   id, no Challenge-id trainer by the old cell, at most one Normal trainer). Report probes present over total.
+   Then, by hand, one gym and one League floor from section (a) below, with the coordinates of that boss.
 
 ## Mechanism rung
 
@@ -100,9 +159,10 @@ Reapply step **R17L** runs it after R17. The step forceloads a box 24 blocks aro
 the function, then reads the result back (`check single_leader`). `cobblers_trainers` stays EXCLUDED as
 self-driving, so `prepare`'s coverage gate is unchanged.
 
-For a template boss (Misty, the League), the rollout fails closed until `single_leader.restore {floor, under}` is
-measured from its template. For the League, `single_leader.normal_at` is also needed: no record carries those five
-spawners. So `"rollout": "all"` refuses today. A test checks that it does.
+For a template boss (the League; Misty until her hall), the rollout fails closed until
+`single_leader.restore {floor, under}` is measured from its template. For the League, `single_leader.normal_at` is
+also needed: no record carries those five spawners. All five were measured on 2026-10-08 (unit M1). A test still
+checks that a template boss without them refuses, on an in-memory copy.
 
 ## Staging proof for Brock
 
@@ -142,6 +202,6 @@ None of this has run in a game. The following are assumed:
 - the `InBattle` byte form (a8 tests this);
 - the spawner's own spawn range.
 
-The Challenge audit (`tools/challenge_mode_audit.py`, not edited) fails two checks for Brock by design:
-`P:count` (0 Challenge spawners) and `R:summon` (the retire function's `kill`). Its owner decides how the audit
-treats a single-leader boss.
+The Challenge audit (`tools/challenge_mode_audit.py`) judges a rollout boss by P1 and excuses the retire's two kill
+shapes in R:summon. With the twelve rolled out (2026-10-16): 56 checks, 0 problems, 16 reports. Twelve of the
+reports are `P1:inbattle_assumed`: staging measured `InBattle:0b` on a standing trainer, never `1b` in a battle.

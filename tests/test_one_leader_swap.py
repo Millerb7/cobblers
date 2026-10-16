@@ -47,9 +47,12 @@ def _brock_seat():
 
 
 # ------------------------------------------------------------------------------------------------ the switch
-def test_the_rollout_is_brock_only_until_the_staging_proof():
-    assert DATA["single_leader"]["rollout"] == ["kanto_brock"]
-    assert CM.rollout() == {"kanto_brock"}
+# The owner, 2026-10-16: every boss stands as one leader. Lance alone is held, on his move's open P1:move_orphan
+# (data/challenge_mode.json single_leader.rollout_why). Without it a boss could leave the rollout, or Lance join it
+# with his move still able to orphan a leader, and nothing would say so.
+def test_the_rollout_is_every_boss_but_lance():
+    assert set(DATA["single_leader"]["rollout"]) == set(DATA["bosses"]) - {"kanto_league_lance"}
+    assert CM.rollout() == set(DATA["bosses"]) - {"kanto_league_lance"}
 
 
 def test_a_rollout_naming_a_boss_that_does_not_exist_fails(monkeypatch):
@@ -143,7 +146,7 @@ def test_brocks_challenge_hold_off_stands_at_his_one_spawner(files):
 
 
 # ------------------------------------------------------------------------------------------------ the others: unchanged
-@pytest.mark.parametrize("up", [u for u in DATA["bosses"] if u != "kanto_brock"])
+@pytest.mark.parametrize("up", [u for u in DATA["bosses"] if u not in CM.rollout()])
 def test_a_boss_not_in_the_rollout_keeps_its_second_spawner(files, up):
     cid = up + SFX
     assert FN % ("place_" + cid) in files
@@ -153,8 +156,9 @@ def test_a_boss_not_in_the_rollout_keeps_its_second_spawner(files, up):
 
 
 def test_the_rollout_changes_nothing_for_the_bosses_outside_it(monkeypatch):
-    bosses = CM.boss_ids(OVER)
-    with_brock = CM.spawner_files(bosses)
+    # judged on an in-memory rollout of Brock alone against none, so every other boss is outside it in both
+    _with(monkeypatch, ["kanto_brock"])
+    with_brock = CM.spawner_files(CM.boss_ids(OVER))
     _with(monkeypatch, [])
     without = CM.spawner_files(CM.boss_ids(OVER))
     cid = "kanto_brock" + SFX
@@ -236,12 +240,23 @@ def test_reapply_runs_every_retire_function_in_a_held_step_with_its_read_back(fi
     assert src.index('out.append(("R17", ') < src.index('out.append(("R17L", '), "after the restart that loads the pack"
     assert 'kind == "check" and v == "single_leader"' in src
     fns = CM.retire_functions()
-    assert fns == ["cobblers:trainers/challenge/retire_kanto_brock" + SFX]
+    roll = sorted(CM.rollout())
+    # no rollout boss moves its spawner (Lance, the one that does, is held): one retire each, nothing else
+    assert fns == ["cobblers:trainers/challenge/retire_%s%s" % (u, SFX) for u in roll]
     for f in fns:
         assert FN % f.split("challenge/", 1)[1] in files
-    (x0, z0, x1, z1), = CM.retire_hold()
-    for (x, _y, z) in (DATA["bosses"]["kanto_brock"]["spawner"]["at"], _brock_seat()):
-        assert x0 <= x - 24 and x + 24 <= x1 and z0 <= z - 24 and z + 24 <= z1
+    # each held box covers the old cell and the one spawner, the latter read from the record that builds it (a gym's
+    # arena leader.seat, the League's single_leader.normal_at), not through tools/challenge_mode.py
+    seats = {}
+    for p in sorted((ROOT / "data" / "gym_arenas").glob("gym*.json")):
+        g = json.loads(p.read_text(encoding="utf-8"))
+        seats[g["leader"]["id"]] = tuple(g["leader"]["seat"])
+    holds = CM.retire_hold()
+    assert len(holds) == len(roll)
+    for up, (x0, z0, x1, z1) in zip(roll, holds):
+        seat = seats.get(up) or tuple(DATA["bosses"][up]["single_leader"]["normal_at"])
+        for (x, _y, z) in (DATA["bosses"][up]["spawner"]["at"], seat):
+            assert x0 <= x - 24 and x + 24 <= x1 and z0 <= z - 24 and z + 24 <= z1, up
 
 
 class _World:
@@ -262,8 +277,9 @@ class _World:
         raise AssertionError(cmd)
 
 
-def test_the_read_back_passes_on_a_retired_world_and_names_each_fault():
-    s, n = tuple(DATA["bosses"]["kanto_brock"]["spawner"]["at"]), _brock_seat()
+def test_the_read_back_passes_on_a_retired_world_and_names_each_fault(monkeypatch):
+    _with(monkeypatch, ["kanto_brock"])   # the fault-naming of one boss; the world below holds only Brock's cells
+    s, n =tuple(DATA["bosses"]["kanto_brock"]["spawner"]["at"]), _brock_seat()
     one = 'rctmod:trainer_spawner{TrainerIds:["kanto_brock"]}'
     assert CM.single_leader_verify(_World({n: one})) == []
     # the second spawner left behind
