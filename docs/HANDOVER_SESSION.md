@@ -1,42 +1,44 @@
-# Handover: session 2312d085, 2026-10-15 (launch; far past the context line at the owner's request)
+# Handover: session 2312d085, 2026-10-16 (launch and first live fixes; far past the context line)
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
 ## 1. Branch
-`build/2026-10-14-launch` (worktree `.claude/worktrees/mods-182`, which holds `derived/`, `build/` and hydrated
-kits), merged to main through its PR at the end of this session (re-read: `git fetch --prune`; `gh pr list --state all
---head build/2026-10-14-launch`). Everything from #137 and #138 is on main; job D (`build/2026-10-14-rips-spawn`) is
-merged into the launch branch.
+`build/2026-10-16-gyms` in worktree `.claude/worktrees/mods-182` (holds `derived/`, `build/`, hydrated kits). Pushed with
+a draft PR (re-read with `gh pr list --head build/2026-10-16-gyms`). It stacks on `build/2026-10-15-launch-fixes`
+(PR #141, draft, head d1badbcb, FROZEN: do not push to it). PR #139 and #140 are merged. Re-read heads after
+`git fetch --prune` before quoting them: the owner merges while sessions work.
 
 ## 2. Where it stopped
-- **The LIVE server is UP** in the Terminal panel tab "LIVE server 12G (voucher)" (12G, watchdog 60000, whitelist on with
-  the old server's two names), restarted 2026-10-15 20:26 with the voucher build (draft PR #140, branch
-  `build/2026-10-15-voucher`). The coordination lock is held by `claude-launch-2026-10-15d` for the owner's in-game
-  smoke test: release it (`C:\Users\wnd\Documents\github\.cobblers-server-agent.lock`) once the owner
-  has the server, or keep it while a session works on it.
-- Rollback: `docs/launch/ROLLBACK.md` (the retired world, the D: snapshots).
-- Launch docs: `docs/launch/` (HOSTING, CLIENT_PACK, KNOWN_ISSUES, ROLLBACK); the client pack
-  `build/client/cobblers-client-0.1.0.mrpack` (sha1 72244e00) and the AllTheMons subset zip.
-- **Not clean, the owner's call:** the offline audit (town audits predate the gym overhaul; light-0 cells; the Deep city
-  2 blocks; two trails) and presence 973/1,062 (Mega dens 31 probes look inverted; dens 29 short; Night Shift slots 12).
-  All in `docs/MORNING_REPORT_2026-10-14.md`.
+- **LIVE is UP** at 12G, started with `server/scripts/start-live.ps1` (hidden window, console to
+  `logs/console-*.log`; stop with RCON `stop`). Last install 2026-10-16 10:56: prepare 242/242, install_check 0,
+  R17L 12 bosses 0 problems, watchdog back at max-tick-time=60000 (a `reapply.py run` needs -1 while it runs).
+- The coordination lock is held by `claude-launch-2026-10-15d`
+  (`C:\Users\wnd\Documents\github\.cobblers-server-agent.lock`). Release it when no session is working the server.
+- Whitelist: the owner's two names (in the server's whitelist only, never in the repo).
+- The client files for friends: `C:\Users\wnd\Documents\cobblers-client\` (the .mrpack, sha1 adb0bce6, and the
+  subset zip, sha1 b43635df, which now carries the NPC looks and the rip oval). Steps: `docs/launch/CLIENT_PACK.md`.
 
 ## 3. Waiting on the owner
-- Launch: the network route (HOSTING.md), `whitelist add` for each friend, the client pack to friends.
-- The audit verdict above; Challenge's 77 route/junior fights (not redesigned); the voucher's eight gym-clear grants (Oak's $4,000 is built, not seen in game); Cobbreeding's new 5% alpha chance.
-- Later: a VPS (24-32 GB RAM) and moving the tooling to Linux.
+- A cast test: fishing in a few areas (Lake Viltri, West Shore, the Windward shallows); before 2026-10-16 no area
+  hooked a Pokemon.
+- Dungeon fishing: deepen one canal slot's pool by RCON with the owner present and cast (STATE has the coordinates).
+- Lance's single leader (needs the challenge audit's R:summon rule widened: reviewer's call); the Agatha/Bruno/Lorelei
+  floor overlaps (open decision).
+- More NPC looks (only Brock's witness has one), the Trading Post as a CobbleDollars bank screen (integer per-item
+  prices block cheap bulk goods), near-player rip weighting (not built), faster elder-tree refill (offered, not done).
 
 ## 4. Do not rediscover
-- CobbleDollars Beta-6.1: `default_bank.json` (bare list, string prices); a merchant's shop lives at
-  `CobbleDollars.Shop`; a summon's old CobbleMerchantShop migrates but gets an EMPTY inline bank; a registry bank
-  (`{type:"registry",bank:"cobbledollars:default"}`) sticks only when set AFTER the summon (`traders.bank_line`).
-- Cobblemon 1.8.2 ships Showdown zipped (`battle_sim.showdown_read`); its type chart adds Stellar; only Venonat,
-  Venomoth (tm:megadrain) and Spinda (tm:teeterdance) changed learnsets. `find_jar` prefers the 1.8.0 snapshot jar.
-- Zamega 1.8.2 moved five stones into Mega Showdown; three Z-A stones have no recipe (the Cutters still trade them).
-- Distant Horizons v5 dropped `enableServerGeneration`; `maxGenerationRequestDistance = 0` replaces it.
-- Every tool change makes prepare stale, and install, run and strip all refuse until a full prepare (about 46 min).
-  Strip insists on the world path the last install used.
-- Lootr: loot-table containers convert on chunk load; `lootr custom-chest` from a function works (EXP-056 C2).
+- rctapi 0.16.2 Text reads only `literal`/`translatable`; a `text` key is blank, and under speech bubbles a crash
+  (`route_trainers.rct_line`). rctmod speech bubbles stay off.
+- A Cobblemon NPC look = a client variation (`assets/<ns>/bedrock/npcs/variations/`) + the class
+  `resourceIdentifier`; `ForcedResourceIdentifier` on the entity overrides it live. No look in the client = the
+  substitute doll.
+- Lootr chests naming a missing loot table: Pallet's eight were set to `minecraft:empty` on live only; the
+  `place_town.py` source fix is open.
+- The 2026-10-15 watchdog stop was a blocked console write, not a datapack (no tick function is slow).
+- RCON `execute if block` in an unloaded chunk fails: forceload around probes, then remove.
+- Shell heredocs turn `\\x..` escapes into raw bytes; write binary literals without escapes (bytes([...])).
+- Strip refuses while ANY java runs, the owner's client included.
 
 ## 5. Cost
-`python tools/session_cost.py`: this session ran far past the hand-over line at the owner's request.
+`python tools/session_cost.py`. This session ran far past the hand-over line at the owner's request; start fresh.
