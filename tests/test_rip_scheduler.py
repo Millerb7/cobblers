@@ -280,15 +280,16 @@ def test_every_default_is_confirmed_by_the_owner():
 
 
 def test_the_owners_proposal_is_what_the_file_says():
-    # 3-5 open, an hour of play each, closed once entered, anywhere including gated, a chat line naming the region
-    assert (V["open_min"], V["open_max"]) == (3, 5)
+    # 6-9 open (the owner, 2026-10-16: "we need more rifts"; job D proposed 3-5), an hour of play each, closed once
+    # entered, anywhere including gated, a chat line naming the region
+    assert (V["open_min"], V["open_max"]) == (6, 9)
     assert V["lifetime_minutes"] == 60 and V["close_when_entered"] is True
     assert V["sites"] == "anywhere" and V["gated_sites"] == "allow"
     assert "{region}" in V["announce"]
 
 
 @pytest.mark.parametrize("key,val,needle", [
-    ("open_min", 6, "above open_max"), ("open_max", 0, "open_max"), ("lifetime_jitter_minutes", 60, "jitter"),
+    ("open_min", 10, "above open_max"), ("open_max", 0, "open_max"), ("lifetime_jitter_minutes", 60, "jitter"),
     ("gated_sites", "maybe", "gated_sites"), ("announce", "A rift has opened.", "announce"), ("pass_seconds", 0, "pass_seconds"),
     ("sites", "nearby", "sites"), ("enabled", "yes", "enabled")])
 def test_a_setting_out_of_range_is_named_and_the_build_refuses(key, val, needle):
@@ -636,14 +637,20 @@ def test_two_rips_of_one_region_are_never_open_together():
     d = synthetic(DDOC, 3)
     for r in d["rips"]:
         r["region"] = "pallet_fields"
-    w = build_world(ddoc=d)
+
+    def small(rdoc):  # a pool of 3 cannot hold the live minimum; the rule under test is the region's, not the counts
+        rdoc["settings"]["open_min"]["value"], rdoc["settings"]["open_max"]["value"] = 1, 3
+    w = build_world(ddoc=d, rdoc_edit=small)
     far_player(w)
     w.call("init")
     w.call("o1")
     w.call("o2")
     w.call("o3")
     assert [w.scores[("#r%d" % i, "rp.s")] for i in (1, 2, 3)] == [1, 0, 0]
-    off = build_world(ddoc=d, rdoc_edit=edit_settings(one_open_per_region=False))
+    def small_off(rdoc):
+        small(rdoc)
+        edit_settings(one_open_per_region=False)(rdoc)
+    off = build_world(ddoc=d, rdoc_edit=small_off)
     far_player(off)
     off.call("init")
     off.call("o1")

@@ -10,14 +10,14 @@
       "origin": "builder: a switch for the scheduler as a whole. Set false and the pass does nothing (no rip opens; open ones close at their timers). At runtime: scoreboard players set #on rp.v 0|1."
     },
     "open_min": {
-      "value": 3,
+      "value": 6,
       "owner_confirmed": true,
-      "origin": "owner's proposal (job D): '3-5 open at once'. Below this many open, the scheduler opens one every pass (5 s) until it is reached."
+      "origin": "the owner, 2026-10-16: 'we need more rifts ... there wasnt many early game' (was 3, job D's '3-5 open at once'); 6 and 9 are Claude's numbers, set live by RCON the same day. Below this many open, the scheduler opens one every pass (5 s) until it is reached."
     },
     "open_max": {
-      "value": 5,
+      "value": 9,
       "owner_confirmed": true,
-      "origin": "owner's proposal (job D): '3-5 open at once'. The cap: nothing opens while this many are open. Between open_min and open_max a further one opens at random (extra_open_every_minutes)."
+      "origin": "the owner, 2026-10-16: more rifts (was 5); Claude's number. The cap: nothing opens while this many are open. Between open_min and open_max a further one opens at random (extra_open_every_minutes)."
     },
     "lifetime_minutes": {
       "value": 60,
