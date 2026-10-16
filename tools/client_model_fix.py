@@ -796,6 +796,19 @@ def build_server_pack(instance: Path, out: Path, record_paths=False) -> dict:
     manifest = {"cobblemon": cobblemon_jar(instance).name, "donor": derived, "covers": covered,
                 "cobblemon_files": {d: s for d, (_, s, _) in sorted(files.items())},
                 "donor_files": sorted(sub["files"])}
+    # our NPC looks (data/npc_looks.json): one variation per look, textures from packs players already have
+    looks = json.loads((Path(__file__).resolve().parent.parent / "data" / "npc_looks.json").read_text(encoding="utf-8"))
+    for name, lk in sorted(looks["looks"].items()):
+        ns, path = name.split(":", 1)
+        entries["assets/%s/bedrock/npcs/variations/%s.json" % (ns, path)] = json.dumps(
+            {"name": name, "order": 0, "variations": [{"aspects": [], "layers": [], "model": lk["model"],
+                                                       "poser": lk["poser"], "texture": lk["texture"]}]},
+            separators=(",", ":")).encode()
+    # the dungeon rip's oval (tools/rip_pack.py), so players install one zip, not two
+    import rip_pack
+    for name, data in rip_pack.files(json.loads(rip_pack.DATA.read_text(encoding="utf-8"))).items():
+        if name != "pack.mcmeta":
+            entries[name] = data
     entries["cobblers-client-pack.json"] = json.dumps(manifest, indent=1).encode()
     write_zip(out, entries)
     digest = sha1(out)

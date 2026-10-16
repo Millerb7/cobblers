@@ -107,9 +107,31 @@ def test_bare_class_is_the_doll(tmp_path):
     assert rep["problems"] and "no client variation is named cobblers:npc_ursaluna_den_watcher" in rep["problems"][0]
 
 
+def looks_zip(tmp_path):
+    """Our NPC looks (data/npc_looks.json) as the client sees them: the variation the subset zip ships, plus a stand-in
+    for the texture the COBBLEVERSE RCTmod RP provides (not committed: no-redistribution), 64x64 like the real one."""
+    import struct, zlib, zipfile
+    doc = json.loads((ROOT / "data" / "npc_looks.json").read_text(encoding="utf-8"))
+    raw = b"".join(bytes(1 + 4 * 64) for _ in range(64))  # 64 rows: filter byte 0, then 64 RGBA pixels
+    chunk = lambda k, d: struct.pack(">I", len(d)) + k + d + struct.pack(">I", zlib.crc32(k + d))  # noqa: E731
+    png = (bytes([137]) + b"PNG" + bytes([13, 10, 26, 10]) + chunk(b"IHDR", struct.pack(">IIBBBBB", 64, 64, 8, 6, 0, 0, 0))
+           + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b""))
+    out = tmp_path / "looks.zip"
+    with zipfile.ZipFile(out, "w") as z:
+        for name, lk in doc["looks"].items():
+            ns, path = name.split(":", 1)
+            z.writestr("assets/%s/bedrock/npcs/variations/%s.json" % (ns, path), json.dumps(
+                {"name": name, "order": 0, "variations": [{"aspects": [], "layers": [], "model": lk["model"],
+                                                           "poser": lk["poser"], "texture": lk["texture"]}]}))
+            tns, tpath = lk["texture"].split(":", 1)
+            z.writestr("assets/%s/%s" % (tns, tpath), png)
+    return out
+
+
 def test_every_generated_class_resolves(tmp_path):
+    # with our looks on top (a player with the subset zip and the COBBLEVERSE RCTmod RP): every class resolves
     packs = generate(tmp_path)
-    rep = A.audit(packs, JAR)
+    rep = A.audit(packs, JAR, [looks_zip(tmp_path)])
     assert rep["problems"] == [], rep["problems"][:5]
     assert rep["classes"] >= 30
     for r in rep["rows"]:

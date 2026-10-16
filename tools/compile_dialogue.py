@@ -114,6 +114,21 @@ import levelcap_pack as LC  # the NPC-battle level-cap check's function and tag 
 
 ROOT = Path(__file__).resolve().parent.parent
 
+
+def npc_look(npc, data_dir=None):
+    """The resourceIdentifier an NPC's class names: its look in data/npc_looks.json (a client variation that
+    tools/client_model_fix.py --server-pack ships), else Cobblemon's standard model."""
+    f = Path(data_dir or ROOT / "data") / "npc_looks.json"
+    if not f.exists():
+        return NPC_RESOURCE
+    doc = json.loads(f.read_text(encoding="utf-8"))
+    look = doc.get("npcs", {}).get(npc)
+    if look is None:
+        return NPC_RESOURCE
+    if look not in doc.get("looks", {}):
+        raise Unsupported("npc %s names look %r, which data/npc_looks.json does not define" % (npc, look))
+    return look
+
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_dialogue"
 NS = "cobblers"
 # The client variation every NPC class renders as (see "model" above). Shipped in the Cobblemon jar itself, so the
@@ -647,7 +662,7 @@ def compile_conversation(conv, quests, fields, data_dir=None):
         first = next((n.get("speaker") for n in conv["nodes"] if n.get("speaker")), None)
         name = conv.get("npc_name") or (c.speaker_name(first) if first else None) or npc
         files["data/%s/npcs/%s.json" % (NS, npc)] = {
-            "hitbox": "player", "names": [name], "resourceIdentifier": NPC_RESOURCE,
+            "hitbox": "player", "names": [name], "resourceIdentifier": npc_look(npc, data_dir),
             "interaction": {"type": "dialogue", "dialogue": "%s:%s" % (NS, conv["id"])},
             "canDespawn": False, "isInvulnerable": True, "isMovable": False, "isLeashable": False,
             "allowProjectileHits": False,

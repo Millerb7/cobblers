@@ -352,7 +352,12 @@ def test_server_pack_holds_exactly_the_derived_files_and_its_notices(instance, t
     with zipfile.ZipFile(out) as z:
         names = set(z.namelist())
     donor_in_zip = set(recorded["paths"]) - set(recorded["left_to_stack"])
-    assert names == Instance.COBBLEMON_FILES | donor_in_zip | Instance.META
+    # plus our own files: the NPC looks (data/npc_looks.json) and the rip's oval (tools/rip_pack.py)
+    import rip_pack
+    looks = json.loads((CMF.Path(CMF.__file__).resolve().parent.parent / "data" / "npc_looks.json").read_text(encoding="utf-8"))
+    ours = {"assets/%s/bedrock/npcs/variations/%s.json" % tuple(n.split(":", 1)) for n in looks["looks"]}
+    ours |= set(rip_pack.files(json.loads(rip_pack.DATA.read_text(encoding="utf-8")))) - {"pack.mcmeta"}
+    assert names == Instance.COBBLEMON_FILES | donor_in_zip | Instance.META | ours
     assert set(m["cobblemon_files"]) == Instance.COBBLEMON_FILES and set(m["donor_files"]) == donor_in_zip
     assert not any(n.startswith(tuple(Instance.UNRELATED)) for n in names)
 

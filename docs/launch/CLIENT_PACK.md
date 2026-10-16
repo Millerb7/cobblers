@@ -32,7 +32,7 @@ chose to give it to players directly. Without it the game works; about 43 specie
      MysticMons RP, OJsAnimations RP, PlanetaCobblemon RP, Pokemans RP, TDmon RP (and, optionally, ATMxMSD RP).
    - from its `overrides/config/fancymenu/`: the `assets/` and `slideshows/` folders → your instance's
      `config/fancymenu/` (the title screen's images; without them the menu is black with magenta squares).
-4. Copy `cobblers-client-AllTheMons-subset.zip` into `resourcepacks/`.
+4. Copy `cobblers-client-AllTheMons-subset.zip` into `resourcepacks/`. It also carries our NPC looks (Brock, data/npc_looks.json; without it he is a substitute doll) and the dungeon rip's oval (without it a rip is a plain purple shard).
 5. Launch once, open **Options → Resource Packs**, and make sure the packs are enabled (the subset zip at the top).
 6. **Multiplayer → Add Server**, the address from the owner (see `docs/launch/HOSTING.md`). Your Minecraft username
    must be on the whitelist: send it to the owner first.
