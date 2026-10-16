@@ -16,6 +16,13 @@ It owns three parts of data/spawns.json and nothing else:
                        Fails closed on an item the jar does not name, a listed species that spawns in no such entry,
                        a species past max_total_percent, and held_items on a habitat-block entry
 
+  fishing              every fishing_coordinate_boxes entry (docs/mechanics/FISHING.md; the owner, 2026-10-16: "make
+                       them feel unique ... incorporate what you see in the water but have other mons as well"): a
+                       table's `fishing` half and design marine_fishing per sea band, expanded as the other halves are and
+                       standing at position "fishing". generate_fishing fails closed on a fishable area with no list, a
+                       swimmer of the area not on the rod or omitted with a reason, a list with nothing of its own, an
+                       empty fishing bucket, a role or condition outside rules.fishing, and two areas with the same list
+
 Every other entry and habitat (the elder and sapling bird nests, the Route 1 mansion, the unplaced pools, the Windward
 Sea's marine bands, the Mt Clay outflow waterway) is copied through untouched, in its place.
 
@@ -135,8 +142,13 @@ VANILLA_HELD = {"minecraft:bone", "minecraft:snowball", "minecraft:gold_block"}
 # the Nether's tables (data/encounter_design.json "nether"): one per (table, ring), keyed on the dimension, a biome or a
 # structure, and the ring's boxes; compiled to spawn_pool_world/nether/ by tools/compile_spawns.py build_nether
 NETHER = "nether_ring_boxes"
+# fishing (docs/mechanics/FISHING.md): a sub-region table's `fishing` half and design marine_fishing per sea band, compiled
+# by tools/compile_spawns.py as spawnablePositionType "fishing" over the area's own boxes
+FISHING = "fishing_coordinate_boxes"
+MARINE = "marine_coordinate_boxes"
 # the spawn mechanisms tools/compile_spawns.py writes as spawn_pool_world details, which carry heldItems
-POOL_WORLD = (SURFACE, "marine_coordinate_boxes", "waterway_coordinate_boxes", NETHER)
+POOL_WORLD = (SURFACE, MARINE, "waterway_coordinate_boxes", NETHER, FISHING)
+FISHING_BUCKETS = ("common", "uncommon", "rare", "ultra-rare")
 # The blocks a Nether heart may need nearby (Cobblemon 1.8.0 AreaTypeSpawningCondition.neededNearbyBlocks: the position
 # fails unless one listed block is among its nearby blocks, within maxNearbyBlocksHorizontalRange 4 and
 # maxNearbyBlocksVerticalRange 2 in our config/cobblemon/main.json; docs/research/notes/spawn-dimension-condition-1.8.0.md).
@@ -739,6 +751,190 @@ def build_rare_spawns(dex, rules, design, dolls):
     return out, problems
 
 
+# ------------------------------------------------------------------ fishing (docs/mechanics/FISHING.md)
+
+def build_fishing(dex, rules, where, tier, band, mtier, families, roster, omits, drops=None):
+    """([row], [problem]) for one area's fishing list (the owner, 2026-10-16: "make them feel unique ... incorporate what
+    you see in the water but have other mons as well").
+
+    Each family is expanded as a land or water family is (expand_family, the area's band and maturity tier), every stage
+    standing at position "fishing". Fails closed on: a role outside rules.fishing.roles (no find, no presence); a
+    condition outside rules.fishing.conditions; a family no stage of which spawns in the band; a stage outside the band
+    or over the tier cap; one stage twice with different buckets or conditions; a family of the area's water roster
+    (`roster`, family roots) that is neither on the rod nor in `omits` with a reason; an omit the roster does not hold,
+    or that is on the rod after all; a list with no family beyond the roster (nothing only the rod gives); and a list
+    that leaves one of the four fishing buckets empty."""
+    fr = rules.get("fishing") or {}
+    roles, conds = set(fr.get("roles") or []), set(fr.get("conditions") or [])
+    cap, _ = tier_rules(rules, tier)
+    rows, problems, named = [], [], set()
+    for item in families:
+        try:
+            species, role, weight, cond = parse_family(item, rules, where + " fishing")
+        except DesignError as ex:
+            problems.append(str(ex))
+            continue
+        if role not in roles:
+            problems.append("%s fishing: %s has role %s; a fishing role is one of %s" % (where, species, role, sorted(roles)))
+            continue
+        bad = sorted(set(cond) - conds)
+        if bad:
+            problems.append("%s fishing: %s carries %s; a fishing condition is one of %s" % (where, species, bad, sorted(conds)))
+            continue
+        if not dex.has(species):
+            problems.append("%s fishing: %s is not a species in the Cobblemon jar" % (where, species))
+            continue
+        named.add(dex.family(species))
+        try:
+            stages = expand_family(dex, rules, tier, band, species, role, weight, where + " fishing", mtier)
+        except IndexError:
+            stages = []
+        if stages and drops:
+            stages = drop_stages(stages, {"drop_stages": drops}, where, set())
+        if not stages:
+            problems.append("%s fishing: no stage of %s spawns inside the band %s" % (where, species, list(band)))
+            continue
+        for name, lo, hi, w, reason in stages:
+            if hi > cap or lo < band[0] or hi > band[1]:
+                problems.append("%s fishing: %s spawns %d-%d, outside band %s or over the tier %d cap %d"
+                                % (where, name, lo, hi, list(band), tier, cap))
+                continue
+            rows.append({"name": name, "bucket": rules["roles"][role]["bucket"], "level": "%d-%d" % (lo, hi), "weight": w,
+                         "conditions": dict(cond), "reason": "fishing: " + reason, "position": "fishing",
+                         "family": dex.family(species), "priority": role, "role": role, "half": "fishing"})
+    merged, order = {}, []
+    for r in rows:
+        k = r["name"]
+        if k not in merged:
+            merged[k] = r
+            order.append(k)
+            continue
+        a = merged[k]
+        if (a["bucket"], a["conditions"]) != (r["bucket"], r["conditions"]):
+            problems.append("%s fishing: %s comes twice, in %s and %s; the compiled ids would collide"
+                            % (where, k, a["bucket"], r["bucket"]))
+            continue
+        alo, ahi = map(int, a["level"].split("-"))
+        blo, bhi = map(int, r["level"].split("-"))
+        a["level"] = "%d-%d" % (min(alo, blo), max(ahi, bhi))
+        a["weight"] = round(a["weight"] + r["weight"], 1)
+        a["reason"] += "; also " + r["reason"]
+    omits = dict(omits or {})
+    for sp in sorted(roster - named - set(omits)):
+        problems.append("%s fishing: %s swims here (the area's water roster) and is not on the rod; name it or omit it "
+                        "with a reason" % (where, sp))
+    for sp in sorted(set(omits) - roster):
+        problems.append("%s fishing: omits %s, which the area's water roster does not hold" % (where, sp))
+    for sp in sorted(set(omits) & named):
+        problems.append("%s fishing: omits %s and names it too" % (where, sp))
+    for sp, why in sorted(omits.items()):
+        if not isinstance(why, str) or not why.strip():
+            problems.append("%s fishing: the omit of %s carries no reason" % (where, sp))
+    if not named - roster:
+        problems.append("%s fishing: every family is one the area's water already shows; the rod gives nothing of its own"
+                        % where)
+    empty = [b for b in FISHING_BUCKETS if not any(r["bucket"] == b for r in merged.values())]
+    if empty:
+        problems.append("%s fishing: bucket %s holds nothing (rules.fishing.buckets_required)" % (where, ", ".join(empty)))
+    return [merged[k] for k in order], problems
+
+
+def marine_band_tier(rules, band):
+    """A sea band's tier: its own (data/marine_seas.json bands), else the lowest tier whose cap holds the band's top (the
+    Windward Sea's bands, hand-authored without one)."""
+    if isinstance(band.get("tier"), int):
+        return band["tier"]
+    top = band["level_band"]["maximum"]
+    fits = sorted(int(k) for k, t in rules["tiers"].items() if t["cap"] >= top)
+    if not fits:
+        raise DesignError("sea band %s: no tier's cap holds its top level %d" % (band["id"], top))
+    return fits[0]
+
+
+def generate_fishing(design, spawns, dex, rules, bands, dolls, gen_rows):
+    """({(FISHING, scope): [row]}, {scope: "subregion" | "marine"}, [problem]) for every table's `fishing` half and every
+    sea band's design marine_fishing record.
+
+    A sub-region table either has a fishing half or is named in rules.fishing.dry with the measurement that makes it dry;
+    a table with a water half is never dry. Every band of data/spawns.json marine_zones has a marine_fishing record, and
+    a record names a band that exists. No two areas share one list of species (the owner: "so i have a reason to fish
+    everywhere"); compared on the authored species, so two lists that differ only in roles or weights still collide."""
+    fr = rules.get("fishing")
+    if not isinstance(fr, dict):
+        return {}, {}, ["rules.fishing is missing: the fishing halves cannot be checked"]
+    dry = fr.get("dry") or {}
+    tables = design["tables"]
+    problems, rows, kind, lists = [], {}, {}, {}
+    for tid in sorted(set(dry) - set(tables)):
+        problems.append("rules.fishing.dry names %s, which is not a design table" % tid)
+    for tid, t in tables.items():
+        has = "fishing" in t
+        if tid in dry and has:
+            problems.append("%s: has a fishing half and is in rules.fishing.dry" % tid)
+            continue
+        if tid in dry:
+            if t.get("water"):
+                problems.append("%s: is in rules.fishing.dry but its water half has swimmers" % tid)
+            if not isinstance(dry[tid], str) or not dry[tid].strip():
+                problems.append("%s: rules.fishing.dry gives no measurement" % tid)
+            continue
+        if not has:
+            problems.append("%s: no fishing half and not in rules.fishing.dry (every fishable area has a fishing list)" % tid)
+            continue
+        if tid not in bands:
+            continue                      # the table did not build; its own problem is already reported
+        mtier = min(9, t["tier"] + rules.get("off_path_maturity_step", 0)) if t.get("placement") == "off" else t["tier"]
+        # what swims there: the water half's families whose stages stand IN the water (a shore family, a starter at the
+        # water's edge, is seen on the bank and is not the rod's)
+        roster = {r["family"] for r in gen_rows.get(tid, []) if r["half"] == "water" and r["position"] in WATER_POS}
+        rs, ps = build_fishing(dex, rules, tid, t["tier"], bands[tid], mtier, t["fishing"], roster,
+                               t.get("fishing_omits"), t.get("drop_stages"))
+        problems += ps
+        rows[(FISHING, tid)], kind[tid] = rs, "subregion"
+        lists[tid] = t["fishing"]
+    mf = {k: v for k, v in (design.get("marine_fishing") or {}).items() if not k.startswith("_")}
+    sea = {b["id"]: b for z in spawns.get("marine_zones") or [] for b in z["bands"]}
+    for bid in sorted(set(mf) - set(sea)):
+        problems.append("marine_fishing names %s, which no marine zone band defines" % bid)
+    for bid, b in sea.items():
+        rec = mf.get(bid)
+        if rec is None:
+            problems.append("sea band %s: no marine_fishing record (every fishable area has a fishing list)" % bid)
+            continue
+        try:
+            tier = marine_band_tier(rules, b)
+        except DesignError as ex:
+            problems.append(str(ex))
+            continue
+        band = (b["level_band"]["minimum"], b["level_band"]["maximum"])
+        roster = {dex.family(e["species"]) for e in spawns["entries"]
+                  if e["mechanism"] == MARINE and e["scope"] == bid and not e.get("heart") and e.get("ambient")}
+        rs, ps = build_fishing(dex, rules, bid, tier, band, tier, rec.get("fishing") or [], roster, rec.get("omits"))
+        problems += ps
+        rows[(FISHING, bid)], kind[bid] = rs, "marine"
+        lists[bid] = rec.get("fishing") or []
+    seen = {}
+    for area, fams in sorted(lists.items()):
+        key = frozenset(str(f[0]).strip().lower() for f in fams)
+        if key in seen:
+            problems.append("%s and %s fish the same list %s; every area's catch is its own" % (seen[key], area, sorted(key)))
+        else:
+            seen[key] = area
+    for (_, scope), rs in rows.items():
+        for r in rs:
+            if dex.split(r["name"])[0] in dolls:
+                problems.append("%s fishing: %s is drawn by the client as the substitute doll "
+                                "(modpack/manifest/client-pack-atm-subset.json)" % (scope, r["name"]))
+    return rows, kind, problems
+
+
+def fishing_entry_of(r, scope, area):
+    return {"id": "fishing.%s.%s" % (scope, r["name"].replace(" ", "_")), "species": r["name"], "bucket": r["bucket"],
+            "level": r["level"], "weight": r["weight"], "ambient": True, "scope": scope, "mechanism": FISHING,
+            "fishing_area": area, "conditions": r["conditions"], "eligibility_reason": r["reason"],
+            "spawnable_position": "fishing"}
+
+
 def entry_of(dex, r, scope, kind, authored, heart=None, alpha=False):
     sid = r["name"].replace(" ", "_")
     e = {"id": ("surface.%s.%s" if kind == SURFACE else "habitat.%s.%s") % (scope, ("heart." + sid) if heart else sid),
@@ -1165,6 +1361,8 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
                                 "(modpack/manifest/client-pack-atm-subset.json)" % (pid, r["name"]))
     rare_rows, rare_problems = build_rare_spawns(dex, rules, design, dolls)
     problems += rare_problems
+    fish_rows, fish_kind, fish_problems = generate_fishing(design, spawns, dex, rules, bands, dolls, gen_rows)
+    problems += fish_problems
     if problems:
         raise DesignError("\n".join(problems))
 
@@ -1185,8 +1383,11 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
     if nether_problems:
         raise DesignError("\n".join(nether_problems))
     gen_entries.update(nether_gen)
-    # a Nether entry in the file that the design no longer produces is dropped, not copied through
-    stale_nether = {(e["mechanism"], e["scope"]) for e in spawns["entries"] if e["mechanism"] == NETHER} - set(nether_gen)
+    for k, rs in fish_rows.items():
+        gen_entries[k] = [fishing_entry_of(r, k[1], fish_kind[k[1]]) for r in rs]
+    # a Nether or fishing entry in the file that the design no longer produces is dropped, not copied through
+    stale_nether = {(e["mechanism"], e["scope"]) for e in spawns["entries"]
+                    if e["mechanism"] in (NETHER, FISHING)} - set(nether_gen) - set(fish_rows)
     entries, done = [], set()
     for e in spawns["entries"]:
         k = (e["mechanism"], e["scope"])
@@ -1289,6 +1490,10 @@ def main(argv=None):
         len(sel), "/".join(str(len(v["species"])) for v in sel.values()))
     summary += "; %d Nether tables, %d entries" % (len(out.get("nether_tables") or []),
                                                   sum(1 for e in out["entries"] if e["mechanism"] == NETHER))
+    fishing = [e for e in out["entries"] if e["mechanism"] == FISHING]
+    summary += "; %d fishing areas (%d sub-regions, %d sea bands), %d entries" % (
+        len({e["scope"] for e in fishing}), len({e["scope"] for e in fishing if e["fishing_area"] == "subregion"}),
+        len({e["scope"] for e in fishing if e["fishing_area"] == "marine"}), len(fishing))
     if a.check:
         same = spawns_path.read_text(encoding="utf-8") == text
         print("%s: %s" % ("identical" if same else "DIFFERS from the design", summary))

@@ -102,7 +102,12 @@ KINDS = ("subregions", "routes", "marine", "waterways")
 # NOT covered by this audit: the Nether's tables (spawn_pool_world/nether/, docs/mechanics/NETHER_ENCOUNTERS.md). Their
 # two rings and hearts-by-block are not ENCOUNTER_DESIGN.md's overworld tiers, and a structure table (fortress, bastion,
 # shrine ring) is a layer, not an area with an ultra-rare and a heart; tests/test_nether_encounters.py grades them.
-NOT_GRADED = ("nether",)
+# NOT covered either: the fishing lists (spawn_pool_world/fishing/, docs/mechanics/FISHING.md, 2026-10-16). A fishing
+# detail competes only with fishing details, on the rod's own buckets, so this audit's world-spawn tiers do not grade it.
+# Their rules (all four buckets filled, the area's swimmers on the rod, no two areas alike) fail closed in the generator,
+# tools/build_encounters.py generate_fishing; an independent grade of them is owed (added by the implementing session,
+# not by the audit's author: say so to whoever owns this file).
+NOT_GRADED = ("nether", "fishing")
 WATER_WORDS = ("lake", "waters", "river", "pond", "creek", "creeks", "tarn")
 
 
