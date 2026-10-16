@@ -8,7 +8,8 @@
       anything without data-section is always shown. The choice is the page's #hash (#KEY; no hash is "all"), so a
       filter can be linked, and a link to an anchor inside a hidden section shows that section.
    3. the search box: <input data-search="SELECTOR"> hides every SELECTOR match whose data-name (or, without one, its
-      text) does not contain what is typed; <span data-search-count> beside it says how many still match.
+      text) does not contain what is typed; <span data-search-count> beside it says how many still match; a [data-search-group] holding matches only
+      (a card, a section) is hidden when none of them is left.
    tools/player_site.py filter_nav() and search_box() emit the markup, so no guide writes it twice. */
 (function () {
   var d = document.documentElement;
@@ -73,6 +74,11 @@
           var hit = !t || (r.getAttribute('data-name') || r.textContent).toLowerCase().indexOf(t) >= 0;
           r.classList.toggle('miss', !hit);
           if (hit) n++;
+        });
+        // a [data-search-group] (a card, a section) with no matching entry left inside is hidden with them
+        all('[data-search-group]').forEach(function (g) {
+          if (!g.querySelector(q.getAttribute('data-search'))) return;
+          g.classList.toggle('miss', !!t && !g.querySelector(q.getAttribute('data-search') + ':not(.miss)'));
         });
         if (count) count.textContent = t ? n + (n === 1 ? ' entry matches' : ' entries match') : '';
       }
