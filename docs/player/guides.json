@@ -59,6 +59,14 @@
       "order": 35
     },
     {
+      "file": "fishing.html",
+      "title": "Fishing",
+      "label": "Fishing",
+      "description": "What you can catch with a rod in every area and sea, how often it bites, and at what levels.",
+      "generator": "tools/player_guide_fishing.py",
+      "order": 38
+    },
+    {
       "file": "dungeons.html",
       "title": "Dungeons",
       "label": "Dungeons",
