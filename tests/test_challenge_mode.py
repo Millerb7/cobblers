@@ -102,11 +102,11 @@ def test_a_challenge_boss_speaks_every_refusal_and_its_battle_lines(files, up):
     d = files["data/rctmod/dialogs/trainers/single/%s.json" % (up + SFX)]
     refusals = json.loads((ROOT / "data" / "trainer_refusals.json").read_text(encoding="utf-8"))["lines"]
     for ctx, text in refusals.items():
-        assert d[ctx] == [{"text": text}], ctx
+        assert d[ctx] == [{"literal": text}], ctx
     for ctx in ("on_battle_start", "on_battle_won", "on_battle_lost", "trainer_won", "trainer_lost", "on_cooldown"):
         assert d[ctx], ctx
     if "league" in up or "champion" in up:
-        assert all("text" in x for x in d["on_battle_start"]), "the League's Challenge copy speaks our lines"
+        assert all("literal" in x for x in d["on_battle_start"]), "the League's Challenge copy speaks our lines"
     else:
         lang = DATA["bosses"][up]["lang"]
         assert d["on_battle_start"][0] == {"translatable": "dialogs.rctmod.%s.on_battle_start.0" % lang}

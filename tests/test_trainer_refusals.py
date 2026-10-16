@@ -65,7 +65,7 @@ def test_every_built_rctmod_dialog_file_holds_every_refusal_key(built):
         assert not missing, "%s lacks %s" % (path, sorted(missing))
         for k in REFUSALS:
             assert isinstance(d[k], list) and d[k], (path, k)
-            assert all(isinstance(x.get("text"), str) and x["text"].strip() for x in d[k]), (path, k)
+            assert all(isinstance(x.get("literal"), str) and x["literal"].strip() for x in d[k]), (path, k)
 
 
 # Without it a trainer we seat would speak rctmod's default (or nothing) instead of a file we checked, or a League
@@ -88,9 +88,9 @@ def test_a_files_own_line_wins_over_a_refusal_line(tmp_path, monkeypatch):
     p = tmp_path / "trainer_refusals.json"
     p.write_text(json.dumps(doc), encoding="utf-8")
     monkeypatch.setattr(RT, "REFUSALS", p)
-    out = RT.with_refusals({"on_battle_start": [{"text": "own"}]})
-    assert out["on_battle_start"] == [{"text": "own"}]
-    assert out["over_level_cap"] == [{"text": doc["lines"]["over_level_cap"]}]
+    out = RT.with_refusals({"on_battle_start": [{"literal": "own"}]})
+    assert out["on_battle_start"] == [{"literal": "own"}]
+    assert out["over_level_cap"] == [{"literal": doc["lines"]["over_level_cap"]}]
 
 
 # ------------------------------------------------------------------------------------------------ the over-cap notice

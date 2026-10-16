@@ -132,6 +132,13 @@ REFUSALS = ROOT / "data" / "trainer_refusals.json"
 HOLDOFF_TOLD = "cobblers_holdoff_told"
 
 
+
+def rct_line(text):
+    """One rctmod dialog line. rctapi 0.16.2's Text reads only `literal` or `translatable` (api/util/Text.class
+    fields); a `text` key is read as neither, so the line was blank in chat and its speech bubble a null that crashed
+    the battle tick (live, 2026-10-15)."""
+    return [{"literal": text}]
+
 def refusals():
     return json.loads(REFUSALS.read_text(encoding="utf-8"))
 
@@ -139,7 +146,7 @@ def refusals():
 def with_refusals(own):
     """A dialog file we write REPLACES rctmod's default whole (data/trainer_refusals.json `why`): every refusal context
     TrainerMob.replyTo can ask for goes in, or that refusal is silent. The file's own lines win."""
-    out = {k: [{"text": v}] for k, v in refusals()["lines"].items()}
+    out = {k: rct_line(v) for k, v in refusals()["lines"].items()}
     out.update(own)
     return out
 
@@ -362,7 +369,7 @@ def league_lines(upstream):
             if e.get("upstream_trainer_id") != upstream or not e.get("dialogue_text"):
                 continue
             d = lines_of(recs[e["id"]], e)
-            ln = lambda text: [{"text": text}]
+            ln = rct_line
             return {"on_battle_start": ln(d["pre"]), "on_battle_lost": ln(d["player_win"]),
                     "trainer_lost": ln(d["player_win"]), "on_battle_won": ln(d["player_loss"]),
                     "trainer_won": ln(d["player_loss"]), "on_cooldown": ln(COOLDOWN_LINE[e.get("cooldown", "league")])}
@@ -416,7 +423,7 @@ def files():
                         "forceBattleMaxLevelDiff": 10})
         out["data/rctmod/mobs/trainers/single/%s.json" % tid] = mob
         d = lines_of(r, s)
-        line = lambda text: [{"text": text}]
+        line = rct_line
         out["data/rctmod/dialogs/trainers/single/%s.json" % tid] = with_refusals({
             "on_battle_start": line(d["pre"]), "on_battle_lost": line(d["player_win"]), "trainer_lost": line(d["player_win"]),
             "on_battle_won": line(d["player_loss"]), "trainer_won": line(d["player_loss"]),
@@ -473,7 +480,7 @@ def files():
         if not entry.get("dialogue_text"):
             continue
         d = lines_of(rec, entry)
-        ln = lambda text: [{"text": text}]
+        ln = rct_line
         # with_refusals: this file replaces upstream's whole dialog, and upstream's carried every refusal context;
         # without them an Elite Four member refuses a player who has not beaten the one before in silence
         out["data/rctmod/dialogs/trainers/single/%s.json" % upstream] = with_refusals({

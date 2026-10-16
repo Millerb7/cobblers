@@ -135,10 +135,10 @@
 	forceBattleMaxLevelDiff = 12
 	#━━━━━━━━━━
 	#If enabled trainer messages are displayed as speech bubbles above their head.
-	showMessagesAsSpeechBubble = true
+	showMessagesAsSpeechBubble = false
 	#━━━━━━━━━━
 	#If enabled trainer messages are displayed in the chat.
-	showMessagesInChat = false
+	showMessagesInChat = true
 
 [Players]
 	#━━━━━━━━━━

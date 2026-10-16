@@ -99,7 +99,7 @@ def test_dialog_keys_carry_the_records_own_lines(files, tid):
     want = {**REFUSAL_LINES, **want}
     assert set(d) == set(want)
     for k, line in want.items():
-        assert d[k] == [{"text": line}], k
+        assert d[k] == [{"literal": line}], k
 
 
 # Without it the defeat field is set by another trainer's win, or by a count the first win does not reach (the same
