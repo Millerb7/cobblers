@@ -250,7 +250,7 @@ def test_guardian_dialog_keys_carry_the_records_lines(files, g):
     # plus every refusal context rctmod can ask for, as data/trainer_refusals.json records them (the file replaces
     # rctmod's default whole, so a missing one refuses in silence); the guardian's own lines win
     want = {**_load("trainer_refusals.json")["lines"], **want}
-    assert d == {k: [{"text": v}] for k, v in want.items()}
+    assert d == {k: [{"literal": v}] for k, v in want.items()}
 
 
 def _key(field):
