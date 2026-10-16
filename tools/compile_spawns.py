@@ -35,6 +35,12 @@ waterway covers, split into bands by distance from land (marine_bands below); ev
 Deep, the Frostwater Shelf, the Pine Strait, the Eastern Reach, the Southern Shallows, the Sunset Sea; 2026-10-12) are
 authored in data/marine_seas.json and generated into marine_zones by tools/marine_seas.py.
 
+Fishing (docs/mechanics/FISHING.md, entries with mechanism fishing_coordinate_boxes, tools/build_encounters.py): an
+area's list as spawnablePositionType "fishing" details, ids <area>_f<n>_<species>, in spawn_pool_world/fishing/subregions/
+<sub>.json or spawn_pool_world/fishing/marine/<band>.json (build_fishing): a sub-region's over its whole polygon raster
+(corridor and waterway cells included, spawn-free zones cut), a sea band's over the band's boxes. Those are the cells tools/suppress_inherited_spawns.py --subregions empties of every inherited detail, fishing
+included, so the list replaces the inherited fishing there rather than sitting beside it.
+
 Nether files (spawn_pool_world/nether/<table>_<ring>.json), from spawns.json nether_tables and the entries with mechanism
 nether_ring_boxes (tools/build_encounters.py, from data/encounter_design.json "nether"): each table's roster over its
 ring's boxes, bound to minecraft:the_nether by the entries' own conditions, never with a forced canSeeSky (build_nether).
@@ -133,6 +139,46 @@ def open_sky_forced(entry):
     if not isinstance(dims, list) or not all(isinstance(d, str) and ":" in d for d in dims):
         raise SystemExit("%s: conditions.dimensions must be a list of dimension ids, not %r" % (entry.get("species"), dims))
     return bool(dims) and set(dims) == {OVERWORLD}
+
+
+FISHING = "fishing_coordinate_boxes"
+
+
+def fishing_condition(min_x, max_x, min_z, max_z, entry):
+    """A fishing spawn condition: the box and whatever the entry authored, bound to the overworld, nothing forced.
+
+    Cobblemon 1.8.0 FishingSpawningCondition.fits(FishingSpawnablePosition) calls SpawningCondition.fits first
+    (invokespecial, read from the jar's bytecode 2026-10-16), and that tests minX/maxX/minZ/maxZ against the position,
+    which FishingSpawnablePosition sets to the bobber's BlockPos: so the box is where the bobber lands, not where the
+    player stands. No canSeeSky is forced: the bobber's own sky flag is world.canSeeSky(pos), and a pond under a bridge,
+    an overhang or a tree should still fish. Not seen in game."""
+    cond = {"minX": min_x, "maxX": max_x, "minZ": min_z, "maxZ": max_z}
+    cond.update(entry.get("conditions") or {})
+    bind_dimension(cond)
+    return cond
+
+
+def fishing_details(area, boxes, entries):
+    """The fishing spawn details of one area (a sub-region or a sea band) over its boxes, ids <area>_f<n>_<species>."""
+    out = []
+    for e in entries:
+        # read directly, not through position_type(): the mechanism is what makes a detail a fishing one
+        if e.get("spawnable_position") != "fishing":
+            raise SystemExit("%s: a fishing entry stands at %r, not fishing" % (e["id"], e.get("spawnable_position")))
+    for n, b in enumerate(boxes):
+        for e in entries:
+            out.append({"id": "%s_f%04d_%s" % (area, n, e["species"].replace(" ", "_")), "pokemon": e["species"],
+                        "type": "pokemon", "spawnablePositionType": "fishing", "bucket": e["bucket"], "level": e["level"],
+                        "weight": e["weight"], "condition": fishing_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
+    return out
+
+
+def fishing_by_scope(spawns):
+    by = {}
+    for e in spawns["entries"]:
+        if e["mechanism"] == FISHING and e["ambient"] and e["weight"] > 0:
+            by.setdefault(e["scope"], []).append(e)
+    return by
 
 
 def heart_pokemon(entry):
@@ -978,6 +1024,47 @@ def build_marine(spawns, regions, routes, waterways=()):
     return files, summaries
 
 
+def build_fishing(spawns, regions, routes, waterways=(), grid=SUBREGION_GRID):
+    """The fishing half of the pack (docs/mechanics/FISHING.md): each area's fishing entries as spawnablePositionType
+    "fishing" details, in a file of their own, spawn_pool_world/fishing/subregions/<sub>.json or
+    spawn_pool_world/fishing/marine/<band>.json (the folder names the kind of place, as the land files' folders do).
+
+    A sub-region's list lies over its WHOLE polygon raster, corridor and waterway cells included: exactly the cells
+    tools/suppress_inherited_spawns.py --subregions empties of every inherited detail, fishing among them, so the rod
+    there catches this list and nothing inherited. A fishing detail competes only with fishing details, so covering a
+    route corridor doubles no world weight. Spawn-free zones are cut out as everywhere else (any cell they touch). A sea
+    band's list lies over the band's own boxes (marine_bands), which the suppression reads too.
+
+    Kept out of the sub-region and marine files on purpose: those files are each place's world roster over its world
+    boxes, and their readers (tests/test_encounter_design.py world(), the heart and rare-spawn checks) take every
+    detail in them as that. Fails closed on a fishing scope that is neither a sub-region nor a sea band, a band with a
+    list and no box, and an entry not at position fishing."""
+    fish = fishing_by_scope(spawns)
+    if not fish:
+        return {}, []
+    subs = {s["id"]: s for s in regions["subregions"]}
+    bands = marine_bands(spawns, regions, routes, waterways)
+    lost = sorted(set(fish) - set(bands) - set(subs))
+    if lost:
+        raise SystemExit("fishing entries name areas that are neither a sub-region nor a marine band: %s" % lost)
+    files, summaries = {}, []
+    for area, ents in sorted(fish.items()):
+        if area in subs:
+            kind, boxes = "subregions", subregion_boxes.boxes_for(subs[area]["polygons"], grid, (), spawn_free_zones())
+        else:
+            kind, boxes = "marine", bands[area]
+        if not boxes:
+            raise SystemExit("%s: an area with a fishing list compiles no box" % area)
+        out = fishing_details(area, boxes, ents)
+        rel = "spawn_pool_world/fishing/%s/%s.json" % (kind, area)
+        files["data/cobblers/" + rel] = dumps({"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [],
+                                               "spawns": out})
+        summaries.append({"area": area, "kind": kind, "box_count": len(boxes), "compiled_entry_count": len(out),
+                          "species": sorted({e["species"] for e in ents}), "covered_blocks": subregion_boxes.area(boxes),
+                          "output": rel})
+    return files, summaries
+
+
 NETHER = "nether_ring_boxes"
 NETHER_DIMENSION = "minecraft:the_nether"
 
@@ -1058,13 +1145,15 @@ def main(argv=None):
                    != [(s["condition"]["minX"], s["condition"]["maxX"], s["condition"]["minZ"], s["condition"]["maxZ"])]
                    for s in d["spawns"] if "minX" in s["condition"]):
                 raise SystemExit("%s reaches into a spawn-free zone; cut the waterway short of it" % rel)
-    ss, ms = [], []
+    ss, ms, fs = [], [], []
     if not a.no_subregions:
         regions = json.loads(Path(a.regions).read_text(encoding="utf-8"))
         subfiles, ss = build_subregions(spawns, routes, regions, a.grid, water_boxes)
         files.update(subfiles)
         marinefiles, ms = build_marine(spawns, regions, routes, water_boxes)
         files.update(marinefiles)
+        fishfiles, fs = build_fishing(spawns, regions, routes, water_boxes, a.grid)
+        files.update(fishfiles)
     netherfiles, ns = build_nether(spawns)
     files.update(netherfiles)
     if a.check:
@@ -1105,6 +1194,7 @@ def main(argv=None):
                 "files": {rel: hashlib.sha256(text.encode("utf-8")).hexdigest() for rel, text in sorted(files.items())},
                 "route_files": rs, "habitat_files": hs, "subregion_files": ss, "waterway_files": ws,
                 "marine_files": ms,
+                "fishing_files": fs,
                 "nether_files": ns,
                 "subregion_grid": a.grid,
                 "subregion_box_count": sum(q["box_count"] for q in ss),
@@ -1120,6 +1210,10 @@ def main(argv=None):
     for q in ms:
         print("  marine %s: %d boxes, %d entries, %s blocks" % (q["band_id"], q["box_count"], q["compiled_entry_count"],
                                                             format(q["covered_blocks"], ",")))
+    if fs:
+        print("  fishing: %d areas (%d sub-regions, %d sea bands), %d boxes, %d entries" % (
+            len(fs), sum(1 for q in fs if q["kind"] == "subregions"), sum(1 for q in fs if q["kind"] == "marine"),
+            sum(q["box_count"] for q in fs), sum(q["compiled_entry_count"] for q in fs)))
     if ns:
         print("  nether: %d tables, %d entries" % (len(ns), sum(q["compiled_entry_count"] for q in ns)))
     return 0

@@ -1,0 +1,15 @@
+{
+  "generated_by": "hand",
+  "why": "The owner, 2026-10-16: our talk-to NPCs render as Cobblemon's standard (Steve-like) model; 'make him have the correct skin and appearance'. A look is a client NPC variation (assets/<ns>/bedrock/npcs/variations/, docs/research/notes/npc-skins-1.8.md section 2) that tools/client_model_fix.py --server-pack writes into cobblers-client-AllTheMons-subset.zip; tools/compile_dialogue.py gives the NPC's class that resourceIdentifier. The texture is one players already have (the COBBLEVERSE RCTmod RP), so no art is shipped. A player without the subset zip sees the substitute doll for that NPC. Brock's look was seen working in game on 2026-10-16.",
+  "looks": {
+    "cobblers:brock": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/kanto_brock.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/kanto_brock.png, 64x64 player-skin layout, matching steve.geo's 64x64)"
+    }
+  },
+  "npcs": {
+    "npc_main_brock_witness": "cobblers:brock"
+  }
+}

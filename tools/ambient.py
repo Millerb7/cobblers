@@ -357,9 +357,16 @@ def plan_worker(w, site, rules):
         if (math.floor(hx), math.floor(hz)) != (x, z) and site.blocked(math.floor(hx), math.floor(hz)):
             hx, hz = x + 0.5, z + 0.5                  # the hop's cell is not free (a lot, an anchor): it hops in place
         p["hop"] = (hx, hz)
+        relaxed = bool(w.get("relaxed"))
+        if relaxed and not (isinstance(w.get("relaxed_why"), str) and w["relaxed_why"].strip()):
+            raise AmbientError("ambient/%s: a relaxed worker says what is missing at its face (relaxed_why)" % wid)
+        if not relaxed and not isinstance(w.get("effect"), dict):
+            raise AmbientError("ambient/%s: a work job needs an effect (or is relaxed)" % wid)
         p.update(start=(x + 0.5, y, z + 0.5), yaw=yaw_to(x + 0.5, z + 0.5, fx + 0.5, fz + 0.5),
                  face=(fx + 0.5, Y(fx, fz) if not site.blocked(fx, fz) else y, fz + 0.5),
-                 every=int(w.get("every", rules["work_every"])), effect=w["effect"])
+                 every=int(w.get("every", rules["work_every"])), effect=w.get("effect") or {}, relaxed=relaxed)
+        if relaxed:
+            p["look_every"] = int(rules["relaxed"]["look_every"])
         if w.get("look_around"):
             lx, lz = w["look_around"]
             p["look_yaw"] = yaw_to(x + 0.5, z + 0.5, lx + 0.5, lz + 0.5)
@@ -623,6 +630,16 @@ def step(w, rules, w_sel, tc, ti, fn=None):
         move.append((down, ["item replace entity @e[type=minecraft:item_display,tag=%s] contents with minecraft:air" % tc]
                      + ([sound(w["drop"]["sound"], bx, by, bz, rules)] if w["drop"].get("sound") else [])
                      + ([particle(w["drop"], bx, by + 0.3, bz)] if (w["drop"].get("block") or w["drop"].get("particle")) else [])))
+    elif w["job"] == "work" and w.get("relaxed"):
+        # nothing to act on at the face (tools/ambient_targets.py): no hop, no effect, no sound. It stands where it is
+        # held, and when it has a `look_around` it turns its head there and back (a tp with a yaw, as the working
+        # look-round does) every look_every ticks; otherwise the step has nothing to do
+        x, y, z = w["start"]
+        period = w["look_every"]
+        if w.get("look_yaw") is not None:
+            half = max(1, period // 2)
+            move.append((half, ["execute as %s run tp @s %s %s %s %s 0" % (w_sel, num(x), y, num(z), num(w["look_yaw"]))]))
+            move.append((0, ["execute as %s run tp @s %s %s %s %s 0" % (w_sel, num(x), y, num(z), num(w["yaw"]))]))
     elif w["job"] == "work":
         x, y, z = w["start"]
         fx, fy, fz = w["face"]

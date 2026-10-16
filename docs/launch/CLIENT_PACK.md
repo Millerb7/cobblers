@@ -7,7 +7,7 @@ Written 2026-10-14. **A client that does not match the server's mods is the most
 | File | What | sha1 |
 |---|---|---|
 | `cobblers-client-0.1.0.mrpack` (747,998 bytes; with Lootr, without Custom Splash Screen, rebuilt 2026-10-15) | the modpack: Minecraft 1.21.1, Fabric Loader 0.19.5, every mod below (downloaded from Modrinth by the launcher) | `adb0bce6603cbec951a3edb0f80accb7f884af6f` |
-| `cobblers-client-AllTheMons-subset.zip` (1,468,971 bytes, built 2026-10-13) | a resource pack: Cobblemon model fixes plus the AllTheMons x Mega Showdown models for the species that otherwise show as a placeholder doll | `dfdd4f8118a66ff854d23a1e5c2f7651ff042e97` |
+| `cobblers-client-AllTheMons-subset.zip` (2,102,822 bytes, rebuilt 2026-10-16 with the NPC looks and the rip oval) | a resource pack: Cobblemon model fixes plus the AllTheMons x Mega Showdown models for the species that otherwise show as a placeholder doll | `b43635dfdec78bbc1a6bca38094c3c53aa6d9e0f` |
 
 Rebuild with `python tools/client_pack.py build` and `python tools/client_model_fix.py build --server-pack`. Check a
 friend's install with `python tools/client_pack.py verify <their instance folder>`.
@@ -32,7 +32,7 @@ chose to give it to players directly. Without it the game works; about 43 specie
      MysticMons RP, OJsAnimations RP, PlanetaCobblemon RP, Pokemans RP, TDmon RP (and, optionally, ATMxMSD RP).
    - from its `overrides/config/fancymenu/`: the `assets/` and `slideshows/` folders → your instance's
      `config/fancymenu/` (the title screen's images; without them the menu is black with magenta squares).
-4. Copy `cobblers-client-AllTheMons-subset.zip` into `resourcepacks/`.
+4. Copy `cobblers-client-AllTheMons-subset.zip` into `resourcepacks/`. It also carries our NPC looks (Brock, data/npc_looks.json; without it he is a substitute doll) and the dungeon rip's oval (without it a rip is a plain purple shard).
 5. Launch once, open **Options → Resource Packs**, and make sure the packs are enabled (the subset zip at the top).
 6. **Multiplayer → Add Server**, the address from the owner (see `docs/launch/HOSTING.md`). Your Minecraft username
    must be on the whitelist: send it to the owner first.

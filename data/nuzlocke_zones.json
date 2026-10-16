@@ -342,7 +342,7 @@
    "table": "data/encounter_design.json tables.northgate_west",
    "tier": 6,
    "levels": null,
-   "species": 16,
+   "species": 26,
    "geometry": "data/regions.json subregions.northgate_west polygons, 32-block raster",
    "land_share": 0.995,
    "legs": [],
@@ -360,7 +360,7 @@
    "table": "data/encounter_design.json tables.northgate_east",
    "tier": 6,
    "levels": null,
-   "species": 16,
+   "species": 27,
    "geometry": "data/regions.json subregions.northgate_east polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -378,7 +378,7 @@
    "table": "data/encounter_design.json tables.north_pine_isle",
    "tier": 6,
    "levels": null,
-   "species": 16,
+   "species": 29,
    "geometry": "data/regions.json subregions.north_pine_isle polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -396,7 +396,7 @@
    "table": "data/encounter_design.json tables.south_pine_isle",
    "tier": 6,
    "levels": null,
-   "species": 19,
+   "species": 30,
    "geometry": "data/regions.json subregions.south_pine_isle polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -415,7 +415,7 @@
    "table": "data/encounter_design.json tables.fungal_north",
    "tier": 3,
    "levels": null,
-   "species": 20,
+   "species": 30,
    "geometry": "data/regions.json subregions.fungal_north polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -430,7 +430,7 @@
    "table": "data/encounter_design.json tables.fungal_south",
    "tier": 3,
    "levels": null,
-   "species": 18,
+   "species": 27,
    "geometry": "data/regions.json subregions.fungal_south polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -445,7 +445,7 @@
    "table": "data/encounter_design.json tables.sunset_west",
    "tier": 5,
    "levels": null,
-   "species": 20,
+   "species": 30,
    "geometry": "data/regions.json subregions.sunset_west polygons, 32-block raster",
    "land_share": 0.999,
    "legs": [],
@@ -462,7 +462,7 @@
    "table": "data/encounter_design.json tables.sunset_east",
    "tier": 8,
    "levels": null,
-   "species": 21,
+   "species": 32,
    "geometry": "data/regions.json subregions.sunset_east polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -479,7 +479,7 @@
    "table": "data/encounter_design.json tables.long_isle_north",
    "tier": 7,
    "levels": null,
-   "species": 19,
+   "species": 29,
    "geometry": "data/regions.json subregions.long_isle_north polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -498,7 +498,7 @@
    "table": "data/encounter_design.json tables.long_isle_middle",
    "tier": 7,
    "levels": null,
-   "species": 19,
+   "species": 25,
    "geometry": "data/regions.json subregions.long_isle_middle polygons, 32-block raster",
    "land_share": 0.997,
    "legs": [],
@@ -515,7 +515,7 @@
    "table": "data/encounter_design.json tables.long_isle_south",
    "tier": 8,
    "levels": null,
-   "species": 21,
+   "species": 28,
    "geometry": "data/regions.json subregions.long_isle_south polygons, 32-block raster",
    "land_share": 0.997,
    "legs": [],
@@ -562,7 +562,7 @@
     25,
     32
    ],
-   "species": 14,
+   "species": 19,
    "geometry": "data/regions.json subregions.the_crags polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -584,7 +584,7 @@
     26,
     33
    ],
-   "species": 12,
+   "species": 21,
    "geometry": "data/regions.json subregions.upper_trough polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -601,7 +601,7 @@
    "table": "data/encounter_design.json tables.lower_trough",
    "tier": 5,
    "levels": null,
-   "species": 13,
+   "species": 21,
    "geometry": "data/regions.json subregions.lower_trough polygons, 32-block raster",
    "land_share": 0.987,
    "legs": [],
@@ -619,7 +619,7 @@
     20,
     28
    ],
-   "species": 10,
+   "species": 18,
    "geometry": "data/regions.json subregions.the_tri_peaks polygons, 32-block raster",
    "land_share": 0.995,
    "legs": [
@@ -848,7 +848,7 @@
    "table": "data/encounter_design.json tables.frostpeak",
    "tier": 5,
    "levels": null,
-   "species": 10,
+   "species": 20,
    "geometry": "data/regions.json subregions.frostpeak polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -865,7 +865,7 @@
    "table": "data/encounter_design.json tables.frostpeak_strand",
    "tier": 5,
    "levels": null,
-   "species": 14,
+   "species": 18,
    "geometry": "data/regions.json subregions.frostpeak_strand polygons, 32-block raster",
    "land_share": 0.992,
    "legs": [],
@@ -880,7 +880,7 @@
    "table": "data/encounter_design.json tables.tilpey_north_shore",
    "tier": 6,
    "levels": null,
-   "species": 23,
+   "species": 34,
    "geometry": "data/regions.json subregions.tilpey_north_shore polygons, 32-block raster",
    "land_share": 0.978,
    "legs": [
@@ -901,7 +901,7 @@
    "table": "data/encounter_design.json tables.tilpey_waters",
    "tier": 7,
    "levels": null,
-   "species": 16,
+   "species": 19,
    "geometry": "data/regions.json subregions.tilpey_waters polygons, 32-block raster",
    "land_share": 0.26,
    "legs": [],
@@ -916,7 +916,7 @@
    "table": "data/encounter_design.json tables.tilpey_south_shore",
    "tier": 7,
    "levels": null,
-   "species": 25,
+   "species": 34,
    "geometry": "data/regions.json subregions.tilpey_south_shore polygons, 32-block raster",
    "land_share": 0.947,
    "legs": [
@@ -936,7 +936,7 @@
    "table": "data/encounter_design.json tables.tilpey_west_meadows",
    "tier": 6,
    "levels": null,
-   "species": 19,
+   "species": 27,
    "geometry": "data/regions.json subregions.tilpey_west_meadows polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -951,7 +951,7 @@
    "table": "data/encounter_design.json tables.tilpey_east_shore",
    "tier": 6,
    "levels": null,
-   "species": 18,
+   "species": 25,
    "geometry": "data/regions.json subregions.tilpey_east_shore polygons, 32-block raster",
    "land_share": 0.907,
    "legs": [
@@ -1010,7 +1010,7 @@
     26,
     33
    ],
-   "species": 17,
+   "species": 20,
    "geometry": "data/regions.json subregions.peak_pond_hollow polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -1032,7 +1032,7 @@
    "table": "data/encounter_design.json tables.north_shore_downs",
    "tier": 4,
    "levels": null,
-   "species": 12,
+   "species": 27,
    "geometry": "data/regions.json subregions.north_shore_downs polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -1050,7 +1050,7 @@
     27,
     33
    ],
-   "species": 14,
+   "species": 24,
    "geometry": "data/regions.json subregions.north_east_downs polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -1067,7 +1067,7 @@
    "table": "data/encounter_design.json tables.marshy_marsh",
    "tier": 5,
    "levels": null,
-   "species": 19,
+   "species": 27,
    "geometry": "data/regions.json subregions.marshy_marsh polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -1086,7 +1086,7 @@
    "table": "data/encounter_design.json tables.marsh_creek",
    "tier": 6,
    "levels": null,
-   "species": 23,
+   "species": 27,
    "geometry": "data/regions.json subregions.marsh_creek polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -1103,7 +1103,7 @@
    "table": "data/encounter_design.json tables.eastern_moor",
    "tier": 7,
    "levels": null,
-   "species": 20,
+   "species": 31,
    "geometry": "data/regions.json subregions.eastern_moor polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -1144,7 +1144,7 @@
     13,
     19
    ],
-   "species": 18,
+   "species": 20,
    "geometry": "data/regions.json subregions.lake_viltri_hollow polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -1165,7 +1165,7 @@
    "table": "data/encounter_design.json tables.viltris_path_valley",
    "tier": 2,
    "levels": null,
-   "species": 16,
+   "species": 26,
    "geometry": "data/regions.json subregions.viltris_path_valley polygons, 32-block raster",
    "land_share": 0.999,
    "legs": [],
@@ -1186,7 +1186,7 @@
     19,
     26
    ],
-   "species": 18,
+   "species": 27,
    "geometry": "data/regions.json subregions.foothill_woods polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -1212,7 +1212,7 @@
    "table": "data/encounter_design.json tables.north_west_coast",
    "tier": 3,
    "levels": null,
-   "species": 13,
+   "species": 16,
    "geometry": "data/regions.json subregions.north_west_coast polygons, 32-block raster",
    "land_share": 0.999,
    "legs": [],
@@ -1252,7 +1252,7 @@
    "table": "data/encounter_design.json tables.shrew_lake_shores",
    "tier": 2,
    "levels": null,
-   "species": 17,
+   "species": 21,
    "geometry": "data/regions.json subregions.shrew_lake_shores polygons, 32-block raster",
    "land_share": 0.981,
    "legs": [],
@@ -1271,7 +1271,7 @@
    "table": "data/encounter_design.json tables.arrow_lake_shores",
    "tier": 3,
    "levels": null,
-   "species": 23,
+   "species": 26,
    "geometry": "data/regions.json subregions.arrow_lake_shores polygons, 32-block raster",
    "land_share": 0.976,
    "legs": [],
@@ -1291,7 +1291,7 @@
     8,
     13
    ],
-   "species": 18,
+   "species": 21,
    "geometry": "data/regions.json subregions.river_of_shrews_vale polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -1311,7 +1311,7 @@
     4,
     8
    ],
-   "species": 15,
+   "species": 21,
    "geometry": "data/regions.json subregions.pallet_meadows polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -1331,7 +1331,7 @@
     6,
     12
    ],
-   "species": 16,
+   "species": 17,
    "geometry": "data/regions.json subregions.west_shore polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -1349,7 +1349,7 @@
     6,
     14
    ],
-   "species": 13,
+   "species": 19,
    "geometry": "data/regions.json subregions.south_west_fields polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -1364,7 +1364,7 @@
    "table": "data/encounter_design.json tables.arrow_creeks",
    "tier": 8,
    "levels": null,
-   "species": 20,
+   "species": 22,
    "geometry": "data/regions.json subregions.arrow_creeks polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -1379,7 +1379,7 @@
    "table": "data/encounter_design.json tables.south_strand",
    "tier": 8,
    "levels": null,
-   "species": 20,
+   "species": 21,
    "geometry": "data/regions.json subregions.south_strand polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -1397,7 +1397,7 @@
    "table": "data/encounter_design.json tables.rift_foot",
    "tier": 8,
    "levels": null,
-   "species": 18,
+   "species": 26,
    "geometry": "data/regions.json subregions.rift_foot polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -1417,7 +1417,7 @@
    "table": "data/encounter_design.json tables.east_coast_dunes",
    "tier": 7,
    "levels": null,
-   "species": 23,
+   "species": 31,
    "geometry": "data/regions.json subregions.east_coast_dunes polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -1434,7 +1434,7 @@
    "table": "data/encounter_design.json tables.south_east_dunes",
    "tier": 8,
    "levels": null,
-   "species": 18,
+   "species": 27,
    "geometry": "data/regions.json subregions.south_east_dunes polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
@@ -1454,7 +1454,7 @@
     6,
     11
    ],
-   "species": 16,
+   "species": 22,
    "geometry": "data/regions.json subregions.route1_maze_forest polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [
@@ -1476,7 +1476,7 @@
     16,
     20
    ],
-   "species": 10,
+   "species": 12,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 0-96 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1493,7 +1493,7 @@
     20,
     25
    ],
-   "species": 10,
+   "species": 12,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 96-256 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1510,7 +1510,7 @@
     25,
     30
    ],
-   "species": 9,
+   "species": 13,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 256-the border blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1527,7 +1527,7 @@
     45,
     55
    ],
-   "species": 8,
+   "species": 11,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 0-the border blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1544,7 +1544,7 @@
     26,
     30
    ],
-   "species": 9,
+   "species": 11,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 0-128 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1561,7 +1561,7 @@
     30,
     35
    ],
-   "species": 11,
+   "species": 13,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 128-384 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1578,7 +1578,7 @@
     35,
     40
    ],
-   "species": 12,
+   "species": 14,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 384-the border blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1595,7 +1595,7 @@
     36,
     40
    ],
-   "species": 12,
+   "species": 14,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 0-128 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1612,7 +1612,7 @@
     40,
     45
    ],
-   "species": 11,
+   "species": 15,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 128-384 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1629,7 +1629,7 @@
     45,
     50
    ],
-   "species": 10,
+   "species": 12,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 384-the border blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1646,7 +1646,7 @@
     41,
     45
    ],
-   "species": 8,
+   "species": 11,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 0-128 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1663,7 +1663,7 @@
     45,
     50
    ],
-   "species": 9,
+   "species": 11,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 128-384 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1680,7 +1680,7 @@
     50,
     55
    ],
-   "species": 9,
+   "species": 11,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 384-the border blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1697,7 +1697,7 @@
     46,
     50
    ],
-   "species": 10,
+   "species": 13,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 0-128 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1714,7 +1714,7 @@
     50,
     55
    ],
-   "species": 11,
+   "species": 13,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 128-384 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1731,7 +1731,7 @@
     55,
     60
    ],
-   "species": 10,
+   "species": 11,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 384-the border blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1748,7 +1748,7 @@
     21,
     25
    ],
-   "species": 8,
+   "species": 11,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 0-128 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1765,7 +1765,7 @@
     25,
     30
    ],
-   "species": 10,
+   "species": 13,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 128-384 blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
@@ -1782,7 +1782,7 @@
     30,
     35
    ],
-   "species": 11,
+   "species": 13,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 384-the border blocks from land)",
    "legs": [],
    "access": "a Pokemon that carries a player on water"
