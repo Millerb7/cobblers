@@ -6,7 +6,7 @@ Reads data/spawns.json (the `fishing` entries tools/build_encounters.py expands 
 owner's 2026-10-16 ask: every area its own catch), data/spawns.json `subregions` and data/regions.json for the area
 and region names, and data/spawns.json `marine_zones` for the sea bands' names. One section per region, one table per area: species,
 how often it bites (Cobblemon's bucket), and its levels. Dungeon fishing and bait rooms are described in words: the
-dungeon rooms are not catching yet (docs/STATE.md), and the bait table is data/dungeon_extras.json's design
+dungeon rooms catch (the owner hooked a Horsea, 2026-10-17), and the bait table is data/dungeon_extras.json's design
 (docs/mechanics/DUNGEON_BAIT.md). No legendary is on any fishing list (the builder's rule); the page also drops any
 legendary-class species by the region map's own test, so it can never name one the map keeps secret.
 """
@@ -74,7 +74,12 @@ def collect():
     for region in sorted(regions_out, key=lambda r: (r == "The seas", r)):
         out.append({"region": region, "areas": sorted(regions_out[region], key=lambda a: a["name"])})
     n_species = len({e["species"] for ents in by_area.values() for e in ents})
-    return {"regions": out, "areas": len(by_area), "species": n_species,
+    names = []
+    for dg in _load("dungeons.json").get("dungeons", []):
+        if isinstance(dg, dict) and "fishing_room" in json.dumps(dg):
+            names.append(dg.get("name") or mon_name(dg["id"]))
+    fishing_dungeons = ", ".join(names[:-1]) + " and " + names[-1] if len(names) > 1 else "".join(names)
+    return {"regions": out, "areas": len(by_area), "species": n_species, "fishing_dungeons": fishing_dungeons,
             "entries": sum(len(v) for v in by_area.values())}
 
 
@@ -99,11 +104,16 @@ def render(m):
             'where your bobber lands, not where you stand. Rare and very rare Pokemon bite more often on a rod than '
             'you meet them on foot, so fishing is the best way to the rare end of an area. Shiny and alpha chances '
             'are Cobblemon\'s own. Bait on the rod is Cobblemon\'s own system too.</p></div>%s%s'
-            '<section id="dungeons"><h2>Dungeons</h2><p>Some dungeons have a fishing room with a pool, a pier and a '
-            'rod to borrow; what bites there depends on your band. These rooms are not catching yet: we are fixing '
-            'them. Dungeon bait rooms are different: you set out a berry and the berry\'s rarity sets the odds that '
-            'what comes is shiny or alpha (common berries 1%% shiny and 5%% alpha, up to 8%% and 20%% for the rarest).'
-            '</p></section>'
+            '<section id="items"><h2>When it is not a Pokemon</h2><p>About 85 bites in 100 are a Pokemon (bait can '
+            'change that); the rest are an item. Of the items, about two in three are ordinary fishing junk, one in six '
+            'is Minecraft\'s fishing treasure (enchanted books, name tags, nautilus shells, saddles, bows and rods) and '
+            'one in six is a Cobblemon treasure: a Deep Sea Scale, a Deep Sea Tooth, a Dragon Scale, a King\'s Rock or '
+            'a Prism Scale, all evolution items. Prism Scale evolves Feebas, itself a very rare catch.</p></section>'
+            '<section id="dungeons"><h2>Dungeons</h2><p>%s have a fishing room: a still pool with a pier, where you '
+            'can fish during a run. What bites depends on your band. Items from a dungeon pool are the same as '
+            'outside for now. Dungeon bait rooms are different: you set out a berry and the berry\'s rarity sets the '
+            'odds that what comes is shiny or alpha (common berries 1%% shiny and 5%% alpha, up to 8%% and 20%% for '
+            'the rarest).</p></section>'
             '<section id="not-covered"><h2>What this page leaves out</h2><ul>'
             '<li>Places outside our mapped areas: there, fishing is Cobblemon\'s default for the biome.</li>'
             '<li>Exact chances: "How often" is the bite\'s rarity group; within a group some Pokemon are more common '
@@ -111,7 +121,8 @@ def render(m):
             '<li>What happens in a running game: this is worked out from our data, not counted cast by cast. Where '
             'the game differs, the game is right: say so.</li></ul></section></main>'
             % (m["areas"], m["species"], player_site.search_box("[data-fish]", "Find a Pokemon or place",
-                                                                 "e.g. Magikarp or Lake Viltri"), sections))
+                                                                 "e.g. Magikarp or Lake Viltri"), sections,
+               esc(m["fishing_dungeons"])))
     sources = ('<p class="src">From data/spawns.json (%d fishing entries, expanded from data/encounter_design.json by '
                'tools/build_encounters.py), and data/regions.json.</p>' % m["entries"])
     return player_site.page(GUIDE, body, body_class="page-fishing", not_covered_href="#not-covered",
