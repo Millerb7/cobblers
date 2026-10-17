@@ -829,6 +829,7 @@
       "habitat": 4
     },
     "kinds_why": "which room the catch was made in (the catcher's position at the pokemon_captured callback; the caught entity is gone by then, docs/research/notes/dungeon-catches-on-the-clock.md section 6). Anywhere that is not a nest, miniboss or habitat room counts as ambient",
+    "message": {"lead": "Caught: +", "tail": " points.", "why": "2026-10-17: the owner fished a Horsea in a dungeon, caught it with an Ultra Ball and saw nothing count. A catch worth under 2 points does not raise the rate, so it showed nothing but a number in the bar's title; a credit that makes no sound is indistinguishable from a callback that never ran. One chat line per credited catch (chat, so the actionbar's rate message is not overwritten), the points to a tenth, only in a live run"},
     "cp_by_band": {
       "ambient": [
         100,
