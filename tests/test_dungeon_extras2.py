@@ -564,6 +564,27 @@ def test_a_catch_in_the_fishing_room_weighs_as_a_nest_catch_in_a_live_run(mk):
     assert w.get(p.name, "dg.gp") == 0, "before the clock runs a catch weighs nothing"
 
 
+def test_a_credited_catch_is_said_aloud_in_points_to_a_tenth_and_only_in_a_live_run(mk):
+    # 2026-10-17: the owner caught a fished Horsea and saw nothing count (a catch under 2 points raises no rate). Breaks if the credit
+    # is silent again, if the line shows a wrong number, or if a catch before the clock runs is announced as credited.
+    doc, w = mk()
+    p, s = start(doc, w)
+    t = DGR.load()
+    for band in (1, 3, 5):
+        w.set(p.name, "dg.band", band)
+        w.set(p.name, "dg.gp", 0)
+        p.messages.clear()
+        catch_in(doc, w, p, "fish")
+        cp = DGR.catch_cp(t, "nest", band, doc)
+        assert (w.get("#cw", "dg.t"), w.get("#ct", "dg.t")) == (cp // 100, cp // 10 % 10), band
+        said = [m for m in p.messages if "Caught: +" in m]
+        assert len(said) == 1 and '"objective": "dg.t"' in said[0], p.messages
+    w.set(p.name, "dg.st", 2)
+    p.messages.clear()
+    catch_in(doc, w, p, "fish")
+    assert not [m for m in p.messages if "Caught: +" in m], "nothing is credited before the clock runs, so nothing is announced"
+
+
 # ------------------------------------------------------------------------------------------------- the egg vendor
 
 

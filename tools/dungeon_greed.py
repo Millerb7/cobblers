@@ -38,7 +38,9 @@ so x1 is 10 and 0.1x is one unit; the bar shows x<rate/10>.<rate%10> and the poi
 
 Interface (tools/dungeon.py build() and functions() call these): objective_lines, load_lines, functions, callback_path /
 callback, chest_lines (the vault), zero_lines and bar data via OBJ_G; problems(doc) is registered in dungeon.problems.
-What this does NOT cover: items a wild Pokemon drops (no source event proven), relics (unpriced by design), escrow.
+What this does NOT cover: items a wild Pokemon drops and items a rod fishes up (no source event proven; the dungeon fishing
+table is held to about one catch's value instead, data/dungeon_extras2.json fishing.item_catches), relics (unpriced by design),
+escrow. A credited catch is said in chat (catches.message), so a catch that counted is seen to count.
 """
 from __future__ import annotations
 
@@ -515,6 +517,19 @@ def functions(doc, table=None):
             catch.append("execute if score #gk %s matches %d if score @s %s matches %d run scoreboard players set #gv %s %d"
                          % (t, kinds[k], O["band"], bi, t, v))
     catch += ["function %s" % F("greed/add")]
+    msg = table["catches"]["message"]
+    catch += ["# the credit said aloud (2026-10-17): points to a tenth, a chat line, so a catch that counted is seen to count",
+              "execute unless score #gv %s matches 1.. run return 0" % t,
+              "scoreboard players operation #cw %s = #gv %s" % (t, t),
+              "scoreboard players operation #cw %s /= #100 %s" % (t, t),
+              "scoreboard players operation #ct %s = #gv %s" % (t, t),
+              "scoreboard players operation #ct %s /= #10 %s" % (t, t),
+              "scoreboard players operation #ct %s %%= #10 %s" % (t, t),
+              "tellraw @s %s" % json.dumps([{"text": msg["lead"], "color": "light_purple"},
+                                            {"score": {"name": "#cw", "objective": t}, "color": "light_purple"},
+                                            {"text": ".", "color": "light_purple"},
+                                            {"score": {"name": "#ct", "objective": t}, "color": "light_purple"},
+                                            {"text": msg["tail"], "color": "light_purple"}], ensure_ascii=False)]
     out["greed/catch"] = catch
     out["greed/test_set"] = [
         HEAD, "# TEST HOOK (EXP-084 form): this entity's points to $(p) cp, and its rate. Never lowers the rate it has",
