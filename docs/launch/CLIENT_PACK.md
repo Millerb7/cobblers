@@ -2,6 +2,15 @@
 
 Written 2026-10-14. **A client that does not match the server's mods is the most likely launch-night failure.**
 
+## The bundle: one file, nothing to copy (the owner, 2026-10-20)
+
+`python tools/client_pack.py build --bundle` writes `build/client/cobblers-client-<version>-bundle.mrpack`: the pack
+below plus everything friends used to copy by hand (COBBLEVERSE's resource packs, the Battle Positions mod, the title
+screen's images, our subset zip, already enabled) and a server list entry "Cobblers" whose address is read from
+`C:/Users/wnd/Documents/cobblers-local/server-address.txt` (outside the repo, so it never enters git). The owner chose
+this for a private group: it carries COBBLEVERSE's no-redistribution files, so it is never committed, published or
+uploaded anywhere public. Friends: Modrinth App, Add an instance, From file, choose the bundle, give it 6 GB, play.
+
 ## The files (built tonight, in `build/client/`, never committed)
 
 | File | What | sha1 |
