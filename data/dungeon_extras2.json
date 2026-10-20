@@ -18,6 +18,39 @@
             "why": "The player's own rod is not assumed: the room lends one (a plain Poke Rod marked cobblers_lent_rod) at the first step in. It is taken back wherever the engine takes the rift pick back (a run's end, the far rip, the back rip: tools/dungeon_extras2.py patch_functions adds one line after each `clear @s <pick>`), and by the slot reset. A player who keeps their own rod simply has two."},
     "level_rule": "lo = max(5, lower cap - 10), hi = lower cap of the band (data/dungeons.json engine.bands caps[0]): never above what the cap lets the entrant catch",
     "messages": {"enter": "Still water. Something moves under the lantern light.", "rod": "A rod hangs on the post. Take it."},
+    "item_catches": {
+      "unit": "dungeon fishing, 2026-10-17 (the owner, after casting in the Flooded Ruin's cast_pool: 'i got a tripwire hook, i think the pool for fishing in dungeons needs to be only hits, to make it worth it. so enchant books, gold, pokemon, pokeballs, etc')",
+      "why": "A Poke Rod bite is a Pokemon with probability pokemonSpawnChance (85 by default), else an ITEM from the loot table cobblemon:fishing/pokerod (Cobblemon 1.8.0 and 1.8.2 jars: identical): junk 66 / pokerod_treasure 17 / vanilla treasure 17, both treasure entries gated on the bobber being in OPEN water, which a one-deep pool is not, so a dungeon cast's item was junk, a tripwire hook. tools/dungeon_extras2.py emits that table again at the same path (data/cobblemon/loot_table/fishing/pokerod.json, a deliberate override of an upstream path: nothing in the build or the COBBLEVERSE datapacks overrides it today) with one new entry first: when the loot context's ORIGIN (the bobber) is in the pocket dimension (vanilla minecraft:location_check, predicate.dimension, 1.21.1 loot-table condition) it rolls the dungeon table below and nothing else; the upstream entries each gain the inverse of that test, so anywhere else the pool is exactly the upstream pool (weights, quality, conditions untouched). A loot context carries no scoreboard and no band (origin, tool, luck, the bobber), so the table is one table for every band, sized to the middle of the catch values rather than the top.",
+      "table": "cobblers:dungeons/fishing/treasure",
+      "range_cp": [100, 300],
+      "value_why": "cp is a hundredth of a point and a point is $100 (data/dungeon_greed.json). Pokemon caught on the same rod weigh 100 to 200 cp by band (catches.cp_by_band) and are CHARGED to the clock; an item catch is not charged (GREED measures mined blocks, opened chests and caught Pokemon only, not a fished item), so it is held to about one catch: the table's expected value per ITEM bite is in range_cp, and 15% of bites are items, so an item adds about a third of a point per bite. The vault's chests are worth up to dollar_factor 2.0 times the gathering tier (data/dungeon_greed.json vault_budget), well above one bite. NOTHING here sells to the bank (data/bank.json buys minerals; gold_ingot and gold_nugget are not in buys; raw gold is deliberately not given) and none is a Produce Buyer specimen, so a cast cannot turn into cash.",
+      "left_out": {
+        "cobblemon:fishing/pokerod_treasure": "the owner asked for Cobblemon's own fishing treasure. Four of its five items (deep_sea_scale, deep_sea_tooth, dragon_scale, prism_scale) are Produce Buyer specimens that sell for cash (data/produce_buyer.json specimens.items), so a dungeon source would be a cash route that the buyer's 'drop only' safety property rules out; kings_rock is the fifth and is not a specimen, so it is given on its own. Outside the pocket they are still rolled as before, in open water."
+      },
+      "entries": [
+        {"item": "cobblemon:poke_ball", "count": [1, 2], "weight": 26, "cp_each": 200, "cp_source": "greed", "why": "the commonest hit: 1-2 Poke Balls ($200 each, data/dungeon_greed.json items)"},
+        {"item": "cobblemon:great_ball", "count": [1, 1], "weight": 9, "cp_each": 350, "cp_source": "greed", "why": "a Great Ball ($350)"},
+        {"item": "cobblemon:ultra_ball", "count": [1, 1], "weight": 1, "cp_each": 800, "cp_source": "greed", "why": "the jackpot: an Ultra Ball ($800), one bite in a hundred of the items"},
+        {"item": "minecraft:gold_ingot", "count": [2, 4], "weight": 26, "cp_each": 22, "cp_source": "greed", "why": "the owner's gold; the bank does not buy ingots (bank_removed at 22)"},
+        {"item": "minecraft:gold_nugget", "count": [6, 12], "weight": 15, "cp_each": 2, "cp_source": "greed", "why": "a small gold hit, the bottom of the table: still not junk"},
+        {"item": "minecraft:book", "count": [1, 1], "weight": 20, "cp_each": 300, "cp_source": "proxy", "functions": [{"function": "minecraft:enchant_with_levels", "levels": 30, "options": "#minecraft:on_random_loot"}], "why": "an enchanted book, vanilla's own fishing-treasure form (minecraft:gameplay/fishing/treasure: a book enchanted at 30 levels from #minecraft:on_random_loot). Priced by proxy at the fossil chamber's greed_cp (300: 'three of the owner's diamonds'): nothing prices a book"},
+        {"item": "cobblemon:kings_rock", "count": [1, 1], "weight": 3, "cp_each": 600, "cp_source": "proxy", "why": "the one non-sellable item of pokerod_treasure; a held item no recipe makes, priced by proxy at two fossils"}
+      ],
+      "upstream": {
+        "source": "data/cobblemon/loot_table/fishing/pokerod.json, Cobblemon-fabric-1.8.0+1.21.1.jar; byte-different but JSON-identical in 1.8.2 (read 2026-10-17). The pool's entries, verbatim; the generator adds one condition to each and nothing else",
+        "type": "minecraft:fishing",
+        "random_sequence": "minecraft:gameplay/fishing",
+        "rolls": 1.0,
+        "bonus_rolls": 0.0,
+        "entries": [
+          {"type": "minecraft:loot_table", "value": "minecraft:gameplay/fishing/junk", "weight": 66, "quality": -2},
+          {"type": "minecraft:loot_table", "value": "cobblemon:fishing/pokerod_treasure", "weight": 17, "quality": 2,
+           "conditions": [{"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"type_specific": {"type": "cobblemon:poke_bobber", "in_open_water": true}}}]},
+          {"type": "minecraft:loot_table", "value": "minecraft:gameplay/fishing/treasure", "weight": 17, "quality": 2,
+           "conditions": [{"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"type_specific": {"type": "cobblemon:poke_bobber", "in_open_water": true}}}]}
+        ]
+      }
+    },
     "species": {
       "mine": {
         "why": "an underground lake: mud and deep water (Mudkip, Totodile, Chinchou, Wooper, Magikarp, Barboach), the starters on top",

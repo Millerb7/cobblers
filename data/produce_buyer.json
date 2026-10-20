@@ -104,7 +104,7 @@
     "excluded_patterns": [
       {"regex": "^cobblemon:[a-z_]+_berry$", "why": "a berry sells in the berries crate, by the crate"}
     ],
-    "grant_files": ["data/rewards.json", "data/quests.json", "data/dungeons.json", "data/dungeon_greed.json", "data/dungeon_prize.json", "data/dungeon_prize_roster.json", "data/arena_fights.json", "data/direct_trades.json"],
+    "grant_files": ["data/rewards.json", "data/quests.json", "data/dungeons.json", "data/dungeon_greed.json", "data/dungeon_extras2.json", "data/dungeon_prize.json", "data/dungeon_prize_roster.json", "data/arena_fights.json", "data/direct_trades.json"],
     "grant_files_why": "any item these files hand out is a prize or a dungeon reward, and 'a prize you can buy is not a prize' (docs/STATE.md:151). `check` fails when a specimen id appears in one of them, and when an `excluded` record of kind 'granted' no longer appears in one (a stale exclusion)"
   },
   "never_sold": {

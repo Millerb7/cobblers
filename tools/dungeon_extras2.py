@@ -23,6 +23,12 @@ either. The wanted species (starters among them) stand in the `common` bucket (8
 each bucket. A rod is lent (a marked Poke Rod, taken back wherever the rift pick is: `patch_functions`). A catch is weighed
 as a nest catch (tools/dungeon_greed.py CATCH_ALIAS): GREED counts every catch in a live run, by the room the catcher
 stands in.
+ITEM CATCHES (2026-10-17). A bite that is not a Pokemon rolls the loot table cobblemon:fishing/pokerod, whose treasure entries need
+open water (a one-deep pool is not), so a dungeon cast gave junk. pack_files emits that table again at the same path (a deliberate
+override of an upstream path, recorded in data fishing.item_catches): in the pocket dimension (location_check on the loot context's
+origin) it rolls cobblers:dungeons/fishing/treasure, hits only; elsewhere exactly the upstream entries. A loot context cannot see
+the run or the band, so one table serves every band. A fished ITEM is not weighed by GREED (it measures mined blocks, opened chests
+and caught Pokemon only); the table's value is held to about one catch instead.
 
 EGGS. A non-battling NPC vendor (class and dialogue per slot and band, `pack_files`) stands behind a counter. Each offer's
 button runs `take_b<band>_<k>` as the player: it refuses outside a live run, after the run's one egg, and when fewer than
@@ -292,6 +298,67 @@ def kind_fishing(doc, d, slot, room, theme):
 
 def fishing_rooms(doc, d):
     return [r for r in R.all_records(d) if r.get("kind") == "fishing_room"]
+
+
+# ------------------------------------------------------------------------------------------------- dungeon item catches
+
+POKEROD_PATH = "data/cobblemon/loot_table/fishing/pokerod.json"     # a DELIBERATE override of an upstream path (data fishing.item_catches)
+
+
+def item_cfg():
+    return fishing_cfg()["item_catches"]
+
+
+def table_path(cfg=None):
+    ns, path = (cfg or item_cfg())["table"].split(":", 1)
+    return "data/%s/loot_table/%s.json" % (ns, path)
+
+
+def in_pocket(doc):
+    """The condition 'the loot context's origin (the bobber) is in the pocket dimension': vanilla `minecraft:location_check`
+    with a LocationPredicate `dimension` (1.21.1). A fishing loot context holds origin, tool, luck and this_entity (the bobber);
+    it holds no scoreboard, so it cannot see a run, a slot or a band."""
+    return {"condition": "minecraft:location_check", "predicate": {"dimension": dim_of(doc)}}
+
+
+def item_table(doc):
+    """The dungeon treasure table: the data's entries only, each a hit."""
+    entries = []
+    for e in item_cfg()["entries"]:
+        fns = []
+        lo, hi = e["count"]
+        if (lo, hi) != (1, 1):
+            fns.append({"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": lo, "max": hi}})
+        fns += e.get("functions", [])
+        ent = {"type": "minecraft:item", "name": e["item"], "weight": int(e["weight"])}
+        if fns:
+            ent["functions"] = fns
+        entries.append(ent)
+    return {"type": "minecraft:fishing", "pools": [{"rolls": 1.0, "bonus_rolls": 0.0, "entries": entries}],
+            "random_sequence": "cobblers:dungeons/fishing/treasure"}
+
+
+def pokerod_override(doc):
+    """cobblemon:fishing/pokerod again: the dungeon table when the bobber is in the pocket, else the upstream entries with the
+    inverse test added to each (their own conditions, weights and quality untouched). One pool, one roll, so exactly one side
+    can be chosen: in the pocket only the first entry passes, anywhere else only the upstream three."""
+    up = item_cfg()["upstream"]
+    dungeon = {"type": "minecraft:loot_table", "value": item_cfg()["table"], "weight": 1, "conditions": [in_pocket(doc)]}
+    outside = {"condition": "minecraft:inverted", "term": in_pocket(doc)}
+    entries = [dungeon]
+    for e in up["entries"]:
+        e = json.loads(json.dumps(e))
+        e["conditions"] = [outside] + e.get("conditions", [])
+        entries.append(e)
+    return {"type": up["type"], "pools": [{"bonus_rolls": up["bonus_rolls"], "rolls": up["rolls"], "entries": entries}],
+            "random_sequence": up["random_sequence"]}
+
+
+def item_ev_cp(cfg=None):
+    """The expected cp of one item bite, from the data's own weights, counts and per-item cp."""
+    es = (cfg or item_cfg())["entries"]
+    tot = sum(e["weight"] for e in es)
+    return sum(e["weight"] * (e["count"][0] + e["count"][1]) / 2.0 * e["cp_each"] for e in es) / tot
 
 
 def dungeon_slots(doc, d):
@@ -618,6 +685,9 @@ def pack_files(doc):
             keys = {pool_species_key(r, d) for r in fishing_rooms(doc, d)}
             if len(keys) == 1:
                 out[spawn_pool_path(d)] = json.dumps(spawn_pool(doc, d, keys.pop()), indent=2) + "\n"
+    if has_fishing(doc):
+        out[table_path()] = json.dumps(item_table(doc), indent=2) + "\n"
+        out[POKEROD_PATH] = json.dumps(pokerod_override(doc), indent=2) + "\n"
     out.update(egg_files(doc))
     out.update(fossil_files(doc))
     return out
@@ -685,6 +755,50 @@ NOT_FISHABLE = {"legendary", "mythical", "ultra_beast", "paradox", "fossil"}
 NOT_AN_EGG = {"legendary", "mythical", "ultra_beast", "paradox"}
 
 
+def item_problems(data):
+    """fishing.item_catches against the economy: every entry a real hit, priced the way GREED prices it, nothing the bank or the
+    Produce Buyer would pay cash for, and the table's expected value inside the range the data states."""
+    bad = []
+    cfg = data["fishing"].get("item_catches")
+    if not cfg:
+        return ["fishing.item_catches: missing"]
+    greed = json.loads((ROOT / "data" / "dungeon_greed.json").read_text(encoding="utf-8"))
+    bank = json.loads((ROOT / "data" / "bank.json").read_text(encoding="utf-8"))
+    sold = {b["item"] for b in bank["buys"]}
+    pb = json.loads((ROOT / "data" / "produce_buyer.json").read_text(encoding="utf-8"))
+    specimens = set(pb["specimens"]["items"])
+    ID = re.compile(r"^[a-z0-9_.-]+:[a-z0-9_/.-]+$")
+    seen = set()
+    for e in cfg["entries"]:
+        item = e.get("item", "")
+        if not ID.match(item) or item in seen:
+            bad.append("fishing.item_catches: %r is not a unique item id" % item)
+        seen.add(item)
+        lo_hi = e.get("count")
+        if not (isinstance(lo_hi, list) and len(lo_hi) == 2 and all(isinstance(v, int) for v in lo_hi) and 1 <= lo_hi[0] <= lo_hi[1]):
+            bad.append("fishing.item_catches %s: count must be [min, max] with 1 <= min <= max" % item)
+        if not (isinstance(e.get("weight"), int) and e["weight"] > 0):
+            bad.append("fishing.item_catches %s: weight must be a positive integer" % item)
+        if e.get("cp_source") == "greed":
+            if _greed_item_cp(greed, item) != e.get("cp_each"):
+                bad.append("fishing.item_catches %s: cp_each %r is not data/dungeon_greed.json's price %r" % (item, e.get("cp_each"), _greed_item_cp(greed, item)))
+        elif e.get("cp_source") != "proxy" or not isinstance(e.get("cp_each"), int) or e["cp_each"] <= 0 or not e.get("why"):
+            bad.append("fishing.item_catches %s: cp_source must be 'greed' or a 'proxy' with a positive cp_each and a why" % item)
+        if item in sold:
+            bad.append("fishing.item_catches %s: the bank buys it, so a cast would be a cash route" % item)
+        if item in specimens:
+            bad.append("fishing.item_catches %s: a Produce Buyer specimen, so a cast would be a cash route" % item)
+    lo, hi = cfg["range_cp"]
+    if cfg["entries"] and not lo <= item_ev_cp(cfg) <= hi:
+        bad.append("fishing.item_catches: expected value %.0f cp is outside range_cp %s" % (item_ev_cp(cfg), cfg["range_cp"]))
+    return bad
+
+
+def _greed_item_cp(table, item):
+    row = table["items"].get(item)
+    return int(row["cp"]) if row is not None else None
+
+
 def data_problems(doc, species=None):
     """The data file against the engine: every band and bucket covered, levels under the band's lower cap, species ids that
     exist and are not a legendary (or, for fishing, a fossil Pokemon: the fossil chamber is their source), prices that can
@@ -721,6 +835,7 @@ def data_problems(doc, species=None):
             commons = {sp for sp, _w in row.get("common", [])}
             if species is not None and not any(species.get(sp, set()) & {"starter", "starter_line"} for sp in commons):
                 bad.append("fishing.species.%s band %d: no starter in the common bucket" % (theme, b))
+    bad += item_problems(data)
     eggs = data["eggs"]
     for b in bands:
         offs = eggs["offers"].get(str(b))
