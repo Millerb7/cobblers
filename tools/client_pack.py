@@ -366,6 +366,10 @@ def bundle_files(plan: dict, cobbleverse: Path, address_file: Path, ours: list[P
         raise PackError("bundle: no server address file at %s (one line: the address players join)" % address_file)
     addr = address_file.read_text(encoding="utf-8").strip()
     out["servers.dat"] = servers_dat([("Cobblers", addr)])
+    # the instance's own options.txt, so the first launch already has our resource packs on (2026-10-20: the
+    # defaultoptions copy under config/ did not apply to a Modrinth App import, and the owner's NPCs were dolls)
+    opts = Path(__file__).resolve().parent.parent / "modpack" / "config" / "defaultoptions" / "options.txt"
+    out["options.txt"] = opts.read_bytes()
     if missing:
         raise PackError("bundle: missing files: " + ", ".join(missing))
     return out
