@@ -1,15 +1,704 @@
 {
   "generated_by": "hand",
-  "why": "The owner, 2026-10-16: our talk-to NPCs render as Cobblemon's standard (Steve-like) model; 'make him have the correct skin and appearance'. A look is a client NPC variation (assets/<ns>/bedrock/npcs/variations/, docs/research/notes/npc-skins-1.8.md section 2) that tools/client_model_fix.py --server-pack writes into cobblers-client-AllTheMons-subset.zip; tools/compile_dialogue.py gives the NPC's class that resourceIdentifier. The texture is one players already have (the COBBLEVERSE RCTmod RP), so no art is shipped. A player without the subset zip sees the substitute doll for that NPC. Brock's look was seen working in game on 2026-10-16.",
+  "why": "The owner, 2026-10-16: our talk-to NPCs render as Cobblemon's standard (Steve-like) model; 'make him have the correct skin and appearance'. A look is a client NPC variation (assets/<ns>/bedrock/npcs/variations/, docs/research/notes/npc-skins-1.8.md section 2) that tools/client_model_fix.py --server-pack writes into cobblers-client-AllTheMons-subset.zip; tools/compile_dialogue.py gives the NPC's class that resourceIdentifier. The texture is one players already have (the COBBLEVERSE RCTmod RP), so no art is shipped. A player without the subset zip sees the substitute doll for that NPC. Brock's look was seen working in game on 2026-10-16. The owner, 2026-10-20: 'there is still a bunch of steve npcs out there' (Hank and Lena): every NPC with a dialogue class (data/dialogue.json conversations with an npc_id, 108) now has a look, one skin per character (a character with several NPC ids, such as Nia Calder, shares one look), chosen by role, age, gender and place from the 2,010 single/ skins in the COBBLEVERSE RCTmod RP (all 64x64, so all use cobblemon:steve.geo); named canon characters use their named skin (Oak, Sabrina, Brock). Skins the compact-route and HQ trainer records already seat (worker_braden, engineer_bernie, camper_jeff) are avoided. Chosen from the skin file names and the character's lines, not by looking at the textures: a wrong fit is an edit of one 'npcs' entry. Not covered: NPC classes that no conversation opens (the dungeon bosses, stand trainers and egg vendors, tools/dungeon*.py, and the arena classes, tools/arena_runtime.py), which still name cobblemon:standard or no resource.",
   "looks": {
     "cobblers:brock": {
       "model": "cobblemon:steve.geo",
       "poser": "cobblemon:standard",
       "texture": "rctmod:textures/trainers/single/kanto_brock.png",
       "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/kanto_brock.png, 64x64 player-skin layout, matching steve.geo's 64x64)"
+    },
+    "cobblers:stranger": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/veteran_edgar_0386.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/veteran_edgar_0386.png, 64x64 player-skin layout, matching steve.geo's 64x64). the Route 1 thirsty stranger: curt, weathered traveller."
+    },
+    "cobblers:hank": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/worker_gary_039b.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/worker_gary_039b.png, 64x64 player-skin layout, matching steve.geo's 64x64). Hank, Pallet husband woken outside his crushed house: plain workman."
+    },
+    "cobblers:lena": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/breeder_bethany_0261.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/breeder_bethany_0261.png, 64x64 player-skin layout, matching steve.geo's 64x64). Lena, Hank's wife trapped in the house: a homebody."
+    },
+    "cobblers:prof_oak": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/professor_oak_00c8.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/professor_oak_00c8.png, 64x64 player-skin layout, matching steve.geo's 64x64). Professor Oak: the pack's own Professor Oak skin."
+    },
+    "cobblers:mina": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/aroma_lady_hannah_030e.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/aroma_lady_hannah_030e.png, 64x64 player-skin layout, matching steve.geo's 64x64). Mina, a Pallet local who walked Route 1: townswoman."
+    },
+    "cobblers:maren": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/rival_1_player_chose_gible_0606.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/rival_1_player_chose_gible_0606.png, 64x64 player-skin layout, matching steve.geo's 64x64). Maren of Pallet, the rival: the pack's rival skin."
+    },
+    "cobblers:relief_clerk": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/reporter_valerie_048c.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/reporter_valerie_048c.png, 64x64 player-skin layout, matching steve.geo's 64x64). Lake Viltri relief clerk: office worker with a ledger."
+    },
+    "cobblers:signal_tech": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/engineer_baily_00dc.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/engineer_baily_00dc.png, 64x64 player-skin layout, matching steve.geo's 64x64). Mt Vessu signal technician: engineer."
+    },
+    "cobblers:survey_archivist": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/gentleman_leonardo_0487.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/gentleman_leonardo_0487.png, 64x64 player-skin layout, matching steve.geo's 64x64). Peak Pond survey archivist: bookish gentleman."
+    },
+    "cobblers:marsh_tracker": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/pokemon_ranger_taylor_0335.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/pokemon_ranger_taylor_0335.png, 64x64 player-skin layout, matching steve.geo's 64x64). Glacier Foot marsh tracker: ranger."
+    },
+    "cobblers:sabrina": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/kanto_sabrina.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/kanto_sabrina.png, 64x64 player-skin layout, matching steve.geo's 64x64). Sabrina's story self: the named gym leader skin."
+    },
+    "cobblers:crater_analyst": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/scientist_gideon_0221.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/scientist_gideon_0221.png, 64x64 player-skin layout, matching steve.geo's 64x64). Blaine's crater analyst: scientist."
+    },
+    "cobblers:watch_officer": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/police_officer_thomas_03e7.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/police_officer_thomas_03e7.png, 64x64 player-skin layout, matching steve.geo's 64x64). Giovanni's southern watch officer: police officer."
+    },
+    "cobblers:rift_surveyor": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/pokemon_ranger_jeffrey_0336.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/pokemon_ranger_jeffrey_0336.png, 64x64 player-skin layout, matching steve.geo's 64x64). Rift surveyor at the Victory Road trailhead: field ranger."
+    },
+    "cobblers:league_steward": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/gentleman_clifford_025d.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/gentleman_clifford_025d.png, 64x64 player-skin layout, matching steve.geo's 64x64). League steward: formal gentleman."
+    },
+    "cobblers:vr_digger": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/worker_colin_037a.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/worker_colin_037a.png, 64x64 player-skin layout, matching steve.geo's 64x64). Victory Road abandoned-cut digger: labourer."
+    },
+    "cobblers:picnicker": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/picnicker_celia_01e1.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/picnicker_celia_01e1.png, 64x64 player-skin layout, matching steve.geo's 64x64). Route 1 picnicker whose lunch was taken: picnicker."
+    },
+    "cobblers:first_cast_fisher": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/fisher_cody_030d.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/fisher_cody_030d.png, 64x64 player-skin layout, matching steve.geo's 64x64). Route 1 first-cast fisher: fisher."
+    },
+    "cobblers:wick_doran": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/fisherman_wade_00e7.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/fisherman_wade_00e7.png, 64x64 player-skin layout, matching steve.geo's 64x64). Wick Doran, Viltri shallows fisherman."
+    },
+    "cobblers:hanne_brook": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/skier_kaitlyn_0351.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/skier_kaitlyn_0351.png, 64x64 player-skin layout, matching steve.geo's 64x64). Hanne Brook, fishes the cold Glacial Tear river: cold-weather gear."
+    },
+    "cobblers:pell_ashwick": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/fisherman_ned_00e1.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/fisherman_ned_00e1.png, 64x64 player-skin layout, matching steve.geo's 64x64). Pell Ashwick, Peak Pond fisherman."
+    },
+    "cobblers:ingrid_salt": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/sailor_skyler_03ea.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/sailor_skyler_03ea.png, 64x64 player-skin layout, matching steve.geo's 64x64). Ingrid Salt, fishes between the boats at Northlight shore: sailor."
+    },
+    "cobblers:corin_vale": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/sailor_edmond_0086.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/sailor_edmond_0086.png, 64x64 player-skin layout, matching steve.geo's 64x64). Corin Vale, mends lines at Sunset Harbour: sailor."
+    },
+    "cobblers:route2_miner": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/worker_conrad_0586.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/worker_conrad_0586.png, 64x64 player-skin layout, matching steve.geo's 64x64). Route 2 miner with a cart and a Geodude: labourer."
+    },
+    "cobblers:shore_keeper": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/pokemon_ranger_dwayne_04ba.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/pokemon_ranger_dwayne_04ba.png, 64x64 player-skin layout, matching steve.geo's 64x64). Route 2 shore keeper at the Viltri banks: ranger."
+    },
+    "cobblers:ansel_kerr": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/cyclist_ryan_02fe.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/cyclist_ryan_02fe.png, 64x64 player-skin layout, matching steve.geo's 64x64). Courier Ansel Kerr: courier on the road."
+    },
+    "cobblers:mila_aster": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/breeder_allison_0262.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/breeder_allison_0262.png, 64x64 player-skin layout, matching steve.geo's 64x64). Mila Aster, displaced family organiser (two NPCs)."
+    },
+    "cobblers:nia_calder": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ace_trainer_caroline_0193.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ace_trainer_caroline_0193.png, 64x64 player-skin layout, matching steve.geo's 64x64). Nia Calder, Compact field-clinic medic (four NPCs)."
+    },
+    "cobblers:tomas_rill": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/scientist_taylor_0155.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/scientist_taylor_0155.png, 64x64 player-skin layout, matching steve.geo's 64x64). Tomas Rill, destination surveyor with the survey cases (two NPCs)."
+    },
+    "cobblers:teo_halloran": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ranger_nicolas_0209.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ranger_nicolas_0209.png, 64x64 player-skin layout, matching steve.geo's 64x64). Cirque Ranger Teo Halloran."
+    },
+    "cobblers:ilse_marn": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ranger_katelyn_0256.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ranger_katelyn_0256.png, 64x64 player-skin layout, matching steve.geo's 64x64). Destination Surveyor Ilse Marn."
+    },
+    "cobblers:dev_aster": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/gentleman_tucker_01a7.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/gentleman_tucker_01a7.png, 64x64 player-skin layout, matching steve.geo's 64x64). Dev Aster, displaced family man (two NPCs)."
+    },
+    "cobblers:hale_dorrin": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/police_officer_alex_0330.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/police_officer_alex_0330.png, 64x64 player-skin layout, matching steve.geo's 64x64). Guard Sergeant Hale Dorrin, council guard."
+    },
+    "cobblers:varga": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/battle_girl_kelsey_02f6.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/battle_girl_kelsey_02f6.png, 64x64 player-skin layout, matching steve.geo's 64x64). Lieutenant/Sergeant Varga, Compact officer (four NPCs)."
+    },
+    "cobblers:ysolde_crane": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/madame_reina_032e.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/madame_reina_032e.png, 64x64 player-skin layout, matching steve.geo's 64x64). Camp Warden Ysolde Crane: commanding older woman."
+    },
+    "cobblers:odile_marsh": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/pokemon_breeder_jennifer_0311.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/pokemon_breeder_jennifer_0311.png, 64x64 player-skin layout, matching steve.geo's 64x64). Odile Marsh, mother in the waiting camp."
+    },
+    "cobblers:perrin_hask": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/sailor_luther_036d.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/sailor_luther_036d.png, 64x64 player-skin layout, matching steve.geo's 64x64). Boarding Officer Perrin Hask at the requisition dock."
+    },
+    "cobblers:tamsin_ode": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/police_officer_caleb_0339.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/police_officer_caleb_0339.png, 64x64 player-skin layout, matching steve.geo's 64x64). Checkpoint Guard Tamsin Ode at the bridge."
+    },
+    "cobblers:corin_aldous": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/pokemon_breeder_kahlil_0317.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/pokemon_breeder_kahlil_0317.png, 64x64 player-skin layout, matching steve.geo's 64x64). Medic Corin Aldous, dissenter taking families west."
+    },
+    "cobblers:trail_keeper": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/hiker_marcos_00b5.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/hiker_marcos_00b5.png, 64x64 player-skin layout, matching steve.geo's 64x64). Route 3 trail keeper: hiker."
+    },
+    "cobblers:route3_courier": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/jogger_richard_0313.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/jogger_richard_0313.png, 64x64 player-skin layout, matching steve.geo's 64x64). Route 3 courier guarding a crate: jogger."
+    },
+    "cobblers:route3_guide": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/camper_liam_008e.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/camper_liam_008e.png, 64x64 player-skin layout, matching steve.geo's 64x64). Route 3 guide with a torn route flag: camper."
+    },
+    "cobblers:hallam": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/hiker_wayne_00b8.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/hiker_wayne_00b8.png, 64x64 player-skin layout, matching steve.geo's 64x64). Hallam, Route 4 packer who lost his mule."
+    },
+    "cobblers:oriel": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/gatekeeper_logan_0253.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/gatekeeper_logan_0253.png, 64x64 player-skin layout, matching steve.geo's 64x64). Oriel, Route 4 gatekeeper: gatekeeper."
+    },
+    "cobblers:light_keeper": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/sailor_huey_008a.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/sailor_huey_008a.png, 64x64 player-skin layout, matching steve.geo's 64x64). Viltri light keeper: sailor."
+    },
+    "cobblers:tea_picker": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/aroma_lady_alison_0480.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/aroma_lady_alison_0480.png, 64x64 player-skin layout, matching steve.geo's 64x64). Tea Town picker among the tea rows."
+    },
+    "cobblers:scar_scavenger": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/burglar_dusty_00d7.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/burglar_dusty_00d7.png, 64x64 player-skin layout, matching steve.geo's 64x64). The Scar scavenger: scrounger."
+    },
+    "cobblers:city_mason": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/worker_gerardo_03fd.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/worker_gerardo_03fd.png, 64x64 player-skin layout, matching steve.geo's 64x64). Displaced City mason: labourer."
+    },
+    "cobblers:northlight_hand": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/skier_bradley_034f.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/skier_bradley_034f.png, 64x64 player-skin layout, matching steve.geo's 64x64). Northlight field hand under the weather mast: cold-weather gear."
+    },
+    "cobblers:gorge_elder": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/old_sage.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/old_sage.png, 64x64 player-skin layout, matching steve.geo's 64x64). Gorge hamlet elder: the pack's old sage."
+    },
+    "cobblers:mining_foreman": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/worker_quentin_0462.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/worker_quentin_0462.png, 64x64 player-skin layout, matching steve.geo's 64x64). Mining town foreman: labourer."
+    },
+    "cobblers:hollis": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ranger_jackson_0254.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ranger_jackson_0254.png, 64x64 player-skin layout, matching steve.geo's 64x64). Hollis, watches the Ursaluna den: ranger."
+    },
+    "cobblers:hopgood": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/poke_fan_leonard_0479.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/poke_fan_leonard_0479.png, 64x64 player-skin layout, matching steve.geo's 64x64). Ellis Hopgood, Lopunny superfan."
+    },
+    "cobblers:marlow": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/gentleman_norton_01a8.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/gentleman_norton_01a8.png, 64x64 player-skin layout, matching steve.geo's 64x64). Marlow, last keeper of the old cider orchard."
+    },
+    "cobblers:isaura_dray": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/lady_melissa_032c.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/lady_melissa_032c.png, 64x64 player-skin layout, matching steve.geo's 64x64). Isaura Dray, keeper of the boatbuilders' brow."
+    },
+    "cobblers:varn": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ruin_maniac_harry_0433.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ruin_maniac_harry_0433.png, 64x64 player-skin layout, matching steve.geo's 64x64). Varn, salvager at the dune ruin."
+    },
+    "cobblers:quarne": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ruin_maniac_karl_0492.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ruin_maniac_karl_0492.png, 64x64 player-skin layout, matching steve.geo's 64x64). Quarne, fossil dig foreman."
+    },
+    "cobblers:owen_cray": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ranchers_bob_047d.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ranchers_bob_047d.png, 64x64 player-skin layout, matching steve.geo's 64x64). Owen Cray, last of the Hollow drovers."
+    },
+    "cobblers:brann_saye": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/veteran_brenden_045e.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/veteran_brenden_045e.png, 64x64 player-skin layout, matching steve.geo's 64x64). Captain Brann Saye, Compact HQ tower."
+    },
+    "cobblers:oren_pell": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/engineer_braxton_00dd.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/engineer_braxton_00dd.png, 64x64 player-skin layout, matching steve.geo's 64x64). Oren Pell, Compact control-room engineer (two NPCs)."
+    },
+    "cobblers:elara_venn": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/madame_rebecca_0488.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/madame_rebecca_0488.png, 64x64 player-skin layout, matching steve.geo's 64x64). Director Elara Venn of the Compact."
+    },
+    "cobblers:hq_guard": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/police_officer_dylan_0331.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/police_officer_dylan_0331.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact HQ ring-0 door guard."
+    },
+    "cobblers:hq_guard_inside": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/police_officer_bobby_032f.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/police_officer_bobby_032f.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact HQ inside guard."
+    },
+    "cobblers:hall_binder": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/scientist_jerry_0151.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/scientist_jerry_0151.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact binder at the Hall of the ring."
+    },
+    "cobblers:imogen_vale": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ace_trainer_laura_034d.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ace_trainer_laura_034d.png, 64x64 player-skin layout, matching steve.geo's 64x64). Imogen Vale, Director of Shrew Station."
+    },
+    "cobblers:brandt": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/pokemon_ranger_deshawn_04b9.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/pokemon_ranger_deshawn_04b9.png, 64x64 player-skin layout, matching steve.geo's 64x64). Brandt, Shrew Station field officer who counts clouds."
+    },
+    "cobblers:tobias_quill": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/scientist_ed_0158.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/scientist_ed_0158.png, 64x64 player-skin layout, matching steve.geo's 64x64). Tobias Quill, Shrew Station archivist."
+    },
+    "cobblers:mireille": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/channeler_laurel_01bd.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/channeler_laurel_01bd.png, 64x64 player-skin layout, matching steve.geo's 64x64). Mireille, keeper of the Eon shrine."
+    },
+    "cobblers:tobiah_rusk": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/hiker_earl_0245.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/hiker_earl_0245.png, 64x64 player-skin layout, matching steve.geo's 64x64). Tobiah Rusk, stands in the half house."
+    },
+    "cobblers:corran_vey": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/pokemon_ranger_allison_0337.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/pokemon_ranger_allison_0337.png, 64x64 player-skin layout, matching steve.geo's 64x64). Corran Vey, Survey of the Meridian."
+    },
+    "cobblers:nan": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ranchers_beth_047c.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ranchers_beth_047c.png, 64x64 player-skin layout, matching steve.geo's 64x64). Nan, shepherd with nineteen ewes."
+    },
+    "cobblers:gorse": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/hiker_theodore_043a.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/hiker_theodore_043a.png, 64x64 player-skin layout, matching steve.geo's 64x64). Gorse, who has watched the Tear for decades."
+    },
+    "cobblers:jory_tarrow": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ranchers_matt_03bd.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ranchers_matt_03bd.png, 64x64 player-skin layout, matching steve.geo's 64x64). Jory Tarrow, winter fold shepherd."
+    },
+    "cobblers:bettany_oake": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/lady_gillian_0234.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/lady_gillian_0234.png, 64x64 player-skin layout, matching steve.geo's 64x64). Bettany Oake, forty years a panner."
+    },
+    "cobblers:hale_brannock": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/veteran_terrell_045d.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/veteran_terrell_045d.png, 64x64 player-skin layout, matching steve.geo's 64x64). Hale Brannock, gate watcher, seven badges."
+    },
+    "cobblers:hesketh_fell": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/worker_willy_045f.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/worker_willy_045f.png, 64x64 player-skin layout, matching steve.geo's 64x64). Hesketh Fell, fells the birch wood."
+    },
+    "cobblers:agnes_merrow": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/aroma_lady_angela_039e.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/aroma_lady_angela_039e.png, 64x64 player-skin layout, matching steve.geo's 64x64). Agnes Merrow, blind carver."
+    },
+    "cobblers:pip": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/school_kid_chance_03ec.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/school_kid_chance_03ec.png, 64x64 player-skin layout, matching steve.geo's 64x64). Pip, child 'leader' of Pip's Gym."
+    },
+    "cobblers:tam": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/youngster_ben_0059.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/youngster_ben_0059.png, 64x64 player-skin layout, matching steve.geo's 64x64). Tam, boy playing hide and seek."
+    },
+    "cobblers:lettie": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/poke_kid_danielle_0314.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/poke_kid_danielle_0314.png, 64x64 player-skin layout, matching steve.geo's 64x64). Lettie, girl hiding from Tam."
+    },
+    "cobblers:cassius_rook": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/camper_zackary_0405.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/camper_zackary_0405.png, 64x64 player-skin layout, matching steve.geo's 64x64). Cassius Rook, hunter who sits for the Hart."
+    },
+    "cobblers:perrin_hale": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/picnicker_nancy_0097.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/picnicker_nancy_0097.png, 64x64 player-skin layout, matching steve.geo's 64x64). Perrin Hale, the Long Count counter."
+    },
+    "cobblers:tamsin_hollin": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/breeder_annie_05a9.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/breeder_annie_05a9.png, 64x64 player-skin layout, matching steve.geo's 64x64). Tamsin Hollin, apricorn farmer."
+    },
+    "cobblers:arrow_creeks_farmer": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ranchers_ava_03bc.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ranchers_ava_03bc.png, 64x64 player-skin layout, matching steve.geo's 64x64). Arrow Creeks Farm farmer: rancher."
+    },
+    "cobblers:wardenhold_maren": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/skier_lexie_0357.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/skier_lexie_0357.png, 64x64 player-skin layout, matching steve.geo's 64x64). Maren of Wardenhold, keep keeper's daughter."
+    },
+    "cobblers:wardenhold_sef": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/hiker_trent_00bc.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/hiker_trent_00bc.png, 64x64 player-skin layout, matching steve.geo's 64x64). Sef, Wardenhold warden."
+    },
+    "cobblers:wardenhold_pell": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/veteran_emanuel_0491.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/veteran_emanuel_0491.png, 64x64 player-skin layout, matching steve.geo's 64x64). Pell, Wardenhold keeper of the count."
+    },
+    "cobblers:odile_courier": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/cyclist_nicole_0300.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/cyclist_nicole_0300.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact Courier Odile."
+    },
+    "cobblers:imre_courier": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/cyclist_james_02fc.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/cyclist_james_02fc.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact Courier Imre."
+    },
+    "cobblers:sefa_courier": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/cyclist_rachel_0302.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/cyclist_rachel_0302.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact Courier Sefa."
+    },
+    "cobblers:rhoswen": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/black_belt_kendal_0436.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/black_belt_kendal_0436.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact Anchor Guard Rhoswen."
+    },
+    "cobblers:tobin": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/police_officer_danny_03e6.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/police_officer_danny_03e6.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact Anchor Guard Tobin."
+    },
+    "cobblers:ysolde_guard": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/black_belt_kiyo_0143.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/black_belt_kiyo_0143.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact Anchor Guard Ysolde."
+    },
+    "cobblers:aubrecht": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/veteran_armando_03fb.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/veteran_armando_03fb.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact Field Commander Aubrecht."
+    },
+    "cobblers:watch_sergeant": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/veteran_clayton_0387.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/veteran_clayton_0387.png, 64x64 player-skin layout, matching steve.geo's 64x64). Holdfast Watch Sergeant."
+    },
+    "cobblers:corrin_loyalist": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ace_trainer_henry_0383.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ace_trainer_henry_0383.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact Loyalist Corrin."
+    },
+    "cobblers:hesper_loyalist": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/ace_trainer_destiny_03b7.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/ace_trainer_destiny_03b7.png, 64x64 player-skin layout, matching steve.geo's 64x64). Compact Loyalist Hesper."
     }
   },
   "npcs": {
-    "npc_main_brock_witness": "cobblers:brock"
+    "npc_main_brock_witness": "cobblers:brock",
+    "npc_route1_thirsty_stranger": "cobblers:stranger",
+    "npc_pallet_crushed_house_hank": "cobblers:hank",
+    "npc_pallet_crushed_house_lena": "cobblers:lena",
+    "npc_main_pallet_oak": "cobblers:prof_oak",
+    "npc_main_pallet_mina": "cobblers:mina",
+    "npc_main_pallet_maren": "cobblers:maren",
+    "npc_main_misty_relief_clerk": "cobblers:relief_clerk",
+    "npc_main_surge_signal_clerk": "cobblers:signal_tech",
+    "npc_main_erika_survey_archivist": "cobblers:survey_archivist",
+    "npc_main_koga_marsh_tracker": "cobblers:marsh_tracker",
+    "npc_main_sabrina_pattern": "cobblers:sabrina",
+    "npc_main_blaine_crater_analyst": "cobblers:crater_analyst",
+    "npc_main_giovanni_watch": "cobblers:watch_officer",
+    "npc_main_rift_surveyor": "cobblers:rift_surveyor",
+    "npc_main_league_steward": "cobblers:league_steward",
+    "npc_vr_abandoned_cut_digger": "cobblers:vr_digger",
+    "npc_route1_picnicker": "cobblers:picnicker",
+    "npc_route1_first_cast_fisher": "cobblers:first_cast_fisher",
+    "npc_fisher_viltri": "cobblers:wick_doran",
+    "npc_fisher_glacial_tear": "cobblers:hanne_brook",
+    "npc_fisher_peak_pond": "cobblers:pell_ashwick",
+    "npc_fisher_northlight_shore": "cobblers:ingrid_salt",
+    "npc_fisher_sunset_harbour": "cobblers:corin_vale",
+    "npc_route2_miner": "cobblers:route2_miner",
+    "npc_route2_shore_keeper": "cobblers:shore_keeper",
+    "npc_compact_courier_ansel": "cobblers:ansel_kerr",
+    "npc_compact_mila_aster": "cobblers:mila_aster",
+    "npc_compact_nia_landing": "cobblers:nia_calder",
+    "npc_compact_tomas_landing": "cobblers:tomas_rill",
+    "npc_compact_ranger_halloran": "cobblers:teo_halloran",
+    "npc_compact_surveyor_marn": "cobblers:ilse_marn",
+    "npc_compact_nia_pause": "cobblers:nia_calder",
+    "npc_compact_dev_aster": "cobblers:dev_aster",
+    "npc_compact_sergeant_dorrin": "cobblers:hale_dorrin",
+    "npc_compact_varga_2": "cobblers:varga",
+    "npc_compact_camp_warden": "cobblers:ysolde_crane",
+    "npc_compact_camp_mother": "cobblers:odile_marsh",
+    "npc_compact_boarding_hask": "cobblers:perrin_hask",
+    "npc_compact_bridge_guard": "cobblers:tamsin_ode",
+    "npc_compact_varga_3": "cobblers:varga",
+    "npc_compact_varga_4": "cobblers:varga",
+    "npc_compact_dissenter_medic": "cobblers:corin_aldous",
+    "npc_route3_trail_keeper": "cobblers:trail_keeper",
+    "npc_route3_courier": "cobblers:route3_courier",
+    "npc_route3_guide": "cobblers:route3_guide",
+    "npc_route4_packer": "cobblers:hallam",
+    "npc_route4_gatekeeper": "cobblers:oriel",
+    "npc_stone_tip_viltri_light_keeper": "cobblers:light_keeper",
+    "npc_stone_tip_tea_town_picker": "cobblers:tea_picker",
+    "npc_stone_tip_the_scar_scavenger": "cobblers:scar_scavenger",
+    "npc_stone_tip_displaced_city_mason": "cobblers:city_mason",
+    "npc_stone_tip_northlight_field_hand": "cobblers:northlight_hand",
+    "npc_stone_tip_gorge_hamlet_elder": "cobblers:gorge_elder",
+    "npc_stone_tip_mining_town_foreman": "cobblers:mining_foreman",
+    "npc_ursaluna_den_watcher": "cobblers:hollis",
+    "npc_lopunny_superfan": "cobblers:hopgood",
+    "npc_old_orchard_keeper": "cobblers:marlow",
+    "npc_sunset_watch_keeper": "cobblers:isaura_dray",
+    "npc_dune_ruin_salvager": "cobblers:varn",
+    "npc_fossil_dig_foreman": "cobblers:quarne",
+    "npc_drovers_hollow_drover": "cobblers:owen_cray",
+    "npc_finale_nia_calder": "cobblers:nia_calder",
+    "npc_finale_brann_saye": "cobblers:brann_saye",
+    "npc_finale_oren_pell": "cobblers:oren_pell",
+    "npc_finale_elara_venn": "cobblers:elara_venn",
+    "npc_main_relic_hq_guard": "cobblers:hq_guard",
+    "npc_main_relic_hq_guard_inside": "cobblers:hq_guard_inside",
+    "npc_main_relic_hall_binder": "cobblers:hall_binder",
+    "npc_station_director": "cobblers:imogen_vale",
+    "npc_station_field_officer": "cobblers:brandt",
+    "npc_station_archivist": "cobblers:tobias_quill",
+    "npc_station_shrine_keeper": "cobblers:mireille",
+    "npc_half_house": "cobblers:tobiah_rusk",
+    "npc_surveyor_line": "cobblers:corran_vey",
+    "npc_r5_nan": "cobblers:nan",
+    "npc_r5_gorse": "cobblers:gorse",
+    "npc_r5_jory": "cobblers:jory_tarrow",
+    "npc_prospector_claim": "cobblers:bettany_oake",
+    "npc_gate_watcher": "cobblers:hale_brannock",
+    "npc_stubborn_tree": "cobblers:hesketh_fell",
+    "npc_agnes_carving": "cobblers:agnes_merrow",
+    "npc_pips_gym": "cobblers:pip",
+    "npc_hide_and_seek": "cobblers:tam",
+    "npc_hide_and_seek_den": "cobblers:lettie",
+    "npc_hunters_hide": "cobblers:cassius_rook",
+    "npc_long_count": "cobblers:perrin_hale",
+    "npc_apricorn_farmer": "cobblers:tamsin_hollin",
+    "npc_pokemon_farm_farmer": "cobblers:arrow_creeks_farmer",
+    "npc_wardenhold_maren": "cobblers:wardenhold_maren",
+    "npc_wardenhold_sef": "cobblers:wardenhold_sef",
+    "npc_wardenhold_pell": "cobblers:wardenhold_pell",
+    "npc_compact_cp04_courier_1": "cobblers:odile_courier",
+    "npc_compact_cp04_courier_2": "cobblers:imre_courier",
+    "npc_compact_cp04_courier_3": "cobblers:sefa_courier",
+    "npc_compact_cp04_varga": "cobblers:varga",
+    "npc_compact_cp12_tomas_rill": "cobblers:tomas_rill",
+    "npc_compact_cp12_oren_pell": "cobblers:oren_pell",
+    "npc_compact_cp12_aster": "cobblers:mila_aster",
+    "npc_compact_cp12_guard_1": "cobblers:rhoswen",
+    "npc_compact_cp12_guard_2": "cobblers:tobin",
+    "npc_compact_cp12_guard_3": "cobblers:ysolde_guard",
+    "npc_compact_cp12_commander": "cobblers:aubrecht",
+    "npc_compact_cp14_nia_calder": "cobblers:nia_calder",
+    "npc_compact_cp14_aster": "cobblers:dev_aster",
+    "npc_compact_cp14_watch_sergeant": "cobblers:watch_sergeant",
+    "npc_compact_cp14_loyalist_1": "cobblers:corrin_loyalist",
+    "npc_compact_cp14_loyalist_2": "cobblers:hesper_loyalist"
   }
 }
