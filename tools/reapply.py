@@ -2319,6 +2319,14 @@ def steps(with_spawns=False):
     out.append(("R9OC", "the refillable mining caves: %s (data/mining_caves.json)" % ", ".join(
                     "%s with %d galleries" % (c["id"], len(c["galleries"])) for c in mining_caves.load()["caves"]),
                 [("fn", f) for f in mining_caves.build_functions()]))
+    # 2026-10-20, the Lower Galleries entered from the Route 1 old mine (data/mining_caves.json cave_old_mine entry.host,
+    # retired_entry): AFTER R9OC and after the towns (R8), whose old mine the passage is cut from. Hold the box, then the
+    # reroute: refused while a player stands where it writes (read back: 0 held), the old mouth, incline and frame back to
+    # the heightmap's terrain only while a probe shows the old frame, and the passage cut only while the hall's opening is
+    # not yet air. A fresh export (R8 already cut the passage, R9OC built no mouth) and a second run write nothing
+    out.append(("R9OCR", "the mining caves' retired mouths and their ways in from the host mine (%s)" % (
+                    ", ".join(c["id"] for c in mining_caves.load()["caves"] if c.get("retired_entry")) or "none"),
+                mining_caves.reroute_steps()))
     # the cave kit (tools/caves.py, data/caves.json; LEGENDARY_HOMES.md section 4): K1, K2 and K3, one block pass each held in a
     # forceload of its box, BEFORE R9E (each part's Habitat Block replaces a floor cell this writes). The gates' doors and the area
     # boss's keeper drive themselves (cobblers:caves/tick and /boss/<id>/keeper) and need no step
