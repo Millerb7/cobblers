@@ -47,12 +47,36 @@ def _brock_seat():
 
 
 # ------------------------------------------------------------------------------------------------ the switch
-# The owner, 2026-10-16: every boss stands as one leader. Lance alone is held, on his move's open P1:move_orphan
-# (data/challenge_mode.json single_leader.rollout_why). Without it a boss could leave the rollout, or Lance join it
-# with his move still able to orphan a leader, and nothing would say so.
-def test_the_rollout_is_every_boss_but_lance():
-    assert set(DATA["single_leader"]["rollout"]) == set(DATA["bosses"]) - {"kanto_league_lance"}
-    assert CM.rollout() == set(DATA["bosses"]) - {"kanto_league_lance"}
+# The owner, 2026-10-16: every boss stands as one leader; 2026-10-20: "lance should be one entity", so Lance too
+# (data/challenge_mode.json single_leader.rollout_why). Without it a boss could leave the rollout and stand two
+# leaders again, and nothing would say so.
+def test_the_rollout_is_all_thirteen_bosses():
+    assert set(DATA["single_leader"]["rollout"]) == set(DATA["bosses"])
+    assert len(DATA["bosses"]) == 13
+    assert CM.rollout() == set(DATA["bosses"])
+
+
+# Without it Lance's move could drop the kills that clear his old cell, and the template spawner's trainer, already
+# raised, would stand on the Normal id where the swap (which follows move.to) never reaches it (audit P1:move_orphan).
+# Judged on the generated text: every kill in the move function is anchored at move.from (data), waits for the old
+# spawner there, and comes before the line that sets the new spawner.
+def test_lances_move_clears_both_ids_by_his_old_cell_before_the_spawner_moves(files):
+    u = "kanto_league_lance"
+    mv = DATA["bosses"][u]["single_leader"]["move"]
+    body = [l for l in files[FN % ("move_" + u)] if l.strip() and not l.startswith("#")]
+    kills = [i for i, l in enumerate(body) if " run kill " in l]
+    sets = [i for i, l in enumerate(body) if " run setblock " in l]
+    assert len(kills) == 2 and sets and max(kills) < min(sets)
+    o, t = mv["from"], mv["to"]
+    for i, who in zip(kills, (u, u + SFX)):
+        l = body[i]
+        assert l.startswith("execute if block %d %d %d rctmod:trainer_spawner " % tuple(o)), l
+        assert "positioned %d.5 %d %d.5 unless entity @a[distance=.." % tuple(o) in l, l
+        assert "positioned %d.5 %d %d.5 unless entity @a[distance=.." % tuple(t) in l, l
+        assert l.endswith('run kill @e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..24,nbt={TrainerId:"%s",'
+                          'InBattle:0b}]' % (tuple(o) + (who,))), l
+    # the new leader stands outside the kill radius, so a re-run that still found the old spawner could not take him
+    assert sum((a - b) ** 2 for a, b in zip(o, t)) ** 0.5 > 24
 
 
 def test_a_rollout_naming_a_boss_that_does_not_exist_fails(monkeypatch):
@@ -241,8 +265,14 @@ def test_reapply_runs_every_retire_function_in_a_held_step_with_its_read_back(fi
     assert 'kind == "check" and v == "single_leader"' in src
     fns = CM.retire_functions()
     roll = sorted(CM.rollout())
-    # no rollout boss moves its spawner (Lance, the one that does, is held): one retire each, nothing else
-    assert fns == ["cobblers:trainers/challenge/retire_%s%s" % (u, SFX) for u in roll]
+    # one retire each; a boss whose spawner moves (Lance, single_leader.move) also its move, AFTER its retire
+    want = []
+    for u in roll:
+        want.append("cobblers:trainers/challenge/retire_%s%s" % (u, SFX))
+        if (DATA["bosses"][u].get("single_leader") or {}).get("move"):
+            want.append("cobblers:trainers/challenge/move_%s" % u)
+    assert fns == want
+    assert "cobblers:trainers/challenge/move_kanto_league_lance" in fns
     for f in fns:
         assert FN % f.split("challenge/", 1)[1] in files
     # each held box covers the old cell and the one spawner, the latter read from the record that builds it (a gym's
@@ -255,7 +285,8 @@ def test_reapply_runs_every_retire_function_in_a_held_step_with_its_read_back(fi
     assert len(holds) == len(roll)
     for up, (x0, z0, x1, z1) in zip(roll, holds):
         seat = seats.get(up) or tuple(DATA["bosses"][up]["single_leader"]["normal_at"])
-        for (x, _y, z) in (DATA["bosses"][up]["spawner"]["at"], seat):
+        mv = (DATA["bosses"][up].get("single_leader") or {}).get("move")
+        for (x, _y, z) in (DATA["bosses"][up]["spawner"]["at"], seat) + ((mv["from"],) if mv else ()):
             assert x0 <= x - 24 and x + 24 <= x1 and z0 <= z - 24 and z + 24 <= z1, up
 
 
@@ -294,3 +325,27 @@ def test_the_read_back_passes_on_a_retired_world_and_names_each_fault(monkeypatc
     assert any("still carries" in p for p in CM.single_leader_verify(_World({n: one}, stray=True)))
     # a player near: said so, never passed as checked
     assert any("NOT checked" in p for p in CM.single_leader_verify(_World({n: one}, player_near=True)))
+
+
+# Without it R17L's read-back could pass a world where Lance's spawner moved but the trainer his old spawner raised
+# still stands by the old cell, out of the swap's reach for good (audit P1:move_orphan): the read-back must name it.
+# The old cell is data/challenge_mode.json move.from; the fake world answers a trainer query only there.
+def test_the_read_back_names_a_trainer_left_by_lances_old_cell(monkeypatch):
+    u = "kanto_league_lance"
+    _with(monkeypatch, [u])
+    mv = DATA["bosses"][u]["single_leader"]["move"]
+    seat, old = tuple(mv["to"]), "x=%d.5,y=%d,z=%d.5," % tuple(mv["from"])
+    one = 'rctmod:trainer_spawner{TrainerIds:["%s"]}' % u
+
+    def world(stray_id):
+        base = _World({seat: one})
+
+        def rc(cmd):
+            if " if entity @e[" in cmd:
+                return "Test passed, count: 1" if stray_id and old in cmd and '"%s"' % stray_id in cmd else "Test failed"
+            return base(cmd)
+        return rc
+    assert CM.single_leader_verify(world(None)) == []
+    for who in (u, u + SFX):
+        got = CM.single_leader_verify(world(who))
+        assert len(got) == 1 and "old cell" in got[0] and who in got[0], got

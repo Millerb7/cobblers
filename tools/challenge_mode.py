@@ -36,7 +36,8 @@ docs/mechanics/OAK_AND_CHALLENGE.md, which also lists what an audit must check. 
              recorded data position, and read back by single_leader_verify. Bosses not in the rollout: unchanged.
              A boss with single_leader.move (Lance, the owner's 2026-10-09 decision: two League storeys inside one
              swap reach, measured by tools/league_separation.py) also gets cobblers:trainers/challenge/move_<id>,
-             run by R17L after its retire: the one spawner set at move.to, the old cell restored.
+             run by R17L after its retire: any idle trainer of either id by the old cell removed, the one spawner
+             set at move.to, the old cell restored.
   routes    <id>_challenge for every seated trainer whose record has a Challenge team: the same files as the Normal
              seat (team from modes.challenge.rct), series cobblers_challenge. tools/route_trainers.py's cycle swaps
              the one standing entity's TrainerId to whichever mode the nearest player is in (ASSUMED, experiment E7).
@@ -454,10 +455,17 @@ def move_lines(up, cid, entry):
     the last line also tests that the new spawner stands, so the old one is never removed without it.
 
     Never with a player within reach of either cell (no battle can start with the old leader or the new one) and
-    never while either id is in a battle by the old cell. Kills nothing: the old cell's standing trainer is removed
-    by the retire just before, which kills the Normal-id trainers by the retired cell other than the one nearest
-    the new spawner (retire_lines). NOT covered: a world with no second spawner (a fresh export) whose old spawner
-    had already spawned its trainer -- the retire does nothing there, so that trainer stays, away from the swap."""
+    never while either id is in a battle by the old cell.
+
+    Before the spawner moves, the same guards kill any idle trainer of either id within SEAT_BOX of the OLD cell
+    (the owner, 2026-10-20: "lance should be one entity"). Without it a trainer the old spawner had already raised
+    stays where the swap, which follows move.to (30.6 away), never reaches it, and rctmod spawns no second trainer
+    of an identity while one stands: Lance would stand on the Normal id at his old cell for good (audit
+    P1:move_orphan). The retire just before clears the old cell only while the second spawner still stands; these
+    kills cover the rest -- a world that never had the second spawner (a fresh export), and a re-run after a first
+    R17L met Lance in a battle (the retire then already restored its cell). The new leader at move.to is outside
+    the kill radius, and every line waits for the old spawner, so a re-run kills nothing. The audit's R:summon
+    excuses exactly these two kill shapes, in this function, for a boss with single_leader.move."""
     mv = move_of(up, entry)
     ox, oy, oz = mv["from"]
     nx, ny, nz = mv["to"]
@@ -467,11 +475,15 @@ def move_lines(up, cid, entry):
                     'InBattle:1b}]' % (ox, oy, oz, SEAT_BOX, i) for i in (up, cid))
     guard = ("positioned %d.5 %d %d.5 unless entity @a[distance=..%s] positioned %d.5 %d %d.5 unless entity "
              "@a[distance=..%s] %s" % (ox, oy, oz, r, nx, ny, nz, r, busy))
+    orphan = 'kill @e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,nbt={TrainerId:"%%s",InBattle:0b}]' % (
+        ox, oy, oz, SEAT_BOX)
     return [
         "# %s: the one spawner moves from (%d, %d, %d) to (%d, %d, %d) (data/challenge_mode.json bosses.%s."
         "single_leader.move; tools/league_separation.py); run by reapply step R17L after retire_%s" % (
             up, ox, oy, oz, nx, ny, nz, up, cid),
         "# chunks-loaded-by: tools/reapply.py R17L (retire_hold's forceload of the seat box)",
+        "execute %s %s run %s" % (old, guard, orphan % up),
+        "execute %s %s run %s" % (old, guard, orphan % cid),
         "execute %s %s run setblock %d %d %d minecraft:redstone_block" % (old, guard, nx, ny - 1, nz),
         'execute %s %s run setblock %d %d %d %s{TrainerIds:["%s"]}' % (old, guard, nx, ny, nz, SPAWNER, up),
         'execute %s if block %d %d %d %s{TrainerIds:["%s"]} %s run setblock %d %d %d %s' % (
@@ -533,6 +545,15 @@ def single_leader_verify(rc):
         if "passed" in rc('execute if entity @e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,'
                           'nbt={TrainerId:"%s"}]' % (sx, sy, sz, SEAT_BOX, cid)):
             problems.append("%s: a trainer still carries the Challenge id with nobody near" % cid)
+        # a moved boss: a trainer of either id left by the OLD cell is one the swap (which follows move.to) never
+        # reaches, and rctmod spawns no second while it stands (move_lines' kills, audit P1:move_orphan)
+        if mv:
+            ox, oy, oz = mv["from"]
+            for i in (up, cid):
+                if "passed" in rc('execute if entity @e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,'
+                                  'nbt={TrainerId:"%s"}]' % (ox, oy, oz, SEAT_BOX, i)):
+                    problems.append("%s: a trainer on %s still stands by the old cell (%d, %d, %d), out of the "
+                                    "swap's reach" % (up, i, ox, oy, oz))
         # Two leaders of this boss standing at once (the rename race, audit P1:retire): `execute if entity` answers
         # "Test passed, count: N".
         both = rc('execute if entity @e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,nbt={TrainerId:"%s"}]'
