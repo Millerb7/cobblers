@@ -57,8 +57,10 @@ Checks (FAIL fails the run; REPORT is a finding that needs an owner or another t
                   trainer the swap cannot reach
   R   routes      every seated trainer with a Challenge team has a copy whose mob is the Normal mob but for series,
                   whose team is the record's Challenge team; both ids in the seat's defeat advancement; the swap
-                  never summons or kills (one exception, matched exactly: a one-leader boss's retire function may
-                  kill its old Challenge-id trainer at the retired cell, out of battle; P1 judges it), never acts in battle, ends on the Challenge id exactly when the nearest
+                  never summons or kills (two exceptions, matched exactly: a one-leader boss's retire function may
+                  kill its old Challenge-id trainer at the retired cell, out of battle; and a moved boss's move
+                  function may kill an idle trainer of either id by move.from while the old spawner stands, with
+                  nobody near either cell; P1 judges both), never acts in battle, ends on the Challenge id exactly when the nearest
                   player within the seat's reach carries the mode tag, and on the Normal id otherwise
   K   keyed       REPORT: other systems that key on a Normal boss id and never mention the Challenge id
 
@@ -1953,7 +1955,7 @@ class Audit:
         recs, seats = self.art.seats
         challenge_cycle = lines_of(T.get("data/cobblers/function/trainers/challenge/cycle.mcfunction") or [])
         normal_cycle = lines_of(T.get("data/cobblers/function/trainers/cycle.mcfunction") or [])
-        # ONE exception: a one-leader boss's retire function may kill, in exactly these two shapes, only while the
+        # The exceptions, matched exactly. A one-leader boss's retire function may kill, in exactly these two shapes, only while the
         # second spawner still stands at the retired cell, only with no player near that cell, never in a battle:
         # the Challenge-id trainers there, and the Normal-id trainers there that do not carry the keep tag. Whether
         # those kills are SAFE is P1's (check_single_leader runs them); here they are only excused.
@@ -1968,6 +1970,29 @@ class Audit:
                 exempt[self.retire_path(cid)] = [
                     re.compile(head + r'nbt=\{TrainerId:"%s",InBattle:0b\}\]' % re.escape(cid)),
                     re.compile(head + r'nbt=\{TrainerId:"%s",InBattle:0b\},tag=!cobblers_keep_leader\]' % re.escape(u))]
+        # ...and its narrow sibling, for a rollout boss whose ONE spawner moves (single_leader.move; Lance, the owner
+        # 2026-10-20: "lance should be one entity"). Its move function may kill, in exactly these two shapes, an idle
+        # trainer of either id by move.from, only while the old spawner still stands there, with no player within
+        # reach of move.from AND move.to, and neither id in a battle by move.from. WHY: a trainer the old spawner had
+        # already raised is out of the swap's reach once the spawner moves (P1:move_orphan), and the retire's kills,
+        # gated on the second spawner, miss it in a world that never had one or after a battle held the first R17L.
+        # Keyed on the move function's path and the record's own from/to, so the same kill anywhere else -- another
+        # function, another anchor, without the old-spawner test or either player guard -- still fails R:summon.
+        # Whether the kills are SAFE is P1's (P1:move_orphan, P1:retire_kills, P1:move_rerun run them).
+        for u in self.rollout:
+            mv = ((self.cm["bosses"].get(u) or {}).get("single_leader") or {}).get("move") or {}
+            o, t = tuple(mv.get("from") or ()), tuple(mv.get("to") or ())
+            if len(o) != 3 or len(t) != 3:
+                continue
+            cid = u + sfx
+            at0 = r"x=%d\.5,y=%d,z=%d\.5,distance=\.\.[0-9.]+," % o
+            busy = " ".join(r'unless entity @e\[type=rctmod:trainer,%snbt=\{TrainerId:"%s",InBattle:1b\}\]'
+                            % (at0, re.escape(i)) for i in (u, cid))
+            head = (r"execute if block %d %d %d %s positioned %d\.5 %d %d\.5 unless entity @a\[distance=\.\.[0-9.]+\] "
+                    r"positioned %d\.5 %d %d\.5 unless entity @a\[distance=\.\.[0-9.]+\] %s run kill "
+                    r"@e\[type=rctmod:trainer,%s" % (o + (re.escape(SPAWNER),) + o + t + (busy, at0)))
+            exempt["data/cobblers/function/trainers/challenge/move_%s.mcfunction" % u] = [
+                re.compile(head + r'nbt=\{TrainerId:"%s",InBattle:0b\}\]' % re.escape(i)) for i in (u, cid)]
         for k, v in T.items():
             if k.endswith(".mcfunction"):
                 for line in lines_of(v):

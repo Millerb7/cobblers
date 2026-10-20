@@ -5,7 +5,8 @@ Every expectation here is derived from the GENERATED TEXT and from data the gene
 seat is data/challenge_mode.json `spawner.at`; the one spawner and the swap's reach are read back out of the cycle's
 own lines; the guard's radius out of the retire's own lines. The rule that joins them is the triangle inequality,
 not the generator's formula. Mutations edit tools/challenge_mode.py, never data/. Template bosses are judged with
-`single_leader.rollout` set to "all" on an IN-MEMORY copy of the data; the file's rollout stays Brock.
+`single_leader.rollout` set to "all" on an IN-MEMORY copy of the data (the file's rollout names all thirteen since
+2026-10-20).
 
 What this does not prove: anything rctmod does. Whether a spawner respawns a killed leader, whether an orphaned
 trainer (its spawner gone) despawns, whether InBattle reads 1b during a battle (staging saw 0b on a standing trainer
@@ -353,27 +354,20 @@ def all_thirteen_problems():
 
 # Without it the thirteen could be rolled out with P1 (the 3-D command model in tools/challenge_mode_audit.py) never
 # having run over the template bosses: this runs it with rollout "all" in memory and wants no problem. It needs the
-# snapshot's DP-v31 zip for the templates and skips without it. KNOWN FAILING (2026-10-08): Lance's P1:move_orphan,
-# which predates the gym arenas and is the owner's open item. The one other thing it would show, the retire of the
-# seven arena gyms restoring the hall's blocks in the arena, is pinned by its own strict xfail below and is the only
-# thing filtered here, so each defect has exactly one test and a fix to either flips exactly one.
+# snapshot's DP-v31 zip for the templates and skips without it. Lance's P1:move_orphan, known failing from 2026-10-08,
+# was closed on 2026-10-20 by the kills in his move function (tools/challenge_mode.py move_lines) and R:summon's
+# matching exemption; the arena restore, pinned here until 2026-10-09, no longer has a subject (below). Nothing is
+# filtered any more.
 def test_the_challenge_audit_passes_p1_for_all_thirteen_in_memory(all_thirteen_problems):
-    arena = {up + SFX for up in _arena_seats() if up != "kanto_brock"}
-    pinned = lambda p: p[0] in ("P1:restore", "P1:retire") and p[1].split()[0] in arena
-    assert [p for p in all_thirteen_problems if p[0].startswith(("P1", "R:summon", "P:count")) and not pinned(p)] == []
+    assert [p for p in all_thirteen_problems if p[0].startswith(("P1", "R:summon", "P:count"))] == []
 
 
 # Without it the seven gyms whose Challenge spawner moved into an arena could be rolled out to one leader with a retire
 # that, finding a second spawner in the arena, writes the HALL's floor (the building model's, or Misty's template's)
 # into the arena's floor cell: the audit judges the retire against the world the apply leaves, arena included.
-# KNOWN DEFECT, left failing on purpose (strict): tools/challenge_mode.py restore_blocks reads the building model (gym
-# buildings) or single_leader.restore (templates) at bosses.<id>.spawner.at, and that cell is now in the arena, where
-# the building model holds stone and the template block is not the arena's floor. docs/world-building/GYM_ARENAS.md
-# calls restore_blocks "unchanged, on purpose"; true while only Brock is in the rollout (his retired cell is still in
-# the hall), false the day another arena gym joins it. The fix is the generator's (restore from the arena's floor);
-# not made here. Flips to a pass, and fails the run, when it is made.
-@pytest.mark.xfail(strict=True, reason="restore_blocks restores the hall's blocks at a Challenge cell that is now in the "
-                   "arena (tools/challenge_mode.py:344): 7 gyms would get stone or the hall's floor in the arena")
+# Was a strict xfail (restore_blocks reading the building model in a carve-below arena); every gym became a
+# walk-through hall on 2026-10-09 and restore_blocks reads the hall's own model, so it passed (XPASS) and the marker
+# was removed on 2026-10-20. It stays as a plain test so a return of that defect names itself.
 def test_a_rollout_gyms_retire_restores_its_arena_floor_not_the_halls(all_thirteen_problems):
     arena = {up + SFX for up in _arena_seats() if up != "kanto_brock"}
     bad = [p for p in all_thirteen_problems if p[0] in ("P1:restore", "P1:retire") and p[1].split()[0] in arena]
@@ -531,8 +525,10 @@ MOVE_MUTATIONS = {
                                 "P1:move_at"),
     # the battle guard dropped: the spawner moves while Lance is in a battle by it
     "move_in_battle": ([('nx, ny, nz, r, busy))', 'nx, ny, nz, r, ""))')], "P1:move_battle"),
-    # the player guard reduced to nothing: the spawner moves with a Challenge player in battle range of the leader
-    "move_ignores_players": ([('    r = "%g" % reach()\n    old = ', '    r = "0"\n    old = ')], "P1:retire_renames"),
+    # the player guard reduced to nothing: with a Challenge player in battle range of the leader, the move's kills
+    # (2026-10-20) take him before the spawner moves (P1:rerun_kills is the first the audit meets; until the kills
+    # were added this was P1:retire_renames, the spawner moving under him)
+    "move_ignores_players": ([('    r = "%g" % reach()\n    old = ', '    r = "0"\n    old = ')], "P1:rerun_kills"),
     # R17L runs the move before the retire: the retire's kills no longer clear the old cell first
     "move_before_retire": ([(
         '        out.append("%s:trainers/challenge/retire_%s" % (NS, challenge_id(up)))\n'
@@ -554,18 +550,74 @@ def test_a_mutated_move_fails_the_audit(name, monkeypatch):
     assert code in got - base, "mutation %s: the audit did not newly fail %s (got %s, base %s)" % (name, code, got, base)
 
 
-# Without it P1:move_orphan could be a check that always fails: a move that also removes an idle trainer of either id
-# by the old cell, under its own guards, before it moves the spawner, leaves Lance with no P1 problem at all. (The
-# shape of a fix, written here to test the check; not a change to tools/challenge_mode.py.)
-ORPHAN_FIX = [(
-    '        "execute %s %s run setblock %d %d %d minecraft:redstone_block" % (old, guard, nx, ny - 1, nz),\n',
-    '        "execute %s %s run kill @e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,nbt={TrainerId:\\"%s\\",'
-    'InBattle:0b}]" % (old, guard, ox, oy, oz, SEAT_BOX, up),\n'
-    '        "execute %s %s run kill @e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,nbt={TrainerId:\\"%s\\",'
-    'InBattle:0b}]" % (old, guard, ox, oy, oz, SEAT_BOX, cid),\n'
-    '        "execute %s %s run setblock %d %d %d minecraft:redstone_block" % (old, guard, nx, ny - 1, nz),\n')]
+# Without it P1:move_orphan could be a check that always fails, or one that never bites. The generator as it is (the
+# move kills the idle trainers of either id by the old cell, under its own guards, before the spawner moves; the
+# owner, 2026-10-20: "lance should be one entity") leaves Lance with no P1 problem; with those two kill lines cut out
+# of tools/challenge_mode.py (data untouched) P1:move_orphan comes back. (Until 2026-10-20 this test added the kills as
+# ORPHAN_FIX; the generator now carries them, so the mutation removes them.)
+ORPHAN_KILLS_REMOVED = [
+    ('        "execute %s %s run %s" % (old, guard, orphan % up),\n', ''),
+    ('        "execute %s %s run %s" % (old, guard, orphan % cid),\n', '')]
 
 
-def test_the_orphan_check_passes_a_move_that_clears_the_old_cell(monkeypatch):
-    a = _audit_lance(monkeypatch, ORPHAN_FIX)
+def test_the_orphan_check_passes_the_move_and_fails_it_without_its_kills(monkeypatch):
+    a = _audit_lance(monkeypatch)
     assert [p for p in a.problems if p[0].startswith("P1")] == []
+    cut = {c for c, _m in _audit_lance(monkeypatch, ORPHAN_KILLS_REMOVED).problems}
+    assert "P1:move_orphan" in cut, cut
+
+
+# ------------------------------------------------------------------------------------------------ R:summon, narrowed
+def _audit_r(monkeypatch, edits=()):
+    """Check R (whose R:summon rule this judges) with the file's own data (all thirteen, Lance included) over
+    tools/challenge_mode.py with `edits` applied."""
+    try:
+        up = A.Upstream()
+    except FileNotFoundError as e:
+        pytest.skip("the local server snapshot is not here: %s" % e)
+    d = copy.deepcopy(DATA)
+    _exec_into(monkeypatch, "challenge_mode", edits, d)
+    _exec_into(monkeypatch, "route_trainers")
+    orig = A.Audit.doc
+    monkeypatch.setattr(A.Audit, "doc", lambda self, name: copy.deepcopy(d) if name == "challenge_mode.json"
+                        else orig(self, name))
+    return A.Audit(A.Artifacts(), up).run("R")
+
+
+# R:summon's exemption for Lance's move kills (2026-10-20) is keyed on the move function's path, move.from and
+# move.to, the old-spawner test, both player guards, the battle guard and the two ids. Without these, a widened rule
+# could excuse any trainer kill anywhere. Each mutation edits tools/challenge_mode.py only (never data/) and must ADD
+# R:summon to the unmutated run, which has none.
+SUMMON_MUTATIONS = {
+    # the kill no longer waits for the old spawner: it would run on every re-apply, after the move too
+    "kill_without_the_old_spawner_test": [('"execute %s %s run %s" % (old, guard, orphan % up),',
+                                           '"execute %s run %s" % (guard, orphan % up),')],
+    # the kill without the player guards (only the battle guard left)
+    "kill_without_the_player_guards": [('"execute %s %s run %s" % (old, guard, orphan % cid),',
+                                        '"execute %s %s run %s" % (old, busy, orphan % cid),')],
+    # the kill anchored at the NEW cell, where the one leader stands once the spawner has moved
+    "kill_at_the_new_cell": [("        ox, oy, oz, SEAT_BOX)\n", "        nx, ny, nz, SEAT_BOX)\n")],
+    # the kill of a third trainer by the old cell (Agatha's spawner is 10.8 from it)
+    "kill_another_boss": [('orphan % cid),', 'orphan % "kanto_league_agatha"),')],
+    # the same move lines, kills included, written into the retire function instead of the move function
+    "kill_in_the_retire_function": [(
+        '                out["data/%s/function/trainers/challenge/move_%s.mcfunction" % (NS, up)] = move_lines(up, cid, e)',
+        '                out["data/%s/function/trainers/challenge/retire_%s.mcfunction" % (NS, cid)] += move_lines(up, cid, e)')],
+}
+
+
+@pytest.fixture(scope="module")
+def summon_base():
+    with pytest.MonkeyPatch.context() as mp:
+        return {c for c, _m in _audit_r(mp).problems}
+
+
+def test_r_summon_excuses_lances_move_kills_as_generated(summon_base):
+    assert "R:summon" not in summon_base, summon_base
+
+
+@pytest.mark.parametrize("name", sorted(SUMMON_MUTATIONS))
+def test_r_summon_still_fails_a_kill_outside_the_narrow_exemption(name, monkeypatch, summon_base):
+    got = {c for c, _m in _audit_r(monkeypatch, SUMMON_MUTATIONS[name]).problems}
+    assert "R:summon" in got - summon_base, "mutation %s: R:summon did not newly fail (got %s, base %s)" % (
+        name, got, summon_base)
