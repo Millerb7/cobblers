@@ -1335,7 +1335,7 @@
           "kind": "line",
           "speaker": "hank",
           "text": "See? Completely recovered.",
-          "next": "post_hank_1",
+          "next": "post_hank_3",
           "actions_after_acknowledge": [
             {
               "kind": "close_dialogue"
@@ -1550,7 +1550,7 @@
           "kind": "line",
           "speaker": "lena",
           "text": "Put one spoon wrong and I will bury you in the new dirt.",
-          "next": "post_lena_1",
+          "next": "post_lena_2",
           "actions_after_acknowledge": [
             {
               "kind": "close_dialogue"
@@ -15311,7 +15311,7 @@
           "kind": "line",
           "speaker": "picker",
           "text": "Upper rows, old stone in the meadow: Leaf in the green face, Shiny in the bright one.",
-          "next": "birds",
+          "next": "repeat",
           "actions_after_acknowledge": [
             {
               "kind": "close_dialogue"
@@ -15483,7 +15483,7 @@
           "kind": "line",
           "speaker": "field_hand",
           "text": "Weather mast, square-side cut. Dark band at the foot; stop when you reach it.",
-          "next": "birds",
+          "next": "repeat",
           "actions_after_acknowledge": [
             {
               "kind": "close_dialogue"
