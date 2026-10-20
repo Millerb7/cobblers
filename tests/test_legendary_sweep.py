@@ -136,6 +136,49 @@ def test_a_floating_site_lowered_into_its_trees_is_caught(ground):
     assert any("gap" in b for b in bad), bad
 
 
+def _build_limit():
+    # this file's own reading of the height pack the world loads, not tools/legendary_sweep.runtime_top or the record's
+    # ceiling: the highest buildable layer is min_y + height - 1
+    d = json.loads((ROOT / "modpack" / "datapacks" / "cobblers_height" / "data" / "minecraft" / "dimension_type"
+                    / "overworld.json").read_text(encoding="utf-8"))
+    return d["min_y"] + d["height"] - 1
+
+
+NEWMOON_LAYERS = 58     # newmoon_island.nbt size [101, 58, 100], read from LumyMon-0.6.6.jar 2026-10-06 and 2026-10-20
+
+
+def test_newmoon_island_touches_the_build_limit():
+    # the owner, 2026-10-20: "raise darkrais island way into the air, where it touches the build limit". Without it
+    # the island could sit anywhere under the limit, or its box run over it and lose its top layers
+    q = record("sweep_newmoon_island")
+    assert q["size"][1] == NEWMOON_LAYERS
+    assert q["position"]["y"] + NEWMOON_LAYERS - 1 == _build_limit() == 575
+    assert SWEEP["sweep_newmoon_island"]["seat"].get("top_at_runtime_top") is True
+
+
+@pytest.mark.parametrize("dy,want", [(1, "over the runtime top"), (-1, "top_at_runtime_top")])
+def test_newmoon_island_off_the_build_limit_is_caught(ground, dy, want):
+    # one block over the limit loses the top layer; one under is not where the owner put it
+    q = copy.deepcopy(PLACEMENTS)
+    for r in q:
+        if r["id"] == "legendary_newmoon_island":
+            r["position"]["y"] += dy
+    bad = S.check(ground, DOC, q)["sweep_newmoon_island"]
+    assert any(want in b for b in bad), bad
+
+
+def test_the_old_newmoon_seat_has_only_air_to_restore(ground):
+    # this file's own column loop: every column under the old box has its rounded ground below the box's bottom, so
+    # filling the box with air is the restore (data/placements.json legendary_newmoon_island superseded_seats)
+    q = record("sweep_newmoon_island")
+    (old,) = q["superseded_seats"]
+    x0, y0, z0 = (old["position"][k] for k in "xyz")
+    assert (x0, y0, z0) == (24, 141, 5582) and old["restore"] == "air"
+    sx, _sy, sz = old["size"]
+    top = max(ground(x, z) for x in range(x0, x0 + sx) for z in range(z0, z0 + sz))
+    assert top < y0, top
+
+
 def test_a_site_moved_onto_a_route_is_caught(ground):
     # Viridian-side Route 1 country: the move must trip the route rule (and others), never pass
     q = copy.deepcopy(FIXTURE_PLACEMENTS)

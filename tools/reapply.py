@@ -2230,6 +2230,13 @@ def steps(with_spawns=False):
     out.append(("R8B", "the League's lot on the apex oval, levelled before its donor",
                 [("fn", "cobblers:league_tunnel/%s" % f)
                  for f in indexed("cobblers_league_tunnel", "league_tunnel")]))
+    # 2026-10-20, the re-seated donors (tools/donor_reseat.py; data/placements.json superseded_seats): BEFORE R9, each
+    # moved donor's old seat taken down to air (refused while a player stands on it; only while a probe still shows the
+    # old paste), then the paste at its new seat (only while no probe shows it there), read back from the world. A
+    # second run writes nothing. First and only so far: Newmoon Island raised from y141 to the build limit
+    import donor_reseat
+    out.append(("R9DR", "re-seated donors: the old seats taken down, the new pasted (%s)"
+                % ", ".join(sorted({q["id"] for q, _i, _s in donor_reseat.reseated(doc)})), donor_reseat.steps(doc)))
     out.append(("R9", "pack donors (%d)" % len(donors(doc)), r9))
     # the Deep is sunk into the Rift floor; Victory Road runs from its floor to the League's apron, so it needs
     # the Deep carved and the lot levelled first. Its backfill pack is staging-only and is excluded on purpose.

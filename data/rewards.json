@@ -2340,7 +2340,7 @@
     {
       "id": "sweep_nightmare_weaver",
       "kind": "cache",
-      "place": "Newmoon Island, hanging over the Fungal Isle's west end (data/adopted_legendary_sites.json sweep_newmoon_island): at Darkrai's shrine, in the island's top room",
+      "place": "Newmoon Island, hanging at the build limit (top layer y575) over the Fungal Isle's west end (data/adopted_legendary_sites.json sweep_newmoon_island): at Darkrai's shrine, in the island's top room",
       "requires_flags": [
         "champion_cleared"
       ],
@@ -2357,20 +2357,21 @@
       "trigger": {
         "min": [
           69,
-          186,
+          563,
           5611
         ],
         "max": [
           77,
-          189,
+          566,
           5619
         ]
       },
+      "trigger_moved": "2026-10-20 with the island (data/placements.json legendary_newmoon_island raised from y141 to y518): every y +377, the box still the shrine's x and z +-4 and y -1..+2. Was min [69, 186, 5611] max [77, 189, 5619], container at [73, 187, 5615].",
       "container": {
         "block": "lumymon:darkrai_shrine",
         "at": [
           73,
-          187,
+          564,
           5615
         ]
       }

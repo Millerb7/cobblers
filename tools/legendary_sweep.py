@@ -13,7 +13,11 @@ are not that shape, so they live in the same file's `sweep_sites`, each with a `
              Every footprint column must be dry (data/world.json sea level and tools/water_mask.py's lakes).
   floating   the whole template hangs `gap` or more over the highest ground in its footprint, so its air writes
              over nothing (Newmoon Island: a floating island whose bottom layer is 28% air; seated on ground it
-             would dig holes, on sea it would open dry pits).
+             would dig holes, on sea it would open dry pits). `top_at_runtime_top` (Newmoon Island since 2026-10-20,
+             the owner: "where it touches the build limit") holds the top layer to the runtime top exactly.
+
+A placement that moved keeps the seats it left (data/placements.json `superseded_seats`); each is held to
+tools/donor_reseat.py's takedown rules (the ground below it, clear of the new seat and of every other donor).
 
 Every sweep site is held to the hidden-site rules (tools/hidden_sites.py: 96 from every authored coordinate, the
 keep-outs, 120 from every portal, 800 from every other legendary - Hoopa's cradle included now that Hoopa is an
@@ -195,7 +199,23 @@ def rule_problems(site, m, top):
             bad.append("gap %d is under %d" % (gap, FLOAT_GAP_MIN))
         if m["gap_over_highest_ground"] != gap:
             bad.append("the bottom layer is %d over the highest ground, the record says gap %d" % (m["gap_over_highest_ground"], gap))
+    # the owner, 2026-10-20, of Newmoon Island: "where it touches the build limit": the top layer IS the runtime top
+    if site["seat"].get("top_at_runtime_top") and m["top_y"] != top:
+        bad.append("top occupied layer y%d; the seat says top_at_runtime_top, the runtime top is y%d" % (m["top_y"], top))
     return bad
+
+
+def reseat_problems(site, placements, g):
+    """[problem] for every old seat the site's placement left (data/placements.json superseded_seats): each is taken
+    down by tools/donor_reseat.py, which refuses a seat whose ground is not below it, one that overlaps the new seat or
+    another donor, and a new seat over the build limit."""
+    import donor_reseat
+    doc = {"placements": placements}
+    q = next((p for p in placements if p.get("id") == site.get("scheduled_as")), None)
+    if q is None:
+        return []
+    return [b for qq, i, s in donor_reseat.reseated(doc) if qq is q
+            for b in donor_reseat.seat_problems(qq, i, s, g, doc)]
 
 
 def record_problems(site, m):
@@ -327,7 +347,8 @@ def check(g, doc=None, placements=None):
     out = {}
     for s in sweep_sites(doc):
         m = measure(s, g, placements)
-        out[s["id"]] = rule_problems(s, m, top) + record_problems(s, m) + placement_problems(s, placements)
+        out[s["id"]] = (rule_problems(s, m, top) + record_problems(s, m) + placement_problems(s, placements)
+                        + reseat_problems(s, placements, g))
     return out
 
 

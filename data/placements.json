@@ -28015,7 +28015,7 @@
       "kind": "donor",
       "position": {
         "x": 24,
-        "y": 141,
+        "y": 518,
         "z": 5582
       },
       "size": [
@@ -28029,7 +28029,44 @@
       "y_mode": "absolute",
       "status": "planned",
       "sweep_site": "sweep_newmoon_island",
-      "chosen_because": "measured and argued in data/adopted_legendary_sites.json sweep_newmoon_island (tools/legendary_sweep.py check): LumyMon's floating Nightmare island hung 24 over the highest ground of the Fungal Isle's empty west end, as the 2026-10-03 hidden-site pass proposed (docs/world-building/HIDDEN_LEGENDARIES.md owner call 3). No route point within 1,200 blocks. Scheduled 2026-10-06, off tools/ground.py, rounded."
+      "seat_probes": [
+        [50, 0, 50, "minecraft:obsidian"],
+        [50, 10, 50, "minecraft:obsidian"],
+        [50, 19, 50, "minecraft:obsidian"],
+        [59, 37, 24, "lumymon:summon_anchor"],
+        [49, 46, 33, "lumymon:darkrai_shrine"]
+      ],
+      "seat_probes_source": "template-relative cells read 2026-10-20 from data/lumymon/structure/newmoon_island.nbt in LumyMon-0.6.6.jar (cobblers-local/server-mods-1.8.2) with tools/nbt.py: the island body's obsidian at the template's middle column in layers 0, 10 and 19, the summon anchor and the shrine. tools/donor_reseat.py reads them to say whether a paste stands at a seat.",
+      "superseded_seats": [
+        {
+          "position": {
+            "x": 24,
+            "y": 141,
+            "z": 5582
+          },
+          "size": [
+            101,
+            58,
+            100
+          ],
+          "rotation": "none",
+          "mirror": "none",
+          "placed": "2026-10-06 (commit fbeb7ffc), pasted by reapply R9: hung 24 over the highest ground under it (y117)",
+          "retired": "2026-10-20",
+          "why": "the owner, 2026-10-20: \"raise darkrais island way into the air, where it touches the build limit\". The record's position is now y518, its top layer at the build limit y575.",
+          "restore": "air",
+          "restore_why": "the paste wrote every cell of its 101 x 58 x 100 box (the template lists all 585,800), and every column's ground under it is below its bottom y141 (tools/ground.py, rounded: highest y117, tools/donor_reseat.py check), so what a fresh export holds there is air",
+          "remove_entities": [
+            "minecraft:armor_stand",
+            "minecraft:painting",
+            "handcrafted:fancy_painting",
+            "minecraft:item"
+          ],
+          "remove_entities_why": "the template's own entities (5 armor stands, 1 minecraft:painting, 3 handcrafted:fancy_painting, read from its NBT 2026-10-20), killed inside the old box before its blocks go so none falls to the isle or drops; and any item lying in the box",
+          "taken_down_by": "tools/donor_reseat.py, reapply step R9DR"
+        }
+      ],
+      "chosen_because": "measured and argued in data/adopted_legendary_sites.json sweep_newmoon_island (tools/legendary_sweep.py check): LumyMon's floating Nightmare island over the highest ground of the Fungal Isle's empty west end, as the 2026-10-03 hidden-site pass proposed (docs/world-building/HIDDEN_LEGENDARIES.md owner call 3). No route point within 1,200 blocks. Scheduled 2026-10-06 at y141, 24 over that ground; raised 2026-10-20 by the owner's word so its top layer is the build limit: y = 575 - (58 - 1) = 518, 401 over the highest ground y117. Off tools/ground.py, rounded."
     }
   ],
   "superseded_placements": {
