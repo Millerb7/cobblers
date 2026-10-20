@@ -63,7 +63,7 @@ PREFABS = ROOT / "kits" / "structures" / "prefabs" / "trees" / "tree_town"
 # the owner, 2026-09-26 (docs/STATE.md, commit ab3cf01): four blocks per elder, suffix -> (height above ground, the
 # block kind its mimic and its surroundings are), and what each keeps alive
 NEST = {"": (12, "log"), "_mid": (35, "log"), "_crown": (58, "log"), "_top": (74, "leaves")}
-ACTIVATED = {"spawn_range": 16, "max_spawns": 8, "max_spawns_per_activation": 2, "chance": 1.0, "trigger": "TICK",
+ACTIVATED = {"spawn_range": 16, "max_spawns": 8, "max_spawns_per_activation": 6, "chance": 1.0, "trigger": "TICK",
              "cancel_range": -1}
 LEAVES_RUN = (63, 81)           # the staging probe (docs/STATE.md): leaves at every elder's centre, ground + 63 to + 81
 AT_LEAST_PER_TREE = 20          # the owner: "at least 20 ... spread vertically along the tree"

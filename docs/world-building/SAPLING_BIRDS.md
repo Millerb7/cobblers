@@ -2,7 +2,7 @@
 
 Status: **PLACED ON STAGING 2026-09-26 as nests; the block placement below is superseded.** Each sapling is now a
 nest of its one species: activated Habitat Blocks up its centre column (four per elder: ground + 12, + 35, + 58 in
-the trunk and + 74 in the crown's leaves, up to 8 birds alive each within 16 blocks, refilling 2 at a time; two in the
+the trunk and + 74 in the crown's leaves, up to 8 birds alive each within 16 blocks, refilling 6 at a time (the owner, 2026-10-20, was 2: a tree near a player filled too slowly); two in the
 Route 1 sapling, up to 12 each), `data/habitat_blocks.json`. On staging the birds keep to the floor and the lower
 storeys; the crown stays empty, which the owner accepted. The owner:
 a player should "see and feel like a sapling belongs to a species", with "at least 20 ... spread vertically along the
