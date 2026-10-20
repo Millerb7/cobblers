@@ -638,27 +638,73 @@ def clock_problems(spec, built, ground, cave, gid, period):
 # ------------------------------------------------------------------ walking the built cave
 
 PASS = ("minecraft:air", "minecraft:cave_air")
+# A closed bottom-half trapdoor (the old mine's sleepers) is 3/16 of a block: a player's feet stand in its cell, so it
+# is neither a wall nor a floor (vanilla 1.21.1 TrapDoorBlock's bottom shape; tests/test_route1_old_mine.py's THIN)
+THIN = "(closed bottom trapdoor)"
+
+
+def apply_lines(written, lines):
+    """Replay fills and setblocks into {(x, y, z): block}, in order, last write winning; block states dropped except that
+    a closed bottom-half trapdoor reads THIN. A fill with a filter (replace, keep, destroy, hollow, outline) is refused:
+    what it leaves depends on the world, which this model does not hold."""
+    for line in lines:
+        t = line.split()
+        if not t or t[0] not in ("fill", "setblock"):
+            continue
+        if t[0] == "setblock":
+            c0 = c1 = tuple(map(int, t[1:4]))
+            blk = t[4]
+            extra = t[5:]
+        else:
+            x0, y0, z0, x1, y1, z1 = map(int, t[1:7])
+            c0, c1 = (min(x0, x1), min(y0, y1), min(z0, z1)), (max(x0, x1), max(y0, y1), max(z0, z1))
+            blk = t[7]
+            extra = t[8:]
+        if extra:
+            raise AuditError("a filtered write the model cannot replay: %s" % line[:90])
+        b = base(blk)
+        if b.endswith("_trapdoor") and "half=bottom" in blk and "open=false" in blk:
+            b = THIN
+        for x in range(c0[0], c1[0] + 1):
+            for y in range(c0[1], c1[1] + 1):
+                for z in range(c0[2], c1[2] + 1):
+                    written[(x, y, z)] = b
+    return written
+
+
+def host_of(cave):
+    """entry.host of a cave entered from its host mine (entry.mouth false), else None."""
+    e = cave.get("entry") or {}
+    return e.get("host") if e.get("mouth", True) is False else None
+
+
+def host_lines(cave):
+    """The host earthwork's commands, read from data/placements.json (the text R8 runs), never from its generator."""
+    h = host_of(cave)
+    doc = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+    rec = next((p for p in doc["placements"] if p["id"] == h["placement"]), None)
+    if rec is None:
+        raise AuditError("%s: entry.host.placement %s has no record in data/placements.json" % (cave["id"], h["placement"]))
+    return list(rec.get("commands") or [])
 
 
 def walk_problems(spec, fns, ground):
     """BFS over the built cave on the ground, 1-block steps up or down, from outside the mouth to the hall cell beside
-    every gallery's middle row. Moves are symmetric, so reaching a gallery is also walking back out."""
+    every gallery's middle row. Moves are symmetric, so reaching a gallery is also walking back out.
+
+    A cave entered from its host mine (entry.mouth false) is walked from entry.host.walk_from over the host's earthwork
+    (data/placements.json, as R8 leaves it) with the cave's build over it (R9OC runs after R8), in that order."""
     probs = []
     for cave in spec["caves"]:
         written = {}
-        for line in fns.get("build_%s" % cave["id"], []):
-            t = line.split()
-            if t and t[0] == "setblock":
-                written[tuple(map(int, t[1:4]))] = base(t[4])
-            elif t and t[0] == "fill":
-                x0, y0, z0, x1, y1, z1 = map(int, t[1:7])
-                for x in range(min(x0, x1), max(x0, x1) + 1):
-                    for y in range(min(y0, y1), max(y0, y1) + 1):
-                        for z in range(min(z0, z1), max(z0, z1) + 1):
-                            written[(x, y, z)] = base(t[7])
-        if not written:
+        own = fns.get("build_%s" % cave["id"], [])
+        if not own:
             probs.append("%s: no build function" % cave["id"])
             continue
+        host = host_of(cave)
+        if host:
+            apply_lines(written, host_lines(cave))
+        apply_lines(written, own)
 
         def passable(c):
             b = written.get(c)
@@ -666,13 +712,21 @@ def walk_problems(spec, fns, ground):
                 return c[1] > ground(c[0], c[2])
             return b in PASS
 
+        def feet_ok(c):
+            return passable(c) or written.get(c) == THIN
+
+        def floor_ok(c):
+            return not passable(c) and written.get(c) != THIN
+
         ex = expected(spec, cave, ground)
         xz, hw = ex["xz"], spec["geometry"]["passage_half_width"]
         xs = [c[0] for c in written]
         zs = [c[2] for c in written]
         lim = (min(xs) - 8, min(zs) - 8, max(xs) + 8, max(zs) + 8)
-        sx, sz = xz(0, -3)
+        sx, sz = host["walk_from"] if host else xz(0, -3)
         start = (sx, int(ground(sx, sz)) + 1, sz)
+        if not (feet_ok(start) and passable((sx, start[1] + 1, sz)) and floor_ok((sx, start[1] - 1, sz))):
+            probs.append("%s: the walk's start %s is not a cell a player stands in" % (cave["id"], start))
         seen = {start}
         q = deque([start])
         while q:
@@ -686,7 +740,7 @@ def walk_problems(spec, fns, ground):
                     n = (nx, ny, nz)
                     if n in seen:
                         continue
-                    if not (passable(n) and passable((nx, ny + 1, nz)) and not passable((nx, ny - 1, nz))):
+                    if not (feet_ok(n) and passable((nx, ny + 1, nz)) and floor_ok((nx, ny - 1, nz))):
                         continue
                     if dy == 1 and not passable((x, y + 2, z)):
                         continue
@@ -699,6 +753,232 @@ def walk_problems(spec, fns, ground):
             if (hx, ex["yh"] + 1, hz) not in seen:
                 probs.append("%s %s: the hall beside the gallery (%d, %d, %d) is not walkable from outside the mouth %s"
                              % (cave["id"], gid, hx, ex["yh"] + 1, hz, start))
+    return probs
+
+
+# ------------------------------------------------------------------ a cave entered from its host, and its retired mouth
+
+def hall_cells(spec, cave, ex):
+    """{(x, y, z)}: the hall's floor, air and roof (|u| <= hw, y yh .. yh + PH + 1) and its two walls at the air's height
+    (|u| = hw + 1, y yh + 1 .. yh + PH), from the rules text ('the hall: floor yh = y0 - drop, from d = drop + 1, 3 wide
+    and passage_height high, as long as the galleries along it need')."""
+    geo = spec["geometry"]
+    hw, PH, W = geo["passage_half_width"], geo["passage_height"], geo["gallery_width"]
+    slots = max(g["slot"] for g in cave["galleries"]) + 1
+    d0 = cave["drop"] + 1
+    out = set()
+    for d in range(d0, d0 + slots * (W + 2)):
+        for u in range(-hw - 1, hw + 2):
+            x, z = ex["xz"](u, d)
+            ys = range(ex["yh"], ex["yh"] + PH + 2) if abs(u) <= hw else range(ex["yh"] + 1, ex["yh"] + PH + 1)
+            for y in ys:
+                out.add((x, y, z))
+    return out
+
+
+def opening_cells(cave):
+    x0, y0, z0, x1, y1, z1 = host_of(cave)["opening"]
+    return {(x, y, z) for x in range(x0, x1 + 1) for y in range(y0, y1 + 1) for z in range(z0, z1 + 1)}
+
+
+def host_problems(spec, fns, ground):
+    """A cave entered from its host mine: the opening is in the hall's wall (|u| = hw + 1, a hall row, the hall's air
+    height) and in no gallery; the cave's build writes it air and writes nothing of a mouth (no cell at d <= drop - 1,
+    where the rules text puts the mouth and incline); the host's earthwork, replayed as R8 leaves it, leaves every
+    opening cell air and writes no other cell the cave's build writes."""
+    probs = []
+    for cave in spec["caves"]:
+        host = host_of(cave)
+        if not host:
+            continue
+        cid = cave["id"]
+        ex = expected(spec, cave, ground)
+        hw, PH = spec["geometry"]["passage_half_width"], spec["geometry"]["passage_height"]
+        xz = ex["xz"]
+        gal = set().union(*[e["body"] | e["shell"] for e in ex["galleries"].values()])
+        wallrow = set()
+        for d in range(cave["drop"] + 1, cave["drop"] + 1 + (max(g["slot"] for g in cave["galleries"]) + 1)
+                       * (spec["geometry"]["gallery_width"] + 2)):
+            for s in (-1, 1):
+                x, z = xz(s * (hw + 1), d)
+                wallrow |= {(x, y, z) for y in range(ex["yh"] + 1, ex["yh"] + PH + 1)}
+        op = opening_cells(cave)
+        if not op <= wallrow:
+            probs.append("%s: %d opening cell(s) are not in the hall's wall, e.g. %s" % (cid, len(op - wallrow), sorted(op - wallrow)[0]))
+        if op & gal:
+            probs.append("%s: the opening cuts into a gallery at %s" % (cid, sorted(op & gal)[0]))
+        build = apply_lines({}, fns.get("build_%s" % cid, []))
+        shut = sorted(c for c in op if build.get(c) not in PASS)
+        if shut:
+            probs.append("%s: the cave's build leaves %d opening cell(s) closed, e.g. %s %s" % (cid, len(shut), shut[0], build.get(shut[0])))
+        ax, az = cave["entry"]["anchor"]
+        mouth = []
+        for (x, y, z) in build:
+            d = (ax - x) if cave["entry"]["front"] == "east" else (x - ax) if cave["entry"]["front"] == "west" else \
+                (z - az) if cave["entry"]["front"] == "north" else (az - z)
+            if d < cave["drop"]:
+                mouth.append((x, y, z))
+        if mouth:
+            probs.append("%s: the build still writes %d cell(s) where the old mouth and incline were (d < %d), e.g. %s"
+                         % (cid, len(mouth), cave["drop"], sorted(mouth)[0]))
+        hl = host_lines(cave)
+        cols = {(x, z) for x, _y, z in build}
+        hostw = {c: b for c, b in apply_lines({}, [l for l in hl if _touches(l, cols)]).items() if (c[0], c[2]) in cols}
+        closed = sorted(c for c in op if hostw.get(c) not in PASS)
+        if closed:
+            probs.append("%s: the host's earthwork leaves %d opening cell(s) not air, e.g. %s" % (cid, len(closed), closed[0]))
+        both = sorted(c for c in hostw if c in build and c not in op)
+        if both:
+            probs.append("%s: the host's earthwork and the cave's build both write %d cell(s), e.g. %s (%s / %s)"
+                         % (cid, len(both), both[0], hostw[both[0]], build[both[0]]))
+    return probs
+
+
+def _touches(line, cols):
+    """Whether a fill or setblock line's x/z box meets any of cols (a cheap prefilter before replaying it)."""
+    t = line.split()
+    if not t or t[0] not in ("fill", "setblock"):
+        return False
+    if t[0] == "setblock":
+        return (int(t[1]), int(t[3])) in cols
+    x0, x1 = sorted((int(t[1]), int(t[4])))
+    z0, z1 = sorted((int(t[3]), int(t[6])))
+    return any(x0 <= x <= x1 and z0 <= z <= z1 for (x, z) in cols)
+
+
+def old_entry_cells(rt, ground):
+    """{(x, y, z): role} of the retired mouth as the rules text defines it, read from the retired record's frozen spec and
+    cave: the mouth row d = 0 and the incline d = 1 .. drop, 3 wide ('stair n at y0 - n + 1'), passage_height of air over
+    each, the posts at |u| = hw + 1 on the mouth row and the beam over it. Cuttings' extra air and the skin are not
+    modelled: this is the core the restore must cover, not all it may write."""
+    fs, fc = rt["frozen_spec"], rt["frozen_cave"]
+    geo = fs["geometry"]
+    hw, PH = geo["passage_half_width"], geo["passage_height"]
+    xz = frame(fc["entry"]["anchor"], fc["entry"]["front"])
+    row = sorted(int(ground(*xz(u, -1))) for u in range(-hw - 1, hw + 2))
+    y0 = row[(len(row) - 1) // 2]
+    out = {}
+    for d in range(0, fc["drop"] + 1):
+        ft = y0 if d == 0 else y0 - d + 1
+        for u in range(-hw, hw + 1):
+            x, z = xz(u, d)
+            out[(x, ft, z)] = "floor" if d == 0 else "stair"
+            for y in range(ft + 1, ft + PH + 1):
+                out[(x, y, z)] = "air"
+    for u in (-hw - 1, hw + 1):
+        x, z = xz(u, 0)
+        for y in range(y0 + 1, y0 + PH + 1):
+            out[(x, y, z)] = "post"
+    for u in range(-hw - 1, hw + 2):
+        x, z = xz(u, 0)
+        out[(x, y0 + PH + 1, z)] = "beam"
+    return out, y0
+
+
+def in_box(c, box):
+    """The selector box semantics stated at the top: x .. x + dx + 1 (a block cell inside it, here)."""
+    x0, y0, z0, x1, y1, z1 = box
+    return x0 <= c[0] <= x1 and y0 <= c[1] <= y1 and z0 <= c[2] <= z1
+
+
+def reroute_problems(spec, fns, ground):
+    """A cave with a retired entry (step R9OCR): its restore puts every core cell of the old mouth (old_entry_cells, the
+    rules text over the frozen record) back to the record's terrain on the heightmap's ground, except the hall's new
+    end wall (the cells of the drop row at the hall's air height, which become the cave's wall), and writes no cell of
+    the hall or a gallery; it runs only behind probes on the old frame and with nobody held; every cell it or the
+    passage writes solid is inside a held box; the passage is gated on the opening not yet being air, leaves the
+    opening air, writes nothing of the hall or a gallery but the opening, and writes exactly what the host's earthwork
+    leaves in those cells (so a live world rerouted matches a fresh export)."""
+    probs = []
+    for cave in spec["caves"]:
+        rt = cave.get("retired_entry")
+        if not rt:
+            continue
+        cid = cave["id"]
+        ent = fns.get("reroute/%s" % cid)
+        rst = fns.get("reroute/%s_restore" % cid)
+        con = fns.get("reroute/%s_connect" % cid)
+        if not (ent and rst and con):
+            probs.append("%s: the reroute's entry, restore or connect function is missing" % cid)
+            continue
+        ex = expected(spec, cave, ground)
+        core, _y0 = old_entry_cells(rt, ground)
+        restored = apply_lines({}, rst)
+        t = rt["terrain"]
+        hw, PH = spec["geometry"]["passage_half_width"], spec["geometry"]["passage_height"]
+        endwall = set()
+        for u in range(-hw, hw + 1):
+            x, z = ex["xz"](u, cave["drop"])
+            endwall |= {(x, y, z) for y in range(ex["yh"] + 1, ex["yh"] + PH + 1)}
+        wrong = []
+        for c in sorted(core):
+            g = ground(c[0], c[2])
+            want = (base(cave["wall"]) if c in endwall else base(t["deep"]) if c[1] <= g - 3 else base(t["under"])
+                    if c[1] <= g - 1 else base(t["surface"]) if c[1] == g else "minecraft:air")
+            if restored.get(c) != want:
+                wrong.append((c, restored.get(c), want))
+        if wrong:
+            probs.append("%s: the restore leaves %d core cell(s) of the old mouth wrong, e.g. %s is %s, want %s"
+                         % (cid, len(wrong), wrong[0][0], wrong[0][1], wrong[0][2]))
+        keep = hall_cells(spec, cave, ex) | set().union(*[e["body"] | e["shell"] for e in ex["galleries"].values()])
+        hit = sorted(c for c in restored if c in keep)
+        if hit:
+            probs.append("%s: the restore writes %d cell(s) of the hall or a gallery, e.g. %s" % (cid, len(hit), hit[0]))
+        # the gate: tags, the count, then the calls behind `matches 0`
+        body = [l for l in ent if l and not l.startswith("#")]
+        holder = None
+        boxes = []
+        for l in body:
+            m = re.fullmatch(r"execute store result score (#\S+) cobblers_chunk_look if entity @a\[tag=(\S+)\]", l)
+            if m:
+                holder = m.group(1)
+            if l.startswith("tag @a[") and holder is None:
+                k_, args = selector(l.split(" add ")[0][4:])
+                boxes.append(sel_box(args))
+        if holder is None:
+            probs.append("%s: the reroute never counts the held players" % cid)
+            continue
+        calls_r = [l for l in body if l.endswith("run function %sreroute/%s_restore" % (FN, cid))]
+        calls_c = [l for l in body if l.endswith("run function %sreroute/%s_connect" % (FN, cid))]
+        gate = "execute if score %s cobblers_chunk_look matches 0 " % holder
+        if not calls_r or not all(l.startswith(gate + "if block ") for l in calls_r):
+            probs.append("%s: the restore is not called only behind the held count and a probe" % cid)
+        for l in calls_r:
+            m = re.match(re.escape(gate) + r"if block (-?\d+) (-?\d+) (-?\d+) (\S+) run", l)
+            if not m:
+                continue
+            p = tuple(int(m.group(i)) for i in (1, 2, 3))
+            if core.get(p) not in ("beam", "stair") or m.group(4) not in (base(rt["frozen_cave"]["timber"]), base(rt["frozen_cave"]["stair"])):
+                probs.append("%s: probe %s %s is not the old frame's beam or a first stair" % (cid, p, m.group(4)))
+            elif restored.get(p) == m.group(4):
+                probs.append("%s: the restore leaves the probe %s showing: a second run would restore again" % (cid, p))
+        op = opening_cells(cave)
+        if len(calls_c) != 1 or not re.fullmatch(re.escape(gate) + r"unless block (-?\d+) (-?\d+) (-?\d+) minecraft:air run .*", calls_c[0]):
+            probs.append("%s: the passage is not called once behind the held count and the opening's air" % cid)
+        else:
+            m = re.match(re.escape(gate) + r"unless block (-?\d+) (-?\d+) (-?\d+)", calls_c[0])
+            if tuple(int(m.group(i)) for i in (1, 2, 3)) not in op:
+                probs.append("%s: the passage's gate cell is not in the opening" % cid)
+        cut = apply_lines({}, con)
+        shut = sorted(c for c in op if cut.get(c) not in PASS)
+        if shut:
+            probs.append("%s: the passage leaves %d opening cell(s) closed, e.g. %s" % (cid, len(shut), shut[0]))
+        hit = sorted(c for c in cut if c in keep and c not in op)
+        if hit:
+            probs.append("%s: the passage writes %d cell(s) of the hall or a gallery, e.g. %s" % (cid, len(hit), hit[0]))
+        unheld = sorted(c for c, b in list(restored.items()) + list(cut.items())
+                        if b not in PASS and not any(in_box(c, bx) for bx in boxes))
+        if unheld:
+            probs.append("%s: %d solid write(s) stand outside every held box (a player there would be buried), e.g. %s"
+                         % (cid, len(unheld), unheld[0]))
+        hl = host_lines(cave)
+        cols = {(x, z) for x, _y, z in cut}
+        fresh = apply_lines({}, [l for l in hl if _touches(l, cols)])
+        differ = sorted(c for c, b in cut.items() if fresh.get(c) != b)
+        if differ:
+            probs.append("%s: the passage writes %d cell(s) differently from what the host's earthwork leaves, e.g. %s "
+                         "(%s / %s): a rerouted world would not match a fresh export" % (cid, len(differ), differ[0],
+                                                                                      cut[differ[0]], fresh.get(differ[0])))
     return probs
 
 
@@ -821,15 +1101,22 @@ def keep_clear(spec, fns, inputs_root, ground, R=64):
                                       int(p["position"]["z"]), p["id"]) for p in placements
                                      if isinstance(p.get("position"), dict) and isinstance(p["position"].get("x"), (int, float))
                                      and isinstance(p["position"].get("z"), (int, float))], kc["placement_reach"] + 1)
+        # a cave entered from its host mine: the host's earthwork and its towns-pack function ARE its way in, so they
+        # are judged cell by cell (host_problems: nothing shared but the opening), not by distance
+        host = host_of(cave) or {}
         ew = []
         for p in placements:
+            if p["id"] == host.get("placement"):
+                continue
             for cmd in p.get("commands") or []:
                 for m in WRITE.finditer(cmd):
                     ax, az = int(m.group(2)), int(m.group(4))
                     bx, bz = (int(m.group(5)), int(m.group(7))) if m.group(5) else (ax, az)
                     ew.append((min(ax, bx), min(az, bz), max(ax, bx), max(az, bz), p["id"]))
         rects("earthwork command", ew, kc["earthwork_gap"] + 1)
-        rects("another pack's write", [(a, b, c, d, w) for a, b, c, d, k, w in others if k == "write"], kc["pack_gap"] + 1)
+        hostfn = "cobblers_towns/%s.mcfunction" % host["settlement"] if host.get("settlement") else None
+        rects("another pack's write", [(a, b, c, d, w) for a, b, c, d, k, w in others if k == "write" and w != hostfn],
+              kc["pack_gap"] + 1)
         rects("another pack's placed structure origin", [(a, b, c, d, w) for a, b, c, d, k, w in others if k != "write"],
               TEMPLATE_HINT)
         note("route path or leg", R + 1, kc["road_clear"], "none within %d" % R, "euclidean")
@@ -918,6 +1205,9 @@ def main(argv=None):
     fns, tag = read_pack(a.pack)
     probs = static_problems(spec, fns, tag, ground)
     print("static: %d problem(s)" % len(probs))
+    hp = host_problems(spec, fns, ground) + reroute_problems(spec, fns, ground)
+    print("host entry and retired mouth: %d problem(s)" % len(hp))
+    probs += hp
     if not a.no_run:
         rp = run_problems(spec, fns, tag, ground)
         print("command model: %d problem(s)" % len(rp))

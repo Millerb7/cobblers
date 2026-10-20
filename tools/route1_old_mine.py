@@ -24,6 +24,11 @@ every block it writes.
                 the copper face the miners were still working, a south branch in a fall of ground. They go under the
                 ground west of the hill, where the heightmap leaves 4 to 8 blocks over their roof, and the tool
                 refuses to write them if any roof or wall comes within MIN_COVER of the ground
+  the lower way (the owner, 2026-10-20: the Lower Galleries are entered from this mine, not from a frame and shaft of
+                their own on the flat) a drift north from the chamber's north edge, two stairs down, into the hole in
+                the galleries' hall wall that data/mining_caves.json cave_old_mine entry.host.opening records; the
+                galleries themselves are tools/mining_caves.py's (R9OC), and step R9OCR cuts this way in a world that
+                already has the mine
 
 Lanterns are close enough that nothing walkable inside is at block light 0 (tools/light_plan.py checks places under a
 roof); there are no hostile mobs in this pack (docs/STATE.md), so the light is for looks. No block here is a spawn
@@ -164,16 +169,7 @@ def build(g):
         sb(x, t, z, skin)
     # ---- the cave: a stone shell, then the chamber hollowed out of it, walls dressed afterwards
     floor = g(PORTAL_X + 1, Z_AXIS) - DROP              # the chamber's floor block; feet stand at floor + 1
-    cells = set()
-    for x in range(int(CAVE[0] - CAVE_R[0]) - 1, int(CAVE[0] + CAVE_R[0]) + 2):
-        for z in range(int(CAVE[1] - CAVE_R[1]) - 1, int(CAVE[1] + CAVE_R[1]) + 2):
-            th = math.atan2(z - CAVE[1], x - CAVE[0])
-            d = math.hypot((x - CAVE[0]) / CAVE_R[0], (z - CAVE[1]) / CAVE_R[1]) / (1 + 0.12 * math.sin(4 * th + 0.7))
-            if d >= 1:
-                continue
-            ceil = floor + 1 + int(round(CAVE_H * math.sqrt(1 - d * d)))
-            for y in range(floor + 1, max(floor + 3, ceil) + 1):
-                cells.add((x, y, z))
+    cells = chamber_cells(floor)
     shell = set()
     for (x, y, z) in cells:
         for a in (-2, -1, 0, 1, 2):
@@ -196,6 +192,7 @@ def build(g):
         ys = [y for (xx, y, zz) in cells if xx == x and zz == z]
         fill((x, min(ys), z), (x, max(ys), z), "minecraft:air")
     workings(g, top, cells, floor, c)
+    lower_way(g, top, cells, floor, c)
     # ---- the notch and the adit: cut from the hill's foot west into the face, at ground level
     feet = g(PORTAL_X + 1, Z_AXIS) + 1
     east_foot = max(x for (x, z) in top if z == Z_AXIS) + 1
@@ -303,6 +300,118 @@ def build(g):
     # schedules nothing. Every second rebuild lost one on staging (2026-09-24) until this ran first
     # The portal's lamp stands on a fence the site clear also removes, and it dropped as an item on every rebuild
     c[1:1] = ["setblock %d %d %d minecraft:air" % p for p in hanging + [(PORTAL_X + 3, feet + 1, Z_AXIS + 2)]]
+    return c
+
+
+def chamber_cells(floor):
+    """{(x, y, z)}: the chamber's air over its floor block `floor`, an irregular dome under the hill's west half."""
+    cells = set()
+    for x in range(int(CAVE[0] - CAVE_R[0]) - 1, int(CAVE[0] + CAVE_R[0]) + 2):
+        for z in range(int(CAVE[1] - CAVE_R[1]) - 1, int(CAVE[1] + CAVE_R[1]) + 2):
+            th = math.atan2(z - CAVE[1], x - CAVE[0])
+            d = math.hypot((x - CAVE[0]) / CAVE_R[0], (z - CAVE[1]) / CAVE_R[1]) / (1 + 0.12 * math.sin(4 * th + 0.7))
+            if d >= 1:
+                continue
+            ceil = floor + 1 + int(round(CAVE_H * math.sqrt(1 - d * d)))
+            for y in range(floor + 1, max(floor + 3, ceil) + 1):
+                cells.add((x, y, z))
+    return cells
+
+
+def lower_opening():
+    """(x0, y0, z0, x1, y1, z1, cave id): the hole in the Lower Galleries' hall wall the lower way ends in, as
+    data/mining_caves.json records it for the cave whose entry is a passage from this mine (entry.host.settlement)."""
+    spec = json.loads((ROOT / "data" / "mining_caves.json").read_text(encoding="utf-8"))
+    hosted = [c for c in spec["caves"] if ((c.get("entry") or {}).get("host") or {}).get("settlement") == SID]
+    if len(hosted) != 1:
+        raise SystemExit("data/mining_caves.json: %d caves are entered from %s, not one" % (len(hosted), SID))
+    x0, y0, z0, x1, y1, z1 = hosted[0]["entry"]["host"]["opening"]
+    return x0, y0, z0, x1, y1, z1, hosted[0]["id"]
+
+
+def lower_way(g, top, cave, floor, c):
+    """The lower way (the owner, 2026-10-20: the Lower Galleries are entered from this mine, not from a shaft of their
+    own): a drift 3 wide and 4 high north from the chamber's north edge, at the chamber's floor, then two stair steps
+    down to the galleries' hall floor and into the hole in the hall's wall that data/mining_caves.json records
+    (entry.host.opening). The workings' palette: rock() walls with wall()'s veins, a stone floor, a timber set and its
+    lantern every SET_EVERY rows, the incline's cobblestone stairs. The opening row itself writes only its air, its
+    floor and its roof: its two side cells are the hall's own wall, which tools/mining_caves.py writes (R9OC, after
+    this mine's R8). Raises if any roof comes within MIN_COVER of the ground, as workings() does."""
+    fill = lambda a, b, blk: c.append("fill %d %d %d %d %d %d %s" % (a[0], a[1], a[2], b[0], b[1], b[2], blk))
+    sb = lambda x, y, z, blk: c.append("setblock %d %d %d %s" % (x, y, z, blk))
+    surf = lambda x, z: top.get((x, z), g(x, z))
+    ox0, oy0, oz0, ox1, oy1, oz1, _cid = lower_opening()
+    if ox1 - ox0 != 2 or oz0 != oz1 or oy1 - oy0 != 3:
+        raise SystemExit("the lower way's opening %s is not 3 wide, 4 high and one row deep" % ([ox0, oy0, oz0, ox1, oy1, oz1],))
+    cx = (ox0 + ox1) // 2
+    feet = floor + 1                                    # the chamber's feet
+    low = oy0                                           # the hall's feet
+    steps = feet - low
+    if steps < 0:
+        raise SystemExit("the galleries' hall (feet y%d) is above the chamber (feet y%d)" % (low, feet))
+    cave_cols = {(x, z) for x, _, z in cave}
+    # rows north to south, each (z, feet, stair?): the opening, two level rows, the stairs, then level to the chamber
+    rows = [(oz0, low, False), (oz0 + 1, low, False), (oz0 + 2, low, False)]
+    for i in range(steps, 0, -1):                       # stair i stands at feet - i, its top at the level above
+        rows.append((oz0 + 2 + (steps - i + 1), feet - i, True))
+    z = rows[-1][0] + 1
+    while not all((x, z) in cave_cols for x in (cx - 1, cx, cx + 1)):
+        rows.append((z, feet, False))
+        z += 1
+        if z > CAVE[1]:
+            raise SystemExit("the lower way from z%d never meets the chamber at x%d..%d" % (oz0, cx - 1, cx + 1))
+    thin = []
+    for (z, f, stair) in rows:
+        roof = f + 4 if not stair else f + 5
+        for x in range(cx - 2, cx + 3):
+            if surf(x, z) - roof < MIN_COVER:
+                thin.append((x, z, surf(x, z) - roof))
+    if thin:
+        raise SystemExit("the lower way comes within %d blocks of the ground at %d columns, e.g. %s"
+                         % (MIN_COVER, len(thin), thin[:5]))
+    for k, (z, f, stair) in enumerate(rows):
+        opening = z == oz0
+        y_air = f + 1 if stair else f                   # a stair fills its own feet cell; the air starts above it
+        roof = y_air + 4
+        for x in range(cx - 2, cx + 3):
+            if (x, z) in cave_cols:
+                continue
+            side = abs(x - cx) == 2
+            if side:
+                if opening:
+                    continue                            # the hall's wall (R9OC's), not this mine's
+                fill((x, f - 1, z), (x, roof, z), rock(x, f, z))
+                for y in range(y_air, roof):
+                    v = wall(x, y, z)
+                    if v != rock(x, f, z):
+                        sb(x, y, z, v)
+                continue
+            fill((x, f - 2, z), (x, f - 1, z), "minecraft:stone")
+            if stair:
+                sb(x, f, z, "minecraft:cobblestone_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]")
+            fill((x, y_air, z), (x, roof - 1, z), "minecraft:air")
+            sb(x, roof, z, rock(x, roof, z))
+    # timber sets on the level rows, a lantern under each cap; one just inside the galleries' hall wall. Not on the row
+    # at the stairs' foot: a player coming down the last stair has his head at the lantern's height for one step
+    # (tools/mining_caves_audit.py's walk found it), so the set stands one row further on
+    level = [(z, f) for (z, f, stair) in rows if not stair and z != oz0]
+    sets = [level[0]] + [r for i, r in enumerate(level[2:]) if i % SET_EVERY == SET_EVERY // 2]
+    for (z, f) in sets:
+        if any((x, z) in cave_cols for x in (cx - 1, cx, cx + 1)):
+            continue
+        for x in (cx - 1, cx + 1):
+            fill((x, f, z), (x, f + 2, z), "minecraft:spruce_fence")
+        fill((cx - 1, f + 3, z), (cx + 1, f + 3, z), "minecraft:spruce_planks")
+        sb(cx, f + 2, z, "minecraft:lantern[hanging=true]")
+
+
+def lower_way_lines(g):
+    """The lower way's commands alone, as build(g) writes them (tools/mining_caves.py runs them on a world that already
+    has this mine and the galleries, to join the two: step R9OCR)."""
+    top, _clear = plan(g)
+    floor = g(PORTAL_X + 1, Z_AXIS) - DROP
+    c = []
+    lower_way(g, top, chamber_cells(floor), floor, c)
     return c
 
 
