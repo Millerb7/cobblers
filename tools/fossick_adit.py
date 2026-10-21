@@ -29,7 +29,8 @@ world that already has the galleries' old frame and shaft (the live world), step
 reroute_files) first puts the old mouth back to the heightmap's terrain and then runs exactly these lines, gated on the
 portal's beam (entry.host.probe), so a rerouted world matches a fresh export and a second run writes nothing.
 
-No block here decides a spawn (data/spawn_blocks.json): no ore, no magma, no rail, no water.
+No block here decides a spawn (the spawn-condition list tools/route1_old_mine.py and validate_data read): no ore, no
+magma, no rail, no water.
 
   python tools/fossick_adit.py --source-root <root>     # writes the settlement and its earthwork
 """

@@ -1547,7 +1547,7 @@
       "statement": "Every cell of the street 'path' in data/placements.json settlements.fossick_adit.plan, as tools/town_plan.py graded_cells grades and paves it, is left by the earthwork fossick_adit_hill with the street's block at the graded height and air over it. Step R9OCF builds that earthwork in the live world and runs no town pass; a fresh export runs the town's prep (which paves the street) and then the same earthwork; only this makes the two worlds end the same at the path.",
       "stated_in": [
         {
-          "at": "tools/fossick_adit.py:57",
+          "at": "tools/fossick_adit.py:58",
           "quote": "earthwork exactly as tools/town_plan.py grades a street (town_plan.graded_cells)"
         }
       ],

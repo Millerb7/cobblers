@@ -44,7 +44,7 @@ def rock(x, y, z):
 def wall(x, y, z):
     """A cave wall: rock, and now and then copper the miners left and a calcite vein. No coal or iron ore: both decide
     spawns (#minecraft:coal_ores draws rolycoly and carkol, #minecraft:iron_ores aron, aggron and alolan geodude,
-    data/spawn_blocks.json), and a cave drawing them is a balance decision, not dressing."""
+    the spawn conditions tools/route1_old_mine.py names), and a cave drawing them is a balance decision, not dressing."""
     k = h32(x, y, z, 11) % 60
     if k < 3:
         return "minecraft:copper_ore"
