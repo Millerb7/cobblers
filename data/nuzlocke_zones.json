@@ -348,7 +348,11 @@
    "legs": [],
    "sites": [
     "elder_northgate_west_1",
-    "elder_northgate_west_2"
+    "elder_northgate_west_2",
+    "tbird_elder_northgate_west_1_low",
+    "tbird_elder_northgate_west_1_mid",
+    "tbird_elder_northgate_west_2_low",
+    "tbird_elder_northgate_west_2_mid"
    ]
   },
   {
@@ -366,7 +370,11 @@
    "legs": [],
    "sites": [
     "elder_northgate_east_1",
-    "elder_northgate_east_2"
+    "elder_northgate_east_2",
+    "tbird_elder_northgate_east_1_low",
+    "tbird_elder_northgate_east_1_mid",
+    "tbird_elder_northgate_east_2_low",
+    "tbird_elder_northgate_east_2_mid"
    ]
   },
   {
@@ -384,7 +392,11 @@
    "legs": [],
    "sites": [
     "elder_north_pine_isle_1",
-    "elder_north_pine_isle_2"
+    "elder_north_pine_isle_2",
+    "tbird_elder_north_pine_isle_1_low",
+    "tbird_elder_north_pine_isle_1_mid",
+    "tbird_elder_north_pine_isle_2_low",
+    "tbird_elder_north_pine_isle_2_mid"
    ]
   },
   {
@@ -403,7 +415,13 @@
    "sites": [
     "elder_south_pine_isle_1",
     "elder_south_pine_isle_2",
-    "elder_south_pine_isle_3"
+    "elder_south_pine_isle_3",
+    "tbird_elder_south_pine_isle_1_low",
+    "tbird_elder_south_pine_isle_1_mid",
+    "tbird_elder_south_pine_isle_2_low",
+    "tbird_elder_south_pine_isle_2_mid",
+    "tbird_elder_south_pine_isle_3_low",
+    "tbird_elder_south_pine_isle_3_mid"
    ]
   },
   {
@@ -450,7 +468,9 @@
    "land_share": 0.999,
    "legs": [],
    "sites": [
-    "sapling_palm_sunset_west"
+    "sapling_palm_sunset_west",
+    "tbird_sapling_palm_sunset_west_low",
+    "tbird_sapling_palm_sunset_west_mid"
    ]
   },
   {
@@ -467,7 +487,9 @@
    "land_share": 1.0,
    "legs": [],
    "sites": [
-    "sapling_palm_sunset_east"
+    "sapling_palm_sunset_east",
+    "tbird_sapling_palm_sunset_east_low",
+    "tbird_sapling_palm_sunset_east_mid"
    ]
   },
   {
@@ -486,7 +508,13 @@
    "sites": [
     "elder_long_isle_north_1",
     "elder_long_isle_north_2",
-    "sapling_desert_long_isle_north"
+    "sapling_desert_long_isle_north",
+    "tbird_elder_long_isle_north_1_low",
+    "tbird_elder_long_isle_north_1_mid",
+    "tbird_elder_long_isle_north_2_low",
+    "tbird_elder_long_isle_north_2_mid",
+    "tbird_sapling_desert_long_isle_north_low",
+    "tbird_sapling_desert_long_isle_north_mid"
    ]
   },
   {
@@ -503,7 +531,9 @@
    "land_share": 0.997,
    "legs": [],
    "sites": [
-    "elder_long_isle_middle_1"
+    "elder_long_isle_middle_1",
+    "tbird_elder_long_isle_middle_1_low",
+    "tbird_elder_long_isle_middle_1_mid"
    ]
   },
   {
@@ -527,7 +557,23 @@
     "elder_long_isle_middle_2",
     "elder_long_isle_south_1",
     "elder_long_isle_south_2",
-    "elder_long_isle_south_3"
+    "elder_long_isle_south_3",
+    "tbird_elder_jungle_east_1_low",
+    "tbird_elder_jungle_east_1_mid",
+    "tbird_elder_jungle_east_2_low",
+    "tbird_elder_jungle_east_2_mid",
+    "tbird_elder_jungle_west_1_low",
+    "tbird_elder_jungle_west_1_mid",
+    "tbird_elder_jungle_west_2_low",
+    "tbird_elder_jungle_west_2_mid",
+    "tbird_elder_long_isle_middle_2_low",
+    "tbird_elder_long_isle_middle_2_mid",
+    "tbird_elder_long_isle_south_1_low",
+    "tbird_elder_long_isle_south_1_mid",
+    "tbird_elder_long_isle_south_2_low",
+    "tbird_elder_long_isle_south_2_mid",
+    "tbird_elder_long_isle_south_3_low",
+    "tbird_elder_long_isle_south_3_mid"
    ]
   },
   {
@@ -569,7 +615,9 @@
     "route_04_surge_to_erika"
    ],
    "sites": [
-    "sapling_crag_the_crags"
+    "sapling_crag_the_crags",
+    "tbird_sapling_crag_the_crags_low",
+    "tbird_sapling_crag_the_crags_mid"
    ]
   },
   {
@@ -648,7 +696,9 @@
     "route_04_surge_to_erika"
    ],
    "sites": [
-    "sapling_crag_mt_vessu"
+    "sapling_crag_mt_vessu",
+    "tbird_sapling_crag_mt_vessu_low",
+    "tbird_sapling_crag_mt_vessu_mid"
    ]
   },
   {
@@ -688,7 +738,9 @@
     "victory_road"
    ],
    "sites": [
-    "sapling_storm_rift_trunk"
+    "sapling_storm_rift_trunk",
+    "tbird_sapling_storm_rift_trunk_low",
+    "tbird_sapling_storm_rift_trunk_mid"
    ]
   },
   {
@@ -774,7 +826,9 @@
    "land_share": 1.0,
    "legs": [],
    "sites": [
-    "sapling_scorched_great_crater"
+    "sapling_scorched_great_crater",
+    "tbird_sapling_scorched_great_crater_low",
+    "tbird_sapling_scorched_great_crater_mid"
    ]
   },
   {
@@ -853,7 +907,9 @@
    "land_share": 1.0,
    "legs": [],
    "sites": [
-    "sapling_frost_frostpeak"
+    "sapling_frost_frostpeak",
+    "tbird_sapling_frost_frostpeak_low",
+    "tbird_sapling_frost_frostpeak_mid"
    ]
   },
   {
@@ -889,7 +945,11 @@
    ],
    "sites": [
     "elder_tilpey_north_shore_1",
-    "elder_tilpey_north_shore_2"
+    "elder_tilpey_north_shore_2",
+    "tbird_elder_tilpey_north_shore_1_low",
+    "tbird_elder_tilpey_north_shore_1_mid",
+    "tbird_elder_tilpey_north_shore_2_low",
+    "tbird_elder_tilpey_north_shore_2_mid"
    ]
   },
   {
@@ -924,7 +984,9 @@
     "route_08_blaine_to_giovanni"
    ],
    "sites": [
-    "sapling_lakeshore_tilpey_south_shore"
+    "sapling_lakeshore_tilpey_south_shore",
+    "tbird_sapling_lakeshore_tilpey_south_shore_low",
+    "tbird_sapling_lakeshore_tilpey_south_shore_mid"
    ]
   },
   {
@@ -959,7 +1021,11 @@
    ],
    "sites": [
     "elder_tilpey_east_shore_1",
-    "elder_tilpey_east_shore_2"
+    "elder_tilpey_east_shore_2",
+    "tbird_elder_tilpey_east_shore_1_low",
+    "tbird_elder_tilpey_east_shore_1_mid",
+    "tbird_elder_tilpey_east_shore_2_low",
+    "tbird_elder_tilpey_east_shore_2_mid"
    ]
   },
   {
@@ -977,7 +1043,11 @@
    "legs": [],
    "sites": [
     "elder_wedge_north_1",
-    "elder_wedge_north_2"
+    "elder_wedge_north_2",
+    "tbird_elder_wedge_north_1_low",
+    "tbird_elder_wedge_north_1_mid",
+    "tbird_elder_wedge_north_2_low",
+    "tbird_elder_wedge_north_2_mid"
    ]
   },
   {
@@ -995,7 +1065,11 @@
    "legs": [],
    "sites": [
     "elder_wedge_south_1",
-    "elder_wedge_south_2"
+    "elder_wedge_south_2",
+    "tbird_elder_wedge_south_1_low",
+    "tbird_elder_wedge_south_1_mid",
+    "tbird_elder_wedge_south_2_low",
+    "tbird_elder_wedge_south_2_mid"
    ]
   },
   {
@@ -1020,7 +1094,13 @@
    "sites": [
     "elder_peak_pond_hollow_1",
     "elder_peak_pond_hollow_2",
-    "elder_peak_pond_hollow_3"
+    "elder_peak_pond_hollow_3",
+    "tbird_elder_peak_pond_hollow_1_low",
+    "tbird_elder_peak_pond_hollow_1_mid",
+    "tbird_elder_peak_pond_hollow_2_low",
+    "tbird_elder_peak_pond_hollow_2_mid",
+    "tbird_elder_peak_pond_hollow_3_low",
+    "tbird_elder_peak_pond_hollow_3_mid"
    ]
   },
   {
@@ -1074,7 +1154,13 @@
    "sites": [
     "elder_marshy_marsh_1",
     "elder_marshy_marsh_2",
-    "elder_marshy_marsh_3"
+    "elder_marshy_marsh_3",
+    "tbird_elder_marshy_marsh_1_low",
+    "tbird_elder_marshy_marsh_1_mid",
+    "tbird_elder_marshy_marsh_2_low",
+    "tbird_elder_marshy_marsh_2_mid",
+    "tbird_elder_marshy_marsh_3_low",
+    "tbird_elder_marshy_marsh_3_mid"
    ]
   },
   {
@@ -1129,7 +1215,9 @@
     "route_06_koga_to_sabrina"
    ],
    "sites": [
-    "sapling_frost_glacier_foot_fields"
+    "sapling_frost_glacier_foot_fields",
+    "tbird_sapling_frost_glacier_foot_fields_low",
+    "tbird_sapling_frost_glacier_foot_fields_mid"
    ]
   },
   {
@@ -1153,7 +1241,11 @@
    ],
    "sites": [
     "elder_lake_viltri_hollow_1",
-    "elder_lake_viltri_hollow_2"
+    "elder_lake_viltri_hollow_2",
+    "tbird_elder_lake_viltri_hollow_1_low",
+    "tbird_elder_lake_viltri_hollow_1_mid",
+    "tbird_elder_lake_viltri_hollow_2_low",
+    "tbird_elder_lake_viltri_hollow_2_mid"
    ]
   },
   {
@@ -1171,7 +1263,11 @@
    "legs": [],
    "sites": [
     "elder_viltris_path_valley_1",
-    "elder_viltris_path_valley_2"
+    "elder_viltris_path_valley_2",
+    "tbird_elder_viltris_path_valley_1_low",
+    "tbird_elder_viltris_path_valley_1_mid",
+    "tbird_elder_viltris_path_valley_2_low",
+    "tbird_elder_viltris_path_valley_2_mid"
    ]
   },
   {
@@ -1200,7 +1296,15 @@
     "elder_foothill_woods_1",
     "elder_foothill_woods_2",
     "elder_foothill_woods_3",
-    "elder_foothill_woods_4"
+    "elder_foothill_woods_4",
+    "tbird_elder_foothill_woods_1_low",
+    "tbird_elder_foothill_woods_1_mid",
+    "tbird_elder_foothill_woods_2_low",
+    "tbird_elder_foothill_woods_2_mid",
+    "tbird_elder_foothill_woods_3_low",
+    "tbird_elder_foothill_woods_3_mid",
+    "tbird_elder_foothill_woods_4_low",
+    "tbird_elder_foothill_woods_4_mid"
    ]
   },
   {
@@ -1240,7 +1344,13 @@
    "sites": [
     "elder_viltri_plateau_1",
     "elder_viltri_plateau_2",
-    "elder_viltri_plateau_3"
+    "elder_viltri_plateau_3",
+    "tbird_elder_viltri_plateau_1_low",
+    "tbird_elder_viltri_plateau_1_mid",
+    "tbird_elder_viltri_plateau_2_low",
+    "tbird_elder_viltri_plateau_2_mid",
+    "tbird_elder_viltri_plateau_3_low",
+    "tbird_elder_viltri_plateau_3_mid"
    ]
   },
   {
@@ -1259,7 +1369,13 @@
    "sites": [
     "elder_shrew_lake_shores_1",
     "elder_shrew_lake_shores_2",
-    "elder_shrew_lake_shores_3"
+    "elder_shrew_lake_shores_3",
+    "tbird_elder_shrew_lake_shores_1_low",
+    "tbird_elder_shrew_lake_shores_1_mid",
+    "tbird_elder_shrew_lake_shores_2_low",
+    "tbird_elder_shrew_lake_shores_2_mid",
+    "tbird_elder_shrew_lake_shores_3_low",
+    "tbird_elder_shrew_lake_shores_3_mid"
    ]
   },
   {
@@ -1276,7 +1392,9 @@
    "land_share": 0.976,
    "legs": [],
    "sites": [
-    "sapling_lakeshore_arrow_lake_shores"
+    "sapling_lakeshore_arrow_lake_shores",
+    "tbird_sapling_lakeshore_arrow_lake_shores_low",
+    "tbird_sapling_lakeshore_arrow_lake_shores_mid"
    ]
   },
   {
@@ -1405,7 +1523,9 @@
     "victory_road"
    ],
    "sites": [
-    "sapling_storm_rift_foot"
+    "sapling_storm_rift_foot",
+    "tbird_sapling_storm_rift_foot_low",
+    "tbird_sapling_storm_rift_foot_mid"
    ]
   },
   {
@@ -1422,7 +1542,9 @@
    "land_share": 1.0,
    "legs": [],
    "sites": [
-    "sapling_palm_east_coast_dunes"
+    "sapling_palm_east_coast_dunes",
+    "tbird_sapling_palm_east_coast_dunes_low",
+    "tbird_sapling_palm_east_coast_dunes_mid"
    ]
   },
   {
@@ -1439,7 +1561,9 @@
    "land_share": 1.0,
    "legs": [],
    "sites": [
-    "sapling_desert_south_east_dunes"
+    "sapling_desert_south_east_dunes",
+    "tbird_sapling_desert_south_east_dunes_low",
+    "tbird_sapling_desert_south_east_dunes_mid"
    ]
   },
   {
@@ -2118,7 +2242,7 @@
   },
   {
    "zone": "elder_* / sapling_*",
-   "what": "67 placed elder-tree and sapling Habitat Block pools",
+   "what": "191 placed elder-tree and sapling Habitat Block pools",
    "why": "a few blocks inside the sub-region each is named for: an encounter there is that sub-region's, listed under its zone's \"sites\""
   },
   {
