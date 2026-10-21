@@ -19,7 +19,7 @@
   "clear_above": 2,
   "max_fill": 3,
   "lantern_every": 6,
-  "rules": "A cave is entered at its `entry.anchor` (the middle column of the mouth) from its `entry.front` (tools/mines.py frame(): north means the player stands north and the passage runs +z; u runs across, d into the ground). The mouth floor y0 is the lower median of the heightmap's ground (tools/ground.py, rounded) over row d = -1, u = -2..2. The incline: d = 1..`drop`, one stair a row, stair n at y0 - n + 1, facing the mouth, 3 wide (|u| <= passage_half_width) and passage_height of air over each stair; a row whose least ground over u = -2..2 is under its air top + 1 + cover_min is an open cutting (air up to the higher of the ground and the air top, plus clear_above), any other a tunnel. The hall: floor yh = y0 - drop, from d = drop + 1, 3 wide and passage_height high, as long as the galleries along it need. A gallery is a slot of gallery_width + 2 rows on one side of the hall (`side` left is u < 0): one shell row, gallery_width body rows, one shell row. The body (gallery_width x gallery_depth x gallery_height) is the hall's wall, |u| = 2 .. 1 + gallery_depth, y yh+1 .. yh+gallery_height; the shell is one block of `shell` round its back, its ends, under and over it. Every natural cell next to the air, at or under its column's ground, becomes the cave's wall rock (the skin, as tools/mines.py geometry()). Hanging lanterns down the middle every lantern_every rows where a ceiling holds them; a timber frame at the mouth. A cave whose entry.mouth is false (entered from its host mine, entry.host) has no mouth, incline or timber frame and no approach rule: anchor and front lay out only its hall and galleries, which stand where they would with a mouth; entry.host.opening is a box of cells in the hall's wall (|u| = passage_half_width + 1, a hall row, the hall's air height, in no gallery) written as air and grown no skin, where the host's own passage ends; the host earthwork (entry.host.placement) writes no other cell the cave writes."
+  "rules": "A cave is entered at its `entry.anchor` (the middle column of the mouth) from its `entry.front` (tools/mines.py frame(): north means the player stands north and the passage runs +z; u runs across, d into the ground). The mouth floor y0 is the lower median of the heightmap's ground (tools/ground.py, rounded) over row d = -1, u = -2..2. The incline: d = 1..`drop`, one stair a row, stair n at y0 - n + 1, facing the mouth, 3 wide (|u| <= passage_half_width) and passage_height of air over each stair; a row whose least ground over u = -2..2 is under its air top + 1 + cover_min is an open cutting (air up to the higher of the ground and the air top, plus clear_above), any other a tunnel. The hall: floor yh = y0 - drop, from d = drop + 1, 3 wide and passage_height high, as long as the galleries along it need. A gallery is a slot of gallery_width + 2 rows on one side of the hall (`side` left is u < 0): one shell row, gallery_width body rows, one shell row. The body (gallery_width x gallery_depth x gallery_height) is the hall's wall, |u| = 2 .. 1 + gallery_depth, y yh+1 .. yh+gallery_height; the shell is one block of `shell` round its back, its ends, under and over it. Every natural cell next to the air, at or under its column's ground, becomes the cave's wall rock (the skin, as tools/mines.py geometry()). Hanging lanterns down the middle every lantern_every rows where a ceiling holds them; a timber frame at the mouth. A cave whose entry.mouth is false (entered from its host mine, entry.host) has no mouth, incline or timber frame and no approach rule: anchor and front lay out only its hall and galleries, which stand where they would with a mouth; entry.host.opening is a box of cells in the hall's wall (|u| = passage_half_width + 1, a hall row, the hall's air height, in no gallery) or in its near end wall (d = drop, |u| <= passage_half_width, the hall's air height: where an incline would come in) written as air and grown no skin, where the host's own passage ends; the host earthwork (entry.host.placement) writes no other cell the cave writes."
  },
  "restore": {
   "period_ticks": 24000,
@@ -281,7 +281,18 @@
       1349,
       4120
      ],
-     "walk_from_why": "the notch floor outside the old mine's portal (tools/route1_old_mine.py PORTAL_X 1347, Z_AXIS 4120): the way in is the adit, the incline, the chamber and the lower way north to the hall"
+     "walk_from_why": "the notch floor outside the old mine's portal (tools/route1_old_mine.py PORTAL_X 1347, Z_AXIS 4120): the way in is the adit, the incline, the chamber and the lower way north to the hall",
+     "keep_clear_shared": {
+      "files": [
+       "dungeon_rips.json",
+       "rewards.json",
+       "world_probes.json"
+      ],
+      "packs": [
+       "cobblers_dungeons_build"
+      ],
+      "why": "three things stand in or on this mine by design. The mine's two finds (data/rewards.json r1_old_mine and r1_old_mine_stope: their barrels are in this earthwork, their trigger boxes round them). The Night Shift's rip stood in the notch on purpose (the owner: \"in the notch before the old mine's adit, x1347 z4120, on the carts' trail\", data/dungeon_rips.json retired_rips[0].placeholder_why) and the test rips along the trail; the owner retired them 2026-10-13, and their records keep what each restore puts back, which cobblers_dungeons_build dungeons/rips/retire_* writes in the notch and on the trail after this mine is built (tools/dungeon.py, R16DR after R8), and data/world_probes.json dungeon_rips holds the probes that read the retirement back. tools/mining_caves_audit.py judges the host earthwork against every other file and pack (2026-10-20) and reports these as shared, not as faults"
+     }
     }
    },
    "retired_entry": {
@@ -464,7 +475,7 @@
    "name": "The Fossick Deep Galleries",
    "place": "mining_town",
    "role": "main deep cave, from leg 3 (ECONOMY_OVERHAUL.md 3.2; Fossick's reachability by leg 3 is PROGRESSION_LADDER's open U-5)",
-   "reading": "The old adit at the head of the spur is barred; the guild's new incline goes down past it into the deep seams, which repair themselves faster than anyone can work them out.",
+   "reading": "The old adit at the head of the spur is barred; the guild's new one is cut into a hill of its own east of the town, and its incline goes down into the deep seams, which repair themselves faster than anyone can work them out.",
    "host_anchor": [
     6735,
     5808
@@ -537,7 +548,329 @@
      5804
     ],
     "front": "west",
-    "sited_by": "tools/mining_caves.py author: the best of search() (distance from host_anchor + a tenth of the cells dug) over the canonical heightmap and the keep_clear rules"
+    "sited_by": "tools/mining_caves.py author: the best of search() (distance from host_anchor + a tenth of the cells dug) over the canonical heightmap and the keep_clear rules",
+    "mouth": false,
+    "mouth_why": "the owner, 2026-10-20: \"make fossick like route 1\". The Fossick Deep Galleries are no longer entered by a free-standing timber frame over a stair shaft on the flat: anchor and front now name only the frame the hall and galleries are laid out in (unchanged, so every gallery, its ore and its clock stand exactly where R9OC built them); no mouth, incline or timber frame is built (tools/mining_caves.py geometry), the old one is put back to terrain (retired_entry, step R9OCR), and the way in is the adit of a hill built over the old shaft, Route 1's (tools/fossick_adit.py, tools/hill_adit.py)",
+    "host": {
+     "settlement": "fossick_adit",
+     "placement": "fossick_adit_hill",
+     "opening": [
+      6789,
+      124,
+      5803,
+      6789,
+      127,
+      5805
+     ],
+     "opening_why": "the hall's near end wall (d = drop = 22, u = -1..1: x6789, z5803..5805), where the old incline came in: every gallery slot holds a gallery on both sides, so no side wall is free. Feet at the hall's floor + 1 (y124), passage_height high. tools/fossick_adit.py reads this box and ends its incline in it; tools/mining_caves.py writes it as air and lets no wall grow over it",
+     "walk_from": [
+      6762,
+      5804
+     ],
+     "walk_from_why": "the notch floor outside the adit's portal (tools/fossick_adit.py PORTAL_X 6764, Z_AXIS 5804): the way in is the notch, the portal, the level and the incline down to the hall",
+     "probe": [
+      6764,
+      150,
+      5804,
+      "minecraft:spruce_log"
+     ],
+     "probe_why": "the portal's beam over the adit's middle (tools/fossick_adit.py probe: x PORTAL_X, the level's feet + 4): it stands only once the hill is built, the old mouth never wrote that cell and the cave writes nothing there, so step R9OCR cuts the way in (the whole hill, which a world with the old mouth does not have) only while it is missing. The opening's own air cannot gate it here: the old incline left the opening's cells air already"
+    }
+   },
+   "retired_entry": {
+    "retired": "2026-10-20",
+    "step": "R9OCF",
+    "step_why": "its own tools/reapply.py step after R9OCR (R9OCR stays the Lower Galleries' alone), so the Fossick reroute can be run, and refused, without the other",
+    "why": "the owner, 2026-10-20, asking for the Fossick galleries to be entered the way the Route 1 old mine's are: \"make fossick like route 1\". The mouth, incline and timber frame R9OC built here (applied in the live world with the rest of the pack, relayed, not read from the server) come out: every column they wrote goes back to the heightmap's terrain (tools/mining_caves.py reroute_files, step R9OCR), refused while a player stands in them, and only while a probe still shows the old frame; then the hill and its adit are built over the place",
+    "applied_build_sha256": "386e5b08af937ce6f604bb973f491aed8971283d257459f0990de07ea1892fa5",
+    "applied_build_sha256_why": "sha256 of build_cave_fossick.mcfunction (line endings LF) in the integration worktree's build/datapacks/cobblers_mining_caves (.claude/worktrees/mods-182, the checkout whose build_cave_old_mine hashes to cave_old_mine's 377be8d1..., the last install's prepare per docs/HANDOVER_SESSION.md: relayed, not read from the server); three other worktrees' builds since 2026-10-08 hash the same, and tools/mining_caves.py emits it byte for byte from frozen_spec and frozen_cave below (compared 2026-10-20). The restore refuses if the recomputed text ever hashes otherwise",
+    "frozen_spec": {
+     "seed": 20261010,
+     "geometry": {
+      "passage_half_width": 1,
+      "passage_height": 4,
+      "gallery_width": 7,
+      "gallery_depth": 4,
+      "gallery_height": 4,
+      "cover_min": 3,
+      "approach_rows": 3,
+      "approach_tolerance": 2,
+      "clear_above": 2,
+      "max_fill": 3,
+      "lantern_every": 6,
+      "rules": "A cave is entered at its `entry.anchor` (the middle column of the mouth) from its `entry.front` (tools/mines.py frame(): north means the player stands north and the passage runs +z; u runs across, d into the ground). The mouth floor y0 is the lower median of the heightmap's ground (tools/ground.py, rounded) over row d = -1, u = -2..2. The incline: d = 1..`drop`, one stair a row, stair n at y0 - n + 1, facing the mouth, 3 wide (|u| <= passage_half_width) and passage_height of air over each stair; a row whose least ground over u = -2..2 is under its air top + 1 + cover_min is an open cutting (air up to the higher of the ground and the air top, plus clear_above), any other a tunnel. The hall: floor yh = y0 - drop, from d = drop + 1, 3 wide and passage_height high, as long as the galleries along it need. A gallery is a slot of gallery_width + 2 rows on one side of the hall (`side` left is u < 0): one shell row, gallery_width body rows, one shell row. The body (gallery_width x gallery_depth x gallery_height) is the hall's wall, |u| = 2 .. 1 + gallery_depth, y yh+1 .. yh+gallery_height; the shell is one block of `shell` round its back, its ends, under and over it. Every natural cell next to the air, at or under its column's ground, becomes the cave's wall rock (the skin, as tools/mines.py geometry()). Hanging lanterns down the middle every lantern_every rows where a ceiling holds them; a timber frame at the mouth. A cave whose entry.mouth is false (entered from its host mine, entry.host) has no mouth, incline or timber frame and no approach rule: anchor and front lay out only its hall and galleries, which stand where they would with a mouth; entry.host.opening is a box of cells in the hall's wall (|u| = passage_half_width + 1, a hall row, the hall's air height, in no gallery) written as air and grown no skin, where the host's own passage ends; the host earthwork (entry.host.placement) writes no other cell the cave writes."
+     },
+     "restore": {
+      "period_ticks": 24000,
+      "period_why": "20 minutes per gallery (ECONOMY_OVERHAUL.md 3.3): 20 min x 60 s x 20 ticks = 24,000 ticks, the BUILD LIST's floor (period >= 24,000) exactly, so the two statements agree. Game time, not wall time: a lagging server only lengthens it, and the scores and game time are saved with the world, so a restart neither repeats nor loses a restore (tools/mines.py's rule)",
+      "variants": 8,
+      "every_ticks": 100,
+      "approach_margin": 48,
+      "approach_up": 48,
+      "approach_down": 16,
+      "resettable_tag": "cave_resettable",
+      "resettable_from": "data/mines.json restore.resettable (read, not copied: the stone faces' list is the one list of what a restore may overwrite)",
+      "resettable_add": [
+       "minecraft:coal_ore",
+       "minecraft:deepslate_coal_ore",
+       "minecraft:iron_ore",
+       "minecraft:deepslate_iron_ore",
+       "minecraft:copper_ore",
+       "minecraft:deepslate_copper_ore",
+       "minecraft:lapis_ore",
+       "minecraft:deepslate_lapis_ore",
+       "minecraft:gold_ore",
+       "minecraft:deepslate_gold_ore",
+       "minecraft:redstone_ore",
+       "minecraft:deepslate_redstone_ore",
+       "minecraft:diamond_ore",
+       "minecraft:deepslate_diamond_ore"
+      ],
+      "tag_why": "A cave-specific tag (#cobblers:cave_resettable) rather than adding the vanilla ores to data/mines.json's #cobblers:face_resettable as ECONOMY_OVERHAUL.md 3.1 words it: the same effect for the galleries, and the stone faces' restore, pack and audit (tools/mines_audit.py) stay exactly as they are. The tag is the stone faces' list plus the fourteen vanilla ores; no container is in it, so a player's chest left in a gallery survives a restore",
+      "why": "tools/mines.py's restore on approach, reused: the pack's tick counts to every_ticks; while a player is inside a cave's approach box (its galleries' guard boxes grown by approach_margin across, approach_down below, approach_up above) each gallery whose period has passed, whose guard box's four corners are loaded, and in whose guard box (body and shell grown by one) no player and no cobblemon:pokemon stands is restored: a filtered fill of the body and the shell over #cobblers:cave_resettable, then a variant other than the last one by guarded setblocks. A cave's galleries are staggered by their offset_ticks and kept apart after a restore by the sibling rule (mines.py driver_files)"
+     },
+     "yields": {
+      "early": {
+       "host": "minecraft:stone",
+       "visible_min": 3,
+       "why": "ECONOMY_OVERHAUL.md 3.3 row 'Early (Route 1)': 10 coal, 8 iron, 4 copper, 1 lapis per reset, the mean over the 8 variants; each per_variant list sums to 8 x mean exactly",
+       "ores": {
+        "minecraft:coal_ore": {
+         "mean": 10,
+         "per_variant": [
+          9,
+          11,
+          10,
+          12,
+          8,
+          10,
+          11,
+          9
+         ]
+        },
+        "minecraft:iron_ore": {
+         "mean": 8,
+         "per_variant": [
+          8,
+          7,
+          9,
+          8,
+          8,
+          9,
+          7,
+          8
+         ]
+        },
+        "minecraft:copper_ore": {
+         "mean": 4,
+         "per_variant": [
+          4,
+          3,
+          5,
+          4,
+          4,
+          5,
+          3,
+          4
+         ]
+        },
+        "minecraft:lapis_ore": {
+         "mean": 1,
+         "per_variant": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+         ]
+        }
+       }
+      },
+      "deep": {
+       "host": "minecraft:deepslate",
+       "visible_min": 3,
+       "hidden_only": [
+        "minecraft:deepslate_diamond_ore",
+        "minecraft:deepslate_gold_ore"
+       ],
+       "why": "ECONOMY_OVERHAUL.md 3.3 row 'Deep (Fossick)': 8 coal, 8 iron, 2 lapis, 1 gold, 2 redstone; 1 diamond in 3 of 8 variants (mean 0.375); each per_variant list sums to 8 x mean exactly. Deepslate forms because the deep cave's host is deepslate; each drops what its stone form drops. Diamond and gold are set at least 2 blocks into the body, never on the face",
+       "ores": {
+        "minecraft:deepslate_coal_ore": {
+         "mean": 8,
+         "per_variant": [
+          8,
+          7,
+          9,
+          8,
+          8,
+          9,
+          7,
+          8
+         ]
+        },
+        "minecraft:deepslate_iron_ore": {
+         "mean": 8,
+         "per_variant": [
+          8,
+          9,
+          7,
+          8,
+          8,
+          7,
+          9,
+          8
+         ]
+        },
+        "minecraft:deepslate_lapis_ore": {
+         "mean": 2,
+         "per_variant": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+         ]
+        },
+        "minecraft:deepslate_gold_ore": {
+         "mean": 1,
+         "per_variant": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+         ]
+        },
+        "minecraft:deepslate_redstone_ore": {
+         "mean": 2,
+         "per_variant": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+         ]
+        },
+        "minecraft:deepslate_diamond_ore": {
+         "mean": 0.375,
+         "per_variant": [
+          1,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0
+         ]
+        }
+       }
+      }
+     }
+    },
+    "frozen_cave": {
+     "id": "cave_fossick",
+     "name": "The Fossick Deep Galleries",
+     "place": "mining_town",
+     "role": "main deep cave, from leg 3 (ECONOMY_OVERHAUL.md 3.2; Fossick's reachability by leg 3 is PROGRESSION_LADDER's open U-5)",
+     "reading": "The old adit at the head of the spur is barred; the guild's new incline goes down past it into the deep seams, which repair themselves faster than anyone can work them out.",
+     "host_anchor": [
+      6735,
+      5808
+     ],
+     "host_anchor_why": "the barred adit's mouth at the head of the mine spur (tools/mining_works.py PORTAL_MOUTH; data/placements.json mining_portal)",
+     "ring": {
+      "min": 30,
+      "max": 220
+     },
+     "yield": "deep",
+     "drop": 22,
+     "wall": "minecraft:deepslate",
+     "shell": "minecraft:smooth_basalt",
+     "floor": "minecraft:cobbled_deepslate",
+     "stair": "minecraft:cobbled_deepslate_stairs",
+     "timber": "minecraft:stripped_dark_oak_log",
+     "galleries": [
+      {
+       "id": "fsk_g1",
+       "side": "left",
+       "slot": 0,
+       "offset_ticks": 0
+      },
+      {
+       "id": "fsk_g2",
+       "side": "right",
+       "slot": 0,
+       "offset_ticks": 3000
+      },
+      {
+       "id": "fsk_g3",
+       "side": "left",
+       "slot": 1,
+       "offset_ticks": 6000
+      },
+      {
+       "id": "fsk_g4",
+       "side": "right",
+       "slot": 1,
+       "offset_ticks": 9000
+      },
+      {
+       "id": "fsk_g5",
+       "side": "left",
+       "slot": 2,
+       "offset_ticks": 12000
+      },
+      {
+       "id": "fsk_g6",
+       "side": "right",
+       "slot": 2,
+       "offset_ticks": 15000
+      },
+      {
+       "id": "fsk_g7",
+       "side": "left",
+       "slot": 3,
+       "offset_ticks": 18000
+      },
+      {
+       "id": "fsk_g8",
+       "side": "right",
+       "slot": 3,
+       "offset_ticks": 21000
+      }
+     ],
+     "entry": {
+      "anchor": [
+       6767,
+       5804
+      ],
+      "front": "west",
+      "sited_by": "tools/mining_caves.py author: the best of search() (distance from host_anchor + a tenth of the cells dug) over the canonical heightmap and the keep_clear rules"
+     }
+    },
+    "terrain": {
+     "subregion": "east_cones",
+     "preset": "volcanic",
+     "code": "BASALT (BLACKSTONE patches 40%, GRAVEL 15%, MAGMA 3%)",
+     "surface": "minecraft:basalt[axis=y]",
+     "under": "minecraft:blackstone",
+     "deep": "minecraft:stone",
+     "surface_verified": false,
+     "why": "The paint at the old mouth (6767, 5804) is subregion east_cones, preset volcanic (data/regions.json paint_presets): BASALT with BLACKSTONE, GRAVEL and MAGMA patches; build/paint/terrain.png in the integration checkout reads 596 BASALT and 104 MAGMA cells over x6760..6794 z5795..5814. Basalt, not magma, is put back (magma_block decides spawns, data/spawn_blocks.json), as data/sanctuaries.json's volcanic restore does. Below the ground the restore is stone. Every restored column but the old approach's stands under the hill R9OCR then builds, so the surface shows only at its edge. UNVERIFIED offline (the heightmap has heights, not block ids)"
+    }
    }
   }
  ]

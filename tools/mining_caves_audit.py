@@ -30,7 +30,10 @@ What it checks, per gallery:
               the hall beside every gallery
   keep clear  (--inputs-root, a full checkout) the distance from every column the pack writes to towns, route paths
               and legs, corridor boxes, placements, painted water, the water export's changed columns and every other
-              built pack's writes
+              built pack's writes; and (2026-10-20) the same for a host cave's host earthwork (the hill a cave is
+              entered by, data/placements.json), judged outside every town footprint (its distance against the caves'
+              town margin reported for a look) and clear of every x/z any other data file authors, swept (a trainer's
+              seat, a Habitat Block, a portal); a host's entry.host.keep_clear_shared names what it shares by design
   economy     yield per reset, per player hour and the server's ceiling, priced from data/bank.json
 
 Not covered, and it needs a running server: that the commands parse and do what the stated vanilla semantics say;
@@ -802,6 +805,11 @@ def host_problems(spec, fns, ground):
             for s in (-1, 1):
                 x, z = xz(s * (hw + 1), d)
                 wallrow |= {(x, y, z) for y in range(ex["yh"] + 1, ex["yh"] + PH + 1)}
+        # 'or in its near end wall (d = drop, |u| <= passage_half_width, the hall's air height)' (the rules text,
+        # 2026-10-20: the Fossick galleries, whose every slot holds a gallery on both sides)
+        for u in range(-hw, hw + 1):
+            x, z = xz(u, cave["drop"])
+            wallrow |= {(x, y, z) for y in range(ex["yh"] + 1, ex["yh"] + PH + 1)}
         op = opening_cells(cave)
         if not op <= wallrow:
             probs.append("%s: %d opening cell(s) are not in the hall's wall, e.g. %s" % (cid, len(op - wallrow), sorted(op - wallrow)[0]))
@@ -910,10 +918,13 @@ def reroute_problems(spec, fns, ground):
         for u in range(-hw, hw + 1):
             x, z = ex["xz"](u, cave["drop"])
             endwall |= {(x, y, z) for y in range(ex["yh"] + 1, ex["yh"] + PH + 1)}
+        op = opening_cells(cave)
         wrong = []
         for c in sorted(core):
             g = ground(c[0], c[2])
-            want = (base(cave["wall"]) if c in endwall else base(t["deep"]) if c[1] <= g - 3 else base(t["under"])
+            # an end-wall cell that is the opening (the near end wall is where the host's passage comes in) is air
+            want = ("minecraft:air" if c in endwall and c in op else base(cave["wall"]) if c in endwall
+                    else base(t["deep"]) if c[1] <= g - 3 else base(t["under"])
                     if c[1] <= g - 1 else base(t["surface"]) if c[1] == g else "minecraft:air")
             if restored.get(c) != want:
                 wrong.append((c, restored.get(c), want))
@@ -952,13 +963,31 @@ def reroute_problems(spec, fns, ground):
                 probs.append("%s: probe %s %s is not the old frame's beam or a first stair" % (cid, p, m.group(4)))
             elif restored.get(p) == m.group(4):
                 probs.append("%s: the restore leaves the probe %s showing: a second run would restore again" % (cid, p))
-        op = opening_cells(cave)
-        if len(calls_c) != 1 or not re.fullmatch(re.escape(gate) + r"unless block (-?\d+) (-?\d+) (-?\d+) minecraft:air run .*", calls_c[0]):
-            probs.append("%s: the passage is not called once behind the held count and the opening's air" % cid)
+        hl = host_lines(cave)
+        probe = host_of(cave).get("probe")
+        if not probe:
+            if len(calls_c) != 1 or not re.fullmatch(re.escape(gate) + r"unless block (-?\d+) (-?\d+) (-?\d+) minecraft:air run .*", calls_c[0]):
+                probs.append("%s: the passage is not called once behind the held count and the opening's air" % cid)
+            else:
+                m = re.match(re.escape(gate) + r"unless block (-?\d+) (-?\d+) (-?\d+)", calls_c[0])
+                if tuple(int(m.group(i)) for i in (1, 2, 3)) not in op:
+                    probs.append("%s: the passage's gate cell is not in the opening" % cid)
         else:
-            m = re.match(re.escape(gate) + r"unless block (-?\d+) (-?\d+) (-?\d+)", calls_c[0])
-            if tuple(int(m.group(i)) for i in (1, 2, 3)) not in op:
-                probs.append("%s: the passage's gate cell is not in the opening" % cid)
+            # a host that declares entry.host.probe gates its passage on that block being missing: the gate names it, the
+            # host's earthwork (data/placements.json, replayed here) leaves exactly it there, and neither the old mouth,
+            # nor the restore, nor the cave's build puts it there, or the passage would never be cut in the live world
+            pc, pb = tuple(probe[:3]), probe[3]
+            want_gate = re.escape(gate) + r"unless block %d %d %d %s run .*" % (pc + (re.escape(pb),))
+            if len(calls_c) != 1 or not re.fullmatch(want_gate, calls_c[0]):
+                probs.append("%s: the passage is not called once behind the held count and the probe %s %s's absence"
+                             % (cid, list(pc), pb))
+            left = apply_lines({}, [l for l in hl if _touches(l, {(pc[0], pc[2])})]).get(pc)
+            if left != pb:
+                probs.append("%s: the host's earthwork leaves %s at the probe %s, not %s: the passage would be cut on "
+                             "every run" % (cid, left, list(pc), pb))
+            if pc in core and core[pc] in ("beam", "post", "stair", "floor") or restored.get(pc) == pb \
+                    or apply_lines({}, fns.get("build_%s" % cid, [])).get(pc) == pb:
+                probs.append("%s: the probe %s is a cell the old mouth, the restore or the cave's build writes" % (cid, list(pc)))
         cut = apply_lines({}, con)
         shut = sorted(c for c in op if cut.get(c) not in PASS)
         if shut:
@@ -971,7 +1000,6 @@ def reroute_problems(spec, fns, ground):
         if unheld:
             probs.append("%s: %d solid write(s) stand outside every held box (a player there would be buried), e.g. %s"
                          % (cid, len(unheld), unheld[0]))
-        hl = host_lines(cave)
         cols = {(x, z) for x, _y, z in cut}
         fresh = apply_lines({}, [l for l in hl if _touches(l, cols)])
         differ = sorted(c for c, b in cut.items() if fresh.get(c) != b)
@@ -1040,6 +1068,59 @@ def other_pack_writes(packs_dir, own="cobblers_mining_caves"):
     return out
 
 
+def authored_xz(skip_settlement=None, skip_placement=None):
+    """[(x, z, file)]: every x/z any data/*.json but data/mining_caves.json authors, swept rather than listed (a trainer's
+    seat, a Habitat Block, a portal, a resident, a dungeon rip, a shrine: whatever a file places, whether or not this
+    audit knows the system). Read as keep_clear.why states the rule: x/z dicts, [x, z], [x, y, z] (both ways) and
+    [x0, z0, x1, z1] boxes (corners, edge middles, centre). The host's own records in data/placements.json (its
+    settlement and its earthwork) are skipped by key, not by coordinate."""
+    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool)
+    out = []
+
+    def walk(o, f):
+        if isinstance(o, dict):
+            if num(o.get("x")) and num(o.get("z")):
+                out.append((o["x"], o["z"], f))
+            for k, v in o.items():
+                if isinstance(k, str) and k.startswith("nearest_"):
+                    continue                              # a note of ANOTHER place's point
+                walk(v, f)
+        elif isinstance(o, list):
+            if len(o) == 2 and all(num(v) for v in o):
+                out.append((o[0], o[1], f))
+            elif len(o) == 3 and all(num(v) for v in o):
+                out.extend([(o[0], o[2], f), (o[0], o[1], f)])
+            elif len(o) == 4 and all(num(v) for v in o) and o[2] >= o[0] and o[3] >= o[1]:
+                out.extend((x, z, f) for x in (o[0], (o[0] + o[2]) / 2, o[2]) for z in (o[1], (o[1] + o[3]) / 2, o[3]))
+            else:
+                for v in o:
+                    walk(v, f)
+
+    for p in sorted((ROOT / "data").glob("*.json")):
+        if p.name == "mining_caves.json":
+            continue
+        doc = json.loads(p.read_text(encoding="utf-8"))
+        if p.name == "placements.json":
+            doc = {"settlements": {k: v for k, v in doc["settlements"].items() if k != skip_settlement},
+                   "placements": [q for q in doc["placements"] if q.get("id") != skip_placement]}
+        walk(doc, p.name)
+    return out
+
+
+def authored_rule(note, X, Z, box, host, need):
+    """The nearest Euclidean distance from any of a host's columns to any x/z another data file authors. Every trainer
+    sight distance the data records is 8 or under, so a seat this far off cannot see across the host either."""
+    import numpy as np
+    x0, z0, x1, z1 = box
+    shared = set((host.get("keep_clear_shared") or {}).get("files") or [])
+    note("an x/z another data file authors", 10 ** 6, need, "none within the box", "euclidean")
+    for (ax, az, f) in authored_xz(host.get("settlement"), host.get("placement")):
+        if not (x0 <= ax <= x1 and z0 <= az <= z1) or f in shared:
+            continue
+        note("an x/z another data file authors", float(np.hypot(X - ax, Z - az).min()), need,
+             "%s (%s, %s)" % (f, ax, az), "euclidean")
+
+
 def keep_clear(spec, fns, inputs_root, ground, R=64):
     """{(cave, rule): (nearest distance, the rule's distance, the nearest thing, metric)}: every column the cave's
     functions write against every keep-clear rule, nearest first. A distance over R is reported as R + 1."""
@@ -1058,13 +1139,21 @@ def keep_clear(spec, fns, inputs_root, ground, R=64):
     man = json.loads((paint / "manifest.json").read_text(encoding="utf-8"))
     changed = np.load(ir / "derived" / "water_shape" / "changed.npy", mmap_mode="r")
     res = {}
+    # each cave's own writes, and (2026-10-20) a host cave's host earthwork as a subject of its own: the hill a cave is
+    # entered by stands on the surface, so it must not cover a route, a placement, a portal, a Habitat Block or a
+    # trainer's seat and sight line any more than the cave may
+    subjects = []
     for cave in spec["caves"]:
-        cols = np.array(sorted(pack_columns(cave_functions(spec, fns, cave))))
+        subjects.append((cave, cave["id"], pack_columns(cave_functions(spec, fns, cave)), False))
+        if host_of(cave):
+            subjects.append((cave, cave["id"] + " host", pack_columns({"host": host_lines(cave)}), True))
+    for cave, key, colset, is_host in subjects:
+        cols = np.array(sorted(colset))
         X, Z = cols[:, 0], cols[:, 1]
         x0, z0, x1, z1 = int(X.min()) - R, int(Z.min()) - R, int(X.max()) + R, int(Z.max()) + R
 
         def note(rule, d, need, what, metric="chebyshev"):
-            k = (cave["id"], rule)
+            k = (key, rule)
             d = float(min(d, R + 1))
             if k not in res or d < res[k][0]:
                 res[k] = (d, need, what, metric)
@@ -1091,9 +1180,17 @@ def keep_clear(spec, fns, inputs_root, ground, R=64):
                 best = min(best, int(np.maximum(np.abs(px[None, :] - xs), np.abs(pz[None, :] - zs)).min()))
             note(rule, best, need, what)
 
-        rects("town footprint", [(t["footprint"]["min_x"], t["footprint"]["min_z"], t["footprint"]["max_x"],
-                                  t["footprint"]["max_z"], t["id"]) for t in towns
-                                 if (t.get("footprint") or {}).get("min_x") is not None], kc["town_margin"] + 1)
+        fps = [(t["footprint"]["min_x"], t["footprint"]["min_z"], t["footprint"]["max_x"], t["footprint"]["max_z"], t["id"])
+               for t in towns if (t.get("footprint") or {}).get("min_x") is not None]
+        if not is_host:
+            rects("town footprint", fps, kc["town_margin"] + 1)
+        else:
+            # keep_clear.why gives town_margin to "every written column" of a CAVE; a host is a surface earthwork, the
+            # town's own mine entrance. It is judged only to stand outside every footprint, and its distance against the
+            # caves' margin is reported for the owner's look, not passed or failed here
+            rects("town footprint", fps, 1)
+            rects("town footprint + the caves' town_margin (look)", fps, kc["town_margin"] + 1)
+            authored_rule(note, X, Z, (x0, z0, x1, z1), host_of(cave), kc["authored_clearance"] + 1)
         rects("spawn corridor box", [(b["min_x"], b["min_z"], b["max_x"], b["max_z"], "%s %s" % (rt["id"], b.get("id")))
                                      for rt in routes for b in (rt.get("spawn_scope") or {}).get("boxes") or []],
               kc["corridor_clearance"] + 1)
@@ -1115,8 +1212,16 @@ def keep_clear(spec, fns, inputs_root, ground, R=64):
                     ew.append((min(ax, bx), min(az, bz), max(ax, bx), max(az, bz), p["id"]))
         rects("earthwork command", ew, kc["earthwork_gap"] + 1)
         hostfn = "cobblers_towns/%s.mcfunction" % host["settlement"] if host.get("settlement") else None
-        rects("another pack's write", [(a, b, c, d, w) for a, b, c, d, k, w in others if k == "write" and w != hostfn],
-              kc["pack_gap"] + 1)
+        # a host's declared sharing (entry.host.keep_clear_shared: a named exception with its why, never a smaller
+        # distance) is left out of its host subject's rules only, never out of the cave's own
+        spacks = set((host.get("keep_clear_shared") or {}).get("packs") or []) if is_host else set()
+        # the host's own town functions are the host: its towns-pack build and after-donor function, and its prep
+        # (tools/town_plan.py's prep_<settlement>, which cobblers_reapply carries)
+        own = {hostfn} | ({"cobblers_towns/%s_after_donors.mcfunction" % host["settlement"],
+                           "cobblers_reapply/prep_%s.mcfunction" % host["settlement"]}
+                          if is_host and host.get("settlement") else set())
+        rects("another pack's write", [(a, b, c, d, w) for a, b, c, d, k, w in others if k == "write" and w not in own
+                                       and w.split("/")[0] not in spacks], kc["pack_gap"] + 1)
         rects("another pack's placed structure origin", [(a, b, c, d, w) for a, b, c, d, k, w in others if k != "write"],
               TEMPLATE_HINT)
         note("route path or leg", R + 1, kc["road_clear"], "none within %d" % R, "euclidean")
@@ -1218,7 +1323,7 @@ def main(argv=None):
         probs += wp
     if a.inputs_root:
         for (cid, rule), (d, need, what, metric) in sorted(keep_clear(spec, fns, a.inputs_root, ground).items()):
-            look = rule.endswith("structure origin")
+            look = rule.endswith("structure origin") or rule.endswith("(look)")
             bad = d < need and not look
             print("keep clear %-13s %-42s nearest %5.1f (%s) need >= %d  %s%s" % (
                 cid, rule, d, metric, need, what, "  PROBLEM" if bad else "  LOOK" if look and d < need else ""))

@@ -101,13 +101,14 @@ def test_the_real_galleries_are_entered_from_the_old_mine_and_the_old_mouth_is_r
     assert A.walk_problems(spec, fns, ground) == []
 
 
-# Without it the owner's change is undone silently by the data: the Lower Galleries keep a mouth of their own, or the
-# Fossick cave (which has no real slope to be dug into, and was left as it is) loses its one.
-def test_only_the_old_mine_cave_lost_its_mouth():
+# Without it the owner's change is undone silently by the data: the Lower Galleries keep a mouth of their own, or are
+# entered from somewhere other than the old mine. (The Fossick cave, left with its own mouth on 2026-10-20 for want of a
+# slope, lost it the same day to a built hill: "make fossick like route 1", tests/test_fossick_adit.py.)
+def test_the_old_mine_cave_lost_its_mouth_to_the_old_mine():
     caves = {c["id"]: c for c in A.load()["caves"]}
     assert caves["cave_old_mine"]["entry"]["mouth"] is False
     assert caves["cave_old_mine"]["entry"]["host"]["settlement"] == "route1_old_mine"
-    assert caves["cave_fossick"]["entry"].get("mouth", True) is True and "retired_entry" not in caves["cave_fossick"]
+    assert caves["cave_old_mine"]["retired_entry"].get("step", "R9OCR") == "R9OCR"
 
 
 # Without it the opening is written as wall: the passage from the old mine meets a blank face of stone and the

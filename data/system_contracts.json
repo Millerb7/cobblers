@@ -1535,6 +1535,26 @@
         "tests/test_economy_audit.py::test_a_generator_that_doubles_a_crate_price_fails_the_spine_and_prints_money",
         "tests/test_economy_audit.py::test_a_generator_that_widens_a_crate_tag_is_arbitrage"
       ]
+    },
+    {
+      "id": "C30",
+      "title": "The Fossick adit's earthwork lays its path exactly as the town pass paves it",
+      "owner": "towns",
+      "consumers": [
+        "mining_caves"
+      ],
+      "constrained_by": [],
+      "statement": "Every cell of the street 'path' in data/placements.json settlements.fossick_adit.plan, as tools/town_plan.py graded_cells grades and paves it, is left by the earthwork fossick_adit_hill with the street's block at the graded height and air over it. Step R9OCF builds that earthwork in the live world and runs no town pass; a fresh export runs the town's prep (which paves the street) and then the same earthwork; only this makes the two worlds end the same at the path.",
+      "stated_in": [
+        {
+          "at": "tools/fossick_adit.py:57",
+          "quote": "earthwork exactly as tools/town_plan.py grades a street (town_plan.graded_cells)"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c30_the_fossick_path_is_laid_as_the_town_pass_paves_it",
+        "tests/test_fossick_adit.py::test_the_recorded_adit_is_the_one_the_tool_builds"
+      ]
     }
   ]
 }
