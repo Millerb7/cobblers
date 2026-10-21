@@ -1731,8 +1731,6 @@
     "identity": "Emergent giants: jungle trees half again the height of the mega jungle, their flat crowns standing clear of the canopy.",
     "from_inside": "Buttressed trunks you walk round, vines and cocoa climbing them, vine curtains hanging out of a roof thirty blocks up; from a hill or a boat the crowns stand proud of the canopy, one or two to the hectare.",
     "subregions": {
-     "jungle_west": 1.0,
-     "jungle_east": 1.0,
      "long_isle_south": 0.9
     },
     "stems_per_ha": 8,
@@ -1767,8 +1765,6 @@
     "identity": "Jungle thickets: dense patches of jungle trees under a closed canopy, between the open stands of giants.",
     "from_inside": "Out of the open emergent jungle you walk into a wall of trunks, bushes and vines; inside, the light goes green and the next trunk is three or four blocks away.",
     "subregions": {
-     "jungle_west": 1.0,
-     "jungle_east": 0.85,
      "long_isle_south": 0.75
     },
     "stems_per_ha": 150,
@@ -1839,8 +1835,6 @@
     "identity": "Bamboo groves: stands of bamboo and ferns in the jungle's understory, between the thickets.",
     "from_inside": "Off the fern floor you push into a grove of bamboo two and three times your height, the odd jungle tree standing in it.",
     "subregions": {
-     "jungle_west": 1.0,
-     "jungle_east": 1.0,
      "long_isle_south": 0.9
     },
     "stems_per_ha": 10,

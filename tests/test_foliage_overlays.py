@@ -47,12 +47,13 @@ REGIONS = json.loads((ROOT / "data" / "regions.json").read_text(encoding="utf-8"
 SUBS, PRESETS = REGIONS["subregions"], REGIONS["paint_presets"]
 ROUTES = json.loads((ROOT / "data" / "routes.json").read_text(encoding="utf-8"))
 SEED = 20260914                                   # tools/paint_maps.py --seed default
-WINDOWS = {"marsh": (4160, 960, 2688), "jungle": (4256, 6656, 1792), "long_isle": (6784, 6784, 1408)}
+# The "jungle" window (x 4256..6047, z 6656..8447: jungle_west, jungle_east) is gone: the Jungle Isle is under the sea and its two
+# sub-regions left data/regions.json on 2026-10-21 (Pacifidlog Waters), so the three jungle overlays reach long_isle_south only.
+WINDOWS = {"marsh": (4160, 960, 2688), "long_isle": (6784, 6784, 1408)}
 # which overlays reach each window: the marsh pair (playtest notes 25 and 29), and since 2026-09-26 the owner's "go and
 # update the isles" (docs/world-building/LONG_ISLE.md section 3) put the three jungle overlays on the jungle isle and
 # on the Long Isle's south
 EXPECTED_OVERLAYS = {"marsh": {"marsh_giants", "marsh_mangroves"},
-                     "jungle": {"jungle_emergents", "jungle_thickets", "jungle_bamboo"},
                      "long_isle": {"jungle_emergents", "jungle_thickets", "jungle_bamboo"}}
 LAYERS = {lay["id"]: lay for lay in DOC["overlays"]["layers"]}
 SWAMP_GROUPS = {"mangrove", "tall_mangrove", "mangrove_scrub", "swamp_giant", "vine_snag", "root_tangle"}
@@ -119,7 +120,7 @@ def test_windows_hold_forest_types_and_overlay_stems(runs):
         for oid in EXPECTED_OVERLAYS[w]:
             assert r["with"]["overlay_stats"][oid]["stems_added"] > 0, (w, oid, r["with"]["overlay_stats"][oid])
     # the new emergent giants are actually drawn, on both isles
-    for w in ("jungle", "long_isle"):
+    for w in ("long_isle",):
         n = len(runs[w]["added"].get("jungle_emergent", []))
         assert n > 50, (w, n)
 
@@ -211,8 +212,8 @@ def test_nothing_an_overlay_adds_is_within_route_clearance(runs, full_masks):
     without = runs["marsh"]["without"]["positions"]
     free_added = {g: pts[len(without.get(g, [])):] for g, pts in free["positions"].items()}
     assert _near_routes(free_added, "marsh", clearance)[0]
-    # the jungle and Long Isle windows have no route; recorded so a route added there later is checked here too
-    for w in ("jungle", "long_isle"):
+    # the Long Isle window has no route; recorded so a route added there later is checked here too
+    for w in ("long_isle",):
         jnear, _ = _near_routes(runs[w]["added"], w, clearance)
         assert not jnear, (w, jnear[:8])
 
