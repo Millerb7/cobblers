@@ -290,6 +290,18 @@
       "why": "the owner, 2026-10-09: the burrow is \"clear of spawns\". The burrow's x/z (mouth x1827 to the watch room x1865, z721-751) snapped out to the 8-block grid the route boxes share (data/spawn_suppression.json league_precinct's rule). The boxes are x/z only, so the face over it is spawn-free too. Recorded in data/frostpeak_keep_quest.json burrow.spawn_free_zone.",
       "mechanism": "tools/compile_spawns.py cuts it out of every route, sub-region and waterway pool, and tools/suppress_inherited_spawns.py adds it to the inherited pools' anticondition boxes, so neither the campaign's rosters nor Cobblemon's and Cobbleverse's defaults spawn inside it",
       "not_covered": "Pokemon a player sends out, and anything a trainer spawner or scripted event puts there"
+    },
+    {
+      "id": "pacifidlog_old_rafts",
+      "box": [
+        5096,
+        7312,
+        5207,
+        7439
+      ],
+      "why": "the owner's brief, 2026-10-21: the sea town's square stays spawn-free when its waters get a zone of their own (data/marine_seas.json pacifidlog_sea). The box is the Old Rafts core of data/sea_town.json (the Centre and Mart rafts, the square, raft_01 to raft_12 and their huts, the guild raft: x5100-5196, z7318-7432) snapped out to the 8-block grid the route boxes share. Fishers' Row (x4970-5099), the Stilt Quarter, the yard and the Current Gate are outside it: the pier is where a player fishes. No other town has a spawn-free zone (the gyms, the League, the relic hall, Heaven's Arena and the burrow do), so this is the first for a settlement.",
+      "mechanism": "tools/compile_spawns.py cuts it out of every route, sub-region, waterway and marine pool (a marine cell it touches is split to the 32-block cells that clear it), and tools/suppress_inherited_spawns.py adds it to the inherited pools' anticondition boxes, so neither the campaign's rosters nor Cobblemon's and Cobbleverse's defaults spawn inside it",
+      "not_covered": "Pokemon a player sends out, the town's own residents and traders, and anything a trainer spawner or scripted event puts there"
     }
   ]
 }

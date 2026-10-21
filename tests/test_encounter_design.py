@@ -387,7 +387,7 @@ def world(pack):
     for p in sorted((pack / "habitat_pools").glob("vrc_*.json")):
         rows = table_rows(p)
         vrc[p.stem] = {"rows": rows, "base_rows": rows, "heart_rows": set(), "on_path": True, "leg": 9, "tier": 9}
-    assert len(subs) == 63, "section 1 counts 63 sub-region tables; the pack has %d" % len(subs)
+    assert len(subs) == 61, "61 sub-region tables since 2026-10-21 (the Jungle Isle's two removed; section 1 still counts 63); the pack has %d" % len(subs)
     assert len(vrc) == 11, "section 1 counts 11 Victory Road pools; the pack has %d" % len(vrc)
     return {"subs": subs, "vrc": vrc, "route_leg": route_leg, "route_rows": route_rows, "route_boxes": route_boxes,
             "route_details": {r: details(pw / "routes" / ("%s.json" % r)) for r in route_leg}}

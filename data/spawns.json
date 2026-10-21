@@ -2718,634 +2718,6 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.jungle_west.aipom",
-      "species": "aipom",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 3.6,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named anchor family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.ambipom",
-      "species": "ambipom",
-      "bucket": "common",
-      "level": "48-53",
-      "weight": 20.4,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Aipom knowing a move, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.toucannon",
-      "species": "toucannon",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Trumbeak at level 28: spawns 43-53, inside the tier 8 band 43-53",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.weepinbell",
-      "species": "weepinbell",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 1.2,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Bellsprout at level 21: spawns 43-53, inside the tier 8 band 43-53",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.victreebel",
-      "species": "victreebel",
-      "bucket": "common",
-      "level": "48-53",
-      "weight": 10.8,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Weepinbell using leaf stone, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.budew",
-      "species": "budew",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 1.8,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.roselia",
-      "species": "roselia",
-      "bucket": "common",
-      "level": "48-53",
-      "weight": 1.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Budew by friendship, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.roserade",
-      "species": "roserade",
-      "bucket": "common",
-      "level": "48-53",
-      "weight": 9.2,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Roselia using shiny stone, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.tangela",
-      "species": "tangela",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 1.8,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.tangrowth",
-      "species": "tangrowth",
-      "bucket": "common",
-      "level": "48-53",
-      "weight": 10.2,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Tangela knowing a move, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.noctowl",
-      "species": "noctowl",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {
-        "timeRange": "night"
-      },
-      "eligibility_reason": "evolves from Hoothoot at level 20: spawns 43-53, inside the tier 8 band 43-53",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.tropius",
-      "species": "tropius",
-      "bucket": "uncommon",
-      "level": "43-53",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.toxicroak",
-      "species": "toxicroak",
-      "bucket": "uncommon",
-      "level": "43-53",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Croagunk at level 37: spawns 43-53, inside the tier 8 band 43-53",
-      "biomes": [],
-      "spawnable_position": "grounded",
-      "held_items": [
-        {
-          "item": "cobblemon:black_sludge",
-          "percentage": 2
-        }
-      ]
-    },
-    {
-      "id": "surface.jungle_west.volbeat",
-      "species": "volbeat",
-      "bucket": "uncommon",
-      "level": "43-53",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded",
-      "held_items": [
-        {
-          "item": "cobblemon:bright_powder",
-          "percentage": 5
-        }
-      ]
-    },
-    {
-      "id": "surface.jungle_west.illumise",
-      "species": "illumise",
-      "bucket": "uncommon",
-      "level": "43-53",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded",
-      "held_items": [
-        {
-          "item": "cobblemon:bright_powder",
-          "percentage": 5
-        }
-      ]
-    },
-    {
-      "id": "surface.jungle_west.slaking",
-      "species": "slaking",
-      "bucket": "rare",
-      "level": "48-53",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Vigoroth at level 36: spawns 48-53, inside the tier 8 band 43-53",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.scyther",
-      "species": "scyther",
-      "bucket": "rare",
-      "level": "43-53",
-      "weight": 0.3,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named rare family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.scizor",
-      "species": "scizor",
-      "bucket": "rare",
-      "level": "48-53",
-      "weight": 0.8,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Scyther by trade holding metal coat, not by level: in the wild from tier 7, in the upper half of the band (48-53)",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.kleavor",
-      "species": "kleavor",
-      "bucket": "rare",
-      "level": "48-53",
-      "weight": 0.8,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Scyther using black augurite, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.drampa",
-      "species": "drampa",
-      "bucket": "ultra-rare",
-      "level": "48-53",
-      "weight": 1.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (48-53)",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.heart.victreebel",
-      "species": "victreebel",
-      "bucket": "uncommon",
-      "level": "53-60",
-      "weight": 3.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-      "heart": {
-        "kind": "focus",
-        "x": 4784,
-        "z": 7408,
-        "radius": 128,
-        "clear_of_path_blocks": 128
-      },
-      "alpha": true,
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.heart.roserade",
-      "species": "roserade",
-      "bucket": "uncommon",
-      "level": "53-60",
-      "weight": 3.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-      "heart": {
-        "kind": "focus",
-        "x": 4784,
-        "z": 7408,
-        "radius": 128,
-        "clear_of_path_blocks": 128
-      },
-      "alpha": true,
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_west.heart.lurantis",
-      "species": "lurantis",
-      "bucket": "uncommon",
-      "level": "53-60",
-      "weight": 3.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-      "heart": {
-        "kind": "focus",
-        "x": 4784,
-        "z": 7408,
-        "radius": 128,
-        "clear_of_path_blocks": 128
-      },
-      "alpha": true,
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.grafaiai",
-      "species": "grafaiai",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 24.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Shroodle at level 28: spawns 43-53, inside the tier 8 band 43-53",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.komala",
-      "species": "komala",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.chatot",
-      "species": "chatot",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.venomoth",
-      "species": "venomoth",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Venonat at level 31: spawns 43-53, inside the tier 8 band 43-53",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.ariados",
-      "species": "ariados",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Spinarak at level 22: spawns 43-53, inside the tier 8 band 43-53",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.hariyama",
-      "species": "hariyama",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Makuhita at level 24: spawns 43-53, inside the tier 8 band 43-53",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.spewpa",
-      "species": "spewpa",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 1.2,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Scatterbug at level 9: spawns 43-53, inside the tier 8 band 43-53",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.vivillon",
-      "species": "vivillon",
-      "bucket": "common",
-      "level": "48-53",
-      "weight": 10.8,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Spewpa by biome, level, structure, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.sawk",
-      "species": "sawk",
-      "bucket": "uncommon",
-      "level": "43-53",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.throh",
-      "species": "throh",
-      "bucket": "uncommon",
-      "level": "43-53",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.carnivine",
-      "species": "carnivine",
-      "bucket": "uncommon",
-      "level": "43-53",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.hawlucha",
-      "species": "hawlucha",
-      "bucket": "rare",
-      "level": "48-53",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (48-53)",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.pinsir",
-      "species": "pinsir",
-      "bucket": "rare",
-      "level": "43-53",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named rare family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.bewear",
-      "species": "bewear",
-      "bucket": "ultra-rare",
-      "level": "48-53",
-      "weight": 1.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Stufful at level 27: spawns 48-53, inside the tier 8 band 43-53",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.heart.grafaiai",
-      "species": "grafaiai",
-      "bucket": "uncommon",
-      "level": "53-60",
-      "weight": 3.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-      "heart": {
-        "kind": "focus",
-        "x": 5520,
-        "z": 7504,
-        "radius": 128,
-        "clear_of_path_blocks": 128
-      },
-      "alpha": true,
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.heart.hariyama",
-      "species": "hariyama",
-      "bucket": "uncommon",
-      "level": "53-60",
-      "weight": 3.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-      "heart": {
-        "kind": "focus",
-        "x": 5520,
-        "z": 7504,
-        "radius": 128,
-        "clear_of_path_blocks": 128
-      },
-      "alpha": true,
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.jungle_east.heart.vivillon",
-      "species": "vivillon",
-      "bucket": "uncommon",
-      "level": "53-60",
-      "weight": 3.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-      "heart": {
-        "kind": "focus",
-        "x": 5520,
-        "z": 7504,
-        "radius": 128,
-        "clear_of_path_blocks": 128
-      },
-      "alpha": true,
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "surface.long_isle_north.sandygast",
       "species": "sandygast",
       "bucket": "common",
@@ -32142,9 +31514,9 @@
         "kind": "focus",
         "x": 7792,
         "z": 8432,
-        "radius": 688,
+        "radius": 656,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (7792, 8432), radius 688: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2873 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (7792, 8432), radius 656: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2873 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -32166,9 +31538,9 @@
         "kind": "focus",
         "x": 7792,
         "z": 8432,
-        "radius": 688,
+        "radius": 656,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (7792, 8432), radius 688: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2873 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (7792, 8432), radius 656: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2873 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -32190,9 +31562,9 @@
         "kind": "focus",
         "x": 7792,
         "z": 8432,
-        "radius": 688,
+        "radius": 656,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (7792, 8432), radius 688: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2873 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (7792, 8432), radius 656: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2873 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "seafloor",
@@ -32349,9 +31721,9 @@
         "kind": "focus",
         "x": 8656,
         "z": 8688,
-        "radius": 672,
+        "radius": 688,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (8656, 8688), radius 672: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 3305 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (8656, 8688), radius 688: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 3305 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -32373,9 +31745,9 @@
         "kind": "focus",
         "x": 8656,
         "z": 8688,
-        "radius": 672,
+        "radius": 688,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (8656, 8688), radius 672: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 3305 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (8656, 8688), radius 688: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 3305 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -32397,9 +31769,269 @@
         "kind": "focus",
         "x": 8656,
         "z": 8688,
-        "radius": 672,
+        "radius": 688,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (8656, 8688), radius 672: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 3305 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (8656, 8688), radius 688: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 3305 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+      },
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "alpha": true
+    },
+    {
+      "id": "marine.pacifidlog_waters.tentacruel",
+      "species": "tentacruel",
+      "bucket": "common",
+      "level": "46-50",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "evolves from Tentacool at level 30: spawns 46-50, inside the tier 7 band 46-50",
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "held_items": [
+        {
+          "item": "cobblemon:poison_barb",
+          "percentage": 5
+        }
+      ]
+    },
+    {
+      "id": "marine.pacifidlog_waters.pelipper",
+      "species": "pelipper",
+      "bucket": "common",
+      "level": "46-50",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "canSeeSky": true
+      },
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "evolves from Wingull at level 25: spawns 46-50, inside the tier 7 band 46-50",
+      "biomes": [],
+      "spawnable_position": "surface"
+    },
+    {
+      "id": "marine.pacifidlog_waters.corsola",
+      "species": "corsola",
+      "bucket": "common",
+      "level": "46-50",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "named common family, tier 7: the family starts here",
+      "biomes": [],
+      "spawnable_position": "seafloor"
+    },
+    {
+      "id": "marine.pacifidlog_waters.luvdisc",
+      "species": "luvdisc",
+      "bucket": "common",
+      "level": "46-50",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "named common family, tier 7: the family starts here",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.pacifidlog_waters.mantyke",
+      "species": "mantyke",
+      "bucket": "uncommon",
+      "level": "46-50",
+      "weight": 2.4,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.pacifidlog_waters.mantine",
+      "species": "mantine",
+      "bucket": "uncommon",
+      "level": "48-50",
+      "weight": 3.6,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "evolves from Mantyke by party_member, not by level: in the wild from tier 6, in the upper half of the band (48-50)",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.pacifidlog_waters.lanturn",
+      "species": "lanturn",
+      "bucket": "uncommon",
+      "level": "46-50",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "evolves from Chinchou at level 27: spawns 46-50, inside the tier 7 band 46-50",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.pacifidlog_waters.seadra",
+      "species": "seadra",
+      "bucket": "uncommon",
+      "level": "46-50",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "evolves from Horsea at level 32: spawns 46-50, inside the tier 7 band 46-50",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.pacifidlog_waters.kingdra",
+      "species": "kingdra",
+      "bucket": "uncommon",
+      "level": "48-50",
+      "weight": 4.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "evolves from Seadra by trade holding dragon scale, not by level: in the wild from tier 7, in the upper half of the band (48-50)",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.pacifidlog_waters.relicanth",
+      "species": "relicanth",
+      "bucket": "rare",
+      "level": "46-50",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "named rare family, tier 7: the family starts here",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.pacifidlog_waters.qwilfish",
+      "species": "qwilfish",
+      "bucket": "rare",
+      "level": "46-50",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "named rare family, tier 7: the family starts here",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.pacifidlog_waters.wailord",
+      "species": "wailord",
+      "bucket": "ultra-rare",
+      "level": "48-50",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (48-50)",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.pacifidlog_waters.heart.kingdra",
+      "species": "kingdra",
+      "bucket": "uncommon",
+      "level": "50-55",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: heart presence. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "heart: a presence, from the band's top, 50-55 against the tier 7 cap 50: seen on this leg, caught on the next (next cap 55)",
+      "heart": {
+        "kind": "focus",
+        "x": 6000,
+        "z": 8048,
+        "radius": 544,
+        "clear_of_path_blocks": 128,
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6000, 8048), radius 544: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1849 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+      },
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "alpha": true
+    },
+    {
+      "id": "marine.pacifidlog_waters.heart.lanturn",
+      "species": "lanturn",
+      "bucket": "uncommon",
+      "level": "50-55",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: heart presence. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "heart: a presence, from the band's top, 50-55 against the tier 7 cap 50: seen on this leg, caught on the next (next cap 55)",
+      "heart": {
+        "kind": "focus",
+        "x": 6000,
+        "z": 8048,
+        "radius": 544,
+        "clear_of_path_blocks": 128,
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6000, 8048), radius 544: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1849 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+      },
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "alpha": true
+    },
+    {
+      "id": "marine.pacifidlog_waters.heart.relicanth",
+      "species": "relicanth",
+      "bucket": "uncommon",
+      "level": "50-55",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Pacifidlog Waters: heart presence. No biome filter: the band's boxes hold only open sea",
+      "eligibility_reason": "heart: a presence, from the band's top, 50-55 against the tier 7 cap 50: seen on this leg, caught on the next (next cap 55)",
+      "heart": {
+        "kind": "focus",
+        "x": 6000,
+        "z": 8048,
+        "radius": 544,
+        "clear_of_path_blocks": 128,
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6000, 8048), radius 544: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1849 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -32415,7 +32047,7 @@
       "scope": "southern_reef",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "named anchor family, tier 7: the family starts here",
       "biomes": [],
       "spawnable_position": "seafloor"
@@ -32430,7 +32062,7 @@
       "scope": "southern_reef",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "named common family, tier 7: the family starts here",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32445,7 +32077,7 @@
       "scope": "southern_reef",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Wiglett at level 26: spawns 46-50, inside the tier 7 band 46-50",
       "biomes": [],
       "spawnable_position": "seafloor"
@@ -32460,7 +32092,7 @@
       "scope": "southern_reef",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "named uncommon family, tier 7: the family starts here",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32475,7 +32107,7 @@
       "scope": "southern_reef",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Staryu using water stone, not by level: in the wild from tier 6, in the upper half of the band (48-50)",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32490,7 +32122,7 @@
       "scope": "southern_reef",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Mareanie at level 38: spawns 46-50, inside the tier 7 band 46-50",
       "biomes": [],
       "spawnable_position": "seafloor"
@@ -32505,7 +32137,7 @@
       "scope": "southern_reef",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "named rare family, tier 7: the family starts here",
       "biomes": [],
       "spawnable_position": "seafloor"
@@ -32520,7 +32152,7 @@
       "scope": "southern_reef",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "named rare family, tier 7: the family starts here",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32535,7 +32167,7 @@
       "scope": "southern_reef",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (48-50)",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32550,7 +32182,7 @@
       "scope": "southern_reef",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the reef: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Mantyke by party_member, not by level: in the wild from tier 6, in the upper half of the band (48-50)",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32569,11 +32201,11 @@
       "eligibility_reason": "heart: a presence, from the band's top, 50-55 against the tier 7 cap 50: seen on this leg, caught on the next (next cap 55)",
       "heart": {
         "kind": "focus",
-        "x": 5840,
-        "z": 8048,
-        "radius": 704,
+        "x": 2704,
+        "z": 8176,
+        "radius": 416,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (5840, 8048), radius 704: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1785 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (2704, 8176), radius 416: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1577 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "seafloor",
@@ -32593,11 +32225,11 @@
       "eligibility_reason": "heart: a presence, from the band's top, 50-55 against the tier 7 cap 50: seen on this leg, caught on the next (next cap 55)",
       "heart": {
         "kind": "focus",
-        "x": 5840,
-        "z": 8048,
-        "radius": 704,
+        "x": 2704,
+        "z": 8176,
+        "radius": 416,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (5840, 8048), radius 704: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1785 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (2704, 8176), radius 416: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1577 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "seafloor",
@@ -32617,11 +32249,11 @@
       "eligibility_reason": "heart: a presence, from the band's top, 50-55 against the tier 7 cap 50: seen on this leg, caught on the next (next cap 55)",
       "heart": {
         "kind": "focus",
-        "x": 5840,
-        "z": 8048,
-        "radius": 704,
+        "x": 2704,
+        "z": 8176,
+        "radius": 416,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (5840, 8048), radius 704: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1785 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (2704, 8176), radius 416: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1577 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -32637,7 +32269,7 @@
       "scope": "southern_open",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Tentacool at level 30: spawns 50-55, inside the tier 8 band 50-55",
       "biomes": [],
       "spawnable_position": "submerged",
@@ -32658,7 +32290,7 @@
       "scope": "southern_open",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Horsea at level 32: spawns 50-55, inside the tier 8 band 50-55",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32673,7 +32305,7 @@
       "scope": "southern_open",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Seadra by trade holding dragon scale, not by level: in the wild from tier 7, in the upper half of the band (53-55)",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32688,7 +32320,7 @@
       "scope": "southern_open",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "named common family, tier 8: the family starts here",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32703,7 +32335,7 @@
       "scope": "southern_open",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Skrelp at level 48: spawns 50-55, inside the tier 8 band 50-55",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32718,7 +32350,7 @@
       "scope": "southern_open",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "named uncommon family, tier 8: the family starts here",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32733,7 +32365,7 @@
       "scope": "southern_open",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Mantyke by party_member, not by level: in the wild from tier 6, in the upper half of the band (53-55)",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32748,7 +32380,7 @@
       "scope": "southern_open",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "named uncommon family, tier 8: the family starts here",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32763,7 +32395,7 @@
       "scope": "southern_open",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "named rare family, tier 8: the family starts here",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32778,7 +32410,7 @@
       "scope": "southern_open",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Staryu using water stone, not by level: in the wild from tier 6, in the upper half of the band (53-55)",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32795,7 +32427,7 @@
       "conditions": {
         "maxY": 40
       },
-      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: open water: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Finneon at level 31: spawns 53-55, inside the tier 8 band 50-55",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32814,11 +32446,11 @@
       "eligibility_reason": "heart: a presence, from the band's top, 55-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
       "heart": {
         "kind": "focus",
-        "x": 6128,
-        "z": 8176,
-        "radius": 752,
+        "x": 2576,
+        "z": 8432,
+        "radius": 288,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6128, 8176), radius 752: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1977 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (2576, 8432), radius 288: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1833 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -32838,11 +32470,11 @@
       "eligibility_reason": "heart: a presence, from the band's top, 55-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
       "heart": {
         "kind": "focus",
-        "x": 6128,
-        "z": 8176,
-        "radius": 752,
+        "x": 2576,
+        "z": 8432,
+        "radius": 288,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6128, 8176), radius 752: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1977 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (2576, 8432), radius 288: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1833 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -32862,11 +32494,11 @@
       "eligibility_reason": "heart: a presence, from the band's top, 55-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
       "heart": {
         "kind": "focus",
-        "x": 6128,
-        "z": 8176,
-        "radius": 752,
+        "x": 2576,
+        "z": 8432,
+        "radius": 288,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6128, 8176), radius 752: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1977 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (2576, 8432), radius 288: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 1833 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -32888,7 +32520,7 @@
       "scope": "southern_depths",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "named anchor family, tier 9: the family starts here",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32903,7 +32535,7 @@
       "scope": "southern_depths",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Mantyke by party_member, not by level: in the wild from tier 6, in the upper half of the band (58-60)",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32918,7 +32550,7 @@
       "scope": "southern_depths",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Horsea at level 32: spawns 55-60, inside the tier 9 band 55-60",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32933,7 +32565,7 @@
       "scope": "southern_depths",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Seadra by trade holding dragon scale, not by level: in the wild from tier 7, in the upper half of the band (58-60)",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32948,7 +32580,7 @@
       "scope": "southern_depths",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Skrelp at level 48: spawns 55-60, inside the tier 9 band 55-60",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -32963,7 +32595,7 @@
       "scope": "southern_depths",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Tentacool at level 30: spawns 55-60, inside the tier 9 band 55-60",
       "biomes": [],
       "spawnable_position": "submerged",
@@ -32986,7 +32618,7 @@
       "conditions": {
         "maxY": 40
       },
-      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Finneon at level 31: spawns 55-60, inside the tier 9 band 55-60",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -33001,7 +32633,7 @@
       "scope": "southern_depths",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "named rare family, tier 9: the family starts here",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -33016,7 +32648,7 @@
       "scope": "southern_depths",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "evolves from Mareanie at level 38: spawns 55-60, inside the tier 9 band 55-60",
       "biomes": [],
       "spawnable_position": "seafloor"
@@ -33031,7 +32663,7 @@
       "scope": "southern_depths",
       "mechanism": "marine_coordinate_boxes",
       "conditions": {},
-      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
+      "conditions_basis": "Southern Shallows: the deep: the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon. No biome filter: the band's boxes hold only open sea",
       "eligibility_reason": "ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (58-60)",
       "biomes": [],
       "spawnable_position": "submerged"
@@ -33052,9 +32684,9 @@
         "kind": "focus",
         "x": 6128,
         "z": 8688,
-        "radius": 480,
+        "radius": 576,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6128, 8688), radius 480: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2257 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6128, 8688), radius 576: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2257 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -33076,9 +32708,9 @@
         "kind": "focus",
         "x": 6128,
         "z": 8688,
-        "radius": 480,
+        "radius": 576,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6128, 8688), radius 480: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2257 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6128, 8688), radius 576: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2257 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -33102,9 +32734,9 @@
         "kind": "focus",
         "x": 6128,
         "z": 8688,
-        "radius": 480,
+        "radius": 576,
         "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6128, 8688), radius 480: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2257 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the band's heart, the band cell farthest from every route corridor at (6128, 8688), radius 576: the largest multiple of 16 whose heart covers at most a ninth of the compiled band; its nearest heart cell is 2257 blocks from a route corridor box (tools/marine_seas.py heart_geometry, tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
       "spawnable_position": "submerged",
@@ -41049,278 +40681,6 @@
       "spawnable_position": "fishing"
     },
     {
-      "id": "fishing.jungle_east.wishiwashi",
-      "species": "wishiwashi",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 24.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: named anchor family, tier 8: the family starts here",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_east.palafin",
-      "species": "palafin",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: evolves from Finizen at level 38: spawns 43-53, inside the tier 8 band 43-53",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_east.staryu",
-      "species": "staryu",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 1.8,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: named common family, tier 8: the family starts here",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_east.starmie",
-      "species": "starmie",
-      "bucket": "common",
-      "level": "48-53",
-      "weight": 10.2,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: evolves from Staryu using water stone, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_east.pincurchin",
-      "species": "pincurchin",
-      "bucket": "uncommon",
-      "level": "43-53",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: named uncommon family, tier 8: the family starts here",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_east.clobbopus",
-      "species": "clobbopus",
-      "bucket": "uncommon",
-      "level": "43-53",
-      "weight": 0.9,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: named uncommon family, tier 8: the family starts here",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_east.grapploct",
-      "species": "grapploct",
-      "bucket": "uncommon",
-      "level": "48-53",
-      "weight": 5.1,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: evolves from Clobbopus knowing a move, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_east.toxapex",
-      "species": "toxapex",
-      "bucket": "rare",
-      "level": "43-53",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: evolves from Mareanie at level 38: spawns 43-53, inside the tier 8 band 43-53",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_east.skrelp",
-      "species": "skrelp",
-      "bucket": "ultra-rare",
-      "level": "48-52",
-      "weight": 0.2,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (48-52)",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_east.dragalge",
-      "species": "dragalge",
-      "bucket": "ultra-rare",
-      "level": "48-53",
-      "weight": 0.8,
-      "ambient": true,
-      "scope": "jungle_east",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: evolves from Skrelp at level 48: spawns 48-53, inside the tier 8 band 43-53",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_west.tentacruel",
-      "species": "tentacruel",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 24.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: evolves from Tentacool at level 30: spawns 43-53, inside the tier 8 band 43-53",
-      "spawnable_position": "fishing",
-      "held_items": [
-        {
-          "item": "cobblemon:poison_barb",
-          "percentage": 5
-        }
-      ]
-    },
-    {
-      "id": "fishing.jungle_west.corsola",
-      "species": "corsola",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: named common family, tier 8: the family starts here",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_west.luvdisc",
-      "species": "luvdisc",
-      "bucket": "common",
-      "level": "43-53",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: named common family, tier 8: the family starts here",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_west.toxapex",
-      "species": "toxapex",
-      "bucket": "uncommon",
-      "level": "43-53",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: evolves from Mareanie at level 38: spawns 43-53, inside the tier 8 band 43-53",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_west.pyukumuku",
-      "species": "pyukumuku",
-      "bucket": "uncommon",
-      "level": "43-53",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: named uncommon family, tier 8: the family starts here",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_west.bruxish",
-      "species": "bruxish",
-      "bucket": "rare",
-      "level": "43-53",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: named rare family, tier 8: the family starts here",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_west.clawitzer",
-      "species": "clawitzer",
-      "bucket": "rare",
-      "level": "43-53",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: evolves from Clauncher at level 37: spawns 43-53, inside the tier 8 band 43-53",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_west.mantyke",
-      "species": "mantyke",
-      "bucket": "ultra-rare",
-      "level": "48-53",
-      "weight": 0.2,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (48-53)",
-      "spawnable_position": "fishing"
-    },
-    {
-      "id": "fishing.jungle_west.mantine",
-      "species": "mantine",
-      "bucket": "ultra-rare",
-      "level": "48-53",
-      "weight": 0.8,
-      "ambient": true,
-      "scope": "jungle_west",
-      "mechanism": "fishing_coordinate_boxes",
-      "fishing_area": "subregion",
-      "conditions": {},
-      "eligibility_reason": "fishing: evolves from Mantyke by party_member, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-      "spawnable_position": "fishing"
-    },
-    {
       "id": "fishing.lake_viltri_hollow.magikarp",
       "species": "magikarp",
       "bucket": "common",
@@ -48649,6 +48009,222 @@
       "conditions": {},
       "eligibility_reason": "fishing: ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (18-20)",
       "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.tentacruel",
+      "species": "tentacruel",
+      "bucket": "common",
+      "level": "46-50",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: evolves from Tentacool at level 30: spawns 46-50, inside the tier 7 band 46-50",
+      "spawnable_position": "fishing",
+      "held_items": [
+        {
+          "item": "cobblemon:poison_barb",
+          "percentage": 5
+        }
+      ]
+    },
+    {
+      "id": "fishing.pacifidlog_waters.luvdisc",
+      "species": "luvdisc",
+      "bucket": "common",
+      "level": "46-50",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: named common family, tier 7: the family starts here",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.gyarados",
+      "species": "gyarados",
+      "bucket": "common",
+      "level": "46-50",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: evolves from Magikarp at level 20: spawns 46-50, inside the tier 7 band 46-50",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.lanturn",
+      "species": "lanturn",
+      "bucket": "common",
+      "level": "46-50",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: evolves from Chinchou at level 27: spawns 46-50, inside the tier 7 band 46-50",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.corsola",
+      "species": "corsola",
+      "bucket": "uncommon",
+      "level": "46-50",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: named uncommon family, tier 7: the family starts here",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.seadra",
+      "species": "seadra",
+      "bucket": "uncommon",
+      "level": "46-50",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: evolves from Horsea at level 32: spawns 46-50, inside the tier 7 band 46-50",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.kingdra",
+      "species": "kingdra",
+      "bucket": "uncommon",
+      "level": "48-50",
+      "weight": 4.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: evolves from Seadra by trade holding dragon scale, not by level: in the wild from tier 7, in the upper half of the band (48-50)",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.octillery",
+      "species": "octillery",
+      "bucket": "uncommon",
+      "level": "46-50",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: evolves from Remoraid at level 25: spawns 46-50, inside the tier 7 band 46-50",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.mantyke",
+      "species": "mantyke",
+      "bucket": "rare",
+      "level": "46-50",
+      "weight": 0.8,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: named rare family, tier 7: the family starts here",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.mantine",
+      "species": "mantine",
+      "bucket": "rare",
+      "level": "48-50",
+      "weight": 1.2,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: evolves from Mantyke by party_member, not by level: in the wild from tier 6, in the upper half of the band (48-50)",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.relicanth",
+      "species": "relicanth",
+      "bucket": "rare",
+      "level": "46-50",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: named rare family, tier 7: the family starts here",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.qwilfish",
+      "species": "qwilfish",
+      "bucket": "rare",
+      "level": "46-50",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: named rare family, tier 7: the family starts here",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.feebas",
+      "species": "feebas",
+      "bucket": "ultra-rare",
+      "level": "48-50",
+      "weight": 0.4,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (48-50)",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.milotic",
+      "species": "milotic",
+      "bucket": "ultra-rare",
+      "level": "48-50",
+      "weight": 0.6,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: evolves from Feebas by trade holding prism scale, not by level: in the wild from tier 7, in the upper half of the band (48-50)",
+      "spawnable_position": "fishing"
+    },
+    {
+      "id": "fishing.pacifidlog_waters.wailord",
+      "species": "wailord",
+      "bucket": "ultra-rare",
+      "level": "48-50",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "pacifidlog_waters",
+      "mechanism": "fishing_coordinate_boxes",
+      "fishing_area": "marine",
+      "conditions": {},
+      "eligibility_reason": "fishing: evolves from Wailmer at level 40: spawns 48-50, inside the tier 7 band 46-50",
+      "spawnable_position": "fishing"
     }
   ],
   "placement_sites_note": "A placed structure's grounds with a roster of its own (mechanism placement_coordinate_boxes, an entry's scope a site id). tools/compile_spawns.py lays a site's entries over its placement's footprint (data/placements.json position and size) widened by margin, less the path and the spawn-free zones, inside the sub-region holding it, and appends them to that sub-region's file on top of its roster. Grounded entries are forced canSeeSky like every land entry, so a site spawns on the open grounds round the structure and its sky-open surfaces (a tower's summit), never inside under a roof. Hand-authored; tools/build_encounters.py copies it through.",
@@ -51599,700 +51175,6 @@
               "flying"
             ],
             "family": "hoppip",
-            "family_priority": "presence",
-            "ambient": true,
-            "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-            "level": "53-60",
-            "bucket": "uncommon",
-            "weight": 3.0,
-            "conditions": {}
-          }
-        ]
-      }
-    },
-    {
-      "id": "jungle_west",
-      "display_name": "Jungle West",
-      "region": "jungle_isle",
-      "terrain_basis": "jungle; median y111; slope p90 18.8°",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "policy": "signature_overlay_keep_defaults",
-      "level_band": {
-        "minimum": 43,
-        "maximum": 53,
-        "basis_route": "route_08_blaine_to_giovanni",
-        "tier": 8
-      },
-      "entries": [
-        {
-          "species": "Aipom",
-          "pokemon": "aipom",
-          "types": [
-            "normal"
-          ],
-          "family": "aipom",
-          "family_priority": "anchor",
-          "ambient": true,
-          "eligibility_reason": "named anchor family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 3.6,
-          "conditions": {}
-        },
-        {
-          "species": "Ambipom",
-          "pokemon": "ambipom",
-          "types": [
-            "normal"
-          ],
-          "family": "aipom",
-          "family_priority": "anchor",
-          "ambient": true,
-          "eligibility_reason": "evolves from Aipom knowing a move, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-          "level": "48-53",
-          "bucket": "common",
-          "weight": 20.4,
-          "conditions": {}
-        },
-        {
-          "species": "Toucannon",
-          "pokemon": "toucannon",
-          "types": [
-            "normal",
-            "flying"
-          ],
-          "family": "pikipek",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Trumbeak at level 28: spawns 43-53, inside the tier 8 band 43-53",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Weepinbell",
-          "pokemon": "weepinbell",
-          "types": [
-            "grass",
-            "poison"
-          ],
-          "family": "bellsprout",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Bellsprout at level 21: spawns 43-53, inside the tier 8 band 43-53",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 1.2,
-          "conditions": {}
-        },
-        {
-          "species": "Victreebel",
-          "pokemon": "victreebel",
-          "types": [
-            "grass",
-            "poison"
-          ],
-          "family": "bellsprout",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Weepinbell using leaf stone, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-          "level": "48-53",
-          "bucket": "common",
-          "weight": 10.8,
-          "conditions": {}
-        },
-        {
-          "species": "Budew",
-          "pokemon": "budew",
-          "types": [
-            "grass",
-            "poison"
-          ],
-          "family": "budew",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 1.8,
-          "conditions": {}
-        },
-        {
-          "species": "Roselia",
-          "pokemon": "roselia",
-          "types": [
-            "grass",
-            "poison"
-          ],
-          "family": "budew",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Budew by friendship, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-          "level": "48-53",
-          "bucket": "common",
-          "weight": 1.0,
-          "conditions": {}
-        },
-        {
-          "species": "Roserade",
-          "pokemon": "roserade",
-          "types": [
-            "grass",
-            "poison"
-          ],
-          "family": "budew",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Roselia using shiny stone, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-          "level": "48-53",
-          "bucket": "common",
-          "weight": 9.2,
-          "conditions": {}
-        },
-        {
-          "species": "Tangela",
-          "pokemon": "tangela",
-          "types": [
-            "grass"
-          ],
-          "family": "tangela",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 1.8,
-          "conditions": {}
-        },
-        {
-          "species": "Tangrowth",
-          "pokemon": "tangrowth",
-          "types": [
-            "grass"
-          ],
-          "family": "tangela",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Tangela knowing a move, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-          "level": "48-53",
-          "bucket": "common",
-          "weight": 10.2,
-          "conditions": {}
-        },
-        {
-          "species": "Noctowl",
-          "pokemon": "noctowl",
-          "types": [
-            "normal",
-            "flying"
-          ],
-          "family": "hoothoot",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Hoothoot at level 20: spawns 43-53, inside the tier 8 band 43-53",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {
-            "timeRange": "night"
-          }
-        },
-        {
-          "species": "Tropius",
-          "pokemon": "tropius",
-          "types": [
-            "grass",
-            "flying"
-          ],
-          "family": "tropius",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "uncommon",
-          "weight": 6.0,
-          "conditions": {}
-        },
-        {
-          "species": "Toxicroak",
-          "pokemon": "toxicroak",
-          "types": [
-            "poison",
-            "fighting"
-          ],
-          "family": "croagunk",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "evolves from Croagunk at level 37: spawns 43-53, inside the tier 8 band 43-53",
-          "level": "43-53",
-          "bucket": "uncommon",
-          "weight": 6.0,
-          "conditions": {}
-        },
-        {
-          "species": "Volbeat",
-          "pokemon": "volbeat",
-          "types": [
-            "bug"
-          ],
-          "family": "volbeat",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "uncommon",
-          "weight": 6.0,
-          "conditions": {}
-        },
-        {
-          "species": "Illumise",
-          "pokemon": "illumise",
-          "types": [
-            "bug"
-          ],
-          "family": "illumise",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "uncommon",
-          "weight": 6.0,
-          "conditions": {}
-        },
-        {
-          "species": "Slaking",
-          "pokemon": "slaking",
-          "types": [
-            "normal"
-          ],
-          "family": "slakoth",
-          "family_priority": "find",
-          "ambient": true,
-          "eligibility_reason": "evolves from Vigoroth at level 36: spawns 48-53, inside the tier 8 band 43-53",
-          "level": "48-53",
-          "bucket": "rare",
-          "weight": 2.0,
-          "conditions": {}
-        },
-        {
-          "species": "Scyther",
-          "pokemon": "scyther",
-          "types": [
-            "bug",
-            "flying"
-          ],
-          "family": "scyther",
-          "family_priority": "rare",
-          "ambient": true,
-          "eligibility_reason": "named rare family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "rare",
-          "weight": 0.3,
-          "conditions": {}
-        },
-        {
-          "species": "Scizor",
-          "pokemon": "scizor",
-          "types": [
-            "bug",
-            "steel"
-          ],
-          "family": "scyther",
-          "family_priority": "rare",
-          "ambient": true,
-          "eligibility_reason": "evolves from Scyther by trade holding metal coat, not by level: in the wild from tier 7, in the upper half of the band (48-53)",
-          "level": "48-53",
-          "bucket": "rare",
-          "weight": 0.8,
-          "conditions": {}
-        },
-        {
-          "species": "Kleavor",
-          "pokemon": "kleavor",
-          "types": [
-            "bug",
-            "rock"
-          ],
-          "family": "scyther",
-          "family_priority": "rare",
-          "ambient": true,
-          "eligibility_reason": "evolves from Scyther using black augurite, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-          "level": "48-53",
-          "bucket": "rare",
-          "weight": 0.8,
-          "conditions": {}
-        },
-        {
-          "species": "Drampa",
-          "pokemon": "drampa",
-          "types": [
-            "normal",
-            "dragon"
-          ],
-          "family": "drampa",
-          "family_priority": "ultra",
-          "ambient": true,
-          "eligibility_reason": "ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (48-53)",
-          "level": "48-53",
-          "bucket": "ultra-rare",
-          "weight": 1.0,
-          "conditions": {}
-        }
-      ],
-      "biomes": [
-        "minecraft:jungle"
-      ],
-      "roster_basis": "Generated by tools/build_encounters.py from data/encounter_design.json tables.jungle_west: tier 8, off the path, themes jungle; the Jungle Isle, under the sea since the water export (decision B15); inert until B15. Do not edit by hand.",
-      "heart": {
-        "kind": "focus",
-        "x": 4784,
-        "z": 7408,
-        "radius": 128,
-        "clear_of_path_blocks": 128,
-        "why": "the canopy's heart (inert until decision B15, as the table)",
-        "alpha": true,
-        "above_cap_share": {
-          "land": 0.017
-        },
-        "entries": [
-          {
-            "species": "Victreebel",
-            "pokemon": "victreebel",
-            "types": [
-              "grass",
-              "poison"
-            ],
-            "family": "bellsprout",
-            "family_priority": "presence",
-            "ambient": true,
-            "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-            "level": "53-60",
-            "bucket": "uncommon",
-            "weight": 3.0,
-            "conditions": {}
-          },
-          {
-            "species": "Roserade",
-            "pokemon": "roserade",
-            "types": [
-              "grass",
-              "poison"
-            ],
-            "family": "budew",
-            "family_priority": "presence",
-            "ambient": true,
-            "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-            "level": "53-60",
-            "bucket": "uncommon",
-            "weight": 3.0,
-            "conditions": {}
-          },
-          {
-            "species": "Lurantis",
-            "pokemon": "lurantis",
-            "types": [
-              "grass"
-            ],
-            "family": "fomantis",
-            "family_priority": "presence",
-            "ambient": true,
-            "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-            "level": "53-60",
-            "bucket": "uncommon",
-            "weight": 3.0,
-            "conditions": {}
-          }
-        ]
-      }
-    },
-    {
-      "id": "jungle_east",
-      "display_name": "Jungle East",
-      "region": "jungle_isle",
-      "terrain_basis": "sparse jungle; median y110; slope p90 16.9°",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "policy": "signature_overlay_keep_defaults",
-      "level_band": {
-        "minimum": 43,
-        "maximum": 53,
-        "basis_route": "route_08_blaine_to_giovanni",
-        "tier": 8
-      },
-      "entries": [
-        {
-          "species": "Grafaiai",
-          "pokemon": "grafaiai",
-          "types": [
-            "poison",
-            "normal"
-          ],
-          "family": "shroodle",
-          "family_priority": "anchor",
-          "ambient": true,
-          "eligibility_reason": "evolves from Shroodle at level 28: spawns 43-53, inside the tier 8 band 43-53",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 24.0,
-          "conditions": {}
-        },
-        {
-          "species": "Komala",
-          "pokemon": "komala",
-          "types": [
-            "normal"
-          ],
-          "family": "komala",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Chatot",
-          "pokemon": "chatot",
-          "types": [
-            "normal",
-            "flying"
-          ],
-          "family": "chatot",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Venomoth",
-          "pokemon": "venomoth",
-          "types": [
-            "bug",
-            "poison"
-          ],
-          "family": "venonat",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Venonat at level 31: spawns 43-53, inside the tier 8 band 43-53",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Ariados",
-          "pokemon": "ariados",
-          "types": [
-            "bug",
-            "poison"
-          ],
-          "family": "spinarak",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Spinarak at level 22: spawns 43-53, inside the tier 8 band 43-53",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Hariyama",
-          "pokemon": "hariyama",
-          "types": [
-            "fighting"
-          ],
-          "family": "makuhita",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Makuhita at level 24: spawns 43-53, inside the tier 8 band 43-53",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Spewpa",
-          "pokemon": "spewpa",
-          "types": [
-            "bug"
-          ],
-          "family": "scatterbug",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Scatterbug at level 9: spawns 43-53, inside the tier 8 band 43-53",
-          "level": "43-53",
-          "bucket": "common",
-          "weight": 1.2,
-          "conditions": {}
-        },
-        {
-          "species": "Vivillon",
-          "pokemon": "vivillon",
-          "types": [
-            "bug",
-            "flying"
-          ],
-          "family": "scatterbug",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Spewpa by biome, level, structure, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-          "level": "48-53",
-          "bucket": "common",
-          "weight": 10.8,
-          "conditions": {}
-        },
-        {
-          "species": "Sawk",
-          "pokemon": "sawk",
-          "types": [
-            "fighting"
-          ],
-          "family": "sawk",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "uncommon",
-          "weight": 6.0,
-          "conditions": {}
-        },
-        {
-          "species": "Throh",
-          "pokemon": "throh",
-          "types": [
-            "fighting"
-          ],
-          "family": "throh",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "uncommon",
-          "weight": 6.0,
-          "conditions": {}
-        },
-        {
-          "species": "Carnivine",
-          "pokemon": "carnivine",
-          "types": [
-            "grass"
-          ],
-          "family": "carnivine",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "uncommon",
-          "weight": 6.0,
-          "conditions": {}
-        },
-        {
-          "species": "Hawlucha",
-          "pokemon": "hawlucha",
-          "types": [
-            "fighting",
-            "flying"
-          ],
-          "family": "hawlucha",
-          "family_priority": "find",
-          "ambient": true,
-          "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (48-53)",
-          "level": "48-53",
-          "bucket": "rare",
-          "weight": 2.0,
-          "conditions": {}
-        },
-        {
-          "species": "Pinsir",
-          "pokemon": "pinsir",
-          "types": [
-            "bug"
-          ],
-          "family": "pinsir",
-          "family_priority": "rare",
-          "ambient": true,
-          "eligibility_reason": "named rare family, tier 8: the family starts here",
-          "level": "43-53",
-          "bucket": "rare",
-          "weight": 2.0,
-          "conditions": {}
-        },
-        {
-          "species": "Bewear",
-          "pokemon": "bewear",
-          "types": [
-            "normal",
-            "fighting"
-          ],
-          "family": "stufful",
-          "family_priority": "ultra",
-          "ambient": true,
-          "eligibility_reason": "evolves from Stufful at level 27: spawns 48-53, inside the tier 8 band 43-53",
-          "level": "48-53",
-          "bucket": "ultra-rare",
-          "weight": 1.0,
-          "conditions": {}
-        }
-      ],
-      "biomes": [
-        "minecraft:sparse_jungle"
-      ],
-      "roster_basis": "Generated by tools/build_encounters.py from data/encounter_design.json tables.jungle_east: tier 8, off the path, themes jungle; as jungle_west. Do not edit by hand.",
-      "heart": {
-        "kind": "focus",
-        "x": 5520,
-        "z": 7504,
-        "radius": 128,
-        "clear_of_path_blocks": 128,
-        "why": "the sparse jungle's heart (inert until decision B15, as the table)",
-        "alpha": true,
-        "above_cap_share": {
-          "land": 0.0208
-        },
-        "entries": [
-          {
-            "species": "Grafaiai",
-            "pokemon": "grafaiai",
-            "types": [
-              "poison",
-              "normal"
-            ],
-            "family": "shroodle",
-            "family_priority": "presence",
-            "ambient": true,
-            "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-            "level": "53-60",
-            "bucket": "uncommon",
-            "weight": 3.0,
-            "conditions": {}
-          },
-          {
-            "species": "Hariyama",
-            "pokemon": "hariyama",
-            "types": [
-              "fighting"
-            ],
-            "family": "makuhita",
-            "family_priority": "presence",
-            "ambient": true,
-            "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
-            "level": "53-60",
-            "bucket": "uncommon",
-            "weight": 3.0,
-            "conditions": {}
-          },
-          {
-            "species": "Vivillon",
-            "pokemon": "vivillon",
-            "types": [
-              "bug",
-              "flying"
-            ],
-            "family": "scatterbug",
             "family_priority": "presence",
             "ambient": true,
             "eligibility_reason": "a presence, from the band's top, 53-60 against the tier 8 cap 55: seen on this leg, caught on the next (next cap 60)",
@@ -73664,7 +72546,7 @@
           "basis": "the open reach: Sharpedo hunting the schools, Palafin, the spined Qwilfish, Octillery; Pincurchin rare, Veluza very rare.",
           "compiled": {
             "boxes": 28,
-            "blocks": 2801664
+            "blocks": 2621440
           },
           "entries": [
             {
@@ -73822,7 +72704,7 @@
           "basis": "the deep east: Sharpedo and Palafin at their biggest, Veluza, Mantine; Carracosta, the old turtle that swims out from the strait, very rarely.",
           "compiled": {
             "boxes": 21,
-            "blocks": 3620864
+            "blocks": 3801088
           },
           "entries": [
             {
@@ -73971,12 +72853,249 @@
       ]
     },
     {
+      "id": "pacifidlog_sea",
+      "display_name": "Pacifidlog Waters",
+      "marine_region": "southern_shallows",
+      "status": "authored 2026-10-12, balance pass 2026-10-13; compiled, not seen in game",
+      "draft": null,
+      "theme": "the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord",
+      "legs": "the sea town (data/sea_town.json, the square at (5160, 7380)): reached at the south strand's leg 7, so the adjoining Southern Shallows reef's band, 46-50; data/sea_town.json carries no level band of its own",
+      "clip_boxes": [
+        {
+          "min_x": 4224,
+          "max_x": 6015,
+          "min_z": 6784,
+          "max_z": 8063
+        }
+      ],
+      "clip_basis": "the bank the Jungle Isle was cut down to (data/water_shape.json jungle_isle_bank: the island's polygons x4384-5928 z6880-7976, grown 64 blocks) and the sea round it, snapped out to the 128-block grid: x4224-6015, z6784-8063. Claimed before the Southern Shallows, which owns the rest of the south: the zone order is the table's, so no block is in both. Until 2026-10-21 the island's two sub-regions (jungle_west, jungle_east) counted as land here and the bank's water was in no marine band.",
+      "mechanism": "marine_coordinate_boxes",
+      "grid": 128,
+      "max_land_share": 0.5,
+      "distance_measure": "blocks from the nearest land sub-region cell (tools/compile_spawns.py marine_bands), on this zone's coarse grid; a cell with more than max_land_share of its fine cells on land is dropped, one with less is kept whole (the overlap is land, where a submerged or surface entry cannot spawn)",
+      "policy": "exclusive_curated: the pack's inherited spawns are suppressed over every band box (tools/suppress_inherited_spawns.py --subregions)",
+      "access": "Open water needs a Pokemon that carries a player on water, as for the Windward Sea (data/water_mounts.json); a sea past the first legs is reached by one that has a water mount.",
+      "level_logic": "one band, the reef's: 46-50 (cap 50, tier 7). The town stands on the bank off the south coast, where the Southern Shallows' own distance rule would put the deep (55-60); data/sea_town.json has no band, so the adjoining reef's band is taken (the 2026-10-21 brief), a town met at the reef's level and not at Victory Road's cap.",
+      "depth": "deep-water entries carry maxY 40 (22 blocks under the surface), as in the Windward Sea; surface entries carry canSeeSky true. The seabed of each sea is the marine region's own plan (data/regions.json seabed_plan).",
+      "bands": [
+        {
+          "id": "pacifidlog_waters",
+          "display_name": "Pacifidlog Waters",
+          "from_blocks": 0,
+          "to_blocks": null,
+          "level_band": {
+            "minimum": 46,
+            "maximum": 50
+          },
+          "tier": 7,
+          "basis": "the Hoenn sea route: Tentacruel anchoring the blue water, Pelipper riding the swell, Corsola and Luvdisc over the bank; Mantine and Lanturn and the sea horses (Seadra, Kingdra) uncommon; Relicanth and Qwilfish rare on the sand; Wailord very rarely, in the deep off the bank. At 46-50 only the evolved stages spawn (stage_overlap_levels): Tentacool, Wingull, Chinchou and Horsea are the families' roots, not what is met.",
+          "compiled": {
+            "boxes": 7,
+            "blocks": 2273280
+          },
+          "entries": [
+            {
+              "species": "Tentacruel",
+              "pokemon": "tentacruel",
+              "types": [
+                "water",
+                "poison"
+              ],
+              "family": "tentacool",
+              "family_priority": "anchor",
+              "ambient": true,
+              "eligibility_reason": "evolves from Tentacool at level 30: spawns 46-50, inside the tier 7 band 46-50",
+              "level": "46-50",
+              "bucket": "common",
+              "weight": 24.0,
+              "conditions": {}
+            },
+            {
+              "species": "Pelipper",
+              "pokemon": "pelipper",
+              "types": [
+                "water",
+                "flying"
+              ],
+              "family": "wingull",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "evolves from Wingull at level 25: spawns 46-50, inside the tier 7 band 46-50",
+              "level": "46-50",
+              "bucket": "common",
+              "weight": 12.0,
+              "conditions": {
+                "canSeeSky": true
+              }
+            },
+            {
+              "species": "Corsola",
+              "pokemon": "corsola",
+              "types": [
+                "water",
+                "rock"
+              ],
+              "family": "corsola",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "named common family, tier 7: the family starts here",
+              "level": "46-50",
+              "bucket": "common",
+              "weight": 12.0,
+              "conditions": {}
+            },
+            {
+              "species": "Luvdisc",
+              "pokemon": "luvdisc",
+              "types": [
+                "water"
+              ],
+              "family": "luvdisc",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "named common family, tier 7: the family starts here",
+              "level": "46-50",
+              "bucket": "common",
+              "weight": 12.0,
+              "conditions": {}
+            },
+            {
+              "species": "Mantyke",
+              "pokemon": "mantyke",
+              "types": [
+                "water",
+                "flying"
+              ],
+              "family": "mantyke",
+              "family_priority": "uncommon",
+              "ambient": true,
+              "eligibility_reason": "named uncommon family, tier 7: the family starts here",
+              "level": "46-50",
+              "bucket": "uncommon",
+              "weight": 2.4,
+              "conditions": {}
+            },
+            {
+              "species": "Mantine",
+              "pokemon": "mantine",
+              "types": [
+                "water",
+                "flying"
+              ],
+              "family": "mantyke",
+              "family_priority": "uncommon",
+              "ambient": true,
+              "eligibility_reason": "evolves from Mantyke by party_member, not by level: in the wild from tier 6, in the upper half of the band (48-50)",
+              "level": "48-50",
+              "bucket": "uncommon",
+              "weight": 3.6,
+              "conditions": {}
+            },
+            {
+              "species": "Lanturn",
+              "pokemon": "lanturn",
+              "types": [
+                "water",
+                "electric"
+              ],
+              "family": "chinchou",
+              "family_priority": "uncommon",
+              "ambient": true,
+              "eligibility_reason": "evolves from Chinchou at level 27: spawns 46-50, inside the tier 7 band 46-50",
+              "level": "46-50",
+              "bucket": "uncommon",
+              "weight": 6.0,
+              "conditions": {}
+            },
+            {
+              "species": "Seadra",
+              "pokemon": "seadra",
+              "types": [
+                "water"
+              ],
+              "family": "horsea",
+              "family_priority": "uncommon",
+              "ambient": true,
+              "eligibility_reason": "evolves from Horsea at level 32: spawns 46-50, inside the tier 7 band 46-50",
+              "level": "46-50",
+              "bucket": "uncommon",
+              "weight": 2.0,
+              "conditions": {}
+            },
+            {
+              "species": "Kingdra",
+              "pokemon": "kingdra",
+              "types": [
+                "water",
+                "dragon"
+              ],
+              "family": "horsea",
+              "family_priority": "uncommon",
+              "ambient": true,
+              "eligibility_reason": "evolves from Seadra by trade holding dragon scale, not by level: in the wild from tier 7, in the upper half of the band (48-50)",
+              "level": "48-50",
+              "bucket": "uncommon",
+              "weight": 4.0,
+              "conditions": {}
+            },
+            {
+              "species": "Relicanth",
+              "pokemon": "relicanth",
+              "types": [
+                "water",
+                "rock"
+              ],
+              "family": "relicanth",
+              "family_priority": "rare",
+              "ambient": true,
+              "eligibility_reason": "named rare family, tier 7: the family starts here",
+              "level": "46-50",
+              "bucket": "rare",
+              "weight": 2.0,
+              "conditions": {}
+            },
+            {
+              "species": "Qwilfish",
+              "pokemon": "qwilfish",
+              "types": [
+                "water",
+                "poison"
+              ],
+              "family": "qwilfish",
+              "family_priority": "rare",
+              "ambient": true,
+              "eligibility_reason": "named rare family, tier 7: the family starts here",
+              "level": "46-50",
+              "bucket": "rare",
+              "weight": 2.0,
+              "conditions": {}
+            },
+            {
+              "species": "Wailord",
+              "pokemon": "wailord",
+              "types": [
+                "water"
+              ],
+              "family": "wailmer",
+              "family_priority": "ultra",
+              "ambient": true,
+              "eligibility_reason": "ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (48-50)",
+              "level": "48-50",
+              "bucket": "ultra-rare",
+              "weight": 1.0,
+              "conditions": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "southern_shallows",
       "display_name": "The Southern Shallows",
       "marine_region": "southern_shallows",
       "status": "authored 2026-10-12, balance pass 2026-10-13; compiled, not seen in game",
       "draft": null,
-      "theme": "the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon",
+      "theme": "the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon",
       "legs": "coast leg 8 (Route 8, the south strand, tier 8 band 43-53)",
       "clip_boxes": [
         {
@@ -74008,8 +73127,8 @@
           "tier": 7,
           "basis": "the coral reef: Corsola, Luvdisc, the sand-diggers (Wugtrio), Staryu and its first Starmie, Toxapex on the coral; Pyukumuku and Bruxish rare, a Mantyke very rarely.",
           "compiled": {
-            "boxes": 38,
-            "blocks": 2457600
+            "boxes": 22,
+            "blocks": 1572864
           },
           "entries": [
             {
@@ -74182,8 +73301,8 @@
           "tier": 8,
           "basis": "the warm open water: Tentacruel swarms, the sea horses (Seadra, Kingdra), Dragalge in the kelp, Mantine and Bruxish; Starmie rare, Lumineon very rare.",
           "compiled": {
-            "boxes": 33,
-            "blocks": 2048000
+            "boxes": 19,
+            "blocks": 1081344
           },
           "entries": [
             {
@@ -74375,8 +73494,8 @@
           "tier": 9,
           "basis": "the warm deep: the rays (Mantine), Kingdra and Dragalge grown, Tentacruel, Lumineon below the light; Toxapex rare, a Wishiwashi school very rarely.",
           "compiled": {
-            "boxes": 16,
-            "blocks": 1769472
+            "boxes": 12,
+            "blocks": 2523136
           },
           "entries": [
             {

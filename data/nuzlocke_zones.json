@@ -6,14 +6,14 @@
  "counts": {
   "cave": 6,
   "land": 61,
-  "sea": 19,
+  "sea": 20,
   "site": 1,
   "waterway": 1,
-  "total": 88,
-  "not_zones": 34
+  "total": 89,
+  "not_zones": 32
  },
  "derivation": {
-  "tables_are_subregions": "data/encounter_design.json has 63 tables and data/regions.json 63 sub-regions, the same ids",
+  "tables_are_subregions": "data/encounter_design.json has 61 tables and data/regions.json 61 sub-regions, the same ids",
   "corridors_carry_crossed_tables": [
    {
     "route": "route_01_pallet_to_brock",
@@ -1814,6 +1814,23 @@
    "access": "a Pokemon that carries a player on water"
   },
   {
+   "zone": "pacifidlog_waters",
+   "kind": "sea",
+   "name": "Pacifidlog Waters",
+   "subtitle": "Pacifidlog Waters",
+   "region": "southern_shallows",
+   "table": "data/spawns.json marine_zones.pacifidlog_sea bands.pacifidlog_waters",
+   "tier": null,
+   "levels": [
+    46,
+    50
+   ],
+   "species": 16,
+   "geometry": "tools/compile_spawns.py marine_bands (open sea 0-the border blocks from land)",
+   "legs": [],
+   "access": "a Pokemon that carries a player on water"
+  },
+  {
    "zone": "southern_reef",
    "kind": "sea",
    "name": "Southern Shallows: the reef",
@@ -2089,16 +2106,6 @@
   }
  ],
  "not_zones": [
-  {
-   "zone": "jungle_west",
-   "what": "sub-region table",
-   "why": "no raster cell of Jungle West has ground at or above sea level (y62) on the canonical heightmap: it is under the sea, a land table has nowhere to spawn and a title would show over open water"
-  },
-  {
-   "zone": "jungle_east",
-   "what": "sub-region table",
-   "why": "no raster cell of Jungle East has ground at or above sea level (y62) on the canonical heightmap: it is under the sea, a land table has nowhere to spawn and a title would show over open water"
-  },
   {
    "zone": "desert_wreck_strand",
    "what": "Habitat Block pool",

@@ -741,7 +741,7 @@
    "region_class": "marine",
    "tier": "route",
    "status": "planned",
-   "character": "The warm south: a 400-block shelf around the Southern Isles, Strand Flats and Jungle Isle with coral reefs close in, lukewarm water further out, and a deep basin beyond.",
+   "character": "The warm south: a 400-block shelf around the Southern Isles, Strand Flats and Pacifidlog's bank (the drowned Jungle Isle) with coral reefs close in, lukewarm water further out, and a deep basin beyond.",
    "extent": "Sea south of z5200, sea east of x6000 south of z4456, and the border margin along the south edge.",
    "bounds": {
     "min_x": -512,
@@ -2442,10 +2442,7 @@
    "character": "A jungle island off the south coast.",
    "contiguous": true,
    "pieces": 1,
-   "subregions": [
-    "jungle_west",
-    "jungle_east"
-   ],
+   "subregions": [],
    "measured": {
     "area_km2": 1.232,
     "bounds": {
@@ -2541,7 +2538,14 @@
       6904
      ]
     ]
-   ]
+   ],
+   "subregions_retired": {
+    "ids": [
+     "jungle_west",
+     "jungle_east"
+    ],
+    "why": "2026-10-21: the island is under the sea (data/water_shape.json jungle_isle_bank, decision B15; every column of its polygons at or below y61), so its two sub-regions carried rosters over open water: a strip of jungle species through the sea town Pacifidlog, and their cells counted as land to the marine bands, which therefore skipped the bank's waters. The sub-region records are removed; this region record stays because the dungeon rips' siting names it as the one region with no dry ground (tests/test_dungeon_rips.py NO_DRY_GROUND). The waters are Pacifidlog's own sea, data/marine_seas.json pacifidlog_sea."
+   }
   },
   {
    "id": "long_isle",
@@ -5875,188 +5879,6 @@
      [
       2088,
       7288
-     ]
-    ]
-   ]
-  },
-  {
-   "id": "jungle_west",
-   "display_name": "Jungle West",
-   "parent": "jungle_isle",
-   "measured": {
-    "area_km2": 0.598,
-    "bounds": {
-     "min_x": 4384,
-     "min_z": 6880,
-     "max_x": 5151,
-     "max_z": 7967
-    },
-    "elevation": {
-     "p10": 53.0,
-     "median": 56.0,
-     "p90": 58.0,
-     "max": 61.0
-    },
-    "slope_degrees": {
-     "mean": 1.8,
-     "p90": 4.1,
-     "flat_under_5_pct": 97.4
-    }
-   },
-   "boundaries": [
-    {
-     "basis": "coast",
-     "length_blocks": 1792,
-     "neighbour": null
-    },
-    {
-     "basis": "painted change of cover (treeline, snowline or ground)",
-     "length_blocks": 1120,
-     "channel_share": 0.0,
-     "ridge_share": 0.0,
-     "neighbour": "jungle_east"
-    }
-   ],
-   "encounters": {
-    "table": null,
-    "status": "empty",
-    "note": "spawn philosophy open; not populated"
-   },
-   "paint": {
-    "preset": "jungle"
-   },
-   "polygons": [
-    [
-     [
-      5112,
-      6880
-     ],
-     [
-      5144,
-      6880
-     ],
-     [
-      5144,
-      7960
-     ],
-     [
-      4944,
-      7928
-     ],
-     [
-      4664,
-      7784
-     ],
-     [
-      4472,
-      7608
-     ],
-     [
-      4384,
-      7408
-     ],
-     [
-      4408,
-      7272
-     ],
-     [
-      4552,
-      7104
-     ],
-     [
-      4928,
-      6920
-     ]
-    ]
-   ]
-  },
-  {
-   "id": "jungle_east",
-   "display_name": "Jungle East",
-   "parent": "jungle_isle",
-   "measured": {
-    "area_km2": 0.643,
-    "bounds": {
-     "min_x": 5152,
-     "min_z": 6880,
-     "max_x": 5935,
-     "max_z": 7983
-    },
-    "elevation": {
-     "p10": 53.0,
-     "median": 56.0,
-     "p90": 57.0,
-     "max": 61.0
-    },
-    "slope_degrees": {
-     "mean": 1.3,
-     "p90": 4.0,
-     "flat_under_5_pct": 98.2
-    }
-   },
-   "boundaries": [
-    {
-     "basis": "coast",
-     "length_blocks": 1888,
-     "neighbour": null
-    },
-    {
-     "basis": "painted change of cover (treeline, snowline or ground)",
-     "length_blocks": 1120,
-     "channel_share": 0.0,
-     "ridge_share": 0.0,
-     "neighbour": "jungle_west"
-    }
-   ],
-   "encounters": {
-    "table": null,
-    "status": "empty",
-    "note": "spawn philosophy open; not populated"
-   },
-   "paint": {
-    "preset": "sparse_jungle"
-   },
-   "polygons": [
-    [
-     [
-      5152,
-      6880
-     ],
-     [
-      5416,
-      6968
-     ],
-     [
-      5760,
-      7208
-     ],
-     [
-      5864,
-      7320
-     ],
-     [
-      5928,
-      7504
-     ],
-     [
-      5912,
-      7680
-     ],
-     [
-      5856,
-      7776
-     ],
-     [
-      5720,
-      7880
-     ],
-     [
-      5360,
-      7976
-     ],
-     [
-      5152,
-      7960
      ]
     ]
    ]

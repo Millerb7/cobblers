@@ -101,7 +101,11 @@ def test_an_excluded_sub_region_is_under_the_sea_at_every_sampled_column():
     sea = data("world.json")["vertical"]["sea_level"]
     subs = {s["id"]: s for s in data("regions.json")["subregions"]}
     excluded = [n["zone"] for n in doc()["not_zones"] if n["what"] == "sub-region table"]
-    assert excluded, "no sunk sub-region: drop this test or the exclusion rule"
+    if not excluded:
+        # NOT_EXECUTED, not passed: the only two sunk sub-regions were the Jungle Isle's (jungle_west, jungle_east), removed from
+        # data/regions.json on 2026-10-21 when the island's bank became Pacifidlog Waters. The exclusion rule in
+        # tools/nuzlocke_zones.py is idle until a sub-region sinks again; this test runs again the day one does.
+        pytest.skip("no sub-region is under the sea: the exclusion rule has nothing to exclude")
     for sid in excluded:
         for poly in subs[sid]["polygons"]:
             xs = np.arange(min(p[0] for p in poly), max(p[0] for p in poly) + 1, 4)
