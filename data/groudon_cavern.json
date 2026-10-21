@@ -68,6 +68,8 @@
     "dais_ring": "minecraft:polished_blackstone",
     "dais_inner": "minecraft:polished_basalt",
     "patch": 3,
+    "rim_guard": "minecraft:blackstone_wall",
+    "rim_guard_why": "The ravine's rim guard (quake.rim): the parapet's own block, so the rim reads as the same volcanic work as the lake's wall. A wall block is 1.5 high, which a jump (1.25) never clears, and an eye sees over it; it is written with the side states vanilla would give it (fill never recomputes a placed block's shape), so the posts are joined and leave no gap a player fits through.",
     "why": "The skin is the first solid layer next to the void: patches of blackstone, basalt and deepslate 3 blocks across (so runs merge into fills), magma blocks and shroomlights only in WALLS AND ROOFS, never in a floor and never under a wall-top a player stands on: a magma block hurts the one who stands on it. 'Lights are lanterns, never light blocks' (docs/STATE.md) is about invisible `minecraft:light` blocks; a shroomlight is a visible block and the cavern is lit by it and by the lake, not by lanterns, because a lantern is a town's."
   },
   "guard": {
@@ -83,10 +85,14 @@
     "sim_chunks": 6,
     "sim_chunks_why": "server/config/server.properties.example simulation-distance=6 (the live server.properties is not read by agents, so this is the example's number, not a measurement). A stage runs only while a player stands inside its write box grown by trigger_pad blocks: the farthest chunk it writes is then at most 5 chunks from the player's chunk (tools/groudon_cavern.py chunk_gap computes it per stage from the box's own extent and refuses 6 or more; with a pad of 64 the lower ravine stage came to 6). The stage also holds its own chunks (forceload add in the function, tools/function_limits.py ensure_loaded) and only moves the state on after a read-back of a cell it cut.",
     "left_objective": "cobblers.gq.left",
-    "left_why": "minecraft.custom:minecraft.leave_game, as tools/kyogre_cave.py's keeper uses it: a player who logged out over the ravine's footprint and is back after the cut would load in over air; slow falling for slow_falling_seconds if they stand in the cut's column when the keeper next sees them, and the count cleared.",
+    "left_why": "minecraft.custom:minecraft.leave_game, as tools/kyogre_cave.py's keeper uses it: a player who logged out over the ravine's footprint and is back after the cut would load in over air; slow falling for slow_falling_seconds if they stand in the cut's column, on the first tick they are back (cobblers:groudon_cavern/rejoin schedules itself every tick: the 20-tick keeper was up to a second late, review 2026-10-21), and the count cleared.",
     "ravine_split_z": 5533,
     "slow_falling_seconds": 30,
-    "why": "States of #quake in the objective: 0 sealed, 1 rumbled (a player holds gym8_cleared: heard everywhere, nothing cut), 2 tremor played, 3 the ravine's upper half cut, 4 its lower half cut, 5 the plug cut = open for good (and #groudon cobblers.leg is set to 1)."
+    "rim": {
+      "safe_drop": 3,
+      "why": "The ravine's walls are vertical cuts, so its side rims and its end wall become cliffs of up to 50 blocks (measured from tools/ground.py: rim ground y135 at (6715, 5557) over a floor at y85) on the plateau players cross from the Mining Town. Every column the cut does not lower, with any of its eight neighbours lowered more than safe_drop below its ground, carries palette.rim_guard from one over its ground to one over the highest ground of its eight uncut neighbours, so the wall's top stands at least 1.5 over the feet of anyone beside it. The stage that makes the drop writes the guard, after its own cut. safe_drop is Minecraft's: fall damage is the distance fallen less three. The mouth's walk-in entrance, where the floor is within safe_drop of the ground, is left open by the same rule, because there is no drop there to guard."
+    },
+    "why": "States of #quake in the objective: 0 sealed, 1 rumbled (a player holds gym8_cleared: heard everywhere, nothing cut), 2 tremor played, 3 the ravine's upper half cut, 4 its lower half cut, 5 the plug cut = open for good (and #groudon cobblers.leg is set to 1). tick tests the states last first (tools/groudon_cavern.py tick_order), so one pass moves the state at most once: the tremor and the three cuts fall on separate passes (review 2026-10-21: in ascending order all four ran in one tick)."
   },
   "messages": {
     "rumble": " has beaten the eighth gym. Far off to the east the ground shudders, once, long and low.",

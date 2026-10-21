@@ -717,6 +717,21 @@ def _retired_sites(doc, ground, pack, fn_dir, rep):
                 continue
             if s == "tag @a remove %s" % HELD or s.startswith("scoreboard players set #") or s.startswith("schedule function"):
                 continue
+            # the second gate (2026-10-21): the old chamber opened and its pedestal taken: three cells of the old voids,
+            # derived here from own_old_site, all read air
+            mm = re.match(r"^execute unless entity %s((?: if block -?\d+ -?\d+ -?\d+ minecraft:air)+) run function (\S+)$"
+                          % re.escape(guard), s)
+            if mm:
+                cells = [tuple(int(v) for v in c) for c in re.findall(r"if block (-?\d+) (-?\d+) (-?\d+)", mm.group(1))]
+                voids = [o["chamber"], o["passage"], o["shaft"]]
+                gone_ok = (mm.group(2) == base + "_restore" and len(cells) >= 3 and (px, py, pz) in cells
+                           and all(any(_inside((c[0], c[1], c[2], c[0], c[1], c[2]), v) for v in voids) or c == (px, py, pz)
+                                   for c in cells)
+                           and any(not _inside((c[0], c[1], c[2], c[0], c[1], c[2]), o["chamber"]) and c != (px, py, pz)
+                                   for c in cells))
+                rep.check(gone_ok, "%s: the restore's taken-pedestal gate does not read the old pedestal and cells of the old "
+                                   "voids (one outside the chamber): %s" % (where, cells))
+                continue
             mm = re.match(r"^execute unless entity %s if block (-?\d+) (-?\d+) (-?\d+) (\S+) run function (\S+)$"
                           % re.escape(guard), s)
             if mm:

@@ -19,7 +19,14 @@ before the quake (the carve) and after each stage. Everything below is then meas
   walk       from the keeper's stand on the bowl floor to Groudon's cell and back, one block up or down at a time (up to 3
              down), two cells of headroom everywhere, over every reachable cell and not one shortest path
   hazard     nothing reachable stands on magma, fire or lava, within one block (diagonals) of lava, or beside a drop of
-             more than 3 or into lava; nothing reachable inside the carved cavern is a place to fall from
+             more than 3 or into lava; nothing reachable inside the carved cavern is a place to fall from, and nothing
+             reachable on the surface stands beside a drop the quake cut (only a cliff the heightmap already had is reported)
+  rim        after EACH stage, every column the cut left standing beside an eight-neighbour it lowered more than 3 under the
+             PRE-CUT heightmap carries a wall from one over its ground, on solid ground, its top at least the feet of anyone
+             on an uncut neighbour; every rim column is listed (--rim-out)
+  passes     tick's lines, replayed from every state, move #quake at most once a pass; each stage gives slow falling over
+             its own cut; the rejoin's slow falling runs every tick; R14L reads #built back after carve_once and the summon
+             is held to it
   lava       every lava cell is walled or floored on its four sides and its underside; no water is written anywhere
   guard      the keeper's box holds every carved cell within 40 blocks of the pedestal and not the stand it sends people to,
              the stand is a place to stand, and the selector carries the record's own gate flag
@@ -38,7 +45,7 @@ the real world; that a command parses the way the game parses it; the keeper, th
 what a player sees; whether `forceload add` inside a function loads a chunk in the same tick (the repo's measurement of
 2026-09-21 says so; the stage ALSO needs a player within the simulation distance and a read-back probe).
 
-  python tools/groudon_cavern_audit.py [--runtime DIR] [--build DIR]
+  python tools/groudon_cavern_audit.py [--runtime DIR] [--build DIR] [--rim-out FILE]
 """
 from __future__ import annotations
 
@@ -88,6 +95,7 @@ CALL = re.compile(r"(?:^|\brun\s+)function\s+(\S+)\s*$")
 class Report:
     def __init__(self):
         self.errors, self.checks, self.notes = [], 0, []
+        self.rim = []             # (x, z, deepest drop, guarded, stage first seen) of every rim column of the cut
 
     def check(self, ok, msg):
         self.checks += 1
@@ -346,6 +354,73 @@ def sim_distance():
     return SIM_DEFAULT
 
 
+def above_ground(box, G, o):
+    """Every cell of `box` stands over the natural ground (the heightmap's) of its column."""
+    x0, y0, z0, x1, _y1, z1 = box
+    i0, k0, i1, k1 = x0 - o[0], z0 - o[2], x1 - o[0], z1 - o[2]
+    if min(i0, k0) < 0 or i1 >= G.shape[0] or k1 >= G.shape[1]:
+        return False
+    return bool((G[i0:i1 + 1, k0:k1 + 1] < y0).all())
+
+
+N8 = [(di, dk) for di in (-1, 0, 1) for dk in (-1, 0, 1) if (di, dk) != (0, 0)]
+
+
+def ground_tops(w):
+    """(nx, nz) the top cell of every column that a foot can rest on (solid, hurting, or a fluid): a wall is not ground."""
+    ys = (w.o[1] + np.arange(w.shape[1]))[None, :, None]
+    g = np.isin(w.cls, (SOLID, HURT, LAVA, WATER))
+    return np.where(g, ys, -10_000).max(axis=1)
+
+
+def rim_check(rep, st, w, G, o, rims):
+    """Every drop of more than SAFE_DROP that the quake has made by the end of stage `st`, measured against the PRE-CUT
+    heightmap: a column whose ground the cut lowered, seen from an eight-neighbour it did not lower. Each such neighbour must
+    carry a wall from one over its ground, standing on solid ground (not lava, not magma), whose top block is at least as
+    high as the feet of anyone standing on an uncut eight-neighbour (a wall block is 1.5 high, a jump 1.25). Records every
+    rim column in `rims` {(x, z): (drop, guarded, stage first seen)}."""
+    top = ground_tops(w)
+    lowered = top < G
+    nx, nz = G.shape
+    oy = o[1]
+    bad = []
+    n = 0
+    for i, k in zip(*np.nonzero(~lowered)):
+        drop = 0
+        for di, dk in N8:
+            a, c = i + di, k + dk
+            if 0 <= a < nx and 0 <= c < nz and lowered[a, c]:
+                drop = max(drop, int(G[i, k]) - int(top[a, c]))
+        if drop <= SAFE_DROP:
+            continue
+        n += 1
+        x, z = int(i) + o[0], int(k) + o[2]
+        j0 = int(G[i, k]) + 1 - oy
+        ok = 0 <= j0 < w.shape[1] and w.cls[i, j0, k] == WALL and w.cls[i, j0 - 1, k] == SOLID
+        wtop = j0 - 1
+        while ok and wtop + 1 < w.shape[1] and w.cls[i, wtop + 1, k] == WALL:
+            wtop += 1
+        why = None
+        if not ok:
+            why = "no wall on solid ground"
+        else:
+            for di, dk in N8:
+                a, c = i + di, k + dk
+                if not (0 <= a < nx and 0 <= c < nz) or lowered[a, c]:
+                    continue
+                feet = int(G[a, c]) + 1 - oy
+                if 0 <= feet < w.shape[1] - 1 and w.cls[a, feet, c] == AIR and w.cls[a, feet + 1, c] == AIR and wtop < feet:
+                    why = "the wall's top y%d is under the feet y%d at (%d, %d)" % (wtop + oy, feet + oy, a + o[0], c + o[2])
+                    break
+        prev = rims.get((x, z))
+        rims[(x, z)] = (max(drop, prev[0] if prev else 0), why is None, prev[2] if prev else st)
+        if why:
+            bad.append((x, int(G[i, k]) + 1, z, drop, why))
+    rep.check(not bad, "after stage %d, %d rim column(s) beside a drop of more than %d that the cut made are not guarded; "
+                       "first %s" % (st, len(bad), SAFE_DROP, bad[:4]))
+    rep.notes.append("stage %d: %d rim column(s) beside a cut drop of more than %d, %d guarded" % (st, n, SAFE_DROP, n - len(bad)))
+
+
 def rect_gap(a, b):
     """Chebyshev-free gap between two (x0, z0, x1, z1) rects, Euclidean; 0 when they meet."""
     dx = max(a[0] - b[2], b[0] - a[2], 0)
@@ -387,7 +462,11 @@ def audit(runtime=RUNTIME, build=BUILD, ground=None, rewards=None, leg=None, gdo
 
     # ---- water: none, anywhere in any emitted function
     allcmds = [l for fid in pack.fns for l in pack.body(fid)]
-    rep.check(not any("water" in l or "bubble_column" in l for l in allcmds if l.startswith(("fill", "setblock"))),
+    def wet(l):
+        m = FILL.match(l) or SETBLOCK.match(l)
+        blk = m.group(7 if m.re is FILL else 4) if m else l
+        return classify_block(blk) == WATER or "waterlogged=true" in blk
+    rep.check(not any(wet(l) for l in allcmds if l.startswith(("fill", "setblock"))),
               "a fill or setblock writes water: lava and water meeting make stone in the mouth")
     rep.check(sealed.cls.max() >= LAVA and int((sealed.cls == LAVA).sum()) > 100, "the carve places too little lava to be a lake")
     rep.check(int((sealed.cls == WATER).sum()) == 0, "water in the replayed carve")
@@ -453,6 +532,7 @@ def audit(runtime=RUNTIME, build=BUILD, ground=None, rewards=None, leg=None, gdo
     rep.check(state.writes == s1, "stage 1 (the tremor) writes blocks")
     before_plug = None
     probes = {}
+    rims = {}
     stage_fids = [f for f in rt.fns if re.fullmatch(r"cobblers:groudon_cavern/stage/[2-9]", f)]
     rep.check(sorted(stage_fids) == ["cobblers:groudon_cavern/stage/2", "cobblers:groudon_cavern/stage/3",
                                       "cobblers:groudon_cavern/stage/4"], "stages found: %s" % sorted(stage_fids))
@@ -465,8 +545,26 @@ def audit(runtime=RUNTIME, build=BUILD, ground=None, rewards=None, leg=None, gdo
         replay(rt, fid, state)
         new = [(bx, blk) for bx, blk in state.boxes[w0.writes:]]
         rep.check(len(new) > 0, "stage %d writes nothing" % st)
-        rep.check(all(blk == "minecraft:air" for _bx, blk in new), "stage %d writes something other than air" % st)
+        # air, or a wall standing wholly above the natural ground (the rim guard): nothing else
+        odd = [(bx, blk) for bx, blk in new if blk != "minecraft:air"
+               and not (classify_block(blk) == WALL and above_ground(bx, G, sealed.o))]
+        rep.check(not odd, "stage %d writes something other than air or a wall over the ground: %s" % (st, odd[:2]))
         rep.check(not state.outside, "stage %d writes outside the audit grid: %s" % (st, state.outside[:2]))
+        cut_now = sealed.natural & (state.cls == AIR) & (w0.cls != AIR)
+        # the stage's own slow falling: anyone standing over what it cuts, from the cut's floor to over the old ground
+        sf = [parse_selbox(ln) for ln in body if re.match(r"^effect give @a\[[^\]]*\] minecraft:slow_falling [1-9]\d* ", ln)]
+        sf = [b for b in sf if b]
+        rep.check(bool(sf), "stage %d gives no slow falling over its own cut: whoever stands there falls with it" % st)
+        if sf and cut_now.any():
+            ci = np.argwhere(cut_now)
+            lo = ci.min(axis=0) + np.array(sealed.o)
+            hi = ci.max(axis=0) + np.array(sealed.o)
+            top_g = int(max(G[i, k] for i, _j, k in ci))
+            rep.check(any(b[0] <= lo[0] and b[1] <= lo[1] and b[2] <= lo[2] and b[3] >= hi[0] and b[4] >= top_g + 2
+                          and b[5] >= hi[2] for b, _x in sf),
+                      "stage %d's slow falling box %s does not hold its cut (%s..%s) up to 2 over the old ground y%d"
+                      % (st, [b for b, _x in sf], lo.tolist(), hi.tolist(), top_g))
+        rim_check(rep, st, state, G, sealed.o, rims)
         # holds its own chunks
         held = set()
         for ln in body:
@@ -535,10 +633,39 @@ def audit(runtime=RUNTIME, build=BUILD, ground=None, rewards=None, leg=None, gdo
     rep.check(not any(l.startswith(("fill", "setblock", "forceload")) for l in rb), "the rumble writes blocks")
     rep.check(any("playsound" in l and "@a" in l and "distance" not in l for l in rb), "the rumble is not heard by every player")
     rep.check(any(re.search(r"run tellraw @a |^tellraw @a ", l) for l in rb), "the rumble is not told to every player")
-    # a player who logged out over the cut and is back after it must not fall to their death: slow falling, in a box that
-    # holds every cell the quake cut
-    rj = [l for l in tick if "scores={" in l and "slow_falling" in l]
-    rep.check(len(rj) == 1, "tick has %d rejoin line(s) giving slow falling" % len(rj))
+    # one state a pass: replay tick's lines in their order from every state, each driven function moving #quake to the
+    # value its own body sets (the probe assumed to read air, the worst case); no pass may move it twice
+    qobj = gdoc["quake"]["objective"]
+    moves = {}
+    for ln in tick:
+        m = re.search(r"if score #quake %s matches (\d+) .*run function (\S+)$" % re.escape(qobj), ln)
+        if m:
+            sets = [int(v) for l2 in rt.body(m.group(2))
+                    for v in re.findall(r"scoreboard players set #quake %s (\d+)" % re.escape(qobj), l2)]
+            moves.setdefault(int(m.group(1)), []).append(max(sets) if sets else None)
+    order = [int(m.group(1)) for ln in tick for m in [re.search(r"if score #quake %s matches (\d+) " % re.escape(qobj), ln)] if m]
+    rep.check(sorted(moves) == [0, 1, 2, 3, 4] and all(len(v) == 1 and v[0] == s + 1 for s, v in moves.items()),
+              "tick does not drive each state 0..4 once, each to the next: %s" % moves)
+    worst = 0
+    for s0 in range(0, 5):
+        s, n = s0, 0
+        for want in order:
+            if s == want and moves.get(want) and moves[want][0] is not None:
+                s, n = moves[want][0], n + 1
+        worst = max(worst, n)
+    rep.check(worst <= 1, "one pass of tick can move #quake %d states (the lines test the states in the order %s): the "
+                          "tremor and the cuts fall in one tick" % (worst, order))
+    rep.notes.append("tick tests #quake in the order %s: at most %d state(s) a pass" % (order, worst))
+    # a player who logged out over the cut and is back after it must not fall to their death: slow falling on the first tick
+    # they are back (a function that schedules itself every tick, started by load), in a box that holds every cell the
+    # quake cut
+    loopf = [fid for fid in rt.fns if any(re.fullmatch(r"schedule function %s 1t( replace)?" % re.escape(fid), l)
+                                          for l in rt.body(fid))]
+    rj = [l for fid in loopf for l in rt.body(fid) if "scores={" in l and "slow_falling" in l]
+    rep.check(len(rj) == 1, "%d rejoin line(s) giving slow falling in a function run every tick (%s)" % (len(rj), loopf))
+    loadb = rt.body("cobblers:groudon_cavern/load")
+    rep.check(any(any(l.startswith("schedule function %s 1t" % fid) for l in loadb) for fid in loopf),
+              "load never starts the every-tick rejoin function: a player back over the cut would wait up to 20 ticks")
     if rj:
         sb = parse_selbox(rj[0])
         cut = sealed.natural & (opened.cls == AIR) & (sealed.cls == SOLID)
@@ -550,7 +677,8 @@ def audit(runtime=RUNTIME, build=BUILD, ground=None, rewards=None, leg=None, gdo
             hi = pts_.max(axis=0) + np.array(sealed.o)
             rep.check(rx0 <= lo[0] and ry0 <= lo[1] and rz0 <= lo[2] and rx1 >= hi[0] and ry1 >= hi[1] and rz1 >= hi[2],
                       "the rejoin box %s does not hold every cell the quake cuts (%s..%s)" % ((rx0, ry0, rz0, rx1, ry1, rz1), lo, hi))
-        rep.check(any("scoreboard players reset @a[scores=" in l for l in tick), "the rejoin count is never cleared")
+        rep.check(any("scoreboard players reset @a[scores=" in l for fid in loopf for l in rt.body(fid)),
+                  "the rejoin count is never cleared")
         loadf = " ".join(pack.body("cobblers:groudon_cavern/load"))
         rep.check("minecraft.custom:minecraft.leave_game" in loadf, "the rejoin objective counts nothing (no leave_game criterion)")
     ce = pack.body(CARVE_ONCE)
@@ -592,8 +720,9 @@ def audit(runtime=RUNTIME, build=BUILD, ground=None, rewards=None, leg=None, gdo
     reach = set(prev)
     carved_open = opened.natural & (opened.cls == AIR)
     # hazards over every reachable cell
-    hurt = lava_near = drops = rim = 0
+    hurt = lava_near = drops = rim = quake_drops = 0
     first = {}
+    lowered_open = ground_tops(opened) < G
     for (i, j, k) in reach:
         if opened.cls[i, j - 1, k] == HURT:
             hurt += 1
@@ -609,18 +738,31 @@ def audit(runtime=RUNTIME, build=BUILD, ground=None, rewards=None, leg=None, gdo
                 d = 1
                 while d <= SAFE_DROP + 1 and j - d >= 0 and ow.free(a, j - d, c):
                     d += 1
-                if d > SAFE_DROP or j - d < 0 or opened.cls[a, j - d, c] in (LAVA, WATER, HURT):
-                    if not inside_cave:
-                        rim += 1          # a natural cliff on the surface (the ravine's rim): reported, not failed
-                        break
+                # d stops at the first cell that is not free: the landing's feet are at j - d + 1, so the fall is d - 1
+                # (the Walker's own count: a fall of SAFE_DROP is a step it takes; until 2026-10-21 this read d, one more)
+                if d - 1 > SAFE_DROP or j - d < 0 or opened.cls[a, j - d, c] in (LAVA, WATER, HURT):
                     if inside_cave:
                         drops += 1
                         first.setdefault("drop", (i + ox, j + oy, k + oz))
+                    elif lowered_open[a, c]:
+                        quake_drops += 1  # a cliff the quake made (the column's ground is under the heightmap's): failed
+                        first.setdefault("quake_drop", (i + ox, j + oy, k + oz))
+                    else:
+                        rim += 1          # a natural cliff the heightmap already had: reported, not failed
+                    break
     rep.check(hurt == 0, "%d reachable cell(s) stand on a hurting block (magma, fire...); first %s" % (hurt, first.get("hurt")))
     rep.check(lava_near == 0, "%d reachable cell(s) are within one block of lava; first %s" % (lava_near, first.get("lava")))
     rep.check(drops == 0, "%d reachable cell(s) in the cavern stand beside a drop of more than %d or into a fluid; first %s"
               % (drops, SAFE_DROP, first.get("drop")))
-    rep.notes.append("%d reachable standing cells checked; %d of them on the open surface stand at a natural cliff (the ravine's rim: not on the path, reported and not failed)" % (len(reach), rim))
+    rep.check(quake_drops == 0, "%d reachable cell(s) on the surface stand beside a drop of more than %d that the quake cut; "
+                                "first %s" % (quake_drops, SAFE_DROP, first.get("quake_drop")))
+    rep.notes.append("%d reachable standing cells checked; %d of them on the open surface stand at a natural cliff the "
+                     "heightmap already had (reported, not failed)" % (len(reach), rim))
+    if rims:
+        worst = max(rims.items(), key=lambda kv: kv[1][0])
+        rep.notes.append("rim: %d column(s) beside a cut drop of more than %d, all guarded: %s; deepest drop %d at %s"
+                         % (len(rims), SAFE_DROP, all(v[1] for v in rims.values()), worst[1][0], worst[0]))
+    rep.rim = sorted((x, z, v[0], v[1], v[2]) for (x, z), v in rims.items())
     lava_cells = int((opened.cls == LAVA).sum())
     rep.check(lava_cells == int(sealed_lava.sum()), "the quake changes the lava")
 
@@ -706,6 +848,42 @@ def audit(runtime=RUNTIME, build=BUILD, ground=None, rewards=None, leg=None, gdo
         rep.checks += lrep.checks
         steps = L.placement_steps(doc2, ground)
         rep.check(("fn", CARVE_ONCE) in steps, "R14L's steps do not run carve_once")
+        # fail closed: #built is the carve's LAST write; R14L reads it back after carve_once, and the summon is held to it
+        bs = pack.body("cobblers:groudon_cavern/build/state")
+        rep.check(bool(bs) and bs[-1] == "scoreboard players set #built %s 1" % qobj,
+                  "the carve's state function does not set #built as its last line: %s" % bs[-1:])
+        cv = pack.body("cobblers:groudon_cavern/build/carve")
+        rep.check(bool(cv) and cv[-1] == "function cobblers:groudon_cavern/build/state",
+                  "the carve does not end with its state function: #built could be set before the blocks")
+        readers = {}
+        for fid in rt.fns:
+            for l in rt.body(fid):
+                m = re.fullmatch(r"execute store result score #(\S+) cobblers_chunk_look run scoreboard players get #built %s"
+                                 % re.escape(qobj), l)
+                if m:
+                    readers[fid] = m.group(1)
+        rep.check(len(readers) == 1, "no single runtime function copies #built to a score R14L reads: %s" % readers)
+        if readers and CARVE_ONCE in [s[1] for s in steps if s[0] == "fn"]:
+            (rfid, rholder), = list(readers.items())[:1]
+            rb = rt.body(rfid)
+            zero = "scoreboard players set #%s cobblers_chunk_look 0" % rholder
+            rep.check(zero in rb and rb.index(zero) < len(rb) - 1,
+                      "the read-back does not clear its copy first: a stale 1 would read as built")
+            ic = steps.index(("fn", CARVE_ONCE))
+            after = steps[ic + 1:]
+            ir = next((n for n, s in enumerate(after) if s == ("fn", rfid)), None)
+            ok = ir is not None and any(s[0] == "check" and isinstance(s[1], tuple) and s[1][0] == "chunk_look"
+                                        and s[1][1] == rholder and s[1][2] == 1 for s in after[ir + 1:])
+            rep.check(ok, "R14L does not read #built back (as a count of 1 in #%s) after carve_once: a skipped carve "
+                          "would summon Groudon into rock and report success" % rholder)
+            summon_i = next((n for n, s in enumerate(steps) if s[0] == "fn" and s[1].endswith("/%s/place" % rec["id"])), None)
+            rep.check(ok and summon_i is not None and summon_i > ic + 1 + ir,
+                      "R14L's summon chain does not run after the read-back")
+        act_f = fn_dir / rec["id"] / "place_act.mcfunction"
+        spawn = [l for l in (act_f.read_text(encoding="utf-8").splitlines() if act_f.is_file() else [])
+                 if "/spawn_new" in l and not l.startswith("#")]
+        rep.check(bool(spawn) and all("if score #built %s matches 1" % qobj in l for l in spawn),
+                  "the summon is not held to #built: %s" % spawn)
         ret = [i for i, s in enumerate(steps) if s[0] == "fn" and "retire_" in s[1] and not s[1].endswith("_restore")]
         rep.check(bool(ret) and ret[0] < steps.index(("fn", CARVE_ONCE)), "R14L does not run the cleanup before the carve")
         site = next(s for r, s in L.retired(doc2) if r["id"] == rec["id"])
@@ -805,9 +983,12 @@ def main(argv=None):
     ap.add_argument("--runtime", default=str(RUNTIME))
     ap.add_argument("--build", default=str(BUILD))
     ap.add_argument("--source-root")
+    ap.add_argument("--rim-out", help="write every rim column of the cut as JSON [x, z, deepest drop, guarded, stage]")
     a = ap.parse_args(argv)
     import ground as G
     rep = audit(Path(a.runtime), Path(a.build), G.Ground(a.source_root))
+    if a.rim_out:
+        Path(a.rim_out).write_text(json.dumps({"columns": [list(r) for r in rep.rim]}, indent=0) + "\n", encoding="utf-8")
     for n in rep.notes:
         print("note: %s" % n)
     for e in rep.errors:

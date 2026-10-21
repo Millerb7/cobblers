@@ -61,6 +61,9 @@ F = "%s:%s" % (NS, FOLDER)
 BUILD_PREFIX = F + "/build/"
 CARVE_ONCE = "%s:legendary/groudon/carve_once" % NS
 LOAD = "%s/load" % F
+BUILT_READ = "%s/built_read" % F
+BUILT_HOLDER = "groudon_cavern_built"     # #<holder> of tools/chunk_look.py's objective: R14L's read-back of #built
+CL_OBJ = "cobblers_chunk_look"            # tools/chunk_look.py OBJ (tests/test_groudon_cavern.py holds the two equal)
 PACK_FORMAT = 48
 PART_COMMANDS = 4000
 FILL_LIMIT = 32768
@@ -183,6 +186,12 @@ def retired_problems(doc, leg_doc, ground):
         if hull[0] <= doc["spine"]["lip"][0] <= hull[3] and hull[2] <= doc["spine"]["lip"][1] <= hull[5]:
             bad.append("the lip stands inside the retired hull")
     return bad
+
+
+def built_condition(doc=None):
+    """The execute clause that holds a line to a world the carve has finished in (#built is set by build/state, LAST)."""
+    doc = doc or load()
+    return "if score #built %s matches 1" % doc["quake"]["objective"]
 
 
 def hall_box(doc):
@@ -511,6 +520,120 @@ def stage_cells(doc, M):
     return {2: M.qa_r & north, 3: M.qa_r & ~north, 4: M.qa_p.copy()}
 
 
+N8 = [(di, dk) for di in (-1, 0, 1) for dk in (-1, 0, 1) if (di, dk) != (0, 0)]
+SIDES = (("north", 0, -1), ("east", 1, 0), ("south", 0, 1), ("west", -1, 0))
+
+
+def column_tops(M, cut):
+    """(nx, nz) the top solid y of every column once the cells of `cut` are air (natural terrain is solid up to the ground)."""
+    ys = M.o[1] + np.arange(M.shape[1])[None, :, None]
+    solid = (ys <= M.G[:, None, :]) & ~cut
+    return np.where(solid, ys, -10_000).max(axis=1)
+
+
+def rim_guard_columns(doc, M, cut):
+    """{(i, k) model column: (y_lo, y_hi)} the rim the cut `cut` (a 3-D mask) makes: every column the cut does not lower, with
+    an eight-neighbour lowered more than quake.rim.safe_drop below its ground, walled from one over its ground to one over the
+    highest ground of its uncut eight-neighbours (the wall's top then stands 1.5 over the feet of anyone beside it)."""
+    safe = int(doc["quake"]["rim"]["safe_drop"])
+    top = column_tops(M, cut)
+    G = M.G
+    lowered = top < G
+    nx, nz = G.shape
+    out = {}
+    for i in range(nx):
+        for k in range(nz):
+            if lowered[i, k]:
+                continue
+            drop = 0
+            high = int(G[i, k])
+            for di, dk in N8:
+                a, c = i + di, k + dk
+                if not (0 <= a < nx and 0 <= c < nz):
+                    continue
+                if lowered[a, c]:
+                    drop = max(drop, int(G[i, k]) - int(top[a, c]))
+                else:
+                    high = max(high, int(G[a, c]))
+            if drop > safe:
+                out[(i, k)] = (int(G[i, k]) + 1, high + 1)
+    return out
+
+
+def guard_mask(M, cols):
+    m = np.zeros(M.shape, bool)
+    y0 = M.o[1]
+    for (i, k), (lo, hi) in cols.items():
+        m[i, lo - y0:hi - y0 + 1, k] = True
+    return m
+
+
+def wall_states(M, walls, cut):
+    """{(i, j, k): state} the side states vanilla would give each wall cell of `walls`: a side connects (low) to a wall or a
+    solid block beside it at the same height, and the post shows unless the wall runs straight through."""
+    y0 = M.o[1]
+    nx, ny, nz = M.shape
+    out = {}
+    for i, j, k in zip(*np.nonzero(walls)):
+        con = {}
+        for name, di, dk in SIDES:
+            a, c = i + di, k + dk
+            solid = False
+            if 0 <= a < nx and 0 <= c < nz:
+                solid = bool(walls[a, j, c]) or (j + y0 <= M.G[a, c] and not cut[a, j, c])
+            con[name] = "low" if solid else "none"
+        straight = ((con["north"] == con["south"] == "low" and con["east"] == con["west"] == "none")
+                    or (con["east"] == con["west"] == "low" and con["north"] == con["south"] == "none"))
+        out[(int(i), int(j), int(k))] = "[east=%s,north=%s,south=%s,up=%s,waterlogged=false,west=%s]" % (
+            con["east"], con["north"], con["south"], "false" if straight else "true", con["west"])
+    return out
+
+
+def guard_commands(doc, M, writes, walls, cut):
+    """fill/setblock lines writing the wall cells `writes` in palette.rim_guard, with the states joining them to every wall
+    standing (`walls`) and to the solid ground beside them."""
+    block = doc["palette"]["rim_guard"]
+    states = {c: s for c, s in wall_states(M, walls, cut).items() if writes[c]}
+    names = sorted(set(states.values()))
+    ids = np.zeros(M.shape, np.int16)
+    for c, st in states.items():
+        ids[c] = names.index(st) + 1
+    return [command(b[:6], block + names[b[6] - 1]) for b in merge_boxes(ids, M.o)]
+
+
+def stage_guards(doc, M):
+    """{stage: (new wall mask, stale wall mask, the cut so far, the walls it writes, every wall standing after it)}: the rim
+    each stage's cut makes, written by that stage; and the walls an earlier stage wrote that this stage's cut takes away
+    (cleared, so no wall hangs over the ravine). A stage writes its new walls and the standing ones beside them again, so a
+    post an earlier stage wrote joins the new ones."""
+    cells = stage_cells(doc, M)
+    cum = np.zeros(M.shape, bool)
+    have = np.zeros(M.shape, bool)
+    out = {}
+    for st in (2, 3, 4):
+        cum = cum | cells[st]
+        walls = guard_mask(M, rim_guard_columns(doc, M, cum))
+        lowered = (column_tops(M, cum) < M.G)[:, None, :]
+        stale = have & lowered & ~walls
+        new = walls & ~have
+        have = (have & ~stale) | walls
+        # what this stage writes: its new walls and the standing ones beside them, so their posts join
+        out[st] = (new, stale, cum.copy(), have & dilate(new, 1, (0, 2)), have.copy())
+    return out
+
+
+def cut_falling_lines(box, seconds):
+    """The stage's own slow falling: anyone standing over the cut keeps their legs (the new floor is a walk, not a fall)."""
+    return ["# anyone standing over the cut keeps their legs: slow falling, so the new floor is a walk and not a fall",
+            "effect give @a[%s] minecraft:slow_falling %d 0 true" % (sel_box(box), seconds)]
+
+
+def tick_order():
+    """The order tick tests #quake's states in: the LAST first, so a stage that moves the state on is never followed, in
+    the same pass, by the line that tests the state it moved to. One state a pass, whatever the probes read."""
+    return (4, 3, 2, 1, 0)
+
+
 def mask_box(M, mask):
     i, j, k = np.nonzero(mask)
     x0, y0, z0 = M.o
@@ -572,40 +695,63 @@ def stage_functions(doc, M, leg_objective):
     info = {}
     fns = {}
     falling = int(q["slow_falling_seconds"])
+    guards = stage_guards(doc, M)
     allbox = mask_box(M, M.qa_r | M.qa_p)
     for st in (2, 3, 4):
         mask = cells[st]
         if not mask.any():
             raise CavernError("quake stage %d has no cells" % st)
-        wbox = mask_box(M, mask)
+        new_walls, stale, cum, writes, walls = guards[st]
+        wbox = mask_box(M, mask | writes | stale)
         probe = probe_cell(M, mask, lip_x)
         tb = trigger_box(wbox, int(q["trigger_pad"]))
         gap = chunk_gap(wbox, int(q["trigger_pad"]))
         if gap >= int(q["sim_chunks"]):
             raise CavernError("stage %d: a player at the trigger's edge is %d chunks from a chunk it writes; simulation "
                               "distance is %d" % (st, gap, q["sim_chunks"]))
-        info[st] = {"write_box": wbox, "probe": probe, "trigger": tb, "chunk_gap": gap}
+        info[st] = {"write_box": wbox, "probe": probe, "trigger": tb, "chunk_gap": gap,
+                    "rim_columns": len({(int(i), int(k)) for i, _j, k in zip(*np.nonzero(new_walls))})}
         cx, cy, cz = (wbox[0] + wbox[3]) // 2, wbox[4], (wbox[2] + wbox[5]) // 2
         lines = [HEAD, "# stage %d of the opening: run by tick only while #quake is %d and a player stands within %d blocks of"
                  % (st, st, q["trigger_pad"]),
                  "# every block it writes; it holds its own chunks (the forceload lines below, tools/function_limits.py), and the",
                  "# state moves on only after the probe cell reads air"]
-        pad_box = (wbox[0] - 2, wbox[1] - 2, wbox[2] - 2, wbox[3] + 2, wbox[4] + 60, wbox[5] + 2)
-        lines += ["# anyone standing over the cut keeps their legs: slow falling, so the new floor is a walk and not a fall",
-                  "effect give @a[%s] minecraft:slow_falling %d 0 true" % (sel_box(pad_box), falling),
-                  "playsound minecraft:entity.generic.explode master @a[%s] %d %d %d 4 0.5" % (sel_box(tb), cx, cy, cz),
+        cbox = mask_box(M, mask)
+        pad_box = (cbox[0] - 2, cbox[1] - 2, cbox[2] - 2, cbox[3] + 2, cbox[4] + 60, cbox[5] + 2)
+        lines += cut_falling_lines(pad_box, falling)
+        lines += ["playsound minecraft:entity.generic.explode master @a[%s] %d %d %d 4 0.5" % (sel_box(tb), cx, cy, cz),
                   "playsound minecraft:block.basalt.break master @a[%s] %d %d %d 4 0.6" % (sel_box(tb), cx, cy, cz),
                   "particle minecraft:explosion_emitter %d %d %d 5 2 8 0 6 force" % (cx, cy - 6, cz),
                   "particle minecraft:large_smoke %d %d %d 6 8 10 0.05 80 force" % (cx, cy - 4, cz),
                   "tellraw @a[%s] %s" % (sel_box(tb), text(msg[{2: "split", 3: "fall", 4: "breach"}[st]], "gold"))]
         for b in merge_boxes(mask.astype(np.int16), M.o):
             lines.append(command(b[:6], AIR))
+        if stale.any():
+            lines.append("# the rim guard an earlier stage stood on ground this cut has taken away")
+            lines += [command(b[:6], AIR) for b in merge_boxes(stale.astype(np.int16), M.o)]
+        if new_walls.any():
+            lines.append("# the rim this cut makes: every column beside a drop of more than %d gets %s, 1.5 over the feet of anyone"
+                         % (int(q["rim"]["safe_drop"]), doc["palette"]["rim_guard"]))
+            lines.append("# beside it (data/groudon_cavern.json quake.rim); the standing walls beside them are written again, so")
+            lines.append("# the posts join")
+            lines += guard_commands(doc, M, writes, walls, cum)
         lines = FL.split_fills(lines)
         lines.append("execute if block %d %d %d %s run scoreboard players set #quake %s %d" % (probe + (AIR, O, st + 1)))
         if st == 4:
             lines.append("execute if score #quake %s matches 5 run function %s/opened" % (O, F))
         fns["stage/%d" % st] = FL.ensure_loaded(lines)
     return fns, info, allbox
+
+
+def built_read_lines(doc):
+    """cobblers:groudon_cavern/built_read: R14L's read-back (tools/legendaries.py placement_steps). #built copied to the score
+    the step reads (tools/chunk_look.py's objective); 0 first, so a stale copy can never read as built."""
+    O = doc["quake"]["objective"]
+    return [HEAD, "# R14L's read-back (tools/legendaries.py placement_steps): #built of this objective, copied to the score the",
+            "# step reads (tools/chunk_look.py's objective), 0 first so a stale copy can never read as built",
+            "scoreboard objectives add %s dummy" % CL_OBJ,
+            "scoreboard players set #%s %s 0" % (BUILT_HOLDER, CL_OBJ),
+            "execute store result score #%s %s run scoreboard players get #built %s" % (BUILT_HOLDER, CL_OBJ, O)]
 
 
 def runtime_files(doc, M, leg_objective, stand_y):
@@ -623,28 +769,40 @@ def runtime_files(doc, M, leg_objective, stand_y):
                    "scoreboard objectives add %s minecraft.custom:minecraft.leave_game" % left,
                    "execute unless score #built %s matches -2147483648.. run scoreboard players set #built %s 0" % (O, O),
                    "execute unless score #quake %s matches -2147483648.. run scoreboard players set #quake %s 0" % (O, O),
-                   "schedule function %s/tick 20t replace" % F]
+                   "schedule function %s/tick 20t replace" % F,
+                   "schedule function %s/rejoin 1t replace" % F]
     lip = doc["spine"]["lip"]
     tr1 = trigger_box(allbox, int(q["trigger_pad"]))
+    drive = {
+        0: ["# the rumble: the first moment any player online holds gym8_cleared (a poll, so it also catches a flag granted by a",
+            "# command, or held before this existed); world-wide and once",
+            "execute if score #built %s matches 1 if score #quake %s matches 0 if entity @a[%s] run function %s/rumble"
+            % (O, O, flag, F)],
+        1: ["execute if score #built %s matches 1 if score #quake %s matches 1 if entity @a[%s] run function %s/stage/1"
+            % (O, O, sel_box(tr1), F)]}
+    for st in (2, 3, 4):
+        drive[st] = ["execute if score #built %s matches 1 if score #quake %s matches %d if entity @a[%s] run function %s/stage/%d"
+                     % (O, O, st, sel_box(info[st]["trigger"]), F, st)]
     fns["tick"] = [
         HEAD, "# every 20 ticks. #built is set by the carve (cobblers:groudon_cavern/build/state): nothing below acts on an",
         "# unbuilt world. #quake: 0 sealed, 1 rumbled, 2 tremor played, 3 upper ravine cut, 4 lower ravine cut, 5 open for good",
         "schedule function %s/tick 20t replace" % F,
-        "# the rumble: the first moment any player online holds gym8_cleared (a poll, so it also catches a flag granted by a",
-        "# command, or held before this existed); world-wide and once",
-        "execute if score #built %s matches 1 if score #quake %s matches 0 if entity @a[%s] run function %s/rumble" % (O, O, flag, F),
-        "# the opening: a stage a second while someone is near enough that every chunk it writes is theirs",
-        "execute if score #built %s matches 1 if score #quake %s matches 1 if entity @a[%s] run function %s/stage/1" % (O, O, sel_box(tr1), F)]
-    for st in (2, 3, 4):
-        fns["tick"].append("execute if score #built %s matches 1 if score #quake %s matches %d if entity @a[%s] run function %s/stage/%d"
-                           % (O, O, st, sel_box(info[st]["trigger"]), F, st))
+        "# the opening: a stage a second while someone is near enough that every chunk it writes is theirs. The states are",
+        "# tested LAST FIRST: a line that moves #quake on is never followed in this pass by the line testing the next state,",
+        "# so the tremor and the three cuts fall on four separate passes and never in one tick"]
+    for st in tick_order():
+        fns["tick"] += drive[st]
     over = (allbox[0] - 2, allbox[1] - 2, allbox[2] - 2, allbox[3] + 2, allbox[4] + 80, allbox[5] + 2)
-    fns["tick"] += [
-        "# a player who logged out standing over the cut and is back after it has fallen into the ravine: slow falling, so the",
-        "# new floor is a walk and not a fall (their count of leaving the game, then cleared; the effect only where the cut is)",
+    fns["rejoin"] = [
+        HEAD, "# every tick, so it lands on the first tick a player is back: a player who logged out standing over the cut and is",
+        "# back after it would load in over the ravine. Slow falling, so the new floor is a walk and not a fall (their count of",
+        "# leaving the game, then cleared; the effect only where the cut is)",
+        "schedule function %s/rejoin 1t replace" % F,
         "execute if score #quake %s matches 2.. as @a[scores={%s=1..},%s] run effect give @s minecraft:slow_falling %d 0 true"
         % (O, left, sel_box(over), int(q["slow_falling_seconds"])),
-        "scoreboard players reset @a[scores={%s=1..}] %s" % (left, left),
+        "scoreboard players reset @a[scores={%s=1..}] %s" % (left, left)]
+    fns["built_read"] = built_read_lines(doc)
+    fns["tick"] += [
         "# the keeper: anyone in the hall without gym8_cleared is sent back to the bowl (creative and spectator are left alone)",
         "execute if score #built %s matches 1 as @a[%s] unless entity @s[%s] run function %s/eject"
         % (O, sel_box(tuple(g["box"]), "gamemode=!creative,gamemode=!spectator"), flag, F)]
