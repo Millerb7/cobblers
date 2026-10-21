@@ -27,7 +27,7 @@ owner to close. Head and PR number: see the PR; re-read with `git fetch --prune`
   in; the owner must enable it and AllTheMons in the menu.
 
 ## 3. Waiting on the owner
-- What goes in the big western crater (~(6118, 213, 5527))? Asked, undecided.
+- The big western crater (~(6118, 213, 5527)): the owner declined a Heatran lair; leave it alone unless asked.
 - **A durable launch:** a one-shot Task Scheduler start (asked; needs a yes), or the owner runs
   `server/scripts/start-live.ps1` from their own PowerShell window. The WMI launch died after 44 min.
 - Raise the owner's level cap (RCT records through Giovanni) to catch Kyogre/Groudon? Unanswered.
