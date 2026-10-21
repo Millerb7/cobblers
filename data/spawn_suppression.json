@@ -290,6 +290,18 @@
       "why": "the owner, 2026-10-09: the burrow is \"clear of spawns\". The burrow's x/z (mouth x1827 to the watch room x1865, z721-751) snapped out to the 8-block grid the route boxes share (data/spawn_suppression.json league_precinct's rule). The boxes are x/z only, so the face over it is spawn-free too. Recorded in data/frostpeak_keep_quest.json burrow.spawn_free_zone.",
       "mechanism": "tools/compile_spawns.py cuts it out of every route, sub-region and waterway pool, and tools/suppress_inherited_spawns.py adds it to the inherited pools' anticondition boxes, so neither the campaign's rosters nor Cobblemon's and Cobbleverse's defaults spawn inside it",
       "not_covered": "Pokemon a player sends out, and anything a trainer spawner or scripted event puts there"
+    },
+    {
+      "id": "groudon_cavern",
+      "box": [
+        6728,
+        5592,
+        6799,
+        5655
+      ],
+      "why": "2026-10-21 (Groudon's magma hall, data/groudon_cavern.json hall: centre (6764, 5624), radius 28 with a wobble of 1.5, so x6734-6794 z5594-5654), snapped out to the 8-block grid the route boxes share. A wild Pokemon in the arena of a legendary battle is a nuisance: nothing wanders into the hall. The boxes are x/z only, so the plateau over the hall (ground y131-146, 45 blocks over its dome) is spawn-free too: 72 by 64 columns. Recorded in data/legendaries.json groudon.spawn_free_zone, which is the same box with an exclusive east and south edge.",
+      "mechanism": "as wardenhold_burrow's: tools/compile_spawns.py cuts it out of every route, sub-region and waterway pool, and tools/suppress_inherited_spawns.py adds it to the inherited pools' anticondition boxes",
+      "not_covered": "Pokemon a player sends out, anything a scripted event puts there, and the ravine and the tunnel (a wild Pokemon on the way down is the point)"
     }
   ]
 }

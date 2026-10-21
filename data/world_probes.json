@@ -9906,6 +9906,108 @@
         ],
         "expect": true
       }
+    ],
+    "groudon_cavern": [
+      {
+        "what": "groudon_cavern: the lake's lava",
+        "block": [
+          6764,
+          64,
+          5614,
+          "minecraft:lava"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_cavern: the lake's wall (one block over the floor)",
+        "block": [
+          6775,
+          65,
+          5614,
+          "minecraft:blackstone_wall"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_cavern: the hall floor between the lake and the dais",
+        "block": [
+          6764,
+          64,
+          5626,
+          "minecraft:smooth_basalt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_cavern: the dais ring",
+        "block": [
+          6769,
+          65,
+          5638,
+          "minecraft:polished_blackstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_cavern: the dais top",
+        "block": [
+          6761,
+          66,
+          5638,
+          "minecraft:polished_basalt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_cavern: the pedestal (the Red Orb's container)",
+        "block": [
+          6764,
+          66,
+          5638,
+          "minecraft:smooth_basalt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_cavern: air over the dais where Groudon stands",
+        "block": [
+          6764,
+          67,
+          5638,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_cavern: the tunnel's floor at its first bend",
+        "block": [
+          6712,
+          80,
+          5572,
+          "minecraft:basalt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_cavern: the tunnel's air above it",
+        "block": [
+          6712,
+          81,
+          5572,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_cavern: Groudon (one tagged cobblers_leg_groudon: dormant until the quake, awake after)",
+        "hold": [
+          6764,
+          67,
+          5638
+        ],
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers_leg_groudon]",
+        "count_max": 1
+      }
     ]
   }
 }

@@ -145,6 +145,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # after R16P (the dimension) and R18CW (the arch); world-local below
                 "cobblers_kyogre_cave",
                 "cobblers_kyogre_cave_build",
+                # 2026-10-21: Groudon's quake cavern under the Craters' eastern bowl (tools/groudon_cavern.py,
+                # data/groudon_cavern.json): the runtime (rumble, the opening, the keeper) and its one-shot carve, which
+                # R14L runs through cobblers:legendary/groudon/carve_once and tools/pack_split.py keeps out of the heap
+                "cobblers_groudon_cavern",
+                "cobblers_groudon_cavern_build",
                 # 2026-10-09: the Merian Ice Lodge (tools/ice_lodge.py, data/ice_lodge.json): the Merian cirque's frozen tarn,
                 # its shelters, lodge, racks and gear, and the holekeeper's class and dialogue; one block function and one
                 # NPC, run by R18IL
@@ -538,6 +543,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                # 2026-10-13: the Kyogre cave's keeper SPAWNS a legendary and set pieces, sets game modes and teleports
                # players on its own: never global; its geometry beside it
                "cobblers_kyogre_cave", "cobblers_kyogre_cave_build",
+               # 2026-10-21: the Craters' quake: its keeper sends players out of the hall, teleports, gives slow falling and
+               # cuts the ravine on its own tick when the first gym-8 win is seen: never global; its carve beside it
+               "cobblers_groudon_cavern", "cobblers_groudon_cavern_build",
                # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
                "cobblers_key_ball",
                # 2026-10-09: closes the Waystones recipes; global would close them in the live world too
@@ -954,6 +962,13 @@ def prepare_jobs(a):
     # export's keep zone stops prepare here, before anything is installed
     add("legendaries", "legendaries.py")
     add("legendaries:audit", "legendaries_audit.py")
+    # Groudon's quake cavern (2026-10-21, data/groudon_cavern.json): the runtime pack and its _build pack, after the legendaries
+    # (its record is theirs: it fails when data/legendaries.json, data/rewards.json or data/world_probes.json disagree with
+    # the model), then its independent audit, which REPLAYS the emitted writes onto the terrain and fails the prepare on a
+    # leak, a walk that does not reach Groudon and back, lava beside the path, a keeper that misses the hall, a stage whose
+    # chunks no player holds, or a cleanup that leaves the old chamber
+    add("groudon_cavern:build", "groudon_cavern.py", "build", *src)
+    add("groudon_cavern:audit", "groudon_cavern_audit.py", *src)
     # Rayquaza's arch, island and pillar (data/rayquaza_sky.json): the runtime pack and its _build pack; it refuses a spawn
     # condition, a light block, a plinth past its cut and fill limits, an island within 8 of the cone, and probes that drifted
     add("rayquaza_sky:build", "rayquaza_sky.py", "build", *src)
