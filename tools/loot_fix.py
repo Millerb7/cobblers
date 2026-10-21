@@ -150,6 +150,7 @@ def stage_tables():
     for sid, s in stage_doc().items():
         for kind in s.get("kinds") or {}:
             out.add("%s:chests/%s/%s" % (NS, sid, kind))
+    out |= {site_table_id(k) for k in site_overrides()}
     return out
 
 
@@ -509,14 +510,40 @@ def table_json(stage_id, stage, kind, spec):
     return {"type": "minecraft:chest", "pools": pools}
 
 
+def site_overrides():
+    """{site id: (stage id, extra entries)} from data/stage_loot.json site_overrides: a legendary site's own table is its
+    stage's legendary_site entries plus these themed ones (the owner, 2026-10-21: 'give the player something cool')."""
+    f = ROOT / "data" / "stage_loot.json"
+    if not f.exists():
+        return {}
+    ov = json.loads(f.read_text(encoding="utf-8")).get("site_overrides") or {}
+    return {k: (v["stage"], v.get("add") or []) for k, v in ov.items()
+            if isinstance(v, dict) and v.get("stage") and v.get("add")}
+
+
+def site_table_id(site):
+    stage, _ = site_overrides()[site]
+    return "%s:chests/%s/legendary_%s" % (NS, stage, site)
+
+
 def write_tables(out):
     n = 0
-    for sid, st in stage_doc().items():
+    docs = stage_doc()
+    for sid, st in docs.items():
         for kind, spec in (st.get("kinds") or {}).items():
             p = Path(out) / "data" / NS / "loot_table" / "chests" / sid / (kind + ".json")
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_text(json.dumps(table_json(sid, st, kind, spec), indent=1) + "\n", encoding="utf-8")
             n += 1
+    for site, (stage, add) in site_overrides().items():
+        st = docs.get(stage)
+        if not st or "legendary_site" not in (st.get("kinds") or {}):
+            continue
+        spec = dict(st["kinds"]["legendary_site"])
+        spec["entries"] = list(spec.get("entries") or []) + list(add)
+        p = Path(out) / "data" / NS / "loot_table" / "chests" / stage / ("legendary_%s.json" % site)
+        p.write_text(json.dumps(table_json(stage, st, "legendary_site", spec), indent=1) + "\n", encoding="utf-8")
+        n += 1
     return n
 
 
