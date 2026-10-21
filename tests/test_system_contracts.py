@@ -1870,10 +1870,11 @@ def test_contract_c30_the_fossick_path_is_laid_as_the_town_pass_paves_it():
     assert cells and not wrong, "%d cells of the path differ from the town pass's paving, e.g. %s" % (len(wrong), wrong[:3])
 
 
-# C31: the quake cavern (tools/groudon_cavern.py) and the legendary it houses (tools/legendaries.py) are two packs that share a
-# flag, an objective and one score. If the cavern polled another flag, or two lines wrote the open score, or the cleanup's
-# probe were the new pedestal, the sleeper would wake early or never, or the cleanup would take the new cavern down.
-def test_contract_c31_the_quake_and_the_legendary_agree_on_the_flag_and_the_open_score():
+# C31 (2026-10-21, the cavern undone): the quake cavern's cleanup (tools/groudon_cavern.py) and Groudon's sealed chamber
+# (tools/legendaries.py) share one score. If the cleanup cleared it on every run, a second R14L would re-seal a plug a player
+# had opened; if it never cleared it, carve_once would skip and the chamber would never come back; if its gate were a cell
+# the chamber writes, the gate would never close.
+def test_contract_c31_the_cavern_cleanup_clears_the_chamber_score_once():
     try:
         import ground as G
         g = G.Ground()
@@ -1884,31 +1885,28 @@ def test_contract_c31_the_quake_and_the_legendary_agree_on_the_flag_and_the_open
     import legendaries as LG
     ldoc = LG.load()
     rec = next(r for r in ldoc["encounters"] if r["id"] == "groudon")
-    flag = rec["gate"]["flags"][0]
-    gdoc = GC.load()
-    assert gdoc["quake"]["flag"] == flag
-    prog, leg = _c26_owner_files()
-    assert "data/cobblers/advancement/flag/%s.json" % flag in prog, "no pack defines the flag the quake polls"
-    p = GC.plan(gdoc, g)
-    rfns, _info = GC.runtime_files(gdoc, p["M"], ldoc["objective"], 100)
-    poll = [ln for ln in rfns["tick"] if "function cobblers:groudon_cavern/rumble" in ln]
-    assert len(poll) == 1 and "advancements={cobblers:flag/%s=true}" % flag in poll[0], poll
+    assert rec["kind"] == "sealed_chamber"
+    site = next(s for s in rec["retired_sites"] if s["id"] == GC.SITE_ID)
+    _prog, leg = _c26_owner_files()
     holder = "#%s %s" % (rec["id"], ldoc["objective"])
-    setters = [name for name, lines in rfns.items() for ln in lines if ln == "scoreboard players set %s 1" % holder]
-    assert setters == ["opened"], "the open score is written by %s, not by `opened` alone" % setters
-    callers = [name for name, lines in rfns.items() for ln in lines if "function cobblers:groudon_cavern/opened" in ln]
-    assert callers == ["stage/4"], callers
-    near = leg["data/cobblers/function/legendary/groudon/near.mcfunction"]
-    assert "execute if score %s matches 1 as @e[tag=cobblers_leg_groudon,tag=!cobblers_leg_groudon.awake" % holder in near
-    assert "execute if score %s matches 0 run function cobblers:legendary/groudon/keep" % holder in near
-    carve_once = GC.build_files(gdoc, p["M"], p["B"], p["names"], ldoc)[GC.CARVE_ONCE]
-    assert any("unless score %s matches 1" % holder in ln for ln in carve_once), carve_once
-    site = next(s for r, s in LG.retired(ldoc) if r["id"] == "groudon")
-    old = LG.retired_geometry(rec, site, ldoc, g)["pedestal"]
-    new = LG.geometry(rec, ldoc, g)["pedestal"]
-    assert tuple(old) != tuple(new), "the cleanup's probe is the new pedestal"
-    restore = leg["data/cobblers/function/legendary/groudon/retire_%s_restore.mcfunction" % site["id"]]
-    assert "scoreboard players set %s 0" % holder in restore
+    fdir = "data/cobblers/function/legendary/groudon/"
+    carve_once = leg[fdir + "carve_once.mcfunction"]
+    assert "execute unless score %s matches 1 run function cobblers:legendary/groudon/carve" % holder in carve_once
+    restore = [l for l in leg[fdir + "retire_%s_restore.mcfunction" % site["id"]].splitlines()
+               if l.strip() and not l.startswith("#")]
+    assert restore[0] == "scoreboard players set %s 0" % holder, restore[:2]
+    setters = [rel for rel, text in leg.items() if rel.endswith(".mcfunction")
+               and "scoreboard players set %s 0" % holder in text]
+    assert setters == [fdir + "retire_%s_restore.mcfunction" % site["id"]], setters
+    act = leg[fdir + "retire_%s_act.mcfunction" % site["id"]]
+    px, py, pz = site["pedestal"]
+    assert "if block %d %d %d %s run function" % (px, py, pz, site["pedestal_block"]) in act
+    assert "if score #built cobblers.gq matches 1 run function" in act
+    hull = LG.geometry(rec, ldoc, g)["bbox"]
+    assert not (hull[0] <= px <= hull[3] and hull[1] <= py <= hull[4] and hull[2] <= pz <= hull[5]), \
+        "the cleanup's gate is a cell the chamber writes"
+    assert restore[-1] == "scoreboard players set #quake cobblers.gq 0" and \
+        restore[-2] == "scoreboard players set #built cobblers.gq 0" and restore[-3].startswith("setblock %d %d %d " % (px, py, pz))
 
 
 def test_every_contract_names_existing_tests():

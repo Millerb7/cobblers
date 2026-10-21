@@ -32,10 +32,6 @@ THE CHAMBER, PARAMETRIC BY DESIGN
                     shown to everyone and only answer to a badge (WATER_BUILD_PLAN 4.2).
     sealed_chamber  a stone plug at the surface -> a dry ladder shaft -> a short adit -> the chamber. The
                     plug IS the gate and it never closes again, so nobody is sealed in.
-    quake_cavern    (2026-10-21, Groudon) no box chain: tools/groudon_cavern.py (data/groudon_cavern.json) supplies the
-                    geometry and, in its own packs, the carve (carve_once, in a _build pack), the rumble, the opening and the
-                    keeper. THIS tool still owns the entity: dress, keep, met, the wake, the look-then-act summon and the
-                    retired site's cleanup, and the near/tick driver from the dais (it has no open, carve or plug).
 
 A RECORD THAT MOVES (2026-10-12, Regigigas to the North Pine Isle) keeps its old chamber in `retired_sites`, each
 entry the numbers that chamber was carved from (bore, shell_margin and pedestal_block frozen as they stood). For
@@ -44,6 +40,11 @@ a retired void (and the step reads the held count back, so the run stops), resto
 sleeve and plug columns to the heightmap's terrain, clears the retired chamber's open score, and kills the record's
 own legendary in the old chamber's box. The restore runs only while the old pedestal stands, so a second run
 writes nothing; its ground is the heightmap (never a world) and its surface block is data, `terrain.surface`.
+
+A retired site of kind `quake_cavern` (2026-10-21, Groudon's quake cavern, which the owner had undone and the old
+chamber put back) is not a box chain: tools/groudon_cavern.py retire_functions emits its cleanup in the same shape
+(look-then-act, refuse while a player stands in a void, read the held count back, restore only while the cavern is
+there, kill the record's own legendary in the cavern's box), and this tool puts it in the pack and in R14L's order.
 
   python tools/legendaries.py                     # -> build/datapacks/cobblers_legendaries
   python tools/legendaries.py --report            # the geometry of every record, nothing written
@@ -67,7 +68,8 @@ SCHEMA = "cobblers.legendaries/1"
 PACK_FORMAT = 48  # Minecraft 1.21.1
 FILL_LIMIT = 32768
 
-KINDS = ("lake_grotto", "sealed_chamber", "quake_cavern", "sapling_wake")
+KINDS = ("lake_grotto", "sealed_chamber", "sapling_wake")
+RETIRED_KINDS = ("sealed_chamber", "quake_cavern")   # a retired site's `kind`; absent means sealed_chamber
 STATUSES = ("sited", "blocked", "gate_only")
 
 # bearing -> (dx, dz). Cardinals only: every box stays axis aligned, so every write is a `fill`.
@@ -116,6 +118,8 @@ def load(path=DATA):
 
 RETIRED_KEYS = ("id", "retired", "why", "portal", "approach", "chamber", "plug_depth", "bore", "shell_margin",
                 "pedestal_block", "terrain")
+# a retired quake cavern (2026-10-21): its geometry is data/groudon_cavern.json's model, frozen by the applied record's sha256
+RETIRED_QUAKE_KEYS = ("id", "retired", "why", "portal", "cavern", "pedestal", "pedestal_block", "applied", "terrain")
 TERRAIN_KEYS = ("surface", "under", "deep")
 
 
@@ -131,10 +135,13 @@ def _check_retired(rec):
         if sid in seen:
             raise LegendaryError("%s: declared twice" % where)
         seen.add(sid)
-        if rec["kind"] not in ("sealed_chamber", "quake_cavern"):
-            raise LegendaryError("%s: only a sealed_chamber (or the quake_cavern that replaced one) can have a retired site "
-                                 "(a lake grotto's undoing is the water's, and nothing here writes it)" % where)
-        for k in RETIRED_KEYS:
+        if rec["kind"] != "sealed_chamber":
+            raise LegendaryError("%s: only a sealed_chamber can have a retired site (a lake grotto's undoing is the "
+                                 "water's, and nothing here writes it)" % where)
+        kind = site_kind(s)
+        if kind not in RETIRED_KINDS:
+            raise LegendaryError("%s: kind must be one of %s" % (where, ", ".join(RETIRED_KINDS)))
+        for k in (RETIRED_QUAKE_KEYS if kind == "quake_cavern" else RETIRED_KEYS):
             if k not in s:
                 raise LegendaryError("%s: no %s; the cleanup would have to guess it" % (where, k))
         for k in TERRAIN_KEYS:
@@ -144,6 +151,11 @@ def _check_retired(rec):
             raise LegendaryError("%s: portal must be [x, z]" % where)
         if s["portal"] == rec.get("portal"):
             raise LegendaryError("%s: the retired portal is the record's live portal; nothing moved" % where)
+
+
+def site_kind(site):
+    """A retired site's kind: `sealed_chamber` (the default: every site before 2026-10-21) or `quake_cavern`."""
+    return site.get("kind") or "sealed_chamber"
 
 
 def emitted(doc):
@@ -177,13 +189,7 @@ def geometry(rec, doc, ground):
 
     Pure arithmetic on the record and the heightmap: no world is read, and the same function is what
     tools/legendaries_audit.py re-derives the plan from.
-
-    A quake_cavern record (2026-10-21) has no box chain: tools/groudon_cavern.py supplies the keys files() reads
-    (legendary, pedestal, zone, chamber, bbox, anchor, mouth_y), from the record's own data file.
     """
-    if rec["kind"] == "quake_cavern":
-        import groudon_cavern
-        return groudon_cavern.legendary_geometry(rec, doc, ground)
     d = doc["defaults"]
     mx, mz = _anchor(rec)
     my = ground(mx, mz)
@@ -405,7 +411,12 @@ def retire_functions(rec, site, doc, ground):
 
     The kill is the chamber's own and nothing else: type cobblemon:pokemon, the record's tag, and the retired
     chamber's box. The live chamber's legendary carries the same tag and stands elsewhere, outside that box.
-    The chain counts the players it held (RETIRE_HELD); the step reads 0 back, so a refusal stops the run."""
+    The chain counts the players it held (RETIRE_HELD); the step reads 0 back, so a refusal stops the run.
+
+    A retired QUAKE CAVERN (2026-10-21) is tools/groudon_cavern.py's: the same shape over its own model."""
+    if site_kind(site) == "quake_cavern":
+        import groudon_cavern
+        return groudon_cavern.retire_functions(rec, site, doc, ground)
     import chunk_look as CL
     g = retired_geometry(rec, site, doc, ground)
     base, restore, holder, new_tag = retire_parts(rec, site, doc)
@@ -425,7 +436,7 @@ def retire_functions(rec, site, doc, ground):
     # the restore runs while the old pedestal stands; and ALSO when a player opened the old chamber and took the pedestal
     # away (review 2026-10-21): then the pedestal's cell, the old legendary's cell over it and the passage's floor-level
     # cell all read air, three cells that natural rock (a world that never had the chamber) does not hollow together.
-    # Without it the old open score stays 1 and a quake cavern's carve_once (which skips an opened chamber) never runs.
+    # Without it the old open score stays 1 and the live chamber's carve_once (which skips an opened chamber) never runs.
     # The restore puts rock in all three, so neither line fires twice.
     pp = gone_pedestal_probe(g)
     act += ["execute unless entity %s if block %d %d %d %s run function %s"
@@ -566,13 +577,7 @@ def files(doc, ground):
         lake = rec["kind"] == "lake_grotto"
         lx, ly, lz = g["legendary"]
         at = "%.1f %d %.1f" % (lx + 0.5, ly, lz + 0.5)
-        quake = rec["kind"] == "quake_cavern"
-        if quake:
-            # the cavern's keeper (tools/groudon_cavern.py) drives the opening and the gate; this driver is the legendary's own:
-            # `met`, the wake and the dormant keep, from the dais (the entity is only loaded while somebody is near it)
-            drive_x, drive_y, drive_z = lx, ly, lz
-            reach = 48
-        elif lake:
+        if lake:
             # driven from the CHAMBER's centre, not the mouth: open/close write the partition, so whoever
             # trips the driver has to be close enough to be holding those chunks loaded themselves
             cx0, cy0, cz0, cx1, cy1, cz1 = g["chamber"]
@@ -588,26 +593,10 @@ def files(doc, ground):
                     % (drive_x, drive_y, drive_z, reach, ns, rid))
 
         near = ["# %s. The gate is the advancement predicate on every line that can open this chamber." % rec["title"]]
-        if quake:
-            near = ["# %s (a quake cavern: tools/groudon_cavern.py). Nothing here opens anything: the world's first gym-8 win "
-                    "sets the earthquake off and its keeper cuts the way in and turns away the unqualified (cobblers:%s/tick)."
-                    % (rec["title"], "groudon_cavern"),
-                    "# The wake: once the cavern is open (#%s %s is 1) the sleeper is woken, one entity at a time, by a tag on "
-                    "the entity itself, so a Groudon summoned again after a re-export is woken too" % (rid, obj),
-                    "execute if score #%s %s matches 1 as @e[tag=%s,tag=!%s.awake,limit=1] run function %s:legendary/%s/wake"
-                    % (rid, obj, tag, tag, ns, rid)]
-            fn["legendary/%s/wake" % rid] = [
-                "# as the dormant legendary of an opened cavern, once: AWAKE is the same merge the other chambers use on opening",
-                "data merge entity @s {%s}" % _nbt(AWAKE),
-                "tag @s add %s.awake" % tag,
-                "playsound minecraft:entity.ender_dragon.growl master @a[distance=..48] %d %d %d 2 0.5" % (lx, ly, lz),
-                "tellraw @a[distance=..48] %s" % json.dumps(
-                    {"text": rec["title"].split(",")[0] + " stirs.", "color": "aqua", "italic": True}, ensure_ascii=False)]
-        else:
-            gate_zone = g["zone"] if lake else _grow(_box(g["anchor"][0], g["mouth_y"], g["anchor"][1],
-                                                          g["anchor"][0], g["mouth_y"] + 2, g["anchor"][1]), 2)
-            near.append("execute if entity %s unless score #%s %s matches 1 run function %s:legendary/%s/open"
-                        % (_zone_sel(gate_zone, _sel(rec, ns)), rid, obj, ns, rid))
+        gate_zone = g["zone"] if lake else _grow(_box(g["anchor"][0], g["mouth_y"], g["anchor"][1],
+                                                      g["anchor"][0], g["mouth_y"] + 2, g["anchor"][1]), 2)
+        near.append("execute if entity %s unless score #%s %s matches 1 run function %s:legendary/%s/open"
+                    % (_zone_sel(gate_zone, _sel(rec, ns)), rid, obj, ns, rid))
         if lake:
             # never shut anyone in: the partition stays open while ANY player is in the chamber or the doorway
             # (play test 2026-10-05, review 87: the approach box alone let Azelf's gate close on a player inside)
@@ -618,22 +607,21 @@ def files(doc, ground):
                     % (_zone_sel(g["zone"], _sel(rec, ns, met_false=True)), ns, rid))
         near.append("execute if score #%s %s matches 0 run function %s:legendary/%s/keep" % (rid, obj, ns, rid))
 
-        if not quake:
-            open_ = ["# chunks-loaded-by: the player who trips it. cobblers:legendary/%s/near only calls this when a"
-                     " qualified player stands within %d blocks of this write, inside their own simulation radius"
-                     % (rid, reach),
-                     "scoreboard players set #%s %s 1" % (rid, obj)]
-            if lake:
-                open_ += _fill(g["door"], "minecraft:air", " replace %s" % doc["defaults"]["door_block"])
-            else:
-                open_ += _fill(g["plug"], "minecraft:air")
-            open_ += ["data merge entity @e[tag=%s,limit=1] {%s}" % (tag, _nbt(AWAKE)),
-                      "playsound minecraft:block.beacon.activate master @a[distance=..48] %d %d %d 1 0.6"
-                      % (lx, ly, lz),
-                      "tellraw @a[distance=..48] %s" % json.dumps(
-                          {"text": rec["title"].split(",")[0] + " stirs.", "color": "aqua", "italic": True},
-                          ensure_ascii=False)]
-            fn["legendary/%s/open" % rid] = open_
+        open_ = ["# chunks-loaded-by: the player who trips it. cobblers:legendary/%s/near only calls this when a"
+                 " qualified player stands within %d blocks of this write, inside their own simulation radius"
+                 % (rid, reach),
+                 "scoreboard players set #%s %s 1" % (rid, obj)]
+        if lake:
+            open_ += _fill(g["door"], "minecraft:air", " replace %s" % doc["defaults"]["door_block"])
+        else:
+            open_ += _fill(g["plug"], "minecraft:air")
+        open_ += ["data merge entity @e[tag=%s,limit=1] {%s}" % (tag, _nbt(AWAKE)),
+                  "playsound minecraft:block.beacon.activate master @a[distance=..48] %d %d %d 1 0.6"
+                  % (lx, ly, lz),
+                  "tellraw @a[distance=..48] %s" % json.dumps(
+                      {"text": rec["title"].split(",")[0] + " stirs.", "color": "aqua", "italic": True},
+                      ensure_ascii=False)]
+        fn["legendary/%s/open" % rid] = open_
 
         if lake:
             fn["legendary/%s/close" % rid] = (
@@ -668,20 +656,13 @@ def files(doc, ground):
         spawn_new.append("execute positioned %s as @e[%s,distance=..3,limit=1,sort=nearest] run tag @s add %s"
                          % (at, scope, new_tag))
         fn["legendary/%s/spawn_new" % rid] = spawn_new
-        if not quake:
-            fn["legendary/%s/carve_once" % rid] = [
-                "# a re-run must not re-seal a chamber a player has opened: carve only while the gate is shut (the score is"
-                " 1 once the plug is out, or the door is open)",
-                "execute unless score #%s %s matches 1 run function %s:legendary/%s/carve" % (rid, obj, ns, rid)]
+        fn["legendary/%s/carve_once" % rid] = [
+            "# a re-run must not re-seal a chamber a player has opened: carve only while the gate is shut (the score is"
+            " 1 once the plug is out, or the door is open)",
+            "execute unless score #%s %s matches 1 run function %s:legendary/%s/carve" % (rid, obj, ns, rid)]
         from chunk_look import chain as _chain
-        held_to = ""
-        if quake:
-            # a quake cavern's hall exists only once its carve has finished (#built, tools/groudon_cavern.py build/state):
-            # never summon into rock
-            import groudon_cavern
-            held_to = groudon_cavern.built_condition() + " "
         act = ["# the summon, once a look has seen this chunk's saved entities (or blind after the limit: a first run)",
-               "execute %sunless entity @e[%s] run function %s:legendary/%s/spawn_new" % (held_to, scope, ns, rid)]
+               "execute unless entity @e[%s] run function %s:legendary/%s/spawn_new" % (scope, ns, rid)]
         for ref, lines in _chain(base, box, ["@e[%s]" % scope], act, [scope], new_tag, scope, holder,
                                  note="tools/legendaries.py").items():
             fn[ref.split(":", 1)[1]] = lines
@@ -696,8 +677,7 @@ def files(doc, ground):
             "tellraw @s %s" % json.dumps({"text": "You have found %s." % rec["title"].split(",")[0],
                                           "color": "gold"}, ensure_ascii=False)]
         fn["legendary/%s/near" % rid] = near
-        if not quake:
-            fn["legendary/%s/carve" % rid] = carve_lines(rec, doc, g)
+        fn["legendary/%s/carve" % rid] = carve_lines(rec, doc, g)
 
     for rec in gate_only(doc):
         rid = rec["id"]
@@ -816,26 +796,9 @@ def placement_steps(doc, ground=None):
         g = geometry(rec, doc, ground)
         x0, _y0, z0, x1, _y1, z1 = g["bbox"]
         base, holder, _box, _scope, _new = chain_parts(rec, doc, g)
-        if rec["kind"] == "quake_cavern":
-            # the cavern's runtime pack defines the objective carve_once tests, and a pack added to a running server is not
-            # loaded until a /reload: run its load function first (idempotent), which also adds its objective if missing
-            import groudon_cavern
-            steps += [("fn", groudon_cavern.LOAD)]
-        # a quake cavern's carve_once lives in tools/groudon_cavern.py's build pack, and each of its parts holds the chunks it
-        # writes for its own run (a forceload is per chunk, not counted, so a part's release also ends this hold; every part
-        # takes its chunks again at its start, and this one only gives the first part its 3 seconds of loading); its state
-        # function runs LAST, so a carve that stopped half way is run again
         steps += [("cmd", "forceload add %d %d %d %d" % (x0, z0, x1, z1)), ("wait", 3),
-                  ("fn", "%s:legendary/%s/carve_once" % (ns, rid))]
-        if rec["kind"] == "quake_cavern":
-            # fail closed (review 2026-10-21): carve_once may skip (a stale open score, a missing build pack, a carve cut
-            # short), and the cavern's state function sets #built LAST, so the step reads #built back as a count of 1; the
-            # summon below is held to #built as well, so a skipped carve never puts Groudon into rock. Before the release:
-            # the chain's entry must follow the release directly (tools/chunk_look.py)
-            steps += [("fn", groudon_cavern.BUILT_READ),
-                      ("check", ("chunk_look", groudon_cavern.BUILT_HOLDER, 1,
-                                 "%s's cavern carved (#built %s read back)" % (rid, groudon_cavern.load()["quake"]["objective"])))]
-        steps += [("cmd", "forceload remove %d %d %d %d" % (x0, z0, x1, z1))]
+                  ("fn", "%s:legendary/%s/carve_once" % (ns, rid)),
+                  ("cmd", "forceload remove %d %d %d %d" % (x0, z0, x1, z1))]
         steps += CL.steps(base, holder, 1, "%s's legendary" % rid)
     return steps
 
@@ -860,10 +823,6 @@ def main(argv=None):
                 print("%-12s %-14s BLOCKED on %s" % (rec["id"], rec["kind"], rec["blocked_by"]))
                 continue
             g = geometry(rec, doc, g_)
-            if rec["kind"] == "quake_cavern":
-                print("%-12s %-14s lip %s ground y%d  hall floor y%d  ceiling y%d  box %s  (tools/groudon_cavern.py report)"
-                      % (rec["id"], rec["kind"], g["anchor"], g["mouth_y"], g["floor_y"], g["ceiling_y"], g["bbox"]))
-                continue
             print("%-12s %-14s anchor %s ground y%d  floor y%d  ceiling y%d  envelope %s vol %d  "
                   "clearance %d  sleeve top y%d (mouth %+d)"
                   % (rec["id"], rec["kind"], g["anchor"], g["mouth_y"], g["floor_y"], g["ceiling_y"],
@@ -871,6 +830,10 @@ def main(argv=None):
                      g["env_footprint_min_ground"] - g["envelope"][4], g["sleeve_top"],
                      g["mouth_y"] - g["sleeve_top"] - 1))
         for rec, site in retired(doc):
+            if site_kind(site) == "quake_cavern":
+                print("%-12s RETIRED %-14s lip %s  cavern %s  (%s; python tools/groudon_cavern.py report)"
+                      % (rec["id"], site["id"], site["portal"], site["cavern"], site["retired"]))
+                continue
             g = retired_geometry(rec, site, doc, g_)
             print("%-12s RETIRED %-14s anchor %s ground y%d  floor y%d  hull %s  (%s)"
                   % (rec["id"], site["id"], g["anchor"], g["mouth_y"], g["floor_y"], g["bbox"], site["retired"]))
