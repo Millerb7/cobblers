@@ -529,6 +529,12 @@ def site_table_id(site):
 def write_tables(out):
     n = 0
     docs = stage_doc()
+    if docs:
+        mc = Path(out) / "pack.mcmeta"
+        mc.parent.mkdir(parents=True, exist_ok=True)
+        mc.write_text(json.dumps({"pack": {"pack_format": 48, "description":
+                                           "Cobblers: staged chest loot (tools/loot_fix.py, data/stage_loot.json)"}},
+                                 indent=2) + "\n", encoding="utf-8")
     for sid, st in docs.items():
         for kind, spec in (st.get("kinds") or {}).items():
             p = Path(out) / "data" / NS / "loot_table" / "chests" / sid / (kind + ".json")

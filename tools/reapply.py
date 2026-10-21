@@ -345,6 +345,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-21: Slow Falling for Pokemon round the 66 bird trees (tools/bird_slowfall.py, the owner: birds
                 # walked off the branches and died of the fall); a load-started loop, no blocks, no step; world-local below
                 "cobblers_bird_slowfall",
+                # 2026-10-21: the staged chest loot (tools/loot_fix.py tables, data/stage_loot.json): loot tables only,
+                # read when a Lootr container rolls; no function, no step; world-local below
+                "cobblers_loot",
                 # 2026-10-09: every Waystones recipe (placeable waystones, sharestones, portstones, the warp plate and the
                 # warp items) closed, so Oak's gift is a player's only waystone (tools/player_waystone.py,
                 # data/player_waystone.json): recipe and advancement overrides only; no function, no step; world-local below
@@ -483,6 +486,8 @@ EXCLUDED = {
     "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores; its tick tag runs the over-cap party notice near trainers",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
     "cobblers_key_ball": "self-driving: two Cobblemon callbacks (pokemon_catch_rate_calculated, poke_ball_capture_calculated) run it and call key_ball/refused; its recipe overrides act at load; it writes no blocks (tools/key_ball.py)",
+    "cobblers_loot": "load-time only: the staged chest loot tables (tools/loot_fix.py tables, data/stage_loot.json); "
+                     "no function, no step: the containers are re-pointed by tools/loot_fix.py commands",
     "cobblers_bird_slowfall": "self-driving: its own minecraft load tag starts a loop that gives Pokemon round the bird trees "
                               "Slow Falling every 40 ticks; it writes no blocks and never force-loads (tools/bird_slowfall.py)",
     "cobblers_player_waystone": "load-time only: 54 Waystones recipes and their 54 unlock advancements written back closed "
@@ -561,6 +566,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_key_ball",
                # 2026-10-21: effects on Pokemon round the bird trees on its own tick: world-local with the trees' nests
                "cobblers_bird_slowfall",
+               # 2026-10-21: the staged chest loot; world-local with the containers it serves
+               "cobblers_loot",
                # 2026-10-09: closes the Waystones recipes; global would close them in the live world too
                "cobblers_player_waystone",
                # 2026-10-08: sets a gamerule and rewrites every player's recipe book: never global, or the live world
@@ -1299,6 +1306,9 @@ def prepare_jobs(a):
     # Slow Falling round the bird trees (2026-10-21): fails closed if data/habitat_blocks.json holds no bird tree or one
     # tree's nests spread wider than a crown
     add("bird_slowfall", "bird_slowfall.py")
+    # the staged chest loot (2026-10-21): every table a placed container names exists (check), then the tables
+    add("loot_fix:check", "loot_fix.py", "check")
+    add("loot_fix:tables", "loot_fix.py", "tables")
     # no craftable waystone or warp item (data/player_waystone.json): fails closed if the closed list is not the Waystones
     # jar's own, if the gift's recipe is left open, or if the quest, reward and Oak's dialogue do not agree
     add("player_waystone", "player_waystone.py", "build", "--require-jar")
