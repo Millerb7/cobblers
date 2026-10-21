@@ -513,11 +513,12 @@
     "eastern_reach",
     "frostwater_shelf",
     "outer_deep",
+    "pacifidlog_sea",
     "pine_strait",
     "southern_shallows",
     "sunset_sea"
    ],
-   "why": "ONE entry for the six seas of 2026-10-12 (the owner: \"All water should have regions as well\"). data/marine_seas.json is the AUTHORED table (per band: the families, roles, tier, level band and the heart's species); data/spawns.json marine_zones is what tools/marine_seas.py GENERATES from it (the same bands with the compiler's fields and a mirror of each band's compiled roster, in the shape the Windward Sea's hand-authored bands carry), and tools/compile_spawns.py reads it. Neither is dead: the table is the source, the zone record is the compile input, and `python tools/marine_seas.py --check` fails if they drift apart. The Windward Sea (windward_sea) is authored in data/spawns.json only and is not in the table."
+   "why": "ONE entry for the six seas of 2026-10-12 and the seventh, Pacifidlog Waters (2026-10-21, the same table and the same split) (the owner: \"All water should have regions as well\"). data/marine_seas.json is the AUTHORED table (per band: the families, roles, tier, level band and the heart's species); data/spawns.json marine_zones is what tools/marine_seas.py GENERATES from it (the same bands with the compiler's fields and a mirror of each band's compiled roster, in the shape the Windward Sea's hand-authored bands carry), and tools/compile_spawns.py reads it. Neither is dead: the table is the source, the zone record is the compile input, and `python tools/marine_seas.py --check` fails if they drift apart. The Windward Sea (windward_sea) is authored in data/spawns.json only and is not in the table."
   },
   {
    "files": [

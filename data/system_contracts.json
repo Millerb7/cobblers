@@ -1311,7 +1311,7 @@
           "quote": "\"requires_met\": [\"kyogre\", \"groudon\"],"
         },
         {
-          "at": "tools/legendaries.py:676",
+          "at": "tools/legendaries.py:738",
           "quote": "\"advancement grant @s only %s:legendary/%s/met\" % (ns, rid),"
         },
         {

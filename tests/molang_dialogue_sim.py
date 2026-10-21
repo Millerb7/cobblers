@@ -206,6 +206,15 @@ class World:
 
     def __init__(self):
         self.objectives, self.scores, self.players, self.npcs, self.errors = set(), {}, {}, [], []
+        # function id -> its command lines, filled by a test from a generated pack (tools/scenes_pack.py build()); only
+        # `scoreboard players set @s <objective> <n>` lines are run, as the player the function was called as
+        self.functions = {}
+
+    def run_molang(self, p, src):
+        """Run Molang that is not a dialogue's (a scene zone's `runmolang`) as the player p."""
+        env = {"V": {}, "D": p.data, "UUID": p.name, "HAS_TAG": lambda t: t in p.tags, "SAVE": lambda: None,
+               "DATA": lambda: p.data, "CMD": lambda c: self.command(c), "CLOSE": lambda: None, "SET_PAGE": lambda pid: None}
+        exec(compile_molang(src), env)
 
     def player(self, name):
         return self.players.setdefault(name, Player(name))
@@ -276,6 +285,24 @@ class World:
             tagged = [n for n in self.npcs if m.group(1) in n.tags]
             if tagged:
                 tagged[0].pos = (float(m.group(2)), float(m.group(3)), float(m.group(4)))
+            return
+        m = re.fullmatch(r"execute as (\S+) run tag @s (add|remove) (\S+)", t)      # tag_player / untag_player
+        if m:
+            p = self.players[m.group(1)]
+            (p.tags.add if m.group(2) == "add" else p.tags.discard)(m.group(3))
+            return
+        m = re.fullmatch(r"execute as (\S+) at @s run function (\S+)", t)          # scene_function
+        if m:
+            p = self.players[m.group(1)]
+            if m.group(2) not in self.functions:
+                raise RuntimeError("function %s is not in the pack the test loaded" % m.group(2))
+            for line in self.functions[m.group(2)]:
+                if line.startswith("#"):
+                    continue
+                mm = re.fullmatch(r"scoreboard players set @s (\S+) (-?\d+)", line)
+                if not mm:
+                    raise RuntimeError("the simulator does not run this function line: %r" % line)
+                p.scores[mm.group(1)] = int(mm.group(2))
             return
         raise RuntimeError("the simulator does not know this command (a compiler change?): %r" % t)
 

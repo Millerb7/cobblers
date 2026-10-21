@@ -345,6 +345,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-21: Slow Falling for Pokemon round the 66 bird trees (tools/bird_slowfall.py, the owner: birds
                 # walked off the branches and died of the fall); a load-started loop, no blocks, no step; world-local below
                 "cobblers_bird_slowfall",
+                # 2026-10-21: the staged chest loot (tools/loot_fix.py tables, data/stage_loot.json): loot tables only,
+                # read when a Lootr container rolls; no function, no step; world-local below
+                "cobblers_loot",
+                # 2026-10-21: CobbleCuisine's beans blocked (tools/no_beans.py): eating one crashes the server on Cobblemon
+                # 1.8.2; recipe and crop-loot overrides must sit above the mod's own pack, so world-local below
+                "cobblers_no_beans",
                 # 2026-10-09: every Waystones recipe (placeable waystones, sharestones, portstones, the warp plate and the
                 # warp items) closed, so Oak's gift is a player's only waystone (tools/player_waystone.py,
                 # data/player_waystone.json): recipe and advancement overrides only; no function, no step; world-local below
@@ -483,6 +489,10 @@ EXCLUDED = {
     "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores; its tick tag runs the over-cap party notice near trainers",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
     "cobblers_key_ball": "self-driving: two Cobblemon callbacks (pokemon_catch_rate_calculated, poke_ball_capture_calculated) run it and call key_ball/refused; its recipe overrides act at load; it writes no blocks (tools/key_ball.py)",
+    "cobblers_no_beans": "self-driving: its load tag starts a sweep that clears CobbleCuisine beans from inventories every "
+                         "20 ticks; recipe and crop-loot overrides act at load; no blocks, no step (tools/no_beans.py)",
+    "cobblers_loot": "load-time only: the staged chest loot tables (tools/loot_fix.py tables, data/stage_loot.json); "
+                     "no function, no step: the containers are re-pointed by tools/loot_fix.py commands",
     "cobblers_bird_slowfall": "self-driving: its own minecraft load tag starts a loop that gives Pokemon round the bird trees "
                               "Slow Falling every 40 ticks; it writes no blocks and never force-loads (tools/bird_slowfall.py)",
     "cobblers_player_waystone": "load-time only: 54 Waystones recipes and their 54 unlock advancements written back closed "
@@ -561,6 +571,10 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_key_ball",
                # 2026-10-21: effects on Pokemon round the bird trees on its own tick: world-local with the trees' nests
                "cobblers_bird_slowfall",
+               # 2026-10-21: the staged chest loot; world-local with the containers it serves
+               "cobblers_loot",
+               # 2026-10-21: clears beans from inventories on its own tick and overrides the mod's recipes: world-local
+               "cobblers_no_beans",
                # 2026-10-09: closes the Waystones recipes; global would close them in the live world too
                "cobblers_player_waystone",
                # 2026-10-08: sets a gamerule and rewrites every player's recipe book: never global, or the live world
@@ -1299,6 +1313,11 @@ def prepare_jobs(a):
     # Slow Falling round the bird trees (2026-10-21): fails closed if data/habitat_blocks.json holds no bird tree or one
     # tree's nests spread wider than a crown
     add("bird_slowfall", "bird_slowfall.py")
+    # the staged chest loot (2026-10-21): every table a placed container names exists (check), then the tables
+    add("loot_fix:check", "loot_fix.py", "check")
+    add("loot_fix:tables", "loot_fix.py", "tables")
+    # CobbleCuisine's beans blocked (2026-10-21): eating one crashes the server on Cobblemon 1.8.2
+    add("no_beans", "no_beans.py")
     # no craftable waystone or warp item (data/player_waystone.json): fails closed if the closed list is not the Waystones
     # jar's own, if the gift's recipe is left open, or if the quest, reward and Oak's dialogue do not agree
     add("player_waystone", "player_waystone.py", "build", "--require-jar")
@@ -2797,8 +2816,9 @@ def steps(with_spawns=False):
     out.append(("R17NE", "the mainline beats' evidence displays beside the tellers (data/reveal_evidence.json)",
                 reveal_evidence.placement_steps()))
     # Lena of the Pallet crushed house (2026-10-13, data/npc_seats.json relocating_seats): an NPC like the settlement
-    # ones whose stand is the WORLD field's value, not a fixed seat -- the dialogue moves her once, for everyone, when
-    # the first player finishes her conversation. So the npc action carries a fifth element, the score selecting her
+    # ones whose stand is the WORLD field's value, not a fixed seat -- since 2026-10-21 the scene keeper (data/scenes.json
+    # pallet_crushed_house) stands her inside or outside from the players in the area and writes the score; the dialogue
+    # moves nobody. So the npc action carries a fifth element, the score selecting her
     # later stand, and a re-run puts a Lena left at the other marker on the one the score names. After R17N (Hank)
     out.append(("R18CH", "Lena at the crushed house marker the world field selects (data/npc_seats.json relocating_seats)",
                 [("npc", n) for n in npc_seats.relocating_placements()]))

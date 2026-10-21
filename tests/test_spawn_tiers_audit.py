@@ -298,8 +298,9 @@ def real_pack(tmp_path_factory):
 def test_the_real_compiled_pack_meets_every_tier(real_pack):
     areas = A.load(real_pack)
     kinds = [k for k, _ in areas]
-    # ENCOUNTER_DESIGN.md section 1 counts 63 sub-region tables; the marine bands and the waterway carry hearts too
-    assert kinds.count("subregions") == 63 and "marine" in kinds and "waterways" in kinds, sorted(set(kinds))
+    # 61 sub-region tables since 2026-10-21 (63 before the Jungle Isle's two were removed; ENCOUNTER_DESIGN.md section 1 still
+    # says 63); the marine bands and the waterway carry hearts too
+    assert kinds.count("subregions") == 61 and "marine" in kinds and "waterways" in kinds, sorted(set(kinds))
     assert A.audit(areas)[1] == []
 
 

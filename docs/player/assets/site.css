@@ -3,7 +3,7 @@
    through tools/player_site.py) emit classes and never their own <style>, so the guides cannot drift into three
    looks. Sections: tokens and themes; base; the shared header, spoiler note and footer; the section filter and
    search box; the index; the battle guide (body.page-battles); the region map (body.page-map); the starters
-   (body.page-starters); items and money (body.page-items); drops (body.page-drops); fishing (body.page-fishing). */
+   (body.page-starters); items and money (body.page-items); drops (body.page-drops); fishing (body.page-fishing); the Nuzlocke tracker (body.page-nuzlocke). */
 
 /* ---------------------------------------------------------------- tokens and themes */
 /* light: lavender (the owner, 2026-10-08) */
@@ -270,3 +270,48 @@ vertical-align:top}
 .page-fishing .bk.ultra-rare{background:var(--ultra-rare)}
 .page-fishing #dungeons p,.page-fishing #not-covered{max-width:860px}
 @media (max-width:560px){.page-fishing main{padding:8px 10px 20px}.page-fishing .areas{grid-template-columns:1fr}}
+
+/* ---------------------------------------------------------------- the Nuzlocke tracker (body.page-nuzlocke) */
+.page-nuzlocke main{max-width:1180px;margin:0 auto;padding:12px 16px 20px}
+.page-nuzlocke h1{font-size:1.7rem;margin:14px 0 4px}
+.page-nuzlocke h2{font-size:1.3rem;margin:30px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--accent)}
+.page-nuzlocke h2 small,.page-nuzlocke h3 small{font-weight:400;color:var(--muted);font-size:.85rem;margin-left:6px}
+.nz-bar{display:flex;flex-wrap:wrap;gap:6px 18px;margin:12px 0;padding:8px 12px;background:var(--card);
+border:1px solid var(--rule);border-radius:10px;font-size:1.05rem}
+.nz-bar b{font-size:1.25rem}
+.nz-cap{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:8px 0}
+.nz-cap select,.nz-sp,.nz-nick,.nz-other{font:inherit;padding:.4rem .5rem;border:1px solid var(--rule);border-radius:6px;
+background:var(--card);color:var(--ink);min-width:0}
+.nz-filter{margin:8px 0}
+.nz-used{color:var(--muted);font-size:.9rem;margin:6px 0}
+.nz-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 4px}
+.nz-file{display:inline-block;border:1px solid var(--rule);border-radius:6px;padding:.35rem .7rem;background:var(--card);
+cursor:pointer}
+.nz-file:hover{border-color:var(--accent)}
+.nz-file input{display:none}
+.nz-zones{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}
+.nz-zone{background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--rule);border-radius:10px;
+padding:10px 12px}
+.nz-zone[data-state=caught]{border-left-color:var(--common)}
+.nz-zone[data-state=failed]{border-left-color:var(--ultra-rare)}
+.nz-zone[data-state=skipped]{border-left-color:var(--muted);opacity:.8}
+.nz-zone h3{margin:0 0 2px;font-size:1.05rem}
+.nz-no{color:var(--muted);font-weight:400;font-size:.85rem}
+.nz-meta{margin:0 0 8px;color:var(--muted);font-size:.85rem}
+.nz-over b{color:var(--ultra-rare)}
+.nz-ctl{display:grid;gap:6px}
+.nz-status{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.nz-status button{padding:.5rem .2rem;font-size:.88rem;border-radius:6px}
+.nz-status button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);
+font-weight:600}
+.nz-sp,.nz-nick,.nz-other{width:100%}
+.nz-note{margin:0;color:var(--muted);font-size:.82rem}
+.nz-note:empty{display:none}
+.nz-list{margin-top:8px;font-size:.88rem}
+.nz-list summary{cursor:pointer;color:var(--muted)}
+.nz-list ul{margin:4px 0 0;padding-left:1.2rem;columns:2}
+.nz-how{color:var(--muted);font-size:.8rem}
+.nojs .nz-ctl,.nojs .nz-bar,.nojs .nz-cap,.nojs .nz-tools,.nojs .nz-used,.nojs .nz-filter{display:none}
+@media (max-width:560px){.page-nuzlocke main{padding:8px 10px 20px}.nz-zones{grid-template-columns:1fr}
+.nz-status button{padding:.65rem .1rem}.nz-list ul{columns:1}}
+@media print{.nz-ctl,.nz-tools{display:none}}

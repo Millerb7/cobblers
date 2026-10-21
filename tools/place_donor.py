@@ -168,19 +168,16 @@ def load_template(server_dir, template_id):
 
 
 def loot_commands(rec, template_doc):
-    """`data remove` for every container the template fills from a loot table, when the record asks for it: a
-    pillager outpost's chest is crossbows and the like, which is not what a lookout keeps."""
-    if not rec.get("clear_loot"):
-        return []
-    import place_town
-    out = []
-    for b in template_doc["blocks"]:
-        if (b.get("nbt") or {}).get("LootTable"):
-            tx, ty, tz = b["pos"]
-            rx, rz = place_town.rotate(tx, tz, rec.get("rotation", "none"))
-            out.append("data remove block %d %d %d LootTable" % (rec["position"]["x"] + rx, rec["position"]["y"] + ty,
-                                                                   rec["position"]["z"] + rz))
-    return out
+    """A `setblock` of the Lootr container, with a table that exists on the server, for every container the template seats.
+
+    This replaces `data remove ... LootTable` for a `clear_loot` record (a pillager outpost's chest is crossbows and the
+    like, which is not what a lookout keeps): the record now gets its kind's table at its stage instead of nothing, and
+    every other donor's container whose table is gone from the server (a mod we do not run, `minecraft:empty`) or that has
+    none is repaired the same way (tools/loot_fix.py, data/loot_remap.json). A container whose own table exists is left
+    alone until data/stage_loot.json defines the stage tables. The positions are transform()'s, the transform the paste
+    uses, mirror included."""
+    import loot_fix
+    return loot_fix.donor_source_commands(rec, template_doc)
 
 
 def remove_item_commands(position, rotation, entries):
@@ -390,6 +387,8 @@ def main(argv=None):
                 extra = loot_commands(rec, tdoc) + jigsaw_commands(rec, tdoc)
             elif rec.get("clear_loot") or rec.get("jigsaws"):
                 raise SystemExit("%s clears loot or resolves jigsaws, which needs --server-dir to read its template" % rec["id"])
+            else:
+                print("WARNING %s: placed without --server-dir, so its containers get no table repair (tools/loot_fix.py)" % rec["id"])
             pos = rec["position"]
             extra = extra + remove_item_commands((pos["x"], pos["y"], pos["z"]), rec.get("rotation"),
                                                  rec.get("remove_items"))

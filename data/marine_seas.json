@@ -196,10 +196,37 @@
    ]
   },
   {
+   "id": "pacifidlog_sea",
+   "display_name": "Pacifidlog Waters",
+   "marine_region": "southern_shallows",
+   "theme": "the Hoenn sea route round the raft town: Pelipper on the swell, Tentacruel and Mantine in the blue, Corsola and Luvdisc over the old bank, Lanturn's lanterns and the sea horses below, a Relicanth on the sand and, very rarely, a Wailord",
+   "legs": "the sea town (data/sea_town.json, the square at (5160, 7380)): reached at the south strand's leg 7, so the adjoining Southern Shallows reef's band, 46-50; data/sea_town.json carries no level band of its own",
+   "clip_boxes": [
+    {"min_x": 4224, "max_x": 6015, "min_z": 6784, "max_z": 8063}
+   ],
+   "clip_basis": "the bank the Jungle Isle was cut down to (data/water_shape.json jungle_isle_bank: the island's polygons x4384-5928 z6880-7976, grown 64 blocks) and the sea round it, snapped out to the 128-block grid: x4224-6015, z6784-8063. Claimed before the Southern Shallows, which owns the rest of the south: the zone order is the table's, so no block is in both. Until 2026-10-21 the island's two sub-regions (jungle_west, jungle_east) counted as land here and the bank's water was in no marine band.",
+   "grid": 128,
+   "max_land_share": 0.5,
+   "level_logic": "one band, the reef's: 46-50 (cap 50, tier 7). The town stands on the bank off the south coast, where the Southern Shallows' own distance rule would put the deep (55-60); data/sea_town.json has no band, so the adjoining reef's band is taken (the 2026-10-21 brief), a town met at the reef's level and not at Victory Road's cap.",
+   "bands": [
+    {
+     "id": "pacifidlog_waters", "display_name": "Pacifidlog Waters", "from_blocks": 0, "to_blocks": null,
+     "tier": 7, "level_band": [46, 50],
+     "basis": "the Hoenn sea route: Tentacruel anchoring the blue water, Pelipper riding the swell, Corsola and Luvdisc over the bank; Mantine and Lanturn and the sea horses (Seadra, Kingdra) uncommon; Relicanth and Qwilfish rare on the sand; Wailord very rarely, in the deep off the bank. At 46-50 only the evolved stages spawn (stage_overlap_levels): Tentacool, Wingull, Chinchou and Horsea are the families' roots, not what is met.",
+     "families": [
+      ["tentacool", "anchor"], ["wingull", "common"], ["corsola", "common"], ["luvdisc", "common"],
+      ["mantyke", "uncommon"], ["chinchou", "uncommon"], ["horsea", "uncommon"],
+      ["relicanth", "rare"], ["qwilfish", "rare"], ["wailord", "ultra"]
+     ],
+     "heart": {"families": [["kingdra", "presence"], ["lanturn", "presence"], ["relicanth", "presence"]]}
+    }
+   ]
+  },
+  {
    "id": "southern_shallows",
    "display_name": "The Southern Shallows",
    "marine_region": "southern_shallows",
-   "theme": "the warm south: the coral reef and the sandy flats off the South Strand, the Southern Coast and the Jungle Isle, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon",
+   "theme": "the warm south: the coral reef and the sandy flats off the South Strand and the Southern Coast, then the warm open water of jellyfish, sea horses, rays and the toxic kelp dragon",
    "legs": "coast leg 8 (Route 8, the south strand, tier 8 band 43-53)",
    "clip_boxes": [
     {"min_x": 2048, "max_x": 6143, "min_z": 5120, "max_z": 9215}

@@ -51,6 +51,38 @@
       ]
     },
     {
+      "id": "pallet_crushed_house",
+      "quest_id": "evt_pallet_crushed_house",
+      "source": "the owner, 2026-10-21: Lena 'inside while needed'. Minecraft NPCs are shared, so the first player to finish her lines used to move her outside for everyone (the dialogue's relocate_actor), and every later player, and any player whose data was reset, found her outside and never got the scene.",
+      "built_by": "tools/crushed_house.py (data/crushed_house.json): the 9 by 9 lot x 1512..1520, z 5254..5262, its pocket and its opening; the two stands are data/npc_seats.json markers",
+      "why": "A scene with no props or actors: its zone keeps a per-player tag equal to each player's own quest data, and its keeper stands Lena where the players in the area need her. The area is the lot plus about 14 blocks round it, so she is in place before a player has walked up to the opening, and nobody is left to watch her move.",
+      "area": {
+        "from": [1496, 108, 5242],
+        "to": [1532, 135, 5274]
+      },
+      "zones": [
+        {"id": "whole_area", "from": [1496, 108, 5242], "to": [1532, 135, 5274], "transitions": ["migrate_shared_rescue_stage", "mark_rescued", "unmark_rescued"], "why": "every player in the area, once a second: a player saved at the retired stage shared_rescue_recap goes back to check_house; the per-player tag cobblers_pallet_rescued is made to equal stage == complete (set for a player who finished before the tag existed, removed for a player whose data was reset). Each transition fires only while its conditions differ from the tag, so a steady player costs no save"}
+      ],
+      "functions": {
+        "lena_talk": ["scoreboard players set @s cobblers_hold 40"],
+        "lena_release": ["scoreboard players set @s cobblers_hold 0"]
+      },
+      "keepers": [
+        {
+          "id": "lena",
+          "npc": "npc_pallet_crushed_house_lena",
+          "done_tag": "cobblers_pallet_rescued",
+          "hold_objective": "cobblers_hold",
+          "inside_marker": "marker_pallet_crushed_house_interior_safe",
+          "outside_marker": "marker_pallet_crushed_house_exterior_safe",
+          "state_field": "quest.evt_pallet_crushed_house.house_state",
+          "inside_state": "blocked",
+          "outside_state": "lena_relocated",
+          "why": "Inside the pocket while any player in the area has not finished her scene, outside otherwise; never moved with nobody in the area, nor for 40 seconds after a player opens her conversation (lena_talk; cleared when the finishing line runs, lena_release). The score is what R18CH seats her by."
+        }
+      ]
+    },
+    {
       "id": "route5_empty_fold",
       "quest_id": "evt_route5_bellwether",
       "source": "docs/world-building/ROUTE5_EVENTS.md",

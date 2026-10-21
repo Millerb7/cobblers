@@ -64,6 +64,7 @@ The runtime pieces, each proven on the disposable world before this compiler rel
              be unset (check_series_guard). Oak's League rules choice, 2026-10-06 (docs/mechanics/OAK_AND_CHALLENGE.md).
              {"kind": "tag_player", "tag": "<tag>"} adds a scoreboard tag to the talking player in the same action,
              for selectors that cannot read player data (the route trainers' swap). NOT yet run in game.
+             {"kind": "untag_player", "tag": "<tag>"} removes it again (the same shape, `tag @s remove`).
   opened by  a conversation with "npc_id": null has no NPC class: a prop or an actor opens it (the scene runtime runs
              /opendialogue for the player who clicked), never an NPC's interaction.
   speakers   a conversation may name its speakers ("speakers": {"pip": "Pip", "narration": null}); a speaker mapped to
@@ -388,6 +389,13 @@ class Compiler:
             if not isinstance(tag, str) or not re.fullmatch(r"[a-z0-9_.]+", tag):
                 raise Unsupported("tag_player %r is not [a-z0-9_.]+" % (tag,))
             return run(["execute as ", UUID, " run tag @s add %s" % tag])
+        if k == "untag_player":
+            # the mirror of tag_player: a scene zone keeps the tag equal to the player's own quest data, so a player whose
+            # data was reset loses the tag too (the Pallet crushed house keeper, data/scenes.json pallet_crushed_house)
+            tag = e.get("tag")
+            if not isinstance(tag, str) or not re.fullmatch(r"[a-z0-9_.]+", tag):
+                raise Unsupported("untag_player %r is not [a-z0-9_.]+" % (tag,))
+            return run(["execute as ", UUID, " run tag @s remove %s" % tag])
         raise Unsupported("effect kind %s" % k)
 
     def marker(self, mid):
