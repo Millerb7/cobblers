@@ -65,6 +65,23 @@ HEADROOM = 3            # blocks of air kept over every street and plaza cell, w
 CANOPY = 24             # how high a tree standing on a street or square is cleared
 
 
+def graded_cells(r, ground):
+    """(points, ground along them, graded profile, {(x, z): paved y}) of one planned street: its polyline densified, the
+    profile graded to its max_grade, and every cell of its width paved at the lowest profile height that reaches it.
+    (Lifted out of main() on 2026-10-20 so tools/fossick_adit.py can lay its path exactly as the town pass grades it.)"""
+    pts = densify(r["polyline"])
+    gr = [ground(x, z) for x, z, _ in pts]
+    target = graded_profile(gr, r.get("max_grade", 0.1))
+    half = r["width"] // 2
+    cells = {}
+    for (x, z, _), y in zip(pts, target):
+        for dx in range(-half, half + 1):
+            for dz in range(-half, half + 1):
+                c = (int(round(x)) + dx, int(round(z)) + dz)
+                cells[c] = min(cells.get(c, 10 ** 6), int(y))
+    return pts, gr, target, cells
+
+
 def clear_above(x0, z0, x1, z1, y):
     """Commands that leave a paved box walkable: air for HEADROOM blocks over it, and any tree over it gone.
 
@@ -127,18 +144,9 @@ def main(argv=None):
     # streets
     street_cells = {}
     for r in plan["streets"]:
-        pts = densify(r["polyline"])
-        gr = [ground(x, z) for x, z, _ in pts]
-        target = graded_profile(gr, r.get("max_grade", 0.1))
-        half = r["width"] // 2
+        pts, gr, target, cells = graded_cells(r, ground)
         steep_before = max((abs(gr[i + 8] - gr[i]) / 8 for i in range(0, len(gr) - 8)), default=0)
         steep_after = max((abs(int(target[i + 8]) - int(target[i])) / 8 for i in range(0, len(target) - 8)), default=0)
-        cells = {}
-        for (x, z, _), y in zip(pts, target):
-            for dx in range(-half, half + 1):
-                for dz in range(-half, half + 1):
-                    c = (int(round(x)) + dx, int(round(z)) + dz)
-                    cells[c] = min(cells.get(c, 10 ** 6), int(y))
         cut = sum(max(0, ground(cx, cz) - y) for (cx, cz), y in cells.items())
         fill = sum(max(0, y - ground(cx, cz)) for (cx, cz), y in cells.items())
         cut_total += cut

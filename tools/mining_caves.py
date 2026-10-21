@@ -30,7 +30,10 @@ they did; `entry.host.opening` is a hole in the hall's wall written as air, wher
 (tools/route1_old_mine.py lower_way, built with the mine by R8). A cave whose old mouth was applied carries
 `retired_entry` (the frozen record, hash-checked against the applied build): step R9OCR (reroute_files) puts that
 mouth back to the heightmap's terrain and cuts the host's passage in a world that has the old one, refused while a
-player stands where it writes, each act only while its probe shows it is still to do.
+player stands where it writes, each act only while its probe shows it is still to do. The Fossick Deep Galleries went
+the same way the same day ("make fossick like route 1"): their host is a hill built over the old shaft
+(tools/fossick_adit.py, on tools/hill_adit.py, the Route 1 old mine's own code), its incline ends in the hall's near end
+wall, and their reroute is its own step, R9OCF, which builds the whole hill (entry.host.probe gates it).
 
 What differs from a stone face: a gallery holds several ores per variant (data/mining_caves.json `yields`, whose
 per_variant counts are placed exactly), its scores and functions are its own (cobblers:mining_caves, objectives mcv.*)
@@ -215,8 +218,10 @@ def geometry(spec, cave, ground, anchor=None, front=None):
     for u in (range(-hw - 1, hw + 2) if mouth else ()):
         x, z = xz(u, 0)
         cells[(x, y0 + PH + 1, z)] = "beam"
-    # the host's opening: every cell in the hall's wall (|u| = hw + 1, a hall row, the hall's air height) and in no
-    # gallery's body or shell, or it is a problem
+    # the host's opening: every cell in the hall's wall (|u| = hw + 1, a hall row, the hall's air height) or in its near
+    # end wall (d = drop, |u| <= hw, the hall's air height: where the incline came in, the one wall a cave whose every
+    # slot holds a gallery on both sides has free; the Fossick galleries, 2026-10-20) and in no gallery's body or
+    # shell, or it is a problem
     opening = []
     if not mouth:
         host = e.get("host") or {}
@@ -230,12 +235,16 @@ def geometry(spec, cave, ground, anchor=None, front=None):
                     x, z = xz(s * (hw + 1), d)
                     for y in range(yh + 1, yh + PH + 1):
                         wall_cells[(x, y, z)] = d
+            for u in range(-hw, hw + 1):
+                x, z = xz(u, hall0 - 1)
+                for y in range(yh + 1, yh + PH + 1):
+                    wall_cells[(x, y, z)] = hall0 - 1
             for x in range(ob[0], ob[3] + 1):
                 for y in range(ob[1], ob[4] + 1):
                     for z in range(ob[2], ob[5] + 1):
                         c = (x, y, z)
                         if c not in wall_cells:
-                            probs.append("opening cell %s is not in the hall's wall" % (c,))
+                            probs.append("opening cell %s is not in the hall's wall or its near end wall" % (c,))
                         elif c in cells:
                             probs.append("opening cell %s is already written as %s" % (c, cells[c]))
                         else:
@@ -497,7 +506,10 @@ class Clearance:
         ac = kc["authored_clearance"]
         m = np.zeros(shape, bool)
         first = {}
-        for ax, az, f in SR.authored_points(authored_doc or {"residents": []}, own_file=own_file or SPEC):
+        pts = SR.authored_points(authored_doc or {"residents": []}, own_file=own_file or SPEC)
+        if host:
+            pts = without_host_points(pts, host)
+        for ax, az, f in pts:
             if x0 - ac <= ax <= x1 + ac and z0 - ac <= az <= z1 + ac:
                 ax, az = int(round(ax)), int(round(az))
                 xa, xb, za, zb = max(x0, ax - ac), min(x1, ax + ac), max(z0, az - ac), min(z1, az + ac)
@@ -566,6 +578,53 @@ class Clearance:
         return self.inside(x, z) and bool(self.trees[z - self.box[1], x - self.box[0]])
 
 
+def _xz_points(o, out):
+    """The x/z points tools/southern_residents.py authored_points reads out of one record, in the same forms: dicts with
+    x and z; [x, z]; [x, y, z] both ways; [x0, z0, x1, z1] boxes at corners, edge middles and centre; `nearest_*` keys
+    skipped."""
+    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool)
+    if isinstance(o, dict):
+        if num(o.get("x")) and num(o.get("z")):
+            out.append((o["x"], o["z"]))
+        for k, v in o.items():
+            if not (isinstance(k, str) and k.startswith("nearest_")):
+                _xz_points(v, out)
+    elif isinstance(o, list):
+        if len(o) == 2 and all(num(v) for v in o):
+            out.append((o[0], o[1]))
+        elif len(o) == 3 and all(num(v) for v in o):
+            out += [(o[0], o[2]), (o[0], o[1])]
+        elif len(o) == 4 and all(num(v) for v in o):
+            x0, z0, x1, z1 = o
+            if x1 >= x0 and z1 >= z0 and x1 - x0 < 2000 and z1 - z0 < 2000:
+                out += [(xx, zz) for xx in (x0, (x0 + x1) / 2.0, x1) for zz in (z0, (z0 + z1) / 2.0, z1)]
+        else:
+            for v in o:
+                _xz_points(v, out)
+    return out
+
+
+def without_host_points(pts, host):
+    """authored_points() less the host's own: the points data/placements.json carries in the host's settlement record and
+    its earthwork record (2026-10-20). The host is the cave's way in, laid over it (the Fossick hill stands over the hall),
+    so its own centre, footprint and anchor are not another file's authored x/z. One occurrence per host point is taken
+    out, so a point another placements.json record authors at the same x/z still counts."""
+    from collections import Counter
+    doc = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+    recs = [doc["settlements"].get(host.get("settlement"))] + [p for p in doc["placements"] if p["id"] == host.get("placement")]
+    drop = Counter()
+    for r in recs:
+        if r is not None:
+            drop.update(_xz_points(r, []))
+    out = []
+    for ax, az, f in pts:
+        if f == "placements.json" and drop[(ax, az)] > 0:
+            drop[(ax, az)] -= 1
+            continue
+        out.append((ax, az, f))
+    return out
+
+
 WRITE = re.compile(r"(?:^|\brun\s+)(fill|setblock|place\s+template\s+\S+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)"
                    r"(?:\s+(-?\d+)\s+(-?\d+)\s+(-?\d+))?", re.M)
 
@@ -629,6 +688,15 @@ def host_problems(cave, gm):
     if shared:
         probs.append("the host's earthwork writes %d cell(s) the cave also writes, e.g. %s (%s)"
                      % (len(shared), shared[0], gm["cells"][shared[0]]))
+    pr = cave["entry"]["host"].get("probe")
+    if pr:
+        px, py, pz, pb = pr
+        got = BA.replay(cmds, [(px, pz)]).get((px, pz), {}).get(py)
+        if got is None or base(got) != pb:
+            probs.append("entry.host.probe %s: the host's earthwork leaves %s there, not %s, so the way in would be cut "
+                         "on every run" % ([px, py, pz], got, pb))
+        if (px, py, pz) in gm["cells"]:
+            probs.append("entry.host.probe %s is a cell the cave writes" % ([px, py, pz],))
     return probs
 
 
@@ -745,8 +813,8 @@ def model(spec=None, source_root=None, inputs_root=None, need_packs=False):
         probs += ["%s: %s" % (cave["id"], p) for p in cave_problems(spec, cave, gm, clear)]
         if cave.get("retired_entry"):
             rm = reroute_model(spec, cave, g0)        # CaveError (the frozen build's hash) stops the run
-            notes.append("%s: the retired entry's %d cells in %d columns go back to terrain (step R9OCR)"
-                         % (cave["id"], len(rm["retired"]), len(rm["columns"])))
+            notes.append("%s: the retired entry's %d cells in %d columns go back to terrain (step %s)"
+                         % (cave["id"], len(rm["retired"]), len(rm["columns"]), reroute_step(cave)))
         nv = spec["restore"]["variants"]
         gals = []
         for g in gm["galleries"]:
@@ -971,11 +1039,33 @@ def connector_lines(cave, ground):
     if host["settlement"] == "route1_old_mine":
         import route1_old_mine as OM
         return OM.lower_way_lines(ground)
+    if host["settlement"] == "fossick_adit":
+        # the whole earthwork, hill and all: a world that has the old mouth has no hill either (it is new with the
+        # reroute, 2026-10-20), so the way in is the host's build itself, the same lines R8 runs on a fresh export
+        import fossick_adit as FA
+        return FA.build(ground)
     raise CaveError("%s: no generator for the host passage from %s" % (cave["id"], host["settlement"]))
 
 
-def _write_cols(lines):
-    """{(x, z): (lo, hi)} of every non-air fill and setblock in lines."""
+CONNECT_SOURCE = {"route1_old_mine": "tools/route1_old_mine.py lower_way: the host's passage into the hall, exactly the "
+                                     "lines the host's own build (R8) holds",
+                  "fossick_adit": "tools/fossick_adit.py build: the host's whole earthwork (the hill, its adit and its "
+                                  "incline into the hall), exactly the lines the host's own build (R8) holds"}
+
+
+def connect_gate(cave, opening):
+    """(x, y, z, block): the cell whose block says the host's passage is not cut yet. entry.host.probe when the host
+    declares one (a block its earthwork leaves that neither the old mouth nor the cave writes there: the Fossick
+    portal's beam), else the opening's middle cell, gated on its air."""
+    pr = cave["entry"]["host"].get("probe")
+    if pr:
+        return tuple(pr[:3]) + (pr[3],)
+    ox, oy, oz = opening[len(opening) // 2]
+    return (ox, oy, oz, AIR)
+
+
+def _write_cols(lines, air=False):
+    """{(x, z): (lo, hi)} of every non-air fill and setblock in lines (with air, of every one)."""
     cols = {}
     for line in lines:
         t = line.split()
@@ -987,7 +1077,7 @@ def _write_cols(lines):
         else:
             x0, y0, z0 = map(int, t[1:4])
             x1, y1, z1, blk = x0, y0, z0, t[4]
-        if base(blk) in ("minecraft:air", "minecraft:cave_air"):
+        if not air and base(blk) in ("minecraft:air", "minecraft:cave_air"):
             continue
         for x in range(min(x0, x1), max(x0, x1) + 1):
             for z in range(min(z0, z1), max(z0, z1) + 1):
@@ -1008,6 +1098,11 @@ def reroute_model(spec, cave, ground):
         lo, hi = cols.get((x, z), (y, y))
         cols[(x, z)] = (min(lo, y), max(hi, y))
     probes = reroute_probes(cave, old)
+    pr = cave["entry"]["host"].get("probe")
+    if pr and tuple(pr[:3]) in old["cells"] and base(role_block(cave["retired_entry"]["frozen_cave"], old["cells"][tuple(pr[:3])],
+                                                                  old["front"])) == pr[3]:
+        raise CaveError("%s: entry.host.probe %s is a %s the old mouth already holds: the way in would never be cut"
+                        % (cave["id"], pr[:3], pr[3]))
     connect = connector_lines(cave, ground)
     held = {}
     # the restore also writes the new build's own cells in its columns (the hall's end wall, where the incline's foot
@@ -1021,8 +1116,11 @@ def reroute_model(spec, cave, ground):
         a, b = held.get(c, (lo, hi))
         held[c] = (min(a, lo), max(b, hi))
     boxes = [(x0, lo, z0, x1, hi + 1, z1) for x0, x1, z0, z1, (lo, hi) in LG.retire_rects(held)]
-    xs = [c[0] for c in held] + [new["bounds"][0], new["bounds"][3]]
-    zs = [c[1] for c in held] + [new["bounds"][2], new["bounds"][5]]
+    # the forceload box: the held columns, the new build, and every column the passage writes at all, air too (the
+    # Fossick hill's site clear reaches past its solid writes, and a fill into an unloaded chunk writes nothing)
+    reach = _write_cols(connect, air=True)
+    xs = [c[0] for c in held] + [c[0] for c in reach] + [new["bounds"][0], new["bounds"][3]]
+    zs = [c[1] for c in held] + [c[1] for c in reach] + [new["bounds"][2], new["bounds"][5]]
     return {"old": old, "new": new, "retired": gone, "columns": cols, "probes": probes, "connect": connect,
             "held": boxes, "box": (min(xs), min(zs), max(xs), max(zs))}
 
@@ -1040,7 +1138,7 @@ def reroute_files(spec, cave, ground):
     t = cave["retired_entry"]["terrain"]
     if not rm["new"]["opening"]:
         raise CaveError("%s: a retired entry and no opening in the hall: the cave would have no way in" % cave["id"])
-    ox, oy, oz = rm["new"]["opening"][len(rm["new"]["opening"]) // 2]
+    ox, oy, oz, gate = connect_gate(cave, rm["new"]["opening"])
     head = ["# Generated by tools/mining_caves.py from data/mining_caves.json: %s's old mouth retired (%s) and its way in "
             "from %s cut." % (cave["name"], cave["retired_entry"]["retired"], cave["entry"]["host"]["settlement"]),
             "# chunks-loaded-by: tools/reapply.py's R9OCR (forceload add over the old mouth, the hall and the passage)",
@@ -1054,8 +1152,12 @@ def reroute_files(spec, cave, ground):
     head.append("execute store result score #%s %s if entity @a[tag=%s]" % (holder, CHUNK_OBJ, REROUTE_HELD))
     for (x, y, z, blk) in rm["probes"]:
         head.append("execute if score #%s %s matches 0 if block %d %d %d %s run function %s" % (holder, CHUNK_OBJ, x, y, z, blk, restore))
-    head.append("execute if score #%s %s matches 0 unless block %d %d %d minecraft:air run function %s"
-                % (holder, CHUNK_OBJ, ox, oy, oz, connect))
+    if gate == AIR:
+        head.append("execute if score #%s %s matches 0 unless block %d %d %d minecraft:air run function %s"
+                    % (holder, CHUNK_OBJ, ox, oy, oz, connect))
+    else:
+        head.append("execute if score #%s %s matches 0 unless block %d %d %d %s run function %s"
+                    % (holder, CHUNK_OBJ, ox, oy, oz, gate, connect))
     pk = {(x, z) for (x, _y, z, _b) in rm["probes"]}
     new_cells = rm["new"]["cells"]
     front = rm["new"]["front"]
@@ -1073,20 +1175,26 @@ def reroute_files(spec, cave, ground):
     body += LG.terrain_lines(first, ground, t) + own(set(first))
     body.append("# the probes' columns last: a run that stopped half way is run again")
     body += LG.terrain_lines(last, ground, t) + own(set(last))
-    conn = ["# Generated by tools/mining_caves.py from tools/route1_old_mine.py lower_way: the host's passage into the "
-            "hall, exactly the lines the host's own build (R8) holds; it ends in the opening, which it leaves air",
+    conn = ["# Generated by tools/mining_caves.py from %s; it ends in the opening, which it leaves air"
+            % CONNECT_SOURCE[cave["entry"]["host"]["settlement"]],
             "# chunks-loaded-by: %s (its caller, tools/reapply.py's R9OCR, holds the box)" % entry] + list(rm["connect"])
     return {entry[len(F) + 1:]: head, restore[len(F) + 1:]: body, connect[len(F) + 1:]: conn}
 
 
-def reroute_steps(spec=None, ground=None):
-    """For tools/reapply.py step R9OCR, AFTER R9OC: per cave with a retired entry, hold its box, run the reroute's entry
-    and read back that nobody was held (a refusal fails the step), then release the box. The box comes from the
-    heightmap and the data alone, so listing the steps needs no derived/ or build/."""
+def reroute_step(cave):
+    """The tools/reapply.py step a cave's reroute runs in: retired_entry.step, R9OCR when it names none (the Lower
+    Galleries'); the Fossick galleries' is R9OCF (2026-10-20), its own so it can be run without the other."""
+    return (cave.get("retired_entry") or {}).get("step") or "R9OCR"
+
+
+def reroute_steps(spec=None, ground=None, step="R9OCR"):
+    """For tools/reapply.py step `step` (R9OCR or R9OCF), AFTER R9OC: per cave with a retired entry in that step, hold its
+    box, run the reroute's entry and read back that nobody was held (a refusal fails the step), then release the box.
+    The box comes from the heightmap and the data alone, so listing the steps needs no derived/ or build/."""
     spec = spec or load()
     out = []
     for cave in spec["caves"]:
-        if not cave.get("retired_entry"):
+        if not cave.get("retired_entry") or reroute_step(cave) != step:
             continue
         rm = reroute_model(spec, cave, ground or G.Ground())
         entry, _r, _c, holder = reroute_parts(cave)

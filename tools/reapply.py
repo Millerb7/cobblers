@@ -2325,8 +2325,20 @@ def steps(with_spawns=False):
     # the heightmap's terrain only while a probe shows the old frame, and the passage cut only while the hall's opening is
     # not yet air. A fresh export (R8 already cut the passage, R9OC built no mouth) and a second run write nothing
     out.append(("R9OCR", "the mining caves' retired mouths and their ways in from the host mine (%s)" % (
-                    ", ".join(c["id"] for c in mining_caves.load()["caves"] if c.get("retired_entry")) or "none"),
+                    ", ".join(c["id"] for c in mining_caves.load()["caves"] if c.get("retired_entry")
+                              and mining_caves.reroute_step(c) == "R9OCR") or "none"),
                 mining_caves.reroute_steps()))
+    # 2026-10-20, the owner: "make fossick like route 1". The Fossick Deep Galleries entered by the adit of a built hill
+    # (tools/fossick_adit.py, data/mining_caves.json cave_fossick entry.host, retired_entry.step R9OCF): AFTER R9OC and
+    # R9OCR, its own step so it runs alone. Hold the box, then: refused while a player stands where it writes (read back:
+    # 0 held); the old frame and shaft back to the heightmap's terrain only while a probe shows the old frame; then the
+    # hill and its adit, the whole earthwork (a world with the old frame has no hill), only while the portal's beam is
+    # missing. A fresh export (R8 built the hill, R9OC no mouth) and a second run write nothing. NEVER R9OC on the live
+    # world for this: R9OC rebuilds every gallery at variant 0 and resets the ore
+    out.append(("R9OCF", "the Fossick galleries' old frame and shaft retired and the adit hill built (%s)" % (
+                    ", ".join(c["id"] for c in mining_caves.load()["caves"] if c.get("retired_entry")
+                              and mining_caves.reroute_step(c) == "R9OCF") or "none"),
+                mining_caves.reroute_steps(step="R9OCF")))
     # the cave kit (tools/caves.py, data/caves.json; LEGENDARY_HOMES.md section 4): K1, K2 and K3, one block pass each held in a
     # forceload of its box, BEFORE R9E (each part's Habitat Block replaces a floor cell this writes). The gates' doors and the area
     # boss's keeper drive themselves (cobblers:caves/tick and /boss/<id>/keeper) and need no step
