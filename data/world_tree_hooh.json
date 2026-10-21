@@ -1,0 +1,66 @@
+{
+  "schema": "cobblers.world-tree-hooh/1",
+  "generated_by": "hand (minecraft-systems-dev, 2026-10-21); the measurements are from tools/tree_geometry.world_tree() (the built tree's own block list, tools/tree_grove.big_tree('oak','a','world') seated by tools/world_tree.CENTRE and GROUND), never from a world",
+  "status": "PROPOSED design. Nothing here is built, generated, placed or seen in game, and no tool reads this file yet (tools/legendaries.py has no 'tree_crown' kind). The owner's decision of 2026-10-21 (relayed by the coordinator): the very top of the world tree gets Ho-Oh, as a legendary encounter and not a nest spawn.",
+  "encounter": {
+    "id": "hooh",
+    "title": "Ho-Oh at the top of the world tree",
+    "species": "hooh",
+    "species_check": "Cobblemon-fabric-1.8.2+1.21.1.jar data/cobblemon/species/generation2/hooh.json: implemented true, fire/flying, labels gen2 legendary restricted; no upstream spawn data (so no natural spawn exists to switch off)",
+    "level": 100,
+    "level_basis": "PROPOSED. After the Champion the cap is 100 (data/entei_boss.json level_why: the catch block refuses a ball only STRICTLY above the thrower's cap).",
+    "kind": "tree_crown (NEW: not in tools/legendaries.KINDS lake_grotto, sealed_chamber, quake_cavern, sapling_wake)",
+    "pattern": "tools/legendaries.py: one tagged Pokemon spawned by a macro line (EXP-046) from a look-then-act step, dormant (DORMANT: Unbattleable, NoAI, NoGravity, PoseType SLEEP, HideLabel, PersistenceRequired, Silent), protected by BLOCKS (Cobblemon ignores Invulnerable: EXP-023), woken at the gate, `cobblers:legendary/hooh/met` granted to the player who reaches it",
+    "gate": {"flags": ["champion_cleared"], "requires_met": [], "status": "PROPOSED",
+             "why": "Ho-Oh is `restricted` (the jar's label), band 6 only in data/dungeon_prize_roster.json rules.restricted_band6_only, and every postgame legendary here is gated at the Champion (data/entei_boss.json gate_why). Flight and ladders do not matter: the partition, not the climb, is the gate."},
+    "protection": "a barrier-block shell round the perch (barrier blocks stop a flying or ridden player as well as a walking one), removed at the gate by the same near/tick driver the grotto legendaries use; leaves are no seal (a player walks a leaf canopy)."
+  },
+  "perch": {
+    "measured_from": "tools/tree_geometry.world_tree(): 1,179,542 solid blocks within 80 of the trunk axis; the tree has 1.26 million",
+    "tree_centre": [2016, 2280],
+    "tree_centre_note": "tools/world_tree.CENTRE. The coordinator's brief said 'about (2004, 2267)'; that is 12 and 13 off the code's centre and nothing here uses it.",
+    "ground_y": 116,
+    "highest_solid_y": 535,
+    "highest_columns": "the canopy's top plateau: column tops 531-535 from x2032 to x2060 along z2283 and 531-535 from z2268 to z2298 along x2045; the highest cells (2044..2048, 535, 2283) are one persistent oak-leaves block thick over air, 29 blocks from the trunk axis",
+    "proposed_perch": [2045, 535, 2283],
+    "proposed_perch_why": "the highest standable cell. Ho-Oh stands on a built log platform here (a new world write; the leaf plateau is no floor for something that size), centred on this column.",
+    "axis_core_top": [2016, 512, 2280],
+    "axis_core_top_why": "the highest standable cell on the trunk axis: the centre column holds oak log from y115 to y459 and persistent leaves from y467 to y512 (air at y468-470 and y509-511), so a shaft up the axis exits on the core dome's top."
+  },
+  "way_up": {
+    "needed": true,
+    "why": "Measured: a player with no blocks climbs about 7 over the roots (WORLD_TREE_PLAN.md section 1), the first storey is 57 over the ground and the perch is 419 over it. A BFS over the canopy's standable cells (solid, two air above, step up at most 1, drop at most 3) from the axis core top (2016, 512, 2280) reaches 41,581 cells and tops out at (2048, 520, 2306): the plateau at 535 is NOT walkable, 15 higher and 23.2 blocks away.",
+    "design_PROPOSED": [
+      "door: a 2-high tunnel at y117-118 from the trunk's east face (x2033) to the axis (x2016): 17 blocks, no gate",
+      "shaft: a 1x1 column on the axis, y117 to y459, carved out of the log core (343 cells) with a ladder in every cell on a log back wall: the shaft is enclosed on four sides, so a player on a ladder cannot fall and every cell the player can reach is a ladder",
+      "canopy mast: y460 to y512 on the same column (53 cells): one log back wall per cell replaces a leaf, the rest is carved; the same enclosed ladder shaft up through the core",
+      "exit onto the core dome's top at (2016, 513, 2280), open sky",
+      "walk: 41,581 reachable canopy cells by single-block steps (measured above) to the high point (2048, 520, 2306); no blocks",
+      "last leg: a ladder-and-log mast of about 15 cells up the plateau's flank from the high point to y535, then the log perch. Its exact cells are measured when the mast exists (the nearest reachable cell to the perch column is 15 under it): a walk audit of this leg is part of the unit that builds it"
+    ],
+    "no_lethal_fall": [
+      "the shaft and mast: no fall is possible (the audit asserts every cell of the column is a ladder with solid on three sides)",
+      "the canopy walk and the last leg: a Slow Falling field for players (effect give on players in the tree's box above y176, every 20 ticks, particles hidden), the pattern tools/bird_slowfall.py uses for Pokemon and the pocket island's fall-rescue sweep uses for players. It is the ONLY thing that makes the canopy walk safe: from the plateau the drop is 400 blocks. It also makes every storey of the tree safe, which the owner may want",
+      "Slow Falling is a status effect; it adds no mod and writes no block"
+    ],
+    "cost_estimate": "NOT MEASURED. Three fills for the shaft, one for the mast, a pack for the field, a perch, a partition and a new legendary kind in tools/legendaries.py (or a standalone tool) with its own audit: a builder unit plus an independent audit, and the apply path (R-step) it needs"
+  },
+  "roster_move": {
+    "status": "NOT APPLIED. Applying it alone would leave data/dungeons.json serving Ho-Oh from the Ash Bell and break tests that name it; the edit list is the whole change.",
+    "today": "data/dungeon_prize_roster.json: dungeons.ash_bell.legendary_pool_by_band {'5': [raikou, ragingbolt, sandyshocks], '6': [hooh, raikou, ragingbolt, sandyshocks]}; species.hooh {status to_dungeon, home ash_bell, bands ['6']}; data/dungeons.json ash_ring params.prize.legendary_by_band {'5': 'raikou', '6': 'hooh'}",
+    "edits": [
+      "data/dungeon_prize_roster.json dungeons.ash_bell.legendary_pool_by_band['6'] -> ['raikou', 'ragingbolt', 'sandyshocks']; its 'why' loses 'Ho-Oh (restricted, band 6)'",
+      "data/dungeon_prize_roster.json species.hooh -> {kind legendary, status planned, where 'the world tree's crown (data/world_tree_hooh.json)'}",
+      "data/dungeons.json ash_ring params.prize.legendary_by_band['6']: 'hooh' -> the owner's pick ('raikou' repeats band 5's prize; 'ragingbolt' is held back by its model until the ATM subset is delivered)",
+      "tests/test_dungeon_ash_bell.py: its docstring and the prize test name Ho-Oh and Raikou at band 6 and expect the spawn functions prize/spawn_b6 and prize/spawn_b6_2",
+      "tests/test_player_guide_dungeons.py line 156: needle 'Ho-Oh' in the Ash Bell guide; tools/player_guide_map.py 'hooh' label"
+    ],
+    "band6_pool_keeps": "raikou, ragingbolt, sandyshocks (three of four): the band-6 prize is no longer a restricted species, which rules.restricted_band6_only was written to hold in band 6; Raikou and Sandy Shocks are legendary/paradox, not `restricted`, so the rule is not broken, but the Ash Bell's band 6 has no box legendary left"
+  },
+  "not_verified": [
+    "everything in game: the ladder shaft, the field, the partition, the perch, the legendary's behaviour on a leaf plateau",
+    "that a player can step from the walk's high point onto the last leg (the leg is not designed to the cell)",
+    "that Ho-Oh's hitbox fits the perch (the Xerneas hitbox question of WORLD_TREE_PLAN.md U8 applies)",
+    "whether the tree's actual terrain differs from the generator's block list (the world tree was placed by fill functions from the same generator; the world was not read)"
+  ]
+}

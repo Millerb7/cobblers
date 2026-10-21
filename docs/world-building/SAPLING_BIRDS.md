@@ -10,6 +10,10 @@ tree". One species per tree: Route 1 is Pidgey only, `elder_viltris_path_valley_
 `elder_long_isle_south_3` Oricorio only (so C6 and decisions 5 and 10 are settled that way: no co-residents, owls and
 crows by day too). The "Block y", "Range" and "How it would be built" steps 2-4 describe the retired natural blocks.
 
+**2026-10-21: why the birds only stand in the crown, and the fix (PLANNED, not placed): see "Where the birds stand"
+at the end of this file.** The species of each tree now come from `data/tree_bird_species.json` (one line per tree, by
+height band), not from the tables below.
+
 Earlier status: AUTHORED 2026-09-26, not placed. The owner approved it ("i like those birds ... add the birds"), and every
 open decision took this document's recommendation, except two. The 52 elders are habitats `elder_*` in
 `data/spawns.json` and Habitat Blocks in `data/habitat_blocks.json` (status `planned`). **Block height:** the first
@@ -559,3 +563,118 @@ an open decision).
 11. **The Tree Town canopy.** Settle its band (25-40 beside a cap-30 road) and its ranges before the grove
     elders' blocks go in (C7).
 12. **Rowlet** is kept out of the grove because it is a starter. The owner may want it there.
+
+## Where the birds stand (2026-10-21): the Cobblemon rule, the fault, the fix
+
+The owner: birds are "supposed to be all over trees", not only at the crown. Status: **built offline, planned, not
+placed, not seen in game.** Tools: `tools/habitat_spawn_model.py` (the rule), `tools/tree_geometry.py` (the trees'
+block sets from their prefabs), `tools/tree_birds.py` (the plan, the records, the pools). Data:
+`data/tree_bird_nests.json` (the plan), 143 `tbird_*` records in `data/habitat_blocks.json`, 128 `tbird_*` pools and 66
+rewritten pools in `data/spawns.json`, `data/tree_bird_species.json` (the designer's) and
+`data/tree_bird_species_placeholder.json` (the world tree's, PLACEHOLDER).
+
+### The rule (how an activated Habitat Block picks where a bird stands)
+
+Read from the bytecode of `Cobblemon-fabric-1.8.2+1.21.1.jar` (the server's jar), with `javap -c`, 2026-10-21. The
+classes are in `com.cobblemon.mod.common`: `api.habitats.spawningstyle.ActivatedHabitatSpawning`,
+`api.spawning.spawner.FixedAreaSpawner` and `Spawner` (default methods), `api.spawning.CobblemonSpawningZoneGenerator`,
+`api.spawning.position.AreaSpawnablePositionResolver`, `api.spawning.position.calculators.GroundedSpawnablePositionCalculator`,
+`FlooredSpawnablePositionCalculator` and `SpawnablePositionCalculator$Companion`, and
+`api.spawning.selection.FlatSpawnablePositionWeightedSelector`. `tools/habitat_spawn_model.py` states each step.
+
+1. **VERIFIED.** One activation spawns at most `min(MaxSpawns - this block's own live spawns, MaxSpawnsPerActivation)`.
+2. **VERIFIED.** The zone is the block's own cube: the spawner is built with horizontal and vertical radius `SpawnRange`,
+   so a box of (2r+1)^3 whose centre is the block.
+3. **VERIFIED, and this is the fault.** `Spawner.constrainArea` then needs a *valid start* at the box's centre column: the
+   block at the start is air and the block above is passable. When the centre is not valid it tries start+1, start-1,
+   start+2 ... (up first) in the SAME x/z column, up to `maxVerticalCorrectionBlocks` (64, `modpack/config/cobblemon/main.json`),
+   takes the first valid one and **re-bases the box on it** (base y = valid y - 16). With none valid the area is dropped:
+   no spawn. A Habitat Block is itself a solid block, and ours are buried in wood so nobody breaks them.
+4. **VERIFIED.** The zone generator stores every block of the box; it is not a column-top scan. A `grounded` position is a
+   cell that is solid with air above (`GroundedSpawnablePositionCalculator`: baseCondition `isSolid`, surroundingCondition
+   `isAir`), so limb tops, ledges and leaf tops all count, not only column tops. The STATE hypothesis "grounded spawn
+   positions are column-top surfaces" is **not** what the jar does.
+5. **VERIFIED.** A cell within `minimumDistanceBetweenEntities` (8) of any living entity in the zone (except the cause, the
+   nearest player within 64) is skipped; the first position calculator in priority order that fits makes the position.
+6. **VERIFIED.** The selector picks a spawn detail by weight and then one of its positions by weight; the habitat's own
+   influence adds no per-position weight, so the choice is uniform over the grounded cells. Density by height is therefore
+   the number of standing cells at each height: wide leaf tops dominate.
+7. **VERIFIED.** The other position types are `submerged`, `seafloor`, `lavafloor` and `surface` (water surface); none is
+   an air position, so there is no `flying` type to choose (candidate d is closed).
+8. **ASSUMED.** `isValidStartPoint`'s pathing type (`class_10.field_51`) is LAND; an AIR type gives the same answer for the
+   blocks that matter (air passes, a full block does not). Nothing in the model depends on the difference.
+
+### What it explains (the model reproduces every live observation it can be compared with)
+
+`tools/tree_birds.py plan` seats each tree's prefab (`tools/tree_geometry.py`) and runs the rule on its existing nests:
+
+| Observation (live, 2026-10-21) | The model |
+|---|---|
+| Scorched crater sapling (5632, 5528), ground y145: every spawn at y213-218; the y157 and y180 nests produce nothing | y157 (ground +12): no air within 64 up or down in its column, so **no spawn**. y180 (+35) and y210 (+65): centre re-based to +83 (y228), box +67..+99, cells at +68..+83 = **y213..228**. The observed y213-218 is the bottom of that range |
+| An elder's 23-25 birds, four nests of 8 | all FOUR nests re-base into the crown: +12, +35 and +58 to +60 (box +44..+76) and +74 to +83 (box +67..+99). 4 x 8 = 32 capacity, all in +45..+83; nothing below +45 |
+| Birds on lower branches at `elder_viltri_plateau_1`, y132-134 and y163-165 | not spawn cells (the lowest is +45 = y166); they walked off and fell, as the Slow Falling note says |
+
+An elder's storeys (first +21..+25, second +39..+43) and the themed saplings' lower trunk therefore never get a bird.
+
+### The mechanism (CLAUDE.md principle 6)
+
+- **Rung used: Cobblemon native** (Habitat Blocks), more of the same, placed by data through the existing manifest and
+  step R9E. Earlier rungs cannot do it: no config makes a buried block spawn at its own height (a smaller
+  `maxVerticalCorrectionBlocks` only makes more nests spawn nothing, and it is global); `SpawnRange` is block data;
+  there is no addon to ask. Later rungs are not needed: a function keeper (c) would have to recognise a freshly
+  spawned wild bird and teleport it each pass, which is more machinery for the same result.
+- **Rejected: (b) perch ledges** (writes into live trees), **(c) a keeper** (above), **(d) another position type** (item 7).
+- **What it writes.** A new nest is a cell of a *limb* (the block and its six neighbours are the tree's own wood, so it
+  stays hidden and its mimic is that wood) near the trunk, where the limb's top is 1-4 above the cell: the column above
+  reaches air within 4, so the zone is centred on the limb top.
+  - Each of the 62 elders and themed saplings gets two: `low` (zone centre +24..+29 over the ground, box +8..+43: the first
+    storey) and `mid` (centre +42..+43, box +26..+59: the second storey and the upper limbs). 8 alive each.
+  - 124 blocks for them, 19 for the world tree: **143 records, status `planned`**, id `tbird_<tree>_<band>`. None edits
+    a placed block. R9E replaces every manifest block on every run already.
+  - Per nest: 315-736 standing cells in its box, 0 of them the forest floor (the lowest box starts +8 over the ground).
+- **Capacity after.** An elder: 16 at its storeys + 32 in its crown = 48, of which 32 stand in +45..+83. The crown is
+  still top-heavy because three of its four old nests are redundant (they all re-base to +60). Retiring two of the three
+  would make it 16 + 16 + 16; that edits placed blocks and `tests/test_elder_birds.py`'s four-blocks-a-tree rule, so it
+  is the owner's call, not made here.
+
+### The species (the designer's file)
+
+`data/tree_bird_species.json` gives each tree one line and a species list for `low`, `mid` and `crown`. The pools follow
+what the rule showed: the existing four nests (all in the crown) keep the tree's pool id and take the **crown** band;
+the new storey nests take `tbird_<tree>_low` and `tbird_<tree>_mid`. An evolved stage spawns only in its band, from its
+evolution level (read from the jar, not assumed) to the band's top. All 66 files' evolutions were checked: none
+exceeds its band. The 66 old pools' entries are replaced (scope = the pool id, `habitats[]` copies too). The 4 Foothill
+grove elders get the crown pool only (no geometry here, below).
+
+### The world tree (PROPOSED species)
+
+Seated from its generator (`tools/tree_grove.big_tree('oak','a','world')`, `tools/world_tree.py` CENTRE (2016, 2280),
+ground 116; the tree reaches y535): **19 nests**, two on each of the 8 storeys' limbs (`s1a`..`s8b`, each a hidden
+oak-log cell on a limb 5 thick, zone centre +66, +102, +140, +178, +218, +254, +292, +336 over the ground, 186-1,585 cells),
+and three in the canopy's leaves (`c1`..`c3`, centres +386, +396, +413). Bands: low (storeys 1-2), mid (3-5), high (6-8),
+crown (canopy). Species: `data/tree_bird_species_placeholder.json`, the coordinator's working set, marked PLACEHOLDER;
+`python tools/tree_birds.py spawns` prints each collision with the one-line-per-tree rule (9 of its 13 species are already
+a tree's line). Not here: the roots (one block wide: nothing is hidden in them) and the top, which is Ho-Oh's:
+`data/world_tree_hooh.json` (PROPOSED).
+
+### Not covered, not verified
+
+- **Nothing was seen in game.** The model reproduces the live observations above; it has not predicted a new one.
+  The test: place the planned blocks on staging, then count birds by 8-block band round one elder for 5 minutes.
+- The 4 Foothill grove elders: their seat (variant, rotation) is in `derived/sites/tree_grove_foothill_woods.json`
+  (gitignored, absent here). `python tools/tree_birds.py plan` covers them when it exists.
+- The model has a flat floor and the tree's own blocks: no terrain, no neighbouring tree (a grove giant's limbs near an
+  elder's), no 8-block spacing placement. The cell counts are upper bounds.
+- Compiled pools (`tools/compile_spawns.py`), `data/nuzlocke_zones.json` (its generator needs `derived/cavern/plan.json`)
+  and the placement function were not regenerated here.
+- `tests/test_elder_birds.py` and `tests/test_sapling_birds.py` assert the OLD species of each tree: they fail by design
+  until their test author updates them to the designer's file.
+
+### How to prove it (a brief for the test author; the builder wrote none)
+
+An audit must not import `tools/habitat_spawn_model.py` or `tools/tree_geometry.py` (shared derivation). Re-derive from
+the jar and the prefab NBT: for each `tbird_*` record, the cell and its six neighbours are the tree's wood in the seated
+prefab; the column above reaches air within 4; the zone's cells by a separate flood of the (2r+1)^3 box; no floor cell.
+Mutate the GENERATOR (not the data): `MAX_DROP`, `SMALL_TARGETS`, the `hidden` test, `M.centre_y`'s up-first order, the
+box base (`cy - 16`), `solid_name`; each must fail the audit. Also: every `tbird_` pool has a record and every record a
+pool; each crown pool is exactly the designer's crown band.

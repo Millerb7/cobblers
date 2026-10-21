@@ -48,6 +48,9 @@ TREE_PREFIXES = ("elder_", "sapling_")
 GROUND_MARGIN = 16
 CROWN_MARGIN = 24
 HALF_WIDTH = 32
+WORLD_PREFIX = "tbird_world_tree_"
+WORLD_BELOW = 48            # the lowest world-tree nest is 62 over its ground: 48 + GROUND_MARGIN reaches the forest floor
+WORLD_HALF_WIDTH = 110     # the world tree's canopy reaches 101 from its trunk (tools/tree_grove.TIERS["world"])
 PERIOD = 40      # ticks between passes
 DURATION = 4     # seconds of Slow Falling: twice the period, so it never lapses between passes
 
@@ -64,6 +67,15 @@ def trees(doc=None):
         if b["id"].startswith(TREE_PREFIXES) and b.get("position") and b.get("status", "placed") == "placed":
             nests[b["pool"]].append(b["position"])
     out = []
+    # the world tree (2026-10-21, tools/tree_birds.py): its nests, tbird_world_tree_*, stand over 20 x 40 blocks and its
+    # canopy is 160 wide and 420 tall, so one box round all of them reaches the canopy's edge (WORLD_HALF_WIDTH)
+    world = [b["position"] for b in doc["blocks"]
+             if b["id"].startswith(WORLD_PREFIX) and b.get("position") and b.get("status", "placed") in ("placed", "planned")]
+    if world:
+        xs, zs, ys = [p["x"] for p in world], [p["z"] for p in world], [p["y"] for p in world]
+        out.append(("world_tree", min(xs) - (WORLD_HALF_WIDTH - HALF_WIDTH), max(xs) + (WORLD_HALF_WIDTH - HALF_WIDTH),
+                    min(zs) - (WORLD_HALF_WIDTH - HALF_WIDTH), max(zs) + (WORLD_HALF_WIDTH - HALF_WIDTH),
+                    min(ys) - WORLD_BELOW, max(ys)))
     for pool, ps in sorted(nests.items()):
         xs, zs, ys = [p["x"] for p in ps], [p["z"] for p in ps], [p["y"] for p in ps]
         # most trees' nests share one column; a few stand a step apart (sapling_crag_mt_vessu: two columns 6 apart),

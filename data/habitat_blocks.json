@@ -8142,6 +8142,3295 @@
       "status": "planned",
       "generated_by": "tools/sanctuaries.py",
       "why": "The court's occupants (tools/sanctuaries.py, an open-air sanctuary replacing the cave kit's chamber): one activated block in the court's centre floor cell, spawn_range 8 (the court's reach), cancel_range -1 so nothing is cancelled, up to 3 alive and 1 refilled at a time. It is written after the sanctuary's build (the sanctuary step before R9E). Whether an activated block's spawns stay inside an open court's walls is unmeasured (HB-1)."
+    },
+    {
+      "id": "tbird_elder_foothill_woods_1_low",
+      "place": "the tree elder_foothill_woods_1: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_foothill_woods_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1437,
+        "y": 121,
+        "z": 2262
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 322 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_foothill_woods_1_mid",
+      "place": "the tree elder_foothill_woods_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_foothill_woods_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1438,
+        "y": 140,
+        "z": 2262
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 452 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_foothill_woods_2_low",
+      "place": "the tree elder_foothill_woods_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_foothill_woods_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2909,
+        "y": 129,
+        "z": 2438
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 528 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_foothill_woods_2_mid",
+      "place": "the tree elder_foothill_woods_2: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_foothill_woods_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2914,
+        "y": 146,
+        "z": 2442
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 419 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_foothill_woods_3_low",
+      "place": "the tree elder_foothill_woods_3: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_foothill_woods_3_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2233,
+        "y": 146,
+        "z": 1620
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 500 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_foothill_woods_3_mid",
+      "place": "the tree elder_foothill_woods_3: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_foothill_woods_3_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2234,
+        "y": 163,
+        "z": 1624
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 429 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_foothill_woods_4_low",
+      "place": "the tree elder_foothill_woods_4: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_foothill_woods_4_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2133,
+        "y": 138,
+        "z": 2622
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 322 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_foothill_woods_4_mid",
+      "place": "the tree elder_foothill_woods_4: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_foothill_woods_4_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2134,
+        "y": 157,
+        "z": 2622
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 452 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_jungle_east_1_low",
+      "place": "the tree elder_jungle_east_1: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_jungle_east_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 8095,
+        "y": 105,
+        "z": 6726
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 376 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_jungle_east_1_mid",
+      "place": "the tree elder_jungle_east_1: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_jungle_east_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 8094,
+        "y": 123,
+        "z": 6722
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 410 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_jungle_east_2_low",
+      "place": "the tree elder_jungle_east_2: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_jungle_east_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7761,
+        "y": 159,
+        "z": 7069
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 736 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_jungle_east_2_mid",
+      "place": "the tree elder_jungle_east_2: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_jungle_east_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7758,
+        "y": 173,
+        "z": 7074
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 482 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_jungle_west_1_low",
+      "place": "the tree elder_jungle_west_1: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_jungle_west_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7573,
+        "y": 127,
+        "z": 7822
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 376 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_jungle_west_1_mid",
+      "place": "the tree elder_jungle_west_1: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_jungle_west_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7574,
+        "y": 145,
+        "z": 7826
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 410 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_jungle_west_2_low",
+      "place": "the tree elder_jungle_west_2: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_jungle_west_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6929,
+        "y": 104,
+        "z": 7573
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 736 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_jungle_west_2_mid",
+      "place": "the tree elder_jungle_west_2: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_jungle_west_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6926,
+        "y": 118,
+        "z": 7578
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 482 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_lake_viltri_hollow_1_low",
+      "place": "the tree elder_lake_viltri_hollow_1: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_lake_viltri_hollow_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1282,
+        "y": 131,
+        "z": 3187
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 321 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_lake_viltri_hollow_1_mid",
+      "place": "the tree elder_lake_viltri_hollow_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_lake_viltri_hollow_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1278,
+        "y": 150,
+        "z": 3182
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 481 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_lake_viltri_hollow_2_low",
+      "place": "the tree elder_lake_viltri_hollow_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_lake_viltri_hollow_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1821,
+        "y": 143,
+        "z": 3054
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 511 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_lake_viltri_hollow_2_mid",
+      "place": "the tree elder_lake_viltri_hollow_2: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_lake_viltri_hollow_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1822,
+        "y": 160,
+        "z": 3054
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 419 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_middle_1_low",
+      "place": "the tree elder_long_isle_middle_1: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_middle_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 8107,
+        "y": 101,
+        "z": 5979
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 669 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_middle_1_mid",
+      "place": "the tree elder_long_isle_middle_1: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_middle_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 8102,
+        "y": 115,
+        "z": 5980
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 378 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_middle_2_low",
+      "place": "the tree elder_long_isle_middle_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_middle_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7373,
+        "y": 108,
+        "z": 6788
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 359 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_middle_2_mid",
+      "place": "the tree elder_long_isle_middle_2: inside its limb, 38 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_middle_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7378,
+        "y": 124,
+        "z": 6788
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 402 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_north_1_low",
+      "place": "the tree elder_long_isle_north_1: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_north_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7885,
+        "y": 95,
+        "z": 4489
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 674 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_north_1_mid",
+      "place": "the tree elder_long_isle_north_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_north_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7884,
+        "y": 110,
+        "z": 4490
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 408 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_north_2_low",
+      "place": "the tree elder_long_isle_north_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_north_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7775,
+        "y": 115,
+        "z": 5262
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 434 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_north_2_mid",
+      "place": "the tree elder_long_isle_north_2: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_north_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7776,
+        "y": 133,
+        "z": 5262
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 417 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_south_1_low",
+      "place": "the tree elder_long_isle_south_1: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_south_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7131,
+        "y": 96,
+        "z": 7938
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 376 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_south_1_mid",
+      "place": "the tree elder_long_isle_south_1: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_south_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7130,
+        "y": 114,
+        "z": 7934
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 410 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_south_2_low",
+      "place": "the tree elder_long_isle_south_2: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_south_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7923,
+        "y": 113,
+        "z": 7513
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 736 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_south_2_mid",
+      "place": "the tree elder_long_isle_south_2: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_south_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7918,
+        "y": 127,
+        "z": 7510
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 482 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_south_3_low",
+      "place": "the tree elder_long_isle_south_3: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_south_3_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7333,
+        "y": 157,
+        "z": 7374
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 529 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_long_isle_south_3_mid",
+      "place": "the tree elder_long_isle_south_3: inside its limb, 38 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_long_isle_south_3_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7338,
+        "y": 173,
+        "z": 7374
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 438 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_marshy_marsh_1_low",
+      "place": "the tree elder_marshy_marsh_1: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_marshy_marsh_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4904,
+        "y": 132,
+        "z": 1847
+      },
+      "mimic": "minecraft:mangrove_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 457 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_marshy_marsh_1_mid",
+      "place": "the tree elder_marshy_marsh_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_marshy_marsh_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4904,
+        "y": 150,
+        "z": 1848
+      },
+      "mimic": "minecraft:mangrove_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 473 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_marshy_marsh_2_low",
+      "place": "the tree elder_marshy_marsh_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_marshy_marsh_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5431,
+        "y": 150,
+        "z": 2416
+      },
+      "mimic": "minecraft:mangrove_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 457 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_marshy_marsh_2_mid",
+      "place": "the tree elder_marshy_marsh_2: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_marshy_marsh_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5436,
+        "y": 168,
+        "z": 2416
+      },
+      "mimic": "minecraft:mangrove_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 404 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_marshy_marsh_3_low",
+      "place": "the tree elder_marshy_marsh_3: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_marshy_marsh_3_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5017,
+        "y": 136,
+        "z": 2273
+      },
+      "mimic": "minecraft:mangrove_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 682 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_marshy_marsh_3_mid",
+      "place": "the tree elder_marshy_marsh_3: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_marshy_marsh_3_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5016,
+        "y": 150,
+        "z": 2274
+      },
+      "mimic": "minecraft:mangrove_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 472 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_north_pine_isle_1_low",
+      "place": "the tree elder_north_pine_isle_1: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_north_pine_isle_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7985,
+        "y": 98,
+        "z": 455
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 674 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_north_pine_isle_1_mid",
+      "place": "the tree elder_north_pine_isle_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_north_pine_isle_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7984,
+        "y": 113,
+        "z": 456
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 408 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_north_pine_isle_2_low",
+      "place": "the tree elder_north_pine_isle_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_north_pine_isle_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6995,
+        "y": 97,
+        "z": 314
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 436 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_north_pine_isle_2_mid",
+      "place": "the tree elder_north_pine_isle_2: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_north_pine_isle_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6996,
+        "y": 115,
+        "z": 310
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 454 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_northgate_east_1_low",
+      "place": "the tree elder_northgate_east_1: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_northgate_east_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5471,
+        "y": 152,
+        "z": 429
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 674 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_northgate_east_1_mid",
+      "place": "the tree elder_northgate_east_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_northgate_east_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5470,
+        "y": 167,
+        "z": 430
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 408 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_northgate_east_2_low",
+      "place": "the tree elder_northgate_east_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_northgate_east_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5933,
+        "y": 104,
+        "z": 838
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 435 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_northgate_east_2_mid",
+      "place": "the tree elder_northgate_east_2: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_northgate_east_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5934,
+        "y": 122,
+        "z": 838
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 455 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_northgate_west_1_low",
+      "place": "the tree elder_northgate_west_1: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_northgate_west_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4795,
+        "y": 102,
+        "z": 271
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 674 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_northgate_west_1_mid",
+      "place": "the tree elder_northgate_west_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_northgate_west_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4790,
+        "y": 117,
+        "z": 270
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 421 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_northgate_west_2_low",
+      "place": "the tree elder_northgate_west_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_northgate_west_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5247,
+        "y": 92,
+        "z": 60
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 434 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_northgate_west_2_mid",
+      "place": "the tree elder_northgate_west_2: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_northgate_west_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5248,
+        "y": 110,
+        "z": 60
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 417 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_peak_pond_hollow_1_low",
+      "place": "the tree elder_peak_pond_hollow_1: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_peak_pond_hollow_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3911,
+        "y": 136,
+        "z": 1773
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 674 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_peak_pond_hollow_1_mid",
+      "place": "the tree elder_peak_pond_hollow_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_peak_pond_hollow_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3910,
+        "y": 151,
+        "z": 1774
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 408 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_peak_pond_hollow_2_low",
+      "place": "the tree elder_peak_pond_hollow_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_peak_pond_hollow_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4005,
+        "y": 134,
+        "z": 1042
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 436 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_peak_pond_hollow_2_mid",
+      "place": "the tree elder_peak_pond_hollow_2: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_peak_pond_hollow_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4006,
+        "y": 152,
+        "z": 1038
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 454 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_peak_pond_hollow_3_low",
+      "place": "the tree elder_peak_pond_hollow_3: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_peak_pond_hollow_3_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4343,
+        "y": 135,
+        "z": 2298
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 358 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_peak_pond_hollow_3_mid",
+      "place": "the tree elder_peak_pond_hollow_3: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_peak_pond_hollow_3_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4344,
+        "y": 153,
+        "z": 2294
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 373 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_shrew_lake_shores_1_low",
+      "place": "the tree elder_shrew_lake_shores_1: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_shrew_lake_shores_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3926,
+        "y": 166,
+        "z": 4275
+      },
+      "mimic": "minecraft:cherry_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 321 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_shrew_lake_shores_1_mid",
+      "place": "the tree elder_shrew_lake_shores_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_shrew_lake_shores_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3926,
+        "y": 184,
+        "z": 4270
+      },
+      "mimic": "minecraft:cherry_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 399 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_shrew_lake_shores_2_low",
+      "place": "the tree elder_shrew_lake_shores_2: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_shrew_lake_shores_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3757,
+        "y": 165,
+        "z": 3931
+      },
+      "mimic": "minecraft:cherry_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 615 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_shrew_lake_shores_2_mid",
+      "place": "the tree elder_shrew_lake_shores_2: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_shrew_lake_shores_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3758,
+        "y": 180,
+        "z": 3930
+      },
+      "mimic": "minecraft:cherry_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 412 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_shrew_lake_shores_3_low",
+      "place": "the tree elder_shrew_lake_shores_3: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_shrew_lake_shores_3_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3103,
+        "y": 142,
+        "z": 3621
+      },
+      "mimic": "minecraft:cherry_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 633 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_shrew_lake_shores_3_mid",
+      "place": "the tree elder_shrew_lake_shores_3: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_shrew_lake_shores_3_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3102,
+        "y": 157,
+        "z": 3622
+      },
+      "mimic": "minecraft:cherry_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 409 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_south_pine_isle_1_low",
+      "place": "the tree elder_south_pine_isle_1: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_south_pine_isle_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7231,
+        "y": 101,
+        "z": 1989
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 674 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_south_pine_isle_1_mid",
+      "place": "the tree elder_south_pine_isle_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_south_pine_isle_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7230,
+        "y": 116,
+        "z": 1990
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 408 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_south_pine_isle_2_low",
+      "place": "the tree elder_south_pine_isle_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_south_pine_isle_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6765,
+        "y": 134,
+        "z": 1210
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 436 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_south_pine_isle_2_mid",
+      "place": "the tree elder_south_pine_isle_2: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_south_pine_isle_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6766,
+        "y": 152,
+        "z": 1206
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 454 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_south_pine_isle_3_low",
+      "place": "the tree elder_south_pine_isle_3: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_south_pine_isle_3_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7499,
+        "y": 94,
+        "z": 1264
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 358 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_south_pine_isle_3_mid",
+      "place": "the tree elder_south_pine_isle_3: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_south_pine_isle_3_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7498,
+        "y": 112,
+        "z": 1268
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 373 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_tilpey_east_shore_1_low",
+      "place": "the tree elder_tilpey_east_shore_1: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_tilpey_east_shore_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6850,
+        "y": 116,
+        "z": 3789
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 322 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_tilpey_east_shore_1_mid",
+      "place": "the tree elder_tilpey_east_shore_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_tilpey_east_shore_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6846,
+        "y": 135,
+        "z": 3790
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 485 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_tilpey_east_shore_2_low",
+      "place": "the tree elder_tilpey_east_shore_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_tilpey_east_shore_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6485,
+        "y": 139,
+        "z": 4774
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 528 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_tilpey_east_shore_2_mid",
+      "place": "the tree elder_tilpey_east_shore_2: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_tilpey_east_shore_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6490,
+        "y": 156,
+        "z": 4778
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 419 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_tilpey_north_shore_1_low",
+      "place": "the tree elder_tilpey_north_shore_1: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_tilpey_north_shore_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5877,
+        "y": 117,
+        "z": 3246
+      },
+      "mimic": "minecraft:birch_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 357 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_tilpey_north_shore_1_mid",
+      "place": "the tree elder_tilpey_north_shore_1: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_tilpey_north_shore_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5882,
+        "y": 135,
+        "z": 3250
+      },
+      "mimic": "minecraft:birch_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 377 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_tilpey_north_shore_2_low",
+      "place": "the tree elder_tilpey_north_shore_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_tilpey_north_shore_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5221,
+        "y": 139,
+        "z": 3038
+      },
+      "mimic": "minecraft:birch_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 378 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_tilpey_north_shore_2_mid",
+      "place": "the tree elder_tilpey_north_shore_2: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_tilpey_north_shore_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5226,
+        "y": 156,
+        "z": 3038
+      },
+      "mimic": "minecraft:birch_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 388 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_viltri_plateau_1_low",
+      "place": "the tree elder_viltri_plateau_1: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_viltri_plateau_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1728,
+        "y": 142,
+        "z": 3963
+      },
+      "mimic": "minecraft:birch_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 357 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_viltri_plateau_1_mid",
+      "place": "the tree elder_viltri_plateau_1: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_viltri_plateau_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1732,
+        "y": 160,
+        "z": 3958
+      },
+      "mimic": "minecraft:birch_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 377 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_viltri_plateau_2_low",
+      "place": "the tree elder_viltri_plateau_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_viltri_plateau_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2329,
+        "y": 140,
+        "z": 3558
+      },
+      "mimic": "minecraft:birch_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 378 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_viltri_plateau_2_mid",
+      "place": "the tree elder_viltri_plateau_2: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_viltri_plateau_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2334,
+        "y": 157,
+        "z": 3558
+      },
+      "mimic": "minecraft:birch_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 388 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_viltri_plateau_3_low",
+      "place": "the tree elder_viltri_plateau_3: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_viltri_plateau_3_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2345,
+        "y": 133,
+        "z": 3067
+      },
+      "mimic": "minecraft:birch_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 641 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_viltri_plateau_3_mid",
+      "place": "the tree elder_viltri_plateau_3: inside its limb, 38 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_viltri_plateau_3_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2346,
+        "y": 146,
+        "z": 3066
+      },
+      "mimic": "minecraft:birch_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 404 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_viltris_path_valley_1_low",
+      "place": "the tree elder_viltris_path_valley_1: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_viltris_path_valley_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1013,
+        "y": 159,
+        "z": 3862
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 322 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_viltris_path_valley_1_mid",
+      "place": "the tree elder_viltris_path_valley_1: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_viltris_path_valley_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1014,
+        "y": 178,
+        "z": 3862
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 452 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_viltris_path_valley_2_low",
+      "place": "the tree elder_viltris_path_valley_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_viltris_path_valley_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1091,
+        "y": 144,
+        "z": 3494
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 517 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_viltris_path_valley_2_mid",
+      "place": "the tree elder_viltris_path_valley_2: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_viltris_path_valley_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1092,
+        "y": 161,
+        "z": 3498
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 419 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_wedge_north_1_low",
+      "place": "the tree elder_wedge_north_1: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_wedge_north_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3847,
+        "y": 159,
+        "z": 2909
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 669 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_wedge_north_1_mid",
+      "place": "the tree elder_wedge_north_1: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_wedge_north_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3848,
+        "y": 173,
+        "z": 2914
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 378 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_wedge_north_2_low",
+      "place": "the tree elder_wedge_north_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_wedge_north_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4157,
+        "y": 164,
+        "z": 3182
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 359 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_wedge_north_2_mid",
+      "place": "the tree elder_wedge_north_2: inside its limb, 38 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_wedge_north_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4162,
+        "y": 180,
+        "z": 3182
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 402 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_wedge_south_1_low",
+      "place": "the tree elder_wedge_south_1: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_wedge_south_1_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4785,
+        "y": 137,
+        "z": 4405
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 669 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_wedge_south_1_mid",
+      "place": "the tree elder_wedge_south_1: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_wedge_south_1_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4786,
+        "y": 151,
+        "z": 4410
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 378 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_elder_wedge_south_2_low",
+      "place": "the tree elder_wedge_south_2: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_wedge_south_2_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4689,
+        "y": 113,
+        "z": 3894
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 366 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_elder_wedge_south_2_mid",
+      "place": "the tree elder_wedge_south_2: inside its limb, 38 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_elder_wedge_south_2_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4690,
+        "y": 129,
+        "z": 3898
+      },
+      "mimic": "minecraft:dark_oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 6
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 402 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_crag_mt_vessu_low",
+      "place": "the tree sapling_crag_mt_vessu: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_crag_mt_vessu_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1863,
+        "y": 269,
+        "z": 1429
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 674 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_crag_mt_vessu_mid",
+      "place": "the tree sapling_crag_mt_vessu: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_crag_mt_vessu_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1862,
+        "y": 284,
+        "z": 1430
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 402 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_crag_the_crags_low",
+      "place": "the tree sapling_crag_the_crags: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_crag_the_crags_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3523,
+        "y": 183,
+        "z": 1599
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 674 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_crag_the_crags_mid",
+      "place": "the tree sapling_crag_the_crags: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_crag_the_crags_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3518,
+        "y": 198,
+        "z": 1598
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 549 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_desert_long_isle_north_low",
+      "place": "the tree sapling_desert_long_isle_north: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_desert_long_isle_north_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7933,
+        "y": 121,
+        "z": 4894
+      },
+      "mimic": "minecraft:bone_block",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 357 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_desert_long_isle_north_mid",
+      "place": "the tree sapling_desert_long_isle_north: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_desert_long_isle_north_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7938,
+        "y": 139,
+        "z": 4898
+      },
+      "mimic": "minecraft:bone_block",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 369 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_desert_south_east_dunes_low",
+      "place": "the tree sapling_desert_south_east_dunes: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_desert_south_east_dunes_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6190,
+        "y": 162,
+        "z": 6115
+      },
+      "mimic": "minecraft:bone_block",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 350 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_desert_south_east_dunes_mid",
+      "place": "the tree sapling_desert_south_east_dunes: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_desert_south_east_dunes_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6190,
+        "y": 180,
+        "z": 6114
+      },
+      "mimic": "minecraft:bone_block",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 369 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_frost_frostpeak_low",
+      "place": "the tree sapling_frost_frostpeak: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_frost_frostpeak_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 825,
+        "y": 111,
+        "z": 771
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 674 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_frost_frostpeak_mid",
+      "place": "the tree sapling_frost_frostpeak: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_frost_frostpeak_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 822,
+        "y": 126,
+        "z": 766
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 419 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_frost_glacier_foot_fields_low",
+      "place": "the tree sapling_frost_glacier_foot_fields: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_frost_glacier_foot_fields_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4733,
+        "y": 151,
+        "z": 2641
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 674 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_frost_glacier_foot_fields_mid",
+      "place": "the tree sapling_frost_glacier_foot_fields: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_frost_glacier_foot_fields_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4734,
+        "y": 166,
+        "z": 2638
+      },
+      "mimic": "minecraft:spruce_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 418 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_lakeshore_arrow_lake_shores_low",
+      "place": "the tree sapling_lakeshore_arrow_lake_shores: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_lakeshore_arrow_lake_shores_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2509,
+        "y": 127,
+        "z": 4530
+      },
+      "mimic": "minecraft:mangrove_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 25 over the ground and holds 449 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_lakeshore_arrow_lake_shores_mid",
+      "place": "the tree sapling_lakeshore_arrow_lake_shores: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_lakeshore_arrow_lake_shores_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2510,
+        "y": 145,
+        "z": 4530
+      },
+      "mimic": "minecraft:mangrove_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 436 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_lakeshore_tilpey_south_shore_low",
+      "place": "the tree sapling_lakeshore_tilpey_south_shore: inside its limb, 22 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_lakeshore_tilpey_south_shore_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5821,
+        "y": 105,
+        "z": 4610
+      },
+      "mimic": "minecraft:mangrove_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 432 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_lakeshore_tilpey_south_shore_mid",
+      "place": "the tree sapling_lakeshore_tilpey_south_shore: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_lakeshore_tilpey_south_shore_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5822,
+        "y": 123,
+        "z": 4606
+      },
+      "mimic": "minecraft:mangrove_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 436 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_palm_east_coast_dunes_low",
+      "place": "the tree sapling_palm_east_coast_dunes: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_palm_east_coast_dunes_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7379,
+        "y": 87,
+        "z": 5514
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 376 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_palm_east_coast_dunes_mid",
+      "place": "the tree sapling_palm_east_coast_dunes: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_palm_east_coast_dunes_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7378,
+        "y": 105,
+        "z": 5510
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 490 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_palm_sunset_east_low",
+      "place": "the tree sapling_palm_sunset_east: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_palm_sunset_east_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2842,
+        "y": 86,
+        "z": 7077
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 376 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_palm_sunset_east_mid",
+      "place": "the tree sapling_palm_sunset_east: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_palm_sunset_east_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2838,
+        "y": 104,
+        "z": 7078
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 490 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_palm_sunset_west_low",
+      "place": "the tree sapling_palm_sunset_west: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_palm_sunset_west_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1450,
+        "y": 86,
+        "z": 6677
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 376 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_palm_sunset_west_mid",
+      "place": "the tree sapling_palm_sunset_west: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_palm_sunset_west_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1446,
+        "y": 104,
+        "z": 6678
+      },
+      "mimic": "minecraft:jungle_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 490 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_scorched_great_crater_low",
+      "place": "the tree sapling_scorched_great_crater: inside its limb, 25 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_scorched_great_crater_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5633,
+        "y": 170,
+        "z": 5525
+      },
+      "mimic": "minecraft:polished_basalt",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.2 from the trunk axis whose zone is centred 29 over the ground and holds 669 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_scorched_great_crater_mid",
+      "place": "the tree sapling_scorched_great_crater: inside its limb, 39 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_scorched_great_crater_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5634,
+        "y": 184,
+        "z": 5530
+      },
+      "mimic": "minecraft:polished_basalt",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 42 over the ground and holds 388 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_storm_rift_foot_low",
+      "place": "the tree sapling_storm_rift_foot: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_storm_rift_foot_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4178,
+        "y": 157,
+        "z": 5917
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 322 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_storm_rift_foot_mid",
+      "place": "the tree sapling_storm_rift_foot: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_storm_rift_foot_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4174,
+        "y": 176,
+        "z": 5918
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 476 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_sapling_storm_rift_trunk_low",
+      "place": "the tree sapling_storm_rift_trunk: inside its limb, 21 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_storm_rift_trunk_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3538,
+        "y": 108,
+        "z": 2451
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 3.6 from the trunk axis whose zone is centred 24 over the ground and holds 321 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_sapling_storm_rift_trunk_mid",
+      "place": "the tree sapling_storm_rift_trunk: inside its limb, 40 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_sapling_storm_rift_trunk_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3534,
+        "y": 127,
+        "z": 2446
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 2.8 from the trunk axis whose zone is centred 43 over the ground and holds 481 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s1a",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 62 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2013,
+        "y": 178,
+        "z": 2263
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 17.3 from the trunk axis whose zone is centred 66 over the ground and holds 374 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s1b",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 62 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2013,
+        "y": 178,
+        "z": 2297
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 17.3 from the trunk axis whose zone is centred 66 over the ground and holds 315 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s2a",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 99 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2000,
+        "y": 215,
+        "z": 2277
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 16.3 from the trunk axis whose zone is centred 103 over the ground and holds 443 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s2b",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 97 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_low",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2033,
+        "y": 213,
+        "z": 2280
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 17.0 from the trunk axis whose zone is centred 101 over the ground and holds 447 standing cells; it spawns the low band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s3a",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 137 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2010,
+        "y": 253,
+        "z": 2294
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 15.2 from the trunk axis whose zone is centred 141 over the ground and holds 362 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s3b",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 135 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2024,
+        "y": 251,
+        "z": 2264
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 17.9 from the trunk axis whose zone is centred 139 over the ground and holds 461 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s4a",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 175 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2005,
+        "y": 291,
+        "z": 2271
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 14.2 from the trunk axis whose zone is centred 179 over the ground and holds 396 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s4b",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 174 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2032,
+        "y": 290,
+        "z": 2290
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 18.9 from the trunk axis whose zone is centred 178 over the ground and holds 428 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s5a",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 215 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2003,
+        "y": 331,
+        "z": 2282
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 13.2 from the trunk axis whose zone is centred 219 over the ground and holds 385 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s5b",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 212 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_mid",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2036,
+        "y": 328,
+        "z": 2280
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 20.0 from the trunk axis whose zone is centred 216 over the ground and holds 366 standing cells; it spawns the mid band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s6a",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 251 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_high",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2004,
+        "y": 367,
+        "z": 2278
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 12.2 from the trunk axis whose zone is centred 255 over the ground and holds 405 standing cells; it spawns the high band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s6b",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 249 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_high",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2037,
+        "y": 365,
+        "z": 2283
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 21.2 from the trunk axis whose zone is centred 252 over the ground and holds 276 standing cells; it spawns the high band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s7a",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 288 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_high",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2005,
+        "y": 404,
+        "z": 2282
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 11.2 from the trunk axis whose zone is centred 292 over the ground and holds 278 standing cells; it spawns the high band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s7b",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 288 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_high",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2032,
+        "y": 404,
+        "z": 2271
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 18.4 from the trunk axis whose zone is centred 291 over the ground and holds 186 standing cells; it spawns the high band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s8a",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 337 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_high",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2020,
+        "y": 453,
+        "z": 2289
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 9.8 from the trunk axis whose zone is centred 341 over the ground and holds 1585 standing cells; it spawns the high band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_s8b",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 333 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_high",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2006,
+        "y": 449,
+        "z": 2259
+      },
+      "mimic": "minecraft:oak_log",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 23.3 from the trunk axis whose zone is centred 336 over the ground and holds 1028 standing cells; it spawns the high band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_c1",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 382 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_crown",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2011,
+        "y": 498,
+        "z": 2303
+      },
+      "mimic": "minecraft:oak_leaves",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 23.5 from the trunk axis whose zone is centred 386 over the ground and holds 2094 standing cells; it spawns the crown band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_c2",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 392 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_crown",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2015,
+        "y": 508,
+        "z": 2280
+      },
+      "mimic": "minecraft:oak_leaves",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 1.0 from the trunk axis whose zone is centred 396 over the ground and holds 2277 standing cells; it spawns the crown band's species."
+    },
+    {
+      "id": "tbird_world_tree_foothill_woods_c3",
+      "place": "the world tree world_tree_foothill_woods: inside its limb, 409 over the ground (the zone is centred on the limb top)",
+      "pool": "cobblers:tbird_world_tree_foothill_woods_crown",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2027,
+        "y": 525,
+        "z": 2276
+      },
+      "mimic": "minecraft:oak_leaves",
+      "status": "planned",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 5,
+        "max_spawns_per_activation": 2
+      },
+      "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 11.7 from the trunk axis whose zone is centred 413 over the ground and holds 1049 standing cells; it spawns the crown band's species."
     }
   ]
 }
