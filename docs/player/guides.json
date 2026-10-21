@@ -67,6 +67,14 @@
       "order": 38
     },
     {
+      "file": "nuzlocke.html",
+      "title": "Nuzlocke tracker",
+      "label": "Nuzlocke",
+      "description": "Every catch zone in the order you meet it, with a tracker for your Nuzlocke: caught, failed or skipped, the species and nickname, the dupes clause and the level cap.",
+      "generator": "tools/player_guide_nuzlocke.py",
+      "order": 39
+    },
+    {
       "file": "dungeons.html",
       "title": "Dungeons",
       "label": "Dungeons",
