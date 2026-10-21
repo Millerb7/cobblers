@@ -15,7 +15,19 @@ owner to close. Head and PR number: see the PR; re-read with `git fetch --prune`
 - Friends' bundle: `C:/Users/wnd/Documents/cobblers-client/cobblers-client-0.1.0-bundle.mrpack` sha1 fa8febab (client
   zip c7a58c9f inside; AllTheMons v4.0 required). Private.
 
+## 2b. After the handover (2026-10-21 morning, session 71451c17)
+- The owner now runs the server from THEIR OWN PowerShell window (`java -Xmx12G ... *> logs\console-own.log`, pid 36832
+  at start). Durable while that window stays open; stop it by RCON `stop`. The session-owned server was killed when the
+  previous session ended (07:55:58, unclean). A duplicate the owner started was killed before it reached the world.
+- Live hand-fixes to Groudon's cavern (water pockets plugged, lake walls removed, Groudon moved onto the lava by the
+  owner): STATE "Groudon's cavern, seen and hand-fixed live". **Next unit:** carry all three into
+  `tools/groudon_cavern.py`, its data, audit and probes (lake without walls, Groudon's spot on the lava, the cut plugging
+  exposed water), so a rebuild matches. Branch `build/2026-10-21-followups` (docs only so far).
+- The owner's profile "cobblers-client-0.1.0-bundle (1)" was imported from an OLD bundle; the new client zip was copied
+  in; the owner must enable it and AllTheMons in the menu.
+
 ## 3. Waiting on the owner
+- What goes in the big western crater (~(6118, 213, 5527))? Asked, undecided.
 - **A durable launch:** a one-shot Task Scheduler start (asked; needs a yes), or the owner runs
   `server/scripts/start-live.ps1` from their own PowerShell window. The WMI launch died after 44 min.
 - Raise the owner's level cap (RCT records through Giovanni) to catch Kyogre/Groudon? Unanswered.
