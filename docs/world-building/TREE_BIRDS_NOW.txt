@@ -1,0 +1,66 @@
+elder_foothill_grove_1 x=2078 z=2262 nests=4 | now: natu common 21-23, xatu ultra-rare 21-23
+elder_foothill_grove_2 x=2034 z=2330 nests=4 | now: pikipek common 21-23, toucannon ultra-rare 21-23, trumbeak uncommon 21-23
+elder_foothill_grove_3 x=1958 z=2294 nests=4 | now: pidgeot ultra-rare 21-23, pidgeotto uncommon 21-23, pidgey common 21-23
+elder_foothill_grove_4 x=1958 z=2234 nests=4 | now: altaria ultra-rare 21-23, swablu common 21-23
+elder_foothill_woods_1 x=1440 z=2264 nests=4 | now: hoothoot common 21-23, noctowl uncommon 21-23
+elder_foothill_woods_2 x=2912 z=2440 nests=4 | now: pidove common 21-23, tranquill uncommon 21-23, unfezant ultra-rare 21-23
+elder_foothill_woods_3 x=2236 z=1622 nests=4 | now: braviary ultra-rare 21-23, rufflet common 21-23
+elder_foothill_woods_4 x=2136 z=2624 nests=4 | now: ledian uncommon 21-23, ledyba common 21-23
+elder_jungle_east_1 x=8092 z=6724 nests=4 | now: hawlucha common 25-30
+elder_jungle_east_2 x=7760 z=7072 nests=4 | now: yanma common 25-30
+elder_jungle_west_1 x=7576 z=7824 nests=4 | now: tropius common 25-30
+elder_jungle_west_2 x=6928 z=7576 nests=4 | now: pikipek common 25-30, toucannon rare 30-34, trumbeak uncommon 25-30
+elder_lake_viltri_hollow_1 x=1280 z=3184 nests=4 | now: ducklett common 18-21, swanna ultra-rare 18-21
+elder_lake_viltri_hollow_2 x=1824 z=3056 nests=4 | now: yanma common 18-21
+elder_long_isle_middle_1 x=8104 z=5978 nests=4 | now: pidove common 44-50, tranquill uncommon 44-50, unfezant ultra-rare 44-50
+elder_long_isle_middle_2 x=7376 z=6790 nests=4 | now: fearow uncommon 44-50, spearow common 44-50
+elder_long_isle_north_1 x=7886 z=4492 nests=4 | now: pelipper uncommon 44-50, wingull common 44-50
+elder_long_isle_north_2 x=7778 z=5264 nests=4 | now: corviknight rare 44-50, corvisquire uncommon 44-50, rookidee common 44-50
+elder_long_isle_south_1 x=7128 z=7936 nests=4 | now: chatot common 44-50
+elder_long_isle_south_2 x=7920 z=7512 nests=4 | now: squawkabilly common 44-50
+elder_long_isle_south_3 x=7336 z=7376 nests=4 | now: oricorio common 44-50
+elder_marshy_marsh_1 x=4906 z=1850 nests=4 | now: flamigo common 34-39
+elder_marshy_marsh_2 x=5434 z=2414 nests=4 | now: bombirdier common 34-39
+elder_marshy_marsh_3 x=5014 z=2272 nests=4 | now: cramorant common 34-39
+elder_north_pine_isle_1 x=7986 z=458 nests=4 | now: delibird common 25-30
+elder_north_pine_isle_2 x=6998 z=312 nests=4 | now: swablu common 25-30
+elder_northgate_east_1 x=5472 z=432 nests=4 | now: staraptor ultra-rare 25-30, staravia uncommon 25-30, starly common 25-30
+elder_northgate_east_2 x=5936 z=840 nests=4 | now: swellow uncommon 25-30, taillow common 25-30
+elder_northgate_west_1 x=4792 z=272 nests=4 | now: hoothoot common 25-30, noctowl uncommon 25-30
+elder_northgate_west_2 x=5250 z=62 nests=4 | now: corviknight ultra-rare 25-30, corvisquire uncommon 25-30, rookidee common 25-30
+elder_peak_pond_hollow_1 x=3912 z=1776 nests=4 | now: staraptor ultra-rare 30-32, staravia uncommon 30-32, starly common 30-32
+elder_peak_pond_hollow_2 x=4008 z=1040 nests=4 | now: fletchinder uncommon 30-32, fletchling common 30-32, talonflame ultra-rare 30-32
+elder_peak_pond_hollow_3 x=4346 z=2296 nests=4 | now: corviknight ultra-rare 30-32, corvisquire uncommon 30-32, rookidee common 30-32
+elder_shrew_lake_shores_1 x=3928 z=4272 nests=4 | now: altaria ultra-rare 10-15, swablu common 10-15
+elder_shrew_lake_shores_2 x=3760 z=3932 nests=4 | now: combee common 10-15
+elder_shrew_lake_shores_3 x=3104 z=3624 nests=4 | now: hoppip common 10-15
+elder_south_pine_isle_1 x=7232 z=1992 nests=4 | now: hoothoot common 25-30, noctowl uncommon 25-30
+elder_south_pine_isle_2 x=6768 z=1208 nests=4 | now: staravia uncommon 25-30, starly common 25-30
+elder_south_pine_isle_3 x=7496 z=1266 nests=4 | now: dartrix uncommon 25-30, decidueye rare 36-40, rowlet common 25-30
+elder_tilpey_east_shore_1 x=6848 z=3792 nests=4 | now: hoothoot common 41-43, noctowl uncommon 41-43
+elder_tilpey_east_shore_2 x=6488 z=4776 nests=4 | now: pidgeot ultra-rare 41-43, pidgeotto uncommon 41-43, pidgey common 41-43
+elder_tilpey_north_shore_1 x=5880 z=3248 nests=4 | now: ducklett common 39-41, swanna uncommon 39-41
+elder_tilpey_north_shore_2 x=5224 z=3040 nests=4 | now: staraptor ultra-rare 39-41, staravia uncommon 39-41, starly common 39-41
+elder_viltri_plateau_1 x=1730 z=3960 nests=4 | now: fletchinder ultra-rare 12-15, fletchling common 12-15, talonflame ultra-rare 12-15
+elder_viltri_plateau_2 x=2332 z=3560 nests=4 | now: swellow ultra-rare 12-15, taillow common 12-15
+elder_viltri_plateau_3 x=2344 z=3064 nests=4 | now: fearow ultra-rare 12-15, spearow common 12-15
+elder_viltris_path_valley_1 x=1016 z=3864 nests=4 | now: pidove common 15-20, tranquill ultra-rare 15-20, unfezant ultra-rare 15-20
+elder_viltris_path_valley_2 x=1094 z=3496 nests=4 | now: farfetchd common 15-20
+elder_wedge_north_1 x=3846 z=2912 nests=4 | now: honchkrow ultra-rare 25-30, murkrow common 25-30
+elder_wedge_north_2 x=4160 z=3184 nests=4 | now: natu common 25-30, xatu uncommon 25-30
+elder_wedge_south_1 x=4784 z=4408 nests=4 | now: mandibuzz ultra-rare 25-30, vullaby common 25-30
+elder_wedge_south_2 x=4692 z=3896 nests=4 | now: honchkrow ultra-rare 25-30, murkrow common 25-30
+sapling_crag_mt_vessu x=1864 z=1432 nests=3 | now: noibat common 24-26
+sapling_crag_the_crags x=3520 z=1600 nests=3 | now: skarmory common 28-30
+sapling_desert_long_isle_north x=7936 z=4896 nests=3 | now: vullaby common 44-50
+sapling_desert_south_east_dunes x=6192 z=6112 nests=3 | now: gligar common 25-30
+sapling_frost_frostpeak x=824 z=768 nests=3 | now: delibird common 25-30
+sapling_frost_glacier_foot_fields x=4736 z=2640 nests=3 | now: swablu common 34-36
+sapling_lakeshore_arrow_lake_shores x=2512 z=4528 nests=3 | now: ducklett common 10-15
+sapling_lakeshore_tilpey_south_shore x=5824 z=4608 nests=3 | now: flamigo common 42-44
+sapling_palm_east_coast_dunes x=7376 z=5512 nests=3 | now: cramorant common 25-30
+sapling_palm_sunset_east x=2840 z=7080 nests=3 | now: oricorio common 25-30
+sapling_palm_sunset_west x=1448 z=6680 nests=3 | now: wingull common 16-20
+sapling_scorched_great_crater x=5632 z=5528 nests=3 | now: fletchinder common 44-50, talonflame uncommon 44-50
+sapling_storm_rift_foot x=4176 z=5920 nests=3 | now: kilowattrel uncommon 49-51, wattrel common 49-51
+sapling_storm_rift_trunk x=3536 z=2448 nests=3 | now: emolga common 55-57
