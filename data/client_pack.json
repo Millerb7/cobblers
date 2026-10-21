@@ -4,8 +4,8 @@
  "read_by": "tools/client_pack.py",
  "pack": {
   "name": "Cobbleverse Miller Edit",
-  "server_name": "Cobbleverse Miller Edit",
-  "server_name_why": "the owner, 2026-10-21: the server-list entry and the pack are called Cobbleverse Miller Edit",
+  "server_name": "yordy's happy place",
+  "server_name_why": "the owner, 2026-10-21: the pack is Cobbleverse Miller Edit and its server-list entry yordy's happy place",
   "version": "0.1.0",
   "summary": "Cobblers campaign client: COBBLEVERSE 1.7.42 moved to Cobblemon 1.8.0, with our overlay and configs. For joining the Cobblers server."
  },
