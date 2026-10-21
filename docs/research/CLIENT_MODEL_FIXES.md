@@ -449,3 +449,27 @@ Mega Showdown Megas on COBBLEVERSE RP's 1.7 models get Mega Showdown's own model
 model at a path Cobblemon also ships gets Cobblemon's texture back. Scanned on the owner's bundle instance with the
 zip simulated on top: uv_mismatch 89 -> 2 (Beautifly and Dustox, the male forms; a texture shared by a pack model and
 Cobblemon's female model), crash 6 -> 0, missing 0. Not yet seen in game.
+
+## 2026-10-21: Dustox and Beautifly, male and female, back on Cobblemon's whole set
+
+Cause (read from the owner's bundle instance, Cobblemon 1.8.2): COBBLEVERSE RP's `0_dustox_base.json` and
+`0_beautifly_base.json` replace Cobblemon's resolvers at the same path and point the male at COBBLEVERSE RP's own
+models (`dustox.geo`, `beautifly.geo`, 128x128 UV, 10 bones, their own poser and animation file), while Cobblemon's
+`1_*_female.json` still sets the female to Cobblemon's models (`*_female.geo`, 128x64 and 64x128 UV). Both genders
+share one texture path, so each side of the 2026-10-20 zip broke the other: with COBBLEVERSE RP's texture the
+female was wrong, with Cobblemon's texture (what the zip restored) the male was, and the shiny textures,
+poser and animations followed the COBBLEVERSE RP side. The scan did not see the male before the fix because its
+model and texture came from the same pack; it appeared only once the zip's texture was simulated on top.
+
+Fix (`restore_resolver_assets` in `tools/client_model_fix.py`): when a restored texture is now worn by a pack's
+model, the species' Cobblemon resolver is restored at the pack's path, with every model, poser, animation group and
+texture it names that a pack shadows. Dustox and Beautifly, male, female and shiny, all use Cobblemon 1.8's models,
+posers, animations and textures, and the `alpha_eyes` emissive layer COBBLEVERSE RP's resolver dropped returns. They
+lose COBBLEVERSE RP's older look. Eight files are added (the two resolvers, posers, animation files and shiny
+textures); nothing else in the zip changes. Scan with the zip simulated on top: uv_mismatch 2 -> 0, crash 0,
+missing 0. New zip sha1 `de36fb5d1d448c91925ec860d17b7e6949e0e95d`. Not seen in game.
+
+Cutiefly: no pack, mod jar or datapack in the instance ships a model, poser, animation, texture or resolver for it
+(its only non-Cobblemon files are Xaero minimap sprites), so it renders from Cobblemon 1.8.2's own self-consistent
+set (every opaque texture pixel lies inside the model's UV boxes; the shiny texture is byte-identical in size to the
+base). The scanner cannot see a fault inside one layer by design. No cause found; see the session report.

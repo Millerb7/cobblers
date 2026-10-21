@@ -556,6 +556,40 @@ def scan(instance: Path, with_packs=()) -> dict:
 
 # ---------------------------------------------------------------- build
 
+def restore_resolver_assets(st: Stack, jar: Layer, rel: str, files: dict, jar_posers: dict, jar_anims: dict):
+    """Restore every model, poser, animation group and texture Cobblemon's resolver `rel` names that a pack shadows.
+
+    A resolver restored on its own would name Cobblemon's models, but still meet a pack's poser, animations
+    and textures of the same name (all keyed by file name or path), which were drawn for another model."""
+    doc = jload(st.read(rel, layer=st.jar)) or {}
+    models = st.registry("models", upto=st.jar)
+    for v in doc.get("variations") or []:
+        if not isinstance(v, dict):
+            continue
+        mid = qualify(v["model"]) if isinstance(v.get("model"), str) else None
+        if mid in models:
+            for p in st.paths_for("models", mid):
+                if st.top(p) != st.jar:
+                    files[p] = (jar.label, models[mid])
+        pid = qualify(v["poser"]) if isinstance(v.get("poser"), str) else None
+        if pid in jar_posers:
+            for p in st.paths_for("posers", pid):
+                if st.top(p) != st.jar:
+                    files[p] = (jar.label, jar_posers[pid])
+            for g in sorted(set(GROUP_RE.findall(st.read(jar_posers[pid], layer=st.jar).decode("utf-8-sig", "replace")))):
+                if g in jar_anims:
+                    for p in st.paths_for("anims", g):
+                        if st.top(p) != st.jar:
+                            files[p] = (jar.label, jar_anims[g])
+        tex = tex_ids(v.get("texture"))
+        for layer in v.get("layers") or []:
+            tex += tex_ids(layer.get("texture")) if isinstance(layer, dict) else []
+        for t in tex:
+            trel = tex_rel(t)
+            if st.jar in st.prov.get(trel, ()) and st.top(trel) != st.jar:
+                files[trel] = (jar.label, trel)
+
+
 def cobblemon_fixes(instance: Path):
     """dst path -> (source label, src path, bytes) for Cobblemon's own files, plus what they cover."""
     st = stack_for(instance, include_ours=False)
@@ -661,11 +695,17 @@ def cobblemon_fixes(instance: Path):
     sim = Stack(st.layers + [Layer("simulated:fixes", zipfile.ZipFile(buf))], jar.label)
     covered["resolver_restored"] = []
     for f in uv_forms(sim):
-        if not f["flagged"] or f["species"] not in restored or f["model_pack"] != "simulated:fixes":
+        # model_pack simulated:fixes: the restored model still wears a pack's texture (Arbok).
+        # texture_pack simulated:fixes: the restored texture is now worn by a pack's model that was
+        # drawn for the old one (2026-10-21, the male Dustox and Beautifly: COBBLEVERSE RP's resolver
+        # at Cobblemon's base path points the male at COBBLEVERSE RP's own model, and the female, on
+        # Cobblemon's model, shares the texture path). Either way the species goes back to Cobblemon whole.
+        if not f["flagged"] or f["species"] not in restored                 or "simulated:fixes" not in (f["model_pack"], f["texture_pack"]):
             continue
         for _, rel, _ in sim.resolvers().get("cobblemon:" + f["species"], []):
             if st.top(rel) not in (None, st.jar) and st.jar in st.prov.get(rel, ()):
                 files[rel] = (jar.label, rel)
+                restore_resolver_assets(st, jar, rel, files, jar_posers, jar_anims)
                 if f["species"] + ": " + rel not in covered["resolver_restored"]:
                     covered["resolver_restored"].append(f["species"] + ": " + rel)
         covered["uv_mismatch"].append(form_key(f))

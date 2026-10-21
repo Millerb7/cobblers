@@ -180,3 +180,5 @@ campaign repository stays private.
 **Addendum 2026-10-20.** The zip now travels inside the bundle mrpack instead of from the server (`resource-pack=`
 stays empty on the live server), rebuilt without the ATMxMSD donor subset because AllTheMons v4.0 is required in the
 bundle: sha1 `c7a58c9fb2332ee7a21f93a0d102bf102e79b58c` (`docs/research/CLIENT_MODEL_FIXES.md`, 2026-10-20).
+
+**Addendum 2026-10-21.** The zip now also puts the male and female Dustox and Beautifly back on Cobblemon 1.8's own resolver, poser, animations and textures (the male had COBBLEVERSE RP's model on a Cobblemon texture); scan uv_mismatch 2 -> 0. sha1 `de36fb5d1d448c91925ec860d17b7e6949e0e95d` (`docs/research/CLIENT_MODEL_FIXES.md`, 2026-10-21). The bundle mrpack still carries c7a58c9f until rebuilt.
