@@ -1183,6 +1183,12 @@ def main(argv=None):
             raise SystemExit("%s: %d spawn ids are used more than once, e.g. %s"
                              % (rel, len(repeated), sorted(repeated)[0]))
     out = Path(a.out)
+    # a pool this compile no longer writes is removed, so a retired place cannot linger in the pack (2026-10-21: the Jungle
+    # Isle's jungle_east and jungle_west stayed in build/ after their sub-regions were deleted, and spawned on)
+    wanted = {(out / rel).resolve() for rel in files}
+    for old in out.glob("data/*/spawn_pool_world/**/*.json"):
+        if old.resolve() not in wanted:
+            old.unlink()
     for rel, text in files.items():
         f = out / rel
         f.parent.mkdir(parents=True, exist_ok=True)
