@@ -163,6 +163,16 @@
       "ref": "data/bank.json base_removed (the bank's last price for it)",
       "why": "taken off the bank for an arbitrage route, not because it is worthless; its last price, $500"
     },
+    "cobblemon:scroll_of_darkness": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Kubfu -> Single Strike Urshifu (the player's own starter Kubfu, level 45). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "cobblemon:scroll_of_waters": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Kubfu -> Rapid Strike Urshifu. Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
     "cobblemon:sitrus_berry": {
       "cp": 5,
       "source": "bank_removed",
@@ -186,10 +196,80 @@
       "ref": "data/markets.json counters tilpey_cross (no bank price ever: its replacement cost, price / count)",
       "why": "nothing ever bought it; a counter sells it at $800 each"
     },
+    "lumymon:calyrex_crown": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Calyrex (70). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "lumymon:ember_feather": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Moltres (levels 50, 55, 60). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "lumymon:glacier_feather": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Articuno (levels 50, 55, 60). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "lumymon:iceroot_carrot": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Glastrier (50-59 or 70). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "lumymon:nightmare_weaver": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Darkrai (70-85). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "lumymon:origin_fossil": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Mew (75 or 80). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "lumymon:ruby_dew": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Latias (50, 55 or 75). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "lumymon:sapphire_dew": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Latios (50, 55 or 75). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "lumymon:shaderoot_carrot": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Spectrier (50-59 or 70). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "lumymon:thunder_feather": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Zapdos (levels 50, 55, 60). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "mega_showdown:griseous_core": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Giratina (Origin form). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "mega_showdown:griseous_orb": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Giratina (Origin form). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
     "mega_showdown:mega_stone": {
       "cp": 625,
       "source": "derived",
       "why": "the raw stone: a keyed stone (1350) is 2 raw + a diamond (100) at the bench (data/gulch_mine.json cutters.offer), so (1350 - 100) / 2"
+    },
+    "mega_showdown:prison_bottle": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Hoopa (level 60): the bottle gives Hoopa Unbound, the Confined Hoopa is caught without it. Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
+    },
+    "mega_showdown:red_orb": {
+      "cp": 1,
+      "source": "unpriced",
+      "why": "a legendary gate item (data/vault_keys.json): Groudon -> Primal Groudon (the orb is the Primal form's item). Not wealth: the bank does not buy it, the wishing well refuses an 'unpriced' row, and the clock charges a chest's expected value, so it is the placeholder floor, as the Rare Candy (data/vault_keys.json price)"
     },
     "minecraft:ancient_debris": {
       "cp": 200,
