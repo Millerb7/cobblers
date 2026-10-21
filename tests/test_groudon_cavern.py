@@ -223,6 +223,50 @@ def a_cleanup_that_writes_no_blocks(mp, ground):
     return "cleanup:"
 
 
+@mutation
+def the_rim_left_unguarded(mp, ground):
+    # review 2026-10-21 finding 1: the ravine's vertical walls make cliffs of up to 50 on the plateau
+    mp.setattr(GC, "rim_guard_columns", lambda doc, M, cut: {})
+    return "are not guarded"
+
+
+@mutation
+def a_rim_guard_one_block_high_beside_higher_ground(mp, ground):
+    # a wall one block over its own ground is jumped onto from a neighbour standing higher, and walked off into the ravine
+    orig = GC.rim_guard_columns
+    mp.setattr(GC, "rim_guard_columns", lambda doc, M, cut: {c: (lo, lo) for c, (lo, _hi) in orig(doc, M, cut).items()})
+    return "is under the feet"
+
+
+@mutation
+def the_cut_gives_no_slow_falling(mp, ground):
+    # review finding 3: the stage's own slow falling line, deleted from the generator
+    mp.setattr(GC, "cut_falling_lines", lambda box, seconds: [])
+    return "gives no slow falling over its own cut"
+
+
+@mutation
+def tick_tests_the_states_in_ascending_order(mp, ground):
+    # review finding 2: the first draft's order, under which the tremor and all three cuts fell in one tick
+    mp.setattr(GC, "tick_order", lambda: (0, 1, 2, 3, 4))
+    return "one pass of tick can move #quake"
+
+
+@mutation
+def the_summon_not_held_to_built(mp, ground):
+    # review finding 4: a skipped carve must never put Groudon into rock
+    mp.setattr(GC, "built_condition", lambda doc=None: "")
+    return "the summon is not held to #built"
+
+
+@mutation
+def a_read_back_that_copies_nothing(mp, ground):
+    # review finding 4: R14L reads #built back; a read-back function that never copies it is no read-back
+    orig = GC.built_read_lines
+    mp.setattr(GC, "built_read_lines", lambda doc: [l for l in orig(doc) if not l.startswith("execute store")])
+    return "copies #built to a score R14L reads"
+
+
 @pytest.mark.slow
 @pytest.mark.parametrize("name", sorted(MUTATIONS))
 def test_a_mutated_generator_is_caught_by_the_audit(name, tmp_path, ground, monkeypatch):
@@ -232,3 +276,107 @@ def test_a_mutated_generator_is_caught_by_the_audit(name, tmp_path, ground, monk
     rep = build_and_audit(tmp_path, ground)
     assert rep.errors, "%s: the audit passed a mutated generator" % name
     assert failing(rep, want), "%s: the audit failed but not for the fault (wanted %r); got %s" % (name, want, rep.errors[:4])
+
+
+# ------------------------------------------------------------------------------------------- the review's findings
+
+
+def tick_lines(ground):
+    doc = GC.load()
+    p = GC.plan(doc, ground)
+    rfns, _info = GC.runtime_files(doc, p["M"], L.load()["objective"], 100)
+    return doc, rfns
+
+
+def test_no_pass_of_tick_moves_the_quake_more_than_one_state(ground):
+    # Review 2026-10-21 finding 2. If removed: the stage lines can go back to ascending order, and one pass of tick (every
+    # line run in order, each probe reading air) plays the tremor and cuts all three stages in the same tick.
+    import re
+    doc, rfns = tick_lines(ground)
+    O = re.escape(doc["quake"]["objective"])
+    drives = []
+    for ln in rfns["tick"]:
+        m = re.search(r"if score #quake %s matches (\d+) .*run function cobblers:groudon_cavern/(\S+)$" % O, ln)
+        if m:
+            to = [int(v) for b in rfns[m.group(2)] for v in re.findall(r"scoreboard players set #quake %s (\d+)" % O, b)]
+            drives.append((int(m.group(1)), max(to)))
+    assert sorted(s for s, _t in drives) == [0, 1, 2, 3, 4], drives
+    for start in range(0, 5):
+        s, moved = start, 0
+        for when, to in drives:
+            if s == when:
+                s, moved = to, moved + 1
+        assert moved == 1, "from #quake %d one pass moves it %d states (order %s)" % (start, moved, [d[0] for d in drives])
+
+
+def test_a_rejoin_over_the_cut_is_seen_on_the_first_tick(ground):
+    # Review finding 5. If removed: the rejoin's slow falling could go back to the 20-tick keeper and land up to a second late.
+    doc, rfns = tick_lines(ground)
+    left = doc["quake"]["left_objective"]
+    loop = "schedule function %s/rejoin 1t replace" % GC.F
+    assert loop in rfns["load"] and rfns["rejoin"].count(loop) == 1
+    assert any("scores={%s=1..}" % left in l and "slow_falling" in l for l in rfns["rejoin"])
+    assert not any("slow_falling" in l for l in rfns["tick"]), "the rejoin is still (also) on the 20-tick pass"
+
+
+def test_the_rim_guard_stands_wherever_the_cut_drops_more_than_three(ground):
+    # Review finding 1, on the generator's own model (the audit measures the replayed world instead): the rim is walled from
+    # one over its ground, and the lip, where the mouth's walk-in entrance is, is left open.
+    doc = GC.load()
+    M = GC.plan(doc, ground)["M"]
+    cols = GC.rim_guard_columns(doc, M, M.qa_r | M.qa_p)
+    assert len(cols) > 50
+    lx, lz = doc["spine"]["lip"]
+    i, k = lx - M.o[0], lz - M.o[2]
+    assert (i, k) not in cols and (i, k - 1) not in cols, "the mouth's walk-in entrance is walled"
+    assert all(hi >= lo == int(M.G[c]) + 1 for c, (lo, hi) in cols.items())
+
+
+def r14l_world(ground, carve_sets_built):
+    import test_legendaries_rerun as R
+    doc = L.load()
+    one = dict(doc, encounters=[r for r in doc["encounters"] if r["id"] == "groudon"])
+    fns = R.functions(one, ground)
+    if not carve_sets_built:
+        fns[GC.CARVE_ONCE] = []          # the carve skipped (a stale open score, a missing pack, a carve cut short)
+    w = R.world(fns, delay=0)
+    steps = [s for s in L.placement_steps(one, ground) if "retire_" not in str(s[1])]
+    R.run_steps(w, steps)
+    return w, one, steps, R
+
+
+@pytest.mark.parametrize("built", [True, False])
+def test_r14l_reads_built_back_and_never_summons_into_an_unbuilt_cavern(ground, built):
+    # Review finding 4. If removed: carve_once can skip, R14L reports success, and Groudon is summoned into rock.
+    import chunk_look as CL
+    assert GC.CL_OBJ == CL.OBJ
+    w, one, steps, R = r14l_world(ground, built)
+    rec = one["encounters"][0]
+    checks = [s[1] for s in steps if s[0] == "check" and s[1][1] == GC.BUILT_HOLDER]
+    assert checks and checks[0][2] == 1, "R14L does not read #built back as 1"
+    assert steps.index(("fn", GC.BUILT_READ)) > steps.index(("fn", GC.CARVE_ONCE))
+    got = w.get_score("#" + GC.BUILT_HOLDER, CL.OBJ, w.server())
+    assert got == (1 if built else 0), "the read-back holds %s" % got
+    assert len(R.standing(w, rec, one)) == (1 if built else 0), "built=%s: wrong number of Groudon standing" % built
+
+
+@pytest.mark.slow
+def test_a_retired_chamber_whose_pedestal_a_player_took_is_still_restored(ground):
+    # Review finding 4, the cleanup half. The live world's old Groudon chamber was opened (its score 1, its plug air, the
+    # owner stood inside). Had the pedestal gone too, the restore (gated on it) never ran, the score stayed 1 and the
+    # cavern's carve_once skipped. The second gate reads three cells of the old voids. Run on the cleanup tests' fixture.
+    import copy as _copy
+    import test_legendaries_retire as T
+    doc = _copy.deepcopy(L.load())
+    w, o, natural, live, old = T.set_up(doc, ground)
+    carved = w.terrain
+    ped = tuple(o["pedestal"])
+    w.terrain = lambda x, y, z: "minecraft:air" if (x, y, z) == ped else carved(x, y, z)
+    w.set_score("#regigigas", doc["objective"], 1, w.server())
+    T.run_steps(w, T.retire_steps(doc, ground))
+    bad = T.mismatches(w, o, natural, doc, ground)
+    assert not bad, "%d cell(s) not terrain after the cleanup, e.g. %s" % (len(bad), bad[:3])
+    assert w.get_score("#regigigas", doc["objective"], w.server()) == 0, "the old open score was not cleared"
+    n = len(w.log)
+    T.run_steps(w, T.retire_steps(doc, ground))
+    assert not [1 for _t, k, _d in w.log[n:] if k in ("fill", "setblock")], "a second run wrote again"

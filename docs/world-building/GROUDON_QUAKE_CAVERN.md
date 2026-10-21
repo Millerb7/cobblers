@@ -64,9 +64,20 @@ Edge cases:
   among them) and misses a flag set by a command; the poll costs one `execute if score` a second and at most a second's delay.
 - **Joins late, plays in another order.** Nothing is per player: the cavern is open or not. A late joiner finds it open.
 - **Disconnects mid-quake.** The stage state is the scoreboard; stages are idempotent and run again when somebody is near. A player
-  who logged out over the ravine and rejoins after the cut gets slow falling for 30 s if the keeper finds them in the cut's column.
+  who logged out over the ravine and rejoins after the cut gets slow falling for 30 s on the first tick they are back
+  (`cobblers:groudon_cavern/rejoin`, a function that schedules itself every tick; the 20-tick keeper was up to a second late).
 - **A player over the cut when it happens.** Each cutting stage gives slow falling to everyone standing over its box, so the new
-  floor is a walk. The ravine's floor is walkable back to the lip (audited).
+  floor is a walk (the audit holds each stage's box to its own cut). The ravine's floor is walkable back to the lip (audited).
+- **One state a pass.** `tick` tests `#quake`'s states last first (4, 3, 2, 1, 0), so a line that moves the state on is never
+  followed, in the same pass, by the line testing the next one: the tremor and the three cuts fall on four separate passes, a
+  second apart at least. (The first draft tested them in ascending order, and all four ran in one tick.)
+- **The rim.** The ravine's walls are vertical cuts, so its side rims and its end wall are cliffs of up to **50 blocks** (measured
+  with `tools/ground.py`: ground y135 at (6714, 5553) over a floor at y85) on the plateau players cross from the Mining Town. Every
+  column the cut leaves standing, with any of its eight neighbours lowered more than 3 under its ground, carries
+  `minecraft:blackstone_wall` (the lake parapet's block, `palette.rim_guard`) from one over its ground to one over the highest
+  ground of its uncut neighbours, with joined side states, written by the stage that makes the drop: **65 columns after stage 2,
+  116 after stage 3** (18 of stage 2's are cut away by stage 3 and cleared; 134 columns walled at one time or another). The mouth's
+  walk-in entrance at the lip, where the floor is within 3 of the ground, has no drop to guard and is left open.
 - **No flag.** `eject` (once a second, for anyone in the keeper's box without `gym8_cleared`, creative and spectator left alone)
   tells them why and teleports them to the stand at (6706, 5504), ground y107 plus one. The box (x6724-6796, y62-100, z5588-5656)
   holds the hall and the last 20 or so blocks of tunnel before it; the ravine and the upper tunnel stay open to everyone.
@@ -107,7 +118,17 @@ by `legendary/groudon/wake` (a tag on the entity, so a Groudon summoned again af
 `data/legendaries.json` groudon `retired_sites[sealed_chamber_v1]` freezes the numbers the old chamber was carved from. R14L runs,
 in order: the cleanup (refuses while a player stands in the old shaft, adit or room, and the run stops; restores the voids and the
 3x3 plug to terrain, clears `#groudon`, kills Groudon in the old room), `cobblers:groudon_cavern/load`, the hold, `carve_once`
-(skipped if `#groudon` is 1 or `#quake` is 2 or more), the release, and the summon chain (`1 of 1` read back at the dais).
+(skipped if `#groudon` is 1 or `#quake` is 2 or more), **the read-back of `#built`** (`cobblers:groudon_cavern/built_read` copies it
+to `#groudon_cavern_built cobblers_chunk_look`, and the step reads `1 of 1`, so a skipped or unfinished carve stops the run), the
+release, and the summon chain (`1 of 1` read back at the dais), whose summon is itself held to `#built cobblers.gq` = 1, so a skipped
+carve never puts Groudon into rock.
+
+**The old plug opened by a player** (the live world: `#groudon cobblers.leg` is 1, the plug is air, the owner stood inside). The
+restore is gated on the old pedestal standing, and it clears `#groudon` first, so while the pedestal stands the live world is
+restored and the new carve runs. If a player also took the pedestal, the restore now runs on a second gate: the pedestal's cell, the
+cell over it and the passage's middle at its floor all read air (three cells natural rock does not hollow together, so a world
+that never had the chamber is still left alone). The restore puts rock in all three, so neither gate fires twice. A player standing
+in the old voids still refuses the cleanup and stops the run, as before.
 `tools/legendaries_audit.py`'s existing cleanup audit, which derives the old chamber itself, passes for it; the new box starts at
 x6690 and the old hull ends at x6686. The surface block of the 3x3 patch is a guess (`basalt`, the subregion `east_cones` preset
 `volcanic`; `surface_verified: false`, as for Regigigas).
@@ -128,20 +149,30 @@ z for every y, so it also takes the plateau over it out of the wild spawns, 72 b
 
 ## Proofs run, and what they do not prove
 
-Run (offline): `tools/groudon_cavern_audit.py` (354 checks, 0 failures: envelope, seal, plug thickness, the walk in both
+Review 2026-10-21 (an independent Opus read of the code) found six defects; fixed: the rim (above), one state a pass, the stage's
+slow falling unaudited, the skipped carve (the read-back and the summon's hold, the cleanup's second gate), the late rejoin. The
+sixth, Kyogre's blackout exempt tag, was not applied: Kyogre carries it because its keeper re-sleeps and moves its Pokemon, which
+would fight a blackout guardian's leash (`docs/world-building/KYOGRE_CAVE.md`); nothing moves Groudon once the cavern is open (`keep`
+runs only while sealed, when nobody can reach it), every other legendary in `tools/legendaries.py` goes without it, and the tag
+also takes the item claim out of a loss, which is a gameplay rule for the owner to choose, not a defect fix. The fixes were made by
+one agent that also extended the audit and the tests (the brief asked for both).
+
+Run (offline): `tools/groudon_cavern_audit.py` (375 checks, 0 failures: envelope, seal, plug thickness, the walk in both
 directions with headroom 4 at its least over 193 steps and a 41-block descent, no hurting block / lava within a block / drop of more
 than 3 on any reachable cavern cell, lava walled on four sides and under, no water, the keeper's box and stand, the stages' chunks
 and probes, the rejoin line, the cleanup, clearances, the spawn zone, the hall's size). `tests/test_groudon_cavern.py` mutates the
-GENERATOR (never the data) in ten ways and the audit names each fault: two-block steps, a one-block tunnel, no lake wall, lava
+GENERATOR (never the data) in sixteen ways and the audit names each fault: two-block steps, a one-block tunnel, no lake wall, lava
 above the floor, a hall wider than the keeper's box, a thin envelope, magma in floors, a trigger wider than the simulation distance,
-an always-air probe, and a cleanup that writes nothing. **The same session wrote generator, audit and tests** (the brief asked for
+an always-air probe, a cleanup that writes nothing, an unguarded rim, a rim guard one block high beside higher ground, a stage
+with no slow falling, the states tested in ascending order, a summon not held to `#built`, and a read-back that copies nothing. **The same session wrote generator, audit and tests** (the brief asked for
 all three), so an independent reader should read the mutation table before trusting it.
 
 NOT verified: anything in a game. The rumble's sound and text, the tremor, the cut, slow falling, the keeper's teleport, the
 dormant Groudon's sleep and wake, the Red Orb trigger, R14L's real run (carve of 88 chunks, `forceload add` loading them in the same
 tick), the lava's behaviour, what the natural terrain is made of (the heightmap has heights only; the ravine's walls and floor are
-whatever is there), and the live simulation distance. The ravine's end wall is a natural cliff up to 48 high; 493 reachable surface
-cells stand at the edge of a drop into it (the rim; not on the walk; reported and not failed). A short `effect nausea` plays during
+whatever is there), the live simulation distance, whether a player can squeeze between two wall posts (the states are written
+joined; the audit treats a wall as a cell nobody stands in), what the rim's natural surface is made of (the walls stand on it), and
+how long slow falling must last (the audit holds it to more than 0 s; no descent speed is sourced). A short `effect nausea` plays during
 the tremor stage for players within 40 blocks as the only camera shake the game has; delete that one line if it is unwelcome.
 
 ## Needs
