@@ -3,7 +3,9 @@
  "generated_by": "hand. The cobbleverse_mrpack block was measured 2026-10-04 from the Modrinth API (GET /v2/version/4SKGla61) and from the .mrpack's own zip central directory and modrinth.index.json, read by HTTP range requests (nothing downloaded whole). The optional ATM x MSD v4.0 entry is copied from docs/research/CLIENT_MODEL_FIXES.md 'The file (VERIFIED, Modrinth API, fetched 2026-09-28)'.",
  "read_by": "tools/client_pack.py",
  "pack": {
-  "name": "Cobblers",
+  "name": "Cobbleverse Miller Edit",
+  "server_name": "Cobbleverse Miller Edit",
+  "server_name_why": "the owner, 2026-10-21: the server-list entry and the pack are called Cobbleverse Miller Edit",
   "version": "0.1.0",
   "summary": "Cobblers campaign client: COBBLEVERSE 1.7.42 moved to Cobblemon 1.8.0, with our overlay and configs. For joining the Cobblers server."
  },

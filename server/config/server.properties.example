@@ -4,7 +4,7 @@
 # the file on boot and drops them, so keep this example as the documented copy.
 
 # --- identity / access --------------------------------------------------
-motd=Cobblers private campaign
+motd=who up cobbling they ish rn
 # online-mode=true: Mojang authentication. Keep true on any internet-reachable
 # server; it is what makes whitelist/ops UUIDs mean anything.
 online-mode=true
