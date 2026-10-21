@@ -1,6 +1,17 @@
 # Groudon's quake cavern
 
-**Status: built offline, never applied, never seen in a game.** 2026-10-21. Data `data/groudon_cavern.json`, generator
+**RETIRED 2026-10-21.** R14L applied the cavern to the live world at 01:16 that day and the quake opened it; the owner
+then asked "undo groudon cave" and chose "Old chamber back". Groudon's record is the sealed chamber at (6672, 5508) again
+(its pre-2026-10-20 numbers), and the cavern is its retired site `quake_cavern_v1`: `tools/groudon_cavern.py` emits a
+look-then-act cleanup into `cobblers_legendaries` that R14L runs before any summon (refuses with a player in the ravine,
+plug, tunnel or hall; kills the cavern's Groudon; puts every cell the carve and the cuts wrote at or under the ground back to
+terrain, clears the rim's walls, clears `#groudon cobblers.leg` so the chamber is carved again, and sets `#built` and
+`#quake` to 0 last), holding the 88 chunks of the model box for the chain's life. The runtime and build packs are WITHDRAWN
+(`tools/reapply.py`). The independent audit is now `tools/groudon_revert_audit.py` (tests `tests/test_groudon_revert.py`);
+`tools/groudon_cavern_audit.py` and `tests/test_groudon_cavern.py` are deleted. Everything below describes the cavern as it
+was built, which the cleanup must undo.
+
+**Status before retirement: built offline, never applied, never seen in a game.** 2026-10-21. Data `data/groudon_cavern.json`, generator
 `tools/groudon_cavern.py`, independent audit `tools/groudon_cavern_audit.py`, tests `tests/test_groudon_cavern.py`. The
 encounter stays `groudon` in `data/legendaries.json` (kind `quake_cavern`, run by R14L).
 

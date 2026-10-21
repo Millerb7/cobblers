@@ -2379,7 +2379,7 @@
     {
       "id": "groudon_red_orb",
       "kind": "cache",
-      "place": "Groudon's magma cavern under the Craters (data/legendaries.json groudon, data/groudon_cavern.json): set into the smooth basalt pedestal on the dais Groudon sleeps on, at the hall's south end",
+      "place": "Groudon's sealed chamber deep under the Craters (data/legendaries.json groudon): set into the smooth basalt pedestal Groudon sleeps on, at the chamber's south end",
       "requires_flags": [
         "champion_cleared"
       ],
@@ -2392,25 +2392,25 @@
       ],
       "message": "In a seam of the pedestal, hot to the touch and glowing from inside: a Red Orb.",
       "why": "2026-10-08 (overnight, unit REWARD): docs/mechanics/ITEM_ROUTES.md section 2.3's Red Orb route. The Red Orb is Primal Groudon's item (Mega Showdown 1.0.2 ships data/mega_showdown/mega_showdown/effect/red_orb.json; that holding it triggers the Primal form is ASSUMED, ITEM_ROUTES.md section 6). Gated on champion_cleared rather than the chamber's own gym8_cleared, the design's recommendation and its open question Q5: Primal Groudon before the League would be the answer to it, not an answer. A player who opens the chamber at eight badges earns nothing here and may come back as Champion. Jar path read in the offline server snapshot C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods.",
-      "built_by": "tools/groudon_cavern.py (the pedestal is one block of the carve, reapply step R14L); coordinates from groudon_cavern.legendary_geometry() (pedestal (6764, 66, 5638), the hall's box x6734-6794 y65-89 z5594-5654), held to it by tools/legendaries.py cache_problems. MOVED 2026-10-21 from the retired sealed chamber's pedestal (6672, 68, 5542); the item, count, flags and message are unchanged.",
+      "built_by": "tools/legendaries.py (the pedestal is the carve's own setblock, reapply step R14L); coordinates from legendaries.geometry() on the canonical heightmap (pedestal (6672, 68, 5542), chamber x6662-6682 y69-79 z5524-5544), held to it by tools/legendaries.py cache_problems",
       "trigger": {
         "min": [
-          6760,
-          66,
-          5634
+          6668,
+          68,
+          5538
         ],
         "max": [
-          6768,
-          69,
-          5640
+          6676,
+          71,
+          5544
         ]
       },
       "container": {
         "block": "minecraft:smooth_basalt",
         "at": [
-          6764,
-          66,
-          5638
+          6672,
+          68,
+          5542
         ]
       }
     },

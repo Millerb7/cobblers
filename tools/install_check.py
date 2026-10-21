@@ -12,7 +12,8 @@ disagreement does. `tools/reapply.py install` runs it last and stops on any prob
             unless the repo installs it there. The live world's own datapacks folder is never read (CLAUDE.md): pass
             --world-dir only for a staging or disposable world. A pack `tools/reapply.py strip` moved out (recorded
             in build/install_record.json, and classed `build` in build/pack_roles.json) is absent by design; a
-            stripped pack the roles call runtime, or whose held copy is gone, is a problem.
+            stripped pack the roles call runtime, or whose held copy is gone, is a problem. A pack tools/reapply.py
+            WITHDRAWN names, still in the global folder or the given world's, is a problem (it would keep running).
   configs   tools/server_config_record.py check
   property  every key in REQUIRED_PROPERTIES has its required value in server.properties (enable-command-block=true)
 
@@ -120,6 +121,12 @@ def packs(server_dir, world_dir=None, record=None, roles=None):
             problems += compare_or_stripped(name, RA.PACKS / name, Path(world_dir) / "datapacks" / name)
         for src in RA.WORLD_PACKS:
             problems += compare_or_stripped(src.name, src, Path(world_dir) / "datapacks" / src.name)
+    # a WITHDRAWN pack (tools/reapply.py, 2026-10-21) still installed keeps running: `install` moves it aside
+    for name, why in sorted(getattr(RA, "WITHDRAWN", {}).items()):
+        for folder in [gdp] + ([Path(world_dir) / "datapacks"] if world_dir else []):
+            if (folder / name).exists():
+                problems.append("%s: WITHDRAWN but still installed in %s (%s); run `tools/reapply.py install`"
+                                % (name, folder, why.split(":", 1)[0]))
     expected_global = {n for n in RA.SERVER_PACKS if n not in world_local}
     for p in sorted(gdp.glob("cobblers_*")):
         if p.name not in expected_global:

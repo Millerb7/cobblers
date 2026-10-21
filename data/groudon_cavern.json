@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.groudon_cavern/1",
-  "status": "authored 2026-10-21 for the owner's request of 2026-10-20 ('this crater should just have a large cave mouth that opens up after gym 8 is beaten, call it an earthquake or something'). Built offline only: the generator, its independent audit and their tests run; nothing has been applied to staging or the live world and no part of it has been seen in a game.",
+  "status": "RETIRED 2026-10-21 (the owner: \"undo groudon cave\", then \"Old chamber back\"). Applied to the live world by R14L at 01:16 that day and opened by the quake; it is now data/legendaries.json groudon's retired site quake_cavern_v1, and tools/groudon_cavern.py only emits its cleanup and the record of what the world received. This file is FROZEN: the cleanup must undo exactly the cavern that was built (the retired site's applied.sha256 refuses any change that moves a block).",
   "record": "groudon",
   "record_why": "The cavern is the SHAPE of the encounter data/legendaries.json calls groudon (kind quake_cavern): that record keeps the species, level, gate, `met` advancement (cobblers:legendary/groudon/met, which data/rayquaza_sky.json gate.requires_met reads), the Red Orb cache and R14L's look-then-act summon. This file keeps everything geometric and the quake.",
   "seed": 2026102101,
@@ -104,6 +104,6 @@
     "turned_back": "The heat and the dark press you back. The sleeper under the Craters answers only to a trainer who has earned the Earth Badge."
   },
   "probes": {
-    "why": "data/world_probes.json places.groudon_cavern is written from the model by `python tools/groudon_cavern.py probes`: blocks that hold whether or not the quake has happened (the hall's floor, the lake's lava, the parapet, the dais, the pedestal, the tunnel's first interior floor), and Groudon (at most one tagged cobblers_leg_groudon)."
+    "why": "data/world_probes.json places.groudon_revert is written by `python tools/groudon_cavern.py probes`: cells that read rock once the cleanup has run (the lake, the hall floor, the pedestal, the tunnel, the three cuts), the rebuilt chamber's pedestal, and Groudon (at most one tagged cobblers_leg_groudon, in the chamber)."
   }
 }

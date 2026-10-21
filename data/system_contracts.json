@@ -344,11 +344,11 @@
       ]
     },
     "groudon_cavern": {
-      "what": "Groudon's quake cavern: the rumble on the first gym-8 win, the opening of the ravine, the carve of the tunnel and hall, and the keeper that turns away anyone in the hall without the flag",
+      "what": "Groudon's quake cavern, RETIRED 2026-10-21: the cleanup that puts the ravine, tunnel and hall back to the heightmap's terrain before Groudon's sealed chamber is carved again (the cavern's runtime pack is withdrawn)",
       "paths": [
         "data/groudon_cavern.json",
         "tools/groudon_cavern.py",
-        "tools/groudon_cavern_audit.py"
+        "tools/groudon_revert_audit.py"
       ]
     }
   },
@@ -1311,7 +1311,7 @@
           "quote": "\"requires_met\": [\"kyogre\", \"groudon\"],"
         },
         {
-          "at": "tools/legendaries.py:695",
+          "at": "tools/legendaries.py:676",
           "quote": "\"advancement grant @s only %s:legendary/%s/met\" % (ns, rid),"
         },
         {
@@ -1566,26 +1566,26 @@
     },
     {
       "id": "C31",
-      "title": "Groudon's quake and its legendary agree on the flag and on the one open score",
+      "title": "Groudon's retired quake cavern and its sealed chamber share one open score, cleared once",
       "owner": "groudon_cavern",
       "consumers": [
-        "legendaries",
-        "progression"
+        "legendaries"
       ],
       "constrained_by": [],
-      "statement": "The earthquake is set off by cobblers:flag/gym8_cleared, the advancement tools/progression_pack.py writes and tools/legendaries.py gates the Groudon record on (gate.flags[0]); the cavern's tick polls it and must name the record's own flag. The legendary's open score (#groudon on data/legendaries.json's objective, cobblers.leg) is written to 1 by exactly one line, the cavern's `opened` function, called only by the last stage after its read-back; tools/legendaries.py reads it (the wake, the dormant keep) and its retired site's restore clears it to 0, which is safe only because the restore's probe is the OLD pedestal, a block position the new cavern never writes. carve_once, in the cavern's build pack, skips on the same holder. A different flag, a second writer, or a new pedestal on the old one and the sleeper wakes early, never wakes, or the new cavern is taken down by the cleanup.",
+      "statement": "The sealed chamber's open score (#groudon on data/legendaries.json's objective, cobblers.leg) gates its carve: tools/legendaries.py carve_once carves only while it is not 1. The quake set it to 1 when it opened (2026-10-21), so the cavern's cleanup (tools/groudon_cavern.py retire_functions, run by R14L before Groudon's carve_once) clears it to 0, as the restore's first line, and only while the cavern is there: #built of cobblers.gq is 1, or the dais's pedestal (6764, 66, 5638) holds smooth_basalt, a cell the chamber never writes. The restore puts rock in the pedestal and sets #built to 0 LAST, so a second run of R14L never clears the score of a chamber a player has opened since (which would re-seal it on the carve). A restore gated on a cell the chamber writes, a score cleared on every run, or a carve_once on another holder, and the chamber is either never rebuilt or re-sealed over a player's open plug.",
       "stated_in": [
         {
-          "at": "tools/groudon_cavern.py:670",
-          "quote": "# open score (tools/legendaries.py): 1 means the gate has opened, so a re-run of R14L carves nothing and Groudon is"
+          "at": "tools/groudon_cavern.py:1125",
+          "quote": "\"scoreboard players set #%s %s 0\" % (rec[\"id\"], leg_doc[\"objective\"])]"
         },
         {
-          "at": "tools/legendaries.py:580",
-          "quote": "execute if score #%s %s matches 1 as @e[tag=%s,tag=!%s.awake,limit=1] run function %s:legendary/%s/wake"
+          "at": "tools/legendaries.py:662",
+          "quote": "\"execute unless score #%s %s matches 1 run function %s:legendary/%s/carve\" % (rid, obj, ns, rid)]"
         }
       ],
       "tests": [
-        "tests/test_system_contracts.py::test_contract_c31_the_quake_and_the_legendary_agree_on_the_flag_and_the_open_score"
+        "tests/test_system_contracts.py::test_contract_c31_the_cavern_cleanup_clears_the_chamber_score_once",
+        "tests/test_groudon_revert.py::test_a_second_run_writes_nothing_and_keeps_a_chamber_opened_since"
       ]
     }
   ]

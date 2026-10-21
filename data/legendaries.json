@@ -540,85 +540,84 @@
       "level": 60,
       "level_basis": "5 below the provisional 8-badge cap of 70. PROVISIONAL.",
       "cap_at_gate": 60,
-      "kind": "quake_cavern",
-      "kind_why": "2026-10-21 (the owner, 2026-10-20: 'Groudon feels very lame' next to Kyogre's cave; 'this crater should just have a large cave mouth that opens up after gym 8 is beaten, call it an earthquake or something'). The old sealed_chamber (a 3x3 plug, a ladder shaft, a 21x21x11 room at y69-79) is retired below. A new kind and not a new tool: this record keeps everything R14L already does for a legendary (the look-then-act summon, the dormant NBT, `met` for Rayquaza's gate, the Red Orb's pedestal, the retired site's fail-closed cleanup); tools/groudon_cavern.py (data/groudon_cavern.json) supplies only what a box chain cannot: the geometry and the quake. Ladder rung: functions/commands (docs/world-building/GROUDON_QUAKE_CAVERN.md).",
+      "kind": "sealed_chamber",
+      "kind_why": "2026-10-21, the owner: \"undo groudon cave\", then \"Old chamber back\". Groudon is in its first chamber again, exactly as it stood before 2026-10-20: the record before commit 9d764bcc, whose numbers (portal, approach, chamber, plug_depth) the quake's retired site sealed_chamber_v1 had frozen and are the same; bore, shell_margin and pedestal_block are still the defaults it was carved with (3, 4, smooth_basalt). The live world lost this chamber to the quake's R14L run (the v1 cleanup put it back to rock) and gets it back from carve_once, which runs because the quake cavern's cleanup (retired_sites quake_cavern_v1, run first) clears #groudon cobblers.leg.",
       "status": "sited",
       "site": "the_craters",
-      "cavern": "data/groudon_cavern.json",
       "gate": {
         "flags": [
           "gym8_cleared"
         ],
         "requires_met": [],
-        "status": "DECIDED by the owner 2026-10-20 for the two halves: the FIRST player on the server to hold gym8_cleared sets the earthquake off for the whole world (it opens the cavern for good); anyone may walk in, and a keeper turns away anyone in the hall without gym8_cleared. The badge itself is still the file's original proposal.",
-        "why": "STRUCTURE_DECISIONS: 'depth gates it through heat, lava and darkness' and it 'rewards going deeper than the fossil levels'. No badge is fixed anywhere; the eighth is this file's proposal, because gym 7 (Blaine, Cinderlee) is the crater town and the eighth badge sends a player back. The gate is enforced by the keeper (cobblers:groudon_cavern/tick, the eject function) on every player in the hall, per player, not by a door: the world opens once, each trainer is judged on their own advancement."
+        "status": "DECIDED by the owner 2026-10-20 (gym8_cleared, chosen for the quake) and kept for the chamber on 2026-10-21: the plug opens for a player who holds it, per player, as before the quake.",
+        "why": "STRUCTURE_DECISIONS: 'depth gates it through heat, lava and darkness' and it 'rewards going deeper than the fossil levels'. No badge is fixed anywhere; the eighth is this file's proposal, because gym 7 (Blaine, Cinderlee) is the crater town and the eighth badge sends a player back."
       },
       "portal": [
-        6706,
-        5510
+        6672,
+        5508
       ],
-      "portal_why": "MOVED 2026-10-21 from (6672, 5508): the lip of the new ravine (data/groudon_cavern.json spine.lip) on the eastern bowl's south floor, ground y108 (tools/ground.py, measured 2026-10-21). 34 blocks east of the retired chamber's shaft, and the whole new cavern lies east of x6690 while the retired hull ends at x6686. The bowl is data/landmarks.json craters.anchors.eastern_bowl. Clear of the Mining Town (its square starts at z5688, the hall ends at z5654) and of Fossick's hill (rect z5786-5823).",
+      "portal_why": "The eastern cone's bowl floor (data/landmarks.json craters.anchors.eastern_bowl), the one cone that actually has a crater. Ground y108 on the canonical heightmap (the landmark record's y126.8 predates the rescale and is stale). 211 blocks from Fossick, the Mining Town (6633, 5716).",
+      "approach": {
+        "bearing_deg": 180,
+        "drop": 40,
+        "passage": 14
+      },
+      "chamber": {
+        "width": 21,
+        "length": 21,
+        "height": 11,
+        "alcove": 0
+      },
+      "plug_depth": 8,
       "cache": {
         "reward": "groudon_red_orb",
         "container": "pedestal",
-        "why": "2026-10-08 (overnight, unit REWARD): docs/mechanics/ITEM_ROUTES.md section 2.3's Red Orb route, a requires_flags cache in this chamber. The item is given by data/rewards.json groudon_red_orb (ADR-002, tools/rewards_pack.py), gated on champion_cleared, not on this chamber's own gym8_cleared (the design's answer check: Primal Groudon before the League would be the one answer). The container is the pedestal under Groudon (the smooth_basalt block tools/groudon_cavern.py places on the dais), so no block is added; tools/legendaries.py cache_problems holds the reward's coordinates to this record's geometry. CARRIED 2026-10-21 into the quake cavern: the pedestal is now (6764, 66, 5638)."
+        "why": "2026-10-08 (overnight, unit REWARD): docs/mechanics/ITEM_ROUTES.md section 2.3's Red Orb route, a requires_flags cache in this chamber. The item is given by data/rewards.json groudon_red_orb (ADR-002, tools/rewards_pack.py), gated on champion_cleared, not on this chamber's own gym8_cleared (the design's answer check: Primal Groudon before the League would be the one answer). The container is the pedestal this tool already writes under Groudon, so no block is added to the carve; tools/legendaries.py cache_problems holds the reward's coordinates to this record's geometry."
       },
       "spawn_free_zone": [
-        6728,
-        5592,
-        6800,
-        5656
+        6656,
+        5496,
+        6688,
+        5544
       ],
-      "spawn_free_zone_why": "2026-10-21: the hall (its footprint x6734-6794 z5594-5654, snapped out to the 8-block grid). Also data/spawn_suppression.json spawn_free_zones groudon_cavern, which is what the compiled spawn pools obey (a zone is x and z for every y, so it also takes the plateau 45 blocks over the hall out of the wild spawns: 72 by 64 columns of a subregion about 400 across); this record's own field is only audited (tools/legendaries_audit.py). The ravine and the tunnel are not zoned: a wild Fire type met on the way down is the point, and the hall is where a battle is.",
-      "measured": {
-        "ground_y": 108,
-        "floor_y": 64,
-        "pedestal": [
-          6764,
-          66,
-          5638
-        ],
-        "legendary_at": [
-          6764,
-          67,
-          5638
-        ],
-        "by": "tools/groudon_cavern.py legendary_geometry on tools/ground.py, 2026-10-21"
-      },
-      "why": "STRUCTURE_DECISIONS section 4: the mountain's sleeper. 2026-10-21: no longer a sealed room under a plug but a magma cavern the Craters open for the whole world when the first trainer takes the eighth badge (data/groudon_cavern.json: a ravine from the eastern bowl, a lit tunnel, a hall 56 across with a lava lake and a basalt dais). The connection through Fossick's deep workings stays dressing for a later pass.",
+      "why": "STRUCTURE_DECISIONS section 4: the mountain's sleeper, reached by going deeper than the fossil levels. The connection through Fossick's deep workings is dressing for a later pass; this record only owns the chamber and its plug.",
       "level_why": "lowered from 65 to the upper bound of its own gate (8 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
       "retired_sites": [
         {
-          "id": "sealed_chamber_v1",
+          "id": "quake_cavern_v1",
+          "kind": "quake_cavern",
           "retired": "2026-10-21",
-          "why": "Groudon's first chamber, the 3x3 stone plug at (6672, 5508), the ladder shaft to y69, the 14-block adit and the 21x21x11 room at x6662-6682 y69-79 z5524-5544. Built in the live world; the owner opened it (score #groudon cobblers.leg = 1, plug air) and met Groudon there on 2026-10-20. Moving the record would otherwise leave an open shaft, a carved room and a second Groudon, so tools/legendaries.py emits a fail-closed cleanup for it (cobblers:legendary/groudon/retire_sealed_chamber_v1, run by R14L before any summons). Its restore also clears #groudon cobblers.leg, which the new cavern needs at 0 to be carved. cobblers:legendary/groudon/met is a per-player advancement and is not touched.",
+          "why": "Groudon's quake cavern (data/groudon_cavern.json, tools/groudon_cavern.py): a ravine from the eastern bowl's south floor, a plug, a lit tunnel and a magma hall 56 across with a lava lake, a blackstone lake wall and a basalt dais. R14L carved it into the live world at 01:16 on 2026-10-21 (#built cobblers.gq = 1) and the quake opened it fully (#quake cobblers.gq = 5, which also set #groudon cobblers.leg to 1). The owner then asked for it undone and the old chamber back. tools/groudon_cavern.py retire_functions emits a fail-closed cleanup into cobblers_legendaries (cobblers:legendary/groudon/retire_quake_cavern_v1, run by R14L before any summon): it refuses while a player stands in the ravine, the plug, the tunnel or the hall; kills the cavern's Groudon in the model box; and, only while #built is 1 or the dais's pedestal stands, puts every cell the carve and the cuts wrote at or under the ground back to terrain, clears the rim's walls, clears #groudon cobblers.leg (so the chamber is carved again), and sets #built and #quake to 0 last. cobblers:legendary/groudon/met is a per-player advancement and is not touched: data/rayquaza_sky.json gate.requires_met reads it.",
           "portal": [
-            6672,
-            5508
+            6706,
+            5510
           ],
-          "approach": {
-            "bearing_deg": 180,
-            "drop": 40,
-            "passage": 14
-          },
-          "chamber": {
-            "width": 21,
-            "length": 21,
-            "height": 11,
-            "alcove": 0
-          },
-          "plug_depth": 8,
-          "bore": 3,
-          "shell_margin": 4,
+          "cavern": "data/groudon_cavern.json",
+          "pedestal": [
+            6764,
+            66,
+            5638
+          ],
           "pedestal_block": "minecraft:smooth_basalt",
-          "frozen_why": "bore, shell_margin and pedestal_block are defaults.bore, defaults.shell_margin and defaults.pedestal_block AS THEY STOOD when this chamber was carved (3, 4, smooth_basalt); the pedestal at (6672, 68, 5542) is the probe that says the chamber is still there. Frozen here so a later change to the defaults cannot change what the cleanup thinks it is undoing; the retired geometry is the same tools/legendaries.py geometry() over these numbers.",
+          "applied": {
+            "sha256": "5ce6d870e086fb1ec4eaf139ab4299129a6bb63a82dce7cad378dfb98be7e5f2",
+            "record": "build/groudon_cavern_applied (python tools/groudon_cavern.py build)",
+            "why": "sha256 of the carve and the three cuts as the world received them (tools/groudon_cavern.py applied_functions: the build pack's carve parts, state and carve_once, and the stages 2, 3 and 4), generated from the model of commit bb733a3f, the last change to tools/groudon_cavern.py's geometry before R14L ran at 01:16. Frozen so a later edit of the model cannot change what the cleanup thinks it is undoing: tools/groudon_cavern.py build and tools/groudon_revert_audit.py both refuse a record whose sha256 differs.",
+            "verified": "2026-10-21: the generator of commit bb733a3f, run from git into a scratch directory over the same data and heightmap, emits these eight functions byte for byte (the same sha256)."
+          },
+          "hand_edits": {
+            "why": "Measured in the live world on 2026-10-21 by the owner's session, after the apply; relayed, not re-measured here. The cleanup is written to be right with them in place.",
+            "water_plugged": "85 water sources in x6686-6728, y84-145, z5500-5575 turned to stone, and 31 flowing water blocks to air. Left alone: at or under the ground the restore writes rock where the cut was (what they already are), and over the ground it writes nothing but air in place of the rim's blackstone walls (fill ... replace), so a stone standing over the ground stays.",
+            "lake_walls_removed": "the lake's 88 blackstone_wall blocks round (6764, 64, 5614): under the ground, so rock either way.",
+            "groudon_moved": "Groudon onto the lava at (6763.5, 65, 5612.5), tags cobblers_leg_groudon and cobblers_leg_groudon.awake, NoAI. Inside the model box, so the cleanup's kill takes it."
+          },
           "terrain": {
             "code": "BASALT",
             "surface": "minecraft:basalt",
             "under": "minecraft:stone",
             "deep": "minecraft:stone",
             "surface_verified": false,
-            "why": "The paint at the old portal is the east_cones subregion, preset volcanic (data/regions.json paint_presets: terrain BASALT, patches of BLACKSTONE 40 percent, GRAVEL 15, MAGMA 3). Below the ground the restore is stone, the convention tools/gym_demolish.py and Regigigas's retirement use; the carve's own envelope, sleeve and plug were stone, so below gy-3 the restore is an identity. UNVERIFIED and offline-unknowable (the heightmap has heights, not block ids): the surface block. basalt is the preset's own terrain and a guess for the 3 by 3 the plug's top leaves at y108; a one-line change here if the owner finds the patch wrong in game."
+            "why": "The east_cones subregion's paint preset, volcanic (data/regions.json paint_presets: terrain BASALT), as for sealed_chamber_v1; under the ground stone, the convention tools/gym_demolish.py and the retired chambers share. UNVERIFIED and offline-unknowable (the heightmap has heights, not block ids): the surface block over the ravine's columns, where the restore puts the ground back. The tunnel and the hall lie 40 and more under the plateau, so they are all `deep`. A one-line change here if the owner finds the patch wrong in game."
           }
         }
       ]
