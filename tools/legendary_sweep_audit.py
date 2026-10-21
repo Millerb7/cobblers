@@ -397,8 +397,14 @@ def authored_points(skip_ids):
             for v in o:
                 walk(v, src)
 
+    # data/loot_fixes.json (tools/loot_fix.py, 2026-10-21) lists containers that already stand INSIDE placed templates,
+    # the legendary sites' own among them: a record of what a placement holds, not a point anyone authored beside a site
+    not_authored = {"data/loot_fixes.json"}
     for f in sorted(glob.glob(str(DATA / "*.json"))) + sorted(glob.glob(str(DATA / "*" / "*.json"))):
-        walk(_j(f), os.path.relpath(f, ROOT).replace("\\", "/"))
+        rel = os.path.relpath(f, ROOT).replace("\\", "/")
+        if rel in not_authored:
+            continue
+        walk(_j(f), rel)
     return out
 
 
