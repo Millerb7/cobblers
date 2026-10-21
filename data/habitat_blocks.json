@@ -8155,7 +8155,7 @@
         "z": 2262
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8178,7 +8178,7 @@
         "z": 2262
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8201,7 +8201,7 @@
         "z": 2438
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8224,7 +8224,7 @@
         "z": 2442
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8247,7 +8247,7 @@
         "z": 1620
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8270,7 +8270,7 @@
         "z": 1624
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8293,7 +8293,7 @@
         "z": 2622
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8316,7 +8316,7 @@
         "z": 2622
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8339,7 +8339,7 @@
         "z": 6726
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8362,7 +8362,7 @@
         "z": 6722
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8385,7 +8385,7 @@
         "z": 7069
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8408,7 +8408,7 @@
         "z": 7074
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8431,7 +8431,7 @@
         "z": 7822
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8454,7 +8454,7 @@
         "z": 7826
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8477,7 +8477,7 @@
         "z": 7573
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8500,7 +8500,7 @@
         "z": 7578
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8523,7 +8523,7 @@
         "z": 3187
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8546,7 +8546,7 @@
         "z": 3182
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8569,7 +8569,7 @@
         "z": 3054
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8592,7 +8592,7 @@
         "z": 3054
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8615,7 +8615,7 @@
         "z": 5979
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8638,7 +8638,7 @@
         "z": 5980
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8661,7 +8661,7 @@
         "z": 6788
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8684,7 +8684,7 @@
         "z": 6788
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8707,7 +8707,7 @@
         "z": 4489
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8730,7 +8730,7 @@
         "z": 4490
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8753,7 +8753,7 @@
         "z": 5262
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8776,7 +8776,7 @@
         "z": 5262
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8799,7 +8799,7 @@
         "z": 7938
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8822,7 +8822,7 @@
         "z": 7934
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8845,7 +8845,7 @@
         "z": 7513
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8868,7 +8868,7 @@
         "z": 7510
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8891,7 +8891,7 @@
         "z": 7374
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8914,7 +8914,7 @@
         "z": 7374
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8937,7 +8937,7 @@
         "z": 1847
       },
       "mimic": "minecraft:mangrove_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8960,7 +8960,7 @@
         "z": 1848
       },
       "mimic": "minecraft:mangrove_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -8983,7 +8983,7 @@
         "z": 2416
       },
       "mimic": "minecraft:mangrove_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9006,7 +9006,7 @@
         "z": 2416
       },
       "mimic": "minecraft:mangrove_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9029,7 +9029,7 @@
         "z": 2273
       },
       "mimic": "minecraft:mangrove_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9052,7 +9052,7 @@
         "z": 2274
       },
       "mimic": "minecraft:mangrove_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9075,7 +9075,7 @@
         "z": 455
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9098,7 +9098,7 @@
         "z": 456
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9121,7 +9121,7 @@
         "z": 314
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9144,7 +9144,7 @@
         "z": 310
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9167,7 +9167,7 @@
         "z": 429
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9190,7 +9190,7 @@
         "z": 430
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9213,7 +9213,7 @@
         "z": 838
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9236,7 +9236,7 @@
         "z": 838
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9259,7 +9259,7 @@
         "z": 271
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9282,7 +9282,7 @@
         "z": 270
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9305,7 +9305,7 @@
         "z": 60
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9328,7 +9328,7 @@
         "z": 60
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9351,7 +9351,7 @@
         "z": 1773
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9374,7 +9374,7 @@
         "z": 1774
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9397,7 +9397,7 @@
         "z": 1042
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9420,7 +9420,7 @@
         "z": 1038
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9443,7 +9443,7 @@
         "z": 2298
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9466,7 +9466,7 @@
         "z": 2294
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9489,7 +9489,7 @@
         "z": 4275
       },
       "mimic": "minecraft:cherry_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9512,7 +9512,7 @@
         "z": 4270
       },
       "mimic": "minecraft:cherry_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9535,7 +9535,7 @@
         "z": 3931
       },
       "mimic": "minecraft:cherry_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9558,7 +9558,7 @@
         "z": 3930
       },
       "mimic": "minecraft:cherry_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9581,7 +9581,7 @@
         "z": 3621
       },
       "mimic": "minecraft:cherry_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9604,7 +9604,7 @@
         "z": 3622
       },
       "mimic": "minecraft:cherry_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9627,7 +9627,7 @@
         "z": 1989
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9650,7 +9650,7 @@
         "z": 1990
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9673,7 +9673,7 @@
         "z": 1210
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9696,7 +9696,7 @@
         "z": 1206
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9719,7 +9719,7 @@
         "z": 1264
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9742,7 +9742,7 @@
         "z": 1268
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9765,7 +9765,7 @@
         "z": 3789
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9788,7 +9788,7 @@
         "z": 3790
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9811,7 +9811,7 @@
         "z": 4774
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9834,7 +9834,7 @@
         "z": 4778
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9857,7 +9857,7 @@
         "z": 3246
       },
       "mimic": "minecraft:birch_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9880,7 +9880,7 @@
         "z": 3250
       },
       "mimic": "minecraft:birch_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9903,7 +9903,7 @@
         "z": 3038
       },
       "mimic": "minecraft:birch_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9926,7 +9926,7 @@
         "z": 3038
       },
       "mimic": "minecraft:birch_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9949,7 +9949,7 @@
         "z": 3963
       },
       "mimic": "minecraft:birch_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9972,7 +9972,7 @@
         "z": 3958
       },
       "mimic": "minecraft:birch_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -9995,7 +9995,7 @@
         "z": 3558
       },
       "mimic": "minecraft:birch_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10018,7 +10018,7 @@
         "z": 3558
       },
       "mimic": "minecraft:birch_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10041,7 +10041,7 @@
         "z": 3067
       },
       "mimic": "minecraft:birch_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10064,7 +10064,7 @@
         "z": 3066
       },
       "mimic": "minecraft:birch_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10087,7 +10087,7 @@
         "z": 3862
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10110,7 +10110,7 @@
         "z": 3862
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10133,7 +10133,7 @@
         "z": 3494
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10156,7 +10156,7 @@
         "z": 3498
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10179,7 +10179,7 @@
         "z": 2909
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10202,7 +10202,7 @@
         "z": 2914
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10225,7 +10225,7 @@
         "z": 3182
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10248,7 +10248,7 @@
         "z": 3182
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10271,7 +10271,7 @@
         "z": 4405
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10294,7 +10294,7 @@
         "z": 4410
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10317,7 +10317,7 @@
         "z": 3894
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10340,7 +10340,7 @@
         "z": 3898
       },
       "mimic": "minecraft:dark_oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10363,7 +10363,7 @@
         "z": 1429
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10386,7 +10386,7 @@
         "z": 1430
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10409,7 +10409,7 @@
         "z": 1599
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10432,7 +10432,7 @@
         "z": 1598
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10455,7 +10455,7 @@
         "z": 4894
       },
       "mimic": "minecraft:bone_block",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10478,7 +10478,7 @@
         "z": 4898
       },
       "mimic": "minecraft:bone_block",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10501,7 +10501,7 @@
         "z": 6115
       },
       "mimic": "minecraft:bone_block",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10524,7 +10524,7 @@
         "z": 6114
       },
       "mimic": "minecraft:bone_block",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10547,7 +10547,7 @@
         "z": 771
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10570,7 +10570,7 @@
         "z": 766
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10593,7 +10593,7 @@
         "z": 2641
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10616,7 +10616,7 @@
         "z": 2638
       },
       "mimic": "minecraft:spruce_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10639,7 +10639,7 @@
         "z": 4530
       },
       "mimic": "minecraft:mangrove_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10662,7 +10662,7 @@
         "z": 4530
       },
       "mimic": "minecraft:mangrove_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10685,7 +10685,7 @@
         "z": 4610
       },
       "mimic": "minecraft:mangrove_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10708,7 +10708,7 @@
         "z": 4606
       },
       "mimic": "minecraft:mangrove_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10731,7 +10731,7 @@
         "z": 5514
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10754,7 +10754,7 @@
         "z": 5510
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10777,7 +10777,7 @@
         "z": 7077
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10800,7 +10800,7 @@
         "z": 7078
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10823,7 +10823,7 @@
         "z": 6677
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10846,7 +10846,7 @@
         "z": 6678
       },
       "mimic": "minecraft:jungle_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10869,7 +10869,7 @@
         "z": 5525
       },
       "mimic": "minecraft:polished_basalt",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10892,7 +10892,7 @@
         "z": 5530
       },
       "mimic": "minecraft:polished_basalt",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10915,7 +10915,7 @@
         "z": 5917
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10938,7 +10938,7 @@
         "z": 5918
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10961,7 +10961,7 @@
         "z": 2451
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -10984,7 +10984,7 @@
         "z": 2446
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,

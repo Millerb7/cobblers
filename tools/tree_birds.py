@@ -242,7 +242,10 @@ def records(plan_doc, habitats_doc=None):
                 "place": "%s %s: inside its limb, %d over the ground (the zone is centred on the limb top)"
                          % ("the world tree" if world else "the tree", tid, n["position"]["y"] - t["ground"]),
                 "pool": pool, "style": "activated", "replace_spawns": False, "position": n["position"],
-                "mimic": n["mimic"], "status": "planned",
+                "mimic": n["mimic"],
+                # placed for the trees (the owner, 2026-10-21: "add spawns up the tree"); the world tree's stay planned
+                # until the owner picks its species (data/tree_bird_species_placeholder.json)
+                "status": "planned" if world else "placed",
                 "activated": dict(WORLD_NEST if world else NEST,
                                   **({} if world else {"max_spawns_per_activation": t["per_activation"]})),
                 "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried "
