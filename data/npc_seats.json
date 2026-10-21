@@ -881,7 +881,7 @@
         "source": "tools/ground.py, the canonical heightmap rounded"
       },
       "faces": "the side opening at (1516, 5262), 4.0 blocks off",
-      "why": "data/quests.json actor_relocation.initial_marker: Lena's protected pocket, the centre of the crushed house's 9 by 9 lot, where she waits until the house is checked"
+      "why": "data/quests.json actor_relocation.initial_marker: Lena's protected pocket, the centre of the crushed house's 9 by 9 lot, where she waits while any player in the area has not finished her scene"
     },
     "marker_pallet_crushed_house_exterior_safe": {
       "at": [
@@ -896,7 +896,7 @@
         "source": "tools/ground.py, the canonical heightmap rounded"
       },
       "faces": "Hank at (1509, 5258), 4.1 blocks off",
-      "why": "data/quests.json actor_relocation.relocated_marker: where Lena stands once found, west of the house on the town side, four blocks from Hank so the two can banter"
+      "why": "data/quests.json actor_relocation.relocated_marker: where Lena stands when every player in the area has finished her scene, west of the house on the town side, four blocks from Hank so the two can banter"
     }
   },
   "relocating_seats": [
@@ -909,7 +909,7 @@
         "blocked": "marker_pallet_crushed_house_interior_safe",
         "lena_relocated": "marker_pallet_crushed_house_exterior_safe"
       },
-      "why": "Lena moves once, for everyone, when the first player finishes her conversation (the dialogue's relocate_actor effect). Which marker she stands at is therefore the WORLD field's value, so tools/reapply.py R18CH reads the score and seats her there (the 'npc' action's fifth element), and a re-run moves a Lena left at the other marker. She is not in `seats`: R17N seats unconditionally, and would put a second Lena at the interior marker after the rescue."
+      "why": "2026-10-21: Lena stands inside while any player in the crushed house's area has not finished her scene and outside otherwise, decided once a second by the scene keeper (data/scenes.json pallet_crushed_house keepers, per-player tag cobblers_pallet_rescued); no dialogue moves her. The keeper writes where she stands to the WORLD field, so tools/reapply.py R18CH reads the score and seats her there (the 'npc' action's fifth element), and a re-run moves a Lena left at the other marker. She is not in `seats`: R17N seats unconditionally, and would put a second Lena at the interior marker after the rescue."
     }
   ],
   "not_seated": []

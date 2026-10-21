@@ -792,6 +792,7 @@
       "type": "enum",
       "scope": "player",
       "initial": "not_started",
+      "note": "shared_rescue_recap is LEGACY (2026-10-21): nothing sets it any more; a player saved at it by an earlier build is returned to check_house by the transition migrate_shared_rescue_stage, run by the scene zone.",
       "allowed_values": [
         "not_started",
         "listening",
@@ -825,6 +826,7 @@
       "type": "enum",
       "scope": "world",
       "initial": "blocked",
+      "note": "Since 2026-10-21 this is the KEEPER's record of where Lena stands now (blocked = inside the pocket, lena_relocated = outside), written by the scene keeper in data/scenes.json pallet_crushed_house every second a player is in the area; no dialogue writes it. R18CH seats her by it; Lena's dialogue reads it to tell a player who has not finished that she is briefly outside. Whether a player has finished is the per-player tag cobblers_pallet_rescued, not this field.",
       "allowed_values": [
         "blocked",
         "lena_relocated"

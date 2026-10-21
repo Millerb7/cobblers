@@ -20,6 +20,8 @@ A scene belongs to one quest and holds, inside an area:
              for that player.
   functions  named command lists a dialogue can run as the player (effect scene_function in data/quests.json).
   no_build   boxes (a building's interior) where a survival player is put in adventure mode, and back on leaving.
+  keepers    where ONE shared NPC stands, decided each cycle from the players in the area (Keeper below): inside while any
+             player there lacks a per-player tag, outside otherwise (the Pallet crushed house's Lena, 2026-10-21).
   npcs       Cobblemon NPCs (people) that open a conversation; shared and static. NPC classes load only at server
              start, so they are placed over RCON after a restart (tools/reapply.py), not by a function.
 
@@ -102,8 +104,9 @@ def mol_str(s):
 
 
 class Scene:
-    def __init__(self, doc, quests, fields, conversations):
+    def __init__(self, doc, quests, fields, conversations, data_dir=None):
         self.doc = doc
+        self.data_dir = data_dir
         self.id = doc["id"]
         if not ID.fullmatch(self.id):
             raise SceneError("scene id %r" % self.id)
@@ -204,7 +207,82 @@ class Scene:
             self.conv(n["conversation"], "npc")
             if not inside(n["at"], self.area):
                 raise SceneError("scene %s: npc %s at %s is outside the area" % (self.id, n["conversation"], n["at"]))
+        for k in self.doc.get("keepers") or []:
+            out["keep_%s" % k["id"]] = self.keeper(k)
         return out
+
+    def keeper_calls(self):
+        """The cycle lines that run this scene's keepers (not as a player: a keeper decides for the whole area)."""
+        return ["function %s:scenes/%s/keep_%s" % (NS, self.id, k["id"]) for k in self.doc.get("keepers") or []]
+
+    def keeper(self, k):
+        """The function that keeps ONE shared NPC where the players in the area need her, once a cycle.
+
+        A Cobblemon NPC is one entity for every player, so a fact about one player (they have finished her scene) cannot
+        move her by itself: the Pallet crushed house's Lena was moved for everyone by the first player to finish, and
+        every later player, and any player whose data was reset, found her outside and never got the scene. The keeper
+        reads a PER-PLAYER tag instead and decides for whoever is there:
+
+          near    some player is inside the scene's area (no player, no move: she is never touched in an empty town)
+          todo    some player inside the area does NOT carry done_tag (has not finished)
+          busy    some player inside the area holds hold_objective above 0, set for N seconds by the dialogue when it opens
+                  her conversation (scene function lena_talk). The NPC offers no documented 'in a dialogue' read, so the
+                  hold is a PROXY; it is cleared by the transition that finishes her lines (lena_release)
+
+        near and not busy: todo -> she is teleported to inside_marker, otherwise to outside_marker, only if she is not on
+        that block already. She is found by tag (cobblers_actor_<npc>, the tag the earlier relocate_actor used), put on the
+        NPC standing within 2 blocks of either marker, so the keeper moves the existing NPC and never summons one. The state
+        field (a world score, tools/compile_dialogue.py) is set to the stand she was just kept at, so tools/reapply.py R18CH,
+        which seats her by that score, never fights the keeper, and her conversation can tell a player that she is out."""
+        kid = k["id"]
+        if not ID.fullmatch(kid):
+            raise SceneError("scene %s: keeper id %r" % (self.id, kid))
+        for key in ("npc", "done_tag", "hold_objective", "inside_marker", "outside_marker", "state_field", "inside_state", "outside_state"):
+            if not isinstance(k.get(key), str) or not k[key]:
+                raise SceneError("scene %s: keeper %s needs %s" % (self.id, kid, key))
+        if not (ID.fullmatch(k["npc"]) and re.fullmatch(r"[a-z0-9_.]+", k["done_tag"]) and re.fullmatch(r"[a-z0-9_]+", k["hold_objective"])):
+            raise SceneError("scene %s: keeper %s npc / done_tag / hold_objective" % (self.id, kid))
+        marks = CD.load_markers(self.data_dir)
+        stand = {}
+        for which in ("inside", "outside"):
+            m = marks.get(k[which + "_marker"])
+            if not m or len(m.get("at") or []) != 3 or not isinstance(m.get("yaw"), (int, float)):
+                raise SceneError("scene %s: keeper %s marker %s is not in data/npc_seats.json markers" % (self.id, kid, k[which + "_marker"]))
+            if not inside(m["at"], self.area):
+                raise SceneError("scene %s: keeper %s marker %s is outside the area" % (self.id, kid, k[which + "_marker"]))
+            stand[which] = m
+        field = k["state_field"]
+        if field not in self.c.fields or self.c.fields[field].get("scope") != "world":
+            raise SceneError("scene %s: keeper %s state_field %s is not a declared world field" % (self.id, kid, field))
+        idx = {"inside": self.c.world_index(field, k["inside_state"]), "outside": self.c.world_index(field, k["outside_state"])}
+        if idx["inside"] == idx["outside"]:
+            raise SceneError("scene %s: keeper %s inside_state and outside_state are one value" % (self.id, kid))
+        area, S, hold, tag, done = sel(self.area), CLOCK, k["hold_objective"], "cobblers_actor_%s" % k["npc"], k["done_tag"]
+        near, todo, busy = ("#%s_%s" % (kid, w) for w in ("near", "todo", "busy"))
+        holder = CD.world_holder(field)
+
+        def at(m):
+            return "x=%d,y=%d,z=%d" % tuple(m["at"])
+
+        lines = ["# %s keeper %s: where the shared NPC %s stands, decided each cycle from the players in the area (see tools/scenes_pack.py keeper)"
+                 % (self.id, kid, k["npc"]),
+                 "execute store success score %s %s if entity @a[%s]" % (near, S, area),
+                 "execute store success score %s %s if entity @a[%s,tag=!%s]" % (todo, S, area, done),
+                 "execute store success score %s %s if entity @a[%s,scores={%s=1..}]" % (busy, S, area, hold),
+                 "scoreboard players remove @a[scores={%s=1..}] %s 1" % (hold, hold)]
+        go = "execute if score %s %s matches 1 if score %s %s matches 0" % (near, S, busy, S)
+        for which in ("inside", "outside"):
+            lines.append("execute if score %s %s matches 1 as @e[type=cobblemon:npc,%s,distance=..2] run tag @s add %s"
+                         % (near, S, at(stand[which]), tag))
+        for which, want in (("inside", 1), ("outside", 0)):
+            m = stand[which]
+            x, y, z = m["at"]
+            lines.append("%s if score %s %s matches %d as @e[type=cobblemon:npc,tag=%s,limit=1] unless entity @s[x=%d.5,y=%d,z=%d.5,distance=..0.5] "
+                         "run tp @s %d.5 %d %d.5 %d 0" % (go, todo, S, want, tag, x, y, z, x, y, z, m["yaw"]))
+        for which, want in (("inside", 1), ("outside", 0)):
+            lines.append("%s if score %s %s matches %d run scoreboard players set %s %s %d"
+                         % (go, todo, S, want, holder, CD.WORLD_OBJECTIVE, idx[which]))
+        return lines
 
     def actor(self, a, out):
         aid = a["id"]
@@ -443,9 +521,9 @@ def build(data_dir=DATA):
              "# an actor nobody refreshed since the last cycle: its owner left, logged off, or no longer qualifies",
              "execute as @e[tag=cobblers_actor,tag=!cobblers_fresh] at @s run function %s:scenes/vanish" % NS,
              "tag @e[tag=cobblers_actor,tag=cobblers_fresh] remove cobblers_fresh"]
-    scenes, seen = [], set()
+    scenes, seen, keepers = [], set(), []
     for sdoc in doc["scenes"]:
-        s = Scene(sdoc, quests, fields, convs)
+        s = Scene(sdoc, quests, fields, convs, data_dir)
         if s.id in seen:
             raise SceneError("duplicate scene %s" % s.id)
         seen.add(s.id)
@@ -457,8 +535,14 @@ def build(data_dir=DATA):
                 files[fn("%s/%s" % (s.id, rel))] = content
         if s.doc.get("actors") or s.doc.get("effects") or s.doc.get("zones"):
             cycle.append("execute as @a[%s] at @s run function %s:scenes/%s/beat" % (sel(s.area), NS, s.id))
+        # after the beat: a zone's tag (the keeper's per-player record) is written by the beat, read here a second later
+        cycle += s.keeper_calls()
+        keepers += s.doc.get("keepers") or []
         cycle += s.no_build(files, fn)
     files[fn("cycle")] = cycle
+    # a keeper reads each keeper's hold objective and writes the world score the dialogues read; both must exist first
+    for obj in sorted({k["hold_objective"] for k in keepers} | ({CD.WORLD_OBJECTIVE} if keepers else set())):
+        files[fn("load")].append("scoreboard objectives add %s dummy" % obj)
     return files, scenes
 
 

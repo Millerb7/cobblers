@@ -32,6 +32,8 @@ sys.path.insert(0, str(ROOT / "tests"))
 import compile_dialogue as CD  # noqa: E402
 import npc_seats  # noqa: E402
 import molang_dialogue_sim as SIM  # noqa: E402
+import keeper_sim as KS  # noqa: E402
+import scenes_pack as SP  # noqa: E402
 
 DATA = ROOT / "data"
 HANK, LENA = "dlg_pallet_crushed_house_hank", "dlg_pallet_crushed_house_lena"
@@ -43,6 +45,9 @@ HOUSE = json.loads((DATA / "crushed_house.json").read_text(encoding="utf-8"))
 MK = SEATS["markers"]
 IN, OUT = MK["marker_pallet_crushed_house_interior_safe"], MK["marker_pallet_crushed_house_exterior_safe"]
 HANK_SEAT = next(s for s in SEATS["seats"] if s["id"] == "npc_pallet_crushed_house_hank")
+RESCUED, HOLD = "cobblers_pallet_rescued", "cobblers_hold"
+SCENE = "cobblers/function/scenes/pallet_crushed_house"
+SCENE_FILES, _SCENES = SP.build(DATA)       # the scene pack as generated: the keeper, the zone's beat and the two functions
 
 
 def compile_pair(cd=CD):
@@ -66,7 +71,35 @@ class Game:
     def __init__(self, packs):
         self.packs, self.w = packs, SIM.World()
         self.lena = SIM.Npc("lena", *IN["at"])
-        self.w.npcs.append(self.lena)
+        self.w.npcs += [self.lena, SIM.Npc("hank", *HANK_SEAT["at"])]
+        self.w.pos = {}
+        for name in ("lena_talk", "lena_release"):
+            self.w.functions["cobblers:scenes/pallet_crushed_house/fn/%s" % name] = SCENE_FILES["data/%s/fn/%s.mcfunction" % (SCENE, name)]
+        self.keeper = KS.Keeper(self.w, SCENE_FILES["data/%s/keep_lena.mcfunction" % SCENE])
+        self.beat = SCENE_FILES["data/%s/beat.mcfunction" % SCENE]
+
+    def enter(self, who):
+        """The player walks into the scene's area (beside Hank)."""
+        self.w.player(who)
+        self.w.pos[who] = (1510.5, 118.0, 5254.5)
+
+    def leave(self, who):
+        self.w.pos.pop(who, None)
+
+    def tick(self):
+        """One scene cycle (tools/scenes_pack.py cycle): each player in the area runs the zone's transitions, then the keeper."""
+        for who in list(self.w.pos):
+            for line in self.beat:
+                m = re.fullmatch(r'execute if entity @s\[.*?\] run runmolang "(.*)" @s', line)
+                if m and "q.player.data()" in m.group(1):
+                    self.w.run_molang(self.w.player(who), m.group(1))
+        self.keeper.cycle()
+
+    def where(self):
+        pos = self.lena.pos
+        if pos == (IN["at"][0] + .5, IN["at"][1], IN["at"][2] + .5):
+            return "in"
+        return "out" if pos == (OUT["at"][0] + .5, OUT["at"][1], OUT["at"][2] + .5) else pos
 
     def open(self, who, which):
         return SIM.Dialogue(self.w, self.w.player(who), self.packs[which])
@@ -121,8 +154,9 @@ def test_the_world_constructs_appear_only_in_the_crushed_house_dialogues():
     # Without it the new compiler paths leak into a conversation that was compiling before (the other 173 were diffed
     # byte for byte against the pre-change compiler on 2026-10-13; this keeps them from changing in the way that matters).
     files, _done, _refused = CD.build_all(DATA)
+    # Lena reads the keeper's record of where she stands; Hank reads nothing from the world (2026-10-21), and nothing relocates her
     users = {k for k, v in files.items() if isinstance(v, dict) and (CD.WORLD_OBJECTIVE in json.dumps(v) or "cobblers_actor_" in json.dumps(v))}
-    assert users == {"data/cobblers/dialogues/%s.json" % HANK, "data/cobblers/dialogues/%s.json" % LENA}
+    assert users == {"data/cobblers/dialogues/%s.json" % LENA}
 
 
 def test_a_world_field_is_refused_where_only_a_player_field_works():
@@ -160,7 +194,7 @@ def test_the_house_state_is_a_score_and_the_players_fields_are_player_data(packs
 def test_every_world_read_creates_the_objective_first(packs):
     # Without it a world nobody has written to yet fails every `execute ... score` read with an error (Minecraft fails the
     # command rather than reading false), so "blocked" would hold for nobody on a fresh world.
-    for src in (packs[HANK]["initializationAction"], packs[LENA]["initializationAction"]):
+    for src in (packs[LENA]["initializationAction"],):
         first_read = src.index("if score #") if "if score #" in src else src.index("unless score #")
         assert "objectives add %s dummy" % CD.WORLD_OBJECTIVE in src[:first_read]
 
@@ -193,7 +227,7 @@ def test_a_probe_that_forgets_the_objective_is_caught_by_the_simulator():
     try:
         g = Game(compile_pair())
         with pytest.raises(RuntimeError, match="unknown objective"):
-            g.open("p1", HANK)
+            g.open("p1", LENA)
     finally:
         CD.Compiler.world_objective = real
 
@@ -239,65 +273,140 @@ def test_hank_after_lena_has_been_tried_mid_dialogue_repeats_the_objective(packs
     assert g.open("p1", LENA).page == "l002"
 
 
-def test_player_one_rescues_lena_and_everything_moves_once(packs):
-    # Without it the rescue does not move her, does not pay, or pays without finishing the quest.
+def test_player_one_rescues_lena_the_dialogue_moves_nobody_and_the_keeper_stands_her_outside(packs):
+    # Without it the rescue still moves her from inside the dialogue (for everyone, at once), does not pay, or pays without
+    # finishing the quest.
     g = Game(packs)
     g.monologue("p1")
-    assert g.world_score() is None and g.lena.pos == (IN["at"][0] + .5, IN["at"][1], IN["at"][2] + .5)
+    g.enter("p1")
+    g.tick()
+    assert g.where() == "in" and g.world_score() == 0
     d = g.finish_lena("p1")
     assert g.seeds("p1") == 0
     assert d.ack() == "post_lena_1"
-    assert g.world_score() == 1
-    assert g.lena.pos == (OUT["at"][0] + .5, OUT["at"][1], OUT["at"][2] + .5)
-    assert len(g.w.npcs) == 1
     assert g.seeds("p1") == 1 and g.stage("p1") == "complete"
+    assert RESCUED in g.w.player("p1").tags and g.w.player("p1").scores.get(HOLD) == 0
+    assert g.where() == "in" and len(g.w.npcs) == 2          # the dialogue moved nobody and summoned nobody
+    g.tick()
+    assert g.where() == "out" and g.world_score() == 1 and len(g.w.npcs) == 2
     assert g.open("p1", HANK).page == "post_hank_1"
     assert g.open("p1", LENA).page == "post_lena_1"
 
 
-def test_player_two_arrives_after_and_is_paid_without_the_monologue(packs):
-    # Without it a late friend replays a hundred lines to a wall, is paid nothing, or is paid twice.
+def test_player_two_arrives_after_and_gets_the_whole_scene_with_lena_inside(packs):
+    # Without it a late friend, or a player whose data was reset, finds her outside and never gets the scene (the owner's
+    # report, 2026-10-21): the first rescue must not change what the next player meets.
     g = Game(packs)
     g.monologue("p1")
+    g.enter("p1")
     g.finish_lena("p1").ack()
-    d = g.open("p2", HANK)
-    assert d.page == "late_hank_recap"
-    assert g.stage("p2") == "shared_rescue_recap" and g.seeds("p2") == 0
-    d = g.open("p2", LENA)
-    assert d.page == "late_lena_recap"
+    g.tick()
+    assert g.where() == "out"
+    g.enter("p2")
+    g.tick()
+    assert g.where() == "in" and g.world_score() == 0
+    assert g.monologue("p2") == ["h%03d" % i for i in range(1, 101)] + ["check_house_objective"]
+    d = g.finish_lena("p2")
     assert d.ack() == "post_lena_1"
-    assert g.seeds("p2") == 1 and g.stage("p2") == "complete"
-    assert g.seeds("p1") == 1
-    assert (len(g.w.npcs), g.lena.pos) == (1, (OUT["at"][0] + .5, OUT["at"][1], OUT["at"][2] + .5))
-    assert g.open("p2", HANK).page == "post_hank_1"
+    assert (g.seeds("p1"), g.seeds("p2")) == (1, 1)
+    g.tick()
+    assert g.where() == "out" and len(g.w.npcs) == 2
 
 
-def test_a_player_who_never_heard_hank_and_walks_to_lena_after_the_rescue_is_paid(packs):
-    # Without it Lena's exterior self refuses a stranger who skipped Hank (stage not_started), though the design says a
-    # late player "may claim the reward without replaying the hundred-line monologue".
+def test_she_goes_outside_only_when_every_player_in_the_area_has_finished(packs):
+    # Without it the first finisher sends her out from under a friend who is still on the way to her.
+    g = Game(packs)
+    for who in ("p1", "p2"):
+        g.monologue(who)
+        g.enter(who)
+    g.finish_lena("p1").ack()
+    g.tick()
+    assert g.where() == "in"
+    g.finish_lena("p2").ack()
+    g.tick()
+    assert g.where() == "out" and (g.seeds("p1"), g.seeds("p2")) == (1, 1)
+
+
+def test_a_player_who_has_not_finished_and_finds_her_outside_is_told_to_wait_and_loses_nothing(packs):
+    # Without it the unfinished player is shown "the opening is hidden" (she is not inside), or is paid for nothing, or
+    # their cursor is overwritten. The keeper is held off while a player's conversation with her is open (the hold).
     g = Game(packs)
     g.monologue("p1")
+    g.enter("p1")
     g.finish_lena("p1").ack()
-    assert g.open("p3", LENA).page == "late_lena_recap"
+    g.tick()
+    assert g.where() == "out"
+    g.open("p1", LENA)                                    # p1 talks to her again: the hold is set
+    assert g.w.player("p1").scores[HOLD] == 40
+    g.enter("p2")
+    g.monologue("p2")
+    g.tick()
+    assert g.where() == "out" and g.world_score() == 1    # held off: nobody moves her from under p1
+    d = g.open("p2", LENA)
+    assert d.page == "lena_outside_wait" and g.stage("p2") == "check_house" and g.seeds("p2") == 0
+    d.ack()
+    assert g.stage("p2") == "check_house" and g.open("p2", LENA).page == "lena_outside_wait"
+    for _ in range(39):
+        g.tick()
+        assert g.where() == "out"
+    g.tick()                                              # the hold has run out
+    assert g.where() == "in" and g.world_score() == 0
+    assert g.open("p2", LENA).page == "l001"
 
 
-def test_a_player_midway_through_the_monologue_when_another_finishes_gets_the_recap(packs):
-    # Without it the world changes under a player and Hank carries on describing a house whose wife is already out.
+def test_a_player_who_has_not_met_hank_and_finds_her_inside_is_told_the_opening_is_hidden(packs):
+    # Without it a stranger inside the area gets the quest's first Lena line before Hank has asked anything of them.
     g = Game(packs)
-    g.talk("p2", HANK, acks=29)
+    g.enter("p1")
+    g.tick()
+    assert g.where() == "in"
+    assert g.open("p1", LENA).page == "lena_unavailable"
+
+
+def test_a_player_whose_data_was_reset_gets_her_inside_again(packs):
+    # Without it the tag outlives the data it mirrors: the player's quest is back at the start, the tag still says finished,
+    # and Lena stays outside for them (the owner's reset, 2026-10-21).
+    g = Game(packs)
     g.monologue("p1")
+    g.enter("p1")
     g.finish_lena("p1").ack()
-    d = g.open("p2", HANK)
-    assert d.page == "late_hank_recap"
-    assert g.stage("p2") == "shared_rescue_recap"
+    g.tick()
+    assert g.where() == "out"
+    g.w.player("p1").data.clear()                         # the reset: Cobblemon's player data goes, the scoreboard tag stays
+    assert RESCUED in g.w.player("p1").tags
+    g.tick()
+    assert RESCUED not in g.w.player("p1").tags and g.where() == "in"
+    assert g.monologue("p1")[0] == "h001"
+
+
+def test_a_player_who_finished_before_the_tag_existed_is_tagged_by_the_zone(packs):
+    # Without it every player who finished under the old build keeps Lena inside until they talk to someone.
+    g = Game(packs)
+    g.w.player("old").data[STAGE] = "complete"
+    g.enter("old")
+    g.tick()
+    assert RESCUED in g.w.player("old").tags and g.where() == "out"
+
+
+def test_a_player_saved_at_the_retired_recap_stage_goes_back_to_check_house(packs):
+    # Without it a player saved at shared_rescue_recap by the earlier build has no entry rule on Hank, and is shown nothing.
+    g = Game(packs)
+    p = g.w.player("late")
+    p.data[STAGE] = "shared_rescue_recap"
+    p.data["cobblers__quest__%s__dialogue_cursor" % QUEST] = "late_lena_recap"
+    g.enter("late")
+    g.tick()
+    assert g.stage("late") == "check_house"
+    assert g.open("late", HANK).page == "check_house_objective"
 
 
 def test_each_player_is_paid_once_however_often_they_talk(packs):
     # Without it a talk repeats the reward (the claim is per player and must be written with the item).
     g = Game(packs)
-    g.monologue("p1")
-    g.finish_lena("p1").ack()
-    g.open("p2", LENA).ack()
+    for who in ("p1", "p2"):
+        g.monologue(who)
+        g.enter(who)
+        g.finish_lena(who).ack()
     for who in ("p1", "p2"):
         for _ in range(3):
             g.run_out(who, LENA, limit=6)
@@ -305,45 +414,21 @@ def test_each_player_is_paid_once_however_often_they_talk(packs):
         assert g.seeds(who) == 1
 
 
-def test_two_players_finishing_at_the_same_time_are_both_paid_and_she_moves_once(packs):
-    # Without it a concurrent finish pays one player, strands Lena, or leaves two of her (the "serialization" in the
-    # quest record: the first compare-and-set relocates, the second finds it done, and each is paid on their own claim).
-    g = Game(packs)
-    for who in ("p1", "p2"):
-        g.monologue(who)
-    d1, d2 = g.finish_lena("p1"), g.finish_lena("p2")
-    assert g.world_score() is None
-    d1.ack()
-    d2.ack()
-    assert g.world_score() == 1
-    assert (g.seeds("p1"), g.seeds("p2")) == (1, 1)
-    assert (len(g.w.npcs), g.lena.pos) == (1, (OUT["at"][0] + .5, OUT["at"][1], OUT["at"][2] + .5))
-
-
-def test_no_player_has_the_house_state_in_their_data_and_a_stranger_sees_the_shared_state(packs):
-    # Without it the world value hides in somebody's player data, where another player cannot see it.
-    g = Game(packs)
-    g.monologue("p1")
-    g.finish_lena("p1").ack()
-    g.open("p2", HANK)
-    for p in g.w.players.values():
-        assert not [k for k in p.data if "house_state" in k], p.data
-    assert g.open("p4", HANK).page == "late_hank_recap"
-
-
-def test_a_world_where_the_score_says_rescued_but_lena_is_still_inside_still_pays(packs):
-    # The shape a crash between two commands, or a Lena not in a loaded chunk at the time, leaves: the dialogue pays and
-    # moves the state by the score alone; only the apply step (R18CH, below) moves her body. No player is stranded.
-    g = Game(packs)
-    g.w.objectives.add(CD.WORLD_OBJECTIVE)
-    g.w.scores[("#%s.house_state" % QUEST, CD.WORLD_OBJECTIVE)] = 1
-    d = g.open("p1", LENA)
-    assert d.page == "late_lena_recap" and d.ack() == "post_lena_1" and g.seeds("p1") == 1
+def test_hank_no_longer_reads_the_world_and_nothing_in_the_dialogue_relocates_her(packs):
+    # Without it a dialogue effect moves her again for everyone, against the keeper (it did, until 2026-10-21).
+    assert CD.WORLD_OBJECTIVE not in json.dumps(packs[HANK])
+    for conv in packs.values():
+        text = json.dumps(conv)
+        assert "tp @e" not in text and "cobblers_actor_" not in text
+    quests = json.loads((DATA / "quests.json").read_text(encoding="utf-8"))
+    effects = [e["kind"] for q in quests["quests"] if q["id"] == QUEST for t in q["transitions"] for e in t["effects"]]
+    assert "relocate_actor" not in effects and "compare_and_set_progression" not in effects
 
 
 # ---------------------------------------------------------------------------------------------------- seats
-def test_the_relocation_the_dialogue_performs_is_the_stand_the_apply_uses(packs):
-    # Without it the dialogue moves Lena to one place and a re-apply moves her to another.
+def test_the_keepers_stands_are_the_stands_the_apply_uses(packs):
+    # Without it the keeper stands her at one place and a re-apply (R18CH, which seats her by the score the keeper writes)
+    # at another, and the two fight.
     (conv, at, cls, yaw, sel), = npc_seats.relocating_placements()
     assert (conv, cls) == (LENA, "cobblers:npc_pallet_crushed_house_lena")
     assert (at, yaw) == (tuple(IN["at"]), IN["yaw"])
@@ -351,12 +436,12 @@ def test_the_relocation_the_dialogue_performs_is_the_stand_the_apply_uses(packs)
     allowed = next(f for f in prog["quest_fields"] if f["id"] == FIELD)["allowed_values"]
     assert sel == {"objective": CD.WORLD_OBJECTIVE, "holder": CD.world_holder(FIELD), "value": allowed.index("lena_relocated"),
                    "at": tuple(OUT["at"]), "yaw": OUT["yaw"]}
-    src = packs[LENA]["pages"]
-    cmds = " ".join(p.get("input", "") for p in src if isinstance(p.get("input"), str))
-    m = re.search(r"tp @e\[type=cobblemon:npc,tag=cobblers_actor_npc_pallet_crushed_house_lena,limit=1\] (-?\d+)\.5 (-?\d+) (-?\d+)\.5 (-?\d+) 0", cmds)
-    assert m and tuple(map(int, m.groups()[:3])) == tuple(OUT["at"]) and int(m.group(4)) == OUT["yaw"]
-    m = re.search(r"execute as @e\[type=cobblemon:npc,x=(-?\d+),y=(-?\d+),z=(-?\d+),distance=\.\.2,limit=1\] run tag", cmds)
-    assert tuple(map(int, m.groups())) == tuple(IN["at"])
+    keep = "\n".join(SCENE_FILES["data/%s/keep_lena.mcfunction" % SCENE])
+    tps = re.findall(r"run tp @s (-?\d+)\.5 (-?\d+) (-?\d+)\.5 (-?\d+) 0", keep)
+    assert [tuple(map(int, t)) for t in tps] == [(*IN["at"], IN["yaw"]), (*OUT["at"], OUT["yaw"])]
+    # the score the keeper writes for each stand is the one R18CH reads for it: 0 inside (also an unset score), 1 outside
+    sets = re.findall(r"matches (\d) run scoreboard players set (\S+) %s (\d)" % CD.WORLD_OBJECTIVE, keep)
+    assert sets == [("1", CD.world_holder(FIELD), "0"), ("0", CD.world_holder(FIELD), "1")]
 
 
 def test_the_seats_pass_their_own_offline_checks_and_lena_is_not_double_seated():

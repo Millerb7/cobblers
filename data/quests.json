@@ -46,6 +46,7 @@
       "held_item",
       "inventory_contains",
       "not",
+      "player_tag",
       "progression_equals",
       "progression_in"
     ],
@@ -59,7 +60,9 @@
       "relocate_actor",
       "scene_function",
       "set_progression",
-      "sync_scene"
+      "sync_scene",
+      "tag_player",
+      "untag_player"
     ],
     "transaction_rule": "Progression writes and inventory changes in a transition commit atomically for the triggering player. grant_reward_once must durably commit its per-player claim receipt with item delivery. World compare-and-set and actor relocation are idempotent and retryable; they are not represented as one cross-scope transaction.",
     "progression_registration_rule": "Every progression_field_refs id must be declared exactly once in data/progression.json quest_fields. That registry is authoritative for type, scope, initial value, and allowed values.",
@@ -519,37 +522,96 @@
           ]
         },
         {
-          "id": "enter_shared_rescue_recap",
+          "id": "migrate_shared_rescue_stage",
           "scope": "player",
+          "why": "2026-10-21: a late player no longer gets a recap (Lena stands inside for anyone who has not finished), so the stage shared_rescue_recap and its two recap nodes are gone. A player saved at that stage by an earlier build is put back at check_house with the objective line, once, by the scene zone that runs this (data/scenes.json pallet_crushed_house).",
           "conditions": [
             {
               "kind": "progression_equals",
-              "field": "quest.evt_pallet_crushed_house.house_state",
-              "value": "lena_relocated"
-            },
-            {
-              "kind": "progression_equals",
-              "field": "quest.evt_pallet_crushed_house.reward_claimed",
-              "value": false
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "shared_rescue_recap"
             }
           ],
           "effects": [
             {
               "kind": "set_progression",
               "field": "quest.evt_pallet_crushed_house.stage",
-              "value": "shared_rescue_recap"
+              "value": "check_house"
             },
             {
               "kind": "set_progression",
               "field": "quest.evt_pallet_crushed_house.dialogue_cursor",
-              "value": "late_lena_recap"
+              "value": "check_house_objective"
+            }
+          ]
+        },
+        {
+          "id": "mark_rescued",
+          "scope": "player",
+          "why": "The per-player record the Lena keeper reads (a scoreboard tag, because a selector cannot read player data). The finish transition sets it at once; this zone transition sets it for a player who finished before the tag existed, once, the first time they are in the area.",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "complete"
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "player_tag",
+                "tag": "cobblers_pallet_rescued"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "kind": "tag_player",
+              "tag": "cobblers_pallet_rescued"
+            }
+          ]
+        },
+        {
+          "id": "unmark_rescued",
+          "scope": "player",
+          "why": "The tag is a mirror of the player's own quest data, never a second authority: a player whose data was reset (stage no longer complete) loses the tag in the area, and Lena stands inside for them again.",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "progression_equals",
+                "field": "quest.evt_pallet_crushed_house.stage",
+                "value": "complete"
+              }
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_pallet_rescued"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "untag_player",
+              "tag": "cobblers_pallet_rescued"
+            }
+          ]
+        },
+        {
+          "id": "lena_talking",
+          "scope": "player",
+          "why": "Run by every entry into Lena's conversation: holds the keeper off for 40 seconds (a proxy; no way to read 'in a dialogue' off the NPC is documented), so she is not teleported from under a player mid-line.",
+          "conditions": [],
+          "effects": [
+            {
+              "kind": "scene_function",
+              "scene": "pallet_crushed_house",
+              "function": "lena_talk"
             }
           ]
         },
         {
           "id": "finish_rescue_and_reward",
           "scope": "mixed",
-          "serialization": "world_compare_and_set_then_player_reward",
+          "serialization": "player_tag_then_player_reward",
           "conditions": [
             {
               "kind": "progression_equals",
@@ -564,57 +626,14 @@
           ],
           "effects": [
             {
-              "kind": "compare_and_set_progression",
-              "field": "quest.evt_pallet_crushed_house.house_state",
-              "scope": "world",
-              "from": "blocked",
-              "to": "lena_relocated",
-              "already_at_target": "success"
+              "kind": "tag_player",
+              "tag": "cobblers_pallet_rescued"
             },
             {
-              "kind": "relocate_actor",
-              "actor": "npc_pallet_crushed_house_lena",
-              "from_marker": "marker_pallet_crushed_house_interior_safe",
-              "to_marker": "marker_pallet_crushed_house_exterior_safe",
-              "scope": "world",
-              "idempotent": true
+              "kind": "scene_function",
+              "scene": "pallet_crushed_house",
+              "function": "lena_release"
             },
-            {
-              "kind": "grant_reward_once",
-              "reward": "reward_pallet_locket",
-              "target": "triggering_player",
-              "claim_field": "quest.evt_pallet_crushed_house.reward_claimed",
-              "idempotency_key": "evt_pallet_crushed_house:reward_pallet_locket:{player_uuid}",
-              "receipt_commit": "atomic_with_item_delivery"
-            },
-            {
-              "kind": "set_progression",
-              "field": "quest.evt_pallet_crushed_house.stage",
-              "value": "complete"
-            },
-            {
-              "kind": "set_progression",
-              "field": "quest.evt_pallet_crushed_house.dialogue_cursor",
-              "value": "post_lena_1"
-            }
-          ]
-        },
-        {
-          "id": "claim_reward_after_shared_rescue",
-          "scope": "player",
-          "conditions": [
-            {
-              "kind": "progression_equals",
-              "field": "quest.evt_pallet_crushed_house.house_state",
-              "value": "lena_relocated"
-            },
-            {
-              "kind": "progression_equals",
-              "field": "quest.evt_pallet_crushed_house.reward_claimed",
-              "value": false
-            }
-          ],
-          "effects": [
             {
               "kind": "grant_reward_once",
               "reward": "reward_pallet_locket",
@@ -661,15 +680,17 @@
         "initial_marker": "marker_pallet_crushed_house_interior_safe",
         "relocated_state": "lena_relocated",
         "relocated_marker": "marker_pallet_crushed_house_exterior_safe",
-        "restart_rule": "On load, place Lena at the marker selected by the authoritative world field. Never infer state from current entity position."
+        "restart_rule": "On load, place Lena at the marker selected by the world field (R18CH). The field is the KEEPER's output since 2026-10-21 (blocked = she stands inside, lena_relocated = outside), written every second a player is in the area; no dialogue writes it.",
+        "keeper": "data/scenes.json pallet_crushed_house keepers: inside while any player in the area lacks the per-player tag cobblers_pallet_rescued, outside otherwise; never moves her with nobody in the area or while a player's hold (set when Lena's conversation opens) is running."
       },
       "multiplayer": {
         "dialogue_cursor": "per_player",
-        "house_state": "world",
-        "lena_relocation": "world_idempotent",
-        "reward": "once_per_player_after_world_rescue",
-        "concurrent_finish": "First world compare-and-set relocates Lena; every eligible player independently receives one reward.",
-        "late_player": "Receives a short recap and may claim the reward without replaying the hundred-line monologue."
+        "house_state": "world, written only by the keeper: where Lena stands now (blocked = inside, lena_relocated = outside)",
+        "rescue_record": "per player: the scoreboard tag cobblers_pallet_rescued, a mirror of stage == complete kept by the scene's zone (set by the finish transition at once, set for earlier finishers and removed after a data reset by the zone)",
+        "lena_relocation": "keeper, not dialogue: inside while any player in the area has not finished",
+        "reward": "once_per_player",
+        "concurrent_finish": "Each finishing player tags themselves and is paid on their own claim; Lena goes outside only when no player in the area is still unfinished.",
+        "late_player": "Hears Hank's whole monologue and finds Lena inside, exactly as the first player did (the owner, 2026-10-21: 'inside while needed')."
       },
       "generation_blockers": [
         "Verify Minecraft 1.21.1 item component syntax for the Pallet Locket's custom name and lore (the Miracle Seed item id is verified and is delivered plain).",
@@ -683,7 +704,7 @@
         },
         {
           "blocker": "Implement a serialized world compare-and-set and idempotent actor relocation action.",
-          "resolved": "2026-10-13: tools/compile_dialogue.py, the 'world' construct: a score on a fake player (compare_and_set_progression), a tag-then-teleport (relocate_actor); tools/reapply.py R18CH seats Lena by that score. Compiled, not run in game."
+          "resolved": "2026-10-13: tools/compile_dialogue.py, the 'world' construct: a score on a fake player (compare_and_set_progression), a tag-then-teleport (relocate_actor); tools/reapply.py R18CH seats Lena by that score. Compiled, not run in game. SUPERSEDED 2026-10-21: the dialogue no longer relocates her (it moved her for everyone when the first player finished); the keeper does, per player. The score survives as the keeper's output, which R18CH still reads."
         }
       ],
       "progression_field_refs": [

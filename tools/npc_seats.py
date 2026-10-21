@@ -12,9 +12,10 @@ by tools/compile_dialogue.py into cobblers_dialogue; this file only says where e
                                            each seat, standing on a solid block with air at its feet and head,
                                            facing its yaw, named as its class names it
 
-An NPC whose stand follows a WORLD quest field (Lena, who moves once for everyone when the crushed house is checked) is a
-"relocating_seats" record, not a seat: its stands are "markers", placed by reapply R18CH from the score the dialogue
-writes (relocating_placements), and checked here like a seat (relocating_problems).
+An NPC whose stand follows a WORLD quest field (Lena, whom the scene keeper stands inside while a player in the crushed
+house's area has not finished her scene and outside otherwise) is a "relocating_seats" record, not a seat: its stands
+are "markers", placed by reapply R18CH from the score the KEEPER writes (relocating_placements), and checked here like a
+seat (relocating_problems).
 
 What it does NOT cover: route NPCs (data/scenes.json, R17), reward NPCs (data/rewards.json, R9F), ferrymen (R17F),
 trader clerks (R14), trainers (tools/route_trainers.py), and whatever a template or a mod placed. A world sweep for
