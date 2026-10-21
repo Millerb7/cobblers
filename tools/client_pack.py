@@ -246,7 +246,8 @@ def write_mrpack(out: Path, index: dict, embeds: dict[str, Path], extra: dict[st
         for dest in sorted(embeds):
             put(f"overrides/{dest}", embeds[dest].read_bytes())
         for dest in sorted(extra or {}):
-            put(f"overrides/{dest}", extra[dest])
+            # a ROOT: key lands at the pack's top level, beside modrinth.index.json, not under overrides/
+            put(dest[len(ROOT_KEY):] if dest.startswith(ROOT_KEY) else f"overrides/{dest}", extra[dest])
     tmp.replace(out)
     return {"path": str(out), "size": out.stat().st_size, **{k: v for k, v in pm.hash_file(out).items() if k != "sha256"}}
 
@@ -322,6 +323,11 @@ def cmd_plan(a) -> int:
 # --------------------------------------------------------------- bundle (the owner, 2026-10-20)
 DEFAULT_COBBLEVERSE_DIR = Path("C:/Users/wnd/Documents/github/cobblers/COBBLEVERSE")
 DEFAULT_ADDRESS_FILE = Path("C:/Users/wnd/Documents/cobblers-local/server-address.txt")
+# the pack's icon (the owner's sleeping Pikachu, 2026-10-21): local only, never committed (a screenshot of a Cobblemon
+# model). Packed as icon.png at the top level and in overrides/: the Modrinth App showed it on a local import (the owner
+# tested 2026-10-21), so a friend's instance has it without setting it by hand
+DEFAULT_ICON_FILE = Path("C:/Users/wnd/Documents/cobblers-local/pack-icon.png")
+ROOT_KEY = "ROOT:"
 
 
 def _nbt_str(s: str) -> bytes:
@@ -368,6 +374,10 @@ def bundle_files(plan: dict, cobbleverse: Path, address_file: Path, ours: list[P
     # the server-list entry's name (data/client_pack.json server_name; the owner, 2026-10-21)
     name = json.loads((Path(__file__).resolve().parent.parent / "data" / "client_pack.json").read_text(encoding="utf-8"))["pack"].get("server_name", "Cobblers")
     out["servers.dat"] = servers_dat([(name, addr)])
+    if DEFAULT_ICON_FILE.exists():
+        icon = DEFAULT_ICON_FILE.read_bytes()
+        out["icon.png"] = icon
+        out[ROOT_KEY + "icon.png"] = icon
     # the instance's own options.txt, so the first launch already has our resource packs on (2026-10-20: the
     # defaultoptions copy under config/ did not apply to a Modrinth App import, and the owner's NPCs were dolls)
     opts = Path(__file__).resolve().parent.parent / "modpack" / "config" / "defaultoptions" / "options.txt"
