@@ -1797,9 +1797,9 @@
    "tier": null,
    "levels": [
     24,
-    35
+    30
    ],
-   "species": 12,
+   "species": 4,
    "geometry": "data/waterways.json mt_clay_outflow polyline, half_width 8 (tools/waterways.py boxes_by_segment)",
    "legs": []
   },

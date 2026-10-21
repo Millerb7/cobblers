@@ -108,6 +108,12 @@ KINDS = ("subregions", "routes", "marine", "waterways")
 # tools/build_encounters.py generate_fishing; an independent grade of them is owed (added by the implementing session,
 # not by the audit's author: say so to whoever owns this file).
 NOT_GRADED = ("nether", "fishing")
+# Areas the owner has deliberately made single-theme, exempt from the tier and floor rules (2, 3 and the heart) by name
+# only, each with the owner's words. Never widen this to make data pass: an entry is an owner decision, not a fix.
+OWNER_THEMED = {
+    ("waterways", "mt_clay_outflow"): "the owner, 2026-10-21: \"should only be wooper, paldean wooper, quagsire as rare and "
+                                      "clodsire as rare\" (the Wooper creek)",
+}
 WATER_WORDS = ("lake", "waters", "river", "pond", "creek", "creeks", "tarn")
 
 
@@ -249,6 +255,10 @@ def audit(areas):
                      "heart_species": len({species_of(s["pokemon"]) for s in hearts}), "heart_boxes": len(hboxes),
                      "heart_outside": len(outside), "heart_route_gap": "" if min_gap is None else min_gap,
                      "failures": fails})
+        if (kind, area) in OWNER_THEMED:
+            # graded only for what the owner's decision does not touch: an unknown kind or bucket still fails
+            fails = [f for f in fails if f.startswith(("unknown area kind", "unknown bucket"))]
+            rows[-1]["failures"] = fails
         failures.extend("%s: %s" % (name, f) for f in fails)
     # 4. rarity
     n = len(areas)
