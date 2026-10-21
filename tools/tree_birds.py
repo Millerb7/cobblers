@@ -20,7 +20,8 @@ BANDS. data/tree_bird_species.json (the species designer's, PROPOSED) names, per
   low   -> the new nest on the first storey        pool tbird_<tree>_low
   mid   -> the new nest on the second storey       pool tbird_<tree>_mid
   crown -> the tree's four existing nests, which the rule puts in the crown   pool <tree> (its existing id)
-The world tree (not in that file) takes data/tree_bird_species_placeholder.json, marked PLACEHOLDER.
+The world tree (not in that file) takes data/world_tree_bird_species.json: the owner's set of classics (2026-10-21), four
+bands by height, the owner's deliberate exception to the one-line rule.
 
   python tools/tree_birds.py plan              # nests from the tree geometry -> data/tree_bird_nests.json
   python tools/tree_birds.py merge             # tbird_* records -> data/habitat_blocks.json (status planned)
@@ -52,7 +53,7 @@ PLAN = ROOT / "data" / "tree_bird_nests.json"
 HABITATS = ROOT / "data" / "habitat_blocks.json"
 SPAWNS = ROOT / "data" / "spawns.json"
 SPECIES = ROOT / "data" / "tree_bird_species.json"
-PLACEHOLDER = ROOT / "data" / "tree_bird_species_placeholder.json"
+WORLD_SPECIES = ROOT / "data" / "world_tree_bird_species.json"
 SCHEMA = "cobblers.tree-bird-nests/1"
 PREFIX = "tbird_"
 WORLD_TREE = "world_tree_foothill_woods"
@@ -243,9 +244,9 @@ def records(plan_doc, habitats_doc=None):
                          % ("the world tree" if world else "the tree", tid, n["position"]["y"] - t["ground"]),
                 "pool": pool, "style": "activated", "replace_spawns": False, "position": n["position"],
                 "mimic": n["mimic"],
-                # placed for the trees (the owner, 2026-10-21: "add spawns up the tree"); the world tree's stay planned
-                # until the owner picks its species (data/tree_bird_species_placeholder.json)
-                "status": "planned" if world else "placed",
+                # placed for every tree (the owner, 2026-10-21: "add spawns up the tree"; the world tree's species are the
+                # owner's set, data/world_tree_bird_species.json)
+                "status": "placed",
                 "activated": dict(WORLD_NEST if world else NEST,
                                   **({} if world else {"max_spawns_per_activation": t["per_activation"]})),
                 "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried "
@@ -322,7 +323,7 @@ class Jar:
 
 def load_species():
     """(trees, source): {tree id: {"line": [...], "bands": {band: [species]}, "levels": {band: "lo-hi"}, "why": str}}
-    from the designer's file, plus the placeholder's world tree (its own explicit entries)."""
+    from the designer's file, plus the world tree's file (data/world_tree_bird_species.json) (its own explicit entries)."""
     if not SPECIES.is_file():
         raise TreeBirdsError("%s is missing: the species come from it (the designer's file)" % SPECIES)
     doc = json.loads(SPECIES.read_text(encoding="utf-8"))
@@ -395,14 +396,13 @@ def pool_defs(jar, plan_doc):
     return out, problems
 
 
-def placeholder_world_pools():
-    """The world tree's pools from the placeholder file: explicit entries per band, ALL PLACEHOLDER."""
-    doc = json.loads(PLACEHOLDER.read_text(encoding="utf-8"))
-    return doc
+def world_species():
+    """The world tree's species: the owner's explicit entries per band (data/world_tree_bird_species.json)."""
+    return json.loads(WORLD_SPECIES.read_text(encoding="utf-8"))
 
 
 def world_pool_defs(jar):
-    doc = placeholder_world_pools()
+    doc = world_species()
     out = {}
     for band, spec in doc["bands"].items():
         pool = "%s%s_%s" % (PREFIX, WORLD_TREE, band)
@@ -410,30 +410,16 @@ def world_pool_defs(jar):
         for e in spec["entries"]:
             sid = e["species"]
             f = {"species": sid, "bucket": e["bucket"], "level": spec["levels"], "weight": float(e["weight"]), "ambient": True,
-                 "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): %s" % e["note"]}
+                 "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): %s" % e["note"]}
             flat.append(f)
             rich.append(dict(f, pokemon=sid, species=jar.name(sid), types=jar.types(sid), family=e["family"],
                              family_priority="anchor"))
         lo, hi = lo_hi(spec["levels"])
         out[pool] = {"band": band, "tree": WORLD_TREE, "flat": flat, "rich": rich,
                      "level_band": {"minimum": lo, "maximum": hi},
-                     "why": "PLACEHOLDER: the world tree's %s band (%s), not the owner's choice and not the species "
-                            "designer's; replace data/tree_bird_species_placeholder.json." % (band, spec["height"])}
-    return out
-
-
-def placeholder_conflicts():
-    """[(species, family, tree)] of the placeholder's species whose line is already one tree's in the designer's file:
-    the one-line-per-tree rule (the owner, 2026-10-21) the placeholder does not meet."""
-    lines = {}
-    for tid, v in load_species().items():
-        for sid in v["line"]:
-            lines[sid] = tid
-    out = []
-    for spec in placeholder_world_pools()["bands"].values():
-        for e in spec["entries"]:
-            if e["family"] in lines:
-                out.append((e["species"], e["family"], lines[e["family"]]))
+                     "why": "the world tree's %s band (%s): the owner's species, levels %s, from "
+                            "data/world_tree_bird_species.json (not the one-line-per-tree rule: the owner's classics)."
+                            % (band, spec["height"], spec["levels"])}
     return out
 
 
@@ -509,8 +495,6 @@ def main(argv=None):
             print("PROBLEM", m)
         if problems:
             return 1
-        for sp, fam, tree in placeholder_conflicts():
-            print("PLACEHOLDER CONFLICT: the world tree's %s (line %s) is already %s's line" % (sp, fam, tree))
         target, text = SPAWNS, dumps(apply_spawns(json.loads(SPAWNS.read_text(encoding="utf-8")), defs))
     if a.check:
         same = target.read_text(encoding="utf-8") == text

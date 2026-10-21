@@ -28802,172 +28802,198 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.tbird_world_tree_foothill_woods_crown.braviary",
-      "species": "braviary",
-      "bucket": "common",
-      "level": "46-52",
-      "weight": 18.0,
+      "id": "habitat.tbird_world_tree_foothill_woods_crown.aerodactyl",
+      "species": "aerodactyl",
+      "bucket": "rare",
+      "level": "38-45",
+      "weight": 2.0,
       "ambient": true,
       "scope": "tbird_world_tree_foothill_woods_crown",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, the crown; a base (fossil) stage",
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.tbird_world_tree_foothill_woods_crown.corviknight",
-      "species": "corviknight",
-      "bucket": "uncommon",
-      "level": "46-52",
-      "weight": 8.0,
-      "ambient": true,
-      "scope": "tbird_world_tree_foothill_woods_crown",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.tbird_world_tree_foothill_woods_crown.archeops",
-      "species": "archeops",
+      "id": "habitat.tbird_world_tree_foothill_woods_crown.dragonite",
+      "species": "dragonite",
       "bucket": "ultra-rare",
-      "level": "46-52",
+      "level": "38-45",
       "weight": 1.0,
       "ambient": true,
       "scope": "tbird_world_tree_foothill_woods_crown",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): the coordinator's 'top, ultra-rare'; may go now that Ho-Oh holds the top",
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, the crown; Dragonair evolves at 55, over this band's top 45",
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.tbird_world_tree_foothill_woods_high.tropius",
-      "species": "tropius",
+      "id": "habitat.tbird_world_tree_foothill_woods_high.pidgeot",
+      "species": "pidgeot",
       "bucket": "common",
-      "level": "38-44",
+      "level": "32-38",
       "weight": 24.0,
       "ambient": true,
       "scope": "tbird_world_tree_foothill_woods_high",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): fruit-bearing canopy dinosaur, proposed",
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic; 32-35 is under its evolution level 36",
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.tbird_world_tree_foothill_woods_high.togekiss",
-      "species": "togekiss",
-      "bucket": "uncommon",
-      "level": "38-44",
-      "weight": 6.0,
+      "id": "habitat.tbird_world_tree_foothill_woods_high.staraptor",
+      "species": "staraptor",
+      "bucket": "common",
+      "level": "32-38",
+      "weight": 24.0,
       "ambient": true,
       "scope": "tbird_world_tree_foothill_woods_high",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic; 32-33 is under its evolution level 34",
       "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tbird_world_tree_foothill_woods_high.altaria",
       "species": "altaria",
-      "bucket": "uncommon",
-      "level": "38-44",
-      "weight": 6.0,
+      "bucket": "common",
+      "level": "32-38",
+      "weight": 24.0,
       "ambient": true,
       "scope": "tbird_world_tree_foothill_woods_high",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick; 32-34 is under its evolution level 35 (the owner's '(common)' read as covering Pidgeot, Staraptor and Altaria)",
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.tbird_world_tree_foothill_woods_low.rowlet",
-      "species": "rowlet",
+      "id": "habitat.tbird_world_tree_foothill_woods_high.togekiss",
+      "species": "togekiss",
+      "bucket": "rare",
+      "level": "32-38",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "tbird_world_tree_foothill_woods_high",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick; evolves from Togetic by shiny stone, never by level, so it is a wild-only spawn here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.tbird_world_tree_foothill_woods_high.corviknight",
+      "species": "corviknight",
+      "bucket": "rare",
+      "level": "32-38",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "tbird_world_tree_foothill_woods_high",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick; Corvisquire evolves at 38, so it is evolution-legal at the band's top level only",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.tbird_world_tree_foothill_woods_low.pidgeotto",
+      "species": "pidgeotto",
       "bucket": "common",
-      "level": "22-28",
+      "level": "22-26",
       "weight": 24.0,
       "ambient": true,
       "scope": "tbird_world_tree_foothill_woods_low",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): lower-trunk grass owl, proposed",
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic, low storeys",
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.tbird_world_tree_foothill_woods_low.dartrix",
-      "species": "dartrix",
+      "id": "habitat.tbird_world_tree_foothill_woods_low.staravia",
+      "species": "staravia",
+      "bucket": "common",
+      "level": "22-26",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "tbird_world_tree_foothill_woods_low",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic, low storeys",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.tbird_world_tree_foothill_woods_low.swablu",
+      "species": "swablu",
       "bucket": "uncommon",
-      "level": "22-28",
+      "level": "22-26",
       "weight": 6.0,
       "ambient": true,
       "scope": "tbird_world_tree_foothill_woods_low",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): Rowlet's stage 2, proposed",
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, low storeys; a base stage",
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.tbird_world_tree_foothill_woods_low.decidueye",
-      "species": "decidueye",
-      "bucket": "rare",
-      "level": "22-28",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "tbird_world_tree_foothill_woods_low",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): Rowlet's stage 3, proposed",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.tbird_world_tree_foothill_woods_low.trevenant",
-      "species": "trevenant",
-      "bucket": "rare",
-      "level": "22-28",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "tbird_world_tree_foothill_woods_low",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): the roots' haunted stump, proposed",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.tbird_world_tree_foothill_woods_mid.noctowl",
+      "id": "habitat.tbird_world_tree_foothill_woods_low.noctowl",
       "species": "noctowl",
+      "bucket": "uncommon",
+      "level": "22-26",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tbird_world_tree_foothill_woods_low",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, low storeys (evolves at 20)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.tbird_world_tree_foothill_woods_mid.pidgeot",
+      "species": "pidgeot",
+      "bucket": "uncommon",
+      "level": "26-32",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tbird_world_tree_foothill_woods_mid",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic, mid storeys; Pidgeotto evolves at 36, over this band's top 32",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.tbird_world_tree_foothill_woods_mid.staraptor",
+      "species": "staraptor",
+      "bucket": "uncommon",
+      "level": "26-32",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tbird_world_tree_foothill_woods_mid",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic, mid storeys; Staravia evolves at 34, over this band's top 32",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.tbird_world_tree_foothill_woods_mid.altaria",
+      "species": "altaria",
+      "bucket": "uncommon",
+      "level": "26-32",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "tbird_world_tree_foothill_woods_mid",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, mid storeys; Swablu evolves at 35, over this band's top 32",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.tbird_world_tree_foothill_woods_mid.swellow",
+      "species": "swellow",
       "bucket": "common",
-      "level": "30-36",
+      "level": "26-32",
       "weight": 24.0,
       "ambient": true,
       "scope": "tbird_world_tree_foothill_woods_mid",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): mid-branch owl, proposed",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.tbird_world_tree_foothill_woods_mid.honchkrow",
-      "species": "honchkrow",
-      "bucket": "uncommon",
-      "level": "30-36",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "tbird_world_tree_foothill_woods_mid",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.tbird_world_tree_foothill_woods_mid.xatu",
-      "species": "xatu",
-      "bucket": "uncommon",
-      "level": "30-36",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "tbird_world_tree_foothill_woods_mid",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, mid storeys (evolves at 22)",
       "spawnable_position": "grounded"
     },
     {
@@ -88736,54 +88762,39 @@
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
-        "minimum": 46,
-        "maximum": 52
+        "minimum": 38,
+        "maximum": 45
       },
-      "why": "PLACEHOLDER: the world tree's crown band (the canopy's leaves: 345-418 over the ground), not the owner's choice and not the species designer's; replace data/tree_bird_species_placeholder.json.",
+      "why": "the world tree's crown band (the canopy's leaves: 345-418 over the ground): the owner's species, levels 38-45, from data/world_tree_bird_species.json (not the one-line-per-tree rule: the owner's classics).",
       "entries": [
         {
-          "species": "Braviary",
-          "bucket": "common",
-          "level": "46-52",
-          "weight": 18.0,
+          "species": "Aerodactyl",
+          "bucket": "rare",
+          "level": "38-45",
+          "weight": 2.0,
           "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
-          "pokemon": "braviary",
-          "types": [
-            "normal",
-            "flying"
-          ],
-          "family": "rufflet",
-          "family_priority": "anchor"
-        },
-        {
-          "species": "Corviknight",
-          "bucket": "uncommon",
-          "level": "46-52",
-          "weight": 8.0,
-          "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
-          "pokemon": "corviknight",
-          "types": [
-            "flying",
-            "steel"
-          ],
-          "family": "rookidee",
-          "family_priority": "anchor"
-        },
-        {
-          "species": "Archeops",
-          "bucket": "ultra-rare",
-          "level": "46-52",
-          "weight": 1.0,
-          "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): the coordinator's 'top, ultra-rare'; may go now that Ho-Oh holds the top",
-          "pokemon": "archeops",
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, the crown; a base (fossil) stage",
+          "pokemon": "aerodactyl",
           "types": [
             "rock",
             "flying"
           ],
-          "family": "archen",
+          "family": "aerodactyl",
+          "family_priority": "anchor"
+        },
+        {
+          "species": "Dragonite",
+          "bucket": "ultra-rare",
+          "level": "38-45",
+          "weight": 1.0,
+          "ambient": true,
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, the crown; Dragonair evolves at 55, over this band's top 45",
+          "pokemon": "dragonite",
+          "types": [
+            "dragon",
+            "flying"
+          ],
+          "family": "dratini",
           "family_priority": "anchor"
         }
       ],
@@ -88796,33 +88807,63 @@
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
-        "minimum": 38,
-        "maximum": 44
+        "minimum": 32,
+        "maximum": 38
       },
-      "why": "PLACEHOLDER: the world tree's high band (storeys 6-8: 247-323 over the ground, the upper canopy), not the owner's choice and not the species designer's; replace data/tree_bird_species_placeholder.json.",
+      "why": "the world tree's high band (storeys 6-8: 247-323 over the ground, the upper canopy): the owner's species, levels 32-38, from data/world_tree_bird_species.json (not the one-line-per-tree rule: the owner's classics).",
       "entries": [
         {
-          "species": "Tropius",
+          "species": "Pidgeot",
           "bucket": "common",
-          "level": "38-44",
+          "level": "32-38",
           "weight": 24.0,
           "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): fruit-bearing canopy dinosaur, proposed",
-          "pokemon": "tropius",
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic; 32-35 is under its evolution level 36",
+          "pokemon": "pidgeot",
           "types": [
-            "grass",
+            "normal",
             "flying"
           ],
-          "family": "tropius",
+          "family": "pidgey",
+          "family_priority": "anchor"
+        },
+        {
+          "species": "Staraptor",
+          "bucket": "common",
+          "level": "32-38",
+          "weight": 24.0,
+          "ambient": true,
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic; 32-33 is under its evolution level 34",
+          "pokemon": "staraptor",
+          "types": [
+            "normal",
+            "flying"
+          ],
+          "family": "starly",
+          "family_priority": "anchor"
+        },
+        {
+          "species": "Altaria",
+          "bucket": "common",
+          "level": "32-38",
+          "weight": 24.0,
+          "ambient": true,
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick; 32-34 is under its evolution level 35 (the owner's '(common)' read as covering Pidgeot, Staraptor and Altaria)",
+          "pokemon": "altaria",
+          "types": [
+            "dragon",
+            "flying"
+          ],
+          "family": "swablu",
           "family_priority": "anchor"
         },
         {
           "species": "Togekiss",
-          "bucket": "uncommon",
-          "level": "38-44",
-          "weight": 6.0,
+          "bucket": "rare",
+          "level": "32-38",
+          "weight": 2.0,
           "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick; evolves from Togetic by shiny stone, never by level, so it is a wild-only spawn here",
           "pokemon": "togekiss",
           "types": [
             "fairy",
@@ -88832,18 +88873,18 @@
           "family_priority": "anchor"
         },
         {
-          "species": "Altaria",
-          "bucket": "uncommon",
-          "level": "38-44",
-          "weight": 6.0,
+          "species": "Corviknight",
+          "bucket": "rare",
+          "level": "32-38",
+          "weight": 2.0,
           "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
-          "pokemon": "altaria",
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick; Corvisquire evolves at 38, so it is evolution-legal at the band's top level only",
+          "pokemon": "corviknight",
           "types": [
-            "dragon",
-            "flying"
+            "flying",
+            "steel"
           ],
-          "family": "swablu",
+          "family": "rookidee",
           "family_priority": "anchor"
         }
       ],
@@ -88857,68 +88898,68 @@
       "replace_spawns": false,
       "level_band": {
         "minimum": 22,
-        "maximum": 28
+        "maximum": 26
       },
-      "why": "PLACEHOLDER: the world tree's low band (storeys 1-2: 57-101 over the ground, the roots' height and the lower trunk), not the owner's choice and not the species designer's; replace data/tree_bird_species_placeholder.json.",
+      "why": "the world tree's low band (storeys 1-2: 57-101 over the ground, the roots' height and the lower trunk): the owner's species, levels 22-26, from data/world_tree_bird_species.json (not the one-line-per-tree rule: the owner's classics).",
       "entries": [
         {
-          "species": "Rowlet",
+          "species": "Pidgeotto",
           "bucket": "common",
-          "level": "22-28",
+          "level": "22-26",
           "weight": 24.0,
           "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): lower-trunk grass owl, proposed",
-          "pokemon": "rowlet",
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic, low storeys",
+          "pokemon": "pidgeotto",
           "types": [
-            "grass",
+            "normal",
             "flying"
           ],
-          "family": "rowlet",
+          "family": "pidgey",
           "family_priority": "anchor"
         },
         {
-          "species": "Dartrix",
+          "species": "Staravia",
+          "bucket": "common",
+          "level": "22-26",
+          "weight": 24.0,
+          "ambient": true,
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic, low storeys",
+          "pokemon": "staravia",
+          "types": [
+            "normal",
+            "flying"
+          ],
+          "family": "starly",
+          "family_priority": "anchor"
+        },
+        {
+          "species": "Swablu",
           "bucket": "uncommon",
-          "level": "22-28",
+          "level": "22-26",
           "weight": 6.0,
           "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): Rowlet's stage 2, proposed",
-          "pokemon": "dartrix",
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, low storeys; a base stage",
+          "pokemon": "swablu",
           "types": [
-            "grass",
+            "normal",
             "flying"
           ],
-          "family": "rowlet",
+          "family": "swablu",
           "family_priority": "anchor"
         },
         {
-          "species": "Decidueye",
-          "bucket": "rare",
-          "level": "22-28",
-          "weight": 2.0,
+          "species": "Noctowl",
+          "bucket": "uncommon",
+          "level": "22-26",
+          "weight": 6.0,
           "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): Rowlet's stage 3, proposed",
-          "pokemon": "decidueye",
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, low storeys (evolves at 20)",
+          "pokemon": "noctowl",
           "types": [
-            "grass",
-            "ghost"
+            "normal",
+            "flying"
           ],
-          "family": "rowlet",
-          "family_priority": "anchor"
-        },
-        {
-          "species": "Trevenant",
-          "bucket": "rare",
-          "level": "22-28",
-          "weight": 2.0,
-          "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): the roots' haunted stump, proposed",
-          "pokemon": "trevenant",
-          "types": [
-            "ghost",
-            "grass"
-          ],
-          "family": "phantump",
+          "family": "hoothoot",
           "family_priority": "anchor"
         }
       ],
@@ -88931,54 +88972,69 @@
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
-        "minimum": 30,
-        "maximum": 36
+        "minimum": 26,
+        "maximum": 32
       },
-      "why": "PLACEHOLDER: the world tree's mid band (storeys 3-5: 133-215 over the ground, the mid branches), not the owner's choice and not the species designer's; replace data/tree_bird_species_placeholder.json.",
+      "why": "the world tree's mid band (storeys 3-5: 133-215 over the ground, the mid branches): the owner's species, levels 26-32, from data/world_tree_bird_species.json (not the one-line-per-tree rule: the owner's classics).",
       "entries": [
         {
-          "species": "Noctowl",
-          "bucket": "common",
-          "level": "30-36",
-          "weight": 24.0,
+          "species": "Pidgeot",
+          "bucket": "uncommon",
+          "level": "26-32",
+          "weight": 6.0,
           "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): mid-branch owl, proposed",
-          "pokemon": "noctowl",
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic, mid storeys; Pidgeotto evolves at 36, over this band's top 32",
+          "pokemon": "pidgeot",
           "types": [
             "normal",
             "flying"
           ],
-          "family": "hoothoot",
+          "family": "pidgey",
           "family_priority": "anchor"
         },
         {
-          "species": "Honchkrow",
+          "species": "Staraptor",
           "bucket": "uncommon",
-          "level": "30-36",
+          "level": "26-32",
           "weight": 6.0,
           "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
-          "pokemon": "honchkrow",
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's classic, mid storeys; Staravia evolves at 34, over this band's top 32",
+          "pokemon": "staraptor",
           "types": [
-            "dark",
+            "normal",
             "flying"
           ],
-          "family": "murkrow",
+          "family": "starly",
           "family_priority": "anchor"
         },
         {
-          "species": "Xatu",
+          "species": "Altaria",
           "bucket": "uncommon",
-          "level": "30-36",
+          "level": "26-32",
           "weight": 6.0,
           "ambient": true,
-          "eligibility_reason": "PLACEHOLDER (data/tree_bird_species_placeholder.json): proposed",
-          "pokemon": "xatu",
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, mid storeys; Swablu evolves at 35, over this band's top 32",
+          "pokemon": "altaria",
           "types": [
-            "psychic",
+            "dragon",
             "flying"
           ],
-          "family": "natu",
+          "family": "swablu",
+          "family_priority": "anchor"
+        },
+        {
+          "species": "Swellow",
+          "bucket": "common",
+          "level": "26-32",
+          "weight": 24.0,
+          "ambient": true,
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, mid storeys (evolves at 22)",
+          "pokemon": "swellow",
+          "types": [
+            "normal",
+            "flying"
+          ],
+          "family": "taillow",
           "family_priority": "anchor"
         }
       ],

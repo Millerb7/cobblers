@@ -353,7 +353,7 @@ def test_no_bird_line_sits_on_two_saplings_at_any_distance(compiled, families):
     for h in compiled:
         if h.startswith("tbird_"):
             owner = next((t for t in SAPLING_POOLS if h.startswith("tbird_%s_" % t)), None)
-            if owner:                      # the world tree's pools are a PLACEHOLDER, in tests/test_tree_bird_pools.py
+            if owner:                      # the world tree's pools are the owner's set, in tests/test_tree_bird_pools.py
                 tree_pools[owner].append(h)
     tree_of = {}
     for t, hs in tree_pools.items():
@@ -441,8 +441,8 @@ def test_every_sapling_species_is_a_jar_species_something_implements(compiled, s
                     continue
                 if d.get("implemented") is True:
                     implemented.add((d.get("target") or n.rsplit("/", 1)[1][:-5]).split(":")[-1])
-    # REWRITTEN 2026-10-21: every sapling pool AND every added storey pool (tbird_*, the world tree's placeholder
-    # included); the old teeth (Emolga, Noibat ... of plan v2) named species the designer replaced. The new teeth:
+    # REWRITTEN 2026-10-21: every sapling pool AND every added storey pool (tbird_*, the world tree's, the owner's
+    # set, included); the old teeth (Emolga, Noibat ... of plan v2) named species the designer replaced. The new teeth:
     # every species the designer placed in any band is in some pool (a species dropped on the way would not be
     # checked for implementation at all).
     species = {s["species"] for h in list(SAPLING_POOLS) + [h for h in compiled if h.startswith("tbird_")]

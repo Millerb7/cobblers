@@ -11007,7 +11007,7 @@
         "z": 2263
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11030,7 +11030,7 @@
         "z": 2297
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11053,7 +11053,7 @@
         "z": 2277
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11076,7 +11076,7 @@
         "z": 2280
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11099,7 +11099,7 @@
         "z": 2294
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11122,7 +11122,7 @@
         "z": 2264
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11145,7 +11145,7 @@
         "z": 2271
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11168,7 +11168,7 @@
         "z": 2290
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11191,7 +11191,7 @@
         "z": 2282
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11214,7 +11214,7 @@
         "z": 2280
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11237,7 +11237,7 @@
         "z": 2278
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11260,7 +11260,7 @@
         "z": 2283
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11283,7 +11283,7 @@
         "z": 2282
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11306,7 +11306,7 @@
         "z": 2271
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11329,7 +11329,7 @@
         "z": 2289
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11352,7 +11352,7 @@
         "z": 2259
       },
       "mimic": "minecraft:oak_log",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11375,7 +11375,7 @@
         "z": 2303
       },
       "mimic": "minecraft:oak_leaves",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11398,7 +11398,7 @@
         "z": 2280
       },
       "mimic": "minecraft:oak_leaves",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -11421,7 +11421,7 @@
         "z": 2276
       },
       "mimic": "minecraft:oak_leaves",
-      "status": "planned",
+      "status": "placed",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,

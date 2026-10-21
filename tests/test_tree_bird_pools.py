@@ -11,7 +11,7 @@ levels and families (SKIPPED without the jar: a skip is not a pass).
 
 Pools: the tree's own id is its CROWN pool (the four old nests); `tbird_<tree>_low` and `_mid` are the storey nests.
 The 4 Foothill grove elders have a crown pool only (no geometry for storey nests). The world tree's four pools
-(`tbird_world_tree_foothill_woods_*`) come from a PLACEHOLDER file and are tested apart, strict xfail.
+(`tbird_world_tree_foothill_woods_*`) come from data/world_tree_bird_species.json (the owner's set, an exception to the one-line rule) and are tested apart.
 
 Not covered: that a bird spawns in the tree (nest placement, `tools/tree_birds_audit.py` and a staging count); that
 the species fit their country (tools/spawn_habitat_audit.py); the compiled JSON's keys inside Cobblemon
@@ -281,19 +281,51 @@ def test_every_tbird_record_has_its_pool_and_every_tbird_pool_a_record(compiled)
 WORLD_POOLS = ["tbird_%s_%s" % (WORLD, b) for b in ("low", "mid", "high", "crown")]
 
 
-# The world tree's species are a PLACEHOLDER (data/tree_bird_species_placeholder.json, not the designer's). Strict xfail:
-# today it breaks the owner's one-line-per-tree rule and carries route birds (Rookidee, Hoothoot); when the file is
-# replaced the xfail fires and this mark must be removed, so the rule then binds the world tree too.
-@pytest.mark.xfail(strict=True, reason="PLACEHOLDER world-tree species: 9 of 13 are another tree's line, and Rookidee/"
-                                       "Hoothoot are route birds (data/tree_bird_species_placeholder.json)")
-def test_the_world_trees_pools_hold_no_route_bird_and_no_other_trees_line(compiled):
-    lines = {sp: t for t, v in DESIGN.items() for sp in v["line"]}
-    got = {sp for p in WORLD_POOLS for sp in _species(compiled, p)}
-    assert not (got & ROUTE_SPECIES), sorted(got & ROUTE_SPECIES)
-    assert not (got & set(lines)), sorted(got & set(lines))
+# Without it the world tree drifts from the owner's set (2026-10-21: "the height of flying mons ... classics, like pidgeot
+# and staraptor, or altaria, not a pidove or pikipek"), which is typed here from the owner's message, not read from
+# data/world_tree_bird_species.json. The world tree is the owner's deliberate exception to the one-line-per-tree rule
+# above (it shares Pidgey, Starly, Taillow, Hoothoot, Rookidee and Swablu lines with route birds and a grove elder), so
+# what is asserted is the set itself, the levels climbing with height from the area's 21-23, and that the small birds the
+# owner named as unwanted (Pidove, Pikipek) are absent.
+OWNERS_SET = {
+    "low": ({"pidgeotto", "staravia", "swablu", "noctowl"}, (22, 26)),
+    "mid": ({"pidgeot", "staraptor", "altaria", "swellow"}, (26, 32)),
+    "high": ({"pidgeot", "staraptor", "altaria", "togekiss", "corviknight"}, (32, 38)),
+    "crown": ({"aerodactyl", "dragonite"}, (38, 45)),
+}
 
 
-# Without it the placeholder pools are left unwatched on the properties that do not depend on the species chosen: its
+def test_the_world_trees_pools_are_the_owners_classics_at_the_owners_levels(compiled):
+    for band, (species, (lo, hi)) in OWNERS_SET.items():
+        pool = compiled["tbird_%s_%s" % (WORLD, band)]
+        assert {s["species"] for s in pool} == species, (band, sorted(s["species"] for s in pool))
+        for s in pool:
+            a, b = (int(x) for x in s["levelRange"].split("-"))
+            assert (a, b) == (lo, hi), (band, s["species"], s["levelRange"])
+    got = {sp for b in OWNERS_SET for sp in _species(compiled, "tbird_%s_%s" % (WORLD, b))}
+    assert not got & {"pidove", "tranquill", "unfezant", "pikipek", "trumbeak", "toucannon"}, got
+    # levels climb with height: each band's floor is at or above the one under it, starting at the area's 22
+    floors = [OWNERS_SET[b][1][0] for b in ("low", "mid", "high", "crown")]
+    assert floors == sorted(floors) and floors[0] >= 22
+
+
+# Without it the owner's rarities drift (Togekiss and Corviknight rare, Dragonite ultra-rare, Aerodactyl rare, Swablu and
+# Noctowl uncommon low). A bucket is Cobblemon's own word and the pools' weights are compiled from it. The high band's
+# Pidgeot, Staraptor and Altaria are common (the owner's "(common)" read as covering the three).
+def test_the_world_trees_rarities_are_the_owners(compiled):
+    rows = {}
+    for band in OWNERS_SET:
+        for s in compiled["tbird_%s_%s" % (WORLD, band)]:
+            rows[(band, s["species"])] = s["bucket"]
+    want = {("low", "pidgeotto"): "common", ("low", "staravia"): "common", ("low", "swablu"): "uncommon",
+            ("low", "noctowl"): "uncommon", ("mid", "swellow"): "common", ("mid", "pidgeot"): "uncommon",
+            ("mid", "staraptor"): "uncommon", ("mid", "altaria"): "uncommon", ("high", "pidgeot"): "common",
+            ("high", "staraptor"): "common", ("high", "altaria"): "common", ("high", "togekiss"): "rare",
+            ("high", "corviknight"): "rare", ("crown", "aerodactyl"): "rare", ("crown", "dragonite"): "ultra-rare"}
+    assert rows == want, rows
+
+
+# Without it the world tree's pools go unwatched on the properties that do not depend on the species chosen: its
 # four pools exist and are non-empty, every entry is inside a sane level range.
 def test_the_world_trees_four_pools_exist_and_are_non_empty(compiled):
     for p in WORLD_POOLS:

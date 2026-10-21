@@ -1114,6 +1114,72 @@
         ],
         "by": "tools/legendaries.py geometry on tools/ground.py, 2026-10-12"
       }
+    },
+    {
+      "id": "hooh",
+      "title": "Ho-Oh, at the top of the world tree",
+      "species": "hooh",
+      "level": 100,
+      "level_basis": "the cap of whoever may fight it: the gate is champion_cleared and the RCT cap after the Champion is 100 (tools/legendaries_audit.py rct_caps, level_caps.upper_bound_by_badges 'champion'). The level-cap catch block refuses a ball only STRICTLY above the thrower's cap, so a level-100 Ho-Oh is catchable by every player this pack lets in. As data/entei_boss.json. PROPOSED, not seen by the owner.",
+      "cap_at_gate": 100,
+      "kind": "tree_crown",
+      "kind_why": "2026-10-21, the owner: \"ho oh doesnt need a way up, its flight\". No chamber, ladder, plug or approach: a hollow barrier shell round the legendary on the world tree's highest standable cell, and players fly up on their mounts. Cobblemon ignores Invulnerable (EXP-023), so the shell is the only protection while the gate is shut; barrier blocks stop a ridden flyer as they stop a walker.",
+      "status": "sited",
+      "site": "world_tree_foothill_woods",
+      "gate": {
+        "flags": [
+          "champion_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, the coordinator's brief of 2026-10-21 (the owner decided only that Ho-Oh holds the top)",
+        "why": "Ho-Oh is `restricted` in the Cobblemon 1.8.2 jar's labels, was band 6 only (after the Champion) in the Ash Bell's pool (data/dungeon_prize_roster.json rules.restricted_band6_only), and every postgame legendary here is gated at the Champion (data/entei_boss.json gate_why). The partition, not the climb, is the gate: anyone can fly up, only a qualified player opens it, by being near it (look-then-act: cobblers:legendary/hooh/near)."
+      },
+      "portal": [
+        2045,
+        2283
+      ],
+      "portal_why": "The perch column of data/world_tree_hooh.json: the highest solid cells of the built tree are y535 (35 columns, one persistent oak-leaves block thick over air, measured 2026-10-21 on tools/tree_geometry.world_tree(), the tree's own block list), and (2045, 2283) is one of them, 29 blocks from the trunk axis (2016, 2280). No heightmap is involved: the tree is a built prefab, not terrain (tools/world_tree.py CENTRE and GROUND seat it).",
+      "perch": {
+        "top_y": 535,
+        "top_y_basis": "the highest solid y of tools/tree_geometry.world_tree() (35 columns at y535; (2045, 2283) is oak leaves with air under it and nothing solid anywhere above y535); tools/legendaries_audit.py re-measures it from the tree's block list, not from this number.",
+        "cavity_radius": 3,
+        "cavity_height": 8,
+        "shell_thickness": 1,
+        "cavity_why": "7 by 7 by 8 of air for Ho-Oh and its battle. NOT VERIFIED against Ho-Oh's hitbox in game (WORLD_TREE_PLAN.md U8, the Xerneas question); a dormant NoGravity Pokemon is not moved by its hitbox, so the risk is a clipped model, not a trapped one.",
+        "gate_reach": 48,
+        "zone_margin": 6,
+        "margins_why": "gate_reach: the driver runs only while a player is within 48 blocks of the perch (inside their own simulation radius, so the shell's chunk is loaded when open writes it). zone_margin: the `met` box is the shell grown by 6; the gate box (a qualified player opens the shell) is grown by 12."
+      },
+      "spawn_free_zone": [
+        2040,
+        2272,
+        2056,
+        2288
+      ],
+      "spawn_free_zone_why": "the shell's footprint (x2041-2049, z2279-2287) snapped out to the 8-block grid. Recorded for the audit's grid rule; nothing wild ground-spawns at y535.",
+      "why": "The owner, 2026-10-21: the very top of the world tree is Ho-Oh, 'as a legendary encounter, not a nest'. It was the Ash Bell's band-6 prize (data/dungeon_prize_roster.json) and was moved out of it in the same change. data/world_tree_hooh.json holds the measurements; its ladder, canopy walk and Slow Falling design are DROPPED (the owner: players fly).",
+      "level_why": "champion band = 100, the cap after the Champion; see level_basis.",
+      "measured": {
+        "perch": [
+          2045,
+          535,
+          2283
+        ],
+        "legendary_at": [
+          2045,
+          536,
+          2283
+        ],
+        "shell": [
+          2041,
+          535,
+          2279,
+          2049,
+          544,
+          2287
+        ],
+        "by": "tools/legendaries.py perch_geometry on tools/tree_geometry.world_tree(), 2026-10-21"
+      }
     }
   ],
   "open_questions": [

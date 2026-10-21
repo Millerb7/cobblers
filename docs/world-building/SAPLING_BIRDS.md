@@ -571,7 +571,7 @@ placed, not seen in game.** Tools: `tools/habitat_spawn_model.py` (the rule), `t
 block sets from their prefabs), `tools/tree_birds.py` (the plan, the records, the pools). Data:
 `data/tree_bird_nests.json` (the plan), 143 `tbird_*` records in `data/habitat_blocks.json`, 128 `tbird_*` pools and 66
 rewritten pools in `data/spawns.json`, `data/tree_bird_species.json` (the designer's) and
-`data/tree_bird_species_placeholder.json` (the world tree's, PLACEHOLDER).
+`data/world_tree_bird_species.json` (the world tree's, the owner's set of classics).
 
 ### The rule (how an activated Habitat Block picks where a bird stands)
 
@@ -652,10 +652,8 @@ Seated from its generator (`tools/tree_grove.big_tree('oak','a','world')`, `tool
 ground 116; the tree reaches y535): **19 nests**, two on each of the 8 storeys' limbs (`s1a`..`s8b`, each a hidden
 oak-log cell on a limb 5 thick, zone centre +66, +102, +140, +178, +218, +254, +292, +336 over the ground, 186-1,585 cells),
 and three in the canopy's leaves (`c1`..`c3`, centres +386, +396, +413). Bands: low (storeys 1-2), mid (3-5), high (6-8),
-crown (canopy). Species: `data/tree_bird_species_placeholder.json`, the coordinator's working set, marked PLACEHOLDER;
-`python tools/tree_birds.py spawns` prints each collision with the one-line-per-tree rule (9 of its 13 species are already
-a tree's line). Not here: the roots (one block wide: nothing is hidden in them) and the top, which is Ho-Oh's:
-`data/world_tree_hooh.json` (PROPOSED).
+crown (canopy). Species: `data/world_tree_bird_species.json`, the owner's set (2026-10-21: Pidgeotto, Staravia, Swablu, Noctowl low; Pidgeot, Staraptor, Altaria, Swellow mid; those plus Togekiss and Corviknight high; Aerodactyl and Dragonite in the crown), a deliberate exception to the one-line-per-tree rule;
+Not here: the roots (one block wide: nothing is hidden in them) and the top, which is Ho-Oh's: legendaries.json `hooh` (kind tree_crown, `data/world_tree_hooh.json` has the measurements).
 
 ### Not covered, not verified
 

@@ -290,6 +290,13 @@ def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world
     checked_gates = 0
     for rec in sited:
         rid = rec["id"]
+        if rec["kind"] == "tree_crown":
+            w, gts = _tree_crown(rec, doc, fn_dir, rep)
+            checked_writes += w
+            checked_gates += gts
+            rep.check(_met_is_reachable(rec, doc, rep),
+                      "%s: a sited encounter whose gate can never open, unadmitted" % rid)
+            continue
         g = L.geometry(rec, doc, ground)
         lake = rec["kind"] == "lake_grotto"
         env, sleeve = g["envelope"], g["sleeve"]
@@ -484,6 +491,148 @@ def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world
                       "%s: a gate_only record must not be driven; its trigger is an open question" % rid)
 
     return rep
+
+
+# ------------------------------------------------------------------ a tree crown (2026-10-21)
+#
+# tools/legendaries.py perch_geometry builds a hollow barrier shell round the legendary on the world tree's highest
+# standable cell. This section derives that shell HERE, from the record's declared numbers (perch.top_y,
+# cavity_radius, cavity_height, shell_thickness, portal) and from the TREE'S OWN BLOCK LIST (tools/tree_geometry),
+# never from L.geometry() or from perch.top_y alone: a perch_geometry() that shifted, shrank or mis-sized the shell
+# (the generator mutated, the data untouched) fails the text comparisons; a top_y that is not the tree's top fails the
+# measurement. What it proves, offline: the perch is the tree's highest solid cell and a leaf, the carve writes exactly
+# the shell (barrier over AIR only, so no leaf is replaced), the cavity clear of barrier and a pedestal under the
+# legendary, and a flood fill of the cavity over non-solid, non-barrier cells never leaves the shell: the legendary is
+# enclosed on every side, floor included. It does NOT prove the hitbox fits, that barrier stops a ridden mount in game,
+# or anything about a running server.
+
+BUILD_TOP = 575      # data/world.json built_ceiling.runtime_limit: y-64..575 (modpack/datapacks/cobblers_height)
+NEIGH6 = ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))
+
+
+def _tree_crown(rec, doc, fn_dir, rep):
+    """Audit one tree_crown record against the tree's block list and the pack's text. Returns (writes, gate lines)."""
+    import tree_geometry as TG
+    rid, ns = rec["id"], doc["namespace"]
+    pv = rec["perch"]
+    px, pz = (int(v) for v in rec["portal"])
+    top, cr, ch, th = (int(pv[k]) for k in ("top_y", "cavity_radius", "cavity_height", "shell_thickness"))
+    tree = TG.world_tree()
+    solid = tree["solid"]
+    names = tree["names"]
+    # the perch is where the TREE says its highest standable cell is
+    measured_top = max(y for _x, y, _z in solid)
+    rep.check(top == measured_top, "%s: perch.top_y %d is not the tree's highest solid y%d" % (rid, top, measured_top))
+    rep.check((px, top, pz) in solid and "leaves" in names.get((px, top, pz), ""),
+              "%s: (%d, %d, %d) is not a solid leaf cell of the tree" % (rid, px, top, pz))
+    rep.check(top + ch + th <= BUILD_TOP, "%s: the shell's top y%d is over the build limit y%d"
+              % (rid, top + ch + th, BUILD_TOP))
+    # the shell and the cavity, in this file's own arithmetic
+    R = cr + th
+    shell = (px - R, top - th + 1, pz - R, px + R, top + ch + th, pz + R)
+    cavity = (px - cr, top + 1, pz - cr, px + cr, top + ch, pz + cr)
+    rep.check(not any(c in solid for c in _cells((px - R, top + 1, pz - R, px + R, top + ch + th, pz + R))),
+              "%s: a solid block of the tree stands in the shell above the perch (the cavity is not clear)" % rid)
+    carve = fn_dir / rid / "carve.mcfunction"
+    rep.check(carve.is_file(), "%s: no carve function in the pack" % rid)
+    writes = 0
+    barrier, air_fills, ped = [], [], []
+    if carve.is_file():
+        for line in carve.read_text(encoding="utf-8").splitlines():
+            t = line.strip()
+            mm = FILL.match(t)
+            if mm:
+                b = L._box(*(int(v) for v in mm.groups()[:6]))
+                block = mm.group(7)
+                rest = t.split(block, 1)[1].strip()
+                writes += 1
+                rep.check(_inside(b, shell), "%s: carve writes %s, outside the shell %s" % (rid, b, shell))
+                if block == "minecraft:barrier":
+                    rep.check(rest == "replace minecraft:air",
+                              "%s: a barrier fill is not `replace minecraft:air` (it would replace the tree): %s" % (rid, t))
+                    barrier.append(b)
+                elif block == "minecraft:air":
+                    rep.check(rest == "replace minecraft:barrier",
+                              "%s: an air fill is not `replace minecraft:barrier` (it would cut the tree): %s" % (rid, t))
+                    air_fills.append(b)
+                else:
+                    rep.check(False, "%s: the carve fills %s, which is neither the shell's barrier nor its clearing: %s"
+                              % (rid, block, t))
+                continue
+            mm = SETBLOCK.match(t)
+            if mm:
+                writes += 1
+                ped.append((tuple(int(v) for v in mm.groups()[:3]), mm.group(4)))
+        rep.check(barrier == [shell], "%s: the barrier fill is %s, not the shell %s" % (rid, barrier, [shell]))
+        rep.check(air_fills == [cavity], "%s: the clearing is %s, not the cavity %s" % (rid, air_fills, [cavity]))
+        rep.check(ped == [((px, top, pz), doc["defaults"]["pedestal_block"])],
+                  "%s: the pedestal write is %s, not %s at the perch" % (rid, ped, doc["defaults"]["pedestal_block"]))
+    # enclosure: after the carve, what stands in the shell is barrier on every cell outside the cavity that is not tree,
+    # and the pedestal; a flood fill of the cavity over everything else must not reach the shell's outer boundary
+    inner = set(_cells(cavity))
+    # a cell holding a non-solid block of the tree is no wall: `replace minecraft:air` leaves it, and the flood passes it
+    walls = {c for c in _cells(shell) if c not in inner and c not in names} | {(px, top, pz)}
+    start = (px, top + 1, pz)
+    seen, todo, leak = {start}, [start], None
+    while todo and leak is None:
+        x, y, z = todo.pop()
+        for dx, dy, dz in NEIGH6:
+            c = (x + dx, y + dy, z + dz)
+            if c in seen or c in walls or c in solid:
+                continue
+            if not (shell[0] <= c[0] <= shell[3] and shell[1] <= c[1] <= shell[4] and shell[2] <= c[2] <= shell[5]):
+                leak = c
+                break
+            seen.add(c)
+            todo.append(c)
+    rep.check(leak is None, "%s: the cavity leaks out of its shell at %s" % (rid, leak))
+    rep.check(len(seen) == (2 * cr + 1) ** 2 * ch, "%s: the enclosed air is %d cells, not the cavity's %d"
+              % (rid, len(seen), (2 * cr + 1) ** 2 * ch))
+    # the legendary stands on the pedestal's cell column, inside the cavity, in the summon's own text
+    spawn = fn_dir / rid / "spawn_new.mcfunction"
+    rep.check(spawn.is_file() and ("positioned %.1f %d %.1f" % (px + 0.5, top + 1, pz + 0.5))
+              in spawn.read_text(encoding="utf-8"),
+              "%s: the summon does not stand the legendary on the perch at (%d, %d, %d)" % (rid, px, top + 1, pz))
+    # the gate: opening takes the barrier off and nothing else, and every line that opens it needs the predicate
+    gates = 0
+    opn = fn_dir / rid / "open.mcfunction"
+    rep.check(opn.is_file(), "%s: no open function" % rid)
+    if opn.is_file():
+        body = opn.read_text(encoding="utf-8")
+        fills = [l for l in body.splitlines() if l.startswith("fill ")]
+        rep.check(len(fills) == 1 and fills[0].endswith("minecraft:air replace minecraft:barrier")
+                  and L._box(*(int(v) for v in fills[0].split()[1:7])) == shell,
+                  "%s: open must be one fill of the shell to air, replacing barrier only: %s" % (rid, fills))
+    near = fn_dir / rid / "near.mcfunction"
+    rep.check(near.is_file(), "%s: no near function in the pack" % rid)
+    if near.is_file():
+        need = ["%s:flag/%s=true" % (ns, f) for f in rec["gate"]["flags"]]
+        need += ["%s:legendary/%s/met=true" % (ns, o) for o in rec["gate"].get("requires_met") or []]
+        opens = [l for l in near.read_text(encoding="utf-8").splitlines() if "legendary/%s/open" % rid in l]
+        rep.check(bool(opens), "%s: nothing in near can open the shell" % rid)
+        for line in opens:
+            for key in need:
+                rep.check(key in line, "%s: a line opens the shell without %s in its predicate: %s" % (rid, key, line))
+            gates += 1
+    tick = fn_dir / "tick.mcfunction"
+    rep.check(tick.is_file() and any("legendary/%s/near" % rid in l and "distance=..%d" % int(pv["gate_reach"]) in l
+                                     for l in tick.read_text(encoding="utf-8").splitlines()),
+              "%s: nothing drives its near function at the declared reach %s" % (rid, pv["gate_reach"]))
+    # the spawn-free zone: on the grid and over the shell's footprint
+    zone = rec.get("spawn_free_zone")
+    ok = isinstance(zone, list) and len(zone) == 4
+    rep.check(ok, "%s: a sited encounter declares a spawn_free_zone [x0, z0, x1, z1]" % rid)
+    if ok:
+        rep.check(all(v % GRID == 0 for v in zone), "%s: the spawn-free zone %s is not snapped to the %d-block grid"
+                  % (rid, zone, GRID))
+        rep.check(zone[0] <= shell[0] and zone[1] <= shell[2] and zone[2] >= shell[3] and zone[3] >= shell[5],
+                  "%s: the spawn-free zone %s does not cover the shell's footprint" % (rid, zone))
+    return writes, gates
+
+
+def _cells(box):
+    x0, y0, z0, x1, y1, z1 = box
+    return [(x, y, z) for x in range(x0, x1 + 1) for y in range(y0, y1 + 1) for z in range(z0, z1 + 1)]
 
 
 # ------------------------------------------------------------------ a retired chamber site (2026-10-12)
