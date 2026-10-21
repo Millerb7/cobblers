@@ -393,7 +393,8 @@ def test_no_spawnpokemonat_is_bare_in_any_generated_function(pack):
 # ------------------------------------------------------------------ the tool refuses rather than emits
 
 def _build_with(tmp_path, mutate):
-    for name in ("scenes.json", "dialogue.json", "quests.json", "progression.json"):
+    # npc_seats.json too: a scene's keeper reads its two stands from the seats' markers (tools/scenes_pack.py keeper)
+    for name in ("scenes.json", "dialogue.json", "quests.json", "progression.json", "npc_seats.json"):
         (tmp_path / name).write_text((DATA / name).read_text(encoding="utf-8"), encoding="utf-8")
     doc = json.loads((tmp_path / "scenes.json").read_text(encoding="utf-8"))
     mutate(doc)

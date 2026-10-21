@@ -532,21 +532,6 @@
           "node": "post_hank_1"
         },
         {
-          "priority": 20,
-          "when": {
-            "kind": "progression_equals",
-            "field": "quest.evt_pallet_crushed_house.house_state",
-            "value": "lena_relocated"
-          },
-          "actions": [
-            {
-              "kind": "quest_transition",
-              "transition": "enter_shared_rescue_recap"
-            }
-          ],
-          "node": "late_hank_recap"
-        },
-        {
           "priority": 30,
           "when": {
             "kind": "progression_in",
@@ -1305,18 +1290,6 @@
           "next": "check_house_objective"
         },
         {
-          "id": "late_hank_recap",
-          "kind": "line",
-          "speaker": "hank",
-          "text": "She is alive. She is furious. Beautiful day.",
-          "actions_after_acknowledge": [
-            {
-              "kind": "close_dialogue"
-            }
-          ],
-          "next": "late_hank_recap"
-        },
-        {
           "id": "post_hank_1",
           "kind": "line",
           "speaker": "hank",
@@ -1365,10 +1338,17 @@
             "field": "quest.evt_pallet_crushed_house.stage",
             "value": "complete"
           },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "lena_talking"
+            }
+          ],
           "node": "post_lena_1"
         },
         {
           "priority": 20,
+          "why": "2026-10-21: Lena stands inside for every player who has not finished (the keeper, data/scenes.json pallet_crushed_house). A player who has not finished and finds her OUTSIDE has caught her in the second or two before the keeper walks her back, or in the middle of a finished player's conversation, which holds the keeper off. The world field house_state is the keeper's record of where she stands (blocked = inside). She is not fetched for a reward here: the reward is paid only by finishing her lines.",
           "when": {
             "kind": "all",
             "conditions": [
@@ -1378,19 +1358,16 @@
                 "value": "lena_relocated"
               },
               {
-                "kind": "progression_equals",
-                "field": "quest.evt_pallet_crushed_house.reward_claimed",
-                "value": false
+                "kind": "not",
+                "condition": {
+                  "kind": "progression_equals",
+                  "field": "quest.evt_pallet_crushed_house.stage",
+                  "value": "complete"
+                }
               }
             ]
           },
-          "actions": [
-            {
-              "kind": "quest_transition",
-              "transition": "enter_shared_rescue_recap"
-            }
-          ],
-          "node": "late_lena_recap"
+          "node": "lena_outside_wait"
         },
         {
           "priority": 30,
@@ -1399,6 +1376,12 @@
             "field": "quest.evt_pallet_crushed_house.stage",
             "value": "lena_dialogue"
           },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "lena_talking"
+            }
+          ],
           "node": "$cursor"
         },
         {
@@ -1422,6 +1405,10 @@
             {
               "kind": "quest_transition",
               "transition": "start_lena_dialogue"
+            },
+            {
+              "kind": "quest_transition",
+              "transition": "lena_talking"
             }
           ],
           "node": "l001"
@@ -1526,17 +1513,17 @@
           ]
         },
         {
-          "id": "late_lena_recap",
+          "id": "lena_outside_wait",
           "kind": "line",
-          "speaker": "narrator",
-          "text": "Lena is already safe outside. She offers you the matching Pallet charm kept with the rescued belongings.",
+          "speaker": "lena",
+          "text": "Not now. I am being fussed over and walked about. Give me a moment, and I will be back under my beam.",
           "actions_after_acknowledge": [
             {
-              "kind": "quest_transition",
-              "transition": "claim_reward_after_shared_rescue"
+              "kind": "close_dialogue"
             }
           ],
-          "next": "post_lena_1"
+          "persist_cursor": false,
+          "next": "lena_outside_wait"
         },
         {
           "id": "post_lena_1",

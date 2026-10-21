@@ -969,6 +969,25 @@ def check_scenes(ctx: Context):
                 err("function name %r must be [a-z0-9_]+" % name)
             if not (isinstance(cmds, list) and cmds and all(isinstance(c, str) and c and not c.startswith("/") for c in cmds)):
                 err("function %s must be a non-empty list of commands without a leading /" % name)
+        # keepers (tools/scenes_pack.py keeper): one shared NPC kept where the players in the area need her
+        seatf = ctx.files.get("npc_seats.json")
+        seat_markers = (seatf.doc.get("markers") or {}) if seatf else {}
+        for k in s.get("keepers") or []:
+            kid = k.get("id")
+            for which in ("inside_marker", "outside_marker"):
+                m = seat_markers.get(k.get(which)) if seatf else None
+                if seatf and not (isinstance(m, dict) and isinstance(m.get("at"), list) and len(m["at"]) == 3):
+                    err('keeper %s %s "%s" is not a marker in data/npc_seats.json' % (kid, which, k.get(which)))
+                elif m and not _in_box(m["at"], area):
+                    err('keeper %s %s "%s" is outside the area' % (kid, which, k.get(which)))
+            fdef = fields.get(k.get("state_field"))
+            if fdef is None or fdef.get("scope") != "world":
+                err('keeper %s state_field "%s" is not a declared world field' % (kid, k.get("state_field")))
+            elif not all(k.get(w) in (fdef.get("allowed_values") or []) for w in ("inside_state", "outside_state")):
+                err("keeper %s inside_state / outside_state are not values of %s" % (kid, k.get("state_field")))
+            holds = {str(c).split()[4] for c in sum((v for v in funcs.values() if isinstance(v, list)), []) if str(c).startswith("scoreboard players set @s ")}
+            if k.get("hold_objective") not in holds:
+                err("keeper %s: no scene function sets @s on its hold_objective %s (nothing could ever hold it)" % (kid, k.get("hold_objective")))
 
     # the quests' own reach into the scene runtime: a sync_scene or scene_function to a scene or function that is not
     # there compiles, runs, and does nothing

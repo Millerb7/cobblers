@@ -2797,8 +2797,9 @@ def steps(with_spawns=False):
     out.append(("R17NE", "the mainline beats' evidence displays beside the tellers (data/reveal_evidence.json)",
                 reveal_evidence.placement_steps()))
     # Lena of the Pallet crushed house (2026-10-13, data/npc_seats.json relocating_seats): an NPC like the settlement
-    # ones whose stand is the WORLD field's value, not a fixed seat -- the dialogue moves her once, for everyone, when
-    # the first player finishes her conversation. So the npc action carries a fifth element, the score selecting her
+    # ones whose stand is the WORLD field's value, not a fixed seat -- since 2026-10-21 the scene keeper (data/scenes.json
+    # pallet_crushed_house) stands her inside or outside from the players in the area and writes the score; the dialogue
+    # moves nobody. So the npc action carries a fifth element, the score selecting her
     # later stand, and a re-run puts a Lena left at the other marker on the one the score names. After R17N (Hank)
     out.append(("R18CH", "Lena at the crushed house marker the world field selects (data/npc_seats.json relocating_seats)",
                 [("npc", n) for n in npc_seats.relocating_placements()]))
